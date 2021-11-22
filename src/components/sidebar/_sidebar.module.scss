@@ -1,27 +1,31 @@
 .main {
-  background-color: #000000;
-  height: calc(100vh - 6rem);
-  width: fit-content;
-  border-right: 1px solid rgba(255, 255, 255, 0.25);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 3rem 1rem;
+	background-color: #000000;
+	height: calc(100vh - 6rem);
+	width: fit-content;
+	border-right: 1px solid rgba(255, 255, 255, 0.25);
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 3rem 1rem;
 }
 
 .navContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .icon {
-  margin-top: 2rem;
-  height: 3rem;
-  width: auto;
+	margin-top: 2rem;
+	height: 3rem;
+	width: auto;
 }
 
 .logo {
-  height: 4rem;
-  width: auto;
+	height: 4rem;
+	width: auto;
+}
+
+.logoutContainer {
+	text-align: center;
 }
