@@ -1,4 +1,5 @@
 @import '../../styles/variables.scss';
+@import '../../styles/mixins.scss';
 
 .button {
 	color: $black-color;
@@ -11,4 +12,5 @@
 	padding: 1.4rem 6rem;
 	cursor: pointer;
 	white-space: nowrap;
+	@include preventSelect;
 }

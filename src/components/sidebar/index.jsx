@@ -6,12 +6,24 @@ import { ReactComponent as Media } from '../../assets/media.svg';
 import { ReactComponent as Logout } from '../../assets/logout.svg';
 
 const Sidebar = () => {
+	const selectedRoute = 'post-library';
 	return (
 		<span className={classes.main}>
 			<div className={classes.navContainer}>
 				<Logo className={classes.logo} />
-				<Share className={classes.icon} />
-				<Media className={classes.icon} />
+				<div
+					className={classes.iconWrapper}
+					style={
+						selectedRoute === 'post-library'
+							? { backgroundColor: '#404040' }
+							: {}
+					}
+				>
+					<Share className={classes.icon} />
+				</div>
+				<div className={classes.iconWrapper}>
+					<Media className={classes.icon} />
+				</div>
 			</div>
 
 			<div className={classes.logoutContainer}>
