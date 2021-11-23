@@ -1,31 +1,9 @@
-.main {
-	background-color: #000000;
-	height: calc(100vh - 6rem);
-	width: 5rem;
-	border-right: 1px solid rgba(255, 255, 255, 0.25);
+.root {
 	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	padding: 3rem 1rem;
 }
 
-.navContainer {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
-.icon {
-	margin-top: 3rem;
-	height: 2.5rem;
-	width: auto;
-}
-
-.logo {
-	height: 3.5rem;
-	width: auto;
-}
-
-.logoutContainer {
-	text-align: center;
+.contentWrapper {
+	padding: 3.5rem 2rem;
+	width: 100%;
+	height: 100%;
 }

@@ -6,21 +6,19 @@ import { ReactComponent as Media } from '../../assets/media.svg';
 import { ReactComponent as Logout } from '../../assets/logout.svg';
 
 const Sidebar = () => {
-  return (
-    <span className={classes.main}>
-      <div className={classes.navContainer}>
-        <Logo className={classes.logo} />
-        <Share className={classes.icon} />
-        <Media className={classes.icon} />
-      </div>
+	return (
+		<span className={classes.main}>
+			<div className={classes.navContainer}>
+				<Logo className={classes.logo} />
+				<Share className={classes.icon} />
+				<Media className={classes.icon} />
+			</div>
 
-      <div className={classes.logoutContainer}>
-        <Logout className={classes.icon} />
-      </div>
-    </span>
-  );
+			<div className={classes.logoutContainer}>
+				<Logout className={classes.icon} />
+			</div>
+		</span>
+	);
 };
 
 export default Sidebar;
-
-//231.68

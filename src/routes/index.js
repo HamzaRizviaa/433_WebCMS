@@ -1,13 +1,15 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Home from '../pages/Home/Home';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import PostLibrary from '../pages/PostLibrary/PostLibrary';
 
 const AppRoutes = () => {
 	return (
-		<Routes>
-			<Route path='/' element={<Home />} />
-			<Route path='abc' element={<h1>HOW</h1>} />
-		</Routes>
+		<>
+			<Routes>
+				<Route path='/post-library' element={<PostLibrary />} />
+			</Routes>
+			<Navigate to='/post-library' />
+		</>
 	);
 };
 
