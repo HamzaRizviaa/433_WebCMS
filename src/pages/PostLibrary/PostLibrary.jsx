@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Button from '../../components/button';
 import Layout from '../../components/layout';
 import classes from './_postLibrary.module.scss';
-// import classes from './_postLibary.module.scss';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { decrement, increment } from '../../features/count/er/counterSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { getPosts } from './postLibrarySlice';
 
 const PostLibrary = () => {
-	// const count = useSelector((state) => state.counter.count);
-	// const dispatch = useDispatch();
+	const posts = useSelector((state) => state.postLibrary.posts);
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch(getPosts());
+	}, []);
+
+	console.log(posts);
 	return (
 		<Layout>
 			<div className={classes.header}>

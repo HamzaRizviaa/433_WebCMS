@@ -7,8 +7,8 @@ const AppRoutes = () => {
 		<>
 			<Routes>
 				<Route path='/post-library' element={<PostLibrary />} />
+				<Route path='/' element={<Navigate replace to='/post-library' />} />
 			</Routes>
-			<Navigate to='/post-library' />
 		</>
 	);
 };
