@@ -9,6 +9,7 @@ import classes from './_postLibrary.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPosts } from './postLibrarySlice';
 import moment from 'moment';
+// import Slide from '../../components/slide';
 
 // const getFileName = (content) => {
 // 	let returnValue = '-';
@@ -116,6 +117,7 @@ const PostLibrary = () => {
 			<div className={classes.tableContainer}>
 				<Table columns={columns} data={posts} />
 			</div>
+			{/* <Slide /> */}
 		</Layout>
 	);
 };

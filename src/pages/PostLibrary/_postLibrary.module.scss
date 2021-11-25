@@ -6,7 +6,9 @@
 }
 
 .tableContainer {
-	// padding: 2rem 0rem;
+	margin: 1rem 0rem;
+	max-height: calc(100vh - 108px);
+	overflow: auto;
 }
 
 .mediaIcon {

@@ -1,0 +1,25 @@
+.backdrop {
+	z-index: 5;
+	color: 'rgba(0,0,0,0.98)';
+}
+
+.paper {
+	background-color: #000000 !important;
+	z-index: 4;
+	//  position: relative,
+	position: fixed;
+	right: -2;
+	color: #ffffff;
+	top: 0;
+	flex-grow: 1;
+	min-width: 50%;
+	height: 100vh;
+	transform: translateZ(0);
+	// The position fixed scoping doesnt work in IE 11.
+	// Disable this demo to preserve the others.
+	@media all and (-ms-high-contrast: none) {
+		display: none;
+	}
+	overflow-y: auto;
+	border: 1px solid yellow;
+}
