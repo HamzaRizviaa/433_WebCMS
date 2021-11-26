@@ -45,14 +45,13 @@ const getDateTime = (dateTime) => {
 const PostLibrary = () => {
 	const posts = useSelector((state) => state.postLibrary.posts);
 	const dispatch = useDispatch();
-
 	useEffect(() => {
 		dispatch(getPosts());
 	}, []);
 
 	const columns = [
 		{
-			dataField: 'media',
+			dataField: 'file_name',
 			text: 'MEDIA',
 			sort: true,
 			sortCaret: sortRows,
@@ -61,7 +60,7 @@ const PostLibrary = () => {
 					<div className={classes.mediaWrapper}>
 						<img
 							className={classes.mediaIcon}
-							src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${content}`}
+							src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row.media}`}
 						/>
 						<span className={classes.fileName}>{row.file_name}</span>
 					</div>
