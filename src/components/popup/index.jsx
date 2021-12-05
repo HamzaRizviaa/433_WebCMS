@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import classes from './_popup.module.scss';
-import '../../styles/_variables.scss';
 
 import * as React from 'react';
 //import Button from '@mui/material/Button';
@@ -9,176 +8,12 @@ import { Paper } from '@material-ui/core';
 import Slide from '@material-ui/core/Slide';
 import Backdrop from '@material-ui/core/Backdrop';
 import Close from '@material-ui/icons/Close';
-//import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from '@material-ui/core';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
-
-// const useStyles = makeStyles({
-// 	paper: {
-// 		backgroundColor: '#000000 !important',
-// 		zIndex: 5,
-// 		//  position: 'relative',
-// 		position: 'fixed',
-// 		right: -2,
-// 		color: '#FFFFFF',
-// 		top: 0,
-// 		flexGrow: 1,
-// 		minWidth: '40%',
-// 		height: '100vh',
-// 		transform: 'translateZ(0)',
-// 		// The position fixed scoping doesn't work in IE 11.
-// 		// Disable this demo to preserve the others.
-// 		'@media all and (-ms-high-contrast: none)': {
-// 			display: 'none'
-// 		},
-// 		overflowY: 'auto',
-// 		border: '1px solid yellow'
-// 	},
-// 	backdrop: {
-// 		zIndex: 1,
-// 		color: 'rgba(0,0,0,0.98)'
-// 	},
-// 	content: {
-// 		margin: '1.38rem 0.88rem 1.5rem 1.63rem'
-// 	},
-// 	header: {
-// 		display: 'flex',
-// 		justifyContent: 'space-between',
-// 		marginBottom: 5,
-// 		marginTop: 15,
-// 		paddingLeft: '3%'
-// 	},
-// 	heading: {
-// 		margin: '0px 16px',
-// 		position: 'static',
-// 		width: '30.44rem',
-// 		height: '2.25rem',
-// 		left: '3 rem',
-// 		top: '0 rem',
-// 		fontFamily: 'Poppins',
-// 		fontStyle: 'normal',
-// 		fontWeight: '800',
-// 		fontSize: '1.5rem',
-// 		lineHeight: '2.25rem',
-// 		display: 'flex',
-// 		alignItems: 'center',
-// 		letterSpacing: '-0.02em',
-// 		color: '#FFFF00',
-// 		flex: 'none',
-// 		order: '1',
-// 		flexGrow: '1'
-// 	},
-// 	closeIcon: {
-// 		display: 'flex',
-// 		flexDirection: 'row',
-// 		alignItems: 'flex-start',
-// 		padding: '0.5rem',
-// 		position: 'static',
-// 		width: '1.25rem',
-// 		height: '1.25rem',
-// 		left: '0rem',
-// 		top: '0.13rem',
-// 		background: '#404040',
-// 		borderRadius: '2.5rem',
-// 		flex: 'none',
-// 		order: '0',
-// 		flexGrow: '0',
-// 		margin: '0rem 1rem'
-// 	},
-// 	assignmentContainer: {
-// 		padding: 30,
-// 		backgroundColor: '#00000',
-// 		width: '38.44rem',
-// 		marginRight: 30,
-// 		height: 400
-// 	},
-// 	selectWrapper: {
-// 		width: '41.44rem',
-// 		marginTop: '2%'
-// 	},
-// 	selectWrapper2: {
-// 		width: '41.44rem',
-// 		marginTop: '2%',
-// 		display: 'flex',
-// 		justifyContent: 'center',
-// 		alignItems: 'center'
-// 	},
-// 	right: {
-// 		marginRight: 7
-// 	},
-// 	label1: {
-// 		position: 'static',
-// 		width: '31.44rem',
-// 		height: '1.5rem',
-// 		left: '0rem',
-// 		top: '0rem',
-// 		fontFamily: 'Poppins',
-// 		fontStyle: 'normal',
-// 		fontWeight: 'bold',
-// 		fontSize: '1.15rem',
-// 		lineHeight: '1.5rem',
-// 		display: 'flex',
-// 		alignItems: 'center',
-// 		color: '#FFFFFF',
-// 		flex: 'none',
-// 		order: '0',
-// 		flexGrow: '1',
-// 		margin: '0rem 0.5rem',
-// 	},
-// 	dragdropWrapper: {
-// 		padding: '1.5rem',
-// 		backgroundColor: 'yellow',
-// 		width: '38.44rem',
-// 		marginRight: 30,
-// 		height: '10.5rem',
-// 		left: '0rem',
-// 		//top: '6.75rem',
-// 		borderRadius: '0.5rem',
-// 		marginTop: '6.75rem'
-// 	},
-// 	label2: {
-// 		position: 'static',
-// 		width: '31.44rem',
-// 		height: '1.5rem',
-// 		left: '1rem',
-// 		top: '0rem',
-// 		fontFamily: 'Poppins',
-// 		fontStyle: 'normal',
-// 		fontWeight: 'bold',
-// 		fontSize: '0.75rem',
-// 		lineHeight: '1.5rem',
-// 		textTransform: 'uppercase',
-// 		color: '#FFFFFF',
-// 		flex: 'none',
-// 		order: '0',
-// 		flexGrow: '1',
-// 		margin: '0rem 1rem',
-// 	},
-// 	textField: {
-// 		display: 'flex',
-// 		flexDirection: 'row',
-// 		alignItems: 'center',
-// 		padding: '0.5rem 1rem',
-// 		position: 'static',
-// 		width: '41.44rem',
-// 		//height: '2.5rem',
-// 		left: '0rem',
-// 		top: '1.5rem',
-// 		backgroundColor: '#00000',
-// 		border: '1px solid #FFFFFF',
-// 		boxSizing: 'border-box',
-// 		borderRadius: '1rem',
-// 		flex: 'none',
-// 		order: '1',
-// 		alignSelf: 'stretch',
-// 		flexGrow: '0',
-// 		margin: '0rem 0rem',
-// 		lineHeight: 1.6,
-// 		color: 'white',
-// 		marginBottom: '1rem'
-// 	}
-// });
+import Select from '@material-ui/core/Select';
+import MenuItem from '@mui/material/MenuItem';
+import { ReactComponent as DropdownArrow } from '../../assets/drop_drown_arrow.svg';
 
 //with conditional rendering setValue, prop will be passed as a value
 //className={classes.iosSwitch} with switch
@@ -230,22 +65,57 @@ const IOSSwitch = styled((props) => (
 	}
 }));
 
-const PostBtn = ({ buttonText, btnStyle, btnAction = () => { }, disabled = false}) => {
-    return (
-        <button  style={btnStyle ? btnStyle : {}} onClick={!disabled ? (e) => { btnAction(e) } : null} >
-            {buttonText}
-        </button>
-    )
-}
+const PostBtn = ({
+	classes,
+	buttonText,
+	btnStyle,
+	btnAction = () => {},
+	disabled = true
+}) => {
+	return (
+		<button
+			className={`${classes.btn} ${disabled ? classes.disabled : null}`}
+			style={btnStyle ? btnStyle : {}}
+			onClick={
+				!disabled
+					? (e) => {
+							btnAction(e);
+					  }
+					: null
+			}
+		>
+			{buttonText}
+		</button>
+	);
+};
 
 const Popup = ({ title, open, closePopup }) => {
-	//const classes = useStyles();
-
 	const [caption, setCaption] = React.useState('');
+	const [switchValue, setSwitchValue] = React.useState(false);
+	const [selectedMedia, setSelectedMedia] = React.useState('');
 
 	const handleClose = () => {
 		closePopup();
+		setSwitchValue(false);
 	};
+
+	const handleSwitchValue = () => {
+		setSwitchValue(!switchValue);
+	}
+
+	const handleSelectedMedia = (e) => {
+		setSelectedMedia(e.target.value);
+	};
+
+	const handleDisablePostBtn = () => {
+		if(switchValue){
+			if(selectedMedia !== ''){
+				return false
+			}
+		}
+		return true
+	}
+
 
 	return (
 		<div>
@@ -274,10 +144,11 @@ const Popup = ({ title, open, closePopup }) => {
 								<div className={`${classes.selectWrapper} ${classes.right}`}>
 									<label className={classes.label1}>{'Add Media Files'}</label>
 								</div>
+
 								<div className={classes.dragdropWrapper}></div>
+
 								<div className={`${classes.selectWrapper} ${classes.right}`}>
 									<label className={classes.label2}>{'Caption'}</label>
-
 									<TextField
 										value={caption}
 										onChange={(e) => setCaption(e.target.value)}
@@ -290,27 +161,62 @@ const Popup = ({ title, open, closePopup }) => {
 										maxRows={4}
 									/>
 								</div>
+
 								<div className={`${classes.selectWrapper2}`}>
 									<label className={classes.label1}>
 										{'Link post to Media'}
 									</label>
-									<IOSSwitch sx={{ m: 1 }} />
+									<IOSSwitch
+										value={switchValue}
+										onClick={handleSwitchValue}
+										sx={{ m: 1 }}
+									/>
 								</div>
+
+								{switchValue ? (
+									<div className={`${classes.selectWrapper} ${classes.right}`}>
+										<label
+											style={
+												selectedMedia === ''
+													? { color: '#FF355A' }
+													: { color: 'white' }
+											}
+											className={classes.label2}
+										>
+											{'Select Media'}
+										</label>
+										<Select
+											value={selectedMedia}
+											onChange={handleSelectedMedia}
+											disableUnderline={true}
+											className={`${classes.select}`}
+										>
+	
+											<MenuItem value={10}>Ten</MenuItem>
+											<MenuItem value={20}>Twenty</MenuItem>
+											<MenuItem value={30}>Thirty</MenuItem>
+											
+										</Select>
+										<DropdownArrow className={classes.dropdownicon}/>
+										{selectedMedia === '' ? (
+											<label className={classes.label3}>
+												{'This field is required'}
+											</label>
+										) : null}
+									</div>
+								) : null}
 							</div>
-							<PostBtn 
-								buttonText={'POST'}
-								className={`${classes.btn} ${classes.disabled}`}
-								btnAction={() => {
-									console.log('Button Clicked');
-					  
-								  }}
-								  btnStyle={{
-									width: '100%',
-									padding: '13px 22px',
-									marginRight: 13,
-									marginBottom: 25,
-								  }}
-							/>
+
+							<div className={`${classes.selectWrapper3}`}>
+								<PostBtn
+									classes={classes}
+									buttonText={'POST'}
+									btnAction={() => {
+										console.log('Button Clicked');
+									}}
+									disabled={handleDisablePostBtn()}
+								/>
+							</div>
 						</div>
 					</Paper>
 				</Slide>
@@ -326,10 +232,11 @@ Popup.propTypes = {
 };
 
 PostBtn.propTypes = {
-	disabled : PropTypes.bool.isRequired,
-	buttonText : PropTypes.string.isRequired,
-	btnStyle : PropTypes.func.isRequired,
-	btnAction : PropTypes.func.isRequired
-}
+	disabled: PropTypes.bool.isRequired,
+	buttonText: PropTypes.string.isRequired,
+	btnStyle: PropTypes.func.isRequired,
+	btnAction: PropTypes.func.isRequired,
+	classes: PropTypes.object.isRequired
+};
 
 export default Popup;
