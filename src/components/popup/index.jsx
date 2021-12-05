@@ -89,6 +89,19 @@ const PostBtn = ({
 	);
 };
 
+const DropArea = (props) => {
+
+    const allowDrop = (e) => {
+        e.preventDefault();
+    }
+
+    return (
+        <div id={props.id} onDrop={props.onDrop} onDragOver={allowDrop} style={props.style}>
+            {props.children}
+        </div>
+    )
+}
+
 const Popup = ({ title, open, closePopup }) => {
 	const [caption, setCaption] = React.useState('');
 	const [switchValue, setSwitchValue] = React.useState(false);
@@ -145,7 +158,13 @@ const Popup = ({ title, open, closePopup }) => {
 									<label className={classes.label1}>{'Add Media Files'}</label>
 								</div>
 
-								<div className={classes.dragdropWrapper}></div>
+								<div className={classes.dragdropWrapper}>
+									<DropArea id={'droppable'}>
+										<div className={classes.dropArea}>
+											{'Click or drag files to this area to upload'}
+										</div>
+									</DropArea>
+								</div>
 
 								<div className={`${classes.selectWrapper} ${classes.right}`}>
 									<label className={classes.label2}>{'Caption'}</label>
@@ -191,13 +210,11 @@ const Popup = ({ title, open, closePopup }) => {
 											disableUnderline={true}
 											className={`${classes.select}`}
 										>
-	
 											<MenuItem value={10}>Ten</MenuItem>
 											<MenuItem value={20}>Twenty</MenuItem>
 											<MenuItem value={30}>Thirty</MenuItem>
-											
 										</Select>
-										<DropdownArrow className={classes.dropdownicon}/>
+										<DropdownArrow className={classes.dropdownicon} />
 										{selectedMedia === '' ? (
 											<label className={classes.label3}>
 												{'This field is required'}
@@ -238,5 +255,13 @@ PostBtn.propTypes = {
 	btnAction: PropTypes.func.isRequired,
 	classes: PropTypes.object.isRequired
 };
+
+DropArea.propTypes = {
+	children: PropTypes.node.isRequired,
+	id: PropTypes.string.isRequired,
+	style: PropTypes.object.isRequired,
+	onDrop: PropTypes.func.isRequired
+
+}
 
 export default Popup;
