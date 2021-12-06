@@ -1,4 +1,4 @@
-import React, { useEffect , useState } from 'react';
+import React, { useEffect } from 'react';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
@@ -9,8 +9,8 @@ import classes from './_postLibrary.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPosts } from './postLibrarySlice';
 import moment from 'moment';
-import Popup from '../../components/popup';
-
+import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
+// import Popup from '../../components/popup';
 
 //import Slide from '../../components/slide';
 
@@ -45,15 +45,13 @@ const getDateTime = (dateTime) => {
 	})}`;
 };
 
-
-
 const PostLibrary = () => {
 	const posts = useSelector((state) => state.postLibrary.posts);
-	const [popped , setPopped] = useState(false);
+	// const [popped, setPopped] = useState(false);
 
-	const closeThePop = () =>{
-		setPopped(false)
-	}
+	// const closeThePop = () => {
+	// 	setPopped(false);
+	// };
 
 	const dispatch = useDispatch();
 	useEffect(() => {
@@ -122,16 +120,16 @@ const PostLibrary = () => {
 		<Layout>
 			<div className={classes.header}>
 				<h1>POST LIBRARY</h1>
-				<Button onClick={()=> setPopped(true)} text={'UPLOAD POST'} /> 
+				<Button onClick={() => {}} text={'UPLOAD POST'} />
 			</div>
 			<div className={classes.tableContainer}>
 				<Table columns={columns} data={posts} />
 			</div>
-			
-			 <Popup  closePopup={closeThePop} open={popped} title={'Upload a Post'}/> :  
-			{/* <Slide /> */ }
-			
-			
+
+			<UploadOrEditPost open={true} />
+
+			{/* <Popup  closePopup={closeThePop} open={popped} title={'Upload a Post'}/> :   */}
+			{/* <Slide /> */}
 		</Layout>
 	);
 };
