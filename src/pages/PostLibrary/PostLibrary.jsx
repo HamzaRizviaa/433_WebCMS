@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
@@ -47,7 +47,7 @@ const getDateTime = (dateTime) => {
 
 const PostLibrary = () => {
 	const posts = useSelector((state) => state.postLibrary.posts);
-	// const [popped, setPopped] = useState(false);
+	const [showSlider, setShowSlider] = useState(false);
 
 	// const closeThePop = () => {
 	// 	setPopped(false);
@@ -120,13 +120,23 @@ const PostLibrary = () => {
 		<Layout>
 			<div className={classes.header}>
 				<h1>POST LIBRARY</h1>
-				<Button onClick={() => {}} text={'UPLOAD POST'} />
+				<Button
+					onClick={() => {
+						setShowSlider(true);
+					}}
+					text={'UPLOAD POST'}
+				/>
 			</div>
 			<div className={classes.tableContainer}>
 				<Table columns={columns} data={posts} />
 			</div>
 
-			<UploadOrEditPost open={true} />
+			<UploadOrEditPost
+				open={showSlider}
+				handleClose={() => {
+					setShowSlider(false);
+				}}
+			/>
 
 			{/* <Popup  closePopup={closeThePop} open={popped} title={'Upload a Post'}/> :   */}
 			{/* <Slide /> */}

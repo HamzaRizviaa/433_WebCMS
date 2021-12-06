@@ -1,4 +1,4 @@
-@import '../../styles/variables.scss';
+@import '../../styles/_variables.scss';
 
 .backdrop {
 	z-index: 1 !important;
@@ -8,7 +8,7 @@
 .paper {
 	color: #ffffff !important;
 	right: 0 !important;
-	border-left: 1px solid yellow !important;
+	border-left: 1px solid $neon-yellow !important;
 	height: 100vh !important;
 	z-index: 5 !important;
 	position: fixed !important;
@@ -16,4 +16,27 @@
 	transform: translateZ(0) !important;
 	overflow-y: auto !important;
 	background-color: $black-color !important;
+}
+
+.content {
+	padding: 4rem;
+}
+
+.closeIcon {
+	width: 3.2rem !important;
+	height: 3.2rem !important;
+	margin-right: 1.6rem !important;
+	padding: 0.5rem !important;
+	background: #404040 !important;
+	border-radius: 50% !important;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	margin-bottom: 2.5rem;
+}
+
+.heading {
+	color: $neon-yellow;
 }
