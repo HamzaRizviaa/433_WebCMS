@@ -15,7 +15,8 @@ export const getPosts = createAsyncThunk('postLibary/getPosts', async () => {
 export const postLibrarySlice = createSlice({
 	name: 'postLibrary',
 	initialState: {
-		posts: []
+		posts: [],
+		openUploadPost : false
 	},
 	reducers: null,
 	extraReducers: {
@@ -28,10 +29,11 @@ export const postLibrarySlice = createSlice({
 		},
 		[getPosts.rejected]: (state) => {
 			state.status = 'failed';
-		}
+		},
 	}
 });
 
 // export const { getPosts } = postLibrarySlice.actions;
+
 
 export default postLibrarySlice.reducer;

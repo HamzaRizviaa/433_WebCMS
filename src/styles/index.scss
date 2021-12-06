@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;800&display=swap');
-@import './variables.scss';
-@import './mixins.scss';
+@import './_variables.scss';
+@import './_mixins.scss';
 
 * {
 	margin: 0;
@@ -23,5 +23,19 @@ body {
 
 h1 {
 	font-size: 2.5rem;
+	@include preventSelect;
+}
+
+h5 {
+	font-size: 1.6rem;
+	font-weight: bold;
+	color: $white-color;
+	@include preventSelect;
+}
+
+h6 {
+	font-size: 1.2rem;
+	font-weight: bold;
+	color: $white-color;
 	@include preventSelect;
 }
