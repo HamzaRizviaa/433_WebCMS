@@ -1,6 +1,17 @@
 @mixin preventSelect {
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+	-webkit-user-select: none !important;
+	-moz-user-select: none !important;
+	-ms-user-select: none !important;
+	user-select: none !important;
+}
+
+@mixin textFieldInput {
+	color: white !important;
+	border: 1px solid #ffffff;
+	padding: 1rem !important;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 1rem;
+	margin-bottom: 1rem;
+	background-color: #000000;
 }
