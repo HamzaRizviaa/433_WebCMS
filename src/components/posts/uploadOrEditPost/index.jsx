@@ -3,6 +3,8 @@ import classes from './_uploadOrEditPost.module.scss';
 import { useDropzone } from 'react-dropzone';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import DeleteIcon from '@material-ui/icons/Delete';
+import MenuIcon from '@material-ui/icons/Menu';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
 import { MenuItem, TextField, Select } from '@material-ui/core';
@@ -21,12 +23,32 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 		</li>
 	));
 
+	const _files = [
+		{ id: 1, img: 'https://picsum.photos/80', fileName: 'filename.jpg' },
+		{ id: 2, img: 'https://picsum.photos/80', fileName: 'filename.jpg' }
+	];
+
 	return (
 		<Slider open={open} handleClose={handleClose} title={'Upload a Post'}>
 			<div className={classes.contentWrapper}>
 				<div>
 					<h5>Add Media Files</h5>
-					{/* <div className={classes.uploadedFilesContainer}></div> */}
+					<div className={classes.uploadedFilesContainer}>
+						{_files.map((file, index) => {
+							return (
+								<div key={index} className={classes.filePreview}>
+									<div className={classes.filePreviewLeft}>
+										<img src={file.img} className={classes.fileThumbnail} />
+										<p className={classes.fileName}>{file.fileName}</p>
+									</div>
+									<div className={classes.filePreviewRight}>
+										<MenuIcon className={classes.filePreviewIcons} />
+										<DeleteIcon className={classes.filePreviewIcons} />
+									</div>
+								</div>
+							);
+						})}
+					</div>
 					<section className={classes.dropZoneContainer}>
 						<div {...getRootProps({ className: classes.dropzone })}>
 							<input {...getInputProps()} />
@@ -97,7 +119,7 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 				</div>
 				<div className={classes.postBtn}>
 					<Button
-						disabled={true}
+						// disabled={true}
 						onClick={() => {
 							// setShowSlider(true);
 						}}
