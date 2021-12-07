@@ -23,77 +23,78 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 
 	return (
 		<Slider open={open} handleClose={handleClose} title={'Upload a Post'}>
-			<div>
-				<h5>Add Media Files</h5>
-				{/* <div className={classes.uploadedFilesContainer}></div> */}
-				<section className={classes.dropZoneContainer}>
-					<div {...getRootProps({ className: classes.dropzone })}>
-						<input {...getInputProps()} />
-						<AddCircleOutlineIcon className={classes.addFilesIcon} />
-						<p className={classes.dragMsg}>
-							Click or drag files to this area to upload
-						</p>
-						<p className={classes.formatMsg}>
-							Supported formats are jpeg, png and mp4
-						</p>
-					</div>
-				</section>
-				<div className={classes.captionContainer}>
-					<h6>CAPTION</h6>
-					<TextField
-						value={caption}
-						onChange={(e) => setCaption(e.target.value)}
-						placeholder={'Please write your caption here'}
-						className={classes.textField}
-						InputProps={{
-							disableUnderline: true,
-							className: classes.textFieldInput
-						}}
-						multiline
-						maxRows={4}
-					/>
-				</div>
-
-				<div className={classes.postMediaContainer}>
-					<div className={classes.postMediaHeader}>
-						<h5>Link post to media</h5>
-						<ToggleSwitch
-							id={1}
-							checked={value}
-							onChange={(checked) => setValue(checked)}
+			<div className={classes.contentWrapper}>
+				<div>
+					<h5>Add Media Files</h5>
+					{/* <div className={classes.uploadedFilesContainer}></div> */}
+					<section className={classes.dropZoneContainer}>
+						<div {...getRootProps({ className: classes.dropzone })}>
+							<input {...getInputProps()} />
+							<AddCircleOutlineIcon className={classes.addFilesIcon} />
+							<p className={classes.dragMsg}>
+								Click or drag files to this area to upload
+							</p>
+							<p className={classes.formatMsg}>
+								Supported formats are jpeg, png and mp4
+							</p>
+						</div>
+					</section>
+					<div className={classes.captionContainer}>
+						<h6>CAPTION</h6>
+						<TextField
+							value={caption}
+							onChange={(e) => setCaption(e.target.value)}
+							placeholder={'Please write your caption here'}
+							className={classes.textField}
+							InputProps={{
+								disableUnderline: true,
+								className: classes.textFieldInput
+							}}
+							multiline
+							maxRows={4}
 						/>
 					</div>
-				</div>
-				{value ? (
-					<div className={classes.mediaContainer}>
-						<h6>SELECT MEDIA</h6>
-						<Select
-							// value={selectedMedia}
-							// onChange={handleSelectedMedia}
-							disableUnderline={true}
-							className={`${classes.select}`}
-							IconComponent={KeyboardArrowDownIcon}
-							MenuProps={{
-								anchorOrigin: {
-									vertical: 'bottom',
-									horizontal: 'left'
-								},
-								transformOrigin: {
-									vertical: 'top',
-									horizontal: 'left'
-								},
-								getContentAnchorEl: null
-							}}
-						>
-							<MenuItem value={10}>Ten</MenuItem>
-							<MenuItem value={20}>Twenty</MenuItem>
-							<MenuItem value={30}>Thirty</MenuItem>
-						</Select>
-					</div>
-				) : (
-					<></>
-				)}
 
+					<div className={classes.postMediaContainer}>
+						<div className={classes.postMediaHeader}>
+							<h5>Link post to media</h5>
+							<ToggleSwitch
+								id={1}
+								checked={value}
+								onChange={(checked) => setValue(checked)}
+							/>
+						</div>
+					</div>
+					{value ? (
+						<div className={classes.mediaContainer}>
+							<h6>SELECT MEDIA</h6>
+							<Select
+								// value={selectedMedia}
+								// onChange={handleSelectedMedia}
+								disableUnderline={true}
+								className={`${classes.select}`}
+								IconComponent={KeyboardArrowDownIcon}
+								MenuProps={{
+									anchorOrigin: {
+										vertical: 'bottom',
+										horizontal: 'left'
+									},
+									transformOrigin: {
+										vertical: 'top',
+										horizontal: 'left'
+									},
+									getContentAnchorEl: null
+								}}
+							>
+								<MenuItem value={10}>Ten</MenuItem>
+								<MenuItem value={20}>Twenty</MenuItem>
+								<MenuItem value={30}>Thirty</MenuItem>
+							</Select>
+						</div>
+					) : (
+						<></>
+					)}
+				</div>
 				<div className={classes.postBtn}>
 					<Button
 						disabled={true}

@@ -101,4 +101,13 @@
 
 .postBtn {
 	width: 100%;
+	margin-bottom: 4rem;
+}
+
+.contentWrapper {
+	min-height: calc(100vh - 107px);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 }
