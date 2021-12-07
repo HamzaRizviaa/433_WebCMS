@@ -1,8 +1,10 @@
-@import '../../styles/variables.scss';
-@import '../../styles/mixins.scss';
+@import '../../styles/_variables.scss';
+@import '../../styles/_mixins.scss';
 
 .button {
+	display: block;
 	color: $black-color;
+	text-align: center;
 	background-color: $neon-yellow;
 	font-size: 1.2rem;
 	font-weight: 800;
@@ -13,4 +15,9 @@
 	cursor: pointer;
 	white-space: nowrap;
 	@include preventSelect;
+}
+
+.disabled {
+	background-color: $disabled;
+	cursor: default;
 }

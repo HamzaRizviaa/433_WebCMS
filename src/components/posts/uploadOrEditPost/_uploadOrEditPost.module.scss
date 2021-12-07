@@ -93,8 +93,12 @@
 
 	svg {
 		color: $neon-yellow;
-		right: 10;
+		right: 1rem;
 		top: 0;
 		font-size: 4rem;
 	}
+}
+
+.postBtn {
+	width: 100%;
 }
