@@ -7,7 +7,7 @@
 	padding: 2.5rem;
 	cursor: pointer;
 	border-radius: 0.5rem;
-	margin: 2.5rem 0rem;
+	margin-bottom: 2.5rem;
 }
 
 .dragMsg {
@@ -93,8 +93,59 @@
 
 	svg {
 		color: $neon-yellow;
-		right: 10;
+		right: 1rem;
 		top: 0;
 		font-size: 4rem;
 	}
+}
+
+.postBtn {
+	width: 100%;
+	margin-bottom: 4rem;
+}
+
+.contentWrapper {
+	min-height: calc(100vh - 107px);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.uploadedFilesContainer {
+	margin-top: 4rem;
+}
+
+.filePreview {
+	padding: 1.5rem 2rem;
+	box-shadow: inset 0px -1px 0px rgba(255, 255, 255, 0.25);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	&:last-child {
+		box-shadow: none;
+	}
+}
+
+.filePreviewLeft {
+	display: flex;
+	align-items: center;
+}
+
+.fileThumbnail {
+	height: 8rem;
+	width: 8rem;
+	border-radius: 4px;
+}
+
+.fileName {
+	font-size: 1rem;
+	margin-left: 2rem;
+}
+
+.filePreviewIcons {
+	color: $neon-yellow;
+	font-size: 2.5rem;
+	margin-left: 2rem;
+	cursor: pointer;
 }
