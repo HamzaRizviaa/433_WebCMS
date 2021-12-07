@@ -10,15 +10,13 @@ import Backdrop from '@material-ui/core/Backdrop';
 import Close from '@material-ui/icons/Close';
 import { TextField } from '@material-ui/core';
 import { styled } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
-import Select from '@material-ui/core/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { ReactComponent as DropdownArrow } from '../../assets/drop_drown_arrow.svg';
 
 //with conditional rendering setValue, prop will be passed as a value
 //className={classes.iosSwitch} with switch
 const IOSSwitch = styled((props) => (
-	<Switch  focusVisibleClassName='.Mui-focusVisible' disableRipple {...props} />
+	<Switch focusVisibleClassName='.Mui-focusVisible' disableRipple {...props} />
 ))(({ theme }) => ({
 	width: '4rem',
 	height: '2rem',
@@ -90,17 +88,21 @@ const PostBtn = ({
 };
 
 const DropArea = (props) => {
+	const allowDrop = (e) => {
+		e.preventDefault();
+	};
 
-    const allowDrop = (e) => {
-        e.preventDefault();
-    }
-
-    return (
-        <div id={props.id} onDrop={props.onDrop} onDragOver={allowDrop} style={props.style}>
-            {props.children}
-        </div>
-    )
-}
+	return (
+		<div
+			id={props.id}
+			onDrop={props.onDrop}
+			onDragOver={allowDrop}
+			style={props.style}
+		>
+			{props.children}
+		</div>
+	);
+};
 
 const Popup = ({ title, open, closePopup }) => {
 	const [caption, setCaption] = React.useState('');
@@ -114,21 +116,20 @@ const Popup = ({ title, open, closePopup }) => {
 
 	const handleSwitchValue = () => {
 		setSwitchValue(!switchValue);
-	}
+	};
 
 	const handleSelectedMedia = (e) => {
 		setSelectedMedia(e.target.value);
 	};
 
 	const handleDisablePostBtn = () => {
-		if(switchValue){
-			if(selectedMedia !== ''){
-				return false
+		if (switchValue) {
+			if (selectedMedia !== '') {
+				return false;
 			}
 		}
-		return true
-	}
-
+		return true;
+	};
 
 	return (
 		<div>
@@ -261,7 +262,6 @@ DropArea.propTypes = {
 	id: PropTypes.string.isRequired,
 	style: PropTypes.object.isRequired,
 	onDrop: PropTypes.func.isRequired
-
-}
+};
 
 export default Popup;

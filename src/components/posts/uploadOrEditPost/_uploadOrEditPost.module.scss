@@ -1,0 +1,104 @@
+@import '../../../styles/_variables.scss';
+@import '../../../styles/_mixins.scss';
+
+.dropZoneContainer {
+	border: 1px solid $neon-yellow;
+	border-style: dashed;
+	padding: 2.5rem;
+	cursor: pointer;
+	border-radius: 0.5rem;
+	margin: 2.5rem 0rem;
+}
+
+.dragMsg {
+	font-size: 1.4rem;
+	line-height: 2.4rem;
+	font-weight: 400;
+	@include preventSelect;
+}
+
+.formatMsg {
+	font-size: 1.2rem;
+	line-height: 1.6rem;
+	font-weight: 400;
+	color: $light-grey;
+	@include preventSelect;
+}
+
+.addFilesIcon {
+	height: 2rem !important;
+	width: 2rem !important;
+	margin-bottom: 1.5rem;
+	color: $neon-yellow;
+}
+
+.dropzone {
+	text-align: center;
+}
+
+.textField {
+	width: 100%;
+}
+
+.textFieldInput {
+	@include textFieldInput;
+}
+
+.captionContainer {
+	h6 {
+		margin-bottom: 0.5rem;
+		margin-left: 1rem;
+	}
+}
+
+.postMediaHeader {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.postMediaContainer,
+.mediaContainer {
+	margin-top: 2.5rem;
+}
+
+.mediaContainer {
+	h6 {
+		margin-bottom: 0.5rem;
+		margin-left: 1rem;
+	}
+}
+
+.select {
+	input {
+		// padding: 1rem !important;
+	}
+	.MuiSelect-select {
+		padding: 1rem 0rem 1rem 1rem;
+		padding-right: 32px;
+	}
+	width: 100%;
+	color: white !important;
+	border: 1px solid #ffffff;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 5rem !important;
+	margin-bottom: 1rem !important;
+	background-color: #000000 !important;
+
+	div[role='button'] {
+		padding: 1rem 0rem 1rem 2rem;
+	}
+
+	svg {
+		color: $neon-yellow;
+		right: 1rem;
+		top: 0;
+		font-size: 4rem;
+	}
+}
+
+.postBtn {
+	width: 100%;
+}
