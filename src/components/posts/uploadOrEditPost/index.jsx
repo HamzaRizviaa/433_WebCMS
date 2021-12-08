@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import classes from './_uploadOrEditPost.module.scss';
 import { useDropzone } from 'react-dropzone';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -11,29 +11,32 @@ import { MenuItem, TextField, Select } from '@material-ui/core';
 import ToggleSwitch from '../../switch';
 import Button from '../../button';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { makeid } from '../../../utils/helper';
 
 const UploadOrEditPost = ({ open, handleClose }) => {
 	const [caption, setCaption] = useState('');
 	const [value, setValue] = useState(false);
-	const [uploadedFiles, setUploadedFiles] = useState([
-		{ id: 1, img: 'https://picsum.photos/80', fileName: 'filenamrrre.jpg' },
-		{ id: 2, img: 'https://picsum.photos/80', fileName: 'filename.jpg' }
-	]);
+	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
 
-	// eslint-disable-next-line no-unused-vars
-	const files = acceptedFiles.map((file) => (
-		<li key={file.path}>
-			{file.path} - {file.size} bytes
-		</li>
-	));
+	useEffect(() => {
+		if (acceptedFiles?.length) {
+			let newFiles = acceptedFiles.map((file) => {
+				return {
+					fileName: file.name,
+					id: makeid(10),
+					img: URL.createObjectURL(file)
+				};
+			});
+			setUploadedFiles([...uploadedFiles, ...newFiles]);
+		}
+	}, [acceptedFiles]);
 
 	// a little function to help us with reordering the result
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
 		const [removed] = result.splice(startIndex, 1);
 		result.splice(endIndex, 0, removed);
-
 		return result;
 	};
 
@@ -52,6 +55,11 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 		setUploadedFiles(items);
 	};
 
+	const handleDeleteFile = (id) => {
+		const filteredFiles = uploadedFiles.filter((file) => file.id !== id);
+		setUploadedFiles(filteredFiles);
+	};
+
 	return (
 		<Slider open={open} handleClose={handleClose} title={'Upload a Post'}>
 			<div className={classes.contentWrapper}>
@@ -66,7 +74,6 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 									className={classes.uploadedFilesContainer}
 								>
 									{uploadedFiles.map((file, index) => {
-										console.log(file);
 										return (
 											<Draggable
 												key={file.id}
@@ -102,6 +109,9 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 															</span>
 															<DeleteIcon
 																className={classes.filePreviewIcons}
+																onClick={() => {
+																	handleDeleteFile(file.id);
+																}}
 															/>
 														</div>
 													</div>
