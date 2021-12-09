@@ -42,10 +42,16 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 	useEffect(() => {
 		if (fileRejections) {
 			setFileRejectionError('The uploaded file format is not matching');
-			setTimeout(() => {
+		    setTimeout(() => {
 				setFileRejectionError('');
 			}, [5000]);
+
+			// const timerId = timer();
+			// return () => {
+			// 	clearTimeout(timerId);
+			// };
 		}
+		
 	}, [fileRejections]);
 
 	useEffect(() => {
@@ -195,24 +201,27 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 							)}
 						</Droppable>
 					</DragDropContext>
-					<section
-						className={classes.dropZoneContainer}
-						style={{
-							borderColor: dropZoneBorder
-						}}
-					>
-						<div {...getRootProps({ className: classes.dropzone })}>
-							<input {...getInputProps()} />
-							<AddCircleOutlineIcon className={classes.addFilesIcon} />
-							<p className={classes.dragMsg}>
-								Click or drag files to this area to upload
-							</p>
-							<p className={classes.formatMsg}>
-								Supported formats are jpeg, png and mp4
-							</p>
-							<p className={classes.uploadMediaError}>{uploadMediaError}</p>
-						</div>
-					</section>
+					{uploadedFiles.length < 10 ? (
+						<section
+							className={classes.dropZoneContainer}
+							style={{
+								borderColor: dropZoneBorder
+							}}
+						>
+							<div {...getRootProps({ className: classes.dropzone })}>
+								<input {...getInputProps()} />
+								<AddCircleOutlineIcon className={classes.addFilesIcon} />
+								<p className={classes.dragMsg}>
+									Click or drag files to this area to upload
+								</p>
+								<p className={classes.formatMsg}>
+									Supported formats are jpeg, png and mp4
+								</p>
+								<p className={classes.uploadMediaError}>{uploadMediaError}</p>
+							</div>
+						</section>
+					) : null}
+
 					<p className={classes.fileRejectionError}>{fileRejectionError}</p>
 					<div className={classes.captionContainer}>
 						<h6>CAPTION</h6>
