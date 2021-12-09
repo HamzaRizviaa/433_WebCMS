@@ -97,8 +97,7 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 														ref={provided.innerRef}
 														{...provided.draggableProps}
 														style={{
-															...provided.draggableProps.style,
-															position: 'static'
+															...provided.draggableProps.style
 														}}
 													>
 														<div className={classes.filePreviewLeft}>
