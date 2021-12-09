@@ -22,11 +22,23 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 	useEffect(() => {
 		if (acceptedFiles?.length) {
 			let newFiles = acceptedFiles.map((file) => {
-				return {
-					fileName: file.name,
-					id: makeid(10),
-					img: URL.createObjectURL(file)
-				};
+				if (file.type === 'video/mp4') {
+					// const canvas = document.createElement("canvas");
+					// let blob = new Blob([file], { type: file.type });
+					// let url = (URL.createObjectURL(file)
+					// console.log(URL.createObjectURL(blob), URL.createObjectURL(file));
+					return {
+						fileName: file.name,
+						id: makeid(10),
+						img: URL.createObjectURL(file)
+					};
+				} else {
+					return {
+						fileName: file.name,
+						id: makeid(10),
+						img: URL.createObjectURL(file)
+					};
+				}
 			});
 			setUploadedFiles([...uploadedFiles, ...newFiles]);
 		}
