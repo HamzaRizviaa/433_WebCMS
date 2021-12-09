@@ -16,7 +16,13 @@ import { makeid } from '../../../utils/helper';
 const UploadOrEditPost = ({ open, handleClose }) => {
 	const [caption, setCaption] = useState('');
 	const [value, setValue] = useState(false);
+	// const [postBtnDisabled, setPostBtnDisabled] = useState(true);
+	const [uploadMediaError, setUploadMediaError] = useState('');
+	const [mediaError, setMediaError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
+	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
+	const [mediaLabelColor, setMediaLabelColor] = useState('#ffffff');
+	const [selectedMedia, setSelectedMedia] = useState(null);
 	const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
 
 	useEffect(() => {
@@ -70,6 +76,27 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 		setUploadedFiles(filteredFiles);
 	};
 
+	const validatePostBtn = () => {
+		if (uploadedFiles.length < 1) {
+			setDropZoneBorder('#ff355a');
+			setUploadMediaError('You need to upload a media in order to post');
+			setTimeout(() => {
+				setDropZoneBorder('#ffff00');
+				setUploadMediaError('');
+			}, [5000]);
+		}
+		if (value && !selectedMedia) {
+			setMediaLabelColor('#ff355a');
+			setMediaError('This field is required');
+			setTimeout(() => {
+				setMediaLabelColor('#ffffff');
+				setMediaError('');
+			}, [5000]);
+		}
+	};
+
+	const postBtnDisabled = !uploadedFiles.length || (value && !selectedMedia);
+
 	return (
 		<Slider open={open} handleClose={handleClose} title={'Upload a Post'}>
 			<div className={classes.contentWrapper}>
@@ -89,6 +116,7 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 												key={file.id}
 												draggableId={`droppable-${file.id}`}
 												index={index}
+												isDragDisabled={uploadedFiles.length <= 1}
 											>
 												{(provided) => (
 													<div
@@ -140,7 +168,12 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 							)}
 						</Droppable>
 					</DragDropContext>
-					<section className={classes.dropZoneContainer}>
+					<section
+						className={classes.dropZoneContainer}
+						style={{
+							borderColor: dropZoneBorder
+						}}
+					>
 						<div {...getRootProps({ className: classes.dropzone })}>
 							<input {...getInputProps()} />
 							<AddCircleOutlineIcon className={classes.addFilesIcon} />
@@ -150,6 +183,7 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 							<p className={classes.formatMsg}>
 								Supported formats are jpeg, png and mp4
 							</p>
+							<p className={classes.uploadMediaError}>{uploadMediaError}</p>
 						</div>
 					</section>
 					<div className={classes.captionContainer}>
@@ -180,10 +214,12 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 					</div>
 					{value ? (
 						<div className={classes.mediaContainer}>
-							<h6>SELECT MEDIA</h6>
+							<h6 style={{ color: mediaLabelColor }}>SELECT MEDIA</h6>
 							<Select
-								// value={selectedMedia}
-								// onChange={handleSelectedMedia}
+								value={selectedMedia}
+								onChange={(e) => {
+									setSelectedMedia(e.target.value);
+								}}
 								disableUnderline={true}
 								className={`${classes.select}`}
 								IconComponent={KeyboardArrowDownIcon}
@@ -203,6 +239,7 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 								<MenuItem value={20}>Twenty</MenuItem>
 								<MenuItem value={30}>Thirty</MenuItem>
 							</Select>
+							<p className={classes.uploadMediaError}>{mediaError}</p>
 						</div>
 					) : (
 						<></>
@@ -210,8 +247,13 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 				</div>
 				<div className={classes.postBtn}>
 					<Button
-						// disabled={true}
+						disabled={postBtnDisabled}
 						onClick={() => {
+							if (postBtnDisabled) {
+								validatePostBtn();
+							} else {
+								console.log('POST BUTTON API');
+							}
 							// setShowSlider(true);
 						}}
 						text={'POST'}
