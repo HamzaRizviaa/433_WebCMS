@@ -23,20 +23,18 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 		if (acceptedFiles?.length) {
 			let newFiles = acceptedFiles.map((file) => {
 				if (file.type === 'video/mp4') {
-					// const canvas = document.createElement("canvas");
-					// let blob = new Blob([file], { type: file.type });
-					// let url = (URL.createObjectURL(file)
-					// console.log(URL.createObjectURL(blob), URL.createObjectURL(file));
 					return {
 						fileName: file.name,
 						id: makeid(10),
-						img: URL.createObjectURL(file)
+						img: URL.createObjectURL(file),
+						type: 'video'
 					};
 				} else {
 					return {
 						fileName: file.name,
 						id: makeid(10),
-						img: URL.createObjectURL(file)
+						img: URL.createObjectURL(file),
+						type: 'image'
 					};
 				}
 			});
@@ -104,10 +102,17 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 														}}
 													>
 														<div className={classes.filePreviewLeft}>
-															<img
-																src={file.img}
-																className={classes.fileThumbnail}
-															/>
+															{file.type === 'video' ? (
+																<video className={classes.fileThumbnail}>
+																	<source src={file.img} />
+																</video>
+															) : (
+																<img
+																	src={file.img}
+																	className={classes.fileThumbnail}
+																/>
+															)}
+
 															<p className={classes.fileName}>
 																{file.fileName}
 															</p>
