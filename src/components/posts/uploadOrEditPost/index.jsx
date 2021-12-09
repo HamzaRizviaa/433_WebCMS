@@ -16,20 +16,14 @@ import { makeid } from '../../../utils/helper';
 const UploadOrEditPost = ({ open, handleClose }) => {
 	const [caption, setCaption] = useState('');
 	const [value, setValue] = useState(false);
-	const [postBtnDisabled, setPostBtnDisabled] = useState(true);
+	// const [postBtnDisabled, setPostBtnDisabled] = useState(true);
 	const [uploadMediaError, setUploadMediaError] = useState('');
+	const [mediaError, setMediaError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
-	const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
 	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
-
-	useEffect(() => {
-		if (uploadMediaError) {
-			setTimeout(() => {
-				setDropZoneBorder('#ffff00');
-				setUploadMediaError('');
-			}, [5000]);
-		}
-	}, [uploadMediaError]);
+	const [mediaLabelColor, setMediaLabelColor] = useState('#ffffff');
+	const [selectedMedia, setSelectedMedia] = useState(null);
+	const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
@@ -86,8 +80,22 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 		if (uploadedFiles.length < 1) {
 			setDropZoneBorder('#ff355a');
 			setUploadMediaError('You need to upload a media in order to post');
+			setTimeout(() => {
+				setDropZoneBorder('#ffff00');
+				setUploadMediaError('');
+			}, [5000]);
+		}
+		if (value && !selectedMedia) {
+			setMediaLabelColor('#ff355a');
+			setMediaError('This field is required');
+			setTimeout(() => {
+				setMediaLabelColor('#ffffff');
+				setMediaError('');
+			}, [5000]);
 		}
 	};
+
+	const postBtnDisabled = !uploadedFiles.length || (value && !selectedMedia);
 
 	return (
 		<Slider open={open} handleClose={handleClose} title={'Upload a Post'}>
@@ -206,10 +214,12 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 					</div>
 					{value ? (
 						<div className={classes.mediaContainer}>
-							<h6>SELECT MEDIA</h6>
+							<h6 style={{ color: mediaLabelColor }}>SELECT MEDIA</h6>
 							<Select
-								// value={selectedMedia}
-								// onChange={handleSelectedMedia}
+								value={selectedMedia}
+								onChange={(e) => {
+									setSelectedMedia(e.target.value);
+								}}
 								disableUnderline={true}
 								className={`${classes.select}`}
 								IconComponent={KeyboardArrowDownIcon}
@@ -229,6 +239,7 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 								<MenuItem value={20}>Twenty</MenuItem>
 								<MenuItem value={30}>Thirty</MenuItem>
 							</Select>
+							<p className={classes.uploadMediaError}>{mediaError}</p>
 						</div>
 					) : (
 						<></>
@@ -241,8 +252,7 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 							if (postBtnDisabled) {
 								validatePostBtn();
 							} else {
-								setPostBtnDisabled(false);
-								console.log('s');
+								console.log('POST BUTTON API');
 							}
 							// setShowSlider(true);
 						}}
