@@ -140,6 +140,8 @@
 
 .uploadedFilesContainer {
 	margin-top: 4rem;
+	max-height: 330px;
+	overflow-y: auto;
 }
 
 .filePreview {
