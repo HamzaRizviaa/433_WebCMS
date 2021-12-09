@@ -6,7 +6,7 @@ const Button = ({ text, onClick, disabled }) => {
 	return (
 		<span
 			onClick={() => {
-				disabled ? null : onClick();
+				onClick();
 			}}
 			className={`${classes.button} ${disabled ? classes.disabled : ''}`}
 		>

@@ -16,8 +16,20 @@ import { makeid } from '../../../utils/helper';
 const UploadOrEditPost = ({ open, handleClose }) => {
 	const [caption, setCaption] = useState('');
 	const [value, setValue] = useState(false);
+	const [postBtnDisabled, setPostBtnDisabled] = useState(true);
+	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
+	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
+
+	useEffect(() => {
+		if (uploadMediaError) {
+			setTimeout(() => {
+				setDropZoneBorder('#ffff00');
+				setUploadMediaError('');
+			}, [5000]);
+		}
+	}, [uploadMediaError]);
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
@@ -70,6 +82,13 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 		setUploadedFiles(filteredFiles);
 	};
 
+	const validatePostBtn = () => {
+		if (uploadedFiles.length < 1) {
+			setDropZoneBorder('#ff355a');
+			setUploadMediaError('You need to upload a media in order to post');
+		}
+	};
+
 	return (
 		<Slider open={open} handleClose={handleClose} title={'Upload a Post'}>
 			<div className={classes.contentWrapper}>
@@ -89,6 +108,7 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 												key={file.id}
 												draggableId={`droppable-${file.id}`}
 												index={index}
+												isDragDisabled={uploadedFiles.length <= 1}
 											>
 												{(provided) => (
 													<div
@@ -140,7 +160,12 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 							)}
 						</Droppable>
 					</DragDropContext>
-					<section className={classes.dropZoneContainer}>
+					<section
+						className={classes.dropZoneContainer}
+						style={{
+							borderColor: dropZoneBorder
+						}}
+					>
 						<div {...getRootProps({ className: classes.dropzone })}>
 							<input {...getInputProps()} />
 							<AddCircleOutlineIcon className={classes.addFilesIcon} />
@@ -150,6 +175,7 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 							<p className={classes.formatMsg}>
 								Supported formats are jpeg, png and mp4
 							</p>
+							<p className={classes.uploadMediaError}>{uploadMediaError}</p>
 						</div>
 					</section>
 					<div className={classes.captionContainer}>
@@ -210,8 +236,14 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 				</div>
 				<div className={classes.postBtn}>
 					<Button
-						// disabled={true}
+						disabled={postBtnDisabled}
 						onClick={() => {
+							if (postBtnDisabled) {
+								validatePostBtn();
+							} else {
+								setPostBtnDisabled(false);
+								console.log('s');
+							}
 							// setShowSlider(true);
 						}}
 						text={'POST'}
