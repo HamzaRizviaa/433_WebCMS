@@ -10,6 +10,8 @@ import Slider from '../../slider';
 import { MenuItem, TextField, Select } from '@material-ui/core';
 import ToggleSwitch from '../../switch';
 import Button from '../../button';
+import { useDispatch, useSelector } from 'react-redux';
+import { getMedia } from './mediaDropdownSlice';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
 
@@ -19,11 +21,32 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 	// const [postBtnDisabled, setPostBtnDisabled] = useState(true);
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [mediaError, setMediaError] = useState('');
+	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
 	const [mediaLabelColor, setMediaLabelColor] = useState('#ffffff');
 	const [selectedMedia, setSelectedMedia] = useState(null);
-	const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
+	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
+		useDropzone({
+			accept: 'image/jpeg, image/png, video/mp4',
+			maxFiles: 10
+		});
+
+	const media = useSelector((state) => state.mediaDropdown.media);
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch(getMedia());
+	}, []);
+
+	useEffect(() => {
+		if (fileRejections) {
+			setFileRejectionError('The uploaded file format is not matching');
+			setTimeout(() => {
+				setFileRejectionError('');
+			}, [5000]);
+		}
+	}, [fileRejections]);
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
@@ -47,6 +70,10 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 			setUploadedFiles([...uploadedFiles, ...newFiles]);
 		}
 	}, [acceptedFiles]);
+
+	// const fileRejectionItems = fileRejections.map(({ file }) => (
+	// 	setFileFormatError('The uploaded file format is not matching');
+	// ));
 
 	// a little function to help us with reordering the result
 	const reorder = (list, startIndex, endIndex) => {
@@ -186,6 +213,7 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 							<p className={classes.uploadMediaError}>{uploadMediaError}</p>
 						</div>
 					</section>
+					<p className={classes.fileRejectionError}>{fileRejectionError}</p>
 					<div className={classes.captionContainer}>
 						<h6>CAPTION</h6>
 						<TextField
@@ -235,11 +263,16 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 									getContentAnchorEl: null
 								}}
 							>
-								<MenuItem value={10}>Ten</MenuItem>
-								<MenuItem value={20}>Twenty</MenuItem>
-								<MenuItem value={30}>Thirty</MenuItem>
+								{media.map((item, index) => (
+									<MenuItem key={index} value={item.id}>
+										{item.title}{' '}
+										{/* <img
+											src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${item.cover_image}`}
+										/> */}
+									</MenuItem>
+								))}
 							</Select>
-							<p className={classes.uploadMediaError}>{mediaError}</p>
+							<p className={classes.mediaError}>{mediaError}</p>
 						</div>
 					) : (
 						<></>
