@@ -7,7 +7,7 @@
 	padding: 2.5rem 2.5rem 2rem 2.5rem;
 	cursor: pointer;
 	border-radius: 0.5rem;
-	margin-bottom: 2.5rem;
+	margin-bottom: 1rem;
 }
 
 .borderRed {
@@ -19,6 +19,21 @@
 	font-weight: bold;
 	margin-top: 1rem;
 	height: 1rem;
+}
+
+.mediaError {
+	color: #ff355a;
+	font-weight: bold;
+	height: 1rem;
+	margin-left: 1rem;
+}
+
+.fileRejectionError {
+	color: #ff355a;
+	font-weight: bold;
+	height: 1rem;
+	text-align: center;
+	margin-bottom: 1.5rem;
 }
 
 .dragMsg {
