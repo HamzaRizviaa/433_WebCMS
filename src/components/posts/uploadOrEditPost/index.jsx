@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import classes from './_uploadOrEditPost.module.scss';
 import { useDropzone } from 'react-dropzone';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -175,9 +176,12 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 													>
 														<div className={classes.filePreviewLeft}>
 															{file.type === 'video' ? (
-																<video className={classes.fileThumbnail}>
-																	<source src={file.img} />
-																</video>
+																<>
+																	<PlayArrowIcon className={classes.playIcon} />
+																	<video className={classes.fileThumbnail}>
+																		<source src={file.img} />
+																	</video>
+																</>
 															) : (
 																<img
 																	src={file.img}
