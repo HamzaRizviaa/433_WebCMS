@@ -12,6 +12,7 @@ import ToggleSwitch from '../../switch';
 import Button from '../../button';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMedia } from './mediaDropdownSlice';
+import { addPost } from './createPostSlice';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
 
@@ -33,10 +34,16 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 		});
 
 	const media = useSelector((state) => state.mediaDropdown.media);
+	const post = useSelector((state) => state.createPost.posts);
+	console.log(post)
 	const dispatch = useDispatch();
 
 	useEffect(() => {
 		dispatch(getMedia());
+	}, []);
+
+	useEffect(() => {
+		dispatch(addPost());
 	}, []);
 
 	useEffect(() => {
