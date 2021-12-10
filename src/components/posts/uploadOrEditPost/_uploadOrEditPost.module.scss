@@ -19,6 +19,7 @@
 	font-weight: bold;
 	margin-top: 1rem;
 	height: 1rem;
+	margin-bottom: 1rem;
 }
 
 .mediaError {
@@ -150,6 +151,7 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	position: relative;
 	&:last-child {
 		box-shadow: none;
 	}
