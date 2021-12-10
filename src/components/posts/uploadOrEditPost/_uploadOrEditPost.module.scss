@@ -178,3 +178,11 @@
 	margin-left: 2rem;
 	cursor: pointer;
 }
+
+.playIcon {
+	position: absolute;
+	left: 48px;
+	height: 2.5rem !important;
+	width: auto !important;
+	color: $neon-yellow;
+}
