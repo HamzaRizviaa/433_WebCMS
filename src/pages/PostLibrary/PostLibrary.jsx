@@ -10,20 +10,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getPosts } from './postLibrarySlice';
 import moment from 'moment';
 import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
-// import Popup from '../../components/popup';
-
-//import Slide from '../../components/slide';
-
-// const getFileName = (content) => {
-// 	let returnValue = '-';
-// 	if (content) {
-// 		let splitted = content.split('/');
-// 		if (splitted[2]) {
-// 			returnValue = splitted[2];
-// 		}
-// 	}
-// 	return returnValue;
-// };
 
 const sortRows = (order) => {
 	if (!order) return <ArrowDropUpIcon className={classes.sortIcon} />;
@@ -49,10 +35,6 @@ const PostLibrary = () => {
 	const posts = useSelector((state) => state.postLibrary.posts);
 	const [showSlider, setShowSlider] = useState(false);
 
-	// const closeThePop = () => {
-	// 	setPopped(false);
-	// };
-
 	const dispatch = useDispatch();
 	useEffect(() => {
 		dispatch(getPosts());
@@ -69,9 +51,13 @@ const PostLibrary = () => {
 					<div className={classes.mediaWrapper}>
 						<img
 							className={classes.mediaIcon}
-							src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row.media}`}
+							src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
+								row.thumbnail_url ? row.thumbnail_url : row.media
+							}`}
 						/>
-						<span className={classes.fileName}>{row.file_name}</span>
+						<span className={classes.fileName}>
+							{row.file_name.substring(0, 13)}
+						</span>
 					</div>
 				);
 			}
