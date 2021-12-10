@@ -8,6 +8,7 @@ const Slide = () => {
 	return (
 		<Backdrop className={classes.backdrop} open={true}>
 			<SlideMaterial
+				
 				direction='left'
 				mountOnEnter
 				in={true}

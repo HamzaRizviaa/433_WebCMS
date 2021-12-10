@@ -1,0 +1,190 @@
+@import '../../../styles/_variables.scss';
+@import '../../../styles/_mixins.scss';
+
+.dropZoneContainer {
+	border: 1px solid $neon-yellow;
+	border-style: dashed;
+	padding: 2.5rem 2.5rem 2rem 2.5rem;
+	cursor: pointer;
+	border-radius: 0.5rem;
+	margin-bottom: 1rem;
+}
+
+.borderRed {
+	border-color: #ff355a !important;
+}
+
+.uploadMediaError {
+	color: #ff355a;
+	font-weight: bold;
+	margin-top: 1rem;
+	height: 1rem;
+}
+
+.mediaError {
+	color: #ff355a;
+	font-weight: bold;
+	height: 1rem;
+	margin-bottom: 1rem;
+	margin-left: 1rem;
+}
+
+.fileRejectionError {
+	color: #ff355a;
+	font-weight: bold;
+	height: 1rem;
+	text-align: center;
+	margin-bottom: 1.5rem;
+}
+
+.dragMsg {
+	font-size: 1.4rem;
+	line-height: 2.4rem;
+	font-weight: 400;
+	@include preventSelect;
+}
+
+.formatMsg {
+	font-size: 1.2rem;
+	line-height: 1.6rem;
+	font-weight: 400;
+	color: $light-grey;
+	@include preventSelect;
+}
+
+.addFilesIcon {
+	height: 2rem !important;
+	width: 2rem !important;
+	margin-bottom: 1.5rem;
+	color: $neon-yellow;
+}
+
+.dropzone {
+	text-align: center;
+}
+
+.textField {
+	width: 100%;
+}
+
+.textFieldInput {
+	@include textFieldInput;
+}
+
+.captionContainer {
+	h6 {
+		margin-bottom: 0.5rem;
+		margin-left: 1rem;
+	}
+}
+
+.postMediaHeader {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.postMediaContainer,
+.mediaContainer {
+	margin-top: 2.5rem;
+}
+
+.mediaContainer {
+	h6 {
+		margin-bottom: 0.5rem;
+		margin-left: 1rem;
+	}
+}
+
+.select {
+	input {
+		// padding: 1rem !important;
+	}
+	.MuiSelect-select {
+		padding: 1rem 0rem 1rem 1rem;
+		padding-right: 32px;
+	}
+	width: 100%;
+	color: white !important;
+	border: 1px solid #ffffff;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 5rem !important;
+	margin-bottom: 1rem !important;
+	background-color: #000000 !important;
+
+	div[role='button'] {
+		padding: 1rem 0rem 1rem 2rem;
+	}
+
+	svg {
+		color: $neon-yellow;
+		right: 1rem;
+		top: 0;
+		font-size: 4rem;
+	}
+}
+
+.postBtn {
+	width: 100%;
+	margin-bottom: 4rem;
+}
+
+.contentWrapper {
+	min-height: calc(100vh - 107px);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.uploadedFilesContainer {
+	margin-top: 4rem;
+	max-height: 220px;
+	overflow-y: auto;
+}
+
+.filePreview {
+	padding: 1.5rem 2rem;
+	box-shadow: inset 0px -1px 0px rgba(255, 255, 255, 0.25);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	position: relative;
+	&:last-child {
+		box-shadow: none;
+	}
+}
+
+.filePreviewLeft {
+	display: flex;
+	align-items: center;
+}
+
+.fileThumbnail {
+	height: 8rem;
+	width: 8rem;
+	border-radius: 4px;
+	background-color: white;
+}
+
+.fileName {
+	font-size: 1rem;
+	margin-left: 2rem;
+}
+
+.filePreviewIcons {
+	color: $neon-yellow;
+	font-size: 2.5rem !important;
+	margin-left: 2rem;
+	cursor: pointer;
+}
+
+.playIcon {
+	position: absolute;
+	left: 48px;
+	height: 2.5rem !important;
+	width: auto !important;
+	color: $neon-yellow;
+}
