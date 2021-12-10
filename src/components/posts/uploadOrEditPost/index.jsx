@@ -18,7 +18,6 @@ import { makeid } from '../../../utils/helper';
 const UploadOrEditPost = ({ open, handleClose }) => {
 	const [caption, setCaption] = useState('');
 	const [value, setValue] = useState(false);
-	// const [postBtnDisabled, setPostBtnDisabled] = useState(true);
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [mediaError, setMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -37,25 +36,30 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 
 	useEffect(() => {
 		dispatch(getMedia());
+		return () => {
+			resetState();
+		};
 	}, []);
 
 	useEffect(() => {
-		if (fileRejections) {
+		if (!open) {
+			resetState();
+		}
+	}, [open]);
+
+	useEffect(() => {
+		if (fileRejections.length) {
 			setFileRejectionError('The uploaded file format is not matching');
-		    setTimeout(() => {
+			setTimeout(() => {
 				setFileRejectionError('');
 			}, [5000]);
-
-			// const timerId = timer();
-			// return () => {
-			// 	clearTimeout(timerId);
-			// };
 		}
-		
 	}, [fileRejections]);
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
+			setUploadMediaError('');
+			setDropZoneBorder('#ffff00');
 			let newFiles = acceptedFiles.map((file) => {
 				if (file.type === 'video/mp4') {
 					return {
@@ -77,9 +81,17 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 		}
 	}, [acceptedFiles]);
 
-	// const fileRejectionItems = fileRejections.map(({ file }) => (
-	// 	setFileFormatError('The uploaded file format is not matching');
-	// ));
+	const resetState = () => {
+		setCaption('');
+		setValue(false);
+		setUploadMediaError('');
+		setMediaError('');
+		setFileRejectionError('');
+		setUploadedFiles([]);
+		setDropZoneBorder('#ffff00');
+		setMediaLabelColor('#ffffff');
+		setSelectedMedia(null);
+	};
 
 	// a little function to help us with reordering the result
 	const reorder = (list, startIndex, endIndex) => {
@@ -220,7 +232,9 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 								<p className={classes.uploadMediaError}>{uploadMediaError}</p>
 							</div>
 						</section>
-					) : null}
+					) : (
+						<></>
+					)}
 
 					<p className={classes.fileRejectionError}>{fileRejectionError}</p>
 					<div className={classes.captionContainer}>
@@ -245,7 +259,10 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 							<ToggleSwitch
 								id={1}
 								checked={value}
-								onChange={(checked) => setValue(checked)}
+								onChange={(checked) => {
+									setSelectedMedia(null);
+									setValue(checked);
+								}}
 							/>
 						</div>
 					</div>
@@ -255,6 +272,8 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 							<Select
 								value={selectedMedia}
 								onChange={(e) => {
+									setMediaError(false);
+									setMediaLabelColor('#ffffff');
 									setSelectedMedia(e.target.value);
 								}}
 								disableUnderline={true}
