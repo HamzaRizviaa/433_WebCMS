@@ -194,3 +194,17 @@
 	width: auto !important;
 	color: $neon-yellow;
 }
+
+.loaderContainer {
+	position: absolute;
+	width: calc(100% - 20px);
+	height: 110px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.loader {
+	color: $neon-yellow !important;
+}
