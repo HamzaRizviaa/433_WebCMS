@@ -141,8 +141,14 @@
 
 .uploadedFilesContainer {
 	margin-top: 4rem;
-	max-height: 220px;
+	max-height: 240px;
 	overflow-y: auto;
+	-ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.uploadedFilesContainer::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
 }
 
 .filePreview {

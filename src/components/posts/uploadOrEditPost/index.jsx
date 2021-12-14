@@ -52,7 +52,7 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 			resetState();
 		}
 	}, [open]);
-
+ 
 	useEffect(() => {
 		if (fileRejections.length) {
 			setFileRejectionError('The uploaded file format is not matching');
