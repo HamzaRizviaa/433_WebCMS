@@ -17,6 +17,7 @@ import { getMedia } from './mediaDropdownSlice';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
 import axios from 'axios';
+import { getPosts } from '../../../pages/PostLibrary/postLibrarySlice';
 
 const UploadOrEditPost = ({ open, handleClose }) => {
 	const [caption, setCaption] = useState('');
@@ -31,6 +32,7 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 	const [selectedMedia, setSelectedMedia] = useState(null);
 	// eslint-disable-next-line no-unused-vars
 	const [loadingMedia, setLoadingMedia] = useState([]);
+	const [mediaFiles, setMediaFiles] = useState([]);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png, video/mp4',
@@ -52,7 +54,7 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 			resetState();
 		}
 	}, [open]);
- 
+
 	useEffect(() => {
 		if (fileRejections.length) {
 			setFileRejectionError('The uploaded file format is not matching');
@@ -150,6 +152,10 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 									}
 								);
 								if (uploadResult?.data?.status === 200) {
+									setMediaFiles((mediaFiles) => [
+										...mediaFiles,
+										{ ...uploadResult.data.result }
+									]);
 									setLoadingMedia((_loadingMedia) =>
 										_loadingMedia.filter((media) => media != uploadedFile.id)
 									);
@@ -230,6 +236,26 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 				setMediaLabelColor('#ffffff');
 				setMediaError('');
 			}, [5000]);
+		}
+	};
+
+	const createPost = async () => {
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/dev/api/v1/post/add-post`,
+				{
+					caption: caption,
+					media_files: [...mediaFiles],
+					...(selectedMedia ? { media_id: selectedMedia } : {})
+				}
+			);
+			if (result?.data?.status === 200) {
+				console.log('POST CREATED');
+				handleClose();
+				dispatch(getPosts());
+			}
+		} catch (e) {
+			console.log(e);
 		}
 	};
 
@@ -419,6 +445,7 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 							if (postBtnDisabled) {
 								validatePostBtn();
 							} else {
+								createPost();
 								console.log('POST BUTTON API');
 							}
 							// setShowSlider(true);
