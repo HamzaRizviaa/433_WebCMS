@@ -83,7 +83,7 @@ const UploadOrEditPost = ({ open, handleClose, title, isEdit, heading1, buttonTe
 		dispatch(getMedia());
 		
 		return () => {
-			if (uploadedFiles.length) {
+			if (uploadedFiles.length && !isEdit) {
 				uploadedFiles.map((file) => handleDeleteFile(file.id));
 			}
 			resetState();
@@ -92,7 +92,7 @@ const UploadOrEditPost = ({ open, handleClose, title, isEdit, heading1, buttonTe
 
 	useEffect(() => {
 		if (!open) {
-			if (uploadedFiles.length) {
+			if (uploadedFiles.length && !isEdit) {
 				uploadedFiles.map((file) => handleDeleteFile(file.id));
 			}
 			resetState();
