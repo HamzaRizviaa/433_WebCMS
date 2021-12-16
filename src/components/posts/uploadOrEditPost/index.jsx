@@ -46,12 +46,18 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 	useEffect(() => {
 		dispatch(getMedia());
 		return () => {
+			if (uploadedFiles.length) {
+				uploadedFiles.map((file) => handleDeleteFile(file.id));
+			}
 			resetState();
 		};
 	}, []);
 
 	useEffect(() => {
 		if (!open) {
+			if (uploadedFiles.length) {
+				uploadedFiles.map((file) => handleDeleteFile(file.id));
+			}
 			resetState();
 		}
 	}, [open]);
@@ -73,7 +79,6 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 	};
 
 	useEffect(() => {
-		console.log(acceptedFiles);
 		if (acceptedFiles?.length) {
 			setUploadMediaError('');
 			setDropZoneBorder('#ffff00');
@@ -234,7 +239,6 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 				);
 
 				if (response?.data?.status == 200) {
-					console.log(response);
 					setUploadedFiles((files) => {
 						return files.filter((file) => file.id != id);
 					});
@@ -249,10 +253,6 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 			toast.error('Failed to delete media');
 			console.log(e);
 		}
-
-		console.log(id, uploadedFiles, mediaFiles); // const filteredFiles = uploadedFiles.filter((file) => file.id !== id);
-		// const filteredFiles = uploadedFiles.filter((file) => file.id !== id);
-		// setUploadedFiles(filteredFiles);
 	};
 
 	const validatePostBtn = () => {
@@ -482,7 +482,6 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 								validatePostBtn();
 							} else {
 								createPost();
-								console.log('POST BUTTON API');
 							}
 							// setShowSlider(true);
 						}}
