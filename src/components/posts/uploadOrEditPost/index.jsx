@@ -151,10 +151,24 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 									{
 										file_name: uploadedFile.file.name,
 										data: {
-											Bucket: 'a',
-											MultipartUpload: ['a'],
+											Bucket: 'media',
+											MultipartUpload:
+												uploadedFile?.mime_type == 'video/mp4'
+													? [
+															{
+																ETag: _result?.headers?.etag.replace(
+																	/['"]+/g,
+																	''
+																),
+																PartNumber: 1
+															}
+													  ]
+													: ['image'],
 											Key: result?.data?.result?.Key,
-											UploadId: 'a'
+											UploadId:
+												uploadedFile?.mime_type == 'video/mp4'
+													? result?.data?.result?.UploadId
+													: 'image'
 										}
 									}
 								);
