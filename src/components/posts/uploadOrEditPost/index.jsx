@@ -17,6 +17,8 @@ import { getMedia } from './mediaDropdownSlice';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import { getPosts } from '../../../pages/PostLibrary/postLibrarySlice';
 
 const UploadOrEditPost = ({ open, handleClose }) => {
 	const [caption, setCaption] = useState('');
@@ -31,6 +33,7 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 	const [selectedMedia, setSelectedMedia] = useState(null);
 	// eslint-disable-next-line no-unused-vars
 	const [loadingMedia, setLoadingMedia] = useState([]);
+	const [mediaFiles, setMediaFiles] = useState([]);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png, video/mp4',
@@ -43,16 +46,22 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 	useEffect(() => {
 		dispatch(getMedia());
 		return () => {
+			if (uploadedFiles.length) {
+				uploadedFiles.map((file) => handleDeleteFile(file.id));
+			}
 			resetState();
 		};
 	}, []);
 
 	useEffect(() => {
 		if (!open) {
+			if (uploadedFiles.length) {
+				uploadedFiles.map((file) => handleDeleteFile(file.id));
+			}
 			resetState();
 		}
 	}, [open]);
- 
+
 	useEffect(() => {
 		if (fileRejections.length) {
 			setFileRejectionError('The uploaded file format is not matching');
@@ -150,6 +159,10 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 									}
 								);
 								if (uploadResult?.data?.status === 200) {
+									setMediaFiles((mediaFiles) => [
+										...mediaFiles,
+										{ ...uploadResult.data.result }
+									]);
 									setLoadingMedia((_loadingMedia) =>
 										_loadingMedia.filter((media) => media != uploadedFile.id)
 									);
@@ -163,6 +176,10 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 							throw 'Error in uploading file';
 						}
 					} catch (error) {
+						toast.error('Error in uploading file!');
+						setUploadedFiles((_uploadedFiles) =>
+							_uploadedFiles.filter((__file) => __file.id != uploadedFile.id)
+						);
 						setLoadingMedia((_loadingMedia) =>
 							_loadingMedia.filter((media) => media != uploadedFile.id)
 						);
@@ -209,9 +226,33 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 		setUploadedFiles(items);
 	};
 
-	const handleDeleteFile = (id) => {
-		const filteredFiles = uploadedFiles.filter((file) => file.id !== id);
-		setUploadedFiles(filteredFiles);
+	const handleDeleteFile = async (id) => {
+		try {
+			let mediaFileToDelete = uploadedFiles.filter((file) => file.id === id);
+			mediaFileToDelete = mediaFiles.filter(
+				(_file) => _file?.file_name === mediaFileToDelete[0]?.fileName
+			);
+			if (mediaFileToDelete.length) {
+				const response = await axios.post(
+					`${process.env.REACT_APP_API_ENDPOINT}/dev/api/v1/post/remove-media`,
+					{ media_ids: [mediaFileToDelete[0].id] }
+				);
+
+				if (response?.data?.status == 200) {
+					setUploadedFiles((files) => {
+						return files.filter((file) => file.id != id);
+					});
+					setMediaFiles((files) => {
+						return files.filter((file) => file.id != mediaFileToDelete[0].id);
+					});
+				}
+			} else {
+				throw 'Error';
+			}
+		} catch (e) {
+			toast.error('Failed to delete media');
+			console.log(e);
+		}
 	};
 
 	const validatePostBtn = () => {
@@ -230,6 +271,27 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 				setMediaLabelColor('#ffffff');
 				setMediaError('');
 			}, [5000]);
+		}
+	};
+
+	const createPost = async () => {
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/dev/api/v1/post/add-post`,
+				{
+					caption: caption,
+					media_files: [...mediaFiles],
+					...(selectedMedia ? { media_id: selectedMedia } : {})
+				}
+			);
+			if (result?.data?.status === 200) {
+				toast.success('Post has been created!');
+				handleClose();
+				dispatch(getPosts());
+			}
+		} catch (e) {
+			toast.error('Failed to create post!');
+			console.log(e);
 		}
 	};
 
@@ -419,7 +481,7 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 							if (postBtnDisabled) {
 								validatePostBtn();
 							} else {
-								console.log('POST BUTTON API');
+								createPost();
 							}
 							// setShowSlider(true);
 						}}
