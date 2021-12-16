@@ -1,0 +1,56 @@
+@import '../../styles/variables.scss';
+
+.header {
+	display: flex;
+	justify-content: space-between;
+}
+
+.tableContainer {
+	margin: 1rem 0rem;
+}
+
+.mediaIcon {
+	height: 5rem;
+	width: 5rem;
+	border-radius: 8px;
+}
+
+.mediaWrapper {
+	display: flex;
+	align-items: center;
+	margin-left: 0.5rem;
+	margin-bottom: 1.5rem;
+}
+
+.fileName {
+	margin-left: 1rem;
+	font-size: 1.2rem;
+}
+
+.row {
+	margin-bottom: 1.5rem;
+	font-size: 1.2rem;
+}
+
+.editIcon {
+	width: 2.5rem;
+	height: auto;
+	cursor: pointer;
+}
+
+.sortIcon {
+	position: absolute;
+	left: 0;
+	bottom: -2px;
+	height: 2rem !important;
+	width: 2rem !important;
+}
+
+.sortIconSelected {
+	position: absolute;
+	left: 0;
+	bottom: -2px;
+	height: 2rem !important;
+	width: 2rem !important;
+	color: $neon-yellow;
+}

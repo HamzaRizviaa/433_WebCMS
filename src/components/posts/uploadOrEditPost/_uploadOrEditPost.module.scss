@@ -126,9 +126,23 @@
 	}
 }
 
-.postBtn {
+.buttonDiv {
 	width: 100%;
 	margin-bottom: 4rem;
+}
+
+.postBtn {
+	width: 100%;
+}
+
+.postBtnEdit {
+	width: 70%;
+	display: inline-block;
+}
+
+.editBtn {
+	width: 30%;
+	display: inline-block;
 }
 
 .contentWrapper {
@@ -141,7 +155,7 @@
 
 .uploadedFilesContainer {
 	margin-top: 4rem;
-	max-height: 240px;
+	max-height: 220px;
 	overflow-y: auto;
 	-ms-overflow-style: none;  /* Internet Explorer 10+ */
     scrollbar-width: none;  /* Firefox */
