@@ -20,7 +20,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getPosts } from '../../../pages/PostLibrary/postLibrarySlice';
 
-const UploadOrEditPost = ({ open, handleClose }) => {
+
+const UploadOrEditPost = ({ open, handleClose, title, isEdit, heading1, buttonText }) => {
 	const [caption, setCaption] = useState('');
 	const [value, setValue] = useState(false);
 	const [uploadMediaError, setUploadMediaError] = useState('');
@@ -41,10 +42,46 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 		});
 
 	const media = useSelector((state) => state.mediaDropdown.media);
+	const specificPost = useSelector((state)=> state.editButton.specificPost);
+
 	const dispatch = useDispatch();
+	
+	console.log(specificPost);
+
+	useEffect(()=>{
+		if(specificPost){
+			setCaption(specificPost.caption)
+			if(specificPost?.media_id !== null){
+				setValue(true);
+				setSelectedMedia(specificPost.media_id)
+			}
+			if(specificPost?.medias){
+				let newFiles = specificPost.medias.map((file) => {
+					console.log(file.thumbnail_url)
+					if (file.type === 'video/mp4') {
+						return {
+							fileName: file.file_name,
+							id: makeid(10),
+							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.thumbnail_url}`,
+							type: 'video'
+						};
+					} else {
+						return {
+							fileName: file.file_name,
+							id: makeid(10),
+							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
+							type: 'image'
+						};
+					}
+				});
+				setUploadedFiles([...uploadedFiles, ...newFiles]);
+			}
+		}
+	},[specificPost])
 
 	useEffect(() => {
 		dispatch(getMedia());
+		
 		return () => {
 			if (uploadedFiles.length) {
 				uploadedFiles.map((file) => handleDeleteFile(file.id));
@@ -311,10 +348,10 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 
 	const postBtnDisabled = !uploadedFiles.length || (value && !selectedMedia);
 	return (
-		<Slider open={open} handleClose={handleClose} title={'Upload a Post'}>
+		<Slider open={open} handleClose={handleClose} title={title}>
 			<div className={classes.contentWrapper}>
 				<div>
-					<h5>Add Media Files</h5>
+					<h5>{heading1}</h5>
 					<DragDropContext onDragEnd={onDragEnd}>
 						<Droppable droppableId='droppable-1'>
 							{(provided) => (
@@ -371,20 +408,24 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 															<></>
 														)}
 
-														<div className={classes.filePreviewRight}>
-															<span {...provided.dragHandleProps}>
-																<MenuIcon
-																	style={{ cursor: 'grab' }}
+														{isEdit ? (
+															<></>
+														) : (
+															<div className={classes.filePreviewRight}>
+																<span {...provided.dragHandleProps}>
+																	<MenuIcon
+																		style={{ cursor: 'grab' }}
+																		className={classes.filePreviewIcons}
+																	/>
+																</span>
+																<DeleteIcon
 																	className={classes.filePreviewIcons}
+																	onClick={() => {
+																		handleDeleteFile(file.id);
+																	}}
 																/>
-															</span>
-															<DeleteIcon
-																className={classes.filePreviewIcons}
-																onClick={() => {
-																	handleDeleteFile(file.id);
-																}}
-															/>
-														</div>
+															</div>
+														)}
 													</div>
 												)}
 											</Draggable>
@@ -395,7 +436,7 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 							)}
 						</Droppable>
 					</DragDropContext>
-					{uploadedFiles.length < 10 ? (
+					{uploadedFiles.length < 10 && !isEdit ? (
 						<section
 							className={classes.dropZoneContainer}
 							style={{
@@ -476,31 +517,47 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 								{media.map((item, index) => (
 									<MenuItem key={index} value={item.id}>
 										{item.title}{' '}
-										{/* <img
-											src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${item.cover_image}`}
-										/> */}
 									</MenuItem>
 								))}
 							</Select>
+
 							<p className={classes.mediaError}>{mediaError}</p>
 						</div>
 					) : (
 						<></>
 					)}
 				</div>
-				<div className={classes.postBtn}>
-					<Button
-						disabled={postBtnDisabled}
-						onClick={() => {
-							if (postBtnDisabled) {
-								validatePostBtn();
-							} else {
-								createPost();
-							}
-							// setShowSlider(true);
-						}}
-						text={'POST'}
-					/>
+				<div className={classes.buttonDiv}>
+					{isEdit ? (
+						<div className={classes.editBtn}>
+							<Button
+								button2={isEdit? true : false}
+								onClick={() => {
+									if (postBtnDisabled) {
+										validatePostBtn();
+									} else {
+										console.log('DELETE BUTTON API');
+									}
+								}}
+								text={'DELETE POST'}
+							/>
+						</div>
+					) : (
+						<> </>
+					)}
+					<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
+						<Button
+							disabled={postBtnDisabled}
+							onClick={() => {
+								if (postBtnDisabled) {
+									validatePostBtn();
+								} else {
+									createPost();
+								}
+							}}
+							text={buttonText}
+						/>
+					</div>
 				</div>
 			</div>
 		</Slider>
@@ -509,7 +566,11 @@ const UploadOrEditPost = ({ open, handleClose }) => {
 
 UploadOrEditPost.propTypes = {
 	open: PropTypes.bool.isRequired,
-	handleClose: PropTypes.func.isRequired
+	handleClose: PropTypes.func.isRequired,
+	isEdit: PropTypes.bool.isRequired,
+	title:  PropTypes.string.isRequired,
+	heading1:  PropTypes.string.isRequired,
+	buttonText: PropTypes.string.isRequired,
 };
 
 export default UploadOrEditPost;

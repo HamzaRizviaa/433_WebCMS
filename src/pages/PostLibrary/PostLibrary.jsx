@@ -8,6 +8,7 @@ import Table from '../../components/table';
 import classes from './_postLibrary.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPosts } from './postLibrarySlice';
+import { getSpecificPost } from '../../components/posts/uploadOrEditPost/editButtonSlice';
 import moment from 'moment';
 import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
 
@@ -34,6 +35,8 @@ const getDateTime = (dateTime) => {
 const PostLibrary = () => {
 	const posts = useSelector((state) => state.postLibrary.posts);
 	const [showSlider, setShowSlider] = useState(false);
+	const [edit, setEdit] = useState(false);
+	//let specificPostId = null;
 
 	const dispatch = useDispatch();
 	useEffect(() => {
@@ -92,16 +95,24 @@ const PostLibrary = () => {
 		{
 			dataField: 'options',
 			text: 'OPTIONS',
-			formatter: () => {
+			formatter: (content,row) => {
 				return (
 					<div className={classes.row}>
-						<Edit className={classes.editIcon} />
+						<Edit
+							onClick={() => {
+								setShowSlider(true);
+								setEdit(true);
+								dispatch(getSpecificPost(row.id));
+								
+							}}
+							className={classes.editIcon}
+						/>
 					</div>
 				);
 			}
 		}
 	];
-	//state would be used with onlclick
+
 	return (
 		<Layout>
 			<div className={classes.header}>
@@ -119,13 +130,18 @@ const PostLibrary = () => {
 
 			<UploadOrEditPost
 				open={showSlider}
+				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
+					setTimeout(()=> setEdit(false),150) ;
 				}}
+				title={edit? 'Edit Post' : 'Upload a Post'}
+				heading1={edit? 'Media Files' : 'Add Media Files'}
+				buttonText = {edit? 'SAVE CHANGES' : 'POST'}
+				//specificPostId
 			/>
 
 			{/* <Popup  closePopup={closeThePop} open={popped} title={'Upload a Post'}/> :   */}
-			{/* <Slide /> */}
 		</Layout>
 	);
 };
