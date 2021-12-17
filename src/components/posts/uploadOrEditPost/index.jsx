@@ -325,23 +325,44 @@ const UploadOrEditPost = ({ open, handleClose, title, isEdit, heading1, buttonTe
 		}
 	};
 
-	const createPost = async () => {
+
+	const createPost = async (id) => {
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/dev/api/v1/post/add-post`,
 				{
 					caption: caption,
 					media_files: [...mediaFiles],
-					...(selectedMedia ? { media_id: selectedMedia } : {})
+					...(selectedMedia ? { media_id: selectedMedia } : {media_id : null}),
+					...(isEdit && id ? {post_id : id} : {})
 				}
 			);
 			if (result?.data?.status === 200) {
-				toast.success('Post has been created!');
+				toast.success(isEdit? 'Post has been edited!' : 'Post has been created!');
 				handleClose();
 				dispatch(getPosts());
 			}
 		} catch (e) {
-			toast.error('Failed to create post!');
+			toast.error(isEdit ? 'Failed to edit post!' : 'Failed to create post!');
+			console.log(e);
+		}
+	};
+
+	const deletePost = async (id) => {
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/dev/api/v1/post/delete-post`,
+				{
+					post_id : id
+				}
+			);
+			if (result?.data?.status === 200) {
+				toast.success('Post has been deleted!');
+				handleClose();
+				dispatch(getPosts());
+			}
+		} catch (e) {
+			toast.error('Failed to delete post!');
 			console.log(e);
 		}
 	};
@@ -533,11 +554,7 @@ const UploadOrEditPost = ({ open, handleClose, title, isEdit, heading1, buttonTe
 							<Button
 								button2={isEdit? true : false}
 								onClick={() => {
-									if (postBtnDisabled) {
-										validatePostBtn();
-									} else {
-										console.log('DELETE BUTTON API');
-									}
+									deletePost(specificPost?.id);
 								}}
 								text={'DELETE POST'}
 							/>
@@ -552,7 +569,8 @@ const UploadOrEditPost = ({ open, handleClose, title, isEdit, heading1, buttonTe
 								if (postBtnDisabled) {
 									validatePostBtn();
 								} else {
-									createPost();
+										createPost(isEdit ? specificPost?.id : null);
+															
 								}
 							}}
 							text={buttonText}
