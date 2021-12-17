@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const getMedia = createAsyncThunk('mediaDropdown/getMedia', async () => {
 	const response = await axios.get(
-		`${process.env.REACT_APP_API_ENDPOINT}/dev/api/v1/media/get-media`
+		`${process.env.REACT_APP_API_ENDPOINT}/media/get-media`
 	);
 	if (response?.data?.result?.length > 0) {
 		return response.data.result;
