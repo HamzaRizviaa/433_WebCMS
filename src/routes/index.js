@@ -9,7 +9,7 @@ const AppRoutes = () => {
 			<Routes>
 				<Route path='/post-library' element={<PostLibrary />} />
 				<Route path='/media-library' element={<MediaLibrary />} />
-				<Route path='/' element={<Navigate replace to='/media-library' />} />
+				<Route path='/' element={<Navigate replace to='/post-library' />} />
 			</Routes>
 		</>
 	);
