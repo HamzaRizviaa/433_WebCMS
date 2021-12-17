@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const getPosts = createAsyncThunk('postLibary/getPosts', async () => {
 	const result = await axios.get(
-		`${process.env.REACT_APP_API_ENDPOINT}/dev/api/v1/post/all-posts`
+		`${process.env.REACT_APP_API_ENDPOINT}/post/all-posts`
 	);
 	if (result?.data?.result?.length > 0) {
 		return result.data.result;
@@ -16,7 +16,7 @@ export const postLibrarySlice = createSlice({
 	name: 'postLibrary',
 	initialState: {
 		posts: [],
-		openUploadPost : false
+		openUploadPost: false
 	},
 	reducers: null,
 	extraReducers: {
@@ -29,11 +29,10 @@ export const postLibrarySlice = createSlice({
 		},
 		[getPosts.rejected]: (state) => {
 			state.status = 'failed';
-		},
+		}
 	}
 });
 
 // export const { getPosts } = postLibrarySlice.actions;
-
 
 export default postLibrarySlice.reducer;
