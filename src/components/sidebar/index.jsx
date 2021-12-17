@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React from 'react';
 import classes from './_sidebar.module.scss';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 import { ReactComponent as Share } from '../../assets/share.svg';
 import { ReactComponent as ShareSelected } from '../../assets/share_selected.svg';
@@ -8,38 +9,42 @@ import { ReactComponent as Logout } from '../../assets/logout.svg';
 import { ReactComponent as MediaSelected } from '../../assets/media_selected.svg';
 
 const Sidebar = () => {
-	//const selectedRoute = 'post-library';
-	const [selectedRoute, setSelectedRoute] = useState('post-library')
+	const navigate = useNavigate();
+	const location = useLocation();
 
 	return (
 		<span className={classes.main}>
 			<div className={classes.navContainer}>
 				<Logo className={classes.logo} />
 				<div
-					onClick={()=>setSelectedRoute('post-library')}
+					onClick={() => {
+						navigate('/post-library');
+					}}
 					className={classes.iconWrapper}
 					style={
-						selectedRoute === 'post-library'
+						location?.pathname.includes('post-library')
 							? { backgroundColor: '#404040' }
 							: {}
 					}
 				>
-					{selectedRoute === 'post-library' ? (
+					{location?.pathname.includes('post-library') ? (
 						<ShareSelected className={classes.icon} />
 					) : (
 						<Share className={classes.icon} />
 					)}
 				</div>
 				<div
-					onClick={()=>setSelectedRoute('media-library')}
+					onClick={() => {
+						navigate('/media-library');
+					}}
 					className={classes.iconWrapper}
 					style={
-						selectedRoute === 'media-library'
+						location?.pathname.includes('media-library')
 							? { backgroundColor: '#404040' }
 							: {}
 					}
 				>
-					{selectedRoute === 'media-library' ? (
+					{location?.pathname.includes('media-library') ? (
 						<MediaSelected className={classes.icon} />
 					) : (
 						<Media className={classes.icon} />
