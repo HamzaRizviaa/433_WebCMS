@@ -89,18 +89,18 @@ const UploadOrEditPost = ({
 		dispatch(getMedia());
 
 		return () => {
-			if (uploadedFiles.length && !isEdit) {
-				uploadedFiles.map((file) => handleDeleteFile(file.id));
-			}
+			// if (uploadedFiles.length && !isEdit) {
+			// 	uploadedFiles.map((file) => handleDeleteFile(file.id));
+			// }
 			resetState();
 		};
 	}, []);
 
 	useEffect(() => {
 		if (!open) {
-			if (uploadedFiles.length && !isEdit) {
-				uploadedFiles.map((file) => handleDeleteFile(file.id));
-			}
+			// if (uploadedFiles.length && !isEdit) {
+			// 	uploadedFiles.map((file) => handleDeleteFile(file.id));
+			// }
 			resetState();
 		}
 	}, [open]);
@@ -376,7 +376,16 @@ const UploadOrEditPost = ({
 
 	const postBtnDisabled = !uploadedFiles.length || (value && !selectedMedia);
 	return (
-		<Slider open={open} handleClose={handleClose} title={title}>
+		<Slider
+			open={open}
+			handleClose={() => {
+				handleClose();
+				if (uploadedFiles.length && !isEdit) {
+					uploadedFiles.map((file) => handleDeleteFile(file.id));
+				}
+			}}
+			title={title}
+		>
 			<div className={classes.contentWrapper}>
 				<div>
 					<h5>{heading1}</h5>
