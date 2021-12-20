@@ -20,6 +20,7 @@ import { makeid } from '../../../utils/helper';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getPosts } from '../../../pages/PostLibrary/postLibrarySlice';
+//import VideoImageThumbnail from 'react-video-thumbnail-image'; 
 
 const UploadOrEditPost = ({
 	open,
@@ -49,16 +50,23 @@ const UploadOrEditPost = ({
 		});
 
 	const media = useSelector((state) => state.mediaDropdown.media);
-	const specificPost = useSelector((state) => state.editButton.specificPost);
+	const specificPost = useSelector((state)=> state.editButton.specificPost);
+	const specificPostStatus = useSelector((state)=> state.editButton);
+	
 
 	const dispatch = useDispatch();
+	
 
-	console.log(specificPost);
-
-	useEffect(() => {
-		if (specificPost) {
-			setCaption(specificPost.caption);
-			if (specificPost?.media_id !== null) {
+	useEffect(()=>{
+		// setTimeout(() => {
+		// 	<div className={classes.loaderContainer2}>
+		// 		<CircularProgress className={classes.loader} />;
+		// 	</div>
+		// }, [1000])
+		
+		if(specificPost){
+			setCaption(specificPost.caption)
+			if(specificPost?.media_id !== null){
 				setValue(true);
 				setSelectedMedia(specificPost.media_id);
 			}
@@ -172,26 +180,46 @@ const UploadOrEditPost = ({
 		if (uploadedFiles.length) {
 			uploadedFiles.map(async (uploadedFile) => {
 				if (loadingMedia.includes(uploadedFile.id)) {
+
+					let abortData = null;
 					try {
 						const result = await axios.post(
-							`${process.env.REACT_APP_BUCKET_API_ENDPOINT}/post/get-signed-url`,
+							`${process.env.REACT_APP_API_ENDPOINT}/post/get-signed-url`,
 							{
 								fileType: uploadedFile.fileExtension,
 								parts: 1
 							}
+						
 						);
-
+						
+						abortData = result?.data?.result;
 						if (result?.data?.result?.url) {
 							const _result = await axios.put(
 								result?.data?.result?.url,
 								uploadedFile.file,
 								{
+									
 									headers: { 'Content-Type': uploadedFile.mime_type }
 								}
 							);
+							
+							if (result?.data?.result?.videoThumbnailUrl){
+								const vidThumbnail = new File([uploadedFile.img], 'screenshot.png')
+								
+								await axios.put(
+									result?.data?.result?.videoThumbnailUrl,
+									vidThumbnail,
+									{
+										
+										headers: { 'Content-Type': 'image/png'}
+									}
+								);
+								
+
+							}
 							if (_result?.status === 200) {
 								const uploadResult = await axios.post(
-									`${process.env.REACT_APP_BUCKET_API_ENDPOINT}/post/complete-upload`,
+									`${process.env.REACT_APP_API_ENDPOINT}/post/complete-upload`,
 									{
 										file_name: uploadedFile.file.name,
 										data: {
@@ -208,7 +236,10 @@ const UploadOrEditPost = ({
 															}
 													  ]
 													: ['image'],
-											Key: result?.data?.result?.Key,
+											Keys: {
+												ImageKey : result?.data?.result?.Keys?.ImageKey,
+												VideoKey : result?.data?.result?.Keys?.VideoKey
+											},
 											UploadId:
 												uploadedFile?.mime_type == 'video/mp4'
 													? result?.data?.result?.UploadId
@@ -241,6 +272,20 @@ const UploadOrEditPost = ({
 						setLoadingMedia((_loadingMedia) =>
 							_loadingMedia.filter((media) => media != uploadedFile.id)
 						);
+
+						if (abortData!== null && abortData.videoThumbnailUrl !== ''){
+							await axios.post(
+								`${process.env.REACT_APP_API_ENDPOINT}/post/abort-multipart`,	
+								{
+									data : {
+										Bucket : 'bucket',
+										Key : abortData.Keys.VideoKey,
+										UploadId: abortData.UploadId
+	
+									}
+								}
+							);
+						}	
 						console.log({ error });
 					}
 				}
@@ -367,7 +412,11 @@ const UploadOrEditPost = ({
 			if (result?.data?.status === 200) {
 				toast.success('Post has been deleted!');
 				handleClose();
-				dispatch(getPosts());
+				
+				//setting a timeout for getting post after delete.
+				setTimeout(() => {
+					dispatch(getPosts());
+				}, [300]);
 			}
 		} catch (e) {
 			toast.error('Failed to delete post!');
@@ -388,8 +437,16 @@ const UploadOrEditPost = ({
 			title={title}
 		>
 			<div className={classes.contentWrapper}>
+				{specificPostStatus.status === "loading" ?(
+					<div className={classes.loaderContainer2}>
+						<CircularProgress className={classes.loader} />;
+					</div>
+				) : (
+					<></>
+				)}
 				<div>
 					<h5>{heading1}</h5>
+
 					<DragDropContext onDragEnd={onDragEnd}>
 						<Droppable droppableId='droppable-1'>
 							{(provided) => (
@@ -425,6 +482,16 @@ const UploadOrEditPost = ({
 																	<video className={classes.fileThumbnail}>
 																		<source src={file.img} />
 																	</video>
+																	{/* <VideoImageThumbnail
+																		videoUrl='https://dl.dropboxusercontent.com/s/pkz1yguv8vcs7k1/cover.mp4?dl=0'
+																		thumbnailHandler={(thumbnail) =>
+																			console.log(thumbnail)
+																		}
+																		renderThumbnailHtml={false}
+																		width={120}
+																		height={80}
+																		alt='my test video'
+																	/> */}
 																</>
 															) : (
 																<img
@@ -608,3 +675,5 @@ UploadOrEditPost.propTypes = {
 };
 
 export default UploadOrEditPost;
+
+
