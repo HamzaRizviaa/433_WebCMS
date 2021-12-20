@@ -8,13 +8,23 @@
 	}
 
 	thead {
+		display: table;
+		width: 98.7%;
+		table-layout: fixed;
 		.sortable {
 			padding-left: 2rem;
 		}
 	}
 
 	tbody {
+		display: block;
+		max-height: calc(100vh - 220px);
+		overflow-y: auto;
+		overflow-x: hidden;
 		tr {
+			display: table;
+			width: 100%;
+			table-layout: fixed;
 			td {
 				border-bottom: 1px solid #404040;
 			}
