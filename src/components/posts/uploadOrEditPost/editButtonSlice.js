@@ -1,16 +1,19 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export const getSpecificPost = createAsyncThunk('editButton/getSpecificPost', async (id) => {
-	const response = await axios.get(
-		`${process.env.REACT_APP_API_ENDPOINT}/dev/api/v1/post/edit/${id}`
-	);
-	if (response?.data?.result) {
-		return response.data.result;
-	} else {
-		return [];
+export const getSpecificPost = createAsyncThunk(
+	'editButton/getSpecificPost',
+	async (id) => {
+		const response = await axios.get(
+			`${process.env.REACT_APP_API_ENDPOINT}/post/edit/${id}`
+		);
+		if (response?.data?.result) {
+			return response.data.result;
+		} else {
+			return [];
+		}
 	}
-});
+);
 
 export const editButtonSlice = createSlice({
 	name: 'editButton',

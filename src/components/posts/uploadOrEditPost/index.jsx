@@ -21,8 +21,14 @@ import { toast } from 'react-toastify';
 import { getPosts } from '../../../pages/PostLibrary/postLibrarySlice';
 //import VideoImageThumbnail from 'react-video-thumbnail-image'; 
 
-
-const UploadOrEditPost = ({ open, handleClose, title, isEdit, heading1, buttonText }) => {
+const UploadOrEditPost = ({
+	open,
+	handleClose,
+	title,
+	isEdit,
+	heading1,
+	buttonText
+}) => {
 	const [caption, setCaption] = useState('');
 	const [value, setValue] = useState(false);
 	const [uploadMediaError, setUploadMediaError] = useState('');
@@ -61,12 +67,11 @@ const UploadOrEditPost = ({ open, handleClose, title, isEdit, heading1, buttonTe
 			setCaption(specificPost.caption)
 			if(specificPost?.media_id !== null){
 				setValue(true);
-				setSelectedMedia(specificPost.media_id)
+				setSelectedMedia(specificPost.media_id);
 			}
-			if(specificPost?.medias){
+			if (specificPost?.medias) {
 				let newFiles = specificPost.medias.map((file) => {
-
-
+					console.log(file.thumbnail_url);
 					if (file.type === 'video/mp4') {
 						return {
 							fileName: file.file_name,
@@ -86,24 +91,24 @@ const UploadOrEditPost = ({ open, handleClose, title, isEdit, heading1, buttonTe
 				setUploadedFiles([...uploadedFiles, ...newFiles]);
 			}
 		}
-	},[specificPost])
+	}, [specificPost]);
 
 	useEffect(() => {
 		dispatch(getMedia());
-		
+
 		return () => {
-			if (uploadedFiles.length && !isEdit) {
-				uploadedFiles.map((file) => handleDeleteFile(file.id));
-			}
+			// if (uploadedFiles.length && !isEdit) {
+			// 	uploadedFiles.map((file) => handleDeleteFile(file.id));
+			// }
 			resetState();
 		};
 	}, []);
 
 	useEffect(() => {
 		if (!open) {
-			if (uploadedFiles.length && !isEdit) {
-				uploadedFiles.map((file) => handleDeleteFile(file.id));
-			}
+			// if (uploadedFiles.length && !isEdit) {
+			// 	uploadedFiles.map((file) => handleDeleteFile(file.id));
+			// }
 			resetState();
 		}
 	}, [open]);
@@ -178,7 +183,7 @@ const UploadOrEditPost = ({ open, handleClose, title, isEdit, heading1, buttonTe
 					let abortData = null;
 					try {
 						const result = await axios.post(
-							`${process.env.REACT_APP_API_ENDPOINT}/dev/api/v1/post/get-signed-url`,
+							`${process.env.REACT_APP_API_ENDPOINT}/post/get-signed-url`,
 							{
 								fileType: uploadedFile.fileExtension,
 								parts: 1
@@ -213,7 +218,7 @@ const UploadOrEditPost = ({ open, handleClose, title, isEdit, heading1, buttonTe
 							}
 							if (_result?.status === 200) {
 								const uploadResult = await axios.post(
-									`${process.env.REACT_APP_API_ENDPOINT}/dev/api/v1/post/complete-upload`,
+									`${process.env.REACT_APP_API_ENDPOINT}/post/complete-upload`,
 									{
 										file_name: uploadedFile.file.name,
 										data: {
@@ -269,7 +274,7 @@ const UploadOrEditPost = ({ open, handleClose, title, isEdit, heading1, buttonTe
 
 						if (abortData!== null && abortData.videoThumbnailUrl !== ''){
 							await axios.post(
-								`${process.env.REACT_APP_API_ENDPOINT}/dev/api/v1/post/abort-multipart`,	
+								`${process.env.REACT_APP_API_ENDPOINT}/post/abort-multipart`,	
 								{
 									data : {
 										Bucket : 'bucket',
@@ -331,7 +336,7 @@ const UploadOrEditPost = ({ open, handleClose, title, isEdit, heading1, buttonTe
 			);
 			if (mediaFileToDelete.length) {
 				const response = await axios.post(
-					`${process.env.REACT_APP_API_ENDPOINT}/dev/api/v1/post/remove-media`,
+					`${process.env.REACT_APP_API_ENDPOINT}/post/remove-media`,
 					{ media_ids: [mediaFileToDelete[0].id] }
 				);
 
@@ -371,20 +376,21 @@ const UploadOrEditPost = ({ open, handleClose, title, isEdit, heading1, buttonTe
 		}
 	};
 
-
 	const createPost = async (id) => {
 		try {
 			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/dev/api/v1/post/add-post`,
+				`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
 				{
 					caption: caption,
 					media_files: [...mediaFiles],
-					...(selectedMedia ? { media_id: selectedMedia } : {media_id : null}),
-					...(isEdit && id ? {post_id : id} : {})
+					...(selectedMedia ? { media_id: selectedMedia } : { media_id: null }),
+					...(isEdit && id ? { post_id: id } : {})
 				}
 			);
 			if (result?.data?.status === 200) {
-				toast.success(isEdit? 'Post has been edited!' : 'Post has been created!');
+				toast.success(
+					isEdit ? 'Post has been edited!' : 'Post has been created!'
+				);
 				handleClose();
 				dispatch(getPosts());
 			}
@@ -397,9 +403,9 @@ const UploadOrEditPost = ({ open, handleClose, title, isEdit, heading1, buttonTe
 	const deletePost = async (id) => {
 		try {
 			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/dev/api/v1/post/delete-post`,
+				`${process.env.REACT_APP_API_ENDPOINT}/post/delete-post`,
 				{
-					post_id : id
+					post_id: id
 				}
 			);
 			if (result?.data?.status === 200) {
@@ -419,7 +425,16 @@ const UploadOrEditPost = ({ open, handleClose, title, isEdit, heading1, buttonTe
 
 	const postBtnDisabled = !uploadedFiles.length || (value && !selectedMedia);
 	return (
-		<Slider open={open} handleClose={handleClose} title={title}>
+		<Slider
+			open={open}
+			handleClose={() => {
+				handleClose();
+				if (uploadedFiles.length && !isEdit) {
+					uploadedFiles.map((file) => handleDeleteFile(file.id));
+				}
+			}}
+			title={title}
+		>
 			<div className={classes.contentWrapper}>
 				{specificPostStatus.status === "loading" ?(
 					<div className={classes.loaderContainer2}>
@@ -653,9 +668,9 @@ UploadOrEditPost.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	isEdit: PropTypes.bool.isRequired,
-	title:  PropTypes.string.isRequired,
-	heading1:  PropTypes.string.isRequired,
-	buttonText: PropTypes.string.isRequired,
+	title: PropTypes.string.isRequired,
+	heading1: PropTypes.string.isRequired,
+	buttonText: PropTypes.string.isRequired
 };
 
 export default UploadOrEditPost;
