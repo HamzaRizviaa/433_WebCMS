@@ -134,7 +134,7 @@ const MediaLibrary = () => {
 					}}
 					text={'UPLOAD MEDIA'}
 				/>
-			</div>
+			</div> 
 			<div className={classes.tableContainer}>
 				<Table columns={columns} data={media} />
 			</div>

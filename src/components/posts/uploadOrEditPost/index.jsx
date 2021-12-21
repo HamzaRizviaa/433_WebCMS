@@ -44,6 +44,9 @@ const UploadOrEditPost = ({
 	// eslint-disable-next-line no-unused-vars
 	const [loadingMedia, setLoadingMedia] = useState([]);
 	const [mediaFiles, setMediaFiles] = useState([]);
+	const [postButtonStatus, setPostButtonStatus] = useState(false);
+	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png, video/mp4',
@@ -60,11 +63,7 @@ const UploadOrEditPost = ({
 	
 
 	useEffect(()=>{
-		// setTimeout(() => {
-		// 	<div className={classes.loaderContainer2}>
-		// 		<CircularProgress className={classes.loader} />;
-		// 	</div>
-		// }, [1000])
+		
 		
 		if(specificPost){
 			setCaption(specificPost.caption)
@@ -309,6 +308,8 @@ const UploadOrEditPost = ({
 		setDropZoneBorder('#ffff00');
 		setMediaLabelColor('#ffffff');
 		setSelectedMedia(null);
+		setPostButtonStatus(false);
+		setDeleteBtnStatus(false);
 	};
 
 	// a little function to help us with reordering the result
@@ -358,7 +359,7 @@ const UploadOrEditPost = ({
 				throw 'Error';
 			}
 		} catch (e) {
-			toast.error('Failed to delete media');
+			//toast.error('Failed to delete media');
 			console.log(e);
 		}
 	};
@@ -383,6 +384,7 @@ const UploadOrEditPost = ({
 	};
 
 	const createPost = async (id) => {
+		setPostButtonStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
@@ -398,18 +400,24 @@ const UploadOrEditPost = ({
 					isEdit ? 'Post has been edited!' : 'Post has been created!'
 				);
 				//setMediaFiles([])
+				setPostButtonStatus(false);
 				handleClose();
-
-				dispatch(getPosts());
+				
+				setTimeout(() => {
+					dispatch(getPosts());
+				}, [400]);
 				
 			}
 		} catch (e) {
 			toast.error(isEdit ? 'Failed to edit post!' : 'Failed to create post!');
+			setPostButtonStatus(false);
 			console.log(e);
+
 		}
 	};
 
 	const deletePost = async (id) => {
+		setDeleteBtnStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/post/delete-post`,
@@ -419,20 +427,23 @@ const UploadOrEditPost = ({
 			);
 			if (result?.data?.status === 200) {
 				toast.success('Post has been deleted!');
+				setDeleteBtnStatus(false);
 				handleClose();
 				
 				//setting a timeout for getting post after delete.
 				setTimeout(() => {
 					dispatch(getPosts());
-				}, [300]);
+				}, [400]);
 			}
 		} catch (e) {
 			toast.error('Failed to delete post!');
+			setDeleteBtnStatus(false);
 			console.log(e);
 		}
 	};
 
-	const postBtnDisabled = !uploadedFiles.length || (value && !selectedMedia);
+	const postBtnDisabled = !uploadedFiles.length || loadingMedia.length > 0 || postButtonStatus || (value && !selectedMedia);
+	const deleteBtnDisabled  = deleteBtnStatus;
 	return (
 		<Slider
 			open={open}
@@ -635,9 +646,13 @@ const UploadOrEditPost = ({
 					{isEdit ? (
 						<div className={classes.editBtn}>
 							<Button
+								disabled={deleteBtnDisabled}
 								button2={isEdit ? true : false}
 								onClick={() => {
-									deletePost(specificPost?.id);
+									if(!deleteBtnStatus){
+										deletePost(specificPost?.id);
+									}
+									
 								}}
 								text={'DELETE POST'}
 							/>
@@ -653,6 +668,7 @@ const UploadOrEditPost = ({
 									validatePostBtn();
 								} else {
 									createPost(isEdit ? specificPost?.id : null);
+
 								}
 							}}
 							text={buttonText}
