@@ -304,6 +304,7 @@ const UploadOrEditPost = ({
 		setMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
+		setMediaFiles([]);
 		setFilesUploadingStatus([]);
 		setDropZoneBorder('#ffff00');
 		setMediaLabelColor('#ffffff');
@@ -396,8 +397,11 @@ const UploadOrEditPost = ({
 				toast.success(
 					isEdit ? 'Post has been edited!' : 'Post has been created!'
 				);
+				//setMediaFiles([])
 				handleClose();
+
 				dispatch(getPosts());
+				
 			}
 		} catch (e) {
 			toast.error(isEdit ? 'Failed to edit post!' : 'Failed to create post!');

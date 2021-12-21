@@ -63,8 +63,8 @@ const MediaLibrary = () => {
                                 src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
                                     row.thumbnail_url}`}
                             />
-                            <span className={classes.fileName}>
-                                {row.file_name.substring(0, 18)}
+                            <span  className={classes.fileName}>
+                                {row.file_name.substring(0, 16)}
                             </span>
                         </div>
                     );
@@ -76,7 +76,7 @@ const MediaLibrary = () => {
                 sortCaret: sortRows,
                 text: 'TYPE',
                 formatter: (content) => {
-                    return <div className={classes.row}>{content}</div>;
+                    return <div className={classes.rowType}>{content}</div>;
                 }
             },
             {
