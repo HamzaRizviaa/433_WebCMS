@@ -11,6 +11,7 @@ import { getPosts } from './postLibrarySlice';
 import { getSpecificPost } from '../../components/posts/uploadOrEditPost/editButtonSlice';
 import moment from 'moment';
 import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 
 const sortRows = (order) => {
 	if (!order) return <ArrowDropUpIcon className={classes.sortIcon} />;
@@ -34,6 +35,7 @@ const getDateTime = (dateTime) => {
 
 const PostLibrary = () => {
 	const posts = useSelector((state) => state.postLibrary.posts);
+	console.log(posts)
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	//let specificPostId = null;
@@ -52,6 +54,11 @@ const PostLibrary = () => {
 			formatter: (content, row) => {
 				return (
 					<div className={classes.mediaWrapper}>
+						{row.thumbnail_url ? (
+							<PlayArrowIcon className={classes.playIcon} />
+						) : (
+							<></>
+						)}
 						<img
 							className={classes.mediaIcon}
 							src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
