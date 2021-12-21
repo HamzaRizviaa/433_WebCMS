@@ -21,6 +21,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getPosts } from '../../../pages/PostLibrary/postLibrarySlice';
 //import VideoImageThumbnail from 'react-video-thumbnail-image'; 
+import captureVideoFrame from "capture-video-frame";
 
 const UploadOrEditPost = ({
 	open,
@@ -53,6 +54,7 @@ const UploadOrEditPost = ({
 	const specificPost = useSelector((state)=> state.editButton.specificPost);
 	const specificPostStatus = useSelector((state)=> state.editButton);
 	
+	
 
 	const dispatch = useDispatch();
 	
@@ -72,8 +74,9 @@ const UploadOrEditPost = ({
 			}
 			if (specificPost?.medias) {
 				let newFiles = specificPost.medias.map((file) => {
-					console.log(file.thumbnail_url);
-					if (file.type === 'video/mp4') {
+					
+					if (file.thumbnail_url) {
+						console.log(file.thumbnail_url);
 						return {
 							fileName: file.file_name,
 							id: makeid(10),
@@ -202,20 +205,21 @@ const UploadOrEditPost = ({
 									headers: { 'Content-Type': uploadedFile.mime_type }
 								}
 							);
+							//capture video frame
+							const frame = captureVideoFrame('my-video', 'png');
 							
 							if (result?.data?.result?.videoThumbnailUrl){
-								const vidThumbnail = new File([uploadedFile.img], 'screenshot.png')
-								
-								await axios.put(
-									result?.data?.result?.videoThumbnailUrl,
-									vidThumbnail,
-									{
-										
-										headers: { 'Content-Type': 'image/png'}
-									}
-								);
+								//const vidThumbnail = new File([frame.blob], 'screenshot.png');
+								//console.log(frame.blob);
 								
 
+								await axios.put(
+									result?.data?.result?.videoThumbnailUrl,
+									frame.blob,
+									{
+										headers: { 'Content-Type': 'image/png' }
+									}
+								);
 							}
 							if (_result?.status === 200) {
 								const uploadResult = await axios.post(
@@ -479,19 +483,10 @@ const UploadOrEditPost = ({
 															{file.type === 'video' ? (
 																<>
 																	<PlayArrowIcon className={classes.playIcon} />
-																	<video className={classes.fileThumbnail}>
+																	<video id={"my-video"}  poster={isEdit ? file.img : null} className={classes.fileThumbnail}>
 																		<source src={file.img} />
 																	</video>
-																	{/* <VideoImageThumbnail
-																		videoUrl='https://dl.dropboxusercontent.com/s/pkz1yguv8vcs7k1/cover.mp4?dl=0'
-																		thumbnailHandler={(thumbnail) =>
-																			console.log(thumbnail)
-																		}
-																		renderThumbnailHtml={false}
-																		width={120}
-																		height={80}
-																		alt='my test video'
-																	/> */}
+						
 																</>
 															) : (
 																<img

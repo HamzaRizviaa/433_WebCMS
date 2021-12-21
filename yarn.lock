@@ -3650,6 +3650,11 @@ capture-exit@^2.0.0:
   dependencies:
     rsvp "^4.8.4"
 
+capture-video-frame@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/capture-video-frame/-/capture-video-frame-1.0.0.tgz#b097eec9c5a4e321455dcdc796b0f701bc800dd6"
+  integrity sha512-7YVlaShC63TfEOiOvnxsHr4zCDYnJDOWJGK8QTaYRMttogNe34j78sBzHoEFxanLoB2RMv60tsKTJD+HsCDKig==
+
 case-sensitive-paths-webpack-plugin@2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/case-sensitive-paths-webpack-plugin/-/case-sensitive-paths-webpack-plugin-2.3.0.tgz#23ac613cc9a856e4f88ff8bb73bbb5e989825cf7"
