@@ -20,8 +20,8 @@ import { makeid } from '../../../utils/helper';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getPosts } from '../../../pages/PostLibrary/postLibrarySlice';
-//import VideoImageThumbnail from 'react-video-thumbnail-image'; 
 import captureVideoFrame from "capture-video-frame";
+import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
 
 const UploadOrEditPost = ({
 	open,
@@ -430,12 +430,16 @@ const UploadOrEditPost = ({
 				setDeleteBtnStatus(false);
 				handleClose();
 				
+				
 				//setting a timeout for getting post after delete.
-				setTimeout(() => {
-					dispatch(getPosts());
-				}, [400]);
+				dispatch(getPosts());
+				// setTimeout(() => {
+				// 	setDeleteBtnStatus(false);
+				// }, [1000]);
+				
 			}
 		} catch (e) {
+			
 			toast.error('Failed to delete post!');
 			setDeleteBtnStatus(false);
 			console.log(e);
@@ -456,7 +460,7 @@ const UploadOrEditPost = ({
 			title={title}
 		>
 			<div className={classes.contentWrapper}>
-				{specificPostStatus.status === "loading" ?(
+				{specificPostStatus.status === 'loading' ? (
 					<div className={classes.loaderContainer2}>
 						<CircularProgress className={classes.loader} />;
 					</div>
@@ -464,7 +468,14 @@ const UploadOrEditPost = ({
 					<></>
 				)}
 				<div>
-					<h5>{heading1}</h5>
+					{isEdit ? (
+						<h5>{heading1}</h5>
+					) : (
+						<div className={classes.headerOrientationWrapper}>
+							<h5>{heading1}</h5>
+							<h6>Orientation</h6>
+						</div>
+					)}
 
 					<DragDropContext onDragEnd={onDragEnd}>
 						<Droppable droppableId='droppable-1'>
@@ -498,10 +509,13 @@ const UploadOrEditPost = ({
 															{file.type === 'video' ? (
 																<>
 																	<PlayArrowIcon className={classes.playIcon} />
-																	<video id={"my-video"}  poster={isEdit ? file.img : null} className={classes.fileThumbnail}>
+																	<video
+																		id={'my-video'}
+																		poster={isEdit ? file.img : null}
+																		className={classes.fileThumbnail}
+																	>
 																		<source src={file.img} />
 																	</video>
-						
 																</>
 															) : (
 																<img
@@ -524,9 +538,16 @@ const UploadOrEditPost = ({
 														)}
 
 														{isEdit ? (
-															<></>
+															<div className={classes.filePreviewRight}>
+																<RemoveRedEyeIcon
+																	className={classes.filePreviewIcons}
+																/>
+															</div>
 														) : (
 															<div className={classes.filePreviewRight}>
+																<RemoveRedEyeIcon
+																	className={classes.filePreviewIcons}
+																/>
 																<span {...provided.dragHandleProps}>
 																	<MenuIcon
 																		style={{ cursor: 'grab' }}
@@ -649,10 +670,9 @@ const UploadOrEditPost = ({
 								disabled={deleteBtnDisabled}
 								button2={isEdit ? true : false}
 								onClick={() => {
-									if(!deleteBtnStatus){
+									if (!deleteBtnStatus) {
 										deletePost(specificPost?.id);
 									}
-									
 								}}
 								text={'DELETE POST'}
 							/>
@@ -668,7 +688,6 @@ const UploadOrEditPost = ({
 									validatePostBtn();
 								} else {
 									createPost(isEdit ? specificPost?.id : null);
-
 								}
 							}}
 							text={buttonText}
