@@ -18,9 +18,7 @@
 .mediaWrapper {
 	display: flex;
 	align-items: center;
-	margin-left: 0.5rem;
 	margin-bottom: 1.5rem;
-	margin-right: 2rem;
 }
 
 .fileName {
@@ -36,7 +34,7 @@
 .rowType {
 	margin-bottom: 1.5rem;
 	font-size: 1.2rem;
-	margin-left: 2rem;
+	padding-left: 35px;
 }
 
 .editIcon {
@@ -55,7 +53,7 @@
 
 .sortIconSelected {
 	position: absolute;
-	left: 0;
+	left: -4px;
 	bottom: -2px;
 	height: 2rem !important;
 	width: 2rem !important;
