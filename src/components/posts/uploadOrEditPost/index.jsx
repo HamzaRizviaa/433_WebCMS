@@ -375,11 +375,15 @@ const UploadOrEditPost = ({
 	const createPost = async (id) => {
 		setPostButtonStatus(true);
 		try {
+			const _mediaFiles = mediaFiles.filter(
+				(value, index, self) =>
+					index === self.findIndex((t) => t.file_name === value.file_name)
+			);
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
 				{
 					caption: caption,
-					media_files: [...mediaFiles],
+					media_files: [..._mediaFiles],
 					...(selectedMedia ? { media_id: selectedMedia } : { media_id: null }),
 					...(isEdit && id ? { post_id: id } : {})
 				}
