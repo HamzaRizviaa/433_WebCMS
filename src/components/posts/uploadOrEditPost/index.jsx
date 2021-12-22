@@ -20,8 +20,8 @@ import { makeid } from '../../../utils/helper';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getPosts } from '../../../pages/PostLibrary/postLibrarySlice';
-//import VideoImageThumbnail from 'react-video-thumbnail-image'; 
-import captureVideoFrame from "capture-video-frame";
+//import VideoImageThumbnail from 'react-video-thumbnail-image';
+import captureVideoFrame from 'capture-video-frame';
 
 const UploadOrEditPost = ({
 	open,
@@ -54,26 +54,20 @@ const UploadOrEditPost = ({
 		});
 
 	const media = useSelector((state) => state.mediaDropdown.media);
-	const specificPost = useSelector((state)=> state.editButton.specificPost);
-	const specificPostStatus = useSelector((state)=> state.editButton);
-	
-	
+	const specificPost = useSelector((state) => state.editButton.specificPost);
+	const specificPostStatus = useSelector((state) => state.editButton);
 
 	const dispatch = useDispatch();
-	
 
-	useEffect(()=>{
-		
-		
-		if(specificPost){
-			setCaption(specificPost.caption)
-			if(specificPost?.media_id !== null){
+	useEffect(() => {
+		if (specificPost) {
+			setCaption(specificPost.caption);
+			if (specificPost?.media_id !== null) {
 				setValue(true);
 				setSelectedMedia(specificPost.media_id);
 			}
 			if (specificPost?.medias) {
 				let newFiles = specificPost.medias.map((file) => {
-					
 					if (file.thumbnail_url) {
 						console.log(file.thumbnail_url);
 						return {
@@ -182,7 +176,6 @@ const UploadOrEditPost = ({
 		if (uploadedFiles.length) {
 			uploadedFiles.map(async (uploadedFile) => {
 				if (loadingMedia.includes(uploadedFile.id)) {
-
 					let abortData = null;
 					try {
 						const result = await axios.post(
@@ -191,26 +184,23 @@ const UploadOrEditPost = ({
 								fileType: uploadedFile.fileExtension,
 								parts: 1
 							}
-						
 						);
-						
+
 						abortData = result?.data?.result;
 						if (result?.data?.result?.url) {
 							const _result = await axios.put(
 								result?.data?.result?.url,
 								uploadedFile.file,
 								{
-									
 									headers: { 'Content-Type': uploadedFile.mime_type }
 								}
 							);
 							//capture video frame
 							const frame = captureVideoFrame('my-video', 'png');
-							
-							if (result?.data?.result?.videoThumbnailUrl){
+
+							if (result?.data?.result?.videoThumbnailUrl) {
 								//const vidThumbnail = new File([frame.blob], 'screenshot.png');
 								//console.log(frame.blob);
-								
 
 								await axios.put(
 									result?.data?.result?.videoThumbnailUrl,
@@ -240,8 +230,8 @@ const UploadOrEditPost = ({
 													  ]
 													: ['image'],
 											Keys: {
-												ImageKey : result?.data?.result?.Keys?.ImageKey,
-												VideoKey : result?.data?.result?.Keys?.VideoKey
+												ImageKey: result?.data?.result?.Keys?.ImageKey,
+												VideoKey: result?.data?.result?.Keys?.VideoKey
 											},
 											UploadId:
 												uploadedFile?.mime_type == 'video/mp4'
@@ -276,19 +266,18 @@ const UploadOrEditPost = ({
 							_loadingMedia.filter((media) => media != uploadedFile.id)
 						);
 
-						if (abortData!== null && abortData.videoThumbnailUrl !== ''){
+						if (abortData !== null && abortData.videoThumbnailUrl !== '') {
 							await axios.post(
-								`${process.env.REACT_APP_API_ENDPOINT}/post/abort-multipart`,	
+								`${process.env.REACT_APP_API_ENDPOINT}/post/abort-multipart`,
 								{
-									data : {
-										Bucket : 'bucket',
-										Key : abortData.Keys.VideoKey,
+									data: {
+										Bucket: 'bucket',
+										Key: abortData.Keys.VideoKey,
 										UploadId: abortData.UploadId
-	
 									}
 								}
 							);
-						}	
+						}
 						console.log({ error });
 					}
 				}
@@ -402,17 +391,13 @@ const UploadOrEditPost = ({
 				//setMediaFiles([])
 				setPostButtonStatus(false);
 				handleClose();
-				
-				setTimeout(() => {
-					dispatch(getPosts());
-				}, [400]);
-				
+
+				dispatch(getPosts());
 			}
 		} catch (e) {
 			toast.error(isEdit ? 'Failed to edit post!' : 'Failed to create post!');
 			setPostButtonStatus(false);
 			console.log(e);
-
 		}
 	};
 
@@ -429,11 +414,9 @@ const UploadOrEditPost = ({
 				toast.success('Post has been deleted!');
 				setDeleteBtnStatus(false);
 				handleClose();
-				
+
 				//setting a timeout for getting post after delete.
-				setTimeout(() => {
-					dispatch(getPosts());
-				}, [400]);
+				dispatch(getPosts());
 			}
 		} catch (e) {
 			toast.error('Failed to delete post!');
@@ -442,8 +425,12 @@ const UploadOrEditPost = ({
 		}
 	};
 
-	const postBtnDisabled = !uploadedFiles.length || loadingMedia.length > 0 || postButtonStatus || (value && !selectedMedia);
-	const deleteBtnDisabled  = deleteBtnStatus;
+	const postBtnDisabled =
+		!uploadedFiles.length ||
+		loadingMedia.length > 0 ||
+		postButtonStatus ||
+		(value && !selectedMedia);
+	const deleteBtnDisabled = deleteBtnStatus;
 	return (
 		<Slider
 			open={open}
@@ -456,7 +443,7 @@ const UploadOrEditPost = ({
 			title={title}
 		>
 			<div className={classes.contentWrapper}>
-				{specificPostStatus.status === "loading" ?(
+				{specificPostStatus.status === 'loading' ? (
 					<div className={classes.loaderContainer2}>
 						<CircularProgress className={classes.loader} />;
 					</div>
@@ -498,10 +485,13 @@ const UploadOrEditPost = ({
 															{file.type === 'video' ? (
 																<>
 																	<PlayArrowIcon className={classes.playIcon} />
-																	<video id={"my-video"}  poster={isEdit ? file.img : null} className={classes.fileThumbnail}>
+																	<video
+																		id={'my-video'}
+																		poster={isEdit ? file.img : null}
+																		className={classes.fileThumbnail}
+																	>
 																		<source src={file.img} />
 																	</video>
-						
 																</>
 															) : (
 																<img
@@ -649,10 +639,9 @@ const UploadOrEditPost = ({
 								disabled={deleteBtnDisabled}
 								button2={isEdit ? true : false}
 								onClick={() => {
-									if(!deleteBtnStatus){
+									if (!deleteBtnStatus) {
 										deletePost(specificPost?.id);
 									}
-									
 								}}
 								text={'DELETE POST'}
 							/>
@@ -668,7 +657,6 @@ const UploadOrEditPost = ({
 									validatePostBtn();
 								} else {
 									createPost(isEdit ? specificPost?.id : null);
-
 								}
 							}}
 							text={buttonText}
@@ -690,5 +678,3 @@ UploadOrEditPost.propTypes = {
 };
 
 export default UploadOrEditPost;
-
-
