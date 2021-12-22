@@ -20,8 +20,8 @@ import { makeid } from '../../../utils/helper';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getPosts } from '../../../pages/PostLibrary/postLibrarySlice';
-//import VideoImageThumbnail from 'react-video-thumbnail-image';
 import captureVideoFrame from 'capture-video-frame';
+import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
 
 const UploadOrEditPost = ({
 	open,
@@ -455,7 +455,14 @@ const UploadOrEditPost = ({
 					<></>
 				)}
 				<div>
-					<h5>{heading1}</h5>
+					{isEdit ? (
+						<h5>{heading1}</h5>
+					) : (
+						<div className={classes.headerOrientationWrapper}>
+							<h5>{heading1}</h5>
+							<h6>Orientation</h6>
+						</div>
+					)}
 
 					<DragDropContext onDragEnd={onDragEnd}>
 						<Droppable droppableId='droppable-1'>
@@ -518,9 +525,16 @@ const UploadOrEditPost = ({
 														)}
 
 														{isEdit ? (
-															<></>
+															<div className={classes.filePreviewRight}>
+																<RemoveRedEyeIcon
+																	className={classes.filePreviewIcons}
+																/>
+															</div>
 														) : (
 															<div className={classes.filePreviewRight}>
+																<RemoveRedEyeIcon
+																	className={classes.filePreviewIcons}
+																/>
 																<span {...provided.dragHandleProps}>
 																	<MenuIcon
 																		style={{ cursor: 'grab' }}
