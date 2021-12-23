@@ -298,7 +298,9 @@ const UploadOrEditPost = ({
 		setMediaLabelColor('#ffffff');
 		setSelectedMedia(null);
 		setPostButtonStatus(false);
-		setDeleteBtnStatus(false);
+		setTimeout(() => {
+			setDeleteBtnStatus(false);
+		}, 1000);
 	};
 
 	// a little function to help us with reordering the result
@@ -416,7 +418,6 @@ const UploadOrEditPost = ({
 			);
 			if (result?.data?.status === 200) {
 				toast.success('Post has been deleted!');
-				setDeleteBtnStatus(false);
 				handleClose();
 
 				//setting a timeout for getting post after delete.
@@ -434,7 +435,6 @@ const UploadOrEditPost = ({
 		loadingMedia.length > 0 ||
 		postButtonStatus ||
 		(value && !selectedMedia);
-	const deleteBtnDisabled = deleteBtnStatus;
 	return (
 		<Slider
 			open={open}
@@ -654,7 +654,7 @@ const UploadOrEditPost = ({
 					{isEdit ? (
 						<div className={classes.editBtn}>
 							<Button
-								disabled={deleteBtnDisabled}
+								disabled={deleteBtnStatus}
 								button2={isEdit ? true : false}
 								onClick={() => {
 									if (!deleteBtnStatus) {
