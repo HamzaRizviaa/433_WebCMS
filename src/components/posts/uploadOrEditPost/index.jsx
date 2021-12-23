@@ -465,7 +465,7 @@ const UploadOrEditPost = ({
 					<></>
 				)}
 				<div>
-					{isEdit ? (
+					{isEdit || uploadedFiles.length === 0 ? (
 						<h5>{heading1}</h5>
 					) : (
 						<div className={classes.headerOrientationWrapper}>
