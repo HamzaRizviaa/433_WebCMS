@@ -30,7 +30,6 @@ import { ReactComponent as SquareCropSelected } from '../../../assets/Square_sel
 import { ReactComponent as PortraitCropSelected } from '../../../assets/portrait_rect_selected.svg';
 import { ReactComponent as LandscapeCropSelected } from '../../../assets/Rectangle_12_selected.svg';
 
-
 const UploadOrEditPost = ({
 	open,
 	handleClose,
@@ -45,16 +44,13 @@ const UploadOrEditPost = ({
 	const [mediaError, setMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
-	const [filesUploadingStatus, setFilesUploadingStatus] = useState([]);
 	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
 	const [mediaLabelColor, setMediaLabelColor] = useState('#ffffff');
 	const [selectedMedia, setSelectedMedia] = useState(null);
-	// eslint-disable-next-line no-unused-vars
-	const [loadingMedia, setLoadingMedia] = useState([]);
-	const [mediaFiles, setMediaFiles] = useState([]);
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [dimensionSelect, setDimensionSelect] = useState('');
+	const [isLoadingCreatePost, setIsLoadingCreatePost] = useState(false);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -78,7 +74,6 @@ const UploadOrEditPost = ({
 			if (specificPost?.medias) {
 				let newFiles = specificPost.medias.map((file) => {
 					if (file.thumbnail_url) {
-						console.log(file.thumbnail_url);
 						return {
 							fileName: file.file_name,
 							id: makeid(10),
@@ -101,20 +96,13 @@ const UploadOrEditPost = ({
 
 	useEffect(() => {
 		dispatch(getMedia());
-
 		return () => {
-			// if (uploadedFiles.length && !isEdit) {
-			// 	uploadedFiles.map((file) => handleDeleteFile(file.id));
-			// }
 			resetState();
 		};
 	}, []);
 
 	useEffect(() => {
 		if (!open) {
-			// if (uploadedFiles.length && !isEdit) {
-			// 	uploadedFiles.map((file) => handleDeleteFile(file.id));
-			// }
 			resetState();
 		}
 	}, [open]);
@@ -139,160 +127,89 @@ const UploadOrEditPost = ({
 		if (acceptedFiles?.length) {
 			setUploadMediaError('');
 			setDropZoneBorder('#ffff00');
-			let newFilesUploadingStatus = [];
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
-				newFilesUploadingStatus.push({
-					id,
-					uploadStatus: 'inprogress',
+				return {
+					id: id,
+					fileName: file.name,
+					img: URL.createObjectURL(file),
 					fileExtension: `.${getFileType(file.type)}`,
-					type: file.type,
-					file: file
-				});
-				setLoadingMedia((loadingMedia) => [...loadingMedia, id]);
-				if (file.type === 'video/mp4') {
-					return {
-						id: id,
-						fileName: file.name,
-						img: URL.createObjectURL(file),
-						fileExtension: `.${getFileType(file.type)}`,
-						mime_type: file.type,
-						file: file,
-						type: 'video'
-					};
-				} else {
-					return {
-						id: id,
-						fileName: file.name,
-						img: URL.createObjectURL(file),
-						fileExtension: `.${getFileType(file.type)}`,
-						mime_type: file.type,
-						file: file,
-						type: 'image'
-					};
-				}
+					mime_type: file.type,
+					file: file,
+					type: file.type === 'video/mp4' ? 'video' : 'image'
+				};
 			});
-
-			setFilesUploadingStatus([
-				...filesUploadingStatus,
-				...newFilesUploadingStatus
-			]);
 			setUploadedFiles([...uploadedFiles, ...newFiles]);
 		}
 	}, [acceptedFiles]);
 
-	useEffect(() => {
-		if (uploadedFiles.length) {
-			uploadedFiles.map(async (uploadedFile) => {
-				if (loadingMedia.includes(uploadedFile.id)) {
-					let abortData = null;
-					try {
-						const result = await axios.post(
-							`${process.env.REACT_APP_API_ENDPOINT}/post/get-signed-url`,
-							{
-								fileType: uploadedFile.fileExtension,
-								parts: 1
-							}
-						);
-
-						abortData = result?.data?.result;
-						if (result?.data?.result?.url) {
-							const _result = await axios.put(
-								result?.data?.result?.url,
-								uploadedFile.file,
-								{
-									headers: { 'Content-Type': uploadedFile.mime_type }
-								}
-							);
-							//capture video frame
-							const frame = captureVideoFrame('my-video', 'png');
-
-							if (result?.data?.result?.videoThumbnailUrl) {
-								//const vidThumbnail = new File([frame.blob], 'screenshot.png');
-								//console.log(frame.blob);
-
-								await axios.put(
-									result?.data?.result?.videoThumbnailUrl,
-									frame.blob,
-									{
-										headers: { 'Content-Type': 'image/png' }
-									}
-								);
-							}
-							if (_result?.status === 200) {
-								const uploadResult = await axios.post(
-									`${process.env.REACT_APP_API_ENDPOINT}/post/complete-upload`,
-									{
-										file_name: uploadedFile.file.name,
-										data: {
-											Bucket: 'media',
-											MultipartUpload:
-												uploadedFile?.mime_type == 'video/mp4'
-													? [
-															{
-																ETag: _result?.headers?.etag.replace(
-																	/['"]+/g,
-																	''
-																),
-																PartNumber: 1
-															}
-													  ]
-													: ['image'],
-											Keys: {
-												ImageKey: result?.data?.result?.Keys?.ImageKey,
-												VideoKey: result?.data?.result?.Keys?.VideoKey
-											},
-											UploadId:
-												uploadedFile?.mime_type == 'video/mp4'
-													? result?.data?.result?.UploadId
-													: 'image'
-										}
-									}
-								);
-								if (uploadResult?.data?.status === 200) {
-									setMediaFiles((mediaFiles) => [
-										...mediaFiles,
-										{ ...uploadResult.data.result }
-									]);
-									setLoadingMedia((_loadingMedia) =>
-										_loadingMedia.filter((media) => media != uploadedFile.id)
-									);
-								} else {
-									throw 'Error in uploading file';
-								}
-							} else {
-								throw 'Error in uploading file';
-							}
-						} else {
-							throw 'Error in uploading file';
-						}
-					} catch (error) {
-						toast.error('Error in uploading file!');
-						setUploadedFiles((_uploadedFiles) =>
-							_uploadedFiles.filter((__file) => __file.id != uploadedFile.id)
-						);
-						setLoadingMedia((_loadingMedia) =>
-							_loadingMedia.filter((media) => media != uploadedFile.id)
-						);
-
-						if (abortData !== null && abortData.videoThumbnailUrl !== '') {
-							await axios.post(
-								`${process.env.REACT_APP_API_ENDPOINT}/post/abort-multipart`,
-								{
-									data: {
-										Bucket: 'bucket',
-										Key: abortData.Keys.VideoKey,
-										UploadId: abortData.UploadId
-									}
-								}
-							);
-						}
-						console.log({ error });
-					}
+	const uploadFileToServer = async (uploadedFile) => {
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/post/get-signed-url`,
+				{
+					fileType: uploadedFile.fileExtension,
+					parts: 1
 				}
-			});
+			);
+
+			if (result?.data?.result?.url) {
+				const _result = await axios.put(
+					result?.data?.result?.url,
+					uploadedFile.file,
+					{
+						headers: { 'Content-Type': uploadedFile.mime_type }
+					}
+				);
+				const frame = captureVideoFrame('my-video', 'png');
+				if (result?.data?.result?.videoThumbnailUrl) {
+					await axios.put(result?.data?.result?.videoThumbnailUrl, frame.blob, {
+						headers: { 'Content-Type': 'image/png' }
+					});
+				}
+				if (_result?.status === 200) {
+					const uploadResult = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/post/complete-upload`,
+						{
+							file_name: uploadedFile.file.name,
+							data: {
+								Bucket: 'media',
+								MultipartUpload:
+									uploadedFile?.mime_type == 'video/mp4'
+										? [
+												{
+													ETag: _result?.headers?.etag.replace(/['"]+/g, ''),
+													PartNumber: 1
+												}
+										  ]
+										: ['image'],
+								Keys: {
+									ImageKey: result?.data?.result?.Keys?.ImageKey,
+									VideoKey: result?.data?.result?.Keys?.VideoKey
+								},
+								UploadId:
+									uploadedFile?.mime_type == 'video/mp4'
+										? result?.data?.result?.UploadId
+										: 'image'
+							}
+						}
+					);
+					if (uploadResult?.data?.status === 200) {
+						return uploadResult.data.result;
+					} else {
+						throw 'Error';
+					}
+				} else {
+					throw 'Error';
+				}
+			} else {
+				throw 'Error';
+			}
+		} catch (error) {
+			console.log('Error');
+			return null;
 		}
-	}, [uploadedFiles]);
+	};
 
 	const resetState = () => {
 		setCaption('');
@@ -301,8 +218,6 @@ const UploadOrEditPost = ({
 		setMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
-		setMediaFiles([]);
-		setFilesUploadingStatus([]);
 		setDropZoneBorder('#ffff00');
 		setMediaLabelColor('#ffffff');
 		setSelectedMedia(null);
@@ -336,33 +251,10 @@ const UploadOrEditPost = ({
 		setUploadedFiles(items);
 	};
 
-	const handleDeleteFile = async (id) => {
-		try {
-			let mediaFileToDelete = uploadedFiles.filter((file) => file.id === id);
-			mediaFileToDelete = mediaFiles.filter(
-				(_file) => _file?.file_name === mediaFileToDelete[0]?.fileName
-			);
-			if (mediaFileToDelete.length) {
-				const response = await axios.post(
-					`${process.env.REACT_APP_API_ENDPOINT}/post/remove-media`,
-					{ media_ids: [mediaFileToDelete[0].id] }
-				);
-
-				if (response?.data?.status == 200) {
-					setUploadedFiles((files) => {
-						return files.filter((file) => file.id != id);
-					});
-					setMediaFiles((files) => {
-						return files.filter((file) => file.id != mediaFileToDelete[0].id);
-					});
-				}
-			} else {
-				throw 'Error';
-			}
-		} catch (e) {
-			//toast.error('Failed to delete media');
-			console.log(e);
-		}
+	const handleDeleteFile = (id) => {
+		setUploadedFiles((uploadedFiles) =>
+			uploadedFiles.filter((file) => file.id !== id)
+		);
 	};
 
 	const validatePostBtn = () => {
@@ -374,7 +266,7 @@ const UploadOrEditPost = ({
 				setUploadMediaError('');
 			}, [5000]);
 		}
-		if (value && !selectedMedia) {
+		if (value && !uploadedFiles) {
 			setMediaLabelColor('#ff355a');
 			setMediaError('This field is required');
 			setTimeout(() => {
@@ -384,34 +276,31 @@ const UploadOrEditPost = ({
 		}
 	};
 
-	const createPost = async (id) => {
+	const createPost = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
 		try {
-			const _mediaFiles = mediaFiles.filter(
-				(value, index, self) =>
-					index === self.findIndex((t) => t.file_name === value.file_name)
-			);
+			// console.log({ responseArray });
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
 				{
 					caption: caption,
-					media_files: [..._mediaFiles],
 					...(selectedMedia ? { media_id: selectedMedia } : { media_id: null }),
-					...(isEdit && id ? { post_id: id } : {})
+					...(isEdit && id ? { post_id: id } : {}),
+					...(!isEdit ? { media_files: [...mediaFiles] } : {})
 				}
 			);
 			if (result?.data?.status === 200) {
 				toast.success(
 					isEdit ? 'Post has been edited!' : 'Post has been created!'
 				);
-				//setMediaFiles([])
+				setIsLoadingCreatePost(false);
 				setPostButtonStatus(false);
 				handleClose();
-
 				dispatch(getPosts());
 			}
 		} catch (e) {
 			toast.error(isEdit ? 'Failed to edit post!' : 'Failed to create post!');
+			setIsLoadingCreatePost(false);
 			setPostButtonStatus(false);
 			console.log(e);
 		}
@@ -441,10 +330,8 @@ const UploadOrEditPost = ({
 	};
 
 	const postBtnDisabled =
-		!uploadedFiles.length ||
-		loadingMedia.length > 0 ||
-		postButtonStatus ||
-		(value && !selectedMedia);
+		!uploadedFiles.length || postButtonStatus || (value && !selectedMedia);
+	console.log(isLoadingCreatePost);
 	return (
 		<Slider
 			open={open}
@@ -487,9 +374,7 @@ const UploadOrEditPost = ({
 												className={classes.dimensionPreviewIcons}
 											/>
 										) : (
-											<SquareCrop
-												className={classes.dimensionPreviewIcons}
-											/>
+											<SquareCrop className={classes.dimensionPreviewIcons} />
 										)}
 									</div>
 									<div
@@ -506,9 +391,7 @@ const UploadOrEditPost = ({
 												className={classes.dimensionPreviewIcons}
 											/>
 										) : (
-											<PortraitCrop
-												className={classes.dimensionPreviewIcons}
-											/>
+											<PortraitCrop className={classes.dimensionPreviewIcons} />
 										)}
 									</div>
 									<div
@@ -549,9 +432,7 @@ const UploadOrEditPost = ({
 												key={file.id}
 												draggableId={`droppable-${file.id}`}
 												index={index}
-												isDragDisabled={
-													uploadedFiles.length <= 1 || loadingMedia.length > 0
-												}
+												isDragDisabled={uploadedFiles.length <= 1}
 											>
 												{(provided) => (
 													<div
@@ -587,13 +468,13 @@ const UploadOrEditPost = ({
 															</p>
 														</div>
 
-														{loadingMedia.includes(file.id) ? (
+														{/* {loadingMedia.includes(file.id) ? (
 															<div className={classes.loaderContainer}>
 																<CircularProgress className={classes.loader} />
 															</div>
 														) : (
 															<></>
-														)}
+														)} */}
 
 														{isEdit ? (
 															<div className={classes.filePreviewRight}>
@@ -741,7 +622,25 @@ const UploadOrEditPost = ({
 								if (postBtnDisabled) {
 									validatePostBtn();
 								} else {
-									createPost(isEdit ? specificPost?.id : null);
+									setPostButtonStatus(true);
+									if (isEdit) {
+										createPost(specificPost?.id);
+									} else {
+										setIsLoadingCreatePost(true);
+										let uploadFilesPromiseArray = uploadedFiles.map(
+											async (_file) => {
+												return uploadFileToServer(_file);
+											}
+										);
+
+										Promise.all([...uploadFilesPromiseArray])
+											.then((mediaFiles) => {
+												createPost(null, mediaFiles);
+											})
+											.catch(() => {
+												setIsLoadingCreatePost(true);
+											});
+									}
 								}
 							}}
 							text={buttonText}
