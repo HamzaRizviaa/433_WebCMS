@@ -29,6 +29,7 @@ import { ReactComponent as LandscapeCrop } from '../../../assets/Rectangle_12.sv
 import { ReactComponent as SquareCropSelected } from '../../../assets/Square_selected.svg';
 import { ReactComponent as PortraitCropSelected } from '../../../assets/portrait_rect_selected.svg';
 import { ReactComponent as LandscapeCropSelected } from '../../../assets/Rectangle_12_selected.svg';
+import LoadingOverlay from 'react-loading-overlay';
 
 const UploadOrEditPost = ({
 	open,
@@ -331,7 +332,7 @@ const UploadOrEditPost = ({
 
 	const postBtnDisabled =
 		!uploadedFiles.length || postButtonStatus || (value && !selectedMedia);
-	console.log(isLoadingCreatePost);
+
 	return (
 		<Slider
 			open={open}
@@ -343,132 +344,137 @@ const UploadOrEditPost = ({
 			}}
 			title={title}
 		>
-			<div className={classes.contentWrapper}>
-				{specificPostStatus.status === 'loading' ? (
-					<div className={classes.loaderContainer2}>
-						<CircularProgress className={classes.loader} />;
-					</div>
-				) : (
-					<></>
-				)}
-				<div>
-					{isEdit || uploadedFiles.length === 0 ? (
-						<h5>{heading1}</h5>
+			<LoadingOverlay active={isLoadingCreatePost} spinner text='Loading...'>
+				<div className={classes.contentWrapper}>
+					{specificPostStatus.status === 'loading' ? (
+						<div className={classes.loaderContainer2}>
+							<CircularProgress className={classes.loader} />;
+						</div>
 					) : (
-						<div className={classes.headerOrientationWrapper}>
+						<></>
+					)}
+					<div>
+						{isEdit || uploadedFiles.length === 0 ? (
 							<h5>{heading1}</h5>
-							<div className={classes.orientationDimensionWrapper}>
-								<h6 className={classes.orientation}>Orientation</h6>
-								<div className={classes.dimensionWrapper}>
-									<div
-										className={classes.dimensionSingle}
-										onClick={() => setDimensionSelect('square')}
-										style={
-											dimensionSelect === 'square'
-												? { backgroundColor: '#000000' }
-												: {}
-										}
-									>
-										{dimensionSelect === 'square' ? (
-											<SquareCropSelected
-												className={classes.dimensionPreviewIcons}
-											/>
-										) : (
-											<SquareCrop className={classes.dimensionPreviewIcons} />
-										)}
-									</div>
-									<div
-										className={classes.dimensionSingle}
-										onClick={() => setDimensionSelect('portrait')}
-										style={
-											dimensionSelect === 'portrait'
-												? { backgroundColor: '#000000' }
-												: {}
-										}
-									>
-										{dimensionSelect === 'portrait' ? (
-											<PortraitCropSelected
-												className={classes.dimensionPreviewIcons}
-											/>
-										) : (
-											<PortraitCrop className={classes.dimensionPreviewIcons} />
-										)}
-									</div>
-									<div
-										className={classes.dimensionSingle}
-										onClick={() => setDimensionSelect('landscape')}
-										style={
-											dimensionSelect === 'landscape'
-												? { backgroundColor: '#000000' }
-												: {}
-										}
-									>
-										{dimensionSelect === 'landscape' ? (
-											<LandscapeCropSelected
-												className={classes.dimensionPreviewIcons}
-											/>
-										) : (
-											<LandscapeCrop
-												className={classes.dimensionPreviewIcons}
-											/>
-										)}
+						) : (
+							<div className={classes.headerOrientationWrapper}>
+								<h5>{heading1}</h5>
+								<div className={classes.orientationDimensionWrapper}>
+									<h6 className={classes.orientation}>Orientation</h6>
+									<div className={classes.dimensionWrapper}>
+										<div
+											className={classes.dimensionSingle}
+											onClick={() => setDimensionSelect('square')}
+											style={
+												dimensionSelect === 'square'
+													? { backgroundColor: '#000000' }
+													: {}
+											}
+										>
+											{dimensionSelect === 'square' ? (
+												<SquareCropSelected
+													className={classes.dimensionPreviewIcons}
+												/>
+											) : (
+												<SquareCrop className={classes.dimensionPreviewIcons} />
+											)}
+										</div>
+										<div
+											className={classes.dimensionSingle}
+											onClick={() => setDimensionSelect('portrait')}
+											style={
+												dimensionSelect === 'portrait'
+													? { backgroundColor: '#000000' }
+													: {}
+											}
+										>
+											{dimensionSelect === 'portrait' ? (
+												<PortraitCropSelected
+													className={classes.dimensionPreviewIcons}
+												/>
+											) : (
+												<PortraitCrop
+													className={classes.dimensionPreviewIcons}
+												/>
+											)}
+										</div>
+										<div
+											className={classes.dimensionSingle}
+											onClick={() => setDimensionSelect('landscape')}
+											style={
+												dimensionSelect === 'landscape'
+													? { backgroundColor: '#000000' }
+													: {}
+											}
+										>
+											{dimensionSelect === 'landscape' ? (
+												<LandscapeCropSelected
+													className={classes.dimensionPreviewIcons}
+												/>
+											) : (
+												<LandscapeCrop
+													className={classes.dimensionPreviewIcons}
+												/>
+											)}
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-					)}
+						)}
 
-					<DragDropContext onDragEnd={onDragEnd}>
-						<Droppable droppableId='droppable-1'>
-							{(provided) => (
-								<div
-									{...provided.droppableProps}
-									ref={provided.innerRef}
-									className={classes.uploadedFilesContainer}
-								>
-									{uploadedFiles.map((file, index) => {
-										return (
-											<Draggable
-												key={file.id}
-												draggableId={`droppable-${file.id}`}
-												index={index}
-												isDragDisabled={uploadedFiles.length <= 1}
-											>
-												{(provided) => (
-													<div
-														key={index}
-														className={classes.filePreview}
-														ref={provided.innerRef}
-														{...provided.draggableProps}
-														style={{
-															...provided.draggableProps.style
-														}}
-													>
-														<div className={classes.filePreviewLeft}>
-															{file.type === 'video' ? (
-																<>
-																	<PlayArrowIcon className={classes.playIcon} />
-																	<video
-																		id={'my-video'}
-																		poster={isEdit ? file.img : null}
+						<DragDropContext onDragEnd={onDragEnd}>
+							<Droppable droppableId='droppable-1'>
+								{(provided) => (
+									<div
+										{...provided.droppableProps}
+										ref={provided.innerRef}
+										className={classes.uploadedFilesContainer}
+									>
+										{uploadedFiles.map((file, index) => {
+											return (
+												<Draggable
+													key={file.id}
+													draggableId={`droppable-${file.id}`}
+													index={index}
+													isDragDisabled={uploadedFiles.length <= 1}
+												>
+													{(provided) => (
+														<div
+															key={index}
+															className={classes.filePreview}
+															ref={provided.innerRef}
+															{...provided.draggableProps}
+															style={{
+																...provided.draggableProps.style
+															}}
+														>
+															<div className={classes.filePreviewLeft}>
+																{file.type === 'video' ? (
+																	<>
+																		<PlayArrowIcon
+																			className={classes.playIcon}
+																		/>
+																		<video
+																			id={'my-video'}
+																			poster={isEdit ? file.img : null}
+																			className={classes.fileThumbnail}
+																		>
+																			<source src={file.img} />
+																		</video>
+																	</>
+																) : (
+																	<img
+																		src={file.img}
 																		className={classes.fileThumbnail}
-																	>
-																		<source src={file.img} />
-																	</video>
-																</>
-															) : (
-																<img
-																	src={file.img}
-																	className={classes.fileThumbnail}
-																/>
-															)}
+																	/>
+																)}
 
-															<p className={classes.fileName}>
-																{file.fileName}
-															</p>
-														</div>
+																<p className={classes.fileName}>
+																	{file.fileName}
+																</p>
+															</div>
 
-														{/* {loadingMedia.includes(file.id) ? (
+															{/* {loadingMedia.includes(file.id) ? (
 															<div className={classes.loaderContainer}>
 																<CircularProgress className={classes.loader} />
 															</div>
@@ -476,178 +482,183 @@ const UploadOrEditPost = ({
 															<></>
 														)} */}
 
-														{isEdit ? (
-															<div className={classes.filePreviewRight}>
-																<EyeIcon className={classes.filePreviewIcons} />
-															</div>
-														) : (
-															<div className={classes.filePreviewRight}>
-																<EyeIcon className={classes.filePreviewIcons} />
-																<span {...provided.dragHandleProps}>
-																	<MenuIcon
-																		style={{ cursor: 'grab' }}
+															{isEdit ? (
+																<div className={classes.filePreviewRight}>
+																	<EyeIcon
 																		className={classes.filePreviewIcons}
 																	/>
-																</span>
-																<DeleteIcon
-																	className={classes.filePreviewIcons}
-																	onClick={() => {
-																		handleDeleteFile(file.id);
-																	}}
-																/>
-															</div>
-														)}
-													</div>
-												)}
-											</Draggable>
-										);
-									})}
-									{provided.placeholder}
-								</div>
-							)}
-						</Droppable>
-					</DragDropContext>
-					{uploadedFiles.length < 10 && !isEdit ? (
-						<section
-							className={classes.dropZoneContainer}
-							style={{
-								borderColor: dropZoneBorder
-							}}
-						>
-							<div {...getRootProps({ className: classes.dropzone })}>
-								<input {...getInputProps()} />
-								<AddCircleOutlineIcon className={classes.addFilesIcon} />
-								<p className={classes.dragMsg}>
-									Click or drag files to this area to upload
-								</p>
-								<p className={classes.formatMsg}>
-									Supported formats are jpeg, png and mp4
-								</p>
-								<p className={classes.uploadMediaError}>{uploadMediaError}</p>
-							</div>
-						</section>
-					) : (
-						<></>
-					)}
-
-					<p className={classes.fileRejectionError}>{fileRejectionError}</p>
-					<div className={classes.captionContainer}>
-						<h6>CAPTION</h6>
-						<TextField
-							value={caption}
-							onChange={(e) => setCaption(e.target.value)}
-							placeholder={'Please write your caption here'}
-							className={classes.textField}
-							InputProps={{
-								disableUnderline: true,
-								className: classes.textFieldInput
-							}}
-							multiline
-							maxRows={4}
-						/>
-					</div>
-
-					<div className={classes.postMediaContainer}>
-						<div className={classes.postMediaHeader}>
-							<h5>Link post to media</h5>
-							<ToggleSwitch
-								id={1}
-								checked={value}
-								onChange={(checked) => {
-									setSelectedMedia(null);
-									setValue(checked);
-								}}
-							/>
-						</div>
-					</div>
-					{value ? (
-						<div className={classes.mediaContainer}>
-							<h6 style={{ color: mediaLabelColor }}>SELECT MEDIA</h6>
-							<Select
-								value={selectedMedia}
-								onChange={(e) => {
-									setMediaError(false);
-									setMediaLabelColor('#ffffff');
-									setSelectedMedia(e.target.value);
-								}}
-								disableUnderline={true}
-								className={`${classes.select}`}
-								IconComponent={KeyboardArrowDownIcon}
-								MenuProps={{
-									anchorOrigin: {
-										vertical: 'bottom',
-										horizontal: 'left'
-									},
-									transformOrigin: {
-										vertical: 'top',
-										horizontal: 'left'
-									},
-									getContentAnchorEl: null
+																</div>
+															) : (
+																<div className={classes.filePreviewRight}>
+																	<EyeIcon
+																		className={classes.filePreviewIcons}
+																	/>
+																	<span {...provided.dragHandleProps}>
+																		<MenuIcon
+																			style={{ cursor: 'grab' }}
+																			className={classes.filePreviewIcons}
+																		/>
+																	</span>
+																	<DeleteIcon
+																		className={classes.filePreviewIcons}
+																		onClick={() => {
+																			handleDeleteFile(file.id);
+																		}}
+																	/>
+																</div>
+															)}
+														</div>
+													)}
+												</Draggable>
+											);
+										})}
+										{provided.placeholder}
+									</div>
+								)}
+							</Droppable>
+						</DragDropContext>
+						{uploadedFiles.length < 10 && !isEdit ? (
+							<section
+								className={classes.dropZoneContainer}
+								style={{
+									borderColor: dropZoneBorder
 								}}
 							>
-								{media.map((item, index) => (
-									<MenuItem key={index} value={item.id}>
-										{item.title}{' '}
-									</MenuItem>
-								))}
-							</Select>
+								<div {...getRootProps({ className: classes.dropzone })}>
+									<input {...getInputProps()} />
+									<AddCircleOutlineIcon className={classes.addFilesIcon} />
+									<p className={classes.dragMsg}>
+										Click or drag files to this area to upload
+									</p>
+									<p className={classes.formatMsg}>
+										Supported formats are jpeg, png and mp4
+									</p>
+									<p className={classes.uploadMediaError}>{uploadMediaError}</p>
+								</div>
+							</section>
+						) : (
+							<></>
+						)}
 
-							<p className={classes.mediaError}>{mediaError}</p>
-						</div>
-					) : (
-						<></>
-					)}
-				</div>
-				<div className={classes.buttonDiv}>
-					{isEdit ? (
-						<div className={classes.editBtn}>
-							<Button
-								disabled={deleteBtnStatus}
-								button2={isEdit ? true : false}
-								onClick={() => {
-									if (!deleteBtnStatus) {
-										deletePost(specificPost?.id);
-									}
+						<p className={classes.fileRejectionError}>{fileRejectionError}</p>
+						<div className={classes.captionContainer}>
+							<h6>CAPTION</h6>
+							<TextField
+								value={caption}
+								onChange={(e) => setCaption(e.target.value)}
+								placeholder={'Please write your caption here'}
+								className={classes.textField}
+								InputProps={{
+									disableUnderline: true,
+									className: classes.textFieldInput
 								}}
-								text={'DELETE POST'}
+								multiline
+								maxRows={4}
 							/>
 						</div>
-					) : (
-						<> </>
-					)}
-					<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
-						<Button
-							disabled={postBtnDisabled}
-							onClick={() => {
-								if (postBtnDisabled) {
-									validatePostBtn();
-								} else {
-									setPostButtonStatus(true);
-									if (isEdit) {
-										createPost(specificPost?.id);
-									} else {
-										setIsLoadingCreatePost(true);
-										let uploadFilesPromiseArray = uploadedFiles.map(
-											async (_file) => {
-												return uploadFileToServer(_file);
-											}
-										);
 
-										Promise.all([...uploadFilesPromiseArray])
-											.then((mediaFiles) => {
-												createPost(null, mediaFiles);
-											})
-											.catch(() => {
-												setIsLoadingCreatePost(true);
-											});
+						<div className={classes.postMediaContainer}>
+							<div className={classes.postMediaHeader}>
+								<h5>Link post to media</h5>
+								<ToggleSwitch
+									id={1}
+									checked={value}
+									onChange={(checked) => {
+										setSelectedMedia(null);
+										setValue(checked);
+									}}
+								/>
+							</div>
+						</div>
+						{value ? (
+							<div className={classes.mediaContainer}>
+								<h6 style={{ color: mediaLabelColor }}>SELECT MEDIA</h6>
+								<Select
+									value={selectedMedia}
+									onChange={(e) => {
+										setMediaError(false);
+										setMediaLabelColor('#ffffff');
+										setSelectedMedia(e.target.value);
+									}}
+									disableUnderline={true}
+									className={`${classes.select}`}
+									IconComponent={KeyboardArrowDownIcon}
+									MenuProps={{
+										anchorOrigin: {
+											vertical: 'bottom',
+											horizontal: 'left'
+										},
+										transformOrigin: {
+											vertical: 'top',
+											horizontal: 'left'
+										},
+										getContentAnchorEl: null
+									}}
+								>
+									{media.map((item, index) => (
+										<MenuItem key={index} value={item.id}>
+											{item.title}{' '}
+										</MenuItem>
+									))}
+								</Select>
+
+								<p className={classes.mediaError}>{mediaError}</p>
+							</div>
+						) : (
+							<></>
+						)}
+					</div>
+					<div className={classes.buttonDiv}>
+						{isEdit ? (
+							<div className={classes.editBtn}>
+								<Button
+									disabled={deleteBtnStatus}
+									button2={isEdit ? true : false}
+									onClick={() => {
+										if (!deleteBtnStatus) {
+											deletePost(specificPost?.id);
+										}
+									}}
+									text={'DELETE POST'}
+								/>
+							</div>
+						) : (
+							<> </>
+						)}
+						<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
+							<Button
+								disabled={postBtnDisabled}
+								onClick={() => {
+									if (postBtnDisabled) {
+										validatePostBtn();
+									} else {
+										setPostButtonStatus(true);
+										if (isEdit) {
+											createPost(specificPost?.id);
+										} else {
+											setIsLoadingCreatePost(true);
+											let uploadFilesPromiseArray = uploadedFiles.map(
+												async (_file) => {
+													return uploadFileToServer(_file);
+												}
+											);
+
+											Promise.all([...uploadFilesPromiseArray])
+												.then((mediaFiles) => {
+													createPost(null, mediaFiles);
+												})
+												.catch(() => {
+													setIsLoadingCreatePost(true);
+												});
+										}
 									}
-								}
-							}}
-							text={buttonText}
-						/>
+								}}
+								text={buttonText}
+							/>
+						</div>
 					</div>
 				</div>
-			</div>
+			</LoadingOverlay>
 		</Slider>
 	);
 };
