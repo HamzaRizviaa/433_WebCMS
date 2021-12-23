@@ -21,7 +21,15 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getPosts } from '../../../pages/PostLibrary/postLibrarySlice';
 import captureVideoFrame from 'capture-video-frame';
-import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
+import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
+//import CropDinOutlinedIcon from '@material-ui/icons/CropDinOutlined';
+import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
+import { ReactComponent as PortraitCrop } from '../../../assets/portrait_rect.svg';
+import { ReactComponent as LandscapeCrop } from '../../../assets/Rectangle_12.svg';
+import { ReactComponent as SquareCropSelected } from '../../../assets/Square_selected.svg';
+import { ReactComponent as PortraitCropSelected } from '../../../assets/portrait_rect_selected.svg';
+import { ReactComponent as LandscapeCropSelected } from '../../../assets/Rectangle_12_selected.svg';
+
 
 const UploadOrEditPost = ({
 	open,
@@ -46,6 +54,7 @@ const UploadOrEditPost = ({
 	const [mediaFiles, setMediaFiles] = useState([]);
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
+	const [dimensionSelect, setDimensionSelect] = useState('');
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -299,6 +308,7 @@ const UploadOrEditPost = ({
 		setSelectedMedia(null);
 		setPostButtonStatus(false);
 		setDeleteBtnStatus(false);
+		setDimensionSelect('');
 	};
 
 	// a little function to help us with reordering the result
@@ -460,7 +470,68 @@ const UploadOrEditPost = ({
 					) : (
 						<div className={classes.headerOrientationWrapper}>
 							<h5>{heading1}</h5>
-							<h6>Orientation</h6>
+							<div className={classes.orientationDimensionWrapper}>
+								<h6 className={classes.orientation}>Orientation</h6>
+								<div className={classes.dimensionWrapper}>
+									<div
+										className={classes.dimensionSingle}
+										onClick={() => setDimensionSelect('square')}
+										style={
+											dimensionSelect === 'square'
+												? { backgroundColor: '#000000' }
+												: {}
+										}
+									>
+										{dimensionSelect === 'square' ? (
+											<SquareCropSelected
+												className={classes.dimensionPreviewIcons}
+											/>
+										) : (
+											<SquareCrop
+												className={classes.dimensionPreviewIcons}
+											/>
+										)}
+									</div>
+									<div
+										className={classes.dimensionSingle}
+										onClick={() => setDimensionSelect('portrait')}
+										style={
+											dimensionSelect === 'portrait'
+												? { backgroundColor: '#000000' }
+												: {}
+										}
+									>
+										{dimensionSelect === 'portrait' ? (
+											<PortraitCropSelected
+												className={classes.dimensionPreviewIcons}
+											/>
+										) : (
+											<PortraitCrop
+												className={classes.dimensionPreviewIcons}
+											/>
+										)}
+									</div>
+									<div
+										className={classes.dimensionSingle}
+										onClick={() => setDimensionSelect('landscape')}
+										style={
+											dimensionSelect === 'landscape'
+												? { backgroundColor: '#000000' }
+												: {}
+										}
+									>
+										{dimensionSelect === 'landscape' ? (
+											<LandscapeCropSelected
+												className={classes.dimensionPreviewIcons}
+											/>
+										) : (
+											<LandscapeCrop
+												className={classes.dimensionPreviewIcons}
+											/>
+										)}
+									</div>
+								</div>
+							</div>
 						</div>
 					)}
 
@@ -526,15 +597,11 @@ const UploadOrEditPost = ({
 
 														{isEdit ? (
 															<div className={classes.filePreviewRight}>
-																<RemoveRedEyeIcon
-																	className={classes.filePreviewIcons}
-																/>
+																<EyeIcon className={classes.filePreviewIcons} />
 															</div>
 														) : (
 															<div className={classes.filePreviewRight}>
-																<RemoveRedEyeIcon
-																	className={classes.filePreviewIcons}
-																/>
+																<EyeIcon className={classes.filePreviewIcons} />
 																<span {...provided.dragHandleProps}>
 																	<MenuIcon
 																		style={{ cursor: 'grab' }}

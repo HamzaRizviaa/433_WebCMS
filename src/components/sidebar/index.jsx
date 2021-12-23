@@ -19,7 +19,7 @@ const Sidebar = () => {
 				<div
 					onClick={() => {
 						navigate('/post-library');
-					}}
+					}} 
 					className={classes.iconWrapper}
 					style={
 						location?.pathname.includes('post-library')

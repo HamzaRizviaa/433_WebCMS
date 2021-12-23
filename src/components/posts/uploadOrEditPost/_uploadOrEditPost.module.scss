@@ -157,12 +157,12 @@
 	margin-top: 4rem;
 	max-height: 220px;
 	overflow-y: auto;
-	-ms-overflow-style: none;  /* Internet Explorer 10+ */
-    scrollbar-width: none;  /* Firefox */
+	-ms-overflow-style: none; /* Internet Explorer 10+ */
+	scrollbar-width: none; /* Firefox */
 }
 
-.uploadedFilesContainer::-webkit-scrollbar { 
-    display: none;  /* Safari and Chrome */
+.uploadedFilesContainer::-webkit-scrollbar {
+	display: none; /* Safari and Chrome */
 }
 
 .filePreview {
@@ -236,10 +236,40 @@
 	color: $neon-yellow !important;
 }
 
-.headerOrientationWrapper{
+.orientation{
+	margin-right: 2rem;
+}
+
+.headerOrientationWrapper {
 	//position: fixed;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	width: 100%;
+}
+
+.orientationDimensionWrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.dimensionWrapper {
+	border-radius: 8px;
+	background-color: #404040;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;	
+	padding: 2px;
+}
+
+.dimensionSingle {
+	//margin-left: 1rem;
+	border-radius: 8px;
+	padding: 1rem 1rem 0.8rem 1rem;
+}
+
+.dimensionPreviewIcons {
+	color: #808080;
+	cursor: pointer;
 }
