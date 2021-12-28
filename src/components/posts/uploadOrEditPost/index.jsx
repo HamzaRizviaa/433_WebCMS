@@ -266,6 +266,7 @@ const UploadOrEditPost = ({
 	};
 
 	const validatePostBtn = () => {
+		console.log({uploadedFiles , value})
 		if (uploadedFiles.length < 1) {
 			setDropZoneBorder('#ff355a');
 			setUploadMediaError('You need to upload a media in order to post');
@@ -274,7 +275,7 @@ const UploadOrEditPost = ({
 				setUploadMediaError('');
 			}, [5000]);
 		}
-		if (value && !uploadedFiles) {
+		if (value && !selectedMedia) {
 			setMediaLabelColor('#ff355a');
 			setMediaError('This field is required');
 			setTimeout(() => {
@@ -680,6 +681,7 @@ const UploadOrEditPost = ({
 								disabled={postBtnDisabled}
 								onClick={() => {
 									if (postBtnDisabled) {
+										//console.log(postBtnDisabled)
 										validatePostBtn();
 									} else {
 										setPostButtonStatus(true);
