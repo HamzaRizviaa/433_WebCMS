@@ -14,15 +14,15 @@ import ToggleSwitch from '../../switch';
 import Button from '../../button';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMedia } from './mediaDropdownSlice';
-//import { addPost } from './createPostSlice';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getPosts } from '../../../pages/PostLibrary/postLibrarySlice';
 import captureVideoFrame from 'capture-video-frame';
+//import Cropper from 'react-easy-crop'
+
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
-//import CropDinOutlinedIcon from '@material-ui/icons/CropDinOutlined';
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
 import { ReactComponent as PortraitCrop } from '../../../assets/portrait_rect.svg';
 import { ReactComponent as LandscapeCrop } from '../../../assets/Rectangle_12.svg';
@@ -52,6 +52,10 @@ const UploadOrEditPost = ({
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [dimensionSelect, setDimensionSelect] = useState('');
 	const [isLoadingCreatePost, setIsLoadingCreatePost] = useState(false);
+	const [imageToResizeWidth, setImageToResizeWidth] = useState(null);
+	const [imageToResizeHeight, setImageToResizeHeight] = useState(null);
+	//const [aspect , setAspect] = useState(null);
+	//const [crop, setCrop] = useState({ x: 0, y: 0 })
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -125,6 +129,7 @@ const UploadOrEditPost = ({
 	};
 
 	useEffect(() => {
+		console.log(acceptedFiles);
 		if (acceptedFiles?.length) {
 			setUploadMediaError('');
 			setDropZoneBorder('#ffff00');
@@ -227,6 +232,8 @@ const UploadOrEditPost = ({
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
+		setImageToResizeWidth(null);
+		setImageToResizeHeight(null);
 	};
 
 	// a little function to help us with reordering the result
@@ -330,6 +337,30 @@ const UploadOrEditPost = ({
 		}
 	};
 
+	const squareCrop = () => {
+		setDimensionSelect('square');
+		setImageToResizeWidth(80);
+		setImageToResizeHeight(80);
+		// setAspect(1/1);
+		// setCrop({ x: 80, y: 80 });
+	};
+
+	const landscapeCrop = () => {
+		setDimensionSelect('landscape');
+		setImageToResizeWidth(80.22);
+		setImageToResizeHeight(42);
+		// setAspect(3/2);
+		// setCrop({ x: 80, y: 40 });
+	};
+
+	const portraitCrop = () => {
+		setDimensionSelect('portrait');
+		setImageToResizeWidth(64);
+		setImageToResizeHeight(80);
+		// setAspect(4/5);
+		// setCrop({ x: 40, y: 80 });
+	};
+
 	const postBtnDisabled =
 		!uploadedFiles.length || postButtonStatus || (value && !selectedMedia);
 
@@ -364,7 +395,7 @@ const UploadOrEditPost = ({
 									<div className={classes.dimensionWrapper}>
 										<div
 											className={classes.dimensionSingle}
-											onClick={() => setDimensionSelect('square')}
+											onClick={squareCrop}
 											style={
 												dimensionSelect === 'square'
 													? { backgroundColor: '#000000' }
@@ -378,10 +409,10 @@ const UploadOrEditPost = ({
 											) : (
 												<SquareCrop className={classes.dimensionPreviewIcons} />
 											)}
-										</div>
+										</div>{' '}
 										<div
 											className={classes.dimensionSingle}
-											onClick={() => setDimensionSelect('portrait')}
+											onClick={portraitCrop}
 											style={
 												dimensionSelect === 'portrait'
 													? { backgroundColor: '#000000' }
@@ -400,7 +431,7 @@ const UploadOrEditPost = ({
 										</div>
 										<div
 											className={classes.dimensionSingle}
-											onClick={() => setDimensionSelect('landscape')}
+											onClick={landscapeCrop}
 											style={
 												dimensionSelect === 'landscape'
 													? { backgroundColor: '#000000' }
@@ -458,15 +489,34 @@ const UploadOrEditPost = ({
 																			id={'my-video'}
 																			poster={isEdit ? file.img : null}
 																			className={classes.fileThumbnail}
+																			style={{
+																				maxWidth: `${imageToResizeWidth}px`,
+																				maxHeight: `${imageToResizeHeight}px`
+																			}}
 																		>
 																			<source src={file.img} />
 																		</video>
 																	</>
 																) : (
-																	<img
-																		src={file.img}
+																	<>
+																		{/* <Cropper
+																		image={`${file.img}`}
+																		crop={crop}
+																		aspect={aspect}
 																		className={classes.fileThumbnail}
-																	/>
+																		onCropChange={()=> console.log('lol')}
+																	/> */}
+																		<img
+																			src={file.img}
+																			className={classes.fileThumbnail}
+																			style={{
+																				width: `${imageToResizeWidth}px`,
+																				height: `${imageToResizeHeight}px`,
+																				objectFit: 'cover',
+																				objectPosition: 'center'
+																			}}
+																		/>
+																	</>
 																)}
 
 																<p className={classes.fileName}>
