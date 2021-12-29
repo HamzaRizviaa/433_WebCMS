@@ -20,7 +20,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getPosts } from '../../../pages/PostLibrary/postLibrarySlice';
 import captureVideoFrame from 'capture-video-frame';
-//import Cropper from 'react-easy-crop'
+
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
@@ -54,8 +54,7 @@ const UploadOrEditPost = ({
 	const [isLoadingCreatePost, setIsLoadingCreatePost] = useState(false);
 	const [imageToResizeWidth, setImageToResizeWidth] = useState(null);
 	const [imageToResizeHeight, setImageToResizeHeight] = useState(null);
-	//const [aspect , setAspect] = useState(null);
-	//const [crop, setCrop] = useState({ x: 0, y: 0 })
+	
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -129,7 +128,7 @@ const UploadOrEditPost = ({
 	};
 
 	useEffect(() => {
-		console.log(acceptedFiles);
+		
 		if (acceptedFiles?.length) {
 			setUploadMediaError('');
 			setDropZoneBorder('#ffff00');
@@ -152,7 +151,7 @@ const UploadOrEditPost = ({
 	const uploadFileToServer = async (uploadedFile) => {
 		try {
 			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/post/get-signed-url`,
+				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
 				{
 					fileType: uploadedFile.fileExtension,
 					parts: 1
@@ -175,9 +174,10 @@ const UploadOrEditPost = ({
 				}
 				if (_result?.status === 200) {
 					const uploadResult = await axios.post(
-						`${process.env.REACT_APP_API_ENDPOINT}/post/complete-upload`,
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
 						{
 							file_name: uploadedFile.file.name,
+							type : 'postlibrary',
 							data: {
 								Bucket: 'media',
 								MultipartUpload:
@@ -191,7 +191,9 @@ const UploadOrEditPost = ({
 										: ['image'],
 								Keys: {
 									ImageKey: result?.data?.result?.Keys?.ImageKey,
-									VideoKey: result?.data?.result?.Keys?.VideoKey
+									VideoKey: result?.data?.result?.Keys?.VideoKey,
+									AudioKey : '',
+
 								},
 								UploadId:
 									uploadedFile?.mime_type == 'video/mp4'
@@ -266,7 +268,6 @@ const UploadOrEditPost = ({
 	};
 
 	const validatePostBtn = () => {
-		console.log({uploadedFiles , value})
 		if (uploadedFiles.length < 1) {
 			setDropZoneBorder('#ff355a');
 			setUploadMediaError('You need to upload a media in order to post');
@@ -288,16 +289,17 @@ const UploadOrEditPost = ({
 	const createPost = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
 		try {
-			// console.log({ responseArray });
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
 				{
 					caption: caption,
+					orientation_type : dimensionSelect,
 					...(selectedMedia ? { media_id: selectedMedia } : { media_id: null }),
 					...(isEdit && id ? { post_id: id } : {}),
 					...(!isEdit ? { media_files: [...mediaFiles] } : {})
 				}
 			);
+			console.log(result)
 			if (result?.data?.status === 200) {
 				toast.success(
 					isEdit ? 'Post has been edited!' : 'Post has been created!'
@@ -342,24 +344,21 @@ const UploadOrEditPost = ({
 		setDimensionSelect('square');
 		setImageToResizeWidth(80);
 		setImageToResizeHeight(80);
-		// setAspect(1/1);
-		// setCrop({ x: 80, y: 80 });
+		
 	};
 
 	const landscapeCrop = () => {
 		setDimensionSelect('landscape');
 		setImageToResizeWidth(80.22);
 		setImageToResizeHeight(42);
-		// setAspect(3/2);
-		// setCrop({ x: 80, y: 40 });
+	
 	};
 
 	const portraitCrop = () => {
 		setDimensionSelect('portrait');
 		setImageToResizeWidth(64);
 		setImageToResizeHeight(80);
-		// setAspect(4/5);
-		// setCrop({ x: 40, y: 80 });
+	
 	};
 
 	const postBtnDisabled =
@@ -681,7 +680,7 @@ const UploadOrEditPost = ({
 								disabled={postBtnDisabled}
 								onClick={() => {
 									if (postBtnDisabled) {
-										//console.log(postBtnDisabled)
+										
 										validatePostBtn();
 									} else {
 										setPostButtonStatus(true);
