@@ -189,86 +189,93 @@ const UploadOrEditMedia = ({
 						</div>
 						<p className={classes.uploadMediaError}>{mainCategoryError}</p>
 
-						<DragDropContext>
-							<Droppable droppableId='droppable-1'>
-								{(provided) => (
-									<div
-										{...provided.droppableProps}
-										ref={provided.innerRef}
-										className={classes.uploadedFilesContainer}
-									>
-										{uploadedFiles.map((file, index) => {
-											return (
-												<div
-													key={index}
-													className={classes.filePreview}
-													ref={provided.innerRef}
-												>
-													<div className={classes.filePreviewLeft}>
-														{file.type === 'video' ? (
-															<>
-																<video
-																	id={'my-video'}
-																	//poster={isEdit ? file.img : null}
-																	className={classes.fileThumbnail}
-																	style={{ objectFit: 'cover' }}
-																>
-																	<source src={file.img} />
-																</video>
-															</>
-														) : (
-															<>
-																<img
-																	src={file.img}
-																	className={classes.fileThumbnail}
-																/>
-															</>
-														)}
-
-														<p className={classes.fileName}>{file.fileName}</p>
-													</div>
-
-													<div className={classes.filePreviewRight}>
-														<DeleteIcon
-															className={classes.filePreviewIcons}
-															onClick={() => {
-																handleDeleteFile(file.id);
-															}}
-														/>
-													</div>
-												</div>
-											);
-										})}
-										{provided.placeholder}
-									</div>
-								)}
-							</Droppable>
-						</DragDropContext>
 						{mainCategory ? (
 							<>
 								<h5>Add Media File</h5>
-								<section
-									className={classes.dropZoneContainer}
-									style={{
-										borderColor: dropZoneBorder
-									}}
-								>
-									<div {...getRootProps({ className: classes.dropzone })}>
-										<input {...getInputProps()} />
-										<AddCircleOutlineIcon className={classes.addFilesIcon} />
-										<p className={classes.dragMsg}>
-											Click or drag files to this area to upload
-										</p>
-										<p className={classes.formatMsg}>Supported format is mp4</p>
-										<p className={classes.uploadMediaError}>
-											{uploadMediaError}
-										</p>
-									</div>
-								</section>
+								<DragDropContext>
+									<Droppable droppableId='droppable-1'>
+										{(provided) => (
+											<div
+												{...provided.droppableProps}
+												ref={provided.innerRef}
+												className={classes.uploadedFilesContainer}
+											>
+												{uploadedFiles.map((file, index) => {
+													return (
+														<div
+															key={index}
+															className={classes.filePreview}
+															ref={provided.innerRef}
+														>
+															<div className={classes.filePreviewLeft}>
+																{file.type === 'video' ? (
+																	<>
+																		<video
+																			id={'my-video'}
+																			//poster={isEdit ? file.img : null}
+																			className={classes.fileThumbnail}
+																			style={{ objectFit: 'cover' }}
+																		>
+																			<source src={file.img} />
+																		</video>
+																	</>
+																) : (
+																	<>
+																		<img
+																			src={file.img}
+																			className={classes.fileThumbnail}
+																		/>
+																	</>
+																)}
+
+																<p className={classes.fileName}>
+																	{file.fileName}
+																</p>
+															</div>
+
+															<div className={classes.filePreviewRight}>
+																<DeleteIcon
+																	className={classes.filePreviewIcons}
+																	onClick={() => {
+																		handleDeleteFile(file.id);
+																	}}
+																/>
+															</div>
+														</div>
+													);
+												})}
+												{provided.placeholder}
+											</div>
+										)}
+									</Droppable>
+								</DragDropContext>
+								{!uploadedFiles.length && (
+									<section
+										className={classes.dropZoneContainer}
+										style={{
+											borderColor: dropZoneBorder
+										}}
+									>
+										<div {...getRootProps({ className: classes.dropzone })}>
+											<input {...getInputProps()} />
+											<AddCircleOutlineIcon className={classes.addFilesIcon} />
+											<p className={classes.dragMsg}>
+												Click or drag files to this area to upload
+											</p>
+											<p className={classes.formatMsg}>
+												Supported format is mp4
+											</p>
+											<p className={classes.uploadMediaError}>
+												{uploadMediaError}
+											</p>
+										</div>
+									</section>
+								)}
 							</>
 						) : (
 							<></>
 						)}
+
 						<p className={classes.fileRejectionError}>{fileRejectionError}</p>
 					</div>
 					<div className={classes.buttonDiv}>
