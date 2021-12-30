@@ -542,7 +542,11 @@ const UploadOrEditPost = ({
 																	{file.type === 'video' ? (
 																		<>
 																			<PlayArrowIcon
-																				className={classes.playIcon}
+																				className={
+																					dimensionSelect === 'portrait'
+																						? classes.playIconPortrait
+																						: classes.playIcon
+																				}
 																			/>
 																			<video
 																				id={'my-video'}
