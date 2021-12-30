@@ -233,6 +233,7 @@ const UploadOrEditPost = ({
 		}, 1000);
 		setImageToResizeWidth(80);
 		setImageToResizeHeight(80);
+		setPreviewFile(null);
 	};
 
 	// a little function to help us with reordering the result
