@@ -145,7 +145,22 @@
 	display: inline-block;
 }
 
+.previewContentWrapper {
+	min-height: calc(100vh - 107px);
+	position: relative;
+	display: flex;
+	width: 1000px;
+}
+
 .contentWrapper {
+	min-height: calc(100vh - 107px);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.contentWrapperNoPreview {
 	min-height: calc(100vh - 107px);
 	position: relative;
 	display: flex;
@@ -236,7 +251,7 @@
 	color: $neon-yellow !important;
 }
 
-.orientation{
+.orientation {
 	margin-right: 2rem;
 }
 
@@ -259,7 +274,7 @@
 	background-color: #404040;
 	display: flex;
 	align-items: center;
-	justify-content: space-between;	
+	justify-content: space-between;
 	padding: 2px;
 }
 
@@ -272,4 +287,30 @@
 .dimensionPreviewIcons {
 	color: #808080;
 	cursor: pointer;
+}
+
+.previewComponent {
+	width: 35%;
+	border-left: 1px solid $grey;
+	margin-left: 3rem;
+	padding-left: 3rem;
+	margin-bottom: 10rem;
+}
+
+.closeIcon {
+	width: 3.2rem !important;
+	height: 3.2rem !important;
+	margin-right: 0.8rem;
+	cursor: pointer !important;
+}
+
+.previewHeader {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.previewFile {
+	height: 8rem;
+	width: 8rem;
 }

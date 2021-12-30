@@ -22,6 +22,8 @@
 		"react-bootstrap-table-next": "^4.0.3",
 		"react-dom": "^17.0.2",
 		"react-dropzone": "^11.4.2",
+		"react-easy-crop": "^4.0.1",
+		"react-image-file-resizer": "^0.4.7",
 		"react-ios-switch": "^0.1.19",
 		"react-loading-overlay": "^1.0.1",
 		"react-redux": "^7.2.5",

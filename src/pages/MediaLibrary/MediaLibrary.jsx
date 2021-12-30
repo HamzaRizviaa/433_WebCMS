@@ -129,12 +129,7 @@ const MediaLibrary = () => {
 			formatter: () => {
 				return (
 					<div className={classes.row}>
-						<Edit
-							onClick={() => {
-								console.log('edit clicked');
-							}}
-							className={classes.editIcon}
-						/>
+						<Edit onClick={() => {}} className={classes.editIcon} />
 					</div>
 				);
 			}
@@ -145,12 +140,7 @@ const MediaLibrary = () => {
 		<Layout>
 			<div className={classes.header}>
 				<h1>MEDIA LIBRARY</h1>
-				<Button
-					onClick={() => {
-						console.log('button clicked');
-					}}
-					text={'UPLOAD MEDIA'}
-				/>
+				<Button onClick={() => {}} text={'UPLOAD MEDIA'} />
 			</div>
 			<div className={classes.tableContainer}>
 				<Table columns={columns} data={media} />
