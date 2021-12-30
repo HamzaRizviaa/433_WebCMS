@@ -178,10 +178,10 @@ const UploadOrEditPost = ({
 			);
 
 			if (result?.data?.result?.url) {
-				console.log(uploadedFiles);
+				console.log(uploadedFile);
 				const _result = await axios.put(
 					result?.data?.result?.url,
-					uploadedFiles.file,
+					uploadedFile.file,
 					//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
 					{
 						headers: { 'Content-Type': uploadedFile.mime_type }
