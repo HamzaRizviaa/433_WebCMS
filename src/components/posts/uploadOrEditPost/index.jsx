@@ -734,37 +734,6 @@ const UploadOrEditPost = ({
 							) : (
 								<> </>
 							)}
-							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
-								<Button
-									disabled={postBtnDisabled}
-									onClick={() => {
-										if (postBtnDisabled) {
-											validatePostBtn();
-										} else {
-											setPostButtonStatus(true);
-											if (isEdit) {
-												createPost(specificPost?.id);
-											} else {
-												setIsLoadingCreatePost(true);
-												let uploadFilesPromiseArray = uploadedFiles.map(
-													async (_file) => {
-														return uploadFileToServer(_file);
-													}
-												);
-
-												Promise.all([...uploadFilesPromiseArray])
-													.then((mediaFiles) => {
-														createPost(null, mediaFiles);
-													})
-													.catch(() => {
-														setIsLoadingCreatePost(true);
-													});
-											}
-										}
-									}}
-									text={buttonText}
-								/>
-							</div>
 
 							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 								<Button
