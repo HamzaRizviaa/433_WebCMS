@@ -53,7 +53,13 @@ const PostLibrary = () => {
 				return (
 					<div className={classes.mediaWrapper}>
 						{row.thumbnail_url ? (
-							<PlayArrowIcon className={classes.playIcon} />
+							<PlayArrowIcon
+								className={
+									row.orientation_type === 'portrait'
+										? classes.playIconPortrait
+										: classes.playIcon
+								}
+							/>
 						) : (
 							<></>
 						)}

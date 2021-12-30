@@ -224,6 +224,14 @@
 	color: $neon-yellow;
 }
 
+.playIconPortrait {
+	position: absolute;
+	left: 38px;
+	height: 2.5rem !important;
+	width: auto !important;
+	color: $neon-yellow;
+}
+
 .loaderContainer {
 	position: absolute;
 	width: calc(100% - 20px);
