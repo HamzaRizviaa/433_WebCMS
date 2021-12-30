@@ -80,6 +80,7 @@ const UploadOrEditPost = ({
 						return {
 							fileName: file.file_name,
 							id: makeid(10),
+							url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
 							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.thumbnail_url}`,
 							type: 'video'
 						};
@@ -728,16 +729,48 @@ const UploadOrEditPost = ({
 								<h5>Preview</h5>
 							</div>
 							<div>
-								<img
-									src={previewFile.img}
-									className={classes.previewFile}
-									style={{
-										width: `${imageToResizeWidth * 4}px`,
-										height: `${imageToResizeHeight * 4}px`,
-										objectFit: 'cover',
-										objectPosition: 'center'
-									}}
-								/>
+								{previewFile.mime_type === 'video/mp4' ? (
+									<video
+										id={'my-video'}
+										poster={isEdit ? previewFile.img : null}
+										className={classes.previewFile}
+										style={{
+											width: `${imageToResizeWidth * 4}px`,
+											height: `${imageToResizeHeight * 4}px`,
+											objectFit: 'cover',
+											objectPosition: 'center'
+										}}
+										controls={true}
+									>
+										<source src={previewFile.img} />
+									</video>
+								) : isEdit && previewFile.type === 'video' ? (
+									<video
+										id={'my-video'}
+										poster={isEdit ? previewFile.thumbnail_url : null}
+										className={classes.previewFile}
+										style={{
+											width: `${imageToResizeWidth * 4}px`,
+											height: `${imageToResizeHeight * 4}px`,
+											objectFit: 'cover',
+											objectPosition: 'center'
+										}}
+										controls={true}
+									>
+										<source src={previewFile.url} />
+									</video>
+								) : (
+									<img
+										src={previewFile.img}
+										className={classes.previewFile}
+										style={{
+											width: `${imageToResizeWidth * 4}px`,
+											height: `${imageToResizeHeight * 4}px`,
+											objectFit: 'cover',
+											objectPosition: 'center'
+										}}
+									/>
+								)}
 							</div>
 						</div>
 					)}
