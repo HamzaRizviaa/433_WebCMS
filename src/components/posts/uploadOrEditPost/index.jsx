@@ -21,6 +21,8 @@ import { toast } from 'react-toastify';
 import { getPosts } from '../../../pages/PostLibrary/postLibrarySlice';
 import captureVideoFrame from 'capture-video-frame';
 import Close from '@material-ui/icons/Close';
+// import Cropper from 'cropperjs';
+// import 'cropperjs/dist/cropper.css';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
@@ -55,6 +57,11 @@ const UploadOrEditPost = ({
 	const [imageToResizeWidth, setImageToResizeWidth] = useState(80);
 	const [imageToResizeHeight, setImageToResizeHeight] = useState(80);
 	const [previewFile, setPreviewFile] = useState(null);
+	// const [aspect, setAspect] = useState(1 / 1);
+	// const [imgDestination, setImageDestination] = useState('');
+	// const imageElement = useRef();
+
+	//a library that takes height width input and gives cropped image
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -73,6 +80,19 @@ const UploadOrEditPost = ({
 			if (specificPost?.media_id !== null) {
 				setValue(true);
 				setSelectedMedia(specificPost.media_id);
+			}
+			if (specificPost.orientation_type === 'square') {
+				setDimensionSelect('square');
+				setImageToResizeWidth(80);
+				setImageToResizeHeight(80);
+			} else if (specificPost.orientation_type === 'portrait') {
+				setDimensionSelect('portrait');
+				setImageToResizeWidth(64);
+				setImageToResizeHeight(80);
+			} else if (specificPost.orientation_type === 'landscape') {
+				setDimensionSelect('landscape');
+				setImageToResizeWidth(80.22);
+				setImageToResizeHeight(42);
 			}
 			if (specificPost?.medias) {
 				let newFiles = specificPost.medias.map((file) => {
@@ -158,9 +178,11 @@ const UploadOrEditPost = ({
 			);
 
 			if (result?.data?.result?.url) {
+				console.log(uploadedFile);
 				const _result = await axios.put(
 					result?.data?.result?.url,
 					uploadedFile.file,
+					//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
 					{
 						headers: { 'Content-Type': uploadedFile.mime_type }
 					}
@@ -235,6 +257,7 @@ const UploadOrEditPost = ({
 		setImageToResizeWidth(80);
 		setImageToResizeHeight(80);
 		setPreviewFile(null);
+		//setImageDestination('');
 	};
 
 	// a little function to help us with reordering the result
@@ -342,19 +365,48 @@ const UploadOrEditPost = ({
 		setDimensionSelect('square');
 		setImageToResizeWidth(80);
 		setImageToResizeHeight(80);
+		// setAspect(1 / 1);
+		//cropMe(1);
 	};
 
 	const landscapeCrop = () => {
 		setDimensionSelect('landscape');
 		setImageToResizeWidth(80.22);
 		setImageToResizeHeight(42);
+		// setAspect(1.91 / 1);
+		//cropMe(1.91);
 	};
 
 	const portraitCrop = () => {
 		setDimensionSelect('portrait');
 		setImageToResizeWidth(64);
 		setImageToResizeHeight(80);
+		// setAspect(4 / 5);
+		//cropMe(0.8);
 	};
+
+	// const cropMe = (asp) => {
+	// 	const cropper = new Cropper(imageElement.current, {
+	// 		zoomable: false,
+	// 		scalable: false,
+	// 		aspectRatio: asp,
+	// 		background: false,
+	// 		movable: false,
+	// 		cropBoxMovable: false,
+	// 		cropBoxResizable: false,
+	// 		toggleDragModeOnDblclick: false,
+	// 		dragMode: 'none',
+	// 		//initialAspectRatio: asp,
+	// 		// viewMode: 2,
+	// 		//data :
+	// 		responsive: false,
+	// 		modal: false,
+	// 		crop: () => {
+	// 			const canvas = cropper.getCroppedCanvas();
+	// 			setImageDestination(canvas.toDataURL('image/png'));
+	// 		}
+	// 	});
+	// };
 
 	const postBtnDisabled =
 		!uploadedFiles.length || postButtonStatus || (value && !selectedMedia);
@@ -498,7 +550,9 @@ const UploadOrEditPost = ({
 																				className={classes.fileThumbnail}
 																				style={{
 																					maxWidth: `${imageToResizeWidth}px`,
-																					maxHeight: `${imageToResizeHeight}px`
+																					maxHeight: `${imageToResizeHeight}px`,
+																					objectFit: 'cover',
+																					objectPosition: 'center'
 																				}}
 																			>
 																				<source src={file.img} />
@@ -516,6 +570,7 @@ const UploadOrEditPost = ({
 																			<img
 																				src={file.img}
 																				className={classes.fileThumbnail}
+																				// ref={imageElement}
 																				style={{
 																					width: `${imageToResizeWidth}px`,
 																					height: `${imageToResizeHeight}px`,
@@ -523,6 +578,10 @@ const UploadOrEditPost = ({
 																					objectPosition: 'center'
 																				}}
 																			/>
+																			{/* <img
+																				src={imgDestination}
+																				className={classes.fileThumbnail}
+																			/> */}
 																		</>
 																	)}
 
@@ -686,6 +745,7 @@ const UploadOrEditPost = ({
 							) : (
 								<> </>
 							)}
+
 							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 								<Button
 									disabled={postBtnDisabled}
