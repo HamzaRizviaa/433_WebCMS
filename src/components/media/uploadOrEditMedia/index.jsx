@@ -13,7 +13,7 @@ import { useDropzone } from 'react-dropzone';
 import { makeid } from '../../../utils/helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMainCategories } from './uploadOrEditMediaSlice';
-//import Close from '@material-ui/icons/Close';
+import Close from '@material-ui/icons/Close';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import axios from 'axios';
@@ -569,7 +569,7 @@ const UploadOrEditMedia = ({
 							</div>
 						</div>
 					</div>
-					{/* {previewFile != null && (
+					{previewFile != null && (
 						<div className={classes.previewComponent}>
 							<div className={classes.previewHeader}>
 								<Close
@@ -583,15 +583,15 @@ const UploadOrEditMedia = ({
 									src={previewFile.img}
 									className={classes.previewFile}
 									style={{
-										width: `${2 * 4}px`,
-										height: `${2 * 4}px`,
+										width: `${8 * 4}rem`,
+										height: `${8 * 4}rem`,
 										objectFit: 'cover',
 										objectPosition: 'center'
 									}}
 								/>
 							</div>
 						</div>
-					)} */}
+					)}
 				</div>
 			</LoadingOverlay>
 		</Slider>
