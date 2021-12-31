@@ -13,9 +13,11 @@ import { useDropzone } from 'react-dropzone';
 import { makeid } from '../../../utils/helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMainCategories } from './uploadOrEditMediaSlice';
+import { getMedia } from '../../posts/uploadOrEditPost/mediaDropdownSlice';
+import captureVideoFrame from 'capture-video-frame';
 import Close from '@material-ui/icons/Close';
 import axios from 'axios';
-
+import { toast } from 'react-toastify';
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as MusicIcon } from '../../../assets/Music.svg';
 
@@ -45,7 +47,8 @@ const UploadOrEditMedia = ({
 	const [titleMediaError, setTitleMediaError] = useState('');
 	const [description, setDescription] = useState('');
 	const [previewFile, setPreviewFile] = useState(null);
-
+	const [isLoadingUploadMedia, setIsLoadingUploadMedia] = useState(false);
+	console.log(isLoadingUploadMedia);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
@@ -227,6 +230,112 @@ const UploadOrEditMedia = ({
 				setTitleMediaLabelColor('#ffffff');
 				setTitleMediaError('');
 			}, [5000]);
+		}
+	};
+
+	const uploadMedia = async (id, mediaFiles = []) => {
+		// setPostButtonStatus(true);
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/media/create-media`,
+				{
+					media_type: mainCategory,
+					sub_category: subCategory,
+					title: title,
+					description: description,
+					data: {
+						file_name: mediaFiles[0].file_name,
+						imageData: mediaFiles[1].media_url,
+						...(mainCategory === 'Watch'
+							? { videoData: mediaFiles[0].media_url, audioData: '' }
+							: { audioData: mediaFiles[0].media_url, videoData: '' })
+					}
+				}
+			);
+			if (result?.data?.status === 200) {
+				toast.success('Media has been uploaded!');
+				// setIsLoadingCreatePost(false);
+				// setPostButtonStatus(false);
+				dispatch(getMedia());
+				handleClose();
+				// dispatch(getMedaD());
+			}
+		} catch (e) {
+			toast.error('Failed to create media!');
+			// setIsLoadingCreatePost(false);
+			// setPostButtonStatus(false);
+			console.log(e);
+		}
+	};
+
+	const uploadFileToServer = async (file) => {
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
+				{
+					fileType: file.fileExtension,
+					parts: 1
+				}
+			);
+
+			if (result?.data?.result?.url) {
+				const _result = await axios.put(
+					result?.data?.result?.url,
+					file.file,
+					//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
+					{
+						headers: { 'Content-Type': file.mime_type }
+					}
+				);
+				const frame = captureVideoFrame('my-video', 'png');
+				if (result?.data?.result?.videoThumbnailUrl) {
+					await axios.put(result?.data?.result?.videoThumbnailUrl, frame.blob, {
+						headers: { 'Content-Type': 'image/png' }
+					});
+				}
+				if (_result?.status === 200) {
+					const uploadResult = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: file.file.name,
+							type: 'postlibrary',
+							data: {
+								Bucket: 'media',
+								MultipartUpload:
+									file?.mime_type == 'video/mp4'
+										? [
+												{
+													ETag: _result?.headers?.etag.replace(/['"]+/g, ''),
+													PartNumber: 1
+												}
+										  ]
+										: ['image'],
+								Keys: {
+									ImageKey: result?.data?.result?.Keys?.ImageKey,
+									VideoKey: result?.data?.result?.Keys?.VideoKey,
+									AudioKey: ''
+								},
+								UploadId:
+									file?.mime_type == 'video/mp4'
+										? result?.data?.result?.UploadId
+										: 'image'
+							}
+						}
+					);
+					if (uploadResult?.data?.status === 200) {
+						return uploadResult.data.result;
+					} else {
+						throw 'Error';
+					}
+				} else {
+					throw 'Error';
+				}
+			} else {
+				throw 'Error';
+			}
+		} catch (error) {
+			console.log('Error');
+			return null;
 		}
 	};
 
@@ -571,7 +680,21 @@ const UploadOrEditMedia = ({
 										if (addMediaBtnDisabled) {
 											validatePostBtn();
 										} else {
-											console.log('click');
+											console.log(uploadedCoverImage, uploadedFiles);
+											setIsLoadingUploadMedia(true);
+											let uploadFilesPromiseArray = [
+												uploadedFiles[0],
+												uploadedCoverImage[0]
+											].map(async (_file) => {
+												return uploadFileToServer(_file);
+											});
+											Promise.all([...uploadFilesPromiseArray])
+												.then((mediaFiles) => {
+													uploadMedia(null, mediaFiles);
+												})
+												.catch(() => {
+													setIsLoadingUploadMedia(true);
+												});
 										}
 									}}
 									text={buttonText}
