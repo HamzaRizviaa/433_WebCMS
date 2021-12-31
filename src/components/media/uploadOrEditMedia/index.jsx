@@ -14,9 +14,10 @@ import { makeid } from '../../../utils/helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMainCategories } from './uploadOrEditMediaSlice';
 import Close from '@material-ui/icons/Close';
+import axios from 'axios';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
-import axios from 'axios';
+import { ReactComponent as MusicIcon } from '../../../assets/Music.svg';
 
 const UploadOrEditMedia = ({
 	open,
@@ -47,7 +48,9 @@ const UploadOrEditMedia = ({
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
-			accept: 'video/mp4',
+			accept: `${
+				mainCategory === 'Watch' ? 'video/mp4' : 'audio/mp3, audio/mpeg'
+			}`,
 			maxFiles: 1
 		});
 	const dispatch = useDispatch();
@@ -272,6 +275,9 @@ const UploadOrEditMedia = ({
 											setMainCategory(e.target.value);
 											setMainCategoryLabelColor('#ffffff');
 											setMainCategoryError('');
+											if (uploadedFiles.length) {
+												uploadedFiles.map((file) => handleDeleteFile(file.id));
+											}
 										}}
 										className={`${classes.select}`}
 										disableUnderline={true}
@@ -362,8 +368,10 @@ const UploadOrEditMedia = ({
 																		</>
 																	) : (
 																		<>
+																			<MusicIcon className={classes.playIcon} />
 																			<img
-																				src={file.img}
+																				//src={file.img}
+
 																				className={classes.fileThumbnail}
 																			/>
 																		</>
@@ -406,7 +414,9 @@ const UploadOrEditMedia = ({
 													Click or drag files to this area to upload
 												</p>
 												<p className={classes.formatMsg}>
-													Supported format is mp4
+													{mainCategory === 'Watch'
+														? 'Supported format is mp4'
+														: 'Supported format is mp3'}
 												</p>
 												<p className={classes.uploadMediaError}>
 													{uploadMediaError}
