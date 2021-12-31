@@ -16,6 +16,7 @@ import { getMainCategories } from './uploadOrEditMediaSlice';
 //import Close from '@material-ui/icons/Close';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
+import axios from 'axios';
 
 const UploadOrEditMedia = ({
 	open,
@@ -26,6 +27,7 @@ const UploadOrEditMedia = ({
 }) => {
 	const [mainCategory, setMainCategory] = useState('');
 	const [subCategory, setSubCategory] = useState('');
+	const [subCategories, setSubCategories] = useState([]);
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [uploadedCoverImage, setUploadedCoverImage] = useState([]);
 	const [uploadMediaError, setUploadMediaError] = useState('');
@@ -65,6 +67,27 @@ const UploadOrEditMedia = ({
 		accept: 'image/jpeg, image/png',
 		maxFiles: 1
 	});
+
+	const updateSubCategories = async (mainCategory) => {
+		try {
+			const response = await axios.get(
+				`${process.env.REACT_APP_API_ENDPOINT}/media/get-sub-categories/${mainCategory}`
+			);
+			if (response?.data?.result?.length) {
+				setSubCategories([...response.data.result]);
+			} else {
+				setSubCategories([]);
+			}
+		} catch (error) {
+			console.log({ error });
+		}
+	};
+
+	useEffect(() => {
+		if (mainCategory) {
+			updateSubCategories(mainCategory);
+		}
+	}, [mainCategory]);
 
 	useEffect(() => {
 		if (!open) {
@@ -295,13 +318,13 @@ const UploadOrEditMedia = ({
 											getContentAnchorEl: null
 										}}
 									>
-										{mainCategory === 'Watch' ? (
-											<MenuItem value={'Funny Clips'}>Funny Clips</MenuItem>
-										) : (
-											<MenuItem value={'Football Players'}>
-												Football Players
-											</MenuItem>
-										)}
+										{subCategories.map((category, index) => {
+											return (
+												<MenuItem key={index} value={category}>
+													{category}
+												</MenuItem>
+											);
+										})}
 									</Select>
 								</div>
 							</div>
