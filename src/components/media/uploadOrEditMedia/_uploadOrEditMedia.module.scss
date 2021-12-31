@@ -202,3 +202,37 @@
 .textFieldInput {
 	@include textFieldInput;
 }
+
+.previewContentWrapper {
+	min-height: calc(100vh - 107px);
+	position: relative;
+	display: flex;
+	width: 1000px;
+}
+
+.contentWrapperNoPreview {
+	min-height: calc(100vh - 107px);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.previewComponent {
+	width: 35%;
+	border-left: 1px solid $grey;
+	margin-left: 3rem;
+	padding-left: 3rem;
+	margin-bottom: 10rem;
+}
+
+.previewHeader {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.previewFile {
+	height: 8rem;
+	width: 8rem;
+}

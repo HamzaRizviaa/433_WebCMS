@@ -11,6 +11,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { useDropzone } from 'react-dropzone';
 import { makeid } from '../../../utils/helper';
+import { useDispatch, useSelector } from 'react-redux';
+import { getMainCategories } from './uploadOrEditMediaSlice';
+//import Close from '@material-ui/icons/Close';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 
@@ -38,12 +41,20 @@ const UploadOrEditMedia = ({
 	const [titleMediaLabelColor, setTitleMediaLabelColor] = useState('#ffffff');
 	const [titleMediaError, setTitleMediaError] = useState('');
 	const [description, setDescription] = useState('');
+	const [previewFile, setPreviewFile] = useState(null);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'video/mp4',
 			maxFiles: 1
 		});
+	const dispatch = useDispatch();
+	const mainCategories = useSelector(
+		(state) => state.mediaLibrary.mainCategories
+	);
+	useEffect(() => {
+		dispatch(getMainCategories());
+	}, []);
 
 	const {
 		acceptedFiles: acceptedFiles2,
@@ -143,6 +154,7 @@ const UploadOrEditMedia = ({
 		setMainCategoryError('');
 		setTitleMedia('');
 		setDescription('');
+		setPreviewFile(null);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -203,309 +215,360 @@ const UploadOrEditMedia = ({
 			open={open}
 			handleClose={() => {
 				handleClose();
+				if (uploadedFiles.length) {
+					uploadedFiles.map((file) => handleDeleteFile(file.id));
+				}
+				if (uploadedCoverImage.length) {
+					uploadedCoverImage.map((file) => handleDeleteFile(file.id));
+				}
 			}}
 			title={title}
 		>
 			<LoadingOverlay spinner text='Loading...'>
-				<div className={classes.contentWrapper}>
-					<div>
-						<h5>{heading1}</h5>
-						<div className={classes.categoryContainer}>
-							<div className={classes.mainCategory}>
-								<h6 style={{ color: mainCategoryLabelColor }}>MAIN CATEGORY</h6>
-								<Select
-									value={mainCategory}
-									onChange={(e) => {
-										setMainCategory(e.target.value);
-										setMainCategoryLabelColor('#ffffff');
-										setMainCategoryError('');
-									}}
-									className={`${classes.select}`}
-									disableUnderline={true}
-									IconComponent={KeyboardArrowDownIcon}
-									MenuProps={{
-										anchorOrigin: {
-											vertical: 'bottom',
-											horizontal: 'left'
-										},
-										transformOrigin: {
-											vertical: 'top',
-											horizontal: 'left'
-										},
-										getContentAnchorEl: null
-									}}
-								>
-									<MenuItem value={'Watch'}>Watch</MenuItem>
-									<MenuItem value={'Listen'}>Listen</MenuItem>
-								</Select>
+				<div
+					className={`${
+						previewFile != null
+							? classes.previewContentWrapper
+							: classes.contentWrapper
+					}`}
+				>
+					<div
+						className={classes.contentWrapperNoPreview}
+						style={{ width: previewFile != null ? '60%' : 'auto' }}
+					>
+						<div>
+							<h5>{heading1}</h5>
+							<div className={classes.categoryContainer}>
+								<div className={classes.mainCategory}>
+									<h6 style={{ color: mainCategoryLabelColor }}>
+										MAIN CATEGORY
+									</h6>
+									<Select
+										value={mainCategory}
+										onChange={(e) => {
+											setMainCategory(e.target.value);
+											setMainCategoryLabelColor('#ffffff');
+											setMainCategoryError('');
+										}}
+										className={`${classes.select}`}
+										disableUnderline={true}
+										IconComponent={KeyboardArrowDownIcon}
+										MenuProps={{
+											anchorOrigin: {
+												vertical: 'bottom',
+												horizontal: 'left'
+											},
+											transformOrigin: {
+												vertical: 'top',
+												horizontal: 'left'
+											},
+											getContentAnchorEl: null
+										}}
+									>
+										{mainCategories.map((category, index) => {
+											return (
+												<MenuItem key={index} value={category}>
+													{category}
+												</MenuItem>
+											);
+										})}
+									</Select>
+								</div>
+								<div className={classes.subCategory}>
+									<h6>SUB CATEGORY</h6>
+									<Select
+										disabled={mainCategory ? false : true}
+										value={subCategory}
+										onChange={(e) => setSubCategory(e.target.value)}
+										className={`${classes.select}`}
+										disableUnderline={true}
+										IconComponent={KeyboardArrowDownIcon}
+										MenuProps={{
+											anchorOrigin: {
+												vertical: 'bottom',
+												horizontal: 'left'
+											},
+											transformOrigin: {
+												vertical: 'top',
+												horizontal: 'left'
+											},
+											getContentAnchorEl: null
+										}}
+									>
+										{mainCategory === 'Watch' ? (
+											<MenuItem value={'Funny Clips'}>Funny Clips</MenuItem>
+										) : (
+											<MenuItem value={'Football Players'}>
+												Football Players
+											</MenuItem>
+										)}
+									</Select>
+								</div>
 							</div>
-							<div className={classes.subCategory}>
-								<h6>SUB CATEGORY</h6>
-								<Select
-									disabled={mainCategory ? false : true}
-									value={subCategory}
-									onChange={(e) => setSubCategory(e.target.value)}
-									className={`${classes.select}`}
-									disableUnderline={true}
-									IconComponent={KeyboardArrowDownIcon}
-									MenuProps={{
-										anchorOrigin: {
-											vertical: 'bottom',
-											horizontal: 'left'
-										},
-										transformOrigin: {
-											vertical: 'top',
-											horizontal: 'left'
-										},
-										getContentAnchorEl: null
-									}}
-								>
-									{mainCategory === 'Watch' ? (
-										<MenuItem value={'Funny Clips'}>Funny Clips</MenuItem>
-									) : (
-										<MenuItem value={'Football Players'}>
-											Football Players
-										</MenuItem>
+							<p className={classes.uploadMediaError}>{mainCategoryError}</p>
+
+							{mainCategory ? (
+								<>
+									<h5>Add Media File</h5>
+									<DragDropContext>
+										<Droppable droppableId='droppable-1'>
+											{(provided) => (
+												<div
+													{...provided.droppableProps}
+													ref={provided.innerRef}
+													className={classes.uploadedFilesContainer}
+												>
+													{uploadedFiles.map((file, index) => {
+														return (
+															<div
+																key={index}
+																className={classes.filePreview}
+																ref={provided.innerRef}
+															>
+																<div className={classes.filePreviewLeft}>
+																	{file.type === 'video' ? (
+																		<>
+																			<video
+																				id={'my-video'}
+																				//poster={isEdit ? file.img : null}
+																				className={classes.fileThumbnail}
+																				style={{ objectFit: 'cover' }}
+																			>
+																				<source src={file.img} />
+																			</video>
+																		</>
+																	) : (
+																		<>
+																			<img
+																				src={file.img}
+																				className={classes.fileThumbnail}
+																			/>
+																		</>
+																	)}
+
+																	<p className={classes.fileName}>
+																		{file.fileName}
+																	</p>
+																</div>
+
+																<div className={classes.filePreviewRight}>
+																	<DeleteIcon
+																		className={classes.filePreviewIcons}
+																		onClick={() => {
+																			handleDeleteFile(file.id);
+																		}}
+																	/>
+																</div>
+															</div>
+														);
+													})}
+													{provided.placeholder}
+												</div>
+											)}
+										</Droppable>
+									</DragDropContext>
+									{!uploadedFiles.length && (
+										<section
+											className={classes.dropZoneContainer}
+											style={{
+												borderColor: dropZoneBorder
+											}}
+										>
+											<div {...getRootProps({ className: classes.dropzone })}>
+												<input {...getInputProps()} />
+												<AddCircleOutlineIcon
+													className={classes.addFilesIcon}
+												/>
+												<p className={classes.dragMsg}>
+													Click or drag files to this area to upload
+												</p>
+												<p className={classes.formatMsg}>
+													Supported format is mp4
+												</p>
+												<p className={classes.uploadMediaError}>
+													{uploadMediaError}
+												</p>
+											</div>
+										</section>
 									)}
-								</Select>
+
+									<p className={classes.fileRejectionError}>
+										{fileRejectionError}
+									</p>
+
+									<h5>Add Cover Image</h5>
+									<DragDropContext>
+										<Droppable droppableId='droppable-2'>
+											{(provided) => (
+												<div
+													{...provided.droppableProps}
+													ref={provided.innerRef}
+													className={classes.uploadedFilesContainer}
+												>
+													{uploadedCoverImage.map((file, index) => {
+														return (
+															<div
+																key={index}
+																className={classes.filePreview}
+																ref={provided.innerRef}
+															>
+																<div className={classes.filePreviewLeft}>
+																	{file.type === 'video' ? (
+																		<>
+																			<video
+																				id={'my-video'}
+																				//poster={isEdit ? file.img : null}
+																				className={classes.fileThumbnail}
+																				style={{ objectFit: 'cover' }}
+																			>
+																				<source src={file.img} />
+																			</video>
+																		</>
+																	) : (
+																		<>
+																			<img
+																				src={file.img}
+																				className={classes.fileThumbnail}
+																			/>
+																		</>
+																	)}
+
+																	<p className={classes.fileName}>
+																		{file.fileName}
+																	</p>
+																</div>
+
+																<div className={classes.filePreviewRight}>
+																	<EyeIcon
+																		className={classes.filePreviewIcons}
+																		onClick={() => setPreviewFile(file)}
+																	/>
+																	<DeleteIcon
+																		className={classes.filePreviewIcons}
+																		onClick={() => {
+																			handleDeleteFile2(file.id);
+																		}}
+																	/>
+																</div>
+															</div>
+														);
+													})}
+													{provided.placeholder}
+												</div>
+											)}
+										</Droppable>
+									</DragDropContext>
+									{!uploadedCoverImage.length && (
+										<section
+											className={classes.dropZoneContainer}
+											style={{
+												borderColor: dropZoneBorder2
+											}}
+										>
+											<div {...getRootProps2({ className: classes.dropzone })}>
+												<input {...getInputProps2()} />
+												<AddCircleOutlineIcon
+													className={classes.addFilesIcon}
+												/>
+												<p className={classes.dragMsg}>
+													Click or drag files to this area to upload
+												</p>
+												<p className={classes.formatMsg}>
+													Supported formats are jpeg,png
+												</p>
+												<p className={classes.uploadMediaError}>
+													{uploadCoverError}
+												</p>
+											</div>
+										</section>
+									)}
+
+									<p className={classes.fileRejectionError}>
+										{fileRejectionError2}
+									</p>
+
+									<div className={classes.titleContainer}>
+										<h6 style={{ color: titleMediaLabelColor }}>TITLE</h6>
+										<TextField
+											value={titleMedia}
+											onChange={(e) => {
+												setTitleMedia(e.target.value);
+												setTitleMediaError('');
+												setTitleMediaLabelColor('#ffffff');
+											}}
+											placeholder={'Please write your title here'}
+											className={classes.textField}
+											InputProps={{
+												disableUnderline: true,
+												className: classes.textFieldInput
+											}}
+											multiline
+											maxRows={2}
+										/>
+									</div>
+									<p className={classes.mediaError}>{titleMediaError}</p>
+
+									<div className={classes.titleContainer}>
+										<h6>DESCRIPTION</h6>
+										<TextField
+											value={description}
+											onChange={(e) => {
+												setDescription(e.target.value);
+											}}
+											placeholder={'Please write your description here'}
+											className={classes.textField}
+											InputProps={{
+												disableUnderline: true,
+												className: classes.textFieldInput
+											}}
+											multiline
+											maxRows={4}
+										/>
+									</div>
+								</>
+							) : (
+								<></>
+							)}
+						</div>
+						<div className={classes.buttonDiv}>
+							<div className={classes.addMediaBtn}>
+								<Button
+									disabled={addMediaBtnDisabled}
+									onClick={() => {
+										if (addMediaBtnDisabled) {
+											validatePostBtn();
+										} else {
+											console.log('click');
+										}
+									}}
+									text={buttonText}
+								/>
 							</div>
 						</div>
-						<p className={classes.uploadMediaError}>{mainCategoryError}</p>
-
-						{mainCategory ? (
-							<>
-								<h5>Add Media File</h5>
-								<DragDropContext>
-									<Droppable droppableId='droppable-1'>
-										{(provided) => (
-											<div
-												{...provided.droppableProps}
-												ref={provided.innerRef}
-												className={classes.uploadedFilesContainer}
-											>
-												{uploadedFiles.map((file, index) => {
-													return (
-														<div
-															key={index}
-															className={classes.filePreview}
-															ref={provided.innerRef}
-														>
-															<div className={classes.filePreviewLeft}>
-																{file.type === 'video' ? (
-																	<>
-																		<video
-																			id={'my-video'}
-																			//poster={isEdit ? file.img : null}
-																			className={classes.fileThumbnail}
-																			style={{ objectFit: 'cover' }}
-																		>
-																			<source src={file.img} />
-																		</video>
-																	</>
-																) : (
-																	<>
-																		<img
-																			src={file.img}
-																			className={classes.fileThumbnail}
-																		/>
-																	</>
-																)}
-
-																<p className={classes.fileName}>
-																	{file.fileName}
-																</p>
-															</div>
-
-															<div className={classes.filePreviewRight}>
-																<DeleteIcon
-																	className={classes.filePreviewIcons}
-																	onClick={() => {
-																		handleDeleteFile(file.id);
-																	}}
-																/>
-															</div>
-														</div>
-													);
-												})}
-												{provided.placeholder}
-											</div>
-										)}
-									</Droppable>
-								</DragDropContext>
-								{!uploadedFiles.length && (
-									<section
-										className={classes.dropZoneContainer}
-										style={{
-											borderColor: dropZoneBorder
-										}}
-									>
-										<div {...getRootProps({ className: classes.dropzone })}>
-											<input {...getInputProps()} />
-											<AddCircleOutlineIcon className={classes.addFilesIcon} />
-											<p className={classes.dragMsg}>
-												Click or drag files to this area to upload
-											</p>
-											<p className={classes.formatMsg}>
-												Supported format is mp4
-											</p>
-											<p className={classes.uploadMediaError}>
-												{uploadMediaError}
-											</p>
-										</div>
-									</section>
-								)}
-
-								<p className={classes.fileRejectionError}>
-									{fileRejectionError}
-								</p>
-
-								<h5>Add Cover Image</h5>
-								<DragDropContext>
-									<Droppable droppableId='droppable-2'>
-										{(provided) => (
-											<div
-												{...provided.droppableProps}
-												ref={provided.innerRef}
-												className={classes.uploadedFilesContainer}
-											>
-												{uploadedCoverImage.map((file, index) => {
-													return (
-														<div
-															key={index}
-															className={classes.filePreview}
-															ref={provided.innerRef}
-														>
-															<div className={classes.filePreviewLeft}>
-																{file.type === 'video' ? (
-																	<>
-																		<video
-																			id={'my-video'}
-																			//poster={isEdit ? file.img : null}
-																			className={classes.fileThumbnail}
-																			style={{ objectFit: 'cover' }}
-																		>
-																			<source src={file.img} />
-																		</video>
-																	</>
-																) : (
-																	<>
-																		<img
-																			src={file.img}
-																			className={classes.fileThumbnail}
-																		/>
-																	</>
-																)}
-
-																<p className={classes.fileName}>
-																	{file.fileName}
-																</p>
-															</div>
-
-															<div className={classes.filePreviewRight}>
-																<EyeIcon
-																	className={classes.filePreviewIcons}
-																	onClick={() => console.log('great')}
-																/>
-																<DeleteIcon
-																	className={classes.filePreviewIcons}
-																	onClick={() => {
-																		handleDeleteFile2(file.id);
-																	}}
-																/>
-															</div>
-														</div>
-													);
-												})}
-												{provided.placeholder}
-											</div>
-										)}
-									</Droppable>
-								</DragDropContext>
-								{!uploadedCoverImage.length && (
-									<section
-										className={classes.dropZoneContainer}
-										style={{
-											borderColor: dropZoneBorder2
-										}}
-									>
-										<div {...getRootProps2({ className: classes.dropzone })}>
-											<input {...getInputProps2()} />
-											<AddCircleOutlineIcon className={classes.addFilesIcon} />
-											<p className={classes.dragMsg}>
-												Click or drag files to this area to upload
-											</p>
-											<p className={classes.formatMsg}>
-												Supported formats are jpeg,png
-											</p>
-											<p className={classes.uploadMediaError}>
-												{uploadCoverError}
-											</p>
-										</div>
-									</section>
-								)}
-
-								<p className={classes.fileRejectionError}>
-									{fileRejectionError2}
-								</p>
-
-								<div className={classes.titleContainer}>
-									<h6 style={{ color: titleMediaLabelColor }}>TITLE</h6>
-									<TextField
-										value={titleMedia}
-										onChange={(e) => {
-											setTitleMedia(e.target.value);
-											setTitleMediaError('');
-											setTitleMediaLabelColor('#ffffff');
-										}}
-										placeholder={'Please write your title here'}
-										className={classes.textField}
-										InputProps={{
-											disableUnderline: true,
-											className: classes.textFieldInput
-										}}
-										multiline
-										maxRows={2}
-									/>
-								</div>
-								<p className={classes.mediaError}>{titleMediaError}</p>
-
-								<div className={classes.titleContainer}>
-									<h6>DESCRIPTION</h6>
-									<TextField
-										value={description}
-										onChange={(e) => {
-											setDescription(e.target.value);
-										}}
-										placeholder={'Please write your description here'}
-										className={classes.textField}
-										InputProps={{
-											disableUnderline: true,
-											className: classes.textFieldInput
-										}}
-										multiline
-										maxRows={4}
-									/>
-								</div>
-							</>
-						) : (
-							<></>
-						)}
 					</div>
-					<div className={classes.buttonDiv}>
-						<div className={classes.addMediaBtn}>
-							<Button
-								disabled={addMediaBtnDisabled}
-								onClick={() => {
-									if (addMediaBtnDisabled) {
-										validatePostBtn();
-									} else {
-										console.log('click');
-									}
-								}}
-								text={buttonText}
-							/>
+					{/* {previewFile != null && (
+						<div className={classes.previewComponent}>
+							<div className={classes.previewHeader}>
+								<Close
+									onClick={() => setPreviewFile(null)}
+									className={classes.closeIcon}
+								/>
+								<h5>Preview</h5>
+							</div>
+							<div>
+								<img
+									src={previewFile.img}
+									className={classes.previewFile}
+									style={{
+										width: `${2 * 4}px`,
+										height: `${2 * 4}px`,
+										objectFit: 'cover',
+										objectPosition: 'center'
+									}}
+								/>
+							</div>
 						</div>
-					</div>
+					)} */}
 				</div>
 			</LoadingOverlay>
 		</Slider>
