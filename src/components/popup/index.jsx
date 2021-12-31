@@ -229,9 +229,7 @@ const Popup = ({ title, open, closePopup }) => {
 								<PostBtn
 									classes={classes}
 									buttonText={'POST'}
-									btnAction={() => {
-										console.log('Button Clicked');
-									}}
+									btnAction={() => {}}										
 									disabled={handleDisablePostBtn()}
 								/>
 							</div>
