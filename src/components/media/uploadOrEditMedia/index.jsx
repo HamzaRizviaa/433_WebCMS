@@ -11,6 +11,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { useDropzone } from 'react-dropzone';
 import { makeid } from '../../../utils/helper';
+import { useDispatch, useSelector } from 'react-redux';
+import { getMainCategories } from './uploadOrEditMediaSlice';
 
 const UploadOrEditMedia = ({
 	open,
@@ -28,12 +30,18 @@ const UploadOrEditMedia = ({
 	const [mainCategoryLabelColor, setMainCategoryLabelColor] =
 		useState('#ffffff');
 	const [mainCategoryError, setMainCategoryError] = useState('');
-
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'video/mp4',
 			maxFiles: 1
 		});
+	const dispatch = useDispatch();
+	const mainCategories = useSelector(
+		(state) => state.mediaLibrary.mainCategories
+	);
+	useEffect(() => {
+		dispatch(getMainCategories());
+	}, []);
 
 	useEffect(() => {
 		if (!open) {
@@ -152,8 +160,13 @@ const UploadOrEditMedia = ({
 										getContentAnchorEl: null
 									}}
 								>
-									<MenuItem value={'Watch'}>Watch</MenuItem>
-									<MenuItem value={'Listen'}>Listen</MenuItem>
+									{mainCategories.map((category, index) => {
+										return (
+											<MenuItem key={index} value={category}>
+												{category}
+											</MenuItem>
+										);
+									})}
 								</Select>
 							</div>
 							<div className={classes.subCategory}>
