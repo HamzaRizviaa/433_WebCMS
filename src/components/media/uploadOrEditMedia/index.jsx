@@ -26,7 +26,8 @@ const UploadOrEditMedia = ({
 	handleClose,
 	title,
 	heading1,
-	buttonText
+	buttonText,
+	isEdit
 }) => {
 	const [mainCategory, setMainCategory] = useState('');
 	const [subCategory, setSubCategory] = useState('');
@@ -350,11 +351,11 @@ const UploadOrEditMedia = ({
 			open={open}
 			handleClose={() => {
 				handleClose();
-				if (uploadedFiles.length) {
+				if (uploadedFiles.length && !isEdit) {
 					uploadedFiles.map((file) => handleDeleteFile(file.id));
 				}
-				if (uploadedCoverImage.length) {
-					uploadedCoverImage.map((file) => handleDeleteFile(file.id));
+				if (uploadedCoverImage.length && !isEdit) {
+					uploadedCoverImage.map((file) => handleDeleteFile2(file.id));
 				}
 			}}
 			title={title}
@@ -379,6 +380,8 @@ const UploadOrEditMedia = ({
 										MAIN CATEGORY
 									</h6>
 									<Select
+										disabled={isEdit ? true : false}
+										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
 										value={mainCategory}
 										onChange={(e) => {
 											setMainCategory(e.target.value);
@@ -415,7 +418,8 @@ const UploadOrEditMedia = ({
 								<div className={classes.subCategory}>
 									<h6>SUB CATEGORY</h6>
 									<Select
-										disabled={mainCategory ? false : true}
+										disabled={!mainCategory || isEdit ? true : false}
+										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
 										value={subCategory}
 										onChange={(e) => setSubCategory(e.target.value)}
 										className={`${classes.select}`}
@@ -445,9 +449,9 @@ const UploadOrEditMedia = ({
 							</div>
 							<p className={classes.uploadMediaError}>{mainCategoryError}</p>
 
-							{mainCategory ? (
+							{mainCategory || isEdit ? (
 								<>
-									<h5>Add Media File</h5>
+									<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
 									<DragDropContext>
 										<Droppable droppableId='droppable-1'>
 											{(provided) => (
@@ -468,7 +472,7 @@ const UploadOrEditMedia = ({
 																		<>
 																			<video
 																				id={'my-video'}
-																				//poster={isEdit ? file.img : null}
+																				poster={isEdit ? file.img : null}
 																				className={classes.fileThumbnail}
 																				style={{ objectFit: 'cover' }}
 																			>
@@ -492,12 +496,16 @@ const UploadOrEditMedia = ({
 																</div>
 
 																<div className={classes.filePreviewRight}>
-																	<DeleteIcon
-																		className={classes.filePreviewIcons}
-																		onClick={() => {
-																			handleDeleteFile(file.id);
-																		}}
-																	/>
+																	{isEdit ? (
+																		<></>
+																	) : (
+																		<DeleteIcon
+																			className={classes.filePreviewIcons}
+																			onClick={() => {
+																				handleDeleteFile(file.id);
+																			}}
+																		/>
+																	)}
 																</div>
 															</div>
 														);
@@ -507,7 +515,7 @@ const UploadOrEditMedia = ({
 											)}
 										</Droppable>
 									</DragDropContext>
-									{!uploadedFiles.length && (
+									{!uploadedFiles.length && !isEdit && (
 										<section
 											className={classes.dropZoneContainer}
 											style={{
@@ -538,7 +546,7 @@ const UploadOrEditMedia = ({
 										{fileRejectionError}
 									</p>
 
-									<h5>Add Cover Image</h5>
+									<h5>{isEdit ? 'Cover Image' : 'Add Cover Image'}</h5>
 									<DragDropContext>
 										<Droppable droppableId='droppable-2'>
 											{(provided) => (
@@ -581,16 +589,25 @@ const UploadOrEditMedia = ({
 																</div>
 
 																<div className={classes.filePreviewRight}>
-																	<EyeIcon
-																		className={classes.filePreviewIcons}
-																		onClick={() => setPreviewFile(file)}
-																	/>
-																	<DeleteIcon
-																		className={classes.filePreviewIcons}
-																		onClick={() => {
-																			handleDeleteFile2(file.id);
-																		}}
-																	/>
+																	{isEdit ? (
+																		<EyeIcon
+																			className={classes.filePreviewIcons}
+																			onClick={() => setPreviewFile(file)}
+																		/>
+																	) : (
+																		<>
+																			<EyeIcon
+																				className={classes.filePreviewIcons}
+																				onClick={() => setPreviewFile(file)}
+																			/>
+																			<DeleteIcon
+																				className={classes.filePreviewIcons}
+																				onClick={() => {
+																					handleDeleteFile2(file.id);
+																				}}
+																			/>{' '}
+																		</>
+																	)}
 																</div>
 															</div>
 														);
@@ -600,7 +617,7 @@ const UploadOrEditMedia = ({
 											)}
 										</Droppable>
 									</DragDropContext>
-									{!uploadedCoverImage.length && (
+									{!uploadedCoverImage.length && !isEdit && (
 										<section
 											className={classes.dropZoneContainer}
 											style={{
@@ -673,7 +690,28 @@ const UploadOrEditMedia = ({
 							)}
 						</div>
 						<div className={classes.buttonDiv}>
-							<div className={classes.addMediaBtn}>
+							{isEdit ? (
+								<div className={classes.editBtn}>
+									<Button
+										disabled={false}
+										button2={isEdit ? true : false}
+										onClick={() => {
+											// if (!deleteBtnStatus) {
+											// 	deletePost(specificPost?.id);
+											// }
+										}}
+										text={'DELETE MEDIA'}
+									/>
+								</div>
+							) : (
+								<></>
+							)}
+
+							<div
+								className={
+									isEdit ? classes.addMediaBtnEdit : classes.addMediaBtn
+								}
+							>
 								<Button
 									disabled={addMediaBtnDisabled}
 									onClick={() => {
@@ -734,7 +772,7 @@ const UploadOrEditMedia = ({
 UploadOrEditMedia.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
-	//isEdit: PropTypes.bool.isRequired,
+	isEdit: PropTypes.bool.isRequired,
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired
