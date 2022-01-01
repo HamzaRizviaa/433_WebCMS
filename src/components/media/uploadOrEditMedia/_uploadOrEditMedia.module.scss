@@ -26,6 +26,18 @@
 	margin-top: 0.5rem;
 }
 
+.addMediaBtnEdit {
+	width: 70%;
+	margin-top: 0.5rem;
+	display: inline-block;
+}
+
+.editBtn {
+	width: 30%;
+	display: inline-block;
+	margin-top: 0.5rem;
+}
+
 .categoryContainer {
 	margin-top: 2.5rem;
 	width: 100%;
@@ -63,17 +75,17 @@
 	line-height: 1.6 !important;
 	border-radius: 5rem !important;
 	margin-bottom: 1rem !important;
-	background-color: #000000 !important;
+	background-color: #000000;
 
 	div[role='button'] {
-		padding: 0.6rem 0rem 0.6rem 2rem;
+		padding: 0.5rem 0rem 0.5rem 2rem;
 	}
 
 	svg {
 		color: $neon-yellow;
 		right: 1rem;
 		top: 0;
-		font-size: 3.5rem;
+		font-size: 3rem;
 	}
 }
 

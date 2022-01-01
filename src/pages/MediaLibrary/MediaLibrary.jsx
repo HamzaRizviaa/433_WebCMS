@@ -50,6 +50,7 @@ const getDateTime = (dateTime) => {
 const MediaLibrary = () => {
 	const media = useSelector((state) => state.mediaDropdown.media);
 	const [showSlider, setShowSlider] = useState(false);
+	const [edit, setEdit] = useState(false);
 
 	const dispatch = useDispatch();
 
@@ -131,7 +132,13 @@ const MediaLibrary = () => {
 			formatter: () => {
 				return (
 					<div className={classes.row}>
-						<Edit onClick={() => {}} className={classes.editIcon} />
+						<Edit
+							onClick={() => {
+								setShowSlider(true);
+								setEdit(true);
+							}}
+							className={classes.editIcon}
+						/>
 					</div>
 				);
 			}
@@ -155,12 +162,14 @@ const MediaLibrary = () => {
 
 			<UploadOrEditMedia
 				open={showSlider}
+				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
+					setTimeout(() => setEdit(false), 150);
 				}}
-				title={'Upload Media'}
-				heading1={'Select Media Type'}
-				buttonText={'ADD MEDIA'}
+				title={edit ? 'Edit Media' : 'Upload Media'}
+				heading1={edit ? 'Media Type' : 'Select Media Type'}
+				buttonText={edit ? 'SAVE CHANGES' : 'ADD MEDIA'}
 			/>
 		</Layout>
 	);
