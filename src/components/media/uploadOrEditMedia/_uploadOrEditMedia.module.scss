@@ -159,6 +159,23 @@
 // 	background-repeat: repeat-x;
 // }
 
+.droppa {
+	//background: yellow;
+	background: linear-gradient(
+			to right,
+			$neon-yellow 50%,
+			rgba(255, 255, 255, 0) 0%
+		),
+		linear-gradient($neon-yellow 50%, rgba(255, 255, 255, 0) 0%),
+		linear-gradient(to right, $neon-yellow 50%, rgba(255, 255, 255, 0) 0%),
+		linear-gradient($neon-yellow 50%, rgba(255, 255, 255, 0) 0%);
+	background-position: top, right, bottom, left;
+	background-repeat: repeat-x, repeat-y;
+	background-size: 10px 1px, 1px 10px;
+	padding: 1rem 2.5rem 0.5rem 2.5rem;
+	cursor: pointer;
+}
+
 .dropzone {
 	text-align: center;
 }

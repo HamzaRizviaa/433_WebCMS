@@ -517,7 +517,7 @@ const UploadOrEditMedia = ({
 									</DragDropContext>
 									{!uploadedFiles.length && !isEdit && (
 										<section
-											className={classes.dropZoneContainer}
+											className={classes.droppa}
 											style={{
 												borderColor: dropZoneBorder
 											}}
@@ -619,7 +619,7 @@ const UploadOrEditMedia = ({
 									</DragDropContext>
 									{!uploadedCoverImage.length && !isEdit && (
 										<section
-											className={classes.dropZoneContainer}
+											className={classes.droppa}
 											style={{
 												borderColor: dropZoneBorder2
 											}}
