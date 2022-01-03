@@ -51,7 +51,13 @@ const PostLibrary = () => {
 			sortCaret: sortRows,
 			formatter: (content, row) => {
 				return (
-					<div className={classes.mediaWrapper}>
+					<div
+						className={
+							row.orientation_type === 'landscape'
+								? classes.mediaWrapperLandscape
+								: classes.mediaWrapper
+						}
+					>
 						{row.thumbnail_url ? (
 							<PlayArrowIcon
 								className={
