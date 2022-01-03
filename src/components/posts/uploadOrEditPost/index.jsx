@@ -720,7 +720,18 @@ const UploadOrEditPost = ({
 											},
 											getContentAnchorEl: null
 										}}
+										displayEmpty={true}
+										renderValue={(value) =>
+											value?.length
+												? Array.isArray(value)
+													? value.join(', ')
+													: value
+												: 'Please Select'
+										}
 									>
+										{/* <MenuItem disabled value=''>
+											Please Select
+										</MenuItem> */}
 										{media.map((item, index) => (
 											<MenuItem key={index} value={item.id}>
 												{item.title}{' '}

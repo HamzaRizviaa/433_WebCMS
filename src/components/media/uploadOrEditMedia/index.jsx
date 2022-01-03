@@ -405,7 +405,18 @@ const UploadOrEditMedia = ({
 											},
 											getContentAnchorEl: null
 										}}
+										displayEmpty={true}
+										renderValue={(value) =>
+											value?.length
+												? Array.isArray(value)
+													? value.join(', ')
+													: value
+												: 'Please Select'
+										}
 									>
+										{/* <MenuItem disabled value=''>
+											Please Select
+										</MenuItem> */}
 										{mainCategories.map((category, index) => {
 											return (
 												<MenuItem key={index} value={category}>
@@ -436,7 +447,18 @@ const UploadOrEditMedia = ({
 											},
 											getContentAnchorEl: null
 										}}
+										displayEmpty={mainCategory ? true : false}
+										renderValue={(value) =>
+											value?.length
+												? Array.isArray(value)
+													? value.join(', ')
+													: value
+												: 'Please Select'
+										}
 									>
+										{/* <MenuItem disabled value=''>
+											Please Select
+										</MenuItem> */}
 										{subCategories.map((category, index) => {
 											return (
 												<MenuItem key={index} value={category}>
@@ -528,7 +550,7 @@ const UploadOrEditMedia = ({
 													className={classes.addFilesIcon}
 												/>
 												<p className={classes.dragMsg}>
-													Click or drag files to this area to upload
+													Click or drag file to this area to upload
 												</p>
 												<p className={classes.formatMsg}>
 													{mainCategory === 'Watch'
@@ -619,7 +641,7 @@ const UploadOrEditMedia = ({
 									</DragDropContext>
 									{!uploadedCoverImage.length && !isEdit && (
 										<section
-											className={classes.droppa}
+											className={classes.dropZoneContainer}
 											style={{
 												borderColor: dropZoneBorder2
 											}}
@@ -630,10 +652,10 @@ const UploadOrEditMedia = ({
 													className={classes.addFilesIcon}
 												/>
 												<p className={classes.dragMsg}>
-													Click or drag files to this area to upload
+													Click or drag file to this area to upload
 												</p>
 												<p className={classes.formatMsg}>
-													Supported formats are jpeg,png
+													Supported formats are jpeg, png
 												</p>
 												<p className={classes.uploadMediaError}>
 													{uploadCoverError}
