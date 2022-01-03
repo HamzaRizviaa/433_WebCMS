@@ -49,7 +49,8 @@ const UploadOrEditMedia = ({
 	const [description, setDescription] = useState('');
 	const [previewFile, setPreviewFile] = useState(null);
 	const [isLoadingUploadMedia, setIsLoadingUploadMedia] = useState(false);
-	console.log(isLoadingUploadMedia);
+	const [mediaButtonStatus, setMediaButtonStatus] = useState(false);
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
@@ -185,6 +186,7 @@ const UploadOrEditMedia = ({
 		setTitleMedia('');
 		setDescription('');
 		setPreviewFile(null);
+		setMediaButtonStatus(false);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -235,7 +237,7 @@ const UploadOrEditMedia = ({
 	};
 
 	const uploadMedia = async (id, mediaFiles = []) => {
-		// setPostButtonStatus(true);
+		setMediaButtonStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media/create-media`,
@@ -256,15 +258,14 @@ const UploadOrEditMedia = ({
 			if (result?.data?.status === 200) {
 				toast.success('Media has been uploaded!');
 				setIsLoadingUploadMedia(false);
-				// setPostButtonStatus(false);
+				setMediaButtonStatus(false);
 				dispatch(getMedia());
 				handleClose();
-				// dispatch(getMedaD());
 			}
 		} catch (e) {
 			toast.error('Failed to create media!');
 			setIsLoadingUploadMedia(false);
-			// setPostButtonStatus(false);
+			setMediaButtonStatus(false);
 			console.log(e);
 		}
 	};
@@ -344,7 +345,8 @@ const UploadOrEditMedia = ({
 		!uploadedFiles.length ||
 		!mainCategory ||
 		!uploadedCoverImage.length ||
-		!titleMedia;
+		!titleMedia ||
+		mediaButtonStatus;
 
 	return (
 		<Slider
@@ -718,7 +720,7 @@ const UploadOrEditMedia = ({
 										if (addMediaBtnDisabled) {
 											validatePostBtn();
 										} else {
-											console.log(uploadedCoverImage, uploadedFiles);
+											setMediaButtonStatus(true);
 											setIsLoadingUploadMedia(true);
 											let uploadFilesPromiseArray = [
 												uploadedFiles[0],
