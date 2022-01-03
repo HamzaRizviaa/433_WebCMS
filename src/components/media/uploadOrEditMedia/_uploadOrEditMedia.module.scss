@@ -141,7 +141,6 @@
 .dropZoneContainer {
 	border: 1px solid $neon-yellow;
 	border-style: dashed;
-	padding: 1rem 2.5rem 0.5rem 2.5rem;
 	cursor: pointer;
 	border-radius: 0.5rem;
 	//margin-bottom: 1rem;
@@ -178,6 +177,7 @@
 
 .dropzone {
 	text-align: center;
+	padding: 1rem 2.5rem 0.5rem 2.5rem;
 }
 
 .addFilesIcon {
