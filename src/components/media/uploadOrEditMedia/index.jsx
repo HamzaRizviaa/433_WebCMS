@@ -49,7 +49,8 @@ const UploadOrEditMedia = ({
 	const [description, setDescription] = useState('');
 	const [previewFile, setPreviewFile] = useState(null);
 	const [isLoadingUploadMedia, setIsLoadingUploadMedia] = useState(false);
-	console.log(isLoadingUploadMedia);
+	const [mediaButtonStatus, setMediaButtonStatus] = useState(false);
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
@@ -185,6 +186,7 @@ const UploadOrEditMedia = ({
 		setTitleMedia('');
 		setDescription('');
 		setPreviewFile(null);
+		setMediaButtonStatus(false);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -235,7 +237,7 @@ const UploadOrEditMedia = ({
 	};
 
 	const uploadMedia = async (id, mediaFiles = []) => {
-		// setPostButtonStatus(true);
+		setMediaButtonStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media/create-media`,
@@ -255,16 +257,15 @@ const UploadOrEditMedia = ({
 			);
 			if (result?.data?.status === 200) {
 				toast.success('Media has been uploaded!');
-				// setIsLoadingCreatePost(false);
-				// setPostButtonStatus(false);
+				setIsLoadingUploadMedia(false);
+				setMediaButtonStatus(false);
 				dispatch(getMedia());
 				handleClose();
-				// dispatch(getMedaD());
 			}
 		} catch (e) {
 			toast.error('Failed to create media!');
-			// setIsLoadingCreatePost(false);
-			// setPostButtonStatus(false);
+			setIsLoadingUploadMedia(false);
+			setMediaButtonStatus(false);
 			console.log(e);
 		}
 	};
@@ -344,7 +345,8 @@ const UploadOrEditMedia = ({
 		!uploadedFiles.length ||
 		!mainCategory ||
 		!uploadedCoverImage.length ||
-		!titleMedia;
+		!titleMedia ||
+		mediaButtonStatus;
 
 	return (
 		<Slider
@@ -360,7 +362,7 @@ const UploadOrEditMedia = ({
 			}}
 			title={title}
 		>
-			<LoadingOverlay spinner text='Loading...'>
+			<LoadingOverlay active={isLoadingUploadMedia} spinner text='Loading...'>
 				<div
 					className={`${
 						previewFile != null
@@ -405,7 +407,18 @@ const UploadOrEditMedia = ({
 											},
 											getContentAnchorEl: null
 										}}
+										displayEmpty={true}
+										renderValue={(value) =>
+											value?.length
+												? Array.isArray(value)
+													? value.join(', ')
+													: value
+												: 'Please Select'
+										}
 									>
+										{/* <MenuItem disabled value=''>
+											Please Select
+										</MenuItem> */}
 										{mainCategories.map((category, index) => {
 											return (
 												<MenuItem key={index} value={category}>
@@ -436,7 +449,18 @@ const UploadOrEditMedia = ({
 											},
 											getContentAnchorEl: null
 										}}
+										displayEmpty={mainCategory ? true : false}
+										renderValue={(value) =>
+											value?.length
+												? Array.isArray(value)
+													? value.join(', ')
+													: value
+												: 'Please Select'
+										}
 									>
+										{/* <MenuItem disabled value=''>
+											Please Select
+										</MenuItem> */}
 										{subCategories.map((category, index) => {
 											return (
 												<MenuItem key={index} value={category}>
@@ -528,7 +552,7 @@ const UploadOrEditMedia = ({
 													className={classes.addFilesIcon}
 												/>
 												<p className={classes.dragMsg}>
-													Click or drag files to this area to upload
+													Click or drag file to this area to upload
 												</p>
 												<p className={classes.formatMsg}>
 													{mainCategory === 'Watch'
@@ -630,10 +654,10 @@ const UploadOrEditMedia = ({
 													className={classes.addFilesIcon}
 												/>
 												<p className={classes.dragMsg}>
-													Click or drag files to this area to upload
+													Click or drag file to this area to upload
 												</p>
 												<p className={classes.formatMsg}>
-													Supported formats are jpeg,png
+													Supported formats are jpeg, png
 												</p>
 												<p className={classes.uploadMediaError}>
 													{uploadCoverError}
@@ -718,7 +742,7 @@ const UploadOrEditMedia = ({
 										if (addMediaBtnDisabled) {
 											validatePostBtn();
 										} else {
-											console.log(uploadedCoverImage, uploadedFiles);
+											setMediaButtonStatus(true);
 											setIsLoadingUploadMedia(true);
 											let uploadFilesPromiseArray = [
 												uploadedFiles[0],
@@ -731,7 +755,7 @@ const UploadOrEditMedia = ({
 													uploadMedia(null, mediaFiles);
 												})
 												.catch(() => {
-													setIsLoadingUploadMedia(true);
+													setIsLoadingUploadMedia(false);
 												});
 										}
 									}}
