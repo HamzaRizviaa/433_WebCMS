@@ -255,7 +255,7 @@ const UploadOrEditMedia = ({
 			);
 			if (result?.data?.status === 200) {
 				toast.success('Media has been uploaded!');
-				// setIsLoadingCreatePost(false);
+				setIsLoadingUploadMedia(false);
 				// setPostButtonStatus(false);
 				dispatch(getMedia());
 				handleClose();
@@ -263,7 +263,7 @@ const UploadOrEditMedia = ({
 			}
 		} catch (e) {
 			toast.error('Failed to create media!');
-			// setIsLoadingCreatePost(false);
+			setIsLoadingUploadMedia(false);
 			// setPostButtonStatus(false);
 			console.log(e);
 		}
@@ -360,7 +360,7 @@ const UploadOrEditMedia = ({
 			}}
 			title={title}
 		>
-			<LoadingOverlay spinner text='Loading...'>
+			<LoadingOverlay active={isLoadingUploadMedia} spinner text='Loading...'>
 				<div
 					className={`${
 						previewFile != null
@@ -731,7 +731,7 @@ const UploadOrEditMedia = ({
 													uploadMedia(null, mediaFiles);
 												})
 												.catch(() => {
-													setIsLoadingUploadMedia(true);
+													setIsLoadingUploadMedia(false);
 												});
 										}
 									}}

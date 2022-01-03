@@ -775,7 +775,7 @@ const UploadOrEditPost = ({
 														createPost(null, mediaFiles);
 													})
 													.catch(() => {
-														setIsLoadingCreatePost(true);
+														setIsLoadingCreatePost(false);
 													});
 											}
 										}
