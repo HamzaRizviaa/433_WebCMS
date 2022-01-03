@@ -615,12 +615,14 @@ const UploadOrEditPost = ({
 																			className={classes.filePreviewIcons}
 																			onClick={() => setPreviewFile(file)}
 																		/>
-																		<span {...provided.dragHandleProps}>
-																			<MenuIcon
-																				style={{ cursor: 'grab' }}
-																				className={classes.filePreviewIcons}
-																			/>
-																		</span>
+																		{uploadedFiles.length > 1 && (
+																			<span {...provided.dragHandleProps}>
+																				<MenuIcon
+																					style={{ cursor: 'grab' }}
+																					className={classes.filePreviewIcons}
+																				/>
+																			</span>
+																		)}
 																		<DeleteIcon
 																			className={classes.filePreviewIcons}
 																			onClick={() => {
