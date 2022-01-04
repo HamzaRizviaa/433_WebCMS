@@ -129,6 +129,7 @@ const UploadOrEditMedia = ({
 	};
 
 	useEffect(() => {
+		console.log(acceptedFiles);
 		if (acceptedFiles?.length) {
 			setUploadMediaError('');
 			setDropZoneBorder('#ffff00');
@@ -167,7 +168,7 @@ const UploadOrEditMedia = ({
 			setUploadedCoverImage([...uploadedCoverImage, ...newFiles]);
 		}
 	}, [acceptedFiles2]);
-
+	console.log({ uploadedFiles });
 	const resetState = () => {
 		setMainCategory('');
 		setSubCategory('');
@@ -236,7 +237,8 @@ const UploadOrEditMedia = ({
 		}
 	};
 
-	const uploadMedia = async (id, mediaFiles = []) => {
+	const uploadMedia = async (id, payload) => {
+		console.log(id, payload);
 		setMediaButtonStatus(true);
 		try {
 			const result = await axios.post(
@@ -247,11 +249,10 @@ const UploadOrEditMedia = ({
 					title: title,
 					description: description,
 					data: {
-						file_name: mediaFiles[0].file_name,
-						imageData: mediaFiles[1].media_url,
-						...(mainCategory === 'Watch'
-							? { videoData: mediaFiles[0].media_url, audioData: '' }
-							: { audioData: mediaFiles[0].media_url, videoData: '' })
+						file_name: payload?.file_name,
+						videoData: payload?.data?.Keys?.VideoKey,
+						imageData: payload?.data?.Keys?.ImageKey,
+						audioData: payload?.data?.Keys?.AudioKey
 					}
 				}
 			);
@@ -275,13 +276,14 @@ const UploadOrEditMedia = ({
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
 				{
-					fileType: file.fileExtension,
+					fileType:
+						file.fileExtension === '.mpeg' ? '.mp3' : file.fileExtension,
 					parts: 1
 				}
 			);
 
 			if (result?.data?.result?.url) {
-				const _result = await axios.put(
+				let response = await axios.put(
 					result?.data?.result?.url,
 					file.file,
 					//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
@@ -295,43 +297,7 @@ const UploadOrEditMedia = ({
 						headers: { 'Content-Type': 'image/png' }
 					});
 				}
-				if (_result?.status === 200) {
-					const uploadResult = await axios.post(
-						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-						{
-							file_name: file.file.name,
-							type: 'postlibrary',
-							data: {
-								Bucket: 'media',
-								MultipartUpload:
-									file?.mime_type == 'video/mp4'
-										? [
-												{
-													ETag: _result?.headers?.etag.replace(/['"]+/g, ''),
-													PartNumber: 1
-												}
-										  ]
-										: ['image'],
-								Keys: {
-									ImageKey: result?.data?.result?.Keys?.ImageKey,
-									VideoKey: result?.data?.result?.Keys?.VideoKey,
-									AudioKey: ''
-								},
-								UploadId:
-									file?.mime_type == 'video/mp4'
-										? result?.data?.result?.UploadId
-										: 'image'
-							}
-						}
-					);
-					if (uploadResult?.data?.status === 200) {
-						return uploadResult.data.result;
-					} else {
-						throw 'Error';
-					}
-				} else {
-					throw 'Error';
-				}
+				return { ...result.data.result, signedResponse: response };
 			} else {
 				throw 'Error';
 			}
@@ -751,8 +717,42 @@ const UploadOrEditMedia = ({
 												return uploadFileToServer(_file);
 											});
 											Promise.all([...uploadFilesPromiseArray])
-												.then((mediaFiles) => {
-													uploadMedia(null, mediaFiles);
+												.then(async (mediaFiles) => {
+													uploadMedia(null, {
+														file_name: uploadedFiles[0].fileName,
+														type: 'medialibrary',
+														data: {
+															Bucket: 'media',
+															MultipartUpload:
+																uploadedFiles[0]?.mime_type == 'video/mp4'
+																	? [
+																			{
+																				ETag: mediaFiles[0]?.signedResponse?.headers?.etag.replace(
+																					/['"]+/g,
+																					''
+																				),
+																				PartNumber: 1
+																			}
+																	  ]
+																	: ['image'],
+															Keys: {
+																ImageKey: mediaFiles[1]?.Keys?.ImageKey,
+																...(mainCategory === 'Watch'
+																	? {
+																			VideoKey: mediaFiles[0]?.Keys?.VideoKey,
+																			AudioKey: ''
+																	  }
+																	: {
+																			AudioKey: mediaFiles[0]?.Keys?.AudioKey,
+																			VideoKey: ''
+																	  })
+															},
+															UploadId:
+																mainCategory === 'Watch'
+																	? mediaFiles[0].UploadId
+																	: 'audio'
+														}
+													});
 												})
 												.catch(() => {
 													setIsLoadingUploadMedia(false);
