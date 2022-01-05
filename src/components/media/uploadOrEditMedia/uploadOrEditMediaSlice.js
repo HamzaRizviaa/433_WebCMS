@@ -15,10 +15,25 @@ export const getMainCategories = createAsyncThunk(
 	}
 );
 
+export const getSpecificMedia = createAsyncThunk(
+	'uploadMedia/getSpecificMedia',
+	async (id) => {
+		const response = await axios.get(
+			`${process.env.REACT_APP_API_ENDPOINT}/media/edit/${id}`
+		);
+		if (response?.data?.result) {
+			return response.data.result;
+		} else {
+			return [];
+		}
+	}
+);
+
 export const uploadOrEditMediaSlice = createSlice({
 	name: 'uploadMedia',
 	initialState: {
 		mainCategories: [],
+		specificMedia: [],
 		mainCategoriesStatusLoading: false
 	},
 	reducers: null,
@@ -32,6 +47,9 @@ export const uploadOrEditMediaSlice = createSlice({
 		},
 		[getMainCategories.rejected]: (state) => {
 			state.mainCategoriesStatusLoading = false;
+		},
+		[getSpecificMedia.fulfilled]: (state, action) => {
+			state.specificMedia = action.payload;
 		}
 	}
 });
