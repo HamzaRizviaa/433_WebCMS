@@ -62,6 +62,19 @@ const UploadOrEditMedia = ({
 	const mainCategories = useSelector(
 		(state) => state.mediaLibrary.mainCategories
 	);
+	const specificMedia = useSelector(
+		(state) => state.mediaLibrary.specificMedia
+	);
+	useEffect(() => {
+		console.log({ specificMedia });
+		if (specificMedia) {
+			setMainCategory(specificMedia?.media_type);
+			setSubCategory(specificMedia?.sub_category);
+			setTitleMedia(specificMedia?.title);
+			setDescription(specificMedia?.description);
+		}
+	}, [specificMedia]);
+
 	useEffect(() => {
 		dispatch(getMainCategories());
 	}, []);
@@ -246,7 +259,7 @@ const UploadOrEditMedia = ({
 				{
 					media_type: mainCategory,
 					sub_category: subCategory,
-					title: title,
+					title: titleMedia,
 					description: description,
 					data: {
 						file_name: payload?.file_name,
@@ -359,9 +372,15 @@ const UploadOrEditMedia = ({
 												uploadedFiles.map((file) => handleDeleteFile(file.id));
 											}
 										}}
-										className={`${classes.select}`}
+										className={`${classes.select} ${
+											isEdit ? `${classes.isEditSelect}` : ''
+										}`}
 										disableUnderline={true}
-										IconComponent={KeyboardArrowDownIcon}
+										IconComponent={() => (
+											<KeyboardArrowDownIcon
+												style={{ display: isEdit ? 'none' : 'block' }}
+											/>
+										)}
 										MenuProps={{
 											anchorOrigin: {
 												vertical: 'bottom',
@@ -401,9 +420,15 @@ const UploadOrEditMedia = ({
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
 										value={subCategory}
 										onChange={(e) => setSubCategory(e.target.value)}
-										className={`${classes.select}`}
+										className={`${classes.select} ${
+											isEdit ? `${classes.isEditSelect}` : ''
+										}`}
 										disableUnderline={true}
-										IconComponent={KeyboardArrowDownIcon}
+										IconComponent={() => (
+											<KeyboardArrowDownIcon
+												style={{ display: isEdit ? 'none' : 'block' }}
+											/>
+										)}
 										MenuProps={{
 											anchorOrigin: {
 												vertical: 'bottom',
@@ -415,6 +440,7 @@ const UploadOrEditMedia = ({
 											},
 											getContentAnchorEl: null
 										}}
+										freeSolo
 										displayEmpty={mainCategory ? true : false}
 										renderValue={(value) =>
 											value?.length

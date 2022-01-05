@@ -10,6 +10,7 @@ import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMedia } from '../../components/posts/uploadOrEditPost/mediaDropdownSlice';
 import UploadOrEditMedia from '../../components/media/uploadOrEditMedia';
+import { getSpecificMedia } from '../../components/media/uploadOrEditMedia/uploadOrEditMediaSlice';
 
 const sortRows = (order, row) => {
 	if (!order)
@@ -129,13 +130,14 @@ const MediaLibrary = () => {
 		{
 			dataField: 'options',
 			text: 'OPTIONS',
-			formatter: () => {
+			formatter: (content, row) => {
 				return (
 					<div className={classes.row}>
 						<Edit
 							onClick={() => {
 								setShowSlider(true);
 								setEdit(true);
+								dispatch(getSpecificMedia(row.id));
 							}}
 							className={classes.editIcon}
 						/>
