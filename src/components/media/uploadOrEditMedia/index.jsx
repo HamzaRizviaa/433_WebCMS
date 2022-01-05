@@ -294,33 +294,39 @@ const UploadOrEditMedia = ({
 	};
 
 	const uploadMedia = async (id, payload) => {
-		console.log(id, payload);
 		setMediaButtonStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media/create-media`,
-				{
-					media_type: mainCategory,
-					sub_category: subCategory,
-					title: titleMedia,
-					description: description,
-					data: {
-						file_name: payload?.file_name,
-						videoData: payload?.data?.Keys?.VideoKey,
-						imageData: payload?.data?.Keys?.ImageKey,
-						audioData: payload?.data?.Keys?.AudioKey
-					}
-				}
+				isEdit
+					? { media_id: id, ...payload }
+					: {
+							media_type: mainCategory,
+							sub_category: subCategory,
+							title: titleMedia,
+
+							description: description,
+							data: {
+								file_name: payload?.file_name,
+								videoData: payload?.data?.Keys?.VideoKey,
+								imageData: payload?.data?.Keys?.ImageKey,
+								audioData: payload?.data?.Keys?.AudioKey
+							}
+					  }
 			);
 			if (result?.data?.status === 200) {
-				toast.success('Media has been uploaded!');
+				toast.success(
+					isEdit ? 'Media has been updated!' : 'Media has been uploaded!'
+				);
 				setIsLoadingUploadMedia(false);
 				setMediaButtonStatus(false);
 				dispatch(getMedia());
 				handleClose();
 			}
 		} catch (e) {
-			toast.error('Failed to create media!');
+			toast.error(
+				isEdit ? 'Failed to update media!' : 'Failed to create media!'
+			);
 			setIsLoadingUploadMedia(false);
 			setMediaButtonStatus(false);
 			console.log(e);
@@ -769,53 +775,60 @@ const UploadOrEditMedia = ({
 										} else {
 											setMediaButtonStatus(true);
 											setIsLoadingUploadMedia(true);
-											let uploadFilesPromiseArray = [
-												uploadedFiles[0],
-												uploadedCoverImage[0]
-											].map(async (_file) => {
-												return uploadFileToServer(_file);
-											});
-											Promise.all([...uploadFilesPromiseArray])
-												.then(async (mediaFiles) => {
-													uploadMedia(null, {
-														file_name: uploadedFiles[0].fileName,
-														type: 'medialibrary',
-														data: {
-															Bucket: 'media',
-															MultipartUpload:
-																uploadedFiles[0]?.mime_type == 'video/mp4'
-																	? [
-																			{
-																				ETag: mediaFiles[0]?.signedResponse?.headers?.etag.replace(
-																					/['"]+/g,
-																					''
-																				),
-																				PartNumber: 1
-																			}
-																	  ]
-																	: ['image'],
-															Keys: {
-																ImageKey: mediaFiles[1]?.Keys?.ImageKey,
-																...(mainCategory === 'Watch'
-																	? {
-																			VideoKey: mediaFiles[0]?.Keys?.VideoKey,
-																			AudioKey: ''
-																	  }
-																	: {
-																			AudioKey: mediaFiles[0]?.Keys?.AudioKey,
-																			VideoKey: ''
-																	  })
-															},
-															UploadId:
-																mainCategory === 'Watch'
-																	? mediaFiles[0].UploadId
-																	: 'audio'
-														}
-													});
-												})
-												.catch(() => {
-													setIsLoadingUploadMedia(false);
+											if (isEdit) {
+												uploadMedia(specificMedia?.id, {
+													title: titleMedia,
+													description
 												});
+											} else {
+												let uploadFilesPromiseArray = [
+													uploadedFiles[0],
+													uploadedCoverImage[0]
+												].map(async (_file) => {
+													return uploadFileToServer(_file);
+												});
+												Promise.all([...uploadFilesPromiseArray])
+													.then(async (mediaFiles) => {
+														uploadMedia(null, {
+															file_name: uploadedFiles[0].fileName,
+															type: 'medialibrary',
+															data: {
+																Bucket: 'media',
+																MultipartUpload:
+																	uploadedFiles[0]?.mime_type == 'video/mp4'
+																		? [
+																				{
+																					ETag: mediaFiles[0]?.signedResponse?.headers?.etag.replace(
+																						/['"]+/g,
+																						''
+																					),
+																					PartNumber: 1
+																				}
+																		  ]
+																		: ['image'],
+																Keys: {
+																	ImageKey: mediaFiles[1]?.Keys?.ImageKey,
+																	...(mainCategory === 'Watch'
+																		? {
+																				VideoKey: mediaFiles[0]?.Keys?.VideoKey,
+																				AudioKey: ''
+																		  }
+																		: {
+																				AudioKey: mediaFiles[0]?.Keys?.AudioKey,
+																				VideoKey: ''
+																		  })
+																},
+																UploadId:
+																	mainCategory === 'Watch'
+																		? mediaFiles[0].UploadId
+																		: 'audio'
+															}
+														});
+													})
+													.catch(() => {
+														setIsLoadingUploadMedia(false);
+													});
+											}
 										}
 									}}
 									text={buttonText}
