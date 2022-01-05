@@ -635,6 +635,7 @@ const UploadOrEditPost = ({
 																			className={classes.filePreviewIcons}
 																			onClick={() => {
 																				handleDeleteFile(file.id);
+																				setPreviewFile(null);
 																			}}
 																		/>
 																	</div>

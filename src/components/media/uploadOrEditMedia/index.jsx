@@ -660,6 +660,7 @@ const UploadOrEditMedia = ({
 																				className={classes.filePreviewIcons}
 																				onClick={() => {
 																					handleDeleteFile2(file.id);
+																					setPreviewFile(null);
 																				}}
 																			/>{' '}
 																		</>
