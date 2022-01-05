@@ -4,7 +4,6 @@ import { useDropzone } from 'react-dropzone';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 //import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import DeleteIcon from '@material-ui/icons/Delete';
 import MenuIcon from '@material-ui/icons/Menu';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
@@ -34,6 +33,8 @@ import { ReactComponent as LandscapeCrop } from '../../../assets/Rectangle_12.sv
 import { ReactComponent as SquareCropSelected } from '../../../assets/Square_selected.svg';
 import { ReactComponent as PortraitCropSelected } from '../../../assets/portrait_rect_selected.svg';
 import { ReactComponent as LandscapeCropSelected } from '../../../assets/Rectangle_12_selected.svg';
+import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
+
 import LoadingOverlay from 'react-loading-overlay';
 
 const UploadOrEditPost = ({
@@ -630,7 +631,7 @@ const UploadOrEditPost = ({
 																				/>
 																			</span>
 																		)}
-																		<DeleteIcon
+																		<Deletes
 																			className={classes.filePreviewIcons}
 																			onClick={() => {
 																				handleDeleteFile(file.id);
