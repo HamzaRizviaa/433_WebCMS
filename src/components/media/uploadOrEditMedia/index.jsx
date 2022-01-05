@@ -19,6 +19,7 @@ import Close from '@material-ui/icons/Close';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
+import { ReactComponent as Union } from '../../../assets/Union.svg';
 import { ReactComponent as MusicIcon } from '../../../assets/Music.svg';
 
 const UploadOrEditMedia = ({
@@ -47,10 +48,11 @@ const UploadOrEditMedia = ({
 	const [titleMediaLabelColor, setTitleMediaLabelColor] = useState('#ffffff');
 	const [titleMediaError, setTitleMediaError] = useState('');
 	const [description, setDescription] = useState('');
+	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [isLoadingUploadMedia, setIsLoadingUploadMedia] = useState(false);
 	const [mediaButtonStatus, setMediaButtonStatus] = useState(false);
-
+	console.log(uploadedFiles, uploadedCoverImage);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
@@ -62,6 +64,34 @@ const UploadOrEditMedia = ({
 	const mainCategories = useSelector(
 		(state) => state.mediaLibrary.mainCategories
 	);
+	const specificMedia = useSelector(
+		(state) => state.mediaLibrary.specificMedia
+	);
+	useEffect(() => {
+		console.log({ specificMedia });
+		if (specificMedia) {
+			setMainCategory(specificMedia?.media_type);
+			setSubCategory(specificMedia?.sub_category);
+			setTitleMedia(specificMedia?.title);
+			setDescription(specificMedia?.description);
+			setUploadedFiles([
+				{
+					id: makeid(10),
+					fileName: specificMedia?.file_name,
+					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.media_url}`,
+					type: specificMedia?.media_type === 'Watch' ? 'video' : 'audio'
+				}
+			]);
+
+			setUploadedCoverImage([
+				{
+					id: makeid(10),
+					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`
+				}
+			]);
+		}
+	}, [specificMedia]);
+
 	useEffect(() => {
 		dispatch(getMainCategories());
 	}, []);
@@ -182,6 +212,9 @@ const UploadOrEditMedia = ({
 		setFileRejectionError2('');
 		setMainCategoryLabelColor('#ffffff');
 		setTitleMediaLabelColor('#ffffff');
+		setTimeout(() => {
+			setDeleteBtnStatus(false);
+		}, 1000);
 		setTitleMediaError('');
 		setMainCategoryError('');
 		setTitleMedia('');
@@ -237,34 +270,63 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	const deleteMedia = async (id) => {
+		setDeleteBtnStatus(true);
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/media/delete-media`,
+				{
+					media_id: id
+				}
+			);
+			if (result?.data?.status === 200) {
+				toast.success('Media has been deleted!');
+				handleClose();
+
+				//setting a timeout for getting post after delete.
+				dispatch(getMedia());
+			}
+		} catch (e) {
+			toast.error('Failed to delete media!');
+			setDeleteBtnStatus(false);
+			console.log(e);
+		}
+	};
+
 	const uploadMedia = async (id, payload) => {
-		console.log(id, payload);
 		setMediaButtonStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media/create-media`,
-				{
-					media_type: mainCategory,
-					sub_category: subCategory,
-					title: title,
-					description: description,
-					data: {
-						file_name: payload?.file_name,
-						videoData: payload?.data?.Keys?.VideoKey,
-						imageData: payload?.data?.Keys?.ImageKey,
-						audioData: payload?.data?.Keys?.AudioKey
-					}
-				}
+				isEdit
+					? { media_id: id, ...payload }
+					: {
+							media_type: mainCategory,
+							sub_category: subCategory,
+							title: titleMedia,
+
+							description: description,
+							data: {
+								file_name: payload?.file_name,
+								videoData: payload?.data?.Keys?.VideoKey,
+								imageData: payload?.data?.Keys?.ImageKey,
+								audioData: payload?.data?.Keys?.AudioKey
+							}
+					  }
 			);
 			if (result?.data?.status === 200) {
-				toast.success('Media has been uploaded!');
+				toast.success(
+					isEdit ? 'Media has been updated!' : 'Media has been uploaded!'
+				);
 				setIsLoadingUploadMedia(false);
 				setMediaButtonStatus(false);
 				dispatch(getMedia());
 				handleClose();
 			}
 		} catch (e) {
-			toast.error('Failed to create media!');
+			toast.error(
+				isEdit ? 'Failed to update media!' : 'Failed to create media!'
+			);
 			setIsLoadingUploadMedia(false);
 			setMediaButtonStatus(false);
 			console.log(e);
@@ -359,9 +421,15 @@ const UploadOrEditMedia = ({
 												uploadedFiles.map((file) => handleDeleteFile(file.id));
 											}
 										}}
-										className={`${classes.select}`}
+										className={`${classes.select} ${
+											isEdit ? `${classes.isEditSelect}` : ''
+										}`}
 										disableUnderline={true}
-										IconComponent={KeyboardArrowDownIcon}
+										IconComponent={() => (
+											<KeyboardArrowDownIcon
+												style={{ display: isEdit ? 'none' : 'block' }}
+											/>
+										)}
 										MenuProps={{
 											anchorOrigin: {
 												vertical: 'bottom',
@@ -401,9 +469,15 @@ const UploadOrEditMedia = ({
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
 										value={subCategory}
 										onChange={(e) => setSubCategory(e.target.value)}
-										className={`${classes.select}`}
+										className={`${classes.select} ${
+											isEdit ? `${classes.isEditSelect}` : ''
+										}`}
 										disableUnderline={true}
-										IconComponent={KeyboardArrowDownIcon}
+										IconComponent={() => (
+											<KeyboardArrowDownIcon
+												style={{ display: isEdit ? 'none' : 'block' }}
+											/>
+										)}
 										MenuProps={{
 											anchorOrigin: {
 												vertical: 'bottom',
@@ -415,6 +489,7 @@ const UploadOrEditMedia = ({
 											},
 											getContentAnchorEl: null
 										}}
+										freeSolo
 										displayEmpty={mainCategory ? true : false}
 										renderValue={(value) =>
 											value?.length
@@ -460,23 +535,13 @@ const UploadOrEditMedia = ({
 																<div className={classes.filePreviewLeft}>
 																	{file.type === 'video' ? (
 																		<>
-																			<video
-																				id={'my-video'}
-																				poster={isEdit ? file.img : null}
-																				className={classes.fileThumbnail}
-																				style={{ objectFit: 'cover' }}
-																			>
-																				<source src={file.img} />
-																			</video>
+																			<Union className={classes.playIcon} />
+																			<img className={classes.fileThumbnail} />
 																		</>
 																	) : (
 																		<>
 																			<MusicIcon className={classes.playIcon} />
-																			<img
-																				//src={file.img}
-
-																				className={classes.fileThumbnail}
-																			/>
+																			<img className={classes.fileThumbnail} />
 																		</>
 																	)}
 
@@ -686,9 +751,9 @@ const UploadOrEditMedia = ({
 										disabled={false}
 										button2={isEdit ? true : false}
 										onClick={() => {
-											// if (!deleteBtnStatus) {
-											// 	deletePost(specificPost?.id);
-											// }
+											if (!deleteBtnStatus) {
+												deleteMedia(specificMedia?.id);
+											}
 										}}
 										text={'DELETE MEDIA'}
 									/>
@@ -710,53 +775,60 @@ const UploadOrEditMedia = ({
 										} else {
 											setMediaButtonStatus(true);
 											setIsLoadingUploadMedia(true);
-											let uploadFilesPromiseArray = [
-												uploadedFiles[0],
-												uploadedCoverImage[0]
-											].map(async (_file) => {
-												return uploadFileToServer(_file);
-											});
-											Promise.all([...uploadFilesPromiseArray])
-												.then(async (mediaFiles) => {
-													uploadMedia(null, {
-														file_name: uploadedFiles[0].fileName,
-														type: 'medialibrary',
-														data: {
-															Bucket: 'media',
-															MultipartUpload:
-																uploadedFiles[0]?.mime_type == 'video/mp4'
-																	? [
-																			{
-																				ETag: mediaFiles[0]?.signedResponse?.headers?.etag.replace(
-																					/['"]+/g,
-																					''
-																				),
-																				PartNumber: 1
-																			}
-																	  ]
-																	: ['image'],
-															Keys: {
-																ImageKey: mediaFiles[1]?.Keys?.ImageKey,
-																...(mainCategory === 'Watch'
-																	? {
-																			VideoKey: mediaFiles[0]?.Keys?.VideoKey,
-																			AudioKey: ''
-																	  }
-																	: {
-																			AudioKey: mediaFiles[0]?.Keys?.AudioKey,
-																			VideoKey: ''
-																	  })
-															},
-															UploadId:
-																mainCategory === 'Watch'
-																	? mediaFiles[0].UploadId
-																	: 'audio'
-														}
-													});
-												})
-												.catch(() => {
-													setIsLoadingUploadMedia(false);
+											if (isEdit) {
+												uploadMedia(specificMedia?.id, {
+													title: titleMedia,
+													description
 												});
+											} else {
+												let uploadFilesPromiseArray = [
+													uploadedFiles[0],
+													uploadedCoverImage[0]
+												].map(async (_file) => {
+													return uploadFileToServer(_file);
+												});
+												Promise.all([...uploadFilesPromiseArray])
+													.then(async (mediaFiles) => {
+														uploadMedia(null, {
+															file_name: uploadedFiles[0].fileName,
+															type: 'medialibrary',
+															data: {
+																Bucket: 'media',
+																MultipartUpload:
+																	uploadedFiles[0]?.mime_type == 'video/mp4'
+																		? [
+																				{
+																					ETag: mediaFiles[0]?.signedResponse?.headers?.etag.replace(
+																						/['"]+/g,
+																						''
+																					),
+																					PartNumber: 1
+																				}
+																		  ]
+																		: ['image'],
+																Keys: {
+																	ImageKey: mediaFiles[1]?.Keys?.ImageKey,
+																	...(mainCategory === 'Watch'
+																		? {
+																				VideoKey: mediaFiles[0]?.Keys?.VideoKey,
+																				AudioKey: ''
+																		  }
+																		: {
+																				AudioKey: mediaFiles[0]?.Keys?.AudioKey,
+																				VideoKey: ''
+																		  })
+																},
+																UploadId:
+																	mainCategory === 'Watch'
+																		? mediaFiles[0].UploadId
+																		: 'audio'
+															}
+														});
+													})
+													.catch(() => {
+														setIsLoadingUploadMedia(false);
+													});
+											}
 										}
 									}}
 									text={buttonText}
