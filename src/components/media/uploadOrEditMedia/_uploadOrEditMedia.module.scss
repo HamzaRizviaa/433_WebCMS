@@ -89,6 +89,28 @@
 	}
 }
 
+.autoComplete {
+	width: 100%;
+	color: white !important;
+	border: 1px solid #ffffff;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 5rem !important;
+	margin-bottom: 1rem !important;
+	background-color: #ff355a !important;
+	.MuiInput-input {
+		padding: 1rem 0rem 1rem 1rem;
+		padding-right: 32px !important;
+	}
+
+	svg {
+		color: $neon-yellow;
+		right: 1rem;
+		top: 0;
+		font-size: 3rem;
+	}
+}
+
 .uploadedFilesContainer {
 	margin-top: 1.5rem;
 	max-height: 220px;

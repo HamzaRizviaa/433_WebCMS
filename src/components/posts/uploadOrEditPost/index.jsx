@@ -3,12 +3,12 @@ import classes from './_uploadOrEditPost.module.scss';
 import { useDropzone } from 'react-dropzone';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+//import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import DeleteIcon from '@material-ui/icons/Delete';
 import MenuIcon from '@material-ui/icons/Menu';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
-import { MenuItem, TextField, Select } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
 import { CircularProgress } from '@material-ui/core';
 import ToggleSwitch from '../../switch';
 import Button from '../../button';
@@ -23,6 +23,9 @@ import captureVideoFrame from 'capture-video-frame';
 import Close from '@material-ui/icons/Close';
 // import Cropper from 'cropperjs';
 // import 'cropperjs/dist/cropper.css';
+import Autocomplete from '@mui/material/Autocomplete';
+import ClearIcon from '@material-ui/icons/Clear';
+import Chip from '@mui/material/Chip';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
@@ -60,6 +63,7 @@ const UploadOrEditPost = ({
 	// const [aspect, setAspect] = useState(1 / 1);
 	// const [imgDestination, setImageDestination] = useState('');
 	// const imageElement = useRef();
+	//const [inputValue, setInputValue] = useState('');
 
 	//a library that takes height width input and gives cropped image
 
@@ -411,6 +415,9 @@ const UploadOrEditPost = ({
 	const postBtnDisabled =
 		!uploadedFiles.length || postButtonStatus || (value && !selectedMedia);
 
+	const totalMedia = [];
+	media.slice(0, 5).map((medi) => totalMedia.push(medi.title)); //gets recent first 5 elements from the list
+
 	return (
 		<Slider
 			open={open}
@@ -699,7 +706,7 @@ const UploadOrEditPost = ({
 							{value ? (
 								<div className={classes.mediaContainer}>
 									<h6 style={{ color: mediaLabelColor }}>SELECT MEDIA</h6>
-									<Select
+									{/* <Select
 										value={selectedMedia}
 										onChange={(e) => {
 											setMediaError(false);
@@ -729,15 +736,153 @@ const UploadOrEditPost = ({
 												: 'Please Select'
 										}
 									>
-										{/* <MenuItem disabled value=''>
+										<MenuItem disabled value=''>
 											Please Select
-										</MenuItem> */}
+										</MenuItem> 
 										{media.map((item, index) => (
 											<MenuItem key={index} value={item.id}>
 												{item.title}{' '}
 											</MenuItem>
 										))}
-									</Select>
+									</Select> */}
+
+									{/* <Autocomplete
+										id='combo-box-demo'
+										options={totalMedia}
+										value={selectedMedia}
+										underlineShow={false}
+										disableUnderline={true}
+										//getOptionLabel={(option) => option.title}
+										underlineStyle={{ display: 'none' }}
+										popupIcon={<KeyboardArrowDownIcon />}
+										ListboxProps={{
+											anchorOrigin: {
+												vertical: 'bottom',
+												horizontal: 'left'
+											},
+											transformOrigin: {
+												vertical: 'top',
+												horizontal: 'left'
+											},
+											getContentAnchorEl: null
+										}}
+										onChange={(e, value) => {
+											setMediaError(false);
+											setMediaLabelColor('#ffffff');
+											setSelectedMedia(value);
+										}}
+										className={`${classes.autoComplete}`}
+										renderInput={(params) => (
+											<TextField
+												placeholder='Please Select a Media'
+												InputProps={{
+													...params.InputProps,
+													disableUnderline: true
+												}}
+												{...params}
+											/>
+										)}
+									/> */}
+
+									<Autocomplete
+										// freeSolo={false}
+										// multiple
+										// // value={selectedMedia}
+										// //disabled={selectedMedia ? true : false}
+										// // onChange={(e, value, reason) => {
+										// // 	setMediaError(false);
+										// // 	setMediaLabelColor('#ffffff');
+										// // 	setSelectedMedia(value);
+										// // 	console.log(reason);
+										// // }}
+										// inputValue={selectedMedia}
+										// onInputChange={(event, newInputValue) => {
+										// 	setSelectedMedia(newInputValue);
+										// }}
+										// popupIcon={''}
+										// noOptionsText={'No Results Found'}
+										// className={`${classes.autoComplete}`}
+										// id='free-solo-2-demo'
+										// disableClearable
+										// options={totalMedia}
+										// renderInput={(params) => (
+										// 	<TextField
+										// 		{...params}
+										// 		InputProps={{
+										// 			disableUnderline: true,
+										// 			...params.InputProps,
+										// 			className: classes.textFieldInput2,
+										// 			type: 'search'
+										// 		}}
+										// 		placeholder='Search Media'
+										// 		// onChange={({ target }) =>
+										// 		// 	setSelectedMedia(target.value)
+										// 		// }
+										// 	/>
+										// )}
+										// ChipProps={{
+										// 	className: classes.tagYellow,
+										// 	size: 'small',
+										// 	deleteIcon: <ClearIcon />
+										// }}
+										// clearIcon={''}
+
+										// popoverProps={{
+										// 	canAutoPosition: true
+										// }}
+										// anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+										// transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+										// popoverProps={{
+										// 	style: {
+										// 		bottom: 0,
+										// 		overflowY: 'auto'
+										// 	}
+										// }}
+										// MenuProps={{
+										// 	anchorOrigin: {
+										// 		vertical: 'bottom',
+										// 		horizontal: 'left'
+										// 	},
+										// 	transformOrigin: {
+										// 		vertical: 'top',
+										// 		horizontal: 'left'
+										// 	},
+										// 	getContentAnchorEl: null
+										// }}
+
+										//multiple
+										id='tags-filled'
+										options={totalMedia}
+										freeSolo
+										renderTags={(value, getTagProps) =>
+											value.map((option, index) => (
+												<Chip
+													key={index}
+													variant='outlined'
+													label={option}
+													{...getTagProps({ index })}
+													deleteIcon={<ClearIcon />}
+													className={classes.tagYellow}
+												/>
+											))
+										}
+										renderInput={(params) => (
+											<TextField
+												{...params}
+												//variant='filled'
+												//label='freeSolo'
+												placeholder='Favorites'
+												//className={classes.textFieldInput2}
+												InputProps={{
+													disableUnderline: true,
+													...params.InputProps,
+													className: classes.textFieldInput2,
+													type: 'search'
+												}}
+											/>
+										)}
+										clearIcon={''}
+									/>
 
 									<p className={classes.mediaError}>{mediaError}</p>
 								</div>
