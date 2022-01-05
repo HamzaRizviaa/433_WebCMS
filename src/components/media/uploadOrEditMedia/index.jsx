@@ -47,6 +47,7 @@ const UploadOrEditMedia = ({
 	const [titleMediaLabelColor, setTitleMediaLabelColor] = useState('#ffffff');
 	const [titleMediaError, setTitleMediaError] = useState('');
 	const [description, setDescription] = useState('');
+	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [isLoadingUploadMedia, setIsLoadingUploadMedia] = useState(false);
 	const [mediaButtonStatus, setMediaButtonStatus] = useState(false);
@@ -195,6 +196,9 @@ const UploadOrEditMedia = ({
 		setFileRejectionError2('');
 		setMainCategoryLabelColor('#ffffff');
 		setTitleMediaLabelColor('#ffffff');
+		setTimeout(() => {
+			setDeleteBtnStatus(false);
+		}, 1000);
 		setTitleMediaError('');
 		setMainCategoryError('');
 		setTitleMedia('');
@@ -247,6 +251,29 @@ const UploadOrEditMedia = ({
 				setTitleMediaLabelColor('#ffffff');
 				setTitleMediaError('');
 			}, [5000]);
+		}
+	};
+
+	const deleteMedia = async (id) => {
+		setDeleteBtnStatus(true);
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/media/delete-media`,
+				{
+					media_id: id
+				}
+			);
+			if (result?.data?.status === 200) {
+				toast.success('Media has been deleted!');
+				handleClose();
+
+				//setting a timeout for getting post after delete.
+				dispatch(getMedia());
+			}
+		} catch (e) {
+			toast.error('Failed to delete media!');
+			setDeleteBtnStatus(false);
+			console.log(e);
 		}
 	};
 
@@ -712,9 +739,9 @@ const UploadOrEditMedia = ({
 										disabled={false}
 										button2={isEdit ? true : false}
 										onClick={() => {
-											// if (!deleteBtnStatus) {
-											// 	deletePost(specificPost?.id);
-											// }
+											if (!deleteBtnStatus) {
+												deleteMedia(specificMedia?.id);
+											}
 										}}
 										text={'DELETE MEDIA'}
 									/>
