@@ -7,7 +7,6 @@ import LoadingOverlay from 'react-loading-overlay';
 import { MenuItem, TextField, Select } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
-import DeleteIcon from '@material-ui/icons/Delete';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { useDropzone } from 'react-dropzone';
 import { makeid } from '../../../utils/helper';
@@ -18,9 +17,11 @@ import captureVideoFrame from 'capture-video-frame';
 import Close from '@material-ui/icons/Close';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Union } from '../../../assets/Union.svg';
 import { ReactComponent as MusicIcon } from '../../../assets/Music.svg';
+import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 
 const UploadOrEditMedia = ({
 	open,
@@ -536,12 +537,12 @@ const UploadOrEditMedia = ({
 																	{file.type === 'video' ? (
 																		<>
 																			<Union className={classes.playIcon} />
-																			<img className={classes.fileThumbnail} />
+																			<div className={classes.fileThumbnail} />
 																		</>
 																	) : (
 																		<>
 																			<MusicIcon className={classes.playIcon} />
-																			<img className={classes.fileThumbnail} />
+																			<div className={classes.fileThumbnail} />
 																		</>
 																	)}
 
@@ -554,7 +555,7 @@ const UploadOrEditMedia = ({
 																	{isEdit ? (
 																		<></>
 																	) : (
-																		<DeleteIcon
+																		<Deletes
 																			className={classes.filePreviewIcons}
 																			onClick={() => {
 																				handleDeleteFile(file.id);
@@ -655,10 +656,11 @@ const UploadOrEditMedia = ({
 																				className={classes.filePreviewIcons}
 																				onClick={() => setPreviewFile(file)}
 																			/>
-																			<DeleteIcon
+																			<Deletes
 																				className={classes.filePreviewIcons}
 																				onClick={() => {
 																					handleDeleteFile2(file.id);
+																					setPreviewFile(null);
 																				}}
 																			/>{' '}
 																		</>

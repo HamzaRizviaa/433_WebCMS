@@ -2,11 +2,17 @@
 @import '../../../styles/_mixins.scss';
 
 .dropZoneContainer {
-	border: 1px solid $neon-yellow;
-	border-style: dashed;
+	//border: 1px solid $neon-yellow;
+	border-top: 1.5px dashed $neon-yellow;
+	border-right: 1.5px dashed $neon-yellow;
+	border-bottom: 1.5px dashed $neon-yellow;
+	border-left: 1.5px dashed $neon-yellow;
+	//border-style: dashed;
+	padding: 1rem 2.5rem 0.5rem 2.5rem;
 	cursor: pointer;
-	border-radius: 0.5rem;
-	margin-bottom: 1rem;
+	border-radius: 1rem;
+	//margin-bottom: 1rem;
+	//margin-top: 1rem;
 }
 
 .borderRed {
