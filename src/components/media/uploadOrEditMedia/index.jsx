@@ -537,12 +537,12 @@ const UploadOrEditMedia = ({
 																	{file.type === 'video' ? (
 																		<>
 																			<Union className={classes.playIcon} />
-																			<img className={classes.fileThumbnail} />
+																			<div className={classes.fileThumbnail} />
 																		</>
 																	) : (
 																		<>
 																			<MusicIcon className={classes.playIcon} />
-																			<img className={classes.fileThumbnail} />
+																			<div className={classes.fileThumbnail} />
 																		</>
 																	)}
 
