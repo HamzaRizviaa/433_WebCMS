@@ -19,6 +19,7 @@ import Close from '@material-ui/icons/Close';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
+import { ReactComponent as Union } from '../../../assets/Union.svg';
 import { ReactComponent as MusicIcon } from '../../../assets/Music.svg';
 
 const UploadOrEditMedia = ({
@@ -51,7 +52,7 @@ const UploadOrEditMedia = ({
 	const [previewFile, setPreviewFile] = useState(null);
 	const [isLoadingUploadMedia, setIsLoadingUploadMedia] = useState(false);
 	const [mediaButtonStatus, setMediaButtonStatus] = useState(false);
-
+	console.log(uploadedFiles, uploadedCoverImage);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
@@ -73,6 +74,21 @@ const UploadOrEditMedia = ({
 			setSubCategory(specificMedia?.sub_category);
 			setTitleMedia(specificMedia?.title);
 			setDescription(specificMedia?.description);
+			setUploadedFiles([
+				{
+					id: makeid(10),
+					fileName: specificMedia?.file_name,
+					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.media_url}`,
+					type: specificMedia?.media_type === 'Watch' ? 'video' : 'audio'
+				}
+			]);
+
+			setUploadedCoverImage([
+				{
+					id: makeid(10),
+					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`
+				}
+			]);
 		}
 	}, [specificMedia]);
 
@@ -513,23 +529,13 @@ const UploadOrEditMedia = ({
 																<div className={classes.filePreviewLeft}>
 																	{file.type === 'video' ? (
 																		<>
-																			<video
-																				id={'my-video'}
-																				poster={isEdit ? file.img : null}
-																				className={classes.fileThumbnail}
-																				style={{ objectFit: 'cover' }}
-																			>
-																				<source src={file.img} />
-																			</video>
+																			<Union className={classes.playIcon} />
+																			<img className={classes.fileThumbnail} />
 																		</>
 																	) : (
 																		<>
 																			<MusicIcon className={classes.playIcon} />
-																			<img
-																				//src={file.img}
-
-																				className={classes.fileThumbnail}
-																			/>
+																			<img className={classes.fileThumbnail} />
 																		</>
 																	)}
 
