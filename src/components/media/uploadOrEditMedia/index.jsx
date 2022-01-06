@@ -724,7 +724,7 @@ const UploadOrEditMedia = ({
 									</div>
 									<p className={classes.mediaError}>{titleMediaError}</p>
 
-									<div className={classes.titleContainer}>
+									<div className={classes.titleContainerDesription}>
 										<h6>DESCRIPTION</h6>
 										<TextField
 											value={description}
