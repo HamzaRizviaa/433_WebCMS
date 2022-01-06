@@ -24,7 +24,7 @@ import Close from '@material-ui/icons/Close';
 // import 'cropperjs/dist/cropper.css';
 import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
-import Chip from '@mui/material/Chip';
+//import Chip from '@mui/material/Chip';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
@@ -748,142 +748,27 @@ const UploadOrEditPost = ({
 										))}
 									</Select> */}
 
-									{/* <Autocomplete
-										id='combo-box-demo'
-										options={totalMedia}
-										value={selectedMedia}
-										underlineShow={false}
-										disableUnderline={true}
-										//getOptionLabel={(option) => option.title}
-										underlineStyle={{ display: 'none' }}
-										popupIcon={<KeyboardArrowDownIcon />}
-										ListboxProps={{
-											anchorOrigin: {
-												vertical: 'bottom',
-												horizontal: 'left'
-											},
-											transformOrigin: {
-												vertical: 'top',
-												horizontal: 'left'
-											},
-											getContentAnchorEl: null
-										}}
-										onChange={(e, value) => {
-											setMediaError(false);
-											setMediaLabelColor('#ffffff');
-											setSelectedMedia(value);
-										}}
-										className={`${classes.autoComplete}`}
-										renderInput={(params) => (
-											<TextField
-												placeholder='Please Select a Media'
-												InputProps={{
-													...params.InputProps,
-													disableUnderline: true
-												}}
-												{...params}
-											/>
-										)}
-									/> */}
-
 									<Autocomplete
-										// freeSolo={false}
-										// multiple
-										// // value={selectedMedia}
-										// //disabled={selectedMedia ? true : false}
-										// // onChange={(e, value, reason) => {
-										// // 	setMediaError(false);
-										// // 	setMediaLabelColor('#ffffff');
-										// // 	setSelectedMedia(value);
-										// // 	console.log(reason);
-										// // }}
-										// inputValue={selectedMedia}
-										// onInputChange={(event, newInputValue) => {
-										// 	setSelectedMedia(newInputValue);
-										// }}
-										// popupIcon={''}
-										// noOptionsText={'No Results Found'}
-										// className={`${classes.autoComplete}`}
-										// id='free-solo-2-demo'
-										// disableClearable
-										// options={totalMedia}
-										// renderInput={(params) => (
-										// 	<TextField
-										// 		{...params}
-										// 		InputProps={{
-										// 			disableUnderline: true,
-										// 			...params.InputProps,
-										// 			className: classes.textFieldInput2,
-										// 			type: 'search'
-										// 		}}
-										// 		placeholder='Search Media'
-										// 		// onChange={({ target }) =>
-										// 		// 	setSelectedMedia(target.value)
-										// 		// }
-										// 	/>
-										// )}
-										// ChipProps={{
-										// 	className: classes.tagYellow,
-										// 	size: 'small',
-										// 	deleteIcon: <ClearIcon />
-										// }}
-										// clearIcon={''}
-
-										// popoverProps={{
-										// 	canAutoPosition: true
-										// }}
-										// anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-										// transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-										// popoverProps={{
-										// 	style: {
-										// 		bottom: 0,
-										// 		overflowY: 'auto'
-										// 	}
-										// }}
-										// MenuProps={{
-										// 	anchorOrigin: {
-										// 		vertical: 'bottom',
-										// 		horizontal: 'left'
-										// 	},
-										// 	transformOrigin: {
-										// 		vertical: 'top',
-										// 		horizontal: 'left'
-										// 	},
-										// 	getContentAnchorEl: null
-										// }}
-
-										//multiple
-										id='tags-filled'
+										value={selectedMedia}
+										onChange={(e, newVal) => {
+											setSelectedMedia(newVal);
+										}}
+										//className={classes.autoComplete}
 										options={totalMedia}
-										freeSolo
-										renderTags={(value, getTagProps) =>
-											value.map((option, index) => (
-												<Chip
-													key={index}
-													variant='outlined'
-													label={option}
-													{...getTagProps({ index })}
-													deleteIcon={<ClearIcon />}
-													className={classes.tagYellow}
-												/>
-											))
-										}
 										renderInput={(params) => (
 											<TextField
 												{...params}
-												//variant='filled'
-												//label='freeSolo'
-												placeholder='Favorites'
-												//className={classes.textFieldInput2}
+												placeholder='Search Media'
 												InputProps={{
 													disableUnderline: true,
 													...params.InputProps,
-													className: classes.textFieldInput2,
-													type: 'search'
+													className: classes.textFieldInput
 												}}
 											/>
 										)}
-										clearIcon={''}
+										clearIcon={<ClearIcon />}
+										noOptionsText={'No Results Found'}
+										popupIcon={''}
 									/>
 
 									<p className={classes.mediaError}>{mediaError}</p>
