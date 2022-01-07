@@ -778,7 +778,9 @@ const UploadOrEditMedia = ({
 											}}
 											popupIcon={''}
 											noOptionsText={'No Results Found'}
-											className={`${classes.autoComplete}`}
+											className={`${classes.autoComplete} ${
+												isEdit && classes.disableAutoComplete
+											}`}
 											id='free-solo-2-demo'
 											disableClearable
 											options={mediaLabels}

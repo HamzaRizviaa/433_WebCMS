@@ -97,7 +97,6 @@
 	line-height: 1.6 !important;
 	border-radius: 5rem !important;
 	margin-bottom: 1rem !important;
-	background-color: #ff355a !important;
 	.MuiInput-input {
 		padding: 1rem 0rem 1rem 1rem;
 		padding-right: 32px !important;
@@ -347,6 +346,10 @@
 	}
 }
 
+.disableAutoComplete {
+	background-color: #404040 !important;
+}
+
 .autoComplete {
 	padding: 8px;
 	width: 96% !important;
@@ -357,7 +360,6 @@
 	line-height: 1.6 !important;
 	border-radius: 5rem !important;
 	margin-bottom: 1rem !important;
-	background-color: #000000 !important;
 	.MuiInput-input {
 		padding: 1rem 0rem 1rem 1rem;
 		color: #ffffff !important;
