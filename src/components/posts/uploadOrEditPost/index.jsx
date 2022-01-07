@@ -1,9 +1,9 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import classes from './_uploadOrEditPost.module.scss';
 import { useDropzone } from 'react-dropzone';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-//import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import MenuIcon from '@material-ui/icons/Menu';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
@@ -17,14 +17,18 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { getPosts } from '../../../pages/PostLibrary/postLibrarySlice';
+import {
+	getPosts,
+	getPostLabels
+} from '../../../pages/PostLibrary/postLibrarySlice';
 import captureVideoFrame from 'capture-video-frame';
 import Close from '@material-ui/icons/Close';
 // import Cropper from 'cropperjs';
 // import 'cropperjs/dist/cropper.css';
 import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
-//import Chip from '@mui/material/Chip';
+import Chip from '@mui/material/Chip';
+import { Popper, Paper } from '@mui/material';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
@@ -51,6 +55,7 @@ const UploadOrEditPost = ({
 	const [mediaError, setMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
+	const [selectedLabels, setSelectedLabels] = useState([]);
 	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
 	const [mediaLabelColor, setMediaLabelColor] = useState('#ffffff');
 	const [selectedMedia, setSelectedMedia] = useState(null);
@@ -61,6 +66,7 @@ const UploadOrEditPost = ({
 	const [imageToResizeWidth, setImageToResizeWidth] = useState(80);
 	const [imageToResizeHeight, setImageToResizeHeight] = useState(80);
 	const [previewFile, setPreviewFile] = useState(null);
+	const [postLabels, setPostLabels] = useState([]);
 	// const [aspect, setAspect] = useState(1 / 1);
 	// const [imgDestination, setImageDestination] = useState('');
 	// const imageElement = useRef();
@@ -75,12 +81,20 @@ const UploadOrEditPost = ({
 		});
 
 	const media = useSelector((state) => state.mediaDropdown.media);
+	const labels = useSelector((state) => state.postLibrary.labels);
 	const specificPost = useSelector((state) => state.editButton.specificPost);
 	const specificPostStatus = useSelector((state) => state.editButton);
-
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		if (labels.length) {
+			setPostLabels(labels.map((label) => label.name));
+		}
+	}, [labels]);
+
 	useEffect(() => {
 		if (specificPost) {
+			setSelectedLabels(specificPost?.labels);
 			setCaption(specificPost.caption);
 			if (specificPost?.media_id !== null) {
 				setValue(true);
@@ -125,6 +139,7 @@ const UploadOrEditPost = ({
 
 	useEffect(() => {
 		dispatch(getMedia());
+		dispatch(getPostLabels());
 		return () => {
 			resetState();
 		};
@@ -183,7 +198,6 @@ const UploadOrEditPost = ({
 			);
 
 			if (result?.data?.result?.url) {
-				console.log(uploadedFile);
 				const _result = await axios.put(
 					result?.data?.result?.url,
 					uploadedFile.file,
@@ -262,6 +276,7 @@ const UploadOrEditPost = ({
 		setImageToResizeWidth(80);
 		setImageToResizeHeight(80);
 		setPreviewFile(null);
+		setSelectedLabels([]);
 		//setImageDestination('');
 	};
 
@@ -316,6 +331,14 @@ const UploadOrEditPost = ({
 	const createPost = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
 		try {
+			let _labels = [];
+			if (!isEdit) {
+				labels.map((label) => {
+					if (selectedLabels.includes(label.name)) {
+						_labels.push(label);
+					}
+				});
+			}
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
 				{
@@ -323,6 +346,7 @@ const UploadOrEditPost = ({
 					orientation_type: dimensionSelect,
 					...(selectedMedia ? { media_id: selectedMedia } : { media_id: null }),
 					...(isEdit && id ? { post_id: id } : {}),
+					...(!isEdit && _labels.length ? { labels: [..._labels] } : {}),
 					...(!isEdit ? { media_files: [...mediaFiles] } : {})
 				}
 			);
@@ -676,6 +700,89 @@ const UploadOrEditPost = ({
 							)}
 
 							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
+
+							<div className={classes.captionContainer}>
+								<h6>LABELS</h6>
+								<Autocomplete
+									disabled={isEdit}
+									PaperComponent={(props) => {
+										return (
+											<Paper
+												elevation={6}
+												className={classes.popperAuto}
+												style={{
+													marginTop: '12px',
+													background: 'black',
+													border: '1px solid #404040',
+													boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)',
+													borderRadius: '8px'
+												}}
+												{...props}
+											/>
+										);
+									}}
+									multiple
+									filterSelectedOptions
+									freeSolo={true}
+									value={selectedLabels}
+									placeholder='Select Media'
+									onChange={(event, newValue) => {
+										setSelectedLabels(newValue);
+									}}
+									popupIcon={''}
+									noOptionsText={'No Results Found'}
+									className={`${classes.autoComplete}`}
+									id='free-solo-2-demo'
+									disableClearable
+									options={postLabels}
+									renderInput={(params) => (
+										<TextField
+											{...params}
+											placeholder={selectedLabels.length ? ' ' : 'Select Label'}
+											className={classes.textFieldAuto}
+											InputProps={{
+												disableUnderline: true,
+												className: classes.textFieldInput,
+												type: 'search',
+												...params.InputProps
+											}}
+										/>
+									)}
+									renderOption={(props, option, { selected }) => (
+										<li {...props} className={classes.liAutocomplete}>
+											{option}
+										</li>
+									)}
+									ChipProps={{
+										className: classes.tagYellow,
+										size: 'small',
+										deleteIcon: <ClearIcon />
+									}}
+									clearIcon={''}
+									anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+									transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+									popoverProps={{
+										style: {
+											bottom: 0,
+											overflowY: 'auto'
+										}
+									}}
+									MenuProps={{
+										anchorOrigin: {
+											vertical: 'bottom',
+											horizontal: 'left'
+										},
+										transformOrigin: {
+											vertical: 'top',
+											horizontal: 'left'
+										},
+										getContentAnchorEl: null
+									}}
+								/>
+							</div>
+
+							<p className={classes.mediaError}>{''}</p>
+
 							<div className={classes.captionContainer}>
 								<h6>CAPTION</h6>
 								<TextField
