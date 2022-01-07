@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
@@ -9,6 +9,8 @@ import classes from './_mediaLibrary.module.scss';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMedia } from '../../components/posts/uploadOrEditPost/mediaDropdownSlice';
+import UploadOrEditMedia from '../../components/media/uploadOrEditMedia';
+import { getSpecificMedia } from '../../components/media/uploadOrEditMedia/uploadOrEditMediaSlice';
 
 const sortRows = (order, row) => {
 	if (!order)
@@ -48,6 +50,8 @@ const getDateTime = (dateTime) => {
 
 const MediaLibrary = () => {
 	const media = useSelector((state) => state.mediaDropdown.media);
+	const [showSlider, setShowSlider] = useState(false);
+	const [edit, setEdit] = useState(false);
 
 	const dispatch = useDispatch();
 
@@ -126,12 +130,14 @@ const MediaLibrary = () => {
 		{
 			dataField: 'options',
 			text: 'OPTIONS',
-			formatter: () => {
+			formatter: (content, row) => {
 				return (
 					<div className={classes.row}>
 						<Edit
 							onClick={() => {
-								console.log('edit clicked');
+								setShowSlider(true);
+								setEdit(true);
+								dispatch(getSpecificMedia(row.id));
 							}}
 							className={classes.editIcon}
 						/>
@@ -147,7 +153,7 @@ const MediaLibrary = () => {
 				<h1>MEDIA LIBRARY</h1>
 				<Button
 					onClick={() => {
-						console.log('button clicked');
+						setShowSlider(true);
 					}}
 					text={'UPLOAD MEDIA'}
 				/>
@@ -155,6 +161,18 @@ const MediaLibrary = () => {
 			<div className={classes.tableContainer}>
 				<Table columns={columns} data={media} />
 			</div>
+
+			<UploadOrEditMedia
+				open={showSlider}
+				isEdit={edit}
+				handleClose={() => {
+					setShowSlider(false);
+					setTimeout(() => setEdit(false), 150);
+				}}
+				title={edit ? 'Edit Media' : 'Upload Media'}
+				heading1={edit ? 'Media Type' : 'Select Media Type'}
+				buttonText={edit ? 'SAVE CHANGES' : 'ADD MEDIA'}
+			/>
 		</Layout>
 	);
 };

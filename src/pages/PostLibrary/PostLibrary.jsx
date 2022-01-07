@@ -35,10 +35,8 @@ const getDateTime = (dateTime) => {
 
 const PostLibrary = () => {
 	const posts = useSelector((state) => state.postLibrary.posts);
-	console.log(posts)
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
-	//let specificPostId = null;
 
 	const dispatch = useDispatch();
 	useEffect(() => {
@@ -53,14 +51,32 @@ const PostLibrary = () => {
 			sortCaret: sortRows,
 			formatter: (content, row) => {
 				return (
-					<div className={classes.mediaWrapper}>
+					<div
+						className={
+							row.orientation_type === 'landscape'
+								? classes.mediaWrapperLandscape
+								: classes.mediaWrapper
+						}
+					>
 						{row.thumbnail_url ? (
-							<PlayArrowIcon className={classes.playIcon} />
+							<PlayArrowIcon
+								className={
+									row.orientation_type === 'portrait'
+										? classes.playIconPortrait
+										: classes.playIcon
+								}
+							/>
 						) : (
 							<></>
 						)}
 						<img
-							className={classes.mediaIcon}
+							className={
+								row.orientation_type === 'square'
+									? classes.mediaIcon
+									: row.orientation_type === 'landscape'
+									? classes.mediaIconLandscape
+									: classes.mediaIconPortrait
+							}
 							src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
 								row.thumbnail_url ? row.thumbnail_url : row.media
 							}`}
@@ -102,7 +118,7 @@ const PostLibrary = () => {
 		{
 			dataField: 'options',
 			text: 'OPTIONS',
-			formatter: (content,row) => {
+			formatter: (content, row) => {
 				return (
 					<div className={classes.row}>
 						<Edit
@@ -110,7 +126,6 @@ const PostLibrary = () => {
 								setShowSlider(true);
 								setEdit(true);
 								dispatch(getSpecificPost(row.id));
-								
 							}}
 							className={classes.editIcon}
 						/>
@@ -140,11 +155,11 @@ const PostLibrary = () => {
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
-					setTimeout(()=> setEdit(false),150) ;
+					setTimeout(() => setEdit(false), 150);
 				}}
-				title={edit? 'Edit Post' : 'Upload a Post'}
-				heading1={edit? 'Media Files' : 'Add Media Files'}
-				buttonText = {edit? 'SAVE CHANGES' : 'POST'}
+				title={edit ? 'Edit Post' : 'Upload a Post'}
+				heading1={edit ? 'Media Files' : 'Add Media Files'}
+				buttonText={edit ? 'SAVE CHANGES' : 'POST'}
 				//specificPostId
 			/>
 

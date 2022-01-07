@@ -7,11 +7,24 @@
 
 @mixin textFieldInput {
 	color: white !important;
-	border: 1px solid #ffffff;
-	padding: 1rem !important;
+	border: 0.01px solid #ffffff;
+	padding: 1rem 1rem 1rem 1.5rem !important;
 	font-size: 1.4rem !important;
 	line-height: 1.6 !important;
-	border-radius: 1rem;
+	border-radius: 40px;
 	margin-bottom: 1rem;
 	background-color: #000000;
+
+	svg {
+		position: absolute;
+		color: $neon-yellow;
+		right: 2rem !important;
+		top: -9px !important;
+		font-size: 3rem;
+	}
+
+	// .MuiAutocomplete-endAdornment {
+	// 	color: green !important;
+	// 	position: relative !important;
+	// }
 }

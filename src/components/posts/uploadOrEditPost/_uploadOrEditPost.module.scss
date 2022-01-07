@@ -2,12 +2,17 @@
 @import '../../../styles/_mixins.scss';
 
 .dropZoneContainer {
-	border: 1px solid $neon-yellow;
-	border-style: dashed;
-	padding: 2.5rem 2.5rem 2rem 2.5rem;
+	//border: 1px solid $neon-yellow;
+	border-top: 1.5px dashed $neon-yellow;
+	border-right: 1.5px dashed $neon-yellow;
+	border-bottom: 1.5px dashed $neon-yellow;
+	border-left: 1.5px dashed $neon-yellow;
+	//border-style: dashed;
+	padding: 1rem 2.5rem 0.5rem 2.5rem;
 	cursor: pointer;
-	border-radius: 0.5rem;
-	margin-bottom: 1rem;
+	border-radius: 1rem;
+	//margin-bottom: 1rem;
+	//margin-top: 1rem;
 }
 
 .borderRed {
@@ -61,6 +66,7 @@
 
 .dropzone {
 	text-align: center;
+	padding: 2.5rem 2.5rem 2rem 2.5rem;
 }
 
 .textField {
@@ -126,6 +132,79 @@
 	}
 }
 
+.disableAutoComplete {
+	background-color: #404040 !important;
+}
+
+.autoComplete {
+	padding: 8px;
+	padding-left: 16px;
+	color: white !important;
+	border: 1px solid #ffffff;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 5rem !important;
+	margin-bottom: 1rem !important;
+	.MuiInput-input {
+		padding: 1rem 0rem 1rem 1rem;
+		color: #ffffff !important;
+	}
+
+	.textFieldAuto {
+		color: #ffffff !important;
+		input {
+			color: #ffffff !important;
+			font-size: 14px;
+		}
+	}
+
+	svg {
+		color: $neon-yellow;
+		right: 5rem !important;
+		top: 0rem !important;
+		font-size: 3rem;
+	}
+}
+
+.textFieldInput2 {
+	// color: white !important;
+	// padding: 0.5rem 0rem 0.5rem 1rem;
+	// margin-bottom: 0.5rem;
+	// font-size: 1.4rem !important;
+	// line-height: 1.6;
+	// background-color: #ff355a;
+	color: white !important;
+	border: 0.01px solid #ffffff;
+	padding: 1rem 1rem 1rem 1.5rem !important;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 40px;
+	margin-bottom: 1rem;
+	background-color: #000000;
+
+	svg {
+		color: $neon-yellow;
+		right: 5rem !important;
+		top: 0 !important;
+		font-size: 3rem !important;
+	}
+}
+
+.tagYellow {
+	background-color: $neon-yellow !important;
+	font-family: Poppins !important;
+	font-style: normal !important;
+	font-weight: bold !important;
+	font-size: 12px !important;
+	line-height: 24px !important;
+	padding: 4px 6px !important;
+	margin-right: 6px !important;
+	svg {
+		color: black !important;
+		font-size: 20px !important;
+	}
+}
+
 .buttonDiv {
 	width: 100%;
 	margin-bottom: 4rem;
@@ -145,7 +224,22 @@
 	display: inline-block;
 }
 
+.previewContentWrapper {
+	min-height: calc(100vh - 107px);
+	position: relative;
+	display: flex;
+	width: 1000px;
+}
+
 .contentWrapper {
+	min-height: calc(100vh - 107px);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.contentWrapperNoPreview {
 	min-height: calc(100vh - 107px);
 	position: relative;
 	display: flex;
@@ -209,6 +303,14 @@
 	color: $neon-yellow;
 }
 
+.playIconPortrait {
+	position: absolute;
+	left: 38px;
+	height: 2.5rem !important;
+	width: auto !important;
+	color: $neon-yellow;
+}
+
 .loaderContainer {
 	position: absolute;
 	width: calc(100% - 20px);
@@ -236,7 +338,7 @@
 	color: $neon-yellow !important;
 }
 
-.orientation{
+.orientation {
 	margin-right: 2rem;
 }
 
@@ -259,7 +361,7 @@
 	background-color: #404040;
 	display: flex;
 	align-items: center;
-	justify-content: space-between;	
+	justify-content: space-between;
 	padding: 2px;
 }
 
@@ -272,4 +374,51 @@
 .dimensionPreviewIcons {
 	color: #808080;
 	cursor: pointer;
+}
+
+.previewComponent {
+	width: 35%;
+	border-left: 1px solid $grey;
+	margin-left: 3rem;
+	padding-left: 3rem;
+	margin-bottom: 10rem;
+}
+
+.closeIcon {
+	width: 3.2rem !important;
+	height: 3.2rem !important;
+	margin-right: 0.8rem;
+	cursor: pointer !important;
+}
+
+.previewHeader {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.previewFile {
+	height: 8rem;
+	width: 8rem;
+}
+
+video::-webkit-media-controls-fullscreen-button {
+	display: none;
+}
+.liAutocomplete {
+	background-color: black;
+	color: white;
+	font-size: 14px;
+	padding: 8px 8px 8px 12px;
+	&:hover {
+		color: $neon-yellow;
+		cursor: pointer;
+	}
+}
+
+.popperAuto {
+	border: 1px solid #404040;
+	box-shadow: 0px 16px 40px rgba(255, 255, 255, 0.16);
+	border-radius: 8px;
+	background: black;
 }
