@@ -513,7 +513,6 @@ const UploadOrEditMedia = ({
 											},
 											getContentAnchorEl: null
 										}}
-										freeSolo
 										displayEmpty={mainCategory ? true : false}
 										renderValue={(value) =>
 											value?.length
@@ -770,14 +769,18 @@ const UploadOrEditMedia = ({
 											}}
 											multiple
 											filterSelectedOptions
-											freeSolo={true}
+											freeSolo={false}
 											value={selectedLabels}
 											placeholder='Select Media'
 											onChange={(event, newValue) => {
 												setSelectedLabels(newValue);
 											}}
 											popupIcon={''}
-											noOptionsText={'No Results Found'}
+											noOptionsText={
+												<div style={{ color: '#808080', fontSize: 14 }}>
+													No Results Found
+												</div>
+											}
 											className={`${classes.autoComplete} ${
 												isEdit && classes.disableAutoComplete
 											}`}
