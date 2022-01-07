@@ -749,7 +749,6 @@ const UploadOrEditPost = ({
 											InputProps={{
 												disableUnderline: true,
 												className: classes.textFieldInput,
-												type: 'search',
 												...params.InputProps
 											}}
 										/>
