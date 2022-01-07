@@ -440,7 +440,8 @@ const UploadOrEditPost = ({
 		!uploadedFiles.length || postButtonStatus || (value && !selectedMedia);
 
 	const totalMedia = [];
-	media.slice(0, 5).map((medi) => totalMedia.push(medi.title)); //gets recent first 5 elements from the list
+	//media.slice(0, 5).map((medi) => totalMedia.push(medi.title)); //gets recent first 5 elements from the list
+	media.map((medi) => totalMedia.push(medi));
 
 	return (
 		<Slider
@@ -861,14 +862,41 @@ const UploadOrEditPost = ({
 
 									<Autocomplete
 										value={selectedMedia}
+										PaperComponent={(props) => {
+											return (
+												<Paper
+													elevation={6}
+													className={classes.popperAuto}
+													style={{
+														marginTop: '12px',
+														background: 'black',
+														border: '1px solid #404040',
+														boxShadow:
+															'0px 16px 40px rgba(255, 255, 255, 0.16)',
+														borderRadius: '8px'
+													}}
+													{...props}
+												/>
+											);
+										}}
 										onChange={(e, newVal) => {
 											setSelectedMedia(newVal);
 										}}
 										//className={classes.autoComplete}
 										options={totalMedia}
+										getOptionLabel={(option) => option.title}
+										renderOption={(props, option, { selected }) => {
+											console.log(option);
+											return (
+												<li {...props} className={classes.liAutocomplete}>
+													{option.title}
+												</li>
+											);
+										}}
 										renderInput={(params) => (
 											<TextField
 												{...params}
+												size='small'
 												placeholder='Search Media'
 												InputProps={{
 													disableUnderline: true,
@@ -878,7 +906,11 @@ const UploadOrEditPost = ({
 											/>
 										)}
 										clearIcon={<ClearIcon />}
-										noOptionsText={'No Results Found'}
+										noOptionsText={
+											<div style={{ color: '#808080', fontSize: 14 }}>
+												No Results Found
+											</div>
+										}
 										popupIcon={''}
 									/>
 
