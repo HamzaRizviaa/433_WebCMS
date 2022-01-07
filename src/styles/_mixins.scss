@@ -16,9 +16,10 @@
 	background-color: #000000;
 
 	svg {
+		position: absolute;
 		color: $neon-yellow;
 		right: 2rem !important;
-		top: 0 !important;
+		top: -9px !important;
 		font-size: 3rem;
 	}
 
