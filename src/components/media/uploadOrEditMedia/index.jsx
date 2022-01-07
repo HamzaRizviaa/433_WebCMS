@@ -11,9 +11,10 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { useDropzone } from 'react-dropzone';
 import { makeid } from '../../../utils/helper';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMainCategories } from './uploadOrEditMediaSlice';
+import { getMainCategories, getMediaLabels } from './uploadOrEditMediaSlice';
 import { getMedia } from '../../posts/uploadOrEditPost/mediaDropdownSlice';
 import captureVideoFrame from 'capture-video-frame';
+import ClearIcon from '@material-ui/icons/Clear';
 import Close from '@material-ui/icons/Close';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -22,6 +23,7 @@ import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Union } from '../../../assets/Union.svg';
 import { ReactComponent as MusicIcon } from '../../../assets/Music.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
+import { Autocomplete, Paper } from '@mui/material';
 
 const UploadOrEditMedia = ({
 	open,
@@ -31,6 +33,8 @@ const UploadOrEditMedia = ({
 	buttonText,
 	isEdit
 }) => {
+	const [selectedLabels, setSelectedLabels] = useState([]);
+	const [mediaLabels, setMediaLabels] = useState([]);
 	const [mainCategory, setMainCategory] = useState('');
 	const [subCategory, setSubCategory] = useState('');
 	const [subCategories, setSubCategories] = useState([]);
@@ -68,9 +72,18 @@ const UploadOrEditMedia = ({
 	const specificMedia = useSelector(
 		(state) => state.mediaLibrary.specificMedia
 	);
+	const labels = useSelector((state) => state.mediaLibrary.labels);
+
+	useEffect(() => {
+		if (labels.length) {
+			setMediaLabels(labels.map((label) => label.name));
+		}
+	}, [labels]);
+
 	useEffect(() => {
 		console.log({ specificMedia });
 		if (specificMedia) {
+			setSelectedLabels(specificMedia?.labels);
 			setMainCategory(specificMedia?.media_type);
 			setSubCategory(specificMedia?.sub_category);
 			setTitleMedia(specificMedia?.title);
@@ -95,6 +108,7 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		dispatch(getMainCategories());
+		dispatch(getMediaLabels());
 	}, []);
 
 	const {
@@ -222,6 +236,7 @@ const UploadOrEditMedia = ({
 		setDescription('');
 		setPreviewFile(null);
 		setMediaButtonStatus(false);
+		setSelectedLabels([]);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -296,6 +311,14 @@ const UploadOrEditMedia = ({
 
 	const uploadMedia = async (id, payload) => {
 		setMediaButtonStatus(true);
+		let _labels = [];
+		if (!isEdit) {
+			labels.map((label) => {
+				if (selectedLabels.includes(label.name)) {
+					_labels.push(label);
+				}
+			});
+		}
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media/create-media`,
@@ -305,7 +328,7 @@ const UploadOrEditMedia = ({
 							media_type: mainCategory,
 							sub_category: subCategory,
 							title: titleMedia,
-
+							...(_labels.length ? { labels: [..._labels] } : {}),
 							description: description,
 							data: {
 								file_name: payload?.file_name,
@@ -490,7 +513,6 @@ const UploadOrEditMedia = ({
 											},
 											getContentAnchorEl: null
 										}}
-										freeSolo
 										displayEmpty={mainCategory ? true : false}
 										renderValue={(value) =>
 											value?.length
@@ -724,7 +746,98 @@ const UploadOrEditMedia = ({
 									</div>
 									<p className={classes.mediaError}>{titleMediaError}</p>
 
-									<div className={classes.titleContainerDesription}>
+									<div className={classes.titleContainer}>
+										<h6>LABELS</h6>
+										<Autocomplete
+											disabled={isEdit}
+											PaperComponent={(props) => {
+												return (
+													<Paper
+														elevation={6}
+														className={classes.popperAuto}
+														style={{
+															marginTop: '12px',
+															background: 'black',
+															border: '1px solid #404040',
+															boxShadow:
+																'0px 16px 40px rgba(255, 255, 255, 0.16)',
+															borderRadius: '8px'
+														}}
+														{...props}
+													/>
+												);
+											}}
+											multiple
+											filterSelectedOptions
+											freeSolo={false}
+											value={selectedLabels}
+											placeholder='Select Media'
+											onChange={(event, newValue) => {
+												setSelectedLabels(newValue);
+											}}
+											popupIcon={''}
+											noOptionsText={
+												<div style={{ color: '#808080', fontSize: 14 }}>
+													No Results Found
+												</div>
+											}
+											className={`${classes.autoComplete} ${
+												isEdit && classes.disableAutoComplete
+											}`}
+											id='free-solo-2-demo'
+											disableClearable
+											options={mediaLabels}
+											renderInput={(params) => (
+												<TextField
+													{...params}
+													placeholder={
+														selectedLabels.length ? ' ' : 'Select Label'
+													}
+													className={classes.textFieldAuto}
+													InputProps={{
+														disableUnderline: true,
+														className: classes.textFieldInput,
+														...params.InputProps
+													}}
+												/>
+											)}
+											// eslint-disable-next-line no-unused-vars
+											renderOption={(props, option, { selected }) => (
+												<li {...props} className={classes.liAutocomplete}>
+													{option}
+												</li>
+											)}
+											ChipProps={{
+												className: classes.tagYellow,
+												size: 'small',
+												deleteIcon: <ClearIcon />
+											}}
+											clearIcon={''}
+											anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+											transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+											popoverProps={{
+												style: {
+													bottom: 0,
+													overflowY: 'auto'
+												}
+											}}
+											MenuProps={{
+												anchorOrigin: {
+													vertical: 'bottom',
+													horizontal: 'left'
+												},
+												transformOrigin: {
+													vertical: 'top',
+													horizontal: 'left'
+												},
+												getContentAnchorEl: null
+											}}
+										/>
+									</div>
+
+									<p className={classes.mediaError}>{''}</p>
+
+									<div className={classes.titleContainer}>
 										<h6>DESCRIPTION</h6>
 										<TextField
 											value={description}
