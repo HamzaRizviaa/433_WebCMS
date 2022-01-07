@@ -14,4 +14,16 @@
 	border-radius: 40px;
 	margin-bottom: 1rem;
 	background-color: #000000;
+
+	svg {
+		color: $neon-yellow;
+		right: 2rem !important;
+		top: 0 !important;
+		font-size: 3rem;
+	}
+
+	// .MuiAutocomplete-endAdornment {
+	// 	color: green !important;
+	// 	position: relative !important;
+	// }
 }

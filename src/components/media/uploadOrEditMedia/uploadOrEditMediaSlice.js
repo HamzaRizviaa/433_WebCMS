@@ -29,11 +29,26 @@ export const getSpecificMedia = createAsyncThunk(
 	}
 );
 
+export const getMediaLabels = createAsyncThunk(
+	'uploadMedia/getMediaLabels',
+	async () => {
+		const result = await axios.get(
+			`${process.env.REACT_APP_API_ENDPOINT}/label/medias`
+		);
+		if (result?.data?.result?.length > 0) {
+			return result.data.result;
+		} else {
+			return [];
+		}
+	}
+);
+
 export const uploadOrEditMediaSlice = createSlice({
 	name: 'uploadMedia',
 	initialState: {
 		mainCategories: [],
 		specificMedia: [],
+		labels: [],
 		mainCategoriesStatusLoading: false
 	},
 	reducers: null,
@@ -50,6 +65,9 @@ export const uploadOrEditMediaSlice = createSlice({
 		},
 		[getSpecificMedia.fulfilled]: (state, action) => {
 			state.specificMedia = action.payload;
+		},
+		[getMediaLabels.fulfilled]: (state, action) => {
+			state.labels = action.payload;
 		}
 	}
 });
