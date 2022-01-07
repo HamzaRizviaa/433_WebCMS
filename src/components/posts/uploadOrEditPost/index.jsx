@@ -29,7 +29,6 @@ import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
 import Chip from '@mui/material/Chip';
 import { Popper, Paper } from '@mui/material';
-
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
 import { ReactComponent as PortraitCrop } from '../../../assets/portrait_rect.svg';
