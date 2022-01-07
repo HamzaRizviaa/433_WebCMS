@@ -5,20 +5,35 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Button from '../../components/button';
 import Layout from '../../components/layout';
 import Table from '../../components/table';
-import classes from './_postLibrary.module.scss';
-import { useDispatch, useSelector } from 'react-redux';
-import { getPosts } from './postLibrarySlice';
-import { getSpecificPost } from '../../components/posts/uploadOrEditPost/editButtonSlice';
+import classes from './_mediaLibrary.module.scss';
 import moment from 'moment';
-import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import { useDispatch, useSelector } from 'react-redux';
+import { getMedia } from '../../components/posts/uploadOrEditPost/mediaDropdownSlice';
+import UploadOrEditMedia from '../../components/media/uploadOrEditMedia';
+import { getSpecificMedia } from '../../components/media/uploadOrEditMedia/uploadOrEditMediaSlice';
 
-const sortRows = (order) => {
-	if (!order) return <ArrowDropUpIcon className={classes.sortIcon} />;
+const sortRows = (order, row) => {
+	if (!order)
+		return (
+			<ArrowDropUpIcon
+				className={classes.sortIcon}
+				style={{ left: row?.dataField === 'type' ? 30 : -4 }}
+			/>
+		);
 	else if (order === 'asc')
-		return <ArrowDropUpIcon className={classes.sortIconSelected} />;
+		return (
+			<ArrowDropUpIcon
+				className={classes.sortIconSelected}
+				style={{ left: row?.dataField === 'type' ? 30 : -4 }}
+			/>
+		);
 	else if (order === 'desc')
-		return <ArrowDropDownIcon className={classes.sortIconSelected} />;
+		return (
+			<ArrowDropDownIcon
+				className={classes.sortIconSelected}
+				style={{ left: row?.dataField === 'type' ? 30 : -4 }}
+			/>
+		);
 	return null;
 };
 
@@ -33,17 +48,27 @@ const getDateTime = (dateTime) => {
 	})}`;
 };
 
-const PostLibrary = () => {
-	const posts = useSelector((state) => state.postLibrary.posts);
+const MediaLibrary = () => {
+	const media = useSelector((state) => state.mediaDropdown.media);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 
 	const dispatch = useDispatch();
+
 	useEffect(() => {
-		dispatch(getPosts());
+		dispatch(getMedia());
 	}, []);
 
 	const columns = [
+		{
+			dataField: 'title',
+			text: 'TITLE',
+			sort: true,
+			sortCaret: sortRows,
+			formatter: (content) => {
+				return <div className={classes.row}>{content}</div>;
+			}
+		},
 		{
 			dataField: 'file_name',
 			text: 'MEDIA',
@@ -51,41 +76,28 @@ const PostLibrary = () => {
 			sortCaret: sortRows,
 			formatter: (content, row) => {
 				return (
-					<div
-						className={
-							row.orientation_type === 'landscape'
-								? classes.mediaWrapperLandscape
-								: classes.mediaWrapper
-						}
-					>
-						{row.thumbnail_url ? (
-							<PlayArrowIcon
-								className={
-									row.orientation_type === 'portrait'
-										? classes.playIconPortrait
-										: classes.playIcon
-								}
-							/>
-						) : (
-							<></>
-						)}
+					<div className={classes.mediaWrapper}>
 						<img
-							className={
-								row.orientation_type === 'square'
-									? classes.mediaIcon
-									: row.orientation_type === 'landscape'
-									? classes.mediaIconLandscape
-									: classes.mediaIconPortrait
-							}
-							src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-								row.thumbnail_url ? row.thumbnail_url : row.media
-							}`}
+							className={classes.mediaIcon}
+							src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row.thumbnail_url}`}
 						/>
 						<span className={classes.fileName}>
-							{row.file_name.substring(0, 13)}
+							{row.file_name.substring(0, 16)}
 						</span>
 					</div>
 				);
+			}
+		},
+		{
+			dataField: 'type',
+			sort: true,
+			sortCaret: sortRows,
+			text: 'TYPE',
+			formatter: (content) => {
+				return <div className={classes.rowType}>{content}</div>;
+			},
+			headerStyle: () => {
+				return { paddingLeft: '48px' };
 			}
 		},
 		{
@@ -125,7 +137,7 @@ const PostLibrary = () => {
 							onClick={() => {
 								setShowSlider(true);
 								setEdit(true);
-								dispatch(getSpecificPost(row.id));
+								dispatch(getSpecificMedia(row.id));
 							}}
 							className={classes.editIcon}
 						/>
@@ -138,34 +150,31 @@ const PostLibrary = () => {
 	return (
 		<Layout>
 			<div className={classes.header}>
-				<h1>POST LIBRARY</h1>
+				<h1>MEDIA LIBRARY</h1>
 				<Button
 					onClick={() => {
 						setShowSlider(true);
 					}}
-					text={'UPLOAD POST'}
+					text={'UPLOAD MEDIA'}
 				/>
 			</div>
 			<div className={classes.tableContainer}>
-				<Table columns={columns} data={posts} />
+				<Table columns={columns} data={media} />
 			</div>
 
-			<UploadOrEditPost
+			<UploadOrEditMedia
 				open={showSlider}
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
 					setTimeout(() => setEdit(false), 150);
 				}}
-				title={edit ? 'Edit Post' : 'Upload a Post'}
-				heading1={edit ? 'Media Files' : 'Add Media Files'}
-				buttonText={edit ? 'SAVE CHANGES' : 'POST'}
-				//specificPostId
+				title={edit ? 'Edit Media' : 'Upload Media'}
+				heading1={edit ? 'Media Type' : 'Select Media Type'}
+				buttonText={edit ? 'SAVE CHANGES' : 'ADD MEDIA'}
 			/>
-
-			{/* <Popup  closePopup={closeThePop} open={popped} title={'Upload a Post'}/> :   */}
 		</Layout>
 	);
 };
 
-export default PostLibrary;
+export default MediaLibrary;

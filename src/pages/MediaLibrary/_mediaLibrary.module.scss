@@ -10,39 +10,15 @@
 }
 
 .mediaIcon {
-	height: 48px;
-	width: 48px;
+	height: 5rem;
+	width: 5rem;
 	border-radius: 8px;
-	object-fit: cover;
-}
-
-.mediaIconLandscape {
-	height: 25.131px;
-	width: 48px;
-	border-radius: 8px;
-	object-fit: cover;
-}
-
-.mediaIconPortrait {
-	height: 48px;
-	width: 38.4px;
-	border-radius: 8px;
-	object-fit: cover;
 }
 
 .mediaWrapper {
 	display: flex;
 	align-items: center;
-	margin-left: 0.5rem;
 	margin-bottom: 1.5rem;
-}
-
-.mediaWrapperLandscape {
-	margin-top: 1.25rem;
-	display: flex;
-	align-items: center;
-	margin-left: 0.5rem;
-	margin-bottom: 2.5rem;
 }
 
 .fileName {
@@ -53,6 +29,12 @@
 .row {
 	margin-bottom: 1.5rem;
 	font-size: 1.2rem;
+}
+
+.rowType {
+	margin-bottom: 1.5rem;
+	font-size: 1.2rem;
+	padding-left: 35px;
 }
 
 .editIcon {
@@ -71,25 +53,9 @@
 
 .sortIconSelected {
 	position: absolute;
-	left: 0;
+	left: -4px;
 	bottom: -2px;
 	height: 2rem !important;
 	width: 2rem !important;
-	color: $neon-yellow;
-}
-
-.playIcon {
-	position: absolute;
-	left: 18px;
-	height: 2.5rem !important;
-	width: auto !important;
-	color: $neon-yellow;
-}
-
-.playIconPortrait {
-	position: absolute;
-	left: 12px;
-	height: 2.5rem !important;
-	width: auto !important;
 	color: $neon-yellow;
 }
