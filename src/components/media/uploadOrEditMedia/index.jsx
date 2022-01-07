@@ -441,6 +441,7 @@ const UploadOrEditMedia = ({
 											setMainCategory(e.target.value);
 											setMainCategoryLabelColor('#ffffff');
 											setMainCategoryError('');
+											setSubCategory('');
 											if (uploadedFiles.length) {
 												uploadedFiles.map((file) => handleDeleteFile(file.id));
 											}

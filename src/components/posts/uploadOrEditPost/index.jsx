@@ -821,45 +821,6 @@ const UploadOrEditPost = ({
 							{value ? (
 								<div className={classes.mediaContainer}>
 									<h6 style={{ color: mediaLabelColor }}>SELECT MEDIA</h6>
-									{/* <Select
-										value={selectedMedia}
-										onChange={(e) => {
-											setMediaError(false);
-											setMediaLabelColor('#ffffff');
-											setSelectedMedia(e.target.value);
-										}}
-										disableUnderline={true}
-										className={`${classes.select}`}
-										IconComponent={KeyboardArrowDownIcon}
-										MenuProps={{
-											anchorOrigin: {
-												vertical: 'bottom',
-												horizontal: 'left'
-											},
-											transformOrigin: {
-												vertical: 'top',
-												horizontal: 'left'
-											},
-											getContentAnchorEl: null
-										}}
-										displayEmpty={true}
-										renderValue={(value) =>
-											value?.length
-												? Array.isArray(value)
-													? value.join(', ')
-													: value
-												: 'Please Select'
-										}
-									>
-										<MenuItem disabled value=''>
-											Please Select
-										</MenuItem> 
-										{media.map((item, index) => (
-											<MenuItem key={index} value={item.id}>
-												{item.title}{' '}
-											</MenuItem>
-										))}
-									</Select> */}
 
 									<Autocomplete
 										value={selectedMedia}
