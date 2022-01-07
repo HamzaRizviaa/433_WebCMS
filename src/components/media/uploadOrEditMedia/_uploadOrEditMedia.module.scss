@@ -23,6 +23,19 @@
 
 .addMediaBtn {
 	width: 100%;
+	margin-top: 0.5rem;
+}
+
+.addMediaBtnEdit {
+	width: 70%;
+	margin-top: 0.5rem;
+	display: inline-block;
+}
+
+.editBtn {
+	width: 30%;
+	display: inline-block;
+	margin-top: 0.5rem;
 }
 
 .categoryContainer {
@@ -57,31 +70,50 @@
 	}
 	width: 100%;
 	color: white !important;
-	border: 1px solid #ffffff;
+	border: 1px solid #404040;
 	font-size: 1.4rem !important;
 	line-height: 1.6 !important;
 	border-radius: 5rem !important;
 	margin-bottom: 1rem !important;
-	background-color: #000000 !important;
+	background-color: #000000;
 
 	div[role='button'] {
-		padding: 1rem 0rem 1rem 2rem;
+		padding: 0.5rem 0rem 0.5rem 2rem;
 	}
 
 	svg {
 		color: $neon-yellow;
 		right: 1rem;
 		top: 0;
-		font-size: 4rem;
+		font-size: 3rem;
+	}
+}
+
+.autoComplete {
+	width: 100%;
+	color: white !important;
+	border: 1px solid #ffffff;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 5rem !important;
+	margin-bottom: 1rem !important;
+	background-color: #ff355a !important;
+	.MuiInput-input {
+		padding: 1rem 0rem 1rem 1rem;
+		padding-right: 32px !important;
+	}
+
+	svg {
+		color: $neon-yellow;
+		right: 1rem;
+		top: 0;
+		font-size: 3rem;
 	}
 }
 
 .uploadedFilesContainer {
-	margin-top: 4rem;
+	margin-top: 1.5rem;
 	max-height: 220px;
-	// overflow-y: auto;
-	// -ms-overflow-style: none; /* Internet Explorer 10+ */
-	// scrollbar-width: none; /* Firefox */
 }
 
 .filePreview {
@@ -91,9 +123,9 @@
 	justify-content: space-between;
 	align-items: center;
 	position: relative;
-	&:last-child {
-		box-shadow: none;
-	}
+	// &:last-child {
+	// 	box-shadow: none;
+	// }
 }
 
 .filePreviewLeft {
@@ -105,7 +137,7 @@
 	height: 8rem;
 	width: 8rem;
 	border-radius: 4px;
-	background-color: white;
+	background-color: #404040;
 }
 
 .fileName {
@@ -120,18 +152,59 @@
 	cursor: pointer;
 }
 
+.playIcon {
+	position: absolute;
+	left: 48px;
+	height: 2.5rem !important;
+	width: auto !important;
+	color: $neon-yellow;
+}
+
 .dropZoneContainer {
-	border: 1px solid $neon-yellow;
-	border-style: dashed;
-	padding: 2.5rem 2.5rem 2rem 2.5rem;
+	//border: 1px solid $neon-yellow;
+	border-top: 1.5px dashed $neon-yellow;
+	border-right: 1.5px dashed $neon-yellow;
+	border-bottom: 1.5px dashed $neon-yellow;
+	border-left: 1.5px dashed $neon-yellow;
+	//border-style: dashed;
 	cursor: pointer;
-	border-radius: 0.5rem;
-	margin-bottom: 1rem;
+	border-radius: 1rem;
+	//margin-bottom: 1rem;
 	//margin-top: 1rem;
+}
+
+// .dropZoneContainer {
+// 	background-image: linear-gradient(
+// 		to right,
+// 		$neon-yellow 13%,
+// 		rgba(255, 255, 255, 0) 0%
+// 	);
+// 	background-position: top;
+// 	background-size: 3px 1px;
+// 	background-repeat: repeat-x;
+// }
+
+.droppa {
+	//background: yellow;
+	background: linear-gradient(
+			to right,
+			$neon-yellow 65%,
+			rgba(255, 255, 255, 0) 0%
+		),
+		linear-gradient($neon-yellow 65%, rgba(255, 255, 255, 0) 0%),
+		linear-gradient(to right, $neon-yellow 65%, rgba(255, 255, 255, 0) 0%),
+		linear-gradient($neon-yellow 65%, rgba(255, 255, 255, 0) 0%);
+	background-position: top, right, bottom, left;
+	background-repeat: repeat-x, repeat-y;
+	background-size: 6px 2px, 2px 6px;
+	padding: 1rem 2.5rem 0.5rem 2.5rem;
+	cursor: pointer;
+	border-radius: 0.7rem;
 }
 
 .dropzone {
 	text-align: center;
+	padding: 1rem 2.5rem 0.5rem 2.5rem;
 }
 
 .addFilesIcon {
@@ -163,10 +236,79 @@
 	height: 1rem;
 }
 
+.mediaError {
+	color: #ff355a;
+	font-weight: bold;
+	height: 1rem;
+	margin-bottom: 1rem;
+	margin-left: 1rem;
+}
+
 .fileRejectionError {
 	color: #ff355a;
 	font-weight: bold;
 	height: 1rem;
 	text-align: center;
 	margin-bottom: 1.5rem;
+}
+
+.titleContainer {
+	h6 {
+		margin-bottom: 0.5rem;
+		margin-left: 1rem;
+	}
+}
+
+.titleContainerDesription {
+	h6 {
+		margin-bottom: 0.5rem;
+		margin-left: 1rem;
+	}
+	margin-bottom: 2.5rem;
+}
+
+.textField {
+	width: 100%;
+}
+
+.textFieldInput {
+	@include textFieldInput;
+}
+
+.previewContentWrapper {
+	min-height: calc(100vh - 107px);
+	position: relative;
+	display: flex;
+	width: 1000px;
+}
+
+.contentWrapperNoPreview {
+	min-height: calc(100vh - 107px);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.previewComponent {
+	width: 35%;
+	border-left: 1px solid $grey;
+	margin-left: 3rem;
+	padding-left: 3rem;
+	margin-bottom: 10rem;
+}
+
+.previewHeader {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.previewFile {
+	height: 8rem;
+	width: 8rem;
+}
+
+.isEditSelect {
+	opacity: 0.7;
 }

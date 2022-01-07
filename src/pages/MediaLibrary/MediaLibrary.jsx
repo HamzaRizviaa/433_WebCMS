@@ -10,6 +10,7 @@ import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMedia } from '../../components/posts/uploadOrEditPost/mediaDropdownSlice';
 import UploadOrEditMedia from '../../components/media/uploadOrEditMedia';
+import { getSpecificMedia } from '../../components/media/uploadOrEditMedia/uploadOrEditMediaSlice';
 
 const sortRows = (order, row) => {
 	if (!order)
@@ -50,6 +51,7 @@ const getDateTime = (dateTime) => {
 const MediaLibrary = () => {
 	const media = useSelector((state) => state.mediaDropdown.media);
 	const [showSlider, setShowSlider] = useState(false);
+	const [edit, setEdit] = useState(false);
 
 	const dispatch = useDispatch();
 
@@ -128,10 +130,17 @@ const MediaLibrary = () => {
 		{
 			dataField: 'options',
 			text: 'OPTIONS',
-			formatter: () => {
+			formatter: (content, row) => {
 				return (
 					<div className={classes.row}>
-						<Edit onClick={() => {}} className={classes.editIcon} />
+						<Edit
+							onClick={() => {
+								setShowSlider(true);
+								setEdit(true);
+								dispatch(getSpecificMedia(row.id));
+							}}
+							className={classes.editIcon}
+						/>
 					</div>
 				);
 			}
@@ -155,12 +164,14 @@ const MediaLibrary = () => {
 
 			<UploadOrEditMedia
 				open={showSlider}
+				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
+					setTimeout(() => setEdit(false), 150);
 				}}
-				title={'Upload Media'}
-				heading1={'Select Media Type'}
-				buttonText={'ADD MEDIA'}
+				title={edit ? 'Edit Media' : 'Upload Media'}
+				heading1={edit ? 'Media Type' : 'Select Media Type'}
+				buttonText={edit ? 'SAVE CHANGES' : 'ADD MEDIA'}
 			/>
 		</Layout>
 	);
