@@ -164,6 +164,13 @@
 		top: 0rem !important;
 		font-size: 3rem;
 	}
+	overflow-y: auto;
+	-ms-overflow-style: none; /* Internet Explorer 10+ */
+	scrollbar-width: none; /* Firefox */
+}
+
+.autoComplete::-webkit-scrollbar {
+	display: none; /* Safari and Chrome */
 }
 
 .textFieldInput2 {
