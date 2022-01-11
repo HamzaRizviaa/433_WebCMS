@@ -67,7 +67,6 @@ const UploadOrEditPost = ({
 	const [imageToResizeHeight, setImageToResizeHeight] = useState(80);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [postLabels, setPostLabels] = useState([]);
-	const [postMedia, setPostMedia] = useState([]);
 	// const [aspect, setAspect] = useState(1 / 1);
 	// const [imgDestination, setImageDestination] = useState('');
 	// const imageElement = useRef();
@@ -92,14 +91,6 @@ const UploadOrEditPost = ({
 			setPostLabels(labels.map((label) => label.name));
 		}
 	}, [labels]);
-
-	//console.log(media);
-	//console.log(postMedia);
-	useEffect(() => {
-		if (media.length) {
-			setPostMedia(media.map((medi) => medi.title));
-		}
-	}, [media]);
 
 	useEffect(() => {
 		if (specificPost) {
@@ -348,20 +339,14 @@ const UploadOrEditPost = ({
 					}
 				});
 			}
-			let _media;
-
-			media.map((medi) => {
-				if (selectedMedia.includes(medi.title)) {
-					_media = medi.id;
-				}
-			});
-			console.log(_media);
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
 				{
 					caption: caption,
 					orientation_type: dimensionSelect,
-					...(selectedMedia ? { media_id: _media } : { media_id: null }),
+					...(selectedMedia
+						? { media_id: selectedMedia.id }
+						: { media_id: null }),
 					...(isEdit && id ? { post_id: id } : {}),
 					...(!isEdit && _labels.length ? { labels: [..._labels] } : {}),
 					...(!isEdit ? { media_files: [...mediaFiles] } : {})
@@ -457,9 +442,9 @@ const UploadOrEditPost = ({
 	const postBtnDisabled =
 		!uploadedFiles.length || postButtonStatus || (value && !selectedMedia);
 
-	// const totalMedia = [];
-	// //media.slice(0, 5).map((medi) => totalMedia.push(medi.title)); //gets recent first 5 elements from the list
-	// media.map((medi) => totalMedia.push(medi));
+	const totalMedia = [];
+	//media.slice(0, 5).map((medi) => totalMedia.push(medi.title)); //gets recent first 5 elements from the list
+	media.map((medi) => totalMedia.push(medi));
 
 	return (
 		<Slider
@@ -741,11 +726,10 @@ const UploadOrEditPost = ({
 									}}
 									multiple
 									filterSelectedOptions
-									//freeSolo={false}
+									freeSolo={false}
 									value={selectedLabels}
 									placeholder='Select Media'
 									onChange={(event, newValue) => {
-										console.log(newValue);
 										setSelectedLabels(newValue);
 									}}
 									popupIcon={''}
@@ -837,7 +821,7 @@ const UploadOrEditPost = ({
 								</div>
 							</div>
 							{value ? (
-								<div className={classes.captionContainer}>
+								<div className={classes.mediaContainer}>
 									<h6 style={{ color: mediaLabelColor }}>SELECT MEDIA</h6>
 
 									<Autocomplete
@@ -861,23 +845,24 @@ const UploadOrEditPost = ({
 												/>
 											);
 										}}
-										//multiple
-										filterSelectedOptions
 										onChange={(e, newVal) => {
 											setSelectedMedia(newVal);
 										}}
-										className={`${classes.autoComplete}`}
-										options={postMedia}
-										renderOption={(props, option, { selected }) => (
-											<li {...props} className={classes.liAutocomplete}>
-												{option}
-											</li>
-										)}
+										//className={classes.autoComplete}
+										options={totalMedia}
+										getOptionLabel={(option) => option.title}
+										renderOption={(props, option, { selected }) => {
+											return (
+												<li {...props} className={classes.liAutocomplete}>
+													{option.title}
+												</li>
+											);
+										}}
 										renderInput={(params) => (
 											<TextField
 												{...params}
+												size='small'
 												placeholder='Search Media'
-												className={classes.textFieldAuto}
 												InputProps={{
 													disableUnderline: true,
 													...params.InputProps,
@@ -892,8 +877,6 @@ const UploadOrEditPost = ({
 											</div>
 										}
 										popupIcon={''}
-										disableClearable
-										//filterSelectedOptions
 									/>
 
 									<p className={classes.mediaError}>{mediaError}</p>
