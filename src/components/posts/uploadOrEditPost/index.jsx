@@ -58,6 +58,8 @@ const UploadOrEditPost = ({
 	const [selectedLabels, setSelectedLabels] = useState([]);
 	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
 	const [mediaLabelColor, setMediaLabelColor] = useState('#ffffff');
+	const [labelColor, setLabelColor] = useState('#ffffff');
+	const [labelError, setLabelError] = useState('');
 	const [selectedMedia, setSelectedMedia] = useState(null);
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
@@ -318,6 +320,19 @@ const UploadOrEditPost = ({
 				setUploadMediaError('');
 			}, [5000]);
 		}
+
+		if (selectedLabels.length < 10) {
+			setLabelColor('#ff355a');
+			setLabelError(
+				`You need to add ${
+					10 - selectedLabels.length
+				} more labels in order to post`
+			);
+			setTimeout(() => {
+				setLabelColor('#ffff00');
+				setLabelError('');
+			}, [5000]);
+		}
 		if (value && !selectedMedia) {
 			setMediaLabelColor('#ff355a');
 			setMediaError('This field is required');
@@ -440,7 +455,10 @@ const UploadOrEditPost = ({
 	// };
 
 	const postBtnDisabled =
-		!uploadedFiles.length || postButtonStatus || (value && !selectedMedia);
+		!uploadedFiles.length ||
+		postButtonStatus ||
+		(value && !selectedMedia) ||
+		selectedLabels.length < 10;
 
 	const totalMedia = [];
 	//media.slice(0, 5).map((medi) => totalMedia.push(medi.title)); //gets recent first 5 elements from the list
@@ -705,7 +723,7 @@ const UploadOrEditPost = ({
 							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
 
 							<div className={classes.captionContainer}>
-								<h6>LABELS</h6>
+								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete
 									disabled={isEdit}
 									PaperComponent={(props) => {
@@ -789,7 +807,7 @@ const UploadOrEditPost = ({
 								/>
 							</div>
 
-							<p className={classes.mediaError}>{''}</p>
+							<p className={classes.mediaError}>{labelError}</p>
 
 							<div className={classes.captionContainer}>
 								<h6>CAPTION</h6>

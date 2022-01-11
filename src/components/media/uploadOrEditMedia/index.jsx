@@ -33,6 +33,8 @@ const UploadOrEditMedia = ({
 	buttonText,
 	isEdit
 }) => {
+	const [labelColor, setLabelColor] = useState('#ffffff');
+	const [labelError, setLabelError] = useState('');
 	const [selectedLabels, setSelectedLabels] = useState([]);
 	const [mediaLabels, setMediaLabels] = useState([]);
 	const [mainCategory, setMainCategory] = useState('');
@@ -260,6 +262,18 @@ const UploadOrEditMedia = ({
 				setUploadMediaError('');
 			}, [5000]);
 		}
+		if (selectedLabels.length < 10) {
+			setLabelColor('#ff355a');
+			setLabelError(
+				`You need to add ${
+					10 - selectedLabels.length
+				} more labels in order to upload media`
+			);
+			setTimeout(() => {
+				setLabelColor('#ffffff');
+				setLabelError('');
+			}, [5000]);
+		}
 		if (uploadedCoverImage.length < 1) {
 			setDropZoneBorder2('#ff355a');
 			setUploadCoverError('You need to upload a cover in order to post');
@@ -398,7 +412,8 @@ const UploadOrEditMedia = ({
 		!mainCategory ||
 		!uploadedCoverImage.length ||
 		!titleMedia ||
-		mediaButtonStatus;
+		mediaButtonStatus ||
+		selectedLabels.length < 10;
 
 	return (
 		<Slider
@@ -748,7 +763,7 @@ const UploadOrEditMedia = ({
 									<p className={classes.mediaError}>{titleMediaError}</p>
 
 									<div className={classes.titleContainer}>
-										<h6>LABELS</h6>
+										<h6 style={{ color: labelColor }}>LABELS</h6>
 										<Autocomplete
 											disabled={isEdit}
 											PaperComponent={(props) => {
@@ -836,7 +851,7 @@ const UploadOrEditMedia = ({
 										/>
 									</div>
 
-									<p className={classes.mediaError}>{''}</p>
+									<p className={classes.mediaError}>{labelError}</p>
 
 									<div className={classes.titleContainer}>
 										<h6>DESCRIPTION</h6>
