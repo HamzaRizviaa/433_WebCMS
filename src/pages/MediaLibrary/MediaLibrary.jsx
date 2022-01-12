@@ -50,6 +50,7 @@ const getDateTime = (dateTime) => {
 
 const MediaLibrary = () => {
 	const media = useSelector((state) => state.mediaDropdown.media);
+	console.log(media);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 
@@ -96,6 +97,17 @@ const MediaLibrary = () => {
 			text: 'POST DATE | TIME',
 			formatter: (content) => {
 				return <div className={classes.row}>{getDateTime(content)}</div>;
+			}
+		},
+		{
+			dataField: 'labels',
+			sort: true,
+			sortCaret: sortRows,
+			text: 'LABEL',
+			formatter: (content) => {
+				return (
+					<div className={classes.row}>{content[0] + `, ` + content[1]}</div>
+				);
 			}
 		},
 		{
