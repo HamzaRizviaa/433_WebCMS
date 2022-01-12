@@ -150,7 +150,7 @@ const MediaLibrary = () => {
 	return (
 		<Layout>
 			<div className={classes.header}>
-				<h1>MEDIA LIBRARY</h1>
+				<h1 style={{ marginRight: '2rem' }}>MEDIA LIBRARY</h1>
 				<Button
 					onClick={() => {
 						setShowSlider(true);
