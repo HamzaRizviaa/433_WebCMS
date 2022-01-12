@@ -82,7 +82,8 @@ const MediaLibrary = () => {
 							src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row.thumbnail_url}`}
 						/>
 						<span className={classes.fileName}>
-							{row.file_name.substring(0, 16)}
+							{row.file_name.substring(0, 13) +
+								`${row.file_name.length > 13 ? '...' : ''}`}
 						</span>
 					</div>
 				);
