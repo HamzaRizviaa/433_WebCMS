@@ -17,21 +17,42 @@ const sortRows = (order, row) => {
 		return (
 			<ArrowDropUpIcon
 				className={classes.sortIcon}
-				style={{ left: row?.dataField === 'type' ? 30 : -4 }}
+				style={{
+					left:
+						row?.dataField === 'type' ||
+						row?.dataField === 'post_date' ||
+						row?.dataField === 'labels'
+							? 30
+							: -4
+				}}
 			/>
 		);
 	else if (order === 'asc')
 		return (
 			<ArrowDropUpIcon
 				className={classes.sortIconSelected}
-				style={{ left: row?.dataField === 'type' ? 30 : -4 }}
+				style={{
+					left:
+						row?.dataField === 'type' ||
+						row?.dataField === 'post_date' ||
+						row?.dataField === 'labels'
+							? 30
+							: -4
+				}}
 			/>
 		);
 	else if (order === 'desc')
 		return (
 			<ArrowDropDownIcon
 				className={classes.sortIconSelected}
-				style={{ left: row?.dataField === 'type' ? 30 : -4 }}
+				style={{
+					left:
+						row?.dataField === 'type' ||
+						row?.dataField === 'post_date' ||
+						row?.dataField === 'labels'
+							? 30
+							: -4
+				}}
 			/>
 		);
 	return null;
@@ -96,7 +117,10 @@ const MediaLibrary = () => {
 			sortCaret: sortRows,
 			text: 'POST DATE | TIME',
 			formatter: (content) => {
-				return <div className={classes.row}>{getDateTime(content)}</div>;
+				return <div className={classes.rowType}>{getDateTime(content)}</div>;
+			},
+			headerStyle: () => {
+				return { paddingLeft: '48px' };
 			}
 		},
 		{
@@ -106,8 +130,13 @@ const MediaLibrary = () => {
 			text: 'LABEL',
 			formatter: (content) => {
 				return (
-					<div className={classes.row}>{content[0] + `, ` + content[1]}</div>
+					<div className={classes.rowType}>
+						{content[0] + `, ` + content[1]}
+					</div>
 				);
+			},
+			headerStyle: () => {
+				return { paddingLeft: '48px' };
 			}
 		},
 		{
