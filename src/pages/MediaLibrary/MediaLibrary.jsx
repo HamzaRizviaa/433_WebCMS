@@ -17,21 +17,42 @@ const sortRows = (order, row) => {
 		return (
 			<ArrowDropUpIcon
 				className={classes.sortIcon}
-				style={{ left: row?.dataField === 'type' ? 30 : -4 }}
+				style={{
+					left:
+						row?.dataField === 'type' ||
+						row?.dataField === 'post_date' ||
+						row?.dataField === 'labels'
+							? 30
+							: -4
+				}}
 			/>
 		);
 	else if (order === 'asc')
 		return (
 			<ArrowDropUpIcon
 				className={classes.sortIconSelected}
-				style={{ left: row?.dataField === 'type' ? 30 : -4 }}
+				style={{
+					left:
+						row?.dataField === 'type' ||
+						row?.dataField === 'post_date' ||
+						row?.dataField === 'labels'
+							? 30
+							: -4
+				}}
 			/>
 		);
 	else if (order === 'desc')
 		return (
 			<ArrowDropDownIcon
 				className={classes.sortIconSelected}
-				style={{ left: row?.dataField === 'type' ? 30 : -4 }}
+				style={{
+					left:
+						row?.dataField === 'type' ||
+						row?.dataField === 'post_date' ||
+						row?.dataField === 'labels'
+							? 30
+							: -4
+				}}
 			/>
 		);
 	return null;
@@ -50,6 +71,7 @@ const getDateTime = (dateTime) => {
 
 const MediaLibrary = () => {
 	const media = useSelector((state) => state.mediaDropdown.media);
+	console.log(media);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 
@@ -82,10 +104,39 @@ const MediaLibrary = () => {
 							src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row.thumbnail_url}`}
 						/>
 						<span className={classes.fileName}>
-							{row.file_name.substring(0, 16)}
+							{row.file_name.substring(0, 13) +
+								`${row.file_name.length > 13 ? '...' : ''}`}
 						</span>
 					</div>
 				);
+			}
+		},
+		{
+			dataField: 'post_date',
+			sort: true,
+			sortCaret: sortRows,
+			text: 'POST DATE | TIME',
+			formatter: (content) => {
+				return <div className={classes.rowType}>{getDateTime(content)}</div>;
+			},
+			headerStyle: () => {
+				return { paddingLeft: '48px' };
+			}
+		},
+		{
+			dataField: 'labels',
+			sort: true,
+			sortCaret: sortRows,
+			text: 'LABEL',
+			formatter: (content) => {
+				return (
+					<div className={classes.rowType}>
+						{content[0] + `, ` + content[1]}
+					</div>
+				);
+			},
+			headerStyle: () => {
+				return { paddingLeft: '48px' };
 			}
 		},
 		{
@@ -100,15 +151,7 @@ const MediaLibrary = () => {
 				return { paddingLeft: '48px' };
 			}
 		},
-		{
-			dataField: 'post_date',
-			sort: true,
-			sortCaret: sortRows,
-			text: 'POST DATE | TIME',
-			formatter: (content) => {
-				return <div className={classes.row}>{getDateTime(content)}</div>;
-			}
-		},
+
 		{
 			dataField: 'user',
 			sort: true,
@@ -150,7 +193,7 @@ const MediaLibrary = () => {
 	return (
 		<Layout>
 			<div className={classes.header}>
-				<h1>MEDIA LIBRARY</h1>
+				<h1 style={{ marginRight: '2rem' }}>MEDIA LIBRARY</h1>
 				<Button
 					onClick={() => {
 						setShowSlider(true);

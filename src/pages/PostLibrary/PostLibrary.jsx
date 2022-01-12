@@ -82,7 +82,8 @@ const PostLibrary = () => {
 							}`}
 						/>
 						<span className={classes.fileName}>
-							{row.file_name.substring(0, 13)}
+							{row.file_name.substring(0, 13) +
+								`${row.file_name.length > 13 ? '...' : ''}`}
 						</span>
 					</div>
 				);
@@ -95,6 +96,17 @@ const PostLibrary = () => {
 			text: 'POST DATE | TIME',
 			formatter: (content) => {
 				return <div className={classes.row}>{getDateTime(content)}</div>;
+			}
+		},
+		{
+			dataField: 'labels',
+			sort: true,
+			sortCaret: sortRows,
+			text: 'LABEL',
+			formatter: (content) => {
+				return (
+					<div className={classes.row}>{content[0] + `, ` + content[1]}</div>
+				);
 			}
 		},
 		{
@@ -138,7 +150,7 @@ const PostLibrary = () => {
 	return (
 		<Layout>
 			<div className={classes.header}>
-				<h1>POST LIBRARY</h1>
+				<h1 style={{ marginRight: '2rem' }}>POST LIBRARY</h1>
 				<Button
 					onClick={() => {
 						setShowSlider(true);
