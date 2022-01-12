@@ -90,6 +90,15 @@ const MediaLibrary = () => {
 			}
 		},
 		{
+			dataField: 'post_date',
+			sort: true,
+			sortCaret: sortRows,
+			text: 'POST DATE | TIME',
+			formatter: (content) => {
+				return <div className={classes.row}>{getDateTime(content)}</div>;
+			}
+		},
+		{
 			dataField: 'type',
 			sort: true,
 			sortCaret: sortRows,
@@ -101,15 +110,7 @@ const MediaLibrary = () => {
 				return { paddingLeft: '48px' };
 			}
 		},
-		{
-			dataField: 'post_date',
-			sort: true,
-			sortCaret: sortRows,
-			text: 'POST DATE | TIME',
-			formatter: (content) => {
-				return <div className={classes.row}>{getDateTime(content)}</div>;
-			}
-		},
+
 		{
 			dataField: 'user',
 			sort: true,
