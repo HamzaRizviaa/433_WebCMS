@@ -98,7 +98,17 @@ const PostLibrary = () => {
 				return <div className={classes.row}>{getDateTime(content)}</div>;
 			}
 		},
-
+		{
+			dataField: 'labels',
+			sort: true,
+			sortCaret: sortRows,
+			text: 'LABEL',
+			formatter: (content) => {
+				return (
+					<div className={classes.row}>{content[0] + `, ` + content[1]}</div>
+				);
+			}
+		},
 		{
 			dataField: 'user',
 			sort: true,
