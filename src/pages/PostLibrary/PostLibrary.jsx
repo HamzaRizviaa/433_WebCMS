@@ -97,6 +97,7 @@ const PostLibrary = () => {
 				return <div className={classes.row}>{getDateTime(content)}</div>;
 			}
 		},
+
 		{
 			dataField: 'user',
 			sort: true,
@@ -138,7 +139,7 @@ const PostLibrary = () => {
 	return (
 		<Layout>
 			<div className={classes.header}>
-				<h1>POST LIBRARY</h1>
+				<h1 style={{ marginRight: '2rem' }}>POST LIBRARY</h1>
 				<Button
 					onClick={() => {
 						setShowSlider(true);
