@@ -123,8 +123,19 @@ const PostLibrary = () => {
 			sort: true,
 			sortCaret: sortRows,
 			text: 'LAST EDIT',
-			formatter: (content) => {
-				return <div className={classes.row}>{getDateTime(content)}</div>;
+			formatter: (content, row) => {
+				return (
+					<div
+						onClick={() => {
+							setShowSlider(true);
+							setEdit(true);
+							dispatch(getSpecificPost(row.id));
+						}}
+						className={classes.row}
+					>
+						{getDateTime(content)}
+					</div>
+				);
 			}
 		},
 		{

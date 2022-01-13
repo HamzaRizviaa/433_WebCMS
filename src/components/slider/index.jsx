@@ -6,7 +6,11 @@ import { Backdrop, Paper, Slide } from '@material-ui/core';
 
 const Slider = ({ children, open, handleClose, title }) => {
 	return (
-		<div>
+		<div
+		// onKeyDown={() => {
+		// 	onKeyDowne();
+		// }}
+		>
 			<Backdrop className={classes.backdrop} open={open}>
 				<Slide
 					direction='left'
@@ -38,6 +42,7 @@ Slider.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	title: PropTypes.string.isRequired
+	//onKeyDowne: PropTypes.func.isRequired
 };
 
 export default Slider;

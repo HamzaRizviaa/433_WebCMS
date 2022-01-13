@@ -464,6 +464,12 @@ const UploadOrEditPost = ({
 	//media.slice(0, 5).map((medi) => totalMedia.push(medi.title)); //gets recent first 5 elements from the list
 	media.map((medi) => totalMedia.push(medi));
 
+	// const handleKeyDown = (event) => {
+	// 	if (event.keyCode === 27) {
+	// 		handleClose();
+	// 	}
+	// };
+
 	return (
 		<Slider
 			open={open}
@@ -471,6 +477,11 @@ const UploadOrEditPost = ({
 				handleClose();
 				if (uploadedFiles.length && !isEdit) {
 					uploadedFiles.map((file) => handleDeleteFile(file.id));
+				}
+			}}
+			onKeyDowne={(event) => {
+				if (event.keyCode === 27) {
+					handleClose();
 				}
 			}}
 			title={title}
