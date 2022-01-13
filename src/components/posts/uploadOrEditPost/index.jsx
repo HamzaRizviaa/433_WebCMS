@@ -69,7 +69,7 @@ const UploadOrEditPost = ({
 	const [imageToResizeHeight, setImageToResizeHeight] = useState(80);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [postLabels, setPostLabels] = useState([]);
-	const [extraLabel, setExtraLabel] = useState('');
+	const [extraLabel, setExtraLabel] = useState('fffff');
 	const [inputWidth, setInputWidth] = useState(null);
 	const labelsInputRef = useRef(null);
 	// const [aspect, setAspect] = useState(1 / 1);
@@ -357,11 +357,19 @@ const UploadOrEditPost = ({
 		try {
 			let _labels = [];
 			if (!isEdit) {
-				labels.map((label) => {
-					if (selectedLabels.includes(label.name)) {
-						_labels.push(label);
+				selectedLabels.map((label) => {
+					let labelToAdd = null;
+					labels.map((apiLabel) => {
+						if (apiLabel.name === label) {
+							labelToAdd = apiLabel;
+						}
+					});
+					if (labelToAdd === null) {
+						labelToAdd = { id: null, name: label };
 					}
+					_labels.push(labelToAdd);
 				});
+				console.log(_labels);
 			}
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
@@ -384,6 +392,7 @@ const UploadOrEditPost = ({
 				setPostButtonStatus(false);
 				handleClose();
 				dispatch(getPosts());
+				dispatch(getPostLabels());
 			}
 		} catch (e) {
 			toast.error(isEdit ? 'Failed to edit post!' : 'Failed to create post!');
@@ -439,29 +448,6 @@ const UploadOrEditPost = ({
 		// setAspect(4 / 5);
 		//cropMe(0.8);
 	};
-
-	// const cropMe = (asp) => {
-	// 	const cropper = new Cropper(imageElement.current, {
-	// 		zoomable: false,
-	// 		scalable: false,
-	// 		aspectRatio: asp,
-	// 		background: false,
-	// 		movable: false,
-	// 		cropBoxMovable: false,
-	// 		cropBoxResizable: false,
-	// 		toggleDragModeOnDblclick: false,
-	// 		dragMode: 'none',
-	// 		//initialAspectRatio: asp,
-	// 		// viewMode: 2,
-	// 		//data :
-	// 		responsive: false,
-	// 		modal: false,
-	// 		crop: () => {
-	// 			const canvas = cropper.getCroppedCanvas();
-	// 			setImageDestination(canvas.toDataURL('image/png'));
-	// 		}
-	// 	});
-	// };
 
 	const [newLabels, setNewLabels] = useState([]);
 
@@ -749,7 +735,6 @@ const UploadOrEditPost = ({
 							) : (
 								<></>
 							)}
-
 							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
 
 							<div className={classes.captionContainer}>
@@ -792,12 +777,22 @@ const UploadOrEditPost = ({
 												color: '#ffffff',
 												display: 'flex',
 												justifyContent: 'space-between',
-												alignItems: 'center'
+												alignItems: 'center',
+												padding: '3px 12px'
 											}}
 										>
 											{/* No Results Found */}
 											<p>{extraLabel.toUpperCase()}</p>
-											<Button text='CREATE NEW LABEL' />
+											<Button
+												text='CREATE NEW LABEL'
+												style={{ padding: '3px 12px', fontWeight: 'bolder' }}
+												onClick={() => {
+													setSelectedLabels((labels) => [
+														...labels,
+														extraLabel.toUpperCase()
+													]);
+												}}
+											/>
 										</div>
 									}
 									className={`${classes.autoComplete} ${
