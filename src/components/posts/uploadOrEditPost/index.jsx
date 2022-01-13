@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditPost.module.scss';
 import { useDropzone } from 'react-dropzone';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
@@ -70,6 +70,8 @@ const UploadOrEditPost = ({
 	const [previewFile, setPreviewFile] = useState(null);
 	const [postLabels, setPostLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
+	const [inputWidth, setInputWidth] = useState(null);
+	const labelsInputRef = useRef(null);
 	// const [aspect, setAspect] = useState(1 / 1);
 	// const [imgDestination, setImageDestination] = useState('');
 	// const imageElement = useRef();
@@ -88,6 +90,12 @@ const UploadOrEditPost = ({
 	const specificPost = useSelector((state) => state.editButton.specificPost);
 	const specificPostStatus = useSelector((state) => state.editButton);
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		if (labelsInputRef?.current && inputWidth === null) {
+			setInputWidth(labelsInputRef?.current?.offsetWidth);
+		}
+	}, [labelsInputRef?.current]);
 
 	useEffect(() => {
 		if (labels.length) {
@@ -474,7 +482,6 @@ const UploadOrEditPost = ({
 	const totalMedia = [];
 	//media.slice(0, 5).map((medi) => totalMedia.push(medi.title)); //gets recent first 5 elements from the list
 	media.map((medi) => totalMedia.push(medi));
-
 	return (
 		<Slider
 			open={open}
@@ -737,6 +744,9 @@ const UploadOrEditPost = ({
 								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete
 									disabled={isEdit}
+									style={{
+										maxWidth: `${inputWidth}px`
+									}}
 									PaperComponent={(props) => {
 										return (
 											<Paper
@@ -836,6 +846,7 @@ const UploadOrEditPost = ({
 							<div className={classes.captionContainer}>
 								<h6>CAPTION</h6>
 								<TextField
+									ref={labelsInputRef}
 									value={caption}
 									onChange={(e) => setCaption(e.target.value)}
 									placeholder={'Please write your caption here'}
