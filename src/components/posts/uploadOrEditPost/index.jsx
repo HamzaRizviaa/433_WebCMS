@@ -128,8 +128,8 @@ const UploadOrEditPost = ({
 				specificPost.labels.map((label) =>
 					_labels.push({ id: -1, name: label })
 				);
+				setSelectedLabels(_labels);
 			}
-			setSelectedLabels(specificPost?.labels);
 			setCaption(specificPost.caption);
 			if (specificPost?.media_id !== null) {
 				setValue(true);
