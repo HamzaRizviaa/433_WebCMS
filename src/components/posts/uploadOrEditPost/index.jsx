@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditPost.module.scss';
 import { useDropzone } from 'react-dropzone';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
@@ -69,6 +69,9 @@ const UploadOrEditPost = ({
 	const [imageToResizeHeight, setImageToResizeHeight] = useState(80);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [postLabels, setPostLabels] = useState([]);
+	const [extraLabel, setExtraLabel] = useState('');
+	const [inputWidth, setInputWidth] = useState(null);
+	const labelsInputRef = useRef(null);
 	// const [aspect, setAspect] = useState(1 / 1);
 	// const [imgDestination, setImageDestination] = useState('');
 	// const imageElement = useRef();
@@ -87,6 +90,12 @@ const UploadOrEditPost = ({
 	const specificPost = useSelector((state) => state.editButton.specificPost);
 	const specificPostStatus = useSelector((state) => state.editButton);
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		if (labelsInputRef?.current && inputWidth === null) {
+			setInputWidth(labelsInputRef?.current?.offsetWidth);
+		}
+	}, [labelsInputRef?.current]);
 
 	useEffect(() => {
 		if (labels.length) {
@@ -454,6 +463,16 @@ const UploadOrEditPost = ({
 	// 	});
 	// };
 
+	const [newLabels, setNewLabels] = useState([]);
+
+	const handleChangeExtraLabel = (e) => {
+		setExtraLabel(e.target.value);
+	};
+
+	useEffect(() => {
+		if (labels.length) setNewLabels(labels);
+	}, [newLabels]);
+
 	const postBtnDisabled =
 		!uploadedFiles.length ||
 		postButtonStatus ||
@@ -737,6 +756,9 @@ const UploadOrEditPost = ({
 								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete
 									disabled={isEdit}
+									style={{
+										maxWidth: `${inputWidth}px`
+									}}
 									PaperComponent={(props) => {
 										return (
 											<Paper
@@ -755,6 +777,7 @@ const UploadOrEditPost = ({
 									}}
 									multiple
 									filterSelectedOptions
+									// freeSolo
 									freeSolo={false}
 									value={selectedLabels}
 									placeholder='Select Media'
@@ -763,8 +786,18 @@ const UploadOrEditPost = ({
 									}}
 									popupIcon={''}
 									noOptionsText={
-										<div style={{ color: '#808080', fontSize: 14 }}>
-											No Results Found
+										<div
+											className={classes.liAutocomplete}
+											style={{
+												color: '#ffffff',
+												display: 'flex',
+												justifyContent: 'space-between',
+												alignItems: 'center'
+											}}
+										>
+											{/* No Results Found */}
+											<p>{extraLabel.toUpperCase()}</p>
+											<Button text='CREATE NEW LABEL' />
 										</div>
 									}
 									className={`${classes.autoComplete} ${
@@ -778,6 +811,8 @@ const UploadOrEditPost = ({
 											{...params}
 											placeholder={selectedLabels.length ? ' ' : 'Select Label'}
 											className={classes.textFieldAuto}
+											value={extraLabel}
+											onChange={handleChangeExtraLabel}
 											InputProps={{
 												disableUnderline: true,
 												className: classes.textFieldInput,
@@ -823,6 +858,7 @@ const UploadOrEditPost = ({
 							<div className={classes.captionContainer}>
 								<h6>CAPTION</h6>
 								<TextField
+									ref={labelsInputRef}
 									value={caption}
 									onChange={(e) => setCaption(e.target.value)}
 									placeholder={'Please write your caption here'}
