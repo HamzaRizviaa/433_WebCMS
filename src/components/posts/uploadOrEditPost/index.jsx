@@ -123,6 +123,12 @@ const UploadOrEditPost = ({
 
 	useEffect(() => {
 		if (specificPost) {
+			if (specificPost?.labels) {
+				let _labels = [];
+				specificPost.labels.map((label) =>
+					_labels.push({ id: -1, name: label })
+				);
+			}
 			setSelectedLabels(specificPost?.labels);
 			setCaption(specificPost.caption);
 			if (specificPost?.media_id !== null) {
