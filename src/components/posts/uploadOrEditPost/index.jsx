@@ -70,6 +70,7 @@ const UploadOrEditPost = ({
 	const [previewFile, setPreviewFile] = useState(null);
 	const [postLabels, setPostLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
+	const [selectMediaInput, setSelectMediaInput] = useState('');
 	const [inputWidth, setInputWidth] = useState(null);
 	const labelsInputRef = useRef(null);
 	// const [aspect, setAspect] = useState(1 / 1);
@@ -461,6 +462,10 @@ const UploadOrEditPost = ({
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
+	const handleChangeSelectMediaInput = (e) => {
+		setSelectMediaInput(e.target.value);
+	};
+
 	useEffect(() => {
 		if (labels.length) setNewLabels(labels);
 	}, [newLabels]);
@@ -470,10 +475,6 @@ const UploadOrEditPost = ({
 		postButtonStatus ||
 		(value && !selectedMedia) ||
 		selectedLabels.length < 10;
-
-	const totalMedia = [];
-	//media.slice(0, 5).map((medi) => totalMedia.push(medi.title)); //gets recent first 5 elements from the list
-	media.map((medi) => totalMedia.push(medi));
 
 	// const handleKeyDown = (event) => {
 	// 	if (event.keyCode === 27) {
@@ -918,7 +919,6 @@ const UploadOrEditPost = ({
 							{value ? (
 								<div className={classes.mediaContainer}>
 									<h6 style={{ color: mediaLabelColor }}>SELECT MEDIA</h6>
-
 									<Autocomplete
 										value={selectedMedia}
 										PaperComponent={(props) => {
@@ -943,14 +943,20 @@ const UploadOrEditPost = ({
 										onChange={(e, newVal) => {
 											setSelectedMedia(newVal);
 										}}
-										//className={classes.autoComplete}
-										options={totalMedia}
+										options={media}
 										getOptionLabel={(option) => option.title}
 										renderOption={(props, option, { selected }) => {
 											return (
 												<li {...props} className={classes.liAutocomplete}>
 													{option.title}
 												</li>
+											);
+										}}
+										filterOptions={(items) => {
+											return items.filter((item) =>
+												item.title
+													.toLowerCase()
+													.includes(selectMediaInput.toLowerCase())
 											);
 										}}
 										renderInput={(params) => (
@@ -963,6 +969,8 @@ const UploadOrEditPost = ({
 													...params.InputProps,
 													className: classes.textFieldInput
 												}}
+												value={selectMediaInput}
+												onChange={handleChangeSelectMediaInput}
 											/>
 										)}
 										clearIcon={<ClearIcon />}
