@@ -59,6 +59,7 @@ const UploadOrEditMedia = ({
 	const [previewFile, setPreviewFile] = useState(null);
 	const [isLoadingUploadMedia, setIsLoadingUploadMedia] = useState(false);
 	const [mediaButtonStatus, setMediaButtonStatus] = useState(false);
+	const [extraLabel, setExtraLabel] = useState('');
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
@@ -77,13 +78,33 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		if (labels.length) {
-			setMediaLabels(labels.map((label) => label.name));
+			setMediaLabels([...labels]);
 		}
 	}, [labels]);
 
 	useEffect(() => {
+		setMediaLabels((labels) => {
+			return labels.filter((label) => label.id != null);
+		});
+		if (extraLabel) {
+			let flag = mediaLabels.some((label) => label.name == extraLabel);
+			if (flag == false) {
+				setMediaLabels((labels) => {
+					return [...labels, { id: null, name: extraLabel }];
+				});
+			}
+		}
+	}, [extraLabel]);
+
+	useEffect(() => {
 		if (specificMedia) {
-			setSelectedLabels(specificMedia?.labels);
+			if (specificMedia?.labels) {
+				let _labels = [];
+				specificMedia.labels.map((label) =>
+					_labels.push({ id: -1, name: label })
+				);
+				setSelectedLabels(_labels);
+			}
 			setMainCategory(specificMedia?.media_type);
 			setSubCategory(specificMedia?.sub_category);
 			setTitleMedia(specificMedia?.title);
@@ -236,6 +257,7 @@ const UploadOrEditMedia = ({
 		setPreviewFile(null);
 		setMediaButtonStatus(false);
 		setSelectedLabels([]);
+		setExtraLabel('');
 	};
 
 	const handleDeleteFile = (id) => {
@@ -320,16 +342,12 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	const handleChangeExtraLabel = (e) => {
+		setExtraLabel(e.target.value.toUpperCase());
+	};
+
 	const uploadMedia = async (id, payload) => {
 		setMediaButtonStatus(true);
-		let _labels = [];
-		if (!isEdit) {
-			labels.map((label) => {
-				if (selectedLabels.includes(label.name)) {
-					_labels.push(label);
-				}
-			});
-		}
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media/create-media`,
@@ -339,7 +357,7 @@ const UploadOrEditMedia = ({
 							media_type: mainCategory,
 							sub_category: subCategory,
 							title: titleMedia,
-							...(_labels.length ? { labels: [..._labels] } : {}),
+							...(selectedLabels.length ? { labels: [...selectedLabels] } : {}),
 							description: description,
 							data: {
 								file_name: payload?.file_name,
@@ -776,6 +794,10 @@ const UploadOrEditMedia = ({
 										<h6 style={{ color: labelColor }}>LABELS</h6>
 										<Autocomplete
 											disabled={isEdit}
+											// style={{
+											// 	// maxWidth: `${inputWidth}px`
+											// }}
+											getOptionLabel={(option) => option.name}
 											PaperComponent={(props) => {
 												return (
 													<Paper
@@ -795,16 +817,39 @@ const UploadOrEditMedia = ({
 											}}
 											multiple
 											filterSelectedOptions
+											// freeSolo
 											freeSolo={false}
 											value={selectedLabels}
 											placeholder='Select Media'
 											onChange={(event, newValue) => {
-												setSelectedLabels(newValue);
+												setSelectedLabels([...newValue]);
 											}}
 											popupIcon={''}
 											noOptionsText={
-												<div style={{ color: '#808080', fontSize: 14 }}>
-													No Results Found
+												<div
+													className={classes.liAutocompleteWithButton}
+													style={{
+														display: 'flex',
+														justifyContent: 'space-between',
+														alignItems: 'center',
+														color: 'white',
+														fontSize: 14
+													}}
+												>
+													<p>{extraLabel.toUpperCase()}</p>
+													<Button
+														text='CREATE NEW LABEL'
+														style={{
+															padding: '3px 12px',
+															fontWeight: 700
+														}}
+														onClick={() => {
+															// setSelectedLabels((labels) => [
+															// 	...labels,
+															// 	extraLabel.toUpperCase()
+															// ]);
+														}}
+													/>
 												</div>
 											}
 											className={`${classes.autoComplete} ${
@@ -820,6 +865,8 @@ const UploadOrEditMedia = ({
 														selectedLabels.length ? ' ' : 'Select Label'
 													}
 													className={classes.textFieldAuto}
+													value={extraLabel}
+													onChange={handleChangeExtraLabel}
 													InputProps={{
 														disableUnderline: true,
 														className: classes.textFieldInput,
@@ -827,12 +874,42 @@ const UploadOrEditMedia = ({
 													}}
 												/>
 											)}
-											// eslint-disable-next-line no-unused-vars
-											renderOption={(props, option, { selected }) => (
-												<li {...props} className={classes.liAutocomplete}>
-													{option}
-												</li>
-											)}
+											renderOption={(props, option) => {
+												if (option.id == null) {
+													return (
+														<li
+															{...props}
+															style={{
+																display: 'flex',
+																alignItems: 'center',
+																justifyContent: 'space-between'
+															}}
+															className={classes.liAutocomplete}
+														>
+															{option.name}
+															<Button
+																text='CREATE NEW LABEL'
+																style={{
+																	padding: '3px 12px',
+																	fontWeight: 700
+																}}
+																onClick={() => {
+																	// setSelectedLabels((labels) => [
+																	// 	...labels,
+																	// 	extraLabel.toUpperCase()
+																	// ]);
+																}}
+															/>
+														</li>
+													);
+												} else {
+													return (
+														<li {...props} className={classes.liAutocomplete}>
+															{option.name}
+														</li>
+													);
+												}
+											}}
 											ChipProps={{
 												className: classes.tagYellow,
 												size: 'small',
