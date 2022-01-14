@@ -4,7 +4,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import './_table.scss';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 
-const Table = ({ data, columns }) => (
+const Table = ({ data, columns, rowEvents }) => (
 	<BootstrapTable
 		className={'table'}
 		keyField='id'
@@ -12,12 +12,14 @@ const Table = ({ data, columns }) => (
 		columns={columns}
 		bordered={false}
 		headerClasses={'table-header'}
+		rowEvents={rowEvents}
 	/>
 );
 
 Table.propTypes = {
 	data: PropTypes.array.isRequired,
-	columns: PropTypes.array.isRequired
+	columns: PropTypes.array.isRequired,
+	rowEvents: PropTypes.func.isRequired
 };
 
 export default Table;
