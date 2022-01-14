@@ -214,6 +214,14 @@ const MediaLibrary = () => {
 		}
 	];
 
+	const tableRowEvents = {
+		onClick: (e, row) => {
+			setShowSlider(true);
+			setEdit(true);
+			dispatch(getSpecificMedia(row.id));
+		}
+	};
+
 	return (
 		<Layout>
 			<div className={classes.header}>
@@ -226,7 +234,7 @@ const MediaLibrary = () => {
 				/>
 			</div>
 			<div className={classes.tableContainer}>
-				<Table columns={columns} data={media} />
+				<Table rowEvents={tableRowEvents} columns={columns} data={media} />
 			</div>
 
 			<UploadOrEditMedia
