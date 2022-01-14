@@ -136,19 +136,8 @@ const PostLibrary = () => {
 			sort: true,
 			sortCaret: sortRows,
 			text: 'LAST EDIT',
-			formatter: (content, row) => {
-				return (
-					<div
-						onClick={() => {
-							setShowSlider(true);
-							setEdit(true);
-							dispatch(getSpecificPost(row.id));
-						}}
-						className={classes.row}
-					>
-						{getDateTime(content)}
-					</div>
-				);
+			formatter: (content) => {
+				return <div className={classes.row}>{getDateTime(content)}</div>;
 			}
 		},
 		{
@@ -157,14 +146,25 @@ const PostLibrary = () => {
 			formatter: (content, row) => {
 				return (
 					<div className={classes.row}>
-						<Edit
-							onClick={() => {
-								setShowSlider(true);
-								setEdit(true);
-								dispatch(getSpecificPost(row.id));
+						<Tooltip
+							TransitionComponent={Fade}
+							TransitionProps={{ timeout: 600 }}
+							title={'EDIT POST'}
+							arrow
+							componentsProps={{
+								tooltip: { className: classes.toolTip },
+								arrow: { className: classes.toolTipArrow }
 							}}
-							className={classes.editIcon}
-						/>
+						>
+							<Edit
+								onClick={() => {
+									setShowSlider(true);
+									setEdit(true);
+									dispatch(getSpecificPost(row.id));
+								}}
+								className={classes.editIcon}
+							/>
+						</Tooltip>
 					</div>
 				);
 			}
