@@ -171,6 +171,14 @@ const PostLibrary = () => {
 		}
 	];
 
+	const tableRowEvents = {
+		onClick: (e, row) => {
+			setShowSlider(true);
+			setEdit(true);
+			dispatch(getSpecificPost(row.id));
+		}
+	};
+
 	return (
 		<Layout>
 			<div className={classes.header}>
@@ -183,7 +191,7 @@ const PostLibrary = () => {
 				/>
 			</div>
 			<div className={classes.tableContainer}>
-				<Table columns={columns} data={posts} />
+				<Table rowEvents={tableRowEvents} columns={columns} data={posts} />
 			</div>
 
 			<UploadOrEditPost

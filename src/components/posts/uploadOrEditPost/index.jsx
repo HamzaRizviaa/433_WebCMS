@@ -458,6 +458,8 @@ const UploadOrEditPost = ({
 	const [newLabels, setNewLabels] = useState([]);
 
 	const handleChangeExtraLabel = (e) => {
+		e.preventDefault();
+		e.stopPropagation();
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
@@ -761,6 +763,8 @@ const UploadOrEditPost = ({
 									value={selectedLabels}
 									placeholder='Select Media'
 									onChange={(event, newValue) => {
+										event.preventDefault();
+										event.stopPropagation();
 										setSelectedLabels([...newValue]);
 									}}
 									popupIcon={''}
@@ -931,6 +935,8 @@ const UploadOrEditPost = ({
 										}}
 										onChange={(e, newVal) => {
 											setSelectedMedia(newVal);
+											e.preventDefault();
+											e.stopPropagation();
 										}}
 										//className={classes.autoComplete}
 										options={totalMedia}

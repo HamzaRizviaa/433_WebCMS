@@ -24,8 +24,8 @@ const Slider = ({ children, open, handleClose, title }) => {
 	// 		}
 	// 	}
 
-	// 	window.addEventListener('mousedown', handleClickOutside);
-	// 	return () => window.removeEventListener('mousedown', handleClickOutside);
+	// 	document.addEventListener('mousedown', handleClickOutside);
+	// 	return () => document.removeEventListener('mousedown', handleClickOutside);
 	// }, [wrapperRef]);
 
 	return (
