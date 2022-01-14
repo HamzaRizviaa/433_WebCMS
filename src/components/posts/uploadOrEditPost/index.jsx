@@ -106,10 +106,6 @@ const UploadOrEditPost = ({
 	}, [extraLabel]);
 
 	useEffect(() => {
-		console.log({ postLabels });
-	}, [postLabels]);
-
-	useEffect(() => {
 		if (labelsInputRef?.current && inputWidth === null) {
 			setInputWidth(labelsInputRef?.current?.offsetWidth);
 		}
