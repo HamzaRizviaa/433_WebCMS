@@ -11,6 +11,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getMedia } from '../../components/posts/uploadOrEditPost/mediaDropdownSlice';
 import UploadOrEditMedia from '../../components/media/uploadOrEditMedia';
 import { getSpecificMedia } from '../../components/media/uploadOrEditMedia/uploadOrEditMediaSlice';
+import Tooltip from '@mui/material/Tooltip';
+import Fade from '@mui/material/Fade';
 
 const sortRows = (order, row) => {
 	if (!order)
@@ -103,10 +105,21 @@ const MediaLibrary = () => {
 							className={classes.mediaIcon}
 							src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row.thumbnail_url}`}
 						/>
-						<span className={classes.fileName}>
-							{row.file_name.substring(0, 13) +
-								`${row.file_name.length > 13 ? '...' : ''}`}
-						</span>
+						<Tooltip
+							TransitionComponent={Fade}
+							TransitionProps={{ timeout: 600 }}
+							title={row.file_name.length > 13 ? row.file_name : ''}
+							arrow
+							componentsProps={{
+								tooltip: { className: classes.toolTip },
+								arrow: { className: classes.toolTipArrow }
+							}}
+						>
+							<span className={classes.fileName}>
+								{row.file_name.substring(0, 13) +
+									`${row.file_name.length > 13 ? '...' : ''}`}
+							</span>
+						</Tooltip>
 					</div>
 				);
 			}
@@ -176,14 +189,25 @@ const MediaLibrary = () => {
 			formatter: (content, row) => {
 				return (
 					<div className={classes.row}>
-						<Edit
-							onClick={() => {
-								setShowSlider(true);
-								setEdit(true);
-								dispatch(getSpecificMedia(row.id));
+						<Tooltip
+							TransitionComponent={Fade}
+							TransitionProps={{ timeout: 600 }}
+							title={'EDIT MEDIA'}
+							arrow
+							componentsProps={{
+								tooltip: { className: classes.toolTip },
+								arrow: { className: classes.toolTipArrow }
 							}}
-							className={classes.editIcon}
-						/>
+						>
+							<Edit
+								onClick={() => {
+									setShowSlider(true);
+									setEdit(true);
+									dispatch(getSpecificMedia(row.id));
+								}}
+								className={classes.editIcon}
+							/>
+						</Tooltip>
 					</div>
 				);
 			}

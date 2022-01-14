@@ -59,3 +59,16 @@
 	width: 2rem !important;
 	color: $neon-yellow;
 }
+
+.toolTip {
+	background-color: $black-color !important;
+	font-family: Poppins !important;
+	font-size: 12px !important;
+	line-height: 16px !important;
+	border-radius: 8px !important;
+	max-width: none !important;
+}
+
+.toolTipArrow {
+	color: $black-color !important;
+}

@@ -491,11 +491,6 @@ const UploadOrEditPost = ({
 					uploadedFiles.map((file) => handleDeleteFile(file.id));
 				}
 			}}
-			onKeyDowne={(event) => {
-				if (event.keyCode === 27) {
-					handleClose();
-				}
-			}}
 			title={title}
 		>
 			<LoadingOverlay active={isLoadingCreatePost} spinner text='Loading...'>
