@@ -12,6 +12,8 @@ import { getSpecificPost } from '../../components/posts/uploadOrEditPost/editBut
 import moment from 'moment';
 import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import Tooltip from '@mui/material/Tooltip';
+import Fade from '@mui/material/Fade';
 
 const sortRows = (order) => {
 	if (!order) return <ArrowDropUpIcon className={classes.sortIcon} />;
@@ -81,10 +83,21 @@ const PostLibrary = () => {
 								row.thumbnail_url ? row.thumbnail_url : row.media
 							}`}
 						/>
-						<span className={classes.fileName}>
-							{row.file_name.substring(0, 13) +
-								`${row.file_name.length > 13 ? '...' : ''}`}
-						</span>
+						<Tooltip
+							TransitionComponent={Fade}
+							TransitionProps={{ timeout: 600 }}
+							title={row.file_name.length > 13 ? row.file_name : ''}
+							arrow
+							componentsProps={{
+								tooltip: { className: classes.toolTip },
+								arrow: { className: classes.toolTipArrow }
+							}}
+						>
+							<span className={classes.fileName}>
+								{row.file_name.substring(0, 13) +
+									`${row.file_name.length > 13 ? '...' : ''}`}
+							</span>
+						</Tooltip>
 					</div>
 				);
 			}
