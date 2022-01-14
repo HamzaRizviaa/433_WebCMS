@@ -189,14 +189,25 @@ const MediaLibrary = () => {
 			formatter: (content, row) => {
 				return (
 					<div className={classes.row}>
-						<Edit
-							onClick={() => {
-								setShowSlider(true);
-								setEdit(true);
-								dispatch(getSpecificMedia(row.id));
+						<Tooltip
+							TransitionComponent={Fade}
+							TransitionProps={{ timeout: 600 }}
+							title={'EDIT MEDIA'}
+							arrow
+							componentsProps={{
+								tooltip: { className: classes.toolTip },
+								arrow: { className: classes.toolTipArrow }
 							}}
-							className={classes.editIcon}
-						/>
+						>
+							<Edit
+								onClick={() => {
+									setShowSlider(true);
+									setEdit(true);
+									dispatch(getSpecificMedia(row.id));
+								}}
+								className={classes.editIcon}
+							/>
+						</Tooltip>
 					</div>
 				);
 			}
