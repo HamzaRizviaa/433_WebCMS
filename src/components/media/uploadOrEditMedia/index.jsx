@@ -59,7 +59,6 @@ const UploadOrEditMedia = ({
 	const [previewFile, setPreviewFile] = useState(null);
 	const [isLoadingUploadMedia, setIsLoadingUploadMedia] = useState(false);
 	const [mediaButtonStatus, setMediaButtonStatus] = useState(false);
-	console.log(uploadedFiles, uploadedCoverImage);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
@@ -83,7 +82,6 @@ const UploadOrEditMedia = ({
 	}, [labels]);
 
 	useEffect(() => {
-		console.log({ specificMedia });
 		if (specificMedia) {
 			setSelectedLabels(specificMedia?.labels);
 			setMainCategory(specificMedia?.media_type);
@@ -176,7 +174,6 @@ const UploadOrEditMedia = ({
 	};
 
 	useEffect(() => {
-		console.log(acceptedFiles);
 		if (acceptedFiles?.length) {
 			setUploadMediaError('');
 			setDropZoneBorder('#ffff00');
@@ -215,7 +212,7 @@ const UploadOrEditMedia = ({
 			setUploadedCoverImage([...uploadedCoverImage, ...newFiles]);
 		}
 	}, [acceptedFiles2]);
-	console.log({ uploadedFiles });
+
 	const resetState = () => {
 		setMainCategory('');
 		setSubCategory('');
@@ -401,6 +398,19 @@ const UploadOrEditMedia = ({
 			} else {
 				throw 'Error';
 			}
+		} catch (error) {
+			console.log('Error');
+			return null;
+		}
+	};
+
+	const handleTitleDuplicate = async (givenTitle) => {
+		try {
+			const result = await axios.get(
+				`${process.env.REACT_APP_API_ENDPOINT}/media/check/${givenTitle}`
+			);
+			console.log(result);
+			return result?.data?.status;
 		} catch (error) {
 			console.log('Error');
 			return null;
@@ -900,12 +910,23 @@ const UploadOrEditMedia = ({
 							>
 								<Button
 									disabled={addMediaBtnDisabled}
-									onClick={() => {
+									onClick={async () => {
 										if (addMediaBtnDisabled) {
 											validatePostBtn();
 										} else {
 											setMediaButtonStatus(true);
 											setIsLoadingUploadMedia(true);
+											if ((await handleTitleDuplicate(titleMedia)) === 200) {
+												setTitleMediaLabelColor('#ff355a');
+												setTitleMediaError('This title already exists');
+												setTimeout(() => {
+													setTitleMediaLabelColor('#ffffff');
+													setTitleMediaError('');
+												}, [5000]);
+												setIsLoadingUploadMedia(false);
+												setMediaButtonStatus(false);
+												return;
+											}
 											if (isEdit) {
 												uploadMedia(specificMedia?.id, {
 													title: titleMedia,
