@@ -777,7 +777,6 @@ const UploadOrEditPost = ({
 									value={selectedLabels}
 									onChange={(event, newValue) => {
 										setDisableDropdown(true);
-										//setSelectedLabels([...newValue]);
 										event.preventDefault();
 										event.stopPropagation();
 										let newLabels = newValue.filter(
