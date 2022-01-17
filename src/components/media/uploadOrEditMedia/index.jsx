@@ -60,6 +60,8 @@ const UploadOrEditMedia = ({
 	const [isLoadingUploadMedia, setIsLoadingUploadMedia] = useState(false);
 	const [mediaButtonStatus, setMediaButtonStatus] = useState(false);
 	const [extraLabel, setExtraLabel] = useState('');
+	const [disableDropdown, setDisableDropdown] = useState(true);
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
@@ -258,6 +260,7 @@ const UploadOrEditMedia = ({
 		setMediaButtonStatus(false);
 		setSelectedLabels([]);
 		setExtraLabel('');
+		setDisableDropdown(true);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -456,6 +459,7 @@ const UploadOrEditMedia = ({
 				}
 			}}
 			title={title}
+			disableDropdown={disableDropdown}
 		>
 			<LoadingOverlay active={isLoadingUploadMedia} spinner text='Loading...'>
 				<div
@@ -477,10 +481,17 @@ const UploadOrEditMedia = ({
 										MAIN CATEGORY
 									</h6>
 									<Select
+										onOpen={() => {
+											setDisableDropdown(false);
+										}}
+										onClose={() => {
+											setDisableDropdown(true);
+										}}
 										disabled={isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
 										value={mainCategory}
 										onChange={(e) => {
+											setDisableDropdown(true);
 											setMainCategory(e.target.value);
 											setMainCategoryLabelColor('#ffffff');
 											setMainCategoryError('');
@@ -533,10 +544,19 @@ const UploadOrEditMedia = ({
 								<div className={classes.subCategory}>
 									<h6>SUB CATEGORY</h6>
 									<Select
+										onOpen={() => {
+											setDisableDropdown(false);
+										}}
+										onClose={() => {
+											setDisableDropdown(true);
+										}}
 										disabled={!mainCategory || isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
 										value={subCategory}
-										onChange={(e) => setSubCategory(e.target.value)}
+										onChange={(e) => {
+											setDisableDropdown(true);
+											setSubCategory(e.target.value);
+										}}
 										className={`${classes.select} ${
 											isEdit ? `${classes.isEditSelect}` : ''
 										}`}
@@ -799,6 +819,7 @@ const UploadOrEditMedia = ({
 											// }}
 											getOptionLabel={(option) => option.name}
 											PaperComponent={(props) => {
+												setDisableDropdown(false);
 												return (
 													<Paper
 														elevation={6}
@@ -815,12 +836,16 @@ const UploadOrEditMedia = ({
 													/>
 												);
 											}}
+											onClose={() => {
+												setDisableDropdown(true);
+											}}
 											multiple
 											filterSelectedOptions
 											// freeSolo
 											freeSolo={false}
 											value={selectedLabels}
 											onChange={(event, newValue) => {
+												setDisableDropdown(true);
 												event.preventDefault();
 												event.stopPropagation();
 												let newLabels = newValue.filter(

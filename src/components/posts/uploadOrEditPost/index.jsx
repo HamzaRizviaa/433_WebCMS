@@ -72,6 +72,7 @@ const UploadOrEditPost = ({
 	const [extraLabel, setExtraLabel] = useState('');
 	const [selectMediaInput, setSelectMediaInput] = useState('');
 	const [inputWidth, setInputWidth] = useState(null);
+	const [disableDropdown, setDisableDropdown] = useState(true);
 	const labelsInputRef = useRef(null);
 	// const [aspect, setAspect] = useState(1 / 1);
 	// const [imgDestination, setImageDestination] = useState('');
@@ -309,6 +310,7 @@ const UploadOrEditPost = ({
 		setImageToResizeHeight(80);
 		setPreviewFile(null);
 		setSelectedLabels([]);
+		setDisableDropdown(true);
 		//setImageDestination('');
 	};
 
@@ -459,8 +461,8 @@ const UploadOrEditPost = ({
 	const [newLabels, setNewLabels] = useState([]);
 
 	const handleChangeExtraLabel = (e) => {
-		e.preventDefault();
-		e.stopPropagation();
+		// e.preventDefault();
+		// e.stopPropagation();
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
@@ -494,6 +496,7 @@ const UploadOrEditPost = ({
 				}
 			}}
 			title={title}
+			disableDropdown={disableDropdown}
 		>
 			<LoadingOverlay active={isLoadingCreatePost} spinner text='Loading...'>
 				<div
@@ -748,6 +751,7 @@ const UploadOrEditPost = ({
 									}}
 									getOptionLabel={(option) => option.name}
 									PaperComponent={(props) => {
+										setDisableDropdown(false);
 										return (
 											<Paper
 												elevation={6}
@@ -763,12 +767,16 @@ const UploadOrEditPost = ({
 											/>
 										);
 									}}
+									onClose={(e) => {
+										setDisableDropdown(true);
+									}}
 									multiple
 									filterSelectedOptions
 									// freeSolo
 									freeSolo={false}
 									value={selectedLabels}
 									onChange={(event, newValue) => {
+										setDisableDropdown(true);
 										event.preventDefault();
 										event.stopPropagation();
 										let newLabels = newValue.filter(
@@ -926,6 +934,7 @@ const UploadOrEditPost = ({
 									<Autocomplete
 										value={selectedMedia}
 										PaperComponent={(props) => {
+											setDisableDropdown(false);
 											return (
 												<Paper
 													elevation={6}
@@ -944,10 +953,14 @@ const UploadOrEditPost = ({
 												/>
 											);
 										}}
+										onClose={(e) => {
+											setDisableDropdown(true);
+										}}
 										onChange={(e, newVal) => {
+											setDisableDropdown(true);
+											// e.preventDefault();
+											// e.stopPropagation();
 											setSelectedMedia(newVal);
-											e.preventDefault();
-											e.stopPropagation();
 										}}
 										options={media}
 										getOptionLabel={(option) => option.title}
