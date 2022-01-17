@@ -768,11 +768,16 @@ const UploadOrEditPost = ({
 									// freeSolo
 									freeSolo={false}
 									value={selectedLabels}
-									placeholder='Select Media'
 									onChange={(event, newValue) => {
 										event.preventDefault();
 										event.stopPropagation();
-										setSelectedLabels([...newValue]);
+										let newLabels = newValue.filter(
+											(v, i, a) =>
+												a.findIndex(
+													(t) => t.name.toLowerCase() === v.name.toLowerCase()
+												) === i
+										);
+										setSelectedLabels([...newLabels]);
 									}}
 									popupIcon={''}
 									noOptionsText={
