@@ -4,7 +4,7 @@ import classes from './_slider.module.scss';
 import Close from '@material-ui/icons/Close';
 import { Backdrop, Paper, Slide } from '@material-ui/core';
 
-const Slider = ({ children, open, handleClose, title }) => {
+const Slider = ({ children, open, handleClose, title, disableDropdown }) => {
 	const wrapperRef = useRef(null);
 
 	useEffect(() => {
@@ -17,16 +17,20 @@ const Slider = ({ children, open, handleClose, title }) => {
 		return () => window.removeEventListener('keydown', close);
 	}, []);
 
-	// useEffect(() => {
-	// 	function handleClickOutside(event) {
-	// 		if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-	// 			handleClose();
-	// 		}
-	// 	}
+	useEffect(() => {
+		function handleClickOutside(event) {
+			if (
+				wrapperRef.current &&
+				disableDropdown &&
+				!wrapperRef.current.contains(event.target)
+			) {
+				handleClose();
+			}
+		}
 
-	// 	document.addEventListener('mousedown', handleClickOutside);
-	// 	return () => document.removeEventListener('mousedown', handleClickOutside);
-	// }, [wrapperRef]);
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => document.removeEventListener('mousedown', handleClickOutside);
+	}, [wrapperRef, disableDropdown]);
 
 	return (
 		<div>
@@ -36,12 +40,12 @@ const Slider = ({ children, open, handleClose, title }) => {
 				open={open}
 			>
 				<Slide
-					//ref={wrapperRef}
 					direction='left'
 					mountOnEnter
 					in={open}
 					unmountOnExit
 					timeout={800}
+					ref={wrapperRef}
 				>
 					<Paper
 						// tabIndex='0'
@@ -50,7 +54,7 @@ const Slider = ({ children, open, handleClose, title }) => {
 						// 		handleClose();
 						// 	}
 						// }}
-						ref={wrapperRef}
+
 						elevation={4}
 						className={classes.paper}
 					>
@@ -75,7 +79,8 @@ Slider.propTypes = {
 	children: PropTypes.element.isRequired,
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
-	title: PropTypes.string.isRequired
+	title: PropTypes.string.isRequired,
+	disableDropdown: PropTypes.bool.isRequired
 };
 
 export default Slider;
