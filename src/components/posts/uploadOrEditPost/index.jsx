@@ -775,12 +775,18 @@ const UploadOrEditPost = ({
 									// freeSolo
 									freeSolo={false}
 									value={selectedLabels}
-									placeholder='Select Media'
 									onChange={(event, newValue) => {
 										setDisableDropdown(true);
-										// event.preventDefault();
-										// event.stopPropagation();
-										setSelectedLabels([...newValue]);
+										//setSelectedLabels([...newValue]);
+										event.preventDefault();
+										event.stopPropagation();
+										let newLabels = newValue.filter(
+											(v, i, a) =>
+												a.findIndex(
+													(t) => t.name.toLowerCase() === v.name.toLowerCase()
+												) === i
+										);
+										setSelectedLabels([...newLabels]);
 									}}
 									popupIcon={''}
 									noOptionsText={
