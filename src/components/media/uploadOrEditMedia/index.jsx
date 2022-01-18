@@ -1024,7 +1024,11 @@ const UploadOrEditMedia = ({
 										} else {
 											setMediaButtonStatus(true);
 											setIsLoadingUploadMedia(true);
-											if ((await handleTitleDuplicate(titleMedia)) === 200) {
+
+											if (
+												(await handleTitleDuplicate(titleMedia)) === 200 &&
+												titleMedia !== specificMedia.title
+											) {
 												setTitleMediaLabelColor('#ff355a');
 												setTitleMediaError('This title already exists');
 												setTimeout(() => {
