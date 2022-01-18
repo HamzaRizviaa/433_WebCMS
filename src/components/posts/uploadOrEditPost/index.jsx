@@ -788,6 +788,13 @@ const UploadOrEditPost = ({
 											/>
 										);
 									}}
+									PopperComponent={({ style, ...props }) => (
+										<Popper {...props} style={{ ...style, height: 0 }} />
+									)}
+									ListboxProps={{
+										style: { maxHeight: 180 },
+										position: 'bottom'
+									}}
 									onClose={(e) => {
 										setDisableDropdown(true);
 									}}
@@ -898,25 +905,6 @@ const UploadOrEditPost = ({
 										deleteIcon: <ClearIcon />
 									}}
 									clearIcon={''}
-									anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-									transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-									popoverProps={{
-										style: {
-											bottom: 0,
-											overflowY: 'auto'
-										}
-									}}
-									MenuProps={{
-										anchorOrigin: {
-											vertical: 'bottom',
-											horizontal: 'left'
-										},
-										transformOrigin: {
-											vertical: 'top',
-											horizontal: 'left'
-										},
-										getContentAnchorEl: null
-									}}
 								/>
 							</div>
 							<p className={classes.mediaError}>{labelError}</p>
