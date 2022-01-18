@@ -12,6 +12,12 @@ import { getSpecificPost } from '../../components/posts/uploadOrEditPost/editBut
 import moment from 'moment';
 import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import Tooltip from '@mui/material/Tooltip';
+import Fade from '@mui/material/Fade';
+
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+import { makeStyles } from '@material-ui/core/styles';
 
 const sortRows = (order) => {
 	if (!order) return <ArrowDropUpIcon className={classes.sortIcon} />;
@@ -33,7 +39,65 @@ const getDateTime = (dateTime) => {
 	})}`;
 };
 
+const useStyles = makeStyles(() => ({
+	root: {
+		'& .MuiPagination-ul': {
+			display: 'flex',
+			justifyContent: 'flex-end',
+			'& > li:first-child': {
+				'& button': {
+					borderRadius: '8px',
+					border: '1px solid #808080',
+					width: '32',
+					height: '32',
+					color: 'white'
+				}
+			},
+			'& > li:last-child': {
+				'& button': {
+					borderRadius: '8px',
+					border: '1px solid #808080',
+					width: '32',
+					height: '32',
+					color: 'white'
+				}
+			}
+		},
+		'& .Mui-selected': {
+			backgroundColor: 'transparent !important',
+			color: 'yellow',
+			border: '1px solid yellow',
+			borderRadius: '8px',
+			fontSize: '12px',
+			fontWeight: '700',
+			lineHeight: '16px',
+			letterSpacing: '0.03em'
+		},
+		'& ul > li:not(:first-child):not(:last-child) > button:not(.Mui-selected)':
+			{
+				background: 'transparent',
+				border: '1px solid #808080',
+				color: '#ffffff',
+				height: '32px',
+				width: '32px',
+				borderRadius: '8px',
+				fontSize: '12px',
+				fontWeight: '700',
+				lineHeight: '16px',
+				letterSpacing: '0.03em'
+			},
+		'& .MuiPaginationItem-ellipsis': {
+			color: '#ffffff',
+			fontSize: '12px',
+			fontWeight: '700',
+			lineHeight: '16px',
+			letterSpacing: '0.03em'
+		}
+	}
+}));
+
 const PostLibrary = () => {
+	const muiClasses = useStyles();
 	const posts = useSelector((state) => state.postLibrary.posts);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
@@ -81,9 +145,21 @@ const PostLibrary = () => {
 								row.thumbnail_url ? row.thumbnail_url : row.media
 							}`}
 						/>
-						<span className={classes.fileName}>
-							{row.file_name.substring(0, 13)}
-						</span>
+						<Tooltip
+							TransitionComponent={Fade}
+							TransitionProps={{ timeout: 600 }}
+							title={row.file_name.length > 13 ? row.file_name : ''}
+							arrow
+							componentsProps={{
+								tooltip: { className: classes.toolTip },
+								arrow: { className: classes.toolTipArrow }
+							}}
+						>
+							<span className={classes.fileName}>
+								{row.file_name.substring(0, 13) +
+									`${row.file_name.length > 13 ? '...' : ''}`}
+							</span>
+						</Tooltip>
 					</div>
 				);
 			}
@@ -95,6 +171,17 @@ const PostLibrary = () => {
 			text: 'POST DATE | TIME',
 			formatter: (content) => {
 				return <div className={classes.row}>{getDateTime(content)}</div>;
+			}
+		},
+		{
+			dataField: 'labels',
+			sort: true,
+			sortCaret: sortRows,
+			text: 'LABEL',
+			formatter: (content) => {
+				return (
+					<div className={classes.row}>{content[0] + `, ` + content[1]}</div>
+				);
 			}
 		},
 		{
@@ -118,27 +205,47 @@ const PostLibrary = () => {
 		{
 			dataField: 'options',
 			text: 'OPTIONS',
-			formatter: (content, row) => {
+			formatter: () => {
 				return (
 					<div className={classes.row}>
-						<Edit
-							onClick={() => {
-								setShowSlider(true);
-								setEdit(true);
-								dispatch(getSpecificPost(row.id));
+						<Tooltip
+							TransitionComponent={Fade}
+							TransitionProps={{ timeout: 600 }}
+							title={'EDIT POST'}
+							arrow
+							componentsProps={{
+								tooltip: { className: classes.toolTip },
+								arrow: { className: classes.toolTipArrow }
 							}}
-							className={classes.editIcon}
-						/>
+						>
+							<Edit
+								// onClick={() => {
+								// 	setShowSlider(true);
+								// 	setEdit(true);
+								// 	dispatch(getSpecificPost(row.id));
+								// }}
+								className={classes.editIcon}
+							/>
+						</Tooltip>
 					</div>
 				);
 			}
 		}
 	];
 
+	const tableRowEvents = {
+		onClick: (e, row) => {
+			setEdit(true);
+			setShowSlider(true);
+
+			dispatch(getSpecificPost(row.id));
+		}
+	};
+
 	return (
 		<Layout>
 			<div className={classes.header}>
-				<h1>POST LIBRARY</h1>
+				<h1 style={{ marginRight: '2rem' }}>POST LIBRARY</h1>
 				<Button
 					onClick={() => {
 						setShowSlider(true);
@@ -147,15 +254,24 @@ const PostLibrary = () => {
 				/>
 			</div>
 			<div className={classes.tableContainer}>
-				<Table columns={columns} data={posts} />
+				<Table rowEvents={tableRowEvents} columns={columns} data={posts} />
 			</div>
+
+			<Stack spacing={2}>
+				<Pagination
+					className={muiClasses.root}
+					count={50}
+					variant='outlined'
+					shape='rounded'
+				/>
+			</Stack>
 
 			<UploadOrEditPost
 				open={showSlider}
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
-					setTimeout(() => setEdit(false), 150);
+					setTimeout(() => setEdit(false), 20);
 				}}
 				title={edit ? 'Edit Post' : 'Upload a Post'}
 				heading1={edit ? 'Media Files' : 'Add Media Files'}

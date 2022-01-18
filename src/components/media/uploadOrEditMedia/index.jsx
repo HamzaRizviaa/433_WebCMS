@@ -23,7 +23,8 @@ import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Union } from '../../../assets/Union.svg';
 import { ReactComponent as MusicIcon } from '../../../assets/Music.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
-import { Autocomplete, Paper } from '@mui/material';
+import { Autocomplete, Paper, Popper } from '@mui/material';
+import { useRef } from 'react';
 
 const UploadOrEditMedia = ({
 	open,
@@ -33,6 +34,8 @@ const UploadOrEditMedia = ({
 	buttonText,
 	isEdit
 }) => {
+	const [labelColor, setLabelColor] = useState('#ffffff');
+	const [labelError, setLabelError] = useState('');
 	const [selectedLabels, setSelectedLabels] = useState([]);
 	const [mediaLabels, setMediaLabels] = useState([]);
 	const [mainCategory, setMainCategory] = useState('');
@@ -55,9 +58,15 @@ const UploadOrEditMedia = ({
 	const [description, setDescription] = useState('');
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
+	const [previewBool, setPreviewBool] = useState(false);
 	const [isLoadingUploadMedia, setIsLoadingUploadMedia] = useState(false);
 	const [mediaButtonStatus, setMediaButtonStatus] = useState(false);
-	console.log(uploadedFiles, uploadedCoverImage);
+	const [extraLabel, setExtraLabel] = useState('');
+	const [disableDropdown, setDisableDropdown] = useState(true);
+	const [inputWidth, setInputWidth] = useState(null);
+	const labelsInputRef = useRef(null);
+	const previewRef = useRef(null);
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
@@ -76,14 +85,39 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		if (labels.length) {
-			setMediaLabels(labels.map((label) => label.name));
+			setMediaLabels([...labels]);
 		}
 	}, [labels]);
 
 	useEffect(() => {
-		console.log({ specificMedia });
+		if (labelsInputRef?.current && inputWidth === null) {
+			setInputWidth(labelsInputRef?.current?.offsetWidth);
+		}
+	}, [labelsInputRef?.current]);
+
+	useEffect(() => {
+		setMediaLabels((labels) => {
+			return labels.filter((label) => label.id != null);
+		});
+		if (extraLabel) {
+			let flag = mediaLabels.some((label) => label.name == extraLabel);
+			if (flag == false) {
+				setMediaLabels((labels) => {
+					return [...labels, { id: null, name: extraLabel }];
+				});
+			}
+		}
+	}, [extraLabel]);
+
+	useEffect(() => {
 		if (specificMedia) {
-			setSelectedLabels(specificMedia?.labels);
+			if (specificMedia?.labels) {
+				let _labels = [];
+				specificMedia.labels.map((label) =>
+					_labels.push({ id: -1, name: label })
+				);
+				setSelectedLabels(_labels);
+			}
 			setMainCategory(specificMedia?.media_type);
 			setSubCategory(specificMedia?.sub_category);
 			setTitleMedia(specificMedia?.title);
@@ -174,7 +208,6 @@ const UploadOrEditMedia = ({
 	};
 
 	useEffect(() => {
-		console.log(acceptedFiles);
 		if (acceptedFiles?.length) {
 			setUploadMediaError('');
 			setDropZoneBorder('#ffff00');
@@ -213,7 +246,7 @@ const UploadOrEditMedia = ({
 			setUploadedCoverImage([...uploadedCoverImage, ...newFiles]);
 		}
 	}, [acceptedFiles2]);
-	console.log({ uploadedFiles });
+
 	const resetState = () => {
 		setMainCategory('');
 		setSubCategory('');
@@ -235,8 +268,11 @@ const UploadOrEditMedia = ({
 		setTitleMedia('');
 		setDescription('');
 		setPreviewFile(null);
+		setPreviewBool(false);
 		setMediaButtonStatus(false);
 		setSelectedLabels([]);
+		setExtraLabel('');
+		setDisableDropdown(true);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -258,6 +294,18 @@ const UploadOrEditMedia = ({
 			setTimeout(() => {
 				setDropZoneBorder('#ffff00');
 				setUploadMediaError('');
+			}, [5000]);
+		}
+		if (selectedLabels.length < 10) {
+			setLabelColor('#ff355a');
+			setLabelError(
+				`You need to add ${
+					10 - selectedLabels.length
+				} more labels in order to upload media`
+			);
+			setTimeout(() => {
+				setLabelColor('#ffffff');
+				setLabelError('');
 			}, [5000]);
 		}
 		if (uploadedCoverImage.length < 1) {
@@ -309,16 +357,12 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	const handleChangeExtraLabel = (e) => {
+		setExtraLabel(e.target.value.toUpperCase());
+	};
+
 	const uploadMedia = async (id, payload) => {
 		setMediaButtonStatus(true);
-		let _labels = [];
-		if (!isEdit) {
-			labels.map((label) => {
-				if (selectedLabels.includes(label.name)) {
-					_labels.push(label);
-				}
-			});
-		}
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media/create-media`,
@@ -328,7 +372,7 @@ const UploadOrEditMedia = ({
 							media_type: mainCategory,
 							sub_category: subCategory,
 							title: titleMedia,
-							...(_labels.length ? { labels: [..._labels] } : {}),
+							...(selectedLabels.length ? { labels: [...selectedLabels] } : {}),
 							description: description,
 							data: {
 								file_name: payload?.file_name,
@@ -393,12 +437,31 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	const handleTitleDuplicate = async (givenTitle) => {
+		try {
+			const result = await axios.get(
+				`${process.env.REACT_APP_API_ENDPOINT}/media/check/${givenTitle}`
+			);
+			console.log(result);
+			return result?.data?.status;
+		} catch (error) {
+			console.log('Error');
+			return null;
+		}
+	};
+
+	const handlePreviewEscape = () => {
+		setPreviewBool(false);
+		setPreviewFile(null);
+	};
+
 	const addMediaBtnDisabled =
 		!uploadedFiles.length ||
 		!mainCategory ||
 		!uploadedCoverImage.length ||
 		!titleMedia ||
-		mediaButtonStatus;
+		mediaButtonStatus ||
+		selectedLabels.length < 10;
 
 	return (
 		<Slider
@@ -413,6 +476,12 @@ const UploadOrEditMedia = ({
 				}
 			}}
 			title={title}
+			disableDropdown={disableDropdown}
+			handlePreview={() => {
+				handlePreviewEscape();
+			}}
+			preview={previewBool}
+			previewRef={previewRef}
 		>
 			<LoadingOverlay active={isLoadingUploadMedia} spinner text='Loading...'>
 				<div
@@ -434,10 +503,17 @@ const UploadOrEditMedia = ({
 										MAIN CATEGORY
 									</h6>
 									<Select
+										onOpen={() => {
+											setDisableDropdown(false);
+										}}
+										onClose={() => {
+											setDisableDropdown(true);
+										}}
 										disabled={isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
 										value={mainCategory}
 										onChange={(e) => {
+											setDisableDropdown(true);
 											setMainCategory(e.target.value);
 											setMainCategoryLabelColor('#ffffff');
 											setMainCategoryError('');
@@ -490,10 +566,19 @@ const UploadOrEditMedia = ({
 								<div className={classes.subCategory}>
 									<h6>SUB CATEGORY</h6>
 									<Select
+										onOpen={() => {
+											setDisableDropdown(false);
+										}}
+										onClose={() => {
+											setDisableDropdown(true);
+										}}
 										disabled={!mainCategory || isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
 										value={subCategory}
-										onChange={(e) => setSubCategory(e.target.value)}
+										onChange={(e) => {
+											setDisableDropdown(true);
+											setSubCategory(e.target.value);
+										}}
 										className={`${classes.select} ${
 											isEdit ? `${classes.isEditSelect}` : ''
 										}`}
@@ -671,18 +756,25 @@ const UploadOrEditMedia = ({
 																	{isEdit ? (
 																		<EyeIcon
 																			className={classes.filePreviewIcons}
-																			onClick={() => setPreviewFile(file)}
+																			onClick={() => {
+																				setPreviewBool(true);
+																				setPreviewFile(file);
+																			}}
 																		/>
 																	) : (
 																		<>
 																			<EyeIcon
 																				className={classes.filePreviewIcons}
-																				onClick={() => setPreviewFile(file)}
+																				onClick={() => {
+																					setPreviewBool(true);
+																					setPreviewFile(file);
+																				}}
 																			/>
 																			<Deletes
 																				className={classes.filePreviewIcons}
 																				onClick={() => {
 																					handleDeleteFile2(file.id);
+																					setPreviewBool(false);
 																					setPreviewFile(null);
 																				}}
 																			/>{' '}
@@ -729,6 +821,7 @@ const UploadOrEditMedia = ({
 									<div className={classes.titleContainer}>
 										<h6 style={{ color: titleMediaLabelColor }}>TITLE</h6>
 										<TextField
+											ref={labelsInputRef}
 											value={titleMedia}
 											onChange={(e) => {
 												setTitleMedia(e.target.value);
@@ -748,10 +841,15 @@ const UploadOrEditMedia = ({
 									<p className={classes.mediaError}>{titleMediaError}</p>
 
 									<div className={classes.titleContainer}>
-										<h6>LABELS</h6>
+										<h6 style={{ color: labelColor }}>LABELS</h6>
 										<Autocomplete
 											disabled={isEdit}
+											style={{
+												maxWidth: `${inputWidth}px`
+											}}
+											getOptionLabel={(option) => option.name}
 											PaperComponent={(props) => {
+												setDisableDropdown(false);
 												return (
 													<Paper
 														elevation={6}
@@ -768,18 +866,60 @@ const UploadOrEditMedia = ({
 													/>
 												);
 											}}
+											PopperComponent={({ style, ...props }) => (
+												<Popper {...props} style={{ ...style, height: 0 }} />
+											)}
+											ListboxProps={{
+												style: { maxHeight: 180 },
+												position: 'bottom'
+											}}
+											onClose={() => {
+												setDisableDropdown(true);
+											}}
 											multiple
 											filterSelectedOptions
+											// freeSolo
 											freeSolo={false}
 											value={selectedLabels}
-											placeholder='Select Media'
 											onChange={(event, newValue) => {
-												setSelectedLabels(newValue);
+												setDisableDropdown(true);
+												event.preventDefault();
+												event.stopPropagation();
+												let newLabels = newValue.filter(
+													(v, i, a) =>
+														a.findIndex(
+															(t) =>
+																t.name.toLowerCase() === v.name.toLowerCase()
+														) === i
+												);
+												setSelectedLabels([...newLabels]);
 											}}
 											popupIcon={''}
 											noOptionsText={
-												<div style={{ color: '#808080', fontSize: 14 }}>
-													No Results Found
+												<div
+													className={classes.liAutocompleteWithButton}
+													style={{
+														display: 'flex',
+														justifyContent: 'space-between',
+														alignItems: 'center',
+														color: 'white',
+														fontSize: 14
+													}}
+												>
+													<p>{extraLabel.toUpperCase()}</p>
+													<Button
+														text='CREATE NEW LABEL'
+														style={{
+															padding: '3px 12px',
+															fontWeight: 700
+														}}
+														onClick={() => {
+															// setSelectedLabels((labels) => [
+															// 	...labels,
+															// 	extraLabel.toUpperCase()
+															// ]);
+														}}
+													/>
 												</div>
 											}
 											className={`${classes.autoComplete} ${
@@ -795,6 +935,8 @@ const UploadOrEditMedia = ({
 														selectedLabels.length ? ' ' : 'Select Label'
 													}
 													className={classes.textFieldAuto}
+													value={extraLabel}
+													onChange={handleChangeExtraLabel}
 													InputProps={{
 														disableUnderline: true,
 														className: classes.textFieldInput,
@@ -802,41 +944,52 @@ const UploadOrEditMedia = ({
 													}}
 												/>
 											)}
-											// eslint-disable-next-line no-unused-vars
-											renderOption={(props, option, { selected }) => (
-												<li {...props} className={classes.liAutocomplete}>
-													{option}
-												</li>
-											)}
+											renderOption={(props, option) => {
+												if (option.id == null) {
+													return (
+														<li
+															{...props}
+															style={{
+																display: 'flex',
+																alignItems: 'center',
+																justifyContent: 'space-between'
+															}}
+															className={classes.liAutocomplete}
+														>
+															{option.name}
+															<Button
+																text='CREATE NEW LABEL'
+																style={{
+																	padding: '3px 12px',
+																	fontWeight: 700
+																}}
+																onClick={() => {
+																	// setSelectedLabels((labels) => [
+																	// 	...labels,
+																	// 	extraLabel.toUpperCase()
+																	// ]);
+																}}
+															/>
+														</li>
+													);
+												} else {
+													return (
+														<li {...props} className={classes.liAutocomplete}>
+															{option.name}
+														</li>
+													);
+												}
+											}}
 											ChipProps={{
 												className: classes.tagYellow,
 												size: 'small',
 												deleteIcon: <ClearIcon />
 											}}
 											clearIcon={''}
-											anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-											transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-											popoverProps={{
-												style: {
-													bottom: 0,
-													overflowY: 'auto'
-												}
-											}}
-											MenuProps={{
-												anchorOrigin: {
-													vertical: 'bottom',
-													horizontal: 'left'
-												},
-												transformOrigin: {
-													vertical: 'top',
-													horizontal: 'left'
-												},
-												getContentAnchorEl: null
-											}}
 										/>
 									</div>
 
-									<p className={classes.mediaError}>{''}</p>
+									<p className={classes.mediaError}>{labelError}</p>
 
 									<div className={classes.titleContainer}>
 										<h6>DESCRIPTION</h6>
@@ -885,12 +1038,27 @@ const UploadOrEditMedia = ({
 							>
 								<Button
 									disabled={addMediaBtnDisabled}
-									onClick={() => {
+									onClick={async () => {
 										if (addMediaBtnDisabled) {
 											validatePostBtn();
 										} else {
 											setMediaButtonStatus(true);
 											setIsLoadingUploadMedia(true);
+
+											if (
+												(await handleTitleDuplicate(titleMedia)) === 200 &&
+												titleMedia !== specificMedia.title
+											) {
+												setTitleMediaLabelColor('#ff355a');
+												setTitleMediaError('This title already exists');
+												setTimeout(() => {
+													setTitleMediaLabelColor('#ffffff');
+													setTitleMediaError('');
+												}, [5000]);
+												setIsLoadingUploadMedia(false);
+												setMediaButtonStatus(false);
+												return;
+											}
 											if (isEdit) {
 												uploadMedia(specificMedia?.id, {
 													title: titleMedia,
@@ -953,10 +1121,13 @@ const UploadOrEditMedia = ({
 						</div>
 					</div>
 					{previewFile != null && (
-						<div className={classes.previewComponent}>
+						<div ref={previewRef} className={classes.previewComponent}>
 							<div className={classes.previewHeader}>
 								<Close
-									onClick={() => setPreviewFile(null)}
+									onClick={() => {
+										setPreviewBool(false);
+										setPreviewFile(null);
+									}}
 									className={classes.closeIcon}
 								/>
 								<h5>Preview</h5>
