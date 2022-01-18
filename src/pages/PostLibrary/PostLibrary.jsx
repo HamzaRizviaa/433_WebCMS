@@ -205,7 +205,7 @@ const PostLibrary = () => {
 		{
 			dataField: 'options',
 			text: 'OPTIONS',
-			formatter: (content, row) => {
+			formatter: () => {
 				return (
 					<div className={classes.row}>
 						<Tooltip
@@ -219,11 +219,11 @@ const PostLibrary = () => {
 							}}
 						>
 							<Edit
-								onClick={() => {
-									setShowSlider(true);
-									setEdit(true);
-									dispatch(getSpecificPost(row.id));
-								}}
+								// onClick={() => {
+								// 	setShowSlider(true);
+								// 	setEdit(true);
+								// 	dispatch(getSpecificPost(row.id));
+								// }}
 								className={classes.editIcon}
 							/>
 						</Tooltip>

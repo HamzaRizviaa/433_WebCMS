@@ -143,8 +143,15 @@ const UploadOrEditPost = ({
 			}
 			setCaption(specificPost.caption);
 			if (specificPost?.media_id !== null) {
+				let _mediaTitle = '';
+				media.find((medi) => {
+					if (medi.id === specificPost.media_id) {
+						_mediaTitle = medi.title;
+					}
+				});
 				setValue(true);
-				setSelectedMedia(specificPost.media_id);
+				setSelectedMedia(_mediaTitle);
+				//setSelectedMedia(specificPost.media_id);
 			}
 			if (specificPost.orientation_type === 'square') {
 				setDimensionSelect('square');
