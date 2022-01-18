@@ -20,7 +20,7 @@ const Slider = ({
 		const close = (e) => {
 			if (e.key === 'Escape' && preview === true) {
 				handlePreview();
-			} else {
+			} else if (e.key === 'Escape' && preview === false) {
 				handleClose();
 			}
 		};
