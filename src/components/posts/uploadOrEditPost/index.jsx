@@ -986,8 +986,8 @@ const UploadOrEditPost = ({
 											setDisableDropdown(true);
 											// e.preventDefault();
 											// e.stopPropagation();
-											console.log(newVal);
 											setSelectedMedia(newVal);
+											console.log(selectedMedia);
 										}}
 										options={media}
 										getOptionLabel={(option) => option.title}
