@@ -73,7 +73,6 @@ const getDateTime = (dateTime) => {
 
 const MediaLibrary = () => {
 	const media = useSelector((state) => state.mediaDropdown.media);
-	console.log(media);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 

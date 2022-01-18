@@ -58,12 +58,14 @@ const UploadOrEditMedia = ({
 	const [description, setDescription] = useState('');
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
+	const [previewBool, setPreviewBool] = useState(false);
 	const [isLoadingUploadMedia, setIsLoadingUploadMedia] = useState(false);
 	const [mediaButtonStatus, setMediaButtonStatus] = useState(false);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [inputWidth, setInputWidth] = useState(null);
 	const labelsInputRef = useRef(null);
+	const previewRef = useRef(null);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -266,6 +268,7 @@ const UploadOrEditMedia = ({
 		setTitleMedia('');
 		setDescription('');
 		setPreviewFile(null);
+		setPreviewBool(false);
 		setMediaButtonStatus(false);
 		setSelectedLabels([]);
 		setExtraLabel('');
@@ -447,6 +450,11 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	const handlePreviewEscape = () => {
+		setPreviewBool(false);
+		setPreviewFile(null);
+	};
+
 	const addMediaBtnDisabled =
 		!uploadedFiles.length ||
 		!mainCategory ||
@@ -469,6 +477,11 @@ const UploadOrEditMedia = ({
 			}}
 			title={title}
 			disableDropdown={disableDropdown}
+			handlePreview={() => {
+				handlePreviewEscape();
+			}}
+			preview={previewBool}
+			previewRef={previewRef}
 		>
 			<LoadingOverlay active={isLoadingUploadMedia} spinner text='Loading...'>
 				<div
@@ -743,18 +756,25 @@ const UploadOrEditMedia = ({
 																	{isEdit ? (
 																		<EyeIcon
 																			className={classes.filePreviewIcons}
-																			onClick={() => setPreviewFile(file)}
+																			onClick={() => {
+																				setPreviewBool(true);
+																				setPreviewFile(file);
+																			}}
 																		/>
 																	) : (
 																		<>
 																			<EyeIcon
 																				className={classes.filePreviewIcons}
-																				onClick={() => setPreviewFile(file)}
+																				onClick={() => {
+																					setPreviewBool(true);
+																					setPreviewFile(file);
+																				}}
 																			/>
 																			<Deletes
 																				className={classes.filePreviewIcons}
 																				onClick={() => {
 																					handleDeleteFile2(file.id);
+																					setPreviewBool(false);
 																					setPreviewFile(null);
 																				}}
 																			/>{' '}
@@ -1101,10 +1121,13 @@ const UploadOrEditMedia = ({
 						</div>
 					</div>
 					{previewFile != null && (
-						<div className={classes.previewComponent}>
+						<div ref={previewRef} className={classes.previewComponent}>
 							<div className={classes.previewHeader}>
 								<Close
-									onClick={() => setPreviewFile(null)}
+									onClick={() => {
+										setPreviewBool(false);
+										setPreviewFile(null);
+									}}
 									className={classes.closeIcon}
 								/>
 								<h5>Preview</h5>
