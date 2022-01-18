@@ -73,6 +73,7 @@ const UploadOrEditPost = ({
 	const [selectMediaInput, setSelectMediaInput] = useState('');
 	const [inputWidth, setInputWidth] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
+	const [dropdownPosition, setDropdownPosition] = useState(false);
 	const labelsInputRef = useRef(null);
 	// const [aspect, setAspect] = useState(1 / 1);
 	// const [imgDestination, setImageDestination] = useState('');
@@ -81,10 +82,22 @@ const UploadOrEditPost = ({
 
 	//a library that takes height width input and gives cropped image
 
+	// const tenFilesValidator = (file) => {
+	// 	if (uploadedFiles.indexOf(file) > 9) {
+	// 		console.log(uploadedFiles.indexOf(file));
+	// 		return {
+	// 			code: 'max-files-reached',
+	// 			message: `You have reached maximum files allowed`
+	// 		};
+	// 	}
+	// 	return null;
+	// };
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png, video/mp4',
 			maxFiles: 10
+			// validator: tenFilesValidator
 		});
 
 	const media = useSelector((state) => state.mediaDropdown.media);
@@ -218,6 +231,10 @@ const UploadOrEditPost = ({
 			});
 			setUploadedFiles([...uploadedFiles, ...newFiles]);
 		}
+		if (uploadedFiles.length > 10) {
+			let newArray = uploadedFiles.slice(0, 10);
+			setUploadedFiles([newArray]);
+		}
 	}, [acceptedFiles]);
 
 	const uploadFileToServer = async (uploadedFile) => {
@@ -311,6 +328,7 @@ const UploadOrEditPost = ({
 		setPreviewFile(null);
 		setSelectedLabels([]);
 		setDisableDropdown(true);
+		setDropdownPosition(false);
 		//setImageDestination('');
 	};
 
@@ -657,10 +675,6 @@ const UploadOrEditPost = ({
 																					objectPosition: 'center'
 																				}}
 																			/>
-																			{/* <img
-																				src={imgDestination}
-																				className={classes.fileThumbnail}
-																			/> */}
 																		</>
 																	)}
 
@@ -929,12 +943,16 @@ const UploadOrEditPost = ({
 								</div>
 							</div>
 							{value ? (
-								<div className={classes.mediaContainer}>
+								<div
+									style={{ marginBottom: dropdownPosition ? 200 : 0 }}
+									className={classes.mediaContainer}
+								>
 									<h6 style={{ color: mediaLabelColor }}>SELECT MEDIA</h6>
 									<Autocomplete
 										value={selectedMedia}
 										PaperComponent={(props) => {
 											setDisableDropdown(false);
+
 											return (
 												<Paper
 													elevation={6}
@@ -945,16 +963,25 @@ const UploadOrEditPost = ({
 														border: '1px solid #404040',
 														boxShadow:
 															'0px 16px 40px rgba(255, 255, 255, 0.16)',
-														borderRadius: '8px',
-														maxHeight: 200,
-														overflowY: 'hidden'
+														borderRadius: '8px'
 													}}
 													{...props}
 												/>
 											);
 										}}
+										PopperComponent={({ style, ...props }) => (
+											<Popper {...props} style={{ ...style, height: 0 }} />
+										)}
+										ListboxProps={{
+											style: { maxHeight: 180 },
+											position: 'bottom'
+										}}
+										onOpen={() => {
+											setDropdownPosition(true);
+										}}
 										onClose={(e) => {
 											setDisableDropdown(true);
+											setDropdownPosition(false);
 										}}
 										onChange={(e, newVal) => {
 											setDisableDropdown(true);
