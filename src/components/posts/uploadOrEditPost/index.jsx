@@ -145,18 +145,14 @@ const UploadOrEditPost = ({
 			if (specificPost?.media_id !== null) {
 				let _media;
 				media.find((medi) => {
-					if (medi.id === specificPost.media_id) {
+					if (medi.id === specificPost?.media_id) {
 						//console.log(medi);
-						_media = medi.title;
+						_media = medi;
 					}
 				});
-				setValue(true);
-				console.log(_media);
 				setSelectedMedia(_media);
-
-				//setSelectedMedia(specificPost.media_id);
+				setValue(true);
 			}
-
 			if (specificPost.orientation_type === 'square') {
 				setDimensionSelect('square');
 				setImageToResizeWidth(80);
@@ -983,11 +979,8 @@ const UploadOrEditPost = ({
 											setDropdownPosition(false);
 										}}
 										onChange={(e, newVal) => {
-											setDisableDropdown(true);
-											// e.preventDefault();
-											// e.stopPropagation();
 											setSelectedMedia(newVal);
-											console.log(selectedMedia);
+											setDisableDropdown(true);
 										}}
 										options={media}
 										getOptionLabel={(option) => option.title}
