@@ -23,7 +23,7 @@ import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Union } from '../../../assets/Union.svg';
 import { ReactComponent as MusicIcon } from '../../../assets/Music.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
-import { Autocomplete, Paper } from '@mui/material';
+import { Autocomplete, Paper, Popper } from '@mui/material';
 import { useRef } from 'react';
 
 const UploadOrEditMedia = ({
@@ -846,6 +846,13 @@ const UploadOrEditMedia = ({
 													/>
 												);
 											}}
+											PopperComponent={({ style, ...props }) => (
+												<Popper {...props} style={{ ...style, height: 0 }} />
+											)}
+											ListboxProps={{
+												style: { maxHeight: 180 },
+												position: 'bottom'
+											}}
 											onClose={() => {
 												setDisableDropdown(true);
 											}}
@@ -959,25 +966,6 @@ const UploadOrEditMedia = ({
 												deleteIcon: <ClearIcon />
 											}}
 											clearIcon={''}
-											anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-											transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-											popoverProps={{
-												style: {
-													bottom: 0,
-													overflowY: 'auto'
-												}
-											}}
-											MenuProps={{
-												anchorOrigin: {
-													vertical: 'bottom',
-													horizontal: 'left'
-												},
-												transformOrigin: {
-													vertical: 'top',
-													horizontal: 'left'
-												},
-												getContentAnchorEl: null
-											}}
 										/>
 									</div>
 
