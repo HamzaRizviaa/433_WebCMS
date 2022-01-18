@@ -33,7 +33,7 @@ export const getMediaLabels = createAsyncThunk(
 	'uploadMedia/getMediaLabels',
 	async () => {
 		const result = await axios.get(
-			`${process.env.REACT_APP_API_ENDPOINT}/label/medias`
+			`${process.env.REACT_APP_API_ENDPOINT}/label/all-labels`
 		);
 		if (result?.data?.result?.length > 0) {
 			return result.data.result;

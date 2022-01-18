@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditPost.module.scss';
 import { useDropzone } from 'react-dropzone';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
@@ -57,6 +57,8 @@ const UploadOrEditPost = ({
 	const [selectedLabels, setSelectedLabels] = useState([]);
 	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
 	const [mediaLabelColor, setMediaLabelColor] = useState('#ffffff');
+	const [labelColor, setLabelColor] = useState('#ffffff');
+	const [labelError, setLabelError] = useState('');
 	const [selectedMedia, setSelectedMedia] = useState(null);
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
@@ -66,6 +68,12 @@ const UploadOrEditPost = ({
 	const [imageToResizeHeight, setImageToResizeHeight] = useState(80);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [postLabels, setPostLabels] = useState([]);
+	const [extraLabel, setExtraLabel] = useState('');
+	const [selectMediaInput, setSelectMediaInput] = useState('');
+	const [inputWidth, setInputWidth] = useState(null);
+	const [disableDropdown, setDisableDropdown] = useState(true);
+	const [dropdownPosition, setDropdownPosition] = useState(false);
+	const labelsInputRef = useRef(null);
 	// const [aspect, setAspect] = useState(1 / 1);
 	// const [imgDestination, setImageDestination] = useState('');
 	// const imageElement = useRef();
@@ -73,10 +81,22 @@ const UploadOrEditPost = ({
 
 	//a library that takes height width input and gives cropped image
 
+	// const tenFilesValidator = (file) => {
+	// 	if (uploadedFiles.indexOf(file) > 9) {
+	// 		console.log(uploadedFiles.indexOf(file));
+	// 		return {
+	// 			code: 'max-files-reached',
+	// 			message: `You have reached maximum files allowed`
+	// 		};
+	// 	}
+	// 	return null;
+	// };
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png, video/mp4',
 			maxFiles: 10
+			// validator: tenFilesValidator
 		});
 
 	const media = useSelector((state) => state.mediaDropdown.media);
@@ -86,18 +106,51 @@ const UploadOrEditPost = ({
 	const dispatch = useDispatch();
 
 	useEffect(() => {
+		setPostLabels((labels) => {
+			return labels.filter((label) => label.id != null);
+		});
+		if (extraLabel) {
+			let flag = postLabels.some((label) => label.name == extraLabel);
+			if (flag == false) {
+				setPostLabels((labels) => {
+					return [...labels, { id: null, name: extraLabel }];
+				});
+			}
+		}
+	}, [extraLabel]);
+
+	useEffect(() => {
+		if (labelsInputRef?.current && inputWidth === null) {
+			setInputWidth(labelsInputRef?.current?.offsetWidth);
+		}
+	}, [labelsInputRef?.current]);
+
+	useEffect(() => {
 		if (labels.length) {
-			setPostLabels(labels.map((label) => label.name));
+			setPostLabels([...labels]);
 		}
 	}, [labels]);
 
 	useEffect(() => {
 		if (specificPost) {
-			setSelectedLabels(specificPost?.labels);
+			if (specificPost?.labels) {
+				let _labels = [];
+				specificPost.labels.map((label) =>
+					_labels.push({ id: -1, name: label })
+				);
+				setSelectedLabels(_labels);
+			}
 			setCaption(specificPost.caption);
 			if (specificPost?.media_id !== null) {
+				let _media;
+				media.find((medi) => {
+					if (medi.id === specificPost?.media_id) {
+						//console.log(medi);
+						_media = medi;
+					}
+				});
+				setSelectedMedia(_media);
 				setValue(true);
-				setSelectedMedia(specificPost.media_id);
 			}
 			if (specificPost.orientation_type === 'square') {
 				setDimensionSelect('square');
@@ -183,6 +236,10 @@ const UploadOrEditPost = ({
 				};
 			});
 			setUploadedFiles([...uploadedFiles, ...newFiles]);
+		}
+		if (uploadedFiles.length > 10) {
+			let newArray = uploadedFiles.slice(0, 10);
+			setUploadedFiles([newArray]);
 		}
 	}, [acceptedFiles]);
 
@@ -276,6 +333,8 @@ const UploadOrEditPost = ({
 		setImageToResizeHeight(80);
 		setPreviewFile(null);
 		setSelectedLabels([]);
+		setDisableDropdown(true);
+		setDropdownPosition(false);
 		//setImageDestination('');
 	};
 
@@ -317,6 +376,19 @@ const UploadOrEditPost = ({
 				setUploadMediaError('');
 			}, [5000]);
 		}
+
+		if (selectedLabels.length < 10) {
+			setLabelColor('#ff355a');
+			setLabelError(
+				`You need to add ${
+					10 - selectedLabels.length
+				} more labels in order to post`
+			);
+			setTimeout(() => {
+				setLabelColor('#ffff00');
+				setLabelError('');
+			}, [5000]);
+		}
 		if (value && !selectedMedia) {
 			setMediaLabelColor('#ff355a');
 			setMediaError('This field is required');
@@ -330,22 +402,18 @@ const UploadOrEditPost = ({
 	const createPost = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
 		try {
-			let _labels = [];
-			if (!isEdit) {
-				labels.map((label) => {
-					if (selectedLabels.includes(label.name)) {
-						_labels.push(label);
-					}
-				});
-			}
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
 				{
 					caption: caption,
 					orientation_type: dimensionSelect,
-					...(selectedMedia ? { media_id: selectedMedia } : { media_id: null }),
+					...(selectedMedia
+						? { media_id: selectedMedia.id }
+						: { media_id: null }),
 					...(isEdit && id ? { post_id: id } : {}),
-					...(!isEdit && _labels.length ? { labels: [..._labels] } : {}),
+					...(!isEdit && selectedLabels.length
+						? { labels: [...selectedLabels] }
+						: {}),
 					...(!isEdit ? { media_files: [...mediaFiles] } : {})
 				}
 			);
@@ -357,6 +425,7 @@ const UploadOrEditPost = ({
 				setPostButtonStatus(false);
 				handleClose();
 				dispatch(getPosts());
+				dispatch(getPostLabels());
 			}
 		} catch (e) {
 			toast.error(isEdit ? 'Failed to edit post!' : 'Failed to create post!');
@@ -413,35 +482,33 @@ const UploadOrEditPost = ({
 		//cropMe(0.8);
 	};
 
-	// const cropMe = (asp) => {
-	// 	const cropper = new Cropper(imageElement.current, {
-	// 		zoomable: false,
-	// 		scalable: false,
-	// 		aspectRatio: asp,
-	// 		background: false,
-	// 		movable: false,
-	// 		cropBoxMovable: false,
-	// 		cropBoxResizable: false,
-	// 		toggleDragModeOnDblclick: false,
-	// 		dragMode: 'none',
-	// 		//initialAspectRatio: asp,
-	// 		// viewMode: 2,
-	// 		//data :
-	// 		responsive: false,
-	// 		modal: false,
-	// 		crop: () => {
-	// 			const canvas = cropper.getCroppedCanvas();
-	// 			setImageDestination(canvas.toDataURL('image/png'));
-	// 		}
-	// 	});
-	// };
+	const [newLabels, setNewLabels] = useState([]);
+
+	const handleChangeExtraLabel = (e) => {
+		// e.preventDefault();
+		// e.stopPropagation();
+		setExtraLabel(e.target.value.toUpperCase());
+	};
+
+	const handleChangeSelectMediaInput = (e) => {
+		setSelectMediaInput(e.target.value);
+	};
+
+	useEffect(() => {
+		if (labels.length) setNewLabels(labels);
+	}, [newLabels]);
 
 	const postBtnDisabled =
-		!uploadedFiles.length || postButtonStatus || (value && !selectedMedia);
+		!uploadedFiles.length ||
+		postButtonStatus ||
+		(value && !selectedMedia) ||
+		selectedLabels.length < 10;
 
-	const totalMedia = [];
-	//media.slice(0, 5).map((medi) => totalMedia.push(medi.title)); //gets recent first 5 elements from the list
-	media.map((medi) => totalMedia.push(medi));
+	// const handleKeyDown = (event) => {
+	// 	if (event.keyCode === 27) {
+	// 		handleClose();
+	// 	}
+	// };
 
 	return (
 		<Slider
@@ -453,6 +520,7 @@ const UploadOrEditPost = ({
 				}
 			}}
 			title={title}
+			disableDropdown={disableDropdown}
 		>
 			<LoadingOverlay active={isLoadingCreatePost} spinner text='Loading...'>
 				<div
@@ -543,7 +611,6 @@ const UploadOrEditPost = ({
 									</div>
 								</div>
 							)}
-
 							<DragDropContext onDragEnd={onDragEnd}>
 								<Droppable droppableId='droppable-1'>
 									{(provided) => (
@@ -614,10 +681,6 @@ const UploadOrEditPost = ({
 																					objectPosition: 'center'
 																				}}
 																			/>
-																			{/* <img
-																				src={imgDestination}
-																				className={classes.fileThumbnail}
-																			/> */}
 																		</>
 																	)}
 
@@ -698,14 +761,17 @@ const UploadOrEditPost = ({
 							) : (
 								<></>
 							)}
-
 							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
-
 							<div className={classes.captionContainer}>
-								<h6>LABELS</h6>
+								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete
 									disabled={isEdit}
+									style={{
+										maxWidth: `${inputWidth}px`
+									}}
+									getOptionLabel={(option) => option.name}
 									PaperComponent={(props) => {
+										setDisableDropdown(false);
 										return (
 											<Paper
 												elevation={6}
@@ -721,18 +787,59 @@ const UploadOrEditPost = ({
 											/>
 										);
 									}}
+									PopperComponent={({ style, ...props }) => (
+										<Popper {...props} style={{ ...style, height: 0 }} />
+									)}
+									ListboxProps={{
+										style: { maxHeight: 180 },
+										position: 'bottom'
+									}}
+									onClose={(e) => {
+										setDisableDropdown(true);
+									}}
 									multiple
 									filterSelectedOptions
+									// freeSolo
 									freeSolo={false}
 									value={selectedLabels}
-									placeholder='Select Media'
 									onChange={(event, newValue) => {
-										setSelectedLabels(newValue);
+										setDisableDropdown(true);
+										event.preventDefault();
+										event.stopPropagation();
+										let newLabels = newValue.filter(
+											(v, i, a) =>
+												a.findIndex(
+													(t) => t.name.toLowerCase() === v.name.toLowerCase()
+												) === i
+										);
+										setSelectedLabels([...newLabels]);
 									}}
 									popupIcon={''}
 									noOptionsText={
-										<div style={{ color: '#808080', fontSize: 14 }}>
-											No Results Found
+										<div
+											className={classes.liAutocompleteWithButton}
+											style={{
+												display: 'flex',
+												justifyContent: 'space-between',
+												alignItems: 'center',
+												color: 'white',
+												fontSize: 14
+											}}
+										>
+											<p>{extraLabel.toUpperCase()}</p>
+											<Button
+												text='CREATE NEW LABEL'
+												style={{
+													padding: '3px 12px',
+													fontWeight: 700
+												}}
+												onClick={() => {
+													// setSelectedLabels((labels) => [
+													// 	...labels,
+													// 	extraLabel.toUpperCase()
+													// ]);
+												}}
+											/>
 										</div>
 									}
 									className={`${classes.autoComplete} ${
@@ -746,6 +853,8 @@ const UploadOrEditPost = ({
 											{...params}
 											placeholder={selectedLabels.length ? ' ' : 'Select Label'}
 											className={classes.textFieldAuto}
+											value={extraLabel}
+											onChange={handleChangeExtraLabel}
 											InputProps={{
 												disableUnderline: true,
 												className: classes.textFieldInput,
@@ -753,44 +862,55 @@ const UploadOrEditPost = ({
 											}}
 										/>
 									)}
-									renderOption={(props, option, { selected }) => (
-										<li {...props} className={classes.liAutocomplete}>
-											{option}
-										</li>
-									)}
+									renderOption={(props, option, state) => {
+										if (option.id == null) {
+											return (
+												<li
+													{...props}
+													style={{
+														display: 'flex',
+														alignItems: 'center',
+														justifyContent: 'space-between'
+													}}
+													className={classes.liAutocomplete}
+												>
+													{option.name}
+													<Button
+														text='CREATE NEW LABEL'
+														style={{
+															padding: '3px 12px',
+															fontWeight: 700
+														}}
+														onClick={() => {
+															// setSelectedLabels((labels) => [
+															// 	...labels,
+															// 	extraLabel.toUpperCase()
+															// ]);
+														}}
+													/>
+												</li>
+											);
+										} else {
+											return (
+												<li {...props} className={classes.liAutocomplete}>
+													{option.name}
+												</li>
+											);
+										}
+									}}
 									ChipProps={{
 										className: classes.tagYellow,
 										size: 'small',
 										deleteIcon: <ClearIcon />
 									}}
 									clearIcon={''}
-									anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-									transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-									popoverProps={{
-										style: {
-											bottom: 0,
-											overflowY: 'auto'
-										}
-									}}
-									MenuProps={{
-										anchorOrigin: {
-											vertical: 'bottom',
-											horizontal: 'left'
-										},
-										transformOrigin: {
-											vertical: 'top',
-											horizontal: 'left'
-										},
-										getContentAnchorEl: null
-									}}
 								/>
 							</div>
-
-							<p className={classes.mediaError}>{''}</p>
-
+							<p className={classes.mediaError}>{labelError}</p>
 							<div className={classes.captionContainer}>
 								<h6>CAPTION</h6>
 								<TextField
+									ref={labelsInputRef}
 									value={caption}
 									onChange={(e) => setCaption(e.target.value)}
 									placeholder={'Please write your caption here'}
@@ -803,7 +923,6 @@ const UploadOrEditPost = ({
 									maxRows={4}
 								/>
 							</div>
-
 							<div className={classes.postMediaContainer}>
 								<div className={classes.postMediaHeader}>
 									<h5>Link post to media</h5>
@@ -818,51 +937,16 @@ const UploadOrEditPost = ({
 								</div>
 							</div>
 							{value ? (
-								<div className={classes.mediaContainer}>
+								<div
+									style={{ marginBottom: dropdownPosition ? 200 : 0 }}
+									className={classes.mediaContainer}
+								>
 									<h6 style={{ color: mediaLabelColor }}>SELECT MEDIA</h6>
-									{/* <Select
-										value={selectedMedia}
-										onChange={(e) => {
-											setMediaError(false);
-											setMediaLabelColor('#ffffff');
-											setSelectedMedia(e.target.value);
-										}}
-										disableUnderline={true}
-										className={`${classes.select}`}
-										IconComponent={KeyboardArrowDownIcon}
-										MenuProps={{
-											anchorOrigin: {
-												vertical: 'bottom',
-												horizontal: 'left'
-											},
-											transformOrigin: {
-												vertical: 'top',
-												horizontal: 'left'
-											},
-											getContentAnchorEl: null
-										}}
-										displayEmpty={true}
-										renderValue={(value) =>
-											value?.length
-												? Array.isArray(value)
-													? value.join(', ')
-													: value
-												: 'Please Select'
-										}
-									>
-										<MenuItem disabled value=''>
-											Please Select
-										</MenuItem> 
-										{media.map((item, index) => (
-											<MenuItem key={index} value={item.id}>
-												{item.title}{' '}
-											</MenuItem>
-										))}
-									</Select> */}
-
 									<Autocomplete
 										value={selectedMedia}
 										PaperComponent={(props) => {
+											setDisableDropdown(false);
+
 											return (
 												<Paper
 													elevation={6}
@@ -879,18 +963,38 @@ const UploadOrEditPost = ({
 												/>
 											);
 										}}
+										PopperComponent={({ style, ...props }) => (
+											<Popper {...props} style={{ ...style, height: 0 }} />
+										)}
+										ListboxProps={{
+											style: { maxHeight: 180 },
+											position: 'bottom'
+										}}
+										onOpen={() => {
+											setDropdownPosition(true);
+										}}
+										onClose={(e) => {
+											setDisableDropdown(true);
+											setDropdownPosition(false);
+										}}
 										onChange={(e, newVal) => {
 											setSelectedMedia(newVal);
+											setDisableDropdown(true);
 										}}
-										//className={classes.autoComplete}
-										options={totalMedia}
+										options={media}
 										getOptionLabel={(option) => option.title}
 										renderOption={(props, option, { selected }) => {
-											console.log(option);
 											return (
 												<li {...props} className={classes.liAutocomplete}>
 													{option.title}
 												</li>
+											);
+										}}
+										filterOptions={(items) => {
+											return items.filter((item) =>
+												item.title
+													.toLowerCase()
+													.includes(selectMediaInput.toLowerCase())
 											);
 										}}
 										renderInput={(params) => (
@@ -903,6 +1007,8 @@ const UploadOrEditPost = ({
 													...params.InputProps,
 													className: classes.textFieldInput
 												}}
+												value={selectMediaInput}
+												onChange={handleChangeSelectMediaInput}
 											/>
 										)}
 										clearIcon={<ClearIcon />}
