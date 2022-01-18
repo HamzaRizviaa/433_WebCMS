@@ -143,16 +143,20 @@ const UploadOrEditPost = ({
 			}
 			setCaption(specificPost.caption);
 			if (specificPost?.media_id !== null) {
-				let _mediaTitle = '';
+				let _media;
 				media.find((medi) => {
 					if (medi.id === specificPost.media_id) {
-						_mediaTitle = medi.title;
+						//console.log(medi);
+						_media = medi.title;
 					}
 				});
 				setValue(true);
-				setSelectedMedia(_mediaTitle);
+				console.log(_media);
+				setSelectedMedia(_media);
+
 				//setSelectedMedia(specificPost.media_id);
 			}
+
 			if (specificPost.orientation_type === 'square') {
 				setDimensionSelect('square');
 				setImageToResizeWidth(80);
@@ -982,6 +986,7 @@ const UploadOrEditPost = ({
 											setDisableDropdown(true);
 											// e.preventDefault();
 											// e.stopPropagation();
+											console.log(newVal);
 											setSelectedMedia(newVal);
 										}}
 										options={media}
