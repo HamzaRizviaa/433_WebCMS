@@ -68,6 +68,7 @@ const UploadOrEditPost = ({
 	const [imageToResizeWidth, setImageToResizeWidth] = useState(80);
 	const [imageToResizeHeight, setImageToResizeHeight] = useState(80);
 	const [previewFile, setPreviewFile] = useState(null);
+	const [previewBool, setPreviewBool] = useState(false);
 	const [postLabels, setPostLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [selectMediaInput, setSelectMediaInput] = useState('');
@@ -75,6 +76,7 @@ const UploadOrEditPost = ({
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [dropdownPosition, setDropdownPosition] = useState(false);
 	const labelsInputRef = useRef(null);
+	const previewRef = useRef(null);
 	// const [aspect, setAspect] = useState(1 / 1);
 	// const [imgDestination, setImageDestination] = useState('');
 	// const imageElement = useRef();
@@ -333,6 +335,7 @@ const UploadOrEditPost = ({
 		setImageToResizeWidth(80);
 		setImageToResizeHeight(80);
 		setPreviewFile(null);
+		setPreviewBool(false);
 		setSelectedLabels([]);
 		setDisableDropdown(true);
 		setDropdownPosition(false);
@@ -499,6 +502,11 @@ const UploadOrEditPost = ({
 		if (labels.length) setNewLabels(labels);
 	}, [newLabels]);
 
+	const handlePreviewEscape = () => {
+		setPreviewBool(false);
+		setPreviewFile(null);
+	};
+
 	const postBtnDisabled =
 		!uploadedFiles.length ||
 		postButtonStatus ||
@@ -522,6 +530,11 @@ const UploadOrEditPost = ({
 			}}
 			title={title}
 			disableDropdown={disableDropdown}
+			handlePreview={() => {
+				handlePreviewEscape();
+			}}
+			preview={previewBool}
+			previewRef={previewRef}
 		>
 			<LoadingOverlay active={isLoadingCreatePost} spinner text='Loading...'>
 				<div
@@ -701,7 +714,10 @@ const UploadOrEditPost = ({
 																{isEdit ? (
 																	<div className={classes.filePreviewRight}>
 																		<EyeIcon
-																			onClick={() => setPreviewFile(file)}
+																			onClick={() => {
+																				setPreviewBool(true);
+																				setPreviewFile(file);
+																			}}
 																			className={classes.filePreviewIcons}
 																		/>
 																	</div>
@@ -709,7 +725,10 @@ const UploadOrEditPost = ({
 																	<div className={classes.filePreviewRight}>
 																		<EyeIcon
 																			className={classes.filePreviewIcons}
-																			onClick={() => setPreviewFile(file)}
+																			onClick={() => {
+																				setPreviewBool(true);
+																				setPreviewFile(file);
+																			}}
 																		/>
 																		{uploadedFiles.length > 1 && (
 																			<span {...provided.dragHandleProps}>
@@ -723,6 +742,7 @@ const UploadOrEditPost = ({
 																			className={classes.filePreviewIcons}
 																			onClick={() => {
 																				handleDeleteFile(file.id);
+																				setPreviewBool(false);
 																				setPreviewFile(null);
 																			}}
 																		/>
@@ -1079,10 +1099,13 @@ const UploadOrEditPost = ({
 						</div>
 					</div>
 					{previewFile != null && (
-						<div className={classes.previewComponent}>
+						<div ref={previewRef} className={classes.previewComponent}>
 							<div className={classes.previewHeader}>
 								<Close
-									onClick={() => setPreviewFile(null)}
+									onClick={() => {
+										setPreviewBool(false);
+										setPreviewFile(null);
+									}}
 									className={classes.closeIcon}
 								/>
 								<h5>Preview</h5>
