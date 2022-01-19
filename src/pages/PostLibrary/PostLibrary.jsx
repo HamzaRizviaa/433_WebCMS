@@ -99,13 +99,19 @@ const useStyles = makeStyles(() => ({
 const PostLibrary = () => {
 	const muiClasses = useStyles();
 	const posts = useSelector((state) => state.postLibrary.posts);
+	const totalRecords = useSelector((state) => state.postLibrary.totalRecords);
+	const [page, setPage] = useState(1);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
-
 	const dispatch = useDispatch();
+
+	const handleChange = (event, value) => {
+		setPage(value);
+	};
+
 	useEffect(() => {
-		dispatch(getPosts());
-	}, []);
+		dispatch(getPosts(page));
+	}, [page]);
 
 	const columns = [
 		{
@@ -259,7 +265,9 @@ const PostLibrary = () => {
 			<Stack spacing={2}>
 				<Pagination
 					className={muiClasses.root}
-					count={50}
+					page={page}
+					onChange={handleChange}
+					count={Math.floor(totalRecords / 20)}
 					variant='outlined'
 					shape='rounded'
 				/>
