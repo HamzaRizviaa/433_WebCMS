@@ -393,10 +393,12 @@
 
 .loaderContainer2 {
 	position: absolute;
-	width: 45rem;
-	height: 100%;
+	//width: 4rem !important;
+	//height: 110px;
 	//height: 100vh;
 	//min-height: calc(100vh - 200px);
+	width: 100%;
+	height: 100%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
