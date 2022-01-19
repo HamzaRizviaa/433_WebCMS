@@ -49,7 +49,8 @@ export const uploadOrEditMediaSlice = createSlice({
 		mainCategories: [],
 		specificMedia: [],
 		labels: [],
-		mainCategoriesStatusLoading: false
+		mainCategoriesStatusLoading: false,
+		specificMediaStatus: ''
 	},
 	reducers: null,
 	extraReducers: {
@@ -63,8 +64,15 @@ export const uploadOrEditMediaSlice = createSlice({
 		[getMainCategories.rejected]: (state) => {
 			state.mainCategoriesStatusLoading = false;
 		},
+		[getSpecificMedia.pending]: (state) => {
+			state.specificMediaStatus = 'loading';
+		},
 		[getSpecificMedia.fulfilled]: (state, action) => {
 			state.specificMedia = action.payload;
+			state.specificMediaStatus = 'success';
+		},
+		[getSpecificMedia.rejected]: (state) => {
+			state.specificMediaStatus = 'failed';
 		},
 		[getMediaLabels.fulfilled]: (state, action) => {
 			state.labels = action.payload;

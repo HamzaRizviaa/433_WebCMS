@@ -18,6 +18,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import Close from '@material-ui/icons/Close';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { CircularProgress } from '@material-ui/core';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Union } from '../../../assets/Union.svg';
@@ -81,6 +82,7 @@ const UploadOrEditMedia = ({
 	const specificMedia = useSelector(
 		(state) => state.mediaLibrary.specificMedia
 	);
+	const specificMediaStatus = useSelector((state) => state.mediaLibrary);
 	const labels = useSelector((state) => state.mediaLibrary.labels);
 
 	useEffect(() => {
@@ -491,6 +493,13 @@ const UploadOrEditMedia = ({
 							: classes.contentWrapper
 					}`}
 				>
+					{specificMediaStatus.specificMediaStatus === 'loading' ? (
+						<div className={classes.loaderContainer2}>
+							<CircularProgress className={classes.loader} />;
+						</div>
+					) : (
+						<></>
+					)}
 					<div
 						className={classes.contentWrapperNoPreview}
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
