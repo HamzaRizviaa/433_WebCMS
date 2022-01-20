@@ -18,12 +18,14 @@ import ClearIcon from '@material-ui/icons/Clear';
 import Close from '@material-ui/icons/Close';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { CircularProgress } from '@material-ui/core';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Union } from '../../../assets/Union.svg';
 import { ReactComponent as MusicIcon } from '../../../assets/Music.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
-import { Autocomplete, Paper } from '@mui/material';
+import { Autocomplete, Paper, Popper } from '@mui/material';
+import { useRef } from 'react';
 
 const UploadOrEditMedia = ({
 	open,
@@ -57,10 +59,14 @@ const UploadOrEditMedia = ({
 	const [description, setDescription] = useState('');
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
+	const [previewBool, setPreviewBool] = useState(false);
 	const [isLoadingUploadMedia, setIsLoadingUploadMedia] = useState(false);
 	const [mediaButtonStatus, setMediaButtonStatus] = useState(false);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
+	const [inputWidth, setInputWidth] = useState(null);
+	const labelsInputRef = useRef(null);
+	const previewRef = useRef(null);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -76,6 +82,7 @@ const UploadOrEditMedia = ({
 	const specificMedia = useSelector(
 		(state) => state.mediaLibrary.specificMedia
 	);
+	const specificMediaStatus = useSelector((state) => state.mediaLibrary);
 	const labels = useSelector((state) => state.mediaLibrary.labels);
 
 	useEffect(() => {
@@ -83,6 +90,12 @@ const UploadOrEditMedia = ({
 			setMediaLabels([...labels]);
 		}
 	}, [labels]);
+
+	useEffect(() => {
+		if (labelsInputRef?.current && inputWidth === null) {
+			setInputWidth(labelsInputRef?.current?.offsetWidth);
+		}
+	}, [labelsInputRef?.current]);
 
 	useEffect(() => {
 		setMediaLabels((labels) => {
@@ -257,6 +270,7 @@ const UploadOrEditMedia = ({
 		setTitleMedia('');
 		setDescription('');
 		setPreviewFile(null);
+		setPreviewBool(false);
 		setMediaButtonStatus(false);
 		setSelectedLabels([]);
 		setExtraLabel('');
@@ -438,6 +452,11 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	const handlePreviewEscape = () => {
+		setPreviewBool(false);
+		setPreviewFile(null);
+	};
+
 	const addMediaBtnDisabled =
 		!uploadedFiles.length ||
 		!mainCategory ||
@@ -460,6 +479,11 @@ const UploadOrEditMedia = ({
 			}}
 			title={title}
 			disableDropdown={disableDropdown}
+			handlePreview={() => {
+				handlePreviewEscape();
+			}}
+			preview={previewBool}
+			previewRef={previewRef}
 		>
 			<LoadingOverlay active={isLoadingUploadMedia} spinner text='Loading...'>
 				<div
@@ -469,6 +493,13 @@ const UploadOrEditMedia = ({
 							: classes.contentWrapper
 					}`}
 				>
+					{specificMediaStatus.specificMediaStatus === 'loading' ? (
+						<div className={classes.loaderContainer2}>
+							<CircularProgress className={classes.loader} />;
+						</div>
+					) : (
+						<></>
+					)}
 					<div
 						className={classes.contentWrapperNoPreview}
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
@@ -734,18 +765,25 @@ const UploadOrEditMedia = ({
 																	{isEdit ? (
 																		<EyeIcon
 																			className={classes.filePreviewIcons}
-																			onClick={() => setPreviewFile(file)}
+																			onClick={() => {
+																				setPreviewBool(true);
+																				setPreviewFile(file);
+																			}}
 																		/>
 																	) : (
 																		<>
 																			<EyeIcon
 																				className={classes.filePreviewIcons}
-																				onClick={() => setPreviewFile(file)}
+																				onClick={() => {
+																					setPreviewBool(true);
+																					setPreviewFile(file);
+																				}}
 																			/>
 																			<Deletes
 																				className={classes.filePreviewIcons}
 																				onClick={() => {
 																					handleDeleteFile2(file.id);
+																					setPreviewBool(false);
 																					setPreviewFile(null);
 																				}}
 																			/>{' '}
@@ -792,6 +830,7 @@ const UploadOrEditMedia = ({
 									<div className={classes.titleContainer}>
 										<h6 style={{ color: titleMediaLabelColor }}>TITLE</h6>
 										<TextField
+											ref={labelsInputRef}
 											value={titleMedia}
 											onChange={(e) => {
 												setTitleMedia(e.target.value);
@@ -814,9 +853,9 @@ const UploadOrEditMedia = ({
 										<h6 style={{ color: labelColor }}>LABELS</h6>
 										<Autocomplete
 											disabled={isEdit}
-											// style={{
-											// 	// maxWidth: `${inputWidth}px`
-											// }}
+											style={{
+												maxWidth: `${inputWidth}px`
+											}}
 											getOptionLabel={(option) => option.name}
 											PaperComponent={(props) => {
 												setDisableDropdown(false);
@@ -835,6 +874,13 @@ const UploadOrEditMedia = ({
 														{...props}
 													/>
 												);
+											}}
+											PopperComponent={({ style, ...props }) => (
+												<Popper {...props} style={{ ...style, height: 0 }} />
+											)}
+											ListboxProps={{
+												style: { maxHeight: 180 },
+												position: 'bottom'
 											}}
 											onClose={() => {
 												setDisableDropdown(true);
@@ -949,25 +995,6 @@ const UploadOrEditMedia = ({
 												deleteIcon: <ClearIcon />
 											}}
 											clearIcon={''}
-											anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-											transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-											popoverProps={{
-												style: {
-													bottom: 0,
-													overflowY: 'auto'
-												}
-											}}
-											MenuProps={{
-												anchorOrigin: {
-													vertical: 'bottom',
-													horizontal: 'left'
-												},
-												transformOrigin: {
-													vertical: 'top',
-													horizontal: 'left'
-												},
-												getContentAnchorEl: null
-											}}
 										/>
 									</div>
 
@@ -1026,7 +1053,11 @@ const UploadOrEditMedia = ({
 										} else {
 											setMediaButtonStatus(true);
 											setIsLoadingUploadMedia(true);
-											if ((await handleTitleDuplicate(titleMedia)) === 200) {
+
+											if (
+												(await handleTitleDuplicate(titleMedia)) === 200 &&
+												titleMedia !== specificMedia.title
+											) {
 												setTitleMediaLabelColor('#ff355a');
 												setTitleMediaError('This title already exists');
 												setTimeout(() => {
@@ -1099,10 +1130,13 @@ const UploadOrEditMedia = ({
 						</div>
 					</div>
 					{previewFile != null && (
-						<div className={classes.previewComponent}>
+						<div ref={previewRef} className={classes.previewComponent}>
 							<div className={classes.previewHeader}>
 								<Close
-									onClick={() => setPreviewFile(null)}
+									onClick={() => {
+										setPreviewBool(false);
+										setPreviewFile(null);
+									}}
 									className={classes.closeIcon}
 								/>
 								<h5>Preview</h5>

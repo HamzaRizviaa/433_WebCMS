@@ -73,7 +73,6 @@ const getDateTime = (dateTime) => {
 
 const MediaLibrary = () => {
 	const media = useSelector((state) => state.mediaDropdown.media);
-	console.log(media);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 
@@ -186,7 +185,7 @@ const MediaLibrary = () => {
 		{
 			dataField: 'options',
 			text: 'OPTIONS',
-			formatter: (content, row) => {
+			formatter: () => {
 				return (
 					<div className={classes.row}>
 						<Tooltip
@@ -200,11 +199,11 @@ const MediaLibrary = () => {
 							}}
 						>
 							<Edit
-								onClick={() => {
-									setShowSlider(true);
-									setEdit(true);
-									dispatch(getSpecificMedia(row.id));
-								}}
+								// onClick={() => {
+								// 	setShowSlider(true);
+								// 	setEdit(true);
+								// 	dispatch(getSpecificMedia(row.id));
+								// }}
 								className={classes.editIcon}
 							/>
 						</Tooltip>
@@ -216,8 +215,8 @@ const MediaLibrary = () => {
 
 	const tableRowEvents = {
 		onClick: (e, row) => {
-			setShowSlider(true);
 			setEdit(true);
+			setShowSlider(true);
 			dispatch(getSpecificMedia(row.id));
 		}
 	};
@@ -242,7 +241,7 @@ const MediaLibrary = () => {
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
-					setTimeout(() => setEdit(false), 150);
+					setTimeout(() => setEdit(false), 20);
 				}}
 				title={edit ? 'Edit Media' : 'Upload Media'}
 				heading1={edit ? 'Media Type' : 'Select Media Type'}
