@@ -13,6 +13,8 @@ import UploadOrEditMedia from '../../components/media/uploadOrEditMedia';
 import { getSpecificMedia } from '../../components/media/uploadOrEditMedia/uploadOrEditMediaSlice';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
+import Pagination from '@mui/material/Pagination';
+import { makeStyles } from '@material-ui/core/styles';
 
 const sortRows = (order, row) => {
 	if (!order)
@@ -71,16 +73,83 @@ const getDateTime = (dateTime) => {
 	})}`;
 };
 
+const useStyles = makeStyles(() => ({
+	root: {
+		'& .MuiPagination-ul': {
+			display: 'flex',
+			justifyContent: 'flex-end',
+			'& > li:first-child': {
+				'& button': {
+					borderRadius: '8px',
+					border: '1px solid #808080',
+					width: '32',
+					height: '32',
+					color: 'white'
+				}
+			},
+			'& > li:last-child': {
+				'& button': {
+					borderRadius: '8px',
+					border: '1px solid #808080',
+					width: '32',
+					height: '32',
+					color: 'white'
+				}
+			}
+		},
+		'& .Mui-selected': {
+			backgroundColor: 'transparent !important',
+			color: 'yellow',
+			border: '1px solid yellow',
+			borderRadius: '8px',
+			fontSize: '12px',
+			fontWeight: '700',
+			lineHeight: '16px',
+			letterSpacing: '0.03em'
+		},
+		'& ul > li:not(:first-child):not(:last-child) > button:not(.Mui-selected)':
+			{
+				background: 'transparent',
+				border: '1px solid #808080',
+				color: '#ffffff',
+				height: '32px',
+				width: '32px',
+				borderRadius: '8px',
+				fontSize: '12px',
+				fontWeight: '700',
+				lineHeight: '16px',
+				letterSpacing: '0.03em'
+			},
+		'& .MuiPaginationItem-ellipsis': {
+			color: '#ffffff',
+			fontSize: '12px',
+			fontWeight: '700',
+			lineHeight: '16px',
+			letterSpacing: '0.03em'
+		}
+	}
+}));
+
 const MediaLibrary = () => {
+	const muiClasses = useStyles();
 	const media = useSelector((state) => state.mediaDropdown.media);
+	console.log(media);
+	// const media = [];
+	const totalRecords = useSelector((state) => state.mediaDropdown.totalRecords);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
+	const [page, setPage] = useState(1);
+	const [paginationError, setPaginationError] = useState(false);
 
 	const dispatch = useDispatch();
 
+	const handleChange = (event, value) => {
+		setPage(value);
+	};
+
 	useEffect(() => {
-		dispatch(getMedia());
-	}, []);
+		dispatch(getMedia(page));
+	}, [page]);
 
 	const columns = [
 		{
@@ -107,7 +176,7 @@ const MediaLibrary = () => {
 						<Tooltip
 							TransitionComponent={Fade}
 							TransitionProps={{ timeout: 600 }}
-							title={row.file_name.length > 13 ? row.file_name : ''}
+							title={row?.file_name?.length > 13 ? row?.file_name : ''}
 							arrow
 							componentsProps={{
 								tooltip: { className: classes.toolTip },
@@ -115,8 +184,8 @@ const MediaLibrary = () => {
 							}}
 						>
 							<span className={classes.fileName}>
-								{row.file_name.substring(0, 13) +
-									`${row.file_name.length > 13 ? '...' : ''}`}
+								{row?.file_name?.substring(0, 13) +
+									`${row?.file_name?.length > 13 ? '...' : ''}`}
 							</span>
 						</Tooltip>
 					</div>
@@ -234,6 +303,38 @@ const MediaLibrary = () => {
 			</div>
 			<div className={classes.tableContainer}>
 				<Table rowEvents={tableRowEvents} columns={columns} data={media} />
+			</div>
+
+			<div className={classes.paginationRow}>
+				<Pagination
+					className={muiClasses.root}
+					page={page}
+					onChange={handleChange}
+					count={Math.ceil(totalRecords / 20)}
+					variant='outlined'
+					shape='rounded'
+				/>
+				<div className={classes.gotoText}>Go to page</div>
+				<input
+					style={{
+						border: `${paginationError ? '1px solid red' : '1px solid #808080'}`
+					}}
+					type={'number'}
+					min={1}
+					onChange={(e) => {
+						setPaginationError(false);
+						const value = Number(e.target.value);
+						if (value > Math.ceil(totalRecords / 20)) {
+							setPaginationError(true);
+							setPage(1);
+						} else if (value) {
+							setPage(value);
+						} else {
+							setPage(1);
+						}
+					}}
+					className={classes.gotoInput}
+				/>
 			</div>
 
 			<UploadOrEditMedia
