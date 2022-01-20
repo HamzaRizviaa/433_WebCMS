@@ -18,15 +18,6 @@ import Fade from '@mui/material/Fade';
 import Pagination from '@mui/material/Pagination';
 import { makeStyles } from '@material-ui/core/styles';
 
-const sortRows = (order) => {
-	if (!order) return <ArrowDropUpIcon className={classes.sortIcon} />;
-	else if (order === 'asc')
-		return <ArrowDropUpIcon className={classes.sortIconSelected} />;
-	else if (order === 'desc')
-		return <ArrowDropDownIcon className={classes.sortIconSelected} />;
-	return null;
-};
-
 const getDateTime = (dateTime) => {
 	let formatted = new Date(dateTime);
 	return `${moment(formatted).format(
@@ -103,14 +94,48 @@ const PostLibrary = () => {
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [paginationError, setPaginationError] = useState(false);
+	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const dispatch = useDispatch();
 	const handleChange = (event, value) => {
 		setPage(value);
 	};
+	const sortKeysMapping = {
+		file_name: 'media',
+		post_date: 'postdate',
+		labels: 'label',
+		user: 'user',
+		last_edit: 'lastedit'
+	};
 
 	useEffect(() => {
-		dispatch(getPosts(page));
+		if (sortState.sortby && sortState.order_type) {
+			dispatch(getPosts({ page, ...sortState }));
+		}
+	}, [sortState]);
+
+	useEffect(() => {
+		dispatch(getPosts({ page, ...sortState }));
 	}, [page]);
+
+	const sortRows = (order, col) => {
+		if (order && col.dataField) {
+			if (
+				order.toUpperCase() != sortState.order_type ||
+				sortKeysMapping[col.dataField] != sortState.sortby
+			) {
+				setSortState({
+					sortby: sortKeysMapping[col.dataField],
+					order_type: order.toUpperCase()
+				});
+			}
+		}
+		if (!order) return <ArrowDropUpIcon className={classes.sortIcon} />;
+		else if (order === 'asc')
+			return <ArrowDropUpIcon className={classes.sortIconSelected} />;
+		else if (order === 'desc')
+			return <ArrowDropDownIcon className={classes.sortIconSelected} />;
+		return null;
+	};
 
 	const columns = [
 		{
@@ -118,6 +143,7 @@ const PostLibrary = () => {
 			text: 'MEDIA',
 			sort: true,
 			sortCaret: sortRows,
+			sortFunc: () => {},
 			formatter: (content, row) => {
 				return (
 					<div
@@ -173,6 +199,7 @@ const PostLibrary = () => {
 			dataField: 'post_date',
 			sort: true,
 			sortCaret: sortRows,
+			sortFunc: () => {},
 			text: 'POST DATE | TIME',
 			formatter: (content) => {
 				return <div className={classes.row}>{getDateTime(content)}</div>;
@@ -182,6 +209,7 @@ const PostLibrary = () => {
 			dataField: 'labels',
 			sort: true,
 			sortCaret: sortRows,
+			sortFunc: () => {},
 			text: 'LABEL',
 			formatter: (content) => {
 				return (
@@ -193,6 +221,7 @@ const PostLibrary = () => {
 			dataField: 'user',
 			sort: true,
 			sortCaret: sortRows,
+			sortFunc: () => {},
 			text: 'USER',
 			formatter: (content) => {
 				return <div className={classes.row}>{content}</div>;
@@ -202,6 +231,7 @@ const PostLibrary = () => {
 			dataField: 'last_edit',
 			sort: true,
 			sortCaret: sortRows,
+			sortFunc: () => {},
 			text: 'LAST EDIT',
 			formatter: (content) => {
 				return <div className={classes.row}>{getDateTime(content)}</div>;
