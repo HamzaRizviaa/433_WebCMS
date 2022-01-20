@@ -16,7 +16,6 @@ import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 
 import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
 import { makeStyles } from '@material-ui/core/styles';
 
 const sortRows = (order) => {
@@ -99,13 +98,19 @@ const useStyles = makeStyles(() => ({
 const PostLibrary = () => {
 	const muiClasses = useStyles();
 	const posts = useSelector((state) => state.postLibrary.posts);
+	const totalRecords = useSelector((state) => state.postLibrary.totalRecords);
+	const [page, setPage] = useState(1);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
-
+	const [paginationError, setPaginationError] = useState(false);
 	const dispatch = useDispatch();
+	const handleChange = (event, value) => {
+		setPage(value);
+	};
+
 	useEffect(() => {
-		dispatch(getPosts());
-	}, []);
+		dispatch(getPosts(page));
+	}, [page]);
 
 	const columns = [
 		{
@@ -259,14 +264,37 @@ const PostLibrary = () => {
 				<Table rowEvents={tableRowEvents} columns={columns} data={posts} />
 			</div>
 
-			<Stack spacing={2}>
+			<div className={classes.paginationRow}>
 				<Pagination
 					className={muiClasses.root}
-					count={50}
+					page={page}
+					onChange={handleChange}
+					count={Math.ceil(totalRecords / 20)}
 					variant='outlined'
 					shape='rounded'
 				/>
-			</Stack>
+				<div className={classes.gotoText}>Go to page</div>
+				<input
+					style={{
+						border: `${paginationError ? '1px solid red' : '1px solid #808080'}`
+					}}
+					type={'number'}
+					min={1}
+					onChange={(e) => {
+						setPaginationError(false);
+						const value = Number(e.target.value);
+						if (value > Math.ceil(totalRecords / 20)) {
+							setPaginationError(true);
+							setPage(1);
+						} else if (value) {
+							setPage(value);
+						} else {
+							setPage(1);
+						}
+					}}
+					className={classes.gotoInput}
+				/>
+			</div>
 
 			<UploadOrEditPost
 				open={showSlider}
