@@ -20,6 +20,7 @@
 	tbody {
 		display: block;
 		max-height: calc(100vh - 200px);
+		min-height: calc(100vh - 200px);
 		overflow-y: auto;
 		overflow-x: hidden;
 		tr {
