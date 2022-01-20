@@ -3,9 +3,13 @@ import axios from 'axios';
 
 export const getMedia = createAsyncThunk(
 	'mediaDropdown/getMedia',
-	async (page) => {
+	async ({ page, order_type, sortby }) => {
+		let endPoint = `media/get-media?limit=20&page=${page}`;
+		if (order_type && sortby) {
+			endPoint += `&order_type=${order_type}&sortby=${sortby}`;
+		}
 		const response = await axios.get(
-			`${process.env.REACT_APP_API_ENDPOINT}/media/get-media?limit=20&page=${page}`
+			`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`
 		);
 		if (response?.data?.result?.data?.length > 0) {
 			return response.data.result;

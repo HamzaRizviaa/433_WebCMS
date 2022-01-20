@@ -16,52 +16,6 @@ import Fade from '@mui/material/Fade';
 import Pagination from '@mui/material/Pagination';
 import { makeStyles } from '@material-ui/core/styles';
 
-const sortRows = (order, row) => {
-	if (!order)
-		return (
-			<ArrowDropUpIcon
-				className={classes.sortIcon}
-				style={{
-					left:
-						row?.dataField === 'type' ||
-						row?.dataField === 'post_date' ||
-						row?.dataField === 'labels'
-							? 30
-							: -4
-				}}
-			/>
-		);
-	else if (order === 'asc')
-		return (
-			<ArrowDropUpIcon
-				className={classes.sortIconSelected}
-				style={{
-					left:
-						row?.dataField === 'type' ||
-						row?.dataField === 'post_date' ||
-						row?.dataField === 'labels'
-							? 30
-							: -4
-				}}
-			/>
-		);
-	else if (order === 'desc')
-		return (
-			<ArrowDropDownIcon
-				className={classes.sortIconSelected}
-				style={{
-					left:
-						row?.dataField === 'type' ||
-						row?.dataField === 'post_date' ||
-						row?.dataField === 'labels'
-							? 30
-							: -4
-				}}
-			/>
-		);
-	return null;
-};
-
 const getDateTime = (dateTime) => {
 	let formatted = new Date(dateTime);
 	return `${moment(formatted).format(
@@ -133,23 +87,93 @@ const useStyles = makeStyles(() => ({
 const MediaLibrary = () => {
 	const muiClasses = useStyles();
 	const media = useSelector((state) => state.mediaDropdown.media);
-	console.log(media);
-	// const media = [];
 	const totalRecords = useSelector((state) => state.mediaDropdown.totalRecords);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [page, setPage] = useState(1);
+	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [paginationError, setPaginationError] = useState(false);
-
 	const dispatch = useDispatch();
+	const sortKeysMapping = {
+		title: 'title',
+		file_name: 'media',
+		post_date: 'postdate',
+		labels: 'label',
+		user: 'user',
+		last_edit: 'lastedit',
+		type: 'type'
+	};
 
 	const handleChange = (event, value) => {
 		setPage(value);
 	};
 
 	useEffect(() => {
-		dispatch(getMedia(page));
+		if (sortState.sortby && sortState.order_type) {
+			dispatch(getMedia({ page, ...sortState }));
+		}
+	}, [sortState]);
+
+	useEffect(() => {
+		dispatch(getMedia({ page, ...sortState }));
 	}, [page]);
+
+	const sortRows = (order, col) => {
+		if (order && col.dataField) {
+			if (
+				order.toUpperCase() != sortState.order_type ||
+				sortKeysMapping[col.dataField] != sortState.sortby
+			) {
+				setSortState({
+					sortby: sortKeysMapping[col.dataField],
+					order_type: order.toUpperCase()
+				});
+			}
+		}
+		if (!order)
+			return (
+				<ArrowDropUpIcon
+					className={classes.sortIcon}
+					style={{
+						left:
+							col?.dataField === 'type' ||
+							col?.dataField === 'post_date' ||
+							col?.dataField === 'labels'
+								? 30
+								: -4
+					}}
+				/>
+			);
+		else if (order === 'asc')
+			return (
+				<ArrowDropUpIcon
+					className={classes.sortIconSelected}
+					style={{
+						left:
+							col?.dataField === 'type' ||
+							col?.dataField === 'post_date' ||
+							col?.dataField === 'labels'
+								? 30
+								: -4
+					}}
+				/>
+			);
+		else if (order === 'desc')
+			return (
+				<ArrowDropDownIcon
+					className={classes.sortIconSelected}
+					style={{
+						left:
+							col?.dataField === 'type' ||
+							col?.dataField === 'post_date' ||
+							col?.dataField === 'labels'
+								? 30
+								: -4
+					}}
+				/>
+			);
+		return null;
+	};
 
 	const columns = [
 		{
@@ -157,6 +181,7 @@ const MediaLibrary = () => {
 			text: 'TITLE',
 			sort: true,
 			sortCaret: sortRows,
+			sortFunc: () => {},
 			formatter: (content) => {
 				return <div className={classes.row}>{content}</div>;
 			}
@@ -166,6 +191,7 @@ const MediaLibrary = () => {
 			text: 'MEDIA',
 			sort: true,
 			sortCaret: sortRows,
+			sortFunc: () => {},
 			formatter: (content, row) => {
 				return (
 					<div className={classes.mediaWrapper}>
@@ -196,6 +222,7 @@ const MediaLibrary = () => {
 			dataField: 'post_date',
 			sort: true,
 			sortCaret: sortRows,
+			sortFunc: () => {},
 			text: 'POST DATE | TIME',
 			formatter: (content) => {
 				return <div className={classes.rowType}>{getDateTime(content)}</div>;
@@ -208,6 +235,7 @@ const MediaLibrary = () => {
 			dataField: 'labels',
 			sort: true,
 			sortCaret: sortRows,
+			sortFunc: () => {},
 			text: 'LABEL',
 			formatter: (content) => {
 				return (
@@ -224,6 +252,7 @@ const MediaLibrary = () => {
 			dataField: 'type',
 			sort: true,
 			sortCaret: sortRows,
+			sortFunc: () => {},
 			text: 'TYPE',
 			formatter: (content) => {
 				return <div className={classes.rowType}>{content}</div>;
@@ -237,6 +266,7 @@ const MediaLibrary = () => {
 			dataField: 'user',
 			sort: true,
 			sortCaret: sortRows,
+			sortFunc: () => {},
 			text: 'USER',
 			formatter: (content) => {
 				return <div className={classes.row}>{content}</div>;
@@ -246,6 +276,7 @@ const MediaLibrary = () => {
 			dataField: 'last_edit',
 			sort: true,
 			sortCaret: sortRows,
+			sortFunc: () => {},
 			text: 'LAST EDIT',
 			formatter: (content) => {
 				return <div className={classes.row}>{getDateTime(content)}</div>;
