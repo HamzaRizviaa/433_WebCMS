@@ -109,6 +109,13 @@ const UploadOrEditPost = ({
 	const dispatch = useDispatch();
 
 	useEffect(() => {
+		if (uploadedFiles.length > 10) {
+			let _uploadedFile = uploadedFiles.slice(0, 10);
+			setUploadedFiles(_uploadedFile);
+		}
+	}, [uploadedFiles]);
+
+	useEffect(() => {
 		setPostLabels((labels) => {
 			return labels.filter((label) => label.id != null);
 		});
