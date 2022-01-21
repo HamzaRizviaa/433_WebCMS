@@ -329,8 +329,8 @@ const PostLibrary = () => {
 							}}
 						>
 							<span className={classes.fileName}>
-								{row?.file_name.substring(0, 13) +
-									`${row?.file_name.length > 13 ? '...' : ''}`}
+								{row?.file_name?.substring(0, 13) +
+									`${row?.file_name?.length > 13 ? '...' : ''}`}
 							</span>
 						</Tooltip>
 					</div>
