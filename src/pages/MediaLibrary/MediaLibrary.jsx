@@ -315,9 +315,9 @@ const MediaLibrary = () => {
 
 	const tableRowEvents = {
 		onClick: (e, row) => {
+			dispatch(getSpecificMedia(row.id));
 			setEdit(true);
 			setShowSlider(true);
-			dispatch(getSpecificMedia(row.id));
 		}
 	};
 
@@ -327,6 +327,7 @@ const MediaLibrary = () => {
 				<h1 style={{ marginRight: '2rem' }}>MEDIA LIBRARY</h1>
 				<Button
 					onClick={() => {
+						setEdit(false);
 						setShowSlider(true);
 					}}
 					text={'UPLOAD MEDIA'}
@@ -373,7 +374,7 @@ const MediaLibrary = () => {
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
-					setTimeout(() => setEdit(false), 600);
+					// setTimeout(() => setEdit(false), 600);
 				}}
 				title={edit ? 'Edit Media' : 'Upload Media'}
 				heading1={edit ? 'Media Type' : 'Select Media Type'}
