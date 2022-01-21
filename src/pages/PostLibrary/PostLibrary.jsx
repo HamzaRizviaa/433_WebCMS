@@ -331,7 +331,7 @@ const PostLibrary = () => {
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
-					setTimeout(() => setEdit(false), 50);
+					setTimeout(() => setEdit(false), 600);
 				}}
 				title={edit ? 'Edit Post' : 'Upload a Post'}
 				heading1={edit ? 'Media Files' : 'Add Media Files'}
