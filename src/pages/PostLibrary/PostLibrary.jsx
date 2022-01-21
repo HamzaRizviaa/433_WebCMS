@@ -194,34 +194,34 @@ const PostLibrary = () => {
 							// TransitionComponent={Fade}
 							// TransitionProps={{ timeout: 600 }}
 							title={
-								row.thumbnail_url ? (
+								row?.thumbnail_url ? (
 									<video
 										id={'my-video'}
 										//poster={row.thumbnail_url}
 										className={
-											row.orientation_type === 'square'
+											row?.orientation_type === 'square'
 												? classes.mediaIconPreview
-												: row.orientation_type === 'landscape'
+												: row?.orientation_type === 'landscape'
 												? classes.mediaIconLandscapePreview
 												: classes.mediaIconPortraitPreview
 										}
 										controls={true}
 									>
 										<source
-											src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row.media}`}
+											src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.media}`}
 										/>
 									</video>
 								) : (
 									<img
 										className={
-											row.orientation_type === 'square'
+											row?.orientation_type === 'square'
 												? classes.mediaIconPreview
-												: row.orientation_type === 'landscape'
+												: row?.orientation_type === 'landscape'
 												? classes.mediaIconLandscapePreview
 												: classes.mediaIconPortraitPreview
 										}
 										src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-											row.thumbnail_url ? row.thumbnail_url : row.media
+											row?.thumbnail_url ? row?.thumbnail_url : row?.media
 										}`}
 										alt='no img'
 									/>
@@ -233,10 +233,10 @@ const PostLibrary = () => {
 							}}
 						>
 							<span>
-								{row.thumbnail_url ? (
+								{row?.thumbnail_url ? (
 									<PlayArrowIcon
 										className={
-											row.orientation_type === 'portrait'
+											row?.orientation_type === 'portrait'
 												? classes.playIconPortrait
 												: classes.playIcon
 										}
@@ -272,14 +272,14 @@ const PostLibrary = () => {
 									// }}
 
 									className={
-										row.orientation_type === 'square'
+										row?.orientation_type === 'square'
 											? classes.mediaIcon
-											: row.orientation_type === 'landscape'
+											: row?.orientation_type === 'landscape'
 											? classes.mediaIconLandscape
 											: classes.mediaIconPortrait
 									}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-										row.thumbnail_url ? row.thumbnail_url : row.media
+										row?.thumbnail_url ? row?.thumbnail_url : row?.media
 									}`}
 								/>
 							</span>
@@ -321,7 +321,7 @@ const PostLibrary = () => {
 						<Tooltip
 							TransitionComponent={Fade}
 							TransitionProps={{ timeout: 600 }}
-							title={row.file_name.length > 13 ? row.file_name : ''}
+							title={row?.file_name.length > 13 ? row?.file_name : ''}
 							arrow
 							componentsProps={{
 								tooltip: { className: classes.toolTip },
@@ -329,8 +329,8 @@ const PostLibrary = () => {
 							}}
 						>
 							<span className={classes.fileName}>
-								{row.file_name.substring(0, 13) +
-									`${row.file_name.length > 13 ? '...' : ''}`}
+								{row?.file_name.substring(0, 13) +
+									`${row?.file_name.length > 13 ? '...' : ''}`}
 							</span>
 						</Tooltip>
 					</div>
