@@ -1,21 +1,29 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export const getMedia = createAsyncThunk('mediaDropdown/getMedia', async () => {
-	const response = await axios.get(
-		`${process.env.REACT_APP_API_ENDPOINT}/media/get-media`
-	);
-	if (response?.data?.result?.length > 0) {
-		return response.data.result;
-	} else {
-		return [];
+export const getMedia = createAsyncThunk(
+	'mediaDropdown/getMedia',
+	async ({ page, order_type, sortby }) => {
+		let endPoint = `media/get-media?limit=20&page=${page}`;
+		if (order_type && sortby) {
+			endPoint += `&order_type=${order_type}&sortby=${sortby}`;
+		}
+		const response = await axios.get(
+			`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`
+		);
+		if (response?.data?.result?.data?.length > 0) {
+			return response.data.result;
+		} else {
+			return [];
+		}
 	}
-});
+);
 
 export const mediaDropdownSlice = createSlice({
 	name: 'mediaDropdown',
 	initialState: {
-		media: []
+		media: [],
+		totalRecords: 0
 	},
 	reducers: null,
 	extraReducers: {
@@ -23,7 +31,8 @@ export const mediaDropdownSlice = createSlice({
 			state.status = 'loading';
 		},
 		[getMedia.fulfilled]: (state, action) => {
-			state.media = action.payload;
+			state.media = action.payload.data;
+			state.totalRecords = action.payload.total;
 			state.status = 'success';
 		},
 		[getMedia.rejected]: (state) => {

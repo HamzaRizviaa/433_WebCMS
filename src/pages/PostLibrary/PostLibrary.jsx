@@ -18,17 +18,7 @@ import Fade from '@mui/material/Fade';
 //import hoverPreview from 'hover-preview-js';
 
 import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
 import { makeStyles } from '@material-ui/core/styles';
-
-const sortRows = (order) => {
-	if (!order) return <ArrowDropUpIcon className={classes.sortIcon} />;
-	else if (order === 'asc')
-		return <ArrowDropUpIcon className={classes.sortIconSelected} />;
-	else if (order === 'desc')
-		return <ArrowDropDownIcon className={classes.sortIconSelected} />;
-	return null;
-};
 
 const getDateTime = (dateTime) => {
 	let formatted = new Date(dateTime);
@@ -105,16 +95,30 @@ const PostLibrary = () => {
 	const [page, setPage] = useState(1);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
-	//const [previewOpen, setPreviewOpen] = useState(false);
+	const [paginationError, setPaginationError] = useState(false);
+	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const dispatch = useDispatch();
+	//const [previewOpen, setPreviewOpen] = useState(false);
 	//const previewRef = useRef(null);
-
 	const handleChange = (event, value) => {
 		setPage(value);
 	};
+	const sortKeysMapping = {
+		file_name: 'media',
+		post_date: 'postdate',
+		labels: 'label',
+		user: 'user',
+		last_edit: 'lastedit'
+	};
 
 	useEffect(() => {
-		dispatch(getPosts(page));
+		if (sortState.sortby && sortState.order_type) {
+			dispatch(getPosts({ page, ...sortState }));
+		}
+	}, [sortState]);
+
+	useEffect(() => {
+		dispatch(getPosts({ page, ...sortState }));
 	}, [page]);
 
 	// const handleDialog = () => {
@@ -150,6 +154,25 @@ const PostLibrary = () => {
 
 	// previews.reload(); // reloads the instance
 	// previews.destroy(); // removes all event listeners from the instance
+	const sortRows = (order, col) => {
+		if (order && col.dataField) {
+			if (
+				order.toUpperCase() != sortState.order_type ||
+				sortKeysMapping[col.dataField] != sortState.sortby
+			) {
+				setSortState({
+					sortby: sortKeysMapping[col.dataField],
+					order_type: order.toUpperCase()
+				});
+			}
+		}
+		if (!order) return <ArrowDropUpIcon className={classes.sortIcon} />;
+		else if (order === 'asc')
+			return <ArrowDropUpIcon className={classes.sortIconSelected} />;
+		else if (order === 'desc')
+			return <ArrowDropDownIcon className={classes.sortIconSelected} />;
+		return null;
+	};
 
 	const columns = [
 		{
@@ -157,6 +180,7 @@ const PostLibrary = () => {
 			text: 'MEDIA',
 			sort: true,
 			sortCaret: sortRows,
+			sortFunc: () => {},
 			formatter: (content, row) => {
 				return (
 					<div
@@ -317,6 +341,7 @@ const PostLibrary = () => {
 			dataField: 'post_date',
 			sort: true,
 			sortCaret: sortRows,
+			sortFunc: () => {},
 			text: 'POST DATE | TIME',
 			formatter: (content) => {
 				return <div className={classes.row}>{getDateTime(content)}</div>;
@@ -326,6 +351,7 @@ const PostLibrary = () => {
 			dataField: 'labels',
 			sort: true,
 			sortCaret: sortRows,
+			sortFunc: () => {},
 			text: 'LABEL',
 			formatter: (content) => {
 				return (
@@ -337,6 +363,7 @@ const PostLibrary = () => {
 			dataField: 'user',
 			sort: true,
 			sortCaret: sortRows,
+			sortFunc: () => {},
 			text: 'USER',
 			formatter: (content) => {
 				return <div className={classes.row}>{content}</div>;
@@ -346,6 +373,7 @@ const PostLibrary = () => {
 			dataField: 'last_edit',
 			sort: true,
 			sortCaret: sortRows,
+			sortFunc: () => {},
 			text: 'LAST EDIT',
 			formatter: (content) => {
 				return <div className={classes.row}>{getDateTime(content)}</div>;
@@ -408,23 +436,44 @@ const PostLibrary = () => {
 				<Table rowEvents={tableRowEvents} columns={columns} data={posts} />
 			</div>
 
-			<Stack spacing={2}>
+			<div className={classes.paginationRow}>
 				<Pagination
 					className={muiClasses.root}
 					page={page}
 					onChange={handleChange}
-					count={Math.floor(totalRecords / 20)}
+					count={Math.ceil(totalRecords / 20)}
 					variant='outlined'
 					shape='rounded'
 				/>
-			</Stack>
+				<div className={classes.gotoText}>Go to page</div>
+				<input
+					style={{
+						border: `${paginationError ? '1px solid red' : '1px solid #808080'}`
+					}}
+					type={'number'}
+					min={1}
+					onChange={(e) => {
+						setPaginationError(false);
+						const value = Number(e.target.value);
+						if (value > Math.ceil(totalRecords / 20)) {
+							setPaginationError(true);
+							setPage(1);
+						} else if (value) {
+							setPage(value);
+						} else {
+							setPage(1);
+						}
+					}}
+					className={classes.gotoInput}
+				/>
+			</div>
 
 			<UploadOrEditPost
 				open={showSlider}
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
-					setTimeout(() => setEdit(false), 50);
+					setTimeout(() => setEdit(false), 600);
 				}}
 				title={edit ? 'Edit Post' : 'Upload a Post'}
 				heading1={edit ? 'Media Files' : 'Add Media Files'}

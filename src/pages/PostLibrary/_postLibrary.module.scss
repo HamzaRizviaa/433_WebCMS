@@ -136,7 +136,26 @@
 	color: $black-color !important;
 }
 
-.previewFile {
-	height: 8rem;
-	width: 8rem;
+.paginationRow {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	nav {
+		width: fit-content;
+	}
+	.gotoText {
+		font-size: 12px;
+		font-weight: 700;
+		margin: 0px 10px;
+	}
+	.gotoInput {
+		background: #000000;
+		color: white;
+		border-radius: 8px;
+		padding: 6px;
+		width: 50px;
+		&:focus {
+			outline: none;
+		}
+	}
 }
