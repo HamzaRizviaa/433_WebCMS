@@ -13,8 +13,15 @@
 	height: 5rem;
 	width: 5rem;
 	border-radius: 8px;
+	object-fit: cover;
 }
 
+.mediaIconPreview {
+	height: calc(5rem * 6);
+	width: calc(5rem * 6);
+	border-radius: 8px;
+	object-fit: cover;
+}
 .mediaWrapper {
 	display: flex;
 	align-items: center;
@@ -95,4 +102,10 @@
 			outline: none;
 		}
 	}
+}
+
+.toolTipPreview {
+	background-color: transparent !important;
+	border-radius: 8px !important;
+	max-width: none !important;
 }

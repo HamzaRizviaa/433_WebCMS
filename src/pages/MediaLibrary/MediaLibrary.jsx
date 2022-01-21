@@ -195,10 +195,28 @@ const MediaLibrary = () => {
 			formatter: (content, row) => {
 				return (
 					<div className={classes.mediaWrapper}>
-						<img
-							className={classes.mediaIcon}
-							src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row.thumbnail_url}`}
-						/>
+						<Tooltip
+							// TransitionComponent={Fade}
+							// TransitionProps={{ timeout: 600 }}
+							title={
+								<img
+									className={classes.mediaIconPreview}
+									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
+										row?.thumbnail_url ? row?.thumbnail_url : ''
+									}`}
+									alt='no img'
+								/>
+							}
+							placement='right'
+							componentsProps={{
+								tooltip: { className: classes.toolTipPreview }
+							}}
+						>
+							<img
+								className={classes.mediaIcon}
+								src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.thumbnail_url}`}
+							/>
+						</Tooltip>
 						<Tooltip
 							TransitionComponent={Fade}
 							TransitionProps={{ timeout: 600 }}
