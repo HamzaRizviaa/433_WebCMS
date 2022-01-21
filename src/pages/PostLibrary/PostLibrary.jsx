@@ -270,12 +270,11 @@ const PostLibrary = () => {
 
 	const tableRowEvents = {
 		onClick: (e, row) => {
-			if (!edit) {
-				setEdit(true);
-				setShowSlider(true);
-
-				dispatch(getSpecificPost(row.id));
-			}
+			// if (!edit) {
+			dispatch(getSpecificPost(row.id));
+			setEdit(true);
+			setShowSlider(true);
+			// }
 		}
 	};
 
@@ -285,6 +284,7 @@ const PostLibrary = () => {
 				<h1 style={{ marginRight: '2rem' }}>POST LIBRARY</h1>
 				<Button
 					onClick={() => {
+						setEdit(false);
 						setShowSlider(true);
 					}}
 					text={'UPLOAD POST'}
@@ -331,7 +331,7 @@ const PostLibrary = () => {
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
-					setTimeout(() => setEdit(false), 600);
+					// setTimeout(() => setEdit(false), 600);
 				}}
 				title={edit ? 'Edit Post' : 'Upload a Post'}
 				heading1={edit ? 'Media Files' : 'Add Media Files'}
