@@ -373,7 +373,7 @@ const MediaLibrary = () => {
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
-					setTimeout(() => setEdit(false), 20);
+					setTimeout(() => setEdit(false), 600);
 				}}
 				title={edit ? 'Edit Media' : 'Upload Media'}
 				heading1={edit ? 'Media Type' : 'Select Media Type'}
