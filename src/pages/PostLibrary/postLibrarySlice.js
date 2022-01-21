@@ -1,16 +1,23 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export const getPosts = createAsyncThunk('postLibary/getPosts', async () => {
-	const result = await axios.get(
-		`${process.env.REACT_APP_API_ENDPOINT}/post/all-posts`
-	);
-	if (result?.data?.result?.length > 0) {
-		return result.data.result;
-	} else {
-		return [];
+export const getPosts = createAsyncThunk(
+	'postLibary/getPosts',
+	async ({ page, order_type, sortby }) => {
+		let endPoint = `post/all-posts?limit=20&page=${page}`;
+		if (order_type && sortby) {
+			endPoint += `&order_type=${order_type}&sortby=${sortby}`;
+		}
+		const result = await axios.get(
+			`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`
+		);
+		if (result?.data?.result?.data?.length > 0) {
+			return result.data.result;
+		} else {
+			return [];
+		}
 	}
-});
+);
 
 export const getPostLabels = createAsyncThunk(
 	'postLibary/getPostLabels',
@@ -31,7 +38,8 @@ export const postLibrarySlice = createSlice({
 	initialState: {
 		labels: [],
 		posts: [],
-		openUploadPost: false
+		openUploadPost: false,
+		totalRecords: 0
 	},
 	reducers: null,
 	extraReducers: {
@@ -39,7 +47,8 @@ export const postLibrarySlice = createSlice({
 			state.status = 'loading';
 		},
 		[getPosts.fulfilled]: (state, action) => {
-			state.posts = action.payload;
+			state.posts = action.payload.data;
+			state.totalRecords = action.payload.total;
 			state.status = 'success';
 		},
 		[getPosts.rejected]: (state) => {
