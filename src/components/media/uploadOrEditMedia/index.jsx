@@ -162,8 +162,8 @@ const UploadOrEditMedia = ({
 			const response = await axios.get(
 				`${process.env.REACT_APP_API_ENDPOINT}/media/get-sub-categories/${mainCategory}`
 			);
-			if (response?.data?.result?.length) {
-				setSubCategories([...response.data.result]);
+			if (response?.data?.data?.length) {
+				setSubCategories([...response.data.data]);
 			} else {
 				setSubCategories([]);
 			}
@@ -384,7 +384,7 @@ const UploadOrEditMedia = ({
 							}
 					  }
 			);
-			if (result?.data?.status === 200) {
+			if (result?.data?.status_code === 200) {
 				toast.success(
 					isEdit ? 'Media has been updated!' : 'Media has been uploaded!'
 				);
@@ -408,15 +408,15 @@ const UploadOrEditMedia = ({
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
 				{
-					fileType:
+					file_type:
 						file.fileExtension === '.mpeg' ? '.mp3' : file.fileExtension,
 					parts: 1
 				}
 			);
 
-			if (result?.data?.result?.url) {
+			if (result?.data?.data?.url) {
 				let response = await axios.put(
-					result?.data?.result?.url,
+					result?.data?.data?.url,
 					file.file,
 					//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
 					{
@@ -424,12 +424,12 @@ const UploadOrEditMedia = ({
 					}
 				);
 				const frame = captureVideoFrame('my-video', 'png');
-				if (result?.data?.result?.videoThumbnailUrl) {
-					await axios.put(result?.data?.result?.videoThumbnailUrl, frame.blob, {
+				if (result?.data?.data?.videoThumbnailUrl) {
+					await axios.put(result?.data?.data?.videoThumbnailUrl, frame.blob, {
 						headers: { 'Content-Type': 'image/png' }
 					});
 				}
-				return { ...result.data.result, signedResponse: response };
+				return { ...result.data.data, signedResponse: response };
 			} else {
 				throw 'Error';
 			}
@@ -1086,12 +1086,12 @@ const UploadOrEditMedia = ({
 															file_name: uploadedFiles[0].fileName,
 															type: 'medialibrary',
 															data: {
-																Bucket: 'media',
-																MultipartUpload:
+																bucket: 'media',
+																multipart_upload:
 																	uploadedFiles[0]?.mime_type == 'video/mp4'
 																		? [
 																				{
-																					ETag: mediaFiles[0]?.signedResponse?.headers?.etag.replace(
+																					ETag: mediaFiles[0]?.signed_response?.headers?.etag.replace(
 																						/['"]+/g,
 																						''
 																					),
@@ -1099,21 +1099,23 @@ const UploadOrEditMedia = ({
 																				}
 																		  ]
 																		: ['image'],
-																Keys: {
-																	ImageKey: mediaFiles[1]?.Keys?.ImageKey,
+																keys: {
+																	image_key: mediaFiles[1]?.keys?.image_key,
 																	...(mainCategory === 'Watch'
 																		? {
-																				VideoKey: mediaFiles[0]?.Keys?.VideoKey,
-																				AudioKey: ''
+																				video_key:
+																					mediaFiles[0]?.keys?.video_key,
+																				audio_key: ''
 																		  }
 																		: {
-																				AudioKey: mediaFiles[0]?.Keys?.AudioKey,
-																				VideoKey: ''
+																				audio_key:
+																					mediaFiles[0]?.keys?.audio_key,
+																				video_key: ''
 																		  })
 																},
-																UploadId:
+																upload_id:
 																	mainCategory === 'Watch'
-																		? mediaFiles[0].UploadId
+																		? mediaFiles[0].upload_id
 																		: 'audio'
 															}
 														});

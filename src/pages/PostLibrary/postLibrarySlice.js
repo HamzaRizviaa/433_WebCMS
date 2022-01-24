@@ -11,8 +11,8 @@ export const getPosts = createAsyncThunk(
 		const result = await axios.get(
 			`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`
 		);
-		if (result?.data?.result?.data?.length > 0) {
-			return result.data.result;
+		if (result?.data?.data?.data?.length > 0) {
+			return result.data.data;
 		} else {
 			return [];
 		}
@@ -25,8 +25,8 @@ export const getPostLabels = createAsyncThunk(
 		const result = await axios.get(
 			`${process.env.REACT_APP_API_ENDPOINT}/label/all-labels`
 		);
-		if (result?.data?.result?.length > 0) {
-			return result.data.result;
+		if (result?.data?.data?.length > 0) {
+			return result.data.data;
 		} else {
 			return [];
 		}
