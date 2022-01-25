@@ -200,7 +200,7 @@ const UploadOrEditPost = ({
 	}, [specificPost]);
 
 	useEffect(() => {
-		dispatch(getMedia());
+		dispatch(getMedia({}));
 		dispatch(getPostLabels());
 		return () => {
 			resetState();
@@ -435,7 +435,7 @@ const UploadOrEditPost = ({
 				setIsLoadingCreatePost(false);
 				setPostButtonStatus(false);
 				handleClose();
-				dispatch(getPosts());
+				dispatch(getPosts({}));
 				dispatch(getPostLabels());
 			}
 		} catch (e) {
@@ -460,7 +460,7 @@ const UploadOrEditPost = ({
 				handleClose();
 
 				//setting a timeout for getting post after delete.
-				dispatch(getPosts());
+				dispatch(getPosts({}));
 			}
 		} catch (e) {
 			toast.error('Failed to delete post!');
