@@ -21,7 +21,6 @@ export const getSpecificMedia = createAsyncThunk(
 		const response = await axios.get(
 			`${process.env.REACT_APP_API_ENDPOINT}/media/edit/${id}`
 		);
-		console.log(response);
 		if (response?.data?.data) {
 			return response.data.data;
 		} else {

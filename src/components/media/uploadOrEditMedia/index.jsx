@@ -84,7 +84,6 @@ const UploadOrEditMedia = ({
 	);
 	const specificMediaStatus = useSelector((state) => state.mediaLibrary);
 	const labels = useSelector((state) => state.mediaLibrary.labels);
-
 	useEffect(() => {
 		if (labels.length) {
 			setMediaLabels([...labels]);
@@ -345,7 +344,7 @@ const UploadOrEditMedia = ({
 					media_id: id
 				}
 			);
-			if (result?.data?.status === 200) {
+			if (result?.data?.status_code === 200) {
 				toast.success('Media has been deleted!');
 				handleClose();
 
@@ -1030,6 +1029,7 @@ const UploadOrEditMedia = ({
 										button2={isEdit ? true : false}
 										onClick={() => {
 											if (!deleteBtnStatus) {
+												console.log('specific', specificMedia.id);
 												deleteMedia(specificMedia?.id);
 											}
 										}}
