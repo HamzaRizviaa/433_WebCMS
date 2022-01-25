@@ -423,12 +423,12 @@ const UploadOrEditMedia = ({
 					}
 				);
 				const frame = captureVideoFrame('my-video', 'png');
-				if (result?.data?.data?.videoThumbnailUrl) {
-					await axios.put(result?.data?.data?.videoThumbnailUrl, frame.blob, {
+				if (result?.data?.data?.video_thumbnail_url) {
+					await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
 						headers: { 'Content-Type': 'image/png' }
 					});
 				}
-				return { ...result.data.data, signedResponse: response };
+				return { ...result.data.data, signed_response: response };
 			} else {
 				throw 'Error';
 			}
