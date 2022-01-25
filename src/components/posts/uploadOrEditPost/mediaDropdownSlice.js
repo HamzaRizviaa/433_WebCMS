@@ -4,7 +4,10 @@ import axios from 'axios';
 export const getMedia = createAsyncThunk(
 	'mediaDropdown/getMedia',
 	async ({ page, order_type, sortby }) => {
-		let endPoint = `media/get-media?limit=20&page=${page}`;
+		let endPoint = `media/get-media?limit=20&page=1`;
+		if (page) {
+			endPoint = `media/get-media?limit=20&page=${page}`;
+		}
 		if (order_type && sortby) {
 			endPoint += `&order_type=${order_type}&sortby=${sortby}`;
 		}
