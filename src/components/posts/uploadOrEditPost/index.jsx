@@ -258,14 +258,14 @@ const UploadOrEditPost = ({
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
 				{
-					fileType: uploadedFile.fileExtension,
+					file_type: uploadedFile.fileExtension,
 					parts: 1
 				}
 			);
 
-			if (result?.data?.result?.url) {
+			if (result?.data?.data?.url) {
 				const _result = await axios.put(
-					result?.data?.result?.url,
+					result?.data?.data?.url,
 					uploadedFile.file,
 					//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
 					{
@@ -273,7 +273,7 @@ const UploadOrEditPost = ({
 					}
 				);
 				const frame = captureVideoFrame('my-video', 'png');
-				if (result?.data?.result?.videoThumbnailUrl) {
+				if (result?.data?.data?.videoThumbnailUrl) {
 					await axios.put(result?.data?.result?.videoThumbnailUrl, frame.blob, {
 						headers: { 'Content-Type': 'image/png' }
 					});
@@ -285,8 +285,8 @@ const UploadOrEditPost = ({
 							file_name: uploadedFile.file.name,
 							type: 'postlibrary',
 							data: {
-								Bucket: 'media',
-								MultipartUpload:
+								bucket: 'media',
+								multipart_upload:
 									uploadedFile?.mime_type == 'video/mp4'
 										? [
 												{
@@ -295,20 +295,20 @@ const UploadOrEditPost = ({
 												}
 										  ]
 										: ['image'],
-								Keys: {
-									ImageKey: result?.data?.result?.Keys?.ImageKey,
-									VideoKey: result?.data?.result?.Keys?.VideoKey,
-									AudioKey: ''
+								keys: {
+									image_key: result?.data?.data?.keys?.image_key,
+									video_key: result?.data?.data?.keys?.video_key,
+									audio_key: ''
 								},
-								UploadId:
+								upload_id:
 									uploadedFile?.mime_type == 'video/mp4'
-										? result?.data?.result?.UploadId
+										? result?.data?.data?.upload_id
 										: 'image'
 							}
 						}
 					);
-					if (uploadResult?.data?.status === 200) {
-						return uploadResult.data.result;
+					if (uploadResult?.data?.status_code === 200) {
+						return uploadResult.data.data;
 					} else {
 						throw 'Error';
 					}
@@ -428,7 +428,7 @@ const UploadOrEditPost = ({
 					...(!isEdit ? { media_files: [...mediaFiles] } : {})
 				}
 			);
-			if (result?.data?.status === 200) {
+			if (result?.data?.status_code === 200) {
 				toast.success(
 					isEdit ? 'Post has been edited!' : 'Post has been created!'
 				);
@@ -455,7 +455,7 @@ const UploadOrEditPost = ({
 					post_id: id
 				}
 			);
-			if (result?.data?.status === 200) {
+			if (result?.data?.status_code === 200) {
 				toast.success('Post has been deleted!');
 				handleClose();
 

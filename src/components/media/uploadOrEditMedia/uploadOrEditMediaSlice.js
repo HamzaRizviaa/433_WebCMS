@@ -7,8 +7,8 @@ export const getMainCategories = createAsyncThunk(
 		const response = await axios.get(
 			`${process.env.REACT_APP_API_ENDPOINT}/media/get-main-categories`
 		);
-		if (response?.data?.result?.length > 0) {
-			return response.data.result;
+		if (response?.data?.data?.length > 0) {
+			return response.data.data;
 		} else {
 			return [];
 		}
@@ -35,8 +35,8 @@ export const getMediaLabels = createAsyncThunk(
 		const result = await axios.get(
 			`${process.env.REACT_APP_API_ENDPOINT}/label/all-labels`
 		);
-		if (result?.data?.result?.length > 0) {
-			return result.data.result;
+		if (result?.data?.data?.length > 0) {
+			return result.data.data;
 		} else {
 			return [];
 		}
