@@ -1091,11 +1091,12 @@ const UploadOrEditMedia = ({
 																	uploadedFiles[0]?.mime_type == 'video/mp4'
 																		? [
 																				{
-																					ETag: mediaFiles[0]?.signed_response?.headers?.etag.replace(
-																						/['"]+/g,
-																						''
-																					),
-																					PartNumber: 1
+																					e_tag:
+																						mediaFiles[0]?.signed_response?.headers?.etag.replace(
+																							/['"]+/g,
+																							''
+																						),
+																					part_number: 1
 																				}
 																		  ]
 																		: ['image'],
