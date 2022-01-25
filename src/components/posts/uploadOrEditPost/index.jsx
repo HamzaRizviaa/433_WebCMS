@@ -104,7 +104,6 @@ const UploadOrEditPost = ({
 
 	//const media = useSelector((state) => state.mediaDropdown.media);
 	const allMedia = useSelector((state) => state.mediaDropdown.allMedia);
-	console.log(allMedia);
 	const labels = useSelector((state) => state.postLibrary.labels);
 	const specificPost = useSelector((state) => state.editButton.specificPost);
 	const specificPostStatus = useSelector((state) => state.editButton);
@@ -204,6 +203,7 @@ const UploadOrEditPost = ({
 	useEffect(() => {
 		//dispatch(getMedia());
 		dispatch(getAllMedia(1000));
+		dispatch(getMedia({}));
 		dispatch(getPostLabels());
 		return () => {
 			resetState();
@@ -438,7 +438,7 @@ const UploadOrEditPost = ({
 				setIsLoadingCreatePost(false);
 				setPostButtonStatus(false);
 				handleClose();
-				dispatch(getPosts());
+				dispatch(getPosts({}));
 				dispatch(getPostLabels());
 			}
 		} catch (e) {
@@ -463,7 +463,7 @@ const UploadOrEditPost = ({
 				handleClose();
 
 				//setting a timeout for getting post after delete.
-				dispatch(getPosts());
+				dispatch(getPosts({}));
 			}
 		} catch (e) {
 			toast.error('Failed to delete post!');
