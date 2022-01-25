@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { ReactComponent as Edit } from '../../assets/edit.svg';
+import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Button from '../../components/button';
@@ -15,6 +16,8 @@ import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
+import TextField from '@material-ui/core/TextField';
+import InputAdornment from '@material-ui/core/InputAdornment';
 
 import Pagination from '@mui/material/Pagination';
 import { makeStyles } from '@material-ui/core/styles';
@@ -96,6 +99,7 @@ const PostLibrary = () => {
 	const [edit, setEdit] = useState(false);
 	const [paginationError, setPaginationError] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
+	const [search, setSearch] = useState('');
 	const dispatch = useDispatch();
 
 	const handleChange = (event, value) => {
@@ -323,14 +327,33 @@ const PostLibrary = () => {
 	return (
 		<Layout>
 			<div className={classes.header}>
-				<h1 style={{ marginRight: '2rem' }}>POST LIBRARY</h1>
-				<Button
-					onClick={() => {
-						setEdit(false);
-						setShowSlider(true);
-					}}
-					text={'UPLOAD POST'}
-				/>
+				<div className={classes.subheader1}>
+					<h1 style={{ marginRight: '2rem' }}>POST LIBRARY</h1>
+					<Button
+						onClick={() => {
+							setEdit(false);
+							setShowSlider(true);
+						}}
+						text={'UPLOAD POST'}
+					/>
+				</div>
+				<div className={classes.subheader2}>
+					<TextField
+						className={classes.searchField}
+						value={search}
+						onChange={(e) => setSearch(e.target.value)}
+						placeholder={'Search post, user, label'}
+						InputProps={{
+							disableUnderline: true,
+							className: classes.textFieldInput,
+							endAdornment: (
+								<InputAdornment>
+									<Search className={classes.searchIcon} />
+								</InputAdornment>
+							)
+						}}
+					/>
+				</div>
 			</div>
 			<div className={classes.tableContainer}>
 				<Table rowEvents={tableRowEvents} columns={columns} data={posts} />

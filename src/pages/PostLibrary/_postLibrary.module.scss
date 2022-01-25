@@ -1,8 +1,19 @@
 @import '../../styles/variables.scss';
+@import '../../styles/_mixins.scss';
 
 .header {
 	display: flex;
+	justify-content: space-between;
+}
+
+.subheader1 {
+	display: flex;
 	justify-content: flex-start;
+}
+
+.subheader2 {
+	display: flex;
+	justify-content: flex-end;
 }
 
 .tableContainer {
@@ -158,4 +169,23 @@
 			outline: none;
 		}
 	}
+}
+
+.searchField {
+	width: 271px;
+}
+
+.textFieldInput {
+	color: white !important;
+	border: 1px solid #404040;
+	padding: 0.5rem 0.5rem 0.5rem 1.5rem !important;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 40px;
+	//margin-bottom: 1rem;
+	background-color: #000000;
+}
+
+.searchIcon {
+	margin-right: 8;
 }
