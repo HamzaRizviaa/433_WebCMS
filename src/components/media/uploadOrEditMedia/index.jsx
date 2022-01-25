@@ -350,7 +350,7 @@ const UploadOrEditMedia = ({
 				handleClose();
 
 				//setting a timeout for getting post after delete.
-				dispatch(getMedia());
+				dispatch(getMedia({}));
 			}
 		} catch (e) {
 			toast.error('Failed to delete media!');
@@ -390,7 +390,7 @@ const UploadOrEditMedia = ({
 				);
 				setIsLoadingUploadMedia(false);
 				setMediaButtonStatus(false);
-				dispatch(getMedia());
+				dispatch(getMedia({}));
 				handleClose();
 			}
 		} catch (e) {

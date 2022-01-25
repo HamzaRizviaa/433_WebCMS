@@ -15,7 +15,6 @@ import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
-//import hoverPreview from 'hover-preview-js';
 
 import Pagination from '@mui/material/Pagination';
 import { makeStyles } from '@material-ui/core/styles';
@@ -98,8 +97,7 @@ const PostLibrary = () => {
 	const [paginationError, setPaginationError] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const dispatch = useDispatch();
-	//const [previewOpen, setPreviewOpen] = useState(false);
-	//const previewRef = useRef(null);
+
 	const handleChange = (event, value) => {
 		setPage(value);
 	};
@@ -121,39 +119,6 @@ const PostLibrary = () => {
 		dispatch(getPosts({ page, ...sortState }));
 	}, [page]);
 
-	// const handleDialog = () => {
-	// 	setPreviewOpen(!previewOpen);
-	// };
-
-	// const onHover = () => {
-	// 	setPreviewOpen(true);
-	// 	console.log(previewOpen);
-	// };
-
-	// const onLeave = () => {
-	// 	setPreviewOpen(false);
-	// };
-
-	// useEffect(() => {
-	// 	if (!previewOpen) {
-	// 		return;
-	// 	}
-
-	// 	const timeoutId = setTimeout(() => {
-	// 		setPreviewOpen(false);
-	// 	}, 100);
-	// 	return () => {
-	// 		clearTimeout(timeoutId);
-	// 	};
-	// }, [previewOpen]);
-
-	// const previews = hoverPreview(previewRef.current(), {
-	// 	delay: 100, // sets a delay before the preview is shown
-	// 	cursor: true // enables a loading cursor while the preview is loading
-	// });
-
-	// previews.reload(); // reloads the instance
-	// previews.destroy(); // removes all event listeners from the instance
 	const sortRows = (order, col) => {
 		if (order && col.dataField) {
 			if (
@@ -244,33 +209,8 @@ const PostLibrary = () => {
 								) : (
 									<></>
 								)}
-								{/* <div
-							ref={previewRef}
-							src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-								row.thumbnail_url ? row.thumbnail_url : row.media
-							}`}
-						> */}
-								{/* <div
-							// onMouseEnter={onHover}
-							// onMouseLeave={onLeave}
-							// role='button'
-							// tabIndex='-3'
-							// onClick={(event) => {
-							// 	setPreviewOpen(true);
-							// 	console.log(previewOpen);
-							// 	event.preventDefault();
-							// 	event.stopPropagation();
-							// }}
-						> */}
 
 								<img
-									// onClick={(event) => {
-									// 	setPreviewOpen(true);
-									// 	console.log('click');
-									// 	event.preventDefault();
-									// 	event.stopPropagation();
-									// }}
-
 									className={
 										row?.orientation_type === 'square'
 											? classes.mediaIcon
@@ -284,40 +224,7 @@ const PostLibrary = () => {
 								/>
 							</span>
 						</Tooltip>
-						{/* </div> */}
 
-						{/* {previewOpen ? (
-								// <dialog
-								// 	//className='dialog'
-								// 	style={{ position: 'fixed' }}
-								// 	open
-								// 	// onClick={this.handleShowDialog}
-								// >
-								<img
-									className={classes.previewFile}
-									// className={
-									// 	row.orientation_type === 'square'
-									// 		? classes.mediaIcon
-									// 		: row.orientation_type === 'landscape'
-									// 		? classes.mediaIconLandscape
-									// 		: classes.mediaIconPortrait
-									// }
-									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-										row.thumbnail_url ? row.thumbnail_url : row.media
-									}`}
-									alt='no img'
-									style={{
-										width: `${8 * 4}rem`,
-										height: `${8 * 4}rem`,
-										objectFit: 'cover',
-										objectPosition: 'center'
-									}}
-								/>
-							) : (
-								// </dialog>
-								<></>
-							)} */}
-						{/* </div> */}
 						<Tooltip
 							TransitionComponent={Fade}
 							TransitionProps={{ timeout: 600 }}
@@ -395,14 +302,7 @@ const PostLibrary = () => {
 								arrow: { className: classes.toolTipArrow }
 							}}
 						>
-							<Edit
-								// onClick={() => {
-								// 	setShowSlider(true);
-								// 	setEdit(true);
-								// 	dispatch(getSpecificPost(row.id));
-								// }}
-								className={classes.editIcon}
-							/>
+							<Edit className={classes.editIcon} />
 						</Tooltip>
 					</div>
 				);
@@ -478,7 +378,6 @@ const PostLibrary = () => {
 				title={edit ? 'Edit Post' : 'Upload a Post'}
 				heading1={edit ? 'Media Files' : 'Add Media Files'}
 				buttonText={edit ? 'SAVE CHANGES' : 'POST'}
-				//specificPostId
 			/>
 
 			{/* <Popup  closePopup={closeThePop} open={popped} title={'Upload a Post'}/> :   */}
