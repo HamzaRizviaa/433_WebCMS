@@ -293,8 +293,8 @@ const UploadOrEditPost = ({
 									uploadedFile?.mime_type == 'video/mp4'
 										? [
 												{
-													ETag: _result?.headers?.etag.replace(/['"]+/g, ''),
-													PartNumber: 1
+													e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
+													part_number: 1
 												}
 										  ]
 										: ['image'],
