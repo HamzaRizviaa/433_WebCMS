@@ -19,11 +19,26 @@ export const getMedia = createAsyncThunk(
 	}
 );
 
+export const getAllMedia = createAsyncThunk(
+	'mediaDropdown/getAllMedia',
+	async () => {
+		const response = await axios.get(
+			`${process.env.REACT_APP_API_ENDPOINT}/media/get-limited-media`
+		);
+		if (response?.data?.result?.length > 0) {
+			return response.data.result;
+		} else {
+			return [];
+		}
+	}
+);
+
 export const mediaDropdownSlice = createSlice({
 	name: 'mediaDropdown',
 	initialState: {
 		media: [],
-		totalRecords: 0
+		totalRecords: 0,
+		allMedia: []
 	},
 	reducers: null,
 	extraReducers: {
@@ -37,6 +52,9 @@ export const mediaDropdownSlice = createSlice({
 		},
 		[getMedia.rejected]: (state) => {
 			state.status = 'failed';
+		},
+		[getAllMedia.fulfilled]: (state, action) => {
+			state.allMedia = action.payload;
 		}
 	}
 });

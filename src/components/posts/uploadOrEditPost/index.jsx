@@ -12,7 +12,7 @@ import { CircularProgress } from '@material-ui/core';
 import ToggleSwitch from '../../switch';
 import Button from '../../button';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMedia } from './mediaDropdownSlice';
+import { getMedia, getAllMedia } from './mediaDropdownSlice';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
 import axios from 'axios';
@@ -102,7 +102,8 @@ const UploadOrEditPost = ({
 			// validator: tenFilesValidator
 		});
 
-	const media = useSelector((state) => state.mediaDropdown.media);
+	//const media = useSelector((state) => state.mediaDropdown.media);
+	const allMedia = useSelector((state) => state.mediaDropdown.allMedia);
 	const labels = useSelector((state) => state.postLibrary.labels);
 	const specificPost = useSelector((state) => state.editButton.specificPost);
 	const specificPostStatus = useSelector((state) => state.editButton);
@@ -153,7 +154,7 @@ const UploadOrEditPost = ({
 			setCaption(specificPost.caption);
 			if (specificPost?.media_id !== null) {
 				let _media;
-				media.find((medi) => {
+				allMedia.find((medi) => {
 					if (medi.id === specificPost?.media_id) {
 						//console.log(medi);
 						_media = medi;
@@ -200,7 +201,8 @@ const UploadOrEditPost = ({
 	}, [specificPost]);
 
 	useEffect(() => {
-		dispatch(getMedia());
+		//dispatch(getMedia());
+		dispatch(getAllMedia());
 		dispatch(getPostLabels());
 		return () => {
 			resetState();
@@ -1009,7 +1011,7 @@ const UploadOrEditPost = ({
 											setSelectedMedia(newVal);
 											setDisableDropdown(true);
 										}}
-										options={media}
+										options={allMedia}
 										getOptionLabel={(option) => option.title}
 										renderOption={(props, option, { selected }) => {
 											return (
