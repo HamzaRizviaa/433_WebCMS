@@ -21,12 +21,16 @@ export const getMedia = createAsyncThunk(
 
 export const getAllMedia = createAsyncThunk(
 	'mediaDropdown/getAllMedia',
-	async () => {
+	async (limit) => {
+		let endPoint = `media/get-limited-media`;
+		if (limit) {
+			endPoint += `?limit=${limit}`;
+		}
 		const response = await axios.get(
-			`${process.env.REACT_APP_API_ENDPOINT}/media/get-limited-media`
+			`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`
 		);
-		if (response?.data?.result?.length > 0) {
-			return response.data.result;
+		if (response?.data?.data?.length > 0) {
+			return response.data.data;
 		} else {
 			return [];
 		}

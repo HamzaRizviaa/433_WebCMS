@@ -104,6 +104,7 @@ const UploadOrEditPost = ({
 
 	//const media = useSelector((state) => state.mediaDropdown.media);
 	const allMedia = useSelector((state) => state.mediaDropdown.allMedia);
+	console.log(allMedia);
 	const labels = useSelector((state) => state.postLibrary.labels);
 	const specificPost = useSelector((state) => state.editButton.specificPost);
 	const specificPostStatus = useSelector((state) => state.editButton);
@@ -202,7 +203,7 @@ const UploadOrEditPost = ({
 
 	useEffect(() => {
 		//dispatch(getMedia());
-		dispatch(getAllMedia());
+		dispatch(getAllMedia(1000));
 		dispatch(getPostLabels());
 		return () => {
 			resetState();
