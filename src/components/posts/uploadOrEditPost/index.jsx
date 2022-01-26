@@ -285,7 +285,7 @@ const UploadOrEditPost = ({
 						}
 					);
 				}
-				if (_result?.status === 200) {
+				if (_result?.status_code === 200) {
 					const uploadResult = await axios.post(
 						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
 						{
