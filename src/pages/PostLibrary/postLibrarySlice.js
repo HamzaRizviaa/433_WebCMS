@@ -9,7 +9,7 @@ export const getPosts = createAsyncThunk(
 			endPoint = `post/all-posts?limit=20&page=${page}`;
 		}
 		if (order_type && sortby) {
-			endPoint += `&order_type=${order_type}&sortby=${sortby}`;
+			endPoint += `&order_type=${order_type}&sort_by=${sortby}`;
 		}
 		const result = await axios.get(
 			`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`
