@@ -1080,8 +1080,10 @@ const UploadOrEditMedia = ({
 												].map(async (_file) => {
 													return uploadFileToServer(_file);
 												});
+
 												Promise.all([...uploadFilesPromiseArray])
 													.then(async (mediaFiles) => {
+														console.log(mediaFiles);
 														uploadMedia(null, {
 															file_name: uploadedFiles[0].fileName,
 															type: 'medialibrary',

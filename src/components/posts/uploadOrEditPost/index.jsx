@@ -275,8 +275,8 @@ const UploadOrEditPost = ({
 					}
 				);
 				const frame = captureVideoFrame('my-video', 'png');
-				if (result?.data?.data?.videoThumbnailUrl) {
-					await axios.put(result?.data?.result?.videoThumbnailUrl, frame.blob, {
+				if (result?.data?.data?.video_thumbnail_url) {
+					await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
 						headers: { 'Content-Type': 'image/png' }
 					});
 				}
