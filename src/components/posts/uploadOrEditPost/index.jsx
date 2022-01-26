@@ -277,15 +277,11 @@ const UploadOrEditPost = ({
 				);
 				const frame = captureVideoFrame('my-video', 'png');
 				if (result?.data?.data?.video_thumbnail_url) {
-					await axios.put(
-						result?.data?.result?.video_thumbnail_url,
-						frame.blob,
-						{
-							headers: { 'Content-Type': 'image/png' }
-						}
-					);
+					await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
+						headers: { 'Content-Type': 'image/png' }
+					});
 				}
-				if (_result?.status_code === 200) {
+				if (_result?.status === 200) {
 					const uploadResult = await axios.post(
 						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
 						{
