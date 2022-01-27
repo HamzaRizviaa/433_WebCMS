@@ -100,6 +100,7 @@ const PostLibrary = () => {
 	const [paginationError, setPaginationError] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [search, setSearch] = useState('');
+	//const [isSearch, setIsSearch] = useState(false);
 	const dispatch = useDispatch();
 
 	const handleChange = (event, value) => {
@@ -239,10 +240,19 @@ const PostLibrary = () => {
 								arrow: { className: classes.toolTipArrow }
 							}}
 						>
-							<span className={classes.fileName}>
+							{/* <span className={classes.fileName}>
 								{row?.file_name?.substring(0, 13) +
 									`${row?.file_name?.length > 13 ? '...' : ''}`}
-							</span>
+							</span> */}
+							<span
+								className={classes.fileName}
+								dangerouslySetInnerHTML={{
+									__html: `${
+										row?.file_name?.substring(0, 13) +
+										`${row?.file_name?.length > 13 ? '...' : ''}`
+									}`
+								}}
+							></span>
 						</Tooltip>
 					</div>
 				);
@@ -265,10 +275,16 @@ const PostLibrary = () => {
 			sortFunc: () => {},
 			text: 'LABEL',
 			formatter: (content) => {
+				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
 				return (
-					<div className={classes.row}>{content[0] + `, ` + content[1]}</div>
+					//<div className={classes.row}>{content[0] + `, ` + content[1]}</div>
+					<div
+						dangerouslySetInnerHTML={{ __html: `${content[0]} ${secondLabel}` }}
+						className={classes.row}
+					/>
 				);
 			}
+			//condition to render only one matching
 		},
 		{
 			dataField: 'user',
@@ -277,7 +293,13 @@ const PostLibrary = () => {
 			sortFunc: () => {},
 			text: 'USER',
 			formatter: (content) => {
-				return <div className={classes.row}>{content}</div>;
+				return (
+					//<div className={classes.row}>{content}</div>
+					<div
+						dangerouslySetInnerHTML={{ __html: `${content}` }}
+						className={classes.row}
+					/>
+				);
 			}
 		},
 		{
@@ -341,14 +363,24 @@ const PostLibrary = () => {
 					<TextField
 						className={classes.searchField}
 						value={search}
-						onChange={(e) => setSearch(e.target.value)}
+						onChange={(e) => {
+							setSearch(e.target.value);
+							//setIsSearch(true);
+						}}
 						placeholder={'Search post, user, label'}
 						InputProps={{
 							disableUnderline: true,
 							className: classes.textFieldInput,
 							endAdornment: (
 								<InputAdornment>
-									<Search className={classes.searchIcon} />
+									<Search
+										onClick={() => {
+											if (search) {
+												dispatch(getPosts({ q: search, page, ...sortState }));
+											}
+										}}
+										className={classes.searchIcon}
+									/>
 								</InputAdornment>
 							)
 						}}
