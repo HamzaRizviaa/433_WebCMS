@@ -259,7 +259,7 @@ const MediaLibrary = () => {
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
-			text: 'LABEL',
+			text: 'LABELS',
 			formatter: (content) => {
 				return (
 					<div className={classes.rowType}>
