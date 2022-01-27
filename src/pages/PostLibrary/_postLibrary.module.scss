@@ -12,8 +12,9 @@
 }
 
 .subheader2 {
-	display: flex;
+	//display: flex;
 	justify-content: flex-end;
+	//align-items: ;
 }
 
 .tableContainer {
@@ -189,4 +190,12 @@
 .searchIcon {
 	cursor: pointer;
 	margin-right: 8;
+}
+
+.noResultError {
+	color: #ff355a;
+	font-weight: bold;
+	margin-top: 0.2rem;
+	margin-left: 0.5rem;
+	height: 1rem;
 }

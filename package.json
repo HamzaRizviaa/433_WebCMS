@@ -16,6 +16,7 @@
 		"capture-video-frame": "^1.0.0",
 		"cropperjs": "^1.5.12",
 		"env-cmd": "^10.1.0",
+		"interweave": "^12.9.0",
 		"moment": "^2.29.1",
 		"node-sass": "4.14.1",
 		"react": "^17.0.2",

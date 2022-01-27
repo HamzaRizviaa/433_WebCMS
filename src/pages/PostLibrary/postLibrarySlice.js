@@ -18,11 +18,7 @@ export const getPosts = createAsyncThunk(
 			`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`
 		);
 		//console.log(result.data.data);
-		if (result?.data?.data?.data?.length > 0) {
-			return result.data.data;
-		} else {
-			return result.data.data;
-		}
+		return result.data.data;
 	}
 );
 
@@ -46,7 +42,8 @@ export const postLibrarySlice = createSlice({
 		labels: [],
 		posts: [],
 		openUploadPost: false,
-		totalRecords: 0
+		totalRecords: 0,
+		noResultStatus: false
 	},
 	reducers: null,
 	extraReducers: {
@@ -61,6 +58,7 @@ export const postLibrarySlice = createSlice({
 					? action.payload.total
 					: state.totalRecords;
 			state.status = 'success';
+			state.noResultStatus = action.payload.data.length > 0 ? false : true;
 		},
 		[getPosts.rejected]: (state) => {
 			state.status = 'failed';
