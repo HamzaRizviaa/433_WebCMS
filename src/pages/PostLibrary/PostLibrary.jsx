@@ -298,7 +298,7 @@ const PostLibrary = () => {
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
-			text: 'LABEL',
+			text: 'LABELS',
 			formatter: (content) => {
 				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
 				return (
