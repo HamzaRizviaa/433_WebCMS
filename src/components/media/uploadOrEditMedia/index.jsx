@@ -13,7 +13,6 @@ import { makeid } from '../../../utils/helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMainCategories, getMediaLabels } from './uploadOrEditMediaSlice';
 import { getMedia } from '../../posts/uploadOrEditPost/mediaDropdownSlice';
-import captureVideoFrame from 'capture-video-frame';
 import ClearIcon from '@material-ui/icons/Clear';
 import Close from '@material-ui/icons/Close';
 import axios from 'axios';
@@ -84,7 +83,6 @@ const UploadOrEditMedia = ({
 	);
 	const specificMediaStatus = useSelector((state) => state.mediaLibrary);
 	const labels = useSelector((state) => state.mediaLibrary.labels);
-
 	useEffect(() => {
 		if (labels.length) {
 			setMediaLabels([...labels]);
@@ -345,7 +343,7 @@ const UploadOrEditMedia = ({
 					media_id: id
 				}
 			);
-			if (result?.data?.status === 200) {
+			if (result?.data?.status_code === 200) {
 				toast.success('Media has been deleted!');
 				handleClose();
 
@@ -378,10 +376,11 @@ const UploadOrEditMedia = ({
 							description: description,
 							data: {
 								file_name: payload?.file_name,
-								videoData: payload?.data?.Keys?.VideoKey,
-								imageData: payload?.data?.Keys?.ImageKey,
-								audioData: payload?.data?.Keys?.AudioKey
-							}
+								video_data: payload?.data?.Keys?.VideoKey,
+								image_data: payload?.data?.Keys?.ImageKey,
+								audio_data: payload?.data?.Keys?.AudioKey
+							},
+							...payload
 					  }
 			);
 			if (result?.data?.status_code === 200) {
@@ -415,21 +414,10 @@ const UploadOrEditMedia = ({
 			);
 
 			if (result?.data?.data?.url) {
-				let response = await axios.put(
-					result?.data?.data?.url,
-					file.file,
-					//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
-					{
-						headers: { 'Content-Type': file.mime_type }
-					}
-				);
-				const frame = captureVideoFrame('my-video', 'png');
-				if (result?.data?.data?.videoThumbnailUrl) {
-					await axios.put(result?.data?.data?.videoThumbnailUrl, frame.blob, {
-						headers: { 'Content-Type': 'image/png' }
-					});
-				}
-				return { ...result.data.data, signedResponse: response };
+				let response = await axios.put(result?.data?.data?.url, file.file, {
+					headers: { 'Content-Type': file.mime_type }
+				});
+				return { ...result.data.data, signed_response: response };
 			} else {
 				throw 'Error';
 			}
@@ -1030,6 +1018,7 @@ const UploadOrEditMedia = ({
 										button2={isEdit ? true : false}
 										onClick={() => {
 											if (!deleteBtnStatus) {
+												console.log('specific', specificMedia.id);
 												deleteMedia(specificMedia?.id);
 											}
 										}}
@@ -1080,43 +1069,56 @@ const UploadOrEditMedia = ({
 												].map(async (_file) => {
 													return uploadFileToServer(_file);
 												});
+
 												Promise.all([...uploadFilesPromiseArray])
 													.then(async (mediaFiles) => {
-														uploadMedia(null, {
+														console.log(mediaFiles);
+														const completeUpload = await axios.post(
+															`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+															{
+																file_name: uploadedFiles[0].fileName,
+																type: 'medialibrary',
+																data: {
+																	bucket: 'media',
+																	multipart_upload:
+																		uploadedFiles[0]?.mime_type == 'video/mp4'
+																			? [
+																					{
+																						e_tag:
+																							mediaFiles[0]?.signed_response?.headers?.etag.replace(
+																								/['"]+/g,
+																								''
+																							),
+																						part_number: 1
+																					}
+																			  ]
+																			: ['image'],
+																	keys: {
+																		image_key: mediaFiles[1]?.keys?.image_key,
+																		...(mainCategory === 'Watch'
+																			? {
+																					video_key:
+																						mediaFiles[0]?.keys?.video_key,
+																					audio_key: ''
+																			  }
+																			: {
+																					audio_key:
+																						mediaFiles[0]?.keys?.audio_key,
+																					video_key: ''
+																			  })
+																	},
+																	upload_id:
+																		mainCategory === 'Watch'
+																			? mediaFiles[0].upload_id
+																			: 'audio'
+																}
+															}
+														);
+														await uploadMedia(null, {
 															file_name: uploadedFiles[0].fileName,
 															type: 'medialibrary',
 															data: {
-																bucket: 'media',
-																multipart_upload:
-																	uploadedFiles[0]?.mime_type == 'video/mp4'
-																		? [
-																				{
-																					ETag: mediaFiles[0]?.signed_response?.headers?.etag.replace(
-																						/['"]+/g,
-																						''
-																					),
-																					PartNumber: 1
-																				}
-																		  ]
-																		: ['image'],
-																keys: {
-																	image_key: mediaFiles[1]?.keys?.image_key,
-																	...(mainCategory === 'Watch'
-																		? {
-																				video_key:
-																					mediaFiles[0]?.keys?.video_key,
-																				audio_key: ''
-																		  }
-																		: {
-																				audio_key:
-																					mediaFiles[0]?.keys?.audio_key,
-																				video_key: ''
-																		  })
-																},
-																upload_id:
-																	mainCategory === 'Watch'
-																		? mediaFiles[0].upload_id
-																		: 'audio'
+																...completeUpload?.data?.data
 															}
 														});
 													})

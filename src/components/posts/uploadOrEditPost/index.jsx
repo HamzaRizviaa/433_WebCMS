@@ -276,8 +276,8 @@ const UploadOrEditPost = ({
 					}
 				);
 				const frame = captureVideoFrame('my-video', 'png');
-				if (result?.data?.data?.videoThumbnailUrl) {
-					await axios.put(result?.data?.result?.videoThumbnailUrl, frame.blob, {
+				if (result?.data?.data?.video_thumbnail_url) {
+					await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
 						headers: { 'Content-Type': 'image/png' }
 					});
 				}
@@ -293,8 +293,8 @@ const UploadOrEditPost = ({
 									uploadedFile?.mime_type == 'video/mp4'
 										? [
 												{
-													ETag: _result?.headers?.etag.replace(/['"]+/g, ''),
-													PartNumber: 1
+													e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
+													part_number: 1
 												}
 										  ]
 										: ['image'],
