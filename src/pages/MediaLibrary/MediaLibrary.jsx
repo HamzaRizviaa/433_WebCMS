@@ -305,11 +305,9 @@ const MediaLibrary = () => {
 					// <div className={classes.rowType}>
 					// 	{content[0] + `, ` + content[1]}
 					// </div>
-
-					<Markup
-						className={classes.rowType}
-						content={`${content[0]} ${secondLabel}`}
-					/>
+					<div className={classes.rowType}>
+						<Markup content={`${content[0]} ${secondLabel}`} />
+					</div>
 				);
 			},
 			headerStyle: () => {
