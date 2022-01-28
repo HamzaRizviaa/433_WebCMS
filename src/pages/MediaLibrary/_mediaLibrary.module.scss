@@ -12,8 +12,9 @@
 }
 
 .subheader2 {
-	display: flex;
+	//display: flex;
 	justify-content: flex-end;
+	//align-items: ;
 }
 
 .tableContainer {
@@ -52,7 +53,7 @@
 .rowType {
 	margin-bottom: 1.5rem;
 	font-size: 1.2rem;
-	padding-left: 35px;
+	padding-left: 40px;
 }
 
 .editIcon {
@@ -138,4 +139,13 @@
 
 .searchIcon {
 	margin-right: 8;
+	cursor: pointer;
+}
+
+.noResultError {
+	color: #ff355a;
+	font-weight: bold;
+	margin-top: 0.2rem;
+	margin-left: 0.5rem;
+	height: 1rem;
 }

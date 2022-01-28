@@ -313,7 +313,6 @@ const PostLibrary = () => {
 					/>
 				);
 			}
-			//condition to render only one matching
 		},
 		{
 			dataField: 'user',

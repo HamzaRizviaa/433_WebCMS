@@ -16,6 +16,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import { Markup } from 'interweave';
 
 import Pagination from '@mui/material/Pagination';
 import { makeStyles } from '@material-ui/core/styles';
@@ -92,12 +93,19 @@ const MediaLibrary = () => {
 	const muiClasses = useStyles();
 	const media = useSelector((state) => state.mediaDropdown.media);
 	const totalRecords = useSelector((state) => state.mediaDropdown.totalRecords);
+	const noResultStatus = useSelector(
+		(state) => state.mediaDropdown.noResultStatus
+	);
+
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [page, setPage] = useState(1);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [paginationError, setPaginationError] = useState(false);
 	const [search, setSearch] = useState('');
+	const [noResultBorder, setNoResultBorder] = useState('#404040');
+	const [noResultError, setNoResultError] = useState('');
+
 	const dispatch = useDispatch();
 	const sortKeysMapping = {
 		title: 'title',
@@ -114,14 +122,32 @@ const MediaLibrary = () => {
 	};
 
 	useEffect(() => {
-		if (sortState.sortby && sortState.order_type) {
+		if (sortState.sortby && sortState.order_type && !search) {
 			dispatch(getMedia({ page, ...sortState }));
+		}
+		if (sortState.sortby && sortState.order_type && search) {
+			dispatch(getMedia({ q: search, page, ...sortState }));
 		}
 	}, [sortState]);
 
 	useEffect(() => {
-		dispatch(getMedia({ page, ...sortState }));
+		if (search) {
+			dispatch(getMedia({ q: search, page, ...sortState }));
+		} else {
+			dispatch(getMedia({ page, ...sortState }));
+		}
 	}, [page]);
+
+	useEffect(() => {
+		if (noResultStatus) {
+			setNoResultBorder('#FF355A');
+			setNoResultError('No Results Found');
+			setTimeout(() => {
+				setNoResultBorder('#404040');
+				setNoResultError('');
+			}, [5000]);
+		}
+	}, [noResultStatus]);
 
 	const sortRows = (order, col) => {
 		if (order && col.dataField) {
@@ -225,17 +251,30 @@ const MediaLibrary = () => {
 						<Tooltip
 							TransitionComponent={Fade}
 							TransitionProps={{ timeout: 600 }}
-							title={row?.file_name?.length > 13 ? row?.file_name : ''}
+							title={
+								<Markup
+									content={row?.file_name.length > 13 ? row?.file_name : ''}
+								/>
+							}
 							arrow
 							componentsProps={{
 								tooltip: { className: classes.toolTip },
 								arrow: { className: classes.toolTipArrow }
 							}}
 						>
-							<span className={classes.fileName}>
+							{/* <span className={classes.fileName}>
 								{row?.file_name?.substring(0, 13) +
 									`${row?.file_name?.length > 13 ? '...' : ''}`}
-							</span>
+							</span> */}
+							<div>
+								<Markup
+									className={classes.fileName}
+									content={`${
+										row?.file_name?.substring(0, 13) +
+										`${row?.file_name?.length > 13 ? '...' : ''}`
+									}`}
+								/>
+							</div>
 						</Tooltip>
 					</div>
 				);
@@ -261,10 +300,16 @@ const MediaLibrary = () => {
 			sortFunc: () => {},
 			text: 'LABELS',
 			formatter: (content) => {
+				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
 				return (
-					<div className={classes.rowType}>
-						{content[0] + `, ` + content[1]}
-					</div>
+					// <div className={classes.rowType}>
+					// 	{content[0] + `, ` + content[1]}
+					// </div>
+
+					<Markup
+						className={classes.rowType}
+						content={`${content[0]} ${secondLabel}`}
+					/>
 				);
 			},
 			headerStyle: () => {
@@ -292,7 +337,10 @@ const MediaLibrary = () => {
 			sortFunc: () => {},
 			text: 'USER',
 			formatter: (content) => {
-				return <div className={classes.row}>{content}</div>;
+				return (
+					// <div className={classes.row}>{content}</div>
+					<Markup className={classes.row} content={`${content}`} />
+				);
 			}
 		},
 		{
@@ -321,14 +369,7 @@ const MediaLibrary = () => {
 								arrow: { className: classes.toolTipArrow }
 							}}
 						>
-							<Edit
-								// onClick={() => {
-								// 	setShowSlider(true);
-								// 	setEdit(true);
-								// 	dispatch(getSpecificMedia(row.id));
-								// }}
-								className={classes.editIcon}
-							/>
+							<Edit className={classes.editIcon} />
 						</Tooltip>
 					</div>
 				);
@@ -361,18 +402,36 @@ const MediaLibrary = () => {
 					<TextField
 						className={classes.searchField}
 						value={search}
+						onKeyPress={(e) => {
+							if (e.key === 'Enter' && search) {
+								dispatch(getMedia({ q: search, page, ...sortState }));
+							} else if (e.key === 'Enter' && !search) {
+								dispatch(getMedia({ page, ...sortState }));
+							}
+						}}
 						onChange={(e) => setSearch(e.target.value)}
 						placeholder={'Search post, user, label'}
 						InputProps={{
 							disableUnderline: true,
 							className: classes.textFieldInput,
+							style: { borderColor: noResultBorder },
 							endAdornment: (
 								<InputAdornment>
-									<Search className={classes.searchIcon} />
+									<Search
+										onClick={() => {
+											if (search) {
+												dispatch(getMedia({ q: search, page, ...sortState }));
+											} else {
+												dispatch(getMedia({ page, ...sortState }));
+											}
+										}}
+										className={classes.searchIcon}
+									/>
 								</InputAdornment>
 							)
 						}}
 					/>
+					<p className={classes.noResultError}>{noResultError}</p>
 				</div>
 			</div>
 			<div className={classes.tableContainer}>
