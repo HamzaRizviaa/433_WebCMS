@@ -214,7 +214,11 @@ const MediaLibrary = () => {
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			formatter: (content) => {
-				return <div className={classes.row}>{content}</div>;
+				return (
+					<div className={classes.row}>
+						<Markup content={`${content} `} />
+					</div>
+				);
 			}
 		},
 		{
@@ -321,7 +325,11 @@ const MediaLibrary = () => {
 			sortFunc: () => {},
 			text: 'TYPE',
 			formatter: (content) => {
-				return <div className={classes.rowType}>{content}</div>;
+				return (
+					<div className={classes.rowType}>
+						<Markup content={`${content} `} />
+					</div>
+				);
 			},
 			headerStyle: () => {
 				return { paddingLeft: '48px' };
