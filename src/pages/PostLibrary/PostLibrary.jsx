@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { ReactComponent as Edit } from '../../assets/edit.svg';
+import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Button from '../../components/button';
@@ -15,6 +16,9 @@ import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
+import TextField from '@material-ui/core/TextField';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import { Markup } from 'interweave';
 
 import Pagination from '@mui/material/Pagination';
 import { makeStyles } from '@material-ui/core/styles';
@@ -91,11 +95,19 @@ const PostLibrary = () => {
 	const muiClasses = useStyles();
 	const posts = useSelector((state) => state.postLibrary.posts);
 	const totalRecords = useSelector((state) => state.postLibrary.totalRecords);
+	const noResultStatus = useSelector(
+		(state) => state.postLibrary.noResultStatus
+	);
+
 	const [page, setPage] = useState(1);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [paginationError, setPaginationError] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
+	const [search, setSearch] = useState('');
+	const [noResultBorder, setNoResultBorder] = useState('#404040');
+	const [noResultError, setNoResultError] = useState('');
+
 	const dispatch = useDispatch();
 
 	const handleChange = (event, value) => {
@@ -110,14 +122,32 @@ const PostLibrary = () => {
 	};
 
 	useEffect(() => {
-		if (sortState.sortby && sortState.order_type) {
+		if (sortState.sortby && sortState.order_type && !search) {
 			dispatch(getPosts({ page, ...sortState }));
+		}
+		if (sortState.sortby && sortState.order_type && search) {
+			dispatch(getPosts({ q: search, page, ...sortState }));
 		}
 	}, [sortState]);
 
 	useEffect(() => {
-		dispatch(getPosts({ page, ...sortState }));
+		if (search) {
+			dispatch(getPosts({ q: search, page, ...sortState }));
+		} else {
+			dispatch(getPosts({ page, ...sortState }));
+		}
 	}, [page]);
+
+	useEffect(() => {
+		if (noResultStatus) {
+			setNoResultBorder('#FF355A');
+			setNoResultError('No Results Found');
+			setTimeout(() => {
+				setNoResultBorder('#404040');
+				setNoResultError('');
+			}, [5000]);
+		}
+	}, [noResultStatus]);
 
 	const sortRows = (order, col) => {
 		if (order && col.dataField) {
@@ -228,16 +258,29 @@ const PostLibrary = () => {
 						<Tooltip
 							TransitionComponent={Fade}
 							TransitionProps={{ timeout: 600 }}
-							title={row?.file_name.length > 13 ? row?.file_name : ''}
+							title={
+								<Markup
+									content={row?.file_name?.length > 13 ? row?.file_name : ''}
+								/>
+							}
 							arrow
 							componentsProps={{
 								tooltip: { className: classes.toolTip },
 								arrow: { className: classes.toolTipArrow }
 							}}
 						>
-							<span className={classes.fileName}>
+							{/* <span className={classes.fileName}>
 								{row?.file_name?.substring(0, 13) +
 									`${row?.file_name?.length > 13 ? '...' : ''}`}
+							</span> */}
+							<span>
+								<Markup
+									className={classes.fileName}
+									content={`${
+										row?.file_name?.substring(0, 13) +
+										`${row?.file_name?.length > 13 ? '...' : ''}`
+									}`}
+								/>
 							</span>
 						</Tooltip>
 					</div>
@@ -259,10 +302,15 @@ const PostLibrary = () => {
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
-			text: 'LABEL',
+			text: 'LABELS',
 			formatter: (content) => {
+				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
 				return (
-					<div className={classes.row}>{content[0] + `, ` + content[1]}</div>
+					//<div className={classes.row}>{content[0] + `, ` + content[1]}</div>
+					<Markup
+						className={classes.row}
+						content={`${content[0]} ${secondLabel}`}
+					/>
 				);
 			}
 		},
@@ -273,7 +321,10 @@ const PostLibrary = () => {
 			sortFunc: () => {},
 			text: 'USER',
 			formatter: (content) => {
-				return <div className={classes.row}>{content}</div>;
+				return (
+					//<div className={classes.row}>{content}</div>
+					<Markup className={classes.row} content={`${content}`} />
+				);
 			}
 		},
 		{
@@ -323,14 +374,54 @@ const PostLibrary = () => {
 	return (
 		<Layout>
 			<div className={classes.header}>
-				<h1 style={{ marginRight: '2rem' }}>POST LIBRARY</h1>
-				<Button
-					onClick={() => {
-						setEdit(false);
-						setShowSlider(true);
-					}}
-					text={'UPLOAD POST'}
-				/>
+				<div className={classes.subheader1}>
+					<h1 style={{ marginRight: '2rem' }}>POST LIBRARY</h1>
+					<Button
+						onClick={() => {
+							setEdit(false);
+							setShowSlider(true);
+						}}
+						text={'UPLOAD POST'}
+					/>
+				</div>
+				<div className={classes.subheader2}>
+					<TextField
+						className={classes.searchField}
+						value={search}
+						onKeyPress={(e) => {
+							if (e.key === 'Enter' && search) {
+								dispatch(getPosts({ q: search, page, ...sortState }));
+							} else if (e.key === 'Enter' && !search) {
+								dispatch(getPosts({ page, ...sortState }));
+							}
+						}}
+						onChange={(e) => {
+							setSearch(e.target.value);
+							//setIsSearch(true);
+						}}
+						placeholder={'Search post, user, label'}
+						InputProps={{
+							disableUnderline: true,
+							className: classes.textFieldInput,
+							style: { borderColor: noResultBorder },
+							endAdornment: (
+								<InputAdornment>
+									<Search
+										onClick={() => {
+											if (search) {
+												dispatch(getPosts({ q: search, page, ...sortState }));
+											} else {
+												dispatch(getPosts({ page, ...sortState }));
+											}
+										}}
+										className={classes.searchIcon}
+									/>
+								</InputAdornment>
+							)
+						}}
+					/>
+					<p className={classes.noResultError}>{noResultError}</p>
+				</div>
 			</div>
 			<div className={classes.tableContainer}>
 				<Table rowEvents={tableRowEvents} columns={columns} data={posts} />

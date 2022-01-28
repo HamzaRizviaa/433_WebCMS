@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const getMedia = createAsyncThunk(
 	'mediaDropdown/getMedia',
-	async ({ page, order_type, sortby }) => {
+	async ({ page, order_type, sortby, q }) => {
 		let endPoint = `media/get-media?limit=20&page=1`;
 		if (page) {
 			endPoint = `media/get-media?limit=20&page=${page}`;
@@ -11,14 +11,18 @@ export const getMedia = createAsyncThunk(
 		if (order_type && sortby) {
 			endPoint += `&order_type=${order_type}&sort_by=${sortby}`;
 		}
+		if (q) {
+			endPoint += `&q=${q}&is_search=true`;
+		}
 		const response = await axios.get(
 			`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`
 		);
-		if (response?.data?.data?.data?.length > 0) {
-			return response.data.data;
-		} else {
-			return [];
-		}
+		// if (response?.data?.data?.data?.length > 0) {
+		// 	return response.data.data;
+		// } else {
+		// 	return [];
+		// }
+		return response.data.data;
 	}
 );
 
@@ -45,7 +49,8 @@ export const mediaDropdownSlice = createSlice({
 	initialState: {
 		media: [],
 		totalRecords: 0,
-		allMedia: []
+		allMedia: [],
+		noResultStatus: false
 	},
 	reducers: null,
 	extraReducers: {
@@ -53,9 +58,14 @@ export const mediaDropdownSlice = createSlice({
 			state.status = 'loading';
 		},
 		[getMedia.fulfilled]: (state, action) => {
-			state.media = action.payload.data;
-			state.totalRecords = action.payload.total;
+			state.media =
+				action.payload.data.length > 0 ? action.payload.data : state.media;
+			state.totalRecords =
+				action.payload.data.length > 0
+					? action.payload.total
+					: state.totalRecords;
 			state.status = 'success';
+			state.noResultStatus = action.payload.data.length > 0 ? false : true;
 		},
 		[getMedia.rejected]: (state) => {
 			state.status = 'failed';

@@ -1,8 +1,20 @@
 @import '../../styles/variables.scss';
+@import '../../styles/_mixins.scss';
 
 .header {
 	display: flex;
+	justify-content: space-between;
+}
+
+.subheader1 {
+	display: flex;
 	justify-content: flex-start;
+}
+
+.subheader2 {
+	//display: flex;
+	justify-content: flex-end;
+	//align-items: ;
 }
 
 .tableContainer {
@@ -108,4 +120,32 @@
 	background-color: transparent !important;
 	border-radius: 8px !important;
 	max-width: none !important;
+}
+
+.searchField {
+	width: 271px;
+}
+
+.textFieldInput {
+	color: white !important;
+	border: 1px solid #404040;
+	padding: 0.5rem 0.5rem 0.5rem 1.5rem !important;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 40px;
+	//margin-bottom: 1rem;
+	background-color: #000000;
+}
+
+.searchIcon {
+	margin-right: 8;
+	cursor: pointer;
+}
+
+.noResultError {
+	color: #ff355a;
+	font-weight: bold;
+	margin-top: 0.2rem;
+	margin-left: 0.5rem;
+	height: 1rem;
 }
