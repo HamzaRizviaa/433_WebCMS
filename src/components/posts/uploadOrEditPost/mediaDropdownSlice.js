@@ -17,11 +17,12 @@ export const getMedia = createAsyncThunk(
 		const response = await axios.get(
 			`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`
 		);
-		if (response?.data?.data?.data?.length > 0) {
-			return response.data.data;
-		} else {
-			return [];
-		}
+		// if (response?.data?.data?.data?.length > 0) {
+		// 	return response.data.data;
+		// } else {
+		// 	return [];
+		// }
+		return response.data.data;
 	}
 );
 
