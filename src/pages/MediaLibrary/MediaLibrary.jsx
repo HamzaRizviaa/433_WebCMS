@@ -253,7 +253,7 @@ const MediaLibrary = () => {
 							TransitionProps={{ timeout: 600 }}
 							title={
 								<Markup
-									content={row?.file_name.length > 13 ? row?.file_name : ''}
+									content={row?.file_name?.length > 13 ? row?.file_name : ''}
 								/>
 							}
 							arrow
