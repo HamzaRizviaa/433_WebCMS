@@ -131,7 +131,11 @@ const PostLibrary = () => {
 	}, [sortState]);
 
 	useEffect(() => {
-		dispatch(getPosts({ page, ...sortState }));
+		if (search) {
+			dispatch(getPosts({ q: search, page, ...sortState }));
+		} else {
+			dispatch(getPosts({ page, ...sortState }));
+		}
 	}, [page]);
 
 	useEffect(() => {
@@ -385,6 +389,13 @@ const PostLibrary = () => {
 					<TextField
 						className={classes.searchField}
 						value={search}
+						onKeyPress={(e) => {
+							if (e.key === 'Enter' && search) {
+								dispatch(getPosts({ q: search, page, ...sortState }));
+							} else if (e.key === 'Enter' && !search) {
+								dispatch(getPosts({ page, ...sortState }));
+							}
+						}}
 						onChange={(e) => {
 							setSearch(e.target.value);
 							//setIsSearch(true);
