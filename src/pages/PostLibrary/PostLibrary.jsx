@@ -8,6 +8,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
+import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Button from '../../components/button';
@@ -28,6 +29,7 @@ import { Markup } from 'interweave';
 
 import Pagination from '@mui/material/Pagination';
 import { makeStyles } from '@material-ui/core/styles';
+import './_calender.scss';
 
 const getDateTime = (dateTime) => {
 	let formatted = new Date(dateTime);
@@ -144,7 +146,11 @@ const PostLibrary = () => {
 				ref={ref}
 			>
 				<span>{` ${startDate} > ${endDate} `}</span>
-				<span>faf</span>
+				<span
+					style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+				>
+					<Calendar />
+				</span>
 			</div>
 		);
 	});
@@ -468,6 +474,7 @@ const PostLibrary = () => {
 							selectsRange={true}
 							startDate={startDate}
 							endDate={endDate}
+							maxDate={new Date()}
 							onChange={(update) => {
 								setDateRange(update);
 							}}
