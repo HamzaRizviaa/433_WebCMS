@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
+import React, { forwardRef, useEffect, useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+// import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
@@ -107,6 +113,41 @@ const PostLibrary = () => {
 	const [search, setSearch] = useState('');
 	const [noResultBorder, setNoResultBorder] = useState('#404040');
 	const [noResultError, setNoResultError] = useState('');
+	const [dateRange, setDateRange] = useState([null, null]);
+	const [startDate, endDate] = dateRange;
+
+	const formatDate = (date) => {
+		if (date === null) return null;
+
+		let _date = new Date(date);
+		let dd = _date.getDate();
+		let mm = _date.getMonth() + 1;
+		let yyyy = _date.getFullYear();
+		if (dd < 10) {
+			dd = '0' + dd;
+		}
+		if (mm < 10) {
+			mm = '0' + mm;
+		}
+		return `${dd + '/' + mm + '/' + yyyy}`;
+	};
+
+	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
+		const startDate = formatDate(dateRange[0]);
+		const endDate = formatDate(dateRange[1]);
+		return (
+			<div
+				contentEditable={true}
+				data-text=''
+				className={classes.customDateInput}
+				onClick={onClick}
+				ref={ref}
+			>
+				<span>{` ${startDate} > ${endDate} `}</span>
+				<span>faf</span>
+			</div>
+		);
+	});
 
 	const dispatch = useDispatch();
 
@@ -421,6 +462,18 @@ const PostLibrary = () => {
 						}}
 					/>
 					<p className={classes.noResultError}>{noResultError}</p>
+					<div>
+						<DatePicker
+							customInput={<ExampleCustomInput />}
+							selectsRange={true}
+							startDate={startDate}
+							endDate={endDate}
+							onChange={(update) => {
+								setDateRange(update);
+							}}
+							placement='center'
+						/>
+					</div>
 				</div>
 			</div>
 			<div className={classes.tableContainer}>
