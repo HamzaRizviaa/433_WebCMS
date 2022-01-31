@@ -134,22 +134,38 @@ const PostLibrary = () => {
 		return `${dd + '/' + mm + '/' + yyyy}`;
 	};
 
+	const getCalendarText = (startDate, endDate) => {
+		if (startDate && endDate) {
+			return <span>{`${startDate} > ${endDate}`}</span>;
+		} else {
+			if (startDate && endDate === null) {
+				return <span>{`${startDate} > End date`}</span>;
+			} else if (startDate === null && endDate) {
+				return <span>{`Start date > ${endDate}`}</span>;
+			} else {
+				return (
+					<span style={{ color: '#808080' }}>{`Start date > End date`}</span>
+				);
+			}
+		}
+	};
+
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
 		const startDate = formatDate(dateRange[0]);
 		const endDate = formatDate(dateRange[1]);
 		return (
-			<div
-				contentEditable={true}
-				data-text=''
-				className={classes.customDateInput}
-				onClick={onClick}
-				ref={ref}
-			>
-				<span>{` ${startDate} > ${endDate} `}</span>
+			<div className={classes.customDateInput} onClick={onClick} ref={ref}>
+				{getCalendarText(startDate, endDate)}
 				<span
 					style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
 				>
-					<Calendar />
+					<Calendar
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							console.log('Api call');
+						}}
+					/>
 				</span>
 			</div>
 		);
