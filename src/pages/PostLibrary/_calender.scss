@@ -1,6 +1,6 @@
 .react-datepicker-popper {
 	font-family: 'Poppins' !important;
-	transform: translate3d(-20px, 83px, 0px) !important;
+	// transform: translate3d(-20px, 83px, 0px) !important;
 
 	& > div {
 		// border: 1.9px solid #808080 !important;
@@ -14,8 +14,8 @@
 
 	.react-datepicker {
 		overflow: visible !important;
-		width: 390px !important;
-		font-size: 2rem !important;
+		width: 350px !important;
+		font-size: 1.5rem !important;
 		background-color: #000000 !important;
 		// border: none !important;
 		border: 1.9px solid #808080 !important;
@@ -57,7 +57,7 @@
 			.react-datepicker__day {
 				text-align: center !important;
 				color: #ffffff !important;
-				font-size: 1.7rem !important;
+				font-size: 1.5rem !important;
 				padding: 8px 12px !important;
 				border-radius: 0px !important;
 
@@ -117,13 +117,13 @@
 			align-items: center !important;
 			.react-datepicker__day-name {
 				color: #ffffff;
-				font-size: 1.7rem !important;
+				font-size: 1.5rem !important;
 			}
 		}
 
 		.react-datepicker__current-month {
 			color: #ffffff;
-			font-size: 2rem !important;
+			font-size: 1.5rem !important;
 			font-weight: normal !important;
 			text-align: center !important;
 			padding: 16px 0px !important;
