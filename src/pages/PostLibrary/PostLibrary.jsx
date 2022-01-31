@@ -448,43 +448,45 @@ const PostLibrary = () => {
 					/>
 				</div>
 				<div className={classes.subheader2}>
-					<TextField
-						className={classes.searchField}
-						value={search}
-						onKeyPress={(e) => {
-							if (e.key === 'Enter' && search) {
-								dispatch(getPosts({ q: search, page, ...sortState }));
-							} else if (e.key === 'Enter' && !search) {
-								dispatch(getPosts({ page, ...sortState }));
-							}
-						}}
-						onChange={(e) => {
-							setSearch(e.target.value);
-							//setIsSearch(true);
-						}}
-						placeholder={'Search post, user, label'}
-						InputProps={{
-							disableUnderline: true,
-							className: classes.textFieldInput,
-							style: { borderColor: noResultBorder },
-							endAdornment: (
-								<InputAdornment>
-									<Search
-										onClick={() => {
-											if (search) {
-												dispatch(getPosts({ q: search, page, ...sortState }));
-											} else {
-												dispatch(getPosts({ page, ...sortState }));
-											}
-										}}
-										className={classes.searchIcon}
-									/>
-								</InputAdornment>
-							)
-						}}
-					/>
-					<p className={classes.noResultError}>{noResultError}</p>
 					<div>
+						<TextField
+							className={classes.searchField}
+							value={search}
+							onKeyPress={(e) => {
+								if (e.key === 'Enter' && search) {
+									dispatch(getPosts({ q: search, page, ...sortState }));
+								} else if (e.key === 'Enter' && !search) {
+									dispatch(getPosts({ page, ...sortState }));
+								}
+							}}
+							onChange={(e) => {
+								setSearch(e.target.value);
+								//setIsSearch(true);
+							}}
+							placeholder={'Search post, user, label'}
+							InputProps={{
+								disableUnderline: true,
+								className: classes.textFieldInput,
+								style: { borderColor: noResultBorder },
+								endAdornment: (
+									<InputAdornment>
+										<Search
+											onClick={() => {
+												if (search) {
+													dispatch(getPosts({ q: search, page, ...sortState }));
+												} else {
+													dispatch(getPosts({ page, ...sortState }));
+												}
+											}}
+											className={classes.searchIcon}
+										/>
+									</InputAdornment>
+								)
+							}}
+						/>
+						<p className={classes.noResultError}>{noResultError}</p>
+					</div>
+					<div className={classes.calendarWrapper}>
 						<DatePicker
 							customInput={<ExampleCustomInput />}
 							selectsRange={true}
@@ -495,7 +497,9 @@ const PostLibrary = () => {
 								setDateRange(update);
 							}}
 							placement='center'
+							isClearable={true}
 						/>
+						<p className={classes.noResultError}>{}</p>
 					</div>
 				</div>
 			</div>

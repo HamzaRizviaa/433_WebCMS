@@ -1,10 +1,6 @@
 @import '../../styles/variables.scss';
 @import '../../styles/_mixins.scss';
 
-[contentEditable='true']:empty:not(:focus):before {
-	content: attr(data-text);
-}
-
 .header {
 	display: flex;
 	justify-content: space-between;
@@ -19,6 +15,10 @@
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
+}
+
+.calendarWrapper {
+	margin-left: 10px;
 }
 
 .customDateInput {
@@ -39,7 +39,7 @@
 	border-radius: 40px;
 	background-color: #000000;
 	border-color: rgb(64, 64, 64);
-	height: 1.1876em;
+	height: 17.5px;
 	box-sizing: content-box;
 	padding: 6px 0 7px;
 	flex-direction: row;

@@ -92,6 +92,7 @@
 
 			.react-datepicker__day--disabled {
 				background-color: transparent !important;
+				color: #404040 !important;
 				&:hover {
 					background-color: transparent !important;
 					color: #404040 !important;
@@ -131,5 +132,13 @@
 
 	.react-datepicker__triangle {
 		display: none !important;
+	}
+}
+.react-datepicker__close-icon {
+	top: -1px !important;
+	right: 35px !important;
+	&::after {
+		background-color: #ffff00 !important;
+		color: black !important;
 	}
 }
