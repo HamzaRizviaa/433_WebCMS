@@ -16,7 +16,11 @@ import Layout from '../../components/layout';
 import Table from '../../components/table';
 import classes from './_postLibrary.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
-import { getPosts } from './postLibrarySlice';
+import {
+	getPosts,
+	resetCalendarError,
+	resetNoResultStatus
+} from './postLibrarySlice';
 import { getSpecificPost } from '../../components/posts/uploadOrEditPost/editButtonSlice';
 import moment from 'moment';
 import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
@@ -269,6 +273,7 @@ const PostLibrary = () => {
 			setNoResultBorder('#FF355A');
 			setNoResultError('No Results Found');
 			setTimeout(() => {
+				dispatch(resetNoResultStatus());
 				setNoResultBorder('#404040');
 				setNoResultError('');
 			}, [5000]);
@@ -280,11 +285,23 @@ const PostLibrary = () => {
 			setNoResultCalendarBorder('#FF355A');
 			setNoResultCalendarError('No Results Found');
 			setTimeout(() => {
+				dispatch(resetCalendarError());
 				setNoResultCalendarBorder('#404040');
 				setNoResultCalendarError('');
 			}, [5000]);
 		}
 	}, [noResultStatusCalendar]);
+
+	useEffect(() => {
+		return () => {
+			setNoResultBorder('#404040');
+			setNoResultError('');
+			setNoResultCalendarBorder('#404040');
+			setNoResultCalendarError('');
+			dispatch(resetCalendarError());
+			dispatch(resetNoResultStatus());
+		};
+	}, []);
 
 	const sortRows = (order, col) => {
 		if (order && col.dataField) {
