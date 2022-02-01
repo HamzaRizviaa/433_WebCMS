@@ -106,6 +106,9 @@ const PostLibrary = () => {
 	const noResultStatus = useSelector(
 		(state) => state.postLibrary.noResultStatus
 	);
+	const noResultStatusCalendar = useSelector(
+		(state) => state.postLibrary.noResultStatusCalendar
+	);
 
 	const [page, setPage] = useState(1);
 	const [showSlider, setShowSlider] = useState(false);
@@ -115,6 +118,9 @@ const PostLibrary = () => {
 	const [search, setSearch] = useState('');
 	const [noResultBorder, setNoResultBorder] = useState('#404040');
 	const [noResultError, setNoResultError] = useState('');
+	const [noResultCalendarBorder, setNoResultCalendarBorder] =
+		useState('#404040');
+	const [noResultCalendarError, setNoResultCalendarError] = useState('');
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
 
@@ -131,20 +137,22 @@ const PostLibrary = () => {
 		if (mm < 10) {
 			mm = '0' + mm;
 		}
-		return `${dd + '/' + mm + '/' + yyyy}`;
+		return `${dd + '-' + mm + '-' + yyyy}`;
 	};
 
 	const getCalendarText = (startDate, endDate) => {
 		if (startDate && endDate) {
-			return <span>{`${startDate} > ${endDate}`}</span>;
+			return <span>{`${startDate}   >   ${endDate}`}</span>;
 		} else {
 			if (startDate && endDate === null) {
-				return <span>{`${startDate} > End date`}</span>;
+				return <span>{`${startDate}   >   End date`}</span>;
 			} else if (startDate === null && endDate) {
-				return <span>{`Start date > ${endDate}`}</span>;
+				return <span>{`Start date   >   ${endDate}`}</span>;
 			} else {
 				return (
-					<span style={{ color: '#808080' }}>{`Start date > End date`}</span>
+					<span
+						style={{ color: '#808080' }}
+					>{`Start date   >   End date`}</span>
 				);
 			}
 		}
@@ -154,7 +162,12 @@ const PostLibrary = () => {
 		const startDate = formatDate(dateRange[0]);
 		const endDate = formatDate(dateRange[1]);
 		return (
-			<div className={classes.customDateInput} onClick={onClick} ref={ref}>
+			<div
+				className={classes.customDateInput}
+				onClick={onClick}
+				ref={ref}
+				style={{ borderColor: noResultCalendarBorder }}
+			>
 				{getCalendarText(startDate, endDate)}
 				<span
 					style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
@@ -163,7 +176,27 @@ const PostLibrary = () => {
 						onClick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
-							console.log('Api call');
+							if (startDate && endDate) {
+								dispatch(
+									getPosts({
+										q: search,
+										page,
+										startDate,
+										endDate,
+										fromCalendar: true,
+										...sortState
+									})
+								);
+							} else {
+								dispatch(
+									getPosts({
+										q: search,
+										page,
+										fromCalendar: true,
+										...sortState
+									})
+								);
+							}
 						}}
 					/>
 				</span>
@@ -186,18 +219,48 @@ const PostLibrary = () => {
 
 	useEffect(() => {
 		if (sortState.sortby && sortState.order_type && !search) {
-			dispatch(getPosts({ page, ...sortState }));
+			dispatch(
+				getPosts({
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
 		}
 		if (sortState.sortby && sortState.order_type && search) {
-			dispatch(getPosts({ q: search, page, ...sortState }));
+			dispatch(
+				getPosts({
+					q: search,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					page,
+					...sortState
+				})
+			);
 		}
 	}, [sortState]);
 
 	useEffect(() => {
 		if (search) {
-			dispatch(getPosts({ q: search, page, ...sortState }));
+			dispatch(
+				getPosts({
+					q: search,
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
 		} else {
-			dispatch(getPosts({ page, ...sortState }));
+			dispatch(
+				getPosts({
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
 		}
 	}, [page]);
 
@@ -211,6 +274,17 @@ const PostLibrary = () => {
 			}, [5000]);
 		}
 	}, [noResultStatus]);
+
+	useEffect(() => {
+		if (noResultStatusCalendar) {
+			setNoResultCalendarBorder('#FF355A');
+			setNoResultCalendarError('No Results Found');
+			setTimeout(() => {
+				setNoResultCalendarBorder('#404040');
+				setNoResultCalendarError('');
+			}, [5000]);
+		}
+	}, [noResultStatusCalendar]);
 
 	const sortRows = (order, col) => {
 		if (order && col.dataField) {
@@ -433,7 +507,6 @@ const PostLibrary = () => {
 			// }
 		}
 	};
-
 	return (
 		<Layout>
 			<div className={classes.header}>
@@ -454,9 +527,24 @@ const PostLibrary = () => {
 							value={search}
 							onKeyPress={(e) => {
 								if (e.key === 'Enter' && search) {
-									dispatch(getPosts({ q: search, page, ...sortState }));
+									dispatch(
+										getPosts({
+											q: search,
+											page,
+											startDate: formatDate(dateRange[0]),
+											endDate: formatDate(dateRange[1]),
+											...sortState
+										})
+									);
 								} else if (e.key === 'Enter' && !search) {
-									dispatch(getPosts({ page, ...sortState }));
+									dispatch(
+										getPosts({
+											page,
+											startDate: formatDate(dateRange[0]),
+											endDate: formatDate(dateRange[1]),
+											...sortState
+										})
+									);
 								}
 							}}
 							onChange={(e) => {
@@ -473,9 +561,24 @@ const PostLibrary = () => {
 										<Search
 											onClick={() => {
 												if (search) {
-													dispatch(getPosts({ q: search, page, ...sortState }));
+													dispatch(
+														getPosts({
+															q: search,
+															page,
+															startDate: formatDate(dateRange[0]),
+															endDate: formatDate(dateRange[1]),
+															...sortState
+														})
+													);
 												} else {
-													dispatch(getPosts({ page, ...sortState }));
+													dispatch(
+														getPosts({
+															page,
+															startDate: formatDate(dateRange[0]),
+															endDate: formatDate(dateRange[1]),
+															...sortState
+														})
+													);
 												}
 											}}
 											className={classes.searchIcon}
@@ -499,7 +602,7 @@ const PostLibrary = () => {
 							placement='center'
 							isClearable={true}
 						/>
-						<p className={classes.noResultError}>{}</p>
+						<p className={classes.noResultError}>{noResultCalendarError}</p>
 					</div>
 				</div>
 			</div>

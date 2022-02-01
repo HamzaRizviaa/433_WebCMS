@@ -3,7 +3,15 @@ import axios from 'axios';
 
 export const getPosts = createAsyncThunk(
 	'postLibary/getPosts',
-	async ({ page, order_type, sortby, q }) => {
+	async ({
+		page,
+		order_type,
+		sortby,
+		q,
+		startDate,
+		endDate,
+		fromCalendar = false
+	}) => {
 		let endPoint = `post/all-posts?limit=20&page=1`;
 		if (page) {
 			endPoint = `post/all-posts?limit=20&page=${page}`;
@@ -14,11 +22,14 @@ export const getPosts = createAsyncThunk(
 		if (q) {
 			endPoint += `&q=${q}&is_search=true`;
 		}
+		if (startDate && endDate) {
+			endPoint += `&start_date=${startDate}&end_date=${endDate}`;
+		}
 		const result = await axios.get(
 			`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`
 		);
 		//console.log(result.data.data);
-		return result.data.data;
+		return { ...result.data.data, fromCalendar };
 	}
 );
 
@@ -43,7 +54,8 @@ export const postLibrarySlice = createSlice({
 		posts: [],
 		openUploadPost: false,
 		totalRecords: 0,
-		noResultStatus: false
+		noResultStatus: false,
+		noResultStatusCalendar: false
 	},
 	reducers: null,
 	extraReducers: {
@@ -58,7 +70,12 @@ export const postLibrarySlice = createSlice({
 					? action.payload.total
 					: state.totalRecords;
 			state.status = 'success';
-			state.noResultStatus = action.payload.data.length > 0 ? false : true;
+			if (action.payload.fromCalendar) {
+				state.noResultStatusCalendar =
+					action.payload.data.length > 0 ? false : true;
+			} else {
+				state.noResultStatus = action.payload.data.length > 0 ? false : true;
+			}
 		},
 		[getPosts.rejected]: (state) => {
 			state.status = 'failed';
