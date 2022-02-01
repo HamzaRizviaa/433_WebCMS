@@ -59,7 +59,14 @@ export const mediaDropdownSlice = createSlice({
 		noResultStatus: false,
 		noResultStatusCalendar: false
 	},
-	reducers: null,
+	reducers: {
+		resetCalendarError: (state) => {
+			state.noResultStatusCalendar = false;
+		},
+		resetNoResultStatus: (state) => {
+			state.noResultStatus = false;
+		}
+	},
 	extraReducers: {
 		[getMedia.pending]: (state) => {
 			state.status = 'loading';
@@ -87,5 +94,8 @@ export const mediaDropdownSlice = createSlice({
 		}
 	}
 });
+
+export const { resetCalendarError, resetNoResultStatus } =
+	mediaDropdownSlice.actions;
 
 export default mediaDropdownSlice.reducer;

@@ -57,7 +57,14 @@ export const postLibrarySlice = createSlice({
 		noResultStatus: false,
 		noResultStatusCalendar: false
 	},
-	reducers: null,
+	reducers: {
+		resetCalendarError: (state) => {
+			state.noResultStatusCalendar = false;
+		},
+		resetNoResultStatus: (state) => {
+			state.noResultStatus = false;
+		}
+	},
 	extraReducers: {
 		[getPosts.pending]: (state) => {
 			state.status = 'loading';
@@ -86,6 +93,7 @@ export const postLibrarySlice = createSlice({
 	}
 });
 
-// export const { getPosts } = postLibrarySlice.actions;
+export const { resetCalendarError, resetNoResultStatus } =
+	postLibrarySlice.actions;
 
 export default postLibrarySlice.reducer;

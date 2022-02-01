@@ -13,7 +13,11 @@ import Table from '../../components/table';
 import classes from './_mediaLibrary.module.scss';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMedia } from '../../components/posts/uploadOrEditPost/mediaDropdownSlice';
+import {
+	getMedia,
+	resetCalendarError,
+	resetNoResultStatus
+} from '../../components/posts/uploadOrEditPost/mediaDropdownSlice';
 import UploadOrEditMedia from '../../components/media/uploadOrEditMedia';
 import { getSpecificMedia } from '../../components/media/uploadOrEditMedia/uploadOrEditMediaSlice';
 import Tooltip from '@mui/material/Tooltip';
@@ -266,6 +270,7 @@ const MediaLibrary = () => {
 			setNoResultBorder('#FF355A');
 			setNoResultError('No Results Found');
 			setTimeout(() => {
+				dispatch(resetNoResultStatus());
 				setNoResultBorder('#404040');
 				setNoResultError('');
 			}, [5000]);
@@ -277,11 +282,23 @@ const MediaLibrary = () => {
 			setNoResultCalendarBorder('#FF355A');
 			setNoResultCalendarError('No Results Found');
 			setTimeout(() => {
+				dispatch(resetCalendarError());
 				setNoResultCalendarBorder('#404040');
 				setNoResultCalendarError('');
 			}, [5000]);
 		}
 	}, [noResultStatusCalendar]);
+
+	useEffect(() => {
+		return () => {
+			setNoResultBorder('#404040');
+			setNoResultError('');
+			setNoResultCalendarBorder('#404040');
+			setNoResultCalendarError('');
+			dispatch(resetCalendarError());
+			dispatch(resetNoResultStatus());
+		};
+	}, []);
 
 	const sortRows = (order, col) => {
 		if (order && col.dataField) {
