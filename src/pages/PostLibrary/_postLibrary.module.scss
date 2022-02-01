@@ -12,9 +12,39 @@
 }
 
 .subheader2 {
-	//display: flex;
+	display: flex;
 	justify-content: flex-end;
-	//align-items: ;
+	align-items: center;
+}
+
+.calendarWrapper {
+	margin-left: 10px;
+}
+
+.customDateInput {
+	border: 0;
+	margin: 0;
+	display: inline-flex;
+	padding: 0;
+	position: relative;
+	min-width: 0;
+	flex-direction: column;
+	vertical-align: top;
+	width: 271px;
+	color: white !important;
+	border: 1px solid #404040;
+	padding: 1rem 1rem 1.2rem 1rem !important;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 40px;
+	background-color: #000000;
+	border-color: rgb(64, 64, 64);
+	height: 17.5px;
+	box-sizing: content-box;
+	padding: 6px 0 7px;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .tableContainer {

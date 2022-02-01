@@ -1,7 +1,14 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
+import React, { forwardRef, useEffect, useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+// import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
+import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Button from '../../components/button';
@@ -22,6 +29,7 @@ import { Markup } from 'interweave';
 
 import Pagination from '@mui/material/Pagination';
 import { makeStyles } from '@material-ui/core/styles';
+import './_calender.scss';
 
 const getDateTime = (dateTime) => {
 	let formatted = new Date(dateTime);
@@ -107,6 +115,61 @@ const PostLibrary = () => {
 	const [search, setSearch] = useState('');
 	const [noResultBorder, setNoResultBorder] = useState('#404040');
 	const [noResultError, setNoResultError] = useState('');
+	const [dateRange, setDateRange] = useState([null, null]);
+	const [startDate, endDate] = dateRange;
+
+	const formatDate = (date) => {
+		if (date === null) return null;
+
+		let _date = new Date(date);
+		let dd = _date.getDate();
+		let mm = _date.getMonth() + 1;
+		let yyyy = _date.getFullYear();
+		if (dd < 10) {
+			dd = '0' + dd;
+		}
+		if (mm < 10) {
+			mm = '0' + mm;
+		}
+		return `${dd + '/' + mm + '/' + yyyy}`;
+	};
+
+	const getCalendarText = (startDate, endDate) => {
+		if (startDate && endDate) {
+			return <span>{`${startDate} > ${endDate}`}</span>;
+		} else {
+			if (startDate && endDate === null) {
+				return <span>{`${startDate} > End date`}</span>;
+			} else if (startDate === null && endDate) {
+				return <span>{`Start date > ${endDate}`}</span>;
+			} else {
+				return (
+					<span style={{ color: '#808080' }}>{`Start date > End date`}</span>
+				);
+			}
+		}
+	};
+
+	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
+		const startDate = formatDate(dateRange[0]);
+		const endDate = formatDate(dateRange[1]);
+		return (
+			<div className={classes.customDateInput} onClick={onClick} ref={ref}>
+				{getCalendarText(startDate, endDate)}
+				<span
+					style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+				>
+					<Calendar
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							console.log('Api call');
+						}}
+					/>
+				</span>
+			</div>
+		);
+	});
 
 	const dispatch = useDispatch();
 
@@ -385,42 +448,59 @@ const PostLibrary = () => {
 					/>
 				</div>
 				<div className={classes.subheader2}>
-					<TextField
-						className={classes.searchField}
-						value={search}
-						onKeyPress={(e) => {
-							if (e.key === 'Enter' && search) {
-								dispatch(getPosts({ q: search, page, ...sortState }));
-							} else if (e.key === 'Enter' && !search) {
-								dispatch(getPosts({ page, ...sortState }));
-							}
-						}}
-						onChange={(e) => {
-							setSearch(e.target.value);
-							//setIsSearch(true);
-						}}
-						placeholder={'Search post, user, label'}
-						InputProps={{
-							disableUnderline: true,
-							className: classes.textFieldInput,
-							style: { borderColor: noResultBorder },
-							endAdornment: (
-								<InputAdornment>
-									<Search
-										onClick={() => {
-											if (search) {
-												dispatch(getPosts({ q: search, page, ...sortState }));
-											} else {
-												dispatch(getPosts({ page, ...sortState }));
-											}
-										}}
-										className={classes.searchIcon}
-									/>
-								</InputAdornment>
-							)
-						}}
-					/>
-					<p className={classes.noResultError}>{noResultError}</p>
+					<div>
+						<TextField
+							className={classes.searchField}
+							value={search}
+							onKeyPress={(e) => {
+								if (e.key === 'Enter' && search) {
+									dispatch(getPosts({ q: search, page, ...sortState }));
+								} else if (e.key === 'Enter' && !search) {
+									dispatch(getPosts({ page, ...sortState }));
+								}
+							}}
+							onChange={(e) => {
+								setSearch(e.target.value);
+								//setIsSearch(true);
+							}}
+							placeholder={'Search post, user, label'}
+							InputProps={{
+								disableUnderline: true,
+								className: classes.textFieldInput,
+								style: { borderColor: noResultBorder },
+								endAdornment: (
+									<InputAdornment>
+										<Search
+											onClick={() => {
+												if (search) {
+													dispatch(getPosts({ q: search, page, ...sortState }));
+												} else {
+													dispatch(getPosts({ page, ...sortState }));
+												}
+											}}
+											className={classes.searchIcon}
+										/>
+									</InputAdornment>
+								)
+							}}
+						/>
+						<p className={classes.noResultError}>{noResultError}</p>
+					</div>
+					<div className={classes.calendarWrapper}>
+						<DatePicker
+							customInput={<ExampleCustomInput />}
+							selectsRange={true}
+							startDate={startDate}
+							endDate={endDate}
+							maxDate={new Date()}
+							onChange={(update) => {
+								setDateRange(update);
+							}}
+							placement='center'
+							isClearable={true}
+						/>
+						<p className={classes.noResultError}>{}</p>
+					</div>
 				</div>
 			</div>
 			<div className={classes.tableContainer}>
