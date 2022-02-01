@@ -3,7 +3,15 @@ import axios from 'axios';
 
 export const getMedia = createAsyncThunk(
 	'mediaDropdown/getMedia',
-	async ({ page, order_type, sortby, q }) => {
+	async ({
+		page,
+		order_type,
+		sortby,
+		q,
+		startDate,
+		endDate,
+		fromCalendar = false
+	}) => {
 		let endPoint = `media/get-media?limit=20&page=1`;
 		if (page) {
 			endPoint = `media/get-media?limit=20&page=${page}`;
@@ -14,15 +22,13 @@ export const getMedia = createAsyncThunk(
 		if (q) {
 			endPoint += `&q=${q}&is_search=true`;
 		}
+		if (startDate && endDate) {
+			endPoint += `&start_date=${startDate}&end_date=${endDate}`;
+		}
 		const response = await axios.get(
 			`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`
 		);
-		// if (response?.data?.data?.data?.length > 0) {
-		// 	return response.data.data;
-		// } else {
-		// 	return [];
-		// }
-		return response.data.data;
+		return { ...response.data.data, fromCalendar };
 	}
 );
 
@@ -50,7 +56,8 @@ export const mediaDropdownSlice = createSlice({
 		media: [],
 		totalRecords: 0,
 		allMedia: [],
-		noResultStatus: false
+		noResultStatus: false,
+		noResultStatusCalendar: false
 	},
 	reducers: null,
 	extraReducers: {
@@ -65,7 +72,12 @@ export const mediaDropdownSlice = createSlice({
 					? action.payload.total
 					: state.totalRecords;
 			state.status = 'success';
-			state.noResultStatus = action.payload.data.length > 0 ? false : true;
+			if (action.payload.fromCalendar) {
+				state.noResultStatusCalendar =
+					action.payload.data.length > 0 ? false : true;
+			} else {
+				state.noResultStatus = action.payload.data.length > 0 ? false : true;
+			}
 		},
 		[getMedia.rejected]: (state) => {
 			state.status = 'failed';

@@ -1,6 +1,10 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/display-name */
+/* eslint-disable react/prop-types */
+import React, { forwardRef, useEffect, useState } from 'react';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
+import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Button from '../../components/button';
@@ -17,9 +21,11 @@ import Fade from '@mui/material/Fade';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { Markup } from 'interweave';
-
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import Pagination from '@mui/material/Pagination';
 import { makeStyles } from '@material-ui/core/styles';
+import '../PostLibrary/_calender.scss';
 
 const getDateTime = (dateTime) => {
 	let formatted = new Date(dateTime);
@@ -96,7 +102,9 @@ const MediaLibrary = () => {
 	const noResultStatus = useSelector(
 		(state) => state.mediaDropdown.noResultStatus
 	);
-
+	const noResultStatusCalendar = useSelector(
+		(state) => state.mediaDropdown.noResultStatusCalendar
+	);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [page, setPage] = useState(1);
@@ -105,6 +113,11 @@ const MediaLibrary = () => {
 	const [search, setSearch] = useState('');
 	const [noResultBorder, setNoResultBorder] = useState('#404040');
 	const [noResultError, setNoResultError] = useState('');
+	const [noResultCalendarBorder, setNoResultCalendarBorder] =
+		useState('#404040');
+	const [noResultCalendarError, setNoResultCalendarError] = useState('');
+	const [dateRange, setDateRange] = useState([null, null]);
+	const [startDate, endDate] = dateRange;
 
 	const dispatch = useDispatch();
 	const sortKeysMapping = {
@@ -117,24 +130,134 @@ const MediaLibrary = () => {
 		type: 'type'
 	};
 
+	const formatDate = (date) => {
+		if (date === null) return null;
+
+		let _date = new Date(date);
+		let dd = _date.getDate();
+		let mm = _date.getMonth() + 1;
+		let yyyy = _date.getFullYear();
+		if (dd < 10) {
+			dd = '0' + dd;
+		}
+		if (mm < 10) {
+			mm = '0' + mm;
+		}
+		return `${dd + '-' + mm + '-' + yyyy}`;
+	};
+
+	const getCalendarText = (startDate, endDate) => {
+		if (startDate && endDate) {
+			return <span>{`${startDate}   >   ${endDate}`}</span>;
+		} else {
+			if (startDate && endDate === null) {
+				return <span>{`${startDate}   >   End date`}</span>;
+			} else if (startDate === null && endDate) {
+				return <span>{`Start date   >   ${endDate}`}</span>;
+			} else {
+				return (
+					<span
+						style={{ color: '#808080' }}
+					>{`Start date   >   End date`}</span>
+				);
+			}
+		}
+	};
+
+	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
+		const startDate = formatDate(dateRange[0]);
+		const endDate = formatDate(dateRange[1]);
+		return (
+			<div
+				className={classes.customDateInput}
+				onClick={onClick}
+				ref={ref}
+				style={{ borderColor: noResultCalendarBorder }}
+			>
+				{getCalendarText(startDate, endDate)}
+				<span
+					style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+				>
+					<Calendar
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							if (startDate && endDate) {
+								dispatch(
+									getMedia({
+										q: search,
+										page,
+										startDate,
+										endDate,
+										fromCalendar: true,
+										...sortState
+									})
+								);
+							} else {
+								dispatch(
+									getMedia({
+										q: search,
+										page,
+										fromCalendar: true,
+										...sortState
+									})
+								);
+							}
+						}}
+					/>
+				</span>
+			</div>
+		);
+	});
+
 	const handleChange = (event, value) => {
 		setPage(value);
 	};
 
 	useEffect(() => {
 		if (sortState.sortby && sortState.order_type && !search) {
-			dispatch(getMedia({ page, ...sortState }));
+			dispatch(
+				getMedia({
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
 		}
 		if (sortState.sortby && sortState.order_type && search) {
-			dispatch(getMedia({ q: search, page, ...sortState }));
+			dispatch(
+				getMedia({
+					q: search,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					page,
+					...sortState
+				})
+			);
 		}
 	}, [sortState]);
 
 	useEffect(() => {
 		if (search) {
-			dispatch(getMedia({ q: search, page, ...sortState }));
+			dispatch(
+				getMedia({
+					q: search,
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
 		} else {
-			dispatch(getMedia({ page, ...sortState }));
+			dispatch(
+				getMedia({
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
 		}
 	}, [page]);
 
@@ -148,6 +271,17 @@ const MediaLibrary = () => {
 			}, [5000]);
 		}
 	}, [noResultStatus]);
+
+	useEffect(() => {
+		if (noResultStatusCalendar) {
+			setNoResultCalendarBorder('#FF355A');
+			setNoResultCalendarError('No Results Found');
+			setTimeout(() => {
+				setNoResultCalendarBorder('#404040');
+				setNoResultCalendarError('');
+			}, [5000]);
+		}
+	}, [noResultStatusCalendar]);
 
 	const sortRows = (order, col) => {
 		if (order && col.dataField) {
@@ -405,39 +539,86 @@ const MediaLibrary = () => {
 					/>
 				</div>
 				<div className={classes.subheader2}>
-					<TextField
-						className={classes.searchField}
-						value={search}
-						onKeyPress={(e) => {
-							if (e.key === 'Enter' && search) {
-								dispatch(getMedia({ q: search, page, ...sortState }));
-							} else if (e.key === 'Enter' && !search) {
-								dispatch(getMedia({ page, ...sortState }));
-							}
-						}}
-						onChange={(e) => setSearch(e.target.value)}
-						placeholder={'Search post, user, label'}
-						InputProps={{
-							disableUnderline: true,
-							className: classes.textFieldInput,
-							style: { borderColor: noResultBorder },
-							endAdornment: (
-								<InputAdornment>
-									<Search
-										onClick={() => {
-											if (search) {
-												dispatch(getMedia({ q: search, page, ...sortState }));
-											} else {
-												dispatch(getMedia({ page, ...sortState }));
-											}
-										}}
-										className={classes.searchIcon}
-									/>
-								</InputAdornment>
-							)
-						}}
-					/>
-					<p className={classes.noResultError}>{noResultError}</p>
+					<div>
+						<TextField
+							className={classes.searchField}
+							value={search}
+							onKeyPress={(e) => {
+								if (e.key === 'Enter' && search) {
+									dispatch(
+										getMedia({
+											q: search,
+											page,
+											startDate: formatDate(dateRange[0]),
+											endDate: formatDate(dateRange[1]),
+											...sortState
+										})
+									);
+								} else if (e.key === 'Enter' && !search) {
+									dispatch(
+										getMedia({
+											page,
+											startDate: formatDate(dateRange[0]),
+											endDate: formatDate(dateRange[1]),
+											...sortState
+										})
+									);
+								}
+							}}
+							onChange={(e) => setSearch(e.target.value)}
+							placeholder={'Search post, user, label'}
+							InputProps={{
+								disableUnderline: true,
+								className: classes.textFieldInput,
+								style: { borderColor: noResultBorder },
+								endAdornment: (
+									<InputAdornment>
+										<Search
+											onClick={() => {
+												if (search) {
+													dispatch(
+														getMedia({
+															q: search,
+															page,
+															startDate: formatDate(dateRange[0]),
+															endDate: formatDate(dateRange[1]),
+															...sortState
+														})
+													);
+												} else {
+													dispatch(
+														getMedia({
+															page,
+															startDate: formatDate(dateRange[0]),
+															endDate: formatDate(dateRange[1]),
+															...sortState
+														})
+													);
+												}
+											}}
+											className={classes.searchIcon}
+										/>
+									</InputAdornment>
+								)
+							}}
+						/>
+						<p className={classes.noResultError}>{noResultError}</p>
+					</div>
+					<div className={classes.calendarWrapper}>
+						<DatePicker
+							customInput={<ExampleCustomInput />}
+							selectsRange={true}
+							startDate={startDate}
+							endDate={endDate}
+							maxDate={new Date()}
+							onChange={(update) => {
+								setDateRange(update);
+							}}
+							placement='center'
+							isClearable={true}
+						/>
+						<p className={classes.noResultError}>{noResultCalendarError}</p>
+					</div>
 				</div>
 			</div>
 			<div className={classes.tableContainer}>
