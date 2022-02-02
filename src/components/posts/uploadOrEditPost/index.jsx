@@ -77,6 +77,7 @@ const UploadOrEditPost = ({
 	const [dropdownPosition, setDropdownPosition] = useState(false);
 	const labelsInputRef = useRef(null);
 	const previewRef = useRef(null);
+	const orientationRef = useRef(null);
 	// const [aspect, setAspect] = useState(1 / 1);
 	// const [imgDestination, setImageDestination] = useState('');
 	// const imageElement = useRef();
@@ -545,6 +546,8 @@ const UploadOrEditPost = ({
 			}}
 			preview={previewBool}
 			previewRef={previewRef}
+			orientationRef={orientationRef}
+			edit={isEdit}
 		>
 			<LoadingOverlay active={isLoadingCreatePost} spinner text='Loading...'>
 				<div
@@ -573,7 +576,10 @@ const UploadOrEditPost = ({
 									<h5>{heading1}</h5>
 									<div className={classes.orientationDimensionWrapper}>
 										<h6 className={classes.orientation}>Orientation</h6>
-										<div className={classes.dimensionWrapper}>
+										<div
+											ref={orientationRef}
+											className={classes.dimensionWrapper}
+										>
 											<div
 												className={classes.dimensionSingle}
 												onClick={squareCrop}
