@@ -472,6 +472,7 @@ const UploadOrEditMedia = ({
 			}}
 			preview={previewBool}
 			previewRef={previewRef}
+			media={true}
 		>
 			<LoadingOverlay active={isLoadingUploadMedia} spinner text='Loading...'>
 				<div

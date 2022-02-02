@@ -12,7 +12,10 @@ const Slider = ({
 	disableDropdown,
 	handlePreview,
 	preview,
-	previewRef
+	previewRef,
+	orientationRef,
+	edit,
+	media
 }) => {
 	const wrapperRef = useRef(null);
 
@@ -39,6 +42,25 @@ const Slider = ({
 				handleClose();
 			}
 			if (
+				!media &&
+				preview &&
+				previewRef.current &&
+				!previewRef.current.contains(event.target) &&
+				orientationRef.current &&
+				!orientationRef.current.contains(event.target)
+			) {
+				handlePreview();
+			}
+			if (
+				edit &&
+				preview &&
+				previewRef.current &&
+				!previewRef.current.contains(event.target)
+			) {
+				handlePreview();
+			}
+			if (
+				media &&
 				preview &&
 				previewRef.current &&
 				!previewRef.current.contains(event.target)
@@ -105,7 +127,13 @@ Slider.propTypes = {
 	previewRef: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
-	]).isRequired
+	]).isRequired,
+	orientationRef: PropTypes.oneOfType([
+		PropTypes.func,
+		PropTypes.shape({ current: PropTypes.elementType })
+	]).isRequired,
+	edit: PropTypes.bool.isRequired,
+	media: PropTypes.bool.isRequired
 };
 
 export default Slider;
