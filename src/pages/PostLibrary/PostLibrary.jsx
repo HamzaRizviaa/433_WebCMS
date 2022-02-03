@@ -22,7 +22,6 @@ import {
 	resetNoResultStatus,
 	getSpecificPost
 } from './postLibrarySlice';
-// import { getSpecificPost } from '../../components/posts/uploadOrEditPost/editButtonSlice';
 import moment from 'moment';
 import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
