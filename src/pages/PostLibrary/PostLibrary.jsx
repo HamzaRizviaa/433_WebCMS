@@ -19,9 +19,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
 	getPosts,
 	resetCalendarError,
-	resetNoResultStatus
+	resetNoResultStatus,
+	getSpecificPost
 } from './postLibrarySlice';
-import { getSpecificPost } from '../../components/posts/uploadOrEditPost/editButtonSlice';
+// import { getSpecificPost } from '../../components/posts/uploadOrEditPost/editButtonSlice';
 import moment from 'moment';
 import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';

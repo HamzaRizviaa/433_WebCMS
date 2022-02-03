@@ -47,11 +47,26 @@ export const getPostLabels = createAsyncThunk(
 	}
 );
 
+export const getSpecificPost = createAsyncThunk(
+	'editButton/getSpecificPost',
+	async (id) => {
+		const response = await axios.get(
+			`${process.env.REACT_APP_API_ENDPOINT}/post/edit/${id}`
+		);
+		if (response?.data?.data) {
+			return response.data.data;
+		} else {
+			return [];
+		}
+	}
+);
+
 export const postLibrarySlice = createSlice({
 	name: 'postLibrary',
 	initialState: {
 		labels: [],
 		posts: [],
+		specificPost: [],
 		openUploadPost: false,
 		totalRecords: 0,
 		noResultStatus: false,
@@ -89,6 +104,17 @@ export const postLibrarySlice = createSlice({
 		},
 		[getPostLabels.fulfilled]: (state, action) => {
 			state.labels = action.payload;
+		},
+
+		[getSpecificPost.pending]: (state) => {
+			state.status = 'loading';
+		},
+		[getSpecificPost.fulfilled]: (state, action) => {
+			state.specificPost = action.payload;
+			state.status = 'success';
+		},
+		[getSpecificPost.rejected]: (state) => {
+			state.status = 'failed';
 		}
 	}
 });
