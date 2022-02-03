@@ -1,13 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import postLibraryReducer from '../pages/PostLibrary/postLibrarySlice';
-import mediaDropdownReducer from '../components/posts/uploadOrEditPost/mediaDropdownSlice';
-import mediaLibraryReducer from '../components/media/uploadOrEditMedia/uploadOrEditMediaSlice';
+import mediaLibraryReducer from '../pages/MediaLibrary/mediaLibrarySlice';
 
 const store = configureStore({
 	reducer: {
 		postLibrary: postLibraryReducer,
-		mediaDropdown: mediaDropdownReducer,
-		mediaLibrary: mediaLibraryReducer
+		mediaLibraryOriginal: mediaLibraryReducer
 	}
 });
 

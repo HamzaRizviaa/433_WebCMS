@@ -11,8 +11,11 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { useDropzone } from 'react-dropzone';
 import { makeid } from '../../../utils/helper';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMainCategories, getMediaLabels } from './uploadOrEditMediaSlice';
-import { getMedia } from '../../posts/uploadOrEditPost/mediaDropdownSlice';
+import {
+	getMainCategories,
+	getMediaLabels
+} from './../../../pages/MediaLibrary/mediaLibrarySlice';
+import { getMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
 import ClearIcon from '@material-ui/icons/Clear';
 import Close from '@material-ui/icons/Close';
 import axios from 'axios';
@@ -76,13 +79,15 @@ const UploadOrEditMedia = ({
 		});
 	const dispatch = useDispatch();
 	const mainCategories = useSelector(
-		(state) => state.mediaLibrary.mainCategories
+		(state) => state.mediaLibraryOriginal.mainCategories
 	);
 	const specificMedia = useSelector(
-		(state) => state.mediaLibrary.specificMedia
+		(state) => state.mediaLibraryOriginal.specificMedia
 	);
-	const specificMediaStatus = useSelector((state) => state.mediaLibrary);
-	const labels = useSelector((state) => state.mediaLibrary.labels);
+	const specificMediaStatus = useSelector(
+		(state) => state.mediaLibraryOriginal
+	);
+	const labels = useSelector((state) => state.mediaLibraryOriginal.labels);
 	useEffect(() => {
 		if (labels.length) {
 			setMediaLabels([...labels]);

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+
+import PostLibraryService from './postLibraryService';
 
 export const getPosts = createAsyncThunk(
 	'postLibary/getPosts',
@@ -25,9 +26,7 @@ export const getPosts = createAsyncThunk(
 		if (startDate && endDate) {
 			endPoint += `&start_date=${startDate}&end_date=${endDate}`;
 		}
-		const result = await axios.get(
-			`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`
-		);
+		const result = await PostLibraryService.getPostsApi(endPoint);
 		//console.log(result.data.data);
 		return { ...result.data.data, fromCalendar };
 	}
@@ -36,9 +35,7 @@ export const getPosts = createAsyncThunk(
 export const getPostLabels = createAsyncThunk(
 	'postLibary/getPostLabels',
 	async () => {
-		const result = await axios.get(
-			`${process.env.REACT_APP_API_ENDPOINT}/label/all-labels`
-		);
+		const result = await PostLibraryService.getPostLabelsApi();
 		if (result?.data?.data?.length > 0) {
 			return result.data.data;
 		} else {
@@ -50,9 +47,7 @@ export const getPostLabels = createAsyncThunk(
 export const getSpecificPost = createAsyncThunk(
 	'editButton/getSpecificPost',
 	async (id) => {
-		const response = await axios.get(
-			`${process.env.REACT_APP_API_ENDPOINT}/post/edit/${id}`
-		);
+		const response = await PostLibraryService.getSpecificPostApi(id);
 		if (response?.data?.data) {
 			return response.data.data;
 		} else {

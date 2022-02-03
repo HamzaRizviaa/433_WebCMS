@@ -12,7 +12,10 @@ import { CircularProgress } from '@material-ui/core';
 import ToggleSwitch from '../../switch';
 import Button from '../../button';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMedia, getAllMedia } from './mediaDropdownSlice';
+import {
+	getMedia,
+	getAllMedia
+} from './../../../pages/MediaLibrary/mediaLibrarySlice';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
 import axios from 'axios';
@@ -104,7 +107,7 @@ const UploadOrEditPost = ({
 		});
 
 	//const media = useSelector((state) => state.mediaDropdown.media);
-	const allMedia = useSelector((state) => state.mediaDropdown.allMedia);
+	const allMedia = useSelector((state) => state.mediaLibraryOriginal.allMedia);
 	const labels = useSelector((state) => state.postLibrary.labels);
 	const specificPost = useSelector((state) => state.postLibrary.specificPost);
 	const specificPostStatus = useSelector((state) => state.postLibrary);

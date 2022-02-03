@@ -17,9 +17,10 @@ import {
 	getMedia,
 	resetCalendarError,
 	resetNoResultStatus
-} from '../../components/posts/uploadOrEditPost/mediaDropdownSlice';
+} from './mediaLibrarySlice';
 import UploadOrEditMedia from '../../components/media/uploadOrEditMedia';
-import { getSpecificMedia } from '../../components/media/uploadOrEditMedia/uploadOrEditMediaSlice';
+
+import { getSpecificMedia } from './mediaLibrarySlice';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 import TextField from '@material-ui/core/TextField';
@@ -101,13 +102,15 @@ const useStyles = makeStyles(() => ({
 
 const MediaLibrary = () => {
 	const muiClasses = useStyles();
-	const media = useSelector((state) => state.mediaDropdown.media);
-	const totalRecords = useSelector((state) => state.mediaDropdown.totalRecords);
+	const media = useSelector((state) => state.mediaLibraryOriginal.media);
+	const totalRecords = useSelector(
+		(state) => state.mediaLibraryOriginal.totalRecords
+	);
 	const noResultStatus = useSelector(
-		(state) => state.mediaDropdown.noResultStatus
+		(state) => state.mediaLibraryOriginal.noResultStatus
 	);
 	const noResultStatusCalendar = useSelector(
-		(state) => state.mediaDropdown.noResultStatusCalendar
+		(state) => state.mediaLibraryOriginal.noResultStatusCalendar
 	);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
