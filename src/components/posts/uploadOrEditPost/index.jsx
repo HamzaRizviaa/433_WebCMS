@@ -958,7 +958,10 @@ const UploadOrEditPost = ({
 									className={classes.textField}
 									InputProps={{
 										disableUnderline: true,
-										className: classes.textFieldInput
+										className: classes.textFieldInput,
+										style: {
+											borderRadius: caption ? '16px' : '40px'
+										}
 									}}
 									multiline
 									maxRows={4}
