@@ -4,17 +4,9 @@
 import React, { forwardRef, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-// import 'react-datepicker/dist/react-datepicker-cssmodules.css';
+import { Markup } from 'interweave';
 
-import { ReactComponent as Edit } from '../../assets/edit.svg';
-import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
-import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
-import Button from '../../components/button';
-import Layout from '../../components/layout';
-import Table from '../../components/table';
-import classes from './_postLibrary.module.scss';
+// Redux
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	getPosts,
@@ -22,89 +14,38 @@ import {
 	resetNoResultStatus,
 	getSpecificPost
 } from './postLibrarySlice';
-import moment from 'moment';
-import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
+
+// CSS / Material UI
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import { Markup } from 'interweave';
-
 import Pagination from '@mui/material/Pagination';
-import { makeStyles } from '@material-ui/core/styles';
+import classes from './_postLibrary.module.scss';
 import './_calender.scss';
 
-const getDateTime = (dateTime) => {
-	let formatted = new Date(dateTime);
-	return `${moment(formatted).format(
-		'DD-MM-YYYY'
-	)} | ${formatted.toLocaleTimeString('en-US', {
-		hour12: false,
-		hour: '2-digit',
-		minute: '2-digit'
-	})}`;
-};
+// Utils
+import { getDateTime, formatDate, getCalendarText } from '../../utils';
+import { useStyles } from './../../utils/styles';
 
-const useStyles = makeStyles(() => ({
-	root: {
-		'& .MuiPagination-ul': {
-			display: 'flex',
-			justifyContent: 'flex-end',
-			'& > li:first-child': {
-				'& button': {
-					borderRadius: '8px',
-					border: '1px solid #808080',
-					width: '32',
-					height: '32',
-					color: 'white'
-				}
-			},
-			'& > li:last-child': {
-				'& button': {
-					borderRadius: '8px',
-					border: '1px solid #808080',
-					width: '32',
-					height: '32',
-					color: 'white'
-				}
-			}
-		},
-		'& .Mui-selected': {
-			backgroundColor: 'transparent !important',
-			color: 'yellow',
-			border: '1px solid yellow',
-			borderRadius: '8px',
-			fontSize: '12px',
-			fontWeight: '700',
-			lineHeight: '16px',
-			letterSpacing: '0.03em'
-		},
-		'& ul > li:not(:first-child):not(:last-child) > button:not(.Mui-selected)':
-			{
-				background: 'transparent',
-				border: '1px solid #808080',
-				color: '#ffffff',
-				height: '32px',
-				width: '32px',
-				borderRadius: '8px',
-				fontSize: '12px',
-				fontWeight: '700',
-				lineHeight: '16px',
-				letterSpacing: '0.03em'
-			},
-		'& .MuiPaginationItem-ellipsis': {
-			color: '#ffffff',
-			fontSize: '12px',
-			fontWeight: '700',
-			lineHeight: '16px',
-			letterSpacing: '0.03em'
-		}
-	}
-}));
+// Components
+import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
+import Button from '../../components/button';
+import Layout from '../../components/layout';
+import Table from '../../components/table';
+
+// Icons
+import { ReactComponent as Edit } from '../../assets/edit.svg';
+import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
+import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 
 const PostLibrary = () => {
 	const muiClasses = useStyles();
+
+	// Selectors
 	const posts = useSelector((state) => state.postLibrary.posts);
 	const totalRecords = useSelector((state) => state.postLibrary.totalRecords);
 	const noResultStatus = useSelector(
@@ -114,6 +55,7 @@ const PostLibrary = () => {
 		(state) => state.postLibrary.noResultStatusCalendar
 	);
 
+	// State
 	const [page, setPage] = useState(1);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
@@ -127,40 +69,6 @@ const PostLibrary = () => {
 	const [noResultCalendarError, setNoResultCalendarError] = useState('');
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
-
-	const formatDate = (date) => {
-		if (date === null) return null;
-
-		let _date = new Date(date);
-		let dd = _date.getDate();
-		let mm = _date.getMonth() + 1;
-		let yyyy = _date.getFullYear();
-		if (dd < 10) {
-			dd = '0' + dd;
-		}
-		if (mm < 10) {
-			mm = '0' + mm;
-		}
-		return `${dd + '-' + mm + '-' + yyyy}`;
-	};
-
-	const getCalendarText = (startDate, endDate) => {
-		if (startDate && endDate) {
-			return <span>{`${startDate}   >   ${endDate}`}</span>;
-		} else {
-			if (startDate && endDate === null) {
-				return <span>{`${startDate}   >   End date`}</span>;
-			} else if (startDate === null && endDate) {
-				return <span>{`Start date   >   ${endDate}`}</span>;
-			} else {
-				return (
-					<span
-						style={{ color: '#808080' }}
-					>{`Start date   >   End date`}</span>
-				);
-			}
-		}
-	};
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
 		const startDate = formatDate(dateRange[0]);
@@ -213,6 +121,7 @@ const PostLibrary = () => {
 	const handleChange = (event, value) => {
 		setPage(value);
 	};
+	
 	const sortKeysMapping = {
 		file_name: 'media',
 		post_date: 'postdate',

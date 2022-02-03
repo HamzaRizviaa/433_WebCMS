@@ -2,106 +2,50 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
 import React, { forwardRef, useEffect, useState } from 'react';
-import { ReactComponent as Edit } from '../../assets/edit.svg';
-import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
-import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
-import Button from '../../components/button';
-import Layout from '../../components/layout';
-import Table from '../../components/table';
-import classes from './_mediaLibrary.module.scss';
-import moment from 'moment';
+import { Markup } from 'interweave';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
+// Redux
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	getMedia,
 	resetCalendarError,
 	resetNoResultStatus
 } from './mediaLibrarySlice';
-import UploadOrEditMedia from '../../components/media/uploadOrEditMedia';
 
 import { getSpecificMedia } from './mediaLibrarySlice';
+
+// Components
+import UploadOrEditMedia from '../../components/media/uploadOrEditMedia';
+import Button from '../../components/button';
+import Layout from '../../components/layout';
+import Table from '../../components/table';
+
+// CSS / Material UI
+import classes from './_mediaLibrary.module.scss';
+import Pagination from '@mui/material/Pagination';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import { Markup } from 'interweave';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import Pagination from '@mui/material/Pagination';
-import { makeStyles } from '@material-ui/core/styles';
 import '../PostLibrary/_calender.scss';
 
-const getDateTime = (dateTime) => {
-	let formatted = new Date(dateTime);
-	return `${moment(formatted).format(
-		'DD-MM-YYYY'
-	)} | ${formatted.toLocaleTimeString('en-US', {
-		hour12: false,
-		hour: '2-digit',
-		minute: '2-digit'
-	})}`;
-};
+// Utils
+import { getDateTime, formatDate, getCalendarText } from '../../utils';
+import { useStyles } from './../../utils/styles';
 
-const useStyles = makeStyles(() => ({
-	root: {
-		'& .MuiPagination-ul': {
-			display: 'flex',
-			justifyContent: 'flex-end',
-			'& > li:first-child': {
-				'& button': {
-					borderRadius: '8px',
-					border: '1px solid #808080',
-					width: '32',
-					height: '32',
-					color: 'white'
-				}
-			},
-			'& > li:last-child': {
-				'& button': {
-					borderRadius: '8px',
-					border: '1px solid #808080',
-					width: '32',
-					height: '32',
-					color: 'white'
-				}
-			}
-		},
-		'& .Mui-selected': {
-			backgroundColor: 'transparent !important',
-			color: 'yellow',
-			border: '1px solid yellow',
-			borderRadius: '8px',
-			fontSize: '12px',
-			fontWeight: '700',
-			lineHeight: '16px',
-			letterSpacing: '0.03em'
-		},
-		'& ul > li:not(:first-child):not(:last-child) > button:not(.Mui-selected)':
-			{
-				background: 'transparent',
-				border: '1px solid #808080',
-				color: '#ffffff',
-				height: '32px',
-				width: '32px',
-				borderRadius: '8px',
-				fontSize: '12px',
-				fontWeight: '700',
-				lineHeight: '16px',
-				letterSpacing: '0.03em'
-			},
-		'& .MuiPaginationItem-ellipsis': {
-			color: '#ffffff',
-			fontSize: '12px',
-			fontWeight: '700',
-			lineHeight: '16px',
-			letterSpacing: '0.03em'
-		}
-	}
-}));
+// Icons
+import { ReactComponent as Edit } from '../../assets/edit.svg';
+import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
+import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 
 const MediaLibrary = () => {
 	const muiClasses = useStyles();
+
+	// Selctor
 	const media = useSelector((state) => state.mediaLibraryOriginal.media);
 	const totalRecords = useSelector(
 		(state) => state.mediaLibraryOriginal.totalRecords
@@ -112,6 +56,8 @@ const MediaLibrary = () => {
 	const noResultStatusCalendar = useSelector(
 		(state) => state.mediaLibraryOriginal.noResultStatusCalendar
 	);
+
+	// State
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [page, setPage] = useState(1);
@@ -135,40 +81,6 @@ const MediaLibrary = () => {
 		user: 'user',
 		last_edit: 'lastedit',
 		type: 'type'
-	};
-
-	const formatDate = (date) => {
-		if (date === null) return null;
-
-		let _date = new Date(date);
-		let dd = _date.getDate();
-		let mm = _date.getMonth() + 1;
-		let yyyy = _date.getFullYear();
-		if (dd < 10) {
-			dd = '0' + dd;
-		}
-		if (mm < 10) {
-			mm = '0' + mm;
-		}
-		return `${dd + '-' + mm + '-' + yyyy}`;
-	};
-
-	const getCalendarText = (startDate, endDate) => {
-		if (startDate && endDate) {
-			return <span>{`${startDate}   >   ${endDate}`}</span>;
-		} else {
-			if (startDate && endDate === null) {
-				return <span>{`${startDate}   >   End date`}</span>;
-			} else if (startDate === null && endDate) {
-				return <span>{`Start date   >   ${endDate}`}</span>;
-			} else {
-				return (
-					<span
-						style={{ color: '#808080' }}
-					>{`Start date   >   End date`}</span>
-				);
-			}
-		}
 	};
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
