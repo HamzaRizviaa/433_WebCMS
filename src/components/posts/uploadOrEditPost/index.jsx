@@ -12,7 +12,10 @@ import { CircularProgress } from '@material-ui/core';
 import ToggleSwitch from '../../switch';
 import Button from '../../button';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMedia, getAllMedia } from './mediaDropdownSlice';
+import {
+	getMedia,
+	getAllMedia
+} from './../../../pages/MediaLibrary/mediaLibrarySlice';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
 import axios from 'axios';
@@ -76,6 +79,7 @@ const UploadOrEditPost = ({
 	const [dropdownPosition, setDropdownPosition] = useState(false);
 	const labelsInputRef = useRef(null);
 	const previewRef = useRef(null);
+	const orientationRef = useRef(null);
 	// const [aspect, setAspect] = useState(1 / 1);
 	// const [imgDestination, setImageDestination] = useState('');
 	// const imageElement = useRef();
@@ -102,10 +106,10 @@ const UploadOrEditPost = ({
 		});
 
 	//const media = useSelector((state) => state.mediaDropdown.media);
-	const allMedia = useSelector((state) => state.mediaDropdown.allMedia);
+	const allMedia = useSelector((state) => state.mediaLibraryOriginal.allMedia);
 	const labels = useSelector((state) => state.postLibrary.labels);
-	const specificPost = useSelector((state) => state.editButton.specificPost);
-	const specificPostStatus = useSelector((state) => state.editButton);
+	const specificPost = useSelector((state) => state.postLibrary.specificPost);
+	const specificPostStatus = useSelector((state) => state.postLibrary);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -544,6 +548,8 @@ const UploadOrEditPost = ({
 			}}
 			preview={previewBool}
 			previewRef={previewRef}
+			orientationRef={orientationRef}
+			edit={isEdit}
 		>
 			<LoadingOverlay active={isLoadingCreatePost} spinner text='Loading...'>
 				<div
@@ -572,7 +578,10 @@ const UploadOrEditPost = ({
 									<h5>{heading1}</h5>
 									<div className={classes.orientationDimensionWrapper}>
 										<h6 className={classes.orientation}>Orientation</h6>
-										<div className={classes.dimensionWrapper}>
+										<div
+											ref={orientationRef}
+											className={classes.dimensionWrapper}
+										>
 											<div
 												className={classes.dimensionSingle}
 												onClick={squareCrop}
@@ -797,7 +806,8 @@ const UploadOrEditPost = ({
 								<Autocomplete
 									disabled={isEdit}
 									style={{
-										maxWidth: `${inputWidth}px`
+										maxWidth: `530px`
+										// minWidth: `${inputWidth}px`
 									}}
 									getOptionLabel={(option) => option.name}
 									PaperComponent={(props) => {
@@ -947,7 +957,10 @@ const UploadOrEditPost = ({
 									className={classes.textField}
 									InputProps={{
 										disableUnderline: true,
-										className: classes.textFieldInput
+										className: classes.textFieldInput,
+										style: {
+											borderRadius: caption ? '16px' : '40px'
+										}
 									}}
 									multiline
 									maxRows={4}

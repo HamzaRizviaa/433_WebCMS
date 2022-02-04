@@ -1,106 +1,127 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
+import React, { forwardRef, useEffect, useState } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { Markup } from 'interweave';
 
-import { ReactComponent as Edit } from '../../assets/edit.svg';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
-import Button from '../../components/button';
-import Layout from '../../components/layout';
-import Table from '../../components/table';
-import classes from './_postLibrary.module.scss';
+// Redux
 import { useDispatch, useSelector } from 'react-redux';
-import { getPosts } from './postLibrarySlice';
-import { getSpecificPost } from '../../components/posts/uploadOrEditPost/editButtonSlice';
-import moment from 'moment';
-import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
+import {
+	getPosts,
+	resetCalendarError,
+	resetNoResultStatus,
+	getSpecificPost
+} from './postLibrarySlice';
+
+// CSS / Material UI
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
-
+import TextField from '@material-ui/core/TextField';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import Pagination from '@mui/material/Pagination';
-import { makeStyles } from '@material-ui/core/styles';
+import classes from './_postLibrary.module.scss';
+import './_calender.scss';
 
-const getDateTime = (dateTime) => {
-	let formatted = new Date(dateTime);
-	return `${moment(formatted).format(
-		'DD-MM-YYYY'
-	)} | ${formatted.toLocaleTimeString('en-US', {
-		hour12: false,
-		hour: '2-digit',
-		minute: '2-digit'
-	})}`;
-};
+// Utils
+import { getDateTime, formatDate, getCalendarText } from '../../utils';
+import { useStyles } from './../../utils/styles';
 
-const useStyles = makeStyles(() => ({
-	root: {
-		'& .MuiPagination-ul': {
-			display: 'flex',
-			justifyContent: 'flex-end',
-			'& > li:first-child': {
-				'& button': {
-					borderRadius: '8px',
-					border: '1px solid #808080',
-					width: '32',
-					height: '32',
-					color: 'white'
-				}
-			},
-			'& > li:last-child': {
-				'& button': {
-					borderRadius: '8px',
-					border: '1px solid #808080',
-					width: '32',
-					height: '32',
-					color: 'white'
-				}
-			}
-		},
-		'& .Mui-selected': {
-			backgroundColor: 'transparent !important',
-			color: 'yellow',
-			border: '1px solid yellow',
-			borderRadius: '8px',
-			fontSize: '12px',
-			fontWeight: '700',
-			lineHeight: '16px',
-			letterSpacing: '0.03em'
-		},
-		'& ul > li:not(:first-child):not(:last-child) > button:not(.Mui-selected)':
-			{
-				background: 'transparent',
-				border: '1px solid #808080',
-				color: '#ffffff',
-				height: '32px',
-				width: '32px',
-				borderRadius: '8px',
-				fontSize: '12px',
-				fontWeight: '700',
-				lineHeight: '16px',
-				letterSpacing: '0.03em'
-			},
-		'& .MuiPaginationItem-ellipsis': {
-			color: '#ffffff',
-			fontSize: '12px',
-			fontWeight: '700',
-			lineHeight: '16px',
-			letterSpacing: '0.03em'
-		}
-	}
-}));
+// Components
+import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
+import Button from '../../components/button';
+import Layout from '../../components/layout';
+import Table from '../../components/table';
+
+// Icons
+import { ReactComponent as Edit } from '../../assets/edit.svg';
+import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
+import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 
 const PostLibrary = () => {
 	const muiClasses = useStyles();
+
+	// Selectors
 	const posts = useSelector((state) => state.postLibrary.posts);
 	const totalRecords = useSelector((state) => state.postLibrary.totalRecords);
+	const noResultStatus = useSelector(
+		(state) => state.postLibrary.noResultStatus
+	);
+	const noResultStatusCalendar = useSelector(
+		(state) => state.postLibrary.noResultStatusCalendar
+	);
+
+	// State
 	const [page, setPage] = useState(1);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [paginationError, setPaginationError] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
+	const [search, setSearch] = useState('');
+	const [noResultBorder, setNoResultBorder] = useState('#404040');
+	const [noResultError, setNoResultError] = useState('');
+	const [noResultCalendarBorder, setNoResultCalendarBorder] =
+		useState('#404040');
+	const [noResultCalendarError, setNoResultCalendarError] = useState('');
+	const [dateRange, setDateRange] = useState([null, null]);
+	const [startDate, endDate] = dateRange;
+
+	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
+		const startDate = formatDate(dateRange[0]);
+		const endDate = formatDate(dateRange[1]);
+		return (
+			<div
+				className={classes.customDateInput}
+				onClick={onClick}
+				ref={ref}
+				style={{ borderColor: noResultCalendarBorder }}
+			>
+				{getCalendarText(startDate, endDate)}
+				<span
+					style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+				>
+					<Calendar
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							if (startDate && endDate) {
+								dispatch(
+									getPosts({
+										q: search,
+										page,
+										startDate,
+										endDate,
+										fromCalendar: true,
+										...sortState
+									})
+								);
+							} else {
+								dispatch(
+									getPosts({
+										q: search,
+										page,
+										fromCalendar: true,
+										...sortState
+									})
+								);
+							}
+						}}
+					/>
+				</span>
+			</div>
+		);
+	});
+
 	const dispatch = useDispatch();
 
 	const handleChange = (event, value) => {
 		setPage(value);
 	};
+	
 	const sortKeysMapping = {
 		file_name: 'media',
 		post_date: 'postdate',
@@ -110,14 +131,86 @@ const PostLibrary = () => {
 	};
 
 	useEffect(() => {
-		if (sortState.sortby && sortState.order_type) {
-			dispatch(getPosts({ page, ...sortState }));
+		if (sortState.sortby && sortState.order_type && !search) {
+			dispatch(
+				getPosts({
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
+		if (sortState.sortby && sortState.order_type && search) {
+			dispatch(
+				getPosts({
+					q: search,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					page,
+					...sortState
+				})
+			);
 		}
 	}, [sortState]);
 
 	useEffect(() => {
-		dispatch(getPosts({ page, ...sortState }));
+		if (search) {
+			dispatch(
+				getPosts({
+					q: search,
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		} else {
+			dispatch(
+				getPosts({
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
 	}, [page]);
+
+	useEffect(() => {
+		if (noResultStatus) {
+			setNoResultBorder('#FF355A');
+			setNoResultError('No Results Found');
+			setTimeout(() => {
+				dispatch(resetNoResultStatus());
+				setNoResultBorder('#404040');
+				setNoResultError('');
+			}, [5000]);
+		}
+	}, [noResultStatus]);
+
+	useEffect(() => {
+		if (noResultStatusCalendar) {
+			setNoResultCalendarBorder('#FF355A');
+			setNoResultCalendarError('No Results Found');
+			setTimeout(() => {
+				dispatch(resetCalendarError());
+				setNoResultCalendarBorder('#404040');
+				setNoResultCalendarError('');
+			}, [5000]);
+		}
+	}, [noResultStatusCalendar]);
+
+	useEffect(() => {
+		return () => {
+			setNoResultBorder('#404040');
+			setNoResultError('');
+			setNoResultCalendarBorder('#404040');
+			setNoResultCalendarError('');
+			dispatch(resetCalendarError());
+			dispatch(resetNoResultStatus());
+		};
+	}, []);
 
 	const sortRows = (order, col) => {
 		if (order && col.dataField) {
@@ -228,16 +321,29 @@ const PostLibrary = () => {
 						<Tooltip
 							TransitionComponent={Fade}
 							TransitionProps={{ timeout: 600 }}
-							title={row?.file_name.length > 13 ? row?.file_name : ''}
+							title={
+								<Markup
+									content={row?.file_name?.length > 13 ? row?.file_name : ''}
+								/>
+							}
 							arrow
 							componentsProps={{
 								tooltip: { className: classes.toolTip },
 								arrow: { className: classes.toolTipArrow }
 							}}
 						>
-							<span className={classes.fileName}>
+							{/* <span className={classes.fileName}>
 								{row?.file_name?.substring(0, 13) +
 									`${row?.file_name?.length > 13 ? '...' : ''}`}
+							</span> */}
+							<span>
+								<Markup
+									className={classes.fileName}
+									content={`${
+										row?.file_name?.substring(0, 13) +
+										`${row?.file_name?.length > 13 ? '...' : ''}`
+									}`}
+								/>
 							</span>
 						</Tooltip>
 					</div>
@@ -259,10 +365,15 @@ const PostLibrary = () => {
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
-			text: 'LABEL',
+			text: 'LABELS',
 			formatter: (content) => {
+				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
 				return (
-					<div className={classes.row}>{content[0] + `, ` + content[1]}</div>
+					//<div className={classes.row}>{content[0] + `, ` + content[1]}</div>
+					<Markup
+						className={classes.row}
+						content={`${content[0]} ${secondLabel}`}
+					/>
 				);
 			}
 		},
@@ -273,7 +384,10 @@ const PostLibrary = () => {
 			sortFunc: () => {},
 			text: 'USER',
 			formatter: (content) => {
-				return <div className={classes.row}>{content}</div>;
+				return (
+					//<div className={classes.row}>{content}</div>
+					<Markup className={classes.row} content={`${content}`} />
+				);
 			}
 		},
 		{
@@ -319,18 +433,104 @@ const PostLibrary = () => {
 			// }
 		}
 	};
-
 	return (
 		<Layout>
 			<div className={classes.header}>
-				<h1 style={{ marginRight: '2rem' }}>POST LIBRARY</h1>
-				<Button
-					onClick={() => {
-						setEdit(false);
-						setShowSlider(true);
-					}}
-					text={'UPLOAD POST'}
-				/>
+				<div className={classes.subheader1}>
+					<h1 style={{ marginRight: '2rem' }}>POST LIBRARY</h1>
+					<Button
+						onClick={() => {
+							setEdit(false);
+							setShowSlider(true);
+						}}
+						text={'UPLOAD POST'}
+					/>
+				</div>
+				<div className={classes.subheader2}>
+					<div>
+						<TextField
+							className={classes.searchField}
+							value={search}
+							onKeyPress={(e) => {
+								if (e.key === 'Enter' && search) {
+									dispatch(
+										getPosts({
+											q: search,
+											page,
+											startDate: formatDate(dateRange[0]),
+											endDate: formatDate(dateRange[1]),
+											...sortState
+										})
+									);
+								} else if (e.key === 'Enter' && !search) {
+									dispatch(
+										getPosts({
+											page,
+											startDate: formatDate(dateRange[0]),
+											endDate: formatDate(dateRange[1]),
+											...sortState
+										})
+									);
+								}
+							}}
+							onChange={(e) => {
+								setSearch(e.target.value);
+								//setIsSearch(true);
+							}}
+							placeholder={'Search post, user, label'}
+							InputProps={{
+								disableUnderline: true,
+								className: classes.textFieldInput,
+								style: { borderColor: noResultBorder },
+								endAdornment: (
+									<InputAdornment>
+										<Search
+											onClick={() => {
+												if (search) {
+													dispatch(
+														getPosts({
+															q: search,
+															page,
+															startDate: formatDate(dateRange[0]),
+															endDate: formatDate(dateRange[1]),
+															...sortState
+														})
+													);
+												} else {
+													dispatch(
+														getPosts({
+															page,
+															startDate: formatDate(dateRange[0]),
+															endDate: formatDate(dateRange[1]),
+															...sortState
+														})
+													);
+												}
+											}}
+											className={classes.searchIcon}
+										/>
+									</InputAdornment>
+								)
+							}}
+						/>
+						<p className={classes.noResultError}>{noResultError}</p>
+					</div>
+					<div className={classes.calendarWrapper}>
+						<DatePicker
+							customInput={<ExampleCustomInput />}
+							selectsRange={true}
+							startDate={startDate}
+							endDate={endDate}
+							maxDate={new Date()}
+							onChange={(update) => {
+								setDateRange(update);
+							}}
+							placement='center'
+							isClearable={true}
+						/>
+						<p className={classes.noResultError}>{noResultCalendarError}</p>
+					</div>
+				</div>
 			</div>
 			<div className={classes.tableContainer}>
 				<Table rowEvents={tableRowEvents} columns={columns} data={posts} />

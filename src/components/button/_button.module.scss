@@ -15,7 +15,6 @@
 	cursor: pointer;
 	white-space: nowrap;
 	@include preventSelect;
-	
 }
 
 .disabled {
@@ -29,4 +28,16 @@
 	color: $white-color;
 	margin: 0rem 1rem 0rem 0rem;
 	padding: 1rem 1rem;
+}
+.activebtn {
+	background-color: $light-green;
+	color: $white-color;
+	padding: 0.5rem 1rem;
+	border-radius: 24px;
+}
+.closedbtn {
+	background-color: $red;
+	color: $white-color;
+	padding: 0.5rem 1rem;
+	border-radius: 24px;
 }

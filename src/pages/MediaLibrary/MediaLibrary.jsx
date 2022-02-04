@@ -1,98 +1,77 @@
-import React, { useEffect, useState } from 'react';
-import { ReactComponent as Edit } from '../../assets/edit.svg';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/display-name */
+/* eslint-disable react/prop-types */
+import React, { forwardRef, useEffect, useState } from 'react';
+import { Markup } from 'interweave';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
+// Redux
+import { useDispatch, useSelector } from 'react-redux';
+import {
+	getMedia,
+	resetCalendarError,
+	resetNoResultStatus
+} from './mediaLibrarySlice';
+
+import { getSpecificMedia } from './mediaLibrarySlice';
+
+// Components
+import UploadOrEditMedia from '../../components/media/uploadOrEditMedia';
 import Button from '../../components/button';
 import Layout from '../../components/layout';
 import Table from '../../components/table';
+
+// CSS / Material UI
 import classes from './_mediaLibrary.module.scss';
-import moment from 'moment';
-import { useDispatch, useSelector } from 'react-redux';
-import { getMedia } from '../../components/posts/uploadOrEditPost/mediaDropdownSlice';
-import UploadOrEditMedia from '../../components/media/uploadOrEditMedia';
-import { getSpecificMedia } from '../../components/media/uploadOrEditMedia/uploadOrEditMediaSlice';
+import Pagination from '@mui/material/Pagination';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
-import Pagination from '@mui/material/Pagination';
-import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import '../PostLibrary/_calender.scss';
 
-const getDateTime = (dateTime) => {
-	let formatted = new Date(dateTime);
-	return `${moment(formatted).format(
-		'DD-MM-YYYY'
-	)} | ${formatted.toLocaleTimeString('en-US', {
-		hour12: false,
-		hour: '2-digit',
-		minute: '2-digit'
-	})}`;
-};
+// Utils
+import { getDateTime, formatDate, getCalendarText } from '../../utils';
+import { useStyles } from './../../utils/styles';
 
-const useStyles = makeStyles(() => ({
-	root: {
-		'& .MuiPagination-ul': {
-			display: 'flex',
-			justifyContent: 'flex-end',
-			'& > li:first-child': {
-				'& button': {
-					borderRadius: '8px',
-					border: '1px solid #808080',
-					width: '32',
-					height: '32',
-					color: 'white'
-				}
-			},
-			'& > li:last-child': {
-				'& button': {
-					borderRadius: '8px',
-					border: '1px solid #808080',
-					width: '32',
-					height: '32',
-					color: 'white'
-				}
-			}
-		},
-		'& .Mui-selected': {
-			backgroundColor: 'transparent !important',
-			color: 'yellow',
-			border: '1px solid yellow',
-			borderRadius: '8px',
-			fontSize: '12px',
-			fontWeight: '700',
-			lineHeight: '16px',
-			letterSpacing: '0.03em'
-		},
-		'& ul > li:not(:first-child):not(:last-child) > button:not(.Mui-selected)':
-			{
-				background: 'transparent',
-				border: '1px solid #808080',
-				color: '#ffffff',
-				height: '32px',
-				width: '32px',
-				borderRadius: '8px',
-				fontSize: '12px',
-				fontWeight: '700',
-				lineHeight: '16px',
-				letterSpacing: '0.03em'
-			},
-		'& .MuiPaginationItem-ellipsis': {
-			color: '#ffffff',
-			fontSize: '12px',
-			fontWeight: '700',
-			lineHeight: '16px',
-			letterSpacing: '0.03em'
-		}
-	}
-}));
+// Icons
+import { ReactComponent as Edit } from '../../assets/edit.svg';
+import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
+import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 
 const MediaLibrary = () => {
 	const muiClasses = useStyles();
-	const media = useSelector((state) => state.mediaDropdown.media);
-	const totalRecords = useSelector((state) => state.mediaDropdown.totalRecords);
+
+	// Selctor
+	const media = useSelector((state) => state.mediaLibraryOriginal.media);
+	const totalRecords = useSelector(
+		(state) => state.mediaLibraryOriginal.totalRecords
+	);
+	const noResultStatus = useSelector(
+		(state) => state.mediaLibraryOriginal.noResultStatus
+	);
+	const noResultStatusCalendar = useSelector(
+		(state) => state.mediaLibraryOriginal.noResultStatusCalendar
+	);
+
+	// State
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [page, setPage] = useState(1);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [paginationError, setPaginationError] = useState(false);
+	const [search, setSearch] = useState('');
+	const [noResultBorder, setNoResultBorder] = useState('#404040');
+	const [noResultError, setNoResultError] = useState('');
+	const [noResultCalendarBorder, setNoResultCalendarBorder] =
+		useState('#404040');
+	const [noResultCalendarError, setNoResultCalendarError] = useState('');
+	const [dateRange, setDateRange] = useState([null, null]);
+	const [startDate, endDate] = dateRange;
+
 	const dispatch = useDispatch();
 	const sortKeysMapping = {
 		title: 'title',
@@ -104,19 +83,137 @@ const MediaLibrary = () => {
 		type: 'type'
 	};
 
+	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
+		const startDate = formatDate(dateRange[0]);
+		const endDate = formatDate(dateRange[1]);
+		return (
+			<div
+				className={classes.customDateInput}
+				onClick={onClick}
+				ref={ref}
+				style={{ borderColor: noResultCalendarBorder }}
+			>
+				{getCalendarText(startDate, endDate)}
+				<span
+					style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+				>
+					<Calendar
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							if (startDate && endDate) {
+								dispatch(
+									getMedia({
+										q: search,
+										page,
+										startDate,
+										endDate,
+										fromCalendar: true,
+										...sortState
+									})
+								);
+							} else {
+								dispatch(
+									getMedia({
+										q: search,
+										page,
+										fromCalendar: true,
+										...sortState
+									})
+								);
+							}
+						}}
+					/>
+				</span>
+			</div>
+		);
+	});
+
 	const handleChange = (event, value) => {
 		setPage(value);
 	};
 
 	useEffect(() => {
-		if (sortState.sortby && sortState.order_type) {
-			dispatch(getMedia({ page, ...sortState }));
+		if (sortState.sortby && sortState.order_type && !search) {
+			dispatch(
+				getMedia({
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
+		if (sortState.sortby && sortState.order_type && search) {
+			dispatch(
+				getMedia({
+					q: search,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					page,
+					...sortState
+				})
+			);
 		}
 	}, [sortState]);
 
 	useEffect(() => {
-		dispatch(getMedia({ page, ...sortState }));
+		if (search) {
+			dispatch(
+				getMedia({
+					q: search,
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		} else {
+			dispatch(
+				getMedia({
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
 	}, [page]);
+
+	useEffect(() => {
+		if (noResultStatus) {
+			setNoResultBorder('#FF355A');
+			setNoResultError('No Results Found');
+			setTimeout(() => {
+				dispatch(resetNoResultStatus());
+				setNoResultBorder('#404040');
+				setNoResultError('');
+			}, [5000]);
+		}
+	}, [noResultStatus]);
+
+	useEffect(() => {
+		if (noResultStatusCalendar) {
+			setNoResultCalendarBorder('#FF355A');
+			setNoResultCalendarError('No Results Found');
+			setTimeout(() => {
+				dispatch(resetCalendarError());
+				setNoResultCalendarBorder('#404040');
+				setNoResultCalendarError('');
+			}, [5000]);
+		}
+	}, [noResultStatusCalendar]);
+
+	useEffect(() => {
+		return () => {
+			setNoResultBorder('#404040');
+			setNoResultError('');
+			setNoResultCalendarBorder('#404040');
+			setNoResultCalendarError('');
+			dispatch(resetCalendarError());
+			dispatch(resetNoResultStatus());
+		};
+	}, []);
 
 	const sortRows = (order, col) => {
 		if (order && col.dataField) {
@@ -183,7 +280,11 @@ const MediaLibrary = () => {
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			formatter: (content) => {
-				return <div className={classes.row}>{content}</div>;
+				return (
+					<div className={classes.row}>
+						<Markup content={`${content} `} />
+					</div>
+				);
 			}
 		},
 		{
@@ -220,17 +321,30 @@ const MediaLibrary = () => {
 						<Tooltip
 							TransitionComponent={Fade}
 							TransitionProps={{ timeout: 600 }}
-							title={row?.file_name?.length > 13 ? row?.file_name : ''}
+							title={
+								<Markup
+									content={row?.file_name?.length > 13 ? row?.file_name : ''}
+								/>
+							}
 							arrow
 							componentsProps={{
 								tooltip: { className: classes.toolTip },
 								arrow: { className: classes.toolTipArrow }
 							}}
 						>
-							<span className={classes.fileName}>
+							{/* <span className={classes.fileName}>
 								{row?.file_name?.substring(0, 13) +
 									`${row?.file_name?.length > 13 ? '...' : ''}`}
-							</span>
+							</span> */}
+							<div>
+								<Markup
+									className={classes.fileName}
+									content={`${
+										row?.file_name?.substring(0, 13) +
+										`${row?.file_name?.length > 13 ? '...' : ''}`
+									}`}
+								/>
+							</div>
 						</Tooltip>
 					</div>
 				);
@@ -254,11 +368,15 @@ const MediaLibrary = () => {
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
-			text: 'LABEL',
+			text: 'LABELS',
 			formatter: (content) => {
+				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
 				return (
+					// <div className={classes.rowType}>
+					// 	{content[0] + `, ` + content[1]}
+					// </div>
 					<div className={classes.rowType}>
-						{content[0] + `, ` + content[1]}
+						<Markup content={`${content[0]} ${secondLabel}`} />
 					</div>
 				);
 			},
@@ -273,7 +391,11 @@ const MediaLibrary = () => {
 			sortFunc: () => {},
 			text: 'TYPE',
 			formatter: (content) => {
-				return <div className={classes.rowType}>{content}</div>;
+				return (
+					<div className={classes.rowType}>
+						<Markup content={`${content} `} />
+					</div>
+				);
 			},
 			headerStyle: () => {
 				return { paddingLeft: '48px' };
@@ -287,7 +409,10 @@ const MediaLibrary = () => {
 			sortFunc: () => {},
 			text: 'USER',
 			formatter: (content) => {
-				return <div className={classes.row}>{content}</div>;
+				return (
+					// <div className={classes.row}>{content}</div>
+					<Markup className={classes.row} content={`${content}`} />
+				);
 			}
 		},
 		{
@@ -316,14 +441,7 @@ const MediaLibrary = () => {
 								arrow: { className: classes.toolTipArrow }
 							}}
 						>
-							<Edit
-								// onClick={() => {
-								// 	setShowSlider(true);
-								// 	setEdit(true);
-								// 	dispatch(getSpecificMedia(row.id));
-								// }}
-								className={classes.editIcon}
-							/>
+							<Edit className={classes.editIcon} />
 						</Tooltip>
 					</div>
 				);
@@ -342,14 +460,98 @@ const MediaLibrary = () => {
 	return (
 		<Layout>
 			<div className={classes.header}>
-				<h1 style={{ marginRight: '2rem' }}>MEDIA LIBRARY</h1>
-				<Button
-					onClick={() => {
-						setEdit(false);
-						setShowSlider(true);
-					}}
-					text={'UPLOAD MEDIA'}
-				/>
+				<div className={classes.subheader1}>
+					<h1 style={{ marginRight: '2rem' }}>MEDIA LIBRARY</h1>
+					<Button
+						onClick={() => {
+							setEdit(false);
+							setShowSlider(true);
+						}}
+						text={'UPLOAD MEDIA'}
+					/>
+				</div>
+				<div className={classes.subheader2}>
+					<div>
+						<TextField
+							className={classes.searchField}
+							value={search}
+							onKeyPress={(e) => {
+								if (e.key === 'Enter' && search) {
+									dispatch(
+										getMedia({
+											q: search,
+											page,
+											startDate: formatDate(dateRange[0]),
+											endDate: formatDate(dateRange[1]),
+											...sortState
+										})
+									);
+								} else if (e.key === 'Enter' && !search) {
+									dispatch(
+										getMedia({
+											page,
+											startDate: formatDate(dateRange[0]),
+											endDate: formatDate(dateRange[1]),
+											...sortState
+										})
+									);
+								}
+							}}
+							onChange={(e) => setSearch(e.target.value)}
+							placeholder={'Search post, user, label'}
+							InputProps={{
+								disableUnderline: true,
+								className: classes.textFieldInput,
+								style: { borderColor: noResultBorder },
+								endAdornment: (
+									<InputAdornment>
+										<Search
+											onClick={() => {
+												if (search) {
+													dispatch(
+														getMedia({
+															q: search,
+															page,
+															startDate: formatDate(dateRange[0]),
+															endDate: formatDate(dateRange[1]),
+															...sortState
+														})
+													);
+												} else {
+													dispatch(
+														getMedia({
+															page,
+															startDate: formatDate(dateRange[0]),
+															endDate: formatDate(dateRange[1]),
+															...sortState
+														})
+													);
+												}
+											}}
+											className={classes.searchIcon}
+										/>
+									</InputAdornment>
+								)
+							}}
+						/>
+						<p className={classes.noResultError}>{noResultError}</p>
+					</div>
+					<div className={classes.calendarWrapper}>
+						<DatePicker
+							customInput={<ExampleCustomInput />}
+							selectsRange={true}
+							startDate={startDate}
+							endDate={endDate}
+							maxDate={new Date()}
+							onChange={(update) => {
+								setDateRange(update);
+							}}
+							placement='center'
+							isClearable={true}
+						/>
+						<p className={classes.noResultError}>{noResultCalendarError}</p>
+					</div>
+				</div>
 			</div>
 			<div className={classes.tableContainer}>
 				<Table rowEvents={tableRowEvents} columns={columns} data={media} />
