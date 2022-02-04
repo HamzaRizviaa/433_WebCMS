@@ -32,9 +32,12 @@
 .activebtn {
 	background-color: $light-green;
 	color: $white-color;
+	padding: 0.5rem 1rem;
+	border-radius: 24px;
 }
 .closedbtn {
 	background-color: $red;
 	color: $white-color;
+	padding: 0.5rem 1rem;
 	border-radius: 24px;
 }
