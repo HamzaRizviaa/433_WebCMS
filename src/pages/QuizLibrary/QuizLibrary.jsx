@@ -215,7 +215,7 @@ const QuizLibrary = () => {
 			user: 'Lorem Ipsum'
 		},
 		{
-			question: 'Lorem Ipsum dolor?',
+			question: 'Que Pasa Harmano?',
 			post_date: '2021-11-25T17:00:08.000Z',
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
@@ -275,7 +275,6 @@ const QuizLibrary = () => {
 							setShowSlider(true);
 						}}
 						text={'UPLOAD QUIZ'}
-						
 					/>
 				</div>
 			</div>
