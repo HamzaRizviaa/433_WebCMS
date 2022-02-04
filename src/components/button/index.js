@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classes from './_button.module.scss';
 
-const Button = ({ text, onClick, disabled, button2, style = {} }) => {
+const Button = ({ text, onClick, disabled, button2, style = {}, active }) => {
 	return (
 		<span
 			onClick={() => {
@@ -11,7 +11,9 @@ const Button = ({ text, onClick, disabled, button2, style = {} }) => {
 			style={style}
 			className={`${classes.button}  ${disabled ? classes.disabled : ''} ${
 				button2 ? classes.button2 : ''
-			}`}
+			} ${active === true && classes.activebtn} ${
+				active === false && classes.closedbtn
+			} `}
 		>
 			{text}
 		</span>
@@ -23,7 +25,8 @@ Button.propTypes = {
 	onClick: PropTypes.func.isRequired,
 	disabled: PropTypes.bool,
 	button2: PropTypes.bool,
-	style: PropTypes.object
+	style: PropTypes.object,
+	active: PropTypes.bool
 };
 
 export default Button;
