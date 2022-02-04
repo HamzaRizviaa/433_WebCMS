@@ -14,3 +14,50 @@
 	display: flex;
 	justify-content: flex-start;
 }
+
+.sortIcon {
+	position: absolute;
+	left: -4px;
+	bottom: -2px;
+	height: 2rem !important;
+	width: 2rem !important;
+}
+
+.sortIconSelected {
+	position: absolute;
+	left: -4px;
+	bottom: -2px;
+	height: 2rem !important;
+	width: 2rem !important;
+	color: $neon-yellow;
+}
+
+.row {
+	margin-bottom: 1.5rem;
+	font-size: 1.2rem;
+}
+
+.rowType {
+	margin-bottom: 1.5rem;
+	font-size: 1.2rem;
+	padding-left: 35px;
+}
+
+.editIcon {
+	width: 2.5rem;
+	height: auto;
+	cursor: pointer;
+}
+
+.toolTip {
+	background-color: $black-color !important;
+	font-family: Poppins !important;
+	font-size: 12px !important;
+	line-height: 16px !important;
+	border-radius: 8px !important;
+	max-width: none !important;
+}
+
+.toolTipArrow {
+	color: $black-color !important;
+}
