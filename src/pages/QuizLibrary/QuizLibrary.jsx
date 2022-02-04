@@ -144,10 +144,17 @@ const QuizLibrary = () => {
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			text: 'STATUS',
-			formatter: () => {
+			formatter: (content) => {
 				return (
-					<div className={classes.rowType}>
-						<Edit className={classes.editIcon} />
+					<div className={`${classes.active_closed_btn}`}>
+						<Button
+						onClick={() => {
+							
+						}}
+						text={content=="active"?'ACTIVE':'CLOSED'}
+						active={content=="active"?true:false}
+					/>
+						{/* <Edit className={classes.editIcon} /> */}
 					</div>
 				);
 			},
@@ -212,6 +219,7 @@ const QuizLibrary = () => {
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
 			participants: 123,
+			status:'closed',
 			user: 'Lorem Ipsum'
 		},
 		{
@@ -220,6 +228,7 @@ const QuizLibrary = () => {
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
 			participants: 123,
+			status:'active',
 			user: 'Lorem Ipsum'
 		},
 		{
@@ -228,6 +237,7 @@ const QuizLibrary = () => {
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
 			participants: 123,
+			status:'active',
 			user: 'Lorem Ipsum'
 		},
 		{
@@ -236,6 +246,7 @@ const QuizLibrary = () => {
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
 			participants: 123,
+			status:'active',
 			user: 'Lorem Ipsum'
 		},
 		{
@@ -243,7 +254,7 @@ const QuizLibrary = () => {
 			post_date: '2021-11-25T17:00:08.000Z',
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
-			participants: 123,
+			participants: 123,status:'closed',
 			user: 'Lorem Ipsum'
 		},
 		{
@@ -252,6 +263,7 @@ const QuizLibrary = () => {
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
 			participants: 123,
+			status:'active',
 			user: 'Lorem Ipsum'
 		},
 		{
@@ -260,6 +272,7 @@ const QuizLibrary = () => {
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
 			participants: 123,
+			status:'closed',
 			user: 'Lorem Ipsum'
 		}
 	];
