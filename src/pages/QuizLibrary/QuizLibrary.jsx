@@ -20,6 +20,7 @@ const QuizLibrary = () => {
 							setShowSlider(true);
 						}}
 						text={'UPLOAD QUIZ'}
+						
 					/>
 				</div>
 			</div>
