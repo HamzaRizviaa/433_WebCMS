@@ -3,7 +3,7 @@ import Layout from '../../components/layout';
 import Table from '../../components/table';
 import classes from './_quizLibrary.module.scss';
 import Button from '../../components/button';
-import UploadOrEditQuiz from '../../components/quizzes/uploadOrEditQuiz';
+import UploadOrEditQuiz from '../../components/quizzes/uploadOrEditQuiz/UploadOrEditQuiz';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import { getDateTime } from '../../utils';
@@ -148,12 +148,10 @@ const QuizLibrary = () => {
 				return (
 					<div className={`${classes.active_closed_btn}`}>
 						<Button
-						onClick={() => {
-							
-						}}
-						text={content=="active"?'ACTIVE':'CLOSED'}
-						active={content=="active"?true:false}
-					/>
+							onClick={() => {}}
+							text={content == 'active' ? 'ACTIVE' : 'CLOSED'}
+							active={content == 'active' ? true : false}
+						/>
 						{/* <Edit className={classes.editIcon} /> */}
 					</div>
 				);
@@ -219,7 +217,7 @@ const QuizLibrary = () => {
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
 			participants: 123,
-			status:'closed',
+			status: 'closed',
 			user: 'Lorem Ipsum'
 		},
 		{
@@ -228,16 +226,16 @@ const QuizLibrary = () => {
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
 			participants: 123,
-			status:'active',
+			status: 'active',
 			user: 'Lorem Ipsum'
 		},
 		{
-			question: 'Kia apke toothpase me namak hai?',
+			question: 'Pakistannnnnnnnnnn <3?',
 			post_date: '2021-11-25T17:00:08.000Z',
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
 			participants: 123,
-			status:'active',
+			status: 'active',
 			user: 'Lorem Ipsum'
 		},
 		{
@@ -246,7 +244,7 @@ const QuizLibrary = () => {
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
 			participants: 123,
-			status:'active',
+			status: 'active',
 			user: 'Lorem Ipsum'
 		},
 		{
@@ -254,7 +252,8 @@ const QuizLibrary = () => {
 			post_date: '2021-11-25T17:00:08.000Z',
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
-			participants: 123,status:'closed',
+			participants: 123,
+			status: 'closed',
 			user: 'Lorem Ipsum'
 		},
 		{
@@ -263,7 +262,7 @@ const QuizLibrary = () => {
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
 			participants: 123,
-			status:'active',
+			status: 'active',
 			user: 'Lorem Ipsum'
 		},
 		{
@@ -272,7 +271,7 @@ const QuizLibrary = () => {
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
 			participants: 123,
-			status:'closed',
+			status: 'closed',
 			user: 'Lorem Ipsum'
 		}
 	];
