@@ -1,8 +1,8 @@
 import React from 'react';
-//import classes from './_uploadOrEditQuiz.module.scss';
 import Slider from '../../slider';
 import PropTypes from 'prop-types';
-import classes from './_uploadOrEditQuiz.module.scss';
+//import classes from './_uploadOrEditQuiz.module.scss';
+import UploadQuiz from './UploadQuiz';
 
 const UploadOrEditQuiz = ({ open, handleClose, title, heading1 }) => {
 	return (
@@ -13,11 +13,7 @@ const UploadOrEditQuiz = ({ open, handleClose, title, heading1 }) => {
 			}}
 			title={title}
 		>
-			<div className={classes.contentWrapper}>
-				<div>
-					<h5>{heading1}</h5>
-				</div>
-			</div>
+			<UploadQuiz heading1={heading1} open={open} />
 		</Slider>
 	);
 };
