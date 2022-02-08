@@ -9,11 +9,12 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import { getDateTime } from '../../utils';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
-
+import QuizDetails from '../../components/quizzes/uploadOrEditQuiz/QuizDetails';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 
 const QuizLibrary = () => {
 	const [showSlider, setShowSlider] = useState(false);
+	const [showQuizSlider,setShowQuizSlider]= useState(false);
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 
@@ -282,7 +283,7 @@ const QuizLibrary = () => {
 			// dispatch(getSpecificPost(row.id));
 			console.log(row)
 			setEdit(true);
-			setShowSlider(true);
+			setShowQuizSlider(true);
 			// }
 		}
 	};
@@ -314,6 +315,16 @@ const QuizLibrary = () => {
 				title={edit ? 'Quiz Detail' : 'Upload Quiz'}
 				heading1={edit ? ' ' : 'Add Background Image'}
 				buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
+			/>
+			<QuizDetails
+				open={showQuizSlider}
+				isEdit={edit}
+				handleClose={() => {
+					setShowQuizSlider(false);
+				}}
+				title={'Quiz Detail'}
+				// heading1={edit ? ' ' : 'Add Background Image'}
+				// buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
 			/>
 		</Layout>
 	);
