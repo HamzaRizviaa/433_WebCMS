@@ -1,5 +1,5 @@
 import React from 'react';
-import classes from './_uploadOrEditQuiz.module.scss';
+
 import Slider from '../../slider';
 import PropTypes from 'prop-types';
 import TabsUnstyled from '@mui/base/TabsUnstyled';
@@ -8,7 +8,7 @@ import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import TabUnstyled from '@mui/base/TabUnstyled';
 import { useStyles } from './quizStyles';
 import EditQuiz from './EditQuiz';
-
+import QuizResults from './QuizResults';
 export default function QuizDetails({ open, handleClose, title,  }) {
   const muiClasses = useStyles();
   return (<Slider
@@ -17,29 +17,24 @@ export default function QuizDetails({ open, handleClose, title,  }) {
       handleClose();
     }}
     title={title}
-  >	<div className={muiClasses.root}>
-  <TabsUnstyled defaultValue={0}  className={muiClasses.tabRoot}>
+  >	
+  <div className={muiClasses.root}>
+         <TabsUnstyled defaultValue={0}  className={muiClasses.tabRoot}>
            <TabsListUnstyled  className={muiClasses.tabMainDiv} >
                <TabUnstyled >Quiz Results</TabUnstyled>
                <TabUnstyled >Edit Quiz</TabUnstyled>
-          </TabsListUnstyled>
+           </TabsListUnstyled>
           <TabPanelUnstyled value={0}>
-  {/* table */}
-  <QuizDetails/>
-</TabPanelUnstyled>
+               {/* table */}
+               <QuizResults className={muiClasses.quizResults}/>
+          </TabPanelUnstyled>
           <TabPanelUnstyled value={1}> 
-   {/* add edit quiz */}
-   <EditQuiz/> 
-</TabPanelUnstyled>  
+               {/* add edit quiz */}
+               <EditQuiz/> 
+            </TabPanelUnstyled>  
         </TabsUnstyled>
-</div><div className={classes.quizDetails}>
-  <div className={classes.contentWrapper}>
-    <div className={classes.QuizQuestion}>
-    Who will win El Classico? 
-    </div>
-  </div>
-</div>;
-    </Slider>) 
+     </div>
+ </Slider>) 
 };
 QuizDetails.propTypes = {
 	open: PropTypes.bool.isRequired,
