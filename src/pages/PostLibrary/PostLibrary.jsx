@@ -121,7 +121,7 @@ const PostLibrary = () => {
 	const handleChange = (event, value) => {
 		setPage(value);
 	};
-	
+
 	const sortKeysMapping = {
 		file_name: 'media',
 		post_date: 'postdate',
@@ -264,6 +264,8 @@ const PostLibrary = () => {
 												: classes.mediaIconPortraitPreview
 										}
 										controls={true}
+										autoPlay
+										muted
 									>
 										<source
 											src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.media}`}
