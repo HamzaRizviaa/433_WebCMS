@@ -276,6 +276,17 @@ const QuizLibrary = () => {
 		}
 	];
 
+	const tableRowEvents = {
+		onClick: (e, row) => {
+			// if (!edit) {
+			// dispatch(getSpecificPost(row.id));
+			console.log(row)
+			setEdit(true);
+			setShowSlider(true);
+			// }
+		}
+	};
+
 	return (
 		<Layout>
 			<div className={classes.header}>
@@ -291,7 +302,7 @@ const QuizLibrary = () => {
 				</div>
 			</div>
 			<div className={classes.tableContainer}>
-				<Table columns={columns} data={data} />
+				<Table  rowEvents={tableRowEvents} columns={columns} data={data} />
 			</div>
 
 			<UploadOrEditQuiz
@@ -301,7 +312,7 @@ const QuizLibrary = () => {
 					setShowSlider(false);
 				}}
 				title={edit ? 'Quiz Detail' : 'Upload Quiz'}
-				heading1={edit ? 'Media Type' : 'Add Background Image'}
+				heading1={edit ? ' ' : 'Add Background Image'}
 				buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
 			/>
 		</Layout>
