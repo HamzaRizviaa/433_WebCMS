@@ -60,12 +60,10 @@
 }
 .QuizDetailstableContainer {
 	margin: 1rem 0rem;
-	.react-bootstrap-table {
-		.table {
-			> tbody {
-				min-height: auto !important;
-				max-height: 100% !important;
-			}
+	& > div {
+		tbody {
+			min-height: auto !important;
+			max-height: 100% !important;
 		}
 	}
 }

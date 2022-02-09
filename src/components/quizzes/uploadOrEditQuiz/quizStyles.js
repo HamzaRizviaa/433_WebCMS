@@ -29,9 +29,6 @@ export const useStyles = makeStyles(() => ({
 			marginLeft: '7px !important',
 			borderRadius: '4px !important',
 			padding: '8px 0px'
-		},
-		'& .quizResults': {
-			'& .react-bootstrap-table': { backgroundColor: '#ffff00 !important' }
 		}
 	}
 }));
