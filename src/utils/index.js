@@ -43,3 +43,13 @@ export const getCalendarText = (startDate, endDate) => {
 		}
 	}
 };
+
+export const getCalendarText2 = (startDate) => {
+	if (startDate) {
+		return <span>{`${startDate}`}</span>;
+	} else {
+		return (
+			<span style={{ color: '#808080' }}>{`Please select an end date`}</span>
+		);
+	}
+};

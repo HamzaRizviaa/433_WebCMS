@@ -138,10 +138,169 @@
 	height: 1rem;
 }
 
+.mediaError {
+	color: #ff355a;
+	font-weight: bold;
+	height: 1rem;
+	margin-bottom: 1rem;
+	margin-left: 1rem;
+}
+
 .fileRejectionError {
 	color: #ff355a;
 	font-weight: bold;
 	height: 1rem;
 	text-align: center;
 	margin-bottom: 1.5rem;
+}
+
+.titleContainer {
+	h6 {
+		margin-bottom: 0.5rem;
+		margin-left: 1rem;
+	}
+}
+
+.textField {
+	width: 100%;
+}
+
+.textFieldInput {
+	@include textFieldInput;
+}
+
+.popperAuto {
+	border: 1px solid #404040;
+	box-shadow: 0px 16px 40px rgba(255, 255, 255, 0.16);
+	border-radius: 8px;
+	background: black;
+}
+
+.liAutocompleteWithButton {
+	background-color: black;
+	color: white;
+	font-size: 14px;
+	padding: 8px 8px 8px 12px;
+	&:hover {
+		color: $neon-yellow;
+		cursor: pointer;
+	}
+}
+
+.liAutocomplete {
+	background-color: black;
+	color: white;
+	font-size: 14px;
+	padding: 8px 8px 8px 12px;
+	&:hover {
+		color: $neon-yellow;
+		cursor: pointer;
+	}
+}
+
+.tagYellow {
+	background-color: $neon-yellow !important;
+	font-family: Poppins !important;
+	font-style: normal !important;
+	font-weight: bold !important;
+	font-size: 12px !important;
+	line-height: 24px !important;
+	padding: 4px 6px !important;
+	margin-right: 6px !important;
+	svg {
+		color: black !important;
+		font-size: 20px !important;
+	}
+}
+
+.autoComplete {
+	padding: 8px;
+	width: 96% !important;
+	padding-left: 16px;
+	color: white !important;
+	border: 1px solid #404040;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 5rem !important;
+	margin-bottom: 1rem !important;
+	.MuiInput-input {
+		padding: 1rem 0rem 1rem 1rem;
+		color: #ffffff !important;
+	}
+
+	.textFieldAuto {
+		width: 530px;
+		color: #ffffff !important;
+		input {
+			color: #ffffff !important;
+			font-size: 14px;
+		}
+	}
+
+	svg {
+		color: $neon-yellow;
+		right: 5rem;
+		top: 0;
+		font-size: 3rem;
+	}
+}
+
+.disableAutoComplete {
+	background-color: #404040 !important;
+}
+
+.buttonDiv {
+	width: 100%;
+	margin-bottom: 4rem;
+}
+
+.addQuizBtn {
+	width: 100%;
+	margin-top: 0.5rem;
+}
+
+.addMediaBtnEdit {
+	width: 70%;
+	margin-top: 0.5rem;
+	display: inline-block;
+}
+
+.editBtn {
+	width: 30%;
+	display: inline-block;
+	margin-top: 0.5rem;
+}
+
+.noResultError {
+	color: #ff355a;
+	font-weight: bold;
+	margin-top: 0.2rem;
+	margin-left: 0.5rem;
+	height: 1rem;
+}
+
+.customDateInput {
+	border: 0;
+	margin: 0;
+	display: inline-flex;
+	padding: 0;
+	position: relative;
+	min-width: 0;
+	flex-direction: column;
+	vertical-align: top;
+	width: 100%;
+	color: white !important;
+	border: 1px solid #404040;
+	padding: 1rem 1rem 1.2rem 1rem !important;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 40px;
+	background-color: #000000;
+	border-color: rgb(64, 64, 64);
+	height: 17.5px;
+	box-sizing: content-box;
+	padding: 6px 0 7px;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
 }
