@@ -1,4 +1,5 @@
 import React , {useState} from 'react';
+import { styled } from '@mui/material/styles';
 import classes from './_uploadOrEditQuiz.module.scss';
 import Button from '../../../components/button';
 import Table from '../../../components/table';
@@ -6,9 +7,20 @@ import Table from '../../../components/table';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import { getDateTime } from '../../../utils';
+import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 
-
-
+const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+	height: "56px",
+	borderRadius: '8px',
+	[`&.${linearProgressClasses.colorPrimary}`]: {
+	  backgroundColor: theme.palette.grey[theme.palette.mode === '#404040' ? 200 : 800],
+	},
+	[`& .${linearProgressClasses.bar}`]: {
+	  borderRadius: '8px',
+	  backgroundColor: theme.palette.mode === '#404040' ? 'red' : '#808080',
+	},
+  }));
+ 
 export default function QuizResults() {
     // const muiClasses = useStyles();
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
@@ -18,6 +30,7 @@ export default function QuizResults() {
 		answers: 'postdate',
 		date_time: 'enddate',
 	};
+
     const sortRows = (order, col) => {
 		if (order && col.dataField) {
 			if (
@@ -39,7 +52,7 @@ export default function QuizResults() {
 							col?.dataField === 'answers' ||
 							col?.dataField === 'labels' ||
 							col?.dataField === 'date_time' 
-								? 0
+								? -7
 								: -4
 					}}
 				/>
@@ -53,7 +66,7 @@ export default function QuizResults() {
 							col?.dataField === 'answers' ||
 							col?.dataField === 'username' ||
 							col?.dataField === 'date_time' 
-								? 0
+								? -7
 								: -4
 					}}
 				/>
@@ -67,7 +80,7 @@ export default function QuizResults() {
 							col?.dataField === 'answers' ||
 							col?.dataField === 'username' ||
 							col?.dataField === 'date_time'
-								? 0
+								? -7
 								: -4
 					}}
 				/>
@@ -174,11 +187,12 @@ export default function QuizResults() {
 				return <div className={classes.rowData}>{getDateTime(content)}</div>;
 			},
 			headerStyle: () => {
-				return { paddingLeft: '20px' };
+				return { paddingLeft: '12px' };
 			}
 		},
 		
 	];
+
     const tableRowEvents = {
 		onClick: (e, row) => {
 			// if (!edit) {
@@ -198,7 +212,32 @@ export default function QuizResults() {
              Who will win El Classico? 
              </div>
              <div className={classes.QuizDetailsProgressBars}>
-                 progress bars 
+				 <div className={classes.progressBars}>
+				 <BorderLinearProgress variant="determinate" value={30} />
+				 <div  className={classes.progressbarTextBox}>
+				 <div >
+					 <span className={classes.leftprogressbarText}>FC Barcelona</span>
+					 <span className={classes.rightProgressText}>%30 | 123 Users</span>
+				 </div>
+				 </div>
+				
+				 </div>
+			
+			
+             </div>
+			 <div className={classes.QuizDetailsProgressBars}>
+				 <div className={classes.progressBars}>
+				 <BorderLinearProgress variant="determinate" value={70} />
+				 <div  className={classes.progressbarTextBox}>
+				 <div >
+					 <span className={classes.leftprogressbarText}>Real Madrid</span>
+					 <span className={classes.rightProgressText}>%70 | 1234 Users</span>
+				 </div>
+				 </div>
+				
+				 </div>
+			
+			
              </div>
              <div className={classes.QuizDetailstextUsers}>
                  <span>Ended  in 24.01.2022 - 1.4 K Participants</span>
@@ -207,7 +246,7 @@ export default function QuizResults() {
              <div className={classes.QuizDetailsHeading}>
              Participants
              </div>
-             <div style={{width:"496px"}}  className={classes.tableContainer} >
+             <div style={{width:"496px"}}  className={classes.QuizDetailstableContainer} >
 				<Table style={{width:"496px"}}   rowEvents={tableRowEvents} columns={columns} data={data} />
 			</div>
             <div style={{width:"496px", marginBottom:"2px"}}>

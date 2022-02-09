@@ -8,9 +8,9 @@
 	flex-direction: column;
 	justify-content: space-between;
 }
-// quiz details
+// quiz details start
+
 .QuizQuestion {
-	//styleName: Body/Bold;
 	margin-top: 24px;
 	font-family: Poppins;
 	font-size: 16px;
@@ -58,9 +58,18 @@
 	width: 2rem !important;
 	color: $neon-yellow;
 }
-.tableContainer {
+.QuizDetailstableContainer {
 	margin: 1rem 0rem;
+	.react-bootstrap-table {
+		.table {
+			> tbody {
+				min-height: auto !important;
+				max-height: 100% !important;
+			}
+		}
+	}
 }
+
 .row {
 	margin-bottom: 1.5rem;
 	display: block;
@@ -70,6 +79,45 @@
 	margin-bottom: 1.5rem;
 	display: block;
 	font-size: 1.2rem;
+}
+
+.progressBars {
+	position: relative;
+}
+
+.progressbarTextBox {
+	width: 100%;
+	position: absolute;
+	bottom: 16px;
+}
+
+.leftprogressbarText {
+	// display: flex !important;
+	// justify-content: space-between !important;
+	font-family: Poppins;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 24px;
+	letter-spacing: 0em;
+	text-align: left;
+	color: white;
+	margin-left: 16px;
+	// margin-right: 16px;
+}
+
+.rightProgressText {
+	position: absolute;
+	right: 0;
+	bottom: 4px;
+	margin-right: 16px;
+	font-family: Poppins;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 16px;
+	letter-spacing: 0.03em;
+	text-align: right;
 }
 
 //quiz details ends
