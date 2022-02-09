@@ -8,6 +8,117 @@
 	flex-direction: column;
 	justify-content: space-between;
 }
+// quiz details start
+
+.QuizQuestion {
+	margin-top: 24px;
+	font-family: Poppins;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 24px;
+	letter-spacing: 0em;
+}
+.QuizDetailsProgressBars {
+	margin-top: 24px;
+}
+.QuizDetailstextUsers {
+	margin-top: 24px;
+	display: flex;
+	justify-content: space-between;
+	font-family: Poppins;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 16px;
+	letter-spacing: 0.03em;
+}
+.QuizDetailsHeading {
+	margin-top: 24px;
+	font-family: Poppins;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 24px;
+	letter-spacing: 0em;
+}
+.sortIcon {
+	position: absolute;
+	left: -4px;
+	bottom: -2px;
+	height: 2rem !important;
+	width: 2rem !important;
+}
+
+.sortIconSelected {
+	position: absolute;
+	left: -4px;
+	bottom: -2px;
+	height: 2rem !important;
+	width: 2rem !important;
+	color: $neon-yellow;
+}
+.QuizDetailstableContainer {
+	margin: 1rem 0rem;
+	& > div {
+		tbody {
+			min-height: auto !important;
+			max-height: 100% !important;
+		}
+	}
+}
+
+.row {
+	margin-bottom: 1.5rem;
+	display: block;
+	font-size: 1.2rem;
+}
+.rowData {
+	margin-bottom: 1.5rem;
+	display: block;
+	font-size: 1.2rem;
+}
+
+.progressBars {
+	position: relative;
+}
+
+.progressbarTextBox {
+	width: 100%;
+	position: absolute;
+	bottom: 16px;
+}
+
+.leftprogressbarText {
+	// display: flex !important;
+	// justify-content: space-between !important;
+	font-family: Poppins;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 24px;
+	letter-spacing: 0em;
+	text-align: left;
+	color: white;
+	margin-left: 16px;
+	// margin-right: 16px;
+}
+
+.rightProgressText {
+	position: absolute;
+	right: 0;
+	bottom: 4px;
+	margin-right: 16px;
+	font-family: Poppins;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 16px;
+	letter-spacing: 0.03em;
+	text-align: right;
+}
+
+//quiz details ends
 
 .previewContentWrapper {
 	min-height: calc(100vh - 107px);
