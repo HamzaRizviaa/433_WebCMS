@@ -807,8 +807,8 @@ const UploadOrEditPost = ({
 								<Autocomplete
 									disabled={isEdit}
 									style={{
-										maxWidth: `530px`
-										// minWidth: `${inputWidth}px`
+										maxWidth: `530px`,
+										minWidth: `${inputWidth}px`
 									}}
 									getOptionLabel={(option) => option.name}
 									PaperComponent={(props) => {
