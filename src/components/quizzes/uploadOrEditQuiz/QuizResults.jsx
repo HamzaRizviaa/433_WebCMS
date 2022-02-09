@@ -213,7 +213,7 @@ export default function QuizResults() {
              </div>
              <div className={classes.QuizDetailsProgressBars}>
 				 <div className={classes.progressBars}>
-				 <BorderLinearProgress variant="determinate" value={30} />
+				 <BorderLinearProgress variant="determinate" value={33} />
 				 <div  className={classes.progressbarTextBox}>
 				 <div >
 					 <span className={classes.leftprogressbarText}>FC Barcelona</span>
@@ -240,16 +240,17 @@ export default function QuizResults() {
 			
              </div>
              <div className={classes.QuizDetailstextUsers}>
-                 <span>Ended  in 24.01.2022 - 1.4 K Participants</span>
+				 <span>1.4 K Participants</span>
+                 <span>Ends 24.01.2022 </span>
                  
              </div>
              <div className={classes.QuizDetailsHeading}>
              Participants
              </div>
-             <div style={{width:"496px"}}  className={classes.QuizDetailstableContainer} >
-				<Table style={{width:"496px"}}   rowEvents={tableRowEvents} columns={columns} data={data} />
+             <div style={{width:"416px"}}  className={classes.QuizDetailstableContainer} >
+				<Table style={{width:"416px"}}   rowEvents={tableRowEvents} columns={columns} data={data} />
 			</div>
-            <div style={{width:"496px", marginBottom:"2px"}}>
+            <div style={{width:"416px", paddingBottom: "10%"}}>
             <Button
 										disabled={false}
 										button2={ true}
