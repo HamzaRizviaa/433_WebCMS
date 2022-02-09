@@ -53,6 +53,13 @@ export const useStyles = makeStyles(() => ({
 			fontWeight: '700',
 			lineHeight: '16px',
 			letterSpacing: '0.03em'
+		},
+		'& .MuiPaginationItem-icon': {
+			fontSize: '2rem !important'
+		},
+		'& .Mui-disabled': {
+			background: '#808080',
+			opacity: 0.4
 		}
 	}
 }));
