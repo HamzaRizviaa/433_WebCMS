@@ -11,13 +11,17 @@ import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 import QuizDetails from '../../components/quizzes/uploadOrEditQuiz/QuizDetails';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
+import Pagination from '@mui/material/Pagination';
+import { useStyles } from './../../utils/styles';
 
 const QuizLibrary = () => {
+	const muiClasses = useStyles();
 	const [showSlider, setShowSlider] = useState(false);
 	const [showQuizSlider,setShowQuizSlider]= useState(false);
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
-
+	const [paginationError, setPaginationError] = useState(false);
+	const [page, setPage] = useState(1);
 	const sortKeysMapping = {
 		question: 'question',
 		post_date: 'postdate',
@@ -288,6 +292,10 @@ const QuizLibrary = () => {
 		}
 	};
 
+	const handleChange = (event, value) => {
+		setPage(value);
+	};
+
 	return (
 		<Layout>
 			<div className={classes.header}>
@@ -304,6 +312,41 @@ const QuizLibrary = () => {
 			</div>
 			<div className={classes.tableContainer}>
 				<Table  rowEvents={tableRowEvents} columns={columns} data={data} />
+			</div>
+			<div className={classes.paginationRow}>
+				<Pagination
+					className={muiClasses.root}
+					page={page}
+					onChange={handleChange}
+					//	count={Math.ceil(totalRecords / 20)}
+					count={Math.ceil(60 / 20)}
+					variant='outlined'
+					shape='rounded'
+				/>
+				<div className={classes.gotoText}>Go to page</div>
+				<input
+					style={{
+					
+						 border: `${paginationError ? '1px solid red' : '1px solid #808080'}`
+					}}
+					type={'number'}
+					min={1}
+					onChange={(e) => {
+						console.log(e,'onchange',page);
+						setPaginationError(false);
+						const value = Number(e.target.value);
+						//if (value > Math.ceil(totalRecords / 20)) {
+						if (value > Math.ceil(60 / 20)) {
+							setPaginationError(true);
+							setPage(1);
+						} else if (value) {
+							setPage(value);
+						} else {
+							setPage(1);
+						}
+					}}
+					className={classes.gotoInput}
+				/>
 			</div>
 
 			<UploadOrEditQuiz
@@ -323,9 +366,9 @@ const QuizLibrary = () => {
 					setShowQuizSlider(false);
 				}}
 				title={'Quiz Detail'}
-				// heading1={edit ? ' ' : 'Add Background Image'}
-				// buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
+				
 			/>
+
 		</Layout>
 	);
 };
