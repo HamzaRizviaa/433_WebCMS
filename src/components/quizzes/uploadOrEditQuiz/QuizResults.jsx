@@ -10,7 +10,7 @@ import { getDateTime } from '../../../utils';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
-	height: "56px",
+	height: "54px",
 	borderRadius: '8px',
 	[`&.${linearProgressClasses.colorPrimary}`]: {
 	  backgroundColor: theme.palette.grey[theme.palette.mode === '#404040' ? 200 : 800],
@@ -247,10 +247,10 @@ export default function QuizResults() {
              <div className={classes.QuizDetailsHeading}>
              Participants
              </div>
-             <div style={{width:"416px"}}  className={classes.QuizDetailstableContainer} >
-				<Table style={{width:"416px"}}   rowEvents={tableRowEvents} columns={columns} data={data} />
+             <div   className={classes.QuizDetailstableContainer} >
+				<Table    rowEvents={tableRowEvents} columns={columns} data={data} />
 			</div>
-            <div style={{width:"416px", paddingBottom: "10%"}}>
+            <div style={{width:"100%", paddingBottom: "10%"}}>
             <Button
 										disabled={false}
 										button2={ true}
