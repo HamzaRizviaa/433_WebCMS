@@ -3,7 +3,7 @@ import Layout from '../../components/layout';
 import Table from '../../components/table';
 import classes from './_quizLibrary.module.scss';
 import Button from '../../components/button';
-import UploadOrEditQuiz from '../../components/quizzes/uploadOrEditQuiz/UploadOrEditQuiz';
+import UploadQuiz from '../../components/quizzes/uploadOrEditQuiz/UploadQuiz';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import { getDateTime } from '../../utils';
@@ -17,7 +17,7 @@ import { useStyles } from './../../utils/styles';
 const QuizLibrary = () => {
 	const muiClasses = useStyles();
 	const [showSlider, setShowSlider] = useState(false);
-	const [showQuizSlider,setShowQuizSlider]= useState(false);
+	const [showQuizSlider, setShowQuizSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [paginationError, setPaginationError] = useState(false);
@@ -285,7 +285,7 @@ const QuizLibrary = () => {
 		onClick: (e, row) => {
 			// if (!edit) {
 			// dispatch(getSpecificPost(row.id));
-			console.log(row)
+			console.log(row);
 			setEdit(true);
 			setShowQuizSlider(true);
 			// }
@@ -311,7 +311,7 @@ const QuizLibrary = () => {
 				</div>
 			</div>
 			<div className={classes.tableContainer}>
-				<Table  rowEvents={tableRowEvents} columns={columns} data={data} />
+				<Table rowEvents={tableRowEvents} columns={columns} data={data} />
 			</div>
 			<div className={classes.paginationRow}>
 				<Pagination
@@ -326,13 +326,12 @@ const QuizLibrary = () => {
 				<div className={classes.gotoText}>Go to page</div>
 				<input
 					style={{
-					
-						 border: `${paginationError ? '1px solid red' : '1px solid #808080'}`
+						border: `${paginationError ? '1px solid red' : '1px solid #808080'}`
 					}}
 					type={'number'}
 					min={1}
 					onChange={(e) => {
-						console.log(e,'onchange',page);
+						console.log(e, 'onchange', page);
 						setPaginationError(false);
 						const value = Number(e.target.value);
 						//if (value > Math.ceil(totalRecords / 20)) {
@@ -349,7 +348,7 @@ const QuizLibrary = () => {
 				/>
 			</div>
 
-			<UploadOrEditQuiz
+			<UploadQuiz
 				open={showSlider}
 				isEdit={edit}
 				handleClose={() => {
@@ -366,9 +365,7 @@ const QuizLibrary = () => {
 					setShowQuizSlider(false);
 				}}
 				title={'Quiz Detail'}
-				
 			/>
-
 		</Layout>
 	);
 };
