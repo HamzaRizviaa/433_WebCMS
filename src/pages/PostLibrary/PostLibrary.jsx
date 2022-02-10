@@ -577,6 +577,7 @@ const PostLibrary = () => {
 					setShowSlider(false);
 					// setTimeout(() => setEdit(false), 600);
 				}}
+				page={page}
 				title={edit ? 'Edit Post' : 'Upload a Post'}
 				heading1={edit ? 'Media Files' : 'Add Media Files'}
 				buttonText={edit ? 'SAVE CHANGES' : 'POST'}

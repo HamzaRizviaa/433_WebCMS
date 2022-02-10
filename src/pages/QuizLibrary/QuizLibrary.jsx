@@ -309,6 +309,7 @@ const QuizLibrary = () => {
 						text={'UPLOAD QUIZ'}
 					/>
 				</div>
+				
 			</div>
 			<div className={classes.tableContainer}>
 				<Table rowEvents={tableRowEvents} columns={columns} data={data} />
