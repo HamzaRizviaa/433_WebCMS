@@ -596,6 +596,7 @@ const MediaLibrary = () => {
 					setShowSlider(false);
 					// setTimeout(() => setEdit(false), 600);
 				}}
+				page={page}
 				title={edit ? 'Edit Media' : 'Upload Media'}
 				heading1={edit ? 'Media Type' : 'Select Media Type'}
 				buttonText={edit ? 'SAVE CHANGES' : 'ADD MEDIA'}
