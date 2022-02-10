@@ -490,7 +490,7 @@ const UploadOrEditMedia = ({
 				>
 					{specificMediaStatus.specificMediaStatus === 'loading' ? (
 						<div className={classes.loaderContainer2}>
-							<CircularProgress className={classes.loader} />;
+							<CircularProgress className={classes.loader} />
 						</div>
 					) : (
 						<></>
