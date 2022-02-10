@@ -35,7 +35,8 @@ const UploadOrEditMedia = ({
 	title,
 	heading1,
 	buttonText,
-	isEdit
+	isEdit,
+	page
 }) => {
 	const [labelColor, setLabelColor] = useState('#ffffff');
 	const [labelError, setLabelError] = useState('');
@@ -353,7 +354,7 @@ const UploadOrEditMedia = ({
 				handleClose();
 
 				//setting a timeout for getting post after delete.
-				dispatch(getMedia({}));
+				dispatch(getMedia({ page }));
 			}
 		} catch (e) {
 			toast.error('Failed to delete media!');
@@ -394,7 +395,7 @@ const UploadOrEditMedia = ({
 				);
 				setIsLoadingUploadMedia(false);
 				setMediaButtonStatus(false);
-				dispatch(getMedia({}));
+				dispatch(getMedia({ page }));
 				handleClose();
 			}
 		} catch (e) {
@@ -1178,7 +1179,8 @@ UploadOrEditMedia.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
-	buttonText: PropTypes.string.isRequired
+	buttonText: PropTypes.string.isRequired,
+	page: PropTypes.string
 };
 
 export default UploadOrEditMedia;

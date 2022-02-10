@@ -50,7 +50,8 @@ const UploadOrEditPost = ({
 	title,
 	isEdit,
 	heading1,
-	buttonText
+	buttonText,
+	page
 }) => {
 	const [caption, setCaption] = useState('');
 	const [value, setValue] = useState(false);
@@ -442,7 +443,7 @@ const UploadOrEditPost = ({
 				setIsLoadingCreatePost(false);
 				setPostButtonStatus(false);
 				handleClose();
-				dispatch(getPosts({}));
+				dispatch(getPosts({ page }));
 				dispatch(getPostLabels());
 			}
 		} catch (e) {
@@ -467,7 +468,7 @@ const UploadOrEditPost = ({
 				handleClose();
 
 				//setting a timeout for getting post after delete.
-				dispatch(getPosts({}));
+				dispatch(getPosts({ page }));
 			}
 		} catch (e) {
 			toast.error('Failed to delete post!');
@@ -1191,7 +1192,8 @@ UploadOrEditPost.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
-	buttonText: PropTypes.string.isRequired
+	buttonText: PropTypes.string.isRequired,
+	page: PropTypes.string
 };
 
 export default UploadOrEditPost;
