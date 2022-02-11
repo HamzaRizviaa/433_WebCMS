@@ -26,7 +26,7 @@ export default function QuizDetails({ open, handleClose, title,  }) {
            </TabsListUnstyled>
           <TabPanelUnstyled value={0}>
                {/* table */}
-               <QuizResults className={muiClasses.quizResults}/>
+               <QuizResults />
           </TabPanelUnstyled>
           <TabPanelUnstyled value={1}> 
                {/* add edit quiz */}

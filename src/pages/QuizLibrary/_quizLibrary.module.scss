@@ -15,6 +15,71 @@
 	justify-content: flex-start;
 }
 
+.subheader2 {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.calendarWrapper {
+	margin-left: 10px;
+}
+// date
+.customDateInput {
+	border: 0;
+	margin: 0;
+	display: inline-flex;
+	padding: 0;
+	position: relative;
+	min-width: 0;
+	flex-direction: column;
+	vertical-align: top;
+	width: 271px;
+	color: white !important;
+	border: 1px solid #404040;
+	padding: 1rem 1rem 1.2rem 1rem !important;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 40px;
+	background-color: #000000;
+	border-color: rgb(64, 64, 64);
+	height: 17.5px;
+	box-sizing: content-box;
+	padding: 6px 0 7px;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+//search
+
+.searchField {
+	width: 271px;
+}
+
+.textFieldInput {
+	color: white !important;
+	border: 1px solid #404040;
+	padding: 0.5rem 0.5rem 0.5rem 1.5rem !important;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 40px;
+	//margin-bottom: 1rem;
+	background-color: #000000;
+}
+
+.searchIcon {
+	cursor: pointer;
+	margin-right: 8;
+}
+
+.noResultError {
+	color: #ff355a;
+	font-weight: bold;
+	margin-top: 0.2rem;
+	margin-left: 0.5rem;
+	height: 1rem;
+}
+
 .sortIcon {
 	position: absolute;
 	left: -4px;

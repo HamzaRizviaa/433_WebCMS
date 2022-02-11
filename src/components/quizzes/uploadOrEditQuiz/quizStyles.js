@@ -10,7 +10,7 @@ export const useStyles = makeStyles(() => ({
 			padding: '6px 0px'
 		},
 		'& button': {
-			width: '48%',
+			width: '49%',
 			backgroundColor: '#404040',
 			color: '#ffffff !important',
 			border: 'none !important',
@@ -25,8 +25,8 @@ export const useStyles = makeStyles(() => ({
 			color: '#000000 !important',
 			border: 'none !important',
 			backgroundColor: '#ffff00 !important',
-			marginRight: '7px !important',
-			marginLeft: '7px !important',
+			marginRight: '4px !important',
+			marginLeft: '4px !important',
 			borderRadius: '4px !important',
 			padding: '8px 0px'
 		}

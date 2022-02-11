@@ -435,8 +435,10 @@ const PostLibrary = () => {
 			// }
 		}
 	};
+
 	return (
 		<Layout>
+			{console.log(dateRange,startDate,endDate,'dates')}
 			<div className={classes.header}>
 				<div className={classes.subheader1}>
 					<h1 style={{ marginRight: '2rem' }}>POST LIBRARY</h1>
