@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Markup } from 'interweave';
+import _debounce from 'lodash/debounce';
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux';
@@ -264,8 +265,6 @@ const PostLibrary = () => {
 												: classes.mediaIconPortraitPreview
 										}
 										controls={true}
-										autoPlay
-										muted
 									>
 										<source
 											src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.media}`}
@@ -435,6 +434,43 @@ const PostLibrary = () => {
 			// }
 		}
 	};
+
+	const handleDebounceFun = () => {
+		let _search;
+		setSearch((prevState) => {
+			_search = prevState;
+			return _search;
+		});
+
+		if (_search) {
+			dispatch(
+				getPosts({
+					q: _search,
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		} else {
+			dispatch(
+				getPosts({
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
+	};
+
+	const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
+
+	const handleChangeSearch = (e) => {
+		setSearch(e.target.value);
+		debounceFun(e.target.value);
+	};
+
 	return (
 		<Layout>
 			<div className={classes.header}>
@@ -453,32 +489,33 @@ const PostLibrary = () => {
 						<TextField
 							className={classes.searchField}
 							value={search}
-							onKeyPress={(e) => {
-								if (e.key === 'Enter' && search) {
-									dispatch(
-										getPosts({
-											q: search,
-											page,
-											startDate: formatDate(dateRange[0]),
-											endDate: formatDate(dateRange[1]),
-											...sortState
-										})
-									);
-								} else if (e.key === 'Enter' && !search) {
-									dispatch(
-										getPosts({
-											page,
-											startDate: formatDate(dateRange[0]),
-											endDate: formatDate(dateRange[1]),
-											...sortState
-										})
-									);
-								}
-							}}
-							onChange={(e) => {
-								setSearch(e.target.value);
-								//setIsSearch(true);
-							}}
+							// onKeyPress={(e) => {
+							// 	if (e.key === 'Enter' && search) {
+							// 		dispatch(
+							// 			getPosts({
+							// 				q: search,
+							// 				page,
+							// 				startDate: formatDate(dateRange[0]),
+							// 				endDate: formatDate(dateRange[1]),
+							// 				...sortState
+							// 			})
+							// 		);
+							// 	} else if (e.key === 'Enter' && !search) {
+							// 		dispatch(
+							// 			getPosts({
+							// 				page,
+							// 				startDate: formatDate(dateRange[0]),
+							// 				endDate: formatDate(dateRange[1]),
+							// 				...sortState
+							// 			})
+							// 		);
+							// 	}
+							// }}
+							// onChange={(e) => {
+							// 	setSearch(e.target.value);
+							// 	//setIsSearch(true);
+							// }}
+							onChange={handleChangeSearch}
 							placeholder={'Search post, user, label'}
 							InputProps={{
 								disableUnderline: true,
@@ -486,31 +523,7 @@ const PostLibrary = () => {
 								style: { borderColor: noResultBorder },
 								endAdornment: (
 									<InputAdornment>
-										<Search
-											onClick={() => {
-												if (search) {
-													dispatch(
-														getPosts({
-															q: search,
-															page,
-															startDate: formatDate(dateRange[0]),
-															endDate: formatDate(dateRange[1]),
-															...sortState
-														})
-													);
-												} else {
-													dispatch(
-														getPosts({
-															page,
-															startDate: formatDate(dateRange[0]),
-															endDate: formatDate(dateRange[1]),
-															...sortState
-														})
-													);
-												}
-											}}
-											className={classes.searchIcon}
-										/>
+										<Search className={classes.searchIcon} />
 									</InputAdornment>
 								)
 							}}
@@ -577,7 +590,6 @@ const PostLibrary = () => {
 					setShowSlider(false);
 					// setTimeout(() => setEdit(false), 600);
 				}}
-				page={page}
 				title={edit ? 'Edit Post' : 'Upload a Post'}
 				heading1={edit ? 'Media Files' : 'Add Media Files'}
 				buttonText={edit ? 'SAVE CHANGES' : 'POST'}
