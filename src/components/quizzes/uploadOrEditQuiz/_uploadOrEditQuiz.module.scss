@@ -360,6 +360,10 @@
 	background-color: #404040 !important;
 }
 
+.disableTextField {
+	background-color: #404040 !important;
+}
+
 .buttonDiv {
 	width: 100%;
 	margin-bottom: 4rem;
@@ -370,7 +374,7 @@
 	margin-top: 0.5rem;
 }
 
-.addMediaBtnEdit {
+.addQuizBtnEdit {
 	width: 70%;
 	margin-top: 0.5rem;
 	display: inline-block;
@@ -421,5 +425,13 @@
 	h6 {
 		margin-bottom: 0.5rem;
 		margin-left: 1rem;
+	}
+}
+
+.datePicker {
+	button {
+		background-color: transparent !important;
+		top: 0.5px !important;
+		right: -150px !important;
 	}
 }

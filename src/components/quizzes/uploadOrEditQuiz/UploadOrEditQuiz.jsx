@@ -110,7 +110,26 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
-	//const labels = ['kaka', 'ricardo', 'lala', 'nasri', 'nani'];
+	useEffect(() => {
+		if (editQuiz) {
+			setUploadedFiles([
+				{
+					id: makeid(10),
+					fileName: 'Better than Messi',
+					img: 'https://cdni0.trtworld.com/w960/h540/q75/34070_esp20180526ronaldo_1527420747155.JPG',
+					type: 'image'
+				}
+			]);
+			setQuestion('Ronaldo better than Messi?');
+			setAns1('Yes');
+			setAns2('Yes');
+			setSelectedLabels([
+				{ id: 1, name: 'CRISTINAAAAA' },
+				{ id: 2, name: 'SIUUUUUU7UUUUUUU' }
+			]);
+			setEndDate('Tue Feb 14 2022 00:00:00 GMT+0500 (Pakistan Standard Time)');
+		}
+	}, [editQuiz]);
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
@@ -269,7 +288,7 @@ const UploadOrEditQuiz = ({
 				style={{ width: previewFile != null ? '60%' : 'auto' }}
 			>
 				<div>
-					<h5>{heading1}</h5>
+					<h5 className={editQuiz ? classes.QuizQuestion : ''}>{heading1}</h5>
 					<DragDropContext>
 						<Droppable droppableId='droppable-1'>
 							{(provided) => (
@@ -294,21 +313,33 @@ const UploadOrEditQuiz = ({
 												</div>
 
 												<div className={classes.filePreviewRight}>
-													<EyeIcon
-														className={classes.filePreviewIcons}
-														onClick={() => {
-															setPreviewBool(true);
-															setPreviewFile(file);
-														}}
-													/>
-													<Deletes
-														className={classes.filePreviewIcons}
-														onClick={() => {
-															handleDeleteFile(file.id);
-															setPreviewBool(false);
-															setPreviewFile(null);
-														}}
-													/>
+													{editQuiz ? (
+														<EyeIcon
+															className={classes.filePreviewIcons}
+															onClick={() => {
+																setPreviewBool(true);
+																setPreviewFile(file);
+															}}
+														/>
+													) : (
+														<>
+															<EyeIcon
+																className={classes.filePreviewIcons}
+																onClick={() => {
+																	setPreviewBool(true);
+																	setPreviewFile(file);
+																}}
+															/>
+															<Deletes
+																className={classes.filePreviewIcons}
+																onClick={() => {
+																	handleDeleteFile(file.id);
+																	setPreviewBool(false);
+																	setPreviewFile(null);
+																}}
+															/>{' '}
+														</>
+													)}
 												</div>
 											</div>
 										);
@@ -318,7 +349,7 @@ const UploadOrEditQuiz = ({
 							)}
 						</Droppable>
 					</DragDropContext>
-					{!uploadedFiles.length && (
+					{!uploadedFiles.length && !editQuiz && (
 						<section
 							className={classes.dropZoneContainer}
 							style={{
@@ -343,6 +374,7 @@ const UploadOrEditQuiz = ({
 					<div className={classes.titleContainer}>
 						<h6 style={{ color: questionColor }}>QUESTION</h6>
 						<TextField
+							disabled={editQuiz}
 							value={question}
 							onChange={(e) => {
 								setQuestion(e.target.value);
@@ -351,7 +383,9 @@ const UploadOrEditQuiz = ({
 							className={classes.textField}
 							InputProps={{
 								disableUnderline: true,
-								className: classes.textFieldInput
+								className: `${classes.textFieldInput}  ${
+									editQuiz && classes.disableTextField
+								}`
 							}}
 							multiline
 							maxRows={2}
@@ -363,6 +397,7 @@ const UploadOrEditQuiz = ({
 					<div className={classes.titleContainer}>
 						<h6 style={{ color: ans1Color }}>ANSWER 1</h6>
 						<TextField
+							disabled={editQuiz}
 							value={ans1}
 							onChange={(e) => {
 								setAns1(e.target.value);
@@ -371,7 +406,9 @@ const UploadOrEditQuiz = ({
 							className={classes.textField}
 							InputProps={{
 								disableUnderline: true,
-								className: classes.textFieldInput
+								className: `${classes.textFieldInput}  ${
+									editQuiz && classes.disableTextField
+								}`
 							}}
 							multiline
 							maxRows={1}
@@ -383,6 +420,7 @@ const UploadOrEditQuiz = ({
 					<div className={classes.titleContainer}>
 						<h6 style={{ color: ans2Color }}>ANSWER 2</h6>
 						<TextField
+							disabled={editQuiz}
 							value={ans2}
 							onChange={(e) => {
 								setAns2(e.target.value);
@@ -391,7 +429,9 @@ const UploadOrEditQuiz = ({
 							className={classes.textField}
 							InputProps={{
 								disableUnderline: true,
-								className: classes.textFieldInput
+								className: `${classes.textFieldInput}  ${
+									editQuiz && classes.disableTextField
+								}`
 							}}
 							multiline
 							maxRows={1}
@@ -403,7 +443,7 @@ const UploadOrEditQuiz = ({
 					<div className={classes.titleContainer}>
 						<h6 style={{ color: labelColor }}>LABELS</h6>
 						<Autocomplete
-							//disabled={isEdit}
+							disabled={editQuiz}
 							style={{
 								maxWidth: `530px`
 							}}
@@ -479,7 +519,9 @@ const UploadOrEditQuiz = ({
 									/>
 								</div>
 							}
-							className={`${classes.autoComplete} `}
+							className={`${classes.autoComplete}  ${
+								editQuiz && classes.disableAutoComplete
+							}`}
 							id='free-solo-2-demo'
 							disableClearable
 							options={quizLabels}
@@ -546,7 +588,10 @@ const UploadOrEditQuiz = ({
 
 					<div className={classes.datePickerContainer}>
 						<h6 style={{ color: quizColor }}>QUIZ END DATE</h6>
-						<div style={{ marginBottom: calenderOpen ? '250px' : '' }}>
+						<div
+							className={editQuiz ? classes.datePicker : ''}
+							style={{ marginBottom: calenderOpen ? '250px' : '' }}
+						>
 							<DatePicker
 								customInput={<ExampleCustomInput />}
 								startDate={endDate}
@@ -585,7 +630,27 @@ const UploadOrEditQuiz = ({
 				</div>
 
 				<div className={classes.buttonDiv}>
-					<div className={classes.addQuizBtn}>
+					{editQuiz ? (
+						<div className={classes.editBtn}>
+							<Button
+								disabled={false}
+								button2={editQuiz ? true : false}
+								onClick={() => {
+									// if (!deleteBtnStatus) {
+									// 	console.log('specific', specificMedia.id);
+									// 	deleteMedia(specificMedia?.id);
+									// }
+								}}
+								text={'DELETE QUIZ'}
+							/>
+						</div>
+					) : (
+						<></>
+					)}
+
+					<div
+						className={editQuiz ? classes.addQuizBtnEdit : classes.addQuizBtn}
+					>
 						<Button
 							disabled={addQuizBtnDisabled}
 							onClick={async () => {

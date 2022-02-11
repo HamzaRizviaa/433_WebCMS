@@ -309,7 +309,6 @@ const QuizLibrary = () => {
 						text={'UPLOAD QUIZ'}
 					/>
 				</div>
-				
 			</div>
 			<div className={classes.tableContainer}>
 				<Table rowEvents={tableRowEvents} columns={columns} data={data} />
@@ -366,6 +365,8 @@ const QuizLibrary = () => {
 					setShowQuizSlider(false);
 				}}
 				title={'Quiz Detail'}
+				heading1={edit ? 'Add Background Image' : 'Add Background Image'}
+				buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
 			/>
 		</Layout>
 	);
