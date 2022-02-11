@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import quizLibraryService from './quizLibraryService';
+import QuizLibraryService from './quizLibraryService';
 export const getQuizess = createAsyncThunk(
 	'quizLibary/getQuizess',
 	async ({
@@ -24,9 +24,21 @@ export const getQuizess = createAsyncThunk(
 		if (startDate && endDate) {
 			endPoint += `&start_date=${startDate}&end_date=${endDate}`;
 		}
-		const result = await quizLibraryService.getQuizApi(endPoint);
+		const result = await QuizLibraryService.getQuizApi(endPoint);
 		//console.log(result.data.data);
 		return { ...result.data.data, fromCalendar };
+	}
+);
+
+export const getQuizLabels = createAsyncThunk(
+	'quizLibrary/getQuizLabels',
+	async () => {
+		const result = await QuizLibraryService.getQuizLabelsApi();
+		if (result?.data?.data?.length > 0) {
+			return result.data.data;
+		} else {
+			return [];
+		}
 	}
 );
 
@@ -70,6 +82,9 @@ export const quizLibrarySlice = createSlice({
 		},
 		[getQuizess.rejected]: (state) => {
 			state.status = 'failed';
+		},
+		[getQuizLabels.fulfilled]: (state, action) => {
+			state.labels = action.payload;
 		}
 		// [getPostLabels.fulfilled]: (state, action) => {
 		// 	state.labels = action.payload;
@@ -90,5 +105,4 @@ export const quizLibrarySlice = createSlice({
 
 export const { resetCalendarError, resetNoResultStatus } =
 	quizLibrarySlice.actions;
-
 export default quizLibrarySlice.reducer;
