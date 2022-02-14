@@ -335,18 +335,8 @@ const PostLibrary = () => {
 								arrow: { className: classes.toolTipArrow }
 							}}
 						>
-							{/* <span className={classes.fileName}>
-								{row?.file_name?.substring(0, 13) +
-									`${row?.file_name?.length > 13 ? '...' : ''}`}
-							</span> */}
 							<span>
-								<Markup
-									className={classes.fileName}
-									content={`${
-										row?.file_name?.substring(0, 13) +
-										`${row?.file_name?.length > 13 ? '...' : ''}`
-									}`}
-								/>
+								<Markup className={classes.fileName} content={row?.file_name} />
 							</span>
 						</Tooltip>
 					</div>
