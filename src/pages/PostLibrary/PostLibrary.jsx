@@ -335,9 +335,9 @@ const PostLibrary = () => {
 								arrow: { className: classes.toolTipArrow }
 							}}
 						>
-							<span>
+							<div>
 								<Markup className={classes.fileName} content={row?.file_name} />
-							</span>
+							</div>
 						</Tooltip>
 					</div>
 				);
