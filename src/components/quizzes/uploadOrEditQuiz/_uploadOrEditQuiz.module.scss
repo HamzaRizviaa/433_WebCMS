@@ -1,0 +1,437 @@
+@import '../../../styles/_variables.scss';
+@import '../../../styles/_mixins.scss';
+
+.contentWrapper {
+	min-height: calc(100vh - 107px);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+// quiz details start
+
+.QuizQuestion {
+	margin-top: 24px;
+	font-family: Poppins;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 24px;
+	letter-spacing: 0em;
+}
+.QuizDetailsProgressBars {
+	margin-top: 24px;
+}
+.QuizDetailstextUsers {
+	margin-top: 24px;
+	display: flex;
+	justify-content: space-between;
+	font-family: Poppins;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 16px;
+	letter-spacing: 0.03em;
+}
+.QuizDetailsHeading {
+	margin-top: 24px;
+	font-family: Poppins;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 24px;
+	letter-spacing: 0em;
+}
+.sortIcon {
+	position: absolute;
+	left: -4px;
+	bottom: -2px;
+	height: 2rem !important;
+	width: 2rem !important;
+}
+
+.sortIconSelected {
+	position: absolute;
+	left: -4px;
+	bottom: -2px;
+	height: 2rem !important;
+	width: 2rem !important;
+	color: $neon-yellow;
+}
+.QuizDetailstableContainer {
+	margin: 1rem 0rem;
+	& > div {
+		tbody {
+			min-height: auto !important;
+			max-height: 100% !important;
+		}
+	}
+}
+
+.row {
+	margin-bottom: 1.5rem;
+	display: block;
+	font-size: 1.2rem;
+}
+.rowData {
+	margin-bottom: 1.5rem;
+	display: block;
+	font-size: 1.2rem;
+}
+
+.progressBars {
+	position: relative;
+}
+
+.progressbarTextBox {
+	width: 100%;
+	position: absolute;
+	bottom: 16px;
+}
+
+.leftprogressbarText {
+	// display: flex !important;
+	// justify-content: space-between !important;
+	font-family: Poppins;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 24px;
+	letter-spacing: 0em;
+	text-align: left;
+	color: white;
+	margin-left: 16px;
+	// margin-right: 16px;
+}
+
+.rightProgressText {
+	position: absolute;
+	right: 0;
+	bottom: 4px;
+	margin-right: 16px;
+	font-family: Poppins;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 16px;
+	letter-spacing: 0.03em;
+	text-align: right;
+}
+
+//quiz details ends
+
+.previewContentWrapper {
+	min-height: calc(100vh - 107px);
+	position: relative;
+	display: flex;
+	width: 1000px;
+}
+
+.contentWrapperNoPreview {
+	min-height: calc(100vh - 107px);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.previewComponent {
+	width: 35%;
+	border-left: 1px solid $grey;
+	margin-left: 3rem;
+	padding-left: 3rem;
+	margin-bottom: 10rem;
+}
+
+.previewHeader {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.previewFile {
+	height: 8rem;
+	width: 8rem;
+}
+
+.closeIcon {
+	width: 3.2rem !important;
+	height: 3.2rem !important;
+	margin-right: 0.8rem;
+	cursor: pointer !important;
+}
+
+.uploadedFilesContainer {
+	margin-top: 1.5rem;
+	max-height: 220px;
+}
+
+.filePreview {
+	padding: 1.5rem 2rem;
+	box-shadow: inset 0px -1px 0px rgba(255, 255, 255, 0.25);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	position: relative;
+	// &:last-child {
+	// 	box-shadow: none;
+	// }
+}
+
+.filePreviewLeft {
+	display: flex;
+	align-items: center;
+}
+
+.fileThumbnail {
+	height: 8rem;
+	width: 8rem;
+	border-radius: 4px;
+	background-color: #404040;
+}
+
+.fileName {
+	font-size: 1rem;
+	margin-left: 2rem;
+}
+
+.filePreviewIcons {
+	color: $neon-yellow;
+	font-size: 2.5rem !important;
+	margin-left: 2rem;
+	cursor: pointer;
+}
+
+.dropZoneContainer {
+	//border: 1px solid $neon-yellow;
+	border-top: 1.5px dashed $neon-yellow;
+	border-right: 1.5px dashed $neon-yellow;
+	border-bottom: 1.5px dashed $neon-yellow;
+	border-left: 1.5px dashed $neon-yellow;
+	//border-style: dashed;
+	cursor: pointer;
+	border-radius: 1rem;
+	//margin-bottom: 1rem;
+	//margin-top: 1rem;
+}
+
+.dropzone {
+	text-align: center;
+	padding: 1rem 2.5rem 0.5rem 2.5rem;
+}
+
+.addFilesIcon {
+	height: 2rem !important;
+	width: 2rem !important;
+	margin-bottom: 1.5rem;
+	color: $neon-yellow;
+}
+
+.dragMsg {
+	font-size: 1.4rem;
+	line-height: 2.4rem;
+	font-weight: 400;
+	@include preventSelect;
+}
+
+.formatMsg {
+	font-size: 1.2rem;
+	line-height: 1.6rem;
+	font-weight: 400;
+	color: $light-grey;
+	@include preventSelect;
+}
+
+.uploadMediaError {
+	color: #ff355a;
+	font-weight: bold;
+	margin-top: 1rem;
+	height: 1rem;
+}
+
+.mediaError {
+	color: #ff355a;
+	font-weight: bold;
+	height: 1rem;
+	margin-bottom: 1rem;
+	margin-left: 1rem;
+}
+
+.fileRejectionError {
+	color: #ff355a;
+	font-weight: bold;
+	height: 1rem;
+	text-align: center;
+	margin-bottom: 1.5rem;
+}
+
+.titleContainer {
+	h6 {
+		margin-bottom: 0.5rem;
+		margin-left: 1rem;
+	}
+}
+
+.textField {
+	width: 100%;
+}
+
+.textFieldInput {
+	@include textFieldInput;
+}
+
+.popperAuto {
+	border: 1px solid #404040;
+	box-shadow: 0px 16px 40px rgba(255, 255, 255, 0.16);
+	border-radius: 8px;
+	background: black;
+}
+
+.liAutocompleteWithButton {
+	background-color: black;
+	color: white;
+	font-size: 14px;
+	padding: 8px 8px 8px 12px;
+	&:hover {
+		color: $neon-yellow;
+		cursor: pointer;
+	}
+}
+
+.liAutocomplete {
+	background-color: black;
+	color: white;
+	font-size: 14px;
+	padding: 8px 8px 8px 12px;
+	&:hover {
+		color: $neon-yellow;
+		cursor: pointer;
+	}
+}
+
+.tagYellow {
+	background-color: $neon-yellow !important;
+	font-family: Poppins !important;
+	font-style: normal !important;
+	font-weight: bold !important;
+	font-size: 12px !important;
+	line-height: 24px !important;
+	padding: 4px 6px !important;
+	margin-right: 6px !important;
+	svg {
+		color: black !important;
+		font-size: 20px !important;
+	}
+}
+
+.autoComplete {
+	padding: 8px;
+	width: 96% !important;
+	padding-left: 16px;
+	color: white !important;
+	border: 1px solid #404040;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 5rem !important;
+	margin-bottom: 1rem !important;
+	.MuiInput-input {
+		padding: 1rem 0rem 1rem 1rem;
+		color: #ffffff !important;
+	}
+
+	.textFieldAuto {
+		width: 530px;
+		color: #ffffff !important;
+		input {
+			color: #ffffff !important;
+			font-size: 14px;
+		}
+	}
+
+	svg {
+		color: $neon-yellow;
+		right: 5rem;
+		top: 0;
+		font-size: 3rem;
+	}
+}
+
+.disableAutoComplete {
+	background-color: #404040 !important;
+}
+
+.disableTextField {
+	background-color: #404040 !important;
+}
+
+.buttonDiv {
+	width: 100%;
+	margin-bottom: 4rem;
+}
+
+.addQuizBtn {
+	width: 100%;
+	margin-top: 0.5rem;
+}
+
+.addQuizBtnEdit {
+	width: 70%;
+	margin-top: 0.5rem;
+	display: inline-block;
+}
+
+.editBtn {
+	width: 30%;
+	display: inline-block;
+	margin-top: 0.5rem;
+}
+
+.noResultError {
+	color: #ff355a;
+	font-weight: bold;
+	margin-top: 0.2rem;
+	margin-left: 0.5rem;
+	height: 1rem;
+}
+
+.customDateInput {
+	border: 0;
+	margin: 0;
+	display: inline-flex;
+	padding: 0;
+	position: relative;
+	min-width: 0;
+	flex-direction: column;
+	vertical-align: top;
+	width: 95%;
+	color: white !important;
+	border: 1px solid #404040;
+	padding: 1.2rem 1rem 1.2rem 1.5rem !important;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 40px;
+	background-color: #000000;
+	border-color: rgb(64, 64, 64);
+	height: 17.5px;
+	box-sizing: content-box;
+	padding: 6px 0 7px;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.datePickerContainer {
+	margin-bottom: 1rem !important;
+	h6 {
+		margin-bottom: 0.5rem;
+		margin-left: 1rem;
+	}
+}
+
+.datePicker {
+	button {
+		background-color: transparent !important;
+		top: 0.5px !important;
+		right: -150px !important;
+	}
+}

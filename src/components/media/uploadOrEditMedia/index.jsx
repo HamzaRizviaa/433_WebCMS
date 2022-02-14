@@ -67,8 +67,6 @@ const UploadOrEditMedia = ({
 	const [mediaButtonStatus, setMediaButtonStatus] = useState(false);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
-	const [inputWidth, setInputWidth] = useState(null);
-	const labelsInputRef = useRef(null);
 	const previewRef = useRef(null);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
@@ -94,12 +92,6 @@ const UploadOrEditMedia = ({
 			setMediaLabels([...labels]);
 		}
 	}, [labels]);
-
-	useEffect(() => {
-		if (labelsInputRef?.current && inputWidth === null) {
-			setInputWidth(labelsInputRef?.current?.offsetWidth);
-		}
-	}, [labelsInputRef?.current]);
 
 	useEffect(() => {
 		setMediaLabels((labels) => {
@@ -825,7 +817,6 @@ const UploadOrEditMedia = ({
 									<div className={classes.titleContainer}>
 										<h6 style={{ color: titleMediaLabelColor }}>TITLE</h6>
 										<TextField
-											ref={labelsInputRef}
 											value={titleMedia}
 											onChange={(e) => {
 												setTitleMedia(e.target.value);
@@ -848,10 +839,6 @@ const UploadOrEditMedia = ({
 										<h6 style={{ color: labelColor }}>LABELS</h6>
 										<Autocomplete
 											disabled={isEdit}
-											style={{
-												maxWidth: `530px`
-												// minWidth: `${inputWidth}px`
-											}}
 											getOptionLabel={(option) => option.name}
 											PaperComponent={(props) => {
 												setDisableDropdown(false);

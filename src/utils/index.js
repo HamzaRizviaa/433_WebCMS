@@ -30,16 +30,40 @@ export const formatDate = (date) => {
 
 export const getCalendarText = (startDate, endDate) => {
 	if (startDate && endDate) {
-		return <span>{`${startDate}   >   ${endDate}`}</span>;
+		return (
+			<span
+				style={{ whiteSpace: 'pre-wrap' }}
+			>{`${startDate} > ${endDate}`}</span>
+		);
 	} else {
 		if (startDate && endDate === null) {
-			return <span>{`${startDate}   >   End date`}</span>;
+			return (
+				<span
+					style={{ whiteSpace: 'pre-wrap' }}
+				>{`${startDate} > End date`}</span>
+			);
 		} else if (startDate === null && endDate) {
-			return <span>{`Start date   >   ${endDate}`}</span>;
+			return (
+				<span
+					style={{ color: '#808080', whiteSpace: 'pre-wrap' }}
+				>{`Start date > ${endDate}`}</span>
+			);
 		} else {
 			return (
-				<span style={{ color: '#808080' }}>{`Start date   >   End date`}</span>
+				<span
+					style={{ color: '#808080', whiteSpace: 'pre-wrap' }}
+				>{`Start date  >  End date`}</span>
 			);
 		}
+	}
+};
+
+export const getCalendarText2 = (startDate) => {
+	if (startDate) {
+		return <span>{`${startDate}`}</span>;
+	} else {
+		return (
+			<span style={{ color: '#808080' }}>{`Please select an end date`}</span>
+		);
 	}
 };

@@ -257,6 +257,8 @@ const PostLibrary = () => {
 									<video
 										id={'my-video'}
 										//poster={row.thumbnail_url}
+										autoPlay
+										muted
 										className={
 											row?.orientation_type === 'square'
 												? classes.mediaIconPreview

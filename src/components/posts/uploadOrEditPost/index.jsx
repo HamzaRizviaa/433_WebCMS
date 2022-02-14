@@ -76,10 +76,8 @@ const UploadOrEditPost = ({
 	const [postLabels, setPostLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [selectMediaInput, setSelectMediaInput] = useState('');
-	const [inputWidth, setInputWidth] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [dropdownPosition, setDropdownPosition] = useState(false);
-	const labelsInputRef = useRef(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	// const [aspect, setAspect] = useState(1 / 1);
@@ -134,12 +132,6 @@ const UploadOrEditPost = ({
 			}
 		}
 	}, [extraLabel]);
-
-	useEffect(() => {
-		if (labelsInputRef?.current && inputWidth === null) {
-			setInputWidth(labelsInputRef?.current?.offsetWidth);
-		}
-	}, [labelsInputRef?.current]);
 
 	useEffect(() => {
 		if (labels.length) {
@@ -807,10 +799,6 @@ const UploadOrEditPost = ({
 								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete
 									disabled={isEdit}
-									style={{
-										maxWidth: `530px`
-										// minWidth: `${inputWidth}px`
-									}}
 									getOptionLabel={(option) => option.name}
 									PaperComponent={(props) => {
 										setDisableDropdown(false);
@@ -952,7 +940,6 @@ const UploadOrEditPost = ({
 							<div className={classes.captionContainer}>
 								<h6>CAPTION</h6>
 								<TextField
-									ref={labelsInputRef}
 									value={caption}
 									onChange={(e) => setCaption(e.target.value)}
 									placeholder={'Please write your caption here'}

@@ -15,7 +15,8 @@ const Slider = ({
 	previewRef,
 	orientationRef,
 	edit,
-	media
+	media,
+	quiz
 }) => {
 	const wrapperRef = useRef(null);
 
@@ -43,6 +44,7 @@ const Slider = ({
 			}
 			if (
 				!media &&
+				!quiz &&
 				preview &&
 				previewRef.current &&
 				!previewRef.current.contains(event.target) &&
@@ -60,7 +62,7 @@ const Slider = ({
 				handlePreview();
 			}
 			if (
-				media &&
+				(media || quiz) &&
 				preview &&
 				previewRef.current &&
 				!previewRef.current.contains(event.target)
@@ -133,7 +135,8 @@ Slider.propTypes = {
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,
 	edit: PropTypes.bool.isRequired,
-	media: PropTypes.bool.isRequired
+	media: PropTypes.bool,
+	quiz: PropTypes.bool
 };
 
 export default Slider;
