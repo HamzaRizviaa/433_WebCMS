@@ -188,11 +188,6 @@ const UploadOrEditQuiz = ({
 		);
 	};
 
-	// const handlePreviewEscape = () => {
-	// 	setPreviewBool(false);
-	// 	setPreviewFile(null);
-	// };
-
 	const handleChangeExtraLabel = (e) => {
 		setExtraLabel(e.target.value.toUpperCase());
 	};
