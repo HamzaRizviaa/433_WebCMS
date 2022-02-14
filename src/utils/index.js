@@ -33,20 +33,20 @@ export const getCalendarText = (startDate, endDate) => {
 		return (
 			<span
 				style={{ whiteSpace: 'pre-wrap' }}
-			>{`${startDate}  >  ${endDate}`}</span>
+			>{`${startDate} > ${endDate}`}</span>
 		);
 	} else {
 		if (startDate && endDate === null) {
 			return (
 				<span
 					style={{ whiteSpace: 'pre-wrap' }}
-				>{`${startDate}  >  End date`}</span>
+				>{`${startDate} > End date`}</span>
 			);
 		} else if (startDate === null && endDate) {
 			return (
 				<span
 					style={{ color: '#808080', whiteSpace: 'pre-wrap' }}
-				>{`Start date  >  ${endDate}`}</span>
+				>{`Start date > ${endDate}`}</span>
 			);
 		} else {
 			return (
