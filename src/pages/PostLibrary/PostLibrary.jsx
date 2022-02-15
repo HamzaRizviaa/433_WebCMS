@@ -93,7 +93,7 @@ const PostLibrary = () => {
 								dispatch(
 									getPosts({
 										q: search,
-										page,
+										page: 1,
 										startDate,
 										endDate,
 										fromCalendar: true,
@@ -104,12 +104,13 @@ const PostLibrary = () => {
 								dispatch(
 									getPosts({
 										q: search,
-										page,
+										page: 1,
 										fromCalendar: true,
 										...sortState
 									})
 								);
 							}
+							setPage(1);
 						}}
 					/>
 				</span>
@@ -433,12 +434,11 @@ const PostLibrary = () => {
 			_search = prevState;
 			return _search;
 		});
-
 		if (_search) {
 			dispatch(
 				getPosts({
 					q: _search,
-					page,
+					page: 1,
 					startDate: formatDate(dateRange[0]),
 					endDate: formatDate(dateRange[1]),
 					...sortState
@@ -447,13 +447,14 @@ const PostLibrary = () => {
 		} else {
 			dispatch(
 				getPosts({
-					page,
+					page: 1,
 					startDate: formatDate(dateRange[0]),
 					endDate: formatDate(dateRange[1]),
 					...sortState
 				})
 			);
 		}
+		setPage(1);
 	};
 
 	const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
