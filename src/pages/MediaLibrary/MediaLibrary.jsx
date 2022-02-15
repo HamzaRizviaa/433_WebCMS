@@ -106,7 +106,7 @@ const MediaLibrary = () => {
 								dispatch(
 									getMedia({
 										q: search,
-										page,
+										page: 1,
 										startDate,
 										endDate,
 										fromCalendar: true,
@@ -117,12 +117,13 @@ const MediaLibrary = () => {
 								dispatch(
 									getMedia({
 										q: search,
-										page,
+										page: 1,
 										fromCalendar: true,
 										...sortState
 									})
 								);
 							}
+							setPage(1);
 						}}
 					/>
 				</span>
@@ -459,7 +460,7 @@ const MediaLibrary = () => {
 			dispatch(
 				getMedia({
 					q: _search,
-					page,
+					page: 1,
 					startDate: formatDate(dateRange[0]),
 					endDate: formatDate(dateRange[1]),
 					...sortState
@@ -468,13 +469,14 @@ const MediaLibrary = () => {
 		} else {
 			dispatch(
 				getMedia({
-					page,
+					page: 1,
 					startDate: formatDate(dateRange[0]),
 					endDate: formatDate(dateRange[1]),
 					...sortState
 				})
 			);
 		}
+		setPage(1);
 	};
 
 	const debounceFun = useCallback(_debounce(handleDebounceFun, 600), []);
