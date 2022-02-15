@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import PostLibrary from '../pages/PostLibrary/PostLibrary';
 import MediaLibrary from '../pages/MediaLibrary/MediaLibrary';
 import QuizLibrary from '../pages/QuizLibrary/QuizLibrary';
-import TopBanner from '../pages/TopBanner/TopBanner';
+import TopBanner from '../pages/TopBanner/TopBanner.jsx';
 
 const AppRoutes = () => {
 	return (
