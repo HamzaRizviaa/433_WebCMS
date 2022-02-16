@@ -24,9 +24,30 @@ export default function Banners() {
 	const classUseStyle = useStyles();
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [dropdownPosition, setDropdownPosition] = useState(false);
-	const [selectedMedia, setSelectedMedia] = useState(null);
+	const [selectedMedia, setSelectedMedia] = useState([]);
 	const [selectMediaInput, setSelectMediaInput] = useState('');
-	const options = ['neymar', 'neymar', 'neymar', 'neymar', 'neymar'];
+	const options = [
+		{
+			id: '1',
+			name: 'neymar'
+		},
+		{
+			id: '2',
+			name: 'salah'
+		},
+		{
+			id: '3',
+			name: 'neymar'
+		},
+		{
+			id: '4',
+			name: 'neymar'
+		},
+		{
+			id: '5',
+			name: 'messi'
+		}
+	];
 	const [bannerData, setBannerData] = useState([
 		{
 			id: '1',
@@ -273,9 +294,8 @@ export default function Banners() {
 																			setSelectedMedia(newVal);
 																			setDisableDropdown(true);
 																		}}
-																		// options={bannerData}
 																		options={options}
-																		getOptionLabel={(options) => options}
+																		getOptionLabel={(options) => options.name}
 																		// getOptionLabel={(option) => option.name}
 																		renderOption={(props, option) => {
 																			return (
@@ -283,7 +303,7 @@ export default function Banners() {
 																					{...props}
 																					className={classes.liAutocomplete}
 																				>
-																					{option.title}
+																					{option.name}
 																				</li>
 																			);
 																		}}
