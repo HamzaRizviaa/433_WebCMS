@@ -47,13 +47,16 @@ export default function QuizDetails({
 		>
 			<div className={muiClasses.root}>
 				<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
-					<TabsListUnstyled className={muiClasses.tabMainDiv}>
+					<TabsListUnstyled
+						className={muiClasses.tabMainDiv}
+						style={{ width: previewBool ? '60%' : '100%' }}
+					>
 						<TabUnstyled>Quiz Results</TabUnstyled>
 						<TabUnstyled>Edit Quiz</TabUnstyled>
 					</TabsListUnstyled>
 					<TabPanelUnstyled value={0}>
 						{/* table */}
-						<QuizResults style={{minWidth:"40% !important"}} />
+						<QuizResults style={{ minWidth: '40% !important' }} />
 					</TabPanelUnstyled>
 					<TabPanelUnstyled value={1}>
 						{/* add edit quiz */}
