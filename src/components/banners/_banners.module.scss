@@ -35,11 +35,11 @@
 		box-sizing: border-box;
 		border-radius: 16px;
 		width: 100%;
-		padding: 20px 22px;
+		padding: 20px 22px 20px 22px;
 		margin-top: 2%;
 	}
 	.dragIcon {
-		padding-top: 0.7rem;
+		padding-top: 1.2rem;
 	}
 	.dragbale {
 		width: 100%;
@@ -103,7 +103,18 @@
 		margin-left: 22px;
 		> div {
 			width: 70%;
+			> div {
+				> div {
+					padding-left: 6px;
+					padding-right: 6px;
+					margin: 0px !important;
+					> input {
+						padding: 0px 4px 4px 0px !important;
+					}
+				}
+			}
 		}
+
 		.bannerLabel {
 			width: 30%;
 			//styleName: Body/Label;

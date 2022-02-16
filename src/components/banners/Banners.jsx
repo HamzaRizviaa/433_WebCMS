@@ -69,14 +69,14 @@ export default function Banners() {
 		}
 	];
 
-	// a little function to help us with reordering the result
+	// a little function to help us with reordering the result - autocomplete
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
 		const [removed] = result.splice(startIndex, 1);
 		result.splice(endIndex, 0, removed);
 		return result;
 	};
-
+	// - autocomplete
 	const onDragEnd = (result) => {
 		// dropped outside the list
 		if (!result.destination) {
@@ -91,6 +91,7 @@ export default function Banners() {
 
 		setBannerData(items);
 	};
+	// - autocomplete ends
 
 	useEffect(() => {
 		if (!open) {
