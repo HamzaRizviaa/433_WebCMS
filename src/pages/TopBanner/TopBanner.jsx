@@ -6,7 +6,7 @@ import TabsListUnstyled from '@mui/base/TabsListUnstyled';
 import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import TabUnstyled from '@mui/base/TabUnstyled';
 import { useStyles } from './topBanner';
-import Banners from '../../components/banners/Banners'
+import Banners from '../../components/banners/Banners';
 const TopBanner = () => {
 	const muiClasses = useStyles();
 
@@ -24,8 +24,13 @@ const TopBanner = () => {
 						<TabUnstyled>Home</TabUnstyled>
 						<TabUnstyled>Media</TabUnstyled>
 					</TabsListUnstyled>
-					<TabPanelUnstyled value={0}> <Banners/> </TabPanelUnstyled>
-					<TabPanelUnstyled value={1}>{/* add media here */}media content</TabPanelUnstyled>
+					<TabPanelUnstyled value={0}>
+						{' '}
+						<Banners />{' '}
+					</TabPanelUnstyled>
+					<TabPanelUnstyled value={1}>
+						{/* add media here */}media content
+					</TabPanelUnstyled>
 				</TabsUnstyled>
 			</div>
 		</Layout>
