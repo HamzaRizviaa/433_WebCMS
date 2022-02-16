@@ -9,8 +9,11 @@ import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
 import { Popper, Paper } from '@mui/material';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+//import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+
 import { ReactComponent as DropdownArrow } from '../../assets/drop_drown_arrow.svg';
 import { ReactComponent as Union } from '../../assets/drag.svg';
+
 import Button from '../button';
 
 const useStyles = makeStyles(() => ({
@@ -24,28 +27,28 @@ export default function Banners() {
 	const classUseStyle = useStyles();
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [dropdownPosition, setDropdownPosition] = useState(false);
-	const [selectedMedia, setSelectedMedia] = useState([]);
+	const [selectedMedia, setSelectedMedia] = useState(null);
 	const [selectMediaInput, setSelectMediaInput] = useState('');
 	const options = [
 		{
-			id: '1',
+			id: 1,
 			name: 'neymar'
 		},
 		{
-			id: '2',
+			id: 2,
 			name: 'salah'
 		},
 		{
-			id: '3',
-			name: 'neymar'
+			id: 3,
+			name: 'kagawa'
 		},
 		{
-			id: '4',
-			name: 'neymar'
+			id: 4,
+			name: 'Cristiano'
 		},
 		{
-			id: '5',
-			name: 'messi'
+			id: 5,
+			name: 'RONAAAAAAAAALD'
 		}
 	];
 	const [bannerData, setBannerData] = useState([
@@ -199,10 +202,11 @@ export default function Banners() {
 																			setDisableDropdown(true);
 																			setBannerType(e.target.value);
 																		}}
-																		// className={`${classes.select}`}
+																		//className={`${classes.select}`}
 																		disableUnderline={true}
-																		IconComponent={() => (
+																		IconComponent={(props) => (
 																			<DropdownArrow
+																				{...props}
 																				className={classes.dropdownicon}
 																			/>
 																		)}
@@ -296,7 +300,7 @@ export default function Banners() {
 																			setDisableDropdown(true);
 																		}}
 																		options={options}
-																		getOptionLabel={(options) => options.name}
+																		getOptionLabel={(option) => option.name}
 																		// getOptionLabel={(option) => option.name}
 																		renderOption={(props, option) => {
 																			return (
