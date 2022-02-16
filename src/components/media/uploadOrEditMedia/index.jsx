@@ -994,7 +994,10 @@ const UploadOrEditMedia = ({
 											className={classes.textField}
 											InputProps={{
 												disableUnderline: true,
-												className: classes.textFieldInput
+												className: classes.textFieldInput,
+												style: {
+													borderRadius: description ? '16px' : '40px'
+												}
 											}}
 											multiline
 											maxRows={4}
