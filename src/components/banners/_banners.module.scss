@@ -4,9 +4,9 @@
 	@include textFieldInput;
 }
 .Banner {
-	width: 100%;
-	height: auto;
-
+	width: 96%;
+	max-height: calc(100vh - 200px);
+	overflow-y: 'auto';
 	.bannerRow {
 		display: flex;
 		margin-top: 2%;
