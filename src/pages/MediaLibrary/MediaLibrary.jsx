@@ -486,6 +486,13 @@ const MediaLibrary = () => {
 		debounceFun(e.target.value);
 	};
 
+	useEffect(() => {
+		let tableBody = document.getElementsByTagName('tbody')[0];
+		if (tableBody) {
+			tableBody.scrollTop = 0;
+		}
+	}, [page]);
+
 	return (
 		<Layout>
 			<div className={classes.header}>
