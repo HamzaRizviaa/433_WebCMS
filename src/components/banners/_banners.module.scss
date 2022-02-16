@@ -1,0 +1,83 @@
+// @import '../../../styles/_variables.scss';
+// @import '../../../styles/_mixins.scss';
+
+.Banner {
+	width: 100%;
+
+	.bannerRow {
+		display: flex;
+		margin-top: 2%;
+	}
+	.bannertext {
+		//styleName: Body/Bold;
+		font-family: Poppins;
+		font-size: 16px;
+		font-style: normal;
+		font-weight: 700;
+		line-height: 24px;
+		letter-spacing: 0em;
+		text-align: left;
+		padding-right: 24px;
+		padding-top: 2.5rem;
+	}
+	.bannerRight {
+		display: flex;
+		border: 1px solid #404040;
+		box-sizing: border-box;
+		border-radius: 16px;
+		width: 90%;
+		padding: 20px 22px;
+	}
+	.dragIcon {
+		padding-top: 0.7rem;
+	}
+
+	.bannerDropdownDiv {
+		display: flex;
+		justify-content: space-between;
+		width: 50%;
+		margin-left: 22px;
+		> div {
+			background-color: none !important;
+			> div {
+				color: #ffffff;
+				font-family: Poppins;
+				font-size: 12px;
+				width: 100% !important;
+				background-color: none !important;
+			}
+		}
+		> div:focus-visible {
+			outline: none !important;
+		}
+		> div:focus {
+			outline: none !important;
+		}
+		.bannerLabel {
+			//styleName: Body/Label;
+			font-family: Poppins;
+			font-size: 12px;
+			font-style: normal;
+			font-weight: 700;
+			line-height: 24px;
+			text-transform: uppercase;
+			margin-top: 7px;
+		}
+		.bannerDropdown {
+			border: 1px solid #404040;
+			box-sizing: border-box;
+			border-radius: 40px;
+			display: flex;
+			justify-content: space-between;
+			width: 70%;
+			height: 40px;
+			position: relative;
+			.dropdownicon {
+				cursor: pointer;
+				position: absolute;
+				right: 4%;
+				top: 35%;
+			}
+		}
+	}
+}
