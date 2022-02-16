@@ -1,12 +1,20 @@
-// @import '../../../styles/_variables.scss';
-// @import '../../../styles/_mixins.scss';
-
+@import '../../styles/_variables.scss';
+@import '../../styles/_mixins.scss';
+.textFieldInput {
+	@include textFieldInput;
+}
 .Banner {
 	width: 100%;
+	height: auto;
 
 	.bannerRow {
 		display: flex;
 		margin-top: 2%;
+	}
+	.bannersLeft {
+		width: 10%;
+		flex-direction: column;
+		margin-top: 1.5rem;
 	}
 	.bannertext {
 		//styleName: Body/Bold;
@@ -18,18 +26,23 @@
 		letter-spacing: 0em;
 		text-align: left;
 		padding-right: 24px;
-		padding-top: 2.5rem;
+		padding-top: 40px;
+		padding-bottom: 40px;
 	}
 	.bannerRight {
 		display: flex;
 		border: 1px solid #404040;
 		box-sizing: border-box;
 		border-radius: 16px;
-		width: 90%;
+		width: 100%;
 		padding: 20px 22px;
+		margin-top: 2%;
 	}
 	.dragIcon {
 		padding-top: 0.7rem;
+	}
+	.dragbale {
+		width: 100%;
 	}
 
 	.bannerDropdownDiv {
@@ -78,6 +91,57 @@
 				right: 4%;
 				top: 35%;
 			}
+		}
+	}
+
+	.bannerAutocomplete {
+		min-height: 1.4375em;
+		margin-bottom: 0px;
+		display: flex;
+		justify-content: space-between;
+		width: 50%;
+		margin-left: 22px;
+		> div {
+			width: 70%;
+		}
+		.bannerLabel {
+			width: 30%;
+			//styleName: Body/Label;
+			font-family: Poppins;
+			font-size: 12px;
+			font-style: normal;
+			font-weight: 700;
+			line-height: 24px;
+			text-transform: uppercase;
+			margin-top: 7px;
+		}
+		.liAutocomplete {
+			background-color: black;
+			color: white;
+			font-size: 14px;
+			padding: 8px 8px 8px 12px;
+			&:hover {
+				color: $neon-yellow;
+				cursor: pointer;
+			}
+		}
+
+		.liAutocompleteWithButton {
+			background-color: black;
+			color: white;
+			font-size: 14px;
+			padding: 8px 8px 8px 12px;
+			&:hover {
+				color: $neon-yellow;
+				cursor: pointer;
+			}
+		}
+
+		.popperAuto {
+			border: 1px solid #404040;
+			box-shadow: 0px 16px 40px rgba(255, 255, 255, 0.16);
+			border-radius: 8px;
+			background: black;
 		}
 	}
 }
