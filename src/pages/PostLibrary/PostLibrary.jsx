@@ -214,6 +214,13 @@ const PostLibrary = () => {
 		};
 	}, []);
 
+	useEffect(() => {
+		let tableBody = document.getElementsByTagName('tbody')[0];
+		if (tableBody) {
+			tableBody.scrollTop = 0;
+		}
+	}, [page]);
+
 	const sortRows = (order, col) => {
 		if (order && col.dataField) {
 			if (
