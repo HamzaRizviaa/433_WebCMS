@@ -522,9 +522,10 @@ const UploadOrEditMedia = ({
 											isEdit ? `${classes.isEditSelect}` : ''
 										}`}
 										disableUnderline={true}
-										IconComponent={() => (
+										IconComponent={(props) => (
 											<KeyboardArrowDownIcon
-												style={{ display: isEdit ? 'none' : 'block' }}
+												{...props}
+												style={{ display: isEdit ? 'none' : 'block', top: '4' }}
 											/>
 										)}
 										MenuProps={{
@@ -579,9 +580,10 @@ const UploadOrEditMedia = ({
 											isEdit ? `${classes.isEditSelect}` : ''
 										}`}
 										disableUnderline={true}
-										IconComponent={() => (
+										IconComponent={(props) => (
 											<KeyboardArrowDownIcon
-												style={{ display: isEdit ? 'none' : 'block' }}
+												{...props}
+												style={{ display: isEdit ? 'none' : 'block', top: '4' }}
 											/>
 										)}
 										MenuProps={{
@@ -994,7 +996,10 @@ const UploadOrEditMedia = ({
 											className={classes.textField}
 											InputProps={{
 												disableUnderline: true,
-												className: classes.textFieldInput
+												className: classes.textFieldInput,
+												style: {
+													borderRadius: description ? '16px' : '40px'
+												}
 											}}
 											multiline
 											maxRows={4}

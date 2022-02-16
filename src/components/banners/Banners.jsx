@@ -11,6 +11,8 @@ import { Popper, Paper } from '@mui/material';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { ReactComponent as DropdownArrow } from '../../assets/drop_drown_arrow.svg';
 import { ReactComponent as Union } from '../../assets/drag.svg';
+import Button from '../button';
+
 const useStyles = makeStyles(() => ({
 	'&.Mui-focused': {
 		border: 'none !important',
@@ -335,6 +337,13 @@ export default function Banners() {
 						</Droppable>
 					</DragDropContext>
 				</div>
+			</div>
+			<div className={classes.buttonDiv}>
+				<Button
+					disabled={false}
+					onClick={() => {}}
+					text={'PUBLISH HOME BANNERS'}
+				/>
 			</div>
 		</div>
 	);
