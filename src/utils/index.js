@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 export const getDateTime = (dateTime) => {
 	let formatted = new Date(dateTime);
@@ -32,27 +33,53 @@ export const getCalendarText = (startDate, endDate) => {
 	if (startDate && endDate) {
 		return (
 			<span
-				style={{ whiteSpace: 'pre-wrap' }}
-			>{`${startDate} > ${endDate}`}</span>
+				style={{
+					whiteSpace: 'pre-wrap',
+					display: 'flex',
+					alignItems: 'center'
+				}}
+			>
+				{startDate} <ArrowForwardIosIcon /> {endDate}
+			</span>
 		);
 	} else {
 		if (startDate && endDate === null) {
 			return (
 				<span
-					style={{ whiteSpace: 'pre-wrap' }}
-				>{`${startDate} > End date`}</span>
+					style={{
+						whiteSpace: 'pre-wrap',
+						display: 'flex',
+						alignItems: 'center'
+					}}
+				>
+					{startDate} <ArrowForwardIosIcon /> End date
+				</span>
 			);
 		} else if (startDate === null && endDate) {
 			return (
 				<span
-					style={{ color: '#808080', whiteSpace: 'pre-wrap' }}
-				>{`Start date > ${endDate}`}</span>
+					style={{
+						color: '#808080',
+						whiteSpace: 'pre-wrap',
+						display: 'flex',
+						alignItems: 'center'
+					}}
+				>
+					Start Date <ArrowForwardIosIcon /> {endDate}
+				</span>
 			);
 		} else {
 			return (
 				<span
-					style={{ color: '#808080', whiteSpace: 'pre-wrap' }}
-				>{`Start date  >  End date`}</span>
+					style={{
+						color: '#808080',
+						whiteSpace: 'pre-wrap',
+						display: 'flex',
+						alignItems: 'center'
+					}}
+				>
+					Start Date <ArrowForwardIosIcon /> End date
+				</span>
 			);
 		}
 	}
