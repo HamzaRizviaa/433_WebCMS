@@ -28,7 +28,7 @@ import './_calender.scss';
 
 // Utils
 import { getDateTime, formatDate, getCalendarText } from '../../utils';
-import { useStyles } from './../../utils/styles';
+import { useStyles, useStyles2 } from './../../utils/styles';
 
 // Components
 import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
@@ -45,6 +45,7 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 
 const PostLibrary = () => {
 	const muiClasses = useStyles();
+	const muiClasses2 = useStyles2();
 
 	// Selectors
 	const posts = useSelector((state) => state.postLibrary.posts);
@@ -487,7 +488,7 @@ const PostLibrary = () => {
 				<div className={classes.subheader2}>
 					<div>
 						<TextField
-							className={classes.searchField}
+							className={`${classes.searchField} ${muiClasses2.root}`}
 							value={search}
 							// onKeyPress={(e) => {
 							// 	if (e.key === 'Enter' && search) {
