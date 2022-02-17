@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 // import Backdrop from '@material-ui/core/Backdrop';
 //import { makeStyles } from '@material-ui/core/styles';
@@ -23,12 +24,13 @@ import { useStyles } from './bannerStyles';
 // 	}
 // }));
 
-export default function BannerRows({ key, data }) {
+// eslint-disable-next-line no-unused-vars
+export default function BannerRows({ key, data, setBannerData }) {
 	// const listElement = useRef(null);
 	//styles
 	const muiClasses = useStyles();
 	//states
-	const [bannerType, setBannerType] = useState('');
+	// const [bannerType, setBannerType] = useState('');
 	//const classUseStyle = useStyles();
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [dropdownPosition, setDropdownPosition] = useState(false);
@@ -62,7 +64,7 @@ export default function BannerRows({ key, data }) {
 	// a little function to help us with reordering the result
 
 	useEffect(() => {
-		console.log(data, 'provided');
+		// console.log(data, 'provided');
 		if (!open) {
 			resetState();
 		}
@@ -71,7 +73,7 @@ export default function BannerRows({ key, data }) {
 		setDropdownPosition(false);
 	};
 	const handleChangeSelectMediaInput = (e) => {
-		console.log(disableDropdown);
+		// console.log(disableDropdown);
 		setSelectMediaInput(e.target.value);
 	};
 
@@ -86,8 +88,8 @@ export default function BannerRows({ key, data }) {
 
 	return (
 		<Draggable
-			key={data}
-			draggableId={`droppable-${data}`}
+			key={data.id}
+			draggableId={`droppable-${data.id}`}
 			index={key}
 			//	isDragDisabled={uploadeddatas.length <= 1}
 		>
@@ -100,7 +102,7 @@ export default function BannerRows({ key, data }) {
 						...provided.draggableProps.style
 					}}
 				>
-					<div className={classes.bannerRight} key={data} index={key}>
+					<div className={classes.bannerRight} key={data.id} index={key}>
 						<div className={classes.dragIcon}>
 							<span {...provided.dragHandleProps}>
 								<Union
@@ -126,10 +128,24 @@ export default function BannerRows({ key, data }) {
 										setDisableDropdown(true);
 									}}
 									disabled={false}
-									value={bannerType}
+									value={data.bannerType}
 									onChange={(e) => {
 										setDisableDropdown(true);
-										setBannerType(e.target.value);
+										setBannerData((bannerData) => {
+											// eslint-disable-next-line no-unused-vars
+											let _bannerData = bannerData.map((banner) => {
+												if (banner.id === data.id) {
+													return {
+														...banner,
+														bannerType: e.target.value
+													};
+												}
+												return {
+													...banner
+												};
+											});
+											return _bannerData;
+										});
 									}}
 									disableUnderline={true}
 									IconComponent={(props) => (
@@ -174,7 +190,7 @@ export default function BannerRows({ key, data }) {
 							</div>
 						</div>
 
-						{bannerType == 'Please Select' ? (
+						{data.bannerType == 'Please Select' ? (
 							<div className={classes.bannerAutocomplete}></div>
 						) : (
 							<div
@@ -282,7 +298,8 @@ export default function BannerRows({ key, data }) {
 }
 
 BannerRows.propTypes = {
-	data: PropTypes.integer,
+	data: PropTypes.object,
 	key: PropTypes.integer,
+	setBannerData: PropTypes.func,
 	provided: PropTypes.draggableProps
 };

@@ -7,39 +7,31 @@ import Button from '../button';
 export default function Banners() {
 	const [bannerData, setBannerData] = useState([
 		{
-			id: '1'
+			id: '1',
+			bannerType: '',
+			selectedMedia: null
 		},
 		{
-			id: '2'
+			id: '2',
+			bannerType: '',
+			selectedMedia: null
 		},
 		{
-			id: '3'
+			id: '3',
+			bannerType: '',
+			selectedMedia: null
 		},
 		{
-			id: '4'
+			id: '4',
+			bannerType: '',
+			selectedMedia: null
 		},
 		{
-			id: '5'
+			id: '5',
+			bannerType: '',
+			selectedMedia: null
 		}
 	]);
-
-	const bannersDataValue = [
-		{
-			id: '1'
-		},
-		{
-			id: '2'
-		},
-		{
-			id: '3'
-		},
-		{
-			id: '4'
-		},
-		{
-			id: '5'
-		}
-	];
 
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
@@ -67,11 +59,11 @@ export default function Banners() {
 		<div className={classes.Banner}>
 			<div className={classes.bannerRow}>
 				<div className={classes.bannersLeft}>
-					{bannersDataValue.length > 0 &&
-						bannersDataValue.map((data, index) => {
+					{[1, 2, 3, 4, 5].length > 0 &&
+						[1, 2, 3, 4, 5].map((id, index) => {
 							return (
 								<div className={classes.bannertext} key={index}>
-									Banner {data.id}
+									Banner {id}
 								</div>
 							);
 						})}
@@ -87,7 +79,8 @@ export default function Banners() {
 									{bannerData.map((data, index) => {
 										return (
 											<BannerRows
-												data={data.id}
+												data={data}
+												setBannerData={setBannerData}
 												key={index}
 												provided={provided}
 											/>
