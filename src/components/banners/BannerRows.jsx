@@ -14,7 +14,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import PropTypes from 'prop-types';
 import { ReactComponent as DropdownArrow } from '../../assets/drop_drown_arrow.svg';
 import { ReactComponent as Union } from '../../assets/drag.svg';
-import { useStyles } from './bannerStyles';
+import { useStyles, useStyles2 } from './bannerStyles';
 
 // const useStyles = makeStyles(() => ({
 // 	'&.Mui-focused': {
@@ -29,6 +29,7 @@ export default function BannerRows({ key, data, setBannerData }) {
 	// const listElement = useRef(null);
 	//styles
 	const muiClasses = useStyles();
+	const muiClasses2 = useStyles2();
 	//states
 	// const [bannerType, setBannerType] = useState('');
 	//const classUseStyle = useStyles();
@@ -116,6 +117,7 @@ export default function BannerRows({ key, data, setBannerData }) {
 
 							<div className={classes.bannerDropdown}>
 								<Select
+									className={muiClasses2.root}
 									// className={classUseStyle.bannerSelect}
 									// ref={listElement}
 									// onClick={() => {
@@ -177,11 +179,7 @@ export default function BannerRows({ key, data, setBannerData }) {
 									{allMedia.length > 0 &&
 										allMedia.map((category, index) => {
 											return (
-												<MenuItem
-													key={index}
-													value={category}
-													className={muiClasses.root}
-												>
+												<MenuItem key={index} value={category}>
 													{category}
 												</MenuItem>
 											);
@@ -203,6 +201,7 @@ export default function BannerRows({ key, data, setBannerData }) {
 									select Banner Type
 								</label>
 								<Autocomplete
+									className={muiClasses.root}
 									value={selectedMedia}
 									PaperComponent={(props) => {
 										setDisableDropdown(false);
@@ -228,7 +227,7 @@ export default function BannerRows({ key, data, setBannerData }) {
 										<Popper {...props} style={{ ...style, height: 0 }} />
 									)}
 									ListboxProps={{
-										style: { maxHeight: 180 },
+										style: { maxHeight: 140 },
 										position: 'bottom'
 									}}
 									onOpen={() => {
