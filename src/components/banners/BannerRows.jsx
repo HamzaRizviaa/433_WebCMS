@@ -195,6 +195,15 @@ export default function BannerRows({ key, data }) {
 											<Paper
 												elevation={6}
 												className={classes.popperAuto}
+												style={{
+													marginTop: '12px',
+													background: 'black',
+													border: '1px solid #404040',
+													boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)',
+													borderRadius: '8px',
+													color: '#ffffff',
+													fontSize: '14px'
+												}}
 												{...props}
 											/>
 										);

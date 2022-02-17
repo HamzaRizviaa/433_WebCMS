@@ -3,6 +3,17 @@
 .textFieldInput {
 	@include textFieldInput;
 }
+
+.popperAuto {
+	border: 1px solid #404040 !important;
+	box-shadow: 0px 16px 40px rgba(255, 255, 255, 0.16) !important;
+	border-radius: 8px !important;
+	background: black !important;
+	border-radius: 8px !important;
+	color: #ffffff !important;
+	padding: 6px !important;
+	font-family: 'Poppins' !important;
+}
 .Banner {
 	width: 96%;
 	max-height: calc(100vh - 200px);
@@ -127,38 +138,6 @@
 			text-transform: uppercase;
 			margin-top: 7px;
 		}
-		.liAutocomplete {
-			background-color: black;
-			color: white;
-			font-size: 14px;
-			padding: 8px 8px 8px 12px;
-			&:hover {
-				color: $neon-yellow;
-				cursor: pointer;
-			}
-		}
-
-		.liAutocompleteWithButton {
-			background-color: black;
-			color: white;
-			font-size: 14px;
-			padding: 8px 8px 8px 12px;
-			&:hover {
-				color: $neon-yellow;
-				cursor: pointer;
-			}
-		}
-
-		.popperAuto {
-			border: 1px solid #404040;
-			box-shadow: 0px 16px 40px rgba(255, 255, 255, 0.16);
-			border-radius: 8px;
-			background: black;
-			border-radius: 8px;
-			color: #ffffff;
-			padding: 6px;
-			font-family: 'Poppins';
-		}
 	}
 }
 
@@ -199,3 +178,25 @@
 // 		font-size: 3rem;
 // 	}
 // }
+
+.liAutocomplete {
+	background-color: black;
+	color: white;
+	font-size: 14px;
+	padding: 8px 8px 8px 12px;
+	&:hover {
+		color: $neon-yellow;
+		cursor: pointer;
+	}
+}
+
+.liAutocompleteWithButton {
+	background-color: black;
+	color: white;
+	font-size: 14px;
+	padding: 8px 8px 8px 12px;
+	&:hover {
+		color: $neon-yellow;
+		cursor: pointer;
+	}
+}
