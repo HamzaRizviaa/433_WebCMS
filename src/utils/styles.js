@@ -63,3 +63,11 @@ export const useStyles = makeStyles(() => ({
 		}
 	}
 }));
+
+export const useStyles2 = makeStyles(() => ({
+	root: {
+		'& .MuiInputBase-input': {
+			padding: '6px 0px 6px'
+		}
+	}
+}));
