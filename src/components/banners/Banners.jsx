@@ -73,66 +73,77 @@ export default function Banners() {
 	// NOT DISABLED = FALSE = YELLOW
 
 	const handleBannerPositionAndFirstBanner = () => {
-		let min;
-		let max;
-		let flag = false;
-		let flag2 = false;
-		for (let i = 0; i <= 4; i++) {
+		// let min;
+		// let max;
+		let flag;
+		// let flag2;
+
+		// for (let i = 0; i <= 4; i++) {
+		// 	if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
+		// 		min = i;
+		// 		break;
+		// 	}
+		// }
+		// for (let i = 4; i >= 0; i--) {
+		// 	if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
+		// 		max = i;
+		// 		break;
+		// 	}
+		// }
+		// // first value
+		// if (bannerData[0].bannerType && bannerData[0].selectedMedia) {
+		// 	flag2 = false;
+		// } else {
+		// 	flag2 = true;
+		// }
+
+		//position
+		// if (min !== max) {
+		// 	console.log(min, 'min');
+		// 	console.log(max, 'max');
+
+		// 	for (let i = min; i <= max; i++)
+		// 	{
+		// 		if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
+		// 			flag = false; // all banners are consecutive  // false
+		// 		} else {
+		// 			flag = true; //true
+		// 		}
+		// 	}
+		// }
+
+		for (let i = 4; i >= 1; i--) {
 			if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
-				min = i;
-				break;
-			}
-		}
-		for (let i = 4; i >= 0; i--) {
-			if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
-				max = i;
-				break;
-			}
-		}
-
-		if (bannerData[0].bannerType && bannerData[0].selectedMedia) {
-			flag2 = false;
-		} else {
-			flag2 = true;
-		}
-
-		if (min !== max) {
-			console.log(min);
-			console.log(max);
-
-			for (let i = min; i <= max; i++) {
-				if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
-					flag = false; // all banners are consecutive  // false
-				} else {
-					flag = true; //true
+				if (!bannerData[i - 1].bannerType && !bannerData[i - 1].selectedMedia) {
+					flag = true;
+					break;
+				} else if (
+					!bannerData[i - 1].bannerType ||
+					!bannerData[i - 1].selectedMedia
+				) {
+					flag = true;
+					break;
 				}
 			}
-		} else {
-			flag = false; //false
 		}
+		console.log('Position ', flag);
+		// max
+		return flag;
 
-		console.log('Position ', flag, '1st banner ', flag2);
-
-		if (flag === false && flag2 === false) {
-			return false;
-		} else if (flag === true && flag2 === true) {
-			return true;
-		} else if (flag === true && flag2 === false) {
-			return true;
-		} else if (flag === false && flag2 === true) {
-			return true;
-		}
+		// if (flag === false && flag2 === false) {
+		// 	return false; // yellow
+		// } else if (flag === true && flag2 === true) {
+		// 	return true; // grey
+		// } else if (flag === true && flag2 === false) {
+		// 	return true; //grey
+		// } else if (flag === false && flag2 === true) {
+		// 	return true; //grey
+		// }
 	};
 
 	console.log(handleBannerPositionAndFirstBanner());
 
-	//const publishBannerBtn = handleFirstBanner() && handleBannerPosition();
-
-	// console.log(
-	// 	bannerData,
-	// 	bannerData[0].bannerType,
-	// 	bannerData[0].selectedMedia
-	// );
+	//const publishBannerBtn = handleFirstBanner() && handleBannerPosition()
 
 	return (
 		<div className={classes.Banner}>
