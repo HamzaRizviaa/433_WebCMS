@@ -241,6 +241,28 @@ export default function BannerRows({ key, data, setBannerData }) {
 									onChange={(e, newVal) => {
 										setSelectedMedia(newVal);
 										setDisableDropdown(true);
+										setBannerData((bannerData) => {
+											// eslint-disable-next-line no-unused-vars
+											let _bannerData = bannerData.map((banner) => {
+												if (banner.id === data.id) {
+													if (banner.bannerType === 'Please Select') {
+														return {
+															...banner,
+															selectedMedia: null
+														};
+													} else {
+														return {
+															...banner,
+															selectedMedia: newVal
+														};
+													}
+												}
+												return {
+													...banner
+												};
+											});
+											return _bannerData;
+										});
 									}}
 									options={options}
 									getOptionLabel={(option) => option.name}

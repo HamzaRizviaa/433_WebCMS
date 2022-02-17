@@ -3,8 +3,10 @@ import classes from './_banners.module.scss';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import BannerRows from './BannerRows';
 import Button from '../button';
+//import { useEffect } from 'react';
 
 export default function Banners() {
+	//const [isDisabledBtn, setIsDisabledBtn] = useState(true);
 	const [bannerData, setBannerData] = useState([
 		{
 			id: '1',
@@ -55,6 +57,60 @@ export default function Banners() {
 	};
 	// - autocomplete ends
 
+	const handleFirstBanner = () => {
+		if (bannerData[0].bannerType && bannerData[0].selectedMedia) {
+			return false;
+		} else {
+			return true;
+		}
+	};
+
+	// useEffect(() => {
+	// 	handleBannerPosition();
+	// }, [bannerData]);
+
+	const handleBannerPosition = () => {
+		let min = 0;
+		let max = 4;
+		let flag = false;
+		for (let i = 0; i <= 4; i++) {
+			if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
+				min = i;
+				break;
+			}
+		}
+		for (let i = 4; i >= 0; i--) {
+			if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
+				max = i;
+				break;
+			}
+		}
+		console.log(min);
+		console.log(max);
+		if (min !== max) {
+			for (let i = min; i < max; i++) {
+				if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
+					flag = false; // all banners are consecutive
+				} else {
+					flag = true;
+				}
+			}
+			return flag;
+		} else {
+			return false;
+		}
+	};
+
+	console.log(handleFirstBanner(), handleBannerPosition());
+
+	const publishBannerBtn = handleFirstBanner() && handleBannerPosition();
+
+	// console.log(
+	// 	bannerData,
+	// 	bannerData[0].bannerType,
+	// 	bannerData[0].selectedMedia
+	// );
+
 	return (
 		<div className={classes.Banner}>
 			<div className={classes.bannerRow}>
@@ -95,7 +151,7 @@ export default function Banners() {
 			</div>
 			<div className={classes.buttonDiv}>
 				<Button
-					disabled={false}
+					disabled={publishBannerBtn}
 					onClick={() => {}}
 					text={'PUBLISH HOME BANNERS'}
 				/>
