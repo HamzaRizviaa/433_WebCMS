@@ -57,22 +57,26 @@ export default function Banners() {
 	};
 	// - autocomplete ends
 
-	const handleFirstBanner = () => {
-		if (bannerData[0].bannerType && bannerData[0].selectedMedia) {
-			return false;
-		} else {
-			return true;
-		}
-	};
+	// const handleFirstBanner = () => {
+	// 	if (bannerData[0].bannerType && bannerData[0].selectedMedia) {
+	// 		return false;
+	// 	} else {
+	// 		return true;
+	// 	}
+	// };
 
 	// useEffect(() => {
 	// 	handleBannerPosition();
 	// }, [bannerData]);
 
-	const handleBannerPosition = () => {
-		let min = 0;
-		let max = 4;
+	// disabled = true = GREY
+	// NOT DISABLED = FALSE = YELLOW
+
+	const handleBannerPositionAndFirstBanner = () => {
+		let min;
+		let max;
 		let flag = false;
+		let flag2 = false;
 		for (let i = 0; i <= 4; i++) {
 			if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
 				min = i;
@@ -85,25 +89,44 @@ export default function Banners() {
 				break;
 			}
 		}
-		console.log(min);
-		console.log(max);
+
+		if (bannerData[0].bannerType && bannerData[0].selectedMedia) {
+			flag2 = false;
+		} else {
+			flag2 = true;
+		}
+
 		if (min !== max) {
-			for (let i = min; i < max; i++) {
+			console.log(min);
+			console.log(max);
+
+			for (let i = min; i <= max; i++) {
 				if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
-					flag = false; // all banners are consecutive
+					flag = false; // all banners are consecutive  // false
 				} else {
-					flag = true;
+					flag = true; //true
 				}
 			}
-			return flag;
 		} else {
+			flag = false; //false
+		}
+
+		console.log('Position ', flag, '1st banner ', flag2);
+
+		if (flag === false && flag2 === false) {
 			return false;
+		} else if (flag === true && flag2 === true) {
+			return true;
+		} else if (flag === true && flag2 === false) {
+			return true;
+		} else if (flag === false && flag2 === true) {
+			return true;
 		}
 	};
 
-	console.log(handleFirstBanner(), handleBannerPosition());
+	console.log(handleBannerPositionAndFirstBanner());
 
-	const publishBannerBtn = handleFirstBanner() && handleBannerPosition();
+	//const publishBannerBtn = handleFirstBanner() && handleBannerPosition();
 
 	// console.log(
 	// 	bannerData,
@@ -151,7 +174,7 @@ export default function Banners() {
 			</div>
 			<div className={classes.buttonDiv}>
 				<Button
-					disabled={publishBannerBtn}
+					disabled={handleBannerPositionAndFirstBanner()}
 					onClick={() => {}}
 					text={'PUBLISH HOME BANNERS'}
 				/>
