@@ -19,6 +19,8 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 	background-color: $black-color;
 	color: $white-color;
+	scrollbar-width: thin; /* "auto" or "thin" */
+	scrollbar-color: #3f3f3f #3f3f3f; /* scroll thumb and track */
 }
 
 h1 {
@@ -38,4 +40,39 @@ h6 {
 	font-weight: bold;
 	color: $white-color;
 	@include preventSelect;
+}
+
+body::-webkit-scrollbar {
+	width: 12px; /* width of the entire scrollbar */
+}
+
+body::-webkit-scrollbar-track {
+	background: #3f3f3f; /* color of the tracking area */
+}
+
+body::-webkit-scrollbar-thumb {
+	background-color: #3f3f3f; /* color of the scroll thumb */
+	border-radius: 20px; /* roundness of the scroll thumb */
+	border: 3px solid #3f3f3f; /* creates padding around scroll thumb */
+}
+
+/* Works on Firefox */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: #3f3f3f #3f3f3f;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+	width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+	background: #3f3f3f;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: #808080;
+	border-radius: 20px;
+	border: 3px solid #808080;
 }

@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useState } from 'react';
 import { Markup } from 'interweave';
 import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import _debounce from 'lodash/debounce';
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,6 +23,7 @@ import Layout from '../../components/layout';
 import Table from '../../components/table';
 
 // CSS / Material UI
+import 'react-datepicker/dist/react-datepicker.css';
 import classes from './_mediaLibrary.module.scss';
 import Pagination from '@mui/material/Pagination';
 import Tooltip from '@mui/material/Tooltip';
@@ -105,7 +106,7 @@ const MediaLibrary = () => {
 								dispatch(
 									getMedia({
 										q: search,
-										page,
+										page: 1,
 										startDate,
 										endDate,
 										fromCalendar: true,
@@ -116,12 +117,13 @@ const MediaLibrary = () => {
 								dispatch(
 									getMedia({
 										q: search,
-										page,
+										page: 1,
 										fromCalendar: true,
 										...sortState
 									})
 								);
 							}
+							setPage(1);
 						}}
 					/>
 				</span>
@@ -332,18 +334,8 @@ const MediaLibrary = () => {
 								arrow: { className: classes.toolTipArrow }
 							}}
 						>
-							{/* <span className={classes.fileName}>
-								{row?.file_name?.substring(0, 13) +
-									`${row?.file_name?.length > 13 ? '...' : ''}`}
-							</span> */}
 							<div>
-								<Markup
-									className={classes.fileName}
-									content={`${
-										row?.file_name?.substring(0, 13) +
-										`${row?.file_name?.length > 13 ? '...' : ''}`
-									}`}
-								/>
+								<Markup className={classes.fileName} content={row?.file_name} />
 							</div>
 						</Tooltip>
 					</div>
@@ -457,6 +449,50 @@ const MediaLibrary = () => {
 		}
 	};
 
+	const handleDebounceFun = () => {
+		let _search;
+		setSearch((prevState) => {
+			_search = prevState;
+			return _search;
+		});
+
+		if (_search) {
+			dispatch(
+				getMedia({
+					q: _search,
+					page: 1,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		} else {
+			dispatch(
+				getMedia({
+					page: 1,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
+		setPage(1);
+	};
+
+	const debounceFun = useCallback(_debounce(handleDebounceFun, 600), []);
+
+	const handleChangeSearch = (e) => {
+		setSearch(e.target.value);
+		debounceFun(e.target.value);
+	};
+
+	useEffect(() => {
+		let tableBody = document.getElementsByTagName('tbody')[0];
+		if (tableBody) {
+			tableBody.scrollTop = 0;
+		}
+	}, [page]);
+
 	return (
 		<Layout>
 			<div className={classes.header}>
@@ -475,29 +511,29 @@ const MediaLibrary = () => {
 						<TextField
 							className={classes.searchField}
 							value={search}
-							onKeyPress={(e) => {
-								if (e.key === 'Enter' && search) {
-									dispatch(
-										getMedia({
-											q: search,
-											page,
-											startDate: formatDate(dateRange[0]),
-											endDate: formatDate(dateRange[1]),
-											...sortState
-										})
-									);
-								} else if (e.key === 'Enter' && !search) {
-									dispatch(
-										getMedia({
-											page,
-											startDate: formatDate(dateRange[0]),
-											endDate: formatDate(dateRange[1]),
-											...sortState
-										})
-									);
-								}
-							}}
-							onChange={(e) => setSearch(e.target.value)}
+							// onKeyPress={(e) => {
+							// 	if (e.key === 'Enter' && search) {
+							// 		dispatch(
+							// 			getMedia({
+							// 				q: search,
+							// 				page,
+							// 				startDate: formatDate(dateRange[0]),
+							// 				endDate: formatDate(dateRange[1]),
+							// 				...sortState
+							// 			})
+							// 		);
+							// 	} else if (e.key === 'Enter' && !search) {
+							// 		dispatch(
+							// 			getMedia({
+							// 				page,
+							// 				startDate: formatDate(dateRange[0]),
+							// 				endDate: formatDate(dateRange[1]),
+							// 				...sortState
+							// 			})
+							// 		);
+							// 	}
+							// }}
+							onChange={handleChangeSearch}
 							placeholder={'Search post, user, label'}
 							InputProps={{
 								disableUnderline: true,
@@ -505,31 +541,7 @@ const MediaLibrary = () => {
 								style: { borderColor: noResultBorder },
 								endAdornment: (
 									<InputAdornment>
-										<Search
-											onClick={() => {
-												if (search) {
-													dispatch(
-														getMedia({
-															q: search,
-															page,
-															startDate: formatDate(dateRange[0]),
-															endDate: formatDate(dateRange[1]),
-															...sortState
-														})
-													);
-												} else {
-													dispatch(
-														getMedia({
-															page,
-															startDate: formatDate(dateRange[0]),
-															endDate: formatDate(dateRange[1]),
-															...sortState
-														})
-													);
-												}
-											}}
-											className={classes.searchIcon}
-										/>
+										<Search className={classes.searchIcon} />
 									</InputAdornment>
 								)
 							}}
@@ -596,6 +608,7 @@ const MediaLibrary = () => {
 					setShowSlider(false);
 					// setTimeout(() => setEdit(false), 600);
 				}}
+				page={page}
 				title={edit ? 'Edit Media' : 'Upload Media'}
 				heading1={edit ? 'Media Type' : 'Select Media Type'}
 				buttonText={edit ? 'SAVE CHANGES' : 'ADD MEDIA'}

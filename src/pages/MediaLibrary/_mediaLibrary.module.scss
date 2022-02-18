@@ -29,7 +29,7 @@
 	min-width: 0;
 	flex-direction: column;
 	vertical-align: top;
-	width: 271px;
+	width: 250px;
 	color: white !important;
 	border: 1px solid #404040;
 	padding: 1rem 1rem 1.2rem 1rem !important;
@@ -63,10 +63,19 @@
 	border-radius: 8px;
 	object-fit: cover;
 }
+
 .mediaWrapper {
 	display: flex;
 	align-items: center;
 	margin-bottom: 1.5rem;
+	div {
+		max-width: 100%;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		span {
+			white-space: nowrap;
+		}
+	}
 }
 
 .fileName {
@@ -76,6 +85,7 @@
 
 .row {
 	margin-bottom: 1.5rem;
+	display: block;
 	font-size: 1.2rem;
 }
 
@@ -83,6 +93,14 @@
 	margin-bottom: 1.5rem;
 	font-size: 1.2rem;
 	padding-left: 35px;
+	display: block;
+	max-width: 100%;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	span {
+		white-space: nowrap;
+	}
 }
 
 .editIcon {
@@ -162,6 +180,7 @@
 	font-size: 1.4rem !important;
 	line-height: 1.6 !important;
 	border-radius: 40px;
+	font-family: Poppins !important;
 	//margin-bottom: 1rem;
 	background-color: #000000;
 }

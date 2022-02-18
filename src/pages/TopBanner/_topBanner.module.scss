@@ -1,0 +1,13 @@
+.header {
+	display: flex;
+	justify-content: space-between;
+}
+
+.subheader1 {
+	display: flex;
+	justify-content: flex-start;
+}
+.bannerWrapper {
+	max-height: 100vh;
+	overflow-y: auto;
+}

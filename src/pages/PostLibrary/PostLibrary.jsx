@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Markup } from 'interweave';
+import _debounce from 'lodash/debounce';
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,7 +28,7 @@ import './_calender.scss';
 
 // Utils
 import { getDateTime, formatDate, getCalendarText } from '../../utils';
-import { useStyles } from './../../utils/styles';
+import { useStyles, useStyles2 } from './../../utils/styles';
 
 // Components
 import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
@@ -44,6 +45,7 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 
 const PostLibrary = () => {
 	const muiClasses = useStyles();
+	const muiClasses2 = useStyles2();
 
 	// Selectors
 	const posts = useSelector((state) => state.postLibrary.posts);
@@ -92,7 +94,7 @@ const PostLibrary = () => {
 								dispatch(
 									getPosts({
 										q: search,
-										page,
+										page: 1,
 										startDate,
 										endDate,
 										fromCalendar: true,
@@ -103,12 +105,13 @@ const PostLibrary = () => {
 								dispatch(
 									getPosts({
 										q: search,
-										page,
+										page: 1,
 										fromCalendar: true,
 										...sortState
 									})
 								);
 							}
+							setPage(1);
 						}}
 					/>
 				</span>
@@ -121,7 +124,7 @@ const PostLibrary = () => {
 	const handleChange = (event, value) => {
 		setPage(value);
 	};
-	
+
 	const sortKeysMapping = {
 		file_name: 'media',
 		post_date: 'postdate',
@@ -212,6 +215,13 @@ const PostLibrary = () => {
 		};
 	}, []);
 
+	useEffect(() => {
+		let tableBody = document.getElementsByTagName('tbody')[0];
+		if (tableBody) {
+			tableBody.scrollTop = 0;
+		}
+	}, [page]);
+
 	const sortRows = (order, col) => {
 		if (order && col.dataField) {
 			if (
@@ -256,6 +266,8 @@ const PostLibrary = () => {
 									<video
 										id={'my-video'}
 										//poster={row.thumbnail_url}
+										autoPlay
+										muted
 										className={
 											row?.orientation_type === 'square'
 												? classes.mediaIconPreview
@@ -332,19 +344,9 @@ const PostLibrary = () => {
 								arrow: { className: classes.toolTipArrow }
 							}}
 						>
-							{/* <span className={classes.fileName}>
-								{row?.file_name?.substring(0, 13) +
-									`${row?.file_name?.length > 13 ? '...' : ''}`}
-							</span> */}
-							<span>
-								<Markup
-									className={classes.fileName}
-									content={`${
-										row?.file_name?.substring(0, 13) +
-										`${row?.file_name?.length > 13 ? '...' : ''}`
-									}`}
-								/>
-							</span>
+							<div>
+								<Markup className={classes.fileName} content={row?.file_name} />
+							</div>
 						</Tooltip>
 					</div>
 				);
@@ -433,6 +435,43 @@ const PostLibrary = () => {
 			// }
 		}
 	};
+
+	const handleDebounceFun = () => {
+		let _search;
+		setSearch((prevState) => {
+			_search = prevState;
+			return _search;
+		});
+		if (_search) {
+			dispatch(
+				getPosts({
+					q: _search,
+					page: 1,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		} else {
+			dispatch(
+				getPosts({
+					page: 1,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
+		setPage(1);
+	};
+
+	const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
+
+	const handleChangeSearch = (e) => {
+		setSearch(e.target.value);
+		debounceFun(e.target.value);
+	};
+
 	return (
 		<Layout>
 			<div className={classes.header}>
@@ -449,34 +488,35 @@ const PostLibrary = () => {
 				<div className={classes.subheader2}>
 					<div>
 						<TextField
-							className={classes.searchField}
+							className={`${classes.searchField} ${muiClasses2.root}`}
 							value={search}
-							onKeyPress={(e) => {
-								if (e.key === 'Enter' && search) {
-									dispatch(
-										getPosts({
-											q: search,
-											page,
-											startDate: formatDate(dateRange[0]),
-											endDate: formatDate(dateRange[1]),
-											...sortState
-										})
-									);
-								} else if (e.key === 'Enter' && !search) {
-									dispatch(
-										getPosts({
-											page,
-											startDate: formatDate(dateRange[0]),
-											endDate: formatDate(dateRange[1]),
-											...sortState
-										})
-									);
-								}
-							}}
-							onChange={(e) => {
-								setSearch(e.target.value);
-								//setIsSearch(true);
-							}}
+							// onKeyPress={(e) => {
+							// 	if (e.key === 'Enter' && search) {
+							// 		dispatch(
+							// 			getPosts({
+							// 				q: search,
+							// 				page,
+							// 				startDate: formatDate(dateRange[0]),
+							// 				endDate: formatDate(dateRange[1]),
+							// 				...sortState
+							// 			})
+							// 		);
+							// 	} else if (e.key === 'Enter' && !search) {
+							// 		dispatch(
+							// 			getPosts({
+							// 				page,
+							// 				startDate: formatDate(dateRange[0]),
+							// 				endDate: formatDate(dateRange[1]),
+							// 				...sortState
+							// 			})
+							// 		);
+							// 	}
+							// }}
+							// onChange={(e) => {
+							// 	setSearch(e.target.value);
+							// 	//setIsSearch(true);
+							// }}
+							onChange={handleChangeSearch}
 							placeholder={'Search post, user, label'}
 							InputProps={{
 								disableUnderline: true,
@@ -484,31 +524,7 @@ const PostLibrary = () => {
 								style: { borderColor: noResultBorder },
 								endAdornment: (
 									<InputAdornment>
-										<Search
-											onClick={() => {
-												if (search) {
-													dispatch(
-														getPosts({
-															q: search,
-															page,
-															startDate: formatDate(dateRange[0]),
-															endDate: formatDate(dateRange[1]),
-															...sortState
-														})
-													);
-												} else {
-													dispatch(
-														getPosts({
-															page,
-															startDate: formatDate(dateRange[0]),
-															endDate: formatDate(dateRange[1]),
-															...sortState
-														})
-													);
-												}
-											}}
-											className={classes.searchIcon}
-										/>
+										<Search className={classes.searchIcon} />
 									</InputAdornment>
 								)
 							}}

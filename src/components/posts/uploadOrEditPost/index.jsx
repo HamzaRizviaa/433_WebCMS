@@ -49,7 +49,8 @@ const UploadOrEditPost = ({
 	title,
 	isEdit,
 	heading1,
-	buttonText
+	buttonText,
+	page
 }) => {
 	const [caption, setCaption] = useState('');
 	const [value, setValue] = useState(false);
@@ -74,10 +75,8 @@ const UploadOrEditPost = ({
 	const [postLabels, setPostLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [selectMediaInput, setSelectMediaInput] = useState('');
-	const [inputWidth, setInputWidth] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [dropdownPosition, setDropdownPosition] = useState(false);
-	const labelsInputRef = useRef(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	// const [aspect, setAspect] = useState(1 / 1);
@@ -132,12 +131,6 @@ const UploadOrEditPost = ({
 			}
 		}
 	}, [extraLabel]);
-
-	useEffect(() => {
-		if (labelsInputRef?.current && inputWidth === null) {
-			setInputWidth(labelsInputRef?.current?.offsetWidth);
-		}
-	}, [labelsInputRef?.current]);
 
 	useEffect(() => {
 		if (labels.length) {
@@ -371,8 +364,8 @@ const UploadOrEditPost = ({
 
 		const items = reorder(
 			uploadedFiles,
-			result.source.index,
-			result.destination.index
+			result.source.index, // pick
+			result.destination.index // drop
 		);
 
 		setUploadedFiles(items);
@@ -441,7 +434,7 @@ const UploadOrEditPost = ({
 				setIsLoadingCreatePost(false);
 				setPostButtonStatus(false);
 				handleClose();
-				dispatch(getPosts({}));
+				dispatch(getPosts({ page }));
 				dispatch(getPostLabels());
 			}
 		} catch (e) {
@@ -466,7 +459,7 @@ const UploadOrEditPost = ({
 				handleClose();
 
 				//setting a timeout for getting post after delete.
-				dispatch(getPosts({}));
+				dispatch(getPosts({ page }));
 			}
 		} catch (e) {
 			toast.error('Failed to delete post!');
@@ -561,7 +554,7 @@ const UploadOrEditPost = ({
 				>
 					{specificPostStatus.status === 'loading' ? (
 						<div className={classes.loaderContainer2}>
-							<CircularProgress className={classes.loader} />;
+							<CircularProgress className={classes.loader} />
 						</div>
 					) : (
 						<></>
@@ -805,11 +798,7 @@ const UploadOrEditPost = ({
 								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete
 									disabled={isEdit}
-									style={{
-										maxWidth: `530px`
-										// minWidth: `${inputWidth}px`
-									}}
-									getOptionLabel={(option) => option.name}
+									getOptionLabel={(option) => option.name} // name out of array of strings
 									PaperComponent={(props) => {
 										setDisableDropdown(false);
 										return (
@@ -950,7 +939,6 @@ const UploadOrEditPost = ({
 							<div className={classes.captionContainer}>
 								<h6>CAPTION</h6>
 								<TextField
-									ref={labelsInputRef}
 									value={caption}
 									onChange={(e) => setCaption(e.target.value)}
 									placeholder={'Please write your caption here'}
@@ -1190,7 +1178,8 @@ UploadOrEditPost.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
-	buttonText: PropTypes.string.isRequired
+	buttonText: PropTypes.string.isRequired,
+	page: PropTypes.string
 };
 
 export default UploadOrEditPost;

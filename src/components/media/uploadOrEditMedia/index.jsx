@@ -35,7 +35,8 @@ const UploadOrEditMedia = ({
 	title,
 	heading1,
 	buttonText,
-	isEdit
+	isEdit,
+	page
 }) => {
 	const [labelColor, setLabelColor] = useState('#ffffff');
 	const [labelError, setLabelError] = useState('');
@@ -66,8 +67,6 @@ const UploadOrEditMedia = ({
 	const [mediaButtonStatus, setMediaButtonStatus] = useState(false);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
-	const [inputWidth, setInputWidth] = useState(null);
-	const labelsInputRef = useRef(null);
 	const previewRef = useRef(null);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
@@ -93,12 +92,6 @@ const UploadOrEditMedia = ({
 			setMediaLabels([...labels]);
 		}
 	}, [labels]);
-
-	useEffect(() => {
-		if (labelsInputRef?.current && inputWidth === null) {
-			setInputWidth(labelsInputRef?.current?.offsetWidth);
-		}
-	}, [labelsInputRef?.current]);
 
 	useEffect(() => {
 		setMediaLabels((labels) => {
@@ -353,7 +346,7 @@ const UploadOrEditMedia = ({
 				handleClose();
 
 				//setting a timeout for getting post after delete.
-				dispatch(getMedia({}));
+				dispatch(getMedia({ page }));
 			}
 		} catch (e) {
 			toast.error('Failed to delete media!');
@@ -394,7 +387,7 @@ const UploadOrEditMedia = ({
 				);
 				setIsLoadingUploadMedia(false);
 				setMediaButtonStatus(false);
-				dispatch(getMedia({}));
+				dispatch(getMedia({ page }));
 				handleClose();
 			}
 		} catch (e) {
@@ -489,7 +482,7 @@ const UploadOrEditMedia = ({
 				>
 					{specificMediaStatus.specificMediaStatus === 'loading' ? (
 						<div className={classes.loaderContainer2}>
-							<CircularProgress className={classes.loader} />;
+							<CircularProgress className={classes.loader} />
 						</div>
 					) : (
 						<></>
@@ -529,9 +522,10 @@ const UploadOrEditMedia = ({
 											isEdit ? `${classes.isEditSelect}` : ''
 										}`}
 										disableUnderline={true}
-										IconComponent={() => (
+										IconComponent={(props) => (
 											<KeyboardArrowDownIcon
-												style={{ display: isEdit ? 'none' : 'block' }}
+												{...props}
+												style={{ display: isEdit ? 'none' : 'block', top: '4' }}
 											/>
 										)}
 										MenuProps={{
@@ -586,9 +580,10 @@ const UploadOrEditMedia = ({
 											isEdit ? `${classes.isEditSelect}` : ''
 										}`}
 										disableUnderline={true}
-										IconComponent={() => (
+										IconComponent={(props) => (
 											<KeyboardArrowDownIcon
-												style={{ display: isEdit ? 'none' : 'block' }}
+												{...props}
+												style={{ display: isEdit ? 'none' : 'block', top: '4' }}
 											/>
 										)}
 										MenuProps={{
@@ -824,7 +819,6 @@ const UploadOrEditMedia = ({
 									<div className={classes.titleContainer}>
 										<h6 style={{ color: titleMediaLabelColor }}>TITLE</h6>
 										<TextField
-											ref={labelsInputRef}
 											value={titleMedia}
 											onChange={(e) => {
 												setTitleMedia(e.target.value);
@@ -847,10 +841,6 @@ const UploadOrEditMedia = ({
 										<h6 style={{ color: labelColor }}>LABELS</h6>
 										<Autocomplete
 											disabled={isEdit}
-											style={{
-												maxWidth: `530px`
-												// minWidth: `${inputWidth}px`
-											}}
 											getOptionLabel={(option) => option.name}
 											PaperComponent={(props) => {
 												setDisableDropdown(false);
@@ -1006,7 +996,10 @@ const UploadOrEditMedia = ({
 											className={classes.textField}
 											InputProps={{
 												disableUnderline: true,
-												className: classes.textFieldInput
+												className: classes.textFieldInput,
+												style: {
+													borderRadius: description ? '16px' : '40px'
+												}
 											}}
 											multiline
 											maxRows={4}
@@ -1178,7 +1171,8 @@ UploadOrEditMedia.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
-	buttonText: PropTypes.string.isRequired
+	buttonText: PropTypes.string.isRequired,
+	page: PropTypes.string
 };
 
 export default UploadOrEditMedia;

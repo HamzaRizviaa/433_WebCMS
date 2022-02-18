@@ -25,15 +25,15 @@
 	border: 0;
 	margin: 0;
 	display: inline-flex;
-	padding: 0;
+	//padding: 0;
 	position: relative;
 	min-width: 0;
 	flex-direction: column;
 	vertical-align: top;
-	width: 271px;
+	width: 250px;
 	color: white !important;
 	border: 1px solid #404040;
-	padding: 1rem 1rem 1.2rem 1rem !important;
+	padding: 1.2rem 1rem 1rem 1rem !important;
 	font-size: 1.4rem !important;
 	line-height: 1.6 !important;
 	border-radius: 40px;
@@ -41,7 +41,7 @@
 	border-color: rgb(64, 64, 64);
 	height: 17.5px;
 	box-sizing: content-box;
-	padding: 6px 0 7px;
+	//padding: 6px 0 6px;
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
@@ -98,6 +98,15 @@
 	align-items: center;
 	margin-left: 0.5rem;
 	margin-bottom: 1.5rem;
+	div {
+		max-width: 100%;
+		max-width: 60%;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		span {
+			white-space: nowrap;
+		}
+	}
 }
 
 .mediaWrapperLandscape {
@@ -106,6 +115,15 @@
 	align-items: center;
 	margin-left: 0.5rem;
 	margin-bottom: 2.5rem;
+	div {
+		max-width: 100%;
+		max-width: 60%;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		span {
+			white-space: nowrap;
+		}
+	}
 }
 
 .fileName {
@@ -116,6 +134,13 @@
 .row {
 	margin-bottom: 1.5rem;
 	font-size: 1.2rem;
+	display: block;
+	padding-right: 35px;
+	// max-width: 100%;
+	// text-overflow: ellipsis;
+	// overflow: hidden;
+
+	// white-space: nowrap;
 }
 
 .editIcon {
@@ -209,10 +234,11 @@
 .textFieldInput {
 	color: white !important;
 	border: 1px solid #404040;
-	padding: 0.5rem 0.5rem 0.5rem 1.5rem !important;
+	padding: 0.55rem 0.5rem 0.5rem 1.5rem !important;
 	font-size: 1.4rem !important;
 	line-height: 1.6 !important;
 	border-radius: 40px;
+	font-family: Poppins !important;
 	//margin-bottom: 1rem;
 	background-color: #000000;
 }

@@ -8,6 +8,8 @@ import { ReactComponent as Media } from '../../assets/media.svg';
 import { ReactComponent as MediaSelected } from '../../assets/media_selected.svg';
 import { ReactComponent as Quiz } from '../../assets/Quiz.svg';
 import { ReactComponent as QuizSelected } from '../../assets/QuizSelected.svg';
+import { ReactComponent as Banner } from '../../assets/Star.svg';
+import { ReactComponent as BannerSelected } from '../../assets/Star_Selected.svg';
 import { ReactComponent as Logout } from '../../assets/logout.svg';
 
 const Sidebar = () => {
@@ -67,6 +69,23 @@ const Sidebar = () => {
 						<QuizSelected className={classes.icon} />
 					) : (
 						<Quiz className={classes.icon} />
+					)}
+				</div>
+				<div
+					onClick={() => {
+						navigate('/top-banner');
+					}}
+					className={classes.iconWrapper}
+					style={
+						location?.pathname.includes('top-banner')
+							? { backgroundColor: '#404040' }
+							: {}
+					}
+				>
+					{location?.pathname.includes('top-banner') ? (
+						<BannerSelected className={classes.icon} />
+					) : (
+						<Banner className={classes.icon} />
 					)}
 				</div>
 			</div>
