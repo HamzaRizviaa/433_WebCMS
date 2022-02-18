@@ -60,7 +60,6 @@ export default function Banners() {
 
 	const handleBannerPositionAndFirstBanner = () => {
 		let flag;
-		let flag2;
 		// max 4
 		// min 1 , can't set 0
 		// disabled = true = GREY
@@ -71,9 +70,7 @@ export default function Banners() {
 				//check data in both fields
 				if (!bannerData[i - 1].bannerType || !bannerData[i - 1].selectedMedia) {
 					// check one up , if data is here
-
 					flag = true;
-
 					//not return true
 					break;
 				}
@@ -86,7 +83,7 @@ export default function Banners() {
 		// 		break;
 		// 	}
 		// }
-		console.log('Position ', flag, flag2);
+		console.log('Position ', flag);
 
 		return flag;
 	};
@@ -132,7 +129,11 @@ export default function Banners() {
 			</div>
 			<div className={classes.buttonDiv}>
 				<Button
-					disabled={handleBannerPositionAndFirstBanner()}
+					disabled={
+						bannerData[0].bannerType
+							? handleBannerPositionAndFirstBanner()
+							: true
+					}
 					onClick={() => {}}
 					text={'PUBLISH HOME BANNERS'}
 				/>
