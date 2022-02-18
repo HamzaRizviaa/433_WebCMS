@@ -7,7 +7,8 @@ import { TextField } from '@material-ui/core';
 import MenuItem from '@mui/material/MenuItem';
 import { Select } from '@material-ui/core';
 import classes from './_banners.module.scss';
-import { Autocomplete, Paper, Popper } from '@mui/material';
+import { Paper, Popper } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
 import { Draggable } from 'react-beautiful-dnd';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -211,7 +212,7 @@ export default function BannerRows({
 							>
 								<label className={classes.bannerLabel}>select content</label>
 								<Autocomplete
-									className={muiClasses.root}
+									//className={muiClasses.root}
 									value={selectedMedia}
 									PaperComponent={(props) => {
 										setDisableDropdown(false);
@@ -298,7 +299,10 @@ export default function BannerRows({
 											InputProps={{
 												disableUnderline: true,
 												...params.InputProps,
-												className: classes.textFieldInput
+												className: classes.textFieldInput,
+												classes: {
+													root: muiClasses.input
+												}
 											}}
 											value={selectMediaInput}
 											onChange={handleChangeSelectMediaInput}
@@ -316,6 +320,7 @@ export default function BannerRows({
 										</div>
 									}
 									popupIcon={''}
+
 									// renderValue={(selected) => {
 									// 	if (selected.length === 0) {
 									// 	  return <em>Please Select</em>;
