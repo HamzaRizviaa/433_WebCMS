@@ -197,9 +197,7 @@ export default function BannerRows({ key, data, setBannerData }) {
 									marginBottom: dropdownPosition ? 0 : 0
 								}}
 							>
-								<label className={classes.bannerLabel}>
-									select Banner Type
-								</label>
+								<label className={classes.bannerLabel}>select content</label>
 								<Autocomplete
 									className={muiClasses.root}
 									value={selectedMedia}

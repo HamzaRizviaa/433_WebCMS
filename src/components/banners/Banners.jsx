@@ -57,93 +57,35 @@ export default function Banners() {
 	};
 	// - autocomplete ends
 
-	// const handleFirstBanner = () => {
-	// 	if (bannerData[0].bannerType && bannerData[0].selectedMedia) {
-	// 		return false;
-	// 	} else {
-	// 		return true;
-	// 	}
-	// };
-
-	// useEffect(() => {
-	// 	handleBannerPosition();
-	// }, [bannerData]);
-
-	// disabled = true = GREY
-	// NOT DISABLED = FALSE = YELLOW
-
 	const handleBannerPositionAndFirstBanner = () => {
-		// let min;
-		// let max;
 		let flag;
-		// let flag2;
-
-		// for (let i = 0; i <= 4; i++) {
-		// 	if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
-		// 		min = i;
-		// 		break;
-		// 	}
-		// }
-		// for (let i = 4; i >= 0; i--) {
-		// 	if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
-		// 		max = i;
-		// 		break;
-		// 	}
-		// }
-		// // first value
-		// if (bannerData[0].bannerType && bannerData[0].selectedMedia) {
-		// 	flag2 = false;
-		// } else {
-		// 	flag2 = true;
-		// }
-
-		//position
-		// if (min !== max) {
-		// 	console.log(min, 'min');
-		// 	console.log(max, 'max');
-
-		// 	for (let i = min; i <= max; i++)
-		// 	{
-		// 		if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
-		// 			flag = false; // all banners are consecutive  // false
-		// 		} else {
-		// 			flag = true; //true
-		// 		}
-		// 	}
-		// }
-
+		let flag2;
+		// max 4
+		// min 1 , can't set 0
+		// disabled = true = GREY
+		// noy disables = false = YELLOW
 		for (let i = 4; i >= 1; i--) {
-			if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
-				if (!bannerData[i - 1].bannerType && !bannerData[i - 1].selectedMedia) {
+			// start from max to min
+			if (bannerData[i].bannerType || bannerData[i].selectedMedia) {
+				//check data in both fields
+				if (!bannerData[i - 1].bannerType || !bannerData[i - 1].selectedMedia) {
+					// check one up , if data is here
 					flag = true;
-					break;
-				} else if (
-					!bannerData[i - 1].bannerType ||
-					!bannerData[i - 1].selectedMedia
-				) {
-					flag = true;
+					//not return true
 					break;
 				}
 			}
 		}
-		console.log('Position ', flag);
-		// max
-		return flag;
-
-		// if (flag === false && flag2 === false) {
-		// 	return false; // yellow
-		// } else if (flag === true && flag2 === true) {
-		// 	return true; // grey
-		// } else if (flag === true && flag2 === false) {
-		// 	return true; //grey
-		// } else if (flag === false && flag2 === true) {
-		// 	return true; //grey
+		//please select should be at last
+		// for (let i = 4; i >= 1; i--) {
+		// 	if ((bannerData[i].bannerType === 'Please Select') !== 4) {
+		// 		flag2 = true;
+		// 		break;
+		// 	}
 		// }
+		console.log('Position ', flag, flag2);
+		return flag;
 	};
-
-	console.log(handleBannerPositionAndFirstBanner());
-
-	//const publishBannerBtn = handleFirstBanner() && handleBannerPosition()
 
 	return (
 		<div className={classes.Banner}>
