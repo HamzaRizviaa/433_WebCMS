@@ -186,7 +186,7 @@ export default function BannerRows({
 											? Array.isArray(value)
 												? value.join(', ')
 												: value
-											: ' '
+											: 'Please Select'
 									}
 								>
 									{allMedia.length > 0 &&
@@ -320,14 +320,6 @@ export default function BannerRows({
 										</div>
 									}
 									popupIcon={''}
-
-									// renderValue={(selected) => {
-									// 	if (selected.length === 0) {
-									// 	  return <em>Please Select</em>;
-									// 	}
-
-									// 	return selected.join(', ');
-									//   }}
 								/>
 							</div>
 						)}
