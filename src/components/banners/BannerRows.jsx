@@ -26,7 +26,13 @@ import { useStyles, useStyles2 } from './bannerStyles';
 // }));
 
 // eslint-disable-next-line no-unused-vars
-export default function BannerRows({ key, data, setBannerData, index }) {
+export default function BannerRows({
+	key,
+	data,
+	setBannerData,
+	index,
+	handleBanner
+}) {
 	// const listElement = useRef(null);
 	//styles
 	const muiClasses = useStyles();
@@ -149,6 +155,7 @@ export default function BannerRows({ key, data, setBannerData, index }) {
 											});
 											return _bannerData;
 										});
+										// handleBanner();
 									}}
 									disableUnderline={true}
 									IconComponent={(props) => (
@@ -321,5 +328,6 @@ BannerRows.propTypes = {
 	data: PropTypes.object,
 	key: PropTypes.integer,
 	setBannerData: PropTypes.func,
+	handleBanner: PropTypes.func,
 	provided: PropTypes.draggableProps
 };

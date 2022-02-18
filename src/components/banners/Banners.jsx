@@ -6,7 +6,6 @@ import Button from '../button';
 //import { useEffect } from 'react';
 
 export default function Banners() {
-	//const [isDisabledBtn, setIsDisabledBtn] = useState(true);
 	const [bannerData, setBannerData] = useState([
 		{
 			id: '1',
@@ -54,6 +53,8 @@ export default function Banners() {
 		);
 
 		setBannerData(items);
+
+		handleBannerPositionAndFirstBanner();
 	};
 	// - autocomplete ends
 
@@ -70,7 +71,9 @@ export default function Banners() {
 				//check data in both fields
 				if (!bannerData[i - 1].bannerType || !bannerData[i - 1].selectedMedia) {
 					// check one up , if data is here
+
 					flag = true;
+
 					//not return true
 					break;
 				}
@@ -84,6 +87,7 @@ export default function Banners() {
 		// 	}
 		// }
 		console.log('Position ', flag, flag2);
+
 		return flag;
 	};
 
