@@ -365,8 +365,8 @@ const UploadOrEditPost = ({
 
 		const items = reorder(
 			uploadedFiles,
-			result.source.index,
-			result.destination.index
+			result.source.index, // pick
+			result.destination.index // drop
 		);
 
 		setUploadedFiles(items);
@@ -799,7 +799,7 @@ const UploadOrEditPost = ({
 								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete
 									disabled={isEdit}
-									getOptionLabel={(option) => option.name}
+									getOptionLabel={(option) => option.name} // name out of array of strings
 									PaperComponent={(props) => {
 										setDisableDropdown(false);
 										return (

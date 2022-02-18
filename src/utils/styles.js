@@ -60,6 +60,20 @@ export const useStyles = makeStyles(() => ({
 		'& .Mui-disabled': {
 			background: '#808080',
 			opacity: 0.4
+		},
+		'&. Mui-focused': {
+			display: 'none !important'
+		}
+	}
+}));
+
+export const useStyles2 = makeStyles(() => ({
+	root: {
+		'& .MuiInputBase-input': {
+			padding: '6px 0px 6px'
+		},
+		'&. Mui-focused': {
+			display: 'none !important'
 		}
 	}
 }));

@@ -41,7 +41,7 @@
 	border-color: rgb(64, 64, 64);
 	height: 17.5px;
 	box-sizing: content-box;
-	//padding: 6px 0 7px;
+	//padding: 6px 0 6px;
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
@@ -136,19 +136,11 @@
 	font-size: 1.2rem;
 	display: block;
 	padding-right: 35px;
-	max-width: 100%;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	white-space: nowrap;
 	// max-width: 100%;
 	// text-overflow: ellipsis;
 	// overflow: hidden;
 
-	max-width: 100%;
-	text-overflow: ellipsis;
-	overflow: hidden;
-
-	white-space: nowrap;
+	// white-space: nowrap;
 }
 
 .editIcon {
@@ -242,7 +234,7 @@
 .textFieldInput {
 	color: white !important;
 	border: 1px solid #404040;
-	padding: 0.55rem 0.5rem 0.45rem 1.5rem !important;
+	padding: 0.55rem 0.5rem 0.5rem 1.5rem !important;
 	font-size: 1.4rem !important;
 	line-height: 1.6 !important;
 	border-radius: 40px;
