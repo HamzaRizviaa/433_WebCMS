@@ -43,7 +43,7 @@ export default function BannerRows({
 	const [dropdownPosition, setDropdownPosition] = useState(false);
 	const [selectedMedia, setSelectedMedia] = useState(null);
 	const [selectMediaInput, setSelectMediaInput] = useState('');
-	const allMedia = ['Title only', 'Title + Text', 'Please Select'];
+	const allMedia = ['Title only', 'Title + Text'];
 	//content type dropdown
 	const options = [
 		{
@@ -310,6 +310,13 @@ export default function BannerRows({
 										</div>
 									}
 									popupIcon={''}
+									// renderValue={(selected) => {
+									// 	if (selected.length === 0) {
+									// 	  return <em>Please Select</em>;
+									// 	}
+
+									// 	return selected.join(', ');
+									//   }}
 								/>
 							</div>
 						)}

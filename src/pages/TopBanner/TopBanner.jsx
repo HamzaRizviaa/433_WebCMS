@@ -30,7 +30,7 @@ const TopBanner = () => {
 							<Banners />{' '}
 						</TabPanelUnstyled>
 						<TabPanelUnstyled value={1}>
-							{/* add media here */}media content
+							<Banners />
 						</TabPanelUnstyled>
 					</TabsUnstyled>
 				</div>

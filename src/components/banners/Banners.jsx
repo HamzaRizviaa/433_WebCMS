@@ -66,7 +66,7 @@ export default function Banners() {
 		// noy disables = false = YELLOW
 		for (let i = 4; i >= 1; i--) {
 			// start from max to min
-			if (bannerData[i].bannerType || bannerData[i].selectedMedia) {
+			if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
 				//check data in both fields
 				if (!bannerData[i - 1].bannerType || !bannerData[i - 1].selectedMedia) {
 					// check one up , if data is here
@@ -74,6 +74,11 @@ export default function Banners() {
 					//not return true
 					break;
 				}
+			} else if (bannerData[i].bannerType || bannerData[i].selectedMedia) {
+				// check one up , if data is here
+				flag = true;
+				//not return true
+				break;
 			}
 		}
 		//please select should be at last
@@ -130,7 +135,7 @@ export default function Banners() {
 			<div className={classes.buttonDiv}>
 				<Button
 					disabled={
-						bannerData[0].bannerType
+						bannerData[0].bannerType && bannerData[0].selectedMedia
 							? handleBannerPositionAndFirstBanner()
 							: true
 					}
