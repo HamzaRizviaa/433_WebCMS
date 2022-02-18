@@ -169,7 +169,15 @@ export default function BannerRows({
 											vertical: 'top',
 											horizontal: 'left'
 										},
-										getContentAnchorEl: null
+										getContentAnchorEl: null,
+										classes: {
+											paper: muiClasses.paper
+										}
+									}}
+									inputProps={{
+										classes: {
+											root: muiClasses.input
+										}
 									}}
 									displayEmpty={true}
 									renderValue={(value) =>
@@ -219,7 +227,8 @@ export default function BannerRows({
 													boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)',
 													borderRadius: '8px',
 													color: '#ffffff',
-													fontSize: '14px'
+													fontSize: '14px',
+													fontFamily: 'Poppins'
 												}}
 												{...props}
 											/>
@@ -267,7 +276,6 @@ export default function BannerRows({
 									}}
 									options={options}
 									getOptionLabel={(option) => option.name}
-									// getOptionLabel={(option) => option.name}
 									renderOption={(props, option) => {
 										return (
 											<li {...props} className={classes.liAutocomplete}>
@@ -277,11 +285,9 @@ export default function BannerRows({
 									}}
 									// filterOptions={(items) => {
 									// 	return items.filter((item) =>
-									// 		item.title
+									// 		item.name
 									// 			.toLowerCase()
-									// 			.includes(
-									// 				selectMediaInput.toLowerCase()
-									// 			)
+									// 			.includes(selectMediaInput.toLowerCase())
 									// 	);
 									// }}
 									renderInput={(params) => (
