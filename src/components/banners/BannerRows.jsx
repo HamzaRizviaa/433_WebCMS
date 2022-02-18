@@ -177,7 +177,9 @@ export default function BannerRows({
 									}}
 									inputProps={{
 										classes: {
-											root: muiClasses.input
+											root: data.bannerType
+												? muiClasses.input
+												: muiClasses.inputPlaceholder
 										}
 									}}
 									displayEmpty={true}
@@ -295,7 +297,7 @@ export default function BannerRows({
 										<TextField
 											{...params}
 											size='small'
-											placeholder=''
+											placeholder='Select Content'
 											InputProps={{
 												disableUnderline: true,
 												...params.InputProps,
