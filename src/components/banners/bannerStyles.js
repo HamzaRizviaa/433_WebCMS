@@ -9,8 +9,9 @@ export const useStyles = makeStyles(() => ({
 }));
 export const useStyles2 = makeStyles(() => ({
 	root: {
-		'&. Mui-focused': {
+		'& .Mui-focused': {
 			display: 'none !important'
+			//outline: 'none !important'
 		}
 	}
 }));

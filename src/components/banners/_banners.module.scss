@@ -96,13 +96,13 @@
 			width: 70%;
 			height: 40px;
 			position: relative;
-			.dropdownicon {
-				cursor: pointer;
-				//display: block;
-				position: absolute;
-				right: 4%;
-				top: 35%;
-			}
+			// .dropdownicon {
+			// 	cursor: pointer;
+			// 	//display: block;
+			// 	position: absolute;
+			// 	right: 4%;
+			// 	top: 35%;
+			// }
 		}
 	}
 
@@ -181,7 +181,7 @@
 
 .liAutocomplete {
 	background-color: black;
-	color: white;
+	color: #f5ebeb;
 	font-size: 14px;
 	padding: 8px 8px 8px 12px;
 	&:hover {
@@ -198,5 +198,35 @@
 	&:hover {
 		color: $neon-yellow;
 		cursor: pointer;
+	}
+}
+
+.select {
+	// .MuiSelect-select {
+	// 	padding: 1rem 0rem 1rem 1rem;
+	// 	padding-right: 32px;
+	// }
+	// width: 100%;
+	// padding: 3px 0px;
+	// padding-right: 10px;
+	color: white !important;
+	// border: 1px solid #404040;
+	font-family: Poppins;
+	font-size: 1.6rem !important;
+	line-height: 1.6 !important;
+	// border-radius: 5rem !important;
+	// margin-bottom: 1rem !important;
+	// background-color: #000000;
+
+	div[role='button'] {
+		padding: 0.5rem 0rem 0.5rem 2rem;
+	}
+
+	svg {
+		display: block;
+		color: $neon-yellow;
+		right: 1rem !important;
+		top: 0 !important;
+		font-size: 3.5rem;
 	}
 }

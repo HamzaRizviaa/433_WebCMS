@@ -5,13 +5,13 @@ import React, { useState, useEffect } from 'react';
 //import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from '@material-ui/core';
 import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import { Select } from '@material-ui/core';
 import classes from './_banners.module.scss';
 import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
 import { Popper, Paper } from '@mui/material';
 import { Draggable } from 'react-beautiful-dnd';
-//import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import PropTypes from 'prop-types';
 import { ReactComponent as DropdownArrow } from '../../assets/drop_drown_arrow.svg';
 import { ReactComponent as Union } from '../../assets/drag.svg';
@@ -124,7 +124,6 @@ export default function BannerRows({
 
 							<div className={classes.bannerDropdown}>
 								<Select
-									className={muiClasses2.root}
 									// className={classUseStyle.bannerSelect}
 									// ref={listElement}
 									// onClick={() => {
@@ -157,12 +156,10 @@ export default function BannerRows({
 										});
 										// handleBanner();
 									}}
+									className={classes.select}
 									disableUnderline={true}
 									IconComponent={(props) => (
-										<DropdownArrow
-											{...props}
-											className={classes.dropdownicon}
-										/>
+										<KeyboardArrowDownIcon {...props} />
 									)}
 									MenuProps={{
 										anchorOrigin: {
