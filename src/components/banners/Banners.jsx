@@ -113,8 +113,9 @@ export default function Banners() {
 											<BannerRows
 												data={data}
 												setBannerData={setBannerData}
-												key={index}
+												key={data.id}
 												provided={provided}
+												index={index}
 											/>
 										);
 									})}

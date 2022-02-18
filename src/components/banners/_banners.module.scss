@@ -17,10 +17,10 @@
 .Banner {
 	width: 96%;
 	max-height: calc(100vh - 200px);
-	overflow-y: 'auto';
+	overflow-y: auto;
 	.bannerRow {
 		display: flex;
-		margin-top: 2%;
+		// margin-top: 2%;
 	}
 	.bannersLeft {
 		width: 10%;
@@ -47,7 +47,7 @@
 		border-radius: 16px;
 		width: 100%;
 		padding: 20px 22px 20px 22px;
-		margin-top: 2%;
+		// margin-top: 2%;
 	}
 	.dragIcon {
 		padding-top: 1.2rem;

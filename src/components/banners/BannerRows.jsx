@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 // import Backdrop from '@material-ui/core/Backdrop';
@@ -25,7 +26,7 @@ import { useStyles, useStyles2 } from './bannerStyles';
 // }));
 
 // eslint-disable-next-line no-unused-vars
-export default function BannerRows({ key, data, setBannerData }) {
+export default function BannerRows({ key, data, setBannerData, index }) {
 	// const listElement = useRef(null);
 	//styles
 	const muiClasses = useStyles();
@@ -90,20 +91,20 @@ export default function BannerRows({ key, data, setBannerData }) {
 	return (
 		<Draggable
 			key={data.id}
-			draggableId={`droppable-${data.id}`}
-			index={key}
+			draggableId={`draggable-${data.id}`}
+			index={index}
 			//	isDragDisabled={uploadeddatas.length <= 1}
 		>
 			{(provided) => (
 				<div
-					key={key}
+					key={index}
 					ref={provided.innerRef}
 					{...provided.draggableProps}
 					style={{
 						...provided.draggableProps.style
 					}}
 				>
-					<div className={classes.bannerRight} key={data.id} index={key}>
+					<div className={classes.bannerRight}>
 						<div className={classes.dragIcon}>
 							<span {...provided.dragHandleProps}>
 								<Union
