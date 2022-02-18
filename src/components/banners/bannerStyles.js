@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 export const useStyles = makeStyles(() => ({
 	root: {
 		'& .MuiAutocomplete-endAdornment': {
-			display: 'none !important'
+			//display: 'none !important'
 		}
 	}
 }));
