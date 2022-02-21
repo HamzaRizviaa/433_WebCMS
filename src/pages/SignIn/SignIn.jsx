@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import classes from './_signIn.module.scss';
 import GoogleLogin from 'react-google-login';
 import { useNavigate } from 'react-router-dom';
 
 import { ReactComponent as Logo2 } from '../../assets/Logo2.svg';
 import { ReactComponent as BGImage } from '../../assets/BG.svg';
+//import { ReactComponent as BGImage } from '../../assets/BG (1).png';
+import { ReactComponent as DeniedError } from '../../assets/AccesDenied.svg';
 
 const SignIn = () => {
+	const [signInError, setSignInError] = useState(false);
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		return () => {
+			setSignInError(false);
+		};
+	}, []);
 
 	const refreshTokenSetup = (res) => {
 		// Timing to renew access token
@@ -29,6 +38,7 @@ const SignIn = () => {
 	};
 
 	const responseGoogleSuccess = (res) => {
+		setSignInError(false);
 		console.log('Login Success: currentUser:', res.profileObj);
 		alert(`Logged in successfully!  Welcome ${res.profileObj.name} 😍.`);
 
@@ -37,6 +47,7 @@ const SignIn = () => {
 	};
 
 	const responseGoogleFailure = (res) => {
+		setSignInError(true);
 		console.log('Login failed: res:', res);
 		alert(`Failed to login. 😢`);
 	};
@@ -54,6 +65,17 @@ const SignIn = () => {
 								<div className={classes.welcomeText}>
 									Welcome to 433 Content Magament System
 								</div>
+								{signInError ? (
+									<div className={classes.errorWrapper}>
+										<DeniedError />
+										<span className={classes.errorMsg}>
+											<div className={classes.errorMsgTop}>Access Denied</div>
+											You can only access the CMS with your 433 email account
+										</span>
+									</div>
+								) : (
+									<></>
+								)}
 								<div className={classes.googleButtonWrapper}>
 									<GoogleLogin
 										className={classes.googleButton}
@@ -83,6 +105,11 @@ const SignIn = () => {
 					{/* <div className={classes.bgImage}> */}
 					<div>
 						<BGImage className={classes.bgImage} />
+						{/* <img
+							src={require('../../assets/BG (1).png')}
+							className={classes.bgImage}
+							alt='logo'
+						/> */}
 					</div>
 				</div>
 			</div>
