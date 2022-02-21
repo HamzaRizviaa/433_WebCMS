@@ -15,6 +15,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import PropTypes from 'prop-types';
 import { ReactComponent as DropdownArrow } from '../../assets/drop_drown_arrow.svg';
 import { ReactComponent as Union } from '../../assets/drag.svg';
+import { ReactComponent as Deletes } from '../../assets/Delete.svg';
 import { useStyles, useStyles2 } from './bannerStyles';
 
 // const useStyles = makeStyles(() => ({
@@ -44,6 +45,7 @@ export default function BannerRows({
 	const [dropdownPosition, setDropdownPosition] = useState(false);
 	const [selectedMedia, setSelectedMedia] = useState(null);
 	const [selectMediaInput, setSelectMediaInput] = useState('');
+	const [trashcan, setTrashCan] = useState(false);
 	const allMedia = ['Title only', 'Title + Text'];
 	//content type dropdown
 	const options = [
@@ -85,14 +87,27 @@ export default function BannerRows({
 		setSelectMediaInput(e.target.value);
 	};
 
-	// const removeClass = () => {
-	// 	// var element = document.getElementById('myDIV');
-	// 	if (listElement === undefined) {
-	// 		return;
-	// 	}
-
-	// 	listElement.classList.remove('Mui-focused');
-	// };
+	const emptyBannerData = (Trashdata) => {
+		console.log('empty data', data);
+		setTrashCan(true);
+		setBannerData((data) => {
+			// eslint-disable-next-line no-unused-vars
+			let _bannerData = data.map((banner) => {
+				if (Trashdata.id === banner.id) {
+					return {
+						...banner,
+						bannerType: '',
+						selectedMedia: null
+					};
+				}
+				return {
+					...banner
+				};
+			});
+			return _bannerData;
+		});
+		// handleBanner();
+	};
 
 	return (
 		<Draggable
@@ -111,6 +126,7 @@ export default function BannerRows({
 					}}
 				>
 					<div className={classes.bannerRight}>
+						{/* drag icon */}
 						<div className={classes.dragIcon}>
 							<span {...provided.dragHandleProps}>
 								<Union
@@ -119,6 +135,8 @@ export default function BannerRows({
 								/>
 							</span>
 						</div>
+
+						{/* select banner dropdown */}
 						<div className={classes.bannerDropdownDiv}>
 							<label className={classes.bannerLabel}>select Banner Type</label>
 
@@ -194,7 +212,14 @@ export default function BannerRows({
 									{allMedia.length > 0 &&
 										allMedia.map((category, index) => {
 											return (
-												<MenuItem key={index} value={category}>
+												<MenuItem
+													key={index}
+													value={category}
+													style={{
+														fontFamily: 'Poppins !important',
+														fontSize: '14px'
+													}}
+												>
 													{category}
 												</MenuItem>
 											);
@@ -203,7 +228,8 @@ export default function BannerRows({
 							</div>
 						</div>
 
-						{data.bannerType == 'Please Select' ? (
+						{/* select content sutocomplete */}
+						{data.bannerType === '' ? (
 							<div className={classes.bannerAutocomplete}></div>
 						) : (
 							<div
@@ -325,6 +351,14 @@ export default function BannerRows({
 								/>
 							</div>
 						)}
+
+						{/* delete icon */}
+						<Deletes
+							className={classes.BannertrashCan}
+							onClick={() => {
+								emptyBannerData(data);
+							}}
+						/>
 					</div>
 				</div>
 			)}

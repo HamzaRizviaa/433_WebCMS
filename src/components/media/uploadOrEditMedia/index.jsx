@@ -606,9 +606,6 @@ const UploadOrEditMedia = ({
 												: 'Please Select'
 										}
 									>
-										{/* <MenuItem disabled value=''>
-											Please Select
-										</MenuItem> */}
 										{subCategories.map((category, index) => {
 											return (
 												<MenuItem key={index} value={category}>
