@@ -7,7 +7,8 @@ import { TextField } from '@material-ui/core';
 import MenuItem from '@mui/material/MenuItem';
 import { Select } from '@material-ui/core';
 import classes from './_banners.module.scss';
-import { Autocomplete, Paper, Popper } from '@mui/material';
+import { Paper, Popper } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
 import { Draggable } from 'react-beautiful-dnd';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -169,7 +170,17 @@ export default function BannerRows({
 											vertical: 'top',
 											horizontal: 'left'
 										},
-										getContentAnchorEl: null
+										getContentAnchorEl: null,
+										classes: {
+											paper: muiClasses.paper
+										}
+									}}
+									inputProps={{
+										classes: {
+											root: data.bannerType
+												? muiClasses.input
+												: muiClasses.inputPlaceholder
+										}
 									}}
 									displayEmpty={true}
 									renderValue={(value) =>
@@ -177,7 +188,7 @@ export default function BannerRows({
 											? Array.isArray(value)
 												? value.join(', ')
 												: value
-											: ' '
+											: 'Please Select'
 									}
 								>
 									{allMedia.length > 0 &&
@@ -203,7 +214,7 @@ export default function BannerRows({
 							>
 								<label className={classes.bannerLabel}>select content</label>
 								<Autocomplete
-									className={muiClasses.root}
+									//className={muiClasses.root}
 									value={selectedMedia}
 									PaperComponent={(props) => {
 										setDisableDropdown(false);
@@ -219,7 +230,8 @@ export default function BannerRows({
 													boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)',
 													borderRadius: '8px',
 													color: '#ffffff',
-													fontSize: '14px'
+													fontSize: '14px',
+													fontFamily: 'Poppins'
 												}}
 												{...props}
 											/>
@@ -267,7 +279,6 @@ export default function BannerRows({
 									}}
 									options={options}
 									getOptionLabel={(option) => option.name}
-									// getOptionLabel={(option) => option.name}
 									renderOption={(props, option) => {
 										return (
 											<li {...props} className={classes.liAutocomplete}>
@@ -277,22 +288,23 @@ export default function BannerRows({
 									}}
 									// filterOptions={(items) => {
 									// 	return items.filter((item) =>
-									// 		item.title
+									// 		item.name
 									// 			.toLowerCase()
-									// 			.includes(
-									// 				selectMediaInput.toLowerCase()
-									// 			)
+									// 			.includes(selectMediaInput.toLowerCase())
 									// 	);
 									// }}
 									renderInput={(params) => (
 										<TextField
 											{...params}
 											size='small'
-											placeholder=''
+											placeholder='Select Content'
 											InputProps={{
 												disableUnderline: true,
 												...params.InputProps,
-												className: classes.textFieldInput
+												className: classes.textFieldInput,
+												classes: {
+													root: muiClasses.input
+												}
 											}}
 											value={selectMediaInput}
 											onChange={handleChangeSelectMediaInput}
@@ -310,13 +322,6 @@ export default function BannerRows({
 										</div>
 									}
 									popupIcon={''}
-									// renderValue={(selected) => {
-									// 	if (selected.length === 0) {
-									// 	  return <em>Please Select</em>;
-									// 	}
-
-									// 	return selected.join(', ');
-									//   }}
 								/>
 							</div>
 						)}

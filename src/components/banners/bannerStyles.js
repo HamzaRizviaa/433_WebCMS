@@ -5,6 +5,31 @@ export const useStyles = makeStyles(() => ({
 		'& .MuiAutocomplete-endAdornment': {
 			//display: 'none !important'
 		}
+	},
+	paper: {
+		background: 'black',
+		border: '1px solid #404040',
+		boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)',
+		borderRadius: '8px',
+		color: '#ffffff'
+		// fontSize: '14px',
+		// fontFamily: 'Poppins !important',
+		// '&:hover': {
+		// 	color: 'yellow'
+		// 	// cursor: pointer;
+		// }
+	},
+	input: {
+		color: 'white',
+		'&:hover': {
+			boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)'
+		}
+	},
+	inputPlaceholder: {
+		color: '#808080',
+		'&:hover': {
+			boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)'
+		}
 	}
 }));
 export const useStyles2 = makeStyles(() => ({
