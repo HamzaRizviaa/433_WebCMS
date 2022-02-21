@@ -250,6 +250,7 @@ const PostLibrary = () => {
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			formatter: (content, row) => {
+				console.log(row);
 				return (
 					<div
 						className={

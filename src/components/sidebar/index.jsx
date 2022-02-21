@@ -10,6 +10,8 @@ import { ReactComponent as Quiz } from '../../assets/Quiz.svg';
 import { ReactComponent as QuizSelected } from '../../assets/QuizSelected.svg';
 import { ReactComponent as Banner } from '../../assets/Star.svg';
 import { ReactComponent as BannerSelected } from '../../assets/Star_Selected.svg';
+import { ReactComponent as Viral } from '../../assets/Flame.svg';
+import { ReactComponent as ViralSelected } from '../../assets/Flame_Selected.svg';
 import { ReactComponent as Logout } from '../../assets/logout.svg';
 
 import { useGoogleLogout } from 'react-google-login';
@@ -108,6 +110,23 @@ const Sidebar = () => {
 						<BannerSelected className={classes.icon} />
 					) : (
 						<Banner className={classes.icon} />
+					)}
+				</div>
+				<div
+					onClick={() => {
+						navigate('/viral-library');
+					}}
+					className={classes.iconWrapper}
+					style={
+						location?.pathname.includes('viral-library')
+							? { backgroundColor: '#404040' }
+							: {}
+					}
+				>
+					{location?.pathname.includes('viral-library') ? (
+						<ViralSelected className={classes.icon} />
+					) : (
+						<Viral className={classes.icon} />
 					)}
 				</div>
 			</div>
