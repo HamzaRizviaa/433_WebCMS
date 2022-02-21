@@ -6,7 +6,7 @@ import Layout from '../../components/layout';
 import Table from '../../components/table';
 import classes from './_viralLibrary.module.scss';
 import Button from '../../components/button';
-import UploadQuiz from '../../components/quizzes/uploadOrEditQuiz/UploadQuiz';
+import UploadOrEditViral from '../../components/virals/uploadOrEditViral';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Tooltip from '@mui/material/Tooltip';
@@ -40,7 +40,6 @@ const ViralLibrary = () => {
 
 	const muiClasses = useStyles();
 	const [showSlider, setShowSlider] = useState(false);
-	const [showQuizSlider, setShowQuizSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [paginationError, setPaginationError] = useState(false);
@@ -365,9 +364,8 @@ const ViralLibrary = () => {
 		onClick: (e, row) => {
 			// if (!edit) {
 			// dispatch(getSpecificPost(row.id));
-			console.log(row);
 			setEdit(true);
-			setShowQuizSlider(true);
+			setShowSlider(true);
 			// }
 		}
 	};
@@ -377,7 +375,6 @@ const ViralLibrary = () => {
 	};
 
 	useEffect(() => {
-		console.log('sort state use effect');
 		// if (sortState.sortby && sortState.order_type && !search) {
 		// 	dispatch(
 		// 		getQuizess({
@@ -402,7 +399,6 @@ const ViralLibrary = () => {
 	}, [sortState]);
 
 	useEffect(() => {
-		console.log('search use effect');
 		// if (search) {
 		// 	dispatch(
 		// 		getQuizess({
@@ -599,16 +595,16 @@ const ViralLibrary = () => {
 				/>
 			</div>
 
-			{/* <UploadQuiz
+			<UploadOrEditViral
 				open={showSlider}
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
 				}}
-				title={edit ? 'Quiz Detail' : 'Upload Quiz'}
-				heading1={edit ? ' ' : 'Add Background Image'}
-				buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
-			/> */}
+				title={edit ? 'Edit Viral' : 'Upload Viral'}
+				heading1={edit ? 'Media File' : 'Add Media File'}
+				buttonText={edit ? 'SAVE CHANGES' : 'ADD VIRAL'}
+			/>
 		</Layout>
 	);
 };
