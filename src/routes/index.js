@@ -15,7 +15,7 @@ const AppRoutes = () => {
 				<Route path='/media-library' element={<MediaLibrary />} />
 				<Route path='/quiz-library' element={<QuizLibrary />} />
 				<Route path='/top-banner' element={<TopBanner />} />
-				<Route path='/' element={<Navigate replace to='/post-library' />} />
+				<Route path='/' element={<Navigate replace to='/sign-in' />} />
 			</Routes>
 		</>
 	);
