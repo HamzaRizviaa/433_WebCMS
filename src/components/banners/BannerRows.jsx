@@ -90,6 +90,7 @@ export default function BannerRows({
 	const emptyBannerData = (Trashdata) => {
 		console.log('empty data', data);
 		setTrashCan(true);
+		setSelectedMedia(null);
 		setBannerData((data) => {
 			// eslint-disable-next-line no-unused-vars
 			let _bannerData = data.map((banner) => {
