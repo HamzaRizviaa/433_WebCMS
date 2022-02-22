@@ -360,6 +360,10 @@ const ViralLibrary = () => {
 			// dispatch(getSpecificPost(row.id));
 			setEdit(true);
 			setShowSlider(true);
+			// setTimeout(() => {
+			// 	setShowSlider(true);
+			// }, [500]);
+
 			// }
 		}
 	};
@@ -594,6 +598,8 @@ const ViralLibrary = () => {
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
+					setEdit(false);
+					// setTimeout(() => setEdit(false), 100); //to show edit data after clicking second time
 				}}
 				title={edit ? 'Edit Viral' : 'Upload Viral'}
 				heading1={edit ? 'Media File' : 'Add Media File'}

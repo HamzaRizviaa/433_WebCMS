@@ -10,6 +10,7 @@ import { ReactComponent as DeniedError } from '../../assets/AccesDenied.svg';
 
 const SignIn = () => {
 	const [signInError, setSignInError] = useState(false);
+	const [googleData, setGoogleData] = useState(null);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -39,12 +40,15 @@ const SignIn = () => {
 
 	const responseGoogleSuccess = (res) => {
 		setSignInError(false);
-		console.log('Login Success: currentUser:', res.profileObj);
+		//console.log('Login Success: currentUser:', res);
 		//alert(`Logged in successfully!  Welcome ${res.profileObj.name} 😍.`);
+		setGoogleData(res);
 
 		navigate('/post-library');
 		refreshTokenSetup(res);
 	};
+
+	console.log(googleData);
 
 	const responseGoogleFailure = (res) => {
 		setSignInError(true);
@@ -84,7 +88,7 @@ const SignIn = () => {
 										onSuccess={responseGoogleSuccess}
 										onFailure={responseGoogleFailure}
 										hostedDomain={'by433.com'}
-										isSignedIn={false}
+										isSignedIn={true}
 										cookiePolicy={'single_host_origin'}
 									/>
 								</div>
