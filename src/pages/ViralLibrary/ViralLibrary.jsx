@@ -174,57 +174,59 @@ const ViralLibrary = () => {
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			formatter: (content, row) => {
-				console.log(content);
-				<div className={classes.mediaWrapper}>
-					<Tooltip
-						// TransitionComponent={Fade}
-						// TransitionProps={{ timeout: 600 }}
-						title={
-							<video
-								id={'my-video'}
-								//poster={row.thumbnail_url}
-								autoPlay
-								muted
-								className={classes.mediaIconPreview}
-								controls={true}
-							>
-								<source src={content.media} />
-							</video>
-						}
-						placement='right'
-						componentsProps={{
-							tooltip: { className: classes.toolTipPreview }
-						}}
-					>
-						<span>
-							<PlayArrowIcon className={classes.playIcon} />
-							<img className={classes.mediaIcon} src={content.thumbnail_url} />
-						</span>
-					</Tooltip>
-					<Tooltip
-						TransitionComponent={Fade}
-						TransitionProps={{ timeout: 600 }}
-						title={
-							'h'
-							// <Markup
-							// 	content={row?.file_name?.length > 13 ? row?.file_name : ''}
-							// />
-						}
-						arrow
-						componentsProps={{
-							tooltip: { className: classes.toolTip },
-							arrow: { className: classes.toolTipArrow }
-						}}
-					>
-						<div className={classes.fileName}>
-							{content}
-							{/* <Markup
+				console.log(content, row);
+				return (
+					<div className={classes.mediaWrapper}>
+						<Tooltip
+							// TransitionComponent={Fade}
+							// TransitionProps={{ timeout: 600 }}
+							title={
+								<video
+									id={'my-video'}
+									//poster={row.thumbnail_url}
+									autoPlay
+									muted
+									className={classes.mediaIconPreview}
+									controls={true}
+								>
+									<source src={row.media} />
+								</video>
+							}
+							placement='right'
+							componentsProps={{
+								tooltip: { className: classes.toolTipPreview }
+							}}
+						>
+							<span>
+								<PlayArrowIcon className={classes.playIcon} />
+								<img className={classes.mediaIcon} src={row.thumbnail_url} />
+							</span>
+						</Tooltip>
+						<Tooltip
+							TransitionComponent={Fade}
+							TransitionProps={{ timeout: 600 }}
+							title={
+								'h'
+								// <Markup
+								// 	content={row?.file_name?.length > 13 ? row?.file_name : ''}
+								// />
+							}
+							arrow
+							componentsProps={{
+								tooltip: { className: classes.toolTip },
+								arrow: { className: classes.toolTipArrow }
+							}}
+						>
+							<div className={classes.fileName}>
+								{row.file_name}
+								{/* <Markup
 								className={classes.fileName}
 								content={content.file_name}
 							/> */}
-						</div>
-					</Tooltip>
-				</div>;
+							</div>
+						</Tooltip>
+					</div>
+				);
 			}
 		},
 		{
@@ -303,13 +305,11 @@ const ViralLibrary = () => {
 
 	const data = [
 		{
-			viral: {
-				file_name: 'special Tom & Jerry.mp4',
-				media:
-					'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-				thumbnail_url:
-					'https://cdni0.trtworld.com/w960/h540/q75/34070_esp20180526ronaldo_1527420747155.JPG'
-			},
+			media:
+				'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+			thumbnail_url:
+				'https://cdni0.trtworld.com/w960/h540/q75/34070_esp20180526ronaldo_1527420747155.JPG',
+
 			post_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 22',
 			user: 'Lorem Ipsum',

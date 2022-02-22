@@ -230,7 +230,7 @@ export default function BannerRows({
 						</div>
 
 						{/* select content sutocomplete */}
-						{data.bannerType === '' ? (
+						{data.bannerType === '' && trashcan === true ? (
 							<div className={classes.bannerAutocomplete}></div>
 						) : (
 							<div
