@@ -797,6 +797,7 @@ const UploadOrEditViral = ({
 										className={classes.previewFile}
 										style={{
 											//width: `${8 * 4}rem`,
+											width: `100%`,
 											height: `${8 * 4}rem`,
 											objectFit: 'contain',
 											objectPosition: 'center'
@@ -812,6 +813,7 @@ const UploadOrEditViral = ({
 										className={classes.previewFile}
 										style={{
 											//width: `${8 * 4}rem`,
+											width: `100%`,
 											height: `${8 * 4}rem`,
 											objectFit: 'contain',
 											objectPosition: 'center'
@@ -825,7 +827,8 @@ const UploadOrEditViral = ({
 										src={previewFile.img}
 										className={classes.previewFile}
 										style={{
-											width: `${8 * 4}rem`,
+											//width: `${8 * 4}rem`,
+											width: `100%`,
 											height: `${8 * 4}rem`,
 											objectFit: 'contain',
 											objectPosition: 'center'
