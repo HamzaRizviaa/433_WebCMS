@@ -206,10 +206,9 @@ const ViralLibrary = () => {
 							TransitionComponent={Fade}
 							TransitionProps={{ timeout: 600 }}
 							title={
-								'h'
-								// <Markup
-								// 	content={row?.file_name?.length > 13 ? row?.file_name : ''}
-								// />
+								<Markup
+									content={row?.file_name?.length > 13 ? row?.file_name : ''}
+								/>
 							}
 							arrow
 							componentsProps={{
@@ -218,11 +217,7 @@ const ViralLibrary = () => {
 							}}
 						>
 							<div className={classes.fileName}>
-								{row.file_name}
-								{/* <Markup
-								className={classes.fileName}
-								content={content.file_name}
-							/> */}
+								<Markup className={classes.fileName} content={row.file_name} />
 							</div>
 						</Tooltip>
 					</div>
@@ -309,7 +304,6 @@ const ViralLibrary = () => {
 				'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
 			thumbnail_url:
 				'https://cdni0.trtworld.com/w960/h540/q75/34070_esp20180526ronaldo_1527420747155.JPG',
-
 			post_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 22',
 			user: 'Lorem Ipsum',

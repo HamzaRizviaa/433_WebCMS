@@ -40,7 +40,7 @@ const SignIn = () => {
 	const responseGoogleSuccess = (res) => {
 		setSignInError(false);
 		console.log('Login Success: currentUser:', res.profileObj);
-		alert(`Logged in successfully!  Welcome ${res.profileObj.name} 😍.`);
+		//alert(`Logged in successfully!  Welcome ${res.profileObj.name} 😍.`);
 
 		navigate('/post-library');
 		refreshTokenSetup(res);
@@ -49,7 +49,7 @@ const SignIn = () => {
 	const responseGoogleFailure = (res) => {
 		setSignInError(true);
 		console.log('Login failed: res:', res);
-		alert(`Failed to login. 😢`);
+		//alert(`Failed to login. 😢`);
 	};
 
 	return (
