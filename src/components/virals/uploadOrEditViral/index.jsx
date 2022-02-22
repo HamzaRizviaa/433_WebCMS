@@ -796,9 +796,9 @@ const UploadOrEditViral = ({
 										poster={isEdit ? previewFile.img : null}
 										className={classes.previewFile}
 										style={{
-											width: `${8 * 4}rem`,
+											//width: `${8 * 4}rem`,
 											height: `${8 * 4}rem`,
-											objectFit: 'cover',
+											objectFit: 'contain',
 											objectPosition: 'center'
 										}}
 										controls={true}
@@ -811,9 +811,9 @@ const UploadOrEditViral = ({
 										poster={isEdit ? previewFile.thumbnail_url : null}
 										className={classes.previewFile}
 										style={{
-											width: `${8 * 4}rem`,
+											//width: `${8 * 4}rem`,
 											height: `${8 * 4}rem`,
-											objectFit: 'cover',
+											objectFit: 'contain',
 											objectPosition: 'center'
 										}}
 										controls={true}
@@ -827,7 +827,7 @@ const UploadOrEditViral = ({
 										style={{
 											width: `${8 * 4}rem`,
 											height: `${8 * 4}rem`,
-											objectFit: 'cover',
+											objectFit: 'contain',
 											objectPosition: 'center'
 										}}
 									/>
