@@ -89,15 +89,18 @@ const SignIn = () => {
 									/>
 								</div>
 								<div className={classes.helpText}>
-									Need help signing in? Please write an email to
-									<a
-										href={'https://www.433football.com/'}
-										target='_blank'
-										rel='noopener noreferrer'
-										style={{ color: '#ffff00' }}
-									>
-										cms@by433.com
-									</a>
+									<p>
+										Need help signing in? Please write an email to
+										<br />
+										<a
+											href={'https://www.433football.com/'}
+											target='_blank'
+											rel='noopener noreferrer'
+											style={{ color: '#ffff00' }}
+										>
+											cms@by433.com
+										</a>
+									</p>
 								</div>
 							</div>
 						</div>
