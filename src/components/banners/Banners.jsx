@@ -81,14 +81,6 @@ export default function Banners() {
 				break;
 			}
 		}
-		//please select should be at last
-		// for (let i = 4; i >= 1; i--) {
-		// 	if ((bannerData[i].bannerType === 'Please Select') !== 4) {
-		// 		flag2 = true;
-		// 		break;
-		// 	}
-		// }
-		console.log('Position ', flag);
 
 		return flag;
 	};
@@ -114,17 +106,18 @@ export default function Banners() {
 						<Droppable droppableId='droppable-1'>
 							{(provided) => (
 								<div {...provided.droppableProps} ref={provided.innerRef}>
-									{bannerData.map((data, index) => {
-										return (
-											<BannerRows
-												data={data}
-												setBannerData={setBannerData}
-												key={data.id}
-												provided={provided}
-												index={index}
-											/>
-										);
-									})}
+									{bannerData.length > 0 &&
+										bannerData.map((data, index) => {
+											return (
+												<BannerRows
+													data={data}
+													setBannerData={setBannerData}
+													key={data.id}
+													provided={provided}
+													index={index}
+												/>
+											);
+										})}
 									{provided.placeholder}
 								</div>
 							)}

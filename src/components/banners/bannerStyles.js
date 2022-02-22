@@ -2,8 +2,8 @@ import { makeStyles } from '@material-ui/core/styles';
 
 export const useStyles = makeStyles(() => ({
 	root: {
-		'& .MuiAutocomplete-endAdornment': {
-			//display: 'none !important'
+		'& .MuiTouchRipple-root': {
+			display: 'none !important'
 		}
 	},
 	paper: {
@@ -11,14 +11,17 @@ export const useStyles = makeStyles(() => ({
 		border: '1px solid #404040',
 		boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)',
 		borderRadius: '8px',
-		color: '#ffffff'
-		// fontSize: '14px',
-		// fontFamily: 'Poppins !important',
+		color: '#ffffff',
+		fontSize: '14px',
+		fontFamily: 'Poppins !important'
 		// '&:hover': {
 		// 	color: 'yellow'
 		// 	// cursor: pointer;
 		// }
 	},
+	// '& .MuiMenuItem-root': {
+	// 	fontFamily: 'Poppins !important'
+	// },
 	input: {
 		color: 'white',
 		'&:hover': {
