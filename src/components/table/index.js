@@ -13,7 +13,7 @@ const Table = ({ data, columns, rowEvents }) => (
 		bordered={false}
 		headerClasses={'table-header'}
 		rowEvents={rowEvents}
-		hover
+		//hover
 	/>
 );
 
