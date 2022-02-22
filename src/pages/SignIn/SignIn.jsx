@@ -40,7 +40,7 @@ const SignIn = () => {
 	const responseGoogleSuccess = (res) => {
 		setSignInError(false);
 		console.log('Login Success: currentUser:', res.profileObj);
-		alert(`Logged in successfully!  Welcome ${res.profileObj.name} 😍.`);
+		//alert(`Logged in successfully!  Welcome ${res.profileObj.name} 😍.`);
 
 		navigate('/post-library');
 		refreshTokenSetup(res);
@@ -49,7 +49,7 @@ const SignIn = () => {
 	const responseGoogleFailure = (res) => {
 		setSignInError(true);
 		console.log('Login failed: res:', res);
-		alert(`Failed to login. 😢`);
+		//alert(`Failed to login. 😢`);
 	};
 
 	return (
@@ -89,15 +89,18 @@ const SignIn = () => {
 									/>
 								</div>
 								<div className={classes.helpText}>
-									Need help signing in? Please write an email to
-									<a
-										href={'https://www.433football.com/'}
-										target='_blank'
-										rel='noopener noreferrer'
-										style={{ color: '#ffff00' }}
-									>
-										cms@by433.com
-									</a>
+									<p>
+										Need help signing in? Please write an email to
+										<br />
+										<a
+											href={'https://www.433football.com/'}
+											target='_blank'
+											rel='noopener noreferrer'
+											style={{ color: '#ffff00' }}
+										>
+											cms@by433.com
+										</a>
+									</p>
 								</div>
 							</div>
 						</div>
