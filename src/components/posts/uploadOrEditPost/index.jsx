@@ -149,6 +149,7 @@ const UploadOrEditPost = ({
 				setSelectedLabels(_labels);
 			}
 			setCaption(specificPost.caption);
+
 			if (specificPost?.media_id !== null) {
 				let _media;
 				allMedia.find((medi) => {
@@ -160,6 +161,8 @@ const UploadOrEditPost = ({
 				setSelectedMedia(_media);
 				setValue(true);
 			}
+			// console.log('specific post', specificPost?.media_id);
+			// console.log('normal', selectedMedia?.id);
 			if (specificPost.orientation_type === 'square') {
 				setDimensionSelect('square');
 				setImageToResizeWidth(80);
@@ -520,11 +523,14 @@ const UploadOrEditPost = ({
 		(value && !selectedMedia) ||
 		selectedLabels.length < 10;
 
-	// const handleKeyDown = (event) => {
-	// 	if (event.keyCode === 27) {
-	// 		handleClose();
-	// 	}
-	// };
+	const editBtnDisabled =
+		postButtonStatus ||
+		(value && !selectedMedia) ||
+		(specificPost?.caption === caption &&
+			specificPost?.media_id == selectedMedia?.id);
+
+	// console.log('specific post', specificPost?.media_id);
+	// console.log('normal', selectedMedia?.id);
 
 	return (
 		<Slider
@@ -1011,6 +1017,7 @@ const UploadOrEditPost = ({
 										}}
 										onChange={(e, newVal) => {
 											setSelectedMedia(newVal);
+
 											setDisableDropdown(true);
 										}}
 										options={allMedia}
@@ -1078,11 +1085,13 @@ const UploadOrEditPost = ({
 
 							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 								<Button
-									disabled={postBtnDisabled}
+									disabled={isEdit ? editBtnDisabled : postBtnDisabled}
 									onClick={() => {
-										if (postBtnDisabled) {
+										if (postBtnDisabled || editBtnDisabled) {
 											validatePostBtn();
 										} else {
+											console.log(specificPost.caption);
+											console.log(caption);
 											setPostButtonStatus(true);
 											if (isEdit) {
 												createPost(specificPost?.id);
