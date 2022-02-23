@@ -287,9 +287,16 @@
 	align-items: center;
 }
 
+.filePreviewRight {
+	display: flex;
+	align-items: center;
+}
+
 .fileThumbnail {
 	height: 8rem;
 	//width: 8rem;
+	//max-height: 50%;
+	max-width: 50%;
 	border-radius: 4px;
 	background-color: white;
 }
@@ -297,6 +304,10 @@
 .fileName {
 	font-size: 1rem;
 	margin-left: 2rem;
+	max-width: 100%; // to shorten the filename if its too big
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 .filePreviewIcons {
