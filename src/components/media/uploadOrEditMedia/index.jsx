@@ -157,7 +157,7 @@ const UploadOrEditMedia = ({
 	const updateSubCategories = async (mainCategory) => {
 		try {
 			const response = await axios.get(
-				`${process.env.REACT_APP_API_ENDPOINT}/media/get-sub-categories/${mainCategory}`
+				`${process.env.REACT_APP_API_ENDPOINT}/media/get-sub-categories/${mainCategory.id}`
 			);
 
 			if (response?.data?.data?.length) {
@@ -363,6 +363,7 @@ const UploadOrEditMedia = ({
 	};
 
 	const uploadMedia = async (id, payload) => {
+		let media_type = mainCategory.id;
 		setMediaButtonStatus(true);
 		try {
 			const result = await axios.post(
@@ -370,8 +371,9 @@ const UploadOrEditMedia = ({
 				isEdit
 					? { media_id: id, ...payload }
 					: {
-							media_type: mainCategory,
-							sub_category: subCategory,
+							// media_type: mainCategory.id,
+							main_category_id: media_type,
+							// sub_category: subCategory,
 							title: titleMedia,
 							...(selectedLabels.length ? { labels: [...selectedLabels] } : {}),
 							description: description,
@@ -454,6 +456,12 @@ const UploadOrEditMedia = ({
 		mediaButtonStatus ||
 		selectedLabels.length < 10;
 
+	const MainCategoryId = (e) => {
+		//find name and will return whole object
+		let setData = mainCategories.find((u) => u.name === e);
+		setMainCategory(setData);
+	};
+
 	return (
 		<Slider
 			open={open}
@@ -510,11 +518,12 @@ const UploadOrEditMedia = ({
 										}}
 										disabled={isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
-										value={mainCategory}
+										value={mainCategory.name}
 										onChange={(e) => {
 											setDisableDropdown(true);
-											setMainCategory(e.target.value);
-											console.log(e.target.value, mainCategory);
+											// setMainCategory(e.target.value);
+											//calling function , passing name (i.e. watch & listen)
+											MainCategoryId(e.target.value);
 											setMainCategoryLabelColor('#ffffff');
 											setMainCategoryError('');
 											setSubCategory('');
