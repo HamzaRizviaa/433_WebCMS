@@ -104,22 +104,15 @@
 	letter-spacing: 0.03em;
 	// position: static;
 }
-
-.bgImage {
-	// object-fit: cover;
-	// object-position: center;
-	// background-image: url('../../assets/BG.svg');
-	// background-size: cover;
-	// background-repeat: no-repeat;
-	// min-height: 90vh;
-	//width: calc(60% + 15px);
-	// margin-left: -15px;
-	width: 67%;
-	position: absolute;
-	height: 100%;
-	// height: calc(100vh + 200px);
-	// left: 511px;
-	// top: -137px;
+.rightBGImage {
+	width: 100%;
+	// position: relative;
+	// height: 100vh;
+	object-fit: cover;
+	object-position: center;
+	background-image: url('../../assets/GlobeBG.svg');
+	background-size: cover;
+	background-repeat: no-repeat;
 }
 
 .googleButtonWrapper {

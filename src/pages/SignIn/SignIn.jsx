@@ -1,60 +1,75 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import classes from './_signIn.module.scss';
 import GoogleLogin from 'react-google-login';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 import { ReactComponent as Logo2 } from '../../assets/Logo2.svg';
 //import { ReactComponent as BGImage } from '../../assets/BG.svg';
-import { ReactComponent as BGImage } from '../../assets/Globe 1.svg';
+// import { ReactComponent as BGImage } from '../../assets/GlobeBG.svg';
 import { ReactComponent as DeniedError } from '../../assets/AccesDenied.svg';
 
 const SignIn = () => {
-	const [signInError, setSignInError] = useState(false);
-	const [googleData, setGoogleData] = useState(null);
-	const navigate = useNavigate();
+	// const [signInError, setSignInError] = useState(false);
+	// const [googleData, setGoogleData] = useState(null);
+	//hamza code
+	// const navigate = useNavigate();
 
-	useEffect(() => {
-		return () => {
-			setSignInError(false);
-		};
-	}, []);
+	// const refreshTokenSetup = (res) => {
+	// 	// Timing to renew access token
+	// 	let refreshTiming = (res.tokenObj.expires_in || 3600 - 5 * 60) * 1000;
 
-	const refreshTokenSetup = (res) => {
-		// Timing to renew access token
-		let refreshTiming = (res.tokenObj.expires_in || 3600 - 5 * 60) * 1000;
+	// 	const refreshToken = async () => {
+	// 		const newAuthRes = await res.reloadAuthResponse();
+	// 		refreshTiming = (newAuthRes.expires_in || 3600 - 5 * 60) * 1000;
+	// 		console.log('newAuthRes:', newAuthRes);
+	// 		// saveUserToken(newAuthRes.access_token);  <-- save new token
+	// 		localStorage.setItem('authToken', newAuthRes.id_token);
 
-		const refreshToken = async () => {
-			const newAuthRes = await res.reloadAuthResponse();
-			refreshTiming = (newAuthRes.expires_in || 3600 - 5 * 60) * 1000;
-			console.log('newAuthRes:', newAuthRes);
-			// saveUserToken(newAuthRes.access_token);  <-- save new token
-			localStorage.setItem('authToken', newAuthRes.id_token);
+	// 		// Setup the other timer after the first one
+	// 		setTimeout(refreshToken, refreshTiming);
+	// 	};
 
-			// Setup the other timer after the first one
-			setTimeout(refreshToken, refreshTiming);
-		};
+	// 	// Setup first refresh timer
+	// 	setTimeout(refreshToken, refreshTiming);
+	// };
 
-		// Setup first refresh timer
-		setTimeout(refreshToken, refreshTiming);
+	// const responseGoogleSuccess = (res) => {
+	// 	setSignInError(false);
+	// 	console.log('Login Success: currentUser:', res);
+	// 	//alert(`Logged in successfully!  Welcome ${res.profileObj.name} 😍.`);
+	// 	setGoogleData(res);
+
+	// 	navigate('/post-library');
+	// 	// refreshTokenSetup(res); expire from backend
+	// };
+
+	// const responseGoogleFailure = (res) => {
+	// 	setSignInError(true);
+	// 	console.log('Login failed: res:', res);
+	// 	//alert(`Failed to login. 😢`);
+	// };
+
+	const [loginData, setLoginData] = useState(
+		localStorage.getItem('loginData')
+			? JSON.parse(localStorage.getItem('loginData'))
+			: null
+	);
+
+	const handleFailure = () => {
+		console.log('failure');
 	};
 
-	const responseGoogleSuccess = (res) => {
-		setSignInError(false);
-		//console.log('Login Success: currentUser:', res);
-		//alert(`Logged in successfully!  Welcome ${res.profileObj.name} 😍.`);
-		setGoogleData(res);
-
-		navigate('/post-library');
-		refreshTokenSetup(res);
+	const handleLogin = async (googleData) => {
+		console.log('login', googleData);
+		//post api with googleData.tokenId
+		setLoginData(null); // just for now
 	};
 
-	console.log(googleData);
-
-	const responseGoogleFailure = (res) => {
-		setSignInError(true);
-		console.log('Login failed: res:', res);
-		//alert(`Failed to login. 😢`);
-	};
+	// const handleLogout = () => {
+	// 	console.log('logout');
+	// 	localStorage.removeItem('loginData');
+	// 	setLoginData(null);
+	// };
 
 	return (
 		<>
@@ -69,7 +84,7 @@ const SignIn = () => {
 								<div className={classes.welcomeText}>
 									Welcome to 433 Content Magament System
 								</div>
-								{signInError ? (
+								{loginData ? (
 									<div className={classes.errorWrapper}>
 										<DeniedError />
 										<span className={classes.errorMsg}>
@@ -78,15 +93,21 @@ const SignIn = () => {
 										</span>
 									</div>
 								) : (
-									<></>
+									<>
+										{/* <DeniedError
+											onClick={() => {
+												handleLogout;
+											}}
+										/> */}
+									</>
 								)}
 								<div className={classes.googleButtonWrapper}>
 									<GoogleLogin
 										className={classes.googleButton}
 										clientId='761006834675-0717aiakfe9at8d7jahf10hdgevu7acg.apps.googleusercontent.com'
 										buttonText='Sign In with Google'
-										onSuccess={responseGoogleSuccess}
-										onFailure={responseGoogleFailure}
+										onSuccess={handleLogin}
+										onFailure={handleFailure}
 										hostedDomain={'by433.com'}
 										isSignedIn={true}
 										cookiePolicy={'single_host_origin'}
@@ -109,15 +130,8 @@ const SignIn = () => {
 							</div>
 						</div>
 					</div>
-					{/* <div className={classes.bgImage}> */}
-					<div>
-						<BGImage className={classes.bgImage} />
-						{/* <img
-							src={require('../../assets/BG (1).png')}
-							className={classes.bgImage}
-							alt='logo'
-						/> */}
-					</div>
+
+					<div className={classes.rightBGImage}></div>
 				</div>
 			</div>
 		</>
