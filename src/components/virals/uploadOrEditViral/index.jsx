@@ -44,6 +44,8 @@ const UploadOrEditViral = ({
 	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
 	const [labelColor, setLabelColor] = useState('#ffffff');
 	const [labelError, setLabelError] = useState('');
+	const [captionColor, setCaptionColor] = useState('#ffffff');
+	const [captionError, setCaptionError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [isLoadingCreatePost, setIsLoadingCreatePost] = useState(false);
@@ -302,6 +304,17 @@ const UploadOrEditViral = ({
 				setLabelError('');
 			}, [5000]);
 		}
+
+		if (!caption) {
+			setCaptionColor('#ff355a');
+			setCaptionError(
+				'You need to put a caption of atleast 1 character in order to post'
+			);
+			setTimeout(() => {
+				setCaptionColor('#ffff00');
+				setCaptionError('');
+			}, [5000]);
+		}
 	};
 
 	// const createPost = async (id, mediaFiles = []) => {
@@ -381,7 +394,10 @@ const UploadOrEditViral = ({
 	};
 
 	const viralBtnDisabled =
-		!uploadedFiles.length || postButtonStatus || selectedLabels.length < 10;
+		!uploadedFiles.length ||
+		postButtonStatus ||
+		selectedLabels.length < 10 ||
+		!caption;
 
 	return (
 		<Slider
@@ -707,7 +723,7 @@ const UploadOrEditViral = ({
 							<p className={classes.mediaError}>{labelError}</p>
 
 							<div className={classes.captionContainer}>
-								<h6>CAPTION</h6>
+								<h6 style={{ color: captionColor }}>CAPTION</h6>
 								<TextField
 									value={caption}
 									onChange={(e) => setCaption(e.target.value)}
@@ -725,6 +741,8 @@ const UploadOrEditViral = ({
 								/>
 							</div>
 						</div>
+
+						<p className={classes.mediaError}>{captionError}</p>
 
 						<div className={classes.buttonDiv}>
 							{isEdit ? (
