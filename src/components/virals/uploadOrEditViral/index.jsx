@@ -454,9 +454,9 @@ const UploadOrEditViral = ({
 																<div className={classes.filePreviewLeft}>
 																	{file.type === 'video' ? (
 																		<>
-																			<PlayArrowIcon
+																			{/* <PlayArrowIcon
 																				className={classes.playIcon}
-																			/>
+																			/> */}
 																			<video
 																				id={'my-video'}
 																				poster={isEdit ? file.img : null}

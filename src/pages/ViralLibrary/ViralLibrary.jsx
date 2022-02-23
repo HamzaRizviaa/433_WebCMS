@@ -198,7 +198,7 @@ const ViralLibrary = () => {
 							}}
 						>
 							<span>
-								<PlayArrowIcon className={classes.playIcon} />
+								{/* <PlayArrowIcon className={classes.playIcon} /> */}
 								<img className={classes.mediaIcon} src={row.thumbnail_url} />
 							</span>
 						</Tooltip>
@@ -609,8 +609,8 @@ const ViralLibrary = () => {
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
-					setEdit(false);
-					// setTimeout(() => setEdit(false), 100); //to show edit data after clicking second time
+					//setEdit(false);
+					setTimeout(() => setEdit(false), 300); //to show edit data after clicking second time
 				}}
 				title={edit ? 'Edit Viral' : 'Upload Viral'}
 				heading1={edit ? 'Media File' : 'Add Media File'}
