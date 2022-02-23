@@ -80,6 +80,7 @@ const UploadOrEditMedia = ({
 	const mainCategories = useSelector(
 		(state) => state.mediaLibraryOriginal.mainCategories
 	);
+
 	const specificMedia = useSelector(
 		(state) => state.mediaLibraryOriginal.specificMedia
 	);
@@ -158,8 +159,10 @@ const UploadOrEditMedia = ({
 			const response = await axios.get(
 				`${process.env.REACT_APP_API_ENDPOINT}/media/get-sub-categories/${mainCategory}`
 			);
+
 			if (response?.data?.data?.length) {
 				setSubCategories([...response.data.data]);
+				console.log('subcat', response?.data?.data);
 			} else {
 				setSubCategories([]);
 			}
@@ -511,6 +514,7 @@ const UploadOrEditMedia = ({
 										onChange={(e) => {
 											setDisableDropdown(true);
 											setMainCategory(e.target.value);
+											console.log(e.target.value, mainCategory);
 											setMainCategoryLabelColor('#ffffff');
 											setMainCategoryError('');
 											setSubCategory('');
@@ -553,8 +557,8 @@ const UploadOrEditMedia = ({
 										</MenuItem> */}
 										{mainCategories.map((category, index) => {
 											return (
-												<MenuItem key={index} value={category}>
-													{category}
+												<MenuItem key={index} value={category.name}>
+													{category.name}
 												</MenuItem>
 											);
 										})}
@@ -608,8 +612,8 @@ const UploadOrEditMedia = ({
 									>
 										{subCategories.map((category, index) => {
 											return (
-												<MenuItem key={index} value={category}>
-													{category}
+												<MenuItem key={index} value={category.name}>
+													{category.name}
 												</MenuItem>
 											);
 										})}
