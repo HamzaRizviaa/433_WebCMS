@@ -72,7 +72,7 @@ const UploadOrEditMedia = ({
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
-				mainCategory === 'Watch' ? 'video/mp4' : 'audio/mp3, audio/mpeg'
+				mainCategory.name === 'Watch' ? 'video/mp4' : 'audio/mp3, audio/mpeg'
 			}`,
 			maxFiles: 1
 		});
@@ -162,7 +162,6 @@ const UploadOrEditMedia = ({
 
 			if (response?.data?.data?.length) {
 				setSubCategories([...response.data.data]);
-				console.log('subcat', response?.data?.data);
 			} else {
 				setSubCategories([]);
 			}
@@ -435,7 +434,6 @@ const UploadOrEditMedia = ({
 			const result = await axios.get(
 				`${process.env.REACT_APP_API_ENDPOINT}/media/check/${givenTitle}`
 			);
-			console.log(result);
 			return result?.data?.status;
 		} catch (error) {
 			console.log('Error');
@@ -461,6 +459,8 @@ const UploadOrEditMedia = ({
 		let setData = mainCategories.find((u) => u.name === e);
 		setMainCategory(setData);
 	};
+
+	//console.log(mainCategory);
 
 	return (
 		<Slider
@@ -703,7 +703,7 @@ const UploadOrEditMedia = ({
 													Click or drag file to this area to upload
 												</p>
 												<p className={classes.formatMsg}>
-													{mainCategory === 'Watch'
+													{mainCategory.name === 'Watch'
 														? 'Supported format is mp4'
 														: 'Supported format is mp3'}
 												</p>
@@ -1028,7 +1028,6 @@ const UploadOrEditMedia = ({
 										button2={isEdit ? true : false}
 										onClick={() => {
 											if (!deleteBtnStatus) {
-												console.log('specific', specificMedia.id);
 												deleteMedia(specificMedia?.id);
 											}
 										}}
@@ -1082,7 +1081,6 @@ const UploadOrEditMedia = ({
 
 												Promise.all([...uploadFilesPromiseArray])
 													.then(async (mediaFiles) => {
-														console.log(mediaFiles);
 														const completeUpload = await axios.post(
 															`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
 															{
@@ -1105,7 +1103,7 @@ const UploadOrEditMedia = ({
 																			: ['image'],
 																	keys: {
 																		image_key: mediaFiles[1]?.keys?.image_key,
-																		...(mainCategory === 'Watch'
+																		...(mainCategory.name === 'Watch'
 																			? {
 																					video_key:
 																						mediaFiles[0]?.keys?.video_key,
@@ -1118,7 +1116,7 @@ const UploadOrEditMedia = ({
 																			  })
 																	},
 																	upload_id:
-																		mainCategory === 'Watch'
+																		mainCategory.name === 'Watch'
 																			? mediaFiles[0].upload_id
 																			: 'audio'
 																}
