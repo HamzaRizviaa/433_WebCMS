@@ -4,8 +4,8 @@ import GoogleLogin from 'react-google-login';
 import { useNavigate } from 'react-router-dom';
 
 import { ReactComponent as Logo2 } from '../../assets/Logo2.svg';
-import { ReactComponent as BGImage } from '../../assets/BG.svg';
-//import { ReactComponent as BGImage } from '../../assets/BG (1).png';
+//import { ReactComponent as BGImage } from '../../assets/BG.svg';
+import { ReactComponent as BGImage } from '../../assets/Globe 1.svg';
 import { ReactComponent as DeniedError } from '../../assets/AccesDenied.svg';
 
 const SignIn = () => {
