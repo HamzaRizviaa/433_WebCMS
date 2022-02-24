@@ -645,7 +645,7 @@ const QuizLibrary = () => {
 				handleClose={() => {
 					setShowQuizSlider(false);
 				}}
-				title={'Poll Detail'}
+				title={'Quiz Detail'}
 				heading1={edit ? 'Add Background Image' : 'Add Background Image'}
 				buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
 			/>
