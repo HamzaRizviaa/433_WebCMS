@@ -10,7 +10,7 @@ import { ReactComponent as Logo2 } from '../../assets/Logo2.svg';
 import { ReactComponent as DeniedError } from '../../assets/AccesDenied.svg';
 
 const SignIn = () => {
-	// const [signInError, setSignInError] = useState(false);
+	const [signInError, setSignInError] = useState(false);
 	// const [googleData, setGoogleData] = useState(null);
 	//hamza code
 	const navigate = useNavigate();
@@ -56,8 +56,8 @@ const SignIn = () => {
 			: null
 	);
 
-	const handleFailure = () => {
-		console.log('failure');
+	const handleFailure = (e) => {
+		console.log('failure', e);
 	};
 
 	const handleLogin = async (googleData) => {
@@ -66,24 +66,30 @@ const SignIn = () => {
 
 		try {
 			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/api/v1/cmsuser/verify-google-user`,
+				`${process.env.REACT_APP_API_ENDPOINT}/cmsuser/verify-google-user`,
 				{
 					token: googleData.tokenId
 				}
 			);
 
 			if (result?.data?.status_code === 200) {
-				// const user_email = result?.data?.data?.email;
-				// const user_id = result?.data?.data?.id;
 				console.log(result?.data);
+				setLoginData(
+					localStorage.setItem('user_data', JSON.stringify(result?.data?.data))
+				);
+				navigate('/post-library');
+				setSignInError(false);
+				console.log(loginData);
+			} else {
+				setSignInError(true);
 			}
 		} catch (e) {
 			console.log(e);
 		}
 
-		setLoginData(null); // just for now
+		console.log();
+		//setLoginData(null); // just for now
 
-		navigate('/post-library');
 		refreshTokenSetup(googleData);
 	};
 
@@ -106,7 +112,7 @@ const SignIn = () => {
 								<div className={classes.welcomeText}>
 									Welcome to 433 Content Magament System
 								</div>
-								{loginData ? (
+								{signInError ? (
 									<div className={classes.errorWrapper}>
 										<DeniedError />
 										<span className={classes.errorMsg}>
@@ -131,7 +137,7 @@ const SignIn = () => {
 										onSuccess={handleLogin}
 										onFailure={handleFailure}
 										hostedDomain={'by433.com'}
-										isSignedIn={true}
+										isSignedIn={false}
 										cookiePolicy={'single_host_origin'}
 										// 	accessType={'offline'}
 										// responseType={}										}
