@@ -362,7 +362,7 @@ const UploadOrEditMedia = ({
 	};
 
 	const uploadMedia = async (id, payload) => {
-		let media_type = mainCategory.id;
+		let media_type = mainCategory?.id;
 		setMediaButtonStatus(true);
 		try {
 			const result = await axios.post(
@@ -370,8 +370,8 @@ const UploadOrEditMedia = ({
 				isEdit
 					? { media_id: id, ...payload }
 					: {
-							// media_type: mainCategory.id,
 							main_category_id: media_type,
+							sub_category_id: subCategory?.id ?? null,
 							// sub_category: subCategory,
 							title: titleMedia,
 							...(selectedLabels.length ? { labels: [...selectedLabels] } : {}),
@@ -460,6 +460,13 @@ const UploadOrEditMedia = ({
 		setMainCategory(setData);
 	};
 
+	const SubCategoryId = (e) => {
+		//find name and will return whole object
+		let setData = subCategories.find((u) => u.name === e);
+		//console.log(setData);
+		setSubCategory(setData);
+	};
+
 	//console.log(mainCategory);
 
 	return (
@@ -520,13 +527,14 @@ const UploadOrEditMedia = ({
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
 										value={mainCategory.name}
 										onChange={(e) => {
+											setSubCategory('');
 											setDisableDropdown(true);
 											// setMainCategory(e.target.value);
 											//calling function , passing name (i.e. watch & listen)
 											MainCategoryId(e.target.value);
 											setMainCategoryLabelColor('#ffffff');
 											setMainCategoryError('');
-											setSubCategory('');
+
 											if (uploadedFiles.length) {
 												uploadedFiles.map((file) => handleDeleteFile(file.id));
 											}
@@ -584,10 +592,10 @@ const UploadOrEditMedia = ({
 										}}
 										disabled={!mainCategory || isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
-										value={subCategory}
+										value={subCategory.name}
 										onChange={(e) => {
 											setDisableDropdown(true);
-											setSubCategory(e.target.value);
+											SubCategoryId(e.target.value);
 										}}
 										className={`${classes.select} ${
 											isEdit ? `${classes.isEditSelect}` : ''
