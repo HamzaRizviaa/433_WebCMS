@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
-import React, { useState ,  useEffect, forwardRef } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 import Layout from '../../components/layout';
 import Table from '../../components/table';
 import classes from './_quizLibrary.module.scss';
@@ -12,10 +12,11 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 import QuizDetails from '../../components/quizzes/uploadOrEditQuiz/QuizDetails';
+import PollDetails from '../../components/quizzes/uploadOrEditQuiz/PollDetails';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import Pagination from '@mui/material/Pagination';
 import { useStyles } from './../../utils/styles';
-import { useSelector , useDispatch, } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import TextField from '@material-ui/core/TextField';
@@ -24,12 +25,11 @@ import { getDateTime, formatDate, getCalendarText } from '../../utils';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 // import './_calender.scss';
-import {getQuizess} from './quizLibrarySlice';
+import { getQuizess } from './quizLibrarySlice';
 const QuizLibrary = () => {
-	
 	// Selectors
 	// const posts = useSelector((state) => state.postLibrary.posts);
-	const totalRecords=200 
+	const totalRecords = 200;
 	// const totalRecords = useSelector((state) => state.postLibrary.totalRecords);
 	const noResultStatus = useSelector(
 		(state) => state.postLibrary.noResultStatus
@@ -41,6 +41,8 @@ const QuizLibrary = () => {
 	const muiClasses = useStyles();
 	const [showSlider, setShowSlider] = useState(false);
 	const [showQuizSlider, setShowQuizSlider] = useState(false);
+	const [showPollSlider, setShowPollSlider] = useState(false);
+	const [rowStatus, setrowStatus] = useState(''); //status open closed to pass in poll slider
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [paginationError, setPaginationError] = useState(false);
@@ -54,7 +56,6 @@ const QuizLibrary = () => {
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
 
-	
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
 		const startDate = formatDate(dateRange[0]);
 		const endDate = formatDate(dateRange[1]);
@@ -100,13 +101,12 @@ const QuizLibrary = () => {
 			</div>
 		);
 	});
-	
 
-	
 	const dispatch = useDispatch();
 
 	const sortKeysMapping = {
 		question: 'question',
+		question_type: 'quesType',
 		post_date: 'postdate',
 		end_date: 'enddate',
 		labels: 'label',
@@ -184,6 +184,23 @@ const QuizLibrary = () => {
 			sortFunc: () => {},
 			formatter: (content) => {
 				return <div className={classes.row}>{content}</div>;
+			}
+		},
+		{
+			dataField: 'question_type',
+			sort: true,
+			sortCaret: sortRows,
+			sortFunc: () => {},
+			text: 'QUESTION TYPE',
+			formatter: (content) => {
+				return (
+					<div className={classes.row} style={{ paddingLeft: '18px' }}>
+						{content}
+					</div>
+				);
+			},
+			headerStyle: () => {
+				return { paddingLeft: '18px' };
 			}
 		},
 		{
@@ -301,6 +318,7 @@ const QuizLibrary = () => {
 	const data = [
 		{
 			question: 'Who will win the El Classico?',
+			question_type: 'Quiz',
 			post_date: '2021-11-25T17:00:08.000Z',
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
@@ -310,6 +328,7 @@ const QuizLibrary = () => {
 		},
 		{
 			question: 'Que Pasa Harmano?',
+			question_type: 'Poll',
 			post_date: '2021-11-25T17:00:08.000Z',
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
@@ -319,6 +338,7 @@ const QuizLibrary = () => {
 		},
 		{
 			question: 'Pakistannnnnnnnnnn <3?',
+			question_type: 'Poll',
 			post_date: '2021-11-25T17:00:08.000Z',
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
@@ -328,6 +348,7 @@ const QuizLibrary = () => {
 		},
 		{
 			question: 'PAKISTAN vs INDIA?',
+			question_type: 'Quiz',
 			post_date: '2021-11-25T17:00:08.000Z',
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
@@ -337,6 +358,7 @@ const QuizLibrary = () => {
 		},
 		{
 			question: 'CRISTIANO?',
+			question_type: 'Quiz',
 			post_date: '2021-11-25T17:00:08.000Z',
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
@@ -346,6 +368,7 @@ const QuizLibrary = () => {
 		},
 		{
 			question: 'RONALDO?',
+			question_type: 'Quiz',
 			post_date: '2021-11-25T17:00:08.000Z',
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
@@ -355,6 +378,7 @@ const QuizLibrary = () => {
 		},
 		{
 			question: 'THE BEST?',
+			question_type: 'Poll',
 			post_date: '2021-11-25T17:00:08.000Z',
 			end_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
@@ -368,9 +392,12 @@ const QuizLibrary = () => {
 		onClick: (e, row) => {
 			// if (!edit) {
 			// dispatch(getSpecificPost(row.id));
-			console.log(row);
+			// console.log(row);
+			setrowStatus(row.status);
 			setEdit(true);
-			setShowQuizSlider(true);
+			row.question_type === 'Quiz'
+				? setShowQuizSlider(true)
+				: setShowPollSlider(true);
 			// }
 		}
 	};
@@ -380,7 +407,7 @@ const QuizLibrary = () => {
 	};
 
 	useEffect(() => {
-		console.log("sort state use effect")
+		console.log('sort state use effect');
 		// if (sortState.sortby && sortState.order_type && !search) {
 		// 	dispatch(
 		// 		getQuizess({
@@ -405,7 +432,7 @@ const QuizLibrary = () => {
 	}, [sortState]);
 
 	useEffect(() => {
-		console.log('search use effect')
+		console.log('search use effect');
 		// if (search) {
 		// 	dispatch(
 		// 		getQuizess({
@@ -463,9 +490,6 @@ const QuizLibrary = () => {
 		};
 	}, []);
 
-	
-
-
 	return (
 		<Layout>
 			<div className={classes.header}>
@@ -485,7 +509,7 @@ const QuizLibrary = () => {
 							className={classes.searchField}
 							value={search}
 							onKeyPress={(e) => {
-								console.log(e,'on ky press')
+								console.log(e, 'on ky press');
 								// if (e.key === 'Enter' && search) {
 								// 	dispatch(
 								// 		getQuizess({
@@ -520,7 +544,7 @@ const QuizLibrary = () => {
 									<InputAdornment>
 										<Search
 											onClick={() => {
-												console.log('search onclick')
+												console.log('search onclick');
 												// if (search) {
 												// 	dispatch(
 												// 		getQuizess({
@@ -566,7 +590,6 @@ const QuizLibrary = () => {
 						<p className={classes.noResultError}>{noResultCalendarError}</p>
 					</div>
 				</div>
-				
 			</div>
 			<div className={classes.tableContainer}>
 				<Table rowEvents={tableRowEvents} columns={columns} data={data} />
@@ -577,8 +600,7 @@ const QuizLibrary = () => {
 					className={muiClasses.root}
 					page={page}
 					onChange={handleChange}
-						count={Math.ceil(totalRecords / 20)}
-					
+					count={Math.ceil(totalRecords / 20)}
 					variant='outlined'
 					shape='rounded'
 				/>
@@ -594,7 +616,7 @@ const QuizLibrary = () => {
 						setPaginationError(false);
 						const value = Number(e.target.value);
 						if (value > Math.ceil(totalRecords / 20)) {
-						// if (value > Math.ceil(60 / 20)) {
+							// if (value > Math.ceil(60 / 20)) {
 							setPaginationError(true);
 							setPage(1);
 						} else if (value) {
@@ -626,6 +648,17 @@ const QuizLibrary = () => {
 				title={'Quiz Detail'}
 				heading1={edit ? 'Add Background Image' : 'Add Background Image'}
 				buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
+			/>
+			<PollDetails
+				open={showPollSlider}
+				isEdit={edit}
+				handleClose={() => {
+					setShowPollSlider(false);
+				}}
+				status={rowStatus}
+				title={'Poll Detail'}
+				heading1={edit ? ' ' : 'Add Background Image'}
+				//buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
 			/>
 		</Layout>
 	);
