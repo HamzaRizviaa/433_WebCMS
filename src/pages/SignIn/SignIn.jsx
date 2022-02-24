@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import classes from './_signIn.module.scss';
 import GoogleLogin from 'react-google-login';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 import { ReactComponent as Logo2 } from '../../assets/Logo2.svg';
 //import { ReactComponent as BGImage } from '../../assets/BG.svg';
@@ -9,29 +10,29 @@ import { ReactComponent as Logo2 } from '../../assets/Logo2.svg';
 import { ReactComponent as DeniedError } from '../../assets/AccesDenied.svg';
 
 const SignIn = () => {
-	// const [signInError, setSignInError] = useState(false);
+	const [signInError, setSignInError] = useState(false);
 	// const [googleData, setGoogleData] = useState(null);
 	//hamza code
-	// const navigate = useNavigate();
+	const navigate = useNavigate();
 
-	// const refreshTokenSetup = (res) => {
-	// 	// Timing to renew access token
-	// 	let refreshTiming = (res.tokenObj.expires_in || 3600 - 5 * 60) * 1000;
+	const refreshTokenSetup = (res) => {
+		// Timing to renew access token
+		let refreshTiming = (res.tokenObj.expires_in || 3600 - 5 * 60) * 1000;
 
-	// 	const refreshToken = async () => {
-	// 		const newAuthRes = await res.reloadAuthResponse();
-	// 		refreshTiming = (newAuthRes.expires_in || 3600 - 5 * 60) * 1000;
-	// 		console.log('newAuthRes:', newAuthRes);
-	// 		// saveUserToken(newAuthRes.access_token);  <-- save new token
-	// 		localStorage.setItem('authToken', newAuthRes.id_token);
+		const refreshToken = async () => {
+			const newAuthRes = await res.reloadAuthResponse();
+			refreshTiming = (newAuthRes.expires_in || 3600 - 5 * 60) * 1000;
+			console.log('newAuthRes:', newAuthRes);
+			// saveUserToken(newAuthRes.access_token);  <-- save new token
+			localStorage.setItem('authToken', newAuthRes.id_token);
 
-	// 		// Setup the other timer after the first one
-	// 		setTimeout(refreshToken, refreshTiming);
-	// 	};
+			// Setup the other timer after the first one
+			setTimeout(refreshToken, refreshTiming);
+		};
 
-	// 	// Setup first refresh timer
-	// 	setTimeout(refreshToken, refreshTiming);
-	// };
+		// Setup first refresh timer
+		setTimeout(refreshToken, refreshTiming);
+	};
 
 	// const responseGoogleSuccess = (res) => {
 	// 	setSignInError(false);
@@ -55,14 +56,41 @@ const SignIn = () => {
 			: null
 	);
 
-	const handleFailure = () => {
-		console.log('failure');
+	const handleFailure = (e) => {
+		console.log('failure', e);
 	};
 
 	const handleLogin = async (googleData) => {
-		console.log('login', googleData);
+		//console.log('login', googleData);
 		//post api with googleData.tokenId
-		setLoginData(null); // just for now
+
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/cmsuser/verify-google-user`,
+				{
+					token: googleData.tokenId
+				}
+			);
+
+			if (result?.data?.status_code === 200) {
+				console.log(result?.data);
+				setLoginData(
+					localStorage.setItem('user_data', JSON.stringify(result?.data?.data))
+				);
+				navigate('/post-library');
+				setSignInError(false);
+				console.log(loginData);
+			} else {
+				setSignInError(true);
+			}
+		} catch (e) {
+			console.log(e);
+		}
+
+		console.log();
+		//setLoginData(null); // just for now
+
+		refreshTokenSetup(googleData);
 	};
 
 	// const handleLogout = () => {
@@ -84,7 +112,7 @@ const SignIn = () => {
 								<div className={classes.welcomeText}>
 									Welcome to 433 Content Magament System
 								</div>
-								{loginData ? (
+								{signInError ? (
 									<div className={classes.errorWrapper}>
 										<DeniedError />
 										<span className={classes.errorMsg}>
@@ -109,8 +137,10 @@ const SignIn = () => {
 										onSuccess={handleLogin}
 										onFailure={handleFailure}
 										hostedDomain={'by433.com'}
-										isSignedIn={true}
+										isSignedIn={false}
 										cookiePolicy={'single_host_origin'}
+										// 	accessType={'offline'}
+										// responseType={}										}
 									/>
 								</div>
 								<div className={classes.helpText}>

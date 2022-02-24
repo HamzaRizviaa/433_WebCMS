@@ -494,13 +494,13 @@ const QuizLibrary = () => {
 		<Layout>
 			<div className={classes.header}>
 				<div className={classes.subheader1}>
-					<h1 style={{ marginRight: '2rem' }}>QUIZ LIBRARY</h1>
+					<h1 style={{ marginRight: '2rem' }}>QUESTION LIBRARY</h1>
 					<Button
 						onClick={() => {
 							setEdit(false);
 							setShowSlider(true);
 						}}
-						text={'UPLOAD QUIZ'}
+						text={'UPLOAD QUESTION'}
 					/>
 				</div>
 				<div className={classes.subheader2}>
@@ -635,7 +635,7 @@ const QuizLibrary = () => {
 				handleClose={() => {
 					setShowSlider(false);
 				}}
-				title={edit ? 'Quiz Detail' : 'Upload Quiz'}
+				title={edit ? 'Poll Detail' : 'Upload Question'}
 				heading1={edit ? ' ' : 'Add Background Image'}
 				buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
 			/>
@@ -645,7 +645,7 @@ const QuizLibrary = () => {
 				handleClose={() => {
 					setShowQuizSlider(false);
 				}}
-				title={'Quiz Detail'}
+				title={'Poll Detail'}
 				heading1={edit ? 'Add Background Image' : 'Add Background Image'}
 				buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
 			/>
