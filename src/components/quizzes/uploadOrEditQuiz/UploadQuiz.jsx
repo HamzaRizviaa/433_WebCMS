@@ -38,7 +38,6 @@ const UploadQuiz = ({ open, handleClose, title, heading1, buttonText }) => {
 			disableDropdown={disableDropdown}
 			quiz={true}
 		>
-			{/* tab panes */}
 			<div className={muiClasses.root}>
 				<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
 					<TabsListUnstyled
@@ -62,6 +61,7 @@ const UploadQuiz = ({ open, handleClose, title, heading1, buttonText }) => {
 					</TabPanelUnstyled>
 					<TabPanelUnstyled value={1}>
 						<UploadOrEditQuiz
+							quiz={true}
 							heading1={heading1}
 							open={open}
 							buttonText={buttonText}

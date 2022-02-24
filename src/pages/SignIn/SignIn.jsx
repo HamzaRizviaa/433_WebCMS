@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import classes from './_signIn.module.scss';
 import GoogleLogin from 'react-google-login';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 import { ReactComponent as Logo2 } from '../../assets/Logo2.svg';
 //import { ReactComponent as BGImage } from '../../assets/BG.svg';
@@ -12,26 +13,26 @@ const SignIn = () => {
 	// const [signInError, setSignInError] = useState(false);
 	// const [googleData, setGoogleData] = useState(null);
 	//hamza code
-	// const navigate = useNavigate();
+	const navigate = useNavigate();
 
-	// const refreshTokenSetup = (res) => {
-	// 	// Timing to renew access token
-	// 	let refreshTiming = (res.tokenObj.expires_in || 3600 - 5 * 60) * 1000;
+	const refreshTokenSetup = (res) => {
+		// Timing to renew access token
+		let refreshTiming = (res.tokenObj.expires_in || 3600 - 5 * 60) * 1000;
 
-	// 	const refreshToken = async () => {
-	// 		const newAuthRes = await res.reloadAuthResponse();
-	// 		refreshTiming = (newAuthRes.expires_in || 3600 - 5 * 60) * 1000;
-	// 		console.log('newAuthRes:', newAuthRes);
-	// 		// saveUserToken(newAuthRes.access_token);  <-- save new token
-	// 		localStorage.setItem('authToken', newAuthRes.id_token);
+		const refreshToken = async () => {
+			const newAuthRes = await res.reloadAuthResponse();
+			refreshTiming = (newAuthRes.expires_in || 3600 - 5 * 60) * 1000;
+			console.log('newAuthRes:', newAuthRes);
+			// saveUserToken(newAuthRes.access_token);  <-- save new token
+			localStorage.setItem('authToken', newAuthRes.id_token);
 
-	// 		// Setup the other timer after the first one
-	// 		setTimeout(refreshToken, refreshTiming);
-	// 	};
+			// Setup the other timer after the first one
+			setTimeout(refreshToken, refreshTiming);
+		};
 
-	// 	// Setup first refresh timer
-	// 	setTimeout(refreshToken, refreshTiming);
-	// };
+		// Setup first refresh timer
+		setTimeout(refreshToken, refreshTiming);
+	};
 
 	// const responseGoogleSuccess = (res) => {
 	// 	setSignInError(false);
@@ -60,9 +61,30 @@ const SignIn = () => {
 	};
 
 	const handleLogin = async (googleData) => {
-		console.log('login', googleData);
+		//console.log('login', googleData);
 		//post api with googleData.tokenId
+
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/api/v1/cmsuser/verify-google-user`,
+				{
+					token: googleData.tokenId
+				}
+			);
+
+			if (result?.data?.status_code === 200) {
+				// const user_email = result?.data?.data?.email;
+				// const user_id = result?.data?.data?.id;
+				console.log(result?.data);
+			}
+		} catch (e) {
+			console.log(e);
+		}
+
 		setLoginData(null); // just for now
+
+		navigate('/post-library');
+		refreshTokenSetup(googleData);
 	};
 
 	// const handleLogout = () => {
@@ -111,6 +133,8 @@ const SignIn = () => {
 										hostedDomain={'by433.com'}
 										isSignedIn={true}
 										cookiePolicy={'single_host_origin'}
+										// 	accessType={'offline'}
+										// responseType={}										}
 									/>
 								</div>
 								<div className={classes.helpText}>

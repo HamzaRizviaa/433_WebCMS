@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
-import React, { useState ,  useEffect, forwardRef } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 import Layout from '../../components/layout';
 import Table from '../../components/table';
 import classes from './_quizLibrary.module.scss';
@@ -15,7 +15,7 @@ import QuizDetails from '../../components/quizzes/uploadOrEditQuiz/QuizDetails';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import Pagination from '@mui/material/Pagination';
 import { useStyles } from './../../utils/styles';
-import { useSelector , useDispatch, } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import TextField from '@material-ui/core/TextField';
@@ -24,12 +24,11 @@ import { getDateTime, formatDate, getCalendarText } from '../../utils';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 // import './_calender.scss';
-import {getQuizess} from './quizLibrarySlice';
+import { getQuizess } from './quizLibrarySlice';
 const QuizLibrary = () => {
-	
 	// Selectors
 	// const posts = useSelector((state) => state.postLibrary.posts);
-	const totalRecords=200 
+	const totalRecords = 200;
 	// const totalRecords = useSelector((state) => state.postLibrary.totalRecords);
 	const noResultStatus = useSelector(
 		(state) => state.postLibrary.noResultStatus
@@ -54,7 +53,6 @@ const QuizLibrary = () => {
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
 
-	
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
 		const startDate = formatDate(dateRange[0]);
 		const endDate = formatDate(dateRange[1]);
@@ -100,9 +98,7 @@ const QuizLibrary = () => {
 			</div>
 		);
 	});
-	
 
-	
 	const dispatch = useDispatch();
 
 	const sortKeysMapping = {
@@ -380,7 +376,7 @@ const QuizLibrary = () => {
 	};
 
 	useEffect(() => {
-		console.log("sort state use effect")
+		console.log('sort state use effect');
 		// if (sortState.sortby && sortState.order_type && !search) {
 		// 	dispatch(
 		// 		getQuizess({
@@ -405,7 +401,7 @@ const QuizLibrary = () => {
 	}, [sortState]);
 
 	useEffect(() => {
-		console.log('search use effect')
+		console.log('search use effect');
 		// if (search) {
 		// 	dispatch(
 		// 		getQuizess({
@@ -463,20 +459,17 @@ const QuizLibrary = () => {
 		};
 	}, []);
 
-	
-
-
 	return (
 		<Layout>
 			<div className={classes.header}>
 				<div className={classes.subheader1}>
-					<h1 style={{ marginRight: '2rem' }}>QUIZ LIBRARY</h1>
+					<h1 style={{ marginRight: '2rem' }}>QUESTION LIBRARY</h1>
 					<Button
 						onClick={() => {
 							setEdit(false);
 							setShowSlider(true);
 						}}
-						text={'UPLOAD QUIZ'}
+						text={'UPLOAD QUESTION'}
 					/>
 				</div>
 				<div className={classes.subheader2}>
@@ -485,7 +478,7 @@ const QuizLibrary = () => {
 							className={classes.searchField}
 							value={search}
 							onKeyPress={(e) => {
-								console.log(e,'on ky press')
+								console.log(e, 'on ky press');
 								// if (e.key === 'Enter' && search) {
 								// 	dispatch(
 								// 		getQuizess({
@@ -520,7 +513,7 @@ const QuizLibrary = () => {
 									<InputAdornment>
 										<Search
 											onClick={() => {
-												console.log('search onclick')
+												console.log('search onclick');
 												// if (search) {
 												// 	dispatch(
 												// 		getQuizess({
@@ -566,7 +559,6 @@ const QuizLibrary = () => {
 						<p className={classes.noResultError}>{noResultCalendarError}</p>
 					</div>
 				</div>
-				
 			</div>
 			<div className={classes.tableContainer}>
 				<Table rowEvents={tableRowEvents} columns={columns} data={data} />
@@ -577,8 +569,7 @@ const QuizLibrary = () => {
 					className={muiClasses.root}
 					page={page}
 					onChange={handleChange}
-						count={Math.ceil(totalRecords / 20)}
-					
+					count={Math.ceil(totalRecords / 20)}
 					variant='outlined'
 					shape='rounded'
 				/>
@@ -594,7 +585,7 @@ const QuizLibrary = () => {
 						setPaginationError(false);
 						const value = Number(e.target.value);
 						if (value > Math.ceil(totalRecords / 20)) {
-						// if (value > Math.ceil(60 / 20)) {
+							// if (value > Math.ceil(60 / 20)) {
 							setPaginationError(true);
 							setPage(1);
 						} else if (value) {
@@ -613,7 +604,7 @@ const QuizLibrary = () => {
 				handleClose={() => {
 					setShowSlider(false);
 				}}
-				title={edit ? 'Quiz Detail' : 'Upload Quiz'}
+				title={edit ? 'Poll Detail' : 'Upload Question'}
 				heading1={edit ? ' ' : 'Add Background Image'}
 				buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
 			/>
@@ -623,7 +614,7 @@ const QuizLibrary = () => {
 				handleClose={() => {
 					setShowQuizSlider(false);
 				}}
-				title={'Quiz Detail'}
+				title={'Poll Detail'}
 				heading1={edit ? 'Add Background Image' : 'Add Background Image'}
 				buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
 			/>

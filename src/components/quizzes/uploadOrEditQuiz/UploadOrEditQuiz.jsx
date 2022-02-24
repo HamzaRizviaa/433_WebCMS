@@ -33,7 +33,8 @@ const UploadOrEditQuiz = ({
 	previewFile,
 	setPreviewFile,
 	previewRef,
-	setDisableDropdown
+	setDisableDropdown,
+	quiz
 }) => {
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -246,7 +247,11 @@ const UploadOrEditQuiz = ({
 		}
 		if (!ans1) {
 			setAns1Color('#ff355a');
-			setAns1Error('You need to provide first answer in order to post');
+			setAns1Error(
+				quiz
+					? 'You need to provide right answer in order to post'
+					: 'You need to provide first answer in order to post'
+			);
 			setTimeout(() => {
 				setAns1Color('#ffffff');
 				setAns1Error('');
@@ -254,7 +259,11 @@ const UploadOrEditQuiz = ({
 		}
 		if (!ans2) {
 			setAns2Color('#ff355a');
-			setAns2Error('You need to provide second answer in order to post');
+			setAns2Error(
+				quiz
+					? 'You need to provide wrong answer in order to post'
+					: 'You need to provide second answer in order to post'
+			);
 			setTimeout(() => {
 				setAns2Color('#ffffff');
 				setAns2Error('');
@@ -283,7 +292,7 @@ const UploadOrEditQuiz = ({
 				style={{ width: previewFile != null ? '60%' : 'auto' }}
 			>
 				<div>
-					<h5 className={editQuiz ? classes.QuizQuestion : ''}>{heading1}</h5>
+					<h5 className={classes.QuizQuestion}>{heading1}</h5>
 					<DragDropContext>
 						<Droppable droppableId='droppable-1'>
 							{(provided) => (
@@ -390,7 +399,9 @@ const UploadOrEditQuiz = ({
 					<p className={classes.mediaError}>{questionError}</p>
 
 					<div className={classes.titleContainer}>
-						<h6 style={{ color: ans1Color }}>ANSWER 1</h6>
+						<h6 style={{ color: ans1Color }}>
+							{quiz ? 'Right Answer' : 'ANSWER 1'}
+						</h6>
 						<TextField
 							disabled={editQuiz}
 							value={ans1}
@@ -413,7 +424,9 @@ const UploadOrEditQuiz = ({
 					<p className={classes.mediaError}>{ans1Error}</p>
 
 					<div className={classes.titleContainer}>
-						<h6 style={{ color: ans2Color }}>ANSWER 2</h6>
+						<h6 style={{ color: ans2Color }}>
+							{quiz ? 'Wrong Answer' : 'ANSWER 2'}
+						</h6>
 						<TextField
 							disabled={editQuiz}
 							value={ans2}
@@ -702,7 +715,8 @@ UploadOrEditQuiz.propTypes = {
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,
-	setDisableDropdown: PropTypes.func.isRequired
+	setDisableDropdown: PropTypes.func.isRequired,
+	quiz: PropTypes.bool.isRequired
 };
 
 export default UploadOrEditQuiz;
