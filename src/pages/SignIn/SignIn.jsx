@@ -3,13 +3,14 @@ import classes from './_signIn.module.scss';
 import GoogleLogin from 'react-google-login';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 
 import { ReactComponent as Logo2 } from '../../assets/Logo2.svg';
 //import { ReactComponent as BGImage } from '../../assets/BG.svg';
 // import { ReactComponent as BGImage } from '../../assets/GlobeBG.svg';
 import { ReactComponent as DeniedError } from '../../assets/AccesDenied.svg';
 
-const SignIn = () => {
+const SignIn = ({ setLoginData }) => {
 	const [signInError, setSignInError] = useState(false);
 	// const [googleData, setGoogleData] = useState(null);
 	//hamza code
@@ -50,14 +51,15 @@ const SignIn = () => {
 	// 	//alert(`Failed to login. 😢`);
 	// };
 
-	const [loginData, setLoginData] = useState(
-		localStorage.getItem('loginData')
-			? JSON.parse(localStorage.getItem('loginData'))
-			: null
-	);
+	// const [loginData, setLoginData] = useState(
+	// 	localStorage.getItem('loginData')
+	// 		? JSON.parse(localStorage.getItem('loginData'))
+	// 		: null
+	// );
 
 	const handleFailure = (e) => {
 		console.log('failure', e);
+		setSignInError(true);
 	};
 
 	const handleLogin = async (googleData) => {
@@ -71,7 +73,7 @@ const SignIn = () => {
 					token: googleData.tokenId
 				}
 			);
-
+			console.log(result);
 			if (result?.data?.status_code === 200) {
 				console.log(result?.data);
 				setLoginData(
@@ -79,15 +81,12 @@ const SignIn = () => {
 				);
 				navigate('/post-library');
 				setSignInError(false);
-				console.log(loginData);
-			} else {
-				setSignInError(true);
 			}
 		} catch (e) {
-			console.log(e);
+			setSignInError(true);
+			console.log(e, googleData.profileObj.email);
 		}
 
-		console.log();
 		//setLoginData(null); // just for now
 
 		refreshTokenSetup(googleData);
@@ -121,13 +120,7 @@ const SignIn = () => {
 										</span>
 									</div>
 								) : (
-									<>
-										{/* <DeniedError
-											onClick={() => {
-												handleLogout;
-											}}
-										/> */}
-									</>
+									<></>
 								)}
 								<div className={classes.googleButtonWrapper}>
 									<GoogleLogin
@@ -136,7 +129,7 @@ const SignIn = () => {
 										buttonText='Sign In with Google'
 										onSuccess={handleLogin}
 										onFailure={handleFailure}
-										hostedDomain={'by433.com'}
+										//hostedDomain={'by433.com'}
 										isSignedIn={false}
 										cookiePolicy={'single_host_origin'}
 										// 	accessType={'offline'}
@@ -166,6 +159,11 @@ const SignIn = () => {
 			</div>
 		</>
 	);
+};
+
+SignIn.propTypes = {
+	//loginData: PropTypes.object.isRequired,
+	setLoginData: PropTypes.func.isRequired
 };
 
 export default SignIn;

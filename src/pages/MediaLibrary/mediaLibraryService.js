@@ -2,7 +2,11 @@ import axios from 'axios';
 
 export default class MediaLibraryService {
 	static getMediaApi(endPoint) {
-		return axios.get(`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`);
+		return axios.get(`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`, {
+			headers: {
+				Authorization: `Bearer `
+			}
+		});
 	}
 
 	static getAllMediaApi(endPoint) {
