@@ -151,7 +151,7 @@ const UploadOrEditMedia = ({
 		getRootProps: getRootProps2,
 		getInputProps: getInputProps2
 	} = useDropzone({
-		accept: 'image/jpeg, image/png',
+		accept: '.jpeg, .png',
 		maxFiles: 1
 	});
 
