@@ -1,3 +1,7 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/display-name */
+/* eslint-disable react/prop-types */
+
 import React, { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import PostLibrary from '../pages/PostLibrary/PostLibrary';
@@ -6,7 +10,7 @@ import QuizLibrary from '../pages/QuizLibrary/QuizLibrary';
 import TopBanner from '../pages/TopBanner/TopBanner.jsx';
 import SignIn from '../pages/SignIn/SignIn';
 import ViralLibrary from '../pages/ViralLibrary/ViralLibrary';
-
+import RequireAuth from './RequireAuth.js';
 const AppRoutes = () => {
 	const [loginData, setLoginData] = useState(
 		localStorage.getItem('user_data')
@@ -18,30 +22,37 @@ const AppRoutes = () => {
 		<>
 			<Routes>
 				<Route
+					exact
 					path='/sign-in'
 					element={<SignIn setLoginData={setLoginData} />}
 				/>
 				<Route
 					path='/post-library'
-					element={loginData ? <PostLibrary /> : <SignIn />}
+					element={<RequireAuth component={<PostLibrary />} />}
 				/>
+
 				<Route
+					exact
 					path='/media-library'
-					element={loginData ? <MediaLibrary /> : <SignIn />}
+					element={<RequireAuth component={<MediaLibrary />} />}
 				/>
 				<Route
+					exact
 					path='/quiz-library'
-					element={loginData ? <QuizLibrary /> : <SignIn />}
+					element={<RequireAuth component={<QuizLibrary />} />}
 				/>
 				<Route
+					exact
 					path='/top-banner'
-					element={loginData ? <TopBanner /> : <SignIn />}
+					element={<RequireAuth component={<TopBanner />} />}
 				/>
 				<Route
+					exact
 					path='/viral-library'
-					element={loginData ? <ViralLibrary /> : <SignIn />}
+					element={<RequireAuth component={<ViralLibrary />} />}
 				/>
-				<Route path='/' element={<Navigate replace to='/sign-in' />} />
+
+				<Route path='*' element={<Navigate to='/sign-in' />} />
 			</Routes>
 		</>
 	);
