@@ -35,37 +35,11 @@ const SignIn = ({ setLoginData }) => {
 		setTimeout(refreshToken, refreshTiming);
 	};
 
-	// const responseGoogleSuccess = (res) => {
-	// 	setSignInError(false);
-	// 	console.log('Login Success: currentUser:', res);
-	// 	//alert(`Logged in successfully!  Welcome ${res.profileObj.name} 😍.`);
-	// 	setGoogleData(res);
-
-	// 	navigate('/post-library');
-	// 	// refreshTokenSetup(res); expire from backend
+	// const handleFailure = (e) => {
+	// 	console.log('failure', e);
 	// };
-
-	// const responseGoogleFailure = (res) => {
-	// 	setSignInError(true);
-	// 	console.log('Login failed: res:', res);
-	// 	//alert(`Failed to login. 😢`);
-	// };
-
-	// const [loginData, setLoginData] = useState(
-	// 	localStorage.getItem('loginData')
-	// 		? JSON.parse(localStorage.getItem('loginData'))
-	// 		: null
-	// );
-
-	const handleFailure = (e) => {
-		console.log('failure', e);
-		setSignInError(true);
-	};
 
 	const handleLogin = async (googleData) => {
-		//console.log('login', googleData);
-		//post api with googleData.tokenId
-
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/cmsuser/verify-google-user`,
@@ -73,7 +47,6 @@ const SignIn = ({ setLoginData }) => {
 					token: googleData.tokenId
 				}
 			);
-			console.log(result);
 			if (result?.data?.status_code === 200) {
 				console.log(result?.data);
 				setLoginData(
@@ -86,8 +59,6 @@ const SignIn = ({ setLoginData }) => {
 			setSignInError(true);
 			console.log(e, googleData.profileObj.email);
 		}
-
-		//setLoginData(null); // just for now
 
 		refreshTokenSetup(googleData);
 	};
@@ -128,12 +99,14 @@ const SignIn = ({ setLoginData }) => {
 										clientId='761006834675-0717aiakfe9at8d7jahf10hdgevu7acg.apps.googleusercontent.com'
 										buttonText='Sign In with Google'
 										onSuccess={handleLogin}
-										onFailure={handleFailure}
+										//onFailure={handleFailure}
 										//hostedDomain={'by433.com'}
-										isSignedIn={false}
+										//isSignedIn={true}
+										//uxMode={'popup'}
+										prompt={'consent'}
 										cookiePolicy={'single_host_origin'}
-										// 	accessType={'offline'}
-										// responseType={}										}
+										// accessType={'offline'}
+										// responseType={'code'}
 									/>
 								</div>
 								<div className={classes.helpText}>

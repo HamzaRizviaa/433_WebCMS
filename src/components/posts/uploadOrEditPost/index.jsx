@@ -18,6 +18,7 @@ import {
 } from './../../../pages/MediaLibrary/mediaLibrarySlice';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
+import { getLocalStorageDetails } from '../../../utils';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import {
@@ -263,6 +264,11 @@ const UploadOrEditPost = ({
 				{
 					file_type: uploadedFile.fileExtension,
 					parts: 1
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
 				}
 			);
 
@@ -307,6 +313,13 @@ const UploadOrEditPost = ({
 									uploadedFile?.mime_type == 'video/mp4'
 										? result?.data?.data?.upload_id
 										: 'image'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
 							}
 						}
 					);
@@ -428,7 +441,17 @@ const UploadOrEditPost = ({
 					...(!isEdit && selectedLabels.length
 						? { labels: [...selectedLabels] }
 						: {}),
-					...(!isEdit ? { media_files: [...mediaFiles] } : {})
+					...(!isEdit ? { media_files: [...mediaFiles] } : {}),
+					user_data: {
+						id: `${getLocalStorageDetails()?.id}`,
+						first_name: `${getLocalStorageDetails()?.first_name}`,
+						last_name: `${getLocalStorageDetails()?.last_name}`
+					}
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
 				}
 			);
 			if (result?.data?.status_code === 200) {
@@ -456,6 +479,11 @@ const UploadOrEditPost = ({
 				`${process.env.REACT_APP_API_ENDPOINT}/post/delete-post`,
 				{
 					post_id: id
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
 				}
 			);
 			if (result?.data?.status_code === 200) {
