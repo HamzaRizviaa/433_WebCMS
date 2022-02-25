@@ -15,6 +15,7 @@ import {
 	getMainCategories,
 	getMediaLabels
 } from './../../../pages/MediaLibrary/mediaLibrarySlice';
+import { getLocalStorageDetails } from '../../../utils';
 import { getMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
 import ClearIcon from '@material-ui/icons/Clear';
 import Close from '@material-ui/icons/Close';
@@ -157,7 +158,12 @@ const UploadOrEditMedia = ({
 	const updateSubCategories = async (mainCategory) => {
 		try {
 			const response = await axios.get(
-				`${process.env.REACT_APP_API_ENDPOINT}/media/get-sub-categories/${mainCategory.id}`
+				`${process.env.REACT_APP_API_ENDPOINT}/media/get-sub-categories/${mainCategory.id}`,
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
 			);
 
 			if (response?.data?.data?.length) {
@@ -341,6 +347,11 @@ const UploadOrEditMedia = ({
 				`${process.env.REACT_APP_API_ENDPOINT}/media/delete-media`,
 				{
 					media_id: id
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
 				}
 			);
 			if (result?.data?.status_code === 200) {
@@ -382,8 +393,18 @@ const UploadOrEditMedia = ({
 								image_data: payload?.data?.Keys?.ImageKey,
 								audio_data: payload?.data?.Keys?.AudioKey
 							},
+							user_data: {
+								id: `${getLocalStorageDetails()?.id}`,
+								first_name: `${getLocalStorageDetails()?.first_name}`,
+								last_name: `${getLocalStorageDetails()?.last_name}`
+							},
 							...payload
-					  }
+					  },
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
 			);
 			if (result?.data?.status_code === 200) {
 				toast.success(
@@ -412,6 +433,11 @@ const UploadOrEditMedia = ({
 					file_type:
 						file.fileExtension === '.mpeg' ? '.mp3' : file.fileExtension,
 					parts: 1
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
 				}
 			);
 
@@ -432,9 +458,14 @@ const UploadOrEditMedia = ({
 	const handleTitleDuplicate = async (givenTitle) => {
 		try {
 			const result = await axios.get(
-				`${process.env.REACT_APP_API_ENDPOINT}/media/check/${givenTitle}`
+				`${process.env.REACT_APP_API_ENDPOINT}/media/check/${givenTitle}`,
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
 			);
-			return result?.data?.status;
+			return result?.data?.status_code;
 		} catch (error) {
 			console.log('Error');
 			return null;
@@ -1127,6 +1158,13 @@ const UploadOrEditMedia = ({
 																		mainCategory.name === 'Watch'
 																			? mediaFiles[0].upload_id
 																			: 'audio'
+																}
+															},
+															{
+																headers: {
+																	Authorization: `Bearer ${
+																		getLocalStorageDetails()?.access_token
+																	}`
 																}
 															}
 														);

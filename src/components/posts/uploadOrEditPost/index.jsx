@@ -101,7 +101,7 @@ const UploadOrEditPost = ({
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
-			accept: 'image/jpeg, image/png, video/mp4',
+			accept: '.jpeg,.jpg,.png, video/mp4',
 			maxFiles: 10
 			// validator: tenFilesValidator
 		});
@@ -554,7 +554,7 @@ const UploadOrEditPost = ({
 	const editBtnDisabled =
 		postButtonStatus ||
 		(value && !selectedMedia) ||
-		(specificPost?.caption === caption &&
+		(specificPost?.caption === caption.trim() &&
 			specificPost?.media_id == selectedMedia?.id);
 
 	// console.log('specific post', specificPost?.media_id);
