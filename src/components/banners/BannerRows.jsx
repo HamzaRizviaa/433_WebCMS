@@ -32,7 +32,9 @@ export default function BannerRows({
 	data,
 	setBannerData,
 	index,
-	handleBanner
+	handleBanner,
+	errMsg,
+	firstrow
 }) {
 	// const listElement = useRef(null);
 	//styles
@@ -70,6 +72,7 @@ export default function BannerRows({
 			name: 'RONAAAAAAAAALD'
 		}
 	];
+	// console.log(data, errMsg, 'data in banner');
 
 	// a little function to help us with reordering the result
 
@@ -126,240 +129,257 @@ export default function BannerRows({
 						...provided.draggableProps.style
 					}}
 				>
-					<div className={classes.bannerRight}>
-						{/* drag icon */}
-						<div className={classes.dragIcon}>
-							<span {...provided.dragHandleProps}>
-								<Union
-									style={{ cursor: 'grab' }}
-									// className={classes.dataPreviewIcons}
-								/>
-							</span>
-						</div>
+					{' '}
+					<div>
+						<div
+							className={
+								errMsg || firstrow
+									? classes.bannerErrRight
+									: classes.bannerRight
+							}
+						>
+							<div className={classes.bannerContentRight}>
+								{/* drag icon */}
+								<div className={classes.dragIcon}>
+									<span {...provided.dragHandleProps}>
+										<Union
+											style={{ cursor: 'grab' }}
+											// className={classes.dataPreviewIcons}
+										/>
+									</span>
+								</div>
 
-						{/* select banner dropdown */}
-						<div className={classes.bannerDropdownDiv}>
-							<label className={classes.bannerLabel}>select Banner Type</label>
+								{/* select banner dropdown */}
+								<div className={classes.bannerDropdownDiv}>
+									<label className={classes.bannerLabel}>
+										select Banner Type
+									</label>
 
-							<div className={classes.bannerDropdown}>
-								<Select
-									// className={classUseStyle.bannerSelect}
-									// ref={listElement}
-									// onClick={() => {
-									// 	removeClass();
-									// }}
-									onOpen={() => {
-										setDisableDropdown(false);
-									}}
-									onClose={() => {
-										setDisableDropdown(true);
-									}}
-									disabled={false}
-									value={data.bannerType}
-									onChange={(e) => {
-										setDisableDropdown(true);
-										setBannerData((bannerData) => {
-											// eslint-disable-next-line no-unused-vars
-											let _bannerData = bannerData.map((banner) => {
-												if (banner.id === data.id) {
-													return {
-														...banner,
-														bannerType: e.target.value
-													};
+									<div className={classes.bannerDropdown}>
+										<Select
+											// className={classUseStyle.bannerSelect}
+											// ref={listElement}
+											// onClick={() => {
+											// 	removeClass();
+											// }}
+											onOpen={() => {
+												setDisableDropdown(false);
+											}}
+											onClose={() => {
+												setDisableDropdown(true);
+											}}
+											disabled={false}
+											value={data.bannerType}
+											onChange={(e) => {
+												setDisableDropdown(true);
+												setBannerData((bannerData) => {
+													// eslint-disable-next-line no-unused-vars
+													let _bannerData = bannerData.map((banner) => {
+														if (banner.id === data.id) {
+															return {
+																...banner,
+																bannerType: e.target.value
+															};
+														}
+														return {
+															...banner
+														};
+													});
+													return _bannerData;
+												});
+												// handleBanner();
+											}}
+											className={classes.select}
+											disableUnderline={true}
+											IconComponent={(props) => (
+												<KeyboardArrowDownIcon {...props} />
+											)}
+											MenuProps={{
+												anchorOrigin: {
+													vertical: 'bottom',
+													horizontal: 'left'
+												},
+												transformOrigin: {
+													vertical: 'top',
+													horizontal: 'left'
+												},
+												getContentAnchorEl: null,
+												classes: {
+													paper: muiClasses.paper
 												}
-												return {
-													...banner
-												};
-											});
-											return _bannerData;
-										});
-										// handleBanner();
-									}}
-									className={classes.select}
-									disableUnderline={true}
-									IconComponent={(props) => (
-										<KeyboardArrowDownIcon {...props} />
-									)}
-									MenuProps={{
-										anchorOrigin: {
-											vertical: 'bottom',
-											horizontal: 'left'
-										},
-										transformOrigin: {
-											vertical: 'top',
-											horizontal: 'left'
-										},
-										getContentAnchorEl: null,
-										classes: {
-											paper: muiClasses.paper
-										}
-									}}
-									inputProps={{
-										classes: {
-											root: data.bannerType
-												? muiClasses.input
-												: muiClasses.inputPlaceholder
-										}
-									}}
-									displayEmpty={true}
-									renderValue={(value) =>
-										value?.length
-											? Array.isArray(value)
-												? value.join(', ')
-												: value
-											: 'Please Select'
-									}
-								>
-									{allMedia.length > 0 &&
-										allMedia.map((category, index) => {
-											return (
-												<MenuItem
-													key={index}
-													value={category}
+											}}
+											inputProps={{
+												classes: {
+													root: data.bannerType
+														? muiClasses.input
+														: muiClasses.inputPlaceholder
+												}
+											}}
+											displayEmpty={true}
+											renderValue={(value) =>
+												value?.length
+													? Array.isArray(value)
+														? value.join(', ')
+														: value
+													: 'Please Select'
+											}
+										>
+											{allMedia.length > 0 &&
+												allMedia.map((category, index) => {
+													return (
+														<MenuItem
+															key={index}
+															value={category}
+															style={{
+																fontFamily: 'Poppins !important',
+																fontSize: '14px'
+															}}
+														>
+															{category}
+														</MenuItem>
+													);
+												})}
+										</Select>
+									</div>
+								</div>
+
+								{/* select content sutocomplete */}
+								{data.bannerType === '' && trashcan === true ? (
+									<div className={classes.bannerAutocomplete}></div>
+								) : (
+									<div
+										className={classes.bannerAutocomplete}
+										style={{
+											marginBottom: dropdownPosition ? 0 : 0
+										}}
+									>
+										<label className={classes.bannerLabel}>
+											select content
+										</label>
+										<Autocomplete
+											//className={muiClasses.root}
+											value={selectedMedia}
+											PaperComponent={(props) => {
+												setDisableDropdown(false);
+
+												return (
+													<Paper
+														elevation={6}
+														className={classes.popperAuto}
+														style={{
+															marginTop: '12px',
+															background: 'black',
+															border: '1px solid #404040',
+															boxShadow:
+																'0px 16px 40px rgba(255, 255, 255, 0.16)',
+															borderRadius: '8px',
+															color: '#ffffff',
+															fontSize: '14px',
+															fontFamily: 'Poppins'
+														}}
+														{...props}
+													/>
+												);
+											}}
+											PopperComponent={({ style, ...props }) => (
+												<Popper {...props} style={{ ...style, height: 0 }} />
+											)}
+											ListboxProps={{
+												style: { maxHeight: 140 },
+												position: 'bottom'
+											}}
+											onOpen={() => {
+												setDropdownPosition(true);
+											}}
+											onClose={() => {
+												setDisableDropdown(true);
+												setDropdownPosition(false);
+											}}
+											onChange={(e, newVal) => {
+												setSelectedMedia(newVal);
+												setDisableDropdown(true);
+												setBannerData((bannerData) => {
+													// eslint-disable-next-line no-unused-vars
+													let _bannerData = bannerData.map((banner) => {
+														if (banner.id === data.id) {
+															if (banner.bannerType === 'Please Select') {
+																return {
+																	...banner,
+																	selectedMedia: null
+																};
+															} else {
+																return {
+																	...banner,
+																	selectedMedia: newVal
+																};
+															}
+														}
+														return {
+															...banner
+														};
+													});
+													return _bannerData;
+												});
+											}}
+											options={options}
+											getOptionLabel={(option) => option.name}
+											renderOption={(props, option) => {
+												return (
+													<li {...props} className={classes.liAutocomplete}>
+														{option.name}
+													</li>
+												);
+											}}
+											// filterOptions={(items) => {
+											// 	return items.filter((item) =>
+											// 		item.name
+											// 			.toLowerCase()
+											// 			.includes(selectMediaInput.toLowerCase())
+											// 	);
+											// }}
+											renderInput={(params) => (
+												<TextField
+													{...params}
+													size='small'
+													placeholder='Select Content'
+													InputProps={{
+														disableUnderline: true,
+														...params.InputProps,
+														className: classes.textFieldInput,
+														classes: {
+															root: muiClasses.input
+														}
+													}}
+													value={selectMediaInput}
+													onChange={handleChangeSelectMediaInput}
+												/>
+											)}
+											clearIcon={<ClearIcon />}
+											noOptionsText={
+												<div
 													style={{
-														fontFamily: 'Poppins !important',
-														fontSize: '14px'
+														color: '#808080',
+														fontSize: 14
 													}}
 												>
-													{category}
-												</MenuItem>
-											);
-										})}
-								</Select>
-							</div>
-						</div>
-
-						{/* select content sutocomplete */}
-						{data.bannerType === '' && trashcan === true ? (
-							<div className={classes.bannerAutocomplete}></div>
-						) : (
-							<div
-								className={classes.bannerAutocomplete}
-								style={{
-									marginBottom: dropdownPosition ? 0 : 0
-								}}
-							>
-								<label className={classes.bannerLabel}>select content</label>
-								<Autocomplete
-									//className={muiClasses.root}
-									value={selectedMedia}
-									PaperComponent={(props) => {
-										setDisableDropdown(false);
-
-										return (
-											<Paper
-												elevation={6}
-												className={classes.popperAuto}
-												style={{
-													marginTop: '12px',
-													background: 'black',
-													border: '1px solid #404040',
-													boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)',
-													borderRadius: '8px',
-													color: '#ffffff',
-													fontSize: '14px',
-													fontFamily: 'Poppins'
-												}}
-												{...props}
-											/>
-										);
-									}}
-									PopperComponent={({ style, ...props }) => (
-										<Popper {...props} style={{ ...style, height: 0 }} />
-									)}
-									ListboxProps={{
-										style: { maxHeight: 140 },
-										position: 'bottom'
-									}}
-									onOpen={() => {
-										setDropdownPosition(true);
-									}}
-									onClose={() => {
-										setDisableDropdown(true);
-										setDropdownPosition(false);
-									}}
-									onChange={(e, newVal) => {
-										setSelectedMedia(newVal);
-										setDisableDropdown(true);
-										setBannerData((bannerData) => {
-											// eslint-disable-next-line no-unused-vars
-											let _bannerData = bannerData.map((banner) => {
-												if (banner.id === data.id) {
-													if (banner.bannerType === 'Please Select') {
-														return {
-															...banner,
-															selectedMedia: null
-														};
-													} else {
-														return {
-															...banner,
-															selectedMedia: newVal
-														};
-													}
-												}
-												return {
-													...banner
-												};
-											});
-											return _bannerData;
-										});
-									}}
-									options={options}
-									getOptionLabel={(option) => option.name}
-									renderOption={(props, option) => {
-										return (
-											<li {...props} className={classes.liAutocomplete}>
-												{option.name}
-											</li>
-										);
-									}}
-									// filterOptions={(items) => {
-									// 	return items.filter((item) =>
-									// 		item.name
-									// 			.toLowerCase()
-									// 			.includes(selectMediaInput.toLowerCase())
-									// 	);
-									// }}
-									renderInput={(params) => (
-										<TextField
-											{...params}
-											size='small'
-											placeholder='Select Content'
-											InputProps={{
-												disableUnderline: true,
-												...params.InputProps,
-												className: classes.textFieldInput,
-												classes: {
-													root: muiClasses.input
-												}
-											}}
-											value={selectMediaInput}
-											onChange={handleChangeSelectMediaInput}
+													No Results Found
+												</div>
+											}
+											popupIcon={''}
 										/>
-									)}
-									clearIcon={<ClearIcon />}
-									noOptionsText={
-										<div
-											style={{
-												color: '#808080',
-												fontSize: 14
-											}}
-										>
-											No Results Found
-										</div>
-									}
-									popupIcon={''}
+									</div>
+								)}
+
+								{/* delete icon */}
+								<Deletes
+									className={classes.BannertrashCan}
+									onClick={() => {
+										emptyBannerData(data);
+									}}
 								/>
 							</div>
-						)}
-
-						{/* delete icon */}
-						<Deletes
-							className={classes.BannertrashCan}
-							onClick={() => {
-								emptyBannerData(data);
-							}}
-						/>
+							<div className={classes.errorMsg}>{errMsg || firstrow}</div>
+						</div>
 					</div>
 				</div>
 			)}
@@ -372,5 +392,7 @@ BannerRows.propTypes = {
 	key: PropTypes.integer,
 	setBannerData: PropTypes.func,
 	handleBanner: PropTypes.func,
-	provided: PropTypes.draggableProps
+	provided: PropTypes.draggableProps,
+	errMsg: PropTypes.object,
+	firstrow: PropTypes.object
 };

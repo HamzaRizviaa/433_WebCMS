@@ -394,6 +394,22 @@
 	height: 1rem;
 }
 
+.datePickerContainer {
+	margin-bottom: 1rem !important;
+	h6 {
+		margin-bottom: 0.5rem;
+		margin-left: 1rem;
+	}
+}
+
+.datePicker {
+	button {
+		background-color: transparent !important;
+		top: 0.5px !important;
+		right: -150px !important;
+	}
+}
+
 .customDateInput {
 	border: 0;
 	margin: 0;
@@ -418,20 +434,4 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-}
-
-.datePickerContainer {
-	margin-bottom: 1rem !important;
-	h6 {
-		margin-bottom: 0.5rem;
-		margin-left: 1rem;
-	}
-}
-
-.datePicker {
-	button {
-		background-color: transparent !important;
-		top: 0.5px !important;
-		right: -150px !important;
-	}
 }
