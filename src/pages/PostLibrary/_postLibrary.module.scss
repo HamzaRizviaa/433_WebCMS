@@ -207,6 +207,10 @@
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	padding: 1vw 2vw;
 	nav {
 		width: fit-content;
 	}
