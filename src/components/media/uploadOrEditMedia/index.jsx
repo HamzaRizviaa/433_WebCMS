@@ -85,6 +85,7 @@ const UploadOrEditMedia = ({
 	const specificMedia = useSelector(
 		(state) => state.mediaLibraryOriginal.specificMedia
 	);
+
 	const specificMediaStatus = useSelector(
 		(state) => state.mediaLibraryOriginal
 	);
@@ -110,6 +111,9 @@ const UploadOrEditMedia = ({
 	}, [extraLabel]);
 
 	useEffect(() => {
+		// console.log(specificMedia?.media_type);
+		// console.log(specificMedia?.sub_category);
+
 		if (specificMedia) {
 			if (specificMedia?.labels) {
 				let _labels = [];
@@ -118,7 +122,17 @@ const UploadOrEditMedia = ({
 				);
 				setSelectedLabels(_labels);
 			}
+			// if (specificMedia.media_type) {
+			// 	let setData = mainCategories.find(
+			// 		(u) => u.name === specificMedia?.media_type
+			// 	);
+			// 	console.log(specificMedia?.media_type);
+			// 	console.log(setData.name);
+			// 	setMainCategory(setData.name);
+			// }
+
 			setMainCategory(specificMedia?.media_type);
+			console.log(specificMedia?.media_type);
 			setSubCategory(specificMedia?.sub_category);
 			setTitleMedia(specificMedia?.title);
 			setDescription(specificMedia?.description);
@@ -151,7 +165,7 @@ const UploadOrEditMedia = ({
 		getRootProps: getRootProps2,
 		getInputProps: getInputProps2
 	} = useDropzone({
-		accept: '.jpeg, .png',
+		accept: '.jpeg, .jpg, .png',
 		maxFiles: 1
 	});
 
@@ -177,7 +191,7 @@ const UploadOrEditMedia = ({
 	};
 
 	useEffect(() => {
-		if (mainCategory) {
+		if (mainCategory && !isEdit) {
 			updateSubCategories(mainCategory);
 		}
 	}, [mainCategory]);
@@ -254,6 +268,7 @@ const UploadOrEditMedia = ({
 	}, [acceptedFiles2]);
 
 	const resetState = () => {
+		console.log('adwadwadwad');
 		setMainCategory('');
 		setSubCategory('');
 		setUploadedFiles([]);
@@ -494,6 +509,7 @@ const UploadOrEditMedia = ({
 	const MainCategoryId = (e) => {
 		//find name and will return whole object
 		let setData = mainCategories.find((u) => u.name === e);
+		console.log(setData, 'daa');
 		setMainCategory(setData);
 	};
 
