@@ -24,7 +24,7 @@
 	border: 0;
 	margin: 0;
 	display: inline-flex;
-	padding: 0;
+	//padding: 0;
 	position: relative;
 	min-width: 0;
 	flex-direction: column;
@@ -32,7 +32,7 @@
 	width: 250px;
 	color: white !important;
 	border: 1px solid #404040;
-	padding: 1rem 1rem 1.2rem 1rem !important;
+	padding: 1.2rem 1rem 1rem 1rem !important;
 	font-size: 1.4rem !important;
 	line-height: 1.6 !important;
 	border-radius: 40px;
@@ -40,7 +40,7 @@
 	border-color: rgb(64, 64, 64);
 	height: 17.5px;
 	box-sizing: content-box;
-	padding: 6px 0 7px;
+	//padding: 6px 0 7px;
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
@@ -176,7 +176,7 @@
 .textFieldInput {
 	color: white !important;
 	border: 1px solid #404040;
-	padding: 0.5rem 0.5rem 0.5rem 1.5rem !important;
+	padding: 0.55rem 0.5rem 0.5rem 1.5rem !important;
 	font-size: 1.4rem !important;
 	line-height: 1.6 !important;
 	border-radius: 40px;
