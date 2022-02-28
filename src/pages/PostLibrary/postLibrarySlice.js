@@ -36,6 +36,7 @@ export const getPostLabels = createAsyncThunk(
 	'postLibary/getPostLabels',
 	async () => {
 		const result = await PostLibraryService.getPostLabelsApi();
+		console.log(result);
 		if (result?.data?.data?.length > 0) {
 			return result.data.data;
 		} else {

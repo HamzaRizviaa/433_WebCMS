@@ -25,8 +25,7 @@ const Sidebar = () => {
 
 	const onLogoutSuccess = (res) => {
 		console.log('Logged out Success', res);
-		alert('Logged out Successfully ✌');
-
+		localStorage.removeItem('user_data');
 		navigate('/sign-in');
 	};
 

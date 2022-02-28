@@ -44,6 +44,8 @@ const UploadOrEditViral = ({
 	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
 	const [labelColor, setLabelColor] = useState('#ffffff');
 	const [labelError, setLabelError] = useState('');
+	const [captionColor, setCaptionColor] = useState('#ffffff');
+	const [captionError, setCaptionError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [isLoadingCreatePost, setIsLoadingCreatePost] = useState(false);
@@ -302,6 +304,17 @@ const UploadOrEditViral = ({
 				setLabelError('');
 			}, [5000]);
 		}
+
+		if (!caption) {
+			setCaptionColor('#ff355a');
+			setCaptionError(
+				'You need to put a caption of atleast 1 character in order to post'
+			);
+			setTimeout(() => {
+				setCaptionColor('#ffff00');
+				setCaptionError('');
+			}, [5000]);
+		}
 	};
 
 	// const createPost = async (id, mediaFiles = []) => {
@@ -381,7 +394,10 @@ const UploadOrEditViral = ({
 	};
 
 	const viralBtnDisabled =
-		!uploadedFiles.length || postButtonStatus || selectedLabels.length < 10;
+		!uploadedFiles.length ||
+		postButtonStatus ||
+		selectedLabels.length < 10 ||
+		!caption;
 
 	return (
 		<Slider
@@ -454,9 +470,9 @@ const UploadOrEditViral = ({
 																<div className={classes.filePreviewLeft}>
 																	{file.type === 'video' ? (
 																		<>
-																			<PlayArrowIcon
+																			{/* <PlayArrowIcon
 																				className={classes.playIcon}
-																			/>
+																			/> */}
 																			<video
 																				id={'my-video'}
 																				poster={isEdit ? file.img : null}
@@ -707,7 +723,7 @@ const UploadOrEditViral = ({
 							<p className={classes.mediaError}>{labelError}</p>
 
 							<div className={classes.captionContainer}>
-								<h6>CAPTION</h6>
+								<h6 style={{ color: captionColor }}>CAPTION</h6>
 								<TextField
 									value={caption}
 									onChange={(e) => setCaption(e.target.value)}
@@ -725,6 +741,8 @@ const UploadOrEditViral = ({
 								/>
 							</div>
 						</div>
+
+						<p className={classes.mediaError}>{captionError}</p>
 
 						<div className={classes.buttonDiv}>
 							{isEdit ? (
@@ -796,9 +814,10 @@ const UploadOrEditViral = ({
 										poster={isEdit ? previewFile.img : null}
 										className={classes.previewFile}
 										style={{
-											width: `${8 * 4}rem`,
+											//width: `${8 * 4}rem`,
+											width: `100%`,
 											height: `${8 * 4}rem`,
-											objectFit: 'cover',
+											objectFit: 'contain',
 											objectPosition: 'center'
 										}}
 										controls={true}
@@ -811,9 +830,10 @@ const UploadOrEditViral = ({
 										poster={isEdit ? previewFile.thumbnail_url : null}
 										className={classes.previewFile}
 										style={{
-											width: `${8 * 4}rem`,
+											//width: `${8 * 4}rem`,
+											width: `100%`,
 											height: `${8 * 4}rem`,
-											objectFit: 'cover',
+											objectFit: 'contain',
 											objectPosition: 'center'
 										}}
 										controls={true}
@@ -825,9 +845,10 @@ const UploadOrEditViral = ({
 										src={previewFile.img}
 										className={classes.previewFile}
 										style={{
-											width: `${8 * 4}rem`,
+											//width: `${8 * 4}rem`,
+											width: `100%`,
 											height: `${8 * 4}rem`,
-											objectFit: 'cover',
+											objectFit: 'contain',
 											objectPosition: 'center'
 										}}
 									/>

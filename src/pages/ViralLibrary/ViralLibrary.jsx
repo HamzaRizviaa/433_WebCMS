@@ -198,7 +198,7 @@ const ViralLibrary = () => {
 							}}
 						>
 							<span>
-								<PlayArrowIcon className={classes.playIcon} />
+								{/* <PlayArrowIcon className={classes.playIcon} /> */}
 								<img className={classes.mediaIcon} src={row.thumbnail_url} />
 							</span>
 						</Tooltip>
@@ -309,6 +309,17 @@ const ViralLibrary = () => {
 			user: 'Lorem Ipsum',
 			last_edit: '2021-11-25T17:00:08.000Z',
 			file_name: 'special Tom & Jerry.mp4'
+		},
+		{
+			media:
+				'https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-water-1164-large.mp4',
+			thumbnail_url:
+				'https://images.pexels.com/photos/4622423/pexels-photo-4622423.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
+			post_date: '2021-11-25T17:00:08.000Z',
+			labels: 'Label1 , Label 22',
+			user: 'Lorem Ipsum',
+			last_edit: '2021-11-25T17:00:08.000Z',
+			file_name: 'special Tom & Jerry.mp4'
 		}
 		// {
 		// 	viral: 'Who will win the El Classico?',
@@ -360,6 +371,10 @@ const ViralLibrary = () => {
 			// dispatch(getSpecificPost(row.id));
 			setEdit(true);
 			setShowSlider(true);
+			// setTimeout(() => {
+			// 	setShowSlider(true);
+			// }, [500]);
+
 			// }
 		}
 	};
@@ -594,6 +609,8 @@ const ViralLibrary = () => {
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
+					//setEdit(false);
+					setTimeout(() => setEdit(false), 300); //to show edit data after clicking second time
 				}}
 				title={edit ? 'Edit Viral' : 'Upload Viral'}
 				heading1={edit ? 'Media File' : 'Add Media File'}
