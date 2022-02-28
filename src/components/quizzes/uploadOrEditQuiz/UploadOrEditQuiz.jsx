@@ -400,7 +400,7 @@ const UploadOrEditQuiz = ({
 
 					<div className={classes.titleContainer}>
 						<h6 style={{ color: ans1Color }}>
-							{quiz ? 'Right Answer' : 'ANSWER 1'}
+							{quiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
 						</h6>
 						<TextField
 							disabled={editQuiz}
@@ -425,7 +425,7 @@ const UploadOrEditQuiz = ({
 
 					<div className={classes.titleContainer}>
 						<h6 style={{ color: ans2Color }}>
-							{quiz ? 'Wrong Answer' : 'ANSWER 2'}
+							{quiz ? 'WRONG ANSWER' : 'ANSWER 2'}
 						</h6>
 						<TextField
 							disabled={editQuiz}
