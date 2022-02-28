@@ -513,7 +513,7 @@ const UploadOrEditQuiz = ({
 									}}
 								>
 									<p>{extraLabel.toUpperCase()}</p>
-									<Button
+									{/* <Button
 										text='CREATE NEW LABEL'
 										style={{
 											padding: '3px 12px',
@@ -525,7 +525,7 @@ const UploadOrEditQuiz = ({
 											// 	extraLabel.toUpperCase()
 											// ]);
 										}}
-									/>
+									/> */}
 								</div>
 							}
 							className={`${classes.autoComplete}  ${

@@ -950,7 +950,7 @@ const UploadOrEditMedia = ({
 													}}
 												>
 													<p>{extraLabel.toUpperCase()}</p>
-													<Button
+													{/* <Button
 														text='CREATE NEW LABEL'
 														style={{
 															padding: '3px 12px',
@@ -962,7 +962,7 @@ const UploadOrEditMedia = ({
 															// 	extraLabel.toUpperCase()
 															// ]);
 														}}
-													/>
+													/> */}
 												</div>
 											}
 											className={`${classes.autoComplete} ${
