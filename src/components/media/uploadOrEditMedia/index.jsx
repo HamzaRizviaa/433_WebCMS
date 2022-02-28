@@ -73,7 +73,7 @@ const UploadOrEditMedia = ({
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
-				mainCategory.name === 'Watch' ? 'video/mp4' : 'audio/mp3, audio/mpeg'
+				mainCategory?.name === 'Watch' ? 'video/mp4' : 'audio/mp3, audio/mpeg'
 			}`,
 			maxFiles: 1
 		});
@@ -484,6 +484,12 @@ const UploadOrEditMedia = ({
 		!titleMedia ||
 		mediaButtonStatus ||
 		selectedLabels.length < 10;
+
+	const editBtnDisabled =
+		mediaButtonStatus ||
+		!titleMedia ||
+		(specificMedia?.title === titleMedia.trim() &&
+			specificMedia?.description === description.trim());
 
 	const MainCategoryId = (e) => {
 		//find name and will return whole object
@@ -1083,9 +1089,9 @@ const UploadOrEditMedia = ({
 								}
 							>
 								<Button
-									disabled={addMediaBtnDisabled}
+									disabled={isEdit ? editBtnDisabled : addMediaBtnDisabled}
 									onClick={async () => {
-										if (addMediaBtnDisabled) {
+										if (addMediaBtnDisabled || editBtnDisabled) {
 											validatePostBtn();
 										} else {
 											setMediaButtonStatus(true);
