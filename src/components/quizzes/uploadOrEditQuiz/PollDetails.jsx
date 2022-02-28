@@ -65,7 +65,7 @@ export default function PollDetails({
 							{/* add edit quiz */}
 							{/* <EditQuiz/>  */}
 							<UploadOrEditQuiz
-								editQuiz={isEdit}
+								editPoll={isEdit}
 								heading1={heading1}
 								open={open}
 								buttonText={buttonText}

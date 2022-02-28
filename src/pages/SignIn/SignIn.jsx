@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import classes from './_signIn.module.scss';
 import GoogleLogin from 'react-google-login';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import LoadingOverlay from 'react-loading-overlay';
+import { ReactComponent as LogoSpinner } from '../../assets/logoSpinner.svg';
 
 import { ReactComponent as Logo2 } from '../../assets/Logo2.svg';
 //import { ReactComponent as BGImage } from '../../assets/BG.svg';
@@ -12,8 +14,14 @@ import { ReactComponent as DeniedError } from '../../assets/AccesDenied.svg';
 
 const SignIn = ({ setLoginData }) => {
 	const [signInError, setSignInError] = useState(false);
-	// const [googleData, setGoogleData] = useState(null);
-	//hamza code
+	const [isLoadingSignIn, setIsLoadingSignin] = useState(false);
+
+	useEffect(() => {
+		return () => {
+			setSignInError(false);
+		};
+	}, []);
+
 	const navigate = useNavigate();
 
 	const refreshTokenSetup = (res) => {
@@ -40,6 +48,7 @@ const SignIn = ({ setLoginData }) => {
 	// };
 
 	const handleLogin = async (googleData) => {
+		setIsLoadingSignin(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/cmsuser/verify-google-user`,
@@ -48,6 +57,7 @@ const SignIn = ({ setLoginData }) => {
 				}
 			);
 			if (result?.data?.status_code === 200) {
+				setIsLoadingSignin(false);
 				console.log(result?.data);
 				setLoginData(
 					localStorage.setItem('user_data', JSON.stringify(result?.data?.data))
@@ -56,6 +66,7 @@ const SignIn = ({ setLoginData }) => {
 				setSignInError(false);
 			}
 		} catch (e) {
+			setIsLoadingSignin(false);
 			setSignInError(true);
 			console.log(e, googleData.profileObj.email);
 		}
@@ -72,63 +83,69 @@ const SignIn = ({ setLoginData }) => {
 	return (
 		<>
 			<div className={classes.root}>
-				<div className={classes.signinRoot}>
-					<div className={classes.panel}>
-						<div className={classes.content}>
-							<div className={classes.w100}>
-								<div className={classes.LogoIconWrapper}>
-									<Logo2 className={classes.Logo} />
-								</div>
-								<div className={classes.welcomeText}>
-									Welcome to 433 Content Magament System
-								</div>
-								{signInError ? (
-									<div className={classes.errorWrapper}>
-										<DeniedError />
-										<span className={classes.errorMsg}>
-											<div className={classes.errorMsgTop}>Access Denied</div>
-											You can only access the CMS with your 433 email account
-										</span>
+				<LoadingOverlay
+					active={isLoadingSignIn}
+					spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
+					//text='is loading...'
+				>
+					<div className={classes.signinRoot}>
+						<div className={classes.panel}>
+							<div className={classes.content}>
+								<div className={classes.w100}>
+									<div className={classes.LogoIconWrapper}>
+										<Logo2 className={classes.Logo} />
 									</div>
-								) : (
-									<></>
-								)}
-								<div className={classes.googleButtonWrapper}>
-									<GoogleLogin
-										className={classes.googleButton}
-										clientId='761006834675-0717aiakfe9at8d7jahf10hdgevu7acg.apps.googleusercontent.com'
-										buttonText='Sign In with Google'
-										onSuccess={handleLogin}
-										//onFailure={handleFailure}
-										//hostedDomain={'by433.com'}
-										//isSignedIn={true}
-										//uxMode={'popup'}
-										prompt={'consent'}
-										cookiePolicy={'single_host_origin'}
-										// accessType={'offline'}
-										// responseType={'code'}
-									/>
-								</div>
-								<div className={classes.helpText}>
-									<p>
-										Need help signing in? Please write an email to
-										<br />
-										<a
-											href={'https://www.433football.com/'}
-											target='_blank'
-											rel='noopener noreferrer'
-											style={{ color: '#ffff00' }}
-										>
-											cms@by433.com
-										</a>
-									</p>
+									<div className={classes.welcomeText}>
+										Welcome to 433 Content Magament System
+									</div>
+									{signInError ? (
+										<div className={classes.errorWrapper}>
+											<DeniedError />
+											<span className={classes.errorMsg}>
+												<div className={classes.errorMsgTop}>Access Denied</div>
+												You can only access the CMS with your 433 email account
+											</span>
+										</div>
+									) : (
+										<></>
+									)}
+									<div className={classes.googleButtonWrapper}>
+										<GoogleLogin
+											className={classes.googleButton}
+											clientId='761006834675-0717aiakfe9at8d7jahf10hdgevu7acg.apps.googleusercontent.com'
+											buttonText='Sign In with Google'
+											onSuccess={handleLogin}
+											//onFailure={handleFailure}
+											//hostedDomain={'by433.com'}
+											//isSignedIn={true}
+											//uxMode={'redirect'}
+											prompt={'consent'}
+											cookiePolicy={'single_host_origin'}
+											// accessType={'offline'}
+											// responseType={'code'}
+										/>
+									</div>
+									<div className={classes.helpText}>
+										<p>
+											Need help signing in? Please write an email to
+											<br />
+											<a
+												href={'https://www.433football.com/'}
+												target='_blank'
+												rel='noopener noreferrer'
+												style={{ color: '#ffff00' }}
+											>
+												cms@by433.com
+											</a>
+										</p>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
 
-					<div className={classes.rightBGImage}></div>
-				</div>
+						<div className={classes.rightBGImage}></div>
+					</div>
+				</LoadingOverlay>
 			</div>
 		</>
 	);

@@ -657,8 +657,8 @@ const QuizLibrary = () => {
 				}}
 				status={rowStatus}
 				title={'Poll Detail'}
-				heading1={edit ? ' ' : 'Add Background Image'}
-				//buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
+				heading1={edit ? 'Add Background Image' : 'Add Background Image'}
+				buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
 			/>
 		</Layout>
 	);

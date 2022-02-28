@@ -29,14 +29,15 @@
 	display: flex;
 	align-items: center;
 	margin-bottom: 1.5rem;
-	// div {
-	// 	max-width: 100%;
-	// 	text-overflow: ellipsis;
-	// 	overflow: hidden;
-	// 	span {
-	// 		white-space: nowrap;
-	// 	}
-	// }
+	margin-left: 0.5rem;
+	div {
+		max-width: 100%;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		span {
+			white-space: nowrap;
+		}
+	}
 }
 
 .mediaIcon {
@@ -193,6 +194,10 @@
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	padding: 1vw 2vw;
 	nav {
 		width: fit-content;
 	}

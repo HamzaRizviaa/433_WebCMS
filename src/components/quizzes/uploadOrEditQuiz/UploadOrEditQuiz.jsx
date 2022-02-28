@@ -29,6 +29,7 @@ const UploadOrEditQuiz = ({
 	open,
 	buttonText,
 	editQuiz,
+	editPoll,
 	setPreviewBool,
 	previewFile,
 	setPreviewFile,
@@ -112,7 +113,7 @@ const UploadOrEditQuiz = ({
 	};
 
 	useEffect(() => {
-		if (editQuiz) {
+		if (editQuiz || editPoll) {
 			setUploadedFiles([
 				{
 					id: makeid(10),
@@ -130,7 +131,7 @@ const UploadOrEditQuiz = ({
 			]);
 			setEndDate('Tue Feb 14 2022 00:00:00 GMT+0500 (Pakistan Standard Time)');
 		}
-	}, [editQuiz]);
+	}, [editQuiz, editPoll]);
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
@@ -317,7 +318,7 @@ const UploadOrEditQuiz = ({
 												</div>
 
 												<div className={classes.filePreviewRight}>
-													{editQuiz ? (
+													{editQuiz || editPoll ? (
 														<EyeIcon
 															className={classes.filePreviewIcons}
 															onClick={() => {
@@ -353,7 +354,7 @@ const UploadOrEditQuiz = ({
 							)}
 						</Droppable>
 					</DragDropContext>
-					{!uploadedFiles.length && !editQuiz && (
+					{!uploadedFiles.length && !editQuiz && !editPoll && (
 						<section
 							className={classes.dropZoneContainer}
 							style={{
@@ -378,7 +379,7 @@ const UploadOrEditQuiz = ({
 					<div className={classes.titleContainer}>
 						<h6 style={{ color: questionColor }}>QUESTION</h6>
 						<TextField
-							disabled={editQuiz}
+							disabled={editQuiz || editPoll}
 							value={question}
 							onChange={(e) => {
 								setQuestion(e.target.value);
@@ -388,7 +389,7 @@ const UploadOrEditQuiz = ({
 							InputProps={{
 								disableUnderline: true,
 								className: `${classes.textFieldInput}  ${
-									editQuiz && classes.disableTextField
+									(editQuiz || editPoll) && classes.disableTextField
 								}`
 							}}
 							multiline
@@ -400,10 +401,10 @@ const UploadOrEditQuiz = ({
 
 					<div className={classes.titleContainer}>
 						<h6 style={{ color: ans1Color }}>
-							{quiz ? 'Right Answer' : 'ANSWER 1'}
+							{quiz || editQuiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
 						</h6>
 						<TextField
-							disabled={editQuiz}
+							disabled={editQuiz || editPoll}
 							value={ans1}
 							onChange={(e) => {
 								setAns1(e.target.value);
@@ -413,7 +414,7 @@ const UploadOrEditQuiz = ({
 							InputProps={{
 								disableUnderline: true,
 								className: `${classes.textFieldInput}  ${
-									editQuiz && classes.disableTextField
+									(editQuiz || editPoll) && classes.disableTextField
 								}`
 							}}
 							multiline
@@ -425,10 +426,10 @@ const UploadOrEditQuiz = ({
 
 					<div className={classes.titleContainer}>
 						<h6 style={{ color: ans2Color }}>
-							{quiz ? 'Wrong Answer' : 'ANSWER 2'}
+							{quiz || editQuiz ? 'WRONG ANSWER' : 'ANSWER 2'}
 						</h6>
 						<TextField
-							disabled={editQuiz}
+							disabled={editQuiz || editPoll}
 							value={ans2}
 							onChange={(e) => {
 								setAns2(e.target.value);
@@ -438,7 +439,7 @@ const UploadOrEditQuiz = ({
 							InputProps={{
 								disableUnderline: true,
 								className: `${classes.textFieldInput}  ${
-									editQuiz && classes.disableTextField
+									(editQuiz || editPoll) && classes.disableTextField
 								}`
 							}}
 							multiline
@@ -451,7 +452,7 @@ const UploadOrEditQuiz = ({
 					<div className={classes.titleContainer}>
 						<h6 style={{ color: labelColor }}>LABELS</h6>
 						<Autocomplete
-							disabled={editQuiz}
+							disabled={editQuiz || editPoll}
 							style={{
 								maxWidth: `530px`
 							}}
@@ -512,7 +513,7 @@ const UploadOrEditQuiz = ({
 									}}
 								>
 									<p>{extraLabel.toUpperCase()}</p>
-									<Button
+									{/* <Button
 										text='CREATE NEW LABEL'
 										style={{
 											padding: '3px 12px',
@@ -524,11 +525,11 @@ const UploadOrEditQuiz = ({
 											// 	extraLabel.toUpperCase()
 											// ]);
 										}}
-									/>
+									/> */}
 								</div>
 							}
 							className={`${classes.autoComplete}  ${
-								editQuiz && classes.disableAutoComplete
+								(editQuiz || editPoll) && classes.disableAutoComplete
 							}`}
 							id='free-solo-2-demo'
 							disableClearable
@@ -597,7 +598,7 @@ const UploadOrEditQuiz = ({
 					<div className={classes.datePickerContainer}>
 						<h6 style={{ color: quizColor }}>QUIZ END DATE</h6>
 						<div
-							className={editQuiz ? classes.datePicker : ''}
+							className={editQuiz || editPoll ? classes.datePicker : ''}
 							style={{ marginBottom: calenderOpen ? '250px' : '' }}
 						>
 							<DatePicker
@@ -638,11 +639,11 @@ const UploadOrEditQuiz = ({
 				</div>
 
 				<div className={classes.buttonDiv}>
-					{editQuiz ? (
+					{editQuiz || editPoll ? (
 						<div className={classes.editBtn}>
 							<Button
 								disabled={false}
-								button2={editQuiz ? true : false}
+								button2={editQuiz || editPoll ? true : false}
 								onClick={() => {
 									// if (!deleteBtnStatus) {
 									// 	console.log('specific', specificMedia.id);
@@ -657,7 +658,9 @@ const UploadOrEditQuiz = ({
 					)}
 
 					<div
-						className={editQuiz ? classes.addQuizBtnEdit : classes.addQuizBtn}
+						className={
+							editQuiz || editPoll ? classes.addQuizBtnEdit : classes.addQuizBtn
+						}
 					>
 						<Button
 							disabled={addQuizBtnDisabled}
@@ -716,7 +719,8 @@ UploadOrEditQuiz.propTypes = {
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,
 	setDisableDropdown: PropTypes.func.isRequired,
-	quiz: PropTypes.bool.isRequired
+	quiz: PropTypes.bool,
+	editPoll: PropTypes.bool
 };
 
 export default UploadOrEditQuiz;
