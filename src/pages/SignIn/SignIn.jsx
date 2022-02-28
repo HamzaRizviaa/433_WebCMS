@@ -118,7 +118,7 @@ const SignIn = ({ setLoginData }) => {
 											//onFailure={handleFailure}
 											//hostedDomain={'by433.com'}
 											//isSignedIn={true}
-											//uxMode={'popup'}
+											//uxMode={'redirect'}
 											prompt={'consent'}
 											cookiePolicy={'single_host_origin'}
 											// accessType={'offline'}

@@ -19,7 +19,8 @@
 .panel {
 	min-height: 100vh;
 	background-color: $black-color;
-	width: 34%;
+	//width: 34%;
+	width: auto;
 	z-index: 1;
 
 	animation: fadeInAnimation ease 2.5s;
@@ -39,8 +40,10 @@
 }
 
 .content {
-	margin-top: 35%;
-	padding: 10px 100px;
+	// margin-top: 35%;
+	// padding: 10px 100px;
+	margin-top: calc(50vh - 150px);
+	padding: 0 2vw;
 	display: flex;
 	justify-content: center;
 }
@@ -108,11 +111,12 @@
 	width: 100%;
 	// position: relative;
 	// height: 100vh;
-	object-fit: cover;
-	object-position: center;
+	//object-fit: cover;
+	//object-position: center;
 	background-image: url('../../assets/GlobeBG.svg');
 	background-size: cover;
 	background-repeat: no-repeat;
+	background-position: center;
 
 	animation: fadeInAnimation2 ease 2.5s;
 	animation-iteration-count: 1;
