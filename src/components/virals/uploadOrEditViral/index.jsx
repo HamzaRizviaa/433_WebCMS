@@ -741,9 +741,9 @@ const UploadOrEditViral = ({
 									maxRows={4}
 								/>
 							</div>
-						</div>
 
-						<p className={classes.mediaError}>{captionError}</p>
+							<p className={classes.mediaError}>{captionError}</p>
+						</div>
 
 						<div className={classes.buttonDiv}>
 							{isEdit ? (
