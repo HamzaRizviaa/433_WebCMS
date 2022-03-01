@@ -55,7 +55,7 @@ export default function Banners() {
 		);
 
 		setBannerData(items);
-
+		clickBanner();
 		// handleBannerPositionAndFirstBanner();
 	};
 	// - autocomplete ends
@@ -63,32 +63,31 @@ export default function Banners() {
 	// useEffect(() => {
 	// 	const firstrowcheck = handleCheckFirstRow();
 	// 	const validateRow = handleBannerPositionAndFirstBanner();
-	// 	// console.log(
-	// 	// 	firstrowcheck.rowId,
-	// 	// 	firstrowcheck.flag,
-	// 	// 	firstrowcheck.errMsg,
-	// 	// 	'flag value firstrowcheck'
-	// 	// );
 	// 	setFirstCheck(firstrowcheck);
 	// 	setValidateRow(validateRow);
 	// }, [bannerData]);
 
 	const clickBanner = () => {
+		console.log('click banner');
 		const firstrowcheck = handleCheckFirstRow();
-		const validateRow = handleBannerPositionAndFirstBanner();
-		// console.log(
-		// 	firstrowcheck.rowId,
-		// 	firstrowcheck.flag,
-		// 	firstrowcheck.errMsg,
-		// 	'flag value firstrowcheck'
-		// );
+		const validateRow =
+			handleCheckFirstRow() && handleBannerPositionAndFirstBanner();
+		console.log(firstrowcheck, validateRow, 'flags');
 		setFirstCheck(firstrowcheck);
-		setValidateRow(validateRow);
+		firstrowcheck.errMsg
+			? setFirstCheck(firstrowcheck)
+			: setValidateRow(validateRow);
 	};
 
 	const handleCheckFirstRow = () => {
 		let errValidate = { flag: '', rowId: undefined, errMsg: '' };
 		if (!bannerData[0].bannerType ^ !bannerData[0].selectedMedia) {
+			errValidate = {
+				flag: true,
+				rowId: 0,
+				errMsg: 'The first top banner should always be filled. '
+			};
+		} else if (!bannerData[0].bannerType || !bannerData[0].selectedMedia) {
 			errValidate = {
 				flag: true,
 				rowId: 0,
@@ -164,7 +163,9 @@ export default function Banners() {
 														index === validateRow.rowId && validateRow.errMsg
 													}
 													firstrow={
-														index === firstCheck.rowId && firstCheck.errMsg
+														index === validateRow.rowId && validateRow.errMsg
+															? ''
+															: index === firstCheck.rowId && firstCheck.errMsg
 													}
 													data={data}
 													setBannerData={setBannerData}
