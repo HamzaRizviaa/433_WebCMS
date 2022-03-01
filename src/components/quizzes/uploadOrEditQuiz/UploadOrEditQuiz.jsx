@@ -512,7 +512,8 @@ const UploadOrEditQuiz = ({
 										fontSize: 14
 									}}
 								>
-									<p>{extraLabel.toUpperCase()}</p>
+									{/* <p>{extraLabel.toUpperCase()}</p> */}
+									<p>No results found</p>
 									{/* <Button
 										text='CREATE NEW LABEL'
 										style={{
