@@ -3,7 +3,7 @@ import classes from './_banners.module.scss';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import BannerRows from './BannerRows';
 import Button from '../button';
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 
 export default function Banners() {
 	const [validateRow, setValidateRow] = useState('');
@@ -60,19 +60,31 @@ export default function Banners() {
 	};
 	// - autocomplete ends
 
-	useEffect(() => {
+	// useEffect(() => {
+	// 	const firstrowcheck = handleCheckFirstRow();
+	// 	const validateRow = handleBannerPositionAndFirstBanner();
+	// 	// console.log(
+	// 	// 	firstrowcheck.rowId,
+	// 	// 	firstrowcheck.flag,
+	// 	// 	firstrowcheck.errMsg,
+	// 	// 	'flag value firstrowcheck'
+	// 	// );
+	// 	setFirstCheck(firstrowcheck);
+	// 	setValidateRow(validateRow);
+	// }, [bannerData]);
+
+	const clickBanner = () => {
 		const firstrowcheck = handleCheckFirstRow();
 		const validateRow = handleBannerPositionAndFirstBanner();
-		console.log(
-			firstrowcheck.rowId,
-			firstrowcheck.flag,
-			firstrowcheck.errMsg,
-			'flag value firstrowcheck'
-		);
-
+		// console.log(
+		// 	firstrowcheck.rowId,
+		// 	firstrowcheck.flag,
+		// 	firstrowcheck.errMsg,
+		// 	'flag value firstrowcheck'
+		// );
 		setFirstCheck(firstrowcheck);
 		setValidateRow(validateRow);
-	}, [bannerData]);
+	};
 
 	const handleCheckFirstRow = () => {
 		let errValidate = { flag: '', rowId: undefined, errMsg: '' };
@@ -92,8 +104,6 @@ export default function Banners() {
 		// min 1 , can't set 0
 		// disabled = true = GREY
 		// noy disables = false = YELLOW
-
-		// if (!errValidate.flag) {
 		for (let i = 4; i >= 1; i--) {
 			// start from max to min
 			if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
@@ -105,7 +115,7 @@ export default function Banners() {
 					errValidate = {
 						flag: true,
 						rowId: i - 1,
-						errMsg: 'The banner ' + i + ' cannot be empty.'
+						errMsg: 'The banner cannot be empty.'
 					};
 					//not return true
 					break;
@@ -121,7 +131,6 @@ export default function Banners() {
 				break;
 			}
 		}
-		// }
 
 		return errValidate;
 	};
@@ -180,7 +189,9 @@ export default function Banners() {
 							? validateRow.flag
 							: true
 					}
-					onClick={() => {}}
+					onClick={() => {
+						clickBanner();
+					}}
 					text={'PUBLISH HOME BANNERS'}
 				/>
 			</div>
