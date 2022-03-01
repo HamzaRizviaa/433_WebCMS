@@ -61,6 +61,8 @@ const UploadOrEditMedia = ({
 	const [titleMediaLabelColor, setTitleMediaLabelColor] = useState('#ffffff');
 	const [titleMediaError, setTitleMediaError] = useState('');
 	const [description, setDescription] = useState('');
+	const [descriptionColor, setDescriptionColor] = useState('#ffffff');
+	const [descriptionError, setDescriptionError] = useState('');
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [previewBool, setPreviewBool] = useState(false);
@@ -281,6 +283,8 @@ const UploadOrEditMedia = ({
 		setFileRejectionError2('');
 		setMainCategoryLabelColor('#ffffff');
 		setTitleMediaLabelColor('#ffffff');
+		setDescriptionColor('#ffffff');
+		setDescriptionError('');
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
@@ -351,6 +355,14 @@ const UploadOrEditMedia = ({
 			setTimeout(() => {
 				setTitleMediaLabelColor('#ffffff');
 				setTitleMediaError('');
+			}, [5000]);
+		}
+		if (!description) {
+			setDescriptionColor('#ff355a');
+			setDescriptionError('You need to enter a Description');
+			setTimeout(() => {
+				setDescriptionColor('#ffffff');
+				setDescriptionError('');
 			}, [5000]);
 		}
 	};
@@ -497,12 +509,14 @@ const UploadOrEditMedia = ({
 		!mainCategory ||
 		!uploadedCoverImage.length ||
 		!titleMedia ||
+		!description ||
 		mediaButtonStatus ||
 		selectedLabels.length < 10;
 
 	const editBtnDisabled =
 		mediaButtonStatus ||
 		!titleMedia ||
+		!description ||
 		(specificMedia?.title === titleMedia.trim() &&
 			specificMedia?.description === description.trim());
 
@@ -578,7 +592,7 @@ const UploadOrEditMedia = ({
 										}}
 										disabled={isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
-										value={mainCategory.name}
+										value={mainCategory?.name}
 										onChange={(e) => {
 											setSubCategory('');
 											setDisableDropdown(true);
@@ -1058,7 +1072,7 @@ const UploadOrEditMedia = ({
 									<p className={classes.mediaError}>{labelError}</p>
 
 									<div className={classes.titleContainer}>
-										<h6>DESCRIPTION</h6>
+										<h6 style={{ color: descriptionColor }}>DESCRIPTION</h6>
 										<TextField
 											value={description}
 											onChange={(e) => {
@@ -1077,6 +1091,8 @@ const UploadOrEditMedia = ({
 											maxRows={4}
 										/>
 									</div>
+
+									<p className={classes.mediaError}>{descriptionError}</p>
 								</>
 							) : (
 								<></>
