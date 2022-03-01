@@ -38,13 +38,29 @@
 		padding-bottom: 40px;
 	}
 	.bannerRight {
-		display: flex;
 		border: 1px solid #404040;
 		box-sizing: border-box;
 		border-radius: 16px;
 		width: 100%;
 		padding: 20px 22px 20px 22px;
 		margin: 2% 0%;
+	}
+	.bannerErrRight {
+		border: 1px dashed red;
+		box-sizing: border-box;
+		border-radius: 16px;
+		width: 100%;
+		padding: 20px 22px 20px 22px;
+		margin: 1% 0% 0% 0%;
+		.errorMsg {
+			text-transform: uppercase;
+			font-weight: bold;
+			color: red;
+			margin-top: 1%;
+		}
+	}
+	.bannerContentRight {
+		display: flex;
 	}
 	.dragIcon {
 		padding-top: 1.2rem;

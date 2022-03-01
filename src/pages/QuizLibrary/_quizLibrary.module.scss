@@ -2,7 +2,7 @@
 @import '../../styles/_mixins.scss';
 
 .tableContainer {
-	margin: 1rem 0rem;
+	//margin: 0rem 0rem;
 }
 
 .header {
@@ -140,6 +140,10 @@
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	padding: 1vw 2vw;
 	nav {
 		width: fit-content;
 	}
