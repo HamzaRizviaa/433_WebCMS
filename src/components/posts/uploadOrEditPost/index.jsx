@@ -889,7 +889,7 @@ const UploadOrEditPost = ({
 													(t) => t.name.toLowerCase() === v.name.toLowerCase()
 												) === i
 										);
-										console.log(selectedLabels, newValue);
+										//console.log(selectedLabels, newValue);
 										setSelectedLabels([...newLabels]);
 									}}
 									popupIcon={''}
@@ -942,7 +942,6 @@ const UploadOrEditPost = ({
 										/>
 									)}
 									renderOption={(props, option, state) => {
-										// console.log(option, 'option');
 										if (option.id == null) {
 											// if (option.filter(option=>option.name===option.name))
 

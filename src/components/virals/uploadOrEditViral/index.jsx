@@ -308,11 +308,11 @@ const UploadOrEditViral = ({
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
 				{
-					caption: caption,
-					media_url: mediaFiles[0].media_url,
-					file_name: mediaFiles[0].file_name,
-					height: 100,
-					width: 100,
+					...(caption ? { caption: caption } : { caption: '' }),
+					...(!isEdit ? { media_url: mediaFiles[0]?.media_url } : {}),
+					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
+					...(!isEdit ? { height: 100 } : {}),
+					...(!isEdit ? { width: 100 } : {}),
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
