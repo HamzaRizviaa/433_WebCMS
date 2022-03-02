@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import LoadingOverlay from 'react-loading-overlay';
-import { ReactComponent as LogoSpinner } from '../../assets/logoSpinner.svg';
+//import { ReactComponent as LogoSpinner } from '../../assets/logoSpinner.svg';
+import Four33Loader from '../../assets/Loader_Yellow.gif';
 
 import { ReactComponent as Logo2 } from '../../assets/Logo2.svg';
 //import { ReactComponent as BGImage } from '../../assets/BG.svg';
@@ -85,7 +86,10 @@ const SignIn = ({ setLoginData }) => {
 			<div className={classes.root}>
 				<LoadingOverlay
 					active={isLoadingSignIn}
-					spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
+					// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
+					spinner={
+						<img src={Four33Loader} className={classes.loader} alt='loader' />
+					}
 					//text='is loading...'
 				>
 					<div className={classes.signinRoot}>
