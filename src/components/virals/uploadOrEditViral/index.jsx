@@ -14,6 +14,7 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { getAllViralsApi } from '../../../pages/ViralLibrary/viralLibararySlice';
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import captureVideoFrame from 'capture-video-frame';
 import Close from '@material-ui/icons/Close';
@@ -21,6 +22,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
 import Chip from '@mui/material/Chip';
 import { Popper, Paper } from '@mui/material';
+import { getLocalStorageDetails } from '../../../utils';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
@@ -33,8 +35,8 @@ const UploadOrEditViral = ({
 	title,
 	isEdit,
 	heading1,
-	buttonText
-	// page
+	buttonText,
+	page
 }) => {
 	const [caption, setCaption] = useState('');
 	const [uploadMediaError, setUploadMediaError] = useState('');
@@ -110,25 +112,6 @@ const UploadOrEditViral = ({
 			]);
 		}
 	}, [specificViral]);
-
-	// useEffect(() => {
-	// 	if (isEdit) {
-	// 		setUploadedFiles([
-	// 			{
-	// 				id: makeid(10),
-	// 				fileName: 'Better than Messi',
-	// 				img: 'https://cdni0.trtworld.com/w960/h540/q75/34070_esp20180526ronaldo_1527420747155.JPG',
-	// 				type: 'image'
-	// 			}
-	// 		]);
-	// 		setSelectedLabels([
-	// 			{ id: 1, name: 'CRISTINAAAAA' },
-	// 			{ id: 2, name: 'SIUUUUUU7UUUUUUU' },
-	// 			{ id: 3, name: 'DIL HAI PAKISTANI <3' }
-	// 		]);
-	// 		setCaption('NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO :(');
-	// 	}
-	// }, [isEdit]);
 
 	useEffect(() => {
 		dispatch(getPostLabels());
@@ -343,28 +326,33 @@ const UploadOrEditViral = ({
 	// 	}
 	// };
 
-	// const deletePost = async (id) => {
-	// 	setDeleteBtnStatus(true);
-	// 	try {
-	// 		const result = await axios.post(
-	// 			`${process.env.REACT_APP_API_ENDPOINT}/post/delete-post`,
-	// 			{
-	// 				post_id: id
-	// 			}
-	// 		);
-	// 		if (result?.data?.status_code === 200) {
-	// 			toast.success('Post has been deleted!');
-	// 			handleClose();
+	const deleteViral = async (id) => {
+		setDeleteBtnStatus(true);
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/viral/delete-viral`,
+				{
+					viral_id: id
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success('Viral has been deleted!');
+				handleClose();
 
-	// 			//setting a timeout for getting post after delete.
-	// 			dispatch(getPosts({ page }));
-	// 		}
-	// 	} catch (e) {
-	// 		toast.error('Failed to delete post!');
-	// 		setDeleteBtnStatus(false);
-	// 		console.log(e);
-	// 	}
-	// };
+				//setting a timeout for getting post after delete.
+				dispatch(getAllViralsApi({ page }));
+			}
+		} catch (e) {
+			toast.error('Failed to delete Viral!');
+			setDeleteBtnStatus(false);
+			console.log(e);
+		}
+	};
 
 	const [newLabels, setNewLabels] = useState([]);
 
@@ -742,9 +730,9 @@ const UploadOrEditViral = ({
 										disabled={deleteBtnStatus}
 										button2={isEdit ? true : false}
 										onClick={() => {
-											// if (!deleteBtnStatus) {
-											// 	deletePost(specificViral?.id);
-											// }
+											if (!deleteBtnStatus) {
+												deleteViral(specificViral?.id);
+											}
 										}}
 										text={'DELETE VIRAL'}
 									/>
@@ -859,8 +847,8 @@ UploadOrEditViral.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
-	buttonText: PropTypes.string.isRequired
-	//page: PropTypes.string
+	buttonText: PropTypes.string.isRequired,
+	page: PropTypes.string
 };
 
 export default UploadOrEditViral;
