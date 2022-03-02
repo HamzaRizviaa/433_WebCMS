@@ -846,7 +846,7 @@ const UploadOrEditPost = ({
 								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete
 									disabled={isEdit}
-									getOptionLabel={(option) => option.name} // name out of array of strings
+									getOptionLabel={(option) => option.name} // setSelectedLabels name out of array of strings
 									PaperComponent={(props) => {
 										setDisableDropdown(false);
 										return (
@@ -889,6 +889,7 @@ const UploadOrEditPost = ({
 													(t) => t.name.toLowerCase() === v.name.toLowerCase()
 												) === i
 										);
+										console.log(selectedLabels, newValue);
 										setSelectedLabels([...newLabels]);
 									}}
 									popupIcon={''}
@@ -941,7 +942,10 @@ const UploadOrEditPost = ({
 										/>
 									)}
 									renderOption={(props, option, state) => {
+										// console.log(option, 'option');
 										if (option.id == null) {
+											// if (option.filter(option=>option.name===option.name))
+
 											return (
 												<li
 													{...props}

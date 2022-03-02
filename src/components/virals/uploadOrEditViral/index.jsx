@@ -50,7 +50,7 @@ const UploadOrEditViral = ({
 	const [captionError, setCaptionError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
-	const [isLoadingCreatePost, setIsLoadingCreatePost] = useState(false);
+	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [previewBool, setPreviewBool] = useState(false);
 	const [postLabels, setPostLabels] = useState([]);
@@ -162,76 +162,88 @@ const UploadOrEditViral = ({
 		}
 	}, [acceptedFiles]);
 
-	// const uploadFileToServer = async (uploadedFile) => {
-	// 	try {
-	// 		const result = await axios.post(
-	// 			`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
-	// 			{
-	// 				file_type: uploadedFile.fileExtension,
-	// 				parts: 1
-	// 			}
-	// 		);
+	const uploadFileToServer = async (uploadedFile) => {
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
+				{
+					file_type: uploadedFile.fileExtension,
+					parts: 1
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
 
-	// 		if (result?.data?.data?.url) {
-	// 			const _result = await axios.put(
-	// 				result?.data?.data?.url,
-	// 				uploadedFile.file,
-	// 				//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
-	// 				{
-	// 					headers: { 'Content-Type': uploadedFile.mime_type }
-	// 				}
-	// 			);
-	// 			const frame = captureVideoFrame('my-video', 'png');
-	// 			if (result?.data?.data?.video_thumbnail_url) {
-	// 				await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
-	// 					headers: { 'Content-Type': 'image/png' }
-	// 				});
-	// 			}
-	// 			if (_result?.status === 200) {
-	// 				const uploadResult = await axios.post(
-	// 					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-	// 					{
-	// 						file_name: uploadedFile.file.name,
-	// 						type: 'postlibrary',
-	// 						data: {
-	// 							bucket: 'media',
-	// 							multipart_upload:
-	// 								uploadedFile?.mime_type == 'video/mp4'
-	// 									? [
-	// 											{
-	// 												e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
-	// 												part_number: 1
-	// 											}
-	// 									  ]
-	// 									: ['image'],
-	// 							keys: {
-	// 								image_key: result?.data?.data?.keys?.image_key,
-	// 								video_key: result?.data?.data?.keys?.video_key,
-	// 								audio_key: ''
-	// 							},
-	// 							upload_id:
-	// 								uploadedFile?.mime_type == 'video/mp4'
-	// 									? result?.data?.data?.upload_id
-	// 									: 'image'
-	// 						}
-	// 					}
-	// 				);
-	// 				if (uploadResult?.data?.status_code === 200) {
-	// 					return uploadResult.data.data;
-	// 				} else {
-	// 					throw 'Error';
-	// 				}
-	// 			} else {
-	// 				throw 'Error';
-	// 			}
-	// 		} else {
-	// 			throw 'Error';
-	// 		}
-	// 	} catch (error) {
-	// 		console.log('Error');
-	// 		return null;
-	// 	}
-	// };
+			if (result?.data?.data?.url) {
+				const _result = await axios.put(
+					result?.data?.data?.url,
+					uploadedFile.file,
+					//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
+					{
+						headers: { 'Content-Type': uploadedFile.mime_type }
+					}
+				);
+				const frame = captureVideoFrame('my-video', 'png');
+				if (result?.data?.data?.video_thumbnail_url) {
+					await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
+						headers: { 'Content-Type': 'image/png' }
+					});
+				}
+				if (_result?.status === 200) {
+					const uploadResult = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: uploadedFile.file.name,
+							type: 'virallibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									uploadedFile?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: result?.data?.data?.keys?.image_key,
+									video_key: result?.data?.data?.keys?.video_key,
+									audio_key: ''
+								},
+								upload_id:
+									uploadedFile?.mime_type == 'video/mp4'
+										? result?.data?.data?.upload_id
+										: 'image'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
+						}
+					);
+					if (uploadResult?.data?.status_code === 200) {
+						return uploadResult.data.data;
+					} else {
+						throw 'Error';
+					}
+				} else {
+					throw 'Error';
+				}
+			} else {
+				throw 'Error';
+			}
+		} catch (error) {
+			console.log('Error');
+			return null;
+		}
+	};
 
 	const resetState = () => {
 		setCaption('');
@@ -290,41 +302,50 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	// const createPost = async (id, mediaFiles = []) => {
-	// 	setPostButtonStatus(true);
-	// 	try {
-	// 		const result = await axios.post(
-	// 			`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
-	// 			{
-	// 				caption: caption,
-	// 				orientation_type: dimensionSelect,
-	// 				...(selectedMedia
-	// 					? { media_id: selectedMedia.id }
-	// 					: { media_id: null }),
-	// 				...(isEdit && id ? { post_id: id } : {}),
-	// 				...(!isEdit && selectedLabels.length
-	// 					? { labels: [...selectedLabels] }
-	// 					: {}),
-	// 				...(!isEdit ? { media_files: [...mediaFiles] } : {})
-	// 			}
-	// 		);
-	// 		if (result?.data?.status_code === 200) {
-	// 			toast.success(
-	// 				isEdit ? 'Post has been edited!' : 'Post has been created!'
-	// 			);
-	// 			setIsLoadingCreatePost(false);
-	// 			setPostButtonStatus(false);
-	// 			handleClose();
-	// 			dispatch(getPosts({ page }));
-	// 			dispatch(getPostLabels());
-	// 		}
-	// 	} catch (e) {
-	// 		toast.error(isEdit ? 'Failed to edit post!' : 'Failed to create post!');
-	// 		setIsLoadingCreatePost(false);
-	// 		setPostButtonStatus(false);
-	// 		console.log(e);
-	// 	}
-	// };
+	const createViral = async (id, mediaFiles = []) => {
+		setPostButtonStatus(true);
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
+				{
+					caption: caption,
+					media_url: mediaFiles[0].media_url,
+					file_name: mediaFiles[0].file_name,
+					height: 100,
+					width: 100,
+					user_data: {
+						id: `${getLocalStorageDetails()?.id}`,
+						first_name: `${getLocalStorageDetails()?.first_name}`,
+						last_name: `${getLocalStorageDetails()?.last_name}`
+					},
+					...(isEdit && id ? { viral_id: id } : {}),
+					...(!isEdit && selectedLabels.length
+						? { labels: [...selectedLabels] }
+						: {})
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success(
+					isEdit ? 'Viral has been edited!' : 'Viral has been created!'
+				);
+				setIsLoadingcreateViral(false);
+				setPostButtonStatus(false);
+				handleClose();
+				dispatch(getAllViralsApi({ page }));
+				dispatch(getPostLabels());
+			}
+		} catch (e) {
+			toast.error(isEdit ? 'Failed to edit viral!' : 'Failed to create viral!');
+			setIsLoadingcreateViral(false);
+			setPostButtonStatus(false);
+			console.log(e);
+		}
+	};
 
 	const deleteViral = async (id) => {
 		setDeleteBtnStatus(true);
@@ -397,7 +418,7 @@ const UploadOrEditViral = ({
 			edit={isEdit}
 			viral={true}
 		>
-			<LoadingOverlay active={isLoadingCreatePost} spinner text='Loading...'>
+			<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
 				<div
 					className={`${
 						previewFile != null
@@ -675,10 +696,10 @@ const UploadOrEditViral = ({
 															fontWeight: 700
 														}}
 														onClick={() => {
-															// setSelectedLabels((labels) => [
-															// 	...labels,
-															// 	extraLabel.toUpperCase()
-															// ]);
+															setSelectedLabels((labels) => [
+																...labels,
+																extraLabel.toUpperCase()
+															]);
 														}}
 													/>
 												</li>
@@ -749,24 +770,24 @@ const UploadOrEditViral = ({
 											validateViralBtn();
 										} else {
 											setPostButtonStatus(true);
-											// 	if (isEdit) {
-											// 		createPost(specificViral?.id);
-											// 	} else {
-											// 		setIsLoadingCreatePost(true);
-											// 		let uploadFilesPromiseArray = uploadedFiles.map(
-											// 			async (_file) => {
-											// 				return uploadFileToServer(_file);
-											// 			}
-											// 		);
+											if (isEdit) {
+												createViral(specificViral?.id);
+											} else {
+												setIsLoadingcreateViral(true);
+												let uploadFilesPromiseArray = uploadedFiles.map(
+													async (_file) => {
+														return uploadFileToServer(_file);
+													}
+												);
 
-											// 		Promise.all([...uploadFilesPromiseArray])
-											// 			.then((mediaFiles) => {
-											// 				createPost(null, mediaFiles);
-											// 			})
-											// 			.catch(() => {
-											// 				setIsLoadingCreatePost(false);
-											// 			});
-											// 	}
+												Promise.all([...uploadFilesPromiseArray])
+													.then((mediaFiles) => {
+														createViral(null, mediaFiles);
+													})
+													.catch(() => {
+														setIsLoadingcreateViral(false);
+													});
+											}
 										}
 									}}
 									text={buttonText}
