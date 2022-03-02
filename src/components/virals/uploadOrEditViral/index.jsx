@@ -14,6 +14,7 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { getAllViralsApi } from '../../../pages/ViralLibrary/viralLibararySlice';
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import captureVideoFrame from 'capture-video-frame';
 import Close from '@material-ui/icons/Close';
@@ -21,6 +22,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
 import Chip from '@mui/material/Chip';
 import { Popper, Paper } from '@mui/material';
+import { getLocalStorageDetails } from '../../../utils';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
@@ -33,8 +35,8 @@ const UploadOrEditViral = ({
 	title,
 	isEdit,
 	heading1,
-	buttonText
-	// page
+	buttonText,
+	page
 }) => {
 	const [caption, setCaption] = useState('');
 	const [uploadMediaError, setUploadMediaError] = useState('');
@@ -48,7 +50,7 @@ const UploadOrEditViral = ({
 	const [captionError, setCaptionError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
-	const [isLoadingCreatePost, setIsLoadingCreatePost] = useState(false);
+	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [previewBool, setPreviewBool] = useState(false);
 	const [postLabels, setPostLabels] = useState([]);
@@ -64,7 +66,10 @@ const UploadOrEditViral = ({
 		});
 
 	const labels = useSelector((state) => state.postLibrary.labels);
-
+	const specificViral = useSelector(
+		(state) => state.ViralLibraryStore.specificViral
+	);
+	console.log(specificViral);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -87,58 +92,26 @@ const UploadOrEditViral = ({
 		}
 	}, [labels]);
 
-	// useEffect(() => {
-	// 	if (specificPost) {
-	// 		if (specificPost?.labels) {
-	// 			let _labels = [];
-	// 			specificPost.labels.map((label) =>
-	// 				_labels.push({ id: -1, name: label })
-	// 			);
-	// 			setSelectedLabels(_labels);
-	// 		}
-	// 		setCaption(specificPost.caption);
-	// 		if (specificPost?.medias) {
-	// 			let newFiles = specificPost.medias.map((file) => {
-	// 				if (file.thumbnail_url) {
-	// 					return {
-	// 						fileName: file.file_name,
-	// 						id: makeid(10),
-	// 						url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
-	// 						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.thumbnail_url}`,
-	// 						type: 'video'
-	// 					};
-	// 				} else {
-	// 					return {
-	// 						fileName: file.file_name,
-	// 						id: makeid(10),
-	// 						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
-	// 						type: 'image'
-	// 					};
-	// 				}
-	// 			});
-	// 			setUploadedFiles([...uploadedFiles, ...newFiles]);
-	// 		}
-	// 	}
-	// }, [specificPost]);
-
 	useEffect(() => {
-		if (isEdit) {
+		if (specificViral) {
+			if (specificViral?.labels) {
+				let _labels = [];
+				specificViral.labels.map((label) =>
+					_labels.push({ id: -1, name: label })
+				);
+				setSelectedLabels(_labels);
+			}
+			setCaption(specificViral.caption);
 			setUploadedFiles([
 				{
 					id: makeid(10),
-					fileName: 'Better than Messi',
-					img: 'https://cdni0.trtworld.com/w960/h540/q75/34070_esp20180526ronaldo_1527420747155.JPG',
-					type: 'image'
+					fileName: specificViral?.file_name,
+					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.media_url}`,
+					type: specificViral?.media_type === 'Watch' ? 'video' : 'audio'
 				}
 			]);
-			setSelectedLabels([
-				{ id: 1, name: 'CRISTINAAAAA' },
-				{ id: 2, name: 'SIUUUUUU7UUUUUUU' },
-				{ id: 3, name: 'DIL HAI PAKISTANI <3' }
-			]);
-			setCaption('NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO :(');
 		}
-	}, [isEdit]);
+	}, [specificViral]);
 
 	useEffect(() => {
 		dispatch(getPostLabels());
@@ -189,76 +162,88 @@ const UploadOrEditViral = ({
 		}
 	}, [acceptedFiles]);
 
-	// const uploadFileToServer = async (uploadedFile) => {
-	// 	try {
-	// 		const result = await axios.post(
-	// 			`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
-	// 			{
-	// 				file_type: uploadedFile.fileExtension,
-	// 				parts: 1
-	// 			}
-	// 		);
+	const uploadFileToServer = async (uploadedFile) => {
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
+				{
+					file_type: uploadedFile.fileExtension,
+					parts: 1
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
 
-	// 		if (result?.data?.data?.url) {
-	// 			const _result = await axios.put(
-	// 				result?.data?.data?.url,
-	// 				uploadedFile.file,
-	// 				//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
-	// 				{
-	// 					headers: { 'Content-Type': uploadedFile.mime_type }
-	// 				}
-	// 			);
-	// 			const frame = captureVideoFrame('my-video', 'png');
-	// 			if (result?.data?.data?.video_thumbnail_url) {
-	// 				await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
-	// 					headers: { 'Content-Type': 'image/png' }
-	// 				});
-	// 			}
-	// 			if (_result?.status === 200) {
-	// 				const uploadResult = await axios.post(
-	// 					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-	// 					{
-	// 						file_name: uploadedFile.file.name,
-	// 						type: 'postlibrary',
-	// 						data: {
-	// 							bucket: 'media',
-	// 							multipart_upload:
-	// 								uploadedFile?.mime_type == 'video/mp4'
-	// 									? [
-	// 											{
-	// 												e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
-	// 												part_number: 1
-	// 											}
-	// 									  ]
-	// 									: ['image'],
-	// 							keys: {
-	// 								image_key: result?.data?.data?.keys?.image_key,
-	// 								video_key: result?.data?.data?.keys?.video_key,
-	// 								audio_key: ''
-	// 							},
-	// 							upload_id:
-	// 								uploadedFile?.mime_type == 'video/mp4'
-	// 									? result?.data?.data?.upload_id
-	// 									: 'image'
-	// 						}
-	// 					}
-	// 				);
-	// 				if (uploadResult?.data?.status_code === 200) {
-	// 					return uploadResult.data.data;
-	// 				} else {
-	// 					throw 'Error';
-	// 				}
-	// 			} else {
-	// 				throw 'Error';
-	// 			}
-	// 		} else {
-	// 			throw 'Error';
-	// 		}
-	// 	} catch (error) {
-	// 		console.log('Error');
-	// 		return null;
-	// 	}
-	// };
+			if (result?.data?.data?.url) {
+				const _result = await axios.put(
+					result?.data?.data?.url,
+					uploadedFile.file,
+					//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
+					{
+						headers: { 'Content-Type': uploadedFile.mime_type }
+					}
+				);
+				const frame = captureVideoFrame('my-video', 'png');
+				if (result?.data?.data?.video_thumbnail_url) {
+					await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
+						headers: { 'Content-Type': 'image/png' }
+					});
+				}
+				if (_result?.status === 200) {
+					const uploadResult = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: uploadedFile.file.name,
+							type: 'virallibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									uploadedFile?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: result?.data?.data?.keys?.image_key,
+									video_key: result?.data?.data?.keys?.video_key,
+									audio_key: ''
+								},
+								upload_id:
+									uploadedFile?.mime_type == 'video/mp4'
+										? result?.data?.data?.upload_id
+										: 'image'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
+						}
+					);
+					if (uploadResult?.data?.status_code === 200) {
+						return uploadResult.data.data;
+					} else {
+						throw 'Error';
+					}
+				} else {
+					throw 'Error';
+				}
+			} else {
+				throw 'Error';
+			}
+		} catch (error) {
+			console.log('Error');
+			return null;
+		}
+	};
 
 	const resetState = () => {
 		setCaption('');
@@ -317,64 +302,78 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	// const createPost = async (id, mediaFiles = []) => {
-	// 	setPostButtonStatus(true);
-	// 	try {
-	// 		const result = await axios.post(
-	// 			`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
-	// 			{
-	// 				caption: caption,
-	// 				orientation_type: dimensionSelect,
-	// 				...(selectedMedia
-	// 					? { media_id: selectedMedia.id }
-	// 					: { media_id: null }),
-	// 				...(isEdit && id ? { post_id: id } : {}),
-	// 				...(!isEdit && selectedLabels.length
-	// 					? { labels: [...selectedLabels] }
-	// 					: {}),
-	// 				...(!isEdit ? { media_files: [...mediaFiles] } : {})
-	// 			}
-	// 		);
-	// 		if (result?.data?.status_code === 200) {
-	// 			toast.success(
-	// 				isEdit ? 'Post has been edited!' : 'Post has been created!'
-	// 			);
-	// 			setIsLoadingCreatePost(false);
-	// 			setPostButtonStatus(false);
-	// 			handleClose();
-	// 			dispatch(getPosts({ page }));
-	// 			dispatch(getPostLabels());
-	// 		}
-	// 	} catch (e) {
-	// 		toast.error(isEdit ? 'Failed to edit post!' : 'Failed to create post!');
-	// 		setIsLoadingCreatePost(false);
-	// 		setPostButtonStatus(false);
-	// 		console.log(e);
-	// 	}
-	// };
+	const createViral = async (id, mediaFiles = []) => {
+		setPostButtonStatus(true);
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
+				{
+					...(caption ? { caption: caption } : { caption: '' }),
+					...(!isEdit ? { media_url: mediaFiles[0]?.media_url } : {}),
+					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
+					...(!isEdit ? { height: 100 } : {}),
+					...(!isEdit ? { width: 100 } : {}),
+					user_data: {
+						id: `${getLocalStorageDetails()?.id}`,
+						first_name: `${getLocalStorageDetails()?.first_name}`,
+						last_name: `${getLocalStorageDetails()?.last_name}`
+					},
+					...(isEdit && id ? { viral_id: id } : {}),
+					...(!isEdit && selectedLabels.length
+						? { labels: [...selectedLabels] }
+						: {})
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success(
+					isEdit ? 'Viral has been edited!' : 'Viral has been created!'
+				);
+				setIsLoadingcreateViral(false);
+				setPostButtonStatus(false);
+				handleClose();
+				dispatch(getAllViralsApi({ page }));
+				dispatch(getPostLabels());
+			}
+		} catch (e) {
+			toast.error(isEdit ? 'Failed to edit viral!' : 'Failed to create viral!');
+			setIsLoadingcreateViral(false);
+			setPostButtonStatus(false);
+			console.log(e);
+		}
+	};
 
-	// const deletePost = async (id) => {
-	// 	setDeleteBtnStatus(true);
-	// 	try {
-	// 		const result = await axios.post(
-	// 			`${process.env.REACT_APP_API_ENDPOINT}/post/delete-post`,
-	// 			{
-	// 				post_id: id
-	// 			}
-	// 		);
-	// 		if (result?.data?.status_code === 200) {
-	// 			toast.success('Post has been deleted!');
-	// 			handleClose();
+	const deleteViral = async (id) => {
+		setDeleteBtnStatus(true);
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/viral/delete-viral`,
+				{
+					viral_id: id
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success('Viral has been deleted!');
+				handleClose();
 
-	// 			//setting a timeout for getting post after delete.
-	// 			dispatch(getPosts({ page }));
-	// 		}
-	// 	} catch (e) {
-	// 		toast.error('Failed to delete post!');
-	// 		setDeleteBtnStatus(false);
-	// 		console.log(e);
-	// 	}
-	// };
+				//setting a timeout for getting post after delete.
+				dispatch(getAllViralsApi({ page }));
+			}
+		} catch (e) {
+			toast.error('Failed to delete Viral!');
+			setDeleteBtnStatus(false);
+			console.log(e);
+		}
+	};
 
 	const [newLabels, setNewLabels] = useState([]);
 
@@ -419,7 +418,7 @@ const UploadOrEditViral = ({
 			edit={isEdit}
 			viral={true}
 		>
-			<LoadingOverlay active={isLoadingCreatePost} spinner text='Loading...'>
+			<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
 				<div
 					className={`${
 						previewFile != null
@@ -427,7 +426,7 @@ const UploadOrEditViral = ({
 							: classes.contentWrapper
 					}`}
 				>
-					{/* {specificPostStatus.status === 'loading' ? (
+					{/* {specificViralStatus.status === 'loading' ? (
 						<div className={classes.loaderContainer2}>
 							<CircularProgress className={classes.loader} />
 						</div>
@@ -640,8 +639,9 @@ const UploadOrEditViral = ({
 												fontSize: 14
 											}}
 										>
-											<p>{extraLabel.toUpperCase()}</p>
-											<Button
+											{/* <p>{extraLabel.toUpperCase()}</p> */}
+											<p>No results found</p>
+											{/* <Button
 												text='CREATE NEW LABEL'
 												style={{
 													padding: '3px 12px',
@@ -653,7 +653,7 @@ const UploadOrEditViral = ({
 													// 	extraLabel.toUpperCase()
 													// ]);
 												}}
-											/>
+											/> */}
 										</div>
 									}
 									className={`${classes.autoComplete} ${
@@ -696,10 +696,10 @@ const UploadOrEditViral = ({
 															fontWeight: 700
 														}}
 														onClick={() => {
-															// setSelectedLabels((labels) => [
-															// 	...labels,
-															// 	extraLabel.toUpperCase()
-															// ]);
+															setSelectedLabels((labels) => [
+																...labels,
+																extraLabel.toUpperCase()
+															]);
 														}}
 													/>
 												</li>
@@ -740,9 +740,9 @@ const UploadOrEditViral = ({
 									maxRows={4}
 								/>
 							</div>
-						</div>
 
-						<p className={classes.mediaError}>{captionError}</p>
+							<p className={classes.mediaError}>{captionError}</p>
+						</div>
 
 						<div className={classes.buttonDiv}>
 							{isEdit ? (
@@ -751,9 +751,9 @@ const UploadOrEditViral = ({
 										disabled={deleteBtnStatus}
 										button2={isEdit ? true : false}
 										onClick={() => {
-											// if (!deleteBtnStatus) {
-											// 	deletePost(specificPost?.id);
-											// }
+											if (!deleteBtnStatus) {
+												deleteViral(specificViral?.id);
+											}
 										}}
 										text={'DELETE VIRAL'}
 									/>
@@ -770,24 +770,24 @@ const UploadOrEditViral = ({
 											validateViralBtn();
 										} else {
 											setPostButtonStatus(true);
-											// 	if (isEdit) {
-											// 		createPost(specificPost?.id);
-											// 	} else {
-											// 		setIsLoadingCreatePost(true);
-											// 		let uploadFilesPromiseArray = uploadedFiles.map(
-											// 			async (_file) => {
-											// 				return uploadFileToServer(_file);
-											// 			}
-											// 		);
+											if (isEdit) {
+												createViral(specificViral?.id);
+											} else {
+												setIsLoadingcreateViral(true);
+												let uploadFilesPromiseArray = uploadedFiles.map(
+													async (_file) => {
+														return uploadFileToServer(_file);
+													}
+												);
 
-											// 		Promise.all([...uploadFilesPromiseArray])
-											// 			.then((mediaFiles) => {
-											// 				createPost(null, mediaFiles);
-											// 			})
-											// 			.catch(() => {
-											// 				setIsLoadingCreatePost(false);
-											// 			});
-											// 	}
+												Promise.all([...uploadFilesPromiseArray])
+													.then((mediaFiles) => {
+														createViral(null, mediaFiles);
+													})
+													.catch(() => {
+														setIsLoadingcreateViral(false);
+													});
+											}
 										}
 									}}
 									text={buttonText}
@@ -868,8 +868,8 @@ UploadOrEditViral.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
-	buttonText: PropTypes.string.isRequired
-	//page: PropTypes.string
+	buttonText: PropTypes.string.isRequired,
+	page: PropTypes.string
 };
 
 export default UploadOrEditViral;

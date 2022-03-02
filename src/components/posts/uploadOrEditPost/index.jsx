@@ -63,6 +63,8 @@ const UploadOrEditPost = ({
 	const [selectedLabels, setSelectedLabels] = useState([]);
 	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
 	const [mediaLabelColor, setMediaLabelColor] = useState('#ffffff');
+	const [captionColor, setCaptionColor] = useState('#ffffff');
+	const [captionError, setCaptionError] = useState('');
 	const [labelColor, setLabelColor] = useState('#ffffff');
 	const [labelError, setLabelError] = useState('');
 	const [selectedMedia, setSelectedMedia] = useState(null);
@@ -141,6 +143,7 @@ const UploadOrEditPost = ({
 	}, [labels]);
 
 	useEffect(() => {
+		// specific post data get ,api / edit
 		if (specificPost) {
 			if (specificPost?.labels) {
 				let _labels = [];
@@ -424,6 +427,14 @@ const UploadOrEditPost = ({
 				setMediaError('');
 			}, [5000]);
 		}
+		if (!caption) {
+			setCaptionColor('#ff355a');
+			setCaptionError('This field is required');
+			setTimeout(() => {
+				setCaptionColor('#ffffff');
+				setCaptionError('');
+			}, [5000]);
+		}
 	};
 
 	const createPost = async (id, mediaFiles = []) => {
@@ -547,12 +558,14 @@ const UploadOrEditPost = ({
 
 	const postBtnDisabled =
 		!uploadedFiles.length ||
+		!caption ||
 		postButtonStatus ||
 		(value && !selectedMedia) ||
 		selectedLabels.length < 10;
 
 	const editBtnDisabled =
 		postButtonStatus ||
+		!caption ||
 		(value && !selectedMedia) ||
 		(specificPost?.caption === caption.trim() &&
 			specificPost?.media_id == selectedMedia?.id);
@@ -833,7 +846,7 @@ const UploadOrEditPost = ({
 								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete
 									disabled={isEdit}
-									getOptionLabel={(option) => option.name} // name out of array of strings
+									getOptionLabel={(option) => option.name} // setSelectedLabels name out of array of strings
 									PaperComponent={(props) => {
 										setDisableDropdown(false);
 										return (
@@ -876,6 +889,7 @@ const UploadOrEditPost = ({
 													(t) => t.name.toLowerCase() === v.name.toLowerCase()
 												) === i
 										);
+										//console.log(selectedLabels, newValue);
 										setSelectedLabels([...newLabels]);
 									}}
 									popupIcon={''}
@@ -890,7 +904,8 @@ const UploadOrEditPost = ({
 												fontSize: 14
 											}}
 										>
-											<p>{extraLabel.toUpperCase()}</p>
+											{/* <p>{extraLabel.toUpperCase()}</p> */}
+											<p>No results found</p>
 											{/* <Button
 												text='CREATE NEW LABEL'
 												style={{
@@ -928,6 +943,8 @@ const UploadOrEditPost = ({
 									)}
 									renderOption={(props, option, state) => {
 										if (option.id == null) {
+											// if (option.filter(option=>option.name===option.name))
+
 											return (
 												<li
 													{...props}
@@ -972,7 +989,7 @@ const UploadOrEditPost = ({
 							</div>
 							<p className={classes.mediaError}>{labelError}</p>
 							<div className={classes.captionContainer}>
-								<h6>CAPTION</h6>
+								<h6 style={{ color: captionColor }}>CAPTION</h6>
 								<TextField
 									value={caption}
 									onChange={(e) => setCaption(e.target.value)}
@@ -989,6 +1006,8 @@ const UploadOrEditPost = ({
 									maxRows={4}
 								/>
 							</div>
+							<p className={classes.mediaError}>{captionError}</p>
+
 							<div className={classes.postMediaContainer}>
 								<div className={classes.postMediaHeader}>
 									<h5>Link post to media</h5>

@@ -3,7 +3,7 @@ import classes from './_banners.module.scss';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import BannerRows from './BannerRows';
 import Button from '../button';
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 
 export default function Banners() {
 	const [validateRow, setValidateRow] = useState('');
@@ -55,28 +55,39 @@ export default function Banners() {
 		);
 
 		setBannerData(items);
-
+		clickBanner();
 		// handleBannerPositionAndFirstBanner();
 	};
 	// - autocomplete ends
 
-	useEffect(() => {
-		const firstrowcheck = handleCheckFirstRow();
-		const validateRow = handleBannerPositionAndFirstBanner();
-		console.log(
-			firstrowcheck.rowId,
-			firstrowcheck.flag,
-			firstrowcheck.errMsg,
-			'flag value firstrowcheck'
-		);
+	// useEffect(() => {
+	// 	const firstrowcheck = handleCheckFirstRow();
+	// 	const validateRow = handleBannerPositionAndFirstBanner();
+	// 	setFirstCheck(firstrowcheck);
+	// 	setValidateRow(validateRow);
+	// }, [bannerData]);
 
+	const clickBanner = () => {
+		console.log('click banner');
+		const firstrowcheck = handleCheckFirstRow();
+		const validateRow =
+			handleCheckFirstRow() && handleBannerPositionAndFirstBanner();
+		console.log(firstrowcheck, validateRow, 'flags');
 		setFirstCheck(firstrowcheck);
-		setValidateRow(validateRow);
-	}, [bannerData]);
+		firstrowcheck.errMsg
+			? setFirstCheck(firstrowcheck)
+			: setValidateRow(validateRow);
+	};
 
 	const handleCheckFirstRow = () => {
 		let errValidate = { flag: '', rowId: undefined, errMsg: '' };
 		if (!bannerData[0].bannerType ^ !bannerData[0].selectedMedia) {
+			errValidate = {
+				flag: true,
+				rowId: 0,
+				errMsg: 'The first top banner should always be filled. '
+			};
+		} else if (!bannerData[0].bannerType || !bannerData[0].selectedMedia) {
 			errValidate = {
 				flag: true,
 				rowId: 0,
@@ -92,8 +103,6 @@ export default function Banners() {
 		// min 1 , can't set 0
 		// disabled = true = GREY
 		// noy disables = false = YELLOW
-
-		// if (!errValidate.flag) {
 		for (let i = 4; i >= 1; i--) {
 			// start from max to min
 			if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
@@ -105,7 +114,7 @@ export default function Banners() {
 					errValidate = {
 						flag: true,
 						rowId: i - 1,
-						errMsg: 'The banner ' + i + ' cannot be empty.'
+						errMsg: 'The banner cannot be empty.'
 					};
 					//not return true
 					break;
@@ -121,7 +130,6 @@ export default function Banners() {
 				break;
 			}
 		}
-		// }
 
 		return errValidate;
 	};
@@ -155,7 +163,9 @@ export default function Banners() {
 														index === validateRow.rowId && validateRow.errMsg
 													}
 													firstrow={
-														index === firstCheck.rowId && firstCheck.errMsg
+														index === validateRow.rowId && validateRow.errMsg
+															? ''
+															: index === firstCheck.rowId && firstCheck.errMsg
 													}
 													data={data}
 													setBannerData={setBannerData}
@@ -180,7 +190,9 @@ export default function Banners() {
 							? validateRow.flag
 							: true
 					}
-					onClick={() => {}}
+					onClick={() => {
+						clickBanner();
+					}}
 					text={'PUBLISH HOME BANNERS'}
 				/>
 			</div>

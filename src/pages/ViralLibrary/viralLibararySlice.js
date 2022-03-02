@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-import PostLibraryService from './postLibraryService';
+import ViralLibraryService from './viralLibraryService';
 
-export const getPosts = createAsyncThunk(
-	'postLibary/getPosts',
+export const getAllViralsApi = createAsyncThunk(
+	'viralLibary/getAllViralsApi',
 	async ({
 		page,
 		order_type,
@@ -13,9 +13,9 @@ export const getPosts = createAsyncThunk(
 		endDate,
 		fromCalendar = false
 	}) => {
-		let endPoint = `post/all-posts?limit=20&page=1`;
+		let endPoint = `viral/all-virals?limit=20&page=1`;
 		if (page) {
-			endPoint = `post/all-posts?limit=20&page=${page}`;
+			endPoint = `viral/all-virals?limit=20&page=${page}`;
 		}
 		if (order_type && sortby) {
 			endPoint += `&order_type=${order_type}&sort_by=${sortby}`;
@@ -26,17 +26,16 @@ export const getPosts = createAsyncThunk(
 		if (startDate && endDate) {
 			endPoint += `&start_date=${startDate}&end_date=${endDate}`;
 		}
-		const result = await PostLibraryService.getPostsApi(endPoint);
-		//console.log(result.data.data);
+		const result = await ViralLibraryService.getAllViralsServiceCall(endPoint);
+		console.log(result, 'virals api');
 		return { ...result.data.data, fromCalendar };
 	}
 );
-
-export const getPostLabels = createAsyncThunk(
-	'postLibary/getPostLabels',
+export const getLabels = createAsyncThunk(
+	'viralLibary/getViralsLabels',
 	async () => {
-		const result = await PostLibraryService.getPostLabelsApi();
-		// console.log(result);
+		const result = await ViralLibraryService.getLabelsApi();
+		console.log(result);
 		if (result?.data?.data?.length > 0) {
 			return result.data.data;
 		} else {
@@ -45,10 +44,10 @@ export const getPostLabels = createAsyncThunk(
 	}
 );
 
-export const getSpecificPost = createAsyncThunk(
-	'editButton/getSpecificPost', //khud se , not url , url is in services
+export const getSpecificViral = createAsyncThunk(
+	'editButton/getSpecificViral', // not url , url is in services
 	async (id) => {
-		const response = await PostLibraryService.getSpecificPostApi(id);
+		const response = await ViralLibraryService.getSpecificViralApi(id);
 		if (response?.data?.data) {
 			return response.data.data;
 		} else {
@@ -56,13 +55,12 @@ export const getSpecificPost = createAsyncThunk(
 		}
 	}
 );
-
-export const postLibrarySlice = createSlice({
-	name: 'postLibrary',
+export const viralLibararySlice = createSlice({
+	name: 'viralLibrary',
 	initialState: {
 		labels: [],
-		posts: [], // all posts
-		specificPost: [], //specific posts
+		virals: [], //get api - all virals state
+		specificViral: [],
 		openUploadPost: false,
 		totalRecords: 0,
 		noResultStatus: false,
@@ -77,13 +75,12 @@ export const postLibrarySlice = createSlice({
 		}
 	},
 	extraReducers: {
-		//redux comes up
-		[getPosts.pending]: (state) => {
+		[getAllViralsApi.pending]: (state) => {
 			state.status = 'loading';
 		},
-		[getPosts.fulfilled]: (state, action) => {
-			state.posts =
-				action.payload.data.length > 0 ? action.payload.data : state.posts;
+		[getAllViralsApi.fulfilled]: (state, action) => {
+			state.virals =
+				action.payload.data.length > 0 ? action.payload.data : state.virals;
 			state.totalRecords =
 				action.payload.data.length > 0
 					? action.payload.total
@@ -96,27 +93,27 @@ export const postLibrarySlice = createSlice({
 				state.noResultStatus = action.payload.data.length > 0 ? false : true;
 			}
 		},
-		[getPosts.rejected]: (state) => {
+		[getAllViralsApi.rejected]: (state) => {
 			state.status = 'failed';
 		},
-		[getPostLabels.fulfilled]: (state, action) => {
+		[getLabels.fulfilled]: (state, action) => {
 			state.labels = action.payload;
 		},
 
-		[getSpecificPost.pending]: (state) => {
+		[getSpecificViral.pending]: (state) => {
 			state.status = 'loading';
 		},
-		[getSpecificPost.fulfilled]: (state, action) => {
-			state.specificPost = action.payload;
+		[getSpecificViral.fulfilled]: (state, action) => {
+			state.specificViral = action.payload;
 			state.status = 'success';
 		},
-		[getSpecificPost.rejected]: (state) => {
+		[getSpecificViral.rejected]: (state) => {
 			state.status = 'failed';
 		}
 	}
 });
 
 export const { resetCalendarError, resetNoResultStatus } =
-	postLibrarySlice.actions;
+	viralLibararySlice.actions;
 
-export default postLibrarySlice.reducer;
+export default viralLibararySlice.reducer;

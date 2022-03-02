@@ -26,11 +26,23 @@ import { Markup } from 'interweave';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 // import './_calender.scss';
 
+import {
+	getAllViralsApi,
+	resetCalendarError,
+	resetNoResultStatus,
+	getSpecificViral
+} from './viralLibararySlice';
+
 const ViralLibrary = () => {
 	// Selectors
 	// const posts = useSelector((state) => state.postLibrary.posts);
-	const totalRecords = 200;
-	// const totalRecords = useSelector((state) => state.postLibrary.totalRecords);
+	const virals = useSelector((state) => state.ViralLibraryStore.virals);
+	console.log(virals, 'viral data');
+	// const totalRecords = 200;
+	const totalRecords = useSelector(
+		(state) => state.ViralLibraryStore.totalRecords
+	);
+	console.log(totalRecords, ' totalRecords viral data');
 	const noResultStatus = useSelector(
 		(state) => state.postLibrary.noResultStatus
 	);
@@ -72,25 +84,25 @@ const ViralLibrary = () => {
 							e.preventDefault();
 							e.stopPropagation();
 							if (startDate && endDate) {
-								// dispatch(
-								// 	getQuizess({
-								// 		q: search,
-								// 		page,
-								// 		startDate,
-								// 		endDate,
-								// 		fromCalendar: true,
-								// 		...sortState
-								// 	})
-								// );
+								dispatch(
+									getAllViralsApi({
+										q: search,
+										page,
+										startDate,
+										endDate,
+										fromCalendar: true,
+										...sortState
+									})
+								);
 							} else {
-								// dispatch(
-								// 	getQuizess({
-								// 		q: search,
-								// 		page,
-								// 		fromCalendar: true,
-								// 		...sortState
-								// 	})
-								// );
+								dispatch(
+									getAllViralsApi({
+										q: search,
+										page,
+										fromCalendar: true,
+										...sortState
+									})
+								);
 							}
 						}}
 					/>
@@ -174,7 +186,7 @@ const ViralLibrary = () => {
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			formatter: (content, row) => {
-				console.log(content, row);
+				// console.log(content, row);
 				return (
 					<div className={classes.mediaWrapper}>
 						<Tooltip
@@ -298,77 +310,10 @@ const ViralLibrary = () => {
 		}
 	];
 
-	const data = [
-		{
-			media:
-				'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-			thumbnail_url:
-				'https://cdni0.trtworld.com/w960/h540/q75/34070_esp20180526ronaldo_1527420747155.JPG',
-			post_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 22',
-			user: 'Lorem Ipsum',
-			last_edit: '2021-11-25T17:00:08.000Z',
-			file_name: 'special Tom & Jerry.mp4'
-		},
-		{
-			media:
-				'https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-water-1164-large.mp4',
-			thumbnail_url:
-				'https://images.pexels.com/photos/4622423/pexels-photo-4622423.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
-			post_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 22',
-			user: 'Lorem Ipsum',
-			last_edit: '2021-11-25T17:00:08.000Z',
-			file_name: 'special Tom & Jerry.mp4'
-		}
-		// {
-		// 	viral: 'Who will win the El Classico?',
-		// 	post_date: '2021-11-25T17:00:08.000Z',
-		// 	labels: 'Label1 , Label 2',
-		// 	user: 'Lorem Ipsum',
-		// 	last_edit: '2021-11-25T17:00:08.000Z'
-		// },
-		// {
-		// 	viral: 'Who will win the El Classico?',
-		// 	post_date: '2021-11-25T17:00:08.000Z',
-		// 	labels: 'Label1 , Label 2',
-		// 	user: 'Lorem Ipsum',
-		// 	last_edit: '2021-11-25T17:00:08.000Z'
-		// },
-		// {
-		// 	viral: 'Who will win the El Classico?',
-		// 	post_date: '2021-11-25T17:00:08.000Z',
-		// 	labels: 'Label1 , Label 2',
-		// 	user: 'Lorem Ipsum',
-		// 	last_edit: '2021-11-25T17:00:08.000Z'
-		// },
-		// {
-		// 	viral: 'Who will win the El Classico?',
-		// 	post_date: '2021-11-25T17:00:08.000Z',
-		// 	labels: 'Label1 , Label 2',
-		// 	user: 'Lorem Ipsum',
-		// 	last_edit: '2021-11-25T17:00:08.000Z'
-		// },
-		// {
-		// 	viral: 'Who will win the El Classico?',
-		// 	post_date: '2021-11-25T17:00:08.000Z',
-		// 	labels: 'Label1 , Label 2',
-		// 	user: 'Lorem Ipsum',
-		// 	last_edit: '2021-11-25T17:00:08.000Z'
-		// },
-		// {
-		// 	viral: 'Who will win the El Classico?',
-		// 	post_date: '2021-11-25T17:00:08.000Z',
-		// 	labels: 'Label1 , Label 2',
-		// 	user: 'Lorem Ipsum',
-		// 	last_edit: '2021-11-25T17:00:08.000Z'
-		// }
-	];
-
 	const tableRowEvents = {
 		onClick: (e, row) => {
 			// if (!edit) {
-			// dispatch(getSpecificPost(row.id));
+			dispatch(getSpecificViral(row.id));
 			setEdit(true);
 			setShowSlider(true);
 			// setTimeout(() => {
@@ -384,50 +329,50 @@ const ViralLibrary = () => {
 	};
 
 	useEffect(() => {
-		// if (sortState.sortby && sortState.order_type && !search) {
-		// 	dispatch(
-		// 		getQuizess({
-		// 			page,
-		// 			startDate: formatDate(dateRange[0]),
-		// 			endDate: formatDate(dateRange[1]),
-		// 			...sortState
-		// 		})
-		// 	);
-		// }
-		// if (sortState.sortby && sortState.order_type && search) {
-		// 	dispatch(
-		// 		getQuizess({
-		// 			q: search,
-		// 			startDate: formatDate(dateRange[0]),
-		// 			endDate: formatDate(dateRange[1]),
-		// 			page,
-		// 			...sortState
-		// 		})
-		// 	);
-		// }
+		if (sortState.sortby && sortState.order_type && !search) {
+			dispatch(
+				getAllViralsApi({
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
+		if (sortState.sortby && sortState.order_type && search) {
+			dispatch(
+				getAllViralsApi({
+					q: search,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					page,
+					...sortState
+				})
+			);
+		}
 	}, [sortState]);
 
 	useEffect(() => {
-		// if (search) {
-		// 	dispatch(
-		// 		getQuizess({
-		// 			q: search,
-		// 			page,
-		// 			startDate: formatDate(dateRange[0]),
-		// 			endDate: formatDate(dateRange[1]),
-		// 			...sortState
-		// 		})
-		// 	);
-		// } else {
-		// 	dispatch(
-		// 		getQuizess({
-		// 			page,
-		// 			startDate: formatDate(dateRange[0]),
-		// 			endDate: formatDate(dateRange[1]),
-		// 			...sortState
-		// 		})
-		// 	);
-		// }
+		if (search) {
+			dispatch(
+				getAllViralsApi({
+					q: search,
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		} else {
+			dispatch(
+				getAllViralsApi({
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
 	}, [page]);
 
 	useEffect(() => {
@@ -435,7 +380,7 @@ const ViralLibrary = () => {
 			setNoResultBorder('#FF355A');
 			setNoResultError('No Results Found');
 			setTimeout(() => {
-				// dispatch(resetNoResultStatus());
+				dispatch(resetNoResultStatus());
 				setNoResultBorder('#404040');
 				setNoResultError('');
 			}, [5000]);
@@ -447,7 +392,7 @@ const ViralLibrary = () => {
 			setNoResultCalendarBorder('#FF355A');
 			setNoResultCalendarError('No Results Found');
 			setTimeout(() => {
-				// dispatch(resetCalendarError());
+				dispatch(resetCalendarError());
 				setNoResultCalendarBorder('#404040');
 				setNoResultCalendarError('');
 			}, [5000]);
@@ -460,8 +405,8 @@ const ViralLibrary = () => {
 			setNoResultError('');
 			setNoResultCalendarBorder('#404040');
 			setNoResultCalendarError('');
-			// dispatch(resetCalendarError());
-			// dispatch(resetNoResultStatus());
+			dispatch(resetCalendarError());
+			dispatch(resetNoResultStatus());
 		};
 	}, []);
 
@@ -485,26 +430,26 @@ const ViralLibrary = () => {
 							value={search}
 							onKeyPress={(e) => {
 								console.log(e, 'on ky press');
-								// if (e.key === 'Enter' && search) {
-								// 	dispatch(
-								// 		getQuizess({
-								// 			q: search,
-								// 			page,
-								// 			startDate: formatDate(dateRange[0]),
-								// 			endDate: formatDate(dateRange[1]),
-								// 			...sortState
-								// 		})
-								// 	);
-								// } else if (e.key === 'Enter' && !search) {
-								// 	dispatch(
-								// 		getQuizess({
-								// 			page,
-								// 			startDate: formatDate(dateRange[0]),
-								// 			endDate: formatDate(dateRange[1]),
-								// 			...sortState
-								// 		})
-								// 	);
-								// }
+								if (e.key === 'Enter' && search) {
+									dispatch(
+										getAllViralsApi({
+											q: search,
+											page,
+											startDate: formatDate(dateRange[0]),
+											endDate: formatDate(dateRange[1]),
+											...sortState
+										})
+									);
+								} else if (e.key === 'Enter' && !search) {
+									dispatch(
+										getAllViralsApi({
+											page,
+											startDate: formatDate(dateRange[0]),
+											endDate: formatDate(dateRange[1]),
+											...sortState
+										})
+									);
+								}
 							}}
 							onChange={(e) => {
 								setSearch(e.target.value);
@@ -520,26 +465,26 @@ const ViralLibrary = () => {
 										<Search
 											onClick={() => {
 												console.log('search onclick');
-												// if (search) {
-												// 	dispatch(
-												// 		getQuizess({
-												// 			q: search,
-												// 			page,
-												// 			startDate: formatDate(dateRange[0]),
-												// 			endDate: formatDate(dateRange[1]),
-												// 			...sortState
-												// 		})
-												// 	);
-												// } else {
-												// 	dispatch(
-												// 		getQuizess({
-												// 			page,
-												// 			startDate: formatDate(dateRange[0]),
-												// 			endDate: formatDate(dateRange[1]),
-												// 			...sortState
-												// 		})
-												// 	);
-												// }
+												if (search) {
+													dispatch(
+														getAllViralsApi({
+															q: search,
+															page,
+															startDate: formatDate(dateRange[0]),
+															endDate: formatDate(dateRange[1]),
+															...sortState
+														})
+													);
+												} else {
+													dispatch(
+														getAllViralsApi({
+															page,
+															startDate: formatDate(dateRange[0]),
+															endDate: formatDate(dateRange[1]),
+															...sortState
+														})
+													);
+												}
 											}}
 											className={classes.searchIcon}
 										/>
@@ -567,7 +512,7 @@ const ViralLibrary = () => {
 				</div>
 			</div>
 			<div className={classes.tableContainer}>
-				<Table rowEvents={tableRowEvents} columns={columns} data={data} />
+				<Table rowEvents={tableRowEvents} columns={columns} data={virals} />
 			</div>
 
 			<div className={classes.paginationRow}>

@@ -9,7 +9,7 @@ export const useStyles = makeStyles(() => ({
 			borderRadius: '8px',
 			padding: '6px 0px'
 		},
-		'& button': {
+		'& .TabUnstyled-root': {
 			width: '49%',
 			backgroundColor: '#404040',
 			color: '#ffffff !important',
