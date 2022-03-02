@@ -141,6 +141,7 @@ const UploadOrEditPost = ({
 	}, [labels]);
 
 	useEffect(() => {
+		// specific post data get ,api / edit
 		if (specificPost) {
 			if (specificPost?.labels) {
 				let _labels = [];

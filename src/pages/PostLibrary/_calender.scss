@@ -135,8 +135,10 @@
 	}
 }
 .react-datepicker__close-icon {
-	top: -1px !important;
-	right: 35px !important;
+	// top: -1px !important;
+	// right: 35px !important;
+	top: 0px !important;
+	right: 50px !important;
 	&::after {
 		background-color: #ffff00 !important;
 		color: black !important;
