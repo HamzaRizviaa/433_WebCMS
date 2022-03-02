@@ -36,8 +36,8 @@ import {
 const ViralLibrary = () => {
 	// Selectors
 	// const posts = useSelector((state) => state.postLibrary.posts);
-	const viralData = useSelector((state) => state.ViralLibraryStore.virals);
-	console.log(viralData, 'viral data');
+	const virals = useSelector((state) => state.ViralLibraryStore.virals);
+	console.log(virals, 'viral data');
 	// const totalRecords = 200;
 	const totalRecords = useSelector(
 		(state) => state.ViralLibraryStore.totalRecords
@@ -512,7 +512,7 @@ const ViralLibrary = () => {
 				</div>
 			</div>
 			<div className={classes.tableContainer}>
-				<Table rowEvents={tableRowEvents} columns={columns} data={viralData} />
+				<Table rowEvents={tableRowEvents} columns={columns} data={virals} />
 			</div>
 
 			<div className={classes.paginationRow}>

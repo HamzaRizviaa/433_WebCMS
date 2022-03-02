@@ -60,7 +60,7 @@ export const viralLibararySlice = createSlice({
 	initialState: {
 		labels: [],
 		virals: [], //get api - all virals state
-		specificPost: [],
+		specificViral: [],
 		openUploadPost: false,
 		totalRecords: 0,
 		noResultStatus: false,
@@ -104,7 +104,7 @@ export const viralLibararySlice = createSlice({
 			state.status = 'loading';
 		},
 		[getSpecificViral.fulfilled]: (state, action) => {
-			state.specificPost = action.payload;
+			state.specificViral = action.payload;
 			state.status = 'success';
 		},
 		[getSpecificViral.rejected]: (state) => {

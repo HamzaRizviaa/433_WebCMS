@@ -64,7 +64,10 @@ const UploadOrEditViral = ({
 		});
 
 	const labels = useSelector((state) => state.postLibrary.labels);
-
+	const specificViral = useSelector(
+		(state) => state.ViralLibraryStore.specificViral
+	);
+	console.log(specificViral);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -87,58 +90,45 @@ const UploadOrEditViral = ({
 		}
 	}, [labels]);
 
-	// useEffect(() => {
-	// 	if (specificPost) {
-	// 		if (specificPost?.labels) {
-	// 			let _labels = [];
-	// 			specificPost.labels.map((label) =>
-	// 				_labels.push({ id: -1, name: label })
-	// 			);
-	// 			setSelectedLabels(_labels);
-	// 		}
-	// 		setCaption(specificPost.caption);
-	// 		if (specificPost?.medias) {
-	// 			let newFiles = specificPost.medias.map((file) => {
-	// 				if (file.thumbnail_url) {
-	// 					return {
-	// 						fileName: file.file_name,
-	// 						id: makeid(10),
-	// 						url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
-	// 						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.thumbnail_url}`,
-	// 						type: 'video'
-	// 					};
-	// 				} else {
-	// 					return {
-	// 						fileName: file.file_name,
-	// 						id: makeid(10),
-	// 						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
-	// 						type: 'image'
-	// 					};
-	// 				}
-	// 			});
-	// 			setUploadedFiles([...uploadedFiles, ...newFiles]);
-	// 		}
-	// 	}
-	// }, [specificPost]);
-
 	useEffect(() => {
-		if (isEdit) {
+		if (specificViral) {
+			if (specificViral?.labels) {
+				let _labels = [];
+				specificViral.labels.map((label) =>
+					_labels.push({ id: -1, name: label })
+				);
+				setSelectedLabels(_labels);
+			}
+			setCaption(specificViral.caption);
 			setUploadedFiles([
 				{
 					id: makeid(10),
-					fileName: 'Better than Messi',
-					img: 'https://cdni0.trtworld.com/w960/h540/q75/34070_esp20180526ronaldo_1527420747155.JPG',
-					type: 'image'
+					fileName: specificViral?.file_name,
+					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.media_url}`,
+					type: specificViral?.media_type === 'Watch' ? 'video' : 'audio'
 				}
 			]);
-			setSelectedLabels([
-				{ id: 1, name: 'CRISTINAAAAA' },
-				{ id: 2, name: 'SIUUUUUU7UUUUUUU' },
-				{ id: 3, name: 'DIL HAI PAKISTANI <3' }
-			]);
-			setCaption('NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO :(');
 		}
-	}, [isEdit]);
+	}, [specificViral]);
+
+	// useEffect(() => {
+	// 	if (isEdit) {
+	// 		setUploadedFiles([
+	// 			{
+	// 				id: makeid(10),
+	// 				fileName: 'Better than Messi',
+	// 				img: 'https://cdni0.trtworld.com/w960/h540/q75/34070_esp20180526ronaldo_1527420747155.JPG',
+	// 				type: 'image'
+	// 			}
+	// 		]);
+	// 		setSelectedLabels([
+	// 			{ id: 1, name: 'CRISTINAAAAA' },
+	// 			{ id: 2, name: 'SIUUUUUU7UUUUUUU' },
+	// 			{ id: 3, name: 'DIL HAI PAKISTANI <3' }
+	// 		]);
+	// 		setCaption('NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO :(');
+	// 	}
+	// }, [isEdit]);
 
 	useEffect(() => {
 		dispatch(getPostLabels());
@@ -427,7 +417,7 @@ const UploadOrEditViral = ({
 							: classes.contentWrapper
 					}`}
 				>
-					{/* {specificPostStatus.status === 'loading' ? (
+					{/* {specificViralStatus.status === 'loading' ? (
 						<div className={classes.loaderContainer2}>
 							<CircularProgress className={classes.loader} />
 						</div>
@@ -753,7 +743,7 @@ const UploadOrEditViral = ({
 										button2={isEdit ? true : false}
 										onClick={() => {
 											// if (!deleteBtnStatus) {
-											// 	deletePost(specificPost?.id);
+											// 	deletePost(specificViral?.id);
 											// }
 										}}
 										text={'DELETE VIRAL'}
@@ -772,7 +762,7 @@ const UploadOrEditViral = ({
 										} else {
 											setPostButtonStatus(true);
 											// 	if (isEdit) {
-											// 		createPost(specificPost?.id);
+											// 		createPost(specificViral?.id);
 											// 	} else {
 											// 		setIsLoadingCreatePost(true);
 											// 		let uploadFilesPromiseArray = uploadedFiles.map(
