@@ -63,6 +63,8 @@ const UploadOrEditPost = ({
 	const [selectedLabels, setSelectedLabels] = useState([]);
 	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
 	const [mediaLabelColor, setMediaLabelColor] = useState('#ffffff');
+	const [captionColor, setCaptionColor] = useState('#ffffff');
+	const [captionError, setCaptionError] = useState('');
 	const [labelColor, setLabelColor] = useState('#ffffff');
 	const [labelError, setLabelError] = useState('');
 	const [selectedMedia, setSelectedMedia] = useState(null);
@@ -425,6 +427,14 @@ const UploadOrEditPost = ({
 				setMediaError('');
 			}, [5000]);
 		}
+		if (!caption) {
+			setCaptionColor('#ff355a');
+			setCaptionError('This field is required');
+			setTimeout(() => {
+				setCaptionColor('#ffffff');
+				setCaptionError('');
+			}, [5000]);
+		}
 	};
 
 	const createPost = async (id, mediaFiles = []) => {
@@ -548,12 +558,14 @@ const UploadOrEditPost = ({
 
 	const postBtnDisabled =
 		!uploadedFiles.length ||
+		!caption ||
 		postButtonStatus ||
 		(value && !selectedMedia) ||
 		selectedLabels.length < 10;
 
 	const editBtnDisabled =
 		postButtonStatus ||
+		!caption ||
 		(value && !selectedMedia) ||
 		(specificPost?.caption === caption.trim() &&
 			specificPost?.media_id == selectedMedia?.id);
@@ -891,7 +903,8 @@ const UploadOrEditPost = ({
 												fontSize: 14
 											}}
 										>
-											<p>{extraLabel.toUpperCase()}</p>
+											{/* <p>{extraLabel.toUpperCase()}</p> */}
+											<p>No results found</p>
 											{/* <Button
 												text='CREATE NEW LABEL'
 												style={{
@@ -973,7 +986,7 @@ const UploadOrEditPost = ({
 							</div>
 							<p className={classes.mediaError}>{labelError}</p>
 							<div className={classes.captionContainer}>
-								<h6>CAPTION</h6>
+								<h6 style={{ color: captionColor }}>CAPTION</h6>
 								<TextField
 									value={caption}
 									onChange={(e) => setCaption(e.target.value)}
@@ -990,6 +1003,8 @@ const UploadOrEditPost = ({
 									maxRows={4}
 								/>
 							</div>
+							<p className={classes.mediaError}>{captionError}</p>
+
 							<div className={classes.postMediaContainer}>
 								<div className={classes.postMediaHeader}>
 									<h5>Link post to media</h5>

@@ -640,8 +640,9 @@ const UploadOrEditViral = ({
 												fontSize: 14
 											}}
 										>
-											<p>{extraLabel.toUpperCase()}</p>
-											<Button
+											{/* <p>{extraLabel.toUpperCase()}</p> */}
+											<p>No results found</p>
+											{/* <Button
 												text='CREATE NEW LABEL'
 												style={{
 													padding: '3px 12px',
@@ -653,7 +654,7 @@ const UploadOrEditViral = ({
 													// 	extraLabel.toUpperCase()
 													// ]);
 												}}
-											/>
+											/> */}
 										</div>
 									}
 									className={`${classes.autoComplete} ${
@@ -740,9 +741,9 @@ const UploadOrEditViral = ({
 									maxRows={4}
 								/>
 							</div>
-						</div>
 
-						<p className={classes.mediaError}>{captionError}</p>
+							<p className={classes.mediaError}>{captionError}</p>
+						</div>
 
 						<div className={classes.buttonDiv}>
 							{isEdit ? (
