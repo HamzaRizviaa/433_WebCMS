@@ -279,7 +279,7 @@ const ViralLibrary = () => {
 							TransitionProps={{ timeout: 600 }}
 							title={
 								<Markup
-									content={tooltipTitle ? row?.file_name : 'a'}
+									content={tooltipTitle ? row?.file_name : ' '}
 									// content={
 									// 	row?.file_name?.includes('...') ? row?.file_name : ''
 									// }
@@ -318,10 +318,9 @@ const ViralLibrary = () => {
 			formatter: (content) => {
 				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
 				return (
-					<Markup
-						className={classes.row}
-						content={`${content[0]} ${secondLabel}`}
-					/>
+					<div className={classes.labelsWrapper}>
+						{`${content[0]} ${secondLabel}`}
+					</div>
 				);
 			}
 		},

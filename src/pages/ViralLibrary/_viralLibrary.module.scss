@@ -32,13 +32,19 @@
 	margin-left: 0.5rem;
 	div {
 		//max-width: 100%;
-		max-width: 60%;
+		max-width: 55%;
 		text-overflow: ellipsis;
 		overflow: hidden;
 		span {
 			white-space: nowrap;
 		}
 	}
+}
+.labelsWrapper {
+	max-width: 60%;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 .mediaIcon {

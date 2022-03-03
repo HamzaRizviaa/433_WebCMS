@@ -58,7 +58,10 @@ const UploadOrEditViral = ({
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
-
+	// const ref = useRef(null);
+	// useEffect(() => {
+	// 	console.log('width', ref.current ? ref.current.offsetWidth : 0);
+	// }, [ref.current]);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png, video/mp4',
@@ -69,7 +72,6 @@ const UploadOrEditViral = ({
 	const specificViral = useSelector(
 		(state) => state.ViralLibraryStore.specificViral
 	);
-	console.log(specificViral);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -161,6 +163,7 @@ const UploadOrEditViral = ({
 			setDropZoneBorder('#ffff00');
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
+				// readImageFile(file);
 				return {
 					id: id,
 					fileName: file.name,
@@ -174,6 +177,21 @@ const UploadOrEditViral = ({
 			setUploadedFiles([...uploadedFiles, ...newFiles]);
 		}
 	}, [acceptedFiles]);
+
+	// const readImageFile = (file) => {
+	// 	var reader = new FileReader(); // CREATE AN NEW INSTANCE.
+
+	// 	reader.onload = function (e) {
+	// 		var img = file;
+	// 		img.src = e.target.result;
+
+	// 		img.onload = function () {
+	// 			var w = this.width;
+	// 			var h = this.height;
+	// 			console.log(w, h, 'w h ');
+	// 		};
+	// 	};
+	// };
 
 	const uploadFileToServer = async (uploadedFile) => {
 		try {
@@ -200,6 +218,7 @@ const UploadOrEditViral = ({
 					}
 				);
 				const frame = captureVideoFrame('my-video', 'png');
+				// console.log(frame, 'frame', frame.width);
 				if (result?.data?.data?.video_thumbnail_url) {
 					await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
 						headers: { 'Content-Type': 'image/png' }
@@ -298,7 +317,7 @@ const UploadOrEditViral = ({
 				} more labels in order to post`
 			);
 			setTimeout(() => {
-				setLabelColor('#ffff00');
+				('#ffff00');
 				setLabelError('');
 			}, [5000]);
 		}
@@ -317,6 +336,7 @@ const UploadOrEditViral = ({
 
 	const createViral = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
+		console.log(mediaFiles, 'media files');
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
@@ -324,6 +344,7 @@ const UploadOrEditViral = ({
 					...(caption ? { caption: caption } : { caption: '' }),
 					...(!isEdit ? { media_url: mediaFiles[0]?.media_url } : {}),
 					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
+					...(!isEdit ? { thumbnail_url: mediaFiles[0]?.thumbnail_url } : {}),
 					...(!isEdit ? { height: 100 } : {}),
 					...(!isEdit ? { width: 100 } : {}),
 					user_data: {

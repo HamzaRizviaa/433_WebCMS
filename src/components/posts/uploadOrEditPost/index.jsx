@@ -101,6 +101,11 @@ const UploadOrEditPost = ({
 	// 	return null;
 	// };
 
+	// const ref = useRef(null);
+	// useEffect(() => {
+	// 	console.log('width', ref.current ? ref.current.offsetWidth : 0);
+	// }, [ref.current]);
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png, video/mp4',
@@ -825,7 +830,10 @@ const UploadOrEditPost = ({
 									}}
 								>
 									<div {...getRootProps({ className: classes.dropzone })}>
-										<input {...getInputProps()} />
+										<input
+											{...getInputProps()}
+											// ref={ref}
+										/>
 										<AddCircleOutlineIcon className={classes.addFilesIcon} />
 										<p className={classes.dragMsg}>
 											Click or drag files to this area to upload

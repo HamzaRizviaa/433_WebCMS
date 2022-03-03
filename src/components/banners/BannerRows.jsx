@@ -18,14 +18,6 @@ import { ReactComponent as Union } from '../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../assets/Delete.svg';
 import { useStyles, useStyles2 } from './bannerStyles';
 
-// const useStyles = makeStyles(() => ({
-// 	'&.Mui-focused': {
-// 		border: 'none !important',
-// 		borderRadius: 'none !important',
-// 		outline: 'none !important'
-// 	}
-// }));
-
 // eslint-disable-next-line no-unused-vars
 export default function BannerRows({
 	key,
@@ -49,6 +41,7 @@ export default function BannerRows({
 	const [selectMediaInput, setSelectMediaInput] = useState('');
 	const [trashcan, setTrashCan] = useState(false);
 	const allMedia = ['Title only', 'Title + Text'];
+	const [errorMsg, setErrMsg] = useState('');
 	//content type dropdown
 	const options = [
 		{
@@ -72,7 +65,6 @@ export default function BannerRows({
 			name: 'RONAAAAAAAAALD'
 		}
 	];
-	// console.log(data, errMsg, 'data in banner');
 
 	// a little function to help us with reordering the result
 
@@ -112,6 +104,13 @@ export default function BannerRows({
 		});
 		// handleBanner();
 	};
+	useEffect(() => {
+		var errorMessage = errMsg || firstrow;
+		setErrMsg(errorMessage);
+		setTimeout(() => {
+			setErrMsg('');
+		}, [5000]);
+	}, [errMsg || firstrow]);
 
 	return (
 		<Draggable
@@ -133,9 +132,7 @@ export default function BannerRows({
 					<div>
 						<div
 							className={
-								errMsg || firstrow
-									? classes.bannerErrRight
-									: classes.bannerRight
+								errorMsg ? classes.bannerErrRight : classes.bannerRight
 							}
 						>
 							<div className={classes.bannerContentRight}>
@@ -378,7 +375,7 @@ export default function BannerRows({
 									}}
 								/>
 							</div>
-							<div className={classes.errorMsg}>{errMsg || firstrow}</div>
+							<div className={classes.errorMsg}>{errorMsg}</div>
 						</div>
 					</div>
 				</div>
