@@ -23,6 +23,11 @@
 
 .calendarWrapper {
 	margin-left: 10px;
+	button {
+		background-color: transparent !important;
+		top: 0.5px !important;
+		right: 30px !important;
+	}
 }
 
 .mediaWrapper {
