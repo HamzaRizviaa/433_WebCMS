@@ -102,14 +102,27 @@ const UploadOrEditViral = ({
 				setSelectedLabels(_labels);
 			}
 			setCaption(specificViral.caption);
-			setUploadedFiles([
-				{
-					id: makeid(10),
-					fileName: specificViral?.file_name,
-					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.media_url}`,
-					type: specificViral?.media_type === 'Watch' ? 'video' : 'audio'
-				}
-			]);
+			if (specificViral?.thumbnail_url) {
+				setUploadedFiles([
+					{
+						id: makeid(10),
+						fileName: specificViral?.file_name,
+						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.thumbnail_url}`,
+						url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
+						type: 'video'
+					}
+				]);
+			}
+			if (specificViral?.thumbnail_url === null) {
+				setUploadedFiles([
+					{
+						id: makeid(10),
+						fileName: specificViral?.file_name,
+						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
+						type: 'image'
+					}
+				]);
+			}
 		}
 	}, [specificViral]);
 
