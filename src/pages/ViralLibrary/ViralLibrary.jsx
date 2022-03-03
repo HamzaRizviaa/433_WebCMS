@@ -239,7 +239,7 @@ const ViralLibrary = () => {
 								row?.thumbnail_url ? (
 									<video
 										id={'my-video'}
-										//poster={row.thumbnail_url}
+										poster={row.thumbnail_url}
 										autoPlay
 										muted
 										className={classes.mediaIconPreview}
@@ -265,6 +265,11 @@ const ViralLibrary = () => {
 							}}
 						>
 							<span>
+								{row?.thumbnail_url ? (
+									<PlayArrowIcon className={classes.playIcon} />
+								) : (
+									''
+								)}
 								{/* <PlayArrowIcon className={classes.playIcon} /> */}
 								<img
 									className={classes.mediaIcon}
@@ -279,7 +284,7 @@ const ViralLibrary = () => {
 							TransitionProps={{ timeout: 600 }}
 							title={
 								<Markup
-									content={tooltipTitle ? row?.file_name : ' '}
+									content={tooltipTitle ? row?.file_name : row?.file_name}
 									// content={
 									// 	row?.file_name?.includes('...') ? row?.file_name : ''
 									// }
@@ -318,9 +323,13 @@ const ViralLibrary = () => {
 			formatter: (content) => {
 				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
 				return (
-					<div className={classes.labelsWrapper}>
-						{`${content[0]} ${secondLabel}`}
-					</div>
+					// <div className={classes.labelsWrapper}>
+					// 	{`${content[0]} ${secondLabel}`}
+					// </div>
+					<Markup
+						className={classes.row}
+						content={`${content[0]} ${secondLabel}`}
+					/>
 				);
 			}
 		},
@@ -518,7 +527,7 @@ const ViralLibrary = () => {
 								setSearch(e.target.value);
 								//setIsSearch(true);
 							}}
-							placeholder={'Search post, user, label'}
+							placeholder={'Search viral, user, label'}
 							InputProps={{
 								disableUnderline: true,
 								className: classes.textFieldInput,
