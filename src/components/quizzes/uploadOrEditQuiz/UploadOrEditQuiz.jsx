@@ -599,7 +599,8 @@ const UploadOrEditQuiz = ({
 					<div className={classes.datePickerContainer}>
 						<h6 style={{ color: quizColor }}>QUIZ END DATE</h6>
 						<div
-							className={editQuiz || editPoll ? classes.datePicker : ''}
+							// className={editQuiz || editPoll ? classes.datePicker : ''}
+							className={classes.datePicker}
 							style={{ marginBottom: calenderOpen ? '250px' : '' }}
 						>
 							<DatePicker

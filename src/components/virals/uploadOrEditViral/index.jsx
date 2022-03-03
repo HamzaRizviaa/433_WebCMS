@@ -56,9 +56,17 @@ const UploadOrEditViral = ({
 	const [postLabels, setPostLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
+	const [fileWidth, setFileWidth] = useState(null);
+	const [fileHeight, setFileHeight] = useState(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
+	const videoRef = useRef(null);
+	const imgEl = useRef(null);
 
+	// const ref = useRef(null);
+	// useEffect(() => {
+	// 	console.log('width', ref.current ? ref.current.offsetWidth : 0);
+	// }, [ref.current]);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png, video/mp4',
@@ -69,7 +77,6 @@ const UploadOrEditViral = ({
 	const specificViral = useSelector(
 		(state) => state.ViralLibraryStore.specificViral
 	);
-	console.log(specificViral);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -102,14 +109,27 @@ const UploadOrEditViral = ({
 				setSelectedLabels(_labels);
 			}
 			setCaption(specificViral.caption);
-			setUploadedFiles([
-				{
-					id: makeid(10),
-					fileName: specificViral?.file_name,
-					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.media_url}`,
-					type: specificViral?.media_type === 'Watch' ? 'video' : 'audio'
-				}
-			]);
+			if (specificViral?.thumbnail_url) {
+				setUploadedFiles([
+					{
+						id: makeid(10),
+						fileName: specificViral?.file_name,
+						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.thumbnail_url}`,
+						url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
+						type: 'video'
+					}
+				]);
+			}
+			if (specificViral?.thumbnail_url === null) {
+				setUploadedFiles([
+					{
+						id: makeid(10),
+						fileName: specificViral?.file_name,
+						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
+						type: 'image'
+					}
+				]);
+			}
 		}
 	}, [specificViral]);
 
@@ -148,6 +168,7 @@ const UploadOrEditViral = ({
 			setDropZoneBorder('#ffff00');
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
+				// readImageFile(file);
 				return {
 					id: id,
 					fileName: file.name,
@@ -161,6 +182,30 @@ const UploadOrEditViral = ({
 			setUploadedFiles([...uploadedFiles, ...newFiles]);
 		}
 	}, [acceptedFiles]);
+
+	// useEffect(() => {
+	// 	//console.log('adw');
+	// 	if (videoRef?.current) {
+	// 		console.log('dawdw');
+	// 		console.log(videoRef?.current?.clientWidth);
+	// 	}
+	// 	alert(videoRef?.current?.clientWidth);
+	// }, [videoRef.current]);
+
+	// const readImageFile = (file) => {
+	// 	var reader = new FileReader(); // CREATE AN NEW INSTANCE.
+
+	// 	reader.onload = function (e) {
+	// 		var img = file;
+	// 		img.src = e.target.result;
+
+	// 		img.onload = function () {
+	// 			var w = this.width;
+	// 			var h = this.height;
+	// 			console.log(w, h, 'w h ');
+	// 		};
+	// 	};
+	// };
 
 	const uploadFileToServer = async (uploadedFile) => {
 		try {
@@ -187,6 +232,7 @@ const UploadOrEditViral = ({
 					}
 				);
 				const frame = captureVideoFrame('my-video', 'png');
+				// console.log(frame, 'frame', frame.width);
 				if (result?.data?.data?.video_thumbnail_url) {
 					await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
 						headers: { 'Content-Type': 'image/png' }
@@ -285,7 +331,7 @@ const UploadOrEditViral = ({
 				} more labels in order to post`
 			);
 			setTimeout(() => {
-				setLabelColor('#ffff00');
+				('#ffff00');
 				setLabelError('');
 			}, [5000]);
 		}
@@ -304,6 +350,7 @@ const UploadOrEditViral = ({
 
 	const createViral = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
+		console.log(mediaFiles, 'media files');
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
@@ -311,8 +358,9 @@ const UploadOrEditViral = ({
 					...(caption ? { caption: caption } : { caption: '' }),
 					...(!isEdit ? { media_url: mediaFiles[0]?.media_url } : {}),
 					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
-					...(!isEdit ? { height: 100 } : {}),
-					...(!isEdit ? { width: 100 } : {}),
+					...(!isEdit ? { thumbnail_url: mediaFiles[0]?.thumbnail_url } : {}),
+					...(!isEdit ? { height: fileHeight } : {}),
+					...(!isEdit ? { width: fileWidth } : {}),
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -474,6 +522,7 @@ const UploadOrEditViral = ({
 																			/> */}
 																			<video
 																				id={'my-video'}
+																				ref={videoRef}
 																				poster={isEdit ? file.img : null}
 																				className={classes.fileThumbnail}
 																				style={{
@@ -481,6 +530,20 @@ const UploadOrEditViral = ({
 																					// maxHeight: `${imageToResizeHeight}px`,
 																					objectFit: 'cover',
 																					objectPosition: 'center'
+																				}}
+																				onLoadedMetadata={() => {
+																					console.log(
+																						videoRef,
+																						videoRef.current.videoWidth,
+																						videoRef.current.videoHeight,
+																						'video'
+																					);
+																					setFileWidth(
+																						videoRef.current.videoWidth
+																					);
+																					setFileHeight(
+																						videoRef.current.videoHeight
+																					);
 																				}}
 																			>
 																				<source src={file.img} />
@@ -496,6 +559,20 @@ const UploadOrEditViral = ({
 																					// height: `${imageToResizeHeight}px`,
 																					objectFit: 'cover',
 																					objectPosition: 'center'
+																				}}
+																				ref={imgEl}
+																				onLoad={() => {
+																					console.log(
+																						imgEl.current.naturalHeight,
+																						imgEl.current.naturalWidth,
+																						'image'
+																					);
+																					setFileWidth(
+																						imgEl.current.naturalWidth
+																					);
+																					setFileHeight(
+																						imgEl.current.naturalHeight
+																					);
 																				}}
 																			/>
 																		</>

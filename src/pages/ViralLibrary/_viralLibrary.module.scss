@@ -30,14 +30,23 @@
 	align-items: center;
 	margin-bottom: 1.5rem;
 	margin-left: 0.5rem;
+	margin-right: 0.5rem;
 	div {
-		max-width: 100%;
+		//max-width: 100%;
+		max-width: 60%;
 		text-overflow: ellipsis;
 		overflow: hidden;
 		span {
 			white-space: nowrap;
 		}
 	}
+}
+
+.labelsWrapper {
+	max-width: 60%;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 .mediaIcon {
@@ -67,14 +76,14 @@
 	font-size: 1.2rem;
 }
 
-.playIcon {
-	position: absolute;
-	left: 18px;
-	top: 20px;
-	height: 2.5rem !important;
-	width: auto !important;
-	color: $neon-yellow;
-}
+// .playIcon {
+// 	position: absolute;
+// 	left: 15px;
+// 	top: 20px;
+// 	height: 2.5rem !important;
+// 	width: auto !important;
+// 	color: $neon-yellow;
+// }
 
 // date
 .customDateInput {
@@ -155,6 +164,8 @@
 	margin-bottom: 1.5rem;
 	display: block;
 	font-size: 1.2rem;
+	padding-right: 30px;
+	//padding-left: -40px;
 }
 
 .rowType {

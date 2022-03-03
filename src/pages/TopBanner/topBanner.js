@@ -11,7 +11,7 @@ export const useStyles = makeStyles(() => ({
 			marginTop: '2.5rem',
 			marginBottom: '2rem'
 		},
-		'& button': {
+		'& .TabUnstyled-root': {
 			width: '49%',
 			backgroundColor: '#404040',
 			color: '#ffffff !important',
