@@ -56,8 +56,13 @@ const UploadOrEditViral = ({
 	const [postLabels, setPostLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
+	const [fileWidth, setFileWidth] = useState(null);
+	const [fileHeight, setFileHeight] = useState(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
+	const videoRef = useRef(null);
+	const imgEl = useRef(null);
+
 	// const ref = useRef(null);
 	// useEffect(() => {
 	// 	console.log('width', ref.current ? ref.current.offsetWidth : 0);
@@ -177,6 +182,15 @@ const UploadOrEditViral = ({
 			setUploadedFiles([...uploadedFiles, ...newFiles]);
 		}
 	}, [acceptedFiles]);
+
+	// useEffect(() => {
+	// 	//console.log('adw');
+	// 	if (videoRef?.current) {
+	// 		console.log('dawdw');
+	// 		console.log(videoRef?.current?.clientWidth);
+	// 	}
+	// 	alert(videoRef?.current?.clientWidth);
+	// }, [videoRef.current]);
 
 	// const readImageFile = (file) => {
 	// 	var reader = new FileReader(); // CREATE AN NEW INSTANCE.
@@ -345,8 +359,8 @@ const UploadOrEditViral = ({
 					...(!isEdit ? { media_url: mediaFiles[0]?.media_url } : {}),
 					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
 					...(!isEdit ? { thumbnail_url: mediaFiles[0]?.thumbnail_url } : {}),
-					...(!isEdit ? { height: 100 } : {}),
-					...(!isEdit ? { width: 100 } : {}),
+					...(!isEdit ? { height: fileHeight } : {}),
+					...(!isEdit ? { width: fileWidth } : {}),
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -508,6 +522,7 @@ const UploadOrEditViral = ({
 																			/> */}
 																			<video
 																				id={'my-video'}
+																				ref={videoRef}
 																				poster={isEdit ? file.img : null}
 																				className={classes.fileThumbnail}
 																				style={{
@@ -515,6 +530,20 @@ const UploadOrEditViral = ({
 																					// maxHeight: `${imageToResizeHeight}px`,
 																					objectFit: 'cover',
 																					objectPosition: 'center'
+																				}}
+																				onLoadedMetadata={() => {
+																					console.log(
+																						videoRef,
+																						videoRef.current.videoWidth,
+																						videoRef.current.videoHeight,
+																						'video'
+																					);
+																					setFileWidth(
+																						videoRef.current.videoWidth
+																					);
+																					setFileHeight(
+																						videoRef.current.videoHeight
+																					);
 																				}}
 																			>
 																				<source src={file.img} />
@@ -530,6 +559,20 @@ const UploadOrEditViral = ({
 																					// height: `${imageToResizeHeight}px`,
 																					objectFit: 'cover',
 																					objectPosition: 'center'
+																				}}
+																				ref={imgEl}
+																				onLoad={() => {
+																					console.log(
+																						imgEl.current.naturalHeight,
+																						imgEl.current.naturalWidth,
+																						'image'
+																					);
+																					setFileWidth(
+																						imgEl.current.naturalWidth
+																					);
+																					setFileHeight(
+																						imgEl.current.naturalHeight
+																					);
 																				}}
 																			/>
 																		</>

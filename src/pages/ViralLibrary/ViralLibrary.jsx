@@ -265,11 +265,11 @@ const ViralLibrary = () => {
 							}}
 						>
 							<span>
-								{row?.thumbnail_url ? (
+								{/* {row?.thumbnail_url ? (
 									<PlayArrowIcon className={classes.playIcon} />
 								) : (
 									''
-								)}
+								)} */}
 								{/* <PlayArrowIcon className={classes.playIcon} /> */}
 								<img
 									className={classes.mediaIcon}
