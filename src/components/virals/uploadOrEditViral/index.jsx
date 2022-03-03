@@ -331,7 +331,7 @@ const UploadOrEditViral = ({
 				} more labels in order to post`
 			);
 			setTimeout(() => {
-				('#ffff00');
+				setLabelColor('#ffff00');
 				setLabelError('');
 			}, [5000]);
 		}

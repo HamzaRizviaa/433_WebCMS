@@ -363,6 +363,7 @@ const UploadOrEditPost = ({
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
+		setExtraLabel('');
 		setImageToResizeWidth(80);
 		setImageToResizeHeight(80);
 		setPreviewFile(null);
@@ -950,6 +951,7 @@ const UploadOrEditPost = ({
 										/>
 									)}
 									renderOption={(props, option, state) => {
+										console.log(option);
 										if (option.id == null) {
 											// if (option.filter(option=>option.name===option.name))
 
