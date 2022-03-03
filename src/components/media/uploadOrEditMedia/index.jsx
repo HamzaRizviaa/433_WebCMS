@@ -124,17 +124,17 @@ const UploadOrEditMedia = ({
 				);
 				setSelectedLabels(_labels);
 			}
-			// if (specificMedia.media_type) {
-			// 	let setData = mainCategories.find(
-			// 		(u) => u.name === specificMedia?.media_type
-			// 	);
-			// 	console.log(specificMedia?.media_type);
-			// 	console.log(setData.name);
-			// 	setMainCategory(setData.name);
-			// }
+			if (specificMedia.media_type) {
+				let setData = mainCategories.find(
+					(u) => u.name === specificMedia?.media_type
+				);
+				//console.log(specificMedia?.media_type);
+				//console.log(setData.name);
+				setMainCategory(setData.name);
+			}
 
-			setMainCategory(specificMedia?.media_type);
-			console.log(specificMedia?.media_type);
+			//setMainCategory(specificMedia?.media_type);
+			console.log(mainCategory);
 			setSubCategory(specificMedia?.sub_category);
 			setTitleMedia(specificMedia?.title);
 			setDescription(specificMedia?.description);
@@ -159,6 +159,9 @@ const UploadOrEditMedia = ({
 	useEffect(() => {
 		dispatch(getMainCategories());
 		dispatch(getMediaLabels());
+		return () => {
+			resetState();
+		};
 	}, []);
 
 	const {
@@ -270,7 +273,6 @@ const UploadOrEditMedia = ({
 	}, [acceptedFiles2]);
 
 	const resetState = () => {
-		console.log('adwadwadwad');
 		setMainCategory('');
 		setSubCategory('');
 		setUploadedFiles([]);
@@ -592,7 +594,7 @@ const UploadOrEditMedia = ({
 										}}
 										disabled={isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
-										value={mainCategory?.name}
+										value={isEdit ? mainCategory : mainCategory.name}
 										onChange={(e) => {
 											setSubCategory('');
 											setDisableDropdown(true);
@@ -659,7 +661,7 @@ const UploadOrEditMedia = ({
 										}}
 										disabled={!mainCategory || isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
-										value={subCategory.name}
+										value={isEdit ? subCategory : subCategory.name}
 										onChange={(e) => {
 											setDisableDropdown(true);
 											SubCategoryId(e.target.value);

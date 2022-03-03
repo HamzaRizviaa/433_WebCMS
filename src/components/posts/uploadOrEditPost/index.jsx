@@ -163,15 +163,13 @@ const UploadOrEditPost = ({
 				let _media;
 				allMedia.find((medi) => {
 					if (medi.id === specificPost?.media_id) {
-						//console.log(medi);
 						_media = medi;
 					}
 				});
 				setSelectedMedia(_media);
 				setValue(true);
 			}
-			// console.log('specific post', specificPost?.media_id);
-			// console.log('normal', selectedMedia?.id);
+
 			if (specificPost.orientation_type === 'square') {
 				setDimensionSelect('square');
 				setImageToResizeWidth(80);
@@ -889,31 +887,24 @@ const UploadOrEditPost = ({
 									freeSolo={false}
 									value={selectedLabels}
 									onChange={(event, newValue) => {
+										//console.log(newValue);
 										setDisableDropdown(true);
 										event.preventDefault();
 										event.stopPropagation();
 										let newLabels = newValue.filter(
+											//code to check if the new added label is already in the list
 											(v, i, a) =>
 												a.findIndex(
 													(t) => t.name.toLowerCase() === v.name.toLowerCase()
 												) === i
 										);
-										//console.log(selectedLabels, newValue);
+
 										setSelectedLabels([...newLabels]);
+										console.log(selectedLabels, newValue);
 									}}
 									popupIcon={''}
 									noOptionsText={
-										<div
-											className={classes.liAutocompleteWithButton}
-											style={{
-												display: 'flex',
-												justifyContent: 'space-between',
-												alignItems: 'center',
-												color: 'white',
-												fontSize: 14
-											}}
-										>
-											{/* <p>{extraLabel.toUpperCase()}</p> */}
+										<div className={classes.liAutocompleteWithButton}>
 											<p>No results found</p>
 											{/* <Button
 												text='CREATE NEW LABEL'
@@ -951,8 +942,11 @@ const UploadOrEditPost = ({
 										/>
 									)}
 									renderOption={(props, option, state) => {
-										console.log(option);
-										if (option.id == null) {
+										let currentLabelDuplicate = selectedLabels.some(
+											(label) => label.name == option.name
+										);
+
+										if (option.id == null && !currentLabelDuplicate) {
 											// if (option.filter(option=>option.name===option.name))
 
 											return (
@@ -981,11 +975,17 @@ const UploadOrEditPost = ({
 													/>
 												</li>
 											);
-										} else {
+										} else if (!currentLabelDuplicate) {
 											return (
 												<li {...props} className={classes.liAutocomplete}>
 													{option.name}
 												</li>
+											);
+										} else {
+											return (
+												<div className={classes.liAutocompleteWithButton}>
+													&apos;{option.name}&apos; is already selected
+												</div>
 											);
 										}
 									}}
@@ -1147,8 +1147,6 @@ const UploadOrEditPost = ({
 										if (postBtnDisabled || editBtnDisabled) {
 											validatePostBtn();
 										} else {
-											console.log(specificPost.caption);
-											console.log(caption);
 											setPostButtonStatus(true);
 											if (isEdit) {
 												createPost(specificPost?.id);
