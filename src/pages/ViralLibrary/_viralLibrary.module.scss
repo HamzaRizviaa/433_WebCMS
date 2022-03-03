@@ -30,9 +30,10 @@
 	align-items: center;
 	margin-bottom: 1.5rem;
 	margin-left: 0.5rem;
+	margin-right: 0.5rem;
 	div {
 		//max-width: 100%;
-		max-width: 55%;
+		max-width: 60%;
 		text-overflow: ellipsis;
 		overflow: hidden;
 		span {
@@ -40,6 +41,7 @@
 		}
 	}
 }
+
 .labelsWrapper {
 	max-width: 60%;
 	text-overflow: ellipsis;
