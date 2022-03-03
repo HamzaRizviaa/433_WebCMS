@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
-import React, { useState, useEffect, forwardRef } from 'react';
+import React, { useState, useEffect, forwardRef, useRef } from 'react';
 import Layout from '../../components/layout';
 import Table from '../../components/table';
 import classes from './_viralLibrary.module.scss';
@@ -35,19 +35,18 @@ import {
 
 const ViralLibrary = () => {
 	// Selectors
-	// const posts = useSelector((state) => state.postLibrary.posts);
 	const virals = useSelector((state) => state.ViralLibraryStore.virals);
-	console.log(virals, 'viral data');
+	//console.log(virals);
 	// const totalRecords = 200;
 	const totalRecords = useSelector(
 		(state) => state.ViralLibraryStore.totalRecords
 	);
-	console.log(totalRecords, ' totalRecords viral data');
+
 	const noResultStatus = useSelector(
-		(state) => state.postLibrary.noResultStatus
+		(state) => state.ViralLibraryStore.noResultStatus
 	);
 	const noResultStatusCalendar = useSelector(
-		(state) => state.postLibrary.noResultStatusCalendar
+		(state) => state.ViralLibraryStore.noResultStatusCalendar
 	);
 
 	const muiClasses = useStyles();
@@ -64,6 +63,8 @@ const ViralLibrary = () => {
 	const [noResultCalendarError, setNoResultCalendarError] = useState('');
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
+	const [tooltipTitle, setTooltipTitle] = useState(false);
+	const fileNameRef = useRef(null);
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
 		const startDate = formatDate(dateRange[0]);
@@ -139,10 +140,8 @@ const ViralLibrary = () => {
 					className={classes.sortIcon}
 					style={{
 						left:
-							col?.dataField === 'post_date' ||
-							col?.dataField === 'labels' ||
-							col?.dataField === 'end_date'
-								? 30
+							col?.dataField === 'user' || col?.dataField === 'last_edit'
+								? 7
 								: -4
 					}}
 				/>
@@ -153,10 +152,8 @@ const ViralLibrary = () => {
 					className={classes.sortIconSelected}
 					style={{
 						left:
-							col?.dataField === 'post_date' ||
-							col?.dataField === 'labels' ||
-							col?.dataField === 'end_date'
-								? 30
+							col?.dataField === 'user' || col?.dataField === 'last_edit'
+								? 7
 								: -4
 					}}
 				/>
@@ -167,16 +164,62 @@ const ViralLibrary = () => {
 					className={classes.sortIconSelected}
 					style={{
 						left:
-							col?.dataField === 'post_date' ||
-							col?.dataField === 'labels' ||
-							col?.dataField === 'end_date'
-								? 30
+							col?.dataField === 'user' || col?.dataField === 'last_edit'
+								? 7
 								: -4
 					}}
 				/>
 			);
 		return null;
 	};
+
+	// useEffect(() => {
+	// 	console.log(
+	// 		'cotent',
+	// 		fileNameRef.current ? fileNameRef.current.innerHTML : 'none'
+	// 	);
+	// 	// if (fileNameRef.current || fileNameRef?.current?.offsetWidth > 200) {
+	// 	// 	setTooltipTitle(true);
+	// 	// }
+	// 	// console.log(tooltipTitle);
+	// }, [fileNameRef.current]);
+
+	// useEffect(() => {
+	// 	console.log(
+	// 		'width',
+	// 		fileNameRef.current ? fileNameRef.current.offsetWidth : 0
+	// 	);
+	// 	if (fileNameRef.current || fileNameRef?.current?.offsetWidth > 200) {
+	// 		setTooltipTitle(true);
+	// 	}
+	// 	console.log(tooltipTitle);
+	// }, [fileNameRef.current]);
+
+	// const useResize = (myRef) => {
+	// 	const [width, setWidth] = useState(0);
+	// 	const [height, setHeight] = useState(0);
+
+	// 	useEffect(() => {
+	// 		const handleResize = () => {
+	// 			if (myRef?.current) {
+	// 				setWidth(myRef?.current?.offsetWidth);
+	// 				setHeight(myRef?.current?.offsetHeight);
+	// 			}
+	// 		};
+
+	// 		window.addEventListener('resize', handleResize());
+
+	// 		return () => {
+	// 			window.removeEventListener('resize', handleResize());
+	// 		};
+	// 	}, [myRef]);
+
+	// 	return { width, height };
+	// };
+
+	// const { width, height } = useResize(fileNameRef);
+	// console.log(width);
+	// console.log(height);
 
 	const columns = [
 		{
@@ -186,23 +229,35 @@ const ViralLibrary = () => {
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			formatter: (content, row) => {
-				// console.log(content, row);
+				//console.log(content, row);
 				return (
 					<div className={classes.mediaWrapper}>
 						<Tooltip
 							// TransitionComponent={Fade}
 							// TransitionProps={{ timeout: 600 }}
 							title={
-								<video
-									id={'my-video'}
-									//poster={row.thumbnail_url}
-									autoPlay
-									muted
-									className={classes.mediaIconPreview}
-									controls={true}
-								>
-									<source src={row.media} />
-								</video>
+								row?.thumbnail_url ? (
+									<video
+										id={'my-video'}
+										//poster={row.thumbnail_url}
+										autoPlay
+										muted
+										className={classes.mediaIconPreview}
+										controls={true}
+									>
+										<source
+											src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.media}`}
+										/>
+									</video>
+								) : (
+									<img
+										className={classes.mediaIconPreview}
+										src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
+											row?.thumbnail_url ? row?.thumbnail_url : row?.media
+										}`}
+										alt='no img'
+									/>
+								)
 							}
 							placement='right'
 							componentsProps={{
@@ -211,7 +266,12 @@ const ViralLibrary = () => {
 						>
 							<span>
 								{/* <PlayArrowIcon className={classes.playIcon} /> */}
-								<img className={classes.mediaIcon} src={row.thumbnail_url} />
+								<img
+									className={classes.mediaIcon}
+									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
+										row?.thumbnail_url ? row?.thumbnail_url : row?.media
+									}`}
+								/>
 							</span>
 						</Tooltip>
 						<Tooltip
@@ -219,7 +279,10 @@ const ViralLibrary = () => {
 							TransitionProps={{ timeout: 600 }}
 							title={
 								<Markup
-									content={row?.file_name?.length > 13 ? row?.file_name : ''}
+									content={tooltipTitle ? row?.file_name : 'a'}
+									// content={
+									// 	row?.file_name?.includes('...') ? row?.file_name : ''
+									// }
 								/>
 							}
 							arrow
@@ -228,7 +291,7 @@ const ViralLibrary = () => {
 								arrow: { className: classes.toolTipArrow }
 							}}
 						>
-							<div className={classes.fileName}>
+							<div ref={fileNameRef} className={classes.fileName}>
 								<Markup className={classes.fileName} content={row.file_name} />
 							</div>
 						</Tooltip>
@@ -243,10 +306,7 @@ const ViralLibrary = () => {
 			sortFunc: () => {},
 			text: 'POST DATE | TIME',
 			formatter: (content) => {
-				return <div className={classes.rowType}>{getDateTime(content)}</div>;
-			},
-			headerStyle: () => {
-				return { paddingLeft: '48px' };
+				return <div className={classes.row}>{getDateTime(content)}</div>;
 			}
 		},
 		{
@@ -256,11 +316,13 @@ const ViralLibrary = () => {
 			sortFunc: () => {},
 			text: 'LABELS',
 			formatter: (content) => {
-				//let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
-				return <div className={classes.rowType}>{content}</div>;
-			},
-			headerStyle: () => {
-				return { paddingLeft: '48px' };
+				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
+				return (
+					<Markup
+						className={classes.row}
+						content={`${content[0]} ${secondLabel}`}
+					/>
+				);
 			}
 		},
 		{
@@ -270,10 +332,10 @@ const ViralLibrary = () => {
 			sortFunc: () => {},
 			text: 'USER',
 			formatter: (content) => {
-				return (
-					<div className={classes.row}>{content}</div>
-					// <Markup className={classes.row} content={`${content}`} />
-				);
+				return <Markup className={classes.row} content={`${content}`} />;
+			},
+			headerStyle: () => {
+				return { paddingLeft: '30px' };
 			}
 		},
 		{
@@ -284,6 +346,9 @@ const ViralLibrary = () => {
 			text: 'LAST EDIT',
 			formatter: (content) => {
 				return <div className={classes.row}>{getDateTime(content)}</div>;
+			},
+			headerStyle: () => {
+				return { paddingLeft: '30px' };
 			}
 		},
 		{
@@ -429,7 +494,6 @@ const ViralLibrary = () => {
 							className={classes.searchField}
 							value={search}
 							onKeyPress={(e) => {
-								console.log(e, 'on ky press');
 								if (e.key === 'Enter' && search) {
 									dispatch(
 										getAllViralsApi({
@@ -464,7 +528,6 @@ const ViralLibrary = () => {
 									<InputAdornment>
 										<Search
 											onClick={() => {
-												console.log('search onclick');
 												if (search) {
 													dispatch(
 														getAllViralsApi({
@@ -532,7 +595,6 @@ const ViralLibrary = () => {
 					type={'number'}
 					min={1}
 					onChange={(e) => {
-						console.log(e, 'onchange', page);
 						setPaginationError(false);
 						const value = Number(e.target.value);
 						if (value > Math.ceil(totalRecords / 20)) {
@@ -554,8 +616,7 @@ const ViralLibrary = () => {
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
-					//setEdit(false);
-					setTimeout(() => setEdit(false), 300); //to show edit data after clicking second time
+					// setTimeout(() => setEdit(false), 300); //to show edit data after clicking second time
 				}}
 				title={edit ? 'Edit Viral' : 'Upload Viral'}
 				heading1={edit ? 'Media File' : 'Add Media File'}

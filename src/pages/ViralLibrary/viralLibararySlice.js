@@ -27,7 +27,7 @@ export const getAllViralsApi = createAsyncThunk(
 			endPoint += `&start_date=${startDate}&end_date=${endDate}`;
 		}
 		const result = await ViralLibraryService.getAllViralsServiceCall(endPoint);
-		console.log(result, 'virals api');
+		//console.log(result, 'virals api');
 		return { ...result.data.data, fromCalendar };
 	}
 );
@@ -35,7 +35,6 @@ export const getLabels = createAsyncThunk(
 	'viralLibary/getViralsLabels',
 	async () => {
 		const result = await ViralLibraryService.getLabelsApi();
-		console.log(result);
 		if (result?.data?.data?.length > 0) {
 			return result.data.data;
 		} else {
