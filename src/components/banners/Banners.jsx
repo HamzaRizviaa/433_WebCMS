@@ -108,7 +108,7 @@ export default function Banners() {
 					errValidate = {
 						flag: true,
 						rowId: i - 1,
-						errMsg: 'The banner ' + i + '  cannot be empty.'
+						errMsg: 'The banner  cannot be empty.'
 					};
 					//not return true
 					break;
