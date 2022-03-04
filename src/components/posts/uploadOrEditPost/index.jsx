@@ -942,6 +942,7 @@ const UploadOrEditPost = ({
 										/>
 									)}
 									renderOption={(props, option, state) => {
+										//selected in input field,  some -> array to check exists
 										let currentLabelDuplicate = selectedLabels.some(
 											(label) => label.name == option.name
 										);

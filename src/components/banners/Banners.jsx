@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 export default function Banners() {
 	const [validateRow, setValidateRow] = useState('');
 	const [firstCheck, setFirstCheck] = useState('');
-	const [btnDisable, setbtnDisable] = useState('');
+	const [btnDisable, setbtnDisable] = useState(false);
 	// eslint-disable-next-line no-unused-vars
 	const [isDrag, setIsDrag] = useState(false);
 	const [bannerData, setBannerData] = useState([
@@ -58,8 +58,6 @@ export default function Banners() {
 		);
 
 		setBannerData(items);
-		// setIsDrag(true);
-		// isDrag && clickBanner();
 	};
 	// - autocomplete ends
 
@@ -188,6 +186,7 @@ export default function Banners() {
 			<div className={classes.buttonDiv}>
 				<Button
 					disabled={
+						// btnDisable
 						bannerData[0].bannerType && bannerData[0].selectedMedia
 							? btnDisable
 							: true

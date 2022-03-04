@@ -523,13 +523,15 @@ const UploadOrEditMedia = ({
 			specificMedia?.description === description.trim());
 
 	const MainCategoryId = (e) => {
-		//find name and will return whole object
+		//find name and will return whole object  isEdit ? subCategory : subCategory.name
 		let setData = mainCategories.find((u) => u.name === e);
-		console.log(setData, 'daa');
+		setSubCategory({ id: null, name: ' ' });
+		console.log(subCategory, 'subCategory');
 		setMainCategory(setData);
 	};
 
 	const SubCategoryId = (e) => {
+		//e -- name
 		//find name and will return whole object
 		let setData = subCategories.find((u) => u.name === e);
 		//console.log(setData);
@@ -596,7 +598,7 @@ const UploadOrEditMedia = ({
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
 										value={isEdit ? mainCategory : mainCategory.name}
 										onChange={(e) => {
-											setSubCategory('');
+											// setSubCategory({ id: null, name: '' });
 											setDisableDropdown(true);
 											// setMainCategory(e.target.value);
 											//calling function , passing name (i.e. watch & listen)
