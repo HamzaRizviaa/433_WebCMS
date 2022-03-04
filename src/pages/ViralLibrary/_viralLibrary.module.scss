@@ -23,6 +23,11 @@
 
 .calendarWrapper {
 	margin-left: 10px;
+	button {
+		background-color: transparent !important;
+		top: 0.5px !important;
+		right: 30px !important;
+	}
 }
 
 .mediaWrapper {
@@ -63,6 +68,81 @@
 	max-width: calc(5rem * 8);
 	border-radius: 8px;
 	object-fit: cover;
+}
+
+.mediaIcon {
+	height: 48px;
+	width: 48px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaIconPreview {
+	height: calc(48px * 6);
+	width: calc(48px * 6);
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaIconLandscape {
+	height: 25.131px;
+	width: 48px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.virallandscapePreview {
+	height: calc(25.131px * 6);
+	width: calc(48px * 6);
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaIconPortrait {
+	height: 48px;
+	width: 38.4px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaIconPortraitPreview {
+	height: calc(48px * 6);
+	width: calc(38.4px * 6);
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaWrapper {
+	display: flex;
+	align-items: center;
+	margin-left: 0.5rem;
+	margin-bottom: 1.5rem;
+	div {
+		max-width: 100%;
+		max-width: 60%;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		span {
+			white-space: nowrap;
+		}
+	}
+}
+
+.virallandscape {
+	margin-top: 1.25rem;
+	display: flex;
+	align-items: center;
+	margin-left: 0.5rem;
+	margin-bottom: 2.5rem;
+	div {
+		max-width: 100%;
+		max-width: 60%;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		span {
+			white-space: nowrap;
+		}
+	}
 }
 
 .toolTipPreview {
@@ -163,7 +243,7 @@
 .row {
 	margin-bottom: 1.5rem;
 	display: block;
-	font-size: 1.2rem;
+	font-size: 1.35rem;
 	padding-right: 30px;
 	//padding-left: -40px;
 }

@@ -124,17 +124,17 @@ const UploadOrEditMedia = ({
 				);
 				setSelectedLabels(_labels);
 			}
-			// if (specificMedia.media_type) {
-			// 	let setData = mainCategories.find(
-			// 		(u) => u.name === specificMedia?.media_type
-			// 	);
-			// 	console.log(specificMedia?.media_type);
-			// 	console.log(setData.name);
-			// 	setMainCategory(setData.name);
-			// }
+			if (specificMedia.media_type) {
+				let setData = mainCategories.find(
+					(u) => u.name === specificMedia?.media_type
+				);
+				//console.log(specificMedia?.media_type);
+				//console.log(setData.name);
+				setMainCategory(setData.name);
+			}
 
-			setMainCategory(specificMedia?.media_type);
-			console.log(specificMedia?.media_type);
+			//setMainCategory(specificMedia?.media_type);
+			console.log(mainCategory);
 			setSubCategory(specificMedia?.sub_category);
 			setTitleMedia(specificMedia?.title);
 			setDescription(specificMedia?.description);
@@ -159,6 +159,9 @@ const UploadOrEditMedia = ({
 	useEffect(() => {
 		dispatch(getMainCategories());
 		dispatch(getMediaLabels());
+		return () => {
+			resetState();
+		};
 	}, []);
 
 	const {
@@ -270,7 +273,6 @@ const UploadOrEditMedia = ({
 	}, [acceptedFiles2]);
 
 	const resetState = () => {
-		console.log('adwadwadwad');
 		setMainCategory('');
 		setSubCategory('');
 		setUploadedFiles([]);
@@ -521,13 +523,15 @@ const UploadOrEditMedia = ({
 			specificMedia?.description === description.trim());
 
 	const MainCategoryId = (e) => {
-		//find name and will return whole object
+		//find name and will return whole object  isEdit ? subCategory : subCategory.name
 		let setData = mainCategories.find((u) => u.name === e);
-		console.log(setData, 'daa');
+		setSubCategory({ id: null, name: ' ' });
+		console.log(subCategory, 'subCategory');
 		setMainCategory(setData);
 	};
 
 	const SubCategoryId = (e) => {
+		//e -- name
 		//find name and will return whole object
 		let setData = subCategories.find((u) => u.name === e);
 		//console.log(setData);
@@ -592,9 +596,9 @@ const UploadOrEditMedia = ({
 										}}
 										disabled={isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
-										value={mainCategory?.name}
+										value={isEdit ? mainCategory : mainCategory.name}
 										onChange={(e) => {
-											setSubCategory('');
+											// setSubCategory({ id: null, name: '' });
 											setDisableDropdown(true);
 											// setMainCategory(e.target.value);
 											//calling function , passing name (i.e. watch & listen)
@@ -659,7 +663,7 @@ const UploadOrEditMedia = ({
 										}}
 										disabled={!mainCategory || isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
-										value={subCategory.name}
+										value={isEdit ? subCategory : subCategory.name}
 										onChange={(e) => {
 											setDisableDropdown(true);
 											SubCategoryId(e.target.value);

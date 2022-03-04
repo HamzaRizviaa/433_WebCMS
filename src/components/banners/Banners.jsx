@@ -3,11 +3,14 @@ import classes from './_banners.module.scss';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import BannerRows from './BannerRows';
 import Button from '../button';
-// import { useEffect } from 'react';
+import { useEffect } from 'react';
 
 export default function Banners() {
 	const [validateRow, setValidateRow] = useState('');
 	const [firstCheck, setFirstCheck] = useState('');
+	const [btnDisable, setbtnDisable] = useState(false);
+	// eslint-disable-next-line no-unused-vars
+	const [isDrag, setIsDrag] = useState(false);
 	const [bannerData, setBannerData] = useState([
 		{
 			id: '1',
@@ -35,7 +38,7 @@ export default function Banners() {
 			selectedMedia: null
 		}
 	]);
-
+	//reorder
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
 		const [removed] = result.splice(startIndex, 1);
@@ -55,31 +58,27 @@ export default function Banners() {
 		);
 
 		setBannerData(items);
-		clickBanner();
-		// handleBannerPositionAndFirstBanner();
 	};
 	// - autocomplete ends
 
-	// useEffect(() => {
-	// 	const firstrowcheck = handleCheckFirstRow();
-	// 	const validateRow = handleBannerPositionAndFirstBanner();
-	// 	setFirstCheck(firstrowcheck);
-	// 	setValidateRow(validateRow);
-	// }, [bannerData]);
+	//button disable
+	useEffect(() => {
+		const disableContent = handleBannerPositionAndFirstBanner();
+		setbtnDisable(disableContent.flag);
+	}, [bannerData]);
 
 	const clickBanner = () => {
 		console.log('click banner');
-		const firstrowcheck = handleCheckFirstRow();
-		const validateRow =
-			handleCheckFirstRow() && handleBannerPositionAndFirstBanner();
-		console.log(firstrowcheck, validateRow, 'flags');
+		const firstrowcheck = handleCheckFirstRow(); // 1
+		const validateRow = handleBannerPositionAndFirstBanner(); // 2- 5
+		// handleCheckFirstRow() && handleBannerPositionAndFirstBanner(); // 2
 		setFirstCheck(firstrowcheck);
-		firstrowcheck.errMsg
-			? setFirstCheck(firstrowcheck)
-			: setValidateRow(validateRow);
+		setValidateRow(validateRow);
+		console.log(validateRow, firstrowcheck, 'post set state');
 	};
 
 	const handleCheckFirstRow = () => {
+		console.log('click first banner');
 		let errValidate = { flag: '', rowId: undefined, errMsg: '' };
 		if (!bannerData[0].bannerType ^ !bannerData[0].selectedMedia) {
 			errValidate = {
@@ -91,26 +90,23 @@ export default function Banners() {
 			errValidate = {
 				flag: true,
 				rowId: 0,
-				errMsg: 'The first top banner should always be filled. '
+				errMsg: 'The first top banner should always be filled.  '
 			};
 		}
 		return errValidate;
 	};
 
 	const handleBannerPositionAndFirstBanner = () => {
+		console.log('click other banner');
 		let errValidate = { flag: '', rowId: undefined, errMsg: '' };
-		// max 4
-		// min 1 , can't set 0
 		// disabled = true = GREY
 		// noy disables = false = YELLOW
 		for (let i = 4; i >= 1; i--) {
 			// start from max to min
 			if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
-				//check data in both fields
-
+				//check data in both field
 				if (!bannerData[i - 1].bannerType || !bannerData[i - 1].selectedMedia) {
 					// check one up , if data is here
-					// console.log('check one up', i);
 					errValidate = {
 						flag: true,
 						rowId: i - 1,
@@ -120,11 +116,11 @@ export default function Banners() {
 					break;
 				}
 			} else if (bannerData[i].bannerType || bannerData[i].selectedMedia) {
-				// console.log('check both fields', i);
+				console.log('check both fields', i);
 				errValidate = {
 					flag: true,
 					rowId: i,
-					errMsg: ' The banner content cannot be empty.'
+					errMsg: 'The banner content cannot be empty.'
 				};
 				//not return true
 				break;
@@ -160,13 +156,17 @@ export default function Banners() {
 											return (
 												<BannerRows
 													errMsg={
-														index === validateRow.rowId && validateRow.errMsg
+														validateRow.rowId === index ? validateRow : ''
 													}
 													firstrow={
-														index === validateRow.rowId && validateRow.errMsg
+														index === validateRow.rowId && validateRow
 															? ''
-															: index === firstCheck.rowId && firstCheck.errMsg
+															: index === firstCheck.rowId
+															? firstCheck
+															: ''
 													}
+													//firstBannerErr={firstBannerErr}
+													validateRow={validateRow}
 													data={data}
 													setBannerData={setBannerData}
 													key={data.id}
@@ -186,8 +186,9 @@ export default function Banners() {
 			<div className={classes.buttonDiv}>
 				<Button
 					disabled={
+						// btnDisable
 						bannerData[0].bannerType && bannerData[0].selectedMedia
-							? validateRow.flag
+							? btnDisable
 							: true
 					}
 					onClick={() => {
