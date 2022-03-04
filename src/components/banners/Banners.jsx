@@ -9,8 +9,6 @@ export default function Banners() {
 	const [validateRow, setValidateRow] = useState('');
 	const [firstCheck, setFirstCheck] = useState('');
 	const [btnDisable, setbtnDisable] = useState(false);
-	// eslint-disable-next-line no-unused-vars
-	const [isDrag, setIsDrag] = useState(false);
 	const [bannerData, setBannerData] = useState([
 		{
 			id: '1',
@@ -58,6 +56,8 @@ export default function Banners() {
 		);
 
 		setBannerData(items);
+		setFirstCheck({ flag: '', rowId: undefined, errMsg: '' });
+		setValidateRow({ flag: '', rowId: undefined, errMsg: '' });
 	};
 	// - autocomplete ends
 
@@ -110,7 +110,7 @@ export default function Banners() {
 					errValidate = {
 						flag: true,
 						rowId: i - 1,
-						errMsg: 'The banner cannot be empty.'
+						errMsg: 'The banner  cannot be empty.'
 					};
 					//not return true
 					break;
