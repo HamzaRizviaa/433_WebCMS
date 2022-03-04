@@ -56,6 +56,8 @@ export default function Banners() {
 		);
 
 		setBannerData(items);
+		setFirstCheck({ flag: '', rowId: undefined, errMsg: '' });
+		setValidateRow({ flag: '', rowId: undefined, errMsg: '' });
 	};
 	// - autocomplete ends
 
