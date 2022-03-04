@@ -502,16 +502,7 @@ const UploadOrEditQuiz = ({
 							}}
 							popupIcon={''}
 							noOptionsText={
-								<div
-									className={classes.liAutocompleteWithButton}
-									style={{
-										display: 'flex',
-										justifyContent: 'space-between',
-										alignItems: 'center',
-										color: 'white',
-										fontSize: 14
-									}}
-								>
+								<div className={classes.liAutocompleteWithButton}>
 									{/* <p>{extraLabel.toUpperCase()}</p> */}
 									<p>No results found</p>
 									{/* <Button
@@ -550,7 +541,11 @@ const UploadOrEditQuiz = ({
 								/>
 							)}
 							renderOption={(props, option) => {
-								if (option.id == null) {
+								let currentLabelDuplicate = selectedLabels.some(
+									(label) => label.name == option.name
+								);
+
+								if (option.id == null && !currentLabelDuplicate) {
 									return (
 										<li
 											{...props}
@@ -577,11 +572,17 @@ const UploadOrEditQuiz = ({
 											/>
 										</li>
 									);
-								} else {
+								} else if (!currentLabelDuplicate) {
 									return (
 										<li {...props} className={classes.liAutocomplete}>
 											{option.name}
 										</li>
+									);
+								} else {
+									return (
+										<div className={classes.liAutocompleteWithButton}>
+											&apos;{option.name}&apos; is already selected
+										</div>
 									);
 								}
 							}}
