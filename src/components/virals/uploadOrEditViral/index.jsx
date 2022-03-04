@@ -1,50 +1,35 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
-import classes from './_uploadOrEditPost.module.scss';
+import classes from './_uploadOrEditViral.module.scss';
 import { useDropzone } from 'react-dropzone';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import MenuIcon from '@material-ui/icons/Menu';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
 import { TextField } from '@material-ui/core';
 import { CircularProgress } from '@material-ui/core';
-import ToggleSwitch from '../../switch';
 import Button from '../../button';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-	getMedia,
-	getAllMedia
-} from './../../../pages/MediaLibrary/mediaLibrarySlice';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
-import { getLocalStorageDetails } from '../../../utils';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import {
-	getPosts,
-	getPostLabels
-} from '../../../pages/PostLibrary/postLibrarySlice';
+import { getAllViralsApi } from '../../../pages/ViralLibrary/viralLibararySlice';
+import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import captureVideoFrame from 'capture-video-frame';
 import Close from '@material-ui/icons/Close';
-// import Cropper from 'cropperjs';
-// import 'cropperjs/dist/cropper.css';
 import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
 import Chip from '@mui/material/Chip';
 import { Popper, Paper } from '@mui/material';
+import { getLocalStorageDetails } from '../../../utils';
+
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
-import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
-import { ReactComponent as PortraitCrop } from '../../../assets/portrait_rect.svg';
-import { ReactComponent as LandscapeCrop } from '../../../assets/Rectangle_12.svg';
-import { ReactComponent as SquareCropSelected } from '../../../assets/Square_selected.svg';
-import { ReactComponent as PortraitCropSelected } from '../../../assets/portrait_rect_selected.svg';
-import { ReactComponent as LandscapeCropSelected } from '../../../assets/Rectangle_12_selected.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 
 import LoadingOverlay from 'react-loading-overlay';
 
-const UploadOrEditPost = ({
+const UploadOrEditViral = ({
 	open,
 	handleClose,
 	title,
@@ -54,77 +39,45 @@ const UploadOrEditPost = ({
 	page
 }) => {
 	const [caption, setCaption] = useState('');
-	const [value, setValue] = useState(false);
 	const [uploadMediaError, setUploadMediaError] = useState('');
-	const [mediaError, setMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [selectedLabels, setSelectedLabels] = useState([]);
 	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
-	const [mediaLabelColor, setMediaLabelColor] = useState('#ffffff');
-	const [captionColor, setCaptionColor] = useState('#ffffff');
-	const [captionError, setCaptionError] = useState('');
 	const [labelColor, setLabelColor] = useState('#ffffff');
 	const [labelError, setLabelError] = useState('');
-	const [selectedMedia, setSelectedMedia] = useState(null);
+	const [captionColor, setCaptionColor] = useState('#ffffff');
+	const [captionError, setCaptionError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
-	const [dimensionSelect, setDimensionSelect] = useState('square');
-	const [isLoadingCreatePost, setIsLoadingCreatePost] = useState(false);
-	const [imageToResizeWidth, setImageToResizeWidth] = useState(80);
-	const [imageToResizeHeight, setImageToResizeHeight] = useState(80);
+	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [previewBool, setPreviewBool] = useState(false);
 	const [postLabels, setPostLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
-	const [selectMediaInput, setSelectMediaInput] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
-	const [dropdownPosition, setDropdownPosition] = useState(false);
+	const [fileWidth, setFileWidth] = useState(null);
+	const [fileHeight, setFileHeight] = useState(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
-	// const [aspect, setAspect] = useState(1 / 1);
-	// const [imgDestination, setImageDestination] = useState('');
-	// const imageElement = useRef();
-	//const [inputValue, setInputValue] = useState('');
-
-	//a library that takes height width input and gives cropped image
-
-	// const tenFilesValidator = (file) => {
-	// 	if (uploadedFiles.indexOf(file) > 9) {
-	// 		console.log(uploadedFiles.indexOf(file));
-	// 		return {
-	// 			code: 'max-files-reached',
-	// 			message: `You have reached maximum files allowed`
-	// 		};
-	// 	}
-	// 	return null;
-	// };
+	const videoRef = useRef(null);
+	const imgEl = useRef(null);
 
 	// const ref = useRef(null);
 	// useEffect(() => {
 	// 	console.log('width', ref.current ? ref.current.offsetWidth : 0);
 	// }, [ref.current]);
-
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
-			accept: '.jpeg,.jpg,.png, video/mp4',
-			maxFiles: 10
-			// validator: tenFilesValidator
+			accept: 'image/jpeg, image/png, video/mp4',
+			maxFiles: 1
 		});
 
-	//const media = useSelector((state) => state.mediaDropdown.media);
-	const allMedia = useSelector((state) => state.mediaLibraryOriginal.allMedia);
 	const labels = useSelector((state) => state.postLibrary.labels);
-	const specificPost = useSelector((state) => state.postLibrary.specificPost);
-	const specificPostStatus = useSelector((state) => state.postLibrary);
+	const specificViral = useSelector(
+		(state) => state.ViralLibraryStore.specificViral
+	);
 	const dispatch = useDispatch();
-
-	useEffect(() => {
-		if (uploadedFiles.length > 10) {
-			let _uploadedFile = uploadedFiles.slice(0, 10);
-			setUploadedFiles(_uploadedFile);
-		}
-	}, [uploadedFiles]);
 
 	useEffect(() => {
 		setPostLabels((labels) => {
@@ -147,69 +100,40 @@ const UploadOrEditPost = ({
 	}, [labels]);
 
 	useEffect(() => {
-		// specific post data get ,api / edit
-		if (specificPost) {
-			if (specificPost?.labels) {
+		if (specificViral) {
+			if (specificViral?.labels) {
 				let _labels = [];
-				specificPost.labels.map((label) =>
+				specificViral.labels.map((label) =>
 					_labels.push({ id: -1, name: label })
 				);
 				setSelectedLabels(_labels);
 			}
-			setCaption(specificPost.caption);
-
-			if (specificPost?.media_id !== null) {
-				let _media;
-				allMedia.find((medi) => {
-					if (medi.id === specificPost?.media_id) {
-						_media = medi;
+			setCaption(specificViral.caption);
+			if (specificViral?.thumbnail_url) {
+				setUploadedFiles([
+					{
+						id: makeid(10),
+						fileName: specificViral?.file_name,
+						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.thumbnail_url}`,
+						url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
+						type: 'video'
 					}
-				});
-				setSelectedMedia(_media);
-				setValue(true);
+				]);
 			}
-
-			if (specificPost.orientation_type === 'square') {
-				setDimensionSelect('square');
-				setImageToResizeWidth(80);
-				setImageToResizeHeight(80);
-			} else if (specificPost.orientation_type === 'portrait') {
-				setDimensionSelect('portrait');
-				setImageToResizeWidth(64);
-				setImageToResizeHeight(80);
-			} else if (specificPost.orientation_type === 'landscape') {
-				setDimensionSelect('landscape');
-				setImageToResizeWidth(80.22);
-				setImageToResizeHeight(42);
-			}
-			if (specificPost?.medias) {
-				let newFiles = specificPost.medias.map((file) => {
-					if (file.thumbnail_url) {
-						return {
-							fileName: file.file_name,
-							id: makeid(10),
-							url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
-							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.thumbnail_url}`,
-							type: 'video'
-						};
-					} else {
-						return {
-							fileName: file.file_name,
-							id: makeid(10),
-							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
-							type: 'image'
-						};
+			if (specificViral?.thumbnail_url === null) {
+				setUploadedFiles([
+					{
+						id: makeid(10),
+						fileName: specificViral?.file_name,
+						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
+						type: 'image'
 					}
-				});
-				setUploadedFiles([...uploadedFiles, ...newFiles]);
+				]);
 			}
 		}
-	}, [specificPost]);
+	}, [specificViral]);
 
 	useEffect(() => {
-		//dispatch(getMedia());
-		dispatch(getAllMedia(1000));
-		dispatch(getMedia({}));
 		dispatch(getPostLabels());
 		return () => {
 			resetState();
@@ -244,6 +168,7 @@ const UploadOrEditPost = ({
 			setDropZoneBorder('#ffff00');
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
+				// readImageFile(file);
 				return {
 					id: id,
 					fileName: file.name,
@@ -256,11 +181,31 @@ const UploadOrEditPost = ({
 			});
 			setUploadedFiles([...uploadedFiles, ...newFiles]);
 		}
-		if (uploadedFiles.length > 10) {
-			let newArray = uploadedFiles.slice(0, 10);
-			setUploadedFiles([newArray]);
-		}
 	}, [acceptedFiles]);
+
+	// useEffect(() => {
+	// 	//console.log('adw');
+	// 	if (videoRef?.current) {
+	// 		console.log('dawdw');
+	// 		console.log(videoRef?.current?.clientWidth);
+	// 	}
+	// 	alert(videoRef?.current?.clientWidth);
+	// }, [videoRef.current]);
+
+	// const readImageFile = (file) => {
+	// 	var reader = new FileReader(); // CREATE AN NEW INSTANCE.
+
+	// 	reader.onload = function (e) {
+	// 		var img = file;
+	// 		img.src = e.target.result;
+
+	// 		img.onload = function () {
+	// 			var w = this.width;
+	// 			var h = this.height;
+	// 			console.log(w, h, 'w h ');
+	// 		};
+	// 	};
+	// };
 
 	const uploadFileToServer = async (uploadedFile) => {
 		try {
@@ -287,6 +232,7 @@ const UploadOrEditPost = ({
 					}
 				);
 				const frame = captureVideoFrame('my-video', 'png');
+				// console.log(frame, 'frame', frame.width);
 				if (result?.data?.data?.video_thumbnail_url) {
 					await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
 						headers: { 'Content-Type': 'image/png' }
@@ -297,7 +243,7 @@ const UploadOrEditPost = ({
 						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
 						{
 							file_name: uploadedFile.file.name,
-							type: 'postlibrary',
+							type: 'virallibrary',
 							data: {
 								bucket: 'media',
 								multipart_upload:
@@ -347,51 +293,18 @@ const UploadOrEditPost = ({
 
 	const resetState = () => {
 		setCaption('');
-		setValue(false);
 		setUploadMediaError('');
-		setMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
 		setDropZoneBorder('#ffff00');
-		setMediaLabelColor('#ffffff');
-		setSelectedMedia(null);
 		setPostButtonStatus(false);
-		setDimensionSelect('square');
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
-		setExtraLabel('');
-		setImageToResizeWidth(80);
-		setImageToResizeHeight(80);
 		setPreviewFile(null);
 		setPreviewBool(false);
 		setSelectedLabels([]);
 		setDisableDropdown(true);
-		setDropdownPosition(false);
-		//setImageDestination('');
-	};
-
-	// a little function to help us with reordering the result
-	const reorder = (list, startIndex, endIndex) => {
-		const result = Array.from(list);
-		const [removed] = result.splice(startIndex, 1);
-		result.splice(endIndex, 0, removed);
-		return result;
-	};
-
-	const onDragEnd = (result) => {
-		// dropped outside the list
-		if (!result.destination) {
-			return;
-		}
-
-		const items = reorder(
-			uploadedFiles,
-			result.source.index, // pick
-			result.destination.index // drop
-		);
-
-		setUploadedFiles(items);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -400,7 +313,7 @@ const UploadOrEditPost = ({
 		);
 	};
 
-	const validatePostBtn = () => {
+	const validateViralBtn = () => {
 		if (uploadedFiles.length < 1) {
 			setDropZoneBorder('#ff355a');
 			setUploadMediaError('You need to upload a media in order to post');
@@ -422,45 +335,41 @@ const UploadOrEditPost = ({
 				setLabelError('');
 			}, [5000]);
 		}
-		if (value && !selectedMedia) {
-			setMediaLabelColor('#ff355a');
-			setMediaError('This field is required');
-			setTimeout(() => {
-				setMediaLabelColor('#ffffff');
-				setMediaError('');
-			}, [5000]);
-		}
+
 		if (!caption) {
 			setCaptionColor('#ff355a');
-			setCaptionError('This field is required');
+			setCaptionError(
+				'You need to put a caption of atleast 1 character in order to post'
+			);
 			setTimeout(() => {
-				setCaptionColor('#ffffff');
+				setCaptionColor('#ffff00');
 				setCaptionError('');
 			}, [5000]);
 		}
 	};
 
-	const createPost = async (id, mediaFiles = []) => {
+	const createViral = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
+		console.log(mediaFiles, 'media files');
 		try {
 			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
+				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
 				{
-					caption: caption,
-					orientation_type: dimensionSelect,
-					...(selectedMedia
-						? { media_id: selectedMedia.id }
-						: { media_id: null }),
-					...(isEdit && id ? { post_id: id } : {}),
-					...(!isEdit && selectedLabels.length
-						? { labels: [...selectedLabels] }
-						: {}),
-					...(!isEdit ? { media_files: [...mediaFiles] } : {}),
+					...(caption ? { caption: caption } : { caption: '' }),
+					...(!isEdit ? { media_url: mediaFiles[0]?.media_url } : {}),
+					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
+					...(!isEdit ? { thumbnail_url: mediaFiles[0]?.thumbnail_url } : {}),
+					...(!isEdit ? { height: fileHeight } : {}),
+					...(!isEdit ? { width: fileWidth } : {}),
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
 						last_name: `${getLocalStorageDetails()?.last_name}`
-					}
+					},
+					...(isEdit && id ? { viral_id: id } : {}),
+					...(!isEdit && selectedLabels.length
+						? { labels: [...selectedLabels] }
+						: {})
 				},
 				{
 					headers: {
@@ -470,29 +379,29 @@ const UploadOrEditPost = ({
 			);
 			if (result?.data?.status_code === 200) {
 				toast.success(
-					isEdit ? 'Post has been edited!' : 'Post has been created!'
+					isEdit ? 'Viral has been edited!' : 'Viral has been created!'
 				);
-				setIsLoadingCreatePost(false);
+				setIsLoadingcreateViral(false);
 				setPostButtonStatus(false);
 				handleClose();
-				dispatch(getPosts({ page }));
+				dispatch(getAllViralsApi({ page }));
 				dispatch(getPostLabels());
 			}
 		} catch (e) {
-			toast.error(isEdit ? 'Failed to edit post!' : 'Failed to create post!');
-			setIsLoadingCreatePost(false);
+			toast.error(isEdit ? 'Failed to edit viral!' : 'Failed to create viral!');
+			setIsLoadingcreateViral(false);
 			setPostButtonStatus(false);
 			console.log(e);
 		}
 	};
 
-	const deletePost = async (id) => {
+	const deleteViral = async (id) => {
 		setDeleteBtnStatus(true);
 		try {
 			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/post/delete-post`,
+				`${process.env.REACT_APP_API_ENDPOINT}/viral/delete-viral`,
 				{
-					post_id: id
+					viral_id: id
 				},
 				{
 					headers: {
@@ -501,44 +410,24 @@ const UploadOrEditPost = ({
 				}
 			);
 			if (result?.data?.status_code === 200) {
-				toast.success('Post has been deleted!');
+				toast.success('Viral has been deleted!');
 				handleClose();
 
 				//setting a timeout for getting post after delete.
-				dispatch(getPosts({ page }));
+				dispatch(getAllViralsApi({ page }));
 			}
 		} catch (e) {
-			toast.error('Failed to delete post!');
+			toast.error('Failed to delete Viral!');
 			setDeleteBtnStatus(false);
 			console.log(e);
 		}
 	};
 
-	const squareCrop = () => {
-		setDimensionSelect('square');
-		setImageToResizeWidth(80);
-		setImageToResizeHeight(80);
-		// setAspect(1 / 1);
-		//cropMe(1);
-	};
-
-	const landscapeCrop = () => {
-		setDimensionSelect('landscape');
-		setImageToResizeWidth(80.22);
-		setImageToResizeHeight(42);
-		// setAspect(1.91 / 1);
-		//cropMe(1.91);
-	};
-
-	const portraitCrop = () => {
-		setDimensionSelect('portrait');
-		setImageToResizeWidth(64);
-		setImageToResizeHeight(80);
-		// setAspect(4 / 5);
-		//cropMe(0.8);
-	};
-
 	const [newLabels, setNewLabels] = useState([]);
+
+	useEffect(() => {
+		if (labels.length) setNewLabels(labels);
+	}, [newLabels]);
 
 	const handleChangeExtraLabel = (e) => {
 		// e.preventDefault();
@@ -546,35 +435,16 @@ const UploadOrEditPost = ({
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
-	const handleChangeSelectMediaInput = (e) => {
-		setSelectMediaInput(e.target.value);
-	};
-
-	useEffect(() => {
-		if (labels.length) setNewLabels(labels);
-	}, [newLabels]);
-
 	const handlePreviewEscape = () => {
 		setPreviewBool(false);
 		setPreviewFile(null);
 	};
 
-	const postBtnDisabled =
+	const viralBtnDisabled =
 		!uploadedFiles.length ||
-		!caption ||
 		postButtonStatus ||
-		(value && !selectedMedia) ||
-		selectedLabels.length < 10;
-
-	const editBtnDisabled =
-		postButtonStatus ||
-		!caption ||
-		(value && !selectedMedia) ||
-		(specificPost?.caption === caption.trim() &&
-			specificPost?.media_id == selectedMedia?.id);
-
-	// console.log('specific post', specificPost?.media_id);
-	// console.log('normal', selectedMedia?.id);
+		selectedLabels.length < 10 ||
+		!caption;
 
 	return (
 		<Slider
@@ -594,8 +464,9 @@ const UploadOrEditPost = ({
 			previewRef={previewRef}
 			orientationRef={orientationRef}
 			edit={isEdit}
+			viral={true}
 		>
-			<LoadingOverlay active={isLoadingCreatePost} spinner text='Loading...'>
+			<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
 				<div
 					className={`${
 						previewFile != null
@@ -603,91 +474,21 @@ const UploadOrEditPost = ({
 							: classes.contentWrapper
 					}`}
 				>
-					{specificPostStatus.status === 'loading' ? (
+					{/* {specificViralStatus.status === 'loading' ? (
 						<div className={classes.loaderContainer2}>
 							<CircularProgress className={classes.loader} />
 						</div>
 					) : (
 						<></>
-					)}
+					)} */}
+
 					<div
 						className={classes.contentWrapperNoPreview}
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
 					>
 						<div>
-							{isEdit || uploadedFiles.length === 0 ? (
-								<h5>{heading1}</h5>
-							) : (
-								<div className={classes.headerOrientationWrapper}>
-									<h5>{heading1}</h5>
-									<div className={classes.orientationDimensionWrapper}>
-										<h6 className={classes.orientation}>Orientation</h6>
-										<div
-											ref={orientationRef}
-											className={classes.dimensionWrapper}
-										>
-											<div
-												className={classes.dimensionSingle}
-												onClick={squareCrop}
-												style={
-													dimensionSelect === 'square'
-														? { backgroundColor: '#000000' }
-														: {}
-												}
-											>
-												{dimensionSelect === 'square' ? (
-													<SquareCropSelected
-														className={classes.dimensionPreviewIcons}
-													/>
-												) : (
-													<SquareCrop
-														className={classes.dimensionPreviewIcons}
-													/>
-												)}
-											</div>{' '}
-											<div
-												className={classes.dimensionSingle}
-												onClick={portraitCrop}
-												style={
-													dimensionSelect === 'portrait'
-														? { backgroundColor: '#000000' }
-														: {}
-												}
-											>
-												{dimensionSelect === 'portrait' ? (
-													<PortraitCropSelected
-														className={classes.dimensionPreviewIcons}
-													/>
-												) : (
-													<PortraitCrop
-														className={classes.dimensionPreviewIcons}
-													/>
-												)}
-											</div>
-											<div
-												className={classes.dimensionSingle}
-												onClick={landscapeCrop}
-												style={
-													dimensionSelect === 'landscape'
-														? { backgroundColor: '#000000' }
-														: {}
-												}
-											>
-												{dimensionSelect === 'landscape' ? (
-													<LandscapeCropSelected
-														className={classes.dimensionPreviewIcons}
-													/>
-												) : (
-													<LandscapeCrop
-														className={classes.dimensionPreviewIcons}
-													/>
-												)}
-											</div>
-										</div>
-									</div>
-								</div>
-							)}
-							<DragDropContext onDragEnd={onDragEnd}>
+							<h5>{heading1}</h5>
+							<DragDropContext>
 								<Droppable droppableId='droppable-1'>
 									{(provided) => (
 										<div
@@ -716,22 +517,33 @@ const UploadOrEditPost = ({
 																<div className={classes.filePreviewLeft}>
 																	{file.type === 'video' ? (
 																		<>
-																			<PlayArrowIcon
-																				className={
-																					dimensionSelect === 'portrait'
-																						? classes.playIconPortrait
-																						: classes.playIcon
-																				}
-																			/>
+																			{/* <PlayArrowIcon
+																				className={classes.playIcon}
+																			/> */}
 																			<video
 																				id={'my-video'}
+																				ref={videoRef}
 																				poster={isEdit ? file.img : null}
 																				className={classes.fileThumbnail}
 																				style={{
-																					maxWidth: `${imageToResizeWidth}px`,
-																					maxHeight: `${imageToResizeHeight}px`,
+																					// maxWidth: `${imageToResizeWidth}px`,
+																					// maxHeight: `${imageToResizeHeight}px`,
 																					objectFit: 'cover',
 																					objectPosition: 'center'
+																				}}
+																				onLoadedMetadata={() => {
+																					console.log(
+																						videoRef,
+																						videoRef.current.videoWidth,
+																						videoRef.current.videoHeight,
+																						'video'
+																					);
+																					setFileWidth(
+																						videoRef.current.videoWidth
+																					);
+																					setFileHeight(
+																						videoRef.current.videoHeight
+																					);
 																				}}
 																			>
 																				<source src={file.img} />
@@ -739,22 +551,28 @@ const UploadOrEditPost = ({
 																		</>
 																	) : (
 																		<>
-																			{/* <Cropper
-																		image={`${file.img}`}
-																		crop={crop}
-																		aspect={aspect}
-																		className={classes.fileThumbnail}
-																		onCropChange={()=> console.log('lol')}
-																	/> */}
 																			<img
 																				src={file.img}
 																				className={classes.fileThumbnail}
-																				// ref={imageElement}
 																				style={{
-																					width: `${imageToResizeWidth}px`,
-																					height: `${imageToResizeHeight}px`,
+																					// width: `${imageToResizeWidth}px`,
+																					// height: `${imageToResizeHeight}px`,
 																					objectFit: 'cover',
 																					objectPosition: 'center'
+																				}}
+																				ref={imgEl}
+																				onLoad={() => {
+																					console.log(
+																						imgEl.current.naturalHeight,
+																						imgEl.current.naturalWidth,
+																						'image'
+																					);
+																					setFileWidth(
+																						imgEl.current.naturalWidth
+																					);
+																					setFileHeight(
+																						imgEl.current.naturalHeight
+																					);
 																				}}
 																			/>
 																		</>
@@ -792,14 +610,6 @@ const UploadOrEditPost = ({
 																				setPreviewFile(file);
 																			}}
 																		/>
-																		{uploadedFiles.length > 1 && (
-																			<span {...provided.dragHandleProps}>
-																				<MenuIcon
-																					style={{ cursor: 'grab' }}
-																					className={classes.filePreviewIcons}
-																				/>
-																			</span>
-																		)}
 																		<Deletes
 																			className={classes.filePreviewIcons}
 																			onClick={() => {
@@ -820,7 +630,7 @@ const UploadOrEditPost = ({
 									)}
 								</Droppable>
 							</DragDropContext>
-							{uploadedFiles.length < 10 && !isEdit ? (
+							{uploadedFiles.length < 1 && !isEdit ? (
 								<section
 									className={classes.dropZoneContainer}
 									style={{
@@ -828,10 +638,7 @@ const UploadOrEditPost = ({
 									}}
 								>
 									<div {...getRootProps({ className: classes.dropzone })}>
-										<input
-											{...getInputProps()}
-											// ref={ref}
-										/>
+										<input {...getInputProps()} />
 										<AddCircleOutlineIcon className={classes.addFilesIcon} />
 										<p className={classes.dragMsg}>
 											Click or drag files to this area to upload
@@ -852,7 +659,7 @@ const UploadOrEditPost = ({
 								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete
 									disabled={isEdit}
-									getOptionLabel={(option) => option.name} // setSelectedLabels name out of array of strings
+									getOptionLabel={(option) => option.name} // name out of array of strings
 									PaperComponent={(props) => {
 										setDisableDropdown(false);
 										return (
@@ -886,24 +693,30 @@ const UploadOrEditPost = ({
 									freeSolo={false}
 									value={selectedLabels}
 									onChange={(event, newValue) => {
-										//console.log(newValue);
 										setDisableDropdown(true);
 										event.preventDefault();
 										event.stopPropagation();
 										let newLabels = newValue.filter(
-											//code to check if the new added label is already in the list
 											(v, i, a) =>
 												a.findIndex(
 													(t) => t.name.toLowerCase() === v.name.toLowerCase()
 												) === i
 										);
-
 										setSelectedLabels([...newLabels]);
-										console.log(selectedLabels, newValue);
 									}}
 									popupIcon={''}
 									noOptionsText={
-										<div className={classes.liAutocompleteWithButton}>
+										<div
+											className={classes.liAutocompleteWithButton}
+											style={{
+												display: 'flex',
+												justifyContent: 'space-between',
+												alignItems: 'center',
+												color: 'white',
+												fontSize: 14
+											}}
+										>
+											{/* <p>{extraLabel.toUpperCase()}</p> */}
 											<p>No results found</p>
 											{/* <Button
 												text='CREATE NEW LABEL'
@@ -941,14 +754,7 @@ const UploadOrEditPost = ({
 										/>
 									)}
 									renderOption={(props, option, state) => {
-										//selected in input field,  some -> array to check exists
-										let currentLabelDuplicate = selectedLabels.some(
-											(label) => label.name == option.name
-										);
-
-										if (option.id == null && !currentLabelDuplicate) {
-											// if (option.filter(option=>option.name===option.name))
-
+										if (option.id == null) {
 											return (
 												<li
 													{...props}
@@ -967,25 +773,19 @@ const UploadOrEditPost = ({
 															fontWeight: 700
 														}}
 														onClick={() => {
-															// setSelectedLabels((labels) => [
-															// 	...labels,
-															// 	extraLabel.toUpperCase()
-															// ]);
+															setSelectedLabels((labels) => [
+																...labels,
+																extraLabel.toUpperCase()
+															]);
 														}}
 													/>
 												</li>
 											);
-										} else if (!currentLabelDuplicate) {
+										} else {
 											return (
 												<li {...props} className={classes.liAutocomplete}>
 													{option.name}
 												</li>
-											);
-										} else {
-											return (
-												<div className={classes.liAutocompleteWithButton}>
-													&apos;{option.name}&apos; is already selected
-												</div>
 											);
 										}
 									}}
@@ -998,6 +798,7 @@ const UploadOrEditPost = ({
 								/>
 							</div>
 							<p className={classes.mediaError}>{labelError}</p>
+
 							<div className={classes.captionContainer}>
 								<h6 style={{ color: captionColor }}>CAPTION</h6>
 								<TextField
@@ -1016,112 +817,10 @@ const UploadOrEditPost = ({
 									maxRows={4}
 								/>
 							</div>
+
 							<p className={classes.mediaError}>{captionError}</p>
-
-							<div className={classes.postMediaContainer}>
-								<div className={classes.postMediaHeader}>
-									<h5>Link post to media</h5>
-									<ToggleSwitch
-										id={1}
-										checked={value}
-										onChange={(checked) => {
-											setSelectedMedia(null);
-											setValue(checked);
-										}}
-									/>
-								</div>
-							</div>
-							{value ? (
-								<div
-									style={{ marginBottom: dropdownPosition ? 200 : 0 }}
-									className={classes.mediaContainer}
-								>
-									<h6 style={{ color: mediaLabelColor }}>SELECT MEDIA</h6>
-									<Autocomplete
-										value={selectedMedia}
-										PaperComponent={(props) => {
-											setDisableDropdown(false);
-
-											return (
-												<Paper
-													elevation={6}
-													className={classes.popperAuto}
-													style={{
-														marginTop: '12px',
-														background: 'black',
-														border: '1px solid #404040',
-														boxShadow:
-															'0px 16px 40px rgba(255, 255, 255, 0.16)',
-														borderRadius: '8px'
-													}}
-													{...props}
-												/>
-											);
-										}}
-										PopperComponent={({ style, ...props }) => (
-											<Popper {...props} style={{ ...style, height: 0 }} />
-										)}
-										ListboxProps={{
-											style: { maxHeight: 180 },
-											position: 'bottom'
-										}}
-										onOpen={() => {
-											setDropdownPosition(true);
-										}}
-										onClose={(e) => {
-											setDisableDropdown(true);
-											setDropdownPosition(false);
-										}}
-										onChange={(e, newVal) => {
-											setSelectedMedia(newVal);
-
-											setDisableDropdown(true);
-										}}
-										options={allMedia}
-										getOptionLabel={(option) => option.title}
-										renderOption={(props, option, { selected }) => {
-											return (
-												<li {...props} className={classes.liAutocomplete}>
-													{option.title}
-												</li>
-											);
-										}}
-										filterOptions={(items) => {
-											return items.filter((item) =>
-												item.title
-													.toLowerCase()
-													.includes(selectMediaInput.toLowerCase())
-											);
-										}}
-										renderInput={(params) => (
-											<TextField
-												{...params}
-												size='small'
-												placeholder='Search Media'
-												InputProps={{
-													disableUnderline: true,
-													...params.InputProps,
-													className: classes.textFieldInput
-												}}
-												value={selectMediaInput}
-												onChange={handleChangeSelectMediaInput}
-											/>
-										)}
-										clearIcon={<ClearIcon />}
-										noOptionsText={
-											<div style={{ color: '#808080', fontSize: 14 }}>
-												No Results Found
-											</div>
-										}
-										popupIcon={''}
-									/>
-
-									<p className={classes.mediaError}>{mediaError}</p>
-								</div>
-							) : (
-								<></>
-							)}
 						</div>
+
 						<div className={classes.buttonDiv}>
 							{isEdit ? (
 								<div className={classes.editBtn}>
@@ -1130,10 +829,10 @@ const UploadOrEditPost = ({
 										button2={isEdit ? true : false}
 										onClick={() => {
 											if (!deleteBtnStatus) {
-												deletePost(specificPost?.id);
+												deleteViral(specificViral?.id);
 											}
 										}}
-										text={'DELETE POST'}
+										text={'DELETE VIRAL'}
 									/>
 								</div>
 							) : (
@@ -1142,16 +841,16 @@ const UploadOrEditPost = ({
 
 							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 								<Button
-									disabled={isEdit ? editBtnDisabled : postBtnDisabled}
+									disabled={viralBtnDisabled}
 									onClick={() => {
-										if (postBtnDisabled || editBtnDisabled) {
-											validatePostBtn();
+										if (viralBtnDisabled) {
+											validateViralBtn();
 										} else {
 											setPostButtonStatus(true);
 											if (isEdit) {
-												createPost(specificPost?.id);
+												createViral(specificViral?.id);
 											} else {
-												setIsLoadingCreatePost(true);
+												setIsLoadingcreateViral(true);
 												let uploadFilesPromiseArray = uploadedFiles.map(
 													async (_file) => {
 														return uploadFileToServer(_file);
@@ -1160,10 +859,10 @@ const UploadOrEditPost = ({
 
 												Promise.all([...uploadFilesPromiseArray])
 													.then((mediaFiles) => {
-														createPost(null, mediaFiles);
+														createViral(null, mediaFiles);
 													})
 													.catch(() => {
-														setIsLoadingCreatePost(false);
+														setIsLoadingcreateViral(false);
 													});
 											}
 										}
@@ -1192,9 +891,10 @@ const UploadOrEditPost = ({
 										poster={isEdit ? previewFile.img : null}
 										className={classes.previewFile}
 										style={{
-											width: `${imageToResizeWidth * 4}px`,
-											height: `${imageToResizeHeight * 4}px`,
-											objectFit: 'cover',
+											//width: `${8 * 4}rem`,
+											width: `100%`,
+											height: `${8 * 4}rem`,
+											objectFit: 'contain',
 											objectPosition: 'center'
 										}}
 										controls={true}
@@ -1207,9 +907,10 @@ const UploadOrEditPost = ({
 										poster={isEdit ? previewFile.thumbnail_url : null}
 										className={classes.previewFile}
 										style={{
-											width: `${imageToResizeWidth * 4}px`,
-											height: `${imageToResizeHeight * 4}px`,
-											objectFit: 'cover',
+											//width: `${8 * 4}rem`,
+											width: `100%`,
+											height: `${8 * 4}rem`,
+											objectFit: 'contain',
 											objectPosition: 'center'
 										}}
 										controls={true}
@@ -1221,9 +922,10 @@ const UploadOrEditPost = ({
 										src={previewFile.img}
 										className={classes.previewFile}
 										style={{
-											width: `${imageToResizeWidth * 4}px`,
-											height: `${imageToResizeHeight * 4}px`,
-											objectFit: 'cover',
+											//width: `${8 * 4}rem`,
+											width: `100%`,
+											height: `${8 * 4}rem`,
+											objectFit: 'contain',
 											objectPosition: 'center'
 										}}
 									/>
@@ -1237,7 +939,7 @@ const UploadOrEditPost = ({
 	);
 };
 
-UploadOrEditPost.propTypes = {
+UploadOrEditViral.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	isEdit: PropTypes.bool.isRequired,
@@ -1247,4 +949,4 @@ UploadOrEditPost.propTypes = {
 	page: PropTypes.string
 };
 
-export default UploadOrEditPost;
+export default UploadOrEditViral;

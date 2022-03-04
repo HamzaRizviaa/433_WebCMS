@@ -34,7 +34,7 @@ import '../PostLibrary/_calender.scss';
 
 // Utils
 import { getDateTime, formatDate, getCalendarText } from '../../utils';
-import { useStyles } from './../../utils/styles';
+import { useStyles, useStyles2 } from './../../utils/styles';
 
 // Icons
 import { ReactComponent as Edit } from '../../assets/edit.svg';
@@ -45,6 +45,7 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 
 const MediaLibrary = () => {
 	const muiClasses = useStyles();
+	const muiClasses2 = useStyles2();
 
 	// Selctor
 	const media = useSelector((state) => state.mediaLibraryOriginal.media);
@@ -509,7 +510,7 @@ const MediaLibrary = () => {
 				<div className={classes.subheader2}>
 					<div>
 						<TextField
-							className={classes.searchField}
+							className={`${classes.searchField} ${muiClasses2.root}`}
 							value={search}
 							// onKeyPress={(e) => {
 							// 	if (e.key === 'Enter' && search) {

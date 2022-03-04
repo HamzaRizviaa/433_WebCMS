@@ -1,3 +1,5 @@
+@import '../../styles/variables.scss';
+
 .table {
 	width: 100%;
 	border-collapse: separate;
@@ -72,9 +74,9 @@
 }
 
 .table-header {
-	th:first-of-type {
-		// width: 40rem;
-	}
+	// th:first-of-type {
+	// 	// width: 40rem;
+	// }
 	th {
 		font-size: 1rem;
 		font-weight: bold;
@@ -82,4 +84,10 @@
 		text-align: initial;
 		text-transform: uppercase;
 	}
+}
+
+.table-hover tbody tr:hover td,
+.table-hover tbody tr:hover th {
+	//background-color: rgb(68, 68, 28);
+	//transform: translateY(0) scale(1.005);
 }

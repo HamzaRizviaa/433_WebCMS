@@ -15,6 +15,7 @@ import {
 	getMainCategories,
 	getMediaLabels
 } from './../../../pages/MediaLibrary/mediaLibrarySlice';
+import { getLocalStorageDetails } from '../../../utils';
 import { getMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
 import ClearIcon from '@material-ui/icons/Clear';
 import Close from '@material-ui/icons/Close';
@@ -60,6 +61,8 @@ const UploadOrEditMedia = ({
 	const [titleMediaLabelColor, setTitleMediaLabelColor] = useState('#ffffff');
 	const [titleMediaError, setTitleMediaError] = useState('');
 	const [description, setDescription] = useState('');
+	const [descriptionColor, setDescriptionColor] = useState('#ffffff');
+	const [descriptionError, setDescriptionError] = useState('');
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [previewBool, setPreviewBool] = useState(false);
@@ -72,7 +75,7 @@ const UploadOrEditMedia = ({
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
-				mainCategory === 'Watch' ? 'video/mp4' : 'audio/mp3, audio/mpeg'
+				mainCategory?.name === 'Watch' ? 'video/mp4' : 'audio/mp3, audio/mpeg'
 			}`,
 			maxFiles: 1
 		});
@@ -80,9 +83,11 @@ const UploadOrEditMedia = ({
 	const mainCategories = useSelector(
 		(state) => state.mediaLibraryOriginal.mainCategories
 	);
+
 	const specificMedia = useSelector(
 		(state) => state.mediaLibraryOriginal.specificMedia
 	);
+
 	const specificMediaStatus = useSelector(
 		(state) => state.mediaLibraryOriginal
 	);
@@ -108,6 +113,9 @@ const UploadOrEditMedia = ({
 	}, [extraLabel]);
 
 	useEffect(() => {
+		// console.log(specificMedia?.media_type);
+		// console.log(specificMedia?.sub_category);
+
 		if (specificMedia) {
 			if (specificMedia?.labels) {
 				let _labels = [];
@@ -116,7 +124,17 @@ const UploadOrEditMedia = ({
 				);
 				setSelectedLabels(_labels);
 			}
-			setMainCategory(specificMedia?.media_type);
+			if (specificMedia.media_type) {
+				let setData = mainCategories.find(
+					(u) => u.name === specificMedia?.media_type
+				);
+				//console.log(specificMedia?.media_type);
+				//console.log(setData.name);
+				setMainCategory(setData.name);
+			}
+
+			//setMainCategory(specificMedia?.media_type);
+			console.log(mainCategory);
 			setSubCategory(specificMedia?.sub_category);
 			setTitleMedia(specificMedia?.title);
 			setDescription(specificMedia?.description);
@@ -141,6 +159,9 @@ const UploadOrEditMedia = ({
 	useEffect(() => {
 		dispatch(getMainCategories());
 		dispatch(getMediaLabels());
+		return () => {
+			resetState();
+		};
 	}, []);
 
 	const {
@@ -149,15 +170,21 @@ const UploadOrEditMedia = ({
 		getRootProps: getRootProps2,
 		getInputProps: getInputProps2
 	} = useDropzone({
-		accept: 'image/jpeg, image/png',
+		accept: '.jpeg, .jpg, .png',
 		maxFiles: 1
 	});
 
 	const updateSubCategories = async (mainCategory) => {
 		try {
 			const response = await axios.get(
-				`${process.env.REACT_APP_API_ENDPOINT}/media/get-sub-categories/${mainCategory}`
+				`${process.env.REACT_APP_API_ENDPOINT}/media/get-sub-categories/${mainCategory.id}`,
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
 			);
+
 			if (response?.data?.data?.length) {
 				setSubCategories([...response.data.data]);
 			} else {
@@ -169,7 +196,7 @@ const UploadOrEditMedia = ({
 	};
 
 	useEffect(() => {
-		if (mainCategory) {
+		if (mainCategory && !isEdit) {
 			updateSubCategories(mainCategory);
 		}
 	}, [mainCategory]);
@@ -258,6 +285,8 @@ const UploadOrEditMedia = ({
 		setFileRejectionError2('');
 		setMainCategoryLabelColor('#ffffff');
 		setTitleMediaLabelColor('#ffffff');
+		setDescriptionColor('#ffffff');
+		setDescriptionError('');
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
@@ -330,6 +359,14 @@ const UploadOrEditMedia = ({
 				setTitleMediaError('');
 			}, [5000]);
 		}
+		if (!description) {
+			setDescriptionColor('#ff355a');
+			setDescriptionError('You need to enter a Description');
+			setTimeout(() => {
+				setDescriptionColor('#ffffff');
+				setDescriptionError('');
+			}, [5000]);
+		}
 	};
 
 	const deleteMedia = async (id) => {
@@ -339,6 +376,11 @@ const UploadOrEditMedia = ({
 				`${process.env.REACT_APP_API_ENDPOINT}/media/delete-media`,
 				{
 					media_id: id
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
 				}
 			);
 			if (result?.data?.status_code === 200) {
@@ -360,6 +402,7 @@ const UploadOrEditMedia = ({
 	};
 
 	const uploadMedia = async (id, payload) => {
+		let media_type = mainCategory?.id;
 		setMediaButtonStatus(true);
 		try {
 			const result = await axios.post(
@@ -367,8 +410,9 @@ const UploadOrEditMedia = ({
 				isEdit
 					? { media_id: id, ...payload }
 					: {
-							media_type: mainCategory,
-							sub_category: subCategory,
+							main_category_id: media_type,
+							sub_category_id: subCategory?.id ?? null,
+							// sub_category: subCategory,
 							title: titleMedia,
 							...(selectedLabels.length ? { labels: [...selectedLabels] } : {}),
 							description: description,
@@ -378,8 +422,18 @@ const UploadOrEditMedia = ({
 								image_data: payload?.data?.Keys?.ImageKey,
 								audio_data: payload?.data?.Keys?.AudioKey
 							},
+							user_data: {
+								id: `${getLocalStorageDetails()?.id}`,
+								first_name: `${getLocalStorageDetails()?.first_name}`,
+								last_name: `${getLocalStorageDetails()?.last_name}`
+							},
 							...payload
-					  }
+					  },
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
 			);
 			if (result?.data?.status_code === 200) {
 				toast.success(
@@ -408,6 +462,11 @@ const UploadOrEditMedia = ({
 					file_type:
 						file.fileExtension === '.mpeg' ? '.mp3' : file.fileExtension,
 					parts: 1
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
 				}
 			);
 
@@ -428,10 +487,14 @@ const UploadOrEditMedia = ({
 	const handleTitleDuplicate = async (givenTitle) => {
 		try {
 			const result = await axios.get(
-				`${process.env.REACT_APP_API_ENDPOINT}/media/check/${givenTitle}`
+				`${process.env.REACT_APP_API_ENDPOINT}/media/check/${givenTitle}`,
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
 			);
-			console.log(result);
-			return result?.data?.status;
+			return result?.data?.status_code;
 		} catch (error) {
 			console.log('Error');
 			return null;
@@ -448,8 +511,34 @@ const UploadOrEditMedia = ({
 		!mainCategory ||
 		!uploadedCoverImage.length ||
 		!titleMedia ||
+		!description ||
 		mediaButtonStatus ||
 		selectedLabels.length < 10;
+
+	const editBtnDisabled =
+		mediaButtonStatus ||
+		!titleMedia ||
+		!description ||
+		(specificMedia?.title === titleMedia.trim() &&
+			specificMedia?.description === description.trim());
+
+	const MainCategoryId = (e) => {
+		//find name and will return whole object  isEdit ? subCategory : subCategory.name
+		let setData = mainCategories.find((u) => u.name === e);
+		setSubCategory({ id: null, name: ' ' });
+		console.log(subCategory, 'subCategory');
+		setMainCategory(setData);
+	};
+
+	const SubCategoryId = (e) => {
+		//e -- name
+		//find name and will return whole object
+		let setData = subCategories.find((u) => u.name === e);
+		//console.log(setData);
+		setSubCategory(setData);
+	};
+
+	//console.log(mainCategory);
 
 	return (
 		<Slider
@@ -507,13 +596,16 @@ const UploadOrEditMedia = ({
 										}}
 										disabled={isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
-										value={mainCategory}
+										value={isEdit ? mainCategory : mainCategory.name}
 										onChange={(e) => {
+											// setSubCategory({ id: null, name: '' });
 											setDisableDropdown(true);
-											setMainCategory(e.target.value);
+											// setMainCategory(e.target.value);
+											//calling function , passing name (i.e. watch & listen)
+											MainCategoryId(e.target.value);
 											setMainCategoryLabelColor('#ffffff');
 											setMainCategoryError('');
-											setSubCategory('');
+
 											if (uploadedFiles.length) {
 												uploadedFiles.map((file) => handleDeleteFile(file.id));
 											}
@@ -553,8 +645,8 @@ const UploadOrEditMedia = ({
 										</MenuItem> */}
 										{mainCategories.map((category, index) => {
 											return (
-												<MenuItem key={index} value={category}>
-													{category}
+												<MenuItem key={index} value={category.name}>
+													{category.name}
 												</MenuItem>
 											);
 										})}
@@ -571,10 +663,10 @@ const UploadOrEditMedia = ({
 										}}
 										disabled={!mainCategory || isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
-										value={subCategory}
+										value={isEdit ? subCategory : subCategory.name}
 										onChange={(e) => {
 											setDisableDropdown(true);
-											setSubCategory(e.target.value);
+											SubCategoryId(e.target.value);
 										}}
 										className={`${classes.select} ${
 											isEdit ? `${classes.isEditSelect}` : ''
@@ -606,13 +698,10 @@ const UploadOrEditMedia = ({
 												: 'Please Select'
 										}
 									>
-										{/* <MenuItem disabled value=''>
-											Please Select
-										</MenuItem> */}
 										{subCategories.map((category, index) => {
 											return (
-												<MenuItem key={index} value={category}>
-													{category}
+												<MenuItem key={index} value={category.name}>
+													{category.name}
 												</MenuItem>
 											);
 										})}
@@ -693,7 +782,7 @@ const UploadOrEditMedia = ({
 													Click or drag file to this area to upload
 												</p>
 												<p className={classes.formatMsg}>
-													{mainCategory === 'Watch'
+													{mainCategory.name === 'Watch'
 														? 'Supported format is mp4'
 														: 'Supported format is mp3'}
 												</p>
@@ -900,8 +989,9 @@ const UploadOrEditMedia = ({
 														fontSize: 14
 													}}
 												>
-													<p>{extraLabel.toUpperCase()}</p>
-													<Button
+													{/* <p>{extraLabel.toUpperCase()}</p> */}
+													<p>No results found</p>
+													{/* <Button
 														text='CREATE NEW LABEL'
 														style={{
 															padding: '3px 12px',
@@ -913,7 +1003,7 @@ const UploadOrEditMedia = ({
 															// 	extraLabel.toUpperCase()
 															// ]);
 														}}
-													/>
+													/> */}
 												</div>
 											}
 											className={`${classes.autoComplete} ${
@@ -986,7 +1076,7 @@ const UploadOrEditMedia = ({
 									<p className={classes.mediaError}>{labelError}</p>
 
 									<div className={classes.titleContainer}>
-										<h6>DESCRIPTION</h6>
+										<h6 style={{ color: descriptionColor }}>DESCRIPTION</h6>
 										<TextField
 											value={description}
 											onChange={(e) => {
@@ -1005,6 +1095,8 @@ const UploadOrEditMedia = ({
 											maxRows={4}
 										/>
 									</div>
+
+									<p className={classes.mediaError}>{descriptionError}</p>
 								</>
 							) : (
 								<></>
@@ -1018,7 +1110,6 @@ const UploadOrEditMedia = ({
 										button2={isEdit ? true : false}
 										onClick={() => {
 											if (!deleteBtnStatus) {
-												console.log('specific', specificMedia.id);
 												deleteMedia(specificMedia?.id);
 											}
 										}}
@@ -1035,9 +1126,9 @@ const UploadOrEditMedia = ({
 								}
 							>
 								<Button
-									disabled={addMediaBtnDisabled}
+									disabled={isEdit ? editBtnDisabled : addMediaBtnDisabled}
 									onClick={async () => {
-										if (addMediaBtnDisabled) {
+										if (addMediaBtnDisabled || editBtnDisabled) {
 											validatePostBtn();
 										} else {
 											setMediaButtonStatus(true);
@@ -1072,7 +1163,6 @@ const UploadOrEditMedia = ({
 
 												Promise.all([...uploadFilesPromiseArray])
 													.then(async (mediaFiles) => {
-														console.log(mediaFiles);
 														const completeUpload = await axios.post(
 															`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
 															{
@@ -1095,7 +1185,7 @@ const UploadOrEditMedia = ({
 																			: ['image'],
 																	keys: {
 																		image_key: mediaFiles[1]?.keys?.image_key,
-																		...(mainCategory === 'Watch'
+																		...(mainCategory.name === 'Watch'
 																			? {
 																					video_key:
 																						mediaFiles[0]?.keys?.video_key,
@@ -1108,9 +1198,16 @@ const UploadOrEditMedia = ({
 																			  })
 																	},
 																	upload_id:
-																		mainCategory === 'Watch'
+																		mainCategory.name === 'Watch'
 																			? mediaFiles[0].upload_id
 																			: 'audio'
+																}
+															},
+															{
+																headers: {
+																	Authorization: `Bearer ${
+																		getLocalStorageDetails()?.access_token
+																	}`
 																}
 															}
 														);

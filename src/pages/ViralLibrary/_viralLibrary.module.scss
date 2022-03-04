@@ -2,7 +2,7 @@
 @import '../../styles/_mixins.scss';
 
 .tableContainer {
-	//margin: 0rem 0rem;
+	margin: 1rem 0rem;
 }
 
 .header {
@@ -29,6 +29,142 @@
 		right: 30px !important;
 	}
 }
+
+.mediaWrapper {
+	display: flex;
+	align-items: center;
+	margin-bottom: 1.5rem;
+	margin-left: 0.5rem;
+	margin-right: 0.5rem;
+	div {
+		//max-width: 100%;
+		max-width: 60%;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		span {
+			white-space: nowrap;
+		}
+	}
+}
+
+.labelsWrapper {
+	max-width: 60%;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.mediaIcon {
+	height: 5rem;
+	//width: 5rem;
+	//max-width: 100%;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaIconPreview {
+	height: calc(5rem * 5);
+	//width: calc(5rem * 6);
+	max-width: calc(5rem * 8);
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaIcon {
+	height: 48px;
+	width: 48px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaIconPreview {
+	height: calc(48px * 6);
+	width: calc(48px * 6);
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaIconLandscape {
+	height: 25.131px;
+	width: 48px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.virallandscapePreview {
+	height: calc(25.131px * 6);
+	width: calc(48px * 6);
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaIconPortrait {
+	height: 48px;
+	width: 38.4px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaIconPortraitPreview {
+	height: calc(48px * 6);
+	width: calc(38.4px * 6);
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaWrapper {
+	display: flex;
+	align-items: center;
+	margin-left: 0.5rem;
+	margin-bottom: 1.5rem;
+	div {
+		max-width: 100%;
+		max-width: 60%;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		span {
+			white-space: nowrap;
+		}
+	}
+}
+
+.virallandscape {
+	margin-top: 1.25rem;
+	display: flex;
+	align-items: center;
+	margin-left: 0.5rem;
+	margin-bottom: 2.5rem;
+	div {
+		max-width: 100%;
+		max-width: 60%;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		span {
+			white-space: nowrap;
+		}
+	}
+}
+
+.toolTipPreview {
+	background-color: transparent !important;
+	border-radius: 8px !important;
+	max-width: none !important;
+}
+
+.fileName {
+	margin-left: 1rem;
+	font-size: 1.2rem;
+}
+
+// .playIcon {
+// 	position: absolute;
+// 	left: 15px;
+// 	top: 20px;
+// 	height: 2.5rem !important;
+// 	width: auto !important;
+// 	color: $neon-yellow;
+// }
+
 // date
 .customDateInput {
 	border: 0;
@@ -106,11 +242,15 @@
 
 .row {
 	margin-bottom: 1.5rem;
-	font-size: 1.2rem;
+	display: block;
+	font-size: 1.35rem;
+	padding-right: 30px;
+	//padding-left: -40px;
 }
 
 .rowType {
 	margin-bottom: 1.5rem;
+	display: block;
 	font-size: 1.2rem;
 	padding-left: 35px;
 }

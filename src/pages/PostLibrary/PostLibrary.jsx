@@ -91,11 +91,13 @@ const PostLibrary = () => {
 							e.preventDefault();
 							e.stopPropagation();
 							if (startDate && endDate) {
+								//start end search
 								dispatch(
+									//api calls dispatch
 									getPosts({
 										q: search,
 										page: 1,
-										startDate,
+										startDate, //start end search
 										endDate,
 										fromCalendar: true,
 										...sortState
@@ -134,6 +136,7 @@ const PostLibrary = () => {
 	};
 
 	useEffect(() => {
+		//sort from backend
 		if (sortState.sortby && sortState.order_type && !search) {
 			dispatch(
 				getPosts({
@@ -216,6 +219,7 @@ const PostLibrary = () => {
 	}, []);
 
 	useEffect(() => {
+		//page switch and get scroll on top
 		let tableBody = document.getElementsByTagName('tbody')[0];
 		if (tableBody) {
 			tableBody.scrollTop = 0;
@@ -250,6 +254,7 @@ const PostLibrary = () => {
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			formatter: (content, row) => {
+				//console.log(row, content, 'post library');
 				return (
 					<div
 						className={

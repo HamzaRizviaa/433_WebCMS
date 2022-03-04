@@ -4,11 +4,19 @@ import PropTypes from 'prop-types';
 //import classes from './_uploadOrEditQuiz.module.scss';
 import UploadOrEditQuiz from './UploadOrEditQuiz';
 
+import TabsUnstyled from '@mui/base/TabsUnstyled';
+import TabsListUnstyled from '@mui/base/TabsListUnstyled';
+import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
+import TabUnstyled from '@mui/base/TabUnstyled';
+import { useStyles } from './quizStyles';
+
 const UploadQuiz = ({ open, handleClose, title, heading1, buttonText }) => {
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const previewRef = useRef(null);
+
+	const muiClasses = useStyles();
 
 	const handlePreviewEscape = () => {
 		setPreviewBool(false);
@@ -30,16 +38,42 @@ const UploadQuiz = ({ open, handleClose, title, heading1, buttonText }) => {
 			disableDropdown={disableDropdown}
 			quiz={true}
 		>
-			<UploadOrEditQuiz
-				heading1={heading1}
-				open={open}
-				buttonText={buttonText}
-				setPreviewBool={setPreviewBool}
-				previewFile={previewFile}
-				setPreviewFile={setPreviewFile}
-				previewRef={previewRef}
-				setDisableDropdown={setDisableDropdown}
-			/>
+			<div className={muiClasses.root}>
+				<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
+					<TabsListUnstyled
+						className={muiClasses.tabMainDiv}
+						style={{ width: previewBool ? '60%' : '100%' }}
+					>
+						<TabUnstyled>Add Poll</TabUnstyled>
+						<TabUnstyled>Add Quiz</TabUnstyled>
+					</TabsListUnstyled>
+					<TabPanelUnstyled value={0}>
+						<UploadOrEditQuiz
+							heading1={heading1}
+							open={open}
+							buttonText={buttonText}
+							setPreviewBool={setPreviewBool}
+							previewFile={previewFile}
+							setPreviewFile={setPreviewFile}
+							previewRef={previewRef}
+							setDisableDropdown={setDisableDropdown}
+						/>
+					</TabPanelUnstyled>
+					<TabPanelUnstyled value={1}>
+						<UploadOrEditQuiz
+							quiz={true}
+							heading1={heading1}
+							open={open}
+							buttonText={buttonText}
+							setPreviewBool={setPreviewBool}
+							previewFile={previewFile}
+							setPreviewFile={setPreviewFile}
+							previewRef={previewRef}
+							setDisableDropdown={setDisableDropdown}
+						/>
+					</TabPanelUnstyled>
+				</TabsUnstyled>
+			</div>
 		</Slider>
 	);
 };

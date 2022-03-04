@@ -94,3 +94,11 @@ export const getCalendarText2 = (startDate) => {
 		);
 	}
 };
+
+export const getLocalStorageDetails = () => {
+	let localStorageData = localStorage.getItem('user_data')
+		? JSON.parse(localStorage.getItem('user_data'))
+		: null;
+
+	return localStorageData;
+};
