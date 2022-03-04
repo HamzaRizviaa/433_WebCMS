@@ -229,12 +229,27 @@ const ViralLibrary = () => {
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			formatter: (content, row) => {
-				//console.log(content, row);
+				//console.log(content, row); classes.mediaWrapper
 				return (
-					<div className={classes.mediaWrapper}>
+					<div
+						className={
+							row.height < row.width
+								? classes.virallandscape
+								: // : row.width > row.height
+								  // ? classes.viralpotrait
+								  classes.mediaWrapper
+						}
+					>
+						{console.log(row.width, row.height)}
 						<Tooltip
 							// TransitionComponent={Fade}
-							// TransitionProps={{ timeout: 600 }}
+							// TransitionProps={{ timeout: 600 }} row.width === row.height
+							//row?.orientation_type === 'square'
+							// ? classes.mediaIconPreview
+							// : row?.orientation_type === 'landscape'
+							// ? classes.mediaIconLandscapePreview
+							// : classes.mediaIconPortraitPreview
+
 							title={
 								row?.thumbnail_url ? (
 									<video
@@ -242,7 +257,13 @@ const ViralLibrary = () => {
 										poster={row.thumbnail_url}
 										autoPlay
 										muted
-										className={classes.mediaIconPreview}
+										className={
+											row.width === row.height
+												? classes.mediaIconPreview
+												: row.width > row.height
+												? classes.virallandscapePreview
+												: classes.mediaIconPortraitPreview
+										}
 										controls={true}
 									>
 										<source
@@ -251,7 +272,13 @@ const ViralLibrary = () => {
 									</video>
 								) : (
 									<img
-										className={classes.mediaIconPreview}
+										className={
+											row.width === row.height
+												? classes.mediaIconPreview
+												: row.width > row.height
+												? classes.virallandscapePreview
+												: classes.mediaIconPortraitPreview
+										}
 										src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
 											row?.thumbnail_url ? row?.thumbnail_url : row?.media
 										}`}
