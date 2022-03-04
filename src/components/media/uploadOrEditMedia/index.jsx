@@ -1029,7 +1029,10 @@ const UploadOrEditMedia = ({
 												/>
 											)}
 											renderOption={(props, option) => {
-												if (option.id == null) {
+												let currentLabelDuplicate = selectedLabels.some(
+													(label) => label.name == option.name
+												);
+												if (option.id == null && !currentLabelDuplicate) {
 													return (
 														<li
 															{...props}
@@ -1056,11 +1059,17 @@ const UploadOrEditMedia = ({
 															/>
 														</li>
 													);
-												} else {
+												} else if (!currentLabelDuplicate) {
 													return (
 														<li {...props} className={classes.liAutocomplete}>
 															{option.name}
 														</li>
+													);
+												} else {
+													return (
+														<div className={classes.liAutocompleteWithButton}>
+															&apos;{option.name}&apos; is already selected
+														</div>
 													);
 												}
 											}}

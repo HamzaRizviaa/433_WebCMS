@@ -326,14 +326,12 @@
 }
 
 .liAutocompleteWithButton {
-	background-color: black;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 	color: white;
 	font-size: 14px;
 	padding: 8px 8px 8px 12px;
-	&:hover {
-		color: $neon-yellow;
-		cursor: pointer;
-	}
 }
 
 .popperAuto {
