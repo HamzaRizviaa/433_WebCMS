@@ -453,9 +453,6 @@ const UploadOrEditQuiz = ({
 						<h6 style={{ color: labelColor }}>LABELS</h6>
 						<Autocomplete
 							disabled={editQuiz || editPoll}
-							style={{
-								maxWidth: `530px`
-							}}
 							getOptionLabel={(option) => option.name}
 							PaperComponent={(props) => {
 								setDisableDropdown(false);
