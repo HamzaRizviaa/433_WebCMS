@@ -57,6 +57,8 @@ const UploadOrEditMedia = ({
 	const [mainCategoryLabelColor, setMainCategoryLabelColor] =
 		useState('#ffffff');
 	const [mainCategoryError, setMainCategoryError] = useState('');
+	const [subCategoryLabelColor, setSubCategoryLabelColor] = useState('#ffffff');
+	const [subCategoryError, setSubCategoryError] = useState('');
 	const [titleMedia, setTitleMedia] = useState('');
 	const [titleMediaLabelColor, setTitleMediaLabelColor] = useState('#ffffff');
 	const [titleMediaError, setTitleMediaError] = useState('');
@@ -284,6 +286,7 @@ const UploadOrEditMedia = ({
 		setFileRejectionError('');
 		setFileRejectionError2('');
 		setMainCategoryLabelColor('#ffffff');
+		setSubCategoryLabelColor('#ffffff');
 		setTitleMediaLabelColor('#ffffff');
 		setDescriptionColor('#ffffff');
 		setDescriptionError('');
@@ -351,6 +354,14 @@ const UploadOrEditMedia = ({
 				setMainCategoryError('');
 			}, [5000]);
 		}
+		if (!subCategory) {
+			setSubCategoryLabelColor('#ff355a');
+			setSubCategoryError('You need to select sub category');
+			setTimeout(() => {
+				setSubCategoryLabelColor('#ffffff');
+				setSubCategoryError('');
+			}, [5000]);
+		}
 		if (!titleMedia) {
 			setTitleMediaLabelColor('#ff355a');
 			setTitleMediaError('You need to enter a Title');
@@ -411,7 +422,7 @@ const UploadOrEditMedia = ({
 					? { media_id: id, ...payload }
 					: {
 							main_category_id: media_type,
-							sub_category_id: subCategory?.id ?? null,
+							sub_category_id: subCategory?.id,
 							// sub_category: subCategory,
 							title: titleMedia,
 							...(selectedLabels.length ? { labels: [...selectedLabels] } : {}),
@@ -509,6 +520,7 @@ const UploadOrEditMedia = ({
 	const addMediaBtnDisabled =
 		!uploadedFiles.length ||
 		!mainCategory ||
+		!subCategory ||
 		!uploadedCoverImage.length ||
 		!titleMedia ||
 		!description ||
@@ -596,7 +608,7 @@ const UploadOrEditMedia = ({
 										}}
 										disabled={isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
-										value={isEdit ? mainCategory : mainCategory.name}
+										value={isEdit ? mainCategory : mainCategory?.name}
 										onChange={(e) => {
 											// setSubCategory({ id: null, name: '' });
 											setDisableDropdown(true);
@@ -653,7 +665,13 @@ const UploadOrEditMedia = ({
 									</Select>
 								</div>
 								<div className={classes.subCategory}>
-									<h6>SUB CATEGORY</h6>
+									<h6
+										style={{
+											color: mainCategory?.name ? subCategoryLabelColor : ''
+										}}
+									>
+										SUB CATEGORY
+									</h6>
 									<Select
 										onOpen={() => {
 											setDisableDropdown(false);
@@ -663,10 +681,12 @@ const UploadOrEditMedia = ({
 										}}
 										disabled={!mainCategory || isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
-										value={isEdit ? subCategory : subCategory.name}
+										value={isEdit ? subCategory : subCategory?.name}
 										onChange={(e) => {
 											setDisableDropdown(true);
 											SubCategoryId(e.target.value);
+											setSubCategoryLabelColor('#ffffff');
+											setSubCategoryError('');
 										}}
 										className={`${classes.select} ${
 											isEdit ? `${classes.isEditSelect}` : ''
@@ -708,7 +728,12 @@ const UploadOrEditMedia = ({
 									</Select>
 								</div>
 							</div>
-							<p className={classes.uploadMediaError}>{mainCategoryError}</p>
+							<div className={classes.catergoryErrorContainer}>
+								<p className={classes.uploadMediaError}>{mainCategoryError}</p>
+								<p className={classes.uploadMediaError2}>
+									{mainCategory ? subCategoryError : ''}
+								</p>
+							</div>
 
 							{mainCategory || isEdit ? (
 								<>

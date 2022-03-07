@@ -595,7 +595,9 @@ const UploadOrEditQuiz = ({
 					<p className={classes.mediaError}>{labelError}</p>
 
 					<div className={classes.datePickerContainer}>
-						<h6 style={{ color: quizColor }}>QUIZ END DATE</h6>
+						<h6 style={{ color: quizColor }}>
+							{quiz || editQuiz ? 'QUIZ END DATE' : 'POLL END DATE'}
+						</h6>
 						<div
 							// className={editQuiz || editPoll ? classes.datePicker : ''}
 							className={classes.datePicker}
