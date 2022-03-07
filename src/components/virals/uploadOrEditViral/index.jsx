@@ -532,12 +532,12 @@ const UploadOrEditViral = ({
 																					objectPosition: 'center'
 																				}}
 																				onLoadedMetadata={() => {
-																					console.log(
-																						videoRef,
-																						videoRef.current.videoWidth,
-																						videoRef.current.videoHeight,
-																						'video'
-																					);
+																					// console.log(
+																					// 	videoRef,
+																					// 	videoRef.current.videoWidth,
+																					// 	videoRef.current.videoHeight,
+																					// 	'video'
+																					// );
 																					setFileWidth(
 																						videoRef.current.videoWidth
 																					);

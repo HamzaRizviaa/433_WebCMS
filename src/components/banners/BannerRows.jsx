@@ -25,26 +25,22 @@ export default function BannerRows({
 	setBannerData,
 	index,
 	handleBanner,
-	errMsg, // 2-5
-
-	firstrow, // 1
+	otherRowsErrMsg, // 2-5
+	firstrowErrMsg, // 1
 	validateRow
 }) {
-	// const listElement = useRef(null);
 	//styles
 	const muiClasses = useStyles();
 	const muiClasses2 = useStyles2();
 	//states
-	// const [bannerType, setBannerType] = useState('');
-	//const classUseStyle = useStyles();
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [dropdownPosition, setDropdownPosition] = useState(false);
 	const [selectedMedia, setSelectedMedia] = useState(null);
 	const [selectMediaInput, setSelectMediaInput] = useState('');
 	const [trashcan, setTrashCan] = useState(false);
 	const allMedia = ['Title only', 'Title + Text'];
-	const [errorMsg, setErrMsg] = useState(firstrow);
-	const [errMsg2, setErrMsg2] = useState(errMsg);
+	const [errorMsg, setErrMsg] = useState(firstrowErrMsg);
+	const [errMsg2, setErrMsg2] = useState(otherRowsErrMsg);
 	//content type dropdown
 	const options = [
 		{
@@ -107,63 +103,24 @@ export default function BannerRows({
 		});
 		// handleBanner();
 	};
-	// useEffect(() => {
-	// 	var errorMessage = errMsg;
-	// 	console.log(errorMsg, 'errorMsg in banner row');
-	// 	setErrMsg(errorMessage);
-	// 	setTimeout(() => {
-	// 		setErrMsg('');
-	// 	}, [5000]);
-	// }, [errMsg]);
-
-	// useEffect(() => {
-	// 	var errorMessage = firstrow;
-	// 	console.log(errorMsg, 'errorMsg in banner row');
-	// 	setErrMsg(errorMessage);
-	// 	setTimeout(() => {
-	// 		setErrMsg('');
-	// 	}, [5000]);
-	// }, [firstrow]);
-
-	// useEffect(() => {
-	// 	var Message = errMsg || firstrow;
-	// 	console.log(Message, 'Message');
-	// 	// setErrMsg(Message);
-	// 	setTimeout(() => {
-	// 		setErrMsg(Message);
-	// 	}, [1000]);
-	// }, [errMsg, firstrow]);
-
-	// const timeOut = () => {
-	// 	console.log('timeout');
-	// 	setErrMsg('');
-	// };
 
 	useEffect(() => {
-		var Message = firstrow.errMsg;
-		console.log(Message, 'first row Message', index);
+		var Message = firstrowErrMsg.errMsg;
+		// console.log(Message, 'first row banner error Message', index);
 		setErrMsg(Message);
 		setTimeout(() => {
 			setErrMsg('');
 		}, [5000]);
-	}, [firstrow]); // object as dependecy as one of the value got change , useeffect
+	}, [firstrowErrMsg]); // object as dependecy as one of the value got change , useeffect
 
 	useEffect(() => {
-		var message2 = errMsg.errMsg;
-		console.log(message2, 'errMsg Message', index);
+		var message2 = otherRowsErrMsg.errMsg;
+		// console.log(message2, '2-5 row banner error Message', index);
 		setErrMsg2(message2);
 		setTimeout(() => {
 			setErrMsg2('');
 		}, [5000]);
-		// const interval = setInterval(() => {
-		// 	setErrMsg2('');
-		// }, 5000);
-		// return () => clearInterval(interval);
-	}, [errMsg]);
-
-	// useEffect(() => {
-
-	// }, [validateRow]);
+	}, [otherRowsErrMsg]);
 
 	return (
 		<Draggable
@@ -182,7 +139,6 @@ export default function BannerRows({
 					}}
 				>
 					<div>
-						{console.log(validateRow, index, errMsg, firstrow, 'validateRow')}
 						<div
 							className={
 								errorMsg
@@ -448,7 +404,7 @@ BannerRows.propTypes = {
 	setBannerData: PropTypes.func,
 	handleBanner: PropTypes.func,
 	provided: PropTypes.draggableProps,
-	errMsg: PropTypes.object,
-	firstrow: PropTypes.object,
+	otherRowsErrMsg: PropTypes.object,
+	firstrowErrMsg: PropTypes.object,
 	validateRow: PropTypes.object
 };

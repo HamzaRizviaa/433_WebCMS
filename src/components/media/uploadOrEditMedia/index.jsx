@@ -70,6 +70,11 @@ const UploadOrEditMedia = ({
 	const [mediaButtonStatus, setMediaButtonStatus] = useState(false);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
+	const [fileWidth, setFileWidth] = useState(null);
+	const [fileHeight, setFileHeight] = useState(null);
+	const videoRef = useRef(null);
+	const imgRef = useRef(null);
+
 	const previewRef = useRef(null);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
@@ -351,6 +356,14 @@ const UploadOrEditMedia = ({
 				setMainCategoryError('');
 			}, [5000]);
 		}
+		if (!subCategory) {
+			setMainCategoryLabelColor('#ff355a');
+			setMainCategoryError('You need to select sub category');
+			setTimeout(() => {
+				setMainCategoryLabelColor('#ffffff');
+				setMainCategoryError('');
+			}, [5000]);
+		}
 		if (!titleMedia) {
 			setTitleMediaLabelColor('#ff355a');
 			setTitleMediaError('You need to enter a Title');
@@ -412,6 +425,8 @@ const UploadOrEditMedia = ({
 					: {
 							main_category_id: media_type,
 							sub_category_id: subCategory?.id ?? null,
+							width: fileWidth,
+							height: fileHeight,
 							// sub_category: subCategory,
 							title: titleMedia,
 							...(selectedLabels.length ? { labels: [...selectedLabels] } : {}),
@@ -817,10 +832,19 @@ const UploadOrEditMedia = ({
 																	{file.type === 'video' ? (
 																		<>
 																			<video
+																				ref={videoRef}
 																				id={'my-video'}
 																				//poster={isEdit ? file.img : null}
 																				className={classes.fileThumbnail}
 																				style={{ objectFit: 'cover' }}
+																				onLoadedMetadata={() => {
+																					setFileWidth(
+																						videoRef.current.videoWidth
+																					);
+																					setFileHeight(
+																						videoRef.current.videoHeight
+																					);
+																				}}
 																			>
 																				<source src={file.img} />
 																			</video>
@@ -830,6 +854,15 @@ const UploadOrEditMedia = ({
 																			<img
 																				src={file.img}
 																				className={classes.fileThumbnail}
+																				ref={imgRef}
+																				onLoad={() => {
+																					setFileWidth(
+																						imgRef.current.naturalWidth
+																					);
+																					setFileHeight(
+																						imgRef.current.naturalHeight
+																					);
+																				}}
 																			/>
 																		</>
 																	)}
