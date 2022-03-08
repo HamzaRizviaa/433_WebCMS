@@ -18,6 +18,9 @@ import { ReactComponent as Union } from '../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../assets/Delete.svg';
 import { useStyles, useStyles2 } from './bannerStyles';
 
+import { getBannerContent } from './../../pages/TopBanner/topBannerSlice';
+import { useDispatch, useSelector } from 'react-redux';
+
 // eslint-disable-next-line no-unused-vars
 export default function BannerRows({
 	key,
@@ -41,31 +44,42 @@ export default function BannerRows({
 	const allMedia = ['Title only', 'Title + Text'];
 	const [errorMsg, setErrMsg] = useState(firstrowErrMsg);
 	const [errMsg2, setErrMsg2] = useState(otherRowsErrMsg);
-	//content type dropdown
-	const options = [
-		{
-			id: 1,
-			name: 'neymar'
-		},
-		{
-			id: 2,
-			name: 'salah'
-		},
-		{
-			id: 3,
-			name: 'kagawa'
-		},
-		{
-			id: 4,
-			name: 'Cristiano'
-		},
-		{
-			id: 5,
-			name: 'RONAAAAAAAAALD'
-		}
-	];
+	// const [errorMsg, setErrMsg] = useState(firstrow);
+	// const [errMsg2, setErrMsg2] = useState(errMsg);
 
-	// a little function to help us with reordering the result
+	const dispatch = useDispatch();
+
+	const bannerContent = useSelector((state) => state.topBanner.content);
+	//content type dropdown
+	// const options = [
+	// 	{
+	// 		id: 1,
+	// 		name: 'neymar'
+	// 	},
+	// 	{
+	// 		id: 2,
+	// 		name: 'salah'
+	// 	},
+	// 	{
+	// 		id: 3,
+	// 		name: 'kagawa'
+	// 	},
+	// 	{
+	// 		id: 4,
+	// 		name: 'Cristiano'
+	// 	},
+	// 	{
+	// 		id: 5,
+	// 		name: 'RONAAAAAAAAALD'
+	// 	}
+	// ];
+
+	useEffect(() => {
+		dispatch(getBannerContent());
+		return () => {
+			resetState();
+		};
+	}, []);
 
 	useEffect(() => {
 		// console.log(data, 'provided');
@@ -331,12 +345,12 @@ export default function BannerRows({
 													return _bannerData;
 												});
 											}}
-											options={options}
-											getOptionLabel={(option) => option.name}
+											options={bannerContent}
+											getOptionLabel={(option) => option.title}
 											renderOption={(props, option) => {
 												return (
 													<li {...props} className={classes.liAutocomplete}>
-														{option.name}
+														{option.title}
 													</li>
 												);
 											}}
