@@ -59,11 +59,11 @@ const SignIn = ({ setLoginData }) => {
 			);
 			if (result?.data?.status_code === 200) {
 				setTimeout(() => {
-					//remove localStorage data when token expires (12 hours)
+					//remove localStorage data when token expires (12 hours) 43200000
 					alert('Your session has expired');
 					localStorage.removeItem('user_data');
 					navigate('/sign-in');
-				}, [43200000]);
+				}, [3600000]);
 				setIsLoadingSignin(false);
 				console.log(result?.data);
 				setLoginData(
