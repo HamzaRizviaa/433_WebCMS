@@ -19,7 +19,6 @@ export const getAllBanners = createAsyncThunk(
 	'topBanner/getAllBanners',
 	async () => {
 		const result = await TopBannerService.getAllBannersApi();
-		console.log(result);
 		if (result?.data?.data?.length > 0) {
 			return result.data.data;
 		} else {

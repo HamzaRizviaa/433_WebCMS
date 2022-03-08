@@ -55,7 +55,7 @@ export default function Banners() {
 	const dispatch = useDispatch();
 
 	const allBanners = useSelector((state) => state.topBanner.allBanners);
-	console.log(allBanners, 'AllBanners');
+	//console.log(allBanners, 'AllBanners');
 	const bannerContent = useSelector((state) => state.topBanner.content);
 
 	useEffect(() => {
@@ -65,7 +65,7 @@ export default function Banners() {
 
 	useEffect(() => {
 		setBannerData(allBanners);
-	}, []);
+	}, [allBanners]);
 	console.log(bannerData, 'bdT');
 
 	//reorder
@@ -176,8 +176,8 @@ export default function Banners() {
 						<Droppable droppableId='droppable-1'>
 							{(provided) => (
 								<div {...provided.droppableProps} ref={provided.innerRef}>
-									{allBanners.length > 0 &&
-										allBanners.map((data, index) => {
+									{bannerData.length > 0 &&
+										bannerData.map((data, index) => {
 											return (
 												<BannerRows
 													otherRowsErrMsg={

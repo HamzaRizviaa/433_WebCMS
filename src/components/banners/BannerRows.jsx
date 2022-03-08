@@ -52,6 +52,7 @@ export default function BannerRows({
 			resetState();
 		}
 	}, [open]);
+
 	const resetState = () => {
 		setDropdownPosition(false);
 	};
@@ -132,9 +133,7 @@ export default function BannerRows({
 		}, [5000]);
 	}, [otherRowsErrMsg]);
 
-	// useEffect(() => {
-
-	// }, [validateRow]);
+	console.log(selectedMedia, 'sm');
 
 	return (
 		<Draggable
@@ -283,7 +282,7 @@ export default function BannerRows({
 										</label>
 										<Autocomplete
 											//className={muiClasses.root}
-											value={selectedMedia}
+											value={data?.content}
 											PaperComponent={(props) => {
 												setDisableDropdown(false);
 
