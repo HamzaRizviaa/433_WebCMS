@@ -53,30 +53,6 @@ export default function BannerRows({
 
 	const bannerContent = useSelector((state) => state.topBanner.content);
 
-	//content type dropdown
-	// const options = [
-	// 	{
-	// 		id: 1,
-	// 		name: 'neymar'
-	// 	},
-	// 	{
-	// 		id: 2,
-	// 		name: 'salah'
-	// 	},
-	// 	{
-	// 		id: 3,
-	// 		name: 'kagawa'
-	// 	},
-	// 	{
-	// 		id: 4,
-	// 		name: 'Cristiano'
-	// 	},
-	// 	{
-	// 		id: 5,
-	// 		name: 'RONAAAAAAAAALD'
-	// 	}
-	// ];
-
 	useEffect(() => {
 		dispatch(getBannerContent());
 		return () => {
@@ -108,8 +84,8 @@ export default function BannerRows({
 				if (Trashdata.id === banner.id) {
 					return {
 						...banner,
-						bannerType: '',
-						selectedMedia: null
+						banner_type: '',
+						content: null
 					};
 				}
 				return {
@@ -232,7 +208,7 @@ export default function BannerRows({
 												setDisableDropdown(true);
 											}}
 											disabled={false}
-											value={data.bannerType}
+											value={data.banner_type}
 											onChange={(e) => {
 												setDisableDropdown(true);
 												setBannerData((bannerData) => {
@@ -241,7 +217,7 @@ export default function BannerRows({
 														if (banner.id === data.id) {
 															return {
 																...banner,
-																bannerType: e.target.value
+																banner_type: e.target.value
 															};
 														}
 														return {
@@ -273,7 +249,7 @@ export default function BannerRows({
 											}}
 											inputProps={{
 												classes: {
-													root: data.bannerType
+													root: data.banner_type
 														? muiClasses.input
 														: muiClasses.inputPlaceholder
 												}
@@ -307,7 +283,7 @@ export default function BannerRows({
 								</div>
 
 								{/* select content sutocomplete */}
-								{data.bannerType === '' && trashcan === true ? (
+								{data.banner_type === '' && trashcan === true ? (
 									<div className={classes.bannerAutocomplete}></div>
 								) : (
 									<div
@@ -359,23 +335,28 @@ export default function BannerRows({
 												setDropdownPosition(false);
 											}}
 											onChange={(e, newVal) => {
+												//console.log(newVal, 'nv');
 												setSelectedMedia(newVal);
 												setDisableDropdown(true);
+
 												setBannerData((bannerData) => {
 													// eslint-disable-next-line no-unused-vars
+													console.log(bannerData, 'b1');
 													let _bannerData = bannerData.map((banner) => {
 														if (banner.id === data.id) {
-															if (banner.bannerType === 'Please Select') {
-																return {
-																	...banner,
-																	selectedMedia: null
-																};
-															} else {
-																return {
-																	...banner,
-																	selectedMedia: newVal
-																};
-															}
+															// console.log(banner, 'bannerID');
+															// if (banner.banner_type === 'Please Select') {
+															// 	return {
+															// 		...banner,
+															// 		content: null
+															// 	};
+															// }
+															// else {
+															return {
+																...banner,
+																content: newVal
+															};
+															// }
 														}
 														return {
 															...banner

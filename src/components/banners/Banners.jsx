@@ -14,38 +14,54 @@ export default function Banners() {
 	const [bannerData, setBannerData] = useState([
 		{
 			id: '1',
-			bannerType: '',
-			selectedMedia: null
+			banner_type: '',
+			content: {}
 		},
 		{
 			id: '2',
-			bannerType: '',
-			selectedMedia: null
+			banner_type: '',
+			content: {}
 		},
 		{
 			id: '3',
-			bannerType: '',
-			selectedMedia: null
+			banner_type: '',
+			content: {}
 		},
 		{
 			id: '4',
-			bannerType: '',
-			selectedMedia: null
+			banner_type: '',
+			content: {}
 		},
 		{
 			id: '5',
-			bannerType: '',
-			selectedMedia: null
+			banner_type: '',
+			content: {}
 		}
 	]);
+
+	// useEffect(() => {
+	// 	allBanners.map((banner) => {
+	// 		setBannerData({
+	// 			id: banner.id,
+	// 			banner_type: banner.banner_type,
+	// 			content: {}
+	// 		});
+	// 	});
+	// }, []);
 
 	const dispatch = useDispatch();
 	//get all banners api
 	const allBanners = useSelector((state) => state.topBanner.allBanners);
 	console.log(allBanners, 'AllBanners');
+
 	useEffect(() => {
 		dispatch(getAllBanners());
 	}, []);
+
+	useEffect(() => {
+		setBannerData(allBanners);
+	}, []);
+	console.log(bannerData, 'bdT');
 
 	//reorder
 	const reorder = (list, startIndex, endIndex) => {
@@ -90,13 +106,13 @@ export default function Banners() {
 
 	const handleCheckFirstRow = () => {
 		let errValidate = { flag: '', rowId: undefined, errMsg: '' };
-		if (!bannerData[0].bannerType ^ !bannerData[0].selectedMedia) {
+		if (!bannerData[0].banner_type ^ !bannerData[0].content) {
 			errValidate = {
 				flag: true,
 				rowId: 0,
 				errMsg: 'The first top banner should always be filled. '
 			};
-		} else if (!bannerData[0].bannerType || !bannerData[0].selectedMedia) {
+		} else if (!bannerData[0].banner_type || !bannerData[0].content) {
 			errValidate = {
 				flag: true,
 				rowId: 0,
@@ -110,9 +126,9 @@ export default function Banners() {
 		let errValidate = { flag: '', rowId: undefined, errMsg: '' };
 		for (let i = 4; i >= 1; i--) {
 			// start from max to min
-			if (bannerData[i].bannerType && bannerData[i].selectedMedia) {
+			if (bannerData[i]?.banner_type && bannerData[i]?.content) {
 				//check data in both field
-				if (!bannerData[i - 1].bannerType || !bannerData[i - 1].selectedMedia) {
+				if (!bannerData[i - 1].banner_type || !bannerData[i - 1].content) {
 					// check one up , if data is here
 					errValidate = {
 						flag: true,
@@ -121,7 +137,7 @@ export default function Banners() {
 					};
 					break;
 				}
-			} else if (bannerData[i].bannerType || bannerData[i].selectedMedia) {
+			} else if (bannerData[i]?.banner_type || bannerData[i]?.content) {
 				//check both fields or either
 				errValidate = {
 					flag: true,
@@ -155,8 +171,8 @@ export default function Banners() {
 						<Droppable droppableId='droppable-1'>
 							{(provided) => (
 								<div {...provided.droppableProps} ref={provided.innerRef}>
-									{bannerData.length > 0 &&
-										bannerData.map((data, index) => {
+									{allBanners.length > 0 &&
+										allBanners.map((data, index) => {
 											return (
 												<BannerRows
 													otherRowsErrMsg={
@@ -191,7 +207,7 @@ export default function Banners() {
 				<Button
 					disabled={
 						// btnDisable
-						bannerData[0].bannerType && bannerData[0].selectedMedia
+						bannerData[0]?.banner_type && bannerData[0]?.content
 							? btnDisable
 							: true
 					}

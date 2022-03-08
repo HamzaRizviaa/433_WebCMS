@@ -14,7 +14,7 @@ export default class TopBannerService {
 	}
 	static getAllBannersApi() {
 		return axios.get(
-			`${process.env.REACT_APP_API_ENDPOINT}/top-banner/get-banners/media`,
+			`${process.env.REACT_APP_API_ENDPOINT}/top-banner/get-banners/home`,
 			{
 				headers: {
 					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
