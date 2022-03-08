@@ -64,7 +64,8 @@
 
 .mediaIconPreview {
 	height: calc(5rem * 6);
-	width: calc(5rem * 6);
+	// width: calc(5rem * 6);
+	max-width: calc(5rem * 8);
 	border-radius: 8px;
 	object-fit: cover;
 }
