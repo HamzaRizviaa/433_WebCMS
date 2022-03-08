@@ -18,9 +18,6 @@ import { ReactComponent as Union } from '../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../assets/Delete.svg';
 import { useStyles, useStyles2 } from './bannerStyles';
 
-import { getBannerContent } from './../../pages/TopBanner/topBannerSlice';
-import { useDispatch, useSelector } from 'react-redux';
-
 // eslint-disable-next-line no-unused-vars
 export default function BannerRows({
 	key,
@@ -29,7 +26,7 @@ export default function BannerRows({
 	index,
 	handleBanner,
 	otherRowsErrMsg, // 2-5
-
+	bannerContent,
 	firstrowErrMsg, // 1
 	validateRow
 }) {
@@ -48,17 +45,6 @@ export default function BannerRows({
 	const allMedia = ['Title only', 'Title + Text'];
 	const [errorMsg, setErrMsg] = useState(firstrowErrMsg);
 	const [errMsg2, setErrMsg2] = useState(otherRowsErrMsg);
-
-	const dispatch = useDispatch();
-
-	const bannerContent = useSelector((state) => state.topBanner.content);
-
-	useEffect(() => {
-		dispatch(getBannerContent());
-		return () => {
-			resetState();
-		};
-	}, []);
 
 	useEffect(() => {
 		// console.log(data, 'provided');
@@ -440,5 +426,6 @@ BannerRows.propTypes = {
 	provided: PropTypes.draggableProps,
 	otherRowsErrMsg: PropTypes.object,
 	firstrowErrMsg: PropTypes.object,
-	validateRow: PropTypes.object
+	validateRow: PropTypes.object,
+	bannerContent: PropTypes.array
 };
