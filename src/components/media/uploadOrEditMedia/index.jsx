@@ -57,6 +57,8 @@ const UploadOrEditMedia = ({
 	const [mainCategoryLabelColor, setMainCategoryLabelColor] =
 		useState('#ffffff');
 	const [mainCategoryError, setMainCategoryError] = useState('');
+	const [subCategoryLabelColor, setSubCategoryLabelColor] = useState('#ffffff');
+	const [subCategoryError, setSubCategoryError] = useState('');
 	const [titleMedia, setTitleMedia] = useState('');
 	const [titleMediaLabelColor, setTitleMediaLabelColor] = useState('#ffffff');
 	const [titleMediaError, setTitleMediaError] = useState('');
@@ -289,6 +291,7 @@ const UploadOrEditMedia = ({
 		setFileRejectionError('');
 		setFileRejectionError2('');
 		setMainCategoryLabelColor('#ffffff');
+		setSubCategoryLabelColor('#ffffff');
 		setTitleMediaLabelColor('#ffffff');
 		setDescriptionColor('#ffffff');
 		setDescriptionError('');
@@ -356,12 +359,12 @@ const UploadOrEditMedia = ({
 				setMainCategoryError('');
 			}, [5000]);
 		}
-		if (!subCategory) {
-			setMainCategoryLabelColor('#ff355a');
-			setMainCategoryError('You need to select sub category');
+		if (!subCategory?.name) {
+			setSubCategoryLabelColor('#ff355a');
+			setSubCategoryError('You need to select sub category');
 			setTimeout(() => {
-				setMainCategoryLabelColor('#ffffff');
-				setMainCategoryError('');
+				setSubCategoryLabelColor('#ffffff');
+				setSubCategoryError('');
 			}, [5000]);
 		}
 		if (!titleMedia) {
@@ -524,6 +527,7 @@ const UploadOrEditMedia = ({
 	const addMediaBtnDisabled =
 		!uploadedFiles.length ||
 		!mainCategory ||
+		!subCategory ||
 		!uploadedCoverImage.length ||
 		!titleMedia ||
 		!description ||
@@ -540,7 +544,7 @@ const UploadOrEditMedia = ({
 	const MainCategoryId = (e) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
 		let setData = mainCategories.find((u) => u.name === e);
-		setSubCategory({ id: null, name: ' ' });
+		setSubCategory({ id: null, name: '' });
 		console.log(subCategory, 'subCategory');
 		setMainCategory(setData);
 	};
@@ -611,7 +615,7 @@ const UploadOrEditMedia = ({
 										}}
 										disabled={isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
-										value={isEdit ? mainCategory : mainCategory.name}
+										value={isEdit ? mainCategory : mainCategory?.name}
 										onChange={(e) => {
 											// setSubCategory({ id: null, name: '' });
 											setDisableDropdown(true);
@@ -666,9 +670,23 @@ const UploadOrEditMedia = ({
 											);
 										})}
 									</Select>
+									<div className={classes.catergoryErrorContainer}>
+										<p className={classes.uploadMediaError}>
+											{mainCategoryError}
+										</p>
+										{/* <p className={classes.uploadMediaError2}>
+									{mainCategory?.name || mainCategory ? subCategoryError : ''}
+								</p> */}
+									</div>
 								</div>
 								<div className={classes.subCategory}>
-									<h6>SUB CATEGORY</h6>
+									<h6
+										style={{
+											color: mainCategory?.name ? subCategoryLabelColor : ''
+										}}
+									>
+										SUB CATEGORY
+									</h6>
 									<Select
 										onOpen={() => {
 											setDisableDropdown(false);
@@ -678,10 +696,12 @@ const UploadOrEditMedia = ({
 										}}
 										disabled={!mainCategory || isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
-										value={isEdit ? subCategory : subCategory.name}
+										value={isEdit ? subCategory : subCategory?.name}
 										onChange={(e) => {
 											setDisableDropdown(true);
 											SubCategoryId(e.target.value);
+											setSubCategoryLabelColor('#ffffff');
+											setSubCategoryError('');
 										}}
 										className={`${classes.select} ${
 											isEdit ? `${classes.isEditSelect}` : ''
@@ -721,9 +741,17 @@ const UploadOrEditMedia = ({
 											);
 										})}
 									</Select>
+									<p className={classes.uploadMediaError2}>
+										{mainCategory?.name || mainCategory ? subCategoryError : ''}
+									</p>
 								</div>
 							</div>
-							<p className={classes.uploadMediaError}>{mainCategoryError}</p>
+							{/* <div className={classes.catergoryErrorContainer}>
+								<p className={classes.uploadMediaError}>{mainCategoryError}</p>
+								{/* <p className={classes.uploadMediaError2}>
+									{mainCategory?.name || mainCategory ? subCategoryError : ''}
+								</p> */}
+							{/* </div> */}
 
 							{mainCategory || isEdit ? (
 								<>
