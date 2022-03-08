@@ -15,10 +15,24 @@ export const getBannerContent = createAsyncThunk(
 	}
 );
 
+export const getAllBanners = createAsyncThunk(
+	'topBanner/getAllBanners',
+	async () => {
+		const result = await TopBannerService.getAllBannersApi();
+		console.log(result);
+		if (result?.data?.data?.length > 0) {
+			return result.data.data;
+		} else {
+			return [];
+		}
+	}
+);
+
 export const topBannerSlice = createSlice({
 	name: 'topBanner',
 	initialState: {
-		content: []
+		content: [],
+		allBanners: []
 	},
 	reducers: {},
 	extraReducers: {
@@ -29,6 +43,15 @@ export const topBannerSlice = createSlice({
 			state.content = action.payload;
 		},
 		[getBannerContent.rejected]: (state) => {
+			state.status = 'failed';
+		},
+		[getAllBanners.pending]: (state) => {
+			state.status = 'loading';
+		},
+		[getAllBanners.fulfilled]: (state, action) => {
+			state.allBanners = action.payload;
+		},
+		[getAllBanners.rejected]: (state) => {
 			state.status = 'failed';
 		}
 	}

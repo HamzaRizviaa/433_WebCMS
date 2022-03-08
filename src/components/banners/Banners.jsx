@@ -5,6 +5,8 @@ import BannerRows from './BannerRows';
 import Button from '../button';
 import { useEffect } from 'react';
 
+import { getAllBanners } from './../../pages/TopBanner/topBannerSlice';
+import { useDispatch, useSelector } from 'react-redux';
 export default function Banners() {
 	const [validateRow, setValidateRow] = useState(''); //row check 2-5
 	const [firstCheck, setFirstRowCheck] = useState(''); //row check 1
@@ -36,6 +38,15 @@ export default function Banners() {
 			selectedMedia: null
 		}
 	]);
+
+	const dispatch = useDispatch();
+	//get all banners api
+	const allBanners = useSelector((state) => state.topBanner.allBanners);
+	console.log(allBanners, 'AllBanners');
+	useEffect(() => {
+		dispatch(getAllBanners());
+	}, []);
+
 	//reorder
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
