@@ -58,17 +58,18 @@ const SignIn = ({ setLoginData }) => {
 				}
 			);
 			if (result?.data?.status_code === 200) {
+				setLoginData(
+					localStorage.setItem('user_data', JSON.stringify(result?.data?.data))
+				);
 				setTimeout(() => {
-					//remove localStorage data when token expires (12 hours) 43200000
+					//remove localStorage data when token expires (12 hours) 43200000 - 12 hours , 3600000 -1 hour
 					alert('Your session has expired');
 					localStorage.removeItem('user_data');
 					navigate('/sign-in');
 				}, [3600000]);
 				setIsLoadingSignin(false);
 				console.log(result?.data);
-				setLoginData(
-					localStorage.setItem('user_data', JSON.stringify(result?.data?.data))
-				);
+
 				navigate('/post-library');
 				setSignInError(false);
 			}

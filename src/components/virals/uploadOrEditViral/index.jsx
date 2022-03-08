@@ -446,6 +446,9 @@ const UploadOrEditViral = ({
 		selectedLabels.length < 10 ||
 		!caption;
 
+	const editBtnDisabled =
+		postButtonStatus || !caption || specificViral?.caption === caption.trim();
+
 	return (
 		<Slider
 			open={open}
@@ -842,9 +845,9 @@ const UploadOrEditViral = ({
 
 							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 								<Button
-									disabled={viralBtnDisabled}
+									disabled={isEdit ? editBtnDisabled : viralBtnDisabled}
 									onClick={() => {
-										if (viralBtnDisabled) {
+										if (viralBtnDisabled || editBtnDisabled) {
 											validateViralBtn();
 										} else {
 											setPostButtonStatus(true);
