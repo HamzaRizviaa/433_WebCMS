@@ -427,7 +427,7 @@ const UploadOrEditMedia = ({
 					? { media_id: id, ...payload }
 					: {
 							main_category_id: media_type,
-							sub_category_id: subCategory?.id ?? null,
+							sub_category_id: subCategory?.id,
 							width: fileWidth,
 							height: fileHeight,
 							// sub_category: subCategory,
@@ -544,10 +544,13 @@ const UploadOrEditMedia = ({
 	const MainCategoryId = (e) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
 		let setData = mainCategories.find((u) => u.name === e);
-		setSubCategory({ id: null, name: '' });
-		console.log(subCategory, 'subCategory');
 		setMainCategory(setData);
 	};
+
+	useEffect(() => {
+		setSubCategory({ id: null, name: '' });
+		console.log(subCategory, 'subCategory');
+	}, [mainCategory]);
 
 	const SubCategoryId = (e) => {
 		//e -- name
@@ -622,6 +625,7 @@ const UploadOrEditMedia = ({
 											// setMainCategory(e.target.value);
 											//calling function , passing name (i.e. watch & listen)
 											MainCategoryId(e.target.value);
+
 											setMainCategoryLabelColor('#ffffff');
 											setMainCategoryError('');
 
@@ -753,7 +757,7 @@ const UploadOrEditMedia = ({
 								</p> */}
 							{/* </div> */}
 
-							{mainCategory || isEdit ? (
+							{(mainCategory && subCategory?.name) || isEdit ? (
 								<>
 									<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
 									<DragDropContext>
