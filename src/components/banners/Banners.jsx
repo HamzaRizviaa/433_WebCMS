@@ -69,7 +69,7 @@ export default function Banners() {
 
 		// filter length
 		let length = _filterData.length;
-		//arr.splice(index of the item to be removed, number of elements to be removed)
+		//arr.splice(index of the item to be removed, number of elements to be removed) // rest of the filter DATA
 		bannerData.splice(0, length);
 		setBannerData([..._filterData, ...bannerData]);
 	};
@@ -112,6 +112,7 @@ export default function Banners() {
 		const validateRow = handleBannerPositionAndFirstBanner(); // 2- 5
 		setFirstRowCheck(firstrowcheck);
 		setValidateRow(validateRow);
+
 		// console.log(validateRow, firstrowcheck, 'post set state');
 	};
 
