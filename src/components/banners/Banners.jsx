@@ -4,7 +4,6 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import BannerRows from './BannerRows';
 import Button from '../button';
 import { useEffect } from 'react';
-
 import {
 	getAllBanners,
 	getBannerContent
@@ -17,45 +16,35 @@ export default function Banners() {
 	const [bannerData, setBannerData] = useState([
 		{
 			id: '1',
-			banner_type: '',
-			content: {}
+			bannerType: '',
+			selectedMedia: null
 		},
 		{
 			id: '2',
-			banner_type: '',
-			content: {}
+			bannerType: '',
+			selectedMedia: null
 		},
 		{
 			id: '3',
-			banner_type: '',
-			content: {}
+			bannerType: '',
+			selectedMedia: null
 		},
 		{
 			id: '4',
-			banner_type: '',
-			content: {}
+			bannerType: '',
+			selectedMedia: null
 		},
 		{
 			id: '5',
-			banner_type: '',
-			content: {}
+			bannerType: '',
+			selectedMedia: null
 		}
 	]);
 
-	// useEffect(() => {
-	// 	allBanners.map((banner) => {
-	// 		setBannerData({
-	// 			id: banner.id,
-	// 			banner_type: banner.banner_type,
-	// 			content: {}
-	// 		});
-	// 	});
-	// }, []);
+	// emptybarray -> api response -> func obj -> emptyobj , next line map data api s data us object map kr k is main push
 
 	const dispatch = useDispatch();
-
 	const allBanners = useSelector((state) => state.topBanner.allBanners);
-	//console.log(allBanners, 'AllBanners');
 	const bannerContent = useSelector((state) => state.topBanner.content);
 
 	useEffect(() => {
@@ -64,9 +53,26 @@ export default function Banners() {
 	}, []);
 
 	useEffect(() => {
-		setBannerData(allBanners);
+		updateBannerObject();
 	}, [allBanners]);
-	console.log(bannerData, 'bdT');
+
+	const updateBannerObject = () => {
+		let _filterData = [];
+		_filterData = allBanners.map((data) => {
+			return {
+				// ...bannerData,
+				id: data.id,
+				bannerType: data.banner_type,
+				selectedMedia: data.content
+			};
+		});
+
+		// filter length
+		let length = _filterData.length;
+		//arr.splice(index of the item to be removed, number of elements to be removed)
+		bannerData.splice(0, length);
+		setBannerData([..._filterData, ...bannerData]);
+	};
 
 	//reorder
 	const reorder = (list, startIndex, endIndex) => {
@@ -111,13 +117,13 @@ export default function Banners() {
 
 	const handleCheckFirstRow = () => {
 		let errValidate = { flag: '', rowId: undefined, errMsg: '' };
-		if (!bannerData[0].banner_type ^ !bannerData[0].content) {
+		if (!bannerData[0]?.bannerType ^ !bannerData[0]?.selectedMedia) {
 			errValidate = {
 				flag: true,
 				rowId: 0,
 				errMsg: 'The first top banner should always be filled. '
 			};
-		} else if (!bannerData[0].banner_type || !bannerData[0].content) {
+		} else if (!bannerData[0]?.bannerType || !bannerData[0]?.selectedMedia) {
 			errValidate = {
 				flag: true,
 				rowId: 0,
@@ -131,9 +137,12 @@ export default function Banners() {
 		let errValidate = { flag: '', rowId: undefined, errMsg: '' };
 		for (let i = 4; i >= 1; i--) {
 			// start from max to min
-			if (bannerData[i]?.banner_type && bannerData[i]?.content) {
+			if (bannerData[i]?.bannerType && bannerData[i]?.selectedMedia) {
 				//check data in both field
-				if (!bannerData[i - 1].banner_type || !bannerData[i - 1].content) {
+				if (
+					!bannerData[i - 1]?.bannerType ||
+					!bannerData[i - 1]?.selectedMedia
+				) {
 					// check one up , if data is here
 					errValidate = {
 						flag: true,
@@ -142,7 +151,7 @@ export default function Banners() {
 					};
 					break;
 				}
-			} else if (bannerData[i]?.banner_type || bannerData[i]?.content) {
+			} else if (bannerData[i]?.bannerType || bannerData[i]?.selectedMedia) {
 				//check both fields or either
 				errValidate = {
 					flag: true,
@@ -193,11 +202,11 @@ export default function Banners() {
 													//firstBannerErr={firstBannerErr}
 													validateRow={validateRow}
 													data={data}
-													setBannerData={setBannerData}
+													setBannerData={setBannerData} //?
+													bannerContent={bannerContent}
 													key={data.id}
 													provided={provided}
 													index={index}
-													bannerContent={bannerContent}
 												/>
 											);
 										})}
@@ -213,7 +222,8 @@ export default function Banners() {
 				<Button
 					disabled={
 						// btnDisable
-						bannerData[0]?.banner_type && bannerData[0]?.content
+
+						bannerData[0]?.bannerType && bannerData[0]?.selectedMedia
 							? btnDisable
 							: true
 					}
