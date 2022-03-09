@@ -53,8 +53,9 @@ const SignIn = ({ setLoginData }) => {
 		let minutes = Math.abs((initialTimeVal - new Date()) / 1000 / 60);
 		// console.log('malamal');
 		// console.log(minutes, 'm');
-		// console.log(initialTimeVal, 'i');
-		if (minutes > 60 && accessExpire) {
+		//console.log(initialTimeVal, 'i');
+		// console.log(new Date());
+		if (minutes > 10 && accessExpire) {
 			alert('Your session has expired');
 			localStorage.removeItem('user_data');
 			setAccessExpire(false);
