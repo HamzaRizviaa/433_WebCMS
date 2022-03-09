@@ -135,14 +135,17 @@ const UploadOrEditMedia = ({
 				let setData = mainCategories.find(
 					(u) => u.name === specificMedia?.media_type
 				);
-				//console.log(specificMedia?.media_type);
-				//console.log(setData.name);
-				setMainCategory(setData.name);
+				setMainCategory(setData?.name);
 			}
-
-			//setMainCategory(specificMedia?.media_type);
-			console.log(mainCategory);
-			setSubCategory(specificMedia?.sub_category);
+			if (specificMedia.sub_category) {
+				let setData = subCategories.find(
+					(u) => u.name === specificMedia?.sub_category
+				);
+				console.log(setData, 'SD');
+				setSubCategory(setData?.name);
+			}
+			//setSubCategory(specificMedia?.sub_category);
+			console.log(subCategories);
 			setTitleMedia(specificMedia?.title);
 			setDescription(specificMedia?.description);
 			setUploadedFiles([
@@ -157,7 +160,9 @@ const UploadOrEditMedia = ({
 			setUploadedCoverImage([
 				{
 					id: makeid(10),
-					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`
+					fileName: specificMedia?.file_name,
+					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`,
+					type: 'image'
 				}
 			]);
 		}
@@ -204,7 +209,12 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		if (mainCategory && !isEdit) {
+			console.log(mainCategory, 'mc');
 			updateSubCategories(mainCategory);
+		} else if (mainCategory && isEdit) {
+			let setData = mainCategories.find((u) => u.name === mainCategory);
+			//console.log(setData, 'm');
+			updateSubCategories(setData);
 		}
 	}, [mainCategory]);
 
@@ -549,7 +559,6 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		setSubCategory({ id: null, name: '' });
-		console.log(subCategory, 'subCategory');
 	}, [mainCategory]);
 
 	const SubCategoryId = (e) => {
@@ -868,7 +877,10 @@ const UploadOrEditMedia = ({
 																				id={'my-video'}
 																				//poster={isEdit ? file.img : null}
 																				className={classes.fileThumbnail}
-																				style={{ objectFit: 'cover' }}
+																				style={{
+																					objectFit: 'cover',
+																					objectPosition: 'center'
+																				}}
 																				onLoadedMetadata={() => {
 																					setFileWidth(
 																						videoRef.current.videoWidth
@@ -886,6 +898,10 @@ const UploadOrEditMedia = ({
 																			<img
 																				src={file.img}
 																				className={classes.fileThumbnail}
+																				style={{
+																					objectFit: 'cover',
+																					objectPosition: 'center'
+																				}}
 																				ref={imgRef}
 																				onLoad={() => {
 																					setFileWidth(
