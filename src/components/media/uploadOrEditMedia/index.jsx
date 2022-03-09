@@ -57,6 +57,8 @@ const UploadOrEditMedia = ({
 	const [mainCategoryLabelColor, setMainCategoryLabelColor] =
 		useState('#ffffff');
 	const [mainCategoryError, setMainCategoryError] = useState('');
+	const [subCategoryLabelColor, setSubCategoryLabelColor] = useState('#ffffff');
+	const [subCategoryError, setSubCategoryError] = useState('');
 	const [titleMedia, setTitleMedia] = useState('');
 	const [titleMediaLabelColor, setTitleMediaLabelColor] = useState('#ffffff');
 	const [titleMediaError, setTitleMediaError] = useState('');
@@ -70,6 +72,11 @@ const UploadOrEditMedia = ({
 	const [mediaButtonStatus, setMediaButtonStatus] = useState(false);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
+	const [fileWidth, setFileWidth] = useState(null);
+	const [fileHeight, setFileHeight] = useState(null);
+	const videoRef = useRef(null);
+	const imgRef = useRef(null);
+
 	const previewRef = useRef(null);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
@@ -284,6 +291,7 @@ const UploadOrEditMedia = ({
 		setFileRejectionError('');
 		setFileRejectionError2('');
 		setMainCategoryLabelColor('#ffffff');
+		setSubCategoryLabelColor('#ffffff');
 		setTitleMediaLabelColor('#ffffff');
 		setDescriptionColor('#ffffff');
 		setDescriptionError('');
@@ -351,6 +359,14 @@ const UploadOrEditMedia = ({
 				setMainCategoryError('');
 			}, [5000]);
 		}
+		if (!subCategory?.name) {
+			setSubCategoryLabelColor('#ff355a');
+			setSubCategoryError('You need to select sub category');
+			setTimeout(() => {
+				setSubCategoryLabelColor('#ffffff');
+				setSubCategoryError('');
+			}, [5000]);
+		}
 		if (!titleMedia) {
 			setTitleMediaLabelColor('#ff355a');
 			setTitleMediaError('You need to enter a Title');
@@ -411,7 +427,9 @@ const UploadOrEditMedia = ({
 					? { media_id: id, ...payload }
 					: {
 							main_category_id: media_type,
-							sub_category_id: subCategory?.id ?? null,
+							sub_category_id: subCategory?.id,
+							width: fileWidth,
+							height: fileHeight,
 							// sub_category: subCategory,
 							title: titleMedia,
 							...(selectedLabels.length ? { labels: [...selectedLabels] } : {}),
@@ -509,6 +527,7 @@ const UploadOrEditMedia = ({
 	const addMediaBtnDisabled =
 		!uploadedFiles.length ||
 		!mainCategory ||
+		!subCategory ||
 		!uploadedCoverImage.length ||
 		!titleMedia ||
 		!description ||
@@ -525,10 +544,13 @@ const UploadOrEditMedia = ({
 	const MainCategoryId = (e) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
 		let setData = mainCategories.find((u) => u.name === e);
-		setSubCategory({ id: null, name: ' ' });
-		console.log(subCategory, 'subCategory');
 		setMainCategory(setData);
 	};
+
+	useEffect(() => {
+		setSubCategory({ id: null, name: '' });
+		console.log(subCategory, 'subCategory');
+	}, [mainCategory]);
 
 	const SubCategoryId = (e) => {
 		//e -- name
@@ -596,13 +618,14 @@ const UploadOrEditMedia = ({
 										}}
 										disabled={isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
-										value={isEdit ? mainCategory : mainCategory.name}
+										value={isEdit ? mainCategory : mainCategory?.name}
 										onChange={(e) => {
 											// setSubCategory({ id: null, name: '' });
 											setDisableDropdown(true);
 											// setMainCategory(e.target.value);
 											//calling function , passing name (i.e. watch & listen)
 											MainCategoryId(e.target.value);
+
 											setMainCategoryLabelColor('#ffffff');
 											setMainCategoryError('');
 
@@ -651,9 +674,23 @@ const UploadOrEditMedia = ({
 											);
 										})}
 									</Select>
+									<div className={classes.catergoryErrorContainer}>
+										<p className={classes.uploadMediaError}>
+											{mainCategoryError}
+										</p>
+										{/* <p className={classes.uploadMediaError2}>
+									{mainCategory?.name || mainCategory ? subCategoryError : ''}
+								</p> */}
+									</div>
 								</div>
 								<div className={classes.subCategory}>
-									<h6>SUB CATEGORY</h6>
+									<h6
+										style={{
+											color: mainCategory?.name ? subCategoryLabelColor : ''
+										}}
+									>
+										SUB CATEGORY
+									</h6>
 									<Select
 										onOpen={() => {
 											setDisableDropdown(false);
@@ -663,10 +700,12 @@ const UploadOrEditMedia = ({
 										}}
 										disabled={!mainCategory || isEdit ? true : false}
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
-										value={isEdit ? subCategory : subCategory.name}
+										value={isEdit ? subCategory : subCategory?.name}
 										onChange={(e) => {
 											setDisableDropdown(true);
 											SubCategoryId(e.target.value);
+											setSubCategoryLabelColor('#ffffff');
+											setSubCategoryError('');
 										}}
 										className={`${classes.select} ${
 											isEdit ? `${classes.isEditSelect}` : ''
@@ -706,11 +745,19 @@ const UploadOrEditMedia = ({
 											);
 										})}
 									</Select>
+									<p className={classes.uploadMediaError2}>
+										{mainCategory?.name || mainCategory ? subCategoryError : ''}
+									</p>
 								</div>
 							</div>
-							<p className={classes.uploadMediaError}>{mainCategoryError}</p>
+							{/* <div className={classes.catergoryErrorContainer}>
+								<p className={classes.uploadMediaError}>{mainCategoryError}</p>
+								{/* <p className={classes.uploadMediaError2}>
+									{mainCategory?.name || mainCategory ? subCategoryError : ''}
+								</p> */}
+							{/* </div> */}
 
-							{mainCategory || isEdit ? (
+							{(mainCategory && subCategory?.name) || isEdit ? (
 								<>
 									<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
 									<DragDropContext>
@@ -732,12 +779,12 @@ const UploadOrEditMedia = ({
 																	{file.type === 'video' ? (
 																		<>
 																			<Union className={classes.playIcon} />
-																			<div className={classes.fileThumbnail} />
+																			<div className={classes.fileThumbnail2} />
 																		</>
 																	) : (
 																		<>
 																			<MusicIcon className={classes.playIcon} />
-																			<div className={classes.fileThumbnail} />
+																			<div className={classes.fileThumbnail2} />
 																		</>
 																	)}
 
@@ -817,10 +864,19 @@ const UploadOrEditMedia = ({
 																	{file.type === 'video' ? (
 																		<>
 																			<video
+																				ref={videoRef}
 																				id={'my-video'}
 																				//poster={isEdit ? file.img : null}
 																				className={classes.fileThumbnail}
 																				style={{ objectFit: 'cover' }}
+																				onLoadedMetadata={() => {
+																					setFileWidth(
+																						videoRef.current.videoWidth
+																					);
+																					setFileHeight(
+																						videoRef.current.videoHeight
+																					);
+																				}}
 																			>
 																				<source src={file.img} />
 																			</video>
@@ -830,6 +886,15 @@ const UploadOrEditMedia = ({
 																			<img
 																				src={file.img}
 																				className={classes.fileThumbnail}
+																				ref={imgRef}
+																				onLoad={() => {
+																					setFileWidth(
+																						imgRef.current.naturalWidth
+																					);
+																					setFileHeight(
+																						imgRef.current.naturalHeight
+																					);
+																				}}
 																			/>
 																		</>
 																	)}
@@ -1256,9 +1321,9 @@ const UploadOrEditMedia = ({
 									src={previewFile.img}
 									className={classes.previewFile}
 									style={{
-										width: `${8 * 4}rem`,
+										width: `100%`,
 										height: `${8 * 4}rem`,
-										objectFit: 'cover',
+										objectFit: 'contain',
 										objectPosition: 'center'
 									}}
 								/>

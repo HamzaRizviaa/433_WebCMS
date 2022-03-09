@@ -243,12 +243,7 @@ const ViralLibrary = () => {
 						{console.log(row.width, row.height)}
 						<Tooltip
 							// TransitionComponent={Fade}
-							// TransitionProps={{ timeout: 600 }} row.width === row.height
-							//row?.orientation_type === 'square'
-							// ? classes.mediaIconPreview
-							// : row?.orientation_type === 'landscape'
-							// ? classes.mediaIconLandscapePreview
-							// : classes.mediaIconPortraitPreview
+							// TransitionProps={{ timeout: 600 }}
 
 							title={
 								row?.thumbnail_url ? (

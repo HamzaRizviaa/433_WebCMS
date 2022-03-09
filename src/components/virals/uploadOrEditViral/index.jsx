@@ -446,6 +446,9 @@ const UploadOrEditViral = ({
 		selectedLabels.length < 10 ||
 		!caption;
 
+	const editBtnDisabled =
+		postButtonStatus || !caption || specificViral?.caption === caption.trim();
+
 	return (
 		<Slider
 			open={open}
@@ -532,12 +535,12 @@ const UploadOrEditViral = ({
 																					objectPosition: 'center'
 																				}}
 																				onLoadedMetadata={() => {
-																					console.log(
-																						videoRef,
-																						videoRef.current.videoWidth,
-																						videoRef.current.videoHeight,
-																						'video'
-																					);
+																					// console.log(
+																					// 	videoRef,
+																					// 	videoRef.current.videoWidth,
+																					// 	videoRef.current.videoHeight,
+																					// 	'video'
+																					// );
 																					setFileWidth(
 																						videoRef.current.videoWidth
 																					);
@@ -842,9 +845,9 @@ const UploadOrEditViral = ({
 
 							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 								<Button
-									disabled={viralBtnDisabled}
+									disabled={isEdit ? editBtnDisabled : viralBtnDisabled}
 									onClick={() => {
-										if (viralBtnDisabled) {
+										if (viralBtnDisabled || editBtnDisabled) {
 											validateViralBtn();
 										} else {
 											setPostButtonStatus(true);

@@ -315,7 +315,10 @@
 	font-size: 12px !important;
 	line-height: 24px !important;
 	padding: 4px 6px !important;
-	margin-right: 6px !important;
+	margin-right: 3px !important;
+	margin-left: 3px !important;
+	margin-top: 2px !important;
+	margin-bottom: 2px !important;
 	svg {
 		color: black !important;
 		font-size: 20px !important;
@@ -324,7 +327,7 @@
 
 .autoComplete {
 	padding: 8px;
-	width: 96% !important;
+	// width: 96% !important;
 	padding-left: 16px;
 	color: white !important;
 	border: 1px solid #404040;
@@ -338,7 +341,7 @@
 	}
 
 	.textFieldAuto {
-		width: 530px;
+		width: 100%;
 		color: #ffffff !important;
 		input {
 			color: #ffffff !important;
@@ -348,10 +351,18 @@
 
 	svg {
 		color: $neon-yellow;
-		right: 5rem;
-		top: 0;
+		right: 5rem !important;
+		top: 0rem !important;
 		font-size: 3rem;
 	}
+
+	overflow-y: auto;
+	-ms-overflow-style: none; /* Internet Explorer 10+ */
+	scrollbar-width: none; /* Firefox */
+}
+
+.autoComplete::-webkit-scrollbar {
+	display: none; /* Safari and Chrome */
 }
 
 .disableAutoComplete {

@@ -16,6 +16,7 @@ import { ReactComponent as DeniedError } from '../../assets/AccesDenied.svg';
 const SignIn = ({ setLoginData }) => {
 	const [signInError, setSignInError] = useState(false);
 	const [isLoadingSignIn, setIsLoadingSignin] = useState(false);
+	const [accessExpire, setAccessExpire] = useState(false);
 
 	useEffect(() => {
 		return () => {
@@ -48,6 +49,29 @@ const SignIn = ({ setLoginData }) => {
 	// 	console.log('failure', e);
 	// };
 
+	const checkSessionTimeout = (initialTimeVal) => {
+		let minutes = Math.abs((initialTimeVal - new Date()) / 1000 / 60);
+		// console.log('malamal');
+		// console.log(minutes, 'm');
+		//console.log(initialTimeVal, 'i');
+		// console.log(new Date());
+		if (minutes >= 720 && accessExpire) {
+			//alert('Your session has expired');
+			localStorage.removeItem('user_data');
+			setAccessExpire(false);
+			navigate('/sign-in');
+		}
+	};
+
+	useEffect(() => {
+		console.log(accessExpire);
+		if (accessExpire) {
+			console.log('aE is true');
+			let initialTime = new Date();
+			setInterval(() => checkSessionTimeout(initialTime), 1000);
+		}
+	}, [accessExpire]);
+
 	const handleLogin = async (googleData) => {
 		setIsLoadingSignin(true);
 		try {
@@ -58,11 +82,21 @@ const SignIn = ({ setLoginData }) => {
 				}
 			);
 			if (result?.data?.status_code === 200) {
-				setIsLoadingSignin(false);
-				console.log(result?.data);
 				setLoginData(
 					localStorage.setItem('user_data', JSON.stringify(result?.data?.data))
 				);
+
+				// setTimeout(() => {
+				// 	//remove localStorage data when token expires (12 hours) 43200000 - 12 hours , 3600000 -1 hour
+				// 	alert('Your session has expired');
+				// 	localStorage.removeItem('user_data');
+				// 	navigate('/sign-in');
+				// }, [3600000]);
+
+				setAccessExpire(true);
+
+				setIsLoadingSignin(false);
+				console.log(result?.data);
 				navigate('/post-library');
 				setSignInError(false);
 			}

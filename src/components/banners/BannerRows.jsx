@@ -17,6 +17,10 @@ import { ReactComponent as DropdownArrow } from '../../assets/drop_drown_arrow.s
 import { ReactComponent as Union } from '../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../assets/Delete.svg';
 import { useStyles, useStyles2 } from './bannerStyles';
+import { getLocalStorageDetails } from '../../utils';
+
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 // eslint-disable-next-line no-unused-vars
 export default function BannerRows({
@@ -25,51 +29,31 @@ export default function BannerRows({
 	setBannerData,
 	index,
 	handleBanner,
-	errMsg, // 2-5
-
-	firstrow, // 1
-	validateRow
+	otherRowsErrMsg, // 2-5
+	firstrowErrMsg, // 1
+	validateRow,
+	bannerContent // content dropdown
 }) {
-	// const listElement = useRef(null);
 	//styles
 	const muiClasses = useStyles();
 	const muiClasses2 = useStyles2();
 	//states
-	// const [bannerType, setBannerType] = useState('');
-	//const classUseStyle = useStyles();
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [dropdownPosition, setDropdownPosition] = useState(false);
-	const [selectedMedia, setSelectedMedia] = useState(null);
+	const [selectedMedia, setSelectedMedia] = useState({ id: '', title: '' });
 	const [selectMediaInput, setSelectMediaInput] = useState('');
 	const [trashcan, setTrashCan] = useState(false);
 	const allMedia = ['Title only', 'Title + Text'];
-	const [errorMsg, setErrMsg] = useState(firstrow);
-	const [errMsg2, setErrMsg2] = useState(errMsg);
-	//content type dropdown
-	const options = [
-		{
-			id: 1,
-			name: 'neymar'
-		},
-		{
-			id: 2,
-			name: 'salah'
-		},
-		{
-			id: 3,
-			name: 'kagawa'
-		},
-		{
-			id: 4,
-			name: 'Cristiano'
-		},
-		{
-			id: 5,
-			name: 'RONAAAAAAAAALD'
-		}
-	];
+	const [errorMsg, setErrMsg] = useState(firstrowErrMsg);
+	const [errMsg2, setErrMsg2] = useState(otherRowsErrMsg);
 
-	// a little function to help us with reordering the result
+	useEffect(() => {
+		setSelectedMedia({
+			id: data?.selectedMedia?.id ? data?.selectedMedia?.id : '',
+			title: data?.selectedMedia?.title ? data?.selectedMedia?.title : ''
+		});
+		console.log(selectedMedia, 'selectedMedia');
+	}, []);
 
 	useEffect(() => {
 		// console.log(data, 'provided');
@@ -86,84 +70,102 @@ export default function BannerRows({
 	};
 
 	const emptyBannerData = (Trashdata) => {
-		console.log('empty data', data);
 		setTrashCan(true);
-		setSelectedMedia(null);
-		setBannerData((data) => {
-			// eslint-disable-next-line no-unused-vars
-			let _bannerData = data.map((banner) => {
-				if (Trashdata.id === banner.id) {
+		console.log(Trashdata);
+		if (
+			Trashdata.id === '1' ||
+			Trashdata.id === '2' ||
+			Trashdata.id === '3' ||
+			Trashdata.id === '4' ||
+			Trashdata.id === '5'
+		) {
+			setSelectedMedia(null);
+			setBannerData((data) => {
+				// eslint-disable-next-line no-unused-vars
+				let _bannerData = data.map((banner) => {
+					if (Trashdata.id === banner.id) {
+						return {
+							...banner,
+							bannerType: '',
+							selectedMedia: null
+						};
+					}
 					return {
-						...banner,
-						bannerType: '',
-						selectedMedia: null
+						...banner
 					};
-				}
-				return {
-					...banner
-				};
+				});
+				return _bannerData;
 			});
-			return _bannerData;
-		});
+		} else {
+			deleteBannerData(Trashdata.id);
+		}
+
 		// handleBanner();
 	};
-	// useEffect(() => {
-	// 	var errorMessage = errMsg;
-	// 	console.log(errorMsg, 'errorMsg in banner row');
-	// 	setErrMsg(errorMessage);
-	// 	setTimeout(() => {
-	// 		setErrMsg('');
-	// 	}, [5000]);
-	// }, [errMsg]);
 
-	// useEffect(() => {
-	// 	var errorMessage = firstrow;
-	// 	console.log(errorMsg, 'errorMsg in banner row');
-	// 	setErrMsg(errorMessage);
-	// 	setTimeout(() => {
-	// 		setErrMsg('');
-	// 	}, [5000]);
-	// }, [firstrow]);
+	const deleteBannerData = async (id) => {
+		// setDeleteBtnStatus(true);
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/top-banner/delete-banner`,
+				{
+					banner_id: id
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success('banner has been deleted!');
+				window.location.reload();
+				// handleClose();
 
-	// useEffect(() => {
-	// 	var Message = errMsg || firstrow;
-	// 	console.log(Message, 'Message');
-	// 	// setErrMsg(Message);
-	// 	setTimeout(() => {
-	// 		setErrMsg(Message);
-	// 	}, [1000]);
-	// }, [errMsg, firstrow]);
-
-	// const timeOut = () => {
-	// 	console.log('timeout');
-	// 	setErrMsg('');
-	// };
+				setSelectedMedia(null);
+				setBannerData((data) => {
+					// eslint-disable-next-line no-unused-vars
+					let _bannerData = data.map((banner) => {
+						if (id === banner.id) {
+							return {
+								...banner,
+								bannerType: '',
+								selectedMedia: null
+							};
+						}
+						return {
+							...banner
+						};
+					});
+					return _bannerData;
+				});
+				//setting a timeout for getting post after delete.
+				// dispatch(getMedia({ page }));
+			}
+		} catch (e) {
+			toast.error('Failed to delete banner!');
+			// setDeleteBtnStatus(false);
+			console.log(e);
+		}
+	};
 
 	useEffect(() => {
-		var Message = firstrow.errMsg;
-		console.log(Message, 'first row Message', index);
+		var Message = firstrowErrMsg.errMsg;
+		// console.log(Message, 'first row banner error Message', index);
 		setErrMsg(Message);
 		setTimeout(() => {
 			setErrMsg('');
 		}, [5000]);
-	}, [firstrow]); // object as dependecy as one of the value got change , useeffect
+	}, [firstrowErrMsg]); // object as dependecy as one of the value got change , useeffect
 
 	useEffect(() => {
-		var message2 = errMsg.errMsg;
-		console.log(message2, 'errMsg Message', index);
+		var message2 = otherRowsErrMsg.errMsg;
+		// console.log(message2, '2-5 row banner error Message', index);
 		setErrMsg2(message2);
 		setTimeout(() => {
 			setErrMsg2('');
 		}, [5000]);
-		// const interval = setInterval(() => {
-		// 	setErrMsg2('');
-		// }, 5000);
-		// return () => clearInterval(interval);
-	}, [errMsg]);
-
-	// useEffect(() => {
-
-	// }, [validateRow]);
+	}, [otherRowsErrMsg]);
 
 	return (
 		<Draggable
@@ -182,7 +184,6 @@ export default function BannerRows({
 					}}
 				>
 					<div>
-						{console.log(validateRow, index, errMsg, firstrow, 'validateRow')}
 						<div
 							className={
 								errorMsg
@@ -375,12 +376,12 @@ export default function BannerRows({
 													return _bannerData;
 												});
 											}}
-											options={options}
-											getOptionLabel={(option) => option.name}
+											options={bannerContent}
+											getOptionLabel={(option) => option.title}
 											renderOption={(props, option) => {
 												return (
 													<li {...props} className={classes.liAutocomplete}>
-														{option.name}
+														{option.title}
 													</li>
 												);
 											}}
@@ -404,6 +405,7 @@ export default function BannerRows({
 															root: muiClasses.input
 														}
 													}}
+													// value={selectedMedia?.title}
 													value={selectMediaInput}
 													onChange={handleChangeSelectMediaInput}
 												/>
@@ -448,7 +450,8 @@ BannerRows.propTypes = {
 	setBannerData: PropTypes.func,
 	handleBanner: PropTypes.func,
 	provided: PropTypes.draggableProps,
-	errMsg: PropTypes.object,
-	firstrow: PropTypes.object,
-	validateRow: PropTypes.object
+	otherRowsErrMsg: PropTypes.object,
+	firstrowErrMsg: PropTypes.object,
+	validateRow: PropTypes.object,
+	bannerContent: PropTypes.array
 };
