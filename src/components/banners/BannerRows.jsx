@@ -18,9 +18,10 @@ import { ReactComponent as Union } from '../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../assets/Delete.svg';
 import { useStyles, useStyles2 } from './bannerStyles';
 import { getLocalStorageDetails } from '../../utils';
-// import Close from '@material-ui/icons/Close';
+
 import axios from 'axios';
 import { toast } from 'react-toastify';
+
 // eslint-disable-next-line no-unused-vars
 export default function BannerRows({
 	key,
