@@ -50,7 +50,8 @@ export default function BannerRows({
 	useEffect(() => {
 		setSelectedMedia({
 			id: data?.selectedMedia?.id ? data?.selectedMedia?.id : '',
-			title: data?.selectedMedia?.title ? data?.selectedMedia?.title : ''
+			title: data?.selectedMedia?.title ? data?.selectedMedia?.title : '',
+			type: data?.selectedMedia?.type ? data?.selectedMedia?.type : null
 		});
 		console.log(selectedMedia, 'selectedMedia');
 	}, []);

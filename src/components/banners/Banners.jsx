@@ -61,6 +61,7 @@ export default function Banners() {
 		updateBannerObject();
 	}, [allBanners]);
 
+	//get banners from get api and map on your own data
 	const updateBannerObject = () => {
 		let _filterData = [];
 		_filterData = allBanners.map((data) => {
@@ -125,12 +126,31 @@ export default function Banners() {
 	};
 
 	const uploadBanner = async () => {
+		let bannerPayload = [];
+		// to post banners , map your own data to api payload data as in docs
+		bannerPayload = bannerData.map((data, index) => {
+			return {
+				// ...bannerData,
+				banner_type: data.bannerType,
+				content: data.selectedMedia,
+				banner_id:
+					data?.id === '1' ||
+					data?.id === '2' ||
+					data?.id === '3' ||
+					data?.id === '4' ||
+					data?.id === '5'
+						? null
+						: data?.id,
+				sort_order: index
+			};
+		});
+		console.log(bannerPayload, bannerData);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/top-banner/publish-banner`,
 				{
-					banners: [...bannerData],
-					type: 'Article'
+					banners: bannerPayload,
+					type: 'media'
 				},
 				{
 					headers: {
@@ -140,8 +160,12 @@ export default function Banners() {
 			);
 
 			console.log(result);
+			if (result?.data?.status_code === 200) {
+				toast.success('banner has been created!');
+				dispatch(getAllBanners());
+			}
 		} catch (error) {
-			toast.error('Failed to upload a banner');
+			toast.error('Failed to add a new banner');
 			console.log(error);
 		}
 	};

@@ -142,7 +142,7 @@ const UploadOrEditMedia = ({
 			// }
 
 			setMainCategory(specificMedia?.media_type);
-			console.log(mainCategory);
+			// console.log(mainCategory);
 			setSubCategory(specificMedia?.sub_category);
 			setTitleMedia(specificMedia?.title);
 			setDescription(specificMedia?.description);
@@ -209,11 +209,12 @@ const UploadOrEditMedia = ({
 		if (mainCategory && !isEdit) {
 			console.log(mainCategory, 'mc');
 			updateSubCategories(mainCategory);
-		} else if (mainCategory && isEdit) {
-			let setData = mainCategories.find((u) => u.name === mainCategory);
-			//console.log(setData, 'm');
-			updateSubCategories(setData);
 		}
+		// else if (mainCategory && isEdit) {
+		// 	let setData = mainCategories.find((u) => u.name === mainCategory);
+		// 	//console.log(setData, 'm');
+		// 	updateSubCategories(setData);
+		// }
 	}, [mainCategory]);
 
 	useEffect(() => {
