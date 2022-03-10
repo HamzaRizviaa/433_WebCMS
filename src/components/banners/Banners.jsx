@@ -114,6 +114,7 @@ export default function Banners({ tabValue }) {
 		//arr.splice(index of the item to be removed, number of elements to be removed) // rest of the filter DATA
 		bannerData.splice(0, length);
 		setBannerData([..._filterData, ...bannerData]);
+		setbtnDisable(true);
 	};
 
 	//reorder
@@ -145,8 +146,22 @@ export default function Banners({ tabValue }) {
 	useEffect(() => {
 		// disabled = true = GREY
 		// noy disables = false = YELLOW
-		const disableContent = handleBannerPositionAndFirstBanner();
-		setbtnDisable(disableContent.flag);
+
+		allBanners.map((banner, index) => {
+			// console.log(banner, 'banner');
+			// console.log(bannerData[index], 'bd');
+			if (
+				banner?.banner_type === bannerData[index]?.bannerType &&
+				banner?.content?.title === bannerData[index]?.selectedMedia?.title
+			) {
+				// console.log('jajaj');
+				return true; // grey
+			} else {
+				// console.log('kakak');
+				const disableContent = handleBannerPositionAndFirstBanner();
+				setbtnDisable(disableContent.flag);
+			}
+		});
 	}, [bannerData]);
 
 	const clickBanner = () => {
