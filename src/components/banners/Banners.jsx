@@ -10,11 +10,12 @@ import {
 } from './../../pages/TopBanner/topBannerSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLocalStorageDetails } from '../../utils';
+import PropTypes from 'prop-types';
 
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-export default function Banners() {
+export default function Banners({ tabValue }) {
 	const [validateRow, setValidateRow] = useState(''); //row check 2-5
 	const [firstCheck, setFirstRowCheck] = useState(''); //row check 1
 	const [btnDisable, setbtnDisable] = useState(false);
@@ -53,14 +54,50 @@ export default function Banners() {
 	const bannerContent = useSelector((state) => state.topBanner.content);
 
 	useEffect(() => {
-		dispatch(getAllBanners());
-		dispatch(getBannerContent());
+		dispatch(getAllBanners(tabValue));
+		dispatch(
+			getBannerContent({
+				type: tabValue,
+				title: null
+			})
+		);
 	}, []);
 
 	useEffect(() => {
 		updateBannerObject();
 	}, [allBanners]);
 
+	useEffect(() => {
+		setBannerData([
+			{
+				id: '1',
+				bannerType: '',
+				selectedMedia: null
+			},
+			{
+				id: '2',
+				bannerType: '',
+				selectedMedia: null
+			},
+			{
+				id: '3',
+				bannerType: '',
+				selectedMedia: null
+			},
+			{
+				id: '4',
+				bannerType: '',
+				selectedMedia: null
+			},
+			{
+				id: '5',
+				bannerType: '',
+				selectedMedia: null
+			}
+		]);
+	}, [tabValue]);
+
+	//get banners from get api and map on your own data
 	const updateBannerObject = () => {
 		let _filterData = [];
 		_filterData = allBanners.map((data) => {
@@ -77,6 +114,7 @@ export default function Banners() {
 		//arr.splice(index of the item to be removed, number of elements to be removed) // rest of the filter DATA
 		bannerData.splice(0, length);
 		setBannerData([..._filterData, ...bannerData]);
+		setbtnDisable(true);
 	};
 
 	//reorder
@@ -108,8 +146,22 @@ export default function Banners() {
 	useEffect(() => {
 		// disabled = true = GREY
 		// noy disables = false = YELLOW
-		const disableContent = handleBannerPositionAndFirstBanner();
-		setbtnDisable(disableContent.flag);
+
+		allBanners.map((banner, index) => {
+			// console.log(banner, 'banner');
+			// console.log(bannerData[index], 'bd');
+			if (
+				banner?.banner_type === bannerData[index]?.bannerType &&
+				banner?.content?.title === bannerData[index]?.selectedMedia?.title
+			) {
+				// console.log('jajaj');
+				return true; // grey
+			} else {
+				// console.log('kakak');
+				const disableContent = handleBannerPositionAndFirstBanner();
+				setbtnDisable(disableContent.flag);
+			}
+		});
 	}, [bannerData]);
 
 	const clickBanner = () => {
@@ -125,12 +177,31 @@ export default function Banners() {
 	};
 
 	const uploadBanner = async () => {
+		let bannerPayload = [];
+		// to post banners , map your own data to api payload data as in docs
+		bannerPayload = bannerData.map((data, index) => {
+			return {
+				// ...bannerData,
+				banner_type: data.bannerType,
+				content: data.selectedMedia,
+				banner_id:
+					data?.id === '1' ||
+					data?.id === '2' ||
+					data?.id === '3' ||
+					data?.id === '4' ||
+					data?.id === '5'
+						? null
+						: data?.id,
+				sort_order: index
+			};
+		});
+		console.log(bannerPayload, bannerData);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/top-banner/publish-banner`,
 				{
-					banners: [...bannerData],
-					type: 'Article'
+					banners: bannerPayload,
+					type: tabValue
 				},
 				{
 					headers: {
@@ -140,8 +211,12 @@ export default function Banners() {
 			);
 
 			console.log(result);
+			if (result?.data?.status_code === 200) {
+				toast.success('banner has been created!');
+				dispatch(getAllBanners(tabValue));
+			}
 		} catch (error) {
-			toast.error('Failed to upload a banner');
+			toast.error('Failed to add a new banner');
 			console.log(error);
 		}
 	};
@@ -238,6 +313,7 @@ export default function Banners() {
 													key={data.id}
 													provided={provided}
 													index={index}
+													tabValue={tabValue}
 												/>
 											);
 										})}
@@ -267,3 +343,7 @@ export default function Banners() {
 		</div>
 	);
 }
+
+Banners.propTypes = {
+	tabValue: PropTypes.string
+};

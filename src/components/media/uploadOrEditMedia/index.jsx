@@ -124,6 +124,7 @@ const UploadOrEditMedia = ({
 		// console.log(specificMedia?.sub_category);
 
 		if (specificMedia) {
+			// console.log(specificMedia, 'specificMedia');
 			if (specificMedia?.labels) {
 				let _labels = [];
 				specificMedia.labels.map((label) =>
@@ -131,17 +132,17 @@ const UploadOrEditMedia = ({
 				);
 				setSelectedLabels(_labels);
 			}
-			if (specificMedia.media_type) {
-				let setData = mainCategories.find(
-					(u) => u.name === specificMedia?.media_type
-				);
-				//console.log(specificMedia?.media_type);
-				//console.log(setData.name);
-				setMainCategory(setData.name);
-			}
+			// if (specificMedia.media_type) {
+			// 	// let setData = mainCategories.find(
+			// 	// 	(u) => u.name === specificMedia?.media_type
+			// 	// );
+			// 	//console.log(specificMedia?.media_type);
+			// 	// console.log(setData.name);
+			// 	setMainCategory(specificMedia.media_type);
+			// }
 
-			//setMainCategory(specificMedia?.media_type);
-			console.log(mainCategory);
+			setMainCategory(specificMedia?.media_type);
+			// console.log(mainCategory);
 			setSubCategory(specificMedia?.sub_category);
 			setTitleMedia(specificMedia?.title);
 			setDescription(specificMedia?.description);
@@ -157,7 +158,9 @@ const UploadOrEditMedia = ({
 			setUploadedCoverImage([
 				{
 					id: makeid(10),
-					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`
+					fileName: specificMedia?.file_name,
+					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`,
+					type: 'image'
 				}
 			]);
 		}
@@ -204,8 +207,14 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		if (mainCategory && !isEdit) {
+			console.log(mainCategory, 'mc');
 			updateSubCategories(mainCategory);
 		}
+		// else if (mainCategory && isEdit) {
+		// 	let setData = mainCategories.find((u) => u.name === mainCategory);
+		// 	//console.log(setData, 'm');
+		// 	updateSubCategories(setData);
+		// }
 	}, [mainCategory]);
 
 	useEffect(() => {
@@ -548,8 +557,11 @@ const UploadOrEditMedia = ({
 	};
 
 	useEffect(() => {
-		setSubCategory({ id: null, name: '' });
-		console.log(subCategory, 'subCategory');
+		//only empty it when its on new one , not on edit / specific media
+		if (!isEdit) {
+			setSubCategory({ id: null, name: '' });
+		}
+		// console.log(subCategory, 'subCategory');
 	}, [mainCategory]);
 
 	const SubCategoryId = (e) => {
@@ -868,7 +880,10 @@ const UploadOrEditMedia = ({
 																				id={'my-video'}
 																				//poster={isEdit ? file.img : null}
 																				className={classes.fileThumbnail}
-																				style={{ objectFit: 'cover' }}
+																				style={{
+																					objectFit: 'cover',
+																					objectPosition: 'center'
+																				}}
 																				onLoadedMetadata={() => {
 																					setFileWidth(
 																						videoRef.current.videoWidth
@@ -886,6 +901,10 @@ const UploadOrEditMedia = ({
 																			<img
 																				src={file.img}
 																				className={classes.fileThumbnail}
+																				style={{
+																					objectFit: 'cover',
+																					objectPosition: 'center'
+																				}}
 																				ref={imgRef}
 																				onLoad={() => {
 																					setFileWidth(

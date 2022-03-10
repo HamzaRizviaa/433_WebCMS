@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 // import Backdrop from '@material-ui/core/Backdrop';
 //import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from '@material-ui/core';
@@ -17,10 +17,13 @@ import { ReactComponent as DropdownArrow } from '../../assets/drop_drown_arrow.s
 import { ReactComponent as Union } from '../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../assets/Delete.svg';
 import { useStyles, useStyles2 } from './bannerStyles';
-import { getLocalStorageDetails } from '../../utils';
 
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+//import { getLocalStorageDetails } from '../../utils';
+import _debounce from 'lodash/debounce';
+//import axios from 'axios';
+//import { toast } from 'react-toastify';
+import { getBannerContent } from './../../pages/TopBanner/topBannerSlice';
 
 // eslint-disable-next-line no-unused-vars
 export default function BannerRows({
@@ -32,7 +35,8 @@ export default function BannerRows({
 	otherRowsErrMsg, // 2-5
 	firstrowErrMsg, // 1
 	validateRow,
-	bannerContent // content dropdown
+	bannerContent, // content dropdown
+	tabValue
 }) {
 	//styles
 	const muiClasses = useStyles();
@@ -47,10 +51,13 @@ export default function BannerRows({
 	const [errorMsg, setErrMsg] = useState(firstrowErrMsg);
 	const [errMsg2, setErrMsg2] = useState(otherRowsErrMsg);
 
+	const dispatch = useDispatch();
+
 	useEffect(() => {
 		setSelectedMedia({
 			id: data?.selectedMedia?.id ? data?.selectedMedia?.id : '',
-			title: data?.selectedMedia?.title ? data?.selectedMedia?.title : ''
+			title: data?.selectedMedia?.title ? data?.selectedMedia?.title : '',
+			type: data?.selectedMedia?.type ? data?.selectedMedia?.type : null
 		});
 		console.log(selectedMedia, 'selectedMedia');
 	}, []);
@@ -64,90 +71,119 @@ export default function BannerRows({
 	const resetState = () => {
 		setDropdownPosition(false);
 	};
+
+	const handleDebounceFun = () => {
+		let _search;
+		setSelectMediaInput((prevState) => {
+			_search = prevState;
+			return _search;
+		});
+		console.log(_search);
+		if (_search) {
+			dispatch(
+				getBannerContent({
+					type: tabValue,
+					title: _search
+				})
+			);
+		} else {
+			dispatch(
+				getBannerContent({
+					type: tabValue,
+					title: null
+				})
+			);
+		}
+	};
+
+	const debounceFun = useCallback(_debounce(handleDebounceFun, 600), []);
+
 	const handleChangeSelectMediaInput = (e) => {
-		// console.log(disableDropdown);
+		//console.log(e.target.value, 'aaa');
 		setSelectMediaInput(e.target.value);
+		debounceFun(e.target.value);
 	};
 
 	const emptyBannerData = (Trashdata) => {
 		setTrashCan(true);
 		console.log(Trashdata);
-		if (
-			Trashdata.id === '1' ||
-			Trashdata.id === '2' ||
-			Trashdata.id === '3' ||
-			Trashdata.id === '4' ||
-			Trashdata.id === '5'
-		) {
-			setSelectedMedia(null);
-			setBannerData((data) => {
-				// eslint-disable-next-line no-unused-vars
-				let _bannerData = data.map((banner) => {
-					if (Trashdata.id === banner.id) {
-						return {
-							...banner,
-							bannerType: '',
-							selectedMedia: null
-						};
-					}
+		// if (
+		// 	Trashdata.id === '1' ||
+		// 	Trashdata.id === '2' ||
+		// 	Trashdata.id === '3' ||
+		// 	Trashdata.id === '4' ||
+		// 	Trashdata.id === '5'
+		// ) {
+		setSelectedMedia(null);
+		setBannerData((data) => {
+			// eslint-disable-next-line no-unused-vars
+			let _bannerData = data.map((banner) => {
+				if (Trashdata.id === banner.id) {
 					return {
-						...banner
+						...banner,
+						bannerType: '',
+						selectedMedia: null
 					};
-				});
-				return _bannerData;
+				}
+				return {
+					...banner
+				};
 			});
-		} else {
-			deleteBannerData(Trashdata.id);
-		}
+			return _bannerData;
+		});
+		// }
+		// else {
+		// 	deleteBannerData(Trashdata.id);
+		// }
 
 		// handleBanner();
 	};
 
-	const deleteBannerData = async (id) => {
-		// setDeleteBtnStatus(true);
-		try {
-			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/top-banner/delete-banner`,
-				{
-					banner_id: id
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
-				}
-			);
-			if (result?.data?.status_code === 200) {
-				toast.success('banner has been deleted!');
-				window.location.reload();
-				// handleClose();
+	// const deleteBannerData = async (id) => {
+	// 	// setDeleteBtnStatus(true);
+	// 	try {
+	// 		const result = await axios.post(
+	// 			`${process.env.REACT_APP_API_ENDPOINT}/top-banner/delete-banner`,
+	// 			{
+	// 				banner_id: id
+	// 			},
+	// 			{
+	// 				headers: {
+	// 					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+	// 				}
+	// 			}
+	// 		);
+	// 		if (result?.data?.status_code === 200) {
+	// 			toast.success('banner has been deleted!');
+	// 			window.location.reload();
+	// 			// handleClose();
 
-				setSelectedMedia(null);
-				setBannerData((data) => {
-					// eslint-disable-next-line no-unused-vars
-					let _bannerData = data.map((banner) => {
-						if (id === banner.id) {
-							return {
-								...banner,
-								bannerType: '',
-								selectedMedia: null
-							};
-						}
-						return {
-							...banner
-						};
-					});
-					return _bannerData;
-				});
-				//setting a timeout for getting post after delete.
-				// dispatch(getMedia({ page }));
-			}
-		} catch (e) {
-			toast.error('Failed to delete banner!');
-			// setDeleteBtnStatus(false);
-			console.log(e);
-		}
-	};
+	// 			setSelectedMedia(null);
+	// 			setBannerData((data) => {
+	// 				// eslint-disable-next-line no-unused-vars
+	// 				let _bannerData = data.map((banner) => {
+	// 					if (id === banner.id) {
+	// 						return {
+	// 							...banner,
+	// 							bannerType: '',
+	// 							selectedMedia: null
+	// 						};
+	// 					}
+	// 					return {
+	// 						...banner
+	// 					};
+	// 				});
+	// 				return _bannerData;
+	// 			});
+	// 			//setting a timeout for getting post after delete.
+	// 			// dispatch(getMedia({ page }));
+	// 		}
+	// 	} catch (e) {
+	// 		toast.error('Failed to delete banner!');
+	// 		// setDeleteBtnStatus(false);
+	// 		console.log(e);
+	// 	}
+	// };
 
 	useEffect(() => {
 		var Message = firstrowErrMsg.errMsg;
@@ -453,5 +489,6 @@ BannerRows.propTypes = {
 	otherRowsErrMsg: PropTypes.object,
 	firstrowErrMsg: PropTypes.object,
 	validateRow: PropTypes.object,
-	bannerContent: PropTypes.array
+	bannerContent: PropTypes.array,
+	tabValue: PropTypes.string
 };

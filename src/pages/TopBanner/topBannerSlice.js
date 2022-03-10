@@ -4,8 +4,17 @@ import TopBannerService from './topBannerService';
 
 export const getBannerContent = createAsyncThunk(
 	'topBanner/getBannerContent',
-	async () => {
-		const result = await TopBannerService.getBannerContentApi();
+	async ({ type, title }) => {
+		// console.log(type, 'type');
+		// console.log(title, 'title');
+		let endPoint = `top-banner/get-content?type=home`;
+		if (type) {
+			endPoint = `top-banner/get-content?type=${type}`;
+		}
+		if (title) {
+			endPoint += `&title=${title}`;
+		}
+		const result = await TopBannerService.getBannerContentApi(endPoint);
 		// console.log(result);
 		if (result?.data?.data?.length > 0) {
 			return result.data.data;
@@ -17,8 +26,8 @@ export const getBannerContent = createAsyncThunk(
 
 export const getAllBanners = createAsyncThunk(
 	'topBanner/getAllBanners',
-	async () => {
-		const result = await TopBannerService.getAllBannersApi();
+	async (type) => {
+		const result = await TopBannerService.getAllBannersApi(type);
 		if (result?.data?.data?.length > 0) {
 			return result.data.data;
 		} else {
