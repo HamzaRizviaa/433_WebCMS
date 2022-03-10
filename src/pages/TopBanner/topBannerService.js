@@ -2,9 +2,9 @@ import axios from 'axios';
 import { getLocalStorageDetails } from '../../utils';
 
 export default class TopBannerService {
-	static getBannerContentApi() {
+	static getBannerContentApi(type, title) {
 		return axios.get(
-			`${process.env.REACT_APP_API_ENDPOINT}/top-banner/get-content`,
+			`${process.env.REACT_APP_API_ENDPOINT}/top-banner/get-content?type=${type}&title=${title}`,
 			{
 				headers: {
 					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
@@ -12,9 +12,10 @@ export default class TopBannerService {
 			}
 		);
 	}
-	static getAllBannersApi() {
+	static getAllBannersApi(type) {
+		console.log(type, 'type');
 		return axios.get(
-			`${process.env.REACT_APP_API_ENDPOINT}/top-banner/get-banners/media`,
+			`${process.env.REACT_APP_API_ENDPOINT}/top-banner/get-banners/${type}`,
 			{
 				headers: {
 					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`

@@ -10,11 +10,12 @@ import {
 } from './../../pages/TopBanner/topBannerSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLocalStorageDetails } from '../../utils';
+import PropTypes from 'prop-types';
 
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-export default function Banners() {
+export default function Banners({ tabValue }) {
 	const [validateRow, setValidateRow] = useState(''); //row check 2-5
 	const [firstCheck, setFirstRowCheck] = useState(''); //row check 1
 	const [btnDisable, setbtnDisable] = useState(false);
@@ -47,14 +48,14 @@ export default function Banners() {
 	]);
 
 	// emptybarray -> api response -> func obj -> emptyobj , next line map data api s data us object map kr k is main push
-
+	console.log(tabValue);
 	const dispatch = useDispatch();
 	const allBanners = useSelector((state) => state.topBanner.allBanners);
 	const bannerContent = useSelector((state) => state.topBanner.content);
 
 	useEffect(() => {
-		dispatch(getAllBanners());
-		dispatch(getBannerContent());
+		dispatch(getAllBanners(tabValue));
+		dispatch(getBannerContent(tabValue));
 	}, []);
 
 	useEffect(() => {
@@ -150,7 +151,7 @@ export default function Banners() {
 				`${process.env.REACT_APP_API_ENDPOINT}/top-banner/publish-banner`,
 				{
 					banners: bannerPayload,
-					type: 'media'
+					type: tabValue
 				},
 				{
 					headers: {
@@ -162,7 +163,7 @@ export default function Banners() {
 			console.log(result);
 			if (result?.data?.status_code === 200) {
 				toast.success('banner has been created!');
-				dispatch(getAllBanners());
+				dispatch(getAllBanners(tabValue));
 			}
 		} catch (error) {
 			toast.error('Failed to add a new banner');
@@ -291,3 +292,7 @@ export default function Banners() {
 		</div>
 	);
 }
+
+Banners.propTypes = {
+	tabValue: PropTypes.string
+};

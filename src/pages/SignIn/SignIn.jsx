@@ -53,7 +53,7 @@ const SignIn = ({ setLoginData }) => {
 		let minutes = Math.abs((initialTimeVal - new Date()) / 1000 / 60);
 		// console.log('malamal');
 		// console.log(minutes, 'm');
-		//console.log(initialTimeVal, 'i');
+		// console.log(initialTimeVal, 'i');
 		// console.log(new Date());
 		if (minutes >= 720 && accessExpire) {
 			//alert('Your session has expired');

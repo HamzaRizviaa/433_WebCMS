@@ -27,10 +27,10 @@ const TopBanner = () => {
 						</TabsListUnstyled>
 						<TabPanelUnstyled value={0}>
 							{' '}
-							<Banners />{' '}
+							<Banners tabValue={'home'} />{' '}
 						</TabPanelUnstyled>
 						<TabPanelUnstyled value={1}>
-							<Banners />
+							<Banners tabValue={'media'} />
 						</TabPanelUnstyled>
 					</TabsUnstyled>
 				</div>

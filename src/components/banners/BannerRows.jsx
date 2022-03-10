@@ -73,82 +73,83 @@ export default function BannerRows({
 	const emptyBannerData = (Trashdata) => {
 		setTrashCan(true);
 		console.log(Trashdata);
-		if (
-			Trashdata.id === '1' ||
-			Trashdata.id === '2' ||
-			Trashdata.id === '3' ||
-			Trashdata.id === '4' ||
-			Trashdata.id === '5'
-		) {
-			setSelectedMedia(null);
-			setBannerData((data) => {
-				// eslint-disable-next-line no-unused-vars
-				let _bannerData = data.map((banner) => {
-					if (Trashdata.id === banner.id) {
-						return {
-							...banner,
-							bannerType: '',
-							selectedMedia: null
-						};
-					}
+		// if (
+		// 	Trashdata.id === '1' ||
+		// 	Trashdata.id === '2' ||
+		// 	Trashdata.id === '3' ||
+		// 	Trashdata.id === '4' ||
+		// 	Trashdata.id === '5'
+		// ) {
+		setSelectedMedia(null);
+		setBannerData((data) => {
+			// eslint-disable-next-line no-unused-vars
+			let _bannerData = data.map((banner) => {
+				if (Trashdata.id === banner.id) {
 					return {
-						...banner
+						...banner,
+						bannerType: '',
+						selectedMedia: null
 					};
-				});
-				return _bannerData;
+				}
+				return {
+					...banner
+				};
 			});
-		} else {
-			deleteBannerData(Trashdata.id);
-		}
+			return _bannerData;
+		});
+		// }
+		// else {
+		// 	deleteBannerData(Trashdata.id);
+		// }
 
 		// handleBanner();
 	};
 
-	const deleteBannerData = async (id) => {
-		// setDeleteBtnStatus(true);
-		try {
-			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/top-banner/delete-banner`,
-				{
-					banner_id: id
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
-				}
-			);
-			if (result?.data?.status_code === 200) {
-				toast.success('banner has been deleted!');
-				window.location.reload();
-				// handleClose();
+	// const deleteBannerData = async (id) => {
+	// 	// setDeleteBtnStatus(true);
+	// 	try {
+	// 		const result = await axios.post(
+	// 			`${process.env.REACT_APP_API_ENDPOINT}/top-banner/delete-banner`,
+	// 			{
+	// 				banner_id: id
+	// 			},
+	// 			{
+	// 				headers: {
+	// 					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+	// 				}
+	// 			}
+	// 		);
+	// 		if (result?.data?.status_code === 200) {
+	// 			toast.success('banner has been deleted!');
+	// 			window.location.reload();
+	// 			// handleClose();
 
-				setSelectedMedia(null);
-				setBannerData((data) => {
-					// eslint-disable-next-line no-unused-vars
-					let _bannerData = data.map((banner) => {
-						if (id === banner.id) {
-							return {
-								...banner,
-								bannerType: '',
-								selectedMedia: null
-							};
-						}
-						return {
-							...banner
-						};
-					});
-					return _bannerData;
-				});
-				//setting a timeout for getting post after delete.
-				// dispatch(getMedia({ page }));
-			}
-		} catch (e) {
-			toast.error('Failed to delete banner!');
-			// setDeleteBtnStatus(false);
-			console.log(e);
-		}
-	};
+	// 			setSelectedMedia(null);
+	// 			setBannerData((data) => {
+	// 				// eslint-disable-next-line no-unused-vars
+	// 				let _bannerData = data.map((banner) => {
+	// 					if (id === banner.id) {
+	// 						return {
+	// 							...banner,
+	// 							bannerType: '',
+	// 							selectedMedia: null
+	// 						};
+	// 					}
+	// 					return {
+	// 						...banner
+	// 					};
+	// 				});
+	// 				return _bannerData;
+	// 			});
+	// 			//setting a timeout for getting post after delete.
+	// 			// dispatch(getMedia({ page }));
+	// 		}
+	// 	} catch (e) {
+	// 		toast.error('Failed to delete banner!');
+	// 		// setDeleteBtnStatus(false);
+	// 		console.log(e);
+	// 	}
+	// };
 
 	useEffect(() => {
 		var Message = firstrowErrMsg.errMsg;
