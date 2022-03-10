@@ -55,7 +55,7 @@ const SignIn = ({ setLoginData }) => {
 		// console.log(minutes, 'm');
 		// console.log(initialTimeVal, 'i');
 		// console.log(new Date());
-		if (minutes >= 720 && accessExpire) {
+		if (minutes >= 180 && accessExpire) {
 			//alert('Your session has expired');
 			localStorage.removeItem('user_data');
 			setAccessExpire(false);
@@ -68,7 +68,7 @@ const SignIn = ({ setLoginData }) => {
 		if (accessExpire) {
 			console.log('aE is true');
 			let initialTime = new Date();
-			setInterval(() => checkSessionTimeout(initialTime), 1000);
+			setInterval(() => checkSessionTimeout(initialTime), 3600000);
 		}
 	}, [accessExpire]);
 
