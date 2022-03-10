@@ -9,6 +9,11 @@ import {
 	getBannerContent
 } from './../../pages/TopBanner/topBannerSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { getLocalStorageDetails } from '../../utils';
+
+import axios from 'axios';
+import { toast } from 'react-toastify';
+
 export default function Banners() {
 	const [validateRow, setValidateRow] = useState(''); //row check 2-5
 	const [firstCheck, setFirstRowCheck] = useState(''); //row check 1
@@ -69,7 +74,7 @@ export default function Banners() {
 
 		// filter length
 		let length = _filterData.length;
-		//arr.splice(index of the item to be removed, number of elements to be removed)
+		//arr.splice(index of the item to be removed, number of elements to be removed) // rest of the filter DATA
 		bannerData.splice(0, length);
 		setBannerData([..._filterData, ...bannerData]);
 	};
@@ -112,7 +117,33 @@ export default function Banners() {
 		const validateRow = handleBannerPositionAndFirstBanner(); // 2- 5
 		setFirstRowCheck(firstrowcheck);
 		setValidateRow(validateRow);
-		// console.log(validateRow, firstrowcheck, 'post set state');
+
+		if (!firstrowcheck?.flag && !validateRow?.flag) {
+			// Validating whether post button is diabled OR not
+			uploadBanner();
+		}
+	};
+
+	const uploadBanner = async () => {
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/top-banner/publish-banner`,
+				{
+					banners: [...bannerData],
+					type: 'Article'
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+
+			console.log(result);
+		} catch (error) {
+			toast.error('Failed to upload a banner');
+			console.log(error);
+		}
 	};
 
 	const handleCheckFirstRow = () => {

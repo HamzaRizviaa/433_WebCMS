@@ -18,9 +18,10 @@ import { ReactComponent as Union } from '../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../assets/Delete.svg';
 import { useStyles, useStyles2 } from './bannerStyles';
 import { getLocalStorageDetails } from '../../utils';
-// import Close from '@material-ui/icons/Close';
+
 import axios from 'axios';
 import { toast } from 'react-toastify';
+
 // eslint-disable-next-line no-unused-vars
 export default function BannerRows({
 	key,
@@ -54,30 +55,6 @@ export default function BannerRows({
 		console.log(selectedMedia, 'selectedMedia');
 	}, []);
 
-	//content type dropdown
-	// const options = [
-	// 	{
-	// 		id: 1,
-	// 		name: 'neymar'
-	// 	},
-	// 	{
-	// 		id: 2,
-	// 		name: 'salah'
-	// 	},
-	// 	{
-	// 		id: 3,
-	// 		name: 'kagawa'
-	// 	},
-	// 	{
-	// 		id: 4,
-	// 		name: 'Cristiano'
-	// 	},
-	// 	{
-	// 		id: 5,
-	// 		name: 'RONAAAAAAAAALD'
-	// 	}
-	// ];
-
 	useEffect(() => {
 		// console.log(data, 'provided');
 		if (!open) {
@@ -94,25 +71,36 @@ export default function BannerRows({
 
 	const emptyBannerData = (Trashdata) => {
 		setTrashCan(true);
-		// setSelectedMedia(null);
-		// setBannerData((data) => {
-		// 	// eslint-disable-next-line no-unused-vars
-		// 	let _bannerData = data.map((banner) => {
-		// 		if (Trashdata.id === banner.id) {
-		// 			return {
-		// 				...banner,
-		// 				bannerType: '',
-		// 				selectedMedia: null
-		// 			};
-		// 		}
-		// 		return {
-		// 			...banner
-		// 		};
-		// 	});
-		// 	return _bannerData;
-		// });
+		console.log(Trashdata);
+		if (
+			Trashdata.id === '1' ||
+			Trashdata.id === '2' ||
+			Trashdata.id === '3' ||
+			Trashdata.id === '4' ||
+			Trashdata.id === '5'
+		) {
+			setSelectedMedia(null);
+			setBannerData((data) => {
+				// eslint-disable-next-line no-unused-vars
+				let _bannerData = data.map((banner) => {
+					if (Trashdata.id === banner.id) {
+						return {
+							...banner,
+							bannerType: '',
+							selectedMedia: null
+						};
+					}
+					return {
+						...banner
+					};
+				});
+				return _bannerData;
+			});
+		} else {
+			deleteBannerData(Trashdata.id);
+		}
+
 		// handleBanner();
-		deleteBannerData(Trashdata.id);
 	};
 
 	const deleteBannerData = async (id) => {
@@ -131,9 +119,26 @@ export default function BannerRows({
 			);
 			if (result?.data?.status_code === 200) {
 				toast.success('banner has been deleted!');
-				window.location.reload;
+				window.location.reload();
 				// handleClose();
 
+				setSelectedMedia(null);
+				setBannerData((data) => {
+					// eslint-disable-next-line no-unused-vars
+					let _bannerData = data.map((banner) => {
+						if (id === banner.id) {
+							return {
+								...banner,
+								bannerType: '',
+								selectedMedia: null
+							};
+						}
+						return {
+							...banner
+						};
+					});
+					return _bannerData;
+				});
 				//setting a timeout for getting post after delete.
 				// dispatch(getMedia({ page }));
 			}
