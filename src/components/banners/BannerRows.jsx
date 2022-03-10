@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 // import Backdrop from '@material-ui/core/Backdrop';
 //import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from '@material-ui/core';
@@ -17,10 +17,13 @@ import { ReactComponent as DropdownArrow } from '../../assets/drop_drown_arrow.s
 import { ReactComponent as Union } from '../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../assets/Delete.svg';
 import { useStyles, useStyles2 } from './bannerStyles';
-import { getLocalStorageDetails } from '../../utils';
 
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+//import { getLocalStorageDetails } from '../../utils';
+import _debounce from 'lodash/debounce';
+//import axios from 'axios';
+//import { toast } from 'react-toastify';
+import { getBannerContent } from './../../pages/TopBanner/topBannerSlice';
 
 // eslint-disable-next-line no-unused-vars
 export default function BannerRows({
@@ -32,7 +35,8 @@ export default function BannerRows({
 	otherRowsErrMsg, // 2-5
 	firstrowErrMsg, // 1
 	validateRow,
-	bannerContent // content dropdown
+	bannerContent, // content dropdown
+	tabValue
 }) {
 	//styles
 	const muiClasses = useStyles();
@@ -46,6 +50,8 @@ export default function BannerRows({
 	const allMedia = ['Title only', 'Title + Text'];
 	const [errorMsg, setErrMsg] = useState(firstrowErrMsg);
 	const [errMsg2, setErrMsg2] = useState(otherRowsErrMsg);
+
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		setSelectedMedia({
@@ -65,9 +71,37 @@ export default function BannerRows({
 	const resetState = () => {
 		setDropdownPosition(false);
 	};
+
+	const handleDebounceFun = () => {
+		let _search;
+		setSelectMediaInput((prevState) => {
+			_search = prevState;
+			return _search;
+		});
+		console.log(_search);
+		if (_search) {
+			dispatch(
+				getBannerContent({
+					type: tabValue,
+					title: _search
+				})
+			);
+		} else {
+			dispatch(
+				getBannerContent({
+					type: tabValue,
+					title: null
+				})
+			);
+		}
+	};
+
+	const debounceFun = useCallback(_debounce(handleDebounceFun, 600), []);
+
 	const handleChangeSelectMediaInput = (e) => {
-		// console.log(disableDropdown);
+		//console.log(e.target.value, 'aaa');
 		setSelectMediaInput(e.target.value);
+		debounceFun(e.target.value);
 	};
 
 	const emptyBannerData = (Trashdata) => {
@@ -455,5 +489,6 @@ BannerRows.propTypes = {
 	otherRowsErrMsg: PropTypes.object,
 	firstrowErrMsg: PropTypes.object,
 	validateRow: PropTypes.object,
-	bannerContent: PropTypes.array
+	bannerContent: PropTypes.array,
+	tabValue: PropTypes.string
 };

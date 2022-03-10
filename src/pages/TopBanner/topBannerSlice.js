@@ -4,7 +4,9 @@ import TopBannerService from './topBannerService';
 
 export const getBannerContent = createAsyncThunk(
 	'topBanner/getBannerContent',
-	async (type, { title }) => {
+	async ({ type, title }) => {
+		// console.log(type, 'type');
+		// console.log(title, 'title');
 		let endPoint = `top-banner/get-content?type=home`;
 		if (type) {
 			endPoint = `top-banner/get-content?type=${type}`;

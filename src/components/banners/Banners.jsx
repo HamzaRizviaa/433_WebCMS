@@ -48,14 +48,19 @@ export default function Banners({ tabValue }) {
 	]);
 
 	// emptybarray -> api response -> func obj -> emptyobj , next line map data api s data us object map kr k is main push
-	console.log(tabValue);
+
 	const dispatch = useDispatch();
 	const allBanners = useSelector((state) => state.topBanner.allBanners);
 	const bannerContent = useSelector((state) => state.topBanner.content);
 
 	useEffect(() => {
 		dispatch(getAllBanners(tabValue));
-		dispatch(getBannerContent(tabValue));
+		dispatch(
+			getBannerContent({
+				type: tabValue,
+				title: null
+			})
+		);
 	}, []);
 
 	useEffect(() => {
@@ -91,6 +96,7 @@ export default function Banners({ tabValue }) {
 			}
 		]);
 	}, [tabValue]);
+
 	//get banners from get api and map on your own data
 	const updateBannerObject = () => {
 		let _filterData = [];
@@ -292,6 +298,7 @@ export default function Banners({ tabValue }) {
 													key={data.id}
 													provided={provided}
 													index={index}
+													tabValue={tabValue}
 												/>
 											);
 										})}
