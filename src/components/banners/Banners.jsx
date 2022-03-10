@@ -62,6 +62,35 @@ export default function Banners({ tabValue }) {
 		updateBannerObject();
 	}, [allBanners]);
 
+	useEffect(() => {
+		setBannerData([
+			{
+				id: '1',
+				bannerType: '',
+				selectedMedia: null
+			},
+			{
+				id: '2',
+				bannerType: '',
+				selectedMedia: null
+			},
+			{
+				id: '3',
+				bannerType: '',
+				selectedMedia: null
+			},
+			{
+				id: '4',
+				bannerType: '',
+				selectedMedia: null
+			},
+			{
+				id: '5',
+				bannerType: '',
+				selectedMedia: null
+			}
+		]);
+	}, [tabValue]);
 	//get banners from get api and map on your own data
 	const updateBannerObject = () => {
 		let _filterData = [];
