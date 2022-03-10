@@ -299,7 +299,7 @@ const MediaLibrary = () => {
 			formatter: (content, row) => {
 				return (
 					<div className={classes.mediaWrapper}>
-						<Tooltip
+						{/* <Tooltip
 							// TransitionComponent={Fade}
 							// TransitionProps={{ timeout: 600 }}
 							title={
@@ -316,10 +316,48 @@ const MediaLibrary = () => {
 								tooltip: { className: classes.toolTipPreview }
 							}}
 						>
-							<img
-								className={classes.mediaIcon}
-								src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.thumbnail_url}`}
-							/>
+							<div className={classes.mediaIcon}>
+								<img
+									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.thumbnail_url}`}
+								/>
+							</div>
+						</Tooltip> */}
+						<Tooltip
+							// TransitionComponent={Fade}
+							// TransitionProps={{ timeout: 600 }}
+
+							title={
+								<img
+									className={
+										row.width === row.height
+											? classes.mediaIconPreview
+											: row.width > row.height
+											? classes.virallandscapePreview
+											: classes.mediaIconPortraitPreview
+									}
+									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
+										row?.thumbnail_url ? row?.thumbnail_url : row?.media
+									}`}
+									alt='no img'
+								/>
+							}
+							placement='right'
+							componentsProps={{
+								tooltip: { className: classes.toolTipPreview }
+							}}
+						>
+							<span>
+								{/* {row?.thumbnail_url ? (
+									<PlayArrowIcon className={classes.playIcon} />
+								) : (
+									''
+								)} */}
+								{/* <PlayArrowIcon className={classes.playIcon} /> */}
+								<img
+									className={classes.mediaIcon}
+									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.thumbnail_url}`}
+								/>
+							</span>
 						</Tooltip>
 						<Tooltip
 							TransitionComponent={Fade}

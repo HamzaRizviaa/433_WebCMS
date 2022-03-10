@@ -55,17 +55,81 @@
 	margin: 1rem 0rem;
 }
 
+// .mediaIcon {
+// 	height: 5rem;
+// 	width: 5rem;
+// 	// border-radius: 8px;
+// 	// object-fit: cover;
+// 	> img {
+// 		border-radius: 8px;
+// 		object-fit: cover;
+// 		height: 100%;
+// 		width: 100%;
+// 	}
+// }
+
+// .mediaIconPreview {
+// 	height: calc(5rem * 6);
+// 	// width: calc(5rem * 6);
+// 	max-width: calc(5rem * 8);
+// 	border-radius: 8px;
+// 	object-fit: cover;
+// }
+
 .mediaIcon {
 	height: 5rem;
-	width: 5rem;
+	//width: 5rem;
+	//max-width: 100%;
 	border-radius: 8px;
 	object-fit: cover;
 }
 
 .mediaIconPreview {
-	height: calc(5rem * 6);
-	// width: calc(5rem * 6);
+	height: calc(5rem * 5);
+	//width: calc(5rem * 6);
 	max-width: calc(5rem * 8);
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaIcon {
+	height: 48px;
+	width: 48px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+// .mediaIconPreview {
+// 	height: calc(48px * 6);
+// 	width: calc(48px * 6);
+// 	border-radius: 8px;
+// 	object-fit: cover;
+// }
+
+.mediaIconLandscape {
+	height: 25.131px;
+	width: 48px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.virallandscapePreview {
+	height: calc(25.131px * 6);
+	width: calc(48px * 6);
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaIconPortrait {
+	height: 48px;
+	width: 38.4px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaIconPortraitPreview {
+	height: calc(48px * 6);
+	width: calc(38.4px * 6);
 	border-radius: 8px;
 	object-fit: cover;
 }
