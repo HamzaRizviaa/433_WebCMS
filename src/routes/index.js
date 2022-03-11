@@ -10,7 +10,10 @@ import QuizLibrary from '../pages/QuizLibrary/QuizLibrary';
 import TopBanner from '../pages/TopBanner/TopBanner.jsx';
 import SignIn from '../pages/SignIn/SignIn';
 import ViralLibrary from '../pages/ViralLibrary/ViralLibrary';
+import ArticleLibrary from '../pages/ArticleLibrary/ArticleLibrary';
+
 import RequireAuth from './RequireAuth.js';
+
 const AppRoutes = () => {
 	const [loginData, setLoginData] = useState(
 		localStorage.getItem('user_data')
@@ -45,6 +48,11 @@ const AppRoutes = () => {
 					exact
 					path='/top-banner'
 					element={<RequireAuth component={<TopBanner />} />}
+				/>
+				<Route
+					exact
+					path='/article-library'
+					element={<RequireAuth component={<ArticleLibrary />} />}
 				/>
 				<Route
 					exact

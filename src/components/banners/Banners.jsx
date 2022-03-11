@@ -148,6 +148,7 @@ export default function Banners({ tabValue }) {
 		// noy disables = false = YELLOW
 
 		allBanners.map((banner, index) => {
+			//if the user updates, only then turn yellow
 			// console.log(banner, 'banner');
 			// console.log(bannerData[index], 'bd');
 			if (

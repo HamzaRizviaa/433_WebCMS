@@ -10,6 +10,8 @@ import { ReactComponent as Quiz } from '../../assets/Quiz.svg';
 import { ReactComponent as QuizSelected } from '../../assets/QuizSelected.svg';
 import { ReactComponent as Banner } from '../../assets/Star.svg';
 import { ReactComponent as BannerSelected } from '../../assets/Star_Selected.svg';
+import { ReactComponent as Article } from '../../assets/News.svg';
+import { ReactComponent as ArticleSelected } from '../../assets/NewsSelected.svg';
 import { ReactComponent as Viral } from '../../assets/Flame.svg';
 import { ReactComponent as ViralSelected } from '../../assets/Flame_Selected.svg';
 import { ReactComponent as Logout } from '../../assets/logout.svg';
@@ -109,6 +111,23 @@ const Sidebar = () => {
 						<BannerSelected className={classes.icon} />
 					) : (
 						<Banner className={classes.icon} />
+					)}
+				</div>
+				<div
+					onClick={() => {
+						navigate('/article-library');
+					}}
+					className={classes.iconWrapper}
+					style={
+						location?.pathname.includes('article-library')
+							? { backgroundColor: '#404040' }
+							: {}
+					}
+				>
+					{location?.pathname.includes('article-library') ? (
+						<ArticleSelected className={classes.icon} />
+					) : (
+						<Article className={classes.icon} />
 					)}
 				</div>
 				<div

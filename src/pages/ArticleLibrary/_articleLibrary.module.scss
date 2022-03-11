@@ -1,0 +1,16 @@
+@import '../../styles/variables.scss';
+@import '../../styles/_mixins.scss';
+
+.header {
+	display: flex;
+	justify-content: space-between;
+}
+
+.subheader1 {
+	display: flex;
+	justify-content: flex-start;
+}
+
+.tableContainer {
+	margin: 1rem 0rem;
+}
