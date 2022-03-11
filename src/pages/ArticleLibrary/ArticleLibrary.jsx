@@ -21,6 +21,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import { getDateTime, formatDate, getCalendarText } from '../../utils';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
+import UploadOrEditArticle from '../../components/articles/uploadOrEditArticle';
 
 const ArticleLibrary = () => {
 	// Selectors
@@ -36,6 +37,7 @@ const ArticleLibrary = () => {
 
 	const muiClasses = useStyles();
 
+	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [paginationError, setPaginationError] = useState(false);
@@ -301,7 +303,8 @@ const ArticleLibrary = () => {
 		onClick: (e, row) => {
 			// if (!edit) {
 			// dispatch(getSpecificPost(row.id));
-			console.log(row, e, 'table row events');
+			setEdit(true);
+			setShowSlider(true);
 
 			// }
 		}
@@ -400,7 +403,13 @@ const ArticleLibrary = () => {
 			<div className={classes.header}>
 				<div className={classes.subheader1}>
 					<h1 style={{ marginRight: '2rem' }}>ARTICLE LIBRARY</h1>
-					<Button onClick={() => {}} text={'UPLOAD ARTICLE'} />
+					<Button
+						onClick={() => {
+							setEdit(false);
+							setShowSlider(true);
+						}}
+						text={'UPLOAD ARTICLE'}
+					/>
 				</div>
 				<div className={classes.subheader2}>
 					<div>
@@ -507,6 +516,18 @@ const ArticleLibrary = () => {
 					className={classes.gotoInput}
 				/>
 			</div>
+
+			<UploadOrEditArticle
+				open={showSlider}
+				isEdit={edit}
+				handleClose={() => {
+					setShowSlider(false);
+					// setTimeout(() => setEdit(false), 600);
+				}}
+				title={edit ? 'Edit Article' : 'Upload Article'}
+				heading1={edit ? 'Media File' : 'Add Media File'}
+				buttonText={edit ? 'SAVE CHANGES' : 'POST ARTICLE'}
+			/>
 		</Layout>
 	);
 };

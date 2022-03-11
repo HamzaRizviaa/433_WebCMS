@@ -1,27 +1,25 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
-import classes from './_uploadOrEditViral.module.scss';
+import classes from './_uploadOrEditArticle.module.scss';
 import { useDropzone } from 'react-dropzone';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
-import { TextField } from '@material-ui/core';
-import { CircularProgress } from '@material-ui/core';
+//import { CircularProgress } from '@material-ui/core';
 import Button from '../../button';
-import { useDispatch, useSelector } from 'react-redux';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { getAllViralsApi } from '../../../pages/ViralLibrary/viralLibararySlice';
+
+import { useDispatch, useSelector } from 'react-redux';
+//import { getLocalStorageDetails } from '../../../utils';
+//import axios from 'axios';
+//import { toast } from 'react-toastify';
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
-import captureVideoFrame from 'capture-video-frame';
+//import captureVideoFrame from 'capture-video-frame';
 import Close from '@material-ui/icons/Close';
 import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
 import { Popper, Paper } from '@mui/material';
-import { getLocalStorageDetails } from '../../../utils';
+import { TextField } from '@material-ui/core';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
@@ -34,48 +32,37 @@ const UploadOrEditViral = ({
 	title,
 	isEdit,
 	heading1,
-	buttonText,
-	page
+	buttonText
 }) => {
-	const [caption, setCaption] = useState('');
+	const [articleTitle, setArticleTitle] = useState('');
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [selectedLabels, setSelectedLabels] = useState([]);
 	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
+	const [articleTitleColor, setArticleTitleColor] = useState('#ffffff');
+	const [articleTitleError, setArticleTitleError] = useState('');
 	const [labelColor, setLabelColor] = useState('#ffffff');
 	const [labelError, setLabelError] = useState('');
-	const [captionColor, setCaptionColor] = useState('#ffffff');
-	const [captionError, setCaptionError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
-	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
+	//const [isLoadingCreatePost, setIsLoadingCreatePost] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [previewBool, setPreviewBool] = useState(false);
 	const [postLabels, setPostLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
-	const [fileWidth, setFileWidth] = useState(null);
-	const [fileHeight, setFileHeight] = useState(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
-	const videoRef = useRef(null);
-	const imgEl = useRef(null);
 
-	// const ref = useRef(null);
-	// useEffect(() => {
-	// 	console.log('width', ref.current ? ref.current.offsetWidth : 0);
-	// }, [ref.current]);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
-			accept: 'image/jpeg, image/png, video/mp4',
+			accept: '.jpeg,.jpg,.png',
 			maxFiles: 1
 		});
 
 	const labels = useSelector((state) => state.postLibrary.labels);
-	const specificViral = useSelector(
-		(state) => state.ViralLibraryStore.specificViral
-	);
+
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -97,40 +84,6 @@ const UploadOrEditViral = ({
 			setPostLabels([...labels]);
 		}
 	}, [labels]);
-
-	useEffect(() => {
-		if (specificViral) {
-			if (specificViral?.labels) {
-				let _labels = [];
-				specificViral.labels.map((label) =>
-					_labels.push({ id: -1, name: label })
-				);
-				setSelectedLabels(_labels);
-			}
-			setCaption(specificViral.caption);
-			if (specificViral?.thumbnail_url) {
-				setUploadedFiles([
-					{
-						id: makeid(10),
-						fileName: specificViral?.file_name,
-						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.thumbnail_url}`,
-						url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
-						type: 'video'
-					}
-				]);
-			}
-			if (specificViral?.thumbnail_url === null) {
-				setUploadedFiles([
-					{
-						id: makeid(10),
-						fileName: specificViral?.file_name,
-						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
-						type: 'image'
-					}
-				]);
-			}
-		}
-	}, [specificViral]);
 
 	useEffect(() => {
 		dispatch(getPostLabels());
@@ -167,7 +120,6 @@ const UploadOrEditViral = ({
 			setDropZoneBorder('#ffff00');
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
-				// readImageFile(file);
 				return {
 					id: id,
 					fileName: file.name,
@@ -175,123 +127,116 @@ const UploadOrEditViral = ({
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
-					type: file.type === 'video/mp4' ? 'video' : 'image'
+					type: 'image'
 				};
 			});
 			setUploadedFiles([...uploadedFiles, ...newFiles]);
 		}
 	}, [acceptedFiles]);
 
-	// useEffect(() => {
-	// 	//console.log('adw');
-	// 	if (videoRef?.current) {
-	// 		console.log('dawdw');
-	// 		console.log(videoRef?.current?.clientWidth);
+	useEffect(() => {
+		if (isEdit) {
+			setUploadedFiles([
+				{
+					id: makeid(10),
+					fileName: 'Pyari photo',
+					img: `https://www.suchtv.pk/media/k2/items/cache/56956f629e5b759e41d3d88448802c3f_XL.jpg?t=20160823_164734`,
+					type: 'image'
+				}
+			]);
+			setArticleTitle('Lets win this');
+			setSelectedLabels([
+				{ id: 1, name: 'yummy :D' },
+				{ id: 2, name: 'ICE CREAM TIME' }
+			]);
+		}
+	}, [isEdit]);
+
+	// const uploadFileToServer = async (uploadedFile) => {
+	// 	try {
+	// 		const result = await axios.post(
+	// 			`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
+	// 			{
+	// 				file_type: uploadedFile.fileExtension,
+	// 				parts: 1
+	// 			},
+	// 			{
+	// 				headers: {
+	// 					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+	// 				}
+	// 			}
+	// 		);
+
+	// 		if (result?.data?.data?.url) {
+	// 			const _result = await axios.put(
+	// 				result?.data?.data?.url,
+	// 				uploadedFile.file,
+	// 				//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
+	// 				{
+	// 					headers: { 'Content-Type': uploadedFile.mime_type }
+	// 				}
+	// 			);
+	// 			const frame = captureVideoFrame('my-video', 'png');
+	// 			if (result?.data?.data?.video_thumbnail_url) {
+	// 				await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
+	// 					headers: { 'Content-Type': 'image/png' }
+	// 				});
+	// 			}
+	// 			if (_result?.status === 200) {
+	// 				const uploadResult = await axios.post(
+	// 					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+	// 					{
+	// 						file_name: uploadedFile.file.name,
+	// 						type: 'postlibrary',
+	// 						data: {
+	// 							bucket: 'media',
+	// 							multipart_upload:
+	// 								uploadedFile?.mime_type == 'video/mp4'
+	// 									? [
+	// 											{
+	// 												e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
+	// 												part_number: 1
+	// 											}
+	// 									  ]
+	// 									: ['image'],
+	// 							keys: {
+	// 								image_key: result?.data?.data?.keys?.image_key,
+	// 								video_key: result?.data?.data?.keys?.video_key,
+	// 								audio_key: ''
+	// 							},
+	// 							upload_id:
+	// 								uploadedFile?.mime_type == 'video/mp4'
+	// 									? result?.data?.data?.upload_id
+	// 									: 'image'
+	// 						}
+	// 					},
+	// 					{
+	// 						headers: {
+	// 							Authorization: `Bearer ${
+	// 								getLocalStorageDetails()?.access_token
+	// 							}`
+	// 						}
+	// 					}
+	// 				);
+	// 				if (uploadResult?.data?.status_code === 200) {
+	// 					return uploadResult.data.data;
+	// 				} else {
+	// 					throw 'Error';
+	// 				}
+	// 			} else {
+	// 				throw 'Error';
+	// 			}
+	// 		} else {
+	// 			throw 'Error';
+	// 		}
+	// 	} catch (error) {
+	// 		console.log('Error');
+	// 		return null;
 	// 	}
-	// 	alert(videoRef?.current?.clientWidth);
-	// }, [videoRef.current]);
-
-	// const readImageFile = (file) => {
-	// 	var reader = new FileReader(); // CREATE AN NEW INSTANCE.
-
-	// 	reader.onload = function (e) {
-	// 		var img = file;
-	// 		img.src = e.target.result;
-
-	// 		img.onload = function () {
-	// 			var w = this.width;
-	// 			var h = this.height;
-	// 			console.log(w, h, 'w h ');
-	// 		};
-	// 	};
 	// };
 
-	const uploadFileToServer = async (uploadedFile) => {
-		try {
-			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
-				{
-					file_type: uploadedFile.fileExtension,
-					parts: 1
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
-				}
-			);
-
-			if (result?.data?.data?.url) {
-				const _result = await axios.put(
-					result?.data?.data?.url,
-					uploadedFile.file,
-					//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
-					{
-						headers: { 'Content-Type': uploadedFile.mime_type }
-					}
-				);
-				const frame = captureVideoFrame('my-video', 'png');
-				// console.log(frame, 'frame', frame.width);
-				if (result?.data?.data?.video_thumbnail_url) {
-					await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
-						headers: { 'Content-Type': 'image/png' }
-					});
-				}
-				if (_result?.status === 200) {
-					const uploadResult = await axios.post(
-						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-						{
-							file_name: uploadedFile.file.name,
-							type: 'virallibrary',
-							data: {
-								bucket: 'media',
-								multipart_upload:
-									uploadedFile?.mime_type == 'video/mp4'
-										? [
-												{
-													e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
-													part_number: 1
-												}
-										  ]
-										: ['image'],
-								keys: {
-									image_key: result?.data?.data?.keys?.image_key,
-									video_key: result?.data?.data?.keys?.video_key,
-									audio_key: ''
-								},
-								upload_id:
-									uploadedFile?.mime_type == 'video/mp4'
-										? result?.data?.data?.upload_id
-										: 'image'
-							}
-						},
-						{
-							headers: {
-								Authorization: `Bearer ${
-									getLocalStorageDetails()?.access_token
-								}`
-							}
-						}
-					);
-					if (uploadResult?.data?.status_code === 200) {
-						return uploadResult.data.data;
-					} else {
-						throw 'Error';
-					}
-				} else {
-					throw 'Error';
-				}
-			} else {
-				throw 'Error';
-			}
-		} catch (error) {
-			console.log('Error');
-			return null;
-		}
-	};
-
 	const resetState = () => {
-		setCaption('');
+		setArticleTitle('');
 		setUploadMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
@@ -300,6 +245,7 @@ const UploadOrEditViral = ({
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
+		setExtraLabel('');
 		setPreviewFile(null);
 		setPreviewBool(false);
 		setSelectedLabels([]);
@@ -312,7 +258,7 @@ const UploadOrEditViral = ({
 		);
 	};
 
-	const validateViralBtn = () => {
+	const validateArticleBtn = () => {
 		if (uploadedFiles.length < 1) {
 			setDropZoneBorder('#ff355a');
 			setUploadMediaError('You need to upload a media in order to post');
@@ -335,98 +281,17 @@ const UploadOrEditViral = ({
 			}, [5000]);
 		}
 
-		if (!caption) {
-			setCaptionColor('#ff355a');
-			setCaptionError(
-				'You need to put a caption of atleast 1 character in order to post'
-			);
+		if (!articleTitle) {
+			setArticleTitleColor('#ff355a');
+			setArticleTitleError('This field is required');
 			setTimeout(() => {
-				setCaptionColor('#ffff00');
-				setCaptionError('');
+				setArticleTitleColor('#ffffff');
+				setArticleTitleError('');
 			}, [5000]);
 		}
 	};
 
-	const createViral = async (id, mediaFiles = []) => {
-		setPostButtonStatus(true);
-		console.log(mediaFiles, 'media files');
-		try {
-			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
-				{
-					...(caption ? { caption: caption } : { caption: '' }),
-					...(!isEdit ? { media_url: mediaFiles[0]?.media_url } : {}),
-					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
-					...(!isEdit ? { thumbnail_url: mediaFiles[0]?.thumbnail_url } : {}),
-					...(!isEdit ? { height: fileHeight } : {}),
-					...(!isEdit ? { width: fileWidth } : {}),
-					user_data: {
-						id: `${getLocalStorageDetails()?.id}`,
-						first_name: `${getLocalStorageDetails()?.first_name}`,
-						last_name: `${getLocalStorageDetails()?.last_name}`
-					},
-					...(isEdit && id ? { viral_id: id } : {}),
-					...(!isEdit && selectedLabels.length
-						? { labels: [...selectedLabels] }
-						: {})
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
-				}
-			);
-			if (result?.data?.status_code === 200) {
-				toast.success(
-					isEdit ? 'Viral has been edited!' : 'Viral has been created!'
-				);
-				setIsLoadingcreateViral(false);
-				setPostButtonStatus(false);
-				handleClose();
-				dispatch(getAllViralsApi({ page }));
-				dispatch(getPostLabels());
-			}
-		} catch (e) {
-			toast.error(isEdit ? 'Failed to edit viral!' : 'Failed to create viral!');
-			setIsLoadingcreateViral(false);
-			setPostButtonStatus(false);
-			console.log(e);
-		}
-	};
-
-	const deleteViral = async (id) => {
-		setDeleteBtnStatus(true);
-		try {
-			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/viral/delete-viral`,
-				{
-					viral_id: id
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
-				}
-			);
-			if (result?.data?.status_code === 200) {
-				toast.success('Viral has been deleted!');
-				handleClose();
-
-				//setting a timeout for getting post after delete.
-				dispatch(getAllViralsApi({ page }));
-			}
-		} catch (e) {
-			toast.error('Failed to delete Viral!');
-			setDeleteBtnStatus(false);
-			console.log(e);
-		}
-	};
-
 	const [newLabels, setNewLabels] = useState([]);
-
-	useEffect(() => {
-		if (labels.length) setNewLabels(labels);
-	}, [newLabels]);
 
 	const handleChangeExtraLabel = (e) => {
 		// e.preventDefault();
@@ -434,19 +299,26 @@ const UploadOrEditViral = ({
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
+	useEffect(() => {
+		if (labels.length) setNewLabels(labels);
+	}, [newLabels]);
+
 	const handlePreviewEscape = () => {
 		setPreviewBool(false);
 		setPreviewFile(null);
 	};
 
-	const viralBtnDisabled =
+	const postBtnDisabled =
 		!uploadedFiles.length ||
+		!articleTitle ||
 		postButtonStatus ||
-		selectedLabels.length < 10 ||
-		!caption;
+		selectedLabels.length < 10;
 
-	const editBtnDisabled =
-		postButtonStatus || !caption || specificViral?.caption === caption.trim();
+	// const editBtnDisabled = postButtonStatus || !articleTitle;
+	//|| (specificPost?.articleTitle === articleTitle.trim() &&
+	// 	specificPost?.media_id == selectedMedia?.id);
+
+	// const regex = /[!@#$%^&*(),.?":{}|<>/\\ ]/g;
 
 	return (
 		<Slider
@@ -466,9 +338,9 @@ const UploadOrEditViral = ({
 			previewRef={previewRef}
 			orientationRef={orientationRef}
 			edit={isEdit}
-			viral={true}
+			article={true}
 		>
-			<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
+			<LoadingOverlay spinner text='Loading...'>
 				<div
 					className={`${
 						previewFile != null
@@ -476,14 +348,13 @@ const UploadOrEditViral = ({
 							: classes.contentWrapper
 					}`}
 				>
-					{/* {specificViralStatus.status === 'loading' ? (
+					{/* {specificPostStatus.status === 'loading' ? (
 						<div className={classes.loaderContainer2}>
 							<CircularProgress className={classes.loader} />
 						</div>
 					) : (
 						<></>
 					)} */}
-
 					<div
 						className={classes.contentWrapperNoPreview}
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
@@ -517,68 +388,15 @@ const UploadOrEditViral = ({
 																}}
 															>
 																<div className={classes.filePreviewLeft}>
-																	{file.type === 'video' ? (
-																		<>
-																			{/* <PlayArrowIcon
-																				className={classes.playIcon}
-																			/> */}
-																			<video
-																				id={'my-video'}
-																				ref={videoRef}
-																				poster={isEdit ? file.img : null}
-																				className={classes.fileThumbnail}
-																				style={{
-																					// maxWidth: `${imageToResizeWidth}px`,
-																					// maxHeight: `${imageToResizeHeight}px`,
-																					objectFit: 'cover',
-																					objectPosition: 'center'
-																				}}
-																				onLoadedMetadata={() => {
-																					// console.log(
-																					// 	videoRef,
-																					// 	videoRef.current.videoWidth,
-																					// 	videoRef.current.videoHeight,
-																					// 	'video'
-																					// );
-																					setFileWidth(
-																						videoRef.current.videoWidth
-																					);
-																					setFileHeight(
-																						videoRef.current.videoHeight
-																					);
-																				}}
-																			>
-																				<source src={file.img} />
-																			</video>
-																		</>
-																	) : (
-																		<>
-																			<img
-																				src={file.img}
-																				className={classes.fileThumbnail}
-																				style={{
-																					// width: `${imageToResizeWidth}px`,
-																					// height: `${imageToResizeHeight}px`,
-																					objectFit: 'cover',
-																					objectPosition: 'center'
-																				}}
-																				ref={imgEl}
-																				onLoad={() => {
-																					console.log(
-																						imgEl.current.naturalHeight,
-																						imgEl.current.naturalWidth,
-																						'image'
-																					);
-																					setFileWidth(
-																						imgEl.current.naturalWidth
-																					);
-																					setFileHeight(
-																						imgEl.current.naturalHeight
-																					);
-																				}}
-																			/>
-																		</>
-																	)}
+																	<img
+																		src={file.img}
+																		className={classes.fileThumbnail}
+																		// ref={imageElement}
+																		style={{
+																			objectFit: 'cover',
+																			objectPosition: 'center'
+																		}}
+																	/>
 
 																	<p className={classes.fileName}>
 																		{file.fileName}
@@ -612,6 +430,7 @@ const UploadOrEditViral = ({
 																				setPreviewFile(file);
 																			}}
 																		/>
+
 																		<Deletes
 																			className={classes.filePreviewIcons}
 																			onClick={() => {
@@ -640,13 +459,16 @@ const UploadOrEditViral = ({
 									}}
 								>
 									<div {...getRootProps({ className: classes.dropzone })}>
-										<input {...getInputProps()} />
+										<input
+											{...getInputProps()}
+											// ref={ref}
+										/>
 										<AddCircleOutlineIcon className={classes.addFilesIcon} />
 										<p className={classes.dragMsg}>
 											Click or drag files to this area to upload
 										</p>
 										<p className={classes.formatMsg}>
-											Supported formats are jpeg, png and mp4
+											Supported formats are jpeg and png
 										</p>
 										<p className={classes.uploadMediaError}>
 											{uploadMediaError}
@@ -656,12 +478,37 @@ const UploadOrEditViral = ({
 							) : (
 								<></>
 							)}
+
 							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
+
+							<div className={classes.captionContainer}>
+								<h6 style={{ color: articleTitleColor }}>ARTICLE TITLE</h6>
+								<TextField
+									disabled={isEdit}
+									value={articleTitle}
+									onChange={(e) => setArticleTitle(e.target.value)}
+									placeholder={'Please write your title here'}
+									className={classes.textField}
+									InputProps={{
+										disableUnderline: true,
+										className: `${classes.textFieldInput} ${
+											isEdit && classes.disableAutoComplete
+										}`,
+										style: {
+											borderRadius: articleTitle ? '16px' : '40px'
+										}
+									}}
+									multiline
+									maxRows={2}
+								/>
+							</div>
+							<p className={classes.mediaError}>{articleTitleError}</p>
+
 							<div className={classes.captionContainer}>
 								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete
 									disabled={isEdit}
-									getOptionLabel={(option) => option.name} // name out of array of strings
+									getOptionLabel={(option) => option.name} // setSelectedLabels name out of array of strings
 									PaperComponent={(props) => {
 										setDisableDropdown(false);
 										return (
@@ -686,7 +533,7 @@ const UploadOrEditViral = ({
 										style: { maxHeight: 180 },
 										position: 'bottom'
 									}}
-									onClose={(e) => {
+									onClose={() => {
 										setDisableDropdown(true);
 									}}
 									multiple
@@ -695,21 +542,31 @@ const UploadOrEditViral = ({
 									freeSolo={false}
 									value={selectedLabels}
 									onChange={(event, newValue) => {
+										//console.log(newValue);
 										setDisableDropdown(true);
 										event.preventDefault();
 										event.stopPropagation();
+										// let regexCheck = regex.test(newValue);
+										// if (regexCheck) {
+										// 	alert('you cant use regex');
+										// }
+										// else {
 										let newLabels = newValue.filter(
+											//code to check if the new added label is already in the list
 											(v, i, a) =>
 												a.findIndex(
 													(t) => t.name.toLowerCase() === v.name.toLowerCase()
 												) === i
 										);
+
 										setSelectedLabels([...newLabels]);
+										//}
+
+										console.log(selectedLabels, newValue);
 									}}
 									popupIcon={''}
 									noOptionsText={
 										<div className={classes.liAutocompleteWithButton}>
-											{/* <p>{extraLabel.toUpperCase()}</p> */}
 											<p>No results found</p>
 											{/* <Button
 												text='CREATE NEW LABEL'
@@ -746,12 +603,15 @@ const UploadOrEditViral = ({
 											}}
 										/>
 									)}
-									renderOption={(props, option, state) => {
+									renderOption={(props, option) => {
+										//selected in input field,  some -> array to check exists
 										let currentLabelDuplicate = selectedLabels.some(
 											(label) => label.name == option.name
 										);
 
 										if (option.id == null && !currentLabelDuplicate) {
+											// if (option.filter(option=>option.name===option.name))
+
 											return (
 												<li
 													{...props}
@@ -770,10 +630,10 @@ const UploadOrEditViral = ({
 															fontWeight: 700
 														}}
 														onClick={() => {
-															setSelectedLabels((labels) => [
-																...labels,
-																extraLabel.toUpperCase()
-															]);
+															// setSelectedLabels((labels) => [
+															// 	...labels,
+															// 	extraLabel.toUpperCase()
+															// ]);
 														}}
 													/>
 												</li>
@@ -800,28 +660,8 @@ const UploadOrEditViral = ({
 									clearIcon={''}
 								/>
 							</div>
+
 							<p className={classes.mediaError}>{labelError}</p>
-
-							<div className={classes.captionContainer}>
-								<h6 style={{ color: captionColor }}>CAPTION</h6>
-								<TextField
-									value={caption}
-									onChange={(e) => setCaption(e.target.value)}
-									placeholder={'Please write your caption here'}
-									className={classes.textField}
-									InputProps={{
-										disableUnderline: true,
-										className: classes.textFieldInput,
-										style: {
-											borderRadius: caption ? '16px' : '40px'
-										}
-									}}
-									multiline
-									maxRows={4}
-								/>
-							</div>
-
-							<p className={classes.mediaError}>{captionError}</p>
 						</div>
 
 						<div className={classes.buttonDiv}>
@@ -832,10 +672,10 @@ const UploadOrEditViral = ({
 										button2={isEdit ? true : false}
 										onClick={() => {
 											if (!deleteBtnStatus) {
-												deleteViral(specificViral?.id);
+												// deletePost(specificPost?.id);
 											}
 										}}
-										text={'DELETE VIRAL'}
+										text={'DELETE ARTICLE'}
 									/>
 								</div>
 							) : (
@@ -844,30 +684,30 @@ const UploadOrEditViral = ({
 
 							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 								<Button
-									disabled={isEdit ? editBtnDisabled : viralBtnDisabled}
+									disabled={postBtnDisabled}
 									onClick={() => {
-										if (viralBtnDisabled || editBtnDisabled) {
-											validateViralBtn();
+										if (postBtnDisabled) {
+											validateArticleBtn();
 										} else {
 											setPostButtonStatus(true);
-											if (isEdit) {
-												createViral(specificViral?.id);
-											} else {
-												setIsLoadingcreateViral(true);
-												let uploadFilesPromiseArray = uploadedFiles.map(
-													async (_file) => {
-														return uploadFileToServer(_file);
-													}
-												);
+											// if (isEdit) {
+											// 	createPost(specificPost?.id);
+											// } else {
+											// 	setIsLoadingCreatePost(true);
+											// 	let uploadFilesPromiseArray = uploadedFiles.map(
+											// 		async (_file) => {
+											// 			return uploadFileToServer(_file);
+											// 		}
+											// 	);
 
-												Promise.all([...uploadFilesPromiseArray])
-													.then((mediaFiles) => {
-														createViral(null, mediaFiles);
-													})
-													.catch(() => {
-														setIsLoadingcreateViral(false);
-													});
-											}
+											// 	Promise.all([...uploadFilesPromiseArray])
+											// 		.then((mediaFiles) => {
+											// 			createPost(null, mediaFiles);
+											// 		})
+											// 		.catch(() => {
+											// 			setIsLoadingCreatePost(false);
+											// 		});
+											// }
 										}
 									}}
 									text={buttonText}
@@ -875,6 +715,7 @@ const UploadOrEditViral = ({
 							</div>
 						</div>
 					</div>
+
 					{previewFile != null && (
 						<div ref={previewRef} className={classes.previewComponent}>
 							<div className={classes.previewHeader}>
@@ -888,51 +729,18 @@ const UploadOrEditViral = ({
 								<h5>Preview</h5>
 							</div>
 							<div>
-								{previewFile.mime_type === 'video/mp4' ? (
-									<video
-										id={'my-video'}
-										poster={isEdit ? previewFile.img : null}
-										className={classes.previewFile}
-										style={{
-											//width: `${8 * 4}rem`,
-											width: `100%`,
-											height: `${8 * 4}rem`,
-											objectFit: 'contain',
-											objectPosition: 'center'
-										}}
-										controls={true}
-									>
-										<source src={previewFile.img} />
-									</video>
-								) : isEdit && previewFile.type === 'video' ? (
-									<video
-										id={'my-video'}
-										poster={isEdit ? previewFile.thumbnail_url : null}
-										className={classes.previewFile}
-										style={{
-											//width: `${8 * 4}rem`,
-											width: `100%`,
-											height: `${8 * 4}rem`,
-											objectFit: 'contain',
-											objectPosition: 'center'
-										}}
-										controls={true}
-									>
-										<source src={previewFile.url} />
-									</video>
-								) : (
-									<img
-										src={previewFile.img}
-										className={classes.previewFile}
-										style={{
-											//width: `${8 * 4}rem`,
-											width: `100%`,
-											height: `${8 * 4}rem`,
-											objectFit: 'contain',
-											objectPosition: 'center'
-										}}
-									/>
-								)}
+								<img
+									src={previewFile.img}
+									className={classes.previewFile}
+									style={{
+										// width: `${imageToResizeWidth * 4}px`,
+										// height: `${imageToResizeHeight * 4}px`,
+										width: `100%`,
+										height: `${8 * 4}rem`,
+										objectFit: 'cover',
+										objectPosition: 'center'
+									}}
+								/>
 							</div>
 						</div>
 					)}
