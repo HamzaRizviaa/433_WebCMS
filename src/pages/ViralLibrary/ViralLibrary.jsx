@@ -25,6 +25,7 @@ import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import { Markup } from 'interweave';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 // import './_calender.scss';
+import { useNavigate } from 'react-router-dom';
 
 import {
 	getAllViralsApi,
@@ -65,6 +66,22 @@ const ViralLibrary = () => {
 	const [startDate, endDate] = dateRange;
 	const [tooltipTitle, setTooltipTitle] = useState(false);
 	const fileNameRef = useRef(null);
+
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));
+		let current_date = new Date();
+		let time_difference_minutes = (expiry_date - current_date) / 1000 / 60; //in minutes
+		// console.log(current_date, 'curr');
+		console.log(time_difference_minutes);
+		if (time_difference_minutes <= 1) {
+			alert('Your session has expired');
+			localStorage.removeItem('user_data');
+			localStorage.removeItem('token_expire_time');
+			navigate('/sign-in');
+		}
+	}, []);
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
 		const startDate = formatDate(dateRange[0]);

@@ -49,37 +49,44 @@ const SignIn = ({ setLoginData }) => {
 	// 	console.log('failure', e);
 	// };
 
-	const checkSessionTimeout = (initialTimeVal) => {
-		let minutes = Math.abs((initialTimeVal - new Date()) / 1000 / 60);
-		// console.log('malamal');
-		//console.log(minutes, 'm');
-		//console.log(initialTimeVal, 'i');
-		// console.log(new Date());
-		if (minutes >= 120) {
-			//alert('Your session has expired');
-			localStorage.removeItem('user_data');
-			setAccessExpire(false);
-			navigate('/sign-in');
-			clearInterval(setTimeOutId);
-		}
-	};
+	// const checkSessionTimeout = (initialTimeVal) => {
+	// 	let minutes = Math.abs((initialTimeVal - new Date()) / 1000 / 60);
+	// 	// console.log('malamal');
+	// 	console.log(minutes, 'm');
+	// 	console.log(initialTimeVal, 'i');
+	// 	console.log(new Date());
+	// 	if (minutes >= 120) {
+	// 		//alert('Your session has expired');
+	// 		localStorage.removeItem('user_data');
+	// 		setAccessExpire(false);
+	// 		navigate('/sign-in');
+	// 		clearInterval(setTimeOutId);
+	// 	}
+	// };
+
+	// let setTimeOutId;
 
 	// useEffect(() => {
-
-	// }, [window.location.reload()])
-
-	let setTimeOutId;
+	// 	console.log(accessExpire);
+	// 	if (accessExpire) {
+	// 		console.log('aE is true');
+	// 		let initialTime = new Date();
+	// 		setTimeOutId = setInterval(() => checkSessionTimeout(initialTime), 1000); //3600000 - 1 hour
+	// 	}
+	// }, [accessExpire]);
 
 	useEffect(() => {
-		console.log(accessExpire);
+		console.log(accessExpire, 'ae');
 		if (accessExpire) {
-			console.log('aE is true');
-			let initialTime = new Date();
-			setTimeOutId = setInterval(
-				() => checkSessionTimeout(initialTime),
-				3600000
-			); //3600000 - 1 hour
+			let expiryDate = new Date(
+				new Date().setHours(new Date().getHours() + 10)
+			);
+			localStorage.setItem('token_expire_time', expiryDate);
 		}
+
+		return () => {
+			setAccessExpire(false);
+		};
 	}, [accessExpire]);
 
 	const handleLogin = async (googleData) => {

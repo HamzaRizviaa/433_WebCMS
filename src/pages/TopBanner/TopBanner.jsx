@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Layout from '../../components/layout';
 import classes from './_topBanner.module.scss';
 import TabsUnstyled from '@mui/base/TabsUnstyled';
@@ -7,8 +7,26 @@ import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import TabUnstyled from '@mui/base/TabUnstyled';
 import { useStyles } from './topBanner';
 import Banners from '../../components/banners/Banners';
+import { useNavigate } from 'react-router-dom';
+
 const TopBanner = () => {
 	const muiClasses = useStyles();
+
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));
+		let current_date = new Date();
+		let time_difference_minutes = (expiry_date - current_date) / 1000 / 60; //in minutes
+		// console.log(current_date, 'curr');
+		console.log(time_difference_minutes);
+		if (time_difference_minutes <= 1) {
+			alert('Your session has expired');
+			localStorage.removeItem('user_data');
+			localStorage.removeItem('token_expire_time');
+			navigate('/sign-in');
+		}
+	}, []);
 
 	return (
 		<Layout>
