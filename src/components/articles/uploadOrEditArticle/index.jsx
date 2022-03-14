@@ -34,9 +34,9 @@ import 'tinymce/plugins/emoticons';
 import 'tinymce/plugins/hr';
 import 'tinymce/plugins/anchor';
 import 'tinymce/plugins/insertdatetime';
-import 'tinymce/plugins/hr';
-import 'tinymce/plugins/hr';
-import 'tinymce/plugins/hr';
+import 'tinymce/plugins/wordcount';
+import 'tinymce/plugins/lists';
+import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/table';
 import 'tinymce/plugins/spellchecker';
 import 'tinymce/skins/ui/oxide/skin.min.css';
@@ -713,7 +713,7 @@ const UploadOrEditViral = ({
 											var words = text.match(this.getWordCharPattern());
 											if (method === 'spellcheck') {
 												var suggestions = {};
-												for (var i = 0; i < words.length; i++) {
+												for (var i = 0; i < words?.length; i++) {
 													suggestions[words[i]] = ['First', 'Second'];
 												}
 												success({ words: suggestions, dictionary: [] });
@@ -724,6 +724,9 @@ const UploadOrEditViral = ({
 										},
 										browser_spellcheck: true,
 										emoticons_database: 'emojiimages',
+										spellchecker_languages:
+											'English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr_FR,' +
+											'German=de,Italian=it,Polish=pl,Portuguese=pt_BR,Spanish=es,Swedish=sv',
 										menu: {
 											edit: {
 												title: 'Edit',
@@ -741,24 +744,23 @@ const UploadOrEditViral = ({
 											format: {
 												title: 'Format',
 												items:
-													'bold italic underline strikethrough | formats blockformats fontformats fontsizes align lineheight | forecolor backcolor | removeformat'
+													'bold italic underline strikethrough |  blockformats fontformats fontsizes align lineheight | forecolor '
 											},
 											tools: {
 												title: 'Tools',
-												items: 'spellchecker'
+												items: 'spellchecker spellcheckerlanguage wordcount'
 											}
 										},
-										contextmenu: 'spellchecker',
 										plugins: [
-											'advlist autolink lists link image charmap print preview anchor',
-											'searchreplace spellchecker emoticons hr visualblocks code fullscreen',
-											'insertdatetime media table paste code help wordcount'
+											'lists advlist link image anchor',
+											'searchreplace spellchecker emoticons hr visualblocks fullscreen',
+											'insertdatetime media table paste wordcount'
 										],
 										toolbar:
-											'undo redo | formatselect insertdatetime| ' +
-											'bold italic backcolor | alignleft aligncenter ' +
-											'alignright alignjustify | bullist numlist outdent indent | ' +
-											'removeformat | help'
+											'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect| ' +
+											'alignleft aligncenter ' +
+											'alignright alignjustify | bullist numlist | ' +
+											'emoticons'
 									}}
 									onFocus={() => setDisableDropdown(false)}
 									onBlur={() => setDisableDropdown(true)}
