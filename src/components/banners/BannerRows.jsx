@@ -59,7 +59,6 @@ export default function BannerRows({
 			title: data?.selectedMedia?.title ? data?.selectedMedia?.title : '',
 			type: data?.selectedMedia?.type ? data?.selectedMedia?.type : null
 		});
-		console.log(selectedMedia, 'selectedMedia');
 	}, []);
 
 	useEffect(() => {

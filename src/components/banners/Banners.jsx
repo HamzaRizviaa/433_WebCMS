@@ -19,6 +19,8 @@ export default function Banners({ tabValue }) {
 	const [validateRow, setValidateRow] = useState(''); //row check 2-5
 	const [firstCheck, setFirstRowCheck] = useState(''); //row check 1
 	const [btnDisable, setbtnDisable] = useState(false);
+	const [btnSetBannerDisable, setbtnSetBannerDisable] = useState(false);
+
 	const [bannerData, setBannerData] = useState([
 		{
 			id: '1',
@@ -115,6 +117,7 @@ export default function Banners({ tabValue }) {
 		bannerData.splice(0, length);
 		setBannerData([..._filterData, ...bannerData]);
 		setbtnDisable(true);
+		setbtnSetBannerDisable(false);
 	};
 
 	//reorder
@@ -137,6 +140,7 @@ export default function Banners({ tabValue }) {
 		);
 
 		setBannerData(items);
+		setbtnSetBannerDisable(true);
 		setFirstRowCheck({ flag: '', rowId: undefined, errMsg: '' });
 		setValidateRow({ flag: '', rowId: undefined, errMsg: '' });
 	};
@@ -144,25 +148,9 @@ export default function Banners({ tabValue }) {
 
 	//button disable
 	useEffect(() => {
-		// disabled = true = GREY
-		// noy disables = false = YELLOW
-
-		allBanners.map((banner, index) => {
-			//if the user updates, only then turn yellow
-			// console.log(banner, 'banner');
-			// console.log(bannerData[index], 'bd');
-			if (
-				banner?.banner_type === bannerData[index]?.bannerType &&
-				banner?.content?.title === bannerData[index]?.selectedMedia?.title
-			) {
-				// console.log('jajaj');
-				return true; // grey
-			} else {
-				// console.log('kakak');
-				const disableContent = handleBannerPositionAndFirstBanner();
-				setbtnDisable(disableContent.flag);
-			}
-		});
+		setbtnSetBannerDisable(true);
+		const disableContent = handleBannerPositionAndFirstBanner();
+		btnSetBannerDisable === true ? setbtnDisable(disableContent.flag) : '';
 	}, [bannerData]);
 
 	const clickBanner = () => {
@@ -170,10 +158,10 @@ export default function Banners({ tabValue }) {
 		const validateRow = handleBannerPositionAndFirstBanner(); // 2- 5
 		setFirstRowCheck(firstrowcheck);
 		setValidateRow(validateRow);
-
-		if (!firstrowcheck?.flag && !validateRow?.flag) {
-			// Validating whether post button is diabled OR not
+		if (btnDisable === '' || null || undefined) {
 			uploadBanner();
+		} else {
+			console.log('add or update banner to publish new one ');
 		}
 	};
 
