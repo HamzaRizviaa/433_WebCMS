@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
-import React, { useState, useEffect, forwardRef } from 'react';
+import React, { useState, useEffect, forwardRef, useRef } from 'react';
 import Layout from '../../components/layout';
 import Table from '../../components/table';
 import classes from './_articleLibrary.module.scss';
@@ -23,12 +23,22 @@ import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import UploadOrEditArticle from '../../components/articles/uploadOrEditArticle';
 import { useNavigate } from 'react-router-dom';
+import { Markup } from 'interweave';
+import {
+	getAllArticlesApi,
+	resetCalendarError,
+	resetNoResultStatus
+} from './articleLibrarySlice';
 
 const ArticleLibrary = () => {
 	// Selectors
-	// const posts = useSelector((state) => state.postLibrary.posts);
-	const totalRecords = 200;
-	// const totalRecords = useSelector((state) => state.postLibrary.totalRecords);
+	const articles = useSelector((state) => state.ArticleLibraryStore.articles);
+	console.log(articles, 'articles');
+
+	const totalRecords = useSelector(
+		(state) => state.ArticleLibraryStore.totalRecords
+	);
+	console.log(totalRecords, 'totalRecords');
 	const noResultStatus = useSelector(
 		(state) => state.postLibrary.noResultStatus
 	);
@@ -86,27 +96,27 @@ const ArticleLibrary = () => {
 						onClick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
-							// if (startDate && endDate) {
-							// 	dispatch(
-							// 		getQuizess({
-							// 			q: search,
-							// 			page,
-							// 			startDate,
-							// 			endDate,
-							// 			fromCalendar: true,
-							// 			...sortState
-							// 		})
-							// 	);
-							// } else {
-							// 	dispatch(
-							// 		getQuizess({
-							// 			q: search,
-							// 			page,
-							// 			fromCalendar: true,
-							// 			...sortState
-							// 		})
-							// 	);
-							// }
+							if (startDate && endDate) {
+								dispatch(
+									getAllArticlesApi({
+										q: search,
+										page,
+										startDate,
+										endDate,
+										fromCalendar: true,
+										...sortState
+									})
+								);
+							} else {
+								dispatch(
+									getAllArticlesApi({
+										q: search,
+										page,
+										fromCalendar: true,
+										...sortState
+									})
+								);
+							}
 						}}
 					/>
 				</span>
@@ -194,8 +204,108 @@ const ArticleLibrary = () => {
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
-			formatter: (content) => {
-				return <div className={classes.row}>{content}</div>;
+			formatter: (content, row) => {
+				console.log(content, row, 'abc');
+				return (
+					<div
+						className={
+							row.height < row.width
+								? classes.virallandscape
+								: // : row.width > row.height
+								  // ? classes.viralpotrait
+								  classes.mediaWrapper
+						}
+					>
+						{console.log(row.width, row.height)}
+						<Tooltip
+							// TransitionComponent={Fade}
+							// TransitionProps={{ timeout: 600 }}
+
+							title={
+								row?.thumbnail_url ? (
+									<video
+										id={'my-video'}
+										poster={row.thumbnail_url}
+										autoPlay
+										muted
+										className={
+											row.width === row.height
+												? classes.mediaIconPreview
+												: row.width > row.height
+												? classes.virallandscapePreview
+												: classes.mediaIconPortraitPreview
+										}
+										controls={true}
+									>
+										<source
+											src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.media}`}
+										/>
+									</video>
+								) : (
+									<img
+										className={
+											row.width === row.height
+												? classes.mediaIconPreview
+												: row.width > row.height
+												? classes.virallandscapePreview
+												: classes.mediaIconPortraitPreview
+										}
+										src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
+											row?.thumbnail_url ? row?.thumbnail_url : row?.image
+										}`}
+										alt='no img'
+									/>
+								)
+							}
+							placement='right'
+							componentsProps={{
+								tooltip: { className: classes.toolTipPreview }
+							}}
+						>
+							<span>
+								{/* {row?.thumbnail_url ? (
+									<PlayArrowIcon className={classes.playIcon} />
+								) : (
+									''
+								)} */}
+								{/* <PlayArrowIcon className={classes.playIcon} /> */}
+								<img
+									className={classes.mediaIcon}
+									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
+										row?.thumbnail_url ? row?.thumbnail_url : row?.media
+									}`}
+								/>
+							</span>
+						</Tooltip>
+						<div className={classes.fileName}>
+							<Markup className={classes.fileName} content={row.title} />
+						</div>
+						{/* <Tooltip
+							TransitionComponent={Fade}
+							TransitionProps={{ timeout: 600 }}
+							title={
+								<Markup
+									content={row?.file_name}
+									// content={
+									// 	row?.file_name?.includes('...') ? row?.file_name : ''
+									// }
+								/>
+							}
+							arrow
+							componentsProps={{
+								tooltip: { className: classes.toolTip },
+								arrow: { className: classes.toolTipArrow }
+							}}
+						>
+							<div className={classes.fileName}>
+								<Markup
+									className={classes.fileName}
+									content={row.article_title}
+								/>
+							</div>
+						</Tooltip> */}
+					</div>
+				);
 			}
 		},
 
@@ -239,6 +349,9 @@ const ArticleLibrary = () => {
 					<div className={classes.row}>{content}</div>
 					// <Markup className={classes.row} content={`${content}`} />
 				);
+			},
+			headerStyle: () => {
+				return { paddingLeft: '48px' };
 			}
 		},
 		{
@@ -281,6 +394,8 @@ const ArticleLibrary = () => {
 	const data = [
 		{
 			article_title: 'Who will win the El Classico?',
+			media:
+				'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.aplustopper.com%2F10-lines-on-football%2F&psig=AOvVaw0Ar-IiuU6vKTJmnO-E0LA_&ust=1647328925207000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCL58-IxfYCFQAAAAAdAAAAABAD',
 			post_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
 			user: 'Lorem Ispum',
@@ -288,6 +403,8 @@ const ArticleLibrary = () => {
 		},
 		{
 			article_title: 'Who will win the El Classico?',
+			media:
+				'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.aplustopper.com%2F10-lines-on-football%2F&psig=AOvVaw0Ar-IiuU6vKTJmnO-E0LA_&ust=1647328925207000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCL58-IxfYCFQAAAAAdAAAAABAD',
 			post_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
 			user: 'Lorem Ispum',
@@ -295,6 +412,8 @@ const ArticleLibrary = () => {
 		},
 		{
 			article_title: 'Who will win the El Classico?',
+			media:
+				'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.aplustopper.com%2F10-lines-on-football%2F&psig=AOvVaw0Ar-IiuU6vKTJmnO-E0LA_&ust=1647328925207000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCL58-IxfYCFQAAAAAdAAAAABAD',
 			post_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
 			user: 'Lorem Ispum',
@@ -302,6 +421,8 @@ const ArticleLibrary = () => {
 		},
 		{
 			article_title: 'Who will win the El Classico?',
+			media:
+				'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.aplustopper.com%2F10-lines-on-football%2F&psig=AOvVaw0Ar-IiuU6vKTJmnO-E0LA_&ust=1647328925207000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCL58-IxfYCFQAAAAAdAAAAABAD',
 			post_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
 			user: 'Lorem Ispum',
@@ -309,6 +430,8 @@ const ArticleLibrary = () => {
 		},
 		{
 			article_title: 'Who will win the El Classico?',
+			media:
+				'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.aplustopper.com%2F10-lines-on-football%2F&psig=AOvVaw0Ar-IiuU6vKTJmnO-E0LA_&ust=1647328925207000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCL58-IxfYCFQAAAAAdAAAAABAD',
 			post_date: '2021-11-25T17:00:08.000Z',
 			labels: 'Label1 , Label 2',
 			user: 'Lorem Ispum',
@@ -333,51 +456,51 @@ const ArticleLibrary = () => {
 
 	useEffect(() => {
 		console.log('sort state use effect');
-		// if (sortState.sortby && sortState.order_type && !search) {
-		// 	dispatch(
-		// 		getQuizess({
-		// 			page,
-		// 			startDate: formatDate(dateRange[0]),
-		// 			endDate: formatDate(dateRange[1]),
-		// 			...sortState
-		// 		})
-		// 	);
-		// }
-		// if (sortState.sortby && sortState.order_type && search) {
-		// 	dispatch(
-		// 		getQuizess({
-		// 			q: search,
-		// 			startDate: formatDate(dateRange[0]),
-		// 			endDate: formatDate(dateRange[1]),
-		// 			page,
-		// 			...sortState
-		// 		})
-		// 	);
-		// }
+		if (sortState.sortby && sortState.order_type && !search) {
+			dispatch(
+				getAllArticlesApi({
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
+		if (sortState.sortby && sortState.order_type && search) {
+			dispatch(
+				getAllArticlesApi({
+					q: search,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					page,
+					...sortState
+				})
+			);
+		}
 	}, [sortState]);
 
 	useEffect(() => {
 		console.log('search use effect');
-		// if (search) {
-		// 	dispatch(
-		// 		getQuizess({
-		// 			q: search,
-		// 			page,
-		// 			startDate: formatDate(dateRange[0]),
-		// 			endDate: formatDate(dateRange[1]),
-		// 			...sortState
-		// 		})
-		// 	);
-		// } else {
-		// 	dispatch(
-		// 		getQuizess({
-		// 			page,
-		// 			startDate: formatDate(dateRange[0]),
-		// 			endDate: formatDate(dateRange[1]),
-		// 			...sortState
-		// 		})
-		// 	);
-		// }
+		if (search) {
+			dispatch(
+				getAllArticlesApi({
+					q: search,
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		} else {
+			dispatch(
+				getAllArticlesApi({
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
 	}, [page]);
 
 	useEffect(() => {
@@ -435,6 +558,26 @@ const ArticleLibrary = () => {
 							value={search}
 							onKeyPress={(e) => {
 								console.log(e, 'on key press');
+								if (e.key === 'Enter' && search) {
+									dispatch(
+										getAllArticlesApi({
+											q: search,
+											page,
+											startDate: formatDate(dateRange[0]),
+											endDate: formatDate(dateRange[1]),
+											...sortState
+										})
+									);
+								} else if (e.key === 'Enter' && !search) {
+									dispatch(
+										getAllArticlesApi({
+											page,
+											startDate: formatDate(dateRange[0]),
+											endDate: formatDate(dateRange[1]),
+											...sortState
+										})
+									);
+								}
 							}}
 							onChange={(e) => {
 								setSearch(e.target.value);
@@ -450,26 +593,26 @@ const ArticleLibrary = () => {
 										<Search
 											onClick={() => {
 												console.log('search onclick');
-												// if (search) {
-												// 	dispatch(
-												// 		getQuizess({
-												// 			q: search,
-												// 			page,
-												// 			startDate: formatDate(dateRange[0]),
-												// 			endDate: formatDate(dateRange[1]),
-												// 			...sortState
-												// 		})
-												// 	);
-												// } else {
-												// 	dispatch(
-												// 		getQuizess({
-												// 			page,
-												// 			startDate: formatDate(dateRange[0]),
-												// 			endDate: formatDate(dateRange[1]),
-												// 			...sortState
-												// 		})
-												// 	);
-												// }
+												if (search) {
+													dispatch(
+														getAllArticlesApi({
+															q: search,
+															page,
+															startDate: formatDate(dateRange[0]),
+															endDate: formatDate(dateRange[1]),
+															...sortState
+														})
+													);
+												} else {
+													dispatch(
+														getAllArticlesApi({
+															page,
+															startDate: formatDate(dateRange[0]),
+															endDate: formatDate(dateRange[1]),
+															...sortState
+														})
+													);
+												}
 											}}
 											className={classes.searchIcon}
 										/>
@@ -497,7 +640,7 @@ const ArticleLibrary = () => {
 				</div>
 			</div>
 			<div className={classes.tableContainer}>
-				<Table rowEvents={tableRowEvents} columns={columns} data={data} />
+				<Table rowEvents={tableRowEvents} columns={columns} data={articles} />
 			</div>
 
 			<div className={classes.paginationRow}>

@@ -37,7 +37,7 @@ import {
 const ViralLibrary = () => {
 	// Selectors
 	const virals = useSelector((state) => state.ViralLibraryStore.virals);
-	//console.log(virals);
+	console.log(virals, 'virals data api');
 	// const totalRecords = 200;
 	const totalRecords = useSelector(
 		(state) => state.ViralLibraryStore.totalRecords
@@ -189,54 +189,6 @@ const ViralLibrary = () => {
 			);
 		return null;
 	};
-
-	// useEffect(() => {
-	// 	console.log(
-	// 		'cotent',
-	// 		fileNameRef.current ? fileNameRef.current.innerHTML : 'none'
-	// 	);
-	// 	// if (fileNameRef.current || fileNameRef?.current?.offsetWidth > 200) {
-	// 	// 	setTooltipTitle(true);
-	// 	// }
-	// 	// console.log(tooltipTitle);
-	// }, [fileNameRef.current]);
-
-	// useEffect(() => {
-	// 	console.log(
-	// 		'width',
-	// 		fileNameRef.current ? fileNameRef.current.offsetWidth : 0
-	// 	);
-	// 	if (fileNameRef.current || fileNameRef?.current?.offsetWidth > 200) {
-	// 		setTooltipTitle(true);
-	// 	}
-	// 	console.log(tooltipTitle);
-	// }, [fileNameRef.current]);
-
-	// const useResize = (myRef) => {
-	// 	const [width, setWidth] = useState(0);
-	// 	const [height, setHeight] = useState(0);
-
-	// 	useEffect(() => {
-	// 		const handleResize = () => {
-	// 			if (myRef?.current) {
-	// 				setWidth(myRef?.current?.offsetWidth);
-	// 				setHeight(myRef?.current?.offsetHeight);
-	// 			}
-	// 		};
-
-	// 		window.addEventListener('resize', handleResize());
-
-	// 		return () => {
-	// 			window.removeEventListener('resize', handleResize());
-	// 		};
-	// 	}, [myRef]);
-
-	// 	return { width, height };
-	// };
-
-	// const { width, height } = useResize(fileNameRef);
-	// console.log(width);
-	// console.log(height);
 
 	const columns = [
 		{
