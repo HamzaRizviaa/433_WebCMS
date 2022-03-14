@@ -8,7 +8,6 @@ import Slider from '../../slider';
 import Button from '../../button';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
-
 import { useDispatch, useSelector } from 'react-redux';
 //import { getLocalStorageDetails } from '../../../utils';
 //import axios from 'axios';
@@ -20,6 +19,29 @@ import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
 import { Popper, Paper } from '@mui/material';
 import { TextField } from '@material-ui/core';
+
+//tinymce
+import { Editor } from '@tinymce/tinymce-react';
+import 'tinymce/tinymce';
+import 'tinymce/icons/default';
+import 'tinymce/themes/silver';
+import 'tinymce/plugins/paste';
+import 'tinymce/plugins/link';
+import 'tinymce/plugins/image';
+import 'tinymce/plugins/media';
+import 'tinymce/plugins/searchreplace';
+import 'tinymce/plugins/emoticons';
+import 'tinymce/plugins/hr';
+import 'tinymce/plugins/anchor';
+import 'tinymce/plugins/insertdatetime';
+import 'tinymce/plugins/hr';
+import 'tinymce/plugins/hr';
+import 'tinymce/plugins/hr';
+import 'tinymce/plugins/table';
+import 'tinymce/plugins/spellchecker';
+import 'tinymce/skins/ui/oxide/skin.min.css';
+import 'tinymce/skins/ui/oxide/content.min.css';
+import 'tinymce/skins/content/default/content.min.css';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
@@ -241,6 +263,10 @@ const UploadOrEditViral = ({
 		setFileRejectionError('');
 		setUploadedFiles([]);
 		setDropZoneBorder('#ffff00');
+		setArticleTitleColor('#ffffff');
+		setArticleTitleError('');
+		setLabelColor('#ffffff');
+		setLabelError('');
 		setPostButtonStatus(false);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
@@ -498,6 +524,15 @@ const UploadOrEditViral = ({
 											borderRadius: articleTitle ? '16px' : '40px'
 										}
 									}}
+									// inputProps={{ maxLength: 30 }}
+									// autoFocus={true}
+									// FormHelperTextProps={{
+									// 	className: classes.characterCount,
+									// 	style: {
+									// 		color: articleTitle.length === 30 ? 'red' : 'white'
+									// 	}
+									// }}
+									// helperText={`${articleTitle.length}/30`}
 									multiline
 									maxRows={2}
 								/>
@@ -662,6 +697,73 @@ const UploadOrEditViral = ({
 							</div>
 
 							<p className={classes.mediaError}>{labelError}</p>
+
+							<div className={classes.captionContainer}>
+								<h6>ARTICLE TEXT</h6>
+								<Editor
+									init={{
+										height: 288,
+										//content_style: 'div {background: red;}',
+
+										branding: false,
+										statusbar: true,
+										skin: 'oxide',
+										menubar: 'edit view insert format tools',
+										spellchecker_callback: function (method, text, success) {
+											var words = text.match(this.getWordCharPattern());
+											if (method === 'spellcheck') {
+												var suggestions = {};
+												for (var i = 0; i < words.length; i++) {
+													suggestions[words[i]] = ['First', 'Second'];
+												}
+												success({ words: suggestions, dictionary: [] });
+											} else if (method === 'addToDictionary') {
+												// Add word to dictionary here
+												success();
+											}
+										},
+										browser_spellcheck: true,
+										emoticons_database: 'emojiimages',
+										menu: {
+											edit: {
+												title: 'Edit',
+												items: 'undo redo | cut copy paste  | searchreplace'
+											},
+											view: {
+												title: 'View',
+												items: ' spellchecker '
+											},
+											insert: {
+												title: 'Insert',
+												items:
+													'image link media emoticons hr anchor insertdatetime'
+											},
+											format: {
+												title: 'Format',
+												items:
+													'bold italic underline strikethrough | formats blockformats fontformats fontsizes align lineheight | forecolor backcolor | removeformat'
+											},
+											tools: {
+												title: 'Tools',
+												items: 'spellchecker'
+											}
+										},
+										contextmenu: 'spellchecker',
+										plugins: [
+											'advlist autolink lists link image charmap print preview anchor',
+											'searchreplace spellchecker emoticons hr visualblocks code fullscreen',
+											'insertdatetime media table paste code help wordcount'
+										],
+										toolbar:
+											'undo redo | formatselect insertdatetime| ' +
+											'bold italic backcolor | alignleft aligncenter ' +
+											'alignright alignjustify | bullist numlist outdent indent | ' +
+											'removeformat | help'
+									}}
+									onFocus={() => setDisableDropdown(false)}
+									onBlur={() => setDisableDropdown(true)}
+								/>
+							</div>
 						</div>
 
 						<div className={classes.buttonDiv}>
