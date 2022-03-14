@@ -27,18 +27,19 @@ import { Markup } from 'interweave';
 import {
 	getAllArticlesApi,
 	resetCalendarError,
-	resetNoResultStatus
+	resetNoResultStatus,
+	getSpecificArticle
 } from './articleLibrarySlice';
 
 const ArticleLibrary = () => {
 	// Selectors
 	const articles = useSelector((state) => state.ArticleLibraryStore.articles);
-	console.log(articles, 'articles');
+	// console.log(articles, 'articles');
 
 	const totalRecords = useSelector(
 		(state) => state.ArticleLibraryStore.totalRecords
 	);
-	console.log(totalRecords, 'totalRecords');
+	// console.log(totalRecords, 'totalRecords');
 	const noResultStatus = useSelector(
 		(state) => state.postLibrary.noResultStatus
 	);
@@ -152,11 +153,12 @@ const ArticleLibrary = () => {
 					className={classes.sortIcon}
 					style={{
 						left:
-							col?.dataField === 'article_title' ||
-							col?.dataField === 'labels' ||
-							col?.dataField === 'post_date' ||
-							col?.dataField === 'last_edit' ||
-							col?.dataField === 'user'
+							col?.dataField === 'article_title'
+								? -2
+								: col?.dataField === 'labels' ||
+								  col?.dataField === 'post_date' ||
+								  col?.dataField === 'last_edit' ||
+								  col?.dataField === 'user'
 								? 30
 								: -4
 					}}
@@ -168,11 +170,12 @@ const ArticleLibrary = () => {
 					className={classes.sortIconSelected}
 					style={{
 						left:
-							col?.dataField === 'article_title' ||
-							col?.dataField === 'labels' ||
-							col?.dataField === 'post_date' ||
-							col?.dataField === 'last_edit' ||
-							col?.dataField === 'user'
+							col?.dataField === 'article_title'
+								? -2
+								: col?.dataField === 'labels' ||
+								  col?.dataField === 'post_date' ||
+								  col?.dataField === 'last_edit' ||
+								  col?.dataField === 'user'
 								? 30
 								: -4
 					}}
@@ -184,13 +187,15 @@ const ArticleLibrary = () => {
 					className={classes.sortIconSelected}
 					style={{
 						left:
-							col?.dataField === 'article_title' ||
-							col?.dataField === 'labels' ||
-							col?.dataField === 'post_date' ||
-							col?.dataField === 'last_edit' ||
-							col?.dataField === 'user'
+							col?.dataField === 'article_title'
+								? -2
+								: col?.dataField === 'labels' ||
+								  col?.dataField === 'post_date' ||
+								  col?.dataField === 'last_edit' ||
+								  col?.dataField === 'user'
 								? 30
-								: -4
+								: -4,
+						bottom: 1
 					}}
 				/>
 			);
@@ -205,7 +210,6 @@ const ArticleLibrary = () => {
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			formatter: (content, row) => {
-				console.log(content, row, 'abc');
 				return (
 					<div
 						className={
@@ -216,46 +220,22 @@ const ArticleLibrary = () => {
 								  classes.mediaWrapper
 						}
 					>
-						{console.log(row.width, row.height)}
+						{console.log(row.width, row.height, row.image)}
 						<Tooltip
-							// TransitionComponent={Fade}
-							// TransitionProps={{ timeout: 600 }}
-
 							title={
-								row?.thumbnail_url ? (
-									<video
-										id={'my-video'}
-										poster={row.thumbnail_url}
-										autoPlay
-										muted
-										className={
-											row.width === row.height
-												? classes.mediaIconPreview
-												: row.width > row.height
-												? classes.virallandscapePreview
-												: classes.mediaIconPortraitPreview
-										}
-										controls={true}
-									>
-										<source
-											src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.media}`}
-										/>
-									</video>
-								) : (
-									<img
-										className={
-											row.width === row.height
-												? classes.mediaIconPreview
-												: row.width > row.height
-												? classes.virallandscapePreview
-												: classes.mediaIconPortraitPreview
-										}
-										src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-											row?.thumbnail_url ? row?.thumbnail_url : row?.image
-										}`}
-										alt='no img'
-									/>
-								)
+								<img
+									className={
+										row.width === row.height
+											? classes.mediaIconPreview
+											: row.width > row.height
+											? classes.virallandscapePreview
+											: classes.mediaIconPortraitPreview
+									}
+									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
+										row?.thumbnail_url ? row?.thumbnail_url : row?.image
+									}`}
+									alt='no img'
+								/>
 							}
 							placement='right'
 							componentsProps={{
@@ -263,47 +243,15 @@ const ArticleLibrary = () => {
 							}}
 						>
 							<span>
-								{/* {row?.thumbnail_url ? (
-									<PlayArrowIcon className={classes.playIcon} />
-								) : (
-									''
-								)} */}
-								{/* <PlayArrowIcon className={classes.playIcon} /> */}
 								<img
 									className={classes.mediaIcon}
-									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-										row?.thumbnail_url ? row?.thumbnail_url : row?.media
-									}`}
+									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.image}`}
 								/>
 							</span>
 						</Tooltip>
 						<div className={classes.fileName}>
 							<Markup className={classes.fileName} content={row.title} />
 						</div>
-						{/* <Tooltip
-							TransitionComponent={Fade}
-							TransitionProps={{ timeout: 600 }}
-							title={
-								<Markup
-									content={row?.file_name}
-									// content={
-									// 	row?.file_name?.includes('...') ? row?.file_name : ''
-									// }
-								/>
-							}
-							arrow
-							componentsProps={{
-								tooltip: { className: classes.toolTip },
-								arrow: { className: classes.toolTipArrow }
-							}}
-						>
-							<div className={classes.fileName}>
-								<Markup
-									className={classes.fileName}
-									content={row.article_title}
-								/>
-							</div>
-						</Tooltip> */}
 					</div>
 				);
 			}
@@ -331,7 +279,17 @@ const ArticleLibrary = () => {
 			text: 'LABELS',
 			formatter: (content) => {
 				//let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
-				return <div className={classes.rowType}>{content}</div>;
+				// return <div className={classes.rowType}>{content}</div>;
+				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
+				return (
+					// <div className={classes.labelsWrapper}>
+					// 	{`${content[0]} ${secondLabel}`}
+					// </div>
+					<Markup
+						className={classes.row}
+						content={`${content[0]} ${secondLabel}`}
+					/>
+				);
 			},
 			headerStyle: () => {
 				return { paddingLeft: '48px' };
@@ -391,62 +349,11 @@ const ArticleLibrary = () => {
 		}
 	];
 
-	const data = [
-		{
-			article_title: 'Who will win the El Classico?',
-			media:
-				'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.aplustopper.com%2F10-lines-on-football%2F&psig=AOvVaw0Ar-IiuU6vKTJmnO-E0LA_&ust=1647328925207000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCL58-IxfYCFQAAAAAdAAAAABAD',
-			post_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			user: 'Lorem Ispum',
-			last_edit: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			article_title: 'Who will win the El Classico?',
-			media:
-				'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.aplustopper.com%2F10-lines-on-football%2F&psig=AOvVaw0Ar-IiuU6vKTJmnO-E0LA_&ust=1647328925207000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCL58-IxfYCFQAAAAAdAAAAABAD',
-			post_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			user: 'Lorem Ispum',
-			last_edit: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			article_title: 'Who will win the El Classico?',
-			media:
-				'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.aplustopper.com%2F10-lines-on-football%2F&psig=AOvVaw0Ar-IiuU6vKTJmnO-E0LA_&ust=1647328925207000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCL58-IxfYCFQAAAAAdAAAAABAD',
-			post_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			user: 'Lorem Ispum',
-			last_edit: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			article_title: 'Who will win the El Classico?',
-			media:
-				'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.aplustopper.com%2F10-lines-on-football%2F&psig=AOvVaw0Ar-IiuU6vKTJmnO-E0LA_&ust=1647328925207000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCL58-IxfYCFQAAAAAdAAAAABAD',
-			post_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			user: 'Lorem Ispum',
-			last_edit: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			article_title: 'Who will win the El Classico?',
-			media:
-				'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.aplustopper.com%2F10-lines-on-football%2F&psig=AOvVaw0Ar-IiuU6vKTJmnO-E0LA_&ust=1647328925207000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCL58-IxfYCFQAAAAAdAAAAABAD',
-			post_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			user: 'Lorem Ispum',
-			last_edit: '2021-11-25T17:00:08.000Z'
-		}
-	];
-
 	const tableRowEvents = {
 		onClick: (e, row) => {
-			// if (!edit) {
-			// dispatch(getSpecificPost(row.id));
+			dispatch(getSpecificArticle(row.id));
 			setEdit(true);
 			setShowSlider(true);
-
-			// }
 		}
 	};
 

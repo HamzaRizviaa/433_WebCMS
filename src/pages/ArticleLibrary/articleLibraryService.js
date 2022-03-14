@@ -17,4 +17,15 @@ export default class ArticleLibraryService {
 			}
 		});
 	}
+
+	static getSpecificArticleApi(id) {
+		return axios.get(
+			`${process.env.REACT_APP_API_ENDPOINT}/article/get-specific-article/${id}`,
+			{
+				headers: {
+					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+				}
+			}
+		);
+	}
 }

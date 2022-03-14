@@ -43,7 +43,17 @@ export const getLabels = createAsyncThunk(
 		}
 	}
 );
-
+export const getSpecificArticle = createAsyncThunk(
+	'editButton/getSpecificArticle',
+	async (id) => {
+		const response = await ArticleLibraryService.getSpecificArticleApi(id);
+		if (response?.data?.data) {
+			return response.data.data;
+		} else {
+			return [];
+		}
+	}
+);
 export const articlesLibrarySlice = createSlice({
 	name: 'articlesLibrary',
 	initialState: {
@@ -87,6 +97,16 @@ export const articlesLibrarySlice = createSlice({
 		},
 		[getLabels.fulfilled]: (state, action) => {
 			state.labels = action.payload;
+		},
+		[getSpecificArticle.pending]: (state) => {
+			state.status = 'loading';
+		},
+		[getSpecificArticle.fulfilled]: (state, action) => {
+			state.specificArticle = action.payload;
+			state.status = 'success';
+		},
+		[getSpecificArticle.rejected]: (state) => {
+			state.status = 'failed';
 		}
 	}
 });

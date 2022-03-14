@@ -524,7 +524,6 @@ const UploadOrEditViral = ({
 																			/> */}
 																			<video
 																				id={'my-video'}
-																				ref={videoRef}
 																				poster={isEdit ? file.img : null}
 																				className={classes.fileThumbnail}
 																				style={{
@@ -533,13 +532,8 @@ const UploadOrEditViral = ({
 																					objectFit: 'cover',
 																					objectPosition: 'center'
 																				}}
+																				ref={videoRef}
 																				onLoadedMetadata={() => {
-																					// console.log(
-																					// 	videoRef,
-																					// 	videoRef.current.videoWidth,
-																					// 	videoRef.current.videoHeight,
-																					// 	'video'
-																					// );
 																					setFileWidth(
 																						videoRef.current.videoWidth
 																					);
@@ -564,11 +558,6 @@ const UploadOrEditViral = ({
 																				}}
 																				ref={imgEl}
 																				onLoad={() => {
-																					console.log(
-																						imgEl.current.naturalHeight,
-																						imgEl.current.naturalWidth,
-																						'image'
-																					);
 																					setFileWidth(
 																						imgEl.current.naturalWidth
 																					);

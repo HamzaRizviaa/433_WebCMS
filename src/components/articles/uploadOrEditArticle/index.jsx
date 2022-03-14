@@ -9,11 +9,12 @@ import Button from '../../button';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
 import { useDispatch, useSelector } from 'react-redux';
-//import { getLocalStorageDetails } from '../../../utils';
-//import axios from 'axios';
-//import { toast } from 'react-toastify';
+import { getLocalStorageDetails } from '../../../utils';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
-//import captureVideoFrame from 'capture-video-frame';
+import { getAllArticlesApi } from '../../../pages/ArticleLibrary/articleLibrarySlice';
+import captureVideoFrame from 'capture-video-frame';
 import Close from '@material-ui/icons/Close';
 import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
@@ -54,7 +55,8 @@ const UploadOrEditViral = ({
 	title,
 	isEdit,
 	heading1,
-	buttonText
+	buttonText,
+	page
 }) => {
 	const [articleTitle, setArticleTitle] = useState('');
 	const [uploadMediaError, setUploadMediaError] = useState('');
@@ -68,12 +70,15 @@ const UploadOrEditViral = ({
 	const [labelError, setLabelError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
-	//const [isLoadingCreatePost, setIsLoadingCreatePost] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [previewBool, setPreviewBool] = useState(false);
 	const [postLabels, setPostLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
+	const [fileWidth, setFileWidth] = useState(null);
+	const [fileHeight, setFileHeight] = useState(null);
+	const imgEl = useRef(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 
@@ -85,7 +90,35 @@ const UploadOrEditViral = ({
 
 	const labels = useSelector((state) => state.postLibrary.labels);
 
+	const specificArticle = useSelector(
+		(state) => state.ArticleLibraryStore.specificArticle
+	);
+	console.log(specificArticle, 'specificArticle');
+
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		if (specificArticle) {
+			if (specificArticle?.labels) {
+				let _labels = [];
+				specificArticle.labels.map((label) =>
+					_labels.push({ id: -1, name: label })
+				);
+				setSelectedLabels(_labels);
+			}
+			setArticleTitle(specificArticle.title);
+			console.log(selectedLabels, 'SelectedLabels');
+
+			setUploadedFiles([
+				{
+					id: makeid(10),
+					fileName: specificArticle?.file_name,
+					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificArticle?.image}`,
+					type: 'image'
+				}
+			]);
+		}
+	}, [specificArticle]);
 
 	useEffect(() => {
 		setPostLabels((labels) => {
@@ -156,106 +189,137 @@ const UploadOrEditViral = ({
 		}
 	}, [acceptedFiles]);
 
-	useEffect(() => {
-		if (isEdit) {
-			setUploadedFiles([
+	const uploadFileToServer = async (uploadedFile) => {
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
 				{
-					id: makeid(10),
-					fileName: 'Pyari photo',
-					img: `https://www.suchtv.pk/media/k2/items/cache/56956f629e5b759e41d3d88448802c3f_XL.jpg?t=20160823_164734`,
-					type: 'image'
+					file_type: uploadedFile.fileExtension,
+					parts: 1
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
 				}
-			]);
-			setArticleTitle('Lets win this');
-			setSelectedLabels([
-				{ id: 1, name: 'yummy :D' },
-				{ id: 2, name: 'ICE CREAM TIME' }
-			]);
+			);
+			const frame = captureVideoFrame('my-video', 'png');
+			if (result?.data?.data?.video_thumbnail_url) {
+				await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
+					headers: { 'Content-Type': 'image/png' }
+				});
+			}
+			if (result?.data?.data?.url) {
+				const _result = await axios.put(
+					result?.data?.data?.url,
+					uploadedFile.file,
+					//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
+					{
+						headers: { 'Content-Type': uploadedFile.mime_type }
+					}
+				);
+
+				if (_result?.status === 200) {
+					const uploadResult = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: uploadedFile.file.name,
+							type: 'articleLibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									uploadedFile?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: result?.data?.data?.keys?.image_key,
+									video_key: result?.data?.data?.keys?.video_key,
+									audio_key: ''
+								},
+								upload_id:
+									uploadedFile?.mime_type == 'video/mp4'
+										? result?.data?.data?.upload_id
+										: 'image'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
+						}
+					);
+					if (uploadResult?.data?.status_code === 200) {
+						return uploadResult.data.data;
+					} else {
+						throw 'Error';
+					}
+				} else {
+					throw 'Error';
+				}
+			} else {
+				throw 'Error';
+			}
+		} catch (error) {
+			console.log('Error');
+			return null;
 		}
-	}, [isEdit]);
+	};
 
-	// const uploadFileToServer = async (uploadedFile) => {
-	// 	try {
-	// 		const result = await axios.post(
-	// 			`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
-	// 			{
-	// 				file_type: uploadedFile.fileExtension,
-	// 				parts: 1
-	// 			},
-	// 			{
-	// 				headers: {
-	// 					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-	// 				}
-	// 			}
-	// 		);
-
-	// 		if (result?.data?.data?.url) {
-	// 			const _result = await axios.put(
-	// 				result?.data?.data?.url,
-	// 				uploadedFile.file,
-	// 				//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
-	// 				{
-	// 					headers: { 'Content-Type': uploadedFile.mime_type }
-	// 				}
-	// 			);
-	// 			const frame = captureVideoFrame('my-video', 'png');
-	// 			if (result?.data?.data?.video_thumbnail_url) {
-	// 				await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
-	// 					headers: { 'Content-Type': 'image/png' }
-	// 				});
-	// 			}
-	// 			if (_result?.status === 200) {
-	// 				const uploadResult = await axios.post(
-	// 					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-	// 					{
-	// 						file_name: uploadedFile.file.name,
-	// 						type: 'postlibrary',
-	// 						data: {
-	// 							bucket: 'media',
-	// 							multipart_upload:
-	// 								uploadedFile?.mime_type == 'video/mp4'
-	// 									? [
-	// 											{
-	// 												e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
-	// 												part_number: 1
-	// 											}
-	// 									  ]
-	// 									: ['image'],
-	// 							keys: {
-	// 								image_key: result?.data?.data?.keys?.image_key,
-	// 								video_key: result?.data?.data?.keys?.video_key,
-	// 								audio_key: ''
-	// 							},
-	// 							upload_id:
-	// 								uploadedFile?.mime_type == 'video/mp4'
-	// 									? result?.data?.data?.upload_id
-	// 									: 'image'
-	// 						}
-	// 					},
-	// 					{
-	// 						headers: {
-	// 							Authorization: `Bearer ${
-	// 								getLocalStorageDetails()?.access_token
-	// 							}`
-	// 						}
-	// 					}
-	// 				);
-	// 				if (uploadResult?.data?.status_code === 200) {
-	// 					return uploadResult.data.data;
-	// 				} else {
-	// 					throw 'Error';
-	// 				}
-	// 			} else {
-	// 				throw 'Error';
-	// 			}
-	// 		} else {
-	// 			throw 'Error';
-	// 		}
-	// 	} catch (error) {
-	// 		console.log('Error');
-	// 		return null;
-	// 	}
-	// };
+	const createArticle = async (id, mediaFiles = []) => {
+		setPostButtonStatus(true);
+		console.log(mediaFiles, 'media files');
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/article/post-article`,
+				{
+					...(articleTitle ? { title: articleTitle } : { articleTitle: '' }),
+					...(!isEdit ? { image: mediaFiles[0]?.media_url } : {}),
+					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
+					...(!isEdit ? { height: fileHeight } : {}),
+					...(!isEdit ? { width: fileWidth } : {}),
+					...(!isEdit ? { description: 'abc' } : {}),
+					user_data: {
+						id: `${getLocalStorageDetails()?.id}`,
+						first_name: `${getLocalStorageDetails()?.first_name}`,
+						last_name: `${getLocalStorageDetails()?.last_name}`
+					},
+					...(isEdit && id ? { article_id: id } : {}),
+					...(!isEdit && selectedLabels.length
+						? { labels: [...selectedLabels] }
+						: {})
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success(
+					isEdit ? 'Article has been edited!' : 'Article has been created!'
+				);
+				setIsLoading(false);
+				setPostButtonStatus(false);
+				handleClose();
+				dispatch(getAllArticlesApi({ page }));
+				dispatch(getPostLabels());
+			}
+		} catch (e) {
+			toast.error(
+				isEdit ? 'Failed to edit Article!' : 'Failed to create Article!'
+			);
+			setIsLoading(false);
+			setPostButtonStatus(false);
+			console.log(e);
+		}
+	};
 
 	const resetState = () => {
 		setArticleTitle('');
@@ -319,6 +383,34 @@ const UploadOrEditViral = ({
 
 	const [newLabels, setNewLabels] = useState([]);
 
+	const deleteArticle = async (id) => {
+		setDeleteBtnStatus(true);
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/article/delete-article`,
+				{
+					article_id: id
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success('Article has been deleted!');
+				handleClose();
+
+				//setting a timeout for getting post after delete.
+				dispatch(getAllArticlesApi({ page }));
+			}
+		} catch (e) {
+			toast.error('Failed to delete Article!');
+			setDeleteBtnStatus(false);
+			console.log(e);
+		}
+	};
+
 	const handleChangeExtraLabel = (e) => {
 		// e.preventDefault();
 		// e.stopPropagation();
@@ -366,7 +458,7 @@ const UploadOrEditViral = ({
 			edit={isEdit}
 			article={true}
 		>
-			<LoadingOverlay spinner text='Loading...'>
+			<LoadingOverlay active={isLoading} spinner text='Loading...'>
 				<div
 					className={`${
 						previewFile != null
@@ -396,6 +488,7 @@ const UploadOrEditViral = ({
 											className={classes.uploadedFilesContainer}
 										>
 											{uploadedFiles.map((file, index) => {
+												console.log(file, 'file');
 												return (
 													<Draggable
 														key={file.id}
@@ -421,6 +514,13 @@ const UploadOrEditViral = ({
 																		style={{
 																			objectFit: 'cover',
 																			objectPosition: 'center'
+																		}}
+																		ref={imgEl}
+																		onLoad={() => {
+																			setFileWidth(imgEl.current.naturalWidth);
+																			setFileHeight(
+																				imgEl.current.naturalHeight
+																			);
 																		}}
 																	/>
 
@@ -774,7 +874,7 @@ const UploadOrEditViral = ({
 										button2={isEdit ? true : false}
 										onClick={() => {
 											if (!deleteBtnStatus) {
-												// deletePost(specificPost?.id);
+												deleteArticle(specificArticle?.id);
 											}
 										}}
 										text={'DELETE ARTICLE'}
@@ -792,24 +892,24 @@ const UploadOrEditViral = ({
 											validateArticleBtn();
 										} else {
 											setPostButtonStatus(true);
-											// if (isEdit) {
-											// 	createPost(specificPost?.id);
-											// } else {
-											// 	setIsLoadingCreatePost(true);
-											// 	let uploadFilesPromiseArray = uploadedFiles.map(
-											// 		async (_file) => {
-											// 			return uploadFileToServer(_file);
-											// 		}
-											// 	);
+											if (isEdit) {
+												createArticle(specificArticle?.id);
+											} else {
+												setIsLoading(true);
+												let uploadFilesPromiseArray = uploadedFiles.map(
+													async (_file) => {
+														return uploadFileToServer(_file);
+													}
+												);
 
-											// 	Promise.all([...uploadFilesPromiseArray])
-											// 		.then((mediaFiles) => {
-											// 			createPost(null, mediaFiles);
-											// 		})
-											// 		.catch(() => {
-											// 			setIsLoadingCreatePost(false);
-											// 		});
-											// }
+												Promise.all([...uploadFilesPromiseArray])
+													.then((mediaFiles) => {
+														createArticle(null, mediaFiles);
+													})
+													.catch(() => {
+														setIsLoading(false);
+													});
+											}
 										}
 									}}
 									text={buttonText}
@@ -839,7 +939,7 @@ const UploadOrEditViral = ({
 										// height: `${imageToResizeHeight * 4}px`,
 										width: `100%`,
 										height: `${8 * 4}rem`,
-										objectFit: 'cover',
+										objectFit: 'contain',
 										objectPosition: 'center'
 									}}
 								/>
