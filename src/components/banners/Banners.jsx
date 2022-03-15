@@ -49,8 +49,6 @@ export default function Banners({ tabValue }) {
 		}
 	]);
 
-	// emptybarray -> api response -> func obj -> emptyobj , next line map data api s data us object map kr k is main push
-
 	const dispatch = useDispatch();
 	const allBanners = useSelector((state) => state.topBanner.allBanners);
 	const bannerContent = useSelector((state) => state.topBanner.content);
@@ -184,7 +182,7 @@ export default function Banners({ tabValue }) {
 				sort_order: index
 			};
 		});
-		console.log(bannerPayload, bannerData);
+		// console.log(bannerPayload, bannerData);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/top-banner/publish-banner`,
@@ -326,7 +324,11 @@ export default function Banners({ tabValue }) {
 					onClick={() => {
 						clickBanner();
 					}}
-					text={'PUBLISH HOME BANNERS'}
+					text={
+						tabValue === 'home'
+							? 'PUBLISH HOME BANNERS'
+							: 'PUBLISH MEDIA BANNERS'
+					}
 				/>
 			</div>
 		</div>
