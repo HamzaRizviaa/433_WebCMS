@@ -453,3 +453,107 @@ video::-webkit-media-controls-fullscreen-button {
 	font-size: 14px;
 	padding: 8px 8px 8px 12px;
 }
+
+.editor {
+	margin: 10px 0px;
+	// editor
+	// > div {
+	// 	//tox tox-tinymce tox-platform-touch
+	// 	border: 1px solid #404040 !important;
+	// 	border-radius: 8px;
+	// 	//top bars and middle box
+	// 	> div {
+	// 		//tox-editor-container
+	// 		background-color: black !important;
+	// 		// top bars
+	// 		> div {
+	// 			//tox-editor-header
+	// 			> div {
+	// 				//tox-menubar
+	// 				background-color: black !important;
+	// 				> button {
+	// 					color: white !important;
+	// 				}
+	// 				> button:focus {
+	// 					background: #404040 !important;
+	// 				}
+	// 				> button:hover {
+	// 					background: #404040 !important;
+	// 				}
+	// 				> button:active {
+	// 					background: #404040 !important;
+	// 				}
+	// 			}
+	// 			> div {
+	// 				//tox-toolbar tox-toolbar--scrolling
+
+	// 				> div {
+	// 					//tox-toolbar__group
+	// 					border-top: 1px solid #404040 !important;
+	// 					background-color: black !important;
+	// 					// border-right: none !important;
+
+	// 					> button {
+	// 						// border-right: 1px solid white !important;
+	// 						> span {
+	// 							color: white !important;
+	// 							> svg {
+	// 								fill: white !important;
+	// 							}
+	// 						}
+	// 					}
+	// 					> button:focus {
+	// 						background: #404040 !important;
+	// 					}
+	// 					> button:hover {
+	// 						background: #404040 !important;
+	// 					}
+	// 					> button:active {
+	// 						background: #404040 !important;
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 		//middle text area
+	// 		> div {
+	// 			//tox-sidebar-wrap
+	// 			> div {
+	// 				> iframe {
+	// 					background-color: black !important;
+	// 					// color: white !important ;
+	// 					// #document {
+	// 					// 	color: white !important;
+	// 					// }
+	// 					// > html {
+	// 					// 	color: white !important;
+	// 					// }
+	// 					// .mce-content-body {
+	// 					// 	color: white !important;
+	// 					// }
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// 	//bottom bar
+	// 	> div {
+	// 		//tox-statusbar
+	// 		> div {
+	// 			> div {
+	// 				> div {
+	// 					color: white !important;
+	// 				}
+	// 			}
+	// 			> button {
+	// 				color: white !important;
+	// 			}
+	// 		}
+	// 	}
+	// }
+}
+
+// .tox-editor-container {
+// 	background: red !important;
+// }
+// .tox-menubar {
+// 	background-color: black !important;
+// }

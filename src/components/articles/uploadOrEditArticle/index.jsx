@@ -800,71 +800,74 @@ const UploadOrEditViral = ({
 
 							<div className={classes.captionContainer}>
 								<h6>ARTICLE TEXT</h6>
-								<Editor
-									init={{
-										height: 288,
-										//content_style: 'div {background: red;}',
-
-										branding: false,
-										statusbar: true,
-										skin: 'oxide',
-										menubar: 'edit view insert format tools',
-										spellchecker_callback: function (method, text, success) {
-											var words = text.match(this.getWordCharPattern());
-											if (method === 'spellcheck') {
-												var suggestions = {};
-												for (var i = 0; i < words?.length; i++) {
-													suggestions[words[i]] = ['First', 'Second'];
+								<div className={classes.editor}>
+									<Editor
+										init={{
+											height: 288,
+											//content_style: 'div {background: red;}',
+											content_css: false,
+											content_style: 'body {color: white;}',
+											branding: false,
+											statusbar: true,
+											skin: false,
+											menubar: 'edit view insert format tools',
+											spellchecker_callback: function (method, text, success) {
+												var words = text.match(this.getWordCharPattern());
+												if (method === 'spellcheck') {
+													var suggestions = {};
+													for (var i = 0; i < words?.length; i++) {
+														suggestions[words[i]] = ['First', 'Second'];
+													}
+													success({ words: suggestions, dictionary: [] });
+												} else if (method === 'addToDictionary') {
+													// Add word to dictionary here
+													success();
 												}
-												success({ words: suggestions, dictionary: [] });
-											} else if (method === 'addToDictionary') {
-												// Add word to dictionary here
-												success();
-											}
-										},
-										browser_spellcheck: true,
-										emoticons_database: 'emojiimages',
-										spellchecker_languages:
-											'English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr_FR,' +
-											'German=de,Italian=it,Polish=pl,Portuguese=pt_BR,Spanish=es,Swedish=sv',
-										menu: {
-											edit: {
-												title: 'Edit',
-												items: 'undo redo | cut copy paste  | searchreplace'
 											},
-											view: {
-												title: 'View',
-												items: ' spellchecker '
+											browser_spellcheck: true,
+											emoticons_database: 'emojiimages',
+											spellchecker_languages:
+												'English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr_FR,' +
+												'German=de,Italian=it,Polish=pl,Portuguese=pt_BR,Spanish=es,Swedish=sv',
+											menu: {
+												edit: {
+													title: 'Edit',
+													items: 'undo redo | cut copy paste  | searchreplace'
+												},
+												view: {
+													title: 'View',
+													items: ' spellchecker '
+												},
+												insert: {
+													title: 'Insert',
+													items:
+														'image link media emoticons hr anchor insertdatetime'
+												},
+												format: {
+													title: 'Format',
+													items:
+														'bold italic underline strikethrough |  blockformats fontformats fontsizes align lineheight | forecolor '
+												},
+												tools: {
+													title: 'Tools',
+													items: 'spellchecker spellcheckerlanguage wordcount'
+												}
 											},
-											insert: {
-												title: 'Insert',
-												items:
-													'image link media emoticons hr anchor insertdatetime'
-											},
-											format: {
-												title: 'Format',
-												items:
-													'bold italic underline strikethrough |  blockformats fontformats fontsizes align lineheight | forecolor '
-											},
-											tools: {
-												title: 'Tools',
-												items: 'spellchecker spellcheckerlanguage wordcount'
-											}
-										},
-										plugins: [
-											'lists advlist link image anchor',
-											'searchreplace spellchecker emoticons hr visualblocks fullscreen',
-											'insertdatetime media table paste wordcount'
-										],
-										toolbar:
-											'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect| ' +
-											'alignleft aligncenter ' +
-											'alignright alignjustify | bullist numlist | ' +
-											'emoticons'
-									}}
-									onFocus={() => setDisableDropdown(false)}
-									onBlur={() => setDisableDropdown(true)}
-								/>
+											plugins: [
+												'lists advlist link image anchor',
+												'searchreplace spellchecker emoticons hr visualblocks fullscreen',
+												'insertdatetime media table paste wordcount'
+											],
+											toolbar:
+												'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect| ' +
+												'alignleft aligncenter ' +
+												'alignright alignjustify | bullist numlist | ' +
+												'emoticons'
+										}}
+										onFocus={() => setDisableDropdown(false)}
+										onBlur={() => setDisableDropdown(true)}
+									/>
+								</div>
 							</div>
 						</div>
 
