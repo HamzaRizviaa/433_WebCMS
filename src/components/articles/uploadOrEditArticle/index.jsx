@@ -807,23 +807,175 @@ const UploadOrEditViral = ({
 										init={{
 											height: 288,
 											//content_style: 'div {background: red;}',
-											content_css: false,
-											content_style: 'body {color: white;}',
+											content_style:
+												"@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap'); body { font-family: Poppins; color: white   };" +
+												'.hamza {font-family:Poppins, sans-serif; font-size:100px , color : green}',
 											branding: false,
 											statusbar: true,
 											skin: false,
+											// textcolor_cols: '1',
+											// textcolor_rows: '1',
+											// textcolor_map: ['FFFFFF', 'White'],
+											// color_picker_callback: function (callback) {
+											// 	callback('#000000');
+											// },
+											//toolbar_mode: 'sliding',
+											//font_formats: 'Poppins = poppins, sans-serif;',
+											formats: {
+												title_h1: {
+													inline: 'span',
+													styles: {
+														//fontFamily: 'Poppins',
+														fontWeight: '800',
+														fontSize: '64px',
+														letterSpacing: '-2%'
+														//color: 'yellow'
+													},
+													classes: 'hamza'
+												},
+												title_h2: {
+													inline: 'span',
+													styles: {
+														//fontFamily: 'Poppins',
+														fontWeight: '800',
+														fontSize: '40px',
+														letterSpacing: '-2%'
+													}
+													//classes: 'hamza'
+												}
+											},
+											style_formats: [
+												{
+													title: 'Title',
+													items: [
+														{
+															title: 'Header 1',
+															format: 'title_h1',
+															// block: 'h1',
+															styles: {
+																//fontFamily: 'Poppins',
+																fontWeight: '800',
+																fontSize: '64',
+																letterSpacing: '-2%'
+																//color: '#ffffff'
+															}
+														},
+														{
+															title: 'Header 2',
+															format: 'title_h2',
+															//block: 'h2',
+															styles: {
+																//fontFamily: 'Poppins',
+																fontWeight: '800',
+																fontSize: '40',
+																letterSpacing: '-2%'
+															}
+														},
+														{
+															title: 'Header 3',
+															format: 'title_h3',
+															block: 'h3',
+															styles: {
+																fontFamily: 'Poppins',
+																fontWeight: '800',
+																fontSize: '36',
+																letterSpacing: '-2%'
+															}
+														},
+														{
+															title: 'Header 4',
+															format: 'title_h4',
+															block: 'h4',
+															styles: {
+																fontFamily: 'Poppins',
+																fontWeight: '800',
+																fontSize: '24',
+																letterSpacing: '-2%'
+															}
+														},
+														{
+															title: 'Subtitle',
+															format: 'title_subtitle',
+															block: 'h5',
+															styles: {
+																fontFamily: 'Poppins',
+																fontWeight: '600',
+																fontSize: '24'
+															}
+														}
+													]
+												},
+												{
+													title: 'Body',
+													items: [
+														{
+															title: 'Regular',
+															format: 'body_regular',
+															block: 'p',
+															styles: {
+																fontFamily: 'Poppins',
+																fontWeight: '400',
+																fontSize: '16',
+																lineHeight: '24'
+															}
+														},
+														{
+															title: 'Bold',
+															format: 'body_bold',
+															block: 'b',
+															styles: {
+																fontFamily: 'Poppins',
+																fontWeight: '700',
+																fontSize: '16',
+																lineHeight: '24'
+															}
+														},
+														{
+															title: 'Small',
+															format: 'body_small',
+															block: 'p',
+															styles: {
+																fontFamily: 'Poppins',
+																fontWeight: '400',
+																fontSize: '14',
+																lineHeight: '16'
+															}
+														},
+														{
+															title: 'Tiny',
+															format: 'body_tiny',
+															block: 'p',
+															styles: {
+																fontFamily: 'Poppins',
+																fontWeight: '500',
+																fontSize: '12',
+																lineHeight: '16',
+																letterSpacing: '3%'
+															}
+														},
+														{
+															title: 'Bold and Tiny',
+															format: 'body_boldAndTiny',
+															block: 'p',
+															styles: {
+																fontFamily: 'Poppins',
+																fontWeight: '700',
+																fontSize: '12',
+																lineHeight: '16',
+																letterSpacing: '3%'
+															}
+														}
+													]
+												}
+											],
 											menubar: 'edit view insert format tools',
-											spellchecker_callback: function (method, text, success) {
+											spellchecker_callback: function (method, text) {
 												var words = text.match(this.getWordCharPattern());
 												if (method === 'spellcheck') {
 													var suggestions = {};
 													for (var i = 0; i < words?.length; i++) {
 														suggestions[words[i]] = ['First', 'Second'];
 													}
-													success({ words: suggestions, dictionary: [] });
-												} else if (method === 'addToDictionary') {
-													// Add word to dictionary here
-													success();
 												}
 											},
 											browser_spellcheck: true,
@@ -848,7 +1000,7 @@ const UploadOrEditViral = ({
 												format: {
 													title: 'Format',
 													items:
-														'bold italic underline strikethrough |  blockformats fontformats fontsizes align lineheight | forecolor '
+														'bold italic underline strikethrough | formats  fontsizes align lineheight  '
 												},
 												tools: {
 													title: 'Tools',
@@ -858,15 +1010,19 @@ const UploadOrEditViral = ({
 											plugins: [
 												'lists advlist link image anchor',
 												'searchreplace spellchecker emoticons hr visualblocks fullscreen',
-												'insertdatetime media table paste wordcount'
+												'insertdatetime media table paste wordcount textcolor colorpicker'
 											],
 											toolbar:
-												'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect| ' +
+												'undo redo | bold italic underline strikethrough |  fontsizeselect formatselect| ' +
 												'alignleft aligncenter ' +
 												'alignright alignjustify | bullist numlist | ' +
 												'emoticons'
 										}}
-										onFocus={() => setDisableDropdown(false)}
+										onInit={() => setDisableDropdown(false)}
+										onFocusIn={() => {
+											console.log('hamza');
+											setDisableDropdown(false);
+										}}
 										onBlur={() => setDisableDropdown(true)}
 									/>
 								</div>
