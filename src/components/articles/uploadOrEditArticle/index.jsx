@@ -38,6 +38,8 @@ import 'tinymce/plugins/insertdatetime';
 import 'tinymce/plugins/wordcount';
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/advlist';
+import 'tinymce/plugins/textcolor';
+import 'tinymce/plugins/colorpicker';
 import 'tinymce/plugins/table';
 import 'tinymce/plugins/spellchecker';
 import 'tinymce/skins/ui/oxide/skin.min.css';

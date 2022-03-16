@@ -99,6 +99,7 @@ const UploadOrEditMedia = ({
 		(state) => state.mediaLibraryOriginal
 	);
 	const labels = useSelector((state) => state.mediaLibraryOriginal.labels);
+
 	useEffect(() => {
 		if (labels.length) {
 			setMediaLabels([...labels]);
@@ -267,6 +268,10 @@ const UploadOrEditMedia = ({
 			setUploadedFiles([...uploadedFiles, ...newFiles]);
 		}
 	}, [acceptedFiles]);
+
+	useEffect(() => {
+		console.log(videoRef?.current?.duration, 'duration');
+	}, [videoRef.current]);
 
 	useEffect(() => {
 		if (acceptedFiles2?.length) {

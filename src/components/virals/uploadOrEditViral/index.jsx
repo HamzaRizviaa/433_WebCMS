@@ -183,6 +183,9 @@ const UploadOrEditViral = ({
 	}, [acceptedFiles]);
 
 	// useEffect(() => {
+	// 	console.log(videoRef?.current?.duration);
+	// }, [videoRef.current]);
+	// useEffect(() => {
 	// 	//console.log('adw');
 	// 	if (videoRef?.current) {
 	// 		console.log('dawdw');
@@ -349,7 +352,6 @@ const UploadOrEditViral = ({
 
 	const createViral = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
-		console.log(mediaFiles, 'media files');
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
