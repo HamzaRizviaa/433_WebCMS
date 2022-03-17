@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditArticle.module.scss';
 import { useDropzone } from 'react-dropzone';
@@ -23,6 +24,7 @@ import { TextField } from '@material-ui/core';
 
 //tinymce
 import { Editor } from '@tinymce/tinymce-react';
+
 import 'tinymce/tinymce';
 import 'tinymce/icons/default';
 import 'tinymce/themes/silver';
@@ -61,6 +63,7 @@ const UploadOrEditViral = ({
 	page
 }) => {
 	const [articleTitle, setArticleTitle] = useState('');
+	const [editorText, setEditorText] = useState('');
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -95,7 +98,7 @@ const UploadOrEditViral = ({
 	const specificArticle = useSelector(
 		(state) => state.ArticleLibraryStore.specificArticle
 	);
-	console.log(specificArticle, 'specificArticle');
+	console.log(specificArticle, '==== specificArticle ----');
 
 	const dispatch = useDispatch();
 
@@ -109,8 +112,16 @@ const UploadOrEditViral = ({
 				setSelectedLabels(_labels);
 			}
 			setArticleTitle(specificArticle.title);
-			console.log(selectedLabels, 'SelectedLabels');
+			// setEditorText(specificArticle.description);
+			setTimeout(() => {
+				specificArticle.length === 0
+					? setEditorText('')
+					: setEditorText(
+							tinyMCE.activeEditor.setContent(specificArticle.description)
+					  );
+			}, 5000);
 
+			console.log(editorText, 'specific data');
 			setUploadedFiles([
 				{
 					id: makeid(10),
@@ -121,6 +132,11 @@ const UploadOrEditViral = ({
 			]);
 		}
 	}, [specificArticle]);
+
+	// useEffect(() => {
+	// 	setEditorText(editorText);
+	// 	console.log(editorText, 'use Effect');
+	// }, [editorText]);
 
 	useEffect(() => {
 		setPostLabels((labels) => {
@@ -275,8 +291,10 @@ const UploadOrEditViral = ({
 	};
 
 	const createArticle = async (id, mediaFiles = []) => {
+		const editorTextContent = tinymce?.activeEditor?.getContent();
+		console.log(editorTextContent, 'editorTextContent');
 		setPostButtonStatus(true);
-		console.log(mediaFiles, 'media files');
+
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/article/post-article`,
@@ -286,13 +304,17 @@ const UploadOrEditViral = ({
 					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
 					...(!isEdit ? { height: fileHeight } : {}),
 					...(!isEdit ? { width: fileWidth } : {}),
-					...(!isEdit ? { description: 'abc' } : {}),
+					// ...(!isEdit ? { description: editorTextContent } : {}),
+					// description: editorTextContent,
+					description: editorTextContent,
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
 						last_name: `${getLocalStorageDetails()?.last_name}`
 					},
-					...(isEdit && id ? { article_id: id } : {}),
+					...(isEdit && id
+						? { article_id: id, description: editorTextContent }
+						: {}),
 					...(!isEdit && selectedLabels.length
 						? { labels: [...selectedLabels] }
 						: {})
@@ -325,6 +347,7 @@ const UploadOrEditViral = ({
 
 	const resetState = () => {
 		setArticleTitle('');
+		// setEditorText('');
 		setUploadMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
@@ -439,6 +462,9 @@ const UploadOrEditViral = ({
 	// 	specificPost?.media_id == selectedMedia?.id);
 
 	// const regex = /[!@#$%^&*(),.?":{}|<>/\\ ]/g;
+	// var abc = 'hello editor';
+	// var abc = tinymce?.activeEditor?.getContent();
+	// console.log(abc, '==== abc =============');
 
 	return (
 		<Slider
@@ -804,15 +830,47 @@ const UploadOrEditViral = ({
 								<h6>ARTICLE TEXT</h6>
 								<div className={classes.editor}>
 									<Editor
+										// value={editorText}
+										// onChange={(e) => setEditorText(e.target.value)}
 										init={{
 											height: 288,
-											//content_style: 'div {background: red;}',
+											selector: '#myTextarea',
+											id: '#myTextarea',
+											browser_spellcheck: true,
+											contextmenu: false,
+
+											setup: function (editor) {
+												editor.on('init', function () {
+													// while (description === null || undefined) {
+													// 	console.log(description);
+													// }
+													// setTimeout(() => {
+													console.log(editorText, 'timeout');
+													// editor.setContent(
+													editorText;
+													// editorText === null || undefined ? '' : editorText;
+													// );
+													// }, 5000);
+													// console.log(
+													// 	tinymce.activeEditor.getContent(),
+													// 	'abc tinymce'
+													// );
+												});
+											}, //content_style: 'div {background: red;}',
 											content_style:
 												"@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap'); body { font-family: Poppins; color: white   };" +
 												'.hamza {font-family:Poppins, sans-serif; font-size:100px , color : green}',
 											branding: false,
 											statusbar: true,
 											skin: false,
+
+											// emoticons_append: {
+											// 	custom_mind_explode: {
+											// 		keywords: ['brain', 'mind', 'explode', 'blown'],
+											// 		char: '🤯'
+											// 	}
+											// },
+											// emoticons_database_url: 'tinymce/plugins/emoticons/js/emojis.js',
 											// textcolor_cols: '1',
 											// textcolor_rows: '1',
 											// textcolor_map: ['FFFFFF', 'White'],
@@ -978,7 +1036,7 @@ const UploadOrEditViral = ({
 													}
 												}
 											},
-											browser_spellcheck: true,
+											// browser_spellcheck: true,
 											emoticons_database: 'emojiimages',
 											spellchecker_languages:
 												'English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr_FR,' +
@@ -1020,7 +1078,6 @@ const UploadOrEditViral = ({
 										}}
 										onInit={() => setDisableDropdown(false)}
 										onFocusIn={() => {
-											console.log('hamza');
 											setDisableDropdown(false);
 										}}
 										onBlur={() => setDisableDropdown(true)}
@@ -1029,6 +1086,15 @@ const UploadOrEditViral = ({
 							</div>
 						</div>
 
+						{/* <Button
+							disabled={deleteBtnStatus}
+							// button2={isEdit ? true : false}
+							onClick={() => {
+								tinymce.activeEditor.getContent();
+								console.log(tinymce.activeEditor.getContent());
+							}}
+							text={'set  ARTICLE'}
+						/> */}
 						<div className={classes.buttonDiv}>
 							{isEdit ? (
 								<div className={classes.editBtn}>
