@@ -24,8 +24,10 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import { getDateTime, formatDate, getCalendarText } from '../../utils';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
+import { useNavigate } from 'react-router-dom';
 // import './_calender.scss';
 import { getQuizess } from './quizLibrarySlice';
+
 const QuizLibrary = () => {
 	// Selectors
 	// const posts = useSelector((state) => state.postLibrary.posts);
@@ -55,6 +57,22 @@ const QuizLibrary = () => {
 	const [noResultCalendarError, setNoResultCalendarError] = useState('');
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
+
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));
+		let current_date = new Date();
+		let time_difference_minutes = (expiry_date - current_date) / 1000 / 60; //in minutes
+		// console.log(current_date, 'curr');
+		console.log(time_difference_minutes);
+		if (time_difference_minutes <= 1) {
+			alert('Your session has expired');
+			localStorage.removeItem('user_data');
+			localStorage.removeItem('token_expire_time');
+			navigate('/sign-in');
+		}
+	}, []);
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
 		const startDate = formatDate(dateRange[0]);

@@ -26,50 +26,67 @@ const SignIn = ({ setLoginData }) => {
 
 	const navigate = useNavigate();
 
-	const refreshTokenSetup = (res) => {
-		// Timing to renew access token
-		let refreshTiming = (res.tokenObj.expires_in || 3600 - 5 * 60) * 1000;
+	// const refreshTokenSetup = (res) => {
+	// 	// Timing to renew access token
+	// 	let refreshTiming = (res.tokenObj.expires_in || 3600 - 5 * 60) * 1000;
 
-		const refreshToken = async () => {
-			const newAuthRes = await res.reloadAuthResponse();
-			refreshTiming = (newAuthRes.expires_in || 3600 - 5 * 60) * 1000;
-			console.log('newAuthRes:', newAuthRes);
-			// saveUserToken(newAuthRes.access_token);  <-- save new token
-			localStorage.setItem('authToken', newAuthRes.id_token);
+	// 	const refreshToken = async () => {
+	// 		const newAuthRes = await res.reloadAuthResponse();
+	// 		refreshTiming = (newAuthRes.expires_in || 3600 - 5 * 60) * 1000;
+	// 		console.log('newAuthRes:', newAuthRes);
+	// 		// saveUserToken(newAuthRes.access_token);  <-- save new token
+	// 		localStorage.setItem('authToken', newAuthRes.id_token);
 
-			// Setup the other timer after the first one
-			setTimeout(refreshToken, refreshTiming);
-		};
+	// 		// Setup the other timer after the first one
+	// 		setTimeout(refreshToken, refreshTiming);
+	// 	};
 
-		// Setup first refresh timer
-		setTimeout(refreshToken, refreshTiming);
-	};
+	// 	// Setup first refresh timer
+	// 	setTimeout(refreshToken, refreshTiming);
+	// };
 
 	// const handleFailure = (e) => {
 	// 	console.log('failure', e);
 	// };
 
-	const checkSessionTimeout = (initialTimeVal) => {
-		let minutes = Math.abs((initialTimeVal - new Date()) / 1000 / 60);
-		// console.log('malamal');
-		// console.log(minutes, 'm');
-		// console.log(initialTimeVal, 'i');
-		// console.log(new Date());
-		if (minutes >= 720 && accessExpire) {
-			//alert('Your session has expired');
-			localStorage.removeItem('user_data');
-			setAccessExpire(false);
-			navigate('/sign-in');
-		}
-	};
+	// const checkSessionTimeout = (initialTimeVal) => {
+	// 	let minutes = Math.abs((initialTimeVal - new Date()) / 1000 / 60);
+	// 	// console.log('malamal');
+	// 	console.log(minutes, 'm');
+	// 	console.log(initialTimeVal, 'i');
+	// 	console.log(new Date());
+	// 	if (minutes >= 120) {
+	// 		//alert('Your session has expired');
+	// 		localStorage.removeItem('user_data');
+	// 		setAccessExpire(false);
+	// 		navigate('/sign-in');
+	// 		clearInterval(setTimeOutId);
+	// 	}
+	// };
+
+	// let setTimeOutId;
+
+	// useEffect(() => {
+	// 	console.log(accessExpire);
+	// 	if (accessExpire) {
+	// 		console.log('aE is true');
+	// 		let initialTime = new Date();
+	// 		setTimeOutId = setInterval(() => checkSessionTimeout(initialTime), 1000); //3600000 - 1 hour
+	// 	}
+	// }, [accessExpire]);
 
 	useEffect(() => {
-		console.log(accessExpire);
+		console.log(accessExpire, 'ae');
 		if (accessExpire) {
-			console.log('aE is true');
-			let initialTime = new Date();
-			setInterval(() => checkSessionTimeout(initialTime), 1000);
+			let expiryDate = new Date(
+				new Date().setHours(new Date().getHours() + 10)
+			);
+			localStorage.setItem('token_expire_time', expiryDate);
 		}
+
+		return () => {
+			setAccessExpire(false);
+		};
 	}, [accessExpire]);
 
 	const handleLogin = async (googleData) => {
@@ -96,7 +113,7 @@ const SignIn = ({ setLoginData }) => {
 				setAccessExpire(true);
 
 				setIsLoadingSignin(false);
-				console.log(result?.data);
+				//console.log(result?.data);
 				navigate('/post-library');
 				setSignInError(false);
 			}
@@ -106,7 +123,7 @@ const SignIn = ({ setLoginData }) => {
 			console.log(e, googleData.profileObj.email);
 		}
 
-		refreshTokenSetup(googleData);
+		// refreshTokenSetup(googleData);
 	};
 
 	// const handleLogout = () => {

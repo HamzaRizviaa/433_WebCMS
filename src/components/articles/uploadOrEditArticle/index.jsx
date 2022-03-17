@@ -1,27 +1,53 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 import React, { useState, useEffect, useRef } from 'react';
-import classes from './_uploadOrEditViral.module.scss';
+import classes from './_uploadOrEditArticle.module.scss';
 import { useDropzone } from 'react-dropzone';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
-import { TextField } from '@material-ui/core';
-import { CircularProgress } from '@material-ui/core';
+//import { CircularProgress } from '@material-ui/core';
 import Button from '../../button';
-import { useDispatch, useSelector } from 'react-redux';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
+import { useDispatch, useSelector } from 'react-redux';
+import { getLocalStorageDetails } from '../../../utils';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { getAllViralsApi } from '../../../pages/ViralLibrary/viralLibararySlice';
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
+import { getAllArticlesApi } from '../../../pages/ArticleLibrary/articleLibrarySlice';
 import captureVideoFrame from 'capture-video-frame';
 import Close from '@material-ui/icons/Close';
 import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
 import { Popper, Paper } from '@mui/material';
-import { getLocalStorageDetails } from '../../../utils';
+import { TextField } from '@material-ui/core';
+
+//tinymce
+import { Editor } from '@tinymce/tinymce-react';
+
+import 'tinymce/tinymce';
+import 'tinymce/icons/default';
+import 'tinymce/themes/silver';
+import 'tinymce/plugins/paste';
+import 'tinymce/plugins/link';
+import 'tinymce/plugins/image';
+import 'tinymce/plugins/media';
+import 'tinymce/plugins/searchreplace';
+import 'tinymce/plugins/emoticons';
+import 'tinymce/plugins/hr';
+import 'tinymce/plugins/anchor';
+import 'tinymce/plugins/insertdatetime';
+import 'tinymce/plugins/wordcount';
+import 'tinymce/plugins/lists';
+import 'tinymce/plugins/advlist';
+import 'tinymce/plugins/textcolor';
+import 'tinymce/plugins/colorpicker';
+import 'tinymce/plugins/fullscreen';
+import 'tinymce/plugins/charmap';
+import 'tinymce/plugins/spellchecker';
+import 'tinymce/skins/ui/oxide/skin.min.css';
+import 'tinymce/skins/ui/oxide/content.min.css';
+import 'tinymce/skins/content/default/content.min.css';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
@@ -37,19 +63,20 @@ const UploadOrEditViral = ({
 	buttonText,
 	page
 }) => {
-	const [caption, setCaption] = useState('');
+	const [articleTitle, setArticleTitle] = useState('');
+	const [editorText, setEditorText] = useState('');
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [selectedLabels, setSelectedLabels] = useState([]);
 	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
+	const [articleTitleColor, setArticleTitleColor] = useState('#ffffff');
+	const [articleTitleError, setArticleTitleError] = useState('');
 	const [labelColor, setLabelColor] = useState('#ffffff');
 	const [labelError, setLabelError] = useState('');
-	const [captionColor, setCaptionColor] = useState('#ffffff');
-	const [captionError, setCaptionError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
-	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [previewBool, setPreviewBool] = useState(false);
 	const [postLabels, setPostLabels] = useState([]);
@@ -57,26 +84,60 @@ const UploadOrEditViral = ({
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
+	const imgEl = useRef(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
-	const videoRef = useRef(null);
-	const imgEl = useRef(null);
 
-	// const ref = useRef(null);
-	// useEffect(() => {
-	// 	console.log('width', ref.current ? ref.current.offsetWidth : 0);
-	// }, [ref.current]);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
-			accept: 'image/jpeg, image/png, video/mp4',
+			accept: '.jpeg,.jpg,.png',
 			maxFiles: 1
 		});
 
 	const labels = useSelector((state) => state.postLibrary.labels);
-	const specificViral = useSelector(
-		(state) => state.ViralLibraryStore.specificViral
+
+	const specificArticle = useSelector(
+		(state) => state.ArticleLibraryStore.specificArticle
 	);
+	console.log(specificArticle, '==== specificArticle ----');
+
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		if (specificArticle) {
+			if (specificArticle?.labels) {
+				let _labels = [];
+				specificArticle.labels.map((label) =>
+					_labels.push({ id: -1, name: label })
+				);
+				setSelectedLabels(_labels);
+			}
+			setArticleTitle(specificArticle.title);
+			// setEditorText(specificArticle.description);
+			setTimeout(() => {
+				specificArticle.length === 0
+					? setEditorText('')
+					: setEditorText(
+							tinyMCE.activeEditor.setContent(specificArticle.description)
+					  );
+			}, 5000);
+
+			console.log(editorText, 'specific data');
+			setUploadedFiles([
+				{
+					id: makeid(10),
+					fileName: specificArticle?.file_name,
+					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificArticle?.image}`,
+					type: 'image'
+				}
+			]);
+		}
+	}, [specificArticle]);
+
+	// useEffect(() => {
+	// 	setEditorText(editorText);
+	// 	console.log(editorText, 'use Effect');
+	// }, [editorText]);
 
 	useEffect(() => {
 		setPostLabels((labels) => {
@@ -97,40 +158,6 @@ const UploadOrEditViral = ({
 			setPostLabels([...labels]);
 		}
 	}, [labels]);
-
-	useEffect(() => {
-		if (specificViral) {
-			if (specificViral?.labels) {
-				let _labels = [];
-				specificViral.labels.map((label) =>
-					_labels.push({ id: -1, name: label })
-				);
-				setSelectedLabels(_labels);
-			}
-			setCaption(specificViral.caption);
-			if (specificViral?.thumbnail_url) {
-				setUploadedFiles([
-					{
-						id: makeid(10),
-						fileName: specificViral?.file_name,
-						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.thumbnail_url}`,
-						url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
-						type: 'video'
-					}
-				]);
-			}
-			if (specificViral?.thumbnail_url === null) {
-				setUploadedFiles([
-					{
-						id: makeid(10),
-						fileName: specificViral?.file_name,
-						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
-						type: 'image'
-					}
-				]);
-			}
-		}
-	}, [specificViral]);
 
 	useEffect(() => {
 		dispatch(getPostLabels());
@@ -167,7 +194,6 @@ const UploadOrEditViral = ({
 			setDropZoneBorder('#ffff00');
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
-				// readImageFile(file);
 				return {
 					id: id,
 					fileName: file.name,
@@ -175,39 +201,12 @@ const UploadOrEditViral = ({
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
-					type: file.type === 'video/mp4' ? 'video' : 'image'
+					type: 'image'
 				};
 			});
 			setUploadedFiles([...uploadedFiles, ...newFiles]);
 		}
 	}, [acceptedFiles]);
-
-	// useEffect(() => {
-	// 	console.log(videoRef?.current?.duration);
-	// }, [videoRef.current]);
-	// useEffect(() => {
-	// 	//console.log('adw');
-	// 	if (videoRef?.current) {
-	// 		console.log('dawdw');
-	// 		console.log(videoRef?.current?.clientWidth);
-	// 	}
-	// 	alert(videoRef?.current?.clientWidth);
-	// }, [videoRef.current]);
-
-	// const readImageFile = (file) => {
-	// 	var reader = new FileReader(); // CREATE AN NEW INSTANCE.
-
-	// 	reader.onload = function (e) {
-	// 		var img = file;
-	// 		img.src = e.target.result;
-
-	// 		img.onload = function () {
-	// 			var w = this.width;
-	// 			var h = this.height;
-	// 			console.log(w, h, 'w h ');
-	// 		};
-	// 	};
-	// };
 
 	const uploadFileToServer = async (uploadedFile) => {
 		try {
@@ -223,7 +222,12 @@ const UploadOrEditViral = ({
 					}
 				}
 			);
-
+			const frame = captureVideoFrame('my-video', 'png');
+			if (result?.data?.data?.video_thumbnail_url) {
+				await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
+					headers: { 'Content-Type': 'image/png' }
+				});
+			}
 			if (result?.data?.data?.url) {
 				const _result = await axios.put(
 					result?.data?.data?.url,
@@ -233,19 +237,13 @@ const UploadOrEditViral = ({
 						headers: { 'Content-Type': uploadedFile.mime_type }
 					}
 				);
-				const frame = captureVideoFrame('my-video', 'png');
-				// console.log(frame, 'frame', frame.width);
-				if (result?.data?.data?.video_thumbnail_url) {
-					await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
-						headers: { 'Content-Type': 'image/png' }
-					});
-				}
+
 				if (_result?.status === 200) {
 					const uploadResult = await axios.post(
 						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
 						{
 							file_name: uploadedFile.file.name,
-							type: 'virallibrary',
+							type: 'articleLibrary',
 							data: {
 								bucket: 'media',
 								multipart_upload:
@@ -293,16 +291,77 @@ const UploadOrEditViral = ({
 		}
 	};
 
+	const createArticle = async (id, mediaFiles = []) => {
+		const editorTextContent = tinymce?.activeEditor?.getContent();
+		console.log(editorTextContent, 'editorTextContent');
+		setPostButtonStatus(true);
+
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/article/post-article`,
+				{
+					...(articleTitle ? { title: articleTitle } : { articleTitle: '' }),
+					...(!isEdit ? { image: mediaFiles[0]?.media_url } : {}),
+					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
+					...(!isEdit ? { height: fileHeight } : {}),
+					...(!isEdit ? { width: fileWidth } : {}),
+					// ...(!isEdit ? { description: editorTextContent } : {}),
+					// description: editorTextContent,
+					description: editorTextContent,
+					user_data: {
+						id: `${getLocalStorageDetails()?.id}`,
+						first_name: `${getLocalStorageDetails()?.first_name}`,
+						last_name: `${getLocalStorageDetails()?.last_name}`
+					},
+					...(isEdit && id
+						? { article_id: id, description: editorTextContent }
+						: {}),
+					...(!isEdit && selectedLabels.length
+						? { labels: [...selectedLabels] }
+						: {})
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success(
+					isEdit ? 'Article has been edited!' : 'Article has been created!'
+				);
+				setIsLoading(false);
+				setPostButtonStatus(false);
+				handleClose();
+				dispatch(getAllArticlesApi({ page }));
+				dispatch(getPostLabels());
+			}
+		} catch (e) {
+			toast.error(
+				isEdit ? 'Failed to edit Article!' : 'Failed to create Article!'
+			);
+			setIsLoading(false);
+			setPostButtonStatus(false);
+			console.log(e);
+		}
+	};
+
 	const resetState = () => {
-		setCaption('');
+		setArticleTitle('');
+		// setEditorText('');
 		setUploadMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
 		setDropZoneBorder('#ffff00');
+		setArticleTitleColor('#ffffff');
+		setArticleTitleError('');
+		setLabelColor('#ffffff');
+		setLabelError('');
 		setPostButtonStatus(false);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
+		setExtraLabel('');
 		setPreviewFile(null);
 		setPreviewBool(false);
 		setSelectedLabels([]);
@@ -315,7 +374,7 @@ const UploadOrEditViral = ({
 		);
 	};
 
-	const validateViralBtn = () => {
+	const validateArticleBtn = () => {
 		if (uploadedFiles.length < 1) {
 			setDropZoneBorder('#ff355a');
 			setUploadMediaError('You need to upload a media in order to post');
@@ -338,97 +397,45 @@ const UploadOrEditViral = ({
 			}, [5000]);
 		}
 
-		if (!caption) {
-			setCaptionColor('#ff355a');
-			setCaptionError(
-				'You need to put a caption of atleast 1 character in order to post'
-			);
+		if (!articleTitle) {
+			setArticleTitleColor('#ff355a');
+			setArticleTitleError('This field is required');
 			setTimeout(() => {
-				setCaptionColor('#ffff00');
-				setCaptionError('');
+				setArticleTitleColor('#ffffff');
+				setArticleTitleError('');
 			}, [5000]);
-		}
-	};
-
-	const createViral = async (id, mediaFiles = []) => {
-		setPostButtonStatus(true);
-		try {
-			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
-				{
-					...(caption ? { caption: caption } : { caption: '' }),
-					...(!isEdit ? { media_url: mediaFiles[0]?.media_url } : {}),
-					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
-					...(!isEdit ? { thumbnail_url: mediaFiles[0]?.thumbnail_url } : {}),
-					...(!isEdit ? { height: fileHeight } : {}),
-					...(!isEdit ? { width: fileWidth } : {}),
-					user_data: {
-						id: `${getLocalStorageDetails()?.id}`,
-						first_name: `${getLocalStorageDetails()?.first_name}`,
-						last_name: `${getLocalStorageDetails()?.last_name}`
-					},
-					...(isEdit && id ? { viral_id: id } : {}),
-					...(!isEdit && selectedLabels.length
-						? { labels: [...selectedLabels] }
-						: {})
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
-				}
-			);
-			if (result?.data?.status_code === 200) {
-				toast.success(
-					isEdit ? 'Viral has been edited!' : 'Viral has been created!'
-				);
-				setIsLoadingcreateViral(false);
-				setPostButtonStatus(false);
-				handleClose();
-				dispatch(getAllViralsApi({ page }));
-				dispatch(getPostLabels());
-			}
-		} catch (e) {
-			toast.error(isEdit ? 'Failed to edit viral!' : 'Failed to create viral!');
-			setIsLoadingcreateViral(false);
-			setPostButtonStatus(false);
-			console.log(e);
-		}
-	};
-
-	const deleteViral = async (id) => {
-		setDeleteBtnStatus(true);
-		try {
-			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/viral/delete-viral`,
-				{
-					viral_id: id
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
-				}
-			);
-			if (result?.data?.status_code === 200) {
-				toast.success('Viral has been deleted!');
-				handleClose();
-
-				//setting a timeout for getting post after delete.
-				dispatch(getAllViralsApi({ page }));
-			}
-		} catch (e) {
-			toast.error('Failed to delete Viral!');
-			setDeleteBtnStatus(false);
-			console.log(e);
 		}
 	};
 
 	const [newLabels, setNewLabels] = useState([]);
 
-	useEffect(() => {
-		if (labels.length) setNewLabels(labels);
-	}, [newLabels]);
+	const deleteArticle = async (id) => {
+		setDeleteBtnStatus(true);
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/article/delete-article`,
+				{
+					article_id: id
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success('Article has been deleted!');
+				handleClose();
+
+				//setting a timeout for getting post after delete.
+				dispatch(getAllArticlesApi({ page }));
+			}
+		} catch (e) {
+			toast.error('Failed to delete Article!');
+			setDeleteBtnStatus(false);
+			console.log(e);
+		}
+	};
 
 	const handleChangeExtraLabel = (e) => {
 		// e.preventDefault();
@@ -436,19 +443,29 @@ const UploadOrEditViral = ({
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
+	useEffect(() => {
+		if (labels.length) setNewLabels(labels);
+	}, [newLabels]);
+
 	const handlePreviewEscape = () => {
 		setPreviewBool(false);
 		setPreviewFile(null);
 	};
 
-	const viralBtnDisabled =
+	const postBtnDisabled =
 		!uploadedFiles.length ||
+		!articleTitle ||
 		postButtonStatus ||
-		selectedLabels.length < 10 ||
-		!caption;
+		selectedLabels.length < 10;
 
-	const editBtnDisabled =
-		postButtonStatus || !caption || specificViral?.caption === caption.trim();
+	// const editBtnDisabled = postButtonStatus || !articleTitle;
+	//|| (specificPost?.articleTitle === articleTitle.trim() &&
+	// 	specificPost?.media_id == selectedMedia?.id);
+
+	// const regex = /[!@#$%^&*(),.?":{}|<>/\\ ]/g;
+	// var abc = 'hello editor';
+	// var abc = tinymce?.activeEditor?.getContent();
+	// console.log(abc, '==== abc =============');
 
 	return (
 		<Slider
@@ -468,9 +485,9 @@ const UploadOrEditViral = ({
 			previewRef={previewRef}
 			orientationRef={orientationRef}
 			edit={isEdit}
-			viral={true}
+			article={true}
 		>
-			<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
+			<LoadingOverlay active={isLoading} spinner text='Loading...'>
 				<div
 					className={`${
 						previewFile != null
@@ -478,14 +495,13 @@ const UploadOrEditViral = ({
 							: classes.contentWrapper
 					}`}
 				>
-					{/* {specificViralStatus.status === 'loading' ? (
+					{/* {specificPostStatus.status === 'loading' ? (
 						<div className={classes.loaderContainer2}>
 							<CircularProgress className={classes.loader} />
 						</div>
 					) : (
 						<></>
 					)} */}
-
 					<div
 						className={classes.contentWrapperNoPreview}
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
@@ -501,6 +517,7 @@ const UploadOrEditViral = ({
 											className={classes.uploadedFilesContainer}
 										>
 											{uploadedFiles.map((file, index) => {
+												console.log(file, 'file');
 												return (
 													<Draggable
 														key={file.id}
@@ -519,57 +536,22 @@ const UploadOrEditViral = ({
 																}}
 															>
 																<div className={classes.filePreviewLeft}>
-																	{file.type === 'video' ? (
-																		<>
-																			{/* <PlayArrowIcon
-																				className={classes.playIcon}
-																			/> */}
-																			<video
-																				id={'my-video'}
-																				poster={isEdit ? file.img : null}
-																				className={classes.fileThumbnail}
-																				style={{
-																					// maxWidth: `${imageToResizeWidth}px`,
-																					// maxHeight: `${imageToResizeHeight}px`,
-																					objectFit: 'cover',
-																					objectPosition: 'center'
-																				}}
-																				ref={videoRef}
-																				onLoadedMetadata={() => {
-																					setFileWidth(
-																						videoRef.current.videoWidth
-																					);
-																					setFileHeight(
-																						videoRef.current.videoHeight
-																					);
-																				}}
-																			>
-																				<source src={file.img} />
-																			</video>
-																		</>
-																	) : (
-																		<>
-																			<img
-																				src={file.img}
-																				className={classes.fileThumbnail}
-																				style={{
-																					// width: `${imageToResizeWidth}px`,
-																					// height: `${imageToResizeHeight}px`,
-																					objectFit: 'cover',
-																					objectPosition: 'center'
-																				}}
-																				ref={imgEl}
-																				onLoad={() => {
-																					setFileWidth(
-																						imgEl.current.naturalWidth
-																					);
-																					setFileHeight(
-																						imgEl.current.naturalHeight
-																					);
-																				}}
-																			/>
-																		</>
-																	)}
+																	<img
+																		src={file.img}
+																		className={classes.fileThumbnail}
+																		// ref={imageElement}
+																		style={{
+																			objectFit: 'cover',
+																			objectPosition: 'center'
+																		}}
+																		ref={imgEl}
+																		onLoad={() => {
+																			setFileWidth(imgEl.current.naturalWidth);
+																			setFileHeight(
+																				imgEl.current.naturalHeight
+																			);
+																		}}
+																	/>
 
 																	<p className={classes.fileName}>
 																		{file.fileName}
@@ -603,6 +585,7 @@ const UploadOrEditViral = ({
 																				setPreviewFile(file);
 																			}}
 																		/>
+
 																		<Deletes
 																			className={classes.filePreviewIcons}
 																			onClick={() => {
@@ -631,13 +614,16 @@ const UploadOrEditViral = ({
 									}}
 								>
 									<div {...getRootProps({ className: classes.dropzone })}>
-										<input {...getInputProps()} />
+										<input
+											{...getInputProps()}
+											// ref={ref}
+										/>
 										<AddCircleOutlineIcon className={classes.addFilesIcon} />
 										<p className={classes.dragMsg}>
 											Click or drag files to this area to upload
 										</p>
 										<p className={classes.formatMsg}>
-											Supported formats are jpeg, png and mp4
+											Supported formats are jpeg and png
 										</p>
 										<p className={classes.uploadMediaError}>
 											{uploadMediaError}
@@ -647,12 +633,46 @@ const UploadOrEditViral = ({
 							) : (
 								<></>
 							)}
+
 							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
+
+							<div className={classes.captionContainer}>
+								<h6 style={{ color: articleTitleColor }}>ARTICLE TITLE</h6>
+								<TextField
+									disabled={isEdit}
+									value={articleTitle}
+									onChange={(e) => setArticleTitle(e.target.value)}
+									placeholder={'Please write your title here'}
+									className={classes.textField}
+									InputProps={{
+										disableUnderline: true,
+										className: `${classes.textFieldInput} ${
+											isEdit && classes.disableAutoComplete
+										}`,
+										style: {
+											borderRadius: articleTitle ? '16px' : '40px'
+										}
+									}}
+									// inputProps={{ maxLength: 30 }}
+									// autoFocus={true}
+									// FormHelperTextProps={{
+									// 	className: classes.characterCount,
+									// 	style: {
+									// 		color: articleTitle.length === 30 ? 'red' : 'white'
+									// 	}
+									// }}
+									// helperText={`${articleTitle.length}/30`}
+									multiline
+									maxRows={2}
+								/>
+							</div>
+							<p className={classes.mediaError}>{articleTitleError}</p>
+
 							<div className={classes.captionContainer}>
 								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete
 									disabled={isEdit}
-									getOptionLabel={(option) => option.name} // name out of array of strings
+									getOptionLabel={(option) => option.name} // setSelectedLabels name out of array of strings
 									PaperComponent={(props) => {
 										setDisableDropdown(false);
 										return (
@@ -677,7 +697,7 @@ const UploadOrEditViral = ({
 										style: { maxHeight: 180 },
 										position: 'bottom'
 									}}
-									onClose={(e) => {
+									onClose={() => {
 										setDisableDropdown(true);
 									}}
 									multiple
@@ -686,21 +706,31 @@ const UploadOrEditViral = ({
 									freeSolo={false}
 									value={selectedLabels}
 									onChange={(event, newValue) => {
+										//console.log(newValue);
 										setDisableDropdown(true);
 										event.preventDefault();
 										event.stopPropagation();
+										// let regexCheck = regex.test(newValue);
+										// if (regexCheck) {
+										// 	alert('you cant use regex');
+										// }
+										// else {
 										let newLabels = newValue.filter(
+											//code to check if the new added label is already in the list
 											(v, i, a) =>
 												a.findIndex(
 													(t) => t.name.toLowerCase() === v.name.toLowerCase()
 												) === i
 										);
+
 										setSelectedLabels([...newLabels]);
+										//}
+
+										console.log(selectedLabels, newValue);
 									}}
 									popupIcon={''}
 									noOptionsText={
 										<div className={classes.liAutocompleteWithButton}>
-											{/* <p>{extraLabel.toUpperCase()}</p> */}
 											<p>No results found</p>
 											{/* <Button
 												text='CREATE NEW LABEL'
@@ -737,12 +767,15 @@ const UploadOrEditViral = ({
 											}}
 										/>
 									)}
-									renderOption={(props, option, state) => {
+									renderOption={(props, option) => {
+										//selected in input field,  some -> array to check exists
 										let currentLabelDuplicate = selectedLabels.some(
 											(label) => label.name == option.name
 										);
 
 										if (option.id == null && !currentLabelDuplicate) {
+											// if (option.filter(option=>option.name===option.name))
+
 											return (
 												<li
 													{...props}
@@ -761,10 +794,10 @@ const UploadOrEditViral = ({
 															fontWeight: 700
 														}}
 														onClick={() => {
-															setSelectedLabels((labels) => [
-																...labels,
-																extraLabel.toUpperCase()
-															]);
+															// setSelectedLabels((labels) => [
+															// 	...labels,
+															// 	extraLabel.toUpperCase()
+															// ]);
 														}}
 													/>
 												</li>
@@ -791,30 +824,257 @@ const UploadOrEditViral = ({
 									clearIcon={''}
 								/>
 							</div>
+
 							<p className={classes.mediaError}>{labelError}</p>
 
 							<div className={classes.captionContainer}>
-								<h6 style={{ color: captionColor }}>CAPTION</h6>
-								<TextField
-									value={caption}
-									onChange={(e) => setCaption(e.target.value)}
-									placeholder={'Please write your caption here'}
-									className={classes.textField}
-									InputProps={{
-										disableUnderline: true,
-										className: classes.textFieldInput,
-										style: {
-											borderRadius: caption ? '16px' : '40px'
-										}
-									}}
-									multiline
-									maxRows={4}
-								/>
+								<h6>ARTICLE TEXT</h6>
+								<div className={classes.editor}>
+									<Editor
+										// value={editorText}
+										// onChange={(e) => setEditorText(e.target.value)}
+										init={{
+											height: 288,
+											selector: '#myTextarea',
+											id: '#myTextarea',
+											browser_spellcheck: true,
+											contextmenu: false,
+											setup: function (editor) {
+												editor.on('init', function () {
+													// while (description === null || undefined) {
+													// 	console.log(description);
+													// }
+													// setTimeout(() => {
+													console.log(editorText, 'timeout');
+													// editor.setContent(
+													editorText;
+													// editorText === null || undefined ? '' : editorText;
+													// );
+													// }, 5000);
+													// console.log(
+													// 	tinymce.activeEditor.getContent(),
+													// 	'abc tinymce'
+													// );
+												});
+											},
+											//placeholder: 'WYSIWYG',
+											content_style:
+												"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white  };",
+											//+'.hamza {font-family:Poppins, sans-serif; font-size:64px ;color : green ; letter-spacing : -2%; font-weight : 800}',
+											branding: false,
+											statusbar: true,
+											skin: false,
+											//toolbar_mode: 'wrap',
+											//emoticons_database: 'emojiis',
+											//relative_urls: false,
+											//emoticons_database_url: '/emojis.js',
+											formats: {
+												title_h1: {
+													inline: 'span',
+													styles: {
+														fontWeight: '800',
+														fontSize: '64px',
+														letterSpacing: '-2%'
+														// lineHeight: '56px',
+													}
+													//classes: 'hamza'
+												},
+												title_h2: {
+													inline: 'span',
+													styles: {
+														fontWeight: '800',
+														fontSize: '40px',
+														letterSpacing: '-2%'
+													}
+												},
+												title_h3: {
+													inline: 'span',
+													styles: {
+														fontWeight: '800',
+														fontSize: '36px',
+														letterSpacing: '-2%'
+													}
+												},
+												title_h4: {
+													inline: 'span',
+													styles: {
+														fontWeight: '800',
+														fontSize: '24px',
+														letterSpacing: '-2%'
+													}
+												},
+												title_subtitle: {
+													inline: 'span',
+													styles: {
+														fontWeight: '600',
+														fontSize: '24px'
+													}
+												},
+												body_regular: {
+													inline: 'span',
+													styles: {
+														fontWeight: '400',
+														fontSize: '16px',
+														lineHeight: '24px'
+													}
+												},
+												body_bold: {
+													inline: 'span',
+													styles: {
+														fontWeight: '700',
+														fontSize: '16px',
+														lineHeight: '24px'
+													}
+												},
+												body_small: {
+													inline: 'span',
+													styles: {
+														fontWeight: '400',
+														fontSize: '14px',
+														lineHeight: '16px'
+													}
+												},
+												body_tiny: {
+													inline: 'span',
+													styles: {
+														fontWeight: '500',
+														fontSize: '12px',
+														lineHeight: '16px',
+														letterSpacing: '3%'
+													}
+												},
+												body_boldAndTiny: {
+													inline: 'span',
+													styles: {
+														fontWeight: '700',
+														fontSize: '12px',
+														lineHeight: '16px',
+														letterSpacing: '3%'
+													}
+												}
+											},
+											style_formats: [
+												{
+													title: 'Title',
+													items: [
+														{
+															title: 'Header 1',
+															format: 'title_h1'
+														},
+														{
+															title: 'Header 2',
+															format: 'title_h2'
+														},
+														{
+															title: 'Header 3',
+															format: 'title_h3'
+														},
+														{
+															title: 'Header 4',
+															format: 'title_h4'
+														},
+														{
+															title: 'Subtitle',
+															format: 'title_subtitle'
+														}
+													]
+												},
+												{
+													title: 'Body',
+													items: [
+														{
+															title: 'Regular',
+															format: 'body_regular'
+														},
+														{
+															title: 'Bold',
+															format: 'body_bold'
+														},
+														{
+															title: 'Small',
+															format: 'body_small'
+														},
+														{
+															title: 'Tiny',
+															format: 'body_tiny'
+														},
+														{
+															title: 'Bold and Tiny',
+															format: 'body_boldAndTiny'
+														}
+													]
+												}
+											],
+											menubar: 'edit view insert format tools',
+											// spellchecker_callback: function (method, text) {
+											// 	var words = text.match(this.getWordCharPattern());
+											// 	if (method === 'spellcheck') {
+											// 		var suggestions = {};
+											// 		for (var i = 0; i < words?.length; i++) {
+											// 			suggestions[words[i]] = ['First', 'Second'];
+											// 		}
+											// 	}
+											// },
+											// spellchecker_rpc_url:
+											// 	'../../../../node_modules/tinymce/plugins/spellchecker/plugin.min.js',
+											spellchecker_languages:
+												'English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr_FR,' +
+												'German=de,Italian=it,Polish=pl,Portuguese=pt_BR,Spanish=es,Swedish=sv',
+											menu: {
+												edit: {
+													title: 'Edit',
+													items: 'undo redo | cut copy paste  | searchreplace'
+												},
+												view: {
+													title: 'View',
+													items: ' spellchecker '
+												},
+												insert: {
+													title: 'Insert',
+													items:
+														'image link media  emoticons hr anchor insertdatetime'
+												},
+												format: {
+													title: 'Format',
+													items:
+														'bold italic underline strikethrough | formats  fontsizes align lineheight  '
+												},
+												tools: {
+													title: 'Tools',
+													items: 'spellchecker spellcheckerlanguage wordcount'
+												}
+											},
+											plugins: [
+												'lists advlist link image anchor',
+												'searchreplace spellchecker emoticons hr visualblocks fullscreen',
+												'insertdatetime media table paste wordcount  charmap textcolor colorpicker'
+											],
+											//width: 490,
+											toolbar:
+												'undo redo  bold italic underline strikethrough fontsizeselect | ' +
+												'alignleft aligncenter ' +
+												'alignright alignjustify | bullist numlist | ' +
+												'emoticons spellchecker spellcheckerlanguage'
+										}}
+										onInit={() => setDisableDropdown(false)}
+										onFocusIn={() => {
+											setDisableDropdown(false);
+										}}
+										onBlur={() => setDisableDropdown(true)}
+									/>
+								</div>
 							</div>
-
-							<p className={classes.mediaError}>{captionError}</p>
 						</div>
 
+						{/* <Button
+							disabled={deleteBtnStatus}
+							// button2={isEdit ? true : false}
+							onClick={() => {
+								tinymce.activeEditor.getContent();
+								console.log(tinymce.activeEditor.getContent());
+							}}
+							text={'set  ARTICLE'}
+						/> */}
 						<div className={classes.buttonDiv}>
 							{isEdit ? (
 								<div className={classes.editBtn}>
@@ -823,10 +1083,10 @@ const UploadOrEditViral = ({
 										button2={isEdit ? true : false}
 										onClick={() => {
 											if (!deleteBtnStatus) {
-												deleteViral(specificViral?.id);
+												deleteArticle(specificArticle?.id);
 											}
 										}}
-										text={'DELETE VIRAL'}
+										text={'DELETE ARTICLE'}
 									/>
 								</div>
 							) : (
@@ -835,16 +1095,16 @@ const UploadOrEditViral = ({
 
 							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 								<Button
-									disabled={isEdit ? editBtnDisabled : viralBtnDisabled}
+									disabled={postBtnDisabled}
 									onClick={() => {
-										if (viralBtnDisabled || editBtnDisabled) {
-											validateViralBtn();
+										if (postBtnDisabled) {
+											validateArticleBtn();
 										} else {
 											setPostButtonStatus(true);
 											if (isEdit) {
-												createViral(specificViral?.id);
+												createArticle(specificArticle?.id);
 											} else {
-												setIsLoadingcreateViral(true);
+												setIsLoading(true);
 												let uploadFilesPromiseArray = uploadedFiles.map(
 													async (_file) => {
 														return uploadFileToServer(_file);
@@ -853,10 +1113,10 @@ const UploadOrEditViral = ({
 
 												Promise.all([...uploadFilesPromiseArray])
 													.then((mediaFiles) => {
-														createViral(null, mediaFiles);
+														createArticle(null, mediaFiles);
 													})
 													.catch(() => {
-														setIsLoadingcreateViral(false);
+														setIsLoading(false);
 													});
 											}
 										}
@@ -866,6 +1126,7 @@ const UploadOrEditViral = ({
 							</div>
 						</div>
 					</div>
+
 					{previewFile != null && (
 						<div ref={previewRef} className={classes.previewComponent}>
 							<div className={classes.previewHeader}>
@@ -879,51 +1140,18 @@ const UploadOrEditViral = ({
 								<h5>Preview</h5>
 							</div>
 							<div>
-								{previewFile.mime_type === 'video/mp4' ? (
-									<video
-										id={'my-video'}
-										poster={isEdit ? previewFile.img : null}
-										className={classes.previewFile}
-										style={{
-											//width: `${8 * 4}rem`,
-											width: `100%`,
-											height: `${8 * 4}rem`,
-											objectFit: 'contain',
-											objectPosition: 'center'
-										}}
-										controls={true}
-									>
-										<source src={previewFile.img} />
-									</video>
-								) : isEdit && previewFile.type === 'video' ? (
-									<video
-										id={'my-video'}
-										poster={isEdit ? previewFile.thumbnail_url : null}
-										className={classes.previewFile}
-										style={{
-											//width: `${8 * 4}rem`,
-											width: `100%`,
-											height: `${8 * 4}rem`,
-											objectFit: 'contain',
-											objectPosition: 'center'
-										}}
-										controls={true}
-									>
-										<source src={previewFile.url} />
-									</video>
-								) : (
-									<img
-										src={previewFile.img}
-										className={classes.previewFile}
-										style={{
-											//width: `${8 * 4}rem`,
-											width: `100%`,
-											height: `${8 * 4}rem`,
-											objectFit: 'contain',
-											objectPosition: 'center'
-										}}
-									/>
-								)}
+								<img
+									src={previewFile.img}
+									className={classes.previewFile}
+									style={{
+										// width: `${imageToResizeWidth * 4}px`,
+										// height: `${imageToResizeHeight * 4}px`,
+										width: `100%`,
+										height: `${8 * 4}rem`,
+										objectFit: 'contain',
+										objectPosition: 'center'
+									}}
+								/>
 							</div>
 						</div>
 					)}

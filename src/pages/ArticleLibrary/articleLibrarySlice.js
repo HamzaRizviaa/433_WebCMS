@@ -1,9 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import ArticleLibraryService from './articleLibraryService';
 
-import PostLibraryService from './postLibraryService';
-
-export const getPosts = createAsyncThunk(
-	'postLibary/getPosts',
+export const getAllArticlesApi = createAsyncThunk(
+	'articlesLibrary/getAllArticlesApi',
 	async ({
 		page,
 		order_type,
@@ -13,9 +12,9 @@ export const getPosts = createAsyncThunk(
 		endDate,
 		fromCalendar = false
 	}) => {
-		let endPoint = `post/all-posts?limit=20&page=1`;
+		let endPoint = `article/all-articles?limit=20&page=1`;
 		if (page) {
-			endPoint = `post/all-posts?limit=20&page=${page}`;
+			endPoint = `article/all-articles?limit=20&page=${page}`;
 		}
 		if (order_type && sortby) {
 			endPoint += `&order_type=${order_type}&sort_by=${sortby}`;
@@ -26,20 +25,17 @@ export const getPosts = createAsyncThunk(
 		if (startDate && endDate) {
 			endPoint += `&start_date=${startDate}&end_date=${endDate}`;
 		}
-		const result = await PostLibraryService.getPostsApi(endPoint);
-		//console.log(result.data.data);
+		const result = await ArticleLibraryService.getAllArticlesServiceCall(
+			endPoint
+		);
+		// console.log(result, 'articles api');
 		return { ...result.data.data, fromCalendar };
 	}
 );
-
-export const getPostLabels = createAsyncThunk(
-	'postLibary/getPostLabels',
+export const getLabels = createAsyncThunk(
+	'articlesLibrary/getArticlesLabels',
 	async () => {
-		const result = await PostLibraryService.getPostLabelsApi();
-		// if (result?.status_code === 409) {
-		// 	console.log('kakaaa');
-		// 	localStorage.removeItem('user_data');
-		// }
+		const result = await ArticleLibraryService.getLabelsApi();
 		if (result?.data?.data?.length > 0) {
 			return result.data.data;
 		} else {
@@ -47,11 +43,10 @@ export const getPostLabels = createAsyncThunk(
 		}
 	}
 );
-
-export const getSpecificPost = createAsyncThunk(
-	'editButton/getSpecificPost', //khud se , not url , url is in services
+export const getSpecificArticle = createAsyncThunk(
+	'editButton/getSpecificArticle',
 	async (id) => {
-		const response = await PostLibraryService.getSpecificPostApi(id);
+		const response = await ArticleLibraryService.getSpecificArticleApi(id);
 		if (response?.data?.data) {
 			return response.data.data;
 		} else {
@@ -59,13 +54,12 @@ export const getSpecificPost = createAsyncThunk(
 		}
 	}
 );
-
-export const postLibrarySlice = createSlice({
-	name: 'postLibrary',
+export const articlesLibrarySlice = createSlice({
+	name: 'articlesLibrary',
 	initialState: {
-		labels: [],
-		posts: [], // all posts
-		specificPost: [], //specific posts
+		labels: [], //get api - all labels state
+		articles: [], //get api - all articles state
+		specificArticle: [], ///get api - all specific article data state
 		openUploadPost: false,
 		totalRecords: 0,
 		noResultStatus: false,
@@ -80,13 +74,12 @@ export const postLibrarySlice = createSlice({
 		}
 	},
 	extraReducers: {
-		//redux comes up
-		[getPosts.pending]: (state) => {
+		[getAllArticlesApi.pending]: (state) => {
 			state.status = 'loading';
 		},
-		[getPosts.fulfilled]: (state, action) => {
-			state.posts =
-				action.payload.data.length > 0 ? action.payload.data : state.posts;
+		[getAllArticlesApi.fulfilled]: (state, action) => {
+			state.articles =
+				action.payload.data.length > 0 ? action.payload.data : state.articles;
 			state.totalRecords =
 				action.payload.data.length > 0
 					? action.payload.total
@@ -99,27 +92,26 @@ export const postLibrarySlice = createSlice({
 				state.noResultStatus = action.payload.data.length > 0 ? false : true;
 			}
 		},
-		[getPosts.rejected]: (state) => {
+		[getAllArticlesApi.rejected]: (state) => {
 			state.status = 'failed';
 		},
-		[getPostLabels.fulfilled]: (state, action) => {
+		[getLabels.fulfilled]: (state, action) => {
 			state.labels = action.payload;
 		},
-
-		[getSpecificPost.pending]: (state) => {
+		[getSpecificArticle.pending]: (state) => {
 			state.status = 'loading';
 		},
-		[getSpecificPost.fulfilled]: (state, action) => {
-			state.specificPost = action.payload;
+		[getSpecificArticle.fulfilled]: (state, action) => {
+			state.specificArticle = action.payload;
 			state.status = 'success';
 		},
-		[getSpecificPost.rejected]: (state) => {
+		[getSpecificArticle.rejected]: (state) => {
 			state.status = 'failed';
 		}
 	}
 });
 
 export const { resetCalendarError, resetNoResultStatus } =
-	postLibrarySlice.actions;
+	articlesLibrarySlice.actions;
 
-export default postLibrarySlice.reducer;
+export default articlesLibrarySlice.reducer;

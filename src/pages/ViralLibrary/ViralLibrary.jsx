@@ -25,6 +25,7 @@ import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import { Markup } from 'interweave';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 // import './_calender.scss';
+import { useNavigate } from 'react-router-dom';
 
 import {
 	getAllViralsApi,
@@ -36,7 +37,7 @@ import {
 const ViralLibrary = () => {
 	// Selectors
 	const virals = useSelector((state) => state.ViralLibraryStore.virals);
-	//console.log(virals);
+	console.log(virals, 'virals data api');
 	// const totalRecords = 200;
 	const totalRecords = useSelector(
 		(state) => state.ViralLibraryStore.totalRecords
@@ -65,6 +66,22 @@ const ViralLibrary = () => {
 	const [startDate, endDate] = dateRange;
 	const [tooltipTitle, setTooltipTitle] = useState(false);
 	const fileNameRef = useRef(null);
+
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));
+		let current_date = new Date();
+		let time_difference_minutes = (expiry_date - current_date) / 1000 / 60; //in minutes
+		// console.log(current_date, 'curr');
+		console.log(time_difference_minutes);
+		if (time_difference_minutes <= 1) {
+			alert('Your session has expired');
+			localStorage.removeItem('user_data');
+			localStorage.removeItem('token_expire_time');
+			navigate('/sign-in');
+		}
+	}, []);
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
 		const startDate = formatDate(dateRange[0]);
@@ -172,54 +189,6 @@ const ViralLibrary = () => {
 			);
 		return null;
 	};
-
-	// useEffect(() => {
-	// 	console.log(
-	// 		'cotent',
-	// 		fileNameRef.current ? fileNameRef.current.innerHTML : 'none'
-	// 	);
-	// 	// if (fileNameRef.current || fileNameRef?.current?.offsetWidth > 200) {
-	// 	// 	setTooltipTitle(true);
-	// 	// }
-	// 	// console.log(tooltipTitle);
-	// }, [fileNameRef.current]);
-
-	// useEffect(() => {
-	// 	console.log(
-	// 		'width',
-	// 		fileNameRef.current ? fileNameRef.current.offsetWidth : 0
-	// 	);
-	// 	if (fileNameRef.current || fileNameRef?.current?.offsetWidth > 200) {
-	// 		setTooltipTitle(true);
-	// 	}
-	// 	console.log(tooltipTitle);
-	// }, [fileNameRef.current]);
-
-	// const useResize = (myRef) => {
-	// 	const [width, setWidth] = useState(0);
-	// 	const [height, setHeight] = useState(0);
-
-	// 	useEffect(() => {
-	// 		const handleResize = () => {
-	// 			if (myRef?.current) {
-	// 				setWidth(myRef?.current?.offsetWidth);
-	// 				setHeight(myRef?.current?.offsetHeight);
-	// 			}
-	// 		};
-
-	// 		window.addEventListener('resize', handleResize());
-
-	// 		return () => {
-	// 			window.removeEventListener('resize', handleResize());
-	// 		};
-	// 	}, [myRef]);
-
-	// 	return { width, height };
-	// };
-
-	// const { width, height } = useResize(fileNameRef);
-	// console.log(width);
-	// console.log(height);
 
 	const columns = [
 		{
