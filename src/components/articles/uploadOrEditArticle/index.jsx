@@ -42,7 +42,8 @@ import 'tinymce/plugins/lists';
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/textcolor';
 import 'tinymce/plugins/colorpicker';
-import 'tinymce/plugins/table';
+import 'tinymce/plugins/fullscreen';
+import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/spellchecker';
 import 'tinymce/skins/ui/oxide/skin.min.css';
 import 'tinymce/skins/ui/oxide/content.min.css';
@@ -838,7 +839,6 @@ const UploadOrEditViral = ({
 											id: '#myTextarea',
 											browser_spellcheck: true,
 											contextmenu: false,
-
 											setup: function (editor) {
 												editor.on('init', function () {
 													// while (description === null || undefined) {
@@ -856,51 +856,101 @@ const UploadOrEditViral = ({
 													// 	'abc tinymce'
 													// );
 												});
-											}, //content_style: 'div {background: red;}',
+											},
+											//placeholder: 'WYSIWYG',
 											content_style:
-												"@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap'); body { font-family: Poppins; color: white   };" +
-												'.hamza {font-family:Poppins, sans-serif; font-size:100px , color : green}',
+												"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white  };",
+											//+'.hamza {font-family:Poppins, sans-serif; font-size:64px ;color : green ; letter-spacing : -2%; font-weight : 800}',
 											branding: false,
 											statusbar: true,
 											skin: false,
-
-											// emoticons_append: {
-											// 	custom_mind_explode: {
-											// 		keywords: ['brain', 'mind', 'explode', 'blown'],
-											// 		char: '🤯'
-											// 	}
-											// },
-											// emoticons_database_url: 'tinymce/plugins/emoticons/js/emojis.js',
-											// textcolor_cols: '1',
-											// textcolor_rows: '1',
-											// textcolor_map: ['FFFFFF', 'White'],
-											// color_picker_callback: function (callback) {
-											// 	callback('#000000');
-											// },
-											//toolbar_mode: 'sliding',
-											//font_formats: 'Poppins = poppins, sans-serif;',
+											//toolbar_mode: 'wrap',
+											//emoticons_database: 'emojiis',
+											//relative_urls: false,
+											//emoticons_database_url: '/emojis.js',
 											formats: {
 												title_h1: {
 													inline: 'span',
 													styles: {
-														//fontFamily: 'Poppins',
 														fontWeight: '800',
 														fontSize: '64px',
-														letterSpacing: '-2%',
-														marginBottom: '4px'
-														//color: 'yellow'
-													},
-													classes: 'hamza'
+														letterSpacing: '-2%'
+														// lineHeight: '56px',
+													}
+													//classes: 'hamza'
 												},
 												title_h2: {
 													inline: 'span',
 													styles: {
-														//fontFamily: 'Poppins',
 														fontWeight: '800',
 														fontSize: '40px',
 														letterSpacing: '-2%'
 													}
-													//classes: 'hamza'
+												},
+												title_h3: {
+													inline: 'span',
+													styles: {
+														fontWeight: '800',
+														fontSize: '36px',
+														letterSpacing: '-2%'
+													}
+												},
+												title_h4: {
+													inline: 'span',
+													styles: {
+														fontWeight: '800',
+														fontSize: '24px',
+														letterSpacing: '-2%'
+													}
+												},
+												title_subtitle: {
+													inline: 'span',
+													styles: {
+														fontWeight: '600',
+														fontSize: '24px'
+													}
+												},
+												body_regular: {
+													inline: 'span',
+													styles: {
+														fontWeight: '400',
+														fontSize: '16px',
+														lineHeight: '24px'
+													}
+												},
+												body_bold: {
+													inline: 'span',
+													styles: {
+														fontWeight: '700',
+														fontSize: '16px',
+														lineHeight: '24px'
+													}
+												},
+												body_small: {
+													inline: 'span',
+													styles: {
+														fontWeight: '400',
+														fontSize: '14px',
+														lineHeight: '16px'
+													}
+												},
+												body_tiny: {
+													inline: 'span',
+													styles: {
+														fontWeight: '500',
+														fontSize: '12px',
+														lineHeight: '16px',
+														letterSpacing: '3%'
+													}
+												},
+												body_boldAndTiny: {
+													inline: 'span',
+													styles: {
+														fontWeight: '700',
+														fontSize: '12px',
+														lineHeight: '16px',
+														letterSpacing: '3%'
+													}
 												}
 											},
 											style_formats: [
@@ -909,58 +959,23 @@ const UploadOrEditViral = ({
 													items: [
 														{
 															title: 'Header 1',
-															format: 'title_h1',
-															// block: 'h1',
-															styles: {
-																//fontFamily: 'Poppins',
-																fontWeight: '800',
-																fontSize: '64',
-																letterSpacing: '-2%'
-																//color: '#ffffff'
-															}
+															format: 'title_h1'
 														},
 														{
 															title: 'Header 2',
-															format: 'title_h2',
-															//block: 'h2',
-															styles: {
-																//fontFamily: 'Poppins',
-																fontWeight: '800',
-																fontSize: '40',
-																letterSpacing: '-2%'
-															}
+															format: 'title_h2'
 														},
 														{
 															title: 'Header 3',
-															format: 'title_h3',
-															block: 'h3',
-															styles: {
-																fontFamily: 'Poppins',
-																fontWeight: '800',
-																fontSize: '36',
-																letterSpacing: '-2%'
-															}
+															format: 'title_h3'
 														},
 														{
 															title: 'Header 4',
-															format: 'title_h4',
-															block: 'h4',
-															styles: {
-																fontFamily: 'Poppins',
-																fontWeight: '800',
-																fontSize: '24',
-																letterSpacing: '-2%'
-															}
+															format: 'title_h4'
 														},
 														{
 															title: 'Subtitle',
-															format: 'title_subtitle',
-															block: 'h5',
-															styles: {
-																fontFamily: 'Poppins',
-																fontWeight: '600',
-																fontSize: '24'
-															}
+															format: 'title_subtitle'
 														}
 													]
 												},
@@ -969,76 +984,39 @@ const UploadOrEditViral = ({
 													items: [
 														{
 															title: 'Regular',
-															format: 'body_regular',
-															block: 'p',
-															styles: {
-																fontFamily: 'Poppins',
-																fontWeight: '400',
-																fontSize: '16',
-																lineHeight: '24'
-															}
+															format: 'body_regular'
 														},
 														{
 															title: 'Bold',
-															format: 'body_bold',
-															block: 'b',
-															styles: {
-																fontFamily: 'Poppins',
-																fontWeight: '700',
-																fontSize: '16',
-																lineHeight: '24'
-															}
+															format: 'body_bold'
 														},
 														{
 															title: 'Small',
-															format: 'body_small',
-															block: 'p',
-															styles: {
-																fontFamily: 'Poppins',
-																fontWeight: '400',
-																fontSize: '14',
-																lineHeight: '16'
-															}
+															format: 'body_small'
 														},
 														{
 															title: 'Tiny',
-															format: 'body_tiny',
-															block: 'p',
-															styles: {
-																fontFamily: 'Poppins',
-																fontWeight: '500',
-																fontSize: '12',
-																lineHeight: '16',
-																letterSpacing: '3%'
-															}
+															format: 'body_tiny'
 														},
 														{
 															title: 'Bold and Tiny',
-															format: 'body_boldAndTiny',
-															block: 'p',
-															styles: {
-																fontFamily: 'Poppins',
-																fontWeight: '700',
-																fontSize: '12',
-																lineHeight: '16',
-																letterSpacing: '3%'
-															}
+															format: 'body_boldAndTiny'
 														}
 													]
 												}
 											],
 											menubar: 'edit view insert format tools',
-											spellchecker_callback: function (method, text) {
-												var words = text.match(this.getWordCharPattern());
-												if (method === 'spellcheck') {
-													var suggestions = {};
-													for (var i = 0; i < words?.length; i++) {
-														suggestions[words[i]] = ['First', 'Second'];
-													}
-												}
-											},
-											// browser_spellcheck: true,
-											emoticons_database: 'emojiimages',
+											// spellchecker_callback: function (method, text) {
+											// 	var words = text.match(this.getWordCharPattern());
+											// 	if (method === 'spellcheck') {
+											// 		var suggestions = {};
+											// 		for (var i = 0; i < words?.length; i++) {
+											// 			suggestions[words[i]] = ['First', 'Second'];
+											// 		}
+											// 	}
+											// },
+											// spellchecker_rpc_url:
+											// 	'../../../../node_modules/tinymce/plugins/spellchecker/plugin.min.js',
 											spellchecker_languages:
 												'English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr_FR,' +
 												'German=de,Italian=it,Polish=pl,Portuguese=pt_BR,Spanish=es,Swedish=sv',
@@ -1054,7 +1032,7 @@ const UploadOrEditViral = ({
 												insert: {
 													title: 'Insert',
 													items:
-														'image link media emoticons hr anchor insertdatetime'
+														'image link media  emoticons hr anchor insertdatetime'
 												},
 												format: {
 													title: 'Format',
@@ -1069,13 +1047,14 @@ const UploadOrEditViral = ({
 											plugins: [
 												'lists advlist link image anchor',
 												'searchreplace spellchecker emoticons hr visualblocks fullscreen',
-												'insertdatetime media table paste wordcount textcolor colorpicker'
+												'insertdatetime media table paste wordcount  charmap textcolor colorpicker'
 											],
+											//width: 490,
 											toolbar:
-												'undo redo | bold italic underline strikethrough |  fontsizeselect formatselect| ' +
+												'undo redo  bold italic underline strikethrough fontsizeselect | ' +
 												'alignleft aligncenter ' +
 												'alignright alignjustify | bullist numlist | ' +
-												'emoticons'
+												'emoticons spellchecker spellcheckerlanguage'
 										}}
 										onInit={() => setDisableDropdown(false)}
 										onFocusIn={() => {
