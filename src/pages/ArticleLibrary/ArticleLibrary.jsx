@@ -1,11 +1,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
-import React, { useState, useEffect, forwardRef, useRef } from 'react';
+import React, { useState, useEffect, forwardRef, useCallback } from 'react';
 import Layout from '../../components/layout';
 import Table from '../../components/table';
 import classes from './_articleLibrary.module.scss';
 import Button from '../../components/button';
+import _debounce from 'lodash/debounce';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Tooltip from '@mui/material/Tooltip';
@@ -39,12 +40,12 @@ const ArticleLibrary = () => {
 	const totalRecords = useSelector(
 		(state) => state.ArticleLibraryStore.totalRecords
 	);
-	// console.log(totalRecords, 'totalRecords');
+
 	const noResultStatus = useSelector(
-		(state) => state.postLibrary.noResultStatus
+		(state) => state.ArticleLibraryStore.noResultStatus
 	);
 	const noResultStatusCalendar = useSelector(
-		(state) => state.postLibrary.noResultStatusCalendar
+		(state) => state.ArticleLibraryStore.noResultStatusCalendar
 	);
 
 	const muiClasses = useStyles();
@@ -154,7 +155,7 @@ const ArticleLibrary = () => {
 					style={{
 						left:
 							col?.dataField === 'article_title'
-								? -2
+								? 0
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||
@@ -171,7 +172,7 @@ const ArticleLibrary = () => {
 					style={{
 						left:
 							col?.dataField === 'article_title'
-								? -2
+								? 0
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||
@@ -188,7 +189,7 @@ const ArticleLibrary = () => {
 					style={{
 						left:
 							col?.dataField === 'article_title'
-								? -2
+								? 0
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||
@@ -304,8 +305,8 @@ const ArticleLibrary = () => {
 			text: 'USER',
 			formatter: (content) => {
 				return (
-					<div className={classes.row}>{content}</div>
-					// <Markup className={classes.row} content={`${content}`} />
+					// <div className={classes.row}>{content}</div>
+					<Markup className={classes.row} content={`${content}`} />
 				);
 			},
 			headerStyle: () => {
@@ -319,7 +320,7 @@ const ArticleLibrary = () => {
 			sortFunc: () => {},
 			text: 'LAST EDIT',
 			formatter: (content) => {
-				return <div className={classes.rowType}>{getDateTime(content)}</div>;
+				return <div className={classes.row}>{getDateTime(content)}</div>;
 			},
 			headerStyle: () => {
 				return { paddingLeft: '48px' };
@@ -415,7 +416,7 @@ const ArticleLibrary = () => {
 			setNoResultBorder('#FF355A');
 			setNoResultError('No Results Found');
 			setTimeout(() => {
-				// dispatch(resetNoResultStatus());
+				dispatch(resetNoResultStatus());
 				setNoResultBorder('#404040');
 				setNoResultError('');
 			}, [5000]);
@@ -427,7 +428,7 @@ const ArticleLibrary = () => {
 			setNoResultCalendarBorder('#FF355A');
 			setNoResultCalendarError('No Results Found');
 			setTimeout(() => {
-				// dispatch(resetCalendarError());
+				dispatch(resetCalendarError());
 				setNoResultCalendarBorder('#404040');
 				setNoResultCalendarError('');
 			}, [5000]);
@@ -440,10 +441,52 @@ const ArticleLibrary = () => {
 			setNoResultError('');
 			setNoResultCalendarBorder('#404040');
 			setNoResultCalendarError('');
-			// dispatch(resetCalendarError());
-			// dispatch(resetNoResultStatus());
+			dispatch(resetCalendarError());
+			dispatch(resetNoResultStatus());
 		};
 	}, []);
+
+	useEffect(() => {
+		//page switch and get scroll on top
+		let tableBody = document.getElementsByTagName('tbody')[0];
+		if (tableBody) {
+			tableBody.scrollTop = 0;
+		}
+	}, [page]);
+
+	const handleDebounceFun = () => {
+		let _search;
+		setSearch((prevState) => {
+			_search = prevState;
+			return _search;
+		});
+		if (_search) {
+			dispatch(
+				getAllArticlesApi({
+					q: _search,
+					page: 1,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		} else {
+			dispatch(
+				getAllArticlesApi({
+					page: 1,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
+		setPage(1);
+	};
+	const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
+	const handleChangeSearch = (e) => {
+		setSearch(e.target.value);
+		debounceFun(e.target.value);
+	};
 
 	return (
 		<Layout className={classes.articleLibrary}>
@@ -486,10 +529,12 @@ const ArticleLibrary = () => {
 									);
 								}
 							}}
-							onChange={(e) => {
-								setSearch(e.target.value);
-								//setIsSearch(true);
-							}}
+							// onChange={(e) => {
+
+							// 	setSearch(e.target.value);
+							// 	//setIsSearch(true);
+							// }}
+							onChange={handleChangeSearch}
 							placeholder={'Search post, user, label'}
 							InputProps={{
 								disableUnderline: true,
@@ -498,29 +543,29 @@ const ArticleLibrary = () => {
 								endAdornment: (
 									<InputAdornment>
 										<Search
-											onClick={() => {
-												console.log('search onclick');
-												if (search) {
-													dispatch(
-														getAllArticlesApi({
-															q: search,
-															page,
-															startDate: formatDate(dateRange[0]),
-															endDate: formatDate(dateRange[1]),
-															...sortState
-														})
-													);
-												} else {
-													dispatch(
-														getAllArticlesApi({
-															page,
-															startDate: formatDate(dateRange[0]),
-															endDate: formatDate(dateRange[1]),
-															...sortState
-														})
-													);
-												}
-											}}
+											// onClick={() => {
+											// 	console.log('search onclick');
+											// 	if (search) {
+											// 		dispatch(
+											// 			getAllArticlesApi({
+											// 				q: search,
+											// 				page,
+											// 				startDate: formatDate(dateRange[0]),
+											// 				endDate: formatDate(dateRange[1]),
+											// 				...sortState
+											// 			})
+											// 		);
+											// 	} else {
+											// 		dispatch(
+											// 			getAllArticlesApi({
+											// 				page,
+											// 				startDate: formatDate(dateRange[0]),
+											// 				endDate: formatDate(dateRange[1]),
+											// 				...sortState
+											// 			})
+											// 		);
+											// 	}
+											// }}
 											className={classes.searchIcon}
 										/>
 									</InputAdornment>

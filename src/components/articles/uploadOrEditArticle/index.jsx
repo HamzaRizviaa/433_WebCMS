@@ -98,7 +98,7 @@ const UploadOrEditViral = ({
 	const specificArticle = useSelector(
 		(state) => state.ArticleLibraryStore.specificArticle
 	);
-	console.log(specificArticle, '==== specificArticle ----');
+	console.log(specificArticle, '==== specificArticle ====');
 
 	const dispatch = useDispatch();
 
@@ -111,15 +111,15 @@ const UploadOrEditViral = ({
 				);
 				setSelectedLabels(_labels);
 			}
-			setArticleTitle(specificArticle.title);
+			setArticleTitle(specificArticle?.title);
 			// setEditorText(specificArticle.description);
-			setTimeout(() => {
-				specificArticle.length === 0
-					? setEditorText('')
-					: setEditorText(
-							tinyMCE.activeEditor.setContent(specificArticle.description)
-					  );
-			}, 5000);
+			// setTimeout(() => {
+			specificArticle?.length === 0
+				? setEditorText('')
+				: setEditorText(
+						tinyMCE.activeEditor.setContent(specificArticle?.description)
+				  );
+			// }, 5000);
 
 			console.log(editorText, 'specific data');
 			setUploadedFiles([
@@ -347,7 +347,7 @@ const UploadOrEditViral = ({
 
 	const resetState = () => {
 		setArticleTitle('');
-		// setEditorText('');
+		setEditorText('');
 		setUploadMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
@@ -886,7 +886,8 @@ const UploadOrEditViral = ({
 														//fontFamily: 'Poppins',
 														fontWeight: '800',
 														fontSize: '64px',
-														letterSpacing: '-2%'
+														letterSpacing: '-2%',
+														marginBottom: '4px'
 														//color: 'yellow'
 													},
 													classes: 'hamza'
