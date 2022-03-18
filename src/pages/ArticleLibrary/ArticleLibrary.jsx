@@ -195,8 +195,7 @@ const ArticleLibrary = () => {
 								  col?.dataField === 'last_edit' ||
 								  col?.dataField === 'user'
 								? 30
-								: -4,
-						bottom: 1
+								: -4
 					}}
 				/>
 			);
