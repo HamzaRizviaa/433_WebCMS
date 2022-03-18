@@ -299,6 +299,8 @@ const UploadOrEditViral = ({
 		setFileRejectionError('');
 		setUploadedFiles([]);
 		setDropZoneBorder('#ffff00');
+		setCaptionColor('#ffffff');
+		setLabelColor('#ffffff');
 		setPostButtonStatus(false);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
@@ -333,7 +335,7 @@ const UploadOrEditViral = ({
 				} more labels in order to post`
 			);
 			setTimeout(() => {
-				setLabelColor('#ffff00');
+				setLabelColor('#ffffff');
 				setLabelError('');
 			}, [5000]);
 		}
@@ -344,7 +346,7 @@ const UploadOrEditViral = ({
 				'You need to put a caption of atleast 1 character in order to post'
 			);
 			setTimeout(() => {
-				setCaptionColor('#ffff00');
+				setCaptionColor('#ffffff');
 				setCaptionError('');
 			}, [5000]);
 		}

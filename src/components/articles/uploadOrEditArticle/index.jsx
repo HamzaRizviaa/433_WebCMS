@@ -34,6 +34,7 @@ import 'tinymce/plugins/image';
 import 'tinymce/plugins/media';
 import 'tinymce/plugins/searchreplace';
 import 'tinymce/plugins/emoticons';
+import 'tinymce/plugins/emoticons/js/emojiimages.min.js';
 import 'tinymce/plugins/hr';
 import 'tinymce/plugins/anchor';
 import 'tinymce/plugins/insertdatetime';
@@ -44,7 +45,6 @@ import 'tinymce/plugins/textcolor';
 import 'tinymce/plugins/colorpicker';
 import 'tinymce/plugins/fullscreen';
 import 'tinymce/plugins/charmap';
-import 'tinymce/plugins/spellchecker';
 import 'tinymce/skins/ui/oxide/skin.min.css';
 import 'tinymce/skins/ui/oxide/content.min.css';
 import 'tinymce/skins/content/default/content.min.css';
@@ -65,6 +65,7 @@ const UploadOrEditViral = ({
 }) => {
 	const [articleTitle, setArticleTitle] = useState('');
 	const [editorText, setEditorText] = useState('');
+	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -72,6 +73,8 @@ const UploadOrEditViral = ({
 	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
 	const [articleTitleColor, setArticleTitleColor] = useState('#ffffff');
 	const [articleTitleError, setArticleTitleError] = useState('');
+	const [articleTextColor, setArticleTextColor] = useState('#ffffff');
+	const [articleTextError, setArticleTextError] = useState('');
 	const [labelColor, setLabelColor] = useState('#ffffff');
 	const [labelError, setLabelError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
@@ -99,7 +102,7 @@ const UploadOrEditViral = ({
 	const specificArticle = useSelector(
 		(state) => state.ArticleLibraryStore.specificArticle
 	);
-	console.log(specificArticle, '==== specificArticle ----');
+	// console.log(specificArticle, '==== specificArticle ----');
 
 	const dispatch = useDispatch();
 
@@ -112,17 +115,16 @@ const UploadOrEditViral = ({
 				);
 				setSelectedLabels(_labels);
 			}
-			setArticleTitle(specificArticle.title);
-			// setEditorText(specificArticle.description);
-			setTimeout(() => {
-				specificArticle.length === 0
-					? setEditorText('')
-					: setEditorText(
-							tinyMCE.activeEditor.setContent(specificArticle.description)
-					  );
-			}, 5000);
+			setArticleTitle(specificArticle?.title);
+			setEditorTextChecker(specificArticle.description);
+			// setTimeout(() => {
+			specificArticle?.length === 0
+				? setEditorText('')
+				: setEditorText(
+						tinyMCE.activeEditor.setContent(specificArticle?.description)
+				  );
+			// }, 5000);
 
-			console.log(editorText, 'specific data');
 			setUploadedFiles([
 				{
 					id: makeid(10),
@@ -291,9 +293,15 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	const createArticle = async (id, mediaFiles = []) => {
+	const handleEditorChange = () => {
 		const editorTextContent = tinymce?.activeEditor?.getContent();
-		console.log(editorTextContent, 'editorTextContent');
+		setEditorText(editorTextContent);
+		setEditorTextChecker(editorTextContent); // to check yellow button condition
+	};
+
+	const createArticle = async (id, mediaFiles = []) => {
+		// const editorTextContent = tinymce?.activeEditor?.getContent();
+		// console.log(editorTextContent, 'editorTextContent');
 		setPostButtonStatus(true);
 
 		try {
@@ -307,15 +315,13 @@ const UploadOrEditViral = ({
 					...(!isEdit ? { width: fileWidth } : {}),
 					// ...(!isEdit ? { description: editorTextContent } : {}),
 					// description: editorTextContent,
-					description: editorTextContent,
+					description: editorText,
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
 						last_name: `${getLocalStorageDetails()?.last_name}`
 					},
-					...(isEdit && id
-						? { article_id: id, description: editorTextContent }
-						: {}),
+					...(isEdit && id ? { article_id: id, description: editorText } : {}),
 					...(!isEdit && selectedLabels.length
 						? { labels: [...selectedLabels] }
 						: {})
@@ -348,13 +354,16 @@ const UploadOrEditViral = ({
 
 	const resetState = () => {
 		setArticleTitle('');
-		// setEditorText('');
+		setEditorText('');
+		setEditorTextChecker('');
 		setUploadMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
 		setDropZoneBorder('#ffff00');
 		setArticleTitleColor('#ffffff');
+		setArticleTextColor('#ffffff');
 		setArticleTitleError('');
+		setArticleTextError('');
 		setLabelColor('#ffffff');
 		setLabelError('');
 		setPostButtonStatus(false);
@@ -392,7 +401,7 @@ const UploadOrEditViral = ({
 				} more labels in order to post`
 			);
 			setTimeout(() => {
-				setLabelColor('#ffff00');
+				setLabelColor('#ffffff');
 				setLabelError('');
 			}, [5000]);
 		}
@@ -403,6 +412,15 @@ const UploadOrEditViral = ({
 			setTimeout(() => {
 				setArticleTitleColor('#ffffff');
 				setArticleTitleError('');
+			}, [5000]);
+		}
+
+		if (!editorText) {
+			setArticleTextColor('#ff355a');
+			setArticleTextError('This field is required');
+			setTimeout(() => {
+				setArticleTextColor('#ffffff');
+				setArticleTextError('');
 			}, [5000]);
 		}
 	};
@@ -456,8 +474,27 @@ const UploadOrEditViral = ({
 		!uploadedFiles.length ||
 		!articleTitle ||
 		postButtonStatus ||
-		selectedLabels.length < 10;
+		selectedLabels.length < 10 ||
+		!editorText;
 
+	// var html = editorTextChecker.replace(
+	// 	/(?:^(?:&nbsp;)+)|(?:(?:&nbsp;)+$)/g,
+	// 	''
+	// );
+	// var editorData = $('<div/>').html(html).text();
+	const editorTextCheckerTrimmed = editorTextChecker?.replace(/&nbsp;/g, ' ');
+	const specificArticleTextTrimmed = specificArticle?.description?.replace(
+		/&nbsp;/g,
+		' '
+	);
+	const editBtnDisabled =
+		postButtonStatus ||
+		specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim();
+
+	console.log(specificArticleTextTrimmed, 'desc');
+	console.log(editorTextCheckerTrimmed.trim(), 'editor');
+	console.log(specificArticleTextTrimmed?.length, 'desc Length');
+	console.log(editorTextCheckerTrimmed?.trim()?.length, 'editor Length');
 	// const editBtnDisabled = postButtonStatus || !articleTitle;
 	//|| (specificPost?.articleTitle === articleTitle.trim() &&
 	// 	specificPost?.media_id == selectedMedia?.id);
@@ -465,7 +502,6 @@ const UploadOrEditViral = ({
 	// const regex = /[!@#$%^&*(),.?":{}|<>/\\ ]/g;
 	// var abc = 'hello editor';
 	// var abc = tinymce?.activeEditor?.getContent();
-	// console.log(abc, '==== abc =============');
 
 	return (
 		<Slider
@@ -517,7 +553,6 @@ const UploadOrEditViral = ({
 											className={classes.uploadedFilesContainer}
 										>
 											{uploadedFiles.map((file, index) => {
-												console.log(file, 'file');
 												return (
 													<Draggable
 														key={file.id}
@@ -706,7 +741,6 @@ const UploadOrEditViral = ({
 									freeSolo={false}
 									value={selectedLabels}
 									onChange={(event, newValue) => {
-										//console.log(newValue);
 										setDisableDropdown(true);
 										event.preventDefault();
 										event.stopPropagation();
@@ -725,8 +759,6 @@ const UploadOrEditViral = ({
 
 										setSelectedLabels([...newLabels]);
 										//}
-
-										console.log(selectedLabels, newValue);
 									}}
 									popupIcon={''}
 									noOptionsText={
@@ -828,7 +860,7 @@ const UploadOrEditViral = ({
 							<p className={classes.mediaError}>{labelError}</p>
 
 							<div className={classes.captionContainer}>
-								<h6>ARTICLE TEXT</h6>
+								<h6 style={{ color: articleTextColor }}>ARTICLE TEXT</h6>
 								<div className={classes.editor}>
 									<Editor
 										// value={editorText}
@@ -845,7 +877,7 @@ const UploadOrEditViral = ({
 													// 	console.log(description);
 													// }
 													// setTimeout(() => {
-													console.log(editorText, 'timeout');
+													// console.log(editorText, 'timeout');
 													// editor.setContent(
 													editorText;
 													// editorText === null || undefined ? '' : editorText;
@@ -857,16 +889,16 @@ const UploadOrEditViral = ({
 													// );
 												});
 											},
-											//placeholder: 'WYSIWYG',
 											content_style:
-												"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white  };",
+												"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white  }; ",
 											//+'.hamza {font-family:Poppins, sans-serif; font-size:64px ;color : green ; letter-spacing : -2%; font-weight : 800}',
 											branding: false,
 											statusbar: true,
 											skin: false,
+											emoticons_database: 'emojiimages',
 											//toolbar_mode: 'wrap',
-											//emoticons_database: 'emojiis',
 											//relative_urls: false,
+											//placeholder: 'WYSIWYG .......',
 											//emoticons_database_url: '/emojis.js',
 											formats: {
 												title_h1: {
@@ -874,7 +906,8 @@ const UploadOrEditViral = ({
 													styles: {
 														fontWeight: '800',
 														fontSize: '64px',
-														letterSpacing: '-2%'
+														letterSpacing: '-2%',
+														marginBottom: '3px'
 														// lineHeight: '56px',
 													}
 													//classes: 'hamza'
@@ -959,7 +992,10 @@ const UploadOrEditViral = ({
 													items: [
 														{
 															title: 'Header 1',
-															format: 'title_h1'
+															format: 'title_h1',
+															styles: {
+																marginBottom: '23px !important'
+															}
 														},
 														{
 															title: 'Header 2',
@@ -1005,34 +1041,16 @@ const UploadOrEditViral = ({
 													]
 												}
 											],
-											menubar: 'edit view insert format tools',
-											// spellchecker_callback: function (method, text) {
-											// 	var words = text.match(this.getWordCharPattern());
-											// 	if (method === 'spellcheck') {
-											// 		var suggestions = {};
-											// 		for (var i = 0; i < words?.length; i++) {
-											// 			suggestions[words[i]] = ['First', 'Second'];
-											// 		}
-											// 	}
-											// },
-											// spellchecker_rpc_url:
-											// 	'../../../../node_modules/tinymce/plugins/spellchecker/plugin.min.js',
-											spellchecker_languages:
-												'English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr_FR,' +
-												'German=de,Italian=it,Polish=pl,Portuguese=pt_BR,Spanish=es,Swedish=sv',
+											menubar: 'edit insert format tools',
 											menu: {
 												edit: {
 													title: 'Edit',
 													items: 'undo redo | cut copy paste  | searchreplace'
 												},
-												view: {
-													title: 'View',
-													items: ' spellchecker '
-												},
 												insert: {
 													title: 'Insert',
 													items:
-														'image link media  emoticons hr anchor insertdatetime'
+														'image link media charmap emoticons hr anchor insertdatetime'
 												},
 												format: {
 													title: 'Format',
@@ -1041,12 +1059,12 @@ const UploadOrEditViral = ({
 												},
 												tools: {
 													title: 'Tools',
-													items: 'spellchecker spellcheckerlanguage wordcount'
+													items: 'wordcount'
 												}
 											},
 											plugins: [
 												'lists advlist link image anchor',
-												'searchreplace spellchecker emoticons hr visualblocks fullscreen',
+												'searchreplace  emoticons hr visualblocks fullscreen',
 												'insertdatetime media table paste wordcount  charmap textcolor colorpicker'
 											],
 											//width: 490,
@@ -1054,8 +1072,9 @@ const UploadOrEditViral = ({
 												'undo redo  bold italic underline strikethrough fontsizeselect | ' +
 												'alignleft aligncenter ' +
 												'alignright alignjustify | bullist numlist | ' +
-												'emoticons spellchecker spellcheckerlanguage'
+												'emoticons'
 										}}
+										onEditorChange={() => handleEditorChange()}
 										onInit={() => setDisableDropdown(false)}
 										onFocusIn={() => {
 											setDisableDropdown(false);
@@ -1064,17 +1083,10 @@ const UploadOrEditViral = ({
 									/>
 								</div>
 							</div>
+
+							<p className={classes.mediaError}>{articleTextError}</p>
 						</div>
 
-						{/* <Button
-							disabled={deleteBtnStatus}
-							// button2={isEdit ? true : false}
-							onClick={() => {
-								tinymce.activeEditor.getContent();
-								console.log(tinymce.activeEditor.getContent());
-							}}
-							text={'set  ARTICLE'}
-						/> */}
 						<div className={classes.buttonDiv}>
 							{isEdit ? (
 								<div className={classes.editBtn}>
@@ -1095,9 +1107,9 @@ const UploadOrEditViral = ({
 
 							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 								<Button
-									disabled={postBtnDisabled}
+									disabled={isEdit ? editBtnDisabled : postBtnDisabled}
 									onClick={() => {
-										if (postBtnDisabled) {
+										if (postBtnDisabled || editBtnDisabled) {
 											validateArticleBtn();
 										} else {
 											setPostButtonStatus(true);

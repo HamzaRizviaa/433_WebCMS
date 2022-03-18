@@ -108,12 +108,41 @@
 	margin-bottom: 1.5rem;
 	font-size: 1.2rem;
 	padding-left: 35px;
+	display: block;
 }
 
 .rowType {
 	margin-bottom: 1.5rem;
 	font-size: 1.2rem;
 	padding-left: 35px;
+}
+
+.paginationRow {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	padding: 1vw 2vw;
+	nav {
+		width: fit-content;
+	}
+	.gotoText {
+		font-size: 12px;
+		font-weight: 700;
+		margin: 0px 10px;
+	}
+	.gotoInput {
+		background: #000000;
+		color: white;
+		border-radius: 8px;
+		padding: 6px;
+		width: 50px;
+		&:focus {
+			outline: none;
+		}
+	}
 }
 //landscape scss
 
@@ -182,7 +211,7 @@
 }
 
 .fileName {
-	margin-left: 1rem;
+	// margin-left: 1rem;
 	font-size: 1.2rem;
 }
 
@@ -193,13 +222,14 @@
 	white-space: nowrap;
 }
 
-.mediaIcon {
-	height: 5rem;
-	//width: 5rem;
-	//max-width: 100%;
-	border-radius: 8px;
-	object-fit: cover;
-}
+// .mediaIcon {
+// 	height: 5rem;
+// 	//width: 5rem;
+// 	//max-width: 100%;
+// 	border-radius: 8px;
+// 	object-fit: cover;
+// 	margin-right: 1.5rem;
+// }
 
 .mediaIconPreview {
 	height: calc(5rem * 5);
@@ -214,4 +244,5 @@
 	width: 48px;
 	border-radius: 8px;
 	object-fit: cover;
+	margin-right: 1.5rem;
 }
