@@ -1,5 +1,6 @@
 @import '../../../styles/_variables.scss';
 @import '../../../styles/_mixins.scss';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
 
 .dropZoneContainer {
 	//border: 1px solid $neon-yellow;
@@ -8,7 +9,7 @@
 	border-bottom: 1.5px dashed $neon-yellow;
 	border-left: 1.5px dashed $neon-yellow;
 	//border-style: dashed;
-	// padding: 0.5rem 2.5rem 0.5rem 2.5rem;
+	//padding: 1rem 2.5rem 0.5rem 2.5rem;
 	cursor: pointer;
 	border-radius: 1rem;
 	//margin-bottom: 1rem;
@@ -32,6 +33,15 @@
 	height: 1rem;
 	margin-bottom: 1rem;
 	margin-left: 1rem;
+}
+
+.characterCount {
+	margin-left: 1rem !important;
+	font-size: 1.2rem !important;
+	font-family: Poppins !important;
+	left: 481px !important;
+	top: 0px !important;
+	text-align: right !important;
 }
 
 .fileRejectionError {
@@ -66,7 +76,7 @@
 
 .dropzone {
 	text-align: center;
-	padding: 2.5rem 2.5rem 2rem 2.5rem;
+	padding: 1.5rem 2.5rem 2rem 1.5rem;
 }
 
 .textField {
@@ -104,9 +114,9 @@
 }
 
 .select {
-	// input {
-	// 	// padding: 1rem !important;
-	// }
+	input {
+		// padding: 1rem !important;
+	}
 	.MuiSelect-select {
 		padding: 1rem 0rem 1rem 1rem;
 		padding-right: 32px;
@@ -287,11 +297,6 @@
 	align-items: center;
 }
 
-.filePreviewRight {
-	display: flex;
-	align-items: center;
-}
-
 .fileThumbnail {
 	height: 8rem;
 	//width: 8rem;
@@ -304,10 +309,6 @@
 .fileName {
 	font-size: 1rem;
 	margin-left: 2rem;
-	max-width: 100%; // to shorten the filename if its too big
-	text-overflow: ellipsis;
-	overflow: hidden;
-	white-space: nowrap;
 }
 
 .filePreviewIcons {
@@ -453,3 +454,107 @@ video::-webkit-media-controls-fullscreen-button {
 	font-size: 14px;
 	padding: 8px 8px 8px 12px;
 }
+
+.editor {
+	margin: 10px 0px;
+	// editor
+	// > div {
+	// 	//tox tox-tinymce tox-platform-touch
+	// 	border: 1px solid #404040 !important;
+	// 	border-radius: 8px;
+	// 	//top bars and middle box
+	// 	> div {
+	// 		//tox-editor-container
+	// 		background-color: black !important;
+	// 		// top bars
+	// 		> div {
+	// 			//tox-editor-header
+	// 			> div {
+	// 				//tox-menubar
+	// 				background-color: black !important;
+	// 				> button {
+	// 					color: white !important;
+	// 				}
+	// 				> button:focus {
+	// 					background: #404040 !important;
+	// 				}
+	// 				> button:hover {
+	// 					background: #404040 !important;
+	// 				}
+	// 				> button:active {
+	// 					background: #404040 !important;
+	// 				}
+	// 			}
+	// 			> div {
+	// 				//tox-toolbar tox-toolbar--scrolling
+
+	// 				> div {
+	// 					//tox-toolbar__group
+	// 					border-top: 1px solid #404040 !important;
+	// 					background-color: black !important;
+	// 					// border-right: none !important;
+
+	// 					> button {
+	// 						// border-right: 1px solid white !important;
+	// 						> span {
+	// 							color: white !important;
+	// 							> svg {
+	// 								fill: white !important;
+	// 							}
+	// 						}
+	// 					}
+	// 					> button:focus {
+	// 						background: #404040 !important;
+	// 					}
+	// 					> button:hover {
+	// 						background: #404040 !important;
+	// 					}
+	// 					> button:active {
+	// 						background: #404040 !important;
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 		//middle text area
+	// 		> div {
+	// 			//tox-sidebar-wrap
+	// 			> div {
+	// 				> iframe {
+	// 					background-color: black !important;
+	// 					// color: white !important ;
+	// 					// #document {
+	// 					// 	color: white !important;
+	// 					// }
+	// 					// > html {
+	// 					// 	color: white !important;
+	// 					// }
+	// 					// .mce-content-body {
+	// 					// 	color: white !important;
+	// 					// }
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// 	//bottom bar
+	// 	> div {
+	// 		//tox-statusbar
+	// 		> div {
+	// 			> div {
+	// 				> div {
+	// 					color: white !important;
+	// 				}
+	// 			}
+	// 			> button {
+	// 				color: white !important;
+	// 			}
+	// 		}
+	// 	}
+	// }
+}
+
+// .tox-editor-container {
+// 	background: red !important;
+// }
+// .tox-menubar {
+// 	background-color: black !important;
+// }

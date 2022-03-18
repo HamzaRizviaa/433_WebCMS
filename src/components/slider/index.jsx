@@ -17,7 +17,8 @@ const Slider = ({
 	edit,
 	media,
 	quiz,
-	viral
+	viral,
+	article
 }) => {
 	const wrapperRef = useRef(null);
 
@@ -47,6 +48,7 @@ const Slider = ({
 				!media &&
 				!quiz &&
 				!viral &&
+				!article &&
 				preview &&
 				previewRef.current &&
 				!previewRef.current.contains(event.target) &&
@@ -64,7 +66,7 @@ const Slider = ({
 				handlePreview();
 			}
 			if (
-				(media || quiz || viral) &&
+				(media || quiz || viral || article) &&
 				preview &&
 				previewRef.current &&
 				!previewRef.current.contains(event.target)
@@ -140,7 +142,8 @@ Slider.propTypes = {
 	edit: PropTypes.bool.isRequired,
 	media: PropTypes.bool,
 	quiz: PropTypes.bool,
-	viral: PropTypes.bool
+	viral: PropTypes.bool,
+	article: PropTypes.bool
 };
 
 export default Slider;

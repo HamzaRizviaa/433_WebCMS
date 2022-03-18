@@ -5,6 +5,7 @@ import React, { forwardRef, useCallback, useEffect, useState } from 'react';
 import { Markup } from 'interweave';
 import DatePicker from 'react-datepicker';
 import _debounce from 'lodash/debounce';
+import { useNavigate } from 'react-router-dom';
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux';
@@ -75,6 +76,22 @@ const MediaLibrary = () => {
 	const [startDate, endDate] = dateRange;
 
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));
+		let current_date = new Date();
+		let time_difference_minutes = (expiry_date - current_date) / 1000 / 60; //in minutes
+		// console.log(current_date, 'curr');
+		console.log(time_difference_minutes);
+		if (time_difference_minutes <= 1) {
+			alert('Your session has expired');
+			localStorage.removeItem('user_data');
+			localStorage.removeItem('token_expire_time');
+			navigate('/sign-in');
+		}
+	}, []);
+
 	const sortKeysMapping = {
 		title: 'title',
 		file_name: 'media',
@@ -299,7 +316,7 @@ const MediaLibrary = () => {
 			formatter: (content, row) => {
 				return (
 					<div className={classes.mediaWrapper}>
-						<Tooltip
+						{/* <Tooltip
 							// TransitionComponent={Fade}
 							// TransitionProps={{ timeout: 600 }}
 							title={
@@ -316,10 +333,48 @@ const MediaLibrary = () => {
 								tooltip: { className: classes.toolTipPreview }
 							}}
 						>
-							<img
-								className={classes.mediaIcon}
-								src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.thumbnail_url}`}
-							/>
+							<div className={classes.mediaIcon}>
+								<img
+									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.thumbnail_url}`}
+								/>
+							</div>
+						</Tooltip> */}
+						<Tooltip
+							// TransitionComponent={Fade}
+							// TransitionProps={{ timeout: 600 }}
+
+							title={
+								<img
+									className={
+										row.width === row.height
+											? classes.mediaIconPreview
+											: row.width > row.height
+											? classes.virallandscapePreview
+											: classes.mediaIconPortraitPreview
+									}
+									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
+										row?.thumbnail_url ? row?.thumbnail_url : row?.media
+									}`}
+									alt='no img'
+								/>
+							}
+							placement='right'
+							componentsProps={{
+								tooltip: { className: classes.toolTipPreview }
+							}}
+						>
+							<span>
+								{/* {row?.thumbnail_url ? (
+									<PlayArrowIcon className={classes.playIcon} />
+								) : (
+									''
+								)} */}
+								{/* <PlayArrowIcon className={classes.playIcon} /> */}
+								<img
+									className={classes.mediaIcon}
+									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.thumbnail_url}`}
+								/>
+							</span>
 						</Tooltip>
 						<Tooltip
 							TransitionComponent={Fade}

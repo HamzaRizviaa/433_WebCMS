@@ -573,6 +573,8 @@ const UploadOrEditPost = ({
 		(specificPost?.caption === caption.trim() &&
 			specificPost?.media_id == selectedMedia?.id);
 
+	// const regex = /[!@#$%^&*(),.?":{}|<>/\\ ]/g;
+
 	// console.log('specific post', specificPost?.media_id);
 	// console.log('normal', selectedMedia?.id);
 
@@ -890,6 +892,11 @@ const UploadOrEditPost = ({
 										setDisableDropdown(true);
 										event.preventDefault();
 										event.stopPropagation();
+										// let regexCheck = regex.test(newValue);
+										// if (regexCheck) {
+										// 	alert('you cant use regex');
+										// }
+										// else {
 										let newLabels = newValue.filter(
 											//code to check if the new added label is already in the list
 											(v, i, a) =>
@@ -899,6 +906,8 @@ const UploadOrEditPost = ({
 										);
 
 										setSelectedLabels([...newLabels]);
+										//}
+
 										console.log(selectedLabels, newValue);
 									}}
 									popupIcon={''}

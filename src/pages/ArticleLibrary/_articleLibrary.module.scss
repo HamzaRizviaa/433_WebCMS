@@ -1,0 +1,248 @@
+@import '../../styles/variables.scss';
+@import '../../styles/_mixins.scss';
+
+.header {
+	display: flex;
+	justify-content: space-between;
+}
+
+.subheader1 {
+	display: flex;
+	justify-content: flex-start;
+}
+
+.tableContainer {
+	margin: 1rem 0rem;
+}
+
+.subheader2 {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.calendarWrapper {
+	margin-left: 10px;
+	button {
+		background-color: transparent !important;
+		top: 0.5px !important;
+		right: 30px !important;
+	}
+}
+// date
+.customDateInput {
+	border: 0;
+	margin: 0;
+	display: inline-flex;
+	padding: 0;
+	position: relative;
+	min-width: 0;
+	flex-direction: column;
+	vertical-align: top;
+	width: 250px;
+	color: white !important;
+	border: 1px solid #404040;
+	padding: 1rem 1rem 1.2rem 1rem !important;
+	font-size: 1.4rem !important;
+	font-family: Poppins !important;
+	line-height: 1.6 !important;
+	border-radius: 40px;
+	background-color: #000000;
+	border-color: rgb(64, 64, 64);
+	height: 17.5px;
+	box-sizing: content-box;
+	padding: 6px 0 7px;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+//search
+
+.searchField {
+	width: 271px;
+}
+
+.textFieldInput {
+	color: white !important;
+	border: 1px solid #404040;
+	padding: 0.5rem 0.5rem 0.5rem 1.5rem !important;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 40px;
+	font-family: Poppins !important;
+	//margin-bottom: 1rem;
+	background-color: #000000;
+}
+
+.searchIcon {
+	cursor: pointer;
+	margin-right: 8;
+}
+
+.noResultError {
+	color: #ff355a;
+	font-weight: bold;
+	margin-top: 0.2rem;
+	margin-left: 0.5rem;
+	height: 1rem;
+}
+
+.sortIcon {
+	position: absolute;
+	left: -4px;
+	bottom: -2px;
+	height: 2rem !important;
+	width: 2rem !important;
+}
+
+.sortIconSelected {
+	position: absolute;
+	left: -4px;
+	bottom: -2px;
+	height: 2rem !important;
+	width: 2rem !important;
+	color: $neon-yellow;
+}
+
+.row {
+	margin-bottom: 1.5rem;
+	font-size: 1.2rem;
+	padding-left: 35px;
+	display: block;
+}
+
+.rowType {
+	margin-bottom: 1.5rem;
+	font-size: 1.2rem;
+	padding-left: 35px;
+}
+
+.paginationRow {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	padding: 1vw 2vw;
+	nav {
+		width: fit-content;
+	}
+	.gotoText {
+		font-size: 12px;
+		font-weight: 700;
+		margin: 0px 10px;
+	}
+	.gotoInput {
+		background: #000000;
+		color: white;
+		border-radius: 8px;
+		padding: 6px;
+		width: 50px;
+		&:focus {
+			outline: none;
+		}
+	}
+}
+//landscape scss
+
+.mediaIconLandscape {
+	height: 25.131px;
+	width: 48px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.virallandscapePreview {
+	height: calc(25.131px * 6);
+	width: calc(48px * 6);
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaIconPortrait {
+	height: 48px;
+	width: 38.4px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaIconPortraitPreview {
+	height: calc(48px * 6);
+	width: calc(38.4px * 6);
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaWrapper {
+	display: flex;
+	align-items: center;
+	margin-left: 0.5rem;
+	margin-bottom: 1.5rem;
+	// div {
+	// 	max-width: 60%;
+	// 	text-overflow: ellipsis;
+	// 	overflow: hidden;
+	// 	span {
+	// 		white-space: nowrap;
+	// 	}
+	// }
+}
+
+.virallandscape {
+	display: flex;
+	align-items: center;
+	margin-left: 0.5rem;
+	margin-bottom: 2.5rem;
+	// div {
+	// 	max-width: 60%;
+	// 	text-overflow: ellipsis;
+	// 	overflow: hidden;
+	// 	span {
+	// 		white-space: nowrap;
+	// 	}
+	// }
+}
+
+.toolTipPreview {
+	background-color: transparent !important;
+	border-radius: 8px !important;
+	max-width: none !important;
+}
+
+.fileName {
+	// margin-left: 1rem;
+	font-size: 1.2rem;
+}
+
+.labelsWrapper {
+	max-width: 60%;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+// .mediaIcon {
+// 	height: 5rem;
+// 	//width: 5rem;
+// 	//max-width: 100%;
+// 	border-radius: 8px;
+// 	object-fit: cover;
+// 	margin-right: 1.5rem;
+// }
+
+.mediaIconPreview {
+	height: calc(5rem * 5);
+	//width: calc(5rem * 6);
+	max-width: calc(5rem * 8);
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.mediaIcon {
+	height: 48px;
+	width: 48px;
+	border-radius: 8px;
+	object-fit: cover;
+	margin-right: 1.5rem;
+}
