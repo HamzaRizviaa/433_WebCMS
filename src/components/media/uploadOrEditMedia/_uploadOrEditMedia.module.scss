@@ -149,6 +149,12 @@
 	background-color: #404040;
 }
 
+.characterCount {
+	margin-right: 0.5rem;
+	display: flex;
+	justify-content: space-between;
+}
+
 .fileName {
 	font-size: 1rem;
 	margin-left: 2rem;
