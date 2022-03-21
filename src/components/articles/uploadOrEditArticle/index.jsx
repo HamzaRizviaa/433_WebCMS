@@ -439,11 +439,17 @@ const UploadOrEditViral = ({
 				}
 			);
 			if (result?.data?.status_code === 200) {
-				toast.success('Article has been deleted!');
-				handleClose();
-
-				//setting a timeout for getting post after delete.
-				dispatch(getAllArticlesApi({ page }));
+				if (result?.data?.data?.is_deleted === false) {
+					toast.error(
+						'the media or article cannot be deleted because it is used as a top banner'
+					);
+					dispatch(getAllArticlesApi({ page }));
+				} else {
+					toast.success('Article has been deleted!');
+					handleClose();
+					//setting a timeout for getting post after delete.
+					dispatch(getAllArticlesApi({ page }));
+				}
 			}
 		} catch (e) {
 			toast.error('Failed to delete Article!');
@@ -465,6 +471,23 @@ const UploadOrEditViral = ({
 	const handlePreviewEscape = () => {
 		setPreviewBool(false);
 		setPreviewFile(null);
+	};
+
+	const handleTitleDuplicate = async (givenTitle) => {
+		try {
+			const result = await axios.get(
+				`${process.env.REACT_APP_API_ENDPOINT}/article/check/${givenTitle}`,
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			return result?.data?.status_code;
+		} catch (error) {
+			console.log('Error');
+			return null;
+		}
 	};
 
 	const postBtnDisabled =
@@ -1094,11 +1117,25 @@ const UploadOrEditViral = ({
 							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 								<Button
 									disabled={isEdit ? editBtnDisabled : postBtnDisabled}
-									onClick={() => {
+									onClick={async () => {
 										if (postBtnDisabled || editBtnDisabled) {
 											validateArticleBtn();
 										} else {
 											setPostButtonStatus(true);
+											if (
+												(await handleTitleDuplicate(articleTitle)) === 200 &&
+												articleTitle !== specificArticle?.title
+											) {
+												setArticleTitleColor('#ff355a');
+												setArticleTitleError('This title already exists');
+												setTimeout(() => {
+													setArticleTitleColor('#ffffff');
+													setArticleTitleError('');
+												}, [5000]);
+
+												setPostButtonStatus(false);
+												return;
+											}
 											if (isEdit) {
 												createArticle(specificArticle?.id);
 											} else {

@@ -156,8 +156,13 @@ export default function Banners({ tabValue }) {
 		const validateRow = handleBannerPositionAndFirstBanner(); // 2- 5
 		setFirstRowCheck(firstrowcheck);
 		setValidateRow(validateRow);
+
 		if (btnDisable === '' || null || undefined) {
-			uploadBanner();
+			if (bannerData[0]?.bannerType && bannerData[0]?.selectedMedia) {
+				uploadBanner();
+			} else {
+				console.log('Add or update banner to publish new one');
+			}
 		} else {
 			console.log('add or update banner to publish new one ');
 		}

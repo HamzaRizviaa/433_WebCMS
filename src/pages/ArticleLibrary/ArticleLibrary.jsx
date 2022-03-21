@@ -148,58 +148,64 @@ const ArticleLibrary = () => {
 				});
 			}
 		}
-		if (!order)
-			return (
-				<ArrowDropUpIcon
-					className={classes.sortIcon}
-					style={{
-						left:
-							col?.dataField === 'article_title'
-								? 0
-								: col?.dataField === 'labels' ||
-								  col?.dataField === 'post_date' ||
-								  col?.dataField === 'last_edit' ||
-								  col?.dataField === 'user'
-								? 30
-								: -4
-					}}
-				/>
-			);
+		if (!order) return <ArrowDropUpIcon className={classes.sortIcon} />;
 		else if (order === 'asc')
-			return (
-				<ArrowDropUpIcon
-					className={classes.sortIconSelected}
-					style={{
-						left:
-							col?.dataField === 'article_title'
-								? 0
-								: col?.dataField === 'labels' ||
-								  col?.dataField === 'post_date' ||
-								  col?.dataField === 'last_edit' ||
-								  col?.dataField === 'user'
-								? 30
-								: -4
-					}}
-				/>
-			);
+			return <ArrowDropUpIcon className={classes.sortIconSelected} />;
 		else if (order === 'desc')
-			return (
-				<ArrowDropDownIcon
-					className={classes.sortIconSelected}
-					style={{
-						left:
-							col?.dataField === 'article_title'
-								? 0
-								: col?.dataField === 'labels' ||
-								  col?.dataField === 'post_date' ||
-								  col?.dataField === 'last_edit' ||
-								  col?.dataField === 'user'
-								? 30
-								: -4
-					}}
-				/>
-			);
+			return <ArrowDropDownIcon className={classes.sortIconSelected} />;
 		return null;
+		// if (!order)
+		// 	return (
+		// 		<ArrowDropUpIcon
+		// 			className={classes.sortIconArticle}
+		// 			style={{
+		// 				left:
+		// 					col?.dataField === 'article_title'
+		// 						? 0
+		// 						: col?.dataField === 'labels' ||
+		// 						  col?.dataField === 'post_date' ||
+		// 						  col?.dataField === 'last_edit' ||
+		// 						  col?.dataField === 'user'
+		// 						? 30
+		// 						: -4
+		// 			}}
+		// 		/>
+		// 	);
+		// else if (order === 'asc')
+		// 	return (
+		// 		<ArrowDropUpIcon
+		// 			className={classes.sortIconArticleSelected}
+		// 			style={{
+		// 				left:
+		// 					col?.dataField === 'article_title'
+		// 						? 0
+		// 						: col?.dataField === 'labels' ||
+		// 						  col?.dataField === 'post_date' ||
+		// 						  col?.dataField === 'last_edit' ||
+		// 						  col?.dataField === 'user'
+		// 						? 30
+		// 						: -4
+		// 			}}
+		// 		/>
+		// 	);
+		// else if (order === 'desc')
+		// 	return (
+		// 		<ArrowDropDownIcon
+		// 			className={classes.sortIconArticleSelected}
+		// 			style={{
+		// 				left:
+		// 					col?.dataField === 'article_title'
+		// 						? 0
+		// 						: col?.dataField === 'labels' ||
+		// 						  col?.dataField === 'post_date' ||
+		// 						  col?.dataField === 'last_edit' ||
+		// 						  col?.dataField === 'user'
+		// 						? 30
+		// 						: -4
+		// 			}}
+		// 		/>
+		// 	);
+		// return null;
 	};
 
 	const columns = [

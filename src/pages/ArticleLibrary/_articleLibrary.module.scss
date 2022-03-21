@@ -87,6 +87,22 @@
 	height: 1rem;
 }
 
+.sortIconArticle {
+	position: absolute;
+	left: -4px;
+	bottom: -2px;
+	height: 2rem !important;
+	width: 2rem !important;
+}
+
+.sortIconArticleSelected {
+	position: absolute;
+	left: -4px;
+	bottom: -2px;
+	height: 2rem !important;
+	width: 2rem !important;
+	color: $neon-yellow;
+}
 .sortIcon {
 	position: absolute;
 	left: -4px;

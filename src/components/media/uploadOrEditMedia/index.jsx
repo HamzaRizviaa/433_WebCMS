@@ -414,11 +414,17 @@ const UploadOrEditMedia = ({
 				}
 			);
 			if (result?.data?.status_code === 200) {
-				toast.success('Media has been deleted!');
-				handleClose();
-
-				//setting a timeout for getting post after delete.
-				dispatch(getMedia({ page }));
+				if (result?.data?.data?.is_deleted === false) {
+					toast.error(
+						'The media or article cannot be deleted because it is used as a top banner'
+					);
+					dispatch(getMedia({ page }));
+				} else {
+					toast.success('Media has been deleted!');
+					handleClose();
+					//setting a timeout for getting post after delete.
+					dispatch(getMedia({ page }));
+				}
 			}
 		} catch (e) {
 			toast.error('Failed to delete media!');

@@ -19,7 +19,7 @@ const TopBanner = () => {
 		let current_date = new Date();
 		let time_difference_minutes = (expiry_date - current_date) / 1000 / 60; //in minutes
 		// console.log(current_date, 'curr');
-		console.log(time_difference_minutes);
+
 		if (time_difference_minutes <= 1) {
 			alert('Your session has expired');
 			localStorage.removeItem('user_data');
