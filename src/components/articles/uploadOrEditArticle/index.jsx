@@ -6,7 +6,6 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
 //import { CircularProgress } from '@material-ui/core';
-//import 'tinymce/plugins/emoticons/js/emojiimages.min.js';
 import Button from '../../button';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
@@ -35,6 +34,7 @@ import 'tinymce/plugins/image';
 import 'tinymce/plugins/media';
 import 'tinymce/plugins/searchreplace';
 import 'tinymce/plugins/emoticons';
+import 'tinymce/plugins/emoticons/js/emojiimages.min.js';
 import 'tinymce/plugins/hr';
 import 'tinymce/plugins/anchor';
 import 'tinymce/plugins/insertdatetime';
@@ -65,6 +65,7 @@ const UploadOrEditViral = ({
 }) => {
 	const [articleTitle, setArticleTitle] = useState('');
 	const [editorText, setEditorText] = useState('');
+	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -115,7 +116,7 @@ const UploadOrEditViral = ({
 				setSelectedLabels(_labels);
 			}
 			setArticleTitle(specificArticle?.title);
-			// setEditorText(specificArticle.description);
+			setEditorTextChecker(specificArticle.description);
 			// setTimeout(() => {
 			specificArticle?.length === 0
 				? setEditorText('')
@@ -295,6 +296,7 @@ const UploadOrEditViral = ({
 	const handleEditorChange = () => {
 		const editorTextContent = tinymce?.activeEditor?.getContent();
 		setEditorText(editorTextContent);
+		setEditorTextChecker(editorTextContent); // to check yellow button condition
 	};
 
 	const createArticle = async (id, mediaFiles = []) => {
@@ -353,6 +355,7 @@ const UploadOrEditViral = ({
 	const resetState = () => {
 		setArticleTitle('');
 		setEditorText('');
+		setEditorTextChecker('');
 		setUploadMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
@@ -497,13 +500,24 @@ const UploadOrEditViral = ({
 		selectedLabels.length < 10 ||
 		!editorText;
 
+	// var html = editorTextChecker.replace(
+	// 	/(?:^(?:&nbsp;)+)|(?:(?:&nbsp;)+$)/g,
+	// 	''
+	// );
+	// var editorData = $('<div/>').html(html).text();
+	const editorTextCheckerTrimmed = editorTextChecker?.replace(/&nbsp;/g, ' ');
+	const specificArticleTextTrimmed = specificArticle?.description?.replace(
+		/&nbsp;/g,
+		' '
+	);
 	const editBtnDisabled =
-		postButtonStatus || specificArticle?.description === editorText;
+		postButtonStatus ||
+		specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim();
 
-	console.log(specificArticle?.description?.trim(), 'desc');
-	console.log(editorText.trim(), 'editor');
-	console.log(specificArticle?.description?.trim().length, 'desc Length');
-	console.log(editorText.trim()?.length, 'editor Length');
+	console.log(specificArticleTextTrimmed, 'desc');
+	console.log(editorTextCheckerTrimmed.trim(), 'editor');
+	console.log(specificArticleTextTrimmed?.length, 'desc Length');
+	console.log(editorTextCheckerTrimmed?.trim()?.length, 'editor Length');
 	// const editBtnDisabled = postButtonStatus || !articleTitle;
 	//|| (specificPost?.articleTitle === articleTitle.trim() &&
 	// 	specificPost?.media_id == selectedMedia?.id);
