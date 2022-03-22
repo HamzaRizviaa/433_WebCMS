@@ -81,16 +81,16 @@ const Sidebar = () => {
 				</div>
 				<div
 					onClick={() => {
-						navigate('/quiz-library');
+						navigate('/question-library');
 					}}
 					className={classes.iconWrapper}
 					style={
-						location?.pathname.includes('quiz-library')
+						location?.pathname.includes('question-library')
 							? { backgroundColor: '#404040' }
 							: {}
 					}
 				>
-					{location?.pathname.includes('quiz-library') ? (
+					{location?.pathname.includes('question-library') ? (
 						<QuizSelected className={classes.icon} />
 					) : (
 						<Quiz className={classes.icon} />

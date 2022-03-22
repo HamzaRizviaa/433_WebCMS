@@ -1,5 +1,8 @@
 @import '../../styles/variables.scss';
 @import '../../styles/_mixins.scss';
+.articleLibrary {
+	height: 100vh !important;
+}
 
 .header {
 	display: flex;
@@ -87,28 +90,37 @@
 	height: 1rem;
 }
 
-.sortIconArticle {
-	position: absolute;
-	left: -4px;
-	bottom: -2px;
-	height: 2rem !important;
-	width: 2rem !important;
-}
+// .sortIconArticle {
+// 	position: absolute;
+// 	left: -4px;
+// 	bottom: -2px;
+// 	height: 2rem !important;
+// 	width: 2rem !important;
+// 	> svg {
+// 		left: 30px;
+// 	}
+// }
 
-.sortIconArticleSelected {
-	position: absolute;
-	left: -4px;
-	bottom: -2px;
-	height: 2rem !important;
-	width: 2rem !important;
-	color: $neon-yellow;
-}
+// .sortIconArticleSelected {
+// 	position: absolute;
+// 	left: -4px;
+// 	bottom: -2px;
+// 	height: 2rem !important;
+// 	width: 2rem !important;
+// 	color: $neon-yellow;
+// 	> svg {
+// 		left: 30px;
+// 	}
+// }
 .sortIcon {
 	position: absolute;
 	left: -4px;
 	bottom: -2px;
 	height: 2rem !important;
 	width: 2rem !important;
+	> svg {
+		left: 30px;
+	}
 }
 
 .sortIconSelected {
@@ -118,6 +130,9 @@
 	height: 2rem !important;
 	width: 2rem !important;
 	color: $neon-yellow;
+	> svg {
+		left: 30px;
+	}
 }
 
 .row {

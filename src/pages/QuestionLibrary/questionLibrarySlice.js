@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import QuizLibraryService from './quizLibraryService';
-export const getQuizess = createAsyncThunk(
-	'quizLibary/getQuizess',
+import QuestionLibraryService from './questionLibraryService';
+export const getQuestions = createAsyncThunk(
+	'questionLibrary/getQuestions',
 	async ({
 		page,
 		order_type,
@@ -11,9 +11,9 @@ export const getQuizess = createAsyncThunk(
 		endDate,
 		fromCalendar = false
 	}) => {
-		let endPoint = `quiz/quizzes?limit=20&page=1`;
+		let endPoint = `question/questions?limit=20&page=1`;
 		if (page) {
-			endPoint = `quiz/quizzes?limit=20&page=${page}`;
+			endPoint = `question/questions?limit=20&page=${page}`;
 		}
 		if (order_type && sortby) {
 			endPoint += `&order_type=${order_type}&sort_by=${sortby}`;
@@ -24,16 +24,17 @@ export const getQuizess = createAsyncThunk(
 		if (startDate && endDate) {
 			endPoint += `&start_date=${startDate}&end_date=${endDate}`;
 		}
-		const result = await QuizLibraryService.getQuizApi(endPoint);
-		//console.log(result.data.data);
+		const result = await QuestionLibraryService.getQuestionApi(endPoint);
+		console.log(result.data.data, 'QuestionLibraryService data');
 		return { ...result.data.data, fromCalendar };
 	}
 );
 
-export const getQuizLabels = createAsyncThunk(
-	'quizLibrary/getQuizLabels',
+export const getQuestionLabels = createAsyncThunk(
+	'questionLibrary/getQuestionLabels',
 	async () => {
-		const result = await QuizLibraryService.getQuizLabelsApi();
+		const result = await QuestionLibraryService.getQuizLabelsApi();
+		console.log(result.data.data, 'QuestionLibraryService labels');
 		if (result?.data?.data?.length > 0) {
 			return result.data.data;
 		} else {
@@ -43,10 +44,10 @@ export const getQuizLabels = createAsyncThunk(
 );
 
 export const quizLibrarySlice = createSlice({
-	name: 'quizLibrary',
+	name: 'questionLibrary',
 	initialState: {
 		labels: [],
-		posts: [],
+		questions: [],
 		specificPost: [],
 		openUploadPost: false,
 		totalRecords: 0,
@@ -62,12 +63,12 @@ export const quizLibrarySlice = createSlice({
 		}
 	},
 	extraReducers: {
-		[getQuizess.pending]: (state) => {
+		[getQuestions.pending]: (state) => {
 			state.status = 'loading';
 		},
-		[getQuizess.fulfilled]: (state, action) => {
-			state.posts =
-				action.payload.data.length > 0 ? action.payload.data : state.posts;
+		[getQuestions.fulfilled]: (state, action) => {
+			state.questions =
+				action.payload.data.length > 0 ? action.payload.data : state.questions;
 			state.totalRecords =
 				action.payload.data.length > 0
 					? action.payload.total
@@ -80,10 +81,10 @@ export const quizLibrarySlice = createSlice({
 				state.noResultStatus = action.payload.data.length > 0 ? false : true;
 			}
 		},
-		[getQuizess.rejected]: (state) => {
+		[getQuestions.rejected]: (state) => {
 			state.status = 'failed';
 		},
-		[getQuizLabels.fulfilled]: (state, action) => {
+		[getQuestionLabels.fulfilled]: (state, action) => {
 			state.labels = action.payload;
 		}
 		// [getPostLabels.fulfilled]: (state, action) => {

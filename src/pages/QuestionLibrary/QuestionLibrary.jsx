@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
-import React, { useState, useEffect, forwardRef } from 'react';
+import React, { useState, useEffect, useCallback, forwardRef } from 'react';
 import Layout from '../../components/layout';
+import _debounce from 'lodash/debounce';
 import Table from '../../components/table';
-import classes from './_quizLibrary.module.scss';
+import classes from './_questionLibrary.module.scss';
 import Button from '../../components/button';
 import UploadQuiz from '../../components/quizzes/uploadOrEditQuiz/UploadQuiz';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -15,7 +16,7 @@ import QuizDetails from '../../components/quizzes/uploadOrEditQuiz/QuizDetails';
 import PollDetails from '../../components/quizzes/uploadOrEditQuiz/PollDetails';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import Pagination from '@mui/material/Pagination';
-import { useStyles } from './../../utils/styles';
+import { useStyles } from '../../utils/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -26,18 +27,24 @@ import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import { useNavigate } from 'react-router-dom';
 // import './_calender.scss';
-import { getQuizess } from './quizLibrarySlice';
+import {
+	getQuestions,
+	resetCalendarError,
+	resetNoResultStatus
+} from './questionLibrarySlice';
 
-const QuizLibrary = () => {
+const QuestionLibrary = () => {
 	// Selectors
-	// const posts = useSelector((state) => state.postLibrary.posts);
-	const totalRecords = 200;
-	// const totalRecords = useSelector((state) => state.postLibrary.totalRecords);
+	const questions = useSelector((state) => state.questionLibrary.questions);
+
+	const totalRecords = useSelector(
+		(state) => state.questionLibrary.totalRecords
+	);
 	const noResultStatus = useSelector(
-		(state) => state.postLibrary.noResultStatus
+		(state) => state.questionLibrary.noResultStatus
 	);
 	const noResultStatusCalendar = useSelector(
-		(state) => state.postLibrary.noResultStatusCalendar
+		(state) => state.questionLibrary.noResultStatusCalendar
 	);
 
 	const muiClasses = useStyles();
@@ -94,7 +101,7 @@ const QuizLibrary = () => {
 							e.stopPropagation();
 							if (startDate && endDate) {
 								dispatch(
-									getQuizess({
+									getQuestions({
 										q: search,
 										page,
 										startDate,
@@ -105,7 +112,7 @@ const QuizLibrary = () => {
 								);
 							} else {
 								dispatch(
-									getQuizess({
+									getQuestions({
 										q: search,
 										page,
 										fromCalendar: true,
@@ -333,79 +340,6 @@ const QuizLibrary = () => {
 		}
 	];
 
-	const data = [
-		{
-			question: 'Who will win the El Classico?',
-			question_type: 'Quiz',
-			post_date: '2021-11-25T17:00:08.000Z',
-			end_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			participants: 123,
-			status: 'closed',
-			user: 'Lorem Ipsum'
-		},
-		{
-			question: 'Que Pasa Harmano?',
-			question_type: 'Poll',
-			post_date: '2021-11-25T17:00:08.000Z',
-			end_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			participants: 123,
-			status: 'active',
-			user: 'Lorem Ipsum'
-		},
-		{
-			question: 'Pakistannnnnnnnnnn <3?',
-			question_type: 'Poll',
-			post_date: '2021-11-25T17:00:08.000Z',
-			end_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			participants: 123,
-			status: 'active',
-			user: 'Lorem Ipsum'
-		},
-		{
-			question: 'PAKISTAN vs INDIA?',
-			question_type: 'Quiz',
-			post_date: '2021-11-25T17:00:08.000Z',
-			end_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			participants: 123,
-			status: 'active',
-			user: 'Lorem Ipsum'
-		},
-		{
-			question: 'CRISTIANO?',
-			question_type: 'Quiz',
-			post_date: '2021-11-25T17:00:08.000Z',
-			end_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			participants: 123,
-			status: 'closed',
-			user: 'Lorem Ipsum'
-		},
-		{
-			question: 'RONALDO?',
-			question_type: 'Quiz',
-			post_date: '2021-11-25T17:00:08.000Z',
-			end_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			participants: 123,
-			status: 'active',
-			user: 'Lorem Ipsum'
-		},
-		{
-			question: 'THE BEST?',
-			question_type: 'Poll',
-			post_date: '2021-11-25T17:00:08.000Z',
-			end_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			participants: 123,
-			status: 'closed',
-			user: 'Lorem Ipsum'
-		}
-	];
-
 	const tableRowEvents = {
 		onClick: (e, row) => {
 			// if (!edit) {
@@ -426,51 +360,51 @@ const QuizLibrary = () => {
 
 	useEffect(() => {
 		console.log('sort state use effect');
-		// if (sortState.sortby && sortState.order_type && !search) {
-		// 	dispatch(
-		// 		getQuizess({
-		// 			page,
-		// 			startDate: formatDate(dateRange[0]),
-		// 			endDate: formatDate(dateRange[1]),
-		// 			...sortState
-		// 		})
-		// 	);
-		// }
-		// if (sortState.sortby && sortState.order_type && search) {
-		// 	dispatch(
-		// 		getQuizess({
-		// 			q: search,
-		// 			startDate: formatDate(dateRange[0]),
-		// 			endDate: formatDate(dateRange[1]),
-		// 			page,
-		// 			...sortState
-		// 		})
-		// 	);
-		// }
+		if (sortState.sortby && sortState.order_type && !search) {
+			dispatch(
+				getQuestions({
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
+		if (sortState.sortby && sortState.order_type && search) {
+			dispatch(
+				getQuestions({
+					q: search,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					page,
+					...sortState
+				})
+			);
+		}
 	}, [sortState]);
 
 	useEffect(() => {
 		console.log('search use effect');
-		// if (search) {
-		// 	dispatch(
-		// 		getQuizess({
-		// 			q: search,
-		// 			page,
-		// 			startDate: formatDate(dateRange[0]),
-		// 			endDate: formatDate(dateRange[1]),
-		// 			...sortState
-		// 		})
-		// 	);
-		// } else {
-		// 	dispatch(
-		// 		getQuizess({
-		// 			page,
-		// 			startDate: formatDate(dateRange[0]),
-		// 			endDate: formatDate(dateRange[1]),
-		// 			...sortState
-		// 		})
-		// 	);
-		// }
+		if (search) {
+			dispatch(
+				getQuestions({
+					q: search,
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		} else {
+			dispatch(
+				getQuestions({
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
 	}, [page]);
 
 	useEffect(() => {
@@ -478,7 +412,7 @@ const QuizLibrary = () => {
 			setNoResultBorder('#FF355A');
 			setNoResultError('No Results Found');
 			setTimeout(() => {
-				// dispatch(resetNoResultStatus());
+				dispatch(resetNoResultStatus());
 				setNoResultBorder('#404040');
 				setNoResultError('');
 			}, [5000]);
@@ -490,7 +424,7 @@ const QuizLibrary = () => {
 			setNoResultCalendarBorder('#FF355A');
 			setNoResultCalendarError('No Results Found');
 			setTimeout(() => {
-				// dispatch(resetCalendarError());
+				dispatch(resetCalendarError());
 				setNoResultCalendarBorder('#404040');
 				setNoResultCalendarError('');
 			}, [5000]);
@@ -503,10 +437,41 @@ const QuizLibrary = () => {
 			setNoResultError('');
 			setNoResultCalendarBorder('#404040');
 			setNoResultCalendarError('');
-			// dispatch(resetCalendarError());
-			// dispatch(resetNoResultStatus());
+			dispatch(resetCalendarError());
+			dispatch(resetNoResultStatus());
 		};
 	}, []);
+
+	const handleDebounceFun = () => {
+		let _search;
+		setSearch((prevState) => {
+			_search = prevState;
+			return _search;
+		});
+		if (_search) {
+			dispatch(
+				getQuestions({
+					q: _search,
+					page: 1,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		} else {
+			dispatch(
+				getQuestions({
+					page: 1,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
+		setPage(1);
+	};
+
+	const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
 
 	return (
 		<Layout>
@@ -530,7 +495,7 @@ const QuizLibrary = () => {
 								console.log(e, 'on ky press');
 								// if (e.key === 'Enter' && search) {
 								// 	dispatch(
-								// 		getQuizess({
+								// 		getQuestions({
 								// 			q: search,
 								// 			page,
 								// 			startDate: formatDate(dateRange[0]),
@@ -540,7 +505,7 @@ const QuizLibrary = () => {
 								// 	);
 								// } else if (e.key === 'Enter' && !search) {
 								// 	dispatch(
-								// 		getQuizess({
+								// 		getQuestions({
 								// 			page,
 								// 			startDate: formatDate(dateRange[0]),
 								// 			endDate: formatDate(dateRange[1]),
@@ -563,26 +528,26 @@ const QuizLibrary = () => {
 										<Search
 											onClick={() => {
 												console.log('search onclick');
-												// if (search) {
-												// 	dispatch(
-												// 		getQuizess({
-												// 			q: search,
-												// 			page,
-												// 			startDate: formatDate(dateRange[0]),
-												// 			endDate: formatDate(dateRange[1]),
-												// 			...sortState
-												// 		})
-												// 	);
-												// } else {
-												// 	dispatch(
-												// 		getQuizess({
-												// 			page,
-												// 			startDate: formatDate(dateRange[0]),
-												// 			endDate: formatDate(dateRange[1]),
-												// 			...sortState
-												// 		})
-												// 	);
-												// }
+												if (search) {
+													dispatch(
+														getQuestions({
+															q: search,
+															page,
+															startDate: formatDate(dateRange[0]),
+															endDate: formatDate(dateRange[1]),
+															...sortState
+														})
+													);
+												} else {
+													dispatch(
+														getQuestions({
+															page,
+															startDate: formatDate(dateRange[0]),
+															endDate: formatDate(dateRange[1]),
+															...sortState
+														})
+													);
+												}
 											}}
 											className={classes.searchIcon}
 										/>
@@ -610,7 +575,7 @@ const QuizLibrary = () => {
 				</div>
 			</div>
 			<div className={classes.tableContainer}>
-				<Table rowEvents={tableRowEvents} columns={columns} data={data} />
+				<Table rowEvents={tableRowEvents} columns={columns} data={questions} />
 			</div>
 
 			<div className={classes.paginationRow}>
@@ -682,4 +647,4 @@ const QuizLibrary = () => {
 	);
 };
 
-export default QuizLibrary;
+export default QuestionLibrary;

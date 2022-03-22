@@ -769,7 +769,12 @@ const UploadOrEditMedia = ({
 										})}
 									</Select>
 									<p className={classes.uploadMediaError2}>
-										{mainCategory?.name || mainCategory ? subCategoryError : ''}
+										{isEdit
+											? ' '
+											: mainCategory?.name || mainCategory
+											? subCategoryError
+											: ''}
+										{/* {} */}
 									</p>
 								</div>
 							</div>
