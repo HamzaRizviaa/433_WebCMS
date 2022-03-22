@@ -698,7 +698,7 @@ const UploadOrEditViral = ({
 							<div className={classes.captionContainer}>
 								<div className={classes.characterCount}>
 									<h6 style={{ color: articleTitleColor }}>ARTICLE TITLE</h6>
-									{/* <h6
+									<h6
 										style={{
 											color:
 												articleTitle?.length >= 25 && articleTitle?.length <= 27
@@ -709,7 +709,7 @@ const UploadOrEditViral = ({
 										}}
 									>
 										{articleTitle?.length}/28
-									</h6> */}
+									</h6>
 								</div>
 
 								<TextField

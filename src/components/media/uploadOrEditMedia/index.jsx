@@ -1007,7 +1007,7 @@ const UploadOrEditMedia = ({
 									<div className={classes.titleContainer}>
 										<div className={classes.characterCount}>
 											<h6 style={{ color: titleMediaLabelColor }}>TITLE</h6>
-											{/* <h6
+											<h6
 												style={{
 													color:
 														titleMedia?.length >= 25 && titleMedia?.length <= 27
@@ -1018,7 +1018,7 @@ const UploadOrEditMedia = ({
 												}}
 											>
 												{titleMedia?.length}/28
-											</h6> */}
+											</h6>
 										</div>
 										<TextField
 											value={titleMedia}

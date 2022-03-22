@@ -47,7 +47,7 @@ export default function PollDetails({
 			// quiz={true}
 		>
 			{/* {console.log(status, 'status in poll')} */}
-			{status === 'active' ? (
+			{status === 'ACTIVE' ? (
 				<div className={muiClasses.root}>
 					<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
 						<TabsListUnstyled
