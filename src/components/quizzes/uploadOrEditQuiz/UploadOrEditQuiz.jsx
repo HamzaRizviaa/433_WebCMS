@@ -18,7 +18,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import '../../../pages/PostLibrary/_calender.scss';
 import { formatDate, getCalendarText2 } from '../../../utils';
 import { useDispatch, useSelector } from 'react-redux';
-import { getQuizLabels } from '../../../pages/QuizLibrary/quizLibrarySlice';
+import { getQuestionLabels } from '../../../pages/QuestionLibrary/questionLibrarySlice';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
@@ -72,7 +72,7 @@ const UploadOrEditQuiz = ({
 	}, [labels]);
 
 	useEffect(() => {
-		dispatch(getQuizLabels());
+		dispatch(getQuestionLabels());
 	}, []);
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
