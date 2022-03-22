@@ -43,13 +43,17 @@ import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
-
+import Four33Loader from '../../assets/Loader_Yellow.gif';
+import LoadingOverlay from 'react-loading-overlay';
 const MediaLibrary = () => {
 	const muiClasses = useStyles();
 	const muiClasses2 = useStyles2();
 
 	// Selctor
 	const media = useSelector((state) => state.mediaLibraryOriginal.media);
+
+	const mediaApiStatus = useSelector((state) => state.mediaLibraryOriginal);
+
 	const totalRecords = useSelector(
 		(state) => state.mediaLibraryOriginal.totalRecords
 	);
@@ -550,126 +554,136 @@ const MediaLibrary = () => {
 	}, [page]);
 
 	return (
-		<Layout>
-			<div className={classes.header}>
-				<div className={classes.subheader1}>
-					<h1 style={{ marginRight: '2rem' }}>MEDIA LIBRARY</h1>
-					<Button
-						onClick={() => {
-							setEdit(false);
-							setShowSlider(true);
+		<LoadingOverlay
+			active={mediaApiStatus.status === 'pending' ? true : false}
+			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
+			spinner={
+				<img src={Four33Loader} className={classes.loader} alt='loader' />
+			}
+		>
+			<Layout>
+				<div className={classes.header}>
+					<div className={classes.subheader1}>
+						<h1 style={{ marginRight: '2rem' }}>MEDIA LIBRARY</h1>
+						<Button
+							onClick={() => {
+								setEdit(false);
+								setShowSlider(true);
+							}}
+							text={'UPLOAD MEDIA'}
+						/>
+					</div>
+					<div className={classes.subheader2}>
+						<div>
+							<TextField
+								className={`${classes.searchField} ${muiClasses2.root}`}
+								value={search}
+								// onKeyPress={(e) => {
+								// 	if (e.key === 'Enter' && search) {
+								// 		dispatch(
+								// 			getMedia({
+								// 				q: search,
+								// 				page,
+								// 				startDate: formatDate(dateRange[0]),
+								// 				endDate: formatDate(dateRange[1]),
+								// 				...sortState
+								// 			})
+								// 		);
+								// 	} else if (e.key === 'Enter' && !search) {
+								// 		dispatch(
+								// 			getMedia({
+								// 				page,
+								// 				startDate: formatDate(dateRange[0]),
+								// 				endDate: formatDate(dateRange[1]),
+								// 				...sortState
+								// 			})
+								// 		);
+								// 	}
+								// }}
+								onChange={handleChangeSearch}
+								placeholder={'Search post, user, label'}
+								InputProps={{
+									disableUnderline: true,
+									className: classes.textFieldInput,
+									style: { borderColor: noResultBorder },
+									endAdornment: (
+										<InputAdornment>
+											<Search className={classes.searchIcon} />
+										</InputAdornment>
+									)
+								}}
+							/>
+							<p className={classes.noResultError}>{noResultError}</p>
+						</div>
+						<div className={classes.calendarWrapper}>
+							<DatePicker
+								customInput={<ExampleCustomInput />}
+								selectsRange={true}
+								startDate={startDate}
+								endDate={endDate}
+								maxDate={new Date()}
+								onChange={(update) => {
+									setDateRange(update);
+								}}
+								placement='center'
+								isClearable={true}
+							/>
+							<p className={classes.noResultError}>{noResultCalendarError}</p>
+						</div>
+					</div>
+				</div>
+				<div className={classes.tableContainer}>
+					<Table rowEvents={tableRowEvents} columns={columns} data={media} />
+				</div>
+
+				<div className={classes.paginationRow}>
+					<Pagination
+						className={muiClasses.root}
+						page={page}
+						onChange={handleChange}
+						count={Math.ceil(totalRecords / 20)}
+						variant='outlined'
+						shape='rounded'
+					/>
+					<div className={classes.gotoText}>Go to page</div>
+					<input
+						style={{
+							border: `${
+								paginationError ? '1px solid red' : '1px solid #808080'
+							}`
 						}}
-						text={'UPLOAD MEDIA'}
+						type={'number'}
+						min={1}
+						onChange={(e) => {
+							setPaginationError(false);
+							const value = Number(e.target.value);
+							if (value > Math.ceil(totalRecords / 20)) {
+								setPaginationError(true);
+								setPage(1);
+							} else if (value) {
+								setPage(value);
+							} else {
+								setPage(1);
+							}
+						}}
+						className={classes.gotoInput}
 					/>
 				</div>
-				<div className={classes.subheader2}>
-					<div>
-						<TextField
-							className={`${classes.searchField} ${muiClasses2.root}`}
-							value={search}
-							// onKeyPress={(e) => {
-							// 	if (e.key === 'Enter' && search) {
-							// 		dispatch(
-							// 			getMedia({
-							// 				q: search,
-							// 				page,
-							// 				startDate: formatDate(dateRange[0]),
-							// 				endDate: formatDate(dateRange[1]),
-							// 				...sortState
-							// 			})
-							// 		);
-							// 	} else if (e.key === 'Enter' && !search) {
-							// 		dispatch(
-							// 			getMedia({
-							// 				page,
-							// 				startDate: formatDate(dateRange[0]),
-							// 				endDate: formatDate(dateRange[1]),
-							// 				...sortState
-							// 			})
-							// 		);
-							// 	}
-							// }}
-							onChange={handleChangeSearch}
-							placeholder={'Search post, user, label'}
-							InputProps={{
-								disableUnderline: true,
-								className: classes.textFieldInput,
-								style: { borderColor: noResultBorder },
-								endAdornment: (
-									<InputAdornment>
-										<Search className={classes.searchIcon} />
-									</InputAdornment>
-								)
-							}}
-						/>
-						<p className={classes.noResultError}>{noResultError}</p>
-					</div>
-					<div className={classes.calendarWrapper}>
-						<DatePicker
-							customInput={<ExampleCustomInput />}
-							selectsRange={true}
-							startDate={startDate}
-							endDate={endDate}
-							maxDate={new Date()}
-							onChange={(update) => {
-								setDateRange(update);
-							}}
-							placement='center'
-							isClearable={true}
-						/>
-						<p className={classes.noResultError}>{noResultCalendarError}</p>
-					</div>
-				</div>
-			</div>
-			<div className={classes.tableContainer}>
-				<Table rowEvents={tableRowEvents} columns={columns} data={media} />
-			</div>
 
-			<div className={classes.paginationRow}>
-				<Pagination
-					className={muiClasses.root}
+				<UploadOrEditMedia
+					open={showSlider}
+					isEdit={edit}
+					handleClose={() => {
+						setShowSlider(false);
+						// setTimeout(() => setEdit(false), 600);
+					}}
 					page={page}
-					onChange={handleChange}
-					count={Math.ceil(totalRecords / 20)}
-					variant='outlined'
-					shape='rounded'
+					title={edit ? 'Edit Media' : 'Upload Media'}
+					heading1={edit ? 'Media Type' : 'Select Media Type'}
+					buttonText={edit ? 'SAVE CHANGES' : 'ADD MEDIA'}
 				/>
-				<div className={classes.gotoText}>Go to page</div>
-				<input
-					style={{
-						border: `${paginationError ? '1px solid red' : '1px solid #808080'}`
-					}}
-					type={'number'}
-					min={1}
-					onChange={(e) => {
-						setPaginationError(false);
-						const value = Number(e.target.value);
-						if (value > Math.ceil(totalRecords / 20)) {
-							setPaginationError(true);
-							setPage(1);
-						} else if (value) {
-							setPage(value);
-						} else {
-							setPage(1);
-						}
-					}}
-					className={classes.gotoInput}
-				/>
-			</div>
-
-			<UploadOrEditMedia
-				open={showSlider}
-				isEdit={edit}
-				handleClose={() => {
-					setShowSlider(false);
-					// setTimeout(() => setEdit(false), 600);
-				}}
-				page={page}
-				title={edit ? 'Edit Media' : 'Upload Media'}
-				heading1={edit ? 'Media Type' : 'Select Media Type'}
-				buttonText={edit ? 'SAVE CHANGES' : 'ADD MEDIA'}
-			/>
-		</Layout>
+			</Layout>
+		</LoadingOverlay>
 	);
 };
 

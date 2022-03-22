@@ -51,6 +51,7 @@ const PostLibrary = () => {
 
 	// Selectors
 	const posts = useSelector((state) => state.postLibrary.posts);
+	const statusApi = useSelector((state) => state.postLibrary);
 	const totalRecords = useSelector((state) => state.postLibrary.totalRecords);
 	const noResultStatus = useSelector(
 		(state) => state.postLibrary.noResultStatus
@@ -60,7 +61,7 @@ const PostLibrary = () => {
 	);
 
 	// State
-	const [isLoading, setIsLoading] = useState(true);
+
 	const [page, setPage] = useState(1);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
@@ -244,10 +245,6 @@ const PostLibrary = () => {
 			tableBody.scrollTop = 0;
 		}
 	}, [page]);
-
-	useEffect(() => {
-		posts.length > 0 && setIsLoading(false);
-	}, [posts]);
 
 	const sortRows = (order, col) => {
 		if (order && col.dataField) {
@@ -502,15 +499,10 @@ const PostLibrary = () => {
 
 	return (
 		<LoadingOverlay
-			active={isLoading}
+			active={statusApi.status === 'pending' ? true : false}
 			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
 			spinner={
-				<img
-					src={Four33Loader}
-					className={classes.loader}
-					alt='loader'
-					style={{ height: '50%', width: '50%' }}
-				/>
+				<img src={Four33Loader} className={classes.loader} alt='loader' />
 			}
 		>
 			<Layout>

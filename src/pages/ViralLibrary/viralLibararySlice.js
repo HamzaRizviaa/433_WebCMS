@@ -75,7 +75,7 @@ export const viralLibararySlice = createSlice({
 	},
 	extraReducers: {
 		[getAllViralsApi.pending]: (state) => {
-			state.status = 'loading';
+			state.status = 'pending';
 		},
 		[getAllViralsApi.fulfilled]: (state, action) => {
 			state.virals =

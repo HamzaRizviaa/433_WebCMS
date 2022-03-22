@@ -32,10 +32,14 @@ import {
 	resetCalendarError,
 	resetNoResultStatus
 } from './questionLibrarySlice';
+import Four33Loader from '../../assets/Loader_Yellow.gif';
+import LoadingOverlay from 'react-loading-overlay';
 
 const QuestionLibrary = () => {
 	// Selectors
 	const questions = useSelector((state) => state.questionLibrary.questions);
+
+	const statusQuestionApi = useSelector((state) => state.questionLibrary);
 
 	const totalRecords = useSelector(
 		(state) => state.questionLibrary.totalRecords
@@ -474,176 +478,190 @@ const QuestionLibrary = () => {
 	const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
 
 	return (
-		<Layout>
-			<div className={classes.header}>
-				<div className={classes.subheader1}>
-					<h1 style={{ marginRight: '2rem' }}>QUESTION LIBRARY</h1>
-					<Button
-						onClick={() => {
-							setEdit(false);
-							setShowSlider(true);
-						}}
-						text={'UPLOAD QUESTION'}
+		<LoadingOverlay
+			active={statusQuestionApi.status === 'pending' ? true : false}
+			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
+			spinner={
+				<img src={Four33Loader} className={classes.loader} alt='loader' />
+			}
+		>
+			<Layout>
+				<div className={classes.header}>
+					<div className={classes.subheader1}>
+						<h1 style={{ marginRight: '2rem' }}>QUESTION LIBRARY</h1>
+						<Button
+							onClick={() => {
+								setEdit(false);
+								setShowSlider(true);
+							}}
+							text={'UPLOAD QUESTION'}
+						/>
+					</div>
+					<div className={classes.subheader2}>
+						<div>
+							<TextField
+								className={classes.searchField}
+								value={search}
+								onKeyPress={(e) => {
+									console.log(e, 'on ky press');
+									// if (e.key === 'Enter' && search) {
+									// 	dispatch(
+									// 		getQuestions({
+									// 			q: search,
+									// 			page,
+									// 			startDate: formatDate(dateRange[0]),
+									// 			endDate: formatDate(dateRange[1]),
+									// 			...sortState
+									// 		})
+									// 	);
+									// } else if (e.key === 'Enter' && !search) {
+									// 	dispatch(
+									// 		getQuestions({
+									// 			page,
+									// 			startDate: formatDate(dateRange[0]),
+									// 			endDate: formatDate(dateRange[1]),
+									// 			...sortState
+									// 		})
+									// 	);
+									// }
+								}}
+								onChange={(e) => {
+									setSearch(e.target.value);
+									//setIsSearch(true);
+								}}
+								placeholder={'Search post, user, label'}
+								InputProps={{
+									disableUnderline: true,
+									className: classes.textFieldInput,
+									style: { borderColor: noResultBorder },
+									endAdornment: (
+										<InputAdornment>
+											<Search
+												onClick={() => {
+													console.log('search onclick');
+													if (search) {
+														dispatch(
+															getQuestions({
+																q: search,
+																page,
+																startDate: formatDate(dateRange[0]),
+																endDate: formatDate(dateRange[1]),
+																...sortState
+															})
+														);
+													} else {
+														dispatch(
+															getQuestions({
+																page,
+																startDate: formatDate(dateRange[0]),
+																endDate: formatDate(dateRange[1]),
+																...sortState
+															})
+														);
+													}
+												}}
+												className={classes.searchIcon}
+											/>
+										</InputAdornment>
+									)
+								}}
+							/>
+							<p className={classes.noResultError}>{noResultError}</p>
+						</div>
+						<div className={classes.calendarWrapper}>
+							<DatePicker
+								customInput={<ExampleCustomInput />}
+								selectsRange={true}
+								startDate={startDate}
+								endDate={endDate}
+								maxDate={new Date()}
+								onChange={(update) => {
+									setDateRange(update);
+								}}
+								placement='center'
+								isClearable={true}
+							/>
+							<p className={classes.noResultError}>{noResultCalendarError}</p>
+						</div>
+					</div>
+				</div>
+				<div className={classes.tableContainer}>
+					<Table
+						rowEvents={tableRowEvents}
+						columns={columns}
+						data={questions}
 					/>
 				</div>
-				<div className={classes.subheader2}>
-					<div>
-						<TextField
-							className={classes.searchField}
-							value={search}
-							onKeyPress={(e) => {
-								console.log(e, 'on ky press');
-								// if (e.key === 'Enter' && search) {
-								// 	dispatch(
-								// 		getQuestions({
-								// 			q: search,
-								// 			page,
-								// 			startDate: formatDate(dateRange[0]),
-								// 			endDate: formatDate(dateRange[1]),
-								// 			...sortState
-								// 		})
-								// 	);
-								// } else if (e.key === 'Enter' && !search) {
-								// 	dispatch(
-								// 		getQuestions({
-								// 			page,
-								// 			startDate: formatDate(dateRange[0]),
-								// 			endDate: formatDate(dateRange[1]),
-								// 			...sortState
-								// 		})
-								// 	);
-								// }
-							}}
-							onChange={(e) => {
-								setSearch(e.target.value);
-								//setIsSearch(true);
-							}}
-							placeholder={'Search post, user, label'}
-							InputProps={{
-								disableUnderline: true,
-								className: classes.textFieldInput,
-								style: { borderColor: noResultBorder },
-								endAdornment: (
-									<InputAdornment>
-										<Search
-											onClick={() => {
-												console.log('search onclick');
-												if (search) {
-													dispatch(
-														getQuestions({
-															q: search,
-															page,
-															startDate: formatDate(dateRange[0]),
-															endDate: formatDate(dateRange[1]),
-															...sortState
-														})
-													);
-												} else {
-													dispatch(
-														getQuestions({
-															page,
-															startDate: formatDate(dateRange[0]),
-															endDate: formatDate(dateRange[1]),
-															...sortState
-														})
-													);
-												}
-											}}
-											className={classes.searchIcon}
-										/>
-									</InputAdornment>
-								)
-							}}
-						/>
-						<p className={classes.noResultError}>{noResultError}</p>
-					</div>
-					<div className={classes.calendarWrapper}>
-						<DatePicker
-							customInput={<ExampleCustomInput />}
-							selectsRange={true}
-							startDate={startDate}
-							endDate={endDate}
-							maxDate={new Date()}
-							onChange={(update) => {
-								setDateRange(update);
-							}}
-							placement='center'
-							isClearable={true}
-						/>
-						<p className={classes.noResultError}>{noResultCalendarError}</p>
-					</div>
+
+				<div className={classes.paginationRow}>
+					<Pagination
+						className={muiClasses.root}
+						page={page}
+						onChange={handleChange}
+						count={Math.ceil(totalRecords / 20)}
+						variant='outlined'
+						shape='rounded'
+					/>
+					<div className={classes.gotoText}>Go to page</div>
+					<input
+						style={{
+							border: `${
+								paginationError ? '1px solid red' : '1px solid #808080'
+							}`
+						}}
+						type={'number'}
+						min={1}
+						onChange={(e) => {
+							console.log(e, 'onchange', page);
+							setPaginationError(false);
+							const value = Number(e.target.value);
+							if (value > Math.ceil(totalRecords / 20)) {
+								// if (value > Math.ceil(60 / 20)) {
+								setPaginationError(true);
+								setPage(1);
+							} else if (value) {
+								setPage(value);
+							} else {
+								setPage(1);
+							}
+						}}
+						className={classes.gotoInput}
+					/>
 				</div>
-			</div>
-			<div className={classes.tableContainer}>
-				<Table rowEvents={tableRowEvents} columns={columns} data={questions} />
-			</div>
 
-			<div className={classes.paginationRow}>
-				<Pagination
-					className={muiClasses.root}
-					page={page}
-					onChange={handleChange}
-					count={Math.ceil(totalRecords / 20)}
-					variant='outlined'
-					shape='rounded'
-				/>
-				<div className={classes.gotoText}>Go to page</div>
-				<input
-					style={{
-						border: `${paginationError ? '1px solid red' : '1px solid #808080'}`
+				<UploadQuiz
+					open={showSlider}
+					isEdit={edit}
+					handleClose={() => {
+						setShowSlider(false);
 					}}
-					type={'number'}
-					min={1}
-					onChange={(e) => {
-						console.log(e, 'onchange', page);
-						setPaginationError(false);
-						const value = Number(e.target.value);
-						if (value > Math.ceil(totalRecords / 20)) {
-							// if (value > Math.ceil(60 / 20)) {
-							setPaginationError(true);
-							setPage(1);
-						} else if (value) {
-							setPage(value);
-						} else {
-							setPage(1);
-						}
-					}}
-					className={classes.gotoInput}
+					title={edit ? 'Poll Detail' : 'Upload Question'}
+					heading1={edit ? ' ' : 'Add Background Image'}
+					buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
 				/>
-			</div>
-
-			<UploadQuiz
-				open={showSlider}
-				isEdit={edit}
-				handleClose={() => {
-					setShowSlider(false);
-				}}
-				title={edit ? 'Poll Detail' : 'Upload Question'}
-				heading1={edit ? ' ' : 'Add Background Image'}
-				buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
-			/>
-			<QuizDetails
-				open={showQuizSlider}
-				isEdit={edit}
-				handleClose={() => {
-					setShowQuizSlider(false);
-				}}
-				title={'Quiz Detail'}
-				heading1={edit ? 'Add Background Image' : 'Add Background Image'}
-				buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
-			/>
-			<PollDetails
-				open={showPollSlider}
-				isEdit={edit}
-				handleClose={() => {
-					setShowPollSlider(false);
-				}}
-				status={rowStatus}
-				title={'Poll Detail'}
-				heading1={edit ? 'Add Background Image' : 'Add Background Image'}
-				buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
-			/>
-		</Layout>
+				<QuizDetails
+					open={showQuizSlider}
+					isEdit={edit}
+					handleClose={() => {
+						setShowQuizSlider(false);
+					}}
+					title={'Quiz Detail'}
+					heading1={edit ? 'Add Background Image' : 'Add Background Image'}
+					buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
+				/>
+				<PollDetails
+					open={showPollSlider}
+					isEdit={edit}
+					handleClose={() => {
+						setShowPollSlider(false);
+					}}
+					status={rowStatus}
+					title={'Poll Detail'}
+					heading1={edit ? 'Add Background Image' : 'Add Background Image'}
+					buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
+				/>
+			</Layout>
+		</LoadingOverlay>
 	);
 };
 

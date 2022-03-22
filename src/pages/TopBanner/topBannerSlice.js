@@ -45,7 +45,7 @@ export const topBannerSlice = createSlice({
 	reducers: {},
 	extraReducers: {
 		[getBannerContent.pending]: (state) => {
-			state.status = 'loading';
+			state.status = 'pending';
 		},
 		[getBannerContent.fulfilled]: (state, action) => {
 			state.content = action.payload;
@@ -54,7 +54,7 @@ export const topBannerSlice = createSlice({
 			state.status = 'failed';
 		},
 		[getAllBanners.pending]: (state) => {
-			state.status = 'loading';
+			state.status = 'pending';
 		},
 		[getAllBanners.fulfilled]: (state, action) => {
 			state.allBanners = action.payload;

@@ -495,19 +495,12 @@ const ArticleLibrary = () => {
 
 	return (
 		<LoadingOverlay
-			style={{ height: '100vh !important' }}
 			active={isLoading}
 			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
 			spinner={
-				<img
-					src={Four33Loader}
-					className={classes.loader}
-					alt='loader'
-					style={{ height: '50%', width: '50%' }}
-				/>
+				<img src={Four33Loader} className={classes.loader} alt='loader' />
 			}
 		>
-			{' '}
 			<Layout className={classes.articleLibrary}>
 				<div className={classes.header}>
 					<div className={classes.subheader1}>

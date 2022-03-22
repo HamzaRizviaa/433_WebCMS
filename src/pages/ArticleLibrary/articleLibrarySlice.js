@@ -75,7 +75,7 @@ export const articlesLibrarySlice = createSlice({
 	},
 	extraReducers: {
 		[getAllArticlesApi.pending]: (state) => {
-			state.status = 'loading';
+			state.status = 'pending';
 		},
 		[getAllArticlesApi.fulfilled]: (state, action) => {
 			state.articles =

@@ -64,7 +64,7 @@ export const quizLibrarySlice = createSlice({
 	},
 	extraReducers: {
 		[getQuestions.pending]: (state) => {
-			state.status = 'loading';
+			state.status = 'pending';
 		},
 		[getQuestions.fulfilled]: (state, action) => {
 			state.questions =
