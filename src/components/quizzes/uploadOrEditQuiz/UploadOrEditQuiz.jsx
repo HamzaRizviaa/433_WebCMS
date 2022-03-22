@@ -18,7 +18,10 @@ import 'react-datepicker/dist/react-datepicker.css';
 import '../../../pages/PostLibrary/_calender.scss';
 import { formatDate, getCalendarText2 } from '../../../utils';
 import { useDispatch, useSelector } from 'react-redux';
-import { getQuestionLabels } from '../../../pages/QuestionLibrary/questionLibrarySlice';
+import {
+	getQuestionLabels,
+	getQuestionEdit
+} from '../../../pages/QuestionLibrary/questionLibrarySlice';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
@@ -63,8 +66,11 @@ const UploadOrEditQuiz = ({
 
 	const dispatch = useDispatch();
 
-	const labels = useSelector((state) => state.quizLibrary.labels);
-
+	const labels = useSelector((state) => state.questionLibrary.labels);
+	const editQuestionData = useSelector(
+		(state) => state.questionLibrary.questionEdit
+	);
+	console.log(editQuestionData, 'editQuestionData');
 	useEffect(() => {
 		if (labels.length) {
 			setQuizLabels([...labels]);
@@ -112,26 +118,56 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
+	// useEffect(() => {
+	// 	if (editQuiz || editPoll) {
+	// 		setUploadedFiles([
+	// 			{
+	// 				id: makeid(10),
+	// 				fileName: 'Better than Messi',
+	// 				img: 'https://cdni0.trtworld.com/w960/h540/q75/34070_esp20180526ronaldo_1527420747155.JPG',
+	// 				type: 'image'
+	// 			}
+	// 		]);
+	// 		setQuestion('Ronaldo better than Messi?');
+	// 		setAns1('Yes');
+	// 		setAns2('Yes');
+
+	// 		setEndDate('Tue Feb 14 2022 00:00:00 GMT+0500 (Pakistan Standard Time)');
+	// 	}
+	// }, [editQuiz, editPoll]);
+
 	useEffect(() => {
-		if (editQuiz || editPoll) {
+		if (editQuestionData) {
+			if (editQuestionData?.labels) {
+				let _labels = [];
+				editQuestionData.labels.map((label) =>
+					_labels.push({ id: -1, name: label })
+				);
+				setSelectedLabels(_labels);
+			}
+			setQuestion(editQuestionData?.question);
+			setAns1(
+				editQuestionData?.answers.length > 0
+					? editQuestionData?.answers[0]?.answer
+					: ''
+			);
+			setAns2(
+				editQuestionData?.answers.length > 0
+					? editQuestionData?.answers[1]?.answer
+					: ''
+			);
+
+			setEndDate(editQuestionData?.quiz_end_date);
 			setUploadedFiles([
 				{
 					id: makeid(10),
-					fileName: 'Better than Messi',
-					img: 'https://cdni0.trtworld.com/w960/h540/q75/34070_esp20180526ronaldo_1527420747155.JPG',
+					fileName: editQuestionData?.file_name,
+					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${editQuestionData?.image}`,
 					type: 'image'
 				}
 			]);
-			setQuestion('Ronaldo better than Messi?');
-			setAns1('Yes');
-			setAns2('Yes');
-			setSelectedLabels([
-				{ id: 1, name: 'CRISTINAAAAA' },
-				{ id: 2, name: 'SIUUUUUU7UUUUUUU' }
-			]);
-			setEndDate('Tue Feb 14 2022 00:00:00 GMT+0500 (Pakistan Standard Time)');
 		}
-	}, [editQuiz, editPoll]);
+	}, [editQuestionData]);
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {

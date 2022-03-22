@@ -30,7 +30,8 @@ import { useNavigate } from 'react-router-dom';
 import {
 	getQuestions,
 	resetCalendarError,
-	resetNoResultStatus
+	resetNoResultStatus,
+	getQuestionEdit
 } from './questionLibrarySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
@@ -56,6 +57,7 @@ const QuestionLibrary = () => {
 	const [showQuizSlider, setShowQuizSlider] = useState(false);
 	const [showPollSlider, setShowPollSlider] = useState(false);
 	const [rowStatus, setrowStatus] = useState(''); //status open closed to pass in poll slider
+	// const [rowType, setRowType] = useState(''); //row type to pass in api
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [paginationError, setPaginationError] = useState(false);
@@ -283,8 +285,8 @@ const QuestionLibrary = () => {
 					<div className={`${classes.active_closed_btn}`}>
 						<Button
 							onClick={() => {}}
-							text={content == 'active' ? 'ACTIVE' : 'CLOSED'}
-							active={content == 'active' ? true : false}
+							text={content == 'ACTIVE' ? 'ACTIVE' : 'CLOSED'}
+							active={content == 'ACTIVE' ? true : false}
 						/>
 						{/* <Edit className={classes.editIcon} /> */}
 					</div>
@@ -348,12 +350,15 @@ const QuestionLibrary = () => {
 		onClick: (e, row) => {
 			// if (!edit) {
 			// dispatch(getSpecificPost(row.id));
-			// console.log(row);
+			console.log(row, 'question', row);
+			dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
+			console.log('question', row.question_type);
 			setrowStatus(row.status);
 			setEdit(true);
-			row.question_type === 'Quiz'
+			row.question_type === 'quiz'
 				? setShowQuizSlider(true)
 				: setShowPollSlider(true);
+
 			// }
 		}
 	};

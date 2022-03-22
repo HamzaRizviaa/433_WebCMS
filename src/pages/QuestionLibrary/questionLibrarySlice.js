@@ -25,7 +25,7 @@ export const getQuestions = createAsyncThunk(
 			endPoint += `&start_date=${startDate}&end_date=${endDate}`;
 		}
 		const result = await QuestionLibraryService.getQuestionApi(endPoint);
-		console.log(result.data.data, 'QuestionLibraryService data');
+		// console.log(result.data.data, 'QuestionLibraryService data');
 		return { ...result.data.data, fromCalendar };
 	}
 );
@@ -43,12 +43,29 @@ export const getQuestionLabels = createAsyncThunk(
 	}
 );
 
+export const getQuestionEdit = createAsyncThunk(
+	'questionLibrary/getQuestionEdit',
+	async ({ id, type }) => {
+		let endPoint = `question/get-question-edit?question_id=${id}`;
+
+		if (id && type) {
+			endPoint = `question/get-question-edit?question_id=${id}&question_type=${type}`;
+		}
+		const response = await QuestionLibraryService.getQuestionEditApi(endPoint);
+		if (response?.data?.data) {
+			return response.data.data;
+		} else {
+			return [];
+		}
+	}
+);
+
 export const quizLibrarySlice = createSlice({
 	name: 'questionLibrary',
 	initialState: {
 		labels: [],
-		questions: [],
-		specificPost: [],
+		questions: [], // all data
+		questionEdit: [], // get-question-edit
 		openUploadPost: false,
 		totalRecords: 0,
 		noResultStatus: false,
@@ -86,21 +103,18 @@ export const quizLibrarySlice = createSlice({
 		},
 		[getQuestionLabels.fulfilled]: (state, action) => {
 			state.labels = action.payload;
-		}
-		// [getPostLabels.fulfilled]: (state, action) => {
-		// 	state.labels = action.payload;
-		// },
+		},
 
-		// [getSpecificPost.pending]: (state) => {
-		// 	state.status = 'loading';
-		// },
-		// [getSpecificPost.fulfilled]: (state, action) => {
-		// 	state.specificPost = action.payload;
-		// 	state.status = 'success';
-		// },
-		// [getSpecificPost.rejected]: (state) => {
-		// 	state.status = 'failed';
-		//}
+		[getQuestionEdit.pending]: (state) => {
+			state.status = 'loading';
+		},
+		[getQuestionEdit.fulfilled]: (state, action) => {
+			state.questionEdit = action.payload;
+			state.status = 'success';
+		},
+		[getQuestionEdit.rejected]: (state) => {
+			state.status = 'failed';
+		}
 	}
 });
 
