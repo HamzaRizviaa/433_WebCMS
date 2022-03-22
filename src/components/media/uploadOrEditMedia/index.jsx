@@ -74,6 +74,7 @@ const UploadOrEditMedia = ({
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
+	const [fileDuration, setFileDuration] = useState(null);
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
 
@@ -270,7 +271,7 @@ const UploadOrEditMedia = ({
 	}, [acceptedFiles]);
 
 	useEffect(() => {
-		console.log(videoRef?.current?.duration, 'duration');
+		console.log(fileDuration, 'duration');
 	}, [videoRef.current]);
 
 	useEffect(() => {
@@ -448,6 +449,7 @@ const UploadOrEditMedia = ({
 					: {
 							main_category_id: media_type,
 							sub_category_id: subCategory?.id,
+							duration: Math.round(fileDuration),
 							width: fileWidth,
 							height: fileHeight,
 							// sub_category: subCategory,
@@ -808,11 +810,37 @@ const UploadOrEditMedia = ({
 																		<>
 																			<Union className={classes.playIcon} />
 																			<div className={classes.fileThumbnail2} />
+																			<video
+																				src={file.img}
+																				style={{ display: 'none' }}
+																				ref={videoRef}
+																				onLoadedMetadata={() => {
+																					setFileWidth(
+																						videoRef.current.videoWidth
+																					);
+																					setFileHeight(
+																						videoRef.current.videoHeight
+																					);
+																					setFileDuration(
+																						videoRef.current.duration
+																					);
+																				}}
+																			/>
 																		</>
 																	) : (
 																		<>
 																			<MusicIcon className={classes.playIcon} />
 																			<div className={classes.fileThumbnail2} />
+																			<audio
+																				src={file.img}
+																				style={{ display: 'none' }}
+																				ref={videoRef}
+																				onLoadedMetadata={() => {
+																					setFileDuration(
+																						videoRef.current.duration
+																					);
+																				}}
+																			/>
 																		</>
 																	)}
 
@@ -889,50 +917,21 @@ const UploadOrEditMedia = ({
 																ref={provided.innerRef}
 															>
 																<div className={classes.filePreviewLeft}>
-																	{file.type === 'video' ? (
-																		<>
-																			<video
-																				ref={videoRef}
-																				id={'my-video'}
-																				//poster={isEdit ? file.img : null}
-																				className={classes.fileThumbnail}
-																				style={{
-																					objectFit: 'cover',
-																					objectPosition: 'center'
-																				}}
-																				onLoadedMetadata={() => {
-																					setFileWidth(
-																						videoRef.current.videoWidth
-																					);
-																					setFileHeight(
-																						videoRef.current.videoHeight
-																					);
-																				}}
-																			>
-																				<source src={file.img} />
-																			</video>
-																		</>
-																	) : (
-																		<>
-																			<img
-																				src={file.img}
-																				className={classes.fileThumbnail}
-																				style={{
-																					objectFit: 'cover',
-																					objectPosition: 'center'
-																				}}
-																				ref={imgRef}
-																				onLoad={() => {
-																					setFileWidth(
-																						imgRef.current.naturalWidth
-																					);
-																					setFileHeight(
-																						imgRef.current.naturalHeight
-																					);
-																				}}
-																			/>
-																		</>
-																	)}
+																	<img
+																		src={file.img}
+																		className={classes.fileThumbnail}
+																		style={{
+																			objectFit: 'cover',
+																			objectPosition: 'center'
+																		}}
+																		ref={imgRef}
+																		onLoad={() => {
+																			setFileWidth(imgRef.current.naturalWidth);
+																			setFileHeight(
+																				imgRef.current.naturalHeight
+																			);
+																		}}
+																	/>
 
 																	<p className={classes.fileName}>
 																		{file.fileName}
@@ -1006,7 +1005,21 @@ const UploadOrEditMedia = ({
 									</p>
 
 									<div className={classes.titleContainer}>
-										<h6 style={{ color: titleMediaLabelColor }}>TITLE</h6>
+										<div className={classes.characterCount}>
+											<h6 style={{ color: titleMediaLabelColor }}>TITLE</h6>
+											{/* <h6
+												style={{
+													color:
+														titleMedia?.length >= 25 && titleMedia?.length <= 27
+															? 'pink'
+															: titleMedia?.length === 28
+															? 'red'
+															: 'white'
+												}}
+											>
+												{titleMedia?.length}/28
+											</h6> */}
+										</div>
 										<TextField
 											value={titleMedia}
 											onChange={(e) => {
@@ -1020,6 +1033,7 @@ const UploadOrEditMedia = ({
 												disableUnderline: true,
 												className: classes.textFieldInput
 											}}
+											inputProps={{ maxLength: 28 }}
 											multiline
 											maxRows={2}
 										/>

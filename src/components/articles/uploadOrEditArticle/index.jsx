@@ -121,7 +121,7 @@ const UploadOrEditViral = ({
 			specificArticle?.length === 0
 				? setEditorText('')
 				: setEditorText(
-						tinyMCE.activeEditor.setContent(specificArticle?.description)
+						tinyMCE.activeEditor?.setContent(specificArticle?.description)
 				  );
 			// }, 5000);
 
@@ -295,6 +295,7 @@ const UploadOrEditViral = ({
 
 	const handleEditorChange = () => {
 		const editorTextContent = tinymce?.activeEditor?.getContent();
+		console.log(editorTextContent);
 		setEditorText(editorTextContent);
 		setEditorTextChecker(editorTextContent); // to check yellow button condition
 	};
@@ -514,10 +515,10 @@ const UploadOrEditViral = ({
 		postButtonStatus ||
 		specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim();
 
-	console.log(specificArticleTextTrimmed, 'desc');
-	console.log(editorTextCheckerTrimmed.trim(), 'editor');
-	console.log(specificArticleTextTrimmed?.length, 'desc Length');
-	console.log(editorTextCheckerTrimmed?.trim()?.length, 'editor Length');
+	// console.log(specificArticleTextTrimmed, 'desc');
+	// console.log(editorTextCheckerTrimmed.trim(), 'editor');
+	// console.log(specificArticleTextTrimmed?.length, 'desc Length');
+	// console.log(editorTextCheckerTrimmed?.trim()?.length, 'editor Length');
 	// const editBtnDisabled = postButtonStatus || !articleTitle;
 	//|| (specificPost?.articleTitle === articleTitle.trim() &&
 	// 	specificPost?.media_id == selectedMedia?.id);
@@ -695,7 +696,22 @@ const UploadOrEditViral = ({
 							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
 
 							<div className={classes.captionContainer}>
-								<h6 style={{ color: articleTitleColor }}>ARTICLE TITLE</h6>
+								<div className={classes.characterCount}>
+									<h6 style={{ color: articleTitleColor }}>ARTICLE TITLE</h6>
+									{/* <h6
+										style={{
+											color:
+												articleTitle?.length >= 25 && articleTitle?.length <= 27
+													? 'pink'
+													: articleTitle?.length === 28
+													? 'red'
+													: 'white'
+										}}
+									>
+										{articleTitle?.length}/28
+									</h6> */}
+								</div>
+
 								<TextField
 									disabled={isEdit}
 									value={articleTitle}
@@ -711,15 +727,15 @@ const UploadOrEditViral = ({
 											borderRadius: articleTitle ? '16px' : '40px'
 										}
 									}}
-									// inputProps={{ maxLength: 30 }}
+									inputProps={{ maxLength: 28 }}
 									// autoFocus={true}
 									// FormHelperTextProps={{
 									// 	className: classes.characterCount,
 									// 	style: {
-									// 		color: articleTitle.length === 30 ? 'red' : 'white'
+									// 		color: articleTitle.length === 28 ? 'red' : 'white'
 									// 	}
 									// }}
-									// helperText={`${articleTitle.length}/30`}
+									// helperText={`${articleTitle.length}/28`}
 									multiline
 									maxRows={2}
 								/>
@@ -1099,9 +1115,10 @@ const UploadOrEditViral = ({
 										}}
 										onEditorChange={() => handleEditorChange()}
 										onInit={() => setDisableDropdown(false)}
-										onFocusIn={() => {
-											setDisableDropdown(false);
-										}}
+										//onMouseEnter={() => setDisableDropdown(false)}
+										// onFocusIn={() => {
+										// 	setDisableDropdown(false);
+										// }}
 										onBlur={() => setDisableDropdown(true)}
 									/>
 								</div>
