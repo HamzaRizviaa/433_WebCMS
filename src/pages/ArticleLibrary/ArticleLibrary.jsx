@@ -163,7 +163,8 @@ const ArticleLibrary = () => {
 								  col?.dataField === 'last_edit' ||
 								  col?.dataField === 'user'
 								? 30
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -180,7 +181,8 @@ const ArticleLibrary = () => {
 								  col?.dataField === 'last_edit' ||
 								  col?.dataField === 'user'
 								? 30
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -197,7 +199,8 @@ const ArticleLibrary = () => {
 								  col?.dataField === 'last_edit' ||
 								  col?.dataField === 'user'
 								? 30
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);

@@ -57,6 +57,9 @@ const UploadQuiz = ({ open, handleClose, title, heading1, buttonText }) => {
 							setPreviewFile={setPreviewFile}
 							previewRef={previewRef}
 							setDisableDropdown={setDisableDropdown}
+							handleClose={() => {
+								handleClose();
+							}}
 						/>
 					</TabPanelUnstyled>
 					<TabPanelUnstyled value={1}>
@@ -70,6 +73,9 @@ const UploadQuiz = ({ open, handleClose, title, heading1, buttonText }) => {
 							setPreviewFile={setPreviewFile}
 							previewRef={previewRef}
 							setDisableDropdown={setDisableDropdown}
+							handleClose={() => {
+								handleClose();
+							}}
 						/>
 					</TabPanelUnstyled>
 				</TabsUnstyled>

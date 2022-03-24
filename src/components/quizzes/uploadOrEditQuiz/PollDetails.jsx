@@ -59,7 +59,12 @@ export default function PollDetails({
 						</TabsListUnstyled>
 						<TabPanelUnstyled value={0}>
 							{/* table */}
-							<QuizResults style={{ minWidth: '40% !important' }} />
+							<QuizResults
+								handleClose={() => {
+									handleClose();
+								}}
+								style={{ minWidth: '40% !important' }}
+							/>
 						</TabPanelUnstyled>
 						<TabPanelUnstyled value={1}>
 							{/* add edit quiz */}
@@ -74,12 +79,20 @@ export default function PollDetails({
 								setPreviewFile={setPreviewFile}
 								previewRef={previewRef}
 								setDisableDropdown={setDisableDropdown}
+								handleClose={() => {
+									handleClose();
+								}}
 							/>
 						</TabPanelUnstyled>
 					</TabsUnstyled>
 				</div>
 			) : (
-				<QuizResults style={{ minWidth: '40% !important' }} />
+				<QuizResults
+					handleClose={() => {
+						handleClose();
+					}}
+					style={{ minWidth: '40% !important' }}
+				/>
 			)}
 		</Slider>
 	);

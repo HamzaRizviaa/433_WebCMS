@@ -1,15 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import classes from './_uploadOrEditQuiz.module.scss';
 import Button from '../../../components/button';
 import Table from '../../../components/table';
-// import { useStyles } from './quizStyles';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
-import { getDateTime } from '../../../utils';
+import { getDateTime, formatDate } from '../../../utils';
 import LinearProgress, {
 	linearProgressClasses
 } from '@mui/material/LinearProgress';
+import PropTypes from 'prop-types';
+
+import {
+	getQuestions,
+	getQuestionResulParticipant
+} from '../../../pages/QuestionLibrary/questionLibrarySlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { getLocalStorageDetails } from '../../../utils';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	height: '54px',
@@ -24,14 +33,33 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	}
 }));
 
-export default function QuizResults() {
+export default function QuizResults({ handleClose, page }) {
 	// const muiClasses = useStyles();
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
+	const [firstUserPercentage, setFirstUserPercentage] = useState(null);
+	const [secondUserPercentage, setSecondtUserPercentage] = useState(null);
+	const [ans1, setAns1] = useState('');
+	const [ans2, setAns2] = useState('');
+	const [ans1Users, setAns1Users] = useState(null);
+	const [ans2Users, setAns2Users] = useState(null);
+	const [totalParticipants, setTotalParticipants] = useState(null);
+	const [endDate, setEndDate] = useState(null);
+	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
+
+	const dispatch = useDispatch();
+
+	const editQuestionResultDetail = useSelector(
+		(state) => state.questionLibrary.questionResultDetail
+	);
+
+	const participants = useSelector(
+		(state) => state.questionLibrary.questionResultParticipant
+	);
 
 	const sortKeysMapping = {
 		username: 'username',
-		answers: 'postdate',
-		date_time: 'enddate'
+		answer: 'answer',
+		date_and_time: 'datetime'
 	};
 
 	const sortRows = (order, col) => {
@@ -52,9 +80,9 @@ export default function QuizResults() {
 					className={classes.sortIcon}
 					style={{
 						left:
-							col?.dataField === 'answers' ||
+							col?.dataField === 'answer' ||
 							col?.dataField === 'labels' ||
-							col?.dataField === 'date_time'
+							col?.dataField === 'date_and_time'
 								? -7
 								: -4
 					}}
@@ -66,9 +94,9 @@ export default function QuizResults() {
 					className={classes.sortIconSelected}
 					style={{
 						left:
-							col?.dataField === 'answers' ||
+							col?.dataField === 'answer' ||
 							col?.dataField === 'username' ||
-							col?.dataField === 'date_time'
+							col?.dataField === 'date_and_time'
 								? -7
 								: -4
 					}}
@@ -80,9 +108,9 @@ export default function QuizResults() {
 					className={classes.sortIconSelected}
 					style={{
 						left:
-							col?.dataField === 'answers' ||
+							col?.dataField === 'answer' ||
 							col?.dataField === 'username' ||
-							col?.dataField === 'date_time'
+							col?.dataField === 'date_and_time'
 								? -7
 								: -4
 					}}
@@ -91,59 +119,87 @@ export default function QuizResults() {
 		return null;
 	};
 
-	const data = [
-		{
-			username: 'loremipsum',
-			answers: 'Real Madrid',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			username: 'loremipsum',
-			answers: 'Barcelona FC',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			username: 'loremipsum',
-			answers: 'Barcelona FC',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			username: 'loremipsum',
-			answers: 'Real Madrid',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
+	const deleteQuiz = async (id) => {
+		setDeleteBtnStatus(true);
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/question/delete-question`,
+				{
+					question_id: id
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success('Question has been deleted!');
+				handleClose();
 
-		{
-			username: 'loremipsum',
-			answers: 'Real Madrid',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			username: 'loremipsum',
-			answers: 'Barcelona FC',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			username: 'loremipsum',
-			answers: 'Barcelona FC',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			username: 'loremipsum',
-			answers: 'Real Madrid',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			username: 'loremipsum',
-			answers: 'Barcelona FC',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			username: 'loremipsum',
-			answers: 'Real Madrid',
-			date_time: '2021-11-25T17:00:08.000Z'
+				//setting a timeout for getting post after delete.
+				dispatch(getQuestions({ page }));
+			}
+		} catch (e) {
+			toast.error('Failed to delete Question!');
+			setDeleteBtnStatus(false);
+			console.log(e);
 		}
-	];
+	};
+
+	// const data = [
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Real Madrid',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Barcelona FC',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Barcelona FC',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Real Madrid',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
+
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Real Madrid',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Barcelona FC',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Barcelona FC',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Real Madrid',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Barcelona FC',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Real Madrid',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	}
+	// ];
 
 	const columns = [
 		{
@@ -157,7 +213,7 @@ export default function QuizResults() {
 			}
 		},
 		{
-			dataField: 'answers',
+			dataField: 'answer',
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
@@ -170,7 +226,7 @@ export default function QuizResults() {
 			// }
 		},
 		{
-			dataField: 'date_time',
+			dataField: 'date_and_time',
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
@@ -194,47 +250,115 @@ export default function QuizResults() {
 		}
 	};
 
+	useEffect(() => {
+		if (sortState.sortby && sortState.order_type) {
+			dispatch(
+				getQuestionResulParticipant({
+					id: editQuestionResultDetail?.id,
+					type: editQuestionResultDetail?.question_type,
+					...sortState
+				})
+			);
+		}
+	}, [sortState]);
+
+	useEffect(() => {
+		if (editQuestionResultDetail?.answers) {
+			setTotalParticipants(editQuestionResultDetail?.total_participants);
+			setAns1Users(editQuestionResultDetail?.answers[0]?.users_count);
+			setAns2Users(editQuestionResultDetail?.answers[1]?.users_count);
+			setFirstUserPercentage(
+				editQuestionResultDetail?.total_participants !== 0
+					? Math.round(
+							(editQuestionResultDetail?.answers[0]?.users_count /
+								editQuestionResultDetail?.total_participants) *
+								100
+					  )
+					: 0
+			);
+			setSecondtUserPercentage(
+				editQuestionResultDetail?.total_participants !== 0
+					? Math.round(
+							(editQuestionResultDetail?.answers[1]?.users_count /
+								editQuestionResultDetail?.total_participants) *
+								100
+					  )
+					: 0
+			);
+
+			setAns1(editQuestionResultDetail?.answers[0]?.answer);
+			setAns2(editQuestionResultDetail?.answers[1]?.answer);
+			setEndDate(
+				formatDate(
+					editQuestionResultDetail?.poll_end_date ??
+						editQuestionResultDetail?.quiz_end_date
+				)
+			);
+		}
+	}, [editQuestionResultDetail]);
+
 	return (
 		<div>
-			<div className={classes.QuizQuestion}>Who will win El Classico?</div>
+			<div className={classes.QuizQuestion}>
+				{editQuestionResultDetail.question}
+			</div>
 			<div className={classes.QuizDetailsProgressBars}>
 				<div className={classes.progressBars}>
-					<BorderLinearProgress variant='determinate' value={33} />
+					<BorderLinearProgress
+						variant='determinate'
+						value={firstUserPercentage}
+					/>
 					<div className={classes.progressbarTextBox}>
 						<div>
-							<span className={classes.leftprogressbarText}>FC Barcelona</span>
-							<span className={classes.rightProgressText}>%30 | 123 Users</span>
+							<span className={classes.leftprogressbarText}>{ans1}</span>
+							<span className={classes.rightProgressText}>
+								%{firstUserPercentage} | {ans1Users}{' '}
+								{ans1Users === 1 ? 'User' : 'Users'}
+							</span>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div className={classes.QuizDetailsProgressBars}>
 				<div className={classes.progressBars}>
-					<BorderLinearProgress variant='determinate' value={70} />
+					<BorderLinearProgress
+						variant='determinate'
+						value={secondUserPercentage}
+					/>
 					<div className={classes.progressbarTextBox}>
 						<div>
-							<span className={classes.leftprogressbarText}>Real Madrid</span>
+							<span className={classes.leftprogressbarText}>{ans2}</span>
 							<span className={classes.rightProgressText}>
-								%70 | 1234 Users
+								%{secondUserPercentage} | {ans2Users}{' '}
+								{ans2Users === 1 ? 'User' : 'Users'}
 							</span>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div className={classes.QuizDetailstextUsers}>
-				<span>1.4 K Participants</span>
-				<span>Ends 24.01.2022 </span>
+				<span>
+					{totalParticipants}{' '}
+					{totalParticipants === 1 ? 'Participant' : 'Participants'}
+				</span>
+				<span>Ends {endDate} </span>
 			</div>
 			<div className={classes.QuizDetailsHeading}>Participants</div>
 			<div className={classes.QuizDetailstableContainer}>
-				<Table rowEvents={tableRowEvents} columns={columns} data={data} />
+				<Table
+					rowEvents={tableRowEvents}
+					columns={columns}
+					data={participants}
+				/>
 			</div>
 			<div style={{ width: '100%', paddingBottom: '10%' }}>
 				<Button
-					disabled={false}
+					disabled={deleteBtnStatus}
 					button2={true}
 					onClick={() => {
-						console.log('delete qquiz');
+						if (!deleteBtnStatus) {
+							deleteQuiz(editQuestionResultDetail?.id);
+						}
 					}}
 					text={'DELETE QUIZ'}
 				/>
@@ -242,3 +366,8 @@ export default function QuizResults() {
 		</div>
 	);
 }
+
+QuizResults.propTypes = {
+	handleClose: PropTypes.func.isRequired,
+	page: PropTypes.string
+};

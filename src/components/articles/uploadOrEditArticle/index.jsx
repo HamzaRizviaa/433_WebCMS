@@ -1113,7 +1113,7 @@ const UploadOrEditViral = ({
 													]
 												}
 											],
-											menubar: 'edit insert format tools',
+											menubar: 'format edit insert tools',
 											menu: {
 												edit: {
 													title: 'Edit',

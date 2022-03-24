@@ -17,8 +17,24 @@ export default class questionLibraryService {
 			}
 		});
 	}
+
 	static getQuestionEditApi(endPoint) {
-		console.log(endPoint, 'type in service');
+		return axios.get(`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`, {
+			headers: {
+				Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+			}
+		});
+	}
+
+	static getQuestionResultDetialApi(endPoint) {
+		return axios.get(`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`, {
+			headers: {
+				Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+			}
+		});
+	}
+
+	static getQuestionResultParticipantApi(endPoint) {
 		return axios.get(`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`, {
 			headers: {
 				Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
