@@ -65,6 +65,9 @@ const UploadOrEditViral = ({
 }) => {
 	const [articleTitle, setArticleTitle] = useState('');
 	const [editorText, setEditorText] = useState('');
+	const [dropboxLink, setDropboxLink] = useState('');
+	const [dropboxLinkError, setDropboxLinkError] = useState('');
+	const [dropboxLinkColor, setDropboxLinkColor] = useState('#ffffff');
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -116,6 +119,7 @@ const UploadOrEditViral = ({
 				setSelectedLabels(_labels);
 			}
 			setArticleTitle(specificArticle?.title);
+			setDropboxLink(specificArticle?.dropbox_url);
 			setEditorTextChecker(specificArticle.description);
 			// setTimeout(() => {
 			specificArticle?.length === 0
@@ -317,6 +321,7 @@ const UploadOrEditViral = ({
 					// ...(!isEdit ? { description: editorTextContent } : {}),
 					// description: editorTextContent,
 					description: editorText,
+					dropbox_url: dropboxLink,
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -356,6 +361,7 @@ const UploadOrEditViral = ({
 	const resetState = () => {
 		setArticleTitle('');
 		setEditorText('');
+		setDropboxLink('');
 		setEditorTextChecker('');
 		setUploadMediaError('');
 		setFileRejectionError('');
@@ -422,6 +428,14 @@ const UploadOrEditViral = ({
 			setTimeout(() => {
 				setArticleTextColor('#ffffff');
 				setArticleTextError('');
+			}, [5000]);
+		}
+		if (!dropboxLink) {
+			setDropboxLinkColor('#ff355a');
+			setDropboxLinkError('This field is required');
+			setTimeout(() => {
+				setDropboxLinkColor('#ffffff');
+				setDropboxLinkError('');
 			}, [5000]);
 		}
 	};
@@ -497,6 +511,7 @@ const UploadOrEditViral = ({
 	const postBtnDisabled =
 		!uploadedFiles.length ||
 		!articleTitle ||
+		!dropboxLink ||
 		postButtonStatus ||
 		selectedLabels.length < 10 ||
 		!editorText;
@@ -513,7 +528,9 @@ const UploadOrEditViral = ({
 	);
 	const editBtnDisabled =
 		postButtonStatus ||
-		specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim();
+		!dropboxLink ||
+		(specificArticle?.dropbox_url === dropboxLink.trim() &&
+			specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim());
 
 	// console.log(specificArticleTextTrimmed, 'desc');
 	// console.log(editorTextCheckerTrimmed.trim(), 'editor');
@@ -741,7 +758,23 @@ const UploadOrEditViral = ({
 								/>
 							</div>
 							<p className={classes.mediaError}>{articleTitleError}</p>
-
+							<div className={classes.captionContainer}>
+								<h6 style={{ color: dropboxLinkColor }}>DROPBOX URL</h6>
+								<TextField
+									value={dropboxLink}
+									onChange={(e) => setDropboxLink(e.target.value)}
+									placeholder={'Please drop the dropbox URL here'}
+									className={classes.textField}
+									InputProps={{
+										disableUnderline: true,
+										className: classes.textFieldInput,
+										style: {
+											borderRadius: dropboxLink ? '16px' : '40px'
+										}
+									}}
+								/>
+							</div>
+							<p className={classes.mediaError}>{dropboxLinkError}</p>
 							<div className={classes.captionContainer}>
 								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete

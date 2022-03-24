@@ -38,6 +38,9 @@ const UploadOrEditViral = ({
 	page
 }) => {
 	const [caption, setCaption] = useState('');
+	const [dropboxLink, setDropboxLink] = useState('');
+	const [dropboxLinkError, setDropboxLinkError] = useState('');
+	const [dropboxLinkColor, setDropboxLinkColor] = useState('#ffffff');
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -107,7 +110,10 @@ const UploadOrEditViral = ({
 				);
 				setSelectedLabels(_labels);
 			}
-			setCaption(specificViral.caption);
+			setCaption(specificViral?.caption);
+
+			setDropboxLink(specificViral?.dropbox_url);
+
 			if (specificViral?.thumbnail_url) {
 				setUploadedFiles([
 					{
@@ -295,6 +301,7 @@ const UploadOrEditViral = ({
 
 	const resetState = () => {
 		setCaption('');
+		setDropboxLink('');
 		setUploadMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
@@ -350,6 +357,15 @@ const UploadOrEditViral = ({
 				setCaptionError('');
 			}, [5000]);
 		}
+
+		if (!dropboxLink) {
+			setDropboxLinkColor('#ff355a');
+			setDropboxLinkError('This field is required');
+			setTimeout(() => {
+				setDropboxLinkColor('#ffffff');
+				setDropboxLinkError('');
+			}, [5000]);
+		}
 	};
 
 	const createViral = async (id, mediaFiles = []) => {
@@ -358,6 +374,7 @@ const UploadOrEditViral = ({
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
 				{
+					dropbox_url: dropboxLink,
 					...(caption ? { caption: caption } : { caption: '' }),
 					...(!isEdit ? { media_url: mediaFiles[0]?.media_url } : {}),
 					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
@@ -447,10 +464,15 @@ const UploadOrEditViral = ({
 		!uploadedFiles.length ||
 		postButtonStatus ||
 		selectedLabels.length < 10 ||
+		!dropboxLink ||
 		!caption;
 
 	const editBtnDisabled =
-		postButtonStatus || !caption || specificViral?.caption === caption.trim();
+		postButtonStatus ||
+		!caption ||
+		!dropboxLink ||
+		(specificViral?.caption === caption.trim() &&
+			specificViral?.dropbox_url === dropboxLink.trim());
 
 	return (
 		<Slider
@@ -651,6 +673,23 @@ const UploadOrEditViral = ({
 							)}
 							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
 							<div className={classes.captionContainer}>
+								<h6 style={{ color: dropboxLinkColor }}>DROPBOX URL</h6>
+								<TextField
+									value={dropboxLink}
+									onChange={(e) => setDropboxLink(e.target.value)}
+									placeholder={'Please drop the dropbox URL here'}
+									className={classes.textField}
+									InputProps={{
+										disableUnderline: true,
+										className: classes.textFieldInput,
+										style: {
+											borderRadius: dropboxLink ? '16px' : '40px'
+										}
+									}}
+								/>
+							</div>
+							<p className={classes.mediaError}>{dropboxLinkError}</p>{' '}
+							<div className={classes.captionContainer}>
 								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete
 									disabled={isEdit}
@@ -794,7 +833,6 @@ const UploadOrEditViral = ({
 								/>
 							</div>
 							<p className={classes.mediaError}>{labelError}</p>
-
 							<div className={classes.captionContainer}>
 								<h6 style={{ color: captionColor }}>CAPTION</h6>
 								<TextField
@@ -813,7 +851,6 @@ const UploadOrEditViral = ({
 									maxRows={4}
 								/>
 							</div>
-
 							<p className={classes.mediaError}>{captionError}</p>
 						</div>
 
