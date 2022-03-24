@@ -26,6 +26,7 @@ import { getDateTime, formatDate, getCalendarText } from '../../utils';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import { useNavigate } from 'react-router-dom';
+import { Markup } from 'interweave';
 // import './_calender.scss';
 import {
 	getQuestions,
@@ -269,8 +270,15 @@ const QuestionLibrary = () => {
 			sortFunc: () => {},
 			text: 'LABELS',
 			formatter: (content) => {
-				//let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
-				return <div className={classes.rowType}>{content}</div>;
+				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
+				return (
+					// <div className={classes.rowType}>
+					// 	{content[0] + `, ` + content[1]}
+					// </div>
+					<div className={classes.rowType}>
+						<Markup content={`${content[0]} ${secondLabel}`} />
+					</div>
+				);
 			},
 			headerStyle: () => {
 				return { paddingLeft: '48px' };
