@@ -12,6 +12,7 @@ export const getAllArticlesApi = createAsyncThunk(
 		endDate,
 		fromCalendar = false
 	}) => {
+		console.log(sortby, 'sortby');
 		let endPoint = `article/all-articles?limit=20&page=1`;
 		if (page) {
 			endPoint = `article/all-articles?limit=20&page=${page}`;
