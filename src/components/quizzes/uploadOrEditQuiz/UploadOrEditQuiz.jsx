@@ -26,6 +26,7 @@ import {
 import { getLocalStorageDetails } from '../../../utils';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import LoadingOverlay from 'react-loading-overlay';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
@@ -70,6 +71,8 @@ const UploadOrEditQuiz = ({
 	const [endDate, setEndDate] = useState(null);
 	const [calenderOpen, setCalenderOpen] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
+	const [postButtonStatus, setPostButtonStatus] = useState(false);
+	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
 
 	const dispatch = useDispatch();
 
@@ -239,6 +242,147 @@ const UploadOrEditQuiz = ({
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
+	const uploadFileToServer = async (uploadedFile) => {
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
+				{
+					file_type: uploadedFile.fileExtension,
+					parts: 1
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			// const frame = captureVideoFrame('my-video', 'png');
+			// if (result?.data?.data?.video_thumbnail_url) {
+			// 	await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
+			// 		headers: { 'Content-Type': 'image/png' }
+			// 	});
+			// }
+			if (result?.data?.data?.url) {
+				const _result = await axios.put(
+					result?.data?.data?.url,
+					uploadedFile.file,
+					{
+						headers: { 'Content-Type': uploadedFile.mime_type }
+					}
+				);
+
+				if (_result?.status === 200) {
+					const uploadResult = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: uploadedFile.file.name,
+							type: 'questionLibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									uploadedFile?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: result?.data?.data?.keys?.image_key,
+									video_key: result?.data?.data?.keys?.video_key,
+									audio_key: ''
+								},
+								upload_id:
+									uploadedFile?.mime_type == 'video/mp4'
+										? result?.data?.data?.upload_id
+										: 'image'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
+						}
+					);
+					if (uploadResult?.data?.status_code === 200) {
+						return uploadResult.data.data;
+					} else {
+						throw 'Error';
+					}
+				} else {
+					throw 'Error';
+				}
+			} else {
+				throw 'Error';
+			}
+		} catch (error) {
+			console.log('Error');
+			return null;
+		}
+	};
+
+	const createQuestion = async (id, mediaFiles = []) => {
+		setPostButtonStatus(true);
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/question/add-question`,
+				{
+					...(question ? { question: question } : { question: '' }),
+					...(!(editQuiz || editPoll)
+						? { image: mediaFiles[0]?.media_url }
+						: {}),
+					...(!(editQuiz || editPoll) ? { end_date: endDate } : {}),
+					...(!(editQuiz || editPoll)
+						? quiz
+							? { question_type: 'quiz' }
+							: { question_type: 'poll' }
+						: {}),
+					...(!(editQuiz || editPoll)
+						? {
+								answers: [
+									{ answer: ans1, type: quiz ? 'right_answer' : 'poll' },
+									{ answer: ans2, type: quiz ? 'wrong_answer' : 'poll' }
+								]
+						  }
+						: {}),
+					...(!(editQuiz || editPoll) && selectedLabels.length
+						? { labels: [...selectedLabels] }
+						: {}),
+					...((editQuiz || editPoll) && id ? { question_id: id } : {})
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success(
+					editQuiz || editPoll
+						? 'Question has been edited!'
+						: 'Question has been created!'
+				);
+				setIsLoadingcreateViral(false);
+				setPostButtonStatus(false);
+				handleClose();
+				dispatch(getQuestions({ page }));
+				dispatch(getQuestionLabels());
+			}
+		} catch (e) {
+			toast.error(
+				editQuiz || editPoll
+					? 'Failed to edit question!'
+					: 'Failed to create question!'
+			);
+			setIsLoadingcreateViral(false);
+			setPostButtonStatus(false);
+			console.log(e);
+		}
+	};
+
 	const deleteQuiz = async (id) => {
 		setDeleteBtnStatus(true);
 		try {
@@ -283,6 +427,7 @@ const UploadOrEditQuiz = ({
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
+		setPostButtonStatus(false);
 	};
 
 	const validatePostBtn = () => {
@@ -351,59 +496,52 @@ const UploadOrEditQuiz = ({
 	const addQuizBtnDisabled =
 		!uploadedFiles.length ||
 		selectedLabels.length < 10 ||
+		postButtonStatus ||
 		!question ||
 		!ans1 ||
 		!ans2 ||
 		!endDate;
 
 	return (
-		<div
-			className={`${
-				previewFile != null
-					? classes.previewContentWrapper
-					: classes.contentWrapper
-			}`}
-		>
+		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
 			<div
-				className={classes.contentWrapperNoPreview}
-				style={{ width: previewFile != null ? '60%' : 'auto' }}
+				className={`${
+					previewFile != null
+						? classes.previewContentWrapper
+						: classes.contentWrapper
+				}`}
 			>
-				<div>
-					<h5 className={classes.QuizQuestion}>{heading1}</h5>
-					<DragDropContext>
-						<Droppable droppableId='droppable-1'>
-							{(provided) => (
-								<div
-									{...provided.droppableProps}
-									ref={provided.innerRef}
-									className={classes.uploadedFilesContainer}
-								>
-									{uploadedFiles.map((file, index) => {
-										return (
-											<div
-												key={index}
-												className={classes.filePreview}
-												ref={provided.innerRef}
-											>
-												<div className={classes.filePreviewLeft}>
-													<img
-														src={file.img}
-														className={classes.fileThumbnail}
-													/>
-													<p className={classes.fileName}>{file.fileName}</p>
-												</div>
-
-												<div className={classes.filePreviewRight}>
-													{editQuiz || editPoll ? (
-														<EyeIcon
-															className={classes.filePreviewIcons}
-															onClick={() => {
-																setPreviewBool(true);
-																setPreviewFile(file);
-															}}
+				<div
+					className={classes.contentWrapperNoPreview}
+					style={{ width: previewFile != null ? '60%' : 'auto' }}
+				>
+					<div>
+						<h5 className={classes.QuizQuestion}>{heading1}</h5>
+						<DragDropContext>
+							<Droppable droppableId='droppable-1'>
+								{(provided) => (
+									<div
+										{...provided.droppableProps}
+										ref={provided.innerRef}
+										className={classes.uploadedFilesContainer}
+									>
+										{uploadedFiles.map((file, index) => {
+											return (
+												<div
+													key={index}
+													className={classes.filePreview}
+													ref={provided.innerRef}
+												>
+													<div className={classes.filePreviewLeft}>
+														<img
+															src={file.img}
+															className={classes.fileThumbnail}
 														/>
-													) : (
-														<>
+														<p className={classes.fileName}>{file.fileName}</p>
+													</div>
+
+													<div className={classes.filePreviewRight}>
+														{editQuiz || editPoll ? (
 															<EyeIcon
 																className={classes.filePreviewIcons}
 																onClick={() => {
@@ -411,174 +549,183 @@ const UploadOrEditQuiz = ({
 																	setPreviewFile(file);
 																}}
 															/>
-															<Deletes
-																className={classes.filePreviewIcons}
-																onClick={() => {
-																	handleDeleteFile(file.id);
-																	setPreviewBool(false);
-																	setPreviewFile(null);
-																}}
-															/>{' '}
-														</>
-													)}
+														) : (
+															<>
+																<EyeIcon
+																	className={classes.filePreviewIcons}
+																	onClick={() => {
+																		setPreviewBool(true);
+																		setPreviewFile(file);
+																	}}
+																/>
+																<Deletes
+																	className={classes.filePreviewIcons}
+																	onClick={() => {
+																		handleDeleteFile(file.id);
+																		setPreviewBool(false);
+																		setPreviewFile(null);
+																	}}
+																/>{' '}
+															</>
+														)}
+													</div>
 												</div>
-											</div>
-										);
-									})}
-									{provided.placeholder}
+											);
+										})}
+										{provided.placeholder}
+									</div>
+								)}
+							</Droppable>
+						</DragDropContext>
+						{!uploadedFiles.length && !editQuiz && !editPoll && (
+							<section
+								className={classes.dropZoneContainer}
+								style={{
+									borderColor: dropZoneBorder
+								}}
+							>
+								<div {...getRootProps({ className: classes.dropzone })}>
+									<input {...getInputProps()} />
+									<AddCircleOutlineIcon className={classes.addFilesIcon} />
+									<p className={classes.dragMsg}>
+										Click or drag file to this area to upload
+									</p>
+									<p className={classes.formatMsg}>
+										Supported formats are jpeg and png
+									</p>
+									<p className={classes.uploadMediaError}>{uploadMediaError}</p>
 								</div>
-							)}
-						</Droppable>
-					</DragDropContext>
-					{!uploadedFiles.length && !editQuiz && !editPoll && (
-						<section
-							className={classes.dropZoneContainer}
-							style={{
-								borderColor: dropZoneBorder
-							}}
-						>
-							<div {...getRootProps({ className: classes.dropzone })}>
-								<input {...getInputProps()} />
-								<AddCircleOutlineIcon className={classes.addFilesIcon} />
-								<p className={classes.dragMsg}>
-									Click or drag file to this area to upload
-								</p>
-								<p className={classes.formatMsg}>
-									Supported formats are jpeg and png
-								</p>
-								<p className={classes.uploadMediaError}>{uploadMediaError}</p>
-							</div>
-						</section>
-					)}
-					<p className={classes.fileRejectionError}>{fileRejectionError}</p>
+							</section>
+						)}
+						<p className={classes.fileRejectionError}>{fileRejectionError}</p>
 
-					<div className={classes.titleContainer}>
-						<h6 style={{ color: questionColor }}>QUESTION</h6>
-						<TextField
-							disabled={editQuiz || editPoll}
-							value={question}
-							onChange={(e) => {
-								setQuestion(e.target.value);
-							}}
-							placeholder={'Please write your question here'}
-							className={classes.textField}
-							InputProps={{
-								disableUnderline: true,
-								className: `${classes.textFieldInput}  ${
-									(editQuiz || editPoll) && classes.disableTextField
-								}`
-							}}
-							multiline
-							maxRows={2}
-						/>
-					</div>
+						<div className={classes.titleContainer}>
+							<h6 style={{ color: questionColor }}>QUESTION</h6>
+							<TextField
+								disabled={editQuiz || editPoll}
+								value={question}
+								onChange={(e) => {
+									setQuestion(e.target.value);
+								}}
+								placeholder={'Please write your question here'}
+								className={classes.textField}
+								InputProps={{
+									disableUnderline: true,
+									className: `${classes.textFieldInput}  ${
+										(editQuiz || editPoll) && classes.disableTextField
+									}`
+								}}
+								multiline
+								maxRows={2}
+							/>
+						</div>
 
-					<p className={classes.mediaError}>{questionError}</p>
+						<p className={classes.mediaError}>{questionError}</p>
 
-					<div className={classes.titleContainer}>
-						<h6 style={{ color: ans1Color }}>
-							{quiz || editQuiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
-						</h6>
-						<TextField
-							disabled={editQuiz || editPoll}
-							value={ans1}
-							onChange={(e) => {
-								setAns1(e.target.value);
-							}}
-							placeholder={'Please write your answer here'}
-							className={classes.textField}
-							InputProps={{
-								disableUnderline: true,
-								className: `${classes.textFieldInput}  ${
-									(editQuiz || editPoll) && classes.disableTextField
-								}`
-							}}
-							multiline
-							maxRows={1}
-						/>
-					</div>
+						<div className={classes.titleContainer}>
+							<h6 style={{ color: ans1Color }}>
+								{quiz || editQuiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
+							</h6>
+							<TextField
+								disabled={editQuiz || editPoll}
+								value={ans1}
+								onChange={(e) => {
+									setAns1(e.target.value);
+								}}
+								placeholder={'Please write your answer here'}
+								className={classes.textField}
+								InputProps={{
+									disableUnderline: true,
+									className: `${classes.textFieldInput}  ${
+										(editQuiz || editPoll) && classes.disableTextField
+									}`
+								}}
+								multiline
+								maxRows={1}
+							/>
+						</div>
 
-					<p className={classes.mediaError}>{ans1Error}</p>
+						<p className={classes.mediaError}>{ans1Error}</p>
 
-					<div className={classes.titleContainer}>
-						<h6 style={{ color: ans2Color }}>
-							{quiz || editQuiz ? 'WRONG ANSWER' : 'ANSWER 2'}
-						</h6>
-						<TextField
-							disabled={editQuiz || editPoll}
-							value={ans2}
-							onChange={(e) => {
-								setAns2(e.target.value);
-							}}
-							placeholder={'Please write your answer here'}
-							className={classes.textField}
-							InputProps={{
-								disableUnderline: true,
-								className: `${classes.textFieldInput}  ${
-									(editQuiz || editPoll) && classes.disableTextField
-								}`
-							}}
-							multiline
-							maxRows={1}
-						/>
-					</div>
+						<div className={classes.titleContainer}>
+							<h6 style={{ color: ans2Color }}>
+								{quiz || editQuiz ? 'WRONG ANSWER' : 'ANSWER 2'}
+							</h6>
+							<TextField
+								disabled={editQuiz || editPoll}
+								value={ans2}
+								onChange={(e) => {
+									setAns2(e.target.value);
+								}}
+								placeholder={'Please write your answer here'}
+								className={classes.textField}
+								InputProps={{
+									disableUnderline: true,
+									className: `${classes.textFieldInput}  ${
+										(editQuiz || editPoll) && classes.disableTextField
+									}`
+								}}
+								multiline
+								maxRows={1}
+							/>
+						</div>
 
-					<p className={classes.mediaError}>{ans2Error}</p>
+						<p className={classes.mediaError}>{ans2Error}</p>
 
-					<div className={classes.titleContainer}>
-						<h6 style={{ color: labelColor }}>LABELS</h6>
-						<Autocomplete
-							disabled={editQuiz || editPoll}
-							getOptionLabel={(option) => option.name}
-							PaperComponent={(props) => {
-								setDisableDropdown(false);
-								return (
-									<Paper
-										elevation={6}
-										className={classes.popperAuto}
-										style={{
-											marginTop: '12px',
-											background: 'black',
-											border: '1px solid #404040',
-											boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)',
-											borderRadius: '8px'
-										}}
-										{...props}
-									/>
-								);
-							}}
-							PopperComponent={({ style, ...props }) => (
-								<Popper {...props} style={{ ...style, height: 0 }} />
-							)}
-							ListboxProps={{
-								style: { maxHeight: 180 },
-								position: 'bottom'
-							}}
-							onClose={() => {
-								setDisableDropdown(true);
-							}}
-							multiple
-							filterSelectedOptions
-							freeSolo={false}
-							value={selectedLabels}
-							onChange={(event, newValue) => {
-								setDisableDropdown(true);
-								event.preventDefault();
-								event.stopPropagation();
-								let newLabels = newValue.filter(
-									(v, i, a) =>
-										a.findIndex(
-											(t) => t.name.toLowerCase() === v.name.toLowerCase()
-										) === i
-								);
-								setSelectedLabels([...newLabels]);
-							}}
-							popupIcon={''}
-							noOptionsText={
-								<div className={classes.liAutocompleteWithButton}>
-									{/* <p>{extraLabel.toUpperCase()}</p> */}
-									<p>No results found</p>
-									{/* <Button
+						<div className={classes.titleContainer}>
+							<h6 style={{ color: labelColor }}>LABELS</h6>
+							<Autocomplete
+								disabled={editQuiz || editPoll}
+								getOptionLabel={(option) => option.name}
+								PaperComponent={(props) => {
+									setDisableDropdown(false);
+									return (
+										<Paper
+											elevation={6}
+											className={classes.popperAuto}
+											style={{
+												marginTop: '12px',
+												background: 'black',
+												border: '1px solid #404040',
+												boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)',
+												borderRadius: '8px'
+											}}
+											{...props}
+										/>
+									);
+								}}
+								PopperComponent={({ style, ...props }) => (
+									<Popper {...props} style={{ ...style, height: 0 }} />
+								)}
+								ListboxProps={{
+									style: { maxHeight: 180 },
+									position: 'bottom'
+								}}
+								onClose={() => {
+									setDisableDropdown(true);
+								}}
+								multiple
+								filterSelectedOptions
+								freeSolo={false}
+								value={selectedLabels}
+								onChange={(event, newValue) => {
+									setDisableDropdown(true);
+									event.preventDefault();
+									event.stopPropagation();
+									let newLabels = newValue.filter(
+										(v, i, a) =>
+											a.findIndex(
+												(t) => t.name.toLowerCase() === v.name.toLowerCase()
+											) === i
+									);
+									setSelectedLabels([...newLabels]);
+								}}
+								popupIcon={''}
+								noOptionsText={
+									<div className={classes.liAutocompleteWithButton}>
+										{/* <p>{extraLabel.toUpperCase()}</p> */}
+										<p>No results found</p>
+										{/* <Button
 										text='CREATE NEW LABEL'
 										style={{
 											padding: '3px 12px',
@@ -591,196 +738,217 @@ const UploadOrEditQuiz = ({
 											// ]);
 										}}
 									/> */}
-								</div>
-							}
-							className={`${classes.autoComplete}  ${
-								(editQuiz || editPoll) && classes.disableAutoComplete
-							}`}
-							id='free-solo-2-demo'
-							disableClearable
-							options={quizLabels}
-							renderInput={(params) => (
-								<TextField
-									{...params}
-									placeholder={selectedLabels.length ? ' ' : 'Select Labels'}
-									className={classes.textFieldAuto}
-									value={extraLabel}
-									onChange={handleChangeExtraLabel}
-									InputProps={{
-										disableUnderline: true,
-										className: classes.textFieldInput,
-										...params.InputProps
-									}}
-								/>
-							)}
-							renderOption={(props, option) => {
-								let currentLabelDuplicate = selectedLabels.some(
-									(label) => label.name == option.name
-								);
-
-								if (option.id == null && !currentLabelDuplicate) {
-									return (
-										<li
-											{...props}
-											style={{
-												display: 'flex',
-												alignItems: 'center',
-												justifyContent: 'space-between'
-											}}
-											className={classes.liAutocomplete}
-										>
-											{option.name}
-											<Button
-												text='CREATE NEW LABEL'
-												style={{
-													padding: '3px 12px',
-													fontWeight: 700
-												}}
-												onClick={() => {
-													// setSelectedLabels((labels) => [
-													// 	...labels,
-													// 	extraLabel.toUpperCase()
-													// ]);
-												}}
-											/>
-										</li>
-									);
-								} else if (!currentLabelDuplicate) {
-									return (
-										<li {...props} className={classes.liAutocomplete}>
-											{option.name}
-										</li>
-									);
-								} else {
-									return (
-										<div className={classes.liAutocompleteWithButton}>
-											&apos;{option.name}&apos; is already selected
-										</div>
-									);
+									</div>
 								}
-							}}
-							ChipProps={{
-								className: classes.tagYellow,
-								size: 'small',
-								deleteIcon: <ClearIcon />
-							}}
-							clearIcon={''}
-						/>
-					</div>
+								className={`${classes.autoComplete}  ${
+									(editQuiz || editPoll) && classes.disableAutoComplete
+								}`}
+								id='free-solo-2-demo'
+								disableClearable
+								options={quizLabels}
+								renderInput={(params) => (
+									<TextField
+										{...params}
+										placeholder={selectedLabels.length ? ' ' : 'Select Labels'}
+										className={classes.textFieldAuto}
+										value={extraLabel}
+										onChange={handleChangeExtraLabel}
+										InputProps={{
+											disableUnderline: true,
+											className: classes.textFieldInput,
+											...params.InputProps
+										}}
+									/>
+								)}
+								renderOption={(props, option) => {
+									let currentLabelDuplicate = selectedLabels.some(
+										(label) => label.name == option.name
+									);
 
-					<p className={classes.mediaError}>{labelError}</p>
-
-					<div className={classes.datePickerContainer}>
-						<h6 style={{ color: quizColor }}>
-							{quiz || editQuiz ? 'QUIZ END DATE' : 'POLL END DATE'}
-						</h6>
-						<div
-							// className={editQuiz || editPoll ? classes.datePicker : ''}
-							className={classes.datePicker}
-							style={{ marginBottom: calenderOpen ? '250px' : '' }}
-						>
-							<DatePicker
-								customInput={<ExampleCustomInput />}
-								startDate={endDate}
-								minDate={new Date()}
-								//className={classes.datePicker}
-								onChange={(update) => {
-									setEndDate(update);
-								}}
-								popperPlacement='bottom'
-								// popperModifiers={{
-								// 	flip: {
-								// 		behavior: ['bottom'] // don't allow it to flip to be above
-								// 	},
-								// 	preventOverflow: {
-								// 		enabled: false // tell it not to try to stay within the view (this prevents the popper from covering the element you clicked)
-								// 	},
-								// 	hide: {
-								// 		enabled: false // turn off since needs preventOverflow to be enabled
-								// 	}
-								// }}
-								onCalendarOpen={() => {
-									setCalenderOpen(true);
-									setDisableDropdown(false);
-								}}
-								onCalendarClose={() => {
-									setCalenderOpen(false);
-									setDisableDropdown(true);
-								}}
-								//placement='center'
-								isClearable={true}
-							/>
-						</div>
-					</div>
-
-					<p className={classes.mediaError}>{calenderError}</p>
-				</div>
-
-				<div className={classes.buttonDiv}>
-					{editQuiz || editPoll ? (
-						<div className={classes.editBtn}>
-							<Button
-								disabled={deleteBtnStatus}
-								button2={editQuiz || editPoll ? true : false}
-								onClick={() => {
-									if (!deleteBtnStatus) {
-										//console.log('specific', specificMedia.id);
-										deleteQuiz(editQuestionData?.id);
+									if (option.id == null && !currentLabelDuplicate) {
+										return (
+											<li
+												{...props}
+												style={{
+													display: 'flex',
+													alignItems: 'center',
+													justifyContent: 'space-between'
+												}}
+												className={classes.liAutocomplete}
+											>
+												{option.name}
+												<Button
+													text='CREATE NEW LABEL'
+													style={{
+														padding: '3px 12px',
+														fontWeight: 700
+													}}
+													onClick={() => {
+														// setSelectedLabels((labels) => [
+														// 	...labels,
+														// 	extraLabel.toUpperCase()
+														// ]);
+													}}
+												/>
+											</li>
+										);
+									} else if (!currentLabelDuplicate) {
+										return (
+											<li {...props} className={classes.liAutocomplete}>
+												{option.name}
+											</li>
+										);
+									} else {
+										return (
+											<div className={classes.liAutocompleteWithButton}>
+												&apos;{option.name}&apos; is already selected
+											</div>
+										);
 									}
 								}}
-								text={'DELETE QUIZ'}
+								ChipProps={{
+									className: classes.tagYellow,
+									size: 'small',
+									deleteIcon: <ClearIcon />
+								}}
+								clearIcon={''}
 							/>
 						</div>
-					) : (
-						<></>
-					)}
 
-					<div
-						className={
-							editQuiz || editPoll ? classes.addQuizBtnEdit : classes.addQuizBtn
-						}
-					>
-						<Button
-							disabled={addQuizBtnDisabled}
-							onClick={async () => {
-								if (addQuizBtnDisabled) {
-									validatePostBtn();
-								} else {
-									console.log('click');
-								}
-							}}
-							text={buttonText}
-						/>
+						<p className={classes.mediaError}>{labelError}</p>
+
+						<div className={classes.datePickerContainer}>
+							<h6 style={{ color: quizColor }}>
+								{quiz || editQuiz ? 'QUIZ END DATE' : 'POLL END DATE'}
+							</h6>
+							<div
+								// className={editQuiz || editPoll ? classes.datePicker : ''}
+								className={classes.datePicker}
+								style={{ marginBottom: calenderOpen ? '250px' : '' }}
+							>
+								<DatePicker
+									customInput={<ExampleCustomInput />}
+									startDate={endDate}
+									minDate={new Date()}
+									//className={classes.datePicker}
+									onChange={(update) => {
+										setEndDate(update);
+									}}
+									popperPlacement='bottom'
+									// popperModifiers={{
+									// 	flip: {
+									// 		behavior: ['bottom'] // don't allow it to flip to be above
+									// 	},
+									// 	preventOverflow: {
+									// 		enabled: false // tell it not to try to stay within the view (this prevents the popper from covering the element you clicked)
+									// 	},
+									// 	hide: {
+									// 		enabled: false // turn off since needs preventOverflow to be enabled
+									// 	}
+									// }}
+									onCalendarOpen={() => {
+										setCalenderOpen(true);
+										setDisableDropdown(false);
+									}}
+									onCalendarClose={() => {
+										setCalenderOpen(false);
+										setDisableDropdown(true);
+									}}
+									//placement='center'
+									isClearable={true}
+								/>
+							</div>
+						</div>
+
+						<p className={classes.mediaError}>{calenderError}</p>
+					</div>
+
+					<div className={classes.buttonDiv}>
+						{editQuiz || editPoll ? (
+							<div className={classes.editBtn}>
+								<Button
+									disabled={deleteBtnStatus}
+									button2={editQuiz || editPoll ? true : false}
+									onClick={() => {
+										if (!deleteBtnStatus) {
+											//console.log('specific', specificMedia.id);
+											deleteQuiz(editQuestionData?.id);
+										}
+									}}
+									text={'DELETE QUIZ'}
+								/>
+							</div>
+						) : (
+							<></>
+						)}
+
+						<div
+							className={
+								editQuiz || editPoll
+									? classes.addQuizBtnEdit
+									: classes.addQuizBtn
+							}
+						>
+							<Button
+								disabled={addQuizBtnDisabled}
+								onClick={async () => {
+									if (addQuizBtnDisabled) {
+										validatePostBtn();
+									} else {
+										setPostButtonStatus(true);
+										if (editQuiz || editPoll) {
+											createQuestion(editQuestionData?.id);
+										} else {
+											setIsLoadingcreateViral(true);
+											let uploadFilesPromiseArray = uploadedFiles.map(
+												async (_file) => {
+													return uploadFileToServer(_file);
+												}
+											);
+
+											Promise.all([...uploadFilesPromiseArray])
+												.then((mediaFiles) => {
+													createQuestion(null, mediaFiles);
+												})
+												.catch(() => {
+													setIsLoadingcreateViral(false);
+												});
+										}
+									}
+								}}
+								text={buttonText}
+							/>
+						</div>
 					</div>
 				</div>
+				{previewFile != null && (
+					<div ref={previewRef} className={classes.previewComponent}>
+						<div className={classes.previewHeader}>
+							<Close
+								onClick={() => {
+									setPreviewBool(false);
+									setPreviewFile(null);
+								}}
+								className={classes.closeIcon}
+							/>
+							<h5>Preview</h5>
+						</div>
+						<div>
+							<img
+								src={previewFile.img}
+								className={classes.previewFile}
+								style={{
+									width: `${8 * 4}rem`,
+									height: `${8 * 4}rem`,
+									objectFit: 'cover',
+									objectPosition: 'center'
+								}}
+							/>
+						</div>
+					</div>
+				)}
 			</div>
-			{previewFile != null && (
-				<div ref={previewRef} className={classes.previewComponent}>
-					<div className={classes.previewHeader}>
-						<Close
-							onClick={() => {
-								setPreviewBool(false);
-								setPreviewFile(null);
-							}}
-							className={classes.closeIcon}
-						/>
-						<h5>Preview</h5>
-					</div>
-					<div>
-						<img
-							src={previewFile.img}
-							className={classes.previewFile}
-							style={{
-								width: `${8 * 4}rem`,
-								height: `${8 * 4}rem`,
-								objectFit: 'cover',
-								objectPosition: 'center'
-							}}
-						/>
-					</div>
-				</div>
-			)}
-		</div>
+		</LoadingOverlay>
 	);
 };
 
