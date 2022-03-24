@@ -251,25 +251,10 @@ const ArticleLibrary = () => {
 								/>
 							</span>
 						</Tooltip>
-						<Tooltip
-							TransitionComponent={Fade}
-							TransitionProps={{ timeout: 600 }}
-							title={
-								// <Markup
-								// 	content={row?.file_name?.length > 13 ? row?.file_name : ''}
-								// />
-								<Markup className={classes.fileName} content={row?.title} />
-							}
-							arrow
-							componentsProps={{
-								tooltip: { className: classes.toolTip },
-								arrow: { className: classes.toolTipArrow }
-							}}
-						>
-							<div>
-								<Markup className={classes.fileName} content={row?.title} />
-							</div>
-						</Tooltip>
+
+						<div>
+							<Markup className={classes.fileName} content={row?.title} />
+						</div>
 					</div>
 				);
 			}
