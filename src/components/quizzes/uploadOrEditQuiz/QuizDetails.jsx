@@ -71,6 +71,9 @@ export default function QuizDetails({
 							setPreviewFile={setPreviewFile}
 							previewRef={previewRef}
 							setDisableDropdown={setDisableDropdown}
+							handleClose={() => {
+								handleClose();
+							}}
 						/>
 					</TabPanelUnstyled>
 				</TabsUnstyled>

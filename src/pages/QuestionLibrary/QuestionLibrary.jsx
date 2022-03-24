@@ -31,7 +31,8 @@ import {
 	getQuestions,
 	resetCalendarError,
 	resetNoResultStatus,
-	getQuestionEdit
+	getQuestionEdit,
+	getQuestionResultDetail
 } from './questionLibrarySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
@@ -39,7 +40,7 @@ import LoadingOverlay from 'react-loading-overlay';
 const QuestionLibrary = () => {
 	// Selectors
 	const questions = useSelector((state) => state.questionLibrary.questions);
-
+	console.log(questions);
 	const statusQuestionApi = useSelector((state) => state.questionLibrary);
 
 	const totalRecords = useSelector(
@@ -350,15 +351,15 @@ const QuestionLibrary = () => {
 		onClick: (e, row) => {
 			// if (!edit) {
 			// dispatch(getSpecificPost(row.id));
-			console.log(row, 'question', row);
 			dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
-			console.log('question', row.question_type);
+			dispatch(
+				getQuestionResultDetail({ id: row.id, type: row.question_type })
+			);
 			setrowStatus(row.status);
 			setEdit(true);
 			row.question_type === 'quiz'
 				? setShowQuizSlider(true)
 				: setShowPollSlider(true);
-
 			// }
 		}
 	};

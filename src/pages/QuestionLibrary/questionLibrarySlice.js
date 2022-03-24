@@ -60,12 +60,32 @@ export const getQuestionEdit = createAsyncThunk(
 	}
 );
 
+export const getQuestionResultDetail = createAsyncThunk(
+	'questionLibrary/getQuestionResultDetail',
+	async ({ id, type }) => {
+		let endPoint = `question/get-question-result-detail?question_id=${id}`;
+
+		if (id && type) {
+			endPoint = `question/get-question-result-detail?question_id=${id}&question_type=${type}`;
+		}
+		const response = await QuestionLibraryService.getQuestionResultDetialApi(
+			endPoint
+		);
+		if (response?.data?.data) {
+			return response.data.data;
+		} else {
+			return [];
+		}
+	}
+);
+
 export const quizLibrarySlice = createSlice({
 	name: 'questionLibrary',
 	initialState: {
 		labels: [],
 		questions: [], // all data
 		questionEdit: [], // get-question-edit
+		questionResultDetail: [],
 		openUploadPost: false,
 		totalRecords: 0,
 		noResultStatus: false,
@@ -113,6 +133,17 @@ export const quizLibrarySlice = createSlice({
 			state.status = 'success';
 		},
 		[getQuestionEdit.rejected]: (state) => {
+			state.status = 'failed';
+		},
+
+		[getQuestionResultDetail.pending]: (state) => {
+			state.status = 'loading';
+		},
+		[getQuestionResultDetail.fulfilled]: (state, action) => {
+			state.questionResultDetail = action.payload;
+			state.status = 'success';
+		},
+		[getQuestionResultDetail.rejected]: (state) => {
 			state.status = 'failed';
 		}
 	}

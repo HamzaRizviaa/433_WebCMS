@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import classes from './_uploadOrEditQuiz.module.scss';
 import Button from '../../../components/button';
@@ -10,6 +10,7 @@ import { getDateTime } from '../../../utils';
 import LinearProgress, {
 	linearProgressClasses
 } from '@mui/material/LinearProgress';
+import { useSelector } from 'react-redux';
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	height: '54px',
@@ -27,6 +28,17 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 export default function QuizResults() {
 	// const muiClasses = useStyles();
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
+	const [firstUserPercentage, setFirstUserPercentage] = useState(null);
+	const [secondUserPercentage, setSecondtUserPercentage] = useState(null);
+	const [ans1, setAns1] = useState('');
+	const [ans2, setAns2] = useState('');
+	const [ans1Users, setAns1Users] = useState(null);
+	const [ans2Users, setAns2Users] = useState(null);
+	const [totalParticipants, setTotalParticipants] = useState(null);
+
+	const editQuestionResultDetail = useSelector(
+		(state) => state.questionLibrary.questionResultDetail
+	);
 
 	const sortKeysMapping = {
 		username: 'username',
@@ -194,35 +206,74 @@ export default function QuizResults() {
 		}
 	};
 
+	useEffect(() => {
+		if (editQuestionResultDetail?.answers) {
+			setTotalParticipants(editQuestionResultDetail?.total_participants);
+			setAns1Users(editQuestionResultDetail?.answers[0]?.users_count);
+			setAns2Users(editQuestionResultDetail?.answers[1]?.users_count);
+			setFirstUserPercentage(
+				editQuestionResultDetail?.total_participants !== 0
+					? Math.round(
+							(editQuestionResultDetail?.answers[0]?.users_count /
+								editQuestionResultDetail?.total_participants) *
+								100
+					  )
+					: 0
+			);
+			setSecondtUserPercentage(
+				editQuestionResultDetail?.total_participants !== 0
+					? Math.round(
+							(editQuestionResultDetail?.answers[1]?.users_count /
+								editQuestionResultDetail?.total_participants) *
+								100
+					  )
+					: 0
+			);
+
+			setAns1(editQuestionResultDetail?.answers[0]?.answer);
+			setAns2(editQuestionResultDetail?.answers[1]?.answer);
+		}
+	}, [editQuestionResultDetail]);
+
 	return (
 		<div>
-			<div className={classes.QuizQuestion}>Who will win El Classico?</div>
+			<div className={classes.QuizQuestion}>
+				{editQuestionResultDetail.question}
+			</div>
 			<div className={classes.QuizDetailsProgressBars}>
 				<div className={classes.progressBars}>
-					<BorderLinearProgress variant='determinate' value={33} />
+					<BorderLinearProgress
+						variant='determinate'
+						value={firstUserPercentage}
+					/>
 					<div className={classes.progressbarTextBox}>
 						<div>
-							<span className={classes.leftprogressbarText}>FC Barcelona</span>
-							<span className={classes.rightProgressText}>%30 | 123 Users</span>
+							<span className={classes.leftprogressbarText}>{ans1}</span>
+							<span className={classes.rightProgressText}>
+								%{firstUserPercentage} | {ans1Users} Users
+							</span>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div className={classes.QuizDetailsProgressBars}>
 				<div className={classes.progressBars}>
-					<BorderLinearProgress variant='determinate' value={70} />
+					<BorderLinearProgress
+						variant='determinate'
+						value={secondUserPercentage}
+					/>
 					<div className={classes.progressbarTextBox}>
 						<div>
-							<span className={classes.leftprogressbarText}>Real Madrid</span>
+							<span className={classes.leftprogressbarText}>{ans2}</span>
 							<span className={classes.rightProgressText}>
-								%70 | 1234 Users
+								%{secondUserPercentage} | {ans2Users} Users
 							</span>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div className={classes.QuizDetailstextUsers}>
-				<span>1.4 K Participants</span>
+				<span>{totalParticipants} Participants</span>
 				<span>Ends 24.01.2022 </span>
 			</div>
 			<div className={classes.QuizDetailsHeading}>Participants</div>

@@ -20,8 +20,12 @@ import { formatDate, getCalendarText2 } from '../../../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	getQuestionLabels,
-	getQuestionEdit
+	getQuestionEdit,
+	getQuestions
 } from '../../../pages/QuestionLibrary/questionLibrarySlice';
+import { getLocalStorageDetails } from '../../../utils';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
@@ -38,7 +42,9 @@ const UploadOrEditQuiz = ({
 	setPreviewFile,
 	previewRef,
 	setDisableDropdown,
-	quiz
+	quiz,
+	handleClose,
+	page
 }) => {
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -63,14 +69,17 @@ const UploadOrEditQuiz = ({
 	const [extraLabel, setExtraLabel] = useState('');
 	const [endDate, setEndDate] = useState(null);
 	const [calenderOpen, setCalenderOpen] = useState(false);
+	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 
 	const dispatch = useDispatch();
 
 	const labels = useSelector((state) => state.questionLibrary.labels);
+
 	const editQuestionData = useSelector(
 		(state) => state.questionLibrary.questionEdit
 	);
 	console.log(editQuestionData, 'editQuestionData');
+
 	useEffect(() => {
 		if (labels.length) {
 			setQuizLabels([...labels]);
@@ -147,12 +156,12 @@ const UploadOrEditQuiz = ({
 			}
 			setQuestion(editQuestionData?.question);
 			setAns1(
-				editQuestionData?.answers.length > 0
+				editQuestionData?.answers?.length > 0
 					? editQuestionData?.answers[0]?.answer
 					: ''
 			);
 			setAns2(
-				editQuestionData?.answers.length > 0
+				editQuestionData?.answers?.length > 0
 					? editQuestionData?.answers[1]?.answer
 					: ''
 			);
@@ -230,6 +239,34 @@ const UploadOrEditQuiz = ({
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
+	const deleteQuiz = async (id) => {
+		setDeleteBtnStatus(true);
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/question/delete-question`,
+				{
+					question_id: id
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success('Question has been deleted!');
+				handleClose();
+
+				//setting a timeout for getting post after delete.
+				dispatch(getQuestions({ page }));
+			}
+		} catch (e) {
+			toast.error('Failed to delete Question!');
+			setDeleteBtnStatus(false);
+			console.log(e);
+		}
+	};
+
 	const resetState = () => {
 		setUploadedFiles([]);
 		setFileRejectionError('');
@@ -243,6 +280,9 @@ const UploadOrEditQuiz = ({
 		setSelectedLabels([]);
 		setExtraLabel('');
 		setDisableDropdown(true);
+		setTimeout(() => {
+			setDeleteBtnStatus(false);
+		}, 1000);
 	};
 
 	const validatePostBtn = () => {
@@ -680,13 +720,13 @@ const UploadOrEditQuiz = ({
 					{editQuiz || editPoll ? (
 						<div className={classes.editBtn}>
 							<Button
-								disabled={false}
+								disabled={deleteBtnStatus}
 								button2={editQuiz || editPoll ? true : false}
 								onClick={() => {
-									// if (!deleteBtnStatus) {
-									// 	console.log('specific', specificMedia.id);
-									// 	deleteMedia(specificMedia?.id);
-									// }
+									if (!deleteBtnStatus) {
+										//console.log('specific', specificMedia.id);
+										deleteQuiz(editQuestionData?.id);
+									}
 								}}
 								text={'DELETE QUIZ'}
 							/>
@@ -758,7 +798,9 @@ UploadOrEditQuiz.propTypes = {
 	]).isRequired,
 	setDisableDropdown: PropTypes.func.isRequired,
 	quiz: PropTypes.bool,
-	editPoll: PropTypes.bool
+	editPoll: PropTypes.bool,
+	handleClose: PropTypes.func.isRequired,
+	page: PropTypes.string
 };
 
 export default UploadOrEditQuiz;

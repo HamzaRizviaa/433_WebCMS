@@ -74,6 +74,9 @@ export default function PollDetails({
 								setPreviewFile={setPreviewFile}
 								previewRef={previewRef}
 								setDisableDropdown={setDisableDropdown}
+								handleClose={() => {
+									handleClose();
+								}}
 							/>
 						</TabPanelUnstyled>
 					</TabsUnstyled>
