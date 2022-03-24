@@ -3,14 +3,19 @@ import { styled } from '@mui/material/styles';
 import classes from './_uploadOrEditQuiz.module.scss';
 import Button from '../../../components/button';
 import Table from '../../../components/table';
-// import { useStyles } from './quizStyles';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
-import { getDateTime } from '../../../utils';
+import { getDateTime, formatDate } from '../../../utils';
 import LinearProgress, {
 	linearProgressClasses
 } from '@mui/material/LinearProgress';
-import { useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
+
+import { getQuestions } from '../../../pages/QuestionLibrary/questionLibrarySlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { getLocalStorageDetails } from '../../../utils';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	height: '54px',
@@ -25,7 +30,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	}
 }));
 
-export default function QuizResults() {
+export default function QuizResults({ handleClose, page }) {
 	// const muiClasses = useStyles();
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [firstUserPercentage, setFirstUserPercentage] = useState(null);
@@ -35,6 +40,10 @@ export default function QuizResults() {
 	const [ans1Users, setAns1Users] = useState(null);
 	const [ans2Users, setAns2Users] = useState(null);
 	const [totalParticipants, setTotalParticipants] = useState(null);
+	const [endDate, setEndDate] = useState(null);
+	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
+
+	const dispatch = useDispatch();
 
 	const editQuestionResultDetail = useSelector(
 		(state) => state.questionLibrary.questionResultDetail
@@ -101,6 +110,34 @@ export default function QuizResults() {
 				/>
 			);
 		return null;
+	};
+
+	const deleteQuiz = async (id) => {
+		setDeleteBtnStatus(true);
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/question/delete-question`,
+				{
+					question_id: id
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success('Question has been deleted!');
+				handleClose();
+
+				//setting a timeout for getting post after delete.
+				dispatch(getQuestions({ page }));
+			}
+		} catch (e) {
+			toast.error('Failed to delete Question!');
+			setDeleteBtnStatus(false);
+			console.log(e);
+		}
 	};
 
 	const data = [
@@ -232,6 +269,12 @@ export default function QuizResults() {
 
 			setAns1(editQuestionResultDetail?.answers[0]?.answer);
 			setAns2(editQuestionResultDetail?.answers[1]?.answer);
+			setEndDate(
+				formatDate(
+					editQuestionResultDetail?.poll_end_date ??
+						editQuestionResultDetail?.quiz_end_date
+				)
+			);
 		}
 	}, [editQuestionResultDetail]);
 
@@ -250,7 +293,8 @@ export default function QuizResults() {
 						<div>
 							<span className={classes.leftprogressbarText}>{ans1}</span>
 							<span className={classes.rightProgressText}>
-								%{firstUserPercentage} | {ans1Users} Users
+								%{firstUserPercentage} | {ans1Users}{' '}
+								{ans1Users === 1 ? 'User' : 'Users'}
 							</span>
 						</div>
 					</div>
@@ -266,15 +310,19 @@ export default function QuizResults() {
 						<div>
 							<span className={classes.leftprogressbarText}>{ans2}</span>
 							<span className={classes.rightProgressText}>
-								%{secondUserPercentage} | {ans2Users} Users
+								%{secondUserPercentage} | {ans2Users}{' '}
+								{ans2Users === 1 ? 'User' : 'Users'}
 							</span>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div className={classes.QuizDetailstextUsers}>
-				<span>{totalParticipants} Participants</span>
-				<span>Ends 24.01.2022 </span>
+				<span>
+					{totalParticipants}{' '}
+					{totalParticipants === 1 ? 'Participant' : 'Participants'}
+				</span>
+				<span>Ends {endDate} </span>
 			</div>
 			<div className={classes.QuizDetailsHeading}>Participants</div>
 			<div className={classes.QuizDetailstableContainer}>
@@ -282,10 +330,12 @@ export default function QuizResults() {
 			</div>
 			<div style={{ width: '100%', paddingBottom: '10%' }}>
 				<Button
-					disabled={false}
+					disabled={deleteBtnStatus}
 					button2={true}
 					onClick={() => {
-						console.log('delete qquiz');
+						if (!deleteBtnStatus) {
+							deleteQuiz(editQuestionResultDetail?.id);
+						}
 					}}
 					text={'DELETE QUIZ'}
 				/>
@@ -293,3 +343,8 @@ export default function QuizResults() {
 		</div>
 	);
 }
+
+QuizResults.propTypes = {
+	handleClose: PropTypes.func.isRequired,
+	page: PropTypes.string
+};
