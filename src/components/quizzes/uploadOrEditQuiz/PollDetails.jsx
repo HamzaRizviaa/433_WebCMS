@@ -29,6 +29,8 @@ export default function PollDetails({
 		setPreviewFile(null);
 	};
 
+	console.log(status, 'stat2');
+
 	const muiClasses = useStyles();
 
 	return (
@@ -47,53 +49,55 @@ export default function PollDetails({
 			// quiz={true}
 		>
 			{/* {console.log(status, 'status in poll')} */}
-			{status === 'ACTIVE' ? (
-				<div className={muiClasses.root}>
-					<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
-						<TabsListUnstyled
-							className={muiClasses.tabMainDiv}
-							style={{ width: previewBool ? '60%' : '100%' }}
-						>
-							<TabUnstyled>Poll Results</TabUnstyled>
-							<TabUnstyled>Edit Poll</TabUnstyled>
-						</TabsListUnstyled>
-						<TabPanelUnstyled value={0}>
-							{/* table */}
-							<QuizResults
-								handleClose={() => {
-									handleClose();
-								}}
-								style={{ minWidth: '40% !important' }}
-							/>
-						</TabPanelUnstyled>
-						<TabPanelUnstyled value={1}>
-							{/* add edit quiz */}
-							{/* <EditQuiz/>  */}
-							<UploadOrEditQuiz
-								editPoll={isEdit}
-								heading1={heading1}
-								open={open}
-								buttonText={buttonText}
-								setPreviewBool={setPreviewBool}
-								previewFile={previewFile}
-								setPreviewFile={setPreviewFile}
-								previewRef={previewRef}
-								setDisableDropdown={setDisableDropdown}
-								handleClose={() => {
-									handleClose();
-								}}
-							/>
-						</TabPanelUnstyled>
-					</TabsUnstyled>
-				</div>
-			) : (
+			{/* {status === 'ACTIVE' ? ( */}
+
+			<div className={muiClasses.root}>
+				<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
+					<TabsListUnstyled
+						className={muiClasses.tabMainDiv}
+						style={{ width: previewBool ? '60%' : '100%' }}
+					>
+						<TabUnstyled>Poll Results</TabUnstyled>
+						<TabUnstyled>Edit Poll</TabUnstyled>
+					</TabsListUnstyled>
+					<TabPanelUnstyled value={0}>
+						{/* table */}
+						<QuizResults
+							handleClose={() => {
+								handleClose();
+							}}
+							style={{ minWidth: '40% !important' }}
+						/>
+					</TabPanelUnstyled>
+					<TabPanelUnstyled value={1}>
+						{/* add edit quiz */}
+						{/* <EditQuiz/>  */}
+						<UploadOrEditQuiz
+							editPoll={isEdit}
+							heading1={heading1}
+							open={open}
+							buttonText={buttonText}
+							setPreviewBool={setPreviewBool}
+							previewFile={previewFile}
+							setPreviewFile={setPreviewFile}
+							previewRef={previewRef}
+							setDisableDropdown={setDisableDropdown}
+							handleClose={() => {
+								handleClose();
+							}}
+							status={status}
+						/>
+					</TabPanelUnstyled>
+				</TabsUnstyled>
+			</div>
+			{/* ) : (
 				<QuizResults
 					handleClose={() => {
 						handleClose();
 					}}
 					style={{ minWidth: '40% !important' }}
 				/>
-			)}
+			)} */}
 		</Slider>
 	);
 }

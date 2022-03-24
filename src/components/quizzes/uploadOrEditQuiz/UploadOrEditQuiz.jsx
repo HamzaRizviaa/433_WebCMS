@@ -45,7 +45,8 @@ const UploadOrEditQuiz = ({
 	setDisableDropdown,
 	quiz,
 	handleClose,
-	page
+	page,
+	status
 }) => {
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -93,11 +94,14 @@ const UploadOrEditQuiz = ({
 		dispatch(getQuestionLabels());
 	}, []);
 
+	console.log(status, 'stat');
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
 		const startDate = formatDate(endDate);
 		return (
 			<div
-				className={classes.customDateInput}
+				className={`${classes.customDateInput} ${
+					status === 'CLOSED' && classes.disableTextField
+				}`}
 				onClick={onClick}
 				ref={ref}
 				//style={{ borderColor: noResultCalendarBorder }}
@@ -828,6 +832,9 @@ const UploadOrEditQuiz = ({
 							>
 								<DatePicker
 									customInput={<ExampleCustomInput />}
+									disabled={
+										(editPoll || editQuiz) && status === 'CLOSED' ? true : false
+									}
 									startDate={endDate}
 									minDate={new Date()}
 									//className={classes.datePicker}
@@ -855,7 +862,9 @@ const UploadOrEditQuiz = ({
 										setDisableDropdown(true);
 									}}
 									//placement='center'
-									isClearable={true}
+									isClearable={
+										(editPoll || editQuiz) && status === 'CLOSED' ? false : true
+									}
 								/>
 							</div>
 						</div>
@@ -968,7 +977,8 @@ UploadOrEditQuiz.propTypes = {
 	quiz: PropTypes.bool,
 	editPoll: PropTypes.bool,
 	handleClose: PropTypes.func.isRequired,
-	page: PropTypes.string
+	page: PropTypes.string,
+	status: PropTypes.string
 };
 
 export default UploadOrEditQuiz;

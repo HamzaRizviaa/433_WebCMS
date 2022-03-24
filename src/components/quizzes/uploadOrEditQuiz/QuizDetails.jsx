@@ -16,7 +16,8 @@ export default function QuizDetails({
 	title,
 	heading1,
 	buttonText,
-	isEdit
+	isEdit,
+	status
 }) {
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
@@ -79,6 +80,7 @@ export default function QuizDetails({
 							handleClose={() => {
 								handleClose();
 							}}
+							status={status}
 						/>
 					</TabPanelUnstyled>
 				</TabsUnstyled>
@@ -92,5 +94,6 @@ QuizDetails.propTypes = {
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
-	isEdit: PropTypes.bool.isRequired
+	isEdit: PropTypes.bool.isRequired,
+	status: PropTypes.string.isRequired
 };
