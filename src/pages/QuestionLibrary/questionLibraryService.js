@@ -33,4 +33,12 @@ export default class questionLibraryService {
 			}
 		});
 	}
+
+	static getQuestionResultParticipantApi(endPoint) {
+		return axios.get(`${process.env.REACT_APP_API_ENDPOINT}/${endPoint}`, {
+			headers: {
+				Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+			}
+		});
+	}
 }

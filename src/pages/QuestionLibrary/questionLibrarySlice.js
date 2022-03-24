@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import QuestionLibraryService from './questionLibraryService';
+
 export const getQuestions = createAsyncThunk(
 	'questionLibrary/getQuestions',
 	async ({
@@ -79,13 +80,36 @@ export const getQuestionResultDetail = createAsyncThunk(
 	}
 );
 
+export const getQuestionResulParticipant = createAsyncThunk(
+	'questionLibrary/getQuestionResulParticipant',
+	async ({ id, type, order_type, sortby }) => {
+		let endPoint = `question/get-question-participant-listing?question_id=${id}`;
+
+		if (id && type) {
+			endPoint = `question/get-question-participant-listing?question_id=${id}&question_type=${type}`;
+		}
+		if (order_type && sortby) {
+			endPoint += `&order_type=${order_type}&sort_by=${sortby}`;
+		}
+		const response =
+			await QuestionLibraryService.getQuestionResultParticipantApi(endPoint);
+
+		if (response?.data?.data) {
+			return response.data.data;
+		} else {
+			return [];
+		}
+	}
+);
+
 export const quizLibrarySlice = createSlice({
 	name: 'questionLibrary',
 	initialState: {
 		labels: [],
 		questions: [], // all data
 		questionEdit: [], // get-question-edit
-		questionResultDetail: [],
+		questionResultDetail: [], // get-question-result-detail
+		questionResultParticipant: [], // get-question-result-participants
 		openUploadPost: false,
 		totalRecords: 0,
 		noResultStatus: false,
@@ -144,6 +168,17 @@ export const quizLibrarySlice = createSlice({
 			state.status = 'success';
 		},
 		[getQuestionResultDetail.rejected]: (state) => {
+			state.status = 'failed';
+		},
+
+		[getQuestionResulParticipant.pending]: (state) => {
+			state.status = 'loading';
+		},
+		[getQuestionResulParticipant.fulfilled]: (state, action) => {
+			state.questionResultParticipant = action.payload;
+			state.status = 'success';
+		},
+		[getQuestionResulParticipant.rejected]: (state) => {
 			state.status = 'failed';
 		}
 	}

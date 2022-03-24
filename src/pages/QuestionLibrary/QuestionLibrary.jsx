@@ -32,7 +32,8 @@ import {
 	resetCalendarError,
 	resetNoResultStatus,
 	getQuestionEdit,
-	getQuestionResultDetail
+	getQuestionResultDetail,
+	getQuestionResulParticipant
 } from './questionLibrarySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
@@ -354,6 +355,9 @@ const QuestionLibrary = () => {
 			dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
 			dispatch(
 				getQuestionResultDetail({ id: row.id, type: row.question_type })
+			);
+			dispatch(
+				getQuestionResulParticipant({ id: row.id, type: row.question_type })
 			);
 			setrowStatus(row.status);
 			setEdit(true);

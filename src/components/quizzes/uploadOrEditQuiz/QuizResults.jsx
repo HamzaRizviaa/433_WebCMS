@@ -11,7 +11,10 @@ import LinearProgress, {
 } from '@mui/material/LinearProgress';
 import PropTypes from 'prop-types';
 
-import { getQuestions } from '../../../pages/QuestionLibrary/questionLibrarySlice';
+import {
+	getQuestions,
+	getQuestionResulParticipant
+} from '../../../pages/QuestionLibrary/questionLibrarySlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLocalStorageDetails } from '../../../utils';
 import { toast } from 'react-toastify';
@@ -49,10 +52,14 @@ export default function QuizResults({ handleClose, page }) {
 		(state) => state.questionLibrary.questionResultDetail
 	);
 
+	const participants = useSelector(
+		(state) => state.questionLibrary.questionResultParticipant
+	);
+
 	const sortKeysMapping = {
 		username: 'username',
-		answers: 'postdate',
-		date_time: 'enddate'
+		answer: 'answer',
+		date_and_time: 'datetime'
 	};
 
 	const sortRows = (order, col) => {
@@ -73,9 +80,9 @@ export default function QuizResults({ handleClose, page }) {
 					className={classes.sortIcon}
 					style={{
 						left:
-							col?.dataField === 'answers' ||
+							col?.dataField === 'answer' ||
 							col?.dataField === 'labels' ||
-							col?.dataField === 'date_time'
+							col?.dataField === 'date_and_time'
 								? -7
 								: -4
 					}}
@@ -87,9 +94,9 @@ export default function QuizResults({ handleClose, page }) {
 					className={classes.sortIconSelected}
 					style={{
 						left:
-							col?.dataField === 'answers' ||
+							col?.dataField === 'answer' ||
 							col?.dataField === 'username' ||
-							col?.dataField === 'date_time'
+							col?.dataField === 'date_and_time'
 								? -7
 								: -4
 					}}
@@ -101,9 +108,9 @@ export default function QuizResults({ handleClose, page }) {
 					className={classes.sortIconSelected}
 					style={{
 						left:
-							col?.dataField === 'answers' ||
+							col?.dataField === 'answer' ||
 							col?.dataField === 'username' ||
-							col?.dataField === 'date_time'
+							col?.dataField === 'date_and_time'
 								? -7
 								: -4
 					}}
@@ -140,59 +147,59 @@ export default function QuizResults({ handleClose, page }) {
 		}
 	};
 
-	const data = [
-		{
-			username: 'loremipsum',
-			answers: 'Real Madrid',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			username: 'loremipsum',
-			answers: 'Barcelona FC',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			username: 'loremipsum',
-			answers: 'Barcelona FC',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			username: 'loremipsum',
-			answers: 'Real Madrid',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
+	// const data = [
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Real Madrid',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Barcelona FC',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Barcelona FC',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Real Madrid',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
 
-		{
-			username: 'loremipsum',
-			answers: 'Real Madrid',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			username: 'loremipsum',
-			answers: 'Barcelona FC',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			username: 'loremipsum',
-			answers: 'Barcelona FC',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			username: 'loremipsum',
-			answers: 'Real Madrid',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			username: 'loremipsum',
-			answers: 'Barcelona FC',
-			date_time: '2021-11-25T17:00:08.000Z'
-		},
-		{
-			username: 'loremipsum',
-			answers: 'Real Madrid',
-			date_time: '2021-11-25T17:00:08.000Z'
-		}
-	];
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Real Madrid',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Barcelona FC',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Barcelona FC',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Real Madrid',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Barcelona FC',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	},
+	// 	{
+	// 		username: 'loremipsum',
+	// 		answer: 'Real Madrid',
+	// 		date_time: '2021-11-25T17:00:08.000Z'
+	// 	}
+	// ];
 
 	const columns = [
 		{
@@ -206,7 +213,7 @@ export default function QuizResults({ handleClose, page }) {
 			}
 		},
 		{
-			dataField: 'answers',
+			dataField: 'answer',
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
@@ -219,7 +226,7 @@ export default function QuizResults({ handleClose, page }) {
 			// }
 		},
 		{
-			dataField: 'date_time',
+			dataField: 'date_and_time',
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
@@ -242,6 +249,18 @@ export default function QuizResults({ handleClose, page }) {
 			// }
 		}
 	};
+
+	useEffect(() => {
+		if (sortState.sortby && sortState.order_type) {
+			dispatch(
+				getQuestionResulParticipant({
+					id: editQuestionResultDetail?.id,
+					type: editQuestionResultDetail?.question_type,
+					...sortState
+				})
+			);
+		}
+	}, [sortState]);
 
 	useEffect(() => {
 		if (editQuestionResultDetail?.answers) {
@@ -326,7 +345,11 @@ export default function QuizResults({ handleClose, page }) {
 			</div>
 			<div className={classes.QuizDetailsHeading}>Participants</div>
 			<div className={classes.QuizDetailstableContainer}>
-				<Table rowEvents={tableRowEvents} columns={columns} data={data} />
+				<Table
+					rowEvents={tableRowEvents}
+					columns={columns}
+					data={participants}
+				/>
 			</div>
 			<div style={{ width: '100%', paddingBottom: '10%' }}>
 				<Button
