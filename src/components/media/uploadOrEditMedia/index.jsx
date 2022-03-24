@@ -42,11 +42,7 @@ const UploadOrEditMedia = ({
 	const [labelColor, setLabelColor] = useState('#ffffff');
 	const [labelError, setLabelError] = useState('');
 	const [dropboxLink, setDropboxLink] = useState(''); // media dropbox url
-	const [dropboxLinkError, setDropboxLinkError] = useState('');
-	const [dropboxLinkColor, setDropboxLinkColor] = useState('#ffffff');
 	const [dropboxLink2, setDropboxLink2] = useState(''); // cover image dropbox url
-	const [dropboxLinkError2, setDropboxLinkError2] = useState('');
-	const [dropboxLinkColor2, setDropboxLinkColor2] = useState('#ffffff');
 	const [selectedLabels, setSelectedLabels] = useState([]);
 	const [mediaLabels, setMediaLabels] = useState([]);
 	const [mainCategory, setMainCategory] = useState('');
@@ -407,22 +403,6 @@ const UploadOrEditMedia = ({
 				setDescriptionError('');
 			}, [5000]);
 		}
-		if (!dropboxLink) {
-			setDropboxLinkColor('#ff355a');
-			setDropboxLinkError('This field is required');
-			setTimeout(() => {
-				setDropboxLinkColor('#ffffff');
-				setDropboxLinkError('');
-			}, [5000]);
-		}
-		if (!dropboxLink2) {
-			setDropboxLinkColor2('#ff355a');
-			setDropboxLinkError2('This field is required');
-			setTimeout(() => {
-				setDropboxLinkColor2('#ffffff');
-				setDropboxLinkError2('');
-			}, [5000]);
-		}
 	};
 
 	const deleteMedia = async (id) => {
@@ -478,9 +458,12 @@ const UploadOrEditMedia = ({
 							width: fileWidth,
 							height: fileHeight,
 							// sub_category: subCategory,
+
 							title: titleMedia,
-							media_dropbox_url: dropboxLink,
-							image_dropbox_url: dropboxLink2,
+							// media_dropbox_url: dropboxLink,
+							// image_dropbox_url: dropboxLink2,
+							...(dropboxLink ? { media_dropbox_url: dropboxLink } : {}),
+							...(dropboxLink2 ? { image_dropbox_url: dropboxLink2 } : {}),
 							...(selectedLabels.length ? { labels: [...selectedLabels] } : {}),
 							description: description,
 							data: {
@@ -581,16 +564,14 @@ const UploadOrEditMedia = ({
 		!titleMedia ||
 		!description ||
 		mediaButtonStatus ||
-		!dropboxLink ||
-		!dropboxLink2 ||
 		selectedLabels.length < 10;
 
 	const editBtnDisabled =
 		mediaButtonStatus ||
 		!titleMedia ||
 		!description ||
-		!dropboxLink ||
-		!dropboxLink2 ||
+		// !dropboxLink ||
+		// !dropboxLink2 ||
 		(specificMedia?.media_dropbox_url === dropboxLink.trim() &&
 			specificMedia?.image_dropbox_url === dropboxLink2.trim() &&
 			specificMedia?.title === titleMedia.trim() &&
@@ -933,7 +914,7 @@ const UploadOrEditMedia = ({
 										{fileRejectionError}
 									</p>
 									<div className={classes.captionContainer}>
-										<h6 style={{ color: dropboxLinkColor }}>DROPBOX URL</h6>
+										<h6>DROPBOX URL</h6>
 										<TextField
 											value={dropboxLink}
 											onChange={(e) => setDropboxLink(e.target.value)}
@@ -948,7 +929,6 @@ const UploadOrEditMedia = ({
 											}}
 										/>
 									</div>
-									<p className={classes.mediaError}>{dropboxLinkError}</p>
 
 									<h5>{isEdit ? 'Cover Image' : 'Add Cover Image'}</h5>
 									<DragDropContext>
@@ -1054,7 +1034,7 @@ const UploadOrEditMedia = ({
 										{fileRejectionError2}
 									</p>
 									<div className={classes.captionContainer}>
-										<h6 style={{ color: dropboxLinkColor2 }}>DROPBOX URL</h6>
+										<h6>DROPBOX URL</h6>
 										<TextField
 											value={dropboxLink2}
 											onChange={(e) => setDropboxLink2(e.target.value)}
@@ -1069,7 +1049,6 @@ const UploadOrEditMedia = ({
 											}}
 										/>
 									</div>
-									<p className={classes.mediaError}>{dropboxLinkError2}</p>
 
 									<div className={classes.titleContainer}>
 										<div className={classes.characterCount}>

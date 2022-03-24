@@ -39,8 +39,7 @@ const UploadOrEditViral = ({
 }) => {
 	const [caption, setCaption] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
-	const [dropboxLinkError, setDropboxLinkError] = useState('');
-	const [dropboxLinkColor, setDropboxLinkColor] = useState('#ffffff');
+
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -357,15 +356,6 @@ const UploadOrEditViral = ({
 				setCaptionError('');
 			}, [5000]);
 		}
-
-		if (!dropboxLink) {
-			setDropboxLinkColor('#ff355a');
-			setDropboxLinkError('This field is required');
-			setTimeout(() => {
-				setDropboxLinkColor('#ffffff');
-				setDropboxLinkError('');
-			}, [5000]);
-		}
 	};
 
 	const createViral = async (id, mediaFiles = []) => {
@@ -374,8 +364,8 @@ const UploadOrEditViral = ({
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
 				{
-					dropbox_url: dropboxLink,
 					...(caption ? { caption: caption } : { caption: '' }),
+					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
 					...(!isEdit ? { media_url: mediaFiles[0]?.media_url } : {}),
 					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
 					...(!isEdit ? { thumbnail_url: mediaFiles[0]?.thumbnail_url } : {}),
@@ -464,13 +454,12 @@ const UploadOrEditViral = ({
 		!uploadedFiles.length ||
 		postButtonStatus ||
 		selectedLabels.length < 10 ||
-		!dropboxLink ||
 		!caption;
 
 	const editBtnDisabled =
 		postButtonStatus ||
 		!caption ||
-		!dropboxLink ||
+		// !dropboxLink ||
 		(specificViral?.caption === caption.trim() &&
 			specificViral?.dropbox_url === dropboxLink.trim());
 
@@ -673,7 +662,7 @@ const UploadOrEditViral = ({
 							)}
 							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
 							<div className={classes.captionContainer}>
-								<h6 style={{ color: dropboxLinkColor }}>DROPBOX URL</h6>
+								<h6>DROPBOX URL</h6>
 								<TextField
 									value={dropboxLink}
 									onChange={(e) => setDropboxLink(e.target.value)}
@@ -688,7 +677,7 @@ const UploadOrEditViral = ({
 									}}
 								/>
 							</div>
-							<p className={classes.mediaError}>{dropboxLinkError}</p>{' '}
+
 							<div className={classes.captionContainer}>
 								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete

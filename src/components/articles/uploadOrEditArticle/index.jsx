@@ -66,8 +66,6 @@ const UploadOrEditViral = ({
 	const [articleTitle, setArticleTitle] = useState('');
 	const [editorText, setEditorText] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
-	const [dropboxLinkError, setDropboxLinkError] = useState('');
-	const [dropboxLinkColor, setDropboxLinkColor] = useState('#ffffff');
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -318,10 +316,10 @@ const UploadOrEditViral = ({
 					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
 					...(!isEdit ? { height: fileHeight } : {}),
 					...(!isEdit ? { width: fileWidth } : {}),
-					// ...(!isEdit ? { description: editorTextContent } : {}),
+					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
 					// description: editorTextContent,
 					description: editorText,
-					dropbox_url: dropboxLink,
+					// dropbox_url: dropboxLink,
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -430,14 +428,6 @@ const UploadOrEditViral = ({
 				setArticleTextError('');
 			}, [5000]);
 		}
-		if (!dropboxLink) {
-			setDropboxLinkColor('#ff355a');
-			setDropboxLinkError('This field is required');
-			setTimeout(() => {
-				setDropboxLinkColor('#ffffff');
-				setDropboxLinkError('');
-			}, [5000]);
-		}
 	};
 
 	const [newLabels, setNewLabels] = useState([]);
@@ -511,7 +501,6 @@ const UploadOrEditViral = ({
 	const postBtnDisabled =
 		!uploadedFiles.length ||
 		!articleTitle ||
-		!dropboxLink ||
 		postButtonStatus ||
 		selectedLabels.length < 10 ||
 		!editorText;
@@ -528,7 +517,6 @@ const UploadOrEditViral = ({
 	);
 	const editBtnDisabled =
 		postButtonStatus ||
-		!dropboxLink ||
 		(specificArticle?.dropbox_url === dropboxLink.trim() &&
 			specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim());
 
@@ -759,7 +747,7 @@ const UploadOrEditViral = ({
 							</div>
 							<p className={classes.mediaError}>{articleTitleError}</p>
 							<div className={classes.captionContainer}>
-								<h6 style={{ color: dropboxLinkColor }}>DROPBOX URL</h6>
+								<h6>DROPBOX URL</h6>
 								<TextField
 									value={dropboxLink}
 									onChange={(e) => setDropboxLink(e.target.value)}
@@ -774,7 +762,7 @@ const UploadOrEditViral = ({
 									}}
 								/>
 							</div>
-							<p className={classes.mediaError}>{dropboxLinkError}</p>
+
 							<div className={classes.captionContainer}>
 								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete

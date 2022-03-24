@@ -131,7 +131,7 @@ const ArticleLibrary = () => {
 	const dispatch = useDispatch();
 
 	const sortKeysMapping = {
-		article_title: 'articleTitle',
+		article_title: 'title',
 		post_date: 'postdate',
 		labels: 'label',
 		user: 'user',
