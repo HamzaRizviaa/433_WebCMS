@@ -145,7 +145,7 @@ const QuestionLibrary = () => {
 		end_date: 'enddate',
 		labels: 'label',
 		status: 'status',
-		participants: 'participant',
+		participants: 'participants',
 		user: 'user'
 	};
 
