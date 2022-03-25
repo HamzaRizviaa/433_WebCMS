@@ -156,8 +156,13 @@ export default function Banners({ tabValue }) {
 		const validateRow = handleBannerPositionAndFirstBanner(); // 2- 5
 		setFirstRowCheck(firstrowcheck);
 		setValidateRow(validateRow);
+
 		if (btnDisable === '' || null || undefined) {
-			uploadBanner();
+			if (bannerData[0]?.bannerType && bannerData[0]?.selectedMedia) {
+				uploadBanner();
+			} else {
+				console.log('Add or update banner to publish new one ok 	');
+			}
 		} else {
 			console.log('add or update banner to publish new one ');
 		}
@@ -199,7 +204,7 @@ export default function Banners({ tabValue }) {
 
 			console.log(result);
 			if (result?.data?.status_code === 200) {
-				toast.success('banner has been created!');
+				toast.success('banner has been created/updated!');
 				dispatch(getAllBanners(tabValue));
 			}
 		} catch (error) {
@@ -209,6 +214,7 @@ export default function Banners({ tabValue }) {
 	};
 
 	const handleCheckFirstRow = () => {
+		console.log('click first banner');
 		let errValidate = { flag: '', rowId: undefined, errMsg: '' };
 		if (!bannerData[0]?.bannerType ^ !bannerData[0]?.selectedMedia) {
 			errValidate = {
@@ -227,6 +233,7 @@ export default function Banners({ tabValue }) {
 	};
 
 	const handleBannerPositionAndFirstBanner = () => {
+		console.log('click other banner');
 		let errValidate = { flag: '', rowId: undefined, errMsg: '' };
 		for (let i = 4; i >= 1; i--) {
 			// start from max to min

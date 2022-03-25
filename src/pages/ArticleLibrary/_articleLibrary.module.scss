@@ -1,5 +1,8 @@
 @import '../../styles/variables.scss';
 @import '../../styles/_mixins.scss';
+.articleLibrary {
+	height: 100vh !important;
+}
 
 .header {
 	display: flex;
@@ -87,12 +90,37 @@
 	height: 1rem;
 }
 
+// .sortIconArticle {
+// 	position: absolute;
+// 	left: -4px;
+// 	bottom: -2px;
+// 	height: 2rem !important;
+// 	width: 2rem !important;
+// 	> svg {
+// 		left: 30px;
+// 	}
+// }
+
+// .sortIconArticleSelected {
+// 	position: absolute;
+// 	left: -4px;
+// 	bottom: -2px;
+// 	height: 2rem !important;
+// 	width: 2rem !important;
+// 	color: $neon-yellow;
+// 	> svg {
+// 		left: 30px;
+// 	}
+// }
 .sortIcon {
 	position: absolute;
 	left: -4px;
 	bottom: -2px;
 	height: 2rem !important;
 	width: 2rem !important;
+	> svg {
+		left: 30px;
+	}
 }
 
 .sortIconSelected {
@@ -102,6 +130,9 @@
 	height: 2rem !important;
 	width: 2rem !important;
 	color: $neon-yellow;
+	> svg {
+		left: 30px;
+	}
 }
 
 .row {
@@ -245,4 +276,26 @@
 	border-radius: 8px;
 	object-fit: cover;
 	margin-right: 1.5rem;
+}
+.loader {
+	width: 20%;
+	height: auto;
+}
+.editIcon {
+	width: 2.5rem;
+	height: auto;
+	cursor: pointer;
+}
+
+.toolTip {
+	background-color: $black-color !important;
+	font-family: Poppins !important;
+	font-size: 12px !important;
+	line-height: 16px !important;
+	border-radius: 8px !important;
+	max-width: none !important;
+}
+
+.toolTipArrow {
+	color: $black-color !important;
 }

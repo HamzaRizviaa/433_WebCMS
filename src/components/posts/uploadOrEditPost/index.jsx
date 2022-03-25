@@ -55,6 +55,9 @@ const UploadOrEditPost = ({
 	page
 }) => {
 	const [caption, setCaption] = useState('');
+	const [dropboxLink, setDropboxLink] = useState('');
+	// const [dropboxLinkError, setDropboxLinkError] = useState('');
+	// const [dropboxLinkColor, setDropboxLinkColor] = useState('#ffffff');
 	const [value, setValue] = useState(false);
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [mediaError, setMediaError] = useState('');
@@ -158,6 +161,8 @@ const UploadOrEditPost = ({
 				setSelectedLabels(_labels);
 			}
 			setCaption(specificPost.caption);
+
+			setDropboxLink(specificPost?.dropbox_url);
 
 			if (specificPost?.media_id !== null) {
 				let _media;
@@ -348,6 +353,7 @@ const UploadOrEditPost = ({
 
 	const resetState = () => {
 		setCaption('');
+		setDropboxLink('');
 		setValue(false);
 		setUploadMediaError('');
 		setMediaError('');
@@ -439,6 +445,15 @@ const UploadOrEditPost = ({
 				setCaptionError('');
 			}, [5000]);
 		}
+
+		// if (!dropboxLink) {
+		// 	setDropboxLinkColor('#ff355a');
+		// 	setDropboxLinkError('This field is required');
+		// 	setTimeout(() => {
+		// 		setDropboxLinkColor('#ffffff');
+		// 		setDropboxLinkError('');
+		// 	}, [5000]);
+		// }
 	};
 
 	const createPost = async (id, mediaFiles = []) => {
@@ -448,6 +463,7 @@ const UploadOrEditPost = ({
 				`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
 				{
 					caption: caption,
+				...(dropboxLink? { dropbox_url: dropboxLink} : {}),
 					orientation_type: dimensionSelect,
 					...(selectedMedia
 						? { media_id: selectedMedia.id }
@@ -563,6 +579,7 @@ const UploadOrEditPost = ({
 	const postBtnDisabled =
 		!uploadedFiles.length ||
 		!caption ||
+		// !dropboxLink ||
 		postButtonStatus ||
 		(value && !selectedMedia) ||
 		selectedLabels.length < 10;
@@ -570,10 +587,10 @@ const UploadOrEditPost = ({
 	const editBtnDisabled =
 		postButtonStatus ||
 		!caption ||
+		// !dropboxLink ||
 		(value && !selectedMedia) ||
-		(specificPost?.caption === caption.trim() &&
-			specificPost?.media_id == selectedMedia?.id);
-
+		(specificPost?.dropbox_url === dropboxLink.trim() &&
+			specificPost?.caption === caption.trim());
 	// const regex = /[!@#$%^&*(),.?":{}|<>/\\ ]/g;
 
 	// console.log('specific post', specificPost?.media_id);
@@ -851,6 +868,25 @@ const UploadOrEditPost = ({
 								<></>
 							)}
 							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
+							<div className={classes.captionContainer}>
+								<h6>DROPBOX URL</h6>
+								<TextField
+									value={dropboxLink}
+									onChange={(e) => setDropboxLink(e.target.value)}
+									placeholder={'Please drop the dropbox URL here'}
+									className={classes.textField}
+									multiline
+									maxRows={2}
+									InputProps={{
+										disableUnderline: true,
+										className: classes.textFieldInput,
+										style: {
+											borderRadius: dropboxLink ? '16px' : '40px'
+										}
+									}}
+								/>
+							</div>
+							{/* <p className={classes.mediaError}>{dropboxLinkError}</p> */}
 							<div className={classes.captionContainer}>
 								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete

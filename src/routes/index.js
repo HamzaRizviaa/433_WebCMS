@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import PostLibrary from '../pages/PostLibrary/PostLibrary';
 import MediaLibrary from '../pages/MediaLibrary/MediaLibrary';
-import QuizLibrary from '../pages/QuizLibrary/QuizLibrary';
+import QuestionLibrary from '../pages/QuestionLibrary/QuestionLibrary';
 import TopBanner from '../pages/TopBanner/TopBanner.jsx';
 import SignIn from '../pages/SignIn/SignIn';
 import ViralLibrary from '../pages/ViralLibrary/ViralLibrary';
@@ -41,8 +41,8 @@ const AppRoutes = () => {
 				/>
 				<Route
 					exact
-					path='/quiz-library'
-					element={<RequireAuth component={<QuizLibrary />} />}
+					path='/question-library'
+					element={<RequireAuth component={<QuestionLibrary />} />}
 				/>
 				<Route
 					exact

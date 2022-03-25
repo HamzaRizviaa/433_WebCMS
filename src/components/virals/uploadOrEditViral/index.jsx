@@ -38,6 +38,8 @@ const UploadOrEditViral = ({
 	page
 }) => {
 	const [caption, setCaption] = useState('');
+	const [dropboxLink, setDropboxLink] = useState('');
+
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -107,7 +109,10 @@ const UploadOrEditViral = ({
 				);
 				setSelectedLabels(_labels);
 			}
-			setCaption(specificViral.caption);
+			setCaption(specificViral?.caption);
+
+			setDropboxLink(specificViral?.dropbox_url);
+
 			if (specificViral?.thumbnail_url) {
 				setUploadedFiles([
 					{
@@ -295,6 +300,7 @@ const UploadOrEditViral = ({
 
 	const resetState = () => {
 		setCaption('');
+		setDropboxLink('');
 		setUploadMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
@@ -359,6 +365,7 @@ const UploadOrEditViral = ({
 				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
 				{
 					...(caption ? { caption: caption } : { caption: '' }),
+					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
 					...(!isEdit ? { media_url: mediaFiles[0]?.media_url } : {}),
 					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
 					...(!isEdit ? { thumbnail_url: mediaFiles[0]?.thumbnail_url } : {}),
@@ -450,7 +457,11 @@ const UploadOrEditViral = ({
 		!caption;
 
 	const editBtnDisabled =
-		postButtonStatus || !caption || specificViral?.caption === caption.trim();
+		postButtonStatus ||
+		!caption ||
+		// !dropboxLink ||
+		(specificViral?.caption === caption.trim() &&
+			specificViral?.dropbox_url === dropboxLink.trim());
 
 	return (
 		<Slider
@@ -651,6 +662,25 @@ const UploadOrEditViral = ({
 							)}
 							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
 							<div className={classes.captionContainer}>
+								<h6>DROPBOX URL</h6>
+								<TextField
+									value={dropboxLink}
+									onChange={(e) => setDropboxLink(e.target.value)}
+									placeholder={'Please drop the dropbox URL here'}
+									className={classes.textField}
+									multiline
+									maxRows={2}
+									InputProps={{
+										disableUnderline: true,
+										className: classes.textFieldInput,
+										style: {
+											borderRadius: dropboxLink ? '16px' : '40px'
+										}
+									}}
+								/>
+							</div>
+
+							<div className={classes.captionContainer}>
 								<h6 style={{ color: labelColor }}>LABELS</h6>
 								<Autocomplete
 									disabled={isEdit}
@@ -794,7 +824,6 @@ const UploadOrEditViral = ({
 								/>
 							</div>
 							<p className={classes.mediaError}>{labelError}</p>
-
 							<div className={classes.captionContainer}>
 								<h6 style={{ color: captionColor }}>CAPTION</h6>
 								<TextField
@@ -813,7 +842,6 @@ const UploadOrEditViral = ({
 									maxRows={4}
 								/>
 							</div>
-
 							<p className={classes.mediaError}>{captionError}</p>
 						</div>
 

@@ -36,12 +36,9 @@
 }
 
 .characterCount {
-	margin-left: 1rem !important;
-	font-size: 1.2rem !important;
-	font-family: Poppins !important;
-	left: 481px !important;
-	top: 0px !important;
-	text-align: right !important;
+	margin-right: 0.5rem;
+	display: flex;
+	justify-content: space-between;
 }
 
 .fileRejectionError {

@@ -16,7 +16,8 @@ export default function QuizDetails({
 	title,
 	heading1,
 	buttonText,
-	isEdit
+	isEdit,
+	status
 }) {
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
@@ -29,6 +30,8 @@ export default function QuizDetails({
 	};
 
 	const muiClasses = useStyles();
+	// on edit click on row with type:quiz
+	// edit quiz or view quiz details
 
 	return (
 		<Slider
@@ -56,7 +59,13 @@ export default function QuizDetails({
 					</TabsListUnstyled>
 					<TabPanelUnstyled value={0}>
 						{/* table */}
-						<QuizResults style={{ minWidth: '40% !important' }} />
+						<QuizResults
+							handleClose={() => {
+								handleClose();
+							}}
+							style={{ minWidth: '40% !important' }}
+							type={'quiz'}
+						/>
 					</TabPanelUnstyled>
 					<TabPanelUnstyled value={1}>
 						{/* add edit quiz */}
@@ -71,6 +80,11 @@ export default function QuizDetails({
 							setPreviewFile={setPreviewFile}
 							previewRef={previewRef}
 							setDisableDropdown={setDisableDropdown}
+							handleClose={() => {
+								handleClose();
+							}}
+							status={status}
+							type={'quiz'}
 						/>
 					</TabPanelUnstyled>
 				</TabsUnstyled>
@@ -84,5 +98,7 @@ QuizDetails.propTypes = {
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
-	isEdit: PropTypes.bool.isRequired
+	isEdit: PropTypes.bool.isRequired,
+	status: PropTypes.string.isRequired,
+	type: PropTypes.string.isRequired
 };

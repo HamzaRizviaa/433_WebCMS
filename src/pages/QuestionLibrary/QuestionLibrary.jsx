@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
-import React, { useState, useEffect, forwardRef } from 'react';
+import React, { useState, useEffect, useCallback, forwardRef } from 'react';
 import Layout from '../../components/layout';
+import _debounce from 'lodash/debounce';
 import Table from '../../components/table';
-import classes from './_quizLibrary.module.scss';
+import classes from './_questionLibrary.module.scss';
 import Button from '../../components/button';
 import UploadQuiz from '../../components/quizzes/uploadOrEditQuiz/UploadQuiz';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -15,7 +16,7 @@ import QuizDetails from '../../components/quizzes/uploadOrEditQuiz/QuizDetails';
 import PollDetails from '../../components/quizzes/uploadOrEditQuiz/PollDetails';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import Pagination from '@mui/material/Pagination';
-import { useStyles } from './../../utils/styles';
+import { useStyles } from '../../utils/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -25,19 +26,33 @@ import { getDateTime, formatDate, getCalendarText } from '../../utils';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import { useNavigate } from 'react-router-dom';
+import { Markup } from 'interweave';
 // import './_calender.scss';
-import { getQuizess } from './quizLibrarySlice';
+import {
+	getQuestions,
+	resetCalendarError,
+	resetNoResultStatus,
+	getQuestionEdit,
+	getQuestionResultDetail,
+	getQuestionResulParticipant
+} from './questionLibrarySlice';
+import Four33Loader from '../../assets/Loader_Yellow.gif';
+import LoadingOverlay from 'react-loading-overlay';
 
-const QuizLibrary = () => {
+const QuestionLibrary = () => {
 	// Selectors
-	// const posts = useSelector((state) => state.postLibrary.posts);
-	const totalRecords = 200;
-	// const totalRecords = useSelector((state) => state.postLibrary.totalRecords);
+	const questions = useSelector((state) => state.questionLibrary.questions);
+	console.log(questions);
+	const statusQuestionApi = useSelector((state) => state.questionLibrary);
+
+	const totalRecords = useSelector(
+		(state) => state.questionLibrary.totalRecords
+	);
 	const noResultStatus = useSelector(
-		(state) => state.postLibrary.noResultStatus
+		(state) => state.questionLibrary.noResultStatus
 	);
 	const noResultStatusCalendar = useSelector(
-		(state) => state.postLibrary.noResultStatusCalendar
+		(state) => state.questionLibrary.noResultStatusCalendar
 	);
 
 	const muiClasses = useStyles();
@@ -45,6 +60,7 @@ const QuizLibrary = () => {
 	const [showQuizSlider, setShowQuizSlider] = useState(false);
 	const [showPollSlider, setShowPollSlider] = useState(false);
 	const [rowStatus, setrowStatus] = useState(''); //status open closed to pass in poll slider
+	// const [rowType, setRowType] = useState(''); //row type to pass in api
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [paginationError, setPaginationError] = useState(false);
@@ -94,7 +110,7 @@ const QuizLibrary = () => {
 							e.stopPropagation();
 							if (startDate && endDate) {
 								dispatch(
-									getQuizess({
+									getQuestions({
 										q: search,
 										page,
 										startDate,
@@ -105,7 +121,7 @@ const QuizLibrary = () => {
 								);
 							} else {
 								dispatch(
-									getQuizess({
+									getQuestions({
 										q: search,
 										page,
 										fromCalendar: true,
@@ -129,7 +145,7 @@ const QuizLibrary = () => {
 		end_date: 'enddate',
 		labels: 'label',
 		status: 'status',
-		participants: 'participant',
+		participants: 'participants',
 		user: 'user'
 	};
 
@@ -156,7 +172,8 @@ const QuizLibrary = () => {
 							col?.dataField === 'end_date' ||
 							col?.dataField === 'status'
 								? 30
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -171,7 +188,8 @@ const QuizLibrary = () => {
 							col?.dataField === 'end_date' ||
 							col?.dataField === 'status'
 								? 30
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -186,7 +204,8 @@ const QuizLibrary = () => {
 							col?.dataField === 'end_date' ||
 							col?.dataField === 'status'
 								? 30
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -254,8 +273,15 @@ const QuizLibrary = () => {
 			sortFunc: () => {},
 			text: 'LABELS',
 			formatter: (content) => {
-				//let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
-				return <div className={classes.rowType}>{content}</div>;
+				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
+				return (
+					// <div className={classes.rowType}>
+					// 	{content[0] + `, ` + content[1]}
+					// </div>
+					<div className={classes.rowType}>
+						<Markup content={`${content[0]} ${secondLabel}`} />
+					</div>
+				);
 			},
 			headerStyle: () => {
 				return { paddingLeft: '48px' };
@@ -272,8 +298,8 @@ const QuizLibrary = () => {
 					<div className={`${classes.active_closed_btn}`}>
 						<Button
 							onClick={() => {}}
-							text={content == 'active' ? 'ACTIVE' : 'CLOSED'}
-							active={content == 'active' ? true : false}
+							text={content == 'ACTIVE' ? 'ACTIVE' : 'CLOSED'}
+							active={content == 'ACTIVE' ? true : false}
 						/>
 						{/* <Edit className={classes.editIcon} /> */}
 					</div>
@@ -333,87 +359,20 @@ const QuizLibrary = () => {
 		}
 	];
 
-	const data = [
-		{
-			question: 'Who will win the El Classico?',
-			question_type: 'Quiz',
-			post_date: '2021-11-25T17:00:08.000Z',
-			end_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			participants: 123,
-			status: 'closed',
-			user: 'Lorem Ipsum'
-		},
-		{
-			question: 'Que Pasa Harmano?',
-			question_type: 'Poll',
-			post_date: '2021-11-25T17:00:08.000Z',
-			end_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			participants: 123,
-			status: 'active',
-			user: 'Lorem Ipsum'
-		},
-		{
-			question: 'Pakistannnnnnnnnnn <3?',
-			question_type: 'Poll',
-			post_date: '2021-11-25T17:00:08.000Z',
-			end_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			participants: 123,
-			status: 'active',
-			user: 'Lorem Ipsum'
-		},
-		{
-			question: 'PAKISTAN vs INDIA?',
-			question_type: 'Quiz',
-			post_date: '2021-11-25T17:00:08.000Z',
-			end_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			participants: 123,
-			status: 'active',
-			user: 'Lorem Ipsum'
-		},
-		{
-			question: 'CRISTIANO?',
-			question_type: 'Quiz',
-			post_date: '2021-11-25T17:00:08.000Z',
-			end_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			participants: 123,
-			status: 'closed',
-			user: 'Lorem Ipsum'
-		},
-		{
-			question: 'RONALDO?',
-			question_type: 'Quiz',
-			post_date: '2021-11-25T17:00:08.000Z',
-			end_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			participants: 123,
-			status: 'active',
-			user: 'Lorem Ipsum'
-		},
-		{
-			question: 'THE BEST?',
-			question_type: 'Poll',
-			post_date: '2021-11-25T17:00:08.000Z',
-			end_date: '2021-11-25T17:00:08.000Z',
-			labels: 'Label1 , Label 2',
-			participants: 123,
-			status: 'closed',
-			user: 'Lorem Ipsum'
-		}
-	];
-
 	const tableRowEvents = {
 		onClick: (e, row) => {
 			// if (!edit) {
 			// dispatch(getSpecificPost(row.id));
-			// console.log(row);
+			dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
+			dispatch(
+				getQuestionResultDetail({ id: row.id, type: row.question_type })
+			);
+			dispatch(
+				getQuestionResulParticipant({ id: row.id, type: row.question_type })
+			);
 			setrowStatus(row.status);
 			setEdit(true);
-			row.question_type === 'Quiz'
+			row.question_type === 'quiz'
 				? setShowQuizSlider(true)
 				: setShowPollSlider(true);
 			// }
@@ -426,51 +385,51 @@ const QuizLibrary = () => {
 
 	useEffect(() => {
 		console.log('sort state use effect');
-		// if (sortState.sortby && sortState.order_type && !search) {
-		// 	dispatch(
-		// 		getQuizess({
-		// 			page,
-		// 			startDate: formatDate(dateRange[0]),
-		// 			endDate: formatDate(dateRange[1]),
-		// 			...sortState
-		// 		})
-		// 	);
-		// }
-		// if (sortState.sortby && sortState.order_type && search) {
-		// 	dispatch(
-		// 		getQuizess({
-		// 			q: search,
-		// 			startDate: formatDate(dateRange[0]),
-		// 			endDate: formatDate(dateRange[1]),
-		// 			page,
-		// 			...sortState
-		// 		})
-		// 	);
-		// }
+		if (sortState.sortby && sortState.order_type && !search) {
+			dispatch(
+				getQuestions({
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
+		if (sortState.sortby && sortState.order_type && search) {
+			dispatch(
+				getQuestions({
+					q: search,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					page,
+					...sortState
+				})
+			);
+		}
 	}, [sortState]);
 
 	useEffect(() => {
 		console.log('search use effect');
-		// if (search) {
-		// 	dispatch(
-		// 		getQuizess({
-		// 			q: search,
-		// 			page,
-		// 			startDate: formatDate(dateRange[0]),
-		// 			endDate: formatDate(dateRange[1]),
-		// 			...sortState
-		// 		})
-		// 	);
-		// } else {
-		// 	dispatch(
-		// 		getQuizess({
-		// 			page,
-		// 			startDate: formatDate(dateRange[0]),
-		// 			endDate: formatDate(dateRange[1]),
-		// 			...sortState
-		// 		})
-		// 	);
-		// }
+		if (search) {
+			dispatch(
+				getQuestions({
+					q: search,
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		} else {
+			dispatch(
+				getQuestions({
+					page,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
 	}, [page]);
 
 	useEffect(() => {
@@ -478,7 +437,7 @@ const QuizLibrary = () => {
 			setNoResultBorder('#FF355A');
 			setNoResultError('No Results Found');
 			setTimeout(() => {
-				// dispatch(resetNoResultStatus());
+				dispatch(resetNoResultStatus());
 				setNoResultBorder('#404040');
 				setNoResultError('');
 			}, [5000]);
@@ -490,7 +449,7 @@ const QuizLibrary = () => {
 			setNoResultCalendarBorder('#FF355A');
 			setNoResultCalendarError('No Results Found');
 			setTimeout(() => {
-				// dispatch(resetCalendarError());
+				dispatch(resetCalendarError());
 				setNoResultCalendarBorder('#404040');
 				setNoResultCalendarError('');
 			}, [5000]);
@@ -503,183 +462,229 @@ const QuizLibrary = () => {
 			setNoResultError('');
 			setNoResultCalendarBorder('#404040');
 			setNoResultCalendarError('');
-			// dispatch(resetCalendarError());
-			// dispatch(resetNoResultStatus());
+			dispatch(resetCalendarError());
+			dispatch(resetNoResultStatus());
 		};
 	}, []);
 
+	const handleDebounceFun = () => {
+		let _search;
+		setSearch((prevState) => {
+			_search = prevState;
+			return _search;
+		});
+		if (_search) {
+			dispatch(
+				getQuestions({
+					q: _search,
+					page: 1,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		} else {
+			dispatch(
+				getQuestions({
+					page: 1,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
+		setPage(1);
+	};
+
+	const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
+
 	return (
-		<Layout>
-			<div className={classes.header}>
-				<div className={classes.subheader1}>
-					<h1 style={{ marginRight: '2rem' }}>QUESTION LIBRARY</h1>
-					<Button
-						onClick={() => {
-							setEdit(false);
-							setShowSlider(true);
-						}}
-						text={'UPLOAD QUESTION'}
+		<LoadingOverlay
+			active={statusQuestionApi.status === 'pending' ? true : false}
+			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
+			spinner={
+				<img src={Four33Loader} className={classes.loader} alt='loader' />
+			}
+		>
+			<Layout>
+				<div className={classes.header}>
+					<div className={classes.subheader1}>
+						<h1 style={{ marginRight: '2rem' }}>QUESTION LIBRARY</h1>
+						<Button
+							onClick={() => {
+								setEdit(false);
+								setShowSlider(true);
+							}}
+							text={'UPLOAD QUESTION'}
+						/>
+					</div>
+					<div className={classes.subheader2}>
+						<div>
+							<TextField
+								className={classes.searchField}
+								value={search}
+								onKeyPress={(e) => {
+									console.log(e, 'on ky press');
+									// if (e.key === 'Enter' && search) {
+									// 	dispatch(
+									// 		getQuestions({
+									// 			q: search,
+									// 			page,
+									// 			startDate: formatDate(dateRange[0]),
+									// 			endDate: formatDate(dateRange[1]),
+									// 			...sortState
+									// 		})
+									// 	);
+									// } else if (e.key === 'Enter' && !search) {
+									// 	dispatch(
+									// 		getQuestions({
+									// 			page,
+									// 			startDate: formatDate(dateRange[0]),
+									// 			endDate: formatDate(dateRange[1]),
+									// 			...sortState
+									// 		})
+									// 	);
+									// }
+								}}
+								onChange={(e) => {
+									setSearch(e.target.value);
+									//setIsSearch(true);
+								}}
+								placeholder={'Search post, user, label'}
+								InputProps={{
+									disableUnderline: true,
+									className: classes.textFieldInput,
+									style: { borderColor: noResultBorder },
+									endAdornment: (
+										<InputAdornment>
+											<Search
+												onClick={() => {
+													console.log('search onclick');
+													if (search) {
+														dispatch(
+															getQuestions({
+																q: search,
+																page,
+																startDate: formatDate(dateRange[0]),
+																endDate: formatDate(dateRange[1]),
+																...sortState
+															})
+														);
+													} else {
+														dispatch(
+															getQuestions({
+																page,
+																startDate: formatDate(dateRange[0]),
+																endDate: formatDate(dateRange[1]),
+																...sortState
+															})
+														);
+													}
+												}}
+												className={classes.searchIcon}
+											/>
+										</InputAdornment>
+									)
+								}}
+							/>
+							<p className={classes.noResultError}>{noResultError}</p>
+						</div>
+						<div className={classes.calendarWrapper}>
+							<DatePicker
+								customInput={<ExampleCustomInput />}
+								selectsRange={true}
+								startDate={startDate}
+								endDate={endDate}
+								maxDate={new Date()}
+								onChange={(update) => {
+									setDateRange(update);
+								}}
+								placement='center'
+								isClearable={true}
+							/>
+							<p className={classes.noResultError}>{noResultCalendarError}</p>
+						</div>
+					</div>
+				</div>
+				<div className={classes.tableContainer}>
+					<Table
+						rowEvents={tableRowEvents}
+						columns={columns}
+						data={questions}
 					/>
 				</div>
-				<div className={classes.subheader2}>
-					<div>
-						<TextField
-							className={classes.searchField}
-							value={search}
-							onKeyPress={(e) => {
-								console.log(e, 'on ky press');
-								// if (e.key === 'Enter' && search) {
-								// 	dispatch(
-								// 		getQuizess({
-								// 			q: search,
-								// 			page,
-								// 			startDate: formatDate(dateRange[0]),
-								// 			endDate: formatDate(dateRange[1]),
-								// 			...sortState
-								// 		})
-								// 	);
-								// } else if (e.key === 'Enter' && !search) {
-								// 	dispatch(
-								// 		getQuizess({
-								// 			page,
-								// 			startDate: formatDate(dateRange[0]),
-								// 			endDate: formatDate(dateRange[1]),
-								// 			...sortState
-								// 		})
-								// 	);
-								// }
-							}}
-							onChange={(e) => {
-								setSearch(e.target.value);
-								//setIsSearch(true);
-							}}
-							placeholder={'Search post, user, label'}
-							InputProps={{
-								disableUnderline: true,
-								className: classes.textFieldInput,
-								style: { borderColor: noResultBorder },
-								endAdornment: (
-									<InputAdornment>
-										<Search
-											onClick={() => {
-												console.log('search onclick');
-												// if (search) {
-												// 	dispatch(
-												// 		getQuizess({
-												// 			q: search,
-												// 			page,
-												// 			startDate: formatDate(dateRange[0]),
-												// 			endDate: formatDate(dateRange[1]),
-												// 			...sortState
-												// 		})
-												// 	);
-												// } else {
-												// 	dispatch(
-												// 		getQuizess({
-												// 			page,
-												// 			startDate: formatDate(dateRange[0]),
-												// 			endDate: formatDate(dateRange[1]),
-												// 			...sortState
-												// 		})
-												// 	);
-												// }
-											}}
-											className={classes.searchIcon}
-										/>
-									</InputAdornment>
-								)
-							}}
-						/>
-						<p className={classes.noResultError}>{noResultError}</p>
-					</div>
-					<div className={classes.calendarWrapper}>
-						<DatePicker
-							customInput={<ExampleCustomInput />}
-							selectsRange={true}
-							startDate={startDate}
-							endDate={endDate}
-							maxDate={new Date()}
-							onChange={(update) => {
-								setDateRange(update);
-							}}
-							placement='center'
-							isClearable={true}
-						/>
-						<p className={classes.noResultError}>{noResultCalendarError}</p>
-					</div>
+
+				<div className={classes.paginationRow}>
+					<Pagination
+						className={muiClasses.root}
+						page={page}
+						onChange={handleChange}
+						count={Math.ceil(totalRecords / 20)}
+						variant='outlined'
+						shape='rounded'
+					/>
+					<div className={classes.gotoText}>Go to page</div>
+					<input
+						style={{
+							border: `${
+								paginationError ? '1px solid red' : '1px solid #808080'
+							}`
+						}}
+						type={'number'}
+						min={1}
+						onChange={(e) => {
+							console.log(e, 'onchange', page);
+							setPaginationError(false);
+							const value = Number(e.target.value);
+							if (value > Math.ceil(totalRecords / 20)) {
+								// if (value > Math.ceil(60 / 20)) {
+								setPaginationError(true);
+								setPage(1);
+							} else if (value) {
+								setPage(value);
+							} else {
+								setPage(1);
+							}
+						}}
+						className={classes.gotoInput}
+					/>
 				</div>
-			</div>
-			<div className={classes.tableContainer}>
-				<Table rowEvents={tableRowEvents} columns={columns} data={data} />
-			</div>
 
-			<div className={classes.paginationRow}>
-				<Pagination
-					className={muiClasses.root}
-					page={page}
-					onChange={handleChange}
-					count={Math.ceil(totalRecords / 20)}
-					variant='outlined'
-					shape='rounded'
-				/>
-				<div className={classes.gotoText}>Go to page</div>
-				<input
-					style={{
-						border: `${paginationError ? '1px solid red' : '1px solid #808080'}`
+				<UploadQuiz
+					open={showSlider}
+					isEdit={edit}
+					handleClose={() => {
+						setShowSlider(false);
 					}}
-					type={'number'}
-					min={1}
-					onChange={(e) => {
-						console.log(e, 'onchange', page);
-						setPaginationError(false);
-						const value = Number(e.target.value);
-						if (value > Math.ceil(totalRecords / 20)) {
-							// if (value > Math.ceil(60 / 20)) {
-							setPaginationError(true);
-							setPage(1);
-						} else if (value) {
-							setPage(value);
-						} else {
-							setPage(1);
-						}
-					}}
-					className={classes.gotoInput}
+					title={edit ? 'Poll Detail' : 'Upload Question'}
+					heading1={edit ? ' ' : 'Add Background Image'}
+					buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
 				/>
-			</div>
-
-			<UploadQuiz
-				open={showSlider}
-				isEdit={edit}
-				handleClose={() => {
-					setShowSlider(false);
-				}}
-				title={edit ? 'Poll Detail' : 'Upload Question'}
-				heading1={edit ? ' ' : 'Add Background Image'}
-				buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
-			/>
-			<QuizDetails
-				open={showQuizSlider}
-				isEdit={edit}
-				handleClose={() => {
-					setShowQuizSlider(false);
-				}}
-				title={'Quiz Detail'}
-				heading1={edit ? 'Add Background Image' : 'Add Background Image'}
-				buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
-			/>
-			<PollDetails
-				open={showPollSlider}
-				isEdit={edit}
-				handleClose={() => {
-					setShowPollSlider(false);
-				}}
-				status={rowStatus}
-				title={'Poll Detail'}
-				heading1={edit ? 'Add Background Image' : 'Add Background Image'}
-				buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
-			/>
-		</Layout>
+				<QuizDetails
+					open={showQuizSlider}
+					isEdit={edit}
+					handleClose={() => {
+						setShowQuizSlider(false);
+					}}
+					status={rowStatus}
+					title={'Quiz Detail'}
+					heading1={edit ? 'Add Background Image' : 'Add Background Image'}
+					buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
+				/>
+				<PollDetails
+					open={showPollSlider}
+					isEdit={edit}
+					handleClose={() => {
+						setShowPollSlider(false);
+					}}
+					status={rowStatus}
+					title={'Poll Detail'}
+					heading1={edit ? 'Add Background Image' : 'Add Background Image'}
+					buttonText={edit ? 'SAVE CHANGES' : 'ADD POLL'}
+				/>
+			</Layout>
+		</LoadingOverlay>
 	);
 };
 
-export default QuizLibrary;
+export default QuestionLibrary;
