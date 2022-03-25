@@ -261,7 +261,8 @@ const MediaLibrary = () => {
 							col?.dataField === 'post_date' ||
 							col?.dataField === 'labels'
 								? 30
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -275,7 +276,8 @@ const MediaLibrary = () => {
 							col?.dataField === 'post_date' ||
 							col?.dataField === 'labels'
 								? 30
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -289,7 +291,8 @@ const MediaLibrary = () => {
 							col?.dataField === 'post_date' ||
 							col?.dataField === 'labels'
 								? 30
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);

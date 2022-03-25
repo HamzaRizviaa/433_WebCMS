@@ -46,13 +46,15 @@ const UploadOrEditQuiz = ({
 	quiz,
 	handleClose,
 	page,
-	status
+	status,
+	type
 }) => {
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
 	//const [previewFile, setPreviewFile] = useState(null);
+	const [dropboxLink, setDropboxLink] = useState('');
 	const [question, setQuestion] = useState('');
 	const [ans1, setAns1] = useState('');
 	const [ans2, setAns2] = useState('');
@@ -82,7 +84,6 @@ const UploadOrEditQuiz = ({
 	const editQuestionData = useSelector(
 		(state) => state.questionLibrary.questionEdit
 	);
-	console.log(editQuestionData, 'editQuestionData');
 
 	useEffect(() => {
 		if (labels.length) {
@@ -94,7 +95,6 @@ const UploadOrEditQuiz = ({
 		dispatch(getQuestionLabels());
 	}, []);
 
-	console.log(status, 'stat');
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
 		const startDate = formatDate(endDate);
 		return (
@@ -161,6 +161,7 @@ const UploadOrEditQuiz = ({
 				);
 				setSelectedLabels(_labels);
 			}
+			setDropboxLink(editQuestionData?.dropbox_url);
 			setQuestion(editQuestionData?.question);
 			setAns1(
 				editQuestionData?.answers?.length > 0
@@ -173,7 +174,11 @@ const UploadOrEditQuiz = ({
 					: ''
 			);
 
-			setEndDate(editQuestionData?.quiz_end_date);
+			setEndDate(
+				editQuestionData?.quiz_end_date
+					? editQuestionData?.quiz_end_date
+					: editQuestionData?.poll_end_date
+			);
 			setUploadedFiles([
 				{
 					id: makeid(10),
@@ -335,6 +340,7 @@ const UploadOrEditQuiz = ({
 				`${process.env.REACT_APP_API_ENDPOINT}/question/add-question`,
 				{
 					...(question ? { question: question } : { question: '' }),
+					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
 					...(!(editQuiz || editPoll)
 						? { image: mediaFiles[0]?.media_url }
 						: {}),
@@ -418,6 +424,7 @@ const UploadOrEditQuiz = ({
 	const resetState = () => {
 		setUploadedFiles([]);
 		setFileRejectionError('');
+		setDropboxLink('');
 		setUploadMediaError('');
 		setDropZoneBorder('#ffff00');
 		setPreviewFile(null);
@@ -602,6 +609,25 @@ const UploadOrEditQuiz = ({
 							</section>
 						)}
 						<p className={classes.fileRejectionError}>{fileRejectionError}</p>
+
+						<div className={classes.captionContainer}>
+							<h6>DROPBOX URL</h6>
+							<TextField
+								value={dropboxLink}
+								onChange={(e) => setDropboxLink(e.target.value)}
+								placeholder={'Please drop the dropbox URL here'}
+								className={classes.textField}
+								multiline
+								maxRows={2}
+								InputProps={{
+									disableUnderline: true,
+									className: classes.textFieldInput,
+									style: {
+										borderRadius: dropboxLink ? '16px' : '40px'
+									}
+								}}
+							/>
+						</div>
 
 						<div className={classes.titleContainer}>
 							<h6 style={{ color: questionColor }}>QUESTION</h6>
@@ -884,7 +910,7 @@ const UploadOrEditQuiz = ({
 											deleteQuiz(editQuestionData?.id);
 										}
 									}}
-									text={'DELETE QUIZ'}
+									text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
 								/>
 							</div>
 						) : (
@@ -925,7 +951,7 @@ const UploadOrEditQuiz = ({
 										}
 									}
 								}}
-								text={buttonText}
+								text={type === 'quiz' ? 'ADD QUIZ' : 'ADD POLL'}
 							/>
 						</div>
 					</div>
@@ -978,7 +1004,8 @@ UploadOrEditQuiz.propTypes = {
 	editPoll: PropTypes.bool,
 	handleClose: PropTypes.func.isRequired,
 	page: PropTypes.string,
-	status: PropTypes.string
+	status: PropTypes.string,
+	type: PropTypes.string //poll or quiz
 };
 
 export default UploadOrEditQuiz;

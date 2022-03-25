@@ -29,10 +29,9 @@ export default function PollDetails({
 		setPreviewFile(null);
 	};
 
-	console.log(status, 'stat2');
-
 	const muiClasses = useStyles();
-
+	// on edit click on row with type:poll
+	// poll quiz or view poll details
 	return (
 		<Slider
 			open={open}
@@ -67,12 +66,14 @@ export default function PollDetails({
 								handleClose();
 							}}
 							style={{ minWidth: '40% !important' }}
+							type={'poll'}
 						/>
 					</TabPanelUnstyled>
 					<TabPanelUnstyled value={1}>
 						{/* add edit quiz */}
 						{/* <EditQuiz/>  */}
 						<UploadOrEditQuiz
+							type={'poll'}
 							editPoll={isEdit}
 							heading1={heading1}
 							open={open}
@@ -108,5 +109,6 @@ PollDetails.propTypes = {
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
 	isEdit: PropTypes.bool.isRequired,
-	status: PropTypes.string.isRequired
+	status: PropTypes.string.isRequired,
+	type: PropTypes.string.isRequired
 };

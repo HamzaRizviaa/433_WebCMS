@@ -30,6 +30,8 @@ export default function QuizDetails({
 	};
 
 	const muiClasses = useStyles();
+	// on edit click on row with type:quiz
+	// edit quiz or view quiz details
 
 	return (
 		<Slider
@@ -62,6 +64,7 @@ export default function QuizDetails({
 								handleClose();
 							}}
 							style={{ minWidth: '40% !important' }}
+							type={'quiz'}
 						/>
 					</TabPanelUnstyled>
 					<TabPanelUnstyled value={1}>
@@ -81,6 +84,7 @@ export default function QuizDetails({
 								handleClose();
 							}}
 							status={status}
+							type={'quiz'}
 						/>
 					</TabPanelUnstyled>
 				</TabsUnstyled>
@@ -95,5 +99,6 @@ QuizDetails.propTypes = {
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
 	isEdit: PropTypes.bool.isRequired,
-	status: PropTypes.string.isRequired
+	status: PropTypes.string.isRequired,
+	type: PropTypes.string.isRequired
 };

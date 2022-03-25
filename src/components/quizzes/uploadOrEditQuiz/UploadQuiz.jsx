@@ -23,6 +23,8 @@ const UploadQuiz = ({ open, handleClose, title, heading1, buttonText }) => {
 		setPreviewFile(null);
 	};
 
+	// on upload button in header - to upload new poll or quiz
+
 	return (
 		<Slider
 			open={open}
@@ -60,6 +62,7 @@ const UploadQuiz = ({ open, handleClose, title, heading1, buttonText }) => {
 							handleClose={() => {
 								handleClose();
 							}}
+							type='poll'
 						/>
 					</TabPanelUnstyled>
 					<TabPanelUnstyled value={1}>
@@ -76,6 +79,7 @@ const UploadQuiz = ({ open, handleClose, title, heading1, buttonText }) => {
 							handleClose={() => {
 								handleClose();
 							}}
+							type='quiz'
 						/>
 					</TabPanelUnstyled>
 				</TabsUnstyled>
@@ -89,7 +93,8 @@ UploadQuiz.propTypes = {
 	handleClose: PropTypes.func.isRequired,
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
-	buttonText: PropTypes.string.isRequired
+	buttonText: PropTypes.string.isRequired,
+	type: PropTypes.string.isRequired
 };
 
 export default UploadQuiz;

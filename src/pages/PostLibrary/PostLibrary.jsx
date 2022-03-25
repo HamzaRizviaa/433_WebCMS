@@ -258,11 +258,24 @@ const PostLibrary = () => {
 				});
 			}
 		}
-		if (!order) return <ArrowDropUpIcon className={classes.sortIcon} />;
+		if (!order)
+			return (
+				<ArrowDropUpIcon className={classes.sortIcon} style={{ bottom: 0.5 }} />
+			);
 		else if (order === 'asc')
-			return <ArrowDropUpIcon className={classes.sortIconSelected} />;
+			return (
+				<ArrowDropUpIcon
+					className={classes.sortIconSelected}
+					style={{ bottom: 0.5 }}
+				/>
+			);
 		else if (order === 'desc')
-			return <ArrowDropDownIcon className={classes.sortIconSelected} />;
+			return (
+				<ArrowDropDownIcon
+					className={classes.sortIconSelected}
+					style={{ bottom: 0.5 }}
+				/>
+			);
 		return null;
 	};
 

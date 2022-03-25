@@ -157,7 +157,7 @@ const ArticleLibrary = () => {
 					style={{
 						left:
 							col?.dataField === 'article_title'
-								? 0
+								? 2
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||
@@ -175,7 +175,7 @@ const ArticleLibrary = () => {
 					style={{
 						left:
 							col?.dataField === 'article_title'
-								? 0
+								? 2
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||
@@ -193,7 +193,7 @@ const ArticleLibrary = () => {
 					style={{
 						left:
 							col?.dataField === 'article_title'
-								? 0
+								? 2
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||

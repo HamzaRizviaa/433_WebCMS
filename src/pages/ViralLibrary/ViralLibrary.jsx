@@ -159,7 +159,8 @@ const ViralLibrary = () => {
 						left:
 							col?.dataField === 'user' || col?.dataField === 'last_edit'
 								? 7
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -171,7 +172,8 @@ const ViralLibrary = () => {
 						left:
 							col?.dataField === 'user' || col?.dataField === 'last_edit'
 								? 7
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -183,7 +185,8 @@ const ViralLibrary = () => {
 						left:
 							col?.dataField === 'user' || col?.dataField === 'last_edit'
 								? 7
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);

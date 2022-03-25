@@ -33,7 +33,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	}
 }));
 
-export default function QuizResults({ handleClose, page }) {
+export default function QuizResults({ handleClose, page, type }) {
 	// const muiClasses = useStyles();
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [firstUserPercentage, setFirstUserPercentage] = useState(null);
@@ -360,7 +360,7 @@ export default function QuizResults({ handleClose, page }) {
 							deleteQuiz(editQuestionResultDetail?.id);
 						}
 					}}
-					text={'DELETE QUIZ'}
+					text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
 				/>
 			</div>
 		</div>
@@ -369,5 +369,6 @@ export default function QuizResults({ handleClose, page }) {
 
 QuizResults.propTypes = {
 	handleClose: PropTypes.func.isRequired,
-	page: PropTypes.string
+	page: PropTypes.string,
+	type: PropTypes.string
 };

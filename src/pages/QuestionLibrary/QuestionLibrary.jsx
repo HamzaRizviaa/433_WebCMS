@@ -172,7 +172,8 @@ const QuestionLibrary = () => {
 							col?.dataField === 'end_date' ||
 							col?.dataField === 'status'
 								? 30
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -187,7 +188,8 @@ const QuestionLibrary = () => {
 							col?.dataField === 'end_date' ||
 							col?.dataField === 'status'
 								? 30
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -202,7 +204,8 @@ const QuestionLibrary = () => {
 							col?.dataField === 'end_date' ||
 							col?.dataField === 'status'
 								? 30
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -677,7 +680,7 @@ const QuestionLibrary = () => {
 					status={rowStatus}
 					title={'Poll Detail'}
 					heading1={edit ? 'Add Background Image' : 'Add Background Image'}
-					buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
+					buttonText={edit ? 'SAVE CHANGES' : 'ADD POLL'}
 				/>
 			</Layout>
 		</LoadingOverlay>
