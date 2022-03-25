@@ -917,6 +917,8 @@ const UploadOrEditMedia = ({
 										<h6>DROPBOX URL</h6>
 										<TextField
 											value={dropboxLink}
+											multiline
+											maxRows={2}
 											onChange={(e) => setDropboxLink(e.target.value)}
 											placeholder={'Please drop the dropbox URL here'}
 											className={classes.textField}

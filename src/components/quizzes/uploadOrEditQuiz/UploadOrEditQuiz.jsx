@@ -93,6 +93,7 @@ const UploadOrEditQuiz = ({
 
 	useEffect(() => {
 		dispatch(getQuestionLabels());
+		// !(editPoll || editQuiz) ? resetState() : '';
 	}, []);
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
@@ -225,6 +226,7 @@ const UploadOrEditQuiz = ({
 		if (!open) {
 			resetState();
 		}
+		!(editPoll || editQuiz) ? resetState() : '';
 	}, [open]);
 
 	useEffect(() => {
@@ -422,6 +424,7 @@ const UploadOrEditQuiz = ({
 	};
 
 	const resetState = () => {
+		console.log('reset');
 		setUploadedFiles([]);
 		setFileRejectionError('');
 		setDropboxLink('');
@@ -435,6 +438,7 @@ const UploadOrEditQuiz = ({
 		setSelectedLabels([]);
 		setExtraLabel('');
 		setDisableDropdown(true);
+		setEndDate(null);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);

@@ -875,6 +875,8 @@ const UploadOrEditPost = ({
 									onChange={(e) => setDropboxLink(e.target.value)}
 									placeholder={'Please drop the dropbox URL here'}
 									className={classes.textField}
+									multiline
+									maxRows={2}
 									InputProps={{
 										disableUnderline: true,
 										className: classes.textFieldInput,
