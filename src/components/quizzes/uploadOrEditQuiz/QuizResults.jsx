@@ -147,60 +147,6 @@ export default function QuizResults({ handleClose, page, type }) {
 		}
 	};
 
-	// const data = [
-	// 	{
-	// 		username: 'loremipsum',
-	// 		answer: 'Real Madrid',
-	// 		date_time: '2021-11-25T17:00:08.000Z'
-	// 	},
-	// 	{
-	// 		username: 'loremipsum',
-	// 		answer: 'Barcelona FC',
-	// 		date_time: '2021-11-25T17:00:08.000Z'
-	// 	},
-	// 	{
-	// 		username: 'loremipsum',
-	// 		answer: 'Barcelona FC',
-	// 		date_time: '2021-11-25T17:00:08.000Z'
-	// 	},
-	// 	{
-	// 		username: 'loremipsum',
-	// 		answer: 'Real Madrid',
-	// 		date_time: '2021-11-25T17:00:08.000Z'
-	// 	},
-
-	// 	{
-	// 		username: 'loremipsum',
-	// 		answer: 'Real Madrid',
-	// 		date_time: '2021-11-25T17:00:08.000Z'
-	// 	},
-	// 	{
-	// 		username: 'loremipsum',
-	// 		answer: 'Barcelona FC',
-	// 		date_time: '2021-11-25T17:00:08.000Z'
-	// 	},
-	// 	{
-	// 		username: 'loremipsum',
-	// 		answer: 'Barcelona FC',
-	// 		date_time: '2021-11-25T17:00:08.000Z'
-	// 	},
-	// 	{
-	// 		username: 'loremipsum',
-	// 		answer: 'Real Madrid',
-	// 		date_time: '2021-11-25T17:00:08.000Z'
-	// 	},
-	// 	{
-	// 		username: 'loremipsum',
-	// 		answer: 'Barcelona FC',
-	// 		date_time: '2021-11-25T17:00:08.000Z'
-	// 	},
-	// 	{
-	// 		username: 'loremipsum',
-	// 		answer: 'Real Madrid',
-	// 		date_time: '2021-11-25T17:00:08.000Z'
-	// 	}
-	// ];
-
 	const columns = [
 		{
 			dataField: 'username',
