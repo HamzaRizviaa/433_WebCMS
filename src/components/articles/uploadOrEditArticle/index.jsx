@@ -970,7 +970,6 @@ const UploadOrEditViral = ({
 														fontSize: '64px',
 														letterSpacing: '-2%',
 														marginBottom: '3px'
-														// lineHeight: '56px',
 													}
 													//classes: 'hamza'
 												},
@@ -1054,10 +1053,10 @@ const UploadOrEditViral = ({
 													items: [
 														{
 															title: 'Header 1',
-															format: 'title_h1',
-															styles: {
-																marginBottom: '23px !important'
-															}
+															format: 'title_h1'
+															// styles: {
+															// 	fontSize: '40'
+															// }
 														},
 														{
 															title: 'Header 2',
@@ -1103,7 +1102,7 @@ const UploadOrEditViral = ({
 													]
 												}
 											],
-											menubar: 'format edit insert tools',
+											menubar: 'edit insert tools format',
 											menu: {
 												edit: {
 													title: 'Edit',
@@ -1135,13 +1134,23 @@ const UploadOrEditViral = ({
 												'alignleft aligncenter ' +
 												'alignright alignjustify | bullist numlist | ' +
 												'emoticons'
+											// init_instance_callback: function (editor) {
+											// 	editor.on('focus', function () {
+											// 		setDisableDropdown(false);
+											// 	});
+											// },
 										}}
 										onEditorChange={() => handleEditorChange()}
-										onInit={() => setDisableDropdown(false)}
+										//onExecCommand={() => setDisableDropdown(false)}
+										onMouseEnter={() => setDisableDropdown(false)}
+										//onInit={() => setDisableDropdown(false)}
 										//onMouseEnter={() => setDisableDropdown(false)}
 										// onFocusIn={() => {
 										// 	setDisableDropdown(false);
 										// }}
+										//onDeactivate={() => setDisableDropdown(true)}
+										//onActivate={() => setDisableDropdown(true)}
+										//onMouseLeave={() => setDisableDropdown(true)}
 										onBlur={() => setDisableDropdown(true)}
 									/>
 								</div>
