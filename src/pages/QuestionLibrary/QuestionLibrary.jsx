@@ -145,7 +145,7 @@ const QuestionLibrary = () => {
 
 	const sortKeysMapping = {
 		question: 'question',
-		question_type: 'quesType',
+		question_type: 'questiontype',
 		post_date: 'postdate',
 		end_date: 'enddate',
 		labels: 'label',
