@@ -15,7 +15,7 @@ export const getDateTime = (dateTime) => {
 
 export const getDateConstantTime = (dateTime) => {
 	let formatted = new Date(dateTime);
-	return `${moment(formatted).format('DD-MM-YYYY')} | 23:59`;
+	return `${moment(formatted).format('DD-MM-YYYY')} | 23:59 (UTC +0)`;
 };
 
 export const formatDate = (date) => {

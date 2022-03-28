@@ -349,7 +349,7 @@ const UploadOrEditQuiz = ({
 
 	const createQuestion = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
-		console.log(mediaFiles, id, 'abc=============');
+
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/question/add-question`,
@@ -969,7 +969,14 @@ const UploadOrEditQuiz = ({
 										}
 									}
 								}}
-								text={type === 'quiz' ? 'ADD QUIZ' : 'ADD POLL'}
+								// text={type === 'quiz' ? 'ADD QUIZ' : 'ADD POLL'}
+								text={
+									type === 'quiz' && !(editPoll || editQuiz)
+										? 'ADD QUIZ'
+										: type === 'poll' && !(editPoll || editQuiz)
+										? 'ADD POLL'
+										: 'SAVE CHANGES'
+								}
 							/>
 						</div>
 					</div>
