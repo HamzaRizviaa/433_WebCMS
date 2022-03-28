@@ -580,7 +580,7 @@ const GamesLibrary = () => {
 								setEdit(false);
 								setShowSlider(true);
 							}}
-							text={'UPLOAD GAMES'}
+							text={'UPLOAD GAME'}
 						/>
 					</div>
 					<div className={classes.subheader2}>
@@ -611,7 +611,7 @@ const GamesLibrary = () => {
 								// 	}
 								// }}
 								onChange={handleChangeSearch}
-								placeholder={'Search post, user, label'}
+								placeholder={'Search game'}
 								InputProps={{
 									disableUnderline: true,
 									className: classes.textFieldInput,
