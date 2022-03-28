@@ -354,9 +354,6 @@ const UploadOrEditQuiz = ({
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/question/add-question`,
 				{
-					image: mediaFiles[0]?.media_url,
-					end_date: endDate,
-					question_id: id ? id : null,
 					...(question ? { question: question } : { question: '' }),
 					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
 					...(!(editQuiz || editPoll)
@@ -378,10 +375,8 @@ const UploadOrEditQuiz = ({
 						: {}),
 					...(!(editQuiz || editPoll) && selectedLabels.length
 						? { labels: [...selectedLabels] }
-						: {})
-					// ...((editQuiz || editPoll) && id
-					// 	? { question_id: id }
-					// 	: { question_id: null })
+						: {}),
+					...((editQuiz || editPoll) && id ? { question_id: id } : {})
 				},
 				{
 					headers: {
