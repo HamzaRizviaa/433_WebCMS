@@ -337,16 +337,22 @@ const UploadOrEditQuiz = ({
 
 	const createQuestion = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
+		console.log(mediaFiles, id, 'abc=============');
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/question/add-question`,
 				{
+					image: mediaFiles[0]?.media_url,
+					end_date: endDate,
+					question_id: id ? id : null,
 					...(question ? { question: question } : { question: '' }),
 					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
-					...(!(editQuiz || editPoll)
-						? { image: mediaFiles[0]?.media_url }
-						: {}),
-					...(!(editQuiz || editPoll) ? { end_date: endDate } : {}),
+					// ...(!(editQuiz || editPoll)
+					// 	? { image: mediaFiles[0]?.media_url }
+					// 	: { image: mediaFiles[0]?.media_url }),
+					// ...(!(editQuiz || editPoll)
+					// 	? { end_date: endDate }
+					// 	: { end_date: endDate }),
 					...(!(editQuiz || editPoll)
 						? quiz
 							? { question_type: 'quiz' }
@@ -362,8 +368,10 @@ const UploadOrEditQuiz = ({
 						: {}),
 					...(!(editQuiz || editPoll) && selectedLabels.length
 						? { labels: [...selectedLabels] }
-						: {}),
-					...((editQuiz || editPoll) && id ? { question_id: id } : {})
+						: {})
+					// ...((editQuiz || editPoll) && id
+					// 	? { question_id: id }
+					// 	: { question_id: null })
 				},
 				{
 					headers: {
@@ -424,7 +432,6 @@ const UploadOrEditQuiz = ({
 	};
 
 	const resetState = () => {
-		console.log('reset');
 		setUploadedFiles([]);
 		setFileRejectionError('');
 		setDropboxLink('');
@@ -947,6 +954,7 @@ const UploadOrEditQuiz = ({
 
 											Promise.all([...uploadFilesPromiseArray])
 												.then((mediaFiles) => {
+													console.log(mediaFiles, 'media files ');
 													createQuestion(null, mediaFiles);
 												})
 												.catch(() => {

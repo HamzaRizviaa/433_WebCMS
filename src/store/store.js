@@ -5,7 +5,7 @@ import questionLibraryReducer from '../pages/QuestionLibrary/questionLibrarySlic
 import viralLibraryReducer from '../pages/ViralLibrary/viralLibararySlice';
 import articleLibraryReducer from '../pages/ArticleLibrary/articleLibrarySlice';
 import topBannerReducer from '../pages/TopBanner/topBannerSlice';
-
+import gamesLibraryReducer from '../pages/GamesLibrary/gamesLibrarySlice';
 const store = configureStore({
 	reducer: {
 		postLibrary: postLibraryReducer,
@@ -13,7 +13,8 @@ const store = configureStore({
 		questionLibrary: questionLibraryReducer,
 		topBanner: topBannerReducer,
 		ViralLibraryStore: viralLibraryReducer,
-		ArticleLibraryStore: articleLibraryReducer
+		ArticleLibraryStore: articleLibraryReducer,
+		GamesLibraryStore: gamesLibraryReducer
 	}
 });
 
