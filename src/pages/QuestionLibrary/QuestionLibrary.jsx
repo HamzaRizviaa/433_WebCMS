@@ -22,7 +22,12 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import { getDateTime, formatDate, getCalendarText } from '../../utils';
+import {
+	getDateTime,
+	getDateConstantTime,
+	formatDate,
+	getCalendarText
+} from '../../utils';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import { useNavigate } from 'react-router-dom';
@@ -140,7 +145,7 @@ const QuestionLibrary = () => {
 
 	const sortKeysMapping = {
 		question: 'question',
-		question_type: 'quesType',
+		question_type: 'questiontype',
 		post_date: 'postdate',
 		end_date: 'enddate',
 		labels: 'label',
@@ -260,7 +265,9 @@ const QuestionLibrary = () => {
 			sortFunc: () => {},
 			text: 'END DATE | TIME',
 			formatter: (content) => {
-				return <div className={classes.rowType}>{getDateTime(content)}</div>;
+				return (
+					<div className={classes.rowType}>{getDateConstantTime(content)}</div>
+				);
 			},
 			headerStyle: () => {
 				return { paddingLeft: '48px' };
