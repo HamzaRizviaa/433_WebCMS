@@ -359,7 +359,7 @@ const UploadOrEditQuiz = ({
 					...(!(editQuiz || editPoll)
 						? { image: mediaFiles[0]?.media_url }
 						: {}),
-					...(!(editQuiz || editPoll) ? { end_date: convertedDate } : {}),
+					...(convertedDate ? { end_date: convertedDate } : {}),
 					...(!(editQuiz || editPoll)
 						? quiz
 							? { question_type: 'quiz' }
