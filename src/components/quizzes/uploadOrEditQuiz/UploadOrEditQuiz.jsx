@@ -88,7 +88,7 @@ const UploadOrEditQuiz = ({
 	);
 
 	useEffect(() => {
-		var da = new Date(endDate?.toLocaleString());
+		var da = new Date(endDate);
 		var toSend = `${da?.getFullYear()}-${('0' + (da?.getMonth() + 1)).slice(
 			-2
 		)}-${da?.getDate()}T${('0' + da.getHours()).slice(-2)}:${(
