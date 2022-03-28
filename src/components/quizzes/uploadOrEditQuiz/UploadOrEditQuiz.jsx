@@ -16,7 +16,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../../../pages/PostLibrary/_calender.scss';
-import { formatDate, getCalendarText2 } from '../../../utils';
+import { getDateTime, formatDate, getCalendarText2 } from '../../../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	getQuestionLabels,
@@ -27,6 +27,7 @@ import { getLocalStorageDetails } from '../../../utils';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import LoadingOverlay from 'react-loading-overlay';
+// import moment from 'moment';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
@@ -72,6 +73,7 @@ const UploadOrEditQuiz = ({
 	const [quizLabels, setQuizLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [endDate, setEndDate] = useState(null);
+	const [convertedDate, setConvertedDate] = useState(null);
 	const [calenderOpen, setCalenderOpen] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
@@ -84,6 +86,16 @@ const UploadOrEditQuiz = ({
 	const editQuestionData = useSelector(
 		(state) => state.questionLibrary.questionEdit
 	);
+
+	useEffect(() => {
+		var da = new Date(endDate);
+		var toSend = `${da?.getFullYear()}-${('0' + (da?.getMonth() + 1)).slice(
+			-2
+		)}-${da?.getDate()}T${('0' + da.getHours()).slice(-2)}:${(
+			'0' + da.getMinutes()
+		).slice(-2)}:${('0' + da.getSeconds()).slice(-2)}.${da.getMilliseconds()}Z`;
+		setConvertedDate(toSend);
+	}, [endDate]);
 
 	useEffect(() => {
 		if (labels.length) {
@@ -337,6 +349,7 @@ const UploadOrEditQuiz = ({
 
 	const createQuestion = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
+		console.log(mediaFiles, id, 'abc=============');
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/question/add-question`,
@@ -346,7 +359,7 @@ const UploadOrEditQuiz = ({
 					...(!(editQuiz || editPoll)
 						? { image: mediaFiles[0]?.media_url }
 						: {}),
-					...(!(editQuiz || editPoll) ? { end_date: endDate } : {}),
+					...(convertedDate ? { end_date: convertedDate } : {}),
 					...(!(editQuiz || editPoll)
 						? quiz
 							? { question_type: 'quiz' }
@@ -424,7 +437,6 @@ const UploadOrEditQuiz = ({
 	};
 
 	const resetState = () => {
-		console.log('reset');
 		setUploadedFiles([]);
 		setFileRejectionError('');
 		setDropboxLink('');
@@ -439,6 +451,7 @@ const UploadOrEditQuiz = ({
 		setExtraLabel('');
 		setDisableDropdown(true);
 		setEndDate(null);
+		setConvertedDate(null);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
@@ -947,6 +960,7 @@ const UploadOrEditQuiz = ({
 
 											Promise.all([...uploadFilesPromiseArray])
 												.then((mediaFiles) => {
+													console.log(mediaFiles, 'media files ');
 													createQuestion(null, mediaFiles);
 												})
 												.catch(() => {
@@ -977,9 +991,9 @@ const UploadOrEditQuiz = ({
 								src={previewFile.img}
 								className={classes.previewFile}
 								style={{
-									width: `${8 * 4}rem`,
+									width: '100%',
 									height: `${8 * 4}rem`,
-									objectFit: 'cover',
+									objectFit: 'contain',
 									objectPosition: 'center'
 								}}
 							/>

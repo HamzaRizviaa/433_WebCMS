@@ -11,7 +11,7 @@ import TopBanner from '../pages/TopBanner/TopBanner.jsx';
 import SignIn from '../pages/SignIn/SignIn';
 import ViralLibrary from '../pages/ViralLibrary/ViralLibrary';
 import ArticleLibrary from '../pages/ArticleLibrary/ArticleLibrary';
-
+import GamesLibrary from '../pages/GamesLibrary/GamesLibrary';
 import RequireAuth from './RequireAuth.js';
 
 const AppRoutes = () => {
@@ -58,6 +58,11 @@ const AppRoutes = () => {
 					exact
 					path='/viral-library'
 					element={<RequireAuth component={<ViralLibrary />} />}
+				/>
+				<Route
+					exact
+					path='/games-library'
+					element={<RequireAuth component={<GamesLibrary />} />}
 				/>
 
 				<Route path='*' element={<Navigate to='/sign-in' />} />
