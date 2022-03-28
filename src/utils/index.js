@@ -13,6 +13,11 @@ export const getDateTime = (dateTime) => {
 	})}`;
 };
 
+export const getDateConstantTime = (dateTime) => {
+	let formatted = new Date(dateTime);
+	return `${moment(formatted).format('DD-MM-YYYY')} | 23:59`;
+};
+
 export const formatDate = (date) => {
 	if (date === null) return null;
 
