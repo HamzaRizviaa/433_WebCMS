@@ -13,9 +13,9 @@ export const getAllGames = createAsyncThunk(
 		endDate,
 		fromCalendar = false
 	}) => {
-		let endPoint = `media/get-media?limit=20&page=1`;
+		let endPoint = `games/all-games?limit=20&page=1`;
 		if (page) {
-			endPoint = `media/get-media?limit=20&page=${page}`;
+			endPoint = `games/all-games?limit=20&page=${page}`;
 		}
 		if (order_type && sortby) {
 			endPoint += `&order_type=${order_type}&sort_by=${sortby}`;

@@ -47,20 +47,20 @@ const GamesLibrary = () => {
 	const muiClasses = useStyles();
 	const muiClasses2 = useStyles2();
 
-	// Selctor
-	// const media = useSelector((state) => state.mediaLibraryOriginal.media);
+	// Selector
+	const games = useSelector((state) => state.GamesLibraryStore.gamesData);
 
-	// const mediaApiStatus = useSelector((state) => state.mediaLibraryOriginal);
+	const gamesApiStatus = useSelector((state) => state.GamesLibraryStore);
 
-	// const totalRecords = useSelector(
-	// 	(state) => state.mediaLibraryOriginal.totalRecords
-	// );
-	const totalRecords = 200;
+	const totalRecords = useSelector(
+		(state) => state.mediaLibraryOriginal.totalRecords
+	);
+
 	const noResultStatus = useSelector(
-		(state) => state.mediaLibraryOriginal.noResultStatus
+		(state) => state.GamesLibraryStore.noResultStatus
 	);
 	const noResultStatusCalendar = useSelector(
-		(state) => state.mediaLibraryOriginal.noResultStatusCalendar
+		(state) => state.GamesLibraryStore.noResultStatusCalendar
 	);
 
 	// State
@@ -99,7 +99,6 @@ const GamesLibrary = () => {
 		title: 'title',
 		file_name: 'media',
 		post_date: 'postdate',
-		labels: 'label',
 		user: 'user',
 		last_edit: 'lastedit',
 		type: 'type'
@@ -256,9 +255,7 @@ const GamesLibrary = () => {
 					className={classes.sortIcon}
 					style={{
 						left:
-							col?.dataField === 'type' ||
-							col?.dataField === 'post_date' ||
-							col?.dataField === 'labels'
+							col?.dataField === 'type' || col?.dataField === 'post_date'
 								? 30
 								: -4,
 						bottom: 0.5
@@ -271,9 +268,7 @@ const GamesLibrary = () => {
 					className={classes.sortIconSelected}
 					style={{
 						left:
-							col?.dataField === 'type' ||
-							col?.dataField === 'post_date' ||
-							col?.dataField === 'labels'
+							col?.dataField === 'type' || col?.dataField === 'post_date'
 								? 30
 								: -4,
 						bottom: 0.5
@@ -286,9 +281,7 @@ const GamesLibrary = () => {
 					className={classes.sortIconSelected}
 					style={{
 						left:
-							col?.dataField === 'type' ||
-							col?.dataField === 'post_date' ||
-							col?.dataField === 'labels'
+							col?.dataField === 'type' || col?.dataField === 'post_date'
 								? 30
 								: -4,
 						bottom: 0.5
@@ -382,7 +375,7 @@ const GamesLibrary = () => {
 			}
 		},
 		{
-			dataField: 'type',
+			dataField: 'game_type',
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
@@ -411,27 +404,6 @@ const GamesLibrary = () => {
 				return { paddingLeft: '48px' };
 			}
 		},
-		{
-			dataField: 'labels',
-			sort: true,
-			sortCaret: sortRows,
-			sortFunc: () => {},
-			text: 'LABELS',
-			formatter: (content) => {
-				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
-				return (
-					// <div className={classes.rowType}>
-					// 	{content[0] + `, ` + content[1]}
-					// </div>
-					<div className={classes.rowType}>
-						<Markup content={`${content[0]} ${secondLabel}`} />
-					</div>
-				);
-			},
-			headerStyle: () => {
-				return { paddingLeft: '48px' };
-			}
-		},
 
 		{
 			dataField: 'user',
@@ -453,7 +425,7 @@ const GamesLibrary = () => {
 			sortFunc: () => {},
 			text: 'LAST EDIT',
 			formatter: (content) => {
-				return <div className={classes.row}>{getDateTime(content)}</div>;
+				return <div className={classes.row}>{formatDate(content)}</div>;
 			}
 		},
 		{
@@ -477,37 +449,6 @@ const GamesLibrary = () => {
 					</div>
 				);
 			}
-		}
-	];
-
-	const data = [
-		{
-			file_name:
-				'@mls Incredible angle goal REELS LOGO-[onlinevideoconverter.com].mp4',
-			height: 1348,
-			id: '623c882ca246b1fdea75b96f',
-			labels: ['YOAV', 'TRHEJ'],
-			last_edit: '2022-03-24T15:03:08.160Z',
-			post_date: '2022-03-24T15:03:08.160Z',
-			thumbnail_url: 'media/photos/5ac3974b-7f16-421b-b789-d42cceb6159e.jpeg',
-			title: '123123123123',
-			type: 'jogo',
-			user: 'Khadija Hussain',
-			width: 1080
-		},
-		{
-			file_name:
-				'@mls Incredible angle goal REELS LOGO-[onlinevideoconverter.com].mp4',
-			height: 1348,
-			id: '623c882ca246b1fdea75b96f',
-			labels: ['YOAV', 'TRHEJ'],
-			last_edit: '2022-03-24T15:03:08.160Z',
-			post_date: '2022-03-24T15:03:08.160Z',
-			thumbnail_url: 'media/photos/5ac3974b-7f16-421b-b789-d42cceb6159e.jpeg',
-			title: '123123123123',
-			type: 'arcade',
-			user: 'Khadija Hussain',
-			width: 1080
 		}
 	];
 
@@ -565,7 +506,7 @@ const GamesLibrary = () => {
 
 	return (
 		<LoadingOverlay
-			// active={mediaApiStatus.status === 'pending' ? true : false}
+			active={gamesApiStatus.status === 'pending' ? true : false}
 			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
 			spinner={
 				<img src={Four33Loader} className={classes.loader} alt='loader' />
@@ -643,7 +584,7 @@ const GamesLibrary = () => {
 					</div>
 				</div>
 				<div className={classes.tableContainer}>
-					<Table rowEvents={tableRowEvents} columns={columns} data={data} />
+					<Table rowEvents={tableRowEvents} columns={columns} data={games} />
 				</div>
 
 				<div className={classes.paginationRow}>
