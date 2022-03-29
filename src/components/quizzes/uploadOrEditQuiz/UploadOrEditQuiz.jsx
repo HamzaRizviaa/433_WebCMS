@@ -32,7 +32,7 @@ import LoadingOverlay from 'react-loading-overlay';
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 import { ReactComponent as CalenderYellow } from '../../../assets/Calender_Yellow.svg';
-
+import { useRef } from 'react';
 const UploadOrEditQuiz = ({
 	heading1,
 	open,
@@ -78,7 +78,9 @@ const UploadOrEditQuiz = ({
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
-
+	const [fileWidth, setFileWidth] = useState(null);
+	const [fileHeight, setFileHeight] = useState(null);
+	const imgRef = useRef(null);
 	const dispatch = useDispatch();
 
 	const labels = useSelector((state) => state.questionLibrary.labels);
@@ -354,6 +356,8 @@ const UploadOrEditQuiz = ({
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/question/add-question`,
 				{
+					width: fileWidth,
+					height: fileHeight,
 					...(question ? { question: question } : { question: '' }),
 					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
 					...(!(editQuiz || editPoll)
@@ -564,6 +568,15 @@ const UploadOrEditQuiz = ({
 														<img
 															src={file.img}
 															className={classes.fileThumbnail}
+															style={{
+																objectFit: 'cover',
+																objectPosition: 'center'
+															}}
+															ref={imgRef}
+															onLoad={() => {
+																setFileWidth(imgRef.current.naturalWidth);
+																setFileHeight(imgRef.current.naturalHeight);
+															}}
 														/>
 														<p className={classes.fileName}>{file.fileName}</p>
 													</div>
@@ -627,7 +640,7 @@ const UploadOrEditQuiz = ({
 						)}
 						<p className={classes.fileRejectionError}>{fileRejectionError}</p>
 
-						<div className={classes.captionContainer}>
+						<div className={classes.titleContainer}>
 							<h6>DROPBOX URL</h6>
 							<TextField
 								value={dropboxLink}

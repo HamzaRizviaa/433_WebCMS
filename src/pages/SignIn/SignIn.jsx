@@ -90,15 +90,18 @@ const SignIn = ({ setLoginData }) => {
 	}, [accessExpire]);
 
 	const handleLogin = async (googleData) => {
-		setIsLoadingSignin(true);
 		try {
+			setIsLoadingSignin(true);
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/cmsuser/verify-google-user`,
 				{
 					token: googleData.tokenId
 				}
 			);
-			if (result?.data?.status_code === 200) {
+			if (
+				result?.data?.status_code === 200 &&
+				result?.data?.response === true
+			) {
 				setLoginData(
 					localStorage.setItem('user_data', JSON.stringify(result?.data?.data))
 				);
@@ -118,8 +121,9 @@ const SignIn = ({ setLoginData }) => {
 				setSignInError(false);
 			}
 		} catch (e) {
-			setIsLoadingSignin(false);
 			setSignInError(true);
+			setIsLoadingSignin(false);
+
 			console.log(e, googleData.profileObj.email);
 		}
 

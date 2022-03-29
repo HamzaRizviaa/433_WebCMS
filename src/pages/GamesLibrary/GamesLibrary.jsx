@@ -101,7 +101,7 @@ const GamesLibrary = () => {
 		post_date: 'postdate',
 		user: 'user',
 		last_edit: 'lastedit',
-		type: 'type'
+		type: 'gametype'
 	};
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
