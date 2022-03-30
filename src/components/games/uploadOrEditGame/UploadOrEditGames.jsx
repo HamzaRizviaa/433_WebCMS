@@ -77,6 +77,30 @@ const UploadOrEditQuiz = ({
 	);
 	const [uploadExplanationOrIconError, setUploadExplanationOrIconError] =
 		useState('');
+	const [arcadeGameType, setArcadeGameType] = useState('');
+	const [arcadeGameTypeColor, setArcadeGameTypeColor] = useState('#ffffff');
+	const [arcadeGameTypeError, setArcadeGameTypeError] = useState('');
+	const [gameId, setGameId] = useState('');
+	const [gameIdColor, setGameIdColor] = useState('#ffffff');
+	const [gameIdError, setGameIdError] = useState('');
+	const [android, setAndrioid] = useState('');
+	const [androidColor, setAndroidColor] = useState('#ffffff');
+	const [androidError, setAndroidError] = useState('');
+	const [ios, setIos] = useState('');
+	const [iosColor, setIosColor] = useState('#ffffff');
+	const [iosError, setIosError] = useState('');
+	const [playStore, setPlayStore] = useState('');
+	const [playStoreColor, setPlayStoreColor] = useState('#ffffff');
+	const [playStoreError, setPlayStoreError] = useState('');
+	const [appStore, setAppStore] = useState('');
+	const [appStoreColor, setAppStoreColor] = useState('#ffffff');
+	const [appStoreError, setAppStoreError] = useState('');
+	const [playStore2, setPlayStore2] = useState('');
+	const [playStoreColor2, setPlayStoreColor2] = useState('#ffffff');
+	const [playStoreError2, setPlayStoreError2] = useState('');
+	const [appStore2, setAppStore2] = useState('');
+	const [appStoreColor2, setAppStoreColor2] = useState('#ffffff');
+	const [appStoreError2, setAppStoreError2] = useState('');
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
 	const videoRef = useRef(null);
@@ -108,6 +132,7 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
+	console.log(arcadeGameType);
 	// useEffect(() => {
 	// 	if (editQuiz || editPoll) {
 	// 		setUploadedFiles([
@@ -446,6 +471,30 @@ const UploadOrEditQuiz = ({
 		setVideoOrientation('');
 		setVideoOrientationColor('#ffffff');
 		setvideoOrientationError('');
+		setArcadeGameType('');
+		setArcadeGameTypeColor('#ffffff');
+		setArcadeGameTypeError('');
+		setGameId('');
+		setGameIdColor('#ffffff');
+		setGameIdError('');
+		setAndrioid('');
+		setAndroidColor('#ffffff');
+		setAndroidError('');
+		setIos('');
+		setIosColor('#ffffff');
+		setIosError('');
+		setPlayStore('');
+		setPlayStoreColor('#ffffff');
+		setPlayStoreError('');
+		setAppStore('');
+		setAppStoreColor('#ffffff');
+		setAppStoreError('');
+		setPlayStore2('');
+		setPlayStoreColor2('#ffffff');
+		setPlayStoreError2('');
+		setAppStore2('');
+		setAppStoreColor2('#ffffff');
+		setAppStoreError2('');
 	};
 
 	const validatePostBtn = () => {
@@ -521,6 +570,70 @@ const UploadOrEditQuiz = ({
 			setTimeout(() => {
 				setPayloadColor('#ffffff');
 				setPayloadError('');
+			}, [5000]);
+		}
+		if (!arcadeGameType) {
+			setArcadeGameTypeColor('#ff355a');
+			setArcadeGameTypeError('You need to provide payload in order to post');
+			setTimeout(() => {
+				setArcadeGameTypeColor('#ffffff');
+				setArcadeGameTypeError('');
+			}, [5000]);
+		}
+		if (!gameId) {
+			setGameIdColor('#ff355a');
+			setGameIdError('You need to provide game Id in order to post');
+			setTimeout(() => {
+				setGameIdColor('#ffffff');
+				setGameIdError('');
+			}, [5000]);
+		}
+		if (!android) {
+			setAndroidColor('#ff355a');
+			setAndroidError('You need to provide android in order to post');
+			setTimeout(() => {
+				setAndroidColor('#ffffff');
+				setAndroidError('');
+			}, [5000]);
+		}
+		if (!ios) {
+			setIosColor('#ff355a');
+			setIosError('You need to provide IOS in order to post');
+			setTimeout(() => {
+				setIosColor('#ffffff');
+				setIosError('');
+			}, [5000]);
+		}
+		if (!playStore) {
+			setPlayStoreColor('#ff355a');
+			setPlayStoreError('You need to provide PlayStore in order to post');
+			setTimeout(() => {
+				setPlayStoreColor('#ffffff');
+				setPlayStoreError('');
+			}, [5000]);
+		}
+		if (!appStore) {
+			setAppStoreColor('#ff355a');
+			setAppStoreError('You need to provide AppStore in order to post');
+			setTimeout(() => {
+				setAppStoreColor('#ffffff');
+				setAppStoreError('');
+			}, [5000]);
+		}
+		if (!playStore2) {
+			setPlayStoreColor2('#ff355a');
+			setPlayStoreError2('You need to provide PlayStore in order to post');
+			setTimeout(() => {
+				setPlayStoreColor2('#ffffff');
+				setPlayStoreError2('');
+			}, [5000]);
+		}
+		if (!appStore2) {
+			setAppStoreColor2('#ff355a');
+			setAppStoreError2('You need to provide AppStore in order to post');
+			setTimeout(() => {
+				setAppStoreColor2('#ffffff');
+				setAppStoreError2('');
 			}, [5000]);
 		}
 	};
@@ -936,7 +1049,7 @@ const UploadOrEditQuiz = ({
 													: 'white'
 										}}
 									>
-										{descriptionGame?.length}/84
+										{type === 'jogo' ? `${descriptionGame?.length}/84` : ''}
 									</h6>
 								</div>
 								<TextField
@@ -952,7 +1065,7 @@ const UploadOrEditQuiz = ({
 										disableUnderline: true,
 										className: classes.textFieldInput
 									}}
-									inputProps={{ maxLength: 84 }}
+									inputProps={{ maxLength: type === 'jogo' ? 84 : 524288 }}
 									multiline
 									maxRows={2}
 								/>
@@ -1071,7 +1184,229 @@ const UploadOrEditQuiz = ({
 									<p className={classes.mediaError}>{payloadError}</p>
 								</>
 							) : (
-								<></>
+								<>
+									<div className={classes.titleContainer}>
+										<h6 style={{ color: arcadeGameTypeColor }}>
+											ARCADE GAME TYPE
+										</h6>
+										<Select
+											onOpen={() => {
+												setDisableDropdown(false);
+											}}
+											onClose={() => {
+												setDisableDropdown(true);
+											}}
+											disabled={false}
+											style={{
+												backgroundColor: editPoll ? '#404040' : '#000000'
+											}}
+											value={arcadeGameType}
+											onChange={(e) => {
+												setDisableDropdown(true);
+												setArcadeGameType(e.target.value);
+												setArcadeGameTypeColor('#ffffff');
+												setArcadeGameTypeError('');
+											}}
+											className={`${classes.select} ${
+												editPoll && `${classes.isEditSelect}`
+											}`}
+											disableUnderline={true}
+											IconComponent={(props) => (
+												<KeyboardArrowDownIcon
+													{...props}
+													style={{
+														display: editPoll ? 'none' : 'block',
+														top: '4'
+													}}
+												/>
+											)}
+											MenuProps={{
+												anchorOrigin: {
+													vertical: 'bottom',
+													horizontal: 'left'
+												},
+												transformOrigin: {
+													vertical: 'top',
+													horizontal: 'left'
+												},
+												getContentAnchorEl: null
+											}}
+											displayEmpty={true}
+											// renderValue={(value) =>
+											// 	value?.length
+											// 		? Array.isArray(value)
+											// 			? value.join(', ')
+											// 			: value
+											// 		: 'Please Select Orientation'
+											// }
+										>
+											<MenuItem value={10}>Outside App</MenuItem>
+											<MenuItem value={20}>Inside App</MenuItem>
+										</Select>
+									</div>
+									<p className={classes.mediaError}>{arcadeGameTypeError}</p>
+
+									{arcadeGameType === 10 ? (
+										<>
+											<div className={classes.gameIDwrapper}>
+												<h5>Package ID</h5>
+											</div>
+											<div className={classes.titleContainer}>
+												<h6 style={{ color: androidColor }}>ANDROID</h6>
+												<TextField
+													value={android}
+													onChange={(e) => setAndrioid(e.target.value)}
+													placeholder={'Enter Andrioid'}
+													className={classes.textField}
+													multiline
+													maxRows={2}
+													InputProps={{
+														disableUnderline: true,
+														className: classes.textFieldInput,
+														style: {
+															borderRadius: android ? '16px' : '40px'
+														}
+													}}
+												/>
+											</div>
+											<p className={classes.mediaError}>{androidError}</p>
+											<div className={classes.titleContainer}>
+												<h6 style={{ color: iosColor }}>IOS</h6>
+												<TextField
+													value={ios}
+													onChange={(e) => setIos(e.target.value)}
+													placeholder={'Enter IOS'}
+													className={classes.textField}
+													multiline
+													maxRows={2}
+													InputProps={{
+														disableUnderline: true,
+														className: classes.textFieldInput,
+														style: {
+															borderRadius: ios ? '16px' : '40px'
+														}
+													}}
+												/>
+											</div>
+											<p className={classes.mediaError}>{iosError}</p>
+
+											<div className={classes.gameIDwrapper}>
+												<h5>Store URL</h5>
+											</div>
+											<div className={classes.titleContainer}>
+												<h6 style={{ color: playStoreColor }}>PLAY STORE</h6>
+												<TextField
+													value={playStore}
+													onChange={(e) => setPlayStore(e.target.value)}
+													placeholder={'Enter PLAY STORE'}
+													className={classes.textField}
+													multiline
+													maxRows={2}
+													InputProps={{
+														disableUnderline: true,
+														className: classes.textFieldInput,
+														style: {
+															borderRadius: playStore ? '16px' : '40px'
+														}
+													}}
+												/>
+											</div>
+											<p className={classes.mediaError}>{playStoreError}</p>
+											<div className={classes.titleContainer}>
+												<h6 style={{ color: appStoreColor }}>APP STORE</h6>
+												<TextField
+													value={appStore}
+													onChange={(e) => setAppStore(e.target.value)}
+													placeholder={'Enter APP STORE'}
+													className={classes.textField}
+													multiline
+													maxRows={2}
+													InputProps={{
+														disableUnderline: true,
+														className: classes.textFieldInput,
+														style: {
+															borderRadius: appStore ? '16px' : '40px'
+														}
+													}}
+												/>
+											</div>
+											<p className={classes.mediaError}>{appStoreError}</p>
+
+											<div className={classes.gameIDwrapper}>
+												<h5>Deep Link</h5>
+											</div>
+											<div className={classes.titleContainer}>
+												<h6 style={{ color: playStoreColor2 }}>PLAY STORE</h6>
+												<TextField
+													value={playStore2}
+													onChange={(e) => setPlayStore2(e.target.value)}
+													placeholder={'Enter PLAY STORE'}
+													className={classes.textField}
+													multiline
+													maxRows={2}
+													InputProps={{
+														disableUnderline: true,
+														className: classes.textFieldInput,
+														style: {
+															borderRadius: playStore2 ? '16px' : '40px'
+														}
+													}}
+												/>
+											</div>
+											<p className={classes.mediaError}>{playStoreError2}</p>
+											<div className={classes.titleContainer}>
+												<h6 style={{ color: appStoreColor2 }}>APP STORE</h6>
+												<TextField
+													value={appStore2}
+													onChange={(e) => setAppStore2(e.target.value)}
+													placeholder={'Enter APP STORE'}
+													className={classes.textField}
+													multiline
+													maxRows={2}
+													InputProps={{
+														disableUnderline: true,
+														className: classes.textFieldInput,
+														style: {
+															borderRadius: appStore2 ? '16px' : '40px'
+														}
+													}}
+												/>
+											</div>
+											<p className={classes.mediaError}>{appStoreError2}</p>
+										</>
+									) : (
+										<></>
+									)}
+
+									{arcadeGameType === 20 ? (
+										<>
+											<div className={classes.gameIDwrapper}>
+												<h5 style={{ color: gameIdColor }}>Game ID</h5>
+											</div>
+
+											<div className={classes.titleContainer}>
+												<TextField
+													value={gameId}
+													onChange={(e) => setGameId(e.target.value)}
+													placeholder={'Game ID'}
+													className={classes.textField}
+													multiline
+													maxRows={2}
+													InputProps={{
+														disableUnderline: true,
+														className: classes.textFieldInput,
+														style: {
+															borderRadius: gameId ? '16px' : '40px'
+														}
+													}}
+												/>
+											</div>
+											<p className={classes.mediaError}>{gameIdError}</p>
+										</>
+									) : (
+										<></>
+									)}
+								</>
 							)}
 						</div>
 
