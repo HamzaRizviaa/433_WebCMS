@@ -18,11 +18,11 @@ const SignIn = ({ setLoginData }) => {
 	const [isLoadingSignIn, setIsLoadingSignin] = useState(false);
 	const [accessExpire, setAccessExpire] = useState(false);
 
-	useEffect(() => {
-		return () => {
-			setSignInError(false);
-		};
-	}, []);
+	// useEffect(() => {
+	// 	return () => {
+	// 		setSignInError(false);
+	// 	};
+	// }, []);
 
 	const navigate = useNavigate();
 
@@ -98,10 +98,12 @@ const SignIn = ({ setLoginData }) => {
 					token: googleData.tokenId
 				}
 			);
+
 			if (result?.data?.status_code === 200) {
 				setLoginData(
 					localStorage.setItem('user_data', JSON.stringify(result?.data?.data))
 				);
+				// console.log(result, 'try - login result');
 
 				// setTimeout(() => {
 				// 	//remove localStorage data when token expires (12 hours) 43200000 - 12 hours , 3600000 -1 hour
@@ -111,18 +113,22 @@ const SignIn = ({ setLoginData }) => {
 				// }, [3600000]);
 
 				setAccessExpire(true);
-
 				setIsLoadingSignin(false);
 				//console.log(result?.data);
 				navigate('/post-library');
 				setSignInError(false);
 			}
 		} catch (e) {
-			setIsLoadingSignin(false);
+			// console.log('catch - login result');
 			setSignInError(true);
+			setIsLoadingSignin(false);
+			// setAccessExpire(false);
+			// setLoginData(null);
 			console.log(e, googleData.profileObj.email);
 		}
-
+		// console.log('out of catch - login result');
+		setSignInError(true);
+		setIsLoadingSignin(false);
 		// refreshTokenSetup(googleData);
 	};
 

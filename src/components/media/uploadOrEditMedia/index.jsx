@@ -913,7 +913,7 @@ const UploadOrEditMedia = ({
 									<p className={classes.fileRejectionError}>
 										{fileRejectionError}
 									</p>
-									<div className={classes.captionContainer}>
+									<div className={classes.titleContainer}>
 										<h6>DROPBOX URL</h6>
 										<TextField
 											value={dropboxLink}
@@ -1035,7 +1035,7 @@ const UploadOrEditMedia = ({
 									<p className={classes.fileRejectionError}>
 										{fileRejectionError2}
 									</p>
-									<div className={classes.captionContainer}>
+									<div className={classes.titleContainer}>
 										<h6>DROPBOX URL</h6>
 										<TextField
 											value={dropboxLink2}
@@ -1309,6 +1309,11 @@ const UploadOrEditMedia = ({
 												(await handleTitleDuplicate(titleMedia)) === 200 &&
 												titleMedia !== specificMedia.title
 											) {
+												console.log(
+													titleMedia,
+													specificMedia.title,
+													'====abc==='
+												);
 												setTitleMediaLabelColor('#ff355a');
 												setTitleMediaError('This title already exists');
 												setTimeout(() => {
