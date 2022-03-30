@@ -33,6 +33,7 @@ import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 import { ReactComponent as CalenderYellow } from '../../../assets/Calender_Yellow.svg';
 import { useRef } from 'react';
+import { getSpecificMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
 const UploadOrEditQuiz = ({
 	heading1,
 	open,
@@ -93,7 +94,7 @@ const UploadOrEditQuiz = ({
 		var da = new Date(endDate);
 		var toSend = `${da?.getFullYear()}-${('0' + (da?.getMonth() + 1)).slice(
 			-2
-		)}-${da?.getDate()}T${('0' + da.getHours()).slice(-2)}:${(
+		)}-${('0' + da?.getDate()).slice(-2)}T${('0' + da.getHours()).slice(-2)}:${(
 			'0' + da.getMinutes()
 		).slice(-2)}:${('0' + da.getSeconds()).slice(-2)}.${da.getMilliseconds()}Z`;
 		setConvertedDate(toSend);
@@ -534,6 +535,14 @@ const UploadOrEditQuiz = ({
 		!ans2 ||
 		!endDate;
 
+	const editQuizBtnDisabled =
+		postButtonStatus ||
+		!endDate ||
+		((type === 'poll'
+			? editQuestionData?.poll_end_date === endDate
+			: editQuestionData?.quiz_end_date == endDate) &&
+			editQuestionData?.dropbox_url === dropboxLink.trim());
+
 	return (
 		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
 			<div
@@ -547,6 +556,12 @@ const UploadOrEditQuiz = ({
 					className={classes.contentWrapperNoPreview}
 					style={{ width: previewFile != null ? '60%' : 'auto' }}
 				>
+					{console.log(
+						editQuestionData?.quiz_end_date,
+						endDate,
+
+						'endDate'
+					)}
 					<div>
 						<h5 className={classes.QuizQuestion}>{heading1}</h5>
 						<DragDropContext>
@@ -956,9 +971,9 @@ const UploadOrEditQuiz = ({
 							}
 						>
 							<Button
-								disabled={addQuizBtnDisabled}
+								disabled={!editPoll ? addQuizBtnDisabled : editQuizBtnDisabled}
 								onClick={async () => {
-									if (addQuizBtnDisabled) {
+									if (addQuizBtnDisabled || editQuizBtnDisabled) {
 										validatePostBtn();
 									} else {
 										setPostButtonStatus(true);

@@ -572,8 +572,8 @@ const UploadOrEditMedia = ({
 		!description ||
 		// !dropboxLink ||
 		// !dropboxLink2 ||
-		(specificMedia?.media_dropbox_url === dropboxLink.trim() &&
-			specificMedia?.image_dropbox_url === dropboxLink2.trim() &&
+		(specificMedia?.media_dropbox_url === dropboxLink &&
+			specificMedia?.image_dropbox_url === dropboxLink2 &&
 			specificMedia?.title === titleMedia.trim() &&
 			specificMedia?.description === description.trim());
 
