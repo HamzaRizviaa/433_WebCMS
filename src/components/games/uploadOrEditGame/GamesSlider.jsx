@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import Slider from '../slider';
+import Slider from '../../slider';
 import PropTypes from 'prop-types';
 //import classes from './_uploadOrEditQuiz.module.scss';
 import UploadOrEditGames from './UploadOrEditGames';
@@ -47,7 +47,7 @@ const GamesSlider = ({ open, handleClose, title, heading1, buttonText }) => {
 						style={{ width: previewBool ? '60%' : '100%' }}
 					>
 						<TabUnstyled>JOGO</TabUnstyled>
-						<TabUnstyled>Archade Game</TabUnstyled>
+						<TabUnstyled>Arcade Game</TabUnstyled>
 					</TabsListUnstyled>
 					<TabPanelUnstyled value={0}>
 						<UploadOrEditGames
@@ -62,12 +62,11 @@ const GamesSlider = ({ open, handleClose, title, heading1, buttonText }) => {
 							handleClose={() => {
 								handleClose();
 							}}
-							type='poll'
+							type='jogo'
 						/>
 					</TabPanelUnstyled>
 					<TabPanelUnstyled value={1}>
 						<UploadOrEditGames
-							quiz={true}
 							heading1={heading1}
 							open={open}
 							buttonText={buttonText}
@@ -79,7 +78,7 @@ const GamesSlider = ({ open, handleClose, title, heading1, buttonText }) => {
 							handleClose={() => {
 								handleClose();
 							}}
-							type='quiz'
+							type='arcade'
 						/>
 					</TabPanelUnstyled>
 				</TabsUnstyled>

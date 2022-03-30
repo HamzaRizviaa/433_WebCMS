@@ -29,3 +29,15 @@
 	// 	position: relative !important;
 	// }
 }
+
+@mixin textFieldInputStartAdornment {
+	color: white !important;
+	border: 0.01px solid #404040;
+	padding: 1rem 1rem 1rem 1.5rem !important;
+	font-size: 1.4rem !important;
+	font-family: Poppins !important;
+	line-height: 1.6 !important;
+	border-radius: 40px;
+	margin-bottom: 1rem;
+	background-color: #000000;
+}

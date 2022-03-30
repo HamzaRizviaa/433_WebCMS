@@ -16,7 +16,7 @@ import {
 } from './gamesLibrarySlice';
 
 // Components
-import GamesSlider from '../../components/games/GamesSlider';
+import GamesSlider from '../../components/games/uploadOrEditGame/GamesSlider';
 import Button from '../../components/button';
 import Layout from '../../components/layout';
 import Table from '../../components/table';
@@ -688,9 +688,9 @@ const GamesLibrary = () => {
 						// setTimeout(() => setEdit(false), 600);
 					}}
 					page={page}
-					title={edit ? 'Edit Media' : 'Upload Media'}
-					heading1={edit ? 'Media Type' : 'Select Media Type'}
-					buttonText={edit ? 'SAVE CHANGES' : 'ADD GAMES'}
+					title={edit ? 'Edit Game' : 'Upload Game'}
+					heading1={edit ? 'Game Image' : 'Add Game Image'}
+					buttonText={edit ? 'SAVE CHANGES' : 'ADD GAME'}
 				/>
 			</Layout>
 		</LoadingOverlay>
