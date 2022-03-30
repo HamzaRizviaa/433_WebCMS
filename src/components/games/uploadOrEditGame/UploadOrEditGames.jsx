@@ -639,16 +639,37 @@ const UploadOrEditQuiz = ({
 	};
 
 	const addQuizBtnDisabled =
-		!uploadedFiles.length ||
-		!videoOrientation ||
-		!uploadedExplanationOrIcon ||
-		postButtonStatus ||
-		!titleGame ||
-		!descriptionGame ||
-		!time ||
-		!scoring ||
-		!objective ||
-		!payload;
+		type === 'jogo'
+			? !uploadedFiles.length ||
+			  !videoOrientation ||
+			  !uploadedExplanationOrIcon.length ||
+			  postButtonStatus ||
+			  !titleGame ||
+			  !descriptionGame ||
+			  !time ||
+			  !scoring ||
+			  !objective ||
+			  !payload
+			: type === 'arcade' && arcadeGameType === 10
+			? !uploadedFiles.length ||
+			  !uploadedExplanationOrIcon.length ||
+			  postButtonStatus ||
+			  !titleGame ||
+			  !descriptionGame ||
+			  !arcadeGameType ||
+			  !android ||
+			  !ios ||
+			  !playStore ||
+			  !appStore ||
+			  !playStore2 ||
+			  !appStore2
+			: !uploadedFiles.length ||
+			  !uploadedExplanationOrIcon.length ||
+			  postButtonStatus ||
+			  !titleGame ||
+			  !descriptionGame ||
+			  !arcadeGameType ||
+			  !gameId;
 
 	return (
 		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
