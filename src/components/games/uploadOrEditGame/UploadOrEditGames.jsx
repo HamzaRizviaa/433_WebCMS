@@ -18,6 +18,7 @@ import '../../../pages/PostLibrary/_calender.scss';
 import LoadingOverlay from 'react-loading-overlay';
 import InputAdornment from '@mui/material/InputAdornment';
 import Slide from '@mui/material/Slide';
+//import Fade from '@mui/material/Fade';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
@@ -673,7 +674,7 @@ const UploadOrEditQuiz = ({
 
 	return (
 		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
-			<Slide in={true} direction='up' {...{ timeout: 200 }}>
+			<Slide in={true} direction='up' {...{ timeout: 400 }}>
 				<div
 					className={`${
 						previewFile != null
@@ -1268,162 +1269,166 @@ const UploadOrEditQuiz = ({
 									<p className={classes.mediaError}>{arcadeGameTypeError}</p>
 
 									{arcadeGameType === 10 ? (
-										<>
-											<div className={classes.gameIDwrapper}>
-												<h5>Package ID</h5>
-											</div>
-											<div className={classes.titleContainer}>
-												<h6 style={{ color: androidColor }}>ANDROID</h6>
-												<TextField
-													value={android}
-													onChange={(e) => setAndrioid(e.target.value)}
-													placeholder={'Enter Andrioid'}
-													className={classes.textField}
-													multiline
-													maxRows={2}
-													InputProps={{
-														disableUnderline: true,
-														className: classes.textFieldInput,
-														style: {
-															borderRadius: android ? '16px' : '40px'
-														}
-													}}
-												/>
-											</div>
-											<p className={classes.mediaError}>{androidError}</p>
-											<div className={classes.titleContainer}>
-												<h6 style={{ color: iosColor }}>IOS</h6>
-												<TextField
-													value={ios}
-													onChange={(e) => setIos(e.target.value)}
-													placeholder={'Enter IOS'}
-													className={classes.textField}
-													multiline
-													maxRows={2}
-													InputProps={{
-														disableUnderline: true,
-														className: classes.textFieldInput,
-														style: {
-															borderRadius: ios ? '16px' : '40px'
-														}
-													}}
-												/>
-											</div>
-											<p className={classes.mediaError}>{iosError}</p>
+										<Slide in={true} direction='up' {...{ timeout: 400 }}>
+											<div>
+												<div className={classes.gameIDwrapper}>
+													<h5>Package ID</h5>
+												</div>
+												<div className={classes.titleContainer}>
+													<h6 style={{ color: androidColor }}>ANDROID</h6>
+													<TextField
+														value={android}
+														onChange={(e) => setAndrioid(e.target.value)}
+														placeholder={'Enter Andrioid'}
+														className={classes.textField}
+														multiline
+														maxRows={2}
+														InputProps={{
+															disableUnderline: true,
+															className: classes.textFieldInput,
+															style: {
+																borderRadius: android ? '16px' : '40px'
+															}
+														}}
+													/>
+												</div>
+												<p className={classes.mediaError}>{androidError}</p>
+												<div className={classes.titleContainer}>
+													<h6 style={{ color: iosColor }}>IOS</h6>
+													<TextField
+														value={ios}
+														onChange={(e) => setIos(e.target.value)}
+														placeholder={'Enter IOS'}
+														className={classes.textField}
+														multiline
+														maxRows={2}
+														InputProps={{
+															disableUnderline: true,
+															className: classes.textFieldInput,
+															style: {
+																borderRadius: ios ? '16px' : '40px'
+															}
+														}}
+													/>
+												</div>
+												<p className={classes.mediaError}>{iosError}</p>
 
-											<div className={classes.gameIDwrapper}>
-												<h5>Store URL</h5>
-											</div>
-											<div className={classes.titleContainer}>
-												<h6 style={{ color: playStoreColor }}>PLAY STORE</h6>
-												<TextField
-													value={playStore}
-													onChange={(e) => setPlayStore(e.target.value)}
-													placeholder={'Enter PLAY STORE'}
-													className={classes.textField}
-													multiline
-													maxRows={2}
-													InputProps={{
-														disableUnderline: true,
-														className: classes.textFieldInput,
-														style: {
-															borderRadius: playStore ? '16px' : '40px'
-														}
-													}}
-												/>
-											</div>
-											<p className={classes.mediaError}>{playStoreError}</p>
-											<div className={classes.titleContainer}>
-												<h6 style={{ color: appStoreColor }}>APP STORE</h6>
-												<TextField
-													value={appStore}
-													onChange={(e) => setAppStore(e.target.value)}
-													placeholder={'Enter APP STORE'}
-													className={classes.textField}
-													multiline
-													maxRows={2}
-													InputProps={{
-														disableUnderline: true,
-														className: classes.textFieldInput,
-														style: {
-															borderRadius: appStore ? '16px' : '40px'
-														}
-													}}
-												/>
-											</div>
-											<p className={classes.mediaError}>{appStoreError}</p>
+												<div className={classes.gameIDwrapper}>
+													<h5>Store URL</h5>
+												</div>
+												<div className={classes.titleContainer}>
+													<h6 style={{ color: playStoreColor }}>PLAY STORE</h6>
+													<TextField
+														value={playStore}
+														onChange={(e) => setPlayStore(e.target.value)}
+														placeholder={'Enter PLAY STORE'}
+														className={classes.textField}
+														multiline
+														maxRows={2}
+														InputProps={{
+															disableUnderline: true,
+															className: classes.textFieldInput,
+															style: {
+																borderRadius: playStore ? '16px' : '40px'
+															}
+														}}
+													/>
+												</div>
+												<p className={classes.mediaError}>{playStoreError}</p>
+												<div className={classes.titleContainer}>
+													<h6 style={{ color: appStoreColor }}>APP STORE</h6>
+													<TextField
+														value={appStore}
+														onChange={(e) => setAppStore(e.target.value)}
+														placeholder={'Enter APP STORE'}
+														className={classes.textField}
+														multiline
+														maxRows={2}
+														InputProps={{
+															disableUnderline: true,
+															className: classes.textFieldInput,
+															style: {
+																borderRadius: appStore ? '16px' : '40px'
+															}
+														}}
+													/>
+												</div>
+												<p className={classes.mediaError}>{appStoreError}</p>
 
-											<div className={classes.gameIDwrapper}>
-												<h5>Deep Link</h5>
+												<div className={classes.gameIDwrapper}>
+													<h5>Deep Link</h5>
+												</div>
+												<div className={classes.titleContainer}>
+													<h6 style={{ color: playStoreColor2 }}>PLAY STORE</h6>
+													<TextField
+														value={playStore2}
+														onChange={(e) => setPlayStore2(e.target.value)}
+														placeholder={'Enter PLAY STORE'}
+														className={classes.textField}
+														multiline
+														maxRows={2}
+														InputProps={{
+															disableUnderline: true,
+															className: classes.textFieldInput,
+															style: {
+																borderRadius: playStore2 ? '16px' : '40px'
+															}
+														}}
+													/>
+												</div>
+												<p className={classes.mediaError}>{playStoreError2}</p>
+												<div className={classes.titleContainer}>
+													<h6 style={{ color: appStoreColor2 }}>APP STORE</h6>
+													<TextField
+														value={appStore2}
+														onChange={(e) => setAppStore2(e.target.value)}
+														placeholder={'Enter APP STORE'}
+														className={classes.textField}
+														multiline
+														maxRows={2}
+														InputProps={{
+															disableUnderline: true,
+															className: classes.textFieldInput,
+															style: {
+																borderRadius: appStore2 ? '16px' : '40px'
+															}
+														}}
+													/>
+												</div>
+												<p className={classes.mediaError}>{appStoreError2}</p>
 											</div>
-											<div className={classes.titleContainer}>
-												<h6 style={{ color: playStoreColor2 }}>PLAY STORE</h6>
-												<TextField
-													value={playStore2}
-													onChange={(e) => setPlayStore2(e.target.value)}
-													placeholder={'Enter PLAY STORE'}
-													className={classes.textField}
-													multiline
-													maxRows={2}
-													InputProps={{
-														disableUnderline: true,
-														className: classes.textFieldInput,
-														style: {
-															borderRadius: playStore2 ? '16px' : '40px'
-														}
-													}}
-												/>
-											</div>
-											<p className={classes.mediaError}>{playStoreError2}</p>
-											<div className={classes.titleContainer}>
-												<h6 style={{ color: appStoreColor2 }}>APP STORE</h6>
-												<TextField
-													value={appStore2}
-													onChange={(e) => setAppStore2(e.target.value)}
-													placeholder={'Enter APP STORE'}
-													className={classes.textField}
-													multiline
-													maxRows={2}
-													InputProps={{
-														disableUnderline: true,
-														className: classes.textFieldInput,
-														style: {
-															borderRadius: appStore2 ? '16px' : '40px'
-														}
-													}}
-												/>
-											</div>
-											<p className={classes.mediaError}>{appStoreError2}</p>
-										</>
+										</Slide>
 									) : (
 										<></>
 									)}
 
 									{arcadeGameType === 20 ? (
-										<>
-											<div className={classes.gameIDwrapper}>
-												<h5 style={{ color: gameIdColor }}>Game ID</h5>
-											</div>
+										<Slide in={true} direction='up' {...{ timeout: 400 }}>
+											<div>
+												<div className={classes.gameIDwrapper}>
+													<h5 style={{ color: gameIdColor }}>Game ID</h5>
+												</div>
 
-											<div className={classes.titleContainer}>
-												<TextField
-													value={gameId}
-													onChange={(e) => setGameId(e.target.value)}
-													placeholder={'Game ID'}
-													className={classes.textField}
-													multiline
-													maxRows={2}
-													InputProps={{
-														disableUnderline: true,
-														className: classes.textFieldInput,
-														style: {
-															borderRadius: gameId ? '16px' : '40px'
-														}
-													}}
-												/>
+												<div className={classes.titleContainer}>
+													<TextField
+														value={gameId}
+														onChange={(e) => setGameId(e.target.value)}
+														placeholder={'Game ID'}
+														className={classes.textField}
+														multiline
+														maxRows={2}
+														InputProps={{
+															disableUnderline: true,
+															className: classes.textFieldInput,
+															style: {
+																borderRadius: gameId ? '16px' : '40px'
+															}
+														}}
+													/>
+												</div>
+												<p className={classes.mediaError}>{gameIdError}</p>
 											</div>
-											<p className={classes.mediaError}>{gameIdError}</p>
-										</>
+										</Slide>
 									) : (
 										<></>
 									)}
