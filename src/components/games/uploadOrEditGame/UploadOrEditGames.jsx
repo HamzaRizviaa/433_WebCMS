@@ -11,13 +11,14 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import Button from '../../button';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../../../pages/PostLibrary/_calender.scss';
-//import { useDispatch } from 'react-redux';
-// import { getLocalStorageDetails } from '../../../utils';
-// import { toast } from 'react-toastify';
-// import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+import { getLocalStorageDetails } from '../../../utils';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 import LoadingOverlay from 'react-loading-overlay';
 import InputAdornment from '@mui/material/InputAdornment';
 import Slide from '@mui/material/Slide';
+import { getAllGames } from '../../../pages/GamesLibrary/gamesLibrarySlice';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
@@ -26,19 +27,20 @@ import { ReactComponent as Timer } from '../../../assets/Timer.svg';
 import { ReactComponent as Scoring } from '../../../assets/football.svg';
 import { ReactComponent as Objective } from '../../../assets/Cross.svg';
 
-const UploadOrEditQuiz = ({
+const UploadOreditArcade = ({
 	heading1,
 	open,
 	buttonText,
-	editQuiz,
-	editPoll,
+	editArcade,
+	editJogo,
 	setPreviewBool,
 	previewFile,
 	setPreviewFile,
 	previewRef,
 	setDisableDropdown,
-	type
-	//page
+	type, // jogo - archade
+	page,
+	handleClose
 }) => {
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -82,8 +84,12 @@ const UploadOrEditQuiz = ({
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
 
-	//const dispatch = useDispatch();
-	console.log(fileWidth, fileHeight);
+	const dispatch = useDispatch();
+
+	const specificGamesData = useSelector(
+		(state) => state.GamesLibraryStore.specificGame
+	);
+	console.log(fileWidth, fileHeight, specificGamesData, '---- abc -----');
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -108,61 +114,37 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
-	// useEffect(() => {
-	// 	if (editQuiz || editPoll) {
-	// 		setUploadedFiles([
-	// 			{
-	// 				id: makeid(10),
-	// 				fileName: 'Better than Messi',
-	// 				img: 'https://cdni0.trtworld.com/w960/h540/q75/34070_esp20180526ronaldo_1527420747155.JPG',
-	// 				type: 'image'
-	// 			}
-	// 		]);
-	// 		setQuestion('Ronaldo better than Messi?');
-	// 		setAns1('Yes');
-	// 		setAns2('Yes');
-
-	// 		setEndDate('Tue Feb 14 2022 00:00:00 GMT+0500 (Pakistan Standard Time)');
-	// 	}
-	// }, [editQuiz, editPoll]);
-
-	// useEffect(() => {
-	// 	if (editQuestionData) {
-	// 		if (editQuestionData?.labels) {
-	// 			let _labels = [];
-	// 			editQuestionData.labels.map((label) =>
-	// 				_labels.push({ id: -1, name: label })
-	// 			);
-	// 			setSelectedLabels(_labels);
-	// 		}
-	// 		setDropboxLink(editQuestionData?.dropbox_url);
-	// 		setQuestion(editQuestionData?.question);
-	// 		setAns1(
-	// 			editQuestionData?.answers?.length > 0
-	// 				? editQuestionData?.answers[0]?.answer
-	// 				: ''
-	// 		);
-	// 		setAns2(
-	// 			editQuestionData?.answers?.length > 0
-	// 				? editQuestionData?.answers[1]?.answer
-	// 				: ''
-	// 		);
-
-	// 		setEndDate(
-	// 			editQuestionData?.quiz_end_date
-	// 				? editQuestionData?.quiz_end_date
-	// 				: editQuestionData?.poll_end_date
-	// 		);
-	// 		setUploadedFiles([
-	// 			{
-	// 				id: makeid(10),
-	// 				fileName: editQuestionData?.file_name,
-	// 				img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${editQuestionData?.image}`,
-	// 				type: 'image'
-	// 			}
-	// 		]);
-	// 	}
-	// }, [editQuestionData]);
+	useEffect(() => {
+		if (specificGamesData) {
+			if (specificGamesData?.game_type === 'JOGO') {
+				setDropboxLink(specificGamesData?.dropbox_urls?.image);
+				setDropboxLink2(specificGamesData?.dropbox_urls?.video);
+				setDescriptionGame(specificGamesData?.description);
+				setTitleGame(specificGamesData?.title);
+				setScoring(specificGamesData?.scoring);
+				setObjective(specificGamesData?.objective);
+				setPayload(specificGamesData?.payload);
+				setTime(specificGamesData?.time);
+				setVideoOrientation(specificGamesData?.orientation);
+				setUploadedFiles([
+					{
+						id: makeid(10),
+						fileName: specificGamesData?.game_image_file_name,
+						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_image?.url}`,
+						type: 'image'
+					}
+				]);
+				setUploadedExplanationOrIcon([
+					{
+						id: makeid(10),
+						fileName: specificGamesData?.game_video_file_name,
+						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_video?.url}`,
+						type: 'video'
+					}
+				]);
+			}
+		}
+	}, [specificGamesData]);
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
@@ -228,7 +210,7 @@ const UploadOrEditQuiz = ({
 		if (!open) {
 			resetState();
 		}
-		!(editPoll || editQuiz) ? resetState() : '';
+		!(editJogo || editArcade) ? resetState() : '';
 	}, [open]);
 
 	const handleDeleteFile = (id) => {
@@ -334,16 +316,16 @@ const UploadOrEditQuiz = ({
 	// 			{
 	// 				...(question ? { question: question } : { question: '' }),
 	// 				...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
-	// 				...(!(editQuiz || editPoll)
+	// 				...(!(editArcade || editJogo)
 	// 					? { image: mediaFiles[0]?.media_url }
 	// 					: {}),
 	// 				...(convertedDate ? { end_date: convertedDate } : {}),
-	// 				...(!(editQuiz || editPoll)
+	// 				...(!(editArcade || editJogo)
 	// 					? quiz
 	// 						? { question_type: 'quiz' }
 	// 						: { question_type: 'poll' }
 	// 					: {}),
-	// 				...(!(editQuiz || editPoll)
+	// 				...(!(editArcade || editJogo)
 	// 					? {
 	// 							answers: [
 	// 								{ answer: ans1, type: quiz ? 'right_answer' : 'poll' },
@@ -351,10 +333,10 @@ const UploadOrEditQuiz = ({
 	// 							]
 	// 					  }
 	// 					: {}),
-	// 				...(!(editQuiz || editPoll) && selectedLabels.length
+	// 				...(!(editArcade || editJogo) && selectedLabels.length
 	// 					? { labels: [...selectedLabels] }
 	// 					: {}),
-	// 				...((editQuiz || editPoll) && id ? { question_id: id } : {})
+	// 				...((editArcade || editJogo) && id ? { question_id: id } : {})
 	// 			},
 	// 			{
 	// 				headers: {
@@ -364,7 +346,7 @@ const UploadOrEditQuiz = ({
 	// 		);
 	// 		if (result?.data?.status_code === 200) {
 	// 			toast.success(
-	// 				editQuiz || editPoll
+	// 				editArcade || editJogo
 	// 					? 'Question has been edited!'
 	// 					: 'Question has been created!'
 	// 			);
@@ -376,7 +358,7 @@ const UploadOrEditQuiz = ({
 	// 		}
 	// 	} catch (e) {
 	// 		toast.error(
-	// 			editQuiz || editPoll
+	// 			editArcade || editJogo
 	// 				? 'Failed to edit question!'
 	// 				: 'Failed to create question!'
 	// 		);
@@ -386,33 +368,33 @@ const UploadOrEditQuiz = ({
 	// 	}
 	// };
 
-	// const deleteQuiz = async (id) => {
-	// 	setDeleteBtnStatus(true);
-	// 	try {
-	// 		const result = await axios.post(
-	// 			`${process.env.REACT_APP_API_ENDPOINT}/question/delete-question`,
-	// 			{
-	// 				question_id: id
-	// 			},
-	// 			{
-	// 				headers: {
-	// 					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-	// 				}
-	// 			}
-	// 		);
-	// 		if (result?.data?.status_code === 200) {
-	// 			toast.success('Question has been deleted!');
-	// 			handleClose();
+	const deleteGame = async (id) => {
+		setDeleteBtnStatus(true);
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/games/delete-game`,
+				{
+					game_id: id
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success('Question has been deleted!');
+				handleClose();
 
-	// 			//setting a timeout for getting post after delete.
-	// 			dispatch(getQuestions({ page }));
-	// 		}
-	// 	} catch (e) {
-	// 		toast.error('Failed to delete Question!');
-	// 		setDeleteBtnStatus(false);
-	// 		console.log(e);
-	// 	}
-	// };
+				//setting a timeout for getting post after delete.
+				dispatch(getAllGames({ page }));
+			}
+		} catch (e) {
+			toast.error('Failed to delete Question!');
+			setDeleteBtnStatus(false);
+			console.log(e);
+		}
+	};
 
 	const resetState = () => {
 		setUploadedFiles([]);
@@ -525,6 +507,23 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
+	const handleTitleDuplicate = async (givenTitle) => {
+		try {
+			const result = await axios.get(
+				`${process.env.REACT_APP_API_ENDPOINT}/games/check/${givenTitle}`,
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			return result?.data?.message;
+		} catch (error) {
+			console.log('Error');
+			return null;
+		}
+	};
+
 	const addQuizBtnDisabled =
 		!uploadedFiles.length ||
 		!videoOrientation ||
@@ -584,7 +583,7 @@ const UploadOrEditQuiz = ({
 														</div>
 
 														<div className={classes.filePreviewRight}>
-															{editQuiz || editPoll ? (
+															{editArcade || editJogo ? (
 																<EyeIcon
 																	className={classes.filePreviewIcons}
 																	onClick={() => {
@@ -620,7 +619,7 @@ const UploadOrEditQuiz = ({
 									)}
 								</Droppable>
 							</DragDropContext>
-							{!uploadedFiles.length && !editQuiz && !editPoll && (
+							{!uploadedFiles.length && !editArcade && !editJogo && (
 								<section
 									className={classes.dropZoneContainer}
 									style={{
@@ -683,7 +682,7 @@ const UploadOrEditQuiz = ({
 											}}
 											disabled={false}
 											style={{
-												backgroundColor: editPoll ? '#404040' : '#000000'
+												backgroundColor: editJogo ? '#404040' : '#000000'
 											}}
 											value={videoOrientation}
 											onChange={(e) => {
@@ -696,14 +695,14 @@ const UploadOrEditQuiz = ({
 												// }
 											}}
 											className={`${classes.select} ${
-												editPoll && `${classes.isEditSelect}`
+												editJogo && `${classes.isEditSelect}`
 											}`}
 											disableUnderline={true}
 											IconComponent={(props) => (
 												<KeyboardArrowDownIcon
 													{...props}
 													style={{
-														display: editPoll ? 'none' : 'block',
+														display: editJogo ? 'none' : 'block',
 														top: '4'
 													}}
 												/>
@@ -757,7 +756,7 @@ const UploadOrEditQuiz = ({
 																<>
 																	<video
 																		id={'my-video'}
-																		poster={editPoll ? file.img : null}
+																		poster={editJogo ? file.img : null}
 																		className={classes.fileThumbnail}
 																		style={{
 																			objectFit: 'cover',
@@ -802,7 +801,7 @@ const UploadOrEditQuiz = ({
 														</div>
 
 														<div className={classes.filePreviewRight}>
-															{editPoll ? (
+															{editJogo ? (
 																<EyeIcon
 																	className={classes.filePreviewIcons}
 																	onClick={() => {
@@ -838,7 +837,7 @@ const UploadOrEditQuiz = ({
 									)}
 								</Droppable>
 							</DragDropContext>
-							{!uploadedExplanationOrIcon.length && !editPoll && (
+							{!uploadedExplanationOrIcon.length && !editJogo && (
 								<section
 									className={classes.dropZoneContainer}
 									style={{
@@ -964,7 +963,7 @@ const UploadOrEditQuiz = ({
 									<div className={classes.titleContainer}>
 										<h6 style={{ color: questionColor }}>TIME</h6>
 										<TextField
-											disabled={editQuiz || editPoll}
+											disabled={editArcade || editJogo}
 											value={time}
 											onChange={(e) => {
 												setTime(e.target.value);
@@ -974,7 +973,7 @@ const UploadOrEditQuiz = ({
 											InputProps={{
 												disableUnderline: true,
 												className: `${classes.textFieldInputStartAdornment}  ${
-													(editQuiz || editPoll) && classes.disableTextField
+													(editArcade || editJogo) && classes.disableTextField
 												}`,
 												startAdornment: (
 													<InputAdornment position='start'>
@@ -992,7 +991,7 @@ const UploadOrEditQuiz = ({
 									<div className={classes.titleContainer}>
 										<h6 style={{ color: ans1Color }}>SCORING</h6>
 										<TextField
-											disabled={editQuiz || editPoll}
+											disabled={editArcade || editJogo}
 											value={scoring}
 											onChange={(e) => {
 												setScoring(e.target.value);
@@ -1002,7 +1001,7 @@ const UploadOrEditQuiz = ({
 											InputProps={{
 												disableUnderline: true,
 												className: `${classes.textFieldInputStartAdornment}  ${
-													(editQuiz || editPoll) && classes.disableTextField
+													(editArcade || editJogo) && classes.disableTextField
 												}`,
 												startAdornment: (
 													<InputAdornment position='start'>
@@ -1021,7 +1020,7 @@ const UploadOrEditQuiz = ({
 										<h6 style={{ color: ans2Color }}>OBJECTIVE</h6>
 
 										<TextField
-											disabled={editQuiz || editPoll}
+											disabled={editArcade || editJogo}
 											value={objective}
 											onChange={(e) => {
 												setObjective(e.target.value);
@@ -1031,7 +1030,7 @@ const UploadOrEditQuiz = ({
 											InputProps={{
 												disableUnderline: true,
 												className: `${classes.textFieldInputStartAdornment}  ${
-													(editQuiz || editPoll) && classes.disableTextField
+													(editArcade || editJogo) && classes.disableTextField
 												}`,
 												startAdornment: (
 													<InputAdornment position='start'>
@@ -1050,7 +1049,7 @@ const UploadOrEditQuiz = ({
 										<h6 style={{ color: payloadColor }}>PAYLOAD</h6>
 
 										<TextField
-											disabled={editQuiz || editPoll}
+											disabled={editArcade || editJogo}
 											value={payload}
 											onChange={(e) => {
 												setPayload(e.target.value);
@@ -1060,7 +1059,7 @@ const UploadOrEditQuiz = ({
 											InputProps={{
 												disableUnderline: true,
 												className: `${classes.textFieldInput}  ${
-													(editQuiz || editPoll) && classes.disableTextField
+													(editArcade || editJogo) && classes.disableTextField
 												}`
 											}}
 											multiline
@@ -1076,15 +1075,15 @@ const UploadOrEditQuiz = ({
 						</div>
 
 						<div className={classes.buttonDiv}>
-							{editQuiz || editPoll ? (
+							{editArcade || editJogo ? (
 								<div className={classes.editBtn}>
 									<Button
 										disabled={deleteBtnStatus}
-										button2={editQuiz || editPoll ? true : false}
+										button2={editArcade || editJogo ? true : false}
 										onClick={() => {
 											if (!deleteBtnStatus) {
-												//console.log('specific', specificMedia.id);
-												// deleteQuiz(editQuestionData?.id);
+												//console.log('specific', specificGamesData.id);
+												deleteGame(specificGamesData?.id);
 											}
 										}}
 										text={'DELETE GAME'}
@@ -1096,7 +1095,7 @@ const UploadOrEditQuiz = ({
 
 							<div
 								className={
-									editQuiz || editPoll
+									editArcade || editJogo
 										? classes.addQuizBtnEdit
 										: classes.addQuizBtn
 								}
@@ -1108,8 +1107,25 @@ const UploadOrEditQuiz = ({
 											validatePostBtn();
 										} else {
 											setPostButtonStatus(true);
-											if (editQuiz || editPoll) {
-												// createQuestion(editQuestionData?.id);
+											if (
+												(await handleTitleDuplicate(titleGame)) ===
+												'The Title Already Exist'
+												// 	200 &&
+												// articleTitle !== specificArticle?.title
+											) {
+												setTitleGameColor('#ff355a');
+												setTitleGameError('This title already exists');
+												setTimeout(() => {
+													setTitleGameColor('#ffffff');
+													setTitleGameError('');
+												}, [5000]);
+
+												setPostButtonStatus(false);
+												return;
+											}
+
+											if (editArcade || editJogo) {
+												// createQuestion(specificGamesData?.id);
 											} else {
 												setIsLoadingcreateViral(true);
 												let uploadFilesPromiseArray = uploadedFiles
@@ -1152,7 +1168,7 @@ const UploadOrEditQuiz = ({
 								{previewFile.mime_type === 'video/mp4' ? (
 									<video
 										id={'my-video'}
-										poster={editPoll ? previewFile.img : null}
+										poster={editJogo ? previewFile.img : null}
 										className={classes.previewFile}
 										style={{
 											width: '100%',
@@ -1185,7 +1201,7 @@ const UploadOrEditQuiz = ({
 	);
 };
 
-UploadOrEditQuiz.propTypes = {
+UploadOreditArcade.propTypes = {
 	heading1: PropTypes.string.isRequired,
 	open: PropTypes.bool.isRequired,
 	buttonText: PropTypes.string.isRequired,
@@ -1197,10 +1213,11 @@ UploadOrEditQuiz.propTypes = {
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,
 	setDisableDropdown: PropTypes.func.isRequired,
-	editPoll: PropTypes.bool,
-	editQuiz: PropTypes.bool,
+	editJogo: PropTypes.bool, // poll
+	editArcade: PropTypes.bool, // quiz
 	page: PropTypes.string,
-	type: PropTypes.string //JOGO OR ARCADE
+	type: PropTypes.string, //JOGO OR ARCADE
+	handleClose: PropTypes.func.isRequired
 };
 
-export default UploadOrEditQuiz;
+export default UploadOreditArcade;

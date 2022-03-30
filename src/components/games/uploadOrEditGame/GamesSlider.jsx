@@ -10,7 +10,14 @@ import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import TabUnstyled from '@mui/base/TabUnstyled';
 import { useStyles } from './gamesStyles';
 
-const GamesSlider = ({ open, handleClose, title, heading1, buttonText }) => {
+const GamesSlider = ({
+	open,
+	handleClose,
+	title,
+	heading1,
+	buttonText,
+	isEdit
+}) => {
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
@@ -59,6 +66,7 @@ const GamesSlider = ({ open, handleClose, title, heading1, buttonText }) => {
 							setPreviewFile={setPreviewFile}
 							previewRef={previewRef}
 							setDisableDropdown={setDisableDropdown}
+							editJogo={isEdit}
 							handleClose={() => {
 								handleClose();
 							}}
@@ -78,6 +86,7 @@ const GamesSlider = ({ open, handleClose, title, heading1, buttonText }) => {
 							handleClose={() => {
 								handleClose();
 							}}
+							editArcade={isEdit}
 							type='arcade'
 						/>
 					</TabPanelUnstyled>
@@ -93,7 +102,8 @@ GamesSlider.propTypes = {
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
-	type: PropTypes.string.isRequired
+	type: PropTypes.string.isRequired,
+	isEdit: PropTypes.bool.isRequired
 };
 
 export default GamesSlider;

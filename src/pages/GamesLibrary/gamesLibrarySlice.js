@@ -43,10 +43,23 @@ export const getLabels = createAsyncThunk(
 	}
 );
 
+export const getSpecificGame = createAsyncThunk(
+	'editButton/getSpecificGame',
+	async (id) => {
+		const response = await gamesLibraryService.getSpecificGameApi(id);
+		if (response?.data?.data) {
+			return response.data.data;
+		} else {
+			return [];
+		}
+	}
+);
+
 export const gamesLibrarySlice = createSlice({
 	name: 'gamesLibrary',
 	initialState: {
 		gamesData: [], // all games data
+		specificGame: [], //get specific game data
 		totalRecords: 0,
 		// allMedia: [],
 		noResultStatus: false,
@@ -86,6 +99,16 @@ export const gamesLibrarySlice = createSlice({
 
 		[getLabels.fulfilled]: (state, action) => {
 			state.labels = action.payload;
+		},
+		[getSpecificGame.pending]: (state) => {
+			state.status = 'loading';
+		},
+		[getSpecificGame.fulfilled]: (state, action) => {
+			state.specificGame = action.payload;
+			state.status = 'success';
+		},
+		[getSpecificGame.rejected]: (state) => {
+			state.status = 'failed';
 		}
 	}
 });

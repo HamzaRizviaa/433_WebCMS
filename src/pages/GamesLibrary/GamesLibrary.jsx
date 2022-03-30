@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	getAllGames,
+	getSpecificGame,
 	resetCalendarError,
 	resetNoResultStatus
 } from './gamesLibrarySlice';
@@ -454,7 +455,7 @@ const GamesLibrary = () => {
 
 	const tableRowEvents = {
 		onClick: (e, row) => {
-			// dispatch(getSpecificMedia(row.id));
+			dispatch(getSpecificGame(row.id));
 			setEdit(true);
 			setShowSlider(true);
 		}

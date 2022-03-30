@@ -359,6 +359,7 @@ const UploadOrEditViral = ({
 	const resetState = () => {
 		setArticleTitle('');
 		setEditorText('');
+		setEditorText(tinyMCE.activeEditor?.setContent(''));
 		setDropboxLink('');
 		setEditorTextChecker('');
 		setUploadMediaError('');
@@ -494,6 +495,7 @@ const UploadOrEditViral = ({
 			return result?.data?.message;
 		} catch (error) {
 			console.log('Error');
+
 			return null;
 		}
 	};
