@@ -13,9 +13,9 @@ export const getAllGames = createAsyncThunk(
 		endDate,
 		fromCalendar = false
 	}) => {
-		let endPoint = `media/get-media?limit=20&page=1`;
+		let endPoint = `games/all-games?limit=20&page=1`;
 		if (page) {
-			endPoint = `media/get-media?limit=20&page=${page}`;
+			endPoint = `games/all-games?limit=20&page=${page}`;
 		}
 		if (order_type && sortby) {
 			endPoint += `&order_type=${order_type}&sort_by=${sortby}`;
@@ -43,10 +43,24 @@ export const getLabels = createAsyncThunk(
 	}
 );
 
+export const getSpecificGame = createAsyncThunk(
+	'editButton/getSpecificGame',
+	async (id) => {
+		const response = await gamesLibraryService.getSpecificGameApi(id);
+		if (response?.data?.data) {
+			return response.data.data;
+		} else {
+			return [];
+		}
+	}
+);
+
 export const gamesLibrarySlice = createSlice({
 	name: 'gamesLibrary',
 	initialState: {
 		gamesData: [], // all games data
+		specificGame: [], //get specific game data
+		specificGameStatus: '', //specific game status
 		totalRecords: 0,
 		// allMedia: [],
 		noResultStatus: false,
@@ -86,6 +100,16 @@ export const gamesLibrarySlice = createSlice({
 
 		[getLabels.fulfilled]: (state, action) => {
 			state.labels = action.payload;
+		},
+		[getSpecificGame.pending]: (state) => {
+			state.specificGameStatus = 'loading';
+		},
+		[getSpecificGame.fulfilled]: (state, action) => {
+			state.specificGame = action.payload;
+			state.specificGameStatus = 'success';
+		},
+		[getSpecificGame.rejected]: (state) => {
+			state.specificGameStatus = 'failed';
 		}
 	}
 });

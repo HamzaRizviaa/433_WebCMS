@@ -359,6 +359,7 @@ const UploadOrEditViral = ({
 	const resetState = () => {
 		setArticleTitle('');
 		setEditorText('');
+		setEditorText(tinyMCE.activeEditor?.setContent(''));
 		setDropboxLink('');
 		setEditorTextChecker('');
 		setUploadMediaError('');
@@ -491,9 +492,10 @@ const UploadOrEditViral = ({
 					}
 				}
 			);
-			return result?.data?.status_code;
+			return result?.data?.message;
 		} catch (error) {
 			console.log('Error');
+
 			return null;
 		}
 	};
@@ -1186,9 +1188,12 @@ const UploadOrEditViral = ({
 										} else {
 											setPostButtonStatus(true);
 											if (
-												(await handleTitleDuplicate(articleTitle)) === 200 &&
-												articleTitle !== specificArticle?.title
+												(await handleTitleDuplicate(articleTitle)) ===
+												'The Title Already Exist'
+												// 	200 &&
+												// articleTitle !== specificArticle?.title
 											) {
+												console.log(articleTitle, specificArticle.title);
 												setArticleTitleColor('#ff355a');
 												setArticleTitleError('This title already exists');
 												setTimeout(() => {

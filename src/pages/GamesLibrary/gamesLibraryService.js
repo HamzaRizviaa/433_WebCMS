@@ -17,4 +17,15 @@ export default class GamesLibraryService {
 			}
 		});
 	}
+
+	static getSpecificGameApi(id) {
+		return axios.get(
+			`${process.env.REACT_APP_API_ENDPOINT}/games/get-specific-game/${id}`,
+			{
+				headers: {
+					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+				}
+			}
+		);
+	}
 }
