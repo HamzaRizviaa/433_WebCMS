@@ -77,6 +77,7 @@ const UploadOrEditMedia = ({
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
 	const [fileDuration, setFileDuration] = useState(null);
+	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
 
@@ -328,6 +329,7 @@ const UploadOrEditMedia = ({
 		setSelectedLabels([]);
 		setExtraLabel('');
 		setDisableDropdown(true);
+		setEditBtnDisabled(false);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -566,16 +568,23 @@ const UploadOrEditMedia = ({
 		mediaButtonStatus ||
 		selectedLabels.length < 10;
 
-	const editBtnDisabled =
-		mediaButtonStatus ||
-		!titleMedia ||
-		!description ||
-		// !dropboxLink ||
-		// !dropboxLink2 ||
-		(specificMedia?.media_dropbox_url === dropboxLink &&
-			specificMedia?.image_dropbox_url === dropboxLink2 &&
-			specificMedia?.title === titleMedia.trim() &&
-			specificMedia?.description === description.trim());
+	useEffect(() => {
+		if (specificMedia?.description) {
+			console.log(dropboxLink, 'dl');
+			console.log(specificMedia?.media_dropbox_url, 'dl1');
+			console.log(dropboxLink?.length, 'dl');
+			console.log(specificMedia?.media_dropbox_url?.length, 'dl1');
+			setEditBtnDisabled(
+				mediaButtonStatus ||
+					!titleMedia ||
+					!description ||
+					(specificMedia?.media_dropbox_url === dropboxLink.trim() &&
+						specificMedia?.image_dropbox_url === dropboxLink2.trim() &&
+						specificMedia?.title === titleMedia.trim() &&
+						specificMedia?.description === description.trim())
+			);
+		}
+	}, [specificMedia, titleMedia, description, dropboxLink, dropboxLink2]);
 
 	const MainCategoryId = (e) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
@@ -598,8 +607,6 @@ const UploadOrEditMedia = ({
 		//console.log(setData);
 		setSubCategory(setData);
 	};
-
-	//console.log(mainCategory);
 
 	return (
 		<Slider
@@ -1309,6 +1316,11 @@ const UploadOrEditMedia = ({
 												(await handleTitleDuplicate(titleMedia)) === 200 &&
 												titleMedia !== specificMedia.title
 											) {
+												console.log(
+													titleMedia,
+													specificMedia.title,
+													'====abc==='
+												);
 												setTitleMediaLabelColor('#ff355a');
 												setTitleMediaError('This title already exists');
 												setTimeout(() => {
