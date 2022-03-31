@@ -480,6 +480,7 @@ const UploadOreditArcade = ({
 		setTime('');
 		setScoring('');
 		setObjective('');
+		setPayload('');
 		setDisableDropdown(true);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
