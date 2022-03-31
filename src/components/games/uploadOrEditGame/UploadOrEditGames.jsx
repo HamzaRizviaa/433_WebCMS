@@ -20,6 +20,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Slide from '@mui/material/Slide';
 import { getAllGames } from '../../../pages/GamesLibrary/gamesLibrarySlice';
 //import Fade from '@mui/material/Fade';
+import { useStyles } from './gamesStyles';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
@@ -115,9 +116,10 @@ const UploadOreditArcade = ({
 	const gameOrientation = ['Portrait', 'Landscape'];
 	const arcadeType = ['Inside App', 'Outside App'];
 
+	const muiClasses = useStyles();
 	const dispatch = useDispatch();
 	console.log(fileHeight, fileWidth, fileWidth2, fileHeight2);
-	console.log(arcadeGameType, 'at');
+
 	const specificGamesData = useSelector(
 		(state) => state.GamesLibraryStore.specificGame
 	);
@@ -874,7 +876,17 @@ const UploadOreditArcade = ({
 													vertical: 'top',
 													horizontal: 'left'
 												},
-												getContentAnchorEl: null
+												getContentAnchorEl: null,
+												classes: {
+													paper: muiClasses.paper
+												}
+											}}
+											inputProps={{
+												classes: {
+													root: videoOrientation
+														? muiClasses.input
+														: muiClasses.inputPlaceholder
+												}
 											}}
 											displayEmpty={true}
 											renderValue={(value) =>
@@ -1263,7 +1275,17 @@ const UploadOreditArcade = ({
 													vertical: 'top',
 													horizontal: 'left'
 												},
-												getContentAnchorEl: null
+												getContentAnchorEl: null,
+												classes: {
+													paper: muiClasses.paper
+												}
+											}}
+											inputProps={{
+												classes: {
+													root: arcadeGameType
+														? muiClasses.input
+														: muiClasses.inputPlaceholder
+												}
 											}}
 											displayEmpty={true}
 											renderValue={(value) =>

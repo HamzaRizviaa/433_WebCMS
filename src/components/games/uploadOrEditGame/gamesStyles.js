@@ -53,5 +53,31 @@ export const useStyles = makeStyles(() => ({
 			borderRadius: '4px !important',
 			padding: '8px 0px'
 		}
+	},
+	paper: {
+		background: 'black',
+		border: '1px solid #404040',
+		boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)',
+		borderRadius: '8px',
+		color: '#ffffff',
+		fontSize: '14px',
+		fontFamily: 'Poppins !important'
+		// '&:hover': {
+		// 	//color: 'yellow'
+		// 	// cursor: pointer;
+		// 	borderColor: 'yellow'
+		// }
+	},
+	input: {
+		color: 'white',
+		'&:hover': {
+			boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)'
+		}
+	},
+	inputPlaceholder: {
+		color: '#808080',
+		'&:hover': {
+			boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)'
+		}
 	}
 }));
