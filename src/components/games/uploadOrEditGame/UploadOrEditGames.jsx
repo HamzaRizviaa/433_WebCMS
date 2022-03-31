@@ -141,24 +141,27 @@ const UploadOreditArcade = ({
 
 	useEffect(() => {
 		if (specificGamesData) {
+			setDropboxLink(specificGamesData?.dropbox_urls?.image);
+			setDropboxLink2(specificGamesData?.dropbox_urls?.video);
+			setDescriptionGame(specificGamesData?.description);
+			setTitleGame(specificGamesData?.title);
+			setUploadedFiles([
+				{
+					id: makeid(10),
+					fileName: specificGamesData?.game_image_file_name,
+					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_image?.url}`,
+					type: 'image'
+				}
+			]);
 			if (specificGamesData?.game_type === 'JOGO') {
-				setDropboxLink(specificGamesData?.dropbox_urls?.image);
-				setDropboxLink2(specificGamesData?.dropbox_urls?.video);
-				setDescriptionGame(specificGamesData?.description);
-				setTitleGame(specificGamesData?.title);
+				//jogo
 				setScoring(specificGamesData?.scoring);
 				setObjective(specificGamesData?.objective);
 				setPayload(specificGamesData?.payload);
 				setTime(specificGamesData?.time);
-				setVideoOrientation(specificGamesData?.orientation);
-				setUploadedFiles([
-					{
-						id: makeid(10),
-						fileName: specificGamesData?.game_image_file_name,
-						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_image?.url}`,
-						type: 'image'
-					}
-				]);
+				setVideoOrientation(
+					specificGamesData?.orientation === 'landscape' ? 20 : 10
+				);
 				setUploadedExplanationOrIcon([
 					{
 						id: makeid(10),
@@ -167,8 +170,29 @@ const UploadOreditArcade = ({
 						type: 'video'
 					}
 				]);
+			} else {
+				//arcade
+				setArcadeGameType(
+					specificGamesData?.arcade_game_type === 'OutSide App' ? 10 : 20
+				);
+				setAndrioid(specificGamesData?.package_id?.android);
+				setIos(specificGamesData?.package_id?.ios);
+				setPlayStore(specificGamesData?.store_url?.play_store); //store url
+				setAppStore(specificGamesData?.store_url?.apple_store);
+				setPlayStore2(specificGamesData?.deep_link?.android); // deep link
+				setAppStore2(specificGamesData?.deep_link?.ios);
+				setGameId(specificGamesData?.game_id);
+				setUploadedExplanationOrIcon([
+					{
+						id: makeid(10),
+						fileName: specificGamesData?.game_icon_file_name,
+						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_icon?.url}`,
+						type: 'image'
+					}
+				]);
 			}
 		}
+		// }
 	}, [specificGamesData]);
 
 	useEffect(() => {
