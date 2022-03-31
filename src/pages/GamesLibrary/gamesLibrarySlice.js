@@ -60,6 +60,7 @@ export const gamesLibrarySlice = createSlice({
 	initialState: {
 		gamesData: [], // all games data
 		specificGame: [], //get specific game data
+		specificGameStatus: '', //specific game status
 		totalRecords: 0,
 		// allMedia: [],
 		noResultStatus: false,
@@ -101,14 +102,14 @@ export const gamesLibrarySlice = createSlice({
 			state.labels = action.payload;
 		},
 		[getSpecificGame.pending]: (state) => {
-			state.status = 'loading';
+			state.specificGameStatus = 'loading';
 		},
 		[getSpecificGame.fulfilled]: (state, action) => {
 			state.specificGame = action.payload;
-			state.status = 'success';
+			state.specificGameStatus = 'success';
 		},
 		[getSpecificGame.rejected]: (state) => {
-			state.status = 'failed';
+			state.specificGameStatus = 'failed';
 		}
 	}
 });

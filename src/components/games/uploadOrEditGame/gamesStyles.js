@@ -30,5 +30,28 @@ export const useStyles = makeStyles(() => ({
 			borderRadius: '4px !important',
 			padding: '8px 0px'
 		}
+	},
+	edit: {
+		'& .TabUnstyled-root': {
+			width: '100%',
+			backgroundColor: '#404040',
+			color: '#ffffff !important',
+			border: 'none !important',
+			fontFamily: 'Poppins',
+			fontStyle: 'normal',
+			fontWeight: 'bold',
+			fontSize: '12px',
+			lineHeight: '16px',
+			textTransform: 'capitalize'
+		},
+		' & .Mui-selected': {
+			color: '#000000 !important',
+			border: 'none !important',
+			backgroundColor: '#ffff00 !important',
+			marginRight: '4px !important',
+			marginLeft: '4px !important',
+			borderRadius: '4px !important',
+			padding: '8px 0px'
+		}
 	}
 }));

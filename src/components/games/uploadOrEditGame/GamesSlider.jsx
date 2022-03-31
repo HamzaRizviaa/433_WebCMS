@@ -16,6 +16,7 @@ const GamesSlider = ({
 	title,
 	heading1,
 	buttonText,
+	gameType,
 	isEdit
 }) => {
 	const [previewBool, setPreviewBool] = useState(false);
@@ -47,51 +48,69 @@ const GamesSlider = ({
 			disableDropdown={disableDropdown}
 			quiz={true}
 		>
-			<div className={muiClasses.root}>
-				<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
-					<TabsListUnstyled
-						className={muiClasses.tabMainDiv}
-						style={{ width: previewBool ? '60%' : '100%' }}
-					>
-						<TabUnstyled>JOGO</TabUnstyled>
-						<TabUnstyled>Arcade Game</TabUnstyled>
-					</TabsListUnstyled>
-					<TabPanelUnstyled value={0}>
-						<UploadOrEditGames
-							heading1={heading1}
-							open={open}
-							buttonText={buttonText}
-							setPreviewBool={setPreviewBool}
-							previewFile={previewFile}
-							setPreviewFile={setPreviewFile}
-							previewRef={previewRef}
-							setDisableDropdown={setDisableDropdown}
-							editJogo={isEdit}
-							handleClose={() => {
-								handleClose();
-							}}
-							type='jogo'
-						/>
-					</TabPanelUnstyled>
-					<TabPanelUnstyled value={1}>
-						<UploadOrEditGames
-							heading1={heading1}
-							open={open}
-							buttonText={buttonText}
-							setPreviewBool={setPreviewBool}
-							previewFile={previewFile}
-							setPreviewFile={setPreviewFile}
-							previewRef={previewRef}
-							setDisableDropdown={setDisableDropdown}
-							handleClose={() => {
-								handleClose();
-							}}
-							editArcade={isEdit}
-							type='arcade'
-						/>
-					</TabPanelUnstyled>
-				</TabsUnstyled>
-			</div>
+			{isEdit ? (
+				<UploadOrEditGames
+					heading1={heading1}
+					open={open}
+					buttonText={buttonText}
+					setPreviewBool={setPreviewBool}
+					previewFile={previewFile}
+					setPreviewFile={setPreviewFile}
+					previewRef={previewRef}
+					setDisableDropdown={setDisableDropdown}
+					editJogo={isEdit}
+					handleClose={() => {
+						handleClose();
+					}}
+					type={gameType === 'JOGO' ? 'jogo' : 'arcade'}
+				/>
+			) : (
+				<div className={muiClasses.root}>
+					<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
+						<TabsListUnstyled
+							className={muiClasses.tabMainDiv}
+							style={{ width: previewBool ? '60%' : '100%' }}
+						>
+							<TabUnstyled>JOGO</TabUnstyled>
+							<TabUnstyled>Arcade Game</TabUnstyled>
+						</TabsListUnstyled>
+						<TabPanelUnstyled value={0}>
+							<UploadOrEditGames
+								heading1={heading1}
+								open={open}
+								buttonText={buttonText}
+								setPreviewBool={setPreviewBool}
+								previewFile={previewFile}
+								setPreviewFile={setPreviewFile}
+								previewRef={previewRef}
+								setDisableDropdown={setDisableDropdown}
+								editJogo={isEdit}
+								handleClose={() => {
+									handleClose();
+								}}
+								type='jogo'
+							/>
+						</TabPanelUnstyled>
+						<TabPanelUnstyled value={1}>
+							<UploadOrEditGames
+								heading1={heading1}
+								open={open}
+								buttonText={buttonText}
+								setPreviewBool={setPreviewBool}
+								previewFile={previewFile}
+								setPreviewFile={setPreviewFile}
+								previewRef={previewRef}
+								setDisableDropdown={setDisableDropdown}
+								handleClose={() => {
+									handleClose();
+								}}
+								editArcade={isEdit}
+								type='arcade'
+							/>
+						</TabPanelUnstyled>
+					</TabsUnstyled>
+				</div>
+			)}
 		</Slider>
 	);
 };
@@ -100,6 +119,7 @@ GamesSlider.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	title: PropTypes.string.isRequired,
+	gameType: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
 	type: PropTypes.string.isRequired,

@@ -27,6 +27,7 @@ import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 import { ReactComponent as Timer } from '../../../assets/Timer.svg';
 import { ReactComponent as Scoring } from '../../../assets/football.svg';
 import { ReactComponent as Objective } from '../../../assets/Cross.svg';
+import Four33Loader from '../../../assets/Loader_Yellow.gif';
 
 const UploadOreditArcade = ({
 	heading1,
@@ -106,15 +107,23 @@ const UploadOreditArcade = ({
 	const [appStoreError2, setAppStoreError2] = useState('');
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
+	const [fileWidth2, setFileWidth2] = useState(null);
+	const [fileHeight2, setFileHeight2] = useState(null);
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
 
-	const dispatch = useDispatch();
+	const gameOrientation = ['Portrait', 'Landscape'];
+	const arcadeType = ['Inside App', 'Outside App'];
 
+	const dispatch = useDispatch();
+	console.log(fileHeight, fileWidth, fileWidth2, fileHeight2);
+	console.log(arcadeGameType, 'at');
 	const specificGamesData = useSelector(
 		(state) => state.GamesLibraryStore.specificGame
 	);
-	console.log(fileWidth, fileHeight, specificGamesData, '---- abc -----');
+	const specificGameStatus = useSelector(
+		(state) => state.GamesLibraryStore.specificGameStatus
+	);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -673,7 +682,7 @@ const UploadOreditArcade = ({
 			  !scoring ||
 			  !objective ||
 			  !payload
-			: type === 'arcade' && arcadeGameType === 10
+			: type === 'arcade' && arcadeGameType === 'Outside App'
 			? !uploadedFiles.length ||
 			  !uploadedExplanationOrIcon.length ||
 			  postButtonStatus ||
@@ -704,6 +713,13 @@ const UploadOreditArcade = ({
 							: classes.contentWrapper
 					}`}
 				>
+					{specificGameStatus === 'loading' ? (
+						<div className={classes.loaderContainer2}>
+							<img src={Four33Loader} className={classes.loader} />
+						</div>
+					) : (
+						<></>
+					)}
 					<div
 						className={classes.contentWrapperNoPreview}
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
@@ -741,7 +757,7 @@ const UploadOreditArcade = ({
 														</div>
 
 														<div className={classes.filePreviewRight}>
-															{editArcade || editJogo ? (
+															<>
 																<EyeIcon
 																	className={classes.filePreviewIcons}
 																	onClick={() => {
@@ -749,25 +765,15 @@ const UploadOreditArcade = ({
 																		setPreviewFile(file);
 																	}}
 																/>
-															) : (
-																<>
-																	<EyeIcon
-																		className={classes.filePreviewIcons}
-																		onClick={() => {
-																			setPreviewBool(true);
-																			setPreviewFile(file);
-																		}}
-																	/>
-																	<Deletes
-																		className={classes.filePreviewIcons}
-																		onClick={() => {
-																			handleDeleteFile(file.id);
-																			setPreviewBool(false);
-																			setPreviewFile(null);
-																		}}
-																	/>{' '}
-																</>
-															)}
+																<Deletes
+																	className={classes.filePreviewIcons}
+																	onClick={() => {
+																		handleDeleteFile(file.id);
+																		setPreviewBool(false);
+																		setPreviewFile(null);
+																	}}
+																/>{' '}
+															</>
 														</div>
 													</div>
 												);
@@ -777,7 +783,7 @@ const UploadOreditArcade = ({
 									)}
 								</Droppable>
 							</DragDropContext>
-							{!uploadedFiles.length && !editArcade && !editJogo && (
+							{!uploadedFiles.length && (
 								<section
 									className={classes.dropZoneContainer}
 									style={{
@@ -839,9 +845,6 @@ const UploadOreditArcade = ({
 												setDisableDropdown(true);
 											}}
 											disabled={false}
-											style={{
-												backgroundColor: editJogo ? '#404040' : '#000000'
-											}}
 											value={videoOrientation}
 											onChange={(e) => {
 												setDisableDropdown(true);
@@ -852,15 +855,12 @@ const UploadOreditArcade = ({
 												// 	uploadedFiles.map((file) => handleDeleteFile(file.id));
 												// }
 											}}
-											className={`${classes.select} ${
-												editJogo && `${classes.isEditSelect}`
-											}`}
+											className={`${classes.select}`}
 											disableUnderline={true}
 											IconComponent={(props) => (
 												<KeyboardArrowDownIcon
 													{...props}
 													style={{
-														display: editJogo ? 'none' : 'block',
 														top: '4'
 													}}
 												/>
@@ -877,16 +877,28 @@ const UploadOreditArcade = ({
 												getContentAnchorEl: null
 											}}
 											displayEmpty={true}
-											// renderValue={(value) =>
-											// 	value?.length
-											// 		? Array.isArray(value)
-											// 			? value.join(', ')
-											// 			: value
-											// 		: 'Please Select Orientation'
-											// }
+											renderValue={(value) =>
+												value?.length
+													? Array.isArray(value)
+														? value.join(', ')
+														: value
+													: 'Please Select Orientation'
+											}
 										>
-											<MenuItem value={10}>Portrait</MenuItem>
-											<MenuItem value={20}>Landscape</MenuItem>
+											{gameOrientation.map((orientation, index) => {
+												return (
+													<MenuItem
+														key={index}
+														value={orientation}
+														style={{
+															fontFamily: 'Poppins !important',
+															fontSize: '14px'
+														}}
+													>
+														{orientation}
+													</MenuItem>
+												);
+											})}
 										</Select>
 									</div>
 									<p className={classes.mediaError}>{videoOrientationError}</p>
@@ -914,7 +926,7 @@ const UploadOreditArcade = ({
 																<>
 																	<video
 																		id={'my-video'}
-																		poster={editJogo ? file.img : null}
+																		//poster={editJogo ? file.img : null}
 																		className={classes.fileThumbnail}
 																		style={{
 																			objectFit: 'cover',
@@ -922,8 +934,10 @@ const UploadOreditArcade = ({
 																		}}
 																		ref={videoRef}
 																		onLoadedMetadata={() => {
-																			setFileWidth(videoRef.current.videoWidth);
-																			setFileHeight(
+																			setFileWidth2(
+																				videoRef.current.videoWidth
+																			);
+																			setFileHeight2(
 																				videoRef.current.videoHeight
 																			);
 																		}}
@@ -942,10 +956,10 @@ const UploadOreditArcade = ({
 																		}}
 																		ref={videoRef}
 																		onLoad={() => {
-																			setFileWidth(
+																			setFileWidth2(
 																				videoRef.current.naturalWidth
 																			);
-																			setFileHeight(
+																			setFileHeight2(
 																				videoRef.current.naturalHeight
 																			);
 																		}}
@@ -959,7 +973,7 @@ const UploadOreditArcade = ({
 														</div>
 
 														<div className={classes.filePreviewRight}>
-															{editJogo ? (
+															<>
 																<EyeIcon
 																	className={classes.filePreviewIcons}
 																	onClick={() => {
@@ -967,25 +981,15 @@ const UploadOreditArcade = ({
 																		setPreviewFile(file);
 																	}}
 																/>
-															) : (
-																<>
-																	<EyeIcon
-																		className={classes.filePreviewIcons}
-																		onClick={() => {
-																			setPreviewBool(true);
-																			setPreviewFile(file);
-																		}}
-																	/>
-																	<Deletes
-																		className={classes.filePreviewIcons}
-																		onClick={() => {
-																			handleDeleteFile2(file.id);
-																			setPreviewBool(false);
-																			setPreviewFile(null);
-																		}}
-																	/>{' '}
-																</>
-															)}
+																<Deletes
+																	className={classes.filePreviewIcons}
+																	onClick={() => {
+																		handleDeleteFile2(file.id);
+																		setPreviewBool(false);
+																		setPreviewFile(null);
+																	}}
+																/>{' '}
+															</>
 														</div>
 													</div>
 												);
@@ -995,7 +999,7 @@ const UploadOreditArcade = ({
 									)}
 								</Droppable>
 							</DragDropContext>
-							{!uploadedExplanationOrIcon.length && !editJogo && (
+							{!uploadedExplanationOrIcon.length && (
 								<section
 									className={classes.dropZoneContainer}
 									style={{
@@ -1121,7 +1125,7 @@ const UploadOreditArcade = ({
 									<div className={classes.titleContainer}>
 										<h6 style={{ color: questionColor }}>TIME</h6>
 										<TextField
-											disabled={editArcade || editJogo}
+											disabled={false}
 											value={time}
 											onChange={(e) => {
 												setTime(e.target.value);
@@ -1130,9 +1134,7 @@ const UploadOreditArcade = ({
 											className={classes.textField}
 											InputProps={{
 												disableUnderline: true,
-												className: `${classes.textFieldInputStartAdornment}  ${
-													(editArcade || editJogo) && classes.disableTextField
-												}`,
+												className: `${classes.textFieldInputStartAdornment}`,
 												startAdornment: (
 													<InputAdornment position='start'>
 														<Timer />
@@ -1149,7 +1151,7 @@ const UploadOreditArcade = ({
 									<div className={classes.titleContainer}>
 										<h6 style={{ color: ans1Color }}>SCORING</h6>
 										<TextField
-											disabled={editArcade || editJogo}
+											disabled={false}
 											value={scoring}
 											onChange={(e) => {
 												setScoring(e.target.value);
@@ -1158,9 +1160,7 @@ const UploadOreditArcade = ({
 											className={classes.textField}
 											InputProps={{
 												disableUnderline: true,
-												className: `${classes.textFieldInputStartAdornment}  ${
-													(editArcade || editJogo) && classes.disableTextField
-												}`,
+												className: `${classes.textFieldInputStartAdornment} `,
 												startAdornment: (
 													<InputAdornment position='start'>
 														<Scoring />
@@ -1178,7 +1178,7 @@ const UploadOreditArcade = ({
 										<h6 style={{ color: ans2Color }}>OBJECTIVE</h6>
 
 										<TextField
-											disabled={editArcade || editJogo}
+											disabled={false}
 											value={objective}
 											onChange={(e) => {
 												setObjective(e.target.value);
@@ -1187,9 +1187,7 @@ const UploadOreditArcade = ({
 											className={classes.textField}
 											InputProps={{
 												disableUnderline: true,
-												className: `${classes.textFieldInputStartAdornment}  ${
-													(editArcade || editJogo) && classes.disableTextField
-												}`,
+												className: `${classes.textFieldInputStartAdornment} `,
 												startAdornment: (
 													<InputAdornment position='start'>
 														<Objective />
@@ -1207,7 +1205,7 @@ const UploadOreditArcade = ({
 										<h6 style={{ color: payloadColor }}>PAYLOAD</h6>
 
 										<TextField
-											disabled={editArcade || editJogo}
+											disabled={false}
 											value={payload}
 											onChange={(e) => {
 												setPayload(e.target.value);
@@ -1216,9 +1214,7 @@ const UploadOreditArcade = ({
 											className={classes.textField}
 											InputProps={{
 												disableUnderline: true,
-												className: `${classes.textFieldInput}  ${
-													(editArcade || editJogo) && classes.disableTextField
-												}`
+												className: `${classes.textFieldInput}  `
 											}}
 											multiline
 											maxRows={2}
@@ -1241,9 +1237,6 @@ const UploadOreditArcade = ({
 												setDisableDropdown(true);
 											}}
 											disabled={false}
-											style={{
-												backgroundColor: editJogo ? '#404040' : '#000000'
-											}}
 											value={arcadeGameType}
 											onChange={(e) => {
 												setDisableDropdown(true);
@@ -1251,15 +1244,12 @@ const UploadOreditArcade = ({
 												setArcadeGameTypeColor('#ffffff');
 												setArcadeGameTypeError('');
 											}}
-											className={`${classes.select} ${
-												editJogo && `${classes.isEditSelect}`
-											}`}
+											className={`${classes.select}`}
 											disableUnderline={true}
 											IconComponent={(props) => (
 												<KeyboardArrowDownIcon
 													{...props}
 													style={{
-														display: editJogo ? 'none' : 'block',
 														top: '4'
 													}}
 												/>
@@ -1276,21 +1266,33 @@ const UploadOreditArcade = ({
 												getContentAnchorEl: null
 											}}
 											displayEmpty={true}
-											// renderValue={(value) =>
-											// 	value?.length
-											// 		? Array.isArray(value)
-											// 			? value.join(', ')
-											// 			: value
-											// 		: 'Please Select Orientation'
-											// }
+											renderValue={(value) =>
+												value?.length
+													? Array.isArray(value)
+														? value.join(', ')
+														: value
+													: 'Please Select Game Type'
+											}
 										>
-											<MenuItem value={10}>Outside App</MenuItem>
-											<MenuItem value={20}>Inside App</MenuItem>
+											{arcadeType.map((type, index) => {
+												return (
+													<MenuItem
+														key={index}
+														value={type}
+														style={{
+															fontFamily: 'Poppins !important',
+															fontSize: '14px'
+														}}
+													>
+														{type}
+													</MenuItem>
+												);
+											})}
 										</Select>
 									</div>
 									<p className={classes.mediaError}>{arcadeGameTypeError}</p>
 
-									{arcadeGameType === 10 ? (
+									{arcadeGameType === 'Outside App' ? (
 										<Slide in={true} direction='up' {...{ timeout: 400 }}>
 											<div>
 												<div className={classes.gameIDwrapper}>
@@ -1424,7 +1426,7 @@ const UploadOreditArcade = ({
 										<></>
 									)}
 
-									{arcadeGameType === 20 ? (
+									{arcadeGameType === 'Inside App' ? (
 										<Slide in={true} direction='up' {...{ timeout: 400 }}>
 											<div>
 												<div className={classes.gameIDwrapper}>

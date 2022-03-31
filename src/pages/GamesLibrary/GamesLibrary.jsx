@@ -78,6 +78,7 @@ const GamesLibrary = () => {
 	const [noResultCalendarError, setNoResultCalendarError] = useState('');
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
+	const [gameType, setGameType] = useState('');
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -458,6 +459,7 @@ const GamesLibrary = () => {
 			dispatch(getSpecificGame(row.id));
 			setEdit(true);
 			setShowSlider(true);
+			setGameType(row.game_type);
 		}
 	};
 
@@ -630,7 +632,14 @@ const GamesLibrary = () => {
 						// setTimeout(() => setEdit(false), 600);
 					}}
 					page={page}
-					title={edit ? 'Edit Game' : 'Upload Game'}
+					gameType={gameType}
+					title={
+						edit && gameType === 'JOGO'
+							? 'Edit JOGO Game'
+							: edit && gameType === 'ARCADE GAME'
+							? 'Edit Arcade Game'
+							: 'Upload Game'
+					}
 					heading1={edit ? 'Game Image' : 'Add Game Image'}
 					buttonText={edit ? 'SAVE CHANGES' : 'ADD GAME'}
 				/>
