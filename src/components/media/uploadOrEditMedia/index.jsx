@@ -933,7 +933,7 @@ const UploadOrEditMedia = ({
 									<p className={classes.fileRejectionError}>
 										{fileRejectionError}
 									</p>
-									<div className={classes.titleContainer}>
+									<div className={classes.dropBoxUrlContainer}>
 										<h6>DROPBOX URL</h6>
 										<TextField
 											value={dropboxLink}
@@ -1055,7 +1055,7 @@ const UploadOrEditMedia = ({
 									<p className={classes.fileRejectionError}>
 										{fileRejectionError2}
 									</p>
-									<div className={classes.titleContainer}>
+									<div className={classes.dropBoxUrlContainer}>
 										<h6>DROPBOX URL</h6>
 										<TextField
 											value={dropboxLink2}

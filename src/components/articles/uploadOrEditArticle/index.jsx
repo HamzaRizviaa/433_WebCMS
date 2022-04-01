@@ -748,7 +748,7 @@ const UploadOrEditViral = ({
 								/>
 							</div>
 							<p className={classes.mediaError}>{articleTitleError}</p>
-							<div className={classes.captionContainer}>
+							<div className={classes.dropBoxUrlContainer}>
 								<h6>DROPBOX URL</h6>
 								<TextField
 									value={dropboxLink}
