@@ -1606,7 +1606,24 @@ const UploadOreditArcade = ({
 								{previewFile.mime_type === 'video/mp4' ? (
 									<video
 										id={'my-video'}
-										poster={editJogo ? previewFile.img : null}
+										poster={editJogo || editArcade ? previewFile.img : null}
+										className={classes.previewFile}
+										style={{
+											width: '100%',
+											height: `${8 * 4}rem`,
+											objectFit: 'contain',
+											objectPosition: 'center'
+										}}
+										controls={true}
+									>
+										<source src={previewFile.img} />
+									</video>
+								) : (editJogo || editArcade) && previewFile.type === 'video' ? (
+									<video
+										id={'my-video'}
+										poster={
+											editJogo || editArcade ? previewFile?.thumbnail_url : null
+										}
 										className={classes.previewFile}
 										style={{
 											width: '100%',

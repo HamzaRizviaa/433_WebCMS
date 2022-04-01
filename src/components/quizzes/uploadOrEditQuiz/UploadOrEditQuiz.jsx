@@ -34,6 +34,7 @@ import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 import { ReactComponent as CalenderYellow } from '../../../assets/Calender_Yellow.svg';
 import { useRef } from 'react';
 import { getSpecificMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
+import { getSpecificGame } from '../../../pages/GamesLibrary/gamesLibrarySlice';
 const UploadOrEditQuiz = ({
 	heading1,
 	open,
@@ -79,6 +80,7 @@ const UploadOrEditQuiz = ({
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
+	const [editQuizBtnDisabled, setEditQuizBtnDisabled] = useState(false);
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
 	const imgRef = useRef(null);
@@ -90,13 +92,16 @@ const UploadOrEditQuiz = ({
 		(state) => state.questionLibrary.questionEdit
 	);
 
+	// ${(
+	// 	'0' + da.getHours().toLocaleString()
+	// ).slice(-2)}:${('0' + da.getMinutes()).slice(-2)}:${(
+	// 	'0' + da.getSeconds()
+	// ).slice(-2)}.${'00' + da.getMilliseconds()}
 	useEffect(() => {
 		var da = new Date(endDate);
 		var toSend = `${da?.getFullYear()}-${('0' + (da?.getMonth() + 1)).slice(
 			-2
-		)}-${('0' + da?.getDate()).slice(-2)}T${('0' + da.getHours()).slice(-2)}:${(
-			'0' + da.getMinutes()
-		).slice(-2)}:${('0' + da.getSeconds()).slice(-2)}.${da.getMilliseconds()}Z`;
+		)}-${('0' + da?.getDate()).slice(-2)}T00:00:00.000Z`;
 		setConvertedDate(toSend);
 	}, [endDate]);
 
@@ -536,11 +541,11 @@ const UploadOrEditQuiz = ({
 		!endDate;
 
 	console.log(editQuestionData?.quiz_end_date, 'quiz');
-	console.log(editQuestionData?.poll_end_date, 'poll');
-	console.log(endDate, 'endDate');
+	// console.log(editQuestionData?.poll_end_date, 'poll');
+	console.log(convertedDate, 'endDate');
 	console.log(editQuestionData?.quiz_end_date?.length, 'quiz');
-	console.log(editQuestionData?.poll_end_date?.length, 'poll');
-	console.log(endDate?.length, 'endDate');
+	// console.log(editQuestionData?.poll_end_date?.length, 'poll');
+	console.log(convertedDate?.length, 'endDate');
 
 	// const editQuizBtnDisabled =
 	// 	postButtonStatus ||
@@ -550,11 +555,18 @@ const UploadOrEditQuiz = ({
 	// 		: editQuestionData?.poll_end_date === endDate) &&
 	// 		editQuestionData?.dropbox_url === dropboxLink.trim());
 
-	const editQuizBtnDisabled =
-		postButtonStatus ||
-		!endDate ||
-		editQuestionData?.quiz_end_date === endDate ||
-		editQuestionData?.poll_end_date === endDate;
+	useEffect(() => {
+		if (editQuestionData) {
+			setEditQuizBtnDisabled(
+				postButtonStatus ||
+					!endDate ||
+					((type === 'quiz'
+						? editQuestionData?.quiz_end_date === convertedDate
+						: editQuestionData?.poll_end_date === convertedDate) &&
+						editQuestionData?.dropbox_url === dropboxLink.trim())
+			);
+		}
+	}, [editQuestionData, dropboxLink, endDate, convertedDate]);
 
 	return (
 		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
@@ -978,7 +990,11 @@ const UploadOrEditQuiz = ({
 							}
 						>
 							<Button
-								disabled={!editPoll ? addQuizBtnDisabled : editQuizBtnDisabled}
+								disabled={
+									!(editPoll || editQuiz)
+										? addQuizBtnDisabled
+										: editQuizBtnDisabled
+								}
 								onClick={async () => {
 									if (addQuizBtnDisabled || editQuizBtnDisabled) {
 										validatePostBtn();
