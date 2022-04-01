@@ -535,13 +535,26 @@ const UploadOrEditQuiz = ({
 		!ans2 ||
 		!endDate;
 
+	console.log(editQuestionData?.quiz_end_date, 'quiz');
+	console.log(editQuestionData?.poll_end_date, 'poll');
+	console.log(endDate, 'endDate');
+	console.log(editQuestionData?.quiz_end_date?.length, 'quiz');
+	console.log(editQuestionData?.poll_end_date?.length, 'poll');
+	console.log(endDate?.length, 'endDate');
+
+	// const editQuizBtnDisabled =
+	// 	postButtonStatus ||
+	// 	!endDate ||
+	// 	((type === 'quiz'
+	// 		? editQuestionData?.quiz_end_date === endDate
+	// 		: editQuestionData?.poll_end_date === endDate) &&
+	// 		editQuestionData?.dropbox_url === dropboxLink.trim());
+
 	const editQuizBtnDisabled =
 		postButtonStatus ||
 		!endDate ||
-		((type === 'poll'
-			? editQuestionData?.poll_end_date === endDate
-			: editQuestionData?.quiz_end_date == endDate) &&
-			editQuestionData?.dropbox_url === dropboxLink.trim());
+		editQuestionData?.quiz_end_date === endDate ||
+		editQuestionData?.poll_end_date === endDate;
 
 	return (
 		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
@@ -556,12 +569,6 @@ const UploadOrEditQuiz = ({
 					className={classes.contentWrapperNoPreview}
 					style={{ width: previewFile != null ? '60%' : 'auto' }}
 				>
-					{console.log(
-						editQuestionData?.quiz_end_date,
-						endDate,
-
-						'endDate'
-					)}
 					<div>
 						<h5 className={classes.QuizQuestion}>{heading1}</h5>
 						<DragDropContext>
