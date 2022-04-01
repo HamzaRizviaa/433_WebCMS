@@ -569,22 +569,35 @@ const UploadOrEditMedia = ({
 		selectedLabels.length < 10;
 
 	useEffect(() => {
-		if (specificMedia?.description) {
-			console.log(dropboxLink, 'dl');
-			console.log(specificMedia?.media_dropbox_url, 'dl1');
-			console.log(dropboxLink?.length, 'dl');
-			console.log(specificMedia?.media_dropbox_url?.length, 'dl1');
+		// console.log(specificMedia?.media_dropbox_url, 'dl1');
+		// console.log(specificMedia?.media_dropbox_url?.length, 'dl1');
+		// console.log(specificMedia?.description?.replace(/\s+/g, '')?.trim(), 'dl1');
+		// console.log(
+		// 	specificMedia?.description?.replace(/\s+/g, '')?.trim()?.length,
+		// 	'dl1'
+		// );
+		// console.log(description?.replace(/\s+/g, '')?.trim(), 'dl2');
+		// console.log(description?.replace(/\s+/g, '')?.trim()?.length, 'dl2');
+		// console.log(specificMedia?.title, 'dl1');
+		// console.log(specificMedia?.title?.length, 'dl1');
+		// console.log(titleMedia, 'dl2');
+		// console.log(titleMedia?.length, 'dl2');
+
+		if (specificMedia) {
 			setEditBtnDisabled(
 				mediaButtonStatus ||
 					!titleMedia ||
 					!description ||
 					(specificMedia?.media_dropbox_url === dropboxLink.trim() &&
 						specificMedia?.image_dropbox_url === dropboxLink2.trim() &&
-						specificMedia?.title === titleMedia.trim() &&
-						specificMedia?.description === description.trim())
+						specificMedia?.title.replace(/\s+/g, '')?.trim() ===
+							titleMedia?.replace(/\s+/g, '')?.trim() &&
+						specificMedia?.description?.replace(/\s+/g, '')?.trim() ===
+							description?.replace(/\s+/g, '')?.trim())
 			);
 		}
 	}, [specificMedia, titleMedia, description, dropboxLink, dropboxLink2]);
+	//console.log(editBtnDisabled, 'edb');
 
 	const MainCategoryId = (e) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
@@ -920,7 +933,7 @@ const UploadOrEditMedia = ({
 									<p className={classes.fileRejectionError}>
 										{fileRejectionError}
 									</p>
-									<div className={classes.titleContainer}>
+									<div className={classes.dropBoxUrlContainer}>
 										<h6>DROPBOX URL</h6>
 										<TextField
 											value={dropboxLink}
@@ -1042,7 +1055,7 @@ const UploadOrEditMedia = ({
 									<p className={classes.fileRejectionError}>
 										{fileRejectionError2}
 									</p>
-									<div className={classes.titleContainer}>
+									<div className={classes.dropBoxUrlContainer}>
 										<h6>DROPBOX URL</h6>
 										<TextField
 											value={dropboxLink2}
@@ -1316,11 +1329,6 @@ const UploadOrEditMedia = ({
 												(await handleTitleDuplicate(titleMedia)) === 200 &&
 												titleMedia !== specificMedia.title
 											) {
-												console.log(
-													titleMedia,
-													specificMedia.title,
-													'====abc==='
-												);
 												setTitleMediaLabelColor('#ff355a');
 												setTitleMediaError('This title already exists');
 												setTimeout(() => {
