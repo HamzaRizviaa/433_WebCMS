@@ -1329,11 +1329,6 @@ const UploadOrEditMedia = ({
 												(await handleTitleDuplicate(titleMedia)) === 200 &&
 												titleMedia !== specificMedia.title
 											) {
-												console.log(
-													titleMedia,
-													specificMedia.title,
-													'====abc==='
-												);
 												setTitleMediaLabelColor('#ff355a');
 												setTitleMediaError('This title already exists');
 												setTimeout(() => {
