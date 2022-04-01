@@ -375,6 +375,48 @@ const UploadOreditArcade = ({
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/games/add-edit-game`,
 				{
+					// game_medias: {
+					// 	game_image: {
+					// 		url: specificGamesData
+					// 			? specificGamesData?.url
+					// 			: mediaFiles[0]?.media_url,
+					// 		dropbox_url: dropboxLink,
+					// 		file_name: specificGamesData
+					// 			? specificGamesData?.game_image?.game_image_file_name
+					// 			: mediaFiles[0]?.file_name,
+					// 		width: fileWidth,
+					// 		height: fileHeight
+					// 	},
+
+					// 	game_video: {
+					// 		url: specificGamesData
+					// 			? specificGamesData?.game_video?.url
+					// 			: mediaFiles[1]?.media_url,
+					// 		dropbox_url: dropboxLink2,
+					// 		file_name: specificGamesData
+					// 			? specificGamesData?.game_video_file_name
+					// 			: mediaFiles[1]?.file_name,
+					// 		width: fileWidth2,
+					// 		height: fileHeight2
+					// 	},
+					// 	game_icon: {
+					// 		url: specificGamesData
+					// 			? specificGamesData?.game_icon?.url
+					// 			: mediaFiles[1]?.media_url,
+					// 		dropbox_url: dropboxLink2,
+					// 		file_name: specificGamesData
+					// 			? specificGamesData?.game_icon_file_name
+					// 			: mediaFiles[1]?.file_name,
+					// 		width: fileWidth2,
+					// 		height: fileHeight2
+					// 	}
+					// },
+					type: type === 'jogo' ? 'JOGO' : 'ARCADE GAME',
+					arcade_game_type:
+						arcadeGameType === 'Inside App' ? 'insideapp' : 'outsideapp',
+					orientation: type === 'jogo' ? videoOrientation : 'none',
+					title: titleGame,
+					description: descriptionGame,
 					game_medias: {
 						game_image: {
 							url: mediaFiles[0]?.media_url,
@@ -399,13 +441,6 @@ const UploadOreditArcade = ({
 							height: fileHeight2
 						}
 					},
-					type: type === 'jogo' ? 'JOGO' : 'ARCADE GAME',
-					arcade_game_type:
-						arcadeGameType === 'Inside App' ? 'insideapp' : 'outsideapp',
-					orientation: type === 'jogo' ? videoOrientation : 'none',
-					title: titleGame,
-					description: descriptionGame,
-
 					//jogo
 					time: time,
 					scoring: scoring,
@@ -701,7 +736,7 @@ const UploadOreditArcade = ({
 		}
 	};
 
-	const addQuizBtnDisabled =
+	const addGameBtnDisabled =
 		type === 'jogo'
 			? !uploadedFiles.length ||
 			  !videoOrientation ||
@@ -734,6 +769,38 @@ const UploadOreditArcade = ({
 			  !arcadeGameType ||
 			  !gameId;
 
+	const editBtnDisabled =
+		type === 'jogo'
+			? !uploadedFiles.length ||
+			  !videoOrientation ||
+			  !uploadedExplanationOrIcon.length ||
+			  postButtonStatus ||
+			  !titleGame ||
+			  !descriptionGame ||
+			  !time ||
+			  !scoring ||
+			  !objective ||
+			  !payload
+			: type === 'arcade' && arcadeGameType === 'Outside App'
+			? !uploadedFiles.length ||
+			  !uploadedExplanationOrIcon.length ||
+			  postButtonStatus ||
+			  !titleGame ||
+			  !descriptionGame ||
+			  !arcadeGameType ||
+			  !android ||
+			  !ios ||
+			  !playStore ||
+			  !appStore ||
+			  !playStore2 ||
+			  !appStore2
+			: !uploadedFiles.length ||
+			  !uploadedExplanationOrIcon.length ||
+			  postButtonStatus ||
+			  !titleGame ||
+			  !descriptionGame ||
+			  !arcadeGameType ||
+			  !gameId;
 	return (
 		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
 			<Slide in={true} direction='up' {...{ timeout: 400 }}>
@@ -1539,31 +1606,54 @@ const UploadOreditArcade = ({
 								}
 							>
 								<Button
-									disabled={addQuizBtnDisabled}
+									disabled={
+										editArcade || editJogo
+											? editBtnDisabled
+											: addGameBtnDisabled
+									}
 									onClick={async () => {
-										if (addQuizBtnDisabled) {
+										if (addGameBtnDisabled || editBtnDisabled) {
 											validatePostBtn();
 										} else {
 											setPostButtonStatus(true);
-											if (
-												(await handleTitleDuplicate(titleGame)) ===
-												'The Title Already Exist'
-												// 	200 &&
-												// articleTitle !== specificArticle?.title
-											) {
-												setTitleGameColor('#ff355a');
-												setTitleGameError('This title already exists');
-												setTimeout(() => {
-													setTitleGameColor('#ffffff');
-													setTitleGameError('');
-												}, [5000]);
 
-												setPostButtonStatus(false);
-												return;
+											if (!(editArcade || editJogo)) {
+												if (
+													(await handleTitleDuplicate(titleGame)) ===
+													'The Title Already Exist'
+													// 	200 &&
+													// articleTitle !== specificArticle?.title
+												) {
+													setTitleGameColor('#ff355a');
+													setTitleGameError('This title already exists');
+													setTimeout(() => {
+														setTitleGameColor('#ffffff');
+														setTitleGameError('');
+													}, [5000]);
+
+													setPostButtonStatus(false);
+													return;
+												}
 											}
 
 											if (editArcade || editJogo) {
-												createGames(specificGamesData?.id);
+												setIsLoadingcreateViral(true);
+												let uploadFilesPromiseArray = [
+													uploadedFiles[0],
+													uploadedExplanationOrIcon[0]
+												].map(async (_file) => {
+													return uploadFileToServer(_file);
+												});
+
+												Promise.all([...uploadFilesPromiseArray])
+													.then((mediaFiles) => {
+														console.log(mediaFiles, 'media files ');
+														createGames(specificGamesData?.id, mediaFiles);
+													})
+													.catch(() => {
+														setIsLoadingcreateViral(false);
+													});
+												// createGames(specificGamesData?.id);
 											} else {
 												setIsLoadingcreateViral(true);
 												let uploadFilesPromiseArray = [
@@ -1592,6 +1682,7 @@ const UploadOreditArcade = ({
 					</div>
 					{previewFile != null && (
 						<div ref={previewRef} className={classes.previewComponent}>
+							{console.log(previewFile, 'preview')}
 							<div className={classes.previewHeader}>
 								<Close
 									onClick={() => {
@@ -1603,7 +1694,10 @@ const UploadOreditArcade = ({
 								<h5>Preview</h5>
 							</div>
 							<div>
-								{previewFile.mime_type === 'video/mp4' ? (
+								{previewFile.mime_type === 'video/mp4' ||
+								previewFile.mime_type === 'video' ||
+								previewFile.type === 'video' ||
+								previewFile.type === 'video/mp4' ? (
 									<video
 										id={'my-video'}
 										poster={editJogo ? previewFile.img : null}
