@@ -113,7 +113,7 @@ const UploadOreditArcade = ({
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
 
-	const gameOrientation = ['Portrait', 'Landscape'];
+	const gameOrientation = ['portrait', 'landscape'];
 	const arcadeType = ['Inside App', 'Outside App'];
 
 	const muiClasses = useStyles();
@@ -170,9 +170,7 @@ const UploadOreditArcade = ({
 				setObjective(specificGamesData?.objective);
 				setPayload(specificGamesData?.payload);
 				setTime(specificGamesData?.time);
-				setVideoOrientation(
-					specificGamesData?.orientation === 'landscape' ? 20 : 10
-				);
+				setVideoOrientation(specificGamesData?.orientation);
 				setUploadedExplanationOrIcon([
 					{
 						id: makeid(10),
@@ -184,7 +182,9 @@ const UploadOreditArcade = ({
 			} else {
 				//arcade
 				setArcadeGameType(
-					specificGamesData?.arcade_game_type === 'OutSide App' ? 10 : 20
+					specificGamesData?.arcade_game_type === 'OutSide App'
+						? 'Outside App'
+						: 'Inside App'
 				);
 				setAndrioid(specificGamesData?.package_id?.android);
 				setIos(specificGamesData?.package_id?.ios);
@@ -285,148 +285,176 @@ const UploadOreditArcade = ({
 		);
 	};
 
-	// const uploadFileToServer = async (uploadedFile) => {
-	// 	try {
-	// 		const result = await axios.post(
-	// 			`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
-	// 			{
-	// 				file_type: uploadedFile.fileExtension,
-	// 				parts: 1
-	// 			},
-	// 			{
-	// 				headers: {
-	// 					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-	// 				}
-	// 			}
-	// 		);
-	// 		// const frame = captureVideoFrame('my-video', 'png');
-	// 		// if (result?.data?.data?.video_thumbnail_url) {
-	// 		// 	await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
-	// 		// 		headers: { 'Content-Type': 'image/png' }
-	// 		// 	});
-	// 		// }
-	// 		if (result?.data?.data?.url) {
-	// 			const _result = await axios.put(
-	// 				result?.data?.data?.url,
-	// 				uploadedFile.file,
-	// 				{
-	// 					headers: { 'Content-Type': uploadedFile.mime_type }
-	// 				}
-	// 			);
+	const uploadFileToServer = async (uploadedFile) => {
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
+				{
+					file_type: uploadedFile.fileExtension,
+					parts: 1
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			// const frame = captureVideoFrame('my-video', 'png');
+			// if (result?.data?.data?.video_thumbnail_url) {
+			// 	await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
+			// 		headers: { 'Content-Type': 'image/png' }
+			// 	});
+			// }
+			if (result?.data?.data?.url) {
+				const _result = await axios.put(
+					result?.data?.data?.url,
+					uploadedFile.file,
+					{
+						headers: { 'Content-Type': uploadedFile.mime_type }
+					}
+				);
 
-	// 			if (_result?.status === 200) {
-	// 				const uploadResult = await axios.post(
-	// 					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-	// 					{
-	// 						file_name: uploadedFile.file.name,
-	// 						type: 'questionLibrary',
-	// 						data: {
-	// 							bucket: 'media',
-	// 							multipart_upload:
-	// 								uploadedFile?.mime_type == 'video/mp4'
-	// 									? [
-	// 											{
-	// 												e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
-	// 												part_number: 1
-	// 											}
-	// 									  ]
-	// 									: ['image'],
-	// 							keys: {
-	// 								image_key: result?.data?.data?.keys?.image_key,
-	// 								video_key: result?.data?.data?.keys?.video_key,
-	// 								audio_key: ''
-	// 							},
-	// 							upload_id:
-	// 								uploadedFile?.mime_type == 'video/mp4'
-	// 									? result?.data?.data?.upload_id
-	// 									: 'image'
-	// 						}
-	// 					},
-	// 					{
-	// 						headers: {
-	// 							Authorization: `Bearer ${
-	// 								getLocalStorageDetails()?.access_token
-	// 							}`
-	// 						}
-	// 					}
-	// 				);
-	// 				if (uploadResult?.data?.status_code === 200) {
-	// 					return uploadResult.data.data;
-	// 				} else {
-	// 					throw 'Error';
-	// 				}
-	// 			} else {
-	// 				throw 'Error';
-	// 			}
-	// 		} else {
-	// 			throw 'Error';
-	// 		}
-	// 	} catch (error) {
-	// 		console.log('Error');
-	// 		return null;
-	// 	}
-	// };
+				if (_result?.status === 200) {
+					const uploadResult = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: uploadedFile.file.name,
+							type: 'questionLibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									uploadedFile?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: result?.data?.data?.keys?.image_key,
+									video_key: result?.data?.data?.keys?.video_key,
+									audio_key: ''
+								},
+								upload_id:
+									uploadedFile?.mime_type == 'video/mp4'
+										? result?.data?.data?.upload_id
+										: 'image'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
+						}
+					);
+					if (uploadResult?.data?.status_code === 200) {
+						return uploadResult.data.data;
+					} else {
+						throw 'Error';
+					}
+				} else {
+					throw 'Error';
+				}
+			} else {
+				throw 'Error';
+			}
+		} catch (error) {
+			console.log('Error');
+			return null;
+		}
+	};
 
-	// const createQuestion = async (id, mediaFiles = []) => {
-	// 	setPostButtonStatus(true);
+	const createQuestion = async (id, mediaFiles = []) => {
+		setPostButtonStatus(true);
 
-	// 	try {
-	// 		const result = await axios.post(
-	// 			`${process.env.REACT_APP_API_ENDPOINT}/question/add-question`,
-	// 			{
-	// 				...(question ? { question: question } : { question: '' }),
-	// 				...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
-	// 				...(!(editArcade || editJogo)
-	// 					? { image: mediaFiles[0]?.media_url }
-	// 					: {}),
-	// 				...(convertedDate ? { end_date: convertedDate } : {}),
-	// 				...(!(editArcade || editJogo)
-	// 					? quiz
-	// 						? { question_type: 'quiz' }
-	// 						: { question_type: 'poll' }
-	// 					: {}),
-	// 				...(!(editArcade || editJogo)
-	// 					? {
-	// 							answers: [
-	// 								{ answer: ans1, type: quiz ? 'right_answer' : 'poll' },
-	// 								{ answer: ans2, type: quiz ? 'wrong_answer' : 'poll' }
-	// 							]
-	// 					  }
-	// 					: {}),
-	// 				...(!(editArcade || editJogo) && selectedLabels.length
-	// 					? { labels: [...selectedLabels] }
-	// 					: {}),
-	// 				...((editArcade || editJogo) && id ? { question_id: id } : {})
-	// 			},
-	// 			{
-	// 				headers: {
-	// 					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-	// 				}
-	// 			}
-	// 		);
-	// 		if (result?.data?.status_code === 200) {
-	// 			toast.success(
-	// 				editArcade || editJogo
-	// 					? 'Question has been edited!'
-	// 					: 'Question has been created!'
-	// 			);
-	// 			setIsLoadingcreateViral(false);
-	// 			setPostButtonStatus(false);
-	// 			handleClose();
-	// 			dispatch(getQuestions({ page }));
-	// 			dispatch(getQuestionLabels());
-	// 		}
-	// 	} catch (e) {
-	// 		toast.error(
-	// 			editArcade || editJogo
-	// 				? 'Failed to edit question!'
-	// 				: 'Failed to create question!'
-	// 		);
-	// 		setIsLoadingcreateViral(false);
-	// 		setPostButtonStatus(false);
-	// 		console.log(e);
-	// 	}
-	// };
+		console.log(mediaFiles, 'mediaFiles');
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/games/add-edit-game`,
+				{
+					game_medias: {
+						game_image: {
+							url: mediaFiles[0]?.media_url,
+							dropbox_url: dropboxLink,
+							file_name: mediaFiles[0]?.file_name,
+							width: fileWidth,
+							height: fileHeight
+						},
+
+						game_video: {
+							url: mediaFiles[0]?.media_url,
+							dropbox_url: dropboxLink2,
+							file_name: mediaFiles[0]?.file_name,
+							width: fileWidth2,
+							height: fileHeight2
+						},
+						game_icon: {
+							url: mediaFiles[0]?.media_url,
+							dropbox_url: dropboxLink2,
+							file_name: mediaFiles[0]?.file_name,
+							width: fileWidth2,
+							height: fileHeight2
+						}
+					},
+					type: type === 'jogo' ? 'JOGO' : 'ARCADE GAME',
+					arcade_game_type:
+						arcadeGameType === 'Inside App' ? 'insideapp' : 'outsideapp',
+					orientation: type === 'jogo' ? videoOrientation : 'none',
+					title: titleGame,
+					description: descriptionGame,
+
+					//jogo
+					time: time,
+					scoring: scoring,
+					objective: objective,
+					payload: payload,
+					//arcade
+					game_id: gameId,
+					package_id: {
+						android: android,
+						ios: ios
+					},
+					store_url: {
+						play_store: playStore,
+						apple_store: appStore
+					},
+					deep_link: {
+						android: playStore2,
+						ios: appStore2
+					},
+					...((editArcade || editJogo) && id ? { edit_game_id: id } : {})
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success(
+					editArcade || editJogo
+						? 'Game has been edited!'
+						: 'Game has been created!'
+				);
+				setIsLoadingcreateViral(false);
+				setPostButtonStatus(false);
+				handleClose();
+				dispatch(getAllGames({ page }));
+			}
+		} catch (e) {
+			toast.error(
+				editArcade || editJogo
+					? 'Failed to edit Game!'
+					: 'Failed to create Game!'
+			);
+			setIsLoadingcreateViral(false);
+			setPostButtonStatus(false);
+			console.log(e);
+		}
+	};
 
 	const deleteGame = async (id) => {
 		setDeleteBtnStatus(true);
@@ -443,14 +471,14 @@ const UploadOreditArcade = ({
 				}
 			);
 			if (result?.data?.status_code === 200) {
-				toast.success('Question has been deleted!');
+				toast.success('Game has been deleted!');
 				handleClose();
 
 				//setting a timeout for getting post after delete.
 				dispatch(getAllGames({ page }));
 			}
 		} catch (e) {
-			toast.error('Failed to delete Question!');
+			toast.error('Failed to delete Game!');
 			setDeleteBtnStatus(false);
 			console.log(e);
 		}
@@ -1533,20 +1561,20 @@ const UploadOreditArcade = ({
 											}
 
 											if (editArcade || editJogo) {
-												// createQuestion(specificGamesData?.id);
+												createQuestion(specificGamesData?.id);
 											} else {
 												setIsLoadingcreateViral(true);
-												let uploadFilesPromiseArray = uploadedFiles
-													.map
-													// async (_file) => {
-													// 	 return uploadFileToServer(_file);
-													// }
-													();
+												let uploadFilesPromiseArray = [
+													uploadedFiles[0],
+													uploadedExplanationOrIcon[0]
+												].map(async (_file) => {
+													return uploadFileToServer(_file);
+												});
 
 												Promise.all([...uploadFilesPromiseArray])
 													.then((mediaFiles) => {
 														console.log(mediaFiles, 'media files ');
-														// createQuestion(null, mediaFiles);
+														createQuestion(null, mediaFiles);
 													})
 													.catch(() => {
 														setIsLoadingcreateViral(false);

@@ -103,7 +103,7 @@ const GamesLibrary = () => {
 		post_date: 'postdate',
 		user: 'user',
 		last_edit: 'lastedit',
-		type: 'gametype'
+		game_type: 'gametype'
 	};
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
@@ -257,7 +257,9 @@ const GamesLibrary = () => {
 					className={classes.sortIcon}
 					style={{
 						left:
-							col?.dataField === 'type' || col?.dataField === 'post_date'
+							col?.dataField === 'gametype' || col?.dataField === 'game_type'
+								? 10
+								: col?.dataField === 'post_date'
 								? 30
 								: -4,
 						bottom: 0.5
@@ -270,7 +272,9 @@ const GamesLibrary = () => {
 					className={classes.sortIconSelected}
 					style={{
 						left:
-							col?.dataField === 'type' || col?.dataField === 'post_date'
+							col?.dataField === 'gametype' || col?.dataField === 'game_type'
+								? 10
+								: col?.dataField === 'post_date'
 								? 30
 								: -4,
 						bottom: 0.5
@@ -283,7 +287,9 @@ const GamesLibrary = () => {
 					className={classes.sortIconSelected}
 					style={{
 						left:
-							col?.dataField === 'type' || col?.dataField === 'post_date'
+							col?.dataField === 'gametype' || col?.dataField === 'game_type'
+								? 10
+								: col?.dataField === 'post_date'
 								? 30
 								: -4,
 						bottom: 0.5
@@ -315,6 +321,8 @@ const GamesLibrary = () => {
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			formatter: (content, row) => {
+				console.log(content, 'content media div');
+				console.log(row, 'media div');
 				return (
 					<div className={classes.mediaWrapper}>
 						<Tooltip
@@ -330,9 +338,7 @@ const GamesLibrary = () => {
 											? classes.virallandscapePreview
 											: classes.mediaIconPortraitPreview
 									}
-									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-										row?.thumbnail_url ? row?.thumbnail_url : row?.media
-									}`}
+									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.game_image}`}
 									alt='no img'
 								/>
 							}
@@ -350,7 +356,7 @@ const GamesLibrary = () => {
 								{/* <PlayArrowIcon className={classes.playIcon} /> */}
 								<img
 									className={classes.mediaIcon}
-									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.thumbnail_url}`}
+									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.game_image}`}
 								/>
 							</span>
 						</Tooltip>
@@ -390,7 +396,7 @@ const GamesLibrary = () => {
 				);
 			},
 			headerStyle: () => {
-				return { paddingLeft: '48px' };
+				return { paddingLeft: '30px' };
 			}
 		},
 		{
