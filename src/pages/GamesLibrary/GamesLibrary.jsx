@@ -1,41 +1,40 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
+/* eslint-disable react/prop-types */
 import React, { forwardRef, useCallback, useEffect, useState } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import { Markup } from 'interweave';
+import DatePicker from 'react-datepicker';
 import _debounce from 'lodash/debounce';
 import { useNavigate } from 'react-router-dom';
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux';
 import {
-	getPosts,
+	getAllGames,
+	getSpecificGame,
 	resetCalendarError,
-	resetNoResultStatus,
-	getSpecificPost
-} from './postLibrarySlice';
+	resetNoResultStatus
+} from './gamesLibrarySlice';
+
+// Components
+import GamesSlider from '../../components/games/uploadOrEditGame/GamesSlider';
+import Button from '../../components/button';
+import Layout from '../../components/layout';
+import Table from '../../components/table';
 
 // CSS / Material UI
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import 'react-datepicker/dist/react-datepicker.css';
+import classes from './_gamesLibrary.module.scss';
+import Pagination from '@mui/material/Pagination';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import Pagination from '@mui/material/Pagination';
-import classes from './_postLibrary.module.scss';
-import './_calender.scss';
+import '../PostLibrary/_calender.scss';
 
 // Utils
 import { getDateTime, formatDate, getCalendarText } from '../../utils';
 import { useStyles, useStyles2 } from './../../utils/styles';
-
-// Components
-import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
-import Button from '../../components/button';
-import Layout from '../../components/layout';
-import Table from '../../components/table';
 
 // Icons
 import { ReactComponent as Edit } from '../../assets/edit.svg';
@@ -45,28 +44,32 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
-const PostLibrary = () => {
+const GamesLibrary = () => {
 	const muiClasses = useStyles();
 	const muiClasses2 = useStyles2();
 
-	// Selectors
-	const posts = useSelector((state) => state.postLibrary.posts);
-	const statusApi = useSelector((state) => state.postLibrary);
-	const totalRecords = useSelector((state) => state.postLibrary.totalRecords);
+	// Selector
+	const games = useSelector((state) => state.GamesLibraryStore.gamesData);
+
+	const gamesApiStatus = useSelector((state) => state.GamesLibraryStore);
+
+	const totalRecords = useSelector(
+		(state) => state.mediaLibraryOriginal.totalRecords
+	);
+
 	const noResultStatus = useSelector(
-		(state) => state.postLibrary.noResultStatus
+		(state) => state.GamesLibraryStore.noResultStatus
 	);
 	const noResultStatusCalendar = useSelector(
-		(state) => state.postLibrary.noResultStatusCalendar
+		(state) => state.GamesLibraryStore.noResultStatusCalendar
 	);
 
 	// State
-
-	const [page, setPage] = useState(1);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
-	const [paginationError, setPaginationError] = useState(false);
+	const [page, setPage] = useState(1);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
+	const [paginationError, setPaginationError] = useState(false);
 	const [search, setSearch] = useState('');
 	const [noResultBorder, setNoResultBorder] = useState('#404040');
 	const [noResultError, setNoResultError] = useState('');
@@ -75,7 +78,9 @@ const PostLibrary = () => {
 	const [noResultCalendarError, setNoResultCalendarError] = useState('');
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
+	const [gameType, setGameType] = useState('');
 
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -91,6 +96,15 @@ const PostLibrary = () => {
 			navigate('/sign-in');
 		}
 	}, []);
+
+	const sortKeysMapping = {
+		title: 'title',
+		file_name: 'media',
+		post_date: 'postdate',
+		user: 'user',
+		last_edit: 'lastedit',
+		game_type: 'gametype'
+	};
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
 		const startDate = formatDate(dateRange[0]);
@@ -111,13 +125,11 @@ const PostLibrary = () => {
 							e.preventDefault();
 							e.stopPropagation();
 							if (startDate && endDate) {
-								//start end search
 								dispatch(
-									//api calls dispatch
-									getPosts({
+									getAllGames({
 										q: search,
 										page: 1,
-										startDate, //start end search
+										startDate,
 										endDate,
 										fromCalendar: true,
 										...sortState
@@ -125,7 +137,7 @@ const PostLibrary = () => {
 								);
 							} else {
 								dispatch(
-									getPosts({
+									getAllGames({
 										q: search,
 										page: 1,
 										fromCalendar: true,
@@ -141,25 +153,14 @@ const PostLibrary = () => {
 		);
 	});
 
-	const dispatch = useDispatch();
-
 	const handleChange = (event, value) => {
 		setPage(value);
 	};
 
-	const sortKeysMapping = {
-		file_name: 'media',
-		post_date: 'postdate',
-		labels: 'label',
-		user: 'user',
-		last_edit: 'lastedit'
-	};
-
 	useEffect(() => {
-		//sort from backend
 		if (sortState.sortby && sortState.order_type && !search) {
 			dispatch(
-				getPosts({
+				getAllGames({
 					page,
 					startDate: formatDate(dateRange[0]),
 					endDate: formatDate(dateRange[1]),
@@ -169,7 +170,7 @@ const PostLibrary = () => {
 		}
 		if (sortState.sortby && sortState.order_type && search) {
 			dispatch(
-				getPosts({
+				getAllGames({
 					q: search,
 					startDate: formatDate(dateRange[0]),
 					endDate: formatDate(dateRange[1]),
@@ -183,7 +184,7 @@ const PostLibrary = () => {
 	useEffect(() => {
 		if (search) {
 			dispatch(
-				getPosts({
+				getAllGames({
 					q: search,
 					page,
 					startDate: formatDate(dateRange[0]),
@@ -193,7 +194,7 @@ const PostLibrary = () => {
 			);
 		} else {
 			dispatch(
-				getPosts({
+				getAllGames({
 					page,
 					startDate: formatDate(dateRange[0]),
 					endDate: formatDate(dateRange[1]),
@@ -238,14 +239,6 @@ const PostLibrary = () => {
 		};
 	}, []);
 
-	useEffect(() => {
-		//page switch and get scroll on top
-		let tableBody = document.getElementsByTagName('tbody')[0];
-		if (tableBody) {
-			tableBody.scrollTop = 0;
-		}
-	}, [page]);
-
 	const sortRows = (order, col) => {
 		if (order && col.dataField) {
 			if (
@@ -260,20 +253,47 @@ const PostLibrary = () => {
 		}
 		if (!order)
 			return (
-				<ArrowDropUpIcon className={classes.sortIcon} style={{ bottom: 0.5 }} />
+				<ArrowDropUpIcon
+					className={classes.sortIcon}
+					style={{
+						left:
+							col?.dataField === 'gametype' || col?.dataField === 'game_type'
+								? 10
+								: col?.dataField === 'post_date'
+								? 30
+								: -4,
+						bottom: 0.5
+					}}
+				/>
 			);
 		else if (order === 'asc')
 			return (
 				<ArrowDropUpIcon
 					className={classes.sortIconSelected}
-					style={{ bottom: 0.5 }}
+					style={{
+						left:
+							col?.dataField === 'gametype' || col?.dataField === 'game_type'
+								? 10
+								: col?.dataField === 'post_date'
+								? 30
+								: -4,
+						bottom: 0.5
+					}}
 				/>
 			);
 		else if (order === 'desc')
 			return (
 				<ArrowDropDownIcon
 					className={classes.sortIconSelected}
-					style={{ bottom: 0.5 }}
+					style={{
+						left:
+							col?.dataField === 'gametype' || col?.dataField === 'game_type'
+								? 10
+								: col?.dataField === 'post_date'
+								? 30
+								: -4,
+						bottom: 0.5
+					}}
 				/>
 			);
 		return null;
@@ -281,59 +301,46 @@ const PostLibrary = () => {
 
 	const columns = [
 		{
+			dataField: 'title',
+			text: 'TITLE',
+			sort: true,
+			sortCaret: sortRows,
+			sortFunc: () => {},
+			formatter: (content) => {
+				return (
+					<div className={classes.row}>
+						<Markup content={`${content} `} />
+					</div>
+				);
+			}
+		},
+		{
 			dataField: 'file_name',
 			text: 'MEDIA',
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			formatter: (content, row) => {
-				//console.log(row, content, 'post library');
+				console.log(content, 'content media div');
+				console.log(row, 'media div');
 				return (
-					<div
-						className={
-							row.orientation_type === 'landscape'
-								? classes.mediaWrapperLandscape
-								: classes.mediaWrapper
-						}
-					>
+					<div className={classes.mediaWrapper}>
 						<Tooltip
 							// TransitionComponent={Fade}
 							// TransitionProps={{ timeout: 600 }}
+
 							title={
-								row?.thumbnail_url ? (
-									<video
-										id={'my-video'}
-										//poster={row.thumbnail_url}
-										autoPlay
-										muted
-										className={
-											row?.orientation_type === 'square'
-												? classes.mediaIconPreview
-												: row?.orientation_type === 'landscape'
-												? classes.mediaIconLandscapePreview
-												: classes.mediaIconPortraitPreview
-										}
-										controls={true}
-									>
-										<source
-											src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.media}`}
-										/>
-									</video>
-								) : (
-									<img
-										className={
-											row?.orientation_type === 'square'
-												? classes.mediaIconPreview
-												: row?.orientation_type === 'landscape'
-												? classes.mediaIconLandscapePreview
-												: classes.mediaIconPortraitPreview
-										}
-										src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-											row?.thumbnail_url ? row?.thumbnail_url : row?.media
-										}`}
-										alt='no img'
-									/>
-								)
+								<img
+									className={
+										row.width === row.height
+											? classes.mediaIconPreview
+											: row.width > row.height
+											? classes.virallandscapePreview
+											: classes.mediaIconPortraitPreview
+									}
+									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.game_image}`}
+									alt='no img'
+								/>
 							}
 							placement='right'
 							componentsProps={{
@@ -341,33 +348,18 @@ const PostLibrary = () => {
 							}}
 						>
 							<span>
-								{row?.thumbnail_url ? (
-									<PlayArrowIcon
-										className={
-											row?.orientation_type === 'portrait'
-												? classes.playIconPortrait
-												: classes.playIcon
-										}
-									/>
+								{/* {row?.thumbnail_url ? (
+									<PlayArrowIcon className={classes.playIcon} />
 								) : (
-									<></>
-								)}
-
+									''
+								)} */}
+								{/* <PlayArrowIcon className={classes.playIcon} /> */}
 								<img
-									className={
-										row?.orientation_type === 'square'
-											? classes.mediaIcon
-											: row?.orientation_type === 'landscape'
-											? classes.mediaIconLandscape
-											: classes.mediaIconPortrait
-									}
-									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-										row?.thumbnail_url ? row?.thumbnail_url : row?.media
-									}`}
+									className={classes.mediaIcon}
+									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.game_image}`}
 								/>
 							</span>
 						</Tooltip>
-
 						<Tooltip
 							TransitionComponent={Fade}
 							TransitionProps={{ timeout: 600 }}
@@ -391,32 +383,36 @@ const PostLibrary = () => {
 			}
 		},
 		{
+			dataField: 'game_type',
+			sort: true,
+			sortCaret: sortRows,
+			sortFunc: () => {},
+			text: 'GAME TYPE',
+			formatter: (content) => {
+				return (
+					<div className={classes.rowType}>
+						<Markup content={`${content} `} />
+					</div>
+				);
+			},
+			headerStyle: () => {
+				return { paddingLeft: '30px' };
+			}
+		},
+		{
 			dataField: 'post_date',
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			text: 'POST DATE | TIME',
 			formatter: (content) => {
-				return <div className={classes.row}>{getDateTime(content)}</div>;
+				return <div className={classes.rowType}>{getDateTime(content)}</div>;
+			},
+			headerStyle: () => {
+				return { paddingLeft: '48px' };
 			}
 		},
-		{
-			dataField: 'labels',
-			sort: true,
-			sortCaret: sortRows,
-			sortFunc: () => {},
-			text: 'LABELS',
-			formatter: (content) => {
-				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
-				return (
-					//<div className={classes.row}>{content[0] + `, ` + content[1]}</div>
-					<Markup
-						className={classes.row}
-						content={`${content[0]} ${secondLabel}`}
-					/>
-				);
-			}
-		},
+
 		{
 			dataField: 'user',
 			sort: true,
@@ -425,7 +421,7 @@ const PostLibrary = () => {
 			text: 'USER',
 			formatter: (content) => {
 				return (
-					//<div className={classes.row}>{content}</div>
+					// <div className={classes.row}>{content}</div>
 					<Markup className={classes.row} content={`${content}`} />
 				);
 			}
@@ -437,7 +433,7 @@ const PostLibrary = () => {
 			sortFunc: () => {},
 			text: 'LAST EDIT',
 			formatter: (content) => {
-				return <div className={classes.row}>{getDateTime(content)}</div>;
+				return <div className={classes.row}>{formatDate(content)}</div>;
 			}
 		},
 		{
@@ -449,7 +445,7 @@ const PostLibrary = () => {
 						<Tooltip
 							TransitionComponent={Fade}
 							TransitionProps={{ timeout: 600 }}
-							title={'EDIT POST'}
+							title={'EDIT GAMES'}
 							arrow
 							componentsProps={{
 								tooltip: { className: classes.toolTip },
@@ -466,11 +462,10 @@ const PostLibrary = () => {
 
 	const tableRowEvents = {
 		onClick: (e, row) => {
-			// if (!edit) {
-			dispatch(getSpecificPost(row.id));
+			dispatch(getSpecificGame(row.id));
 			setEdit(true);
 			setShowSlider(true);
-			// }
+			setGameType(row.game_type);
 		}
 	};
 
@@ -480,9 +475,10 @@ const PostLibrary = () => {
 			_search = prevState;
 			return _search;
 		});
+
 		if (_search) {
 			dispatch(
-				getPosts({
+				getAllGames({
 					q: _search,
 					page: 1,
 					startDate: formatDate(dateRange[0]),
@@ -492,7 +488,7 @@ const PostLibrary = () => {
 			);
 		} else {
 			dispatch(
-				getPosts({
+				getAllGames({
 					page: 1,
 					startDate: formatDate(dateRange[0]),
 					endDate: formatDate(dateRange[1]),
@@ -503,16 +499,23 @@ const PostLibrary = () => {
 		setPage(1);
 	};
 
-	const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
+	const debounceFun = useCallback(_debounce(handleDebounceFun, 600), []);
 
 	const handleChangeSearch = (e) => {
 		setSearch(e.target.value);
 		debounceFun(e.target.value);
 	};
 
+	useEffect(() => {
+		let tableBody = document.getElementsByTagName('tbody')[0];
+		if (tableBody) {
+			tableBody.scrollTop = 0;
+		}
+	}, [page]);
+
 	return (
 		<LoadingOverlay
-			active={statusApi.status === 'pending' ? true : false}
+			active={gamesApiStatus.status === 'pending' ? true : false}
 			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
 			spinner={
 				<img src={Four33Loader} className={classes.loader} alt='loader' />
@@ -521,13 +524,13 @@ const PostLibrary = () => {
 			<Layout>
 				<div className={classes.header}>
 					<div className={classes.subheader1}>
-						<h1 style={{ marginRight: '2rem' }}>POST LIBRARY</h1>
+						<h1 style={{ marginRight: '2rem' }}>GAMES LIBRARY</h1>
 						<Button
 							onClick={() => {
 								setEdit(false);
 								setShowSlider(true);
 							}}
-							text={'UPLOAD POST'}
+							text={'UPLOAD GAME'}
 						/>
 					</div>
 					<div className={classes.subheader2}>
@@ -538,7 +541,7 @@ const PostLibrary = () => {
 								// onKeyPress={(e) => {
 								// 	if (e.key === 'Enter' && search) {
 								// 		dispatch(
-								// 			getPosts({
+								// 			getAllGames({
 								// 				q: search,
 								// 				page,
 								// 				startDate: formatDate(dateRange[0]),
@@ -548,7 +551,7 @@ const PostLibrary = () => {
 								// 		);
 								// 	} else if (e.key === 'Enter' && !search) {
 								// 		dispatch(
-								// 			getPosts({
+								// 			getAllGames({
 								// 				page,
 								// 				startDate: formatDate(dateRange[0]),
 								// 				endDate: formatDate(dateRange[1]),
@@ -557,12 +560,8 @@ const PostLibrary = () => {
 								// 		);
 								// 	}
 								// }}
-								// onChange={(e) => {
-								// 	setSearch(e.target.value);
-								// 	//setIsSearch(true);
-								// }}
 								onChange={handleChangeSearch}
-								placeholder={'Search post, user, label'}
+								placeholder={'Search game'}
 								InputProps={{
 									disableUnderline: true,
 									className: classes.textFieldInput,
@@ -594,7 +593,7 @@ const PostLibrary = () => {
 					</div>
 				</div>
 				<div className={classes.tableContainer}>
-					<Table rowEvents={tableRowEvents} columns={columns} data={posts} />
+					<Table rowEvents={tableRowEvents} columns={columns} data={games} />
 				</div>
 
 				<div className={classes.paginationRow}>
@@ -630,22 +629,29 @@ const PostLibrary = () => {
 						className={classes.gotoInput}
 					/>
 				</div>
-				<UploadOrEditPost
+
+				<GamesSlider
 					open={showSlider}
 					isEdit={edit}
 					handleClose={() => {
 						setShowSlider(false);
 						// setTimeout(() => setEdit(false), 600);
 					}}
-					title={edit ? 'Edit Post' : 'Upload a Post'}
-					heading1={edit ? 'Media Files' : 'Add Media Files'}
-					buttonText={edit ? 'SAVE CHANGES' : 'POST'}
+					page={page}
+					gameType={gameType}
+					title={
+						edit && gameType === 'JOGO'
+							? 'Edit JOGO Game'
+							: edit && gameType === 'ARCADE GAME'
+							? 'Edit Arcade Game'
+							: 'Upload Game'
+					}
+					heading1={edit ? 'Game Image' : 'Add Game Image'}
+					buttonText={edit ? 'SAVE CHANGES' : 'ADD GAME'}
 				/>
-
-				{/* <Popup  closePopup={closeThePop} open={popped} title={'Upload a Post'}/> :   */}
 			</Layout>
 		</LoadingOverlay>
 	);
 };
 
-export default PostLibrary;
+export default GamesLibrary;

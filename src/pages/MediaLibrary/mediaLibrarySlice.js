@@ -108,7 +108,7 @@ export const mediaLibrarySlice = createSlice({
 	},
 	extraReducers: {
 		[getMedia.pending]: (state) => {
-			state.status = 'loading';
+			state.status = 'pending';
 		},
 		[getMedia.fulfilled]: (state, action) => {
 			state.media =

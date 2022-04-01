@@ -41,6 +41,8 @@ const UploadOrEditMedia = ({
 }) => {
 	const [labelColor, setLabelColor] = useState('#ffffff');
 	const [labelError, setLabelError] = useState('');
+	const [dropboxLink, setDropboxLink] = useState(''); // media dropbox url
+	const [dropboxLink2, setDropboxLink2] = useState(''); // cover image dropbox url
 	const [selectedLabels, setSelectedLabels] = useState([]);
 	const [mediaLabels, setMediaLabels] = useState([]);
 	const [mainCategory, setMainCategory] = useState('');
@@ -74,6 +76,8 @@ const UploadOrEditMedia = ({
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
+	const [fileDuration, setFileDuration] = useState(null);
+	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
 
@@ -141,7 +145,8 @@ const UploadOrEditMedia = ({
 			// 	// console.log(setData.name);
 			// 	setMainCategory(specificMedia.media_type);
 			// }
-
+			setDropboxLink(specificMedia?.media_dropbox_url);
+			setDropboxLink2(specificMedia?.image_dropbox_url);
 			setMainCategory(specificMedia?.media_type);
 			// console.log(mainCategory);
 			setSubCategory(specificMedia?.sub_category);
@@ -270,7 +275,7 @@ const UploadOrEditMedia = ({
 	}, [acceptedFiles]);
 
 	useEffect(() => {
-		console.log(videoRef?.current?.duration, 'duration');
+		console.log(fileDuration, 'duration');
 	}, [videoRef.current]);
 
 	useEffect(() => {
@@ -295,6 +300,8 @@ const UploadOrEditMedia = ({
 
 	const resetState = () => {
 		setMainCategory('');
+		setDropboxLink('');
+		setDropboxLink2('');
 		setSubCategory('');
 		setUploadedFiles([]);
 		setUploadedCoverImage([]);
@@ -322,6 +329,7 @@ const UploadOrEditMedia = ({
 		setSelectedLabels([]);
 		setExtraLabel('');
 		setDisableDropdown(true);
+		setEditBtnDisabled(false);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -414,11 +422,17 @@ const UploadOrEditMedia = ({
 				}
 			);
 			if (result?.data?.status_code === 200) {
-				toast.success('Media has been deleted!');
-				handleClose();
-
-				//setting a timeout for getting post after delete.
-				dispatch(getMedia({ page }));
+				if (result?.data?.data?.is_deleted === false) {
+					toast.error(
+						'The media or article cannot be deleted because it is used as a top banner'
+					);
+					dispatch(getMedia({ page }));
+				} else {
+					toast.success('Media has been deleted!');
+					handleClose();
+					//setting a timeout for getting post after delete.
+					dispatch(getMedia({ page }));
+				}
 			}
 		} catch (e) {
 			toast.error('Failed to delete media!');
@@ -442,10 +456,16 @@ const UploadOrEditMedia = ({
 					: {
 							main_category_id: media_type,
 							sub_category_id: subCategory?.id,
+							duration: Math.round(fileDuration),
 							width: fileWidth,
 							height: fileHeight,
 							// sub_category: subCategory,
+
 							title: titleMedia,
+							// media_dropbox_url: dropboxLink,
+							// image_dropbox_url: dropboxLink2,
+							...(dropboxLink ? { media_dropbox_url: dropboxLink } : {}),
+							...(dropboxLink2 ? { image_dropbox_url: dropboxLink2 } : {}),
 							...(selectedLabels.length ? { labels: [...selectedLabels] } : {}),
 							description: description,
 							data: {
@@ -548,12 +568,36 @@ const UploadOrEditMedia = ({
 		mediaButtonStatus ||
 		selectedLabels.length < 10;
 
-	const editBtnDisabled =
-		mediaButtonStatus ||
-		!titleMedia ||
-		!description ||
-		(specificMedia?.title === titleMedia.trim() &&
-			specificMedia?.description === description.trim());
+	useEffect(() => {
+		// console.log(specificMedia?.media_dropbox_url, 'dl1');
+		// console.log(specificMedia?.media_dropbox_url?.length, 'dl1');
+		// console.log(specificMedia?.description?.replace(/\s+/g, '')?.trim(), 'dl1');
+		// console.log(
+		// 	specificMedia?.description?.replace(/\s+/g, '')?.trim()?.length,
+		// 	'dl1'
+		// );
+		// console.log(description?.replace(/\s+/g, '')?.trim(), 'dl2');
+		// console.log(description?.replace(/\s+/g, '')?.trim()?.length, 'dl2');
+		// console.log(specificMedia?.title, 'dl1');
+		// console.log(specificMedia?.title?.length, 'dl1');
+		// console.log(titleMedia, 'dl2');
+		// console.log(titleMedia?.length, 'dl2');
+
+		if (specificMedia) {
+			setEditBtnDisabled(
+				mediaButtonStatus ||
+					!titleMedia ||
+					!description ||
+					(specificMedia?.media_dropbox_url === dropboxLink.trim() &&
+						specificMedia?.image_dropbox_url === dropboxLink2.trim() &&
+						specificMedia?.title.replace(/\s+/g, '')?.trim() ===
+							titleMedia?.replace(/\s+/g, '')?.trim() &&
+						specificMedia?.description?.replace(/\s+/g, '')?.trim() ===
+							description?.replace(/\s+/g, '')?.trim())
+			);
+		}
+	}, [specificMedia, titleMedia, description, dropboxLink, dropboxLink2]);
+	//console.log(editBtnDisabled, 'edb');
 
 	const MainCategoryId = (e) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
@@ -576,8 +620,6 @@ const UploadOrEditMedia = ({
 		//console.log(setData);
 		setSubCategory(setData);
 	};
-
-	//console.log(mainCategory);
 
 	return (
 		<Slider
@@ -763,7 +805,12 @@ const UploadOrEditMedia = ({
 										})}
 									</Select>
 									<p className={classes.uploadMediaError2}>
-										{mainCategory?.name || mainCategory ? subCategoryError : ''}
+										{isEdit
+											? ' '
+											: mainCategory?.name || mainCategory
+											? subCategoryError
+											: ''}
+										{/* {} */}
 									</p>
 								</div>
 							</div>
@@ -797,11 +844,37 @@ const UploadOrEditMedia = ({
 																		<>
 																			<Union className={classes.playIcon} />
 																			<div className={classes.fileThumbnail2} />
+																			<video
+																				src={file.img}
+																				style={{ display: 'none' }}
+																				ref={videoRef}
+																				onLoadedMetadata={() => {
+																					setFileWidth(
+																						videoRef.current.videoWidth
+																					);
+																					setFileHeight(
+																						videoRef.current.videoHeight
+																					);
+																					setFileDuration(
+																						videoRef.current.duration
+																					);
+																				}}
+																			/>
 																		</>
 																	) : (
 																		<>
 																			<MusicIcon className={classes.playIcon} />
 																			<div className={classes.fileThumbnail2} />
+																			<audio
+																				src={file.img}
+																				style={{ display: 'none' }}
+																				ref={videoRef}
+																				onLoadedMetadata={() => {
+																					setFileDuration(
+																						videoRef.current.duration
+																					);
+																				}}
+																			/>
 																		</>
 																	)}
 
@@ -860,6 +933,24 @@ const UploadOrEditMedia = ({
 									<p className={classes.fileRejectionError}>
 										{fileRejectionError}
 									</p>
+									<div className={classes.dropBoxUrlContainer}>
+										<h6>DROPBOX URL</h6>
+										<TextField
+											value={dropboxLink}
+											multiline
+											maxRows={2}
+											onChange={(e) => setDropboxLink(e.target.value)}
+											placeholder={'Please drop the dropbox URL here'}
+											className={classes.textField}
+											InputProps={{
+												disableUnderline: true,
+												className: classes.textFieldInput,
+												style: {
+													borderRadius: dropboxLink ? '16px' : '40px'
+												}
+											}}
+										/>
+									</div>
 
 									<h5>{isEdit ? 'Cover Image' : 'Add Cover Image'}</h5>
 									<DragDropContext>
@@ -878,50 +969,21 @@ const UploadOrEditMedia = ({
 																ref={provided.innerRef}
 															>
 																<div className={classes.filePreviewLeft}>
-																	{file.type === 'video' ? (
-																		<>
-																			<video
-																				ref={videoRef}
-																				id={'my-video'}
-																				//poster={isEdit ? file.img : null}
-																				className={classes.fileThumbnail}
-																				style={{
-																					objectFit: 'cover',
-																					objectPosition: 'center'
-																				}}
-																				onLoadedMetadata={() => {
-																					setFileWidth(
-																						videoRef.current.videoWidth
-																					);
-																					setFileHeight(
-																						videoRef.current.videoHeight
-																					);
-																				}}
-																			>
-																				<source src={file.img} />
-																			</video>
-																		</>
-																	) : (
-																		<>
-																			<img
-																				src={file.img}
-																				className={classes.fileThumbnail}
-																				style={{
-																					objectFit: 'cover',
-																					objectPosition: 'center'
-																				}}
-																				ref={imgRef}
-																				onLoad={() => {
-																					setFileWidth(
-																						imgRef.current.naturalWidth
-																					);
-																					setFileHeight(
-																						imgRef.current.naturalHeight
-																					);
-																				}}
-																			/>
-																		</>
-																	)}
+																	<img
+																		src={file.img}
+																		className={classes.fileThumbnail}
+																		style={{
+																			objectFit: 'cover',
+																			objectPosition: 'center'
+																		}}
+																		ref={imgRef}
+																		onLoad={() => {
+																			setFileWidth(imgRef.current.naturalWidth);
+																			setFileHeight(
+																				imgRef.current.naturalHeight
+																			);
+																		}}
+																	/>
 
 																	<p className={classes.fileName}>
 																		{file.fileName}
@@ -993,9 +1055,39 @@ const UploadOrEditMedia = ({
 									<p className={classes.fileRejectionError}>
 										{fileRejectionError2}
 									</p>
+									<div className={classes.dropBoxUrlContainer}>
+										<h6>DROPBOX URL</h6>
+										<TextField
+											value={dropboxLink2}
+											onChange={(e) => setDropboxLink2(e.target.value)}
+											placeholder={'Please drop the dropbox URL here'}
+											className={classes.textField}
+											InputProps={{
+												disableUnderline: true,
+												className: classes.textFieldInput,
+												style: {
+													borderRadius: dropboxLink ? '16px' : '40px'
+												}
+											}}
+										/>
+									</div>
 
 									<div className={classes.titleContainer}>
-										<h6 style={{ color: titleMediaLabelColor }}>TITLE</h6>
+										<div className={classes.characterCount}>
+											<h6 style={{ color: titleMediaLabelColor }}>TITLE</h6>
+											<h6
+												style={{
+													color:
+														titleMedia?.length >= 25 && titleMedia?.length <= 27
+															? 'pink'
+															: titleMedia?.length === 28
+															? 'red'
+															: 'white'
+												}}
+											>
+												{titleMedia?.length}/28
+											</h6>
+										</div>
 										<TextField
 											value={titleMedia}
 											onChange={(e) => {
@@ -1009,6 +1101,7 @@ const UploadOrEditMedia = ({
 												disableUnderline: true,
 												className: classes.textFieldInput
 											}}
+											inputProps={{ maxLength: 28 }}
 											multiline
 											maxRows={2}
 										/>

@@ -15,7 +15,8 @@ import { ReactComponent as ArticleSelected } from '../../assets/NewsSelected.svg
 import { ReactComponent as Viral } from '../../assets/Flame.svg';
 import { ReactComponent as ViralSelected } from '../../assets/Flame_Selected.svg';
 import { ReactComponent as Logout } from '../../assets/logout.svg';
-
+import { ReactComponent as Games } from '../../assets/Games.svg';
+import { ReactComponent as GamesSelected } from '../../assets/GamesSelected.svg';
 import { useGoogleLogout } from 'react-google-login';
 
 const Sidebar = () => {
@@ -81,16 +82,16 @@ const Sidebar = () => {
 				</div>
 				<div
 					onClick={() => {
-						navigate('/quiz-library');
+						navigate('/question-library');
 					}}
 					className={classes.iconWrapper}
 					style={
-						location?.pathname.includes('quiz-library')
+						location?.pathname.includes('question-library')
 							? { backgroundColor: '#404040' }
 							: {}
 					}
 				>
-					{location?.pathname.includes('quiz-library') ? (
+					{location?.pathname.includes('question-library') ? (
 						<QuizSelected className={classes.icon} />
 					) : (
 						<Quiz className={classes.icon} />
@@ -145,6 +146,23 @@ const Sidebar = () => {
 						<ViralSelected className={classes.icon} />
 					) : (
 						<Viral className={classes.icon} />
+					)}
+				</div>
+				<div
+					onClick={() => {
+						navigate('/games-library');
+					}}
+					className={classes.iconWrapper}
+					style={
+						location?.pathname.includes('games-library')
+							? { backgroundColor: '#404040' }
+							: {}
+					}
+				>
+					{location?.pathname.includes('games-library') ? (
+						<GamesSelected className={classes.icon} />
+					) : (
+						<Games className={classes.icon} />
 					)}
 				</div>
 			</div>

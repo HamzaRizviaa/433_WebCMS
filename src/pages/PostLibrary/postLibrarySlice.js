@@ -82,7 +82,7 @@ export const postLibrarySlice = createSlice({
 	extraReducers: {
 		//redux comes up
 		[getPosts.pending]: (state) => {
-			state.status = 'loading';
+			state.status = 'pending';
 		},
 		[getPosts.fulfilled]: (state, action) => {
 			state.posts =

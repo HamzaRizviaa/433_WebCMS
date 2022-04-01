@@ -65,6 +65,7 @@ const UploadOrEditViral = ({
 }) => {
 	const [articleTitle, setArticleTitle] = useState('');
 	const [editorText, setEditorText] = useState('');
+	const [dropboxLink, setDropboxLink] = useState('');
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -116,12 +117,13 @@ const UploadOrEditViral = ({
 				setSelectedLabels(_labels);
 			}
 			setArticleTitle(specificArticle?.title);
+			setDropboxLink(specificArticle?.dropbox_url);
 			setEditorTextChecker(specificArticle.description);
 			// setTimeout(() => {
 			specificArticle?.length === 0
 				? setEditorText('')
 				: setEditorText(
-						tinyMCE.activeEditor.setContent(specificArticle?.description)
+						tinyMCE.activeEditor?.setContent(specificArticle?.description)
 				  );
 			// }, 5000);
 
@@ -295,6 +297,7 @@ const UploadOrEditViral = ({
 
 	const handleEditorChange = () => {
 		const editorTextContent = tinymce?.activeEditor?.getContent();
+		console.log(editorTextContent);
 		setEditorText(editorTextContent);
 		setEditorTextChecker(editorTextContent); // to check yellow button condition
 	};
@@ -313,9 +316,10 @@ const UploadOrEditViral = ({
 					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
 					...(!isEdit ? { height: fileHeight } : {}),
 					...(!isEdit ? { width: fileWidth } : {}),
-					// ...(!isEdit ? { description: editorTextContent } : {}),
+					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
 					// description: editorTextContent,
 					description: editorText,
+					// dropbox_url: dropboxLink,
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -355,6 +359,8 @@ const UploadOrEditViral = ({
 	const resetState = () => {
 		setArticleTitle('');
 		setEditorText('');
+		setEditorText(tinyMCE.activeEditor?.setContent(''));
+		setDropboxLink('');
 		setEditorTextChecker('');
 		setUploadMediaError('');
 		setFileRejectionError('');
@@ -442,11 +448,17 @@ const UploadOrEditViral = ({
 				}
 			);
 			if (result?.data?.status_code === 200) {
-				toast.success('Article has been deleted!');
-				handleClose();
-
-				//setting a timeout for getting post after delete.
-				dispatch(getAllArticlesApi({ page }));
+				if (result?.data?.data?.is_deleted === false) {
+					toast.error(
+						'the media or article cannot be deleted because it is used as a top banner'
+					);
+					dispatch(getAllArticlesApi({ page }));
+				} else {
+					toast.success('Article has been deleted!');
+					handleClose();
+					//setting a timeout for getting post after delete.
+					dispatch(getAllArticlesApi({ page }));
+				}
 			}
 		} catch (e) {
 			toast.error('Failed to delete Article!');
@@ -470,6 +482,24 @@ const UploadOrEditViral = ({
 		setPreviewFile(null);
 	};
 
+	const handleTitleDuplicate = async (givenTitle) => {
+		try {
+			const result = await axios.get(
+				`${process.env.REACT_APP_API_ENDPOINT}/article/check/${givenTitle}`,
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			return result?.data?.message;
+		} catch (error) {
+			console.log('Error');
+
+			return null;
+		}
+	};
+
 	const postBtnDisabled =
 		!uploadedFiles.length ||
 		!articleTitle ||
@@ -489,12 +519,13 @@ const UploadOrEditViral = ({
 	);
 	const editBtnDisabled =
 		postButtonStatus ||
-		specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim();
+		(specificArticle?.dropbox_url === dropboxLink.trim() &&
+			specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim());
 
-	console.log(specificArticleTextTrimmed, 'desc');
-	console.log(editorTextCheckerTrimmed.trim(), 'editor');
-	console.log(specificArticleTextTrimmed?.length, 'desc Length');
-	console.log(editorTextCheckerTrimmed?.trim()?.length, 'editor Length');
+	// console.log(specificArticleTextTrimmed, 'desc');
+	// console.log(editorTextCheckerTrimmed.trim(), 'editor');
+	// console.log(specificArticleTextTrimmed?.length, 'desc Length');
+	// console.log(editorTextCheckerTrimmed?.trim()?.length, 'editor Length');
 	// const editBtnDisabled = postButtonStatus || !articleTitle;
 	//|| (specificPost?.articleTitle === articleTitle.trim() &&
 	// 	specificPost?.media_id == selectedMedia?.id);
@@ -672,7 +703,22 @@ const UploadOrEditViral = ({
 							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
 
 							<div className={classes.captionContainer}>
-								<h6 style={{ color: articleTitleColor }}>ARTICLE TITLE</h6>
+								<div className={classes.characterCount}>
+									<h6 style={{ color: articleTitleColor }}>ARTICLE TITLE</h6>
+									<h6
+										style={{
+											color:
+												articleTitle?.length >= 25 && articleTitle?.length <= 27
+													? 'pink'
+													: articleTitle?.length === 28
+													? 'red'
+													: 'white'
+										}}
+									>
+										{articleTitle?.length}/28
+									</h6>
+								</div>
+
 								<TextField
 									disabled={isEdit}
 									value={articleTitle}
@@ -688,20 +734,38 @@ const UploadOrEditViral = ({
 											borderRadius: articleTitle ? '16px' : '40px'
 										}
 									}}
-									// inputProps={{ maxLength: 30 }}
+									inputProps={{ maxLength: 28 }}
 									// autoFocus={true}
 									// FormHelperTextProps={{
 									// 	className: classes.characterCount,
 									// 	style: {
-									// 		color: articleTitle.length === 30 ? 'red' : 'white'
+									// 		color: articleTitle.length === 28 ? 'red' : 'white'
 									// 	}
 									// }}
-									// helperText={`${articleTitle.length}/30`}
+									// helperText={`${articleTitle.length}/28`}
 									multiline
 									maxRows={2}
 								/>
 							</div>
 							<p className={classes.mediaError}>{articleTitleError}</p>
+							<div className={classes.dropBoxUrlContainer}>
+								<h6>DROPBOX URL</h6>
+								<TextField
+									value={dropboxLink}
+									onChange={(e) => setDropboxLink(e.target.value)}
+									placeholder={'Please drop the dropbox URL here'}
+									className={classes.textField}
+									multiline
+									maxRows={2}
+									InputProps={{
+										disableUnderline: true,
+										className: classes.textFieldInput,
+										style: {
+											borderRadius: dropboxLink ? '16px' : '40px'
+										}
+									}}
+								/>
+							</div>
 
 							<div className={classes.captionContainer}>
 								<h6 style={{ color: labelColor }}>LABELS</h6>
@@ -908,7 +972,6 @@ const UploadOrEditViral = ({
 														fontSize: '64px',
 														letterSpacing: '-2%',
 														marginBottom: '3px'
-														// lineHeight: '56px',
 													}
 													//classes: 'hamza'
 												},
@@ -992,10 +1055,10 @@ const UploadOrEditViral = ({
 													items: [
 														{
 															title: 'Header 1',
-															format: 'title_h1',
-															styles: {
-																marginBottom: '23px !important'
-															}
+															format: 'title_h1'
+															// styles: {
+															// 	fontSize: '40'
+															// }
 														},
 														{
 															title: 'Header 2',
@@ -1041,7 +1104,7 @@ const UploadOrEditViral = ({
 													]
 												}
 											],
-											menubar: 'edit insert format tools',
+											menubar: 'edit insert tools format',
 											menu: {
 												edit: {
 													title: 'Edit',
@@ -1073,12 +1136,23 @@ const UploadOrEditViral = ({
 												'alignleft aligncenter ' +
 												'alignright alignjustify | bullist numlist | ' +
 												'emoticons'
+											// init_instance_callback: function (editor) {
+											// 	editor.on('focus', function () {
+											// 		setDisableDropdown(false);
+											// 	});
+											// },
 										}}
 										onEditorChange={() => handleEditorChange()}
-										onInit={() => setDisableDropdown(false)}
-										onFocusIn={() => {
-											setDisableDropdown(false);
-										}}
+										//onExecCommand={() => setDisableDropdown(false)}
+										onMouseEnter={() => setDisableDropdown(false)}
+										//onInit={() => setDisableDropdown(false)}
+										//onMouseEnter={() => setDisableDropdown(false)}
+										// onFocusIn={() => {
+										// 	setDisableDropdown(false);
+										// }}
+										//onDeactivate={() => setDisableDropdown(true)}
+										//onActivate={() => setDisableDropdown(true)}
+										//onMouseLeave={() => setDisableDropdown(true)}
 										onBlur={() => setDisableDropdown(true)}
 									/>
 								</div>
@@ -1108,11 +1182,28 @@ const UploadOrEditViral = ({
 							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 								<Button
 									disabled={isEdit ? editBtnDisabled : postBtnDisabled}
-									onClick={() => {
+									onClick={async () => {
 										if (postBtnDisabled || editBtnDisabled) {
 											validateArticleBtn();
 										} else {
 											setPostButtonStatus(true);
+											if (
+												(await handleTitleDuplicate(articleTitle)) ===
+												'The Title Already Exist'
+												// 	200 &&
+												// articleTitle !== specificArticle?.title
+											) {
+												console.log(articleTitle, specificArticle.title);
+												setArticleTitleColor('#ff355a');
+												setArticleTitleError('This title already exists');
+												setTimeout(() => {
+													setArticleTitleColor('#ffffff');
+													setArticleTitleError('');
+												}, [5000]);
+
+												setPostButtonStatus(false);
+												return;
+											}
 											if (isEdit) {
 												createArticle(specificArticle?.id);
 											} else {

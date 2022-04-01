@@ -33,12 +33,12 @@ import {
 	resetNoResultStatus,
 	getSpecificViral
 } from './viralLibararySlice';
-
+import Four33Loader from '../../assets/Loader_Yellow.gif';
+import LoadingOverlay from 'react-loading-overlay';
 const ViralLibrary = () => {
 	// Selectors
 	const virals = useSelector((state) => state.ViralLibraryStore.virals);
-	console.log(virals, 'virals data api');
-	// const totalRecords = 200;
+	const viralsApiStatus = useSelector((state) => state.ViralLibraryStore);
 	const totalRecords = useSelector(
 		(state) => state.ViralLibraryStore.totalRecords
 	);
@@ -159,7 +159,8 @@ const ViralLibrary = () => {
 						left:
 							col?.dataField === 'user' || col?.dataField === 'last_edit'
 								? 7
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -171,7 +172,8 @@ const ViralLibrary = () => {
 						left:
 							col?.dataField === 'user' || col?.dataField === 'last_edit'
 								? 7
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -183,7 +185,8 @@ const ViralLibrary = () => {
 						left:
 							col?.dataField === 'user' || col?.dataField === 'last_edit'
 								? 7
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -475,153 +478,163 @@ const ViralLibrary = () => {
 	}, []);
 
 	return (
-		<Layout>
-			<div className={classes.header}>
-				<div className={classes.subheader1}>
-					<h1 style={{ marginRight: '2rem' }}>VIRAL LIBRARY</h1>
-					<Button
-						onClick={() => {
-							setEdit(false);
-							setShowSlider(true);
+		<LoadingOverlay
+			active={viralsApiStatus.status === 'pending' ? true : false}
+			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
+			spinner={
+				<img src={Four33Loader} className={classes.loader} alt='loader' />
+			}
+		>
+			<Layout>
+				<div className={classes.header}>
+					<div className={classes.subheader1}>
+						<h1 style={{ marginRight: '2rem' }}>VIRAL LIBRARY</h1>
+						<Button
+							onClick={() => {
+								setEdit(false);
+								setShowSlider(true);
+							}}
+							text={'UPLOAD VIRAL'}
+						/>
+					</div>
+					<div className={classes.subheader2}>
+						<div>
+							<TextField
+								className={classes.searchField}
+								value={search}
+								onKeyPress={(e) => {
+									if (e.key === 'Enter' && search) {
+										dispatch(
+											getAllViralsApi({
+												q: search,
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									} else if (e.key === 'Enter' && !search) {
+										dispatch(
+											getAllViralsApi({
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									}
+								}}
+								onChange={(e) => {
+									setSearch(e.target.value);
+									//setIsSearch(true);
+								}}
+								placeholder={'Search viral, user, label'}
+								InputProps={{
+									disableUnderline: true,
+									className: classes.textFieldInput,
+									style: { borderColor: noResultBorder },
+									endAdornment: (
+										<InputAdornment>
+											<Search
+												onClick={() => {
+													if (search) {
+														dispatch(
+															getAllViralsApi({
+																q: search,
+																page,
+																startDate: formatDate(dateRange[0]),
+																endDate: formatDate(dateRange[1]),
+																...sortState
+															})
+														);
+													} else {
+														dispatch(
+															getAllViralsApi({
+																page,
+																startDate: formatDate(dateRange[0]),
+																endDate: formatDate(dateRange[1]),
+																...sortState
+															})
+														);
+													}
+												}}
+												className={classes.searchIcon}
+											/>
+										</InputAdornment>
+									)
+								}}
+							/>
+							<p className={classes.noResultError}>{noResultError}</p>
+						</div>
+						<div className={classes.calendarWrapper}>
+							<DatePicker
+								customInput={<ExampleCustomInput />}
+								selectsRange={true}
+								startDate={startDate}
+								endDate={endDate}
+								maxDate={new Date()}
+								onChange={(update) => {
+									setDateRange(update);
+								}}
+								placement='center'
+								isClearable={true}
+							/>
+							<p className={classes.noResultError}>{noResultCalendarError}</p>
+						</div>
+					</div>
+				</div>
+				<div className={classes.tableContainer}>
+					<Table rowEvents={tableRowEvents} columns={columns} data={virals} />
+				</div>
+
+				<div className={classes.paginationRow}>
+					<Pagination
+						className={muiClasses.root}
+						page={page}
+						onChange={handleChange}
+						count={Math.ceil(totalRecords / 20)}
+						variant='outlined'
+						shape='rounded'
+					/>
+					<div className={classes.gotoText}>Go to page</div>
+					<input
+						style={{
+							border: `${
+								paginationError ? '1px solid red' : '1px solid #808080'
+							}`
 						}}
-						text={'UPLOAD VIRAL'}
+						type={'number'}
+						min={1}
+						onChange={(e) => {
+							setPaginationError(false);
+							const value = Number(e.target.value);
+							if (value > Math.ceil(totalRecords / 20)) {
+								// if (value > Math.ceil(60 / 20)) {
+								setPaginationError(true);
+								setPage(1);
+							} else if (value) {
+								setPage(value);
+							} else {
+								setPage(1);
+							}
+						}}
+						className={classes.gotoInput}
 					/>
 				</div>
-				<div className={classes.subheader2}>
-					<div>
-						<TextField
-							className={classes.searchField}
-							value={search}
-							onKeyPress={(e) => {
-								if (e.key === 'Enter' && search) {
-									dispatch(
-										getAllViralsApi({
-											q: search,
-											page,
-											startDate: formatDate(dateRange[0]),
-											endDate: formatDate(dateRange[1]),
-											...sortState
-										})
-									);
-								} else if (e.key === 'Enter' && !search) {
-									dispatch(
-										getAllViralsApi({
-											page,
-											startDate: formatDate(dateRange[0]),
-											endDate: formatDate(dateRange[1]),
-											...sortState
-										})
-									);
-								}
-							}}
-							onChange={(e) => {
-								setSearch(e.target.value);
-								//setIsSearch(true);
-							}}
-							placeholder={'Search viral, user, label'}
-							InputProps={{
-								disableUnderline: true,
-								className: classes.textFieldInput,
-								style: { borderColor: noResultBorder },
-								endAdornment: (
-									<InputAdornment>
-										<Search
-											onClick={() => {
-												if (search) {
-													dispatch(
-														getAllViralsApi({
-															q: search,
-															page,
-															startDate: formatDate(dateRange[0]),
-															endDate: formatDate(dateRange[1]),
-															...sortState
-														})
-													);
-												} else {
-													dispatch(
-														getAllViralsApi({
-															page,
-															startDate: formatDate(dateRange[0]),
-															endDate: formatDate(dateRange[1]),
-															...sortState
-														})
-													);
-												}
-											}}
-											className={classes.searchIcon}
-										/>
-									</InputAdornment>
-								)
-							}}
-						/>
-						<p className={classes.noResultError}>{noResultError}</p>
-					</div>
-					<div className={classes.calendarWrapper}>
-						<DatePicker
-							customInput={<ExampleCustomInput />}
-							selectsRange={true}
-							startDate={startDate}
-							endDate={endDate}
-							maxDate={new Date()}
-							onChange={(update) => {
-								setDateRange(update);
-							}}
-							placement='center'
-							isClearable={true}
-						/>
-						<p className={classes.noResultError}>{noResultCalendarError}</p>
-					</div>
-				</div>
-			</div>
-			<div className={classes.tableContainer}>
-				<Table rowEvents={tableRowEvents} columns={columns} data={virals} />
-			</div>
 
-			<div className={classes.paginationRow}>
-				<Pagination
-					className={muiClasses.root}
-					page={page}
-					onChange={handleChange}
-					count={Math.ceil(totalRecords / 20)}
-					variant='outlined'
-					shape='rounded'
-				/>
-				<div className={classes.gotoText}>Go to page</div>
-				<input
-					style={{
-						border: `${paginationError ? '1px solid red' : '1px solid #808080'}`
+				<UploadOrEditViral
+					open={showSlider}
+					isEdit={edit}
+					handleClose={() => {
+						setShowSlider(false);
+						// setTimeout(() => setEdit(false), 300); //to show edit data after clicking second time
 					}}
-					type={'number'}
-					min={1}
-					onChange={(e) => {
-						setPaginationError(false);
-						const value = Number(e.target.value);
-						if (value > Math.ceil(totalRecords / 20)) {
-							// if (value > Math.ceil(60 / 20)) {
-							setPaginationError(true);
-							setPage(1);
-						} else if (value) {
-							setPage(value);
-						} else {
-							setPage(1);
-						}
-					}}
-					className={classes.gotoInput}
+					title={edit ? 'Edit Viral' : 'Upload Viral'}
+					heading1={edit ? 'Media File' : 'Add Media File'}
+					buttonText={edit ? 'SAVE CHANGES' : 'ADD VIRAL'}
 				/>
-			</div>
-
-			<UploadOrEditViral
-				open={showSlider}
-				isEdit={edit}
-				handleClose={() => {
-					setShowSlider(false);
-					// setTimeout(() => setEdit(false), 300); //to show edit data after clicking second time
-				}}
-				title={edit ? 'Edit Viral' : 'Upload Viral'}
-				heading1={edit ? 'Media File' : 'Add Media File'}
-				buttonText={edit ? 'SAVE CHANGES' : 'ADD VIRAL'}
-			/>
-		</Layout>
+			</Layout>
+		</LoadingOverlay>
 	);
 };
 

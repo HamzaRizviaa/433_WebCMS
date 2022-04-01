@@ -31,11 +31,15 @@ import {
 	resetNoResultStatus,
 	getSpecificArticle
 } from './articleLibrarySlice';
+import Four33Loader from '../../assets/Loader_Yellow.gif';
+import LoadingOverlay from 'react-loading-overlay';
 
 const ArticleLibrary = () => {
 	// Selectors
 	const articles = useSelector((state) => state.ArticleLibraryStore.articles);
 	// console.log(articles, 'articles');
+
+	const statusArticlesApi = useSelector((state) => state.ArticleLibraryStore);
 
 	const totalRecords = useSelector(
 		(state) => state.ArticleLibraryStore.totalRecords
@@ -63,7 +67,7 @@ const ArticleLibrary = () => {
 	const [noResultCalendarError, setNoResultCalendarError] = useState('');
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
-
+	const [isLoading, setIsLoading] = useState(true);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -78,6 +82,7 @@ const ArticleLibrary = () => {
 			localStorage.removeItem('token_expire_time');
 			navigate('/sign-in');
 		}
+		//check
 	}, []);
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
@@ -129,7 +134,7 @@ const ArticleLibrary = () => {
 	const dispatch = useDispatch();
 
 	const sortKeysMapping = {
-		article_title: 'articleTitle',
+		article_title: 'title',
 		post_date: 'postdate',
 		labels: 'label',
 		user: 'user',
@@ -161,7 +166,8 @@ const ArticleLibrary = () => {
 								  col?.dataField === 'last_edit' ||
 								  col?.dataField === 'user'
 								? 30
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -178,7 +184,8 @@ const ArticleLibrary = () => {
 								  col?.dataField === 'last_edit' ||
 								  col?.dataField === 'user'
 								? 30
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -195,7 +202,8 @@ const ArticleLibrary = () => {
 								  col?.dataField === 'last_edit' ||
 								  col?.dataField === 'user'
 								? 30
-								: -4
+								: -4,
+						bottom: 0.5
 					}}
 				/>
 			);
@@ -220,7 +228,6 @@ const ArticleLibrary = () => {
 								  classes.mediaWrapper
 						}
 					>
-						{console.log(row.width, row.height, row.image)}
 						<Tooltip
 							title={
 								<img
@@ -249,8 +256,9 @@ const ArticleLibrary = () => {
 								/>
 							</span>
 						</Tooltip>
-						<div className={classes.fileName}>
-							<Markup className={classes.fileName} content={row.title} />
+
+						<div>
+							<Markup className={classes.fileName} content={row?.title} />
 						</div>
 					</div>
 				);
@@ -330,11 +338,11 @@ const ArticleLibrary = () => {
 			text: 'OPTIONS',
 			formatter: () => {
 				return (
-					<div className={classes.row}>
+					<div className={classes.articlOptionRow}>
 						<Tooltip
 							TransitionComponent={Fade}
 							TransitionProps={{ timeout: 600 }}
-							title={'Edit Article'}
+							title={'EDIT ARTICLE'}
 							arrow
 							componentsProps={{
 								tooltip: { className: classes.toolTip },
@@ -362,7 +370,7 @@ const ArticleLibrary = () => {
 	};
 
 	useEffect(() => {
-		console.log('sort state use effect');
+		// console.log('sort state use effect');
 		if (sortState.sortby && sortState.order_type && !search) {
 			dispatch(
 				getAllArticlesApi({
@@ -481,6 +489,7 @@ const ArticleLibrary = () => {
 		}
 		setPage(1);
 	};
+
 	const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
 	const handleChangeSearch = (e) => {
 		setSearch(e.target.value);
@@ -488,158 +497,166 @@ const ArticleLibrary = () => {
 	};
 
 	return (
-		<Layout className={classes.articleLibrary}>
-			<div className={classes.header}>
-				<div className={classes.subheader1}>
-					<h1 style={{ marginRight: '2rem' }}>ARTICLE LIBRARY</h1>
-					<Button
-						onClick={() => {
-							setEdit(false);
-							setShowSlider(true);
+		<LoadingOverlay
+			active={statusArticlesApi.status === 'pending' ? true : false}
+			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
+			spinner={
+				<img src={Four33Loader} className={classes.loader} alt='loader' />
+			}
+		>
+			<Layout className={classes.articleLibrary}>
+				<div className={classes.header}>
+					<div className={classes.subheader1}>
+						<h1 style={{ marginRight: '2rem' }}>ARTICLE LIBRARY</h1>
+						<Button
+							onClick={() => {
+								setEdit(false);
+								setShowSlider(true);
+							}}
+							text={'UPLOAD ARTICLE'}
+						/>
+					</div>
+					<div className={classes.subheader2}>
+						<div>
+							<TextField
+								className={classes.searchField}
+								value={search}
+								onKeyPress={(e) => {
+									console.log(e, 'on key press');
+									if (e.key === 'Enter' && search) {
+										dispatch(
+											getAllArticlesApi({
+												q: search,
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									} else if (e.key === 'Enter' && !search) {
+										dispatch(
+											getAllArticlesApi({
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									}
+								}}
+								// onChange={(e) => {
+
+								// 	setSearch(e.target.value);
+								// 	//setIsSearch(true);
+								// }}
+								onChange={handleChangeSearch}
+								placeholder={'Search post, user, label'}
+								InputProps={{
+									disableUnderline: true,
+									className: classes.textFieldInput,
+									style: { borderColor: noResultBorder },
+									endAdornment: (
+										<InputAdornment>
+											<Search
+												// onClick={() => {
+												// 	console.log('search onclick');
+												// 	if (search) {
+												// 		dispatch(
+												// 			getAllArticlesApi({
+												// 				q: search,
+												// 				page,
+												// 				startDate: formatDate(dateRange[0]),
+												// 				endDate: formatDate(dateRange[1]),
+												// 				...sortState
+												// 			})
+												// 		);
+												// 	} else {
+												// 		dispatch(
+												// 			getAllArticlesApi({
+												// 				page,
+												// 				startDate: formatDate(dateRange[0]),
+												// 				endDate: formatDate(dateRange[1]),
+												// 				...sortState
+												// 			})
+												// 		);
+												// 	}
+												// }}
+												className={classes.searchIcon}
+											/>
+										</InputAdornment>
+									)
+								}}
+							/>
+							<p className={classes.noResultError}>{noResultError}</p>
+						</div>
+						<div className={classes.calendarWrapper}>
+							<DatePicker
+								customInput={<ExampleCustomInput />}
+								selectsRange={true}
+								startDate={startDate}
+								endDate={endDate}
+								maxDate={new Date()}
+								onChange={(update) => {
+									setDateRange(update);
+								}}
+								placement='center'
+								isClearable={true}
+							/>
+							<p className={classes.noResultError}>{noResultCalendarError}</p>
+						</div>
+					</div>
+				</div>
+				<div className={classes.tableContainer}>
+					<Table rowEvents={tableRowEvents} columns={columns} data={articles} />
+				</div>
+				<div className={classes.paginationRow}>
+					<Pagination
+						className={muiClasses.root}
+						page={page}
+						onChange={handleChange}
+						count={Math.ceil(totalRecords / 20)}
+						variant='outlined'
+						shape='rounded'
+					/>
+					<div className={classes.gotoText}>Go to page</div>
+					<input
+						style={{
+							border: `${
+								paginationError ? '1px solid red' : '1px solid #808080'
+							}`
 						}}
-						text={'UPLOAD ARTICLE'}
+						type={'number'}
+						min={1}
+						onChange={(e) => {
+							console.log(e, 'onchange', page);
+							setPaginationError(false);
+							const value = Number(e.target.value);
+							if (value > Math.ceil(totalRecords / 20)) {
+								// if (value > Math.ceil(60 / 20)) {
+								setPaginationError(true);
+								setPage(1);
+							} else if (value) {
+								setPage(value);
+							} else {
+								setPage(1);
+							}
+						}}
+						className={classes.gotoInput}
 					/>
 				</div>
-				<div className={classes.subheader2}>
-					<div>
-						<TextField
-							className={classes.searchField}
-							value={search}
-							onKeyPress={(e) => {
-								console.log(e, 'on key press');
-								if (e.key === 'Enter' && search) {
-									dispatch(
-										getAllArticlesApi({
-											q: search,
-											page,
-											startDate: formatDate(dateRange[0]),
-											endDate: formatDate(dateRange[1]),
-											...sortState
-										})
-									);
-								} else if (e.key === 'Enter' && !search) {
-									dispatch(
-										getAllArticlesApi({
-											page,
-											startDate: formatDate(dateRange[0]),
-											endDate: formatDate(dateRange[1]),
-											...sortState
-										})
-									);
-								}
-							}}
-							// onChange={(e) => {
-
-							// 	setSearch(e.target.value);
-							// 	//setIsSearch(true);
-							// }}
-							onChange={handleChangeSearch}
-							placeholder={'Search post, user, label'}
-							InputProps={{
-								disableUnderline: true,
-								className: classes.textFieldInput,
-								style: { borderColor: noResultBorder },
-								endAdornment: (
-									<InputAdornment>
-										<Search
-											// onClick={() => {
-											// 	console.log('search onclick');
-											// 	if (search) {
-											// 		dispatch(
-											// 			getAllArticlesApi({
-											// 				q: search,
-											// 				page,
-											// 				startDate: formatDate(dateRange[0]),
-											// 				endDate: formatDate(dateRange[1]),
-											// 				...sortState
-											// 			})
-											// 		);
-											// 	} else {
-											// 		dispatch(
-											// 			getAllArticlesApi({
-											// 				page,
-											// 				startDate: formatDate(dateRange[0]),
-											// 				endDate: formatDate(dateRange[1]),
-											// 				...sortState
-											// 			})
-											// 		);
-											// 	}
-											// }}
-											className={classes.searchIcon}
-										/>
-									</InputAdornment>
-								)
-							}}
-						/>
-						<p className={classes.noResultError}>{noResultError}</p>
-					</div>
-					<div className={classes.calendarWrapper}>
-						<DatePicker
-							customInput={<ExampleCustomInput />}
-							selectsRange={true}
-							startDate={startDate}
-							endDate={endDate}
-							maxDate={new Date()}
-							onChange={(update) => {
-								setDateRange(update);
-							}}
-							placement='center'
-							isClearable={true}
-						/>
-						<p className={classes.noResultError}>{noResultCalendarError}</p>
-					</div>
-				</div>
-			</div>
-			<div className={classes.tableContainer}>
-				<Table rowEvents={tableRowEvents} columns={columns} data={articles} />
-			</div>
-
-			<div className={classes.paginationRow}>
-				<Pagination
-					className={muiClasses.root}
-					page={page}
-					onChange={handleChange}
-					count={Math.ceil(totalRecords / 20)}
-					variant='outlined'
-					shape='rounded'
-				/>
-				<div className={classes.gotoText}>Go to page</div>
-				<input
-					style={{
-						border: `${paginationError ? '1px solid red' : '1px solid #808080'}`
+				<UploadOrEditArticle
+					open={showSlider}
+					isEdit={edit}
+					handleClose={() => {
+						setShowSlider(false);
+						// setTimeout(() => setEdit(false), 600);
 					}}
-					type={'number'}
-					min={1}
-					onChange={(e) => {
-						console.log(e, 'onchange', page);
-						setPaginationError(false);
-						const value = Number(e.target.value);
-						if (value > Math.ceil(totalRecords / 20)) {
-							// if (value > Math.ceil(60 / 20)) {
-							setPaginationError(true);
-							setPage(1);
-						} else if (value) {
-							setPage(value);
-						} else {
-							setPage(1);
-						}
-					}}
-					className={classes.gotoInput}
+					title={edit ? 'Edit Article' : 'Upload Article'}
+					heading1={edit ? 'Media File' : 'Add Media File'}
+					buttonText={edit ? 'SAVE CHANGES' : 'POST ARTICLE'}
 				/>
-			</div>
-
-			<UploadOrEditArticle
-				open={showSlider}
-				isEdit={edit}
-				handleClose={() => {
-					setShowSlider(false);
-					// setTimeout(() => setEdit(false), 600);
-				}}
-				title={edit ? 'Edit Article' : 'Upload Article'}
-				heading1={edit ? 'Media File' : 'Add Media File'}
-				buttonText={edit ? 'SAVE CHANGES' : 'POST ARTICLE'}
-			/>
-		</Layout>
+			</Layout>
+		</LoadingOverlay>
 	);
 };
 

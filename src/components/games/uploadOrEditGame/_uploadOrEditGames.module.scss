@@ -154,14 +154,6 @@
 // 	width: 8rem;
 // }
 
-.dropBoxUrlContainer {
-	h6 {
-		margin-bottom: 0.5rem;
-		margin-left: 1rem;
-	}
-	margin-bottom: 2rem;
-}
-
 .closeIcon {
 	width: 3.2rem !important;
 	height: 3.2rem !important;
@@ -201,6 +193,10 @@
 .fileName {
 	font-size: 1rem;
 	margin-left: 2rem;
+	max-width: 60%;
+	//margin-right: 4rem;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 .filePreviewIcons {
@@ -286,6 +282,10 @@
 
 .textFieldInput {
 	@include textFieldInput;
+}
+
+.textFieldInputStartAdornment {
+	@include textFieldInputStartAdornment;
 }
 
 .popperAuto {
@@ -451,4 +451,88 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
+}
+
+.explanationWrapper {
+	display: flex;
+	justify-content: space-between;
+	margin: 5% 0%;
+	font-family: Poppins;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 24px;
+}
+
+.select {
+	.MuiSelect-select {
+		padding: 1rem 0rem 1rem 1rem;
+		padding-right: 32px;
+	}
+	width: 100%;
+	padding: 3px 0px;
+	padding-right: 10px;
+	color: white !important;
+	border: 1px solid #404040;
+	font-size: 1.4rem !important;
+	line-height: 1.6 !important;
+	border-radius: 5rem !important;
+	margin-bottom: 1rem !important;
+	background-color: #000000;
+
+	div[role='button'] {
+		padding: 0.5rem 0rem 0.5rem 2rem;
+	}
+
+	svg {
+		color: $neon-yellow;
+		right: 1rem;
+		top: 0;
+		font-size: 3rem;
+	}
+}
+
+.videoOrientationContainer {
+	margin-top: 2rem;
+	width: 100%;
+}
+
+.characterCount {
+	margin-right: 0.5rem;
+	display: flex;
+	justify-content: space-between;
+}
+
+.filePreviewRight {
+	display: flex;
+	align-items: center;
+}
+
+.gameIDwrapper {
+	margin: 2% 0% 5% 0%;
+	font-family: Poppins;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 24px;
+}
+
+.loaderContainer2 {
+	position: absolute;
+	//width: 4rem !important;
+	//height: 110px;
+	//height: 100vh;
+	//min-height: calc(100vh - 200px);
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: rgba(0, 0, 0, 0.87);
+	z-index: 100;
+}
+
+.loader {
+	width: 20%;
+	height: auto;
 }
