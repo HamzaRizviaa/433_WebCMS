@@ -21,7 +21,7 @@ import Slide from '@mui/material/Slide';
 import { getAllGames } from '../../../pages/GamesLibrary/gamesLibrarySlice';
 //import Fade from '@mui/material/Fade';
 import { useStyles } from './gamesStyles';
-
+import captureVideoFrame from 'capture-video-frame';
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
@@ -299,12 +299,12 @@ const UploadOreditArcade = ({
 					}
 				}
 			);
-			// const frame = captureVideoFrame('my-video', 'png');
-			// if (result?.data?.data?.video_thumbnail_url) {
-			// 	await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
-			// 		headers: { 'Content-Type': 'image/png' }
-			// 	});
-			// }
+			const frame = captureVideoFrame('my-video', 'png');
+			if (result?.data?.data?.video_thumbnail_url) {
+				await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
+					headers: { 'Content-Type': 'image/png' }
+				});
+			}
 			if (result?.data?.data?.url) {
 				const _result = await axios.put(
 					result?.data?.data?.url,
@@ -367,10 +367,10 @@ const UploadOreditArcade = ({
 		}
 	};
 
-	const createQuestion = async (id, mediaFiles = []) => {
+	const createGames = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
 
-		console.log(mediaFiles, 'mediaFiles');
+		console.log(mediaFiles, 'mediaFiles in create game');
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/games/add-edit-game`,
@@ -385,16 +385,16 @@ const UploadOreditArcade = ({
 						},
 
 						game_video: {
-							url: mediaFiles[0]?.media_url,
+							url: mediaFiles[1]?.media_url,
 							dropbox_url: dropboxLink2,
-							file_name: mediaFiles[0]?.file_name,
+							file_name: mediaFiles[1]?.file_name,
 							width: fileWidth2,
 							height: fileHeight2
 						},
 						game_icon: {
-							url: mediaFiles[0]?.media_url,
+							url: mediaFiles[1]?.media_url,
 							dropbox_url: dropboxLink2,
-							file_name: mediaFiles[0]?.file_name,
+							file_name: mediaFiles[1]?.file_name,
 							width: fileWidth2,
 							height: fileHeight2
 						}
@@ -965,6 +965,7 @@ const UploadOreditArcade = ({
 														<div className={classes.filePreviewLeft}>
 															{file.type === 'video' ? (
 																<>
+																	{console.log(file, 'file in upload icon')}
 																	<video
 																		id={'my-video'}
 																		//poster={editJogo ? file.img : null}
@@ -1562,7 +1563,7 @@ const UploadOreditArcade = ({
 											}
 
 											if (editArcade || editJogo) {
-												createQuestion(specificGamesData?.id);
+												createGames(specificGamesData?.id);
 											} else {
 												setIsLoadingcreateViral(true);
 												let uploadFilesPromiseArray = [
@@ -1575,7 +1576,7 @@ const UploadOreditArcade = ({
 												Promise.all([...uploadFilesPromiseArray])
 													.then((mediaFiles) => {
 														console.log(mediaFiles, 'media files ');
-														createQuestion(null, mediaFiles);
+														createGames(null, mediaFiles);
 													})
 													.catch(() => {
 														setIsLoadingcreateViral(false);
