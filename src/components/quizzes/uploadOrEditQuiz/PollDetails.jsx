@@ -45,7 +45,7 @@ export default function PollDetails({
 			}}
 			previewRef={previewRef}
 			disableDropdown={disableDropdown}
-			// quiz={true}
+			quiz={true}
 		>
 			{/* {console.log(status, 'status in poll')} */}
 			{/* {status === 'ACTIVE' ? ( */}

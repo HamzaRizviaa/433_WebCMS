@@ -46,7 +46,7 @@ const GamesSlider = ({
 			}}
 			previewRef={previewRef}
 			disableDropdown={disableDropdown}
-			quiz={true}
+			games={true}
 		>
 			{isEdit ? (
 				<UploadOrEditGames
