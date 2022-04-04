@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 export const useStyles = makeStyles(() => ({
 	root: {
 		'& .TabsListUnstyled-root': {
-			width: '65%',
+			width: '70%',
 			border: 'none',
 			backgroundColor: '#404040',
 			borderRadius: '8px',

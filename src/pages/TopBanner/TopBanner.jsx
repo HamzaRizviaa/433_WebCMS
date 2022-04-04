@@ -8,12 +8,16 @@ import TabUnstyled from '@mui/base/TabUnstyled';
 import { useStyles } from './topBanner';
 import Banners from '../../components/banners/Banners';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 // import Four33Loader from '../../assets/Loader_Yellow.gif';
 // import LoadingOverlay from 'react-loading-overlay';
 const TopBanner = () => {
 	const muiClasses = useStyles();
 
 	const navigate = useNavigate();
+
+	const allBanners = useSelector((state) => state.topBanner.allBanners);
+	const bannerContent = useSelector((state) => state.topBanner.content);
 
 	useEffect(() => {
 		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));
@@ -41,9 +45,27 @@ const TopBanner = () => {
 				<div className={muiClasses.root}>
 					<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
 						<TabsListUnstyled className={muiClasses.tabMainDiv}>
-							<TabUnstyled>Home</TabUnstyled>
-							<TabUnstyled>Media</TabUnstyled>
-							<TabUnstyled>Game</TabUnstyled>
+							<TabUnstyled
+								disabled={
+									allBanners?.length && bannerContent?.length ? false : true
+								}
+							>
+								Home
+							</TabUnstyled>
+							<TabUnstyled
+								disabled={
+									allBanners?.length && bannerContent?.length ? false : true
+								}
+							>
+								Media
+							</TabUnstyled>
+							<TabUnstyled
+								disabled={
+									allBanners?.length && bannerContent?.length ? false : true
+								}
+							>
+								Game
+							</TabUnstyled>
 						</TabsListUnstyled>
 						<TabPanelUnstyled value={0}>
 							<Banners tabValue={'home'} />
