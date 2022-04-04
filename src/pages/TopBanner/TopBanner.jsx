@@ -43,6 +43,7 @@ const TopBanner = () => {
 						<TabsListUnstyled className={muiClasses.tabMainDiv}>
 							<TabUnstyled>Home</TabUnstyled>
 							<TabUnstyled>Media</TabUnstyled>
+							<TabUnstyled>Games</TabUnstyled>
 						</TabsListUnstyled>
 						<TabPanelUnstyled value={0}>
 							{' '}
@@ -50,6 +51,9 @@ const TopBanner = () => {
 						</TabPanelUnstyled>
 						<TabPanelUnstyled value={1}>
 							<Banners tabValue={'media'} />
+						</TabPanelUnstyled>
+						<TabPanelUnstyled value={2}>
+							<Banners tabValue={'games'} />
 						</TabPanelUnstyled>
 					</TabsUnstyled>
 				</div>

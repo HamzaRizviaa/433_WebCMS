@@ -181,6 +181,8 @@
 .filePreviewLeft {
 	display: flex;
 	align-items: center;
+	gap: 10px;
+	width: 100%;
 }
 
 .fileThumbnail {
@@ -192,8 +194,7 @@
 
 .fileName {
 	font-size: 1rem;
-	margin-left: 2rem;
-	max-width: 60%;
+	max-width: 150px;
 	//margin-right: 4rem;
 	text-overflow: ellipsis;
 	overflow: hidden;

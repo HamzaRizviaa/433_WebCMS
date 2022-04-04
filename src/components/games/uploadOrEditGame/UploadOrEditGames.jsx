@@ -1012,7 +1012,11 @@ const UploadOreditArcade = ({
 									<p className={classes.mediaError}>{videoOrientationError}</p>
 								</>
 							) : (
-								<></>
+								<>
+									<div className={classes.QuizQuestion}>
+										<h5>Add Icon Image</h5>
+									</div>
+								</>
 							)}
 							<DragDropContext>
 								<Droppable droppableId='droppable-2'>
