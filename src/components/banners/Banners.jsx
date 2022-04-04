@@ -331,11 +331,7 @@ export default function Banners({ tabValue }) {
 					onClick={() => {
 						clickBanner();
 					}}
-					text={
-						tabValue === 'home'
-							? 'PUBLISH HOME BANNERS'
-							: 'PUBLISH MEDIA BANNERS'
-					}
+					text={`PUBLISH ${tabValue.toUpperCase()} BANNERS`}
 				/>
 			</div>
 		</div>
