@@ -110,6 +110,10 @@ const UploadOreditArcade = ({
 	const [fileHeight, setFileHeight] = useState(null);
 	const [fileWidth2, setFileWidth2] = useState(null);
 	const [fileHeight2, setFileHeight2] = useState(null);
+	// specific game
+	const [fileUpload, setfileUpload] = useState('');
+	const [fileUpload2, setfileUpload2] = useState('');
+
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
 
@@ -164,6 +168,14 @@ const UploadOreditArcade = ({
 					type: 'image'
 				}
 			]);
+			setfileUpload([
+				{
+					id: makeid(10),
+					fileName: specificGamesData?.game_image_file_name,
+					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_image?.url}`,
+					type: 'image'
+				}
+			]);
 			if (specificGamesData?.game_type === 'JOGO') {
 				//jogo
 				setScoring(specificGamesData?.scoring);
@@ -172,6 +184,14 @@ const UploadOreditArcade = ({
 				setTime(specificGamesData?.time);
 				setVideoOrientation(specificGamesData?.orientation);
 				setUploadedExplanationOrIcon([
+					{
+						id: makeid(10),
+						fileName: specificGamesData?.game_video_file_name,
+						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_video?.url}`,
+						type: 'video'
+					}
+				]);
+				setfileUpload2([
 					{
 						id: makeid(10),
 						fileName: specificGamesData?.game_video_file_name,
@@ -199,6 +219,14 @@ const UploadOreditArcade = ({
 						fileName: specificGamesData?.game_icon_file_name,
 						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_icon?.url}`,
 						type: 'image'
+					}
+				]);
+				setfileUpload2([
+					{
+						id: makeid(10),
+						fileName: specificGamesData?.game_video_file_name,
+						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_video?.url}`,
+						type: 'video'
 					}
 				]);
 			}
@@ -286,6 +314,7 @@ const UploadOreditArcade = ({
 	};
 
 	const uploadFileToServer = async (uploadedFile) => {
+		console.log(uploadedFile, 'uploadedFile file to server ****************');
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
@@ -419,24 +448,24 @@ const UploadOreditArcade = ({
 					description: descriptionGame,
 					game_medias: {
 						game_image: {
-							url: mediaFiles[0]?.media_url,
+							url: mediaFiles[0]?.media_url || fileUpload[0]?.img,
 							dropbox_url: dropboxLink,
-							file_name: mediaFiles[0]?.file_name,
+							file_name: mediaFiles[0]?.file_name || fileUpload[0]?.fileName,
 							width: fileWidth,
 							height: fileHeight
 						},
 
 						game_video: {
-							url: mediaFiles[1]?.media_url,
+							url: mediaFiles[1]?.media_url || fileUpload2[0]?.img,
 							dropbox_url: dropboxLink2,
-							file_name: mediaFiles[1]?.file_name,
+							file_name: mediaFiles[1]?.file_name || fileUpload2[0]?.fileName,
 							width: fileWidth2,
 							height: fileHeight2
 						},
 						game_icon: {
-							url: mediaFiles[1]?.media_url,
+							url: mediaFiles[1]?.media_url || fileUpload2[0]?.img,
 							dropbox_url: dropboxLink2,
-							file_name: mediaFiles[1]?.file_name,
+							file_name: mediaFiles[1]?.file_name || fileUpload2[0]?.fileName,
 							width: fileWidth2,
 							height: fileHeight2
 						}
@@ -506,11 +535,22 @@ const UploadOreditArcade = ({
 				}
 			);
 			if (result?.data?.status_code === 200) {
-				toast.success('Game has been deleted!');
-				handleClose();
+				if (result?.data?.data?.is_deleted === false) {
+					toast.error(
+						'The game  cannot be deleted because it is used as a top banner'
+					);
+					dispatch(getAllGames({ page }));
+				} else {
+					toast.success('Media has been deleted!');
+					handleClose();
+					//setting a timeout for getting post after delete.
+					dispatch(getAllGames({ page }));
+				}
+				// toast.success('Game has been deleted!');
+				// handleClose();
 
-				//setting a timeout for getting post after delete.
-				dispatch(getAllGames({ page }));
+				// //setting a timeout for getting post after delete.
+				// dispatch(getAllGames({ page }));
 			}
 		} catch (e) {
 			toast.error('Failed to delete Game!');
@@ -822,6 +862,12 @@ const UploadOreditArcade = ({
 						className={classes.contentWrapperNoPreview}
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
 					>
+						{console.log(
+							uploadedFiles[0]?.fileName,
+							uploadedFiles,
+							fileUpload,
+							'uploadedFiles[0]?.filename'
+						)}
 						<div>
 							<h5 className={classes.QuizQuestion}>{heading1}</h5>
 							<DragDropContext>
@@ -1638,8 +1684,16 @@ const UploadOreditArcade = ({
 
 											if (editArcade || editJogo) {
 												setIsLoadingcreateViral(true);
+
 												let uploadFilesPromiseArray = [
-													uploadedFiles[0],
+													specificGamesData?.game_image_file_name ==
+													uploadedFiles[0]?.fileName?.trim()
+														? (uploadedFiles[0], fileUpload.type)
+														: (specificGamesData?.game_video_file_name ||
+																specificGamesData?.game_icon_file_name) ==
+														  uploadedExplanationOrIcon[0]?.fileName?.trim()
+														? (fileUpload2.type, uploadedExplanationOrIcon[0])
+														: uploadedFiles[0],
 													uploadedExplanationOrIcon[0]
 												].map(async (_file) => {
 													return uploadFileToServer(_file);
