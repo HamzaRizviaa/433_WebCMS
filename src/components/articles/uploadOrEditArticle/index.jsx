@@ -701,7 +701,24 @@ const UploadOrEditViral = ({
 							)}
 
 							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
-
+							<div className={classes.dropBoxUrlContainer}>
+								<h6>DROPBOX URL</h6>
+								<TextField
+									value={dropboxLink}
+									onChange={(e) => setDropboxLink(e.target.value)}
+									placeholder={'Please drop the dropbox URL here'}
+									className={classes.textField}
+									multiline
+									maxRows={2}
+									InputProps={{
+										disableUnderline: true,
+										className: classes.textFieldInput,
+										style: {
+											borderRadius: dropboxLink ? '16px' : '40px'
+										}
+									}}
+								/>
+							</div>
 							<div className={classes.captionContainer}>
 								<div className={classes.characterCount}>
 									<h6 style={{ color: articleTitleColor }}>ARTICLE TITLE</h6>
@@ -748,24 +765,6 @@ const UploadOrEditViral = ({
 								/>
 							</div>
 							<p className={classes.mediaError}>{articleTitleError}</p>
-							<div className={classes.captionContainer}>
-								<h6>DROPBOX URL</h6>
-								<TextField
-									value={dropboxLink}
-									onChange={(e) => setDropboxLink(e.target.value)}
-									placeholder={'Please drop the dropbox URL here'}
-									className={classes.textField}
-									multiline
-									maxRows={2}
-									InputProps={{
-										disableUnderline: true,
-										className: classes.textFieldInput,
-										style: {
-											borderRadius: dropboxLink ? '16px' : '40px'
-										}
-									}}
-								/>
-							</div>
 
 							<div className={classes.captionContainer}>
 								<h6 style={{ color: labelColor }}>LABELS</h6>

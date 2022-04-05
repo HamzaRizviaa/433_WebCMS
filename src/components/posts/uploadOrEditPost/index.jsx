@@ -463,7 +463,7 @@ const UploadOrEditPost = ({
 				`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
 				{
 					caption: caption,
-				...(dropboxLink? { dropbox_url: dropboxLink} : {}),
+					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
 					orientation_type: dimensionSelect,
 					...(selectedMedia
 						? { media_id: selectedMedia.id }
@@ -868,7 +868,7 @@ const UploadOrEditPost = ({
 								<></>
 							)}
 							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
-							<div className={classes.captionContainer}>
+							<div className={classes.dropBoxUrlContainer}>
 								<h6>DROPBOX URL</h6>
 								<TextField
 									value={dropboxLink}
