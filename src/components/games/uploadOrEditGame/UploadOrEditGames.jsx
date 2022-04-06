@@ -112,9 +112,6 @@ const UploadOreditArcade = ({
 	const [fileHeight, setFileHeight] = useState(null);
 	const [fileWidth2, setFileWidth2] = useState(null);
 	const [fileHeight2, setFileHeight2] = useState(null);
-	// specific game
-	const [fileUpload, setfileUpload] = useState('');
-	const [fileUpload2, setfileUpload2] = useState('');
 
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
@@ -162,6 +159,8 @@ const UploadOreditArcade = ({
 			setDropboxLink2(specificGamesData?.dropbox_urls?.video);
 			setDescriptionGame(specificGamesData?.description);
 			setTitleGame(specificGamesData?.title);
+			setFileWidth(specificGamesData?.game_image?.width);
+			setFileHeight(specificGamesData?.game_image?.height);
 			setUploadedFiles([
 				{
 					id: makeid(10),
@@ -170,14 +169,7 @@ const UploadOreditArcade = ({
 					type: 'image'
 				}
 			]);
-			setfileUpload([
-				{
-					id: makeid(10),
-					fileName: specificGamesData?.game_image_file_name,
-					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_image?.url}`,
-					type: 'image'
-				}
-			]);
+
 			if (specificGamesData?.game_type === 'JOGO') {
 				//jogo
 				setScoring(specificGamesData?.scoring);
@@ -185,20 +177,17 @@ const UploadOreditArcade = ({
 				setPayload(specificGamesData?.payload);
 				setTime(specificGamesData?.time);
 				setVideoOrientation(specificGamesData?.orientation);
+				setFileWidth2(specificGamesData?.game_video?.width);
+				setFileHeight2(specificGamesData?.game_video?.height);
 				setUploadedExplanationOrIcon([
 					{
 						id: makeid(10),
 						fileName: specificGamesData?.game_video_file_name,
 						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_video?.url}`,
-						type: 'video'
-					}
-				]);
-				setfileUpload2([
-					{
-						id: makeid(10),
-						fileName: specificGamesData?.game_video_file_name,
-						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_video?.url}`,
-						type: 'video'
+						type: 'video',
+						fileExtension: '.mp4',
+						url: `${specificGamesData?.game_video?.url}`,
+						file_name: specificGamesData?.game_video_file_name
 					}
 				]);
 			} else {
@@ -215,20 +204,15 @@ const UploadOreditArcade = ({
 				setPlayStore2(specificGamesData?.deep_link?.android); // deep link
 				setAppStore2(specificGamesData?.deep_link?.ios);
 				setGameId(specificGamesData?.game_id);
+				setFileWidth2(specificGamesData?.game_icon?.width);
+				setFileHeight2(specificGamesData?.game_icon?.height);
 				setUploadedExplanationOrIcon([
 					{
 						id: makeid(10),
 						fileName: specificGamesData?.game_icon_file_name,
 						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_icon?.url}`,
-						type: 'image'
-					}
-				]);
-				setfileUpload2([
-					{
-						id: makeid(10),
-						fileName: specificGamesData?.game_video_file_name,
-						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_video?.url}`,
-						type: 'video'
+						type: 'image',
+						fileExtension: '.jpg'
 					}
 				]);
 			}
@@ -316,7 +300,7 @@ const UploadOreditArcade = ({
 	};
 
 	const uploadFileToServer = async (uploadedFile) => {
-		console.log(uploadedFile, 'uploadedFile file to server ****************');
+		console.log('uploadedFile file to server', uploadedFile);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
@@ -330,13 +314,16 @@ const UploadOreditArcade = ({
 					}
 				}
 			);
-			const frame = captureVideoFrame('my-video', 'png');
+
 			if (result?.data?.data?.video_thumbnail_url) {
+				const frame = captureVideoFrame('my-video', 'png');
+				console.log('inside THumb');
 				await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
 					headers: { 'Content-Type': 'image/png' }
 				});
 			}
 			if (result?.data?.data?.url) {
+				console.log('inside put');
 				const _result = await axios.put(
 					result?.data?.data?.url,
 					uploadedFile.file,
@@ -344,6 +331,8 @@ const UploadOreditArcade = ({
 						headers: { 'Content-Type': uploadedFile.mime_type }
 					}
 				);
+
+				console.log('_result', _result);
 
 				if (_result?.status === 200) {
 					const uploadResult = await axios.post(
@@ -384,7 +373,7 @@ const UploadOreditArcade = ({
 					if (uploadResult?.data?.status_code === 200) {
 						return uploadResult.data.data;
 					} else {
-						throw 'Error';
+						throw 'not 200 Error';
 					}
 				} else {
 					throw 'Error';
@@ -393,7 +382,7 @@ const UploadOreditArcade = ({
 				throw 'Error';
 			}
 		} catch (error) {
-			console.log('Error');
+			console.log('Catch Error');
 			return null;
 		}
 	};
@@ -450,24 +439,29 @@ const UploadOreditArcade = ({
 					description: descriptionGame,
 					game_medias: {
 						game_image: {
-							url: mediaFiles[0]?.media_url || fileUpload[0]?.img,
+							url:
+								mediaFiles[0]?.media_url ||
+								mediaFiles[0].img.split('cloudfront.net/')[1],
 							dropbox_url: dropboxLink,
-							file_name: mediaFiles[0]?.file_name || fileUpload[0]?.fileName,
+							file_name: mediaFiles[0]?.file_name || mediaFiles[0]?.fileName,
 							width: fileWidth,
 							height: fileHeight
 						},
-
 						game_video: {
-							url: mediaFiles[1]?.media_url || fileUpload2[0]?.img,
+							url:
+								mediaFiles[1]?.media_url ||
+								mediaFiles[1].img.split('cloudfront.net/')[1],
 							dropbox_url: dropboxLink2,
-							file_name: mediaFiles[1]?.file_name || fileUpload2[0]?.fileName,
+							file_name: mediaFiles[1]?.file_name || mediaFiles[1]?.fileName, //mediaFiles[1]?.file_name || mediaFiles[1]?.fileName,
 							width: fileWidth2,
 							height: fileHeight2
 						},
 						game_icon: {
-							url: mediaFiles[1]?.media_url || fileUpload2[0]?.img,
+							url:
+								mediaFiles[1]?.media_url ||
+								mediaFiles[1].img.split('cloudfront.net/')[1],
 							dropbox_url: dropboxLink2,
-							file_name: mediaFiles[1]?.file_name || fileUpload2[0]?.fileName,
+							file_name: mediaFiles[1]?.file_name || mediaFiles[1]?.fileName,
 							width: fileWidth2,
 							height: fileHeight2
 						}
@@ -543,7 +537,7 @@ const UploadOreditArcade = ({
 					);
 					dispatch(getAllGames({ page }));
 				} else {
-					toast.success('Media has been deleted!');
+					toast.success('Game has been deleted!');
 					handleClose();
 					//setting a timeout for getting post after delete.
 					dispatch(getAllGames({ page }));
@@ -864,12 +858,6 @@ const UploadOreditArcade = ({
 						className={classes.contentWrapperNoPreview}
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
 					>
-						{console.log(
-							uploadedFiles[0]?.fileName,
-							uploadedFiles,
-							fileUpload,
-							'uploadedFiles[0]?.filename'
-						)}
 						<div>
 							<h5 className={classes.QuizQuestion}>{heading1}</h5>
 							<DragDropContext>
@@ -1096,7 +1084,6 @@ const UploadOreditArcade = ({
 														<div className={classes.filePreviewLeft}>
 															{file.type === 'video' ? (
 																<>
-																	{console.log(file, 'file in upload icon')}
 																	<video
 																		id={'my-video'}
 																		//poster={editJogo ? file.img : null}
@@ -1642,7 +1629,6 @@ const UploadOreditArcade = ({
 								</>
 							)}
 						</div>
-
 						<div className={classes.buttonDiv}>
 							{editArcade || editJogo ? (
 								<div className={classes.editBtn}>
@@ -1704,22 +1690,19 @@ const UploadOreditArcade = ({
 												setIsLoadingcreateViral(true);
 
 												let uploadFilesPromiseArray = [
-													specificGamesData?.game_image_file_name ==
-													uploadedFiles[0]?.fileName?.trim()
-														? (uploadedFiles[0], fileUpload.type)
-														: (specificGamesData?.game_video_file_name ||
-																specificGamesData?.game_icon_file_name) ==
-														  uploadedExplanationOrIcon[0]?.fileName?.trim()
-														? (fileUpload2.type, uploadedExplanationOrIcon[0])
-														: uploadedFiles[0],
+													uploadedFiles[0],
 													uploadedExplanationOrIcon[0]
 												].map(async (_file) => {
-													return uploadFileToServer(_file);
+													if (_file.file) {
+														return await uploadFileToServer(_file);
+													} else {
+														return _file;
+													}
 												});
 
 												Promise.all([...uploadFilesPromiseArray])
 													.then((mediaFiles) => {
-														console.log(mediaFiles, 'media files ');
+														console.log('media files', mediaFiles);
 														createGames(specificGamesData?.id, mediaFiles);
 													})
 													.catch(() => {
@@ -1842,3 +1825,16 @@ UploadOreditArcade.propTypes = {
 };
 
 export default UploadOreditArcade;
+
+// specificGamesData?.game_image_file_name !==
+// 	uploadedFiles[0]?.fileName?.trim() &&
+// (specificGamesData?.game_video_file_name ||
+// 	specificGamesData?.game_icon_file_name) ===
+// 	uploadedExplanationOrIcon[0]?.fileName?.trim()
+// 	? (uploadedFiles[0], uploadedExplanationOrIcon[0])
+// 	: (specificGamesData?.game_video_file_name ||
+// 			specificGamesData?.game_icon_file_name) !==
+// 	  uploadedExplanationOrIcon[0]?.fileName?.trim()
+// 	? uploadedExplanationOrIcon[0]
+// 	: uploadedFiles[0],
+// 	uploadedExplanationOrIcon[0];
