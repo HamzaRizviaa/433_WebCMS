@@ -17,6 +17,7 @@ const DropDownField = ({
 	dimensionSelect,
 	imageToResizeWidth,
 	imageToResizeHeight,
+	isPost,
 	...props
 }) => {
 	return (
@@ -72,16 +73,18 @@ const DropDownField = ({
 													</>
 												) : (
 													<>
-														<img
-															src={file.img}
-															className={classes.fileThumbnail}
-															style={{
-																width: `${imageToResizeWidth}px`,
-																height: `${imageToResizeHeight}px`,
-																objectFit: 'cover',
-																objectPosition: 'center'
-															}}
-														/>
+														{isPost && (
+															<img
+																src={file.img}
+																className={classes.fileThumbnail}
+																style={{
+																	width: `${imageToResizeWidth}px`,
+																	height: `${imageToResizeHeight}px`,
+																	objectFit: 'cover',
+																	objectPosition: 'center'
+																}}
+															/>
+														)}
 													</>
 												)}
 
@@ -106,7 +109,7 @@ const DropDownField = ({
 															setPreviewFile(file);
 														}}
 													/>
-													{uploadedFiles.length > 1 && (
+													{isPost && uploadedFiles.length > 1 && (
 														<span {...provided.dragHandleProps}>
 															<MenuIcon
 																style={{ cursor: 'grab' }}
@@ -146,7 +149,8 @@ DropDownField.propTypes = {
 	isEdit: PropTypes.bool,
 	handleDeleteFile: PropTypes.func,
 	setPreviewBool: PropTypes.func,
-	setPreviewFile: PropTypes.func
+	setPreviewFile: PropTypes.func,
+	isPost: PropTypes.bool
 };
 
 export default DropDownField;

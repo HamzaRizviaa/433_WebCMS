@@ -437,27 +437,29 @@ const UploadOreditArcade = ({
 					description: descriptionGame,
 					game_medias: {
 						game_image: {
-							url: mediaFiles[0]?.media_url,
+							url:
+								mediaFiles[0]?.media_url ||
+								mediaFiles[0].img.split('cloudfront.net/')[1],
 							dropbox_url: dropboxLink,
-							file_name: mediaFiles[0]?.file_name,
+							file_name: mediaFiles[0]?.file_name || mediaFiles[0]?.fileName,
 							width: fileWidth,
 							height: fileHeight
 						},
-
 						game_video: {
-							url: 'media/vids/1646050595536.mp4',
-							// mediaFiles[1]?.media_url ||
-							// mediaFiles[1].img.split('cloudfront.net/')[1],
+							url:
+								mediaFiles[1]?.media_url ||
+								mediaFiles[1].img.split('cloudfront.net/')[1],
 							dropbox_url: dropboxLink2,
-							file_name: 'ddoct4v-7c07a7e8-b64b-432e-8a9e-a40f0d98cb7a.png', //mediaFiles[1]?.file_name || mediaFiles[1]?.fileName,
+							file_name: mediaFiles[1]?.file_name || mediaFiles[1]?.fileName, //mediaFiles[1]?.file_name || mediaFiles[1]?.fileName,
 							width: fileWidth2,
 							height: fileHeight2
 						},
-
 						game_icon: {
-							url: mediaFiles[1]?.media_url,
+							url:
+								mediaFiles[1]?.media_url ||
+								mediaFiles[1].img.split('cloudfront.net/')[1],
 							dropbox_url: dropboxLink2,
-							file_name: mediaFiles[1]?.file_name,
+							file_name: mediaFiles[1]?.file_name || mediaFiles[1]?.fileName,
 							width: fileWidth2,
 							height: fileHeight2
 						}
@@ -1674,14 +1676,8 @@ const UploadOreditArcade = ({
 												setIsLoadingcreateViral(true);
 
 												let uploadFilesPromiseArray = [
-													specificGamesData?.game_image_file_name !==
-													uploadedFiles[0]?.fileName?.trim()
-														? uploadedFiles[0]
-														: uploadedFiles[0],
+													uploadedFiles[0],
 													uploadedExplanationOrIcon[0]
-													// Object.assign(...uploadedExplanationOrIcon[0], {
-													// 	fileExtension: '.mp4'
-													// })
 												].map(async (_file) => {
 													if (_file.file) {
 														return await uploadFileToServer(_file);
@@ -1689,10 +1685,6 @@ const UploadOreditArcade = ({
 														return _file;
 													}
 												});
-												console.log(
-													'========promises ======= ',
-													uploadFilesPromiseArray
-												);
 
 												Promise.all([...uploadFilesPromiseArray])
 													.then((mediaFiles) => {
