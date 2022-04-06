@@ -293,6 +293,8 @@
 .filePreviewLeft {
 	display: flex;
 	align-items: center;
+	gap: 10px;
+	width: 100%;
 }
 
 .filePreviewRight {
@@ -311,11 +313,11 @@
 
 .fileName {
 	font-size: 1rem;
-	margin-left: 2rem;
-	max-width: 100%; // to shorten the filename if its too big
+	//max-width: 100%; // to shorten the filename if its too big
+	white-space: nowrap;
+	max-width: 150px;
 	text-overflow: ellipsis;
 	overflow: hidden;
-	white-space: nowrap;
 }
 
 .filePreviewIcons {
@@ -460,4 +462,28 @@ video::-webkit-media-controls-fullscreen-button {
 	color: white;
 	font-size: 14px;
 	padding: 8px 8px 8px 12px;
+}
+
+.explanationWrapper {
+	display: flex;
+	justify-content: flex-start;
+	margin: 5% 0%;
+	font-family: Poppins;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 24px;
+}
+
+.toolTip {
+	background-color: $black-color !important;
+	font-family: Poppins !important;
+	font-size: 12px !important;
+	line-height: 16px !important;
+	border-radius: 8px !important;
+	max-width: none !important;
+}
+
+.toolTipArrow {
+	color: $black-color !important;
 }

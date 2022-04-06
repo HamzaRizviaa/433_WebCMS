@@ -132,6 +132,13 @@
 .filePreviewLeft {
 	display: flex;
 	align-items: center;
+	gap: 10px;
+	width: 100%;
+}
+
+.filePreviewRight {
+	display: flex;
+	align-items: center;
 }
 
 .dropBoxUrlContainer {
@@ -165,7 +172,9 @@
 
 .fileName {
 	font-size: 1rem;
-	margin-left: 2rem;
+	max-width: 150px;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 .filePreviewIcons {
@@ -447,4 +456,28 @@
 .catergoryErrorContainer {
 	display: flex;
 	justify-content: left;
+}
+
+.explanationWrapper {
+	display: flex;
+	justify-content: flex-start;
+	margin-bottom: 5%;
+	font-family: Poppins;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 24px;
+}
+
+.toolTip {
+	background-color: $black-color !important;
+	font-family: Poppins !important;
+	font-size: 12px !important;
+	line-height: 16px !important;
+	border-radius: 8px !important;
+	max-width: none !important;
+}
+
+.toolTipArrow {
+	color: $black-color !important;
 }

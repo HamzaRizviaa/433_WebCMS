@@ -365,6 +365,9 @@ const UploadOrEditQuiz = ({
 				{
 					width: fileWidth,
 					height: fileHeight,
+					...(!(editQuiz || editPoll)
+						? { file_name: mediaFiles[0]?.file_name }
+						: {}),
 					...(question ? { question: question } : { question: '' }),
 					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
 					...(!(editQuiz || editPoll)

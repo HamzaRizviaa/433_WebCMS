@@ -22,6 +22,10 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { CircularProgress } from '@material-ui/core';
 import DragAndDropField from '../../DragAndDropField';
+import Tooltip from '@mui/material/Tooltip';
+import Fade from '@mui/material/Fade';
+
+import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 import { Autocomplete, Paper, Popper } from '@mui/material';
 import { useRef } from 'react';
 
@@ -150,7 +154,7 @@ const UploadOrEditMedia = ({
 			setUploadedFiles([
 				{
 					id: makeid(10),
-					fileName: specificMedia?.file_name,
+					fileName: specificMedia?.file_name_media,
 					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.media_url}`,
 					type: specificMedia?.media_type === 'Watch' ? 'video' : 'audio'
 				}
@@ -159,7 +163,7 @@ const UploadOrEditMedia = ({
 			setUploadedCoverImage([
 				{
 					id: makeid(10),
-					fileName: specificMedia?.file_name,
+					fileName: specificMedia?.file_name_image,
 					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`,
 					type: 'image'
 				}
@@ -441,6 +445,7 @@ const UploadOrEditMedia = ({
 	};
 
 	const uploadMedia = async (id, payload) => {
+		console.log(payload);
 		let media_type = mainCategory?.id;
 		setMediaButtonStatus(true);
 		try {
@@ -464,7 +469,8 @@ const UploadOrEditMedia = ({
 							...(selectedLabels.length ? { labels: [...selectedLabels] } : {}),
 							description: description,
 							data: {
-								file_name: payload?.file_name,
+								// file_name_media: payload?.file_name,
+								// file_name_image: payload?.file_name2,
 								video_data: payload?.data?.Keys?.VideoKey,
 								image_data: payload?.data?.Keys?.ImageKey,
 								audio_data: payload?.data?.Keys?.AudioKey
@@ -818,7 +824,29 @@ const UploadOrEditMedia = ({
 
 							{(mainCategory && subCategory?.name) || isEdit ? (
 								<>
-									<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
+									{mainCategory.name === 'Watch' ? (
+										<div className={classes.explanationWrapper}>
+											<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
+											<Tooltip
+												TransitionComponent={Fade}
+												TransitionProps={{ timeout: 800 }}
+												title='Default encoding for videos should be H.264'
+												arrow
+												componentsProps={{
+													tooltip: { className: classes.toolTip },
+													arrow: { className: classes.toolTipArrow }
+												}}
+												placement='bottom-start'
+											>
+												<Info
+													style={{ cursor: 'pointer', marginLeft: '1rem' }}
+												/>
+											</Tooltip>
+										</div>
+									) : (
+										<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
+									)}
+
 									<DragAndDropField
 										uploadedFiles={uploadedFiles}
 										isEdit={isEdit}
@@ -1274,9 +1302,12 @@ const UploadOrEditMedia = ({
 															}
 														);
 														await uploadMedia(null, {
-															file_name: uploadedFiles[0].fileName,
+															// file_name: uploadedFiles[0].fileName,
+															// file_name2: uploadedCoverImage[0].fileName,
 															type: 'medialibrary',
 															data: {
+																file_name_media: uploadedFiles[0].fileName,
+																file_name_image: uploadedCoverImage[0].fileName,
 																...completeUpload?.data?.data
 															}
 														});

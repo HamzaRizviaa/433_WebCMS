@@ -29,6 +29,8 @@ import { ReactComponent as Timer } from '../../../assets/Timer.svg';
 import { ReactComponent as Scoring } from '../../../assets/football.svg';
 import { ReactComponent as Objective } from '../../../assets/Cross.svg';
 import Four33Loader from '../../../assets/Loader_Yellow.gif';
+import Tooltip from '@mui/material/Tooltip';
+import Fade from '@mui/material/Fade';
 
 const UploadOreditArcade = ({
 	heading1,
@@ -962,7 +964,19 @@ const UploadOreditArcade = ({
 								<>
 									<div className={classes.explanationWrapper}>
 										<h5>Add Game Explanation Video</h5>
-										<Info />
+										<Tooltip
+											TransitionComponent={Fade}
+											TransitionProps={{ timeout: 800 }}
+											title='Default encoding for videos should be H.264'
+											arrow
+											componentsProps={{
+												tooltip: { className: classes.toolTip },
+												arrow: { className: classes.toolTipArrow }
+											}}
+											placement='bottom'
+										>
+											<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
+										</Tooltip>
 									</div>
 
 									<div className={classes.titleContainer}>

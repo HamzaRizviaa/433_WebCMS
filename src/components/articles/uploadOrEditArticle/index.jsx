@@ -520,7 +520,7 @@ const UploadOrEditViral = ({
 	);
 	const editBtnDisabled =
 		postButtonStatus ||
-		(specificArticle?.dropbox_url === dropboxLink.trim() &&
+		(specificArticle?.dropbox_url === dropboxLink?.trim() &&
 			specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim());
 
 	// console.log(specificArticleTextTrimmed, 'desc');

@@ -300,6 +300,13 @@
 .filePreviewLeft {
 	display: flex;
 	align-items: center;
+	gap: 10px;
+	width: 100%;
+}
+
+.filePreviewRight {
+	display: flex;
+	align-items: center;
 }
 
 .fileThumbnail {
@@ -313,7 +320,9 @@
 
 .fileName {
 	font-size: 1rem;
-	margin-left: 2rem;
+	max-width: 150px;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 .filePreviewIcons {
