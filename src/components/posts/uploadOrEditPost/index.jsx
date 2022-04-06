@@ -7,7 +7,7 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import MenuIcon from '@material-ui/icons/Menu';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
-import DropDownField from '../../DropDownField';
+import DragAndDropField from '../../DragAndDropField';
 import { TextField } from '@material-ui/core';
 import { CircularProgress } from '@material-ui/core';
 import ToggleSwitch from '../../switch';
@@ -708,7 +708,7 @@ const UploadOrEditPost = ({
 									</div>
 								</div>
 							)}
-							<DropDownField
+							<DragAndDropField
 								onDragEnd={onDragEnd}
 								uploadedFiles={uploadedFiles}
 								isEdit={isEdit}
@@ -718,6 +718,7 @@ const UploadOrEditPost = ({
 								dimensionSelect={dimensionSelect}
 								imageToResizeWidth={imageToResizeWidth}
 								imageToResizeHeight={imageToResizeHeight}
+								isPost
 							/>
 
 							{uploadedFiles.length < 10 && !isEdit ? (

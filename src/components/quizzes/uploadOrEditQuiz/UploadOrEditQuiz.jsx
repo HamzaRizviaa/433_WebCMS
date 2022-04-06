@@ -10,6 +10,7 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { makeid } from '../../../utils/helper';
 import Close from '@material-ui/icons/Close';
 import { TextField } from '@material-ui/core';
+import DragAndDropField from '../../DragAndDropField';
 import { Autocomplete, Paper, Popper } from '@mui/material';
 import Button from '../../button';
 import ClearIcon from '@material-ui/icons/Clear';
@@ -583,75 +584,20 @@ const UploadOrEditQuiz = ({
 				>
 					<div>
 						<h5 className={classes.QuizQuestion}>{heading1}</h5>
-						<DragDropContext>
-							<Droppable droppableId='droppable-1'>
-								{(provided) => (
-									<div
-										{...provided.droppableProps}
-										ref={provided.innerRef}
-										className={classes.uploadedFilesContainer}
-									>
-										{uploadedFiles.map((file, index) => {
-											return (
-												<div
-													key={index}
-													className={classes.filePreview}
-													ref={provided.innerRef}
-												>
-													<div className={classes.filePreviewLeft}>
-														<img
-															src={file.img}
-															className={classes.fileThumbnail}
-															style={{
-																objectFit: 'contain',
-																objectPosition: 'center'
-															}}
-															ref={imgRef}
-															onLoad={() => {
-																setFileWidth(imgRef.current.naturalWidth);
-																setFileHeight(imgRef.current.naturalHeight);
-															}}
-														/>
-														<p className={classes.fileName}>{file.fileName}</p>
-													</div>
-
-													<div className={classes.filePreviewRight}>
-														{editQuiz || editPoll ? (
-															<EyeIcon
-																className={classes.filePreviewIcons}
-																onClick={() => {
-																	setPreviewBool(true);
-																	setPreviewFile(file);
-																}}
-															/>
-														) : (
-															<>
-																<EyeIcon
-																	className={classes.filePreviewIcons}
-																	onClick={() => {
-																		setPreviewBool(true);
-																		setPreviewFile(file);
-																	}}
-																/>
-																<Deletes
-																	className={classes.filePreviewIcons}
-																	onClick={() => {
-																		handleDeleteFile(file.id);
-																		setPreviewBool(false);
-																		setPreviewFile(null);
-																	}}
-																/>{' '}
-															</>
-														)}
-													</div>
-												</div>
-											);
-										})}
-										{provided.placeholder}
-									</div>
-								)}
-							</Droppable>
-						</DragDropContext>
+						<DragAndDropField
+							uploadedFiles={uploadedFiles}
+							editPoll={editPoll}
+							editQuiz={editQuiz}
+							handleDeleteFile={handleDeleteFile}
+							setPreviewBool={setPreviewBool}
+							setPreviewFile={setPreviewFile}
+							isArticle
+							imgEl={imgRef}
+							imageOnload={() => {
+								setFileWidth(imgRef.current.naturalWidth);
+								setFileHeight(imgRef.current.naturalHeight);
+							}}
+						/>
 						{!uploadedFiles.length && !editQuiz && !editPoll && (
 							<section
 								className={classes.dropZoneContainer}

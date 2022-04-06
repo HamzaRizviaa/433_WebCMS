@@ -7,7 +7,8 @@ import PropTypes from 'prop-types';
 import Slider from '../../slider';
 //import { CircularProgress } from '@material-ui/core';
 import Button from '../../button';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import DragAndDropField from '../../DragAndDropField';
+// import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLocalStorageDetails } from '../../../utils';
@@ -49,8 +50,8 @@ import 'tinymce/skins/ui/oxide/skin.min.css';
 import 'tinymce/skins/ui/oxide/content.min.css';
 import 'tinymce/skins/content/default/content.min.css';
 
-import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
+// import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
+// import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 
 import LoadingOverlay from 'react-loading-overlay';
 
@@ -575,103 +576,20 @@ const UploadOrEditViral = ({
 					>
 						<div>
 							<h5>{heading1}</h5>
-							<DragDropContext>
-								<Droppable droppableId='droppable-1'>
-									{(provided) => (
-										<div
-											{...provided.droppableProps}
-											ref={provided.innerRef}
-											className={classes.uploadedFilesContainer}
-										>
-											{uploadedFiles.map((file, index) => {
-												return (
-													<Draggable
-														key={file.id}
-														draggableId={`droppable-${file.id}`}
-														index={index}
-														isDragDisabled={uploadedFiles.length <= 1}
-													>
-														{(provided) => (
-															<div
-																key={index}
-																className={classes.filePreview}
-																ref={provided.innerRef}
-																{...provided.draggableProps}
-																style={{
-																	...provided.draggableProps.style
-																}}
-															>
-																<div className={classes.filePreviewLeft}>
-																	<img
-																		src={file.img}
-																		className={classes.fileThumbnail}
-																		// ref={imageElement}
-																		style={{
-																			objectFit: 'cover',
-																			objectPosition: 'center'
-																		}}
-																		ref={imgEl}
-																		onLoad={() => {
-																			setFileWidth(imgEl.current.naturalWidth);
-																			setFileHeight(
-																				imgEl.current.naturalHeight
-																			);
-																		}}
-																	/>
+							<DragAndDropField
+								uploadedFiles={uploadedFiles}
+								isEdit={isEdit}
+								handleDeleteFile={handleDeleteFile}
+								setPreviewBool={setPreviewBool}
+								setPreviewFile={setPreviewFile}
+								isArticle
+								imgEl={imgEl}
+								imageOnload={() => {
+									setFileWidth(imgEl.current.naturalWidth);
+									setFileHeight(imgEl.current.naturalHeight);
+								}}
+							/>
 
-																	<p className={classes.fileName}>
-																		{file.fileName}
-																	</p>
-																</div>
-
-																{/* {loadingMedia.includes(file.id) ? (
-															<div className={classes.loaderContainer}>
-																<CircularProgress className={classes.loader} />
-															</div>
-														) : (
-															<></>
-														)} */}
-
-																{isEdit ? (
-																	<div className={classes.filePreviewRight}>
-																		<EyeIcon
-																			onClick={() => {
-																				setPreviewBool(true);
-																				setPreviewFile(file);
-																			}}
-																			className={classes.filePreviewIcons}
-																		/>
-																	</div>
-																) : (
-																	<div className={classes.filePreviewRight}>
-																		<EyeIcon
-																			className={classes.filePreviewIcons}
-																			onClick={() => {
-																				setPreviewBool(true);
-																				setPreviewFile(file);
-																			}}
-																		/>
-
-																		<Deletes
-																			className={classes.filePreviewIcons}
-																			onClick={() => {
-																				handleDeleteFile(file.id);
-																				setPreviewBool(false);
-																				setPreviewFile(null);
-																			}}
-																		/>
-																	</div>
-																)}
-															</div>
-														)}
-													</Draggable>
-												);
-											})}
-											{provided.placeholder}
-										</div>
-									)}
-								</Droppable>
-							</DragDropContext>
 							{uploadedFiles.length < 1 && !isEdit ? (
 								<section
 									className={classes.dropZoneContainer}

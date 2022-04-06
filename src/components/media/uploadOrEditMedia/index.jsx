@@ -6,7 +6,6 @@ import Button from '../../button';
 import LoadingOverlay from 'react-loading-overlay';
 import { MenuItem, TextField, Select } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { useDropzone } from 'react-dropzone';
 import { makeid } from '../../../utils/helper';
@@ -22,11 +21,7 @@ import Close from '@material-ui/icons/Close';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { CircularProgress } from '@material-ui/core';
-
-import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
-import { ReactComponent as Union } from '../../../assets/Union.svg';
-import { ReactComponent as MusicIcon } from '../../../assets/Music.svg';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
+import DragAndDropField from '../../DragAndDropField';
 import { Autocomplete, Paper, Popper } from '@mui/material';
 import { useRef } from 'react';
 
@@ -824,85 +819,22 @@ const UploadOrEditMedia = ({
 							{(mainCategory && subCategory?.name) || isEdit ? (
 								<>
 									<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
-									<DragDropContext>
-										<Droppable droppableId='droppable-1'>
-											{(provided) => (
-												<div
-													{...provided.droppableProps}
-													ref={provided.innerRef}
-													className={classes.uploadedFilesContainer}
-												>
-													{uploadedFiles.map((file, index) => {
-														return (
-															<div
-																key={index}
-																className={classes.filePreview}
-																ref={provided.innerRef}
-															>
-																<div className={classes.filePreviewLeft}>
-																	{file.type === 'video' ? (
-																		<>
-																			<Union className={classes.playIcon} />
-																			<div className={classes.fileThumbnail2} />
-																			<video
-																				src={file.img}
-																				style={{ display: 'none' }}
-																				ref={videoRef}
-																				onLoadedMetadata={() => {
-																					setFileWidth(
-																						videoRef.current.videoWidth
-																					);
-																					setFileHeight(
-																						videoRef.current.videoHeight
-																					);
-																					setFileDuration(
-																						videoRef.current.duration
-																					);
-																				}}
-																			/>
-																		</>
-																	) : (
-																		<>
-																			<MusicIcon className={classes.playIcon} />
-																			<div className={classes.fileThumbnail2} />
-																			<audio
-																				src={file.img}
-																				style={{ display: 'none' }}
-																				ref={videoRef}
-																				onLoadedMetadata={() => {
-																					setFileDuration(
-																						videoRef.current.duration
-																					);
-																				}}
-																			/>
-																		</>
-																	)}
-
-																	<p className={classes.fileName}>
-																		{file.fileName}
-																	</p>
-																</div>
-
-																<div className={classes.filePreviewRight}>
-																	{isEdit ? (
-																		<></>
-																	) : (
-																		<Deletes
-																			className={classes.filePreviewIcons}
-																			onClick={() => {
-																				handleDeleteFile(file.id);
-																			}}
-																		/>
-																	)}
-																</div>
-															</div>
-														);
-													})}
-													{provided.placeholder}
-												</div>
-											)}
-										</Droppable>
-									</DragDropContext>
+									<DragAndDropField
+										uploadedFiles={uploadedFiles}
+										isEdit={isEdit}
+										handleDeleteFile={handleDeleteFile}
+										setPreviewBool={setPreviewBool}
+										setPreviewFile={setPreviewFile}
+										isMedia
+										onLoadedVideodata={() => {
+											setFileWidth(videoRef.current.videoWidth);
+											setFileHeight(videoRef.current.videoHeight);
+											setFileDuration(videoRef.current.duration);
+										}}
+										onLoadedAudioData={() => {
+											setFileDuration(videoRef.current.duration);
+										}}
+									/>
 									{!uploadedFiles.length && !isEdit && (
 										<section
 											className={classes.dropZoneContainer}
@@ -953,80 +885,19 @@ const UploadOrEditMedia = ({
 									</div>
 
 									<h5>{isEdit ? 'Cover Image' : 'Add Cover Image'}</h5>
-									<DragDropContext>
-										<Droppable droppableId='droppable-2'>
-											{(provided) => (
-												<div
-													{...provided.droppableProps}
-													ref={provided.innerRef}
-													className={classes.uploadedFilesContainer}
-												>
-													{uploadedCoverImage.map((file, index) => {
-														return (
-															<div
-																key={index}
-																className={classes.filePreview}
-																ref={provided.innerRef}
-															>
-																<div className={classes.filePreviewLeft}>
-																	<img
-																		src={file.img}
-																		className={classes.fileThumbnail}
-																		style={{
-																			objectFit: 'cover',
-																			objectPosition: 'center'
-																		}}
-																		ref={imgRef}
-																		onLoad={() => {
-																			setFileWidth(imgRef.current.naturalWidth);
-																			setFileHeight(
-																				imgRef.current.naturalHeight
-																			);
-																		}}
-																	/>
-
-																	<p className={classes.fileName}>
-																		{file.fileName}
-																	</p>
-																</div>
-
-																<div className={classes.filePreviewRight}>
-																	{isEdit ? (
-																		<EyeIcon
-																			className={classes.filePreviewIcons}
-																			onClick={() => {
-																				setPreviewBool(true);
-																				setPreviewFile(file);
-																			}}
-																		/>
-																	) : (
-																		<>
-																			<EyeIcon
-																				className={classes.filePreviewIcons}
-																				onClick={() => {
-																					setPreviewBool(true);
-																					setPreviewFile(file);
-																				}}
-																			/>
-																			<Deletes
-																				className={classes.filePreviewIcons}
-																				onClick={() => {
-																					handleDeleteFile2(file.id);
-																					setPreviewBool(false);
-																					setPreviewFile(null);
-																				}}
-																			/>{' '}
-																		</>
-																	)}
-																</div>
-															</div>
-														);
-													})}
-													{provided.placeholder}
-												</div>
-											)}
-										</Droppable>
-									</DragDropContext>
+									<DragAndDropField
+										uploadedFiles={uploadedCoverImage}
+										isEdit={isEdit}
+										handleDeleteFile={handleDeleteFile}
+										setPreviewBool={setPreviewBool}
+										setPreviewFile={setPreviewFile}
+										isArticle
+										imgEl={imgRef}
+										imageOnload={() => {
+											setFileWidth(imgRef.current.naturalWidth);
+											setFileHeight(imgRef.current.naturalHeight);
+										}}
+									/>
 									{!uploadedCoverImage.length && !isEdit && (
 										<section
 											className={classes.dropZoneContainer}
