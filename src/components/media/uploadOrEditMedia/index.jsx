@@ -916,7 +916,7 @@ const UploadOrEditMedia = ({
 									<DragAndDropField
 										uploadedFiles={uploadedCoverImage}
 										isEdit={isEdit}
-										handleDeleteFile={handleDeleteFile}
+										handleDeleteFile={handleDeleteFile2}
 										setPreviewBool={setPreviewBool}
 										setPreviewFile={setPreviewFile}
 										isArticle

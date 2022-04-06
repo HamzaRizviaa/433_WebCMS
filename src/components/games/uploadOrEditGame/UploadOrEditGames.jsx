@@ -1,13 +1,13 @@
 import React, { useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classes from './_uploadOrEditGames.module.scss';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { useDropzone } from 'react-dropzone';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { makeid } from '../../../utils/helper';
 import Close from '@material-ui/icons/Close';
 import { TextField, MenuItem, Select } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import DragAndDropField from '../../DragAndDropField';
 import Button from '../../button';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../../../pages/PostLibrary/_calender.scss';
@@ -22,8 +22,6 @@ import { getAllGames } from '../../../pages/GamesLibrary/gamesLibrarySlice';
 //import Fade from '@mui/material/Fade';
 import { useStyles } from './gamesStyles';
 import captureVideoFrame from 'capture-video-frame';
-import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 import { ReactComponent as Timer } from '../../../assets/Timer.svg';
 import { ReactComponent as Scoring } from '../../../assets/football.svg';
@@ -176,7 +174,7 @@ const UploadOreditArcade = ({
 				setObjective(specificGamesData?.objective);
 				setPayload(specificGamesData?.payload);
 				setTime(specificGamesData?.time);
-				setVideoOrientation(specificGamesData?.orientation);
+				setVideoOrientation(specificGamesData?.orientation?.toLowerCase());
 				setFileWidth2(specificGamesData?.game_video?.width);
 				setFileHeight2(specificGamesData?.game_video?.height);
 				setUploadedExplanationOrIcon([
@@ -860,63 +858,18 @@ const UploadOreditArcade = ({
 					>
 						<div>
 							<h5 className={classes.QuizQuestion}>{heading1}</h5>
-							<DragDropContext>
-								<Droppable droppableId='droppable-1'>
-									{(provided) => (
-										<div
-											{...provided.droppableProps}
-											ref={provided.innerRef}
-											className={classes.uploadedFilesContainer}
-										>
-											{uploadedFiles.map((file, index) => {
-												return (
-													<div
-														key={index}
-														className={classes.filePreview}
-														ref={provided.innerRef}
-													>
-														<div className={classes.filePreviewLeft}>
-															<img
-																ref={imgRef}
-																onLoad={() => {
-																	setFileWidth(imgRef.current.naturalWidth);
-																	setFileHeight(imgRef.current.naturalHeight);
-																}}
-																src={file.img}
-																className={classes.fileThumbnail}
-															/>
-															<p className={classes.fileName}>
-																{file.fileName}
-															</p>
-														</div>
-
-														<div className={classes.filePreviewRight}>
-															<>
-																<EyeIcon
-																	className={classes.filePreviewIcons}
-																	onClick={() => {
-																		setPreviewBool(true);
-																		setPreviewFile(file);
-																	}}
-																/>
-																<Deletes
-																	className={classes.filePreviewIcons}
-																	onClick={() => {
-																		handleDeleteFile(file.id);
-																		setPreviewBool(false);
-																		setPreviewFile(null);
-																	}}
-																/>{' '}
-															</>
-														</div>
-													</div>
-												);
-											})}
-											{provided.placeholder}
-										</div>
-									)}
-								</Droppable>
-							</DragDropContext>
+							<DragAndDropField
+								uploadedFiles={uploadedFiles}
+								handleDeleteFile={handleDeleteFile}
+								setPreviewBool={setPreviewBool}
+								setPreviewFile={setPreviewFile}
+								isArticle
+								imgEl={imgRef}
+								imageOnload={() => {
+									setFileWidth(imgRef.current.naturalWidth);
+									setFileHeight(imgRef.current.naturalHeight);
+								}}
+							/>
 							{!uploadedFiles.length && (
 								<section
 									className={classes.dropZoneContainer}
@@ -1066,99 +1019,24 @@ const UploadOreditArcade = ({
 									</div>
 								</>
 							)}
-							<DragDropContext>
-								<Droppable droppableId='droppable-2'>
-									{(provided) => (
-										<div
-											{...provided.droppableProps}
-											ref={provided.innerRef}
-											className={classes.uploadedFilesContainer}
-										>
-											{uploadedExplanationOrIcon.map((file, index) => {
-												return (
-													<div
-														key={index}
-														className={classes.filePreview}
-														ref={provided.innerRef}
-													>
-														<div className={classes.filePreviewLeft}>
-															{file.type === 'video' ? (
-																<>
-																	<video
-																		id={'my-video'}
-																		//poster={editJogo ? file.img : null}
-																		className={classes.fileThumbnail}
-																		style={{
-																			objectFit: 'cover',
-																			objectPosition: 'center'
-																		}}
-																		ref={videoRef}
-																		onLoadedMetadata={() => {
-																			setFileWidth2(
-																				videoRef.current.videoWidth
-																			);
-																			setFileHeight2(
-																				videoRef.current.videoHeight
-																			);
-																		}}
-																	>
-																		<source src={file.img} />
-																	</video>{' '}
-																</>
-															) : (
-																<>
-																	<img
-																		src={file.img}
-																		className={classes.fileThumbnail}
-																		style={{
-																			objectFit: 'cover',
-																			objectPosition: 'center'
-																		}}
-																		ref={videoRef}
-																		onLoad={() => {
-																			setFileWidth2(
-																				videoRef.current.naturalWidth
-																			);
-																			setFileHeight2(
-																				videoRef.current.naturalHeight
-																			);
-																		}}
-																	/>{' '}
-																</>
-															)}
+							<DragAndDropField
+								uploadedFiles={uploadedExplanationOrIcon}
+								handleDeleteFile={handleDeleteFile2}
+								setPreviewBool={setPreviewBool}
+								setPreviewFile={setPreviewFile}
+								isPost
+								imgEl={videoRef}
+								videoRef={videoRef}
+								imageOnload={() => {
+									setFileWidth2(videoRef.current.naturalWidth);
+									setFileHeight2(videoRef.current.naturalHeight);
+								}}
+								onLoadedVideodata={() => {
+									setFileWidth2(videoRef.current.videoWidth);
+									setFileHeight2(videoRef.current.videoHeight);
+								}}
+							/>
 
-															<p className={classes.fileName}>
-																{file.fileName}
-															</p>
-														</div>
-
-														<div className={classes.filePreviewRight}>
-															<>
-																<EyeIcon
-																	className={classes.filePreviewIcons}
-																	onClick={() => {
-																		setPreviewBool(true);
-																		setPreviewFile(file);
-																	}}
-																/>
-																<Deletes
-																	className={classes.filePreviewIcons}
-																	onClick={() => {
-																		handleDeleteFile2(file.id);
-																		setPreviewBool(false);
-																		setPreviewFile(null);
-																	}}
-																/>{' '}
-															</>
-														</div>
-													</div>
-												);
-											})}
-											{provided.placeholder}
-										</div>
-									)}
-								</Droppable>
-							</DragDropContext>
 							{!uploadedExplanationOrIcon.length && (
 								<section
 									className={classes.dropZoneContainer}
