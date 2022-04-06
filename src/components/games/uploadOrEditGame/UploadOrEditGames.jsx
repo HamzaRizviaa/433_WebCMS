@@ -183,7 +183,9 @@ const UploadOreditArcade = ({
 						fileName: specificGamesData?.game_video_file_name,
 						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_video?.url}`,
 						type: 'video',
-						fileExtension: '.mp4'
+						fileExtension: '.mp4',
+						url: `${specificGamesData?.game_video?.url}`,
+						file_name: specificGamesData?.game_video_file_name
 					}
 				]);
 			} else {
@@ -296,7 +298,7 @@ const UploadOreditArcade = ({
 	};
 
 	const uploadFileToServer = async (uploadedFile) => {
-		console.log(uploadedFile, 'uploadedFile file to server ****************');
+		console.log('uploadedFile file to server', uploadedFile);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
@@ -310,13 +312,16 @@ const UploadOreditArcade = ({
 					}
 				}
 			);
-			const frame = captureVideoFrame('my-video', 'png');
+
 			if (result?.data?.data?.video_thumbnail_url) {
+				const frame = captureVideoFrame('my-video', 'png');
+				console.log('inside THumb');
 				await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
 					headers: { 'Content-Type': 'image/png' }
 				});
 			}
 			if (result?.data?.data?.url) {
+				console.log('inside put');
 				const _result = await axios.put(
 					result?.data?.data?.url,
 					uploadedFile.file,
@@ -324,6 +329,8 @@ const UploadOreditArcade = ({
 						headers: { 'Content-Type': uploadedFile.mime_type }
 					}
 				);
+
+				console.log('_result', _result);
 
 				if (_result?.status === 200) {
 					const uploadResult = await axios.post(
@@ -364,7 +371,7 @@ const UploadOreditArcade = ({
 					if (uploadResult?.data?.status_code === 200) {
 						return uploadResult.data.data;
 					} else {
-						throw 'Error';
+						throw 'not 200 Error';
 					}
 				} else {
 					throw 'Error';
@@ -373,7 +380,7 @@ const UploadOreditArcade = ({
 				throw 'Error';
 			}
 		} catch (error) {
-			console.log('Error');
+			console.log('Catch Error');
 			return null;
 		}
 	};
@@ -847,11 +854,6 @@ const UploadOreditArcade = ({
 						className={classes.contentWrapperNoPreview}
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
 					>
-						{console.log(
-							uploadedExplanationOrIcon[0],
-							uploadedFiles[0],
-							'files to console ************'
-						)}
 						<div>
 							<h5 className={classes.QuizQuestion}>{heading1}</h5>
 							<DragDropContext>
@@ -1066,7 +1068,6 @@ const UploadOreditArcade = ({
 														<div className={classes.filePreviewLeft}>
 															{file.type === 'video' ? (
 																<>
-																	{console.log(file, 'file in upload icon')}
 																	<video
 																		id={'my-video'}
 																		//poster={editJogo ? file.img : null}
@@ -1682,16 +1683,20 @@ const UploadOreditArcade = ({
 													// 	fileExtension: '.mp4'
 													// })
 												].map(async (_file) => {
-													return uploadFileToServer(_file);
+													if (_file.file) {
+														return await uploadFileToServer(_file);
+													} else {
+														return _file;
+													}
 												});
 												console.log(
-													uploadFilesPromiseArray,
-													'========promises ======= '
+													'========promises ======= ',
+													uploadFilesPromiseArray
 												);
 
 												Promise.all([...uploadFilesPromiseArray])
 													.then((mediaFiles) => {
-														console.log(mediaFiles, 'media files ');
+														console.log('media files', mediaFiles);
 														createGames(specificGamesData?.id, mediaFiles);
 													})
 													.catch(() => {
