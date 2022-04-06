@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Paper, Autocomplete, Popper, TextField } from '@mui/material';
 import Button from '../../button';
 import ClearIcon from '@material-ui/icons/Clear';
-import classes from './_dropDownField.module.scss';
+import classes from './_autoCompleteField.module.scss';
 
 const AutoCompleteField = ({
 	isEdit,
