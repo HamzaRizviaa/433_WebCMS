@@ -22,9 +22,12 @@ import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
 import { Popper, Paper } from '@mui/material';
 import { getLocalStorageDetails } from '../../../utils';
+import Tooltip from '@mui/material/Tooltip';
+import Fade from '@mui/material/Fade';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
+import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 
 import LoadingOverlay from 'react-loading-overlay';
 
@@ -504,7 +507,22 @@ const UploadOrEditViral = ({
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
 					>
 						<div>
-							<h5>{heading1}</h5>
+							<div className={classes.explanationWrapper}>
+								<h5>{heading1}</h5>
+								<Tooltip
+									TransitionComponent={Fade}
+									TransitionProps={{ timeout: 800 }}
+									title='Default encoding for videos should be H.264'
+									arrow
+									componentsProps={{
+										tooltip: { className: classes.toolTip },
+										arrow: { className: classes.toolTipArrow }
+									}}
+									placement='bottom-start'
+								>
+									<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
+								</Tooltip>
+							</div>
 							<DragDropContext>
 								<Droppable droppableId='droppable-1'>
 									{(provided) => (

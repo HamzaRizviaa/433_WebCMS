@@ -33,6 +33,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
 import Chip from '@mui/material/Chip';
 import { Popper, Paper } from '@mui/material';
+import Tooltip from '@mui/material/Tooltip';
+import Fade from '@mui/material/Fade';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
@@ -42,6 +44,7 @@ import { ReactComponent as SquareCropSelected } from '../../../assets/Square_sel
 import { ReactComponent as PortraitCropSelected } from '../../../assets/portrait_rect_selected.svg';
 import { ReactComponent as LandscapeCropSelected } from '../../../assets/Rectangle_12_selected.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
+import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 
 import LoadingOverlay from 'react-loading-overlay';
 
@@ -636,10 +639,40 @@ const UploadOrEditPost = ({
 					>
 						<div>
 							{isEdit || uploadedFiles.length === 0 ? (
-								<h5>{heading1}</h5>
+								<div className={classes.explanationWrapper}>
+									<h5>{heading1}</h5>
+									<Tooltip
+										TransitionComponent={Fade}
+										TransitionProps={{ timeout: 800 }}
+										title='Default encoding for videos should be H.264'
+										arrow
+										componentsProps={{
+											tooltip: { className: classes.toolTip },
+											arrow: { className: classes.toolTipArrow }
+										}}
+										placement='bottom-start'
+									>
+										<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
+									</Tooltip>
+								</div>
 							) : (
 								<div className={classes.headerOrientationWrapper}>
-									<h5>{heading1}</h5>
+									<div className={classes.explanationWrapper}>
+										<h5>{heading1}</h5>
+										<Tooltip
+											TransitionComponent={Fade}
+											TransitionProps={{ timeout: 800 }}
+											title='Default encoding for videos should be H.264'
+											arrow
+											componentsProps={{
+												tooltip: { className: classes.toolTip },
+												arrow: { className: classes.toolTipArrow }
+											}}
+											placement='bottom-start'
+										>
+											<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
+										</Tooltip>
+									</div>
 									<div className={classes.orientationDimensionWrapper}>
 										<h6 className={classes.orientation}>Orientation</h6>
 										<div
