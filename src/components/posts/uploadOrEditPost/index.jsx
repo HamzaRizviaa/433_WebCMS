@@ -7,6 +7,7 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import MenuIcon from '@material-ui/icons/Menu';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
+import DropDownField from '../../DropDownField';
 import { TextField } from '@material-ui/core';
 import { CircularProgress } from '@material-ui/core';
 import ToggleSwitch from '../../switch';
@@ -707,139 +708,18 @@ const UploadOrEditPost = ({
 									</div>
 								</div>
 							)}
-							<DragDropContext onDragEnd={onDragEnd}>
-								<Droppable droppableId='droppable-1'>
-									{(provided) => (
-										<div
-											{...provided.droppableProps}
-											ref={provided.innerRef}
-											className={classes.uploadedFilesContainer}
-										>
-											{uploadedFiles.map((file, index) => {
-												return (
-													<Draggable
-														key={file.id}
-														draggableId={`droppable-${file.id}`}
-														index={index}
-														isDragDisabled={uploadedFiles.length <= 1}
-													>
-														{(provided) => (
-															<div
-																key={index}
-																className={classes.filePreview}
-																ref={provided.innerRef}
-																{...provided.draggableProps}
-																style={{
-																	...provided.draggableProps.style
-																}}
-															>
-																<div className={classes.filePreviewLeft}>
-																	{file.type === 'video' ? (
-																		<>
-																			<PlayArrowIcon
-																				className={
-																					dimensionSelect === 'portrait'
-																						? classes.playIconPortrait
-																						: classes.playIcon
-																				}
-																			/>
-																			<video
-																				id={'my-video'}
-																				poster={isEdit ? file.img : null}
-																				className={classes.fileThumbnail}
-																				style={{
-																					maxWidth: `${imageToResizeWidth}px`,
-																					maxHeight: `${imageToResizeHeight}px`,
-																					objectFit: 'cover',
-																					objectPosition: 'center'
-																				}}
-																			>
-																				<source src={file.img} />
-																			</video>
-																		</>
-																	) : (
-																		<>
-																			{/* <Cropper
-																		image={`${file.img}`}
-																		crop={crop}
-																		aspect={aspect}
-																		className={classes.fileThumbnail}
-																		onCropChange={()=> console.log('lol')}
-																	/> */}
-																			<img
-																				src={file.img}
-																				className={classes.fileThumbnail}
-																				// ref={imageElement}
-																				style={{
-																					width: `${imageToResizeWidth}px`,
-																					height: `${imageToResizeHeight}px`,
-																					objectFit: 'cover',
-																					objectPosition: 'center'
-																				}}
-																			/>
-																		</>
-																	)}
+							<DropDownField
+								onDragEnd={onDragEnd}
+								uploadedFiles={uploadedFiles}
+								isEdit={isEdit}
+								handleDeleteFile={handleDeleteFile}
+								setPreviewBool={setPreviewBool}
+								setPreviewFile={setPreviewFile}
+								dimensionSelect={dimensionSelect}
+								imageToResizeWidth={imageToResizeWidth}
+								imageToResizeHeight={imageToResizeHeight}
+							/>
 
-																	<p className={classes.fileName}>
-																		{file.fileName}
-																	</p>
-																</div>
-
-																{/* {loadingMedia.includes(file.id) ? (
-															<div className={classes.loaderContainer}>
-																<CircularProgress className={classes.loader} />
-															</div>
-														) : (
-															<></>
-														)} */}
-
-																{isEdit ? (
-																	<div className={classes.filePreviewRight}>
-																		<EyeIcon
-																			onClick={() => {
-																				setPreviewBool(true);
-																				setPreviewFile(file);
-																			}}
-																			className={classes.filePreviewIcons}
-																		/>
-																	</div>
-																) : (
-																	<div className={classes.filePreviewRight}>
-																		<EyeIcon
-																			className={classes.filePreviewIcons}
-																			onClick={() => {
-																				setPreviewBool(true);
-																				setPreviewFile(file);
-																			}}
-																		/>
-																		{uploadedFiles.length > 1 && (
-																			<span {...provided.dragHandleProps}>
-																				<MenuIcon
-																					style={{ cursor: 'grab' }}
-																					className={classes.filePreviewIcons}
-																				/>
-																			</span>
-																		)}
-																		<Deletes
-																			className={classes.filePreviewIcons}
-																			onClick={() => {
-																				handleDeleteFile(file.id);
-																				setPreviewBool(false);
-																				setPreviewFile(null);
-																			}}
-																		/>
-																	</div>
-																)}
-															</div>
-														)}
-													</Draggable>
-												);
-											})}
-											{provided.placeholder}
-										</div>
-									)}
-								</Droppable>
-							</DragDropContext>
 							{uploadedFiles.length < 10 && !isEdit ? (
 								<section
 									className={classes.dropZoneContainer}

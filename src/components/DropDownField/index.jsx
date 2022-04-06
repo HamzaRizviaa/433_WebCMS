@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
-import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
+import { ReactComponent as Deletes } from '../../assets/Delete.svg';
+import { ReactComponent as EyeIcon } from '../../assets/Eye.svg';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import MenuIcon from '@material-ui/icons/Menu';
 import classes from './_dropDownField.module.scss';
@@ -16,10 +16,11 @@ const DropDownField = ({
 	setPreviewFile,
 	dimensionSelect,
 	imageToResizeWidth,
-	imageToResizeHeight
+	imageToResizeHeight,
+	...props
 }) => {
 	return (
-		<DragDropContext onDragEnd={onDragEnd}>
+		<DragDropContext onDragEnd={onDragEnd} {...props}>
 			<Droppable droppableId='droppable-1'>
 				{(provided) => (
 					<div
