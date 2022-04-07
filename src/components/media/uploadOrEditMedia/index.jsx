@@ -16,17 +16,16 @@ import {
 } from './../../../pages/MediaLibrary/mediaLibrarySlice';
 import { getLocalStorageDetails } from '../../../utils';
 import { getMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
-import ClearIcon from '@material-ui/icons/Clear';
 import Close from '@material-ui/icons/Close';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { CircularProgress } from '@material-ui/core';
 import DragAndDropField from '../../DragAndDropField';
+import Labels from '../../Labels';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
-import { Autocomplete, Paper, Popper } from '@mui/material';
 import { useRef } from 'react';
 
 const UploadOrEditMedia = ({
@@ -1009,157 +1008,14 @@ const UploadOrEditMedia = ({
 
 									<div className={classes.titleContainer}>
 										<h6 style={{ color: labelColor }}>LABELS</h6>
-										<Autocomplete
-											disabled={isEdit}
-											getOptionLabel={(option) => option.name}
-											PaperComponent={(props) => {
-												setDisableDropdown(false);
-												return (
-													<Paper
-														elevation={6}
-														className={classes.popperAuto}
-														style={{
-															marginTop: '12px',
-															background: 'black',
-															border: '1px solid #404040',
-															boxShadow:
-																'0px 16px 40px rgba(255, 255, 255, 0.16)',
-															borderRadius: '8px'
-														}}
-														{...props}
-													/>
-												);
-											}}
-											PopperComponent={({ style, ...props }) => (
-												<Popper {...props} style={{ ...style, height: 0 }} />
-											)}
-											ListboxProps={{
-												style: { maxHeight: 180 },
-												position: 'bottom'
-											}}
-											onClose={() => {
-												setDisableDropdown(true);
-											}}
-											multiple
-											filterSelectedOptions
-											// freeSolo
-											freeSolo={false}
-											value={selectedLabels}
-											onChange={(event, newValue) => {
-												setDisableDropdown(true);
-												event.preventDefault();
-												event.stopPropagation();
-												let newLabels = newValue.filter(
-													(v, i, a) =>
-														a.findIndex(
-															(t) =>
-																t.name.toLowerCase() === v.name.toLowerCase()
-														) === i
-												);
-												setSelectedLabels([...newLabels]);
-											}}
-											popupIcon={''}
-											noOptionsText={
-												<div
-													className={classes.liAutocompleteWithButton}
-													style={{
-														display: 'flex',
-														justifyContent: 'space-between',
-														alignItems: 'center',
-														color: 'white',
-														fontSize: 14
-													}}
-												>
-													{/* <p>{extraLabel.toUpperCase()}</p> */}
-													<p>No results found</p>
-													{/* <Button
-														text='CREATE NEW LABEL'
-														style={{
-															padding: '3px 12px',
-															fontWeight: 700
-														}}
-														onClick={() => {
-															// setSelectedLabels((labels) => [
-															// 	...labels,
-															// 	extraLabel.toUpperCase()
-															// ]);
-														}}
-													/> */}
-												</div>
-											}
-											className={`${classes.autoComplete} ${
-												isEdit && classes.disableAutoComplete
-											}`}
-											id='free-solo-2-demo'
-											disableClearable
-											options={mediaLabels}
-											renderInput={(params) => (
-												<TextField
-													{...params}
-													placeholder={
-														selectedLabels.length ? ' ' : 'Select Label'
-													}
-													className={classes.textFieldAuto}
-													value={extraLabel}
-													onChange={handleChangeExtraLabel}
-													InputProps={{
-														disableUnderline: true,
-														className: classes.textFieldInput,
-														...params.InputProps
-													}}
-												/>
-											)}
-											renderOption={(props, option) => {
-												let currentLabelDuplicate = selectedLabels.some(
-													(label) => label.name == option.name
-												);
-												if (option.id == null && !currentLabelDuplicate) {
-													return (
-														<li
-															{...props}
-															style={{
-																display: 'flex',
-																alignItems: 'center',
-																justifyContent: 'space-between'
-															}}
-															className={classes.liAutocomplete}
-														>
-															{option.name}
-															<Button
-																text='CREATE NEW LABEL'
-																style={{
-																	padding: '3px 12px',
-																	fontWeight: 700
-																}}
-																onClick={() => {
-																	// setSelectedLabels((labels) => [
-																	// 	...labels,
-																	// 	extraLabel.toUpperCase()
-																	// ]);
-																}}
-															/>
-														</li>
-													);
-												} else if (!currentLabelDuplicate) {
-													return (
-														<li {...props} className={classes.liAutocomplete}>
-															{option.name}
-														</li>
-													);
-												} else {
-													return (
-														<div className={classes.liAutocompleteWithButton}>
-															&apos;{option.name}&apos; is already selected
-														</div>
-													);
-												}
-											}}
-											ChipProps={{
-												className: classes.tagYellow,
-												size: 'small',
-												deleteIcon: <ClearIcon />
-											}}
-											clearIcon={''}
+										<Labels
+											isEdit={isEdit}
+											setDisableDropdown={setDisableDropdown}
+											selectedLabels={selectedLabels}
+											setSelectedLabels={setSelectedLabels}
+											LabelsOptions={mediaLabels}
+											extraLabel={extraLabel}
+											handleChangeExtraLabel={handleChangeExtraLabel}
 										/>
 									</div>
 

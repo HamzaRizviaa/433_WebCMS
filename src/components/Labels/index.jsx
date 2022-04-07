@@ -1,16 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Paper, Autocomplete, Popper, TextField } from '@mui/material';
-import Button from '../../button';
+import { Paper, Popper, Autocomplete } from '@mui/material';
+import { TextField } from '@material-ui/core';
+import Button from '../button';
 import ClearIcon from '@material-ui/icons/Clear';
-import classes from './_autoCompleteField.module.scss';
+import classes from './_labels.module.scss';
 
-const AutoCompleteField = ({
+const Labels = ({
 	isEdit,
 	setDisableDropdown,
 	selectedLabels,
 	setSelectedLabels,
-	postLabels,
+	LabelsOptions,
 	extraLabel,
 	handleChangeExtraLabel
 }) => {
@@ -60,8 +61,6 @@ const AutoCompleteField = ({
 						) === i
 				);
 				setSelectedLabels([...newLabels]);
-
-				console.log(selectedLabels, newValue);
 			}}
 			popupIcon={''}
 			noOptionsText={
@@ -74,7 +73,7 @@ const AutoCompleteField = ({
 			}`}
 			id='free-solo-2-demo'
 			disableClearable
-			options={postLabels}
+			options={LabelsOptions} //postlabels, medialabels
 			renderInput={(params) => (
 				<TextField
 					{...params}
@@ -113,6 +112,7 @@ const AutoCompleteField = ({
 									padding: '3px 12px',
 									fontWeight: 700
 								}}
+								onClick={() => {}}
 							/>
 						</li>
 					);
@@ -125,7 +125,7 @@ const AutoCompleteField = ({
 				} else {
 					return (
 						<div className={classes.liAutocompleteWithButton}>
-							&apos;{option.name}&apos; is already selected
+							&apos;{option.name}&apos; is already selected!
 						</div>
 					);
 				}
@@ -140,14 +140,14 @@ const AutoCompleteField = ({
 	);
 };
 
-AutoCompleteField.propTypes = {
+Labels.propTypes = {
 	isEdit: PropTypes.bool,
 	setDisableDropdown: PropTypes.func,
 	selectedLabels: PropTypes.array,
 	setSelectedLabels: PropTypes.func,
-	postLabels: PropTypes.array,
+	LabelsOptions: PropTypes.array,
 	extraLabel: PropTypes.string,
 	handleChangeExtraLabel: PropTypes.func
 };
 
-export default AutoCompleteField;
+export default Labels;
