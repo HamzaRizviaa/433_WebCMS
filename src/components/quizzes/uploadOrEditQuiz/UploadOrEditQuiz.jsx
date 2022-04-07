@@ -4,15 +4,14 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classes from './_uploadOrEditQuiz.module.scss';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { useDropzone } from 'react-dropzone';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { makeid } from '../../../utils/helper';
 import Close from '@material-ui/icons/Close';
 import { TextField } from '@material-ui/core';
-import { Autocomplete, Paper, Popper } from '@mui/material';
+import DragAndDropField from '../../DragAndDropField';
+import Labels from '../../Labels';
 import Button from '../../button';
-import ClearIcon from '@material-ui/icons/Clear';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../../../pages/PostLibrary/_calender.scss';
@@ -29,8 +28,6 @@ import axios from 'axios';
 import LoadingOverlay from 'react-loading-overlay';
 // import moment from 'moment';
 
-import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 import { ReactComponent as CalenderYellow } from '../../../assets/Calender_Yellow.svg';
 import { useRef } from 'react';
 import { getSpecificMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
@@ -364,6 +361,9 @@ const UploadOrEditQuiz = ({
 				{
 					width: fileWidth,
 					height: fileHeight,
+					...(!(editQuiz || editPoll)
+						? { file_name: mediaFiles[0]?.file_name }
+						: {}),
 					...(question ? { question: question } : { question: '' }),
 					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
 					...(!(editQuiz || editPoll)
@@ -583,75 +583,20 @@ const UploadOrEditQuiz = ({
 				>
 					<div>
 						<h5 className={classes.QuizQuestion}>{heading1}</h5>
-						<DragDropContext>
-							<Droppable droppableId='droppable-1'>
-								{(provided) => (
-									<div
-										{...provided.droppableProps}
-										ref={provided.innerRef}
-										className={classes.uploadedFilesContainer}
-									>
-										{uploadedFiles.map((file, index) => {
-											return (
-												<div
-													key={index}
-													className={classes.filePreview}
-													ref={provided.innerRef}
-												>
-													<div className={classes.filePreviewLeft}>
-														<img
-															src={file.img}
-															className={classes.fileThumbnail}
-															style={{
-																objectFit: 'cover',
-																objectPosition: 'center'
-															}}
-															ref={imgRef}
-															onLoad={() => {
-																setFileWidth(imgRef.current.naturalWidth);
-																setFileHeight(imgRef.current.naturalHeight);
-															}}
-														/>
-														<p className={classes.fileName}>{file.fileName}</p>
-													</div>
-
-													<div className={classes.filePreviewRight}>
-														{editQuiz || editPoll ? (
-															<EyeIcon
-																className={classes.filePreviewIcons}
-																onClick={() => {
-																	setPreviewBool(true);
-																	setPreviewFile(file);
-																}}
-															/>
-														) : (
-															<>
-																<EyeIcon
-																	className={classes.filePreviewIcons}
-																	onClick={() => {
-																		setPreviewBool(true);
-																		setPreviewFile(file);
-																	}}
-																/>
-																<Deletes
-																	className={classes.filePreviewIcons}
-																	onClick={() => {
-																		handleDeleteFile(file.id);
-																		setPreviewBool(false);
-																		setPreviewFile(null);
-																	}}
-																/>{' '}
-															</>
-														)}
-													</div>
-												</div>
-											);
-										})}
-										{provided.placeholder}
-									</div>
-								)}
-							</Droppable>
-						</DragDropContext>
+						<DragAndDropField
+							uploadedFiles={uploadedFiles}
+							editPoll={editPoll}
+							editQuiz={editQuiz}
+							handleDeleteFile={handleDeleteFile}
+							setPreviewBool={setPreviewBool}
+							setPreviewFile={setPreviewFile}
+							isArticle
+							imgEl={imgRef}
+							imageOnload={() => {
+								setFileWidth(imgRef.current.naturalWidth);
+								setFileHeight(imgRef.current.naturalHeight);
+							}}
+						/>
 						{!uploadedFiles.length && !editQuiz && !editPoll && (
 							<section
 								className={classes.dropZoneContainer}
@@ -768,144 +713,14 @@ const UploadOrEditQuiz = ({
 
 						<div className={classes.titleContainer}>
 							<h6 style={{ color: labelColor }}>LABELS</h6>
-							<Autocomplete
-								disabled={editQuiz || editPoll}
-								getOptionLabel={(option) => option.name}
-								PaperComponent={(props) => {
-									setDisableDropdown(false);
-									return (
-										<Paper
-											elevation={6}
-											className={classes.popperAuto}
-											style={{
-												marginTop: '12px',
-												background: 'black',
-												border: '1px solid #404040',
-												boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)',
-												borderRadius: '8px'
-											}}
-											{...props}
-										/>
-									);
-								}}
-								PopperComponent={({ style, ...props }) => (
-									<Popper {...props} style={{ ...style, height: 0 }} />
-								)}
-								ListboxProps={{
-									style: { maxHeight: 180 },
-									position: 'bottom'
-								}}
-								onClose={() => {
-									setDisableDropdown(true);
-								}}
-								multiple
-								filterSelectedOptions
-								freeSolo={false}
-								value={selectedLabels}
-								onChange={(event, newValue) => {
-									setDisableDropdown(true);
-									event.preventDefault();
-									event.stopPropagation();
-									let newLabels = newValue.filter(
-										(v, i, a) =>
-											a.findIndex(
-												(t) => t.name.toLowerCase() === v.name.toLowerCase()
-											) === i
-									);
-									setSelectedLabels([...newLabels]);
-								}}
-								popupIcon={''}
-								noOptionsText={
-									<div className={classes.liAutocompleteWithButton}>
-										{/* <p>{extraLabel.toUpperCase()}</p> */}
-										<p>No results found</p>
-										{/* <Button
-										text='CREATE NEW LABEL'
-										style={{
-											padding: '3px 12px',
-											fontWeight: 700
-										}}
-										onClick={() => {
-											// setSelectedLabels((labels) => [
-											// 	...labels,
-											// 	extraLabel.toUpperCase()
-											// ]);
-										}}
-									/> */}
-									</div>
-								}
-								className={`${classes.autoComplete}  ${
-									(editQuiz || editPoll) && classes.disableAutoComplete
-								}`}
-								id='free-solo-2-demo'
-								disableClearable
-								options={quizLabels}
-								renderInput={(params) => (
-									<TextField
-										{...params}
-										placeholder={selectedLabels.length ? ' ' : 'Select Labels'}
-										className={classes.textFieldAuto}
-										value={extraLabel}
-										onChange={handleChangeExtraLabel}
-										InputProps={{
-											disableUnderline: true,
-											className: classes.textFieldInput,
-											...params.InputProps
-										}}
-									/>
-								)}
-								renderOption={(props, option) => {
-									let currentLabelDuplicate = selectedLabels.some(
-										(label) => label.name == option.name
-									);
-
-									if (option.id == null && !currentLabelDuplicate) {
-										return (
-											<li
-												{...props}
-												style={{
-													display: 'flex',
-													alignItems: 'center',
-													justifyContent: 'space-between'
-												}}
-												className={classes.liAutocomplete}
-											>
-												{option.name}
-												<Button
-													text='CREATE NEW LABEL'
-													style={{
-														padding: '3px 12px',
-														fontWeight: 700
-													}}
-													onClick={() => {
-														// setSelectedLabels((labels) => [
-														// 	...labels,
-														// 	extraLabel.toUpperCase()
-														// ]);
-													}}
-												/>
-											</li>
-										);
-									} else if (!currentLabelDuplicate) {
-										return (
-											<li {...props} className={classes.liAutocomplete}>
-												{option.name}
-											</li>
-										);
-									} else {
-										return (
-											<div className={classes.liAutocompleteWithButton}>
-												&apos;{option.name}&apos; is already selected
-											</div>
-										);
-									}
-								}}
-								ChipProps={{
-									className: classes.tagYellow,
-									size: 'small',
-									deleteIcon: <ClearIcon />
-								}}
-								clearIcon={''}
+							<Labels
+								isEdit={editPoll || editQuiz}
+								setDisableDropdown={setDisableDropdown}
+								selectedLabels={selectedLabels}
+								setSelectedLabels={setSelectedLabels}
+								LabelsOptions={quizLabels}
+								extraLabel={extraLabel}
+								handleChangeExtraLabel={handleChangeExtraLabel}
 							/>
 						</div>
 

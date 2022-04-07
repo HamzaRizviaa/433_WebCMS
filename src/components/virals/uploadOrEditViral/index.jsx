@@ -7,10 +7,9 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
 import { TextField } from '@material-ui/core';
-import { CircularProgress } from '@material-ui/core';
 import Button from '../../button';
+import DragAndDropField from '../../DragAndDropField';
 import { useDispatch, useSelector } from 'react-redux';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -18,13 +17,14 @@ import { getAllViralsApi } from '../../../pages/ViralLibrary/viralLibararySlice'
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import captureVideoFrame from 'capture-video-frame';
 import Close from '@material-ui/icons/Close';
-import Autocomplete from '@mui/material/Autocomplete';
-import ClearIcon from '@material-ui/icons/Clear';
-import { Popper, Paper } from '@mui/material';
+import Labels from '../../Labels';
 import { getLocalStorageDetails } from '../../../utils';
+import Tooltip from '@mui/material/Tooltip';
+import Fade from '@mui/material/Fade';
 
 import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
+import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 
 import LoadingOverlay from 'react-loading-overlay';
 
@@ -504,138 +504,40 @@ const UploadOrEditViral = ({
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
 					>
 						<div>
-							<h5>{heading1}</h5>
-							<DragDropContext>
-								<Droppable droppableId='droppable-1'>
-									{(provided) => (
-										<div
-											{...provided.droppableProps}
-											ref={provided.innerRef}
-											className={classes.uploadedFilesContainer}
-										>
-											{uploadedFiles.map((file, index) => {
-												return (
-													<Draggable
-														key={file.id}
-														draggableId={`droppable-${file.id}`}
-														index={index}
-														isDragDisabled={uploadedFiles.length <= 1}
-													>
-														{(provided) => (
-															<div
-																key={index}
-																className={classes.filePreview}
-																ref={provided.innerRef}
-																{...provided.draggableProps}
-																style={{
-																	...provided.draggableProps.style
-																}}
-															>
-																<div className={classes.filePreviewLeft}>
-																	{file.type === 'video' ? (
-																		<>
-																			{/* <PlayArrowIcon
-																				className={classes.playIcon}
-																			/> */}
-																			<video
-																				id={'my-video'}
-																				poster={isEdit ? file.img : null}
-																				className={classes.fileThumbnail}
-																				style={{
-																					// maxWidth: `${imageToResizeWidth}px`,
-																					// maxHeight: `${imageToResizeHeight}px`,
-																					objectFit: 'cover',
-																					objectPosition: 'center'
-																				}}
-																				ref={videoRef}
-																				onLoadedMetadata={() => {
-																					setFileWidth(
-																						videoRef.current.videoWidth
-																					);
-																					setFileHeight(
-																						videoRef.current.videoHeight
-																					);
-																				}}
-																			>
-																				<source src={file.img} />
-																			</video>
-																		</>
-																	) : (
-																		<>
-																			<img
-																				src={file.img}
-																				className={classes.fileThumbnail}
-																				style={{
-																					// width: `${imageToResizeWidth}px`,
-																					// height: `${imageToResizeHeight}px`,
-																					objectFit: 'cover',
-																					objectPosition: 'center'
-																				}}
-																				ref={imgEl}
-																				onLoad={() => {
-																					setFileWidth(
-																						imgEl.current.naturalWidth
-																					);
-																					setFileHeight(
-																						imgEl.current.naturalHeight
-																					);
-																				}}
-																			/>
-																		</>
-																	)}
-
-																	<p className={classes.fileName}>
-																		{file.fileName}
-																	</p>
-																</div>
-
-																{/* {loadingMedia.includes(file.id) ? (
-															<div className={classes.loaderContainer}>
-																<CircularProgress className={classes.loader} />
-															</div>
-														) : (
-															<></>
-														)} */}
-
-																{isEdit ? (
-																	<div className={classes.filePreviewRight}>
-																		<EyeIcon
-																			onClick={() => {
-																				setPreviewBool(true);
-																				setPreviewFile(file);
-																			}}
-																			className={classes.filePreviewIcons}
-																		/>
-																	</div>
-																) : (
-																	<div className={classes.filePreviewRight}>
-																		<EyeIcon
-																			className={classes.filePreviewIcons}
-																			onClick={() => {
-																				setPreviewBool(true);
-																				setPreviewFile(file);
-																			}}
-																		/>
-																		<Deletes
-																			className={classes.filePreviewIcons}
-																			onClick={() => {
-																				handleDeleteFile(file.id);
-																				setPreviewBool(false);
-																				setPreviewFile(null);
-																			}}
-																		/>
-																	</div>
-																)}
-															</div>
-														)}
-													</Draggable>
-												);
-											})}
-											{provided.placeholder}
-										</div>
-									)}
-								</Droppable>
-							</DragDropContext>
+							<div className={classes.explanationWrapper}>
+								<h5>{heading1}</h5>
+								<Tooltip
+									TransitionComponent={Fade}
+									TransitionProps={{ timeout: 800 }}
+									title='Default encoding for videos should be H.264'
+									arrow
+									componentsProps={{
+										tooltip: { className: classes.toolTip },
+										arrow: { className: classes.toolTipArrow }
+									}}
+									placement='bottom-start'
+								>
+									<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
+								</Tooltip>
+							</div>
+							<DragAndDropField
+								uploadedFiles={uploadedFiles}
+								isEdit={isEdit}
+								handleDeleteFile={handleDeleteFile}
+								setPreviewBool={setPreviewBool}
+								setPreviewFile={setPreviewFile}
+								imgEl={imgEl}
+								videoRef={videoRef}
+								imageOnLoad={() => {
+									setFileWidth(imgEl.current.naturalWidth);
+									setFileHeight(imgEl.current.naturalHeight);
+								}}
+								onLoadedVideodata={() => {
+									setFileWidth(videoRef.current.videoWidth);
+									setFileHeight(videoRef.current.videoHeight);
+								}}
+								isPost
+							/>
 							{uploadedFiles.length < 1 && !isEdit ? (
 								<section
 									className={classes.dropZoneContainer}
@@ -682,145 +584,14 @@ const UploadOrEditViral = ({
 
 							<div className={classes.captionContainer}>
 								<h6 style={{ color: labelColor }}>LABELS</h6>
-								<Autocomplete
-									disabled={isEdit}
-									getOptionLabel={(option) => option.name} // name out of array of strings
-									PaperComponent={(props) => {
-										setDisableDropdown(false);
-										return (
-											<Paper
-												elevation={6}
-												className={classes.popperAuto}
-												style={{
-													marginTop: '12px',
-													background: 'black',
-													border: '1px solid #404040',
-													boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)',
-													borderRadius: '8px'
-												}}
-												{...props}
-											/>
-										);
-									}}
-									PopperComponent={({ style, ...props }) => (
-										<Popper {...props} style={{ ...style, height: 0 }} />
-									)}
-									ListboxProps={{
-										style: { maxHeight: 180 },
-										position: 'bottom'
-									}}
-									onClose={(e) => {
-										setDisableDropdown(true);
-									}}
-									multiple
-									filterSelectedOptions
-									// freeSolo
-									freeSolo={false}
-									value={selectedLabels}
-									onChange={(event, newValue) => {
-										setDisableDropdown(true);
-										event.preventDefault();
-										event.stopPropagation();
-										let newLabels = newValue.filter(
-											(v, i, a) =>
-												a.findIndex(
-													(t) => t.name.toLowerCase() === v.name.toLowerCase()
-												) === i
-										);
-										setSelectedLabels([...newLabels]);
-									}}
-									popupIcon={''}
-									noOptionsText={
-										<div className={classes.liAutocompleteWithButton}>
-											{/* <p>{extraLabel.toUpperCase()}</p> */}
-											<p>No results found</p>
-											{/* <Button
-												text='CREATE NEW LABEL'
-												style={{
-													padding: '3px 12px',
-													fontWeight: 700
-												}}
-												onClick={() => {
-													// setSelectedLabels((labels) => [
-													// 	...labels,
-													// 	extraLabel.toUpperCase()
-													// ]);
-												}}
-											/> */}
-										</div>
-									}
-									className={`${classes.autoComplete} ${
-										isEdit && classes.disableAutoComplete
-									}`}
-									id='free-solo-2-demo'
-									disableClearable
-									options={postLabels}
-									renderInput={(params) => (
-										<TextField
-											{...params}
-											placeholder={selectedLabels.length ? ' ' : 'Select Label'}
-											className={classes.textFieldAuto}
-											value={extraLabel}
-											onChange={handleChangeExtraLabel}
-											InputProps={{
-												disableUnderline: true,
-												className: classes.textFieldInput,
-												...params.InputProps
-											}}
-										/>
-									)}
-									renderOption={(props, option, state) => {
-										let currentLabelDuplicate = selectedLabels.some(
-											(label) => label.name == option.name
-										);
-
-										if (option.id == null && !currentLabelDuplicate) {
-											return (
-												<li
-													{...props}
-													style={{
-														display: 'flex',
-														alignItems: 'center',
-														justifyContent: 'space-between'
-													}}
-													className={classes.liAutocomplete}
-												>
-													{option.name}
-													<Button
-														text='CREATE NEW LABEL'
-														style={{
-															padding: '3px 12px',
-															fontWeight: 700
-														}}
-														onClick={() => {
-															setSelectedLabels((labels) => [
-																...labels,
-																extraLabel.toUpperCase()
-															]);
-														}}
-													/>
-												</li>
-											);
-										} else if (!currentLabelDuplicate) {
-											return (
-												<li {...props} className={classes.liAutocomplete}>
-													{option.name}
-												</li>
-											);
-										} else {
-											return (
-												<div className={classes.liAutocompleteWithButton}>
-													&apos;{option.name}&apos; is already selected
-												</div>
-											);
-										}
-									}}
-									ChipProps={{
-										className: classes.tagYellow,
-										size: 'small',
-										deleteIcon: <ClearIcon />
-									}}
-									clearIcon={''}
+								<Labels
+									isEdit={isEdit}
+									setDisableDropdown={setDisableDropdown}
+									selectedLabels={selectedLabels}
+									setSelectedLabels={setSelectedLabels}
+									LabelsOptions={postLabels}
+									extraLabel={extraLabel}
+									handleChangeExtraLabel={handleChangeExtraLabel}
 								/>
 							</div>
 							<p className={classes.mediaError}>{labelError}</p>

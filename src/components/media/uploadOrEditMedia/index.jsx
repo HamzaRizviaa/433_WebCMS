@@ -6,7 +6,6 @@ import Button from '../../button';
 import LoadingOverlay from 'react-loading-overlay';
 import { MenuItem, TextField, Select } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { useDropzone } from 'react-dropzone';
 import { makeid } from '../../../utils/helper';
@@ -17,17 +16,16 @@ import {
 } from './../../../pages/MediaLibrary/mediaLibrarySlice';
 import { getLocalStorageDetails } from '../../../utils';
 import { getMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
-import ClearIcon from '@material-ui/icons/Clear';
 import Close from '@material-ui/icons/Close';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { CircularProgress } from '@material-ui/core';
+import DragAndDropField from '../../DragAndDropField';
+import Labels from '../../Labels';
+import Tooltip from '@mui/material/Tooltip';
+import Fade from '@mui/material/Fade';
 
-import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
-import { ReactComponent as Union } from '../../../assets/Union.svg';
-import { ReactComponent as MusicIcon } from '../../../assets/Music.svg';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
-import { Autocomplete, Paper, Popper } from '@mui/material';
+import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 import { useRef } from 'react';
 
 const UploadOrEditMedia = ({
@@ -155,7 +153,7 @@ const UploadOrEditMedia = ({
 			setUploadedFiles([
 				{
 					id: makeid(10),
-					fileName: specificMedia?.file_name,
+					fileName: specificMedia?.file_name_media,
 					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.media_url}`,
 					type: specificMedia?.media_type === 'Watch' ? 'video' : 'audio'
 				}
@@ -164,7 +162,7 @@ const UploadOrEditMedia = ({
 			setUploadedCoverImage([
 				{
 					id: makeid(10),
-					fileName: specificMedia?.file_name,
+					fileName: specificMedia?.file_name_image,
 					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`,
 					type: 'image'
 				}
@@ -446,6 +444,7 @@ const UploadOrEditMedia = ({
 	};
 
 	const uploadMedia = async (id, payload) => {
+		console.log(payload);
 		let media_type = mainCategory?.id;
 		setMediaButtonStatus(true);
 		try {
@@ -469,7 +468,8 @@ const UploadOrEditMedia = ({
 							...(selectedLabels.length ? { labels: [...selectedLabels] } : {}),
 							description: description,
 							data: {
-								file_name: payload?.file_name,
+								// file_name_media: payload?.file_name,
+								// file_name_image: payload?.file_name2,
 								video_data: payload?.data?.Keys?.VideoKey,
 								image_data: payload?.data?.Keys?.ImageKey,
 								audio_data: payload?.data?.Keys?.AudioKey
@@ -823,86 +823,45 @@ const UploadOrEditMedia = ({
 
 							{(mainCategory && subCategory?.name) || isEdit ? (
 								<>
-									<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
-									<DragDropContext>
-										<Droppable droppableId='droppable-1'>
-											{(provided) => (
-												<div
-													{...provided.droppableProps}
-													ref={provided.innerRef}
-													className={classes.uploadedFilesContainer}
-												>
-													{uploadedFiles.map((file, index) => {
-														return (
-															<div
-																key={index}
-																className={classes.filePreview}
-																ref={provided.innerRef}
-															>
-																<div className={classes.filePreviewLeft}>
-																	{file.type === 'video' ? (
-																		<>
-																			<Union className={classes.playIcon} />
-																			<div className={classes.fileThumbnail2} />
-																			<video
-																				src={file.img}
-																				style={{ display: 'none' }}
-																				ref={videoRef}
-																				onLoadedMetadata={() => {
-																					setFileWidth(
-																						videoRef.current.videoWidth
-																					);
-																					setFileHeight(
-																						videoRef.current.videoHeight
-																					);
-																					setFileDuration(
-																						videoRef.current.duration
-																					);
-																				}}
-																			/>
-																		</>
-																	) : (
-																		<>
-																			<MusicIcon className={classes.playIcon} />
-																			<div className={classes.fileThumbnail2} />
-																			<audio
-																				src={file.img}
-																				style={{ display: 'none' }}
-																				ref={videoRef}
-																				onLoadedMetadata={() => {
-																					setFileDuration(
-																						videoRef.current.duration
-																					);
-																				}}
-																			/>
-																		</>
-																	)}
+									{mainCategory.name === 'Watch' ? (
+										<div className={classes.explanationWrapper}>
+											<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
+											<Tooltip
+												TransitionComponent={Fade}
+												TransitionProps={{ timeout: 800 }}
+												title='Default encoding for videos should be H.264'
+												arrow
+												componentsProps={{
+													tooltip: { className: classes.toolTip },
+													arrow: { className: classes.toolTipArrow }
+												}}
+												placement='bottom-start'
+											>
+												<Info
+													style={{ cursor: 'pointer', marginLeft: '1rem' }}
+												/>
+											</Tooltip>
+										</div>
+									) : (
+										<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
+									)}
 
-																	<p className={classes.fileName}>
-																		{file.fileName}
-																	</p>
-																</div>
-
-																<div className={classes.filePreviewRight}>
-																	{isEdit ? (
-																		<></>
-																	) : (
-																		<Deletes
-																			className={classes.filePreviewIcons}
-																			onClick={() => {
-																				handleDeleteFile(file.id);
-																			}}
-																		/>
-																	)}
-																</div>
-															</div>
-														);
-													})}
-													{provided.placeholder}
-												</div>
-											)}
-										</Droppable>
-									</DragDropContext>
+									<DragAndDropField
+										uploadedFiles={uploadedFiles}
+										isEdit={isEdit}
+										handleDeleteFile={handleDeleteFile}
+										setPreviewBool={setPreviewBool}
+										setPreviewFile={setPreviewFile}
+										isMedia
+										onLoadedVideodata={() => {
+											setFileWidth(videoRef.current.videoWidth);
+											setFileHeight(videoRef.current.videoHeight);
+											setFileDuration(videoRef.current.duration);
+										}}
+										onLoadedAudioData={() => {
+											setFileDuration(videoRef.current.duration);
+										}}
+									/>
 									{!uploadedFiles.length && !isEdit && (
 										<section
 											className={classes.dropZoneContainer}
@@ -953,80 +912,19 @@ const UploadOrEditMedia = ({
 									</div>
 
 									<h5>{isEdit ? 'Cover Image' : 'Add Cover Image'}</h5>
-									<DragDropContext>
-										<Droppable droppableId='droppable-2'>
-											{(provided) => (
-												<div
-													{...provided.droppableProps}
-													ref={provided.innerRef}
-													className={classes.uploadedFilesContainer}
-												>
-													{uploadedCoverImage.map((file, index) => {
-														return (
-															<div
-																key={index}
-																className={classes.filePreview}
-																ref={provided.innerRef}
-															>
-																<div className={classes.filePreviewLeft}>
-																	<img
-																		src={file.img}
-																		className={classes.fileThumbnail}
-																		style={{
-																			objectFit: 'cover',
-																			objectPosition: 'center'
-																		}}
-																		ref={imgRef}
-																		onLoad={() => {
-																			setFileWidth(imgRef.current.naturalWidth);
-																			setFileHeight(
-																				imgRef.current.naturalHeight
-																			);
-																		}}
-																	/>
-
-																	<p className={classes.fileName}>
-																		{file.fileName}
-																	</p>
-																</div>
-
-																<div className={classes.filePreviewRight}>
-																	{isEdit ? (
-																		<EyeIcon
-																			className={classes.filePreviewIcons}
-																			onClick={() => {
-																				setPreviewBool(true);
-																				setPreviewFile(file);
-																			}}
-																		/>
-																	) : (
-																		<>
-																			<EyeIcon
-																				className={classes.filePreviewIcons}
-																				onClick={() => {
-																					setPreviewBool(true);
-																					setPreviewFile(file);
-																				}}
-																			/>
-																			<Deletes
-																				className={classes.filePreviewIcons}
-																				onClick={() => {
-																					handleDeleteFile2(file.id);
-																					setPreviewBool(false);
-																					setPreviewFile(null);
-																				}}
-																			/>{' '}
-																		</>
-																	)}
-																</div>
-															</div>
-														);
-													})}
-													{provided.placeholder}
-												</div>
-											)}
-										</Droppable>
-									</DragDropContext>
+									<DragAndDropField
+										uploadedFiles={uploadedCoverImage}
+										isEdit={isEdit}
+										handleDeleteFile={handleDeleteFile2}
+										setPreviewBool={setPreviewBool}
+										setPreviewFile={setPreviewFile}
+										isArticle
+										imgEl={imgRef}
+										imageOnload={() => {
+											setFileWidth(imgRef.current.naturalWidth);
+											setFileHeight(imgRef.current.naturalHeight);
+										}}
+									/>
 									{!uploadedCoverImage.length && !isEdit && (
 										<section
 											className={classes.dropZoneContainer}
@@ -1110,157 +1008,14 @@ const UploadOrEditMedia = ({
 
 									<div className={classes.titleContainer}>
 										<h6 style={{ color: labelColor }}>LABELS</h6>
-										<Autocomplete
-											disabled={isEdit}
-											getOptionLabel={(option) => option.name}
-											PaperComponent={(props) => {
-												setDisableDropdown(false);
-												return (
-													<Paper
-														elevation={6}
-														className={classes.popperAuto}
-														style={{
-															marginTop: '12px',
-															background: 'black',
-															border: '1px solid #404040',
-															boxShadow:
-																'0px 16px 40px rgba(255, 255, 255, 0.16)',
-															borderRadius: '8px'
-														}}
-														{...props}
-													/>
-												);
-											}}
-											PopperComponent={({ style, ...props }) => (
-												<Popper {...props} style={{ ...style, height: 0 }} />
-											)}
-											ListboxProps={{
-												style: { maxHeight: 180 },
-												position: 'bottom'
-											}}
-											onClose={() => {
-												setDisableDropdown(true);
-											}}
-											multiple
-											filterSelectedOptions
-											// freeSolo
-											freeSolo={false}
-											value={selectedLabels}
-											onChange={(event, newValue) => {
-												setDisableDropdown(true);
-												event.preventDefault();
-												event.stopPropagation();
-												let newLabels = newValue.filter(
-													(v, i, a) =>
-														a.findIndex(
-															(t) =>
-																t.name.toLowerCase() === v.name.toLowerCase()
-														) === i
-												);
-												setSelectedLabels([...newLabels]);
-											}}
-											popupIcon={''}
-											noOptionsText={
-												<div
-													className={classes.liAutocompleteWithButton}
-													style={{
-														display: 'flex',
-														justifyContent: 'space-between',
-														alignItems: 'center',
-														color: 'white',
-														fontSize: 14
-													}}
-												>
-													{/* <p>{extraLabel.toUpperCase()}</p> */}
-													<p>No results found</p>
-													{/* <Button
-														text='CREATE NEW LABEL'
-														style={{
-															padding: '3px 12px',
-															fontWeight: 700
-														}}
-														onClick={() => {
-															// setSelectedLabels((labels) => [
-															// 	...labels,
-															// 	extraLabel.toUpperCase()
-															// ]);
-														}}
-													/> */}
-												</div>
-											}
-											className={`${classes.autoComplete} ${
-												isEdit && classes.disableAutoComplete
-											}`}
-											id='free-solo-2-demo'
-											disableClearable
-											options={mediaLabels}
-											renderInput={(params) => (
-												<TextField
-													{...params}
-													placeholder={
-														selectedLabels.length ? ' ' : 'Select Label'
-													}
-													className={classes.textFieldAuto}
-													value={extraLabel}
-													onChange={handleChangeExtraLabel}
-													InputProps={{
-														disableUnderline: true,
-														className: classes.textFieldInput,
-														...params.InputProps
-													}}
-												/>
-											)}
-											renderOption={(props, option) => {
-												let currentLabelDuplicate = selectedLabels.some(
-													(label) => label.name == option.name
-												);
-												if (option.id == null && !currentLabelDuplicate) {
-													return (
-														<li
-															{...props}
-															style={{
-																display: 'flex',
-																alignItems: 'center',
-																justifyContent: 'space-between'
-															}}
-															className={classes.liAutocomplete}
-														>
-															{option.name}
-															<Button
-																text='CREATE NEW LABEL'
-																style={{
-																	padding: '3px 12px',
-																	fontWeight: 700
-																}}
-																onClick={() => {
-																	// setSelectedLabels((labels) => [
-																	// 	...labels,
-																	// 	extraLabel.toUpperCase()
-																	// ]);
-																}}
-															/>
-														</li>
-													);
-												} else if (!currentLabelDuplicate) {
-													return (
-														<li {...props} className={classes.liAutocomplete}>
-															{option.name}
-														</li>
-													);
-												} else {
-													return (
-														<div className={classes.liAutocompleteWithButton}>
-															&apos;{option.name}&apos; is already selected
-														</div>
-													);
-												}
-											}}
-											ChipProps={{
-												className: classes.tagYellow,
-												size: 'small',
-												deleteIcon: <ClearIcon />
-											}}
-											clearIcon={''}
+										<Labels
+											isEdit={isEdit}
+											setDisableDropdown={setDisableDropdown}
+											selectedLabels={selectedLabels}
+											setSelectedLabels={setSelectedLabels}
+											LabelsOptions={mediaLabels}
+											extraLabel={extraLabel}
+											handleChangeExtraLabel={handleChangeExtraLabel}
 										/>
 									</div>
 
@@ -1403,9 +1158,12 @@ const UploadOrEditMedia = ({
 															}
 														);
 														await uploadMedia(null, {
-															file_name: uploadedFiles[0].fileName,
+															// file_name: uploadedFiles[0].fileName,
+															// file_name2: uploadedCoverImage[0].fileName,
 															type: 'medialibrary',
 															data: {
+																file_name_media: uploadedFiles[0].fileName,
+																file_name_image: uploadedCoverImage[0].fileName,
 																...completeUpload?.data?.data
 															}
 														});

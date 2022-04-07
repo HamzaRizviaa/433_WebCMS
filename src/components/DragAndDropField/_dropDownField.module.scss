@@ -1,0 +1,74 @@
+@import '../../styles/_variables.scss';
+@import '../../styles/_mixins.scss';
+
+.uploadedFilesContainer {
+	margin-top: 4rem;
+	max-height: 220px;
+	overflow-y: auto;
+	-ms-overflow-style: none; /* Internet Explorer 10+ */
+	scrollbar-width: none; /* Firefox */
+}
+
+.filePreview {
+	padding: 1.5rem 2rem;
+	box-shadow: inset 0px -1px 0px rgba(255, 255, 255, 0.25);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	position: relative;
+	&:last-child {
+		box-shadow: none;
+	}
+}
+
+.filePreviewLeft {
+	display: flex;
+	align-items: center;
+}
+
+.fileThumbnailPost {
+	height: 8rem;
+	width: 8rem;
+	border-radius: 4px;
+	background-color: white;
+}
+
+.filePreviewIcons {
+	color: $neon-yellow;
+	font-size: 2.5rem !important;
+	margin-left: 2rem;
+	cursor: pointer;
+}
+.fileName {
+	font-size: 1rem;
+	margin-left: 2rem;
+}
+.fileThumbnail {
+	height: 8rem;
+	//width: 8rem;
+	max-width: 50%;
+	border-radius: 4px;
+	background-color: #404040;
+}
+
+.fileThumbnail2 {
+	height: 8rem;
+	width: 8rem;
+	border-radius: 4px;
+	background-color: #404040;
+}
+.playIcon {
+	position: absolute;
+	left: 48px;
+	height: 2.5rem !important;
+	width: auto !important;
+	color: $neon-yellow;
+}
+
+.playIconPortrait {
+	position: absolute;
+	left: 38px;
+	height: 2.5rem !important;
+	width: auto !important;
+	color: $neon-yellow;
+}

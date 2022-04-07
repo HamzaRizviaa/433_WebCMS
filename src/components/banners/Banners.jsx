@@ -6,7 +6,8 @@ import Button from '../button';
 import { useEffect } from 'react';
 import {
 	getAllBanners,
-	getBannerContent
+	getBannerContent,
+	resetBanner
 } from './../../pages/TopBanner/topBannerSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLocalStorageDetails } from '../../utils';
@@ -61,6 +62,10 @@ export default function Banners({ tabValue }) {
 				title: null
 			})
 		);
+
+		return () => {
+			dispatch(resetBanner());
+		};
 	}, []);
 
 	useEffect(() => {
@@ -331,11 +336,7 @@ export default function Banners({ tabValue }) {
 					onClick={() => {
 						clickBanner();
 					}}
-					text={
-						tabValue === 'home'
-							? 'PUBLISH HOME BANNERS'
-							: 'PUBLISH MEDIA BANNERS'
-					}
+					text={`PUBLISH ${tabValue.toUpperCase()} BANNERS`}
 				/>
 			</div>
 		</div>

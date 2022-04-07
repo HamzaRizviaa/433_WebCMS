@@ -181,6 +181,13 @@
 .filePreviewLeft {
 	display: flex;
 	align-items: center;
+	gap: 10px;
+	width: 100%;
+}
+
+.filePreviewRight {
+	display: flex;
+	align-items: center;
 }
 
 .fileThumbnail {
@@ -192,9 +199,7 @@
 
 .fileName {
 	font-size: 1rem;
-	margin-left: 2rem;
-	max-width: 60%;
-	//margin-right: 4rem;
+	max-width: 150px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 }
@@ -455,7 +460,7 @@
 
 .explanationWrapper {
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-start;
 	margin: 5% 0%;
 	font-family: Poppins;
 	font-size: 16px;
@@ -503,11 +508,6 @@
 	justify-content: space-between;
 }
 
-.filePreviewRight {
-	display: flex;
-	align-items: center;
-}
-
 .gameIDwrapper {
 	margin: 2% 0% 5% 0%;
 	font-family: Poppins;
@@ -535,4 +535,17 @@
 .loader {
 	width: 20%;
 	height: auto;
+}
+
+.toolTip {
+	background-color: $black-color !important;
+	font-family: Poppins !important;
+	font-size: 12px !important;
+	line-height: 16px !important;
+	border-radius: 8px !important;
+	max-width: none !important;
+}
+
+.toolTipArrow {
+	color: $black-color !important;
 }
