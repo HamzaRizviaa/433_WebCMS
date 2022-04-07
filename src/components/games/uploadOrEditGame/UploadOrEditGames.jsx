@@ -77,6 +77,9 @@ const UploadOreditArcade = ({
 	const [videoOrientation, setVideoOrientation] = useState('');
 	const [videoOrientationColor, setVideoOrientationColor] = useState('#ffffff');
 	const [videoOrientationError, setvideoOrientationError] = useState('');
+	const [gameOrientation, setGameOrientation] = useState('');
+	const [gameOrientationColor, setGameOrientationColor] = useState('#ffffff');
+	const [gameOrientationError, setGameOrientationError] = useState('');
 	const [uploadedExplanationOrIcon, setUploadedExplanationOrIcon] = useState(
 		[]
 	);
@@ -114,7 +117,9 @@ const UploadOreditArcade = ({
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
 
-	const gameOrientation = ['portrait', 'landscape'];
+	const gameExplanationOrientation = ['PORTRAIT', 'LANDSCAPE'];
+	const gameOrientationArray = ['PORTRAIT', 'LANDSCAPE'];
+
 	const arcadeType = ['Inside App', 'Outside App'];
 
 	const muiClasses = useStyles();
@@ -174,7 +179,8 @@ const UploadOreditArcade = ({
 				setObjective(specificGamesData?.objective);
 				setPayload(specificGamesData?.payload);
 				setTime(specificGamesData?.time);
-				setVideoOrientation(specificGamesData?.orientation?.toLowerCase());
+				setVideoOrientation(specificGamesData?.orientation?.toUpperCase());
+				setGameOrientation(specificGamesData?.game_orientation);
 				setFileWidth2(specificGamesData?.game_video?.width);
 				setFileHeight2(specificGamesData?.game_video?.height);
 				setUploadedExplanationOrIcon([
@@ -393,46 +399,11 @@ const UploadOreditArcade = ({
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/games/add-edit-game`,
 				{
-					// game_medias: {
-					// 	game_image: {
-					// 		url: specificGamesData
-					// 			? specificGamesData?.url
-					// 			: mediaFiles[0]?.media_url,
-					// 		dropbox_url: dropboxLink,
-					// 		file_name: specificGamesData
-					// 			? specificGamesData?.game_image?.game_image_file_name
-					// 			: mediaFiles[0]?.file_name,
-					// 		width: fileWidth,
-					// 		height: fileHeight
-					// 	},
-
-					// 	game_video: {
-					// 		url: specificGamesData
-					// 			? specificGamesData?.game_video?.url
-					// 			: mediaFiles[1]?.media_url,
-					// 		dropbox_url: dropboxLink2,
-					// 		file_name: specificGamesData
-					// 			? specificGamesData?.game_video_file_name
-					// 			: mediaFiles[1]?.file_name,
-					// 		width: fileWidth2,
-					// 		height: fileHeight2
-					// 	},
-					// 	game_icon: {
-					// 		url: specificGamesData
-					// 			? specificGamesData?.game_icon?.url
-					// 			: mediaFiles[1]?.media_url,
-					// 		dropbox_url: dropboxLink2,
-					// 		file_name: specificGamesData
-					// 			? specificGamesData?.game_icon_file_name
-					// 			: mediaFiles[1]?.file_name,
-					// 		width: fileWidth2,
-					// 		height: fileHeight2
-					// 	}
-					// },
 					type: type === 'jogo' ? 'JOGO' : 'ARCADE GAME',
 					arcade_game_type:
 						arcadeGameType === 'Inside App' ? 'insideapp' : 'outsideapp',
 					orientation: type === 'jogo' ? videoOrientation : 'none',
+					game_orientation: type === 'jogo' ? gameOrientation : 'none',
 					title: titleGame,
 					description: descriptionGame,
 					game_medias: {
@@ -586,6 +557,9 @@ const UploadOreditArcade = ({
 		setVideoOrientation('');
 		setVideoOrientationColor('#ffffff');
 		setvideoOrientationError('');
+		setGameOrientation('');
+		setGameOrientationColor('#ffffff');
+		setGameOrientationError('');
 		setArcadeGameType('');
 		setArcadeGameTypeColor('#ffffff');
 		setArcadeGameTypeError('');
@@ -627,6 +601,14 @@ const UploadOreditArcade = ({
 			setTimeout(() => {
 				setVideoOrientationColor('#ffffff');
 				setvideoOrientationError('');
+			}, [5000]);
+		}
+		if (!gameOrientation) {
+			setGameOrientationColor('#ff355a');
+			setGameOrientationError('You need to enter an orientation');
+			setTimeout(() => {
+				setGameOrientationColor('#ffffff');
+				setGameOrientationError('');
 			}, [5000]);
 		}
 		if (uploadedExplanationOrIcon.length < 1) {
@@ -774,6 +756,7 @@ const UploadOreditArcade = ({
 		type === 'jogo'
 			? !uploadedFiles.length ||
 			  !videoOrientation ||
+			  !gameOrientation ||
 			  !uploadedExplanationOrIcon.length ||
 			  postButtonStatus ||
 			  !titleGame ||
@@ -807,6 +790,7 @@ const UploadOreditArcade = ({
 		type === 'jogo'
 			? !uploadedFiles.length ||
 			  !videoOrientation ||
+			  !gameOrientation ||
 			  !uploadedExplanationOrIcon.length ||
 			  postButtonStatus ||
 			  !titleGame ||
@@ -994,7 +978,7 @@ const UploadOreditArcade = ({
 													: 'Please Select Orientation'
 											}
 										>
-											{gameOrientation.map((orientation, index) => {
+											{gameExplanationOrientation.map((orientation, index) => {
 												return (
 													<MenuItem
 														key={index}
@@ -1260,6 +1244,86 @@ const UploadOreditArcade = ({
 									</div>
 
 									<p className={classes.mediaError}>{payloadError}</p>
+
+									<div className={classes.titleContainer}>
+										<h6 style={{ color: gameOrientationColor }}>
+											SELECT GAME ORIENTATION
+										</h6>
+										<Select
+											onOpen={() => {
+												setDisableDropdown(false);
+											}}
+											onClose={() => {
+												setDisableDropdown(true);
+											}}
+											disabled={false}
+											value={gameOrientation}
+											onChange={(e) => {
+												setDisableDropdown(true);
+												setGameOrientation(e.target.value);
+												// setMainCategoryLabelColor('#ffffff');
+												// setMainCategoryError('');
+												// if (uploadedFiles.length) {
+												// 	uploadedFiles.map((file) => handleDeleteFile(file.id));
+												// }
+											}}
+											className={`${classes.select}`}
+											disableUnderline={true}
+											IconComponent={(props) => (
+												<KeyboardArrowDownIcon
+													{...props}
+													style={{
+														top: '4'
+													}}
+												/>
+											)}
+											MenuProps={{
+												anchorOrigin: {
+													vertical: 'bottom',
+													horizontal: 'left'
+												},
+												transformOrigin: {
+													vertical: 'top',
+													horizontal: 'left'
+												},
+												getContentAnchorEl: null,
+												classes: {
+													paper: muiClasses.paper
+												}
+											}}
+											inputProps={{
+												classes: {
+													root: gameOrientation
+														? muiClasses.input
+														: muiClasses.inputPlaceholder
+												}
+											}}
+											displayEmpty={true}
+											renderValue={(value) =>
+												value?.length
+													? Array.isArray(value)
+														? value.join(', ')
+														: value
+													: 'Please Select Game Orientation'
+											}
+										>
+											{gameOrientationArray.map((orientation, index) => {
+												return (
+													<MenuItem
+														key={index}
+														value={orientation}
+														style={{
+															fontFamily: 'Poppins !important',
+															fontSize: '14px'
+														}}
+													>
+														{orientation}
+													</MenuItem>
+												);
+											})}
+										</Select>
+									</div>
+									<p className={classes.mediaError}>{gameOrientationError}</p>
 								</>
 							) : (
 								<>
