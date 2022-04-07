@@ -86,6 +86,7 @@ const UploadOrEditViral = ({
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
+	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const imgEl = useRef(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
@@ -309,24 +310,34 @@ const UploadOrEditViral = ({
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/article/post-article`,
 				{
-					...(articleTitle ? { title: articleTitle } : { articleTitle: '' }),
-					...(!isEdit ? { image: mediaFiles[0]?.media_url } : {}),
-					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
-					...(!isEdit ? { height: fileHeight } : {}),
-					...(!isEdit ? { width: fileWidth } : {}),
-					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
-					// description: editorTextContent,
+					title: articleTitle,
+					image:
+						mediaFiles[0]?.media_url ||
+						mediaFiles[0].img.split('cloudfront.net/')[1],
+					file_name: mediaFiles[0]?.file_name || mediaFiles[0]?.fileName,
+					height: fileHeight,
+					width: fileWidth,
 					description: editorText,
+					dropbox_url: dropboxLink ? dropboxLink : '',
+					...(isEdit && id ? { article_id: id } : {}),
+					...(!isEdit && selectedLabels.length
+						? { labels: [...selectedLabels] }
+						: {}), // can't edit
+
+					// ...(articleTitle ? { title: articleTitle } : { articleTitle: '' }),
+					// ...(!isEdit ? { image: mediaFiles[0]?.media_url } : {}),
+					// ...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
+					// ...(!isEdit ? { height: fileHeight } : {}),
+					// ...(!isEdit ? { width: fileWidth } : {}),
+					// ...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
+					// description: editorTextContent,
 					// dropbox_url: dropboxLink,
+
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
 						last_name: `${getLocalStorageDetails()?.last_name}`
-					},
-					...(isEdit && id ? { article_id: id, description: editorText } : {}),
-					...(!isEdit && selectedLabels.length
-						? { labels: [...selectedLabels] }
-						: {})
+					}
 				},
 				{
 					headers: {
@@ -505,20 +516,36 @@ const UploadOrEditViral = ({
 		selectedLabels.length < 10 ||
 		!editorText;
 
-	// var html = editorTextChecker.replace(
-	// 	/(?:^(?:&nbsp;)+)|(?:(?:&nbsp;)+$)/g,
-	// 	''
-	// );
-	// var editorData = $('<div/>').html(html).text();
 	const editorTextCheckerTrimmed = editorTextChecker?.replace(/&nbsp;/g, ' ');
 	const specificArticleTextTrimmed = specificArticle?.description?.replace(
 		/&nbsp;/g,
 		' '
 	);
-	const editBtnDisabled =
-		postButtonStatus ||
-		(specificArticle?.dropbox_url === dropboxLink?.trim() &&
-			specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim());
+	console.log(
+		specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim(),
+		specificArticle?.dropbox_url?.trim() === dropboxLink.trim()
+	);
+
+	useEffect(() => {
+		if (specificArticle) {
+			setEditBtnDisabled(
+				postButtonStatus ||
+					!uploadedFiles.length ||
+					!articleTitle ||
+					(specificArticle?.file_name === uploadedFiles[0]?.fileName &&
+						specificArticle?.title?.trim() === articleTitle?.trim() &&
+						specificArticle?.dropbox_url?.trim() === dropboxLink.trim() &&
+						specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim())
+			);
+		}
+	}, [
+		specificArticle,
+		articleTitle,
+		uploadedFiles,
+		editorTextChecker,
+		editorText,
+		dropboxLink
+	]);
 
 	// console.log(specificArticleTextTrimmed, 'desc');
 	// console.log(editorTextCheckerTrimmed.trim(), 'editor');
@@ -531,6 +558,86 @@ const UploadOrEditViral = ({
 	// const regex = /[!@#$%^&*(),.?":{}|<>/\\ ]/g;
 	// var abc = 'hello editor';
 	// var abc = tinymce?.activeEditor?.getContent();
+
+	// const editBtnDisabled =
+	// 	postButtonStatus ||
+	// 	(specificArticle?.dropbox_url === dropboxLink?.trim() &&
+	// 		specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim());
+
+	const handleAddSaveBtn = async () => {
+		if (postBtnDisabled || editBtnDisabled) {
+			validateArticleBtn();
+		} else {
+			setPostButtonStatus(true);
+
+			if (isEdit) {
+				if (specificArticle?.title?.trim() !== articleTitle?.trim()) {
+					if (
+						(await handleTitleDuplicate(articleTitle)) ===
+						'The Title Already Exist'
+						// 	200 &&
+						// articleTitle !== specificArticle?.title
+					) {
+						console.log(articleTitle, specificArticle.title);
+						setArticleTitleColor('#ff355a');
+						setArticleTitleError('This title already exists');
+						setTimeout(() => {
+							setArticleTitleColor('#ffffff');
+							setArticleTitleError('');
+						}, [5000]);
+
+						setPostButtonStatus(false);
+						return;
+					}
+				}
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file);
+					} else {
+						return _file;
+					}
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createArticle(specificArticle?.id, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
+			} else {
+				if (
+					(await handleTitleDuplicate(articleTitle)) ===
+					'The Title Already Exist'
+					// 	200 &&
+					// articleTitle !== specificArticle?.title
+				) {
+					console.log(articleTitle, specificArticle.title);
+					setArticleTitleColor('#ff355a');
+					setArticleTitleError('This title already exists');
+					setTimeout(() => {
+						setArticleTitleColor('#ffffff');
+						setArticleTitleError('');
+					}, [5000]);
+
+					setPostButtonStatus(false);
+					return;
+				}
+				setIsLoading(true);
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					return uploadFileToServer(_file);
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createArticle(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
+			}
+		}
+	};
 
 	return (
 		<Slider
@@ -575,7 +682,7 @@ const UploadOrEditViral = ({
 							<h5>{heading1}</h5>
 							<DragAndDropField
 								uploadedFiles={uploadedFiles}
-								isEdit={isEdit}
+								// isEdit={isEdit}
 								handleDeleteFile={handleDeleteFile}
 								setPreviewBool={setPreviewBool}
 								setPreviewFile={setPreviewFile}
@@ -587,7 +694,7 @@ const UploadOrEditViral = ({
 								}}
 							/>
 
-							{uploadedFiles.length < 1 && !isEdit ? (
+							{!uploadedFiles.length && (
 								<section
 									className={classes.dropZoneContainer}
 									style={{
@@ -611,8 +718,6 @@ const UploadOrEditViral = ({
 										</p>
 									</div>
 								</section>
-							) : (
-								<></>
 							)}
 
 							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
@@ -652,16 +757,14 @@ const UploadOrEditViral = ({
 								</div>
 
 								<TextField
-									disabled={isEdit}
+									// disabled={isEdit}
 									value={articleTitle}
 									onChange={(e) => setArticleTitle(e.target.value)}
 									placeholder={'Please write your title here'}
 									className={classes.textField}
 									InputProps={{
 										disableUnderline: true,
-										className: `${classes.textFieldInput} ${
-											isEdit && classes.disableAutoComplete
-										}`,
+										className: classes.textFieldInput,
 										style: {
 											borderRadius: articleTitle ? '16px' : '40px'
 										}
@@ -955,48 +1058,7 @@ const UploadOrEditViral = ({
 							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 								<Button
 									disabled={isEdit ? editBtnDisabled : postBtnDisabled}
-									onClick={async () => {
-										if (postBtnDisabled || editBtnDisabled) {
-											validateArticleBtn();
-										} else {
-											setPostButtonStatus(true);
-											if (
-												(await handleTitleDuplicate(articleTitle)) ===
-												'The Title Already Exist'
-												// 	200 &&
-												// articleTitle !== specificArticle?.title
-											) {
-												console.log(articleTitle, specificArticle.title);
-												setArticleTitleColor('#ff355a');
-												setArticleTitleError('This title already exists');
-												setTimeout(() => {
-													setArticleTitleColor('#ffffff');
-													setArticleTitleError('');
-												}, [5000]);
-
-												setPostButtonStatus(false);
-												return;
-											}
-											if (isEdit) {
-												createArticle(specificArticle?.id);
-											} else {
-												setIsLoading(true);
-												let uploadFilesPromiseArray = uploadedFiles.map(
-													async (_file) => {
-														return uploadFileToServer(_file);
-													}
-												);
-
-												Promise.all([...uploadFilesPromiseArray])
-													.then((mediaFiles) => {
-														createArticle(null, mediaFiles);
-													})
-													.catch(() => {
-														setIsLoading(false);
-													});
-											}
-										}
-									}}
+									onClick={() => handleAddSaveBtn()}
 									text={buttonText}
 								/>
 							</div>

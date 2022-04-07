@@ -59,6 +59,7 @@ const UploadOrEditViral = ({
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
+	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const videoRef = useRef(null);
@@ -110,9 +111,9 @@ const UploadOrEditViral = ({
 				setSelectedLabels(_labels);
 			}
 			setCaption(specificViral?.caption);
-
 			setDropboxLink(specificViral?.dropbox_url);
-
+			setFileWidth(specificViral?.width);
+			setFileHeight(specificViral?.height);
 			if (specificViral?.thumbnail_url) {
 				setUploadedFiles([
 					{
@@ -359,18 +360,28 @@ const UploadOrEditViral = ({
 	};
 
 	const createViral = async (id, mediaFiles = []) => {
+		console.log(mediaFiles, 'media files in create viral');
 		setPostButtonStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
 				{
-					...(caption ? { caption: caption } : { caption: '' }),
-					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
-					...(!isEdit ? { media_url: mediaFiles[0]?.media_url } : {}),
-					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
-					...(!isEdit ? { thumbnail_url: mediaFiles[0]?.thumbnail_url } : {}),
-					...(!isEdit ? { height: fileHeight } : {}),
-					...(!isEdit ? { width: fileWidth } : {}),
+					caption: caption,
+					dropbox_url: dropboxLink,
+					media_url:
+						mediaFiles[0]?.media_url ||
+						mediaFiles[0].img.split('cloudfront.net/')[1],
+					file_name: mediaFiles[0]?.file_name || mediaFiles[0]?.fileName,
+					thumbnail_url: mediaFiles[0]?.thumbnail_url,
+					height: fileHeight,
+					width: fileWidth,
+					// ...(caption ? { caption: caption } : { caption: '' }),
+					// ...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
+					// ...(!isEdit ? { media_url: mediaFiles[0]?.media_url } : {}),
+					// ...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
+					// ...(!isEdit ? { thumbnail_url: mediaFiles[0]?.thumbnail_url } : {}),
+					// ...(!isEdit ? { height: fileHeight } : {}),
+					// ...(!isEdit ? { width: fileWidth } : {}),
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -456,12 +467,56 @@ const UploadOrEditViral = ({
 		selectedLabels.length < 10 ||
 		!caption;
 
-	const editBtnDisabled =
-		postButtonStatus ||
-		!caption ||
-		// !dropboxLink ||
-		(specificViral?.caption === caption.trim() &&
-			specificViral?.dropbox_url === dropboxLink.trim());
+	useEffect(() => {
+		if (specificViral) {
+			setEditBtnDisabled(
+				postButtonStatus ||
+					!caption ||
+					!uploadedFiles.length ||
+					(specificViral?.file_name === uploadedFiles[0]?.fileName &&
+						specificViral?.caption?.trim() === caption.trim() &&
+						specificViral?.dropbox_url?.trim() === dropboxLink.trim())
+			);
+		}
+	}, [specificViral, caption, uploadedFiles, dropboxLink]);
+
+	const handlePostSaveBtn = () => {
+		if (viralBtnDisabled || editBtnDisabled) {
+			validateViralBtn();
+		} else {
+			setPostButtonStatus(true);
+			if (isEdit) {
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file);
+					} else {
+						return _file;
+					}
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createViral(specificViral?.id, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingcreateViral(false);
+					});
+			} else {
+				setIsLoadingcreateViral(true);
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					return uploadFileToServer(_file);
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createViral(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingcreateViral(false);
+					});
+			}
+		}
+	};
 
 	return (
 		<Slider
@@ -522,13 +577,13 @@ const UploadOrEditViral = ({
 							</div>
 							<DragAndDropField
 								uploadedFiles={uploadedFiles}
-								isEdit={isEdit}
+								// isEdit={isEdit}
 								handleDeleteFile={handleDeleteFile}
 								setPreviewBool={setPreviewBool}
 								setPreviewFile={setPreviewFile}
 								imgEl={imgEl}
 								videoRef={videoRef}
-								imageOnLoad={() => {
+								imageOnload={() => {
 									setFileWidth(imgEl.current.naturalWidth);
 									setFileHeight(imgEl.current.naturalHeight);
 								}}
@@ -536,9 +591,8 @@ const UploadOrEditViral = ({
 									setFileWidth(videoRef.current.videoWidth);
 									setFileHeight(videoRef.current.videoHeight);
 								}}
-								isPost
 							/>
-							{uploadedFiles.length < 1 && !isEdit ? (
+							{!uploadedFiles.length && (
 								<section
 									className={classes.dropZoneContainer}
 									style={{
@@ -559,8 +613,6 @@ const UploadOrEditViral = ({
 										</p>
 									</div>
 								</section>
-							) : (
-								<></>
 							)}
 							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
 							<div className={classes.dropBoxUrlContainer}>
@@ -638,29 +690,7 @@ const UploadOrEditViral = ({
 								<Button
 									disabled={isEdit ? editBtnDisabled : viralBtnDisabled}
 									onClick={() => {
-										if (viralBtnDisabled || editBtnDisabled) {
-											validateViralBtn();
-										} else {
-											setPostButtonStatus(true);
-											if (isEdit) {
-												createViral(specificViral?.id);
-											} else {
-												setIsLoadingcreateViral(true);
-												let uploadFilesPromiseArray = uploadedFiles.map(
-													async (_file) => {
-														return uploadFileToServer(_file);
-													}
-												);
-
-												Promise.all([...uploadFilesPromiseArray])
-													.then((mediaFiles) => {
-														createViral(null, mediaFiles);
-													})
-													.catch(() => {
-														setIsLoadingcreateViral(false);
-													});
-											}
-										}
+										handlePostSaveBtn();
 									}}
 									text={buttonText}
 								/>

@@ -14,22 +14,23 @@ const DragAndDropField = ({
 	onDragEnd,
 	uploadedFiles,
 	isEdit,
-	editPoll,
-	editQuiz,
+	// editPoll,
+	// editQuiz,
 	handleDeleteFile,
 	setPreviewBool,
 	setPreviewFile,
 	dimensionSelect,
 	imageToResizeWidth,
 	imageToResizeHeight,
-	isPost,
-	isMedia,
-	isArticle,
+	isPost, // image and video
+	isMedia, // image and video without thumbnail
+	isArticle, // image
 	imgEl,
 	imageOnload,
 	videoRef,
 	onLoadedVideodata,
 	onLoadedAudiodata,
+	quizPollStatus,
 	...props
 }) => {
 	return (
@@ -41,6 +42,7 @@ const DragAndDropField = ({
 						ref={provided.innerRef}
 						className={classes.uploadedFilesContainer}
 					>
+						{console.log(quizPollStatus, 'quizPollStatus')}
 						{uploadedFiles.map((file, index) => {
 							return (
 								<Draggable
@@ -142,22 +144,40 @@ const DragAndDropField = ({
 													))}
 												<p className={classes.fileName}>{file.fileName}</p>
 											</div>
-											{isEdit || editPoll || editQuiz ? (
+											{isEdit ? (
 												<div className={classes.filePreviewRight}>
 													{isMedia ? (
 														<></>
 													) : (
-														<EyeIcon
-															onClick={() => {
-																setPreviewBool(true);
-																setPreviewFile(file);
-															}}
-															className={classes.filePreviewIcons}
-														/>
+														<div>
+															<EyeIcon
+																onClick={() => {
+																	setPreviewBool(true);
+																	setPreviewFile(file);
+																}}
+																className={classes.filePreviewIcons}
+															/>
+
+															{quizPollStatus === 'CLOSED' ? (
+																<></>
+															) : (
+																<Deletes
+																	className={classes.filePreviewIcons}
+																	onClick={() => {
+																		handleDeleteFile(file.id);
+																		setPreviewBool(false);
+																		setPreviewFile(null);
+																	}}
+																/>
+															)}
+														</div>
 													)}
 												</div>
 											) : (
-												<div className={classes.filePreviewRight}>
+												<div
+													className={classes.filePreviewRight}
+													style={{ display: 'flex' }}
+												>
 													{isMedia ? (
 														<></>
 													) : (
@@ -226,7 +246,8 @@ DragAndDropField.propTypes = {
 	]),
 	imageOnload: PropTypes.func,
 	onLoadedVideodata: PropTypes.func,
-	onLoadedAudiodata: PropTypes.func
+	onLoadedAudiodata: PropTypes.func,
+	quizPollStatus: PropTypes.string
 };
 
 export default DragAndDropField;
