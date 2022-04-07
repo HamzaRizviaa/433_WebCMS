@@ -1,14 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextField } from '@mui/material';
-import classes from './_inputField.module.scss';
+import { TextField } from '@material-ui/core';
+import classes from './_textInputField.module.scss';
 
-const InputField = ({
+const TextInputField = ({
 	value,
 	onChange,
 	style,
 	placeholder,
-	className,
 	multiline,
 	maxRows
 }) => {
@@ -17,11 +16,11 @@ const InputField = ({
 			value={value}
 			onChange={onChange}
 			placeholder={placeholder}
-			className={className}
+			className={classes.textField}
 			InputProps={{
 				disableUnderline: true,
 				className: classes.textFieldInput,
-				style: style
+				style: { style }
 			}}
 			multiline={multiline}
 			maxRows={maxRows}
@@ -29,15 +28,13 @@ const InputField = ({
 	);
 };
 
-InputField.propTypes = {
+TextInputField.propTypes = {
 	value: PropTypes.string,
 	onChange: PropTypes.func,
 	style: PropTypes.object,
-	caption: PropTypes.string,
 	placeholder: PropTypes.string,
-	className: PropTypes.string,
 	multiline: PropTypes.bool,
 	maxRows: PropTypes.number
 };
 
-export default InputField;
+export default TextInputField;
