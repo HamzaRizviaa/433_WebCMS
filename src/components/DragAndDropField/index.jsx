@@ -14,8 +14,8 @@ const DragAndDropField = ({
 	onDragEnd,
 	uploadedFiles,
 	isEdit,
-	// editPoll,
-	// editQuiz,
+	editPoll,
+	editQuiz,
 	handleDeleteFile,
 	setPreviewBool,
 	setPreviewFile,
@@ -42,7 +42,6 @@ const DragAndDropField = ({
 						ref={provided.innerRef}
 						className={classes.uploadedFilesContainer}
 					>
-						{console.log(quizPollStatus, 'quizPollStatus')}
 						{uploadedFiles.map((file, index) => {
 							return (
 								<Draggable
@@ -144,12 +143,12 @@ const DragAndDropField = ({
 													))}
 												<p className={classes.fileName}>{file.fileName}</p>
 											</div>
-											{isEdit ? (
+											{isEdit || editPoll || editQuiz ? (
 												<div className={classes.filePreviewRight}>
 													{isMedia ? (
 														<></>
 													) : (
-														<div>
+														<div style={{ display: 'flex' }}>
 															<EyeIcon
 																onClick={() => {
 																	setPreviewBool(true);
