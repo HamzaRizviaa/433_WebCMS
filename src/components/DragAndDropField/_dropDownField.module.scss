@@ -24,6 +24,13 @@
 .filePreviewLeft {
 	display: flex;
 	align-items: center;
+	gap: 10px;
+	width: 100%;
+}
+
+.filePreviewRight {
+	display: flex;
+	align-items: center;
 }
 
 .fileThumbnailPost {
@@ -41,14 +48,16 @@
 }
 .fileName {
 	font-size: 1rem;
-	margin-left: 2rem;
+	max-width: 150px;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 .fileThumbnail {
 	height: 8rem;
 	//width: 8rem;
 	max-width: 50%;
 	border-radius: 4px;
-	background-color: #404040;
+	//background-color: #404040;
 }
 
 .fileThumbnail2 {

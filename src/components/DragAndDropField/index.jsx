@@ -91,7 +91,7 @@ const DragAndDropField = ({
 															src={file.img}
 															className={classes.fileThumbnail}
 															style={{
-																objectFit: 'cover',
+																objectFit: 'contain',
 																objectPosition: 'center'
 															}}
 															ref={imgEl}
