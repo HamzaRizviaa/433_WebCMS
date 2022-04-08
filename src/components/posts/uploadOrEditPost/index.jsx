@@ -89,6 +89,7 @@ const UploadOrEditPost = ({
 	const [dropdownPosition, setDropdownPosition] = useState(false);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
+	const [isError, setIsError] = useState({});
 	// const [aspect, setAspect] = useState(1 / 1);
 	// const [imgDestination, setImageDestination] = useState('');
 	// const imageElement = useRef();
@@ -411,43 +412,53 @@ const UploadOrEditPost = ({
 	};
 
 	const validatePostBtn = () => {
-		if (uploadedFiles.length < 1) {
-			setDropZoneBorder('#ff355a');
-			setUploadMediaError('You need to upload a media in order to post');
-			setTimeout(() => {
-				setDropZoneBorder('#ffff00');
-				setUploadMediaError('');
-			}, [5000]);
-		}
+		setIsError({
+			caption: !caption,
+			uploadedFiles: uploadedFiles.length < 1,
+			selectedLabels: selectedLabels.length < 10,
+			selectedMediaValue: value && !selectedMedia
+		});
 
-		if (selectedLabels.length < 10) {
-			setLabelColor('#ff355a');
-			setLabelError(
-				`You need to add ${
-					10 - selectedLabels.length
-				} more labels in order to post`
-			);
-			setTimeout(() => {
-				setLabelColor('#ffff00');
-				setLabelError('');
-			}, [5000]);
-		}
-		if (value && !selectedMedia) {
-			setMediaLabelColor('#ff355a');
-			setMediaError('This field is required');
-			setTimeout(() => {
-				setMediaLabelColor('#ffffff');
-				setMediaError('');
-			}, [5000]);
-		}
-		if (!caption) {
-			setCaptionColor('#ff355a');
-			setCaptionError('This field is required');
-			setTimeout(() => {
-				setCaptionColor('#ffffff');
-				setCaptionError('');
-			}, [5000]);
-		}
+		setTimeout(() => {
+			setIsError({});
+		}, 5000);
+		// if (uploadedFiles.length < 1) {
+		// 	setDropZoneBorder('#ff355a');
+		// 	setUploadMediaError('You need to upload a media in order to post');
+		// 	setTimeout(() => {
+		// 		setDropZoneBorder('#ffff00');
+		// 		setUploadMediaError('');
+		// 	}, [5000]);
+		// }
+
+		// if (selectedLabels.length < 10) {
+		// 	setLabelColor('#ff355a');
+		// 	setLabelError(
+		// 		`You need to add ${
+		// 			10 - selectedLabels.length
+		// 		} more labels in order to post`
+		// 	);
+		// 	setTimeout(() => {
+		// 		setLabelColor('#ffff00');
+		// 		setLabelError('');
+		// 	}, [5000]);
+		// }
+		// if (value && !selectedMedia) {
+		// 	setMediaLabelColor('#ff355a');
+		// 	setMediaError('This field is required');
+		// 	setTimeout(() => {
+		// 		setMediaLabelColor('#ffffff');
+		// 		setMediaError('');
+		// 	}, [5000]);
+		// }
+		// if (!caption) {
+		// 	setCaptionColor('#ff355a');
+		// 	setCaptionError('This field is required');
+		// 	setTimeout(() => {
+		// 		setCaptionColor('#ffffff');
+		// 		setCaptionError('');
+		// 	}, [5000]);
+		// }
 
 		// if (!dropboxLink) {
 		// 	setDropboxLinkColor('#ff355a');
@@ -757,7 +768,7 @@ const UploadOrEditPost = ({
 								<section
 									className={classes.dropZoneContainer}
 									style={{
-										borderColor: dropZoneBorder
+										borderColor: isError.uploadedFiles ? 'red' : 'yellow'
 									}}
 								>
 									<div {...getRootProps({ className: classes.dropzone })}>
@@ -772,9 +783,11 @@ const UploadOrEditPost = ({
 										<p className={classes.formatMsg}>
 											Supported formats are jpeg, png and mp4
 										</p>
-										<p className={classes.uploadMediaError}>
-											{uploadMediaError}
-										</p>
+										{isError.uploadedFiles && (
+											<p className={classes.uploadMediaError}>
+												File Uplaod Error
+											</p>
+										)}
 									</div>
 								</section>
 							) : (
@@ -814,12 +827,21 @@ const UploadOrEditPost = ({
 							</div>
 							<p className={classes.mediaError}>{labelError}</p>
 							<div className={classes.captionContainer}>
-								<h6 style={{ color: captionColor }}>CAPTION</h6>
+								<h6 style={{ color: isError.caption ? 'red' : 'white' }}>
+									CAPTION
+								</h6>
 								<TextField
 									value={caption}
 									onChange={(e) => setCaption(e.target.value)}
 									placeholder={'Please write your caption here'}
 									className={classes.textField}
+									helperText={isError.caption ? 'Caption is required' : ''}
+									FormHelperTextProps={{
+										style: {
+											color: 'red',
+											fontSize: '14px'
+										}
+									}}
 									InputProps={{
 										disableUnderline: true,
 										className: classes.textFieldInput,
@@ -831,7 +853,7 @@ const UploadOrEditPost = ({
 									maxRows={4}
 								/>
 							</div>
-							<p className={classes.mediaError}>{captionError}</p>
+							{/* <p className={classes.mediaError}>{captionError}</p> */}
 
 							<div className={classes.postMediaContainer}>
 								<div className={classes.postMediaHeader}>

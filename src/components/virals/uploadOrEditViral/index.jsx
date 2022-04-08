@@ -22,8 +22,6 @@ import uploadFileToServer from '../../../utils/uploadFileToServer';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 
-import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 
 import LoadingOverlay from 'react-loading-overlay';
