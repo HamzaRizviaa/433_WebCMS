@@ -361,14 +361,19 @@ const UploadOrEditQuiz = ({
 				{
 					width: fileWidth,
 					height: fileHeight,
-					...(!(editQuiz || editPoll)
-						? { file_name: mediaFiles[0]?.file_name }
-						: {}),
+					image:
+						mediaFiles[0]?.media_url ||
+						mediaFiles[0].img.split('cloudfront.net/')[1],
+					file_name: mediaFiles[0]?.file_name || mediaFiles[0]?.fileName,
+					// ...(!(editQuiz || editPoll)
+					// 	? { file_name: mediaFiles[0]?.file_name }
+					// 	: {}),
+					// ...(!(editQuiz || editPoll)
+					// 	? { image: mediaFiles[0]?.media_url }
+					// 	: {}),
 					...(question ? { question: question } : { question: '' }),
 					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
-					...(!(editQuiz || editPoll)
-						? { image: mediaFiles[0]?.media_url }
-						: {}),
+
 					...(convertedDate ? { end_date: convertedDate } : {}),
 					...(!(editQuiz || editPoll)
 						? quiz
@@ -559,14 +564,50 @@ const UploadOrEditQuiz = ({
 		if (editQuestionData) {
 			setEditQuizBtnDisabled(
 				postButtonStatus ||
+					!uploadedFiles.length ||
 					!endDate ||
 					((type === 'quiz'
 						? editQuestionData?.quiz_end_date === convertedDate
 						: editQuestionData?.poll_end_date === convertedDate) &&
+						editQuestionData?.file_name === uploadedFiles[0]?.fileName &&
 						editQuestionData?.dropbox_url === dropboxLink.trim())
 			);
 		}
-	}, [editQuestionData, dropboxLink, endDate, convertedDate]);
+	}, [editQuestionData, dropboxLink, endDate, convertedDate, uploadedFiles]);
+
+	const handleAddSaveQuizPollBtn = async () => {
+		if (addQuizBtnDisabled || editQuizBtnDisabled) {
+			validatePostBtn();
+		} else {
+			setPostButtonStatus(true);
+			if (editQuiz || editPoll) {
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					return uploadFileToServer(_file);
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createQuestion(editQuestionData?.id, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingcreateViral(false);
+					});
+			} else {
+				setIsLoadingcreateViral(true);
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					return uploadFileToServer(_file);
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createQuestion(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingcreateViral(false);
+					});
+			}
+		}
+	};
 
 	return (
 		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
@@ -585,19 +626,19 @@ const UploadOrEditQuiz = ({
 						<h5 className={classes.QuizQuestion}>{heading1}</h5>
 						<DragAndDropField
 							uploadedFiles={uploadedFiles}
-							editPoll={editPoll}
-							editQuiz={editQuiz}
+							quizPollStatus={status}
 							handleDeleteFile={handleDeleteFile}
 							setPreviewBool={setPreviewBool}
 							setPreviewFile={setPreviewFile}
 							isArticle
+							isEdit={editPoll || editQuiz}
 							imgEl={imgRef}
 							imageOnload={() => {
 								setFileWidth(imgRef.current.naturalWidth);
 								setFileHeight(imgRef.current.naturalHeight);
 							}}
 						/>
-						{!uploadedFiles.length && !editQuiz && !editPoll && (
+						{!uploadedFiles.length && (
 							<section
 								className={classes.dropZoneContainer}
 								style={{
@@ -810,31 +851,8 @@ const UploadOrEditQuiz = ({
 										? addQuizBtnDisabled
 										: editQuizBtnDisabled
 								}
-								onClick={async () => {
-									if (addQuizBtnDisabled || editQuizBtnDisabled) {
-										validatePostBtn();
-									} else {
-										setPostButtonStatus(true);
-										if (editQuiz || editPoll) {
-											createQuestion(editQuestionData?.id);
-										} else {
-											setIsLoadingcreateViral(true);
-											let uploadFilesPromiseArray = uploadedFiles.map(
-												async (_file) => {
-													return uploadFileToServer(_file);
-												}
-											);
-
-											Promise.all([...uploadFilesPromiseArray])
-												.then((mediaFiles) => {
-													console.log(mediaFiles, 'media files ');
-													createQuestion(null, mediaFiles);
-												})
-												.catch(() => {
-													setIsLoadingcreateViral(false);
-												});
-										}
-									}
+								onClick={() => {
+									handleAddSaveQuizPollBtn();
 								}}
 								// text={type === 'quiz' ? 'ADD QUIZ' : 'ADD POLL'}
 								text={

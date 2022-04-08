@@ -22,14 +22,15 @@ const DragAndDropField = ({
 	dimensionSelect,
 	imageToResizeWidth,
 	imageToResizeHeight,
-	isPost,
-	isMedia,
-	isArticle,
+	isPost, // image and video
+	isMedia, // image and video without thumbnail
+	isArticle, // image
 	imgEl,
 	imageOnload,
 	videoRef,
 	onLoadedVideodata,
 	onLoadedAudiodata,
+	quizPollStatus,
 	...props
 }) => {
 	return (
@@ -147,17 +148,35 @@ const DragAndDropField = ({
 													{isMedia ? (
 														<></>
 													) : (
-														<EyeIcon
-															onClick={() => {
-																setPreviewBool(true);
-																setPreviewFile(file);
-															}}
-															className={classes.filePreviewIcons}
-														/>
+														<div style={{ display: 'flex' }}>
+															<EyeIcon
+																onClick={() => {
+																	setPreviewBool(true);
+																	setPreviewFile(file);
+																}}
+																className={classes.filePreviewIcons}
+															/>
+
+															{quizPollStatus === 'CLOSED' ? (
+																<></>
+															) : (
+																<Deletes
+																	className={classes.filePreviewIcons}
+																	onClick={() => {
+																		handleDeleteFile(file.id);
+																		setPreviewBool(false);
+																		setPreviewFile(null);
+																	}}
+																/>
+															)}
+														</div>
 													)}
 												</div>
 											) : (
-												<div className={classes.filePreviewRight}>
+												<div
+													className={classes.filePreviewRight}
+													style={{ display: 'flex' }}
+												>
 													{isMedia ? (
 														<></>
 													) : (
@@ -213,7 +232,6 @@ DragAndDropField.propTypes = {
 	setPreviewBool: PropTypes.func,
 	setPreviewFile: PropTypes.func,
 	isPost: PropTypes.bool,
-	isViral: PropTypes.bool,
 	isMedia: PropTypes.bool,
 	isArticle: PropTypes.bool,
 	videoRef: PropTypes.oneOfType([
@@ -226,7 +244,8 @@ DragAndDropField.propTypes = {
 	]),
 	imageOnload: PropTypes.func,
 	onLoadedVideodata: PropTypes.func,
-	onLoadedAudiodata: PropTypes.func
+	onLoadedAudiodata: PropTypes.func,
+	quizPollStatus: PropTypes.string
 };
 
 export default DragAndDropField;

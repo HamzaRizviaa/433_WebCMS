@@ -16,7 +16,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import { getAllArticlesApi } from '../../../pages/ArticleLibrary/articleLibrarySlice';
-import captureVideoFrame from 'capture-video-frame';
+import uploadFileToServer from '../../../utils/uploadFileToServer';
 import Close from '@material-ui/icons/Close';
 import { TextField } from '@material-ui/core';
 
@@ -86,6 +86,7 @@ const UploadOrEditViral = ({
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
+	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const imgEl = useRef(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
@@ -210,89 +211,6 @@ const UploadOrEditViral = ({
 		}
 	}, [acceptedFiles]);
 
-	const uploadFileToServer = async (uploadedFile) => {
-		try {
-			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
-				{
-					file_type: uploadedFile.fileExtension,
-					parts: 1
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
-				}
-			);
-			const frame = captureVideoFrame('my-video', 'png');
-			if (result?.data?.data?.video_thumbnail_url) {
-				await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
-					headers: { 'Content-Type': 'image/png' }
-				});
-			}
-			if (result?.data?.data?.url) {
-				const _result = await axios.put(
-					result?.data?.data?.url,
-					uploadedFile.file,
-					//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
-					{
-						headers: { 'Content-Type': uploadedFile.mime_type }
-					}
-				);
-
-				if (_result?.status === 200) {
-					const uploadResult = await axios.post(
-						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-						{
-							file_name: uploadedFile.file.name,
-							type: 'articleLibrary',
-							data: {
-								bucket: 'media',
-								multipart_upload:
-									uploadedFile?.mime_type == 'video/mp4'
-										? [
-												{
-													e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
-													part_number: 1
-												}
-										  ]
-										: ['image'],
-								keys: {
-									image_key: result?.data?.data?.keys?.image_key,
-									video_key: result?.data?.data?.keys?.video_key,
-									audio_key: ''
-								},
-								upload_id:
-									uploadedFile?.mime_type == 'video/mp4'
-										? result?.data?.data?.upload_id
-										: 'image'
-							}
-						},
-						{
-							headers: {
-								Authorization: `Bearer ${
-									getLocalStorageDetails()?.access_token
-								}`
-							}
-						}
-					);
-					if (uploadResult?.data?.status_code === 200) {
-						return uploadResult.data.data;
-					} else {
-						throw 'Error';
-					}
-				} else {
-					throw 'Error';
-				}
-			} else {
-				throw 'Error';
-			}
-		} catch (error) {
-			console.log('Error');
-			return null;
-		}
-	};
-
 	const handleEditorChange = () => {
 		const editorTextContent = tinymce?.activeEditor?.getContent();
 		console.log(editorTextContent);
@@ -309,24 +227,34 @@ const UploadOrEditViral = ({
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/article/post-article`,
 				{
-					...(articleTitle ? { title: articleTitle } : { articleTitle: '' }),
-					...(!isEdit ? { image: mediaFiles[0]?.media_url } : {}),
-					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
-					...(!isEdit ? { height: fileHeight } : {}),
-					...(!isEdit ? { width: fileWidth } : {}),
-					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
-					// description: editorTextContent,
+					title: articleTitle,
+					image:
+						mediaFiles[0]?.media_url ||
+						mediaFiles[0].img.split('cloudfront.net/')[1],
+					file_name: mediaFiles[0]?.file_name || mediaFiles[0]?.fileName,
+					height: fileHeight,
+					width: fileWidth,
 					description: editorText,
+					dropbox_url: dropboxLink ? dropboxLink : '',
+					...(isEdit && id ? { article_id: id } : {}),
+					...(!isEdit && selectedLabels.length
+						? { labels: [...selectedLabels] }
+						: {}), // can't edit
+
+					// ...(articleTitle ? { title: articleTitle } : { articleTitle: '' }),
+					// ...(!isEdit ? { image: mediaFiles[0]?.media_url } : {}),
+					// ...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
+					// ...(!isEdit ? { height: fileHeight } : {}),
+					// ...(!isEdit ? { width: fileWidth } : {}),
+					// ...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
+					// description: editorTextContent,
 					// dropbox_url: dropboxLink,
+
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
 						last_name: `${getLocalStorageDetails()?.last_name}`
-					},
-					...(isEdit && id ? { article_id: id, description: editorText } : {}),
-					...(!isEdit && selectedLabels.length
-						? { labels: [...selectedLabels] }
-						: {})
+					}
 				},
 				{
 					headers: {
@@ -505,32 +433,111 @@ const UploadOrEditViral = ({
 		selectedLabels.length < 10 ||
 		!editorText;
 
-	// var html = editorTextChecker.replace(
-	// 	/(?:^(?:&nbsp;)+)|(?:(?:&nbsp;)+$)/g,
-	// 	''
-	// );
-	// var editorData = $('<div/>').html(html).text();
 	const editorTextCheckerTrimmed = editorTextChecker?.replace(/&nbsp;/g, ' ');
 	const specificArticleTextTrimmed = specificArticle?.description?.replace(
 		/&nbsp;/g,
 		' '
 	);
-	const editBtnDisabled =
-		postButtonStatus ||
-		(specificArticle?.dropbox_url === dropboxLink?.trim() &&
-			specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim());
+	console.log(
+		specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim(),
+		specificArticle?.dropbox_url?.trim() === dropboxLink.trim()
+	);
 
-	// console.log(specificArticleTextTrimmed, 'desc');
-	// console.log(editorTextCheckerTrimmed.trim(), 'editor');
-	// console.log(specificArticleTextTrimmed?.length, 'desc Length');
-	// console.log(editorTextCheckerTrimmed?.trim()?.length, 'editor Length');
-	// const editBtnDisabled = postButtonStatus || !articleTitle;
-	//|| (specificPost?.articleTitle === articleTitle.trim() &&
-	// 	specificPost?.media_id == selectedMedia?.id);
+	useEffect(() => {
+		if (specificArticle) {
+			setEditBtnDisabled(
+				postButtonStatus ||
+					!uploadedFiles.length ||
+					!articleTitle ||
+					(specificArticle?.file_name === uploadedFiles[0]?.fileName &&
+						specificArticle?.title?.trim() === articleTitle?.trim() &&
+						specificArticle?.dropbox_url?.trim() === dropboxLink.trim() &&
+						specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim())
+			);
+		}
+	}, [
+		specificArticle,
+		articleTitle,
+		uploadedFiles,
+		editorTextChecker,
+		editorText,
+		dropboxLink
+	]);
 
-	// const regex = /[!@#$%^&*(),.?":{}|<>/\\ ]/g;
-	// var abc = 'hello editor';
-	// var abc = tinymce?.activeEditor?.getContent();
+	const handleAddSaveBtn = async () => {
+		if (postBtnDisabled || editBtnDisabled) {
+			validateArticleBtn();
+		} else {
+			setPostButtonStatus(true);
+
+			if (isEdit) {
+				if (specificArticle?.title?.trim() !== articleTitle?.trim()) {
+					if (
+						(await handleTitleDuplicate(articleTitle)) ===
+						'The Title Already Exist'
+						// 	200 &&
+						// articleTitle !== specificArticle?.title
+					) {
+						console.log(articleTitle, specificArticle.title);
+						setArticleTitleColor('#ff355a');
+						setArticleTitleError('This title already exists');
+						setTimeout(() => {
+							setArticleTitleColor('#ffffff');
+							setArticleTitleError('');
+						}, [5000]);
+
+						setPostButtonStatus(false);
+						return;
+					}
+				}
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file, 'articleLibrary');
+					} else {
+						return _file;
+					}
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createArticle(specificArticle?.id, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
+			} else {
+				if (
+					(await handleTitleDuplicate(articleTitle)) ===
+					'The Title Already Exist'
+					// 	200 &&
+					// articleTitle !== specificArticle?.title
+				) {
+					console.log(articleTitle, specificArticle.title);
+					setArticleTitleColor('#ff355a');
+					setArticleTitleError('This title already exists');
+					setTimeout(() => {
+						setArticleTitleColor('#ffffff');
+						setArticleTitleError('');
+					}, [5000]);
+
+					setPostButtonStatus(false);
+					return;
+				}
+				setIsLoading(true);
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					return uploadFileToServer(_file, 'articleLibrary');
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createArticle(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
+			}
+		}
+	};
 
 	return (
 		<Slider
@@ -560,13 +567,6 @@ const UploadOrEditViral = ({
 							: classes.contentWrapper
 					}`}
 				>
-					{/* {specificPostStatus.status === 'loading' ? (
-						<div className={classes.loaderContainer2}>
-							<CircularProgress className={classes.loader} />
-						</div>
-					) : (
-						<></>
-					)} */}
 					<div
 						className={classes.contentWrapperNoPreview}
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
@@ -575,7 +575,7 @@ const UploadOrEditViral = ({
 							<h5>{heading1}</h5>
 							<DragAndDropField
 								uploadedFiles={uploadedFiles}
-								isEdit={isEdit}
+								// isEdit={isEdit}
 								handleDeleteFile={handleDeleteFile}
 								setPreviewBool={setPreviewBool}
 								setPreviewFile={setPreviewFile}
@@ -587,7 +587,7 @@ const UploadOrEditViral = ({
 								}}
 							/>
 
-							{uploadedFiles.length < 1 && !isEdit ? (
+							{!uploadedFiles.length && (
 								<section
 									className={classes.dropZoneContainer}
 									style={{
@@ -611,8 +611,6 @@ const UploadOrEditViral = ({
 										</p>
 									</div>
 								</section>
-							) : (
-								<></>
 							)}
 
 							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
@@ -652,29 +650,19 @@ const UploadOrEditViral = ({
 								</div>
 
 								<TextField
-									disabled={isEdit}
+									// disabled={isEdit}
 									value={articleTitle}
 									onChange={(e) => setArticleTitle(e.target.value)}
 									placeholder={'Please write your title here'}
 									className={classes.textField}
 									InputProps={{
 										disableUnderline: true,
-										className: `${classes.textFieldInput} ${
-											isEdit && classes.disableAutoComplete
-										}`,
+										className: classes.textFieldInput,
 										style: {
 											borderRadius: articleTitle ? '16px' : '40px'
 										}
 									}}
 									inputProps={{ maxLength: 28 }}
-									// autoFocus={true}
-									// FormHelperTextProps={{
-									// 	className: classes.characterCount,
-									// 	style: {
-									// 		color: articleTitle.length === 28 ? 'red' : 'white'
-									// 	}
-									// }}
-									// helperText={`${articleTitle.length}/28`}
 									multiline
 									maxRows={2}
 								/>
@@ -955,48 +943,7 @@ const UploadOrEditViral = ({
 							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 								<Button
 									disabled={isEdit ? editBtnDisabled : postBtnDisabled}
-									onClick={async () => {
-										if (postBtnDisabled || editBtnDisabled) {
-											validateArticleBtn();
-										} else {
-											setPostButtonStatus(true);
-											if (
-												(await handleTitleDuplicate(articleTitle)) ===
-												'The Title Already Exist'
-												// 	200 &&
-												// articleTitle !== specificArticle?.title
-											) {
-												console.log(articleTitle, specificArticle.title);
-												setArticleTitleColor('#ff355a');
-												setArticleTitleError('This title already exists');
-												setTimeout(() => {
-													setArticleTitleColor('#ffffff');
-													setArticleTitleError('');
-												}, [5000]);
-
-												setPostButtonStatus(false);
-												return;
-											}
-											if (isEdit) {
-												createArticle(specificArticle?.id);
-											} else {
-												setIsLoading(true);
-												let uploadFilesPromiseArray = uploadedFiles.map(
-													async (_file) => {
-														return uploadFileToServer(_file);
-													}
-												);
-
-												Promise.all([...uploadFilesPromiseArray])
-													.then((mediaFiles) => {
-														createArticle(null, mediaFiles);
-													})
-													.catch(() => {
-														setIsLoading(false);
-													});
-											}
-										}
-									}}
+									onClick={() => handleAddSaveBtn()}
 									text={buttonText}
 								/>
 							</div>
