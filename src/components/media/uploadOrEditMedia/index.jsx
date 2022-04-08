@@ -80,21 +80,21 @@ const UploadOrEditMedia = ({
 	const imgRef = useRef(null);
 
 	const previewRef = useRef(null);
-
+	const specificMedia = useSelector(
+		(state) => state.mediaLibraryOriginal.specificMedia
+	);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
-				mainCategory?.name === 'Watch' ? 'video/mp4' : 'audio/mp3, audio/mpeg'
+				mainCategory?.name || specificMedia?.media_type === 'Watch'
+					? 'video/mp4'
+					: 'audio/mp3, audio/mpeg'
 			}`,
 			maxFiles: 1
 		});
 	const dispatch = useDispatch();
 	const mainCategories = useSelector(
 		(state) => state.mediaLibraryOriginal.mainCategories
-	);
-
-	const specificMedia = useSelector(
-		(state) => state.mediaLibraryOriginal.specificMedia
 	);
 
 	const specificMediaStatus = useSelector(
@@ -586,6 +586,8 @@ const UploadOrEditMedia = ({
 		if (specificMedia) {
 			setEditBtnDisabled(
 				mediaButtonStatus ||
+					!uploadedFiles.length ||
+					!uploadedCoverImage.length ||
 					!titleMedia ||
 					!description ||
 					(specificMedia?.media_dropbox_url === dropboxLink.trim() &&
@@ -596,7 +598,15 @@ const UploadOrEditMedia = ({
 							description?.replace(/\s+/g, '')?.trim())
 			);
 		}
-	}, [specificMedia, titleMedia, description, dropboxLink, dropboxLink2]);
+	}, [
+		specificMedia,
+		titleMedia,
+		description,
+		dropboxLink,
+		dropboxLink2,
+		uploadedFiles,
+		uploadedCoverImage
+	]);
 	//console.log(editBtnDisabled, 'edb');
 
 	const MainCategoryId = (e) => {
@@ -619,6 +629,184 @@ const UploadOrEditMedia = ({
 		let setData = subCategories.find((u) => u.name === e);
 		//console.log(setData);
 		setSubCategory(setData);
+	};
+
+	const addSaveMediaBtn = async () => {
+		if (addMediaBtnDisabled || editBtnDisabled) {
+			validatePostBtn();
+		} else {
+			setMediaButtonStatus(true);
+			setIsLoadingUploadMedia(true);
+
+			if (
+				(await handleTitleDuplicate(titleMedia)) === 200 &&
+				titleMedia !== specificMedia.title
+			) {
+				setTitleMediaLabelColor('#ff355a');
+				setTitleMediaError('This title already exists');
+				setTimeout(() => {
+					setTitleMediaLabelColor('#ffffff');
+					setTitleMediaError('');
+				}, [5000]);
+				setIsLoadingUploadMedia(false);
+				setMediaButtonStatus(false);
+				return;
+			}
+			if (isEdit) {
+				// uploadMedia(specificMedia?.id, {
+				// 	title: titleMedia,
+				// 	description
+				// });
+				let uploadFilesPromiseArray = [
+					uploadedFiles[0],
+					uploadedCoverImage[0]
+				].map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file);
+					} else {
+						return _file;
+					}
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then(async (mediaFiles) => {
+						const completeUpload = await axios.post(
+							`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+							{
+								file_name: uploadedFiles[0].fileName,
+								type: 'medialibrary',
+								data: {
+									bucket: 'media',
+									multipart_upload:
+										uploadedFiles[0]?.mime_type == 'video/mp4'
+											? [
+													{
+														e_tag:
+															mediaFiles[0]?.signed_response?.headers?.etag.replace(
+																/['"]+/g,
+																''
+															),
+														part_number: 1
+													}
+											  ]
+											: ['image'],
+									keys: {
+										image_key: mediaFiles[1]?.keys?.image_key,
+										...(mainCategory.name ||
+										specificMedia?.media_type === 'Watch'
+											? {
+													video_key: mediaFiles[0]?.keys?.video_key,
+													audio_key: ''
+											  }
+											: {
+													audio_key: mediaFiles[0]?.keys?.audio_key,
+													video_key: ''
+											  })
+									},
+									upload_id:
+										mainCategory.name || specificMedia?.media_type === 'Watch'
+											? mediaFiles[0].upload_id
+											: 'audio'
+								}
+							},
+							{
+								headers: {
+									Authorization: `Bearer ${
+										getLocalStorageDetails()?.access_token
+									}`
+								}
+							}
+						);
+
+						await uploadMedia(specificMedia?.id, {
+							// file_name: uploadedFiles[0].fileName,
+							// file_name2: uploadedCoverImage[0].fileName,
+							title: titleMedia,
+							description,
+							type: 'medialibrary',
+							data: {
+								file_name_media: uploadedFiles[0].fileName,
+								file_name_image: uploadedCoverImage[0].fileName,
+								...completeUpload?.data?.data
+							}
+						});
+					})
+					.catch(() => {
+						setIsLoadingUploadMedia(false);
+					});
+			} else {
+				let uploadFilesPromiseArray = [
+					uploadedFiles[0],
+					uploadedCoverImage[0]
+				].map(async (_file) => {
+					return uploadFileToServer(_file);
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then(async (mediaFiles) => {
+						const completeUpload = await axios.post(
+							`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+							{
+								file_name: uploadedFiles[0].fileName,
+								type: 'medialibrary',
+								data: {
+									bucket: 'media',
+									multipart_upload:
+										uploadedFiles[0]?.mime_type == 'video/mp4'
+											? [
+													{
+														e_tag:
+															mediaFiles[0]?.signed_response?.headers?.etag.replace(
+																/['"]+/g,
+																''
+															),
+														part_number: 1
+													}
+											  ]
+											: ['image'],
+									keys: {
+										image_key: mediaFiles[1]?.keys?.image_key,
+										...(mainCategory.name ||
+										specificMedia?.media_type === 'Watch'
+											? {
+													video_key: mediaFiles[0]?.keys?.video_key,
+													audio_key: ''
+											  }
+											: {
+													audio_key: mediaFiles[0]?.keys?.audio_key,
+													video_key: ''
+											  })
+									},
+									upload_id:
+										mainCategory.name || specificMedia?.media_type === 'Watch'
+											? mediaFiles[0].upload_id
+											: 'audio'
+								}
+							},
+							{
+								headers: {
+									Authorization: `Bearer ${
+										getLocalStorageDetails()?.access_token
+									}`
+								}
+							}
+						);
+						await uploadMedia(null, {
+							// file_name: uploadedFiles[0].fileName,
+							// file_name2: uploadedCoverImage[0].fileName,
+							type: 'medialibrary',
+							data: {
+								file_name_media: uploadedFiles[0].fileName,
+								file_name_image: uploadedCoverImage[0].fileName,
+								...completeUpload?.data?.data
+							}
+						});
+					})
+					.catch(() => {
+						setIsLoadingUploadMedia(false);
+					});
+			}
+		}
 	};
 
 	return (
@@ -863,7 +1051,7 @@ const UploadOrEditMedia = ({
 											setFileDuration(videoRef?.current?.duration);
 										}}
 									/>
-									{!uploadedFiles.length && !isEdit && (
+									{!uploadedFiles.length && (
 										<section
 											className={classes.dropZoneContainer}
 											style={{
@@ -879,7 +1067,8 @@ const UploadOrEditMedia = ({
 													Click or drag file to this area to upload
 												</p>
 												<p className={classes.formatMsg}>
-													{mainCategory.name === 'Watch'
+													{mainCategory.name ||
+													specificMedia?.media_type === 'Watch'
 														? 'Supported format is mp4'
 														: 'Supported format is mp3'}
 												</p>
@@ -926,7 +1115,7 @@ const UploadOrEditMedia = ({
 											setFileHeight(imgRef.current.naturalHeight);
 										}}
 									/>
-									{!uploadedCoverImage.length && !isEdit && (
+									{!uploadedCoverImage.length && (
 										<section
 											className={classes.dropZoneContainer}
 											style={{
@@ -1074,107 +1263,7 @@ const UploadOrEditMedia = ({
 							>
 								<Button
 									disabled={isEdit ? editBtnDisabled : addMediaBtnDisabled}
-									onClick={async () => {
-										if (addMediaBtnDisabled || editBtnDisabled) {
-											validatePostBtn();
-										} else {
-											setMediaButtonStatus(true);
-											setIsLoadingUploadMedia(true);
-
-											if (
-												(await handleTitleDuplicate(titleMedia)) === 200 &&
-												titleMedia !== specificMedia.title
-											) {
-												setTitleMediaLabelColor('#ff355a');
-												setTitleMediaError('This title already exists');
-												setTimeout(() => {
-													setTitleMediaLabelColor('#ffffff');
-													setTitleMediaError('');
-												}, [5000]);
-												setIsLoadingUploadMedia(false);
-												setMediaButtonStatus(false);
-												return;
-											}
-											if (isEdit) {
-												uploadMedia(specificMedia?.id, {
-													title: titleMedia,
-													description
-												});
-											} else {
-												let uploadFilesPromiseArray = [
-													uploadedFiles[0],
-													uploadedCoverImage[0]
-												].map(async (_file) => {
-													return uploadFileToServer(_file);
-												});
-
-												Promise.all([...uploadFilesPromiseArray])
-													.then(async (mediaFiles) => {
-														const completeUpload = await axios.post(
-															`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-															{
-																file_name: uploadedFiles[0].fileName,
-																type: 'medialibrary',
-																data: {
-																	bucket: 'media',
-																	multipart_upload:
-																		uploadedFiles[0]?.mime_type == 'video/mp4'
-																			? [
-																					{
-																						e_tag:
-																							mediaFiles[0]?.signed_response?.headers?.etag.replace(
-																								/['"]+/g,
-																								''
-																							),
-																						part_number: 1
-																					}
-																			  ]
-																			: ['image'],
-																	keys: {
-																		image_key: mediaFiles[1]?.keys?.image_key,
-																		...(mainCategory.name === 'Watch'
-																			? {
-																					video_key:
-																						mediaFiles[0]?.keys?.video_key,
-																					audio_key: ''
-																			  }
-																			: {
-																					audio_key:
-																						mediaFiles[0]?.keys?.audio_key,
-																					video_key: ''
-																			  })
-																	},
-																	upload_id:
-																		mainCategory.name === 'Watch'
-																			? mediaFiles[0].upload_id
-																			: 'audio'
-																}
-															},
-															{
-																headers: {
-																	Authorization: `Bearer ${
-																		getLocalStorageDetails()?.access_token
-																	}`
-																}
-															}
-														);
-														await uploadMedia(null, {
-															// file_name: uploadedFiles[0].fileName,
-															// file_name2: uploadedCoverImage[0].fileName,
-															type: 'medialibrary',
-															data: {
-																file_name_media: uploadedFiles[0].fileName,
-																file_name_image: uploadedCoverImage[0].fileName,
-																...completeUpload?.data?.data
-															}
-														});
-													})
-													.catch(() => {
-														setIsLoadingUploadMedia(false);
-													});
-											}
-										}
-									}}
+									onClick={() => addSaveMediaBtn()}
 									text={buttonText}
 								/>
 							</div>
