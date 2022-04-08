@@ -232,7 +232,6 @@ DragAndDropField.propTypes = {
 	setPreviewBool: PropTypes.func,
 	setPreviewFile: PropTypes.func,
 	isPost: PropTypes.bool,
-	isViral: PropTypes.bool,
 	isMedia: PropTypes.bool,
 	isArticle: PropTypes.bool,
 	videoRef: PropTypes.oneOfType([

@@ -15,10 +15,10 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getAllViralsApi } from '../../../pages/ViralLibrary/viralLibararySlice';
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
-import captureVideoFrame from 'capture-video-frame';
 import Close from '@material-ui/icons/Close';
 import Labels from '../../Labels';
 import { getLocalStorageDetails } from '../../../utils';
+import uploadFileToServer from '../../../utils/uploadFileToServer';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 
@@ -65,10 +65,6 @@ const UploadOrEditViral = ({
 	const videoRef = useRef(null);
 	const imgEl = useRef(null);
 
-	// const ref = useRef(null);
-	// useEffect(() => {
-	// 	console.log('width', ref.current ? ref.current.offsetWidth : 0);
-	// }, [ref.current]);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png, video/mp4',
@@ -112,8 +108,6 @@ const UploadOrEditViral = ({
 			}
 			setCaption(specificViral?.caption);
 			setDropboxLink(specificViral?.dropbox_url);
-			setFileWidth(specificViral?.width);
-			setFileHeight(specificViral?.height);
 			if (specificViral?.thumbnail_url) {
 				setUploadedFiles([
 					{
@@ -188,117 +182,6 @@ const UploadOrEditViral = ({
 		}
 	}, [acceptedFiles]);
 
-	// useEffect(() => {
-	// 	console.log(videoRef?.current?.duration);
-	// }, [videoRef.current]);
-	// useEffect(() => {
-	// 	//console.log('adw');
-	// 	if (videoRef?.current) {
-	// 		console.log('dawdw');
-	// 		console.log(videoRef?.current?.clientWidth);
-	// 	}
-	// 	alert(videoRef?.current?.clientWidth);
-	// }, [videoRef.current]);
-
-	// const readImageFile = (file) => {
-	// 	var reader = new FileReader(); // CREATE AN NEW INSTANCE.
-
-	// 	reader.onload = function (e) {
-	// 		var img = file;
-	// 		img.src = e.target.result;
-
-	// 		img.onload = function () {
-	// 			var w = this.width;
-	// 			var h = this.height;
-	// 			console.log(w, h, 'w h ');
-	// 		};
-	// 	};
-	// };
-
-	const uploadFileToServer = async (uploadedFile) => {
-		try {
-			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
-				{
-					file_type: uploadedFile.fileExtension,
-					parts: 1
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
-				}
-			);
-
-			if (result?.data?.data?.url) {
-				const _result = await axios.put(
-					result?.data?.data?.url,
-					uploadedFile.file,
-					//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
-					{
-						headers: { 'Content-Type': uploadedFile.mime_type }
-					}
-				);
-				const frame = captureVideoFrame('my-video', 'png');
-				// console.log(frame, 'frame', frame.width);
-				if (result?.data?.data?.video_thumbnail_url) {
-					await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
-						headers: { 'Content-Type': 'image/png' }
-					});
-				}
-				if (_result?.status === 200) {
-					const uploadResult = await axios.post(
-						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-						{
-							file_name: uploadedFile.file.name,
-							type: 'virallibrary',
-							data: {
-								bucket: 'media',
-								multipart_upload:
-									uploadedFile?.mime_type == 'video/mp4'
-										? [
-												{
-													e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
-													part_number: 1
-												}
-										  ]
-										: ['image'],
-								keys: {
-									image_key: result?.data?.data?.keys?.image_key,
-									video_key: result?.data?.data?.keys?.video_key,
-									audio_key: ''
-								},
-								upload_id:
-									uploadedFile?.mime_type == 'video/mp4'
-										? result?.data?.data?.upload_id
-										: 'image'
-							}
-						},
-						{
-							headers: {
-								Authorization: `Bearer ${
-									getLocalStorageDetails()?.access_token
-								}`
-							}
-						}
-					);
-					if (uploadResult?.data?.status_code === 200) {
-						return uploadResult.data.data;
-					} else {
-						throw 'Error';
-					}
-				} else {
-					throw 'Error';
-				}
-			} else {
-				throw 'Error';
-			}
-		} catch (error) {
-			console.log('Error');
-			return null;
-		}
-	};
-
 	const resetState = () => {
 		setCaption('');
 		setDropboxLink('');
@@ -361,6 +244,8 @@ const UploadOrEditViral = ({
 
 	const createViral = async (id, mediaFiles = []) => {
 		console.log(mediaFiles, 'media files in create viral');
+		setFileWidth(mediaFiles[0].width);
+		setFileHeight(mediaFiles[0].height);
 		setPostButtonStatus(true);
 		try {
 			const result = await axios.post(
@@ -433,8 +318,6 @@ const UploadOrEditViral = ({
 			if (result?.data?.status_code === 200) {
 				toast.success('Viral has been deleted!');
 				handleClose();
-
-				//setting a timeout for getting post after delete.
 				dispatch(getAllViralsApi({ page }));
 			}
 		} catch (e) {
@@ -488,7 +371,7 @@ const UploadOrEditViral = ({
 			if (isEdit) {
 				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
 					if (_file.file) {
-						return await uploadFileToServer(_file);
+						return await uploadFileToServer(_file, 'virallibrary');
 					} else {
 						return _file;
 					}
@@ -504,7 +387,7 @@ const UploadOrEditViral = ({
 			} else {
 				setIsLoadingcreateViral(true);
 				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
-					return uploadFileToServer(_file);
+					return uploadFileToServer(_file, 'virallibrary');
 				});
 
 				Promise.all([...uploadFilesPromiseArray])
@@ -546,14 +429,6 @@ const UploadOrEditViral = ({
 							: classes.contentWrapper
 					}`}
 				>
-					{/* {specificViralStatus.status === 'loading' ? (
-						<div className={classes.loaderContainer2}>
-							<CircularProgress className={classes.loader} />
-						</div>
-					) : (
-						<></>
-					)} */}
-
 					<div
 						className={classes.contentWrapperNoPreview}
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
@@ -591,6 +466,7 @@ const UploadOrEditViral = ({
 									setFileWidth(videoRef.current.videoWidth);
 									setFileHeight(videoRef.current.videoHeight);
 								}}
+								isPost
 							/>
 							{!uploadedFiles.length && (
 								<section

@@ -16,7 +16,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import { getAllArticlesApi } from '../../../pages/ArticleLibrary/articleLibrarySlice';
-import captureVideoFrame from 'capture-video-frame';
+import uploadFileToServer from '../../../utils/uploadFileToServer';
 import Close from '@material-ui/icons/Close';
 import { TextField } from '@material-ui/core';
 
@@ -210,89 +210,6 @@ const UploadOrEditViral = ({
 			setUploadedFiles([...uploadedFiles, ...newFiles]);
 		}
 	}, [acceptedFiles]);
-
-	const uploadFileToServer = async (uploadedFile) => {
-		try {
-			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
-				{
-					file_type: uploadedFile.fileExtension,
-					parts: 1
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
-				}
-			);
-			const frame = captureVideoFrame('my-video', 'png');
-			if (result?.data?.data?.video_thumbnail_url) {
-				await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
-					headers: { 'Content-Type': 'image/png' }
-				});
-			}
-			if (result?.data?.data?.url) {
-				const _result = await axios.put(
-					result?.data?.data?.url,
-					uploadedFile.file,
-					//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
-					{
-						headers: { 'Content-Type': uploadedFile.mime_type }
-					}
-				);
-
-				if (_result?.status === 200) {
-					const uploadResult = await axios.post(
-						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-						{
-							file_name: uploadedFile.file.name,
-							type: 'articleLibrary',
-							data: {
-								bucket: 'media',
-								multipart_upload:
-									uploadedFile?.mime_type == 'video/mp4'
-										? [
-												{
-													e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
-													part_number: 1
-												}
-										  ]
-										: ['image'],
-								keys: {
-									image_key: result?.data?.data?.keys?.image_key,
-									video_key: result?.data?.data?.keys?.video_key,
-									audio_key: ''
-								},
-								upload_id:
-									uploadedFile?.mime_type == 'video/mp4'
-										? result?.data?.data?.upload_id
-										: 'image'
-							}
-						},
-						{
-							headers: {
-								Authorization: `Bearer ${
-									getLocalStorageDetails()?.access_token
-								}`
-							}
-						}
-					);
-					if (uploadResult?.data?.status_code === 200) {
-						return uploadResult.data.data;
-					} else {
-						throw 'Error';
-					}
-				} else {
-					throw 'Error';
-				}
-			} else {
-				throw 'Error';
-			}
-		} catch (error) {
-			console.log('Error');
-			return null;
-		}
-	};
 
 	const handleEditorChange = () => {
 		const editorTextContent = tinymce?.activeEditor?.getContent();
@@ -547,23 +464,6 @@ const UploadOrEditViral = ({
 		dropboxLink
 	]);
 
-	// console.log(specificArticleTextTrimmed, 'desc');
-	// console.log(editorTextCheckerTrimmed.trim(), 'editor');
-	// console.log(specificArticleTextTrimmed?.length, 'desc Length');
-	// console.log(editorTextCheckerTrimmed?.trim()?.length, 'editor Length');
-	// const editBtnDisabled = postButtonStatus || !articleTitle;
-	//|| (specificPost?.articleTitle === articleTitle.trim() &&
-	// 	specificPost?.media_id == selectedMedia?.id);
-
-	// const regex = /[!@#$%^&*(),.?":{}|<>/\\ ]/g;
-	// var abc = 'hello editor';
-	// var abc = tinymce?.activeEditor?.getContent();
-
-	// const editBtnDisabled =
-	// 	postButtonStatus ||
-	// 	(specificArticle?.dropbox_url === dropboxLink?.trim() &&
-	// 		specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim());
-
 	const handleAddSaveBtn = async () => {
 		if (postBtnDisabled || editBtnDisabled) {
 			validateArticleBtn();
@@ -592,7 +492,7 @@ const UploadOrEditViral = ({
 				}
 				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
 					if (_file.file) {
-						return await uploadFileToServer(_file);
+						return await uploadFileToServer(_file, 'articleLibrary');
 					} else {
 						return _file;
 					}
@@ -625,7 +525,7 @@ const UploadOrEditViral = ({
 				}
 				setIsLoading(true);
 				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
-					return uploadFileToServer(_file);
+					return uploadFileToServer(_file, 'articleLibrary');
 				});
 
 				Promise.all([...uploadFilesPromiseArray])
@@ -667,13 +567,6 @@ const UploadOrEditViral = ({
 							: classes.contentWrapper
 					}`}
 				>
-					{/* {specificPostStatus.status === 'loading' ? (
-						<div className={classes.loaderContainer2}>
-							<CircularProgress className={classes.loader} />
-						</div>
-					) : (
-						<></>
-					)} */}
 					<div
 						className={classes.contentWrapperNoPreview}
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
@@ -770,14 +663,6 @@ const UploadOrEditViral = ({
 										}
 									}}
 									inputProps={{ maxLength: 28 }}
-									// autoFocus={true}
-									// FormHelperTextProps={{
-									// 	className: classes.characterCount,
-									// 	style: {
-									// 		color: articleTitle.length === 28 ? 'red' : 'white'
-									// 	}
-									// }}
-									// helperText={`${articleTitle.length}/28`}
 									multiline
 									maxRows={2}
 								/>
