@@ -853,13 +853,14 @@ const UploadOrEditMedia = ({
 										setPreviewBool={setPreviewBool}
 										setPreviewFile={setPreviewFile}
 										isMedia
+										videoRef={videoRef}
 										onLoadedVideodata={() => {
-											setFileWidth(videoRef.current.videoWidth);
-											setFileHeight(videoRef.current.videoHeight);
-											setFileDuration(videoRef.current.duration);
+											setFileWidth(videoRef?.current?.videoWidth);
+											setFileHeight(videoRef?.current?.videoHeight);
+											setFileDuration(videoRef?.current?.duration);
 										}}
 										onLoadedAudioData={() => {
-											setFileDuration(videoRef.current.duration);
+											setFileDuration(videoRef?.current?.duration);
 										}}
 									/>
 									{!uploadedFiles.length && !isEdit && (

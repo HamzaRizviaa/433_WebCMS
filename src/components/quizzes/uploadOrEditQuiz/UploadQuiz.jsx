@@ -51,7 +51,6 @@ const UploadQuiz = ({ open, handleClose, title, heading1, buttonText }) => {
 					</TabsListUnstyled>
 					<TabPanelUnstyled value={0}>
 						<UploadOrEditQuiz
-							quiz={true}
 							heading1={heading1}
 							open={open}
 							buttonText={buttonText}
@@ -63,7 +62,7 @@ const UploadQuiz = ({ open, handleClose, title, heading1, buttonText }) => {
 							handleClose={() => {
 								handleClose();
 							}}
-							type='quiz'
+							type='poll'
 						/>
 					</TabPanelUnstyled>
 					<TabPanelUnstyled value={1}>
