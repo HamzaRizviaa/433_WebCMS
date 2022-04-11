@@ -380,14 +380,14 @@ const UploadOrEditPost = ({
 		setPostButtonStatus(true);
 		console.log(mediaFiles, 'mediaFiles in post');
 
-		let media_files = mediaFiles.map((file) => {
+		let media_files = mediaFiles.map((file, index) => {
 			if (file.file_name) {
 				return file;
 			} else {
 				return Object.assign(file, {
 					file_name: file.fileName,
 					media_url: file.img.split('cloudfront.net/')[1]
-					// sort_order: index + 1
+					//sort_order: index + 1
 				});
 			}
 		});
