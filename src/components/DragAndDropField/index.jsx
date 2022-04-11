@@ -43,6 +43,7 @@ const DragAndDropField = ({
 						className={classes.uploadedFilesContainer}
 					>
 						{uploadedFiles.map((file, index) => {
+							console.log(uploadedFiles.length, 'abc === length');
 							return (
 								<Draggable
 									key={file.id}
@@ -158,6 +159,14 @@ const DragAndDropField = ({
 														</>
 													) : (
 														<div style={{ display: 'flex' }}>
+															{isPost && uploadedFiles.length > 1 && (
+																<span {...provided.dragHandleProps}>
+																	<MenuIcon
+																		style={{ cursor: 'grab' }}
+																		className={classes.filePreviewIcons}
+																	/>
+																</span>
+															)}
 															<EyeIcon
 																onClick={() => {
 																	setPreviewBool(true);

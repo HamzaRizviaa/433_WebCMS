@@ -196,7 +196,7 @@ const UploadOrEditPost = ({
 				let newFiles = specificPost.medias.map((file) => {
 					if (file.thumbnail_url) {
 						return {
-							fileName: file.file_name,
+							file_name: file.file_name,
 							id: makeid(10),
 							url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
 							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.thumbnail_url}`,
@@ -204,7 +204,7 @@ const UploadOrEditPost = ({
 						};
 					} else {
 						return {
-							fileName: file.file_name,
+							file_name: file.file_name,
 							id: makeid(10),
 							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
 							type: 'image'
@@ -256,7 +256,7 @@ const UploadOrEditPost = ({
 				let id = makeid(10);
 				return {
 					id: id,
-					fileName: file.name,
+					file_name: file.name,
 					img: URL.createObjectURL(file),
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
@@ -392,15 +392,19 @@ const UploadOrEditPost = ({
 		setPostButtonStatus(true);
 		console.log(mediaFiles, 'mediaFiles in post');
 
-		let media_files = mediaFiles.map((file) => {
+		let media_files = mediaFiles.map((file, index) => {
+			console.log(index, 'index ========');
 			if (file.file_name) {
 				return file;
 			} else {
 				return Object.assign(file, {
-					file_name: file.fileName,
-					media_url: file.img.split('cloudfront.net/')[1]
-					// sort_order: index + 1
+					file_name: file.file_name,
+					media_url: file.img.split('cloudfront.net/')[1],
+					sort_order: 0
 				});
+				// let media = delete (abc.file_name, abc.img);
+				// console.log(media, '===delete keys ');
+				// return media;
 			}
 		});
 
