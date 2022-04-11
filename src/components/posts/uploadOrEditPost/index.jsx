@@ -196,17 +196,17 @@ const UploadOrEditPost = ({
 				let newFiles = specificPost.medias.map((file) => {
 					if (file.thumbnail_url) {
 						return {
-							file_name: file.file_name,
+							fileName: file.file_name,
 							id: makeid(10),
 							url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
-							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.thumbnail_url}`,
+							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.thumbnail_url}`, //img
 							type: 'video'
 						};
 					} else {
 						return {
-							file_name: file.file_name,
+							fileName: file.file_name,
 							id: makeid(10),
-							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
+							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`, //img
 							type: 'image'
 						};
 					}
@@ -256,7 +256,7 @@ const UploadOrEditPost = ({
 				let id = makeid(10);
 				return {
 					id: id,
-					file_name: file.name,
+					fileName: file.name,
 					img: URL.createObjectURL(file),
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
@@ -397,11 +397,15 @@ const UploadOrEditPost = ({
 			if (file.file_name) {
 				return file;
 			} else {
-				return Object.assign(file, {
-					file_name: file.file_name,
+				let _file = Object.assign(file, {
+					file_name: file.fileName,
 					media_url: file.img.split('cloudfront.net/')[1],
 					sort_order: 0
 				});
+				delete _file.fileName;
+				delete _file.img;
+				console.log(_file, '_file');
+				return _file;
 				// let media = delete (abc.file_name, abc.img);
 				// console.log(media, '===delete keys ');
 				// return media;
@@ -416,9 +420,7 @@ const UploadOrEditPost = ({
 					media_files: [...media_files],
 					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
 					orientation_type: dimensionSelect,
-					...(selectedMedia
-						? { media_id: selectedMedia.id }
-						: { media_id: null }),
+					...(selectedMedia ? { media_id: selectedMedia.id } : {}),
 					...(isEdit && id ? { post_id: id } : {}),
 					...(!isEdit && selectedLabels.length
 						? { labels: [...selectedLabels] }

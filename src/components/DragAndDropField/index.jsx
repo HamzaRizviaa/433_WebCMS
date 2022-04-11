@@ -43,7 +43,6 @@ const DragAndDropField = ({
 						className={classes.uploadedFilesContainer}
 					>
 						{uploadedFiles.map((file, index) => {
-							console.log(uploadedFiles.length, 'abc === length');
 							return (
 								<Draggable
 									key={file.id}
