@@ -397,3 +397,11 @@ video::-webkit-media-controls-fullscreen-button {
 	font-weight: 700;
 	line-height: 24px;
 }
+
+.errorState {
+	color: $red;
+}
+
+.noErrorState {
+	color: $white-color;
+}

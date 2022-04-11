@@ -197,7 +197,7 @@ const UploadOreditArcade = ({
 			} else {
 				//arcade
 				setArcadeGameType(
-					specificGamesData?.arcade_game_type === 'OutSide App'
+					specificGamesData?.arcade_game_type === 'Outside App'
 						? 'Outside App'
 						: 'Inside App'
 				);

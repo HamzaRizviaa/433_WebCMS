@@ -392,14 +392,14 @@ const UploadOrEditPost = ({
 		setPostButtonStatus(true);
 		console.log(mediaFiles, 'mediaFiles in post');
 
-		let media_files = mediaFiles.map((file) => {
+		let media_files = mediaFiles.map((file, index) => {
 			if (file.file_name) {
 				return file;
 			} else {
 				return Object.assign(file, {
 					file_name: file.fileName,
 					media_url: file.img.split('cloudfront.net/')[1]
-					// sort_order: index + 1
+					//sort_order: index + 1
 				});
 			}
 		});
@@ -746,9 +746,11 @@ const UploadOrEditPost = ({
 							{/* <p className={classes.mediaError}>{dropboxLinkError}</p> */}
 							<div className={classes.captionContainer}>
 								<h6
-									style={{
-										color: isError.selectedLabels ? '#ff355a' : 'white'
-									}}
+									className={
+										isError.selectedLabels
+											? classes.errorState
+											: classes.noErrorState
+									}
 								>
 									LABELS
 								</h6>
@@ -769,7 +771,11 @@ const UploadOrEditPost = ({
 								</p>
 							)}
 							<div className={classes.captionContainer}>
-								<h6 style={{ color: isError.caption ? '#ff355a' : 'white' }}>
+								<h6
+									className={
+										isError.caption ? classes.errorState : classes.noErrorState
+									}
+								>
 									CAPTION
 								</h6>
 								<TextField
@@ -816,9 +822,11 @@ const UploadOrEditPost = ({
 									className={classes.mediaContainer}
 								>
 									<h6
-										style={{
-											color: isError.selectedMediaValue ? '#ff355a' : 'white'
-										}}
+										className={
+											isError.selectedMediaValue
+												? classes.errorState
+												: classes.noErrorState
+										}
 									>
 										SELECT MEDIA
 									</h6>
