@@ -86,7 +86,7 @@ const UploadOrEditMedia = ({
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
-				mainCategory?.name || specificMedia?.media_type === 'Watch'
+				mainCategory?.name === 'Watch' || specificMedia?.media_type === 'Watch'
 					? 'video/mp4'
 					: 'audio/mp3, audio/mpeg'
 			}`,
@@ -692,7 +692,7 @@ const UploadOrEditMedia = ({
 											: ['image'],
 									keys: {
 										image_key: mediaFiles[1]?.keys?.image_key,
-										...(mainCategory.name ||
+										...(mainCategory.name === 'Watch' ||
 										specificMedia?.media_type === 'Watch'
 											? {
 													video_key: mediaFiles[0]?.keys?.video_key,
@@ -704,7 +704,8 @@ const UploadOrEditMedia = ({
 											  })
 									},
 									upload_id:
-										mainCategory.name || specificMedia?.media_type === 'Watch'
+										mainCategory.name === 'Watch' ||
+										specificMedia?.media_type === 'Watch'
 											? mediaFiles[0].upload_id
 											: 'audio'
 								}
@@ -766,7 +767,7 @@ const UploadOrEditMedia = ({
 											: ['image'],
 									keys: {
 										image_key: mediaFiles[1]?.keys?.image_key,
-										...(mainCategory.name ||
+										...(mainCategory.name === 'Watch' ||
 										specificMedia?.media_type === 'Watch'
 											? {
 													video_key: mediaFiles[0]?.keys?.video_key,
@@ -778,7 +779,8 @@ const UploadOrEditMedia = ({
 											  })
 									},
 									upload_id:
-										mainCategory.name || specificMedia?.media_type === 'Watch'
+										mainCategory?.name === 'Watch' ||
+										specificMedia?.media_type === 'Watch'
 											? mediaFiles[0].upload_id
 											: 'audio'
 								}
@@ -1047,7 +1049,7 @@ const UploadOrEditMedia = ({
 											setFileHeight(videoRef?.current?.videoHeight);
 											setFileDuration(videoRef?.current?.duration);
 										}}
-										onLoadedAudioData={() => {
+										onLoadedAudiodata={() => {
 											setFileDuration(videoRef?.current?.duration);
 										}}
 									/>
@@ -1067,7 +1069,7 @@ const UploadOrEditMedia = ({
 													Click or drag file to this area to upload
 												</p>
 												<p className={classes.formatMsg}>
-													{mainCategory.name ||
+													{mainCategory?.name === 'Watch' ||
 													specificMedia?.media_type === 'Watch'
 														? 'Supported format is mp4'
 														: 'Supported format is mp3'}
