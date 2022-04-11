@@ -590,7 +590,10 @@ const UploadOrEditMedia = ({
 					!uploadedCoverImage.length ||
 					!titleMedia ||
 					!description ||
-					(specificMedia?.media_dropbox_url === dropboxLink.trim() &&
+					(specificMedia?.file_name_media === uploadedFiles[0]?.fileName &&
+						specificMedia?.file_name_image ===
+							uploadedCoverImage[0]?.fileName &&
+						specificMedia?.media_dropbox_url === dropboxLink.trim() &&
 						specificMedia?.image_dropbox_url === dropboxLink2.trim() &&
 						specificMedia?.title.replace(/\s+/g, '')?.trim() ===
 							titleMedia?.replace(/\s+/g, '')?.trim() &&
