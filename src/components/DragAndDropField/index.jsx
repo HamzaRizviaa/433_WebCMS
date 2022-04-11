@@ -146,7 +146,16 @@ const DragAndDropField = ({
 											{isEdit || editPoll || editQuiz ? (
 												<div className={classes.filePreviewRight}>
 													{isMedia ? (
-														<></>
+														<>
+															<Deletes
+																className={classes.filePreviewIcons}
+																onClick={() => {
+																	handleDeleteFile(file.id);
+																	setPreviewBool(false);
+																	setPreviewFile(null);
+																}}
+															/>
+														</>
 													) : (
 														<div style={{ display: 'flex' }}>
 															<EyeIcon
