@@ -380,6 +380,7 @@ const UploadOrEditPost = ({
 		setDisableDropdown(true);
 		setDropdownPosition(false);
 		//setImageDestination('');
+		setIsError({});
 	};
 
 	// a little function to help us with reordering the result
@@ -768,7 +769,7 @@ const UploadOrEditPost = ({
 								<section
 									className={classes.dropZoneContainer}
 									style={{
-										borderColor: isError.uploadedFiles ? 'red' : 'yellow'
+										borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
 									}}
 								>
 									<div {...getRootProps({ className: classes.dropzone })}>
@@ -814,7 +815,13 @@ const UploadOrEditPost = ({
 							</div>
 							{/* <p className={classes.mediaError}>{dropboxLinkError}</p> */}
 							<div className={classes.captionContainer}>
-								<h6 style={{ color: labelColor }}>LABELS</h6>
+								<h6
+									style={{
+										color: isError.selectedLabels ? '#ff355a' : 'white'
+									}}
+								>
+									LABELS
+								</h6>
 								<Labels
 									isEdit={isEdit}
 									setDisableDropdown={setDisableDropdown}
@@ -825,9 +832,14 @@ const UploadOrEditPost = ({
 									handleChangeExtraLabel={handleChangeExtraLabel}
 								/>
 							</div>
-							<p className={classes.mediaError}>{labelError}</p>
+							{isError.selectedLabels && (
+								<p className={classes.mediaError}>
+									You need to add {10 - selectedLabels.length} more labels in
+									order to post
+								</p>
+							)}
 							<div className={classes.captionContainer}>
-								<h6 style={{ color: isError.caption ? 'red' : 'white' }}>
+								<h6 style={{ color: isError.caption ? '#ff355a' : 'white' }}>
 									CAPTION
 								</h6>
 								<TextField
@@ -873,7 +885,13 @@ const UploadOrEditPost = ({
 									style={{ marginBottom: dropdownPosition ? 200 : 0 }}
 									className={classes.mediaContainer}
 								>
-									<h6 style={{ color: mediaLabelColor }}>SELECT MEDIA</h6>
+									<h6
+										style={{
+											color: isError.selectedMediaValue ? '#ff355a' : 'white'
+										}}
+									>
+										SELECT MEDIA
+									</h6>
 									<Autocomplete
 										value={selectedMedia}
 										PaperComponent={(props) => {
@@ -953,7 +971,9 @@ const UploadOrEditPost = ({
 										popupIcon={''}
 									/>
 
-									<p className={classes.mediaError}>{mediaError}</p>
+									{isError.selectedMediaValue && (
+										<p className={classes.mediaError}>Please select media</p>
+									)}
 								</div>
 							) : (
 								<></>
