@@ -42,6 +42,10 @@
 .fileName {
 	font-size: 1rem;
 	margin-left: 2rem;
+	max-width: 150px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 }
 .fileThumbnail {
 	height: 8rem;
