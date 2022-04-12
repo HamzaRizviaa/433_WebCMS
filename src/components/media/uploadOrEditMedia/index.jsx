@@ -211,7 +211,7 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		if (mainCategory && !isEdit) {
-			console.log(mainCategory, 'mc');
+			// console.log(mainCategory, 'mc');
 			updateSubCategories(mainCategory);
 		}
 		// else if (mainCategory && isEdit) {
@@ -252,6 +252,19 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	const selectFileType = (type) => {
+		switch (type) {
+			case 'video/mp4':
+				return 'video';
+			case 'audio/mp3':
+				return 'audio';
+			case 'audio/mpeg':
+				return 'audio';
+			default:
+				return 'image';
+		}
+	};
+
 	useEffect(() => {
 		if (acceptedFiles?.length) {
 			setUploadMediaError('');
@@ -265,7 +278,7 @@ const UploadOrEditMedia = ({
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
-					type: file.type === 'video/mp4' ? 'video' : 'image'
+					type: selectFileType(file.type)
 				};
 			});
 			setUploadedFiles([...uploadedFiles, ...newFiles]);
@@ -273,7 +286,7 @@ const UploadOrEditMedia = ({
 	}, [acceptedFiles]);
 
 	useEffect(() => {
-		console.log(fileDuration, 'duration');
+		// console.log(fileDuration, 'duration');
 	}, [videoRef.current]);
 
 	useEffect(() => {
@@ -444,7 +457,7 @@ const UploadOrEditMedia = ({
 	};
 
 	const uploadMedia = async (id, payload) => {
-		console.log(payload);
+		// console.log(payload);
 		let media_type = mainCategory?.id;
 		setMediaButtonStatus(true);
 		try {
@@ -506,7 +519,7 @@ const UploadOrEditMedia = ({
 		}
 	};
 
-	const uploadFileToServer = async (file) => {
+	const uploadFileToServer = async (file, type) => {
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
@@ -526,7 +539,11 @@ const UploadOrEditMedia = ({
 				let response = await axios.put(result?.data?.data?.url, file.file, {
 					headers: { 'Content-Type': file.mime_type }
 				});
-				return { ...result.data.data, signed_response: response };
+				return {
+					...result.data.data,
+					signed_response: response,
+					fileType: type
+				};
 			} else {
 				throw 'Error';
 			}
@@ -665,7 +682,8 @@ const UploadOrEditMedia = ({
 					uploadedCoverImage[0]
 				].map(async (_file) => {
 					if (_file.file) {
-						return await uploadFileToServer(_file);
+						console.log('_file', _file);
+						return await uploadFileToServer(_file, _file.type);
 					} else {
 						return _file;
 					}
@@ -673,65 +691,76 @@ const UploadOrEditMedia = ({
 
 				Promise.all([...uploadFilesPromiseArray])
 					.then(async (mediaFiles) => {
-						const completeUpload = await axios.post(
-							`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-							{
-								file_name: uploadedFiles[0].fileName,
-								type: 'medialibrary',
-								data: {
-									bucket: 'media',
-									multipart_upload:
-										uploadedFiles[0]?.mime_type == 'video/mp4'
-											? [
-													{
-														e_tag:
-															mediaFiles[0]?.signed_response?.headers?.etag.replace(
-																/['"]+/g,
-																''
-															),
-														part_number: 1
-													}
-											  ]
-											: ['image'],
-									keys: {
-										image_key: mediaFiles[1]?.keys?.image_key,
-										...(mainCategory.name === 'Watch' ||
-										specificMedia?.media_type === 'Watch'
-											? {
-													video_key: mediaFiles[0]?.keys?.video_key,
-													audio_key: ''
-											  }
-											: {
-													audio_key: mediaFiles[0]?.keys?.audio_key,
-													video_key: ''
-											  })
+						console.log('Media Files', mediaFiles);
+						mediaFiles.map(async (file) => {
+							console.log(file.fileType);
+							if (file?.signed_response) {
+								const completeUpload = await axios.post(
+									`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+									{
+										file_name:
+											file.fileType === 'image'
+												? uploadedCoverImage[0].fileName
+												: uploadedFiles[0].fileName,
+										type: 'medialibrary',
+										data: {
+											bucket: 'media',
+											multipart_upload:
+												uploadedFiles[0]?.mime_type == 'video/mp4'
+													? [
+															{
+																e_tag:
+																	file?.signed_response?.headers?.etag.replace(
+																		/['"]+/g,
+																		''
+																	),
+																part_number: 1
+															}
+													  ]
+													: ['image'],
+											keys: {
+												image_key: file?.keys?.image_key,
+												...(mainCategory.name === 'Watch' ||
+												specificMedia?.media_type === 'Watch'
+													? {
+															video_key: file?.keys?.video_key,
+															audio_key: ''
+													  }
+													: {
+															audio_key: file?.keys?.audio_key,
+															video_key: ''
+													  })
+											},
+											upload_id:
+												mainCategory.name === 'Watch' ||
+												specificMedia?.media_type === 'Watch'
+													? file.upload_id || 'image'
+													: file.fileType === 'image'
+													? 'image'
+													: 'audio'
+										}
 									},
-									upload_id:
-										mainCategory.name === 'Watch' ||
-										specificMedia?.media_type === 'Watch'
-											? mediaFiles[0].upload_id
-											: 'audio'
-								}
-							},
-							{
-								headers: {
-									Authorization: `Bearer ${
-										getLocalStorageDetails()?.access_token
-									}`
-								}
-							}
-						);
+									{
+										headers: {
+											Authorization: `Bearer ${
+												getLocalStorageDetails()?.access_token
+											}`
+										}
+									}
+								);
 
-						await uploadMedia(specificMedia?.id, {
-							// file_name: uploadedFiles[0].fileName,
-							// file_name2: uploadedCoverImage[0].fileName,
-							title: titleMedia,
-							description,
-							type: 'medialibrary',
-							data: {
-								file_name_media: uploadedFiles[0].fileName,
-								file_name_image: uploadedCoverImage[0].fileName,
-								...completeUpload?.data?.data
+								await uploadMedia(specificMedia?.id, {
+									// file_name: uploadedFiles[0].fileName,
+									// file_name2: uploadedCoverImage[0].fileName,
+									title: titleMedia,
+									description,
+									type: 'medialibrary',
+									data: {
+										file_name_media: uploadedFiles[0].fileName,
+										file_name_image: uploadedCoverImage[0].fileName,
+										...completeUpload?.data?.data
+									}
+								});
 							}
 						});
 					})
