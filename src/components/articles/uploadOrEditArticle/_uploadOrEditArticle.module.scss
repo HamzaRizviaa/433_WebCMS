@@ -373,6 +373,13 @@
 	align-items: center;
 	margin-bottom: 10px;
 }
+.errorState {
+	color: $red;
+}
+
+.noErrorState {
+	color: $white-color;
+}
 
 // .previewFile {
 // 	height: 8rem;
