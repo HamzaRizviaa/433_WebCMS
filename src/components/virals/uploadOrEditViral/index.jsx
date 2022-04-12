@@ -42,11 +42,6 @@ const UploadOrEditViral = ({
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [selectedLabels, setSelectedLabels] = useState([]);
-	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
-	const [labelColor, setLabelColor] = useState('#ffffff');
-	const [labelError, setLabelError] = useState('');
-	const [captionColor, setCaptionColor] = useState('#ffffff');
-	const [captionError, setCaptionError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
@@ -165,11 +160,9 @@ const UploadOrEditViral = ({
 	useEffect(() => {
 		if (acceptedFiles?.length) {
 			setIsError({});
-			// setUploadMediaError('');
-			// setDropZoneBorder('#ffff00');
+
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
-				// readImageFile(file);
 				return {
 					id: id,
 					fileName: file.name,
@@ -190,9 +183,6 @@ const UploadOrEditViral = ({
 		setUploadMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
-		setDropZoneBorder('#ffff00');
-		setCaptionColor('#ffffff');
-		setLabelColor('#ffffff');
 		setPostButtonStatus(false);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
@@ -221,38 +211,6 @@ const UploadOrEditViral = ({
 		setTimeout(() => {
 			setIsError({});
 		}, 5000);
-		// if (uploadedFiles.length < 1) {
-		// 	setDropZoneBorder('#ff355a');
-		// 	setUploadMediaError('You need to upload a media in order to post');
-		// 	setTimeout(() => {
-		// 		setDropZoneBorder('#ffff00');
-		// 		setUploadMediaError('');
-		// 	}, [5000]);
-		// }
-
-		// if (selectedLabels.length < 10) {
-		// 	setLabelColor('#ff355a');
-		// 	setLabelError(
-		// 		`You need to add ${
-		// 			10 - selectedLabels.length
-		// 		} more labels in order to post`
-		// 	);
-		// 	setTimeout(() => {
-		// 		setLabelColor('#ffffff');
-		// 		setLabelError('');
-		// 	}, [5000]);
-		// }
-
-		// if (!caption) {
-		// 	setCaptionColor('#ff355a');
-		// 	setCaptionError(
-		// 		'You need to put a caption of atleast 1 character in order to post'
-		// 	);
-		// 	setTimeout(() => {
-		// 		setCaptionColor('#ffffff');
-		// 		setCaptionError('');
-		// 	}, [5000]);
-		// }
 	};
 
 	const createViral = async (id, mediaFiles = []) => {
@@ -337,8 +295,6 @@ const UploadOrEditViral = ({
 	}, [newLabels]);
 
 	const handleChangeExtraLabel = (e) => {
-		// e.preventDefault();
-		// e.stopPropagation();
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
@@ -620,7 +576,6 @@ const UploadOrEditViral = ({
 										poster={isEdit ? previewFile.img : null}
 										className={classes.previewFile}
 										style={{
-											//width: `${8 * 4}rem`,
 											width: `100%`,
 											height: `${8 * 4}rem`,
 											objectFit: 'contain',
@@ -636,7 +591,6 @@ const UploadOrEditViral = ({
 										poster={isEdit ? previewFile.thumbnail_url : null}
 										className={classes.previewFile}
 										style={{
-											//width: `${8 * 4}rem`,
 											width: `100%`,
 											height: `${8 * 4}rem`,
 											objectFit: 'contain',
@@ -651,7 +605,6 @@ const UploadOrEditViral = ({
 										src={previewFile.img}
 										className={classes.previewFile}
 										style={{
-											//width: `${8 * 4}rem`,
 											width: `100%`,
 											height: `${8 * 4}rem`,
 											objectFit: 'contain',
