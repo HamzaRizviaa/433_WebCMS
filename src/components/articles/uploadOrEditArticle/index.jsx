@@ -87,10 +87,11 @@ const UploadOrEditViral = ({
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
+	const [isError, setIsError] = useState({});
 	const imgEl = useRef(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
-
+	console.log(dropZoneBorder, articleTitleColor, articleTextColor, labelColor);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png',
@@ -311,6 +312,7 @@ const UploadOrEditViral = ({
 		setDisableDropdown(true);
 		setFileHeight(null);
 		setFileWidth(null);
+		setIsError({});
 	};
 
 	const handleDeleteFile = (id) => {
@@ -320,45 +322,54 @@ const UploadOrEditViral = ({
 	};
 
 	const validateArticleBtn = () => {
-		if (uploadedFiles.length < 1) {
-			setDropZoneBorder('#ff355a');
-			setUploadMediaError('You need to upload a media in order to post');
-			setTimeout(() => {
-				setDropZoneBorder('#ffff00');
-				setUploadMediaError('');
-			}, [5000]);
-		}
+		setIsError({
+			articleTitle: !articleTitle,
+			uploadedFiles: uploadedFiles.length < 1,
+			selectedLabels: selectedLabels.length < 10,
+			editorText: !editorText
+		});
+		setTimeout(() => {
+			setIsError({});
+		}, 5000);
+		// if (uploadedFiles.length < 1) {
+		// 	setDropZoneBorder('#ff355a');
+		// 	setUploadMediaError('You need to upload a media in order to post');
+		// 	setTimeout(() => {
+		// 		setDropZoneBorder('#ffff00');
+		// 		setUploadMediaError('');
+		// 	}, [5000]);
+		// }
 
-		if (selectedLabels.length < 10) {
-			setLabelColor('#ff355a');
-			setLabelError(
-				`You need to add ${
-					10 - selectedLabels.length
-				} more labels in order to post`
-			);
-			setTimeout(() => {
-				setLabelColor('#ffffff');
-				setLabelError('');
-			}, [5000]);
-		}
+		// if (selectedLabels.length < 10) {
+		// 	setLabelColor('#ff355a');
+		// 	setLabelError(
+		// 		`You need to add ${
+		// 			10 - selectedLabels.length
+		// 		} more labels in order to post`
+		// 	);
+		// 	setTimeout(() => {
+		// 		setLabelColor('#ffffff');
+		// 		setLabelError('');
+		// 	}, [5000]);
+		// }
 
-		if (!articleTitle) {
-			setArticleTitleColor('#ff355a');
-			setArticleTitleError('This field is required');
-			setTimeout(() => {
-				setArticleTitleColor('#ffffff');
-				setArticleTitleError('');
-			}, [5000]);
-		}
+		// if (!articleTitle) {
+		// 	setArticleTitleColor('#ff355a');
+		// 	setArticleTitleError('This field is required');
+		// 	setTimeout(() => {
+		// 		setArticleTitleColor('#ffffff');
+		// 		setArticleTitleError('');
+		// 	}, [5000]);
+		// }
 
-		if (!editorText) {
-			setArticleTextColor('#ff355a');
-			setArticleTextError('This field is required');
-			setTimeout(() => {
-				setArticleTextColor('#ffffff');
-				setArticleTextError('');
-			}, [5000]);
-		}
+		// if (!editorText) {
+		// 	setArticleTextColor('#ff355a');
+		// 	setArticleTextError('This field is required');
+		// 	setTimeout(() => {
+		// 		setArticleTextColor('#ffffff');
+		// 		setArticleTextError('');
+		// 	}, [5000]);
+		// }
 	};
 
 	const [newLabels, setNewLabels] = useState([]);
@@ -441,10 +452,6 @@ const UploadOrEditViral = ({
 	const specificArticleTextTrimmed = specificArticle?.description?.replace(
 		/&nbsp;/g,
 		' '
-	);
-	console.log(
-		specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim(),
-		specificArticle?.dropbox_url?.trim() === dropboxLink.trim()
 	);
 
 	useEffect(() => {
@@ -595,7 +602,7 @@ const UploadOrEditViral = ({
 								<section
 									className={classes.dropZoneContainer}
 									style={{
-										borderColor: dropZoneBorder
+										borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
 									}}
 								>
 									<div {...getRootProps({ className: classes.dropzone })}>
@@ -636,9 +643,18 @@ const UploadOrEditViral = ({
 									}}
 								/>
 							</div>
+
 							<div className={classes.captionContainer}>
 								<div className={classes.characterCount}>
-									<h6 style={{ color: articleTitleColor }}>ARTICLE TITLE</h6>
+									<h6
+										className={
+											isError.articleTitle
+												? classes.errorState
+												: classes.noErrorState
+										}
+									>
+										ARTICLE TITLE
+									</h6>
 									<h6
 										style={{
 											color:
@@ -674,7 +690,15 @@ const UploadOrEditViral = ({
 							<p className={classes.mediaError}>{articleTitleError}</p>
 
 							<div className={classes.captionContainer}>
-								<h6 style={{ color: labelColor }}>LABELS</h6>
+								<h6
+									className={
+										isError.selectedLabels
+											? classes.errorState
+											: classes.noErrorState
+									}
+								>
+									LABELS
+								</h6>
 								<Labels
 									isEdit={isEdit}
 									setDisableDropdown={setDisableDropdown}
@@ -689,7 +713,15 @@ const UploadOrEditViral = ({
 							<p className={classes.mediaError}>{labelError}</p>
 
 							<div className={classes.captionContainer}>
-								<h6 style={{ color: articleTextColor }}>ARTICLE TEXT</h6>
+								<h6
+									className={
+										isError.editorText
+											? classes.errorState
+											: classes.noErrorState
+									}
+								>
+									ARTICLE TEXT
+								</h6>
 								<div className={classes.editor}>
 									<Editor
 										// value={editorText}

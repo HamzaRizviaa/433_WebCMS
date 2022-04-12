@@ -658,21 +658,23 @@ const UploadOrEditMedia = ({
 			setMediaButtonStatus(true);
 			setIsLoadingUploadMedia(true);
 
-			if (
-				(await handleTitleDuplicate(titleMedia)) === 200 &&
-				titleMedia !== specificMedia.title
-			) {
-				setTitleMediaLabelColor('#ff355a');
-				setTitleMediaError('This title already exists');
-				setTimeout(() => {
-					setTitleMediaLabelColor('#ffffff');
-					setTitleMediaError('');
-				}, [5000]);
-				setIsLoadingUploadMedia(false);
-				setMediaButtonStatus(false);
-				return;
-			}
 			if (isEdit) {
+				if (specificMedia?.title?.trim() !== titleMedia?.trim()) {
+					if (
+						(await handleTitleDuplicate(titleMedia)) === 200 &&
+						titleMedia !== specificMedia.title
+					) {
+						setTitleMediaLabelColor('#ff355a');
+						setTitleMediaError('This title already exists');
+						setTimeout(() => {
+							setTitleMediaLabelColor('#ffffff');
+							setTitleMediaError('');
+						}, [5000]);
+						setIsLoadingUploadMedia(false);
+						setMediaButtonStatus(false);
+						return;
+					}
+				}
 				// uploadMedia(specificMedia?.id, {
 				// 	title: titleMedia,
 				// 	description
@@ -768,6 +770,20 @@ const UploadOrEditMedia = ({
 						setIsLoadingUploadMedia(false);
 					});
 			} else {
+				if (
+					(await handleTitleDuplicate(titleMedia)) === 200 &&
+					titleMedia !== specificMedia.title
+				) {
+					setTitleMediaLabelColor('#ff355a');
+					setTitleMediaError('This title already exists');
+					setTimeout(() => {
+						setTitleMediaLabelColor('#ffffff');
+						setTitleMediaError('');
+					}, [5000]);
+					setIsLoadingUploadMedia(false);
+					setMediaButtonStatus(false);
+					return;
+				}
 				let uploadFilesPromiseArray = [
 					uploadedFiles[0],
 					uploadedCoverImage[0]
