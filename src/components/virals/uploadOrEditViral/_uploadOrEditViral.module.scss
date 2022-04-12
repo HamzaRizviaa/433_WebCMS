@@ -401,3 +401,10 @@ video::-webkit-media-controls-fullscreen-button {
 .toolTipArrow {
 	color: $black-color !important;
 }
+.errorState {
+	color: $red;
+}
+
+.noErrorState {
+	color: $white-color;
+}
