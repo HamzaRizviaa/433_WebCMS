@@ -106,6 +106,8 @@ const UploadOrEditViral = ({
 			}
 			setCaption(specificViral?.caption);
 			setDropboxLink(specificViral?.dropbox_url);
+			setFileWidth(specificViral?.width);
+			setFileHeight(specificViral?.height);
 			if (specificViral?.thumbnail_url) {
 				setUploadedFiles([
 					{
@@ -197,6 +199,8 @@ const UploadOrEditViral = ({
 		setPreviewBool(false);
 		setSelectedLabels([]);
 		setDisableDropdown(true);
+		setFileHeight(null);
+		setFileWidth(null);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -242,8 +246,8 @@ const UploadOrEditViral = ({
 
 	const createViral = async (id, mediaFiles = []) => {
 		console.log(mediaFiles, 'media files in create viral');
-		setFileWidth(mediaFiles[0].width);
-		setFileHeight(mediaFiles[0].height);
+		// setFileWidth(mediaFiles[0].width);
+		// setFileHeight(mediaFiles[0].height);
 		setPostButtonStatus(true);
 		try {
 			const result = await axios.post(

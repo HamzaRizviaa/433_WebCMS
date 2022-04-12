@@ -118,6 +118,8 @@ const UploadOrEditViral = ({
 			setArticleTitle(specificArticle?.title);
 			setDropboxLink(specificArticle?.dropbox_url);
 			setEditorTextChecker(specificArticle.description);
+			setFileHeight(specificArticle?.height);
+			setFileWidth(specificArticle?.width);
 			// setTimeout(() => {
 			specificArticle?.length === 0
 				? setEditorText('')
@@ -307,6 +309,8 @@ const UploadOrEditViral = ({
 		setPreviewBool(false);
 		setSelectedLabels([]);
 		setDisableDropdown(true);
+		setFileHeight(null);
+		setFileWidth(null);
 	};
 
 	const handleDeleteFile = (id) => {
