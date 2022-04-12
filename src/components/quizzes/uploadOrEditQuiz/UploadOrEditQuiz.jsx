@@ -80,6 +80,7 @@ const UploadOrEditQuiz = ({
 	const [editQuizBtnDisabled, setEditQuizBtnDisabled] = useState(false);
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
+	const [isError, setIsError] = useState({});
 	const imgRef = useRef(null);
 	const dispatch = useDispatch();
 
@@ -210,8 +211,9 @@ const UploadOrEditQuiz = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			setUploadMediaError('');
-			setDropZoneBorder('#ffff00');
+			setIsError({});
+			// setUploadMediaError('');
+			// setDropZoneBorder('#ffff00');
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -389,69 +391,81 @@ const UploadOrEditQuiz = ({
 			setDeleteBtnStatus(false);
 		}, 1000);
 		setPostButtonStatus(false);
+		setIsError({});
 	};
 
 	const validatePostBtn = () => {
-		if (uploadedFiles.length < 1) {
-			setDropZoneBorder('#ff355a');
-			setUploadMediaError('You need to upload a media in order to post');
-			setTimeout(() => {
-				setDropZoneBorder('#ffff00');
-				setUploadMediaError('');
-			}, [5000]);
-		}
-		if (selectedLabels.length < 10) {
-			setLabelColor('#ff355a');
-			setLabelError(
-				`You need to add ${
-					10 - selectedLabels.length
-				} more labels in order to upload media`
-			);
-			setTimeout(() => {
-				setLabelColor('#ffffff');
-				setLabelError('');
-			}, [5000]);
-		}
-		if (!endDate) {
-			setQuizColor('#ff355a');
-			setCalenderError('You need to seelct a date in order to post');
-			setTimeout(() => {
-				setQuizColor('#ffffff');
-				setCalenderError('');
-			}, [5000]);
-		}
-		if (!question) {
-			setQuestionColor('#ff355a');
-			setQuestionError('You need to provide a question in order to post');
-			setTimeout(() => {
-				setQuestionColor('#ffffff');
-				setQuestionError('');
-			}, [5000]);
-		}
-		if (!ans1) {
-			setAns1Color('#ff355a');
-			setAns1Error(
-				quiz
-					? 'You need to provide right answer in order to post'
-					: 'You need to provide first answer in order to post'
-			);
-			setTimeout(() => {
-				setAns1Color('#ffffff');
-				setAns1Error('');
-			}, [5000]);
-		}
-		if (!ans2) {
-			setAns2Color('#ff355a');
-			setAns2Error(
-				quiz
-					? 'You need to provide wrong answer in order to post'
-					: 'You need to provide second answer in order to post'
-			);
-			setTimeout(() => {
-				setAns2Color('#ffffff');
-				setAns2Error('');
-			}, [5000]);
-		}
+		setIsError({
+			endDate: !endDate,
+			uploadedFiles: uploadedFiles.length < 1,
+			selectedLabels: selectedLabels.length < 10,
+			question: !question,
+			ans1: !ans1,
+			ans2: !ans2
+		});
+		setTimeout(() => {
+			setIsError({});
+		}, 5000);
+		// if (uploadedFiles.length < 1) {
+		// 	setDropZoneBorder('#ff355a');
+		// 	setUploadMediaError('You need to upload a media in order to post');
+		// 	setTimeout(() => {
+		// 		setDropZoneBorder('#ffff00');
+		// 		setUploadMediaError('');
+		// 	}, [5000]);
+		// }
+		// if (selectedLabels.length < 10) {
+		// 	setLabelColor('#ff355a');
+		// 	setLabelError(
+		// 		`You need to add ${
+		// 			10 - selectedLabels.length
+		// 		} more labels in order to upload media`
+		// 	);
+		// 	setTimeout(() => {
+		// 		setLabelColor('#ffffff');
+		// 		setLabelError('');
+		// 	}, [5000]);
+		// }
+		// if (!endDate) {
+		// 	setQuizColor('#ff355a');
+		// 	setCalenderError('You need to seelct a date in order to post');
+		// 	setTimeout(() => {
+		// 		setQuizColor('#ffffff');
+		// 		setCalenderError('');
+		// 	}, [5000]);
+		// }
+		// if (!question) {
+		// 	setQuestionColor('#ff355a');
+		// 	setQuestionError('You need to provide a question in order to post');
+		// 	setTimeout(() => {
+		// 		setQuestionColor('#ffffff');
+		// 		setQuestionError('');
+		// 	}, [5000]);
+		// }
+		// if (!ans1) {
+		// 	setAns1Color('#ff355a');
+		// 	setAns1Error(
+		// 		quiz
+		// 			? 'You need to provide right answer in order to post'
+		// 			: 'You need to provide first answer in order to post'
+		// 	);
+		// 	setTimeout(() => {
+		// 		setAns1Color('#ffffff');
+		// 		setAns1Error('');
+		// 	}, [5000]);
+		// }
+		// if (!ans2) {
+		// 	setAns2Color('#ff355a');
+		// 	setAns2Error(
+		// 		quiz
+		// 			? 'You need to provide wrong answer in order to post'
+		// 			: 'You need to provide second answer in order to post'
+		// 	);
+		// 	setTimeout(() => {
+		// 		setAns2Color('#ffffff');
+		// 		setAns2Error('');
+		// 	}, [5000]);
+		// }
 	};
 
 	const addQuizBtnDisabled =
@@ -565,7 +579,7 @@ const UploadOrEditQuiz = ({
 							<section
 								className={classes.dropZoneContainer}
 								style={{
-									borderColor: dropZoneBorder
+									borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
 								}}
 							>
 								<div {...getRootProps({ className: classes.dropzone })}>
@@ -577,7 +591,11 @@ const UploadOrEditQuiz = ({
 									<p className={classes.formatMsg}>
 										Supported formats are jpeg and png
 									</p>
-									<p className={classes.uploadMediaError}>{uploadMediaError}</p>
+									<p className={classes.uploadMediaError}>
+										{isError.uploadedFiles
+											? 'You need to upload a media in order to post'
+											: ''}
+									</p>
 								</div>
 							</section>
 						)}
@@ -603,7 +621,13 @@ const UploadOrEditQuiz = ({
 						</div>
 
 						<div className={classes.titleContainer}>
-							<h6 style={{ color: questionColor }}>QUESTION</h6>
+							<h6
+								className={
+									isError.question ? classes.errorState : classes.noErrorState
+								}
+							>
+								QUESTION
+							</h6>
 							<TextField
 								disabled={editQuiz || editPoll}
 								value={question}
@@ -623,10 +647,16 @@ const UploadOrEditQuiz = ({
 							/>
 						</div>
 
-						<p className={classes.mediaError}>{questionError}</p>
+						<p className={classes.mediaError}>
+							{isError.question ? 'This field is required' : ''}
+						</p>
 
 						<div className={classes.titleContainer}>
-							<h6 style={{ color: ans1Color }}>
+							<h6
+								className={
+									isError.ans1 ? classes.errorState : classes.noErrorState
+								}
+							>
 								{quiz || editQuiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
 							</h6>
 							<TextField
@@ -648,10 +678,16 @@ const UploadOrEditQuiz = ({
 							/>
 						</div>
 
-						<p className={classes.mediaError}>{ans1Error}</p>
+						<p className={classes.mediaError}>
+							{isError.ans1 ? 'This field is required' : ''}
+						</p>
 
 						<div className={classes.titleContainer}>
-							<h6 style={{ color: ans2Color }}>
+							<h6
+								className={
+									isError.ans2 ? classes.errorState : classes.noErrorState
+								}
+							>
 								{quiz || editQuiz ? 'WRONG ANSWER' : 'ANSWER 2'}
 							</h6>
 							<TextField
@@ -673,10 +709,20 @@ const UploadOrEditQuiz = ({
 							/>
 						</div>
 
-						<p className={classes.mediaError}>{ans2Error}</p>
+						<p className={classes.mediaError}>
+							{isError.ans2 ? 'This field is required' : ''}
+						</p>
 
 						<div className={classes.titleContainer}>
-							<h6 style={{ color: labelColor }}>LABELS</h6>
+							<h6
+								className={
+									isError.selectedLabels
+										? classes.errorState
+										: classes.noErrorState
+								}
+							>
+								LABELS
+							</h6>
 							<Labels
 								isEdit={editPoll || editQuiz}
 								setDisableDropdown={setDisableDropdown}
@@ -688,10 +734,20 @@ const UploadOrEditQuiz = ({
 							/>
 						</div>
 
-						<p className={classes.mediaError}>{labelError}</p>
+						<p className={classes.mediaError}>
+							{isError.selectedLabels
+								? `You need to add  ${
+										10 - selectedLabels.length
+								  }  more labels in order to post`
+								: ''}
+						</p>
 
 						<div className={classes.datePickerContainer}>
-							<h6 style={{ color: quizColor }}>
+							<h6
+								className={
+									isError.endDate ? classes.errorState : classes.noErrorState
+								}
+							>
 								{quiz || editQuiz ? 'QUIZ END DATE' : 'POLL END DATE'}
 							</h6>
 							<div
@@ -739,7 +795,9 @@ const UploadOrEditQuiz = ({
 							</div>
 						</div>
 
-						<p className={classes.mediaError}>{calenderError}</p>
+						<p className={classes.mediaError}>
+							{isError.endDate ? 'This field is required' : ''}
+						</p>
 					</div>
 
 					<div className={classes.buttonDiv}>
