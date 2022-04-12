@@ -19,19 +19,15 @@ import { getDateTime, formatDate, getCalendarText2 } from '../../../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	getQuestionLabels,
-	getQuestionEdit,
 	getQuestions
 } from '../../../pages/QuestionLibrary/questionLibrarySlice';
 import { getLocalStorageDetails } from '../../../utils';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import LoadingOverlay from 'react-loading-overlay';
-// import moment from 'moment';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
 import { ReactComponent as CalenderYellow } from '../../../assets/Calender_Yellow.svg';
 import { useRef } from 'react';
-import { getSpecificMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
-import { getSpecificGame } from '../../../pages/GamesLibrary/gamesLibrarySlice';
 const UploadOrEditQuiz = ({
 	heading1,
 	open,
@@ -51,24 +47,11 @@ const UploadOrEditQuiz = ({
 }) => {
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
-	const [uploadMediaError, setUploadMediaError] = useState('');
-	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
-	//const [previewFile, setPreviewFile] = useState(null);
 	const [dropboxLink, setDropboxLink] = useState('');
 	const [question, setQuestion] = useState('');
 	const [ans1, setAns1] = useState('');
 	const [ans2, setAns2] = useState('');
 	const [selectedLabels, setSelectedLabels] = useState([]);
-	const [labelColor, setLabelColor] = useState('#ffffff');
-	const [labelError, setLabelError] = useState('');
-	const [quizColor, setQuizColor] = useState('#ffffff');
-	const [calenderError, setCalenderError] = useState('');
-	const [questionColor, setQuestionColor] = useState('#ffffff');
-	const [questionError, setQuestionError] = useState('');
-	const [ans1Color, setAns1Color] = useState('#ffffff');
-	const [ans1Error, setAns1Error] = useState('');
-	const [ans2Color, setAns2Color] = useState('#ffffff');
-	const [ans2Error, setAns2Error] = useState('');
 	const [quizLabels, setQuizLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [endDate, setEndDate] = useState(null);
@@ -90,11 +73,6 @@ const UploadOrEditQuiz = ({
 		(state) => state.questionLibrary.questionEdit
 	);
 
-	// ${(
-	// 	'0' + da.getHours().toLocaleString()
-	// ).slice(-2)}:${('0' + da.getMinutes()).slice(-2)}:${(
-	// 	'0' + da.getSeconds()
-	// ).slice(-2)}.${'00' + da.getMilliseconds()}
 	useEffect(() => {
 		var da = new Date(endDate);
 		var toSend = `${da?.getFullYear()}-${('0' + (da?.getMonth() + 1)).slice(
@@ -111,7 +89,6 @@ const UploadOrEditQuiz = ({
 
 	useEffect(() => {
 		dispatch(getQuestionLabels());
-		// !(editPoll || editQuiz) ? resetState() : '';
 	}, []);
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
@@ -123,7 +100,6 @@ const UploadOrEditQuiz = ({
 				}`}
 				onClick={onClick}
 				ref={ref}
-				//style={{ borderColor: noResultCalendarBorder }}
 			>
 				{getCalendarText2(startDate)}
 				<span
@@ -152,24 +128,6 @@ const UploadOrEditQuiz = ({
 			return _type && _type[1];
 		}
 	};
-
-	// useEffect(() => {
-	// 	if (editQuiz || editPoll) {
-	// 		setUploadedFiles([
-	// 			{
-	// 				id: makeid(10),
-	// 				fileName: 'Better than Messi',
-	// 				img: 'https://cdni0.trtworld.com/w960/h540/q75/34070_esp20180526ronaldo_1527420747155.JPG',
-	// 				type: 'image'
-	// 			}
-	// 		]);
-	// 		setQuestion('Ronaldo better than Messi?');
-	// 		setAns1('Yes');
-	// 		setAns2('Yes');
-
-	// 		setEndDate('Tue Feb 14 2022 00:00:00 GMT+0500 (Pakistan Standard Time)');
-	// 	}
-	// }, [editQuiz, editPoll]);
 
 	useEffect(() => {
 		if (editQuestionData) {
@@ -212,8 +170,7 @@ const UploadOrEditQuiz = ({
 	useEffect(() => {
 		if (acceptedFiles?.length) {
 			setIsError({});
-			// setUploadMediaError('');
-			// setDropZoneBorder('#ffff00');
+
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -285,12 +242,6 @@ const UploadOrEditQuiz = ({
 						mediaFiles[0]?.media_url ||
 						mediaFiles[0].img.split('cloudfront.net/')[1],
 					file_name: mediaFiles[0]?.file_name || mediaFiles[0]?.fileName,
-					// ...(!(editQuiz || editPoll)
-					// 	? { file_name: mediaFiles[0]?.file_name }
-					// 	: {}),
-					// ...(!(editQuiz || editPoll)
-					// 	? { image: mediaFiles[0]?.media_url }
-					// 	: {}),
 					...(question ? { question: question } : { question: '' }),
 					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
 
@@ -339,7 +290,7 @@ const UploadOrEditQuiz = ({
 			);
 			setIsLoadingcreateViral(false);
 			setPostButtonStatus(false);
-			console.log(e);
+			console.log(e, 'failed create/edit question');
 		}
 	};
 
@@ -367,7 +318,7 @@ const UploadOrEditQuiz = ({
 		} catch (e) {
 			toast.error('Failed to delete Question!');
 			setDeleteBtnStatus(false);
-			console.log(e);
+			console.log(e, 'Failed to delete Question!');
 		}
 	};
 
@@ -375,8 +326,6 @@ const UploadOrEditQuiz = ({
 		setUploadedFiles([]);
 		setFileRejectionError('');
 		setDropboxLink('');
-		setUploadMediaError('');
-		setDropZoneBorder('#ffff00');
 		setPreviewFile(null);
 		setPreviewBool(false);
 		setQuestion('');
@@ -406,66 +355,6 @@ const UploadOrEditQuiz = ({
 		setTimeout(() => {
 			setIsError({});
 		}, 5000);
-		// if (uploadedFiles.length < 1) {
-		// 	setDropZoneBorder('#ff355a');
-		// 	setUploadMediaError('You need to upload a media in order to post');
-		// 	setTimeout(() => {
-		// 		setDropZoneBorder('#ffff00');
-		// 		setUploadMediaError('');
-		// 	}, [5000]);
-		// }
-		// if (selectedLabels.length < 10) {
-		// 	setLabelColor('#ff355a');
-		// 	setLabelError(
-		// 		`You need to add ${
-		// 			10 - selectedLabels.length
-		// 		} more labels in order to upload media`
-		// 	);
-		// 	setTimeout(() => {
-		// 		setLabelColor('#ffffff');
-		// 		setLabelError('');
-		// 	}, [5000]);
-		// }
-		// if (!endDate) {
-		// 	setQuizColor('#ff355a');
-		// 	setCalenderError('You need to seelct a date in order to post');
-		// 	setTimeout(() => {
-		// 		setQuizColor('#ffffff');
-		// 		setCalenderError('');
-		// 	}, [5000]);
-		// }
-		// if (!question) {
-		// 	setQuestionColor('#ff355a');
-		// 	setQuestionError('You need to provide a question in order to post');
-		// 	setTimeout(() => {
-		// 		setQuestionColor('#ffffff');
-		// 		setQuestionError('');
-		// 	}, [5000]);
-		// }
-		// if (!ans1) {
-		// 	setAns1Color('#ff355a');
-		// 	setAns1Error(
-		// 		quiz
-		// 			? 'You need to provide right answer in order to post'
-		// 			: 'You need to provide first answer in order to post'
-		// 	);
-		// 	setTimeout(() => {
-		// 		setAns1Color('#ffffff');
-		// 		setAns1Error('');
-		// 	}, [5000]);
-		// }
-		// if (!ans2) {
-		// 	setAns2Color('#ff355a');
-		// 	setAns2Error(
-		// 		quiz
-		// 			? 'You need to provide wrong answer in order to post'
-		// 			: 'You need to provide second answer in order to post'
-		// 	);
-		// 	setTimeout(() => {
-		// 		setAns2Color('#ffffff');
-		// 		setAns2Error('');
-		// 	}, [5000]);
-		// }
 	};
 
 	const addQuizBtnDisabled =
@@ -477,20 +366,10 @@ const UploadOrEditQuiz = ({
 		!ans2 ||
 		!endDate;
 
-	console.log(editQuestionData?.quiz_end_date, 'quiz');
-	// console.log(editQuestionData?.poll_end_date, 'poll');
-	console.log(convertedDate, 'endDate');
-	console.log(editQuestionData?.quiz_end_date?.length, 'quiz');
-	// console.log(editQuestionData?.poll_end_date?.length, 'poll');
-	console.log(convertedDate?.length, 'endDate');
-
-	// const editQuizBtnDisabled =
-	// 	postButtonStatus ||
-	// 	!endDate ||
-	// 	((type === 'quiz'
-	// 		? editQuestionData?.quiz_end_date === endDate
-	// 		: editQuestionData?.poll_end_date === endDate) &&
-	// 		editQuestionData?.dropbox_url === dropboxLink.trim());
+	// console.log(editQuestionData?.quiz_end_date, 'quiz');
+	// console.log(convertedDate, 'endDate');
+	// console.log(editQuestionData?.quiz_end_date?.length, 'quiz');
+	// console.log(convertedDate?.length, 'endDate');
 
 	useEffect(() => {
 		if (editQuestionData) {
@@ -648,7 +527,9 @@ const UploadOrEditQuiz = ({
 						</div>
 
 						<p className={classes.mediaError}>
-							{isError.question ? 'This field is required' : ''}
+							{isError.question
+								? 'You need to provide a question in order to post.'
+								: ''}
 						</p>
 
 						<div className={classes.titleContainer}>
@@ -679,7 +560,11 @@ const UploadOrEditQuiz = ({
 						</div>
 
 						<p className={classes.mediaError}>
-							{isError.ans1 ? 'This field is required' : ''}
+							{isError.ans1
+								? quiz
+									? 'You need to provide right answer in order to post'
+									: 'You need to provide first answer in order to post'
+								: ''}
 						</p>
 
 						<div className={classes.titleContainer}>
@@ -710,7 +595,11 @@ const UploadOrEditQuiz = ({
 						</div>
 
 						<p className={classes.mediaError}>
-							{isError.ans2 ? 'This field is required' : ''}
+							{isError.ans2
+								? quiz
+									? 'You need to provide wrong answer in order to post'
+									: 'You need to provide second answer in order to post'
+								: ''}
 						</p>
 
 						<div className={classes.titleContainer}>
@@ -751,7 +640,6 @@ const UploadOrEditQuiz = ({
 								{quiz || editQuiz ? 'QUIZ END DATE' : 'POLL END DATE'}
 							</h6>
 							<div
-								// className={editQuiz || editPoll ? classes.datePicker : ''}
 								className={classes.datePicker}
 								style={{ marginBottom: calenderOpen ? '250px' : '' }}
 							>
@@ -762,23 +650,10 @@ const UploadOrEditQuiz = ({
 									}
 									startDate={endDate}
 									minDate={new Date()}
-									//todayButton='Today'
-									//minDate={new Date().setDate(new Date().getDate() + 1)}
 									onChange={(update) => {
 										setEndDate(update);
 									}}
 									popperPlacement='bottom'
-									// popperModifiers={{
-									// 	flip: {
-									// 		behavior: ['bottom'] // don't allow it to flip to be above
-									// 	},
-									// 	preventOverflow: {
-									// 		enabled: false // tell it not to try to stay within the view (this prevents the popper from covering the element you clicked)
-									// 	},
-									// 	hide: {
-									// 		enabled: false // turn off since needs preventOverflow to be enabled
-									// 	}
-									// }}
 									onCalendarOpen={() => {
 										setCalenderOpen(true);
 										setDisableDropdown(false);
@@ -787,7 +662,6 @@ const UploadOrEditQuiz = ({
 										setCalenderOpen(false);
 										setDisableDropdown(true);
 									}}
-									//placement='center'
 									isClearable={
 										(editPoll || editQuiz) && status === 'CLOSED' ? false : true
 									}
@@ -796,7 +670,9 @@ const UploadOrEditQuiz = ({
 						</div>
 
 						<p className={classes.mediaError}>
-							{isError.endDate ? 'This field is required' : ''}
+							{isError.endDate
+								? 'You need to seelct a date in order to post'
+								: ''}
 						</p>
 					</div>
 
@@ -808,7 +684,6 @@ const UploadOrEditQuiz = ({
 									button2={editQuiz || editPoll ? true : false}
 									onClick={() => {
 										if (!deleteBtnStatus) {
-											//console.log('specific', specificMedia.id);
 											deleteQuiz(editQuestionData?.id);
 										}
 									}}
@@ -835,7 +710,6 @@ const UploadOrEditQuiz = ({
 								onClick={() => {
 									handleAddSaveQuizPollBtn();
 								}}
-								// text={type === 'quiz' ? 'ADD QUIZ' : 'ADD POLL'}
 								text={
 									type === 'quiz' && !(editPoll || editQuiz)
 										? 'ADD QUIZ'
