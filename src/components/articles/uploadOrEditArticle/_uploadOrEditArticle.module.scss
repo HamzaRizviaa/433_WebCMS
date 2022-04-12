@@ -3,17 +3,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
 
 .dropZoneContainer {
-	//border: 1px solid $neon-yellow;
 	border-top: 1.5px dashed $neon-yellow;
 	border-right: 1.5px dashed $neon-yellow;
 	border-bottom: 1.5px dashed $neon-yellow;
 	border-left: 1.5px dashed $neon-yellow;
-	//border-style: dashed;
-	//padding: 1rem 2.5rem 0.5rem 2.5rem;
+
 	cursor: pointer;
 	border-radius: 1rem;
-	//margin-bottom: 1rem;
-	//margin-top: 1rem;
 }
 
 .borderRed {
@@ -119,9 +115,6 @@
 }
 
 .select {
-	input {
-		// padding: 1rem !important;
-	}
 	.MuiSelect-select {
 		padding: 1rem 0rem 1rem 1rem;
 		padding-right: 32px;
@@ -148,12 +141,6 @@
 }
 
 .textFieldInput2 {
-	// color: white !important;
-	// padding: 0.5rem 0rem 0.5rem 1rem;
-	// margin-bottom: 0.5rem;
-	// font-size: 1.4rem !important;
-	// line-height: 1.6;
-	// background-color: #ff355a;
 	color: white !important;
 	border: 0.01px solid #404040;
 	padding: 1rem 1rem 1rem 1.5rem !important;
@@ -251,8 +238,7 @@
 
 .fileThumbnail {
 	height: 8rem;
-	//width: 8rem;
-	//max-height: 50%;
+
 	max-width: 50%;
 	border-radius: 4px;
 	background-color: white;
@@ -302,8 +288,7 @@
 	position: absolute;
 	width: 100%;
 	height: 100%;
-	//height: 100vh;
-	//min-height: calc(100vh - 200px);
+
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -320,7 +305,6 @@
 }
 
 .headerOrientationWrapper {
-	//position: fixed;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -343,7 +327,6 @@
 }
 
 .dimensionSingle {
-	//margin-left: 1rem;
 	border-radius: 8px;
 	padding: 1rem 1rem 0.8rem 1rem;
 }
@@ -381,115 +364,10 @@
 	color: $white-color;
 }
 
-// .previewFile {
-// 	height: 8rem;
-// 	width: 8rem;
-// }
-
 video::-webkit-media-controls-fullscreen-button {
 	display: none;
 }
 
 .editor {
 	margin: 10px 0px;
-	// editor
-	// > div {
-	// 	//tox tox-tinymce tox-platform-touch
-	// 	border: 1px solid #404040 !important;
-	// 	border-radius: 8px;
-	// 	//top bars and middle box
-	// 	> div {
-	// 		//tox-editor-container
-	// 		background-color: black !important;
-	// 		// top bars
-	// 		> div {
-	// 			//tox-editor-header
-	// 			> div {
-	// 				//tox-menubar
-	// 				background-color: black !important;
-	// 				> button {
-	// 					color: white !important;
-	// 				}
-	// 				> button:focus {
-	// 					background: #404040 !important;
-	// 				}
-	// 				> button:hover {
-	// 					background: #404040 !important;
-	// 				}
-	// 				> button:active {
-	// 					background: #404040 !important;
-	// 				}
-	// 			}
-	// 			> div {
-	// 				//tox-toolbar tox-toolbar--scrolling
-
-	// 				> div {
-	// 					//tox-toolbar__group
-	// 					border-top: 1px solid #404040 !important;
-	// 					background-color: black !important;
-	// 					// border-right: none !important;
-
-	// 					> button {
-	// 						// border-right: 1px solid white !important;
-	// 						> span {
-	// 							color: white !important;
-	// 							> svg {
-	// 								fill: white !important;
-	// 							}
-	// 						}
-	// 					}
-	// 					> button:focus {
-	// 						background: #404040 !important;
-	// 					}
-	// 					> button:hover {
-	// 						background: #404040 !important;
-	// 					}
-	// 					> button:active {
-	// 						background: #404040 !important;
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 		//middle text area
-	// 		> div {
-	// 			//tox-sidebar-wrap
-	// 			> div {
-	// 				> iframe {
-	// 					background-color: black !important;
-	// 					// color: white !important ;
-	// 					// #document {
-	// 					// 	color: white !important;
-	// 					// }
-	// 					// > html {
-	// 					// 	color: white !important;
-	// 					// }
-	// 					// .mce-content-body {
-	// 					// 	color: white !important;
-	// 					// }
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// 	//bottom bar
-	// 	> div {
-	// 		//tox-statusbar
-	// 		> div {
-	// 			> div {
-	// 				> div {
-	// 					color: white !important;
-	// 				}
-	// 			}
-	// 			> button {
-	// 				color: white !important;
-	// 			}
-	// 		}
-	// 	}
-	// }
 }
-
-// .tox-editor-container {
-// 	background: red !important;
-// }
-// .tox-menubar {
-// 	background-color: black !important;
-// }
