@@ -752,6 +752,74 @@ const UploadOreditArcade = ({
 		}
 	};
 
+	const addSaveGameBtn = async () => {
+		if (addGameBtnDisabled || editBtnDisabled) {
+			validatePostBtn();
+		} else {
+			setPostButtonStatus(true);
+
+			if (!(editArcade || editJogo)) {
+				if (
+					(await handleTitleDuplicate(titleGame)) === 'The Title Already Exist'
+					// 	200 &&
+					// articleTitle !== specificArticle?.title
+				) {
+					setTitleGameColor('#ff355a');
+					setTitleGameError('This title already exists');
+					setTimeout(() => {
+						setTitleGameColor('#ffffff');
+						setTitleGameError('');
+					}, [5000]);
+
+					setPostButtonStatus(false);
+					return;
+				}
+			}
+
+			if (editArcade || editJogo) {
+				setIsLoadingcreateViral(true);
+
+				let uploadFilesPromiseArray = [
+					uploadedFiles[0],
+					uploadedExplanationOrIcon[0]
+				].map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file);
+					} else {
+						return _file;
+					}
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						console.log('media files', mediaFiles);
+						createGames(specificGamesData?.id, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingcreateViral(false);
+					});
+				// createGames(specificGamesData?.id);
+			} else {
+				setIsLoadingcreateViral(true);
+				let uploadFilesPromiseArray = [
+					uploadedFiles[0],
+					uploadedExplanationOrIcon[0]
+				].map(async (_file) => {
+					return uploadFileToServer(_file);
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						console.log(mediaFiles, 'media files ');
+						createGames(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingcreateViral(false);
+					});
+			}
+		}
+	};
+
 	const addGameBtnDisabled =
 		type === 'jogo'
 			? !uploadedFiles.length ||
@@ -1603,73 +1671,8 @@ const UploadOreditArcade = ({
 											? editBtnDisabled
 											: addGameBtnDisabled
 									}
-									onClick={async () => {
-										if (addGameBtnDisabled || editBtnDisabled) {
-											validatePostBtn();
-										} else {
-											setPostButtonStatus(true);
-
-											if (!(editArcade || editJogo)) {
-												if (
-													(await handleTitleDuplicate(titleGame)) ===
-													'The Title Already Exist'
-													// 	200 &&
-													// articleTitle !== specificArticle?.title
-												) {
-													setTitleGameColor('#ff355a');
-													setTitleGameError('This title already exists');
-													setTimeout(() => {
-														setTitleGameColor('#ffffff');
-														setTitleGameError('');
-													}, [5000]);
-
-													setPostButtonStatus(false);
-													return;
-												}
-											}
-
-											if (editArcade || editJogo) {
-												setIsLoadingcreateViral(true);
-
-												let uploadFilesPromiseArray = [
-													uploadedFiles[0],
-													uploadedExplanationOrIcon[0]
-												].map(async (_file) => {
-													if (_file.file) {
-														return await uploadFileToServer(_file);
-													} else {
-														return _file;
-													}
-												});
-
-												Promise.all([...uploadFilesPromiseArray])
-													.then((mediaFiles) => {
-														console.log('media files', mediaFiles);
-														createGames(specificGamesData?.id, mediaFiles);
-													})
-													.catch(() => {
-														setIsLoadingcreateViral(false);
-													});
-												// createGames(specificGamesData?.id);
-											} else {
-												setIsLoadingcreateViral(true);
-												let uploadFilesPromiseArray = [
-													uploadedFiles[0],
-													uploadedExplanationOrIcon[0]
-												].map(async (_file) => {
-													return uploadFileToServer(_file);
-												});
-
-												Promise.all([...uploadFilesPromiseArray])
-													.then((mediaFiles) => {
-														console.log(mediaFiles, 'media files ');
-														createGames(null, mediaFiles);
-													})
-													.catch(() => {
-														setIsLoadingcreateViral(false);
-													});
-											}
-										}
+									onClick={() => {
+										addSaveGameBtn();
 									}}
 									// text={type === 'quiz' ? 'ADD QUIZ' : 'ADD POLL'}
 									text={buttonText}
