@@ -692,10 +692,9 @@ const UploadOrEditMedia = ({
 				Promise.all([...uploadFilesPromiseArray])
 					.then(async (mediaFiles) => {
 						console.log('Media Files', mediaFiles);
-						mediaFiles.map(async (file) => {
-							console.log(file.fileType);
+						const completedUpload = mediaFiles.map(async (file) => {
 							if (file?.signed_response) {
-								const completeUpload = await axios.post(
+								return await axios.post(
 									`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
 									{
 										file_name:
@@ -748,19 +747,18 @@ const UploadOrEditMedia = ({
 										}
 									}
 								);
-
-								await uploadMedia(specificMedia?.id, {
-									// file_name: uploadedFiles[0].fileName,
-									// file_name2: uploadedCoverImage[0].fileName,
-									title: titleMedia,
-									description,
-									type: 'medialibrary',
-									data: {
-										file_name_media: uploadedFiles[0].fileName,
-										file_name_image: uploadedCoverImage[0].fileName,
-										...completeUpload?.data?.data
-									}
-								});
+							}
+						});
+						await uploadMedia(specificMedia?.id, {
+							// file_name: uploadedFiles[0].fileName,
+							// file_name2: uploadedCoverImage[0].fileName,
+							title: titleMedia,
+							description,
+							type: 'medialibrary',
+							data: {
+								file_name_media: uploadedFiles[0].fileName,
+								file_name_image: uploadedCoverImage[0].fileName,
+								...completedUpload?.data?.data
 							}
 						});
 					})
