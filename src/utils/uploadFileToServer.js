@@ -5,7 +5,7 @@ import { getLocalStorageDetails } from './index';
 const uploadFileToServer = async (uploadedFile, libraryType) => {
 	try {
 		const result = await axios.post(
-			`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
+			`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`, //converting files into smaller parts if file is huge
 			{
 				file_type: uploadedFile.fileExtension,
 				parts: 1
@@ -19,6 +19,7 @@ const uploadFileToServer = async (uploadedFile, libraryType) => {
 
 		if (result?.data?.data?.url) {
 			const _result = await axios.put(
+				//to get e_tag
 				result?.data?.data?.url,
 				uploadedFile.file,
 				{
@@ -28,18 +29,13 @@ const uploadFileToServer = async (uploadedFile, libraryType) => {
 			if (result?.data?.data?.video_thumbnail_url) {
 				const frame = captureVideoFrame('my-video', 'png');
 				await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
+					//to get thumbnail of video
 					headers: { 'Content-Type': 'image/png' }
 				});
 			}
 			if (_result?.status === 200) {
-				console.log(
-					result?.data?.data,
-					'upload id ',
-					uploadedFile,
-					'upload file to server'
-				);
 				const uploadResult = await axios.post(
-					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`, //for completion of image/audio/video uplaod with different data properties
 					{
 						file_name: uploadedFile.file.name,
 						type: libraryType,

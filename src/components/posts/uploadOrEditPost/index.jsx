@@ -245,7 +245,6 @@ const UploadOrEditPost = ({
 		setSelectedLabels([]);
 		setDisableDropdown(true);
 		setDropdownPosition(false);
-		//setImageDestination('');
 		setIsError({});
 	};
 
@@ -429,6 +428,44 @@ const UploadOrEditPost = ({
 		(specificPost?.dropbox_url === dropboxLink.trim() &&
 			specificPost?.caption === caption.trim());
 
+	const addSavePostBtn = () => {
+		if (postBtnDisabled || editBtnDisabled) {
+			validatePostBtn();
+		} else {
+			setPostButtonStatus(true);
+			if (isEdit) {
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file, 'postlibrary');
+					} else {
+						return _file;
+					}
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createPost(specificPost?.id, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingCreatePost(false);
+					});
+			} else {
+				setIsLoadingCreatePost(true);
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					return uploadFileToServer(_file, 'postlibrary');
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createPost(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingCreatePost(false);
+					});
+			}
+		}
+	};
+
 	return (
 		<Slider
 			open={open}
@@ -602,11 +639,11 @@ const UploadOrEditPost = ({
 										<p className={classes.formatMsg}>
 											Supported formats are jpeg, png and mp4
 										</p>
-										{isError.uploadedFiles && (
-											<p className={classes.uploadMediaError}>
-												File Uplaod Error
-											</p>
-										)}
+										<p className={classes.uploadMediaError}>
+											{isError.uploadedFiles
+												? 'You need to upload a media in order to post'
+												: ''}
+										</p>
 									</div>
 								</section>
 							)}
@@ -649,12 +686,14 @@ const UploadOrEditPost = ({
 									handleChangeExtraLabel={handleChangeExtraLabel}
 								/>
 							</div>
-							{isError.selectedLabels && (
-								<p className={classes.mediaError}>
-									You need to add {10 - selectedLabels.length} more labels in
-									order to post
-								</p>
-							)}
+							<p className={classes.mediaError}>
+								{isError.selectedLabels
+									? `You need to add ${
+											10 - selectedLabels.length
+									  } more labels in
+                                                order to post`
+									: ''}
+							</p>
 							<div className={classes.captionContainer}>
 								<h6
 									className={
@@ -668,13 +707,6 @@ const UploadOrEditPost = ({
 									onChange={(e) => setCaption(e.target.value)}
 									placeholder={'Please write your caption here'}
 									className={classes.textField}
-									helperText={isError.caption ? 'Caption is required' : ''}
-									FormHelperTextProps={{
-										style: {
-											color: 'red',
-											fontSize: '14px'
-										}
-									}}
 									InputProps={{
 										disableUnderline: true,
 										className: classes.textFieldInput,
@@ -686,6 +718,11 @@ const UploadOrEditPost = ({
 									maxRows={4}
 								/>
 							</div>
+							<p className={classes.mediaError}>
+								{isError.caption
+									? 'You need to upload a caption in order to post'
+									: ''}
+							</p>
 
 							<div className={classes.postMediaContainer}>
 								<div className={classes.postMediaHeader}>
@@ -793,9 +830,11 @@ const UploadOrEditPost = ({
 										popupIcon={''}
 									/>
 
-									{isError.selectedMediaValue && (
-										<p className={classes.mediaError}>Please select media</p>
-									)}
+									<p className={classes.mediaError}>
+										{isError.selectedMediaValue
+											? 'You need to select a media in order to post'
+											: ''}
+									</p>
 								</div>
 							) : (
 								<></>
@@ -823,48 +862,7 @@ const UploadOrEditPost = ({
 								<Button
 									disabled={isEdit ? editBtnDisabled : postBtnDisabled}
 									onClick={() => {
-										if (postBtnDisabled || editBtnDisabled) {
-											validatePostBtn();
-										} else {
-											setPostButtonStatus(true);
-											if (isEdit) {
-												let uploadFilesPromiseArray = uploadedFiles.map(
-													async (_file) => {
-														if (_file.file) {
-															return await uploadFileToServer(
-																_file,
-																'postlibrary'
-															);
-														} else {
-															return _file;
-														}
-													}
-												);
-
-												Promise.all([...uploadFilesPromiseArray])
-													.then((mediaFiles) => {
-														createPost(specificPost?.id, mediaFiles);
-													})
-													.catch(() => {
-														setIsLoadingCreatePost(false);
-													});
-											} else {
-												setIsLoadingCreatePost(true);
-												let uploadFilesPromiseArray = uploadedFiles.map(
-													async (_file) => {
-														return uploadFileToServer(_file, 'postlibrary');
-													}
-												);
-
-												Promise.all([...uploadFilesPromiseArray])
-													.then((mediaFiles) => {
-														createPost(null, mediaFiles);
-													})
-													.catch(() => {
-														setIsLoadingCreatePost(false);
-													});
-											}
-										}
+										addSavePostBtn();
 									}}
 									text={buttonText}
 								/>

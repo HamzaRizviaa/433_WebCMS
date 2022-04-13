@@ -7,14 +7,11 @@ import classes from './_uploadOrEditQuiz.module.scss';
 import { useDropzone } from 'react-dropzone';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { makeid } from '../../../utils/helper';
-import Close from '@material-ui/icons/Close';
 import { TextField } from '@material-ui/core';
 import DragAndDropField from '../../DragAndDropField';
 import Labels from '../../Labels';
 import Button from '../../button';
 import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import '../../../pages/PostLibrary/_calender.scss';
 import { getDateTime, formatDate, getCalendarText2 } from '../../../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -26,7 +23,10 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import LoadingOverlay from 'react-loading-overlay';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
+import Close from '@material-ui/icons/Close';
 import { ReactComponent as CalenderYellow } from '../../../assets/Calender_Yellow.svg';
+import 'react-datepicker/dist/react-datepicker.css';
+import '../../../pages/PostLibrary/_calender.scss';
 import { useRef } from 'react';
 const UploadOrEditQuiz = ({
 	heading1,
