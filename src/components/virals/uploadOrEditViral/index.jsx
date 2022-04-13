@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditViral.module.scss';
 import { useDropzone } from 'react-dropzone';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+// import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
@@ -19,8 +19,8 @@ import Close from '@material-ui/icons/Close';
 import Labels from '../../Labels';
 import { getLocalStorageDetails } from '../../../utils';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
-import Tooltip from '@mui/material/Tooltip';
-import Fade from '@mui/material/Fade';
+import { Tooltip, Fade } from '@mui/material';
+// import Fade from '@mui/material/Fade';
 
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 
@@ -37,7 +37,6 @@ const UploadOrEditViral = ({
 }) => {
 	const [caption, setCaption] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
-
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -323,6 +322,7 @@ const UploadOrEditViral = ({
 	}, [specificViral, caption, uploadedFiles, dropboxLink]);
 
 	const handlePostSaveBtn = () => {
+		setIsLoadingcreateViral(false);
 		if (viralBtnDisabled || editBtnDisabled) {
 			validateViralBtn();
 		} else {

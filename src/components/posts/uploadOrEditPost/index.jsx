@@ -428,6 +428,44 @@ const UploadOrEditPost = ({
 		(specificPost?.dropbox_url === dropboxLink.trim() &&
 			specificPost?.caption === caption.trim());
 
+	const addSavePostBtn = () => {
+		if (postBtnDisabled || editBtnDisabled) {
+			validatePostBtn();
+		} else {
+			setPostButtonStatus(true);
+			if (isEdit) {
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file, 'postlibrary');
+					} else {
+						return _file;
+					}
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createPost(specificPost?.id, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingCreatePost(false);
+					});
+			} else {
+				setIsLoadingCreatePost(true);
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					return uploadFileToServer(_file, 'postlibrary');
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createPost(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingCreatePost(false);
+					});
+			}
+		}
+	};
+
 	return (
 		<Slider
 			open={open}
@@ -824,48 +862,7 @@ const UploadOrEditPost = ({
 								<Button
 									disabled={isEdit ? editBtnDisabled : postBtnDisabled}
 									onClick={() => {
-										if (postBtnDisabled || editBtnDisabled) {
-											validatePostBtn();
-										} else {
-											setPostButtonStatus(true);
-											if (isEdit) {
-												let uploadFilesPromiseArray = uploadedFiles.map(
-													async (_file) => {
-														if (_file.file) {
-															return await uploadFileToServer(
-																_file,
-																'postlibrary'
-															);
-														} else {
-															return _file;
-														}
-													}
-												);
-
-												Promise.all([...uploadFilesPromiseArray])
-													.then((mediaFiles) => {
-														createPost(specificPost?.id, mediaFiles);
-													})
-													.catch(() => {
-														setIsLoadingCreatePost(false);
-													});
-											} else {
-												setIsLoadingCreatePost(true);
-												let uploadFilesPromiseArray = uploadedFiles.map(
-													async (_file) => {
-														return uploadFileToServer(_file, 'postlibrary');
-													}
-												);
-
-												Promise.all([...uploadFilesPromiseArray])
-													.then((mediaFiles) => {
-														createPost(null, mediaFiles);
-													})
-													.catch(() => {
-														setIsLoadingCreatePost(false);
-													});
-											}
-										}
+										addSavePostBtn();
 									}}
 									text={buttonText}
 								/>
