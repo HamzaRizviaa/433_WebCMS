@@ -19,7 +19,6 @@ import LoadingOverlay from 'react-loading-overlay';
 import InputAdornment from '@mui/material/InputAdornment';
 import Slide from '@mui/material/Slide';
 import { getAllGames } from '../../../pages/GamesLibrary/gamesLibrarySlice';
-//import Fade from '@mui/material/Fade';
 import { useStyles } from './gamesStyles';
 import captureVideoFrame from 'capture-video-frame';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
@@ -27,8 +26,7 @@ import { ReactComponent as Timer } from '../../../assets/Timer.svg';
 import { ReactComponent as Scoring } from '../../../assets/football.svg';
 import { ReactComponent as Objective } from '../../../assets/Cross.svg';
 import Four33Loader from '../../../assets/Loader_Yellow.gif';
-import Tooltip from '@mui/material/Tooltip';
-import Fade from '@mui/material/Fade';
+import { Tooltip, Fade } from '@mui/material';
 
 const UploadOreditArcade = ({
 	heading1,
@@ -48,67 +46,31 @@ const UploadOreditArcade = ({
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
-	const [uploadMediaError, setUploadMediaError] = useState('');
-	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
-	const [dropZoneBorder2, setDropZoneBorder2] = useState('#ffff00');
 	const [titleGame, setTitleGame] = useState('');
-	const [titleGameColor, setTitleGameColor] = useState('#ffffff');
-	const [titleGameError, setTitleGameError] = useState('');
 	const [descriptionGame, setDescriptionGame] = useState('');
-	const [descriptionGameColor, setDescriptionGameColor] = useState('#ffffff');
-	const [descriptionGameError, setDescriptionGameError] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
 	const [dropboxLink2, setDropboxLink2] = useState('');
 	const [time, setTime] = useState('');
 	const [scoring, setScoring] = useState('');
 	const [objective, setObjective] = useState('');
 	const [payload, setPayload] = useState('');
-	const [questionColor, setQuestionColor] = useState('#ffffff');
-	const [questionError, setQuestionError] = useState('');
-	const [ans1Color, setAns1Color] = useState('#ffffff');
-	const [ans1Error, setAns1Error] = useState('');
-	const [ans2Color, setAns2Color] = useState('#ffffff');
-	const [ans2Error, setAns2Error] = useState('');
-	const [payloadColor, setPayloadColor] = useState('#ffffff');
-	const [payloadError, setPayloadError] = useState('');
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
 	const [videoOrientation, setVideoOrientation] = useState('');
-	const [videoOrientationColor, setVideoOrientationColor] = useState('#ffffff');
-	const [videoOrientationError, setvideoOrientationError] = useState('');
 	const [gameOrientation, setGameOrientation] = useState('');
-	const [gameOrientationColor, setGameOrientationColor] = useState('#ffffff');
-	const [gameOrientationError, setGameOrientationError] = useState('');
 	const [uploadedExplanationOrIcon, setUploadedExplanationOrIcon] = useState(
 		[]
 	);
-	const [uploadExplanationOrIconError, setUploadExplanationOrIconError] =
-		useState('');
 	const [arcadeGameType, setArcadeGameType] = useState('');
-	const [arcadeGameTypeColor, setArcadeGameTypeColor] = useState('#ffffff');
-	const [arcadeGameTypeError, setArcadeGameTypeError] = useState('');
 	const [gameId, setGameId] = useState('');
-	const [gameIdColor, setGameIdColor] = useState('#ffffff');
-	const [gameIdError, setGameIdError] = useState('');
 	const [android, setAndrioid] = useState('');
-	const [androidColor, setAndroidColor] = useState('#ffffff');
-	const [androidError, setAndroidError] = useState('');
 	const [ios, setIos] = useState('');
-	const [iosColor, setIosColor] = useState('#ffffff');
-	const [iosError, setIosError] = useState('');
 	const [playStore, setPlayStore] = useState('');
-	const [playStoreColor, setPlayStoreColor] = useState('#ffffff');
-	const [playStoreError, setPlayStoreError] = useState('');
 	const [appStore, setAppStore] = useState('');
-	const [appStoreColor, setAppStoreColor] = useState('#ffffff');
-	const [appStoreError, setAppStoreError] = useState('');
 	const [playStore2, setPlayStore2] = useState('');
-	const [playStoreColor2, setPlayStoreColor2] = useState('#ffffff');
-	const [playStoreError2, setPlayStoreError2] = useState('');
 	const [appStore2, setAppStore2] = useState('');
-	const [appStoreColor2, setAppStoreColor2] = useState('#ffffff');
-	const [appStoreError2, setAppStoreError2] = useState('');
+	const [isError, setIsError] = useState({});
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
 	const [fileWidth2, setFileWidth2] = useState(null);
@@ -226,8 +188,6 @@ const UploadOreditArcade = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			setUploadMediaError('');
-			setDropZoneBorder('#ffff00');
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -246,8 +206,6 @@ const UploadOreditArcade = ({
 
 	useEffect(() => {
 		if (acceptedFiles2?.length) {
-			setUploadExplanationOrIconError('');
-			setDropZoneBorder2('#ffff00');
 			let newFiles = acceptedFiles2.map((file) => {
 				let id = makeid(10);
 				return {
@@ -531,18 +489,8 @@ const UploadOreditArcade = ({
 		setFileRejectionError2('');
 		setDropboxLink('');
 		setDropboxLink2('');
-		setUploadMediaError('');
-		setTitleGameError('');
 		setTitleGame('');
 		setDescriptionGame('');
-		setDescriptionGameError('');
-		setDescriptionGameColor('#ffffff');
-		setPayloadError('');
-		setPayloadColor('#ffffff');
-		setUploadExplanationOrIconError('');
-		setDropZoneBorder('#ffff00');
-		setDropZoneBorder2('#ffff00');
-		setTitleGameColor('#ffffff');
 		setPreviewFile(null);
 		setPreviewBool(false);
 		setTime('');
@@ -555,184 +503,43 @@ const UploadOreditArcade = ({
 		}, 1000);
 		setPostButtonStatus(false);
 		setVideoOrientation('');
-		setVideoOrientationColor('#ffffff');
-		setvideoOrientationError('');
 		setGameOrientation('');
-		setGameOrientationColor('#ffffff');
-		setGameOrientationError('');
 		setArcadeGameType('');
-		setArcadeGameTypeColor('#ffffff');
-		setArcadeGameTypeError('');
 		setGameId('');
-		setGameIdColor('#ffffff');
-		setGameIdError('');
 		setAndrioid('');
-		setAndroidColor('#ffffff');
-		setAndroidError('');
 		setIos('');
-		setIosColor('#ffffff');
-		setIosError('');
 		setPlayStore('');
-		setPlayStoreColor('#ffffff');
-		setPlayStoreError('');
 		setAppStore('');
-		setAppStoreColor('#ffffff');
-		setAppStoreError('');
 		setPlayStore2('');
-		setPlayStoreColor2('#ffffff');
-		setPlayStoreError2('');
 		setAppStore2('');
-		setAppStoreColor2('#ffffff');
-		setAppStoreError2('');
+		setIsError({});
 	};
 
 	const validatePostBtn = () => {
-		if (uploadedFiles.length < 1) {
-			setDropZoneBorder('#ff355a');
-			setUploadMediaError('You need to upload a media in order to post');
-			setTimeout(() => {
-				setDropZoneBorder('#ffff00');
-				setUploadMediaError('');
-			}, [5000]);
-		}
-		if (!videoOrientation) {
-			setVideoOrientationColor('#ff355a');
-			setvideoOrientationError('You need to enter an orientation');
-			setTimeout(() => {
-				setVideoOrientationColor('#ffffff');
-				setvideoOrientationError('');
-			}, [5000]);
-		}
-		if (!gameOrientation) {
-			setGameOrientationColor('#ff355a');
-			setGameOrientationError('You need to enter an orientation');
-			setTimeout(() => {
-				setGameOrientationColor('#ffffff');
-				setGameOrientationError('');
-			}, [5000]);
-		}
-		if (uploadedExplanationOrIcon.length < 1) {
-			setDropZoneBorder2('#ff355a');
-			setUploadExplanationOrIconError(
-				'You need to upload a media in order to post'
-			);
-			setTimeout(() => {
-				setDropZoneBorder2('#ffff00');
-				setUploadExplanationOrIconError('');
-			}, [5000]);
-		}
-		if (!titleGame) {
-			setTitleGameColor('#ff355a');
-			setTitleGameError('You need to enter a Title');
-			setTimeout(() => {
-				setTitleGameColor('#ffffff');
-				setTitleGameError('');
-			}, [5000]);
-		}
-		if (!descriptionGame) {
-			setDescriptionGameColor('#ff355a');
-			setDescriptionGameError('You need to enter a Description');
-			setTimeout(() => {
-				setDescriptionGameColor('#ffffff');
-				setDescriptionGameError('');
-			}, [5000]);
-		}
-		if (!time) {
-			setQuestionColor('#ff355a');
-			setQuestionError('You need to provide a time in order to post');
-			setTimeout(() => {
-				setQuestionColor('#ffffff');
-				setQuestionError('');
-			}, [5000]);
-		}
-		if (!scoring) {
-			setAns1Color('#ff355a');
-			setAns1Error('You need to provide scoring in order to post');
-			setTimeout(() => {
-				setAns1Color('#ffffff');
-				setAns1Error('');
-			}, [5000]);
-		}
-		if (!objective) {
-			setAns2Color('#ff355a');
-			setAns2Error('You need to provide objective in order to post');
-			setTimeout(() => {
-				setAns2Color('#ffffff');
-				setAns2Error('');
-			}, [5000]);
-		}
-		if (!payload) {
-			setPayloadColor('#ff355a');
-			setPayloadError('You need to provide payload in order to post');
-			setTimeout(() => {
-				setPayloadColor('#ffffff');
-				setPayloadError('');
-			}, [5000]);
-		}
-		if (!arcadeGameType) {
-			setArcadeGameTypeColor('#ff355a');
-			setArcadeGameTypeError('You need to provide payload in order to post');
-			setTimeout(() => {
-				setArcadeGameTypeColor('#ffffff');
-				setArcadeGameTypeError('');
-			}, [5000]);
-		}
-		if (!gameId) {
-			setGameIdColor('#ff355a');
-			setGameIdError('You need to provide game Id in order to post');
-			setTimeout(() => {
-				setGameIdColor('#ffffff');
-				setGameIdError('');
-			}, [5000]);
-		}
-		if (!android) {
-			setAndroidColor('#ff355a');
-			setAndroidError('You need to provide android in order to post');
-			setTimeout(() => {
-				setAndroidColor('#ffffff');
-				setAndroidError('');
-			}, [5000]);
-		}
-		if (!ios) {
-			setIosColor('#ff355a');
-			setIosError('You need to provide IOS in order to post');
-			setTimeout(() => {
-				setIosColor('#ffffff');
-				setIosError('');
-			}, [5000]);
-		}
-		if (!playStore) {
-			setPlayStoreColor('#ff355a');
-			setPlayStoreError('You need to provide PlayStore in order to post');
-			setTimeout(() => {
-				setPlayStoreColor('#ffffff');
-				setPlayStoreError('');
-			}, [5000]);
-		}
-		if (!appStore) {
-			setAppStoreColor('#ff355a');
-			setAppStoreError('You need to provide AppStore in order to post');
-			setTimeout(() => {
-				setAppStoreColor('#ffffff');
-				setAppStoreError('');
-			}, [5000]);
-		}
-		if (!playStore2) {
-			setPlayStoreColor2('#ff355a');
-			setPlayStoreError2('You need to provide PlayStore in order to post');
-			setTimeout(() => {
-				setPlayStoreColor2('#ffffff');
-				setPlayStoreError2('');
-			}, [5000]);
-		}
-		if (!appStore2) {
-			setAppStoreColor2('#ff355a');
-			setAppStoreError2('You need to provide AppStore in order to post');
-			setTimeout(() => {
-				setAppStoreColor2('#ffffff');
-				setAppStoreError2('');
-			}, [5000]);
-		}
+		setIsError({
+			videoOrientation: !videoOrientation,
+			uploadedFiles: uploadedFiles.length < 1,
+			gameOrientation: !gameOrientation,
+			uploadedExplanationOrIcon: uploadedExplanationOrIcon.length < 1,
+			titleGame: !titleGame && { message: 'You need to enter a Title' },
+			descriptionGame: !descriptionGame,
+			time: !time,
+			scoring: !scoring,
+			objective: !objective,
+			payload: !payload,
+			arcadeGameType: !arcadeGameType,
+			gameId: !gameId,
+			android: !android,
+			ios: !ios,
+			playStore: !playStore,
+			appStore: !appStore,
+			playStore2: !playStore2,
+			appStore2: !appStore2
+		});
+
+		setTimeout(() => {
+			setIsError({});
+		}, 5000);
 	};
 
 	const handleTitleDuplicate = async (givenTitle) => {
@@ -749,6 +556,97 @@ const UploadOreditArcade = ({
 		} catch (error) {
 			console.log('Error');
 			return null;
+		}
+	};
+
+	const addSaveGameBtn = async () => {
+		if (addGameBtnDisabled || editBtnDisabled) {
+			validatePostBtn();
+		} else {
+			setPostButtonStatus(true);
+
+			if (editArcade || editJogo) {
+				if (titleGame?.trim() !== specificGamesData?.title?.trim()) {
+					if (
+						(await handleTitleDuplicate(titleGame)) ===
+						'The Title Already Exist'
+						// 	200 &&
+						// articleTitle !== specificArticle?.title
+					) {
+						setIsError((prev) => {
+							return {
+								...prev,
+								titleGame: { message: 'This title already exists' }
+							};
+						});
+
+						setTimeout(() => {
+							setIsError({});
+						}, [5000]);
+
+						setPostButtonStatus(false);
+						return;
+					}
+				}
+				setIsLoadingcreateViral(true);
+				let uploadFilesPromiseArray = [
+					uploadedFiles[0],
+					uploadedExplanationOrIcon[0]
+				].map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file);
+					} else {
+						return _file;
+					}
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						console.log('media files', mediaFiles);
+						createGames(specificGamesData?.id, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingcreateViral(false);
+					});
+				// createGames(specificGamesData?.id);
+			} else {
+				if (
+					(await handleTitleDuplicate(titleGame)) === 'The Title Already Exist'
+					// 	200 &&
+					// articleTitle !== specificArticle?.title
+				) {
+					setIsError((prev) => {
+						return {
+							...prev,
+							titleGame: { message: 'This title already exists' }
+						};
+					});
+
+					setTimeout(() => {
+						setIsError({});
+					}, [5000]);
+
+					setPostButtonStatus(false);
+					return;
+				}
+
+				setIsLoadingcreateViral(true);
+				let uploadFilesPromiseArray = [
+					uploadedFiles[0],
+					uploadedExplanationOrIcon[0]
+				].map(async (_file) => {
+					return uploadFileToServer(_file);
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						console.log(mediaFiles, 'media files ');
+						createGames(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingcreateViral(false);
+					});
+			}
 		}
 	};
 
@@ -858,7 +756,7 @@ const UploadOreditArcade = ({
 								<section
 									className={classes.dropZoneContainer}
 									style={{
-										borderColor: dropZoneBorder
+										borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
 									}}
 								>
 									<div {...getRootProps({ className: classes.dropzone })}>
@@ -871,7 +769,9 @@ const UploadOreditArcade = ({
 											Supported formats are jpeg and png
 										</p>
 										<p className={classes.uploadMediaError}>
-											{uploadMediaError}
+											{isError.uploadedFiles
+												? 'You need to upload a media in order to post'
+												: ''}
 										</p>
 									</div>
 								</section>
@@ -915,9 +815,14 @@ const UploadOreditArcade = ({
 											<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
 										</Tooltip>
 									</div>
-
 									<div className={classes.titleContainer}>
-										<h6 style={{ color: videoOrientationColor }}>
+										<h6
+											className={
+												isError.videoOrientation
+													? classes.errorState
+													: classes.noErrorState
+											}
+										>
 											SELECT GAME EXPLANATION VIDEO ORIENTATION
 										</h6>
 										<Select
@@ -994,7 +899,11 @@ const UploadOreditArcade = ({
 											})}
 										</Select>
 									</div>
-									<p className={classes.mediaError}>{videoOrientationError}</p>
+									<p className={classes.mediaError}>
+										{isError.videoOrientation
+											? 'You need to select video orientation in order to post'
+											: ''}
+									</p>
 								</>
 							) : (
 								<>
@@ -1025,7 +934,9 @@ const UploadOreditArcade = ({
 								<section
 									className={classes.dropZoneContainer}
 									style={{
-										borderColor: dropZoneBorder2
+										borderColor: isError.uploadedExplanationOrIcon
+											? '#ff355a'
+											: 'yellow'
 									}}
 								>
 									<div {...getRootProps2({ className: classes.dropzone })}>
@@ -1039,7 +950,9 @@ const UploadOreditArcade = ({
 											{type === 'jogo' ? 'mp4' : 'jpeg and png'}
 										</p>
 										<p className={classes.uploadMediaError}>
-											{uploadExplanationOrIconError}
+											{isError.uploadedExplanationOrIcon
+												? 'You need to upload a media in order to post'
+												: ''}
 										</p>
 									</div>
 								</section>
@@ -1069,7 +982,15 @@ const UploadOreditArcade = ({
 
 							<div className={classes.titleContainer}>
 								<div className={classes.characterCount}>
-									<h6 style={{ color: titleGameColor }}>TITLE</h6>
+									<h6
+										className={
+											isError.titleGame
+												? classes.errorState
+												: classes.noErrorState
+										}
+									>
+										TITLE
+									</h6>
 									<h6
 										style={{
 											color:
@@ -1087,8 +1008,6 @@ const UploadOreditArcade = ({
 									value={titleGame}
 									onChange={(e) => {
 										setTitleGame(e.target.value);
-										setTitleGameError('');
-										setTitleGameColor('#ffffff');
 									}}
 									placeholder={'Please write your title here'}
 									className={classes.textField}
@@ -1101,11 +1020,19 @@ const UploadOreditArcade = ({
 									maxRows={2}
 								/>
 							</div>
-							<p className={classes.mediaError}>{titleGameError}</p>
+							<p className={classes.mediaError}>
+								{isError.titleGame ? isError.titleGame.message : ''}
+							</p>
 
 							<div className={classes.titleContainer}>
 								<div className={classes.characterCount}>
-									<h6 style={{ color: descriptionGameColor }}>
+									<h6
+										className={
+											isError.descriptionGame
+												? classes.errorState
+												: classes.noErrorState
+										}
+									>
 										GAME DESCRIPTION
 									</h6>
 									<h6
@@ -1126,8 +1053,6 @@ const UploadOreditArcade = ({
 									value={descriptionGame}
 									onChange={(e) => {
 										setDescriptionGame(e.target.value);
-										setDescriptionGameError('');
-										setDescriptionGameColor('#ffffff');
 									}}
 									placeholder={'Please write your description here'}
 									className={classes.textField}
@@ -1140,12 +1065,22 @@ const UploadOreditArcade = ({
 									maxRows={2}
 								/>
 							</div>
-							<p className={classes.mediaError}>{descriptionGameError}</p>
+							<p className={classes.mediaError}>
+								{isError.descriptionGame
+									? 'You need to upload a description in order to post'
+									: ''}
+							</p>
 
 							{type === 'jogo' ? (
 								<>
 									<div className={classes.titleContainer}>
-										<h6 style={{ color: questionColor }}>TIME</h6>
+										<h6
+											className={
+												isError.time ? classes.errorState : classes.noErrorState
+											}
+										>
+											TIME
+										</h6>
 										<TextField
 											disabled={false}
 											value={time}
@@ -1168,10 +1103,22 @@ const UploadOreditArcade = ({
 										/>
 									</div>
 
-									<p className={classes.mediaError}>{questionError}</p>
+									<p className={classes.mediaError}>
+										{isError.time
+											? 'You need to upload a time in order to post'
+											: ''}
+									</p>
 
 									<div className={classes.titleContainer}>
-										<h6 style={{ color: ans1Color }}>SCORING</h6>
+										<h6
+											className={
+												isError.scoring
+													? classes.errorState
+													: classes.noErrorState
+											}
+										>
+											SCORING
+										</h6>
 										<TextField
 											disabled={false}
 											value={scoring}
@@ -1194,10 +1141,22 @@ const UploadOreditArcade = ({
 										/>
 									</div>
 
-									<p className={classes.mediaError}>{ans1Error}</p>
+									<p className={classes.mediaError}>
+										{isError.scoring
+											? 'You need to upload a scoring in order to post'
+											: ''}
+									</p>
 
 									<div className={classes.titleContainer}>
-										<h6 style={{ color: ans2Color }}>OBJECTIVE</h6>
+										<h6
+											className={
+												isError.objective
+													? classes.errorState
+													: classes.noErrorState
+											}
+										>
+											OBJECTIVE
+										</h6>
 
 										<TextField
 											disabled={false}
@@ -1221,10 +1180,22 @@ const UploadOreditArcade = ({
 										/>
 									</div>
 
-									<p className={classes.mediaError}>{ans2Error}</p>
+									<p className={classes.mediaError}>
+										{isError.objective
+											? 'You need to upload an objective in order to post'
+											: ''}
+									</p>
 
 									<div className={classes.titleContainer}>
-										<h6 style={{ color: payloadColor }}>PAYLOAD</h6>
+										<h6
+											className={
+												isError.payload
+													? classes.errorState
+													: classes.noErrorState
+											}
+										>
+											PAYLOAD
+										</h6>
 
 										<TextField
 											disabled={false}
@@ -1243,10 +1214,20 @@ const UploadOreditArcade = ({
 										/>
 									</div>
 
-									<p className={classes.mediaError}>{payloadError}</p>
+									<p className={classes.mediaError}>
+										{isError.payload
+											? 'You need to upload a payload in order to post'
+											: ''}
+									</p>
 
 									<div className={classes.titleContainer}>
-										<h6 style={{ color: gameOrientationColor }}>
+										<h6
+											className={
+												isError.gameOrientation
+													? classes.errorState
+													: classes.noErrorState
+											}
+										>
 											SELECT GAME ORIENTATION
 										</h6>
 										<Select
@@ -1323,12 +1304,22 @@ const UploadOreditArcade = ({
 											})}
 										</Select>
 									</div>
-									<p className={classes.mediaError}>{gameOrientationError}</p>
+									<p className={classes.mediaError}>
+										{isError.gameOrientation
+											? 'You need to select game orientation in order to post'
+											: ''}
+									</p>
 								</>
 							) : (
 								<>
 									<div className={classes.titleContainer}>
-										<h6 style={{ color: arcadeGameTypeColor }}>
+										<h6
+											className={
+												isError.arcadeGameType
+													? classes.errorState
+													: classes.noErrorState
+											}
+										>
 											ARCADE GAME TYPE
 										</h6>
 										<Select
@@ -1343,8 +1334,6 @@ const UploadOreditArcade = ({
 											onChange={(e) => {
 												setDisableDropdown(true);
 												setArcadeGameType(e.target.value);
-												setArcadeGameTypeColor('#ffffff');
-												setArcadeGameTypeError('');
 											}}
 											className={`${classes.select}`}
 											disableUnderline={true}
@@ -1402,7 +1391,11 @@ const UploadOreditArcade = ({
 											})}
 										</Select>
 									</div>
-									<p className={classes.mediaError}>{arcadeGameTypeError}</p>
+									<p className={classes.mediaError}>
+										{isError.arcadeGameType
+											? 'You need to select Arcade type in order to post'
+											: ''}
+									</p>
 
 									{arcadeGameType === 'Outside App' ? (
 										<Slide in={true} direction='up' {...{ timeout: 400 }}>
@@ -1411,7 +1404,15 @@ const UploadOreditArcade = ({
 													<h5>Package ID</h5>
 												</div>
 												<div className={classes.titleContainer}>
-													<h6 style={{ color: androidColor }}>ANDROID</h6>
+													<h6
+														className={
+															isError.android
+																? classes.errorState
+																: classes.noErrorState
+														}
+													>
+														ANDROID
+													</h6>
 													<TextField
 														value={android}
 														onChange={(e) => setAndrioid(e.target.value)}
@@ -1428,9 +1429,21 @@ const UploadOreditArcade = ({
 														}}
 													/>
 												</div>
-												<p className={classes.mediaError}>{androidError}</p>
+												<p className={classes.mediaError}>
+													{isError.android
+														? 'You need to upload android in order to post'
+														: ''}
+												</p>
 												<div className={classes.titleContainer}>
-													<h6 style={{ color: iosColor }}>IOS</h6>
+													<h6
+														className={
+															isError.ios
+																? classes.errorState
+																: classes.noErrorState
+														}
+													>
+														IOS
+													</h6>
 													<TextField
 														value={ios}
 														onChange={(e) => setIos(e.target.value)}
@@ -1447,13 +1460,25 @@ const UploadOreditArcade = ({
 														}}
 													/>
 												</div>
-												<p className={classes.mediaError}>{iosError}</p>
+												<p className={classes.mediaError}>
+													{isError.ios
+														? 'You need to upload IOS in order to post'
+														: ''}
+												</p>
 
 												<div className={classes.gameIDwrapper}>
 													<h5>Store URL</h5>
 												</div>
 												<div className={classes.titleContainer}>
-													<h6 style={{ color: playStoreColor }}>PLAY STORE</h6>
+													<h6
+														className={
+															isError.playStore
+																? classes.errorState
+																: classes.noErrorState
+														}
+													>
+														PLAY STORE
+													</h6>
 													<TextField
 														value={playStore}
 														onChange={(e) => setPlayStore(e.target.value)}
@@ -1470,9 +1495,21 @@ const UploadOreditArcade = ({
 														}}
 													/>
 												</div>
-												<p className={classes.mediaError}>{playStoreError}</p>
+												<p className={classes.mediaError}>
+													{isError.playStore
+														? 'You need to upload playStore in order to post'
+														: ''}
+												</p>
 												<div className={classes.titleContainer}>
-													<h6 style={{ color: appStoreColor }}>APP STORE</h6>
+													<h6
+														className={
+															isError.appStore
+																? classes.errorState
+																: classes.noErrorState
+														}
+													>
+														APP STORE
+													</h6>
 													<TextField
 														value={appStore}
 														onChange={(e) => setAppStore(e.target.value)}
@@ -1489,13 +1526,25 @@ const UploadOreditArcade = ({
 														}}
 													/>
 												</div>
-												<p className={classes.mediaError}>{appStoreError}</p>
+												<p className={classes.mediaError}>
+													{isError.appStore
+														? 'You need to upload appStore in order to post'
+														: ''}
+												</p>
 
 												<div className={classes.gameIDwrapper}>
 													<h5>Deep Link</h5>
 												</div>
 												<div className={classes.titleContainer}>
-													<h6 style={{ color: playStoreColor2 }}>PLAY STORE</h6>
+													<h6
+														className={
+															isError.playStore2
+																? classes.errorState
+																: classes.noErrorState
+														}
+													>
+														PLAY STORE
+													</h6>
 													<TextField
 														value={playStore2}
 														onChange={(e) => setPlayStore2(e.target.value)}
@@ -1512,9 +1561,21 @@ const UploadOreditArcade = ({
 														}}
 													/>
 												</div>
-												<p className={classes.mediaError}>{playStoreError2}</p>
+												<p className={classes.mediaError}>
+													{isError.playStore2
+														? 'You need to upload playStore in order to post'
+														: ''}
+												</p>
 												<div className={classes.titleContainer}>
-													<h6 style={{ color: appStoreColor2 }}>APP STORE</h6>
+													<h6
+														className={
+															isError.appStore2
+																? classes.errorState
+																: classes.noErrorState
+														}
+													>
+														APP STORE
+													</h6>
 													<TextField
 														value={appStore2}
 														onChange={(e) => setAppStore2(e.target.value)}
@@ -1531,7 +1592,11 @@ const UploadOreditArcade = ({
 														}}
 													/>
 												</div>
-												<p className={classes.mediaError}>{appStoreError2}</p>
+												<p className={classes.mediaError}>
+													{isError.appStore2
+														? 'You need to upload appStore in order to post'
+														: ''}
+												</p>
 											</div>
 										</Slide>
 									) : (
@@ -1542,7 +1607,15 @@ const UploadOreditArcade = ({
 										<Slide in={true} direction='up' {...{ timeout: 400 }}>
 											<div>
 												<div className={classes.gameIDwrapper}>
-													<h5 style={{ color: gameIdColor }}>Game ID</h5>
+													<h5
+														className={
+															isError.gameId
+																? classes.errorState
+																: classes.noErrorState
+														}
+													>
+														Game ID
+													</h5>
 												</div>
 
 												<div className={classes.titleContainer}>
@@ -1562,7 +1635,11 @@ const UploadOreditArcade = ({
 														}}
 													/>
 												</div>
-												<p className={classes.mediaError}>{gameIdError}</p>
+												<p className={classes.mediaError}>
+													{isError.gameId
+														? 'You need to upload gameId in order to post'
+														: ''}
+												</p>
 											</div>
 										</Slide>
 									) : (
@@ -1603,73 +1680,8 @@ const UploadOreditArcade = ({
 											? editBtnDisabled
 											: addGameBtnDisabled
 									}
-									onClick={async () => {
-										if (addGameBtnDisabled || editBtnDisabled) {
-											validatePostBtn();
-										} else {
-											setPostButtonStatus(true);
-
-											if (!(editArcade || editJogo)) {
-												if (
-													(await handleTitleDuplicate(titleGame)) ===
-													'The Title Already Exist'
-													// 	200 &&
-													// articleTitle !== specificArticle?.title
-												) {
-													setTitleGameColor('#ff355a');
-													setTitleGameError('This title already exists');
-													setTimeout(() => {
-														setTitleGameColor('#ffffff');
-														setTitleGameError('');
-													}, [5000]);
-
-													setPostButtonStatus(false);
-													return;
-												}
-											}
-
-											if (editArcade || editJogo) {
-												setIsLoadingcreateViral(true);
-
-												let uploadFilesPromiseArray = [
-													uploadedFiles[0],
-													uploadedExplanationOrIcon[0]
-												].map(async (_file) => {
-													if (_file.file) {
-														return await uploadFileToServer(_file);
-													} else {
-														return _file;
-													}
-												});
-
-												Promise.all([...uploadFilesPromiseArray])
-													.then((mediaFiles) => {
-														console.log('media files', mediaFiles);
-														createGames(specificGamesData?.id, mediaFiles);
-													})
-													.catch(() => {
-														setIsLoadingcreateViral(false);
-													});
-												// createGames(specificGamesData?.id);
-											} else {
-												setIsLoadingcreateViral(true);
-												let uploadFilesPromiseArray = [
-													uploadedFiles[0],
-													uploadedExplanationOrIcon[0]
-												].map(async (_file) => {
-													return uploadFileToServer(_file);
-												});
-
-												Promise.all([...uploadFilesPromiseArray])
-													.then((mediaFiles) => {
-														console.log(mediaFiles, 'media files ');
-														createGames(null, mediaFiles);
-													})
-													.catch(() => {
-														setIsLoadingcreateViral(false);
-													});
-											}
-										}
+									onClick={() => {
+										addSaveGameBtn();
 									}}
 									// text={type === 'quiz' ? 'ADD QUIZ' : 'ADD POLL'}
 									text={buttonText}

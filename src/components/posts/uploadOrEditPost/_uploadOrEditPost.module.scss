@@ -405,3 +405,21 @@ video::-webkit-media-controls-fullscreen-button {
 .noErrorState {
 	color: $white-color;
 }
+
+.popperAuto {
+	border: 1px solid #404040;
+	box-shadow: 0px 16px 40px rgba(255, 255, 255, 0.16);
+	border-radius: 8px;
+	background: black;
+}
+
+.liAutocomplete {
+	background-color: black;
+	color: white;
+	font-size: 14px;
+	padding: 8px 8px 8px 12px;
+	&:hover {
+		color: $neon-yellow;
+		cursor: pointer;
+	}
+}

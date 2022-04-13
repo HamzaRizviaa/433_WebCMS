@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditViral.module.scss';
 import { useDropzone } from 'react-dropzone';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
@@ -19,11 +18,9 @@ import Close from '@material-ui/icons/Close';
 import Labels from '../../Labels';
 import { getLocalStorageDetails } from '../../../utils';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
-import Tooltip from '@mui/material/Tooltip';
-import Fade from '@mui/material/Fade';
+import { Tooltip, Fade } from '@mui/material';
+// import Fade from '@mui/material/Fade';
 
-import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 
 import LoadingOverlay from 'react-loading-overlay';
@@ -39,16 +36,10 @@ const UploadOrEditViral = ({
 }) => {
 	const [caption, setCaption] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
-
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [selectedLabels, setSelectedLabels] = useState([]);
-	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
-	const [labelColor, setLabelColor] = useState('#ffffff');
-	const [labelError, setLabelError] = useState('');
-	const [captionColor, setCaptionColor] = useState('#ffffff');
-	const [captionError, setCaptionError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
@@ -60,6 +51,7 @@ const UploadOrEditViral = ({
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
+	const [isError, setIsError] = useState({});
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const videoRef = useRef(null);
@@ -108,6 +100,8 @@ const UploadOrEditViral = ({
 			}
 			setCaption(specificViral?.caption);
 			setDropboxLink(specificViral?.dropbox_url);
+			setFileWidth(specificViral?.width);
+			setFileHeight(specificViral?.height);
 			if (specificViral?.thumbnail_url) {
 				setUploadedFiles([
 					{
@@ -163,11 +157,10 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			setUploadMediaError('');
-			setDropZoneBorder('#ffff00');
+			setIsError({});
+
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
-				// readImageFile(file);
 				return {
 					id: id,
 					fileName: file.name,
@@ -188,9 +181,6 @@ const UploadOrEditViral = ({
 		setUploadMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
-		setDropZoneBorder('#ffff00');
-		setCaptionColor('#ffffff');
-		setLabelColor('#ffffff');
 		setPostButtonStatus(false);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
@@ -199,6 +189,9 @@ const UploadOrEditViral = ({
 		setPreviewBool(false);
 		setSelectedLabels([]);
 		setDisableDropdown(true);
+		setFileHeight(null);
+		setFileWidth(null);
+		setIsError({});
 	};
 
 	const handleDeleteFile = (id) => {
@@ -208,44 +201,17 @@ const UploadOrEditViral = ({
 	};
 
 	const validateViralBtn = () => {
-		if (uploadedFiles.length < 1) {
-			setDropZoneBorder('#ff355a');
-			setUploadMediaError('You need to upload a media in order to post');
-			setTimeout(() => {
-				setDropZoneBorder('#ffff00');
-				setUploadMediaError('');
-			}, [5000]);
-		}
-
-		if (selectedLabels.length < 10) {
-			setLabelColor('#ff355a');
-			setLabelError(
-				`You need to add ${
-					10 - selectedLabels.length
-				} more labels in order to post`
-			);
-			setTimeout(() => {
-				setLabelColor('#ffffff');
-				setLabelError('');
-			}, [5000]);
-		}
-
-		if (!caption) {
-			setCaptionColor('#ff355a');
-			setCaptionError(
-				'You need to put a caption of atleast 1 character in order to post'
-			);
-			setTimeout(() => {
-				setCaptionColor('#ffffff');
-				setCaptionError('');
-			}, [5000]);
-		}
+		setIsError({
+			caption: !caption,
+			uploadedFiles: uploadedFiles.length < 1,
+			selectedLabels: selectedLabels.length < 10
+		});
+		setTimeout(() => {
+			setIsError({});
+		}, 5000);
 	};
 
 	const createViral = async (id, mediaFiles = []) => {
-		console.log(mediaFiles, 'media files in create viral');
-		setFileWidth(mediaFiles[0].width);
-		setFileHeight(mediaFiles[0].height);
 		setPostButtonStatus(true);
 		try {
 			const result = await axios.post(
@@ -260,13 +226,6 @@ const UploadOrEditViral = ({
 					thumbnail_url: mediaFiles[0]?.thumbnail_url,
 					height: fileHeight,
 					width: fileWidth,
-					// ...(caption ? { caption: caption } : { caption: '' }),
-					// ...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
-					// ...(!isEdit ? { media_url: mediaFiles[0]?.media_url } : {}),
-					// ...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
-					// ...(!isEdit ? { thumbnail_url: mediaFiles[0]?.thumbnail_url } : {}),
-					// ...(!isEdit ? { height: fileHeight } : {}),
-					// ...(!isEdit ? { width: fileWidth } : {}),
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -297,7 +256,7 @@ const UploadOrEditViral = ({
 			toast.error(isEdit ? 'Failed to edit viral!' : 'Failed to create viral!');
 			setIsLoadingcreateViral(false);
 			setPostButtonStatus(false);
-			console.log(e);
+			console.log(e, 'Failed create / edit viral');
 		}
 	};
 
@@ -323,7 +282,7 @@ const UploadOrEditViral = ({
 		} catch (e) {
 			toast.error('Failed to delete Viral!');
 			setDeleteBtnStatus(false);
-			console.log(e);
+			console.log(e, 'Failed to delete Viral');
 		}
 	};
 
@@ -334,8 +293,6 @@ const UploadOrEditViral = ({
 	}, [newLabels]);
 
 	const handleChangeExtraLabel = (e) => {
-		// e.preventDefault();
-		// e.stopPropagation();
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
@@ -364,6 +321,7 @@ const UploadOrEditViral = ({
 	}, [specificViral, caption, uploadedFiles, dropboxLink]);
 
 	const handlePostSaveBtn = () => {
+		setIsLoadingcreateViral(false);
 		if (viralBtnDisabled || editBtnDisabled) {
 			validateViralBtn();
 		} else {
@@ -472,7 +430,7 @@ const UploadOrEditViral = ({
 								<section
 									className={classes.dropZoneContainer}
 									style={{
-										borderColor: dropZoneBorder
+										borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
 									}}
 								>
 									<div {...getRootProps({ className: classes.dropzone })}>
@@ -485,7 +443,9 @@ const UploadOrEditViral = ({
 											Supported formats are jpeg, png and mp4
 										</p>
 										<p className={classes.uploadMediaError}>
-											{uploadMediaError}
+											{isError.uploadedFiles
+												? 'You need to upload a media in order to post'
+												: ''}
 										</p>
 									</div>
 								</section>
@@ -511,7 +471,15 @@ const UploadOrEditViral = ({
 							</div>
 
 							<div className={classes.captionContainer}>
-								<h6 style={{ color: labelColor }}>LABELS</h6>
+								<h6
+									className={
+										isError.selectedLabels
+											? classes.errorState
+											: classes.noErrorState
+									}
+								>
+									LABELS
+								</h6>
 								<Labels
 									isEdit={isEdit}
 									setDisableDropdown={setDisableDropdown}
@@ -522,9 +490,22 @@ const UploadOrEditViral = ({
 									handleChangeExtraLabel={handleChangeExtraLabel}
 								/>
 							</div>
-							<p className={classes.mediaError}>{labelError}</p>
+							<p className={classes.mediaError}>
+								{isError.selectedLabels
+									? `You need to add  ${
+											10 - selectedLabels.length
+									  }  more labels in order to post`
+									: ''}
+							</p>
+
 							<div className={classes.captionContainer}>
-								<h6 style={{ color: captionColor }}>CAPTION</h6>
+								<h6
+									className={
+										isError.caption ? classes.errorState : classes.noErrorState
+									}
+								>
+									CAPTION
+								</h6>
 								<TextField
 									value={caption}
 									onChange={(e) => setCaption(e.target.value)}
@@ -541,7 +522,9 @@ const UploadOrEditViral = ({
 									maxRows={4}
 								/>
 							</div>
-							<p className={classes.mediaError}>{captionError}</p>
+							<p className={classes.mediaError}>
+								{isError.caption ? 'This field is required' : ''}
+							</p>
 						</div>
 
 						<div className={classes.buttonDiv}>
@@ -592,7 +575,6 @@ const UploadOrEditViral = ({
 										poster={isEdit ? previewFile.img : null}
 										className={classes.previewFile}
 										style={{
-											//width: `${8 * 4}rem`,
 											width: `100%`,
 											height: `${8 * 4}rem`,
 											objectFit: 'contain',
@@ -608,7 +590,6 @@ const UploadOrEditViral = ({
 										poster={isEdit ? previewFile.thumbnail_url : null}
 										className={classes.previewFile}
 										style={{
-											//width: `${8 * 4}rem`,
 											width: `100%`,
 											height: `${8 * 4}rem`,
 											objectFit: 'contain',
@@ -623,7 +604,6 @@ const UploadOrEditViral = ({
 										src={previewFile.img}
 										className={classes.previewFile}
 										style={{
-											//width: `${8 * 4}rem`,
 											width: `100%`,
 											height: `${8 * 4}rem`,
 											objectFit: 'contain',

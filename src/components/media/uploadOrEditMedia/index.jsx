@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditMedia.module.scss';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
 import Button from '../../button';
 import LoadingOverlay from 'react-loading-overlay';
-import { MenuItem, TextField, Select } from '@material-ui/core';
+import {
+	MenuItem,
+	TextField,
+	Select,
+	CircularProgress
+} from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { useDropzone } from 'react-dropzone';
@@ -19,14 +24,11 @@ import { getMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
 import Close from '@material-ui/icons/Close';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { CircularProgress } from '@material-ui/core';
 import DragAndDropField from '../../DragAndDropField';
 import Labels from '../../Labels';
-import Tooltip from '@mui/material/Tooltip';
-import Fade from '@mui/material/Fade';
+import { Tooltip, Fade } from '@mui/material';
 
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
-import { useRef } from 'react';
 
 const UploadOrEditMedia = ({
 	open,
@@ -37,8 +39,6 @@ const UploadOrEditMedia = ({
 	isEdit,
 	page
 }) => {
-	const [labelColor, setLabelColor] = useState('#ffffff');
-	const [labelError, setLabelError] = useState('');
 	const [dropboxLink, setDropboxLink] = useState(''); // media dropbox url
 	const [dropboxLink2, setDropboxLink2] = useState(''); // cover image dropbox url
 	const [selectedLabels, setSelectedLabels] = useState([]);
@@ -48,23 +48,11 @@ const UploadOrEditMedia = ({
 	const [subCategories, setSubCategories] = useState([]);
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [uploadedCoverImage, setUploadedCoverImage] = useState([]);
-	const [uploadMediaError, setUploadMediaError] = useState('');
-	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
 	const [fileRejectionError, setFileRejectionError] = useState('');
-	const [uploadCoverError, setUploadCoverError] = useState('');
-	const [dropZoneBorder2, setDropZoneBorder2] = useState('#ffff00');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
-	const [mainCategoryLabelColor, setMainCategoryLabelColor] =
-		useState('#ffffff');
-	const [mainCategoryError, setMainCategoryError] = useState('');
 	const [subCategoryLabelColor, setSubCategoryLabelColor] = useState('#ffffff');
-	const [subCategoryError, setSubCategoryError] = useState('');
 	const [titleMedia, setTitleMedia] = useState('');
-	const [titleMediaLabelColor, setTitleMediaLabelColor] = useState('#ffffff');
-	const [titleMediaError, setTitleMediaError] = useState('');
 	const [description, setDescription] = useState('');
-	const [descriptionColor, setDescriptionColor] = useState('#ffffff');
-	const [descriptionError, setDescriptionError] = useState('');
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [previewBool, setPreviewBool] = useState(false);
@@ -76,6 +64,7 @@ const UploadOrEditMedia = ({
 	const [fileHeight, setFileHeight] = useState(null);
 	const [fileDuration, setFileDuration] = useState(null);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
+	const [isError, setIsError] = useState({});
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
 
@@ -123,11 +112,7 @@ const UploadOrEditMedia = ({
 	}, [extraLabel]);
 
 	useEffect(() => {
-		// console.log(specificMedia?.media_type);
-		// console.log(specificMedia?.sub_category);
-
 		if (specificMedia) {
-			// console.log(specificMedia, 'specificMedia');
 			if (specificMedia?.labels) {
 				let _labels = [];
 				specificMedia.labels.map((label) =>
@@ -135,18 +120,9 @@ const UploadOrEditMedia = ({
 				);
 				setSelectedLabels(_labels);
 			}
-			// if (specificMedia.media_type) {
-			// 	// let setData = mainCategories.find(
-			// 	// 	(u) => u.name === specificMedia?.media_type
-			// 	// );
-			// 	//console.log(specificMedia?.media_type);
-			// 	// console.log(setData.name);
-			// 	setMainCategory(specificMedia.media_type);
-			// }
 			setDropboxLink(specificMedia?.media_dropbox_url);
 			setDropboxLink2(specificMedia?.image_dropbox_url);
 			setMainCategory(specificMedia?.media_type);
-			// console.log(mainCategory);
 			setSubCategory(specificMedia?.sub_category);
 			setTitleMedia(specificMedia?.title);
 			setDescription(specificMedia?.description);
@@ -211,14 +187,8 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		if (mainCategory && !isEdit) {
-			console.log(mainCategory, 'mc');
 			updateSubCategories(mainCategory);
 		}
-		// else if (mainCategory && isEdit) {
-		// 	let setData = mainCategories.find((u) => u.name === mainCategory);
-		// 	//console.log(setData, 'm');
-		// 	updateSubCategories(setData);
-		// }
 	}, [mainCategory]);
 
 	useEffect(() => {
@@ -252,10 +222,21 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	const selectFileType = (type) => {
+		switch (type) {
+			case 'video/mp4':
+				return 'video';
+			case 'audio/mp3':
+				return 'audio';
+			case 'audio/mpeg':
+				return 'audio';
+			default:
+				return 'image';
+		}
+	};
+
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			setUploadMediaError('');
-			setDropZoneBorder('#ffff00');
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -265,21 +246,17 @@ const UploadOrEditMedia = ({
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
-					type: file.type === 'video/mp4' ? 'video' : 'image'
+					type: selectFileType(file.type)
 				};
 			});
 			setUploadedFiles([...uploadedFiles, ...newFiles]);
 		}
 	}, [acceptedFiles]);
 
-	useEffect(() => {
-		console.log(fileDuration, 'duration');
-	}, [videoRef.current]);
+	useEffect(() => {}, [videoRef.current]);
 
 	useEffect(() => {
 		if (acceptedFiles2?.length) {
-			setUploadCoverError('');
-			setDropZoneBorder2('#ffff00');
 			let newFiles = acceptedFiles2.map((file) => {
 				let id = makeid(10);
 				return {
@@ -303,22 +280,11 @@ const UploadOrEditMedia = ({
 		setSubCategory('');
 		setUploadedFiles([]);
 		setUploadedCoverImage([]);
-		setUploadMediaError('');
-		setUploadCoverError('');
-		setDropZoneBorder('#ffff00');
-		setDropZoneBorder2('#ffff00');
-		setFileRejectionError('');
 		setFileRejectionError2('');
-		setMainCategoryLabelColor('#ffffff');
 		setSubCategoryLabelColor('#ffffff');
-		setTitleMediaLabelColor('#ffffff');
-		setDescriptionColor('#ffffff');
-		setDescriptionError('');
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
-		setTitleMediaError('');
-		setMainCategoryError('');
 		setTitleMedia('');
 		setDescription('');
 		setPreviewFile(null);
@@ -328,6 +294,7 @@ const UploadOrEditMedia = ({
 		setExtraLabel('');
 		setDisableDropdown(true);
 		setEditBtnDisabled(false);
+		setIsError({});
 	};
 
 	const handleDeleteFile = (id) => {
@@ -343,66 +310,19 @@ const UploadOrEditMedia = ({
 	};
 
 	const validatePostBtn = () => {
-		if (uploadedFiles.length < 1) {
-			setDropZoneBorder('#ff355a');
-			setUploadMediaError('You need to upload a media in order to post');
-			setTimeout(() => {
-				setDropZoneBorder('#ffff00');
-				setUploadMediaError('');
-			}, [5000]);
-		}
-		if (selectedLabels.length < 10) {
-			setLabelColor('#ff355a');
-			setLabelError(
-				`You need to add ${
-					10 - selectedLabels.length
-				} more labels in order to upload media`
-			);
-			setTimeout(() => {
-				setLabelColor('#ffffff');
-				setLabelError('');
-			}, [5000]);
-		}
-		if (uploadedCoverImage.length < 1) {
-			setDropZoneBorder2('#ff355a');
-			setUploadCoverError('You need to upload a cover in order to post');
-			setTimeout(() => {
-				setDropZoneBorder2('#ffff00');
-				setUploadCoverError('');
-			}, [5000]);
-		}
-		if (!mainCategory) {
-			setMainCategoryLabelColor('#ff355a');
-			setMainCategoryError('You need to select main category');
-			setTimeout(() => {
-				setMainCategoryLabelColor('#ffffff');
-				setMainCategoryError('');
-			}, [5000]);
-		}
-		if (!subCategory?.name) {
-			setSubCategoryLabelColor('#ff355a');
-			setSubCategoryError('You need to select sub category');
-			setTimeout(() => {
-				setSubCategoryLabelColor('#ffffff');
-				setSubCategoryError('');
-			}, [5000]);
-		}
-		if (!titleMedia) {
-			setTitleMediaLabelColor('#ff355a');
-			setTitleMediaError('You need to enter a Title');
-			setTimeout(() => {
-				setTitleMediaLabelColor('#ffffff');
-				setTitleMediaError('');
-			}, [5000]);
-		}
-		if (!description) {
-			setDescriptionColor('#ff355a');
-			setDescriptionError('You need to enter a Description');
-			setTimeout(() => {
-				setDescriptionColor('#ffffff');
-				setDescriptionError('');
-			}, [5000]);
-		}
+		setIsError({
+			uploadedFiles: uploadedFiles.length < 1,
+			selectedLabels: selectedLabels.length < 10,
+			uploadedCoverImage: uploadedCoverImage.length < 1,
+			mainCategory: !mainCategory,
+			subCategory: !subCategory.name,
+			titleMedia: !titleMedia && { message: 'You need to enter a Title' },
+			description: !description
+		});
+
+		setTimeout(() => {
+			setIsError({});
+		}, 5000);
 	};
 
 	const deleteMedia = async (id) => {
@@ -444,7 +364,7 @@ const UploadOrEditMedia = ({
 	};
 
 	const uploadMedia = async (id, payload) => {
-		console.log(payload);
+		// console.log(payload);
 		let media_type = mainCategory?.id;
 		setMediaButtonStatus(true);
 		try {
@@ -458,18 +378,12 @@ const UploadOrEditMedia = ({
 							duration: Math.round(fileDuration),
 							width: fileWidth,
 							height: fileHeight,
-							// sub_category: subCategory,
-
 							title: titleMedia,
-							// media_dropbox_url: dropboxLink,
-							// image_dropbox_url: dropboxLink2,
 							...(dropboxLink ? { media_dropbox_url: dropboxLink } : {}),
 							...(dropboxLink2 ? { image_dropbox_url: dropboxLink2 } : {}),
 							...(selectedLabels.length ? { labels: [...selectedLabels] } : {}),
 							description: description,
 							data: {
-								// file_name_media: payload?.file_name,
-								// file_name_image: payload?.file_name2,
 								video_data: payload?.data?.Keys?.VideoKey,
 								image_data: payload?.data?.Keys?.ImageKey,
 								audio_data: payload?.data?.Keys?.AudioKey
@@ -506,7 +420,7 @@ const UploadOrEditMedia = ({
 		}
 	};
 
-	const uploadFileToServer = async (file) => {
+	const uploadFileToServer = async (file, type) => {
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
@@ -526,7 +440,11 @@ const UploadOrEditMedia = ({
 				let response = await axios.put(result?.data?.data?.url, file.file, {
 					headers: { 'Content-Type': file.mime_type }
 				});
-				return { ...result.data.data, signed_response: response };
+				return {
+					...result.data.data,
+					signed_response: response,
+					fileType: type
+				};
 			} else {
 				throw 'Error';
 			}
@@ -569,20 +487,6 @@ const UploadOrEditMedia = ({
 		selectedLabels.length < 10;
 
 	useEffect(() => {
-		// console.log(specificMedia?.media_dropbox_url, 'dl1');
-		// console.log(specificMedia?.media_dropbox_url?.length, 'dl1');
-		// console.log(specificMedia?.description?.replace(/\s+/g, '')?.trim(), 'dl1');
-		// console.log(
-		// 	specificMedia?.description?.replace(/\s+/g, '')?.trim()?.length,
-		// 	'dl1'
-		// );
-		// console.log(description?.replace(/\s+/g, '')?.trim(), 'dl2');
-		// console.log(description?.replace(/\s+/g, '')?.trim()?.length, 'dl2');
-		// console.log(specificMedia?.title, 'dl1');
-		// console.log(specificMedia?.title?.length, 'dl1');
-		// console.log(titleMedia, 'dl2');
-		// console.log(titleMedia?.length, 'dl2');
-
 		if (specificMedia) {
 			setEditBtnDisabled(
 				mediaButtonStatus ||
@@ -630,7 +534,6 @@ const UploadOrEditMedia = ({
 		//e -- name
 		//find name and will return whole object
 		let setData = subCategories.find((u) => u.name === e);
-		//console.log(setData);
 		setSubCategory(setData);
 	};
 
@@ -640,22 +543,26 @@ const UploadOrEditMedia = ({
 		} else {
 			setMediaButtonStatus(true);
 			setIsLoadingUploadMedia(true);
-
-			if (
-				(await handleTitleDuplicate(titleMedia)) === 200 &&
-				titleMedia !== specificMedia.title
-			) {
-				setTitleMediaLabelColor('#ff355a');
-				setTitleMediaError('This title already exists');
-				setTimeout(() => {
-					setTitleMediaLabelColor('#ffffff');
-					setTitleMediaError('');
-				}, [5000]);
-				setIsLoadingUploadMedia(false);
-				setMediaButtonStatus(false);
-				return;
-			}
 			if (isEdit) {
+				if (specificMedia?.title?.trim() !== titleMedia?.trim()) {
+					if (
+						(await handleTitleDuplicate(titleMedia)) === 200 &&
+						titleMedia !== specificMedia.title
+					) {
+						setIsError((prev) => {
+							return {
+								...prev,
+								titleMedia: { message: 'This title already exists' }
+							};
+						});
+						setTimeout(() => {
+							setIsError({});
+						}, [5000]);
+						setIsLoadingUploadMedia(false);
+						setMediaButtonStatus(false);
+						return;
+					}
+				}
 				// uploadMedia(specificMedia?.id, {
 				// 	title: titleMedia,
 				// 	description
@@ -665,7 +572,8 @@ const UploadOrEditMedia = ({
 					uploadedCoverImage[0]
 				].map(async (_file) => {
 					if (_file.file) {
-						return await uploadFileToServer(_file);
+						console.log('_file', _file);
+						return await uploadFileToServer(_file, _file.type);
 					} else {
 						return _file;
 					}
@@ -673,65 +581,71 @@ const UploadOrEditMedia = ({
 
 				Promise.all([...uploadFilesPromiseArray])
 					.then(async (mediaFiles) => {
-						const completeUpload = await axios.post(
-							`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-							{
-								file_name: uploadedFiles[0].fileName,
-								type: 'medialibrary',
-								data: {
-									bucket: 'media',
-									multipart_upload:
-										uploadedFiles[0]?.mime_type == 'video/mp4'
-											? [
-													{
-														e_tag:
-															mediaFiles[0]?.signed_response?.headers?.etag.replace(
-																/['"]+/g,
-																''
-															),
-														part_number: 1
-													}
-											  ]
-											: ['image'],
-									keys: {
-										image_key: mediaFiles[1]?.keys?.image_key,
-										...(mainCategory.name === 'Watch' ||
-										specificMedia?.media_type === 'Watch'
-											? {
-													video_key: mediaFiles[0]?.keys?.video_key,
-													audio_key: ''
-											  }
-											: {
-													audio_key: mediaFiles[0]?.keys?.audio_key,
-													video_key: ''
-											  })
+						const completedUpload = mediaFiles.map(async (file) => {
+							if (file?.signed_response) {
+								return await axios.post(
+									`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+									{
+										file_name:
+											file.fileType === 'image'
+												? uploadedCoverImage[0].fileName
+												: uploadedFiles[0].fileName,
+										type: 'medialibrary',
+										data: {
+											bucket: 'media',
+											multipart_upload:
+												uploadedFiles[0]?.mime_type == 'video/mp4'
+													? [
+															{
+																e_tag:
+																	file?.signed_response?.headers?.etag.replace(
+																		/['"]+/g,
+																		''
+																	),
+																part_number: 1
+															}
+													  ]
+													: ['image'],
+											keys: {
+												image_key: file?.keys?.image_key,
+												...(mainCategory.name === 'Watch' ||
+												specificMedia?.media_type === 'Watch'
+													? {
+															video_key: file?.keys?.video_key,
+															audio_key: ''
+													  }
+													: {
+															audio_key: file?.keys?.audio_key,
+															video_key: ''
+													  })
+											},
+											upload_id:
+												mainCategory.name === 'Watch' ||
+												specificMedia?.media_type === 'Watch'
+													? file.upload_id || 'image'
+													: file.fileType === 'image'
+													? 'image'
+													: 'audio'
+										}
 									},
-									upload_id:
-										mainCategory.name === 'Watch' ||
-										specificMedia?.media_type === 'Watch'
-											? mediaFiles[0].upload_id
-											: 'audio'
-								}
-							},
-							{
-								headers: {
-									Authorization: `Bearer ${
-										getLocalStorageDetails()?.access_token
-									}`
-								}
+									{
+										headers: {
+											Authorization: `Bearer ${
+												getLocalStorageDetails()?.access_token
+											}`
+										}
+									}
+								);
 							}
-						);
-
+						});
 						await uploadMedia(specificMedia?.id, {
-							// file_name: uploadedFiles[0].fileName,
-							// file_name2: uploadedCoverImage[0].fileName,
 							title: titleMedia,
 							description,
 							type: 'medialibrary',
 							data: {
 								file_name_media: uploadedFiles[0].fileName,
 								file_name_image: uploadedCoverImage[0].fileName,
-								...completeUpload?.data?.data
+								...completedUpload?.data?.data
 							}
 						});
 					})
@@ -739,6 +653,23 @@ const UploadOrEditMedia = ({
 						setIsLoadingUploadMedia(false);
 					});
 			} else {
+				if (
+					(await handleTitleDuplicate(titleMedia)) === 200 &&
+					titleMedia !== specificMedia.title
+				) {
+					setIsError((prev) => {
+						return {
+							...prev,
+							titleMedia: { message: 'This title already exists' }
+						};
+					});
+					setTimeout(() => {
+						setIsError({});
+					}, [5000]);
+					setIsLoadingUploadMedia(false);
+					setMediaButtonStatus(false);
+					return;
+				}
 				let uploadFilesPromiseArray = [
 					uploadedFiles[0],
 					uploadedCoverImage[0]
@@ -858,7 +789,13 @@ const UploadOrEditMedia = ({
 							<h5>{heading1}</h5>
 							<div className={classes.categoryContainer}>
 								<div className={classes.mainCategory}>
-									<h6 style={{ color: mainCategoryLabelColor }}>
+									<h6
+										className={[
+											isError.mainCategory
+												? classes.errorState
+												: classes.noErrorState
+										].join(' ')}
+									>
 										MAIN CATEGORY
 									</h6>
 									<Select
@@ -872,15 +809,8 @@ const UploadOrEditMedia = ({
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
 										value={isEdit ? mainCategory : mainCategory?.name}
 										onChange={(e) => {
-											// setSubCategory({ id: null, name: '' });
 											setDisableDropdown(true);
-											// setMainCategory(e.target.value);
-											//calling function , passing name (i.e. watch & listen)
 											MainCategoryId(e.target.value);
-
-											setMainCategoryLabelColor('#ffffff');
-											setMainCategoryError('');
-
 											if (uploadedFiles.length) {
 												uploadedFiles.map((file) => handleDeleteFile(file.id));
 											}
@@ -928,11 +858,10 @@ const UploadOrEditMedia = ({
 									</Select>
 									<div className={classes.catergoryErrorContainer}>
 										<p className={classes.uploadMediaError}>
-											{mainCategoryError}
+											{isError.mainCategory
+												? 'You need to select main category'
+												: ''}
 										</p>
-										{/* <p className={classes.uploadMediaError2}>
-									{mainCategory?.name || mainCategory ? subCategoryError : ''}
-								</p> */}
 									</div>
 								</div>
 								<div className={classes.subCategory}>
@@ -956,8 +885,6 @@ const UploadOrEditMedia = ({
 										onChange={(e) => {
 											setDisableDropdown(true);
 											SubCategoryId(e.target.value);
-											setSubCategoryLabelColor('#ffffff');
-											setSubCategoryError('');
 										}}
 										className={`${classes.select} ${
 											isEdit ? `${classes.isEditSelect}` : ''
@@ -1001,7 +928,7 @@ const UploadOrEditMedia = ({
 										{isEdit
 											? ' '
 											: mainCategory?.name || mainCategory
-											? subCategoryError
+											? isError.subCategory && 'You need to select sub category'
 											: ''}
 										{/* {} */}
 									</p>
@@ -1058,9 +985,16 @@ const UploadOrEditMedia = ({
 									/>
 									{!uploadedFiles.length && (
 										<section
-											className={classes.dropZoneContainer}
+											className={[
+												classes.dropZoneContainer,
+												isError.uploadedFiles
+													? classes.errorState
+													: classes.noErrorState
+											].join(' ')}
 											style={{
-												borderColor: dropZoneBorder
+												borderColor: isError.uploadedFiles
+													? '#ff355a'
+													: 'yellow'
 											}}
 										>
 											<div {...getRootProps({ className: classes.dropzone })}>
@@ -1078,7 +1012,9 @@ const UploadOrEditMedia = ({
 														: 'Supported format is mp3'}
 												</p>
 												<p className={classes.uploadMediaError}>
-													{uploadMediaError}
+													{isError.uploadedFiles
+														? 'You need to upload a media in order to post'
+														: ''}
 												</p>
 											</div>
 										</section>
@@ -1122,9 +1058,16 @@ const UploadOrEditMedia = ({
 									/>
 									{!uploadedCoverImage.length && (
 										<section
-											className={classes.dropZoneContainer}
+											className={[
+												classes.dropZoneContainer,
+												isError.uploadedCoverImage
+													? classes.errorState
+													: classes.noErrorState
+											].join(' ')}
 											style={{
-												borderColor: dropZoneBorder2
+												borderColor: isError.uploadedCoverImage
+													? '#ff355a'
+													: 'yellow'
 											}}
 										>
 											<div {...getRootProps2({ className: classes.dropzone })}>
@@ -1139,7 +1082,9 @@ const UploadOrEditMedia = ({
 													Supported formats are jpeg, png
 												</p>
 												<p className={classes.uploadMediaError}>
-													{uploadCoverError}
+													{isError.uploadedCoverImage
+														? 'You need to upload a cover in order to post'
+														: ''}
 												</p>
 											</div>
 										</section>
@@ -1167,7 +1112,15 @@ const UploadOrEditMedia = ({
 
 									<div className={classes.titleContainer}>
 										<div className={classes.characterCount}>
-											<h6 style={{ color: titleMediaLabelColor }}>TITLE</h6>
+											<h6
+												className={[
+													isError.titleMedia
+														? classes.errorState
+														: classes.noErrorState
+												].join(' ')}
+											>
+												TITLE
+											</h6>
 											<h6
 												style={{
 													color:
@@ -1185,8 +1138,6 @@ const UploadOrEditMedia = ({
 											value={titleMedia}
 											onChange={(e) => {
 												setTitleMedia(e.target.value);
-												setTitleMediaError('');
-												setTitleMediaLabelColor('#ffffff');
 											}}
 											placeholder={'Please write your title here'}
 											className={classes.textField}
@@ -1199,10 +1150,20 @@ const UploadOrEditMedia = ({
 											maxRows={2}
 										/>
 									</div>
-									<p className={classes.mediaError}>{titleMediaError}</p>
+									<p className={classes.mediaError}>
+										{isError.titleMedia ? isError.titleMedia.message : ''}
+									</p>
 
 									<div className={classes.titleContainer}>
-										<h6 style={{ color: labelColor }}>LABELS</h6>
+										<h6
+											className={[
+												isError.selectedLabels
+													? classes.errorState
+													: classes.noErrorState
+											].join(' ')}
+										>
+											LABELS
+										</h6>
 										<Labels
 											isEdit={isEdit}
 											setDisableDropdown={setDisableDropdown}
@@ -1213,11 +1174,24 @@ const UploadOrEditMedia = ({
 											handleChangeExtraLabel={handleChangeExtraLabel}
 										/>
 									</div>
-
-									<p className={classes.mediaError}>{labelError}</p>
+									<p className={classes.mediaError}>
+										{isError.selectedLabels
+											? `You need to add ${
+													10 - selectedLabels.length
+											  } more labels in order to upload media`
+											: ''}
+									</p>
 
 									<div className={classes.titleContainer}>
-										<h6 style={{ color: descriptionColor }}>DESCRIPTION</h6>
+										<h6
+											className={[
+												isError.description
+													? classes.errorState
+													: classes.noErrorState
+											].join(' ')}
+										>
+											DESCRIPTION
+										</h6>
 										<TextField
 											value={description}
 											onChange={(e) => {
@@ -1236,8 +1210,11 @@ const UploadOrEditMedia = ({
 											maxRows={4}
 										/>
 									</div>
-
-									<p className={classes.mediaError}>{descriptionError}</p>
+									<p className={classes.mediaError}>
+										{isError.description
+											? 'You need to enter a Description'
+											: ''}
+									</p>
 								</>
 							) : (
 								<></>

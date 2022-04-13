@@ -91,7 +91,7 @@ const DragAndDropField = ({
 															src={file.img}
 															className={classes.fileThumbnail}
 															style={{
-																objectFit: 'cover',
+																objectFit: 'contain',
 																objectPosition: 'center'
 															}}
 															ref={imgEl}
@@ -158,6 +158,14 @@ const DragAndDropField = ({
 														</>
 													) : (
 														<div style={{ display: 'flex' }}>
+															{isPost && uploadedFiles.length > 1 && (
+																<span {...provided.dragHandleProps}>
+																	<MenuIcon
+																		style={{ cursor: 'grab' }}
+																		className={classes.filePreviewIcons}
+																	/>
+																</span>
+															)}
 															<EyeIcon
 																onClick={() => {
 																	setPreviewBool(true);

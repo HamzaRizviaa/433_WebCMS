@@ -173,10 +173,7 @@
 
 .dropZoneContainer {
 	//border: 1px solid $neon-yellow;
-	border-top: 1.5px dashed $neon-yellow;
-	border-right: 1.5px dashed $neon-yellow;
-	border-bottom: 1.5px dashed $neon-yellow;
-	border-left: 1.5px dashed $neon-yellow;
+	border: 1.5px dashed $neon-yellow;
 	//border-style: dashed;
 	cursor: pointer;
 	border-radius: 1rem;
@@ -378,4 +375,10 @@
 
 .toolTipArrow {
 	color: $black-color !important;
+}
+.errorState {
+	color: $red;
+}
+.noErrorState {
+	color: $white-color;
 }

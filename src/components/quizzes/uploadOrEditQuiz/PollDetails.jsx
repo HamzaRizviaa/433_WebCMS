@@ -30,8 +30,7 @@ export default function PollDetails({
 	};
 
 	const muiClasses = useStyles();
-	// on edit click on row with type:poll
-	// poll quiz or view poll details
+	// Question Library :  click on row with type:poll
 	return (
 		<Slider
 			open={open}
@@ -47,9 +46,6 @@ export default function PollDetails({
 			disableDropdown={disableDropdown}
 			quiz={true}
 		>
-			{/* {console.log(status, 'status in poll')} */}
-			{/* {status === 'ACTIVE' ? ( */}
-
 			<div className={muiClasses.root}>
 				<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
 					<TabsListUnstyled
@@ -60,7 +56,7 @@ export default function PollDetails({
 						<TabUnstyled>Edit Poll</TabUnstyled>
 					</TabsListUnstyled>
 					<TabPanelUnstyled value={0}>
-						{/* table */}
+						{/* poll results table */}
 						<QuizResults
 							handleClose={() => {
 								handleClose();
@@ -70,8 +66,7 @@ export default function PollDetails({
 						/>
 					</TabPanelUnstyled>
 					<TabPanelUnstyled value={1}>
-						{/* add edit quiz */}
-						{/* <EditQuiz/>  */}
+						{/*  edit poll */}
 						<UploadOrEditQuiz
 							type={'poll'}
 							editPoll={isEdit}
@@ -91,14 +86,6 @@ export default function PollDetails({
 					</TabPanelUnstyled>
 				</TabsUnstyled>
 			</div>
-			{/* ) : (
-				<QuizResults
-					handleClose={() => {
-						handleClose();
-					}}
-					style={{ minWidth: '40% !important' }}
-				/>
-			)} */}
 		</Slider>
 	);
 }

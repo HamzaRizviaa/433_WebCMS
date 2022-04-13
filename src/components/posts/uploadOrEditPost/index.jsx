@@ -2,15 +2,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditPost.module.scss';
 import { useDropzone } from 'react-dropzone';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import MenuIcon from '@material-ui/icons/Menu';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
 import DragAndDropField from '../../DragAndDropField';
 import Labels from '../../Labels';
-import { TextField } from '@material-ui/core';
-import { CircularProgress } from '@material-ui/core';
+import { TextField, CircularProgress } from '@material-ui/core';
 import ToggleSwitch from '../../switch';
 import Button from '../../button';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,24 +23,16 @@ import {
 	getPosts,
 	getPostLabels
 } from '../../../pages/PostLibrary/postLibrarySlice';
-import captureVideoFrame from 'capture-video-frame';
 import Close from '@material-ui/icons/Close';
-// import Cropper from 'cropperjs';
-// import 'cropperjs/dist/cropper.css';
-import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
-import { Popper, Paper } from '@mui/material';
-import Tooltip from '@mui/material/Tooltip';
-import Fade from '@mui/material/Fade';
+import { Autocomplete, Popper, Paper, Tooltip, Fade } from '@mui/material';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
-import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
 import { ReactComponent as PortraitCrop } from '../../../assets/portrait_rect.svg';
 import { ReactComponent as LandscapeCrop } from '../../../assets/Rectangle_12.svg';
 import { ReactComponent as SquareCropSelected } from '../../../assets/Square_selected.svg';
 import { ReactComponent as PortraitCropSelected } from '../../../assets/portrait_rect_selected.svg';
 import { ReactComponent as LandscapeCropSelected } from '../../../assets/Rectangle_12_selected.svg';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 
 import LoadingOverlay from 'react-loading-overlay';
@@ -59,20 +48,10 @@ const UploadOrEditPost = ({
 }) => {
 	const [caption, setCaption] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
-	// const [dropboxLinkError, setDropboxLinkError] = useState('');
-	// const [dropboxLinkColor, setDropboxLinkColor] = useState('#ffffff');
 	const [value, setValue] = useState(false);
-	const [uploadMediaError, setUploadMediaError] = useState('');
-	const [mediaError, setMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [selectedLabels, setSelectedLabels] = useState([]);
-	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
-	const [mediaLabelColor, setMediaLabelColor] = useState('#ffffff');
-	const [captionColor, setCaptionColor] = useState('#ffffff');
-	const [captionError, setCaptionError] = useState('');
-	const [labelColor, setLabelColor] = useState('#ffffff');
-	const [labelError, setLabelError] = useState('');
 	const [selectedMedia, setSelectedMedia] = useState(null);
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
@@ -89,37 +68,14 @@ const UploadOrEditPost = ({
 	const [dropdownPosition, setDropdownPosition] = useState(false);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
-	// const [aspect, setAspect] = useState(1 / 1);
-	// const [imgDestination, setImageDestination] = useState('');
-	// const imageElement = useRef();
-	//const [inputValue, setInputValue] = useState('');
-
-	//a library that takes height width input and gives cropped image
-
-	// const tenFilesValidator = (file) => {
-	// 	if (uploadedFiles.indexOf(file) > 9) {
-	// 		console.log(uploadedFiles.indexOf(file));
-	// 		return {
-	// 			code: 'max-files-reached',
-	// 			message: `You have reached maximum files allowed`
-	// 		};
-	// 	}
-	// 	return null;
-	// };
-
-	// const ref = useRef(null);
-	// useEffect(() => {
-	// 	console.log('width', ref.current ? ref.current.offsetWidth : 0);
-	// }, [ref.current]);
+	const [isError, setIsError] = useState({});
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png, video/mp4',
 			maxFiles: 10
-			// validator: tenFilesValidator
 		});
 
-	//const media = useSelector((state) => state.mediaDropdown.media);
 	const allMedia = useSelector((state) => state.mediaLibraryOriginal.allMedia);
 	const labels = useSelector((state) => state.postLibrary.labels);
 	const specificPost = useSelector((state) => state.postLibrary.specificPost);
@@ -198,14 +154,14 @@ const UploadOrEditPost = ({
 							fileName: file.file_name,
 							id: makeid(10),
 							url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
-							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.thumbnail_url}`,
+							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.thumbnail_url}`, //img
 							type: 'video'
 						};
 					} else {
 						return {
 							fileName: file.file_name,
 							id: makeid(10),
-							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
+							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`, //img
 							type: 'image'
 						};
 					}
@@ -249,8 +205,6 @@ const UploadOrEditPost = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			setUploadMediaError('');
-			setDropZoneBorder('#ffff00');
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -275,12 +229,8 @@ const UploadOrEditPost = ({
 		setCaption('');
 		setDropboxLink('');
 		setValue(false);
-		setUploadMediaError('');
-		setMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
-		setDropZoneBorder('#ffff00');
-		setMediaLabelColor('#ffffff');
 		setSelectedMedia(null);
 		setPostButtonStatus(false);
 		setDimensionSelect('square');
@@ -295,7 +245,7 @@ const UploadOrEditPost = ({
 		setSelectedLabels([]);
 		setDisableDropdown(true);
 		setDropdownPosition(false);
-		//setImageDestination('');
+		setIsError({});
 	};
 
 	// a little function to help us with reordering the result
@@ -328,67 +278,33 @@ const UploadOrEditPost = ({
 	};
 
 	const validatePostBtn = () => {
-		if (uploadedFiles.length < 1) {
-			setDropZoneBorder('#ff355a');
-			setUploadMediaError('You need to upload a media in order to post');
-			setTimeout(() => {
-				setDropZoneBorder('#ffff00');
-				setUploadMediaError('');
-			}, [5000]);
-		}
+		setIsError({
+			caption: !caption,
+			uploadedFiles: uploadedFiles.length < 1,
+			selectedLabels: selectedLabels.length < 10,
+			selectedMediaValue: value && !selectedMedia
+		});
 
-		if (selectedLabels.length < 10) {
-			setLabelColor('#ff355a');
-			setLabelError(
-				`You need to add ${
-					10 - selectedLabels.length
-				} more labels in order to post`
-			);
-			setTimeout(() => {
-				setLabelColor('#ffff00');
-				setLabelError('');
-			}, [5000]);
-		}
-		if (value && !selectedMedia) {
-			setMediaLabelColor('#ff355a');
-			setMediaError('This field is required');
-			setTimeout(() => {
-				setMediaLabelColor('#ffffff');
-				setMediaError('');
-			}, [5000]);
-		}
-		if (!caption) {
-			setCaptionColor('#ff355a');
-			setCaptionError('This field is required');
-			setTimeout(() => {
-				setCaptionColor('#ffffff');
-				setCaptionError('');
-			}, [5000]);
-		}
-
-		// if (!dropboxLink) {
-		// 	setDropboxLinkColor('#ff355a');
-		// 	setDropboxLinkError('This field is required');
-		// 	setTimeout(() => {
-		// 		setDropboxLinkColor('#ffffff');
-		// 		setDropboxLinkError('');
-		// 	}, [5000]);
-		// }
+		setTimeout(() => {
+			setIsError({});
+		}, 5000);
 	};
 
 	const createPost = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
-		console.log(mediaFiles, 'mediaFiles in post');
 
 		let media_files = mediaFiles.map((file, index) => {
 			if (file.file_name) {
 				return file;
 			} else {
-				return Object.assign(file, {
+				let _file = Object.assign(file, {
 					file_name: file.fileName,
-					media_url: file.img.split('cloudfront.net/')[1]
-					//sort_order: index + 1
+					media_url: file.img.split('cloudfront.net/')[1],
+					sort_order: 0
 				});
+				delete _file.fileName;
+				delete _file.img;
+				return _file;
 			}
 		});
 
@@ -400,14 +316,11 @@ const UploadOrEditPost = ({
 					media_files: [...media_files],
 					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
 					orientation_type: dimensionSelect,
-					...(selectedMedia
-						? { media_id: selectedMedia.id }
-						: { media_id: null }),
+					...(selectedMedia ? { media_id: selectedMedia.id } : {}),
 					...(isEdit && id ? { post_id: id } : {}),
 					...(!isEdit && selectedLabels.length
 						? { labels: [...selectedLabels] }
 						: {}),
-					// ...(!isEdit ? { media_files: [...mediaFiles] } : {}),
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -455,8 +368,6 @@ const UploadOrEditPost = ({
 			if (result?.data?.status_code === 200) {
 				toast.success('Post has been deleted!');
 				handleClose();
-
-				//setting a timeout for getting post after delete.
 				dispatch(getPosts({ page }));
 			}
 		} catch (e) {
@@ -470,31 +381,23 @@ const UploadOrEditPost = ({
 		setDimensionSelect('square');
 		setImageToResizeWidth(80);
 		setImageToResizeHeight(80);
-		// setAspect(1 / 1);
-		//cropMe(1);
 	};
 
 	const landscapeCrop = () => {
 		setDimensionSelect('landscape');
 		setImageToResizeWidth(80.22);
 		setImageToResizeHeight(42);
-		// setAspect(1.91 / 1);
-		//cropMe(1.91);
 	};
 
 	const portraitCrop = () => {
 		setDimensionSelect('portrait');
 		setImageToResizeWidth(64);
 		setImageToResizeHeight(80);
-		// setAspect(4 / 5);
-		//cropMe(0.8);
 	};
 
 	const [newLabels, setNewLabels] = useState([]);
 
 	const handleChangeExtraLabel = (e) => {
-		// e.preventDefault();
-		// e.stopPropagation();
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
@@ -514,7 +417,6 @@ const UploadOrEditPost = ({
 	const postBtnDisabled =
 		!uploadedFiles.length ||
 		!caption ||
-		// !dropboxLink ||
 		postButtonStatus ||
 		(value && !selectedMedia) ||
 		selectedLabels.length < 10;
@@ -522,14 +424,47 @@ const UploadOrEditPost = ({
 	const editBtnDisabled =
 		postButtonStatus ||
 		!caption ||
-		// !dropboxLink ||
 		(value && !selectedMedia) ||
 		(specificPost?.dropbox_url === dropboxLink.trim() &&
 			specificPost?.caption === caption.trim());
-	// const regex = /[!@#$%^&*(),.?":{}|<>/\\ ]/g;
 
-	// console.log('specific post', specificPost?.media_id);
-	// console.log('normal', selectedMedia?.id);
+	const addSavePostBtn = () => {
+		if (postBtnDisabled || editBtnDisabled) {
+			validatePostBtn();
+		} else {
+			setPostButtonStatus(true);
+			if (isEdit) {
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file, 'postlibrary');
+					} else {
+						return _file;
+					}
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createPost(specificPost?.id, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingCreatePost(false);
+					});
+			} else {
+				setIsLoadingCreatePost(true);
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					return uploadFileToServer(_file, 'postlibrary');
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createPost(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingCreatePost(false);
+					});
+			}
+		}
+	};
 
 	return (
 		<Slider
@@ -689,7 +624,7 @@ const UploadOrEditPost = ({
 								<section
 									className={classes.dropZoneContainer}
 									style={{
-										borderColor: dropZoneBorder
+										borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
 									}}
 								>
 									<div {...getRootProps({ className: classes.dropzone })}>
@@ -705,7 +640,9 @@ const UploadOrEditPost = ({
 											Supported formats are jpeg, png and mp4
 										</p>
 										<p className={classes.uploadMediaError}>
-											{uploadMediaError}
+											{isError.uploadedFiles
+												? 'You need to upload a media in order to post'
+												: ''}
 										</p>
 									</div>
 								</section>
@@ -729,9 +666,16 @@ const UploadOrEditPost = ({
 									}}
 								/>
 							</div>
-							{/* <p className={classes.mediaError}>{dropboxLinkError}</p> */}
 							<div className={classes.captionContainer}>
-								<h6 style={{ color: labelColor }}>LABELS</h6>
+								<h6
+									className={
+										isError.selectedLabels
+											? classes.errorState
+											: classes.noErrorState
+									}
+								>
+									LABELS
+								</h6>
 								<Labels
 									isEdit={isEdit}
 									setDisableDropdown={setDisableDropdown}
@@ -742,9 +686,22 @@ const UploadOrEditPost = ({
 									handleChangeExtraLabel={handleChangeExtraLabel}
 								/>
 							</div>
-							<p className={classes.mediaError}>{labelError}</p>
+							<p className={classes.mediaError}>
+								{isError.selectedLabels
+									? `You need to add ${
+											10 - selectedLabels.length
+									  } more labels in
+                                                order to post`
+									: ''}
+							</p>
 							<div className={classes.captionContainer}>
-								<h6 style={{ color: captionColor }}>CAPTION</h6>
+								<h6
+									className={
+										isError.caption ? classes.errorState : classes.noErrorState
+									}
+								>
+									CAPTION
+								</h6>
 								<TextField
 									value={caption}
 									onChange={(e) => setCaption(e.target.value)}
@@ -761,7 +718,11 @@ const UploadOrEditPost = ({
 									maxRows={4}
 								/>
 							</div>
-							<p className={classes.mediaError}>{captionError}</p>
+							<p className={classes.mediaError}>
+								{isError.caption
+									? 'You need to upload a caption in order to post'
+									: ''}
+							</p>
 
 							<div className={classes.postMediaContainer}>
 								<div className={classes.postMediaHeader}>
@@ -781,7 +742,15 @@ const UploadOrEditPost = ({
 									style={{ marginBottom: dropdownPosition ? 200 : 0 }}
 									className={classes.mediaContainer}
 								>
-									<h6 style={{ color: mediaLabelColor }}>SELECT MEDIA</h6>
+									<h6
+										className={
+											isError.selectedMediaValue
+												? classes.errorState
+												: classes.noErrorState
+										}
+									>
+										SELECT MEDIA
+									</h6>
 									<Autocomplete
 										value={selectedMedia}
 										PaperComponent={(props) => {
@@ -861,7 +830,11 @@ const UploadOrEditPost = ({
 										popupIcon={''}
 									/>
 
-									<p className={classes.mediaError}>{mediaError}</p>
+									<p className={classes.mediaError}>
+										{isError.selectedMediaValue
+											? 'You need to select a media in order to post'
+											: ''}
+									</p>
 								</div>
 							) : (
 								<></>
@@ -889,48 +862,7 @@ const UploadOrEditPost = ({
 								<Button
 									disabled={isEdit ? editBtnDisabled : postBtnDisabled}
 									onClick={() => {
-										if (postBtnDisabled || editBtnDisabled) {
-											validatePostBtn();
-										} else {
-											setPostButtonStatus(true);
-											if (isEdit) {
-												let uploadFilesPromiseArray = uploadedFiles.map(
-													async (_file) => {
-														if (_file.file) {
-															return await uploadFileToServer(
-																_file,
-																'postlibrary'
-															);
-														} else {
-															return _file;
-														}
-													}
-												);
-
-												Promise.all([...uploadFilesPromiseArray])
-													.then((mediaFiles) => {
-														createPost(specificPost?.id, mediaFiles);
-													})
-													.catch(() => {
-														setIsLoadingCreatePost(false);
-													});
-											} else {
-												setIsLoadingCreatePost(true);
-												let uploadFilesPromiseArray = uploadedFiles.map(
-													async (_file) => {
-														return uploadFileToServer(_file, 'postlibrary');
-													}
-												);
-
-												Promise.all([...uploadFilesPromiseArray])
-													.then((mediaFiles) => {
-														createPost(null, mediaFiles);
-													})
-													.catch(() => {
-														setIsLoadingCreatePost(false);
-													});
-											}
-										}
+										addSavePostBtn();
 									}}
 									text={buttonText}
 								/>
