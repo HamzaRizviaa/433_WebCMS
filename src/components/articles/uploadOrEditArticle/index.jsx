@@ -406,11 +406,9 @@ const UploadOrEditViral = ({
 						// 	200 &&
 						// articleTitle !== specificArticle?.title
 					) {
-						setArticleTitleColor('#ff355a');
-						setArticleTitleError('This title already exists');
+						setIsError({ articleTitleExists: 'This title already exists' });
 						setTimeout(() => {
-							setArticleTitleColor('#ffffff');
-							setArticleTitleError('');
+							setIsError({});
 						}, [5000]);
 
 						setPostButtonStatus(false);
@@ -437,11 +435,13 @@ const UploadOrEditViral = ({
 					(await handleTitleDuplicate(articleTitle)) ===
 					'The Title Already Exist'
 				) {
-					setArticleTitleColor('#ff355a');
-					setArticleTitleError('This title already exists');
+					// setArticleTitleColor('#ff355a');
+					// setArticleTitleError('This title already exists');
+					setIsError({ articleTitleExists: 'This title already exists' });
 					setTimeout(() => {
-						setArticleTitleColor('#ffffff');
-						setArticleTitleError('');
+						// setArticleTitleColor('#ffffff');
+						// setArticleTitleError('');
+						setIsError({});
 					}, [5000]);
 
 					setPostButtonStatus(false);
@@ -560,7 +560,7 @@ const UploadOrEditViral = ({
 								<div className={classes.characterCount}>
 									<h6
 										className={
-											isError.articleTitle
+											isError.articleTitle || isError.articleTitleExists
 												? classes.errorState
 												: classes.noErrorState
 										}
@@ -600,7 +600,11 @@ const UploadOrEditViral = ({
 								/>
 							</div>
 							<p className={classes.mediaError}>
-								{isError.articleTitle ? 'This field is required' : ''}
+								{isError.articleTitle
+									? 'This field is required'
+									: isError.articleTitleExists
+									? 'This title aready Exists'
+									: ''}
 							</p>
 
 							<div className={classes.captionContainer}>
