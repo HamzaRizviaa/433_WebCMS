@@ -2,17 +2,12 @@
 @import '../../../styles/_mixins.scss';
 
 .dropZoneContainer {
-	//border: 1px solid $neon-yellow;
 	border-top: 1.5px dashed $neon-yellow;
 	border-right: 1.5px dashed $neon-yellow;
 	border-bottom: 1.5px dashed $neon-yellow;
 	border-left: 1.5px dashed $neon-yellow;
-	//border-style: dashed;
-	// padding: 0.5rem 2.5rem 0.5rem 2.5rem;
 	cursor: pointer;
 	border-radius: 1rem;
-	//margin-bottom: 1rem;
-	//margin-top: 1rem;
 }
 
 .borderRed {
@@ -112,9 +107,6 @@
 }
 
 .select {
-	// input {
-	// 	// padding: 1rem !important;
-	// }
 	.MuiSelect-select {
 		padding: 1rem 0rem 1rem 1rem;
 		padding-right: 32px;
@@ -141,12 +133,6 @@
 }
 
 .textFieldInput2 {
-	// color: white !important;
-	// padding: 0.5rem 0rem 0.5rem 1rem;
-	// margin-bottom: 0.5rem;
-	// font-size: 1.4rem !important;
-	// line-height: 1.6;
-	// background-color: #ff355a;
 	color: white !important;
 	border: 0.01px solid #404040;
 	padding: 1rem 1rem 1rem 1.5rem !important;
@@ -244,8 +230,7 @@
 
 .fileThumbnail {
 	height: 8rem;
-	//width: 8rem;
-	//max-height: 50%;
+
 	max-width: 50%;
 	border-radius: 4px;
 	background-color: white;
@@ -253,7 +238,7 @@
 
 .fileName {
 	font-size: 1rem;
-	//max-width: 100%; // to shorten the filename if its too big
+
 	white-space: nowrap;
 	max-width: 150px;
 	text-overflow: ellipsis;
@@ -297,8 +282,7 @@
 	position: absolute;
 	width: 100%;
 	height: 100%;
-	//height: 100vh;
-	//min-height: calc(100vh - 200px);
+
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -315,7 +299,6 @@
 }
 
 .headerOrientationWrapper {
-	//position: fixed;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -338,7 +321,6 @@
 }
 
 .dimensionSingle {
-	//margin-left: 1rem;
 	border-radius: 8px;
 	padding: 1rem 1rem 0.8rem 1rem;
 }
@@ -369,11 +351,6 @@
 	margin-bottom: 10px;
 }
 
-// .previewFile {
-// 	height: 8rem;
-// 	width: 8rem;
-// }
-
 video::-webkit-media-controls-fullscreen-button {
 	display: none;
 }
@@ -400,4 +377,11 @@ video::-webkit-media-controls-fullscreen-button {
 
 .toolTipArrow {
 	color: $black-color !important;
+}
+.errorState {
+	color: $red;
+}
+
+.noErrorState {
+	color: $white-color;
 }

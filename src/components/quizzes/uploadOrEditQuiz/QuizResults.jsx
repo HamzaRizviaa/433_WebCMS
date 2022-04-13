@@ -34,7 +34,6 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 }));
 
 export default function QuizResults({ handleClose, page, type }) {
-	// const muiClasses = useStyles();
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [firstUserPercentage, setFirstUserPercentage] = useState(null);
 	const [secondUserPercentage, setSecondtUserPercentage] = useState(null);
@@ -186,15 +185,12 @@ export default function QuizResults({ handleClose, page, type }) {
 		}
 	];
 
-	const tableRowEvents = {
-		onClick: (e, row) => {
-			// if (!edit) {
-			// dispatch(getSpecificPost(row.id));
-			console.log(row);
-
-			// }
-		}
-	};
+	// in case : we need to click on rows of table
+	// const tableRowEvents = {
+	// 	onClick: (e, row) => {
+	// 		console.log(row);
+	// 	}
+	// };
 
 	useEffect(() => {
 		if (sortState.sortby && sortState.order_type) {
@@ -292,7 +288,7 @@ export default function QuizResults({ handleClose, page, type }) {
 			<div className={classes.QuizDetailsHeading}>Participants</div>
 			<div className={classes.QuizDetailstableContainer}>
 				<Table
-					rowEvents={tableRowEvents}
+					// rowEvents={tableRowEvents}
 					columns={columns}
 					data={participants}
 				/>

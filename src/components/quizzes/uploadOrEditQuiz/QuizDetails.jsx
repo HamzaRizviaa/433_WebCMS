@@ -30,8 +30,7 @@ export default function QuizDetails({
 	};
 
 	const muiClasses = useStyles();
-	// on edit click on row with type:quiz
-	// edit quiz or view quiz details
+	// Question Library :  click on row with type:quiz
 
 	return (
 		<Slider
@@ -58,7 +57,7 @@ export default function QuizDetails({
 						<TabUnstyled>Edit Quiz</TabUnstyled>
 					</TabsListUnstyled>
 					<TabPanelUnstyled value={0}>
-						{/* table */}
+						{/* quiz results table */}
 						<QuizResults
 							handleClose={() => {
 								handleClose();
@@ -68,8 +67,8 @@ export default function QuizDetails({
 						/>
 					</TabPanelUnstyled>
 					<TabPanelUnstyled value={1}>
-						{/* add edit quiz */}
-						{/* <EditQuiz/>  */}
+						{/* edit quiz */}
+
 						<UploadOrEditQuiz
 							editQuiz={isEdit}
 							heading1={heading1}

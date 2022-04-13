@@ -32,6 +32,12 @@ const uploadFileToServer = async (uploadedFile, libraryType) => {
 				});
 			}
 			if (_result?.status === 200) {
+				console.log(
+					result?.data?.data,
+					'upload id ',
+					uploadedFile,
+					'upload file to server'
+				);
 				const uploadResult = await axios.post(
 					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
 					{

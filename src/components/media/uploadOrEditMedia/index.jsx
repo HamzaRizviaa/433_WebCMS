@@ -541,25 +541,26 @@ const UploadOrEditMedia = ({
 		} else {
 			setMediaButtonStatus(true);
 			setIsLoadingUploadMedia(true);
-
-			if (
-				(await handleTitleDuplicate(titleMedia)) === 200 &&
-				titleMedia !== specificMedia.title
-			) {
-				setIsError((prev) => {
-					return {
-						...prev,
-						titleMedia: { message: 'This title already exists' }
-					};
-				});
-				setTimeout(() => {
-					setIsError({});
-				}, [5000]);
-				setIsLoadingUploadMedia(false);
-				setMediaButtonStatus(false);
-				return;
-			}
 			if (isEdit) {
+				if (specificMedia?.title?.trim() !== titleMedia?.trim()) {
+					if (
+						(await handleTitleDuplicate(titleMedia)) === 200 &&
+						titleMedia !== specificMedia.title
+					) {
+						setIsError((prev) => {
+							return {
+								...prev,
+								titleMedia: { message: 'This title already exists' }
+							};
+						});
+						setTimeout(() => {
+							setIsError({});
+						}, [5000]);
+						setIsLoadingUploadMedia(false);
+						setMediaButtonStatus(false);
+						return;
+					}
+				}
 				// uploadMedia(specificMedia?.id, {
 				// 	title: titleMedia,
 				// 	description
@@ -637,8 +638,6 @@ const UploadOrEditMedia = ({
 							}
 						});
 						await uploadMedia(specificMedia?.id, {
-							// file_name: uploadedFiles[0].fileName,
-							// file_name2: uploadedCoverImage[0].fileName,
 							title: titleMedia,
 							description,
 							type: 'medialibrary',
@@ -653,6 +652,23 @@ const UploadOrEditMedia = ({
 						setIsLoadingUploadMedia(false);
 					});
 			} else {
+				if (
+					(await handleTitleDuplicate(titleMedia)) === 200 &&
+					titleMedia !== specificMedia.title
+				) {
+					setIsError((prev) => {
+						return {
+							...prev,
+							titleMedia: { message: 'This title already exists' }
+						};
+					});
+					setTimeout(() => {
+						setIsError({});
+					}, [5000]);
+					setIsLoadingUploadMedia(false);
+					setMediaButtonStatus(false);
+					return;
+				}
 				let uploadFilesPromiseArray = [
 					uploadedFiles[0],
 					uploadedCoverImage[0]
