@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditPost.module.scss';
 import { useDropzone } from 'react-dropzone';
@@ -48,11 +49,9 @@ const UploadOrEditPost = ({
 	const [caption, setCaption] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
 	const [value, setValue] = useState(false);
-	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [selectedLabels, setSelectedLabels] = useState([]);
-	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
 	const [selectedMedia, setSelectedMedia] = useState(null);
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
@@ -206,8 +205,6 @@ const UploadOrEditPost = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			setUploadMediaError('');
-			setDropZoneBorder('#ffff00');
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -232,10 +229,8 @@ const UploadOrEditPost = ({
 		setCaption('');
 		setDropboxLink('');
 		setValue(false);
-		setUploadMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
-		setDropZoneBorder('#ffff00');
 		setSelectedMedia(null);
 		setPostButtonStatus(false);
 		setDimensionSelect('square');
@@ -634,7 +629,6 @@ const UploadOrEditPost = ({
 									}}
 								/>
 							</div>
-							{/* <p className={classes.mediaError}>{dropboxLinkError}</p> */}
 							<div className={classes.captionContainer}>
 								<h6
 									className={
@@ -692,7 +686,6 @@ const UploadOrEditPost = ({
 									maxRows={4}
 								/>
 							</div>
-							{/* <p className={classes.mediaError}>{captionError}</p> */}
 
 							<div className={classes.postMediaContainer}>
 								<div className={classes.postMediaHeader}>

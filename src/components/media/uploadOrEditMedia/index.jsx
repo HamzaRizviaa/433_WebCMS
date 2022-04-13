@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import classes from './_uploadOrEditMedia.module.scss';
 import PropTypes from 'prop-types';
@@ -47,20 +46,10 @@ const UploadOrEditMedia = ({
 	const [subCategories, setSubCategories] = useState([]);
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [uploadedCoverImage, setUploadedCoverImage] = useState([]);
-	const [uploadMediaError, setUploadMediaError] = useState('');
-	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
 	const [fileRejectionError, setFileRejectionError] = useState('');
-	const [uploadCoverError, setUploadCoverError] = useState('');
-	const [dropZoneBorder2, setDropZoneBorder2] = useState('#ffff00');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
-	const [mainCategoryLabelColor, setMainCategoryLabelColor] =
-		useState('#ffffff');
-	const [mainCategoryError, setMainCategoryError] = useState('');
 	const [subCategoryLabelColor, setSubCategoryLabelColor] = useState('#ffffff');
-	const [subCategoryError, setSubCategoryError] = useState('');
 	const [titleMedia, setTitleMedia] = useState('');
-	const [titleMediaLabelColor, setTitleMediaLabelColor] = useState('#ffffff');
-	const [titleMediaError, setTitleMediaError] = useState('');
 	const [description, setDescription] = useState('');
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
@@ -246,8 +235,6 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			setUploadMediaError('');
-			setDropZoneBorder('#ffff00');
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -268,8 +255,6 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		if (acceptedFiles2?.length) {
-			setUploadCoverError('');
-			setDropZoneBorder2('#ffff00');
 			let newFiles = acceptedFiles2.map((file) => {
 				let id = makeid(10);
 				return {
@@ -293,8 +278,6 @@ const UploadOrEditMedia = ({
 		setSubCategory('');
 		setUploadedFiles([]);
 		setUploadedCoverImage([]);
-		setDropZoneBorder('#ffff00');
-		setDropZoneBorder2('#ffff00');
 		setFileRejectionError2('');
 		setSubCategoryLabelColor('#ffffff');
 		setTimeout(() => {
@@ -331,7 +314,7 @@ const UploadOrEditMedia = ({
 			uploadedCoverImage: uploadedCoverImage.length < 1,
 			mainCategory: !mainCategory,
 			subCategory: !subCategory.name,
-			titleMedia: !titleMedia,
+			titleMedia: !titleMedia && { message: 'You need to enter a Title' },
 			description: !description
 		});
 
@@ -393,18 +376,12 @@ const UploadOrEditMedia = ({
 							duration: Math.round(fileDuration),
 							width: fileWidth,
 							height: fileHeight,
-							// sub_category: subCategory,
-
 							title: titleMedia,
-							// media_dropbox_url: dropboxLink,
-							// image_dropbox_url: dropboxLink2,
 							...(dropboxLink ? { media_dropbox_url: dropboxLink } : {}),
 							...(dropboxLink2 ? { image_dropbox_url: dropboxLink2 } : {}),
 							...(selectedLabels.length ? { labels: [...selectedLabels] } : {}),
 							description: description,
 							data: {
-								// file_name_media: payload?.file_name,
-								// file_name_image: payload?.file_name2,
 								video_data: payload?.data?.Keys?.VideoKey,
 								image_data: payload?.data?.Keys?.ImageKey,
 								audio_data: payload?.data?.Keys?.AudioKey
@@ -508,20 +485,6 @@ const UploadOrEditMedia = ({
 		selectedLabels.length < 10;
 
 	useEffect(() => {
-		// console.log(specificMedia?.media_dropbox_url, 'dl1');
-		// console.log(specificMedia?.media_dropbox_url?.length, 'dl1');
-		// console.log(specificMedia?.description?.replace(/\s+/g, '')?.trim(), 'dl1');
-		// console.log(
-		// 	specificMedia?.description?.replace(/\s+/g, '')?.trim()?.length,
-		// 	'dl1'
-		// );
-		// console.log(description?.replace(/\s+/g, '')?.trim(), 'dl2');
-		// console.log(description?.replace(/\s+/g, '')?.trim()?.length, 'dl2');
-		// console.log(specificMedia?.title, 'dl1');
-		// console.log(specificMedia?.title?.length, 'dl1');
-		// console.log(titleMedia, 'dl2');
-		// console.log(titleMedia?.length, 'dl2');
-
 		if (specificMedia) {
 			setEditBtnDisabled(
 				mediaButtonStatus ||
@@ -569,7 +532,6 @@ const UploadOrEditMedia = ({
 		//e -- name
 		//find name and will return whole object
 		let setData = subCategories.find((u) => u.name === e);
-		//console.log(setData);
 		setSubCategory(setData);
 	};
 
@@ -584,11 +546,14 @@ const UploadOrEditMedia = ({
 				(await handleTitleDuplicate(titleMedia)) === 200 &&
 				titleMedia !== specificMedia.title
 			) {
-				setTitleMediaLabelColor('#ff355a');
-				setTitleMediaError('This title already exists');
+				setIsError((prev) => {
+					return {
+						...prev,
+						titleMedia: { message: 'This title already exists' }
+					};
+				});
 				setTimeout(() => {
-					setTitleMediaLabelColor('#ffffff');
-					setTitleMediaError('');
+					setIsError({});
 				}, [5000]);
 				setIsLoadingUploadMedia(false);
 				setMediaButtonStatus(false);
@@ -827,15 +792,8 @@ const UploadOrEditMedia = ({
 										style={{ backgroundColor: isEdit ? '#404040' : '#000000' }}
 										value={isEdit ? mainCategory : mainCategory?.name}
 										onChange={(e) => {
-											// setSubCategory({ id: null, name: '' });
 											setDisableDropdown(true);
-											// setMainCategory(e.target.value);
-											//calling function , passing name (i.e. watch & listen)
 											MainCategoryId(e.target.value);
-
-											setMainCategoryLabelColor('#ffffff');
-											setMainCategoryError('');
-
 											if (uploadedFiles.length) {
 												uploadedFiles.map((file) => handleDeleteFile(file.id));
 											}
@@ -910,8 +868,6 @@ const UploadOrEditMedia = ({
 										onChange={(e) => {
 											setDisableDropdown(true);
 											SubCategoryId(e.target.value);
-											setSubCategoryLabelColor('#ffffff');
-											setSubCategoryError('');
 										}}
 										className={`${classes.select} ${
 											isEdit ? `${classes.isEditSelect}` : ''
@@ -1165,8 +1121,6 @@ const UploadOrEditMedia = ({
 											value={titleMedia}
 											onChange={(e) => {
 												setTitleMedia(e.target.value);
-												setTitleMediaError('');
-												setTitleMediaLabelColor('#ffffff');
 											}}
 											placeholder={'Please write your title here'}
 											className={classes.textField}
@@ -1180,9 +1134,7 @@ const UploadOrEditMedia = ({
 										/>
 									</div>
 									<p className={classes.mediaError}>
-										{isError.titleMedia
-											? 'You need to select sub category'
-											: ''}
+										{isError.titleMedia ? isError.titleMedia.message : ''}
 									</p>
 
 									<div className={classes.titleContainer}>
