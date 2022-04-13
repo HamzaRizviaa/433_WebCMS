@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditViral.module.scss';
 import { useDropzone } from 'react-dropzone';
-// import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
