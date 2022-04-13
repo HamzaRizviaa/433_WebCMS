@@ -1,16 +1,12 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditPost.module.scss';
 import { useDropzone } from 'react-dropzone';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import MenuIcon from '@material-ui/icons/Menu';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
 import DragAndDropField from '../../DragAndDropField';
 import Labels from '../../Labels';
-import { TextField } from '@material-ui/core';
-import { CircularProgress } from '@material-ui/core';
+import { TextField, CircularProgress } from '@material-ui/core';
 import ToggleSwitch from '../../switch';
 import Button from '../../button';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,24 +22,16 @@ import {
 	getPosts,
 	getPostLabels
 } from '../../../pages/PostLibrary/postLibrarySlice';
-import captureVideoFrame from 'capture-video-frame';
 import Close from '@material-ui/icons/Close';
-// import Cropper from 'cropperjs';
-// import 'cropperjs/dist/cropper.css';
-import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
-import { Popper, Paper } from '@mui/material';
-import Tooltip from '@mui/material/Tooltip';
-import Fade from '@mui/material/Fade';
+import { Autocomplete, Popper, Paper, Tooltip, Fade } from '@mui/material';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
-import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
 import { ReactComponent as PortraitCrop } from '../../../assets/portrait_rect.svg';
 import { ReactComponent as LandscapeCrop } from '../../../assets/Rectangle_12.svg';
 import { ReactComponent as SquareCropSelected } from '../../../assets/Square_selected.svg';
 import { ReactComponent as PortraitCropSelected } from '../../../assets/portrait_rect_selected.svg';
 import { ReactComponent as LandscapeCropSelected } from '../../../assets/Rectangle_12_selected.svg';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 
 import LoadingOverlay from 'react-loading-overlay';
@@ -59,20 +47,12 @@ const UploadOrEditPost = ({
 }) => {
 	const [caption, setCaption] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
-	// const [dropboxLinkError, setDropboxLinkError] = useState('');
-	// const [dropboxLinkColor, setDropboxLinkColor] = useState('#ffffff');
 	const [value, setValue] = useState(false);
 	const [uploadMediaError, setUploadMediaError] = useState('');
-	const [mediaError, setMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [selectedLabels, setSelectedLabels] = useState([]);
 	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
-	const [mediaLabelColor, setMediaLabelColor] = useState('#ffffff');
-	const [captionColor, setCaptionColor] = useState('#ffffff');
-	const [captionError, setCaptionError] = useState('');
-	const [labelColor, setLabelColor] = useState('#ffffff');
-	const [labelError, setLabelError] = useState('');
 	const [selectedMedia, setSelectedMedia] = useState(null);
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
@@ -90,37 +70,13 @@ const UploadOrEditPost = ({
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const [isError, setIsError] = useState({});
-	// const [aspect, setAspect] = useState(1 / 1);
-	// const [imgDestination, setImageDestination] = useState('');
-	// const imageElement = useRef();
-	//const [inputValue, setInputValue] = useState('');
-
-	//a library that takes height width input and gives cropped image
-
-	// const tenFilesValidator = (file) => {
-	// 	if (uploadedFiles.indexOf(file) > 9) {
-	// 		console.log(uploadedFiles.indexOf(file));
-	// 		return {
-	// 			code: 'max-files-reached',
-	// 			message: `You have reached maximum files allowed`
-	// 		};
-	// 	}
-	// 	return null;
-	// };
-
-	// const ref = useRef(null);
-	// useEffect(() => {
-	// 	console.log('width', ref.current ? ref.current.offsetWidth : 0);
-	// }, [ref.current]);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png, video/mp4',
 			maxFiles: 10
-			// validator: tenFilesValidator
 		});
 
-	//const media = useSelector((state) => state.mediaDropdown.media);
 	const allMedia = useSelector((state) => state.mediaLibraryOriginal.allMedia);
 	const labels = useSelector((state) => state.postLibrary.labels);
 	const specificPost = useSelector((state) => state.postLibrary.specificPost);
@@ -277,11 +233,9 @@ const UploadOrEditPost = ({
 		setDropboxLink('');
 		setValue(false);
 		setUploadMediaError('');
-		setMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
 		setDropZoneBorder('#ffff00');
-		setMediaLabelColor('#ffffff');
 		setSelectedMedia(null);
 		setPostButtonStatus(false);
 		setDimensionSelect('square');
@@ -340,60 +294,12 @@ const UploadOrEditPost = ({
 		setTimeout(() => {
 			setIsError({});
 		}, 5000);
-		// if (uploadedFiles.length < 1) {
-		// 	setDropZoneBorder('#ff355a');
-		// 	setUploadMediaError('You need to upload a media in order to post');
-		// 	setTimeout(() => {
-		// 		setDropZoneBorder('#ffff00');
-		// 		setUploadMediaError('');
-		// 	}, [5000]);
-		// }
-
-		// if (selectedLabels.length < 10) {
-		// 	setLabelColor('#ff355a');
-		// 	setLabelError(
-		// 		`You need to add ${
-		// 			10 - selectedLabels.length
-		// 		} more labels in order to post`
-		// 	);
-		// 	setTimeout(() => {
-		// 		setLabelColor('#ffff00');
-		// 		setLabelError('');
-		// 	}, [5000]);
-		// }
-		// if (value && !selectedMedia) {
-		// 	setMediaLabelColor('#ff355a');
-		// 	setMediaError('This field is required');
-		// 	setTimeout(() => {
-		// 		setMediaLabelColor('#ffffff');
-		// 		setMediaError('');
-		// 	}, [5000]);
-		// }
-		// if (!caption) {
-		// 	setCaptionColor('#ff355a');
-		// 	setCaptionError('This field is required');
-		// 	setTimeout(() => {
-		// 		setCaptionColor('#ffffff');
-		// 		setCaptionError('');
-		// 	}, [5000]);
-		// }
-
-		// if (!dropboxLink) {
-		// 	setDropboxLinkColor('#ff355a');
-		// 	setDropboxLinkError('This field is required');
-		// 	setTimeout(() => {
-		// 		setDropboxLinkColor('#ffffff');
-		// 		setDropboxLinkError('');
-		// 	}, [5000]);
-		// }
 	};
 
 	const createPost = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
-		console.log(mediaFiles, 'mediaFiles in post');
 
 		let media_files = mediaFiles.map((file, index) => {
-			console.log(index, 'index ========');
 			if (file.file_name) {
 				return file;
 			} else {
@@ -404,11 +310,7 @@ const UploadOrEditPost = ({
 				});
 				delete _file.fileName;
 				delete _file.img;
-				console.log(_file, '_file');
 				return _file;
-				// let media = delete (abc.file_name, abc.img);
-				// console.log(media, '===delete keys ');
-				// return media;
 			}
 		});
 
@@ -425,7 +327,6 @@ const UploadOrEditPost = ({
 					...(!isEdit && selectedLabels.length
 						? { labels: [...selectedLabels] }
 						: {}),
-					// ...(!isEdit ? { media_files: [...mediaFiles] } : {}),
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -473,8 +374,6 @@ const UploadOrEditPost = ({
 			if (result?.data?.status_code === 200) {
 				toast.success('Post has been deleted!');
 				handleClose();
-
-				//setting a timeout for getting post after delete.
 				dispatch(getPosts({ page }));
 			}
 		} catch (e) {
@@ -488,31 +387,23 @@ const UploadOrEditPost = ({
 		setDimensionSelect('square');
 		setImageToResizeWidth(80);
 		setImageToResizeHeight(80);
-		// setAspect(1 / 1);
-		//cropMe(1);
 	};
 
 	const landscapeCrop = () => {
 		setDimensionSelect('landscape');
 		setImageToResizeWidth(80.22);
 		setImageToResizeHeight(42);
-		// setAspect(1.91 / 1);
-		//cropMe(1.91);
 	};
 
 	const portraitCrop = () => {
 		setDimensionSelect('portrait');
 		setImageToResizeWidth(64);
 		setImageToResizeHeight(80);
-		// setAspect(4 / 5);
-		//cropMe(0.8);
 	};
 
 	const [newLabels, setNewLabels] = useState([]);
 
 	const handleChangeExtraLabel = (e) => {
-		// e.preventDefault();
-		// e.stopPropagation();
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
@@ -532,7 +423,6 @@ const UploadOrEditPost = ({
 	const postBtnDisabled =
 		!uploadedFiles.length ||
 		!caption ||
-		// !dropboxLink ||
 		postButtonStatus ||
 		(value && !selectedMedia) ||
 		selectedLabels.length < 10;
@@ -540,14 +430,9 @@ const UploadOrEditPost = ({
 	const editBtnDisabled =
 		postButtonStatus ||
 		!caption ||
-		// !dropboxLink ||
 		(value && !selectedMedia) ||
 		(specificPost?.dropbox_url === dropboxLink.trim() &&
 			specificPost?.caption === caption.trim());
-	// const regex = /[!@#$%^&*(),.?":{}|<>/\\ ]/g;
-
-	// console.log('specific post', specificPost?.media_id);
-	// console.log('normal', selectedMedia?.id);
 
 	return (
 		<Slider

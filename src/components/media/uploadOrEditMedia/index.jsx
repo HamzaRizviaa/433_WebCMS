@@ -38,8 +38,6 @@ const UploadOrEditMedia = ({
 	isEdit,
 	page
 }) => {
-	const [labelColor, setLabelColor] = useState('#ffffff');
-	const [labelError, setLabelError] = useState('');
 	const [dropboxLink, setDropboxLink] = useState(''); // media dropbox url
 	const [dropboxLink2, setDropboxLink2] = useState(''); // cover image dropbox url
 	const [selectedLabels, setSelectedLabels] = useState([]);
@@ -64,8 +62,6 @@ const UploadOrEditMedia = ({
 	const [titleMediaLabelColor, setTitleMediaLabelColor] = useState('#ffffff');
 	const [titleMediaError, setTitleMediaError] = useState('');
 	const [description, setDescription] = useState('');
-	const [descriptionColor, setDescriptionColor] = useState('#ffffff');
-	const [descriptionError, setDescriptionError] = useState('');
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [previewBool, setPreviewBool] = useState(false);
@@ -268,9 +264,7 @@ const UploadOrEditMedia = ({
 		}
 	}, [acceptedFiles]);
 
-	useEffect(() => {
-		// console.log(fileDuration, 'duration');
-	}, [videoRef.current]);
+	useEffect(() => {}, [videoRef.current]);
 
 	useEffect(() => {
 		if (acceptedFiles2?.length) {
@@ -299,22 +293,13 @@ const UploadOrEditMedia = ({
 		setSubCategory('');
 		setUploadedFiles([]);
 		setUploadedCoverImage([]);
-		// setUploadMediaError('');
-		// setUploadCoverError('');
 		setDropZoneBorder('#ffff00');
 		setDropZoneBorder2('#ffff00');
-		// setFileRejectionError('');
 		setFileRejectionError2('');
-		// setMainCategoryLabelColor('#ffffff');
 		setSubCategoryLabelColor('#ffffff');
-		// setTitleMediaLabelColor('#ffffff');
-		// setDescriptionColor('#ffffff');
-		// setDescriptionError('');
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
-		// setTitleMediaError('');
-		// setMainCategoryError('');
 		setTitleMedia('');
 		setDescription('');
 		setPreviewFile(null);
@@ -353,67 +338,6 @@ const UploadOrEditMedia = ({
 		setTimeout(() => {
 			setIsError({});
 		}, 5000);
-
-		// if (uploadedFiles.length < 1) {
-		// 	setDropZoneBorder('#ff355a');
-		// 	setUploadMediaError('You need to upload a media in order to post');
-		// 	setTimeout(() => {
-		// 		setDropZoneBorder('#ffff00');
-		// 		setUploadMediaError('');
-		// 	}, [5000]);
-		// }
-		// if (selectedLabels.length < 10) {
-		// 	setLabelColor('#ff355a');
-		// 	setLabelError(
-		// 		`You need to add ${
-		// 			10 - selectedLabels.length
-		// 		} more labels in order to upload media`
-		// 	);
-		// 	setTimeout(() => {
-		// 		setLabelColor('#ffffff');
-		// 		setLabelError('');
-		// 	}, [5000]);
-		// }
-		// if (uploadedCoverImage.length < 1) {
-		// 	setDropZoneBorder2('#ff355a');
-		// 	setUploadCoverError('You need to upload a cover in order to post');
-		// 	setTimeout(() => {
-		// 		setDropZoneBorder2('#ffff00');
-		// 		setUploadCoverError('');
-		// 	}, [5000]);
-		// }
-		// if (!mainCategory) {
-		// 	setMainCategoryLabelColor('#ff355a');
-		// 	setMainCategoryError('You need to select main category');
-		// 	setTimeout(() => {
-		// 		setMainCategoryLabelColor('#ffffff');
-		// 		setMainCategoryError('');
-		// 	}, [5000]);
-		// }
-		// if (!subCategory?.name) {
-		// 	setSubCategoryLabelColor('#ff355a');
-		// 	setSubCategoryError('You need to select sub category');
-		// 	setTimeout(() => {
-		// 		setSubCategoryLabelColor('#ffffff');
-		// 		setSubCategoryError('');
-		// 	}, [5000]);
-		// }
-		// if (!titleMedia) {
-		// 	setTitleMediaLabelColor('#ff355a');
-		// 	setTitleMediaError('You need to enter a Title');
-		// 	setTimeout(() => {
-		// 		setTitleMediaLabelColor('#ffffff');
-		// 		setTitleMediaError('');
-		// 	}, [5000]);
-		// }
-		// if (!description) {
-		// 	setDescriptionColor('#ff355a');
-		// 	setDescriptionError('You need to enter a Description');
-		// 	setTimeout(() => {
-		// 		setDescriptionColor('#ffffff');
-		// 		setDescriptionError('');
-		// 	}, [5000]);
-		// }
 	};
 
 	const deleteMedia = async (id) => {
