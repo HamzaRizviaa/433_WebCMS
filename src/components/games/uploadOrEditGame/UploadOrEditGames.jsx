@@ -19,7 +19,6 @@ import LoadingOverlay from 'react-loading-overlay';
 import InputAdornment from '@mui/material/InputAdornment';
 import Slide from '@mui/material/Slide';
 import { getAllGames } from '../../../pages/GamesLibrary/gamesLibrarySlice';
-//import Fade from '@mui/material/Fade';
 import { useStyles } from './gamesStyles';
 import captureVideoFrame from 'capture-video-frame';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
@@ -27,8 +26,7 @@ import { ReactComponent as Timer } from '../../../assets/Timer.svg';
 import { ReactComponent as Scoring } from '../../../assets/football.svg';
 import { ReactComponent as Objective } from '../../../assets/Cross.svg';
 import Four33Loader from '../../../assets/Loader_Yellow.gif';
-import Tooltip from '@mui/material/Tooltip';
-import Fade from '@mui/material/Fade';
+import { Tooltip, Fade } from '@mui/material';
 
 const UploadOreditArcade = ({
 	heading1,

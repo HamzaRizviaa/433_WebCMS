@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditMedia.module.scss';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
 import Button from '../../button';
 import LoadingOverlay from 'react-loading-overlay';
-import { MenuItem, TextField, Select } from '@material-ui/core';
+import {
+	MenuItem,
+	TextField,
+	Select,
+	CircularProgress
+} from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { useDropzone } from 'react-dropzone';
@@ -19,14 +24,11 @@ import { getMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
 import Close from '@material-ui/icons/Close';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { CircularProgress } from '@material-ui/core';
 import DragAndDropField from '../../DragAndDropField';
 import Labels from '../../Labels';
-import Tooltip from '@mui/material/Tooltip';
-import Fade from '@mui/material/Fade';
+import { Tooltip, Fade } from '@mui/material';
 
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
-import { useRef } from 'react';
 
 const UploadOrEditMedia = ({
 	open,
