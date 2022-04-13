@@ -549,3 +549,11 @@
 .toolTipArrow {
 	color: $black-color !important;
 }
+
+.errorState {
+	color: $red;
+}
+
+.noErrorState {
+	color: $white-color;
+}
