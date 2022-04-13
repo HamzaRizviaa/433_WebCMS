@@ -5,7 +5,6 @@ import { useDropzone } from 'react-dropzone';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
-//import { CircularProgress } from '@material-ui/core';
 import Button from '../../button';
 import DragAndDropField from '../../DragAndDropField';
 import Labels from '../../Labels';
@@ -22,7 +21,6 @@ import { TextField } from '@material-ui/core';
 
 //tinymce
 import { Editor } from '@tinymce/tinymce-react';
-
 import 'tinymce/tinymce';
 import 'tinymce/icons/default';
 import 'tinymce/themes/silver';
@@ -46,10 +44,6 @@ import 'tinymce/plugins/charmap';
 import 'tinymce/skins/ui/oxide/skin.min.css';
 import 'tinymce/skins/ui/oxide/content.min.css';
 import 'tinymce/skins/content/default/content.min.css';
-
-// import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
-// import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
-
 import LoadingOverlay from 'react-loading-overlay';
 
 const UploadOrEditViral = ({
@@ -65,17 +59,10 @@ const UploadOrEditViral = ({
 	const [editorText, setEditorText] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
 	const [editorTextChecker, setEditorTextChecker] = useState('');
-	const [uploadMediaError, setUploadMediaError] = useState('');
+
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [selectedLabels, setSelectedLabels] = useState([]);
-	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
-	const [articleTitleColor, setArticleTitleColor] = useState('#ffffff');
-	const [articleTitleError, setArticleTitleError] = useState('');
-	const [articleTextColor, setArticleTextColor] = useState('#ffffff');
-	const [articleTextError, setArticleTextError] = useState('');
-	const [labelColor, setLabelColor] = useState('#ffffff');
-	const [labelError, setLabelError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -91,7 +78,7 @@ const UploadOrEditViral = ({
 	const imgEl = useRef(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
-	console.log(dropZoneBorder, articleTitleColor, articleTextColor, labelColor);
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png',
@@ -99,11 +86,9 @@ const UploadOrEditViral = ({
 		});
 
 	const labels = useSelector((state) => state.postLibrary.labels);
-
 	const specificArticle = useSelector(
 		(state) => state.ArticleLibraryStore.specificArticle
 	);
-	// console.log(specificArticle, '==== specificArticle ----');
 
 	const dispatch = useDispatch();
 
@@ -121,14 +106,11 @@ const UploadOrEditViral = ({
 			setEditorTextChecker(specificArticle.description);
 			setFileHeight(specificArticle?.height);
 			setFileWidth(specificArticle?.width);
-			// setTimeout(() => {
 			specificArticle?.length === 0
 				? setEditorText('')
 				: setEditorText(
 						tinyMCE.activeEditor?.setContent(specificArticle?.description)
 				  );
-			// }, 5000);
-
 			setUploadedFiles([
 				{
 					id: makeid(10),
@@ -139,11 +121,6 @@ const UploadOrEditViral = ({
 			]);
 		}
 	}, [specificArticle]);
-
-	// useEffect(() => {
-	// 	setEditorText(editorText);
-	// 	console.log(editorText, 'use Effect');
-	// }, [editorText]);
 
 	useEffect(() => {
 		setPostLabels((labels) => {
@@ -196,8 +173,7 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			setUploadMediaError('');
-			setDropZoneBorder('#ffff00');
+			setIsError({});
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -216,16 +192,13 @@ const UploadOrEditViral = ({
 
 	const handleEditorChange = () => {
 		const editorTextContent = tinymce?.activeEditor?.getContent();
-		console.log(editorTextContent);
 		setEditorText(editorTextContent);
 		setEditorTextChecker(editorTextContent); // to check yellow button condition
 	};
 
 	const createArticle = async (id, mediaFiles = []) => {
-		// const editorTextContent = tinymce?.activeEditor?.getContent();
-		// console.log(editorTextContent, 'editorTextContent');
+		setIsLoading(true);
 		setPostButtonStatus(true);
-
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/article/post-article`,
@@ -243,15 +216,6 @@ const UploadOrEditViral = ({
 					...(!isEdit && selectedLabels.length
 						? { labels: [...selectedLabels] }
 						: {}), // can't edit
-
-					// ...(articleTitle ? { title: articleTitle } : { articleTitle: '' }),
-					// ...(!isEdit ? { image: mediaFiles[0]?.media_url } : {}),
-					// ...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
-					// ...(!isEdit ? { height: fileHeight } : {}),
-					// ...(!isEdit ? { width: fileWidth } : {}),
-					// ...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
-					// description: editorTextContent,
-					// dropbox_url: dropboxLink,
 
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
@@ -281,7 +245,7 @@ const UploadOrEditViral = ({
 			);
 			setIsLoading(false);
 			setPostButtonStatus(false);
-			console.log(e);
+			console.log(e, 'Failed - create / edit  Article');
 		}
 	};
 
@@ -291,16 +255,8 @@ const UploadOrEditViral = ({
 		setEditorText(tinyMCE.activeEditor?.setContent(''));
 		setDropboxLink('');
 		setEditorTextChecker('');
-		setUploadMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
-		setDropZoneBorder('#ffff00');
-		setArticleTitleColor('#ffffff');
-		setArticleTextColor('#ffffff');
-		setArticleTitleError('');
-		setArticleTextError('');
-		setLabelColor('#ffffff');
-		setLabelError('');
 		setPostButtonStatus(false);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
@@ -331,45 +287,6 @@ const UploadOrEditViral = ({
 		setTimeout(() => {
 			setIsError({});
 		}, 5000);
-		// if (uploadedFiles.length < 1) {
-		// 	setDropZoneBorder('#ff355a');
-		// 	setUploadMediaError('You need to upload a media in order to post');
-		// 	setTimeout(() => {
-		// 		setDropZoneBorder('#ffff00');
-		// 		setUploadMediaError('');
-		// 	}, [5000]);
-		// }
-
-		// if (selectedLabels.length < 10) {
-		// 	setLabelColor('#ff355a');
-		// 	setLabelError(
-		// 		`You need to add ${
-		// 			10 - selectedLabels.length
-		// 		} more labels in order to post`
-		// 	);
-		// 	setTimeout(() => {
-		// 		setLabelColor('#ffffff');
-		// 		setLabelError('');
-		// 	}, [5000]);
-		// }
-
-		// if (!articleTitle) {
-		// 	setArticleTitleColor('#ff355a');
-		// 	setArticleTitleError('This field is required');
-		// 	setTimeout(() => {
-		// 		setArticleTitleColor('#ffffff');
-		// 		setArticleTitleError('');
-		// 	}, [5000]);
-		// }
-
-		// if (!editorText) {
-		// 	setArticleTextColor('#ff355a');
-		// 	setArticleTextError('This field is required');
-		// 	setTimeout(() => {
-		// 		setArticleTextColor('#ffffff');
-		// 		setArticleTextError('');
-		// 	}, [5000]);
-		// }
 	};
 
 	const [newLabels, setNewLabels] = useState([]);
@@ -404,7 +321,7 @@ const UploadOrEditViral = ({
 		} catch (e) {
 			toast.error('Failed to delete Article!');
 			setDeleteBtnStatus(false);
-			console.log(e);
+			console.log(e, 'Failed to delete Article!');
 		}
 	};
 
@@ -435,7 +352,7 @@ const UploadOrEditViral = ({
 			);
 			return result?.data?.message;
 		} catch (error) {
-			console.log('Error');
+			console.log(error, 'Error handle duplicate');
 
 			return null;
 		}
@@ -489,12 +406,9 @@ const UploadOrEditViral = ({
 						// 	200 &&
 						// articleTitle !== specificArticle?.title
 					) {
-						console.log(articleTitle, specificArticle.title);
-						setArticleTitleColor('#ff355a');
-						setArticleTitleError('This title already exists');
+						setIsError({ articleTitleExists: 'This title already exists' });
 						setTimeout(() => {
-							setArticleTitleColor('#ffffff');
-							setArticleTitleError('');
+							setIsError({});
 						}, [5000]);
 
 						setPostButtonStatus(false);
@@ -520,15 +434,14 @@ const UploadOrEditViral = ({
 				if (
 					(await handleTitleDuplicate(articleTitle)) ===
 					'The Title Already Exist'
-					// 	200 &&
-					// articleTitle !== specificArticle?.title
 				) {
-					console.log(articleTitle, specificArticle.title);
-					setArticleTitleColor('#ff355a');
-					setArticleTitleError('This title already exists');
+					// setArticleTitleColor('#ff355a');
+					// setArticleTitleError('This title already exists');
+					setIsError({ articleTitleExists: 'This title already exists' });
 					setTimeout(() => {
-						setArticleTitleColor('#ffffff');
-						setArticleTitleError('');
+						// setArticleTitleColor('#ffffff');
+						// setArticleTitleError('');
+						setIsError({});
 					}, [5000]);
 
 					setPostButtonStatus(false);
@@ -606,10 +519,7 @@ const UploadOrEditViral = ({
 									}}
 								>
 									<div {...getRootProps({ className: classes.dropzone })}>
-										<input
-											{...getInputProps()}
-											// ref={ref}
-										/>
+										<input {...getInputProps()} />
 										<AddCircleOutlineIcon className={classes.addFilesIcon} />
 										<p className={classes.dragMsg}>
 											Click or drag files to this area to upload
@@ -618,7 +528,9 @@ const UploadOrEditViral = ({
 											Supported formats are jpeg and png
 										</p>
 										<p className={classes.uploadMediaError}>
-											{uploadMediaError}
+											{isError.uploadedFiles
+												? 'You need to upload a media in order to post'
+												: ''}
 										</p>
 									</div>
 								</section>
@@ -648,7 +560,7 @@ const UploadOrEditViral = ({
 								<div className={classes.characterCount}>
 									<h6
 										className={
-											isError.articleTitle
+											isError.articleTitle || isError.articleTitleExists
 												? classes.errorState
 												: classes.noErrorState
 										}
@@ -687,7 +599,13 @@ const UploadOrEditViral = ({
 									maxRows={2}
 								/>
 							</div>
-							<p className={classes.mediaError}>{articleTitleError}</p>
+							<p className={classes.mediaError}>
+								{isError.articleTitle
+									? 'This field is required'
+									: isError.articleTitleExists
+									? 'This title aready Exists'
+									: ''}
+							</p>
 
 							<div className={classes.captionContainer}>
 								<h6
@@ -709,8 +627,13 @@ const UploadOrEditViral = ({
 									handleChangeExtraLabel={handleChangeExtraLabel}
 								/>
 							</div>
-
-							<p className={classes.mediaError}>{labelError}</p>
+							<p className={classes.mediaError}>
+								{isError.selectedLabels
+									? `You need to add  ${
+											10 - selectedLabels.length
+									  }  more labels in order to post`
+									: ''}
+							</p>
 
 							<div className={classes.captionContainer}>
 								<h6
@@ -724,8 +647,6 @@ const UploadOrEditViral = ({
 								</h6>
 								<div className={classes.editor}>
 									<Editor
-										// value={editorText}
-										// onChange={(e) => setEditorText(e.target.value)}
 										init={{
 											height: 288,
 											selector: '#myTextarea',
@@ -734,33 +655,16 @@ const UploadOrEditViral = ({
 											contextmenu: false,
 											setup: function (editor) {
 												editor.on('init', function () {
-													// while (description === null || undefined) {
-													// 	console.log(description);
-													// }
-													// setTimeout(() => {
-													// console.log(editorText, 'timeout');
-													// editor.setContent(
 													editorText;
-													// editorText === null || undefined ? '' : editorText;
-													// );
-													// }, 5000);
-													// console.log(
-													// 	tinymce.activeEditor.getContent(),
-													// 	'abc tinymce'
-													// );
 												});
 											},
 											content_style:
 												"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white  }; ",
-											//+'.hamza {font-family:Poppins, sans-serif; font-size:64px ;color : green ; letter-spacing : -2%; font-weight : 800}',
+
 											branding: false,
 											statusbar: true,
 											skin: false,
 											emoticons_database: 'emojiimages',
-											//toolbar_mode: 'wrap',
-											//relative_urls: false,
-											//placeholder: 'WYSIWYG .......',
-											//emoticons_database_url: '/emojis.js',
 											formats: {
 												title_h1: {
 													inline: 'span',
@@ -770,7 +674,6 @@ const UploadOrEditViral = ({
 														letterSpacing: '-2%',
 														marginBottom: '3px'
 													}
-													//classes: 'hamza'
 												},
 												title_h2: {
 													inline: 'span',
@@ -853,9 +756,6 @@ const UploadOrEditViral = ({
 														{
 															title: 'Header 1',
 															format: 'title_h1'
-															// styles: {
-															// 	fontSize: '40'
-															// }
 														},
 														{
 															title: 'Header 2',
@@ -927,35 +827,23 @@ const UploadOrEditViral = ({
 												'searchreplace  emoticons hr visualblocks fullscreen',
 												'insertdatetime media table paste wordcount  charmap textcolor colorpicker'
 											],
-											//width: 490,
+
 											toolbar:
 												'undo redo  bold italic underline strikethrough fontsizeselect | ' +
 												'alignleft aligncenter ' +
 												'alignright alignjustify | bullist numlist | ' +
 												'emoticons'
-											// init_instance_callback: function (editor) {
-											// 	editor.on('focus', function () {
-											// 		setDisableDropdown(false);
-											// 	});
-											// },
 										}}
 										onEditorChange={() => handleEditorChange()}
-										//onExecCommand={() => setDisableDropdown(false)}
 										onMouseEnter={() => setDisableDropdown(false)}
-										//onInit={() => setDisableDropdown(false)}
-										//onMouseEnter={() => setDisableDropdown(false)}
-										// onFocusIn={() => {
-										// 	setDisableDropdown(false);
-										// }}
-										//onDeactivate={() => setDisableDropdown(true)}
-										//onActivate={() => setDisableDropdown(true)}
-										//onMouseLeave={() => setDisableDropdown(true)}
 										onBlur={() => setDisableDropdown(true)}
 									/>
 								</div>
 							</div>
 
-							<p className={classes.mediaError}>{articleTextError}</p>
+							<p className={classes.mediaError}>
+								{isError.editorText ? 'This field is required' : ''}
+							</p>
 						</div>
 
 						<div className={classes.buttonDiv}>
@@ -1003,8 +891,6 @@ const UploadOrEditViral = ({
 									src={previewFile.img}
 									className={classes.previewFile}
 									style={{
-										// width: `${imageToResizeWidth * 4}px`,
-										// height: `${imageToResizeHeight * 4}px`,
 										width: `100%`,
 										height: `${8 * 4}rem`,
 										objectFit: 'contain',
