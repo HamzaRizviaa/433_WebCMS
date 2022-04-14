@@ -10,6 +10,7 @@ import Labels from '../../Labels';
 import { TextField, CircularProgress } from '@material-ui/core';
 import ToggleSwitch from '../../switch';
 import Button from '../../button';
+import Four33Loader from '../../../assets/Loader_Yellow.gif';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	getMedia,
@@ -27,6 +28,8 @@ import Close from '@material-ui/icons/Close';
 import ClearIcon from '@material-ui/icons/Clear';
 import { Autocomplete, Popper, Paper, Tooltip, Fade } from '@mui/material';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
+import checkFileSize from '../../../utils/validateFileSize';
+
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
 import { ReactComponent as PortraitCrop } from '../../../assets/portrait_rect.svg';
 import { ReactComponent as LandscapeCrop } from '../../../assets/Rectangle_12.svg';
@@ -73,7 +76,8 @@ const UploadOrEditPost = ({
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png, video/mp4',
-			maxFiles: 10
+			maxFiles: 10,
+			validator: checkFileSize
 		});
 
 	const allMedia = useSelector((state) => state.mediaLibraryOriginal.allMedia);
@@ -189,7 +193,9 @@ const UploadOrEditPost = ({
 
 	useEffect(() => {
 		if (fileRejections.length) {
-			setFileRejectionError('The uploaded file format is not matching');
+			fileRejections.forEach(({ file, errors }) => {
+				return errors.forEach((e) => setFileRejectionError(e.message));
+			});
 			setTimeout(() => {
 				setFileRejectionError('');
 			}, [5000]);
@@ -466,6 +472,10 @@ const UploadOrEditPost = ({
 		}
 	};
 
+	const dropHandler = (file) => {
+		console.log('File', file);
+	};
+
 	return (
 		<Slider
 			open={open}
@@ -496,6 +506,7 @@ const UploadOrEditPost = ({
 					{specificPostStatus.status === 'loading' ? (
 						<div className={classes.loaderContainer2}>
 							<CircularProgress className={classes.loader} />
+							{/* <img src={Four33Loader} className={classes.loader} /> */}
 						</div>
 					) : (
 						<></>

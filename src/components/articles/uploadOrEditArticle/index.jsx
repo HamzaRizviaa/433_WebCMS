@@ -59,7 +59,6 @@ const UploadOrEditViral = ({
 	const [editorText, setEditorText] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
 	const [editorTextChecker, setEditorTextChecker] = useState('');
-
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [selectedLabels, setSelectedLabels] = useState([]);
