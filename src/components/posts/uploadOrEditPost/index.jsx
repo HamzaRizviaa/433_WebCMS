@@ -49,6 +49,8 @@ const UploadOrEditPost = ({
 	const [caption, setCaption] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
 	const [value, setValue] = useState(false);
+	const [valueComments, setValueComments] = useState(false);
+	const [valueLikes, setValueLikes] = useState(false);
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [selectedLabels, setSelectedLabels] = useState([]);
@@ -133,6 +135,9 @@ const UploadOrEditPost = ({
 				setSelectedMedia(_media);
 				setValue(true);
 			}
+
+			setValueComments(specificPost?.show_comments);
+			setValueLikes(specificPost?.show_likes);
 
 			if (specificPost.orientation_type === 'square') {
 				setDimensionSelect('square');
@@ -229,6 +234,8 @@ const UploadOrEditPost = ({
 		setCaption('');
 		setDropboxLink('');
 		setValue(false);
+		setValueComments(false);
+		setValueLikes(false);
 		setFileRejectionError('');
 		setUploadedFiles([]);
 		setSelectedMedia(null);
@@ -317,6 +324,8 @@ const UploadOrEditPost = ({
 					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
 					orientation_type: dimensionSelect,
 					...(selectedMedia ? { media_id: selectedMedia.id } : {}),
+					...(valueLikes ? { show_likes: true } : {}),
+					...(valueComments ? { show_comments: true } : {}),
 					...(isEdit && id ? { post_id: id } : {}),
 					...(!isEdit && selectedLabels.length
 						? { labels: [...selectedLabels] }
@@ -839,6 +848,32 @@ const UploadOrEditPost = ({
 							) : (
 								<></>
 							)}
+
+							<div className={classes.postMediaContainer}>
+								<div className={classes.postMediaHeader}>
+									<h5>Show comments</h5>
+									<ToggleSwitch
+										id={2}
+										checked={valueComments}
+										onChange={(checked) => {
+											setValueComments(checked);
+										}}
+									/>
+								</div>
+							</div>
+
+							<div className={classes.postMediaContainer}>
+								<div className={classes.postMediaHeader}>
+									<h5>Show likes</h5>
+									<ToggleSwitch
+										id={3}
+										checked={valueLikes}
+										onChange={(checked) => {
+											setValueLikes(checked);
+										}}
+									/>
+								</div>
+							</div>
 						</div>
 						<div className={classes.buttonDiv}>
 							{isEdit ? (
