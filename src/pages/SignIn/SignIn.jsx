@@ -115,7 +115,7 @@ const SignIn = ({ setLoginData }) => {
 				setAccessExpire(true);
 				setIsLoadingSignin(false);
 				//console.log(result?.data);
-				navigate('/post-library');
+				navigate('/media-library');
 				setSignInError(false);
 			}
 		} catch (e) {
