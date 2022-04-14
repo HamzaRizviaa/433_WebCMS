@@ -505,8 +505,8 @@ const UploadOrEditPost = ({
 				>
 					{specificPostStatus.status === 'loading' ? (
 						<div className={classes.loaderContainer2}>
-							<CircularProgress className={classes.loader} />
-							{/* <img src={Four33Loader} className={classes.loader} /> */}
+							{/* <CircularProgress className={classes.loader} /> */}
+							<img src={Four33Loader} className={classes.loader} />
 						</div>
 					) : (
 						<></>
