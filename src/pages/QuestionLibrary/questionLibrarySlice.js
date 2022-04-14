@@ -35,7 +35,7 @@ export const getQuestionLabels = createAsyncThunk(
 	'questionLibrary/getQuestionLabels',
 	async () => {
 		const result = await QuestionLibraryService.getQuizLabelsApi();
-		console.log(result.data.data, 'QuestionLibraryService labels');
+
 		if (result?.data?.data?.length > 0) {
 			return result.data.data;
 		} else {

@@ -47,7 +47,6 @@ import LoadingOverlay from 'react-loading-overlay';
 const QuestionLibrary = () => {
 	// Selectors
 	const questions = useSelector((state) => state.questionLibrary.questions);
-	console.log(questions);
 	const statusQuestionApi = useSelector((state) => state.questionLibrary);
 
 	const totalRecords = useSelector(
@@ -86,7 +85,7 @@ const QuestionLibrary = () => {
 		let current_date = new Date();
 		let time_difference_minutes = (expiry_date - current_date) / 1000 / 60; //in minutes
 		// console.log(current_date, 'curr');
-		console.log(time_difference_minutes);
+		// console.log(time_difference_minutes);
 		if (time_difference_minutes <= 1) {
 			alert('Your session has expired');
 			localStorage.removeItem('user_data');
@@ -391,7 +390,7 @@ const QuestionLibrary = () => {
 	};
 
 	useEffect(() => {
-		console.log('sort state use effect');
+		// console.log('sort state use effect');
 		if (sortState.sortby && sortState.order_type && !search) {
 			dispatch(
 				getQuestions({
@@ -416,7 +415,7 @@ const QuestionLibrary = () => {
 	}, [sortState]);
 
 	useEffect(() => {
-		console.log('search use effect');
+		// console.log('search use effect');
 		if (search) {
 			dispatch(
 				getQuestions({
@@ -531,7 +530,7 @@ const QuestionLibrary = () => {
 								className={classes.searchField}
 								value={search}
 								onKeyPress={(e) => {
-									console.log(e, 'on ky press');
+									console.log(e, 'on key press');
 									// if (e.key === 'Enter' && search) {
 									// 	dispatch(
 									// 		getQuestions({
@@ -566,7 +565,7 @@ const QuestionLibrary = () => {
 										<InputAdornment>
 											<Search
 												onClick={() => {
-													console.log('search onclick');
+													// console.log('search onclick');
 													if (search) {
 														dispatch(
 															getQuestions({
@@ -640,7 +639,7 @@ const QuestionLibrary = () => {
 						type={'number'}
 						min={1}
 						onChange={(e) => {
-							console.log(e, 'onchange', page);
+							// console.log(e, 'onchange', page);
 							setPaginationError(false);
 							const value = Number(e.target.value);
 							if (value > Math.ceil(totalRecords / 20)) {
