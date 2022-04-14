@@ -19,6 +19,8 @@ import Labels from '../../Labels';
 import { getLocalStorageDetails } from '../../../utils';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
 import { Tooltip, Fade } from '@mui/material';
+import ToggleSwitch from '../../switch';
+// import Fade from '@mui/material/Fade';
 import Slide from '@mui/material/Slide';
 
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
@@ -51,6 +53,8 @@ const UploadOrEditViral = ({
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
+	const [valueComments, setValueComments] = useState(false);
+	const [valueLikes, setValueLikes] = useState(false);
 	const [isError, setIsError] = useState({});
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
@@ -102,6 +106,8 @@ const UploadOrEditViral = ({
 			setDropboxLink(specificViral?.dropbox_url);
 			setFileWidth(specificViral?.width);
 			setFileHeight(specificViral?.height);
+			setValueComments(specificViral?.show_comments);
+			setValueLikes(specificViral?.show_likes);
 			if (specificViral?.thumbnail_url) {
 				setUploadedFiles([
 					{
@@ -192,6 +198,8 @@ const UploadOrEditViral = ({
 		setFileHeight(null);
 		setFileWidth(null);
 		setIsError({});
+		setValueComments(false);
+		setValueLikes(false);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -231,6 +239,8 @@ const UploadOrEditViral = ({
 						first_name: `${getLocalStorageDetails()?.first_name}`,
 						last_name: `${getLocalStorageDetails()?.last_name}`
 					},
+					...(valueLikes ? { show_likes: true } : {}),
+					...(valueComments ? { show_comments: true } : {}),
 					...(isEdit && id ? { viral_id: id } : {}),
 					...(!isEdit && selectedLabels.length
 						? { labels: [...selectedLabels] }
@@ -530,6 +540,36 @@ const UploadOrEditViral = ({
 								<p className={classes.mediaError}>
 									{isError.caption ? 'This field is required' : ''}
 								</p>
+
+								<p className={classes.mediaError}>
+									{isError.caption ? 'This field is required' : ''}
+								</p>
+
+								<div className={classes.postMediaContainer}>
+									<div className={classes.postMediaHeader}>
+										<h5>Show comments</h5>
+										<ToggleSwitch
+											id={1}
+											checked={valueComments}
+											onChange={(checked) => {
+												setValueComments(checked);
+											}}
+										/>
+									</div>
+								</div>
+
+								<div className={classes.postMediaContainer}>
+									<div className={classes.postMediaHeader}>
+										<h5>Show likes</h5>
+										<ToggleSwitch
+											id={2}
+											checked={valueLikes}
+											onChange={(checked) => {
+												setValueLikes(checked);
+											}}
+										/>
+									</div>
+								</div>
 							</div>
 
 							<div className={classes.buttonDiv}>

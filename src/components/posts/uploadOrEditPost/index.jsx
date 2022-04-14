@@ -11,6 +11,7 @@ import Labels from '../../Labels';
 import { TextField, CircularProgress } from '@material-ui/core';
 import ToggleSwitch from '../../switch';
 import Button from '../../button';
+import Four33Loader from '../../../assets/Loader_Yellow.gif';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	getMedia,
@@ -28,6 +29,8 @@ import Close from '@material-ui/icons/Close';
 import ClearIcon from '@material-ui/icons/Clear';
 import { Autocomplete, Popper, Paper, Tooltip, Fade } from '@mui/material';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
+import checkFileSize from '../../../utils/validateFileSize';
+
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
 import { ReactComponent as PortraitCrop } from '../../../assets/portrait_rect.svg';
 import { ReactComponent as LandscapeCrop } from '../../../assets/Rectangle_12.svg';
@@ -50,6 +53,8 @@ const UploadOrEditPost = ({
 	const [caption, setCaption] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
 	const [value, setValue] = useState(false);
+	const [valueComments, setValueComments] = useState(false);
+	const [valueLikes, setValueLikes] = useState(false);
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [selectedLabels, setSelectedLabels] = useState([]);
@@ -76,7 +81,8 @@ const UploadOrEditPost = ({
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png, video/mp4',
-			maxFiles: 10
+			maxFiles: 10,
+			validator: checkFileSize
 		});
 
 	const allMedia = useSelector((state) => state.mediaLibraryOriginal.allMedia);
@@ -138,6 +144,9 @@ const UploadOrEditPost = ({
 				setValue(true);
 			}
 
+			setValueComments(specificPost?.show_comments);
+			setValueLikes(specificPost?.show_likes);
+
 			if (specificPost.orientation_type === 'square') {
 				setDimensionSelect('square');
 				setImageToResizeWidth(80);
@@ -193,7 +202,9 @@ const UploadOrEditPost = ({
 
 	useEffect(() => {
 		if (fileRejections.length) {
-			setFileRejectionError('The uploaded file format is not matching');
+			fileRejections.forEach(({ file, errors }) => {
+				return errors.forEach((e) => setFileRejectionError(e.message));
+			});
 			setTimeout(() => {
 				setFileRejectionError('');
 			}, [5000]);
@@ -233,6 +244,8 @@ const UploadOrEditPost = ({
 		setCaption('');
 		setDropboxLink('');
 		setValue(false);
+		setValueComments(false);
+		setValueLikes(false);
 		setFileRejectionError('');
 		setUploadedFiles([]);
 		setSelectedMedia(null);
@@ -321,6 +334,8 @@ const UploadOrEditPost = ({
 					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
 					orientation_type: dimensionSelect,
 					...(selectedMedia ? { media_id: selectedMedia.id } : {}),
+					...(valueLikes ? { show_likes: true } : {}),
+					...(valueComments ? { show_comments: true } : {}),
 					...(isEdit && id ? { post_id: id } : {}),
 					...(!isEdit && selectedLabels.length
 						? { labels: [...selectedLabels] }
@@ -493,6 +508,10 @@ const UploadOrEditPost = ({
 		}
 	};
 
+	const dropHandler = (file) => {
+		console.log('File', file);
+	};
+
 	return (
 		<Slider
 			open={open}
@@ -523,7 +542,7 @@ const UploadOrEditPost = ({
 					>
 						{specificPostStatus.status === 'loading' ? (
 							<div className={classes.loaderContainer2}>
-								<CircularProgress className={classes.loader} />
+								<img src={Four33Loader} className={classes.loader} />
 							</div>
 						) : (
 							<></>
@@ -873,6 +892,32 @@ const UploadOrEditPost = ({
 								) : (
 									<></>
 								)}
+
+								<div className={classes.postMediaContainer}>
+									<div className={classes.postMediaHeader}>
+										<h5>Show comments</h5>
+										<ToggleSwitch
+											id={2}
+											checked={valueComments}
+											onChange={(checked) => {
+												setValueComments(checked);
+											}}
+										/>
+									</div>
+								</div>
+
+								<div className={classes.postMediaContainer}>
+									<div className={classes.postMediaHeader}>
+										<h5>Show likes</h5>
+										<ToggleSwitch
+											id={3}
+											checked={valueLikes}
+											onChange={(checked) => {
+												setValueLikes(checked);
+											}}
+										/>
+									</div>
+								</div>
 							</div>
 							<div className={classes.buttonDiv}>
 								{isEdit ? (
