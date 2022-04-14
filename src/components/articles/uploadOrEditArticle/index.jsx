@@ -18,7 +18,7 @@ import { getAllArticlesApi } from '../../../pages/ArticleLibrary/articleLibraryS
 import uploadFileToServer from '../../../utils/uploadFileToServer';
 import Close from '@material-ui/icons/Close';
 import { TextField } from '@material-ui/core';
-
+import Slide from '@mui/material/Slide';
 //tinymce
 import { Editor } from '@tinymce/tinymce-react';
 import 'tinymce/tinymce';
@@ -482,423 +482,428 @@ const UploadOrEditViral = ({
 			article={true}
 		>
 			<LoadingOverlay active={isLoading} spinner text='Loading...'>
-				<div
-					className={`${
-						previewFile != null
-							? classes.previewContentWrapper
-							: classes.contentWrapper
-					}`}
-				>
+				<Slide in={true} direction='up' {...{ timeout: 400 }}>
 					<div
-						className={classes.contentWrapperNoPreview}
-						style={{ width: previewFile != null ? '60%' : 'auto' }}
+						className={`${
+							previewFile != null
+								? classes.previewContentWrapper
+								: classes.contentWrapper
+						}`}
 					>
-						<div>
-							<h5>{heading1}</h5>
-							<DragAndDropField
-								uploadedFiles={uploadedFiles}
-								// isEdit={isEdit}
-								handleDeleteFile={handleDeleteFile}
-								setPreviewBool={setPreviewBool}
-								setPreviewFile={setPreviewFile}
-								isArticle
-								imgEl={imgEl}
-								imageOnload={() => {
-									setFileWidth(imgEl.current.naturalWidth);
-									setFileHeight(imgEl.current.naturalHeight);
-								}}
-							/>
-
-							{!uploadedFiles.length && (
-								<section
-									className={classes.dropZoneContainer}
-									style={{
-										borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
-									}}
-								>
-									<div {...getRootProps({ className: classes.dropzone })}>
-										<input {...getInputProps()} />
-										<AddCircleOutlineIcon className={classes.addFilesIcon} />
-										<p className={classes.dragMsg}>
-											Click or drag files to this area to upload
-										</p>
-										<p className={classes.formatMsg}>
-											Supported formats are jpeg and png
-										</p>
-										<p className={classes.uploadMediaError}>
-											{isError.uploadedFiles
-												? 'You need to upload a media in order to post'
-												: ''}
-										</p>
-									</div>
-								</section>
-							)}
-
-							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
-							<div className={classes.dropBoxUrlContainer}>
-								<h6>DROPBOX URL</h6>
-								<TextField
-									value={dropboxLink}
-									onChange={(e) => setDropboxLink(e.target.value)}
-									placeholder={'Please drop the dropbox URL here'}
-									className={classes.textField}
-									multiline
-									maxRows={2}
-									InputProps={{
-										disableUnderline: true,
-										className: classes.textFieldInput,
-										style: {
-											borderRadius: dropboxLink ? '16px' : '40px'
-										}
+						<div
+							className={classes.contentWrapperNoPreview}
+							style={{ width: previewFile != null ? '60%' : 'auto' }}
+						>
+							<div>
+								<h5>{heading1}</h5>
+								<DragAndDropField
+									uploadedFiles={uploadedFiles}
+									// isEdit={isEdit}
+									handleDeleteFile={handleDeleteFile}
+									setPreviewBool={setPreviewBool}
+									setPreviewFile={setPreviewFile}
+									isArticle
+									imgEl={imgEl}
+									imageOnload={() => {
+										setFileWidth(imgEl.current.naturalWidth);
+										setFileHeight(imgEl.current.naturalHeight);
 									}}
 								/>
-							</div>
 
-							<div className={classes.captionContainer}>
-								<div className={classes.characterCount}>
+								{!uploadedFiles.length && (
+									<section
+										className={classes.dropZoneContainer}
+										style={{
+											borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
+										}}
+									>
+										<div {...getRootProps({ className: classes.dropzone })}>
+											<input {...getInputProps()} />
+											<AddCircleOutlineIcon className={classes.addFilesIcon} />
+											<p className={classes.dragMsg}>
+												Click or drag files to this area to upload
+											</p>
+											<p className={classes.formatMsg}>
+												Supported formats are jpeg and png
+											</p>
+											<p className={classes.uploadMediaError}>
+												{isError.uploadedFiles
+													? 'You need to upload a media in order to post'
+													: ''}
+											</p>
+										</div>
+									</section>
+								)}
+
+								<p className={classes.fileRejectionError}>
+									{fileRejectionError}
+								</p>
+								<div className={classes.dropBoxUrlContainer}>
+									<h6>DROPBOX URL</h6>
+									<TextField
+										value={dropboxLink}
+										onChange={(e) => setDropboxLink(e.target.value)}
+										placeholder={'Please drop the dropbox URL here'}
+										className={classes.textField}
+										multiline
+										maxRows={2}
+										InputProps={{
+											disableUnderline: true,
+											className: classes.textFieldInput,
+											style: {
+												borderRadius: dropboxLink ? '16px' : '40px'
+											}
+										}}
+									/>
+								</div>
+
+								<div className={classes.captionContainer}>
+									<div className={classes.characterCount}>
+										<h6
+											className={
+												isError.articleTitle || isError.articleTitleExists
+													? classes.errorState
+													: classes.noErrorState
+											}
+										>
+											ARTICLE TITLE
+										</h6>
+										<h6
+											style={{
+												color:
+													articleTitle?.length >= 25 &&
+													articleTitle?.length <= 27
+														? 'pink'
+														: articleTitle?.length === 28
+														? 'red'
+														: 'white'
+											}}
+										>
+											{articleTitle?.length}/28
+										</h6>
+									</div>
+
+									<TextField
+										// disabled={isEdit}
+										value={articleTitle}
+										onChange={(e) => setArticleTitle(e.target.value)}
+										placeholder={'Please write your title here'}
+										className={classes.textField}
+										InputProps={{
+											disableUnderline: true,
+											className: classes.textFieldInput,
+											style: {
+												borderRadius: articleTitle ? '16px' : '40px'
+											}
+										}}
+										inputProps={{ maxLength: 28 }}
+										multiline
+										maxRows={2}
+									/>
+								</div>
+								<p className={classes.mediaError}>
+									{isError.articleTitle
+										? 'This field is required'
+										: isError.articleTitleExists
+										? 'This title aready Exists'
+										: ''}
+								</p>
+
+								<div className={classes.captionContainer}>
 									<h6
 										className={
-											isError.articleTitle || isError.articleTitleExists
+											isError.selectedLabels
 												? classes.errorState
 												: classes.noErrorState
 										}
 									>
-										ARTICLE TITLE
+										LABELS
 									</h6>
+									<Labels
+										isEdit={isEdit}
+										setDisableDropdown={setDisableDropdown}
+										selectedLabels={selectedLabels}
+										setSelectedLabels={setSelectedLabels}
+										LabelsOptions={postLabels}
+										extraLabel={extraLabel}
+										handleChangeExtraLabel={handleChangeExtraLabel}
+									/>
+								</div>
+								<p className={classes.mediaError}>
+									{isError.selectedLabels
+										? `You need to add  ${
+												10 - selectedLabels.length
+										  }  more labels in order to post`
+										: ''}
+								</p>
+
+								<div className={classes.captionContainer}>
 									<h6
-										style={{
-											color:
-												articleTitle?.length >= 25 && articleTitle?.length <= 27
-													? 'pink'
-													: articleTitle?.length === 28
-													? 'red'
-													: 'white'
-										}}
-									>
-										{articleTitle?.length}/28
-									</h6>
-								</div>
-
-								<TextField
-									// disabled={isEdit}
-									value={articleTitle}
-									onChange={(e) => setArticleTitle(e.target.value)}
-									placeholder={'Please write your title here'}
-									className={classes.textField}
-									InputProps={{
-										disableUnderline: true,
-										className: classes.textFieldInput,
-										style: {
-											borderRadius: articleTitle ? '16px' : '40px'
+										className={
+											isError.editorText
+												? classes.errorState
+												: classes.noErrorState
 										}
-									}}
-									inputProps={{ maxLength: 28 }}
-									multiline
-									maxRows={2}
-								/>
-							</div>
-							<p className={classes.mediaError}>
-								{isError.articleTitle
-									? 'This field is required'
-									: isError.articleTitleExists
-									? 'This title aready Exists'
-									: ''}
-							</p>
+									>
+										ARTICLE TEXT
+									</h6>
+									<div className={classes.editor}>
+										<Editor
+											init={{
+												height: 288,
+												selector: '#myTextarea',
+												id: '#myTextarea',
+												browser_spellcheck: true,
+												contextmenu: false,
+												setup: function (editor) {
+													editor.on('init', function () {
+														editorText;
+													});
+												},
+												content_style:
+													"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white  }; ",
 
-							<div className={classes.captionContainer}>
-								<h6
-									className={
-										isError.selectedLabels
-											? classes.errorState
-											: classes.noErrorState
-									}
-								>
-									LABELS
-								</h6>
-								<Labels
-									isEdit={isEdit}
-									setDisableDropdown={setDisableDropdown}
-									selectedLabels={selectedLabels}
-									setSelectedLabels={setSelectedLabels}
-									LabelsOptions={postLabels}
-									extraLabel={extraLabel}
-									handleChangeExtraLabel={handleChangeExtraLabel}
-								/>
-							</div>
-							<p className={classes.mediaError}>
-								{isError.selectedLabels
-									? `You need to add  ${
-											10 - selectedLabels.length
-									  }  more labels in order to post`
-									: ''}
-							</p>
-
-							<div className={classes.captionContainer}>
-								<h6
-									className={
-										isError.editorText
-											? classes.errorState
-											: classes.noErrorState
-									}
-								>
-									ARTICLE TEXT
-								</h6>
-								<div className={classes.editor}>
-									<Editor
-										init={{
-											height: 288,
-											selector: '#myTextarea',
-											id: '#myTextarea',
-											browser_spellcheck: true,
-											contextmenu: false,
-											setup: function (editor) {
-												editor.on('init', function () {
-													editorText;
-												});
-											},
-											content_style:
-												"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white  }; ",
-
-											branding: false,
-											statusbar: true,
-											skin: false,
-											emoticons_database: 'emojiimages',
-											formats: {
-												title_h1: {
-													inline: 'span',
-													styles: {
-														fontWeight: '800',
-														fontSize: '64px',
-														letterSpacing: '-2%',
-														marginBottom: '3px'
-													}
-												},
-												title_h2: {
-													inline: 'span',
-													styles: {
-														fontWeight: '800',
-														fontSize: '40px',
-														letterSpacing: '-2%'
-													}
-												},
-												title_h3: {
-													inline: 'span',
-													styles: {
-														fontWeight: '800',
-														fontSize: '36px',
-														letterSpacing: '-2%'
-													}
-												},
-												title_h4: {
-													inline: 'span',
-													styles: {
-														fontWeight: '800',
-														fontSize: '24px',
-														letterSpacing: '-2%'
-													}
-												},
-												title_subtitle: {
-													inline: 'span',
-													styles: {
-														fontWeight: '600',
-														fontSize: '24px'
-													}
-												},
-												body_regular: {
-													inline: 'span',
-													styles: {
-														fontWeight: '400',
-														fontSize: '16px',
-														lineHeight: '24px'
-													}
-												},
-												body_bold: {
-													inline: 'span',
-													styles: {
-														fontWeight: '700',
-														fontSize: '16px',
-														lineHeight: '24px'
-													}
-												},
-												body_small: {
-													inline: 'span',
-													styles: {
-														fontWeight: '400',
-														fontSize: '14px',
-														lineHeight: '16px'
-													}
-												},
-												body_tiny: {
-													inline: 'span',
-													styles: {
-														fontWeight: '500',
-														fontSize: '12px',
-														lineHeight: '16px',
-														letterSpacing: '3%'
-													}
-												},
-												body_boldAndTiny: {
-													inline: 'span',
-													styles: {
-														fontWeight: '700',
-														fontSize: '12px',
-														lineHeight: '16px',
-														letterSpacing: '3%'
-													}
-												}
-											},
-											style_formats: [
-												{
-													title: 'Title',
-													items: [
-														{
-															title: 'Header 1',
-															format: 'title_h1'
-														},
-														{
-															title: 'Header 2',
-															format: 'title_h2'
-														},
-														{
-															title: 'Header 3',
-															format: 'title_h3'
-														},
-														{
-															title: 'Header 4',
-															format: 'title_h4'
-														},
-														{
-															title: 'Subtitle',
-															format: 'title_subtitle'
+												branding: false,
+												statusbar: true,
+												skin: false,
+												emoticons_database: 'emojiimages',
+												formats: {
+													title_h1: {
+														inline: 'span',
+														styles: {
+															fontWeight: '800',
+															fontSize: '64px',
+															letterSpacing: '-2%',
+															marginBottom: '3px'
 														}
-													]
-												},
-												{
-													title: 'Body',
-													items: [
-														{
-															title: 'Regular',
-															format: 'body_regular'
-														},
-														{
-															title: 'Bold',
-															format: 'body_bold'
-														},
-														{
-															title: 'Small',
-															format: 'body_small'
-														},
-														{
-															title: 'Tiny',
-															format: 'body_tiny'
-														},
-														{
-															title: 'Bold and Tiny',
-															format: 'body_boldAndTiny'
+													},
+													title_h2: {
+														inline: 'span',
+														styles: {
+															fontWeight: '800',
+															fontSize: '40px',
+															letterSpacing: '-2%'
 														}
-													]
-												}
-											],
-											menubar: 'edit insert tools format',
-											menu: {
-												edit: {
-													title: 'Edit',
-													items: 'undo redo | cut copy paste  | searchreplace'
+													},
+													title_h3: {
+														inline: 'span',
+														styles: {
+															fontWeight: '800',
+															fontSize: '36px',
+															letterSpacing: '-2%'
+														}
+													},
+													title_h4: {
+														inline: 'span',
+														styles: {
+															fontWeight: '800',
+															fontSize: '24px',
+															letterSpacing: '-2%'
+														}
+													},
+													title_subtitle: {
+														inline: 'span',
+														styles: {
+															fontWeight: '600',
+															fontSize: '24px'
+														}
+													},
+													body_regular: {
+														inline: 'span',
+														styles: {
+															fontWeight: '400',
+															fontSize: '16px',
+															lineHeight: '24px'
+														}
+													},
+													body_bold: {
+														inline: 'span',
+														styles: {
+															fontWeight: '700',
+															fontSize: '16px',
+															lineHeight: '24px'
+														}
+													},
+													body_small: {
+														inline: 'span',
+														styles: {
+															fontWeight: '400',
+															fontSize: '14px',
+															lineHeight: '16px'
+														}
+													},
+													body_tiny: {
+														inline: 'span',
+														styles: {
+															fontWeight: '500',
+															fontSize: '12px',
+															lineHeight: '16px',
+															letterSpacing: '3%'
+														}
+													},
+													body_boldAndTiny: {
+														inline: 'span',
+														styles: {
+															fontWeight: '700',
+															fontSize: '12px',
+															lineHeight: '16px',
+															letterSpacing: '3%'
+														}
+													}
 												},
-												insert: {
-													title: 'Insert',
-													items:
-														'image link media charmap emoticons hr anchor insertdatetime'
+												style_formats: [
+													{
+														title: 'Title',
+														items: [
+															{
+																title: 'Header 1',
+																format: 'title_h1'
+															},
+															{
+																title: 'Header 2',
+																format: 'title_h2'
+															},
+															{
+																title: 'Header 3',
+																format: 'title_h3'
+															},
+															{
+																title: 'Header 4',
+																format: 'title_h4'
+															},
+															{
+																title: 'Subtitle',
+																format: 'title_subtitle'
+															}
+														]
+													},
+													{
+														title: 'Body',
+														items: [
+															{
+																title: 'Regular',
+																format: 'body_regular'
+															},
+															{
+																title: 'Bold',
+																format: 'body_bold'
+															},
+															{
+																title: 'Small',
+																format: 'body_small'
+															},
+															{
+																title: 'Tiny',
+																format: 'body_tiny'
+															},
+															{
+																title: 'Bold and Tiny',
+																format: 'body_boldAndTiny'
+															}
+														]
+													}
+												],
+												menubar: 'edit insert tools format',
+												menu: {
+													edit: {
+														title: 'Edit',
+														items: 'undo redo | cut copy paste  | searchreplace'
+													},
+													insert: {
+														title: 'Insert',
+														items:
+															'image link media charmap emoticons hr anchor insertdatetime'
+													},
+													format: {
+														title: 'Format',
+														items:
+															'bold italic underline strikethrough | formats  fontsizes align lineheight  '
+													},
+													tools: {
+														title: 'Tools',
+														items: 'wordcount'
+													}
 												},
-												format: {
-													title: 'Format',
-													items:
-														'bold italic underline strikethrough | formats  fontsizes align lineheight  '
-												},
-												tools: {
-													title: 'Tools',
-													items: 'wordcount'
-												}
-											},
-											plugins: [
-												'lists advlist link image anchor',
-												'searchreplace  emoticons hr visualblocks fullscreen',
-												'insertdatetime media table paste wordcount  charmap textcolor colorpicker'
-											],
+												plugins: [
+													'lists advlist link image anchor',
+													'searchreplace  emoticons hr visualblocks fullscreen',
+													'insertdatetime media table paste wordcount  charmap textcolor colorpicker'
+												],
 
-											toolbar:
-												'undo redo  bold italic underline strikethrough fontsizeselect | ' +
-												'alignleft aligncenter ' +
-												'alignright alignjustify | bullist numlist | ' +
-												'emoticons'
-										}}
-										onEditorChange={() => handleEditorChange()}
-										onMouseEnter={() => setDisableDropdown(false)}
-										onBlur={() => setDisableDropdown(true)}
-									/>
+												toolbar:
+													'undo redo  bold italic underline strikethrough fontsizeselect | ' +
+													'alignleft aligncenter ' +
+													'alignright alignjustify | bullist numlist | ' +
+													'emoticons'
+											}}
+											onEditorChange={() => handleEditorChange()}
+											onMouseEnter={() => setDisableDropdown(false)}
+											onBlur={() => setDisableDropdown(true)}
+										/>
+									</div>
 								</div>
+
+								<p className={classes.mediaError}>
+									{isError.editorText ? 'This field is required' : ''}
+								</p>
 							</div>
 
-							<p className={classes.mediaError}>
-								{isError.editorText ? 'This field is required' : ''}
-							</p>
-						</div>
+							<div className={classes.buttonDiv}>
+								{isEdit ? (
+									<div className={classes.editBtn}>
+										<Button
+											disabled={deleteBtnStatus}
+											button2={isEdit ? true : false}
+											onClick={() => {
+												if (!deleteBtnStatus) {
+													deleteArticle(specificArticle?.id);
+												}
+											}}
+											text={'DELETE ARTICLE'}
+										/>
+									</div>
+								) : (
+									<> </>
+								)}
 
-						<div className={classes.buttonDiv}>
-							{isEdit ? (
-								<div className={classes.editBtn}>
+								<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 									<Button
-										disabled={deleteBtnStatus}
-										button2={isEdit ? true : false}
-										onClick={() => {
-											if (!deleteBtnStatus) {
-												deleteArticle(specificArticle?.id);
-											}
-										}}
-										text={'DELETE ARTICLE'}
+										disabled={isEdit ? editBtnDisabled : postBtnDisabled}
+										onClick={() => handleAddSaveBtn()}
+										text={buttonText}
 									/>
 								</div>
-							) : (
-								<> </>
-							)}
-
-							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
-								<Button
-									disabled={isEdit ? editBtnDisabled : postBtnDisabled}
-									onClick={() => handleAddSaveBtn()}
-									text={buttonText}
-								/>
 							</div>
 						</div>
+
+						{previewFile != null && (
+							<div ref={previewRef} className={classes.previewComponent}>
+								<div className={classes.previewHeader}>
+									<Close
+										onClick={() => {
+											setPreviewBool(false);
+											setPreviewFile(null);
+										}}
+										className={classes.closeIcon}
+									/>
+									<h5>Preview</h5>
+								</div>
+								<div>
+									<img
+										src={previewFile.img}
+										className={classes.previewFile}
+										style={{
+											width: `100%`,
+											height: `${8 * 4}rem`,
+											objectFit: 'contain',
+											objectPosition: 'center'
+										}}
+									/>
+								</div>
+							</div>
+						)}
 					</div>
-
-					{previewFile != null && (
-						<div ref={previewRef} className={classes.previewComponent}>
-							<div className={classes.previewHeader}>
-								<Close
-									onClick={() => {
-										setPreviewBool(false);
-										setPreviewFile(null);
-									}}
-									className={classes.closeIcon}
-								/>
-								<h5>Preview</h5>
-							</div>
-							<div>
-								<img
-									src={previewFile.img}
-									className={classes.previewFile}
-									style={{
-										width: `100%`,
-										height: `${8 * 4}rem`,
-										objectFit: 'contain',
-										objectPosition: 'center'
-									}}
-								/>
-							</div>
-						</div>
-					)}
-				</div>
+				</Slide>
 			</LoadingOverlay>
 		</Slider>
 	);
