@@ -66,6 +66,8 @@ const UploadOrEditPost = ({
 	const [selectMediaInput, setSelectMediaInput] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [dropdownPosition, setDropdownPosition] = useState(false);
+	const [linktoPostMedia, setLinktoPostMedia] = useState('');
+	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const [isError, setIsError] = useState({});
@@ -130,6 +132,7 @@ const UploadOrEditPost = ({
 						_media = medi;
 					}
 				});
+				setLinktoPostMedia(_media);
 				setSelectedMedia(_media);
 				setValue(true);
 			}
@@ -421,18 +424,41 @@ const UploadOrEditPost = ({
 		(value && !selectedMedia) ||
 		selectedLabels.length < 10;
 
-	const editBtnDisabled =
-		postButtonStatus ||
-		!caption ||
-		(value && !selectedMedia) ||
-		(specificPost?.dropbox_url === dropboxLink.trim() &&
-			specificPost?.caption === caption.trim());
+	//old one
+
+	// const editBtnDisabled =
+	// 	postButtonStatus ||
+	// 	!caption ||
+	// 	(value && !selectedMedia) ||
+	// 	(specificPost?.dropbox_url === dropboxLink.trim() &&
+	// 		specificPost?.caption === caption.trim());
+
+	useEffect(() => {
+		if (specificPost) {
+			setEditBtnDisabled(
+				postButtonStatus ||
+					// !uploadedFiles.length ||
+					!caption ||
+					(value && !selectedMedia) ||
+					// 	linktoPostMedia?.title === selectedMedia?.title?.trim()) ||
+					// specificPost?.medias?.length !== uploadedFiles?.length &&
+					(specificPost?.dropbox_url === dropboxLink?.trim() &&
+						specificPost?.caption === caption?.trim())
+			);
+		}
+	}, [caption, uploadedFiles, selectedMedia, dropboxLink]);
+
+	console.log(specificPost?.medias?.length, 'specificPost?.medias?.length');
+	console.log(uploadedFiles?.length, 'uploadedFiles?.length');
+	console.log(selectedMedia, selectedMedia?.length, 'selectedMedia');
+	console.log(linktoPostMedia, linktoPostMedia?.length, 'linktoPostMedia');
 
 	const addSavePostBtn = () => {
 		if (postBtnDisabled || editBtnDisabled) {
 			validatePostBtn();
 		} else {
 			setPostButtonStatus(true);
+			setIsLoadingCreatePost(true);
 			if (isEdit) {
 				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
 					if (_file.file) {

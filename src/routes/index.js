@@ -29,10 +29,6 @@ const AppRoutes = () => {
 					path='/sign-in'
 					element={<SignIn setLoginData={setLoginData} />}
 				/>
-				<Route
-					path='/post-library'
-					element={<RequireAuth component={<PostLibrary />} />}
-				/>
 
 				<Route
 					exact
@@ -63,6 +59,10 @@ const AppRoutes = () => {
 					exact
 					path='/games-library'
 					element={<RequireAuth component={<GamesLibrary />} />}
+				/>
+				<Route
+					path='/post-library'
+					element={<RequireAuth component={<PostLibrary />} />}
 				/>
 
 				<Route path='*' element={<Navigate to='/sign-in' />} />

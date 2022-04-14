@@ -59,7 +59,6 @@ const UploadOrEditViral = ({
 	const [editorText, setEditorText] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
 	const [editorTextChecker, setEditorTextChecker] = useState('');
-
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [selectedLabels, setSelectedLabels] = useState([]);
@@ -197,7 +196,6 @@ const UploadOrEditViral = ({
 	};
 
 	const createArticle = async (id, mediaFiles = []) => {
-		setIsLoading(true);
 		setPostButtonStatus(true);
 		try {
 			const result = await axios.post(
@@ -397,7 +395,7 @@ const UploadOrEditViral = ({
 			validateArticleBtn();
 		} else {
 			setPostButtonStatus(true);
-
+			setIsLoading(true);
 			if (isEdit) {
 				if (specificArticle?.title?.trim() !== articleTitle?.trim()) {
 					if (

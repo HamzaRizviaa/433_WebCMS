@@ -46,23 +46,7 @@ const Sidebar = () => {
 		<span className={classes.main}>
 			<div className={classes.navContainer}>
 				<Logo className={classes.logo} />
-				<div
-					onClick={() => {
-						navigate('/post-library');
-					}}
-					className={classes.iconWrapper}
-					style={
-						location?.pathname.includes('post-library')
-							? { backgroundColor: '#404040' }
-							: {}
-					}
-				>
-					{location?.pathname.includes('post-library') ? (
-						<ShareSelected className={classes.icon} />
-					) : (
-						<Share className={classes.icon} />
-					)}
-				</div>
+
 				<div
 					onClick={() => {
 						navigate('/media-library');
@@ -163,6 +147,23 @@ const Sidebar = () => {
 						<GamesSelected className={classes.icon} />
 					) : (
 						<Games className={classes.icon} />
+					)}
+				</div>
+				<div
+					onClick={() => {
+						navigate('/post-library');
+					}}
+					className={classes.iconWrapper}
+					style={
+						location?.pathname.includes('post-library')
+							? { backgroundColor: '#404040' }
+							: {}
+					}
+				>
+					{location?.pathname.includes('post-library') ? (
+						<ShareSelected className={classes.icon} />
+					) : (
+						<Share className={classes.icon} />
 					)}
 				</div>
 			</div>
