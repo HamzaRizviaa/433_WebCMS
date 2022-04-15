@@ -4,12 +4,8 @@ import PropTypes from 'prop-types';
 import Slider from '../../slider';
 import Button from '../../button';
 import LoadingOverlay from 'react-loading-overlay';
-import {
-	MenuItem,
-	TextField,
-	Select,
-	CircularProgress
-} from '@material-ui/core';
+import { MenuItem, TextField, Select } from '@material-ui/core';
+import Four33Loader from '../../../assets/Loader_Yellow.gif';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { useDropzone } from 'react-dropzone';
@@ -213,7 +209,7 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		if (fileRejections2.length) {
-			fileRejections.forEach(({ errors }) => {
+			fileRejections2.forEach(({ errors }) => {
 				return errors.forEach((e) => setFileRejectionError2(e.message));
 			});
 			setTimeout(() => {
@@ -789,7 +785,7 @@ const UploadOrEditMedia = ({
 					>
 						{specificMediaStatus.specificMediaStatus === 'loading' ? (
 							<div className={classes.loaderContainer2}>
-								<CircularProgress className={classes.loader} />
+								<img src={Four33Loader} className={classes.loader} />
 							</div>
 						) : (
 							<></>

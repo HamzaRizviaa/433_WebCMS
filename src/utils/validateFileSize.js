@@ -7,7 +7,7 @@ const checkFileSize = (file) => {
 		if (file.size > 52428800) {
 			return {
 				code: 'size-too-large',
-				message: `Image file Too Large`
+				message: `the size of the file is too high`
 			};
 		}
 	}
@@ -15,14 +15,14 @@ const checkFileSize = (file) => {
 		if (file.size > 10737418240) {
 			return {
 				code: 'size-too-large',
-				message: `Video file Too Large`
+				message: `the size of the file is too high`
 			};
 		}
 	}
 	if (file.size > 209715200) {
 		return {
 			code: 'size-too-large',
-			message: `Audio file Too Large`
+			message: `the size of the file is too high`
 		};
 	}
 };
