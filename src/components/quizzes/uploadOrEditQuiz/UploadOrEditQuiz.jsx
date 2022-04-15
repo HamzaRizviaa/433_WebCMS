@@ -74,6 +74,8 @@ const UploadOrEditQuiz = ({
 	const editQuestionData = useSelector(
 		(state) => state.questionLibrary.questionEdit
 	);
+	const editQuestionStatus = useSelector((state) => state.questionLibrary);
+	console.log(editQuestionStatus.status, 'editQuestionStatus');
 
 	useEffect(() => {
 		var da = new Date(endDate);
@@ -234,7 +236,7 @@ const UploadOrEditQuiz = ({
 
 	const createQuestion = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
-
+		setIsLoadingcreateViral(false);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/question/add-question`,
@@ -429,7 +431,11 @@ const UploadOrEditQuiz = ({
 	};
 
 	return (
-		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
+		<LoadingOverlay
+			active={editQuestionStatus.status === 'loading' ? true : false}
+			spinner
+			text='Loading...'
+		>
 			<Slide in={true} direction='up' {...{ timeout: 400 }}>
 				<div
 					className={`${
