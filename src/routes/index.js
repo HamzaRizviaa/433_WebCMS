@@ -4,7 +4,7 @@
 
 import React, { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import PostLibrary from '../pages/PostLibrary/PostLibrary';
+// import PostLibrary from '../pages/PostLibrary/PostLibrary';
 import MediaLibrary from '../pages/MediaLibrary/MediaLibrary';
 import QuestionLibrary from '../pages/QuestionLibrary/QuestionLibrary';
 import TopBanner from '../pages/TopBanner/TopBanner.jsx';
@@ -60,10 +60,10 @@ const AppRoutes = () => {
 					path='/games-library'
 					element={<RequireAuth component={<GamesLibrary />} />}
 				/>
-				<Route
+				{/* <Route
 					path='/post-library'
 					element={<RequireAuth component={<PostLibrary />} />}
-				/>
+				/> */}
 
 				<Route path='*' element={<Navigate to='/sign-in' />} />
 			</Routes>
