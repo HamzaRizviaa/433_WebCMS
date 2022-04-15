@@ -654,9 +654,9 @@ const UploadOrEditMedia = ({
 							data: {
 								file_name_media: uploadedFiles[0].fileName,
 								file_name_image: uploadedCoverImage[0].fileName,
-								image_key: mediaFiles[1]?.keys?.image_key,
-								audio_key: mediaFiles[0]?.keys?.audio_key,
-								video_key: mediaFiles[0]?.keys?.video_key,
+								image_data: mediaFiles[1]?.keys?.image_key,
+								audio_data: mediaFiles[0]?.keys?.audio_key,
+								video_data: mediaFiles[0]?.keys?.video_key,
 								...completedUpload?.data?.data
 							}
 						});
