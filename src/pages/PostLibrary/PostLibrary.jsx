@@ -45,6 +45,9 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
+import { toast } from 'react-toastify';
+import { Flip } from 'react-toastify';
+
 const PostLibrary = () => {
 	const muiClasses = useStyles();
 	const muiClasses2 = useStyles2();
@@ -82,10 +85,27 @@ const PostLibrary = () => {
 		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));
 		let current_date = new Date();
 		let time_difference_minutes = (expiry_date - current_date) / 1000 / 60; //in minutes
-		// console.log(current_date, 'curr');
 		console.log(time_difference_minutes);
 		if (time_difference_minutes <= 1) {
 			alert('Your session has expired');
+
+			// toast.warning('Your session has expired!', {
+			// 	position: 'top-center',
+			// 	autoClose: 5000,
+			// 	hideProgressBar: false,
+			// 	closeOnClick: true,
+			// 	pauseOnHover: true,
+			// 	draggable: true,
+			// 	progress: undefined,
+			// 	theme: 'dark',
+			// 	transition: Flip,
+			// 	icon: ({ theme, type }) => (
+			// 		<img src={Four33Loader} className={classes.loaderAlert} />
+			// 	),
+			// 	className: `${classes.toasterWrapper}`,
+			// 	bodyClassName: `${classes.toastBody}`
+			// });
+
 			localStorage.removeItem('user_data');
 			localStorage.removeItem('token_expire_time');
 			navigate('/sign-in');

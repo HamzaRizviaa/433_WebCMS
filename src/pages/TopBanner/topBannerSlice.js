@@ -42,7 +42,12 @@ export const topBannerSlice = createSlice({
 		content: [],
 		allBanners: []
 	},
-	reducers: {},
+	reducers: {
+		resetBanner: (state) => {
+			state.allBanners = [];
+			state.content = [];
+		}
+	},
 	extraReducers: {
 		[getBannerContent.pending]: (state) => {
 			state.status = 'pending';
@@ -64,5 +69,7 @@ export const topBannerSlice = createSlice({
 		}
 	}
 });
+
+export const { resetBanner } = topBannerSlice.actions;
 
 export default topBannerSlice.reducer;

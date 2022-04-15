@@ -1,0 +1,9 @@
+@import '../../styles/_mixins.scss';
+
+.textField {
+	width: 100%;
+}
+
+.textFieldInput {
+	@include textFieldInput;
+}

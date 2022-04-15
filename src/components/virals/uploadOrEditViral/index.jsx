@@ -2,29 +2,29 @@
 import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditViral.module.scss';
 import { useDropzone } from 'react-dropzone';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
 import { TextField } from '@material-ui/core';
-import { CircularProgress } from '@material-ui/core';
 import Button from '../../button';
+import DragAndDropField from '../../DragAndDropField';
 import { useDispatch, useSelector } from 'react-redux';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
+import checkFileSize from '../../../utils/validateFileSize';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getAllViralsApi } from '../../../pages/ViralLibrary/viralLibararySlice';
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
-import captureVideoFrame from 'capture-video-frame';
 import Close from '@material-ui/icons/Close';
-import Autocomplete from '@mui/material/Autocomplete';
-import ClearIcon from '@material-ui/icons/Clear';
-import { Popper, Paper } from '@mui/material';
+import Labels from '../../Labels';
 import { getLocalStorageDetails } from '../../../utils';
+import uploadFileToServer from '../../../utils/uploadFileToServer';
+import { Tooltip, Fade } from '@mui/material';
+import ToggleSwitch from '../../switch';
+// import Fade from '@mui/material/Fade';
+import Slide from '@mui/material/Slide';
 
-import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
+import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 
 import LoadingOverlay from 'react-loading-overlay';
 
@@ -39,16 +39,10 @@ const UploadOrEditViral = ({
 }) => {
 	const [caption, setCaption] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
-
 	const [uploadMediaError, setUploadMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [selectedLabels, setSelectedLabels] = useState([]);
-	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
-	const [labelColor, setLabelColor] = useState('#ffffff');
-	const [labelError, setLabelError] = useState('');
-	const [captionColor, setCaptionColor] = useState('#ffffff');
-	const [captionError, setCaptionError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
@@ -59,19 +53,20 @@ const UploadOrEditViral = ({
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
+	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
+	const [valueComments, setValueComments] = useState(false);
+	const [valueLikes, setValueLikes] = useState(false);
+	const [isError, setIsError] = useState({});
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const videoRef = useRef(null);
 	const imgEl = useRef(null);
 
-	// const ref = useRef(null);
-	// useEffect(() => {
-	// 	console.log('width', ref.current ? ref.current.offsetWidth : 0);
-	// }, [ref.current]);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png, video/mp4',
-			maxFiles: 1
+			maxFiles: 1,
+			validator: checkFileSize
 		});
 
 	const labels = useSelector((state) => state.postLibrary.labels);
@@ -110,9 +105,11 @@ const UploadOrEditViral = ({
 				setSelectedLabels(_labels);
 			}
 			setCaption(specificViral?.caption);
-
 			setDropboxLink(specificViral?.dropbox_url);
-
+			setFileWidth(specificViral?.width);
+			setFileHeight(specificViral?.height);
+			setValueComments(specificViral?.show_comments);
+			setValueLikes(specificViral?.show_likes);
 			if (specificViral?.thumbnail_url) {
 				setUploadedFiles([
 					{
@@ -152,7 +149,9 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (fileRejections.length) {
-			setFileRejectionError('The uploaded file format is not matching');
+			fileRejections.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError(e.message));
+			});
 			setTimeout(() => {
 				setFileRejectionError('');
 			}, [5000]);
@@ -168,11 +167,10 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			setUploadMediaError('');
-			setDropZoneBorder('#ffff00');
+			setIsError({});
+
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
-				// readImageFile(file);
 				return {
 					id: id,
 					fileName: file.name,
@@ -187,126 +185,12 @@ const UploadOrEditViral = ({
 		}
 	}, [acceptedFiles]);
 
-	// useEffect(() => {
-	// 	console.log(videoRef?.current?.duration);
-	// }, [videoRef.current]);
-	// useEffect(() => {
-	// 	//console.log('adw');
-	// 	if (videoRef?.current) {
-	// 		console.log('dawdw');
-	// 		console.log(videoRef?.current?.clientWidth);
-	// 	}
-	// 	alert(videoRef?.current?.clientWidth);
-	// }, [videoRef.current]);
-
-	// const readImageFile = (file) => {
-	// 	var reader = new FileReader(); // CREATE AN NEW INSTANCE.
-
-	// 	reader.onload = function (e) {
-	// 		var img = file;
-	// 		img.src = e.target.result;
-
-	// 		img.onload = function () {
-	// 			var w = this.width;
-	// 			var h = this.height;
-	// 			console.log(w, h, 'w h ');
-	// 		};
-	// 	};
-	// };
-
-	const uploadFileToServer = async (uploadedFile) => {
-		try {
-			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
-				{
-					file_type: uploadedFile.fileExtension,
-					parts: 1
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
-				}
-			);
-
-			if (result?.data?.data?.url) {
-				const _result = await axios.put(
-					result?.data?.data?.url,
-					uploadedFile.file,
-					//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
-					{
-						headers: { 'Content-Type': uploadedFile.mime_type }
-					}
-				);
-				const frame = captureVideoFrame('my-video', 'png');
-				// console.log(frame, 'frame', frame.width);
-				if (result?.data?.data?.video_thumbnail_url) {
-					await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
-						headers: { 'Content-Type': 'image/png' }
-					});
-				}
-				if (_result?.status === 200) {
-					const uploadResult = await axios.post(
-						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-						{
-							file_name: uploadedFile.file.name,
-							type: 'virallibrary',
-							data: {
-								bucket: 'media',
-								multipart_upload:
-									uploadedFile?.mime_type == 'video/mp4'
-										? [
-												{
-													e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
-													part_number: 1
-												}
-										  ]
-										: ['image'],
-								keys: {
-									image_key: result?.data?.data?.keys?.image_key,
-									video_key: result?.data?.data?.keys?.video_key,
-									audio_key: ''
-								},
-								upload_id:
-									uploadedFile?.mime_type == 'video/mp4'
-										? result?.data?.data?.upload_id
-										: 'image'
-							}
-						},
-						{
-							headers: {
-								Authorization: `Bearer ${
-									getLocalStorageDetails()?.access_token
-								}`
-							}
-						}
-					);
-					if (uploadResult?.data?.status_code === 200) {
-						return uploadResult.data.data;
-					} else {
-						throw 'Error';
-					}
-				} else {
-					throw 'Error';
-				}
-			} else {
-				throw 'Error';
-			}
-		} catch (error) {
-			console.log('Error');
-			return null;
-		}
-	};
-
 	const resetState = () => {
 		setCaption('');
 		setDropboxLink('');
 		setUploadMediaError('');
 		setFileRejectionError('');
 		setUploadedFiles([]);
-		setDropZoneBorder('#ffff00');
-		setCaptionColor('#ffffff');
-		setLabelColor('#ffffff');
 		setPostButtonStatus(false);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
@@ -315,6 +199,11 @@ const UploadOrEditViral = ({
 		setPreviewBool(false);
 		setSelectedLabels([]);
 		setDisableDropdown(true);
+		setFileHeight(null);
+		setFileWidth(null);
+		setIsError({});
+		setValueComments(false);
+		setValueLikes(false);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -324,38 +213,14 @@ const UploadOrEditViral = ({
 	};
 
 	const validateViralBtn = () => {
-		if (uploadedFiles.length < 1) {
-			setDropZoneBorder('#ff355a');
-			setUploadMediaError('You need to upload a media in order to post');
-			setTimeout(() => {
-				setDropZoneBorder('#ffff00');
-				setUploadMediaError('');
-			}, [5000]);
-		}
-
-		if (selectedLabels.length < 10) {
-			setLabelColor('#ff355a');
-			setLabelError(
-				`You need to add ${
-					10 - selectedLabels.length
-				} more labels in order to post`
-			);
-			setTimeout(() => {
-				setLabelColor('#ffffff');
-				setLabelError('');
-			}, [5000]);
-		}
-
-		if (!caption) {
-			setCaptionColor('#ff355a');
-			setCaptionError(
-				'You need to put a caption of atleast 1 character in order to post'
-			);
-			setTimeout(() => {
-				setCaptionColor('#ffffff');
-				setCaptionError('');
-			}, [5000]);
-		}
+		setIsError({
+			caption: !caption,
+			uploadedFiles: uploadedFiles.length < 1,
+			selectedLabels: selectedLabels.length < 10
+		});
+		setTimeout(() => {
+			setIsError({});
+		}, 5000);
 	};
 
 	const createViral = async (id, mediaFiles = []) => {
@@ -364,18 +229,22 @@ const UploadOrEditViral = ({
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
 				{
-					...(caption ? { caption: caption } : { caption: '' }),
-					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
-					...(!isEdit ? { media_url: mediaFiles[0]?.media_url } : {}),
-					...(!isEdit ? { file_name: mediaFiles[0]?.file_name } : {}),
-					...(!isEdit ? { thumbnail_url: mediaFiles[0]?.thumbnail_url } : {}),
-					...(!isEdit ? { height: fileHeight } : {}),
-					...(!isEdit ? { width: fileWidth } : {}),
+					caption: caption,
+					dropbox_url: dropboxLink,
+					media_url:
+						mediaFiles[0]?.media_url ||
+						mediaFiles[0].img.split('cloudfront.net/')[1],
+					file_name: mediaFiles[0]?.file_name || mediaFiles[0]?.fileName,
+					thumbnail_url: mediaFiles[0]?.thumbnail_url,
+					height: fileHeight,
+					width: fileWidth,
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
 						last_name: `${getLocalStorageDetails()?.last_name}`
 					},
+					...(valueLikes ? { show_likes: true } : {}),
+					...(valueComments ? { show_comments: true } : {}),
 					...(isEdit && id ? { viral_id: id } : {}),
 					...(!isEdit && selectedLabels.length
 						? { labels: [...selectedLabels] }
@@ -401,7 +270,7 @@ const UploadOrEditViral = ({
 			toast.error(isEdit ? 'Failed to edit viral!' : 'Failed to create viral!');
 			setIsLoadingcreateViral(false);
 			setPostButtonStatus(false);
-			console.log(e);
+			console.log(e, 'Failed create / edit viral');
 		}
 	};
 
@@ -422,14 +291,12 @@ const UploadOrEditViral = ({
 			if (result?.data?.status_code === 200) {
 				toast.success('Viral has been deleted!');
 				handleClose();
-
-				//setting a timeout for getting post after delete.
 				dispatch(getAllViralsApi({ page }));
 			}
 		} catch (e) {
 			toast.error('Failed to delete Viral!');
 			setDeleteBtnStatus(false);
-			console.log(e);
+			console.log(e, 'Failed to delete Viral');
 		}
 	};
 
@@ -440,8 +307,6 @@ const UploadOrEditViral = ({
 	}, [newLabels]);
 
 	const handleChangeExtraLabel = (e) => {
-		// e.preventDefault();
-		// e.stopPropagation();
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
@@ -456,12 +321,57 @@ const UploadOrEditViral = ({
 		selectedLabels.length < 10 ||
 		!caption;
 
-	const editBtnDisabled =
-		postButtonStatus ||
-		!caption ||
-		// !dropboxLink ||
-		(specificViral?.caption === caption.trim() &&
-			specificViral?.dropbox_url === dropboxLink.trim());
+	useEffect(() => {
+		if (specificViral) {
+			setEditBtnDisabled(
+				postButtonStatus ||
+					!caption ||
+					!uploadedFiles.length ||
+					(specificViral?.file_name === uploadedFiles[0]?.fileName &&
+						specificViral?.caption?.trim() === caption.trim() &&
+						specificViral?.dropbox_url?.trim() === dropboxLink.trim())
+			);
+		}
+	}, [specificViral, caption, uploadedFiles, dropboxLink]);
+
+	const handlePostSaveBtn = () => {
+		setIsLoadingcreateViral(false);
+		if (viralBtnDisabled || editBtnDisabled) {
+			validateViralBtn();
+		} else {
+			setPostButtonStatus(true);
+			if (isEdit) {
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file, 'virallibrary');
+					} else {
+						return _file;
+					}
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createViral(specificViral?.id, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingcreateViral(false);
+					});
+			} else {
+				setIsLoadingcreateViral(true);
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					return uploadFileToServer(_file, 'virallibrary');
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createViral(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingcreateViral(false);
+					});
+			}
+		}
+	};
 
 	return (
 		<Slider
@@ -484,480 +394,277 @@ const UploadOrEditViral = ({
 			viral={true}
 		>
 			<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
-				<div
-					className={`${
-						previewFile != null
-							? classes.previewContentWrapper
-							: classes.contentWrapper
-					}`}
-				>
-					{/* {specificViralStatus.status === 'loading' ? (
-						<div className={classes.loaderContainer2}>
-							<CircularProgress className={classes.loader} />
-						</div>
-					) : (
-						<></>
-					)} */}
-
+				<Slide in={true} direction='up' {...{ timeout: 400 }}>
 					<div
-						className={classes.contentWrapperNoPreview}
-						style={{ width: previewFile != null ? '60%' : 'auto' }}
+						className={`${
+							previewFile != null
+								? classes.previewContentWrapper
+								: classes.contentWrapper
+						}`}
 					>
-						<div>
-							<h5>{heading1}</h5>
-							<DragDropContext>
-								<Droppable droppableId='droppable-1'>
-									{(provided) => (
-										<div
-											{...provided.droppableProps}
-											ref={provided.innerRef}
-											className={classes.uploadedFilesContainer}
-										>
-											{uploadedFiles.map((file, index) => {
-												return (
-													<Draggable
-														key={file.id}
-														draggableId={`droppable-${file.id}`}
-														index={index}
-														isDragDisabled={uploadedFiles.length <= 1}
-													>
-														{(provided) => (
-															<div
-																key={index}
-																className={classes.filePreview}
-																ref={provided.innerRef}
-																{...provided.draggableProps}
-																style={{
-																	...provided.draggableProps.style
-																}}
-															>
-																<div className={classes.filePreviewLeft}>
-																	{file.type === 'video' ? (
-																		<>
-																			{/* <PlayArrowIcon
-																				className={classes.playIcon}
-																			/> */}
-																			<video
-																				id={'my-video'}
-																				poster={isEdit ? file.img : null}
-																				className={classes.fileThumbnail}
-																				style={{
-																					// maxWidth: `${imageToResizeWidth}px`,
-																					// maxHeight: `${imageToResizeHeight}px`,
-																					objectFit: 'cover',
-																					objectPosition: 'center'
-																				}}
-																				ref={videoRef}
-																				onLoadedMetadata={() => {
-																					setFileWidth(
-																						videoRef.current.videoWidth
-																					);
-																					setFileHeight(
-																						videoRef.current.videoHeight
-																					);
-																				}}
-																			>
-																				<source src={file.img} />
-																			</video>
-																		</>
-																	) : (
-																		<>
-																			<img
-																				src={file.img}
-																				className={classes.fileThumbnail}
-																				style={{
-																					// width: `${imageToResizeWidth}px`,
-																					// height: `${imageToResizeHeight}px`,
-																					objectFit: 'cover',
-																					objectPosition: 'center'
-																				}}
-																				ref={imgEl}
-																				onLoad={() => {
-																					setFileWidth(
-																						imgEl.current.naturalWidth
-																					);
-																					setFileHeight(
-																						imgEl.current.naturalHeight
-																					);
-																				}}
-																			/>
-																		</>
-																	)}
-
-																	<p className={classes.fileName}>
-																		{file.fileName}
-																	</p>
-																</div>
-
-																{/* {loadingMedia.includes(file.id) ? (
-															<div className={classes.loaderContainer}>
-																<CircularProgress className={classes.loader} />
-															</div>
-														) : (
-															<></>
-														)} */}
-
-																{isEdit ? (
-																	<div className={classes.filePreviewRight}>
-																		<EyeIcon
-																			onClick={() => {
-																				setPreviewBool(true);
-																				setPreviewFile(file);
-																			}}
-																			className={classes.filePreviewIcons}
-																		/>
-																	</div>
-																) : (
-																	<div className={classes.filePreviewRight}>
-																		<EyeIcon
-																			className={classes.filePreviewIcons}
-																			onClick={() => {
-																				setPreviewBool(true);
-																				setPreviewFile(file);
-																			}}
-																		/>
-																		<Deletes
-																			className={classes.filePreviewIcons}
-																			onClick={() => {
-																				handleDeleteFile(file.id);
-																				setPreviewBool(false);
-																				setPreviewFile(null);
-																			}}
-																		/>
-																	</div>
-																)}
-															</div>
-														)}
-													</Draggable>
-												);
-											})}
-											{provided.placeholder}
-										</div>
-									)}
-								</Droppable>
-							</DragDropContext>
-							{uploadedFiles.length < 1 && !isEdit ? (
-								<section
-									className={classes.dropZoneContainer}
-									style={{
-										borderColor: dropZoneBorder
+						<div
+							className={classes.contentWrapperNoPreview}
+							style={{ width: previewFile != null ? '60%' : 'auto' }}
+						>
+							<div>
+								<div className={classes.explanationWrapper}>
+									<h5>{heading1}</h5>
+									<Tooltip
+										TransitionComponent={Fade}
+										TransitionProps={{ timeout: 800 }}
+										title='Default encoding for videos should be H.264'
+										arrow
+										componentsProps={{
+											tooltip: { className: classes.toolTip },
+											arrow: { className: classes.toolTipArrow }
+										}}
+										placement='bottom-start'
+									>
+										<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
+									</Tooltip>
+								</div>
+								<DragAndDropField
+									uploadedFiles={uploadedFiles}
+									// isEdit={isEdit}
+									handleDeleteFile={handleDeleteFile}
+									setPreviewBool={setPreviewBool}
+									setPreviewFile={setPreviewFile}
+									imgEl={imgEl}
+									videoRef={videoRef}
+									imageOnload={() => {
+										setFileWidth(imgEl.current.naturalWidth);
+										setFileHeight(imgEl.current.naturalHeight);
 									}}
-								>
-									<div {...getRootProps({ className: classes.dropzone })}>
-										<input {...getInputProps()} />
-										<AddCircleOutlineIcon className={classes.addFilesIcon} />
-										<p className={classes.dragMsg}>
-											Click or drag files to this area to upload
-										</p>
-										<p className={classes.formatMsg}>
-											Supported formats are jpeg, png and mp4
-										</p>
-										<p className={classes.uploadMediaError}>
-											{uploadMediaError}
-										</p>
-									</div>
-								</section>
-							) : (
-								<></>
-							)}
-							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
-							<div className={classes.dropBoxUrlContainer}>
-								<h6>DROPBOX URL</h6>
-								<TextField
-									value={dropboxLink}
-									onChange={(e) => setDropboxLink(e.target.value)}
-									placeholder={'Please drop the dropbox URL here'}
-									className={classes.textField}
-									multiline
-									maxRows={2}
-									InputProps={{
-										disableUnderline: true,
-										className: classes.textFieldInput,
-										style: {
-											borderRadius: dropboxLink ? '16px' : '40px'
-										}
+									onLoadedVideodata={() => {
+										setFileWidth(videoRef.current.videoWidth);
+										setFileHeight(videoRef.current.videoHeight);
 									}}
+									isPost
 								/>
+								{!uploadedFiles.length && (
+									<section
+										className={classes.dropZoneContainer}
+										style={{
+											borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
+										}}
+									>
+										<div {...getRootProps({ className: classes.dropzone })}>
+											<input {...getInputProps()} />
+											<AddCircleOutlineIcon className={classes.addFilesIcon} />
+											<p className={classes.dragMsg}>
+												Click or drag files to this area to upload
+											</p>
+											<p className={classes.formatMsg}>
+												Supported formats are jpeg, png and mp4
+											</p>
+											<p className={classes.uploadMediaError}>
+												{isError.uploadedFiles
+													? 'You need to upload a media in order to post'
+													: ''}
+											</p>
+										</div>
+									</section>
+								)}
+								<p className={classes.fileRejectionError}>
+									{fileRejectionError}
+								</p>
+								<div className={classes.dropBoxUrlContainer}>
+									<h6>DROPBOX URL</h6>
+									<TextField
+										value={dropboxLink}
+										onChange={(e) => setDropboxLink(e.target.value)}
+										placeholder={'Please drop the dropbox URL here'}
+										className={classes.textField}
+										multiline
+										maxRows={2}
+										InputProps={{
+											disableUnderline: true,
+											className: classes.textFieldInput,
+											style: {
+												borderRadius: dropboxLink ? '16px' : '40px'
+											}
+										}}
+									/>
+								</div>
+
+								<div className={classes.captionContainer}>
+									<h6
+										className={
+											isError.selectedLabels
+												? classes.errorState
+												: classes.noErrorState
+										}
+									>
+										LABELS
+									</h6>
+									<Labels
+										isEdit={isEdit}
+										setDisableDropdown={setDisableDropdown}
+										selectedLabels={selectedLabels}
+										setSelectedLabels={setSelectedLabels}
+										LabelsOptions={postLabels}
+										extraLabel={extraLabel}
+										handleChangeExtraLabel={handleChangeExtraLabel}
+									/>
+								</div>
+								<p className={classes.mediaError}>
+									{isError.selectedLabels
+										? `You need to add  ${
+												10 - selectedLabels.length
+										  }  more labels in order to post`
+										: ''}
+								</p>
+
+								<div className={classes.captionContainer}>
+									<h6
+										className={
+											isError.caption
+												? classes.errorState
+												: classes.noErrorState
+										}
+									>
+										CAPTION
+									</h6>
+									<TextField
+										value={caption}
+										onChange={(e) => setCaption(e.target.value)}
+										placeholder={'Please write your caption here'}
+										className={classes.textField}
+										InputProps={{
+											disableUnderline: true,
+											className: classes.textFieldInput,
+											style: {
+												borderRadius: caption ? '16px' : '40px'
+											}
+										}}
+										multiline
+										maxRows={4}
+									/>
+								</div>
+								<p className={classes.mediaError}>
+									{isError.caption ? 'This field is required' : ''}
+								</p>
+
+								<p className={classes.mediaError}>
+									{isError.caption ? 'This field is required' : ''}
+								</p>
+
+								<div className={classes.postMediaContainer}>
+									<div className={classes.postMediaHeader}>
+										<h5>Show comments</h5>
+										<ToggleSwitch
+											id={1}
+											checked={valueComments}
+											onChange={(checked) => {
+												setValueComments(checked);
+											}}
+										/>
+									</div>
+								</div>
+
+								<div className={classes.postMediaContainer}>
+									<div className={classes.postMediaHeader}>
+										<h5>Show likes</h5>
+										<ToggleSwitch
+											id={2}
+											checked={valueLikes}
+											onChange={(checked) => {
+												setValueLikes(checked);
+											}}
+										/>
+									</div>
+								</div>
 							</div>
 
-							<div className={classes.captionContainer}>
-								<h6 style={{ color: labelColor }}>LABELS</h6>
-								<Autocomplete
-									disabled={isEdit}
-									getOptionLabel={(option) => option.name} // name out of array of strings
-									PaperComponent={(props) => {
-										setDisableDropdown(false);
-										return (
-											<Paper
-												elevation={6}
-												className={classes.popperAuto}
-												style={{
-													marginTop: '12px',
-													background: 'black',
-													border: '1px solid #404040',
-													boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)',
-													borderRadius: '8px'
-												}}
-												{...props}
-											/>
-										);
-									}}
-									PopperComponent={({ style, ...props }) => (
-										<Popper {...props} style={{ ...style, height: 0 }} />
-									)}
-									ListboxProps={{
-										style: { maxHeight: 180 },
-										position: 'bottom'
-									}}
-									onClose={(e) => {
-										setDisableDropdown(true);
-									}}
-									multiple
-									filterSelectedOptions
-									// freeSolo
-									freeSolo={false}
-									value={selectedLabels}
-									onChange={(event, newValue) => {
-										setDisableDropdown(true);
-										event.preventDefault();
-										event.stopPropagation();
-										let newLabels = newValue.filter(
-											(v, i, a) =>
-												a.findIndex(
-													(t) => t.name.toLowerCase() === v.name.toLowerCase()
-												) === i
-										);
-										setSelectedLabels([...newLabels]);
-									}}
-									popupIcon={''}
-									noOptionsText={
-										<div className={classes.liAutocompleteWithButton}>
-											{/* <p>{extraLabel.toUpperCase()}</p> */}
-											<p>No results found</p>
-											{/* <Button
-												text='CREATE NEW LABEL'
-												style={{
-													padding: '3px 12px',
-													fontWeight: 700
-												}}
-												onClick={() => {
-													// setSelectedLabels((labels) => [
-													// 	...labels,
-													// 	extraLabel.toUpperCase()
-													// ]);
-												}}
-											/> */}
-										</div>
-									}
-									className={`${classes.autoComplete} ${
-										isEdit && classes.disableAutoComplete
-									}`}
-									id='free-solo-2-demo'
-									disableClearable
-									options={postLabels}
-									renderInput={(params) => (
-										<TextField
-											{...params}
-											placeholder={selectedLabels.length ? ' ' : 'Select Label'}
-											className={classes.textFieldAuto}
-											value={extraLabel}
-											onChange={handleChangeExtraLabel}
-											InputProps={{
-												disableUnderline: true,
-												className: classes.textFieldInput,
-												...params.InputProps
+							<div className={classes.buttonDiv}>
+								{isEdit ? (
+									<div className={classes.editBtn}>
+										<Button
+											disabled={deleteBtnStatus}
+											button2={isEdit ? true : false}
+											onClick={() => {
+												if (!deleteBtnStatus) {
+													deleteViral(specificViral?.id);
+												}
+											}}
+											text={'DELETE VIRAL'}
+										/>
+									</div>
+								) : (
+									<> </>
+								)}
+
+								<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
+									<Button
+										disabled={isEdit ? editBtnDisabled : viralBtnDisabled}
+										onClick={() => {
+											handlePostSaveBtn();
+										}}
+										text={buttonText}
+									/>
+								</div>
+							</div>
+						</div>
+						{previewFile != null && (
+							<div ref={previewRef} className={classes.previewComponent}>
+								<div className={classes.previewHeader}>
+									<Close
+										onClick={() => {
+											setPreviewBool(false);
+											setPreviewFile(null);
+										}}
+										className={classes.closeIcon}
+									/>
+									<h5>Preview</h5>
+								</div>
+								<div>
+									{previewFile.mime_type === 'video/mp4' ? (
+										<video
+											id={'my-video'}
+											poster={isEdit ? previewFile.img : null}
+											className={classes.previewFile}
+											style={{
+												width: `100%`,
+												height: `${8 * 4}rem`,
+												objectFit: 'contain',
+												objectPosition: 'center'
+											}}
+											controls={true}
+										>
+											<source src={previewFile.img} />
+										</video>
+									) : isEdit && previewFile.type === 'video' ? (
+										<video
+											id={'my-video'}
+											poster={isEdit ? previewFile.thumbnail_url : null}
+											className={classes.previewFile}
+											style={{
+												width: `100%`,
+												height: `${8 * 4}rem`,
+												objectFit: 'contain',
+												objectPosition: 'center'
+											}}
+											controls={true}
+										>
+											<source src={previewFile.url} />
+										</video>
+									) : (
+										<img
+											src={previewFile.img}
+											className={classes.previewFile}
+											style={{
+												width: `100%`,
+												height: `${8 * 4}rem`,
+												objectFit: 'contain',
+												objectPosition: 'center'
 											}}
 										/>
 									)}
-									renderOption={(props, option, state) => {
-										let currentLabelDuplicate = selectedLabels.some(
-											(label) => label.name == option.name
-										);
-
-										if (option.id == null && !currentLabelDuplicate) {
-											return (
-												<li
-													{...props}
-													style={{
-														display: 'flex',
-														alignItems: 'center',
-														justifyContent: 'space-between'
-													}}
-													className={classes.liAutocomplete}
-												>
-													{option.name}
-													<Button
-														text='CREATE NEW LABEL'
-														style={{
-															padding: '3px 12px',
-															fontWeight: 700
-														}}
-														onClick={() => {
-															setSelectedLabels((labels) => [
-																...labels,
-																extraLabel.toUpperCase()
-															]);
-														}}
-													/>
-												</li>
-											);
-										} else if (!currentLabelDuplicate) {
-											return (
-												<li {...props} className={classes.liAutocomplete}>
-													{option.name}
-												</li>
-											);
-										} else {
-											return (
-												<div className={classes.liAutocompleteWithButton}>
-													&apos;{option.name}&apos; is already selected
-												</div>
-											);
-										}
-									}}
-									ChipProps={{
-										className: classes.tagYellow,
-										size: 'small',
-										deleteIcon: <ClearIcon />
-									}}
-									clearIcon={''}
-								/>
-							</div>
-							<p className={classes.mediaError}>{labelError}</p>
-							<div className={classes.captionContainer}>
-								<h6 style={{ color: captionColor }}>CAPTION</h6>
-								<TextField
-									value={caption}
-									onChange={(e) => setCaption(e.target.value)}
-									placeholder={'Please write your caption here'}
-									className={classes.textField}
-									InputProps={{
-										disableUnderline: true,
-										className: classes.textFieldInput,
-										style: {
-											borderRadius: caption ? '16px' : '40px'
-										}
-									}}
-									multiline
-									maxRows={4}
-								/>
-							</div>
-							<p className={classes.mediaError}>{captionError}</p>
-						</div>
-
-						<div className={classes.buttonDiv}>
-							{isEdit ? (
-								<div className={classes.editBtn}>
-									<Button
-										disabled={deleteBtnStatus}
-										button2={isEdit ? true : false}
-										onClick={() => {
-											if (!deleteBtnStatus) {
-												deleteViral(specificViral?.id);
-											}
-										}}
-										text={'DELETE VIRAL'}
-									/>
 								</div>
-							) : (
-								<> </>
-							)}
-
-							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
-								<Button
-									disabled={isEdit ? editBtnDisabled : viralBtnDisabled}
-									onClick={() => {
-										if (viralBtnDisabled || editBtnDisabled) {
-											validateViralBtn();
-										} else {
-											setPostButtonStatus(true);
-											if (isEdit) {
-												createViral(specificViral?.id);
-											} else {
-												setIsLoadingcreateViral(true);
-												let uploadFilesPromiseArray = uploadedFiles.map(
-													async (_file) => {
-														return uploadFileToServer(_file);
-													}
-												);
-
-												Promise.all([...uploadFilesPromiseArray])
-													.then((mediaFiles) => {
-														createViral(null, mediaFiles);
-													})
-													.catch(() => {
-														setIsLoadingcreateViral(false);
-													});
-											}
-										}
-									}}
-									text={buttonText}
-								/>
 							</div>
-						</div>
+						)}
 					</div>
-					{previewFile != null && (
-						<div ref={previewRef} className={classes.previewComponent}>
-							<div className={classes.previewHeader}>
-								<Close
-									onClick={() => {
-										setPreviewBool(false);
-										setPreviewFile(null);
-									}}
-									className={classes.closeIcon}
-								/>
-								<h5>Preview</h5>
-							</div>
-							<div>
-								{previewFile.mime_type === 'video/mp4' ? (
-									<video
-										id={'my-video'}
-										poster={isEdit ? previewFile.img : null}
-										className={classes.previewFile}
-										style={{
-											//width: `${8 * 4}rem`,
-											width: `100%`,
-											height: `${8 * 4}rem`,
-											objectFit: 'contain',
-											objectPosition: 'center'
-										}}
-										controls={true}
-									>
-										<source src={previewFile.img} />
-									</video>
-								) : isEdit && previewFile.type === 'video' ? (
-									<video
-										id={'my-video'}
-										poster={isEdit ? previewFile.thumbnail_url : null}
-										className={classes.previewFile}
-										style={{
-											//width: `${8 * 4}rem`,
-											width: `100%`,
-											height: `${8 * 4}rem`,
-											objectFit: 'contain',
-											objectPosition: 'center'
-										}}
-										controls={true}
-									>
-										<source src={previewFile.url} />
-									</video>
-								) : (
-									<img
-										src={previewFile.img}
-										className={classes.previewFile}
-										style={{
-											//width: `${8 * 4}rem`,
-											width: `100%`,
-											height: `${8 * 4}rem`,
-											objectFit: 'contain',
-											objectPosition: 'center'
-										}}
-									/>
-								)}
-							</div>
-						</div>
-					)}
-				</div>
+				</Slide>
 			</LoadingOverlay>
 		</Slider>
 	);

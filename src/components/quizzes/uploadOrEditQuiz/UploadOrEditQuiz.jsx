@@ -4,37 +4,32 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classes from './_uploadOrEditQuiz.module.scss';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { useDropzone } from 'react-dropzone';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { makeid } from '../../../utils/helper';
-import Close from '@material-ui/icons/Close';
 import { TextField } from '@material-ui/core';
-import { Autocomplete, Paper, Popper } from '@mui/material';
+import DragAndDropField from '../../DragAndDropField';
+import Labels from '../../Labels';
 import Button from '../../button';
-import ClearIcon from '@material-ui/icons/Clear';
 import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import '../../../pages/PostLibrary/_calender.scss';
+import checkFileSize from '../../../utils/validateFileSize';
 import { getDateTime, formatDate, getCalendarText2 } from '../../../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	getQuestionLabels,
-	getQuestionEdit,
 	getQuestions
 } from '../../../pages/QuestionLibrary/questionLibrarySlice';
 import { getLocalStorageDetails } from '../../../utils';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import LoadingOverlay from 'react-loading-overlay';
-// import moment from 'moment';
-
-import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
+import uploadFileToServer from '../../../utils/uploadFileToServer';
+import Close from '@material-ui/icons/Close';
 import { ReactComponent as CalenderYellow } from '../../../assets/Calender_Yellow.svg';
+import 'react-datepicker/dist/react-datepicker.css';
+import '../../../pages/PostLibrary/_calender.scss';
 import { useRef } from 'react';
-import { getSpecificMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
-import { getSpecificGame } from '../../../pages/GamesLibrary/gamesLibrarySlice';
+import Slide from '@mui/material/Slide';
 const UploadOrEditQuiz = ({
 	heading1,
 	open,
@@ -54,24 +49,11 @@ const UploadOrEditQuiz = ({
 }) => {
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
-	const [uploadMediaError, setUploadMediaError] = useState('');
-	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
-	//const [previewFile, setPreviewFile] = useState(null);
 	const [dropboxLink, setDropboxLink] = useState('');
 	const [question, setQuestion] = useState('');
 	const [ans1, setAns1] = useState('');
 	const [ans2, setAns2] = useState('');
 	const [selectedLabels, setSelectedLabels] = useState([]);
-	const [labelColor, setLabelColor] = useState('#ffffff');
-	const [labelError, setLabelError] = useState('');
-	const [quizColor, setQuizColor] = useState('#ffffff');
-	const [calenderError, setCalenderError] = useState('');
-	const [questionColor, setQuestionColor] = useState('#ffffff');
-	const [questionError, setQuestionError] = useState('');
-	const [ans1Color, setAns1Color] = useState('#ffffff');
-	const [ans1Error, setAns1Error] = useState('');
-	const [ans2Color, setAns2Color] = useState('#ffffff');
-	const [ans2Error, setAns2Error] = useState('');
 	const [quizLabels, setQuizLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [endDate, setEndDate] = useState(null);
@@ -83,6 +65,7 @@ const UploadOrEditQuiz = ({
 	const [editQuizBtnDisabled, setEditQuizBtnDisabled] = useState(false);
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
+	const [isError, setIsError] = useState({});
 	const imgRef = useRef(null);
 	const dispatch = useDispatch();
 
@@ -91,12 +74,9 @@ const UploadOrEditQuiz = ({
 	const editQuestionData = useSelector(
 		(state) => state.questionLibrary.questionEdit
 	);
+	const editQuestionStatus = useSelector((state) => state.questionLibrary);
+	console.log(editQuestionStatus.status, 'editQuestionStatus');
 
-	// ${(
-	// 	'0' + da.getHours().toLocaleString()
-	// ).slice(-2)}:${('0' + da.getMinutes()).slice(-2)}:${(
-	// 	'0' + da.getSeconds()
-	// ).slice(-2)}.${'00' + da.getMilliseconds()}
 	useEffect(() => {
 		var da = new Date(endDate);
 		var toSend = `${da?.getFullYear()}-${('0' + (da?.getMonth() + 1)).slice(
@@ -113,7 +93,6 @@ const UploadOrEditQuiz = ({
 
 	useEffect(() => {
 		dispatch(getQuestionLabels());
-		// !(editPoll || editQuiz) ? resetState() : '';
 	}, []);
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
@@ -125,7 +104,6 @@ const UploadOrEditQuiz = ({
 				}`}
 				onClick={onClick}
 				ref={ref}
-				//style={{ borderColor: noResultCalendarBorder }}
 			>
 				{getCalendarText2(startDate)}
 				<span
@@ -145,7 +123,8 @@ const UploadOrEditQuiz = ({
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png',
-			maxFiles: 1
+			maxFiles: 1,
+			validator: checkFileSize
 		});
 
 	const getFileType = (type) => {
@@ -154,24 +133,6 @@ const UploadOrEditQuiz = ({
 			return _type && _type[1];
 		}
 	};
-
-	// useEffect(() => {
-	// 	if (editQuiz || editPoll) {
-	// 		setUploadedFiles([
-	// 			{
-	// 				id: makeid(10),
-	// 				fileName: 'Better than Messi',
-	// 				img: 'https://cdni0.trtworld.com/w960/h540/q75/34070_esp20180526ronaldo_1527420747155.JPG',
-	// 				type: 'image'
-	// 			}
-	// 		]);
-	// 		setQuestion('Ronaldo better than Messi?');
-	// 		setAns1('Yes');
-	// 		setAns2('Yes');
-
-	// 		setEndDate('Tue Feb 14 2022 00:00:00 GMT+0500 (Pakistan Standard Time)');
-	// 	}
-	// }, [editQuiz, editPoll]);
 
 	useEffect(() => {
 		if (editQuestionData) {
@@ -213,8 +174,8 @@ const UploadOrEditQuiz = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			setUploadMediaError('');
-			setDropZoneBorder('#ffff00');
+			setIsError({});
+
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -233,9 +194,9 @@ const UploadOrEditQuiz = ({
 
 	useEffect(() => {
 		if (fileRejections.length) {
-			setFileRejectionError(
-				'The uploaded file format is not matching OR max files exceeded'
-			);
+			fileRejections.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError(e.message));
+			});
 			setTimeout(() => {
 				setFileRejectionError('');
 			}, [5000]);
@@ -273,102 +234,22 @@ const UploadOrEditQuiz = ({
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
-	const uploadFileToServer = async (uploadedFile) => {
-		try {
-			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
-				{
-					file_type: uploadedFile.fileExtension,
-					parts: 1
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
-				}
-			);
-			// const frame = captureVideoFrame('my-video', 'png');
-			// if (result?.data?.data?.video_thumbnail_url) {
-			// 	await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
-			// 		headers: { 'Content-Type': 'image/png' }
-			// 	});
-			// }
-			if (result?.data?.data?.url) {
-				const _result = await axios.put(
-					result?.data?.data?.url,
-					uploadedFile.file,
-					{
-						headers: { 'Content-Type': uploadedFile.mime_type }
-					}
-				);
-
-				if (_result?.status === 200) {
-					const uploadResult = await axios.post(
-						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-						{
-							file_name: uploadedFile.file.name,
-							type: 'questionLibrary',
-							data: {
-								bucket: 'media',
-								multipart_upload:
-									uploadedFile?.mime_type == 'video/mp4'
-										? [
-												{
-													e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
-													part_number: 1
-												}
-										  ]
-										: ['image'],
-								keys: {
-									image_key: result?.data?.data?.keys?.image_key,
-									video_key: result?.data?.data?.keys?.video_key,
-									audio_key: ''
-								},
-								upload_id:
-									uploadedFile?.mime_type == 'video/mp4'
-										? result?.data?.data?.upload_id
-										: 'image'
-							}
-						},
-						{
-							headers: {
-								Authorization: `Bearer ${
-									getLocalStorageDetails()?.access_token
-								}`
-							}
-						}
-					);
-					if (uploadResult?.data?.status_code === 200) {
-						return uploadResult.data.data;
-					} else {
-						throw 'Error';
-					}
-				} else {
-					throw 'Error';
-				}
-			} else {
-				throw 'Error';
-			}
-		} catch (error) {
-			console.log('Error');
-			return null;
-		}
-	};
-
 	const createQuestion = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
-
+		setIsLoadingcreateViral(false);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/question/add-question`,
 				{
 					width: fileWidth,
 					height: fileHeight,
+					image:
+						mediaFiles[0]?.media_url ||
+						mediaFiles[0].img.split('cloudfront.net/')[1],
+					file_name: mediaFiles[0]?.file_name || mediaFiles[0]?.fileName,
 					...(question ? { question: question } : { question: '' }),
 					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
-					...(!(editQuiz || editPoll)
-						? { image: mediaFiles[0]?.media_url }
-						: {}),
+
 					...(convertedDate ? { end_date: convertedDate } : {}),
 					...(!(editQuiz || editPoll)
 						? quiz
@@ -414,7 +295,7 @@ const UploadOrEditQuiz = ({
 			);
 			setIsLoadingcreateViral(false);
 			setPostButtonStatus(false);
-			console.log(e);
+			console.log(e, 'failed create/edit question');
 		}
 	};
 
@@ -442,7 +323,7 @@ const UploadOrEditQuiz = ({
 		} catch (e) {
 			toast.error('Failed to delete Question!');
 			setDeleteBtnStatus(false);
-			console.log(e);
+			console.log(e, 'Failed to delete Question!');
 		}
 	};
 
@@ -450,8 +331,6 @@ const UploadOrEditQuiz = ({
 		setUploadedFiles([]);
 		setFileRejectionError('');
 		setDropboxLink('');
-		setUploadMediaError('');
-		setDropZoneBorder('#ffff00');
 		setPreviewFile(null);
 		setPreviewBool(false);
 		setQuestion('');
@@ -466,69 +345,21 @@ const UploadOrEditQuiz = ({
 			setDeleteBtnStatus(false);
 		}, 1000);
 		setPostButtonStatus(false);
+		setIsError({});
 	};
 
 	const validatePostBtn = () => {
-		if (uploadedFiles.length < 1) {
-			setDropZoneBorder('#ff355a');
-			setUploadMediaError('You need to upload a media in order to post');
-			setTimeout(() => {
-				setDropZoneBorder('#ffff00');
-				setUploadMediaError('');
-			}, [5000]);
-		}
-		if (selectedLabels.length < 10) {
-			setLabelColor('#ff355a');
-			setLabelError(
-				`You need to add ${
-					10 - selectedLabels.length
-				} more labels in order to upload media`
-			);
-			setTimeout(() => {
-				setLabelColor('#ffffff');
-				setLabelError('');
-			}, [5000]);
-		}
-		if (!endDate) {
-			setQuizColor('#ff355a');
-			setCalenderError('You need to seelct a date in order to post');
-			setTimeout(() => {
-				setQuizColor('#ffffff');
-				setCalenderError('');
-			}, [5000]);
-		}
-		if (!question) {
-			setQuestionColor('#ff355a');
-			setQuestionError('You need to provide a question in order to post');
-			setTimeout(() => {
-				setQuestionColor('#ffffff');
-				setQuestionError('');
-			}, [5000]);
-		}
-		if (!ans1) {
-			setAns1Color('#ff355a');
-			setAns1Error(
-				quiz
-					? 'You need to provide right answer in order to post'
-					: 'You need to provide first answer in order to post'
-			);
-			setTimeout(() => {
-				setAns1Color('#ffffff');
-				setAns1Error('');
-			}, [5000]);
-		}
-		if (!ans2) {
-			setAns2Color('#ff355a');
-			setAns2Error(
-				quiz
-					? 'You need to provide wrong answer in order to post'
-					: 'You need to provide second answer in order to post'
-			);
-			setTimeout(() => {
-				setAns2Color('#ffffff');
-				setAns2Error('');
-			}, [5000]);
-		}
+		setIsError({
+			endDate: !endDate,
+			uploadedFiles: uploadedFiles.length < 1,
+			selectedLabels: selectedLabels.length < 10,
+			question: !question,
+			ans1: !ans1,
+			ans2: !ans2
+		});
+		setTimeout(() => {
+			setIsError({});
+		}, 5000);
 	};
 
 	const addQuizBtnDisabled =
@@ -540,526 +371,398 @@ const UploadOrEditQuiz = ({
 		!ans2 ||
 		!endDate;
 
-	console.log(editQuestionData?.quiz_end_date, 'quiz');
-	// console.log(editQuestionData?.poll_end_date, 'poll');
-	console.log(convertedDate, 'endDate');
-	console.log(editQuestionData?.quiz_end_date?.length, 'quiz');
-	// console.log(editQuestionData?.poll_end_date?.length, 'poll');
-	console.log(convertedDate?.length, 'endDate');
-
-	// const editQuizBtnDisabled =
-	// 	postButtonStatus ||
-	// 	!endDate ||
-	// 	((type === 'quiz'
-	// 		? editQuestionData?.quiz_end_date === endDate
-	// 		: editQuestionData?.poll_end_date === endDate) &&
-	// 		editQuestionData?.dropbox_url === dropboxLink.trim());
+	// console.log(editQuestionData?.quiz_end_date, 'quiz');
+	// console.log(convertedDate, 'endDate');
+	// console.log(editQuestionData?.quiz_end_date?.length, 'quiz');
+	// console.log(convertedDate?.length, 'endDate');
 
 	useEffect(() => {
 		if (editQuestionData) {
 			setEditQuizBtnDisabled(
 				postButtonStatus ||
+					!uploadedFiles.length ||
 					!endDate ||
 					((type === 'quiz'
 						? editQuestionData?.quiz_end_date === convertedDate
 						: editQuestionData?.poll_end_date === convertedDate) &&
+						editQuestionData?.file_name === uploadedFiles[0]?.fileName &&
 						editQuestionData?.dropbox_url === dropboxLink.trim())
 			);
 		}
-	}, [editQuestionData, dropboxLink, endDate, convertedDate]);
+	}, [editQuestionData, dropboxLink, endDate, convertedDate, uploadedFiles]);
+
+	const handleAddSaveQuizPollBtn = async () => {
+		if (addQuizBtnDisabled || editQuizBtnDisabled) {
+			validatePostBtn();
+		} else {
+			setPostButtonStatus(true);
+			setIsLoadingcreateViral(true);
+			if (editQuiz || editPoll) {
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file, 'questionLibrary');
+					} else {
+						return _file;
+					}
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createQuestion(editQuestionData?.id, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingcreateViral(false);
+					});
+			} else {
+				setIsLoadingcreateViral(true);
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					return uploadFileToServer(_file, 'questionLibrary');
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createQuestion(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingcreateViral(false);
+					});
+			}
+		}
+	};
 
 	return (
-		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
-			<div
-				className={`${
-					previewFile != null
-						? classes.previewContentWrapper
-						: classes.contentWrapper
-				}`}
-			>
+		<LoadingOverlay
+			active={editQuestionStatus.status === 'loading' ? true : false}
+			spinner
+			text='Loading...'
+		>
+			<Slide in={true} direction='up' {...{ timeout: 400 }}>
 				<div
-					className={classes.contentWrapperNoPreview}
-					style={{ width: previewFile != null ? '60%' : 'auto' }}
+					className={`${
+						previewFile != null
+							? classes.previewContentWrapper
+							: classes.contentWrapper
+					}`}
 				>
-					<div>
-						<h5 className={classes.QuizQuestion}>{heading1}</h5>
-						<DragDropContext>
-							<Droppable droppableId='droppable-1'>
-								{(provided) => (
-									<div
-										{...provided.droppableProps}
-										ref={provided.innerRef}
-										className={classes.uploadedFilesContainer}
-									>
-										{uploadedFiles.map((file, index) => {
-											return (
-												<div
-													key={index}
-													className={classes.filePreview}
-													ref={provided.innerRef}
-												>
-													<div className={classes.filePreviewLeft}>
-														<img
-															src={file.img}
-															className={classes.fileThumbnail}
-															style={{
-																objectFit: 'cover',
-																objectPosition: 'center'
-															}}
-															ref={imgRef}
-															onLoad={() => {
-																setFileWidth(imgRef.current.naturalWidth);
-																setFileHeight(imgRef.current.naturalHeight);
-															}}
-														/>
-														<p className={classes.fileName}>{file.fileName}</p>
-													</div>
-
-													<div className={classes.filePreviewRight}>
-														{editQuiz || editPoll ? (
-															<EyeIcon
-																className={classes.filePreviewIcons}
-																onClick={() => {
-																	setPreviewBool(true);
-																	setPreviewFile(file);
-																}}
-															/>
-														) : (
-															<>
-																<EyeIcon
-																	className={classes.filePreviewIcons}
-																	onClick={() => {
-																		setPreviewBool(true);
-																		setPreviewFile(file);
-																	}}
-																/>
-																<Deletes
-																	className={classes.filePreviewIcons}
-																	onClick={() => {
-																		handleDeleteFile(file.id);
-																		setPreviewBool(false);
-																		setPreviewFile(null);
-																	}}
-																/>{' '}
-															</>
-														)}
-													</div>
-												</div>
-											);
-										})}
-										{provided.placeholder}
-									</div>
-								)}
-							</Droppable>
-						</DragDropContext>
-						{!uploadedFiles.length && !editQuiz && !editPoll && (
-							<section
-								className={classes.dropZoneContainer}
-								style={{
-									borderColor: dropZoneBorder
-								}}
-							>
-								<div {...getRootProps({ className: classes.dropzone })}>
-									<input {...getInputProps()} />
-									<AddCircleOutlineIcon className={classes.addFilesIcon} />
-									<p className={classes.dragMsg}>
-										Click or drag file to this area to upload
-									</p>
-									<p className={classes.formatMsg}>
-										Supported formats are jpeg and png
-									</p>
-									<p className={classes.uploadMediaError}>{uploadMediaError}</p>
-								</div>
-							</section>
-						)}
-						<p className={classes.fileRejectionError}>{fileRejectionError}</p>
-
-						<div className={classes.dropBoxUrlContainer}>
-							<h6>DROPBOX URL</h6>
-							<TextField
-								value={dropboxLink}
-								onChange={(e) => setDropboxLink(e.target.value)}
-								placeholder={'Please drop the dropbox URL here'}
-								className={classes.textField}
-								multiline
-								maxRows={2}
-								InputProps={{
-									disableUnderline: true,
-									className: classes.textFieldInput,
-									style: {
-										borderRadius: dropboxLink ? '16px' : '40px'
-									}
-								}}
-							/>
-						</div>
-
-						<div className={classes.titleContainer}>
-							<h6 style={{ color: questionColor }}>QUESTION</h6>
-							<TextField
-								disabled={editQuiz || editPoll}
-								value={question}
-								onChange={(e) => {
-									setQuestion(e.target.value);
-								}}
-								placeholder={'Please write your question here'}
-								className={classes.textField}
-								InputProps={{
-									disableUnderline: true,
-									className: `${classes.textFieldInput}  ${
-										(editQuiz || editPoll) && classes.disableTextField
-									}`
-								}}
-								multiline
-								maxRows={2}
-							/>
-						</div>
-
-						<p className={classes.mediaError}>{questionError}</p>
-
-						<div className={classes.titleContainer}>
-							<h6 style={{ color: ans1Color }}>
-								{quiz || editQuiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
-							</h6>
-							<TextField
-								disabled={editQuiz || editPoll}
-								value={ans1}
-								onChange={(e) => {
-									setAns1(e.target.value);
-								}}
-								placeholder={'Please write your answer here'}
-								className={classes.textField}
-								InputProps={{
-									disableUnderline: true,
-									className: `${classes.textFieldInput}  ${
-										(editQuiz || editPoll) && classes.disableTextField
-									}`
-								}}
-								multiline
-								maxRows={1}
-							/>
-						</div>
-
-						<p className={classes.mediaError}>{ans1Error}</p>
-
-						<div className={classes.titleContainer}>
-							<h6 style={{ color: ans2Color }}>
-								{quiz || editQuiz ? 'WRONG ANSWER' : 'ANSWER 2'}
-							</h6>
-							<TextField
-								disabled={editQuiz || editPoll}
-								value={ans2}
-								onChange={(e) => {
-									setAns2(e.target.value);
-								}}
-								placeholder={'Please write your answer here'}
-								className={classes.textField}
-								InputProps={{
-									disableUnderline: true,
-									className: `${classes.textFieldInput}  ${
-										(editQuiz || editPoll) && classes.disableTextField
-									}`
-								}}
-								multiline
-								maxRows={1}
-							/>
-						</div>
-
-						<p className={classes.mediaError}>{ans2Error}</p>
-
-						<div className={classes.titleContainer}>
-							<h6 style={{ color: labelColor }}>LABELS</h6>
-							<Autocomplete
-								disabled={editQuiz || editPoll}
-								getOptionLabel={(option) => option.name}
-								PaperComponent={(props) => {
-									setDisableDropdown(false);
-									return (
-										<Paper
-											elevation={6}
-											className={classes.popperAuto}
-											style={{
-												marginTop: '12px',
-												background: 'black',
-												border: '1px solid #404040',
-												boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)',
-												borderRadius: '8px'
-											}}
-											{...props}
-										/>
-									);
-								}}
-								PopperComponent={({ style, ...props }) => (
-									<Popper {...props} style={{ ...style, height: 0 }} />
-								)}
-								ListboxProps={{
-									style: { maxHeight: 180 },
-									position: 'bottom'
-								}}
-								onClose={() => {
-									setDisableDropdown(true);
-								}}
-								multiple
-								filterSelectedOptions
-								freeSolo={false}
-								value={selectedLabels}
-								onChange={(event, newValue) => {
-									setDisableDropdown(true);
-									event.preventDefault();
-									event.stopPropagation();
-									let newLabels = newValue.filter(
-										(v, i, a) =>
-											a.findIndex(
-												(t) => t.name.toLowerCase() === v.name.toLowerCase()
-											) === i
-									);
-									setSelectedLabels([...newLabels]);
-								}}
-								popupIcon={''}
-								noOptionsText={
-									<div className={classes.liAutocompleteWithButton}>
-										{/* <p>{extraLabel.toUpperCase()}</p> */}
-										<p>No results found</p>
-										{/* <Button
-										text='CREATE NEW LABEL'
-										style={{
-											padding: '3px 12px',
-											fontWeight: 700
-										}}
-										onClick={() => {
-											// setSelectedLabels((labels) => [
-											// 	...labels,
-											// 	extraLabel.toUpperCase()
-											// ]);
-										}}
-									/> */}
-									</div>
-								}
-								className={`${classes.autoComplete}  ${
-									(editQuiz || editPoll) && classes.disableAutoComplete
-								}`}
-								id='free-solo-2-demo'
-								disableClearable
-								options={quizLabels}
-								renderInput={(params) => (
-									<TextField
-										{...params}
-										placeholder={selectedLabels.length ? ' ' : 'Select Labels'}
-										className={classes.textFieldAuto}
-										value={extraLabel}
-										onChange={handleChangeExtraLabel}
-										InputProps={{
-											disableUnderline: true,
-											className: classes.textFieldInput,
-											...params.InputProps
-										}}
-									/>
-								)}
-								renderOption={(props, option) => {
-									let currentLabelDuplicate = selectedLabels.some(
-										(label) => label.name == option.name
-									);
-
-									if (option.id == null && !currentLabelDuplicate) {
-										return (
-											<li
-												{...props}
-												style={{
-													display: 'flex',
-													alignItems: 'center',
-													justifyContent: 'space-between'
-												}}
-												className={classes.liAutocomplete}
-											>
-												{option.name}
-												<Button
-													text='CREATE NEW LABEL'
-													style={{
-														padding: '3px 12px',
-														fontWeight: 700
-													}}
-													onClick={() => {
-														// setSelectedLabels((labels) => [
-														// 	...labels,
-														// 	extraLabel.toUpperCase()
-														// ]);
-													}}
-												/>
-											</li>
-										);
-									} else if (!currentLabelDuplicate) {
-										return (
-											<li {...props} className={classes.liAutocomplete}>
-												{option.name}
-											</li>
-										);
-									} else {
-										return (
-											<div className={classes.liAutocompleteWithButton}>
-												&apos;{option.name}&apos; is already selected
-											</div>
-										);
-									}
-								}}
-								ChipProps={{
-									className: classes.tagYellow,
-									size: 'small',
-									deleteIcon: <ClearIcon />
-								}}
-								clearIcon={''}
-							/>
-						</div>
-
-						<p className={classes.mediaError}>{labelError}</p>
-
-						<div className={classes.datePickerContainer}>
-							<h6 style={{ color: quizColor }}>
-								{quiz || editQuiz ? 'QUIZ END DATE' : 'POLL END DATE'}
-							</h6>
-							<div
-								// className={editQuiz || editPoll ? classes.datePicker : ''}
-								className={classes.datePicker}
-								style={{ marginBottom: calenderOpen ? '250px' : '' }}
-							>
-								<DatePicker
-									customInput={<ExampleCustomInput />}
-									disabled={
-										(editPoll || editQuiz) && status === 'CLOSED' ? true : false
-									}
-									startDate={endDate}
-									minDate={new Date()}
-									//todayButton='Today'
-									//minDate={new Date().setDate(new Date().getDate() + 1)}
-									onChange={(update) => {
-										setEndDate(update);
-									}}
-									popperPlacement='bottom'
-									// popperModifiers={{
-									// 	flip: {
-									// 		behavior: ['bottom'] // don't allow it to flip to be above
-									// 	},
-									// 	preventOverflow: {
-									// 		enabled: false // tell it not to try to stay within the view (this prevents the popper from covering the element you clicked)
-									// 	},
-									// 	hide: {
-									// 		enabled: false // turn off since needs preventOverflow to be enabled
-									// 	}
-									// }}
-									onCalendarOpen={() => {
-										setCalenderOpen(true);
-										setDisableDropdown(false);
-									}}
-									onCalendarClose={() => {
-										setCalenderOpen(false);
-										setDisableDropdown(true);
-									}}
-									//placement='center'
-									isClearable={
-										(editPoll || editQuiz) && status === 'CLOSED' ? false : true
-									}
-								/>
-							</div>
-						</div>
-
-						<p className={classes.mediaError}>{calenderError}</p>
-					</div>
-
-					<div className={classes.buttonDiv}>
-						{editQuiz || editPoll ? (
-							<div className={classes.editBtn}>
-								<Button
-									disabled={deleteBtnStatus}
-									button2={editQuiz || editPoll ? true : false}
-									onClick={() => {
-										if (!deleteBtnStatus) {
-											//console.log('specific', specificMedia.id);
-											deleteQuiz(editQuestionData?.id);
-										}
-									}}
-									text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
-								/>
-							</div>
-						) : (
-							<></>
-						)}
-
-						<div
-							className={
-								editQuiz || editPoll
-									? classes.addQuizBtnEdit
-									: classes.addQuizBtn
-							}
-						>
-							<Button
-								disabled={
-									!(editPoll || editQuiz)
-										? addQuizBtnDisabled
-										: editQuizBtnDisabled
-								}
-								onClick={async () => {
-									if (addQuizBtnDisabled || editQuizBtnDisabled) {
-										validatePostBtn();
-									} else {
-										setPostButtonStatus(true);
-										if (editQuiz || editPoll) {
-											createQuestion(editQuestionData?.id);
-										} else {
-											setIsLoadingcreateViral(true);
-											let uploadFilesPromiseArray = uploadedFiles.map(
-												async (_file) => {
-													return uploadFileToServer(_file);
-												}
-											);
-
-											Promise.all([...uploadFilesPromiseArray])
-												.then((mediaFiles) => {
-													console.log(mediaFiles, 'media files ');
-													createQuestion(null, mediaFiles);
-												})
-												.catch(() => {
-													setIsLoadingcreateViral(false);
-												});
-										}
-									}
-								}}
-								// text={type === 'quiz' ? 'ADD QUIZ' : 'ADD POLL'}
-								text={
-									type === 'quiz' && !(editPoll || editQuiz)
-										? 'ADD QUIZ'
-										: type === 'poll' && !(editPoll || editQuiz)
-										? 'ADD POLL'
-										: 'SAVE CHANGES'
-								}
-							/>
-						</div>
-					</div>
-				</div>
-				{previewFile != null && (
-					<div ref={previewRef} className={classes.previewComponent}>
-						<div className={classes.previewHeader}>
-							<Close
-								onClick={() => {
-									setPreviewBool(false);
-									setPreviewFile(null);
-								}}
-								className={classes.closeIcon}
-							/>
-							<h5>Preview</h5>
-						</div>
+					<div
+						className={classes.contentWrapperNoPreview}
+						style={{ width: previewFile != null ? '60%' : 'auto' }}
+					>
 						<div>
-							<img
-								src={previewFile.img}
-								className={classes.previewFile}
-								style={{
-									width: '100%',
-									height: `${8 * 4}rem`,
-									objectFit: 'contain',
-									objectPosition: 'center'
+							<h5 className={classes.QuizQuestion}>{heading1}</h5>
+							<DragAndDropField
+								uploadedFiles={uploadedFiles}
+								quizPollStatus={status}
+								handleDeleteFile={handleDeleteFile}
+								setPreviewBool={setPreviewBool}
+								setPreviewFile={setPreviewFile}
+								isArticle
+								isEdit={editPoll || editQuiz}
+								imgEl={imgRef}
+								imageOnload={() => {
+									setFileWidth(imgRef.current.naturalWidth);
+									setFileHeight(imgRef.current.naturalHeight);
 								}}
 							/>
+							{!uploadedFiles.length && (
+								<section
+									className={classes.dropZoneContainer}
+									style={{
+										borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
+									}}
+								>
+									<div {...getRootProps({ className: classes.dropzone })}>
+										<input {...getInputProps()} />
+										<AddCircleOutlineIcon className={classes.addFilesIcon} />
+										<p className={classes.dragMsg}>
+											Click or drag file to this area to upload
+										</p>
+										<p className={classes.formatMsg}>
+											Supported formats are jpeg and png
+										</p>
+										<p className={classes.uploadMediaError}>
+											{isError.uploadedFiles
+												? 'You need to upload a media in order to post'
+												: ''}
+										</p>
+									</div>
+								</section>
+							)}
+							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
+
+							<div className={classes.dropBoxUrlContainer}>
+								<h6>DROPBOX URL</h6>
+								<TextField
+									value={dropboxLink}
+									onChange={(e) => setDropboxLink(e.target.value)}
+									placeholder={'Please drop the dropbox URL here'}
+									className={classes.textField}
+									multiline
+									maxRows={2}
+									InputProps={{
+										disableUnderline: true,
+										className: classes.textFieldInput,
+										style: {
+											borderRadius: dropboxLink ? '16px' : '40px'
+										}
+									}}
+								/>
+							</div>
+
+							<div className={classes.titleContainer}>
+								<h6
+									className={
+										isError.question ? classes.errorState : classes.noErrorState
+									}
+								>
+									QUESTION
+								</h6>
+								<TextField
+									disabled={editQuiz || editPoll}
+									value={question}
+									onChange={(e) => {
+										setQuestion(e.target.value);
+									}}
+									placeholder={'Please write your question here'}
+									className={classes.textField}
+									InputProps={{
+										disableUnderline: true,
+										className: `${classes.textFieldInput}  ${
+											(editQuiz || editPoll) && classes.disableTextField
+										}`
+									}}
+									multiline
+									maxRows={2}
+								/>
+							</div>
+
+							<p className={classes.mediaError}>
+								{isError.question
+									? 'You need to provide a question in order to post.'
+									: ''}
+							</p>
+
+							<div className={classes.titleContainer}>
+								<h6
+									className={
+										isError.ans1 ? classes.errorState : classes.noErrorState
+									}
+								>
+									{quiz || editQuiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
+								</h6>
+								<TextField
+									disabled={editQuiz || editPoll}
+									value={ans1}
+									onChange={(e) => {
+										setAns1(e.target.value);
+									}}
+									placeholder={'Please write your answer here'}
+									className={classes.textField}
+									InputProps={{
+										disableUnderline: true,
+										className: `${classes.textFieldInput}  ${
+											(editQuiz || editPoll) && classes.disableTextField
+										}`
+									}}
+									multiline
+									maxRows={1}
+								/>
+							</div>
+
+							<p className={classes.mediaError}>
+								{isError.ans1
+									? quiz
+										? 'You need to provide right answer in order to post'
+										: 'You need to provide first answer in order to post'
+									: ''}
+							</p>
+
+							<div className={classes.titleContainer}>
+								<h6
+									className={
+										isError.ans2 ? classes.errorState : classes.noErrorState
+									}
+								>
+									{quiz || editQuiz ? 'WRONG ANSWER' : 'ANSWER 2'}
+								</h6>
+								<TextField
+									disabled={editQuiz || editPoll}
+									value={ans2}
+									onChange={(e) => {
+										setAns2(e.target.value);
+									}}
+									placeholder={'Please write your answer here'}
+									className={classes.textField}
+									InputProps={{
+										disableUnderline: true,
+										className: `${classes.textFieldInput}  ${
+											(editQuiz || editPoll) && classes.disableTextField
+										}`
+									}}
+									multiline
+									maxRows={1}
+								/>
+							</div>
+
+							<p className={classes.mediaError}>
+								{isError.ans2
+									? quiz
+										? 'You need to provide wrong answer in order to post'
+										: 'You need to provide second answer in order to post'
+									: ''}
+							</p>
+
+							<div className={classes.titleContainer}>
+								<h6
+									className={
+										isError.selectedLabels
+											? classes.errorState
+											: classes.noErrorState
+									}
+								>
+									LABELS
+								</h6>
+								<Labels
+									isEdit={editPoll || editQuiz}
+									setDisableDropdown={setDisableDropdown}
+									selectedLabels={selectedLabels}
+									setSelectedLabels={setSelectedLabels}
+									LabelsOptions={quizLabels}
+									extraLabel={extraLabel}
+									handleChangeExtraLabel={handleChangeExtraLabel}
+								/>
+							</div>
+
+							<p className={classes.mediaError}>
+								{isError.selectedLabels
+									? `You need to add  ${
+											10 - selectedLabels.length
+									  }  more labels in order to post`
+									: ''}
+							</p>
+
+							<div className={classes.datePickerContainer}>
+								<h6
+									className={
+										isError.endDate ? classes.errorState : classes.noErrorState
+									}
+								>
+									{quiz || editQuiz ? 'QUIZ END DATE' : 'POLL END DATE'}
+								</h6>
+								<div
+									className={classes.datePicker}
+									style={{ marginBottom: calenderOpen ? '250px' : '' }}
+								>
+									<DatePicker
+										customInput={<ExampleCustomInput />}
+										disabled={
+											(editPoll || editQuiz) && status === 'CLOSED'
+												? true
+												: false
+										}
+										startDate={endDate}
+										minDate={new Date()}
+										onChange={(update) => {
+											setEndDate(update);
+										}}
+										popperPlacement='bottom'
+										onCalendarOpen={() => {
+											setCalenderOpen(true);
+											setDisableDropdown(false);
+										}}
+										onCalendarClose={() => {
+											setCalenderOpen(false);
+											setDisableDropdown(true);
+										}}
+										isClearable={
+											(editPoll || editQuiz) && status === 'CLOSED'
+												? false
+												: true
+										}
+									/>
+								</div>
+							</div>
+
+							<p className={classes.mediaError}>
+								{isError.endDate
+									? 'You need to seelct a date in order to post'
+									: ''}
+							</p>
+						</div>
+
+						<div className={classes.buttonDiv}>
+							{editQuiz || editPoll ? (
+								<div className={classes.editBtn}>
+									<Button
+										disabled={deleteBtnStatus}
+										button2={editQuiz || editPoll ? true : false}
+										onClick={() => {
+											if (!deleteBtnStatus) {
+												deleteQuiz(editQuestionData?.id);
+											}
+										}}
+										text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
+									/>
+								</div>
+							) : (
+								<></>
+							)}
+
+							<div
+								className={
+									editQuiz || editPoll
+										? classes.addQuizBtnEdit
+										: classes.addQuizBtn
+								}
+							>
+								<Button
+									disabled={
+										!(editPoll || editQuiz)
+											? addQuizBtnDisabled
+											: editQuizBtnDisabled
+									}
+									onClick={() => {
+										handleAddSaveQuizPollBtn();
+									}}
+									text={
+										type === 'quiz' && !(editPoll || editQuiz)
+											? 'ADD QUIZ'
+											: type === 'poll' && !(editPoll || editQuiz)
+											? 'ADD POLL'
+											: 'SAVE CHANGES'
+									}
+								/>
+							</div>
 						</div>
 					</div>
-				)}
-			</div>
+					{previewFile != null && (
+						<div ref={previewRef} className={classes.previewComponent}>
+							<div className={classes.previewHeader}>
+								<Close
+									onClick={() => {
+										setPreviewBool(false);
+										setPreviewFile(null);
+									}}
+									className={classes.closeIcon}
+								/>
+								<h5>Preview</h5>
+							</div>
+							<div>
+								<img
+									src={previewFile.img}
+									className={classes.previewFile}
+									style={{
+										width: '100%',
+										height: `${8 * 4}rem`,
+										objectFit: 'contain',
+										objectPosition: 'center'
+									}}
+								/>
+							</div>
+						</div>
+					)}
+				</div>
+			</Slide>
 		</LoadingOverlay>
 	);
 };

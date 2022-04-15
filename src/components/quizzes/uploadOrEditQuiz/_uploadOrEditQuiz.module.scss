@@ -90,8 +90,6 @@
 }
 
 .leftprogressbarText {
-	// display: flex !important;
-	// justify-content: space-between !important;
 	font-family: Poppins;
 	font-size: 16px;
 	font-style: normal;
@@ -101,7 +99,6 @@
 	text-align: left;
 	color: white;
 	margin-left: 16px;
-	// margin-right: 16px;
 }
 
 .rightProgressText {
@@ -149,11 +146,6 @@
 	margin-bottom: 10px;
 }
 
-// .previewFile {
-// 	height: 8rem;
-// 	width: 8rem;
-// }
-
 .dropBoxUrlContainer {
 	h6 {
 		margin-bottom: 0.5rem;
@@ -181,12 +173,16 @@
 	justify-content: space-between;
 	align-items: center;
 	position: relative;
-	// &:last-child {
-	// 	box-shadow: none;
-	// }
 }
 
 .filePreviewLeft {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+}
+
+.filePreviewRight {
 	display: flex;
 	align-items: center;
 }
@@ -200,7 +196,9 @@
 
 .fileName {
 	font-size: 1rem;
-	margin-left: 2rem;
+	max-width: 150px;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 .filePreviewIcons {
@@ -211,16 +209,13 @@
 }
 
 .dropZoneContainer {
-	//border: 1px solid $neon-yellow;
 	border-top: 1.5px dashed $neon-yellow;
 	border-right: 1.5px dashed $neon-yellow;
 	border-bottom: 1.5px dashed $neon-yellow;
 	border-left: 1.5px dashed $neon-yellow;
-	//border-style: dashed;
+
 	cursor: pointer;
 	border-radius: 1rem;
-	//margin-bottom: 1rem;
-	//margin-top: 1rem;
 }
 
 .dropzone {
@@ -286,95 +281,6 @@
 
 .textFieldInput {
 	@include textFieldInput;
-}
-
-.popperAuto {
-	border: 1px solid #404040;
-	box-shadow: 0px 16px 40px rgba(255, 255, 255, 0.16);
-	border-radius: 8px;
-	background: black;
-}
-
-.liAutocompleteWithButton {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	color: white;
-	font-size: 14px;
-	padding: 8px 8px 8px 12px;
-}
-
-.liAutocomplete {
-	background-color: black;
-	color: white;
-	font-size: 14px;
-	padding: 8px 8px 8px 12px;
-	&:hover {
-		color: $neon-yellow;
-		cursor: pointer;
-	}
-}
-
-.tagYellow {
-	background-color: $neon-yellow !important;
-	font-family: Poppins !important;
-	font-style: normal !important;
-	font-weight: bold !important;
-	font-size: 12px !important;
-	line-height: 24px !important;
-	padding: 4px 6px !important;
-	margin-right: 3px !important;
-	margin-left: 3px !important;
-	margin-top: 2px !important;
-	margin-bottom: 2px !important;
-	svg {
-		color: black !important;
-		font-size: 20px !important;
-	}
-}
-
-.autoComplete {
-	padding: 8px;
-	// width: 96% !important;
-	padding-left: 16px;
-	color: white !important;
-	border: 1px solid #404040;
-	font-size: 1.4rem !important;
-	line-height: 1.6 !important;
-	border-radius: 5rem !important;
-	margin-bottom: 1rem !important;
-	.MuiInput-input {
-		padding: 1rem 0rem 1rem 1rem;
-		color: #ffffff !important;
-	}
-
-	.textFieldAuto {
-		width: 100%;
-		color: #ffffff !important;
-		input {
-			color: #ffffff !important;
-			font-size: 14px;
-		}
-	}
-
-	svg {
-		color: $neon-yellow;
-		right: 5rem !important;
-		top: 0rem !important;
-		font-size: 3rem;
-	}
-
-	overflow-y: auto;
-	-ms-overflow-style: none; /* Internet Explorer 10+ */
-	scrollbar-width: none; /* Firefox */
-}
-
-.autoComplete::-webkit-scrollbar {
-	display: none; /* Safari and Chrome */
-}
-
-.disableAutoComplete {
-	background-color: #404040 !important;
 }
 
 .disableTextField {
@@ -451,4 +357,11 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
+}
+.errorState {
+	color: $red;
+}
+
+.noErrorState {
+	color: $white-color;
 }

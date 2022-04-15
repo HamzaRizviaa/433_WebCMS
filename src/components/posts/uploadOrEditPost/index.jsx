@@ -2,21 +2,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditPost.module.scss';
 import { useDropzone } from 'react-dropzone';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import MenuIcon from '@material-ui/icons/Menu';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
-import { TextField } from '@material-ui/core';
-import { CircularProgress } from '@material-ui/core';
+import Slide from '@mui/material/Slide';
+import DragAndDropField from '../../DragAndDropField';
+import Labels from '../../Labels';
+import { TextField, CircularProgress } from '@material-ui/core';
 import ToggleSwitch from '../../switch';
 import Button from '../../button';
+import Four33Loader from '../../../assets/Loader_Yellow.gif';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	getMedia,
 	getAllMedia
 } from './../../../pages/MediaLibrary/mediaLibrarySlice';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { makeid } from '../../../utils/helper';
 import { getLocalStorageDetails } from '../../../utils';
 import axios from 'axios';
@@ -25,22 +25,19 @@ import {
 	getPosts,
 	getPostLabels
 } from '../../../pages/PostLibrary/postLibrarySlice';
-import captureVideoFrame from 'capture-video-frame';
 import Close from '@material-ui/icons/Close';
-// import Cropper from 'cropperjs';
-// import 'cropperjs/dist/cropper.css';
-import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@material-ui/icons/Clear';
-import Chip from '@mui/material/Chip';
-import { Popper, Paper } from '@mui/material';
-import { ReactComponent as EyeIcon } from '../../../assets/Eye.svg';
+import { Autocomplete, Popper, Paper, Tooltip, Fade } from '@mui/material';
+import uploadFileToServer from '../../../utils/uploadFileToServer';
+import checkFileSize from '../../../utils/validateFileSize';
+
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
 import { ReactComponent as PortraitCrop } from '../../../assets/portrait_rect.svg';
 import { ReactComponent as LandscapeCrop } from '../../../assets/Rectangle_12.svg';
 import { ReactComponent as SquareCropSelected } from '../../../assets/Square_selected.svg';
 import { ReactComponent as PortraitCropSelected } from '../../../assets/portrait_rect_selected.svg';
 import { ReactComponent as LandscapeCropSelected } from '../../../assets/Rectangle_12_selected.svg';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
+import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 
 import LoadingOverlay from 'react-loading-overlay';
 
@@ -55,20 +52,12 @@ const UploadOrEditPost = ({
 }) => {
 	const [caption, setCaption] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
-	// const [dropboxLinkError, setDropboxLinkError] = useState('');
-	// const [dropboxLinkColor, setDropboxLinkColor] = useState('#ffffff');
 	const [value, setValue] = useState(false);
-	const [uploadMediaError, setUploadMediaError] = useState('');
-	const [mediaError, setMediaError] = useState('');
+	const [valueComments, setValueComments] = useState(false);
+	const [valueLikes, setValueLikes] = useState(false);
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [selectedLabels, setSelectedLabels] = useState([]);
-	const [dropZoneBorder, setDropZoneBorder] = useState('#ffff00');
-	const [mediaLabelColor, setMediaLabelColor] = useState('#ffffff');
-	const [captionColor, setCaptionColor] = useState('#ffffff');
-	const [captionError, setCaptionError] = useState('');
-	const [labelColor, setLabelColor] = useState('#ffffff');
-	const [labelError, setLabelError] = useState('');
 	const [selectedMedia, setSelectedMedia] = useState(null);
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
@@ -83,39 +72,19 @@ const UploadOrEditPost = ({
 	const [selectMediaInput, setSelectMediaInput] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [dropdownPosition, setDropdownPosition] = useState(false);
+	const [linktoPostMedia, setLinktoPostMedia] = useState('');
+	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
-	// const [aspect, setAspect] = useState(1 / 1);
-	// const [imgDestination, setImageDestination] = useState('');
-	// const imageElement = useRef();
-	//const [inputValue, setInputValue] = useState('');
-
-	//a library that takes height width input and gives cropped image
-
-	// const tenFilesValidator = (file) => {
-	// 	if (uploadedFiles.indexOf(file) > 9) {
-	// 		console.log(uploadedFiles.indexOf(file));
-	// 		return {
-	// 			code: 'max-files-reached',
-	// 			message: `You have reached maximum files allowed`
-	// 		};
-	// 	}
-	// 	return null;
-	// };
-
-	// const ref = useRef(null);
-	// useEffect(() => {
-	// 	console.log('width', ref.current ? ref.current.offsetWidth : 0);
-	// }, [ref.current]);
+	const [isError, setIsError] = useState({});
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png, video/mp4',
-			maxFiles: 10
-			// validator: tenFilesValidator
+			maxFiles: 10,
+			validator: checkFileSize
 		});
 
-	//const media = useSelector((state) => state.mediaDropdown.media);
 	const allMedia = useSelector((state) => state.mediaLibraryOriginal.allMedia);
 	const labels = useSelector((state) => state.postLibrary.labels);
 	const specificPost = useSelector((state) => state.postLibrary.specificPost);
@@ -170,9 +139,13 @@ const UploadOrEditPost = ({
 						_media = medi;
 					}
 				});
+				setLinktoPostMedia(_media);
 				setSelectedMedia(_media);
 				setValue(true);
 			}
+
+			setValueComments(specificPost?.show_comments);
+			setValueLikes(specificPost?.show_likes);
 
 			if (specificPost.orientation_type === 'square') {
 				setDimensionSelect('square');
@@ -192,16 +165,16 @@ const UploadOrEditPost = ({
 					if (file.thumbnail_url) {
 						return {
 							fileName: file.file_name,
-							id: makeid(10),
+							id: file.id,
 							url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
-							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.thumbnail_url}`,
+							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.thumbnail_url}`, //img
 							type: 'video'
 						};
 					} else {
 						return {
 							fileName: file.file_name,
-							id: makeid(10),
-							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
+							id: file.id,
+							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`, //img
 							type: 'image'
 						};
 					}
@@ -229,7 +202,9 @@ const UploadOrEditPost = ({
 
 	useEffect(() => {
 		if (fileRejections.length) {
-			setFileRejectionError('The uploaded file format is not matching');
+			fileRejections.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError(e.message));
+			});
 			setTimeout(() => {
 				setFileRejectionError('');
 			}, [5000]);
@@ -245,8 +220,6 @@ const UploadOrEditPost = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			setUploadMediaError('');
-			setDropZoneBorder('#ffff00');
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -267,99 +240,14 @@ const UploadOrEditPost = ({
 		}
 	}, [acceptedFiles]);
 
-	const uploadFileToServer = async (uploadedFile) => {
-		try {
-			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
-				{
-					file_type: uploadedFile.fileExtension,
-					parts: 1
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
-				}
-			);
-
-			if (result?.data?.data?.url) {
-				const _result = await axios.put(
-					result?.data?.data?.url,
-					uploadedFile.file,
-					//cropMe(uploadedFiles.file), //imp -- function to call to check landscape, square, portrait
-					{
-						headers: { 'Content-Type': uploadedFile.mime_type }
-					}
-				);
-				const frame = captureVideoFrame('my-video', 'png');
-				if (result?.data?.data?.video_thumbnail_url) {
-					await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
-						headers: { 'Content-Type': 'image/png' }
-					});
-				}
-				if (_result?.status === 200) {
-					const uploadResult = await axios.post(
-						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-						{
-							file_name: uploadedFile.file.name,
-							type: 'postlibrary',
-							data: {
-								bucket: 'media',
-								multipart_upload:
-									uploadedFile?.mime_type == 'video/mp4'
-										? [
-												{
-													e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
-													part_number: 1
-												}
-										  ]
-										: ['image'],
-								keys: {
-									image_key: result?.data?.data?.keys?.image_key,
-									video_key: result?.data?.data?.keys?.video_key,
-									audio_key: ''
-								},
-								upload_id:
-									uploadedFile?.mime_type == 'video/mp4'
-										? result?.data?.data?.upload_id
-										: 'image'
-							}
-						},
-						{
-							headers: {
-								Authorization: `Bearer ${
-									getLocalStorageDetails()?.access_token
-								}`
-							}
-						}
-					);
-					if (uploadResult?.data?.status_code === 200) {
-						return uploadResult.data.data;
-					} else {
-						throw 'Error';
-					}
-				} else {
-					throw 'Error';
-				}
-			} else {
-				throw 'Error';
-			}
-		} catch (error) {
-			console.log('Error');
-			return null;
-		}
-	};
-
 	const resetState = () => {
 		setCaption('');
 		setDropboxLink('');
 		setValue(false);
-		setUploadMediaError('');
-		setMediaError('');
+		setValueComments(false);
+		setValueLikes(false);
 		setFileRejectionError('');
 		setUploadedFiles([]);
-		setDropZoneBorder('#ffff00');
-		setMediaLabelColor('#ffffff');
 		setSelectedMedia(null);
 		setPostButtonStatus(false);
 		setDimensionSelect('square');
@@ -374,7 +262,8 @@ const UploadOrEditPost = ({
 		setSelectedLabels([]);
 		setDisableDropdown(true);
 		setDropdownPosition(false);
-		//setImageDestination('');
+		setIsError({});
+		setEditBtnDisabled(false);
 	};
 
 	// a little function to help us with reordering the result
@@ -407,71 +296,51 @@ const UploadOrEditPost = ({
 	};
 
 	const validatePostBtn = () => {
-		if (uploadedFiles.length < 1) {
-			setDropZoneBorder('#ff355a');
-			setUploadMediaError('You need to upload a media in order to post');
-			setTimeout(() => {
-				setDropZoneBorder('#ffff00');
-				setUploadMediaError('');
-			}, [5000]);
-		}
+		setIsError({
+			caption: !caption,
+			uploadedFiles: uploadedFiles.length < 1,
+			selectedLabels: selectedLabels.length < 10,
+			selectedMediaValue: value && !selectedMedia
+		});
 
-		if (selectedLabels.length < 10) {
-			setLabelColor('#ff355a');
-			setLabelError(
-				`You need to add ${
-					10 - selectedLabels.length
-				} more labels in order to post`
-			);
-			setTimeout(() => {
-				setLabelColor('#ffff00');
-				setLabelError('');
-			}, [5000]);
-		}
-		if (value && !selectedMedia) {
-			setMediaLabelColor('#ff355a');
-			setMediaError('This field is required');
-			setTimeout(() => {
-				setMediaLabelColor('#ffffff');
-				setMediaError('');
-			}, [5000]);
-		}
-		if (!caption) {
-			setCaptionColor('#ff355a');
-			setCaptionError('This field is required');
-			setTimeout(() => {
-				setCaptionColor('#ffffff');
-				setCaptionError('');
-			}, [5000]);
-		}
-
-		// if (!dropboxLink) {
-		// 	setDropboxLinkColor('#ff355a');
-		// 	setDropboxLinkError('This field is required');
-		// 	setTimeout(() => {
-		// 		setDropboxLinkColor('#ffffff');
-		// 		setDropboxLinkError('');
-		// 	}, [5000]);
-		// }
+		setTimeout(() => {
+			setIsError({});
+		}, 5000);
 	};
 
 	const createPost = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
+
+		let media_files = mediaFiles.map((file, index) => {
+			if (file.file_name) {
+				return file;
+			} else {
+				let _file = Object.assign(file, {
+					file_name: file.fileName,
+					media_url: file.img.split('cloudfront.net/')[1],
+					sort_order: 0
+				});
+				delete _file.fileName;
+				delete _file.img;
+				return _file;
+			}
+		});
+
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
 				{
 					caption: caption,
+					media_files: [...media_files],
 					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
 					orientation_type: dimensionSelect,
-					...(selectedMedia
-						? { media_id: selectedMedia.id }
-						: { media_id: null }),
+					...(selectedMedia ? { media_id: selectedMedia.id } : {}),
+					...(valueLikes ? { show_likes: true } : {}),
+					...(valueComments ? { show_comments: true } : {}),
 					...(isEdit && id ? { post_id: id } : {}),
 					...(!isEdit && selectedLabels.length
 						? { labels: [...selectedLabels] }
 						: {}),
-					...(!isEdit ? { media_files: [...mediaFiles] } : {}),
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -519,8 +388,6 @@ const UploadOrEditPost = ({
 			if (result?.data?.status_code === 200) {
 				toast.success('Post has been deleted!');
 				handleClose();
-
-				//setting a timeout for getting post after delete.
 				dispatch(getPosts({ page }));
 			}
 		} catch (e) {
@@ -534,31 +401,23 @@ const UploadOrEditPost = ({
 		setDimensionSelect('square');
 		setImageToResizeWidth(80);
 		setImageToResizeHeight(80);
-		// setAspect(1 / 1);
-		//cropMe(1);
 	};
 
 	const landscapeCrop = () => {
 		setDimensionSelect('landscape');
 		setImageToResizeWidth(80.22);
 		setImageToResizeHeight(42);
-		// setAspect(1.91 / 1);
-		//cropMe(1.91);
 	};
 
 	const portraitCrop = () => {
 		setDimensionSelect('portrait');
 		setImageToResizeWidth(64);
 		setImageToResizeHeight(80);
-		// setAspect(4 / 5);
-		//cropMe(0.8);
 	};
 
 	const [newLabels, setNewLabels] = useState([]);
 
 	const handleChangeExtraLabel = (e) => {
-		// e.preventDefault();
-		// e.stopPropagation();
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
@@ -578,22 +437,97 @@ const UploadOrEditPost = ({
 	const postBtnDisabled =
 		!uploadedFiles.length ||
 		!caption ||
-		// !dropboxLink ||
 		postButtonStatus ||
 		(value && !selectedMedia) ||
 		selectedLabels.length < 10;
 
-	const editBtnDisabled =
-		postButtonStatus ||
-		!caption ||
-		// !dropboxLink ||
-		(value && !selectedMedia) ||
-		(specificPost?.dropbox_url === dropboxLink.trim() &&
-			specificPost?.caption === caption.trim());
-	// const regex = /[!@#$%^&*(),.?":{}|<>/\\ ]/g;
+	//old one
 
-	// console.log('specific post', specificPost?.media_id);
-	// console.log('normal', selectedMedia?.id);
+	// const editBtnDisabled =
+	// 	postButtonStatus ||
+	// 	!caption ||
+	// 	(value && !selectedMedia) ||
+	// 	(specificPost?.dropbox_url === dropboxLink.trim() &&
+	// 		specificPost?.caption === caption.trim());
+
+	// 	linktoPostMedia?.title === selectedMedia?.title?.trim()) ||
+	// specificPost?.medias?.length !== uploadedFiles?.length &&
+
+	useEffect(() => {
+		if (specificPost) {
+			let checkDuplicateFile = specificPost?.medias?.map((mediaFile) => {
+				return uploadedFiles.some((file) => file.id == mediaFile.id);
+			});
+
+			// let checkDuplicateFile = uploadedFiles.some((file) => {
+			// 	specificPost?.medias?.map((mediaFile) => {
+			// 		file.id == mediaFile.id;
+			// 	});
+			// });
+
+			console.log(checkDuplicateFile, 'CDF');
+
+			setEditBtnDisabled(
+				postButtonStatus ||
+					!uploadedFiles.length ||
+					!caption ||
+					(value && !selectedMedia) ||
+					(specificPost?.dropbox_url?.trim() === dropboxLink?.trim() &&
+						specificPost?.caption?.trim() === caption?.trim() &&
+						specificPost?.media_id == selectedMedia?.id &&
+						specificPost?.medias?.length === uploadedFiles?.length)
+			);
+		}
+	}, [specificPost, caption, uploadedFiles, selectedMedia, dropboxLink, value]);
+
+	// console.log(specificPost?.medias?.length, 'specificPost?.medias?.length');
+	// console.log(selectedMedia?.id, 'captionL');
+	// console.log(specificPost?.media_id, 'captionS');
+	//console.log(selectedMedia, selectedMedia?.length, 'selectedMedia');
+	//console.log(uploadedFiles, 'uploadedFiles');
+
+	const addSavePostBtn = () => {
+		if (postBtnDisabled || editBtnDisabled) {
+			validatePostBtn();
+		} else {
+			setPostButtonStatus(true);
+			setIsLoadingCreatePost(true);
+			if (isEdit) {
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file, 'postlibrary');
+					} else {
+						return _file;
+					}
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createPost(specificPost?.id, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingCreatePost(false);
+					});
+			} else {
+				setIsLoadingCreatePost(true);
+				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+					return uploadFileToServer(_file, 'postlibrary');
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createPost(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingCreatePost(false);
+					});
+			}
+		}
+	};
+
+	const dropHandler = (file) => {
+		console.log('File', file);
+	};
 
 	return (
 		<Slider
@@ -615,668 +549,482 @@ const UploadOrEditPost = ({
 			edit={isEdit}
 		>
 			<LoadingOverlay active={isLoadingCreatePost} spinner text='Loading...'>
-				<div
-					className={`${
-						previewFile != null
-							? classes.previewContentWrapper
-							: classes.contentWrapper
-					}`}
-				>
-					{specificPostStatus.status === 'loading' ? (
-						<div className={classes.loaderContainer2}>
-							<CircularProgress className={classes.loader} />
-						</div>
-					) : (
-						<></>
-					)}
+				<Slide in={true} direction='up' {...{ timeout: 400 }}>
 					<div
-						className={classes.contentWrapperNoPreview}
-						style={{ width: previewFile != null ? '60%' : 'auto' }}
+						className={`${
+							previewFile != null
+								? classes.previewContentWrapper
+								: classes.contentWrapper
+						}`}
 					>
-						<div>
-							{isEdit || uploadedFiles.length === 0 ? (
-								<h5>{heading1}</h5>
-							) : (
-								<div className={classes.headerOrientationWrapper}>
-									<h5>{heading1}</h5>
-									<div className={classes.orientationDimensionWrapper}>
-										<h6 className={classes.orientation}>Orientation</h6>
-										<div
-											ref={orientationRef}
-											className={classes.dimensionWrapper}
+						{specificPostStatus.status === 'loading' ? (
+							<div className={classes.loaderContainer2}>
+								<img src={Four33Loader} className={classes.loader} />
+							</div>
+						) : (
+							<></>
+						)}
+						<div
+							className={classes.contentWrapperNoPreview}
+							style={{ width: previewFile != null ? '60%' : 'auto' }}
+						>
+							<div>
+								{uploadedFiles.length === 0 ? (
+									<div className={classes.explanationWrapper}>
+										<h5>{heading1}</h5>
+										<Tooltip
+											TransitionComponent={Fade}
+											TransitionProps={{ timeout: 800 }}
+											title='Default encoding for videos should be H.264'
+											arrow
+											componentsProps={{
+												tooltip: { className: classes.toolTip },
+												arrow: { className: classes.toolTipArrow }
+											}}
+											placement='bottom-start'
 										>
-											<div
-												className={classes.dimensionSingle}
-												onClick={squareCrop}
-												style={
-													dimensionSelect === 'square'
-														? { backgroundColor: '#000000' }
-														: {}
-												}
+											<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
+										</Tooltip>
+									</div>
+								) : (
+									<div className={classes.headerOrientationWrapper}>
+										<div className={classes.explanationWrapper}>
+											<h5>{heading1}</h5>
+											<Tooltip
+												TransitionComponent={Fade}
+												TransitionProps={{ timeout: 800 }}
+												title='Default encoding for videos should be H.264'
+												arrow
+												componentsProps={{
+													tooltip: { className: classes.toolTip },
+													arrow: { className: classes.toolTipArrow }
+												}}
+												placement='bottom-start'
 											>
-												{dimensionSelect === 'square' ? (
-													<SquareCropSelected
-														className={classes.dimensionPreviewIcons}
-													/>
-												) : (
-													<SquareCrop
-														className={classes.dimensionPreviewIcons}
-													/>
-												)}
-											</div>{' '}
+												<Info
+													style={{ cursor: 'pointer', marginLeft: '1rem' }}
+												/>
+											</Tooltip>
+										</div>
+										<div className={classes.orientationDimensionWrapper}>
+											<h6 className={classes.orientation}>Orientation</h6>
 											<div
-												className={classes.dimensionSingle}
-												onClick={portraitCrop}
-												style={
-													dimensionSelect === 'portrait'
-														? { backgroundColor: '#000000' }
-														: {}
-												}
+												ref={orientationRef}
+												className={classes.dimensionWrapper}
 											>
-												{dimensionSelect === 'portrait' ? (
-													<PortraitCropSelected
-														className={classes.dimensionPreviewIcons}
-													/>
-												) : (
-													<PortraitCrop
-														className={classes.dimensionPreviewIcons}
-													/>
-												)}
-											</div>
-											<div
-												className={classes.dimensionSingle}
-												onClick={landscapeCrop}
-												style={
-													dimensionSelect === 'landscape'
-														? { backgroundColor: '#000000' }
-														: {}
-												}
-											>
-												{dimensionSelect === 'landscape' ? (
-													<LandscapeCropSelected
-														className={classes.dimensionPreviewIcons}
-													/>
-												) : (
-													<LandscapeCrop
-														className={classes.dimensionPreviewIcons}
-													/>
-												)}
+												<div
+													className={classes.dimensionSingle}
+													onClick={squareCrop}
+													style={
+														dimensionSelect === 'square'
+															? { backgroundColor: '#000000' }
+															: {}
+													}
+												>
+													{dimensionSelect === 'square' ? (
+														<SquareCropSelected
+															className={classes.dimensionPreviewIcons}
+														/>
+													) : (
+														<SquareCrop
+															className={classes.dimensionPreviewIcons}
+														/>
+													)}
+												</div>{' '}
+												<div
+													className={classes.dimensionSingle}
+													onClick={portraitCrop}
+													style={
+														dimensionSelect === 'portrait'
+															? { backgroundColor: '#000000' }
+															: {}
+													}
+												>
+													{dimensionSelect === 'portrait' ? (
+														<PortraitCropSelected
+															className={classes.dimensionPreviewIcons}
+														/>
+													) : (
+														<PortraitCrop
+															className={classes.dimensionPreviewIcons}
+														/>
+													)}
+												</div>
+												<div
+													className={classes.dimensionSingle}
+													onClick={landscapeCrop}
+													style={
+														dimensionSelect === 'landscape'
+															? { backgroundColor: '#000000' }
+															: {}
+													}
+												>
+													{dimensionSelect === 'landscape' ? (
+														<LandscapeCropSelected
+															className={classes.dimensionPreviewIcons}
+														/>
+													) : (
+														<LandscapeCrop
+															className={classes.dimensionPreviewIcons}
+														/>
+													)}
+												</div>
 											</div>
 										</div>
+									</div>
+								)}
+								<DragAndDropField
+									onDragEnd={onDragEnd}
+									uploadedFiles={uploadedFiles}
+									isEdit={isEdit}
+									handleDeleteFile={handleDeleteFile}
+									setPreviewBool={setPreviewBool}
+									setPreviewFile={setPreviewFile}
+									dimensionSelect={dimensionSelect}
+									imageToResizeWidth={imageToResizeWidth}
+									imageToResizeHeight={imageToResizeHeight}
+									isPost
+								/>
+
+								{uploadedFiles.length < 10 && (
+									<section
+										className={classes.dropZoneContainer}
+										style={{
+											borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
+										}}
+									>
+										<div {...getRootProps({ className: classes.dropzone })}>
+											<input
+												{...getInputProps()}
+												// ref={ref}
+											/>
+											<AddCircleOutlineIcon className={classes.addFilesIcon} />
+											<p className={classes.dragMsg}>
+												Click or drag files to this area to upload
+											</p>
+											<p className={classes.formatMsg}>
+												Supported formats are jpeg, png and mp4
+											</p>
+											<p className={classes.uploadMediaError}>
+												{isError.uploadedFiles
+													? 'You need to upload a media in order to post'
+													: ''}
+											</p>
+										</div>
+									</section>
+								)}
+								<p className={classes.fileRejectionError}>
+									{fileRejectionError}
+								</p>
+								<div className={classes.dropBoxUrlContainer}>
+									<h6>DROPBOX URL</h6>
+									<TextField
+										value={dropboxLink}
+										onChange={(e) => setDropboxLink(e.target.value)}
+										placeholder={'Please drop the dropbox URL here'}
+										className={classes.textField}
+										multiline
+										maxRows={2}
+										InputProps={{
+											disableUnderline: true,
+											className: classes.textFieldInput,
+											style: {
+												borderRadius: dropboxLink ? '16px' : '40px'
+											}
+										}}
+									/>
+								</div>
+								<div className={classes.captionContainer}>
+									<h6
+										className={
+											isError.selectedLabels
+												? classes.errorState
+												: classes.noErrorState
+										}
+									>
+										LABELS
+									</h6>
+									<Labels
+										isEdit={isEdit}
+										setDisableDropdown={setDisableDropdown}
+										selectedLabels={selectedLabels}
+										setSelectedLabels={setSelectedLabels}
+										LabelsOptions={postLabels}
+										extraLabel={extraLabel}
+										handleChangeExtraLabel={handleChangeExtraLabel}
+									/>
+								</div>
+								<p className={classes.mediaError}>
+									{isError.selectedLabels
+										? `You need to add ${
+												10 - selectedLabels.length
+										  } more labels in
+                                                order to post`
+										: ''}
+								</p>
+								<div className={classes.captionContainer}>
+									<h6
+										className={
+											isError.caption
+												? classes.errorState
+												: classes.noErrorState
+										}
+									>
+										CAPTION
+									</h6>
+									<TextField
+										value={caption}
+										onChange={(e) => setCaption(e.target.value)}
+										placeholder={'Please write your caption here'}
+										className={classes.textField}
+										InputProps={{
+											disableUnderline: true,
+											className: classes.textFieldInput,
+											style: {
+												borderRadius: caption ? '16px' : '40px'
+											}
+										}}
+										multiline
+										maxRows={4}
+									/>
+								</div>
+								<p className={classes.mediaError}>
+									{isError.caption
+										? 'You need to upload a caption in order to post'
+										: ''}
+								</p>
+
+								<div className={classes.postMediaContainer}>
+									<div className={classes.postMediaHeader}>
+										<h5>Link post to media</h5>
+										<ToggleSwitch
+											id={1}
+											checked={value}
+											onChange={(checked) => {
+												setSelectedMedia(null);
+												setValue(checked);
+											}}
+										/>
 									</div>
 								</div>
-							)}
-							<DragDropContext onDragEnd={onDragEnd}>
-								<Droppable droppableId='droppable-1'>
-									{(provided) => (
-										<div
-											{...provided.droppableProps}
-											ref={provided.innerRef}
-											className={classes.uploadedFilesContainer}
+								{value ? (
+									<div
+										style={{ marginBottom: dropdownPosition ? 200 : 0 }}
+										className={classes.mediaContainer}
+									>
+										<h6
+											className={
+												isError.selectedMediaValue
+													? classes.errorState
+													: classes.noErrorState
+											}
 										>
-											{uploadedFiles.map((file, index) => {
+											SELECT MEDIA
+										</h6>
+										<Autocomplete
+											value={selectedMedia}
+											PaperComponent={(props) => {
+												setDisableDropdown(false);
+
 												return (
-													<Draggable
-														key={file.id}
-														draggableId={`droppable-${file.id}`}
-														index={index}
-														isDragDisabled={uploadedFiles.length <= 1}
-													>
-														{(provided) => (
-															<div
-																key={index}
-																className={classes.filePreview}
-																ref={provided.innerRef}
-																{...provided.draggableProps}
-																style={{
-																	...provided.draggableProps.style
-																}}
-															>
-																<div className={classes.filePreviewLeft}>
-																	{file.type === 'video' ? (
-																		<>
-																			<PlayArrowIcon
-																				className={
-																					dimensionSelect === 'portrait'
-																						? classes.playIconPortrait
-																						: classes.playIcon
-																				}
-																			/>
-																			<video
-																				id={'my-video'}
-																				poster={isEdit ? file.img : null}
-																				className={classes.fileThumbnail}
-																				style={{
-																					maxWidth: `${imageToResizeWidth}px`,
-																					maxHeight: `${imageToResizeHeight}px`,
-																					objectFit: 'cover',
-																					objectPosition: 'center'
-																				}}
-																			>
-																				<source src={file.img} />
-																			</video>
-																		</>
-																	) : (
-																		<>
-																			{/* <Cropper
-																		image={`${file.img}`}
-																		crop={crop}
-																		aspect={aspect}
-																		className={classes.fileThumbnail}
-																		onCropChange={()=> console.log('lol')}
-																	/> */}
-																			<img
-																				src={file.img}
-																				className={classes.fileThumbnail}
-																				// ref={imageElement}
-																				style={{
-																					width: `${imageToResizeWidth}px`,
-																					height: `${imageToResizeHeight}px`,
-																					objectFit: 'cover',
-																					objectPosition: 'center'
-																				}}
-																			/>
-																		</>
-																	)}
-
-																	<p className={classes.fileName}>
-																		{file.fileName}
-																	</p>
-																</div>
-
-																{/* {loadingMedia.includes(file.id) ? (
-															<div className={classes.loaderContainer}>
-																<CircularProgress className={classes.loader} />
-															</div>
-														) : (
-															<></>
-														)} */}
-
-																{isEdit ? (
-																	<div className={classes.filePreviewRight}>
-																		<EyeIcon
-																			onClick={() => {
-																				setPreviewBool(true);
-																				setPreviewFile(file);
-																			}}
-																			className={classes.filePreviewIcons}
-																		/>
-																	</div>
-																) : (
-																	<div className={classes.filePreviewRight}>
-																		<EyeIcon
-																			className={classes.filePreviewIcons}
-																			onClick={() => {
-																				setPreviewBool(true);
-																				setPreviewFile(file);
-																			}}
-																		/>
-																		{uploadedFiles.length > 1 && (
-																			<span {...provided.dragHandleProps}>
-																				<MenuIcon
-																					style={{ cursor: 'grab' }}
-																					className={classes.filePreviewIcons}
-																				/>
-																			</span>
-																		)}
-																		<Deletes
-																			className={classes.filePreviewIcons}
-																			onClick={() => {
-																				handleDeleteFile(file.id);
-																				setPreviewBool(false);
-																				setPreviewFile(null);
-																			}}
-																		/>
-																	</div>
-																)}
-															</div>
-														)}
-													</Draggable>
+													<Paper
+														elevation={6}
+														className={classes.popperAuto}
+														style={{
+															marginTop: '12px',
+															background: 'black',
+															border: '1px solid #404040',
+															boxShadow:
+																'0px 16px 40px rgba(255, 255, 255, 0.16)',
+															borderRadius: '8px'
+														}}
+														{...props}
+													/>
 												);
-											})}
-											{provided.placeholder}
-										</div>
-									)}
-								</Droppable>
-							</DragDropContext>
-							{uploadedFiles.length < 10 && !isEdit ? (
-								<section
-									className={classes.dropZoneContainer}
-									style={{
-										borderColor: dropZoneBorder
-									}}
-								>
-									<div {...getRootProps({ className: classes.dropzone })}>
-										<input
-											{...getInputProps()}
-											// ref={ref}
+											}}
+											PopperComponent={({ style, ...props }) => (
+												<Popper {...props} style={{ ...style, height: 0 }} />
+											)}
+											ListboxProps={{
+												style: { maxHeight: 180 },
+												position: 'bottom'
+											}}
+											onOpen={() => {
+												setDropdownPosition(true);
+											}}
+											onClose={(e) => {
+												setDisableDropdown(true);
+												setDropdownPosition(false);
+											}}
+											onChange={(e, newVal) => {
+												setSelectedMedia(newVal);
+
+												setDisableDropdown(true);
+											}}
+											options={allMedia}
+											getOptionLabel={(option) => option.title}
+											renderOption={(props, option, { selected }) => {
+												return (
+													<li {...props} className={classes.liAutocomplete}>
+														{option.title}
+													</li>
+												);
+											}}
+											filterOptions={(items) => {
+												return items.filter((item) =>
+													item.title
+														.toLowerCase()
+														.includes(selectMediaInput.toLowerCase())
+												);
+											}}
+											renderInput={(params) => (
+												<TextField
+													{...params}
+													size='small'
+													placeholder='Search Media'
+													InputProps={{
+														disableUnderline: true,
+														...params.InputProps,
+														className: classes.textFieldInput
+													}}
+													value={selectMediaInput}
+													onChange={handleChangeSelectMediaInput}
+												/>
+											)}
+											clearIcon={<ClearIcon />}
+											noOptionsText={
+												<div style={{ color: '#808080', fontSize: 14 }}>
+													No Results Found
+												</div>
+											}
+											popupIcon={''}
 										/>
-										<AddCircleOutlineIcon className={classes.addFilesIcon} />
-										<p className={classes.dragMsg}>
-											Click or drag files to this area to upload
-										</p>
-										<p className={classes.formatMsg}>
-											Supported formats are jpeg, png and mp4
-										</p>
-										<p className={classes.uploadMediaError}>
-											{uploadMediaError}
+
+										<p className={classes.mediaError}>
+											{isError.selectedMediaValue
+												? 'You need to select a media in order to post'
+												: ''}
 										</p>
 									</div>
-								</section>
-							) : (
-								<></>
-							)}
-							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
-							<div className={classes.dropBoxUrlContainer}>
-								<h6>DROPBOX URL</h6>
-								<TextField
-									value={dropboxLink}
-									onChange={(e) => setDropboxLink(e.target.value)}
-									placeholder={'Please drop the dropbox URL here'}
-									className={classes.textField}
-									multiline
-									maxRows={2}
-									InputProps={{
-										disableUnderline: true,
-										className: classes.textFieldInput,
-										style: {
-											borderRadius: dropboxLink ? '16px' : '40px'
-										}
-									}}
-								/>
+								) : (
+									<></>
+								)}
+
+								<div className={classes.postMediaContainer}>
+									<div className={classes.postMediaHeader}>
+										<h5>Show comments</h5>
+										<ToggleSwitch
+											id={2}
+											checked={valueComments}
+											onChange={(checked) => {
+												setValueComments(checked);
+											}}
+										/>
+									</div>
+								</div>
+
+								<div className={classes.postMediaContainer}>
+									<div className={classes.postMediaHeader}>
+										<h5>Show likes</h5>
+										<ToggleSwitch
+											id={3}
+											checked={valueLikes}
+											onChange={(checked) => {
+												setValueLikes(checked);
+											}}
+										/>
+									</div>
+								</div>
 							</div>
-							{/* <p className={classes.mediaError}>{dropboxLinkError}</p> */}
-							<div className={classes.captionContainer}>
-								<h6 style={{ color: labelColor }}>LABELS</h6>
-								<Autocomplete
-									disabled={isEdit}
-									getOptionLabel={(option) => option.name} // setSelectedLabels name out of array of strings
-									PaperComponent={(props) => {
-										setDisableDropdown(false);
-										return (
-											<Paper
-												elevation={6}
-												className={classes.popperAuto}
-												style={{
-													marginTop: '12px',
-													background: 'black',
-													border: '1px solid #404040',
-													boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)',
-													borderRadius: '8px'
-												}}
-												{...props}
-											/>
-										);
-									}}
-									PopperComponent={({ style, ...props }) => (
-										<Popper {...props} style={{ ...style, height: 0 }} />
-									)}
-									ListboxProps={{
-										style: { maxHeight: 180 },
-										position: 'bottom'
-									}}
-									onClose={(e) => {
-										setDisableDropdown(true);
-									}}
-									multiple
-									filterSelectedOptions
-									// freeSolo
-									freeSolo={false}
-									value={selectedLabels}
-									onChange={(event, newValue) => {
-										//console.log(newValue);
-										setDisableDropdown(true);
-										event.preventDefault();
-										event.stopPropagation();
-										// let regexCheck = regex.test(newValue);
-										// if (regexCheck) {
-										// 	alert('you cant use regex');
-										// }
-										// else {
-										let newLabels = newValue.filter(
-											//code to check if the new added label is already in the list
-											(v, i, a) =>
-												a.findIndex(
-													(t) => t.name.toLowerCase() === v.name.toLowerCase()
-												) === i
-										);
+							<div className={classes.buttonDiv}>
+								{isEdit ? (
+									<div className={classes.editBtn}>
+										<Button
+											disabled={deleteBtnStatus}
+											button2={isEdit ? true : false}
+											onClick={() => {
+												if (!deleteBtnStatus) {
+													deletePost(specificPost?.id);
+												}
+											}}
+											text={'DELETE POST'}
+										/>
+									</div>
+								) : (
+									<> </>
+								)}
 
-										setSelectedLabels([...newLabels]);
-										//}
-
-										console.log(selectedLabels, newValue);
-									}}
-									popupIcon={''}
-									noOptionsText={
-										<div className={classes.liAutocompleteWithButton}>
-											<p>No results found</p>
-											{/* <Button
-												text='CREATE NEW LABEL'
-												style={{
-													padding: '3px 12px',
-													fontWeight: 700
-												}}
-												onClick={() => {
-													// setSelectedLabels((labels) => [
-													// 	...labels,
-													// 	extraLabel.toUpperCase()
-													// ]);
-												}}
-											/> */}
-										</div>
-									}
-									className={`${classes.autoComplete} ${
-										isEdit && classes.disableAutoComplete
-									}`}
-									id='free-solo-2-demo'
-									disableClearable
-									options={postLabels}
-									renderInput={(params) => (
-										<TextField
-											{...params}
-											placeholder={selectedLabels.length ? ' ' : 'Select Label'}
-											className={classes.textFieldAuto}
-											value={extraLabel}
-											onChange={handleChangeExtraLabel}
-											InputProps={{
-												disableUnderline: true,
-												className: classes.textFieldInput,
-												...params.InputProps
+								<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
+									<Button
+										disabled={isEdit ? editBtnDisabled : postBtnDisabled}
+										onClick={() => {
+											addSavePostBtn();
+										}}
+										text={buttonText}
+									/>
+								</div>
+							</div>
+						</div>
+						{previewFile != null && (
+							<div ref={previewRef} className={classes.previewComponent}>
+								<div className={classes.previewHeader}>
+									<Close
+										onClick={() => {
+											setPreviewBool(false);
+											setPreviewFile(null);
+										}}
+										className={classes.closeIcon}
+									/>
+									<h5>Preview</h5>
+								</div>
+								<div>
+									{previewFile.mime_type === 'video/mp4' ? (
+										<video
+											id={'my-video'}
+											poster={isEdit ? previewFile.img : null}
+											className={classes.previewFile}
+											style={{
+												width: `${imageToResizeWidth * 4}px`,
+												height: `${imageToResizeHeight * 4}px`,
+												objectFit: 'cover',
+												objectPosition: 'center'
+											}}
+											controls={true}
+										>
+											<source src={previewFile.img} />
+										</video>
+									) : isEdit && previewFile.type === 'video' ? (
+										<video
+											id={'my-video'}
+											poster={isEdit ? previewFile.thumbnail_url : null}
+											className={classes.previewFile}
+											style={{
+												width: `${imageToResizeWidth * 4}px`,
+												height: `${imageToResizeHeight * 4}px`,
+												objectFit: 'cover',
+												objectPosition: 'center'
+											}}
+											controls={true}
+										>
+											<source src={previewFile.url} />
+										</video>
+									) : (
+										<img
+											src={previewFile.img}
+											className={classes.previewFile}
+											style={{
+												width: `${imageToResizeWidth * 4}px`,
+												height: `${imageToResizeHeight * 4}px`,
+												objectFit: 'cover',
+												objectPosition: 'center'
 											}}
 										/>
 									)}
-									renderOption={(props, option, state) => {
-										//selected in input field,  some -> array to check exists
-										let currentLabelDuplicate = selectedLabels.some(
-											(label) => label.name == option.name
-										);
-
-										if (option.id == null && !currentLabelDuplicate) {
-											// if (option.filter(option=>option.name===option.name))
-
-											return (
-												<li
-													{...props}
-													style={{
-														display: 'flex',
-														alignItems: 'center',
-														justifyContent: 'space-between'
-													}}
-													className={classes.liAutocomplete}
-												>
-													{option.name}
-													<Button
-														text='CREATE NEW LABEL'
-														style={{
-															padding: '3px 12px',
-															fontWeight: 700
-														}}
-														onClick={() => {
-															// setSelectedLabels((labels) => [
-															// 	...labels,
-															// 	extraLabel.toUpperCase()
-															// ]);
-														}}
-													/>
-												</li>
-											);
-										} else if (!currentLabelDuplicate) {
-											return (
-												<li {...props} className={classes.liAutocomplete}>
-													{option.name}
-												</li>
-											);
-										} else {
-											return (
-												<div className={classes.liAutocompleteWithButton}>
-													&apos;{option.name}&apos; is already selected
-												</div>
-											);
-										}
-									}}
-									ChipProps={{
-										className: classes.tagYellow,
-										size: 'small',
-										deleteIcon: <ClearIcon />
-									}}
-									clearIcon={''}
-								/>
-							</div>
-							<p className={classes.mediaError}>{labelError}</p>
-							<div className={classes.captionContainer}>
-								<h6 style={{ color: captionColor }}>CAPTION</h6>
-								<TextField
-									value={caption}
-									onChange={(e) => setCaption(e.target.value)}
-									placeholder={'Please write your caption here'}
-									className={classes.textField}
-									InputProps={{
-										disableUnderline: true,
-										className: classes.textFieldInput,
-										style: {
-											borderRadius: caption ? '16px' : '40px'
-										}
-									}}
-									multiline
-									maxRows={4}
-								/>
-							</div>
-							<p className={classes.mediaError}>{captionError}</p>
-
-							<div className={classes.postMediaContainer}>
-								<div className={classes.postMediaHeader}>
-									<h5>Link post to media</h5>
-									<ToggleSwitch
-										id={1}
-										checked={value}
-										onChange={(checked) => {
-											setSelectedMedia(null);
-											setValue(checked);
-										}}
-									/>
 								</div>
 							</div>
-							{value ? (
-								<div
-									style={{ marginBottom: dropdownPosition ? 200 : 0 }}
-									className={classes.mediaContainer}
-								>
-									<h6 style={{ color: mediaLabelColor }}>SELECT MEDIA</h6>
-									<Autocomplete
-										value={selectedMedia}
-										PaperComponent={(props) => {
-											setDisableDropdown(false);
-
-											return (
-												<Paper
-													elevation={6}
-													className={classes.popperAuto}
-													style={{
-														marginTop: '12px',
-														background: 'black',
-														border: '1px solid #404040',
-														boxShadow:
-															'0px 16px 40px rgba(255, 255, 255, 0.16)',
-														borderRadius: '8px'
-													}}
-													{...props}
-												/>
-											);
-										}}
-										PopperComponent={({ style, ...props }) => (
-											<Popper {...props} style={{ ...style, height: 0 }} />
-										)}
-										ListboxProps={{
-											style: { maxHeight: 180 },
-											position: 'bottom'
-										}}
-										onOpen={() => {
-											setDropdownPosition(true);
-										}}
-										onClose={(e) => {
-											setDisableDropdown(true);
-											setDropdownPosition(false);
-										}}
-										onChange={(e, newVal) => {
-											setSelectedMedia(newVal);
-
-											setDisableDropdown(true);
-										}}
-										options={allMedia}
-										getOptionLabel={(option) => option.title}
-										renderOption={(props, option, { selected }) => {
-											return (
-												<li {...props} className={classes.liAutocomplete}>
-													{option.title}
-												</li>
-											);
-										}}
-										filterOptions={(items) => {
-											return items.filter((item) =>
-												item.title
-													.toLowerCase()
-													.includes(selectMediaInput.toLowerCase())
-											);
-										}}
-										renderInput={(params) => (
-											<TextField
-												{...params}
-												size='small'
-												placeholder='Search Media'
-												InputProps={{
-													disableUnderline: true,
-													...params.InputProps,
-													className: classes.textFieldInput
-												}}
-												value={selectMediaInput}
-												onChange={handleChangeSelectMediaInput}
-											/>
-										)}
-										clearIcon={<ClearIcon />}
-										noOptionsText={
-											<div style={{ color: '#808080', fontSize: 14 }}>
-												No Results Found
-											</div>
-										}
-										popupIcon={''}
-									/>
-
-									<p className={classes.mediaError}>{mediaError}</p>
-								</div>
-							) : (
-								<></>
-							)}
-						</div>
-						<div className={classes.buttonDiv}>
-							{isEdit ? (
-								<div className={classes.editBtn}>
-									<Button
-										disabled={deleteBtnStatus}
-										button2={isEdit ? true : false}
-										onClick={() => {
-											if (!deleteBtnStatus) {
-												deletePost(specificPost?.id);
-											}
-										}}
-										text={'DELETE POST'}
-									/>
-								</div>
-							) : (
-								<> </>
-							)}
-
-							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
-								<Button
-									disabled={isEdit ? editBtnDisabled : postBtnDisabled}
-									onClick={() => {
-										if (postBtnDisabled || editBtnDisabled) {
-											validatePostBtn();
-										} else {
-											setPostButtonStatus(true);
-											if (isEdit) {
-												createPost(specificPost?.id);
-											} else {
-												setIsLoadingCreatePost(true);
-												let uploadFilesPromiseArray = uploadedFiles.map(
-													async (_file) => {
-														return uploadFileToServer(_file);
-													}
-												);
-
-												Promise.all([...uploadFilesPromiseArray])
-													.then((mediaFiles) => {
-														createPost(null, mediaFiles);
-													})
-													.catch(() => {
-														setIsLoadingCreatePost(false);
-													});
-											}
-										}
-									}}
-									text={buttonText}
-								/>
-							</div>
-						</div>
+						)}
 					</div>
-					{previewFile != null && (
-						<div ref={previewRef} className={classes.previewComponent}>
-							<div className={classes.previewHeader}>
-								<Close
-									onClick={() => {
-										setPreviewBool(false);
-										setPreviewFile(null);
-									}}
-									className={classes.closeIcon}
-								/>
-								<h5>Preview</h5>
-							</div>
-							<div>
-								{previewFile.mime_type === 'video/mp4' ? (
-									<video
-										id={'my-video'}
-										poster={isEdit ? previewFile.img : null}
-										className={classes.previewFile}
-										style={{
-											width: `${imageToResizeWidth * 4}px`,
-											height: `${imageToResizeHeight * 4}px`,
-											objectFit: 'cover',
-											objectPosition: 'center'
-										}}
-										controls={true}
-									>
-										<source src={previewFile.img} />
-									</video>
-								) : isEdit && previewFile.type === 'video' ? (
-									<video
-										id={'my-video'}
-										poster={isEdit ? previewFile.thumbnail_url : null}
-										className={classes.previewFile}
-										style={{
-											width: `${imageToResizeWidth * 4}px`,
-											height: `${imageToResizeHeight * 4}px`,
-											objectFit: 'cover',
-											objectPosition: 'center'
-										}}
-										controls={true}
-									>
-										<source src={previewFile.url} />
-									</video>
-								) : (
-									<img
-										src={previewFile.img}
-										className={classes.previewFile}
-										style={{
-											width: `${imageToResizeWidth * 4}px`,
-											height: `${imageToResizeHeight * 4}px`,
-											objectFit: 'cover',
-											objectPosition: 'center'
-										}}
-									/>
-								)}
-							</div>
-						</div>
-					)}
-				</div>
+				</Slide>
 			</LoadingOverlay>
 		</Slider>
 	);
