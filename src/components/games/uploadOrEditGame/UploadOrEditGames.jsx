@@ -76,7 +76,7 @@ const UploadOreditArcade = ({
 	const [fileHeight, setFileHeight] = useState(null);
 	const [fileWidth2, setFileWidth2] = useState(null);
 	const [fileHeight2, setFileHeight2] = useState(null);
-
+	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
 
@@ -689,39 +689,111 @@ const UploadOreditArcade = ({
 			  !arcadeGameType ||
 			  !gameId;
 
-	const editBtnDisabled =
-		type === 'jogo'
-			? !uploadedFiles.length ||
-			  !videoOrientation ||
-			  !gameOrientation ||
-			  !uploadedExplanationOrIcon.length ||
-			  postButtonStatus ||
-			  !titleGame ||
-			  !descriptionGame ||
-			  !time ||
-			  !scoring ||
-			  !objective ||
-			  !payload
-			: type === 'arcade' && arcadeGameType === 'Outside App'
-			? !uploadedFiles.length ||
-			  !uploadedExplanationOrIcon.length ||
-			  postButtonStatus ||
-			  !titleGame ||
-			  !descriptionGame ||
-			  !arcadeGameType ||
-			  !android ||
-			  !ios ||
-			  !playStore ||
-			  !appStore ||
-			  !playStore2 ||
-			  !appStore2
-			: !uploadedFiles.length ||
-			  !uploadedExplanationOrIcon.length ||
-			  postButtonStatus ||
-			  !titleGame ||
-			  !descriptionGame ||
-			  !arcadeGameType ||
-			  !gameId;
+	useEffect(() => {
+		if (specificGamesData) {
+			setEditBtnDisabled(
+				type === 'jogo'
+					? !uploadedFiles.length ||
+							!videoOrientation ||
+							!gameOrientation ||
+							!uploadedExplanationOrIcon.length ||
+							postButtonStatus ||
+							!titleGame ||
+							!descriptionGame ||
+							!time ||
+							!scoring ||
+							!objective ||
+							!payload ||
+							(specificGamesData?.title === titleGame?.trim() &&
+								specificGamesData?.description === descriptionGame?.trim() &&
+								specificGamesData?.time === time?.trim() &&
+								specificGamesData?.scoring === scoring?.trim() &&
+								specificGamesData?.objective === objective?.trim() &&
+								specificGamesData?.payload === payload?.trim() &&
+								// specificGamesData?.uploadedFiles[0].file_name ===
+								// 	uploadedFiles[0].fileName &&
+								// specificGamesData?.uploadedExplanationOrIcon[0].file_name ===
+								// 	uploadedExplanationOrIcon[0].fileName &&
+								specificGamesData?.game_orientation === gameOrientation &&
+								specificGamesData?.orientation === videoOrientation)
+					: type === 'arcade' && arcadeGameType === 'Outside App'
+					? !uploadedFiles.length ||
+					  !uploadedExplanationOrIcon.length ||
+					  postButtonStatus ||
+					  !titleGame ||
+					  !descriptionGame ||
+					  !arcadeGameType ||
+					  !android ||
+					  !ios ||
+					  !playStore ||
+					  !appStore ||
+					  !playStore2 ||
+					  !appStore2
+					: !uploadedFiles.length ||
+					  !uploadedExplanationOrIcon.length ||
+					  postButtonStatus ||
+					  !titleGame ||
+					  !descriptionGame ||
+					  !arcadeGameType ||
+					  !gameId ||
+					  type === 'jogo'
+					? !uploadedFiles.length ||
+					  !videoOrientation ||
+					  !gameOrientation ||
+					  !uploadedExplanationOrIcon.length ||
+					  postButtonStatus ||
+					  !titleGame ||
+					  !descriptionGame ||
+					  !time ||
+					  !scoring ||
+					  !objective ||
+					  !payload
+					: type === 'arcade' && arcadeGameType === 'Outside App'
+					? !uploadedFiles.length ||
+					  !uploadedExplanationOrIcon.length ||
+					  postButtonStatus ||
+					  !titleGame ||
+					  !descriptionGame ||
+					  !arcadeGameType ||
+					  !android ||
+					  !ios ||
+					  !playStore ||
+					  !appStore ||
+					  !playStore2 ||
+					  !appStore2
+					: !uploadedFiles.length ||
+					  !uploadedExplanationOrIcon.length ||
+					  postButtonStatus ||
+					  !titleGame ||
+					  !descriptionGame ||
+					  !arcadeGameType ||
+					  !gameId ||
+					  (specificGamesData?.title === titleGame?.trim() &&
+							specificGamesData?.description === descriptionGame?.trim() &&
+							specificGamesData?.arcade_game_type === arcadeGameType.trim() &&
+							specificGamesData?.gameId === gameId?.trim() &&
+							specificGamesData?.time === time?.trim() &&
+							specificGamesData?.scoring === scoring?.trim() &&
+							specificGamesData?.objective === objective?.trim() &&
+							specificGamesData?.payload === payload?.trim() &&
+							specificGamesData?.android === android?.trim() &&
+							specificGamesData?.ios === ios?.trim() &&
+							specificGamesData?.playStore === playStore?.trim() &&
+							specificGamesData?.store_url.appStore === appStore?.trim() &&
+							specificGamesData?.playStore2 === playStore2?.trim() &&
+							specificGamesData?.appStore2 === appStore2?.trim() &&
+							// specificGamesData?.uploadedFiles[0].file_name ===
+							// 	uploadedFiles[0].fileName &&
+							// specificGamesData?.uploadedExplanationOrIcon[0].file_name ===
+							// 	uploadedExplanationOrIcon[0].fileName &&
+							specificGamesData?.game_orientation === gameOrientation &&
+							specificGamesData?.orientation === videoOrientation)
+			);
+		}
+	}, [specificGamesData, uploadedFiles, dropboxLink, editBtnDisabled]);
+
+	console.log('Api KEys', specificGamesData);
+
 	return (
 		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
 			<Slide in={true} direction='up' {...{ timeout: 400 }}>
