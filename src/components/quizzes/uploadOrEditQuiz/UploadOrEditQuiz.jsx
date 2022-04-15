@@ -12,6 +12,7 @@ import DragAndDropField from '../../DragAndDropField';
 import Labels from '../../Labels';
 import Button from '../../button';
 import DatePicker from 'react-datepicker';
+import checkFileSize from '../../../utils/validateFileSize';
 import { getDateTime, formatDate, getCalendarText2 } from '../../../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -122,7 +123,8 @@ const UploadOrEditQuiz = ({
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png',
-			maxFiles: 1
+			maxFiles: 1,
+			validator: checkFileSize
 		});
 
 	const getFileType = (type) => {
@@ -192,9 +194,9 @@ const UploadOrEditQuiz = ({
 
 	useEffect(() => {
 		if (fileRejections.length) {
-			setFileRejectionError(
-				'The uploaded file format is not matching OR max files exceeded'
-			);
+			fileRejections.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError(e.message));
+			});
 			setTimeout(() => {
 				setFileRejectionError('');
 			}, [5000]);

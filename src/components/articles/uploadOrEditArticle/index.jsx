@@ -19,6 +19,7 @@ import uploadFileToServer from '../../../utils/uploadFileToServer';
 import Close from '@material-ui/icons/Close';
 import { TextField } from '@material-ui/core';
 import Slide from '@mui/material/Slide';
+import checkFileSize from '../../../utils/validateFileSize';
 //tinymce
 import { Editor } from '@tinymce/tinymce-react';
 import 'tinymce/tinymce';
@@ -81,7 +82,8 @@ const UploadOrEditViral = ({
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png',
-			maxFiles: 1
+			maxFiles: 1,
+			validator: checkFileSize
 		});
 
 	const labels = useSelector((state) => state.postLibrary.labels);
@@ -156,7 +158,9 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (fileRejections.length) {
-			setFileRejectionError('The uploaded file format is not matching');
+			fileRejections.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError(e.message));
+			});
 			setTimeout(() => {
 				setFileRejectionError('');
 			}, [5000]);

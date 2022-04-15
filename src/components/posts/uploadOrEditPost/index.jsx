@@ -165,7 +165,7 @@ const UploadOrEditPost = ({
 					if (file.thumbnail_url) {
 						return {
 							fileName: file.file_name,
-							id: makeid(10),
+							id: file.id,
 							url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
 							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.thumbnail_url}`, //img
 							type: 'video'
@@ -173,7 +173,7 @@ const UploadOrEditPost = ({
 					} else {
 						return {
 							fileName: file.file_name,
-							id: makeid(10),
+							id: file.id,
 							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`, //img
 							type: 'image'
 						};
@@ -202,7 +202,7 @@ const UploadOrEditPost = ({
 
 	useEffect(() => {
 		if (fileRejections.length) {
-			fileRejections.forEach(({ file, errors }) => {
+			fileRejections.forEach(({ errors }) => {
 				return errors.forEach((e) => setFileRejectionError(e.message));
 			});
 			setTimeout(() => {
@@ -263,6 +263,7 @@ const UploadOrEditPost = ({
 		setDisableDropdown(true);
 		setDropdownPosition(false);
 		setIsError({});
+		setEditBtnDisabled(false);
 	};
 
 	// a little function to help us with reordering the result
@@ -449,25 +450,41 @@ const UploadOrEditPost = ({
 	// 	(specificPost?.dropbox_url === dropboxLink.trim() &&
 	// 		specificPost?.caption === caption.trim());
 
+	// 	linktoPostMedia?.title === selectedMedia?.title?.trim()) ||
+	// specificPost?.medias?.length !== uploadedFiles?.length &&
+
 	useEffect(() => {
 		if (specificPost) {
+			let checkDuplicateFile = specificPost?.medias?.map((mediaFile) => {
+				return uploadedFiles.some((file) => file.id == mediaFile.id);
+			});
+
+			// let checkDuplicateFile = uploadedFiles.some((file) => {
+			// 	specificPost?.medias?.map((mediaFile) => {
+			// 		file.id == mediaFile.id;
+			// 	});
+			// });
+
+			console.log(checkDuplicateFile, 'CDF');
+
 			setEditBtnDisabled(
 				postButtonStatus ||
-					// !uploadedFiles.length ||
+					!uploadedFiles.length ||
 					!caption ||
 					(value && !selectedMedia) ||
-					// 	linktoPostMedia?.title === selectedMedia?.title?.trim()) ||
-					// specificPost?.medias?.length !== uploadedFiles?.length &&
-					(specificPost?.dropbox_url === dropboxLink?.trim() &&
-						specificPost?.caption === caption?.trim())
+					(specificPost?.dropbox_url?.trim() === dropboxLink?.trim() &&
+						specificPost?.caption?.trim() === caption?.trim() &&
+						specificPost?.media_id == selectedMedia?.id &&
+						specificPost?.medias?.length === uploadedFiles?.length)
 			);
 		}
-	}, [caption, uploadedFiles, selectedMedia, dropboxLink]);
+	}, [specificPost, caption, uploadedFiles, selectedMedia, dropboxLink, value]);
 
-	console.log(specificPost?.medias?.length, 'specificPost?.medias?.length');
-	console.log(uploadedFiles?.length, 'uploadedFiles?.length');
-	console.log(selectedMedia, selectedMedia?.length, 'selectedMedia');
-	console.log(linktoPostMedia, linktoPostMedia?.length, 'linktoPostMedia');
+	// console.log(specificPost?.medias?.length, 'specificPost?.medias?.length');
+	// console.log(selectedMedia?.id, 'captionL');
+	// console.log(specificPost?.media_id, 'captionS');
+	//console.log(selectedMedia, selectedMedia?.length, 'selectedMedia');
+	//console.log(uploadedFiles, 'uploadedFiles');
 
 	const addSavePostBtn = () => {
 		if (postBtnDisabled || editBtnDisabled) {
