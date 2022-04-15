@@ -37,7 +37,7 @@ import LoadingOverlay from 'react-loading-overlay';
 const ArticleLibrary = () => {
 	// Selectors
 	const articles = useSelector((state) => state.ArticleLibraryStore.articles);
-	// console.log(articles, 'articles');
+	console.log(articles, 'articles');
 
 	const statusArticlesApi = useSelector((state) => state.ArticleLibraryStore);
 
