@@ -10,6 +10,7 @@ import Button from '../../button';
 import DragAndDropField from '../../DragAndDropField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeid } from '../../../utils/helper';
+import checkFileSize from '../../../utils/validateFileSize';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getAllViralsApi } from '../../../pages/ViralLibrary/viralLibararySlice';
@@ -60,7 +61,8 @@ const UploadOrEditViral = ({
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png, video/mp4',
-			maxFiles: 1
+			maxFiles: 1,
+			validator: checkFileSize
 		});
 
 	const labels = useSelector((state) => state.postLibrary.labels);
@@ -141,7 +143,9 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (fileRejections.length) {
-			setFileRejectionError('The uploaded file format is not matching');
+			fileRejections.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError(e.message));
+			});
 			setTimeout(() => {
 				setFileRejectionError('');
 			}, [5000]);
