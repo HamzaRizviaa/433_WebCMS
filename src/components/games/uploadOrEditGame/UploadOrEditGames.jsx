@@ -790,7 +790,29 @@ const UploadOreditArcade = ({
 							specificGamesData?.orientation === videoOrientation)
 			);
 		}
-	}, [specificGamesData, uploadedFiles, dropboxLink, editBtnDisabled]);
+	}, [
+		specificGamesData,
+		uploadedFiles,
+		dropboxLink,
+		editBtnDisabled,
+		postButtonStatus,
+		titleGame,
+		descriptionGame,
+		arcadeGameType,
+		gameId,
+		time,
+		scoring,
+		objective,
+		payload,
+		android,
+		ios,
+		playStore,
+		appStore,
+		playStore2,
+		appStore2,
+		videoOrientation,
+		gameOrientation
+	]);
 
 	console.log('Api KEys', specificGamesData);
 
