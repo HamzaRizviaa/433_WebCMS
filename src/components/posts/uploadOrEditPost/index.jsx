@@ -202,7 +202,7 @@ const UploadOrEditPost = ({
 
 	useEffect(() => {
 		if (fileRejections.length) {
-			fileRejections.forEach(({ file, errors }) => {
+			fileRejections.forEach(({ errors }) => {
 				return errors.forEach((e) => setFileRejectionError(e.message));
 			});
 			setTimeout(() => {

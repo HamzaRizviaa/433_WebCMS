@@ -9,6 +9,7 @@ import { TextField, MenuItem, Select } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import DragAndDropField from '../../DragAndDropField';
 import Button from '../../button';
+import checkFileSize from '../../../utils/validateFileSize';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../../../pages/PostLibrary/_calender.scss';
 import { useSelector, useDispatch } from 'react-redux';
@@ -98,7 +99,8 @@ const UploadOreditArcade = ({
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg, .jpg, .png',
-			maxFiles: 1
+			maxFiles: 1,
+			validator: checkFileSize
 		});
 
 	const {
@@ -108,7 +110,8 @@ const UploadOreditArcade = ({
 		getInputProps: getInputProps2
 	} = useDropzone({
 		accept: type === 'jogo' ? 'video/mp4' : '.jpeg, .jpg, .png',
-		maxFiles: 1
+		maxFiles: 1,
+		validator: checkFileSize
 	});
 
 	const getFileType = (type) => {
@@ -224,9 +227,9 @@ const UploadOreditArcade = ({
 
 	useEffect(() => {
 		if (fileRejections.length) {
-			setFileRejectionError(
-				'The uploaded file format is not matching OR max files exceeded'
-			);
+			fileRejections.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError(e.message));
+			});
 			setTimeout(() => {
 				setFileRejectionError('');
 			}, [5000]);
@@ -235,7 +238,9 @@ const UploadOreditArcade = ({
 
 	useEffect(() => {
 		if (fileRejections2.length) {
-			setFileRejectionError2('The uploaded file format is not matching');
+			fileRejections.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError2(e.message));
+			});
 			setTimeout(() => {
 				setFileRejectionError2('');
 			}, [5000]);

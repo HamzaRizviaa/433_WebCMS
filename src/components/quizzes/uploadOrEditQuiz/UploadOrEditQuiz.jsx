@@ -12,6 +12,7 @@ import DragAndDropField from '../../DragAndDropField';
 import Labels from '../../Labels';
 import Button from '../../button';
 import DatePicker from 'react-datepicker';
+import checkFileSize from '../../../utils/validateFileSize';
 import { getDateTime, formatDate, getCalendarText2 } from '../../../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -73,6 +74,8 @@ const UploadOrEditQuiz = ({
 	const editQuestionData = useSelector(
 		(state) => state.questionLibrary.questionEdit
 	);
+	const editQuestionStatus = useSelector((state) => state.questionLibrary);
+	console.log(editQuestionStatus.status, 'editQuestionStatus');
 
 	useEffect(() => {
 		var da = new Date(endDate);
@@ -120,7 +123,8 @@ const UploadOrEditQuiz = ({
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png',
-			maxFiles: 1
+			maxFiles: 1,
+			validator: checkFileSize
 		});
 
 	const getFileType = (type) => {
@@ -190,9 +194,9 @@ const UploadOrEditQuiz = ({
 
 	useEffect(() => {
 		if (fileRejections.length) {
-			setFileRejectionError(
-				'The uploaded file format is not matching OR max files exceeded'
-			);
+			fileRejections.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError(e.message));
+			});
 			setTimeout(() => {
 				setFileRejectionError('');
 			}, [5000]);
@@ -232,7 +236,7 @@ const UploadOrEditQuiz = ({
 
 	const createQuestion = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
-
+		setIsLoadingcreateViral(false);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/question/add-question`,
@@ -427,7 +431,11 @@ const UploadOrEditQuiz = ({
 	};
 
 	return (
-		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
+		<LoadingOverlay
+			active={editQuestionStatus.status === 'loading' ? true : false}
+			spinner
+			text='Loading...'
+		>
 			<Slide in={true} direction='up' {...{ timeout: 400 }}>
 				<div
 					className={`${

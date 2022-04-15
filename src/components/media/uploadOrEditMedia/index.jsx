@@ -15,6 +15,7 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { useDropzone } from 'react-dropzone';
 import { makeid } from '../../../utils/helper';
 import { useDispatch, useSelector } from 'react-redux';
+import checkFileSize from '../../../utils/validateFileSize';
 import {
 	getMainCategories,
 	getMediaLabels
@@ -79,7 +80,8 @@ const UploadOrEditMedia = ({
 					? 'video/mp4'
 					: 'audio/mp3, audio/mpeg'
 			}`,
-			maxFiles: 1
+			maxFiles: 1,
+			validator: checkFileSize
 		});
 	const dispatch = useDispatch();
 	const mainCategories = useSelector(
@@ -161,7 +163,8 @@ const UploadOrEditMedia = ({
 		getInputProps: getInputProps2
 	} = useDropzone({
 		accept: '.jpeg, .jpg, .png',
-		maxFiles: 1
+		maxFiles: 1,
+		validator: checkFileSize
 	});
 
 	const updateSubCategories = async (mainCategory) => {
@@ -199,7 +202,9 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		if (fileRejections.length) {
-			setFileRejectionError('The uploaded file format is not matching');
+			fileRejections.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError(e.message));
+			});
 			setTimeout(() => {
 				setFileRejectionError('');
 			}, [5000]);
@@ -208,7 +213,9 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		if (fileRejections2.length) {
-			setFileRejectionError2('The uploaded file format is not matching');
+			fileRejections.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError2(e.message));
+			});
 			setTimeout(() => {
 				setFileRejectionError2('');
 			}, [5000]);
