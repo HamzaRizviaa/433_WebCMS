@@ -29,7 +29,7 @@ export const getAllArticlesApi = createAsyncThunk(
 		const result = await ArticleLibraryService.getAllArticlesServiceCall(
 			endPoint
 		);
-		// console.log(result, 'articles api');
+		console.log(result, 'articles api');
 		return { ...result.data.data, fromCalendar };
 	}
 );

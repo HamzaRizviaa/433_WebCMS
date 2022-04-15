@@ -2,8 +2,8 @@ import React from 'react';
 import classes from './_sidebar.module.scss';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ReactComponent as Logo } from '../../assets/logo.svg';
-import { ReactComponent as Share } from '../../assets/share.svg';
-import { ReactComponent as ShareSelected } from '../../assets/share_selected.svg';
+// import { ReactComponent as Share } from '../../assets/share.svg';
+// import { ReactComponent as ShareSelected } from '../../assets/share_selected.svg';
 import { ReactComponent as Media } from '../../assets/media.svg';
 import { ReactComponent as MediaSelected } from '../../assets/media_selected.svg';
 import { ReactComponent as Quiz } from '../../assets/Quiz.svg';
@@ -46,23 +46,7 @@ const Sidebar = () => {
 		<span className={classes.main}>
 			<div className={classes.navContainer}>
 				<Logo className={classes.logo} />
-				<div
-					onClick={() => {
-						navigate('/post-library');
-					}}
-					className={classes.iconWrapper}
-					style={
-						location?.pathname.includes('post-library')
-							? { backgroundColor: '#404040' }
-							: {}
-					}
-				>
-					{location?.pathname.includes('post-library') ? (
-						<ShareSelected className={classes.icon} />
-					) : (
-						<Share className={classes.icon} />
-					)}
-				</div>
+
 				<div
 					onClick={() => {
 						navigate('/media-library');
@@ -165,6 +149,23 @@ const Sidebar = () => {
 						<Games className={classes.icon} />
 					)}
 				</div>
+				{/* <div
+					onClick={() => {
+						navigate('/post-library');
+					}}
+					className={classes.iconWrapper}
+					style={
+						location?.pathname.includes('post-library')
+							? { backgroundColor: '#404040' }
+							: {}
+					}
+				>
+					{location?.pathname.includes('post-library') ? (
+						<ShareSelected className={classes.icon} />
+					) : (
+						<Share className={classes.icon} />
+					)}
+				</div> */}
 			</div>
 
 			<div onClick={signOut} className={classes.logoutContainer}>

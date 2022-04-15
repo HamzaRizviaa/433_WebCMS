@@ -10,6 +10,7 @@ import Button from '../../button';
 import DragAndDropField from '../../DragAndDropField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeid } from '../../../utils/helper';
+import checkFileSize from '../../../utils/validateFileSize';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getAllViralsApi } from '../../../pages/ViralLibrary/viralLibararySlice';
@@ -19,7 +20,9 @@ import Labels from '../../Labels';
 import { getLocalStorageDetails } from '../../../utils';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
 import { Tooltip, Fade } from '@mui/material';
+import ToggleSwitch from '../../switch';
 // import Fade from '@mui/material/Fade';
+import Slide from '@mui/material/Slide';
 
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 
@@ -51,6 +54,8 @@ const UploadOrEditViral = ({
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
+	const [valueComments, setValueComments] = useState(false);
+	const [valueLikes, setValueLikes] = useState(false);
 	const [isError, setIsError] = useState({});
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
@@ -60,7 +65,8 @@ const UploadOrEditViral = ({
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png, video/mp4',
-			maxFiles: 1
+			maxFiles: 1,
+			validator: checkFileSize
 		});
 
 	const labels = useSelector((state) => state.postLibrary.labels);
@@ -102,6 +108,8 @@ const UploadOrEditViral = ({
 			setDropboxLink(specificViral?.dropbox_url);
 			setFileWidth(specificViral?.width);
 			setFileHeight(specificViral?.height);
+			setValueComments(specificViral?.show_comments);
+			setValueLikes(specificViral?.show_likes);
 			if (specificViral?.thumbnail_url) {
 				setUploadedFiles([
 					{
@@ -141,7 +149,9 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (fileRejections.length) {
-			setFileRejectionError('The uploaded file format is not matching');
+			fileRejections.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError(e.message));
+			});
 			setTimeout(() => {
 				setFileRejectionError('');
 			}, [5000]);
@@ -192,6 +202,8 @@ const UploadOrEditViral = ({
 		setFileHeight(null);
 		setFileWidth(null);
 		setIsError({});
+		setValueComments(false);
+		setValueLikes(false);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -231,6 +243,8 @@ const UploadOrEditViral = ({
 						first_name: `${getLocalStorageDetails()?.first_name}`,
 						last_name: `${getLocalStorageDetails()?.last_name}`
 					},
+					...(valueLikes ? { show_likes: true } : {}),
+					...(valueComments ? { show_comments: true } : {}),
 					...(isEdit && id ? { viral_id: id } : {}),
 					...(!isEdit && selectedLabels.length
 						? { labels: [...selectedLabels] }
@@ -380,241 +394,277 @@ const UploadOrEditViral = ({
 			viral={true}
 		>
 			<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
-				<div
-					className={`${
-						previewFile != null
-							? classes.previewContentWrapper
-							: classes.contentWrapper
-					}`}
-				>
+				<Slide in={true} direction='up' {...{ timeout: 400 }}>
 					<div
-						className={classes.contentWrapperNoPreview}
-						style={{ width: previewFile != null ? '60%' : 'auto' }}
+						className={`${
+							previewFile != null
+								? classes.previewContentWrapper
+								: classes.contentWrapper
+						}`}
 					>
-						<div>
-							<div className={classes.explanationWrapper}>
-								<h5>{heading1}</h5>
-								<Tooltip
-									TransitionComponent={Fade}
-									TransitionProps={{ timeout: 800 }}
-									title='Default encoding for videos should be H.264'
-									arrow
-									componentsProps={{
-										tooltip: { className: classes.toolTip },
-										arrow: { className: classes.toolTipArrow }
+						<div
+							className={classes.contentWrapperNoPreview}
+							style={{ width: previewFile != null ? '60%' : 'auto' }}
+						>
+							<div>
+								<div className={classes.explanationWrapper}>
+									<h5>{heading1}</h5>
+									<Tooltip
+										TransitionComponent={Fade}
+										TransitionProps={{ timeout: 800 }}
+										title='Default encoding for videos should be H.264'
+										arrow
+										componentsProps={{
+											tooltip: { className: classes.toolTip },
+											arrow: { className: classes.toolTipArrow }
+										}}
+										placement='bottom-start'
+									>
+										<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
+									</Tooltip>
+								</div>
+								<DragAndDropField
+									uploadedFiles={uploadedFiles}
+									// isEdit={isEdit}
+									handleDeleteFile={handleDeleteFile}
+									setPreviewBool={setPreviewBool}
+									setPreviewFile={setPreviewFile}
+									imgEl={imgEl}
+									videoRef={videoRef}
+									imageOnload={() => {
+										setFileWidth(imgEl.current.naturalWidth);
+										setFileHeight(imgEl.current.naturalHeight);
 									}}
-									placement='bottom-start'
-								>
-									<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
-								</Tooltip>
-							</div>
-							<DragAndDropField
-								uploadedFiles={uploadedFiles}
-								// isEdit={isEdit}
-								handleDeleteFile={handleDeleteFile}
-								setPreviewBool={setPreviewBool}
-								setPreviewFile={setPreviewFile}
-								imgEl={imgEl}
-								videoRef={videoRef}
-								imageOnload={() => {
-									setFileWidth(imgEl.current.naturalWidth);
-									setFileHeight(imgEl.current.naturalHeight);
-								}}
-								onLoadedVideodata={() => {
-									setFileWidth(videoRef.current.videoWidth);
-									setFileHeight(videoRef.current.videoHeight);
-								}}
-								isPost
-							/>
-							{!uploadedFiles.length && (
-								<section
-									className={classes.dropZoneContainer}
-									style={{
-										borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
+									onLoadedVideodata={() => {
+										setFileWidth(videoRef.current.videoWidth);
+										setFileHeight(videoRef.current.videoHeight);
 									}}
-								>
-									<div {...getRootProps({ className: classes.dropzone })}>
-										<input {...getInputProps()} />
-										<AddCircleOutlineIcon className={classes.addFilesIcon} />
-										<p className={classes.dragMsg}>
-											Click or drag files to this area to upload
-										</p>
-										<p className={classes.formatMsg}>
-											Supported formats are jpeg, png and mp4
-										</p>
-										<p className={classes.uploadMediaError}>
-											{isError.uploadedFiles
-												? 'You need to upload a media in order to post'
-												: ''}
-										</p>
-									</div>
-								</section>
-							)}
-							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
-							<div className={classes.dropBoxUrlContainer}>
-								<h6>DROPBOX URL</h6>
-								<TextField
-									value={dropboxLink}
-									onChange={(e) => setDropboxLink(e.target.value)}
-									placeholder={'Please drop the dropbox URL here'}
-									className={classes.textField}
-									multiline
-									maxRows={2}
-									InputProps={{
-										disableUnderline: true,
-										className: classes.textFieldInput,
-										style: {
-											borderRadius: dropboxLink ? '16px' : '40px'
-										}
-									}}
+									isPost
 								/>
-							</div>
-
-							<div className={classes.captionContainer}>
-								<h6
-									className={
-										isError.selectedLabels
-											? classes.errorState
-											: classes.noErrorState
-									}
-								>
-									LABELS
-								</h6>
-								<Labels
-									isEdit={isEdit}
-									setDisableDropdown={setDisableDropdown}
-									selectedLabels={selectedLabels}
-									setSelectedLabels={setSelectedLabels}
-									LabelsOptions={postLabels}
-									extraLabel={extraLabel}
-									handleChangeExtraLabel={handleChangeExtraLabel}
-								/>
-							</div>
-							<p className={classes.mediaError}>
-								{isError.selectedLabels
-									? `You need to add  ${
-											10 - selectedLabels.length
-									  }  more labels in order to post`
-									: ''}
-							</p>
-
-							<div className={classes.captionContainer}>
-								<h6
-									className={
-										isError.caption ? classes.errorState : classes.noErrorState
-									}
-								>
-									CAPTION
-								</h6>
-								<TextField
-									value={caption}
-									onChange={(e) => setCaption(e.target.value)}
-									placeholder={'Please write your caption here'}
-									className={classes.textField}
-									InputProps={{
-										disableUnderline: true,
-										className: classes.textFieldInput,
-										style: {
-											borderRadius: caption ? '16px' : '40px'
-										}
-									}}
-									multiline
-									maxRows={4}
-								/>
-							</div>
-							<p className={classes.mediaError}>
-								{isError.caption ? 'This field is required' : ''}
-							</p>
-						</div>
-
-						<div className={classes.buttonDiv}>
-							{isEdit ? (
-								<div className={classes.editBtn}>
-									<Button
-										disabled={deleteBtnStatus}
-										button2={isEdit ? true : false}
-										onClick={() => {
-											if (!deleteBtnStatus) {
-												deleteViral(specificViral?.id);
+								{!uploadedFiles.length && (
+									<section
+										className={classes.dropZoneContainer}
+										style={{
+											borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
+										}}
+									>
+										<div {...getRootProps({ className: classes.dropzone })}>
+											<input {...getInputProps()} />
+											<AddCircleOutlineIcon className={classes.addFilesIcon} />
+											<p className={classes.dragMsg}>
+												Click or drag files to this area to upload
+											</p>
+											<p className={classes.formatMsg}>
+												Supported formats are jpeg, png and mp4
+											</p>
+											<p className={classes.uploadMediaError}>
+												{isError.uploadedFiles
+													? 'You need to upload a media in order to post'
+													: ''}
+											</p>
+										</div>
+									</section>
+								)}
+								<p className={classes.fileRejectionError}>
+									{fileRejectionError}
+								</p>
+								<div className={classes.dropBoxUrlContainer}>
+									<h6>DROPBOX URL</h6>
+									<TextField
+										value={dropboxLink}
+										onChange={(e) => setDropboxLink(e.target.value)}
+										placeholder={'Please drop the dropbox URL here'}
+										className={classes.textField}
+										multiline
+										maxRows={2}
+										InputProps={{
+											disableUnderline: true,
+											className: classes.textFieldInput,
+											style: {
+												borderRadius: dropboxLink ? '16px' : '40px'
 											}
 										}}
-										text={'DELETE VIRAL'}
 									/>
 								</div>
-							) : (
-								<> </>
-							)}
 
-							<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
-								<Button
-									disabled={isEdit ? editBtnDisabled : viralBtnDisabled}
-									onClick={() => {
-										handlePostSaveBtn();
-									}}
-									text={buttonText}
-								/>
-							</div>
-						</div>
-					</div>
-					{previewFile != null && (
-						<div ref={previewRef} className={classes.previewComponent}>
-							<div className={classes.previewHeader}>
-								<Close
-									onClick={() => {
-										setPreviewBool(false);
-										setPreviewFile(null);
-									}}
-									className={classes.closeIcon}
-								/>
-								<h5>Preview</h5>
-							</div>
-							<div>
-								{previewFile.mime_type === 'video/mp4' ? (
-									<video
-										id={'my-video'}
-										poster={isEdit ? previewFile.img : null}
-										className={classes.previewFile}
-										style={{
-											width: `100%`,
-											height: `${8 * 4}rem`,
-											objectFit: 'contain',
-											objectPosition: 'center'
-										}}
-										controls={true}
+								<div className={classes.captionContainer}>
+									<h6
+										className={
+											isError.selectedLabels
+												? classes.errorState
+												: classes.noErrorState
+										}
 									>
-										<source src={previewFile.img} />
-									</video>
-								) : isEdit && previewFile.type === 'video' ? (
-									<video
-										id={'my-video'}
-										poster={isEdit ? previewFile.thumbnail_url : null}
-										className={classes.previewFile}
-										style={{
-											width: `100%`,
-											height: `${8 * 4}rem`,
-											objectFit: 'contain',
-											objectPosition: 'center'
-										}}
-										controls={true}
-									>
-										<source src={previewFile.url} />
-									</video>
-								) : (
-									<img
-										src={previewFile.img}
-										className={classes.previewFile}
-										style={{
-											width: `100%`,
-											height: `${8 * 4}rem`,
-											objectFit: 'contain',
-											objectPosition: 'center'
-										}}
+										LABELS
+									</h6>
+									<Labels
+										isEdit={isEdit}
+										setDisableDropdown={setDisableDropdown}
+										selectedLabels={selectedLabels}
+										setSelectedLabels={setSelectedLabels}
+										LabelsOptions={postLabels}
+										extraLabel={extraLabel}
+										handleChangeExtraLabel={handleChangeExtraLabel}
 									/>
+								</div>
+								<p className={classes.mediaError}>
+									{isError.selectedLabels
+										? `You need to add  ${
+												10 - selectedLabels.length
+										  }  more labels in order to post`
+										: ''}
+								</p>
+
+								<div className={classes.captionContainer}>
+									<h6
+										className={
+											isError.caption
+												? classes.errorState
+												: classes.noErrorState
+										}
+									>
+										CAPTION
+									</h6>
+									<TextField
+										value={caption}
+										onChange={(e) => setCaption(e.target.value)}
+										placeholder={'Please write your caption here'}
+										className={classes.textField}
+										InputProps={{
+											disableUnderline: true,
+											className: classes.textFieldInput,
+											style: {
+												borderRadius: caption ? '16px' : '40px'
+											}
+										}}
+										multiline
+										maxRows={4}
+									/>
+								</div>
+								<p className={classes.mediaError}>
+									{isError.caption ? 'This field is required' : ''}
+								</p>
+
+								<p className={classes.mediaError}>
+									{isError.caption ? 'This field is required' : ''}
+								</p>
+
+								<div className={classes.postMediaContainer}>
+									<div className={classes.postMediaHeader}>
+										<h5>Show comments</h5>
+										<ToggleSwitch
+											id={1}
+											checked={valueComments}
+											onChange={(checked) => {
+												setValueComments(checked);
+											}}
+										/>
+									</div>
+								</div>
+
+								<div className={classes.postMediaContainer}>
+									<div className={classes.postMediaHeader}>
+										<h5>Show likes</h5>
+										<ToggleSwitch
+											id={2}
+											checked={valueLikes}
+											onChange={(checked) => {
+												setValueLikes(checked);
+											}}
+										/>
+									</div>
+								</div>
+							</div>
+
+							<div className={classes.buttonDiv}>
+								{isEdit ? (
+									<div className={classes.editBtn}>
+										<Button
+											disabled={deleteBtnStatus}
+											button2={isEdit ? true : false}
+											onClick={() => {
+												if (!deleteBtnStatus) {
+													deleteViral(specificViral?.id);
+												}
+											}}
+											text={'DELETE VIRAL'}
+										/>
+									</div>
+								) : (
+									<> </>
 								)}
+
+								<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
+									<Button
+										disabled={isEdit ? editBtnDisabled : viralBtnDisabled}
+										onClick={() => {
+											handlePostSaveBtn();
+										}}
+										text={buttonText}
+									/>
+								</div>
 							</div>
 						</div>
-					)}
-				</div>
+						{previewFile != null && (
+							<div ref={previewRef} className={classes.previewComponent}>
+								<div className={classes.previewHeader}>
+									<Close
+										onClick={() => {
+											setPreviewBool(false);
+											setPreviewFile(null);
+										}}
+										className={classes.closeIcon}
+									/>
+									<h5>Preview</h5>
+								</div>
+								<div>
+									{previewFile.mime_type === 'video/mp4' ? (
+										<video
+											id={'my-video'}
+											poster={isEdit ? previewFile.img : null}
+											className={classes.previewFile}
+											style={{
+												width: `100%`,
+												height: `${8 * 4}rem`,
+												objectFit: 'contain',
+												objectPosition: 'center'
+											}}
+											controls={true}
+										>
+											<source src={previewFile.img} />
+										</video>
+									) : isEdit && previewFile.type === 'video' ? (
+										<video
+											id={'my-video'}
+											poster={isEdit ? previewFile.thumbnail_url : null}
+											className={classes.previewFile}
+											style={{
+												width: `100%`,
+												height: `${8 * 4}rem`,
+												objectFit: 'contain',
+												objectPosition: 'center'
+											}}
+											controls={true}
+										>
+											<source src={previewFile.url} />
+										</video>
+									) : (
+										<img
+											src={previewFile.img}
+											className={classes.previewFile}
+											style={{
+												width: `100%`,
+												height: `${8 * 4}rem`,
+												objectFit: 'contain',
+												objectPosition: 'center'
+											}}
+										/>
+									)}
+								</div>
+							</div>
+						)}
+					</div>
+				</Slide>
 			</LoadingOverlay>
 		</Slider>
 	);

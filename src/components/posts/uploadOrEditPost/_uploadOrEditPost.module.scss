@@ -159,6 +159,7 @@
 .buttonDiv {
 	width: 100%;
 	margin-bottom: 4rem;
+	margin-top: 2.5rem;
 }
 
 .postBtn {
@@ -303,6 +304,8 @@
 }
 
 .loader {
+	width: 15%;
+	height: auto;
 	color: $neon-yellow !important;
 }
 
