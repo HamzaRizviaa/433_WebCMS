@@ -28,7 +28,6 @@ import 'tinymce/themes/silver';
 import 'tinymce/plugins/paste';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/image';
-import 'tinymce/plugins/media';
 import 'tinymce/plugins/searchreplace';
 import 'tinymce/plugins/emoticons';
 import 'tinymce/plugins/emoticons/js/emojiimages.min.js';
@@ -665,7 +664,7 @@ const UploadOrEditViral = ({
 													});
 												},
 												content_style:
-													"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white  }; ",
+													"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white; line-height:1  }; ",
 
 												branding: false,
 												statusbar: true,
@@ -816,7 +815,7 @@ const UploadOrEditViral = ({
 													insert: {
 														title: 'Insert',
 														items:
-															'image link media charmap emoticons hr anchor insertdatetime'
+															'image link charmap emoticons hr anchor insertdatetime'
 													},
 													format: {
 														title: 'Format',
@@ -831,7 +830,7 @@ const UploadOrEditViral = ({
 												plugins: [
 													'lists advlist link image anchor',
 													'searchreplace  emoticons hr visualblocks fullscreen',
-													'insertdatetime media table paste wordcount  charmap textcolor colorpicker'
+													'insertdatetime table paste wordcount  charmap textcolor colorpicker'
 												],
 
 												toolbar:
