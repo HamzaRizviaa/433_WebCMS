@@ -29,9 +29,7 @@ import 'tinymce/themes/silver';
 import 'tinymce/plugins/paste';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/image';
-import 'tinymce/plugins/media';
 import 'tinymce/plugins/searchreplace';
-import 'tinymce/plugins/emoticons';
 import 'tinymce/plugins/emoticons/js/emojiimages.min.js';
 import 'tinymce/plugins/hr';
 import 'tinymce/plugins/anchor';
@@ -693,7 +691,7 @@ const UploadOrEditViral = ({
 													});
 												},
 												content_style:
-													"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white  }; ",
+													"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white; line-height:1  }; ",
 
 												branding: false,
 												statusbar: true,
@@ -843,8 +841,7 @@ const UploadOrEditViral = ({
 													},
 													insert: {
 														title: 'Insert',
-														items:
-															'image link media charmap emoticons hr anchor insertdatetime'
+														items: 'image link charmap hr anchor insertdatetime'
 													},
 													format: {
 														title: 'Format',
@@ -858,15 +855,14 @@ const UploadOrEditViral = ({
 												},
 												plugins: [
 													'lists advlist link image anchor',
-													'searchreplace  emoticons hr visualblocks fullscreen',
-													'insertdatetime media table paste wordcount  charmap textcolor colorpicker'
+													'searchreplace  hr visualblocks fullscreen',
+													'insertdatetime table paste wordcount  charmap textcolor colorpicker'
 												],
 
 												toolbar:
 													'undo redo  bold italic underline strikethrough fontsizeselect | ' +
 													'alignleft aligncenter ' +
-													'alignright alignjustify | bullist numlist | ' +
-													'emoticons'
+													'alignright alignjustify | bullist numlist | '
 											}}
 											onEditorChange={() => handleEditorChange()}
 											onMouseEnter={() => setDisableDropdown(false)}
