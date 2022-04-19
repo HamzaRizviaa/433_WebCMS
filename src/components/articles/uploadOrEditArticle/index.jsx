@@ -29,7 +29,6 @@ import 'tinymce/plugins/paste';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/image';
 import 'tinymce/plugins/searchreplace';
-import 'tinymce/plugins/emoticons';
 import 'tinymce/plugins/emoticons/js/emojiimages.min.js';
 import 'tinymce/plugins/hr';
 import 'tinymce/plugins/anchor';
@@ -814,8 +813,7 @@ const UploadOrEditViral = ({
 													},
 													insert: {
 														title: 'Insert',
-														items:
-															'image link charmap emoticons hr anchor insertdatetime'
+														items: 'image link charmap hr anchor insertdatetime'
 													},
 													format: {
 														title: 'Format',
@@ -829,15 +827,14 @@ const UploadOrEditViral = ({
 												},
 												plugins: [
 													'lists advlist link image anchor',
-													'searchreplace  emoticons hr visualblocks fullscreen',
+													'searchreplace  hr visualblocks fullscreen',
 													'insertdatetime table paste wordcount  charmap textcolor colorpicker'
 												],
 
 												toolbar:
 													'undo redo  bold italic underline strikethrough fontsizeselect | ' +
 													'alignleft aligncenter ' +
-													'alignright alignjustify | bullist numlist | ' +
-													'emoticons'
+													'alignright alignjustify | bullist numlist | '
 											}}
 											onEditorChange={() => handleEditorChange()}
 											onMouseEnter={() => setDisableDropdown(false)}
