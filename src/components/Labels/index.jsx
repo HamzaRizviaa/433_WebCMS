@@ -10,10 +10,11 @@ const Labels = ({
 	isEdit,
 	setDisableDropdown,
 	selectedLabels,
-	setSelectedLabels,
+	// setSelectedLabels,
 	LabelsOptions,
 	extraLabel,
-	handleChangeExtraLabel
+	handleChangeExtraLabel,
+	setNewLabels
 }) => {
 	return (
 		<Autocomplete
@@ -60,7 +61,9 @@ const Labels = ({
 							(t) => t.name.toLowerCase() === v.name.toLowerCase()
 						) === i
 				);
-				setSelectedLabels([...newLabels]);
+				// setSelectedLabels([...newLabels]);
+				console.log(newValue);
+				setNewLabels(newLabels);
 			}}
 			popupIcon={''}
 			noOptionsText={
@@ -144,10 +147,11 @@ Labels.propTypes = {
 	isEdit: PropTypes.bool,
 	setDisableDropdown: PropTypes.func,
 	selectedLabels: PropTypes.array,
-	setSelectedLabels: PropTypes.func,
+	// setSelectedLabels: PropTypes.func,
 	LabelsOptions: PropTypes.array,
 	extraLabel: PropTypes.string,
-	handleChangeExtraLabel: PropTypes.func
+	handleChangeExtraLabel: PropTypes.func,
+	setNewLabels: PropTypes.func
 };
 
 export default Labels;

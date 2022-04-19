@@ -20,6 +20,7 @@ import Close from '@material-ui/icons/Close';
 import { TextField } from '@material-ui/core';
 import Slide from '@mui/material/Slide';
 import checkFileSize from '../../../utils/validateFileSize';
+import validateForm from '../../../utils/validateForm';
 //tinymce
 import { Editor } from '@tinymce/tinymce-react';
 import 'tinymce/tinymce';
@@ -79,6 +80,14 @@ const UploadOrEditViral = ({
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 
+	const [form, setForm] = useState({
+		title: '',
+		description: '',
+		dropbox_url: '',
+		uploadedFiles: [],
+		labels: []
+	});
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png',
@@ -92,6 +101,10 @@ const UploadOrEditViral = ({
 	);
 
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		validateForm(form);
+	}, []);
 
 	useEffect(() => {
 		if (specificArticle) {
@@ -195,7 +208,10 @@ const UploadOrEditViral = ({
 
 	const handleEditorChange = () => {
 		const editorTextContent = tinymce?.activeEditor?.getContent();
-		setEditorText(editorTextContent);
+		setForm((prev) => {
+			return { ...prev, description: editorTextContent };
+		});
+		// setEditorText(editorTextContent);
 		setEditorTextChecker(editorTextContent); // to check yellow button condition
 	};
 
@@ -545,8 +561,12 @@ const UploadOrEditViral = ({
 								<div className={classes.dropBoxUrlContainer}>
 									<h6>DROPBOX URL</h6>
 									<TextField
-										value={dropboxLink}
-										onChange={(e) => setDropboxLink(e.target.value)}
+										value={form.dropbox_url}
+										onChange={(e) =>
+											setForm((prev) => {
+												return { ...prev, dropbox_url: e.target.value };
+											})
+										}
 										placeholder={'Please drop the dropbox URL here'}
 										className={classes.textField}
 										multiline
@@ -589,8 +609,12 @@ const UploadOrEditViral = ({
 
 									<TextField
 										// disabled={isEdit}
-										value={articleTitle}
-										onChange={(e) => setArticleTitle(e.target.value)}
+										value={form.title}
+										onChange={(e) =>
+											setForm((prev) => {
+												return { ...prev, title: e.target.value };
+											})
+										}
 										placeholder={'Please write your title here'}
 										className={classes.textField}
 										InputProps={{
@@ -631,6 +655,9 @@ const UploadOrEditViral = ({
 										LabelsOptions={postLabels}
 										extraLabel={extraLabel}
 										handleChangeExtraLabel={handleChangeExtraLabel}
+										setNewLabels={(newVal) => (prev) => {
+											return { ...prev, labels: [...newVal] };
+										}}
 									/>
 								</div>
 								<p className={classes.mediaError}>
@@ -661,7 +688,8 @@ const UploadOrEditViral = ({
 												contextmenu: false,
 												setup: function (editor) {
 													editor.on('init', function () {
-														editorText;
+														// editorText;
+														form.description;
 													});
 												},
 												content_style:

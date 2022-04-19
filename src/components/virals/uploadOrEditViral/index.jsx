@@ -19,6 +19,7 @@ import Close from '@material-ui/icons/Close';
 import Labels from '../../Labels';
 import { getLocalStorageDetails } from '../../../utils';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
+import validateForm from '../../../utils/validateForm';
 import { Tooltip, Fade } from '@mui/material';
 import ToggleSwitch from '../../switch';
 // import Fade from '@mui/material/Fade';
@@ -57,6 +58,14 @@ const UploadOrEditViral = ({
 	const [valueComments, setValueComments] = useState(false);
 	const [valueLikes, setValueLikes] = useState(false);
 	const [isError, setIsError] = useState({});
+	const [form, setForm] = useState({
+		caption: '',
+		dropbox_url: '',
+		uploadedFiles: [],
+		labels: [],
+		show_likes: false,
+		show_comments: false
+	});
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const videoRef = useRef(null);
@@ -95,6 +104,10 @@ const UploadOrEditViral = ({
 		}
 	}, [labels]);
 
+	// useEffect(() => {
+	// 	validateForm(form);
+	// }, []);
+
 	useEffect(() => {
 		if (specificViral) {
 			if (specificViral?.labels) {
@@ -114,9 +127,9 @@ const UploadOrEditViral = ({
 				setUploadedFiles([
 					{
 						id: makeid(10),
-						fileName: specificViral?.file_name,
-						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.thumbnail_url}`,
-						url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
+						file_name: specificViral?.file_name,
+						thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.thumbnail_url}`,
+						media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
 						type: 'video'
 					}
 				]);
@@ -125,8 +138,8 @@ const UploadOrEditViral = ({
 				setUploadedFiles([
 					{
 						id: makeid(10),
-						fileName: specificViral?.file_name,
-						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
+						file_name: specificViral?.file_name,
+						media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
 						type: 'image'
 					}
 				]);
@@ -173,15 +186,19 @@ const UploadOrEditViral = ({
 				let id = makeid(10);
 				return {
 					id: id,
-					fileName: file.name,
-					img: URL.createObjectURL(file),
+					file_name: file.name,
+					media_url: URL.createObjectURL(file),
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
 					type: file.type === 'video/mp4' ? 'video' : 'image'
 				};
 			});
-			setUploadedFiles([...uploadedFiles, ...newFiles]);
+			// setUploadedFiles([...uploadedFiles, ...newFiles]);
+
+			setForm((prev) => {
+				return { ...prev, uploadedFiles: [...uploadedFiles, ...newFiles] };
+			});
 		}
 	}, [acceptedFiles]);
 
@@ -202,21 +219,29 @@ const UploadOrEditViral = ({
 		setFileHeight(null);
 		setFileWidth(null);
 		setIsError({});
+		// setForm({});
 		setValueComments(false);
 		setValueLikes(false);
 	};
 
 	const handleDeleteFile = (id) => {
-		setUploadedFiles((uploadedFiles) =>
-			uploadedFiles.filter((file) => file.id !== id)
-		);
+		setForm((prev) => {
+			return {
+				...prev,
+				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
+			};
+		});
+
+		// setUploadedFiles((uploadedFiles) =>
+		// 	uploadedFiles.filter((file) => file.id !== id)
+		// );
 	};
 
 	const validateViralBtn = () => {
 		setIsError({
-			caption: !caption,
-			uploadedFiles: uploadedFiles.length < 1,
-			selectedLabels: selectedLabels.length < 10
+			caption: !form.caption,
+			uploadedFiles: form.uploadedFiles.length < 1,
+			selectedLabels: form.labels.length < 10
 		});
 		setTimeout(() => {
 			setIsError({});
@@ -229,12 +254,12 @@ const UploadOrEditViral = ({
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
 				{
-					caption: caption,
-					dropbox_url: dropboxLink,
+					caption: form.caption,
+					dropbox_url: form.dropbox_url,
 					media_url:
 						mediaFiles[0]?.media_url ||
 						mediaFiles[0].img.split('cloudfront.net/')[1],
-					file_name: mediaFiles[0]?.file_name || mediaFiles[0]?.fileName,
+					file_name: mediaFiles[0]?.file_name,
 					thumbnail_url: mediaFiles[0]?.thumbnail_url,
 					height: fileHeight,
 					width: fileWidth,
@@ -246,8 +271,8 @@ const UploadOrEditViral = ({
 					...(valueLikes ? { show_likes: true } : {}),
 					...(valueComments ? { show_comments: true } : {}),
 					...(isEdit && id ? { viral_id: id } : {}),
-					...(!isEdit && selectedLabels.length
-						? { labels: [...selectedLabels] }
+					...(!isEdit && form.labels?.length
+						? { labels: [...form.labels] }
 						: {})
 				},
 				{
@@ -315,11 +340,11 @@ const UploadOrEditViral = ({
 		setPreviewFile(null);
 	};
 
-	const viralBtnDisabled =
-		!uploadedFiles.length ||
-		postButtonStatus ||
-		selectedLabels.length < 10 ||
-		!caption;
+	// const viralBtnDisabled =
+	// 	!uploadedFiles.length ||
+	// 	postButtonStatus ||
+	// 	selectedLabels.length < 10 ||
+	// 	!caption;
 
 	useEffect(() => {
 		if (specificViral) {
@@ -327,8 +352,8 @@ const UploadOrEditViral = ({
 				postButtonStatus ||
 					!caption ||
 					!uploadedFiles.length ||
-					(specificViral?.file_name === uploadedFiles[0]?.fileName &&
-						specificViral?.caption?.trim() === caption.trim() &&
+					(specificViral?.file_name === uploadedFiles[0]?.file_name &&
+						specificViral?.caption?.trim() === form.caption.trim() &&
 						specificViral?.dropbox_url?.trim() === dropboxLink.trim())
 			);
 		}
@@ -336,12 +361,12 @@ const UploadOrEditViral = ({
 
 	const handlePostSaveBtn = () => {
 		setIsLoadingcreateViral(false);
-		if (viralBtnDisabled || editBtnDisabled) {
+		if (validateForm(form)) {
 			validateViralBtn();
 		} else {
 			setPostButtonStatus(true);
 			if (isEdit) {
-				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
 					if (_file.file) {
 						return await uploadFileToServer(_file, 'virallibrary');
 					} else {
@@ -358,7 +383,7 @@ const UploadOrEditViral = ({
 					});
 			} else {
 				setIsLoadingcreateViral(true);
-				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
 					return uploadFileToServer(_file, 'virallibrary');
 				});
 
@@ -378,8 +403,8 @@ const UploadOrEditViral = ({
 			open={open}
 			handleClose={() => {
 				handleClose();
-				if (uploadedFiles.length && !isEdit) {
-					uploadedFiles.map((file) => handleDeleteFile(file.id));
+				if (form.uploadedFiles.length && !isEdit) {
+					form.uploadedFiles.map((file) => handleDeleteFile(file.id));
 				}
 			}}
 			title={title}
@@ -424,7 +449,7 @@ const UploadOrEditViral = ({
 									</Tooltip>
 								</div>
 								<DragAndDropField
-									uploadedFiles={uploadedFiles}
+									uploadedFiles={form.uploadedFiles}
 									// isEdit={isEdit}
 									handleDeleteFile={handleDeleteFile}
 									setPreviewBool={setPreviewBool}
@@ -441,7 +466,7 @@ const UploadOrEditViral = ({
 									}}
 									isPost
 								/>
-								{!uploadedFiles.length && (
+								{!form.uploadedFiles.length && (
 									<section
 										className={classes.dropZoneContainer}
 										style={{
@@ -471,8 +496,12 @@ const UploadOrEditViral = ({
 								<div className={classes.dropBoxUrlContainer}>
 									<h6>DROPBOX URL</h6>
 									<TextField
-										value={dropboxLink}
-										onChange={(e) => setDropboxLink(e.target.value)}
+										value={form.dropbox_url}
+										onChange={(e) =>
+											setForm((prev) => {
+												return { ...prev, dropbox_url: e.target.value };
+											})
+										}
 										placeholder={'Please drop the dropbox URL here'}
 										className={classes.textField}
 										multiline
@@ -481,7 +510,7 @@ const UploadOrEditViral = ({
 											disableUnderline: true,
 											className: classes.textFieldInput,
 											style: {
-												borderRadius: dropboxLink ? '16px' : '40px'
+												borderRadius: form.dropbox_url ? '16px' : '40px'
 											}
 										}}
 									/>
@@ -500,11 +529,14 @@ const UploadOrEditViral = ({
 									<Labels
 										isEdit={isEdit}
 										setDisableDropdown={setDisableDropdown}
-										selectedLabels={selectedLabels}
-										setSelectedLabels={setSelectedLabels}
+										selectedLabels={form.labels}
 										LabelsOptions={postLabels}
 										extraLabel={extraLabel}
 										handleChangeExtraLabel={handleChangeExtraLabel}
+										setNewLabels={(newVal) => (prev) => {
+											console.log(newVal, '---val---');
+											return { ...prev, labels: [...newVal] };
+										}}
 									/>
 								</div>
 								<p className={classes.mediaError}>
@@ -526,8 +558,12 @@ const UploadOrEditViral = ({
 										CAPTION
 									</h6>
 									<TextField
-										value={caption}
-										onChange={(e) => setCaption(e.target.value)}
+										value={form.caption}
+										onChange={(e) =>
+											setForm((prev) => {
+												return { ...prev, caption: e.target.value };
+											})
+										}
 										placeholder={'Please write your caption here'}
 										className={classes.textField}
 										InputProps={{
@@ -545,19 +581,17 @@ const UploadOrEditViral = ({
 									{isError.caption ? 'This field is required' : ''}
 								</p>
 
-								<p className={classes.mediaError}>
-									{isError.caption ? 'This field is required' : ''}
-								</p>
-
 								<div className={classes.postMediaContainer}>
 									<div className={classes.postMediaHeader}>
 										<h5>Show comments</h5>
 										<ToggleSwitch
 											id={1}
-											checked={valueComments}
-											onChange={(checked) => {
-												setValueComments(checked);
-											}}
+											checked={form.show_comments}
+											onChange={(checked) =>
+												setForm((prev) => {
+													return { ...prev, show_comments: checked };
+												})
+											}
 										/>
 									</div>
 								</div>
@@ -567,10 +601,16 @@ const UploadOrEditViral = ({
 										<h5>Show likes</h5>
 										<ToggleSwitch
 											id={2}
-											checked={valueLikes}
-											onChange={(checked) => {
-												setValueLikes(checked);
-											}}
+											checked={form.show_likes}
+											// onChange={
+											// 	(checked) => {
+											// 	setValueLikes(checked);
+											// }}
+											onChange={(checked) =>
+												setForm((prev) => {
+													return { ...prev, show_likes: checked };
+												})
+											}
 										/>
 									</div>
 								</div>
@@ -596,7 +636,8 @@ const UploadOrEditViral = ({
 
 								<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 									<Button
-										disabled={isEdit ? editBtnDisabled : viralBtnDisabled}
+										// disable - grey
+										disabled={isEdit ? editBtnDisabled : validateForm(form)}
 										onClick={() => {
 											handlePostSaveBtn();
 										}}
