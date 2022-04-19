@@ -409,7 +409,9 @@ const UploadOrEditViral = ({
 					!form.uploadedFiles.length ||
 					(specificViral?.file_name === form.uploadedFiles[0]?.file_name &&
 						specificViral?.caption?.trim() === form.caption.trim() &&
-						specificViral?.dropbox_url?.trim() === form.dropbox_url.trim())
+						specificViral?.dropbox_url?.trim() === form.dropbox_url.trim() &&
+						specificViral?.show_likes === form.show_likes &&
+						specificViral?.show_comments === form.show_comments)
 			);
 		}
 	}, [specificViral, form]);
