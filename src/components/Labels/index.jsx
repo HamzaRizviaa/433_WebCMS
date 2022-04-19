@@ -13,10 +13,9 @@ const Labels = ({
 	setSelectedLabels,
 	LabelsOptions,
 	extraLabel,
-	handleChangeExtraLabel,
-	setNewLabels
+	handleChangeExtraLabel
 }) => {
-	const regex = /[!@#$%^&*(),.?":{}|<>\\\s]/g;
+	// const regex = /[!@#$%^&*(),.?":{}|<>\\\s]/g;
 	//const regex = /[\s]/g;
 
 	return (
@@ -62,15 +61,15 @@ const Labels = ({
 			// 	// 	event.stopPropagation();
 			// 	// }
 			// }}
-			onKeyUp={(e) => {
-				let regexCheck = regex.test(e.target.value);
-				console.log(regexCheck);
-				if (regexCheck) {
-					e.preventDefault();
-					e.stopPropagation();
-					return false;
-				}
-			}}
+			// onKeyUp={(e) => {
+			// 	let regexCheck = regex.test(e.target.value);
+			// 	console.log(regexCheck);
+			// 	if (regexCheck) {
+			// 		e.preventDefault();
+			// 		e.stopPropagation();
+			// 		return false;
+			// 	}
+			// }}
 			onChange={(event, newValue) => {
 				setDisableDropdown(true);
 
@@ -89,10 +88,6 @@ const Labels = ({
 						) === i
 				);
 				setSelectedLabels([...newLabels]);
-				//}
-				// setSelectedLabels([...newLabels]);
-				console.log(newValue);
-				setNewLabels(newLabels);
 			}}
 			popupIcon={''}
 			noOptionsText={
@@ -184,8 +179,7 @@ Labels.propTypes = {
 	setSelectedLabels: PropTypes.func,
 	LabelsOptions: PropTypes.array,
 	extraLabel: PropTypes.string,
-	handleChangeExtraLabel: PropTypes.func,
-	setNewLabels: PropTypes.func
+	handleChangeExtraLabel: PropTypes.func
 };
 
 export default Labels;

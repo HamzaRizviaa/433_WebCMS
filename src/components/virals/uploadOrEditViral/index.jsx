@@ -116,33 +116,76 @@ const UploadOrEditViral = ({
 					_labels.push({ id: -1, name: label })
 				);
 				setSelectedLabels(_labels);
+				// console.log('Labels', _labels);
+				setForm((prev) => {
+					return {
+						...prev,
+						labels: _labels
+					};
+				});
 			}
-			setCaption(specificViral?.caption);
-			setDropboxLink(specificViral?.dropbox_url);
+			setForm((prev) => {
+				return {
+					...prev,
+					caption: specificViral?.caption,
+					dropbox_url: specificViral?.dropbox_url,
+					show_likes: specificViral?.show_likes,
+					show_comments: specificViral?.show_comments
+				};
+			});
+			// setCaption(specificViral?.caption);
+			// setDropboxLink(specificViral?.dropbox_url);
 			setFileWidth(specificViral?.width);
 			setFileHeight(specificViral?.height);
-			setValueComments(specificViral?.show_comments);
-			setValueLikes(specificViral?.show_likes);
+			// setValueComments(specificViral?.show_comments);
+			// setValueLikes(specificViral?.show_likes);
 			if (specificViral?.thumbnail_url) {
-				setUploadedFiles([
-					{
-						id: makeid(10),
-						file_name: specificViral?.file_name,
-						thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.thumbnail_url}`,
-						media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
-						type: 'video'
-					}
-				]);
+				setForm((prev) => {
+					return {
+						...prev,
+						uploadedFiles: [
+							{
+								id: makeid(10),
+								file_name: specificViral?.file_name,
+								thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.thumbnail_url}`,
+								media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
+								type: 'video'
+							}
+						]
+					};
+				});
+				// setUploadedFiles([
+				// 	{
+				// 		id: makeid(10),
+				// 		file_name: specificViral?.file_name,
+				// 		thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.thumbnail_url}`,
+				// 		media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
+				// 		type: 'video'
+				// 	}
+				// ]);
 			}
 			if (specificViral?.thumbnail_url === null) {
-				setUploadedFiles([
-					{
-						id: makeid(10),
-						file_name: specificViral?.file_name,
-						media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
-						type: 'image'
-					}
-				]);
+				setForm((prev) => {
+					return {
+						...prev,
+						uploadedFiles: [
+							{
+								id: makeid(10),
+								file_name: specificViral?.file_name,
+								media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
+								type: 'image'
+							}
+						]
+					};
+				});
+				// setUploadedFiles([
+				// 	{
+				// 		id: makeid(10),
+				// 		file_name: specificViral?.file_name,
+				// 		media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
+				// 		type: 'image'
+				// 	}
+				// ]);
 			}
 		}
 	}, [specificViral]);
@@ -197,7 +240,7 @@ const UploadOrEditViral = ({
 			// setUploadedFiles([...uploadedFiles, ...newFiles]);
 
 			setForm((prev) => {
-				return { ...prev, uploadedFiles: [...uploadedFiles, ...newFiles] };
+				return { ...prev, uploadedFiles: [...form.uploadedFiles, ...newFiles] };
 			});
 		}
 	}, [acceptedFiles]);
@@ -346,22 +389,34 @@ const UploadOrEditViral = ({
 	// 	selectedLabels.length < 10 ||
 	// 	!caption;
 
+	const compareValues = (form, specificViral) => {
+		const values = Object.keys(form).map((key) => {
+			if (typeof form[key] === 'string')
+				if (form[key].trim() === specificViral[key].trim()) {
+					return true;
+				}
+			return false;
+		});
+
+		return values.every((item) => item === false);
+	};
+
 	useEffect(() => {
 		if (specificViral) {
 			setEditBtnDisabled(
 				postButtonStatus ||
-					!caption ||
-					!uploadedFiles.length ||
-					(specificViral?.file_name === uploadedFiles[0]?.file_name &&
+					!form.caption ||
+					!form.uploadedFiles.length ||
+					(specificViral?.file_name === form.uploadedFiles[0]?.file_name &&
 						specificViral?.caption?.trim() === form.caption.trim() &&
-						specificViral?.dropbox_url?.trim() === dropboxLink.trim())
+						specificViral?.dropbox_url?.trim() === form.dropbox_url.trim())
 			);
 		}
-	}, [specificViral, caption, uploadedFiles, dropboxLink]);
+	}, [specificViral, form]);
 
 	const handlePostSaveBtn = () => {
 		setIsLoadingcreateViral(false);
-		if (validateForm(form)) {
+		if (!validateForm(form)) {
 			validateViralBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -533,16 +588,17 @@ const UploadOrEditViral = ({
 										LabelsOptions={postLabels}
 										extraLabel={extraLabel}
 										handleChangeExtraLabel={handleChangeExtraLabel}
-										setNewLabels={(newVal) => (prev) => {
-											console.log(newVal, '---val---');
-											return { ...prev, labels: [...newVal] };
+										setSelectedLabels={(newVal) => {
+											setForm((prev) => {
+												return { ...prev, labels: [...newVal] };
+											});
 										}}
 									/>
 								</div>
 								<p className={classes.mediaError}>
 									{isError.selectedLabels
 										? `You need to add  ${
-												10 - selectedLabels.length
+												10 - form.labels.length
 										  }  more labels in order to post`
 										: ''}
 								</p>
@@ -637,7 +693,7 @@ const UploadOrEditViral = ({
 								<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 									<Button
 										// disable - grey
-										disabled={isEdit ? editBtnDisabled : validateForm(form)}
+										disabled={isEdit ? editBtnDisabled : !validateForm(form)}
 										onClick={() => {
 											handlePostSaveBtn();
 										}}
@@ -662,7 +718,7 @@ const UploadOrEditViral = ({
 									{previewFile.mime_type === 'video/mp4' ? (
 										<video
 											id={'my-video'}
-											poster={isEdit ? previewFile.img : null}
+											poster={isEdit ? previewFile.media_url : null}
 											className={classes.previewFile}
 											style={{
 												width: `100%`,
@@ -672,7 +728,7 @@ const UploadOrEditViral = ({
 											}}
 											controls={true}
 										>
-											<source src={previewFile.img} />
+											<source src={previewFile.media_url} />
 										</video>
 									) : isEdit && previewFile.type === 'video' ? (
 										<video
@@ -687,11 +743,11 @@ const UploadOrEditViral = ({
 											}}
 											controls={true}
 										>
-											<source src={previewFile.url} />
+											<source src={previewFile.media_url} />
 										</video>
 									) : (
 										<img
-											src={previewFile.img}
+											src={previewFile.media_url}
 											className={classes.previewFile}
 											style={{
 												width: `100%`,

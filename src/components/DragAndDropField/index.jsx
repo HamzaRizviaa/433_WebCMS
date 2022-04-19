@@ -67,7 +67,7 @@ const DragAndDropField = ({
 															<Union className={classes.playIcon} />
 															<div className={classes.fileThumbnail2} />
 															<video
-																src={file.img}
+																src={file.media_url}
 																style={{ display: 'none' }}
 																ref={videoRef}
 																onLoadedMetadata={onLoadedVideodata}
@@ -78,7 +78,7 @@ const DragAndDropField = ({
 															<MusicIcon className={classes.playIcon} />
 															<div className={classes.fileThumbnail2} />
 															<audio
-																src={file.img}
+																src={file.media_url}
 																style={{ display: 'none' }}
 																ref={videoRef}
 																onLoadedMetadata={onLoadedAudiodata}
@@ -88,7 +88,7 @@ const DragAndDropField = ({
 												{isArticle && (
 													<>
 														<img
-															src={file.img}
+															src={file.media_url}
 															className={classes.fileThumbnail}
 															style={{
 																objectFit: 'contain',
@@ -111,7 +111,7 @@ const DragAndDropField = ({
 															/>
 															<video
 																id={'my-video'}
-																poster={isEdit ? file.img : null}
+																poster={isEdit ? file.media_url : null}
 																className={classes.fileThumbnailPost}
 																style={{
 																	maxWidth: `${imageToResizeWidth}px`,
@@ -122,13 +122,13 @@ const DragAndDropField = ({
 																ref={videoRef}
 																onLoadedMetadata={onLoadedVideodata}
 															>
-																<source src={file.img} />
+																<source src={file.media_url} />
 															</video>
 														</>
 													) : (
 														<>
 															<img
-																src={file.img}
+																src={file.media_url}
 																className={classes.fileThumbnailPost}
 																style={{
 																	width: `${imageToResizeWidth}px`,
