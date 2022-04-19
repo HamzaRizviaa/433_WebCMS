@@ -15,6 +15,9 @@ const Labels = ({
 	extraLabel,
 	handleChangeExtraLabel
 }) => {
+	const regex = /[!@#$%^&*(),.?":{}|<>\\\s]/g;
+	//const regex = /[\s]/g;
+
 	return (
 		<Autocomplete
 			disabled={isEdit}
@@ -50,10 +53,34 @@ const Labels = ({
 			filterSelectedOptions
 			freeSolo={false}
 			value={selectedLabels}
+			// onKeyUp={(event) => {
+			// 	event.target.value.replace('/[^a-zA-Z0-9]/', '');
+			// 	console.log(event);
+			// 	// if (event.key === ' ') {
+			// 	// 	event.preventDefault();
+			// 	// 	event.stopPropagation();
+			// 	// }
+			// }}
+			onKeyUp={(e) => {
+				let regexCheck = regex.test(e.target.value);
+				console.log(regexCheck);
+				if (regexCheck) {
+					e.preventDefault();
+					e.stopPropagation();
+					return false;
+				}
+			}}
 			onChange={(event, newValue) => {
 				setDisableDropdown(true);
-				event.preventDefault();
-				event.stopPropagation();
+
+				// newValue.map((label) => {
+				// 	return label.name.replace(/[^a-zA-Z0-9]/g, '');
+				// });
+				// let regexCheck = regex.replace(regex, '');
+
+				// if (regexCheck) {
+				// 	return false;
+				// } else {
 				let newLabels = newValue.filter(
 					(v, i, a) =>
 						a.findIndex(
@@ -61,6 +88,7 @@ const Labels = ({
 						) === i
 				);
 				setSelectedLabels([...newLabels]);
+				//}
 			}}
 			popupIcon={''}
 			noOptionsText={
@@ -86,6 +114,11 @@ const Labels = ({
 						className: classes.textFieldInput,
 						...params.InputProps
 					}}
+					// onChange={(e) => {
+					// 	if (e.target.value.match(/[\s]/)) {
+					// 		e.preventDefault();
+					// 	}
+					// }}
 				/>
 			)}
 			renderOption={(props, option) => {
