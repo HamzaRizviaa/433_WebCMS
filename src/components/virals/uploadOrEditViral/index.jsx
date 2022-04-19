@@ -301,7 +301,7 @@ const UploadOrEditViral = ({
 					dropbox_url: form.dropbox_url,
 					media_url:
 						mediaFiles[0]?.media_url ||
-						mediaFiles[0].img.split('cloudfront.net/')[1],
+						mediaFiles[0]?.media_url?.split('cloudfront.net/')[1],
 					file_name: mediaFiles[0]?.file_name,
 					thumbnail_url: mediaFiles[0]?.thumbnail_url,
 					height: fileHeight,
@@ -311,8 +311,8 @@ const UploadOrEditViral = ({
 						first_name: `${getLocalStorageDetails()?.first_name}`,
 						last_name: `${getLocalStorageDetails()?.last_name}`
 					},
-					...(valueLikes ? { show_likes: true } : {}),
-					...(valueComments ? { show_comments: true } : {}),
+					...(form.show_likes ? { show_likes: true } : {}),
+					...(form.show_comments ? { show_comments: true } : {}),
 					...(isEdit && id ? { viral_id: id } : {}),
 					...(!isEdit && form.labels?.length
 						? { labels: [...form.labels] }
