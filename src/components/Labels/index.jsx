@@ -13,7 +13,8 @@ const Labels = ({
 	setSelectedLabels,
 	LabelsOptions,
 	extraLabel,
-	handleChangeExtraLabel
+	handleChangeExtraLabel,
+	setNewLabels
 }) => {
 	const regex = /[!@#$%^&*(),.?":{}|<>\\\s]/g;
 	//const regex = /[\s]/g;
@@ -89,6 +90,9 @@ const Labels = ({
 				);
 				setSelectedLabels([...newLabels]);
 				//}
+				// setSelectedLabels([...newLabels]);
+				console.log(newValue);
+				setNewLabels(newLabels);
 			}}
 			popupIcon={''}
 			noOptionsText={
@@ -180,7 +184,8 @@ Labels.propTypes = {
 	setSelectedLabels: PropTypes.func,
 	LabelsOptions: PropTypes.array,
 	extraLabel: PropTypes.string,
-	handleChangeExtraLabel: PropTypes.func
+	handleChangeExtraLabel: PropTypes.func,
+	setNewLabels: PropTypes.func
 };
 
 export default Labels;

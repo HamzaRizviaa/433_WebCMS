@@ -20,6 +20,7 @@ import Close from '@material-ui/icons/Close';
 import { TextField } from '@material-ui/core';
 import Slide from '@mui/material/Slide';
 import checkFileSize from '../../../utils/validateFileSize';
+import validateForm from '../../../utils/validateForm';
 //tinymce
 import { Editor } from '@tinymce/tinymce-react';
 import 'tinymce/tinymce';
@@ -28,9 +29,7 @@ import 'tinymce/themes/silver';
 import 'tinymce/plugins/paste';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/image';
-import 'tinymce/plugins/media';
 import 'tinymce/plugins/searchreplace';
-import 'tinymce/plugins/emoticons';
 import 'tinymce/plugins/emoticons/js/emojiimages.min.js';
 import 'tinymce/plugins/hr';
 import 'tinymce/plugins/anchor';
@@ -79,6 +78,14 @@ const UploadOrEditViral = ({
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 
+	const [form, setForm] = useState({
+		title: '',
+		description: '',
+		dropbox_url: '',
+		uploadedFiles: [],
+		labels: []
+	});
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png',
@@ -92,6 +99,10 @@ const UploadOrEditViral = ({
 	);
 
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		validateForm(form);
+	}, []);
 
 	useEffect(() => {
 		if (specificArticle) {
@@ -195,7 +206,10 @@ const UploadOrEditViral = ({
 
 	const handleEditorChange = () => {
 		const editorTextContent = tinymce?.activeEditor?.getContent();
-		setEditorText(editorTextContent);
+		setForm((prev) => {
+			return { ...prev, description: editorTextContent };
+		});
+		// setEditorText(editorTextContent);
 		setEditorTextChecker(editorTextContent); // to check yellow button condition
 	};
 
@@ -545,8 +559,12 @@ const UploadOrEditViral = ({
 								<div className={classes.dropBoxUrlContainer}>
 									<h6>DROPBOX URL</h6>
 									<TextField
-										value={dropboxLink}
-										onChange={(e) => setDropboxLink(e.target.value)}
+										value={form.dropbox_url}
+										onChange={(e) =>
+											setForm((prev) => {
+												return { ...prev, dropbox_url: e.target.value };
+											})
+										}
 										placeholder={'Please drop the dropbox URL here'}
 										className={classes.textField}
 										multiline
@@ -589,8 +607,12 @@ const UploadOrEditViral = ({
 
 									<TextField
 										// disabled={isEdit}
-										value={articleTitle}
-										onChange={(e) => setArticleTitle(e.target.value)}
+										value={form.title}
+										onChange={(e) =>
+											setForm((prev) => {
+												return { ...prev, title: e.target.value };
+											})
+										}
 										placeholder={'Please write your title here'}
 										className={classes.textField}
 										InputProps={{
@@ -631,6 +653,9 @@ const UploadOrEditViral = ({
 										LabelsOptions={postLabels}
 										extraLabel={extraLabel}
 										handleChangeExtraLabel={handleChangeExtraLabel}
+										setNewLabels={(newVal) => (prev) => {
+											return { ...prev, labels: [...newVal] };
+										}}
 									/>
 								</div>
 								<p className={classes.mediaError}>
@@ -661,11 +686,12 @@ const UploadOrEditViral = ({
 												contextmenu: false,
 												setup: function (editor) {
 													editor.on('init', function () {
-														editorText;
+														// editorText;
+														form.description;
 													});
 												},
 												content_style:
-													"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white  }; ",
+													"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white; line-height:1  }; ",
 
 												branding: false,
 												statusbar: true,
@@ -815,8 +841,7 @@ const UploadOrEditViral = ({
 													},
 													insert: {
 														title: 'Insert',
-														items:
-															'image link media charmap emoticons hr anchor insertdatetime'
+														items: 'image link charmap hr anchor insertdatetime'
 													},
 													format: {
 														title: 'Format',
@@ -830,15 +855,14 @@ const UploadOrEditViral = ({
 												},
 												plugins: [
 													'lists advlist link image anchor',
-													'searchreplace  emoticons hr visualblocks fullscreen',
-													'insertdatetime media table paste wordcount  charmap textcolor colorpicker'
+													'searchreplace  hr visualblocks fullscreen',
+													'insertdatetime table paste wordcount  charmap textcolor colorpicker'
 												],
 
 												toolbar:
 													'undo redo  bold italic underline strikethrough fontsizeselect | ' +
 													'alignleft aligncenter ' +
-													'alignright alignjustify | bullist numlist | ' +
-													'emoticons'
+													'alignright alignjustify | bullist numlist | '
 											}}
 											onEditorChange={() => handleEditorChange()}
 											onMouseEnter={() => setDisableDropdown(false)}
