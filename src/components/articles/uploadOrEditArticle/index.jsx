@@ -263,8 +263,8 @@ const UploadOrEditViral = ({
 					dropbox_url: form.dropbox_url ? form.dropbox_url : '',
 					file_name: mediaFiles[0]?.file_name,
 					image:
-						mediaFiles[0]?.media_url ||
-						mediaFiles[0].media_url.split('cloudfront.net/')[1],
+						mediaFiles[0]?.media_url.split('cloudfront.net/')[1] ||
+						mediaFiles[0]?.media_url,
 
 					...(isEdit && id ? { article_id: id } : {}),
 					...(!isEdit && form.labels.length
@@ -417,10 +417,11 @@ const UploadOrEditViral = ({
 					}
 				}
 			);
+			setIsLoading(false);
 			return result?.data?.message;
 		} catch (error) {
 			console.log(error, 'Error handle duplicate');
-
+			setIsLoading(false);
 			return null;
 		}
 	};
@@ -493,8 +494,7 @@ const UploadOrEditViral = ({
 					});
 			} else {
 				if (
-					(await handleTitleDuplicate(articleTitle)) ===
-					'The Title Already Exist'
+					(await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
 				) {
 					// setArticleTitleColor('#ff355a');
 					// setArticleTitleError('This title already exists');
