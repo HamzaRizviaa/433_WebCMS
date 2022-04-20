@@ -5,7 +5,6 @@ import Slider from '../../slider';
 import Button from '../../button';
 import LoadingOverlay from 'react-loading-overlay';
 import { MenuItem, TextField, Select } from '@material-ui/core';
-import Four33Loader from '../../../assets/Loader_Yellow.gif';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { useDropzone } from 'react-dropzone';
@@ -26,6 +25,7 @@ import Labels from '../../Labels';
 import { Tooltip, Fade } from '@mui/material';
 import Slide from '@mui/material/Slide';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
+import PrimaryLoader from '../../PrimaryLoader';
 
 const UploadOrEditMedia = ({
 	open,
@@ -774,7 +774,7 @@ const UploadOrEditMedia = ({
 			previewRef={previewRef}
 			media={true}
 		>
-			<LoadingOverlay active={isLoadingUploadMedia} spinner text='Loading...'>
+			<LoadingOverlay active={isLoadingUploadMedia} spinner={<PrimaryLoader />}>
 				<Slide in={true} direction='up' {...{ timeout: 400 }}>
 					<div
 						className={`${
@@ -784,9 +784,7 @@ const UploadOrEditMedia = ({
 						}`}
 					>
 						{specificMediaStatus.specificMediaStatus === 'loading' ? (
-							<div className={classes.loaderContainer2}>
-								<img src={Four33Loader} className={classes.loader} />
-							</div>
+							<PrimaryLoader />
 						) : (
 							<></>
 						)}

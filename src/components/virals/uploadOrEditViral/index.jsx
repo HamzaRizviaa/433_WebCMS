@@ -24,6 +24,7 @@ import { Tooltip, Fade } from '@mui/material';
 import ToggleSwitch from '../../switch';
 // import Fade from '@mui/material/Fade';
 import Slide from '@mui/material/Slide';
+import PrimaryLoader from '../../PrimaryLoader';
 
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 
@@ -70,6 +71,10 @@ const UploadOrEditViral = ({
 	const orientationRef = useRef(null);
 	const videoRef = useRef(null);
 	const imgEl = useRef(null);
+
+	const { specificViralStatus } = useSelector(
+		(state) => state.ViralLibraryStore
+	);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -475,7 +480,11 @@ const UploadOrEditViral = ({
 			edit={isEdit}
 			viral={true}
 		>
-			<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
+			<LoadingOverlay
+				active={isLoadingcreateViral}
+				className={classes.loadingOverlay}
+				spinner={<PrimaryLoader />}
+			>
 				<Slide in={true} direction='up' {...{ timeout: 400 }}>
 					<div
 						className={`${
@@ -484,6 +493,7 @@ const UploadOrEditViral = ({
 								: classes.contentWrapper
 						}`}
 					>
+						{specificViralStatus === 'loading' ? <PrimaryLoader /> : <></>}
 						<div
 							className={classes.contentWrapperNoPreview}
 							style={{ width: previewFile != null ? '60%' : 'auto' }}

@@ -22,6 +22,7 @@ import { TextField } from '@material-ui/core';
 import Slide from '@mui/material/Slide';
 import checkFileSize from '../../../utils/validateFileSize';
 import validateForm from '../../../utils/validateForm';
+import PrimaryLoader from '../../PrimaryLoader';
 //tinymce
 import { Editor } from '@tinymce/tinymce-react';
 import 'tinymce/tinymce';
@@ -95,8 +96,8 @@ const UploadOrEditViral = ({
 		});
 
 	const labels = useSelector((state) => state.postLibrary.labels);
-	const specificArticle = useSelector(
-		(state) => state.ArticleLibraryStore.specificArticle
+	const { specificArticle, specificArticleStatus } = useSelector(
+		(state) => state.ArticleLibraryStore
 	);
 
 	const dispatch = useDispatch();
@@ -543,7 +544,7 @@ const UploadOrEditViral = ({
 			edit={isEdit}
 			article={true}
 		>
-			<LoadingOverlay active={isLoading} spinner text='Loading...'>
+			<LoadingOverlay active={isLoading} spinner={<PrimaryLoader />}>
 				<Slide in={true} direction='up' {...{ timeout: 400 }}>
 					<div
 						className={`${
@@ -552,6 +553,7 @@ const UploadOrEditViral = ({
 								: classes.contentWrapper
 						}`}
 					>
+						{specificArticleStatus === 'loading' ? <PrimaryLoader /> : <></>}
 						<div
 							className={classes.contentWrapperNoPreview}
 							style={{ width: previewFile != null ? '60%' : 'auto' }}

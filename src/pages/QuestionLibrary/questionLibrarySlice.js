@@ -113,7 +113,8 @@ export const quizLibrarySlice = createSlice({
 		openUploadPost: false,
 		totalRecords: 0,
 		noResultStatus: false,
-		noResultStatusCalendar: false
+		noResultStatusCalendar: false,
+		questionEditStatus: ''
 	},
 	reducers: {
 		resetCalendarError: (state) => {
@@ -151,24 +152,30 @@ export const quizLibrarySlice = createSlice({
 
 		[getQuestionEdit.pending]: (state) => {
 			state.status = 'loading';
+			state.questionEditStatus = 'loading';
 		},
 		[getQuestionEdit.fulfilled]: (state, action) => {
 			state.questionEdit = action.payload;
 			state.status = 'success';
+			state.questionEditStatus = 'success';
 		},
 		[getQuestionEdit.rejected]: (state) => {
 			state.status = 'failed';
+			state.questionEditStatus = 'failed';
 		},
 
 		[getQuestionResultDetail.pending]: (state) => {
 			state.status = 'loading';
+			state.questionEditStatus = 'loading';
 		},
 		[getQuestionResultDetail.fulfilled]: (state, action) => {
 			state.questionResultDetail = action.payload;
 			state.status = 'success';
+			state.questionEditStatus = 'success';
 		},
 		[getQuestionResultDetail.rejected]: (state) => {
 			state.status = 'failed';
+			state.questionEditStatus = 'failed';
 		},
 
 		[getQuestionResulParticipant.pending]: (state) => {
