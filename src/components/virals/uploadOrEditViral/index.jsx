@@ -394,17 +394,17 @@ const UploadOrEditViral = ({
 	// 	selectedLabels.length < 10 ||
 	// 	!caption;
 
-	const compareValues = (form, specificViral) => {
-		const values = Object.keys(form).map((key) => {
-			if (typeof form[key] === 'string')
-				if (form[key].trim() === specificViral[key].trim()) {
-					return true;
-				}
-			return false;
-		});
+	// const compareValues = (form, specificViral) => {
+	// 	const values = Object.keys(form).map((key) => {
+	// 		if (typeof form[key] === 'string')
+	// 			if (form[key].trim() === specificViral[key].trim()) {
+	// 				return true;
+	// 			}
+	// 		return false;
+	// 	});
 
-		return values.every((item) => item === false);
-	};
+	// 	return values.every((item) => item === false);
+	// };
 
 	useEffect(() => {
 		if (specificViral) {

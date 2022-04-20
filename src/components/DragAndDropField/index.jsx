@@ -43,6 +43,7 @@ const DragAndDropField = ({
 						className={classes.uploadedFilesContainer}
 					>
 						{uploadedFiles.map((file, index) => {
+							console.log(uploadedFiles, 'uploadedFiles');
 							return (
 								<Draggable
 									key={file.id}
@@ -141,7 +142,9 @@ const DragAndDropField = ({
 															/>
 														</>
 													))}
-												<p className={classes.fileName}>{file.fileName}</p>
+												<p className={classes.fileName}>
+													{file.fileName || file.file_name}
+												</p>
 											</div>
 											{isEdit || editPoll || editQuiz ? (
 												<div className={classes.filePreviewRight}>
