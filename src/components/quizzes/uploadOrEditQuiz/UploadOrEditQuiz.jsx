@@ -506,13 +506,29 @@ const UploadOrEditQuiz = ({
 							</div>
 
 							<div className={classes.titleContainer}>
-								<h6
-									className={
-										isError.question ? classes.errorState : classes.noErrorState
-									}
-								>
-									QUESTION
-								</h6>
+								<div className={classes.characterCount}>
+									<h6
+										className={
+											isError.question
+												? classes.errorState
+												: classes.noErrorState
+										}
+									>
+										QUESTION
+									</h6>
+									<h6
+										style={{
+											color:
+												question?.length >= 34 && question?.length <= 39
+													? 'pink'
+													: question?.length === 40
+													? 'red'
+													: 'white'
+										}}
+									>
+										{question?.length}/40
+									</h6>
+								</div>
 								<TextField
 									disabled={editQuiz || editPoll}
 									value={question}
@@ -527,6 +543,7 @@ const UploadOrEditQuiz = ({
 											(editQuiz || editPoll) && classes.disableTextField
 										}`
 									}}
+									inputProps={{ maxLength: 40 }}
 									multiline
 									maxRows={2}
 								/>

@@ -365,3 +365,9 @@
 .noErrorState {
 	color: $white-color;
 }
+
+.characterCount {
+	margin-right: 0.5rem;
+	display: flex;
+	justify-content: space-between;
+}
