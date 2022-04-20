@@ -64,7 +64,8 @@ export const articlesLibrarySlice = createSlice({
 		openUploadPost: false,
 		totalRecords: 0,
 		noResultStatus: false,
-		noResultStatusCalendar: false
+		noResultStatusCalendar: false,
+		specificArticleStatus: ''
 	},
 	reducers: {
 		resetCalendarError: (state) => {
@@ -101,13 +102,16 @@ export const articlesLibrarySlice = createSlice({
 		},
 		[getSpecificArticle.pending]: (state) => {
 			state.status = 'loading';
+			state.specificArticleStatus = 'loading';
 		},
 		[getSpecificArticle.fulfilled]: (state, action) => {
 			state.specificArticle = action.payload;
 			state.status = 'success';
+			state.specificArticleStatus = 'success';
 		},
 		[getSpecificArticle.rejected]: (state) => {
 			state.status = 'failed';
+			state.specificArticleStatus = 'failed';
 		}
 	}
 });

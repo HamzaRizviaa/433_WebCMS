@@ -12,6 +12,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { getLocalStorageDetails } from '../../utils';
 import PropTypes from 'prop-types';
+import PrimaryLoader from '../PrimaryLoader';
 
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -51,8 +52,11 @@ export default function Banners({ tabValue }) {
 	]);
 
 	const dispatch = useDispatch();
-	const allBanners = useSelector((state) => state.topBanner.allBanners);
-	const bannerContent = useSelector((state) => state.topBanner.content);
+	const {
+		allBanners,
+		getBannerStatus,
+		content: bannerContent
+	} = useSelector((state) => state.topBanner);
 
 	useEffect(() => {
 		dispatch(getAllBanners(tabValue));
@@ -271,6 +275,7 @@ export default function Banners({ tabValue }) {
 
 	return (
 		<div className={classes.Banner}>
+			{getBannerStatus === 'loading' ? <PrimaryLoader /> : <></>}
 			<div className={classes.bannerRow}>
 				<div className={classes.bannersLeft}>
 					{[1, 2, 3, 4, 5].length > 0 &&
