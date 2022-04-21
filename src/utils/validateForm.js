@@ -8,6 +8,10 @@ const validateForm = (form) => {
 		}
 		if (typeof form[key] === 'object') {
 			// array check
+			if (key === 'end_date') {
+				// for question end_Date field
+				return !form[key] ? false : true;
+			}
 			if (key === 'labels') {
 				return form[key]?.length < 10 ? false : true;
 			} else {
