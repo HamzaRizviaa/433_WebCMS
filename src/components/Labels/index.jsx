@@ -81,7 +81,7 @@ const Labels = ({
 				// if (regexCheck) {
 				// 	return false;
 				// } else {
-				let newLabels = newValue.filter(
+				let newLabels = newValue?.filter(
 					(v, i, a) =>
 						a.findIndex(
 							(t) => t.name.toLowerCase() === v.name.toLowerCase()
@@ -104,7 +104,7 @@ const Labels = ({
 			renderInput={(params) => (
 				<TextField
 					{...params}
-					placeholder={selectedLabels?.length ? ' ' : 'Select Label'}
+					placeholder={selectedLabels?.length > 0 ? ' ' : 'Select Label'}
 					className={classes.textFieldAuto}
 					value={extraLabel}
 					onChange={handleChangeExtraLabel}
