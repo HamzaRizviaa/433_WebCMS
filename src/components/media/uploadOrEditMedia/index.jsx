@@ -26,7 +26,7 @@ import { Tooltip, Fade } from '@mui/material';
 import Slide from '@mui/material/Slide';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 import PrimaryLoader from '../../PrimaryLoader';
-
+import validateForm from '../../../utils/validateForm';
 const UploadOrEditMedia = ({
 	open,
 	handleClose,
@@ -64,11 +64,31 @@ const UploadOrEditMedia = ({
 	const [isError, setIsError] = useState({});
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
-
 	const previewRef = useRef(null);
+
+	const [form, setForm] = useState({
+		// main_category_id: '',
+		// sub_category_id: '',
+		title: '',
+		media_dropbox_url: '',
+		image_dropbox_url: '',
+		description: '',
+		labels: [],
+		uploadedFiles: [],
+		uploadedCoverImage: []
+	});
+
 	const specificMedia = useSelector(
 		(state) => state.mediaLibraryOriginal.specificMedia
 	);
+	const mainCategories = useSelector(
+		(state) => state.mediaLibraryOriginal.mainCategories
+	);
+	const specificMediaStatus = useSelector(
+		(state) => state.mediaLibraryOriginal
+	);
+	const labels = useSelector((state) => state.mediaLibraryOriginal.labels);
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
@@ -80,14 +100,6 @@ const UploadOrEditMedia = ({
 			validator: checkFileSize
 		});
 	const dispatch = useDispatch();
-	const mainCategories = useSelector(
-		(state) => state.mediaLibraryOriginal.mainCategories
-	);
-
-	const specificMediaStatus = useSelector(
-		(state) => state.mediaLibraryOriginal
-	);
-	const labels = useSelector((state) => state.mediaLibraryOriginal.labels);
 
 	useEffect(() => {
 		if (labels.length) {
@@ -117,30 +129,58 @@ const UploadOrEditMedia = ({
 					_labels.push({ id: -1, name: label })
 				);
 				setSelectedLabels(_labels);
+				setForm((prev) => {
+					return {
+						...prev,
+						labels: _labels
+					};
+				});
 			}
-			setDropboxLink(specificMedia?.media_dropbox_url);
-			setDropboxLink2(specificMedia?.image_dropbox_url);
 			setMainCategory(specificMedia?.media_type);
 			setSubCategory(specificMedia?.sub_category);
-			setTitleMedia(specificMedia?.title);
-			setDescription(specificMedia?.description);
-			setUploadedFiles([
-				{
-					id: makeid(10),
-					fileName: specificMedia?.file_name_media,
-					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.media_url}`,
-					type: specificMedia?.media_type === 'Watch' ? 'video' : 'audio'
-				}
-			]);
+			setForm({
+				title: specificMedia?.title,
+				description: specificMedia?.description,
+				media_dropbox_url: specificMedia?.media_dropbox_url,
+				image_dropbox_url: specificMedia?.image_dropbox_url,
+				uploadedFiles: [
+					{
+						id: makeid(10),
+						file_name: specificMedia?.file_name_media,
+						media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.media_url}`,
+						type: specificMedia?.media_type === 'Watch' ? 'video' : 'audio'
+					}
+				],
+				uploadedCoverImage: [
+					{
+						id: makeid(10),
+						file_name: specificMedia?.file_name_image,
+						media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`,
+						type: 'image'
+					}
+				]
+			});
+			// setDropboxLink(specificMedia?.media_dropbox_url);
+			// setDropboxLink2(specificMedia?.image_dropbox_url);
+			// setTitleMedia(specificMedia?.title);
+			// setDescription(specificMedia?.description);
+			// setUploadedFiles([
+			// 	{
+			// 		id: makeid(10),
+			// 		file_name: specificMedia?.file_name_media,
+			// 		media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.media_url}`,
+			// 		type: specificMedia?.media_type === 'Watch' ? 'video' : 'audio'
+			// 	}
+			// ]);
 
-			setUploadedCoverImage([
-				{
-					id: makeid(10),
-					fileName: specificMedia?.file_name_image,
-					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`,
-					type: 'image'
-				}
-			]);
+			// setUploadedCoverImage([
+			// 	{
+			// 		id: makeid(10),
+			// 		file_name: specificMedia?.file_name_image,
+			// 		media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`,
+			// 		type: 'image'
+			// 	}
+			// ]);
 		}
 	}, [specificMedia]);
 
@@ -242,17 +282,23 @@ const UploadOrEditMedia = ({
 		if (acceptedFiles?.length) {
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
+				console.log(file, 'file video');
 				return {
 					id: id,
-					fileName: file.name,
-					img: URL.createObjectURL(file),
+					file_name: file.name,
+					media_url: URL.createObjectURL(file),
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
 					type: selectFileType(file.type)
 				};
 			});
-			setUploadedFiles([...uploadedFiles, ...newFiles]);
+			setForm((prev) => {
+				return {
+					...prev,
+					uploadedFiles: [...form.uploadedFiles, ...newFiles]
+				};
+			});
 		}
 	}, [acceptedFiles]);
 
@@ -264,15 +310,21 @@ const UploadOrEditMedia = ({
 				let id = makeid(10);
 				return {
 					id: id,
-					fileName: file.name,
-					img: URL.createObjectURL(file),
+					file_name: file.name,
+					media_url: URL.createObjectURL(file),
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
 					type: file.type === 'video/mp4' ? 'video' : 'image'
 				};
 			});
-			setUploadedCoverImage([...uploadedCoverImage, ...newFiles]);
+			// setUploadedCoverImage([...uploadedCoverImage, ...newFiles]);
+			setForm((prev) => {
+				return {
+					...prev,
+					uploadedCoverImage: [...form.uploadedCoverImage, ...newFiles]
+				};
+			});
 		}
 	}, [acceptedFiles2]);
 
@@ -298,18 +350,43 @@ const UploadOrEditMedia = ({
 		setDisableDropdown(true);
 		setEditBtnDisabled(false);
 		setIsError({});
+		setForm({
+			// main_category_id: '',
+			// sub_category_id: '',
+			title: '',
+			description: '',
+			media_dropbox_url: '',
+			image_dropbox_url: '',
+			labels: [],
+			uploadedFiles: [],
+			uploadedCoverImage: []
+		});
 	};
 
 	const handleDeleteFile = (id) => {
-		setUploadedFiles((uploadedFiles) =>
-			uploadedFiles.filter((file) => file.id !== id)
-		);
+		// setUploadedFiles((uploadedFiles) =>
+		// 	uploadedFiles.filter((file) => file.id !== id)
+		// );
+		setForm((prev) => {
+			return {
+				...prev,
+				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
+			};
+		});
 	};
 
 	const handleDeleteFile2 = (id) => {
-		setUploadedCoverImage((uploadedCoverImage) =>
-			uploadedCoverImage.filter((file) => file.id !== id)
-		);
+		// setUploadedCoverImage((uploadedCoverImage) =>
+		// 	uploadedCoverImage.filter((file) => file.id !== id)
+		// );
+		setForm((prev) => {
+			return {
+				...prev,
+				uploadedCoverImage: form.uploadedCoverImage.filter(
+					(file) => file.id !== id
+				)
+			};
+		});
 	};
 
 	const validatePostBtn = () => {
@@ -367,7 +444,7 @@ const UploadOrEditMedia = ({
 	};
 
 	const uploadMedia = async (id, payload) => {
-		// console.log(payload);
+		console.log(payload, 'payload');
 		let media_type = mainCategory?.id;
 		setMediaButtonStatus(true);
 		try {
@@ -381,11 +458,16 @@ const UploadOrEditMedia = ({
 							duration: Math.round(fileDuration),
 							width: fileWidth,
 							height: fileHeight,
-							title: titleMedia,
-							...(dropboxLink ? { media_dropbox_url: dropboxLink } : {}),
-							...(dropboxLink2 ? { image_dropbox_url: dropboxLink2 } : {}),
-							...(selectedLabels.length ? { labels: [...selectedLabels] } : {}),
-							description: description,
+							title: form.title,
+							description: form.description,
+							...(dropboxLink
+								? { media_dropbox_url: form.media_dropbox_url }
+								: {}),
+							...(dropboxLink2
+								? { image_dropbox_url: form.image_dropbox_url }
+								: {}),
+							...(form.labels.length ? { labels: [...form.labels] } : {}),
+
 							data: {
 								video_data: payload?.data?.Keys?.VideoKey,
 								image_data: payload?.data?.Keys?.ImageKey,
@@ -492,20 +574,21 @@ const UploadOrEditMedia = ({
 	useEffect(() => {
 		if (specificMedia) {
 			setEditBtnDisabled(
-				mediaButtonStatus ||
-					!uploadedFiles.length ||
-					!uploadedCoverImage.length ||
-					!titleMedia ||
-					!description ||
-					(specificMedia?.file_name_media === uploadedFiles[0]?.fileName &&
-						specificMedia?.file_name_image ===
-							uploadedCoverImage[0]?.fileName &&
-						specificMedia?.media_dropbox_url === dropboxLink.trim() &&
-						specificMedia?.image_dropbox_url === dropboxLink2.trim() &&
-						specificMedia?.title.replace(/\s+/g, '')?.trim() ===
-							titleMedia?.replace(/\s+/g, '')?.trim() &&
-						specificMedia?.description?.replace(/\s+/g, '')?.trim() ===
-							description?.replace(/\s+/g, '')?.trim())
+				true
+				// mediaButtonStatus ||
+				// 	!uploadedFiles.length ||
+				// 	!uploadedCoverImage.length ||
+				// 	!titleMedia ||
+				// 	!description ||
+				// 	(specificMedia?.file_name_media === uploadedFiles[0]?.file_name &&
+				// 		specificMedia?.file_name_image ===
+				// 			uploadedCoverImage[0]?.file_name &&
+				// 		specificMedia?.media_dropbox_url === dropboxLink.trim() &&
+				// 		specificMedia?.image_dropbox_url === dropboxLink2.trim() &&
+				// 		specificMedia?.title.replace(/\s+/g, '')?.trim() ===
+				// 			titleMedia?.replace(/\s+/g, '')?.trim() &&
+				// 		specificMedia?.description?.replace(/\s+/g, '')?.trim() ===
+				// 			description?.replace(/\s+/g, '')?.trim())
 			);
 		}
 	}, [
@@ -539,17 +622,20 @@ const UploadOrEditMedia = ({
 		let setData = subCategories.find((u) => u.name === e);
 		setSubCategory(setData);
 	};
+	useEffect(() => {
+		validateForm(form);
+	}, []);
 
 	const addSaveMediaBtn = async () => {
-		if (addMediaBtnDisabled || editBtnDisabled) {
+		if (!validateForm()) {
 			validatePostBtn();
 		} else {
 			setMediaButtonStatus(true);
 			setIsLoadingUploadMedia(true);
 			if (isEdit) {
-				if (specificMedia?.title?.trim() !== titleMedia?.trim()) {
+				if (specificMedia?.title?.trim() !== form.title?.trim()) {
 					if (
-						(await handleTitleDuplicate(titleMedia)) === 200 &&
+						(await handleTitleDuplicate(form.title)) === 200 &&
 						titleMedia !== specificMedia.title
 					) {
 						setIsError((prev) => {
@@ -571,8 +657,8 @@ const UploadOrEditMedia = ({
 				// 	description
 				// });
 				let uploadFilesPromiseArray = [
-					uploadedFiles[0],
-					uploadedCoverImage[0]
+					form.uploadedFiles[0],
+					form.uploadedCoverImage[0]
 				].map(async (_file) => {
 					if (_file.file) {
 						console.log('_file', _file);
@@ -592,13 +678,13 @@ const UploadOrEditMedia = ({
 									{
 										file_name:
 											file.fileType === 'image'
-												? uploadedCoverImage[0].fileName
-												: uploadedFiles[0].fileName,
+												? form.uploadedCoverImage[0].file_name
+												: form.uploadedFiles[0].file_name,
 										type: 'medialibrary',
 										data: {
 											bucket: 'media',
 											multipart_upload:
-												uploadedFiles[0]?.mime_type == 'video/mp4'
+												form.uploadedFiles[0]?.mime_type == 'video/mp4'
 													? [
 															{
 																e_tag:
@@ -644,12 +730,12 @@ const UploadOrEditMedia = ({
 						});
 						console.log(completedUpload, 'completedUpload');
 						await uploadMedia(specificMedia?.id, {
-							title: titleMedia,
-							description,
+							title: form.title,
+							description: form.description,
 							type: 'medialibrary',
 							data: {
-								file_name_media: uploadedFiles[0].fileName,
-								file_name_image: uploadedCoverImage[0].fileName,
+								file_name_media: form.uploadedFiles[0].file_name,
+								file_name_image: form.uploadedCoverImage[0].file_name,
 								image_data: mediaFiles[1]?.keys?.image_key,
 								audio_data: mediaFiles[0]?.keys?.audio_key,
 								video_data: mediaFiles[0]?.keys?.video_key,
@@ -662,8 +748,8 @@ const UploadOrEditMedia = ({
 					});
 			} else {
 				if (
-					(await handleTitleDuplicate(titleMedia)) === 200 &&
-					titleMedia !== specificMedia.title
+					(await handleTitleDuplicate(form.title)) === 200 &&
+					form.title !== specificMedia.title
 				) {
 					setIsError((prev) => {
 						return {
@@ -679,8 +765,8 @@ const UploadOrEditMedia = ({
 					return;
 				}
 				let uploadFilesPromiseArray = [
-					uploadedFiles[0],
-					uploadedCoverImage[0]
+					form.uploadedFiles[0],
+					form.uploadedCoverImage[0]
 				].map(async (_file) => {
 					return uploadFileToServer(_file);
 				});
@@ -690,12 +776,12 @@ const UploadOrEditMedia = ({
 						const completeUpload = await axios.post(
 							`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
 							{
-								file_name: uploadedFiles[0].fileName,
+								file_name: form.uploadedFiles[0].file_name,
 								type: 'medialibrary',
 								data: {
 									bucket: 'media',
 									multipart_upload:
-										uploadedFiles[0]?.mime_type == 'video/mp4'
+										form.uploadedFiles[0]?.mime_type == 'video/mp4'
 											? [
 													{
 														e_tag:
@@ -736,12 +822,12 @@ const UploadOrEditMedia = ({
 							}
 						);
 						await uploadMedia(null, {
-							// file_name: uploadedFiles[0].fileName,
-							// file_name2: uploadedCoverImage[0].fileName,
+							// file_name: uploadedFiles[0].file_name,
+							// file_name2: uploadedCoverImage[0].file_name,
 							type: 'medialibrary',
 							data: {
-								file_name_media: uploadedFiles[0].fileName,
-								file_name_image: uploadedCoverImage[0].fileName,
+								file_name_media: form.uploadedFiles[0].file_name,
+								file_name_image: form.uploadedCoverImage[0].file_name,
 								...completeUpload?.data?.data
 							}
 						});
@@ -758,11 +844,11 @@ const UploadOrEditMedia = ({
 			open={open}
 			handleClose={() => {
 				handleClose();
-				if (uploadedFiles.length && !isEdit) {
-					uploadedFiles.map((file) => handleDeleteFile(file.id));
+				if (form.uploadedFiles.length && !isEdit) {
+					form.uploadedFiles.map((file) => handleDeleteFile(file.id));
 				}
-				if (uploadedCoverImage.length && !isEdit) {
-					uploadedCoverImage.map((file) => handleDeleteFile2(file.id));
+				if (form.uploadedCoverImage.length && !isEdit) {
+					form.uploadedCoverImage.map((file) => handleDeleteFile2(file.id));
 				}
 			}}
 			title={title}
@@ -820,8 +906,8 @@ const UploadOrEditMedia = ({
 											onChange={(e) => {
 												setDisableDropdown(true);
 												MainCategoryId(e.target.value);
-												if (uploadedFiles.length) {
-													uploadedFiles.map((file) =>
+												if (form.uploadedFiles.length) {
+													form.uploadedFiles.map((file) =>
 														handleDeleteFile(file.id)
 													);
 												}
@@ -987,7 +1073,7 @@ const UploadOrEditMedia = ({
 										)}
 
 										<DragAndDropField
-											uploadedFiles={uploadedFiles}
+											uploadedFiles={form.uploadedFiles}
 											isEdit={isEdit}
 											handleDeleteFile={handleDeleteFile}
 											setPreviewBool={setPreviewBool}
@@ -1003,7 +1089,7 @@ const UploadOrEditMedia = ({
 												setFileDuration(videoRef?.current?.duration);
 											}}
 										/>
-										{!uploadedFiles.length && (
+										{!form.uploadedFiles.length && (
 											<section
 												className={[
 													classes.dropZoneContainer,
@@ -1046,10 +1132,17 @@ const UploadOrEditMedia = ({
 										<div className={classes.dropBoxUrlContainer}>
 											<h6>DROPBOX URL</h6>
 											<TextField
-												value={dropboxLink}
+												value={form.media_dropbox_url}
+												onChange={(e) =>
+													setForm((prev) => {
+														return {
+															...prev,
+															media_dropbox_url: e.target.value
+														};
+													})
+												}
 												multiline
 												maxRows={2}
-												onChange={(e) => setDropboxLink(e.target.value)}
 												placeholder={'Please drop the dropbox URL here'}
 												className={classes.textField}
 												InputProps={{
@@ -1064,7 +1157,7 @@ const UploadOrEditMedia = ({
 
 										<h5>{isEdit ? 'Cover Image' : 'Add Cover Image'}</h5>
 										<DragAndDropField
-											uploadedFiles={uploadedCoverImage}
+											uploadedFiles={form.uploadedCoverImage}
 											isEdit={isEdit}
 											handleDeleteFile={handleDeleteFile2}
 											setPreviewBool={setPreviewBool}
@@ -1076,7 +1169,7 @@ const UploadOrEditMedia = ({
 												setFileHeight(imgRef.current.naturalHeight);
 											}}
 										/>
-										{!uploadedCoverImage.length && (
+										{!form.uploadedCoverImage.length && (
 											<section
 												className={[
 													classes.dropZoneContainer,
@@ -1105,7 +1198,7 @@ const UploadOrEditMedia = ({
 													</p>
 													<p className={classes.uploadMediaError}>
 														{isError.uploadedCoverImage
-															? 'You need to upload a cover in order to post'
+															? 'You need to upload a cover image in order to post'
 															: ''}
 													</p>
 												</div>
@@ -1118,8 +1211,15 @@ const UploadOrEditMedia = ({
 										<div className={classes.dropBoxUrlContainer}>
 											<h6>DROPBOX URL</h6>
 											<TextField
-												value={dropboxLink2}
-												onChange={(e) => setDropboxLink2(e.target.value)}
+												value={form.image_dropbox_url}
+												onChange={(e) =>
+													setForm((prev) => {
+														return {
+															...prev,
+															image_dropbox_url: e.target.value
+														};
+													})
+												}
 												placeholder={'Please drop the dropbox URL here'}
 												className={classes.textField}
 												InputProps={{
@@ -1146,22 +1246,27 @@ const UploadOrEditMedia = ({
 												<h6
 													style={{
 														color:
-															titleMedia?.length >= 25 &&
-															titleMedia?.length <= 27
+															form.title?.length >= 25 &&
+															form.title?.length <= 27
 																? 'pink'
-																: titleMedia?.length === 28
+																: form.title?.length === 28
 																? 'red'
 																: 'white'
 													}}
 												>
-													{titleMedia?.length}/28
+													{form.title?.length}/28
 												</h6>
 											</div>
 											<TextField
-												value={titleMedia}
-												onChange={(e) => {
-													setTitleMedia(e.target.value);
-												}}
+												value={form.title}
+												onChange={(e) =>
+													setForm((prev) => {
+														return {
+															...prev,
+															title: e.target.value
+														};
+													})
+												}
 												placeholder={'Please write your title here'}
 												className={classes.textField}
 												InputProps={{
@@ -1190,17 +1295,21 @@ const UploadOrEditMedia = ({
 											<Labels
 												isEdit={isEdit}
 												setDisableDropdown={setDisableDropdown}
-												selectedLabels={selectedLabels}
-												setSelectedLabels={setSelectedLabels}
 												LabelsOptions={mediaLabels}
 												extraLabel={extraLabel}
 												handleChangeExtraLabel={handleChangeExtraLabel}
+												selectedLabels={form.labels}
+												setSelectedLabels={(newVal) => {
+													setForm((prev) => {
+														return { ...prev, labels: [...newVal] };
+													});
+												}}
 											/>
 										</div>
 										<p className={classes.mediaError}>
 											{isError.selectedLabels
 												? `You need to add ${
-														10 - selectedLabels.length
+														10 - form.labels.length
 												  } more labels in order to upload media`
 												: ''}
 										</p>
@@ -1216,10 +1325,15 @@ const UploadOrEditMedia = ({
 												DESCRIPTION
 											</h6>
 											<TextField
-												value={description}
-												onChange={(e) => {
-													setDescription(e.target.value);
-												}}
+												value={form.description}
+												onChange={(e) =>
+													setForm((prev) => {
+														return {
+															...prev,
+															description: e.target.value
+														};
+													})
+												}
 												placeholder={'Please write your description here'}
 												className={classes.textField}
 												InputProps={{
@@ -1263,7 +1377,7 @@ const UploadOrEditMedia = ({
 
 								<div
 									className={
-										isEdit ? classes.addMediaBtnEdit : classes.addMediaBtn
+										isEdit ? classes.addMediaBtnEdit : !validateForm(form)
 									}
 								>
 									<Button
@@ -1288,7 +1402,7 @@ const UploadOrEditMedia = ({
 								</div>
 								<div>
 									<img
-										src={previewFile.img}
+										src={previewFile.media_url}
 										className={classes.previewFile}
 										style={{
 											width: `100%`,

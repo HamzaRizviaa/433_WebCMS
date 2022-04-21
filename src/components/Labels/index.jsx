@@ -104,7 +104,7 @@ const Labels = ({
 			renderInput={(params) => (
 				<TextField
 					{...params}
-					placeholder={selectedLabels.length ? ' ' : 'Select Label'}
+					placeholder={selectedLabels?.length ? ' ' : 'Select Label'}
 					className={classes.textFieldAuto}
 					value={extraLabel}
 					onChange={handleChangeExtraLabel}

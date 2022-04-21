@@ -1,5 +1,6 @@
 const validateForm = (form) => {
 	var validate = Object.keys(form).map((key) => {
+		console.log(typeof form['end_date'], 'typeof form[key]');
 		if (typeof form[key] === 'string') {
 			if (key === 'dropbox_url') {
 				return true;
