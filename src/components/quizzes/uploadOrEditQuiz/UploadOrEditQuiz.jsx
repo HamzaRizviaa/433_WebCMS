@@ -301,7 +301,13 @@ const UploadOrEditQuiz = ({
 					...(form.question ? { question: form.question } : { question: '' }),
 					...(form.dropbox_url ? { dropbox_url: form.dropbox_url } : {}),
 
-					...(convertedDate ? { end_date: convertedDate } : {}),
+					...(!(editQuiz || editPoll)
+						? convertedDate
+							? { end_date: convertedDate }
+							: {}
+						: (editQuiz || editPoll) && status === 'ACTIVE'
+						? { end_date: convertedDate }
+						: {}),
 					...(!(editQuiz || editPoll)
 						? quiz
 							? { question_type: 'quiz' }
