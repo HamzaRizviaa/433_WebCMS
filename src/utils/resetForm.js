@@ -4,9 +4,14 @@ const resetForm = (form) => {
 			form[key] = '';
 		}
 		if (typeof form[key] === 'object') {
+			if (key === 'end_date') {
+				// for question end_Date field
+				form[key] = null;
+			}
 			form[key] = [];
 		}
-		return false; // for non - mandatory fields
+
+		form[key] = false; // for non - mandatory fields
 	});
 	return form;
 };

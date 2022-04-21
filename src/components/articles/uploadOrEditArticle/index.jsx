@@ -102,10 +102,6 @@ const UploadOrEditViral = ({
 
 	const dispatch = useDispatch();
 
-	useEffect(() => {
-		validateForm(form);
-	}, []);
-
 	//unused errors
 	console.log(editorText, 'editorText');
 
@@ -454,7 +450,7 @@ const UploadOrEditViral = ({
 	}, [specificArticle, editorTextChecker, form]);
 
 	const handleAddSaveBtn = async () => {
-		if (!validateForm(form)) {
+		if (!validateForm(form) || editBtnDisabled) {
 			validateArticleBtn();
 		} else {
 			setPostButtonStatus(true);
