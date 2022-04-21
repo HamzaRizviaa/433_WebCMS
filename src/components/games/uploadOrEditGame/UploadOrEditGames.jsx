@@ -28,6 +28,7 @@ import { ReactComponent as Scoring } from '../../../assets/football.svg';
 import { ReactComponent as Objective } from '../../../assets/Cross.svg';
 import Four33Loader from '../../../assets/Loader_Yellow.gif';
 import { Tooltip, Fade } from '@mui/material';
+//import validateForm from '../../../utils/validateForm';
 
 const UploadOreditArcade = ({
 	heading1,
@@ -72,6 +73,28 @@ const UploadOreditArcade = ({
 	const [playStore2, setPlayStore2] = useState('');
 	const [appStore2, setAppStore2] = useState('');
 	const [isError, setIsError] = useState({});
+	// const [form, setForm] = useState({
+	// 	uploadedFiles: [],
+	// 	dropbox_url_1: '',
+	// 	orientation: '',
+	// 	uploadedExplanationOrIcon: [],
+	// 	dropbox_url_2: '',
+	// 	title: '',
+	// 	description: '',
+	// 	time: '',
+	// 	scoring: '',
+	// 	objective: '',
+	// 	payload: '',
+	// 	game_orientation: '',
+	// 	arcade_game_type: '',
+	// 	game_id: '',
+	// 	android: '',
+	// 	ios: '',
+	// 	play_store: '',
+	// 	apple_store: '',
+	// 	play_store_deeplink: '',
+	// 	apple_store_deeplink: '',
+	// });
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
 	const [fileWidth2, setFileWidth2] = useState(null);
