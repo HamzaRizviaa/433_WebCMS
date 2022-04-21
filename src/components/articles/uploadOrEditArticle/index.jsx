@@ -430,10 +430,10 @@ const UploadOrEditViral = ({
 	// 	!editorText;
 
 	const editorTextCheckerTrimmed = editorTextChecker?.replace(/&nbsp;/g, ' ');
-	const specificArticleTextTrimmed = specificArticle?.editorText?.replace(
+	const specificArticleTextTrimmed = specificArticle?.description?.replace(
 		/&nbsp;/g,
 		' '
-	);
+	); // api response
 
 	useEffect(() => {
 		if (specificArticle) {
@@ -441,10 +441,11 @@ const UploadOrEditViral = ({
 				postButtonStatus ||
 					!form.uploadedFiles?.length ||
 					!form.title ||
-					(specificArticle?.file_name === uploadedFiles[0]?.file_name &&
+					!form.description ||
+					(specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
 						specificArticle?.title?.trim() === form.title?.trim() &&
 						specificArticle?.dropbox_url?.trim() === form.dropbox_url.trim() &&
-						specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim())
+						specificArticleTextTrimmed === editorTextCheckerTrimmed)
 			);
 		}
 	}, [specificArticle, editorTextChecker, form]);

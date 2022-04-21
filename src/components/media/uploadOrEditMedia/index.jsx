@@ -193,8 +193,6 @@ const UploadOrEditMedia = ({
 		}
 	}, [specificMedia]);
 
-	console.log('specificMedia', specificMedia);
-
 	useEffect(() => {
 		dispatch(getMainCategories());
 		dispatch(getMediaLabels());
@@ -634,14 +632,12 @@ const UploadOrEditMedia = ({
 	};
 	useEffect(() => {
 		validateForm(form);
-		console.log('Form', validateForm(form));
 	}, [form]);
 
 	const addSaveMediaBtn = async () => {
 		if (!validateForm(form)) {
 			validatePostBtn();
 		} else {
-			console.log('Inside first else');
 			// setMediaButtonStatus(true);
 			setIsLoadingUploadMedia(true);
 			if (isEdit) {
