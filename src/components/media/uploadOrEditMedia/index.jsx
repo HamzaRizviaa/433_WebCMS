@@ -68,8 +68,8 @@ const UploadOrEditMedia = ({
 	const previewRef = useRef(null);
 
 	const [form, setForm] = useState({
-		main_category_id: '',
-		sub_category_id: '',
+		// main_category_id: '',
+		// sub_category_id: '',
 		mainCategory: '',
 		subCategory: '',
 		title: '',
@@ -84,8 +84,6 @@ const UploadOrEditMedia = ({
 	const specificMedia = useSelector(
 		(state) => state.mediaLibraryOriginal.specificMedia
 	);
-
-	console.log('specificMedia', specificMedia);
 	const mainCategories = useSelector(
 		(state) => state.mediaLibraryOriginal.mainCategories
 	);
@@ -144,29 +142,32 @@ const UploadOrEditMedia = ({
 			}
 			// setMainCategory(specificMedia?.media_type);
 			// setSubCategory(specificMedia?.sub_category);
-			setForm({
-				title: specificMedia?.title,
-				description: specificMedia?.description,
-				media_dropbox_url: specificMedia?.media_dropbox_url,
-				image_dropbox_url: specificMedia?.image_dropbox_url,
-				mainCategory: specificMedia?.media_type,
-				subCategory: specificMedia?.sub_category,
-				uploadedFiles: [
-					{
-						id: makeid(10),
-						file_name: specificMedia?.file_name_media,
-						media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.media_url}`,
-						type: specificMedia?.media_type === 'Watch' ? 'video' : 'audio'
-					}
-				],
-				uploadedCoverImage: [
-					{
-						id: makeid(10),
-						file_name: specificMedia?.file_name_image,
-						media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`,
-						type: 'image'
-					}
-				]
+			setForm((prev) => {
+				return {
+					...prev,
+					title: specificMedia?.title,
+					description: specificMedia?.description,
+					media_dropbox_url: specificMedia?.media_dropbox_url,
+					image_dropbox_url: specificMedia?.image_dropbox_url,
+					mainCategory: specificMedia?.media_type,
+					subCategory: specificMedia?.sub_category,
+					uploadedFiles: [
+						{
+							id: makeid(10),
+							file_name: specificMedia?.file_name_media,
+							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.media_url}`,
+							type: specificMedia?.media_type === 'Watch' ? 'video' : 'audio'
+						}
+					],
+					uploadedCoverImage: [
+						{
+							id: makeid(10),
+							file_name: specificMedia?.file_name_image,
+							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`,
+							type: 'image'
+						}
+					]
+				};
 			});
 			// setDropboxLink(specificMedia?.media_dropbox_url);
 			// setDropboxLink2(specificMedia?.image_dropbox_url);
@@ -191,6 +192,8 @@ const UploadOrEditMedia = ({
 			// ]);
 		}
 	}, [specificMedia]);
+
+	console.log('specificMedia', specificMedia);
 
 	useEffect(() => {
 		dispatch(getMainCategories());
@@ -584,32 +587,25 @@ const UploadOrEditMedia = ({
 	useEffect(() => {
 		if (specificMedia) {
 			setEditBtnDisabled(
-				true
-				// mediaButtonStatus ||
-				// 	!uploadedFiles.length ||
-				// 	!uploadedCoverImage.length ||
-				// 	!titleMedia ||
-				// 	!description ||
-				// 	(specificMedia?.file_name_media === uploadedFiles[0]?.file_name &&
-				// 		specificMedia?.file_name_image ===
-				// 			uploadedCoverImage[0]?.file_name &&
-				// 		specificMedia?.media_dropbox_url === dropboxLink.trim() &&
-				// 		specificMedia?.image_dropbox_url === dropboxLink2.trim() &&
-				// 		specificMedia?.title.replace(/\s+/g, '')?.trim() ===
-				// 			titleMedia?.replace(/\s+/g, '')?.trim() &&
-				// 		specificMedia?.description?.replace(/\s+/g, '')?.trim() ===
-				// 			description?.replace(/\s+/g, '')?.trim())
+				!form.uploadedFiles.length ||
+					!form.uploadedCoverImage.length ||
+					!form.title ||
+					!form.description ||
+					(specificMedia?.file_name_media ===
+						form.uploadedFiles[0]?.file_name &&
+						specificMedia?.file_name_image ===
+							form.uploadedCoverImage[0]?.file_name &&
+						specificMedia?.media_dropbox_url ===
+							form.media_dropbox_url.trim() &&
+						specificMedia?.image_dropbox_url ===
+							form.image_dropbox_url.trim() &&
+						specificMedia?.title.replace(/\s+/g, '')?.trim() ===
+							form.title?.replace(/\s+/g, '')?.trim() &&
+						specificMedia?.description?.replace(/\s+/g, '')?.trim() ===
+							form.description?.replace(/\s+/g, '')?.trim())
 			);
 		}
-	}, [
-		specificMedia,
-		titleMedia,
-		description,
-		dropboxLink,
-		dropboxLink2,
-		uploadedFiles,
-		uploadedCoverImage
-	]);
+	}, [specificMedia, form]);
 	//console.log(editBtnDisabled, 'edb');
 
 	const MainCategoryId = (e) => {
@@ -763,7 +759,6 @@ const UploadOrEditMedia = ({
 						setIsLoadingUploadMedia(false);
 					});
 			} else {
-				console.log('Inside Second else');
 				if (
 					(await handleTitleDuplicate(form.title)) === 200 &&
 					form.title !== specificMedia.title
