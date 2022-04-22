@@ -103,6 +103,10 @@ const UploadOrEditQuiz = ({
 	}, [labels]);
 
 	useEffect(() => {
+		validateForm(form);
+	}, [form]);
+
+	useEffect(() => {
 		dispatch(getQuestionLabels());
 	}, []);
 

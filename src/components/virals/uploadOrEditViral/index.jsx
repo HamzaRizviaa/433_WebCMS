@@ -109,9 +109,9 @@ const UploadOrEditViral = ({
 		}
 	}, [labels]);
 
-	// useEffect(() => {
-	// 	validateForm(form);
-	// }, []);
+	useEffect(() => {
+		validateForm(form);
+	}, [form]);
 
 	useEffect(() => {
 		if (specificViral) {
@@ -438,6 +438,7 @@ const UploadOrEditViral = ({
 		} else {
 			setPostButtonStatus(true);
 			if (isEdit) {
+				setIsLoadingcreateViral(true);
 				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
 					if (_file.file) {
 						return await uploadFileToServer(_file, 'virallibrary');

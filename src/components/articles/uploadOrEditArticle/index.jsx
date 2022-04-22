@@ -213,6 +213,10 @@ const UploadOrEditViral = ({
 	};
 
 	useEffect(() => {
+		validateForm(form);
+	}, [form]);
+
+	useEffect(() => {
 		if (acceptedFiles?.length) {
 			setIsError({});
 			let newFiles = acceptedFiles.map((file) => {
