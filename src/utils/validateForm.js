@@ -12,10 +12,14 @@ const validateForm = (form) => {
 				// for question end_Date field
 				return !form[key] ? false : true;
 			}
-			if (key === 'labels') {
-				return form[key]?.length < 10 ? false : true;
+			if (Array.isArray(form[key])) {
+				if (key === 'labels') {
+					return form[key]?.length < 10 ? false : true;
+				} else {
+					return form[key]?.length === 0 ? false : true;
+				}
 			} else {
-				return form[key]?.length === 0 ? false : true;
+				validateForm(form[key]);
 			}
 		}
 		return true; // for non - mandatory fields

@@ -28,7 +28,7 @@ import { ReactComponent as Scoring } from '../../../assets/football.svg';
 import { ReactComponent as Objective } from '../../../assets/Cross.svg';
 import Four33Loader from '../../../assets/Loader_Yellow.gif';
 import { Tooltip, Fade } from '@mui/material';
-//import validateForm from '../../../utils/validateForm';
+import validateForm from '../../../utils/validateForm';
 
 const UploadOreditArcade = ({
 	heading1,
@@ -41,7 +41,7 @@ const UploadOreditArcade = ({
 	setPreviewFile,
 	previewRef,
 	setDisableDropdown,
-	type, // jogo - archade
+	type, // jogo - arcade
 	page,
 	handleClose
 }) => {
@@ -73,28 +73,30 @@ const UploadOreditArcade = ({
 	const [playStore2, setPlayStore2] = useState('');
 	const [appStore2, setAppStore2] = useState('');
 	const [isError, setIsError] = useState({});
-	// const [form, setForm] = useState({
-	// 	uploadedFiles: [],
-	// 	dropbox_url_1: '',
-	// 	orientation: '',
-	// 	uploadedExplanationOrIcon: [],
-	// 	dropbox_url_2: '',
-	// 	title: '',
-	// 	description: '',
-	// 	time: '',
-	// 	scoring: '',
-	// 	objective: '',
-	// 	payload: '',
-	// 	game_orientation: '',
-	// 	arcade_game_type: '',
-	// 	game_id: '',
-	// 	android: '',
-	// 	ios: '',
-	// 	play_store: '',
-	// 	apple_store: '',
-	// 	play_store_deeplink: '',
-	// 	apple_store_deeplink: '',
-	// });
+	const [form, setForm] = useState({
+		uploadedFiles: [],
+		uploadedExplanationOrIcon: [],
+		dropbox_urls: {
+			image: '',
+			video_icon: '' // same for video and icon
+		},
+		orientation: '',
+		title: '',
+		description: '',
+		time: '',
+		scoring: '',
+		objective: '',
+		payload: '',
+		game_orientation: '',
+		arcade_game_type: '',
+		game_id: '',
+		android: '',
+		ios: '',
+		play_store: '',
+		apple_store: '',
+		play_store_deeplink: '',
+		apple_store_deeplink: ''
+	});
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
 	const [fileWidth2, setFileWidth2] = useState(null);
@@ -102,10 +104,39 @@ const UploadOreditArcade = ({
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
-
+	// const jogoKeys = {
+	// 	uploadedFiles: [],
+	// 	uploadedExplanationOrIcon: [],
+	// 	orientation: '',
+	// 	title: '',
+	// 	description: '',
+	// 	time: '',
+	// 	scoring: '',
+	// 	objective: '',
+	// 	payload: '',
+	// 	game_orientation: '',
+	// 	game_id: ''
+	// };
+	// const arcadeKeys = {
+	// 	uploadedFiles: [],
+	// 	uploadedExplanationOrIcon: [],
+	// 	title: '',
+	// 	description: '',
+	// 	android: '',
+	// 	ios: '',
+	// 	play_store: '',
+	// 	apple_store: '',
+	// 	play_store_deeplink: '',
+	// 	apple_store_deeplink: '',
+	// };
+	// const commonKeys = [
+	// 	'uploadedFiles',
+	// 	'uploadedExplanationOrIcon',
+	// 	'title',
+	// 	'description'
+	// ];
 	const gameExplanationOrientation = ['PORTRAIT', 'LANDSCAPE'];
 	const gameOrientationArray = ['PORTRAIT', 'LANDSCAPE'];
-
 	const arcadeType = ['Inside App', 'Outside App'];
 
 	const muiClasses = useStyles();
@@ -117,6 +148,37 @@ const UploadOreditArcade = ({
 	const specificGameStatus = useSelector(
 		(state) => state.GamesLibraryStore.specificGameStatus
 	);
+
+	const keyBinding = (type) => {
+		const obj = {
+			uploadedFiles: [],
+			uploadedExplanationOrIcon: [],
+			title: '',
+			description: ''
+		};
+		if (type === 'jogo') {
+			return {
+				...obj,
+				time: '',
+				scoring: '',
+				objective: '',
+				payload: '',
+				orientation: '',
+				game_orientation: ''
+			};
+		} else {
+			return {
+				...obj,
+				android: '',
+				ios: '',
+				play_store: '',
+				apple_store: '',
+				play_store_deeplink: '',
+				apple_store_deeplink: ''
+			};
+		}
+	};
+	console.log(keyBinding, 'keyBinding');
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -145,71 +207,123 @@ const UploadOreditArcade = ({
 
 	useEffect(() => {
 		if (specificGamesData) {
-			setDropboxLink(specificGamesData?.dropbox_urls?.image);
-			setDropboxLink2(specificGamesData?.dropbox_urls?.video);
-			setDescriptionGame(specificGamesData?.description);
-			setTitleGame(specificGamesData?.title);
+			setForm((prev) => {
+				return {
+					...prev,
+					...specificGamesData,
+					uploadedFiles: [
+						{
+							id: makeid(10),
+							file_name: specificGamesData?.game_image_file_name,
+							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_image?.url}`,
+							type: 'image'
+						}
+					],
+					uploadedExplanationOrIcon: [
+						{
+							id: makeid(10),
+							file_name: specificGamesData?.game_video_file_name
+								? specificGamesData?.game_video_file_name
+								: specificGamesData?.game_icon_file_name,
+							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${
+								specificGamesData?.game_video?.url
+									? specificGamesData?.game_video?.url
+									: specificGamesData?.game_icon?.url
+							}`,
+							type: specificGamesData?.game_video?.url ? 'video' : 'image',
+							fileExtension: specificGamesData?.game_video?.url
+								? '.mp4'
+								: '.jpg',
+							url: `${
+								specificGamesData?.game_video?.url &&
+								specificGamesData?.game_video?.url
+							}`
+						}
+					],
+
+					play_store_deeplink: specificGamesData?.deep_link?.android,
+					apple_store_deeplink: specificGamesData?.deep_link?.android
+				};
+			});
+			console.log(form, 'formkeys specificGamesDa;ta');
 			setFileWidth(specificGamesData?.game_image?.width);
 			setFileHeight(specificGamesData?.game_image?.height);
-			setUploadedFiles([
-				{
-					id: makeid(10),
-					fileName: specificGamesData?.game_image_file_name,
-					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_image?.url}`,
-					type: 'image'
-				}
-			]);
+			setFileWidth2(
+				specificGamesData?.game_video?.width
+					? specificGamesData?.game_video?.width
+					: specificGamesData?.game_icon?.width
+			);
+			setFileHeight2(
+				specificGamesData?.game_video?.height
+					? specificGamesData?.game_video?.height
+					: specificGamesData?.game_icon?.height
+			);
+			// setDropboxLink(specificGamesData?.dropbox_urls?.image);
+			// setDropboxLink2(specificGamesData?.dropbox_urls?.video);
+			// setDescriptionGame(specificGamesData?.description);
+			// setTitleGame(specificGamesData?.title);
+			// setUploadedFiles([
+			// 	{
+			// 		id: makeid(10),
+			// 		file_name: specificGamesData?.game_image_file_name,
+			// 		media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_image?.url}`,
+			// 		type: 'image'
+			// 	}
+			// ]);
 
-			if (specificGamesData?.game_type === 'JOGO') {
-				//jogo
-				setScoring(specificGamesData?.scoring);
-				setObjective(specificGamesData?.objective);
-				setPayload(specificGamesData?.payload);
-				setTime(specificGamesData?.time);
-				setVideoOrientation(specificGamesData?.orientation?.toUpperCase());
-				setGameOrientation(specificGamesData?.game_orientation);
-				setFileWidth2(specificGamesData?.game_video?.width);
-				setFileHeight2(specificGamesData?.game_video?.height);
-				setUploadedExplanationOrIcon([
-					{
-						id: makeid(10),
-						fileName: specificGamesData?.game_video_file_name,
-						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_video?.url}`,
-						type: 'video',
-						fileExtension: '.mp4',
-						url: `${specificGamesData?.game_video?.url}`,
-						file_name: specificGamesData?.game_video_file_name
-					}
-				]);
-			} else {
-				//arcade
-				setArcadeGameType(
-					specificGamesData?.arcade_game_type === 'Outside App'
-						? 'Outside App'
-						: 'Inside App'
-				);
-				setAndrioid(specificGamesData?.package_id?.android);
-				setIos(specificGamesData?.package_id?.ios);
-				setPlayStore(specificGamesData?.store_url?.play_store); //store url
-				setAppStore(specificGamesData?.store_url?.apple_store);
-				setPlayStore2(specificGamesData?.deep_link?.android); // deep link
-				setAppStore2(specificGamesData?.deep_link?.ios);
-				setGameId(specificGamesData?.game_id);
-				setFileWidth2(specificGamesData?.game_icon?.width);
-				setFileHeight2(specificGamesData?.game_icon?.height);
-				setUploadedExplanationOrIcon([
-					{
-						id: makeid(10),
-						fileName: specificGamesData?.game_icon_file_name,
-						img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_icon?.url}`,
-						type: 'image',
-						fileExtension: '.jpg'
-					}
-				]);
-			}
+			// if (specificGamesData?.game_type === 'JOGO') {
+			// 	//jogo
+			// 	setScoring(specificGamesData?.scoring);
+			// 	setObjective(specificGamesData?.objective);
+			// 	setPayload(specificGamesData?.payload);
+			// 	setTime(specificGamesData?.time);
+			// 	setVideoOrientation(specificGamesData?.orientation?.toUpperCase());
+			// 	setGameOrientation(specificGamesData?.game_orientation);
+			// 	setFileWidth2(specificGamesData?.game_video?.width);
+			// 	setFileHeight2(specificGamesData?.game_video?.height);
+			// 	setUploadedExplanationOrIcon([
+			// 		{
+			// 			id: makeid(10),
+			// 			file_name: specificGamesData?.game_video_file_name,
+			// 			media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_video?.url}`,
+			// 			type: 'video',
+			// 			fileExtension: '.mp4',
+			// 			url: `${specificGamesData?.game_video?.url}`
+			// 		}
+			// 	]);
+			// } else {
+			// 	//arcade
+			// 	setArcadeGameType(
+			// 		specificGamesData?.arcade_game_type === 'Outside App'
+			// 			? 'Outside App'
+			// 			: 'Inside App'
+			// 	);
+			// 	setAndrioid(specificGamesData?.package_id?.android);
+			// 	setIos(specificGamesData?.package_id?.ios);
+			// 	setPlayStore(specificGamesData?.store_url?.play_store); //store url
+			// 	setAppStore(specificGamesData?.store_url?.apple_store);
+			// 	setPlayStore2(specificGamesData?.deep_link?.android); // deep link
+			// 	setAppStore2(specificGamesData?.deep_link?.ios);
+			// 	setGameId(specificGamesData?.game_id);
+			// 	setFileWidth2(specificGamesData?.game_icon?.width);
+			// 	setFileHeight2(specificGamesData?.game_icon?.height);
+			// 	setUploadedExplanationOrIcon([
+			// 		{
+			// 			id: makeid(10),
+			// 			file_name: specificGamesData?.game_icon_file_name,
+			// 			media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_icon?.url}`,
+			// 			type: 'image',
+			// 			fileExtension: '.jpg'
+			// 		}
+			// 	]);
+			// }
 		}
 		// }
 	}, [specificGamesData]);
+
+	useEffect(() => {
+		validateForm(form);
+	}, [form]);
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
@@ -217,15 +331,21 @@ const UploadOreditArcade = ({
 				let id = makeid(10);
 				return {
 					id: id,
-					fileName: file.name,
-					img: URL.createObjectURL(file),
+					file_name: file.name,
+					media_url: URL.createObjectURL(file),
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
 					type: file.type === 'image'
 				};
 			});
-			setUploadedFiles([...uploadedFiles, ...newFiles]);
+			// setUploadedFiles([...uploadedFiles, ...newFiles]);
+			setForm((prev) => {
+				return {
+					...prev,
+					uploadedFiles: [...form.uploadedFiles, ...newFiles]
+				};
+			});
 		}
 	}, [acceptedFiles]);
 
@@ -235,15 +355,24 @@ const UploadOreditArcade = ({
 				let id = makeid(10);
 				return {
 					id: id,
-					fileName: file.name,
-					img: URL.createObjectURL(file),
+					file_name: file.name,
+					media_url: URL.createObjectURL(file),
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
 					type: file.type === 'video/mp4' ? 'video' : 'image'
 				};
 			});
-			setUploadedExplanationOrIcon([...uploadedExplanationOrIcon, ...newFiles]);
+			// setUploadedExplanationOrIcon([...uploadedExplanationOrIcon, ...newFiles]);
+			setForm((prev) => {
+				return {
+					...prev,
+					uploadedExplanationOrIcon: [
+						...form.uploadedExplanationOrIcon,
+						...newFiles
+					]
+				};
+			});
 		}
 	}, [acceptedFiles2]);
 
@@ -277,18 +406,30 @@ const UploadOreditArcade = ({
 	}, [open]);
 
 	const handleDeleteFile = (id) => {
-		setUploadedFiles((uploadedFiles) =>
-			uploadedFiles.filter((file) => file.id !== id)
-		);
+		setForm((prev) => {
+			return {
+				...prev,
+				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
+			};
+		});
 	};
 
 	const handleDeleteFile2 = (id) => {
-		setUploadedExplanationOrIcon((uploadedExplanationOrIcon) =>
-			uploadedExplanationOrIcon.filter((file) => file.id !== id)
-		);
+		// setUploadedExplanationOrIcon((uploadedExplanationOrIcon) =>
+		// 	uploadedExplanationOrIcon.filter((file) => file.id !== id)
+		// );
+		setForm((prev) => {
+			return {
+				...prev,
+				uploadedExplanationOrIcon: form.uploadedExplanationOrIcon.filter(
+					(file) => file.id !== id
+				)
+			};
+		});
 	};
 
 	const uploadFileToServer = async (uploadedFile) => {
+		console.log('uploadedFile file to server', uploadedFile);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
@@ -305,12 +446,13 @@ const UploadOreditArcade = ({
 
 			if (result?.data?.data?.video_thumbnail_url) {
 				const frame = captureVideoFrame('my-video', 'png');
-
+				console.log('inside THumb');
 				await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
 					headers: { 'Content-Type': 'image/png' }
 				});
 			}
 			if (result?.data?.data?.url) {
+				console.log('inside put');
 				const _result = await axios.put(
 					result?.data?.data?.url,
 					uploadedFile.file,
@@ -318,6 +460,8 @@ const UploadOreditArcade = ({
 						headers: { 'Content-Type': uploadedFile.mime_type }
 					}
 				);
+
+				console.log('_result', _result);
 
 				if (_result?.status === 200) {
 					const uploadResult = await axios.post(
@@ -328,7 +472,7 @@ const UploadOreditArcade = ({
 							data: {
 								bucket: 'media',
 								multipart_upload:
-									uploadedFile?.mime_type == 'video/mp4'
+									form.uploadedFile?.mime_type == 'video/mp4'
 										? [
 												{
 													e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
@@ -342,7 +486,7 @@ const UploadOreditArcade = ({
 									audio_key: ''
 								},
 								upload_id:
-									uploadedFile?.mime_type == 'video/mp4'
+									form.uploadedFile?.mime_type == 'video/mp4'
 										? result?.data?.data?.upload_id
 										: 'image'
 							}
@@ -375,64 +519,65 @@ const UploadOreditArcade = ({
 	const createGames = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
 
+		console.log(mediaFiles, 'mediaFiles in create game');
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/games/add-edit-game`,
 				{
 					type: type === 'jogo' ? 'JOGO' : 'ARCADE GAME',
 					arcade_game_type:
-						arcadeGameType === 'Inside App' ? 'insideapp' : 'outsideapp',
-					orientation: type === 'jogo' ? videoOrientation : 'none',
-					game_orientation: type === 'jogo' ? gameOrientation : 'none',
-					title: titleGame,
-					description: descriptionGame,
+						form.arcade_game_type === 'Inside App' ? 'insideapp' : 'outsideapp',
+					orientation: type === 'jogo' ? form.orientation : 'none',
+					game_orientation: type === 'jogo' ? form.game_orientation : 'none',
+					title: form.title,
+					description: form.description,
 					game_medias: {
 						game_image: {
 							url:
-								mediaFiles[0]?.media_url ||
-								mediaFiles[0].img.split('cloudfront.net/')[1],
-							dropbox_url: dropboxLink,
-							file_name: mediaFiles[0]?.file_name || mediaFiles[0]?.fileName,
+								mediaFiles[0].media_url.split('cloudfront.net/')[1] ||
+								mediaFiles[0]?.media_url,
+							dropbox_url: form.dropbox_urls.image,
+							file_name: mediaFiles[0]?.file_name,
 							width: fileWidth,
 							height: fileHeight
 						},
 						game_video: {
 							url:
-								mediaFiles[1]?.media_url ||
-								mediaFiles[1].img.split('cloudfront.net/')[1],
-							dropbox_url: dropboxLink2,
-							file_name: mediaFiles[1]?.file_name || mediaFiles[1]?.fileName, //mediaFiles[1]?.file_name || mediaFiles[1]?.fileName,
+								mediaFiles[1].media_url.split('cloudfront.net/')[1] ||
+								mediaFiles[1]?.media_url,
+							dropbox_url: form.dropbox_urls.video_icon,
+							file_name: mediaFiles[1]?.file_name, //mediaFiles[1]?.file_name || mediaFiles[1]?.file_name,
 							width: fileWidth2,
 							height: fileHeight2
 						},
 						game_icon: {
 							url:
-								mediaFiles[1]?.media_url ||
-								mediaFiles[1].img.split('cloudfront.net/')[1],
-							dropbox_url: dropboxLink2,
-							file_name: mediaFiles[1]?.file_name || mediaFiles[1]?.fileName,
+								mediaFiles[1].media_url.split('cloudfront.net/')[1] ||
+								mediaFiles[1]?.media_url,
+							dropbox_url: form.dropbox_urls.video_icon,
+							file_name: mediaFiles[1]?.file_name,
 							width: fileWidth2,
 							height: fileHeight2
 						}
 					},
 					//jogo
-					time: time,
-					scoring: scoring,
-					objective: objective,
-					payload: payload,
+					time: form.time,
+					scoring: form.scoring,
+					objective: form.objective,
+					payload: form.payload,
 					//arcade
-					game_id: gameId,
+					game_id: form.game_id,
 					package_id: {
-						android: android,
-						ios: ios
+						android: form.android,
+						ios: form.ios
 					},
 					store_url: {
-						play_store: playStore,
-						apple_store: appStore
+						play_store: form.play_store,
+						apple_store: form.apple_store
 					},
 					deep_link: {
-						android: playStore2,
-						ios: appStore2
+						android: form.play_store_deeplink,
+						ios: form.apple_store_deeplink
 					},
 					...((editArcade || editJogo) && id ? { edit_game_id: id } : {})
 				},
@@ -535,32 +680,28 @@ const UploadOreditArcade = ({
 		setPlayStore2('');
 		setAppStore2('');
 		setIsError({});
-		setFileHeight(null);
-		setFileWidth(null);
-		setFileHeight2(null);
-		setFileWidth2(null);
 	};
 
 	const validatePostBtn = () => {
 		setIsError({
-			videoOrientation: !videoOrientation,
-			uploadedFiles: uploadedFiles.length < 1,
-			gameOrientation: !gameOrientation,
-			uploadedExplanationOrIcon: uploadedExplanationOrIcon.length < 1,
-			titleGame: !titleGame && { message: 'You need to enter a Title' },
-			descriptionGame: !descriptionGame,
-			time: !time,
-			scoring: !scoring,
-			objective: !objective,
-			payload: !payload,
-			arcadeGameType: !arcadeGameType,
-			gameId: !gameId,
-			android: !android,
-			ios: !ios,
-			playStore: !playStore,
-			appStore: !appStore,
-			playStore2: !playStore2,
-			appStore2: !appStore2
+			videoOrientation: !form.orientation,
+			uploadedFiles: form.uploadedFiles.length < 1,
+			gameOrientation: !form.game_orientation,
+			uploadedExplanationOrIcon: form.uploadedExplanationOrIcon.length < 1,
+			titleGame: !form.title && { message: 'You need to enter a Title' },
+			descriptionGame: !form.description,
+			time: !form.time,
+			scoring: !form.scoring,
+			objective: !form.objective,
+			payload: !form.payload,
+			arcadeGameType: !form.arcade_game_type,
+			gameId: !form.game_id,
+			android: !form.android,
+			ios: !form.ios,
+			playStore: !form.play_store,
+			appStore: !form.apple_store,
+			playStore2: !form.play_store_deeplink,
+			appStore2: !form.apple_store_deeplink
 		});
 
 		setTimeout(() => {
@@ -586,15 +727,15 @@ const UploadOreditArcade = ({
 	};
 
 	const addSaveGameBtn = async () => {
-		if (addGameBtnDisabled || editBtnDisabled) {
+		if (!validateForm(form) || editBtnDisabled) {
 			validatePostBtn();
 		} else {
 			setPostButtonStatus(true);
 
 			if (editArcade || editJogo) {
-				if (titleGame?.trim() !== specificGamesData?.title?.trim()) {
+				if (form.title?.trim() !== specificGamesData?.title?.trim()) {
 					if (
-						(await handleTitleDuplicate(titleGame)) ===
+						(await handleTitleDuplicate(form.title)) ===
 						'The Title Already Exist'
 						// 	200 &&
 						// articleTitle !== specificArticle?.title
@@ -616,8 +757,8 @@ const UploadOreditArcade = ({
 				}
 				setIsLoadingcreateViral(true);
 				let uploadFilesPromiseArray = [
-					uploadedFiles[0],
-					uploadedExplanationOrIcon[0]
+					form.uploadedFiles[0],
+					form.uploadedExplanationOrIcon[0]
 				].map(async (_file) => {
 					if (_file.file) {
 						return await uploadFileToServer(_file);
@@ -628,7 +769,7 @@ const UploadOreditArcade = ({
 
 				Promise.all([...uploadFilesPromiseArray])
 					.then((mediaFiles) => {
-						console.log('media files', mediaFiles);
+						// console.log('media files', mediaFiles);
 						createGames(specificGamesData?.id, mediaFiles);
 					})
 					.catch(() => {
@@ -637,7 +778,7 @@ const UploadOreditArcade = ({
 				// createGames(specificGamesData?.id);
 			} else {
 				if (
-					(await handleTitleDuplicate(titleGame)) === 'The Title Already Exist'
+					(await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
 					// 	200 &&
 					// articleTitle !== specificArticle?.title
 				) {
@@ -658,15 +799,14 @@ const UploadOreditArcade = ({
 
 				setIsLoadingcreateViral(true);
 				let uploadFilesPromiseArray = [
-					uploadedFiles[0],
-					uploadedExplanationOrIcon[0]
+					form.uploadedFiles[0],
+					form.uploadedExplanationOrIcon[0]
 				].map(async (_file) => {
 					return uploadFileToServer(_file);
 				});
 
 				Promise.all([...uploadFilesPromiseArray])
 					.then((mediaFiles) => {
-						console.log(mediaFiles, 'media files ');
 						createGames(null, mediaFiles);
 					})
 					.catch(() => {
@@ -676,39 +816,39 @@ const UploadOreditArcade = ({
 		}
 	};
 
-	const addGameBtnDisabled =
-		type === 'jogo'
-			? !uploadedFiles.length ||
-			  !videoOrientation ||
-			  !gameOrientation ||
-			  !uploadedExplanationOrIcon.length ||
-			  postButtonStatus ||
-			  !titleGame ||
-			  !descriptionGame ||
-			  !time ||
-			  !scoring ||
-			  !objective ||
-			  !payload
-			: type === 'arcade' && arcadeGameType === 'Outside App'
-			? !uploadedFiles.length ||
-			  !uploadedExplanationOrIcon.length ||
-			  postButtonStatus ||
-			  !titleGame ||
-			  !descriptionGame ||
-			  !arcadeGameType ||
-			  !android ||
-			  !ios ||
-			  !playStore ||
-			  !appStore ||
-			  !playStore2 ||
-			  !appStore2
-			: !uploadedFiles.length ||
-			  !uploadedExplanationOrIcon.length ||
-			  postButtonStatus ||
-			  !titleGame ||
-			  !descriptionGame ||
-			  !arcadeGameType ||
-			  !gameId;
+	// const addGameBtnDisabled =
+	// 	type === 'jogo'
+	// 		? !uploadedFiles.length ||
+	// 		  !videoOrientation ||
+	// 		  !gameOrientation ||
+	// 		  !uploadedExplanationOrIcon.length ||
+	// 		  postButtonStatus ||
+	// 		  !titleGame ||
+	// 		  !descriptionGame ||
+	// 		  !time ||
+	// 		  !scoring ||
+	// 		  !objective ||
+	// 		  !payload
+	// 		: type === 'arcade' && arcadeGameType === 'Outside App'
+	// 		? !uploadedFiles.length ||
+	// 		  !uploadedExplanationOrIcon.length ||
+	// 		  postButtonStatus ||
+	// 		  !titleGame ||
+	// 		  !descriptionGame ||
+	// 		  !arcadeGameType ||
+	// 		  !android ||
+	// 		  !ios ||
+	// 		  !playStore ||
+	// 		  !appStore ||
+	// 		  !playStore2 ||
+	// 		  !appStore2
+	// 		: !uploadedFiles.length ||
+	// 		  !uploadedExplanationOrIcon.length ||
+	// 		  postButtonStatus ||
+	// 		  !titleGame ||
+	// 		  !descriptionGame ||
+	// 		  !arcadeGameType ||
+	// 		  !gameId;
 
 	useEffect(() => {
 		if (specificGamesData) {
@@ -732,9 +872,9 @@ const UploadOreditArcade = ({
 								specificGamesData?.objective === objective?.trim() &&
 								specificGamesData?.payload === payload?.trim() &&
 								// specificGamesData?.uploadedFiles[0].file_name ===
-								// 	uploadedFiles[0].fileName &&
+								// 	uploadedFiles[0].file_name &&
 								// specificGamesData?.uploadedExplanationOrIcon[0].file_name ===
-								// 	uploadedExplanationOrIcon[0].fileName &&
+								// 	uploadedExplanationOrIcon[0].file_name &&
 								specificGamesData?.game_orientation === gameOrientation &&
 								specificGamesData?.orientation === videoOrientation)
 					: type === 'arcade' && arcadeGameType === 'Outside App'
@@ -804,9 +944,9 @@ const UploadOreditArcade = ({
 							specificGamesData?.playStore2 === playStore2?.trim() &&
 							specificGamesData?.appStore2 === appStore2?.trim() &&
 							// specificGamesData?.uploadedFiles[0].file_name ===
-							// 	uploadedFiles[0].fileName &&
+							// 	uploadedFiles[0].file_name &&
 							// specificGamesData?.uploadedExplanationOrIcon[0].file_name ===
-							// 	uploadedExplanationOrIcon[0].fileName &&
+							// 	uploadedExplanationOrIcon[0].file_name &&
 							specificGamesData?.game_orientation === gameOrientation &&
 							specificGamesData?.orientation === videoOrientation)
 			);
@@ -835,6 +975,8 @@ const UploadOreditArcade = ({
 		gameOrientation
 	]);
 
+	console.log('Api KEys', specificGamesData);
+
 	return (
 		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
 			<Slide in={true} direction='up' {...{ timeout: 400 }}>
@@ -859,18 +1001,18 @@ const UploadOreditArcade = ({
 						<div>
 							<h5 className={classes.QuizQuestion}>{heading1}</h5>
 							<DragAndDropField
-								uploadedFiles={uploadedFiles}
+								uploadedFiles={form.uploadedFiles}
 								handleDeleteFile={handleDeleteFile}
 								setPreviewBool={setPreviewBool}
 								setPreviewFile={setPreviewFile}
 								isArticle
 								imgEl={imgRef}
 								imageOnload={() => {
-									setFileWidth(imgRef?.current?.naturalWidth);
-									setFileHeight(imgRef?.current?.naturalHeight);
+									setFileWidth(imgRef.current.naturalWidth);
+									setFileHeight(imgRef.current.naturalHeight);
 								}}
 							/>
-							{!uploadedFiles.length && (
+							{!form.uploadedFiles.length && (
 								<section
 									className={classes.dropZoneContainer}
 									style={{
@@ -899,8 +1041,15 @@ const UploadOreditArcade = ({
 							<div className={classes.titleContainer}>
 								<h6>DROPBOX URL</h6>
 								<TextField
-									value={dropboxLink}
-									onChange={(e) => setDropboxLink(e.target.value)}
+									value={form.dropbox_urls.image}
+									onChange={(e) =>
+										setForm((prev) => {
+											return {
+												...prev,
+												dropbox_urls: { image: e.target.value }
+											};
+										})
+									}
 									placeholder={'Please drop the dropbox URL here'}
 									className={classes.textField}
 									multiline
@@ -951,16 +1100,23 @@ const UploadOreditArcade = ({
 												setDisableDropdown(true);
 											}}
 											disabled={false}
-											value={videoOrientation}
-											onChange={(e) => {
-												setDisableDropdown(true);
-												setVideoOrientation(e.target.value);
-												// setMainCategoryLabelColor('#ffffff');
-												// setMainCategoryError('');
-												// if (uploadedFiles.length) {
-												// 	uploadedFiles.map((file) => handleDeleteFile(file.id));
-												// }
-											}}
+											value={form.orientation}
+											onChange={(e) =>
+												setForm((prev) => {
+													setDisableDropdown(true);
+													return { ...prev, orientation: e.target.value };
+												})
+											}
+											// value={videoOrientation}
+											// onChange={(e) => {
+											// 	setDisableDropdown(true);
+											// 	setVideoOrientation(e.target.value);
+											// 	// setMainCategoryLabelColor('#ffffff');
+											// 	// setMainCategoryError('');
+											// 	// if (uploadedFiles.length) {
+											// 	// 	uploadedFiles.map((file) => handleDeleteFile(file.id));
+											// 	// }
+											// }}
 											className={`${classes.select}`}
 											disableUnderline={true}
 											IconComponent={(props) => (
@@ -1031,7 +1187,7 @@ const UploadOreditArcade = ({
 								</>
 							)}
 							<DragAndDropField
-								uploadedFiles={uploadedExplanationOrIcon}
+								uploadedFiles={form.uploadedExplanationOrIcon}
 								handleDeleteFile={handleDeleteFile2}
 								setPreviewBool={setPreviewBool}
 								setPreviewFile={setPreviewFile}
@@ -1048,7 +1204,7 @@ const UploadOreditArcade = ({
 								}}
 							/>
 
-							{!uploadedExplanationOrIcon.length && (
+							{!form.uploadedExplanationOrIcon.length && (
 								<section
 									className={classes.dropZoneContainer}
 									style={{
@@ -1082,8 +1238,15 @@ const UploadOreditArcade = ({
 							<div className={classes.titleContainer}>
 								<h6>DROPBOX URL</h6>
 								<TextField
-									value={dropboxLink2}
-									onChange={(e) => setDropboxLink2(e.target.value)}
+									value={form.dropbox_urls.video_icon}
+									onChange={(e) =>
+										setForm((prev) => {
+											return {
+												...prev,
+												dropbox_urls: { video_icon: e.target.value }
+											};
+										})
+									}
 									placeholder={'Please drop the dropbox URL here'}
 									className={classes.textField}
 									multiline
@@ -1123,10 +1286,12 @@ const UploadOreditArcade = ({
 									</h6>
 								</div>
 								<TextField
-									value={titleGame}
-									onChange={(e) => {
-										setTitleGame(e.target.value);
-									}}
+									value={form.title}
+									onChange={(e) =>
+										setForm((prev) => {
+											return { ...prev, title: e.target.value };
+										})
+									}
 									placeholder={'Please write your title here'}
 									className={classes.textField}
 									InputProps={{
@@ -1156,22 +1321,24 @@ const UploadOreditArcade = ({
 									<h6
 										style={{
 											color:
-												descriptionGame?.length >= 75 &&
-												descriptionGame?.length <= 83
+												form.description?.length >= 75 &&
+												form.description?.length <= 83
 													? 'pink'
-													: descriptionGame?.length === 84
+													: form.description?.length === 84
 													? 'red'
 													: 'white'
 										}}
 									>
-										{type === 'jogo' ? `${descriptionGame?.length}/84` : ''}
+										{type === 'jogo' ? `${form.description?.length}/84` : ''}
 									</h6>
 								</div>
 								<TextField
-									value={descriptionGame}
-									onChange={(e) => {
-										setDescriptionGame(e.target.value);
-									}}
+									value={form.description}
+									onChange={(e) =>
+										setForm((prev) => {
+											return { ...prev, description: e.target.value };
+										})
+									}
 									placeholder={'Please write your description here'}
 									className={classes.textField}
 									InputProps={{
@@ -1201,10 +1368,12 @@ const UploadOreditArcade = ({
 										</h6>
 										<TextField
 											disabled={false}
-											value={time}
-											onChange={(e) => {
-												setTime(e.target.value);
-											}}
+											value={form.time}
+											onChange={(e) =>
+												setForm((prev) => {
+													return { ...prev, time: e.target.value };
+												})
+											}
 											placeholder={'Please write the game duration here'}
 											className={classes.textField}
 											InputProps={{
@@ -1239,10 +1408,12 @@ const UploadOreditArcade = ({
 										</h6>
 										<TextField
 											disabled={false}
-											value={scoring}
-											onChange={(e) => {
-												setScoring(e.target.value);
-											}}
+											value={form.scoring}
+											onChange={(e) =>
+												setForm((prev) => {
+													return { ...prev, scoring: e.target.value };
+												})
+											}
 											placeholder={'Please write the game scoring here'}
 											className={classes.textField}
 											InputProps={{
@@ -1278,10 +1449,12 @@ const UploadOreditArcade = ({
 
 										<TextField
 											disabled={false}
-											value={objective}
-											onChange={(e) => {
-												setObjective(e.target.value);
-											}}
+											value={form.objective}
+											onChange={(e) =>
+												setForm((prev) => {
+													return { ...prev, objective: e.target.value };
+												})
+											}
 											placeholder={'Please write the game objective here'}
 											className={classes.textField}
 											InputProps={{
@@ -1317,10 +1490,12 @@ const UploadOreditArcade = ({
 
 										<TextField
 											disabled={false}
-											value={payload}
-											onChange={(e) => {
-												setPayload(e.target.value);
-											}}
+											value={form.payload}
+											onChange={(e) =>
+												setForm((prev) => {
+													return { ...prev, payload: e.target.value };
+												})
+											}
 											placeholder={'Please write the payload here'}
 											className={classes.textField}
 											InputProps={{
@@ -1356,16 +1531,23 @@ const UploadOreditArcade = ({
 												setDisableDropdown(true);
 											}}
 											disabled={false}
-											value={gameOrientation}
+											value={form.game_orientation}
 											onChange={(e) => {
 												setDisableDropdown(true);
-												setGameOrientation(e.target.value);
-												// setMainCategoryLabelColor('#ffffff');
-												// setMainCategoryError('');
-												// if (uploadedFiles.length) {
-												// 	uploadedFiles.map((file) => handleDeleteFile(file.id));
-												// }
+												setForm((prev) => {
+													return { ...prev, game_orientation: e.target.value };
+												});
 											}}
+											// value={gameOrientation}
+											// onChange={(e) => {
+											// 	setDisableDropdown(true);
+											// 	setGameOrientation(e.target.value);
+											// 	// setMainCategoryLabelColor('#ffffff');
+											// 	// setMainCategoryError('');
+											// 	// if (uploadedFiles.length) {
+											// 	// 	uploadedFiles.map((file) => handleDeleteFile(file.id));
+											// 	// }
+											// }}
 											className={`${classes.select}`}
 											disableUnderline={true}
 											IconComponent={(props) => (
@@ -1448,11 +1630,18 @@ const UploadOreditArcade = ({
 												setDisableDropdown(true);
 											}}
 											disabled={false}
-											value={arcadeGameType}
+											value={form.arcade_game_type}
 											onChange={(e) => {
 												setDisableDropdown(true);
-												setArcadeGameType(e.target.value);
+												setForm((prev) => {
+													return { ...prev, arcade_game_type: e.target.value };
+												});
 											}}
+											// value={arcadeGameType}
+											// onChange={(e) => {
+											// 	setDisableDropdown(true);
+											// 	setArcadeGameType(e.target.value);
+											// }}
 											className={`${classes.select}`}
 											disableUnderline={true}
 											IconComponent={(props) => (
@@ -1532,8 +1721,15 @@ const UploadOreditArcade = ({
 														ANDROID
 													</h6>
 													<TextField
-														value={android}
-														onChange={(e) => setAndrioid(e.target.value)}
+														value={form.android}
+														onChange={(e) =>
+															setForm((prev) => {
+																return {
+																	...prev,
+																	android: e.target.value
+																};
+															})
+														}
 														placeholder={'Enter Andrioid'}
 														className={classes.textField}
 														multiline
@@ -1563,8 +1759,15 @@ const UploadOreditArcade = ({
 														IOS
 													</h6>
 													<TextField
-														value={ios}
-														onChange={(e) => setIos(e.target.value)}
+														value={form.ios}
+														onChange={(e) =>
+															setForm((prev) => {
+																return {
+																	...prev,
+																	ios: e.target.value
+																};
+															})
+														}
 														placeholder={'Enter IOS'}
 														className={classes.textField}
 														multiline
@@ -1598,8 +1801,15 @@ const UploadOreditArcade = ({
 														PLAY STORE
 													</h6>
 													<TextField
-														value={playStore}
-														onChange={(e) => setPlayStore(e.target.value)}
+														value={form.play_store}
+														onChange={(e) =>
+															setForm((prev) => {
+																return {
+																	...prev,
+																	play_store: e.target.value
+																};
+															})
+														}
 														placeholder={'Enter PLAY STORE'}
 														className={classes.textField}
 														multiline
@@ -1629,8 +1839,15 @@ const UploadOreditArcade = ({
 														APP STORE
 													</h6>
 													<TextField
-														value={appStore}
-														onChange={(e) => setAppStore(e.target.value)}
+														value={form.apple_store}
+														onChange={(e) =>
+															setForm((prev) => {
+																return {
+																	...prev,
+																	apple_store: e.target.value
+																};
+															})
+														}
 														placeholder={'Enter APP STORE'}
 														className={classes.textField}
 														multiline
@@ -1664,8 +1881,15 @@ const UploadOreditArcade = ({
 														PLAY STORE
 													</h6>
 													<TextField
-														value={playStore2}
-														onChange={(e) => setPlayStore2(e.target.value)}
+														value={form.play_store_deeplink}
+														onChange={(e) =>
+															setForm((prev) => {
+																return {
+																	...prev,
+																	play_store_deeplink: e.target.value
+																};
+															})
+														}
 														placeholder={'Enter PLAY STORE'}
 														className={classes.textField}
 														multiline
@@ -1695,8 +1919,15 @@ const UploadOreditArcade = ({
 														APP STORE
 													</h6>
 													<TextField
-														value={appStore2}
-														onChange={(e) => setAppStore2(e.target.value)}
+														value={form.apple_store_deeplink}
+														onChange={(e) =>
+															setForm((prev) => {
+																return {
+																	...prev,
+																	apple_store_deeplink: e.target.value
+																};
+															})
+														}
 														placeholder={'Enter APP STORE'}
 														className={classes.textField}
 														multiline
@@ -1738,8 +1969,15 @@ const UploadOreditArcade = ({
 
 												<div className={classes.titleContainer}>
 													<TextField
-														value={gameId}
-														onChange={(e) => setGameId(e.target.value)}
+														value={form.game_id}
+														onChange={(e) =>
+															setForm((prev) => {
+																return {
+																	...prev,
+																	game_id: e.target.value
+																};
+															})
+														}
 														placeholder={'Game ID'}
 														className={classes.textField}
 														multiline
@@ -1774,6 +2012,7 @@ const UploadOreditArcade = ({
 										button2={editArcade || editJogo ? true : false}
 										onClick={() => {
 											if (!deleteBtnStatus) {
+												//console.log('specific', specificGamesData.id);
 												deleteGame(specificGamesData?.id);
 											}
 										}}
@@ -1795,7 +2034,7 @@ const UploadOreditArcade = ({
 									disabled={
 										editArcade || editJogo
 											? editBtnDisabled
-											: addGameBtnDisabled
+											: !validateForm(form)
 									}
 									onClick={() => {
 										addSaveGameBtn();
@@ -1808,6 +2047,7 @@ const UploadOreditArcade = ({
 					</div>
 					{previewFile != null && (
 						<div ref={previewRef} className={classes.previewComponent}>
+							{console.log(previewFile, 'preview')}
 							<div className={classes.previewHeader}>
 								<Close
 									onClick={() => {
@@ -1825,7 +2065,9 @@ const UploadOreditArcade = ({
 								previewFile.type === 'video/mp4' ? (
 									<video
 										id={'my-video'}
-										poster={editJogo || editArcade ? previewFile.img : null}
+										poster={
+											editJogo || editArcade ? previewFile.media_url : null
+										}
 										className={classes.previewFile}
 										style={{
 											width: '100%',
@@ -1835,7 +2077,7 @@ const UploadOreditArcade = ({
 										}}
 										controls={true}
 									>
-										<source src={previewFile.img} />
+										<source src={previewFile.media_url} />
 									</video>
 								) : (editJogo || editArcade) && previewFile.type === 'video' ? (
 									<video
@@ -1852,11 +2094,11 @@ const UploadOreditArcade = ({
 										}}
 										controls={true}
 									>
-										<source src={previewFile.img} />
+										<source src={previewFile.media_url} />
 									</video>
 								) : (
 									<img
-										src={previewFile.img}
+										src={previewFile.media_url}
 										className={classes.previewFile}
 										style={{
 											width: '100%',
