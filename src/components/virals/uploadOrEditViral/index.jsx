@@ -267,7 +267,14 @@ const UploadOrEditViral = ({
 		setFileHeight(null);
 		setFileWidth(null);
 		setIsError({});
-		// setForm({});
+		setForm({
+			caption: '',
+			dropbox_url: '',
+			uploadedFiles: [],
+			labels: [],
+			show_likes: false,
+			show_comments: false
+		});
 		setValueComments(false);
 		setValueLikes(false);
 	};
@@ -297,6 +304,7 @@ const UploadOrEditViral = ({
 	};
 
 	const createViral = async (id, mediaFiles = []) => {
+		console.log(mediaFiles, 'media ');
 		setPostButtonStatus(true);
 		try {
 			const result = await axios.post(
@@ -305,10 +313,12 @@ const UploadOrEditViral = ({
 					caption: form.caption,
 					dropbox_url: form.dropbox_url,
 					media_url:
-						mediaFiles[0]?.media_url ||
-						mediaFiles[0]?.media_url?.split('cloudfront.net/')[1],
+						mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
+						mediaFiles[0]?.media_url,
 					file_name: mediaFiles[0]?.file_name,
-					thumbnail_url: mediaFiles[0]?.thumbnail_url,
+					thumbnail_url:
+						mediaFiles[0]?.thumbnail_url?.split('cloudfront.net/')[1] ||
+						mediaFiles[0]?.thumbnail_url,
 					height: fileHeight,
 					width: fileWidth,
 					user_data: {
