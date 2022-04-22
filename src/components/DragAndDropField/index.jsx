@@ -89,7 +89,7 @@ const DragAndDropField = ({
 												{isArticle && (
 													<>
 														<img
-															src={file.media_url}
+															src={file.media_url || file.img}
 															className={classes.fileThumbnail}
 															style={{
 																objectFit: 'contain',
@@ -112,7 +112,9 @@ const DragAndDropField = ({
 															/>
 															<video
 																id={'my-video'}
-																poster={isEdit ? file.media_url : null}
+																poster={
+																	isEdit ? file.media_url || file.img : null
+																}
 																className={classes.fileThumbnailPost}
 																style={{
 																	maxWidth: `${imageToResizeWidth}px`,
@@ -123,13 +125,13 @@ const DragAndDropField = ({
 																ref={videoRef}
 																onLoadedMetadata={onLoadedVideodata}
 															>
-																<source src={file.media_url} />
+																<source src={file.media_url || file.img} />
 															</video>
 														</>
 													) : (
 														<>
 															<img
-																src={file.media_url}
+																src={file.media_url || file.img}
 																className={classes.fileThumbnailPost}
 																style={{
 																	width: `${imageToResizeWidth}px`,
