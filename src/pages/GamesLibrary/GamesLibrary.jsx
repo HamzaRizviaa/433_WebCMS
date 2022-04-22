@@ -57,8 +57,6 @@ const GamesLibrary = () => {
 		(state) => state.GamesLibraryStore.totalRecords
 	);
 
-	console.log(totalRecords, 'totalRecords');
-
 	const noResultStatus = useSelector(
 		(state) => state.GamesLibraryStore.noResultStatus
 	);
@@ -323,8 +321,6 @@ const GamesLibrary = () => {
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			formatter: (content, row) => {
-				console.log(content, 'content media div');
-				console.log(row, 'media div');
 				return (
 					<div className={classes.mediaWrapper}>
 						<Tooltip

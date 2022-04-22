@@ -149,36 +149,42 @@ const UploadOreditArcade = ({
 		(state) => state.GamesLibraryStore.specificGameStatus
 	);
 
-	const keyBinding = (type) => {
-		const obj = {
-			uploadedFiles: [],
-			uploadedExplanationOrIcon: [],
-			title: '',
-			description: ''
-		};
-		if (type === 'jogo') {
-			return {
-				...obj,
-				time: '',
-				scoring: '',
-				objective: '',
-				payload: '',
-				orientation: '',
-				game_orientation: ''
-			};
-		} else {
-			return {
-				...obj,
-				android: '',
-				ios: '',
-				play_store: '',
-				apple_store: '',
-				play_store_deeplink: '',
-				apple_store_deeplink: ''
-			};
-		}
-	};
-	console.log(keyBinding, 'keyBinding');
+	// const keyBinding = (type, gameData) => {
+	// 	const obj = {
+	// 		title: gameData.title,
+	// 		description: gameData.description
+	// 	};
+	// 	if (type === 'jogo') {
+	// 		return {
+	// 			...obj,
+	// 			time: gameData.time,
+	// 			scoring: gameData.scoring,
+	// 			objective: gameData.objective,
+	// 			payload: gameData.payload,
+	// 			orientation: gameData.orientation,
+	// 			game_orientation: gameData.game_orientation
+	// 		};
+	// 	} else {
+	// 		if (gameData.arcade_game_type === 'Outside App') {
+	// 			return {
+	// 				...obj,
+	// 				android: gameData.package_id.android,
+	// 				ios: gameData.package_id.ios,
+	// 				play_store: gameData.store_url.play_store,
+	// 				apple_store: gameData.store_url.apple_store,
+	// 				play_store_deeplink: gameData.deep_link.android,
+	// 				apple_store_deeplink: gameData.deep_link.ios,
+	// 				arcade_game_type: gameData.arcade_game_type
+	// 			};
+	// 		} else {
+	// 			return {
+	// 				...obj,
+	// 				game_id: gameData.game_id,
+	// 				arcade_game_type: gameData.arcade_game_type
+	// 			};
+	// 		}
+	// 	}
+	// };
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -239,13 +245,9 @@ const UploadOreditArcade = ({
 								specificGamesData?.game_video?.url
 							}`
 						}
-					],
-
-					play_store_deeplink: specificGamesData?.deep_link?.android,
-					apple_store_deeplink: specificGamesData?.deep_link?.android
+					]
 				};
 			});
-			console.log(form, 'formkeys specificGamesDa;ta');
 			setFileWidth(specificGamesData?.game_image?.width);
 			setFileHeight(specificGamesData?.game_image?.height);
 			setFileWidth2(
@@ -320,6 +322,8 @@ const UploadOreditArcade = ({
 		}
 		// }
 	}, [specificGamesData]);
+
+	console.log(form, 'formkeys specificGamesData');
 
 	useEffect(() => {
 		validateForm(form);
@@ -429,7 +433,6 @@ const UploadOreditArcade = ({
 	};
 
 	const uploadFileToServer = async (uploadedFile) => {
-		console.log('uploadedFile file to server', uploadedFile);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
@@ -446,13 +449,11 @@ const UploadOreditArcade = ({
 
 			if (result?.data?.data?.video_thumbnail_url) {
 				const frame = captureVideoFrame('my-video', 'png');
-				console.log('inside THumb');
 				await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
 					headers: { 'Content-Type': 'image/png' }
 				});
 			}
 			if (result?.data?.data?.url) {
-				console.log('inside put');
 				const _result = await axios.put(
 					result?.data?.data?.url,
 					uploadedFile.file,
@@ -460,8 +461,6 @@ const UploadOreditArcade = ({
 						headers: { 'Content-Type': uploadedFile.mime_type }
 					}
 				);
-
-				console.log('_result', _result);
 
 				if (_result?.status === 200) {
 					const uploadResult = await axios.post(
@@ -519,7 +518,6 @@ const UploadOreditArcade = ({
 	const createGames = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
 
-		console.log(mediaFiles, 'mediaFiles in create game');
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/games/add-edit-game`,
@@ -974,8 +972,6 @@ const UploadOreditArcade = ({
 		videoOrientation,
 		gameOrientation
 	]);
-
-	console.log('Api KEys', specificGamesData);
 
 	return (
 		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
@@ -2047,7 +2043,6 @@ const UploadOreditArcade = ({
 					</div>
 					{previewFile != null && (
 						<div ref={previewRef} className={classes.previewComponent}>
-							{console.log(previewFile, 'preview')}
 							<div className={classes.previewHeader}>
 								<Close
 									onClick={() => {
