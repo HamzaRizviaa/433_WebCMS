@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Popper, Autocomplete } from '@mui/material';
@@ -52,9 +53,7 @@ const Labels = ({
 			value={selectedLabels}
 			onChange={(event, newValue) => {
 				setDisableDropdown(true);
-				event.preventDefault();
-				event.stopPropagation();
-				let newLabels = newValue.filter(
+				let newLabels = newValue?.filter(
 					(v, i, a) =>
 						a.findIndex(
 							(t) => t.name.toLowerCase() === v.name.toLowerCase()
@@ -77,7 +76,7 @@ const Labels = ({
 			renderInput={(params) => (
 				<TextField
 					{...params}
-					placeholder={selectedLabels.length ? ' ' : 'Select Label'}
+					placeholder={selectedLabels?.length > 0 ? ' ' : 'Select Label'}
 					className={classes.textFieldAuto}
 					value={extraLabel}
 					onChange={handleChangeExtraLabel}
@@ -86,6 +85,9 @@ const Labels = ({
 						className: classes.textFieldInput,
 						...params.InputProps
 					}}
+					// inputProps={{
+					// 	pattern: '[A-Za-z0-9]+'
+					// }}
 				/>
 			)}
 			renderOption={(props, option) => {

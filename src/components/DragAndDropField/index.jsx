@@ -43,6 +43,7 @@ const DragAndDropField = ({
 						className={classes.uploadedFilesContainer}
 					>
 						{uploadedFiles.map((file, index) => {
+							console.log(uploadedFiles, 'uploadedFiles');
 							return (
 								<Draggable
 									key={file.id}
@@ -67,7 +68,7 @@ const DragAndDropField = ({
 															<Union className={classes.playIcon} />
 															<div className={classes.fileThumbnail2} />
 															<video
-																src={file.img}
+																src={file.media_url}
 																style={{ display: 'none' }}
 																ref={videoRef}
 																onLoadedMetadata={onLoadedVideodata}
@@ -78,7 +79,7 @@ const DragAndDropField = ({
 															<MusicIcon className={classes.playIcon} />
 															<div className={classes.fileThumbnail2} />
 															<audio
-																src={file.img}
+																src={file.media_url}
 																style={{ display: 'none' }}
 																ref={videoRef}
 																onLoadedMetadata={onLoadedAudiodata}
@@ -88,7 +89,7 @@ const DragAndDropField = ({
 												{isArticle && (
 													<>
 														<img
-															src={file.img}
+															src={file.media_url || file.img}
 															className={classes.fileThumbnail}
 															style={{
 																objectFit: 'contain',
@@ -111,7 +112,9 @@ const DragAndDropField = ({
 															/>
 															<video
 																id={'my-video'}
-																poster={isEdit ? file.img : null}
+																poster={
+																	isEdit ? file.media_url || file.img : null
+																}
 																className={classes.fileThumbnailPost}
 																style={{
 																	maxWidth: `${imageToResizeWidth}px`,
@@ -122,13 +125,13 @@ const DragAndDropField = ({
 																ref={videoRef}
 																onLoadedMetadata={onLoadedVideodata}
 															>
-																<source src={file.img} />
+																<source src={file.media_url || file.img} />
 															</video>
 														</>
 													) : (
 														<>
 															<img
-																src={file.img}
+																src={file.media_url || file.img}
 																className={classes.fileThumbnailPost}
 																style={{
 																	width: `${imageToResizeWidth}px`,
@@ -141,7 +144,9 @@ const DragAndDropField = ({
 															/>
 														</>
 													))}
-												<p className={classes.fileName}>{file.fileName}</p>
+												<p className={classes.fileName}>
+													{file.fileName || file.file_name}
+												</p>
 											</div>
 											{isEdit || editPoll || editQuiz ? (
 												<div className={classes.filePreviewRight}>

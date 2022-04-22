@@ -63,7 +63,8 @@ export const viralLibararySlice = createSlice({
 		openUploadPost: false,
 		totalRecords: 0,
 		noResultStatus: false,
-		noResultStatusCalendar: false
+		noResultStatusCalendar: false,
+		specificViralStatus: ''
 	},
 	reducers: {
 		resetCalendarError: (state) => {
@@ -101,13 +102,16 @@ export const viralLibararySlice = createSlice({
 
 		[getSpecificViral.pending]: (state) => {
 			state.status = 'loading';
+			state.specificViralStatus = 'loading';
 		},
 		[getSpecificViral.fulfilled]: (state, action) => {
 			state.specificViral = action.payload;
 			state.status = 'success';
+			state.specificViralStatus = 'success';
 		},
 		[getSpecificViral.rejected]: (state) => {
 			state.status = 'failed';
+			state.specificViralStatus = 'failed';
 		}
 	}
 });

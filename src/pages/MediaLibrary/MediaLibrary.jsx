@@ -353,11 +353,16 @@ const MediaLibrary = () => {
 							title={
 								<img
 									className={
-										row.width === row.height
-											? classes.mediaIconPreview
-											: row.width > row.height
+										row.width > row.height + 200
 											? classes.virallandscapePreview
-											: classes.mediaIconPortraitPreview
+											: row.height > row.width + 200
+											? classes.mediaIconPortraitPreview
+											: classes.mediaIconPreview
+										// row.width === row.height
+										// 	? classes.mediaIconPreview
+										// 	: row.width > row.height
+										// 	? classes.virallandscapePreview
+										// 	: classes.mediaIconPortraitPreview
 									}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
 										row?.thumbnail_url ? row?.thumbnail_url : row?.media

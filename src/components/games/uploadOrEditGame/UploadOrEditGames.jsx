@@ -28,6 +28,7 @@ import { ReactComponent as Scoring } from '../../../assets/football.svg';
 import { ReactComponent as Objective } from '../../../assets/Cross.svg';
 import Four33Loader from '../../../assets/Loader_Yellow.gif';
 import { Tooltip, Fade } from '@mui/material';
+//import validateForm from '../../../utils/validateForm';
 
 const UploadOreditArcade = ({
 	heading1,
@@ -72,6 +73,28 @@ const UploadOreditArcade = ({
 	const [playStore2, setPlayStore2] = useState('');
 	const [appStore2, setAppStore2] = useState('');
 	const [isError, setIsError] = useState({});
+	// const [form, setForm] = useState({
+	// 	uploadedFiles: [],
+	// 	dropbox_url_1: '',
+	// 	orientation: '',
+	// 	uploadedExplanationOrIcon: [],
+	// 	dropbox_url_2: '',
+	// 	title: '',
+	// 	description: '',
+	// 	time: '',
+	// 	scoring: '',
+	// 	objective: '',
+	// 	payload: '',
+	// 	game_orientation: '',
+	// 	arcade_game_type: '',
+	// 	game_id: '',
+	// 	android: '',
+	// 	ios: '',
+	// 	play_store: '',
+	// 	apple_store: '',
+	// 	play_store_deeplink: '',
+	// 	apple_store_deeplink: '',
+	// });
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
 	const [fileWidth2, setFileWidth2] = useState(null);
@@ -87,7 +110,6 @@ const UploadOreditArcade = ({
 
 	const muiClasses = useStyles();
 	const dispatch = useDispatch();
-	console.log(fileHeight, fileWidth, fileWidth2, fileHeight2);
 
 	const specificGamesData = useSelector(
 		(state) => state.GamesLibraryStore.specificGame
@@ -267,7 +289,6 @@ const UploadOreditArcade = ({
 	};
 
 	const uploadFileToServer = async (uploadedFile) => {
-		console.log('uploadedFile file to server', uploadedFile);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`,
@@ -284,13 +305,12 @@ const UploadOreditArcade = ({
 
 			if (result?.data?.data?.video_thumbnail_url) {
 				const frame = captureVideoFrame('my-video', 'png');
-				console.log('inside THumb');
+
 				await axios.put(result?.data?.data?.video_thumbnail_url, frame.blob, {
 					headers: { 'Content-Type': 'image/png' }
 				});
 			}
 			if (result?.data?.data?.url) {
-				console.log('inside put');
 				const _result = await axios.put(
 					result?.data?.data?.url,
 					uploadedFile.file,
@@ -298,8 +318,6 @@ const UploadOreditArcade = ({
 						headers: { 'Content-Type': uploadedFile.mime_type }
 					}
 				);
-
-				console.log('_result', _result);
 
 				if (_result?.status === 200) {
 					const uploadResult = await axios.post(
@@ -357,7 +375,6 @@ const UploadOreditArcade = ({
 	const createGames = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
 
-		console.log(mediaFiles, 'mediaFiles in create game');
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/games/add-edit-game`,
@@ -518,6 +535,10 @@ const UploadOreditArcade = ({
 		setPlayStore2('');
 		setAppStore2('');
 		setIsError({});
+		setFileHeight(null);
+		setFileWidth(null);
+		setFileHeight2(null);
+		setFileWidth2(null);
 	};
 
 	const validatePostBtn = () => {
@@ -814,8 +835,6 @@ const UploadOreditArcade = ({
 		gameOrientation
 	]);
 
-	console.log('Api KEys', specificGamesData);
-
 	return (
 		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
 			<Slide in={true} direction='up' {...{ timeout: 400 }}>
@@ -847,8 +866,8 @@ const UploadOreditArcade = ({
 								isArticle
 								imgEl={imgRef}
 								imageOnload={() => {
-									setFileWidth(imgRef.current.naturalWidth);
-									setFileHeight(imgRef.current.naturalHeight);
+									setFileWidth(imgRef?.current?.naturalWidth);
+									setFileHeight(imgRef?.current?.naturalHeight);
 								}}
 							/>
 							{!uploadedFiles.length && (
@@ -1755,7 +1774,6 @@ const UploadOreditArcade = ({
 										button2={editArcade || editJogo ? true : false}
 										onClick={() => {
 											if (!deleteBtnStatus) {
-												//console.log('specific', specificGamesData.id);
 												deleteGame(specificGamesData?.id);
 											}
 										}}
@@ -1790,7 +1808,6 @@ const UploadOreditArcade = ({
 					</div>
 					{previewFile != null && (
 						<div ref={previewRef} className={classes.previewComponent}>
-							{console.log(previewFile, 'preview')}
 							<div className={classes.previewHeader}>
 								<Close
 									onClick={() => {
@@ -1878,16 +1895,3 @@ UploadOreditArcade.propTypes = {
 };
 
 export default UploadOreditArcade;
-
-// specificGamesData?.game_image_file_name !==
-// 	uploadedFiles[0]?.fileName?.trim() &&
-// (specificGamesData?.game_video_file_name ||
-// 	specificGamesData?.game_icon_file_name) ===
-// 	uploadedExplanationOrIcon[0]?.fileName?.trim()
-// 	? (uploadedFiles[0], uploadedExplanationOrIcon[0])
-// 	: (specificGamesData?.game_video_file_name ||
-// 			specificGamesData?.game_icon_file_name) !==
-// 	  uploadedExplanationOrIcon[0]?.fileName?.trim()
-// 	? uploadedExplanationOrIcon[0]
-// 	: uploadedFiles[0],
-// 	uploadedExplanationOrIcon[0];

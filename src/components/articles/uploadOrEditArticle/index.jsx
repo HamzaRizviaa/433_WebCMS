@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditArticle.module.scss';
@@ -20,6 +21,8 @@ import Close from '@material-ui/icons/Close';
 import { TextField } from '@material-ui/core';
 import Slide from '@mui/material/Slide';
 import checkFileSize from '../../../utils/validateFileSize';
+import validateForm from '../../../utils/validateForm';
+import PrimaryLoader from '../../PrimaryLoader';
 //tinymce
 import { Editor } from '@tinymce/tinymce-react';
 import 'tinymce/tinymce';
@@ -28,9 +31,7 @@ import 'tinymce/themes/silver';
 import 'tinymce/plugins/paste';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/image';
-import 'tinymce/plugins/media';
 import 'tinymce/plugins/searchreplace';
-import 'tinymce/plugins/emoticons';
 import 'tinymce/plugins/emoticons/js/emojiimages.min.js';
 import 'tinymce/plugins/hr';
 import 'tinymce/plugins/anchor';
@@ -79,6 +80,14 @@ const UploadOrEditViral = ({
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 
+	const [form, setForm] = useState({
+		title: '',
+		description: '',
+		dropbox_url: '',
+		uploadedFiles: [],
+		labels: []
+	});
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png',
@@ -87,11 +96,14 @@ const UploadOrEditViral = ({
 		});
 
 	const labels = useSelector((state) => state.postLibrary.labels);
-	const specificArticle = useSelector(
-		(state) => state.ArticleLibraryStore.specificArticle
+	const { specificArticle, specificArticleStatus } = useSelector(
+		(state) => state.ArticleLibraryStore
 	);
 
 	const dispatch = useDispatch();
+
+	//unused errors
+	console.log(editorText, 'editorText');
 
 	useEffect(() => {
 		if (specificArticle) {
@@ -101,25 +113,51 @@ const UploadOrEditViral = ({
 					_labels.push({ id: -1, name: label })
 				);
 				setSelectedLabels(_labels);
+				setForm((prev) => {
+					return {
+						...prev,
+						labels: _labels
+					};
+				});
 			}
-			setArticleTitle(specificArticle?.title);
-			setDropboxLink(specificArticle?.dropbox_url);
-			setEditorTextChecker(specificArticle.description);
+			setForm((prev) => {
+				return {
+					...prev,
+					title: specificArticle?.title,
+					dropbox_url: specificArticle?.dropbox_url,
+					uploadedFiles: [
+						{
+							id: makeid(10),
+							file_name: specificArticle?.file_name,
+							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificArticle?.image}`,
+							type: 'image'
+						}
+					],
+					description:
+						specificArticle?.length === 0
+							? ''
+							: tinyMCE.activeEditor?.setContent(specificArticle?.description)
+				};
+			});
+
+			setEditorTextChecker(specificArticle?.description);
 			setFileHeight(specificArticle?.height);
 			setFileWidth(specificArticle?.width);
-			specificArticle?.length === 0
-				? setEditorText('')
-				: setEditorText(
-						tinyMCE.activeEditor?.setContent(specificArticle?.description)
-				  );
-			setUploadedFiles([
-				{
-					id: makeid(10),
-					fileName: specificArticle?.file_name,
-					img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificArticle?.image}`,
-					type: 'image'
-				}
-			]);
+			// setArticleTitle(specificArticle?.title);
+			// setDropboxLink(specificArticle?.dropbox_url);
+			// specificArticle?.length === 0
+			// 	? setEditorText('')
+			// 	: setEditorText(
+			// 			tinyMCE.activeEditor?.setContent(specificArticle?.description)
+			// 	  );
+			// setUploadedFiles([
+			// 	{
+			// 		id: makeid(10),
+			// 		file_name: specificArticle?.file_name,
+			// 		media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificArticle?.image}`,
+			// 		type: 'image'
+			// 	}
+			// ]);
 		}
 	}, [specificArticle]);
 
@@ -175,48 +213,62 @@ const UploadOrEditViral = ({
 	};
 
 	useEffect(() => {
+		validateForm(form);
+	}, [form]);
+
+	useEffect(() => {
 		if (acceptedFiles?.length) {
 			setIsError({});
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
 					id: id,
-					fileName: file.name,
-					img: URL.createObjectURL(file),
+					file_name: file.name,
+					media_url: URL.createObjectURL(file),
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
 					type: 'image'
 				};
 			});
-			setUploadedFiles([...uploadedFiles, ...newFiles]);
+			setForm((prev) => {
+				return {
+					...prev,
+					uploadedFiles: [...form.uploadedFiles, ...newFiles]
+				};
+			});
 		}
 	}, [acceptedFiles]);
 
 	const handleEditorChange = () => {
 		const editorTextContent = tinymce?.activeEditor?.getContent();
+		setForm((prev) => {
+			return { ...prev, description: editorTextContent };
+		});
 		setEditorText(editorTextContent);
 		setEditorTextChecker(editorTextContent); // to check yellow button condition
 	};
 
 	const createArticle = async (id, mediaFiles = []) => {
+		console.log(mediaFiles, 'mediaFiles');
 		setPostButtonStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/article/post-article`,
 				{
-					title: articleTitle,
-					image:
-						mediaFiles[0]?.media_url ||
-						mediaFiles[0].img.split('cloudfront.net/')[1],
-					file_name: mediaFiles[0]?.file_name || mediaFiles[0]?.fileName,
+					title: form.title,
 					height: fileHeight,
 					width: fileWidth,
-					description: editorText,
-					dropbox_url: dropboxLink ? dropboxLink : '',
+					description: form.description,
+					dropbox_url: form.dropbox_url ? form.dropbox_url : '',
+					file_name: mediaFiles[0]?.file_name,
+					image:
+						mediaFiles[0]?.media_url.split('cloudfront.net/')[1] ||
+						mediaFiles[0]?.media_url,
+
 					...(isEdit && id ? { article_id: id } : {}),
-					...(!isEdit && selectedLabels.length
-						? { labels: [...selectedLabels] }
+					...(!isEdit && form.labels.length
+						? { labels: [...form.labels] }
 						: {}), // can't edit
 
 					user_data: {
@@ -271,20 +323,33 @@ const UploadOrEditViral = ({
 		setFileHeight(null);
 		setFileWidth(null);
 		setIsError({});
+		setForm({
+			title: '',
+			description: '',
+			dropbox_url: '',
+			uploadedFiles: [],
+			labels: []
+		});
 	};
 
 	const handleDeleteFile = (id) => {
-		setUploadedFiles((uploadedFiles) =>
-			uploadedFiles.filter((file) => file.id !== id)
-		);
+		// setUploadedFiles((uploadedFiles) =>
+		// 	uploadedFiles.filter((file) => file.id !== id)
+		// );
+		setForm((prev) => {
+			return {
+				...prev,
+				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
+			};
+		});
 	};
 
 	const validateArticleBtn = () => {
 		setIsError({
-			articleTitle: !articleTitle,
-			uploadedFiles: uploadedFiles.length < 1,
-			selectedLabels: selectedLabels.length < 10,
-			editorText: !editorText
+			articleTitle: !form.title,
+			uploadedFiles: form.uploadedFiles.length < 1,
+			selectedLabels: form.labels.length < 10,
+			editorText: !form.description
 		});
 		setTimeout(() => {
 			setIsError({});
@@ -352,58 +417,54 @@ const UploadOrEditViral = ({
 					}
 				}
 			);
+			setIsLoading(false);
 			return result?.data?.message;
 		} catch (error) {
 			console.log(error, 'Error handle duplicate');
-
+			setIsLoading(false);
 			return null;
 		}
 	};
 
-	const postBtnDisabled =
-		!uploadedFiles.length ||
-		!articleTitle ||
-		postButtonStatus ||
-		selectedLabels.length < 10 ||
-		!editorText;
+	// const postBtnDisabled =
+	// 	!uploadedFiles.length ||
+	// 	!articleTitle ||
+	// 	postButtonStatus ||
+	// 	selectedLabels.length < 10 ||
+	// 	!editorText;
 
 	const editorTextCheckerTrimmed = editorTextChecker?.replace(/&nbsp;/g, ' ');
 	const specificArticleTextTrimmed = specificArticle?.description?.replace(
 		/&nbsp;/g,
 		' '
-	);
+	); // api response
 
 	useEffect(() => {
 		if (specificArticle) {
 			setEditBtnDisabled(
 				postButtonStatus ||
-					!uploadedFiles.length ||
-					!articleTitle ||
-					(specificArticle?.file_name === uploadedFiles[0]?.fileName &&
-						specificArticle?.title?.trim() === articleTitle?.trim() &&
-						specificArticle?.dropbox_url?.trim() === dropboxLink.trim() &&
-						specificArticleTextTrimmed === editorTextCheckerTrimmed?.trim())
+					!form.uploadedFiles?.length ||
+					!form.title ||
+					!form.description ||
+					(specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
+						specificArticle?.title?.trim() === form.title?.trim() &&
+						specificArticle?.dropbox_url?.trim() === form.dropbox_url.trim() &&
+						specificArticleTextTrimmed === editorTextCheckerTrimmed)
 			);
 		}
-	}, [
-		specificArticle,
-		articleTitle,
-		uploadedFiles,
-		editorTextChecker,
-		editorText,
-		dropboxLink
-	]);
+	}, [specificArticle, editorTextChecker, form]);
 
 	const handleAddSaveBtn = async () => {
-		if (postBtnDisabled || editBtnDisabled) {
+		if (!validateForm(form) || editBtnDisabled) {
 			validateArticleBtn();
 		} else {
 			setPostButtonStatus(true);
 			setIsLoading(true);
 			if (isEdit) {
-				if (specificArticle?.title?.trim() !== articleTitle?.trim()) {
+				if (specificArticle?.title?.trim() !== form.title?.trim()) {
+					console.log(form.title, 'title caption');
 					if (
-						(await handleTitleDuplicate(articleTitle)) ===
+						(await handleTitleDuplicate(form.title)) ===
 						'The Title Already Exist'
 						// 	200 &&
 						// articleTitle !== specificArticle?.title
@@ -417,7 +478,7 @@ const UploadOrEditViral = ({
 						return;
 					}
 				}
-				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
 					if (_file.file) {
 						return await uploadFileToServer(_file, 'articleLibrary');
 					} else {
@@ -434,8 +495,7 @@ const UploadOrEditViral = ({
 					});
 			} else {
 				if (
-					(await handleTitleDuplicate(articleTitle)) ===
-					'The Title Already Exist'
+					(await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
 				) {
 					// setArticleTitleColor('#ff355a');
 					// setArticleTitleError('This title already exists');
@@ -450,7 +510,7 @@ const UploadOrEditViral = ({
 					return;
 				}
 				setIsLoading(true);
-				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
 					return uploadFileToServer(_file, 'articleLibrary');
 				});
 
@@ -470,8 +530,8 @@ const UploadOrEditViral = ({
 			open={open}
 			handleClose={() => {
 				handleClose();
-				if (uploadedFiles.length && !isEdit) {
-					uploadedFiles.map((file) => handleDeleteFile(file.id));
+				if (form.uploadedFiles.length && !isEdit) {
+					form.uploadedFiles.map((file) => handleDeleteFile(file.id));
 				}
 			}}
 			title={title}
@@ -485,7 +545,7 @@ const UploadOrEditViral = ({
 			edit={isEdit}
 			article={true}
 		>
-			<LoadingOverlay active={isLoading} spinner text='Loading...'>
+			<LoadingOverlay active={isLoading} spinner={<PrimaryLoader />}>
 				<Slide in={true} direction='up' {...{ timeout: 400 }}>
 					<div
 						className={`${
@@ -494,6 +554,7 @@ const UploadOrEditViral = ({
 								: classes.contentWrapper
 						}`}
 					>
+						{specificArticleStatus === 'loading' ? <PrimaryLoader /> : <></>}
 						<div
 							className={classes.contentWrapperNoPreview}
 							style={{ width: previewFile != null ? '60%' : 'auto' }}
@@ -501,7 +562,7 @@ const UploadOrEditViral = ({
 							<div>
 								<h5>{heading1}</h5>
 								<DragAndDropField
-									uploadedFiles={uploadedFiles}
+									uploadedFiles={form.uploadedFiles}
 									// isEdit={isEdit}
 									handleDeleteFile={handleDeleteFile}
 									setPreviewBool={setPreviewBool}
@@ -514,7 +575,7 @@ const UploadOrEditViral = ({
 									}}
 								/>
 
-								{!uploadedFiles.length && (
+								{!form.uploadedFiles.length && (
 									<section
 										className={classes.dropZoneContainer}
 										style={{
@@ -545,8 +606,12 @@ const UploadOrEditViral = ({
 								<div className={classes.dropBoxUrlContainer}>
 									<h6>DROPBOX URL</h6>
 									<TextField
-										value={dropboxLink}
-										onChange={(e) => setDropboxLink(e.target.value)}
+										value={form.dropbox_url}
+										onChange={(e) =>
+											setForm((prev) => {
+												return { ...prev, dropbox_url: e.target.value };
+											})
+										}
 										placeholder={'Please drop the dropbox URL here'}
 										className={classes.textField}
 										multiline
@@ -575,22 +640,25 @@ const UploadOrEditViral = ({
 										<h6
 											style={{
 												color:
-													articleTitle?.length >= 25 &&
-													articleTitle?.length <= 27
+													form.title?.length >= 25 && form.title?.length <= 27
 														? 'pink'
-														: articleTitle?.length === 28
+														: form.title?.length === 28
 														? 'red'
 														: 'white'
 											}}
 										>
-											{articleTitle?.length}/28
+											{form.title?.length}/28
 										</h6>
 									</div>
 
 									<TextField
 										// disabled={isEdit}
-										value={articleTitle}
-										onChange={(e) => setArticleTitle(e.target.value)}
+										value={form.title}
+										onChange={(e) =>
+											setForm((prev) => {
+												return { ...prev, title: e.target.value };
+											})
+										}
 										placeholder={'Please write your title here'}
 										className={classes.textField}
 										InputProps={{
@@ -626,17 +694,21 @@ const UploadOrEditViral = ({
 									<Labels
 										isEdit={isEdit}
 										setDisableDropdown={setDisableDropdown}
-										selectedLabels={selectedLabels}
-										setSelectedLabels={setSelectedLabels}
+										selectedLabels={form.labels}
 										LabelsOptions={postLabels}
 										extraLabel={extraLabel}
 										handleChangeExtraLabel={handleChangeExtraLabel}
+										setSelectedLabels={(newVal) => {
+											setForm((prev) => {
+												return { ...prev, labels: [...newVal] };
+											});
+										}}
 									/>
 								</div>
 								<p className={classes.mediaError}>
 									{isError.selectedLabels
 										? `You need to add  ${
-												10 - selectedLabels.length
+												10 - form.labels.length
 										  }  more labels in order to post`
 										: ''}
 								</p>
@@ -661,11 +733,12 @@ const UploadOrEditViral = ({
 												contextmenu: false,
 												setup: function (editor) {
 													editor.on('init', function () {
-														editorText;
+														// editorText;
+														form.description;
 													});
 												},
 												content_style:
-													"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white  }; ",
+													"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white; line-height:1  }; ",
 
 												branding: false,
 												statusbar: true,
@@ -815,8 +888,7 @@ const UploadOrEditViral = ({
 													},
 													insert: {
 														title: 'Insert',
-														items:
-															'image link media charmap emoticons hr anchor insertdatetime'
+														items: 'image link charmap hr anchor insertdatetime'
 													},
 													format: {
 														title: 'Format',
@@ -830,15 +902,14 @@ const UploadOrEditViral = ({
 												},
 												plugins: [
 													'lists advlist link image anchor',
-													'searchreplace  emoticons hr visualblocks fullscreen',
-													'insertdatetime media table paste wordcount  charmap textcolor colorpicker'
+													'searchreplace  hr visualblocks fullscreen',
+													'insertdatetime table paste wordcount  charmap textcolor colorpicker'
 												],
 
 												toolbar:
 													'undo redo  bold italic underline strikethrough fontsizeselect | ' +
 													'alignleft aligncenter ' +
-													'alignright alignjustify | bullist numlist | ' +
-													'emoticons'
+													'alignright alignjustify | bullist numlist | '
 											}}
 											onEditorChange={() => handleEditorChange()}
 											onMouseEnter={() => setDisableDropdown(false)}
@@ -872,7 +943,7 @@ const UploadOrEditViral = ({
 
 								<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 									<Button
-										disabled={isEdit ? editBtnDisabled : postBtnDisabled}
+										disabled={isEdit ? editBtnDisabled : !validateForm(form)}
 										onClick={() => handleAddSaveBtn()}
 										text={buttonText}
 									/>
@@ -894,7 +965,7 @@ const UploadOrEditViral = ({
 								</div>
 								<div>
 									<img
-										src={previewFile.img}
+										src={previewFile.media_url}
 										className={classes.previewFile}
 										style={{
 											width: `100%`,

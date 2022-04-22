@@ -225,11 +225,11 @@ const ViralLibrary = () => {
 										autoPlay
 										muted
 										className={
-											row.width === row.height
-												? classes.mediaIconPreview
-												: row.width > row.height
+											row.width > row.height + 200
 												? classes.virallandscapePreview
-												: classes.mediaIconPortraitPreview
+												: row.height > row.width + 200
+												? classes.mediaIconPortraitPreview
+												: classes.mediaIconPreview
 										}
 										controls={true}
 									>

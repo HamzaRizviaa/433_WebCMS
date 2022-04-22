@@ -18,6 +18,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { getLocalStorageDetails } from '../../../utils';
 import { toast } from 'react-toastify';
+import PrimaryLoader from '../../PrimaryLoader';
 import axios from 'axios';
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
@@ -54,6 +55,8 @@ export default function QuizResults({ handleClose, page, type }) {
 	const participants = useSelector(
 		(state) => state.questionLibrary.questionResultParticipant
 	);
+
+	const { questionEditStatus } = useSelector((state) => state.questionLibrary);
 
 	const sortKeysMapping = {
 		username: 'username',
@@ -241,6 +244,7 @@ export default function QuizResults({ handleClose, page, type }) {
 
 	return (
 		<div>
+			{questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>}
 			<div className={classes.QuizQuestion}>
 				{editQuestionResultDetail.question}
 			</div>

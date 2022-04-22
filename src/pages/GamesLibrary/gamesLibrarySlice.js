@@ -13,6 +13,7 @@ export const getAllGames = createAsyncThunk(
 		endDate,
 		fromCalendar = false
 	}) => {
+		console.log(page, 'page');
 		let endPoint = `games/all-games?limit=20&page=1`;
 		if (page) {
 			endPoint = `games/all-games?limit=20&page=${page}`;

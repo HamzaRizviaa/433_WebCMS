@@ -40,7 +40,8 @@ export const topBannerSlice = createSlice({
 	name: 'topBanner',
 	initialState: {
 		content: [],
-		allBanners: []
+		allBanners: [],
+		getBannerStatus: ''
 	},
 	reducers: {
 		resetBanner: (state) => {
@@ -60,12 +61,15 @@ export const topBannerSlice = createSlice({
 		},
 		[getAllBanners.pending]: (state) => {
 			state.status = 'pending';
+			state.getBannerStatus = 'loading';
 		},
 		[getAllBanners.fulfilled]: (state, action) => {
 			state.allBanners = action.payload;
+			state.getBannerStatus = 'success';
 		},
 		[getAllBanners.rejected]: (state) => {
 			state.status = 'failed';
+			state.getBannerStatus = 'failed';
 		}
 	}
 });
