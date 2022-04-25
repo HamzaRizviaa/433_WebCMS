@@ -503,16 +503,16 @@ const UploadOreditArcade = ({
 					//arcade
 					game_id: form.game_id,
 					package_id: {
-						android: form.android,
-						ios: form.ios
+						android: form.package_id.android,
+						ios: form.package_id.ios
 					},
 					store_url: {
-						play_store: form.play_store,
-						apple_store: form.apple_store
+						play_store: form.store_url.play_store,
+						apple_store: form.store_url.apple_store
 					},
 					deep_link: {
-						android: form.play_store_deeplink,
-						ios: form.apple_store_deeplink
+						android: form.deep_link.android,
+						ios: form.deep_link.ios
 					},
 					...((editArcade || editJogo) && id ? { edit_game_id: id } : {})
 				},
@@ -775,7 +775,6 @@ const UploadOreditArcade = ({
 		}
 	};
 
-	console.log(form?.uploadedFiles[0]?.file, 'file');
 	useEffect(() => {
 		if (specificGamesData) {
 			setEditBtnDisabled(
