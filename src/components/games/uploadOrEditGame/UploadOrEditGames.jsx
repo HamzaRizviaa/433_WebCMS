@@ -79,7 +79,8 @@ const UploadOreditArcade = ({
 		uploadedExplanationOrIcon: [],
 		dropbox_urls: {
 			image: '',
-			video_icon: '' // same for video and icon
+			video: '',
+			icon: ''
 		},
 		orientation: '',
 		title: '',
@@ -480,7 +481,7 @@ const UploadOreditArcade = ({
 							url:
 								mediaFiles[1].media_url.split('cloudfront.net/')[1] ||
 								mediaFiles[1]?.media_url,
-							dropbox_url: form.dropbox_urls.video_icon,
+							dropbox_url: form.dropbox_urls.video,
 							file_name: mediaFiles[1]?.file_name, //mediaFiles[1]?.file_name || mediaFiles[1]?.file_name,
 							width: fileWidth2,
 							height: fileHeight2
@@ -489,7 +490,7 @@ const UploadOreditArcade = ({
 							url:
 								mediaFiles[1].media_url.split('cloudfront.net/')[1] ||
 								mediaFiles[1]?.media_url,
-							dropbox_url: form.dropbox_urls.video_icon,
+							dropbox_url: form.dropbox_urls.icon,
 							file_name: mediaFiles[1]?.file_name,
 							width: fileWidth2,
 							height: fileHeight2
@@ -790,7 +791,11 @@ const UploadOreditArcade = ({
 								specificGamesData?.payload === form?.payload?.trim() &&
 								specificGamesData?.game_orientation ===
 									form?.game_orientation &&
-								specificGamesData?.orientation === form?.orientation)
+								specificGamesData?.orientation === form?.orientation &&
+								specificGamesData?.dropbox_urls?.image?.trim() ===
+									form?.dropbox_urls?.image?.trim() &&
+								specificGamesData?.dropbox_urls?.video?.trim() ===
+									form?.dropbox_urls?.video?.trim())
 					: type === 'arcade' && form.arcade_game_type === 'Outside App'
 					? validateGamesForm(type, form, postButtonStatus) ||
 					  (!form?.uploadedFiles[0]?.file &&
@@ -809,14 +814,22 @@ const UploadOreditArcade = ({
 							specificGamesData?.deep_link?.android ===
 								form?.deep_link?.android?.trim() &&
 							specificGamesData?.deep_link?.ios ===
-								form?.deep_link?.ios?.trim())
+								form?.deep_link?.ios?.trim() &&
+							specificGamesData?.dropbox_urls?.image?.trim() ===
+								form?.dropbox_urls?.image?.trim() &&
+							specificGamesData?.dropbox_urls?.icon?.trim() ===
+								form?.dropbox_urls?.icon?.trim())
 					: validateGamesForm(type, form, postButtonStatus) ||
 					  (!form?.uploadedFiles[0]?.file &&
 							!form?.uploadedExplanationOrIcon[0]?.file &&
 							specificGamesData?.title === form?.title?.trim() &&
 							specificGamesData?.description === form?.description?.trim() &&
 							specificGamesData?.arcade_game_type === form?.arcade_game_type &&
-							specificGamesData?.game_id === form?.game_id.trim())
+							specificGamesData?.game_id === form?.game_id.trim() &&
+							specificGamesData?.dropbox_urls?.image?.trim() ===
+								form?.dropbox_urls?.image?.trim() &&
+							specificGamesData?.dropbox_urls?.icon?.trim() ===
+								form?.dropbox_urls?.icon?.trim())
 			);
 		}
 	}, [specificGamesData, form]);
@@ -890,7 +903,10 @@ const UploadOreditArcade = ({
 										setForm((prev) => {
 											return {
 												...prev,
-												dropbox_urls: { image: e.target.value }
+												dropbox_urls: {
+													...form.dropbox_urls,
+													image: e.target.value
+												}
 											};
 										})
 									}
@@ -1082,12 +1098,21 @@ const UploadOreditArcade = ({
 							<div className={classes.titleContainer}>
 								<h6>DROPBOX URL</h6>
 								<TextField
-									value={form?.dropbox_urls?.video_icon}
+									value={
+										type === 'jogo'
+											? form?.dropbox_urls?.video
+											: form?.dropbox_urls?.icon
+									}
 									onChange={(e) =>
 										setForm((prev) => {
 											return {
 												...prev,
-												dropbox_urls: { video_icon: e.target.value }
+												dropbox_urls: {
+													...form.dropbox_urls,
+													...(type === 'jogo'
+														? { video: e.target.value }
+														: { icon: e.target.value })
+												}
 											};
 										})
 									}
@@ -1571,7 +1596,7 @@ const UploadOreditArcade = ({
 																return {
 																	...prev,
 																	package_id: {
-																		...prev,
+																		...form.package_id,
 																		android: e.target.value
 																	}
 																};
@@ -1611,7 +1636,10 @@ const UploadOreditArcade = ({
 															setForm((prev) => {
 																return {
 																	...prev,
-																	package_id: { ios: e.target.value }
+																	package_id: {
+																		...form.package_id,
+																		ios: e.target.value
+																	}
 																};
 															})
 														}
@@ -1653,7 +1681,10 @@ const UploadOreditArcade = ({
 															setForm((prev) => {
 																return {
 																	...prev,
-																	store_url: { play_store: e.target.value }
+																	store_url: {
+																		...form.store_url,
+																		play_store: e.target.value
+																	}
 																};
 															})
 														}
@@ -1691,7 +1722,10 @@ const UploadOreditArcade = ({
 															setForm((prev) => {
 																return {
 																	...prev,
-																	store_url: { apple_store: e.target.value }
+																	store_url: {
+																		...form.store_url,
+																		apple_store: e.target.value
+																	}
 																};
 															})
 														}
@@ -1733,7 +1767,10 @@ const UploadOreditArcade = ({
 															setForm((prev) => {
 																return {
 																	...prev,
-																	deep_link: { android: e.target.value }
+																	deep_link: {
+																		...form.deep_link,
+																		android: e.target.value
+																	}
 																};
 															})
 														}
@@ -1771,7 +1808,10 @@ const UploadOreditArcade = ({
 															setForm((prev) => {
 																return {
 																	...prev,
-																	deep_link: { ios: e.target.value }
+																	deep_link: {
+																		...form.deep_link,
+																		ios: e.target.value
+																	}
 																};
 															})
 														}
