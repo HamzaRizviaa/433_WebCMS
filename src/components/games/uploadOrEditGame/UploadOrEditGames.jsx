@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classes from './_uploadOrEditGames.module.scss';
@@ -45,6 +46,46 @@ const UploadOreditArcade = ({
 	page,
 	handleClose
 }) => {
+	// const keyBinding = (type = 'jogo', gameData, outSideApp) => {
+	// 	const obj = {
+	// 		title: gameData?.title || '',
+	// 		description: gameData?.description || ''
+	// 	};
+	// 	if (type === 'jogo') {
+	// 		return {
+	// 			...obj,
+	// 			time: gameData?.time || '',
+	// 			scoring: gameData?.scoring || '',
+	// 			objective: gameData?.objective || '',
+	// 			payload: gameData?.payload || '',
+	// 			orientation: gameData?.orientation || '',
+	// 			game_orientation: gameData?.game_orientation || ''
+	// 		};
+	// 	} else {
+	// 		if (
+	// 			gameData?.arcade_game_type === 'Outside App' ||
+	// 			outSideApp === 'Outside App'
+	// 		) {
+	// 			return {
+	// 				...obj,
+	// 				android: gameData?.package_id.android || '',
+	// 				ios: gameData?.package_id.ios || '',
+	// 				play_store: gameData?.store_url.play_store || '',
+	// 				apple_store: gameData?.store_url.apple_store || '',
+	// 				play_store_deeplink: gameData?.deep_link.android || '',
+	// 				apple_store_deeplink: gameData?.deep_link.ios || '',
+	// 				arcade_game_type: gameData?.arcade_game_type || ''
+	// 			};
+	// 		} else {
+	// 			return {
+	// 				...obj,
+	// 				game_id: gameData?.game_id || '',
+	// 				arcade_game_type: gameData?.arcade_game_type || ''
+	// 			};
+	// 		}
+	// 	}
+	// };
+
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
@@ -149,43 +190,6 @@ const UploadOreditArcade = ({
 		(state) => state.GamesLibraryStore.specificGameStatus
 	);
 
-	// const keyBinding = (type, gameData) => {
-	// 	const obj = {
-	// 		title: gameData.title,
-	// 		description: gameData.description
-	// 	};
-	// 	if (type === 'jogo') {
-	// 		return {
-	// 			...obj,
-	// 			time: gameData.time,
-	// 			scoring: gameData.scoring,
-	// 			objective: gameData.objective,
-	// 			payload: gameData.payload,
-	// 			orientation: gameData.orientation,
-	// 			game_orientation: gameData.game_orientation
-	// 		};
-	// 	} else {
-	// 		if (gameData.arcade_game_type === 'Outside App') {
-	// 			return {
-	// 				...obj,
-	// 				android: gameData.package_id.android,
-	// 				ios: gameData.package_id.ios,
-	// 				play_store: gameData.store_url.play_store,
-	// 				apple_store: gameData.store_url.apple_store,
-	// 				play_store_deeplink: gameData.deep_link.android,
-	// 				apple_store_deeplink: gameData.deep_link.ios,
-	// 				arcade_game_type: gameData.arcade_game_type
-	// 			};
-	// 		} else {
-	// 			return {
-	// 				...obj,
-	// 				game_id: gameData.game_id,
-	// 				arcade_game_type: gameData.arcade_game_type
-	// 			};
-	// 		}
-	// 	}
-	// };
-
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg, .jpg, .png',
@@ -208,6 +212,51 @@ const UploadOreditArcade = ({
 		if (type) {
 			let _type = type.split('/');
 			return _type && _type[1];
+		}
+	};
+
+	const validateGamesForm = (type, form) => {
+		if (type === 'jogo') {
+			console.log(
+				Object.keys({
+					title: !form?.title,
+					description: !form?.description,
+					time: !form?.time,
+					scoring: !form?.scoring,
+					objective: !form?.objective,
+					payload: !form?.payload,
+					orientation: !form?.orientation,
+					game_orientation: !form?.game_orientation
+					// uploadedFiles: !form?.uploadedFiles.length,
+					// uploadedExplanationOrIcon: !form?.uploadedExplanationOrIcon.length
+				}).every((key) => form[key] === true),
+				'Every'
+			);
+		} else {
+			if (form?.arcade_game_type === 'Outside App') {
+				return Object.keys({
+					title: !form?.title,
+					description: !form?.description,
+					android: !form?.package_id.android,
+					ios: !form?.package_id.ios,
+					play_store: !form?.store_url.play_store,
+					apple_store: !form?.store_url.apple_store,
+					play_store_deeplink: !form?.deep_link.android,
+					apple_store_deeplink: !form?.deep_link.ios,
+					arcade_game_type: !form?.arcade_game_type,
+					uploadedFiles: form.uploadedFiles.length === 0,
+					uploadedExplanationOrIcon: form.uploadedExplanationOrIcon.length === 0
+				}).every((key) => form[key] !== '');
+			} else {
+				return Object.keys({
+					title: !form?.title,
+					description: !form?.description,
+					game_id: !form?.game_id,
+					arcade_game_type: !form?.arcade_game_type,
+					uploadedFiles: form.uploadedFiles.length === 0,
+					uploadedExplanationOrIcon: form.uploadedExplanationOrIcon.length === 0
+				}).every((key) => form[key] !== '');
+			}
 		}
 	};
 
@@ -323,10 +372,10 @@ const UploadOreditArcade = ({
 		// }
 	}, [specificGamesData]);
 
-	console.log(form, 'formkeys specificGamesData');
+	// console.log(form, 'formkeys specificGamesData');
 
 	useEffect(() => {
-		validateForm(form);
+		validateGamesForm(type, form);
 	}, [form]);
 
 	useEffect(() => {
@@ -413,7 +462,7 @@ const UploadOreditArcade = ({
 		setForm((prev) => {
 			return {
 				...prev,
-				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
+				uploadedFiles: form?.uploadedFiles?.filter((file) => file.id !== id)
 			};
 		});
 	};
@@ -678,28 +727,52 @@ const UploadOreditArcade = ({
 		setPlayStore2('');
 		setAppStore2('');
 		setIsError({});
+		setForm({
+			uploadedFiles: [],
+			uploadedExplanationOrIcon: [],
+			dropbox_urls: {
+				image: '',
+				video_icon: '' // same for video and icon
+			},
+			orientation: '',
+			title: '',
+			description: '',
+			time: '',
+			scoring: '',
+			objective: '',
+			payload: '',
+			game_orientation: '',
+			arcade_game_type: '',
+			game_id: '',
+			android: '',
+			ios: '',
+			play_store: '',
+			apple_store: '',
+			play_store_deeplink: '',
+			apple_store_deeplink: ''
+		});
 	};
 
 	const validatePostBtn = () => {
 		setIsError({
-			videoOrientation: !form.orientation,
-			uploadedFiles: form.uploadedFiles.length < 1,
-			gameOrientation: !form.game_orientation,
-			uploadedExplanationOrIcon: form.uploadedExplanationOrIcon.length < 1,
-			titleGame: !form.title && { message: 'You need to enter a Title' },
-			descriptionGame: !form.description,
-			time: !form.time,
-			scoring: !form.scoring,
-			objective: !form.objective,
-			payload: !form.payload,
-			arcadeGameType: !form.arcade_game_type,
-			gameId: !form.game_id,
-			android: !form.android,
-			ios: !form.ios,
-			playStore: !form.play_store,
-			appStore: !form.apple_store,
-			playStore2: !form.play_store_deeplink,
-			appStore2: !form.apple_store_deeplink
+			videoOrientation: !form?.orientation,
+			uploadedFiles: form?.uploadedFiles?.length < 1,
+			gameOrientation: !form?.game_orientation,
+			uploadedExplanationOrIcon: form?.uploadedExplanationOrIcon.length < 1,
+			titleGame: !form?.title && { message: 'You need to enter a Title' },
+			descriptionGame: !form?.description,
+			time: !form?.time,
+			scoring: !form?.scoring,
+			objective: !form?.objective,
+			payload: !form?.payload,
+			arcadeGameType: !form?.arcade_game_type,
+			gameId: !form?.game_id,
+			android: !form?.android,
+			ios: !form?.ios,
+			playStore: !form?.play_store,
+			appStore: !form?.apple_store,
+			playStore2: !form?.play_store_deeplink,
+			appStore2: !form?.apple_store_deeplink
 		});
 
 		setTimeout(() => {
@@ -725,7 +798,7 @@ const UploadOreditArcade = ({
 	};
 
 	const addSaveGameBtn = async () => {
-		if (!validateForm(form) || editBtnDisabled) {
+		if (!validateGamesForm(type, form) || editBtnDisabled) {
 			validatePostBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -997,7 +1070,7 @@ const UploadOreditArcade = ({
 						<div>
 							<h5 className={classes.QuizQuestion}>{heading1}</h5>
 							<DragAndDropField
-								uploadedFiles={form.uploadedFiles}
+								uploadedFiles={form?.uploadedFiles}
 								handleDeleteFile={handleDeleteFile}
 								setPreviewBool={setPreviewBool}
 								setPreviewFile={setPreviewFile}
@@ -1037,7 +1110,7 @@ const UploadOreditArcade = ({
 							<div className={classes.titleContainer}>
 								<h6>DROPBOX URL</h6>
 								<TextField
-									value={form.dropbox_urls.image}
+									value={form?.dropbox_urls?.image}
 									onChange={(e) =>
 										setForm((prev) => {
 											return {
@@ -1096,7 +1169,7 @@ const UploadOreditArcade = ({
 												setDisableDropdown(true);
 											}}
 											disabled={false}
-											value={form.orientation}
+											value={form?.orientation}
 											onChange={(e) =>
 												setForm((prev) => {
 													setDisableDropdown(true);
@@ -1183,7 +1256,7 @@ const UploadOreditArcade = ({
 								</>
 							)}
 							<DragAndDropField
-								uploadedFiles={form.uploadedExplanationOrIcon}
+								uploadedFiles={form?.uploadedExplanationOrIcon}
 								handleDeleteFile={handleDeleteFile2}
 								setPreviewBool={setPreviewBool}
 								setPreviewFile={setPreviewFile}
@@ -1234,7 +1307,7 @@ const UploadOreditArcade = ({
 							<div className={classes.titleContainer}>
 								<h6>DROPBOX URL</h6>
 								<TextField
-									value={form.dropbox_urls.video_icon}
+									value={form?.dropbox_urls?.video_icon}
 									onChange={(e) =>
 										setForm((prev) => {
 											return {
@@ -1282,7 +1355,7 @@ const UploadOreditArcade = ({
 									</h6>
 								</div>
 								<TextField
-									value={form.title}
+									value={form?.title}
 									onChange={(e) =>
 										setForm((prev) => {
 											return { ...prev, title: e.target.value };
@@ -1329,7 +1402,7 @@ const UploadOreditArcade = ({
 									</h6>
 								</div>
 								<TextField
-									value={form.description}
+									value={form?.description}
 									onChange={(e) =>
 										setForm((prev) => {
 											return { ...prev, description: e.target.value };
@@ -1364,7 +1437,7 @@ const UploadOreditArcade = ({
 										</h6>
 										<TextField
 											disabled={false}
-											value={form.time}
+											value={form?.time}
 											onChange={(e) =>
 												setForm((prev) => {
 													return { ...prev, time: e.target.value };
@@ -1404,7 +1477,7 @@ const UploadOreditArcade = ({
 										</h6>
 										<TextField
 											disabled={false}
-											value={form.scoring}
+											value={form?.scoring}
 											onChange={(e) =>
 												setForm((prev) => {
 													return { ...prev, scoring: e.target.value };
@@ -1445,7 +1518,7 @@ const UploadOreditArcade = ({
 
 										<TextField
 											disabled={false}
-											value={form.objective}
+											value={form?.objective}
 											onChange={(e) =>
 												setForm((prev) => {
 													return { ...prev, objective: e.target.value };
@@ -1486,7 +1559,7 @@ const UploadOreditArcade = ({
 
 										<TextField
 											disabled={false}
-											value={form.payload}
+											value={form?.payload}
 											onChange={(e) =>
 												setForm((prev) => {
 													return { ...prev, payload: e.target.value };
@@ -1527,7 +1600,7 @@ const UploadOreditArcade = ({
 												setDisableDropdown(true);
 											}}
 											disabled={false}
-											value={form.game_orientation}
+											value={form?.game_orientation}
 											onChange={(e) => {
 												setDisableDropdown(true);
 												setForm((prev) => {
@@ -1626,7 +1699,7 @@ const UploadOreditArcade = ({
 												setDisableDropdown(true);
 											}}
 											disabled={false}
-											value={form.arcade_game_type}
+											value={form?.arcade_game_type}
 											onChange={(e) => {
 												setDisableDropdown(true);
 												setForm((prev) => {
@@ -1700,7 +1773,7 @@ const UploadOreditArcade = ({
 											: ''}
 									</p>
 
-									{arcadeGameType === 'Outside App' ? (
+									{form?.arcade_game_type === 'Outside App' ? (
 										<Slide in={true} direction='up' {...{ timeout: 400 }}>
 											<div>
 												<div className={classes.gameIDwrapper}>
@@ -1717,7 +1790,7 @@ const UploadOreditArcade = ({
 														ANDROID
 													</h6>
 													<TextField
-														value={form.android}
+														value={form?.android}
 														onChange={(e) =>
 															setForm((prev) => {
 																return {
@@ -1755,7 +1828,7 @@ const UploadOreditArcade = ({
 														IOS
 													</h6>
 													<TextField
-														value={form.ios}
+														value={form?.ios}
 														onChange={(e) =>
 															setForm((prev) => {
 																return {
@@ -1797,7 +1870,7 @@ const UploadOreditArcade = ({
 														PLAY STORE
 													</h6>
 													<TextField
-														value={form.play_store}
+														value={form?.play_store}
 														onChange={(e) =>
 															setForm((prev) => {
 																return {
@@ -1835,7 +1908,7 @@ const UploadOreditArcade = ({
 														APP STORE
 													</h6>
 													<TextField
-														value={form.apple_store}
+														value={form?.apple_store}
 														onChange={(e) =>
 															setForm((prev) => {
 																return {
@@ -1877,7 +1950,7 @@ const UploadOreditArcade = ({
 														PLAY STORE
 													</h6>
 													<TextField
-														value={form.play_store_deeplink}
+														value={form?.play_store_deeplink}
 														onChange={(e) =>
 															setForm((prev) => {
 																return {
@@ -1915,7 +1988,7 @@ const UploadOreditArcade = ({
 														APP STORE
 													</h6>
 													<TextField
-														value={form.apple_store_deeplink}
+														value={form?.apple_store_deeplink}
 														onChange={(e) =>
 															setForm((prev) => {
 																return {
@@ -1948,7 +2021,7 @@ const UploadOreditArcade = ({
 										<></>
 									)}
 
-									{arcadeGameType === 'Inside App' ? (
+									{form?.arcade_game_type === 'Inside App' ? (
 										<Slide in={true} direction='up' {...{ timeout: 400 }}>
 											<div>
 												<div className={classes.gameIDwrapper}>
@@ -1965,7 +2038,7 @@ const UploadOreditArcade = ({
 
 												<div className={classes.titleContainer}>
 													<TextField
-														value={form.game_id}
+														value={form?.game_id}
 														onChange={(e) =>
 															setForm((prev) => {
 																return {
@@ -2030,7 +2103,7 @@ const UploadOreditArcade = ({
 									disabled={
 										editArcade || editJogo
 											? editBtnDisabled
-											: !validateForm(form)
+											: !validateGamesForm(type, form)
 									}
 									onClick={() => {
 										addSaveGameBtn();
