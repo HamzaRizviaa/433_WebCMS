@@ -91,12 +91,18 @@ const UploadOreditArcade = ({
 		game_orientation: '',
 		arcade_game_type: '',
 		game_id: '',
-		android: '',
-		ios: '',
-		play_store: '',
-		apple_store: '',
-		play_store_deeplink: '',
-		apple_store_deeplink: ''
+		package_id: {
+			android: '',
+			ios: ''
+		},
+		store_url: {
+			play_store: '',
+			apple_store: ''
+		},
+		deep_link: {
+			android: '',
+			ios: ''
+		}
 	});
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
@@ -143,7 +149,7 @@ const UploadOreditArcade = ({
 			return _type && _type[1];
 		}
 	};
-
+	console.log(form, 'fm');
 	useEffect(() => {
 		if (specificGamesData) {
 			setForm((prev) => {
@@ -649,12 +655,12 @@ const UploadOreditArcade = ({
 			payload: !form?.payload,
 			arcadeGameType: !form?.arcade_game_type,
 			gameId: !form?.game_id,
-			android: !form?.android,
-			ios: !form?.ios,
-			playStore: !form?.play_store,
-			appStore: !form?.apple_store,
-			playStore2: !form?.play_store_deeplink,
-			appStore2: !form?.apple_store_deeplink
+			android: !form?.package_id?.android,
+			ios: !form?.package_id?.ios,
+			playStore: !form?.store_url?.play_store,
+			appStore: !form?.store_url?.apple_store,
+			playStore2: !form?.deep_link.android,
+			appStore2: !form?.deep_link.ios
 		});
 
 		setTimeout(() => {
@@ -769,164 +775,52 @@ const UploadOreditArcade = ({
 		}
 	};
 
-	// const addGameBtnDisabled =
-	// 	type === 'jogo'
-	// 		? !uploadedFiles.length ||
-	// 		  !videoOrientation ||
-	// 		  !gameOrientation ||
-	// 		  !uploadedExplanationOrIcon.length ||
-	// 		  postButtonStatus ||
-	// 		  !titleGame ||
-	// 		  !descriptionGame ||
-	// 		  !time ||
-	// 		  !scoring ||
-	// 		  !objective ||
-	// 		  !payload
-	// 		: type === 'arcade' && arcadeGameType === 'Outside App'
-	// 		? !uploadedFiles.length ||
-	// 		  !uploadedExplanationOrIcon.length ||
-	// 		  postButtonStatus ||
-	// 		  !titleGame ||
-	// 		  !descriptionGame ||
-	// 		  !arcadeGameType ||
-	// 		  !android ||
-	// 		  !ios ||
-	// 		  !playStore ||
-	// 		  !appStore ||
-	// 		  !playStore2 ||
-	// 		  !appStore2
-	// 		: !uploadedFiles.length ||
-	// 		  !uploadedExplanationOrIcon.length ||
-	// 		  postButtonStatus ||
-	// 		  !titleGame ||
-	// 		  !descriptionGame ||
-	// 		  !arcadeGameType ||
-	// 		  !gameId;
-
+	console.log(form?.uploadedFiles[0]?.file, 'file');
 	useEffect(() => {
 		if (specificGamesData) {
 			setEditBtnDisabled(
 				type === 'jogo'
-					? !uploadedFiles.length ||
-							!videoOrientation ||
-							!gameOrientation ||
-							!uploadedExplanationOrIcon.length ||
-							postButtonStatus ||
-							!titleGame ||
-							!descriptionGame ||
-							!time ||
-							!scoring ||
-							!objective ||
-							!payload ||
-							(specificGamesData?.title === titleGame?.trim() &&
-								specificGamesData?.description === descriptionGame?.trim() &&
-								specificGamesData?.time === time?.trim() &&
-								specificGamesData?.scoring === scoring?.trim() &&
-								specificGamesData?.objective === objective?.trim() &&
-								specificGamesData?.payload === payload?.trim() &&
-								// specificGamesData?.uploadedFiles[0].file_name ===
-								// 	uploadedFiles[0].file_name &&
-								// specificGamesData?.uploadedExplanationOrIcon[0].file_name ===
-								// 	uploadedExplanationOrIcon[0].file_name &&
-								specificGamesData?.game_orientation === gameOrientation &&
-								specificGamesData?.orientation === videoOrientation)
-					: type === 'arcade' && arcadeGameType === 'Outside App'
-					? !uploadedFiles.length ||
-					  !uploadedExplanationOrIcon.length ||
-					  postButtonStatus ||
-					  !titleGame ||
-					  !descriptionGame ||
-					  !arcadeGameType ||
-					  !android ||
-					  !ios ||
-					  !playStore ||
-					  !appStore ||
-					  !playStore2 ||
-					  !appStore2
-					: !uploadedFiles.length ||
-					  !uploadedExplanationOrIcon.length ||
-					  postButtonStatus ||
-					  !titleGame ||
-					  !descriptionGame ||
-					  !arcadeGameType ||
-					  !gameId ||
-					  type === 'jogo'
-					? !uploadedFiles.length ||
-					  !videoOrientation ||
-					  !gameOrientation ||
-					  !uploadedExplanationOrIcon.length ||
-					  postButtonStatus ||
-					  !titleGame ||
-					  !descriptionGame ||
-					  !time ||
-					  !scoring ||
-					  !objective ||
-					  !payload
-					: type === 'arcade' && arcadeGameType === 'Outside App'
-					? !uploadedFiles.length ||
-					  !uploadedExplanationOrIcon.length ||
-					  postButtonStatus ||
-					  !titleGame ||
-					  !descriptionGame ||
-					  !arcadeGameType ||
-					  !android ||
-					  !ios ||
-					  !playStore ||
-					  !appStore ||
-					  !playStore2 ||
-					  !appStore2
-					: !uploadedFiles.length ||
-					  !uploadedExplanationOrIcon.length ||
-					  postButtonStatus ||
-					  !titleGame ||
-					  !descriptionGame ||
-					  !arcadeGameType ||
-					  !gameId ||
-					  (specificGamesData?.title === titleGame?.trim() &&
-							specificGamesData?.description === descriptionGame?.trim() &&
-							specificGamesData?.arcade_game_type === arcadeGameType.trim() &&
-							specificGamesData?.gameId === gameId?.trim() &&
-							specificGamesData?.time === time?.trim() &&
-							specificGamesData?.scoring === scoring?.trim() &&
-							specificGamesData?.objective === objective?.trim() &&
-							specificGamesData?.payload === payload?.trim() &&
-							specificGamesData?.android === android?.trim() &&
-							specificGamesData?.ios === ios?.trim() &&
-							specificGamesData?.playStore === playStore?.trim() &&
-							specificGamesData?.store_url.appStore === appStore?.trim() &&
-							specificGamesData?.playStore2 === playStore2?.trim() &&
-							specificGamesData?.appStore2 === appStore2?.trim() &&
-							// specificGamesData?.uploadedFiles[0].file_name ===
-							// 	uploadedFiles[0].file_name &&
-							// specificGamesData?.uploadedExplanationOrIcon[0].file_name ===
-							// 	uploadedExplanationOrIcon[0].file_name &&
-							specificGamesData?.game_orientation === gameOrientation &&
-							specificGamesData?.orientation === videoOrientation)
+					? validateGamesForm(type, form, postButtonStatus) ||
+							(!form?.uploadedFiles[0]?.file &&
+								!form?.uploadedExplanationOrIcon[0]?.file &&
+								specificGamesData?.title === form?.title?.trim() &&
+								specificGamesData?.description === form?.description?.trim() &&
+								specificGamesData?.time === form?.time?.trim() &&
+								specificGamesData?.scoring === form?.scoring?.trim() &&
+								specificGamesData?.objective === form?.objective?.trim() &&
+								specificGamesData?.payload === form?.payload?.trim() &&
+								specificGamesData?.game_orientation ===
+									form?.game_orientation &&
+								specificGamesData?.orientation === form?.orientation)
+					: type === 'arcade' && form.arcade_game_type === 'Outside App'
+					? validateGamesForm(type, form, postButtonStatus) ||
+					  (!form?.uploadedFiles[0]?.file &&
+							!form?.uploadedExplanationOrIcon[0]?.file &&
+							specificGamesData?.title === form?.title?.trim() &&
+							specificGamesData?.description === form?.description?.trim() &&
+							specificGamesData?.arcade_game_type === form?.arcade_game_type &&
+							specificGamesData?.package_id?.android ===
+								form?.package_id?.android?.trim() &&
+							specificGamesData?.package_id?.ios ===
+								form?.package_id?.ios?.trim() &&
+							specificGamesData?.store_url?.play_store ===
+								form?.store_url?.play_store?.trim() &&
+							specificGamesData?.store_url?.apple_store ===
+								form?.store_url?.apple_store?.trim() &&
+							specificGamesData?.deep_link?.android ===
+								form?.deep_link?.android?.trim() &&
+							specificGamesData?.deep_link?.ios ===
+								form?.deep_link?.ios?.trim())
+					: validateGamesForm(type, form, postButtonStatus) ||
+					  (!form?.uploadedFiles[0]?.file &&
+							!form?.uploadedExplanationOrIcon[0]?.file &&
+							specificGamesData?.title === form?.title?.trim() &&
+							specificGamesData?.description === form?.description?.trim() &&
+							specificGamesData?.arcade_game_type === form?.arcade_game_type &&
+							specificGamesData?.game_id === form?.game_id.trim())
 			);
 		}
-	}, [
-		specificGamesData,
-		uploadedFiles,
-		dropboxLink,
-		editBtnDisabled,
-		postButtonStatus,
-		titleGame,
-		descriptionGame,
-		arcadeGameType,
-		gameId,
-		time,
-		scoring,
-		objective,
-		payload,
-		android,
-		ios,
-		playStore,
-		appStore,
-		playStore2,
-		appStore2,
-		videoOrientation,
-		gameOrientation
-	]);
+	}, [specificGamesData, form]);
 
 	return (
 		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
@@ -1672,12 +1566,15 @@ const UploadOreditArcade = ({
 														ANDROID
 													</h6>
 													<TextField
-														value={form?.android}
+														value={form?.package_id?.android}
 														onChange={(e) =>
 															setForm((prev) => {
 																return {
 																	...prev,
-																	android: e.target.value
+																	package_id: {
+																		...prev,
+																		android: e.target.value
+																	}
 																};
 															})
 														}
@@ -1710,12 +1607,12 @@ const UploadOreditArcade = ({
 														IOS
 													</h6>
 													<TextField
-														value={form?.ios}
+														value={form?.package_id?.ios}
 														onChange={(e) =>
 															setForm((prev) => {
 																return {
 																	...prev,
-																	ios: e.target.value
+																	package_id: { ios: e.target.value }
 																};
 															})
 														}
@@ -1752,12 +1649,12 @@ const UploadOreditArcade = ({
 														PLAY STORE
 													</h6>
 													<TextField
-														value={form?.play_store}
+														value={form?.store_url?.play_store}
 														onChange={(e) =>
 															setForm((prev) => {
 																return {
 																	...prev,
-																	play_store: e.target.value
+																	store_url: { play_store: e.target.value }
 																};
 															})
 														}
@@ -1790,12 +1687,12 @@ const UploadOreditArcade = ({
 														APP STORE
 													</h6>
 													<TextField
-														value={form?.apple_store}
+														value={form?.store_url?.apple_store}
 														onChange={(e) =>
 															setForm((prev) => {
 																return {
 																	...prev,
-																	apple_store: e.target.value
+																	store_url: { apple_store: e.target.value }
 																};
 															})
 														}
@@ -1832,12 +1729,12 @@ const UploadOreditArcade = ({
 														PLAY STORE
 													</h6>
 													<TextField
-														value={form?.play_store_deeplink}
+														value={form?.deep_link?.android}
 														onChange={(e) =>
 															setForm((prev) => {
 																return {
 																	...prev,
-																	play_store_deeplink: e.target.value
+																	deep_link: { android: e.target.value }
 																};
 															})
 														}
@@ -1870,12 +1767,12 @@ const UploadOreditArcade = ({
 														APP STORE
 													</h6>
 													<TextField
-														value={form?.apple_store_deeplink}
+														value={form?.deep_link?.ios}
 														onChange={(e) =>
 															setForm((prev) => {
 																return {
 																	...prev,
-																	apple_store_deeplink: e.target.value
+																	deep_link: { ios: e.target.value }
 																};
 															})
 														}

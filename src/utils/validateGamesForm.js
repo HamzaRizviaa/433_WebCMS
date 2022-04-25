@@ -1,4 +1,5 @@
 const validateGamesForm = (type, form, postButtonStatus) => {
+	console.log(form?.uploadedFiles.length);
 	if (type === 'jogo') {
 		const validate =
 			!form?.uploadedFiles.length ||
@@ -22,12 +23,12 @@ const validateGamesForm = (type, form, postButtonStatus) => {
 				!form?.title ||
 				!form?.description ||
 				!form?.arcade_game_type ||
-				!form?.android ||
-				!form?.ios ||
-				!form?.play_store ||
-				!form?.apple_store ||
-				!form?.play_store_deeplink ||
-				!form?.apple_store_deeplink;
+				!form?.package_id?.android ||
+				!form?.package_id?.ios ||
+				!form?.store_url?.play_store ||
+				!form?.store_url?.apple_store ||
+				!form?.deep_link?.android ||
+				!form?.deep_link?.ios;
 			return validate;
 		} else {
 			const validate =
