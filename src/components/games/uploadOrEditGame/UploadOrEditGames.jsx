@@ -217,45 +217,45 @@ const UploadOreditArcade = ({
 
 	const validateGamesForm = (type, form) => {
 		if (type === 'jogo') {
-			console.log(
-				Object.keys({
-					title: !form?.title,
-					description: !form?.description,
-					time: !form?.time,
-					scoring: !form?.scoring,
-					objective: !form?.objective,
-					payload: !form?.payload,
-					orientation: !form?.orientation,
-					game_orientation: !form?.game_orientation
-					// uploadedFiles: !form?.uploadedFiles.length,
-					// uploadedExplanationOrIcon: !form?.uploadedExplanationOrIcon.length
-				}).every((key) => form[key] === true),
-				'Every'
-			);
+			const validate =
+				!form?.uploadedFiles.length ||
+				!form?.orientation ||
+				!form?.game_orientation ||
+				!form?.uploadedExplanationOrIcon.length ||
+				postButtonStatus ||
+				!form?.title ||
+				!form?.description ||
+				!form?.time ||
+				!form?.scoring ||
+				!form?.objective ||
+				!form?.payload;
+			return validate;
 		} else {
 			if (form?.arcade_game_type === 'Outside App') {
-				return Object.keys({
-					title: !form?.title,
-					description: !form?.description,
-					android: !form?.package_id.android,
-					ios: !form?.package_id.ios,
-					play_store: !form?.store_url.play_store,
-					apple_store: !form?.store_url.apple_store,
-					play_store_deeplink: !form?.deep_link.android,
-					apple_store_deeplink: !form?.deep_link.ios,
-					arcade_game_type: !form?.arcade_game_type,
-					uploadedFiles: form.uploadedFiles.length === 0,
-					uploadedExplanationOrIcon: form.uploadedExplanationOrIcon.length === 0
-				}).every((key) => form[key] !== '');
+				const validate =
+					!form?.uploadedFiles.length ||
+					!form?.uploadedExplanationOrIcon.length ||
+					postButtonStatus ||
+					!form?.title ||
+					!form?.description ||
+					!form?.arcade_game_type ||
+					!form?.android ||
+					!form?.ios ||
+					!form?.play_store ||
+					!form?.apple_store ||
+					!form?.play_store_deeplink ||
+					!form?.apple_store_deeplink;
+				return validate;
 			} else {
-				return Object.keys({
-					title: !form?.title,
-					description: !form?.description,
-					game_id: !form?.game_id,
-					arcade_game_type: !form?.arcade_game_type,
-					uploadedFiles: form.uploadedFiles.length === 0,
-					uploadedExplanationOrIcon: form.uploadedExplanationOrIcon.length === 0
-				}).every((key) => form[key] !== '');
+				const validate =
+					!form?.uploadedFiles.length ||
+					!form?.uploadedExplanationOrIcon.length ||
+					postButtonStatus ||
+					!form?.title ||
+					!form?.description ||
+					!form?.arcade_game_type ||
+					!form?.game_id;
+				return validate;
 			}
 		}
 	};
@@ -798,7 +798,7 @@ const UploadOreditArcade = ({
 	};
 
 	const addSaveGameBtn = async () => {
-		if (!validateGamesForm(type, form) || editBtnDisabled) {
+		if (validateGamesForm(type, form) || editBtnDisabled) {
 			validatePostBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -2103,7 +2103,7 @@ const UploadOreditArcade = ({
 									disabled={
 										editArcade || editJogo
 											? editBtnDisabled
-											: !validateGamesForm(type, form)
+											: validateGamesForm(type, form)
 									}
 									onClick={() => {
 										addSaveGameBtn();
