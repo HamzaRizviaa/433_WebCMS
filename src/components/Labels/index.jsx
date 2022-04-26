@@ -16,6 +16,18 @@ const Labels = ({
 	extraLabel,
 	handleChangeExtraLabel
 }) => {
+	// var regexp = /^\S/;
+
+	var field = document.getElementById('free-solo-2-demo');
+	if (field !== null || undefined) {
+		field.addEventListener('keypress', function (event) {
+			var key = event.keyCode;
+			// var key = event.KeyboardEvent;
+			if (key === 32) {
+				event.preventDefault();
+			}
+		});
+	}
 	//const regex = /[%<>\\$'"\s@#/]/;
 
 	return (
