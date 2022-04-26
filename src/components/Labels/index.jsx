@@ -55,6 +55,8 @@ const Labels = ({
 			value={selectedLabels}
 			onChange={(event, newValue) => {
 				setDisableDropdown(true);
+				// if (space){} else {57-63}
+				// space key - empty string
 				let newLabels = newValue?.filter(
 					(v, i, a) =>
 						a.findIndex(

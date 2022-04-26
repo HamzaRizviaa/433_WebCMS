@@ -1,7 +1,11 @@
 const validateForm = (form) => {
 	var validate = Object.keys(form).map((key) => {
 		if (typeof form[key] === 'string') {
-			if (key.includes('dropbox_url')) {
+			if (
+				key.includes('dropbox_url') ||
+				key.includes('media_dropbox_url') ||
+				key.includes('image_dropbox_url')
+			) {
 				return true;
 			}
 			return !form[key] ? false : true;

@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
 import React, { forwardRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classes from './_uploadOrEditQuiz.module.scss';
@@ -13,7 +12,7 @@ import Labels from '../../Labels';
 import Button from '../../button';
 import DatePicker from 'react-datepicker';
 import checkFileSize from '../../../utils/validateFileSize';
-import { getDateTime, formatDate, getCalendarText2 } from '../../../utils';
+import { formatDate, getCalendarText2 } from '../../../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	getQuestionLabels,
@@ -37,7 +36,6 @@ import validateForm from '../../../utils/validateForm';
 const UploadOrEditQuiz = ({
 	heading1,
 	open,
-	buttonText,
 	editQuiz,
 	editPoll,
 	setPreviewBool,
@@ -51,16 +49,9 @@ const UploadOrEditQuiz = ({
 	status,
 	type
 }) => {
-	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
-	const [dropboxLink, setDropboxLink] = useState('');
-	const [question, setQuestion] = useState('');
-	const [ans1, setAns1] = useState('');
-	const [ans2, setAns2] = useState('');
-	const [selectedLabels, setSelectedLabels] = useState([]);
 	const [quizLabels, setQuizLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
-	const [endDate, setEndDate] = useState(null);
 	const [convertedDate, setConvertedDate] = useState(null);
 	const [calenderOpen, setCalenderOpen] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
@@ -80,6 +71,7 @@ const UploadOrEditQuiz = ({
 		end_date: null
 	});
 	const imgRef = useRef(null);
+	const loadingRef = useRef(null);
 	const dispatch = useDispatch();
 
 	const {
@@ -110,6 +102,7 @@ const UploadOrEditQuiz = ({
 		dispatch(getQuestionLabels());
 	}, []);
 
+	// eslint-disable-next-line no-unused-vars
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
 		const startDate = formatDate(form.end_date);
 		return (
@@ -125,7 +118,7 @@ const UploadOrEditQuiz = ({
 					style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
 				>
 					<CalenderYellow
-						onClick={(e) => {
+						onClick={() => {
 							// e.preventDefault();
 							// e.stopPropagation();
 						}}
@@ -187,33 +180,6 @@ const UploadOrEditQuiz = ({
 						: editQuestionData?.poll_end_date
 				};
 			});
-
-			// setDropboxLink(editQuestionData?.dropbox_url);
-			// setQuestion(editQuestionData?.question);
-			// setAns1(
-			// 	editQuestionData?.answers?.length > 0
-			// 		? editQuestionData?.answers[0]?.answer
-			// 		: ''
-			// );
-			// setAns2(
-			// 	editQuestionData?.answers?.length > 0
-			// 		? editQuestionData?.answers[1]?.answer
-			// 		: ''
-			// );
-
-			// setEndDate(
-			// 	editQuestionData?.quiz_end_date
-			// 		? editQuestionData?.quiz_end_date
-			// 		: editQuestionData?.poll_end_date
-			// );
-			// setUploadedFiles([
-			// 	{
-			// 		id: makeid(10),
-			// 		file_name: editQuestionData?.file_name,
-			// 		media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${editQuestionData?.image}`,
-			// 		type: 'image'
-			// 	}
-			// ]);
 		}
 	}, [editQuestionData]);
 
@@ -291,6 +257,7 @@ const UploadOrEditQuiz = ({
 
 	const createQuestion = async (id, mediaFiles = []) => {
 		setPostButtonStatus(true);
+
 		//setIsLoadingcreateViral(false);
 		try {
 			const result = await axios.post(
@@ -392,18 +359,14 @@ const UploadOrEditQuiz = ({
 	};
 
 	const resetState = () => {
-		setUploadedFiles([]);
 		setFileRejectionError('');
-		setDropboxLink('');
+
 		setPreviewFile(null);
 		setPreviewBool(false);
-		setQuestion('');
-		setAns1('');
-		setAns2('');
-		setSelectedLabels([]);
+
 		setExtraLabel('');
 		setDisableDropdown(true);
-		setEndDate(null);
+
 		setConvertedDate(null);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
@@ -437,22 +400,6 @@ const UploadOrEditQuiz = ({
 		}, 5000);
 	};
 
-	const addQuizBtnDisabled =
-		!uploadedFiles.length ||
-		selectedLabels.length < 10 ||
-		postButtonStatus ||
-		!question ||
-		!ans1 ||
-		!ans2 ||
-		!endDate;
-
-	// console.log(editQuestionData?.quiz_end_date, 'quiz');
-	// console.log(convertedDate, 'endDate');
-	// console.log(editQuestionData?.quiz_end_date?.length, 'quiz');
-	// console.log(convertedDate?.length, 'endDate');
-	// console.log(editQuestionData?.poll_end_date, 'poll');
-	// console.log(editQuestionData?.poll_end_date?.length, 'poll');
-
 	useEffect(() => {
 		if (editQuestionData) {
 			setEditQuizBtnDisabled(
@@ -473,6 +420,7 @@ const UploadOrEditQuiz = ({
 			validatePostBtn();
 		} else {
 			setPostButtonStatus(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			setIsLoadingcreateViral(true);
 			if (editQuiz || editPoll) {
 				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
@@ -511,6 +459,7 @@ const UploadOrEditQuiz = ({
 		<LoadingOverlay active={isLoadingcreateViral} spinner={<PrimaryLoader />}>
 			<Slide in={true} direction='up' {...{ timeout: 400 }}>
 				<div
+					ref={loadingRef}
 					className={`${
 						previewFile != null
 							? classes.previewContentWrapper
@@ -581,7 +530,7 @@ const UploadOrEditQuiz = ({
 										disableUnderline: true,
 										className: classes.textFieldInput,
 										style: {
-											borderRadius: dropboxLink ? '16px' : '40px'
+											borderRadius: form.dropbox_url ? '16px' : '40px'
 										}
 									}}
 								/>
@@ -601,14 +550,15 @@ const UploadOrEditQuiz = ({
 									<h6
 										style={{
 											color:
-												question?.length >= 34 && question?.length <= 39
+												form.question?.length >= 34 &&
+												form.question?.length <= 39
 													? 'pink'
-													: question?.length === 40
+													: form.question?.length === 40
 													? 'red'
 													: 'white'
 										}}
 									>
-										{question?.length}/40
+										{form.question?.length}/40
 									</h6>
 								</div>
 								<TextField
