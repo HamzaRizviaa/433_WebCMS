@@ -30,6 +30,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import { Autocomplete, Popper, Paper, Tooltip, Fade } from '@mui/material';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
 import checkFileSize from '../../../utils/validateFileSize';
+import validateForm from '../../../utils/validateForm';
 
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
 import { ReactComponent as PortraitCrop } from '../../../assets/portrait_rect.svg';
@@ -83,9 +84,12 @@ const UploadOrEditPost = ({
 		labels: [],
 		show_likes: false,
 		show_comments: false,
-		media_id: null
+		media_id: null,
+		mediaToggle: false
 	});
 	const [isError, setIsError] = useState({});
+
+	console.log(form);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -95,6 +99,7 @@ const UploadOrEditPost = ({
 		});
 
 	const allMedia = useSelector((state) => state.mediaLibraryOriginal.allMedia);
+	console.log(allMedia, 'am');
 	const labels = useSelector((state) => state.postLibrary.labels);
 	const specificPost = useSelector((state) => state.postLibrary.specificPost);
 	const specificPostStatus = useSelector((state) => state.postLibrary);
@@ -171,7 +176,13 @@ const UploadOrEditPost = ({
 						media_id: _media
 					};
 				});
-				setMediaToggle(true);
+				// setMediaToggle(true);
+				setForm((prev) => {
+					return {
+						...prev,
+						mediaToggle: true
+					};
+				});
 			}
 
 			// setValueComments(specificPost?.show_comments);
@@ -319,7 +330,8 @@ const UploadOrEditPost = ({
 			labels: [],
 			show_likes: false,
 			show_comments: false,
-			media_id: null
+			media_id: null,
+			mediaToggle: false
 		});
 	};
 
@@ -363,12 +375,16 @@ const UploadOrEditPost = ({
 		});
 	};
 
+	useEffect(() => {
+		validateForm(form);
+	}, [form]);
+
 	const validatePostBtn = () => {
 		setIsError({
 			caption: !form?.caption,
 			uploadedFiles: form?.uploadedFiles.length < 1,
 			selectedLabels: form?.labels.length < 10,
-			selectedMediaValue: mediaToggle && !form?.media_id
+			selectedMediaValue: form.mediaToggle && !form?.media_id
 		});
 
 		setTimeout(() => {
@@ -398,16 +414,16 @@ const UploadOrEditPost = ({
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
 				{
-					caption: caption,
+					caption: form.caption,
 					media_files: [...media_files],
-					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
+					...(form.dropbox_url ? { dropbox_url: form.dropbox_url } : {}),
 					orientation_type: dimensionSelect,
-					...(selectedMedia ? { media_id: selectedMedia.id } : {}),
-					...(valueLikes ? { show_likes: true } : {}),
-					...(valueComments ? { show_comments: true } : {}),
+					...(form.media_id ? { media_id: form.media_id.id } : {}),
+					...(form.show_likes ? { show_likes: true } : {}),
+					...(form.show_comments ? { show_comments: true } : {}),
 					...(isEdit && id ? { post_id: id } : {}),
-					...(!isEdit && selectedLabels.length
-						? { labels: [...selectedLabels] }
+					...(!isEdit && form.labels.length
+						? { labels: [...form.labels] }
 						: {}),
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
@@ -502,12 +518,12 @@ const UploadOrEditPost = ({
 		setPreviewFile(null);
 	};
 
-	const postBtnDisabled =
-		!form?.uploadedFiles.length ||
-		!form?.caption ||
-		postButtonStatus ||
-		(mediaToggle && !form?.media_id) ||
-		form?.labels.length < 10;
+	// const postBtnDisabled =
+	// 	!form?.uploadedFiles.length ||
+	// 	!form?.caption ||
+	// 	postButtonStatus ||
+	// 	(mediaToggle && !form?.media_id) ||
+	// 	form?.labels.length < 10;
 
 	//old one
 
@@ -537,14 +553,14 @@ const UploadOrEditPost = ({
 				postButtonStatus ||
 					!form?.uploadedFiles.length ||
 					!form?.caption ||
-					(mediaToggle && !form?.media_id) ||
+					(form.mediaToggle && !form?.media_id) ||
 					(specificPost?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
 						specificPost?.caption?.trim() === form?.caption?.trim() &&
 						specificPost?.media_id == form?.media_id?.id &&
 						specificPost?.medias?.length === form?.uploadedFiles?.length)
 			);
 		}
-	}, [specificPost, form, mediaToggle]);
+	}, [specificPost, form]);
 
 	// console.log(specificPost?.medias?.length, 'specificPost?.medias?.length');
 	// console.log(selectedMedia?.id, 'captionL');
@@ -553,7 +569,7 @@ const UploadOrEditPost = ({
 	//console.log(uploadedFiles, 'uploadedFiles');
 
 	const addSavePostBtn = () => {
-		if (postBtnDisabled || editBtnDisabled) {
+		if (!validateForm(form) || editBtnDisabled) {
 			validatePostBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -880,15 +896,21 @@ const UploadOrEditPost = ({
 										<h5>Link post to media</h5>
 										<ToggleSwitch
 											id={1}
-											checked={mediaToggle}
+											checked={form.mediaToggle}
 											onChange={(checked) => {
 												setSelectedMedia(null);
-												setMediaToggle(checked);
+												// setMediaToggle(checked);
+												setForm((prev) => {
+													return {
+														...prev,
+														mediaToggle: checked
+													};
+												});
 											}}
 										/>
 									</div>
 								</div>
-								{mediaToggle ? (
+								{form.mediaToggle ? (
 									<div
 										style={{ marginBottom: dropdownPosition ? 200 : 0 }}
 										className={classes.mediaContainer}
@@ -939,6 +961,7 @@ const UploadOrEditPost = ({
 											}}
 											onChange={(e, newVal) => {
 												// setSelectedMedia(newVal);
+												console.log(newVal, 'nv');
 												setForm((prev) => {
 													return { ...prev, media_id: newVal };
 												});
@@ -1045,7 +1068,7 @@ const UploadOrEditPost = ({
 
 								<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 									<Button
-										disabled={isEdit ? editBtnDisabled : postBtnDisabled}
+										disabled={isEdit ? editBtnDisabled : !validateForm(form)}
 										onClick={() => {
 											addSavePostBtn();
 										}}
