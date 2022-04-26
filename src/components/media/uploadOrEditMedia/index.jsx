@@ -37,7 +37,6 @@ const UploadOrEditMedia = ({
 	page
 }) => {
 	const [mediaLabels, setMediaLabels] = useState([]);
-	// const [subCategory, setSubCategory] = useState('');
 	const [subCategories, setSubCategories] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
@@ -56,10 +55,8 @@ const UploadOrEditMedia = ({
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
 	const previewRef = useRef(null);
-
+	const loadingRef = useRef(null);
 	const [form, setForm] = useState({
-		// main_category_id: '',
-		// sub_category_id: '',
 		mainCategory: '',
 		subCategory: '',
 		title: '',
@@ -70,7 +67,7 @@ const UploadOrEditMedia = ({
 		uploadedFiles: [],
 		uploadedCoverImage: []
 	});
-	// console.log(subCategory);
+
 	const specificMedia = useSelector(
 		(state) => state.mediaLibraryOriginal.specificMedia
 	);
@@ -122,7 +119,7 @@ const UploadOrEditMedia = ({
 				specificMedia.labels.map((label) =>
 					_labels.push({ id: -1, name: label })
 				);
-				// setSelectedLabels(_labels);
+
 				setForm((prev) => {
 					return {
 						...prev,
@@ -130,8 +127,7 @@ const UploadOrEditMedia = ({
 					};
 				});
 			}
-			// setMainCategory(specificMedia?.media_type);
-			// setSubCategory(specificMedia?.sub_category);
+
 			setForm((prev) => {
 				return {
 					...prev,
@@ -159,27 +155,6 @@ const UploadOrEditMedia = ({
 					]
 				};
 			});
-			// setDropboxLink(specificMedia?.media_dropbox_url);
-			// setDropboxLink2(specificMedia?.image_dropbox_url);
-			// setTitleMedia(specificMedia?.title);
-			// setDescription(specificMedia?.description);
-			// setUploadedFiles([
-			// 	{
-			// 		id: makeid(10),
-			// 		file_name: specificMedia?.file_name_media,
-			// 		media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.media_url}`,
-			// 		type: specificMedia?.media_type === 'Watch' ? 'video' : 'audio'
-			// 	}
-			// ]);
-
-			// setUploadedCoverImage([
-			// 	{
-			// 		id: makeid(10),
-			// 		file_name: specificMedia?.file_name_image,
-			// 		media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`,
-			// 		type: 'image'
-			// 	}
-			// ]);
 		}
 	}, [specificMedia]);
 
@@ -317,7 +292,7 @@ const UploadOrEditMedia = ({
 					type: file.type === 'video/mp4' ? 'video' : 'image'
 				};
 			});
-			// setUploadedCoverImage([...uploadedCoverImage, ...newFiles]);
+
 			setForm((prev) => {
 				return {
 					...prev,
@@ -354,9 +329,6 @@ const UploadOrEditMedia = ({
 	};
 
 	const handleDeleteFile = (id) => {
-		// setUploadedFiles((uploadedFiles) =>
-		// 	uploadedFiles.filter((file) => file.id !== id)
-		// );
 		setForm((prev) => {
 			return {
 				...prev,
@@ -366,9 +338,6 @@ const UploadOrEditMedia = ({
 	};
 
 	const handleDeleteFile2 = (id) => {
-		// setUploadedCoverImage((uploadedCoverImage) =>
-		// 	uploadedCoverImage.filter((file) => file.id !== id)
-		// );
 		setForm((prev) => {
 			return {
 				...prev,
@@ -481,7 +450,7 @@ const UploadOrEditMedia = ({
 					isEdit ? 'Media has been updated!' : 'Media has been uploaded!'
 				);
 				setIsLoadingUploadMedia(false);
-				// setMediaButtonStatus(false);
+
 				dispatch(getMedia({ page }));
 				handleClose();
 			}
@@ -490,7 +459,7 @@ const UploadOrEditMedia = ({
 				isEdit ? 'Failed to update media!' : 'Failed to create media!'
 			);
 			setIsLoadingUploadMedia(false);
-			// setMediaButtonStatus(false);
+
 			console.log(e);
 		}
 	};
@@ -551,16 +520,6 @@ const UploadOrEditMedia = ({
 		setPreviewFile(null);
 	};
 
-	// const addMediaBtnDisabled =
-	// 	!uploadedFiles.length ||
-	// 	!mainCategory ||
-	// 	!subCategory ||
-	// 	!uploadedCoverImage.length ||
-	// 	!titleMedia ||
-	// 	!description ||
-	// 	mediaButtonStatus ||
-	// 	selectedLabels.length < 10;
-
 	useEffect(() => {
 		if (specificMedia) {
 			setEditBtnDisabled(
@@ -583,7 +542,6 @@ const UploadOrEditMedia = ({
 			);
 		}
 	}, [specificMedia, form]);
-	//console.log(editBtnDisabled, 'edb');
 
 	const MainCategoryId = (e) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
@@ -601,7 +559,6 @@ const UploadOrEditMedia = ({
 				return { ...prev, subCategory: '' };
 			});
 		}
-		// console.log(subCategory, 'subCategory');
 	}, [form.mainCategory]);
 
 	const SubCategoryId = (e) => {
@@ -620,8 +577,8 @@ const UploadOrEditMedia = ({
 		if (!validateForm(form)) {
 			validatePostBtn();
 		} else {
-			// setMediaButtonStatus(true);
 			setIsLoadingUploadMedia(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			if (isEdit) {
 				if (specificMedia?.title?.trim() !== form.title?.trim()) {
 					if (
@@ -642,10 +599,7 @@ const UploadOrEditMedia = ({
 						return;
 					}
 				}
-				// uploadMedia(specificMedia?.id, {
-				// 	title: titleMedia,
-				// 	description
-				// });
+
 				let uploadFilesPromiseArray = [
 					form.uploadedFiles[0],
 					form.uploadedCoverImage[0]
@@ -751,7 +705,7 @@ const UploadOrEditMedia = ({
 						setIsError({});
 					}, [5000]);
 					setIsLoadingUploadMedia(false);
-					// setMediaButtonStatus(false);
+
 					return;
 				}
 				let uploadFilesPromiseArray = [
@@ -812,8 +766,6 @@ const UploadOrEditMedia = ({
 							}
 						);
 						await uploadMedia(null, {
-							// file_name: uploadedFiles[0].file_name,
-							// file_name2: uploadedCoverImage[0].file_name,
 							type: 'medialibrary',
 							data: {
 								file_name_media: form.uploadedFiles[0].file_name,
@@ -853,6 +805,7 @@ const UploadOrEditMedia = ({
 			<LoadingOverlay active={isLoadingUploadMedia} spinner={<PrimaryLoader />}>
 				<Slide in={true} direction='up' {...{ timeout: 400 }}>
 					<div
+						ref={loadingRef}
 						className={`${
 							previewFile != null
 								? classes.previewContentWrapper
