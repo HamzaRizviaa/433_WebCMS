@@ -16,18 +16,6 @@ const Labels = ({
 	extraLabel,
 	handleChangeExtraLabel
 }) => {
-	// var regexp = /^\S/;
-
-	var field = document.getElementById('free-solo-2-demo');
-	if (field !== null || undefined) {
-		field.addEventListener('keypress', function (event) {
-			var key = event.keyCode;
-			// var key = event.KeyboardEvent;
-			if (key === 32) {
-				event.preventDefault();
-			}
-		});
-	}
 	//const regex = /[%<>\\$'"\s@#/]/;
 
 	return (
@@ -67,8 +55,6 @@ const Labels = ({
 			value={selectedLabels}
 			onChange={(event, newValue) => {
 				setDisableDropdown(true);
-				// if (space){} else {57-63}
-				// space key - empty string
 				let newLabels = newValue?.filter(
 					(v, i, a) =>
 						a.findIndex(
