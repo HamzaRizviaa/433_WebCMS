@@ -116,6 +116,7 @@ const UploadOreditArcade = ({
 	const gameExplanationOrientation = ['PORTRAIT', 'LANDSCAPE'];
 	const gameOrientationArray = ['PORTRAIT', 'LANDSCAPE'];
 	const arcadeType = ['Inside App', 'Outside App'];
+	const loadingRef = useRef(null);
 
 	const muiClasses = useStyles();
 	const dispatch = useDispatch();
@@ -700,7 +701,8 @@ const UploadOreditArcade = ({
 			validatePostBtn();
 		} else {
 			setPostButtonStatus(true);
-
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			setIsLoadingcreateViral(true);
 			if (editArcade || editJogo) {
 				if (form.title?.trim() !== specificGamesData?.title?.trim()) {
 					if (
@@ -847,6 +849,7 @@ const UploadOreditArcade = ({
 		<LoadingOverlay active={isLoadingcreateViral} spinner={<PrimaryLoader />}>
 			<Slide in={true} direction='up' {...{ timeout: 400 }}>
 				<div
+					ref={loadingRef}
 					className={`${
 						previewFile != null
 							? classes.previewContentWrapper
@@ -1935,6 +1938,7 @@ const UploadOreditArcade = ({
 							</div>
 						</div>
 					</div>
+
 					{previewFile != null && (
 						<div ref={previewRef} className={classes.previewComponent}>
 							<div className={classes.previewHeader}>
