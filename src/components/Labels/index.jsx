@@ -28,6 +28,7 @@ const Labels = ({
 			}
 		});
 	}
+	//const regex = /[%<>\\$'"\s@#/]/;
 
 	return (
 		<Autocomplete
@@ -100,9 +101,6 @@ const Labels = ({
 						className: classes.textFieldInput,
 						...params.InputProps
 					}}
-					// inputProps={{
-					// 	pattern: '[A-Za-z0-9]+'
-					// }}
 				/>
 			)}
 			renderOption={(props, option) => {
