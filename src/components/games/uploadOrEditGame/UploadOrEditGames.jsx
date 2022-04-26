@@ -11,6 +11,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import DragAndDropField from '../../DragAndDropField';
 import Button from '../../button';
 import checkFileSize from '../../../utils/validateFileSize';
+import PrimaryLoader from '../../PrimaryLoader';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../../../pages/PostLibrary/_calender.scss';
 import { useSelector, useDispatch } from 'react-redux';
@@ -409,7 +410,7 @@ const UploadOreditArcade = ({
 							data: {
 								bucket: 'media',
 								multipart_upload:
-									form.uploadedFile?.mime_type == 'video/mp4'
+									uploadedFile?.mime_type == 'video/mp4'
 										? [
 												{
 													e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
@@ -423,7 +424,7 @@ const UploadOreditArcade = ({
 									audio_key: ''
 								},
 								upload_id:
-									form.uploadedFile?.mime_type == 'video/mp4'
+									uploadedFile?.mime_type == 'video/mp4'
 										? result?.data?.data?.upload_id
 										: 'image'
 							}
@@ -454,6 +455,7 @@ const UploadOreditArcade = ({
 	};
 
 	const createGames = async (id, mediaFiles = []) => {
+		console.log('Create Game');
 		setPostButtonStatus(true);
 
 		try {
@@ -542,7 +544,7 @@ const UploadOreditArcade = ({
 			);
 			setIsLoadingcreateViral(false);
 			setPostButtonStatus(false);
-			console.log(e);
+			console.log('Error', form, e);
 		}
 	};
 
@@ -621,7 +623,8 @@ const UploadOreditArcade = ({
 			uploadedExplanationOrIcon: [],
 			dropbox_urls: {
 				image: '',
-				video_icon: '' // same for video and icon
+				video: '',
+				icon: ''
 			},
 			orientation: '',
 			title: '',
@@ -633,12 +636,18 @@ const UploadOreditArcade = ({
 			game_orientation: '',
 			arcade_game_type: '',
 			game_id: '',
-			android: '',
-			ios: '',
-			play_store: '',
-			apple_store: '',
-			play_store_deeplink: '',
-			apple_store_deeplink: ''
+			package_id: {
+				android: '',
+				ios: ''
+			},
+			store_url: {
+				play_store: '',
+				apple_store: ''
+			},
+			deep_link: {
+				android: '',
+				ios: ''
+			}
 		});
 	};
 
@@ -835,7 +844,7 @@ const UploadOreditArcade = ({
 	}, [specificGamesData, form]);
 
 	return (
-		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
+		<LoadingOverlay active={isLoadingcreateViral} spinner={<PrimaryLoader />}>
 			<Slide in={true} direction='up' {...{ timeout: 400 }}>
 				<div
 					className={`${
@@ -844,13 +853,7 @@ const UploadOreditArcade = ({
 							: classes.contentWrapper
 					}`}
 				>
-					{specificGameStatus === 'loading' ? (
-						<div className={classes.loaderContainer2}>
-							<img src={Four33Loader} className={classes.loader} />
-						</div>
-					) : (
-						<></>
-					)}
+					{specificGameStatus === 'loading' ? <PrimaryLoader /> : <></>}
 					<div
 						className={classes.contentWrapperNoPreview}
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
