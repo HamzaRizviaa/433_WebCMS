@@ -410,7 +410,7 @@ const UploadOreditArcade = ({
 							data: {
 								bucket: 'media',
 								multipart_upload:
-									form.uploadedFile?.mime_type == 'video/mp4'
+									uploadedFile?.mime_type == 'video/mp4'
 										? [
 												{
 													e_tag: _result?.headers?.etag.replace(/['"]+/g, ''),
@@ -424,7 +424,7 @@ const UploadOreditArcade = ({
 									audio_key: ''
 								},
 								upload_id:
-									form.uploadedFile?.mime_type == 'video/mp4'
+									uploadedFile?.mime_type == 'video/mp4'
 										? result?.data?.data?.upload_id
 										: 'image'
 							}
@@ -455,6 +455,7 @@ const UploadOreditArcade = ({
 	};
 
 	const createGames = async (id, mediaFiles = []) => {
+		console.log('Create Game');
 		setPostButtonStatus(true);
 
 		try {
@@ -543,7 +544,7 @@ const UploadOreditArcade = ({
 			);
 			setIsLoadingcreateViral(false);
 			setPostButtonStatus(false);
-			console.log(e);
+			console.log('Error', form, e);
 		}
 	};
 
@@ -622,7 +623,8 @@ const UploadOreditArcade = ({
 			uploadedExplanationOrIcon: [],
 			dropbox_urls: {
 				image: '',
-				video_icon: '' // same for video and icon
+				video: '',
+				icon: ''
 			},
 			orientation: '',
 			title: '',
@@ -634,12 +636,18 @@ const UploadOreditArcade = ({
 			game_orientation: '',
 			arcade_game_type: '',
 			game_id: '',
-			android: '',
-			ios: '',
-			play_store: '',
-			apple_store: '',
-			play_store_deeplink: '',
-			apple_store_deeplink: ''
+			package_id: {
+				android: '',
+				ios: ''
+			},
+			store_url: {
+				play_store: '',
+				apple_store: ''
+			},
+			deep_link: {
+				android: '',
+				ios: ''
+			}
 		});
 	};
 
