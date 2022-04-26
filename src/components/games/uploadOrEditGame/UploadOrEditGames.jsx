@@ -11,6 +11,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import DragAndDropField from '../../DragAndDropField';
 import Button from '../../button';
 import checkFileSize from '../../../utils/validateFileSize';
+import PrimaryLoader from '../../PrimaryLoader';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../../../pages/PostLibrary/_calender.scss';
 import { useSelector, useDispatch } from 'react-redux';
@@ -835,7 +836,7 @@ const UploadOreditArcade = ({
 	}, [specificGamesData, form]);
 
 	return (
-		<LoadingOverlay active={isLoadingcreateViral} spinner text='Loading...'>
+		<LoadingOverlay active={isLoadingcreateViral} spinner={<PrimaryLoader />}>
 			<Slide in={true} direction='up' {...{ timeout: 400 }}>
 				<div
 					className={`${
@@ -844,13 +845,7 @@ const UploadOreditArcade = ({
 							: classes.contentWrapper
 					}`}
 				>
-					{specificGameStatus === 'loading' ? (
-						<div className={classes.loaderContainer2}>
-							<img src={Four33Loader} className={classes.loader} />
-						</div>
-					) : (
-						<></>
-					)}
+					{specificGameStatus === 'loading' ? <PrimaryLoader /> : <></>}
 					<div
 						className={classes.contentWrapperNoPreview}
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
