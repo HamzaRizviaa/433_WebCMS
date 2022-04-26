@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditMedia.module.scss';
 import PropTypes from 'prop-types';
@@ -37,25 +36,16 @@ const UploadOrEditMedia = ({
 	isEdit,
 	page
 }) => {
-	const [dropboxLink, setDropboxLink] = useState(''); // media dropbox url
-	const [dropboxLink2, setDropboxLink2] = useState(''); // cover image dropbox url
-	const [selectedLabels, setSelectedLabels] = useState([]);
 	const [mediaLabels, setMediaLabels] = useState([]);
-	const [mainCategory, setMainCategory] = useState('');
-	const [subCategory, setSubCategory] = useState('');
+	// const [subCategory, setSubCategory] = useState('');
 	const [subCategories, setSubCategories] = useState([]);
-	const [uploadedFiles, setUploadedFiles] = useState([]);
-	const [uploadedCoverImage, setUploadedCoverImage] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
 	const [subCategoryLabelColor, setSubCategoryLabelColor] = useState('#ffffff');
-	const [titleMedia, setTitleMedia] = useState('');
-	const [description, setDescription] = useState('');
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [previewBool, setPreviewBool] = useState(false);
 	const [isLoadingUploadMedia, setIsLoadingUploadMedia] = useState(false);
-	// const [mediaButtonStatus, setMediaButtonStatus] = useState(false);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [fileWidth, setFileWidth] = useState(null);
@@ -80,7 +70,7 @@ const UploadOrEditMedia = ({
 		uploadedFiles: [],
 		uploadedCoverImage: []
 	});
-
+	// console.log(subCategory);
 	const specificMedia = useSelector(
 		(state) => state.mediaLibraryOriginal.specificMedia
 	);
@@ -338,30 +328,19 @@ const UploadOrEditMedia = ({
 	}, [acceptedFiles2]);
 
 	const resetState = () => {
-		// setMainCategory('');
-		// setDropboxLink('');
-		// setDropboxLink2('');
-		// setSubCategory('');
-		// setUploadedFiles([]);
-		// setUploadedCoverImage([]);
 		setFileRejectionError2('');
 		setSubCategoryLabelColor('#ffffff');
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
-		// setTitleMedia('');
-		// setDescription('');
+
 		setPreviewFile(null);
 		setPreviewBool(false);
-		// setMediaButtonStatus(false);
-		// setSelectedLabels([]);
 		setExtraLabel('');
 		setDisableDropdown(true);
 		setEditBtnDisabled(false);
 		setIsError({});
 		setForm({
-			// main_category_id: '',
-			// sub_category_id: '',
 			title: '',
 			description: '',
 			media_dropbox_url: '',
@@ -617,7 +596,10 @@ const UploadOrEditMedia = ({
 	useEffect(() => {
 		//only empty it when its on new one , not on edit / specific media
 		if (!isEdit) {
-			setSubCategory({ id: null, name: '' });
+			// setSubCategory({ id: null, name: '' });
+			setForm((prev) => {
+				return { ...prev, subCategory: '' };
+			});
 		}
 		// console.log(subCategory, 'subCategory');
 	}, [form.mainCategory]);
@@ -977,7 +959,9 @@ const UploadOrEditMedia = ({
 									<div className={classes.subCategory}>
 										<h6
 											style={{
-												color: mainCategory?.name ? subCategoryLabelColor : ''
+												color: form.mainCategory?.name
+													? subCategoryLabelColor
+													: ''
 											}}
 										>
 											SUB CATEGORY
@@ -1159,7 +1143,9 @@ const UploadOrEditMedia = ({
 													disableUnderline: true,
 													className: classes.textFieldInput,
 													style: {
-														borderRadius: dropboxLink ? '16px' : '40px'
+														borderRadius: form.media_dropbox_url
+															? '16px'
+															: '40px'
 													}
 												}}
 											/>
@@ -1236,7 +1222,9 @@ const UploadOrEditMedia = ({
 													disableUnderline: true,
 													className: classes.textFieldInput,
 													style: {
-														borderRadius: dropboxLink ? '16px' : '40px'
+														borderRadius: form.image_dropbox_url
+															? '16px'
+															: '40px'
 													}
 												}}
 											/>
@@ -1350,7 +1338,7 @@ const UploadOrEditMedia = ({
 													disableUnderline: true,
 													className: classes.textFieldInput,
 													style: {
-														borderRadius: description ? '16px' : '40px'
+														borderRadius: form.description ? '16px' : '40px'
 													}
 												}}
 												multiline

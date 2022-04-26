@@ -24,9 +24,7 @@ import ToggleSwitch from '../../switch';
 // import Fade from '@mui/material/Fade';
 import Slide from '@mui/material/Slide';
 import PrimaryLoader from '../../PrimaryLoader';
-
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
-
 import LoadingOverlay from 'react-loading-overlay';
 
 const UploadOrEditViral = ({
@@ -38,12 +36,7 @@ const UploadOrEditViral = ({
 	buttonText,
 	page
 }) => {
-	const [caption, setCaption] = useState('');
-	// const [dropboxLink, setDropboxLink] = useState('');
-	// const [uploadMediaError, setUploadMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
-	// const [uploadedFiles, setUploadedFiles] = useState([]);
-	// const [selectedLabels, setSelectedLabels] = useState([]);
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
@@ -55,8 +48,7 @@ const UploadOrEditViral = ({
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
-	// const [valueComments, setValueComments] = useState(false);
-	// const [valueLikes, setValueLikes] = useState(false);
+
 	const [isError, setIsError] = useState({});
 	const [form, setForm] = useState({
 		caption: '',
@@ -70,7 +62,7 @@ const UploadOrEditViral = ({
 	const orientationRef = useRef(null);
 	const videoRef = useRef(null);
 	const imgEl = useRef(null);
-
+	const loadingRef = useRef(null);
 	const { specificViralStatus } = useSelector(
 		(state) => state.ViralLibraryStore
 	);
@@ -158,15 +150,6 @@ const UploadOrEditViral = ({
 						]
 					};
 				});
-				// setUploadedFiles([
-				// 	{
-				// 		id: makeid(10),
-				// 		file_name: specificViral?.file_name,
-				// 		thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.thumbnail_url}`,
-				// 		media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
-				// 		type: 'video'
-				// 	}
-				// ]);
 			}
 			if (specificViral?.thumbnail_url === null) {
 				setForm((prev) => {
@@ -182,14 +165,6 @@ const UploadOrEditViral = ({
 						]
 					};
 				});
-				// setUploadedFiles([
-				// 	{
-				// 		id: makeid(10),
-				// 		file_name: specificViral?.file_name,
-				// 		media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificViral?.url}`,
-				// 		type: 'image'
-				// 	}
-				// ]);
 			}
 		}
 	}, [specificViral]);
@@ -241,7 +216,6 @@ const UploadOrEditViral = ({
 					type: file.type === 'video/mp4' ? 'video' : 'image'
 				};
 			});
-			// setUploadedFiles([...uploadedFiles, ...newFiles]);
 
 			setForm((prev) => {
 				return { ...prev, uploadedFiles: [...form.uploadedFiles, ...newFiles] };
@@ -250,18 +224,12 @@ const UploadOrEditViral = ({
 	}, [acceptedFiles]);
 
 	const resetState = () => {
-		setCaption('');
-		// setDropboxLink('');
-		// setUploadMediaError('');
-		// setFileRejectionError('');
-		// setUploadedFiles([]);
 		setPostButtonStatus(false);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
 		setPreviewFile(null);
 		setPreviewBool(false);
-		// setSelectedLabels([]);
 		setDisableDropdown(true);
 		setFileHeight(null);
 		setFileWidth(null);
@@ -274,8 +242,6 @@ const UploadOrEditViral = ({
 			show_likes: false,
 			show_comments: false
 		});
-		// setValueComments(false);
-		// setValueLikes(false);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -285,10 +251,6 @@ const UploadOrEditViral = ({
 				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
 			};
 		});
-
-		// setUploadedFiles((uploadedFiles) =>
-		// 	uploadedFiles.filter((file) => file.id !== id)
-		// );
 	};
 
 	const validateViralBtn = () => {
@@ -436,6 +398,7 @@ const UploadOrEditViral = ({
 			validateViralBtn();
 		} else {
 			setPostButtonStatus(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			if (isEdit) {
 				setIsLoadingcreateViral(true);
 				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
@@ -497,6 +460,7 @@ const UploadOrEditViral = ({
 			>
 				<Slide in={true} direction='up' {...{ timeout: 400 }}>
 					<div
+						ref={loadingRef}
 						className={`${
 							previewFile != null
 								? classes.previewContentWrapper
@@ -648,7 +612,7 @@ const UploadOrEditViral = ({
 											disableUnderline: true,
 											className: classes.textFieldInput,
 											style: {
-												borderRadius: caption ? '16px' : '40px'
+												borderRadius: form.caption ? '16px' : '40px'
 											}
 										}}
 										multiline
