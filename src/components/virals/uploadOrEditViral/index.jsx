@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditViral.module.scss';
 import { useDropzone } from 'react-dropzone';
@@ -40,11 +39,11 @@ const UploadOrEditViral = ({
 	page
 }) => {
 	const [caption, setCaption] = useState('');
-	const [dropboxLink, setDropboxLink] = useState('');
-	const [uploadMediaError, setUploadMediaError] = useState('');
+	// const [dropboxLink, setDropboxLink] = useState('');
+	// const [uploadMediaError, setUploadMediaError] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
-	const [uploadedFiles, setUploadedFiles] = useState([]);
-	const [selectedLabels, setSelectedLabels] = useState([]);
+	// const [uploadedFiles, setUploadedFiles] = useState([]);
+	// const [selectedLabels, setSelectedLabels] = useState([]);
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
@@ -56,8 +55,8 @@ const UploadOrEditViral = ({
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
-	const [valueComments, setValueComments] = useState(false);
-	const [valueLikes, setValueLikes] = useState(false);
+	// const [valueComments, setValueComments] = useState(false);
+	// const [valueLikes, setValueLikes] = useState(false);
 	const [isError, setIsError] = useState({});
 	const [form, setForm] = useState({
 		caption: '',
@@ -120,7 +119,7 @@ const UploadOrEditViral = ({
 				specificViral.labels.map((label) =>
 					_labels.push({ id: -1, name: label })
 				);
-				setSelectedLabels(_labels);
+				// setSelectedLabels(_labels);
 				// console.log('Labels', _labels);
 				setForm((prev) => {
 					return {
@@ -252,17 +251,17 @@ const UploadOrEditViral = ({
 
 	const resetState = () => {
 		setCaption('');
-		setDropboxLink('');
-		setUploadMediaError('');
-		setFileRejectionError('');
-		setUploadedFiles([]);
+		// setDropboxLink('');
+		// setUploadMediaError('');
+		// setFileRejectionError('');
+		// setUploadedFiles([]);
 		setPostButtonStatus(false);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
 		setPreviewFile(null);
 		setPreviewBool(false);
-		setSelectedLabels([]);
+		// setSelectedLabels([]);
 		setDisableDropdown(true);
 		setFileHeight(null);
 		setFileWidth(null);
@@ -275,8 +274,8 @@ const UploadOrEditViral = ({
 			show_likes: false,
 			show_comments: false
 		});
-		setValueComments(false);
-		setValueLikes(false);
+		// setValueComments(false);
+		// setValueLikes(false);
 	};
 
 	const handleDeleteFile = (id) => {

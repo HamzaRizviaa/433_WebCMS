@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditArticle.module.scss';
@@ -57,13 +56,8 @@ const UploadOrEditViral = ({
 	buttonText,
 	page
 }) => {
-	const [articleTitle, setArticleTitle] = useState('');
-	const [editorText, setEditorText] = useState('');
-	const [dropboxLink, setDropboxLink] = useState('');
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
-	const [uploadedFiles, setUploadedFiles] = useState([]);
-	const [selectedLabels, setSelectedLabels] = useState([]);
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -102,9 +96,6 @@ const UploadOrEditViral = ({
 
 	const dispatch = useDispatch();
 
-	//unused errors
-	console.log(editorText, 'editorText');
-
 	useEffect(() => {
 		if (specificArticle) {
 			if (specificArticle?.labels) {
@@ -112,7 +103,7 @@ const UploadOrEditViral = ({
 				specificArticle.labels.map((label) =>
 					_labels.push({ id: -1, name: label })
 				);
-				setSelectedLabels(_labels);
+
 				setForm((prev) => {
 					return {
 						...prev,
@@ -136,7 +127,8 @@ const UploadOrEditViral = ({
 					description:
 						specificArticle?.length === 0
 							? ''
-							: tinyMCE.activeEditor?.setContent(specificArticle?.description)
+							: // eslint-disable-next-line no-undef
+							  tinyMCE.activeEditor?.setContent(specificArticle?.description)
 				};
 			});
 
@@ -245,7 +237,7 @@ const UploadOrEditViral = ({
 		setForm((prev) => {
 			return { ...prev, description: editorTextContent };
 		});
-		setEditorText(editorTextContent);
+		// setEditorText(editorTextContent);
 		setEditorTextChecker(editorTextContent); // to check yellow button condition
 	};
 
@@ -304,13 +296,13 @@ const UploadOrEditViral = ({
 	};
 
 	const resetState = () => {
-		setArticleTitle('');
-		setEditorText('');
-		setEditorText(tinyMCE.activeEditor?.setContent(''));
-		setDropboxLink('');
+		// setArticleTitle('');
+		// setEditorText('');
+		// setEditorText(tinyMCE.activeEditor?.setContent(''));
+		// setDropboxLink('');
 		setEditorTextChecker('');
 		setFileRejectionError('');
-		setUploadedFiles([]);
+		// setUploadedFiles([]);
 		setPostButtonStatus(false);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
@@ -318,14 +310,14 @@ const UploadOrEditViral = ({
 		setExtraLabel('');
 		setPreviewFile(null);
 		setPreviewBool(false);
-		setSelectedLabels([]);
+		// setSelectedLabels([]);
 		setDisableDropdown(true);
 		setFileHeight(null);
 		setFileWidth(null);
 		setIsError({});
 		setForm({
 			title: '',
-			description: '',
+			description: tinyMCE.activeEditor?.setContent(''),
 			dropbox_url: '',
 			uploadedFiles: [],
 			labels: []
@@ -620,7 +612,7 @@ const UploadOrEditViral = ({
 											disableUnderline: true,
 											className: classes.textFieldInput,
 											style: {
-												borderRadius: dropboxLink ? '16px' : '40px'
+												borderRadius: form.dropbox_url ? '16px' : '40px'
 											}
 										}}
 									/>
@@ -665,7 +657,7 @@ const UploadOrEditViral = ({
 											disableUnderline: true,
 											className: classes.textFieldInput,
 											style: {
-												borderRadius: articleTitle ? '16px' : '40px'
+												borderRadius: form.title ? '16px' : '40px'
 											}
 										}}
 										inputProps={{ maxLength: 28 }}
