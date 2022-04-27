@@ -138,7 +138,6 @@ const UploadOreditArcade = ({
 			return _type && _type[1];
 		}
 	};
-	console.log(form, 'fm');
 	useEffect(() => {
 		if (specificGamesData) {
 			setForm((prev) => {
