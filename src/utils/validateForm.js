@@ -1,18 +1,7 @@
 const validateForm = (form) => {
 	var validate = Object.keys(form).map((key) => {
-		if (form[key] === null) {
-			if (form['mediaToggle']) {
-				return false;
-			} else {
-				return true;
-			}
-		}
 		if (typeof form[key] === 'string') {
-			if (
-				key.includes('dropbox_url') ||
-				key.includes('media_dropbox_url') ||
-				key.includes('image_dropbox_url')
-			) {
+			if (key.includes('dropbox_url')) {
 				return true;
 			}
 			return !form[key] ? false : true;
@@ -30,13 +19,21 @@ const validateForm = (form) => {
 					return form[key]?.length === 0 ? false : true;
 				}
 			} else {
-				validateForm(form[key]);
+				return validateForm(form[key]);
 			}
 		}
 		if (typeof form[key] === 'boolean') {
 			return true; // for non - mandatory fields
 		}
+		if (form[key] === null) {
+			if (form['mediaToggle']) {
+				return false;
+			} else {
+				return true;
+			}
+		}
 	});
+	console.log('Validate', validate);
 	return validate.every((item) => item === true);
 };
 

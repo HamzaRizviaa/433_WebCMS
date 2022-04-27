@@ -351,7 +351,7 @@ const UploadOrEditMedia = ({
 	const validatePostBtn = () => {
 		setIsError({
 			uploadedFiles: form.uploadedFiles.length < 1,
-			selectedLabels: form.labels.length < 10,
+			selectedLabels: form.labels.length < 7,
 			uploadedCoverImage: form.uploadedCoverImage.length < 1,
 			mainCategory: !form.mainCategory,
 			subCategory: !form.subCategory.name,
@@ -570,6 +570,7 @@ const UploadOrEditMedia = ({
 		});
 	};
 	useEffect(() => {
+		console.log('form', form);
 		validateForm(form);
 	}, [form]);
 
