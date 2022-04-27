@@ -16,6 +16,9 @@ const Labels = ({
 	extraLabel,
 	handleChangeExtraLabel
 }) => {
+	//const regex = /[%<>\\$'"\s@#/-=+&^*()!:;.,?{}[|]]/;
+	const regex = /\W/; // all characters that are not numbers and alphabets and underscore
+
 	return (
 		<Autocomplete
 			disabled={isEdit}
@@ -51,7 +54,21 @@ const Labels = ({
 			filterSelectedOptions
 			freeSolo={false}
 			value={selectedLabels}
+			// onKeyPress={(e) => {
+			// 	console.log(e);
+			// 	if ((e.key = '')) {
+			// 		let newLabels = newValue?.filter(
+			// 			(v, i, a) =>
+			// 				a.findIndex(
+			// 					(t) => t.name.toLowerCase() === v.name.toLowerCase()
+			// 				) === i
+			// 		);
+			// 		setSelectedLabels([...newLabels]);
+			// 	}
+			// }}
+			autoHighlight={false}
 			onChange={(event, newValue) => {
+				// console.log(event, 'change');
 				setDisableDropdown(true);
 				let newLabels = newValue?.filter(
 					(v, i, a) =>
@@ -85,9 +102,13 @@ const Labels = ({
 						className: classes.textFieldInput,
 						...params.InputProps
 					}}
-					// inputProps={{
-					// 	pattern: '[A-Za-z0-9]+'
-					// }}
+					onKeyPress={(e) => {
+						const newValue = e.key;
+						if (newValue.match(regex)) {
+							e.preventDefault();
+							e.stopPropagation();
+						}
+					}}
 				/>
 			)}
 			renderOption={(props, option) => {

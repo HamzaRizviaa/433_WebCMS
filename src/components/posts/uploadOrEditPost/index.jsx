@@ -30,6 +30,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import { Autocomplete, Popper, Paper, Tooltip, Fade } from '@mui/material';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
 import checkFileSize from '../../../utils/validateFileSize';
+import validateForm from '../../../utils/validateForm';
 
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
 import { ReactComponent as PortraitCrop } from '../../../assets/portrait_rect.svg';
@@ -52,7 +53,7 @@ const UploadOrEditPost = ({
 }) => {
 	const [caption, setCaption] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
-	const [value, setValue] = useState(false);
+	const [mediaToggle, setMediaToggle] = useState(false);
 	const [valueComments, setValueComments] = useState(false);
 	const [valueLikes, setValueLikes] = useState(false);
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -76,6 +77,16 @@ const UploadOrEditPost = ({
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
+	const [form, setForm] = useState({
+		caption: '',
+		dropbox_url: '',
+		uploadedFiles: [],
+		labels: [],
+		show_likes: false,
+		show_comments: false,
+		media_id: null,
+		mediaToggle: false
+	});
 	const [isError, setIsError] = useState({});
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
@@ -126,11 +137,26 @@ const UploadOrEditPost = ({
 				specificPost.labels.map((label) =>
 					_labels.push({ id: -1, name: label })
 				);
-				setSelectedLabels(_labels);
+				// setSelectedLabels(_labels);
+				setForm((prev) => {
+					return {
+						...prev,
+						labels: _labels
+					};
+				});
 			}
-			setCaption(specificPost.caption);
+			setForm((prev) => {
+				return {
+					...prev,
+					caption: specificPost.caption,
+					dropbox_url: specificPost.dropbox_url,
+					show_likes: specificPost.show_likes,
+					show_comments: specificPost.show_comments
+				};
+			});
+			// setCaption(specificPost.caption);
 
-			setDropboxLink(specificPost?.dropbox_url);
+			// setDropboxLink(specificPost?.dropbox_url);
 
 			if (specificPost?.media_id !== null) {
 				let _media;
@@ -139,13 +165,25 @@ const UploadOrEditPost = ({
 						_media = medi;
 					}
 				});
-				setLinktoPostMedia(_media);
-				setSelectedMedia(_media);
-				setValue(true);
+				// setLinktoPostMedia(_media);
+				// setSelectedMedia(_media);
+				setForm((prev) => {
+					return {
+						...prev,
+						media_id: _media
+					};
+				});
+				// setMediaToggle(true);
+				setForm((prev) => {
+					return {
+						...prev,
+						mediaToggle: true
+					};
+				});
 			}
 
-			setValueComments(specificPost?.show_comments);
-			setValueLikes(specificPost?.show_likes);
+			// setValueComments(specificPost?.show_comments);
+			// setValueLikes(specificPost?.show_likes);
 
 			if (specificPost.orientation_type === 'square') {
 				setDimensionSelect('square');
@@ -164,22 +202,30 @@ const UploadOrEditPost = ({
 				let newFiles = specificPost.medias.map((file) => {
 					if (file.thumbnail_url) {
 						return {
-							fileName: file.file_name,
+							file_name: file.file_name,
 							id: file.id,
-							url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
-							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.thumbnail_url}`, //img
-							type: 'video'
+							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
+							thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.thumbnail_url}`, //img
+							type: 'video',
+							sort_order: 0
 						};
 					} else {
 						return {
-							fileName: file.file_name,
+							file_name: file.file_name,
 							id: file.id,
-							img: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`, //img
-							type: 'image'
+							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`, //img
+							type: 'image',
+							sort_order: 0
 						};
 					}
 				});
-				setUploadedFiles([...uploadedFiles, ...newFiles]);
+				setForm((prev) => {
+					return {
+						...prev,
+						uploadedFiles: [...form.uploadedFiles, ...newFiles]
+					};
+				});
+				// setUploadedFiles([...uploadedFiles, ...newFiles]);
 			}
 		}
 	}, [specificPost]);
@@ -224,26 +270,38 @@ const UploadOrEditPost = ({
 				let id = makeid(10);
 				return {
 					id: id,
-					fileName: file.name,
-					img: URL.createObjectURL(file),
+					file_name: file.name,
+					media_url: URL.createObjectURL(file),
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
 					type: file.type === 'video/mp4' ? 'video' : 'image'
 				};
 			});
-			setUploadedFiles([...uploadedFiles, ...newFiles]);
+			setForm((prev) => {
+				return {
+					...prev,
+					uploadedFiles: [...form.uploadedFiles, ...newFiles]
+				};
+			});
+			// setUploadedFiles([...uploadedFiles, ...newFiles]);
 		}
-		if (uploadedFiles.length > 10) {
-			let newArray = uploadedFiles.slice(0, 10);
-			setUploadedFiles([newArray]);
+		if (form.uploadedFiles.length > 10) {
+			let newArray = form.uploadedFiles.slice(0, 10);
+			setForm((prev) => {
+				return {
+					...prev,
+					uploadedFiles: [newArray]
+				};
+			});
+			// setUploadedFiles([newArray]);
 		}
 	}, [acceptedFiles]);
 
 	const resetState = () => {
 		setCaption('');
 		setDropboxLink('');
-		setValue(false);
+		setMediaToggle(false);
 		setValueComments(false);
 		setValueLikes(false);
 		setFileRejectionError('');
@@ -264,6 +322,16 @@ const UploadOrEditPost = ({
 		setDropdownPosition(false);
 		setIsError({});
 		setEditBtnDisabled(false);
+		setForm({
+			caption: '',
+			dropbox_url: '',
+			uploadedFiles: [],
+			labels: [],
+			show_likes: false,
+			show_comments: false,
+			media_id: null,
+			mediaToggle: false
+		});
 	};
 
 	// a little function to help us with reordering the result
@@ -281,26 +349,41 @@ const UploadOrEditPost = ({
 		}
 
 		const items = reorder(
-			uploadedFiles,
+			form?.uploadedFiles,
 			result.source.index, // pick
 			result.destination.index // drop
 		);
-
-		setUploadedFiles(items);
+		setForm((prev) => {
+			return {
+				...prev,
+				uploadedFiles: items
+			};
+		});
+		// setUploadedFiles(items);
 	};
 
 	const handleDeleteFile = (id) => {
-		setUploadedFiles((uploadedFiles) =>
-			uploadedFiles.filter((file) => file.id !== id)
-		);
+		// setUploadedFiles((uploadedFiles) =>
+		// 	uploadedFiles.filter((file) => file.id !== id)
+		// );
+		setForm((prev) => {
+			return {
+				...prev,
+				uploadedFiles: form?.uploadedFiles.filter((file) => file.id !== id)
+			};
+		});
 	};
+
+	useEffect(() => {
+		validateForm(form);
+	}, [form]);
 
 	const validatePostBtn = () => {
 		setIsError({
-			caption: !caption,
-			uploadedFiles: uploadedFiles.length < 1,
-			selectedLabels: selectedLabels.length < 10,
-			selectedMediaValue: value && !selectedMedia
+			caption: !form?.caption,
+			uploadedFiles: form?.uploadedFiles.length < 1,
+			selectedLabels: form?.labels.length < 7,
+			selectedMediaValue: form.mediaToggle && !form?.media_id
 		});
 
 		setTimeout(() => {
@@ -312,34 +395,26 @@ const UploadOrEditPost = ({
 		setPostButtonStatus(true);
 
 		let media_files = mediaFiles.map((file, index) => {
-			if (file.file_name) {
-				return file;
-			} else {
-				let _file = Object.assign(file, {
-					file_name: file.fileName,
-					media_url: file.img.split('cloudfront.net/')[1],
-					sort_order: 0
-				});
-				delete _file.fileName;
-				delete _file.img;
-				return _file;
-			}
+			return {
+				...file,
+				media_url: file.media_url.split('cloudfront.net/')[1] || file.media_url
+			};
 		});
 
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
 				{
-					caption: caption,
+					caption: form.caption,
 					media_files: [...media_files],
-					...(dropboxLink ? { dropbox_url: dropboxLink } : {}),
+					...(form.dropbox_url ? { dropbox_url: form.dropbox_url } : {}),
 					orientation_type: dimensionSelect,
-					...(selectedMedia ? { media_id: selectedMedia.id } : {}),
-					...(valueLikes ? { show_likes: true } : {}),
-					...(valueComments ? { show_comments: true } : {}),
+					...(form.media_id ? { media_id: form.media_id.id } : {}),
+					...(form.show_likes ? { show_likes: true } : {}),
+					...(form.show_comments ? { show_comments: true } : {}),
 					...(isEdit && id ? { post_id: id } : {}),
-					...(!isEdit && selectedLabels.length
-						? { labels: [...selectedLabels] }
+					...(!isEdit && form.labels.length
+						? { labels: [...form.labels] }
 						: {}),
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
@@ -434,12 +509,12 @@ const UploadOrEditPost = ({
 		setPreviewFile(null);
 	};
 
-	const postBtnDisabled =
-		!uploadedFiles.length ||
-		!caption ||
-		postButtonStatus ||
-		(value && !selectedMedia) ||
-		selectedLabels.length < 10;
+	// const postBtnDisabled =
+	// 	!form?.uploadedFiles.length ||
+	// 	!form?.caption ||
+	// 	postButtonStatus ||
+	// 	(mediaToggle && !form?.media_id) ||
+	// 	form?.labels.length < 10;
 
 	//old one
 
@@ -453,10 +528,16 @@ const UploadOrEditPost = ({
 	// 	linktoPostMedia?.title === selectedMedia?.title?.trim()) ||
 	// specificPost?.medias?.length !== uploadedFiles?.length &&
 
+	const checkNewFile = () => {
+		return form?.uploadedFiles?.some((item) => {
+			return item?.file;
+		});
+	};
+
 	useEffect(() => {
 		if (specificPost) {
 			let checkDuplicateFile = specificPost?.medias?.map((mediaFile) => {
-				return uploadedFiles.some((file) => file.id == mediaFile.id);
+				return form?.uploadedFiles.some((file) => file.id == mediaFile.id);
 			});
 
 			// let checkDuplicateFile = uploadedFiles.some((file) => {
@@ -465,20 +546,19 @@ const UploadOrEditPost = ({
 			// 	});
 			// });
 
-			console.log(checkDuplicateFile, 'CDF');
-
 			setEditBtnDisabled(
 				postButtonStatus ||
-					!uploadedFiles.length ||
-					!caption ||
-					(value && !selectedMedia) ||
-					(specificPost?.dropbox_url?.trim() === dropboxLink?.trim() &&
-						specificPost?.caption?.trim() === caption?.trim() &&
-						specificPost?.media_id == selectedMedia?.id &&
-						specificPost?.medias?.length === uploadedFiles?.length)
+					!form?.uploadedFiles.length ||
+					!form?.caption ||
+					(form.mediaToggle && !form?.media_id) ||
+					(specificPost?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
+						specificPost?.caption?.trim() === form?.caption?.trim() &&
+						specificPost?.media_id == form?.media_id?.id &&
+						specificPost?.medias?.length === form?.uploadedFiles?.length &&
+						!checkNewFile())
 			);
 		}
-	}, [specificPost, caption, uploadedFiles, selectedMedia, dropboxLink, value]);
+	}, [specificPost, form]);
 
 	// console.log(specificPost?.medias?.length, 'specificPost?.medias?.length');
 	// console.log(selectedMedia?.id, 'captionL');
@@ -487,13 +567,13 @@ const UploadOrEditPost = ({
 	//console.log(uploadedFiles, 'uploadedFiles');
 
 	const addSavePostBtn = () => {
-		if (postBtnDisabled || editBtnDisabled) {
+		if (!validateForm(form) || editBtnDisabled) {
 			validatePostBtn();
 		} else {
 			setPostButtonStatus(true);
 			setIsLoadingCreatePost(true);
 			if (isEdit) {
-				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
 					if (_file.file) {
 						return await uploadFileToServer(_file, 'postlibrary');
 					} else {
@@ -510,7 +590,7 @@ const UploadOrEditPost = ({
 					});
 			} else {
 				setIsLoadingCreatePost(true);
-				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
 					return uploadFileToServer(_file, 'postlibrary');
 				});
 
@@ -569,7 +649,7 @@ const UploadOrEditPost = ({
 							style={{ width: previewFile != null ? '60%' : 'auto' }}
 						>
 							<div>
-								{uploadedFiles.length === 0 ? (
+								{form?.uploadedFiles.length === 0 ? (
 									<div className={classes.explanationWrapper}>
 										<h5>{heading1}</h5>
 										<Tooltip
@@ -675,7 +755,7 @@ const UploadOrEditPost = ({
 								)}
 								<DragAndDropField
 									onDragEnd={onDragEnd}
-									uploadedFiles={uploadedFiles}
+									uploadedFiles={form?.uploadedFiles}
 									isEdit={isEdit}
 									handleDeleteFile={handleDeleteFile}
 									setPreviewBool={setPreviewBool}
@@ -686,7 +766,7 @@ const UploadOrEditPost = ({
 									isPost
 								/>
 
-								{uploadedFiles.length < 10 && (
+								{form?.uploadedFiles.length < 10 && (
 									<section
 										className={classes.dropZoneContainer}
 										style={{
@@ -719,8 +799,15 @@ const UploadOrEditPost = ({
 								<div className={classes.dropBoxUrlContainer}>
 									<h6>DROPBOX URL</h6>
 									<TextField
-										value={dropboxLink}
-										onChange={(e) => setDropboxLink(e.target.value)}
+										value={form?.dropbox_url}
+										onChange={(event) =>
+											setForm((prev) => {
+												return {
+													...prev,
+													dropbox_url: event.target.value
+												};
+											})
+										}
 										placeholder={'Please drop the dropbox URL here'}
 										className={classes.textField}
 										multiline
@@ -747,8 +834,12 @@ const UploadOrEditPost = ({
 									<Labels
 										isEdit={isEdit}
 										setDisableDropdown={setDisableDropdown}
-										selectedLabels={selectedLabels}
-										setSelectedLabels={setSelectedLabels}
+										selectedLabels={form?.labels}
+										setSelectedLabels={(newVal) => {
+											setForm((prev) => {
+												return { ...prev, labels: [...newVal] };
+											});
+										}}
 										LabelsOptions={postLabels}
 										extraLabel={extraLabel}
 										handleChangeExtraLabel={handleChangeExtraLabel}
@@ -773,8 +864,12 @@ const UploadOrEditPost = ({
 										CAPTION
 									</h6>
 									<TextField
-										value={caption}
-										onChange={(e) => setCaption(e.target.value)}
+										value={form?.caption}
+										onChange={(e) =>
+											setForm((prev) => {
+												return { ...prev, caption: e.target.value };
+											})
+										}
 										placeholder={'Please write your caption here'}
 										className={classes.textField}
 										InputProps={{
@@ -799,15 +894,22 @@ const UploadOrEditPost = ({
 										<h5>Link post to media</h5>
 										<ToggleSwitch
 											id={1}
-											checked={value}
+											checked={form.mediaToggle}
 											onChange={(checked) => {
-												setSelectedMedia(null);
-												setValue(checked);
+												setForm((prev) => {
+													return { ...prev, media_id: null };
+												});
+												setForm((prev) => {
+													return {
+														...prev,
+														mediaToggle: checked
+													};
+												});
 											}}
 										/>
 									</div>
 								</div>
-								{value ? (
+								{form.mediaToggle ? (
 									<div
 										style={{ marginBottom: dropdownPosition ? 200 : 0 }}
 										className={classes.mediaContainer}
@@ -822,7 +924,7 @@ const UploadOrEditPost = ({
 											SELECT MEDIA
 										</h6>
 										<Autocomplete
-											value={selectedMedia}
+											value={form?.media_id}
 											PaperComponent={(props) => {
 												setDisableDropdown(false);
 
@@ -857,8 +959,11 @@ const UploadOrEditPost = ({
 												setDropdownPosition(false);
 											}}
 											onChange={(e, newVal) => {
-												setSelectedMedia(newVal);
-
+												// setSelectedMedia(newVal);
+												console.log(newVal, 'nv');
+												setForm((prev) => {
+													return { ...prev, media_id: newVal };
+												});
 												setDisableDropdown(true);
 											}}
 											options={allMedia}
@@ -915,9 +1020,12 @@ const UploadOrEditPost = ({
 										<h5>Show comments</h5>
 										<ToggleSwitch
 											id={2}
-											checked={valueComments}
+											checked={form?.show_comments}
 											onChange={(checked) => {
-												setValueComments(checked);
+												setForm((prev) => {
+													return { ...prev, show_comments: checked };
+												});
+												// setValueComments(checked);
 											}}
 										/>
 									</div>
@@ -928,9 +1036,12 @@ const UploadOrEditPost = ({
 										<h5>Show likes</h5>
 										<ToggleSwitch
 											id={3}
-											checked={valueLikes}
+											checked={form?.show_likes}
 											onChange={(checked) => {
-												setValueLikes(checked);
+												setForm((prev) => {
+													return { ...prev, show_likes: checked };
+												});
+												// setValueLikes(checked);
 											}}
 										/>
 									</div>
@@ -956,7 +1067,7 @@ const UploadOrEditPost = ({
 
 								<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
 									<Button
-										disabled={isEdit ? editBtnDisabled : postBtnDisabled}
+										disabled={isEdit ? editBtnDisabled : !validateForm(form)}
 										onClick={() => {
 											addSavePostBtn();
 										}}
@@ -981,7 +1092,7 @@ const UploadOrEditPost = ({
 									{previewFile.mime_type === 'video/mp4' ? (
 										<video
 											id={'my-video'}
-											poster={isEdit ? previewFile.img : null}
+											poster={isEdit ? previewFile.media_url : null}
 											className={classes.previewFile}
 											style={{
 												width: `${imageToResizeWidth * 4}px`,
@@ -991,7 +1102,7 @@ const UploadOrEditPost = ({
 											}}
 											controls={true}
 										>
-											<source src={previewFile.img} />
+											<source src={previewFile.media_url} />
 										</video>
 									) : isEdit && previewFile.type === 'video' ? (
 										<video
@@ -1006,11 +1117,11 @@ const UploadOrEditPost = ({
 											}}
 											controls={true}
 										>
-											<source src={previewFile.url} />
+											<source src={previewFile.media_url} />
 										</video>
 									) : (
 										<img
-											src={previewFile.img}
+											src={previewFile.media_url}
 											className={classes.previewFile}
 											style={{
 												width: `${imageToResizeWidth * 4}px`,

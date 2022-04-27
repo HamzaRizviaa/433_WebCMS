@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditMedia.module.scss';
 import PropTypes from 'prop-types';
@@ -37,25 +36,15 @@ const UploadOrEditMedia = ({
 	isEdit,
 	page
 }) => {
-	const [dropboxLink, setDropboxLink] = useState(''); // media dropbox url
-	const [dropboxLink2, setDropboxLink2] = useState(''); // cover image dropbox url
-	const [selectedLabels, setSelectedLabels] = useState([]);
 	const [mediaLabels, setMediaLabels] = useState([]);
-	const [mainCategory, setMainCategory] = useState('');
-	const [subCategory, setSubCategory] = useState('');
 	const [subCategories, setSubCategories] = useState([]);
-	const [uploadedFiles, setUploadedFiles] = useState([]);
-	const [uploadedCoverImage, setUploadedCoverImage] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
 	const [subCategoryLabelColor, setSubCategoryLabelColor] = useState('#ffffff');
-	const [titleMedia, setTitleMedia] = useState('');
-	const [description, setDescription] = useState('');
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [previewBool, setPreviewBool] = useState(false);
 	const [isLoadingUploadMedia, setIsLoadingUploadMedia] = useState(false);
-	// const [mediaButtonStatus, setMediaButtonStatus] = useState(false);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [fileWidth, setFileWidth] = useState(null);
@@ -66,10 +55,8 @@ const UploadOrEditMedia = ({
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
 	const previewRef = useRef(null);
-
+	const loadingRef = useRef(null);
 	const [form, setForm] = useState({
-		// main_category_id: '',
-		// sub_category_id: '',
 		mainCategory: '',
 		subCategory: '',
 		title: '',
@@ -132,7 +119,7 @@ const UploadOrEditMedia = ({
 				specificMedia.labels.map((label) =>
 					_labels.push({ id: -1, name: label })
 				);
-				// setSelectedLabels(_labels);
+
 				setForm((prev) => {
 					return {
 						...prev,
@@ -140,8 +127,7 @@ const UploadOrEditMedia = ({
 					};
 				});
 			}
-			// setMainCategory(specificMedia?.media_type);
-			// setSubCategory(specificMedia?.sub_category);
+
 			setForm((prev) => {
 				return {
 					...prev,
@@ -169,27 +155,6 @@ const UploadOrEditMedia = ({
 					]
 				};
 			});
-			// setDropboxLink(specificMedia?.media_dropbox_url);
-			// setDropboxLink2(specificMedia?.image_dropbox_url);
-			// setTitleMedia(specificMedia?.title);
-			// setDescription(specificMedia?.description);
-			// setUploadedFiles([
-			// 	{
-			// 		id: makeid(10),
-			// 		file_name: specificMedia?.file_name_media,
-			// 		media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.media_url}`,
-			// 		type: specificMedia?.media_type === 'Watch' ? 'video' : 'audio'
-			// 	}
-			// ]);
-
-			// setUploadedCoverImage([
-			// 	{
-			// 		id: makeid(10),
-			// 		file_name: specificMedia?.file_name_image,
-			// 		media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`,
-			// 		type: 'image'
-			// 	}
-			// ]);
 		}
 	}, [specificMedia]);
 
@@ -327,7 +292,7 @@ const UploadOrEditMedia = ({
 					type: file.type === 'video/mp4' ? 'video' : 'image'
 				};
 			});
-			// setUploadedCoverImage([...uploadedCoverImage, ...newFiles]);
+
 			setForm((prev) => {
 				return {
 					...prev,
@@ -338,30 +303,19 @@ const UploadOrEditMedia = ({
 	}, [acceptedFiles2]);
 
 	const resetState = () => {
-		// setMainCategory('');
-		// setDropboxLink('');
-		// setDropboxLink2('');
-		// setSubCategory('');
-		// setUploadedFiles([]);
-		// setUploadedCoverImage([]);
 		setFileRejectionError2('');
 		setSubCategoryLabelColor('#ffffff');
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
-		// setTitleMedia('');
-		// setDescription('');
+
 		setPreviewFile(null);
 		setPreviewBool(false);
-		// setMediaButtonStatus(false);
-		// setSelectedLabels([]);
 		setExtraLabel('');
 		setDisableDropdown(true);
 		setEditBtnDisabled(false);
 		setIsError({});
 		setForm({
-			// main_category_id: '',
-			// sub_category_id: '',
 			title: '',
 			description: '',
 			media_dropbox_url: '',
@@ -375,9 +329,6 @@ const UploadOrEditMedia = ({
 	};
 
 	const handleDeleteFile = (id) => {
-		// setUploadedFiles((uploadedFiles) =>
-		// 	uploadedFiles.filter((file) => file.id !== id)
-		// );
 		setForm((prev) => {
 			return {
 				...prev,
@@ -387,9 +338,6 @@ const UploadOrEditMedia = ({
 	};
 
 	const handleDeleteFile2 = (id) => {
-		// setUploadedCoverImage((uploadedCoverImage) =>
-		// 	uploadedCoverImage.filter((file) => file.id !== id)
-		// );
 		setForm((prev) => {
 			return {
 				...prev,
@@ -403,7 +351,7 @@ const UploadOrEditMedia = ({
 	const validatePostBtn = () => {
 		setIsError({
 			uploadedFiles: form.uploadedFiles.length < 1,
-			selectedLabels: form.labels.length < 10,
+			selectedLabels: form.labels.length < 7,
 			uploadedCoverImage: form.uploadedCoverImage.length < 1,
 			mainCategory: !form.mainCategory,
 			subCategory: !form.subCategory.name,
@@ -502,7 +450,7 @@ const UploadOrEditMedia = ({
 					isEdit ? 'Media has been updated!' : 'Media has been uploaded!'
 				);
 				setIsLoadingUploadMedia(false);
-				// setMediaButtonStatus(false);
+
 				dispatch(getMedia({ page }));
 				handleClose();
 			}
@@ -511,7 +459,7 @@ const UploadOrEditMedia = ({
 				isEdit ? 'Failed to update media!' : 'Failed to create media!'
 			);
 			setIsLoadingUploadMedia(false);
-			// setMediaButtonStatus(false);
+
 			console.log(e);
 		}
 	};
@@ -572,16 +520,6 @@ const UploadOrEditMedia = ({
 		setPreviewFile(null);
 	};
 
-	// const addMediaBtnDisabled =
-	// 	!uploadedFiles.length ||
-	// 	!mainCategory ||
-	// 	!subCategory ||
-	// 	!uploadedCoverImage.length ||
-	// 	!titleMedia ||
-	// 	!description ||
-	// 	mediaButtonStatus ||
-	// 	selectedLabels.length < 10;
-
 	useEffect(() => {
 		if (specificMedia) {
 			setEditBtnDisabled(
@@ -604,7 +542,6 @@ const UploadOrEditMedia = ({
 			);
 		}
 	}, [specificMedia, form]);
-	//console.log(editBtnDisabled, 'edb');
 
 	const MainCategoryId = (e) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
@@ -617,9 +554,11 @@ const UploadOrEditMedia = ({
 	useEffect(() => {
 		//only empty it when its on new one , not on edit / specific media
 		if (!isEdit) {
-			setSubCategory({ id: null, name: '' });
+			// setSubCategory({ id: null, name: '' });
+			setForm((prev) => {
+				return { ...prev, subCategory: '' };
+			});
 		}
-		// console.log(subCategory, 'subCategory');
 	}, [form.mainCategory]);
 
 	const SubCategoryId = (e) => {
@@ -631,6 +570,7 @@ const UploadOrEditMedia = ({
 		});
 	};
 	useEffect(() => {
+		console.log('form', form);
 		validateForm(form);
 	}, [form]);
 
@@ -638,8 +578,8 @@ const UploadOrEditMedia = ({
 		if (!validateForm(form)) {
 			validatePostBtn();
 		} else {
-			// setMediaButtonStatus(true);
 			setIsLoadingUploadMedia(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			if (isEdit) {
 				if (specificMedia?.title?.trim() !== form.title?.trim()) {
 					if (
@@ -660,10 +600,7 @@ const UploadOrEditMedia = ({
 						return;
 					}
 				}
-				// uploadMedia(specificMedia?.id, {
-				// 	title: titleMedia,
-				// 	description
-				// });
+
 				let uploadFilesPromiseArray = [
 					form.uploadedFiles[0],
 					form.uploadedCoverImage[0]
@@ -768,7 +705,7 @@ const UploadOrEditMedia = ({
 						setIsError({});
 					}, [5000]);
 					setIsLoadingUploadMedia(false);
-					// setMediaButtonStatus(false);
+
 					return;
 				}
 				let uploadFilesPromiseArray = [
@@ -829,8 +766,6 @@ const UploadOrEditMedia = ({
 							}
 						);
 						await uploadMedia(null, {
-							// file_name: uploadedFiles[0].file_name,
-							// file_name2: uploadedCoverImage[0].file_name,
 							type: 'medialibrary',
 							data: {
 								file_name_media: form.uploadedFiles[0].file_name,
@@ -870,6 +805,7 @@ const UploadOrEditMedia = ({
 			<LoadingOverlay active={isLoadingUploadMedia} spinner={<PrimaryLoader />}>
 				<Slide in={true} direction='up' {...{ timeout: 400 }}>
 					<div
+						ref={loadingRef}
 						className={`${
 							previewFile != null
 								? classes.previewContentWrapper
@@ -976,7 +912,9 @@ const UploadOrEditMedia = ({
 									<div className={classes.subCategory}>
 										<h6
 											style={{
-												color: mainCategory?.name ? subCategoryLabelColor : ''
+												color: form.mainCategory?.name
+													? subCategoryLabelColor
+													: ''
 											}}
 										>
 											SUB CATEGORY
@@ -1158,7 +1096,9 @@ const UploadOrEditMedia = ({
 													disableUnderline: true,
 													className: classes.textFieldInput,
 													style: {
-														borderRadius: dropboxLink ? '16px' : '40px'
+														borderRadius: form.media_dropbox_url
+															? '16px'
+															: '40px'
 													}
 												}}
 											/>
@@ -1235,7 +1175,9 @@ const UploadOrEditMedia = ({
 													disableUnderline: true,
 													className: classes.textFieldInput,
 													style: {
-														borderRadius: dropboxLink ? '16px' : '40px'
+														borderRadius: form.image_dropbox_url
+															? '16px'
+															: '40px'
 													}
 												}}
 											/>
@@ -1318,7 +1260,7 @@ const UploadOrEditMedia = ({
 										<p className={classes.mediaError}>
 											{isError.selectedLabels
 												? `You need to add ${
-														10 - form.labels.length
+														7 - form.labels.length
 												  } more labels in order to upload media`
 												: ''}
 										</p>
@@ -1349,7 +1291,7 @@ const UploadOrEditMedia = ({
 													disableUnderline: true,
 													className: classes.textFieldInput,
 													style: {
-														borderRadius: description ? '16px' : '40px'
+														borderRadius: form.description ? '16px' : '40px'
 													}
 												}}
 												multiline

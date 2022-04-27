@@ -12,13 +12,26 @@ const validateForm = (form) => {
 				// for question end_Date field
 				return !form[key] ? false : true;
 			}
-			if (key === 'labels') {
-				return form[key]?.length < 10 ? false : true;
+			if (form[key] === null) {
+				if (form['mediaToggle']) {
+					return false;
+				} else {
+					return true;
+				}
+			}
+			if (Array.isArray(form[key])) {
+				if (key === 'labels') {
+					return form[key]?.length < 7 ? false : true;
+				} else {
+					return form[key]?.length === 0 ? false : true;
+				}
 			} else {
-				return form[key]?.length === 0 ? false : true;
+				return validateForm(form[key]);
 			}
 		}
-		return true; // for non - mandatory fields
+		if (typeof form[key] === 'boolean') {
+			return true; // for non - mandatory fields
+		}
 	});
 	return validate.every((item) => item === true);
 };
