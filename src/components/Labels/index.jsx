@@ -16,6 +16,8 @@ const Labels = ({
 	extraLabel,
 	handleChangeExtraLabel
 }) => {
+	//const regex = /[%<>\\$'"\s@#/]/;
+
 	return (
 		<Autocomplete
 			disabled={isEdit}
@@ -53,8 +55,6 @@ const Labels = ({
 			value={selectedLabels}
 			onChange={(event, newValue) => {
 				setDisableDropdown(true);
-				// if (space){} else {57-63}
-				// space key - empty string
 				let newLabels = newValue?.filter(
 					(v, i, a) =>
 						a.findIndex(
@@ -87,9 +87,6 @@ const Labels = ({
 						className: classes.textFieldInput,
 						...params.InputProps
 					}}
-					// inputProps={{
-					// 	pattern: '[A-Za-z0-9]+'
-					// }}
 				/>
 			)}
 			renderOption={(props, option) => {
