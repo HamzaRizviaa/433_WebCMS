@@ -318,7 +318,7 @@ const UploadOrEditViral = ({
 		setIsError({
 			articleTitle: !form.title,
 			uploadedFiles: form.uploadedFiles.length < 1,
-			selectedLabels: form.labels.length < 10,
+			selectedLabels: form.labels.length < 7,
 			editorText: !form.description
 		});
 		setTimeout(() => {
