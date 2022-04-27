@@ -390,7 +390,7 @@ const UploadOrEditQuiz = ({
 		setIsError({
 			endDate: !form.end_date,
 			uploadedFiles: form.uploadedFiles.length < 1,
-			selectedLabels: form.labels.length < 10,
+			selectedLabels: form.labels.length < 7,
 			question: !form.question,
 			ans1: !form.answer1,
 			ans2: !form.answer2
