@@ -32,16 +32,7 @@ const validateForm = (form) => {
 		if (typeof form[key] === 'boolean') {
 			return true; // for non - mandatory fields
 		}
-		// if (form[key] === null) {
-		// 	console.log('dwaw');
-		// 	if (form['mediaToggle']) {
-		// 		return false;
-		// 	} else {
-		// 		return true;
-		// 	}
-		// }
 	});
-	console.log('Validate', validate);
 	return validate.every((item) => item === true);
 };
 

@@ -89,8 +89,6 @@ const UploadOrEditPost = ({
 	});
 	const [isError, setIsError] = useState({});
 
-	console.log(form);
-
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png, video/mp4',
@@ -397,19 +395,10 @@ const UploadOrEditPost = ({
 		setPostButtonStatus(true);
 
 		let media_files = mediaFiles.map((file, index) => {
-			if (file.file_name) {
-				console.log(file, 'ffff');
-				return file;
-			} else {
-				let _file = Object.assign(file, {
-					file_name: file.fileName,
-					media_url: file.media_url.split('cloudfront.net/')[1],
-					sort_order: 0
-				});
-				delete _file.fileName;
-				delete _file.img;
-				return _file;
-			}
+			return {
+				...file,
+				media_url: file.media_url.split('cloudfront.net/')[1] || file.media_url
+			};
 		});
 
 		try {
