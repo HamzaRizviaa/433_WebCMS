@@ -1260,7 +1260,7 @@ const UploadOrEditMedia = ({
 										<p className={classes.mediaError}>
 											{isError.selectedLabels
 												? `You need to add ${
-														10 - form.labels.length
+														7 - form.labels.length
 												  } more labels in order to upload media`
 												: ''}
 										</p>
