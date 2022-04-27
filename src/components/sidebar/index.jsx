@@ -2,8 +2,8 @@ import React from 'react';
 import classes from './_sidebar.module.scss';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ReactComponent as Logo } from '../../assets/logo.svg';
-// import { ReactComponent as Share } from '../../assets/share.svg';
-// import { ReactComponent as ShareSelected } from '../../assets/share_selected.svg';
+import { ReactComponent as Share } from '../../assets/share.svg';
+import { ReactComponent as ShareSelected } from '../../assets/share_selected.svg';
 import { ReactComponent as Media } from '../../assets/media.svg';
 import { ReactComponent as MediaSelected } from '../../assets/media_selected.svg';
 import { ReactComponent as Quiz } from '../../assets/Quiz.svg';
@@ -149,7 +149,7 @@ const Sidebar = () => {
 						<Games className={classes.icon} />
 					)}
 				</div>
-				{/* <div
+				<div
 					onClick={() => {
 						navigate('/post-library');
 					}}
@@ -165,7 +165,7 @@ const Sidebar = () => {
 					) : (
 						<Share className={classes.icon} />
 					)}
-				</div> */}
+				</div>
 			</div>
 
 			<div onClick={signOut} className={classes.logoutContainer}>

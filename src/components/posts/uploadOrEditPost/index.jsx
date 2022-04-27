@@ -99,7 +99,6 @@ const UploadOrEditPost = ({
 		});
 
 	const allMedia = useSelector((state) => state.mediaLibraryOriginal.allMedia);
-	console.log(allMedia, 'am');
 	const labels = useSelector((state) => state.postLibrary.labels);
 	const specificPost = useSelector((state) => state.postLibrary.specificPost);
 	const specificPostStatus = useSelector((state) => state.postLibrary);
@@ -209,14 +208,16 @@ const UploadOrEditPost = ({
 							id: file.id,
 							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`,
 							thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.thumbnail_url}`, //img
-							type: 'video'
+							type: 'video',
+							sort_order: 0
 						};
 					} else {
 						return {
 							file_name: file.file_name,
 							id: file.id,
 							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${file.url}`, //img
-							type: 'image'
+							type: 'image',
+							sort_order: 0
 						};
 					}
 				});
@@ -383,7 +384,7 @@ const UploadOrEditPost = ({
 		setIsError({
 			caption: !form?.caption,
 			uploadedFiles: form?.uploadedFiles.length < 1,
-			selectedLabels: form?.labels.length < 10,
+			selectedLabels: form?.labels.length < 7,
 			selectedMediaValue: form.mediaToggle && !form?.media_id
 		});
 
@@ -397,11 +398,12 @@ const UploadOrEditPost = ({
 
 		let media_files = mediaFiles.map((file, index) => {
 			if (file.file_name) {
+				console.log(file, 'ffff');
 				return file;
 			} else {
 				let _file = Object.assign(file, {
 					file_name: file.fileName,
-					media_url: file.img.split('cloudfront.net/')[1],
+					media_url: file.media_url.split('cloudfront.net/')[1],
 					sort_order: 0
 				});
 				delete _file.fileName;
@@ -537,6 +539,12 @@ const UploadOrEditPost = ({
 	// 	linktoPostMedia?.title === selectedMedia?.title?.trim()) ||
 	// specificPost?.medias?.length !== uploadedFiles?.length &&
 
+	const checkNewFile = () => {
+		return form?.uploadedFiles?.some((item) => {
+			return item?.file;
+		});
+	};
+
 	useEffect(() => {
 		if (specificPost) {
 			let checkDuplicateFile = specificPost?.medias?.map((mediaFile) => {
@@ -557,7 +565,8 @@ const UploadOrEditPost = ({
 					(specificPost?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
 						specificPost?.caption?.trim() === form?.caption?.trim() &&
 						specificPost?.media_id == form?.media_id?.id &&
-						specificPost?.medias?.length === form?.uploadedFiles?.length)
+						specificPost?.medias?.length === form?.uploadedFiles?.length &&
+						!checkNewFile())
 			);
 		}
 	}, [specificPost, form]);
@@ -575,7 +584,7 @@ const UploadOrEditPost = ({
 			setPostButtonStatus(true);
 			setIsLoadingCreatePost(true);
 			if (isEdit) {
-				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
 					if (_file.file) {
 						return await uploadFileToServer(_file, 'postlibrary');
 					} else {
@@ -592,7 +601,7 @@ const UploadOrEditPost = ({
 					});
 			} else {
 				setIsLoadingCreatePost(true);
-				let uploadFilesPromiseArray = uploadedFiles.map(async (_file) => {
+				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
 					return uploadFileToServer(_file, 'postlibrary');
 				});
 
@@ -898,8 +907,9 @@ const UploadOrEditPost = ({
 											id={1}
 											checked={form.mediaToggle}
 											onChange={(checked) => {
-												setSelectedMedia(null);
-												// setMediaToggle(checked);
+												setForm((prev) => {
+													return { ...prev, media_id: null };
+												});
 												setForm((prev) => {
 													return {
 														...prev,
