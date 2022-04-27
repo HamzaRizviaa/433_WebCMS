@@ -12,6 +12,13 @@ const validateForm = (form) => {
 				// for question end_Date field
 				return !form[key] ? false : true;
 			}
+			if (form[key] === null) {
+				if (form['mediaToggle']) {
+					return false;
+				} else {
+					return true;
+				}
+			}
 			if (Array.isArray(form[key])) {
 				if (key === 'labels') {
 					return form[key]?.length < 7 ? false : true;
@@ -25,15 +32,7 @@ const validateForm = (form) => {
 		if (typeof form[key] === 'boolean') {
 			return true; // for non - mandatory fields
 		}
-		if (form[key] === null) {
-			if (form['mediaToggle']) {
-				return false;
-			} else {
-				return true;
-			}
-		}
 	});
-	console.log('Validate', validate);
 	return validate.every((item) => item === true);
 };
 
