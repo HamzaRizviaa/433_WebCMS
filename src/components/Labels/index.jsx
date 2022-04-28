@@ -102,6 +102,13 @@ const Labels = ({
 						className: classes.textFieldInput,
 						...params.InputProps
 					}}
+					onPaste={(e) => {
+						const newValue = e.clipboardData.getData('Text');
+						if (newValue.match(regex)) {
+							e.preventDefault();
+							e.stopPropagation();
+						}
+					}}
 					onKeyPress={(e) => {
 						const newValue = e.key;
 						if (newValue.match(regex)) {
