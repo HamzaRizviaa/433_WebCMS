@@ -54,19 +54,7 @@ const Labels = ({
 			filterSelectedOptions
 			freeSolo={false}
 			value={selectedLabels}
-			// onKeyPress={(e) => {
-			// 	console.log(e);
-			// 	if ((e.key = '')) {
-			// 		let newLabels = newValue?.filter(
-			// 			(v, i, a) =>
-			// 				a.findIndex(
-			// 					(t) => t.name.toLowerCase() === v.name.toLowerCase()
-			// 				) === i
-			// 		);
-			// 		setSelectedLabels([...newLabels]);
-			// 	}
-			// }}
-			autoHighlight={false}
+			autoHighlight={true}
 			onChange={(event, newValue) => {
 				// console.log(event, 'change');
 				setDisableDropdown(true);
