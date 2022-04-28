@@ -113,7 +113,7 @@ const DragAndDropField = ({
 															<video
 																id={'my-video'}
 																poster={
-																	isEdit ? file.media_url || file.img : null
+																	isEdit ? file.thumbnail_url || file.img : null
 																}
 																className={classes.fileThumbnailPost}
 																style={{

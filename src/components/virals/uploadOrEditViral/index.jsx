@@ -701,6 +701,7 @@ const UploadOrEditViral = ({
 									<h5>Preview</h5>
 								</div>
 								<div>
+									{console.log(previewFile, 'previewFile')}
 									{previewFile.mime_type === 'video/mp4' ? (
 										<video
 											id={'my-video'}

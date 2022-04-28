@@ -309,3 +309,12 @@
 	width: 20%;
 	height: auto;
 }
+
+.playIcon {
+	position: absolute;
+	left: 20px;
+	top: 26px;
+	height: 2.5rem !important;
+	width: auto !important;
+	color: $neon-yellow;
+}

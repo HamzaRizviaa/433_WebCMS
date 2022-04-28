@@ -54,19 +54,7 @@ const Labels = ({
 			filterSelectedOptions
 			freeSolo={false}
 			value={selectedLabels}
-			// onKeyPress={(e) => {
-			// 	console.log(e);
-			// 	if ((e.key = '')) {
-			// 		let newLabels = newValue?.filter(
-			// 			(v, i, a) =>
-			// 				a.findIndex(
-			// 					(t) => t.name.toLowerCase() === v.name.toLowerCase()
-			// 				) === i
-			// 		);
-			// 		setSelectedLabels([...newLabels]);
-			// 	}
-			// }}
-			autoHighlight={false}
+			autoHighlight={true}
 			onChange={(event, newValue) => {
 				// console.log(event, 'change');
 				setDisableDropdown(true);
@@ -101,6 +89,13 @@ const Labels = ({
 						disableUnderline: true,
 						className: classes.textFieldInput,
 						...params.InputProps
+					}}
+					onPaste={(e) => {
+						const newValue = e.clipboardData.getData('Text');
+						if (newValue.match(regex)) {
+							e.preventDefault();
+							e.stopPropagation();
+						}
 					}}
 					onKeyPress={(e) => {
 						const newValue = e.key;
