@@ -74,7 +74,7 @@ const ViralLibrary = () => {
 		let current_date = new Date();
 		let time_difference_minutes = (expiry_date - current_date) / 1000 / 60; //in minutes
 		// console.log(current_date, 'curr');
-		console.log(time_difference_minutes);
+		// console.log(time_difference_minutes);
 		if (time_difference_minutes <= 1) {
 			alert('Your session has expired');
 			localStorage.removeItem('user_data');
@@ -212,7 +212,7 @@ const ViralLibrary = () => {
 								  classes.mediaWrapper
 						}
 					>
-						{console.log(row.width, row.height)}
+						{console.log(row, 'row')}
 						<Tooltip
 							// TransitionComponent={Fade}
 							// TransitionProps={{ timeout: 600 }}
@@ -225,11 +225,11 @@ const ViralLibrary = () => {
 										autoPlay
 										muted
 										className={
-											row.width === row.height
-												? classes.mediaIconPreview
-												: row.width > row.height
+											row.width > row.height + 200
 												? classes.virallandscapePreview
-												: classes.mediaIconPortraitPreview
+												: row.height > row.width + 200
+												? classes.mediaIconPortraitPreview
+												: classes.mediaIconPreview
 										}
 										controls={true}
 									>
@@ -264,7 +264,10 @@ const ViralLibrary = () => {
 								) : (
 									''
 								)} */}
-								{/* <PlayArrowIcon className={classes.playIcon} /> */}
+
+								{row?.thumbnail_url && (
+									<PlayArrowIcon className={classes.playIcon} />
+								)}
 								<img
 									className={classes.mediaIcon}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${

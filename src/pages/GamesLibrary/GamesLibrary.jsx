@@ -54,7 +54,7 @@ const GamesLibrary = () => {
 	const gamesApiStatus = useSelector((state) => state.GamesLibraryStore);
 
 	const totalRecords = useSelector(
-		(state) => state.mediaLibraryOriginal.totalRecords
+		(state) => state.GamesLibraryStore.totalRecords
 	);
 
 	const noResultStatus = useSelector(
@@ -321,8 +321,6 @@ const GamesLibrary = () => {
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			formatter: (content, row) => {
-				console.log(content, 'content media div');
-				console.log(row, 'media div');
 				return (
 					<div className={classes.mediaWrapper}>
 						<Tooltip
@@ -332,11 +330,16 @@ const GamesLibrary = () => {
 							title={
 								<img
 									className={
-										row.width === row.height
-											? classes.mediaIconPreview
-											: row.width > row.height
+										row.width > row.height + 200
 											? classes.virallandscapePreview
-											: classes.mediaIconPortraitPreview
+											: row.height > row.width + 200
+											? classes.mediaIconPortraitPreview
+											: classes.mediaIconPreview
+										// row.width === row.height
+										// 	? classes.mediaIconPreview
+										// 	: row.width > row.height
+										// 	? classes.virallandscapePreview
+										// 	: classes.mediaIconPortraitPreview
 									}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.game_image}`}
 									alt='no img'

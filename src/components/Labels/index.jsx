@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Popper, Autocomplete } from '@mui/material';
@@ -15,6 +16,9 @@ const Labels = ({
 	extraLabel,
 	handleChangeExtraLabel
 }) => {
+	//const regex = /[%<>\\$'"\s@#/-=+&^*()!:;.,?{}[|]]/;
+	const regex = /\W/; // all characters that are not numbers and alphabets and underscore
+
 	return (
 		<Autocomplete
 			disabled={isEdit}
@@ -50,11 +54,11 @@ const Labels = ({
 			filterSelectedOptions
 			freeSolo={false}
 			value={selectedLabels}
+			autoHighlight={true}
 			onChange={(event, newValue) => {
+				// console.log(event, 'change');
 				setDisableDropdown(true);
-				event.preventDefault();
-				event.stopPropagation();
-				let newLabels = newValue.filter(
+				let newLabels = newValue?.filter(
 					(v, i, a) =>
 						a.findIndex(
 							(t) => t.name.toLowerCase() === v.name.toLowerCase()
@@ -77,7 +81,7 @@ const Labels = ({
 			renderInput={(params) => (
 				<TextField
 					{...params}
-					placeholder={selectedLabels.length ? ' ' : 'Select Label'}
+					placeholder={selectedLabels?.length > 0 ? ' ' : 'Select Label'}
 					className={classes.textFieldAuto}
 					value={extraLabel}
 					onChange={handleChangeExtraLabel}
@@ -85,6 +89,20 @@ const Labels = ({
 						disableUnderline: true,
 						className: classes.textFieldInput,
 						...params.InputProps
+					}}
+					onPaste={(e) => {
+						const newValue = e.clipboardData.getData('Text');
+						if (newValue.match(regex)) {
+							e.preventDefault();
+							e.stopPropagation();
+						}
+					}}
+					onKeyPress={(e) => {
+						const newValue = e.key;
+						if (newValue.match(regex)) {
+							e.preventDefault();
+							e.stopPropagation();
+						}
 					}}
 				/>
 			)}
