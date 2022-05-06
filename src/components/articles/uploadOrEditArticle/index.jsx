@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import React, { useState, useEffect, useRef } from 'react';
-import classes from './_uploadOrEditArticle.module.scss';
+// import classes from './_uploadOrEditArticle.module.scss';
 import { useDropzone } from 'react-dropzone';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import PropTypes from 'prop-types';
@@ -22,6 +22,7 @@ import Slide from '@mui/material/Slide';
 import checkFileSize from '../../../utils/validateFileSize';
 import validateForm from '../../../utils/validateForm';
 import PrimaryLoader from '../../PrimaryLoader';
+import { useStyles } from './index.style';
 //tinymce
 import { Editor } from '@tinymce/tinymce-react';
 import 'tinymce/tinymce';
@@ -81,6 +82,7 @@ const UploadOrEditViral = ({
 		uploadedFiles: [],
 		labels: []
 	});
+	const classes = useStyles();
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({

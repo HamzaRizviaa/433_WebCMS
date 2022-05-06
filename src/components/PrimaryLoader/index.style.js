@@ -1,6 +1,6 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core';
 
-export const useStyles = makeStyles(() => ({
+export const useStyles = makeStyles((theme) => ({
 	loaderContainer: {
 		position: 'absolute',
 		top: 0,
@@ -24,6 +24,6 @@ export const useStyles = makeStyles(() => ({
 		// left: 40%, // top, right, left, bottom can only be used wrt position property
 		// top: 30%, // top, right, left, bottom can only be used wrt position property
 		zIndex: 9999999,
-		color: 'yellow'
+		color: theme.palette.neonYellow
 	}
 }));
