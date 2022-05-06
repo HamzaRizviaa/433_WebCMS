@@ -673,7 +673,6 @@ const UploadOrEditMedia = ({
 								);
 							}
 						});
-						console.log(completedUpload, 'completedUpload');
 						await uploadMedia(specificMedia?.id, {
 							title: form.title,
 							description: form.description,
