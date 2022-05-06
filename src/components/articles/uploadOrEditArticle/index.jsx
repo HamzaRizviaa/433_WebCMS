@@ -23,6 +23,7 @@ import checkFileSize from '../../../utils/validateFileSize';
 import validateForm from '../../../utils/validateForm';
 import PrimaryLoader from '../../PrimaryLoader';
 import { useStyles } from './index.style';
+import { useStyles as globalUseStyles } from '../../../styles/global.style';
 //tinymce
 import { Editor } from '@tinymce/tinymce-react';
 import 'tinymce/tinymce';
@@ -83,6 +84,7 @@ const UploadOrEditViral = ({
 		labels: []
 	});
 	const classes = useStyles();
+	const globalClasses = globalUseStyles();
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -509,13 +511,13 @@ const UploadOrEditViral = ({
 						ref={loadingRef}
 						className={`${
 							previewFile != null
-								? classes.previewContentWrapper
-								: classes.contentWrapper
+								? globalClasses.previewContentWrapper
+								: globalClasses.contentWrapper
 						}`}
 					>
 						{specificArticleStatus === 'loading' ? <PrimaryLoader /> : <></>}
 						<div
-							className={classes.contentWrapperNoPreview}
+							className={globalClasses.contentWrapperNoPreview}
 							style={{ width: previewFile != null ? '60%' : 'auto' }}
 						>
 							<div>
@@ -536,12 +538,14 @@ const UploadOrEditViral = ({
 
 								{!form.uploadedFiles.length && (
 									<section
-										className={classes.dropZoneContainer}
+										className={globalClasses.dropZoneContainer}
 										style={{
 											borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
 										}}
 									>
-										<div {...getRootProps({ className: classes.dropzone })}>
+										<div
+											{...getRootProps({ className: globalClasses.dropzone })}
+										>
 											<input {...getInputProps()} />
 											<AddCircleOutlineIcon className={classes.addFilesIcon} />
 											<p className={classes.dragMsg}>
