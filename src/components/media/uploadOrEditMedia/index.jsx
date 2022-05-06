@@ -27,6 +27,7 @@ import Slide from '@mui/material/Slide';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 import PrimaryLoader from '../../PrimaryLoader';
 import validateForm from '../../../utils/validateForm';
+
 const UploadOrEditMedia = ({
 	open,
 	handleClose,
@@ -35,6 +36,7 @@ const UploadOrEditMedia = ({
 	buttonText,
 	isEdit,
 	page
+	//status
 }) => {
 	const [mediaLabels, setMediaLabels] = useState([]);
 	const [subCategories, setSubCategories] = useState([]);
@@ -1379,7 +1381,8 @@ UploadOrEditMedia.propTypes = {
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
-	page: PropTypes.string
+	page: PropTypes.string,
+	status: PropTypes.string.isRequired
 };
 
 export default UploadOrEditMedia;

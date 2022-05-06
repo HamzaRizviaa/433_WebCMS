@@ -78,6 +78,7 @@ const MediaLibrary = () => {
 	const [noResultCalendarError, setNoResultCalendarError] = useState('');
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
+	const [rowStatus, setrowStatus] = useState(''); //status PUBLISHED DRAFT to pass in UPLOADOREDITMEDIA
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -102,6 +103,7 @@ const MediaLibrary = () => {
 		post_date: 'postdate',
 		labels: 'label',
 		user: 'user',
+		status: 'status',
 		last_edit: 'lastedit',
 		type: 'type'
 	};
@@ -259,7 +261,9 @@ const MediaLibrary = () => {
 						left:
 							col?.dataField === 'type' ||
 							col?.dataField === 'post_date' ||
-							col?.dataField === 'labels'
+							col?.dataField === 'labels' ||
+							col?.dataField === 'status' ||
+							col?.dataField === 'last_edit'
 								? 30
 								: -4,
 						bottom: 0.5
@@ -274,7 +278,9 @@ const MediaLibrary = () => {
 						left:
 							col?.dataField === 'type' ||
 							col?.dataField === 'post_date' ||
-							col?.dataField === 'labels'
+							col?.dataField === 'labels' ||
+							col?.dataField === 'status' ||
+							col?.dataField === 'last_edit'
 								? 30
 								: -4,
 						bottom: 0.5
@@ -289,7 +295,9 @@ const MediaLibrary = () => {
 						left:
 							col?.dataField === 'type' ||
 							col?.dataField === 'post_date' ||
-							col?.dataField === 'labels'
+							col?.dataField === 'labels' ||
+							col?.dataField === 'status' ||
+							col?.dataField === 'last_edit'
 								? 30
 								: -4,
 						bottom: 0.5
@@ -476,13 +484,37 @@ const MediaLibrary = () => {
 			}
 		},
 		{
+			dataField: 'status',
+			sort: true,
+			sortCaret: sortRows,
+			sortFunc: () => {},
+			text: 'STATUS',
+			formatter: (content) => {
+				return (
+					<div className={`${classes.active_closed_btn}`}>
+						<Button
+							onClick={() => {}}
+							text={content == 'published' ? 'PUBLISHED' : 'DRAFT'}
+							published={content == 'published' ? true : false}
+						/>
+					</div>
+				);
+			},
+			headerStyle: () => {
+				return { paddingLeft: '48px' };
+			}
+		},
+		{
 			dataField: 'last_edit',
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			text: 'LAST EDIT',
 			formatter: (content) => {
-				return <div className={classes.row}>{getDateTime(content)}</div>;
+				return <div className={classes.rowType}>{getDateTime(content)}</div>;
+			},
+			headerStyle: () => {
+				return { paddingLeft: '48px' };
 			}
 		},
 		{
@@ -512,6 +544,7 @@ const MediaLibrary = () => {
 	const tableRowEvents = {
 		onClick: (e, row) => {
 			dispatch(getSpecificMedia(row.id));
+			setrowStatus(row.status);
 			setEdit(true);
 			setShowSlider(true);
 		}
@@ -689,6 +722,7 @@ const MediaLibrary = () => {
 					title={edit ? 'Edit Media' : 'Upload Media'}
 					heading1={edit ? 'Media Type' : 'Select Media Type'}
 					buttonText={edit ? 'SAVE CHANGES' : 'ADD MEDIA'}
+					status={rowStatus}
 				/>
 			</Layout>
 		</LoadingOverlay>

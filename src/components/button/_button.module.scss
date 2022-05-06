@@ -49,3 +49,26 @@
 	font-style: normal;
 	font-weight: bold;
 }
+
+.publishedBtn {
+	background-color: $light-green;
+	color: $white-color;
+	padding: 0.2rem 1rem;
+	border-radius: 24px;
+	font-size: 12px;
+	line-height: 24px;
+	font-style: normal;
+	font-weight: bold;
+	width: 97px;
+}
+.draftBtn {
+	background-color: #ffff00;
+	color: $black-color;
+	width: 72px;
+	padding: 0.2rem 1rem;
+	border-radius: 24px;
+	font-size: 12px;
+	line-height: 24px;
+	font-style: normal;
+	font-weight: bold;
+}

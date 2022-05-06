@@ -9,6 +9,7 @@ const Button = ({
 	button2,
 	style = {},
 	active,
+	published,
 	bannerdisabled
 }) => {
 	return (
@@ -21,7 +22,9 @@ const Button = ({
 				button2 ? classes.button2 : ''
 			} ${active === true && classes.activebtn} ${
 				active === false && classes.closedbtn
-			} ${bannerdisabled && classes.disabled}`}
+			} ${bannerdisabled && classes.disabled} ${
+				published === true && classes.publishedBtn
+			} ${published === false && classes.draftBtn}`}
 		>
 			{text}
 		</span>
@@ -35,6 +38,7 @@ Button.propTypes = {
 	button2: PropTypes.bool,
 	style: PropTypes.object,
 	active: PropTypes.bool,
+	published: PropTypes.bool,
 	bannerdisabled: PropTypes.bool
 };
 
