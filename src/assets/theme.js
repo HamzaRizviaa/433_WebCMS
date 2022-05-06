@@ -11,6 +11,27 @@ const theme = createTheme({
 					lineHeight: 1.4
 				}
 			}
+		},
+		textFieldInput: {
+			color: '#ffffff',
+			border: ' 0.01px solid #404040',
+			padding: '1rem 1rem 1rem 1.5rem !important',
+			fontSize: '1.4rem !important',
+			fontFamily: 'Poppins !important',
+			lineHeight: '1.6 !important',
+			borderRadius: '40px',
+			marginBottom: '1rem',
+			backgroundColor: '#000000',
+			'& svg': {
+				position: 'absolute',
+				color: '#ffff00',
+				right: '2rem !important',
+				top: '-9px !important',
+				fontSize: '3rem'
+			}
+		},
+		preventSelect: {
+			userSelect: 'none !important'
 		}
 	},
 	palette: {

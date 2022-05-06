@@ -42,7 +42,8 @@ export const useStyles = makeStyles((theme) => ({
 	dragMsg: {
 		fontSize: '1.4rem',
 		lineHeight: '2.4rem',
-		fontWeight: 400
+		fontWeight: 400,
+		...theme.components.preventSelect
 		// @include preventSelect,
 	},
 
@@ -50,7 +51,8 @@ export const useStyles = makeStyles((theme) => ({
 		fontSize: '1.2rem',
 		lineHeight: '1.6rem',
 		fontWeight: 400,
-		color: theme.palette.lightGrey
+		color: theme.palette.lightGrey,
+		...theme.components.preventSelect
 		// @include preventSelect,
 	},
 
@@ -71,6 +73,7 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	textFieldInput: {
+		...theme.components.textFieldInput
 		// @include textFieldInput,
 	},
 
