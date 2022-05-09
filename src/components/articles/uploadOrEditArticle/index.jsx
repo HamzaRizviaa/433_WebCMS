@@ -547,14 +547,16 @@ const UploadOrEditViral = ({
 											{...getRootProps({ className: globalClasses.dropzone })}
 										>
 											<input {...getInputProps()} />
-											<AddCircleOutlineIcon className={classes.addFilesIcon} />
-											<p className={classes.dragMsg}>
+											<AddCircleOutlineIcon
+												className={globalClasses.addFilesIcon}
+											/>
+											<p className={globalClasses.dragMsg}>
 												Click or drag files to this area to upload
 											</p>
-											<p className={classes.formatMsg}>
+											<p className={globalClasses.formatMsg}>
 												Supported formats are jpeg and png
 											</p>
-											<p className={classes.uploadMediaError}>
+											<p className={globalClasses.uploadMediaError}>
 												{isError.uploadedFiles
 													? 'You need to upload a media in order to post'
 													: ''}
@@ -563,10 +565,10 @@ const UploadOrEditViral = ({
 									</section>
 								)}
 
-								<p className={classes.fileRejectionError}>
+								<p className={globalClasses.fileRejectionError}>
 									{fileRejectionError}
 								</p>
-								<div className={classes.dropBoxUrlContainer}>
+								<div className={globalClasses.dropBoxUrlContainer}>
 									<h6>DROPBOX URL</h6>
 									<TextField
 										value={form.dropbox_url}
@@ -590,12 +592,12 @@ const UploadOrEditViral = ({
 								</div>
 
 								<div className={classes.captionContainer}>
-									<div className={classes.characterCount}>
+									<div className={globalClasses.characterCount}>
 										<h6
 											className={
 												isError.articleTitle || isError.articleTitleExists
-													? classes.errorState
-													: classes.noErrorState
+													? globalClasses.errorState
+													: globalClasses.noErrorState
 											}
 										>
 											ARTICLE TITLE
@@ -636,7 +638,7 @@ const UploadOrEditViral = ({
 										maxRows={2}
 									/>
 								</div>
-								<p className={classes.mediaError}>
+								<p className={globalClasses.mediaError}>
 									{isError.articleTitle
 										? 'This field is required'
 										: isError.articleTitleExists
@@ -648,8 +650,8 @@ const UploadOrEditViral = ({
 									<h6
 										className={
 											isError.selectedLabels
-												? classes.errorState
-												: classes.noErrorState
+												? globalClasses.errorState
+												: globalClasses.noErrorState
 										}
 									>
 										LABELS
@@ -668,7 +670,7 @@ const UploadOrEditViral = ({
 										}}
 									/>
 								</div>
-								<p className={classes.mediaError}>
+								<p className={globalClasses.mediaError}>
 									{isError.selectedLabels
 										? `You need to add  ${
 												7 - form.labels.length
@@ -680,8 +682,8 @@ const UploadOrEditViral = ({
 									<h6
 										className={
 											isError.editorText
-												? classes.errorState
-												: classes.noErrorState
+												? globalClasses.errorState
+												: globalClasses.noErrorState
 										}
 									>
 										ARTICLE TEXT
@@ -881,7 +883,7 @@ const UploadOrEditViral = ({
 									</div>
 								</div>
 
-								<p className={classes.mediaError}>
+								<p className={globalClasses.mediaError}>
 									{isError.editorText ? 'This field is required' : ''}
 								</p>
 							</div>
@@ -915,14 +917,14 @@ const UploadOrEditViral = ({
 						</div>
 
 						{previewFile != null && (
-							<div ref={previewRef} className={classes.previewComponent}>
-								<div className={classes.previewHeader}>
+							<div ref={previewRef} className={globalClasses.previewComponent}>
+								<div className={globalClasses.previewHeader}>
 									<Close
 										onClick={() => {
 											setPreviewBool(false);
 											setPreviewFile(null);
 										}}
-										className={classes.closeIcon}
+										className={globalClasses.closeIcon}
 									/>
 									<h5>Preview</h5>
 								</div>

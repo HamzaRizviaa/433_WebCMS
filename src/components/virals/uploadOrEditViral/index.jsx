@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import classes from './_uploadOrEditViral.module.scss';
+// import classes from './_uploadOrEditViral.module.scss';
 import { useDropzone } from 'react-dropzone';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import PropTypes from 'prop-types';
@@ -26,7 +26,8 @@ import Slide from '@mui/material/Slide';
 import PrimaryLoader from '../../PrimaryLoader';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 import LoadingOverlay from 'react-loading-overlay';
-
+import { useStyles } from './index.styles';
+import { useStyles as globalUseStyles } from '../../../styles/global.style';
 const UploadOrEditViral = ({
 	open,
 	handleClose,
@@ -48,7 +49,6 @@ const UploadOrEditViral = ({
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
-
 	const [isError, setIsError] = useState({});
 	const [form, setForm] = useState({
 		caption: '',
@@ -63,6 +63,8 @@ const UploadOrEditViral = ({
 	const videoRef = useRef(null);
 	const imgEl = useRef(null);
 	const loadingRef = useRef(null);
+	const classes = useStyles();
+	const globalClasses = globalUseStyles();
 	const { specificViralStatus } = useSelector(
 		(state) => state.ViralLibraryStore
 	);
@@ -463,17 +465,17 @@ const UploadOrEditViral = ({
 						ref={loadingRef}
 						className={`${
 							previewFile != null
-								? classes.previewContentWrapper
-								: classes.contentWrapper
+								? globalClasses.previewContentWrapper
+								: globalClasses.contentWrapper
 						}`}
 					>
 						{specificViralStatus === 'loading' ? <PrimaryLoader /> : <></>}
 						<div
-							className={classes.contentWrapperNoPreview}
+							className={globalClasses.contentWrapperNoPreview}
 							style={{ width: previewFile != null ? '60%' : 'auto' }}
 						>
 							<div>
-								<div className={classes.explanationWrapper}>
+								<div className={globalClasses.explanationWrapper}>
 									<h5>{heading1}</h5>
 									<Tooltip
 										TransitionComponent={Fade}
@@ -481,8 +483,8 @@ const UploadOrEditViral = ({
 										title='Default encoding for videos should be H.264'
 										arrow
 										componentsProps={{
-											tooltip: { className: classes.toolTip },
-											arrow: { className: classes.toolTipArrow }
+											tooltip: { className: globalClasses.toolTip },
+											arrow: { className: globalClasses.toolTipArrow }
 										}}
 										placement='bottom-start'
 									>
@@ -509,21 +511,25 @@ const UploadOrEditViral = ({
 								/>
 								{!form.uploadedFiles.length && (
 									<section
-										className={classes.dropZoneContainer}
+										className={globalClasses.dropZoneContainer}
 										style={{
 											borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
 										}}
 									>
-										<div {...getRootProps({ className: classes.dropzone })}>
+										<div
+											{...getRootProps({ className: globalClasses.dropzone })}
+										>
 											<input {...getInputProps()} />
-											<AddCircleOutlineIcon className={classes.addFilesIcon} />
-											<p className={classes.dragMsg}>
+											<AddCircleOutlineIcon
+												className={globalClasses.addFilesIcon}
+											/>
+											<p className={globalClasses.dragMsg}>
 												Click or drag files to this area to upload
 											</p>
-											<p className={classes.formatMsg}>
+											<p className={globalClasses.formatMsg}>
 												Supported formats are jpeg, png and mp4
 											</p>
-											<p className={classes.uploadMediaError}>
+											<p className={globalClasses.uploadMediaError}>
 												{isError.uploadedFiles
 													? 'You need to upload a media in order to post'
 													: ''}
@@ -531,10 +537,10 @@ const UploadOrEditViral = ({
 										</div>
 									</section>
 								)}
-								<p className={classes.fileRejectionError}>
+								<p className={globalClasses.fileRejectionError}>
 									{fileRejectionError}
 								</p>
-								<div className={classes.dropBoxUrlContainer}>
+								<div className={globalClasses.dropBoxUrlContainer}>
 									<h6>DROPBOX URL</h6>
 									<TextField
 										value={form.dropbox_url}
@@ -561,8 +567,8 @@ const UploadOrEditViral = ({
 									<h6
 										className={
 											isError.selectedLabels
-												? classes.errorState
-												: classes.noErrorState
+												? globalClasses.errorState
+												: globalClasses.noErrorState
 										}
 									>
 										LABELS
@@ -581,7 +587,7 @@ const UploadOrEditViral = ({
 										}}
 									/>
 								</div>
-								<p className={classes.mediaError}>
+								<p className={globalClasses.mediaError}>
 									{isError.selectedLabels
 										? `You need to add  ${
 												7 - form.labels.length
@@ -593,8 +599,8 @@ const UploadOrEditViral = ({
 									<h6
 										className={
 											isError.caption
-												? classes.errorState
-												: classes.noErrorState
+												? globalClasses.errorState
+												: globalClasses.noErrorState
 										}
 									>
 										CAPTION
@@ -619,7 +625,7 @@ const UploadOrEditViral = ({
 										maxRows={4}
 									/>
 								</div>
-								<p className={classes.mediaError}>
+								<p className={globalClasses.mediaError}>
 									{isError.caption ? 'This field is required' : ''}
 								</p>
 
@@ -689,14 +695,14 @@ const UploadOrEditViral = ({
 							</div>
 						</div>
 						{previewFile != null && (
-							<div ref={previewRef} className={classes.previewComponent}>
-								<div className={classes.previewHeader}>
+							<div ref={previewRef} className={globalClasses.previewComponent}>
+								<div className={globalClasses.previewHeader}>
 									<Close
 										onClick={() => {
 											setPreviewBool(false);
 											setPreviewFile(null);
 										}}
-										className={classes.closeIcon}
+										className={globalClasses.closeIcon}
 									/>
 									<h5>Preview</h5>
 								</div>
@@ -706,7 +712,7 @@ const UploadOrEditViral = ({
 										<video
 											id={'my-video'}
 											poster={isEdit ? previewFile.media_url : null}
-											className={classes.previewFile}
+											className={globalClasses.previewFile}
 											style={{
 												width: `100%`,
 												height: `${8 * 4}rem`,
@@ -735,7 +741,7 @@ const UploadOrEditViral = ({
 									) : (
 										<img
 											src={previewFile.media_url}
-											className={classes.previewFile}
+											className={globalClasses.previewFile}
 											style={{
 												width: `100%`,
 												height: `${8 * 4}rem`,
