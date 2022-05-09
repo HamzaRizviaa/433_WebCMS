@@ -644,7 +644,10 @@ const UploadOrEditViral = ({
 									</div>
 								</div>
 
-								<div className={classes.postMediaContainer}>
+								<div
+									className={classes.postMediaContainer}
+									style={{ marginBottom: '1rem' }}
+								>
 									<div className={classes.postMediaHeader}>
 										<h5>Show likes</h5>
 										<ToggleSwitch

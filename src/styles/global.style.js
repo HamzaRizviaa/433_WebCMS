@@ -133,5 +133,12 @@ export const useStyles = makeStyles((theme) => ({
 		fontStyle: 'normal',
 		fontWeight: '700',
 		lineHeight: '24px'
+	},
+	contentWrapperNoPreview: {
+		minHeight: 'calc(100vh - 107px)',
+		position: 'relative',
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'space-between'
 	}
 }));
