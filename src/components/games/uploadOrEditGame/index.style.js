@@ -45,6 +45,7 @@ export const useStyles = makeStyles((theme) => ({
 			paddingRight: '32px'
 		},
 		width: '100%',
+		padding: ' 3px 0px',
 		color: theme.palette.white,
 		border: `1px solid ${theme.palette.grey}`,
 		fontSize: ' 1.4rem !important',
@@ -53,14 +54,14 @@ export const useStyles = makeStyles((theme) => ({
 		marginBottom: '1rem !important',
 		backgroundColor: `${theme.palette.black} !important`,
 		"& div[role='button']": {
-			padding: '1rem 0rem 1rem 2rem'
+			padding: '0.5rem 0rem 0.5rem 2rem'
 		},
 
 		'& svg': {
 			color: theme.palette.neonYellow,
 			right: '1rem',
 			top: 0,
-			fontSize: '4rem'
+			fontSize: '3rem'
 		}
 	},
 
@@ -80,6 +81,19 @@ export const useStyles = makeStyles((theme) => ({
 			top: '0 !important',
 			fontSize: '3rem !important'
 		}
+	},
+
+	videoOrientationContainer: {
+		marginTop: '2rem',
+		width: '100%'
+	},
+	gameIDwrapper: {
+		margin: ' 2% 0% 5% 0%',
+		fontFamily: 'Poppins',
+		fontSize: '16px',
+		fontStyle: 'normal',
+		fontWeight: '700',
+		lineHeight: '24px'
 	},
 
 	buttonDiv: {
@@ -118,5 +132,24 @@ export const useStyles = makeStyles((theme) => ({
 		display: 'flex',
 		flexDirection: 'column',
 		justifyContent: 'space-between'
+	},
+	explanationWrapper: {
+		display: 'flex',
+		justifyContent: 'flex-start',
+		margin: ' 5% 0%',
+		fontFamily: 'Poppins',
+		fontSize: '16px',
+		fontStyle: 'normal',
+		fontWeight: '700',
+		lineHeight: '24px'
+	},
+	QuizQuestion: {
+		marginTop: '24px',
+		fontFamily: 'Poppins',
+		fontSize: '16px',
+		fontStyle: 'normal',
+		fontWeight: '700',
+		lineHeight: '24px',
+		letterSpacing: '0em'
 	}
 }));
