@@ -30,6 +30,9 @@ const theme = createTheme({
 				fontSize: '3rem'
 			}
 		},
+		preventSelect: {
+			userSelect: 'none !important'
+		},
 		textFieldInputStartAdornment: {
 			color: 'white !important',
 			border: '0.01px solid #404040',
@@ -40,9 +43,6 @@ const theme = createTheme({
 			borderRadius: '40px',
 			marginBottom: '1rem',
 			backgroundColor: '#000000'
-		},
-		preventSelect: {
-			userSelect: 'none !important'
 		}
 	},
 	palette: {

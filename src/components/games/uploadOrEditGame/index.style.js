@@ -115,17 +115,17 @@ export const useStyles = makeStyles((theme) => ({
 		display: 'inline-block'
 	},
 
-	// postMediaContainer: {
-	// 	marginTop: '2.5rem'
-	// },
+	addQuizBtn: {
+		width: '100% ',
+		marginTop: '0.5rem'
+	},
 
-	// postMediaHeader: {
-	// 	width: '100%',
-	// 	display: 'flex',
-	// 	justifyContent: 'space-between',
-	// 	alignItems: 'center'
-	// }
-	//////////////////
+	addQuizBtnEdit: {
+		width: '70%',
+		marginTop: '0.5rem',
+		display: 'inline-block'
+	},
+
 	contentWrapper: {
 		minHeight: ' calc(100vh - 107px)',
 		position: 'relative',
