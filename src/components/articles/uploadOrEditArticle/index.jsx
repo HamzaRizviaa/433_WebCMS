@@ -583,10 +583,7 @@ const UploadOrEditViral = ({
 										maxRows={2}
 										InputProps={{
 											disableUnderline: true,
-											className: classes.textFieldInput,
-											style: {
-												borderRadius: form.dropbox_url ? '16px' : '40px'
-											}
+											className: classes.textFieldInput
 										}}
 									/>
 								</div>
@@ -628,10 +625,7 @@ const UploadOrEditViral = ({
 										className={classes.textField}
 										InputProps={{
 											disableUnderline: true,
-											className: classes.textFieldInput,
-											style: {
-												borderRadius: form.title ? '16px' : '40px'
-											}
+											className: classes.textFieldInput
 										}}
 										inputProps={{ maxLength: 28 }}
 										multiline

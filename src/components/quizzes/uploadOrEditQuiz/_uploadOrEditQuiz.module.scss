@@ -124,42 +124,42 @@
 	width: 1000px;
 }
 
-.contentWrapperNoPreview {
-	min-height: calc(100vh - 107px);
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-}
+// .contentWrapperNoPreview {
+// 	min-height: calc(100vh - 107px);
+// 	position: relative;
+// 	display: flex;
+// 	flex-direction: column;
+// 	justify-content: space-between;
+// }
 
-.previewComponent {
-	width: 35%;
-	border-left: 1px solid $grey;
-	margin-left: 3rem;
-	padding-left: 3rem;
-	margin-bottom: 10rem;
-}
+// .previewComponent {
+// 	width: 35%;
+// 	border-left: 1px solid $grey;
+// 	margin-left: 3rem;
+// 	padding-left: 3rem;
+// 	margin-bottom: 10rem;
+// }
 
-.previewHeader {
-	display: flex;
-	align-items: center;
-	margin-bottom: 10px;
-}
+// .previewHeader {
+// 	display: flex;
+// 	align-items: center;
+// 	margin-bottom: 10px;
+// }
 
-.dropBoxUrlContainer {
-	h6 {
-		margin-bottom: 0.5rem;
-		margin-left: 1rem;
-	}
-	margin-bottom: 2rem;
-}
+// .dropBoxUrlContainer {
+// 	h6 {
+// 		margin-bottom: 0.5rem;
+// 		margin-left: 1rem;
+// 	}
+// 	margin-bottom: 2rem;
+// }
 
-.closeIcon {
-	width: 3.2rem !important;
-	height: 3.2rem !important;
-	margin-right: 0.8rem;
-	cursor: pointer !important;
-}
+// .closeIcon {
+// 	width: 3.2rem !important;
+// 	height: 3.2rem !important;
+// 	margin-right: 0.8rem;
+// 	cursor: pointer !important;
+// }
 
 .uploadedFilesContainer {
 	margin-top: 1.5rem;
@@ -208,65 +208,65 @@
 	cursor: pointer;
 }
 
-.dropZoneContainer {
-	border-top: 1.5px dashed $neon-yellow;
-	border-right: 1.5px dashed $neon-yellow;
-	border-bottom: 1.5px dashed $neon-yellow;
-	border-left: 1.5px dashed $neon-yellow;
+// .dropZoneContainer {
+// 	border-top: 1.5px dashed $neon-yellow;
+// 	border-right: 1.5px dashed $neon-yellow;
+// 	border-bottom: 1.5px dashed $neon-yellow;
+// 	border-left: 1.5px dashed $neon-yellow;
 
-	cursor: pointer;
-	border-radius: 1rem;
-}
+// 	cursor: pointer;
+// 	border-radius: 1rem;
+// }
 
-.dropzone {
-	text-align: center;
-	padding: 1rem 2.5rem 0.5rem 2.5rem;
-}
+// .dropzone {
+// 	text-align: center;
+// 	padding: 1rem 2.5rem 0.5rem 2.5rem;
+// }
 
-.addFilesIcon {
-	height: 2rem !important;
-	width: 2rem !important;
-	margin-bottom: 1.5rem;
-	color: $neon-yellow;
-}
+// .addFilesIcon {
+// 	height: 2rem !important;
+// 	width: 2rem !important;
+// 	margin-bottom: 1.5rem;
+// 	color: $neon-yellow;
+// }
 
-.dragMsg {
-	font-size: 1.4rem;
-	line-height: 2.4rem;
-	font-weight: 400;
-	@include preventSelect;
-}
+// .dragMsg {
+// 	font-size: 1.4rem;
+// 	line-height: 2.4rem;
+// 	font-weight: 400;
+// 	@include preventSelect;
+// }
 
-.formatMsg {
-	font-size: 1.2rem;
-	line-height: 1.6rem;
-	font-weight: 400;
-	color: $light-grey;
-	@include preventSelect;
-}
+// .formatMsg {
+// 	font-size: 1.2rem;
+// 	line-height: 1.6rem;
+// 	font-weight: 400;
+// 	color: $light-grey;
+// 	@include preventSelect;
+// }
 
-.uploadMediaError {
-	color: #ff355a;
-	font-weight: bold;
-	margin-top: 1rem;
-	height: 1rem;
-}
+// .uploadMediaError {
+// 	color: #ff355a;
+// 	font-weight: bold;
+// 	margin-top: 1rem;
+// 	height: 1rem;
+// }
 
-.mediaError {
-	color: #ff355a;
-	font-weight: bold;
-	height: 1rem;
-	margin-bottom: 1rem;
-	margin-left: 1rem;
-}
+// .mediaError {
+// 	color: #ff355a;
+// 	font-weight: bold;
+// 	height: 1rem;
+// 	margin-bottom: 1rem;
+// 	margin-left: 1rem;
+// }
 
-.fileRejectionError {
-	color: #ff355a;
-	font-weight: bold;
-	height: 1rem;
-	text-align: center;
-	margin-bottom: 1.5rem;
-}
+// .fileRejectionError {
+// 	color: #ff355a;
+// 	font-weight: bold;
+// 	height: 1rem;
+// 	text-align: center;
+// 	margin-bottom: 1.5rem;
+// }
 
 .titleContainer {
 	h6 {
@@ -358,16 +358,16 @@
 	justify-content: space-between;
 	align-items: center;
 }
-.errorState {
-	color: $red;
-}
+// .errorState {
+// 	color: $red;
+// }
 
-.noErrorState {
-	color: $white-color;
-}
+// .noErrorState {
+// 	color: $white-color;
+// }
 
-.characterCount {
-	margin-right: 0.5rem;
-	display: flex;
-	justify-content: space-between;
-}
+// .characterCount {
+// 	margin-right: 0.5rem;
+// 	display: flex;
+// 	justify-content: space-between;
+// }

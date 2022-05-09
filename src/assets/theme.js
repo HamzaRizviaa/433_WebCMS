@@ -19,7 +19,7 @@ const theme = createTheme({
 			fontSize: '1.4rem !important',
 			fontFamily: 'Poppins !important',
 			lineHeight: '1.6 !important',
-			borderRadius: '40px',
+			borderRadius: '22px',
 			marginBottom: '1rem',
 			backgroundColor: '#000000',
 			'& svg': {
