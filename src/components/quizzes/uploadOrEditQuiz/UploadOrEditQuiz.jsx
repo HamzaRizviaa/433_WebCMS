@@ -2,7 +2,7 @@
 /* eslint-disable react/display-name */
 import React, { forwardRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import classes from './_uploadOrEditQuiz.module.scss';
+// import classes from './_uploadOrEditQuiz.module.scss';
 import { useDropzone } from 'react-dropzone';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { makeid } from '../../../utils/helper';
@@ -32,6 +32,8 @@ import Slide from '@mui/material/Slide';
 import PrimaryLoader from '../../PrimaryLoader';
 //import resetForm from '../../../utils/resetForm';
 import validateForm from '../../../utils/validateForm';
+import { useStyles as globalUseStyles } from '../../../styles/global.style';
+import { useStyles } from './UploadOrEditQuiz.style';
 
 const UploadOrEditQuiz = ({
 	heading1,
@@ -73,6 +75,8 @@ const UploadOrEditQuiz = ({
 	const imgRef = useRef(null);
 	const loadingRef = useRef(null);
 	const dispatch = useDispatch();
+	const globalClasses = globalUseStyles();
+	const classes = useStyles();
 
 	const {
 		labels,
@@ -360,13 +364,10 @@ const UploadOrEditQuiz = ({
 
 	const resetState = () => {
 		setFileRejectionError('');
-
 		setPreviewFile(null);
 		setPreviewBool(false);
-
 		setExtraLabel('');
 		setDisableDropdown(true);
-
 		setConvertedDate(null);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
@@ -374,7 +375,6 @@ const UploadOrEditQuiz = ({
 		setPostButtonStatus(false);
 		setIsError({});
 		//resetForm(form);
-
 		setForm({
 			uploadedFiles: [],
 			dropbox_url: '',
@@ -468,7 +468,7 @@ const UploadOrEditQuiz = ({
 				>
 					{questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>}
 					<div
-						className={classes.contentWrapperNoPreview}
+						className={globalClasses.contentWrapperNoPreview}
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
 					>
 						<div>
@@ -489,21 +489,23 @@ const UploadOrEditQuiz = ({
 							/>
 							{!form.uploadedFiles.length && (
 								<section
-									className={classes.dropZoneContainer}
+									className={globalClasses.dropZoneContainer}
 									style={{
 										borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
 									}}
 								>
-									<div {...getRootProps({ className: classes.dropzone })}>
+									<div {...getRootProps({ className: globalClasses.dropzone })}>
 										<input {...getInputProps()} />
-										<AddCircleOutlineIcon className={classes.addFilesIcon} />
-										<p className={classes.dragMsg}>
+										<AddCircleOutlineIcon
+											className={globalClasses.addFilesIcon}
+										/>
+										<p className={globalClasses.dragMsg}>
 											Click or drag file to this area to upload
 										</p>
-										<p className={classes.formatMsg}>
+										<p className={globalClasses.formatMsg}>
 											Supported formats are jpeg and png
 										</p>
-										<p className={classes.uploadMediaError}>
+										<p className={globalClasses.uploadMediaError}>
 											{isError.uploadedFiles
 												? 'You need to upload a media in order to post'
 												: ''}
@@ -511,9 +513,11 @@ const UploadOrEditQuiz = ({
 									</div>
 								</section>
 							)}
-							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
+							<p className={globalClasses.fileRejectionError}>
+								{fileRejectionError}
+							</p>
 
-							<div className={classes.dropBoxUrlContainer}>
+							<div className={globalClasses.dropBoxUrlContainer}>
 								<h6>DROPBOX URL</h6>
 								<TextField
 									value={form.dropbox_url}
@@ -537,12 +541,12 @@ const UploadOrEditQuiz = ({
 							</div>
 
 							<div className={classes.titleContainer}>
-								<div className={classes.characterCount}>
+								<div className={globalClasses.characterCount}>
 									<h6
 										className={
 											isError.question
-												? classes.errorState
-												: classes.noErrorState
+												? globalClasses.errorState
+												: globalClasses.noErrorState
 										}
 									>
 										QUESTION
@@ -583,7 +587,7 @@ const UploadOrEditQuiz = ({
 								/>
 							</div>
 
-							<p className={classes.mediaError}>
+							<p className={globalClasses.mediaError}>
 								{isError.question
 									? 'You need to provide a question in order to post.'
 									: ''}
@@ -592,7 +596,9 @@ const UploadOrEditQuiz = ({
 							<div className={classes.titleContainer}>
 								<h6
 									className={
-										isError.ans1 ? classes.errorState : classes.noErrorState
+										isError.ans1
+											? globalClasses.errorState
+											: globalClasses.noErrorState
 									}
 								>
 									{quiz || editQuiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
@@ -618,7 +624,7 @@ const UploadOrEditQuiz = ({
 								/>
 							</div>
 
-							<p className={classes.mediaError}>
+							<p className={globalClasses.mediaError}>
 								{isError.ans1
 									? quiz
 										? 'You need to provide right answer in order to post'
@@ -629,7 +635,9 @@ const UploadOrEditQuiz = ({
 							<div className={classes.titleContainer}>
 								<h6
 									className={
-										isError.ans2 ? classes.errorState : classes.noErrorState
+										isError.ans2
+											? globalClasses.errorState
+											: globalClasses.noErrorState
 									}
 								>
 									{quiz || editQuiz ? 'WRONG ANSWER' : 'ANSWER 2'}
@@ -655,7 +663,7 @@ const UploadOrEditQuiz = ({
 								/>
 							</div>
 
-							<p className={classes.mediaError}>
+							<p className={globalClasses.mediaError}>
 								{isError.ans2
 									? quiz
 										? 'You need to provide wrong answer in order to post'
@@ -667,8 +675,8 @@ const UploadOrEditQuiz = ({
 								<h6
 									className={
 										isError.selectedLabels
-											? classes.errorState
-											: classes.noErrorState
+											? globalClasses.errorState
+											: globalClasses.noErrorState
 									}
 								>
 									LABELS
@@ -688,7 +696,7 @@ const UploadOrEditQuiz = ({
 								/>
 							</div>
 
-							<p className={classes.mediaError}>
+							<p className={globalClasses.mediaError}>
 								{isError.selectedLabels
 									? `You need to add  ${
 											7 - form.labels.length
@@ -699,7 +707,9 @@ const UploadOrEditQuiz = ({
 							<div className={classes.datePickerContainer}>
 								<h6
 									className={
-										isError.endDate ? classes.errorState : classes.noErrorState
+										isError.endDate
+											? globalClasses.errorState
+											: globalClasses.noErrorState
 									}
 								>
 									{quiz || editQuiz ? 'QUIZ END DATE' : 'POLL END DATE'}
@@ -740,7 +750,7 @@ const UploadOrEditQuiz = ({
 								</div>
 							</div>
 
-							<p className={classes.mediaError}>
+							<p className={globalClasses.mediaError}>
 								{isError.endDate
 									? 'You need to seelct a date in order to post'
 									: ''}
@@ -793,14 +803,14 @@ const UploadOrEditQuiz = ({
 						</div>
 					</div>
 					{previewFile != null && (
-						<div ref={previewRef} className={classes.previewComponent}>
-							<div className={classes.previewHeader}>
+						<div ref={previewRef} className={globalClasses.previewComponent}>
+							<div className={globalClasses.previewHeader}>
 								<Close
 									onClick={() => {
 										setPreviewBool(false);
 										setPreviewFile(null);
 									}}
-									className={classes.closeIcon}
+									className={globalClasses.closeIcon}
 								/>
 								<h5>Preview</h5>
 							</div>

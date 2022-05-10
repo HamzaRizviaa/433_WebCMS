@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import classes from './_uploadOrEditGames.module.scss';
+// import classes from './_uploadOrEditGames.module.scss';
 import { useDropzone } from 'react-dropzone';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { makeid } from '../../../utils/helper';
@@ -21,7 +21,7 @@ import LoadingOverlay from 'react-loading-overlay';
 import InputAdornment from '@mui/material/InputAdornment';
 import Slide from '@mui/material/Slide';
 import { getAllGames } from '../../../pages/GamesLibrary/gamesLibrarySlice';
-import { useStyles } from './gamesStyles';
+
 import captureVideoFrame from 'capture-video-frame';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 import { ReactComponent as Timer } from '../../../assets/Timer.svg';
@@ -29,7 +29,9 @@ import { ReactComponent as Scoring } from '../../../assets/football.svg';
 import { ReactComponent as Objective } from '../../../assets/Cross.svg';
 import { Tooltip, Fade } from '@mui/material';
 import validateGamesForm from '../../../utils/validateGamesForm';
-
+import { useStyles } from './gamesStyles';
+import { useStyles as gameStyles } from './index.style';
+import { useStyles as globalUseStyles } from '../../../styles/global.style';
 const UploadOreditArcade = ({
 	heading1,
 	open,
@@ -105,6 +107,8 @@ const UploadOreditArcade = ({
 	const loadingRef = useRef(null);
 
 	const muiClasses = useStyles();
+	const classes = gameStyles();
+	const globalClasses = globalUseStyles();
 	const dispatch = useDispatch();
 
 	const specificGamesData = useSelector(
@@ -757,13 +761,13 @@ const UploadOreditArcade = ({
 					ref={loadingRef}
 					className={`${
 						previewFile != null
-							? classes.previewContentWrapper
-							: classes.contentWrapper
+							? globalClasses.previewContentWrapper
+							: globalClasses.contentWrapper
 					}`}
 				>
 					{specificGameStatus === 'loading' ? <PrimaryLoader /> : <></>}
 					<div
-						className={classes.contentWrapperNoPreview}
+						className={globalClasses.contentWrapperNoPreview}
 						style={{ width: previewFile != null ? '60%' : 'auto' }}
 					>
 						<div>
@@ -782,21 +786,23 @@ const UploadOreditArcade = ({
 							/>
 							{!form.uploadedFiles.length && (
 								<section
-									className={classes.dropZoneContainer}
+									className={globalClasses.dropZoneContainer}
 									style={{
 										borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
 									}}
 								>
-									<div {...getRootProps({ className: classes.dropzone })}>
+									<div {...getRootProps({ className: globalClasses.dropzone })}>
 										<input {...getInputProps()} />
-										<AddCircleOutlineIcon className={classes.addFilesIcon} />
-										<p className={classes.dragMsg}>
+										<AddCircleOutlineIcon
+											className={globalClasses.addFilesIcon}
+										/>
+										<p className={globalClasses.dragMsg}>
 											Click or drag file to this area to upload
 										</p>
-										<p className={classes.formatMsg}>
+										<p className={globalClasses.formatMsg}>
 											Supported formats are jpeg and png
 										</p>
-										<p className={classes.uploadMediaError}>
+										<p className={globalClasses.uploadMediaError}>
 											{isError.uploadedFiles
 												? 'You need to upload a media in order to post'
 												: ''}
@@ -804,9 +810,11 @@ const UploadOreditArcade = ({
 									</div>
 								</section>
 							)}
-							<p className={classes.fileRejectionError}>{fileRejectionError}</p>
+							<p className={globalClasses.fileRejectionError}>
+								{fileRejectionError}
+							</p>
 
-							<div className={classes.titleContainer}>
+							<div className={globalClasses.dropBoxUrlContainer}>
 								<h6>DROPBOX URL</h6>
 								<TextField
 									value={form?.dropbox_urls?.image}
@@ -845,8 +853,8 @@ const UploadOreditArcade = ({
 											title='Default encoding for videos should be H.264'
 											arrow
 											componentsProps={{
-												tooltip: { className: classes.toolTip },
-												arrow: { className: classes.toolTipArrow }
+												tooltip: { className: globalClasses.toolTip },
+												arrow: { className: globalClasses.toolTipArrow }
 											}}
 											placement='bottom'
 										>
@@ -857,8 +865,8 @@ const UploadOreditArcade = ({
 										<h6
 											className={
 												isError.videoOrientation
-													? classes.errorState
-													: classes.noErrorState
+													? globalClasses.errorState
+													: globalClasses.noErrorState
 											}
 										>
 											SELECT GAME EXPLANATION VIDEO ORIENTATION
@@ -934,7 +942,7 @@ const UploadOreditArcade = ({
 											})}
 										</Select>
 									</div>
-									<p className={classes.mediaError}>
+									<p className={globalClasses.mediaError}>
 										{isError.videoOrientation
 											? 'You need to select video orientation in order to post'
 											: ''}
@@ -967,24 +975,28 @@ const UploadOreditArcade = ({
 
 							{!form.uploadedExplanationOrIcon.length && (
 								<section
-									className={classes.dropZoneContainer}
+									className={globalClasses.dropZoneContainer}
 									style={{
 										borderColor: isError.uploadedExplanationOrIcon
 											? '#ff355a'
 											: 'yellow'
 									}}
 								>
-									<div {...getRootProps2({ className: classes.dropzone })}>
+									<div
+										{...getRootProps2({ className: globalClasses.dropzone })}
+									>
 										<input {...getInputProps2()} />
-										<AddCircleOutlineIcon className={classes.addFilesIcon} />
-										<p className={classes.dragMsg}>
+										<AddCircleOutlineIcon
+											className={globalClasses.addFilesIcon}
+										/>
+										<p className={globalClasses.dragMsg}>
 											Click or drag file to this area to upload
 										</p>
-										<p className={classes.formatMsg}>
+										<p className={globalClasses.formatMsg}>
 											Supported formats are{' '}
 											{type === 'jogo' ? 'mp4' : 'jpeg and png'}
 										</p>
-										<p className={classes.uploadMediaError}>
+										<p className={globalClasses.uploadMediaError}>
 											{isError.uploadedExplanationOrIcon
 												? 'You need to upload a media in order to post'
 												: ''}
@@ -992,7 +1004,7 @@ const UploadOreditArcade = ({
 									</div>
 								</section>
 							)}
-							<p className={classes.fileRejectionError}>
+							<p className={globalClasses.fileRejectionError}>
 								{fileRejectionError2}
 							</p>
 
@@ -1035,12 +1047,12 @@ const UploadOreditArcade = ({
 							</div>
 
 							<div className={classes.titleContainer}>
-								<div className={classes.characterCount}>
+								<div className={globalClasses.characterCount}>
 									<h6
 										className={
 											isError.titleGame
-												? classes.errorState
-												: classes.noErrorState
+												? globalClasses.errorState
+												: globalClasses.noErrorState
 										}
 									>
 										TITLE
@@ -1076,17 +1088,17 @@ const UploadOreditArcade = ({
 									maxRows={2}
 								/>
 							</div>
-							<p className={classes.mediaError}>
+							<p className={globalClasses.mediaError}>
 								{isError.titleGame ? isError.titleGame.message : ''}
 							</p>
 
 							<div className={classes.titleContainer}>
-								<div className={classes.characterCount}>
+								<div className={globalClasses.characterCount}>
 									<h6
 										className={
 											isError.descriptionGame
-												? classes.errorState
-												: classes.noErrorState
+												? globalClasses.errorState
+												: globalClasses.noErrorState
 										}
 									>
 										GAME DESCRIPTION
@@ -1123,7 +1135,7 @@ const UploadOreditArcade = ({
 									maxRows={2}
 								/>
 							</div>
-							<p className={classes.mediaError}>
+							<p className={globalClasses.mediaError}>
 								{isError.descriptionGame
 									? 'You need to upload a description in order to post'
 									: ''}
@@ -1134,7 +1146,9 @@ const UploadOreditArcade = ({
 									<div className={classes.titleContainer}>
 										<h6
 											className={
-												isError.time ? classes.errorState : classes.noErrorState
+												isError.time
+													? globalClasses.errorState
+													: globalClasses.noErrorState
 											}
 										>
 											TIME
@@ -1163,7 +1177,7 @@ const UploadOreditArcade = ({
 										/>
 									</div>
 
-									<p className={classes.mediaError}>
+									<p className={globalClasses.mediaError}>
 										{isError.time
 											? 'You need to upload a time in order to post'
 											: ''}
@@ -1173,8 +1187,8 @@ const UploadOreditArcade = ({
 										<h6
 											className={
 												isError.scoring
-													? classes.errorState
-													: classes.noErrorState
+													? globalClasses.errorState
+													: globalClasses.noErrorState
 											}
 										>
 											SCORING
@@ -1203,7 +1217,7 @@ const UploadOreditArcade = ({
 										/>
 									</div>
 
-									<p className={classes.mediaError}>
+									<p className={globalClasses.mediaError}>
 										{isError.scoring
 											? 'You need to upload a scoring in order to post'
 											: ''}
@@ -1213,8 +1227,8 @@ const UploadOreditArcade = ({
 										<h6
 											className={
 												isError.objective
-													? classes.errorState
-													: classes.noErrorState
+													? globalClasses.errorState
+													: globalClasses.noErrorState
 											}
 										>
 											OBJECTIVE
@@ -1244,7 +1258,7 @@ const UploadOreditArcade = ({
 										/>
 									</div>
 
-									<p className={classes.mediaError}>
+									<p className={globalClasses.mediaError}>
 										{isError.objective
 											? 'You need to upload an objective in order to post'
 											: ''}
@@ -1254,8 +1268,8 @@ const UploadOreditArcade = ({
 										<h6
 											className={
 												isError.payload
-													? classes.errorState
-													: classes.noErrorState
+													? globalClasses.errorState
+													: globalClasses.noErrorState
 											}
 										>
 											PAYLOAD
@@ -1280,7 +1294,7 @@ const UploadOreditArcade = ({
 										/>
 									</div>
 
-									<p className={classes.mediaError}>
+									<p className={globalClasses.mediaError}>
 										{isError.payload
 											? 'You need to upload a payload in order to post'
 											: ''}
@@ -1290,8 +1304,8 @@ const UploadOreditArcade = ({
 										<h6
 											className={
 												isError.gameOrientation
-													? classes.errorState
-													: classes.noErrorState
+													? globalClasses.errorState
+													: globalClasses.noErrorState
 											}
 										>
 											SELECT GAME ORIENTATION
@@ -1367,7 +1381,7 @@ const UploadOreditArcade = ({
 											})}
 										</Select>
 									</div>
-									<p className={classes.mediaError}>
+									<p className={globalClasses.mediaError}>
 										{isError.gameOrientation
 											? 'You need to select game orientation in order to post'
 											: ''}
@@ -1379,8 +1393,8 @@ const UploadOreditArcade = ({
 										<h6
 											className={
 												isError.arcadeGameType
-													? classes.errorState
-													: classes.noErrorState
+													? globalClasses.errorState
+													: globalClasses.noErrorState
 											}
 										>
 											ARCADE GAME TYPE
@@ -1456,7 +1470,7 @@ const UploadOreditArcade = ({
 											})}
 										</Select>
 									</div>
-									<p className={classes.mediaError}>
+									<p className={globalClasses.mediaError}>
 										{isError.arcadeGameType
 											? 'You need to select Arcade type in order to post'
 											: ''}
@@ -1472,8 +1486,8 @@ const UploadOreditArcade = ({
 													<h6
 														className={
 															isError.android
-																? classes.errorState
-																: classes.noErrorState
+																? globalClasses.errorState
+																: globalClasses.noErrorState
 														}
 													>
 														ANDROID
@@ -1504,7 +1518,7 @@ const UploadOreditArcade = ({
 														}}
 													/>
 												</div>
-												<p className={classes.mediaError}>
+												<p className={globalClasses.mediaError}>
 													{isError.android
 														? 'You need to upload android in order to post'
 														: ''}
@@ -1513,8 +1527,8 @@ const UploadOreditArcade = ({
 													<h6
 														className={
 															isError.ios
-																? classes.errorState
-																: classes.noErrorState
+																? globalClasses.errorState
+																: globalClasses.noErrorState
 														}
 													>
 														IOS
@@ -1545,7 +1559,7 @@ const UploadOreditArcade = ({
 														}}
 													/>
 												</div>
-												<p className={classes.mediaError}>
+												<p className={globalClasses.mediaError}>
 													{isError.ios
 														? 'You need to upload IOS in order to post'
 														: ''}
@@ -1558,8 +1572,8 @@ const UploadOreditArcade = ({
 													<h6
 														className={
 															isError.playStore
-																? classes.errorState
-																: classes.noErrorState
+																? globalClasses.errorState
+																: globalClasses.noErrorState
 														}
 													>
 														PLAY STORE
@@ -1590,7 +1604,7 @@ const UploadOreditArcade = ({
 														}}
 													/>
 												</div>
-												<p className={classes.mediaError}>
+												<p className={globalClasses.mediaError}>
 													{isError.playStore
 														? 'You need to upload playStore in order to post'
 														: ''}
@@ -1599,8 +1613,8 @@ const UploadOreditArcade = ({
 													<h6
 														className={
 															isError.appStore
-																? classes.errorState
-																: classes.noErrorState
+																? globalClasses.errorState
+																: globalClasses.noErrorState
 														}
 													>
 														APP STORE
@@ -1631,7 +1645,7 @@ const UploadOreditArcade = ({
 														}}
 													/>
 												</div>
-												<p className={classes.mediaError}>
+												<p className={globalClasses.mediaError}>
 													{isError.appStore
 														? 'You need to upload appStore in order to post'
 														: ''}
@@ -1644,8 +1658,8 @@ const UploadOreditArcade = ({
 													<h6
 														className={
 															isError.playStore2
-																? classes.errorState
-																: classes.noErrorState
+																? globalClasses.errorState
+																: globalClasses.noErrorState
 														}
 													>
 														PLAY STORE
@@ -1676,7 +1690,7 @@ const UploadOreditArcade = ({
 														}}
 													/>
 												</div>
-												<p className={classes.mediaError}>
+												<p className={globalClasses.mediaError}>
 													{isError.playStore2
 														? 'You need to upload playStore in order to post'
 														: ''}
@@ -1685,8 +1699,8 @@ const UploadOreditArcade = ({
 													<h6
 														className={
 															isError.appStore2
-																? classes.errorState
-																: classes.noErrorState
+																? globalClasses.errorState
+																: globalClasses.noErrorState
 														}
 													>
 														APP STORE
@@ -1717,7 +1731,7 @@ const UploadOreditArcade = ({
 														}}
 													/>
 												</div>
-												<p className={classes.mediaError}>
+												<p className={globalClasses.mediaError}>
 													{isError.appStore2
 														? 'You need to upload appStore in order to post'
 														: ''}
@@ -1735,8 +1749,8 @@ const UploadOreditArcade = ({
 													<h5
 														className={
 															isError.gameId
-																? classes.errorState
-																: classes.noErrorState
+																? globalClasses.errorState
+																: globalClasses.noErrorState
 														}
 													>
 														Game ID
@@ -1767,7 +1781,7 @@ const UploadOreditArcade = ({
 														}}
 													/>
 												</div>
-												<p className={classes.mediaError}>
+												<p className={globalClasses.mediaError}>
 													{isError.gameId
 														? 'You need to upload gameId in order to post'
 														: ''}
@@ -1822,14 +1836,14 @@ const UploadOreditArcade = ({
 					</div>
 
 					{previewFile != null && (
-						<div ref={previewRef} className={classes.previewComponent}>
-							<div className={classes.previewHeader}>
+						<div ref={previewRef} className={globalClasses.previewComponent}>
+							<div className={globalClasses.previewHeader}>
 								<Close
 									onClick={() => {
 										setPreviewBool(false);
 										setPreviewFile(null);
 									}}
-									className={classes.closeIcon}
+									className={globalClasses.closeIcon}
 								/>
 								<h5>Preview</h5>
 							</div>
@@ -1843,7 +1857,7 @@ const UploadOreditArcade = ({
 										poster={
 											editJogo || editArcade ? previewFile.media_url : null
 										}
-										className={classes.previewFile}
+										className={globalClasses.previewFile}
 										style={{
 											width: '100%',
 											height: `${8 * 4}rem`,
@@ -1860,7 +1874,7 @@ const UploadOreditArcade = ({
 										poster={
 											editJogo || editArcade ? previewFile?.thumbnail_url : null
 										}
-										className={classes.previewFile}
+										className={globalClasses.previewFile}
 										style={{
 											width: '100%',
 											height: `${8 * 4}rem`,
@@ -1874,7 +1888,7 @@ const UploadOreditArcade = ({
 								) : (
 									<img
 										src={previewFile.media_url}
-										className={classes.previewFile}
+										className={globalClasses.previewFile}
 										style={{
 											width: '100%',
 											height: `${8 * 4}rem`,

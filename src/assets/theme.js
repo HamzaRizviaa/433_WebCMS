@@ -19,7 +19,7 @@ const theme = createTheme({
 			fontSize: '1.4rem !important',
 			fontFamily: 'Poppins !important',
 			lineHeight: '1.6 !important',
-			borderRadius: '40px',
+			borderRadius: '22px',
 			marginBottom: '1rem',
 			backgroundColor: '#000000',
 			'& svg': {
@@ -32,6 +32,17 @@ const theme = createTheme({
 		},
 		preventSelect: {
 			userSelect: 'none !important'
+		},
+		textFieldInputStartAdornment: {
+			color: 'white !important',
+			border: '0.01px solid #404040',
+			padding: ' 1rem 1rem 1rem 1.5rem !important',
+			fontSize: '1.4rem !important',
+			fontFamily: 'Poppins !important',
+			lineHeight: '1.6 !important',
+			borderRadius: '40px',
+			marginBottom: '1rem',
+			backgroundColor: '#000000'
 		}
 	},
 	palette: {

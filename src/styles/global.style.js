@@ -43,7 +43,8 @@ export const useStyles = makeStyles((theme) => ({
 		fontSize: '1.4rem',
 		lineHeight: '2.4rem',
 		fontWeight: 400,
-		...theme.components.preventSelect
+		userSelect: 'none'
+		// ...theme.components.preventSelect
 		// @include preventSelect,
 	},
 
@@ -52,7 +53,8 @@ export const useStyles = makeStyles((theme) => ({
 		lineHeight: '1.6rem',
 		fontWeight: 400,
 		color: theme.palette.lightGrey,
-		...theme.components.preventSelect
+		userSelect: 'none'
+		// ...theme.components.preventSelect
 		// @include preventSelect,
 	},
 
@@ -68,13 +70,116 @@ export const useStyles = makeStyles((theme) => ({
 		padding: '1.5rem 2.5rem 2rem 1.5rem'
 	},
 
+	previewComponent: {
+		width: '35%',
+		borderLeft: `1px solid ${theme.palette.grey}`,
+		marginLeft: '3rem',
+		paddingLeft: '3rem',
+		marginBottom: '10rem'
+	},
+
+	closeIcon: {
+		width: '3.2rem !important',
+		height: '3.2rem !important',
+		marginRight: '0.8rem',
+		cursor: 'pointer !important'
+	},
+
+	previewHeader: {
+		display: 'flex',
+		alignItems: 'center',
+		marginBottom: '10px'
+	},
+	errorState: {
+		color: theme.palette.red
+	},
+
+	noErrorState: {
+		color: theme.palette.white
+	},
+	dropBoxUrlContainer: {
+		'& h6': {
+			marginBottom: '0.5rem',
+			marginLeft: '1rem'
+		},
+		marginBottom: '2rem'
+	},
+
+	video: {
+		'&::-webkit-media-controls-fullscreen-button': {
+			display: 'none'
+		}
+	},
+
+	editor: {
+		margin: '10px 0px'
+	},
+	toolTip: {
+		backgroundColor: ' $black-color !important',
+		fontFamily: 'Poppins !important',
+		fontSize: '12px !important',
+		lineHeight: ' 16px !important',
+		borderRadius: '8px !important',
+		maxWidth: 'none !important'
+	},
+
+	toolTipArrow: {
+		color: '$black-color !important'
+	},
+	explanationWrapper: {
+		display: 'flex',
+		justifyContent: 'flex-start',
+		margin: '5% 0%',
+		fontFamily: 'Poppins',
+		fontSize: '16px',
+		fontStyle: 'normal',
+		fontWeight: 700,
+		lineHeight: '24px'
+	},
+	contentWrapperNoPreview: {
+		minHeight: 'calc(100vh - 107px)',
+		position: 'relative',
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'space-between'
+	},
 	textField: {
 		width: '100%'
 	},
 
-	textFieldInput: {
-		...theme.components.textFieldInput
-		// @include textFieldInput,
+	// textFieldInput: {
+	// 	// ...theme.components.textFieldInput
+	// 	// @include textFieldInput,
+	// },
+	// textFieldInput: {
+	// 	color: '#ffffff',
+	// 	border: ' 0.01px solid #404040',
+	// 	padding: '1rem 1rem 1rem 1.5rem !important',
+	// 	fontSize: '1.4rem !important',
+	// 	fontFamily: 'Poppins !important',
+	// 	lineHeight: '1.6 !important',
+	// 	borderRadius: '22px',
+	// 	marginBottom: '1rem',
+	// 	backgroundColor: '#000000',
+	// 	'& svg': {
+	// 		position: 'absolute',
+	// 		color: '#ffff00',
+	// 		right: '2rem !important',
+	// 		top: '-9px !important',
+	// 		fontSize: '3rem'
+	// 	}
+	// },
+
+	textFieldInputStartAdornment: {
+		color: 'white !important',
+		border: '0.01px solid #404040',
+		padding: ' 1rem 1rem 1rem 1.5rem !important',
+		fontSize: '1.4rem !important',
+		fontFamily: 'Poppins !important',
+		lineHeight: '1.6 !important',
+		borderRadius: '40px',
+		marginBottom: '1rem',
+		backgroundColor: '#000000'
 	},
 
 	captionContainer: {
@@ -82,14 +187,6 @@ export const useStyles = makeStyles((theme) => ({
 			marginBottom: '0.5rem',
 			marginLeft: '1rem'
 		}
-	},
-
-	dropBoxUrlContainer: {
-		'& h6': {
-			marginBottom: '0.5rem',
-			marginLeft: '1rem'
-		},
-		marginBottom: '2rem'
 	},
 
 	postMediaHeader: {
@@ -180,14 +277,6 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	contentWrapper: {
-		minHeight: 'calc(100vh - 107px)',
-		position: 'relative',
-		display: 'flex',
-		flexDirection: 'column',
-		justifyContent: 'space-between'
-	},
-
-	contentWrapperNoPreview: {
 		minHeight: 'calc(100vh - 107px)',
 		position: 'relative',
 		display: 'flex',
@@ -327,42 +416,268 @@ export const useStyles = makeStyles((theme) => ({
 		color: theme.palette.disabled,
 		cursor: 'pointer'
 	},
+	//  library pages
 
-	previewComponent: {
-		width: '35%',
-		borderLeft: `1px solid ${theme.palette.grey}`,
-		marginLeft: '3rem',
-		paddingLeft: '3rem',
-		marginBottom: '10rem'
+	articleLibrary: {
+		height: ' 100vh !important'
 	},
-
-	closeIcon: {
-		width: '3.2rem !important',
-		height: '3.2rem !important',
-		marginRight: '0.8rem',
-		cursor: 'pointer !important'
-	},
-
-	previewHeader: {
+	header: {
 		display: 'flex',
-		alignItems: 'center',
-		marginBottom: '10px'
-	},
-	errorState: {
-		color: theme.palette.red
+		justifyContent: 'space-between'
 	},
 
-	noErrorState: {
-		color: theme.palette.white
+	subheader1: {
+		display: 'flex',
+		justifyContent: ' flex-start'
 	},
 
-	video: {
-		'&::-webkit-media-controls-fullscreen-button': {
-			display: 'none'
+	tableContainer: {
+		margin: ' 1rem 0rem'
+	},
+
+	subheader2: {
+		display: 'flex',
+		justifyContent: 'flex-end',
+		alignItems: 'center'
+	},
+
+	calendarWrapper: {
+		marginLeft: '10px',
+		'& button': {
+			backgroundColor: 'transparent !important',
+			top: '0.5px !important',
+			right: '30px !important'
+		}
+	},
+	// date
+	customDateInput: {
+		// border: '0',
+		margin: ' 0',
+		display: 'inline-flex',
+		// padding: '0',
+		position: 'relative',
+		minWidth: ' 0',
+		// flexDirection: 'column',
+		verticalAlign: 'top',
+		width: '250px',
+		color: 'white !important',
+		border: ' 1px solid #404040',
+		padding: '1rem 1rem 1.2rem 1rem !important',
+		fontSize: '1.4rem !important',
+		fontFamily: ' Poppins !important',
+		lineHeight: '1.6 !important',
+		borderRadius: '40px',
+		backgroundColor: '#000000',
+		borderColor: ' rgb(64, 64, 64)',
+		height: '17.5px',
+		boxSizing: 'content-box',
+		// padding: ' 6px 0 7px',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center'
+	},
+	//search
+
+	searchField: {
+		width: '271px'
+	},
+
+	textFieldInput: {
+		color: ' white !important',
+		border: '1px solid #404040',
+		padding: '0.5rem 0.5rem 0.5rem 1.5rem !important',
+		fontSize: '1.4rem !important',
+		lineHeight: '1.6 !important',
+		borderRadius: '40px',
+		fontFamily: 'Poppins !important',
+		//margin-bottom: 1rem,
+		backgroundColor: ' #000000'
+	},
+
+	searchIcon: {
+		cursor: 'pointer',
+		marginRight: '8'
+	},
+
+	noResultError: {
+		color: '#ff355a',
+		fontWeight: 'bold',
+		marginTop: '0.2rem',
+		marginLeft: '0.5rem',
+		height: '1rem'
+	},
+	sortIcon: {
+		position: 'absolute',
+		left: '-4px',
+		bottom: '-2px',
+		height: '2rem !important',
+		width: '2rem !important',
+		'& svg': {
+			left: '30px'
 		}
 	},
 
-	editor: {
-		margin: '10px 0px'
+	sortIconSelected: {
+		position: 'absolute',
+		left: '-4px',
+		bottom: '-2px',
+		height: '2rem !important',
+		width: ' 2rem !important',
+		color: ' $neon-yellow',
+		'& svg': {
+			left: '30px'
+		}
+	},
+
+	row: {
+		marginBottom: '1.5rem',
+		fontSize: '1.2rem',
+		paddingLeft: '35px',
+		display: 'block'
+	},
+
+	rowType: {
+		marginBottom: '1.5rem',
+		fontSize: '1.2rem',
+		paddingLeft: '35px'
+	},
+	articlOptionRow: {
+		marginBottom: '1.5rem',
+		fontSize: ' 1.2rem',
+		display: 'block'
+	},
+
+	//pagination
+
+	paginationRow: {
+		display: 'flex',
+		justifyContent: 'flex-end',
+		alignItems: 'center',
+		position: 'absolute',
+		bottom: '0',
+		right: '0',
+		padding: '1vw 2vw'
+	},
+	nav: {
+		width: 'fit-content'
+	},
+	gotoText: {
+		fontSize: '12px',
+		fontWeight: 700,
+		margin: '0px 10px'
+	},
+	gotoInput: {
+		background: '#000000',
+		color: 'white',
+		borderRadius: '8px',
+		padding: '6px',
+		width: '50px',
+		'&:focus': {
+			outline: 'none'
+		}
+	},
+
+	//loader on pages
+
+	libraryLoader: {
+		width: '20%',
+		height: 'auto'
+	},
+
+	//library row edit icon
+	editIcon: {
+		width: '2.5rem',
+		height: 'auto',
+		cursor: 'pointer'
+	},
+
+	libraryToolTip: {
+		backgroundColor: ' $black-color !important',
+		fontFamily: 'Poppins !important',
+		fontSize: '12px !important',
+		lineHeight: '16px !important',
+		borderRadius: '8px !important',
+		maxWidth: 'none !important'
+	},
+
+	libraryToolTipArrow: {
+		color: '$black-color !important'
+	},
+	//images styling
+
+	//landscape scss
+
+	mediaIconLandscape: {
+		height: '25.131px',
+		width: '48px',
+		borderRadius: '8px',
+		objectFit: 'cover'
+	},
+	virallandscapePreview: {
+		height: 'calc(25.131px * 6)',
+		width: 'calc(48px * 6)',
+		borderRadius: '8px',
+		objectFit: 'cover'
+	},
+	mediaIconPortrait: {
+		height: '48px',
+		width: '38.4px',
+		borderRadius: '8px',
+		objectFit: 'cover'
+	},
+
+	mediaIconPortraitPreview: {
+		height: 'calc(48px * 6)',
+		width: 'calc(38.4px * 6)',
+		borderRadius: '8px',
+		objectFit: 'cover'
+	},
+
+	mediaWrapper: {
+		display: 'flex',
+		alignItems: 'center',
+		marginLeft: ' 0.5rem',
+		marginBottom: '1.5rem'
+	},
+
+	virallandscape: {
+		display: 'flex',
+		alignItems: 'center',
+		marginLeft: '0.5rem',
+		marginBottom: '2.5rem'
+	},
+
+	toolTipPreview: {
+		backgroundColor: 'transparent !important',
+		borderRadius: '8px !important',
+		maxWidth: 'none !important'
+	},
+
+	libraryFileName: {
+		// margin-left: 1rem,
+		fontSize: ' 1.2rem'
+	},
+
+	labelsWrapper: {
+		maxWidth: '60%',
+		textOverflow: 'ellipsis',
+		overflow: 'hidden',
+		whiteSpace: 'nowrap'
+	},
+
+	mediaIconPreview: {
+		height: 'calc(5rem * 5)',
+		//width: calc(5rem * 6),
+		maxWidth: 'calc(5rem * 8)',
+		borderRadius: '8px',
+		objectFit: 'cover'
+	},
+
+	mediaIcon: {
+		height: '48px',
+		width: '48px',
+		borderRadius: ' 8px',
+		objectFit: 'cover',
+		marginRight: '1.5rem'
 	}
 }));
