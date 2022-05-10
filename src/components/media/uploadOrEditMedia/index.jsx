@@ -853,12 +853,61 @@ const UploadOrEditMedia = ({
 			setIsLoadingUploadMedia(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 
+			let uploadedFile;
+			let uploadedCoverImage;
 			if (form.uploadedFiles[0]) {
 				let promiseFile = await uploadFileToServer(
 					form.uploadedFiles[0],
 					form.uploadedFiles[0].type
 				);
 				console.log(promiseFile, '22');
+
+				uploadedFile = await axios.post(
+					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+					{
+						file_name: form.uploadedFiles[0].file_name,
+						type: 'medialibrary',
+						data: {
+							bucket: 'media',
+							multipart_upload:
+								form.uploadedFiles[0]?.mime_type == 'video/mp4'
+									? [
+											{
+												e_tag:
+													promiseFile?.signed_response?.headers?.etag.replace(
+														/['"]+/g,
+														''
+													),
+												part_number: 1
+											}
+									  ]
+									: ['image'],
+							keys: {
+								image_key: form.uploadedCoverImage[0]?.keys?.image_key || '',
+								...(form.mainCategory.name === 'Watch' ||
+								specificMedia?.media_type === 'Watch'
+									? {
+											video_key: promiseFile?.keys?.video_key,
+											audio_key: ''
+									  }
+									: {
+											audio_key: promiseFile?.keys?.audio_key,
+											video_key: ''
+									  })
+							},
+							upload_id:
+								form.mainCategory?.name === 'Watch' ||
+								specificMedia?.media_type === 'Watch'
+									? promiseFile.upload_id
+									: 'audio'
+						}
+					},
+					{
+						headers: {
+							Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+						}
+					}
+				);
 			}
 
 			if (form.uploadedCoverImage[0]) {
@@ -867,18 +916,73 @@ const UploadOrEditMedia = ({
 					form.uploadedCoverImage[0].type
 				);
 				console.log(promiseFile, '22');
+
+				uploadedCoverImage = await axios.post(
+					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+					{
+						file_name: form.uploadedCoverImage[0].file_name,
+						type: 'medialibrary',
+						data: {
+							bucket: 'media',
+							multipart_upload:
+								form.uploadedCoverImage[0]?.mime_type == 'video/mp4'
+									? [
+											{
+												e_tag:
+													promiseFile?.signed_response?.headers?.etag.replace(
+														/['"]+/g,
+														''
+													),
+												part_number: 1
+											}
+									  ]
+									: ['image'],
+							keys: {
+								image_key: form.uploadedCoverImage[0]?.keys?.image_key || '',
+								...(form.mainCategory.name === 'Watch' ||
+								specificMedia?.media_type === 'Watch'
+									? {
+											video_key: promiseFile?.keys?.video_key,
+											audio_key: ''
+									  }
+									: {
+											audio_key: promiseFile?.keys?.audio_key,
+											video_key: ''
+									  })
+							},
+							upload_id:
+								form.mainCategory?.name === 'Watch' ||
+								specificMedia?.media_type === 'Watch'
+									? promiseFile.upload_id || 'image'
+									: 'audio'
+						}
+					},
+					{
+						headers: {
+							Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+						}
+					}
+				);
 			}
 
-			// await uploadMedia(null, {
-			// 	save_draft: true,
-			// 	type: 'medialibrary',
+			await uploadMedia(null, {
+				save_draft: true,
+				type: 'medialibrary',
 
-			// 	data: {
-			// 		//file_name_media: form.uploadedFiles[0].file_name,
-			// 		file_name_image: form.uploadedCoverImage[0].file_name,
-			// 		...completeUpload?.data?.data
-			// 	}
-			// });
+				data: {
+					...(uploadedFile && {
+						file_name_media: form.uploadedFiles[0].file_name,
+						...uploadedFile?.data?.data
+					}),
+					...(uploadedCoverImage && {
+						file_name_image: form.uploadedCoverImage[0].file_name,
+						...uploadedCoverImage?.data?.data
+					})
+					// file_name_media: form.uploadedFiles[0].file_name,
+					// file_name_image: form.uploadedCoverImage[0].file_name,
+					// ...completeUpload?.data?.data
+				}
+			});
 		}
 	};
 
