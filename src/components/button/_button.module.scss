@@ -22,6 +22,12 @@
 	cursor: default;
 }
 
+.disabledDraft {
+	border: 1px solid $disabled !important;
+	color: $disabled !important;
+	cursor: default;
+}
+
 .button2 {
 	background-color: $black-color;
 	border: 1px solid $neon-yellow;
@@ -29,6 +35,21 @@
 	margin: 0rem 1rem 0rem 0rem;
 	padding: 1rem 1rem;
 }
+
+.button2AddSave {
+	color: $black-color;
+	margin: 0rem 0rem 0rem 0rem;
+	padding: 1rem 2rem;
+}
+
+.button3 {
+	background-color: $black-color;
+	border: 1px solid $neon-yellow;
+	color: $white-color;
+	margin: 0rem 1rem 0rem 0rem;
+	padding: 1rem 2rem;
+}
+
 .activebtn {
 	background-color: $light-green;
 	color: $white-color;

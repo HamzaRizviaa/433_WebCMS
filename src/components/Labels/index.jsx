@@ -14,14 +14,15 @@ const Labels = ({
 	setSelectedLabels,
 	LabelsOptions,
 	extraLabel,
-	handleChangeExtraLabel
+	handleChangeExtraLabel,
+	draftStatus = 'published'
 }) => {
 	//const regex = /[%<>\\$'"\s@#/-=+&^*()!:;.,?{}[|]]/;
 	const regex = /\W/; // all characters that are not numbers and alphabets and underscore
 
 	return (
 		<Autocomplete
-			disabled={isEdit}
+			disabled={isEdit && draftStatus === 'published'}
 			getOptionLabel={(option) => option.name} // setSelectedLabels name out of array of strings
 			PaperComponent={(props) => {
 				setDisableDropdown(false);
@@ -73,7 +74,7 @@ const Labels = ({
 				</div>
 			}
 			className={`${classes.autoComplete} ${
-				isEdit && classes.disableAutoComplete
+				isEdit && draftStatus === 'published' && classes.disableAutoComplete
 			}`}
 			id='free-solo-2-demo'
 			disableClearable
@@ -165,7 +166,8 @@ Labels.propTypes = {
 	setSelectedLabels: PropTypes.func,
 	LabelsOptions: PropTypes.array,
 	extraLabel: PropTypes.string,
-	handleChangeExtraLabel: PropTypes.func
+	handleChangeExtraLabel: PropTypes.func,
+	draftStatus: PropTypes.string
 };
 
 export default Labels;

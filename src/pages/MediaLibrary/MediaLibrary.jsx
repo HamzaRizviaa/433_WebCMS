@@ -41,6 +41,7 @@ import { useStyles, useStyles2 } from './../../utils/styles';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
+import DefaultImage from '../../assets/defaultImage.png';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
@@ -375,6 +376,9 @@ const MediaLibrary = () => {
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
 										row?.thumbnail_url ? row?.thumbnail_url : row?.media
 									}`}
+									onError={(e) => (
+										(e.target.onerror = null), (e.target.src = DefaultImage)
+									)}
 									alt='no img'
 								/>
 							}
@@ -393,6 +397,9 @@ const MediaLibrary = () => {
 								<img
 									className={classes.mediaIcon}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.thumbnail_url}`}
+									onError={(e) => (
+										(e.target.onerror = null), (e.target.src = DefaultImage)
+									)}
 								/>
 							</span>
 						</Tooltip>
@@ -721,7 +728,9 @@ const MediaLibrary = () => {
 					page={page}
 					title={edit ? 'Edit Media' : 'Upload Media'}
 					heading1={edit ? 'Media Type' : 'Select Media Type'}
-					buttonText={edit ? 'SAVE CHANGES' : 'ADD MEDIA'}
+					buttonText={
+						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
+					}
 					status={rowStatus}
 				/>
 			</Layout>

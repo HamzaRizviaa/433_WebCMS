@@ -27,6 +27,7 @@ import Slide from '@mui/material/Slide';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 import PrimaryLoader from '../../PrimaryLoader';
 import validateForm from '../../../utils/validateForm';
+import validateDraft from '../../../utils/validateDraft';
 
 const UploadOrEditMedia = ({
 	open,
@@ -35,8 +36,8 @@ const UploadOrEditMedia = ({
 	heading1,
 	buttonText,
 	isEdit,
-	page
-	//status
+	page,
+	status
 }) => {
 	const [mediaLabels, setMediaLabels] = useState([]);
 	const [subCategories, setSubCategories] = useState([]);
@@ -49,10 +50,11 @@ const UploadOrEditMedia = ({
 	const [isLoadingUploadMedia, setIsLoadingUploadMedia] = useState(false);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
-	const [fileWidth, setFileWidth] = useState(null);
-	const [fileHeight, setFileHeight] = useState(null);
+	const [fileWidth, setFileWidth] = useState(0);
+	const [fileHeight, setFileHeight] = useState(0);
 	const [fileDuration, setFileDuration] = useState(null);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
+	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
@@ -316,6 +318,7 @@ const UploadOrEditMedia = ({
 		setExtraLabel('');
 		setDisableDropdown(true);
 		setEditBtnDisabled(false);
+		setDraftBtnDisabled(false);
 		setIsError({});
 		setForm({
 			title: '',
@@ -357,6 +360,20 @@ const UploadOrEditMedia = ({
 			uploadedCoverImage: form.uploadedCoverImage.length < 1,
 			mainCategory: !form.mainCategory,
 			subCategory: !form.subCategory.name,
+			titleMedia: !form.title && { message: 'You need to enter a Title' },
+			description: !form.description
+		});
+
+		setTimeout(() => {
+			setIsError({});
+		}, 5000);
+	};
+
+	const validateDraftBtn = () => {
+		setIsError({
+			uploadedFiles: form.uploadedFiles.length < 1,
+			selectedLabelsDraft: form.labels.length < 1,
+			uploadedCoverImage: form.uploadedCoverImage.length < 1,
 			titleMedia: !form.title && { message: 'You need to enter a Title' },
 			description: !form.description
 		});
@@ -417,6 +434,7 @@ const UploadOrEditMedia = ({
 							main_category_id: media_type,
 							sub_category_id: form.subCategory?.id,
 							duration: Math.round(fileDuration),
+							save_draft: false,
 							width: fileWidth,
 							height: fileHeight,
 							title: form.title,
@@ -545,6 +563,53 @@ const UploadOrEditMedia = ({
 		}
 	}, [specificMedia, form]);
 
+	// const checkDuplicateLabel = () => {
+	// 	return specificMedia?.labels?.forEach((lb) =>
+	// 		form?.labels?.map((formL) => {
+	// 			console.log(formL.name, lb, 'dadwad');
+	// 			formL.name === lb;
+	// 		})
+	// 	);
+	// };
+
+	// console.log(form, 'wad');
+	useEffect(() => {
+		if (specificMedia) {
+			// let checkDuplicateLabel = specificMedia?.labels?.map((label) => {
+			// 	return form?.labels.some((formLabel) => formLabel.name == label);
+			// });
+
+			// let checkDuplicateLabel = form.labels.some((file) => {
+			// 	specificMedia?.labels?.map((mediaFile) => {
+			// 		file.name !== mediaFile;
+			// 	});
+			// });
+
+			// let checkDuplicateLabel = specificMedia?.labels?.some((lb) =>
+			// 	form?.labels?.map((formL) => {
+			// 		console.log(formL, 'dadwad');
+			// 		formL.name.includes(lb);
+			// 	})
+			// );
+
+			// console.log(checkDuplicateLabel, 'kaka');
+
+			setDraftBtnDisabled(
+				specificMedia?.file_name_media === form?.uploadedFiles[0]?.file_name &&
+					specificMedia?.file_name_image ===
+						form?.uploadedCoverImage[0]?.file_name &&
+					specificMedia?.media_dropbox_url ===
+						form?.media_dropbox_url?.trim() &&
+					specificMedia?.image_dropbox_url ===
+						form?.image_dropbox_url?.trim() &&
+					specificMedia?.title?.replace(/\s+/g, '')?.trim() ===
+						form?.title?.replace(/\s+/g, '')?.trim() &&
+					specificMedia?.description?.replace(/\s+/g, '')?.trim() ===
+						form?.description?.replace(/\s+/g, '')?.trim()
+			);
+		}
+	}, [specificMedia, form]);
+
 	const MainCategoryId = (e) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
 		let setData = mainCategories.find((u) => u.name === e);
@@ -608,7 +673,6 @@ const UploadOrEditMedia = ({
 					form.uploadedCoverImage[0]
 				].map(async (_file) => {
 					if (_file.file) {
-						console.log('_file', _file);
 						return await uploadFileToServer(_file, _file.type);
 					} else {
 						return _file;
@@ -617,7 +681,6 @@ const UploadOrEditMedia = ({
 
 				Promise.all([...uploadFilesPromiseArray])
 					.then(async (mediaFiles) => {
-						console.log('Media Files', mediaFiles);
 						const completedUpload = mediaFiles.map(async (file) => {
 							if (file?.signed_response) {
 								return await axios.post(
@@ -780,6 +843,146 @@ const UploadOrEditMedia = ({
 						setIsLoadingUploadMedia(false);
 					});
 			}
+		}
+	};
+
+	const saveDraftBtn = async () => {
+		if (!validateDraft(form)) {
+			validateDraftBtn();
+		} else {
+			setIsLoadingUploadMedia(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+
+			let uploadedFile;
+			let uploadedCoverImage;
+			if (form.uploadedFiles[0]) {
+				let promiseFile = await uploadFileToServer(
+					form.uploadedFiles[0],
+					form.uploadedFiles[0].type
+				);
+				console.log(promiseFile, '22');
+
+				uploadedFile = await axios.post(
+					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+					{
+						file_name: form.uploadedFiles[0].file_name,
+						type: 'medialibrary',
+						data: {
+							bucket: 'media',
+							multipart_upload:
+								form.uploadedFiles[0]?.mime_type == 'video/mp4'
+									? [
+											{
+												e_tag:
+													promiseFile?.signed_response?.headers?.etag.replace(
+														/['"]+/g,
+														''
+													),
+												part_number: 1
+											}
+									  ]
+									: ['image'],
+							keys: {
+								image_key: form.uploadedCoverImage[0]?.keys?.image_key || '',
+								...(form.mainCategory.name === 'Watch' ||
+								specificMedia?.media_type === 'Watch'
+									? {
+											video_key: promiseFile?.keys?.video_key,
+											audio_key: ''
+									  }
+									: {
+											audio_key: promiseFile?.keys?.audio_key,
+											video_key: ''
+									  })
+							},
+							upload_id:
+								form.mainCategory?.name === 'Watch' ||
+								specificMedia?.media_type === 'Watch'
+									? promiseFile.upload_id
+									: 'audio'
+						}
+					},
+					{
+						headers: {
+							Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+						}
+					}
+				);
+			}
+
+			if (form.uploadedCoverImage[0]) {
+				let promiseFile = await uploadFileToServer(
+					form.uploadedCoverImage[0],
+					form.uploadedCoverImage[0].type
+				);
+				console.log(promiseFile, '22');
+
+				uploadedCoverImage = await axios.post(
+					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+					{
+						file_name: form.uploadedCoverImage[0].file_name,
+						type: 'medialibrary',
+						data: {
+							bucket: 'media',
+							multipart_upload:
+								form.uploadedCoverImage[0]?.mime_type == 'video/mp4'
+									? [
+											{
+												e_tag:
+													promiseFile?.signed_response?.headers?.etag.replace(
+														/['"]+/g,
+														''
+													),
+												part_number: 1
+											}
+									  ]
+									: ['image'],
+							keys: {
+								image_key: form.uploadedCoverImage[0]?.keys?.image_key || '',
+								...(form.mainCategory.name === 'Watch' ||
+								specificMedia?.media_type === 'Watch'
+									? {
+											video_key: promiseFile?.keys?.video_key,
+											audio_key: ''
+									  }
+									: {
+											audio_key: promiseFile?.keys?.audio_key,
+											video_key: ''
+									  })
+							},
+							upload_id:
+								form.mainCategory?.name === 'Watch' ||
+								specificMedia?.media_type === 'Watch'
+									? promiseFile.upload_id || 'image'
+									: 'audio'
+						}
+					},
+					{
+						headers: {
+							Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+						}
+					}
+				);
+			}
+
+			await uploadMedia(null, {
+				save_draft: true,
+				type: 'medialibrary',
+
+				data: {
+					...(uploadedFile && {
+						file_name_media: form.uploadedFiles[0].file_name,
+						...uploadedFile?.data?.data
+					}),
+					...(uploadedCoverImage && {
+						file_name_image: form.uploadedCoverImage[0].file_name,
+						...uploadedCoverImage?.data?.data
+					})
+					// file_name_media: form.uploadedFiles[0].file_name,
+					// file_name_image: form.uploadedCoverImage[0].file_name,
+					// ...completeUpload?.data?.data
+				}
+			});
 		}
 	};
 
@@ -1257,6 +1460,7 @@ const UploadOrEditMedia = ({
 														return { ...prev, labels: [...newVal] };
 													});
 												}}
+												draftStatus={status}
 											/>
 										</div>
 										<p className={classes.mediaError}>
@@ -1264,6 +1468,8 @@ const UploadOrEditMedia = ({
 												? `You need to add ${
 														7 - form.labels.length
 												  } more labels in order to upload media`
+												: isError.selectedLabelsDraft
+												? 'You need to select atleast 1 label to save as draft'
 												: ''}
 										</p>
 
@@ -1311,7 +1517,7 @@ const UploadOrEditMedia = ({
 								)}
 							</div>
 							<div className={classes.buttonDiv}>
-								{isEdit ? (
+								{isEdit || (status === 'draft' && isEdit) ? (
 									<div className={classes.editBtn}>
 										<Button
 											disabled={false}
@@ -1328,16 +1534,42 @@ const UploadOrEditMedia = ({
 									<></>
 								)}
 
-								<div
-									className={
-										isEdit ? classes.addMediaBtnEdit : classes.addMediaBtn
-									}
-								>
-									<Button
-										disabled={isEdit ? editBtnDisabled : !validateForm(form)}
-										onClick={() => addSaveMediaBtn()}
-										text={buttonText}
-									/>
+								<div className={classes.publishDraftDiv}>
+									{status === 'draft' || !isEdit ? (
+										<div
+											className={
+												isEdit ? classes.draftBtnEdit : classes.draftBtn
+											}
+										>
+											<Button
+												disabledDraft={
+													isEdit ? draftBtnDisabled : !validateDraft(form)
+												}
+												onClick={() => saveDraftBtn()}
+												button3={true}
+												text={
+													status === 'draft' && isEdit
+														? 'SAVE DRAFT'
+														: 'SAVE AS DRAFT'
+												}
+											/>
+										</div>
+									) : (
+										<></>
+									)}
+
+									<div
+										className={
+											isEdit ? classes.addMediaBtnEdit : classes.addMediaBtn
+										}
+									>
+										<Button
+											disabled={isEdit ? editBtnDisabled : !validateForm(form)}
+											onClick={() => addSaveMediaBtn()}
+											button2AddSave={true}
+											text={buttonText}
+										/>
+									</div>
 								</div>
 							</div>
 						</div>

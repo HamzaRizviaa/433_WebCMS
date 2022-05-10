@@ -19,22 +19,42 @@
 .buttonDiv {
 	width: 100%;
 	margin-bottom: 4rem;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.publishDraftDiv {
+	display: flex;
+	// justify-content: ;
 }
 
 .addMediaBtn {
-	width: 100%;
+	//width: 20%;
 	margin-top: 0.5rem;
 }
 
 .addMediaBtnEdit {
-	width: 70%;
+	// width: 35%;
+	margin-top: 0.5rem;
+	display: inline-block;
+}
+
+.draftBtn {
+	//width: 35%;
+	margin-top: 0.5rem;
+}
+
+.draftBtnEdit {
+	// width: 25%;
 	margin-top: 0.5rem;
 	display: inline-block;
 }
 
 .editBtn {
-	width: 30%;
-	display: inline-block;
+	//width: 30%;
+	width: 100%;
+	display: flex;
+	justify-self: flex-start;
 	margin-top: 0.5rem;
 }
 
