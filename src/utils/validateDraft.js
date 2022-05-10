@@ -1,9 +1,9 @@
-const validateForm = (form, draft = false) => {
+const validateDraft = (form) => {
 	var validate = Object.keys(form).map((key) => {
+		if (key === 'mainCategory' || key === 'subCategory') {
+			return false;
+		}
 		if (typeof form[key] === 'string') {
-			if (key.includes('dropbox_url')) {
-				return true;
-			}
 			return !form[key] ? false : true;
 		}
 		if (typeof form[key] === 'object') {
@@ -21,24 +21,24 @@ const validateForm = (form, draft = false) => {
 			}
 			if (Array.isArray(form[key])) {
 				if (key === 'labels') {
-					return form[key]?.length < 7 ? false : true;
+					return form[key]?.length < 1 ? false : true;
 				} else {
 					return form[key]?.length === 0 ? false : true;
 				}
 			} else {
-				return validateForm(form[key]);
+				return validateDraft(form[key]);
 			}
 		}
 		if (typeof form[key] === 'boolean') {
-			return true; // for non - mandatory fields
+			if (form[key] === false) {
+				return false;
+			} else {
+				return true;
+			}
 		}
 	});
 
-	if (draft) {
-		return validate.some((item) => item === true);
-	} else {
-		return validate.every((item) => item === true);
-	}
+	return validate.some((item) => item === true);
 };
 
-export default validateForm;
+export default validateDraft;
