@@ -147,9 +147,39 @@ export const useStyles = makeStyles((theme) => ({
 		width: '100%'
 	},
 
-	textFieldInput: {
-		// ...theme.components.textFieldInput
-		// @include textFieldInput,
+	// textFieldInput: {
+	// 	// ...theme.components.textFieldInput
+	// 	// @include textFieldInput,
+	// },
+	// textFieldInput: {
+	// 	color: '#ffffff',
+	// 	border: ' 0.01px solid #404040',
+	// 	padding: '1rem 1rem 1rem 1.5rem !important',
+	// 	fontSize: '1.4rem !important',
+	// 	fontFamily: 'Poppins !important',
+	// 	lineHeight: '1.6 !important',
+	// 	borderRadius: '22px',
+	// 	marginBottom: '1rem',
+	// 	backgroundColor: '#000000',
+	// 	'& svg': {
+	// 		position: 'absolute',
+	// 		color: '#ffff00',
+	// 		right: '2rem !important',
+	// 		top: '-9px !important',
+	// 		fontSize: '3rem'
+	// 	}
+	// },
+
+	textFieldInputStartAdornment: {
+		color: 'white !important',
+		border: '0.01px solid #404040',
+		padding: ' 1rem 1rem 1rem 1.5rem !important',
+		fontSize: '1.4rem !important',
+		fontFamily: 'Poppins !important',
+		lineHeight: '1.6 !important',
+		borderRadius: '40px',
+		marginBottom: '1rem',
+		backgroundColor: '#000000'
 	},
 
 	captionContainer: {
@@ -388,6 +418,9 @@ export const useStyles = makeStyles((theme) => ({
 	},
 	//  library pages
 
+	articleLibrary: {
+		height: ' 100vh !important'
+	},
 	header: {
 		display: 'flex',
 		justifyContent: 'space-between'
@@ -418,7 +451,7 @@ export const useStyles = makeStyles((theme) => ({
 	},
 	// date
 	customDateInput: {
-		border: '0',
+		// border: '0',
 		margin: ' 0',
 		display: 'inline-flex',
 		// padding: '0',
@@ -428,8 +461,8 @@ export const useStyles = makeStyles((theme) => ({
 		verticalAlign: 'top',
 		width: '250px',
 		color: 'white !important',
-		// border: ' 1px solid #404040',
-		// padding: '1rem 1rem 1.2rem 1rem !important',
+		border: ' 1px solid #404040',
+		padding: '1rem 1rem 1.2rem 1rem !important',
 		fontSize: '1.4rem !important',
 		fontFamily: ' Poppins !important',
 		lineHeight: '1.6 !important',
@@ -438,7 +471,7 @@ export const useStyles = makeStyles((theme) => ({
 		borderColor: ' rgb(64, 64, 64)',
 		height: '17.5px',
 		boxSizing: 'content-box',
-		padding: ' 6px 0 7px',
+		// padding: ' 6px 0 7px',
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center'
@@ -449,17 +482,17 @@ export const useStyles = makeStyles((theme) => ({
 		width: '271px'
 	},
 
-	// textFieldInput: {
-	// 	color: ' white !important',
-	// 	border: '1px solid #404040',
-	// 	padding: '0.5rem 0.5rem 0.5rem 1.5rem !important',
-	// 	fontSize: '1.4rem !important',
-	// 	lineHeight: '1.6 !important',
-	// 	borderRadius: '40px',
-	// 	fontFamily: 'Poppins !important',
-	// 	//margin-bottom: 1rem,
-	// 	backgroundColor: ' #000000'
-	// },
+	textFieldInput: {
+		color: ' white !important',
+		border: '1px solid #404040',
+		padding: '0.5rem 0.5rem 0.5rem 1.5rem !important',
+		fontSize: '1.4rem !important',
+		lineHeight: '1.6 !important',
+		borderRadius: '40px',
+		fontFamily: 'Poppins !important',
+		//margin-bottom: 1rem,
+		backgroundColor: ' #000000'
+	},
 
 	searchIcon: {
 		cursor: 'pointer',
@@ -472,5 +505,179 @@ export const useStyles = makeStyles((theme) => ({
 		marginTop: '0.2rem',
 		marginLeft: '0.5rem',
 		height: '1rem'
+	},
+	sortIcon: {
+		position: 'absolute',
+		left: '-4px',
+		bottom: '-2px',
+		height: '2rem !important',
+		width: '2rem !important',
+		'& svg': {
+			left: '30px'
+		}
+	},
+
+	sortIconSelected: {
+		position: 'absolute',
+		left: '-4px',
+		bottom: '-2px',
+		height: '2rem !important',
+		width: ' 2rem !important',
+		color: ' $neon-yellow',
+		'& svg': {
+			left: '30px'
+		}
+	},
+
+	row: {
+		marginBottom: '1.5rem',
+		fontSize: '1.2rem',
+		paddingLeft: '35px',
+		display: 'block'
+	},
+
+	rowType: {
+		marginBottom: '1.5rem',
+		fontSize: '1.2rem',
+		paddingLeft: '35px'
+	},
+	articlOptionRow: {
+		marginBottom: '1.5rem',
+		fontSize: ' 1.2rem',
+		display: 'block'
+	},
+
+	//pagination
+
+	paginationRow: {
+		display: 'flex',
+		justifyContent: 'flex-end',
+		alignItems: 'center',
+		position: 'absolute',
+		bottom: '0',
+		right: '0',
+		padding: '1vw 2vw'
+	},
+	nav: {
+		width: 'fit-content'
+	},
+	gotoText: {
+		fontSize: '12px',
+		fontWeight: 700,
+		margin: '0px 10px'
+	},
+	gotoInput: {
+		background: '#000000',
+		color: 'white',
+		borderRadius: '8px',
+		padding: '6px',
+		width: '50px',
+		'&:focus': {
+			outline: 'none'
+		}
+	},
+
+	//loader on pages
+
+	libraryLoader: {
+		width: '20%',
+		height: 'auto'
+	},
+
+	//library row edit icon
+	editIcon: {
+		width: '2.5rem',
+		height: 'auto',
+		cursor: 'pointer'
+	},
+
+	libraryToolTip: {
+		backgroundColor: ' $black-color !important',
+		fontFamily: 'Poppins !important',
+		fontSize: '12px !important',
+		lineHeight: '16px !important',
+		borderRadius: '8px !important',
+		maxWidth: 'none !important'
+	},
+
+	libraryToolTipArrow: {
+		color: '$black-color !important'
+	},
+	//images styling
+
+	//landscape scss
+
+	mediaIconLandscape: {
+		height: '25.131px',
+		width: '48px',
+		borderRadius: '8px',
+		objectFit: 'cover'
+	},
+	virallandscapePreview: {
+		height: 'calc(25.131px * 6)',
+		width: 'calc(48px * 6)',
+		borderRadius: '8px',
+		objectFit: 'cover'
+	},
+	mediaIconPortrait: {
+		height: '48px',
+		width: '38.4px',
+		borderRadius: '8px',
+		objectFit: 'cover'
+	},
+
+	mediaIconPortraitPreview: {
+		height: 'calc(48px * 6)',
+		width: 'calc(38.4px * 6)',
+		borderRadius: '8px',
+		objectFit: 'cover'
+	},
+
+	mediaWrapper: {
+		display: 'flex',
+		alignItems: 'center',
+		marginLeft: ' 0.5rem',
+		marginBottom: '1.5rem'
+	},
+
+	virallandscape: {
+		display: 'flex',
+		alignItems: 'center',
+		marginLeft: '0.5rem',
+		marginBottom: '2.5rem'
+	},
+
+	toolTipPreview: {
+		backgroundColor: 'transparent !important',
+		borderRadius: '8px !important',
+		maxWidth: 'none !important'
+	},
+
+	libraryFileName: {
+		// margin-left: 1rem,
+		fontSize: ' 1.2rem'
+	},
+
+	labelsWrapper: {
+		maxWidth: '60%',
+		textOverflow: 'ellipsis',
+		overflow: 'hidden',
+		whiteSpace: 'nowrap'
+	},
+
+	mediaIconPreview: {
+		height: 'calc(5rem * 5)',
+		//width: calc(5rem * 6),
+		maxWidth: 'calc(5rem * 8)',
+		borderRadius: '8px',
+		objectFit: 'cover'
+	},
+
+	mediaIcon: {
+		height: '48px',
+		width: '48px',
+		borderRadius: ' 8px',
+		objectFit: 'cover',
+		marginRight: '1.5rem'
 	}
 }));
