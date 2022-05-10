@@ -33,7 +33,7 @@ import {
 } from './articleLibrarySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
-// import { useStyles as globalUseStyles } from '../../styles/global.style';
+import { useStyles as globalUseStyles } from '../../styles/global.style';
 const ArticleLibrary = () => {
 	// Selectors
 	const articles = useSelector((state) => state.ArticleLibraryStore.articles);
@@ -53,7 +53,7 @@ const ArticleLibrary = () => {
 	);
 
 	const muiClasses = useStyles();
-	// const classes = globalUseStyles();
+	const classes = globalUseStyles();
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });

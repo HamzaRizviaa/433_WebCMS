@@ -43,7 +43,8 @@ export const useStyles = makeStyles((theme) => ({
 		fontSize: '1.4rem',
 		lineHeight: '2.4rem',
 		fontWeight: 400,
-		...theme.components.preventSelect
+		userSelect: 'none'
+		// ...theme.components.preventSelect
 		// @include preventSelect,
 	},
 
@@ -52,7 +53,8 @@ export const useStyles = makeStyles((theme) => ({
 		lineHeight: '1.6rem',
 		fontWeight: 400,
 		color: theme.palette.lightGrey,
-		...theme.components.preventSelect
+		userSelect: 'none'
+		// ...theme.components.preventSelect
 		// @include preventSelect,
 	},
 
@@ -146,7 +148,7 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	textFieldInput: {
-		...theme.components.textFieldInput
+		// ...theme.components.textFieldInput
 		// @include textFieldInput,
 	},
 
@@ -383,92 +385,92 @@ export const useStyles = makeStyles((theme) => ({
 	dimensionPreviewIcons: {
 		color: theme.palette.disabled,
 		cursor: 'pointer'
-	}
+	},
 	//  library pages
 
-	// header: {
-	// 	display: 'flex',
-	// 	justifyContent: 'space-between'
-	// },
+	header: {
+		display: 'flex',
+		justifyContent: 'space-between'
+	},
 
-	// subheader1: {
-	// 	display: 'flex',
-	// 	justifyContent: ' flex-start'
-	// },
+	subheader1: {
+		display: 'flex',
+		justifyContent: ' flex-start'
+	},
 
-	// tableContainer: {
-	// 	margin: ' 1rem 0rem'
-	// },
+	tableContainer: {
+		margin: ' 1rem 0rem'
+	},
 
-	// subheader2: {
-	// 	display: 'flex',
-	// 	justifyContent: 'flex-end',
-	// 	alignItems: 'center'
-	// },
+	subheader2: {
+		display: 'flex',
+		justifyContent: 'flex-end',
+		alignItems: 'center'
+	},
 
-	// calendarWrapper: {
-	// 	marginLeft: '10px',
-	// 	'& button': {
-	// 		backgroundColor: 'transparent !important',
-	// 		top: '0.5px !important',
-	// 		right: '30px !important'
-	// 	}
-	// },
-	// // date
-	// customDateInput: {
-	// 	border: '0',
-	// 	margin: ' 0',
-	// 	display: 'inline-flex',
-	// 	// padding: '0',
-	// 	position: 'relative',
-	// 	minWidth: ' 0',
-	// 	// flexDirection: 'column',
-	// 	verticalAlign: 'top',
-	// 	width: '250px',
-	// 	color: 'white !important',
-	// 	// border: ' 1px solid #404040',
-	// 	// padding: '1rem 1rem 1.2rem 1rem !important',
+	calendarWrapper: {
+		marginLeft: '10px',
+		'& button': {
+			backgroundColor: 'transparent !important',
+			top: '0.5px !important',
+			right: '30px !important'
+		}
+	},
+	// date
+	customDateInput: {
+		border: '0',
+		margin: ' 0',
+		display: 'inline-flex',
+		// padding: '0',
+		position: 'relative',
+		minWidth: ' 0',
+		// flexDirection: 'column',
+		verticalAlign: 'top',
+		width: '250px',
+		color: 'white !important',
+		// border: ' 1px solid #404040',
+		// padding: '1rem 1rem 1.2rem 1rem !important',
+		fontSize: '1.4rem !important',
+		fontFamily: ' Poppins !important',
+		lineHeight: '1.6 !important',
+		borderRadius: '40px',
+		backgroundColor: '#000000',
+		borderColor: ' rgb(64, 64, 64)',
+		height: '17.5px',
+		boxSizing: 'content-box',
+		padding: ' 6px 0 7px',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center'
+	},
+	//search
+
+	searchField: {
+		width: '271px'
+	},
+
+	// textFieldInput: {
+	// 	color: ' white !important',
+	// 	border: '1px solid #404040',
+	// 	padding: '0.5rem 0.5rem 0.5rem 1.5rem !important',
 	// 	fontSize: '1.4rem !important',
-	// 	fontFamily: ' Poppins !important',
 	// 	lineHeight: '1.6 !important',
 	// 	borderRadius: '40px',
-	// 	backgroundColor: '#000000',
-	// 	borderColor: ' rgb(64, 64, 64)',
-	// 	height: '17.5px',
-	// 	boxSizing: 'content-box',
-	// 	padding: ' 6px 0 7px',
-	// 	flexDirection: 'row',
-	// 	justifyContent: 'space-between',
-	// 	alignItems: 'center'
-	// },
-	// //search
-
-	// searchField: {
-	// 	width: '271px'
+	// 	fontFamily: 'Poppins !important',
+	// 	//margin-bottom: 1rem,
+	// 	backgroundColor: ' #000000'
 	// },
 
-	// // textFieldInput: {
-	// // 	color: ' white !important',
-	// // 	border: '1px solid #404040',
-	// // 	padding: '0.5rem 0.5rem 0.5rem 1.5rem !important',
-	// // 	fontSize: '1.4rem !important',
-	// // 	lineHeight: '1.6 !important',
-	// // 	borderRadius: '40px',
-	// // 	fontFamily: 'Poppins !important',
-	// // 	//margin-bottom: 1rem,
-	// // 	backgroundColor: ' #000000'
-	// // },
+	searchIcon: {
+		cursor: 'pointer',
+		marginRight: '8'
+	},
 
-	// searchIcon: {
-	// 	cursor: 'pointer',
-	// 	marginRight: '8'
-	// },
-
-	// noResultError: {
-	// 	color: '#ff355a',
-	// 	fontWeight: 'bold',
-	// 	marginTop: '0.2rem',
-	// 	marginLeft: '0.5rem',
-	// 	height: '1rem'
-	// }
+	noResultError: {
+		color: '#ff355a',
+		fontWeight: 'bold',
+		marginTop: '0.2rem',
+		marginLeft: '0.5rem',
+		height: '1rem'
+	}
 }));
