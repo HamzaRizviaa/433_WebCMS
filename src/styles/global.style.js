@@ -482,18 +482,6 @@ export const useStyles = makeStyles((theme) => ({
 		width: '271px'
 	},
 
-	textFieldInput: {
-		color: ' white !important',
-		border: '1px solid #404040',
-		padding: '0.5rem 0.5rem 0.5rem 1.5rem !important',
-		fontSize: '1.4rem !important',
-		lineHeight: '1.6 !important',
-		borderRadius: '40px',
-		fontFamily: 'Poppins !important',
-		//margin-bottom: 1rem,
-		backgroundColor: ' #000000'
-	},
-
 	searchIcon: {
 		cursor: 'pointer',
 		marginRight: '8'
@@ -511,10 +499,7 @@ export const useStyles = makeStyles((theme) => ({
 		left: '-4px',
 		bottom: '-2px',
 		height: '2rem !important',
-		width: '2rem !important',
-		'& svg': {
-			left: '30px'
-		}
+		width: '2rem !important'
 	},
 
 	sortIconSelected: {
@@ -523,10 +508,7 @@ export const useStyles = makeStyles((theme) => ({
 		bottom: '-2px',
 		height: '2rem !important',
 		width: ' 2rem !important',
-		color: ' $neon-yellow',
-		'& svg': {
-			left: '30px'
-		}
+		color: ' $neon-yellow'
 	},
 
 	row: {
@@ -539,11 +521,7 @@ export const useStyles = makeStyles((theme) => ({
 	rowType: {
 		marginBottom: '1.5rem',
 		fontSize: '1.2rem',
-		paddingLeft: '35px'
-	},
-	articlOptionRow: {
-		marginBottom: '1.5rem',
-		fontSize: ' 1.2rem',
+		paddingLeft: '35px',
 		display: 'block'
 	},
 
@@ -592,7 +570,7 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	libraryToolTip: {
-		backgroundColor: ' $black-color !important',
+		backgroundColor: ' #000000 !important',
 		fontFamily: 'Poppins !important',
 		fontSize: '12px !important',
 		lineHeight: '16px !important',
@@ -601,7 +579,7 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	libraryToolTipArrow: {
-		color: '$black-color !important'
+		color: `#000000 !important`
 	},
 	//images styling
 
@@ -633,6 +611,7 @@ export const useStyles = makeStyles((theme) => ({
 		objectFit: 'cover'
 	},
 
+	//article // viral
 	mediaWrapper: {
 		display: 'flex',
 		alignItems: 'center',
@@ -679,5 +658,52 @@ export const useStyles = makeStyles((theme) => ({
 		borderRadius: ' 8px',
 		objectFit: 'cover',
 		marginRight: '1.5rem'
+	},
+	libraryPlayIcon: {
+		position: 'absolute',
+		left: ' 20px',
+		top: '26px',
+		height: ' 2.5rem !important',
+		width: 'auto !important',
+		color: '#ffff00'
+	},
+	//article page
+	articlOptionRow: {
+		marginBottom: '1.5rem',
+		fontSize: ' 1.2rem',
+		display: 'block'
+	},
+	// virals library page
+	viralRow: {
+		marginBottom: '1.5rem',
+		fontSize: '1.2rem',
+		paddingRight: '30px',
+		display: 'block'
+	},
+	viralFileName: {
+		fontSize: ' 1.2rem',
+		maxWidth: '60%',
+		textOverflow: 'ellipsis',
+		overflow: 'hidden',
+		whiteSpace: 'nowrap !important'
+	},
+	textFieldInput: {
+		color: ' white !important',
+		border: '1px solid #404040',
+		padding: '0.5rem 0.5rem 0.5rem 1.5rem !important',
+		fontSize: '1.4rem !important',
+		lineHeight: '1.6 !important',
+		borderRadius: '40px',
+		fontFamily: 'Poppins !important',
+		//margin-bottom: 1rem,
+		backgroundColor: ' #000000'
+	},
+	//question library
+	active_closed_btn: {
+		paddingLeft: '30px',
+		marginBottom: ' 1.7rem',
+		fontSize: '1.2rem',
+		width: '90px',
+		height: '24px'
 	}
 }));
