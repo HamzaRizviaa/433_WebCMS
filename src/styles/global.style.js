@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core';
+import theme from '../assets/theme';
 
-export const useStyles = makeStyles((theme) => ({
+export const useStyles = makeStyles(() => ({
 	dropZoneContainer: {
 		border: `1.5px dashed ${theme.palette.neonYellow}`,
 		cursor: 'pointer',
@@ -43,8 +44,7 @@ export const useStyles = makeStyles((theme) => ({
 		fontSize: '1.4rem',
 		lineHeight: '2.4rem',
 		fontWeight: 400,
-		userSelect: 'none'
-		// ...theme.components.preventSelect
+		...theme.components.preventSelect
 		// @include preventSelect,
 	},
 
@@ -53,8 +53,7 @@ export const useStyles = makeStyles((theme) => ({
 		lineHeight: '1.6rem',
 		fontWeight: 400,
 		color: theme.palette.lightGrey,
-		userSelect: 'none'
-		// ...theme.components.preventSelect
+		...theme.components.preventSelect
 		// @include preventSelect,
 	},
 
