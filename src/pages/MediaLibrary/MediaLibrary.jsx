@@ -370,7 +370,7 @@ const MediaLibrary = () => {
 											: classes.mediaIconPreview
 									}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-										row?.thumbnail_url === '-' ? row?.media : row?.thumbnail_url
+										row?.thumbnail_url ? row?.thumbnail_url : row?.media
 									}`}
 									onError={(e) => (
 										(e.target.onerror = null), (e.target.src = DefaultImage)
