@@ -25,7 +25,7 @@ import Table from '../../components/table';
 
 // CSS / Material UI
 import 'react-datepicker/dist/react-datepicker.css';
-import classes from './_mediaLibrary.module.scss';
+// import classes from './_mediaLibrary.module.scss';
 import Pagination from '@mui/material/Pagination';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
@@ -36,6 +36,7 @@ import '../PostLibrary/_calender.scss';
 // Utils
 import { getDateTime, formatDate, getCalendarText } from '../../utils';
 import { useStyles, useStyles2 } from './../../utils/styles';
+import { useStyles as globalUseStyles } from '../../styles/global.style';
 
 // Icons
 import { ReactComponent as Edit } from '../../assets/edit.svg';
@@ -49,7 +50,7 @@ import LoadingOverlay from 'react-loading-overlay';
 const MediaLibrary = () => {
 	const muiClasses = useStyles();
 	const muiClasses2 = useStyles2();
-
+	const classes = globalUseStyles();
 	// Selctor
 	const media = useSelector((state) => state.mediaLibraryOriginal.media);
 
@@ -317,7 +318,7 @@ const MediaLibrary = () => {
 			sortFunc: () => {},
 			formatter: (content) => {
 				return (
-					<div className={classes.row}>
+					<div className={classes.mediaRow}>
 						<Markup content={`${content} `} />
 					</div>
 				);
@@ -331,7 +332,7 @@ const MediaLibrary = () => {
 			sortFunc: () => {},
 			formatter: (content, row) => {
 				return (
-					<div className={classes.mediaWrapper}>
+					<div className={classes.mediaMediaWrapper}>
 						{/* <Tooltip
 							// TransitionComponent={Fade}
 							// TransitionProps={{ timeout: 600 }}
@@ -367,14 +368,9 @@ const MediaLibrary = () => {
 											: row.height > row.width + 200
 											? classes.mediaIconPortraitPreview
 											: classes.mediaIconPreview
-										// row.width === row.height
-										// 	? classes.mediaIconPreview
-										// 	: row.width > row.height
-										// 	? classes.virallandscapePreview
-										// 	: classes.mediaIconPortraitPreview
 									}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-										row?.thumbnail_url ? row?.thumbnail_url : row?.media
+										row?.thumbnail_url === '-' ? row?.media : row?.thumbnail_url
 									}`}
 									onError={(e) => (
 										(e.target.onerror = null), (e.target.src = DefaultImage)
@@ -395,7 +391,7 @@ const MediaLibrary = () => {
 								)} */}
 								{/* <PlayArrowIcon className={classes.playIcon} /> */}
 								<img
-									className={classes.mediaIcon}
+									className={classes.mediaMediaIcon}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.thumbnail_url}`}
 									onError={(e) => (
 										(e.target.onerror = null), (e.target.src = DefaultImage)
@@ -413,12 +409,15 @@ const MediaLibrary = () => {
 							}
 							arrow
 							componentsProps={{
-								tooltip: { className: classes.toolTip },
-								arrow: { className: classes.toolTipArrow }
+								tooltip: { className: classes.libraryToolTip },
+								arrow: { className: classes.libraryToolTipArrow }
 							}}
 						>
 							<div>
-								<Markup className={classes.fileName} content={row?.file_name} />
+								<Markup
+									className={classes.mediaFileName}
+									content={row?.file_name}
+								/>
 							</div>
 						</Tooltip>
 					</div>
@@ -486,7 +485,7 @@ const MediaLibrary = () => {
 			formatter: (content) => {
 				return (
 					// <div className={classes.row}>{content}</div>
-					<Markup className={classes.row} content={`${content}`} />
+					<Markup className={classes.mediaRow} content={`${content}`} />
 				);
 			}
 		},
@@ -498,7 +497,7 @@ const MediaLibrary = () => {
 			text: 'STATUS',
 			formatter: (content) => {
 				return (
-					<div className={`${classes.active_closed_btn}`}>
+					<div className={`${classes.publish_draft_btn}`}>
 						<Button
 							onClick={() => {}}
 							text={content == 'published' ? 'PUBLISHED' : 'DRAFT'}
@@ -529,15 +528,15 @@ const MediaLibrary = () => {
 			text: 'OPTIONS',
 			formatter: () => {
 				return (
-					<div className={classes.row}>
+					<div className={classes.mediaRow}>
 						<Tooltip
 							TransitionComponent={Fade}
 							TransitionProps={{ timeout: 600 }}
 							title={'EDIT MEDIA'}
 							arrow
 							componentsProps={{
-								tooltip: { className: classes.toolTip },
-								arrow: { className: classes.toolTipArrow }
+								tooltip: { className: classes.libraryToolTip },
+								arrow: { className: classes.libraryToolTipArrow }
 							}}
 						>
 							<Edit className={classes.editIcon} />
@@ -606,7 +605,11 @@ const MediaLibrary = () => {
 			active={mediaApiStatus.status === 'pending' ? true : false}
 			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
 			spinner={
-				<img src={Four33Loader} className={classes.loader} alt='loader' />
+				<img
+					src={Four33Loader}
+					className={classes.libraryLoader}
+					alt='loader'
+				/>
 			}
 		>
 			<Layout>
