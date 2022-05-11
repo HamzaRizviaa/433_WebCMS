@@ -854,7 +854,7 @@ const UploadOrEditMedia = ({
 	};
 
 	console.log(form?.uploadedFiles[0], 'upldF');
-
+	console.log(form?.uploadedCoverImage[0], 'Cover');
 	const saveDraftBtn = async () => {
 		if (!validateDraft(form)) {
 			validateDraftBtn();
@@ -1009,12 +1009,13 @@ const UploadOrEditMedia = ({
 					...(form.labels.length ? { labels: [...form.labels] } : {}),
 					data: {
 						...(uploadedFile &&
-							form?.uploadedFiles[0]?.file && {
+							(form?.uploadedFiles[0]?.file || form?.uploadedFiles[0]) && {
 								file_name_media: form.uploadedFiles[0].file_name,
 								...uploadedFile?.data?.data
 							}),
 						...(uploadedCoverImage &&
-							form?.uploadedCoverImage[0]?.file && {
+							(form?.uploadedCoverImage[0]?.file ||
+								form?.uploadedCoverImage[0]) && {
 								file_name_image: form.uploadedCoverImage[0].file_name,
 								...uploadedCoverImage?.data?.data
 							})
