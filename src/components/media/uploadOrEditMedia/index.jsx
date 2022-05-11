@@ -853,8 +853,6 @@ const UploadOrEditMedia = ({
 		}
 	};
 
-	console.log(form?.uploadedFiles[0], 'upldF');
-	console.log(form?.uploadedCoverImage[0], 'Cover');
 	const saveDraftBtn = async () => {
 		if (!validateDraft(form)) {
 			validateDraftBtn();
@@ -1011,13 +1009,18 @@ const UploadOrEditMedia = ({
 						...(uploadedFile &&
 							(form?.uploadedFiles[0]?.file || form?.uploadedFiles[0]) && {
 								file_name_media: form.uploadedFiles[0].file_name,
-								...uploadedFile?.data?.data
+								...uploadedFile?.data?.data,
+								image_data: uploadedCoverImage?.keys?.image_key,
+								file_name_image: form?.uploadedCoverImage[0]?.file_name
 							}),
 						...(uploadedCoverImage &&
 							(form?.uploadedCoverImage[0]?.file ||
 								form?.uploadedCoverImage[0]) && {
 								file_name_image: form.uploadedCoverImage[0].file_name,
-								...uploadedCoverImage?.data?.data
+								...uploadedCoverImage?.data?.data,
+								audio_data: uploadedFile?.keys?.audio_key,
+								video_data: uploadedFile?.keys?.video_key,
+								file_name_media: form?.uploadedFiles[0]?.file_name
 							})
 					}
 				});
