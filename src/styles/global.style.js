@@ -416,11 +416,9 @@ export const useStyles = makeStyles((theme) => ({
 		color: theme.palette.disabled,
 		cursor: 'pointer'
 	},
-	//  library pages
 
-	articleLibrary: {
-		height: ' 100vh !important'
-	},
+	// ------------- library pages --------------//
+
 	header: {
 		display: 'flex',
 		justifyContent: 'space-between'
@@ -508,14 +506,7 @@ export const useStyles = makeStyles((theme) => ({
 		bottom: '-2px',
 		height: '2rem !important',
 		width: ' 2rem !important',
-		color: ' $neon-yellow'
-	},
-
-	row: {
-		marginBottom: '1.5rem',
-		fontSize: '1.2rem',
-		paddingLeft: '35px',
-		display: 'block'
+		color: theme.palette.neonYellow
 	},
 
 	rowType: {
@@ -581,9 +572,8 @@ export const useStyles = makeStyles((theme) => ({
 	libraryToolTipArrow: {
 		color: `#000000 !important`
 	},
-	//images styling
 
-	//landscape scss
+	//images styling
 
 	mediaIconLandscape: {
 		height: '25.131px',
@@ -667,26 +657,7 @@ export const useStyles = makeStyles((theme) => ({
 		width: 'auto !important',
 		color: '#ffff00'
 	},
-	//article page
-	articlOptionRow: {
-		marginBottom: '1.5rem',
-		fontSize: ' 1.2rem',
-		display: 'block'
-	},
-	// virals library page
-	viralRow: {
-		marginBottom: '1.5rem',
-		fontSize: '1.2rem',
-		paddingRight: '30px',
-		display: 'block'
-	},
-	viralFileName: {
-		fontSize: ' 1.2rem',
-		maxWidth: '60%',
-		textOverflow: 'ellipsis',
-		overflow: 'hidden',
-		whiteSpace: 'nowrap !important'
-	},
+
 	textFieldInput: {
 		color: ' white !important',
 		border: '1px solid #404040',
@@ -698,12 +669,61 @@ export const useStyles = makeStyles((theme) => ({
 		//margin-bottom: 1rem,
 		backgroundColor: ' #000000'
 	},
-	//question library
+
+	// ------- article page
+
+	articleLibrary: {
+		height: ' 100vh !important'
+	},
+
+	articlOptionRow: {
+		marginBottom: '1.5rem',
+		fontSize: ' 1.2rem',
+		display: 'block'
+	},
+
+	row: {
+		marginBottom: '1.5rem',
+		fontSize: '1.2rem',
+		paddingLeft: '35px',
+		display: 'block'
+	},
+
+	// -------- virals library page
+
+	viralRow: {
+		marginBottom: '1.5rem',
+		fontSize: '1.2rem',
+		paddingRight: '30px',
+		display: 'block'
+	},
+
+	viralFileName: {
+		fontSize: ' 1.2rem',
+		maxWidth: '60%',
+		textOverflow: 'ellipsis',
+		overflow: 'hidden',
+		whiteSpace: 'nowrap !important'
+	},
+
+	// -------- question library
+
 	active_closed_btn: {
 		paddingLeft: '30px',
 		marginBottom: ' 1.7rem',
 		fontSize: '1.2rem',
 		width: '90px',
 		height: '24px'
+	},
+
+	questionRow: {
+		marginBottom: '1.5rem',
+		fontSize: '1.2rem'
+	},
+
+	questionRowType: {
+		marginBottom: '1.5rem',
+		fontSize: '1.2rem',
+		paddingLeft: '30px'
 	}
 }));
