@@ -602,14 +602,14 @@ const UploadOrEditViral = ({
 										<h6
 											style={{
 												color:
-													form.title?.length >= 25 && form.title?.length <= 27
+													form.title?.length >= 39 && form.title?.length <= 42
 														? 'pink'
-														: form.title?.length === 28
+														: form.title?.length === 43
 														? 'red'
 														: 'white'
 											}}
 										>
-											{form.title?.length}/28
+											{form.title?.length}/43
 										</h6>
 									</div>
 
@@ -627,7 +627,7 @@ const UploadOrEditViral = ({
 											disableUnderline: true,
 											className: classes.textFieldInput
 										}}
-										inputProps={{ maxLength: 28 }}
+										inputProps={{ maxLength: 43 }}
 										multiline
 										maxRows={2}
 									/>

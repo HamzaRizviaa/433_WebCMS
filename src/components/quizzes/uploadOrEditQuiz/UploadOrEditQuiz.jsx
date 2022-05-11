@@ -554,15 +554,15 @@ const UploadOrEditQuiz = ({
 									<h6
 										style={{
 											color:
-												form.question?.length >= 34 &&
-												form.question?.length <= 39
+												form.question?.length >= 49 &&
+												form.question?.length <= 54
 													? 'pink'
-													: form.question?.length === 40
+													: form.question?.length === 55
 													? 'red'
 													: 'white'
 										}}
 									>
-										{form.question?.length}/40
+										{form.question?.length}/55
 									</h6>
 								</div>
 								<TextField
@@ -581,7 +581,7 @@ const UploadOrEditQuiz = ({
 											(editQuiz || editPoll) && classes.disableTextField
 										}`
 									}}
-									inputProps={{ maxLength: 40 }}
+									inputProps={{ maxLength: 55 }}
 									multiline
 									maxRows={2}
 								/>

@@ -67,7 +67,7 @@ const ArticleLibrary = () => {
 	const [noResultCalendarError, setNoResultCalendarError] = useState('');
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
-	const [isLoading, setIsLoading] = useState(true);
+
 	const navigate = useNavigate();
 
 	useEffect(() => {
