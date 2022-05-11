@@ -474,7 +474,7 @@ export const useStyles = makeStyles((theme) => ({
 		justifyContent: 'space-between',
 		alignItems: 'center'
 	},
-	//search
+	//search and error msgs
 
 	searchField: {
 		width: '271px'
@@ -507,13 +507,6 @@ export const useStyles = makeStyles((theme) => ({
 		height: '2rem !important',
 		width: ' 2rem !important',
 		color: theme.palette.neonYellow
-	},
-
-	rowType: {
-		marginBottom: '1.5rem',
-		fontSize: '1.2rem',
-		paddingLeft: '35px',
-		display: 'block'
 	},
 
 	//pagination
@@ -667,6 +660,12 @@ export const useStyles = makeStyles((theme) => ({
 		fontFamily: 'Poppins !important',
 		backgroundColor: ' #000000'
 	},
+	rowType: {
+		marginBottom: '1.5rem',
+		fontSize: '1.2rem',
+		paddingLeft: '35px',
+		display: 'block'
+	},
 
 	// ------- article page
 
@@ -745,6 +744,37 @@ export const useStyles = makeStyles((theme) => ({
 		marginBottom: '1.5rem',
 		fontSize: '1.2rem',
 		paddingRight: '30px',
+		display: 'block'
+	},
+
+	// media library
+	publish_draft_btn: {
+		paddingLeft: '20px',
+		marginBottom: '1.6rem'
+	},
+
+	mediaMediaIcon: {
+		height: '48px',
+		width: '48px',
+		borderRadius: ' 8px',
+		objectFit: 'cover'
+	},
+	mediaMediaWrapper: {
+		display: 'flex',
+		alignItems: 'center',
+		marginBottom: '1.5rem',
+		maxWidth: '100%',
+		textOverflow: 'ellipsis',
+		overflow: 'hidden'
+	},
+	mediaFileName: {
+		marginLeft: '1rem',
+		fontSize: '1.2rem',
+		whiteSpace: 'nowrap !important'
+	},
+	mediaRow: {
+		marginBottom: '1.5rem',
+		fontSize: '1.2rem',
 		display: 'block'
 	}
 }));

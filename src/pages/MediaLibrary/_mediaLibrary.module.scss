@@ -4,17 +4,17 @@
 .header {
 	display: flex;
 	justify-content: space-between;
-}
+} //
 
 .subheader1 {
 	display: flex;
 	justify-content: flex-start;
-}
+} //
 
 .subheader2 {
 	display: flex;
 	justify-content: flex-end;
-}
+} //
 
 .calendarWrapper {
 	margin-left: 10px;
@@ -23,7 +23,7 @@
 		top: 0.5px !important;
 		right: 30px !important;
 	}
-}
+} //
 
 .customDateInput {
 	border: 0;
@@ -49,40 +49,11 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-}
+} //
 
 .tableContainer {
 	margin: 1rem 0rem;
-}
-
-// .mediaIcon {
-// 	height: 5rem;
-// 	width: 5rem;
-// 	// border-radius: 8px;
-// 	// object-fit: cover;
-// 	> img {
-// 		border-radius: 8px;
-// 		object-fit: cover;
-// 		height: 100%;
-// 		width: 100%;
-// 	}
-// }
-
-// .mediaIconPreview {
-// 	height: calc(5rem * 6);
-// 	// width: calc(5rem * 6);
-// 	max-width: calc(5rem * 8);
-// 	border-radius: 8px;
-// 	object-fit: cover;
-// }
-
-.mediaIcon {
-	height: 5rem;
-	//width: 5rem;
-	//max-width: 100%;
-	border-radius: 8px;
-	object-fit: cover;
-}
+} //
 
 .mediaIconPreview {
 	height: calc(5rem * 5);
@@ -90,14 +61,14 @@
 	max-width: calc(5rem * 8);
 	border-radius: 8px;
 	object-fit: cover;
-}
+} //
 
 .mediaIcon {
 	height: 48px;
 	width: 48px;
 	border-radius: 8px;
 	object-fit: cover;
-}
+} // change
 
 // .mediaIconPreview {
 // 	height: calc(48px * 6);
@@ -111,28 +82,28 @@
 	width: 48px;
 	border-radius: 8px;
 	object-fit: cover;
-}
+} //
 
 .virallandscapePreview {
 	height: calc(25.131px * 6);
 	width: calc(48px * 6);
 	border-radius: 8px;
 	object-fit: cover;
-}
+} //
 
 .mediaIconPortrait {
 	height: 48px;
 	width: 38.4px;
 	border-radius: 8px;
 	object-fit: cover;
-}
+} //
 
 .mediaIconPortraitPreview {
 	height: calc(48px * 6);
 	width: calc(38.4px * 6);
 	border-radius: 8px;
 	object-fit: cover;
-}
+} //
 
 .mediaWrapper {
 	display: flex;
@@ -146,18 +117,18 @@
 			white-space: nowrap;
 		}
 	}
-}
+} // change as games
 
 .fileName {
 	margin-left: 1rem;
 	font-size: 1.2rem;
-}
+} // change
 
 .row {
 	margin-bottom: 1.5rem;
 	display: block;
 	font-size: 1.2rem;
-}
+} //change
 
 .rowType {
 	margin-bottom: 1.5rem;
@@ -277,7 +248,7 @@
 	height: auto;
 }
 
-.active_closed_btn {
+.publish_draft_btn {
 	padding-left: 20px;
 	margin-bottom: 1.6rem;
 	// font-size: 1.2rem;
