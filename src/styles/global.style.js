@@ -601,7 +601,6 @@ export const useStyles = makeStyles((theme) => ({
 		objectFit: 'cover'
 	},
 
-	//article // viral
 	mediaWrapper: {
 		display: 'flex',
 		alignItems: 'center',
@@ -666,7 +665,6 @@ export const useStyles = makeStyles((theme) => ({
 		lineHeight: '1.6 !important',
 		borderRadius: '40px',
 		fontFamily: 'Poppins !important',
-		//margin-bottom: 1rem,
 		backgroundColor: ' #000000'
 	},
 
@@ -725,5 +723,28 @@ export const useStyles = makeStyles((theme) => ({
 		marginBottom: '1.5rem',
 		fontSize: '1.2rem',
 		paddingLeft: '30px'
+	},
+
+	// ----- games library
+
+	gamesMediaWrapper: {
+		display: 'flex',
+		alignItems: 'center',
+		marginBottom: '1.5rem',
+		maxWidth: '100%',
+		textOverflow: 'ellipsis',
+		overflow: 'hidden'
+	},
+
+	gamesFileName: {
+		marginLeft: '1rem',
+		fontSize: '1.2rem',
+		whiteSpace: 'nowrap !important'
+	},
+	gamesRow: {
+		marginBottom: '1.5rem',
+		fontSize: '1.2rem',
+		paddingRight: '30px',
+		display: 'block'
 	}
 }));
