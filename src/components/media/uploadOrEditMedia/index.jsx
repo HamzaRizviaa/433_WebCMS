@@ -1006,22 +1006,25 @@ const UploadOrEditMedia = ({
 						: {}),
 					...(form.labels.length ? { labels: [...form.labels] } : {}),
 					data: {
+						...(!form.uploadedCoverImage[0] && { image_data: null }),
+						...(!form.uploadedFiles[0] && {
+							audio_data: null,
+							video_data: null
+						}),
 						...(uploadedFile &&
 							(form?.uploadedFiles[0]?.file || form?.uploadedFiles[0]) && {
-								file_name_media: form.uploadedFiles[0].file_name,
 								...uploadedFile?.data?.data,
-								image_data: uploadedCoverImage?.keys?.image_key,
-								file_name_image: form?.uploadedCoverImage[0]?.file_name
+								image_data: uploadedCoverImage?.data?.data?.image_data
 							}),
 						...(uploadedCoverImage &&
 							(form?.uploadedCoverImage[0]?.file ||
 								form?.uploadedCoverImage[0]) && {
-								file_name_image: form.uploadedCoverImage[0].file_name,
 								...uploadedCoverImage?.data?.data,
-								audio_data: uploadedFile?.keys?.audio_key,
-								video_data: uploadedFile?.keys?.video_key,
-								file_name_media: form?.uploadedFiles[0]?.file_name
-							})
+								audio_data: uploadedFile?.data?.data?.audio_data,
+								video_data: uploadedFile?.data?.data?.video_data
+							}),
+						file_name_image: form?.uploadedCoverImage[0]?.file_name,
+						file_name_media: form?.uploadedFiles[0]?.file_name
 					}
 				});
 			} else {
@@ -1137,13 +1140,16 @@ const UploadOrEditMedia = ({
 
 					data: {
 						...(uploadedFile && {
-							file_name_media: form.uploadedFiles[0].file_name,
-							...uploadedFile?.data?.data
+							...uploadedFile?.data?.data,
+							image_data: uploadedCoverImage?.data?.data?.image_data
 						}),
 						...(uploadedCoverImage && {
-							file_name_image: form.uploadedCoverImage[0].file_name,
-							...uploadedCoverImage?.data?.data
-						})
+							...uploadedCoverImage?.data?.data,
+							audio_data: uploadedFile?.data?.data?.audio_data,
+							video_data: uploadedFile?.data?.data?.video_data
+						}),
+						file_name_media: form?.uploadedFiles[0]?.file_name,
+						file_name_image: form?.uploadedCoverImage[0]?.file_name
 						// file_name_media: form.uploadedFiles[0].file_name,
 						// file_name_image: form.uploadedCoverImage[0].file_name,
 						// ...completeUpload?.data?.data
