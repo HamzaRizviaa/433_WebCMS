@@ -63,7 +63,7 @@ const DragAndDropField = ({
 										>
 											<div className={classes.filePreviewLeft}>
 												{isMedia &&
-													(file.type === 'video' ? (
+													(file.type === 'video' && file.media_url ? (
 														<>
 															<Union className={classes.playIcon} />
 															<div className={classes.fileThumbnail2} />
@@ -74,7 +74,7 @@ const DragAndDropField = ({
 																onLoadedMetadata={onLoadedVideodata}
 															/>
 														</>
-													) : (
+													) : file.type === 'audio' && file.media_url ? (
 														<>
 															<MusicIcon className={classes.playIcon} />
 															<div className={classes.fileThumbnail2} />
@@ -85,6 +85,8 @@ const DragAndDropField = ({
 																onLoadedMetadata={onLoadedAudiodata}
 															/>
 														</>
+													) : (
+														<></>
 													))}
 												{isArticle && (
 													<>
@@ -150,7 +152,7 @@ const DragAndDropField = ({
 											</div>
 											{isEdit || editPoll || editQuiz ? (
 												<div className={classes.filePreviewRight}>
-													{isMedia ? (
+													{isMedia && file?.media_url ? (
 														<>
 															<Deletes
 																className={classes.filePreviewIcons}
@@ -161,7 +163,7 @@ const DragAndDropField = ({
 																}}
 															/>
 														</>
-													) : (
+													) : file?.media_url ? (
 														<div style={{ display: 'flex' }}>
 															{isPost && uploadedFiles.length > 1 && (
 																<span {...provided.dragHandleProps}>
@@ -192,6 +194,8 @@ const DragAndDropField = ({
 																/>
 															)}
 														</div>
+													) : (
+														<></>
 													)}
 												</div>
 											) : (

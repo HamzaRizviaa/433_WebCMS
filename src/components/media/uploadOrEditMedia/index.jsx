@@ -52,7 +52,7 @@ const UploadOrEditMedia = ({
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
-	const [fileDuration, setFileDuration] = useState(null);
+	const [fileDuration, setFileDuration] = useState(0);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
@@ -141,22 +141,31 @@ const UploadOrEditMedia = ({
 					image_dropbox_url: specificMedia?.image_dropbox_url,
 					mainCategory: specificMedia?.media_type,
 					subCategory: specificMedia?.sub_category,
-					uploadedFiles: [
-						{
-							id: makeid(10),
-							file_name: specificMedia?.file_name_media,
-							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.media_url}`,
-							type: specificMedia?.media_type === 'Watch' ? 'video' : 'audio'
-						}
-					],
-					uploadedCoverImage: [
-						{
-							id: makeid(10),
-							file_name: specificMedia?.file_name_image,
-							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`,
-							type: 'image'
-						}
-					]
+					uploadedFiles: specificMedia?.media_url
+						? [
+								{
+									id: makeid(10),
+									file_name: specificMedia?.file_name_media,
+									media_url: specificMedia?.media_url
+										? `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.media_url}`
+										: '',
+									type:
+										specificMedia?.media_type === 'Watch' ? 'video' : 'audio'
+								}
+						  ]
+						: [],
+					uploadedCoverImage: specificMedia?.cover_image
+						? [
+								{
+									id: makeid(10),
+									file_name: specificMedia?.file_name_image,
+									media_url: specificMedia?.cover_image
+										? `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`
+										: '',
+									type: 'image'
+								}
+						  ]
+						: []
 				};
 			});
 		}
@@ -260,7 +269,7 @@ const UploadOrEditMedia = ({
 		if (acceptedFiles?.length) {
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
-				console.log(file, 'file video');
+
 				return {
 					id: id,
 					file_name: file.name,
@@ -317,6 +326,9 @@ const UploadOrEditMedia = ({
 		setPreviewBool(false);
 		setExtraLabel('');
 		setDisableDropdown(true);
+		setFileWidth(0);
+		setFileHeight(0);
+		setFileDuration(0);
 		setEditBtnDisabled(false);
 		setDraftBtnDisabled(false);
 		setIsError({});
@@ -383,13 +395,14 @@ const UploadOrEditMedia = ({
 		}, 5000);
 	};
 
-	const deleteMedia = async (id) => {
+	const deleteMedia = async (id, isDraft) => {
 		setDeleteBtnStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media/delete-media`,
 				{
-					media_id: id
+					media_id: id,
+					is_draft: isDraft
 				},
 				{
 					headers: {
@@ -422,7 +435,6 @@ const UploadOrEditMedia = ({
 	};
 
 	const uploadMedia = async (id, payload) => {
-		console.log(payload, 'payload');
 		let media_type = form.mainCategory?.id;
 		// setMediaButtonStatus(true);
 		try {
@@ -467,7 +479,11 @@ const UploadOrEditMedia = ({
 			);
 			if (result?.data?.status_code === 200) {
 				toast.success(
-					isEdit ? 'Media has been updated!' : 'Media has been uploaded!'
+					isEdit
+						? 'Media has been updated!'
+						: payload?.save_draft
+						? 'Draft has been saved'
+						: 'Media has been uploaded!'
 				);
 				setIsLoadingUploadMedia(false);
 
@@ -563,49 +579,34 @@ const UploadOrEditMedia = ({
 		}
 	}, [specificMedia, form]);
 
-	// const checkDuplicateLabel = () => {
-	// 	return specificMedia?.labels?.forEach((lb) =>
-	// 		form?.labels?.map((formL) => {
-	// 			console.log(formL.name, lb, 'dadwad');
-	// 			formL.name === lb;
-	// 		})
-	// 	);
-	// };
+	const checkDuplicateLabel = () => {
+		let formLabels = form?.labels?.map((formL) => {
+			if (specificMedia?.labels?.includes(formL.name)) {
+				return true;
+			} else {
+				return false;
+			}
+		});
+		return formLabels.some((label) => label === false);
+	};
 
-	// console.log(form, 'wad');
 	useEffect(() => {
 		if (specificMedia) {
-			// let checkDuplicateLabel = specificMedia?.labels?.map((label) => {
-			// 	return form?.labels.some((formLabel) => formLabel.name == label);
-			// });
-
-			// let checkDuplicateLabel = form.labels.some((file) => {
-			// 	specificMedia?.labels?.map((mediaFile) => {
-			// 		file.name !== mediaFile;
-			// 	});
-			// });
-
-			// let checkDuplicateLabel = specificMedia?.labels?.some((lb) =>
-			// 	form?.labels?.map((formL) => {
-			// 		console.log(formL, 'dadwad');
-			// 		formL.name.includes(lb);
-			// 	})
-			// );
-
-			// console.log(checkDuplicateLabel, 'kaka');
-
 			setDraftBtnDisabled(
-				specificMedia?.file_name_media === form?.uploadedFiles[0]?.file_name &&
-					specificMedia?.file_name_image ===
-						form?.uploadedCoverImage[0]?.file_name &&
-					specificMedia?.media_dropbox_url ===
-						form?.media_dropbox_url?.trim() &&
+				// specificMedia?.file_name_media === form?.uploadedFiles[0]?.file_name &&
+				// 	specificMedia?.file_name_image ===
+				// 		form?.uploadedCoverImage[0]?.file_name &&
+
+				specificMedia?.media_dropbox_url === form?.media_dropbox_url?.trim() &&
 					specificMedia?.image_dropbox_url ===
 						form?.image_dropbox_url?.trim() &&
 					specificMedia?.title?.replace(/\s+/g, '')?.trim() ===
 						form?.title?.replace(/\s+/g, '')?.trim() &&
 					specificMedia?.description?.replace(/\s+/g, '')?.trim() ===
-						form?.description?.replace(/\s+/g, '')?.trim()
+						form?.description?.replace(/\s+/g, '')?.trim() &&
+					(specificMedia?.labels?.length === form?.labels?.length ||
+						!form.labels.length) &&
+					!checkDuplicateLabel()
 			);
 		}
 	}, [specificMedia, form]);
@@ -637,7 +638,6 @@ const UploadOrEditMedia = ({
 		});
 	};
 	useEffect(() => {
-		console.log('form', form);
 		validateForm(form);
 	}, [form]);
 
@@ -742,6 +742,13 @@ const UploadOrEditMedia = ({
 							title: form.title,
 							description: form.description,
 							type: 'medialibrary',
+							save_draft: false,
+							...(form.media_dropbox_url
+								? { media_dropbox_url: form.media_dropbox_url }
+								: {}),
+							...(form.image_dropbox_url
+								? { image_dropbox_url: form.image_dropbox_url }
+								: {}),
 							data: {
 								file_name_media: form.uploadedFiles[0].file_name,
 								file_name_image: form.uploadedCoverImage[0].file_name,
@@ -846,6 +853,8 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	console.log(form?.uploadedFiles[0], 'upldF');
+
 	const saveDraftBtn = async () => {
 		if (!validateDraft(form)) {
 			validateDraftBtn();
@@ -853,136 +862,290 @@ const UploadOrEditMedia = ({
 			setIsLoadingUploadMedia(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 
-			let uploadedFile;
-			let uploadedCoverImage;
-			if (form.uploadedFiles[0]) {
-				let promiseFile = await uploadFileToServer(
-					form.uploadedFiles[0],
-					form.uploadedFiles[0].type
-				);
-				console.log(promiseFile, '22');
+			if (isEdit) {
+				let uploadedFile;
+				let uploadedCoverImage;
+				if (form.uploadedFiles[0] && form?.uploadedFiles[0]?.file) {
+					// let promiseFile;
+					// if (form?.uploadedFiles[0]?.file) {
+					// 	promiseFile = await uploadFileToServer(
+					// 		form.uploadedFiles[0],
+					// 		form.uploadedFiles[0].type
+					// 	);
+					// } else {
+					// 	return form?.uploadedFiles[0];
+					// }
+					let promiseFile = await uploadFileToServer(
+						form.uploadedFiles[0],
+						form.uploadedFiles[0].type
+					);
 
-				uploadedFile = await axios.post(
-					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-					{
-						file_name: form.uploadedFiles[0].file_name,
-						type: 'medialibrary',
-						data: {
-							bucket: 'media',
-							multipart_upload:
-								form.uploadedFiles[0]?.mime_type == 'video/mp4'
-									? [
-											{
-												e_tag:
-													promiseFile?.signed_response?.headers?.etag.replace(
-														/['"]+/g,
-														''
-													),
-												part_number: 1
-											}
-									  ]
-									: ['image'],
-							keys: {
-								image_key: form.uploadedCoverImage[0]?.keys?.image_key || '',
-								...(form.mainCategory.name === 'Watch' ||
-								specificMedia?.media_type === 'Watch'
-									? {
-											video_key: promiseFile?.keys?.video_key,
-											audio_key: ''
-									  }
-									: {
-											audio_key: promiseFile?.keys?.audio_key,
-											video_key: ''
-									  })
-							},
-							upload_id:
-								form.mainCategory?.name === 'Watch' ||
-								specificMedia?.media_type === 'Watch'
-									? promiseFile.upload_id
-									: 'audio'
+					uploadedFile = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: form.uploadedFiles[0].file_name,
+							type: 'medialibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									form.uploadedFiles[0]?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag:
+														promiseFile?.signed_response?.headers?.etag.replace(
+															/['"]+/g,
+															''
+														),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: form.uploadedCoverImage[0]?.keys?.image_key || '',
+									...(form.mainCategory.name === 'Watch' ||
+									specificMedia?.media_type === 'Watch'
+										? {
+												video_key: promiseFile?.keys?.video_key,
+												audio_key: ''
+										  }
+										: {
+												audio_key: promiseFile?.keys?.audio_key,
+												video_key: ''
+										  })
+								},
+								upload_id:
+									form.mainCategory?.name === 'Watch' ||
+									specificMedia?.media_type === 'Watch'
+										? promiseFile?.upload_id
+										: 'audio'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
 						}
-					},
-					{
-						headers: {
-							Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-						}
-					}
-				);
-			}
-
-			if (form.uploadedCoverImage[0]) {
-				let promiseFile = await uploadFileToServer(
-					form.uploadedCoverImage[0],
-					form.uploadedCoverImage[0].type
-				);
-				console.log(promiseFile, '22');
-
-				uploadedCoverImage = await axios.post(
-					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-					{
-						file_name: form.uploadedCoverImage[0].file_name,
-						type: 'medialibrary',
-						data: {
-							bucket: 'media',
-							multipart_upload:
-								form.uploadedCoverImage[0]?.mime_type == 'video/mp4'
-									? [
-											{
-												e_tag:
-													promiseFile?.signed_response?.headers?.etag.replace(
-														/['"]+/g,
-														''
-													),
-												part_number: 1
-											}
-									  ]
-									: ['image'],
-							keys: {
-								image_key: form.uploadedCoverImage[0]?.keys?.image_key || '',
-								...(form.mainCategory.name === 'Watch' ||
-								specificMedia?.media_type === 'Watch'
-									? {
-											video_key: promiseFile?.keys?.video_key,
-											audio_key: ''
-									  }
-									: {
-											audio_key: promiseFile?.keys?.audio_key,
-											video_key: ''
-									  })
-							},
-							upload_id:
-								form.mainCategory?.name === 'Watch' ||
-								specificMedia?.media_type === 'Watch'
-									? promiseFile.upload_id || 'image'
-									: 'audio'
-						}
-					},
-					{
-						headers: {
-							Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-						}
-					}
-				);
-			}
-
-			await uploadMedia(null, {
-				save_draft: true,
-				type: 'medialibrary',
-
-				data: {
-					...(uploadedFile && {
-						file_name_media: form.uploadedFiles[0].file_name,
-						...uploadedFile?.data?.data
-					}),
-					...(uploadedCoverImage && {
-						file_name_image: form.uploadedCoverImage[0].file_name,
-						...uploadedCoverImage?.data?.data
-					})
-					// file_name_media: form.uploadedFiles[0].file_name,
-					// file_name_image: form.uploadedCoverImage[0].file_name,
-					// ...completeUpload?.data?.data
+					);
 				}
-			});
+
+				if (form.uploadedCoverImage[0] && form.uploadedCoverImage[0]?.file) {
+					// let promiseFile;
+					// if (form.uploadedCoverImage[0]?.file) {
+					// 	promiseFile = await uploadFileToServer(
+					// 		form.uploadedCoverImage[0],
+					// 		form.uploadedCoverImage[0].type
+					// 	);
+					// } else {
+					// 	return form.uploadedCoverImage[0];
+					// }
+					let promiseFile = await uploadFileToServer(
+						form.uploadedCoverImage[0],
+						form.uploadedCoverImage[0].type
+					);
+
+					uploadedCoverImage = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: form.uploadedCoverImage[0].file_name,
+							type: 'medialibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									form.uploadedCoverImage[0]?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag:
+														promiseFile?.signed_response?.headers?.etag.replace(
+															/['"]+/g,
+															''
+														),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: promiseFile?.keys?.image_key || '',
+									...(form.mainCategory.name === 'Watch' ||
+									specificMedia?.media_type === 'Watch'
+										? {
+												video_key: promiseFile?.keys?.video_key,
+												audio_key: ''
+										  }
+										: {
+												audio_key: promiseFile?.keys?.audio_key,
+												video_key: ''
+										  })
+								},
+								upload_id:
+									form.mainCategory?.name === 'Watch' ||
+									specificMedia?.media_type === 'Watch'
+										? promiseFile?.upload_id || 'image'
+										: 'audio'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
+						}
+					);
+				}
+
+				await uploadMedia(specificMedia?.id, {
+					save_draft: true,
+					type: 'medialibrary',
+					title: form.title,
+					description: form.description,
+					...(form.media_dropbox_url
+						? { media_dropbox_url: form.media_dropbox_url }
+						: {}),
+					...(form.image_dropbox_url
+						? { image_dropbox_url: form.image_dropbox_url }
+						: {}),
+					...(form.labels.length ? { labels: [...form.labels] } : {}),
+					data: {
+						...(uploadedFile &&
+							form?.uploadedFiles[0]?.file && {
+								file_name_media: form.uploadedFiles[0].file_name,
+								...uploadedFile?.data?.data
+							}),
+						...(uploadedCoverImage &&
+							form?.uploadedCoverImage[0]?.file && {
+								file_name_image: form.uploadedCoverImage[0].file_name,
+								...uploadedCoverImage?.data?.data
+							})
+					}
+				});
+			} else {
+				let uploadedFile;
+				let uploadedCoverImage;
+				if (form.uploadedFiles[0]) {
+					let promiseFile = await uploadFileToServer(
+						form.uploadedFiles[0],
+						form.uploadedFiles[0].type
+					);
+
+					uploadedFile = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: form.uploadedFiles[0].file_name,
+							type: 'medialibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									form.uploadedFiles[0]?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag:
+														promiseFile?.signed_response?.headers?.etag.replace(
+															/['"]+/g,
+															''
+														),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: '',
+									...(form.mainCategory.name === 'Watch' ||
+									specificMedia?.media_type === 'Watch'
+										? {
+												video_key: promiseFile?.keys?.video_key,
+												audio_key: ''
+										  }
+										: {
+												audio_key: promiseFile?.keys?.audio_key,
+												video_key: ''
+										  })
+								},
+								upload_id:
+									form.mainCategory?.name === 'Watch' ||
+									specificMedia?.media_type === 'Watch'
+										? promiseFile?.upload_id
+										: 'audio'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
+						}
+					);
+				}
+
+				if (form.uploadedCoverImage[0]) {
+					let promiseFile = await uploadFileToServer(
+						form.uploadedCoverImage[0],
+						form.uploadedCoverImage[0].type
+					);
+
+					uploadedCoverImage = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: form.uploadedCoverImage[0].file_name,
+							type: 'medialibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									form.uploadedCoverImage[0]?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag:
+														promiseFile?.signed_response?.headers?.etag.replace(
+															/['"]+/g,
+															''
+														),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: promiseFile?.keys?.image_key || '',
+									video_key: '',
+									audio_key: ''
+								},
+								upload_id:
+									form.mainCategory?.name === 'Watch' ||
+									specificMedia?.media_type === 'Watch'
+										? promiseFile?.upload_id || 'image'
+										: 'audio'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
+						}
+					);
+				}
+
+				await uploadMedia(null, {
+					save_draft: true,
+					type: 'medialibrary',
+
+					data: {
+						...(uploadedFile && {
+							file_name_media: form.uploadedFiles[0].file_name,
+							...uploadedFile?.data?.data
+						}),
+						...(uploadedCoverImage && {
+							file_name_image: form.uploadedCoverImage[0].file_name,
+							...uploadedCoverImage?.data?.data
+						})
+						// file_name_media: form.uploadedFiles[0].file_name,
+						// file_name_image: form.uploadedCoverImage[0].file_name,
+						// ...completeUpload?.data?.data
+					}
+				});
+			}
 		}
 	};
 
@@ -1192,12 +1355,6 @@ const UploadOrEditMedia = ({
 										</p>
 									</div>
 								</div>
-								{/* <div className={classes.catergoryErrorContainer}>
-								<p className={classes.uploadMediaError}>{mainCategoryError}</p>
-								{/* <p className={classes.uploadMediaError2}>
-									{mainCategory?.name || mainCategory ? subCategoryError : ''}
-								</p> */}
-								{/* </div> */}
 
 								{(form.mainCategory && form.subCategory?.name) || isEdit ? (
 									<>
@@ -1524,7 +1681,7 @@ const UploadOrEditMedia = ({
 											button2={isEdit ? true : false}
 											onClick={() => {
 												if (!deleteBtnStatus) {
-													deleteMedia(specificMedia?.id);
+													deleteMedia(specificMedia?.id, status);
 												}
 											}}
 											text={'DELETE MEDIA'}
