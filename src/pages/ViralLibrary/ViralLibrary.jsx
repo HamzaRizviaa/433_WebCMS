@@ -266,9 +266,7 @@ const ViralLibrary = () => {
 									''
 								)} */}
 
-								{row?.thumbnail_url === '-' ? (
-									''
-								) : (
+								{row?.thumbnail_url && (
 									<PlayArrowIcon className={classes.libraryPlayIcon} />
 								)}
 								<img
