@@ -35,15 +35,6 @@ export const useStyles = makeStyles(() => ({
 		width: '3.5rem',
 		height: 'auto'
 	},
-	text: {
-		fontFamily: 'Poppins',
-		fontStyle: 'normal',
-		fontWeight: 900,
-		fontSize: '12px',
-		lineHeight: '18px',
-		marginTop: '8px',
-		textAlign: 'center'
-	},
 
 	logoutContainer: {
 		textAlign: 'center',
@@ -133,6 +124,17 @@ export const useStyles = makeStyles(() => ({
 				stroke: 'white'
 			}
 		}
+	},
+	text: {
+		fontFamily: 'Poppins',
+		fontStyle: 'normal',
+		fontWeight: 900,
+		fontSize: '12px',
+		lineHeight: '18px',
+		marginTop: '8px',
+		textAlign: 'center',
+		textTransform: 'uppercase',
+		color: `${theme.palette.black} !important`
 	},
 
 	prod: {}

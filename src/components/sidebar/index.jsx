@@ -70,7 +70,7 @@ const Sidebar = () => {
 			<div className={classes.navContainer}>
 				<div className={classes.logoContainer}>
 					<Logo className={classes.logo} />
-					<div className={classes.text}>{mainClass}</div>
+					<p className={classes.text}>{mainClass}</p>
 				</div>
 
 				<div
