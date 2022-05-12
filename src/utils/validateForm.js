@@ -1,4 +1,4 @@
-const validateForm = (form, draft = false) => {
+const validateForm = (form) => {
 	var validate = Object.keys(form).map((key) => {
 		if (typeof form[key] === 'string') {
 			if (key.includes('dropbox_url')) {
@@ -34,11 +34,7 @@ const validateForm = (form, draft = false) => {
 		}
 	});
 
-	if (draft) {
-		return validate.some((item) => item === true);
-	} else {
-		return validate.every((item) => item === true);
-	}
+	return validate.every((item) => item === true);
 };
 
 export default validateForm;

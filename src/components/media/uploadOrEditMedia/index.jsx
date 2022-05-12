@@ -43,7 +43,6 @@ const UploadOrEditMedia = ({
 	const [subCategories, setSubCategories] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
-	const [subCategoryLabelColor, setSubCategoryLabelColor] = useState('#ffffff');
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [previewBool, setPreviewBool] = useState(false);
@@ -78,6 +77,7 @@ const UploadOrEditMedia = ({
 	const mainCategories = useSelector(
 		(state) => state.mediaLibraryOriginal.mainCategories
 	);
+	// console.log(mainCategories, 'MAINEDIT');
 	const specificMediaStatus = useSelector(
 		(state) => state.mediaLibraryOriginal
 	);
@@ -86,8 +86,7 @@ const UploadOrEditMedia = ({
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
-				form.mainCategory?.name === 'Watch' ||
-				specificMedia?.media_type === 'Watch'
+				form.mainCategory?.name === 'Watch'
 					? 'video/mp4'
 					: 'audio/mp3, audio/mpeg'
 			}`,
@@ -131,7 +130,19 @@ const UploadOrEditMedia = ({
 					};
 				});
 			}
+			// if (specificMedia?.media_type) {
+			// 	// mainCategoryId(specificMedia?.media_type);
 
+			// 	let setData = mainCategories.find(
+			// 		(u) => u.name === specificMedia.media_type
+			// 	);
+
+			// 	setForm((prev) => {
+			// 		return { ...prev, mainCategory: setData };
+			// 	});
+			// }
+			// mainCategoryId(specificMedia?.media_type);
+			console.log(mainCategoryId(specificMedia?.media_type), 'function');
 			setForm((prev) => {
 				return {
 					...prev,
@@ -139,8 +150,9 @@ const UploadOrEditMedia = ({
 					description: specificMedia?.description,
 					media_dropbox_url: specificMedia?.media_dropbox_url,
 					image_dropbox_url: specificMedia?.image_dropbox_url,
-					mainCategory: specificMedia?.media_type,
-					subCategory: specificMedia?.sub_category,
+					//mainCategory: specificMedia.media_type,
+					//subCategory: specificMedia?.sub_category,
+
 					uploadedFiles: specificMedia?.media_url
 						? [
 								{
@@ -168,6 +180,8 @@ const UploadOrEditMedia = ({
 						: []
 				};
 			});
+			// mainCategoryId(specificMedia?.media_type);
+			// SubCategoryId(specificMedia?.sub_category);
 		}
 	}, [specificMedia]);
 
@@ -212,7 +226,7 @@ const UploadOrEditMedia = ({
 	};
 
 	useEffect(() => {
-		if (form.mainCategory && !isEdit) {
+		if (form.mainCategory) {
 			updateSubCategories(form.mainCategory);
 		}
 	}, [form.mainCategory]);
@@ -317,7 +331,6 @@ const UploadOrEditMedia = ({
 
 	const resetState = () => {
 		setFileRejectionError2('');
-		setSubCategoryLabelColor('#ffffff');
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
@@ -382,17 +395,29 @@ const UploadOrEditMedia = ({
 	};
 
 	const validateDraftBtn = () => {
-		setIsError({
-			uploadedFiles: form.uploadedFiles.length < 1,
-			selectedLabelsDraft: form.labels.length < 1,
-			uploadedCoverImage: form.uploadedCoverImage.length < 1,
-			titleMedia: !form.title && { message: 'You need to enter a Title' },
-			description: !form.description
-		});
+		if (isEdit) {
+			setIsError({
+				draftError: draftBtnDisabled
+			});
 
-		setTimeout(() => {
-			setIsError({});
-		}, 5000);
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		} else {
+			setIsError({
+				uploadedFiles: form.uploadedFiles.length < 1,
+				selectedLabelsDraft: form.labels.length < 1,
+				uploadedCoverImage: form.uploadedCoverImage.length < 1,
+				titleMedia: !form.title && { message: 'You need to enter a Title' },
+				description: !form.description,
+				mainCategory: !form?.mainCategory,
+				subCategory: !form?.subCategory.name
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		}
 	};
 
 	const deleteMedia = async (id, isDraft) => {
@@ -563,6 +588,7 @@ const UploadOrEditMedia = ({
 					!form.uploadedCoverImage.length ||
 					!form.title ||
 					!form.description ||
+					form.labels.length < 7 ||
 					(specificMedia?.file_name_media ===
 						form.uploadedFiles[0]?.file_name &&
 						specificMedia?.file_name_image ===
@@ -593,11 +619,16 @@ const UploadOrEditMedia = ({
 	useEffect(() => {
 		if (specificMedia) {
 			setDraftBtnDisabled(
-				// specificMedia?.file_name_media === form?.uploadedFiles[0]?.file_name &&
-				// 	specificMedia?.file_name_image ===
-				// 		form?.uploadedCoverImage[0]?.file_name &&
-
-				specificMedia?.media_dropbox_url === form?.media_dropbox_url?.trim() &&
+				(specificMedia?.media_url || form?.uploadedFiles[0]
+					? specificMedia?.file_name_media === form?.uploadedFiles[0]?.file_name
+					: true) &&
+					(specificMedia?.cover_image || form?.uploadedCoverImage[0]
+						? specificMedia?.file_name_image ===
+						  form?.uploadedCoverImage[0]?.file_name
+						: true) &&
+					specificMedia?.media_type === form?.mainCategory?.name &&
+					specificMedia?.media_dropbox_url ===
+						form?.media_dropbox_url?.trim() &&
 					specificMedia?.image_dropbox_url ===
 						form?.image_dropbox_url?.trim() &&
 					specificMedia?.title?.replace(/\s+/g, '')?.trim() ===
@@ -611,7 +642,9 @@ const UploadOrEditMedia = ({
 		}
 	}, [specificMedia, form]);
 
-	const MainCategoryId = (e) => {
+	// console.log(draftBtnDisabled, 'dft');
+
+	const mainCategoryId = (e) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
 		let setData = mainCategories.find((u) => u.name === e);
 		setForm((prev) => {
@@ -619,14 +652,16 @@ const UploadOrEditMedia = ({
 		});
 	};
 
+	console.log(form, 'dadad');
+
 	useEffect(() => {
-		//only empty it when its on new one , not on edit / specific media
-		if (!isEdit) {
-			// setSubCategory({ id: null, name: '' });
-			setForm((prev) => {
-				return { ...prev, subCategory: '' };
-			});
-		}
+		// //only empty it when its on new one , not on edit / specific media
+		// if (!isEdit) {
+		// setSubCategory({ id: null, name: '' });
+		setForm((prev) => {
+			return { ...prev, subCategory: '' };
+		});
+		// }
 	}, [form.mainCategory]);
 
 	const SubCategoryId = (e) => {
@@ -749,6 +784,7 @@ const UploadOrEditMedia = ({
 							...(form.image_dropbox_url
 								? { image_dropbox_url: form.image_dropbox_url }
 								: {}),
+							...(form.labels.length ? { labels: [...form.labels] } : {}),
 							data: {
 								file_name_media: form.uploadedFiles[0].file_name,
 								file_name_image: form.uploadedCoverImage[0].file_name,
@@ -854,7 +890,7 @@ const UploadOrEditMedia = ({
 	};
 
 	const saveDraftBtn = async () => {
-		if (!validateDraft(form)) {
+		if (!validateDraft(form) || draftBtnDisabled) {
 			validateDraftBtn();
 		} else {
 			setIsLoadingUploadMedia(true);
@@ -1219,16 +1255,21 @@ const UploadOrEditMedia = ({
 											onClose={() => {
 												setDisableDropdown(true);
 											}}
-											disabled={isEdit ? true : false}
+											disabled={isEdit && status === 'published' ? true : false}
 											style={{
-												backgroundColor: isEdit ? '#404040' : '#000000'
+												backgroundColor:
+													isEdit && status === 'published'
+														? '#404040'
+														: '#000000'
 											}}
 											value={
-												isEdit ? form.mainCategory : form.mainCategory?.name
+												// isEdit
+												// 	? specificMedia?.media_type :
+												form.mainCategory.name
 											}
 											onChange={(e) => {
 												setDisableDropdown(true);
-												MainCategoryId(e.target.value);
+												mainCategoryId(e.target.value);
 												if (form.uploadedFiles.length) {
 													form.uploadedFiles.map((file) =>
 														handleDeleteFile(file.id)
@@ -1236,14 +1277,19 @@ const UploadOrEditMedia = ({
 												}
 											}}
 											className={`${classes.select} ${
-												isEdit ? `${classes.isEditSelect}` : ''
+												isEdit && status === 'published'
+													? `${classes.isEditSelect}`
+													: ''
 											}`}
 											disableUnderline={true}
 											IconComponent={(props) => (
 												<KeyboardArrowDownIcon
 													{...props}
 													style={{
-														display: isEdit ? 'none' : 'block',
+														display:
+															isEdit && status === 'published'
+																? 'none'
+																: 'block',
 														top: '4'
 													}}
 												/>
@@ -1260,13 +1306,16 @@ const UploadOrEditMedia = ({
 												getContentAnchorEl: null
 											}}
 											displayEmpty={true}
-											renderValue={(value) =>
-												value?.length
+											renderValue={(value) => {
+												console.log(value, 'mainV');
+												console.log(form.mainCategory, 'MAINC');
+												return value?.length
 													? Array.isArray(value)
 														? value.join(', ')
 														: value
-													: 'Please Select'
-											}
+													: 'Please Select';
+												// return value ? value : 'Please s';
+											}}
 										>
 											{/* <MenuItem disabled value=''>
 											Please Select
@@ -1289,11 +1338,11 @@ const UploadOrEditMedia = ({
 									</div>
 									<div className={classes.subCategory}>
 										<h6
-											style={{
-												color: form.mainCategory?.name
-													? subCategoryLabelColor
-													: ''
-											}}
+											className={[
+												isError.subCategory && form.mainCategory
+													? classes.errorState
+													: classes.noErrorState
+											].join(' ')}
 										>
 											SUB CATEGORY
 										</h6>
@@ -1304,24 +1353,36 @@ const UploadOrEditMedia = ({
 											onClose={() => {
 												setDisableDropdown(true);
 											}}
-											disabled={!form.mainCategory || isEdit ? true : false}
+											disabled={
+												!form.mainCategory || (isEdit && status === 'published')
+													? true
+													: false
+											}
 											style={{
-												backgroundColor: isEdit ? '#404040' : '#000000'
+												backgroundColor:
+													isEdit && status === 'published'
+														? '#404040'
+														: '#000000'
 											}}
-											value={isEdit ? form.subCategory : form.subCategory?.name}
+											value={form.subCategory?.name}
 											onChange={(e) => {
 												setDisableDropdown(true);
 												SubCategoryId(e.target.value);
 											}}
 											className={`${classes.select} ${
-												isEdit ? `${classes.isEditSelect}` : ''
+												isEdit && status === 'published'
+													? `${classes.isEditSelect}`
+													: ''
 											}`}
 											disableUnderline={true}
 											IconComponent={(props) => (
 												<KeyboardArrowDownIcon
 													{...props}
 													style={{
-														display: isEdit ? 'none' : 'block',
+														display:
+															isEdit && status === 'published'
+																? 'none'
+																: 'block',
 														top: '4'
 													}}
 												/>
@@ -1431,8 +1492,7 @@ const UploadOrEditMedia = ({
 														Click or drag file to this area to upload
 													</p>
 													<p className={classes.formatMsg}>
-														{form.mainCategory?.name === 'Watch' ||
-														specificMedia?.media_type === 'Watch'
+														{form.mainCategory?.name === 'Watch'
 															? 'Supported format is mp4'
 															: 'Supported format is mp3'}
 													</p>
@@ -1683,6 +1743,13 @@ const UploadOrEditMedia = ({
 									<></>
 								)}
 							</div>
+
+							<p className={classes.mediaError}>
+								{isError.draftError
+									? 'Something needs to be changed to save a draft'
+									: ''}
+							</p>
+
 							<div className={classes.buttonDiv}>
 								{isEdit || (status === 'draft' && isEdit) ? (
 									<div className={classes.editBtn}>
