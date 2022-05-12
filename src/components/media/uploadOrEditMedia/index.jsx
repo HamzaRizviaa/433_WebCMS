@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditMedia.module.scss';
 import PropTypes from 'prop-types';
@@ -43,7 +44,6 @@ const UploadOrEditMedia = ({
 	const [subCategories, setSubCategories] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
-	const [subCategoryLabelColor, setSubCategoryLabelColor] = useState('#ffffff');
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [previewBool, setPreviewBool] = useState(false);
@@ -52,7 +52,7 @@ const UploadOrEditMedia = ({
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
-	const [fileDuration, setFileDuration] = useState(null);
+	const [fileDuration, setFileDuration] = useState(0);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
@@ -86,8 +86,7 @@ const UploadOrEditMedia = ({
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
-				form.mainCategory?.name === 'Watch' ||
-				specificMedia?.media_type === 'Watch'
+				form.mainCategory?.name === 'Watch'
 					? 'video/mp4'
 					: 'audio/mp3, audio/mpeg'
 			}`,
@@ -131,7 +130,18 @@ const UploadOrEditMedia = ({
 					};
 				});
 			}
+			// if (specificMedia?.media_type) {
+			// 	// mainCategoryId(specificMedia?.media_type);
 
+			// 	let setData = mainCategories.find(
+			// 		(u) => u.name === specificMedia.media_type
+			// 	);
+
+			// 	setForm((prev) => {
+			// 		return { ...prev, mainCategory: setData };
+			// 	});
+			// }
+			// mainCategoryId(specificMedia?.media_type);
 			setForm((prev) => {
 				return {
 					...prev,
@@ -139,26 +149,38 @@ const UploadOrEditMedia = ({
 					description: specificMedia?.description,
 					media_dropbox_url: specificMedia?.media_dropbox_url,
 					image_dropbox_url: specificMedia?.image_dropbox_url,
-					mainCategory: specificMedia?.media_type,
-					subCategory: specificMedia?.sub_category,
-					uploadedFiles: [
-						{
-							id: makeid(10),
-							file_name: specificMedia?.file_name_media,
-							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.media_url}`,
-							type: specificMedia?.media_type === 'Watch' ? 'video' : 'audio'
-						}
-					],
-					uploadedCoverImage: [
-						{
-							id: makeid(10),
-							file_name: specificMedia?.file_name_image,
-							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`,
-							type: 'image'
-						}
-					]
+					mainCategory: specificMedia.media_type,
+					//subCategory: specificMedia?.sub_category,
+
+					uploadedFiles: specificMedia?.media_url
+						? [
+								{
+									id: makeid(10),
+									file_name: specificMedia?.file_name_media,
+									media_url: specificMedia?.media_url
+										? `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.media_url}`
+										: '',
+									type:
+										specificMedia?.media_type === 'Watch' ? 'video' : 'audio'
+								}
+						  ]
+						: [],
+					uploadedCoverImage: specificMedia?.cover_image
+						? [
+								{
+									id: makeid(10),
+									file_name: specificMedia?.file_name_image,
+									media_url: specificMedia?.cover_image
+										? `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`
+										: '',
+									type: 'image'
+								}
+						  ]
+						: []
 				};
 			});
+			// mainCategoryId(specificMedia?.media_type);
+			// SubCategoryId(specificMedia?.sub_category);
 		}
 	}, [specificMedia]);
 
@@ -203,7 +225,7 @@ const UploadOrEditMedia = ({
 	};
 
 	useEffect(() => {
-		if (form.mainCategory && !isEdit) {
+		if (form.mainCategory) {
 			updateSubCategories(form.mainCategory);
 		}
 	}, [form.mainCategory]);
@@ -260,7 +282,7 @@ const UploadOrEditMedia = ({
 		if (acceptedFiles?.length) {
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
-				console.log(file, 'file video');
+
 				return {
 					id: id,
 					file_name: file.name,
@@ -308,7 +330,6 @@ const UploadOrEditMedia = ({
 
 	const resetState = () => {
 		setFileRejectionError2('');
-		setSubCategoryLabelColor('#ffffff');
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
@@ -317,6 +338,9 @@ const UploadOrEditMedia = ({
 		setPreviewBool(false);
 		setExtraLabel('');
 		setDisableDropdown(true);
+		setFileWidth(0);
+		setFileHeight(0);
+		setFileDuration(0);
 		setEditBtnDisabled(false);
 		setDraftBtnDisabled(false);
 		setIsError({});
@@ -370,26 +394,39 @@ const UploadOrEditMedia = ({
 	};
 
 	const validateDraftBtn = () => {
-		setIsError({
-			uploadedFiles: form.uploadedFiles.length < 1,
-			selectedLabelsDraft: form.labels.length < 1,
-			uploadedCoverImage: form.uploadedCoverImage.length < 1,
-			titleMedia: !form.title && { message: 'You need to enter a Title' },
-			description: !form.description
-		});
+		if (isEdit) {
+			setIsError({
+				draftError: draftBtnDisabled
+			});
 
-		setTimeout(() => {
-			setIsError({});
-		}, 5000);
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		} else {
+			setIsError({
+				uploadedFiles: form.uploadedFiles.length < 1,
+				selectedLabelsDraft: form.labels.length < 1,
+				uploadedCoverImage: form.uploadedCoverImage.length < 1,
+				titleMedia: !form.title && { message: 'You need to enter a Title' },
+				description: !form.description,
+				mainCategory: !form?.mainCategory,
+				subCategory: !form?.subCategory.name
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		}
 	};
 
-	const deleteMedia = async (id) => {
+	const deleteMedia = async (id, isDraft) => {
 		setDeleteBtnStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media/delete-media`,
 				{
-					media_id: id
+					media_id: id,
+					is_draft: isDraft
 				},
 				{
 					headers: {
@@ -422,7 +459,6 @@ const UploadOrEditMedia = ({
 	};
 
 	const uploadMedia = async (id, payload) => {
-		console.log(payload, 'payload');
 		let media_type = form.mainCategory?.id;
 		// setMediaButtonStatus(true);
 		try {
@@ -467,7 +503,11 @@ const UploadOrEditMedia = ({
 			);
 			if (result?.data?.status_code === 200) {
 				toast.success(
-					isEdit ? 'Media has been updated!' : 'Media has been uploaded!'
+					isEdit
+						? 'Media has been updated!'
+						: payload?.save_draft
+						? 'Draft has been saved'
+						: 'Media has been uploaded!'
 				);
 				setIsLoadingUploadMedia(false);
 
@@ -547,6 +587,7 @@ const UploadOrEditMedia = ({
 					!form.uploadedCoverImage.length ||
 					!form.title ||
 					!form.description ||
+					form.labels.length < 7 ||
 					(specificMedia?.file_name_media ===
 						form.uploadedFiles[0]?.file_name &&
 						specificMedia?.file_name_image ===
@@ -563,41 +604,28 @@ const UploadOrEditMedia = ({
 		}
 	}, [specificMedia, form]);
 
-	// const checkDuplicateLabel = () => {
-	// 	return specificMedia?.labels?.forEach((lb) =>
-	// 		form?.labels?.map((formL) => {
-	// 			console.log(formL.name, lb, 'dadwad');
-	// 			formL.name === lb;
-	// 		})
-	// 	);
-	// };
+	const checkDuplicateLabel = () => {
+		let formLabels = form?.labels?.map((formL) => {
+			if (specificMedia?.labels?.includes(formL.name)) {
+				return true;
+			} else {
+				return false;
+			}
+		});
+		return formLabels.some((label) => label === false);
+	};
 
-	// console.log(form, 'wad');
 	useEffect(() => {
 		if (specificMedia) {
-			// let checkDuplicateLabel = specificMedia?.labels?.map((label) => {
-			// 	return form?.labels.some((formLabel) => formLabel.name == label);
-			// });
-
-			// let checkDuplicateLabel = form.labels.some((file) => {
-			// 	specificMedia?.labels?.map((mediaFile) => {
-			// 		file.name !== mediaFile;
-			// 	});
-			// });
-
-			// let checkDuplicateLabel = specificMedia?.labels?.some((lb) =>
-			// 	form?.labels?.map((formL) => {
-			// 		console.log(formL, 'dadwad');
-			// 		formL.name.includes(lb);
-			// 	})
-			// );
-
-			// console.log(checkDuplicateLabel, 'kaka');
-
 			setDraftBtnDisabled(
-				specificMedia?.file_name_media === form?.uploadedFiles[0]?.file_name &&
-					specificMedia?.file_name_image ===
-						form?.uploadedCoverImage[0]?.file_name &&
+				(specificMedia?.media_url || form?.uploadedFiles[0]
+					? specificMedia?.file_name_media === form?.uploadedFiles[0]?.file_name
+					: true) &&
+					(specificMedia?.cover_image || form?.uploadedCoverImage[0]
+						? specificMedia?.file_name_image ===
+						  form?.uploadedCoverImage[0]?.file_name
+						: true) &&
+					specificMedia?.media_type === form?.mainCategory?.name &&
 					specificMedia?.media_dropbox_url ===
 						form?.media_dropbox_url?.trim() &&
 					specificMedia?.image_dropbox_url ===
@@ -605,12 +633,17 @@ const UploadOrEditMedia = ({
 					specificMedia?.title?.replace(/\s+/g, '')?.trim() ===
 						form?.title?.replace(/\s+/g, '')?.trim() &&
 					specificMedia?.description?.replace(/\s+/g, '')?.trim() ===
-						form?.description?.replace(/\s+/g, '')?.trim()
+						form?.description?.replace(/\s+/g, '')?.trim() &&
+					(specificMedia?.labels?.length === form?.labels?.length ||
+						!form.labels.length) &&
+					!checkDuplicateLabel()
 			);
 		}
 	}, [specificMedia, form]);
 
-	const MainCategoryId = (e) => {
+	// console.log(draftBtnDisabled, 'dft');
+
+	const mainCategoryId = (e) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
 		let setData = mainCategories.find((u) => u.name === e);
 		setForm((prev) => {
@@ -619,13 +652,13 @@ const UploadOrEditMedia = ({
 	};
 
 	useEffect(() => {
-		//only empty it when its on new one , not on edit / specific media
-		if (!isEdit) {
-			// setSubCategory({ id: null, name: '' });
-			setForm((prev) => {
-				return { ...prev, subCategory: '' };
-			});
-		}
+		// //only empty it when its on new one , not on edit / specific media
+		// if (!isEdit) {
+		// setSubCategory({ id: null, name: '' });
+		setForm((prev) => {
+			return { ...prev, subCategory: '' };
+		});
+		// }
 	}, [form.mainCategory]);
 
 	const SubCategoryId = (e) => {
@@ -637,7 +670,6 @@ const UploadOrEditMedia = ({
 		});
 	};
 	useEffect(() => {
-		console.log('form', form);
 		validateForm(form);
 	}, [form]);
 
@@ -742,6 +774,14 @@ const UploadOrEditMedia = ({
 							title: form.title,
 							description: form.description,
 							type: 'medialibrary',
+							save_draft: false,
+							...(form.media_dropbox_url
+								? { media_dropbox_url: form.media_dropbox_url }
+								: {}),
+							...(form.image_dropbox_url
+								? { image_dropbox_url: form.image_dropbox_url }
+								: {}),
+							...(form.labels.length ? { labels: [...form.labels] } : {}),
 							data: {
 								file_name_media: form.uploadedFiles[0].file_name,
 								file_name_image: form.uploadedCoverImage[0].file_name,
@@ -847,142 +887,308 @@ const UploadOrEditMedia = ({
 	};
 
 	const saveDraftBtn = async () => {
-		if (!validateDraft(form)) {
+		if (!validateDraft(form) || draftBtnDisabled) {
 			validateDraftBtn();
 		} else {
 			setIsLoadingUploadMedia(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 
-			let uploadedFile;
-			let uploadedCoverImage;
-			if (form.uploadedFiles[0]) {
-				let promiseFile = await uploadFileToServer(
-					form.uploadedFiles[0],
-					form.uploadedFiles[0].type
-				);
-				console.log(promiseFile, '22');
+			if (isEdit) {
+				let uploadedFile;
+				let uploadedCoverImage;
+				if (form.uploadedFiles[0] && form?.uploadedFiles[0]?.file) {
+					// let promiseFile;
+					// if (form?.uploadedFiles[0]?.file) {
+					// 	promiseFile = await uploadFileToServer(
+					// 		form.uploadedFiles[0],
+					// 		form.uploadedFiles[0].type
+					// 	);
+					// } else {
+					// 	return form?.uploadedFiles[0];
+					// }
+					let promiseFile = await uploadFileToServer(
+						form.uploadedFiles[0],
+						form.uploadedFiles[0].type
+					);
 
-				uploadedFile = await axios.post(
-					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-					{
-						file_name: form.uploadedFiles[0].file_name,
-						type: 'medialibrary',
-						data: {
-							bucket: 'media',
-							multipart_upload:
-								form.uploadedFiles[0]?.mime_type == 'video/mp4'
-									? [
-											{
-												e_tag:
-													promiseFile?.signed_response?.headers?.etag.replace(
-														/['"]+/g,
-														''
-													),
-												part_number: 1
-											}
-									  ]
-									: ['image'],
-							keys: {
-								image_key: form.uploadedCoverImage[0]?.keys?.image_key || '',
-								...(form.mainCategory.name === 'Watch' ||
-								specificMedia?.media_type === 'Watch'
-									? {
-											video_key: promiseFile?.keys?.video_key,
-											audio_key: ''
-									  }
-									: {
-											audio_key: promiseFile?.keys?.audio_key,
-											video_key: ''
-									  })
-							},
-							upload_id:
-								form.mainCategory?.name === 'Watch' ||
-								specificMedia?.media_type === 'Watch'
-									? promiseFile.upload_id
-									: 'audio'
+					uploadedFile = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: form.uploadedFiles[0].file_name,
+							type: 'medialibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									form.uploadedFiles[0]?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag:
+														promiseFile?.signed_response?.headers?.etag.replace(
+															/['"]+/g,
+															''
+														),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: form.uploadedCoverImage[0]?.keys?.image_key || '',
+									...(form.mainCategory.name === 'Watch' ||
+									specificMedia?.media_type === 'Watch'
+										? {
+												video_key: promiseFile?.keys?.video_key,
+												audio_key: ''
+										  }
+										: {
+												audio_key: promiseFile?.keys?.audio_key,
+												video_key: ''
+										  })
+								},
+								upload_id:
+									form.mainCategory?.name === 'Watch' ||
+									specificMedia?.media_type === 'Watch'
+										? promiseFile?.upload_id
+										: 'audio'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
 						}
-					},
-					{
-						headers: {
-							Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-						}
-					}
-				);
-			}
-
-			if (form.uploadedCoverImage[0]) {
-				let promiseFile = await uploadFileToServer(
-					form.uploadedCoverImage[0],
-					form.uploadedCoverImage[0].type
-				);
-				console.log(promiseFile, '22');
-
-				uploadedCoverImage = await axios.post(
-					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-					{
-						file_name: form.uploadedCoverImage[0].file_name,
-						type: 'medialibrary',
-						data: {
-							bucket: 'media',
-							multipart_upload:
-								form.uploadedCoverImage[0]?.mime_type == 'video/mp4'
-									? [
-											{
-												e_tag:
-													promiseFile?.signed_response?.headers?.etag.replace(
-														/['"]+/g,
-														''
-													),
-												part_number: 1
-											}
-									  ]
-									: ['image'],
-							keys: {
-								image_key: form.uploadedCoverImage[0]?.keys?.image_key || '',
-								...(form.mainCategory.name === 'Watch' ||
-								specificMedia?.media_type === 'Watch'
-									? {
-											video_key: promiseFile?.keys?.video_key,
-											audio_key: ''
-									  }
-									: {
-											audio_key: promiseFile?.keys?.audio_key,
-											video_key: ''
-									  })
-							},
-							upload_id:
-								form.mainCategory?.name === 'Watch' ||
-								specificMedia?.media_type === 'Watch'
-									? promiseFile.upload_id || 'image'
-									: 'audio'
-						}
-					},
-					{
-						headers: {
-							Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-						}
-					}
-				);
-			}
-
-			await uploadMedia(null, {
-				save_draft: true,
-				type: 'medialibrary',
-
-				data: {
-					...(uploadedFile && {
-						file_name_media: form.uploadedFiles[0].file_name,
-						...uploadedFile?.data?.data
-					}),
-					...(uploadedCoverImage && {
-						file_name_image: form.uploadedCoverImage[0].file_name,
-						...uploadedCoverImage?.data?.data
-					})
-					// file_name_media: form.uploadedFiles[0].file_name,
-					// file_name_image: form.uploadedCoverImage[0].file_name,
-					// ...completeUpload?.data?.data
+					);
 				}
-			});
+
+				if (form.uploadedCoverImage[0] && form.uploadedCoverImage[0]?.file) {
+					// let promiseFile;
+					// if (form.uploadedCoverImage[0]?.file) {
+					// 	promiseFile = await uploadFileToServer(
+					// 		form.uploadedCoverImage[0],
+					// 		form.uploadedCoverImage[0].type
+					// 	);
+					// } else {
+					// 	return form.uploadedCoverImage[0];
+					// }
+					let promiseFile = await uploadFileToServer(
+						form.uploadedCoverImage[0],
+						form.uploadedCoverImage[0].type
+					);
+
+					uploadedCoverImage = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: form.uploadedCoverImage[0].file_name,
+							type: 'medialibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									form.uploadedCoverImage[0]?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag:
+														promiseFile?.signed_response?.headers?.etag.replace(
+															/['"]+/g,
+															''
+														),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: promiseFile?.keys?.image_key || '',
+									...(form.mainCategory.name === 'Watch' ||
+									specificMedia?.media_type === 'Watch'
+										? {
+												video_key: promiseFile?.keys?.video_key,
+												audio_key: ''
+										  }
+										: {
+												audio_key: promiseFile?.keys?.audio_key,
+												video_key: ''
+										  })
+								},
+								upload_id:
+									form.mainCategory?.name === 'Watch' ||
+									specificMedia?.media_type === 'Watch'
+										? promiseFile?.upload_id || 'image'
+										: 'audio'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
+						}
+					);
+				}
+
+				await uploadMedia(specificMedia?.id, {
+					save_draft: true,
+					type: 'medialibrary',
+					title: form.title,
+					description: form.description,
+					...(form.media_dropbox_url
+						? { media_dropbox_url: form.media_dropbox_url }
+						: {}),
+					...(form.image_dropbox_url
+						? { image_dropbox_url: form.image_dropbox_url }
+						: {}),
+					...(form.labels.length ? { labels: [...form.labels] } : {}),
+					data: {
+						...(!form.uploadedCoverImage[0] && { image_data: null }),
+						...(!form.uploadedFiles[0] && {
+							audio_data: null,
+							video_data: null
+						}),
+						...(uploadedFile &&
+							(form?.uploadedFiles[0]?.file || form?.uploadedFiles[0]) && {
+								...uploadedFile?.data?.data,
+								image_data: uploadedCoverImage?.data?.data?.image_data
+							}),
+						...(uploadedCoverImage &&
+							(form?.uploadedCoverImage[0]?.file ||
+								form?.uploadedCoverImage[0]) && {
+								...uploadedCoverImage?.data?.data,
+								audio_data: uploadedFile?.data?.data?.audio_data,
+								video_data: uploadedFile?.data?.data?.video_data
+							}),
+						file_name_image: form?.uploadedCoverImage[0]?.file_name,
+						file_name_media: form?.uploadedFiles[0]?.file_name
+					}
+				});
+			} else {
+				let uploadedFile;
+				let uploadedCoverImage;
+				if (form.uploadedFiles[0]) {
+					let promiseFile = await uploadFileToServer(
+						form.uploadedFiles[0],
+						form.uploadedFiles[0].type
+					);
+
+					uploadedFile = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: form.uploadedFiles[0].file_name,
+							type: 'medialibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									form.uploadedFiles[0]?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag:
+														promiseFile?.signed_response?.headers?.etag.replace(
+															/['"]+/g,
+															''
+														),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: '',
+									...(form.mainCategory.name === 'Watch' ||
+									specificMedia?.media_type === 'Watch'
+										? {
+												video_key: promiseFile?.keys?.video_key,
+												audio_key: ''
+										  }
+										: {
+												audio_key: promiseFile?.keys?.audio_key,
+												video_key: ''
+										  })
+								},
+								upload_id:
+									form.mainCategory?.name === 'Watch' ||
+									specificMedia?.media_type === 'Watch'
+										? promiseFile?.upload_id
+										: 'audio'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
+						}
+					);
+				}
+
+				if (form.uploadedCoverImage[0]) {
+					let promiseFile = await uploadFileToServer(
+						form.uploadedCoverImage[0],
+						form.uploadedCoverImage[0].type
+					);
+
+					uploadedCoverImage = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: form.uploadedCoverImage[0].file_name,
+							type: 'medialibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									form.uploadedCoverImage[0]?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag:
+														promiseFile?.signed_response?.headers?.etag.replace(
+															/['"]+/g,
+															''
+														),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: promiseFile?.keys?.image_key || '',
+									video_key: '',
+									audio_key: ''
+								},
+								upload_id:
+									form.mainCategory?.name === 'Watch' ||
+									specificMedia?.media_type === 'Watch'
+										? promiseFile?.upload_id || 'image'
+										: 'audio'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
+						}
+					);
+				}
+
+				await uploadMedia(null, {
+					save_draft: true,
+					type: 'medialibrary',
+
+					data: {
+						...(uploadedFile && {
+							...uploadedFile?.data?.data,
+							image_data: uploadedCoverImage?.data?.data?.image_data
+						}),
+						...(uploadedCoverImage && {
+							...uploadedCoverImage?.data?.data,
+							audio_data: uploadedFile?.data?.data?.audio_data,
+							video_data: uploadedFile?.data?.data?.video_data
+						}),
+						file_name_media: form?.uploadedFiles[0]?.file_name,
+						file_name_image: form?.uploadedCoverImage[0]?.file_name
+						// file_name_media: form.uploadedFiles[0].file_name,
+						// file_name_image: form.uploadedCoverImage[0].file_name,
+						// ...completeUpload?.data?.data
+					}
+				});
+			}
 		}
 	};
 
@@ -1046,16 +1252,19 @@ const UploadOrEditMedia = ({
 											onClose={() => {
 												setDisableDropdown(true);
 											}}
-											disabled={isEdit ? true : false}
+											disabled={isEdit && status === 'published' ? true : false}
 											style={{
-												backgroundColor: isEdit ? '#404040' : '#000000'
+												backgroundColor:
+													isEdit && status === 'published'
+														? '#404040'
+														: '#000000'
 											}}
 											value={
-												isEdit ? form.mainCategory : form.mainCategory?.name
+												isEdit ? form.mainCategory : form.mainCategory.name
 											}
 											onChange={(e) => {
 												setDisableDropdown(true);
-												MainCategoryId(e.target.value);
+												mainCategoryId(e.target.value);
 												if (form.uploadedFiles.length) {
 													form.uploadedFiles.map((file) =>
 														handleDeleteFile(file.id)
@@ -1063,14 +1272,19 @@ const UploadOrEditMedia = ({
 												}
 											}}
 											className={`${classes.select} ${
-												isEdit ? `${classes.isEditSelect}` : ''
+												isEdit && status === 'published'
+													? `${classes.isEditSelect}`
+													: ''
 											}`}
 											disableUnderline={true}
 											IconComponent={(props) => (
 												<KeyboardArrowDownIcon
 													{...props}
 													style={{
-														display: isEdit ? 'none' : 'block',
+														display:
+															isEdit && status === 'published'
+																? 'none'
+																: 'block',
 														top: '4'
 													}}
 												/>
@@ -1087,13 +1301,11 @@ const UploadOrEditMedia = ({
 												getContentAnchorEl: null
 											}}
 											displayEmpty={true}
-											renderValue={(value) =>
-												value?.length
-													? Array.isArray(value)
-														? value.join(', ')
-														: value
-													: 'Please Select'
-											}
+											renderValue={(value) => {
+												console.log(value, 'mainV');
+												return value ? value?.name || value : 'Please Select';
+												// return value ? value : 'Please s';
+											}}
 										>
 											{/* <MenuItem disabled value=''>
 											Please Select
@@ -1116,11 +1328,11 @@ const UploadOrEditMedia = ({
 									</div>
 									<div className={classes.subCategory}>
 										<h6
-											style={{
-												color: form.mainCategory?.name
-													? subCategoryLabelColor
-													: ''
-											}}
+											className={[
+												isError.subCategory && form.mainCategory
+													? classes.errorState
+													: classes.noErrorState
+											].join(' ')}
 										>
 											SUB CATEGORY
 										</h6>
@@ -1131,24 +1343,36 @@ const UploadOrEditMedia = ({
 											onClose={() => {
 												setDisableDropdown(true);
 											}}
-											disabled={!form.mainCategory || isEdit ? true : false}
+											disabled={
+												!form.mainCategory || (isEdit && status === 'published')
+													? true
+													: false
+											}
 											style={{
-												backgroundColor: isEdit ? '#404040' : '#000000'
+												backgroundColor:
+													isEdit && status === 'published'
+														? '#404040'
+														: '#000000'
 											}}
-											value={isEdit ? form.subCategory : form.subCategory?.name}
+											value={form.subCategory?.name}
 											onChange={(e) => {
 												setDisableDropdown(true);
 												SubCategoryId(e.target.value);
 											}}
 											className={`${classes.select} ${
-												isEdit ? `${classes.isEditSelect}` : ''
+												isEdit && status === 'published'
+													? `${classes.isEditSelect}`
+													: ''
 											}`}
 											disableUnderline={true}
 											IconComponent={(props) => (
 												<KeyboardArrowDownIcon
 													{...props}
 													style={{
-														display: isEdit ? 'none' : 'block',
+														display:
+															isEdit && status === 'published'
+																? 'none'
+																: 'block',
 														top: '4'
 													}}
 												/>
@@ -1192,12 +1416,6 @@ const UploadOrEditMedia = ({
 										</p>
 									</div>
 								</div>
-								{/* <div className={classes.catergoryErrorContainer}>
-								<p className={classes.uploadMediaError}>{mainCategoryError}</p>
-								{/* <p className={classes.uploadMediaError2}>
-									{mainCategory?.name || mainCategory ? subCategoryError : ''}
-								</p> */}
-								{/* </div> */}
 
 								{(form.mainCategory && form.subCategory?.name) || isEdit ? (
 									<>
@@ -1264,8 +1482,7 @@ const UploadOrEditMedia = ({
 														Click or drag file to this area to upload
 													</p>
 													<p className={classes.formatMsg}>
-														{form.mainCategory?.name === 'Watch' ||
-														specificMedia?.media_type === 'Watch'
+														{form.mainCategory?.name === 'Watch'
 															? 'Supported format is mp4'
 															: 'Supported format is mp3'}
 													</p>
@@ -1516,6 +1733,13 @@ const UploadOrEditMedia = ({
 									<></>
 								)}
 							</div>
+
+							<p className={classes.mediaError}>
+								{isError.draftError
+									? 'Something needs to be changed to save a draft'
+									: ''}
+							</p>
+
 							<div className={classes.buttonDiv}>
 								{isEdit || (status === 'draft' && isEdit) ? (
 									<div className={classes.editBtn}>
@@ -1524,7 +1748,7 @@ const UploadOrEditMedia = ({
 											button2={isEdit ? true : false}
 											onClick={() => {
 												if (!deleteBtnStatus) {
-													deleteMedia(specificMedia?.id);
+													deleteMedia(specificMedia?.id, status);
 												}
 											}}
 											text={'DELETE MEDIA'}
