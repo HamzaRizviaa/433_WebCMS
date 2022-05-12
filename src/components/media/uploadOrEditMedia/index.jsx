@@ -378,7 +378,9 @@ const UploadOrEditMedia = ({
 			selectedLabels: form.labels.length < 7,
 			uploadedCoverImage: form.uploadedCoverImage.length < 1,
 			mainCategory: !form.mainCategory,
-			subCategory: !form.subCategory.name,
+			subCategory: form?.subCategory?.name
+				? !form?.subCategory?.name
+				: !form?.subCategory,
 			titleMedia: !form.title && { message: 'You need to enter a Title' },
 			description: !form.description
 		});
