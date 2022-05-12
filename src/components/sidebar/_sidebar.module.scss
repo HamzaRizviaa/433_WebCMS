@@ -53,6 +53,13 @@
 		padding: 1rem 1.2rem 0.8rem 1.2rem;
 		border-radius: 8px;
 		cursor: pointer;
+
+		> svg {
+			fill: black;
+			> path {
+				fill: blue;
+			}
+		}
 	}
 
 	.icon {

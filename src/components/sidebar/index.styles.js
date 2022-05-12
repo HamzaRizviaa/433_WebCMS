@@ -2,11 +2,12 @@ import { makeStyles } from '@material-ui/core';
 import theme from '../../assets/theme';
 
 export const useStyles = makeStyles(() => ({
+	// ------------- local host
 	main: {
 		backgroundColor: theme.palette.blackColor,
 		height: ' calc(100vh - 6rem)',
 		width: '5rem',
-		borderRight: `1.5px dashed ${theme.palette.grey}`,
+		borderRight: `1.5px solid ${theme.palette.grey}`,
 		display: 'flex',
 		flexDirection: 'column',
 		justifyContent: 'space-between',
@@ -29,31 +30,46 @@ export const useStyles = makeStyles(() => ({
 	icon: {
 		width: ' 2.5rem'
 	},
+	logoContainer: {},
 	logo: {
 		width: '3.5rem',
 		height: 'auto'
+	},
+	text: {
+		fontFamily: 'Poppins',
+		fontStyle: 'normal',
+		fontWeight: 900,
+		fontSize: '12px',
+		lineHeight: '18px',
+		marginTop: '8px',
+		textAlign: 'center'
 	},
 
 	logoutContainer: {
 		textAlign: 'center',
 		cursor: 'pointer'
 	},
-	devMain: {
+
+	// ------------- dev
+	dev: {
 		backgroundColor: theme.palette.neonYellow,
 		height: ' calc(100vh - 6rem)',
 		width: '5rem',
-		borderRight: `1.5px dashed ${theme.palette.grey}`,
+		borderRight: `1.5px solid ${theme.palette.grey}`,
 		display: 'flex',
 		flexDirection: 'column',
 		justifyContent: 'space-between',
 		padding: '3rem 1rem',
+
 		'& .iconWrapper': {
 			backgroundColor: theme.palette.neonYellow,
+			border: `2px solid ${theme.palette.neonYellow}`,
 			marginTop: '2.5rem',
 			padding: '1rem 1.2rem 0.8rem 1.2rem',
 			borderRadius: '8px',
 			cursor: 'pointer'
 		},
+
 		'& svg': {
 			'& path': {
 				fill: 'black'
@@ -66,7 +82,7 @@ export const useStyles = makeStyles(() => ({
 			width: ' 2.5rem'
 		}
 	},
-	devMainArticle: {
+	devArticle: {
 		'& svg': {
 			'& path': {
 				fill: 'none !important',
@@ -77,7 +93,9 @@ export const useStyles = makeStyles(() => ({
 			}
 		}
 	},
-	stagingMain: {
+
+	// ------------- staging
+	staging: {
 		backgroundColor: theme.palette.red,
 		height: ' calc(100vh - 6rem)',
 		width: '5rem',
@@ -115,5 +133,7 @@ export const useStyles = makeStyles(() => ({
 				stroke: 'white'
 			}
 		}
-	}
+	},
+
+	prod: {}
 }));

@@ -9,31 +9,21 @@ import {
 	// useHistory
 } from 'react-router-dom';
 import { ReactComponent as Logo } from '../../assets/logo.svg';
-// import { ReactComponent as Share } from '../../assets/share.svg';
-// import { ReactComponent as ShareSelected } from '../../assets/share_selected.svg';
 import { ReactComponent as Media } from '../../assets/media.svg';
-import { ReactComponent as MediaSelected } from '../../assets/media_selected.svg';
-// import { ReactComponent as MediaDev } from '../../assets/GameDev.svg';
 import { ReactComponent as Quiz } from '../../assets/Quiz.svg';
-import { ReactComponent as QuizSelected } from '../../assets/QuizSelected.svg';
 import { ReactComponent as Banner } from '../../assets/Star.svg';
-import { ReactComponent as BannerSelected } from '../../assets/Star_Selected.svg';
 import { ReactComponent as Article } from '../../assets/News.svg';
-import { ReactComponent as ArticleSelected } from '../../assets/NewsSelected.svg';
 import { ReactComponent as Viral } from '../../assets/Flame.svg';
-import { ReactComponent as ViralSelected } from '../../assets/Flame_Selected.svg';
 import { ReactComponent as Logout } from '../../assets/logout.svg';
 import { ReactComponent as Games } from '../../assets/Games.svg';
-import { ReactComponent as GamesSelected } from '../../assets/GamesSelected.svg';
 import { useGoogleLogout } from 'react-google-login';
 
 const Sidebar = () => {
-	// const history = useHistory();
 	const navigate = useNavigate();
 	const location = useLocation();
 	const classes = useStyles();
 	const [mainClass, setMainClass] = useState('main');
-	// let urlParams = useParams();
+
 	const clientId =
 		'761006834675-0717aiakfe9at8d7jahf10hdgevu7acg.apps.googleusercontent.com';
 
@@ -52,22 +42,16 @@ const Sidebar = () => {
 		onLogoutSuccess,
 		onFailure
 	});
-	// console.log(
-	// 	location?.pathname.includes('media-library'),
-	// 	'abc',
-	// 	location?.pathname.includes('localhost'),
-	// 	location.pathname,
-	// 	window.location.href,
-	// 	window.location.href.includes('localhost', 'media-library')
-	// );
 
 	const checkDomain = (href) => {
 		if (href.includes('localhost')) {
-			return 'devMain';
+			return 'dev';
 		} else if (href.includes('dev')) {
-			return 'devMain';
+			return 'dev';
 		} else if (href.includes('staging')) {
-			return 'stagingMain';
+			return 'staging';
+		} else if (href.includes('production')) {
+			return 'prod';
 		}
 	};
 
@@ -78,58 +62,31 @@ const Sidebar = () => {
 	}, []);
 	// console.log(urlParams, 'urlParams');
 	// console.log(history, 'history');
+	//<span className={[classes.mainClass,classes.abc2,classes.abc3]}>
+	//<span className={[classes.mainClass,classes.abc2,classes.abc3].join(" ")}>
 
 	return (
 		<span className={classes[mainClass]}>
 			<div className={classes.navContainer}>
-				<Logo className={classes.logo} />
+				<div className={classes.logoContainer}>
+					<Logo className={classes.logo} />
+					<div className={classes.text}>{mainClass}</div>
+				</div>
 
-				<div></div>
-
-				{/* {window.location.href.includes('localhost') ? (
-					<div
-						onClick={() => {
-							navigate('/media-library');
-						}}
-						className={classes.iconWrapperDev}
-						style={
-							window.location.href.includes('media-library')
-								? { border: '2px solid black' }
-								: { border: '2px solid #ffff00' }
-						}
-					>
-						<MediaDev className={classes.icon} />
-					</div>
-				) : (
-					<div
-						onClick={() => {
-							navigate('/media-library');
-						}}
-						className={classes.iconWrapper}
-						style={
-							location?.pathname.includes('media-library')
-								? { backgroundColor: '#404040' }
-								: {}
-						}
-					>
-						{location?.pathname.includes('media-library') ? (
-							<MediaSelected className={classes.icon} />
-						) : (
-							<Media className={classes.icon} />
-						)}
-					</div>
-				)} */}
 				<div
 					onClick={() => {
 						navigate('/media-library');
 					}}
 					className={classes.iconWrapper}
+					style={
+						location.pathname.includes('media-library')
+							? {
+									border: '2px solid black'
+							  }
+							: {}
+					}
 				>
-					{location?.pathname.includes('media-library') ? (
-						<MediaSelected className={classes.icon} />
-					) : (
-						<Media className={classes.icon} />
-					)}
+					<Media className={classes.icon} />
 				</div>
 				<div
 					onClick={() => {
@@ -137,16 +94,12 @@ const Sidebar = () => {
 					}}
 					className={classes.iconWrapper}
 					style={
-						location?.pathname.includes('question-library')
-							? { backgroundColor: '#404040' }
+						location.pathname.includes('question-library')
+							? { border: '2px solid black' }
 							: {}
 					}
 				>
-					{location?.pathname.includes('question-library') ? (
-						<QuizSelected className={classes.icon} />
-					) : (
-						<Quiz className={classes.icon} />
-					)}
+					<Quiz className={classes.icon} />
 				</div>
 				<div
 					onClick={() => {
@@ -155,15 +108,11 @@ const Sidebar = () => {
 					className={classes.iconWrapper}
 					style={
 						location?.pathname.includes('top-banner')
-							? { backgroundColor: '#404040' }
+							? { border: '2px solid black' }
 							: {}
 					}
 				>
-					{location?.pathname.includes('top-banner') ? (
-						<BannerSelected className={classes.icon} />
-					) : (
-						<Banner className={classes.icon} />
-					)}
+					<Banner className={classes.icon} />
 				</div>
 				<div
 					onClick={() => {
@@ -172,19 +121,13 @@ const Sidebar = () => {
 					className={classes.iconWrapper}
 					style={
 						location?.pathname.includes('article-library')
-							? { backgroundColor: '#404040' }
+							? { border: '2px solid black' }
 							: {}
 					}
 				>
-					{location?.pathname.includes('article-library') ? (
-						<span className={classes[`${mainClass}Article`]}>
-							<ArticleSelected className={classes.icon} />
-						</span>
-					) : (
-						<span className={classes[`${mainClass}Article`]}>
-							<Article className={classes.icon} />
-						</span>
-					)}
+					<span className={classes[`${mainClass}Article`]}>
+						<Article className={classes.icon} />
+					</span>
 				</div>
 				<div
 					onClick={() => {
@@ -193,15 +136,11 @@ const Sidebar = () => {
 					className={classes.iconWrapper}
 					style={
 						location?.pathname.includes('viral-library')
-							? { backgroundColor: '#404040' }
+							? { border: '2px solid black' }
 							: {}
 					}
 				>
-					{location?.pathname.includes('viral-library') ? (
-						<ViralSelected className={classes.icon} />
-					) : (
-						<Viral className={classes.icon} />
-					)}
+					<Viral className={classes.icon} />
 				</div>
 				<div
 					onClick={() => {
@@ -210,15 +149,11 @@ const Sidebar = () => {
 					className={classes.iconWrapper}
 					style={
 						location?.pathname.includes('games-library')
-							? { backgroundColor: '#404040' }
+							? { border: '2px solid black' }
 							: {}
 					}
 				>
-					{location?.pathname.includes('games-library') ? (
-						<GamesSelected className={classes.icon} />
-					) : (
-						<Games className={classes.icon} />
-					)}
+					<Games className={classes.icon} />
 				</div>
 				{/* <div
 					onClick={() => {
