@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 import React, { useState, useEffect, useRef } from 'react';
 import classes from './_uploadOrEditMedia.module.scss';
 import PropTypes from 'prop-types';
@@ -77,7 +78,6 @@ const UploadOrEditMedia = ({
 	const mainCategories = useSelector(
 		(state) => state.mediaLibraryOriginal.mainCategories
 	);
-	// console.log(mainCategories, 'MAINEDIT');
 	const specificMediaStatus = useSelector(
 		(state) => state.mediaLibraryOriginal
 	);
@@ -142,7 +142,6 @@ const UploadOrEditMedia = ({
 			// 	});
 			// }
 			// mainCategoryId(specificMedia?.media_type);
-			console.log(mainCategoryId(specificMedia?.media_type), 'function');
 			setForm((prev) => {
 				return {
 					...prev,
@@ -150,7 +149,7 @@ const UploadOrEditMedia = ({
 					description: specificMedia?.description,
 					media_dropbox_url: specificMedia?.media_dropbox_url,
 					image_dropbox_url: specificMedia?.image_dropbox_url,
-					//mainCategory: specificMedia.media_type,
+					mainCategory: specificMedia.media_type,
 					//subCategory: specificMedia?.sub_category,
 
 					uploadedFiles: specificMedia?.media_url
@@ -651,8 +650,6 @@ const UploadOrEditMedia = ({
 			return { ...prev, mainCategory: setData };
 		});
 	};
-
-	console.log(form, 'dadad');
 
 	useEffect(() => {
 		// //only empty it when its on new one , not on edit / specific media
@@ -1263,9 +1260,7 @@ const UploadOrEditMedia = ({
 														: '#000000'
 											}}
 											value={
-												// isEdit
-												// 	? specificMedia?.media_type :
-												form.mainCategory.name
+												isEdit ? form.mainCategory : form.mainCategory.name
 											}
 											onChange={(e) => {
 												setDisableDropdown(true);
@@ -1308,12 +1303,7 @@ const UploadOrEditMedia = ({
 											displayEmpty={true}
 											renderValue={(value) => {
 												console.log(value, 'mainV');
-												console.log(form.mainCategory, 'MAINC');
-												return value?.length
-													? Array.isArray(value)
-														? value.join(', ')
-														: value
-													: 'Please Select';
+												return value ? value?.name || value : 'Please Select';
 												// return value ? value : 'Please s';
 											}}
 										>
