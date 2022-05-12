@@ -56,7 +56,9 @@ const theme = createTheme({
 		lightGrey: '#c4c4c4',
 		lighrGreen: '#00d87d',
 		disabled: '#808080',
-		red: '#ff355a'
+		red: '#ff355a',
+		orange: '#f68216',
+		green: ' #00D87D'
 	},
 	typography: {
 		fontFamily: ['Poppins', 'sans-serif'].join(','),

@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 // import classes from './_sidebar.module.scss';
 import { useStyles } from './index.styles';
 import {
@@ -32,6 +32,7 @@ const Sidebar = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const classes = useStyles();
+	const [mainClass, setMainClass] = useState('main');
 	// let urlParams = useParams();
 	const clientId =
 		'761006834675-0717aiakfe9at8d7jahf10hdgevu7acg.apps.googleusercontent.com';
@@ -60,19 +61,26 @@ const Sidebar = () => {
 	// 	window.location.href.includes('localhost', 'media-library')
 	// );
 
+	const checkDomain = (href) => {
+		if (href.includes('localhost')) {
+			return 'devMain';
+		} else if (href.includes('dev')) {
+			return 'devMain';
+		} else if (href.includes('staging')) {
+			return 'stagingMain';
+		}
+	};
+
+	useEffect(() => {
+		if (window && window.location) {
+			setMainClass(checkDomain(window.location.href));
+		}
+	}, []);
 	// console.log(urlParams, 'urlParams');
 	// console.log(history, 'history');
 
 	return (
-		<span
-			className={
-				location?.pathname.includes('dev')
-					? classes.devMain
-					: location?.pathname.includes('staging')
-					? classes.stagingMain
-					: classes.main
-			}
-		>
+		<span className={classes[mainClass]}>
 			<div className={classes.navContainer}>
 				<Logo className={classes.logo} />
 
@@ -116,11 +124,6 @@ const Sidebar = () => {
 						navigate('/media-library');
 					}}
 					className={classes.iconWrapper}
-					style={
-						location?.pathname.includes('media-library')
-							? { backgroundColor: '#404040' }
-							: {}
-					}
 				>
 					{location?.pathname.includes('media-library') ? (
 						<MediaSelected className={classes.icon} />
@@ -128,7 +131,6 @@ const Sidebar = () => {
 						<Media className={classes.icon} />
 					)}
 				</div>
-
 				<div
 					onClick={() => {
 						navigate('/question-library');
@@ -175,9 +177,13 @@ const Sidebar = () => {
 					}
 				>
 					{location?.pathname.includes('article-library') ? (
-						<ArticleSelected className={classes.icon} />
+						<span className={classes[`${mainClass}Article`]}>
+							<ArticleSelected className={classes.icon} />
+						</span>
 					) : (
-						<Article className={classes.icon} />
+						<span className={classes[`${mainClass}Article`]}>
+							<Article className={classes.icon} />
+						</span>
 					)}
 				</div>
 				<div
