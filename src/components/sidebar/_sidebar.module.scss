@@ -20,7 +20,7 @@
 .iconWrapper {
 	margin-top: 2.5rem;
 	padding: 1rem 1.2rem 0.8rem 1.2rem;
-	// background-color: $grey;
+	background-color: #404040;
 	border-radius: 8px;
 	cursor: pointer;
 }
@@ -36,4 +36,26 @@
 .logoutContainer {
 	text-align: center;
 	cursor: pointer;
+}
+
+.devMain {
+	background-color: #ffff00;
+	height: calc(100vh - 6rem);
+	width: 5rem;
+	border-right: 1px solid $grey;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 3rem 1rem;
+	.iconWrapperDev {
+		background-color: #ffff00;
+		margin-top: 2.5rem;
+		padding: 1rem 1.2rem 0.8rem 1.2rem;
+		border-radius: 8px;
+		cursor: pointer;
+	}
+
+	.icon {
+		width: 2.5rem;
+	}
 }
