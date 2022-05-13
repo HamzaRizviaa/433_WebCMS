@@ -72,7 +72,9 @@ export const useStyles = makeStyles(() => ({
 			width: ' 2.5rem'
 		}
 	},
-
+	gamesIcon: {
+		padding: '6px 0'
+	},
 	// ------------- dev
 	dev: {
 		backgroundColor: theme.palette.neonYellow,
@@ -212,7 +214,7 @@ export const useStyles = makeStyles(() => ({
 			borderRadius: '8px',
 			cursor: 'pointer'
 		},
-		'& svg': {
+		'& > svg': {
 			'& path': {
 				fill: 'white'
 			},
@@ -224,17 +226,18 @@ export const useStyles = makeStyles(() => ({
 			width: ' 2.5rem'
 		}
 	},
-	prodArticle: {
-		'& svg': {
-			'& path': {
-				fill: 'none !important',
-				stroke: 'white'
-			},
-			'& circle': {
-				stroke: 'white'
-			}
-		}
-	},
+	// prodArticle: {
+	// 	'& svg': {
+	// 		'& path': {
+	// 			fill: 'none !important',
+	// 			stroke: ({ mainClass }) =>
+	// 				mainClass === 'prod' ? theme.palette.neonYellow : theme.palette.white
+	// 		},
+	// 		'& circle': {
+	// 			stroke: 'white'
+	// 		}
+	// 	}
+	// },
 	prodText: {
 		fontFamily: 'Poppins',
 		fontStyle: 'normal',
@@ -252,16 +255,20 @@ export const useStyles = makeStyles(() => ({
 		padding: '1rem 1.2rem 0.8rem 1.2rem',
 		borderRadius: '8px',
 		cursor: 'pointer',
-
-		'& svg': {
+		'& svg ': {
 			'& path': {
-				fill: theme.palette.neonYellow
+				fill: theme.palette.neonYellow,
+				stroke: theme.palette.neonYellow
 			},
 			'& circle': {
 				stroke: theme.palette.neonYellow
 			}
 		},
-
+		'& > span > svg ': {
+			'& path': {
+				fill: 'none !important'
+			}
+		},
 		'& .icon': {
 			width: ' 2.5rem'
 		}

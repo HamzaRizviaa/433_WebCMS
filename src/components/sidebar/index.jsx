@@ -15,8 +15,8 @@ import { useGoogleLogout } from 'react-google-login';
 const Sidebar = () => {
 	const navigate = useNavigate();
 
-	const classes = useStyles();
 	const [mainClass, setMainClass] = useState('main');
+	const classes = useStyles({ mainClass });
 
 	const clientId =
 		'761006834675-0717aiakfe9at8d7jahf10hdgevu7acg.apps.googleusercontent.com';
@@ -39,7 +39,7 @@ const Sidebar = () => {
 
 	const checkDomain = (href) => {
 		if (href.includes('localhost')) {
-			return 'prod';
+			return 'staging';
 		} else if (href.includes('dev')) {
 			return 'dev';
 		} else if (href.includes('staging')) {
@@ -116,7 +116,7 @@ const Sidebar = () => {
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
-					<Games className={classes.icon} />
+					<Games className={[classes.icon, classes.gamesIcon].join(' ')} />
 				</NavLink>
 
 				{/* <div
