@@ -4,17 +4,17 @@
 .header {
 	display: flex;
 	justify-content: space-between;
-}
+} //
 
 .subheader1 {
 	display: flex;
 	justify-content: flex-start;
-}
+} //
 
 .subheader2 {
 	display: flex;
 	justify-content: flex-end;
-}
+} //
 
 .calendarWrapper {
 	margin-left: 10px;
@@ -23,7 +23,7 @@
 		top: 0.5px !important;
 		right: 30px !important;
 	}
-}
+} //
 
 .customDateInput {
 	border: 0;
@@ -49,11 +49,11 @@
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-}
+} //
 
 .tableContainer {
 	margin: 1rem 0rem;
-}
+} //
 
 // .mediaIcon {
 // 	height: 5rem;
@@ -76,28 +76,20 @@
 // 	object-fit: cover;
 // }
 
-.mediaIcon {
-	height: 5rem;
-	//width: 5rem;
-	//max-width: 100%;
-	border-radius: 8px;
-	object-fit: cover;
-}
-
 .mediaIconPreview {
 	height: calc(5rem * 5);
 	//width: calc(5rem * 6);
 	max-width: calc(5rem * 8);
 	border-radius: 8px;
 	object-fit: cover;
-}
+} //
 
 .mediaIcon {
 	height: 48px;
 	width: 48px;
 	border-radius: 8px;
 	object-fit: cover;
-}
+} // change
 
 // .mediaIconPreview {
 // 	height: calc(48px * 6);
@@ -111,28 +103,28 @@
 	width: 48px;
 	border-radius: 8px;
 	object-fit: cover;
-}
+} //
 
 .virallandscapePreview {
 	height: calc(25.131px * 6);
 	width: calc(48px * 6);
 	border-radius: 8px;
 	object-fit: cover;
-}
+} //
 
 .mediaIconPortrait {
 	height: 48px;
 	width: 38.4px;
 	border-radius: 8px;
 	object-fit: cover;
-}
+} //
 
 .mediaIconPortraitPreview {
 	height: calc(48px * 6);
 	width: calc(38.4px * 6);
 	border-radius: 8px;
 	object-fit: cover;
-}
+} //
 
 .mediaWrapper {
 	display: flex;
@@ -146,18 +138,18 @@
 			white-space: nowrap;
 		}
 	}
-}
+} // change - games File name
 
 .fileName {
 	margin-left: 1rem;
 	font-size: 1.2rem;
-}
+} //change - done
 
 .row {
 	margin-bottom: 1.5rem;
 	display: block;
 	font-size: 1.2rem;
-}
+} //change - done
 
 .rowType {
 	margin-bottom: 1.5rem;
@@ -178,7 +170,7 @@
 	width: 2.5rem;
 	height: auto;
 	cursor: pointer;
-}
+} //
 
 .sortIcon {
 	position: absolute;
@@ -186,7 +178,7 @@
 	bottom: -2px;
 	height: 2rem !important;
 	width: 2rem !important;
-}
+} //
 
 .sortIconSelected {
 	position: absolute;
@@ -195,7 +187,7 @@
 	height: 2rem !important;
 	width: 2rem !important;
 	color: $neon-yellow;
-}
+} //
 
 .toolTip {
 	background-color: $black-color !important;
@@ -204,11 +196,11 @@
 	line-height: 16px !important;
 	border-radius: 8px !important;
 	max-width: none !important;
-}
+} //
 
 .toolTipArrow {
 	color: $black-color !important;
-}
+} //
 
 .paginationRow {
 	display: flex;
@@ -236,17 +228,17 @@
 			outline: none;
 		}
 	}
-}
+} //
 
 .toolTipPreview {
 	background-color: transparent !important;
 	border-radius: 8px !important;
 	max-width: none !important;
-}
+} //
 
 .searchField {
 	width: 271px;
-}
+} //
 
 .textFieldInput {
 	color: white !important;
@@ -258,12 +250,12 @@
 	font-family: Poppins !important;
 	//margin-bottom: 1rem;
 	background-color: #000000;
-}
+} //
 
 .searchIcon {
 	margin-right: 8;
 	cursor: pointer;
-}
+} //
 
 .noResultError {
 	color: #ff355a;
@@ -271,7 +263,7 @@
 	margin-top: 0.2rem;
 	margin-left: 0.5rem;
 	height: 1rem;
-}
+} //
 .loader {
 	width: 20%;
 	height: auto;

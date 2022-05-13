@@ -4,7 +4,7 @@
 import React, { useState, useEffect, forwardRef, useCallback } from 'react';
 import Layout from '../../components/layout';
 import Table from '../../components/table';
-import classes from './_articleLibrary.module.scss';
+// import classes from './_articleLibrary.module.scss';
 import Button from '../../components/button';
 import _debounce from 'lodash/debounce';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -33,7 +33,7 @@ import {
 } from './articleLibrarySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
-
+import { useStyles as globalUseStyles } from '../../styles/global.style';
 const ArticleLibrary = () => {
 	// Selectors
 	const articles = useSelector((state) => state.ArticleLibraryStore.articles);
@@ -53,7 +53,7 @@ const ArticleLibrary = () => {
 	);
 
 	const muiClasses = useStyles();
-
+	const classes = globalUseStyles();
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
@@ -67,7 +67,7 @@ const ArticleLibrary = () => {
 	const [noResultCalendarError, setNoResultCalendarError] = useState('');
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
-	const [isLoading, setIsLoading] = useState(true);
+
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -263,7 +263,10 @@ const ArticleLibrary = () => {
 						</Tooltip>
 
 						<div>
-							<Markup className={classes.fileName} content={row?.title} />
+							<Markup
+								className={classes.libraryFileName}
+								content={row?.title}
+							/>
 						</div>
 					</div>
 				);
@@ -350,8 +353,8 @@ const ArticleLibrary = () => {
 							title={'EDIT ARTICLE'}
 							arrow
 							componentsProps={{
-								tooltip: { className: classes.toolTip },
-								arrow: { className: classes.toolTipArrow }
+								tooltip: { className: classes.libraryToolTip },
+								arrow: { className: classes.libraryToolTipArrow }
 							}}
 						>
 							<Edit className={classes.editIcon} />
@@ -506,7 +509,11 @@ const ArticleLibrary = () => {
 			active={statusArticlesApi.status === 'pending' ? true : false}
 			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
 			spinner={
-				<img src={Four33Loader} className={classes.loader} alt='loader' />
+				<img
+					src={Four33Loader}
+					className={classes.libraryLoader}
+					alt='loader'
+				/>
 			}
 		>
 			<Layout className={classes.articleLibrary}>
@@ -627,7 +634,9 @@ const ArticleLibrary = () => {
 					<input
 						style={{
 							border: `${
-								paginationError ? '1px solid red' : '1px solid #808080'
+								paginationError
+									? '1px solid red !important'
+									: '1px solid #808080 !important'
 							}`
 						}}
 						type={'number'}

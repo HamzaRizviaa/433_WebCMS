@@ -24,7 +24,7 @@ import Table from '../../components/table';
 
 // CSS / Material UI
 import 'react-datepicker/dist/react-datepicker.css';
-import classes from './_gamesLibrary.module.scss';
+// import classes from './_gamesLibrary.module.scss';
 import Pagination from '@mui/material/Pagination';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
@@ -35,7 +35,7 @@ import '../PostLibrary/_calender.scss';
 // Utils
 import { getDateTime, formatDate, getCalendarText } from '../../utils';
 import { useStyles, useStyles2 } from './../../utils/styles';
-
+import { useStyles as globalUseStyles } from '../../styles/global.style';
 // Icons
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
@@ -47,6 +47,7 @@ import LoadingOverlay from 'react-loading-overlay';
 const GamesLibrary = () => {
 	const muiClasses = useStyles();
 	const muiClasses2 = useStyles2();
+	const classes = globalUseStyles();
 
 	// Selector
 	const games = useSelector((state) => state.GamesLibraryStore.gamesData);
@@ -308,7 +309,7 @@ const GamesLibrary = () => {
 			sortFunc: () => {},
 			formatter: (content) => {
 				return (
-					<div className={classes.row}>
+					<div className={classes.gamesRow}>
 						<Markup content={`${content} `} />
 					</div>
 				);
@@ -322,7 +323,7 @@ const GamesLibrary = () => {
 			sortFunc: () => {},
 			formatter: (content, row) => {
 				return (
-					<div className={classes.mediaWrapper}>
+					<div className={classes.gamesMediaWrapper}>
 						<Tooltip
 							// TransitionComponent={Fade}
 							// TransitionProps={{ timeout: 600 }}
@@ -347,7 +348,7 @@ const GamesLibrary = () => {
 							}
 							placement='right'
 							componentsProps={{
-								tooltip: { className: classes.toolTipPreview }
+								tooltip: { className: classes.libraryToolTipArrow }
 							}}
 						>
 							<span>
@@ -373,12 +374,15 @@ const GamesLibrary = () => {
 							}
 							arrow
 							componentsProps={{
-								tooltip: { className: classes.toolTip },
-								arrow: { className: classes.toolTipArrow }
+								tooltip: { className: classes.libraryToolTip },
+								arrow: { className: classes.libraryToolTipArrow }
 							}}
 						>
 							<div>
-								<Markup className={classes.fileName} content={row?.file_name} />
+								<Markup
+									className={classes.gamesFileName}
+									content={row?.file_name}
+								/>
 							</div>
 						</Tooltip>
 					</div>
@@ -425,7 +429,7 @@ const GamesLibrary = () => {
 			formatter: (content) => {
 				return (
 					// <div className={classes.row}>{content}</div>
-					<Markup className={classes.row} content={`${content}`} />
+					<Markup className={classes.gamesRow} content={`${content}`} />
 				);
 			}
 		},
@@ -436,7 +440,7 @@ const GamesLibrary = () => {
 			sortFunc: () => {},
 			text: 'LAST EDIT',
 			formatter: (content) => {
-				return <div className={classes.row}>{formatDate(content)}</div>;
+				return <div className={classes.gamesRow}>{formatDate(content)}</div>;
 			}
 		},
 		{
@@ -444,15 +448,15 @@ const GamesLibrary = () => {
 			text: 'OPTIONS',
 			formatter: () => {
 				return (
-					<div className={classes.row}>
+					<div className={classes.gamesRow}>
 						<Tooltip
 							TransitionComponent={Fade}
 							TransitionProps={{ timeout: 600 }}
 							title={'EDIT GAMES'}
 							arrow
 							componentsProps={{
-								tooltip: { className: classes.toolTip },
-								arrow: { className: classes.toolTipArrow }
+								tooltip: { className: classes.libraryToolTip },
+								arrow: { className: classes.libraryToolTipArrow }
 							}}
 						>
 							<Edit className={classes.editIcon} />
@@ -521,7 +525,11 @@ const GamesLibrary = () => {
 			active={gamesApiStatus.status === 'pending' ? true : false}
 			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
 			spinner={
-				<img src={Four33Loader} className={classes.loader} alt='loader' />
+				<img
+					src={Four33Loader}
+					className={classes.libraryLoader}
+					alt='loader'
+				/>
 			}
 		>
 			<Layout>
