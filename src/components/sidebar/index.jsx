@@ -39,7 +39,7 @@ const Sidebar = () => {
 
 	const checkDomain = (href) => {
 		if (href.includes('localhost')) {
-			return 'staging';
+			return 'dev';
 		} else if (href.includes('dev')) {
 			return 'dev';
 		} else if (href.includes('staging')) {
