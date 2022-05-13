@@ -53,6 +53,25 @@ export const useStyles = makeStyles(() => ({
 		textTransform: 'uppercase',
 		color: `${theme.palette.black} !important`
 	},
+	mainActiveRoute: {
+		border: `2px solid ${theme.palette.black}`,
+		backgroundColor: theme.palette.grey,
+		marginTop: '2.5rem',
+		padding: '1rem 1.2rem 0.8rem 1.2rem',
+		borderRadius: '8px',
+		cursor: 'pointer',
+		'& svg': {
+			'& path': {
+				fill: theme.palette.neonYellow
+			},
+			'& circle': {
+				stroke: theme.palette.neonYellow
+			}
+		},
+		'& .icon': {
+			width: ' 2.5rem'
+		}
+	},
 
 	// ------------- dev
 	dev: {
@@ -108,6 +127,13 @@ export const useStyles = makeStyles(() => ({
 		textTransform: 'uppercase',
 		color: `${theme.palette.black} !important`
 	},
+	devActiveRoute: {
+		border: `2px solid ${theme.palette.black}`,
+		marginTop: '2.5rem',
+		padding: '1rem 1.2rem 0.8rem 1.2rem',
+		borderRadius: '8px',
+		cursor: 'pointer'
+	},
 
 	// ------------- staging
 	staging: {
@@ -120,11 +146,13 @@ export const useStyles = makeStyles(() => ({
 		justifyContent: 'space-between',
 		padding: '3rem 1rem',
 		'& .iconWrapperDev': {
-			backgroundColor: theme.palette.orange,
 			marginTop: '2.5rem',
 			padding: '1rem 1.2rem 0.8rem 1.2rem',
 			borderRadius: '8px',
 			cursor: 'pointer'
+		},
+		'& .activeRoute': {
+			border: `2px solid ${theme.palette.white}`
 		},
 		'& svg': {
 			'& path': {
@@ -160,19 +188,25 @@ export const useStyles = makeStyles(() => ({
 		textTransform: 'uppercase',
 		color: `${theme.palette.white} !important`
 	},
+	stagingActiveRoute: {
+		border: `2px solid ${theme.palette.white}`,
+		marginTop: '2.5rem',
+		padding: '1rem 1.2rem 0.8rem 1.2rem',
+		borderRadius: '8px',
+		cursor: 'pointer'
+	},
 
 	// ------------- production
 	prod: {
-		backgroundColor: theme.palette.green,
+		backgroundColor: theme.palette.black,
 		height: ' calc(100vh - 6rem)',
 		width: '5rem',
-		borderRight: `1.5px solid ${theme.palette.black}`,
+		borderRight: `1.5px solid ${theme.palette.grey}`,
 		display: 'flex',
 		flexDirection: 'column',
 		justifyContent: 'space-between',
 		padding: '3rem 1rem',
 		'& .iconWrapperDev': {
-			backgroundColor: theme.palette.orange,
 			marginTop: '2.5rem',
 			padding: '1rem 1.2rem 0.8rem 1.2rem',
 			borderRadius: '8px',
@@ -211,5 +245,25 @@ export const useStyles = makeStyles(() => ({
 		textAlign: 'center',
 		textTransform: 'uppercase',
 		color: `${theme.palette.white} !important`
+	},
+	prodActiveRoute: {
+		backgroundColor: theme.palette.grey,
+		marginTop: '2.5rem',
+		padding: '1rem 1.2rem 0.8rem 1.2rem',
+		borderRadius: '8px',
+		cursor: 'pointer',
+
+		'& svg': {
+			'& path': {
+				fill: theme.palette.neonYellow
+			},
+			'& circle': {
+				stroke: theme.palette.neonYellow
+			}
+		},
+
+		'& .icon': {
+			width: ' 2.5rem'
+		}
 	}
 }));

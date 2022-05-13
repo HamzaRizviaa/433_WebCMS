@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useStyles } from './index.styles';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 import { ReactComponent as Media } from '../../assets/media.svg';
 import { ReactComponent as Quiz } from '../../assets/Quiz.svg';
@@ -9,11 +9,12 @@ import { ReactComponent as Article } from '../../assets/News.svg';
 import { ReactComponent as Viral } from '../../assets/Flame.svg';
 import { ReactComponent as Logout } from '../../assets/logout.svg';
 import { ReactComponent as Games } from '../../assets/Games.svg';
+// import { ReactComponent as ArticleSelected } from '../../assets/NewsSelected.svg';
 import { useGoogleLogout } from 'react-google-login';
 
 const Sidebar = () => {
 	const navigate = useNavigate();
-	const location = useLocation();
+
 	const classes = useStyles();
 	const [mainClass, setMainClass] = useState('main');
 
@@ -38,7 +39,7 @@ const Sidebar = () => {
 
 	const checkDomain = (href) => {
 		if (href.includes('localhost')) {
-			return 'dev';
+			return 'prod';
 		} else if (href.includes('dev')) {
 			return 'dev';
 		} else if (href.includes('staging')) {
@@ -62,120 +63,69 @@ const Sidebar = () => {
 					<p className={classes[`${mainClass}Text`]}> {mainClass} </p>
 				</div>
 
-				<div
-					onClick={() => {
-						navigate('/media-library');
-					}}
-					className={classes.iconWrapper}
-					style={
-						location.pathname.includes('media-library')
-							? mainClass === 'staging' || mainClass === 'prod'
-								? { border: '2px solid white' }
-								: { border: '2px solid black' }
-							: {}
+				<NavLink
+					to='/media-library'
+					className={({ isActive }) =>
+						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
 					<Media className={classes.icon} />
-				</div>
+				</NavLink>
 
-				<div
-					onClick={() => {
-						navigate('/question-library');
-					}}
-					className={classes.iconWrapper}
-					style={
-						location.pathname.includes('question-library')
-							? mainClass === 'staging' || mainClass === 'prod'
-								? { border: '2px solid white' }
-								: { border: '2px solid black' }
-							: {}
+				<NavLink
+					to='/question-library'
+					className={({ isActive }) =>
+						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
 					<Quiz className={classes.icon} />
-				</div>
+				</NavLink>
 
-				<div
-					onClick={() => {
-						navigate('/top-banner');
-					}}
-					className={classes.iconWrapper}
-					style={
-						location?.pathname.includes('top-banner')
-							? mainClass === 'staging' || mainClass === 'prod'
-								? { border: '2px solid white' }
-								: { border: '2px solid black' }
-							: {}
+				<NavLink
+					to='/top-banner'
+					className={({ isActive }) =>
+						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
 					<Banner className={classes.icon} />
-				</div>
+				</NavLink>
 
-				<div
-					onClick={() => {
-						navigate('/article-library');
-					}}
-					className={classes.iconWrapper}
-					style={
-						location?.pathname.includes('article-library')
-							? mainClass === 'staging' || mainClass === 'prod'
-								? { border: '2px solid white' }
-								: { border: '2px solid black' }
-							: {}
+				<NavLink
+					to='/article-library'
+					className={({ isActive }) =>
+						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
 					<span className={classes[`${mainClass}Article`]}>
 						<Article className={classes.icon} />
 					</span>
-				</div>
+				</NavLink>
 
-				<div
-					onClick={() => {
-						navigate('/viral-library');
-					}}
-					className={classes.iconWrapper}
-					style={
-						location?.pathname.includes('viral-library')
-							? mainClass === 'staging' || mainClass === 'prod'
-								? { border: '2px solid white' }
-								: { border: '2px solid black' }
-							: {}
+				<NavLink
+					to='/viral-library'
+					className={({ isActive }) =>
+						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
 					<Viral className={classes.icon} />
-				</div>
+				</NavLink>
 
-				<div
-					onClick={() => {
-						navigate('/games-library');
-					}}
-					className={classes.iconWrapper}
-					style={
-						location?.pathname.includes('games-library')
-							? mainClass === 'staging' || mainClass === 'prod'
-								? { border: '2px solid white' }
-								: { border: '2px solid black' }
-							: {}
+				<NavLink
+					to='/games-library'
+					className={({ isActive }) =>
+						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
 					<Games className={classes.icon} />
-				</div>
+				</NavLink>
 
 				{/* <div
-					onClick={() => {
-						navigate('/post-library');
-					}}
-					className={classes.iconWrapper}
-					style={
-						location?.pathname.includes('post-library')
-							? { backgroundColor: '#404040' }
-							: {}
+					to='/post-library'
+					className={({ isActive }) =>
+						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
-					{location?.pathname.includes('post-library') ? (
-						<ShareSelected className={classes.icon} />
-					) : (
-						<Share className={classes.icon} />
-					)}
+					<Share className={classes.icon} />
 				</div> */}
 			</div>
 
