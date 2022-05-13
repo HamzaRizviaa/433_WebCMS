@@ -7,7 +7,7 @@ export const useStyles = makeStyles(() => ({
 		backgroundColor: theme.palette.blackColor,
 		height: ' calc(100vh - 6rem)',
 		width: '5rem',
-		borderRight: `1.5px solid ${theme.palette.grey}`,
+		borderRight: `1.5px solid ${theme.palette.black}`,
 		display: 'flex',
 		flexDirection: 'column',
 		justifyContent: 'space-between',
@@ -30,7 +30,8 @@ export const useStyles = makeStyles(() => ({
 	icon: {
 		width: ' 2.5rem'
 	},
-	logoContainer: {},
+	logoContainer: { textAlign: 'center' },
+
 	logo: {
 		width: '3.5rem',
 		height: 'auto'
@@ -41,12 +42,45 @@ export const useStyles = makeStyles(() => ({
 		cursor: 'pointer'
 	},
 
+	mainText: {
+		fontFamily: 'Poppins',
+		fontStyle: 'normal',
+		fontWeight: 900,
+		fontSize: '12px',
+		lineHeight: '18px',
+		marginTop: '8px',
+		textAlign: 'center',
+		textTransform: 'uppercase',
+		color: `${theme.palette.black} !important`
+	},
+	mainActiveRoute: {
+		border: `2px solid ${theme.palette.black}`,
+		backgroundColor: theme.palette.grey,
+		marginTop: '2.5rem',
+		padding: '1rem 1.2rem 0.8rem 1.2rem',
+		borderRadius: '8px',
+		cursor: 'pointer',
+		'& svg': {
+			'& path': {
+				fill: theme.palette.neonYellow
+			},
+			'& circle': {
+				stroke: theme.palette.neonYellow
+			}
+		},
+		'& .icon': {
+			width: ' 2.5rem'
+		}
+	},
+	gamesIcon: {
+		padding: '6px 0'
+	},
 	// ------------- dev
 	dev: {
 		backgroundColor: theme.palette.neonYellow,
 		height: ' calc(100vh - 6rem)',
 		width: '5rem',
-		borderRight: `1.5px solid ${theme.palette.grey}`,
+		borderRight: `1.5px solid ${theme.palette.black}`,
 		display: 'flex',
 		flexDirection: 'column',
 		justifyContent: 'space-between',
@@ -84,23 +118,43 @@ export const useStyles = makeStyles(() => ({
 			}
 		}
 	},
+	devText: {
+		fontFamily: 'Poppins',
+		fontStyle: 'normal',
+		fontWeight: 900,
+		fontSize: '12px',
+		lineHeight: '18px',
+		marginTop: '8px',
+		textAlign: 'center',
+		textTransform: 'uppercase',
+		color: `${theme.palette.black} !important`
+	},
+	devActiveRoute: {
+		border: `2px solid ${theme.palette.black}`,
+		marginTop: '2.5rem',
+		padding: '1rem 1.2rem 0.8rem 1.2rem',
+		borderRadius: '8px',
+		cursor: 'pointer'
+	},
 
 	// ------------- staging
 	staging: {
-		backgroundColor: theme.palette.red,
+		backgroundColor: theme.palette.orange,
 		height: ' calc(100vh - 6rem)',
 		width: '5rem',
-		borderRight: `1.5px dashed ${theme.palette.grey}`,
+		borderRight: `1.5px solid ${theme.palette.black}`,
 		display: 'flex',
 		flexDirection: 'column',
 		justifyContent: 'space-between',
 		padding: '3rem 1rem',
 		'& .iconWrapperDev': {
-			backgroundColor: theme.palette.orange,
 			marginTop: '2.5rem',
 			padding: '1rem 1.2rem 0.8rem 1.2rem',
 			borderRadius: '8px',
 			cursor: 'pointer'
+		},
+		'& .activeRoute': {
+			border: `2px solid ${theme.palette.white}`
 		},
 		'& svg': {
 			'& path': {
@@ -114,7 +168,7 @@ export const useStyles = makeStyles(() => ({
 			width: ' 2.5rem'
 		}
 	},
-	stagingMainArticle: {
+	stagingArticle: {
 		'& svg': {
 			'& path': {
 				fill: 'none !important',
@@ -125,7 +179,7 @@ export const useStyles = makeStyles(() => ({
 			}
 		}
 	},
-	text: {
+	stagingText: {
 		fontFamily: 'Poppins',
 		fontStyle: 'normal',
 		fontWeight: 900,
@@ -134,8 +188,89 @@ export const useStyles = makeStyles(() => ({
 		marginTop: '8px',
 		textAlign: 'center',
 		textTransform: 'uppercase',
-		color: `${theme.palette.black} !important`
+		color: `${theme.palette.white} !important`
+	},
+	stagingActiveRoute: {
+		border: `2px solid ${theme.palette.white}`,
+		marginTop: '2.5rem',
+		padding: '1rem 1.2rem 0.8rem 1.2rem',
+		borderRadius: '8px',
+		cursor: 'pointer'
 	},
 
-	prod: {}
+	// ------------- production
+	prod: {
+		backgroundColor: theme.palette.black,
+		height: ' calc(100vh - 6rem)',
+		width: '5rem',
+		borderRight: `1.5px solid ${theme.palette.grey}`,
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'space-between',
+		padding: '3rem 1rem',
+		'& .iconWrapperDev': {
+			marginTop: '2.5rem',
+			padding: '1rem 1.2rem 0.8rem 1.2rem',
+			borderRadius: '8px',
+			cursor: 'pointer'
+		},
+		'& > svg': {
+			'& path': {
+				fill: 'white'
+			},
+			'& circle': {
+				stroke: 'white'
+			}
+		},
+		'& .icon': {
+			width: ' 2.5rem'
+		}
+	},
+	// prodArticle: {
+	// 	'& svg': {
+	// 		'& path': {
+	// 			fill: 'none !important',
+	// 			stroke: ({ mainClass }) =>
+	// 				mainClass === 'prod' ? theme.palette.neonYellow : theme.palette.white
+	// 		},
+	// 		'& circle': {
+	// 			stroke: 'white'
+	// 		}
+	// 	}
+	// },
+	prodText: {
+		fontFamily: 'Poppins',
+		fontStyle: 'normal',
+		fontWeight: 900,
+		fontSize: '12px',
+		lineHeight: '18px',
+		marginTop: '8px',
+		textAlign: 'center',
+		textTransform: 'uppercase',
+		color: `${theme.palette.white} !important`
+	},
+	prodActiveRoute: {
+		backgroundColor: theme.palette.grey,
+		marginTop: '2.5rem',
+		padding: '1rem 1.2rem 0.8rem 1.2rem',
+		borderRadius: '8px',
+		cursor: 'pointer',
+		'& svg ': {
+			'& path': {
+				fill: theme.palette.neonYellow,
+				stroke: theme.palette.neonYellow
+			},
+			'& circle': {
+				stroke: theme.palette.neonYellow
+			}
+		},
+		'& > span > svg ': {
+			'& path': {
+				fill: 'none !important'
+			}
+		},
+		'& .icon': {
+			width: ' 2.5rem'
+		}
+	}
 }));
