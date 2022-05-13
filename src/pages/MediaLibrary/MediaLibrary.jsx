@@ -25,7 +25,7 @@ import Table from '../../components/table';
 
 // CSS / Material UI
 import 'react-datepicker/dist/react-datepicker.css';
-import classes from './_mediaLibrary.module.scss';
+// import classes from './_mediaLibrary.module.scss';
 import Pagination from '@mui/material/Pagination';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
@@ -36,11 +36,13 @@ import '../PostLibrary/_calender.scss';
 // Utils
 import { getDateTime, formatDate, getCalendarText } from '../../utils';
 import { useStyles, useStyles2 } from './../../utils/styles';
+import { useStyles as globalUseStyles } from '../../styles/global.style';
 
 // Icons
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
+import DefaultImage from '../../assets/defaultImage.png';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
@@ -48,7 +50,7 @@ import LoadingOverlay from 'react-loading-overlay';
 const MediaLibrary = () => {
 	const muiClasses = useStyles();
 	const muiClasses2 = useStyles2();
-
+	const classes = globalUseStyles();
 	// Selctor
 	const media = useSelector((state) => state.mediaLibraryOriginal.media);
 
@@ -78,6 +80,7 @@ const MediaLibrary = () => {
 	const [noResultCalendarError, setNoResultCalendarError] = useState('');
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
+	const [rowStatus, setrowStatus] = useState(''); //status PUBLISHED DRAFT to pass in UPLOADOREDITMEDIA
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -102,6 +105,7 @@ const MediaLibrary = () => {
 		post_date: 'postdate',
 		labels: 'label',
 		user: 'user',
+		status: 'status',
 		last_edit: 'lastedit',
 		type: 'type'
 	};
@@ -259,7 +263,9 @@ const MediaLibrary = () => {
 						left:
 							col?.dataField === 'type' ||
 							col?.dataField === 'post_date' ||
-							col?.dataField === 'labels'
+							col?.dataField === 'labels' ||
+							col?.dataField === 'status' ||
+							col?.dataField === 'last_edit'
 								? 30
 								: -4,
 						bottom: 0.5
@@ -274,7 +280,9 @@ const MediaLibrary = () => {
 						left:
 							col?.dataField === 'type' ||
 							col?.dataField === 'post_date' ||
-							col?.dataField === 'labels'
+							col?.dataField === 'labels' ||
+							col?.dataField === 'status' ||
+							col?.dataField === 'last_edit'
 								? 30
 								: -4,
 						bottom: 0.5
@@ -289,7 +297,9 @@ const MediaLibrary = () => {
 						left:
 							col?.dataField === 'type' ||
 							col?.dataField === 'post_date' ||
-							col?.dataField === 'labels'
+							col?.dataField === 'labels' ||
+							col?.dataField === 'status' ||
+							col?.dataField === 'last_edit'
 								? 30
 								: -4,
 						bottom: 0.5
@@ -308,7 +318,7 @@ const MediaLibrary = () => {
 			sortFunc: () => {},
 			formatter: (content) => {
 				return (
-					<div className={classes.row}>
+					<div className={classes.mediaRow}>
 						<Markup content={`${content} `} />
 					</div>
 				);
@@ -322,7 +332,7 @@ const MediaLibrary = () => {
 			sortFunc: () => {},
 			formatter: (content, row) => {
 				return (
-					<div className={classes.mediaWrapper}>
+					<div className={classes.mediaMediaWrapper}>
 						{/* <Tooltip
 							// TransitionComponent={Fade}
 							// TransitionProps={{ timeout: 600 }}
@@ -358,15 +368,13 @@ const MediaLibrary = () => {
 											: row.height > row.width + 200
 											? classes.mediaIconPortraitPreview
 											: classes.mediaIconPreview
-										// row.width === row.height
-										// 	? classes.mediaIconPreview
-										// 	: row.width > row.height
-										// 	? classes.virallandscapePreview
-										// 	: classes.mediaIconPortraitPreview
 									}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
 										row?.thumbnail_url ? row?.thumbnail_url : row?.media
 									}`}
+									onError={(e) => (
+										(e.target.onerror = null), (e.target.src = DefaultImage)
+									)}
 									alt='no img'
 								/>
 							}
@@ -383,8 +391,11 @@ const MediaLibrary = () => {
 								)} */}
 								{/* <PlayArrowIcon className={classes.playIcon} /> */}
 								<img
-									className={classes.mediaIcon}
+									className={classes.mediaMediaIcon}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.thumbnail_url}`}
+									onError={(e) => (
+										(e.target.onerror = null), (e.target.src = DefaultImage)
+									)}
 								/>
 							</span>
 						</Tooltip>
@@ -398,12 +409,15 @@ const MediaLibrary = () => {
 							}
 							arrow
 							componentsProps={{
-								tooltip: { className: classes.toolTip },
-								arrow: { className: classes.toolTipArrow }
+								tooltip: { className: classes.libraryToolTip },
+								arrow: { className: classes.libraryToolTipArrow }
 							}}
 						>
 							<div>
-								<Markup className={classes.fileName} content={row?.file_name} />
+								<Markup
+									className={classes.mediaFileName}
+									content={row?.file_name}
+								/>
 							</div>
 						</Tooltip>
 					</div>
@@ -471,8 +485,29 @@ const MediaLibrary = () => {
 			formatter: (content) => {
 				return (
 					// <div className={classes.row}>{content}</div>
-					<Markup className={classes.row} content={`${content}`} />
+					<Markup className={classes.mediaRow} content={`${content}`} />
 				);
+			}
+		},
+		{
+			dataField: 'status',
+			sort: true,
+			sortCaret: sortRows,
+			sortFunc: () => {},
+			text: 'STATUS',
+			formatter: (content) => {
+				return (
+					<div className={`${classes.publish_draft_btn}`}>
+						<Button
+							onClick={() => {}}
+							text={content == 'published' ? 'PUBLISHED' : 'DRAFT'}
+							published={content == 'published' ? true : false}
+						/>
+					</div>
+				);
+			},
+			headerStyle: () => {
+				return { paddingLeft: '48px' };
 			}
 		},
 		{
@@ -482,7 +517,10 @@ const MediaLibrary = () => {
 			sortFunc: () => {},
 			text: 'LAST EDIT',
 			formatter: (content) => {
-				return <div className={classes.row}>{getDateTime(content)}</div>;
+				return <div className={classes.rowType}>{getDateTime(content)}</div>;
+			},
+			headerStyle: () => {
+				return { paddingLeft: '48px' };
 			}
 		},
 		{
@@ -490,15 +528,15 @@ const MediaLibrary = () => {
 			text: 'OPTIONS',
 			formatter: () => {
 				return (
-					<div className={classes.row}>
+					<div className={classes.mediaRow}>
 						<Tooltip
 							TransitionComponent={Fade}
 							TransitionProps={{ timeout: 600 }}
 							title={'EDIT MEDIA'}
 							arrow
 							componentsProps={{
-								tooltip: { className: classes.toolTip },
-								arrow: { className: classes.toolTipArrow }
+								tooltip: { className: classes.libraryToolTip },
+								arrow: { className: classes.libraryToolTipArrow }
 							}}
 						>
 							<Edit className={classes.editIcon} />
@@ -512,6 +550,7 @@ const MediaLibrary = () => {
 	const tableRowEvents = {
 		onClick: (e, row) => {
 			dispatch(getSpecificMedia(row.id));
+			setrowStatus(row.status);
 			setEdit(true);
 			setShowSlider(true);
 		}
@@ -566,7 +605,11 @@ const MediaLibrary = () => {
 			active={mediaApiStatus.status === 'pending' ? true : false}
 			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
 			spinner={
-				<img src={Four33Loader} className={classes.loader} alt='loader' />
+				<img
+					src={Four33Loader}
+					className={classes.libraryLoader}
+					alt='loader'
+				/>
 			}
 		>
 			<Layout>
@@ -688,7 +731,10 @@ const MediaLibrary = () => {
 					page={page}
 					title={edit ? 'Edit Media' : 'Upload Media'}
 					heading1={edit ? 'Media Type' : 'Select Media Type'}
-					buttonText={edit ? 'SAVE CHANGES' : 'ADD MEDIA'}
+					buttonText={
+						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
+					}
+					status={rowStatus}
 				/>
 			</Layout>
 		</LoadingOverlay>

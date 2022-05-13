@@ -8,18 +8,18 @@
 .header {
 	display: flex;
 	justify-content: space-between;
-}
+} //
 
 .subheader1 {
 	display: flex;
 	justify-content: flex-start;
-}
+} //
 
 .subheader2 {
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
-}
+} //
 
 .calendarWrapper {
 	margin-left: 10px;
@@ -28,7 +28,7 @@
 		top: 0.5px !important;
 		right: 30px !important;
 	}
-}
+} //
 // date
 .customDateInput {
 	border: 0;
@@ -60,7 +60,7 @@
 
 .searchField {
 	width: 271px;
-}
+} //
 
 .textFieldInput {
 	color: white !important;
@@ -72,12 +72,12 @@
 	font-family: Poppins !important;
 	//margin-bottom: 1rem;
 	background-color: #000000;
-}
+} //
 
 .searchIcon {
 	cursor: pointer;
 	margin-right: 8;
-}
+} //
 
 .noResultError {
 	color: #ff355a;
@@ -93,7 +93,7 @@
 	bottom: -2px;
 	height: 2rem !important;
 	width: 2rem !important;
-}
+} //
 
 .sortIconSelected {
 	position: absolute;
@@ -102,18 +102,18 @@
 	height: 2rem !important;
 	width: 2rem !important;
 	color: $neon-yellow;
-}
+} //
 
 .row {
 	margin-bottom: 1.5rem;
 	font-size: 1.2rem;
-}
+} //
 
 .rowType {
 	margin-bottom: 1.5rem;
 	font-size: 1.2rem;
 	padding-left: 30px;
-}
+} //
 
 .active_closed_btn {
 	padding-left: 30px;
@@ -121,7 +121,7 @@
 	font-size: 1.2rem;
 	width: 90px;
 	height: 24px;
-}
+} //
 
 .editIcon {
 	width: 2.5rem;

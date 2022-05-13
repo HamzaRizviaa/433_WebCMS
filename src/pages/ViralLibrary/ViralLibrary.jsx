@@ -4,7 +4,7 @@
 import React, { useState, useEffect, forwardRef, useRef } from 'react';
 import Layout from '../../components/layout';
 import Table from '../../components/table';
-import classes from './_viralLibrary.module.scss';
+// import classes from './_viralLibrary.module.scss';
 import Button from '../../components/button';
 import UploadOrEditViral from '../../components/virals/uploadOrEditViral';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -35,6 +35,7 @@ import {
 } from './viralLibararySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
+import { useStyles as globalUseStyles } from '../../styles/global.style';
 const ViralLibrary = () => {
 	// Selectors
 	const virals = useSelector((state) => state.ViralLibraryStore.virals);
@@ -51,6 +52,7 @@ const ViralLibrary = () => {
 	);
 
 	const muiClasses = useStyles();
+	const classes = globalUseStyles();
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
@@ -212,7 +214,6 @@ const ViralLibrary = () => {
 								  classes.mediaWrapper
 						}
 					>
-						{console.log(row, 'row')}
 						<Tooltip
 							// TransitionComponent={Fade}
 							// TransitionProps={{ timeout: 600 }}
@@ -266,7 +267,7 @@ const ViralLibrary = () => {
 								)} */}
 
 								{row?.thumbnail_url && (
-									<PlayArrowIcon className={classes.playIcon} />
+									<PlayArrowIcon className={classes.libraryPlayIcon} />
 								)}
 								<img
 									className={classes.mediaIcon}
@@ -289,12 +290,15 @@ const ViralLibrary = () => {
 							}
 							arrow
 							componentsProps={{
-								tooltip: { className: classes.toolTip },
-								arrow: { className: classes.toolTipArrow }
+								tooltip: { className: classes.libraryToolTip },
+								arrow: { className: classes.libraryToolTipArrow }
 							}}
 						>
-							<div ref={fileNameRef} className={classes.fileName}>
-								<Markup className={classes.fileName} content={row.file_name} />
+							<div ref={fileNameRef} className={classes.viralFileName}>
+								<Markup
+									className={classes.viralFileName}
+									content={row.file_name}
+								/>
 							</div>
 						</Tooltip>
 					</div>
@@ -308,7 +312,7 @@ const ViralLibrary = () => {
 			sortFunc: () => {},
 			text: 'POST DATE | TIME',
 			formatter: (content) => {
-				return <div className={classes.row}>{getDateTime(content)}</div>;
+				return <div className={classes.viralRow}>{getDateTime(content)}</div>;
 			}
 		},
 		{
@@ -324,7 +328,7 @@ const ViralLibrary = () => {
 					// 	{`${content[0]} ${secondLabel}`}
 					// </div>
 					<Markup
-						className={classes.row}
+						className={classes.viralRow}
 						content={`${content[0]} ${secondLabel}`}
 					/>
 				);
@@ -337,7 +341,7 @@ const ViralLibrary = () => {
 			sortFunc: () => {},
 			text: 'USER',
 			formatter: (content) => {
-				return <Markup className={classes.row} content={`${content}`} />;
+				return <Markup className={classes.viralRow} content={`${content}`} />;
 			},
 			headerStyle: () => {
 				return { paddingLeft: '30px' };
@@ -350,7 +354,7 @@ const ViralLibrary = () => {
 			sortFunc: () => {},
 			text: 'LAST EDIT',
 			formatter: (content) => {
-				return <div className={classes.row}>{getDateTime(content)}</div>;
+				return <div className={classes.viralRow}>{getDateTime(content)}</div>;
 			},
 			headerStyle: () => {
 				return { paddingLeft: '30px' };
@@ -361,15 +365,15 @@ const ViralLibrary = () => {
 			text: 'OPTIONS',
 			formatter: () => {
 				return (
-					<div className={classes.row}>
+					<div className={classes.viralRow}>
 						<Tooltip
 							TransitionComponent={Fade}
 							TransitionProps={{ timeout: 600 }}
 							title={'EDIT VIRAL'}
 							arrow
 							componentsProps={{
-								tooltip: { className: classes.toolTip },
-								arrow: { className: classes.toolTipArrow }
+								tooltip: { className: classes.libraryToolTip },
+								arrow: { className: classes.libraryToolTipArrow }
 							}}
 						>
 							<Edit className={classes.editIcon} />
@@ -485,7 +489,11 @@ const ViralLibrary = () => {
 			active={viralsApiStatus.status === 'pending' ? true : false}
 			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
 			spinner={
-				<img src={Four33Loader} className={classes.loader} alt='loader' />
+				<img
+					src={Four33Loader}
+					className={classes.libraryLoader}
+					alt='loader'
+				/>
 			}
 		>
 			<Layout>

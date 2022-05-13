@@ -5,7 +5,7 @@ import React, { useState, useEffect, useCallback, forwardRef } from 'react';
 import Layout from '../../components/layout';
 import _debounce from 'lodash/debounce';
 import Table from '../../components/table';
-import classes from './_questionLibrary.module.scss';
+// import classes from './_questionLibrary.module.scss';
 import Button from '../../components/button';
 import UploadQuiz from '../../components/quizzes/uploadOrEditQuiz/UploadQuiz';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -32,6 +32,7 @@ import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import { useNavigate } from 'react-router-dom';
 import { Markup } from 'interweave';
+import { useStyles as globalUseStyles } from '../../styles/global.style';
 // import './_calender.scss';
 import {
 	getQuestions,
@@ -60,6 +61,7 @@ const QuestionLibrary = () => {
 	);
 
 	const muiClasses = useStyles();
+	const classes = globalUseStyles();
 	const [showSlider, setShowSlider] = useState(false);
 	const [showQuizSlider, setShowQuizSlider] = useState(false);
 	const [showPollSlider, setShowPollSlider] = useState(false);
@@ -224,7 +226,7 @@ const QuestionLibrary = () => {
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			formatter: (content) => {
-				return <div className={classes.row}>{content}</div>;
+				return <div className={classes.questionRow}>{content}</div>;
 			}
 		},
 		{
@@ -235,7 +237,7 @@ const QuestionLibrary = () => {
 			text: 'QUESTION TYPE',
 			formatter: (content) => {
 				return (
-					<div className={classes.row} style={{ paddingLeft: '18px' }}>
+					<div className={classes.questionRow} style={{ paddingLeft: '18px' }}>
 						{content}
 					</div>
 				);
@@ -251,7 +253,9 @@ const QuestionLibrary = () => {
 			sortFunc: () => {},
 			text: 'POST DATE | TIME',
 			formatter: (content) => {
-				return <div className={classes.rowType}>{getDateTime(content)}</div>;
+				return (
+					<div className={classes.questionRowType}>{getDateTime(content)}</div>
+				);
 			},
 			headerStyle: () => {
 				return { paddingLeft: '48px' };
@@ -265,7 +269,9 @@ const QuestionLibrary = () => {
 			text: 'END DATE | TIME',
 			formatter: (content) => {
 				return (
-					<div className={classes.rowType}>{getDateConstantTime(content)}</div>
+					<div className={classes.questionRowType}>
+						{getDateConstantTime(content)}
+					</div>
 				);
 			},
 			headerStyle: () => {
@@ -281,10 +287,10 @@ const QuestionLibrary = () => {
 			formatter: (content) => {
 				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
 				return (
-					// <div className={classes.rowType}>
+					// <div className={classes.questionRowType}>
 					// 	{content[0] + `, ` + content[1]}
 					// </div>
-					<div className={classes.rowType}>
+					<div className={classes.questionRowType}>
 						<Markup content={`${content[0]} ${secondLabel}`} />
 					</div>
 				);
@@ -323,8 +329,8 @@ const QuestionLibrary = () => {
 			text: 'PARTICIPANTS',
 			formatter: (content) => {
 				return (
-					<div className={classes.row}>{content}</div>
-					// <Markup className={classes.row} content={`${content}`} />
+					<div className={classes.questionRow}>{content}</div>
+					// <Markup className={classes.questionRow} content={`${content}`} />
 				);
 			}
 		},
@@ -336,8 +342,8 @@ const QuestionLibrary = () => {
 			text: 'USER',
 			formatter: (content) => {
 				return (
-					<div className={classes.row}>{content}</div>
-					// <Markup className={classes.row} content={`${content}`} />
+					<div className={classes.questionRow}>{content}</div>
+					// <Markup className={classes.questionRow} content={`${content}`} />
 				);
 			}
 		},
@@ -346,15 +352,15 @@ const QuestionLibrary = () => {
 			text: 'OPTIONS',
 			formatter: () => {
 				return (
-					<div className={classes.row}>
+					<div className={classes.questionRow}>
 						<Tooltip
 							TransitionComponent={Fade}
 							TransitionProps={{ timeout: 600 }}
 							title={'QUIZ DETAIL'}
 							arrow
 							componentsProps={{
-								tooltip: { className: classes.toolTip },
-								arrow: { className: classes.toolTipArrow }
+								tooltip: { className: classes.libraryToolTip },
+								arrow: { className: classes.libraryToolTipArrow }
 							}}
 						>
 							<Edit className={classes.editIcon} />
@@ -509,7 +515,11 @@ const QuestionLibrary = () => {
 			active={statusQuestionApi.status === 'pending' ? true : false}
 			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
 			spinner={
-				<img src={Four33Loader} className={classes.loader} alt='loader' />
+				<img
+					src={Four33Loader}
+					className={classes.libraryLoader}
+					alt='loader'
+				/>
 			}
 		>
 			<Layout>

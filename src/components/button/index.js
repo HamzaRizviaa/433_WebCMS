@@ -6,9 +6,13 @@ const Button = ({
 	text,
 	onClick,
 	disabled,
+	disabledDraft,
 	button2,
+	button2AddSave,
+	button3,
 	style = {},
 	active,
+	published,
 	bannerdisabled
 }) => {
 	return (
@@ -17,11 +21,19 @@ const Button = ({
 				onClick();
 			}}
 			style={style}
-			className={`${classes.button}  ${disabled ? classes.disabled : ''} ${
-				button2 ? classes.button2 : ''
-			} ${active === true && classes.activebtn} ${
-				active === false && classes.closedbtn
-			} ${bannerdisabled && classes.disabled}`}
+			className={[
+				classes.button,
+				disabled ? classes.disabled : '',
+				disabledDraft ? classes.disabledDraft : '',
+				button2 ? classes.button2 : '',
+				button3 ? classes.button3 : '',
+				button2AddSave ? classes.button2AddSave : '',
+				active ? classes.activebtn : '',
+				active === false ? classes.closedbtn : '',
+				bannerdisabled && classes.disabled,
+				published ? classes.publishedBtn : '',
+				published === false && classes.draftBtn
+			].join(' ')}
 		>
 			{text}
 		</span>
@@ -32,9 +44,13 @@ Button.propTypes = {
 	text: PropTypes.string.isRequired,
 	onClick: PropTypes.func.isRequired,
 	disabled: PropTypes.bool,
+	disabledDraft: PropTypes.bool,
 	button2: PropTypes.bool,
+	button2AddSave: PropTypes.bool,
+	button3: PropTypes.bool,
 	style: PropTypes.object,
 	active: PropTypes.bool,
+	published: PropTypes.bool,
 	bannerdisabled: PropTypes.bool
 };
 

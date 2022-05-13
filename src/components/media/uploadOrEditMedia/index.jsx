@@ -1,5 +1,6 @@
+/* eslint-disable no-debugger */
 import React, { useState, useEffect, useRef } from 'react';
-import classes from './_uploadOrEditMedia.module.scss';
+//import classes from './_uploadOrEditMedia.module.scss';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
 import Button from '../../button';
@@ -27,6 +28,10 @@ import Slide from '@mui/material/Slide';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 import PrimaryLoader from '../../PrimaryLoader';
 import validateForm from '../../../utils/validateForm';
+import validateDraft from '../../../utils/validateDraft';
+import { useStyles } from './index.style';
+import { useStyles as globalUseStyles } from '../../../styles/global.style';
+
 const UploadOrEditMedia = ({
 	open,
 	handleClose,
@@ -34,23 +39,24 @@ const UploadOrEditMedia = ({
 	heading1,
 	buttonText,
 	isEdit,
-	page
+	page,
+	status
 }) => {
 	const [mediaLabels, setMediaLabels] = useState([]);
 	const [subCategories, setSubCategories] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
-	const [subCategoryLabelColor, setSubCategoryLabelColor] = useState('#ffffff');
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [previewBool, setPreviewBool] = useState(false);
 	const [isLoadingUploadMedia, setIsLoadingUploadMedia] = useState(false);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
-	const [fileWidth, setFileWidth] = useState(null);
-	const [fileHeight, setFileHeight] = useState(null);
-	const [fileDuration, setFileDuration] = useState(null);
+	const [fileWidth, setFileWidth] = useState(0);
+	const [fileHeight, setFileHeight] = useState(0);
+	const [fileDuration, setFileDuration] = useState(0);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
+	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
@@ -68,6 +74,9 @@ const UploadOrEditMedia = ({
 		uploadedCoverImage: []
 	});
 
+	const classes = useStyles();
+	const globalClasses = globalUseStyles();
+
 	const specificMedia = useSelector(
 		(state) => state.mediaLibraryOriginal.specificMedia
 	);
@@ -82,8 +91,7 @@ const UploadOrEditMedia = ({
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${
-				form.mainCategory?.name === 'Watch' ||
-				specificMedia?.media_type === 'Watch'
+				form.mainCategory?.name === 'Watch' || form.mainCategory === 'Watch'
 					? 'video/mp4'
 					: 'audio/mp3, audio/mpeg'
 			}`,
@@ -116,9 +124,10 @@ const UploadOrEditMedia = ({
 		if (specificMedia) {
 			if (specificMedia?.labels) {
 				let _labels = [];
-				specificMedia.labels.map((label) =>
-					_labels.push({ id: -1, name: label })
-				);
+				specificMedia.labels.map((label) => {
+					//let labelId = labels.find((l) => l.name === label)?.id;
+					return _labels.push({ id: -1, name: label });
+				});
 
 				setForm((prev) => {
 					return {
@@ -135,24 +144,34 @@ const UploadOrEditMedia = ({
 					description: specificMedia?.description,
 					media_dropbox_url: specificMedia?.media_dropbox_url,
 					image_dropbox_url: specificMedia?.image_dropbox_url,
-					mainCategory: specificMedia?.media_type,
-					subCategory: specificMedia?.sub_category,
-					uploadedFiles: [
-						{
-							id: makeid(10),
-							file_name: specificMedia?.file_name_media,
-							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.media_url}`,
-							type: specificMedia?.media_type === 'Watch' ? 'video' : 'audio'
-						}
-					],
-					uploadedCoverImage: [
-						{
-							id: makeid(10),
-							file_name: specificMedia?.file_name_image,
-							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`,
-							type: 'image'
-						}
-					]
+					mainCategory: specificMedia.media_type,
+					subCategory: specificMedia.sub_category,
+
+					uploadedFiles: specificMedia?.media_url
+						? [
+								{
+									id: makeid(10),
+									file_name: specificMedia?.file_name_media,
+									media_url: specificMedia?.media_url
+										? `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.media_url}`
+										: '',
+									type:
+										specificMedia?.media_type === 'Watch' ? 'video' : 'audio'
+								}
+						  ]
+						: [],
+					uploadedCoverImage: specificMedia?.cover_image
+						? [
+								{
+									id: makeid(10),
+									file_name: specificMedia?.file_name_image,
+									media_url: specificMedia?.cover_image
+										? `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`
+										: '',
+									type: 'image'
+								}
+						  ]
+						: []
 				};
 			});
 		}
@@ -201,6 +220,14 @@ const UploadOrEditMedia = ({
 	useEffect(() => {
 		if (form.mainCategory && !isEdit) {
 			updateSubCategories(form.mainCategory);
+		} else if (form.mainCategory?.name && isEdit) {
+			let setData = mainCategories.find(
+				(u) => u.name === form.mainCategory?.name
+			);
+			updateSubCategories(setData);
+		} else {
+			let setData = mainCategories.find((u) => u.name === form.mainCategory);
+			updateSubCategories(setData);
 		}
 	}, [form.mainCategory]);
 
@@ -256,7 +283,7 @@ const UploadOrEditMedia = ({
 		if (acceptedFiles?.length) {
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
-				console.log(file, 'file video');
+
 				return {
 					id: id,
 					file_name: file.name,
@@ -304,7 +331,6 @@ const UploadOrEditMedia = ({
 
 	const resetState = () => {
 		setFileRejectionError2('');
-		setSubCategoryLabelColor('#ffffff');
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
@@ -313,7 +339,11 @@ const UploadOrEditMedia = ({
 		setPreviewBool(false);
 		setExtraLabel('');
 		setDisableDropdown(true);
+		setFileWidth(0);
+		setFileHeight(0);
+		setFileDuration(0);
 		setEditBtnDisabled(false);
+		setDraftBtnDisabled(false);
 		setIsError({});
 		setForm({
 			title: '',
@@ -354,7 +384,9 @@ const UploadOrEditMedia = ({
 			selectedLabels: form.labels.length < 7,
 			uploadedCoverImage: form.uploadedCoverImage.length < 1,
 			mainCategory: !form.mainCategory,
-			subCategory: !form.subCategory.name,
+			subCategory: form?.subCategory?.name
+				? !form?.subCategory?.name
+				: !form?.subCategory,
 			titleMedia: !form.title && { message: 'You need to enter a Title' },
 			description: !form.description
 		});
@@ -364,13 +396,43 @@ const UploadOrEditMedia = ({
 		}, 5000);
 	};
 
-	const deleteMedia = async (id) => {
+	const validateDraftBtn = () => {
+		if (isEdit) {
+			setIsError({
+				draftError: draftBtnDisabled,
+				subCategory: form?.subCategory?.name
+					? !form?.subCategory?.name
+					: !form?.subCategory
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		} else {
+			setIsError({
+				uploadedFiles: form.uploadedFiles.length < 1,
+				selectedLabelsDraft: form.labels.length < 1,
+				uploadedCoverImage: form.uploadedCoverImage.length < 1,
+				titleMedia: !form.title && { message: 'You need to enter a Title' },
+				description: !form.description,
+				mainCategory: !form?.mainCategory,
+				subCategory: !form?.subCategory.name
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		}
+	};
+
+	const deleteMedia = async (id, isDraft) => {
 		setDeleteBtnStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media/delete-media`,
 				{
-					media_id: id
+					media_id: id,
+					is_draft: isDraft
 				},
 				{
 					headers: {
@@ -403,7 +465,6 @@ const UploadOrEditMedia = ({
 	};
 
 	const uploadMedia = async (id, payload) => {
-		console.log(payload, 'payload');
 		let media_type = form.mainCategory?.id;
 		// setMediaButtonStatus(true);
 		try {
@@ -415,6 +476,7 @@ const UploadOrEditMedia = ({
 							main_category_id: media_type,
 							sub_category_id: form.subCategory?.id,
 							duration: Math.round(fileDuration),
+							save_draft: false,
 							width: fileWidth,
 							height: fileHeight,
 							title: form.title,
@@ -447,7 +509,11 @@ const UploadOrEditMedia = ({
 			);
 			if (result?.data?.status_code === 200) {
 				toast.success(
-					isEdit ? 'Media has been updated!' : 'Media has been uploaded!'
+					isEdit
+						? 'Media has been updated!'
+						: payload?.save_draft
+						? 'Draft has been saved'
+						: 'Media has been uploaded!'
 				);
 				setIsLoadingUploadMedia(false);
 
@@ -527,6 +593,7 @@ const UploadOrEditMedia = ({
 					!form.uploadedCoverImage.length ||
 					!form.title ||
 					!form.description ||
+					form.labels.length < 7 ||
 					(specificMedia?.file_name_media ===
 						form.uploadedFiles[0]?.file_name &&
 						specificMedia?.file_name_image ===
@@ -543,23 +610,66 @@ const UploadOrEditMedia = ({
 		}
 	}, [specificMedia, form]);
 
-	const MainCategoryId = (e) => {
-		//find name and will return whole object  isEdit ? subCategory : subCategory.name
-		let setData = mainCategories.find((u) => u.name === e);
-		setForm((prev) => {
-			return { ...prev, mainCategory: setData };
+	const checkDuplicateLabel = () => {
+		let formLabels = form?.labels?.map((formL) => {
+			if (specificMedia?.labels?.includes(formL.name)) {
+				return true;
+			} else {
+				return false;
+			}
 		});
+		return formLabels.some((label) => label === false);
 	};
 
 	useEffect(() => {
-		//only empty it when its on new one , not on edit / specific media
-		if (!isEdit) {
-			// setSubCategory({ id: null, name: '' });
-			setForm((prev) => {
-				return { ...prev, subCategory: '' };
-			});
+		if (specificMedia) {
+			setDraftBtnDisabled(
+				!validateDraft(form) ||
+					!form.subCategory ||
+					((specificMedia?.media_url || form?.uploadedFiles[0]
+						? specificMedia?.file_name_media ===
+						  form?.uploadedFiles[0]?.file_name
+						: true) &&
+						(specificMedia?.cover_image || form?.uploadedCoverImage[0]
+							? specificMedia?.file_name_image ===
+							  form?.uploadedCoverImage[0]?.file_name
+							: true) &&
+						specificMedia?.media_type ===
+							(form?.mainCategory?.name || form?.mainCategory) &&
+						specificMedia?.sub_category ===
+							(form?.subCategory?.name || form?.subCategory) &&
+						specificMedia?.media_dropbox_url ===
+							form?.media_dropbox_url?.trim() &&
+						specificMedia?.image_dropbox_url ===
+							form?.image_dropbox_url?.trim() &&
+						specificMedia?.title?.replace(/\s+/g, '')?.trim() ===
+							form?.title?.replace(/\s+/g, '')?.trim() &&
+						specificMedia?.description?.replace(/\s+/g, '')?.trim() ===
+							form?.description?.replace(/\s+/g, '')?.trim() &&
+						specificMedia?.labels?.length === form?.labels?.length &&
+						!checkDuplicateLabel())
+			);
 		}
-	}, [form.mainCategory]);
+	}, [specificMedia, form]);
+
+	console.log(form, 'form');
+	const mainCategoryId = (e) => {
+		//find name and will return whole object  isEdit ? subCategory : subCategory.name
+		let setData = mainCategories.find((u) => u.name === e);
+		setForm((prev) => {
+			return { ...prev, mainCategory: setData, subCategory: '' };
+		});
+	};
+
+	// useEffect(() => {
+	// 	// //only empty it when its on new one , not on edit / specific media
+	// 	if (!isEdit) {
+	// 		// setSubCategory({ id: null, name: '' });
+	// 		setForm((prev) => {
+	// 			return { ...prev, subCategory: '' };
+	// 		});
+	// 	}
+	// }, [form.mainCategory]);
 
 	const SubCategoryId = (e) => {
 		//e -- name
@@ -570,7 +680,6 @@ const UploadOrEditMedia = ({
 		});
 	};
 	useEffect(() => {
-		console.log('form', form);
 		validateForm(form);
 	}, [form]);
 
@@ -600,13 +709,18 @@ const UploadOrEditMedia = ({
 						return;
 					}
 				}
+				let media_type = mainCategories.find(
+					(u) => u.name === form?.mainCategory
+				)?.id;
+				let subId =
+					subCategories.length &&
+					subCategories.find((u) => u.name === form?.subCategory)?.id;
 
 				let uploadFilesPromiseArray = [
 					form.uploadedFiles[0],
 					form.uploadedCoverImage[0]
 				].map(async (_file) => {
 					if (_file.file) {
-						console.log('_file', _file);
 						return await uploadFileToServer(_file, _file.type);
 					} else {
 						return _file;
@@ -672,11 +786,20 @@ const UploadOrEditMedia = ({
 								);
 							}
 						});
-						console.log(completedUpload, 'completedUpload');
 						await uploadMedia(specificMedia?.id, {
 							title: form.title,
 							description: form.description,
 							type: 'medialibrary',
+							save_draft: false,
+							main_category_id: media_type,
+							sub_category_id: subId,
+							...(form.media_dropbox_url
+								? { media_dropbox_url: form.media_dropbox_url }
+								: {}),
+							...(form.image_dropbox_url
+								? { image_dropbox_url: form.image_dropbox_url }
+								: {}),
+							...(form.labels.length ? { labels: [...form.labels] } : {}),
 							data: {
 								file_name_media: form.uploadedFiles[0].file_name,
 								file_name_image: form.uploadedCoverImage[0].file_name,
@@ -781,6 +904,314 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	const saveDraftBtn = async () => {
+		if (!validateDraft(form) || draftBtnDisabled) {
+			validateDraftBtn();
+		} else {
+			setIsLoadingUploadMedia(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+
+			if (isEdit) {
+				let uploadedFile;
+				let uploadedCoverImage;
+				let media_type = mainCategories.find(
+					(u) => u.name === form?.mainCategory || form?.mainCategory?.name
+				)?.id;
+				let subId =
+					subCategories.length &&
+					subCategories.find(
+						(u) => u.name === form?.subCategory || form?.subCategory?.name
+					)?.id;
+
+				if (form.uploadedFiles[0] && form?.uploadedFiles[0]?.file) {
+					let promiseFile = await uploadFileToServer(
+						form.uploadedFiles[0],
+						form.uploadedFiles[0].type
+					);
+
+					uploadedFile = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: form.uploadedFiles[0].file_name,
+							type: 'medialibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									form.uploadedFiles[0]?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag:
+														promiseFile?.signed_response?.headers?.etag.replace(
+															/['"]+/g,
+															''
+														),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: form.uploadedCoverImage[0]?.keys?.image_key || '',
+									...(form.mainCategory.name === 'Watch' ||
+									form.mainCategory === 'Watch'
+										? {
+												video_key: promiseFile?.keys?.video_key,
+												audio_key: ''
+										  }
+										: {
+												audio_key: promiseFile?.keys?.audio_key,
+												video_key: ''
+										  })
+								},
+								upload_id:
+									form.mainCategory?.name === 'Watch' ||
+									form.mainCategory === 'Watch'
+										? promiseFile?.upload_id
+										: 'audio'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
+						}
+					);
+				}
+
+				if (form.uploadedCoverImage[0] && form.uploadedCoverImage[0]?.file) {
+					// let promiseFile;
+					// if (form.uploadedCoverImage[0]?.file) {
+					// 	promiseFile = await uploadFileToServer(
+					// 		form.uploadedCoverImage[0],
+					// 		form.uploadedCoverImage[0].type
+					// 	);
+					// } else {
+					// 	return form.uploadedCoverImage[0];
+					// }
+					let promiseFile = await uploadFileToServer(
+						form.uploadedCoverImage[0],
+						form.uploadedCoverImage[0].type
+					);
+
+					uploadedCoverImage = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: form.uploadedCoverImage[0].file_name,
+							type: 'medialibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									form.uploadedCoverImage[0]?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag:
+														promiseFile?.signed_response?.headers?.etag.replace(
+															/['"]+/g,
+															''
+														),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: promiseFile?.keys?.image_key || '',
+									...(form.mainCategory.name === 'Watch' ||
+									form.mainCategory === 'Watch'
+										? {
+												video_key: promiseFile?.keys?.video_key,
+												audio_key: ''
+										  }
+										: {
+												audio_key: promiseFile?.keys?.audio_key,
+												video_key: ''
+										  })
+								},
+								upload_id:
+									form.mainCategory?.name === 'Watch' ||
+									form.mainCategory === 'Watch'
+										? promiseFile?.upload_id || 'image'
+										: 'audio'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
+						}
+					);
+				}
+
+				await uploadMedia(specificMedia?.id, {
+					save_draft: true,
+					type: 'medialibrary',
+					title: form.title,
+					description: form.description,
+					main_category_id: media_type,
+					sub_category_id: subId,
+					...(form.media_dropbox_url
+						? { media_dropbox_url: form.media_dropbox_url }
+						: {}),
+					...(form.image_dropbox_url
+						? { image_dropbox_url: form.image_dropbox_url }
+						: {}),
+					...(form.labels.length ? { labels: [...form.labels] } : {}),
+					data: {
+						...(!form.uploadedCoverImage[0] && { image_data: null }),
+						...(!form.uploadedFiles[0] && {
+							audio_data: null,
+							video_data: null
+						}),
+						...(uploadedFile &&
+							(form?.uploadedFiles[0]?.file || form?.uploadedFiles[0]) && {
+								...uploadedFile?.data?.data,
+								image_data: uploadedCoverImage?.data?.data?.image_data
+							}),
+						...(uploadedCoverImage &&
+							(form?.uploadedCoverImage[0]?.file ||
+								form?.uploadedCoverImage[0]) && {
+								...uploadedCoverImage?.data?.data,
+								audio_data: uploadedFile?.data?.data?.audio_data,
+								video_data: uploadedFile?.data?.data?.video_data
+							}),
+						file_name_image: form?.uploadedCoverImage[0]?.file_name,
+						file_name_media: form?.uploadedFiles[0]?.file_name
+					}
+				});
+			} else {
+				let uploadedFile;
+				let uploadedCoverImage;
+				if (form.uploadedFiles[0]) {
+					let promiseFile = await uploadFileToServer(
+						form.uploadedFiles[0],
+						form.uploadedFiles[0].type
+					);
+
+					uploadedFile = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: form.uploadedFiles[0].file_name,
+							type: 'medialibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									form.uploadedFiles[0]?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag:
+														promiseFile?.signed_response?.headers?.etag.replace(
+															/['"]+/g,
+															''
+														),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: '',
+									...(form.mainCategory.name === 'Watch' ||
+									specificMedia?.media_type === 'Watch'
+										? {
+												video_key: promiseFile?.keys?.video_key,
+												audio_key: ''
+										  }
+										: {
+												audio_key: promiseFile?.keys?.audio_key,
+												video_key: ''
+										  })
+								},
+								upload_id:
+									form.mainCategory?.name === 'Watch' ||
+									specificMedia?.media_type === 'Watch'
+										? promiseFile?.upload_id
+										: 'audio'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
+						}
+					);
+				}
+
+				if (form.uploadedCoverImage[0]) {
+					let promiseFile = await uploadFileToServer(
+						form.uploadedCoverImage[0],
+						form.uploadedCoverImage[0].type
+					);
+
+					uploadedCoverImage = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name: form.uploadedCoverImage[0].file_name,
+							type: 'medialibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									form.uploadedCoverImage[0]?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag:
+														promiseFile?.signed_response?.headers?.etag.replace(
+															/['"]+/g,
+															''
+														),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: promiseFile?.keys?.image_key || '',
+									video_key: '',
+									audio_key: ''
+								},
+								upload_id:
+									form.mainCategory?.name === 'Watch' ||
+									specificMedia?.media_type === 'Watch'
+										? promiseFile?.upload_id || 'image'
+										: 'audio'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
+						}
+					);
+				}
+
+				await uploadMedia(null, {
+					save_draft: true,
+					type: 'medialibrary',
+
+					data: {
+						...(uploadedFile && {
+							...uploadedFile?.data?.data,
+							image_data: uploadedCoverImage?.data?.data?.image_data
+						}),
+						...(uploadedCoverImage && {
+							...uploadedCoverImage?.data?.data,
+							audio_data: uploadedFile?.data?.data?.audio_data,
+							video_data: uploadedFile?.data?.data?.video_data
+						}),
+						file_name_media: form?.uploadedFiles[0]?.file_name,
+						file_name_image: form?.uploadedCoverImage[0]?.file_name
+						// file_name_media: form.uploadedFiles[0].file_name,
+						// file_name_image: form.uploadedCoverImage[0].file_name,
+						// ...completeUpload?.data?.data
+					}
+				});
+			}
+		}
+	};
+
 	return (
 		<Slider
 			open={open}
@@ -808,8 +1239,8 @@ const UploadOrEditMedia = ({
 						ref={loadingRef}
 						className={`${
 							previewFile != null
-								? classes.previewContentWrapper
-								: classes.contentWrapper
+								? globalClasses.previewContentWrapper
+								: globalClasses.contentWrapper
 						}`}
 					>
 						{specificMediaStatus.specificMediaStatus === 'loading' ? (
@@ -818,7 +1249,7 @@ const UploadOrEditMedia = ({
 							<></>
 						)}
 						<div
-							className={classes.contentWrapperNoPreview}
+							className={globalClasses.contentWrapperNoPreview}
 							style={{ width: previewFile != null ? '60%' : 'auto' }}
 						>
 							<div>
@@ -828,8 +1259,8 @@ const UploadOrEditMedia = ({
 										<h6
 											className={[
 												isError.mainCategory
-													? classes.errorState
-													: classes.noErrorState
+													? globalClasses.errorState
+													: globalClasses.noErrorState
 											].join(' ')}
 										>
 											MAIN CATEGORY
@@ -841,31 +1272,44 @@ const UploadOrEditMedia = ({
 											onClose={() => {
 												setDisableDropdown(true);
 											}}
-											disabled={isEdit ? true : false}
+											disabled={isEdit && status === 'published' ? true : false}
 											style={{
-												backgroundColor: isEdit ? '#404040' : '#000000'
+												backgroundColor:
+													isEdit && status === 'published'
+														? '#404040'
+														: '#000000'
 											}}
 											value={
 												isEdit ? form.mainCategory : form.mainCategory?.name
 											}
 											onChange={(e) => {
 												setDisableDropdown(true);
-												MainCategoryId(e.target.value);
+												mainCategoryId(e.target.value);
 												if (form.uploadedFiles.length) {
 													form.uploadedFiles.map((file) =>
 														handleDeleteFile(file.id)
 													);
 												}
+												if (isEdit) {
+													setForm((prev) => {
+														return { ...prev, subCategory: '' };
+													});
+												}
 											}}
 											className={`${classes.select} ${
-												isEdit ? `${classes.isEditSelect}` : ''
+												isEdit && status === 'published'
+													? `${classes.isEditSelect}`
+													: ''
 											}`}
 											disableUnderline={true}
 											IconComponent={(props) => (
 												<KeyboardArrowDownIcon
 													{...props}
 													style={{
-														display: isEdit ? 'none' : 'block',
+														display:
+															isEdit && status === 'published'
+																? 'none'
+																: 'block',
 														top: '4'
 													}}
 												/>
@@ -882,17 +1326,10 @@ const UploadOrEditMedia = ({
 												getContentAnchorEl: null
 											}}
 											displayEmpty={true}
-											renderValue={(value) =>
-												value?.length
-													? Array.isArray(value)
-														? value.join(', ')
-														: value
-													: 'Please Select'
-											}
+											renderValue={(value) => {
+												return value ? value?.name || value : 'Please Select';
+											}}
 										>
-											{/* <MenuItem disabled value=''>
-											Please Select
-										</MenuItem> */}
 											{mainCategories.map((category, index) => {
 												return (
 													<MenuItem key={index} value={category.name}>
@@ -902,7 +1339,7 @@ const UploadOrEditMedia = ({
 											})}
 										</Select>
 										<div className={classes.catergoryErrorContainer}>
-											<p className={classes.uploadMediaError}>
+											<p className={globalClasses.uploadMediaError}>
 												{isError.mainCategory
 													? 'You need to select main category'
 													: ''}
@@ -911,11 +1348,11 @@ const UploadOrEditMedia = ({
 									</div>
 									<div className={classes.subCategory}>
 										<h6
-											style={{
-												color: form.mainCategory?.name
-													? subCategoryLabelColor
-													: ''
-											}}
+											className={[
+												isError.subCategory && form.mainCategory
+													? globalClasses.errorState
+													: globalClasses.noErrorState
+											].join(' ')}
 										>
 											SUB CATEGORY
 										</h6>
@@ -926,24 +1363,40 @@ const UploadOrEditMedia = ({
 											onClose={() => {
 												setDisableDropdown(true);
 											}}
-											disabled={!form.mainCategory || isEdit ? true : false}
+											disabled={
+												!form.mainCategory || (isEdit && status === 'published')
+													? true
+													: false
+											}
 											style={{
-												backgroundColor: isEdit ? '#404040' : '#000000'
+												backgroundColor:
+													isEdit && status === 'published'
+														? '#404040'
+														: '#000000'
 											}}
-											value={isEdit ? form.subCategory : form.subCategory?.name}
+											value={
+												isEdit
+													? form.subCategory
+													: form.subCategory?.name || form.subCategory
+											}
 											onChange={(e) => {
 												setDisableDropdown(true);
 												SubCategoryId(e.target.value);
 											}}
 											className={`${classes.select} ${
-												isEdit ? `${classes.isEditSelect}` : ''
+												isEdit && status === 'published'
+													? `${classes.isEditSelect}`
+													: ''
 											}`}
 											disableUnderline={true}
 											IconComponent={(props) => (
 												<KeyboardArrowDownIcon
 													{...props}
 													style={{
-														display: isEdit ? 'none' : 'block',
+														display:
+															isEdit && status === 'published'
+																? 'none'
+																: 'block',
 														top: '4'
 													}}
 												/>
@@ -960,12 +1413,15 @@ const UploadOrEditMedia = ({
 												getContentAnchorEl: null
 											}}
 											displayEmpty={form.mainCategory ? true : false}
-											renderValue={(value) =>
-												value?.length
-													? Array.isArray(value)
-														? value.join(', ')
-														: value
-													: 'Please Select'
+											renderValue={
+												(value) => {
+													return value ? value?.name || value : 'Please Select';
+												}
+												// value?.length
+												// 	? Array.isArray(value)
+												// 		? value.join(', ')
+												// 		: value?.name || value
+												// 	: 'Please Select'
 											}
 										>
 											{subCategories.map((category, index) => {
@@ -976,8 +1432,8 @@ const UploadOrEditMedia = ({
 												);
 											})}
 										</Select>
-										<p className={classes.uploadMediaError2}>
-											{isEdit
+										<p className={globalClasses.uploadMediaError}>
+											{isEdit && status === 'published'
 												? ' '
 												: form.mainCategory?.name || form.mainCategory
 												? isError.subCategory &&
@@ -987,17 +1443,11 @@ const UploadOrEditMedia = ({
 										</p>
 									</div>
 								</div>
-								{/* <div className={classes.catergoryErrorContainer}>
-								<p className={classes.uploadMediaError}>{mainCategoryError}</p>
-								{/* <p className={classes.uploadMediaError2}>
-									{mainCategory?.name || mainCategory ? subCategoryError : ''}
-								</p> */}
-								{/* </div> */}
 
 								{(form.mainCategory && form.subCategory?.name) || isEdit ? (
 									<>
 										{form.mainCategory.name === 'Watch' ? (
-											<div className={classes.explanationWrapper}>
+											<div className={globalClasses.explanationWrapper}>
 												<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
 												<Tooltip
 													TransitionComponent={Fade}
@@ -1005,8 +1455,8 @@ const UploadOrEditMedia = ({
 													title='Default encoding for videos should be H.264'
 													arrow
 													componentsProps={{
-														tooltip: { className: classes.toolTip },
-														arrow: { className: classes.toolTipArrow }
+														tooltip: { className: globalClasses.toolTip },
+														arrow: { className: globalClasses.toolTipArrow }
 													}}
 													placement='bottom-start'
 												>
@@ -1039,10 +1489,10 @@ const UploadOrEditMedia = ({
 										{!form.uploadedFiles.length && (
 											<section
 												className={[
-													classes.dropZoneContainer,
+													globalClasses.dropZoneContainer,
 													isError.uploadedFiles
-														? classes.errorState
-														: classes.noErrorState
+														? globalClasses.errorState
+														: globalClasses.noErrorState
 												].join(' ')}
 												style={{
 													borderColor: isError.uploadedFiles
@@ -1050,21 +1500,25 @@ const UploadOrEditMedia = ({
 														: 'yellow'
 												}}
 											>
-												<div {...getRootProps({ className: classes.dropzone })}>
+												<div
+													{...getRootProps({
+														className: globalClasses.dropzone
+													})}
+												>
 													<input {...getInputProps()} />
 													<AddCircleOutlineIcon
-														className={classes.addFilesIcon}
+														className={globalClasses.addFilesIcon}
 													/>
-													<p className={classes.dragMsg}>
+													<p className={globalClasses.dragMsg}>
 														Click or drag file to this area to upload
 													</p>
-													<p className={classes.formatMsg}>
+													<p className={globalClasses.formatMsg}>
 														{form.mainCategory?.name === 'Watch' ||
-														specificMedia?.media_type === 'Watch'
+														form.mainCategory === 'Watch'
 															? 'Supported format is mp4'
 															: 'Supported format is mp3'}
 													</p>
-													<p className={classes.uploadMediaError}>
+													<p className={globalClasses.uploadMediaError}>
 														{isError.uploadedFiles
 															? 'You need to upload a media in order to post'
 															: ''}
@@ -1073,10 +1527,10 @@ const UploadOrEditMedia = ({
 											</section>
 										)}
 
-										<p className={classes.fileRejectionError}>
+										<p className={globalClasses.fileRejectionError}>
 											{fileRejectionError}
 										</p>
-										<div className={classes.dropBoxUrlContainer}>
+										<div className={globalClasses.dropBoxUrlContainer}>
 											<h6>DROPBOX URL</h6>
 											<TextField
 												value={form.media_dropbox_url}
@@ -1091,7 +1545,7 @@ const UploadOrEditMedia = ({
 												multiline
 												maxRows={2}
 												placeholder={'Please drop the dropbox URL here'}
-												className={classes.textField}
+												className={globalClasses.textField}
 												InputProps={{
 													disableUnderline: true,
 													className: classes.textFieldInput,
@@ -1121,10 +1575,10 @@ const UploadOrEditMedia = ({
 										{!form.uploadedCoverImage.length && (
 											<section
 												className={[
-													classes.dropZoneContainer,
+													globalClasses.dropZoneContainer,
 													isError.uploadedCoverImage
-														? classes.errorState
-														: classes.noErrorState
+														? globalClasses.errorState
+														: globalClasses.noErrorState
 												].join(' ')}
 												style={{
 													borderColor: isError.uploadedCoverImage
@@ -1133,19 +1587,21 @@ const UploadOrEditMedia = ({
 												}}
 											>
 												<div
-													{...getRootProps2({ className: classes.dropzone })}
+													{...getRootProps2({
+														className: globalClasses.dropzone
+													})}
 												>
 													<input {...getInputProps2()} />
 													<AddCircleOutlineIcon
-														className={classes.addFilesIcon}
+														className={globalClasses.addFilesIcon}
 													/>
-													<p className={classes.dragMsg}>
+													<p className={globalClasses.dragMsg}>
 														Click or drag file to this area to upload
 													</p>
-													<p className={classes.formatMsg}>
+													<p className={globalClasses.formatMsg}>
 														Supported formats are jpeg, png
 													</p>
-													<p className={classes.uploadMediaError}>
+													<p className={globalClasses.uploadMediaError}>
 														{isError.uploadedCoverImage
 															? 'You need to upload a cover image in order to post'
 															: ''}
@@ -1154,10 +1610,10 @@ const UploadOrEditMedia = ({
 											</section>
 										)}
 
-										<p className={classes.fileRejectionError}>
+										<p className={globalClasses.fileRejectionError}>
 											{fileRejectionError2}
 										</p>
-										<div className={classes.dropBoxUrlContainer}>
+										<div className={globalClasses.dropBoxUrlContainer}>
 											<h6>DROPBOX URL</h6>
 											<TextField
 												value={form.image_dropbox_url}
@@ -1170,7 +1626,7 @@ const UploadOrEditMedia = ({
 													})
 												}
 												placeholder={'Please drop the dropbox URL here'}
-												className={classes.textField}
+												className={globalClasses.textField}
 												InputProps={{
 													disableUnderline: true,
 													className: classes.textFieldInput,
@@ -1184,12 +1640,12 @@ const UploadOrEditMedia = ({
 										</div>
 
 										<div className={classes.titleContainer}>
-											<div className={classes.characterCount}>
+											<div className={globalClasses.characterCount}>
 												<h6
 													className={[
 														isError.titleMedia
-															? classes.errorState
-															: classes.noErrorState
+															? globalClasses.errorState
+															: globalClasses.noErrorState
 													].join(' ')}
 												>
 													TITLE
@@ -1197,15 +1653,15 @@ const UploadOrEditMedia = ({
 												<h6
 													style={{
 														color:
-															form.title?.length >= 25 &&
-															form.title?.length <= 27
+															form.title?.length >= 38 &&
+															form.title?.length <= 42
 																? 'pink'
-																: form.title?.length === 28
+																: form.title?.length === 43
 																? 'red'
 																: 'white'
 													}}
 												>
-													{form.title?.length}/28
+													{form.title?.length}/43
 												</h6>
 											</div>
 											<TextField
@@ -1219,17 +1675,17 @@ const UploadOrEditMedia = ({
 													})
 												}
 												placeholder={'Please write your title here'}
-												className={classes.textField}
+												className={globalClasses.textField}
 												InputProps={{
 													disableUnderline: true,
 													className: classes.textFieldInput
 												}}
-												inputProps={{ maxLength: 28 }}
+												inputProps={{ maxLength: 43 }}
 												multiline
 												maxRows={2}
 											/>
 										</div>
-										<p className={classes.mediaError}>
+										<p className={globalClasses.mediaError}>
 											{isError.titleMedia ? isError.titleMedia.message : ''}
 										</p>
 
@@ -1237,8 +1693,8 @@ const UploadOrEditMedia = ({
 											<h6
 												className={[
 													isError.selectedLabels
-														? classes.errorState
-														: classes.noErrorState
+														? globalClasses.errorState
+														: globalClasses.noErrorState
 												].join(' ')}
 											>
 												LABELS
@@ -1255,13 +1711,16 @@ const UploadOrEditMedia = ({
 														return { ...prev, labels: [...newVal] };
 													});
 												}}
+												draftStatus={status}
 											/>
 										</div>
-										<p className={classes.mediaError}>
+										<p className={globalClasses.mediaError}>
 											{isError.selectedLabels
 												? `You need to add ${
 														7 - form.labels.length
 												  } more labels in order to upload media`
+												: isError.selectedLabelsDraft
+												? 'You need to select atleast 1 label to save as draft'
 												: ''}
 										</p>
 
@@ -1269,8 +1728,8 @@ const UploadOrEditMedia = ({
 											<h6
 												className={[
 													isError.description
-														? classes.errorState
-														: classes.noErrorState
+														? globalClasses.errorState
+														: globalClasses.noErrorState
 												].join(' ')}
 											>
 												DESCRIPTION
@@ -1286,7 +1745,7 @@ const UploadOrEditMedia = ({
 													})
 												}
 												placeholder={'Please write your description here'}
-												className={classes.textField}
+												className={globalClasses.textField}
 												InputProps={{
 													disableUnderline: true,
 													className: classes.textFieldInput,
@@ -1298,7 +1757,7 @@ const UploadOrEditMedia = ({
 												maxRows={4}
 											/>
 										</div>
-										<p className={classes.mediaError}>
+										<p className={globalClasses.mediaError}>
 											{isError.description
 												? 'You need to enter a Description'
 												: ''}
@@ -1308,15 +1767,22 @@ const UploadOrEditMedia = ({
 									<></>
 								)}
 							</div>
+
+							<p className={globalClasses.mediaError}>
+								{isError.draftError
+									? 'Something needs to be changed to save a draft'
+									: ''}
+							</p>
+
 							<div className={classes.buttonDiv}>
-								{isEdit ? (
+								{isEdit || (status === 'draft' && isEdit) ? (
 									<div className={classes.editBtn}>
 										<Button
 											disabled={false}
 											button2={isEdit ? true : false}
 											onClick={() => {
 												if (!deleteBtnStatus) {
-													deleteMedia(specificMedia?.id);
+													deleteMedia(specificMedia?.id, status);
 												}
 											}}
 											text={'DELETE MEDIA'}
@@ -1326,28 +1792,54 @@ const UploadOrEditMedia = ({
 									<></>
 								)}
 
-								<div
-									className={
-										isEdit ? classes.addMediaBtnEdit : classes.addMediaBtn
-									}
-								>
-									<Button
-										disabled={isEdit ? editBtnDisabled : !validateForm(form)}
-										onClick={() => addSaveMediaBtn()}
-										text={buttonText}
-									/>
+								<div className={classes.publishDraftDiv}>
+									{status === 'draft' || !isEdit ? (
+										<div
+											className={
+												isEdit ? classes.draftBtnEdit : classes.draftBtn
+											}
+										>
+											<Button
+												disabledDraft={
+													isEdit ? draftBtnDisabled : !validateDraft(form)
+												}
+												onClick={() => saveDraftBtn()}
+												button3={true}
+												text={
+													status === 'draft' && isEdit
+														? 'SAVE DRAFT'
+														: 'SAVE AS DRAFT'
+												}
+											/>
+										</div>
+									) : (
+										<></>
+									)}
+
+									<div
+										className={
+											isEdit ? classes.addMediaBtnEdit : classes.addMediaBtn
+										}
+									>
+										<Button
+											disabled={isEdit ? editBtnDisabled : !validateForm(form)}
+											onClick={() => addSaveMediaBtn()}
+											button2AddSave={true}
+											text={buttonText}
+										/>
+									</div>
 								</div>
 							</div>
 						</div>
 						{previewFile != null && (
-							<div ref={previewRef} className={classes.previewComponent}>
-								<div className={classes.previewHeader}>
+							<div ref={previewRef} className={globalClasses.previewComponent}>
+								<div className={globalClasses.previewHeader}>
 									<Close
 										onClick={() => {
 											setPreviewBool(false);
 											setPreviewFile(null);
 										}}
-										className={classes.closeIcon}
+										className={globalClasses.closeIcon}
 									/>
 									<h5>Preview</h5>
 								</div>
@@ -1379,7 +1871,8 @@ UploadOrEditMedia.propTypes = {
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
-	page: PropTypes.string
+	page: PropTypes.string,
+	status: PropTypes.string.isRequired
 };
 
 export default UploadOrEditMedia;
