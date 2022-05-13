@@ -100,13 +100,13 @@ export const useStyles = makeStyles((theme) => ({
 		width: '100%',
 		padding: ' 3px 0px',
 		paddingRright: ' 10px',
-		color: theme.palette.white,
+		color: `${theme.palette.white} !important`,
 		border: `1px solid ${theme.palette.grey}`,
 		fontSize: ' 1.4rem !important',
 		lineHeight: '1.6 !important',
 		borderRadius: '5rem !important',
 		marginBottom: '1rem !important',
-		backgroundColor: `${theme.palette.black} !important`,
+		backgroundColor: `${theme.palette.black}`,
 
 		"& div[role='button']": {
 			padding: '0.5rem 0rem 0.5rem 2rem'
