@@ -114,7 +114,7 @@ export const useStyles = makeStyles(() => ({
 		margin: '10px 0px'
 	},
 	toolTip: {
-		backgroundColor: ' $black-color !important',
+		backgroundColor: ` ${theme.palette.black} !important`,
 		fontFamily: 'Poppins !important',
 		fontSize: '12px !important',
 		lineHeight: ' 16px !important',
@@ -123,7 +123,7 @@ export const useStyles = makeStyles(() => ({
 	},
 
 	toolTipArrow: {
-		color: '$black-color !important'
+		color: ` ${theme.palette.black} !important`
 	},
 	explanationWrapper: {
 		display: 'flex',

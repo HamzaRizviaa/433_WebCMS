@@ -1,6 +1,6 @@
 /* eslint-disable no-debugger */
 import React, { useState, useEffect, useRef } from 'react';
-import classes from './_uploadOrEditMedia.module.scss';
+//import classes from './_uploadOrEditMedia.module.scss';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
 import Button from '../../button';
@@ -29,6 +29,8 @@ import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 import PrimaryLoader from '../../PrimaryLoader';
 import validateForm from '../../../utils/validateForm';
 import validateDraft from '../../../utils/validateDraft';
+import { useStyles } from './index.style';
+import { useStyles as globalUseStyles } from '../../../styles/global.style';
 
 const UploadOrEditMedia = ({
 	open,
@@ -71,6 +73,9 @@ const UploadOrEditMedia = ({
 		uploadedFiles: [],
 		uploadedCoverImage: []
 	});
+
+	const classes = useStyles();
+	const globalClasses = globalUseStyles();
 
 	const specificMedia = useSelector(
 		(state) => state.mediaLibraryOriginal.specificMedia
@@ -119,9 +124,10 @@ const UploadOrEditMedia = ({
 		if (specificMedia) {
 			if (specificMedia?.labels) {
 				let _labels = [];
-				specificMedia.labels.map((label) =>
-					_labels.push({ id: -1, name: label })
-				);
+				specificMedia.labels.map((label) => {
+					//let labelId = labels.find((l) => l.name === label)?.id;
+					return _labels.push({ id: -1, name: label });
+				});
 
 				setForm((prev) => {
 					return {
@@ -418,7 +424,7 @@ const UploadOrEditMedia = ({
 			}, 5000);
 		}
 	};
-	console.log(isError, 'DRAFTERROR');
+
 	const deleteMedia = async (id, isDraft) => {
 		setDeleteBtnStatus(true);
 		try {
@@ -646,7 +652,6 @@ const UploadOrEditMedia = ({
 		}
 	}, [specificMedia, form]);
 
-	// console.log(draftBtnDisabled, 'dft');
 	console.log(form, 'form');
 	const mainCategoryId = (e) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
@@ -1234,8 +1239,8 @@ const UploadOrEditMedia = ({
 						ref={loadingRef}
 						className={`${
 							previewFile != null
-								? classes.previewContentWrapper
-								: classes.contentWrapper
+								? globalClasses.previewContentWrapper
+								: globalClasses.contentWrapper
 						}`}
 					>
 						{specificMediaStatus.specificMediaStatus === 'loading' ? (
@@ -1244,7 +1249,7 @@ const UploadOrEditMedia = ({
 							<></>
 						)}
 						<div
-							className={classes.contentWrapperNoPreview}
+							className={globalClasses.contentWrapperNoPreview}
 							style={{ width: previewFile != null ? '60%' : 'auto' }}
 						>
 							<div>
@@ -1254,8 +1259,8 @@ const UploadOrEditMedia = ({
 										<h6
 											className={[
 												isError.mainCategory
-													? classes.errorState
-													: classes.noErrorState
+													? globalClasses.errorState
+													: globalClasses.noErrorState
 											].join(' ')}
 										>
 											MAIN CATEGORY
@@ -1334,7 +1339,7 @@ const UploadOrEditMedia = ({
 											})}
 										</Select>
 										<div className={classes.catergoryErrorContainer}>
-											<p className={classes.uploadMediaError}>
+											<p className={globalClasses.uploadMediaError}>
 												{isError.mainCategory
 													? 'You need to select main category'
 													: ''}
@@ -1345,8 +1350,8 @@ const UploadOrEditMedia = ({
 										<h6
 											className={[
 												isError.subCategory && form.mainCategory
-													? classes.errorState
-													: classes.noErrorState
+													? globalClasses.errorState
+													: globalClasses.noErrorState
 											].join(' ')}
 										>
 											SUB CATEGORY
@@ -1410,7 +1415,6 @@ const UploadOrEditMedia = ({
 											displayEmpty={form.mainCategory ? true : false}
 											renderValue={
 												(value) => {
-													console.log(value, 'subby');
 													return value ? value?.name || value : 'Please Select';
 												}
 												// value?.length
@@ -1428,7 +1432,7 @@ const UploadOrEditMedia = ({
 												);
 											})}
 										</Select>
-										<p className={classes.uploadMediaError2}>
+										<p className={globalClasses.uploadMediaError}>
 											{isEdit && status === 'published'
 												? ' '
 												: form.mainCategory?.name || form.mainCategory
@@ -1443,7 +1447,7 @@ const UploadOrEditMedia = ({
 								{(form.mainCategory && form.subCategory?.name) || isEdit ? (
 									<>
 										{form.mainCategory.name === 'Watch' ? (
-											<div className={classes.explanationWrapper}>
+											<div className={globalClasses.explanationWrapper}>
 												<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
 												<Tooltip
 													TransitionComponent={Fade}
@@ -1451,8 +1455,8 @@ const UploadOrEditMedia = ({
 													title='Default encoding for videos should be H.264'
 													arrow
 													componentsProps={{
-														tooltip: { className: classes.toolTip },
-														arrow: { className: classes.toolTipArrow }
+														tooltip: { className: globalClasses.toolTip },
+														arrow: { className: globalClasses.toolTipArrow }
 													}}
 													placement='bottom-start'
 												>
@@ -1485,10 +1489,10 @@ const UploadOrEditMedia = ({
 										{!form.uploadedFiles.length && (
 											<section
 												className={[
-													classes.dropZoneContainer,
+													globalClasses.dropZoneContainer,
 													isError.uploadedFiles
-														? classes.errorState
-														: classes.noErrorState
+														? globalClasses.errorState
+														: globalClasses.noErrorState
 												].join(' ')}
 												style={{
 													borderColor: isError.uploadedFiles
@@ -1496,21 +1500,25 @@ const UploadOrEditMedia = ({
 														: 'yellow'
 												}}
 											>
-												<div {...getRootProps({ className: classes.dropzone })}>
+												<div
+													{...getRootProps({
+														className: globalClasses.dropzone
+													})}
+												>
 													<input {...getInputProps()} />
 													<AddCircleOutlineIcon
-														className={classes.addFilesIcon}
+														className={globalClasses.addFilesIcon}
 													/>
-													<p className={classes.dragMsg}>
+													<p className={globalClasses.dragMsg}>
 														Click or drag file to this area to upload
 													</p>
-													<p className={classes.formatMsg}>
+													<p className={globalClasses.formatMsg}>
 														{form.mainCategory?.name === 'Watch' ||
 														form.mainCategory === 'Watch'
 															? 'Supported format is mp4'
 															: 'Supported format is mp3'}
 													</p>
-													<p className={classes.uploadMediaError}>
+													<p className={globalClasses.uploadMediaError}>
 														{isError.uploadedFiles
 															? 'You need to upload a media in order to post'
 															: ''}
@@ -1519,10 +1527,10 @@ const UploadOrEditMedia = ({
 											</section>
 										)}
 
-										<p className={classes.fileRejectionError}>
+										<p className={globalClasses.fileRejectionError}>
 											{fileRejectionError}
 										</p>
-										<div className={classes.dropBoxUrlContainer}>
+										<div className={globalClasses.dropBoxUrlContainer}>
 											<h6>DROPBOX URL</h6>
 											<TextField
 												value={form.media_dropbox_url}
@@ -1537,7 +1545,7 @@ const UploadOrEditMedia = ({
 												multiline
 												maxRows={2}
 												placeholder={'Please drop the dropbox URL here'}
-												className={classes.textField}
+												className={globalClasses.textField}
 												InputProps={{
 													disableUnderline: true,
 													className: classes.textFieldInput,
@@ -1567,10 +1575,10 @@ const UploadOrEditMedia = ({
 										{!form.uploadedCoverImage.length && (
 											<section
 												className={[
-													classes.dropZoneContainer,
+													globalClasses.dropZoneContainer,
 													isError.uploadedCoverImage
-														? classes.errorState
-														: classes.noErrorState
+														? globalClasses.errorState
+														: globalClasses.noErrorState
 												].join(' ')}
 												style={{
 													borderColor: isError.uploadedCoverImage
@@ -1579,19 +1587,21 @@ const UploadOrEditMedia = ({
 												}}
 											>
 												<div
-													{...getRootProps2({ className: classes.dropzone })}
+													{...getRootProps2({
+														className: globalClasses.dropzone
+													})}
 												>
 													<input {...getInputProps2()} />
 													<AddCircleOutlineIcon
-														className={classes.addFilesIcon}
+														className={globalClasses.addFilesIcon}
 													/>
-													<p className={classes.dragMsg}>
+													<p className={globalClasses.dragMsg}>
 														Click or drag file to this area to upload
 													</p>
-													<p className={classes.formatMsg}>
+													<p className={globalClasses.formatMsg}>
 														Supported formats are jpeg, png
 													</p>
-													<p className={classes.uploadMediaError}>
+													<p className={globalClasses.uploadMediaError}>
 														{isError.uploadedCoverImage
 															? 'You need to upload a cover image in order to post'
 															: ''}
@@ -1600,10 +1610,10 @@ const UploadOrEditMedia = ({
 											</section>
 										)}
 
-										<p className={classes.fileRejectionError}>
+										<p className={globalClasses.fileRejectionError}>
 											{fileRejectionError2}
 										</p>
-										<div className={classes.dropBoxUrlContainer}>
+										<div className={globalClasses.dropBoxUrlContainer}>
 											<h6>DROPBOX URL</h6>
 											<TextField
 												value={form.image_dropbox_url}
@@ -1616,7 +1626,7 @@ const UploadOrEditMedia = ({
 													})
 												}
 												placeholder={'Please drop the dropbox URL here'}
-												className={classes.textField}
+												className={globalClasses.textField}
 												InputProps={{
 													disableUnderline: true,
 													className: classes.textFieldInput,
@@ -1630,12 +1640,12 @@ const UploadOrEditMedia = ({
 										</div>
 
 										<div className={classes.titleContainer}>
-											<div className={classes.characterCount}>
+											<div className={globalClasses.characterCount}>
 												<h6
 													className={[
 														isError.titleMedia
-															? classes.errorState
-															: classes.noErrorState
+															? globalClasses.errorState
+															: globalClasses.noErrorState
 													].join(' ')}
 												>
 													TITLE
@@ -1643,15 +1653,15 @@ const UploadOrEditMedia = ({
 												<h6
 													style={{
 														color:
-															form.title?.length >= 25 &&
-															form.title?.length <= 27
+															form.title?.length >= 38 &&
+															form.title?.length <= 42
 																? 'pink'
-																: form.title?.length === 28
+																: form.title?.length === 43
 																? 'red'
 																: 'white'
 													}}
 												>
-													{form.title?.length}/28
+													{form.title?.length}/43
 												</h6>
 											</div>
 											<TextField
@@ -1665,17 +1675,17 @@ const UploadOrEditMedia = ({
 													})
 												}
 												placeholder={'Please write your title here'}
-												className={classes.textField}
+												className={globalClasses.textField}
 												InputProps={{
 													disableUnderline: true,
 													className: classes.textFieldInput
 												}}
-												inputProps={{ maxLength: 28 }}
+												inputProps={{ maxLength: 43 }}
 												multiline
 												maxRows={2}
 											/>
 										</div>
-										<p className={classes.mediaError}>
+										<p className={globalClasses.mediaError}>
 											{isError.titleMedia ? isError.titleMedia.message : ''}
 										</p>
 
@@ -1683,8 +1693,8 @@ const UploadOrEditMedia = ({
 											<h6
 												className={[
 													isError.selectedLabels
-														? classes.errorState
-														: classes.noErrorState
+														? globalClasses.errorState
+														: globalClasses.noErrorState
 												].join(' ')}
 											>
 												LABELS
@@ -1704,7 +1714,7 @@ const UploadOrEditMedia = ({
 												draftStatus={status}
 											/>
 										</div>
-										<p className={classes.mediaError}>
+										<p className={globalClasses.mediaError}>
 											{isError.selectedLabels
 												? `You need to add ${
 														7 - form.labels.length
@@ -1718,8 +1728,8 @@ const UploadOrEditMedia = ({
 											<h6
 												className={[
 													isError.description
-														? classes.errorState
-														: classes.noErrorState
+														? globalClasses.errorState
+														: globalClasses.noErrorState
 												].join(' ')}
 											>
 												DESCRIPTION
@@ -1735,7 +1745,7 @@ const UploadOrEditMedia = ({
 													})
 												}
 												placeholder={'Please write your description here'}
-												className={classes.textField}
+												className={globalClasses.textField}
 												InputProps={{
 													disableUnderline: true,
 													className: classes.textFieldInput,
@@ -1747,7 +1757,7 @@ const UploadOrEditMedia = ({
 												maxRows={4}
 											/>
 										</div>
-										<p className={classes.mediaError}>
+										<p className={globalClasses.mediaError}>
 											{isError.description
 												? 'You need to enter a Description'
 												: ''}
@@ -1758,7 +1768,7 @@ const UploadOrEditMedia = ({
 								)}
 							</div>
 
-							<p className={classes.mediaError}>
+							<p className={globalClasses.mediaError}>
 								{isError.draftError
 									? 'Something needs to be changed to save a draft'
 									: ''}
@@ -1822,14 +1832,14 @@ const UploadOrEditMedia = ({
 							</div>
 						</div>
 						{previewFile != null && (
-							<div ref={previewRef} className={classes.previewComponent}>
-								<div className={classes.previewHeader}>
+							<div ref={previewRef} className={globalClasses.previewComponent}>
+								<div className={globalClasses.previewHeader}>
 									<Close
 										onClick={() => {
 											setPreviewBool(false);
 											setPreviewFile(null);
 										}}
-										className={classes.closeIcon}
+										className={globalClasses.closeIcon}
 									/>
 									<h5>Preview</h5>
 								</div>
