@@ -112,7 +112,10 @@ const Labels = ({
 				let currentLabelDuplicate = selectedLabels.some(
 					(label) => label.name == option.name
 				);
-
+				// console.log(selectedLabels, 'subby');
+				// console.log(currentLabelDuplicate, 'mubby');
+				let draftLabels = selectedLabels.filter((label) => label.id == -1);
+				// console.log(draftLabels, 'dftl');
 				if (option.id == null && !currentLabelDuplicate) {
 					return (
 						<li
@@ -141,6 +144,8 @@ const Labels = ({
 							{option.name}
 						</li>
 					);
+				} else if (draftLabels && currentLabelDuplicate) {
+					return null;
 				} else {
 					return (
 						<div className={classes.liAutocompleteWithButton}>
