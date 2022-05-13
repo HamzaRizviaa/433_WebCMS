@@ -1,13 +1,6 @@
-/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react';
-// import classes from './_sidebar.module.scss';
 import { useStyles } from './index.styles';
-import {
-	useNavigate,
-	useLocation
-	// useParams
-	// useHistory
-} from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ReactComponent as Logo } from '../../assets/logo.svg';
 import { ReactComponent as Media } from '../../assets/media.svg';
 import { ReactComponent as Quiz } from '../../assets/Quiz.svg';
@@ -60,17 +53,13 @@ const Sidebar = () => {
 			setMainClass(checkDomain(window.location.href));
 		}
 	}, []);
-	// console.log(urlParams, 'urlParams');
-	// console.log(history, 'history');
-	//<span className={[classes.mainClass,classes.abc2,classes.abc3]}>
-	//<span className={[classes.mainClass,classes.abc2,classes.abc3].join(" ")}>
 
 	return (
 		<span className={classes[mainClass]}>
 			<div className={classes.navContainer}>
 				<div className={classes.logoContainer}>
 					<Logo className={classes.logo} />
-					<p className={classes.text}>{mainClass}</p>
+					<p className={classes[`${mainClass}Text`]}> {mainClass} </p>
 				</div>
 
 				<div
@@ -80,14 +69,15 @@ const Sidebar = () => {
 					className={classes.iconWrapper}
 					style={
 						location.pathname.includes('media-library')
-							? {
-									border: '2px solid black'
-							  }
+							? mainClass === 'staging' || mainClass === 'prod'
+								? { border: '2px solid white' }
+								: { border: '2px solid black' }
 							: {}
 					}
 				>
 					<Media className={classes.icon} />
 				</div>
+
 				<div
 					onClick={() => {
 						navigate('/question-library');
@@ -95,12 +85,15 @@ const Sidebar = () => {
 					className={classes.iconWrapper}
 					style={
 						location.pathname.includes('question-library')
-							? { border: '2px solid black' }
+							? mainClass === 'staging' || mainClass === 'prod'
+								? { border: '2px solid white' }
+								: { border: '2px solid black' }
 							: {}
 					}
 				>
 					<Quiz className={classes.icon} />
 				</div>
+
 				<div
 					onClick={() => {
 						navigate('/top-banner');
@@ -108,12 +101,15 @@ const Sidebar = () => {
 					className={classes.iconWrapper}
 					style={
 						location?.pathname.includes('top-banner')
-							? { border: '2px solid black' }
+							? mainClass === 'staging' || mainClass === 'prod'
+								? { border: '2px solid white' }
+								: { border: '2px solid black' }
 							: {}
 					}
 				>
 					<Banner className={classes.icon} />
 				</div>
+
 				<div
 					onClick={() => {
 						navigate('/article-library');
@@ -121,7 +117,9 @@ const Sidebar = () => {
 					className={classes.iconWrapper}
 					style={
 						location?.pathname.includes('article-library')
-							? { border: '2px solid black' }
+							? mainClass === 'staging' || mainClass === 'prod'
+								? { border: '2px solid white' }
+								: { border: '2px solid black' }
 							: {}
 					}
 				>
@@ -129,6 +127,7 @@ const Sidebar = () => {
 						<Article className={classes.icon} />
 					</span>
 				</div>
+
 				<div
 					onClick={() => {
 						navigate('/viral-library');
@@ -136,12 +135,15 @@ const Sidebar = () => {
 					className={classes.iconWrapper}
 					style={
 						location?.pathname.includes('viral-library')
-							? { border: '2px solid black' }
+							? mainClass === 'staging' || mainClass === 'prod'
+								? { border: '2px solid white' }
+								: { border: '2px solid black' }
 							: {}
 					}
 				>
 					<Viral className={classes.icon} />
 				</div>
+
 				<div
 					onClick={() => {
 						navigate('/games-library');
@@ -149,12 +151,15 @@ const Sidebar = () => {
 					className={classes.iconWrapper}
 					style={
 						location?.pathname.includes('games-library')
-							? { border: '2px solid black' }
+							? mainClass === 'staging' || mainClass === 'prod'
+								? { border: '2px solid white' }
+								: { border: '2px solid black' }
 							: {}
 					}
 				>
 					<Games className={classes.icon} />
 				</div>
+
 				{/* <div
 					onClick={() => {
 						navigate('/post-library');
