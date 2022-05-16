@@ -57,7 +57,7 @@ const Labels = ({
 			value={selectedLabels}
 			autoHighlight={true}
 			onChange={(event, newValue) => {
-				// console.log(event, 'change');
+				console.log(event, 'change', newValue);
 				setDisableDropdown(true);
 				let newLabels = newValue?.filter(
 					(v, i, a) =>
@@ -112,10 +112,17 @@ const Labels = ({
 				let currentLabelDuplicate = selectedLabels.some(
 					(label) => label.name == option.name
 				);
-				// console.log(selectedLabels, 'subby');
-				// console.log(currentLabelDuplicate, 'mubby');
+
 				let draftLabels = selectedLabels.filter((label) => label.id == -1);
-				// console.log(draftLabels, 'dftl');
+				console.log(selectedLabels, 'selectedLabels');
+				console.log(draftLabels, 'draft labels');
+				console.log(option, 'option');
+				// console.log(LabelsOptions, 'LabelsOptions');
+				// var newArr = LabelsOptions.filter((item) => {
+				// 	return item.id !== draftLabels.id;
+				// });
+				// console.log(newArr, 'newArr');
+
 				if (option.id == null && !currentLabelDuplicate) {
 					return (
 						<li

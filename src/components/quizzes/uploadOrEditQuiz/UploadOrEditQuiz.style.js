@@ -183,7 +183,9 @@ export const useStyles = makeStyles((theme) => ({
 
 	buttonDiv: {
 		width: '100%',
-		marginBottom: '4rem'
+		marginBottom: '4rem',
+		display: 'flex',
+		justifyContent: 'space-between'
 	},
 
 	addQuizBtn: {
@@ -192,15 +194,30 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	addQuizBtnEdit: {
-		width: '70%',
+		width: '40%',
 		marginTop: '0.5rem',
-		display: 'inline-block'
+		display: 'inline-block',
+		'& span': {
+			padding: '1rem 3rem'
+		}
+	},
+	leftButtonDiv: {
+		width: '100%'
 	},
 
 	editBtn: {
-		width: '30%',
+		width: '45%',
 		display: 'inline-block',
 		marginTop: '0.5rem'
+	},
+
+	stopBtn: {
+		width: '35%',
+		display: 'inline-block',
+		marginTop: '0.5rem',
+		'& span': {
+			borderColor: theme.palette.red
+		}
 	},
 
 	noResultError: {
