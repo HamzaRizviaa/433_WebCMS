@@ -12,6 +12,7 @@ import { useDropzone } from 'react-dropzone';
 import { makeid } from '../../../utils/helper';
 import { useDispatch, useSelector } from 'react-redux';
 import checkFileSize from '../../../utils/validateFileSize';
+import completeUplaod from '../../../utils/completeUpload';
 import {
 	getMainCategories,
 	getMediaLabels
@@ -684,7 +685,7 @@ const UploadOrEditMedia = ({
 	}, [form]);
 
 	const addSaveMediaBtn = async () => {
-		if (!validateForm(form)) {
+		if (!validateForm(form) || editBtnDisabled) {
 			validatePostBtn();
 		} else {
 			setIsLoadingUploadMedia(true);
@@ -929,54 +930,62 @@ const UploadOrEditMedia = ({
 						form.uploadedFiles[0].type
 					);
 
-					uploadedFile = await axios.post(
-						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-						{
-							file_name: form.uploadedFiles[0].file_name,
-							type: 'medialibrary',
-							data: {
-								bucket: 'media',
-								multipart_upload:
-									form.uploadedFiles[0]?.mime_type == 'video/mp4'
-										? [
-												{
-													e_tag:
-														promiseFile?.signed_response?.headers?.etag.replace(
-															/['"]+/g,
-															''
-														),
-													part_number: 1
-												}
-										  ]
-										: ['image'],
-								keys: {
-									image_key: form.uploadedCoverImage[0]?.keys?.image_key || '',
-									...(form.mainCategory.name === 'Watch' ||
-									form.mainCategory === 'Watch'
-										? {
-												video_key: promiseFile?.keys?.video_key,
-												audio_key: ''
-										  }
-										: {
-												audio_key: promiseFile?.keys?.audio_key,
-												video_key: ''
-										  })
-								},
-								upload_id:
-									form.mainCategory?.name === 'Watch' ||
-									form.mainCategory === 'Watch'
-										? promiseFile?.upload_id
-										: 'audio'
-							}
-						},
-						{
-							headers: {
-								Authorization: `Bearer ${
-									getLocalStorageDetails()?.access_token
-								}`
-							}
-						}
+					uploadedFile = await completeUplaod(
+						form,
+						promiseFile,
+						'medialibrary'
 					);
+
+					console.log('Complete Upload', uploadedFile);
+
+					// uploadedFile = await axios.post(
+					// 	`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+					// 	{
+					// 		file_name: form.uploadedFiles[0].file_name,
+					// 		type: 'medialibrary',
+					// 		data: {
+					// 			bucket: 'media',
+					// 			multipart_upload:
+					// 				form.uploadedFiles[0]?.mime_type == 'video/mp4'
+					// 					? [
+					// 							{
+					// 								e_tag:
+					// 									promiseFile?.signed_response?.headers?.etag.replace(
+					// 										/['"]+/g,
+					// 										''
+					// 									),
+					// 								part_number: 1
+					// 							}
+					// 					  ]
+					// 					: ['image'],
+					// 			keys: {
+					// 				image_key: form.uploadedCoverImage[0]?.keys?.image_key || '',
+					// 				...(form.mainCategory.name === 'Watch' ||
+					// 				form.mainCategory === 'Watch'
+					// 					? {
+					// 							video_key: promiseFile?.keys?.video_key,
+					// 							audio_key: ''
+					// 					  }
+					// 					: {
+					// 							audio_key: promiseFile?.keys?.audio_key,
+					// 							video_key: ''
+					// 					  })
+					// 			},
+					// 			upload_id:
+					// 				form.mainCategory?.name === 'Watch' ||
+					// 				form.mainCategory === 'Watch'
+					// 					? promiseFile?.upload_id
+					// 					: 'audio'
+					// 		}
+					// 	},
+					// 	{
+					// 		headers: {
+					// 			Authorization: `Bearer ${
+					// 				getLocalStorageDetails()?.access_token
+					// 			}`
+					// 		}
+					// 	}
+					// );
 				}
 
 				if (form.uploadedCoverImage[0] && form.uploadedCoverImage[0]?.file) {
@@ -994,54 +1003,63 @@ const UploadOrEditMedia = ({
 						form.uploadedCoverImage[0].type
 					);
 
-					uploadedCoverImage = await axios.post(
-						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-						{
-							file_name: form.uploadedCoverImage[0].file_name,
-							type: 'medialibrary',
-							data: {
-								bucket: 'media',
-								multipart_upload:
-									form.uploadedCoverImage[0]?.mime_type == 'video/mp4'
-										? [
-												{
-													e_tag:
-														promiseFile?.signed_response?.headers?.etag.replace(
-															/['"]+/g,
-															''
-														),
-													part_number: 1
-												}
-										  ]
-										: ['image'],
-								keys: {
-									image_key: promiseFile?.keys?.image_key || '',
-									...(form.mainCategory.name === 'Watch' ||
-									form.mainCategory === 'Watch'
-										? {
-												video_key: promiseFile?.keys?.video_key,
-												audio_key: ''
-										  }
-										: {
-												audio_key: promiseFile?.keys?.audio_key,
-												video_key: ''
-										  })
-								},
-								upload_id:
-									form.mainCategory?.name === 'Watch' ||
-									form.mainCategory === 'Watch'
-										? promiseFile?.upload_id || 'image'
-										: 'audio'
-							}
-						},
-						{
-							headers: {
-								Authorization: `Bearer ${
-									getLocalStorageDetails()?.access_token
-								}`
-							}
-						}
+					uploadedCoverImage = await completeUplaod(
+						form,
+						promiseFile,
+						'medialibrary',
+						true
 					);
+
+					console.log('uploadedCoverImage', uploadedCoverImage);
+
+					// uploadedCoverImage = await axios.post(
+					// 	`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+					// 	{
+					// 		file_name: form.uploadedCoverImage[0].file_name,
+					// 		type: 'medialibrary',
+					// 		data: {
+					// 			bucket: 'media',
+					// 			multipart_upload:
+					// 				form.uploadedCoverImage[0]?.mime_type == 'video/mp4'
+					// 					? [
+					// 							{
+					// 								e_tag:
+					// 									promiseFile?.signed_response?.headers?.etag.replace(
+					// 										/['"]+/g,
+					// 										''
+					// 									),
+					// 								part_number: 1
+					// 							}
+					// 					  ]
+					// 					: ['image'],
+					// 			keys: {
+					// 				image_key: promiseFile?.keys?.image_key || '',
+					// 				...(form.mainCategory.name === 'Watch' ||
+					// 				form.mainCategory === 'Watch'
+					// 					? {
+					// 							video_key: promiseFile?.keys?.video_key,
+					// 							audio_key: ''
+					// 					  }
+					// 					: {
+					// 							audio_key: promiseFile?.keys?.audio_key,
+					// 							video_key: ''
+					// 					  })
+					// 			},
+					// 			upload_id:
+					// 				form.mainCategory?.name === 'Watch' ||
+					// 				form.mainCategory === 'Watch'
+					// 					? promiseFile?.upload_id || 'image'
+					// 					: 'audio'
+					// 		}
+					// 	},
+					// 	{
+					// 		headers: {
+					// 			Authorization: `Bearer ${
+					// 				getLocalStorageDetails()?.access_token
+					// 			}`
+					// 		}
+					// 	}
+					// );
 				}
 
 				await uploadMedia(specificMedia?.id, {
@@ -1152,19 +1170,7 @@ const UploadOrEditMedia = ({
 							type: 'medialibrary',
 							data: {
 								bucket: 'media',
-								multipart_upload:
-									form.uploadedCoverImage[0]?.mime_type == 'video/mp4'
-										? [
-												{
-													e_tag:
-														promiseFile?.signed_response?.headers?.etag.replace(
-															/['"]+/g,
-															''
-														),
-													part_number: 1
-												}
-										  ]
-										: ['image'],
+								multipart_upload: ['image'],
 								keys: {
 									image_key: promiseFile?.keys?.image_key || '',
 									video_key: '',
