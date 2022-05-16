@@ -618,6 +618,14 @@ export const useStyles = makeStyles(() => ({
 		fontSize: ' 1.2rem'
 	},
 
+	noWrapLibraryFileName: {
+		fontSize: ' 1.2rem',
+		maxWidth: '60%',
+		textOverflow: 'ellipsis',
+		overflow: 'hidden',
+		whiteSpace: 'nowrap'
+	},
+
 	labelsWrapper: {
 		maxWidth: '60%',
 		textOverflow: 'ellipsis',
