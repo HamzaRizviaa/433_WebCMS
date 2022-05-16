@@ -28,4 +28,26 @@ export default class ArticleLibraryService {
 			}
 		);
 	}
+
+	static getArticleMainCategoriesApi() {
+		return axios.get(
+			`${process.env.REACT_APP_API_ENDPOINT}/article/get-main-categories`,
+			{
+				headers: {
+					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+				}
+			}
+		);
+	}
+
+	static getArticleSubCategoriesApi(id) {
+		return axios.get(
+			`${process.env.REACT_APP_API_ENDPOINT}/article/get-sub-categories/${id}`,
+			{
+				headers: {
+					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+				}
+			}
+		);
+	}
 }
