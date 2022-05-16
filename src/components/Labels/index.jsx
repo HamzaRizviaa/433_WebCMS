@@ -20,6 +20,13 @@ const Labels = ({
 	//const regex = /[%<>\\$'"\s@#/-=+&^*()!:;.,?{}[|]]/;
 	const regex = /\W/; // all characters that are not numbers and alphabets and underscore
 
+	// let draftLabels = selectedLabels.filter((label) => label.id == -1);
+	// let drafts = [];
+	// draftLabels.forEach((element) => drafts.push(element.name));
+	// let newOptions = LabelsOptions.filter(
+	// 	(element) => !drafts.includes(element.name)
+	// );
+
 	return (
 		<Autocomplete
 			disabled={isEdit && draftStatus === 'published'}
@@ -107,15 +114,20 @@ const Labels = ({
 					}}
 				/>
 			)}
+			// filterOptions={(options) => {
+			// 	let drafts = [];
+			// 	let draftLabels = selectedLabels.filter((label) => label.id == -1);
+			// 	draftLabels.forEach((element) => drafts.push(element.name));
+			// 	let newOptions = options.filter(
+			// 		(element) => !drafts.includes(element.name)
+			// 	);
+			// 	return newOptions;
+			// }}
 			renderOption={(props, option) => {
 				//selected in input field,  some -> array to check exists
 				let currentLabelDuplicate = selectedLabels.some(
 					(label) => label.name == option.name
 				);
-				// console.log(selectedLabels, 'subby');
-				// console.log(currentLabelDuplicate, 'mubby');
-				let draftLabels = selectedLabels.filter((label) => label.id == -1);
-				// console.log(draftLabels, 'dftl');
 				if (option.id == null && !currentLabelDuplicate) {
 					return (
 						<li
@@ -144,8 +156,6 @@ const Labels = ({
 							{option.name}
 						</li>
 					);
-				} else if (draftLabels && currentLabelDuplicate) {
-					return null;
 				} else {
 					return (
 						<div className={classes.liAutocompleteWithButton}>
