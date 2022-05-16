@@ -758,23 +758,43 @@ const UploadOrEditQuiz = ({
 						</div>
 
 						<div className={classes.buttonDiv}>
-							{editQuiz || editPoll ? (
-								<div className={classes.editBtn}>
-									<Button
-										disabled={deleteBtnStatus}
-										button2={editQuiz || editPoll ? true : false}
-										onClick={() => {
-											if (!deleteBtnStatus) {
-												deleteQuiz(editQuestionData?.id);
-											}
-										}}
-										text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
-									/>
-								</div>
-							) : (
-								<></>
-							)}
+							<div className={classes.leftButtonDiv}>
+								{editQuiz || editPoll ? (
+									<div className={classes.editBtn}>
+										<Button
+											disabled={deleteBtnStatus}
+											button2={editQuiz || editPoll ? true : false}
+											onClick={() => {
+												if (!deleteBtnStatus) {
+													deleteQuiz(editQuestionData?.id);
+												}
+											}}
+											text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
+										/>
+									</div>
+								) : (
+									<></>
+								)}
 
+								{(editQuiz || editPoll) && status === 'ACTIVE' ? (
+									<>
+										<div className={classes.stopBtn}>
+											<Button
+												// disabled={deleteBtnStatus}
+												button2={editQuiz || editPoll ? true : false}
+												// onClick={() => {
+												// 	if (!deleteBtnStatus) {
+												// 		stopQuizPoll(editQuestionData?.id);
+												// 	}
+												// }}
+												text={type === 'quiz' ? 'STOP QUIZ' : 'STOP POLL'}
+											/>
+										</div>
+									</>
+								) : (
+									<></>
+								)}
+							</div>
 							<div
 								className={
 									editQuiz || editPoll
