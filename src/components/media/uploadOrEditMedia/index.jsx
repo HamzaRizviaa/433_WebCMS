@@ -653,7 +653,7 @@ const UploadOrEditMedia = ({
 		}
 	}, [specificMedia, form]);
 
-	console.log(form, 'form');
+	// console.log(form, 'form');
 	const mainCategoryId = (e) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
 		let setData = mainCategories.find((u) => u.name === e);
@@ -1821,14 +1821,30 @@ const UploadOrEditMedia = ({
 									) : (
 										<></>
 									)}
+									{/* {console.log(
+										validateForm(form),
+										isEdit,
+										status,
+										'validateForm(form)'
+									)} */}
 
 									<div
 										className={
-											isEdit ? classes.addMediaBtnEdit : classes.addMediaBtn
+											isEdit && validateForm(form)
+												? classes.addMediaBtn
+												: isEdit
+												? classes.addMediaBtnEdit
+												: classes.addMediaBtn
 										}
 									>
 										<Button
-											disabled={isEdit ? editBtnDisabled : !validateForm(form)}
+											disabled={
+												isEdit && validateForm(form) && status === 'draft'
+													? false
+													: isEdit
+													? editBtnDisabled
+													: !validateForm(form)
+											}
 											onClick={() => addSaveMediaBtn()}
 											button2AddSave={true}
 											text={buttonText}
