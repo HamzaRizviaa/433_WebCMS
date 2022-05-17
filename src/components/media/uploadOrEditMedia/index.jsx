@@ -994,6 +994,7 @@ const UploadOrEditMedia = ({
 					}
 				});
 			} else {
+				//new draft
 				let uploadedFile;
 				let uploadedCoverImage;
 				if (form.uploadedFiles[0]) {
@@ -1019,7 +1020,7 @@ const UploadOrEditMedia = ({
 						form,
 						promiseFile,
 						'medialibrary',
-						true
+						true // image/video exists - true
 					);
 				}
 
@@ -1649,12 +1650,6 @@ const UploadOrEditMedia = ({
 									) : (
 										<></>
 									)}
-									{/* {console.log(
-										validateForm(form),
-										isEdit,
-										status,
-										'validateForm(form)'
-									)} */}
 
 									<div
 										className={
