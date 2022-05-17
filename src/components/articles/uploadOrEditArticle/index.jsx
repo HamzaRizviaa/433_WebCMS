@@ -540,6 +540,7 @@ const UploadOrEditViral = ({
 						>
 							<div>
 								<h5>{heading1}</h5>
+
 								<DragAndDropField
 									uploadedFiles={form.uploadedFiles}
 									// isEdit={isEdit}
