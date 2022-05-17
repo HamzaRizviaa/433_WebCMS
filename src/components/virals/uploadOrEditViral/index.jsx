@@ -48,8 +48,8 @@ const UploadOrEditViral = ({
 	const [postLabels, setPostLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
-	const [fileWidth, setFileWidth] = useState(null);
-	const [fileHeight, setFileHeight] = useState(null);
+	const [fileWidth, setFileWidth] = useState(0);
+	const [fileHeight, setFileHeight] = useState(0);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
@@ -236,8 +236,8 @@ const UploadOrEditViral = ({
 		setPreviewFile(null);
 		setPreviewBool(false);
 		setDisableDropdown(true);
-		setFileHeight(null);
-		setFileWidth(null);
+		setFileHeight(0);
+		setFileWidth(0);
 		setIsError({});
 		setForm({
 			caption: '',
@@ -269,23 +269,25 @@ const UploadOrEditViral = ({
 		}, 5000);
 	};
 
-	const createViral = async (id, mediaFiles = []) => {
-		console.log(mediaFiles, 'media ');
+	const createViral = async (id, file, draft = false) => {
 		setPostButtonStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
 				{
-					save_draft: true,
+					save_draft: draft,
 					caption: form.caption,
 					dropbox_url: form.dropbox_url,
-					media_url:
-						mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
-						mediaFiles[0]?.media_url,
-					file_name: mediaFiles[0]?.file_name,
-					thumbnail_url:
-						mediaFiles[0]?.thumbnail_url?.split('cloudfront.net/')[1] ||
-						mediaFiles[0]?.thumbnail_url,
+					media_url: form.uploadedFiles.length
+						? file?.media_url?.split('cloudfront.net/')[1] || file?.media_url
+						: '',
+					file_name: form.uploadedFiles.length ? file?.file_name : '',
+					// 	file?.media_url?.split('cloudfront.net/')[1] || file?.media_url,
+					// file_name: file?.file_name,
+					thumbnail_url: form.uploadedFiles.length
+						? file?.thumbnail_url?.split('cloudfront.net/')[1] ||
+						  file?.thumbnail_url
+						: '',
 					height: fileHeight,
 					width: fileWidth,
 					user_data: {
@@ -293,8 +295,10 @@ const UploadOrEditViral = ({
 						first_name: `${getLocalStorageDetails()?.first_name}`,
 						last_name: `${getLocalStorageDetails()?.last_name}`
 					},
-					...(form.show_likes ? { show_likes: true } : {}),
-					...(form.show_comments ? { show_comments: true } : {}),
+					show_likes: form.show_likes ? true : undefined,
+					show_comments: form.show_comments ? true : undefined,
+					// ...(form.show_likes ? { show_likes: true } : {}),
+					// ...(form.show_comments ? { show_comments: true } : {}),
 					...(isEdit && id ? { viral_id: id } : {}),
 					...(!isEdit && form.labels?.length
 						? { labels: [...form.labels] }
@@ -389,6 +393,7 @@ const UploadOrEditViral = ({
 				postButtonStatus ||
 					!form.caption ||
 					!form.uploadedFiles.length ||
+					form.labels.length < 7 ||
 					(specificViral?.file_name === form.uploadedFiles[0]?.file_name &&
 						specificViral?.caption?.trim() === form.caption.trim() &&
 						specificViral?.dropbox_url?.trim() === form.dropbox_url.trim() &&
@@ -473,8 +478,8 @@ const UploadOrEditViral = ({
 			}, 5000);
 		}
 	};
-	console.log(draftBtnDisabled, 'draftBtnDisabled');
-	const handleViralDraftBtn = () => {
+
+	const handleViralDraftBtn = async () => {
 		setIsLoadingcreateViral(false);
 		if (!validateDraft(form) || draftBtnDisabled) {
 			validateDraftBtn();
@@ -484,34 +489,58 @@ const UploadOrEditViral = ({
 			if (isEdit) {
 				// let uploadedFile;
 				setIsLoadingcreateViral(true);
-				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-					if (_file.file) {
-						return await uploadFileToServer(_file, 'virallibrary');
-					} else {
-						return _file;
-					}
-				});
+				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				// 	if (_file.file) {
+				// 		return await uploadFileToServer(_file, 'virallibrary');
+				// 	} else {
+				// 		return _file;
+				// 	}
+				// });
+				let uploadedFile = form.uploadedFiles[0];
+				if (form.uploadedFiles[0]?.file) {
+					uploadedFile = await uploadFileToServer(
+						form.uploadedFiles[0],
+						'virallibrary'
+					);
+				}
 
-				Promise.all([...uploadFilesPromiseArray])
-					.then((mediaFiles) => {
-						createViral(specificViral?.id, mediaFiles);
-					})
-					.catch(() => {
-						setIsLoadingcreateViral(false);
-					});
+				try {
+					createViral(specificViral?.id, uploadedFile, true);
+				} catch {
+					setIsLoadingcreateViral(false);
+				}
+
+				// Promise.all([...uploadFilesPromiseArray])
+				// 	.then((mediaFiles) => {
+				// 		createViral(specificViral?.id, mediaFiles);
+				// 	})
+				// 	.catch(() => {
+				// 		setIsLoadingcreateViral(false);
+				// 	});
 			} else {
 				setIsLoadingcreateViral(true);
-				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-					return uploadFileToServer(_file, 'virallibrary');
-				});
+				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				// 	return uploadFileToServer(_file, 'virallibrary');
+				// });
 
-				Promise.all([...uploadFilesPromiseArray])
-					.then((mediaFiles) => {
-						createViral(null, mediaFiles);
-					})
-					.catch(() => {
-						setIsLoadingcreateViral(false);
-					});
+				let uploadedFile = await uploadFileToServer(
+					form.uploadedFiles[0],
+					'virallibrary'
+				);
+
+				try {
+					createViral(null, uploadedFile, true);
+				} catch {
+					setIsLoadingcreateViral(false);
+				}
+
+				// Promise.all([...uploadFilesPromiseArray])
+				// 	.then((mediaFiles) => {
+				// 		createViral(null, mediaFiles);
+				// 	})
+				// 	.catch(() => {
+
+				// 	});
 			}
 		}
 	};
@@ -778,7 +807,7 @@ const UploadOrEditViral = ({
 												disabledDraft={
 													isEdit ? draftBtnDisabled : !validateDraft(form)
 												}
-												onClick={() => handleViralDraftBtn()}
+												onClick={handleViralDraftBtn}
 												button3={true}
 												text={
 													status === 'draft' && isEdit
@@ -809,9 +838,7 @@ const UploadOrEditViral = ({
 													: !validateForm(form)
 											}
 											// disabled={isEdit ? editBtnDisabled : !validateForm(form)}
-											onClick={() => {
-												handlePostSaveBtn();
-											}}
+											onClick={handlePostSaveBtn}
 											text={buttonText}
 										/>
 									</div>
