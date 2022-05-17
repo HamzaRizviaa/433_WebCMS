@@ -685,7 +685,7 @@ const UploadOrEditMedia = ({
 	}, [form]);
 
 	const addSaveMediaBtn = async () => {
-		if (!validateForm(form) || editBtnDisabled) {
+		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
 			validatePostBtn();
 		} else {
 			setIsLoadingUploadMedia(true);

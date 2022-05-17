@@ -157,7 +157,7 @@ const SignIn = ({ setLoginData }) => {
 										<Logo2 className={classes.Logo} />
 									</div>
 									<div className={classes.welcomeText}>
-										Welcome to 433 Content Magament System
+										Welcome to 433 Content Management System
 									</div>
 									{signInError ? (
 										<div className={classes.errorWrapper}>

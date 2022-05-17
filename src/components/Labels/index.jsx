@@ -20,12 +20,12 @@ const Labels = ({
 	//const regex = /[%<>\\$'"\s@#/-=+&^*()!:;.,?{}[|]]/;
 	const regex = /\W/; // all characters that are not numbers and alphabets and underscore
 
-	// let draftLabels = selectedLabels.filter((label) => label.id == -1);
-	// let drafts = [];
-	// draftLabels.forEach((element) => drafts.push(element.name));
-	// let newOptions = LabelsOptions.filter(
-	// 	(element) => !drafts.includes(element.name)
-	// );
+	let draftLabels = selectedLabels.filter((label) => label.id == -1);
+	let drafts = [];
+	draftLabels.forEach((element) => drafts.push(element.name));
+	let newOptions = LabelsOptions.filter(
+		(element) => !drafts.includes(element.name)
+	);
 
 	return (
 		<Autocomplete
@@ -85,7 +85,7 @@ const Labels = ({
 			}`}
 			id='free-solo-2-demo'
 			disableClearable
-			options={LabelsOptions} //postlabels, medialabels
+			options={isEdit && draftStatus === 'draft' ? newOptions : LabelsOptions} //postlabels, medialabels
 			renderInput={(params) => (
 				<TextField
 					{...params}
