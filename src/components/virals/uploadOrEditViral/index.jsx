@@ -300,9 +300,12 @@ const UploadOrEditViral = ({
 					// ...(form.show_likes ? { show_likes: true } : {}),
 					// ...(form.show_comments ? { show_comments: true } : {}),
 					...(isEdit && id ? { viral_id: id } : {}),
-					...(!isEdit && form.labels?.length
+					...((!isEdit || status !== 'published') && form.labels?.length
 						? { labels: [...form.labels] }
 						: {})
+					// ...(status !== 'published' && form.labels?.length
+					// 	? { labels: [...form.labels] }
+					// 	: {})
 				},
 				{
 					headers: {
@@ -328,13 +331,14 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	const deleteViral = async (id) => {
+	const deleteViral = async (id, isDraft) => {
 		setDeleteBtnStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/viral/delete-viral`,
 				{
-					viral_id: id
+					viral_id: id,
+					is_draft: isDraft
 				},
 				{
 					headers: {
@@ -412,12 +416,25 @@ const UploadOrEditViral = ({
 						specificViral?.caption?.trim() === form.caption.trim() &&
 						specificViral?.dropbox_url?.trim() === form.dropbox_url.trim() &&
 						specificViral?.show_likes === form.show_likes &&
-						specificViral?.show_comments === form.show_comments)
+						specificViral?.show_comments === form.show_comments &&
+						specificViral?.labels?.length === form?.labels?.length &&
+						!checkDuplicateLabel())
 			);
 		}
 	}, [specificViral, form]);
 
-	const handlePostSaveBtn = () => {
+	const checkDuplicateLabel = () => {
+		let formLabels = form?.labels?.map((formL) => {
+			if (specificViral?.labels?.includes(formL.name)) {
+				return true;
+			} else {
+				return false;
+			}
+		});
+		return formLabels.some((label) => label === false);
+	};
+
+	const handlePostSaveBtn = async () => {
 		setIsLoadingcreateViral(false);
 		if (!validateForm(form)) {
 			validateViralBtn();
@@ -426,34 +443,57 @@ const UploadOrEditViral = ({
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			if (isEdit) {
 				setIsLoadingcreateViral(true);
-				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-					if (_file.file) {
-						return await uploadFileToServer(_file, 'virallibrary');
-					} else {
-						return _file;
-					}
-				});
+				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				// 	if (_file.file) {
+				// 		return await uploadFileToServer(_file, 'virallibrary');
+				// 	} else {
+				// 		return _file;
+				// 	}
+				// });
 
-				Promise.all([...uploadFilesPromiseArray])
-					.then((mediaFiles) => {
-						createViral(specificViral?.id, mediaFiles);
-					})
-					.catch(() => {
-						setIsLoadingcreateViral(false);
-					});
+				let uploadedFile = form.uploadedFiles[0];
+				if (form.uploadedFiles[0]?.file) {
+					uploadedFile = await uploadFileToServer(
+						form.uploadedFiles[0],
+						'virallibrary'
+					);
+				}
+
+				try {
+					createViral(specificViral?.id, uploadedFile);
+				} catch {
+					setIsLoadingcreateViral(false);
+				}
+
+				// Promise.all([...uploadFilesPromiseArray])
+				// 	.then((mediaFiles) => {
+				// 		createViral(specificViral?.id, mediaFiles);
+				// 	})
+				// 	.catch(() => {
+				// 		setIsLoadingcreateViral(false);
+				// 	});
 			} else {
 				setIsLoadingcreateViral(true);
-				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-					return uploadFileToServer(_file, 'virallibrary');
-				});
+				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				// 	return uploadFileToServer(_file, 'virallibrary');
+				// });
+				let uploadedFile = await uploadFileToServer(
+					form.uploadedFiles[0],
+					'virallibrary'
+				);
+				try {
+					createViral(null, uploadedFile);
+				} catch {
+					setIsLoadingcreateViral(false);
+				}
 
-				Promise.all([...uploadFilesPromiseArray])
-					.then((mediaFiles) => {
-						createViral(null, mediaFiles);
-					})
-					.catch(() => {
-						setIsLoadingcreateViral(false);
-					});
+				// Promise.all([...uploadFilesPromiseArray])
+				// 	.then((mediaFiles) => {
+				// 		createViral(null, mediaFiles);
+				// 	})
+				// 	.catch(() => {
+				// 		setIsLoadingcreateViral(false);
+				// 	});
 			}
 		}
 	};
@@ -692,6 +732,7 @@ const UploadOrEditViral = ({
 												return { ...prev, labels: [...newVal] };
 											});
 										}}
+										draftStatus={status}
 									/>
 								</div>
 								<p className={globalClasses.mediaError}>
@@ -786,7 +827,7 @@ const UploadOrEditViral = ({
 											button2={isEdit ? true : false}
 											onClick={() => {
 												if (!deleteBtnStatus) {
-													deleteViral(specificViral?.id);
+													deleteViral(specificViral?.id, status);
 												}
 											}}
 											text={'DELETE VIRAL'}
@@ -842,36 +883,6 @@ const UploadOrEditViral = ({
 											text={buttonText}
 										/>
 									</div>
-								</div>
-							</div>
-
-							<div className={classes.buttonDiv}>
-								{isEdit ? (
-									<div className={classes.editBtn}>
-										<Button
-											disabled={deleteBtnStatus}
-											button2={isEdit ? true : false}
-											onClick={() => {
-												if (!deleteBtnStatus) {
-													deleteViral(specificViral?.id);
-												}
-											}}
-											text={'DELETE VIRAL'}
-										/>
-									</div>
-								) : (
-									<> </>
-								)}
-
-								<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
-									<Button
-										// disable - grey
-										disabled={isEdit ? editBtnDisabled : !validateForm(form)}
-										onClick={() => {
-											handlePostSaveBtn();
-										}}
-										text={buttonText}
-									/>
 								</div>
 							</div>
 						</div>
