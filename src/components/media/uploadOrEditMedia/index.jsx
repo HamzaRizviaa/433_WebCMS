@@ -1020,7 +1020,7 @@ const UploadOrEditMedia = ({
 						form,
 						promiseFile,
 						'medialibrary',
-						true
+						true // image/video exists - true
 					);
 				}
 

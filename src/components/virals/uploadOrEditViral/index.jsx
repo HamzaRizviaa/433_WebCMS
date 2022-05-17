@@ -398,6 +398,20 @@ const UploadOrEditViral = ({
 		}
 	}, [specificViral, form]);
 
+	useEffect(() => {
+		if (specificViral) {
+			// console.log(specificViral, Object.keys(specificViral), 'specificViral');
+			setDraftBtnDisabled(
+				!validateDraft(form) ||
+					(specificViral?.file_name === form.uploadedFiles[0]?.file_name &&
+						specificViral?.caption?.trim() === form.caption.trim() &&
+						specificViral?.dropbox_url?.trim() === form.dropbox_url.trim() &&
+						specificViral?.show_likes === form.show_likes &&
+						specificViral?.show_comments === form.show_comments)
+			);
+		}
+	}, [specificViral, form]);
+
 	const handlePostSaveBtn = () => {
 		setIsLoadingcreateViral(false);
 		if (!validateForm(form)) {
@@ -451,7 +465,7 @@ const UploadOrEditViral = ({
 			setIsError({
 				caption: !form.caption,
 				uploadedFiles: form.uploadedFiles.length < 1,
-				selectedLabels: form.labels.length < 7
+				selectedLabels: form.labels.length < 1
 			});
 
 			setTimeout(() => {
@@ -459,7 +473,7 @@ const UploadOrEditViral = ({
 			}, 5000);
 		}
 	};
-	console.log(setDraftBtnDisabled);
+	console.log(draftBtnDisabled, 'draftBtnDisabled');
 	const handleViralDraftBtn = () => {
 		setIsLoadingcreateViral(false);
 		if (!validateDraft(form) || draftBtnDisabled) {
@@ -653,9 +667,11 @@ const UploadOrEditViral = ({
 								</div>
 								<p className={globalClasses.mediaError}>
 									{isError.selectedLabels
-										? `You need to add  ${
+										? `You need to add ${
 												7 - form.labels.length
-										  }  more labels in order to post`
+										  } more labels in order to upload media`
+										: isError.selectedLabelsDraft
+										? 'You need to select atleast 1 label to save as draft'
 										: ''}
 								</p>
 
@@ -687,7 +703,7 @@ const UploadOrEditViral = ({
 									/>
 								</div>
 								<p className={globalClasses.mediaError}>
-									{isError.caption ? 'This field is required' : ''}
+									{isError.caption ? 'You need to enter the caption' : ''}
 								</p>
 
 								<div className={classes.postMediaContainer}>
@@ -727,6 +743,11 @@ const UploadOrEditViral = ({
 									</div>
 								</div>
 							</div>
+							<p className={globalClasses.mediaError}>
+								{isError.draftError
+									? 'Something needs to be changed to save a draft'
+									: ''}
+							</p>
 
 							<div className={classes.buttonDiv}>
 								{isEdit || (status === 'draft' && isEdit) ? (
@@ -754,9 +775,9 @@ const UploadOrEditViral = ({
 											}
 										>
 											<Button
-												// disabledDraft={
-												// 	// isEdit ? draftBtnDisabled : !validateDraft(form)
-												// }
+												disabledDraft={
+													isEdit ? draftBtnDisabled : !validateDraft(form)
+												}
 												onClick={() => handleViralDraftBtn()}
 												button3={true}
 												text={
