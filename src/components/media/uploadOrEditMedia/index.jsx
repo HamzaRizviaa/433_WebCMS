@@ -936,7 +936,7 @@ const UploadOrEditMedia = ({
 						'medialibrary'
 					);
 
-					console.log('Complete Upload', uploadedFile);
+					console.log('Complete Upload', uploadedFile, promiseFile);
 
 					// uploadedFile = await axios.post(
 					// 	`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
@@ -1099,6 +1099,7 @@ const UploadOrEditMedia = ({
 					}
 				});
 			} else {
+				//new draft
 				let uploadedFile;
 				let uploadedCoverImage;
 				if (form.uploadedFiles[0]) {
@@ -1821,12 +1822,6 @@ const UploadOrEditMedia = ({
 									) : (
 										<></>
 									)}
-									{/* {console.log(
-										validateForm(form),
-										isEdit,
-										status,
-										'validateForm(form)'
-									)} */}
 
 									<div
 										className={

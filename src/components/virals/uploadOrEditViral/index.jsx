@@ -19,6 +19,7 @@ import Labels from '../../Labels';
 import { getLocalStorageDetails } from '../../../utils';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
 import validateForm from '../../../utils/validateForm';
+import validateDraft from '../../../utils/validateDraft';
 import { Tooltip, Fade } from '@mui/material';
 import ToggleSwitch from '../../switch';
 // import Fade from '@mui/material/Fade';
@@ -35,7 +36,8 @@ const UploadOrEditViral = ({
 	isEdit,
 	heading1,
 	buttonText,
-	page
+	page,
+	status //draft or publish
 }) => {
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
@@ -49,6 +51,7 @@ const UploadOrEditViral = ({
 	const [fileWidth, setFileWidth] = useState(null);
 	const [fileHeight, setFileHeight] = useState(null);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
+	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
 	const [form, setForm] = useState({
 		caption: '',
@@ -273,6 +276,7 @@ const UploadOrEditViral = ({
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
 				{
+					save_draft: true,
 					caption: form.caption,
 					dropbox_url: form.dropbox_url,
 					media_url:
@@ -402,6 +406,69 @@ const UploadOrEditViral = ({
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			if (isEdit) {
+				setIsLoadingcreateViral(true);
+				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file, 'virallibrary');
+					} else {
+						return _file;
+					}
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createViral(specificViral?.id, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingcreateViral(false);
+					});
+			} else {
+				setIsLoadingcreateViral(true);
+				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+					return uploadFileToServer(_file, 'virallibrary');
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createViral(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoadingcreateViral(false);
+					});
+			}
+		}
+	};
+	const validateDraftBtn = () => {
+		if (isEdit) {
+			setIsError({
+				draftError: draftBtnDisabled
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		} else {
+			setIsError({
+				caption: !form.caption,
+				uploadedFiles: form.uploadedFiles.length < 1,
+				selectedLabels: form.labels.length < 7
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		}
+	};
+	console.log(setDraftBtnDisabled);
+	const handleViralDraftBtn = () => {
+		setIsLoadingcreateViral(false);
+		if (!validateDraft(form) || draftBtnDisabled) {
+			validateDraftBtn();
+		} else {
+			setPostButtonStatus(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			if (isEdit) {
+				// let uploadedFile;
 				setIsLoadingcreateViral(true);
 				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
 					if (_file.file) {
@@ -662,6 +729,75 @@ const UploadOrEditViral = ({
 							</div>
 
 							<div className={classes.buttonDiv}>
+								{isEdit || (status === 'draft' && isEdit) ? (
+									<div className={classes.editBtn}>
+										<Button
+											disabled={false}
+											button2={isEdit ? true : false}
+											onClick={() => {
+												if (!deleteBtnStatus) {
+													deleteViral(specificViral?.id);
+												}
+											}}
+											text={'DELETE VIRAL'}
+										/>
+									</div>
+								) : (
+									<></>
+								)}
+
+								<div className={classes.publishDraftDiv}>
+									{status === 'draft' || !isEdit ? (
+										<div
+											className={
+												isEdit ? classes.draftBtnEdit : classes.draftBtn
+											}
+										>
+											<Button
+												// disabledDraft={
+												// 	// isEdit ? draftBtnDisabled : !validateDraft(form)
+												// }
+												onClick={() => handleViralDraftBtn()}
+												button3={true}
+												text={
+													status === 'draft' && isEdit
+														? 'SAVE DRAFT'
+														: 'SAVE AS DRAFT'
+												}
+											/>
+										</div>
+									) : (
+										<></>
+									)}
+
+									<div
+										className={
+											isEdit && validateForm(form)
+												? classes.addMediaBtn
+												: isEdit
+												? classes.addMediaBtnEdit
+												: classes.addMediaBtn
+										}
+									>
+										<Button
+											disabled={
+												isEdit && validateForm(form) && status === 'draft'
+													? false
+													: isEdit
+													? editBtnDisabled
+													: !validateForm(form)
+											}
+											// disabled={isEdit ? editBtnDisabled : !validateForm(form)}
+											onClick={() => {
+												handlePostSaveBtn();
+											}}
+											text={buttonText}
+										/>
+									</div>
+								</div>
+							</div>
+
+							<div className={classes.buttonDiv}>
 								{isEdit ? (
 									<div className={classes.editBtn}>
 										<Button
@@ -764,6 +900,7 @@ UploadOrEditViral.propTypes = {
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
+	status: PropTypes.string.isRequired,
 	page: PropTypes.string
 };
 
