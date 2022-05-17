@@ -14,7 +14,6 @@ import { getLocalStorageDetails } from '../../../utils';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
-import { getAllArticlesApi } from '../../../pages/ArticleLibrary/articleLibrarySlice';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
 import Close from '@material-ui/icons/Close';
 import { TextField } from '@material-ui/core';
@@ -24,6 +23,12 @@ import validateForm from '../../../utils/validateForm';
 import PrimaryLoader from '../../PrimaryLoader';
 import { useStyles } from './index.style';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
+//api calls
+import {
+	getAllArticlesApi,
+	getArticleMainCategories
+	// getArticleSubCategories
+} from '../../../pages/ArticleLibrary/articleLibrarySlice';
 //tinymce
 import { Editor } from '@tinymce/tinymce-react';
 import 'tinymce/tinymce';
@@ -94,9 +99,29 @@ const UploadOrEditViral = ({
 		});
 
 	const labels = useSelector((state) => state.postLibrary.labels);
-	const { specificArticle, specificArticleStatus } = useSelector(
-		(state) => state.ArticleLibraryStore
+	const {
+		specificArticle,
+		specificArticleStatus,
+		articleSubCategories,
+		subCategoriesStatus,
+		articleMainCategories,
+		mainCategoriesStatus
+	} = useSelector((state) => state.ArticleLibraryStore);
+
+	console.log(
+		articleSubCategories,
+		subCategoriesStatus,
+		articleMainCategories,
+		mainCategoriesStatus
 	);
+
+	useEffect(() => {
+		dispatch(getPostLabels());
+		dispatch(getArticleMainCategories());
+		return () => {
+			resetState();
+		};
+	}, []);
 
 	const dispatch = useDispatch();
 
@@ -161,13 +186,6 @@ const UploadOrEditViral = ({
 			setPostLabels([...labels]);
 		}
 	}, [labels]);
-
-	useEffect(() => {
-		dispatch(getPostLabels());
-		return () => {
-			resetState();
-		};
-	}, []);
 
 	useEffect(() => {
 		if (!open) {

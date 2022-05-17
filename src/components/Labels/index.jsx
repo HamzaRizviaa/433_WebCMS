@@ -130,14 +130,18 @@ const Labels = ({
 				);
 
 				let draftLabels = selectedLabels.filter((label) => label.id == -1);
-				console.log(selectedLabels, 'selectedLabels');
-				console.log(draftLabels, 'draft labels');
-				console.log(option, 'option');
+
 				// console.log(LabelsOptions, 'LabelsOptions');
 				// var newArr = LabelsOptions.filter((item) => {
 				// 	return item.id !== draftLabels.id;
 				// });
 				// console.log(newArr, 'newArr');
+
+				var draftedValue = draftLabels.filter(
+					(draft) => draft.name === option.name
+				);
+				//option . name
+				console.log(draftedValue, 'newArr');
 
 				if (option.id == null && !currentLabelDuplicate) {
 					return (
@@ -167,7 +171,13 @@ const Labels = ({
 							{option.name}
 						</li>
 					);
-				} else {
+				} else if (draftLabels && currentLabelDuplicate) {
+					return (
+						<div className={classes.liAutocompleteWithButton}>
+							&apos;{option.name}&apos; is already drafted!
+						</div>
+					);
+				} else if (!draftLabels) {
 					return (
 						<div className={classes.liAutocompleteWithButton}>
 							&apos;{option.name}&apos; is already selected!

@@ -262,9 +262,9 @@ const ArticleLibrary = () => {
 							</span>
 						</Tooltip>
 
-						<div>
+						<div className={classes.noWrapLibraryFileName}>
 							<Markup
-								className={classes.libraryFileName}
+								// className={classes.noWrapLibraryFileName}
 								content={row?.title}
 							/>
 						</div>

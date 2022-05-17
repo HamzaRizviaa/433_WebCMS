@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getLocalStorageDetails } from './index';
 
-const completeUplaod = async (
+const completeUplaodDraft = async (
 	form,
 	promiseFile,
 	libraryType,
@@ -34,11 +34,11 @@ const completeUplaod = async (
 					...(form.mainCategory.name === 'Watch' ||
 					form.mainCategory === 'Watch'
 						? {
-								video_key: promiseFile?.keys?.video_key,
+								video_key: promiseFile?.keys?.video_key ?? '',
 								audio_key: ''
 						  }
 						: {
-								audio_key: promiseFile?.keys?.audio_key,
+								audio_key: promiseFile?.keys?.audio_key ?? '',
 								video_key: ''
 						  })
 				},
@@ -55,4 +55,4 @@ const completeUplaod = async (
 		}
 	);
 };
-export default completeUplaod;
+export default completeUplaodDraft;

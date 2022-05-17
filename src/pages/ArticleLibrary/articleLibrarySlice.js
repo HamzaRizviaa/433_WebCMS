@@ -55,6 +55,28 @@ export const getSpecificArticle = createAsyncThunk(
 		}
 	}
 );
+export const getArticleMainCategories = createAsyncThunk(
+	'articleLibary/getMainCategories',
+	async () => {
+		const response = await ArticleLibraryService.getArticleMainCategoriesApi;
+		if (response?.data?.data) {
+			return response.data.data;
+		} else {
+			return [];
+		}
+	}
+);
+export const getArticleSubCategories = createAsyncThunk(
+	'articleLibary/getSubCategories',
+	async (id) => {
+		const response = await ArticleLibraryService.getArticleSubCategoriesApi(id); //id  - main category id
+		if (response?.data?.data) {
+			return response.data.data;
+		} else {
+			return [];
+		}
+	}
+);
 export const articlesLibrarySlice = createSlice({
 	name: 'articlesLibrary',
 	initialState: {
@@ -65,7 +87,11 @@ export const articlesLibrarySlice = createSlice({
 		totalRecords: 0,
 		noResultStatus: false,
 		noResultStatusCalendar: false,
-		specificArticleStatus: ''
+		specificArticleStatus: '',
+		articleMainCategories: [],
+		articleSubCategories: [],
+		mainCategoriesStatus: false,
+		subCategoriesStatus: false
 	},
 	reducers: {
 		resetCalendarError: (state) => {
@@ -112,6 +138,31 @@ export const articlesLibrarySlice = createSlice({
 		[getSpecificArticle.rejected]: (state) => {
 			state.status = 'failed';
 			state.specificArticleStatus = 'failed';
+		},
+		//main categories
+
+		[getArticleMainCategories.pending]: (state) => {
+			state.mainCategoriesStatus = true;
+		},
+		[getArticleMainCategories.fulfilled]: (state, action) => {
+			state.articleMainCategories = action.payload;
+			state.mainCategoriesStatus = false;
+		},
+		[getArticleMainCategories.rejected]: (state) => {
+			state.mainCategoriesStatus = false;
+		},
+
+		//sub categories
+
+		[getArticleSubCategories.pending]: (state) => {
+			state.subCategoriesStatus = true;
+		},
+		[getArticleSubCategories.fulfilled]: (state, action) => {
+			state.articleSubCategories = action.payload;
+			state.subCategoriesStatus = false;
+		},
+		[getArticleSubCategories.rejected]: (state) => {
+			state.subCategoriesStatus = false;
 		}
 	}
 });
