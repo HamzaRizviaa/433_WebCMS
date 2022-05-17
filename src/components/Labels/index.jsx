@@ -171,13 +171,7 @@ const Labels = ({
 							{option.name}
 						</li>
 					);
-				} else if (draftLabels && currentLabelDuplicate) {
-					return (
-						<div className={classes.liAutocompleteWithButton}>
-							&apos;{option.name}&apos; is already drafted!
-						</div>
-					);
-				} else if (!draftLabels) {
+				} else {
 					return (
 						<div className={classes.liAutocompleteWithButton}>
 							&apos;{option.name}&apos; is already selected!

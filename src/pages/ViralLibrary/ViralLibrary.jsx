@@ -24,7 +24,7 @@ import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import { Markup } from 'interweave';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-// import './_calender.scss';
+import DefaultImage from '../../assets/defaultImage.png';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -259,6 +259,9 @@ const ViralLibrary = () => {
 											row?.thumbnail_url ? row?.thumbnail_url : row?.media
 										}`}
 										alt='no img'
+										onError={(e) => (
+											(e.target.onerror = null), (e.target.src = DefaultImage)
+										)}
 									/>
 								)
 							}
@@ -282,6 +285,9 @@ const ViralLibrary = () => {
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
 										row?.thumbnail_url ? row?.thumbnail_url : row?.media
 									}`}
+									onError={(e) => (
+										(e.target.onerror = null), (e.target.src = DefaultImage)
+									)}
 								/>
 							</span>
 						</Tooltip>
