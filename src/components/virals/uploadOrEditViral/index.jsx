@@ -436,7 +436,7 @@ const UploadOrEditViral = ({
 
 	const handlePostSaveBtn = async () => {
 		setIsLoadingcreateViral(false);
-		if (!validateForm(form) || editBtnDisabled ) {
+		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
 			validateViralBtn();
 		} else {
 			setPostButtonStatus(true);

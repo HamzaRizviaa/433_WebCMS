@@ -58,7 +58,7 @@ export const getSpecificArticle = createAsyncThunk(
 export const getArticleMainCategories = createAsyncThunk(
 	'articleLibary/getMainCategories',
 	async () => {
-		const response = await ArticleLibraryService.getArticleMainCategoriesApi;
+		const response = await ArticleLibraryService.getArticleMainCategoriesApi();
 		if (response?.data?.data) {
 			return response.data.data;
 		} else {
@@ -88,8 +88,8 @@ export const articlesLibrarySlice = createSlice({
 		noResultStatus: false,
 		noResultStatusCalendar: false,
 		specificArticleStatus: '',
-		articleMainCategories: [],
-		articleSubCategories: [],
+		mainCategories: [],
+		subCategories: [],
 		mainCategoriesStatus: false,
 		subCategoriesStatus: false
 	},
@@ -145,7 +145,7 @@ export const articlesLibrarySlice = createSlice({
 			state.mainCategoriesStatus = true;
 		},
 		[getArticleMainCategories.fulfilled]: (state, action) => {
-			state.articleMainCategories = action.payload;
+			state.mainCategories = action.payload;
 			state.mainCategoriesStatus = false;
 		},
 		[getArticleMainCategories.rejected]: (state) => {
@@ -158,7 +158,7 @@ export const articlesLibrarySlice = createSlice({
 			state.subCategoriesStatus = true;
 		},
 		[getArticleSubCategories.fulfilled]: (state, action) => {
-			state.articleSubCategories = action.payload;
+			state.subCategories = action.payload;
 			state.subCategoriesStatus = false;
 		},
 		[getArticleSubCategories.rejected]: (state) => {

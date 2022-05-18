@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 // import classes from './_uploadOrEditArticle.module.scss';
 import { useDropzone } from 'react-dropzone';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import { MenuItem, TextField, Select } from '@material-ui/core';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
 import Button from '../../button';
@@ -16,7 +18,6 @@ import { toast } from 'react-toastify';
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
 import Close from '@material-ui/icons/Close';
-import { TextField } from '@material-ui/core';
 import Slide from '@mui/material/Slide';
 import checkFileSize from '../../../utils/validateFileSize';
 import validateForm from '../../../utils/validateForm';
@@ -26,8 +27,8 @@ import { useStyles as globalUseStyles } from '../../../styles/global.style';
 //api calls
 import {
 	getAllArticlesApi,
-	getArticleMainCategories
-	// getArticleSubCategories
+	getArticleMainCategories,
+	getArticleSubCategories
 } from '../../../pages/ArticleLibrary/articleLibrarySlice';
 //tinymce
 import { Editor } from '@tinymce/tinymce-react';
@@ -61,7 +62,8 @@ const UploadOrEditViral = ({
 	isEdit,
 	heading1,
 	buttonText,
-	page
+	page,
+	status
 }) => {
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -86,7 +88,9 @@ const UploadOrEditViral = ({
 		description: '',
 		dropbox_url: '',
 		uploadedFiles: [],
-		labels: []
+		labels: [],
+		mainCategory: '',
+		subCategory: ''
 	});
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
@@ -98,22 +102,19 @@ const UploadOrEditViral = ({
 			validator: checkFileSize
 		});
 
+	console.log('status', status);
+
 	const labels = useSelector((state) => state.postLibrary.labels);
 	const {
 		specificArticle,
 		specificArticleStatus,
-		articleSubCategories,
-		subCategoriesStatus,
-		articleMainCategories,
-		mainCategoriesStatus
+		subCategories,
+		// subCategoriesStatus,
+		mainCategories
+		// mainCategoriesStatus
 	} = useSelector((state) => state.ArticleLibraryStore);
 
-	console.log(
-		articleSubCategories,
-		subCategoriesStatus,
-		articleMainCategories,
-		mainCategoriesStatus
-	);
+	console.log('Main', mainCategories);
 
 	useEffect(() => {
 		dispatch(getPostLabels());
@@ -122,6 +123,37 @@ const UploadOrEditViral = ({
 			resetState();
 		};
 	}, []);
+
+	useEffect(() => {
+		if (form.mainCategory && !isEdit) {
+			dispatch(getArticleSubCategories(form.mainCategory.id));
+		} else if (form.mainCategory?.name && isEdit) {
+			let setData = mainCategories.find(
+				(u) => u.name === form.mainCategory?.name
+			);
+			dispatch(getArticleSubCategories(setData?.id));
+		} else {
+			let setData = mainCategories.find((u) => u.name === form.mainCategory);
+			dispatch(getArticleSubCategories(setData?.id));
+		}
+	}, [form.mainCategory]);
+
+	const mainCategoryId = (e) => {
+		//find name and will return whole object  isEdit ? subCategory : subCategory.name
+		let setData = mainCategories.find((u) => u.name === e);
+		setForm((prev) => {
+			return { ...prev, mainCategory: setData, subCategory: '' };
+		});
+	};
+
+	const SubCategoryId = (e) => {
+		//e -- name
+		//find name and will return whole object
+		let setData = subCategories.find((u) => u.name === e);
+		setForm((prev) => {
+			return { ...prev, subCategory: setData };
+		});
+	};
 
 	const dispatch = useDispatch();
 
@@ -323,7 +355,9 @@ const UploadOrEditViral = ({
 			description: tinyMCE.activeEditor?.setContent(''),
 			dropbox_url: '',
 			uploadedFiles: [],
-			labels: []
+			labels: [],
+			mainCategory: '',
+			subCategory: ''
 		});
 	};
 
@@ -438,7 +472,7 @@ const UploadOrEditViral = ({
 	}, [specificArticle, editorTextChecker, form]);
 
 	const handleAddSaveBtn = async () => {
-		if (!validateForm(form) || editBtnDisabled) {
+		if (!validateForm(form)) {
 			validateArticleBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -503,6 +537,8 @@ const UploadOrEditViral = ({
 		}
 	};
 
+	console.log('Form Main', form.mainCategory);
+
 	return (
 		<Slider
 			open={open}
@@ -540,6 +576,204 @@ const UploadOrEditViral = ({
 						>
 							<div>
 								<h5>{heading1}</h5>
+								<div className={classes.categoryContainer}>
+									<div className={classes.mainCategory}>
+										<h6
+											className={[
+												isError.mainCategory
+													? globalClasses.errorState
+													: globalClasses.noErrorState
+											].join(' ')}
+										>
+											MAIN CATEGORY
+										</h6>
+										<Select
+											onOpen={() => {
+												setDisableDropdown(false);
+											}}
+											onClose={() => {
+												setDisableDropdown(true);
+											}}
+											disabled={isEdit && status === 'published' ? true : false}
+											// style={{
+											// 	backgroundColor:
+											// 		isEdit && status === 'published'
+											// 			? '#404040'
+											// 			: '#000000'
+											// }}
+											value={
+												isEdit ? form.mainCategory : form.mainCategory?.name
+											}
+											onChange={(event) => {
+												setDisableDropdown(true);
+												setForm((prev) => {
+													return {
+														...prev,
+														mainCategory: {
+															...form.mainCategory,
+															name: event.target.value
+														}
+													};
+												});
+												mainCategoryId(event.target.value);
+												if (form.uploadedFiles.length) {
+													form.uploadedFiles.map((file) =>
+														handleDeleteFile(file.id)
+													);
+												}
+												if (isEdit) {
+													setForm((prev) => {
+														return { ...prev, subCategory: '' };
+													});
+												}
+											}}
+											className={`${classes.select} ${
+												isEdit && status === 'published'
+													? `${classes.isEditSelect}`
+													: ''
+											}`}
+											disableUnderline={true}
+											IconComponent={(props) => (
+												<KeyboardArrowDownIcon
+													{...props}
+													style={{
+														display:
+															isEdit && status === 'published'
+																? 'none'
+																: 'block',
+														top: '4'
+													}}
+												/>
+											)}
+											MenuProps={{
+												anchorOrigin: {
+													vertical: 'bottom',
+													horizontal: 'left'
+												},
+												transformOrigin: {
+													vertical: 'top',
+													horizontal: 'left'
+												},
+												getContentAnchorEl: null
+											}}
+											displayEmpty={true}
+											renderValue={(value) => {
+												return value ? value?.name || value : 'Please Select';
+											}}
+										>
+											{mainCategories.map((category, index) => {
+												return (
+													<MenuItem key={index} value={category.name}>
+														{category.name}
+													</MenuItem>
+												);
+											})}
+										</Select>
+										<div className={classes.catergoryErrorContainer}>
+											<p className={globalClasses.uploadMediaError}>
+												{isError.mainCategory
+													? 'You need to select main category'
+													: ''}
+											</p>
+										</div>
+									</div>
+									<div className={classes.subCategory}>
+										<h6
+											className={[
+												isError.subCategory && form.mainCategory
+													? globalClasses.errorState
+													: globalClasses.noErrorState
+											].join(' ')}
+										>
+											SUB CATEGORY
+										</h6>
+										<Select
+											onOpen={() => {
+												setDisableDropdown(false);
+											}}
+											onClose={() => {
+												setDisableDropdown(true);
+											}}
+											disabled={
+												!form.mainCategory || (isEdit && status === 'published')
+													? true
+													: false
+											}
+											// style={{
+											// 	backgroundColor:
+											// 		isEdit && status === 'published'
+											// 			? '#404040'
+											// 			: '#000000'
+											// }}
+											value={
+												isEdit
+													? form.subCategory
+													: form.subCategory?.name || form.subCategory
+											}
+											onChange={(e) => {
+												setDisableDropdown(true);
+												SubCategoryId(e.target.value);
+											}}
+											className={`${classes.select} ${
+												isEdit && status === 'published'
+													? `${classes.isEditSelect}`
+													: ''
+											}`}
+											disableUnderline={true}
+											IconComponent={(props) => (
+												<KeyboardArrowDownIcon
+													{...props}
+													style={{
+														display:
+															isEdit && status === 'published'
+																? 'none'
+																: 'block',
+														top: '4'
+													}}
+												/>
+											)}
+											MenuProps={{
+												anchorOrigin: {
+													vertical: 'bottom',
+													horizontal: 'left'
+												},
+												transformOrigin: {
+													vertical: 'top',
+													horizontal: 'left'
+												},
+												getContentAnchorEl: null
+											}}
+											displayEmpty={form.mainCategory ? true : false}
+											renderValue={
+												(value) => {
+													return value ? value?.name || value : 'Please Select';
+												}
+												// value?.length
+												// 	? Array.isArray(value)
+												// 		? value.join(', ')
+												// 		: value?.name || value
+												// 	: 'Please Select'
+											}
+										>
+											{subCategories.map((category, index) => {
+												return (
+													<MenuItem key={index} value={category.name}>
+														{category.name}
+													</MenuItem>
+												);
+											})}
+										</Select>
+										<p className={globalClasses.uploadMediaError}>
+											{isEdit && status === 'published'
+												? ' '
+												: form.mainCategory?.name || form.mainCategory
+												? isError.subCategory &&
+												  'You need to select sub category'
+												: ''}
+											{/* {} */}
+										</p>
+									</div>
+								</div>
 
 								<DragAndDropField
 									uploadedFiles={form.uploadedFiles}
@@ -969,7 +1203,8 @@ UploadOrEditViral.propTypes = {
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
-	page: PropTypes.string
+	page: PropTypes.string,
+	status: PropTypes.string
 };
 
 export default UploadOrEditViral;

@@ -67,6 +67,7 @@ const ArticleLibrary = () => {
 	const [noResultCalendarError, setNoResultCalendarError] = useState('');
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
+	const [rowStatus, setRowStatus] = useState('');
 
 	const navigate = useNavigate();
 
@@ -370,6 +371,7 @@ const ArticleLibrary = () => {
 			dispatch(getSpecificArticle(row.id));
 			setEdit(true);
 			setShowSlider(true);
+			setRowStatus(row?.status);
 		}
 	};
 
@@ -668,6 +670,7 @@ const ArticleLibrary = () => {
 					title={edit ? 'Edit Article' : 'Upload Article'}
 					heading1={edit ? 'Media File' : 'Add Media File'}
 					buttonText={edit ? 'SAVE CHANGES' : 'POST ARTICLE'}
+					status={'draft'}
 				/>
 			</Layout>
 		</LoadingOverlay>

@@ -16,6 +16,28 @@ export const useStyles = makeStyles((theme) => ({
 			marginLeft: '1rem'
 		}
 	},
+	categoryContainer: {
+		marginTop: '2.5rem',
+		width: '100%',
+		display: 'flex',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+
+		'& h6': {
+			marginBottom: '0.5rem',
+			marginLeft: '1rem'
+		}
+	},
+
+	mainCategory: {
+		width: '48%',
+		display: 'inline-block'
+	},
+
+	subCategory: {
+		width: '48%',
+		display: 'inline-block'
+	},
 
 	postMediaHeader: {
 		width: '100%',
@@ -41,13 +63,14 @@ export const useStyles = makeStyles((theme) => ({
 			paddingRight: '32px'
 		},
 		width: '100%',
-		color: theme.palette.white,
+		padding: '3px 0',
+		color: `${theme.palette.white} !important`,
 		border: `1px solid ${theme.palette.grey}`,
 		fontSize: ' 1.4rem !important',
 		lineHeight: '1.6 !important',
 		borderRadius: '5rem !important',
 		marginBottom: '1rem !important',
-		backgroundColor: `${theme.palette.black} !important`,
+		backgroundColor: `${theme.palette.black}`,
 		"& div[role='button']": {
 			padding: '1rem 0rem 1rem 2rem'
 		},

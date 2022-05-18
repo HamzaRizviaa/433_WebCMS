@@ -14,7 +14,7 @@
 	padding: 1rem 6rem;
 	cursor: pointer;
 	white-space: nowrap;
-	@include preventSelect;
+	// @include preventSelect;
 }
 
 .disabled {
