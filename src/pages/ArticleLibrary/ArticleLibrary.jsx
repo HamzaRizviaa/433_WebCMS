@@ -139,7 +139,8 @@ const ArticleLibrary = () => {
 		post_date: 'postdate',
 		labels: 'label',
 		user: 'user',
-		last_edit: 'lastedit'
+		last_edit: 'lastedit',
+		status: 'status'
 	};
 
 	const sortRows = (order, col) => {
@@ -165,7 +166,8 @@ const ArticleLibrary = () => {
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||
-								  col?.dataField === 'user'
+								  col?.dataField === 'user' ||
+								  col?.dataField === 'status'
 								? 30
 								: -4,
 						bottom: 0.5
@@ -183,7 +185,8 @@ const ArticleLibrary = () => {
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||
-								  col?.dataField === 'user'
+								  col?.dataField === 'user' ||
+								  col?.dataField === 'status'
 								? 30
 								: -4,
 						bottom: 0.5
@@ -201,7 +204,8 @@ const ArticleLibrary = () => {
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||
-								  col?.dataField === 'user'
+								  col?.dataField === 'user' ||
+								  col?.dataField === 'status'
 								? 30
 								: -4,
 						bottom: 0.5
@@ -337,6 +341,27 @@ const ArticleLibrary = () => {
 			text: 'LAST EDIT',
 			formatter: (content) => {
 				return <div className={classes.row}>{getDateTime(content)}</div>;
+			},
+			headerStyle: () => {
+				return { paddingLeft: '48px' };
+			}
+		},
+		{
+			dataField: 'status',
+			sort: true,
+			sortCaret: sortRows,
+			sortFunc: () => {},
+			text: 'STATUS',
+			formatter: (content) => {
+				return (
+					<div className={`${classes.publish_draft_btn}`}>
+						<Button
+							onClick={() => {}}
+							text={content == 'published' ? 'PUBLISHED' : 'DRAFT'}
+							published={content == 'published' ? true : false}
+						/>
+					</div>
+				);
 			},
 			headerStyle: () => {
 				return { paddingLeft: '48px' };
