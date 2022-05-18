@@ -76,8 +76,8 @@ const UploadOrEditViral = ({
 	const [postLabels, setPostLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
-	const [fileWidth, setFileWidth] = useState(null);
-	const [fileHeight, setFileHeight] = useState(null);
+	const [fileWidth, setFileWidth] = useState(0);
+	const [fileHeight, setFileHeight] = useState(0);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
 	const imgEl = useRef(null);
@@ -103,8 +103,6 @@ const UploadOrEditViral = ({
 			validator: checkFileSize
 		});
 
-	console.log('status', status);
-
 	const labels = useSelector((state) => state.postLibrary.labels);
 	const {
 		specificArticle,
@@ -114,8 +112,6 @@ const UploadOrEditViral = ({
 		mainCategories
 		// mainCategoriesStatus
 	} = useSelector((state) => state.ArticleLibraryStore);
-
-	console.log('Main', mainCategories);
 
 	useEffect(() => {
 		dispatch(getPostLabels());
@@ -352,8 +348,8 @@ const UploadOrEditViral = ({
 		setPreviewBool(false);
 
 		setDisableDropdown(true);
-		setFileHeight(null);
-		setFileWidth(null);
+		setFileHeight(0);
+		setFileWidth(0);
 		setIsError({});
 		setForm({
 			title: '',
@@ -607,8 +603,6 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	console.log('Form Main', form.mainCategory);
-
 	return (
 		<Slider
 			open={open}
@@ -675,6 +669,7 @@ const UploadOrEditViral = ({
 												isEdit ? form.mainCategory : form.mainCategory?.name
 											}
 											onChange={(event) => {
+												console.log('event called 1');
 												setDisableDropdown(true);
 												// setForm((prev) => {
 												// 	return {
@@ -685,6 +680,7 @@ const UploadOrEditViral = ({
 												// 		}
 												// 	};
 												// });
+
 												mainCategoryId(event.target.value);
 												if (form.uploadedFiles.length) {
 													form.uploadedFiles.map((file) =>
@@ -692,6 +688,7 @@ const UploadOrEditViral = ({
 													);
 												}
 												if (isEdit) {
+													console.log("event called'");
 													setForm((prev) => {
 														return { ...prev, subCategory: '' };
 													});
