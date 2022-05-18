@@ -362,6 +362,33 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
+	const stopQuizPoll = async (id) => {
+		setDeleteBtnStatus(true);
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/question/stop-question`,
+				{
+					question_id: id
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success('Question has been stoppped!');
+				handleClose();
+
+				//setting a timeout for getting post after delete.
+				dispatch(getQuestions({ page }));
+			}
+		} catch (e) {
+			toast.error('Failed to stop Question!');
+			setDeleteBtnStatus(false);
+		}
+	};
+
 	const resetState = () => {
 		setFileRejectionError('');
 		setPreviewFile(null);
@@ -782,11 +809,11 @@ const UploadOrEditQuiz = ({
 											<Button
 												// disabled={deleteBtnStatus}
 												button2={editQuiz || editPoll ? true : false}
-												// onClick={() => {
-												// 	if (!deleteBtnStatus) {
-												// 		stopQuizPoll(editQuestionData?.id);
-												// 	}
-												// }}
+												onClick={() => {
+													if (!deleteBtnStatus) {
+														stopQuizPoll(editQuestionData?.id);
+													}
+												}}
 												text={type === 'quiz' ? 'STOP QUIZ' : 'STOP POLL'}
 											/>
 										</div>

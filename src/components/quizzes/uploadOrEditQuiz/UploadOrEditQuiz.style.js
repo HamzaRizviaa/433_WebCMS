@@ -178,7 +178,8 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	disableTextField: {
-		backgroundColor: '#404040 !important'
+		backgroundColor: '#404040 !important',
+		color: '#C4C4C4 !important'
 	},
 
 	buttonDiv: {
