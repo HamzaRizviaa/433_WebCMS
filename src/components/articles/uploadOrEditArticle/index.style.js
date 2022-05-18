@@ -103,7 +103,12 @@ export const useStyles = makeStyles((theme) => ({
 
 	buttonDiv: {
 		width: '100%',
-		marginBottom: '4rem'
+		marginBottom: '4rem',
+		display: 'flex',
+		justifyContent: 'flex-end'
+	},
+	publishDraftDiv: {
+		display: 'flex'
 	},
 
 	postBtn: {

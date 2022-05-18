@@ -695,7 +695,7 @@ const ArticleLibrary = () => {
 					title={edit ? 'Edit Article' : 'Upload Article'}
 					heading1={edit ? 'Media File' : 'Add Media File'}
 					buttonText={edit ? 'SAVE CHANGES' : 'POST ARTICLE'}
-					status={'draft'}
+					status={rowStatus}
 				/>
 			</Layout>
 		</LoadingOverlay>

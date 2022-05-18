@@ -21,6 +21,7 @@ import Close from '@material-ui/icons/Close';
 import Slide from '@mui/material/Slide';
 import checkFileSize from '../../../utils/validateFileSize';
 import validateForm from '../../../utils/validateForm';
+import validateDraft from '../../../utils/validateDraft';
 import PrimaryLoader from '../../PrimaryLoader';
 import { useStyles } from './index.style';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
@@ -138,11 +139,11 @@ const UploadOrEditViral = ({
 		}
 	}, [form.mainCategory]);
 
-	const mainCategoryId = (e) => {
+	const mainCategoryId = (categoryString) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
-		let setData = mainCategories.find((u) => u.name === e);
+		let setData = mainCategories.find((u) => u.name === categoryString);
 		setForm((prev) => {
-			return { ...prev, mainCategory: setData, subCategory: '' };
+			return { ...prev, mainCategory: setData };
 		});
 	};
 
@@ -172,6 +173,8 @@ const UploadOrEditViral = ({
 					};
 				});
 			}
+			mainCategoryId(specificArticle?.media_type);
+			SubCategoryId(specificArticle?.sub_category);
 			setForm((prev) => {
 				return {
 					...prev,
@@ -280,8 +283,7 @@ const UploadOrEditViral = ({
 		setEditorTextChecker(editorTextContent); // to check yellow button condition
 	};
 
-	const createArticle = async (id, mediaFiles = []) => {
-		console.log(mediaFiles, 'mediaFiles');
+	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
 		try {
 			const result = await axios.post(
@@ -290,6 +292,9 @@ const UploadOrEditViral = ({
 					title: form.title,
 					height: fileHeight,
 					width: fileWidth,
+					main_category_id: form?.mainCategory.id,
+					sub_category_id: form.subCategory.id,
+					save_draft: draft,
 					description: form.description,
 					dropbox_url: form.dropbox_url ? form.dropbox_url : '',
 					file_name: mediaFiles[0]?.file_name,
@@ -298,9 +303,9 @@ const UploadOrEditViral = ({
 						mediaFiles[0]?.media_url,
 
 					...(isEdit && id ? { article_id: id } : {}),
-					...(!isEdit && form.labels.length
+					...((!isEdit || status !== 'published') && form.labels?.length
 						? { labels: [...form.labels] }
-						: {}), // can't edit
+						: {}),
 
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
@@ -537,6 +542,71 @@ const UploadOrEditViral = ({
 		}
 	};
 
+	const handleDraftSave = async () => {
+		if (!validateDraft(form)) {
+			validateArticleBtn();
+		} else {
+			setPostButtonStatus(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			setIsLoading(true);
+			if (isEdit) {
+				if (specificArticle?.title?.trim() !== form.title?.trim()) {
+					if (
+						(await handleTitleDuplicate(form.title)) ===
+						'The Title Already Exist'
+					) {
+						setIsError({ articleTitleExists: 'This title already exists' });
+						setTimeout(() => {
+							setIsError({});
+						}, [5000]);
+
+						setPostButtonStatus(false);
+						return;
+					}
+				}
+				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file, 'articleLibrary');
+					} else {
+						return _file;
+					}
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createArticle(specificArticle?.id, mediaFiles, true);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
+			} else {
+				if (
+					(await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
+				) {
+					setIsError({ articleTitleExists: 'This title already exists' });
+					setTimeout(() => {
+						setIsError({});
+					}, [5000]);
+
+					setPostButtonStatus(false);
+					return;
+				}
+				setIsLoading(true);
+				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+					return uploadFileToServer(_file, 'articleLibrary');
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createArticle(null, mediaFiles, true);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
+			}
+		}
+	};
+
 	console.log('Form Main', form.mainCategory);
 
 	return (
@@ -595,26 +665,26 @@ const UploadOrEditViral = ({
 												setDisableDropdown(true);
 											}}
 											disabled={isEdit && status === 'published' ? true : false}
-											// style={{
-											// 	backgroundColor:
-											// 		isEdit && status === 'published'
-											// 			? '#404040'
-											// 			: '#000000'
-											// }}
+											style={{
+												backgroundColor:
+													isEdit && status === 'published'
+														? '#404040'
+														: '#000000'
+											}}
 											value={
 												isEdit ? form.mainCategory : form.mainCategory?.name
 											}
 											onChange={(event) => {
 												setDisableDropdown(true);
-												setForm((prev) => {
-													return {
-														...prev,
-														mainCategory: {
-															...form.mainCategory,
-															name: event.target.value
-														}
-													};
-												});
+												// setForm((prev) => {
+												// 	return {
+												// 		...prev,
+												// 		mainCategory: {
+												// 			...form.mainCategory,
+												// 			name: event.target.value
+												// 		}
+												// 	};
+												// });
 												mainCategoryId(event.target.value);
 												if (form.uploadedFiles.length) {
 													form.uploadedFiles.map((file) =>
@@ -699,12 +769,12 @@ const UploadOrEditViral = ({
 													? true
 													: false
 											}
-											// style={{
-											// 	backgroundColor:
-											// 		isEdit && status === 'published'
-											// 			? '#404040'
-											// 			: '#000000'
-											// }}
+											style={{
+												backgroundColor:
+													isEdit && status === 'published'
+														? '#404040'
+														: '#000000'
+											}}
 											value={
 												isEdit
 													? form.subCategory
@@ -909,6 +979,7 @@ const UploadOrEditViral = ({
 										selectedLabels={form.labels}
 										LabelsOptions={postLabels}
 										extraLabel={extraLabel}
+										draftStatus={status}
 										handleChangeExtraLabel={handleChangeExtraLabel}
 										setSelectedLabels={(newVal) => {
 											setForm((prev) => {
@@ -1135,7 +1206,7 @@ const UploadOrEditViral = ({
 								</p>
 							</div>
 
-							<div className={classes.buttonDiv}>
+							{/* <div className={classes.buttonDiv}>
 								{isEdit ? (
 									<div className={classes.editBtn}>
 										<Button
@@ -1159,6 +1230,70 @@ const UploadOrEditViral = ({
 										onClick={() => handleAddSaveBtn()}
 										text={buttonText}
 									/>
+								</div>
+							</div> */}
+							<div className={classes.buttonDiv}>
+								{isEdit || (status === 'draft' && isEdit) ? (
+									<div className={classes.editBtn}>
+										<Button
+											disabled={deleteBtnStatus}
+											button2={isEdit ? true : false}
+											onClick={() => {
+												if (!deleteBtnStatus) {
+													deleteArticle(specificArticle?.id);
+												}
+											}}
+											text={'DELETE ARTICLE'}
+										/>
+									</div>
+								) : (
+									<></>
+								)}
+
+								<div className={classes.publishDraftDiv}>
+									{status === 'draft' || !isEdit ? (
+										<div
+											className={
+												isEdit ? classes.draftBtnEdit : classes.draftBtn
+											}
+										>
+											<Button
+												disabledDraft={isEdit ? false : !validateDraft(form)}
+												onClick={() => handleDraftSave()}
+												button3={true}
+												text={
+													status === 'draft' && isEdit
+														? 'SAVE DRAFT'
+														: 'SAVE AS DRAFT'
+												}
+											/>
+										</div>
+									) : (
+										<></>
+									)}
+
+									<div
+										className={
+											isEdit && validateForm(form)
+												? classes.addMediaBtn
+												: isEdit
+												? classes.addMediaBtnEdit
+												: classes.addMediaBtn
+										}
+									>
+										<Button
+											disabled={
+												isEdit && validateForm(form) && status === 'draft'
+													? false
+													: isEdit
+													? editBtnDisabled
+													: !validateForm(form)
+											}
+											button2AddSave={true}
+											text={buttonText}
+											onClick={() => handleAddSaveBtn()}
+										/>
+									</div>
 								</div>
 							</div>
 						</div>
