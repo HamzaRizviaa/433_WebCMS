@@ -105,7 +105,7 @@ export const useStyles = makeStyles((theme) => ({
 		width: '100%',
 		marginBottom: '4rem',
 		display: 'flex',
-		justifyContent: 'flex-end'
+		justifyContent: 'space-between'
 	},
 	publishDraftDiv: {
 		display: 'flex'
@@ -121,7 +121,6 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	editBtn: {
-		width: '30%',
 		display: 'inline-block'
 	},
 

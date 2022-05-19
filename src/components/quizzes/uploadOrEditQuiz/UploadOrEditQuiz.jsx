@@ -50,8 +50,7 @@ const UploadOrEditQuiz = ({
 	handleClose,
 	page,
 	status,
-	type,
-	
+	type
 }) => {
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [quizLabels, setQuizLabels] = useState([]);
@@ -186,6 +185,8 @@ const UploadOrEditQuiz = ({
 					end_date: editQuestionData?.quiz_end_date
 						? editQuestionData?.quiz_end_date
 						: editQuestionData?.poll_end_date
+						? editQuestionData?.poll_end_date
+						: null
 				};
 			});
 		}
@@ -285,9 +286,11 @@ const UploadOrEditQuiz = ({
 						? convertedDate
 							? { end_date: convertedDate }
 							: {}
-						: (editQuiz || editPoll) && status === 'ACTIVE'
+						: (editQuiz || editPoll) &&
+						  (status === 'ACTIVE' || status === 'draft')
 						? { end_date: convertedDate }
 						: {}),
+
 					...(!(editQuiz || editPoll)
 						? quiz
 							? { question_type: 'quiz' }
@@ -546,21 +549,31 @@ const UploadOrEditQuiz = ({
 					>
 						<div>
 							<h5 className={classes.QuizQuestion}>{heading1}</h5>
-							<DragAndDropField
-								uploadedFiles={form.uploadedFiles}
-								quizPollStatus={status}
-								handleDeleteFile={handleDeleteFile}
-								setPreviewBool={setPreviewBool}
-								setPreviewFile={setPreviewFile}
-								isArticle
-								isEdit={editPoll || editQuiz}
-								imgEl={imgRef}
-								imageOnload={() => {
-									setFileWidth(imgRef.current.naturalWidth);
-									setFileHeight(imgRef.current.naturalHeight);
-								}}
-							/>
-							{!form.uploadedFiles.length && (
+							{(editQuiz || editPoll) && editQuestionData?.file_name === '' ? (
+								<>
+									<br />
+								</>
+							) : (
+								<DragAndDropField
+									uploadedFiles={form.uploadedFiles}
+									quizPollStatus={status}
+									handleDeleteFile={handleDeleteFile}
+									setPreviewBool={setPreviewBool}
+									setPreviewFile={setPreviewFile}
+									isArticle
+									isEdit={editPoll || editQuiz}
+									imgEl={imgRef}
+									imageOnload={() => {
+										setFileWidth(imgRef.current.naturalWidth);
+										setFileHeight(imgRef.current.naturalHeight);
+									}}
+								/>
+							)}
+
+							{(!form.uploadedFiles.length && !(editQuiz || editPoll)) ||
+							((editQuiz || editPoll) &&
+								editQuestionData?.file_name === '' &&
+								status === 'draft') ? (
 								<section
 									className={globalClasses.dropZoneContainer}
 									style={{
@@ -585,7 +598,10 @@ const UploadOrEditQuiz = ({
 										</p>
 									</div>
 								</section>
+							) : (
+								''
 							)}
+
 							<p className={globalClasses.fileRejectionError}>
 								{fileRejectionError}
 							</p>
@@ -904,7 +920,7 @@ const UploadOrEditQuiz = ({
 						<div className={classes.buttonDiv}>
 							<div className={classes.leftButtonDiv}>
 								{editQuiz || editPoll ? (
-									<div className={classes.editBtn}>
+									<div className={classes.editDeleteBtn}>
 										<Button
 											disabled={deleteBtnStatus}
 											button2={editQuiz || editPoll ? true : false}
@@ -967,13 +983,14 @@ const UploadOrEditQuiz = ({
 								)}
 
 								<div
-									className={
+									className={[
 										(editPoll || editQuiz) && validateForm(form)
 											? classes.addMediaBtn
 											: editPoll || editQuiz
 											? classes.addMediaBtnEdit
-											: classes.addMediaBtn
-									}
+											: classes.addMediaBtn,
+										classes.saveChangesbtn
+									].join(' ')}
 								>
 									<Button
 										text={
@@ -1046,8 +1063,7 @@ UploadOrEditQuiz.propTypes = {
 	handleClose: PropTypes.func.isRequired,
 	page: PropTypes.string,
 	status: PropTypes.string,
-	type: PropTypes.string, //poll or quiz
-	
+	type: PropTypes.string //poll or quiz
 };
 
 export default UploadOrEditQuiz;

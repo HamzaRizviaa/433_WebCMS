@@ -294,7 +294,9 @@ const UploadOrEditViral = ({
 					save_draft: draft,
 					description: form.description,
 					dropbox_url: form.dropbox_url ? form.dropbox_url : '',
-					file_name: form?.uploadedFiles[0]?.length ? mediaFiles[0]?.file_name : '',
+					file_name: form?.uploadedFiles[0]?.length
+						? mediaFiles[0]?.file_name
+						: '',
 					image: form?.uploadedFiles[0]?.length
 						? mediaFiles[0]?.media_url.split('cloudfront.net/')[1] ||
 						  mediaFiles[0]?.media_url
@@ -1308,22 +1310,24 @@ const UploadOrEditViral = ({
 									: ''}
 							</p>
 							<div className={classes.buttonDiv}>
-								{isEdit || (status === 'draft' && isEdit) ? (
-									<div className={classes.editBtn}>
-										<Button
-											disabled={deleteBtnStatus}
-											button2={isEdit ? true : false}
-											onClick={() => {
-												if (!deleteBtnStatus) {
-													deleteArticle(specificArticle?.id, status);
-												}
-											}}
-											text={'DELETE ARTICLE'}
-										/>
-									</div>
-								) : (
-									<></>
-								)}
+								<div>
+									{isEdit || (status === 'draft' && isEdit) ? (
+										<div className={classes.editBtn}>
+											<Button
+												disabled={deleteBtnStatus}
+												button2={isEdit ? true : false}
+												onClick={() => {
+													if (!deleteBtnStatus) {
+														deleteArticle(specificArticle?.id, status);
+													}
+												}}
+												text={'DELETE ARTICLE'}
+											/>
+										</div>
+									) : (
+										<></>
+									)}
+								</div>
 
 								<div className={classes.publishDraftDiv}>
 									{status === 'draft' || !isEdit ? (

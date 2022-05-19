@@ -15,7 +15,7 @@ const Button = ({
 	published,
 	bannerdisabled
 }) => {
-	console.log('Active', active);
+	// console.log('Active', active);
 	return (
 		<span
 			onClick={() => {

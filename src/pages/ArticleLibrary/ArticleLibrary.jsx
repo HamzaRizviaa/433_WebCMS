@@ -701,7 +701,9 @@ const ArticleLibrary = () => {
 					}}
 					title={edit ? 'Edit Article' : 'Upload Article'}
 					heading1={edit ? 'Media File' : 'Add Media File'}
-					buttonText={edit ? 'SAVE CHANGES' : 'POST ARTICLE'}
+					buttonText={
+						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
+					}
 					status={rowStatus}
 				/>
 			</Layout>

@@ -273,7 +273,7 @@ const QuestionLibrary = () => {
 			formatter: (content) => {
 				return (
 					<div className={classes.questionRowType}>
-						{getDateConstantTime(content)}
+						{content === '-' ? '-' : getDateConstantTime(content)}
 					</div>
 				);
 			},
@@ -320,27 +320,7 @@ const QuestionLibrary = () => {
 				return { paddingLeft: '48px' };
 			}
 		},
-		// {
-		// 	dataField: 'publishedStatus',
-		// 	sort: true,
-		// 	sortCaret: sortRows,
-		// 	sortFunc: () => {},
-		// 	text: 'PUBLISHED STATUS',
-		// 	formatter: (content) => {
-		// 		return (
-		// 			<div className={`${classes.publish_draft_btn}`}>
-		// 				<Button
-		// 					onClick={() => {}}
-		// 					text={content == 'published' ? 'PUBLISHED' : 'DRAFT'}
-		// 					published={content == 'published' ? true : false}
-		// 				/>
-		// 			</div>
-		// 		);
-		// 	},
-		// 	headerStyle: () => {
-		// 		return { paddingLeft: '48px' };
-		// 	}
-		// },
+
 		{
 			dataField: 'participants',
 			sort: true,
@@ -694,7 +674,9 @@ const QuestionLibrary = () => {
 					}}
 					title={edit ? 'Poll Detail' : 'Upload Question'}
 					heading1={edit ? ' ' : 'Add Background Image'}
-					buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
+					buttonText={
+						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
+					}
 				/>
 				<QuizDetails
 					open={showQuizSlider}
@@ -705,7 +687,9 @@ const QuestionLibrary = () => {
 					status={rowStatus}
 					title={'Quiz Detail'}
 					heading1={edit ? 'Add Background Image' : 'Add Background Image'}
-					buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
+					buttonText={
+						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
+					}
 				/>
 				<PollDetails
 					open={showPollSlider}
@@ -716,7 +700,9 @@ const QuestionLibrary = () => {
 					status={rowStatus}
 					title={'Poll Detail'}
 					heading1={edit ? 'Add Background Image' : 'Add Background Image'}
-					buttonText={edit ? 'SAVE CHANGES' : 'ADD POLL'}
+					buttonText={
+						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
+					}
 				/>
 			</Layout>
 		</LoadingOverlay>

@@ -206,7 +206,8 @@ export const useStyles = makeStyles((theme) => ({
 		}
 	},
 	leftButtonDiv: {
-		width: '100%'
+		width: '100%',
+		display: 'flex'
 	},
 
 	editBtn: {
@@ -215,14 +216,18 @@ export const useStyles = makeStyles((theme) => ({
 		marginTop: '0.5rem'
 	},
 
+	editDeleteBtn: {
+		display: 'inline-block'
+	},
+
 	stopBtn: {
-		width: '35%',
+		// width: '35%',
 		display: 'inline-block',
-		marginTop: '0.5rem',
 		'& span': {
 			borderColor: theme.palette.red
 		}
 	},
+	saveChangesbtn: { '& span': { padding: '1rem 2rem !important' } },
 
 	noResultError: {
 		color: theme.palette.red,
