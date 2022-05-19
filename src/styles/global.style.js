@@ -750,7 +750,12 @@ export const useStyles = makeStyles(() => ({
 	gamesRow: {
 		marginBottom: '1.5rem',
 		fontSize: '1.2rem',
-		paddingRight: '30px',
+		paddingLeft: '30px',
+		display: 'block'
+	},
+	gamesTitleRow: {
+		marginBottom: '1.5rem',
+		fontSize: '1.2rem',
 		display: 'block'
 	},
 
