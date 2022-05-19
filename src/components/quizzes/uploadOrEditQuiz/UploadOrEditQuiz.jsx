@@ -32,6 +32,7 @@ import Slide from '@mui/material/Slide';
 import PrimaryLoader from '../../PrimaryLoader';
 //import resetForm from '../../../utils/resetForm';
 import validateForm from '../../../utils/validateForm';
+import validateDraft from '../../../utils/validateDraft';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { useStyles } from './UploadOrEditQuiz.style';
 
@@ -49,7 +50,8 @@ const UploadOrEditQuiz = ({
 	handleClose,
 	page,
 	status,
-	type
+	type,
+	publishedStatus
 }) => {
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [quizLabels, setQuizLabels] = useState([]);
@@ -60,8 +62,8 @@ const UploadOrEditQuiz = ({
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
 	const [editQuizBtnDisabled, setEditQuizBtnDisabled] = useState(false);
-	const [fileWidth, setFileWidth] = useState(null);
-	const [fileHeight, setFileHeight] = useState(null);
+	const [fileWidth, setFileWidth] = useState(0);
+	const [fileHeight, setFileHeight] = useState(0);
 	const [isError, setIsError] = useState({});
 	const [form, setForm] = useState({
 		uploadedFiles: [],
@@ -77,6 +79,8 @@ const UploadOrEditQuiz = ({
 	const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
+
+	console.log('publishedStatus', publishedStatus);
 
 	const {
 		labels,
@@ -259,7 +263,7 @@ const UploadOrEditQuiz = ({
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
-	const createQuestion = async (id, mediaFiles = []) => {
+	const createQuestion = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
 
 		//setIsLoadingcreateViral(false);
@@ -269,6 +273,7 @@ const UploadOrEditQuiz = ({
 				{
 					width: fileWidth,
 					height: fileHeight,
+					save_draft: draft,
 					image:
 						mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
 						mediaFiles[0]?.media_url,
@@ -299,7 +304,8 @@ const UploadOrEditQuiz = ({
 								]
 						  }
 						: {}),
-					...(!(editQuiz || editPoll) && form.labels.length
+					...((!(editQuiz || editPoll) || status !== 'published') &&
+					form.labels.length
 						? { labels: [...form.labels] }
 						: {}),
 					...((editQuiz || editPoll) && id ? { question_id: id } : {})
@@ -482,6 +488,46 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
+	const handleDraftSave = async () => {
+		if (!validateDraft(form)) {
+			validatePostBtn();
+		} else {
+			setPostButtonStatus(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			setIsLoadingcreateViral(true);
+			if (editQuiz || editPoll) {
+				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file, 'questionLibrary');
+					} else {
+						return _file;
+					}
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createQuestion(editQuestionData?.id, mediaFiles, true);
+					})
+					.catch(() => {
+						setIsLoadingcreateViral(true);
+					});
+			} else {
+				setIsLoadingcreateViral(true);
+				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+					return uploadFileToServer(_file, 'questionLibrary');
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						createQuestion(null, mediaFiles, true);
+					})
+					.catch(() => {
+						setIsLoadingcreateViral(true);
+					});
+			}
+		}
+	};
+
 	return (
 		<LoadingOverlay active={isLoadingcreateViral} spinner={<PrimaryLoader />}>
 			<Slide in={true} direction='up' {...{ timeout: 400 }}>
@@ -593,7 +639,7 @@ const UploadOrEditQuiz = ({
 									</h6>
 								</div>
 								<TextField
-									disabled={editQuiz || editPoll}
+									disabled={(editQuiz || editPoll) && status === 'CLOSED'}
 									value={form.question}
 									onChange={(e) => {
 										setForm((prev) => {
@@ -605,7 +651,9 @@ const UploadOrEditQuiz = ({
 									InputProps={{
 										disableUnderline: true,
 										className: `${classes.textFieldInput}  ${
-											(editQuiz || editPoll) && classes.disableTextField
+											(editQuiz || editPoll) &&
+											status === 'CLOSED' &&
+											classes.disableTextField
 										}`
 									}}
 									inputProps={{ maxLength: 55 }}
@@ -784,7 +832,7 @@ const UploadOrEditQuiz = ({
 							</p>
 						</div>
 
-						<div className={classes.buttonDiv}>
+						{/* <div className={classes.buttonDiv}>
 							<div className={classes.leftButtonDiv}>
 								{editQuiz || editPoll ? (
 									<div className={classes.editBtn}>
@@ -847,6 +895,100 @@ const UploadOrEditQuiz = ({
 									}
 								/>
 							</div>
+						</div> */}
+						<div className={classes.buttonDiv}>
+							<div className={classes.leftButtonDiv}>
+								{editQuiz || editPoll ? (
+									<div className={classes.editBtn}>
+										<Button
+											disabled={deleteBtnStatus}
+											button2={editQuiz || editPoll ? true : false}
+											onClick={() => {
+												if (!deleteBtnStatus) {
+													deleteQuiz(editQuestionData?.id);
+												}
+											}}
+											text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
+										/>
+									</div>
+								) : (
+									<></>
+								)}
+
+								{(editQuiz || editPoll) && status === 'ACTIVE' ? (
+									<>
+										<div className={classes.stopBtn}>
+											<Button
+												// disabled={deleteBtnStatus}
+												button2={editQuiz || editPoll ? true : false}
+												onClick={() => {
+													if (!deleteBtnStatus) {
+														stopQuizPoll(editQuestionData?.id);
+													}
+												}}
+												text={type === 'quiz' ? 'STOP QUIZ' : 'STOP POLL'}
+											/>
+										</div>
+									</>
+								) : (
+									<></>
+								)}
+							</div>
+
+							<div className={classes.publishDraftDiv}>
+								{status === 'draft' || !(editPoll || editQuiz) ? (
+									<div
+										className={
+											editPoll || editQuiz
+												? classes.draftBtnEdit
+												: classes.draftBtn
+										}
+									>
+										<Button
+											disabledDraft={
+												editPoll || editQuiz ? false : !validateDraft(form)
+											}
+											onClick={() => handleDraftSave()}
+											button3={true}
+											text={
+												status === 'draft' && (editPoll || editQuiz)
+													? 'SAVE DRAFT'
+													: 'SAVE AS DRAFT'
+											}
+										/>
+									</div>
+								) : (
+									<></>
+								)}
+
+								<div
+									className={
+										(editPoll || editQuiz) && validateForm(form)
+											? classes.addMediaBtn
+											: editPoll || editQuiz
+											? classes.addMediaBtnEdit
+											: classes.addMediaBtn
+									}
+								>
+									<Button
+										text={
+											type === 'quiz' && !(editPoll || editQuiz)
+												? 'ADD QUIZ'
+												: type === 'poll' && !(editPoll || editQuiz)
+												? 'ADD POLL'
+												: 'SAVE CHANGES'
+										}
+										disabled={
+											!(editPoll || editQuiz)
+												? !validateForm(form)
+												: editQuizBtnDisabled
+										}
+										onClick={() => {
+											handleAddSaveQuizPollBtn();
+										}}
+									/>
+								</div>
+							</div>
 						</div>
 					</div>
 					{previewFile != null && (
@@ -899,7 +1041,8 @@ UploadOrEditQuiz.propTypes = {
 	handleClose: PropTypes.func.isRequired,
 	page: PropTypes.string,
 	status: PropTypes.string,
-	type: PropTypes.string //poll or quiz
+	type: PropTypes.string, //poll or quiz
+	publishedStatus: PropTypes.string
 };
 
 export default UploadOrEditQuiz;

@@ -188,6 +188,9 @@ export const useStyles = makeStyles((theme) => ({
 		display: 'flex',
 		justifyContent: 'space-between'
 	},
+	publishDraftDiv: {
+		display: 'flex'
+	},
 
 	addQuizBtn: {
 		width: '100%',

@@ -15,6 +15,7 @@ const Button = ({
 	published,
 	bannerdisabled
 }) => {
+	console.log('Active', active);
 	return (
 		<span
 			onClick={() => {
@@ -28,8 +29,9 @@ const Button = ({
 				button2 ? classes.button2 : '',
 				button3 ? classes.button3 : '',
 				button2AddSave ? classes.button2AddSave : '',
-				active ? classes.activebtn : '',
-				active === false ? classes.closedbtn : '',
+				active === 'ACTIVE' ? classes.activebtn : '',
+				active === 'CLOSED' ? classes.closedbtn : '',
+				active === 'DRAFT' ? classes.draftdbtn : '',
 				bannerdisabled && classes.disabled,
 				published ? classes.publishedBtn : '',
 				published === false && classes.draftBtn
