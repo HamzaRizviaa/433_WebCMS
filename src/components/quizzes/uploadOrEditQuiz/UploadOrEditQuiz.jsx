@@ -304,19 +304,43 @@ const UploadOrEditQuiz = ({
 						? quiz
 							? { question_type: 'quiz' }
 							: { question_type: 'poll' }
+						: status === 'draft'
+						? quiz
+							? { question_type: 'quiz' }
+							: { question_type: 'poll' }
 						: {}),
 					...(!(editQuiz || editPoll)
 						? {
 								answers: [
 									{
-										answer: form.answer1,
+										answer: form.answer1 ? form.answer1 : '',
+										type: quiz ? 'right_answer' : 'poll',
+										position: 0
+									},
+									{
+										answer: form.answer2 ? form.answer2 : '',
+										type: quiz ? 'wrong_answer' : 'poll',
+										position: 1
+									}
+								]
+						  }
+						: status === 'draft'
+						? {
+								answers: [
+									{
+										answer: form.answer1 ? form.answer1 : '',
+										id: editQuestionData?.answers[0]?.id,
 										type: quiz ? 'right_answer' : 'poll'
 									},
-									{ answer: form.answer2, type: quiz ? 'wrong_answer' : 'poll' }
+									{
+										answer: form.answer2 ? form.answer2 : '',
+										id: editQuestionData?.answers[1]?.id,
+										type: quiz ? 'wrong_answer' : 'poll'
+									}
 								]
 						  }
 						: {}),
-					...((!(editQuiz || editPoll) || status !== 'published') &&
+					...((!(editQuiz || editPoll) || status === 'draft') &&
 					form.labels.length
 						? { labels: [...form.labels] }
 						: {}),
@@ -558,31 +582,22 @@ const UploadOrEditQuiz = ({
 					>
 						<div>
 							<h5 className={classes.QuizQuestion}>{heading1}</h5>
-							{(editQuiz || editPoll) && editQuestionData?.file_name === '' ? (
-								<>
-									<br />
-								</>
-							) : (
-								<DragAndDropField
-									uploadedFiles={form.uploadedFiles}
-									quizPollStatus={status}
-									handleDeleteFile={handleDeleteFile}
-									setPreviewBool={setPreviewBool}
-									setPreviewFile={setPreviewFile}
-									isArticle
-									isEdit={editPoll || editQuiz}
-									imgEl={imgRef}
-									imageOnload={() => {
-										setFileWidth(imgRef.current.naturalWidth);
-										setFileHeight(imgRef.current.naturalHeight);
-									}}
-								/>
-							)}
+							<DragAndDropField
+								uploadedFiles={form.uploadedFiles}
+								quizPollStatus={status}
+								handleDeleteFile={handleDeleteFile}
+								setPreviewBool={setPreviewBool}
+								setPreviewFile={setPreviewFile}
+								isArticle
+								isEdit={editPoll || editQuiz}
+								imgEl={imgRef}
+								imageOnload={() => {
+									setFileWidth(imgRef.current.naturalWidth);
+									setFileHeight(imgRef.current.naturalHeight);
+								}}
+							/>
 
-							{(!form.uploadedFiles.length && !(editQuiz || editPoll)) ||
-							((editQuiz || editPoll) &&
-								editQuestionData?.file_name === '' &&
-								status === 'draft') ? (
+							{!form.uploadedFiles.length ? (
 								<section
 									className={globalClasses.dropZoneContainer}
 									style={{

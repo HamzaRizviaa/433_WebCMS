@@ -177,14 +177,16 @@ const UploadOrEditViral = ({
 					...prev,
 					title: specificArticle?.title,
 					dropbox_url: specificArticle?.dropbox_url,
-					uploadedFiles: [
-						{
-							id: makeid(10),
-							file_name: specificArticle?.file_name,
-							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificArticle?.image}`,
-							type: 'image'
-						}
-					],
+					uploadedFiles: specificArticle?.image
+						? [
+								{
+									id: makeid(10),
+									file_name: specificArticle?.file_name,
+									media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificArticle?.image}`,
+									type: 'image'
+								}
+						  ]
+						: [],
 					description:
 						specificArticle?.length === 0
 							? ''
@@ -224,7 +226,7 @@ const UploadOrEditViral = ({
 			resetState();
 		}
 	}, [open]);
-
+	console.log(form, 'llll');
 	useEffect(() => {
 		if (fileRejections.length) {
 			fileRejections.forEach(({ errors }) => {
@@ -294,10 +296,10 @@ const UploadOrEditViral = ({
 					save_draft: draft,
 					description: form.description,
 					dropbox_url: form.dropbox_url ? form.dropbox_url : '',
-					file_name: form?.uploadedFiles[0]?.length
+					file_name: form?.uploadedFiles?.length
 						? mediaFiles[0]?.file_name
 						: '',
-					image: form?.uploadedFiles[0]?.length
+					image: form?.uploadedFiles?.length
 						? mediaFiles[0]?.media_url.split('cloudfront.net/')[1] ||
 						  mediaFiles[0]?.media_url
 						: '',
@@ -909,29 +911,20 @@ const UploadOrEditViral = ({
 										status === 'draft')
 								}
 
-								{isEdit && specificArticle?.file_name === '' ? (
-									<>
-										<br />
-									</>
-								) : (
-									<DragAndDropField
-										uploadedFiles={form.uploadedFiles}
-										// isEdit={isEdit}
-										handleDeleteFile={handleDeleteFile}
-										setPreviewBool={setPreviewBool}
-										setPreviewFile={setPreviewFile}
-										isArticle
-										imgEl={imgEl}
-										imageOnload={() => {
-											setFileWidth(imgEl.current.naturalWidth);
-											setFileHeight(imgEl.current.naturalHeight);
-										}}
-									/>
-								)}
-								{(!form.uploadedFiles.length && !isEdit) ||
-								(isEdit &&
-									specificArticle?.file_name === '' &&
-									status === 'draft') ? (
+								<DragAndDropField
+									uploadedFiles={form.uploadedFiles}
+									// isEdit={isEdit}
+									handleDeleteFile={handleDeleteFile}
+									setPreviewBool={setPreviewBool}
+									setPreviewFile={setPreviewFile}
+									isArticle
+									imgEl={imgEl}
+									imageOnload={() => {
+										setFileWidth(imgEl.current.naturalWidth);
+										setFileHeight(imgEl.current.naturalHeight);
+									}}
+								/>
+								{!form.uploadedFiles.length ? (
 									<section
 										className={globalClasses.dropZoneContainer}
 										style={{

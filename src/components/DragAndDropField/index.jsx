@@ -87,7 +87,7 @@ const DragAndDropField = ({
 													) : (
 														<></>
 													))}
-												{isArticle && (
+												{isArticle && file.media_url && (
 													<>
 														<img
 															src={file.media_url || file.img}
