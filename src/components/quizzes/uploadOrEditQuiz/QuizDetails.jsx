@@ -84,6 +84,7 @@ export default function QuizDetails({
 							}}
 							status={status}
 							type={'quiz'}
+							publishedStatus='draft'
 						/>
 					</TabPanelUnstyled>
 				</TabsUnstyled>

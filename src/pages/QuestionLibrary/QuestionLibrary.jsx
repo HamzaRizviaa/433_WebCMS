@@ -50,6 +50,8 @@ const QuestionLibrary = () => {
 	const questions = useSelector((state) => state.questionLibrary.questions);
 	const statusQuestionApi = useSelector((state) => state.questionLibrary);
 
+	console.log('questions', questions);
+
 	const totalRecords = useSelector(
 		(state) => state.questionLibrary.totalRecords
 	);
@@ -66,6 +68,7 @@ const QuestionLibrary = () => {
 	const [showQuizSlider, setShowQuizSlider] = useState(false);
 	const [showPollSlider, setShowPollSlider] = useState(false);
 	const [rowStatus, setrowStatus] = useState(''); //status open closed to pass in poll slider
+	// const [publishedStatus, setPublishedStatus] = useState('');
 	// const [rowType, setRowType] = useState(''); //row type to pass in api
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
@@ -307,12 +310,8 @@ const QuestionLibrary = () => {
 			text: 'STATUS',
 			formatter: (content) => {
 				return (
-					<div className={`${classes.active_closed_btn}`}>
-						<Button
-							onClick={() => {}}
-							text={content == 'ACTIVE' ? 'ACTIVE' : 'CLOSED'}
-							active={content == 'ACTIVE' ? true : false}
-						/>
+					<div className={classes.active_closed_btn}>
+						<Button onClick={() => {}} text={content} active={content} />
 						{/* <Edit className={classes.editIcon} /> */}
 					</div>
 				);
@@ -321,6 +320,27 @@ const QuestionLibrary = () => {
 				return { paddingLeft: '48px' };
 			}
 		},
+		// {
+		// 	dataField: 'publishedStatus',
+		// 	sort: true,
+		// 	sortCaret: sortRows,
+		// 	sortFunc: () => {},
+		// 	text: 'PUBLISHED STATUS',
+		// 	formatter: (content) => {
+		// 		return (
+		// 			<div className={`${classes.publish_draft_btn}`}>
+		// 				<Button
+		// 					onClick={() => {}}
+		// 					text={content == 'published' ? 'PUBLISHED' : 'DRAFT'}
+		// 					published={content == 'published' ? true : false}
+		// 				/>
+		// 			</div>
+		// 		);
+		// 	},
+		// 	headerStyle: () => {
+		// 		return { paddingLeft: '48px' };
+		// 	}
+		// },
 		{
 			dataField: 'participants',
 			sort: true,
@@ -675,6 +695,7 @@ const QuestionLibrary = () => {
 					title={edit ? 'Poll Detail' : 'Upload Question'}
 					heading1={edit ? ' ' : 'Add Background Image'}
 					buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
+					publishedStatus={rowStatus}
 				/>
 				<QuizDetails
 					open={showQuizSlider}

@@ -82,6 +82,7 @@ export default function PollDetails({
 								handleClose();
 							}}
 							status={status}
+							publishedStatus='draft'
 						/>
 					</TabPanelUnstyled>
 				</TabsUnstyled>
