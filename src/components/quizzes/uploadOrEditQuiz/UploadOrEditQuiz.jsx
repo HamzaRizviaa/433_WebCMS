@@ -51,7 +51,7 @@ const UploadOrEditQuiz = ({
 	page,
 	status,
 	type,
-	publishedStatus
+	
 }) => {
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [quizLabels, setQuizLabels] = useState([]);
@@ -80,7 +80,7 @@ const UploadOrEditQuiz = ({
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
 
-	console.log('publishedStatus', publishedStatus);
+	console.log('S', status);
 
 	const {
 		labels,
@@ -679,7 +679,7 @@ const UploadOrEditQuiz = ({
 									{quiz || editQuiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
 								</h6>
 								<TextField
-									disabled={editQuiz || editPoll}
+									disabled={(editQuiz || editPoll) && status === 'CLOSED'}
 									value={form.answer1}
 									onChange={(e) => {
 										setForm((prev) => {
@@ -691,7 +691,9 @@ const UploadOrEditQuiz = ({
 									InputProps={{
 										disableUnderline: true,
 										className: `${classes.textFieldInput}  ${
-											(editQuiz || editPoll) && classes.disableTextField
+											(editQuiz || editPoll) &&
+											status === 'CLOSED' &&
+											classes.disableTextField
 										}`
 									}}
 									multiline
@@ -718,7 +720,7 @@ const UploadOrEditQuiz = ({
 									{quiz || editQuiz ? 'WRONG ANSWER' : 'ANSWER 2'}
 								</h6>
 								<TextField
-									disabled={editQuiz || editPoll}
+									disabled={(editQuiz || editPoll) && status === 'CLOSED'}
 									value={form.answer2}
 									onChange={(e) => {
 										setForm((prev) => {
@@ -730,7 +732,9 @@ const UploadOrEditQuiz = ({
 									InputProps={{
 										disableUnderline: true,
 										className: `${classes.textFieldInput}  ${
-											(editQuiz || editPoll) && classes.disableTextField
+											(editQuiz || editPoll) &&
+											status === 'CLOSED' &&
+											classes.disableTextField
 										}`
 									}}
 									multiline
@@ -768,6 +772,7 @@ const UploadOrEditQuiz = ({
 									LabelsOptions={quizLabels}
 									extraLabel={extraLabel}
 									handleChangeExtraLabel={handleChangeExtraLabel}
+									draftStatus={status}
 								/>
 							</div>
 
@@ -1042,7 +1047,7 @@ UploadOrEditQuiz.propTypes = {
 	page: PropTypes.string,
 	status: PropTypes.string,
 	type: PropTypes.string, //poll or quiz
-	publishedStatus: PropTypes.string
+	
 };
 
 export default UploadOrEditQuiz;

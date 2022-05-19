@@ -29,7 +29,7 @@ const Labels = ({
 
 	return (
 		<Autocomplete
-			disabled={isEdit && draftStatus === 'published'}
+			disabled={isEdit && draftStatus !== 'draft'}
 			getOptionLabel={(option) => option.name} // setSelectedLabels name out of array of strings
 			PaperComponent={(props) => {
 				setDisableDropdown(false);

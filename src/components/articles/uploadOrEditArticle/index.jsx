@@ -293,10 +293,11 @@ const UploadOrEditViral = ({
 					save_draft: draft,
 					description: form.description,
 					dropbox_url: form.dropbox_url ? form.dropbox_url : '',
-					file_name: mediaFiles[0]?.file_name,
-					image:
-						mediaFiles[0]?.media_url.split('cloudfront.net/')[1] ||
-						mediaFiles[0]?.media_url,
+					file_name: form?.uploadedFiles[0]?.length ? mediaFiles[0]?.file_name : '',
+					image: form?.uploadedFiles[0]?.length
+						? mediaFiles[0]?.media_url.split('cloudfront.net/')[1] ||
+						  mediaFiles[0]?.media_url
+						: '',
 
 					...(isEdit && id ? { article_id: id } : {}),
 					...((!isEdit || status !== 'published') && form.labels?.length

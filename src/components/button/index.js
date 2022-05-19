@@ -31,7 +31,7 @@ const Button = ({
 				button2AddSave ? classes.button2AddSave : '',
 				active === 'ACTIVE' ? classes.activebtn : '',
 				active === 'CLOSED' ? classes.closedbtn : '',
-				active === 'DRAFT' ? classes.draftdbtn : '',
+				active === 'draft' ? classes.draftdbtn : '',
 				bannerdisabled && classes.disabled,
 				published ? classes.publishedBtn : '',
 				published === false && classes.draftBtn

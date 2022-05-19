@@ -695,7 +695,6 @@ const QuestionLibrary = () => {
 					title={edit ? 'Poll Detail' : 'Upload Question'}
 					heading1={edit ? ' ' : 'Add Background Image'}
 					buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
-					publishedStatus={rowStatus}
 				/>
 				<QuizDetails
 					open={showQuizSlider}

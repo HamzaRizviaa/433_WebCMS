@@ -16,7 +16,7 @@ const UploadQuiz = ({
 	title,
 	heading1,
 	buttonText,
-	publishedStatus
+	
 }) => {
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
@@ -70,7 +70,7 @@ const UploadQuiz = ({
 								handleClose();
 							}}
 							type='poll'
-							publishedStatus={publishedStatus}
+							
 						/>
 					</TabPanelUnstyled>
 					<TabPanelUnstyled value={1}>
@@ -88,7 +88,7 @@ const UploadQuiz = ({
 								handleClose();
 							}}
 							type='quiz'
-							publishedStatus={publishedStatus}
+							
 						/>
 					</TabPanelUnstyled>
 				</TabsUnstyled>
@@ -104,7 +104,7 @@ UploadQuiz.propTypes = {
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
 	type: PropTypes.string.isRequired,
-	publishedStatus: PropTypes.string
+	
 };
 
 export default UploadQuiz;
