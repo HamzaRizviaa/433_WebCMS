@@ -78,6 +78,7 @@ const UploadOrEditViral = ({
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
+	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
 	const imgEl = useRef(null);
@@ -286,8 +287,8 @@ const UploadOrEditViral = ({
 				`${process.env.REACT_APP_API_ENDPOINT}/article/post-article`,
 				{
 					title: form.title,
-					height: fileHeight,
-					width: fileWidth,
+					height: form.uploadedFiles.length > 0 ? fileHeight : 0,
+					width: form.uploadedFiles.length > 0 ? fileWidth : 0,
 					main_category_id: form?.mainCategory.id,
 					sub_category_id: form.subCategory.id,
 					save_draft: draft,
@@ -339,7 +340,6 @@ const UploadOrEditViral = ({
 	const resetState = () => {
 		setEditorTextChecker('');
 		setFileRejectionError('');
-
 		setPostButtonStatus(false);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
@@ -377,7 +377,11 @@ const UploadOrEditViral = ({
 			articleTitle: !form.title,
 			uploadedFiles: form.uploadedFiles.length < 1,
 			selectedLabels: form.labels.length < 7,
-			editorText: !form.description
+			editorText: !form.description,
+			mainCategory: !form.mainCategory,
+			subCategory: form?.subCategory?.name
+				? !form?.subCategory?.name
+				: !form?.subCategory
 		});
 		setTimeout(() => {
 			setIsError({});
@@ -386,13 +390,14 @@ const UploadOrEditViral = ({
 
 	const [newLabels, setNewLabels] = useState([]);
 
-	const deleteArticle = async (id) => {
+	const deleteArticle = async (id, isDraft) => {
 		setDeleteBtnStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/article/delete-article`,
 				{
-					article_id: id
+					article_id: id,
+					is_draft: isDraft
 				},
 				{
 					headers: {
@@ -403,7 +408,7 @@ const UploadOrEditViral = ({
 			if (result?.data?.status_code === 200) {
 				if (result?.data?.data?.is_deleted === false) {
 					toast.error(
-						'the media or article cannot be deleted because it is used as a top banner'
+						'The media or article cannot be deleted because it is used as a top banner'
 					);
 					dispatch(getAllArticlesApi({ page }));
 				} else {
@@ -473,8 +478,33 @@ const UploadOrEditViral = ({
 		}
 	}, [specificArticle, editorTextChecker, form]);
 
+	useEffect(() => {
+		if (specificArticle) {
+			setDraftBtnDisabled(
+				!validateDraft(form) ||
+					(specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
+						specificArticle?.title?.trim() === form.title?.trim() &&
+						specificArticle?.dropbox_url?.trim() === form.dropbox_url.trim() &&
+						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
+						specificArticle?.labels?.length === form?.labels?.length &&
+						!checkDuplicateLabel())
+			);
+		}
+	}, [specificArticle, editorTextChecker, form]);
+
+	const checkDuplicateLabel = () => {
+		let formLabels = form?.labels?.map((formL) => {
+			if (specificArticle?.labels?.includes(formL.name)) {
+				return true;
+			} else {
+				return false;
+			}
+		});
+		return formLabels.some((label) => label === false);
+	};
+
 	const handleAddSaveBtn = async () => {
-		if (!validateForm(form)) {
+		if (!validateForm(form) || editBtnDisabled) {
 			validateArticleBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -538,10 +568,36 @@ const UploadOrEditViral = ({
 			}
 		}
 	};
+	const validateDraftBtn = () => {
+		if (isEdit) {
+			setIsError({
+				draftError: draftBtnDisabled
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		} else {
+			setIsError({
+				articleTitle: !form.title,
+				uploadedFiles: form.uploadedFiles.length < 1,
+				selectedLabels: form.labels.length < 1,
+				editorText: !form.description,
+				mainCategory: !form.mainCategory,
+				subCategory: form?.subCategory?.name
+					? !form?.subCategory?.name
+					: !form?.subCategory
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		}
+	};
 
 	const handleDraftSave = async () => {
-		if (!validateDraft(form)) {
-			validateArticleBtn();
+		if (!validateDraft(form) || draftBtnDisabled) {
+			validateDraftBtn();
 		} else {
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -843,21 +899,37 @@ const UploadOrEditViral = ({
 									</div>
 								</div>
 
-								<DragAndDropField
-									uploadedFiles={form.uploadedFiles}
-									// isEdit={isEdit}
-									handleDeleteFile={handleDeleteFile}
-									setPreviewBool={setPreviewBool}
-									setPreviewFile={setPreviewFile}
-									isArticle
-									imgEl={imgEl}
-									imageOnload={() => {
-										setFileWidth(imgEl.current.naturalWidth);
-										setFileHeight(imgEl.current.naturalHeight);
-									}}
-								/>
+								{
+									(console.log(!form.uploadedFiles.length && !isEdit),
+									'upload',
+									isEdit &&
+										specificArticle?.file_name === '' &&
+										status === 'draft')
+								}
 
-								{!form.uploadedFiles.length && (
+								{isEdit && specificArticle?.file_name === '' ? (
+									<>
+										<br />
+									</>
+								) : (
+									<DragAndDropField
+										uploadedFiles={form.uploadedFiles}
+										// isEdit={isEdit}
+										handleDeleteFile={handleDeleteFile}
+										setPreviewBool={setPreviewBool}
+										setPreviewFile={setPreviewFile}
+										isArticle
+										imgEl={imgEl}
+										imageOnload={() => {
+											setFileWidth(imgEl.current.naturalWidth);
+											setFileHeight(imgEl.current.naturalHeight);
+										}}
+									/>
+								)}
+								{(!form.uploadedFiles.length && !isEdit) ||
+								(isEdit &&
+									specificArticle?.file_name === '' &&
+									status === 'draft') ? (
 									<section
 										className={globalClasses.dropZoneContainer}
 										style={{
@@ -884,6 +956,10 @@ const UploadOrEditViral = ({
 											</p>
 										</div>
 									</section>
+								) : (
+									<>
+										<br />
+									</>
 								)}
 
 								<p className={globalClasses.fileRejectionError}>
@@ -908,7 +984,6 @@ const UploadOrEditViral = ({
 										}}
 									/>
 								</div>
-
 								<div className={classes.captionContainer}>
 									<div className={globalClasses.characterCount}>
 										<h6
@@ -960,7 +1035,6 @@ const UploadOrEditViral = ({
 										? 'This title aready Exists'
 										: ''}
 								</p>
-
 								<div className={classes.captionContainer}>
 									<h6
 										className={
@@ -993,7 +1067,6 @@ const UploadOrEditViral = ({
 										  }  more labels in order to post`
 										: ''}
 								</p>
-
 								<div className={classes.captionContainer}>
 									<h6
 										className={
@@ -1198,7 +1271,6 @@ const UploadOrEditViral = ({
 										/>
 									</div>
 								</div>
-
 								<p className={globalClasses.mediaError}>
 									{isError.editorText ? 'This field is required' : ''}
 								</p>
@@ -1230,6 +1302,11 @@ const UploadOrEditViral = ({
 									/>
 								</div>
 							</div> */}
+							<p className={globalClasses.mediaError}>
+								{isError.draftError
+									? 'Something needs to be changed to save a draft'
+									: ''}
+							</p>
 							<div className={classes.buttonDiv}>
 								{isEdit || (status === 'draft' && isEdit) ? (
 									<div className={classes.editBtn}>
@@ -1238,7 +1315,7 @@ const UploadOrEditViral = ({
 											button2={isEdit ? true : false}
 											onClick={() => {
 												if (!deleteBtnStatus) {
-													deleteArticle(specificArticle?.id);
+													deleteArticle(specificArticle?.id, status);
 												}
 											}}
 											text={'DELETE ARTICLE'}
@@ -1256,7 +1333,9 @@ const UploadOrEditViral = ({
 											}
 										>
 											<Button
-												disabledDraft={isEdit ? false : !validateDraft(form)}
+												disabledDraft={
+													isEdit ? draftBtnDisabled : !validateDraft(form)
+												}
 												onClick={() => handleDraftSave()}
 												button3={true}
 												text={
