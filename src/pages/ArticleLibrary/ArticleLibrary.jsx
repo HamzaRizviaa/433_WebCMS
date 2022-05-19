@@ -33,6 +33,7 @@ import {
 } from './articleLibrarySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
+import DefaultImage from '../../assets/defaultImage.png';
 import { useStyles as globalUseStyles } from '../../styles/global.style';
 const ArticleLibrary = () => {
 	// Selectors
@@ -252,6 +253,9 @@ const ArticleLibrary = () => {
 										row?.thumbnail_url ? row?.thumbnail_url : row?.image
 									}`}
 									alt='no img'
+									onError={(e) => (
+										(e.target.onerror = null), (e.target.src = DefaultImage)
+									)}
 								/>
 							}
 							placement='right'
@@ -263,6 +267,9 @@ const ArticleLibrary = () => {
 								<img
 									className={classes.mediaIcon}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.image}`}
+									onError={(e) => (
+										(e.target.onerror = null), (e.target.src = DefaultImage)
+									)}
 								/>
 							</span>
 						</Tooltip>
