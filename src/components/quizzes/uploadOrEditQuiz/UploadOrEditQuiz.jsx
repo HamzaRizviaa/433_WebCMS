@@ -79,8 +79,6 @@ const UploadOrEditQuiz = ({
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
 
-	console.log('S', status);
-
 	const {
 		labels,
 		questionEditStatus,
@@ -95,6 +93,7 @@ const UploadOrEditQuiz = ({
 		setConvertedDate(toSend);
 	}, [form.end_date]);
 
+	console.log(convertedDate, 'klolo');
 	useEffect(() => {
 		if (labels.length) {
 			setQuizLabels([...labels]);
@@ -135,6 +134,8 @@ const UploadOrEditQuiz = ({
 		);
 	});
 
+	console.log(form, 'kkkk');
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png',
@@ -166,14 +167,18 @@ const UploadOrEditQuiz = ({
 					...prev,
 					dropbox_url: editQuestionData?.dropbox_url,
 					question: editQuestionData?.question,
-					uploadedFiles: [
-						{
-							id: makeid(10),
-							file_name: editQuestionData?.file_name,
-							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${editQuestionData?.image}`,
-							type: 'image'
-						}
-					],
+					uploadedFiles: editQuestionData?.image
+						? [
+								{
+									id: makeid(10),
+									file_name: editQuestionData?.file_name,
+									media_url: editQuestionData?.image
+										? `${process.env.REACT_APP_MEDIA_ENDPOINT}/${editQuestionData?.image}`
+										: '',
+									type: 'image'
+								}
+						  ]
+						: [],
 					answer1:
 						editQuestionData?.answers?.length > 0
 							? editQuestionData?.answers[0]?.answer
@@ -275,21 +280,25 @@ const UploadOrEditQuiz = ({
 					width: fileWidth,
 					height: fileHeight,
 					save_draft: draft,
-					image:
-						mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
-						mediaFiles[0]?.media_url,
-					file_name: mediaFiles[0]?.file_name,
+					image: form.uploadedFiles.length
+						? mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
+						  mediaFiles[0]?.media_url
+						: undefined,
+					file_name: form.uploadedFiles.length
+						? mediaFiles[0]?.file_name
+						: undefined,
 					...(form.question ? { question: form.question } : { question: '' }),
 					...(form.dropbox_url ? { dropbox_url: form.dropbox_url } : {}),
 
 					...(!(editQuiz || editPoll)
 						? convertedDate
 							? { end_date: convertedDate }
-							: {}
+							: { end_date: '' }
 						: (editQuiz || editPoll) &&
-						  (status === 'ACTIVE' || status === 'draft')
+						  (status === 'ACTIVE' || status === 'draft') &&
+						  form.end_date != null
 						? { end_date: convertedDate }
-						: {}),
+						: { end_date: '' }),
 
 					...(!(editQuiz || editPoll)
 						? quiz
