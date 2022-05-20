@@ -479,6 +479,30 @@ const UploadOrEditQuiz = ({
 		}, 5000);
 	};
 
+	const validateDraftBtn = () => {
+		if (editPoll || editQuiz) {
+			setIsError({
+				draftError: draftBtnDisabled
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		} else {
+			setIsError({
+				endDate: !form.end_date,
+				uploadedFiles: form.uploadedFiles.length < 1,
+				selectedLabelsDraft: form.labels.length < 1,
+				question: !form.question,
+				ans1: !form.answer1,
+				ans2: !form.answer2
+			});
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		}
+	};
+
 	useEffect(() => {
 		if (editQuestionData) {
 			setEditQuizBtnDisabled(
@@ -574,7 +598,7 @@ const UploadOrEditQuiz = ({
 
 	const handleDraftSave = async () => {
 		if (!validateDraft(form) || draftBtnDisabled) {
-			validatePostBtn();
+			validateDraftBtn();
 		} else {
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -866,9 +890,11 @@ const UploadOrEditQuiz = ({
 
 							<p className={globalClasses.mediaError}>
 								{isError.selectedLabels
-									? `You need to add  ${
+									? `You need to add ${
 											7 - form.labels.length
-									  }  more labels in order to post`
+									  } more labels in order to upload media`
+									: isError.selectedLabelsDraft
+									? 'You need to select atleast 1 label to save as draft'
 									: ''}
 							</p>
 
@@ -989,6 +1015,13 @@ const UploadOrEditQuiz = ({
 								/>
 							</div>
 						</div> */}
+
+						<p className={globalClasses.mediaError}>
+							{isError.draftError
+								? 'Something needs to be changed to save a draft'
+								: ''}
+						</p>
+
 						<div className={classes.buttonDiv}>
 							<div className={classes.leftButtonDiv}>
 								{editQuiz || editPoll ? (
