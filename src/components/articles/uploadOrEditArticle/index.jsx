@@ -701,6 +701,7 @@ const UploadOrEditViral = ({
 						>
 							<div>
 								<h5>{heading1}</h5>
+								{console.log(form.subCategory?.name, form.subCategory, 'sub ')}
 								<div className={classes.categoryContainer}>
 									<div className={classes.mainCategory}>
 										<h6
@@ -874,6 +875,7 @@ const UploadOrEditViral = ({
 											displayEmpty={form.mainCategory ? true : false}
 											renderValue={
 												(value) => {
+													console.log(value?.name, value, '---value---');
 													return value ? value?.name || value : 'Please Select';
 												}
 												// value?.length

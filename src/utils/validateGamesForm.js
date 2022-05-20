@@ -1,5 +1,4 @@
 const validateGamesForm = (type, form, postButtonStatus) => {
-	console.log(form?.uploadedFiles.length);
 	if (type === 'jogo') {
 		const validate =
 			!form?.uploadedFiles.length ||
@@ -13,6 +12,7 @@ const validateGamesForm = (type, form, postButtonStatus) => {
 			!form?.scoring ||
 			!form?.objective ||
 			!form?.payload;
+
 		return validate;
 	} else {
 		if (form?.arcade_game_type === 'Outside App') {

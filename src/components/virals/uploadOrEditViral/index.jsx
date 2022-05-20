@@ -848,7 +848,7 @@ const UploadOrEditViral = ({
 												disabledDraft={
 													isEdit ? draftBtnDisabled : !validateDraft(form)
 												}
-												onClick={handleViralDraftBtn}
+												onClick={() => handleViralDraftBtn()}
 												button3={true}
 												text={
 													status === 'draft' && isEdit
@@ -899,7 +899,7 @@ const UploadOrEditViral = ({
 									<h5>Preview</h5>
 								</div>
 								<div>
-									{console.log(previewFile, 'previewFile')}
+									{/* {console.log(previewFile, 'previewFile')} */}
 									{previewFile.mime_type === 'video/mp4' ? (
 										<video
 											id={'my-video'}

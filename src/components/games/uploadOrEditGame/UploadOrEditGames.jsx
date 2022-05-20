@@ -45,7 +45,8 @@ const UploadOreditArcade = ({
 	setDisableDropdown,
 	type, // jogo - arcade
 	page,
-	handleClose
+	handleClose,
+	status // draft - publish
 }) => {
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
@@ -144,39 +145,50 @@ const UploadOreditArcade = ({
 	};
 	useEffect(() => {
 		if (specificGamesData) {
+			console.log(status, 'status in game slider ');
 			setForm((prev) => {
 				return {
 					...prev,
 					...specificGamesData,
-					uploadedFiles: [
-						{
-							id: makeid(10),
-							file_name: specificGamesData?.game_image_file_name,
-							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_image?.url}`,
-							type: 'image'
-						}
-					],
-					uploadedExplanationOrIcon: [
-						{
-							id: makeid(10),
-							file_name: specificGamesData?.game_video_file_name
-								? specificGamesData?.game_video_file_name
-								: specificGamesData?.game_icon_file_name,
-							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-								specificGamesData?.game_video?.url
-									? specificGamesData?.game_video?.url
-									: specificGamesData?.game_icon?.url
-							}`,
-							type: specificGamesData?.game_video?.url ? 'video' : 'image',
-							fileExtension: specificGamesData?.game_video?.url
-								? '.mp4'
-								: '.jpg',
-							url: `${
-								specificGamesData?.game_video?.url &&
-								specificGamesData?.game_video?.url
-							}`
-						}
-					]
+
+					uploadedFiles:
+						specificGamesData?.game_image_file_name !== ('undefined' || '')
+							? [
+									{
+										id: makeid(10),
+										file_name: specificGamesData?.game_image_file_name,
+										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_image?.url}`,
+										type: 'image'
+									}
+							  ]
+							: null,
+					uploadedExplanationOrIcon:
+						(specificGamesData?.game_video_file_name ||
+							specificGamesData?.game_icon_file_name) !== ('undefined' || '')
+							? [
+									{
+										id: makeid(10),
+										file_name: specificGamesData?.game_video_file_name
+											? specificGamesData?.game_video_file_name
+											: specificGamesData?.game_icon_file_name,
+										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${
+											specificGamesData?.game_video?.url
+												? specificGamesData?.game_video?.url
+												: specificGamesData?.game_icon?.url
+										}`,
+										type: specificGamesData?.game_video?.url
+											? 'video'
+											: 'image',
+										fileExtension: specificGamesData?.game_video?.url
+											? '.mp4'
+											: '.jpg',
+										url: `${
+											specificGamesData?.game_video?.url &&
+											specificGamesData?.game_video?.url
+										}`
+									}
+							  ]
+							: null
 				};
 			});
 			setFileWidth(specificGamesData?.game_image?.width);
@@ -299,6 +311,8 @@ const UploadOreditArcade = ({
 		});
 	};
 
+	console.log(form.uploadedFiles, form.uploadedExplanationOrIcon, 'form');
+
 	const uploadFileToServer = async (uploadedFile) => {
 		try {
 			const result = await axios.post(
@@ -382,46 +396,60 @@ const UploadOreditArcade = ({
 		}
 	};
 
-	const createGames = async (id, mediaFiles = []) => {
-		console.log('Create Game');
+	const createGames = async (id, mediaFiles = [], draft = false) => {
+		console.log('Create Game', mediaFiles);
 		setPostButtonStatus(true);
 
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/games/add-edit-game`,
 				{
+					save_draft: draft,
 					type: type === 'jogo' ? 'JOGO' : 'ARCADE GAME',
 					arcade_game_type:
 						form.arcade_game_type === 'Inside App' ? 'insideapp' : 'outsideapp',
-					orientation: type === 'jogo' ? form.orientation : 'none',
-					game_orientation: type === 'jogo' ? form.game_orientation : 'none',
+					orientation:
+						type === 'jogo'
+							? form.orientation
+								? form.orientation
+								: 'none'
+							: 'none',
+					game_orientation:
+						type === 'jogo'
+							? form.game_orientation
+								? form.game_orientation
+								: 'none'
+							: 'none',
 					title: form.title,
 					description: form.description,
 					game_medias: {
 						game_image: {
-							url:
-								mediaFiles[0].media_url.split('cloudfront.net/')[1] ||
-								mediaFiles[0]?.media_url,
+							url: mediaFiles[0]
+								? mediaFiles[0].media_url.split('cloudfront.net/')[1] ||
+								  mediaFiles[0]?.media_url
+								: '',
 							dropbox_url: form.dropbox_urls.image,
-							file_name: mediaFiles[0]?.file_name,
+							file_name: mediaFiles[0] ? mediaFiles[0]?.file_name : '',
 							width: fileWidth,
 							height: fileHeight
 						},
 						game_video: {
-							url:
-								mediaFiles[1].media_url.split('cloudfront.net/')[1] ||
-								mediaFiles[1]?.media_url,
+							url: mediaFiles[1]
+								? mediaFiles[1].media_url.split('cloudfront.net/')[1] ||
+								  mediaFiles[1]?.media_url
+								: '',
 							dropbox_url: form.dropbox_urls.video,
-							file_name: mediaFiles[1]?.file_name, //mediaFiles[1]?.file_name || mediaFiles[1]?.file_name,
+							file_name: mediaFiles[1] ? mediaFiles[1]?.file_name : '', //mediaFiles[1]?.file_name || mediaFiles[1]?.file_name,
 							width: fileWidth2,
 							height: fileHeight2
 						},
 						game_icon: {
-							url:
-								mediaFiles[1].media_url.split('cloudfront.net/')[1] ||
-								mediaFiles[1]?.media_url,
+							url: mediaFiles[1]
+								? mediaFiles[1].media_url.split('cloudfront.net/')[1] ||
+								  mediaFiles[1]?.media_url
+								: '',
 							dropbox_url: form.dropbox_urls.icon,
-							file_name: mediaFiles[1]?.file_name,
+							file_name: mediaFiles[1] ? mediaFiles[1]?.file_name : '',
 							width: fileWidth2,
 							height: fileHeight2
 						}
@@ -476,13 +504,14 @@ const UploadOreditArcade = ({
 		}
 	};
 
-	const deleteGame = async (id) => {
+	const deleteGame = async (id, isDraft) => {
 		setDeleteBtnStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/games/delete-game`,
 				{
-					game_id: id
+					game_id: id,
+					is_draft: isDraft
 				},
 				{
 					headers: {
@@ -591,6 +620,43 @@ const UploadOreditArcade = ({
 		}, 5000);
 	};
 
+	const validateDraftBtn = () => {
+		if (editJogo || editArcade) {
+			setIsError({
+				draftError: true
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		} else {
+			setIsError({
+				videoOrientation: !form?.orientation,
+				uploadedFiles: form?.uploadedFiles?.length < 1,
+				gameOrientation: !form?.game_orientation,
+				uploadedExplanationOrIcon: form?.uploadedExplanationOrIcon.length < 1,
+				titleGame: !form?.title && { message: 'You need to enter a Title' },
+				descriptionGame: !form?.description,
+				time: !form?.time,
+				scoring: !form?.scoring,
+				objective: !form?.objective,
+				payload: !form?.payload,
+				arcadeGameType: !form?.arcade_game_type,
+				gameId: !form?.game_id,
+				android: !form?.package_id?.android,
+				ios: !form?.package_id?.ios,
+				playStore: !form?.store_url?.play_store,
+				appStore: !form?.store_url?.apple_store,
+				playStore2: !form?.deep_link.android,
+				appStore2: !form?.deep_link.ios
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		}
+	};
+
 	const handleTitleDuplicate = async (givenTitle) => {
 		try {
 			const result = await axios.get(
@@ -692,6 +758,153 @@ const UploadOreditArcade = ({
 					.catch(() => {
 						setIsLoadingcreateViral(false);
 					});
+			}
+		}
+	};
+
+	{
+		console.log(isError.draftError, 'isError.draftError');
+	}
+
+	const validateDraftGamesForm = (type, form) => {
+		if (type === 'jogo') {
+			const validate =
+				!form?.uploadedFiles.length &&
+				!form?.orientation &&
+				!form?.game_orientation &&
+				!form?.uploadedExplanationOrIcon.length &&
+				!form?.title &&
+				!form?.description &&
+				!form?.time &&
+				!form?.scoring &&
+				!form?.objective &&
+				!form?.payload;
+			console.log(validate, 'validate jogo');
+			return validate;
+		}
+	};
+
+	const handleDraftSave = async () => {
+		if (validateDraftGamesForm(type, form)) {
+			validateDraftBtn();
+		} else {
+			setPostButtonStatus(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			setIsLoadingcreateViral(true);
+			if (editArcade || editJogo) {
+				if (form.title?.trim() !== specificGamesData?.title?.trim()) {
+					if (
+						(await handleTitleDuplicate(form.title)) ===
+						'The Title Already Exist'
+						// 	200 &&
+						// articleTitle !== specificArticle?.title
+					) {
+						setIsError((prev) => {
+							return {
+								...prev,
+								titleGame: { message: 'This title already exists' }
+							};
+						});
+
+						setTimeout(() => {
+							setIsError({});
+						}, [5000]);
+
+						setPostButtonStatus(false);
+						return;
+					}
+				}
+				setIsLoadingcreateViral(true);
+				let uploadFilesPromiseArray = [
+					form.uploadedFiles[0],
+					form.uploadedExplanationOrIcon[0]
+				].map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file);
+					} else {
+						return _file;
+					}
+				});
+
+				Promise.all([...uploadFilesPromiseArray])
+					.then((mediaFiles) => {
+						// console.log('media files', mediaFiles);
+						createGames(specificGamesData?.id, mediaFiles, true);
+					})
+					.catch(() => {
+						setIsLoadingcreateViral(false);
+					});
+			} else {
+				if (
+					(await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
+				) {
+					setIsError((prev) => {
+						return {
+							...prev,
+							titleGame: { message: 'This title already exists' }
+						};
+					});
+
+					setTimeout(() => {
+						setIsError({});
+					}, [5000]);
+
+					setPostButtonStatus(false);
+					return;
+				}
+
+				setIsLoadingcreateViral(true);
+				// new draft
+				let uploadedFile; // first
+				let uploadedExplanationOrIcon; // second
+
+				uploadedFile = form.uploadedFiles[0];
+				if (form.uploadedFiles[0] && form.uploadedFiles[0]?.file) {
+					uploadedFile = await uploadFileToServer(form.uploadedFiles[0]);
+				}
+
+				console.log(uploadedFile, 'uploadedFile');
+
+				uploadedExplanationOrIcon = form.uploadedExplanationOrIcon[0];
+				if (
+					form.uploadedExplanationOrIcon[0] &&
+					form.uploadedExplanationOrIcon[0]?.file
+				) {
+					uploadedExplanationOrIcon = await uploadFileToServer(
+						form.uploadedExplanationOrIcon[0]
+					);
+				}
+				console.log(uploadedExplanationOrIcon, 'uploadedExplanationOrIcon');
+
+				try {
+					createGames(
+						null,
+						[
+							uploadedFile && uploadedFile,
+							uploadedExplanationOrIcon,
+							uploadedExplanationOrIcon
+						],
+						true
+					);
+				} catch {
+					setIsLoadingcreateViral(false);
+				}
+
+				// if (form.uploadedFiles[0] && form.uploadedExplanationOrIcon[0]) {
+				// 	let uploadFilesPromiseArray = [
+				// 		form.uploadedFiles[0],
+				// 		form.uploadedExplanationOrIcon[0]
+				// 	].map(async (_file) => {
+				// 		return uploadFileToServer(_file);
+				// 	});
+				// 	Promise.all([...uploadFilesPromiseArray])
+				// 		.then((mediaFiles) => {
+				// 			createGames(null, mediaFiles, true);
+				// 		})
+				// 		.catch(() => {
+				// 			setIsLoadingcreateViral(false);
+				// 		});
+				// }
 			}
 		}
 	};
@@ -1795,6 +2008,77 @@ const UploadOreditArcade = ({
 							)}
 						</div>
 						<div className={classes.buttonDiv}>
+							<div>
+								{editArcade || editJogo ? (
+									<div className={classes.editBtn}>
+										<Button
+											disabled={deleteBtnStatus}
+											button2={editArcade || editJogo ? true : false}
+											onClick={() => {
+												if (!deleteBtnStatus) {
+													deleteGame(specificGamesData?.id, status);
+												}
+											}}
+											text={'DELETE GAME'}
+										/>
+									</div>
+								) : (
+									<></>
+								)}
+							</div>
+
+							<div className={classes.publishDraftDiv}>
+								{status === 'draft' || !editArcade || editJogo ? (
+									<div
+										className={
+											editArcade || editJogo
+												? classes.draftBtnEdit
+												: classes.draftBtn
+										}
+									>
+										<Button
+											// disabledDraft={
+											// 	editArcade || editJogo
+											// 		? draftBtnDisabled
+											// 		: !validateDraft(form)
+											// }
+											onClick={() => handleDraftSave()}
+											button3={true}
+											text={
+												(status === 'draft' && editArcade) || editJogo
+													? 'SAVE DRAFT'
+													: 'SAVE AS DRAFT'
+											}
+										/>
+									</div>
+								) : (
+									<></>
+								)}
+
+								<div
+									className={[
+										editArcade || editJogo
+											? classes.addQuizBtnEdit
+											: classes.addQuizBtn,
+										classes.saveChangesbtn
+									].join(' ')}
+								>
+									<Button
+										disabled={
+											editArcade || editJogo
+												? editBtnDisabled
+												: validateGamesForm(type, form, postButtonStatus)
+										}
+										onClick={() => {
+											addSaveGameBtn();
+										}}
+										// text={type === 'quiz' ? 'ADD QUIZ' : 'ADD POLL'}
+										text={buttonText}
+									/>
+								</div>
+							</div>
+						</div>
+						{/* <div className={classes.buttonDiv}>
 							{editArcade || editJogo ? (
 								<div className={classes.editBtn}>
 									<Button
@@ -1832,7 +2116,7 @@ const UploadOreditArcade = ({
 									text={buttonText}
 								/>
 							</div>
-						</div>
+						</div> */}
 					</div>
 
 					{previewFile != null && (
@@ -1922,7 +2206,8 @@ UploadOreditArcade.propTypes = {
 	editArcade: PropTypes.bool, // quiz
 	page: PropTypes.string,
 	type: PropTypes.string, //JOGO OR ARCADE
-	handleClose: PropTypes.func.isRequired
+	handleClose: PropTypes.func.isRequired,
+	status: PropTypes.string
 };
 
 export default UploadOreditArcade;

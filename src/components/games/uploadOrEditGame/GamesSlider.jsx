@@ -17,7 +17,8 @@ const GamesSlider = ({
 	heading1,
 	buttonText,
 	gameType,
-	isEdit
+	isEdit,
+	status
 }) => {
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
@@ -89,6 +90,7 @@ const GamesSlider = ({
 									handleClose();
 								}}
 								type='jogo'
+								status={status}
 							/>
 						</TabPanelUnstyled>
 						<TabPanelUnstyled value={1}>
@@ -106,6 +108,7 @@ const GamesSlider = ({
 								}}
 								editArcade={isEdit}
 								type='arcade'
+								status={status}
 							/>
 						</TabPanelUnstyled>
 					</TabsUnstyled>
@@ -123,7 +126,8 @@ GamesSlider.propTypes = {
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
 	type: PropTypes.string.isRequired,
-	isEdit: PropTypes.bool.isRequired
+	isEdit: PropTypes.bool.isRequired,
+	status: PropTypes.string.isRequired
 };
 
 export default GamesSlider;
