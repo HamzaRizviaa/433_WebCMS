@@ -63,6 +63,7 @@ export default function PollDetails({
 							}}
 							style={{ minWidth: '40% !important' }}
 							type={'poll'}
+							status={status}
 						/>
 					</TabPanelUnstyled>
 					<TabPanelUnstyled value={1}>
