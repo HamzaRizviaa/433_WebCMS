@@ -145,66 +145,94 @@ const UploadOreditArcade = ({
 	};
 	useEffect(() => {
 		if (specificGamesData) {
-			console.log(status, 'status in game slider ');
 			setForm((prev) => {
 				return {
 					...prev,
-					...specificGamesData,
-
-					uploadedFiles:
-						specificGamesData?.game_image_file_name !== ('undefined' || '')
-							? [
-									{
-										id: makeid(10),
-										file_name: specificGamesData?.game_image_file_name,
-										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_image?.url}`,
-										type: 'image'
-									}
-							  ]
-							: null,
-					uploadedExplanationOrIcon:
-						(specificGamesData?.game_video_file_name ||
-							specificGamesData?.game_icon_file_name) !== ('undefined' || '')
-							? [
-									{
-										id: makeid(10),
-										file_name: specificGamesData?.game_video_file_name
-											? specificGamesData?.game_video_file_name
-											: specificGamesData?.game_icon_file_name,
-										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-											specificGamesData?.game_video?.url
-												? specificGamesData?.game_video?.url
-												: specificGamesData?.game_icon?.url
-										}`,
-										type: specificGamesData?.game_video?.url
-											? 'video'
-											: 'image',
-										fileExtension: specificGamesData?.game_video?.url
-											? '.mp4'
-											: '.jpg',
-										url: `${
-											specificGamesData?.game_video?.url &&
-											specificGamesData?.game_video?.url
-										}`
-									}
-							  ]
-							: null
+					...specificGamesData
 				};
 			});
+			if (specificGamesData.game_type === 'JOGO') {
+				setForm((prev) => {
+					return {
+						...prev,
+						uploadedFiles:
+							specificGamesData?.game_image_file_name !== ''
+								? [
+										{
+											id: makeid(10),
+											file_name: specificGamesData?.game_image_file_name,
+											media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_image?.url}`,
+											type: 'image'
+										}
+								  ]
+								: [],
+						uploadedExplanationOrIcon:
+							specificGamesData?.game_video_file_name !== ''
+								? [
+										{
+											id: makeid(10),
+											file_name: specificGamesData?.game_video_file_name,
+											media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_video?.url}`,
+											type: specificGamesData?.game_video?.url
+												? 'video'
+												: 'image',
+											fileExtension: specificGamesData?.game_video?.url
+												? '.mp4'
+												: '.jpg',
+											url: `${
+												specificGamesData?.game_video?.url &&
+												specificGamesData?.game_video?.url
+											}`
+										}
+								  ]
+								: []
+					};
+				});
+				setFileWidth2(specificGamesData?.game_video?.width);
+				setFileHeight2(specificGamesData?.game_video?.height);
+			} else {
+				setForm((prev) => {
+					return {
+						...prev,
+						uploadedFiles:
+							specificGamesData?.game_image_file_name !== ''
+								? [
+										{
+											id: makeid(10),
+											file_name: specificGamesData?.game_image_file_name,
+											media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_image?.url}`,
+											type: 'image'
+										}
+								  ]
+								: [],
+						uploadedExplanationOrIcon:
+							specificGamesData?.game_icon_file_name !== ''
+								? [
+										{
+											id: makeid(10),
+											file_name: specificGamesData?.game_icon_file_name,
+											media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_video?.url}`,
+											type: specificGamesData?.game_video?.url
+												? 'video'
+												: 'image',
+											fileExtension: specificGamesData?.game_video?.url
+												? '.mp4'
+												: '.jpg',
+											url: `${
+												specificGamesData?.game_video?.url &&
+												specificGamesData?.game_video?.url
+											}`
+										}
+								  ]
+								: []
+					};
+				});
+				setFileWidth2(specificGamesData?.game_icon?.width);
+				setFileHeight2(specificGamesData?.game_icon?.height);
+			}
 			setFileWidth(specificGamesData?.game_image?.width);
 			setFileHeight(specificGamesData?.game_image?.height);
-			setFileWidth2(
-				specificGamesData?.game_video?.width
-					? specificGamesData?.game_video?.width
-					: specificGamesData?.game_icon?.width
-			);
-			setFileHeight2(
-				specificGamesData?.game_video?.height
-					? specificGamesData?.game_video?.height
-					: specificGamesData?.game_icon?.height
-			);
 		}
-		// }
 	}, [specificGamesData]);
 
 	useEffect(() => {
@@ -397,7 +425,6 @@ const UploadOreditArcade = ({
 	};
 
 	const createGames = async (id, mediaFiles = [], draft = false) => {
-		console.log('Create Game', mediaFiles);
 		setPostButtonStatus(true);
 
 		try {
@@ -762,10 +789,6 @@ const UploadOreditArcade = ({
 		}
 	};
 
-	{
-		console.log(isError.draftError, 'isError.draftError');
-	}
-
 	const validateDraftGamesForm = (type, form) => {
 		if (type === 'jogo') {
 			const validate =
@@ -863,8 +886,6 @@ const UploadOreditArcade = ({
 					uploadedFile = await uploadFileToServer(form.uploadedFiles[0]);
 				}
 
-				console.log(uploadedFile, 'uploadedFile');
-
 				uploadedExplanationOrIcon = form.uploadedExplanationOrIcon[0];
 				if (
 					form.uploadedExplanationOrIcon[0] &&
@@ -874,7 +895,6 @@ const UploadOreditArcade = ({
 						form.uploadedExplanationOrIcon[0]
 					);
 				}
-				console.log(uploadedExplanationOrIcon, 'uploadedExplanationOrIcon');
 
 				try {
 					createGames(
