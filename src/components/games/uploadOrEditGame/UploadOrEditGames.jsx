@@ -95,10 +95,10 @@ const UploadOreditArcade = ({
 			ios: ''
 		}
 	});
-	const [fileWidth, setFileWidth] = useState(null);
-	const [fileHeight, setFileHeight] = useState(null);
-	const [fileWidth2, setFileWidth2] = useState(null);
-	const [fileHeight2, setFileHeight2] = useState(null);
+	const [fileWidth, setFileWidth] = useState(0);
+	const [fileHeight, setFileHeight] = useState(0);
+	const [fileWidth2, setFileWidth2] = useState(0);
+	const [fileHeight2, setFileHeight2] = useState(0);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
@@ -339,8 +339,6 @@ const UploadOreditArcade = ({
 		});
 	};
 
-	console.log(form.uploadedFiles, form.uploadedExplanationOrIcon, 'form');
-
 	const uploadFileToServer = async (uploadedFile) => {
 		try {
 			const result = await axios.post(
@@ -532,6 +530,7 @@ const UploadOreditArcade = ({
 	};
 
 	const deleteGame = async (id, isDraft) => {
+		console.log(isDraft, 'isDraft');
 		setDeleteBtnStatus(true);
 		try {
 			const result = await axios.post(
@@ -586,6 +585,10 @@ const UploadOreditArcade = ({
 		setAppStore('');
 		setPlayStore2('');
 		setAppStore2('');
+		setFileHeight(0);
+		setFileWidth(0);
+		setFileHeight2(0);
+		setFileWidth2(0);
 		setIsError({});
 		setForm({
 			uploadedFiles: [],
@@ -789,91 +792,55 @@ const UploadOreditArcade = ({
 		}
 	};
 
-	const validateDraftGamesForm = (type, form) => {
-		if (type === 'jogo') {
-			const validate =
-				!form?.uploadedFiles.length &&
-				!form?.orientation &&
-				!form?.game_orientation &&
-				!form?.uploadedExplanationOrIcon.length &&
-				!form?.title &&
-				!form?.description &&
-				!form?.time &&
-				!form?.scoring &&
-				!form?.objective &&
-				!form?.payload;
-			console.log(validate, 'validate jogo');
-			return validate;
-		}
-	};
+	// const validateDraftGamesForm = (type, form) => {
+	// 	if (type === 'jogo') {
+	// 		const validate =
+	// 			!form?.uploadedFiles.length &&
+	// 			!form?.orientation &&
+	// 			!form?.game_orientation &&
+	// 			!form?.uploadedExplanationOrIcon.length &&
+	// 			!form?.title &&
+	// 			!form?.description &&
+	// 			!form?.time &&
+	// 			!form?.scoring &&
+	// 			!form?.objective &&
+	// 			!form?.payload;
+	// 		console.log(validate, 'validate jogo');
+	// 		return validate;
+	// 	}
+	// };
 
 	const handleDraftSave = async () => {
-		if (validateDraftGamesForm(type, form)) {
+		if (validateGamesForm(type, form, false, true)) {
 			validateDraftBtn();
 		} else {
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			setIsLoadingcreateViral(true);
 			if (editArcade || editJogo) {
-				if (form.title?.trim() !== specificGamesData?.title?.trim()) {
-					if (
-						(await handleTitleDuplicate(form.title)) ===
-						'The Title Already Exist'
-						// 	200 &&
-						// articleTitle !== specificArticle?.title
-					) {
-						setIsError((prev) => {
-							return {
-								...prev,
-								titleGame: { message: 'This title already exists' }
-							};
-						});
+				if (form.title) {
+					if (form.title?.trim() !== specificGamesData?.title?.trim()) {
+						if (
+							(await handleTitleDuplicate(form.title)) ===
+							'The Title Already Exist'
+							// 	200 &&
+							// articleTitle !== specificArticle?.title
+						) {
+							setIsError((prev) => {
+								return {
+									...prev,
+									titleGame: { message: 'This title already exists' }
+								};
+							});
 
-						setTimeout(() => {
-							setIsError({});
-						}, [5000]);
+							setTimeout(() => {
+								setIsError({});
+							}, [5000]);
 
-						setPostButtonStatus(false);
-						return;
+							setPostButtonStatus(false);
+							return;
+						}
 					}
-				}
-				setIsLoadingcreateViral(true);
-				let uploadFilesPromiseArray = [
-					form.uploadedFiles[0],
-					form.uploadedExplanationOrIcon[0]
-				].map(async (_file) => {
-					if (_file.file) {
-						return await uploadFileToServer(_file);
-					} else {
-						return _file;
-					}
-				});
-
-				Promise.all([...uploadFilesPromiseArray])
-					.then((mediaFiles) => {
-						// console.log('media files', mediaFiles);
-						createGames(specificGamesData?.id, mediaFiles, true);
-					})
-					.catch(() => {
-						setIsLoadingcreateViral(false);
-					});
-			} else {
-				if (
-					(await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
-				) {
-					setIsError((prev) => {
-						return {
-							...prev,
-							titleGame: { message: 'This title already exists' }
-						};
-					});
-
-					setTimeout(() => {
-						setIsError({});
-					}, [5000]);
-
-					setPostButtonStatus(false);
-					return;
 				}
 
 				setIsLoadingcreateViral(true);
@@ -898,11 +865,80 @@ const UploadOreditArcade = ({
 
 				try {
 					createGames(
+						specificGamesData?.id,
+						[
+							uploadedFile && uploadedFile,
+							uploadedExplanationOrIcon && uploadedExplanationOrIcon
+						],
+						true
+					);
+				} catch {
+					setIsLoadingcreateViral(false);
+				}
+				// let uploadFilesPromiseArray = [
+				// 	form.uploadedFiles[0],
+				// 	form.uploadedExplanationOrIcon[0]
+				// ].map(async (_file) => {
+				// 	if (_file.file) {
+				// 		return await uploadFileToServer(_file);
+				// 	} else {
+				// 		return _file;
+				// 	}
+				// });
+
+				// Promise.all([...uploadFilesPromiseArray])
+				// 	.then((mediaFiles) => {
+				// 		// console.log('media files', mediaFiles);
+				// 		createGames(specificGamesData?.id, mediaFiles, true);
+				// 	})
+				// 	.catch(() => {
+				// 		setIsLoadingcreateViral(false);
+				// 	});
+			} else {
+				if (
+					(await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
+				) {
+					setIsError((prev) => {
+						return {
+							...prev,
+							titleGame: { message: 'This title already exists' }
+						};
+					});
+
+					setTimeout(() => {
+						setIsError({});
+					}, [5000]);
+
+					setPostButtonStatus(false);
+					return;
+				}
+
+				setIsLoadingcreateViral(true);
+				// edit draft
+				let uploadedFile; // first
+				let uploadedExplanationOrIcon; // second
+
+				uploadedFile = form.uploadedFiles[0];
+				if (form.uploadedFiles[0] && form.uploadedFiles[0]?.file) {
+					uploadedFile = await uploadFileToServer(form.uploadedFiles[0]);
+				}
+
+				uploadedExplanationOrIcon = form.uploadedExplanationOrIcon[0];
+				if (
+					form.uploadedExplanationOrIcon[0] &&
+					form.uploadedExplanationOrIcon[0]?.file
+				) {
+					uploadedExplanationOrIcon = await uploadFileToServer(
+						form.uploadedExplanationOrIcon[0]
+					);
+				}
+
+				try {
+					createGames(
 						null,
 						[
 							uploadedFile && uploadedFile,
-							uploadedExplanationOrIcon,
-							uploadedExplanationOrIcon
+							uploadedExplanationOrIcon && uploadedExplanationOrIcon
 						],
 						true
 					);
@@ -2227,7 +2263,7 @@ UploadOreditArcade.propTypes = {
 	page: PropTypes.string,
 	type: PropTypes.string, //JOGO OR ARCADE
 	handleClose: PropTypes.func.isRequired,
-	status: PropTypes.string
+	status: PropTypes.string.isRequired
 };
 
 export default UploadOreditArcade;

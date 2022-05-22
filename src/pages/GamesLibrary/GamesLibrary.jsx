@@ -43,6 +43,7 @@ import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
+import DefaultImage from '../../assets/defaultImage.png';
 import LoadingOverlay from 'react-loading-overlay';
 const GamesLibrary = () => {
 	const muiClasses = useStyles();
@@ -358,6 +359,9 @@ const GamesLibrary = () => {
 									}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.game_image}`}
 									alt='no img'
+									onError={(e) => (
+										(e.target.onerror = null), (e.target.src = DefaultImage)
+									)}
 								/>
 							}
 							placement='right'
@@ -375,6 +379,9 @@ const GamesLibrary = () => {
 								<img
 									className={classes.mediaIcon}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.game_image}`}
+									onError={(e) => (
+										(e.target.onerror = null), (e.target.src = DefaultImage)
+									)}
 								/>
 							</span>
 						</Tooltip>
@@ -395,7 +402,7 @@ const GamesLibrary = () => {
 							<div>
 								<Markup
 									className={classes.gamesFileName}
-									content={row?.file_name}
+									content={row?.file_name !== '' ? row?.file_name : '-'}
 								/>
 							</div>
 						</Tooltip>

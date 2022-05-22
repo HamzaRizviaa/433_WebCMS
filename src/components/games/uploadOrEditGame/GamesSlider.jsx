@@ -26,7 +26,7 @@ const GamesSlider = ({
 	const previewRef = useRef(null);
 
 	const muiClasses = useStyles();
-
+	console.log(status, '---status in slider');
 	const handlePreviewEscape = () => {
 		setPreviewBool(false);
 		setPreviewFile(null);
@@ -60,6 +60,7 @@ const GamesSlider = ({
 					previewRef={previewRef}
 					setDisableDropdown={setDisableDropdown}
 					editJogo={isEdit}
+					status={status}
 					handleClose={() => {
 						handleClose();
 					}}
@@ -86,11 +87,11 @@ const GamesSlider = ({
 								previewRef={previewRef}
 								setDisableDropdown={setDisableDropdown}
 								editJogo={isEdit}
+								status={status}
 								handleClose={() => {
 									handleClose();
 								}}
 								type='jogo'
-								status={status}
 							/>
 						</TabPanelUnstyled>
 						<TabPanelUnstyled value={1}>
@@ -107,8 +108,8 @@ const GamesSlider = ({
 									handleClose();
 								}}
 								editArcade={isEdit}
-								type='arcade'
 								status={status}
+								type='arcade'
 							/>
 						</TabPanelUnstyled>
 					</TabsUnstyled>
