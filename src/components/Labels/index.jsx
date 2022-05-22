@@ -81,7 +81,7 @@ const Labels = ({
 				</div>
 			}
 			className={`${classes.autoComplete} ${
-				isEdit && draftStatus === 'published' && classes.disableAutoComplete
+				isEdit && draftStatus !== 'draft' && classes.disableAutoComplete
 			}`}
 			id='free-solo-2-demo'
 			disableClearable

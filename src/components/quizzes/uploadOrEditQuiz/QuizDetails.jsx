@@ -64,12 +64,15 @@ export default function QuizDetails({
 							}}
 							style={{ minWidth: '40% !important' }}
 							type={'quiz'}
+							status={status}
+							quiz={true}
 						/>
 					</TabPanelUnstyled>
 					<TabPanelUnstyled value={1}>
 						{/* edit quiz */}
 
 						<UploadOrEditQuiz
+							quiz={true}
 							editQuiz={isEdit}
 							heading1={heading1}
 							open={open}

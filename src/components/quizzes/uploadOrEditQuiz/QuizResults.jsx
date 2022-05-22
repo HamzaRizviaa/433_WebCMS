@@ -34,7 +34,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	}
 }));
 
-export default function QuizResults({ handleClose, page, type }) {
+export default function QuizResults({ handleClose, page, type, status, quiz }) {
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [firstUserPercentage, setFirstUserPercentage] = useState(null);
 	const [secondUserPercentage, setSecondtUserPercentage] = useState(null);
@@ -121,13 +121,15 @@ export default function QuizResults({ handleClose, page, type }) {
 		return null;
 	};
 
-	const deleteQuiz = async (id) => {
+	const deleteQuiz = async (id, draft, qtype) => {
 		setDeleteBtnStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/question/delete-question`,
 				{
-					question_id: id
+					question_id: id,
+					is_draft: draft,
+					question_type: qtype
 				},
 				{
 					headers: {
@@ -303,7 +305,11 @@ export default function QuizResults({ handleClose, page, type }) {
 					button2={true}
 					onClick={() => {
 						if (!deleteBtnStatus) {
-							deleteQuiz(editQuestionResultDetail?.id);
+							deleteQuiz(
+								editQuestionResultDetail?.id,
+								status.toLowerCase(),
+								quiz ? 'quiz' : 'poll'
+							);
 						}
 					}}
 					text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
@@ -316,5 +322,7 @@ export default function QuizResults({ handleClose, page, type }) {
 QuizResults.propTypes = {
 	handleClose: PropTypes.func.isRequired,
 	page: PropTypes.string,
-	type: PropTypes.string
+	type: PropTypes.string,
+	status: PropTypes.string,
+	quiz: PropTypes.bool
 };

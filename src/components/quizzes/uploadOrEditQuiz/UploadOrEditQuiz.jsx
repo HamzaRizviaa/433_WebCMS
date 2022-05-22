@@ -61,6 +61,7 @@ const UploadOrEditQuiz = ({
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
 	const [editQuizBtnDisabled, setEditQuizBtnDisabled] = useState(false);
+	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
 	const [isError, setIsError] = useState({});
@@ -86,14 +87,23 @@ const UploadOrEditQuiz = ({
 	} = useSelector((state) => state.questionLibrary);
 
 	useEffect(() => {
-		var da = new Date(form.end_date);
-		var toSend = `${da?.getFullYear()}-${('0' + (da?.getMonth() + 1)).slice(
-			-2
-		)}-${('0' + da?.getDate()).slice(-2)}T00:00:00.000Z`;
-		setConvertedDate(toSend);
+		if (
+			(editPoll || editQuiz) &&
+			(quiz
+				? editQuestionData?.quiz_end_date == null
+				: editQuestionData?.poll_end_date == null) &&
+			form.end_date == null
+		) {
+			setConvertedDate(null);
+		} else {
+			var da = new Date(form.end_date);
+			var toSend = `${da?.getFullYear()}-${('0' + (da?.getMonth() + 1)).slice(
+				-2
+			)}-${('0' + da?.getDate()).slice(-2)}T00:00:00.000Z`;
+			setConvertedDate(toSend);
+		}
 	}, [form.end_date]);
 
-	console.log(convertedDate, 'klolo');
 	useEffect(() => {
 		if (labels.length) {
 			setQuizLabels([...labels]);
@@ -133,8 +143,6 @@ const UploadOrEditQuiz = ({
 			</div>
 		);
 	});
-
-	console.log(form, 'kkkk');
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -294,9 +302,7 @@ const UploadOrEditQuiz = ({
 						? convertedDate
 							? { end_date: convertedDate }
 							: { end_date: '' }
-						: (editQuiz || editPoll) &&
-						  (status === 'ACTIVE' || status === 'draft') &&
-						  form.end_date != null
+						: (editQuiz || editPoll) && form.end_date != null
 						? { end_date: convertedDate }
 						: { end_date: '' }),
 
@@ -376,13 +382,15 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
-	const deleteQuiz = async (id) => {
+	const deleteQuiz = async (id, draft, qtype) => {
 		setDeleteBtnStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/question/delete-question`,
 				{
-					question_id: id
+					question_id: id,
+					is_draft: draft,
+					question_type: qtype
 				},
 				{
 					headers: {
@@ -443,6 +451,8 @@ const UploadOrEditQuiz = ({
 		}, 1000);
 		setPostButtonStatus(false);
 		setIsError({});
+		setEditQuizBtnDisabled(false);
+		setDraftBtnDisabled(false);
 		//resetForm(form);
 		setForm({
 			uploadedFiles: [],
@@ -469,6 +479,30 @@ const UploadOrEditQuiz = ({
 		}, 5000);
 	};
 
+	const validateDraftBtn = () => {
+		if (editPoll || editQuiz) {
+			setIsError({
+				draftError: draftBtnDisabled
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		} else {
+			setIsError({
+				endDate: !form.end_date,
+				uploadedFiles: form.uploadedFiles.length < 1,
+				selectedLabelsDraft: form.labels.length < 1,
+				question: !form.question,
+				ans1: !form.answer1,
+				ans2: !form.answer2
+			});
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		}
+	};
+
 	useEffect(() => {
 		if (editQuestionData) {
 			setEditQuizBtnDisabled(
@@ -483,6 +517,44 @@ const UploadOrEditQuiz = ({
 			);
 		}
 	}, [editQuestionData, form, convertedDate]);
+
+	const checkDuplicateLabel = () => {
+		let formLabels = form?.labels?.map((formL) => {
+			if (editQuestionData?.labels?.includes(formL.name)) {
+				return true;
+			} else {
+				return false;
+			}
+		});
+		return formLabels.some((label) => label === false);
+	};
+
+	useEffect(() => {
+		if (editQuestionData) {
+			setDraftBtnDisabled(
+				!validateDraft(form) ||
+					postButtonStatus ||
+					((type === 'quiz'
+						? editQuestionData?.quiz_end_date === convertedDate
+						: editQuestionData?.poll_end_date === convertedDate) &&
+						editQuestionData?.question === form?.question &&
+						editQuestionData?.answers[0].answer === form?.answer1 &&
+						editQuestionData?.answers[1].answer === form?.answer2 &&
+						(editQuestionData?.image || form?.uploadedFiles[0]
+							? editQuestionData?.file_name ===
+							  form?.uploadedFiles[0]?.file_name
+							: true) &&
+						editQuestionData?.dropbox_url?.trim() === form.dropbox_url.trim() &&
+						editQuestionData?.labels?.length === form?.labels?.length &&
+						!checkDuplicateLabel())
+			);
+		}
+	}, [editQuestionData, form, convertedDate]);
+
+	// console.log(form, 'form');
+	console.log(form.end_date, 'dft');
+	// console.log(editQuestionData?.poll_end_date, 'poll');
+	// console.log(convertedDate, 'cd');
 
 	const handleAddSaveQuizPollBtn = async () => {
 		if (!validateForm(form) || editQuizBtnDisabled) {
@@ -525,8 +597,8 @@ const UploadOrEditQuiz = ({
 	};
 
 	const handleDraftSave = async () => {
-		if (!validateDraft(form)) {
-			validatePostBtn();
+		if (!validateDraft(form) || draftBtnDisabled) {
+			validateDraftBtn();
 		} else {
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -679,7 +751,7 @@ const UploadOrEditQuiz = ({
 									</h6>
 								</div>
 								<TextField
-									disabled={(editQuiz || editPoll) && status === 'CLOSED'}
+									disabled={(editQuiz || editPoll) && status !== 'draft'}
 									value={form.question}
 									onChange={(e) => {
 										setForm((prev) => {
@@ -692,7 +764,7 @@ const UploadOrEditQuiz = ({
 										disableUnderline: true,
 										className: `${classes.textFieldInput}  ${
 											(editQuiz || editPoll) &&
-											status === 'CLOSED' &&
+											status !== 'draft' &&
 											classes.disableTextField
 										}`
 									}}
@@ -719,7 +791,7 @@ const UploadOrEditQuiz = ({
 									{quiz || editQuiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
 								</h6>
 								<TextField
-									disabled={(editQuiz || editPoll) && status === 'CLOSED'}
+									disabled={(editQuiz || editPoll) && status !== 'draft'}
 									value={form.answer1}
 									onChange={(e) => {
 										setForm((prev) => {
@@ -732,7 +804,7 @@ const UploadOrEditQuiz = ({
 										disableUnderline: true,
 										className: `${classes.textFieldInput}  ${
 											(editQuiz || editPoll) &&
-											status === 'CLOSED' &&
+											status !== 'draft' &&
 											classes.disableTextField
 										}`
 									}}
@@ -760,7 +832,7 @@ const UploadOrEditQuiz = ({
 									{quiz || editQuiz ? 'WRONG ANSWER' : 'ANSWER 2'}
 								</h6>
 								<TextField
-									disabled={(editQuiz || editPoll) && status === 'CLOSED'}
+									disabled={(editQuiz || editPoll) && status !== 'draft'}
 									value={form.answer2}
 									onChange={(e) => {
 										setForm((prev) => {
@@ -773,7 +845,7 @@ const UploadOrEditQuiz = ({
 										disableUnderline: true,
 										className: `${classes.textFieldInput}  ${
 											(editQuiz || editPoll) &&
-											status === 'CLOSED' &&
+											status !== 'draft' &&
 											classes.disableTextField
 										}`
 									}}
@@ -818,9 +890,11 @@ const UploadOrEditQuiz = ({
 
 							<p className={globalClasses.mediaError}>
 								{isError.selectedLabels
-									? `You need to add  ${
+									? `You need to add ${
 											7 - form.labels.length
-									  }  more labels in order to post`
+									  } more labels in order to upload media`
+									: isError.selectedLabelsDraft
+									? 'You need to select atleast 1 label to save as draft'
 									: ''}
 							</p>
 
@@ -941,6 +1015,13 @@ const UploadOrEditQuiz = ({
 								/>
 							</div>
 						</div> */}
+
+						<p className={globalClasses.mediaError}>
+							{isError.draftError
+								? 'Something needs to be changed to save a draft'
+								: ''}
+						</p>
+
 						<div className={classes.buttonDiv}>
 							<div className={classes.leftButtonDiv}>
 								{editQuiz || editPoll ? (
@@ -950,7 +1031,11 @@ const UploadOrEditQuiz = ({
 											button2={editQuiz || editPoll ? true : false}
 											onClick={() => {
 												if (!deleteBtnStatus) {
-													deleteQuiz(editQuestionData?.id);
+													deleteQuiz(
+														editQuestionData?.id,
+														status.toLowerCase(),
+														quiz ? 'quiz' : 'poll'
+													);
 												}
 											}}
 											text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
@@ -991,7 +1076,9 @@ const UploadOrEditQuiz = ({
 									>
 										<Button
 											disabledDraft={
-												editPoll || editQuiz ? false : !validateDraft(form)
+												editPoll || editQuiz
+													? draftBtnDisabled
+													: !validateDraft(form)
 											}
 											onClick={() => handleDraftSave()}
 											button3={true}
