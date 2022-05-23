@@ -300,7 +300,8 @@ const UploadOrEditViral = ({
 					// ...(form.show_likes ? { show_likes: true } : {}),
 					// ...(form.show_comments ? { show_comments: true } : {}),
 					...(isEdit && id ? { viral_id: id } : {}),
-					...((!isEdit || status !== 'published') && form.labels?.length
+					...((!isEdit || status !== 'published') &&
+					(form.labels?.length || status == 'draft')
 						? { labels: [...form.labels] }
 						: {})
 					// ...(status !== 'published' && form.labels?.length

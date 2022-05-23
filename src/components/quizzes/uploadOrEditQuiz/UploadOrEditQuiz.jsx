@@ -346,10 +346,15 @@ const UploadOrEditQuiz = ({
 								]
 						  }
 						: {}),
-					...((!(editQuiz || editPoll) || status === 'draft') &&
-					form.labels.length
-						? { labels: [...form.labels] }
-						: {}),
+					...((!(editQuiz || editPoll) || status === 'draft') && {
+						labels: [...form.labels]
+					}),
+
+					// ...((!isEdit || status !== 'published') &&
+					// (form.labels?.length || status == 'draft')
+					// 	? { labels: [...form.labels] }
+					// 	: {}),
+
 					...((editQuiz || editPoll) && id ? { question_id: id } : {})
 				},
 				{

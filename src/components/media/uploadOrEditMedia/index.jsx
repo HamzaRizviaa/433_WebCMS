@@ -482,13 +482,14 @@ const UploadOrEditMedia = ({
 							height: fileHeight,
 							title: form.title,
 							description: form.description,
+							labels: [...form.labels],
 							...(form.media_dropbox_url
 								? { media_dropbox_url: form.media_dropbox_url }
 								: {}),
 							...(form.image_dropbox_url
 								? { image_dropbox_url: form.image_dropbox_url }
 								: {}),
-							...(form.labels.length ? { labels: [...form.labels] } : {}),
+							//...(form.labels.length ? { labels: [...form.labels] } : {}),
 
 							data: {
 								video_data: payload?.data?.Keys?.VideoKey,
@@ -970,7 +971,7 @@ const UploadOrEditMedia = ({
 					image_dropbox_url: form?.image_dropbox_url
 						? form.image_dropbox_url
 						: undefined,
-					...(form.labels.length ? { labels: [...form.labels] } : {}),
+					labels: [...form.labels],
 					data: {
 						...(!form.uploadedCoverImage[0] && { image_data: null }),
 						...(!form.uploadedFiles[0] && {

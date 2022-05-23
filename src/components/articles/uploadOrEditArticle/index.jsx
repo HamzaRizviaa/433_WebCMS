@@ -305,7 +305,8 @@ const UploadOrEditViral = ({
 						: '',
 
 					...(isEdit && id ? { article_id: id } : {}),
-					...((!isEdit || status !== 'published') && form.labels?.length
+					...((!isEdit || status !== 'published') &&
+					(form.labels?.length || status == 'draft')
 						? { labels: [...form.labels] }
 						: {}),
 
@@ -351,7 +352,6 @@ const UploadOrEditViral = ({
 		setExtraLabel('');
 		setPreviewFile(null);
 		setPreviewBool(false);
-
 		setDisableDropdown(true);
 		setFileHeight(0);
 		setFileWidth(0);
