@@ -697,6 +697,7 @@ const UploadOreditArcade = ({
 					}
 				}
 			);
+			console.log('result?.data?.message', result?.data?.message);
 			return result?.data?.message;
 		} catch (error) {
 			console.log('Error');
@@ -898,12 +899,18 @@ const UploadOreditArcade = ({
 				if (
 					(await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
 				) {
+					console.log(
+						(await handleTitleDuplicate(form.title)) ===
+							'The Title Already Exist',
+						'abc'
+					);
 					setIsError((prev) => {
 						return {
 							...prev,
 							titleGame: { message: 'This title already exists' }
 						};
 					});
+					console.log(isError, 'error of title duplicate', isError.titleGame);
 
 					setTimeout(() => {
 						setIsError({});

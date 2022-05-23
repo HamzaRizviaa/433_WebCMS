@@ -322,10 +322,10 @@ const GamesLibrary = () => {
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
-			formatter: (content) => {
+			formatter: (content, row) => {
 				return (
 					<div className={classes.gamesTitleRow}>
-						<Markup content={`${content} `} />
+						<Markup content={row?.title !== '' ? row?.title : '-'} />
 					</div>
 				);
 			}
