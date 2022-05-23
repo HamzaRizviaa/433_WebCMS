@@ -29,6 +29,7 @@ import { ReactComponent as Scoring } from '../../../assets/football.svg';
 import { ReactComponent as Objective } from '../../../assets/Cross.svg';
 import { Tooltip, Fade } from '@mui/material';
 import validateGamesForm from '../../../utils/validateGamesForm';
+import validateDraft from '../../../utils/validateDraft';
 import { useStyles } from './gamesStyles';
 import { useStyles as gameStyles } from './index.style';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
@@ -100,6 +101,8 @@ const UploadOreditArcade = ({
 	const [fileWidth2, setFileWidth2] = useState(0);
 	const [fileHeight2, setFileHeight2] = useState(0);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
+	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
+
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
 	const gameExplanationOrientation = ['PORTRAIT', 'LANDSCAPE'];
@@ -573,6 +576,8 @@ const UploadOreditArcade = ({
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
+		setDraftBtnDisabled(false);
+		setEditBtnDisabled(false);
 		setPostButtonStatus(false);
 		setVideoOrientation('');
 		setGameOrientation('');
@@ -652,7 +657,7 @@ const UploadOreditArcade = ({
 	const validateDraftBtn = () => {
 		if (editJogo || editArcade) {
 			setIsError({
-				draftError: true
+				draftError: draftBtnDisabled
 			});
 
 			setTimeout(() => {
@@ -811,38 +816,16 @@ const UploadOreditArcade = ({
 	// };
 
 	const handleDraftSave = async () => {
-		if (validateGamesForm(type, form, false, true)) {
+		if (
+			validateGamesForm(type, form, postButtonStatus, true) ||
+			draftBtnDisabled
+		) {
 			validateDraftBtn();
 		} else {
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 
 			if (editArcade || editJogo) {
-				if (form.title) {
-					if (form.title?.trim() !== specificGamesData?.title?.trim()) {
-						if (
-							(await handleTitleDuplicate(form.title)) ===
-							'The Title Already Exist'
-							// 	200 &&
-							// articleTitle !== specificArticle?.title
-						) {
-							setIsError((prev) => {
-								return {
-									...prev,
-									titleGame: { message: 'This title already exists' }
-								};
-							});
-
-							setTimeout(() => {
-								setIsError({});
-							}, [5000]);
-
-							setPostButtonStatus(false);
-							return;
-						}
-					}
-				}
-
 				setIsLoadingcreateViral(true);
 				// new draft
 				let uploadedFile; // first
@@ -895,29 +878,6 @@ const UploadOreditArcade = ({
 				// 		setIsLoadingcreateViral(false);
 				// 	});
 			} else {
-				if (
-					(await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
-				) {
-					console.log(
-						(await handleTitleDuplicate(form.title)) ===
-							'The Title Already Exist',
-						'abc'
-					);
-					setIsError((prev) => {
-						return {
-							...prev,
-							titleGame: { message: 'This title already exists' }
-						};
-					});
-
-					setTimeout(() => {
-						setIsError({});
-					}, [5000]);
-
-					setPostButtonStatus(false);
-					return;
-				}
-
 				setIsLoadingcreateViral(true);
 				// edit draft
 				let uploadedFile; // first
@@ -1014,6 +974,67 @@ const UploadOreditArcade = ({
 							specificGamesData?.dropbox_urls?.icon?.trim() ===
 								form?.dropbox_urls?.icon?.trim())
 					: validateGamesForm(type, form, postButtonStatus) ||
+					  (!form?.uploadedFiles[0]?.file &&
+							!form?.uploadedExplanationOrIcon[0]?.file &&
+							specificGamesData?.title === form?.title?.trim() &&
+							specificGamesData?.description === form?.description?.trim() &&
+							specificGamesData?.arcade_game_type === form?.arcade_game_type &&
+							specificGamesData?.game_id === form?.game_id.trim() &&
+							specificGamesData?.dropbox_urls?.image?.trim() ===
+								form?.dropbox_urls?.image?.trim() &&
+							specificGamesData?.dropbox_urls?.icon?.trim() ===
+								form?.dropbox_urls?.icon?.trim())
+			);
+		}
+	}, [specificGamesData, form]);
+
+	useEffect(() => {
+		if (specificGamesData) {
+			setDraftBtnDisabled(
+				type === 'jogo'
+					? validateGamesForm(type, form, postButtonStatus, true) ||
+							postButtonStatus ||
+							(!form?.uploadedFiles[0]?.file &&
+								!form?.uploadedExplanationOrIcon[0]?.file &&
+								specificGamesData?.title === form?.title?.trim() &&
+								specificGamesData?.description === form?.description?.trim() &&
+								specificGamesData?.time === form?.time?.trim() &&
+								specificGamesData?.scoring === form?.scoring?.trim() &&
+								specificGamesData?.objective === form?.objective?.trim() &&
+								specificGamesData?.payload === form?.payload?.trim() &&
+								specificGamesData?.game_orientation ===
+									form?.game_orientation &&
+								specificGamesData?.orientation === form?.orientation &&
+								specificGamesData?.dropbox_urls?.image?.trim() ===
+									form?.dropbox_urls?.image?.trim() &&
+								specificGamesData?.dropbox_urls?.video?.trim() ===
+									form?.dropbox_urls?.video?.trim())
+					: type === 'arcade' && form.arcade_game_type === 'Outside App'
+					? validateGamesForm(type, form, postButtonStatus, true) ||
+					  postButtonStatus ||
+					  (!form?.uploadedFiles[0]?.file &&
+							!form?.uploadedExplanationOrIcon[0]?.file &&
+							specificGamesData?.title === form?.title?.trim() &&
+							specificGamesData?.description === form?.description?.trim() &&
+							specificGamesData?.arcade_game_type === form?.arcade_game_type &&
+							specificGamesData?.package_id?.android ===
+								form?.package_id?.android?.trim() &&
+							specificGamesData?.package_id?.ios ===
+								form?.package_id?.ios?.trim() &&
+							specificGamesData?.store_url?.play_store ===
+								form?.store_url?.play_store?.trim() &&
+							specificGamesData?.store_url?.apple_store ===
+								form?.store_url?.apple_store?.trim() &&
+							specificGamesData?.deep_link?.android ===
+								form?.deep_link?.android?.trim() &&
+							specificGamesData?.deep_link?.ios ===
+								form?.deep_link?.ios?.trim() &&
+							specificGamesData?.dropbox_urls?.image?.trim() ===
+								form?.dropbox_urls?.image?.trim() &&
+							specificGamesData?.dropbox_urls?.icon?.trim() ===
+								form?.dropbox_urls?.icon?.trim())
+					: validateGamesForm(type, form, postButtonStatus, true) ||
+					  postButtonStatus ||
 					  (!form?.uploadedFiles[0]?.file &&
 							!form?.uploadedExplanationOrIcon[0]?.file &&
 							specificGamesData?.title === form?.title?.trim() &&
@@ -2068,6 +2089,13 @@ const UploadOreditArcade = ({
 								</>
 							)}
 						</div>
+
+						<p className={globalClasses.mediaError}>
+							{isError.draftError
+								? 'Something needs to be changed to save a draft'
+								: ''}
+						</p>
+
 						<div className={classes.buttonDiv}>
 							<div>
 								{editArcade || editJogo ? (
@@ -2098,11 +2126,11 @@ const UploadOreditArcade = ({
 										}
 									>
 										<Button
-											// disabledDraft={
-											// 	editArcade || editJogo
-											// 		? draftBtnDisabled
-											// 		: !validateDraft(form)
-											// }
+											disabledDraft={
+												editArcade || editJogo
+													? draftBtnDisabled
+													: !validateDraft(form)
+											}
 											onClick={() => handleDraftSave()}
 											button3={true}
 											text={

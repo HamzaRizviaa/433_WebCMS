@@ -12,7 +12,6 @@ const validateGamesForm = (type, form, postButtonStatus, draft = false) => {
 				!form?.scoring &&
 				!form?.objective &&
 				!form?.payload;
-			console.log(validate, 'validate jogo');
 			return validate;
 		} else {
 			if (form?.arcade_game_type === 'Outside App') {
