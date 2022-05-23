@@ -106,7 +106,6 @@ const UploadOreditArcade = ({
 	const gameOrientationArray = ['PORTRAIT', 'LANDSCAPE'];
 	const arcadeType = ['Inside App', 'Outside App'];
 	const loadingRef = useRef(null);
-
 	const muiClasses = useStyles();
 	const classes = gameStyles();
 	const globalClasses = globalUseStyles();
@@ -711,7 +710,7 @@ const UploadOreditArcade = ({
 		} else {
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
-			setIsLoadingcreateViral(true);
+
 			if (editArcade || editJogo) {
 				if (form.title?.trim() !== specificGamesData?.title?.trim()) {
 					if (
@@ -817,7 +816,7 @@ const UploadOreditArcade = ({
 		} else {
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
-			setIsLoadingcreateViral(true);
+
 			if (editArcade || editJogo) {
 				if (form.title) {
 					if (form.title?.trim() !== specificGamesData?.title?.trim()) {
@@ -910,7 +909,6 @@ const UploadOreditArcade = ({
 							titleGame: { message: 'This title already exists' }
 						};
 					});
-					console.log(isError, 'error of title duplicate', isError.titleGame);
 
 					setTimeout(() => {
 						setIsError({});
