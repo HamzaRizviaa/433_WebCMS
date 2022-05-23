@@ -29,6 +29,7 @@ import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 import LoadingOverlay from 'react-loading-overlay';
 import { useStyles } from './index.styles';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
+import DeleteModal from '../../DeleteModal';
 const UploadOrEditViral = ({
 	open,
 	handleClose,
@@ -53,6 +54,7 @@ const UploadOrEditViral = ({
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
+	const [openDeletePopup, setOpenDeletePopup] = useState(false);
 	const [form, setForm] = useState({
 		caption: '',
 		dropbox_url: '',
@@ -249,6 +251,10 @@ const UploadOrEditViral = ({
 		});
 	};
 
+	const toggleDeleteModal = () => {
+		setOpenDeletePopup(!openDeletePopup);
+	};
+
 	const handleDeleteFile = (id) => {
 		setForm((prev) => {
 			return {
@@ -334,6 +340,7 @@ const UploadOrEditViral = ({
 
 	const deleteViral = async (id, isDraft) => {
 		setDeleteBtnStatus(true);
+
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/viral/delete-viral`,
@@ -357,6 +364,8 @@ const UploadOrEditViral = ({
 			setDeleteBtnStatus(false);
 			console.log(e, 'Failed to delete Viral');
 		}
+
+		setOpenDeletePopup(!openDeletePopup);
 	};
 
 	const [newLabels, setNewLabels] = useState([]);
@@ -587,369 +596,386 @@ const UploadOrEditViral = ({
 	};
 
 	return (
-		<Slider
-			open={open}
-			handleClose={() => {
-				handleClose();
-				if (form.uploadedFiles.length && !isEdit) {
-					form.uploadedFiles.map((file) => handleDeleteFile(file.id));
-				}
-			}}
-			title={title}
-			disableDropdown={disableDropdown}
-			handlePreview={() => {
-				handlePreviewEscape();
-			}}
-			preview={previewBool}
-			previewRef={previewRef}
-			orientationRef={orientationRef}
-			edit={isEdit}
-			viral={true}
-		>
-			<LoadingOverlay
-				active={isLoadingcreateViral}
-				className={classes.loadingOverlay}
-				spinner={<PrimaryLoader />}
+		<>
+			<Slider
+				open={open}
+				handleClose={() => {
+					handleClose();
+					if (form.uploadedFiles.length && !isEdit) {
+						form.uploadedFiles.map((file) => handleDeleteFile(file.id));
+					}
+				}}
+				title={title}
+				disableDropdown={disableDropdown}
+				handlePreview={() => {
+					handlePreviewEscape();
+				}}
+				preview={previewBool}
+				previewRef={previewRef}
+				orientationRef={orientationRef}
+				edit={isEdit}
+				viral={true}
 			>
-				<Slide in={true} direction='up' {...{ timeout: 400 }}>
-					<div
-						ref={loadingRef}
-						className={`${
-							previewFile != null
-								? globalClasses.previewContentWrapper
-								: globalClasses.contentWrapper
-						}`}
-					>
-						{specificViralStatus === 'loading' ? <PrimaryLoader /> : <></>}
+				<LoadingOverlay
+					active={isLoadingcreateViral}
+					className={classes.loadingOverlay}
+					spinner={<PrimaryLoader />}
+				>
+					<Slide in={true} direction='up' {...{ timeout: 400 }}>
 						<div
-							className={globalClasses.contentWrapperNoPreview}
-							style={{ width: previewFile != null ? '60%' : 'auto' }}
+							ref={loadingRef}
+							className={`${
+								previewFile != null
+									? globalClasses.previewContentWrapper
+									: globalClasses.contentWrapper
+							}`}
 						>
-							<div>
-								<div className={globalClasses.explanationWrapper}>
-									<h5>{heading1}</h5>
-									<Tooltip
-										TransitionComponent={Fade}
-										TransitionProps={{ timeout: 800 }}
-										title='Default encoding for videos should be H.264'
-										arrow
-										componentsProps={{
-											tooltip: { className: globalClasses.toolTip },
-											arrow: { className: globalClasses.toolTipArrow }
-										}}
-										placement='bottom-start'
-									>
-										<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
-									</Tooltip>
-								</div>
-								<DragAndDropField
-									uploadedFiles={form.uploadedFiles}
-									// isEdit={isEdit}
-									handleDeleteFile={handleDeleteFile}
-									setPreviewBool={setPreviewBool}
-									setPreviewFile={setPreviewFile}
-									imgEl={imgEl}
-									videoRef={videoRef}
-									imageOnload={() => {
-										setFileWidth(imgEl.current.naturalWidth);
-										setFileHeight(imgEl.current.naturalHeight);
-									}}
-									onLoadedVideodata={() => {
-										setFileWidth(videoRef.current.videoWidth);
-										setFileHeight(videoRef.current.videoHeight);
-									}}
-									isPost
-								/>
-								{!form.uploadedFiles.length && (
-									<section
-										className={globalClasses.dropZoneContainer}
-										style={{
-											borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
-										}}
-									>
-										<div
-											{...getRootProps({ className: globalClasses.dropzone })}
+							{specificViralStatus === 'loading' ? <PrimaryLoader /> : <></>}
+							<div
+								className={globalClasses.contentWrapperNoPreview}
+								style={{ width: previewFile != null ? '60%' : 'auto' }}
+							>
+								<div>
+									<div className={globalClasses.explanationWrapper}>
+										<h5>{heading1}</h5>
+										<Tooltip
+											TransitionComponent={Fade}
+											TransitionProps={{ timeout: 800 }}
+											title='Default encoding for videos should be H.264'
+											arrow
+											componentsProps={{
+												tooltip: { className: globalClasses.toolTip },
+												arrow: { className: globalClasses.toolTipArrow }
+											}}
+											placement='bottom-start'
 										>
-											<input {...getInputProps()} />
-											<AddCircleOutlineIcon
-												className={globalClasses.addFilesIcon}
-											/>
-											<p className={globalClasses.dragMsg}>
-												Click or drag files to this area to upload
-											</p>
-											<p className={globalClasses.formatMsg}>
-												Supported formats are jpeg, png and mp4
-											</p>
-											<p className={globalClasses.uploadMediaError}>
-												{isError.uploadedFiles
-													? 'You need to upload a media in order to post'
-													: ''}
-											</p>
-										</div>
-									</section>
-								)}
-								<p className={globalClasses.fileRejectionError}>
-									{fileRejectionError}
-								</p>
-								<div className={globalClasses.dropBoxUrlContainer}>
-									<h6>DROPBOX URL</h6>
-									<TextField
-										value={form.dropbox_url}
-										onChange={(e) =>
-											setForm((prev) => {
-												return { ...prev, dropbox_url: e.target.value };
-											})
-										}
-										placeholder={'Please drop the dropbox URL here'}
-										className={classes.textField}
-										multiline
-										maxRows={2}
-										InputProps={{
-											disableUnderline: true,
-											className: classes.textFieldInput
+											<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
+										</Tooltip>
+									</div>
+									<DragAndDropField
+										uploadedFiles={form.uploadedFiles}
+										// isEdit={isEdit}
+										handleDeleteFile={handleDeleteFile}
+										setPreviewBool={setPreviewBool}
+										setPreviewFile={setPreviewFile}
+										imgEl={imgEl}
+										videoRef={videoRef}
+										imageOnload={() => {
+											setFileWidth(imgEl.current.naturalWidth);
+											setFileHeight(imgEl.current.naturalHeight);
 										}}
+										onLoadedVideodata={() => {
+											setFileWidth(videoRef.current.videoWidth);
+											setFileHeight(videoRef.current.videoHeight);
+										}}
+										isPost
 									/>
-								</div>
+									{!form.uploadedFiles.length && (
+										<section
+											className={globalClasses.dropZoneContainer}
+											style={{
+												borderColor: isError.uploadedFiles
+													? '#ff355a'
+													: 'yellow'
+											}}
+										>
+											<div
+												{...getRootProps({ className: globalClasses.dropzone })}
+											>
+												<input {...getInputProps()} />
+												<AddCircleOutlineIcon
+													className={globalClasses.addFilesIcon}
+												/>
+												<p className={globalClasses.dragMsg}>
+													Click or drag files to this area to upload
+												</p>
+												<p className={globalClasses.formatMsg}>
+													Supported formats are jpeg, png and mp4
+												</p>
+												<p className={globalClasses.uploadMediaError}>
+													{isError.uploadedFiles
+														? 'You need to upload a media in order to post'
+														: ''}
+												</p>
+											</div>
+										</section>
+									)}
+									<p className={globalClasses.fileRejectionError}>
+										{fileRejectionError}
+									</p>
+									<div className={globalClasses.dropBoxUrlContainer}>
+										<h6>DROPBOX URL</h6>
+										<TextField
+											value={form.dropbox_url}
+											onChange={(e) =>
+												setForm((prev) => {
+													return { ...prev, dropbox_url: e.target.value };
+												})
+											}
+											placeholder={'Please drop the dropbox URL here'}
+											className={classes.textField}
+											multiline
+											maxRows={2}
+											InputProps={{
+												disableUnderline: true,
+												className: classes.textFieldInput
+											}}
+										/>
+									</div>
 
-								<div className={classes.captionContainer}>
-									<h6
-										className={
-											isError.selectedLabels
-												? globalClasses.errorState
-												: globalClasses.noErrorState
-										}
+									<div className={classes.captionContainer}>
+										<h6
+											className={
+												isError.selectedLabels
+													? globalClasses.errorState
+													: globalClasses.noErrorState
+											}
+										>
+											LABELS
+										</h6>
+										<Labels
+											isEdit={isEdit}
+											setDisableDropdown={setDisableDropdown}
+											selectedLabels={form.labels}
+											LabelsOptions={postLabels}
+											extraLabel={extraLabel}
+											handleChangeExtraLabel={handleChangeExtraLabel}
+											setSelectedLabels={(newVal) => {
+												setForm((prev) => {
+													return { ...prev, labels: [...newVal] };
+												});
+											}}
+											draftStatus={status}
+										/>
+									</div>
+									<p className={globalClasses.mediaError}>
+										{isError.selectedLabels
+											? `You need to add ${
+													7 - form.labels.length
+											  } more labels in order to upload media`
+											: isError.selectedLabelsDraft
+											? 'You need to select atleast 1 label to save as draft'
+											: ''}
+									</p>
+
+									<div className={classes.captionContainer}>
+										<h6
+											className={
+												isError.caption
+													? globalClasses.errorState
+													: globalClasses.noErrorState
+											}
+										>
+											CAPTION
+										</h6>
+										<TextField
+											value={form.caption}
+											onChange={(e) =>
+												setForm((prev) => {
+													return { ...prev, caption: e.target.value };
+												})
+											}
+											placeholder={'Please write your caption here'}
+											className={classes.textField}
+											InputProps={{
+												disableUnderline: true,
+												className: classes.textFieldInput
+											}}
+											multiline
+											maxRows={4}
+										/>
+									</div>
+									<p className={globalClasses.mediaError}>
+										{isError.caption ? 'You need to enter the caption' : ''}
+									</p>
+
+									<div className={classes.postMediaContainer}>
+										<div className={classes.postMediaHeader}>
+											<h5>Show comments</h5>
+											<ToggleSwitch
+												id={1}
+												checked={form.show_comments}
+												onChange={(checked) =>
+													setForm((prev) => {
+														return { ...prev, show_comments: checked };
+													})
+												}
+											/>
+										</div>
+									</div>
+
+									<div
+										className={classes.postMediaContainer}
+										style={{ marginBottom: '1rem' }}
 									>
-										LABELS
-									</h6>
-									<Labels
-										isEdit={isEdit}
-										setDisableDropdown={setDisableDropdown}
-										selectedLabels={form.labels}
-										LabelsOptions={postLabels}
-										extraLabel={extraLabel}
-										handleChangeExtraLabel={handleChangeExtraLabel}
-										setSelectedLabels={(newVal) => {
-											setForm((prev) => {
-												return { ...prev, labels: [...newVal] };
-											});
-										}}
-										draftStatus={status}
-									/>
+										<div className={classes.postMediaHeader}>
+											<h5>Show likes</h5>
+											<ToggleSwitch
+												id={2}
+												checked={form.show_likes}
+												// onChange={
+												// 	(checked) => {
+												// 	setValueLikes(checked);
+												// }}
+												onChange={(checked) =>
+													setForm((prev) => {
+														return { ...prev, show_likes: checked };
+													})
+												}
+											/>
+										</div>
+									</div>
 								</div>
 								<p className={globalClasses.mediaError}>
-									{isError.selectedLabels
-										? `You need to add ${
-												7 - form.labels.length
-										  } more labels in order to upload media`
-										: isError.selectedLabelsDraft
-										? 'You need to select atleast 1 label to save as draft'
+									{isError.draftError
+										? 'Something needs to be changed to save a draft'
 										: ''}
 								</p>
 
-								<div className={classes.captionContainer}>
-									<h6
-										className={
-											isError.caption
-												? globalClasses.errorState
-												: globalClasses.noErrorState
-										}
-									>
-										CAPTION
-									</h6>
-									<TextField
-										value={form.caption}
-										onChange={(e) =>
-											setForm((prev) => {
-												return { ...prev, caption: e.target.value };
-											})
-										}
-										placeholder={'Please write your caption here'}
-										className={classes.textField}
-										InputProps={{
-											disableUnderline: true,
-											className: classes.textFieldInput
-										}}
-										multiline
-										maxRows={4}
-									/>
-								</div>
-								<p className={globalClasses.mediaError}>
-									{isError.caption ? 'You need to enter the caption' : ''}
-								</p>
-
-								<div className={classes.postMediaContainer}>
-									<div className={classes.postMediaHeader}>
-										<h5>Show comments</h5>
-										<ToggleSwitch
-											id={1}
-											checked={form.show_comments}
-											onChange={(checked) =>
-												setForm((prev) => {
-													return { ...prev, show_comments: checked };
-												})
-											}
-										/>
-									</div>
-								</div>
-
-								<div
-									className={classes.postMediaContainer}
-									style={{ marginBottom: '1rem' }}
-								>
-									<div className={classes.postMediaHeader}>
-										<h5>Show likes</h5>
-										<ToggleSwitch
-											id={2}
-											checked={form.show_likes}
-											// onChange={
-											// 	(checked) => {
-											// 	setValueLikes(checked);
-											// }}
-											onChange={(checked) =>
-												setForm((prev) => {
-													return { ...prev, show_likes: checked };
-												})
-											}
-										/>
-									</div>
-								</div>
-							</div>
-							<p className={globalClasses.mediaError}>
-								{isError.draftError
-									? 'Something needs to be changed to save a draft'
-									: ''}
-							</p>
-
-							<div className={classes.buttonDiv}>
-								{isEdit || (status === 'draft' && isEdit) ? (
-									<div className={classes.editBtn}>
-										<Button
-											disabled={false}
-											button2={isEdit ? true : false}
-											onClick={() => {
-												if (!deleteBtnStatus) {
-													deleteViral(specificViral?.id, status);
-												}
-											}}
-											text={'DELETE VIRAL'}
-										/>
-									</div>
-								) : (
-									<></>
-								)}
-
-								<div className={classes.publishDraftDiv}>
-									{status === 'draft' || !isEdit ? (
-										<div
-											className={
-												isEdit ? classes.draftBtnEdit : classes.draftBtn
-											}
-										>
+								<div className={classes.buttonDiv}>
+									{isEdit || (status === 'draft' && isEdit) ? (
+										<div className={classes.editBtn}>
 											<Button
-												disabledDraft={
-													isEdit ? draftBtnDisabled : !validateDraft(form)
-												}
-												onClick={() => handleViralDraftBtn()}
-												button3={true}
-												text={
-													status === 'draft' && isEdit
-														? 'SAVE DRAFT'
-														: 'SAVE AS DRAFT'
-												}
+												disabled={false}
+												button2={isEdit ? true : false}
+												onClick={() => {
+													if (!deleteBtnStatus) {
+														toggleDeleteModal();
+													}
+												}}
+												text={'DELETE VIRAL'}
 											/>
 										</div>
 									) : (
 										<></>
 									)}
 
-									<div
-										className={
-											isEdit && validateForm(form)
-												? classes.addMediaBtn
-												: isEdit
-												? classes.addMediaBtnEdit
-												: classes.addMediaBtn
-										}
-									>
-										<Button
-											disabled={
-												isEdit && validateForm(form) && status === 'draft'
-													? false
+									<div className={classes.publishDraftDiv}>
+										{status === 'draft' || !isEdit ? (
+											<div
+												className={
+													isEdit ? classes.draftBtnEdit : classes.draftBtn
+												}
+											>
+												<Button
+													disabledDraft={
+														isEdit ? draftBtnDisabled : !validateDraft(form)
+													}
+													onClick={() => handleViralDraftBtn()}
+													button3={true}
+													text={
+														status === 'draft' && isEdit
+															? 'SAVE DRAFT'
+															: 'SAVE AS DRAFT'
+													}
+												/>
+											</div>
+										) : (
+											<></>
+										)}
+
+										<div
+											className={
+												isEdit && validateForm(form)
+													? classes.addMediaBtn
 													: isEdit
-													? editBtnDisabled
-													: !validateForm(form)
+													? classes.addMediaBtnEdit
+													: classes.addMediaBtn
 											}
-											// disabled={isEdit ? editBtnDisabled : !validateForm(form)}
-											onClick={handlePostSaveBtn}
-											text={buttonText}
-										/>
+										>
+											<Button
+												disabled={
+													isEdit && validateForm(form) && status === 'draft'
+														? false
+														: isEdit
+														? editBtnDisabled
+														: !validateForm(form)
+												}
+												// disabled={isEdit ? editBtnDisabled : !validateForm(form)}
+												onClick={handlePostSaveBtn}
+												text={buttonText}
+											/>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-						{previewFile != null && (
-							<div ref={previewRef} className={globalClasses.previewComponent}>
-								<div className={globalClasses.previewHeader}>
-									<Close
-										onClick={() => {
-											setPreviewBool(false);
-											setPreviewFile(null);
-										}}
-										className={globalClasses.closeIcon}
-									/>
-									<h5>Preview</h5>
-								</div>
-								<div>
-									{/* {console.log(previewFile, 'previewFile')} */}
-									{previewFile.mime_type === 'video/mp4' ? (
-										<video
-											id={'my-video'}
-											poster={isEdit ? previewFile.media_url : null}
-											className={globalClasses.previewFile}
-											style={{
-												width: `100%`,
-												height: `${8 * 4}rem`,
-												objectFit: 'contain',
-												objectPosition: 'center'
+							{previewFile != null && (
+								<div
+									ref={previewRef}
+									className={globalClasses.previewComponent}
+								>
+									<div className={globalClasses.previewHeader}>
+										<Close
+											onClick={() => {
+												setPreviewBool(false);
+												setPreviewFile(null);
 											}}
-											controls={true}
-										>
-											<source src={previewFile.media_url} />
-										</video>
-									) : isEdit && previewFile.type === 'video' ? (
-										<video
-											id={'my-video'}
-											poster={isEdit ? previewFile.thumbnail_url : null}
-											className={classes.previewFile}
-											style={{
-												width: `100%`,
-												height: `${8 * 4}rem`,
-												objectFit: 'contain',
-												objectPosition: 'center'
-											}}
-											controls={true}
-										>
-											<source src={previewFile.media_url} />
-										</video>
-									) : (
-										<img
-											src={previewFile.media_url}
-											className={globalClasses.previewFile}
-											style={{
-												width: `100%`,
-												height: `${8 * 4}rem`,
-												objectFit: 'contain',
-												objectPosition: 'center'
-											}}
+											className={globalClasses.closeIcon}
 										/>
-									)}
+										<h5>Preview</h5>
+									</div>
+									<div>
+										{/* {console.log(previewFile, 'previewFile')} */}
+										{previewFile.mime_type === 'video/mp4' ? (
+											<video
+												id={'my-video'}
+												poster={isEdit ? previewFile.media_url : null}
+												className={globalClasses.previewFile}
+												style={{
+													width: `100%`,
+													height: `${8 * 4}rem`,
+													objectFit: 'contain',
+													objectPosition: 'center'
+												}}
+												controls={true}
+											>
+												<source src={previewFile.media_url} />
+											</video>
+										) : isEdit && previewFile.type === 'video' ? (
+											<video
+												id={'my-video'}
+												poster={isEdit ? previewFile.thumbnail_url : null}
+												className={classes.previewFile}
+												style={{
+													width: `100%`,
+													height: `${8 * 4}rem`,
+													objectFit: 'contain',
+													objectPosition: 'center'
+												}}
+												controls={true}
+											>
+												<source src={previewFile.media_url} />
+											</video>
+										) : (
+											<img
+												src={previewFile.media_url}
+												className={globalClasses.previewFile}
+												style={{
+													width: `100%`,
+													height: `${8 * 4}rem`,
+													objectFit: 'contain',
+													objectPosition: 'center'
+												}}
+											/>
+										)}
+									</div>
 								</div>
-							</div>
-						)}
-					</div>
-				</Slide>
-			</LoadingOverlay>
-		</Slider>
+							)}
+						</div>
+					</Slide>
+				</LoadingOverlay>
+			</Slider>
+
+			<DeleteModal
+				open={openDeletePopup}
+				className={classes.deleteModal}
+				toggle={toggleDeleteModal}
+				rightBtn={() => {
+					deleteViral(specificViral?.id, status);
+				}}
+				text={'Viral'}
+			/>
+		</>
 	);
 };
 
