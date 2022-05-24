@@ -193,6 +193,7 @@ const UploadOreditArcade = ({
 				setFileWidth2(specificGamesData?.game_video?.width);
 				setFileHeight2(specificGamesData?.game_video?.height);
 			} else {
+				console.log('Arcade', specificGamesData);
 				setForm((prev) => {
 					return {
 						...prev,
@@ -213,7 +214,7 @@ const UploadOreditArcade = ({
 										{
 											id: makeid(10),
 											file_name: specificGamesData?.game_icon_file_name,
-											media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_video?.url}`,
+											media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificGamesData?.game_icon?.url}`,
 											type: specificGamesData?.game_video?.url
 												? 'video'
 												: 'image',
@@ -2117,7 +2118,7 @@ const UploadOreditArcade = ({
 							</div>
 
 							<div className={classes.publishDraftDiv}>
-								{status === 'draft' || !editArcade || editJogo ? (
+								{status !== 'published' ? (
 									<div
 										className={
 											editArcade || editJogo

@@ -24,6 +24,7 @@ import validateForm from '../../../utils/validateForm';
 import validateDraft from '../../../utils/validateDraft';
 import PrimaryLoader from '../../PrimaryLoader';
 import { useStyles } from './index.style';
+import ToggleSwitch from '../../switch';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 //api calls
 import {
@@ -91,6 +92,8 @@ const UploadOrEditViral = ({
 		dropbox_url: '',
 		uploadedFiles: [],
 		labels: [],
+		show_likes: false,
+		show_comments: false,
 		mainCategory: '',
 		subCategory: ''
 	});
@@ -147,6 +150,7 @@ const UploadOrEditViral = ({
 	const SubCategoryId = (e) => {
 		//e -- name
 		//find name and will return whole object
+		console.log(e, 'ssub');
 		let setData = subCategories.find((u) => u.name === e);
 		setForm((prev) => {
 			return { ...prev, subCategory: setData };
@@ -170,6 +174,7 @@ const UploadOrEditViral = ({
 					};
 				});
 			}
+			//console.log(specificArticle.sub_category, '----sub_category');
 			mainCategoryId(specificArticle?.media_type);
 			SubCategoryId(specificArticle?.sub_category);
 			setForm((prev) => {
@@ -177,6 +182,9 @@ const UploadOrEditViral = ({
 					...prev,
 					title: specificArticle?.title,
 					dropbox_url: specificArticle?.dropbox_url,
+					// subCategory: specificArticle.sub_category,
+					show_likes: specificArticle?.show_likes,
+					show_comments: specificArticle?.show_comments,
 					uploadedFiles: specificArticle?.image
 						? [
 								{
@@ -226,7 +234,7 @@ const UploadOrEditViral = ({
 			resetState();
 		}
 	}, [open]);
-	console.log(form, 'llll');
+	//console.log(form, 'llll');
 	useEffect(() => {
 		if (fileRejections.length) {
 			fileRejections.forEach(({ errors }) => {
@@ -295,6 +303,8 @@ const UploadOrEditViral = ({
 					sub_category_id: form.subCategory.id,
 					save_draft: draft,
 					description: form.description,
+					show_likes: form.show_likes ? true : undefined,
+					show_comments: form.show_comments ? true : undefined,
 					dropbox_url: form.dropbox_url ? form.dropbox_url : '',
 					file_name: form?.uploadedFiles?.length
 						? mediaFiles[0]?.file_name
@@ -363,7 +373,9 @@ const UploadOrEditViral = ({
 			uploadedFiles: [],
 			labels: [],
 			mainCategory: '',
-			subCategory: ''
+			subCategory: '',
+			show_likes: false,
+			show_comments: false
 		});
 	};
 
@@ -383,14 +395,22 @@ const UploadOrEditViral = ({
 			selectedLabels: form.labels.length < 7,
 			editorText: !form.description,
 			mainCategory: !form.mainCategory,
-			subCategory: form?.subCategory?.name
-				? !form?.subCategory?.name
-				: !form?.subCategory
+			subCategory: form?.subCategory
+				? !form?.subCategory
+				: !form?.subCategory?.name
 		});
 		setTimeout(() => {
 			setIsError({});
 		}, 5000);
 	};
+	{
+		console.log(
+			form?.subCategory,
+			!form?.subCategory,
+			!form?.subCategory?.name,
+			'--------'
+		);
+	}
 
 	const [newLabels, setNewLabels] = useState([]);
 
@@ -477,7 +497,9 @@ const UploadOrEditViral = ({
 					(specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
 						specificArticle?.title?.trim() === form.title?.trim() &&
 						specificArticle?.dropbox_url?.trim() === form.dropbox_url.trim() &&
-						specificArticleTextTrimmed === editorTextCheckerTrimmed)
+						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
+						specificArticle?.show_likes === form.show_likes &&
+						specificArticle?.show_comments === form.show_comments)
 			);
 		}
 	}, [specificArticle, editorTextChecker, form]);
@@ -491,6 +513,8 @@ const UploadOrEditViral = ({
 						specificArticle?.dropbox_url?.trim() === form.dropbox_url.trim() &&
 						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
 						specificArticle?.labels?.length === form?.labels?.length &&
+						specificArticle?.show_likes === form.show_likes &&
+						specificArticle?.show_comments === form.show_comments &&
 						!checkDuplicateLabel())
 			);
 		}
@@ -514,9 +538,11 @@ const UploadOrEditViral = ({
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			setIsLoading(true);
+			console.log('before if');
 			if (isEdit) {
+				console.log('inside if');
 				if (specificArticle?.title?.trim() !== form.title?.trim()) {
-					console.log(form.title, 'title caption');
+					// console.log(form.title, 'title caption');
 					if (
 						(await handleTitleDuplicate(form.title)) ===
 						'The Title Already Exist'
@@ -731,7 +757,7 @@ const UploadOrEditViral = ({
 												isEdit ? form.mainCategory : form.mainCategory?.name
 											}
 											onChange={(event) => {
-												console.log('event called 1');
+												// console.log('event called 1');
 												setDisableDropdown(true);
 												// setForm((prev) => {
 												// 	return {
@@ -750,7 +776,7 @@ const UploadOrEditViral = ({
 													);
 												}
 												if (isEdit) {
-													console.log("event called'");
+													// console.log("event called'");
 													setForm((prev) => {
 														return { ...prev, subCategory: '' };
 													});
@@ -904,14 +930,6 @@ const UploadOrEditViral = ({
 										</p>
 									</div>
 								</div>
-
-								{
-									(console.log(!form.uploadedFiles.length && !isEdit),
-									'upload',
-									isEdit &&
-										specificArticle?.file_name === '' &&
-										status === 'draft')
-								}
 
 								<DragAndDropField
 									uploadedFiles={form.uploadedFiles}
@@ -1271,6 +1289,42 @@ const UploadOrEditViral = ({
 								<p className={globalClasses.mediaError}>
 									{isError.editorText ? 'This field is required' : ''}
 								</p>
+							</div>
+							<div className={classes.postMediaContainer}>
+								<div className={classes.postMediaHeader}>
+									<h5>Show comments</h5>
+									<ToggleSwitch
+										id={1}
+										checked={form.show_comments}
+										onChange={(checked) =>
+											setForm((prev) => {
+												return { ...prev, show_comments: checked };
+											})
+										}
+									/>
+								</div>
+							</div>
+
+							<div
+								className={classes.postMediaContainer}
+								style={{ marginBottom: '1rem' }}
+							>
+								<div className={classes.postMediaHeader}>
+									<h5>Show likes</h5>
+									<ToggleSwitch
+										id={2}
+										checked={form.show_likes}
+										// onChange={
+										// 	(checked) => {
+										// 	setValueLikes(checked);
+										// }}
+										onChange={(checked) =>
+											setForm((prev) => {
+												return { ...prev, show_likes: checked };
+											})
+										}
+									/>
+								</div>
 							</div>
 
 							{/* <div className={classes.buttonDiv}>
