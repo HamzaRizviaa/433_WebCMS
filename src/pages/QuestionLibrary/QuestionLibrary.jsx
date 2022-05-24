@@ -675,7 +675,7 @@ const QuestionLibrary = () => {
 					title={edit ? 'Poll Detail' : 'Upload Question'}
 					heading1={edit ? ' ' : 'Add Background Image'}
 					buttonText={
-						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
+						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
 					}
 				/>
 				<QuizDetails
@@ -685,10 +685,10 @@ const QuestionLibrary = () => {
 						setShowQuizSlider(false);
 					}}
 					status={rowStatus}
-					title={'Quiz Detail'}
+					title={rowStatus === 'draft' ? 'Edit Quiz' : 'Quiz Detail'}
 					heading1={edit ? 'Add Background Image' : 'Add Background Image'}
 					buttonText={
-						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
+						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
 					}
 				/>
 				<PollDetails
@@ -698,10 +698,10 @@ const QuestionLibrary = () => {
 						setShowPollSlider(false);
 					}}
 					status={rowStatus}
-					title={'Poll Detail'}
+					title={rowStatus === 'draft' ? 'Edit Poll' : 'Poll Detail'}
 					heading1={edit ? 'Add Background Image' : 'Add Background Image'}
 					buttonText={
-						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
+						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
 					}
 				/>
 			</Layout>

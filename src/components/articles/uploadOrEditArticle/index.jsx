@@ -147,6 +147,7 @@ const UploadOrEditViral = ({
 	const SubCategoryId = (e) => {
 		//e -- name
 		//find name and will return whole object
+		console.log(e, 'ssub');
 		let setData = subCategories.find((u) => u.name === e);
 		setForm((prev) => {
 			return { ...prev, subCategory: setData };
@@ -170,13 +171,15 @@ const UploadOrEditViral = ({
 					};
 				});
 			}
+			//console.log(specificArticle.sub_category, '----sub_category');
 			mainCategoryId(specificArticle?.media_type);
-			SubCategoryId(specificArticle?.sub_category);
+			// SubCategoryId(specificArticle?.sub_category);
 			setForm((prev) => {
 				return {
 					...prev,
 					title: specificArticle?.title,
 					dropbox_url: specificArticle?.dropbox_url,
+					subCategory: specificArticle.sub_category,
 					uploadedFiles: specificArticle?.image
 						? [
 								{
@@ -226,7 +229,7 @@ const UploadOrEditViral = ({
 			resetState();
 		}
 	}, [open]);
-	console.log(form, 'llll');
+	//console.log(form, 'llll');
 	useEffect(() => {
 		if (fileRejections.length) {
 			fileRejections.forEach(({ errors }) => {
@@ -383,9 +386,9 @@ const UploadOrEditViral = ({
 			selectedLabels: form.labels.length < 7,
 			editorText: !form.description,
 			mainCategory: !form.mainCategory,
-			subCategory: form?.subCategory?.name
-				? !form?.subCategory?.name
-				: !form?.subCategory
+			subCategory: form?.subCategory
+				? !form?.subCategory
+				: !form?.subCategory?.name
 		});
 		setTimeout(() => {
 			setIsError({});
@@ -516,7 +519,7 @@ const UploadOrEditViral = ({
 			setIsLoading(true);
 			if (isEdit) {
 				if (specificArticle?.title?.trim() !== form.title?.trim()) {
-					console.log(form.title, 'title caption');
+					// console.log(form.title, 'title caption');
 					if (
 						(await handleTitleDuplicate(form.title)) ===
 						'The Title Already Exist'
@@ -731,7 +734,7 @@ const UploadOrEditViral = ({
 												isEdit ? form.mainCategory : form.mainCategory?.name
 											}
 											onChange={(event) => {
-												console.log('event called 1');
+												// console.log('event called 1');
 												setDisableDropdown(true);
 												// setForm((prev) => {
 												// 	return {
@@ -750,7 +753,7 @@ const UploadOrEditViral = ({
 													);
 												}
 												if (isEdit) {
-													console.log("event called'");
+													// console.log("event called'");
 													setForm((prev) => {
 														return { ...prev, subCategory: '' };
 													});
@@ -904,14 +907,6 @@ const UploadOrEditViral = ({
 										</p>
 									</div>
 								</div>
-
-								{
-									(console.log(!form.uploadedFiles.length && !isEdit),
-									'upload',
-									isEdit &&
-										specificArticle?.file_name === '' &&
-										status === 'draft')
-								}
 
 								<DragAndDropField
 									uploadedFiles={form.uploadedFiles}

@@ -1114,6 +1114,8 @@ const UploadOrEditQuiz = ({
 												? 'ADD QUIZ'
 												: type === 'poll' && !(editPoll || editQuiz)
 												? 'ADD POLL'
+												: status === 'draft'
+												? 'PUBLISH'
 												: 'SAVE CHANGES'
 										}
 										disabled={
