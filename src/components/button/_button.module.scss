@@ -43,11 +43,12 @@
 }
 
 .button3 {
-	background-color: $black-color;
+	background-color: transparent;
 	border: 1px solid $neon-yellow;
 	color: $white-color;
 	margin: 0rem 1rem 0rem 0rem;
 	padding: 1rem 2rem;
+	font-family: Poppins;
 }
 
 .activebtn {

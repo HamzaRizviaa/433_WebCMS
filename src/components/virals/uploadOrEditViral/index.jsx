@@ -68,6 +68,7 @@ const UploadOrEditViral = ({
 	const videoRef = useRef(null);
 	const imgEl = useRef(null);
 	const loadingRef = useRef(null);
+	const dialogWrapper = useRef(null)
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const { specificViralStatus } = useSelector(
@@ -615,6 +616,7 @@ const UploadOrEditViral = ({
 				orientationRef={orientationRef}
 				edit={isEdit}
 				viral={true}
+				dialogRef={dialogWrapper}
 			>
 				<LoadingOverlay
 					active={isLoadingcreateViral}
@@ -968,12 +970,13 @@ const UploadOrEditViral = ({
 
 			<DeleteModal
 				open={openDeletePopup}
-				className={classes.deleteModal}
+				// className={classes.deleteModal}
 				toggle={toggleDeleteModal}
-				rightBtn={() => {
+				deleteBtn={() => {
 					deleteViral(specificViral?.id, status);
 				}}
 				text={'Viral'}
+				wrapperRef={dialogWrapper}
 			/>
 		</>
 	);

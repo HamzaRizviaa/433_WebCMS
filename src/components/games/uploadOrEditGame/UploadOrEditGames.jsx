@@ -532,7 +532,7 @@ const UploadOreditArcade = ({
 	};
 
 	const deleteGame = async (id, isDraft) => {
-		console.log(isDraft, 'isDraft');
+		
 		setDeleteBtnStatus(true);
 		try {
 			const result = await axios.post(

@@ -13,7 +13,8 @@ const Button = ({
 	style = {},
 	active,
 	published,
-	bannerdisabled
+	bannerdisabled,
+	onMouseDown
 }) => {
 	// console.log('Active', active);
 	return (
@@ -21,6 +22,7 @@ const Button = ({
 			onClick={() => {
 				onClick();
 			}}
+			onMouseDown={onMouseDown}
 			style={style}
 			className={[
 				classes.button,
@@ -53,7 +55,8 @@ Button.propTypes = {
 	style: PropTypes.object,
 	active: PropTypes.bool,
 	published: PropTypes.bool,
-	bannerdisabled: PropTypes.bool
+	bannerdisabled: PropTypes.bool,
+	onMouseDown: PropTypes.func
 };
 
 export default Button;
