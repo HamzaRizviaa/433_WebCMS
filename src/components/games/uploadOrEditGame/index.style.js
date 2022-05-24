@@ -124,11 +124,11 @@ export const useStyles = makeStyles((theme) => ({
 	saveChangesbtn: { '& span': { padding: '1rem 2rem !important' } },
 
 	addQuizBtn: {
-		width: '100% '
+		// width: '100% '
 	},
 
 	addQuizBtnEdit: {
-		width: '70%',
+		// width: '70%',
 
 		display: 'inline-block'
 	},

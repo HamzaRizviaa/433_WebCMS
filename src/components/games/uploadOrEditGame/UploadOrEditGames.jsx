@@ -533,7 +533,6 @@ const UploadOreditArcade = ({
 	};
 
 	const deleteGame = async (id, isDraft) => {
-		
 		setDeleteBtnStatus(true);
 		try {
 			const result = await axios.post(
@@ -2149,8 +2148,7 @@ const UploadOreditArcade = ({
 									className={[
 										editArcade || editJogo
 											? classes.addQuizBtnEdit
-											: classes.addQuizBtn,
-										classes.saveChangesbtn
+											: classes.addQuizBtn
 									].join(' ')}
 								>
 									<Button
@@ -2162,6 +2160,7 @@ const UploadOreditArcade = ({
 										onClick={() => {
 											addSaveGameBtn();
 										}}
+										button2AddSave={true}
 										// text={type === 'quiz' ? 'ADD QUIZ' : 'ADD POLL'}
 										text={buttonText}
 									/>

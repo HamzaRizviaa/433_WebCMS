@@ -132,7 +132,10 @@ const UploadOrEditViral = ({
 			let setData = mainCategories.find(
 				(u) => u.name === form.mainCategory?.name
 			);
+
 			dispatch(getArticleSubCategories(setData?.id));
+			// SubCategoryId(specificArticle?.sub_category);
+			// console.log('lallaall');
 		} else {
 			let setData = mainCategories.find((u) => u.name === form.mainCategory);
 			dispatch(getArticleSubCategories(setData?.id));
@@ -150,17 +153,17 @@ const UploadOrEditViral = ({
 	const SubCategoryId = (e) => {
 		//e -- name
 		//find name and will return whole object
-		console.log(e, 'ssub');
+
 		let setData = subCategories.find((u) => u.name === e);
 		setForm((prev) => {
 			return { ...prev, subCategory: setData };
 		});
 	};
-
+	console.log(subCategories, 'global');
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		if (specificArticle) {
+		if (specificArticle && subCategories) {
 			if (specificArticle?.labels) {
 				let _labels = [];
 				specificArticle.labels.map((label) =>
@@ -174,9 +177,10 @@ const UploadOrEditViral = ({
 					};
 				});
 			}
-			//console.log(specificArticle.sub_category, '----sub_category');
+
 			mainCategoryId(specificArticle?.media_type);
 			SubCategoryId(specificArticle?.sub_category);
+			// setId(specificArticle?.media_type, specificArticle?.sub_category);
 			setForm((prev) => {
 				return {
 					...prev,
@@ -207,7 +211,7 @@ const UploadOrEditViral = ({
 			setFileHeight(specificArticle?.height);
 			setFileWidth(specificArticle?.width);
 		}
-	}, [specificArticle]);
+	}, [specificArticle, subCategories]);
 
 	useEffect(() => {
 		setPostLabels((labels) => {
@@ -234,7 +238,7 @@ const UploadOrEditViral = ({
 			resetState();
 		}
 	}, [open]);
-	//console.log(form, 'llll');
+
 	useEffect(() => {
 		if (fileRejections.length) {
 			fileRejections.forEach(({ errors }) => {
@@ -365,6 +369,8 @@ const UploadOrEditViral = ({
 		setDisableDropdown(true);
 		setFileHeight(0);
 		setFileWidth(0);
+		setEditBtnDisabled(false);
+		setDraftBtnDisabled(false);
 		setIsError({});
 		setForm({
 			title: '',
@@ -403,14 +409,14 @@ const UploadOrEditViral = ({
 			setIsError({});
 		}, 5000);
 	};
-	{
-		console.log(
-			form?.subCategory,
-			!form?.subCategory,
-			!form?.subCategory?.name,
-			'--------'
-		);
-	}
+	// {
+	// 	console.log(
+	// 		form?.subCategory,
+	// 		!form?.subCategory,
+	// 		!form?.subCategory?.name,
+	// 		'--------'
+	// 	);
+	// }
 
 	const [newLabels, setNewLabels] = useState([]);
 
@@ -491,7 +497,7 @@ const UploadOrEditViral = ({
 		if (specificArticle) {
 			setEditBtnDisabled(
 				postButtonStatus ||
-					!form.uploadedFiles?.length ||
+					!form.uploadedFiles.length ||
 					!form.title ||
 					!form.description ||
 					(specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
@@ -503,6 +509,8 @@ const UploadOrEditViral = ({
 			);
 		}
 	}, [specificArticle, editorTextChecker, form]);
+
+	console.log(form, 'edt');
 
 	useEffect(() => {
 		if (specificArticle) {
@@ -532,17 +540,15 @@ const UploadOrEditViral = ({
 	};
 
 	const handleAddSaveBtn = async () => {
-		if (!validateForm(form) || editBtnDisabled) {
+		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
 			validateArticleBtn();
 		} else {
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			setIsLoading(true);
-			console.log('before if');
+
 			if (isEdit) {
-				console.log('inside if');
 				if (specificArticle?.title?.trim() !== form.title?.trim()) {
-					// console.log(form.title, 'title caption');
 					if (
 						(await handleTitleDuplicate(form.title)) ===
 						'The Title Already Exist'
@@ -720,14 +726,21 @@ const UploadOrEditViral = ({
 								: globalClasses.contentWrapper
 						}`}
 					>
-						{specificArticleStatus === 'loading' ? <PrimaryLoader /> : <></>}
+						{status === 'published' && specificArticleStatus === 'loading' ? (
+							<PrimaryLoader />
+						) : status === 'draft' && !form?.subCategory ? (
+							<PrimaryLoader />
+						) : (
+							<></>
+						)}
+
 						<div
 							className={globalClasses.contentWrapperNoPreview}
 							style={{ width: previewFile != null ? '60%' : 'auto' }}
 						>
 							<div>
 								<h5>{heading1}</h5>
-								{console.log(form.subCategory?.name, form.subCategory, 'sub ')}
+
 								<div className={classes.categoryContainer}>
 									<div className={classes.mainCategory}>
 										<h6
@@ -757,7 +770,6 @@ const UploadOrEditViral = ({
 												isEdit ? form.mainCategory : form.mainCategory?.name
 											}
 											onChange={(event) => {
-												// console.log('event called 1');
 												setDisableDropdown(true);
 												// setForm((prev) => {
 												// 	return {
@@ -776,7 +788,6 @@ const UploadOrEditViral = ({
 													);
 												}
 												if (isEdit) {
-													// console.log("event called'");
 													setForm((prev) => {
 														return { ...prev, subCategory: '' };
 													});
@@ -860,11 +871,7 @@ const UploadOrEditViral = ({
 														? '#404040'
 														: '#000000'
 											}}
-											value={
-												isEdit
-													? form.subCategory
-													: form.subCategory?.name || form.subCategory
-											}
+											value={isEdit ? form.subCategory : form.subCategory?.name}
 											onChange={(e) => {
 												setDisableDropdown(true);
 												SubCategoryId(e.target.value);
@@ -901,7 +908,6 @@ const UploadOrEditViral = ({
 											displayEmpty={form.mainCategory ? true : false}
 											renderValue={
 												(value) => {
-													console.log(value?.name, value, '---value---');
 													return value ? value?.name || value : 'Please Select';
 												}
 												// value?.length
