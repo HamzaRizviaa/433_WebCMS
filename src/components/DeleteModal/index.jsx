@@ -51,9 +51,7 @@ export default function DeleteModal({
 				>
 					Delete this {text}?
 					<IconButton
-						onClick={() => {
-							toggle();
-						}}
+						onClick={toggle}
 						onMouseDown={playClose}
 						classes={{ root: classes.closeIconRoot }}
 					>
@@ -72,17 +70,13 @@ export default function DeleteModal({
 				<DialogActions classes={{ root: classes.dialogActions }}>
 					<Button
 						button3={true}
-						onClick={() => {
-							toggle();
-						}}
+						onClick={toggle}
 						text={'GO BACK'}
 						onMouseDown={playClose}
 					/>
 					<Button
 						button2AddSave={true}
-						onClick={() => {
-							deleteBtn();
-						}}
+						onClick={deleteBtn}
 						text={`Delete ${text}`.toUpperCase()}
 						onMouseDown={playOpen}
 					/>
