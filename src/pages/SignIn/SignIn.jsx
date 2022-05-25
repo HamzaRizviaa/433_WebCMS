@@ -79,7 +79,7 @@ const SignIn = ({ setLoginData }) => {
 		console.log(accessExpire, 'ae');
 		if (accessExpire) {
 			let expiryDate = new Date(
-				new Date().setHours(new Date().getHours() + 10)
+				new Date().setMinutes(new Date().getMinutes() + 2)
 			);
 			localStorage.setItem('token_expire_time', expiryDate);
 		}

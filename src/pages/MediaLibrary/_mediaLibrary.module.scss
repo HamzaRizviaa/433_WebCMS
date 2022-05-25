@@ -255,3 +255,23 @@
 	// width: 90px;
 	// height: 24px;
 }
+
+.loaderAlert {
+	width: 50px;
+	height: auto;
+}
+
+.toasterWrapper {
+	height: 80px;
+	width: 320px;
+}
+
+.toastBody {
+	font-family: Poppins;
+	color: $neon-yellow;
+	font-size: 1.7rem !important;
+
+	& > div:last-child {
+		margin-left: 3rem;
+	}
+}
