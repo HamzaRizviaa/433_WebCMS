@@ -31,7 +31,7 @@ import { Autocomplete, Popper, Paper, Tooltip, Fade } from '@mui/material';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
 import checkFileSize from '../../../utils/validateFileSize';
 import validateForm from '../../../utils/validateForm';
-
+import validateDraft from '../../../utils/validateDraft';
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
 import { ReactComponent as PortraitCrop } from '../../../assets/portrait_rect.svg';
 import { ReactComponent as LandscapeCrop } from '../../../assets/Rectangle_12.svg';
@@ -49,7 +49,8 @@ const UploadOrEditPost = ({
 	isEdit,
 	heading1,
 	buttonText,
-	page
+	page,
+	status
 }) => {
 	const [caption, setCaption] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
@@ -75,6 +76,8 @@ const UploadOrEditPost = ({
 	const [dropdownPosition, setDropdownPosition] = useState(false);
 	const [linktoPostMedia, setLinktoPostMedia] = useState('');
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
+
+	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const [form, setForm] = useState({
@@ -391,7 +394,7 @@ const UploadOrEditPost = ({
 		}, 5000);
 	};
 
-	const createPost = async (id, mediaFiles = []) => {
+	const createPost = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
 
 		let media_files = mediaFiles.map((file, index) => {
@@ -400,12 +403,12 @@ const UploadOrEditPost = ({
 				media_url: file.media_url.split('cloudfront.net/')[1] || file.media_url
 			};
 		});
-
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/post/add-post`,
 				{
 					caption: form.caption,
+					save_draft: draft,
 					media_files: [...media_files],
 					...(form.dropbox_url ? { dropbox_url: form.dropbox_url } : {}),
 					orientation_type: dimensionSelect,
@@ -413,7 +416,8 @@ const UploadOrEditPost = ({
 					...(form.show_likes ? { show_likes: true } : {}),
 					...(form.show_comments ? { show_comments: true } : {}),
 					...(isEdit && id ? { post_id: id } : {}),
-					...(!isEdit && form.labels.length
+					...((!isEdit || status !== 'published') &&
+					(form.labels?.length || status == 'draft')
 						? { labels: [...form.labels] }
 						: {}),
 					user_data: {
@@ -446,13 +450,14 @@ const UploadOrEditPost = ({
 		}
 	};
 
-	const deletePost = async (id) => {
+	const deletePost = async (id, draft) => {
 		setDeleteBtnStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/post/delete-post`,
 				{
-					post_id: id
+					post_id: id,
+					is_draft: draft
 				},
 				{
 					headers: {
@@ -559,6 +564,35 @@ const UploadOrEditPost = ({
 			);
 		}
 	}, [specificPost, form]);
+	useEffect(() => {
+		if (specificPost) {
+			let checkDuplicateFile = specificPost?.medias?.map((mediaFile) => {
+				return form?.uploadedFiles.some((file) => file.id == mediaFile.id);
+			});
+			// console.log(specificViral, Object.keys(specificViral), 'specificViral');
+			setDraftBtnDisabled(
+				!validateDraft(form) ||
+					(form.mediaToggle && !form?.media_id) ||
+					(specificPost?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
+						specificPost?.caption?.trim() === form?.caption?.trim() &&
+						specificPost?.media_id == form?.media_id?.id &&
+						specificPost?.medias?.length === form?.uploadedFiles?.length &&
+						!checkNewFile() &&
+						!checkDuplicateLabel())
+			);
+		}
+	}, [specificPost, form]);
+
+	const checkDuplicateLabel = () => {
+		let formLabels = form?.labels?.map((formL) => {
+			if (specificPost?.labels?.includes(formL.name)) {
+				return true;
+			} else {
+				return false;
+			}
+		});
+		return formLabels.some((label) => label === false);
+	};
 
 	// console.log(specificPost?.medias?.length, 'specificPost?.medias?.length');
 	// console.log(selectedMedia?.id, 'captionL');
@@ -607,6 +641,99 @@ const UploadOrEditPost = ({
 
 	const dropHandler = (file) => {
 		console.log('File', file);
+	};
+	const validateDraftBtn = () => {
+		if (isEdit) {
+			setIsError({
+				draftError: draftBtnDisabled
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		} else {
+			setIsError({
+				caption: !form?.caption,
+				uploadedFiles: form?.uploadedFiles.length < 1,
+				selectedLabels: form?.labels.length < 1,
+				selectedMediaValue: form.mediaToggle && !form?.media_id
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		}
+	};
+
+	const handlelDraftBtn = () => {
+		if (!validateDraft(form) || draftBtnDisabled) {
+			validateDraftBtn();
+		} else {
+			setPostButtonStatus(true);
+			setIsLoadingCreatePost(true);
+			if (isEdit) {
+				if (form.uploadedFiles.length > 0) {
+					let uploadFilesPromiseArray = form.uploadedFiles.map(
+						async (_file) => {
+							if (_file.file) {
+								return await uploadFileToServer(_file, 'postlibrary');
+							} else {
+								return _file;
+							}
+						}
+					);
+
+					Promise.all([...uploadFilesPromiseArray])
+						.then((mediaFiles) => {
+							createPost(specificPost?.id, mediaFiles, true);
+						})
+						.catch(() => {
+							setIsLoadingCreatePost(false);
+						});
+				} else {
+					try {
+						createPost(specificPost?.id, [], true);
+					} catch {
+						setIsLoadingCreatePost(false);
+					}
+				}
+			} else {
+				setIsLoadingCreatePost(true);
+				if (form.uploadedFiles.length > 0) {
+					let uploadFilesPromiseArray = form.uploadedFiles.map(
+						async (_file) => {
+							return uploadFileToServer(_file, 'postlibrary');
+						}
+					);
+
+					Promise.all([...uploadFilesPromiseArray])
+						.then((mediaFiles) => {
+							createPost(null, mediaFiles, true);
+						})
+						.catch(() => {
+							setIsLoadingCreatePost(false);
+						});
+				} else {
+					try {
+						createPost(null, [], true);
+					} catch {
+						setIsLoadingCreatePost(false);
+					}
+				}
+
+				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				// 	return uploadFileToServer(_file, 'postlibrary');
+				// });
+
+				// Promise.all([...uploadFilesPromiseArray])
+				// 	.then((mediaFiles) => {
+				// 		createPost(null, mediaFiles, true);
+				// 	})
+				// 	.catch(() => {
+				// 		setIsLoadingCreatePost(false);
+				// 	});
+			}
+		}
 	};
 
 	return (
@@ -843,12 +970,13 @@ const UploadOrEditPost = ({
 										LabelsOptions={postLabels}
 										extraLabel={extraLabel}
 										handleChangeExtraLabel={handleChangeExtraLabel}
+										draftStatus={status}
 									/>
 								</div>
 								<p className={classes.mediaError}>
 									{isError.selectedLabels
 										? `You need to add ${
-												10 - selectedLabels.length
+												7 - selectedLabels.length
 										  } more labels in
                                                 order to post`
 										: ''}
@@ -1047,7 +1175,7 @@ const UploadOrEditPost = ({
 									</div>
 								</div>
 							</div>
-							<div className={classes.buttonDiv}>
+							{/* <div className={classes.buttonDiv}>
 								{isEdit ? (
 									<div className={classes.editBtn}>
 										<Button
@@ -1073,6 +1201,81 @@ const UploadOrEditPost = ({
 										}}
 										text={buttonText}
 									/>
+								</div>
+							</div> */}
+
+							<p className={classes.mediaError}>
+								{isError.draftError
+									? 'Something needs to be changed to save a draft'
+									: ''}
+							</p>
+							<div className={classes.buttonDiv}>
+								{isEdit || (status === 'draft' && isEdit) ? (
+									<div className={classes.editBtn}>
+										<Button
+											disabled={false}
+											button2={isEdit ? true : false}
+											onClick={() => {
+												if (!deleteBtnStatus) {
+													deletePost(specificPost?.id, status);
+												}
+											}}
+											text={'DELETE POST'}
+										/>
+									</div>
+								) : (
+									<></>
+								)}
+
+								<div className={classes.publishDraftDiv}>
+									{status === 'draft' || !isEdit ? (
+										<div
+											className={
+												isEdit ? classes.draftBtnEdit : classes.draftBtn
+											}
+										>
+											<Button
+												// disabledDraft={
+												// 	isEdit ? draftBtnDisabled : !validateDraft(form)
+												// }
+												onClick={() => handlelDraftBtn()}
+												button3={true}
+												text={
+													status === 'draft' && isEdit
+														? 'SAVE DRAFT'
+														: 'SAVE AS DRAFT'
+												}
+											/>
+										</div>
+									) : (
+										<></>
+									)}
+
+									<div
+										className={
+											isEdit && validateForm(form)
+												? classes.addMediaBtn
+												: isEdit
+												? classes.addMediaBtnEdit
+												: classes.addMediaBtn
+										}
+									>
+										<Button
+											className={classes.savebbtnPost}
+											// disabled={
+											// 	isEdit && validateForm(form) && status === 'draft'
+											// 		? false
+											// 		: isEdit
+											// 		? editBtnDisabled
+											// 		: !validateForm(form)
+											// }
+											disabled={isEdit ? editBtnDisabled : !validateForm(form)}
+											onClick={() => {
+												addSavePostBtn();
+											}}
+											text={buttonText}
+										/>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -1148,7 +1351,8 @@ UploadOrEditPost.propTypes = {
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
-	page: PropTypes.string
+	page: PropTypes.string,
+	status: PropTypes.string
 };
 
 export default UploadOrEditPost;

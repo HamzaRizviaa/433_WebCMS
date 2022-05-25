@@ -68,7 +68,7 @@ const UploadOrEditViral = ({
 	const videoRef = useRef(null);
 	const imgEl = useRef(null);
 	const loadingRef = useRef(null);
-	const dialogWrapper = useRef(null)
+	const dialogWrapper = useRef(null);
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const { specificViralStatus } = useSelector(
@@ -815,10 +815,6 @@ const UploadOrEditViral = ({
 											<ToggleSwitch
 												id={2}
 												checked={form.show_likes}
-												// onChange={
-												// 	(checked) => {
-												// 	setValueLikes(checked);
-												// }}
 												onChange={(checked) =>
 													setForm((prev) => {
 														return { ...prev, show_likes: checked };

@@ -45,6 +45,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
+import DefaultImage from '../../assets/defaultImage.png';
 import { toast } from 'react-toastify';
 import { Flip } from 'react-toastify';
 
@@ -78,7 +79,7 @@ const PostLibrary = () => {
 	const [noResultCalendarError, setNoResultCalendarError] = useState('');
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
-
+	const [rowStatus, setRowStatus] = useState('');
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -172,7 +173,8 @@ const PostLibrary = () => {
 		post_date: 'postdate',
 		labels: 'label',
 		user: 'user',
-		last_edit: 'lastedit'
+		last_edit: 'lastedit',
+		status: 'status'
 	};
 
 	useEffect(() => {
@@ -352,6 +354,9 @@ const PostLibrary = () => {
 											row?.thumbnail_url ? row?.thumbnail_url : row?.media
 										}`}
 										alt='no img'
+										onError={(e) => (
+											(e.target.onerror = null), (e.target.src = DefaultImage)
+										)}
 									/>
 								)
 							}
@@ -384,6 +389,9 @@ const PostLibrary = () => {
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
 										row?.thumbnail_url ? row?.thumbnail_url : row?.media
 									}`}
+									onError={(e) => (
+										(e.target.onerror = null), (e.target.src = DefaultImage)
+									)}
 								/>
 							</span>
 						</Tooltip>
@@ -451,6 +459,24 @@ const PostLibrary = () => {
 			}
 		},
 		{
+			dataField: 'status',
+			sort: true,
+			sortCaret: sortRows,
+			sortFunc: () => {},
+			text: 'STATUS',
+			formatter: (content) => {
+				return (
+					<div className={`${classes.publish_draft_btn}`}>
+						<Button
+							onClick={() => {}}
+							text={content == 'published' ? 'PUBLISHED' : 'DRAFT'}
+							published={content == 'published' ? true : false}
+						/>
+					</div>
+				);
+			}
+		},
+		{
 			dataField: 'last_edit',
 			sort: true,
 			sortCaret: sortRows,
@@ -490,6 +516,7 @@ const PostLibrary = () => {
 			dispatch(getSpecificPost(row.id));
 			setEdit(true);
 			setShowSlider(true);
+			setRowStatus(row.status);
 			// }
 		}
 	};
@@ -660,6 +687,7 @@ const PostLibrary = () => {
 					title={edit ? 'Edit Post' : 'Upload a Post'}
 					heading1={edit ? 'Media Files' : 'Add Media Files'}
 					buttonText={edit ? 'SAVE CHANGES' : 'POST'}
+					status={rowStatus}
 				/>
 
 				{/* <Popup  closePopup={closeThePop} open={popped} title={'Upload a Post'}/> :   */}
