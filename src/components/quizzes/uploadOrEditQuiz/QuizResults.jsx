@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { styled } from '@mui/material/styles';
 import classes from './_uploadOrEditQuiz.module.scss';
 import Button from '../../../components/button';
@@ -20,7 +20,7 @@ import { getLocalStorageDetails } from '../../../utils';
 import { toast } from 'react-toastify';
 import PrimaryLoader from '../../PrimaryLoader';
 import axios from 'axios';
-
+import DeleteModal from '../../DeleteModal';
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	height: '54px',
 	borderRadius: '8px',
@@ -45,9 +45,9 @@ export default function QuizResults({ handleClose, page, type, status, quiz }) {
 	const [totalParticipants, setTotalParticipants] = useState(null);
 	const [endDate, setEndDate] = useState(null);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
-
+	const [openDeletePopup, setOpenDeletePopup] = useState(false);
 	const dispatch = useDispatch();
-
+	const dialogWrapper = useRef(null);
 	const editQuestionResultDetail = useSelector(
 		(state) => state.questionLibrary.questionResultDetail
 	);
@@ -120,6 +120,9 @@ export default function QuizResults({ handleClose, page, type, status, quiz }) {
 			);
 		return null;
 	};
+	const toggleDeleteModal = () => {
+		setOpenDeletePopup(!openDeletePopup);
+	};
 
 	const deleteQuiz = async (id, draft, qtype) => {
 		setDeleteBtnStatus(true);
@@ -149,6 +152,7 @@ export default function QuizResults({ handleClose, page, type, status, quiz }) {
 			setDeleteBtnStatus(false);
 			console.log(e);
 		}
+		setOpenDeletePopup(!openDeletePopup);
 	};
 
 	const columns = [
@@ -305,16 +309,25 @@ export default function QuizResults({ handleClose, page, type, status, quiz }) {
 					button2={true}
 					onClick={() => {
 						if (!deleteBtnStatus) {
-							deleteQuiz(
-								editQuestionResultDetail?.id,
-								status.toLowerCase(),
-								quiz ? 'quiz' : 'poll'
-							);
+							toggleDeleteModal();
 						}
 					}}
 					text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
 				/>
 			</div>
+			<DeleteModal
+				open={openDeletePopup}
+				toggle={toggleDeleteModal}
+				deleteBtn={() => {
+					deleteQuiz(
+						editQuestionResultDetail?.id,
+						status.toLowerCase(),
+						quiz ? 'quiz' : 'poll'
+					);
+				}}
+				text={type === 'quiz' ? 'Quiz' : 'Poll'}
+				wrapperRef={dialogWrapper}
+			/>
 		</div>
 	);
 }

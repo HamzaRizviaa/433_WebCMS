@@ -64,10 +64,17 @@ export default function DeleteModal({
 						id='alert-dialog-slide-description'
 						className={classes.dialogContentText}
 					>
-						{stop
-							? `You are about to stop this ${text}. You won’t be able to restart the ${text} again.`
-							: `You are about to delete this <b>{text}</b>. You won’t be able to
-						retrieve the post.`}
+						{stop ? (
+							<p>
+								You are about to stop this <strong> {text} </strong>. You won’t
+								be able to restart the {text} again.
+							</p>
+						) : (
+							<p>
+								You are about to delete this <strong> {text}.</strong> You won’t
+								be able to retrieve the post.
+							</p>
+						)}
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions classes={{ root: classes.dialogActions }}>
@@ -101,11 +108,11 @@ export default function DeleteModal({
 DeleteModal.propTypes = {
 	text: PropTypes.string,
 	open: PropTypes.bool,
+	stop: PropTypes.bool,
 	toggle: PropTypes.func.isRequired,
 	deleteBtn: PropTypes.func.isRequired,
 	wrapperRef: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
-	]),
-	stop: PropTypes.bool
+	])
 };

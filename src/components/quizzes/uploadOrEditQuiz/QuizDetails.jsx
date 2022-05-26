@@ -30,6 +30,7 @@ export default function QuizDetails({
 	};
 
 	const muiClasses = useStyles();
+	const dialogWrapper = useRef(null);
 	// Question Library :  click on row with type:quiz
 
 	return (
@@ -46,6 +47,7 @@ export default function QuizDetails({
 			previewRef={previewRef}
 			disableDropdown={disableDropdown}
 			quiz={true}
+			dialogRef={dialogWrapper}
 		>
 			<div className={muiClasses.root}>
 				{status === 'draft' ? (

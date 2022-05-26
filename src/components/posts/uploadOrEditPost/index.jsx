@@ -32,6 +32,7 @@ import uploadFileToServer from '../../../utils/uploadFileToServer';
 import checkFileSize from '../../../utils/validateFileSize';
 import validateForm from '../../../utils/validateForm';
 import validateDraft from '../../../utils/validateDraft';
+import DeleteModal from '../../DeleteModal';
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
 import { ReactComponent as PortraitCrop } from '../../../assets/portrait_rect.svg';
 import { ReactComponent as LandscapeCrop } from '../../../assets/Rectangle_12.svg';
@@ -76,10 +77,11 @@ const UploadOrEditPost = ({
 	const [dropdownPosition, setDropdownPosition] = useState(false);
 	const [linktoPostMedia, setLinktoPostMedia] = useState('');
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
-
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
+	const [openDeletePopup, setOpenDeletePopup] = useState(false);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
+	const dialogWrapper = useRef(null);
 	const [form, setForm] = useState({
 		caption: '',
 		dropbox_url: '',
@@ -449,7 +451,9 @@ const UploadOrEditPost = ({
 			console.log(e);
 		}
 	};
-
+	const toggleDeleteModal = () => {
+		setOpenDeletePopup(!openDeletePopup);
+	};
 	const deletePost = async (id, draft) => {
 		setDeleteBtnStatus(true);
 		try {
@@ -475,6 +479,7 @@ const UploadOrEditPost = ({
 			setDeleteBtnStatus(false);
 			console.log(e);
 		}
+		setOpenDeletePopup(!openDeletePopup);
 	};
 
 	const squareCrop = () => {
@@ -738,64 +743,48 @@ const UploadOrEditPost = ({
 	};
 
 	return (
-		<Slider
-			open={open}
-			handleClose={() => {
-				handleClose();
-				if (uploadedFiles.length && !isEdit) {
-					uploadedFiles.map((file) => handleDeleteFile(file.id));
-				}
-			}}
-			title={title}
-			disableDropdown={disableDropdown}
-			handlePreview={() => {
-				handlePreviewEscape();
-			}}
-			preview={previewBool}
-			previewRef={previewRef}
-			orientationRef={orientationRef}
-			edit={isEdit}
-		>
-			<LoadingOverlay active={isLoadingCreatePost} spinner text='Loading...'>
-				<Slide in={true} direction='up' {...{ timeout: 400 }}>
-					<div
-						className={`${
-							previewFile != null
-								? classes.previewContentWrapper
-								: classes.contentWrapper
-						}`}
-					>
-						{specificPostStatus.status === 'loading' ? (
-							<div className={classes.loaderContainer2}>
-								<img src={Four33Loader} className={classes.loader} />
-							</div>
-						) : (
-							<></>
-						)}
+		<>
+			<Slider
+				open={open}
+				handleClose={() => {
+					handleClose();
+					if (uploadedFiles.length && !isEdit) {
+						uploadedFiles.map((file) => handleDeleteFile(file.id));
+					}
+				}}
+				title={title}
+				disableDropdown={disableDropdown}
+				handlePreview={() => {
+					handlePreviewEscape();
+				}}
+				preview={previewBool}
+				previewRef={previewRef}
+				orientationRef={orientationRef}
+				edit={isEdit}
+				dialogRef={dialogWrapper}
+			>
+				<LoadingOverlay active={isLoadingCreatePost} spinner text='Loading...'>
+					<Slide in={true} direction='up' {...{ timeout: 400 }}>
 						<div
-							className={classes.contentWrapperNoPreview}
-							style={{ width: previewFile != null ? '60%' : 'auto' }}
+							className={`${
+								previewFile != null
+									? classes.previewContentWrapper
+									: classes.contentWrapper
+							}`}
 						>
-							<div>
-								{form?.uploadedFiles.length === 0 ? (
-									<div className={classes.explanationWrapper}>
-										<h5>{heading1}</h5>
-										<Tooltip
-											TransitionComponent={Fade}
-											TransitionProps={{ timeout: 800 }}
-											title='Default encoding for videos should be H.264'
-											arrow
-											componentsProps={{
-												tooltip: { className: classes.toolTip },
-												arrow: { className: classes.toolTipArrow }
-											}}
-											placement='bottom-start'
-										>
-											<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
-										</Tooltip>
-									</div>
-								) : (
-									<div className={classes.headerOrientationWrapper}>
+							{specificPostStatus.status === 'loading' ? (
+								<div className={classes.loaderContainer2}>
+									<img src={Four33Loader} className={classes.loader} />
+								</div>
+							) : (
+								<></>
+							)}
+							<div
+								className={classes.contentWrapperNoPreview}
+								style={{ width: previewFile != null ? '60%' : 'auto' }}
+							>
+								<div>
+									{form?.uploadedFiles.length === 0 ? (
 										<div className={classes.explanationWrapper}>
 											<h5>{heading1}</h5>
 											<Tooltip
@@ -814,369 +803,393 @@ const UploadOrEditPost = ({
 												/>
 											</Tooltip>
 										</div>
-										<div className={classes.orientationDimensionWrapper}>
-											<h6 className={classes.orientation}>Orientation</h6>
-											<div
-												ref={orientationRef}
-												className={classes.dimensionWrapper}
-											>
-												<div
-													className={classes.dimensionSingle}
-													onClick={squareCrop}
-													style={
-														dimensionSelect === 'square'
-															? { backgroundColor: '#000000' }
-															: {}
-													}
+									) : (
+										<div className={classes.headerOrientationWrapper}>
+											<div className={classes.explanationWrapper}>
+												<h5>{heading1}</h5>
+												<Tooltip
+													TransitionComponent={Fade}
+													TransitionProps={{ timeout: 800 }}
+													title='Default encoding for videos should be H.264'
+													arrow
+													componentsProps={{
+														tooltip: { className: classes.toolTip },
+														arrow: { className: classes.toolTipArrow }
+													}}
+													placement='bottom-start'
 												>
-													{dimensionSelect === 'square' ? (
-														<SquareCropSelected
-															className={classes.dimensionPreviewIcons}
-														/>
-													) : (
-														<SquareCrop
-															className={classes.dimensionPreviewIcons}
-														/>
-													)}
-												</div>{' '}
+													<Info
+														style={{ cursor: 'pointer', marginLeft: '1rem' }}
+													/>
+												</Tooltip>
+											</div>
+											<div className={classes.orientationDimensionWrapper}>
+												<h6 className={classes.orientation}>Orientation</h6>
 												<div
-													className={classes.dimensionSingle}
-													onClick={portraitCrop}
-													style={
-														dimensionSelect === 'portrait'
-															? { backgroundColor: '#000000' }
-															: {}
-													}
+													ref={orientationRef}
+													className={classes.dimensionWrapper}
 												>
-													{dimensionSelect === 'portrait' ? (
-														<PortraitCropSelected
-															className={classes.dimensionPreviewIcons}
-														/>
-													) : (
-														<PortraitCrop
-															className={classes.dimensionPreviewIcons}
-														/>
-													)}
-												</div>
-												<div
-													className={classes.dimensionSingle}
-													onClick={landscapeCrop}
-													style={
-														dimensionSelect === 'landscape'
-															? { backgroundColor: '#000000' }
-															: {}
-													}
-												>
-													{dimensionSelect === 'landscape' ? (
-														<LandscapeCropSelected
-															className={classes.dimensionPreviewIcons}
-														/>
-													) : (
-														<LandscapeCrop
-															className={classes.dimensionPreviewIcons}
-														/>
-													)}
+													<div
+														className={classes.dimensionSingle}
+														onClick={squareCrop}
+														style={
+															dimensionSelect === 'square'
+																? { backgroundColor: '#000000' }
+																: {}
+														}
+													>
+														{dimensionSelect === 'square' ? (
+															<SquareCropSelected
+																className={classes.dimensionPreviewIcons}
+															/>
+														) : (
+															<SquareCrop
+																className={classes.dimensionPreviewIcons}
+															/>
+														)}
+													</div>{' '}
+													<div
+														className={classes.dimensionSingle}
+														onClick={portraitCrop}
+														style={
+															dimensionSelect === 'portrait'
+																? { backgroundColor: '#000000' }
+																: {}
+														}
+													>
+														{dimensionSelect === 'portrait' ? (
+															<PortraitCropSelected
+																className={classes.dimensionPreviewIcons}
+															/>
+														) : (
+															<PortraitCrop
+																className={classes.dimensionPreviewIcons}
+															/>
+														)}
+													</div>
+													<div
+														className={classes.dimensionSingle}
+														onClick={landscapeCrop}
+														style={
+															dimensionSelect === 'landscape'
+																? { backgroundColor: '#000000' }
+																: {}
+														}
+													>
+														{dimensionSelect === 'landscape' ? (
+															<LandscapeCropSelected
+																className={classes.dimensionPreviewIcons}
+															/>
+														) : (
+															<LandscapeCrop
+																className={classes.dimensionPreviewIcons}
+															/>
+														)}
+													</div>
 												</div>
 											</div>
 										</div>
-									</div>
-								)}
-								<DragAndDropField
-									onDragEnd={onDragEnd}
-									uploadedFiles={form?.uploadedFiles}
-									isEdit={isEdit}
-									handleDeleteFile={handleDeleteFile}
-									setPreviewBool={setPreviewBool}
-									setPreviewFile={setPreviewFile}
-									dimensionSelect={dimensionSelect}
-									imageToResizeWidth={imageToResizeWidth}
-									imageToResizeHeight={imageToResizeHeight}
-									isPost
-								/>
-
-								{form?.uploadedFiles.length < 10 && (
-									<section
-										className={classes.dropZoneContainer}
-										style={{
-											borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
-										}}
-									>
-										<div {...getRootProps({ className: classes.dropzone })}>
-											<input
-												{...getInputProps()}
-												// ref={ref}
-											/>
-											<AddCircleOutlineIcon className={classes.addFilesIcon} />
-											<p className={classes.dragMsg}>
-												Click or drag files to this area to upload
-											</p>
-											<p className={classes.formatMsg}>
-												Supported formats are jpeg, png and mp4
-											</p>
-											<p className={classes.uploadMediaError}>
-												{isError.uploadedFiles
-													? 'You need to upload a media in order to post'
-													: ''}
-											</p>
-										</div>
-									</section>
-								)}
-								<p className={classes.fileRejectionError}>
-									{fileRejectionError}
-								</p>
-								<div className={classes.dropBoxUrlContainer}>
-									<h6>DROPBOX URL</h6>
-									<TextField
-										value={form?.dropbox_url}
-										onChange={(event) =>
-											setForm((prev) => {
-												return {
-													...prev,
-													dropbox_url: event.target.value
-												};
-											})
-										}
-										placeholder={'Please drop the dropbox URL here'}
-										className={classes.textField}
-										multiline
-										maxRows={2}
-										InputProps={{
-											disableUnderline: true,
-											className: classes.textFieldInput,
-											style: {
-												borderRadius: dropboxLink ? '16px' : '40px'
-											}
-										}}
-									/>
-								</div>
-								<div className={classes.captionContainer}>
-									<h6
-										className={
-											isError.selectedLabels
-												? classes.errorState
-												: classes.noErrorState
-										}
-									>
-										LABELS
-									</h6>
-									<Labels
+									)}
+									<DragAndDropField
+										onDragEnd={onDragEnd}
+										uploadedFiles={form?.uploadedFiles}
 										isEdit={isEdit}
-										setDisableDropdown={setDisableDropdown}
-										selectedLabels={form?.labels}
-										setSelectedLabels={(newVal) => {
-											setForm((prev) => {
-												return { ...prev, labels: [...newVal] };
-											});
-										}}
-										LabelsOptions={postLabels}
-										extraLabel={extraLabel}
-										handleChangeExtraLabel={handleChangeExtraLabel}
-										draftStatus={status}
+										handleDeleteFile={handleDeleteFile}
+										setPreviewBool={setPreviewBool}
+										setPreviewFile={setPreviewFile}
+										dimensionSelect={dimensionSelect}
+										imageToResizeWidth={imageToResizeWidth}
+										imageToResizeHeight={imageToResizeHeight}
+										isPost
 									/>
-								</div>
-								<p className={classes.mediaError}>
-									{isError.selectedLabels
-										? `You need to add ${
-												7 - selectedLabels.length
-										  } more labels in
-                                                order to post`
-										: ''}
-								</p>
-								<div className={classes.captionContainer}>
-									<h6
-										className={
-											isError.caption
-												? classes.errorState
-												: classes.noErrorState
-										}
-									>
-										CAPTION
-									</h6>
-									<TextField
-										value={form?.caption}
-										onChange={(e) =>
-											setForm((prev) => {
-												return { ...prev, caption: e.target.value };
-											})
-										}
-										placeholder={'Please write your caption here'}
-										className={classes.textField}
-										InputProps={{
-											disableUnderline: true,
-											className: classes.textFieldInput,
-											style: {
-												borderRadius: caption ? '16px' : '40px'
-											}
-										}}
-										multiline
-										maxRows={4}
-									/>
-								</div>
-								<p className={classes.mediaError}>
-									{isError.caption
-										? 'You need to upload a caption in order to post'
-										: ''}
-								</p>
 
-								<div className={classes.postMediaContainer}>
-									<div className={classes.postMediaHeader}>
-										<h5>Link post to media</h5>
-										<ToggleSwitch
-											id={1}
-											checked={form.mediaToggle}
-											onChange={(checked) => {
-												setForm((prev) => {
-													return { ...prev, media_id: null };
-												});
+									{form?.uploadedFiles.length < 10 && (
+										<section
+											className={classes.dropZoneContainer}
+											style={{
+												borderColor: isError.uploadedFiles
+													? '#ff355a'
+													: 'yellow'
+											}}
+										>
+											<div {...getRootProps({ className: classes.dropzone })}>
+												<input
+													{...getInputProps()}
+													// ref={ref}
+												/>
+												<AddCircleOutlineIcon
+													className={classes.addFilesIcon}
+												/>
+												<p className={classes.dragMsg}>
+													Click or drag files to this area to upload
+												</p>
+												<p className={classes.formatMsg}>
+													Supported formats are jpeg, png and mp4
+												</p>
+												<p className={classes.uploadMediaError}>
+													{isError.uploadedFiles
+														? 'You need to upload a media in order to post'
+														: ''}
+												</p>
+											</div>
+										</section>
+									)}
+									<p className={classes.fileRejectionError}>
+										{fileRejectionError}
+									</p>
+									<div className={classes.dropBoxUrlContainer}>
+										<h6>DROPBOX URL</h6>
+										<TextField
+											value={form?.dropbox_url}
+											onChange={(event) =>
 												setForm((prev) => {
 													return {
 														...prev,
-														mediaToggle: checked
+														dropbox_url: event.target.value
 													};
-												});
+												})
+											}
+											placeholder={'Please drop the dropbox URL here'}
+											className={classes.textField}
+											multiline
+											maxRows={2}
+											InputProps={{
+												disableUnderline: true,
+												className: classes.textFieldInput,
+												style: {
+													borderRadius: dropboxLink ? '16px' : '40px'
+												}
 											}}
 										/>
 									</div>
-								</div>
-								{form.mediaToggle ? (
-									<div
-										style={{ marginBottom: dropdownPosition ? 200 : 0 }}
-										className={classes.mediaContainer}
-									>
+									<div className={classes.captionContainer}>
 										<h6
 											className={
-												isError.selectedMediaValue
+												isError.selectedLabels
 													? classes.errorState
 													: classes.noErrorState
 											}
 										>
-											SELECT MEDIA
+											LABELS
 										</h6>
-										<Autocomplete
-											value={form?.media_id}
-											PaperComponent={(props) => {
-												setDisableDropdown(false);
-
-												return (
-													<Paper
-														elevation={6}
-														className={classes.popperAuto}
-														style={{
-															marginTop: '12px',
-															background: 'black',
-															border: '1px solid #404040',
-															boxShadow:
-																'0px 16px 40px rgba(255, 255, 255, 0.16)',
-															borderRadius: '8px'
-														}}
-														{...props}
-													/>
-												);
-											}}
-											PopperComponent={({ style, ...props }) => (
-												<Popper {...props} style={{ ...style, height: 0 }} />
-											)}
-											ListboxProps={{
-												style: { maxHeight: 180 },
-												position: 'bottom'
-											}}
-											onOpen={() => {
-												setDropdownPosition(true);
-											}}
-											onClose={(e) => {
-												setDisableDropdown(true);
-												setDropdownPosition(false);
-											}}
-											onChange={(e, newVal) => {
-												// setSelectedMedia(newVal);
-												console.log(newVal, 'nv');
+										<Labels
+											isEdit={isEdit}
+											setDisableDropdown={setDisableDropdown}
+											selectedLabels={form?.labels}
+											setSelectedLabels={(newVal) => {
 												setForm((prev) => {
-													return { ...prev, media_id: newVal };
+													return { ...prev, labels: [...newVal] };
 												});
-												setDisableDropdown(true);
 											}}
-											options={allMedia}
-											getOptionLabel={(option) => option.title}
-											renderOption={(props, option, { selected }) => {
-												return (
-													<li {...props} className={classes.liAutocomplete}>
-														{option.title}
-													</li>
-												);
-											}}
-											filterOptions={(items) => {
-												return items.filter((item) =>
-													item.title
-														.toLowerCase()
-														.includes(selectMediaInput.toLowerCase())
-												);
-											}}
-											renderInput={(params) => (
-												<TextField
-													{...params}
-													size='small'
-													placeholder='Search Media'
-													InputProps={{
-														disableUnderline: true,
-														...params.InputProps,
-														className: classes.textFieldInput
-													}}
-													value={selectMediaInput}
-													onChange={handleChangeSelectMediaInput}
-												/>
-											)}
-											clearIcon={<ClearIcon />}
-											noOptionsText={
-												<div style={{ color: '#808080', fontSize: 14 }}>
-													No Results Found
-												</div>
+											LabelsOptions={postLabels}
+											extraLabel={extraLabel}
+											handleChangeExtraLabel={handleChangeExtraLabel}
+											draftStatus={status}
+										/>
+									</div>
+									<p className={classes.mediaError}>
+										{isError.selectedLabels
+											? `You need to add ${
+													7 - selectedLabels.length
+											  } more labels in
+                                                order to post`
+											: ''}
+									</p>
+									<div className={classes.captionContainer}>
+										<h6
+											className={
+												isError.caption
+													? classes.errorState
+													: classes.noErrorState
 											}
-											popupIcon={''}
-										/>
-
-										<p className={classes.mediaError}>
-											{isError.selectedMediaValue
-												? 'You need to select a media in order to post'
-												: ''}
-										</p>
-									</div>
-								) : (
-									<></>
-								)}
-
-								<div className={classes.postMediaContainer}>
-									<div className={classes.postMediaHeader}>
-										<h5>Show comments</h5>
-										<ToggleSwitch
-											id={2}
-											checked={form?.show_comments}
-											onChange={(checked) => {
+										>
+											CAPTION
+										</h6>
+										<TextField
+											value={form?.caption}
+											onChange={(e) =>
 												setForm((prev) => {
-													return { ...prev, show_comments: checked };
-												});
-												// setValueComments(checked);
+													return { ...prev, caption: e.target.value };
+												})
+											}
+											placeholder={'Please write your caption here'}
+											className={classes.textField}
+											InputProps={{
+												disableUnderline: true,
+												className: classes.textFieldInput,
+												style: {
+													borderRadius: caption ? '16px' : '40px'
+												}
 											}}
+											multiline
+											maxRows={4}
 										/>
+									</div>
+									<p className={classes.mediaError}>
+										{isError.caption
+											? 'You need to upload a caption in order to post'
+											: ''}
+									</p>
+
+									<div className={classes.postMediaContainer}>
+										<div className={classes.postMediaHeader}>
+											<h5>Link post to media</h5>
+											<ToggleSwitch
+												id={1}
+												checked={form.mediaToggle}
+												onChange={(checked) => {
+													setForm((prev) => {
+														return { ...prev, media_id: null };
+													});
+													setForm((prev) => {
+														return {
+															...prev,
+															mediaToggle: checked
+														};
+													});
+												}}
+											/>
+										</div>
+									</div>
+									{form.mediaToggle ? (
+										<div
+											style={{ marginBottom: dropdownPosition ? 200 : 0 }}
+											className={classes.mediaContainer}
+										>
+											<h6
+												className={
+													isError.selectedMediaValue
+														? classes.errorState
+														: classes.noErrorState
+												}
+											>
+												SELECT MEDIA
+											</h6>
+											<Autocomplete
+												value={form?.media_id}
+												PaperComponent={(props) => {
+													setDisableDropdown(false);
+
+													return (
+														<Paper
+															elevation={6}
+															className={classes.popperAuto}
+															style={{
+																marginTop: '12px',
+																background: 'black',
+																border: '1px solid #404040',
+																boxShadow:
+																	'0px 16px 40px rgba(255, 255, 255, 0.16)',
+																borderRadius: '8px'
+															}}
+															{...props}
+														/>
+													);
+												}}
+												PopperComponent={({ style, ...props }) => (
+													<Popper {...props} style={{ ...style, height: 0 }} />
+												)}
+												ListboxProps={{
+													style: { maxHeight: 180 },
+													position: 'bottom'
+												}}
+												onOpen={() => {
+													setDropdownPosition(true);
+												}}
+												onClose={(e) => {
+													setDisableDropdown(true);
+													setDropdownPosition(false);
+												}}
+												onChange={(e, newVal) => {
+													// setSelectedMedia(newVal);
+													console.log(newVal, 'nv');
+													setForm((prev) => {
+														return { ...prev, media_id: newVal };
+													});
+													setDisableDropdown(true);
+												}}
+												options={allMedia}
+												getOptionLabel={(option) => option.title}
+												renderOption={(props, option, { selected }) => {
+													return (
+														<li {...props} className={classes.liAutocomplete}>
+															{option.title}
+														</li>
+													);
+												}}
+												filterOptions={(items) => {
+													return items.filter((item) =>
+														item.title
+															.toLowerCase()
+															.includes(selectMediaInput.toLowerCase())
+													);
+												}}
+												renderInput={(params) => (
+													<TextField
+														{...params}
+														size='small'
+														placeholder='Search Media'
+														InputProps={{
+															disableUnderline: true,
+															...params.InputProps,
+															className: classes.textFieldInput
+														}}
+														value={selectMediaInput}
+														onChange={handleChangeSelectMediaInput}
+													/>
+												)}
+												clearIcon={<ClearIcon />}
+												noOptionsText={
+													<div style={{ color: '#808080', fontSize: 14 }}>
+														No Results Found
+													</div>
+												}
+												popupIcon={''}
+											/>
+
+											<p className={classes.mediaError}>
+												{isError.selectedMediaValue
+													? 'You need to select a media in order to post'
+													: ''}
+											</p>
+										</div>
+									) : (
+										<></>
+									)}
+
+									<div className={classes.postMediaContainer}>
+										<div className={classes.postMediaHeader}>
+											<h5>Show comments</h5>
+											<ToggleSwitch
+												id={2}
+												checked={form?.show_comments}
+												onChange={(checked) => {
+													setForm((prev) => {
+														return { ...prev, show_comments: checked };
+													});
+													// setValueComments(checked);
+												}}
+											/>
+										</div>
+									</div>
+
+									<div className={classes.postMediaContainer}>
+										<div className={classes.postMediaHeader}>
+											<h5>Show likes</h5>
+											<ToggleSwitch
+												id={3}
+												checked={form?.show_likes}
+												onChange={(checked) => {
+													setForm((prev) => {
+														return { ...prev, show_likes: checked };
+													});
+													// setValueLikes(checked);
+												}}
+											/>
+										</div>
 									</div>
 								</div>
-
-								<div className={classes.postMediaContainer}>
-									<div className={classes.postMediaHeader}>
-										<h5>Show likes</h5>
-										<ToggleSwitch
-											id={3}
-											checked={form?.show_likes}
-											onChange={(checked) => {
-												setForm((prev) => {
-													return { ...prev, show_likes: checked };
-												});
-												// setValueLikes(checked);
-											}}
-										/>
-									</div>
-								</div>
-							</div>
-							{/* <div className={classes.buttonDiv}>
+								{/* <div className={classes.buttonDiv}>
 								{isEdit ? (
 									<div className={classes.editBtn}>
 										<Button
@@ -1205,143 +1218,155 @@ const UploadOrEditPost = ({
 								</div>
 							</div> */}
 
-							<p className={classes.mediaError}>
-								{isError.draftError
-									? 'Something needs to be changed to save a draft'
-									: ''}
-							</p>
-							<div className={classes.buttonDiv}>
-								{isEdit || (status === 'draft' && isEdit) ? (
-									<div className={classes.editBtn}>
-										<Button
-											disabled={false}
-											button2={isEdit ? true : false}
-											onClick={() => {
-												if (!deleteBtnStatus) {
-													deletePost(specificPost?.id, status);
-												}
-											}}
-											text={'DELETE POST'}
-										/>
-									</div>
-								) : (
-									<></>
-								)}
-
-								<div className={classes.publishDraftDiv}>
-									{status === 'draft' || !isEdit ? (
-										<div
-											className={
-												isEdit ? classes.draftBtnEdit : classes.draftBtn
-											}
-										>
+								<p className={classes.mediaError}>
+									{isError.draftError
+										? 'Something needs to be changed to save a draft'
+										: ''}
+								</p>
+								<div className={classes.buttonDiv}>
+									{isEdit || (status === 'draft' && isEdit) ? (
+										<div className={classes.editBtn}>
 											<Button
-												disabledDraft={
-													isEdit ? draftBtnDisabled : !validateDraft(form)
-												}
-												onClick={() => handlelDraftBtn()}
-												button3={true}
-												text={
-													status === 'draft' && isEdit
-														? 'SAVE DRAFT'
-														: 'SAVE AS DRAFT'
-												}
+												disabled={false}
+												button2={isEdit ? true : false}
+												onClick={() => {
+													if (!deleteBtnStatus) {
+														toggleDeleteModal();
+													}
+												}}
+												text={'DELETE POST'}
 											/>
 										</div>
 									) : (
 										<></>
 									)}
 
-									<div
-										className={
-											isEdit && validateForm(form)
-												? classes.addMediaBtn
-												: isEdit
-												? classes.addMediaBtnEdit
-												: classes.addMediaBtn
-										}
-									>
-										<Button
-											className={classes.savebbtnPost}
-											// disabled={
-											// 	isEdit && validateForm(form) && status === 'draft'
-											// 		? false
-											// 		: isEdit
-											// 		? editBtnDisabled
-											// 		: !validateForm(form)
-											// }
-											disabled={isEdit ? editBtnDisabled : !validateForm(form)}
-											onClick={() => {
-												addSavePostBtn();
-											}}
-											text={buttonText}
-										/>
+									<div className={classes.publishDraftDiv}>
+										{status === 'draft' || !isEdit ? (
+											<div
+												className={
+													isEdit ? classes.draftBtnEdit : classes.draftBtn
+												}
+											>
+												<Button
+													disabledDraft={
+														isEdit ? draftBtnDisabled : !validateDraft(form)
+													}
+													onClick={() => handlelDraftBtn()}
+													button3={true}
+													text={
+														status === 'draft' && isEdit
+															? 'SAVE DRAFT'
+															: 'SAVE AS DRAFT'
+													}
+												/>
+											</div>
+										) : (
+											<></>
+										)}
+
+										<div
+											className={
+												isEdit && validateForm(form)
+													? classes.addMediaBtn
+													: isEdit
+													? classes.addMediaBtnEdit
+													: classes.addMediaBtn
+											}
+										>
+											<Button
+												className={classes.savebbtnPost}
+												// disabled={
+												// 	isEdit && validateForm(form) && status === 'draft'
+												// 		? false
+												// 		: isEdit
+												// 		? editBtnDisabled
+												// 		: !validateForm(form)
+												// }
+												disabled={
+													isEdit ? editBtnDisabled : !validateForm(form)
+												}
+												onClick={() => {
+													addSavePostBtn();
+												}}
+												text={buttonText}
+											/>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-						{previewFile != null && (
-							<div ref={previewRef} className={classes.previewComponent}>
-								<div className={classes.previewHeader}>
-									<Close
-										onClick={() => {
-											setPreviewBool(false);
-											setPreviewFile(null);
-										}}
-										className={classes.closeIcon}
-									/>
-									<h5>Preview</h5>
-								</div>
-								<div>
-									{previewFile.mime_type === 'video/mp4' ? (
-										<video
-											id={'my-video'}
-											poster={isEdit ? previewFile.media_url : null}
-											className={classes.previewFile}
-											style={{
-												width: `${imageToResizeWidth * 4}px`,
-												height: `${imageToResizeHeight * 4}px`,
-												objectFit: 'cover',
-												objectPosition: 'center'
+							{previewFile != null && (
+								<div ref={previewRef} className={classes.previewComponent}>
+									<div className={classes.previewHeader}>
+										<Close
+											onClick={() => {
+												setPreviewBool(false);
+												setPreviewFile(null);
 											}}
-											controls={true}
-										>
-											<source src={previewFile.media_url} />
-										</video>
-									) : isEdit && previewFile.type === 'video' ? (
-										<video
-											id={'my-video'}
-											poster={isEdit ? previewFile.thumbnail_url : null}
-											className={classes.previewFile}
-											style={{
-												width: `${imageToResizeWidth * 4}px`,
-												height: `${imageToResizeHeight * 4}px`,
-												objectFit: 'cover',
-												objectPosition: 'center'
-											}}
-											controls={true}
-										>
-											<source src={previewFile.media_url} />
-										</video>
-									) : (
-										<img
-											src={previewFile.media_url}
-											className={classes.previewFile}
-											style={{
-												width: `${imageToResizeWidth * 4}px`,
-												height: `${imageToResizeHeight * 4}px`,
-												objectFit: 'cover',
-												objectPosition: 'center'
-											}}
+											className={classes.closeIcon}
 										/>
-									)}
+										<h5>Preview</h5>
+									</div>
+									<div>
+										{previewFile.mime_type === 'video/mp4' ? (
+											<video
+												id={'my-video'}
+												poster={isEdit ? previewFile.media_url : null}
+												className={classes.previewFile}
+												style={{
+													width: `${imageToResizeWidth * 4}px`,
+													height: `${imageToResizeHeight * 4}px`,
+													objectFit: 'cover',
+													objectPosition: 'center'
+												}}
+												controls={true}
+											>
+												<source src={previewFile.media_url} />
+											</video>
+										) : isEdit && previewFile.type === 'video' ? (
+											<video
+												id={'my-video'}
+												poster={isEdit ? previewFile.thumbnail_url : null}
+												className={classes.previewFile}
+												style={{
+													width: `${imageToResizeWidth * 4}px`,
+													height: `${imageToResizeHeight * 4}px`,
+													objectFit: 'cover',
+													objectPosition: 'center'
+												}}
+												controls={true}
+											>
+												<source src={previewFile.media_url} />
+											</video>
+										) : (
+											<img
+												src={previewFile.media_url}
+												className={classes.previewFile}
+												style={{
+													width: `${imageToResizeWidth * 4}px`,
+													height: `${imageToResizeHeight * 4}px`,
+													objectFit: 'cover',
+													objectPosition: 'center'
+												}}
+											/>
+										)}
+									</div>
 								</div>
-							</div>
-						)}
-					</div>
-				</Slide>
-			</LoadingOverlay>
-		</Slider>
+							)}
+						</div>
+					</Slide>
+				</LoadingOverlay>
+			</Slider>
+			<DeleteModal
+				open={openDeletePopup}
+				toggle={toggleDeleteModal}
+				deleteBtn={() => {
+					deletePost(specificPost?.id, status);
+				}}
+				text={'Post'}
+				wrapperRef={dialogWrapper}
+			/>
+		</>
 	);
 };
 
