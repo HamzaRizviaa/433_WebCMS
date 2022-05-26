@@ -14,11 +14,17 @@ const validateDraft = (form) => {
 				return !form[key] ? false : true;
 			}
 			if (form[key] === null) {
-				if (form['mediaToggle']) {
-					return false;
-				} else {
-					return true;
-				}
+				// if (form['mediaToggle'] ) {
+				// 	console.log('Here');
+				// 	return true;
+				// } else {
+
+				// 	return false;
+				// }
+				return false;
+			}
+			if (form['media_id'] !== null) {
+				return true;
 			}
 			if (Array.isArray(form[key])) {
 				if (key === 'labels') {
@@ -31,7 +37,9 @@ const validateDraft = (form) => {
 			}
 		}
 		if (typeof form[key] === 'boolean') {
-			if (form[key] === false) {
+			if (key === 'mediaToggle') {
+				return false;
+			} else if (form[key] === false) {
 				return false;
 			} else {
 				return true;
