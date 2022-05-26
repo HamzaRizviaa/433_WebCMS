@@ -966,7 +966,6 @@ const UploadOrEditViral = ({
 
 			<DeleteModal
 				open={openDeletePopup}
-				// className={classes.deleteModal}
 				toggle={toggleDeleteModal}
 				deleteBtn={() => {
 					deleteViral(specificViral?.id, status);
