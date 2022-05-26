@@ -164,7 +164,6 @@ const UploadOrEditViral = ({
 			return { ...prev, subCategory: setData };
 		});
 	};
-	console.log(subCategories, 'global');
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -1123,6 +1122,7 @@ const UploadOrEditViral = ({
 													id: '#myTextarea',
 													browser_spellcheck: true,
 													contextmenu: false,
+													content_css: '../../index.scss',
 													setup: function (editor) {
 														editor.on('init', function () {
 															// editorText;

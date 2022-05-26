@@ -22,6 +22,12 @@ body {
 	scrollbar-width: thin; /* "auto" or "thin" */
 	scrollbar-color: #3f3f3f #3f3f3f; /* scroll thumb and track */
 }
+// Global styles for tineMce starts
+.tox .tox-menu {
+	background-color: black !important;
+}
+
+// Global styles for tineMce ends
 
 h1 {
 	font-size: 2.5rem;
