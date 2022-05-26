@@ -14,17 +14,17 @@ const validateDraft = (form) => {
 				return !form[key] ? false : true;
 			}
 			if (form[key] === null) {
-				// if (form['mediaToggle'] ) {
-				// 	console.log('Here');
+				if (key === 'media_id') {
+					if (form[key] !== null) {
+						return true;
+					} else {
+						return false;
+					}
+				}
+				// if (form['mediaToggle']) {
 				// 	return true;
-				// } else {
-
-				// 	return false;
 				// }
 				return false;
-			}
-			if (form['media_id'] !== null) {
-				return true;
 			}
 			if (Array.isArray(form[key])) {
 				if (key === 'labels') {

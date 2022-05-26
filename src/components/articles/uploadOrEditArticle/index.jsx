@@ -148,10 +148,10 @@ const UploadOrEditViral = ({
 	}, [form.mainCategory]);
 
 	const mainCategoryId = (categoryString) => {
-		console.log(categoryString, 'categoryString');
+		// console.log(categoryString, 'categoryString');
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
 		let setData = mainCategories.find((u) => u.name === categoryString);
-		console.log(setData, 'onchange  set data main category');
+		// console.log(setData, 'onchange  set data main category');
 		setForm((prev) => {
 			return { ...prev, mainCategory: setData };
 		});
@@ -172,7 +172,7 @@ const UploadOrEditViral = ({
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		if (specificArticle && subCategories) {
+		if (specificArticle) {
 			if (specificArticle?.labels) {
 				let _labels = [];
 				specificArticle.labels.map((label) =>
@@ -188,7 +188,7 @@ const UploadOrEditViral = ({
 			}
 
 			mainCategoryId(specificArticle?.media_type);
-			SubCategoryId(specificArticle?.sub_category);
+			// SubCategoryId(specificArticle?.sub_category);
 			// setId(specificArticle?.media_type, specificArticle?.sub_category);
 			setForm((prev) => {
 				return {
@@ -219,6 +219,12 @@ const UploadOrEditViral = ({
 			setEditorTextChecker(specificArticle?.description);
 			setFileHeight(specificArticle?.height);
 			setFileWidth(specificArticle?.width);
+		}
+	}, [specificArticle]);
+
+	useEffect(() => {
+		if (specificArticle && subCategories) {
+			SubCategoryId(specificArticle?.sub_category);
 		}
 	}, [specificArticle, subCategories]);
 
@@ -511,8 +517,9 @@ const UploadOrEditViral = ({
 					!form.title ||
 					!form.description ||
 					(specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
-						specificArticle?.title?.trim() === form.title?.trim() &&
-						specificArticle?.dropbox_url?.trim() === form.dropbox_url?.trim() &&
+						specificArticle?.title?.trim() === form?.title?.trim() &&
+						specificArticle?.dropbox_url?.trim() ===
+							form?.dropbox_url?.trim() &&
 						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
 						specificArticle?.show_likes === form.show_likes &&
 						specificArticle?.show_comments === form.show_comments)
@@ -527,8 +534,9 @@ const UploadOrEditViral = ({
 			setDraftBtnDisabled(
 				!validateDraft(form) ||
 					(specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
-						specificArticle?.title?.trim() === form.title?.trim() &&
-						specificArticle?.dropbox_url?.trim() === form.dropbox_url?.trim() &&
+						specificArticle?.title?.trim() === form?.title?.trim() &&
+						specificArticle?.dropbox_url?.trim() ===
+							form?.dropbox_url?.trim() &&
 						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
 						specificArticle?.labels?.length === form?.labels?.length &&
 						specificArticle?.show_likes === form.show_likes &&
@@ -740,7 +748,7 @@ const UploadOrEditViral = ({
 						>
 							{status === 'published' && specificArticleStatus === 'loading' ? (
 								<PrimaryLoader />
-							) : status === 'draft' && !form?.subCategory ? (
+							) : status === 'draft' && specificArticleStatus === 'loading' ? (
 								<PrimaryLoader />
 							) : (
 								<></>
@@ -887,7 +895,9 @@ const UploadOrEditViral = ({
 															: '#000000'
 												}}
 												value={
-													isEdit ? form.subCategory : form.subCategory?.name
+													isEdit
+														? form.subCategory
+														: form.subCategory?.name || form.subCategory
 												}
 												onChange={(e) => {
 													setDisableDropdown(true);
