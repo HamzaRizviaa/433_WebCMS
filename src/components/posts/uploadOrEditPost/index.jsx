@@ -56,8 +56,7 @@ const UploadOrEditPost = ({
 	const [caption, setCaption] = useState('');
 	const [dropboxLink, setDropboxLink] = useState('');
 	const [mediaToggle, setMediaToggle] = useState(false);
-	const [valueComments, setValueComments] = useState(false);
-	const [valueLikes, setValueLikes] = useState(false);
+
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const [selectedLabels, setSelectedLabels] = useState([]);
@@ -307,8 +306,6 @@ const UploadOrEditPost = ({
 		setCaption('');
 		setDropboxLink('');
 		setMediaToggle(false);
-		setValueComments(false);
-		setValueLikes(false);
 		setFileRejectionError('');
 		setUploadedFiles([]);
 		setSelectedMedia(null);
@@ -327,6 +324,7 @@ const UploadOrEditPost = ({
 		setDropdownPosition(false);
 		setIsError({});
 		setEditBtnDisabled(false);
+		setDraftBtnDisabled(false);
 		setForm({
 			caption: '',
 			dropbox_url: '',
@@ -569,6 +567,18 @@ const UploadOrEditPost = ({
 			);
 		}
 	}, [specificPost, form]);
+
+	const checkDuplicateLabel = () => {
+		let formLabels = form?.labels?.map((formL) => {
+			if (specificPost?.labels?.includes(formL.name)) {
+				return true;
+			} else {
+				return false;
+			}
+		});
+		return formLabels.some((label) => label === false);
+	};
+
 	useEffect(() => {
 		if (specificPost) {
 			let checkDuplicateFile = specificPost?.medias?.map((mediaFile) => {
@@ -583,21 +593,13 @@ const UploadOrEditPost = ({
 						specificPost?.media_id == form?.media_id?.id &&
 						specificPost?.medias?.length === form?.uploadedFiles?.length &&
 						!checkNewFile() &&
+						specificPost?.show_likes === form.show_likes &&
+						specificPost?.show_comments === form.show_comments &&
+						specificPost?.labels?.length === form?.labels?.length &&
 						!checkDuplicateLabel())
 			);
 		}
 	}, [specificPost, form]);
-
-	const checkDuplicateLabel = () => {
-		let formLabels = form?.labels?.map((formL) => {
-			if (specificPost?.labels?.includes(formL.name)) {
-				return true;
-			} else {
-				return false;
-			}
-		});
-		return formLabels.some((label) => label === false);
-	};
 
 	// console.log(specificPost?.medias?.length, 'specificPost?.medias?.length');
 	// console.log(selectedMedia?.id, 'captionL');
@@ -671,6 +673,7 @@ const UploadOrEditPost = ({
 		}
 	};
 	console.log(!validateDraft(form), !validateForm(form), 'diabled form ');
+
 	const handlelDraftBtn = () => {
 		if (!validateDraft(form) || draftBtnDisabled) {
 			validateDraftBtn();
