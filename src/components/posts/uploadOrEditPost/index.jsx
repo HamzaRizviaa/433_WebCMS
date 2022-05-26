@@ -643,6 +643,7 @@ const UploadOrEditPost = ({
 		console.log('File', file);
 	};
 	const validateDraftBtn = () => {
+		console.log('draft validation');
 		if (isEdit) {
 			setIsError({
 				draftError: draftBtnDisabled
@@ -666,6 +667,7 @@ const UploadOrEditPost = ({
 	};
 
 	const handlelDraftBtn = () => {
+		console.log(!validateDraft(form), draftBtnDisabled, 'diabled form ');
 		if (!validateDraft(form) || draftBtnDisabled) {
 			validateDraftBtn();
 		} else {
@@ -1235,9 +1237,9 @@ const UploadOrEditPost = ({
 											}
 										>
 											<Button
-												// disabledDraft={
-												// 	isEdit ? draftBtnDisabled : !validateDraft(form)
-												// }
+												disabledDraft={
+													isEdit ? draftBtnDisabled : !validateDraft(form)
+												}
 												onClick={() => handlelDraftBtn()}
 												button3={true}
 												text={

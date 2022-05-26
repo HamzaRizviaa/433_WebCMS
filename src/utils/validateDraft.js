@@ -1,4 +1,5 @@
 const validateDraft = (form) => {
+	console.log(form, 'draft formx');
 	var validate = Object.keys(form).map((key) => {
 		if (key === 'mainCategory' || key === 'subCategory') {
 			return false;
