@@ -665,9 +665,8 @@ const UploadOrEditPost = ({
 			}, 5000);
 		}
 	};
-
+	console.log(!validateDraft(form), !validateForm(form), 'diabled form ');
 	const handlelDraftBtn = () => {
-		console.log(!validateDraft(form), draftBtnDisabled, 'diabled form ');
 		if (!validateDraft(form) || draftBtnDisabled) {
 			validateDraftBtn();
 		} else {
