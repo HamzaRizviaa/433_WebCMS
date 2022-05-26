@@ -25,7 +25,8 @@ export default function DeleteModal({
 	open,
 	toggle,
 	deleteBtn,
-	wrapperRef
+	wrapperRef,
+	stop
 }) {
 	const classes = useStyles();
 	const [playOpen] = useSound(soundOpen, { volume: 0.5 });
@@ -49,7 +50,7 @@ export default function DeleteModal({
 					className={classes.dialogTitle}
 					classes={{ root: classes.root }}
 				>
-					Delete this {text}?
+					{stop ? `Stop this ${text}?` : `Delete this ${text}?`}
 					<IconButton
 						onClick={toggle}
 						onMouseDown={playClose}
@@ -63,8 +64,10 @@ export default function DeleteModal({
 						id='alert-dialog-slide-description'
 						className={classes.dialogContentText}
 					>
-						You are about to delete this <b>{text}</b>. You won’t be able to
-						retrieve the post .
+						{stop
+							? `You are about to stop this ${text}. You won’t be able to restart the ${text} again.`
+							: `You are about to delete this <b>{text}</b>. You won’t be able to
+						retrieve the post.`}
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions classes={{ root: classes.dialogActions }}>
@@ -74,12 +77,21 @@ export default function DeleteModal({
 						text={'GO BACK'}
 						onMouseDown={playClose}
 					/>
-					<Button
-						button2AddSave={true}
-						onClick={deleteBtn}
-						text={`Delete ${text}`.toUpperCase()}
-						onMouseDown={playOpen}
-					/>
+					{stop ? (
+						<Button
+							buttonStop={true}
+							onClick={deleteBtn}
+							text={`STOP ${text}`.toUpperCase()}
+							onMouseDown={playOpen}
+						/>
+					) : (
+						<Button
+							button2AddSave={true}
+							onClick={deleteBtn}
+							text={`Delete ${text}`.toUpperCase()}
+							onMouseDown={playOpen}
+						/>
+					)}
 				</DialogActions>
 			</Dialog>
 		</div>
@@ -94,5 +106,6 @@ DeleteModal.propTypes = {
 	wrapperRef: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
-	])
+	]),
+	stop: PropTypes.bool
 };

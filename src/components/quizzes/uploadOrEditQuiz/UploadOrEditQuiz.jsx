@@ -1055,7 +1055,7 @@ const UploadOrEditQuiz = ({
 										<div className={classes.stopBtn}>
 											<Button
 												// disabled={deleteBtnStatus}
-												button2={editQuiz || editPoll ? true : false}
+												buttonStop={true}
 												onClick={() => {
 													if (!deleteBtnStatus) {
 														stopQuizPoll(editQuestionData?.id);

@@ -223,9 +223,7 @@ export const useStyles = makeStyles((theme) => ({
 	stopBtn: {
 		// width: '35%',
 		display: 'inline-block',
-		'& span': {
-			borderColor: theme.palette.red
-		}
+		
 	},
 	saveChangesbtn: { '& span': { padding: '1rem 2rem !important' } },
 
