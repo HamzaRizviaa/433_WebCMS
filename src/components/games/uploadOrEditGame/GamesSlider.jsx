@@ -31,6 +31,7 @@ const GamesSlider = ({
 		setPreviewBool(false);
 		setPreviewFile(null);
 	};
+	const dialogWrapper = useRef(null);
 
 	// on upload button in header - to upload new poll or quiz
 
@@ -48,6 +49,7 @@ const GamesSlider = ({
 			previewRef={previewRef}
 			disableDropdown={disableDropdown}
 			games={true}
+			dialogRef={dialogWrapper}
 		>
 			{isEdit ? (
 				<UploadOrEditGames

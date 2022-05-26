@@ -32,7 +32,7 @@ import validateForm from '../../../utils/validateForm';
 import validateDraft from '../../../utils/validateDraft';
 import { useStyles } from './index.style';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
-
+import DeleteModal from '../../DeleteModal';
 const UploadOrEditMedia = ({
 	open,
 	handleClose,
@@ -58,11 +58,13 @@ const UploadOrEditMedia = ({
 	const [fileDuration, setFileDuration] = useState(0);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
+	const [openDeletePopup, setOpenDeletePopup] = useState(false);
 	const [isError, setIsError] = useState({});
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
 	const previewRef = useRef(null);
 	const loadingRef = useRef(null);
+	const dialogWrapper = useRef(null);
 	const [form, setForm] = useState({
 		mainCategory: '',
 		subCategory: '',
@@ -106,6 +108,9 @@ const UploadOrEditMedia = ({
 			setMediaLabels([...labels]);
 		}
 	}, [labels]);
+	const toggleDeleteModal = () => {
+		setOpenDeletePopup(!openDeletePopup);
+	};
 
 	useEffect(() => {
 		setMediaLabels((labels) => {
@@ -459,6 +464,7 @@ const UploadOrEditMedia = ({
 			setDeleteBtnStatus(false);
 			console.log(e);
 		}
+		setOpenDeletePopup(false);
 	};
 
 	const handleChangeExtraLabel = (e) => {
@@ -1049,664 +1055,687 @@ const UploadOrEditMedia = ({
 	};
 
 	return (
-		<Slider
-			open={open}
-			handleClose={() => {
-				handleClose();
-				if (form.uploadedFiles.length && !isEdit) {
-					form.uploadedFiles.map((file) => handleDeleteFile(file.id));
-				}
-				if (form.uploadedCoverImage.length && !isEdit) {
-					form.uploadedCoverImage.map((file) => handleDeleteFile2(file.id));
-				}
-			}}
-			title={title}
-			disableDropdown={disableDropdown}
-			handlePreview={() => {
-				handlePreviewEscape();
-			}}
-			preview={previewBool}
-			previewRef={previewRef}
-			media={true}
-		>
-			<LoadingOverlay active={isLoadingUploadMedia} spinner={<PrimaryLoader />}>
-				<Slide in={true} direction='up' {...{ timeout: 400 }}>
-					<div
-						ref={loadingRef}
-						className={`${
-							previewFile != null
-								? globalClasses.previewContentWrapper
-								: globalClasses.contentWrapper
-						}`}
-					>
-						{specificMediaStatus.specificMediaStatus === 'loading' ? (
-							<PrimaryLoader />
-						) : (
-							<></>
-						)}
+		<>
+			<Slider
+				open={open}
+				handleClose={() => {
+					handleClose();
+					if (form.uploadedFiles.length && !isEdit) {
+						form.uploadedFiles.map((file) => handleDeleteFile(file.id));
+					}
+					if (form.uploadedCoverImage.length && !isEdit) {
+						form.uploadedCoverImage.map((file) => handleDeleteFile2(file.id));
+					}
+				}}
+				title={title}
+				disableDropdown={disableDropdown}
+				handlePreview={() => {
+					handlePreviewEscape();
+				}}
+				preview={previewBool}
+				previewRef={previewRef}
+				media={true}
+				dialogRef={dialogWrapper}
+			>
+				<LoadingOverlay
+					active={isLoadingUploadMedia}
+					spinner={<PrimaryLoader />}
+				>
+					<Slide in={true} direction='up' {...{ timeout: 400 }}>
 						<div
-							className={globalClasses.contentWrapperNoPreview}
-							style={{ width: previewFile != null ? '60%' : 'auto' }}
+							ref={loadingRef}
+							className={`${
+								previewFile != null
+									? globalClasses.previewContentWrapper
+									: globalClasses.contentWrapper
+							}`}
 						>
-							<div>
-								<h5>{heading1}</h5>
-								<div className={classes.categoryContainer}>
-									<div className={classes.mainCategory}>
-										<h6
-											className={[
-												isError.mainCategory
-													? globalClasses.errorState
-													: globalClasses.noErrorState
-											].join(' ')}
-										>
-											MAIN CATEGORY
-										</h6>
-										<Select
-											onOpen={() => {
-												setDisableDropdown(false);
-											}}
-											onClose={() => {
-												setDisableDropdown(true);
-											}}
-											disabled={isEdit && status === 'published' ? true : false}
-											style={{
-												backgroundColor:
+							{specificMediaStatus.specificMediaStatus === 'loading' ? (
+								<PrimaryLoader />
+							) : (
+								<></>
+							)}
+							<div
+								className={globalClasses.contentWrapperNoPreview}
+								style={{ width: previewFile != null ? '60%' : 'auto' }}
+							>
+								<div>
+									<h5>{heading1}</h5>
+									<div className={classes.categoryContainer}>
+										<div className={classes.mainCategory}>
+											<h6
+												className={[
+													isError.mainCategory
+														? globalClasses.errorState
+														: globalClasses.noErrorState
+												].join(' ')}
+											>
+												MAIN CATEGORY
+											</h6>
+											<Select
+												onOpen={() => {
+													setDisableDropdown(false);
+												}}
+												onClose={() => {
+													setDisableDropdown(true);
+												}}
+												disabled={
+													isEdit && status === 'published' ? true : false
+												}
+												style={{
+													backgroundColor:
+														isEdit && status === 'published'
+															? '#404040'
+															: '#000000'
+												}}
+												value={
+													isEdit ? form.mainCategory : form.mainCategory?.name
+												}
+												onChange={(e) => {
+													setDisableDropdown(true);
+													mainCategoryId(e.target.value);
+													if (form.uploadedFiles.length) {
+														form.uploadedFiles.map((file) =>
+															handleDeleteFile(file.id)
+														);
+													}
+													if (isEdit) {
+														setForm((prev) => {
+															return { ...prev, subCategory: '' };
+														});
+													}
+												}}
+												className={`${classes.select} ${
 													isEdit && status === 'published'
-														? '#404040'
-														: '#000000'
-											}}
-											value={
-												isEdit ? form.mainCategory : form.mainCategory?.name
-											}
-											onChange={(e) => {
-												setDisableDropdown(true);
-												mainCategoryId(e.target.value);
-												if (form.uploadedFiles.length) {
-													form.uploadedFiles.map((file) =>
-														handleDeleteFile(file.id)
+														? `${classes.isEditSelect}`
+														: ''
+												}`}
+												disableUnderline={true}
+												IconComponent={(props) => (
+													<KeyboardArrowDownIcon
+														{...props}
+														style={{
+															display:
+																isEdit && status === 'published'
+																	? 'none'
+																	: 'block',
+															top: '4'
+														}}
+													/>
+												)}
+												MenuProps={{
+													anchorOrigin: {
+														vertical: 'bottom',
+														horizontal: 'left'
+													},
+													transformOrigin: {
+														vertical: 'top',
+														horizontal: 'left'
+													},
+													getContentAnchorEl: null
+												}}
+												displayEmpty={true}
+												renderValue={(value) => {
+													return value ? value?.name || value : 'Please Select';
+												}}
+											>
+												{mainCategories.map((category, index) => {
+													return (
+														<MenuItem key={index} value={category.name}>
+															{category.name}
+														</MenuItem>
 													);
+												})}
+											</Select>
+											<div className={classes.catergoryErrorContainer}>
+												<p className={globalClasses.uploadMediaError}>
+													{isError.mainCategory
+														? 'You need to select main category'
+														: ''}
+												</p>
+											</div>
+										</div>
+										<div className={classes.subCategory}>
+											<h6
+												className={[
+													isError.subCategory && form.mainCategory
+														? globalClasses.errorState
+														: globalClasses.noErrorState
+												].join(' ')}
+											>
+												SUB CATEGORY
+											</h6>
+											<Select
+												onOpen={() => {
+													setDisableDropdown(false);
+												}}
+												onClose={() => {
+													setDisableDropdown(true);
+												}}
+												disabled={
+													!form.mainCategory ||
+													(isEdit && status === 'published')
+														? true
+														: false
 												}
-												if (isEdit) {
-													setForm((prev) => {
-														return { ...prev, subCategory: '' };
-													});
+												style={{
+													backgroundColor:
+														isEdit && status === 'published'
+															? '#404040'
+															: '#000000'
+												}}
+												value={
+													isEdit
+														? form.subCategory
+														: form.subCategory?.name || form.subCategory
 												}
-											}}
-											className={`${classes.select} ${
-												isEdit && status === 'published'
-													? `${classes.isEditSelect}`
-													: ''
-											}`}
-											disableUnderline={true}
-											IconComponent={(props) => (
-												<KeyboardArrowDownIcon
-													{...props}
-													style={{
-														display:
-															isEdit && status === 'published'
-																? 'none'
-																: 'block',
-														top: '4'
-													}}
-												/>
-											)}
-											MenuProps={{
-												anchorOrigin: {
-													vertical: 'bottom',
-													horizontal: 'left'
-												},
-												transformOrigin: {
-													vertical: 'top',
-													horizontal: 'left'
-												},
-												getContentAnchorEl: null
-											}}
-											displayEmpty={true}
-											renderValue={(value) => {
-												return value ? value?.name || value : 'Please Select';
-											}}
-										>
-											{mainCategories.map((category, index) => {
-												return (
-													<MenuItem key={index} value={category.name}>
-														{category.name}
-													</MenuItem>
-												);
-											})}
-										</Select>
-										<div className={classes.catergoryErrorContainer}>
+												onChange={(e) => {
+													setDisableDropdown(true);
+													SubCategoryId(e.target.value);
+												}}
+												className={`${classes.select} ${
+													isEdit && status === 'published'
+														? `${classes.isEditSelect}`
+														: ''
+												}`}
+												disableUnderline={true}
+												IconComponent={(props) => (
+													<KeyboardArrowDownIcon
+														{...props}
+														style={{
+															display:
+																isEdit && status === 'published'
+																	? 'none'
+																	: 'block',
+															top: '4'
+														}}
+													/>
+												)}
+												MenuProps={{
+													anchorOrigin: {
+														vertical: 'bottom',
+														horizontal: 'left'
+													},
+													transformOrigin: {
+														vertical: 'top',
+														horizontal: 'left'
+													},
+													getContentAnchorEl: null
+												}}
+												displayEmpty={form.mainCategory ? true : false}
+												renderValue={
+													(value) => {
+														return value
+															? value?.name || value
+															: 'Please Select';
+													}
+													// value?.length
+													// 	? Array.isArray(value)
+													// 		? value.join(', ')
+													// 		: value?.name || value
+													// 	: 'Please Select'
+												}
+											>
+												{subCategories.map((category, index) => {
+													return (
+														<MenuItem key={index} value={category.name}>
+															{category.name}
+														</MenuItem>
+													);
+												})}
+											</Select>
 											<p className={globalClasses.uploadMediaError}>
-												{isError.mainCategory
-													? 'You need to select main category'
+												{isEdit && status === 'published'
+													? ' '
+													: form.mainCategory?.name || form.mainCategory
+													? isError.subCategory &&
+													  'You need to select sub category'
 													: ''}
+												{/* {} */}
 											</p>
 										</div>
 									</div>
-									<div className={classes.subCategory}>
-										<h6
-											className={[
-												isError.subCategory && form.mainCategory
-													? globalClasses.errorState
-													: globalClasses.noErrorState
-											].join(' ')}
-										>
-											SUB CATEGORY
-										</h6>
-										<Select
-											onOpen={() => {
-												setDisableDropdown(false);
-											}}
-											onClose={() => {
-												setDisableDropdown(true);
-											}}
-											disabled={
-												!form.mainCategory || (isEdit && status === 'published')
-													? true
-													: false
-											}
-											style={{
-												backgroundColor:
-													isEdit && status === 'published'
-														? '#404040'
-														: '#000000'
-											}}
-											value={
-												isEdit
-													? form.subCategory
-													: form.subCategory?.name || form.subCategory
-											}
-											onChange={(e) => {
-												setDisableDropdown(true);
-												SubCategoryId(e.target.value);
-											}}
-											className={`${classes.select} ${
-												isEdit && status === 'published'
-													? `${classes.isEditSelect}`
-													: ''
-											}`}
-											disableUnderline={true}
-											IconComponent={(props) => (
-												<KeyboardArrowDownIcon
-													{...props}
+
+									{(form.mainCategory && form.subCategory?.name) || isEdit ? (
+										<>
+											{form.mainCategory.name === 'Watch' ? (
+												<div className={globalClasses.explanationWrapper}>
+													<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
+													<Tooltip
+														TransitionComponent={Fade}
+														TransitionProps={{ timeout: 800 }}
+														title='Default encoding for videos should be H.264'
+														arrow
+														componentsProps={{
+															tooltip: { className: globalClasses.toolTip },
+															arrow: { className: globalClasses.toolTipArrow }
+														}}
+														placement='bottom-start'
+													>
+														<Info
+															style={{ cursor: 'pointer', marginLeft: '1rem' }}
+														/>
+													</Tooltip>
+												</div>
+											) : (
+												<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
+											)}
+
+											<DragAndDropField
+												uploadedFiles={form.uploadedFiles}
+												isEdit={isEdit}
+												handleDeleteFile={handleDeleteFile}
+												setPreviewBool={setPreviewBool}
+												setPreviewFile={setPreviewFile}
+												isMedia
+												videoRef={videoRef}
+												onLoadedVideodata={() => {
+													setFileWidth(videoRef?.current?.videoWidth);
+													setFileHeight(videoRef?.current?.videoHeight);
+													setFileDuration(videoRef?.current?.duration);
+												}}
+												onLoadedAudiodata={() => {
+													setFileDuration(videoRef?.current?.duration);
+												}}
+											/>
+											{!form.uploadedFiles.length && (
+												<section
+													className={[
+														globalClasses.dropZoneContainer,
+														isError.uploadedFiles
+															? globalClasses.errorState
+															: globalClasses.noErrorState
+													].join(' ')}
 													style={{
-														display:
-															isEdit && status === 'published'
-																? 'none'
-																: 'block',
-														top: '4'
+														borderColor: isError.uploadedFiles
+															? '#ff355a'
+															: 'yellow'
+													}}
+												>
+													<div
+														{...getRootProps({
+															className: globalClasses.dropzone
+														})}
+													>
+														<input {...getInputProps()} />
+														<AddCircleOutlineIcon
+															className={globalClasses.addFilesIcon}
+														/>
+														<p className={globalClasses.dragMsg}>
+															Click or drag file to this area to upload
+														</p>
+														<p className={globalClasses.formatMsg}>
+															{form.mainCategory?.name === 'Watch' ||
+															form.mainCategory === 'Watch'
+																? 'Supported format is mp4'
+																: 'Supported format is mp3'}
+														</p>
+														<p className={globalClasses.uploadMediaError}>
+															{isError.uploadedFiles
+																? 'You need to upload a media in order to post'
+																: ''}
+														</p>
+													</div>
+												</section>
+											)}
+
+											<p className={globalClasses.fileRejectionError}>
+												{fileRejectionError}
+											</p>
+											<div className={globalClasses.dropBoxUrlContainer}>
+												<h6>DROPBOX URL</h6>
+												<TextField
+													value={form.media_dropbox_url}
+													onChange={(e) =>
+														setForm((prev) => {
+															return {
+																...prev,
+																media_dropbox_url: e.target.value
+															};
+														})
+													}
+													multiline
+													maxRows={2}
+													placeholder={'Please drop the dropbox URL here'}
+													className={globalClasses.textField}
+													InputProps={{
+														disableUnderline: true,
+														className: classes.textFieldInput,
+														style: {
+															borderRadius: form.media_dropbox_url
+																? '16px'
+																: '40px'
+														}
 													}}
 												/>
-											)}
-											MenuProps={{
-												anchorOrigin: {
-													vertical: 'bottom',
-													horizontal: 'left'
-												},
-												transformOrigin: {
-													vertical: 'top',
-													horizontal: 'left'
-												},
-												getContentAnchorEl: null
-											}}
-											displayEmpty={form.mainCategory ? true : false}
-											renderValue={
-												(value) => {
-													return value ? value?.name || value : 'Please Select';
-												}
-												// value?.length
-												// 	? Array.isArray(value)
-												// 		? value.join(', ')
-												// 		: value?.name || value
-												// 	: 'Please Select'
-											}
-										>
-											{subCategories.map((category, index) => {
-												return (
-													<MenuItem key={index} value={category.name}>
-														{category.name}
-													</MenuItem>
-												);
-											})}
-										</Select>
-										<p className={globalClasses.uploadMediaError}>
-											{isEdit && status === 'published'
-												? ' '
-												: form.mainCategory?.name || form.mainCategory
-												? isError.subCategory &&
-												  'You need to select sub category'
-												: ''}
-											{/* {} */}
-										</p>
-									</div>
-								</div>
-
-								{(form.mainCategory && form.subCategory?.name) || isEdit ? (
-									<>
-										{form.mainCategory.name === 'Watch' ? (
-											<div className={globalClasses.explanationWrapper}>
-												<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
-												<Tooltip
-													TransitionComponent={Fade}
-													TransitionProps={{ timeout: 800 }}
-													title='Default encoding for videos should be H.264'
-													arrow
-													componentsProps={{
-														tooltip: { className: globalClasses.toolTip },
-														arrow: { className: globalClasses.toolTipArrow }
-													}}
-													placement='bottom-start'
-												>
-													<Info
-														style={{ cursor: 'pointer', marginLeft: '1rem' }}
-													/>
-												</Tooltip>
 											</div>
-										) : (
-											<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
-										)}
 
-										<DragAndDropField
-											uploadedFiles={form.uploadedFiles}
-											isEdit={isEdit}
-											handleDeleteFile={handleDeleteFile}
-											setPreviewBool={setPreviewBool}
-											setPreviewFile={setPreviewFile}
-											isMedia
-											videoRef={videoRef}
-											onLoadedVideodata={() => {
-												setFileWidth(videoRef?.current?.videoWidth);
-												setFileHeight(videoRef?.current?.videoHeight);
-												setFileDuration(videoRef?.current?.duration);
-											}}
-											onLoadedAudiodata={() => {
-												setFileDuration(videoRef?.current?.duration);
-											}}
-										/>
-										{!form.uploadedFiles.length && (
-											<section
-												className={[
-													globalClasses.dropZoneContainer,
-													isError.uploadedFiles
-														? globalClasses.errorState
-														: globalClasses.noErrorState
-												].join(' ')}
-												style={{
-													borderColor: isError.uploadedFiles
-														? '#ff355a'
-														: 'yellow'
-												}}
-											>
-												<div
-													{...getRootProps({
-														className: globalClasses.dropzone
-													})}
-												>
-													<input {...getInputProps()} />
-													<AddCircleOutlineIcon
-														className={globalClasses.addFilesIcon}
-													/>
-													<p className={globalClasses.dragMsg}>
-														Click or drag file to this area to upload
-													</p>
-													<p className={globalClasses.formatMsg}>
-														{form.mainCategory?.name === 'Watch' ||
-														form.mainCategory === 'Watch'
-															? 'Supported format is mp4'
-															: 'Supported format is mp3'}
-													</p>
-													<p className={globalClasses.uploadMediaError}>
-														{isError.uploadedFiles
-															? 'You need to upload a media in order to post'
-															: ''}
-													</p>
-												</div>
-											</section>
-										)}
-
-										<p className={globalClasses.fileRejectionError}>
-											{fileRejectionError}
-										</p>
-										<div className={globalClasses.dropBoxUrlContainer}>
-											<h6>DROPBOX URL</h6>
-											<TextField
-												value={form.media_dropbox_url}
-												onChange={(e) =>
-													setForm((prev) => {
-														return {
-															...prev,
-															media_dropbox_url: e.target.value
-														};
-													})
-												}
-												multiline
-												maxRows={2}
-												placeholder={'Please drop the dropbox URL here'}
-												className={globalClasses.textField}
-												InputProps={{
-													disableUnderline: true,
-													className: classes.textFieldInput,
-													style: {
-														borderRadius: form.media_dropbox_url
-															? '16px'
-															: '40px'
-													}
+											<h5>{isEdit ? 'Cover Image' : 'Add Cover Image'}</h5>
+											<DragAndDropField
+												uploadedFiles={form.uploadedCoverImage}
+												isEdit={isEdit}
+												handleDeleteFile={handleDeleteFile2}
+												setPreviewBool={setPreviewBool}
+												setPreviewFile={setPreviewFile}
+												isArticle
+												imgEl={imgRef}
+												imageOnload={() => {
+													setFileWidth(imgRef.current.naturalWidth);
+													setFileHeight(imgRef.current.naturalHeight);
 												}}
 											/>
-										</div>
-
-										<h5>{isEdit ? 'Cover Image' : 'Add Cover Image'}</h5>
-										<DragAndDropField
-											uploadedFiles={form.uploadedCoverImage}
-											isEdit={isEdit}
-											handleDeleteFile={handleDeleteFile2}
-											setPreviewBool={setPreviewBool}
-											setPreviewFile={setPreviewFile}
-											isArticle
-											imgEl={imgRef}
-											imageOnload={() => {
-												setFileWidth(imgRef.current.naturalWidth);
-												setFileHeight(imgRef.current.naturalHeight);
-											}}
-										/>
-										{!form.uploadedCoverImage.length && (
-											<section
-												className={[
-													globalClasses.dropZoneContainer,
-													isError.uploadedCoverImage
-														? globalClasses.errorState
-														: globalClasses.noErrorState
-												].join(' ')}
-												style={{
-													borderColor: isError.uploadedCoverImage
-														? '#ff355a'
-														: 'yellow'
-												}}
-											>
-												<div
-													{...getRootProps2({
-														className: globalClasses.dropzone
-													})}
+											{!form.uploadedCoverImage.length && (
+												<section
+													className={[
+														globalClasses.dropZoneContainer,
+														isError.uploadedCoverImage
+															? globalClasses.errorState
+															: globalClasses.noErrorState
+													].join(' ')}
+													style={{
+														borderColor: isError.uploadedCoverImage
+															? '#ff355a'
+															: 'yellow'
+													}}
 												>
-													<input {...getInputProps2()} />
-													<AddCircleOutlineIcon
-														className={globalClasses.addFilesIcon}
-													/>
-													<p className={globalClasses.dragMsg}>
-														Click or drag file to this area to upload
-													</p>
-													<p className={globalClasses.formatMsg}>
-														Supported formats are jpeg, png
-													</p>
-													<p className={globalClasses.uploadMediaError}>
-														{isError.uploadedCoverImage
-															? 'You need to upload a cover image in order to post'
-															: ''}
-													</p>
-												</div>
-											</section>
-										)}
+													<div
+														{...getRootProps2({
+															className: globalClasses.dropzone
+														})}
+													>
+														<input {...getInputProps2()} />
+														<AddCircleOutlineIcon
+															className={globalClasses.addFilesIcon}
+														/>
+														<p className={globalClasses.dragMsg}>
+															Click or drag file to this area to upload
+														</p>
+														<p className={globalClasses.formatMsg}>
+															Supported formats are jpeg, png
+														</p>
+														<p className={globalClasses.uploadMediaError}>
+															{isError.uploadedCoverImage
+																? 'You need to upload a cover image in order to post'
+																: ''}
+														</p>
+													</div>
+												</section>
+											)}
 
-										<p className={globalClasses.fileRejectionError}>
-											{fileRejectionError2}
-										</p>
-										<div className={globalClasses.dropBoxUrlContainer}>
-											<h6>DROPBOX URL</h6>
-											<TextField
-												value={form.image_dropbox_url}
-												onChange={(e) =>
-													setForm((prev) => {
-														return {
-															...prev,
-															image_dropbox_url: e.target.value
-														};
-													})
-												}
-												placeholder={'Please drop the dropbox URL here'}
-												className={globalClasses.textField}
-												InputProps={{
-													disableUnderline: true,
-													className: classes.textFieldInput,
-													style: {
-														borderRadius: form.image_dropbox_url
-															? '16px'
-															: '40px'
+											<p className={globalClasses.fileRejectionError}>
+												{fileRejectionError2}
+											</p>
+											<div className={globalClasses.dropBoxUrlContainer}>
+												<h6>DROPBOX URL</h6>
+												<TextField
+													value={form.image_dropbox_url}
+													onChange={(e) =>
+														setForm((prev) => {
+															return {
+																...prev,
+																image_dropbox_url: e.target.value
+															};
+														})
 													}
-												}}
-											/>
-										</div>
+													placeholder={'Please drop the dropbox URL here'}
+													className={globalClasses.textField}
+													InputProps={{
+														disableUnderline: true,
+														className: classes.textFieldInput,
+														style: {
+															borderRadius: form.image_dropbox_url
+																? '16px'
+																: '40px'
+														}
+													}}
+												/>
+											</div>
 
-										<div className={classes.titleContainer}>
-											<div className={globalClasses.characterCount}>
+											<div className={classes.titleContainer}>
+												<div className={globalClasses.characterCount}>
+													<h6
+														className={[
+															isError.titleMedia
+																? globalClasses.errorState
+																: globalClasses.noErrorState
+														].join(' ')}
+													>
+														TITLE
+													</h6>
+													<h6
+														style={{
+															color:
+																form.title?.length >= 38 &&
+																form.title?.length <= 42
+																	? 'pink'
+																	: form.title?.length === 43
+																	? 'red'
+																	: 'white'
+														}}
+													>
+														{form.title?.length}/43
+													</h6>
+												</div>
+												<TextField
+													value={form.title}
+													onChange={(e) =>
+														setForm((prev) => {
+															return {
+																...prev,
+																title: e.target.value
+															};
+														})
+													}
+													placeholder={'Please write your title here'}
+													className={globalClasses.textField}
+													InputProps={{
+														disableUnderline: true,
+														className: classes.textFieldInput
+													}}
+													inputProps={{ maxLength: 43 }}
+													multiline
+													maxRows={2}
+												/>
+											</div>
+											<p className={globalClasses.mediaError}>
+												{isError.titleMedia ? isError.titleMedia.message : ''}
+											</p>
+
+											<div className={classes.titleContainer}>
 												<h6
 													className={[
-														isError.titleMedia
+														isError.selectedLabels
 															? globalClasses.errorState
 															: globalClasses.noErrorState
 													].join(' ')}
 												>
-													TITLE
+													LABELS
 												</h6>
-												<h6
-													style={{
-														color:
-															form.title?.length >= 38 &&
-															form.title?.length <= 42
-																? 'pink'
-																: form.title?.length === 43
-																? 'red'
-																: 'white'
+												<Labels
+													isEdit={isEdit}
+													setDisableDropdown={setDisableDropdown}
+													LabelsOptions={mediaLabels}
+													extraLabel={extraLabel}
+													handleChangeExtraLabel={handleChangeExtraLabel}
+													selectedLabels={form.labels}
+													setSelectedLabels={(newVal) => {
+														setForm((prev) => {
+															return { ...prev, labels: [...newVal] };
+														});
 													}}
-												>
-													{form.title?.length}/43
-												</h6>
+													draftStatus={status}
+												/>
 											</div>
-											<TextField
-												value={form.title}
-												onChange={(e) =>
-													setForm((prev) => {
-														return {
-															...prev,
-															title: e.target.value
-														};
-													})
-												}
-												placeholder={'Please write your title here'}
-												className={globalClasses.textField}
-												InputProps={{
-													disableUnderline: true,
-													className: classes.textFieldInput
-												}}
-												inputProps={{ maxLength: 43 }}
-												multiline
-												maxRows={2}
-											/>
-										</div>
-										<p className={globalClasses.mediaError}>
-											{isError.titleMedia ? isError.titleMedia.message : ''}
-										</p>
+											<p className={globalClasses.mediaError}>
+												{isError.selectedLabels
+													? `You need to add ${
+															7 - form.labels.length
+													  } more labels in order to upload media`
+													: isError.selectedLabelsDraft
+													? 'You need to select atleast 1 label to save as draft'
+													: ''}
+											</p>
 
-										<div className={classes.titleContainer}>
-											<h6
-												className={[
-													isError.selectedLabels
-														? globalClasses.errorState
-														: globalClasses.noErrorState
-												].join(' ')}
-											>
-												LABELS
-											</h6>
-											<Labels
-												isEdit={isEdit}
-												setDisableDropdown={setDisableDropdown}
-												LabelsOptions={mediaLabels}
-												extraLabel={extraLabel}
-												handleChangeExtraLabel={handleChangeExtraLabel}
-												selectedLabels={form.labels}
-												setSelectedLabels={(newVal) => {
-													setForm((prev) => {
-														return { ...prev, labels: [...newVal] };
-													});
-												}}
-												draftStatus={status}
-											/>
-										</div>
-										<p className={globalClasses.mediaError}>
-											{isError.selectedLabels
-												? `You need to add ${
-														7 - form.labels.length
-												  } more labels in order to upload media`
-												: isError.selectedLabelsDraft
-												? 'You need to select atleast 1 label to save as draft'
-												: ''}
-										</p>
+											<div className={classes.titleContainer}>
+												<h6
+													className={[
+														isError.description
+															? globalClasses.errorState
+															: globalClasses.noErrorState
+													].join(' ')}
+												>
+													DESCRIPTION
+												</h6>
+												<TextField
+													value={form.description}
+													onChange={(e) =>
+														setForm((prev) => {
+															return {
+																...prev,
+																description: e.target.value
+															};
+														})
+													}
+													placeholder={'Please write your description here'}
+													className={globalClasses.textField}
+													InputProps={{
+														disableUnderline: true,
+														className: classes.textFieldInput,
+														style: {
+															borderRadius: form.description ? '16px' : '40px'
+														}
+													}}
+													multiline
+													maxRows={4}
+												/>
+											</div>
+											<p className={globalClasses.mediaError}>
+												{isError.description
+													? 'You need to enter a Description'
+													: ''}
+											</p>
+										</>
+									) : (
+										<></>
+									)}
+								</div>
 
-										<div className={classes.titleContainer}>
-											<h6
-												className={[
-													isError.description
-														? globalClasses.errorState
-														: globalClasses.noErrorState
-												].join(' ')}
-											>
-												DESCRIPTION
-											</h6>
-											<TextField
-												value={form.description}
-												onChange={(e) =>
-													setForm((prev) => {
-														return {
-															...prev,
-															description: e.target.value
-														};
-													})
-												}
-												placeholder={'Please write your description here'}
-												className={globalClasses.textField}
-												InputProps={{
-													disableUnderline: true,
-													className: classes.textFieldInput,
-													style: {
-														borderRadius: form.description ? '16px' : '40px'
+								<p className={globalClasses.mediaError}>
+									{isError.draftError
+										? 'Something needs to be changed to save a draft'
+										: ''}
+								</p>
+
+								<div className={classes.buttonDiv}>
+									{isEdit || (status === 'draft' && isEdit) ? (
+										<div className={classes.editBtn}>
+											<Button
+												disabled={false}
+												button2={isEdit ? true : false}
+												onClick={() => {
+													if (!deleteBtnStatus) {
+														toggleDeleteModal();
 													}
 												}}
-												multiline
-												maxRows={4}
-											/>
-										</div>
-										<p className={globalClasses.mediaError}>
-											{isError.description
-												? 'You need to enter a Description'
-												: ''}
-										</p>
-									</>
-								) : (
-									<></>
-								)}
-							</div>
-
-							<p className={globalClasses.mediaError}>
-								{isError.draftError
-									? 'Something needs to be changed to save a draft'
-									: ''}
-							</p>
-
-							<div className={classes.buttonDiv}>
-								{isEdit || (status === 'draft' && isEdit) ? (
-									<div className={classes.editBtn}>
-										<Button
-											disabled={false}
-											button2={isEdit ? true : false}
-											onClick={() => {
-												if (!deleteBtnStatus) {
-													deleteMedia(specificMedia?.id, status);
-												}
-											}}
-											text={'DELETE MEDIA'}
-										/>
-									</div>
-								) : (
-									<></>
-								)}
-
-								<div className={classes.publishDraftDiv}>
-									{status === 'draft' || !isEdit ? (
-										<div
-											className={
-												isEdit ? classes.draftBtnEdit : classes.draftBtn
-											}
-										>
-											<Button
-												disabledDraft={
-													isEdit ? draftBtnDisabled : !validateDraft(form)
-												}
-												onClick={() => saveDraftBtn()}
-												button3={true}
-												text={
-													status === 'draft' && isEdit
-														? 'SAVE DRAFT'
-														: 'SAVE AS DRAFT'
-												}
+												text={'DELETE MEDIA'}
 											/>
 										</div>
 									) : (
 										<></>
 									)}
 
-									<div
-										className={
-											isEdit && validateForm(form)
-												? classes.addMediaBtn
-												: isEdit
-												? classes.addMediaBtnEdit
-												: classes.addMediaBtn
-										}
-									>
-										<Button
-											disabled={
-												isEdit && validateForm(form) && status === 'draft'
-													? false
+									<div className={classes.publishDraftDiv}>
+										{status === 'draft' || !isEdit ? (
+											<div
+												className={
+													isEdit ? classes.draftBtnEdit : classes.draftBtn
+												}
+											>
+												<Button
+													disabledDraft={
+														isEdit ? draftBtnDisabled : !validateDraft(form)
+													}
+													onClick={() => saveDraftBtn()}
+													button3={true}
+													text={
+														status === 'draft' && isEdit
+															? 'SAVE DRAFT'
+															: 'SAVE AS DRAFT'
+													}
+												/>
+											</div>
+										) : (
+											<></>
+										)}
+
+										<div
+											className={
+												isEdit && validateForm(form)
+													? classes.addMediaBtn
 													: isEdit
-													? editBtnDisabled
-													: !validateForm(form)
+													? classes.addMediaBtnEdit
+													: classes.addMediaBtn
 											}
-											onClick={() => addSaveMediaBtn()}
-											button2AddSave={true}
-											text={buttonText}
-										/>
+										>
+											<Button
+												disabled={
+													isEdit && validateForm(form) && status === 'draft'
+														? false
+														: isEdit
+														? editBtnDisabled
+														: !validateForm(form)
+												}
+												onClick={() => addSaveMediaBtn()}
+												button2AddSave={true}
+												text={buttonText}
+											/>
+										</div>
 									</div>
 								</div>
 							</div>
+							{previewFile != null && (
+								<div
+									ref={previewRef}
+									className={globalClasses.previewComponent}
+								>
+									<div className={globalClasses.previewHeader}>
+										<Close
+											onClick={() => {
+												setPreviewBool(false);
+												setPreviewFile(null);
+											}}
+											className={globalClasses.closeIcon}
+										/>
+										<h5>Preview</h5>
+									</div>
+									<div>
+										<img
+											src={previewFile.media_url}
+											className={classes.previewFile}
+											style={{
+												width: `100%`,
+												height: `${8 * 4}rem`,
+												objectFit: 'contain',
+												objectPosition: 'center'
+											}}
+										/>
+									</div>
+								</div>
+							)}
 						</div>
-						{previewFile != null && (
-							<div ref={previewRef} className={globalClasses.previewComponent}>
-								<div className={globalClasses.previewHeader}>
-									<Close
-										onClick={() => {
-											setPreviewBool(false);
-											setPreviewFile(null);
-										}}
-										className={globalClasses.closeIcon}
-									/>
-									<h5>Preview</h5>
-								</div>
-								<div>
-									<img
-										src={previewFile.media_url}
-										className={classes.previewFile}
-										style={{
-											width: `100%`,
-											height: `${8 * 4}rem`,
-											objectFit: 'contain',
-											objectPosition: 'center'
-										}}
-									/>
-								</div>
-							</div>
-						)}
-					</div>
-				</Slide>
-			</LoadingOverlay>
-		</Slider>
+					</Slide>
+				</LoadingOverlay>
+			</Slider>
+			<DeleteModal
+				open={openDeletePopup}
+				toggle={toggleDeleteModal}
+				deleteBtn={() => {
+					deleteMedia(specificMedia?.id, status);
+				}}
+				text={'Media'}
+				wrapperRef={dialogWrapper}
+			/>
+		</>
 	);
 };
 

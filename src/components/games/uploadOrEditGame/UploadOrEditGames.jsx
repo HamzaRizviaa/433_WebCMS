@@ -21,7 +21,7 @@ import LoadingOverlay from 'react-loading-overlay';
 import InputAdornment from '@mui/material/InputAdornment';
 import Slide from '@mui/material/Slide';
 import { getAllGames } from '../../../pages/GamesLibrary/gamesLibrarySlice';
-
+import DeleteModal from '../../DeleteModal';
 import captureVideoFrame from 'capture-video-frame';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 import { ReactComponent as Timer } from '../../../assets/Timer.svg';
@@ -65,6 +65,7 @@ const UploadOreditArcade = ({
 	const [playStore2, setPlayStore2] = useState('');
 	const [appStore2, setAppStore2] = useState('');
 	const [isError, setIsError] = useState({});
+	const [openDeletePopup, setOpenDeletePopup] = useState(false);
 	const [form, setForm] = useState({
 		uploadedFiles: [],
 		uploadedExplanationOrIcon: [],
@@ -105,10 +106,11 @@ const UploadOreditArcade = ({
 
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
+	const dialogWrapper = useRef(null);
+	const loadingRef = useRef(null);
 	const gameExplanationOrientation = ['PORTRAIT', 'LANDSCAPE'];
 	const gameOrientationArray = ['PORTRAIT', 'LANDSCAPE'];
 	const arcadeType = ['Inside App', 'Outside App'];
-	const loadingRef = useRef(null);
 	const muiClasses = useStyles();
 	const classes = gameStyles();
 	const globalClasses = globalUseStyles();
@@ -144,6 +146,10 @@ const UploadOreditArcade = ({
 			let _type = type.split('/');
 			return _type && _type[1];
 		}
+	};
+
+	const toggleDeleteModal = () => {
+		setOpenDeletePopup(!openDeletePopup);
 	};
 	useEffect(() => {
 		if (specificGamesData) {
@@ -565,6 +571,7 @@ const UploadOreditArcade = ({
 			setDeleteBtnStatus(false);
 			console.log(e);
 		}
+		setOpenDeletePopup(!openDeletePopup);
 	};
 
 	const resetState = () => {
@@ -1050,1124 +1057,1137 @@ const UploadOreditArcade = ({
 	}, [specificGamesData, form]);
 
 	return (
-		<LoadingOverlay active={isLoadingcreateViral} spinner={<PrimaryLoader />}>
-			<Slide in={true} direction='up' {...{ timeout: 400 }}>
-				<div
-					ref={loadingRef}
-					className={`${
-						previewFile != null
-							? globalClasses.previewContentWrapper
-							: globalClasses.contentWrapper
-					}`}
-				>
-					{specificGameStatus === 'loading' ? <PrimaryLoader /> : <></>}
+		<>
+			<LoadingOverlay active={isLoadingcreateViral} spinner={<PrimaryLoader />}>
+				<Slide in={true} direction='up' {...{ timeout: 400 }}>
 					<div
-						className={globalClasses.contentWrapperNoPreview}
-						style={{ width: previewFile != null ? '60%' : 'auto' }}
+						ref={loadingRef}
+						className={`${
+							previewFile != null
+								? globalClasses.previewContentWrapper
+								: globalClasses.contentWrapper
+						}`}
 					>
-						<div>
-							<h5 className={classes.QuizQuestion}>{heading1}</h5>
-							<DragAndDropField
-								uploadedFiles={form?.uploadedFiles}
-								handleDeleteFile={handleDeleteFile}
-								setPreviewBool={setPreviewBool}
-								setPreviewFile={setPreviewFile}
-								isArticle
-								imgEl={imgRef}
-								imageOnload={() => {
-									setFileWidth(imgRef.current.naturalWidth);
-									setFileHeight(imgRef.current.naturalHeight);
-								}}
-							/>
-							{!form.uploadedFiles.length && (
-								<section
-									className={globalClasses.dropZoneContainer}
-									style={{
-										borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
-									}}
-								>
-									<div {...getRootProps({ className: globalClasses.dropzone })}>
-										<input {...getInputProps()} />
-										<AddCircleOutlineIcon
-											className={globalClasses.addFilesIcon}
-										/>
-										<p className={globalClasses.dragMsg}>
-											Click or drag file to this area to upload
-										</p>
-										<p className={globalClasses.formatMsg}>
-											Supported formats are jpeg and png
-										</p>
-										<p className={globalClasses.uploadMediaError}>
-											{isError.uploadedFiles
-												? 'You need to upload a media in order to post'
-												: ''}
-										</p>
-									</div>
-								</section>
-							)}
-							<p className={globalClasses.fileRejectionError}>
-								{fileRejectionError}
-							</p>
-
-							<div className={globalClasses.dropBoxUrlContainer}>
-								<h6>DROPBOX URL</h6>
-								<TextField
-									value={form?.dropbox_urls?.image}
-									onChange={(e) =>
-										setForm((prev) => {
-											return {
-												...prev,
-												dropbox_urls: {
-													...form.dropbox_urls,
-													image: e.target.value
-												}
-											};
-										})
-									}
-									placeholder={'Please drop the dropbox URL here'}
-									className={classes.textField}
-									multiline
-									maxRows={2}
-									InputProps={{
-										disableUnderline: true,
-										className: classes.textFieldInput,
-										style: {
-											borderRadius: form.dropbox_urls.image ? '16px' : '40px'
-										}
+						{specificGameStatus === 'loading' ? <PrimaryLoader /> : <></>}
+						<div
+							className={globalClasses.contentWrapperNoPreview}
+							style={{ width: previewFile != null ? '60%' : 'auto' }}
+						>
+							<div>
+								<h5 className={classes.QuizQuestion}>{heading1}</h5>
+								<DragAndDropField
+									uploadedFiles={form?.uploadedFiles}
+									handleDeleteFile={handleDeleteFile}
+									setPreviewBool={setPreviewBool}
+									setPreviewFile={setPreviewFile}
+									isArticle
+									imgEl={imgRef}
+									imageOnload={() => {
+										setFileWidth(imgRef.current.naturalWidth);
+										setFileHeight(imgRef.current.naturalHeight);
 									}}
 								/>
-							</div>
-
-							{type === 'jogo' ? (
-								<>
-									<div className={classes.explanationWrapper}>
-										<h5>Add Game Explanation Video</h5>
-										<Tooltip
-											TransitionComponent={Fade}
-											TransitionProps={{ timeout: 800 }}
-											title='Default encoding for videos should be H.264'
-											arrow
-											componentsProps={{
-												tooltip: { className: globalClasses.toolTip },
-												arrow: { className: globalClasses.toolTipArrow }
-											}}
-											placement='bottom'
+								{!form.uploadedFiles.length && (
+									<section
+										className={globalClasses.dropZoneContainer}
+										style={{
+											borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
+										}}
+									>
+										<div
+											{...getRootProps({ className: globalClasses.dropzone })}
 										>
-											<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
-										</Tooltip>
-									</div>
-									<div className={classes.titleContainer}>
+											<input {...getInputProps()} />
+											<AddCircleOutlineIcon
+												className={globalClasses.addFilesIcon}
+											/>
+											<p className={globalClasses.dragMsg}>
+												Click or drag file to this area to upload
+											</p>
+											<p className={globalClasses.formatMsg}>
+												Supported formats are jpeg and png
+											</p>
+											<p className={globalClasses.uploadMediaError}>
+												{isError.uploadedFiles
+													? 'You need to upload a media in order to post'
+													: ''}
+											</p>
+										</div>
+									</section>
+								)}
+								<p className={globalClasses.fileRejectionError}>
+									{fileRejectionError}
+								</p>
+
+								<div className={globalClasses.dropBoxUrlContainer}>
+									<h6>DROPBOX URL</h6>
+									<TextField
+										value={form?.dropbox_urls?.image}
+										onChange={(e) =>
+											setForm((prev) => {
+												return {
+													...prev,
+													dropbox_urls: {
+														...form.dropbox_urls,
+														image: e.target.value
+													}
+												};
+											})
+										}
+										placeholder={'Please drop the dropbox URL here'}
+										className={classes.textField}
+										multiline
+										maxRows={2}
+										InputProps={{
+											disableUnderline: true,
+											className: classes.textFieldInput,
+											style: {
+												borderRadius: form.dropbox_urls.image ? '16px' : '40px'
+											}
+										}}
+									/>
+								</div>
+
+								{type === 'jogo' ? (
+									<>
+										<div className={classes.explanationWrapper}>
+											<h5>Add Game Explanation Video</h5>
+											<Tooltip
+												TransitionComponent={Fade}
+												TransitionProps={{ timeout: 800 }}
+												title='Default encoding for videos should be H.264'
+												arrow
+												componentsProps={{
+													tooltip: { className: globalClasses.toolTip },
+													arrow: { className: globalClasses.toolTipArrow }
+												}}
+												placement='bottom'
+											>
+												<Info
+													style={{ cursor: 'pointer', marginLeft: '1rem' }}
+												/>
+											</Tooltip>
+										</div>
+										<div className={classes.titleContainer}>
+											<h6
+												className={
+													isError.videoOrientation
+														? globalClasses.errorState
+														: globalClasses.noErrorState
+												}
+											>
+												SELECT GAME EXPLANATION VIDEO ORIENTATION
+											</h6>
+											<Select
+												onOpen={() => {
+													setDisableDropdown(false);
+												}}
+												onClose={() => {
+													setDisableDropdown(true);
+												}}
+												disabled={false}
+												value={form?.orientation}
+												onChange={(e) =>
+													setForm((prev) => {
+														setDisableDropdown(true);
+														return { ...prev, orientation: e.target.value };
+													})
+												}
+												className={`${classes.select}`}
+												disableUnderline={true}
+												IconComponent={(props) => (
+													<KeyboardArrowDownIcon
+														{...props}
+														style={{
+															top: '4'
+														}}
+													/>
+												)}
+												MenuProps={{
+													anchorOrigin: {
+														vertical: 'bottom',
+														horizontal: 'left'
+													},
+													transformOrigin: {
+														vertical: 'top',
+														horizontal: 'left'
+													},
+													getContentAnchorEl: null,
+													classes: {
+														paper: muiClasses.paper
+													}
+												}}
+												inputProps={{
+													classes: {
+														root: videoOrientation
+															? muiClasses.input
+															: muiClasses.inputPlaceholder
+													}
+												}}
+												displayEmpty={true}
+												renderValue={(value) =>
+													value?.length
+														? Array.isArray(value)
+															? value.join(', ')
+															: value
+														: 'Please Select Orientation'
+												}
+											>
+												{gameExplanationOrientation.map(
+													(orientation, index) => {
+														return (
+															<MenuItem
+																key={index}
+																value={orientation}
+																style={{
+																	fontFamily: 'Poppins !important',
+																	fontSize: '14px'
+																}}
+															>
+																{orientation}
+															</MenuItem>
+														);
+													}
+												)}
+											</Select>
+										</div>
+										<p className={globalClasses.mediaError}>
+											{isError.videoOrientation
+												? 'You need to select video orientation in order to post'
+												: ''}
+										</p>
+									</>
+								) : (
+									<>
+										<div className={classes.QuizQuestion}>
+											<h5>Add Icon Image</h5>
+										</div>
+									</>
+								)}
+								<DragAndDropField
+									uploadedFiles={form?.uploadedExplanationOrIcon}
+									handleDeleteFile={handleDeleteFile2}
+									setPreviewBool={setPreviewBool}
+									setPreviewFile={setPreviewFile}
+									isPost
+									imgEl={videoRef}
+									videoRef={videoRef}
+									imageOnload={() => {
+										setFileWidth2(videoRef.current.naturalWidth);
+										setFileHeight2(videoRef.current.naturalHeight);
+									}}
+									onLoadedVideodata={() => {
+										setFileWidth2(videoRef.current.videoWidth);
+										setFileHeight2(videoRef.current.videoHeight);
+									}}
+								/>
+
+								{!form.uploadedExplanationOrIcon.length && (
+									<section
+										className={globalClasses.dropZoneContainer}
+										style={{
+											borderColor: isError.uploadedExplanationOrIcon
+												? '#ff355a'
+												: 'yellow'
+										}}
+									>
+										<div
+											{...getRootProps2({ className: globalClasses.dropzone })}
+										>
+											<input {...getInputProps2()} />
+											<AddCircleOutlineIcon
+												className={globalClasses.addFilesIcon}
+											/>
+											<p className={globalClasses.dragMsg}>
+												Click or drag file to this area to upload
+											</p>
+											<p className={globalClasses.formatMsg}>
+												Supported formats are{' '}
+												{type === 'jogo' ? 'mp4' : 'jpeg and png'}
+											</p>
+											<p className={globalClasses.uploadMediaError}>
+												{isError.uploadedExplanationOrIcon
+													? 'You need to upload a media in order to post'
+													: ''}
+											</p>
+										</div>
+									</section>
+								)}
+								<p className={globalClasses.fileRejectionError}>
+									{fileRejectionError2}
+								</p>
+
+								<div className={classes.titleContainer}>
+									<h6>DROPBOX URL</h6>
+									<TextField
+										value={
+											type === 'jogo'
+												? form?.dropbox_urls?.video
+												: form?.dropbox_urls?.icon
+										}
+										onChange={(e) =>
+											setForm((prev) => {
+												return {
+													...prev,
+													dropbox_urls: {
+														...form.dropbox_urls,
+														...(type === 'jogo'
+															? { video: e.target.value }
+															: { icon: e.target.value })
+													}
+												};
+											})
+										}
+										placeholder={'Please drop the dropbox URL here'}
+										className={classes.textField}
+										multiline
+										maxRows={2}
+										InputProps={{
+											disableUnderline: true,
+											className: classes.textFieldInput,
+											style: {
+												borderRadius:
+													form.dropbox_urls.video || form.dropbox_urls.video
+														? '16px'
+														: '40px'
+											}
+										}}
+									/>
+								</div>
+
+								<div className={classes.titleContainer}>
+									<div className={globalClasses.characterCount}>
 										<h6
 											className={
-												isError.videoOrientation
+												isError.titleGame
 													? globalClasses.errorState
 													: globalClasses.noErrorState
 											}
 										>
-											SELECT GAME EXPLANATION VIDEO ORIENTATION
+											TITLE
 										</h6>
-										<Select
-											onOpen={() => {
-												setDisableDropdown(false);
+										<h6
+											style={{
+												color:
+													form.title?.length >= 25 && form.title?.length <= 27
+														? 'pink'
+														: form.title?.length === 28
+														? 'red'
+														: 'white'
 											}}
-											onClose={() => {
-												setDisableDropdown(true);
-											}}
-											disabled={false}
-											value={form?.orientation}
-											onChange={(e) =>
-												setForm((prev) => {
-													setDisableDropdown(true);
-													return { ...prev, orientation: e.target.value };
-												})
-											}
-											className={`${classes.select}`}
-											disableUnderline={true}
-											IconComponent={(props) => (
-												<KeyboardArrowDownIcon
-													{...props}
-													style={{
-														top: '4'
-													}}
-												/>
-											)}
-											MenuProps={{
-												anchorOrigin: {
-													vertical: 'bottom',
-													horizontal: 'left'
-												},
-												transformOrigin: {
-													vertical: 'top',
-													horizontal: 'left'
-												},
-												getContentAnchorEl: null,
-												classes: {
-													paper: muiClasses.paper
-												}
-											}}
-											inputProps={{
-												classes: {
-													root: videoOrientation
-														? muiClasses.input
-														: muiClasses.inputPlaceholder
-												}
-											}}
-											displayEmpty={true}
-											renderValue={(value) =>
-												value?.length
-													? Array.isArray(value)
-														? value.join(', ')
-														: value
-													: 'Please Select Orientation'
+										>
+											{form.title?.length}/28
+										</h6>
+									</div>
+									<TextField
+										value={form?.title}
+										onChange={(e) =>
+											setForm((prev) => {
+												return { ...prev, title: e.target.value };
+											})
+										}
+										placeholder={'Please write your title here'}
+										className={classes.textField}
+										InputProps={{
+											disableUnderline: true,
+											className: classes.textFieldInput
+										}}
+										inputProps={{ maxLength: 28 }}
+										multiline
+										maxRows={2}
+									/>
+								</div>
+								<p className={globalClasses.mediaError}>
+									{isError.titleGame ? isError.titleGame.message : ''}
+								</p>
+
+								<div className={classes.titleContainer}>
+									<div className={globalClasses.characterCount}>
+										<h6
+											className={
+												isError.descriptionGame
+													? globalClasses.errorState
+													: globalClasses.noErrorState
 											}
 										>
-											{gameExplanationOrientation.map((orientation, index) => {
-												return (
-													<MenuItem
-														key={index}
-														value={orientation}
-														style={{
-															fontFamily: 'Poppins !important',
-															fontSize: '14px'
-														}}
-													>
-														{orientation}
-													</MenuItem>
-												);
-											})}
-										</Select>
+											GAME DESCRIPTION
+										</h6>
+										<h6
+											style={{
+												color:
+													form.description?.length >= 75 &&
+													form.description?.length <= 83
+														? 'pink'
+														: form.description?.length === 84
+														? 'red'
+														: 'white'
+											}}
+										>
+											{type === 'jogo' ? `${form.description?.length}/84` : ''}
+										</h6>
 									</div>
-									<p className={globalClasses.mediaError}>
-										{isError.videoOrientation
-											? 'You need to select video orientation in order to post'
-											: ''}
-									</p>
-								</>
-							) : (
-								<>
-									<div className={classes.QuizQuestion}>
-										<h5>Add Icon Image</h5>
-									</div>
-								</>
-							)}
-							<DragAndDropField
-								uploadedFiles={form?.uploadedExplanationOrIcon}
-								handleDeleteFile={handleDeleteFile2}
-								setPreviewBool={setPreviewBool}
-								setPreviewFile={setPreviewFile}
-								isPost
-								imgEl={videoRef}
-								videoRef={videoRef}
-								imageOnload={() => {
-									setFileWidth2(videoRef.current.naturalWidth);
-									setFileHeight2(videoRef.current.naturalHeight);
-								}}
-								onLoadedVideodata={() => {
-									setFileWidth2(videoRef.current.videoWidth);
-									setFileHeight2(videoRef.current.videoHeight);
-								}}
-							/>
+									<TextField
+										value={form?.description}
+										onChange={(e) =>
+											setForm((prev) => {
+												return { ...prev, description: e.target.value };
+											})
+										}
+										placeholder={'Please write your description here'}
+										className={classes.textField}
+										InputProps={{
+											disableUnderline: true,
+											className: classes.textFieldInput
+										}}
+										inputProps={{ maxLength: type === 'jogo' ? 84 : 524288 }}
+										multiline
+										maxRows={2}
+									/>
+								</div>
+								<p className={globalClasses.mediaError}>
+									{isError.descriptionGame
+										? 'You need to upload a description in order to post'
+										: ''}
+								</p>
 
-							{!form.uploadedExplanationOrIcon.length && (
-								<section
-									className={globalClasses.dropZoneContainer}
-									style={{
-										borderColor: isError.uploadedExplanationOrIcon
-											? '#ff355a'
-											: 'yellow'
-									}}
-								>
-									<div
-										{...getRootProps2({ className: globalClasses.dropzone })}
-									>
-										<input {...getInputProps2()} />
-										<AddCircleOutlineIcon
-											className={globalClasses.addFilesIcon}
-										/>
-										<p className={globalClasses.dragMsg}>
-											Click or drag file to this area to upload
-										</p>
-										<p className={globalClasses.formatMsg}>
-											Supported formats are{' '}
-											{type === 'jogo' ? 'mp4' : 'jpeg and png'}
-										</p>
-										<p className={globalClasses.uploadMediaError}>
-											{isError.uploadedExplanationOrIcon
-												? 'You need to upload a media in order to post'
+								{type === 'jogo' ? (
+									<>
+										<div className={classes.titleContainer}>
+											<h6
+												className={
+													isError.time
+														? globalClasses.errorState
+														: globalClasses.noErrorState
+												}
+											>
+												TIME
+											</h6>
+											<TextField
+												disabled={false}
+												value={form?.time}
+												onChange={(e) =>
+													setForm((prev) => {
+														return { ...prev, time: e.target.value };
+													})
+												}
+												placeholder={'Please write the game duration here'}
+												className={classes.textField}
+												InputProps={{
+													disableUnderline: true,
+													className: `${classes.textFieldInputStartAdornment}`,
+													startAdornment: (
+														<InputAdornment position='start'>
+															<Timer />
+														</InputAdornment>
+													)
+												}}
+												multiline
+												maxRows={2}
+											/>
+										</div>
+
+										<p className={globalClasses.mediaError}>
+											{isError.time
+												? 'You need to upload a time in order to post'
 												: ''}
 										</p>
-									</div>
-								</section>
-							)}
-							<p className={globalClasses.fileRejectionError}>
-								{fileRejectionError2}
-							</p>
 
-							<div className={classes.titleContainer}>
-								<h6>DROPBOX URL</h6>
-								<TextField
-									value={
-										type === 'jogo'
-											? form?.dropbox_urls?.video
-											: form?.dropbox_urls?.icon
-									}
-									onChange={(e) =>
-										setForm((prev) => {
-											return {
-												...prev,
-												dropbox_urls: {
-													...form.dropbox_urls,
-													...(type === 'jogo'
-														? { video: e.target.value }
-														: { icon: e.target.value })
+										<div className={classes.titleContainer}>
+											<h6
+												className={
+													isError.scoring
+														? globalClasses.errorState
+														: globalClasses.noErrorState
 												}
-											};
-										})
-									}
-									placeholder={'Please drop the dropbox URL here'}
-									className={classes.textField}
-									multiline
-									maxRows={2}
-									InputProps={{
-										disableUnderline: true,
-										className: classes.textFieldInput,
-										style: {
-											borderRadius:
-												form.dropbox_urls.video || form.dropbox_urls.video
-													? '16px'
-													: '40px'
-										}
-									}}
-								/>
+											>
+												SCORING
+											</h6>
+											<TextField
+												disabled={false}
+												value={form?.scoring}
+												onChange={(e) =>
+													setForm((prev) => {
+														return { ...prev, scoring: e.target.value };
+													})
+												}
+												placeholder={'Please write the game scoring here'}
+												className={classes.textField}
+												InputProps={{
+													disableUnderline: true,
+													className: `${classes.textFieldInputStartAdornment} `,
+													startAdornment: (
+														<InputAdornment position='start'>
+															<Scoring />
+														</InputAdornment>
+													)
+												}}
+												multiline
+												maxRows={1}
+											/>
+										</div>
+
+										<p className={globalClasses.mediaError}>
+											{isError.scoring
+												? 'You need to upload a scoring in order to post'
+												: ''}
+										</p>
+
+										<div className={classes.titleContainer}>
+											<h6
+												className={
+													isError.objective
+														? globalClasses.errorState
+														: globalClasses.noErrorState
+												}
+											>
+												OBJECTIVE
+											</h6>
+
+											<TextField
+												disabled={false}
+												value={form?.objective}
+												onChange={(e) =>
+													setForm((prev) => {
+														return { ...prev, objective: e.target.value };
+													})
+												}
+												placeholder={'Please write the game objective here'}
+												className={classes.textField}
+												InputProps={{
+													disableUnderline: true,
+													className: `${classes.textFieldInputStartAdornment} `,
+													startAdornment: (
+														<InputAdornment position='start'>
+															<Objective />
+														</InputAdornment>
+													)
+												}}
+												multiline
+												maxRows={1}
+											/>
+										</div>
+
+										<p className={globalClasses.mediaError}>
+											{isError.objective
+												? 'You need to upload an objective in order to post'
+												: ''}
+										</p>
+
+										<div className={classes.titleContainer}>
+											<h6
+												className={
+													isError.payload
+														? globalClasses.errorState
+														: globalClasses.noErrorState
+												}
+											>
+												PAYLOAD
+											</h6>
+
+											<TextField
+												disabled={false}
+												value={form?.payload}
+												onChange={(e) =>
+													setForm((prev) => {
+														return { ...prev, payload: e.target.value };
+													})
+												}
+												placeholder={'Please write the payload here'}
+												className={classes.textField}
+												InputProps={{
+													disableUnderline: true,
+													className: `${classes.textFieldInput}  `
+												}}
+												multiline
+												maxRows={2}
+											/>
+										</div>
+
+										<p className={globalClasses.mediaError}>
+											{isError.payload
+												? 'You need to upload a payload in order to post'
+												: ''}
+										</p>
+
+										<div className={classes.titleContainer}>
+											<h6
+												className={
+													isError.gameOrientation
+														? globalClasses.errorState
+														: globalClasses.noErrorState
+												}
+											>
+												SELECT GAME ORIENTATION
+											</h6>
+											<Select
+												onOpen={() => {
+													setDisableDropdown(false);
+												}}
+												onClose={() => {
+													setDisableDropdown(true);
+												}}
+												disabled={false}
+												value={form?.game_orientation}
+												onChange={(e) => {
+													setDisableDropdown(true);
+													setForm((prev) => {
+														return {
+															...prev,
+															game_orientation: e.target.value
+														};
+													});
+												}}
+												className={`${classes.select}`}
+												disableUnderline={true}
+												IconComponent={(props) => (
+													<KeyboardArrowDownIcon
+														{...props}
+														style={{
+															top: '4'
+														}}
+													/>
+												)}
+												MenuProps={{
+													anchorOrigin: {
+														vertical: 'bottom',
+														horizontal: 'left'
+													},
+													transformOrigin: {
+														vertical: 'top',
+														horizontal: 'left'
+													},
+													getContentAnchorEl: null,
+													classes: {
+														paper: muiClasses.paper
+													}
+												}}
+												inputProps={{
+													classes: {
+														root: gameOrientation
+															? muiClasses.input
+															: muiClasses.inputPlaceholder
+													}
+												}}
+												displayEmpty={true}
+												renderValue={(value) =>
+													value?.length
+														? Array.isArray(value)
+															? value.join(', ')
+															: value
+														: 'Please Select Game Orientation'
+												}
+											>
+												{gameOrientationArray.map((orientation, index) => {
+													return (
+														<MenuItem
+															key={index}
+															value={orientation}
+															style={{
+																fontFamily: 'Poppins !important',
+																fontSize: '14px'
+															}}
+														>
+															{orientation}
+														</MenuItem>
+													);
+												})}
+											</Select>
+										</div>
+										<p className={globalClasses.mediaError}>
+											{isError.gameOrientation
+												? 'You need to select game orientation in order to post'
+												: ''}
+										</p>
+									</>
+								) : (
+									<>
+										<div className={classes.titleContainer}>
+											<h6
+												className={
+													isError.arcadeGameType
+														? globalClasses.errorState
+														: globalClasses.noErrorState
+												}
+											>
+												ARCADE GAME TYPE
+											</h6>
+											<Select
+												onOpen={() => {
+													setDisableDropdown(false);
+												}}
+												onClose={() => {
+													setDisableDropdown(true);
+												}}
+												disabled={false}
+												value={form?.arcade_game_type}
+												onChange={(e) => {
+													setDisableDropdown(true);
+													setForm((prev) => {
+														return {
+															...prev,
+															arcade_game_type: e.target.value
+														};
+													});
+												}}
+												className={`${classes.select}`}
+												disableUnderline={true}
+												IconComponent={(props) => (
+													<KeyboardArrowDownIcon
+														{...props}
+														style={{
+															top: '4'
+														}}
+													/>
+												)}
+												MenuProps={{
+													anchorOrigin: {
+														vertical: 'bottom',
+														horizontal: 'left'
+													},
+													transformOrigin: {
+														vertical: 'top',
+														horizontal: 'left'
+													},
+													getContentAnchorEl: null,
+													classes: {
+														paper: muiClasses.paper
+													}
+												}}
+												inputProps={{
+													classes: {
+														root: arcadeGameType
+															? muiClasses.input
+															: muiClasses.inputPlaceholder
+													}
+												}}
+												displayEmpty={true}
+												renderValue={(value) =>
+													value?.length
+														? Array.isArray(value)
+															? value.join(', ')
+															: value
+														: 'Please Select Game Type'
+												}
+											>
+												{arcadeType.map((type, index) => {
+													return (
+														<MenuItem
+															key={index}
+															value={type}
+															style={{
+																fontFamily: 'Poppins !important',
+																fontSize: '14px'
+															}}
+														>
+															{type}
+														</MenuItem>
+													);
+												})}
+											</Select>
+										</div>
+										<p className={globalClasses.mediaError}>
+											{isError.arcadeGameType
+												? 'You need to select Arcade type in order to post'
+												: ''}
+										</p>
+
+										{form?.arcade_game_type === 'Outside App' ? (
+											<Slide in={true} direction='up' {...{ timeout: 400 }}>
+												<div>
+													<div className={classes.gameIDwrapper}>
+														<h5>Package ID</h5>
+													</div>
+													<div className={classes.titleContainer}>
+														<h6
+															className={
+																isError.android
+																	? globalClasses.errorState
+																	: globalClasses.noErrorState
+															}
+														>
+															ANDROID
+														</h6>
+														<TextField
+															value={form?.package_id?.android}
+															onChange={(e) =>
+																setForm((prev) => {
+																	return {
+																		...prev,
+																		package_id: {
+																			...form.package_id,
+																			android: e.target.value
+																		}
+																	};
+																})
+															}
+															placeholder={'Enter Andrioid'}
+															className={classes.textField}
+															multiline
+															maxRows={2}
+															InputProps={{
+																disableUnderline: true,
+																className: classes.textFieldInput,
+																style: {
+																	borderRadius: android ? '16px' : '40px'
+																}
+															}}
+														/>
+													</div>
+													<p className={globalClasses.mediaError}>
+														{isError.android
+															? 'You need to upload android in order to post'
+															: ''}
+													</p>
+													<div className={classes.titleContainer}>
+														<h6
+															className={
+																isError.ios
+																	? globalClasses.errorState
+																	: globalClasses.noErrorState
+															}
+														>
+															IOS
+														</h6>
+														<TextField
+															value={form?.package_id?.ios}
+															onChange={(e) =>
+																setForm((prev) => {
+																	return {
+																		...prev,
+																		package_id: {
+																			...form.package_id,
+																			ios: e.target.value
+																		}
+																	};
+																})
+															}
+															placeholder={'Enter IOS'}
+															className={classes.textField}
+															multiline
+															maxRows={2}
+															InputProps={{
+																disableUnderline: true,
+																className: classes.textFieldInput,
+																style: {
+																	borderRadius: ios ? '16px' : '40px'
+																}
+															}}
+														/>
+													</div>
+													<p className={globalClasses.mediaError}>
+														{isError.ios
+															? 'You need to upload IOS in order to post'
+															: ''}
+													</p>
+
+													<div className={classes.gameIDwrapper}>
+														<h5>Store URL</h5>
+													</div>
+													<div className={classes.titleContainer}>
+														<h6
+															className={
+																isError.playStore
+																	? globalClasses.errorState
+																	: globalClasses.noErrorState
+															}
+														>
+															PLAY STORE
+														</h6>
+														<TextField
+															value={form?.store_url?.play_store}
+															onChange={(e) =>
+																setForm((prev) => {
+																	return {
+																		...prev,
+																		store_url: {
+																			...form.store_url,
+																			play_store: e.target.value
+																		}
+																	};
+																})
+															}
+															placeholder={'Enter PLAY STORE'}
+															className={classes.textField}
+															multiline
+															maxRows={2}
+															InputProps={{
+																disableUnderline: true,
+																className: classes.textFieldInput,
+																style: {
+																	borderRadius: playStore ? '16px' : '40px'
+																}
+															}}
+														/>
+													</div>
+													<p className={globalClasses.mediaError}>
+														{isError.playStore
+															? 'You need to upload playStore in order to post'
+															: ''}
+													</p>
+													<div className={classes.titleContainer}>
+														<h6
+															className={
+																isError.appStore
+																	? globalClasses.errorState
+																	: globalClasses.noErrorState
+															}
+														>
+															APP STORE
+														</h6>
+														<TextField
+															value={form?.store_url?.apple_store}
+															onChange={(e) =>
+																setForm((prev) => {
+																	return {
+																		...prev,
+																		store_url: {
+																			...form.store_url,
+																			apple_store: e.target.value
+																		}
+																	};
+																})
+															}
+															placeholder={'Enter APP STORE'}
+															className={classes.textField}
+															multiline
+															maxRows={2}
+															InputProps={{
+																disableUnderline: true,
+																className: classes.textFieldInput,
+																style: {
+																	borderRadius: appStore ? '16px' : '40px'
+																}
+															}}
+														/>
+													</div>
+													<p className={globalClasses.mediaError}>
+														{isError.appStore
+															? 'You need to upload appStore in order to post'
+															: ''}
+													</p>
+
+													<div className={classes.gameIDwrapper}>
+														<h5>Deep Link</h5>
+													</div>
+													<div className={classes.titleContainer}>
+														<h6
+															className={
+																isError.playStore2
+																	? globalClasses.errorState
+																	: globalClasses.noErrorState
+															}
+														>
+															PLAY STORE
+														</h6>
+														<TextField
+															value={form?.deep_link?.android}
+															onChange={(e) =>
+																setForm((prev) => {
+																	return {
+																		...prev,
+																		deep_link: {
+																			...form.deep_link,
+																			android: e.target.value
+																		}
+																	};
+																})
+															}
+															placeholder={'Enter PLAY STORE'}
+															className={classes.textField}
+															multiline
+															maxRows={2}
+															InputProps={{
+																disableUnderline: true,
+																className: classes.textFieldInput,
+																style: {
+																	borderRadius: playStore2 ? '16px' : '40px'
+																}
+															}}
+														/>
+													</div>
+													<p className={globalClasses.mediaError}>
+														{isError.playStore2
+															? 'You need to upload playStore in order to post'
+															: ''}
+													</p>
+													<div className={classes.titleContainer}>
+														<h6
+															className={
+																isError.appStore2
+																	? globalClasses.errorState
+																	: globalClasses.noErrorState
+															}
+														>
+															APP STORE
+														</h6>
+														<TextField
+															value={form?.deep_link?.ios}
+															onChange={(e) =>
+																setForm((prev) => {
+																	return {
+																		...prev,
+																		deep_link: {
+																			...form.deep_link,
+																			ios: e.target.value
+																		}
+																	};
+																})
+															}
+															placeholder={'Enter APP STORE'}
+															className={classes.textField}
+															multiline
+															maxRows={2}
+															InputProps={{
+																disableUnderline: true,
+																className: classes.textFieldInput,
+																style: {
+																	borderRadius: appStore2 ? '16px' : '40px'
+																}
+															}}
+														/>
+													</div>
+													<p className={globalClasses.mediaError}>
+														{isError.appStore2
+															? 'You need to upload appStore in order to post'
+															: ''}
+													</p>
+												</div>
+											</Slide>
+										) : (
+											<></>
+										)}
+
+										{form?.arcade_game_type === 'Inside App' ? (
+											<Slide in={true} direction='up' {...{ timeout: 400 }}>
+												<div>
+													<div className={classes.gameIDwrapper}>
+														<h5
+															className={
+																isError.gameId
+																	? globalClasses.errorState
+																	: globalClasses.noErrorState
+															}
+														>
+															Game ID
+														</h5>
+													</div>
+
+													<div className={classes.titleContainer}>
+														<TextField
+															value={form?.game_id}
+															onChange={(e) =>
+																setForm((prev) => {
+																	return {
+																		...prev,
+																		game_id: e.target.value
+																	};
+																})
+															}
+															placeholder={'Game ID'}
+															className={classes.textField}
+															multiline
+															maxRows={2}
+															InputProps={{
+																disableUnderline: true,
+																className: classes.textFieldInput,
+																style: {
+																	borderRadius: gameId ? '16px' : '40px'
+																}
+															}}
+														/>
+													</div>
+													<p className={globalClasses.mediaError}>
+														{isError.gameId
+															? 'You need to upload gameId in order to post'
+															: ''}
+													</p>
+												</div>
+											</Slide>
+										) : (
+											<></>
+										)}
+									</>
+								)}
 							</div>
 
-							<div className={classes.titleContainer}>
-								<div className={globalClasses.characterCount}>
-									<h6
-										className={
-											isError.titleGame
-												? globalClasses.errorState
-												: globalClasses.noErrorState
-										}
-									>
-										TITLE
-									</h6>
-									<h6
-										style={{
-											color:
-												form.title?.length >= 25 && form.title?.length <= 27
-													? 'pink'
-													: form.title?.length === 28
-													? 'red'
-													: 'white'
-										}}
-									>
-										{form.title?.length}/28
-									</h6>
-								</div>
-								<TextField
-									value={form?.title}
-									onChange={(e) =>
-										setForm((prev) => {
-											return { ...prev, title: e.target.value };
-										})
-									}
-									placeholder={'Please write your title here'}
-									className={classes.textField}
-									InputProps={{
-										disableUnderline: true,
-										className: classes.textFieldInput
-									}}
-									inputProps={{ maxLength: 28 }}
-									multiline
-									maxRows={2}
-								/>
-							</div>
 							<p className={globalClasses.mediaError}>
-								{isError.titleGame ? isError.titleGame.message : ''}
-							</p>
-
-							<div className={classes.titleContainer}>
-								<div className={globalClasses.characterCount}>
-									<h6
-										className={
-											isError.descriptionGame
-												? globalClasses.errorState
-												: globalClasses.noErrorState
-										}
-									>
-										GAME DESCRIPTION
-									</h6>
-									<h6
-										style={{
-											color:
-												form.description?.length >= 75 &&
-												form.description?.length <= 83
-													? 'pink'
-													: form.description?.length === 84
-													? 'red'
-													: 'white'
-										}}
-									>
-										{type === 'jogo' ? `${form.description?.length}/84` : ''}
-									</h6>
-								</div>
-								<TextField
-									value={form?.description}
-									onChange={(e) =>
-										setForm((prev) => {
-											return { ...prev, description: e.target.value };
-										})
-									}
-									placeholder={'Please write your description here'}
-									className={classes.textField}
-									InputProps={{
-										disableUnderline: true,
-										className: classes.textFieldInput
-									}}
-									inputProps={{ maxLength: type === 'jogo' ? 84 : 524288 }}
-									multiline
-									maxRows={2}
-								/>
-							</div>
-							<p className={globalClasses.mediaError}>
-								{isError.descriptionGame
-									? 'You need to upload a description in order to post'
+								{isError.draftError
+									? 'Something needs to be changed to save a draft'
 									: ''}
 							</p>
 
-							{type === 'jogo' ? (
-								<>
-									<div className={classes.titleContainer}>
-										<h6
+							<div className={classes.buttonDiv}>
+								<div>
+									{editArcade || editJogo ? (
+										<div className={classes.editBtn}>
+											<Button
+												disabled={deleteBtnStatus}
+												button2={editArcade || editJogo ? true : false}
+												onClick={() => {
+													if (!deleteBtnStatus) {
+														toggleDeleteModal();
+													}
+												}}
+												text={'DELETE GAME'}
+											/>
+										</div>
+									) : (
+										<></>
+									)}
+								</div>
+
+								<div className={classes.publishDraftDiv}>
+									{status !== 'published' ? (
+										<div
 											className={
-												isError.time
-													? globalClasses.errorState
-													: globalClasses.noErrorState
+												editArcade || editJogo
+													? classes.draftBtnEdit
+													: classes.draftBtn
 											}
 										>
-											TIME
-										</h6>
-										<TextField
-											disabled={false}
-											value={form?.time}
-											onChange={(e) =>
-												setForm((prev) => {
-													return { ...prev, time: e.target.value };
-												})
-											}
-											placeholder={'Please write the game duration here'}
-											className={classes.textField}
-											InputProps={{
-												disableUnderline: true,
-												className: `${classes.textFieldInputStartAdornment}`,
-												startAdornment: (
-													<InputAdornment position='start'>
-														<Timer />
-													</InputAdornment>
-												)
-											}}
-											multiline
-											maxRows={2}
-										/>
-									</div>
-
-									<p className={globalClasses.mediaError}>
-										{isError.time
-											? 'You need to upload a time in order to post'
-											: ''}
-									</p>
-
-									<div className={classes.titleContainer}>
-										<h6
-											className={
-												isError.scoring
-													? globalClasses.errorState
-													: globalClasses.noErrorState
-											}
-										>
-											SCORING
-										</h6>
-										<TextField
-											disabled={false}
-											value={form?.scoring}
-											onChange={(e) =>
-												setForm((prev) => {
-													return { ...prev, scoring: e.target.value };
-												})
-											}
-											placeholder={'Please write the game scoring here'}
-											className={classes.textField}
-											InputProps={{
-												disableUnderline: true,
-												className: `${classes.textFieldInputStartAdornment} `,
-												startAdornment: (
-													<InputAdornment position='start'>
-														<Scoring />
-													</InputAdornment>
-												)
-											}}
-											multiline
-											maxRows={1}
-										/>
-									</div>
-
-									<p className={globalClasses.mediaError}>
-										{isError.scoring
-											? 'You need to upload a scoring in order to post'
-											: ''}
-									</p>
-
-									<div className={classes.titleContainer}>
-										<h6
-											className={
-												isError.objective
-													? globalClasses.errorState
-													: globalClasses.noErrorState
-											}
-										>
-											OBJECTIVE
-										</h6>
-
-										<TextField
-											disabled={false}
-											value={form?.objective}
-											onChange={(e) =>
-												setForm((prev) => {
-													return { ...prev, objective: e.target.value };
-												})
-											}
-											placeholder={'Please write the game objective here'}
-											className={classes.textField}
-											InputProps={{
-												disableUnderline: true,
-												className: `${classes.textFieldInputStartAdornment} `,
-												startAdornment: (
-													<InputAdornment position='start'>
-														<Objective />
-													</InputAdornment>
-												)
-											}}
-											multiline
-											maxRows={1}
-										/>
-									</div>
-
-									<p className={globalClasses.mediaError}>
-										{isError.objective
-											? 'You need to upload an objective in order to post'
-											: ''}
-									</p>
-
-									<div className={classes.titleContainer}>
-										<h6
-											className={
-												isError.payload
-													? globalClasses.errorState
-													: globalClasses.noErrorState
-											}
-										>
-											PAYLOAD
-										</h6>
-
-										<TextField
-											disabled={false}
-											value={form?.payload}
-											onChange={(e) =>
-												setForm((prev) => {
-													return { ...prev, payload: e.target.value };
-												})
-											}
-											placeholder={'Please write the payload here'}
-											className={classes.textField}
-											InputProps={{
-												disableUnderline: true,
-												className: `${classes.textFieldInput}  `
-											}}
-											multiline
-											maxRows={2}
-										/>
-									</div>
-
-									<p className={globalClasses.mediaError}>
-										{isError.payload
-											? 'You need to upload a payload in order to post'
-											: ''}
-									</p>
-
-									<div className={classes.titleContainer}>
-										<h6
-											className={
-												isError.gameOrientation
-													? globalClasses.errorState
-													: globalClasses.noErrorState
-											}
-										>
-											SELECT GAME ORIENTATION
-										</h6>
-										<Select
-											onOpen={() => {
-												setDisableDropdown(false);
-											}}
-											onClose={() => {
-												setDisableDropdown(true);
-											}}
-											disabled={false}
-											value={form?.game_orientation}
-											onChange={(e) => {
-												setDisableDropdown(true);
-												setForm((prev) => {
-													return { ...prev, game_orientation: e.target.value };
-												});
-											}}
-											className={`${classes.select}`}
-											disableUnderline={true}
-											IconComponent={(props) => (
-												<KeyboardArrowDownIcon
-													{...props}
-													style={{
-														top: '4'
-													}}
-												/>
-											)}
-											MenuProps={{
-												anchorOrigin: {
-													vertical: 'bottom',
-													horizontal: 'left'
-												},
-												transformOrigin: {
-													vertical: 'top',
-													horizontal: 'left'
-												},
-												getContentAnchorEl: null,
-												classes: {
-													paper: muiClasses.paper
+											<Button
+												disabledDraft={
+													editArcade || editJogo
+														? draftBtnDisabled
+														: !validateDraft(form)
 												}
-											}}
-											inputProps={{
-												classes: {
-													root: gameOrientation
-														? muiClasses.input
-														: muiClasses.inputPlaceholder
+												onClick={() => handleDraftSave()}
+												button3={true}
+												text={
+													(status === 'draft' && editArcade) || editJogo
+														? 'SAVE DRAFT'
+														: 'SAVE AS DRAFT'
 												}
-											}}
-											displayEmpty={true}
-											renderValue={(value) =>
-												value?.length
-													? Array.isArray(value)
-														? value.join(', ')
-														: value
-													: 'Please Select Game Orientation'
-											}
-										>
-											{gameOrientationArray.map((orientation, index) => {
-												return (
-													<MenuItem
-														key={index}
-														value={orientation}
-														style={{
-															fontFamily: 'Poppins !important',
-															fontSize: '14px'
-														}}
-													>
-														{orientation}
-													</MenuItem>
-												);
-											})}
-										</Select>
-									</div>
-									<p className={globalClasses.mediaError}>
-										{isError.gameOrientation
-											? 'You need to select game orientation in order to post'
-											: ''}
-									</p>
-								</>
-							) : (
-								<>
-									<div className={classes.titleContainer}>
-										<h6
-											className={
-												isError.arcadeGameType
-													? globalClasses.errorState
-													: globalClasses.noErrorState
-											}
-										>
-											ARCADE GAME TYPE
-										</h6>
-										<Select
-											onOpen={() => {
-												setDisableDropdown(false);
-											}}
-											onClose={() => {
-												setDisableDropdown(true);
-											}}
-											disabled={false}
-											value={form?.arcade_game_type}
-											onChange={(e) => {
-												setDisableDropdown(true);
-												setForm((prev) => {
-													return { ...prev, arcade_game_type: e.target.value };
-												});
-											}}
-											className={`${classes.select}`}
-											disableUnderline={true}
-											IconComponent={(props) => (
-												<KeyboardArrowDownIcon
-													{...props}
-													style={{
-														top: '4'
-													}}
-												/>
-											)}
-											MenuProps={{
-												anchorOrigin: {
-													vertical: 'bottom',
-													horizontal: 'left'
-												},
-												transformOrigin: {
-													vertical: 'top',
-													horizontal: 'left'
-												},
-												getContentAnchorEl: null,
-												classes: {
-													paper: muiClasses.paper
-												}
-											}}
-											inputProps={{
-												classes: {
-													root: arcadeGameType
-														? muiClasses.input
-														: muiClasses.inputPlaceholder
-												}
-											}}
-											displayEmpty={true}
-											renderValue={(value) =>
-												value?.length
-													? Array.isArray(value)
-														? value.join(', ')
-														: value
-													: 'Please Select Game Type'
-											}
-										>
-											{arcadeType.map((type, index) => {
-												return (
-													<MenuItem
-														key={index}
-														value={type}
-														style={{
-															fontFamily: 'Poppins !important',
-															fontSize: '14px'
-														}}
-													>
-														{type}
-													</MenuItem>
-												);
-											})}
-										</Select>
-									</div>
-									<p className={globalClasses.mediaError}>
-										{isError.arcadeGameType
-											? 'You need to select Arcade type in order to post'
-											: ''}
-									</p>
-
-									{form?.arcade_game_type === 'Outside App' ? (
-										<Slide in={true} direction='up' {...{ timeout: 400 }}>
-											<div>
-												<div className={classes.gameIDwrapper}>
-													<h5>Package ID</h5>
-												</div>
-												<div className={classes.titleContainer}>
-													<h6
-														className={
-															isError.android
-																? globalClasses.errorState
-																: globalClasses.noErrorState
-														}
-													>
-														ANDROID
-													</h6>
-													<TextField
-														value={form?.package_id?.android}
-														onChange={(e) =>
-															setForm((prev) => {
-																return {
-																	...prev,
-																	package_id: {
-																		...form.package_id,
-																		android: e.target.value
-																	}
-																};
-															})
-														}
-														placeholder={'Enter Andrioid'}
-														className={classes.textField}
-														multiline
-														maxRows={2}
-														InputProps={{
-															disableUnderline: true,
-															className: classes.textFieldInput,
-															style: {
-																borderRadius: android ? '16px' : '40px'
-															}
-														}}
-													/>
-												</div>
-												<p className={globalClasses.mediaError}>
-													{isError.android
-														? 'You need to upload android in order to post'
-														: ''}
-												</p>
-												<div className={classes.titleContainer}>
-													<h6
-														className={
-															isError.ios
-																? globalClasses.errorState
-																: globalClasses.noErrorState
-														}
-													>
-														IOS
-													</h6>
-													<TextField
-														value={form?.package_id?.ios}
-														onChange={(e) =>
-															setForm((prev) => {
-																return {
-																	...prev,
-																	package_id: {
-																		...form.package_id,
-																		ios: e.target.value
-																	}
-																};
-															})
-														}
-														placeholder={'Enter IOS'}
-														className={classes.textField}
-														multiline
-														maxRows={2}
-														InputProps={{
-															disableUnderline: true,
-															className: classes.textFieldInput,
-															style: {
-																borderRadius: ios ? '16px' : '40px'
-															}
-														}}
-													/>
-												</div>
-												<p className={globalClasses.mediaError}>
-													{isError.ios
-														? 'You need to upload IOS in order to post'
-														: ''}
-												</p>
-
-												<div className={classes.gameIDwrapper}>
-													<h5>Store URL</h5>
-												</div>
-												<div className={classes.titleContainer}>
-													<h6
-														className={
-															isError.playStore
-																? globalClasses.errorState
-																: globalClasses.noErrorState
-														}
-													>
-														PLAY STORE
-													</h6>
-													<TextField
-														value={form?.store_url?.play_store}
-														onChange={(e) =>
-															setForm((prev) => {
-																return {
-																	...prev,
-																	store_url: {
-																		...form.store_url,
-																		play_store: e.target.value
-																	}
-																};
-															})
-														}
-														placeholder={'Enter PLAY STORE'}
-														className={classes.textField}
-														multiline
-														maxRows={2}
-														InputProps={{
-															disableUnderline: true,
-															className: classes.textFieldInput,
-															style: {
-																borderRadius: playStore ? '16px' : '40px'
-															}
-														}}
-													/>
-												</div>
-												<p className={globalClasses.mediaError}>
-													{isError.playStore
-														? 'You need to upload playStore in order to post'
-														: ''}
-												</p>
-												<div className={classes.titleContainer}>
-													<h6
-														className={
-															isError.appStore
-																? globalClasses.errorState
-																: globalClasses.noErrorState
-														}
-													>
-														APP STORE
-													</h6>
-													<TextField
-														value={form?.store_url?.apple_store}
-														onChange={(e) =>
-															setForm((prev) => {
-																return {
-																	...prev,
-																	store_url: {
-																		...form.store_url,
-																		apple_store: e.target.value
-																	}
-																};
-															})
-														}
-														placeholder={'Enter APP STORE'}
-														className={classes.textField}
-														multiline
-														maxRows={2}
-														InputProps={{
-															disableUnderline: true,
-															className: classes.textFieldInput,
-															style: {
-																borderRadius: appStore ? '16px' : '40px'
-															}
-														}}
-													/>
-												</div>
-												<p className={globalClasses.mediaError}>
-													{isError.appStore
-														? 'You need to upload appStore in order to post'
-														: ''}
-												</p>
-
-												<div className={classes.gameIDwrapper}>
-													<h5>Deep Link</h5>
-												</div>
-												<div className={classes.titleContainer}>
-													<h6
-														className={
-															isError.playStore2
-																? globalClasses.errorState
-																: globalClasses.noErrorState
-														}
-													>
-														PLAY STORE
-													</h6>
-													<TextField
-														value={form?.deep_link?.android}
-														onChange={(e) =>
-															setForm((prev) => {
-																return {
-																	...prev,
-																	deep_link: {
-																		...form.deep_link,
-																		android: e.target.value
-																	}
-																};
-															})
-														}
-														placeholder={'Enter PLAY STORE'}
-														className={classes.textField}
-														multiline
-														maxRows={2}
-														InputProps={{
-															disableUnderline: true,
-															className: classes.textFieldInput,
-															style: {
-																borderRadius: playStore2 ? '16px' : '40px'
-															}
-														}}
-													/>
-												</div>
-												<p className={globalClasses.mediaError}>
-													{isError.playStore2
-														? 'You need to upload playStore in order to post'
-														: ''}
-												</p>
-												<div className={classes.titleContainer}>
-													<h6
-														className={
-															isError.appStore2
-																? globalClasses.errorState
-																: globalClasses.noErrorState
-														}
-													>
-														APP STORE
-													</h6>
-													<TextField
-														value={form?.deep_link?.ios}
-														onChange={(e) =>
-															setForm((prev) => {
-																return {
-																	...prev,
-																	deep_link: {
-																		...form.deep_link,
-																		ios: e.target.value
-																	}
-																};
-															})
-														}
-														placeholder={'Enter APP STORE'}
-														className={classes.textField}
-														multiline
-														maxRows={2}
-														InputProps={{
-															disableUnderline: true,
-															className: classes.textFieldInput,
-															style: {
-																borderRadius: appStore2 ? '16px' : '40px'
-															}
-														}}
-													/>
-												</div>
-												<p className={globalClasses.mediaError}>
-													{isError.appStore2
-														? 'You need to upload appStore in order to post'
-														: ''}
-												</p>
-											</div>
-										</Slide>
+											/>
+										</div>
 									) : (
 										<></>
 									)}
 
-									{form?.arcade_game_type === 'Inside App' ? (
-										<Slide in={true} direction='up' {...{ timeout: 400 }}>
-											<div>
-												<div className={classes.gameIDwrapper}>
-													<h5
-														className={
-															isError.gameId
-																? globalClasses.errorState
-																: globalClasses.noErrorState
-														}
-													>
-														Game ID
-													</h5>
-												</div>
-
-												<div className={classes.titleContainer}>
-													<TextField
-														value={form?.game_id}
-														onChange={(e) =>
-															setForm((prev) => {
-																return {
-																	...prev,
-																	game_id: e.target.value
-																};
-															})
-														}
-														placeholder={'Game ID'}
-														className={classes.textField}
-														multiline
-														maxRows={2}
-														InputProps={{
-															disableUnderline: true,
-															className: classes.textFieldInput,
-															style: {
-																borderRadius: gameId ? '16px' : '40px'
-															}
-														}}
-													/>
-												</div>
-												<p className={globalClasses.mediaError}>
-													{isError.gameId
-														? 'You need to upload gameId in order to post'
-														: ''}
-												</p>
-											</div>
-										</Slide>
-									) : (
-										<></>
-									)}
-								</>
-							)}
-						</div>
-
-						<p className={globalClasses.mediaError}>
-							{isError.draftError
-								? 'Something needs to be changed to save a draft'
-								: ''}
-						</p>
-
-						<div className={classes.buttonDiv}>
-							<div>
-								{editArcade || editJogo ? (
-									<div className={classes.editBtn}>
-										<Button
-											disabled={deleteBtnStatus}
-											button2={editArcade || editJogo ? true : false}
-											onClick={() => {
-												if (!deleteBtnStatus) {
-													deleteGame(specificGamesData?.id, status);
-												}
-											}}
-											text={'DELETE GAME'}
-										/>
-									</div>
-								) : (
-									<></>
-								)}
-							</div>
-
-							<div className={classes.publishDraftDiv}>
-								{status !== 'published' ? (
 									<div
-										className={
+										className={[
 											editArcade || editJogo
-												? classes.draftBtnEdit
-												: classes.draftBtn
-										}
+												? classes.addQuizBtnEdit
+												: classes.addQuizBtn
+										].join(' ')}
 									>
 										<Button
-											disabledDraft={
+											disabled={
 												editArcade || editJogo
-													? draftBtnDisabled
-													: !validateDraft(form)
+													? editBtnDisabled
+													: validateGamesForm(type, form, postButtonStatus)
 											}
-											onClick={() => handleDraftSave()}
-											button3={true}
-											text={
-												(status === 'draft' && editArcade) || editJogo
-													? 'SAVE DRAFT'
-													: 'SAVE AS DRAFT'
-											}
+											onClick={() => {
+												addSaveGameBtn();
+											}}
+											button2AddSave={true}
+											// text={type === 'quiz' ? 'ADD QUIZ' : 'ADD POLL'}
+											text={buttonText}
 										/>
 									</div>
-								) : (
-									<></>
-								)}
-
-								<div
-									className={[
-										editArcade || editJogo
-											? classes.addQuizBtnEdit
-											: classes.addQuizBtn
-									].join(' ')}
-								>
-									<Button
-										disabled={
-											editArcade || editJogo
-												? editBtnDisabled
-												: validateGamesForm(type, form, postButtonStatus)
-										}
-										onClick={() => {
-											addSaveGameBtn();
-										}}
-										button2AddSave={true}
-										// text={type === 'quiz' ? 'ADD QUIZ' : 'ADD POLL'}
-										text={buttonText}
-									/>
 								</div>
 							</div>
-						</div>
-						{/* <div className={classes.buttonDiv}>
+							{/* <div className={classes.buttonDiv}>
 							{editArcade || editJogo ? (
 								<div className={classes.editBtn}>
 									<Button
@@ -2206,76 +2226,89 @@ const UploadOreditArcade = ({
 								/>
 							</div>
 						</div> */}
-					</div>
-
-					{previewFile != null && (
-						<div ref={previewRef} className={globalClasses.previewComponent}>
-							<div className={globalClasses.previewHeader}>
-								<Close
-									onClick={() => {
-										setPreviewBool(false);
-										setPreviewFile(null);
-									}}
-									className={globalClasses.closeIcon}
-								/>
-								<h5>Preview</h5>
-							</div>
-							<div>
-								{previewFile.mime_type === 'video/mp4' ||
-								previewFile.mime_type === 'video' ||
-								previewFile.type === 'video' ||
-								previewFile.type === 'video/mp4' ? (
-									<video
-										id={'my-video'}
-										poster={
-											editJogo || editArcade ? previewFile.media_url : null
-										}
-										className={globalClasses.previewFile}
-										style={{
-											width: '100%',
-											height: `${8 * 4}rem`,
-											objectFit: 'contain',
-											objectPosition: 'center'
-										}}
-										controls={true}
-									>
-										<source src={previewFile.media_url} />
-									</video>
-								) : (editJogo || editArcade) && previewFile.type === 'video' ? (
-									<video
-										id={'my-video'}
-										poster={
-											editJogo || editArcade ? previewFile?.thumbnail_url : null
-										}
-										className={globalClasses.previewFile}
-										style={{
-											width: '100%',
-											height: `${8 * 4}rem`,
-											objectFit: 'contain',
-											objectPosition: 'center'
-										}}
-										controls={true}
-									>
-										<source src={previewFile.media_url} />
-									</video>
-								) : (
-									<img
-										src={previewFile.media_url}
-										className={globalClasses.previewFile}
-										style={{
-											width: '100%',
-											height: `${8 * 4}rem`,
-											objectFit: 'contain',
-											objectPosition: 'center'
-										}}
-									/>
-								)}
-							</div>
 						</div>
-					)}
-				</div>
-			</Slide>
-		</LoadingOverlay>
+
+						{previewFile != null && (
+							<div ref={previewRef} className={globalClasses.previewComponent}>
+								<div className={globalClasses.previewHeader}>
+									<Close
+										onClick={() => {
+											setPreviewBool(false);
+											setPreviewFile(null);
+										}}
+										className={globalClasses.closeIcon}
+									/>
+									<h5>Preview</h5>
+								</div>
+								<div>
+									{previewFile.mime_type === 'video/mp4' ||
+									previewFile.mime_type === 'video' ||
+									previewFile.type === 'video' ||
+									previewFile.type === 'video/mp4' ? (
+										<video
+											id={'my-video'}
+											poster={
+												editJogo || editArcade ? previewFile.media_url : null
+											}
+											className={globalClasses.previewFile}
+											style={{
+												width: '100%',
+												height: `${8 * 4}rem`,
+												objectFit: 'contain',
+												objectPosition: 'center'
+											}}
+											controls={true}
+										>
+											<source src={previewFile.media_url} />
+										</video>
+									) : (editJogo || editArcade) &&
+									  previewFile.type === 'video' ? (
+										<video
+											id={'my-video'}
+											poster={
+												editJogo || editArcade
+													? previewFile?.thumbnail_url
+													: null
+											}
+											className={globalClasses.previewFile}
+											style={{
+												width: '100%',
+												height: `${8 * 4}rem`,
+												objectFit: 'contain',
+												objectPosition: 'center'
+											}}
+											controls={true}
+										>
+											<source src={previewFile.media_url} />
+										</video>
+									) : (
+										<img
+											src={previewFile.media_url}
+											className={globalClasses.previewFile}
+											style={{
+												width: '100%',
+												height: `${8 * 4}rem`,
+												objectFit: 'contain',
+												objectPosition: 'center'
+											}}
+										/>
+									)}
+								</div>
+							</div>
+						)}
+					</div>
+				</Slide>
+			</LoadingOverlay>
+			<DeleteModal
+				open={openDeletePopup}
+				toggle={toggleDeleteModal}
+				deleteBtn={() => {
+					deleteGame(specificGamesData?.id, status);
+				}}
+				text={type === 'jogo' ? 'JOGO game' : 'Arcade game'}
+				wrapperRef={dialogWrapper}
+			/>
+		</>
 	);
 };
 

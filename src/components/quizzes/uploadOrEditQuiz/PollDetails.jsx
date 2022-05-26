@@ -28,7 +28,7 @@ export default function PollDetails({
 		setPreviewBool(false);
 		setPreviewFile(null);
 	};
-
+	const dialogWrapper = useRef(null);
 	const muiClasses = useStyles();
 	// Question Library :  click on row with type:poll
 	return (
@@ -45,6 +45,7 @@ export default function PollDetails({
 			previewRef={previewRef}
 			disableDropdown={disableDropdown}
 			quiz={true}
+			dialogRef={dialogWrapper}
 		>
 			<div className={muiClasses.root}>
 				{status === 'draft' ? (
