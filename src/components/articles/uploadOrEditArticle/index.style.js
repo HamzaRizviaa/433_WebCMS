@@ -310,6 +310,7 @@ export const useStyles = makeStyles((theme) => ({
 					'& > div.tox-menubar': {
 						//tox-menubar
 						backgroundColor: `#404040 !important`,
+						background: `#404040 !important`,
 						'& > button.tox-mbtn': {
 							color: 'white !important',
 							'&:focus': {
@@ -320,6 +321,40 @@ export const useStyles = makeStyles((theme) => ({
 							},
 							'&:active': {
 								background: `#404040 !important`
+							}
+						}
+					},
+					'& > div.tox-toolbar': {
+						backgroundColor: `#404040 !important`,
+						background: `#404040 !important`,
+						'&  >div.tox-toolbar__group': {
+							'& >button.tox-tbtn': {
+								'& > span.tox-icon': {
+									color: ` white !important`,
+									'& > svg': {
+										fill: `white !important`
+									}
+								},
+								'&:focus': {
+									background: `#404040 !important`
+								},
+								'&:hover': {
+									background: `#404040 !important`
+								},
+								'&:active': {
+									background: `#404040 !important`
+								}
+							},
+							'& >button.tox-tbtn--select': {
+								'& >span.tox-tbtn__select-label': {
+									color: `white !important`
+								},
+								'& >div.tox-tbtn__select-chevron': {
+									color: ` white !important`,
+									'& > svg': {
+										fill: `white !important`
+									}
+								}
 							}
 						}
 					},
@@ -386,6 +421,9 @@ export const useStyles = makeStyles((theme) => ({
 					}
 				}
 			}
+			// '& >div .tox-menu': {
+			// 	backgroundColor: '#404040 !important'
+			// }
 		}
 	}
 }));

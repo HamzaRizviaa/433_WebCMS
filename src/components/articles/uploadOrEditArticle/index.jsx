@@ -118,6 +118,7 @@ const UploadOrEditViral = ({
 		mainCategories
 		// mainCategoriesStatus
 	} = useSelector((state) => state.ArticleLibraryStore);
+	console.log(subCategories, '------subCategories----');
 
 	useEffect(() => {
 		dispatch(getPostLabels());
@@ -129,24 +130,28 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (form.mainCategory && !isEdit) {
+			console.log(form.mainCategory, 'if');
 			dispatch(getArticleSubCategories(form.mainCategory.id));
 		} else if (form.mainCategory?.name && isEdit) {
 			let setData = mainCategories.find(
 				(u) => u.name === form.mainCategory?.name
 			);
-
+			console.log(setData, 'else if');
 			dispatch(getArticleSubCategories(setData?.id));
 			// SubCategoryId(specificArticle?.sub_category);
 			// console.log('lallaall');
 		} else {
 			let setData = mainCategories.find((u) => u.name === form.mainCategory);
+			console.log(setData, 'else');
 			dispatch(getArticleSubCategories(setData?.id));
 		}
 	}, [form.mainCategory]);
 
 	const mainCategoryId = (categoryString) => {
+		console.log(categoryString, 'categoryString');
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
 		let setData = mainCategories.find((u) => u.name === categoryString);
+		console.log(setData, 'onchange  set data main category');
 		setForm((prev) => {
 			return { ...prev, mainCategory: setData };
 		});
@@ -508,7 +513,7 @@ const UploadOrEditViral = ({
 					!form.description ||
 					(specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
 						specificArticle?.title?.trim() === form.title?.trim() &&
-						specificArticle?.dropbox_url?.trim() === form.dropbox_url.trim() &&
+						specificArticle?.dropbox_url?.trim() === form.dropbox_url?.trim() &&
 						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
 						specificArticle?.show_likes === form.show_likes &&
 						specificArticle?.show_comments === form.show_comments)
@@ -524,7 +529,7 @@ const UploadOrEditViral = ({
 				!validateDraft(form) ||
 					(specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
 						specificArticle?.title?.trim() === form.title?.trim() &&
-						specificArticle?.dropbox_url?.trim() === form.dropbox_url.trim() &&
+						specificArticle?.dropbox_url?.trim() === form.dropbox_url?.trim() &&
 						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
 						specificArticle?.labels?.length === form?.labels?.length &&
 						specificArticle?.show_likes === form.show_likes &&
