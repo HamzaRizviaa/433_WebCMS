@@ -813,8 +813,8 @@ const UploadOrEditMedia = ({
 							save_draft: false,
 							main_category_id: media_type,
 							sub_category_id: subId,
-							show_likes: form.show_likes ? true : undefined,
-							show_comments: form.show_comments ? true : undefined,
+							show_likes: form.show_likes ? true : false,
+							show_comments: form.show_comments ? true : false,
 							...(form.media_dropbox_url
 								? { media_dropbox_url: form.media_dropbox_url }
 								: {}),
