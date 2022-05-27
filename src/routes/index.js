@@ -60,10 +60,10 @@ const AppRoutes = () => {
 					path='/games-library'
 					element={<RequireAuth component={<GamesLibrary />} />}
 				/>
-				<Route
+				{/* <Route
 					path='/post-library'
 					element={<RequireAuth component={<PostLibrary />} />}
-				/>
+				/> */}
 
 				<Route path='*' element={<Navigate to='/sign-in' />} />
 			</Routes>
