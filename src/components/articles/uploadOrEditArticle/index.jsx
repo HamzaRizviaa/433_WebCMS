@@ -118,7 +118,6 @@ const UploadOrEditViral = ({
 		mainCategories
 		// mainCategoriesStatus
 	} = useSelector((state) => state.ArticleLibraryStore);
-	console.log(subCategories, '------subCategories----');
 
 	useEffect(() => {
 		dispatch(getPostLabels());
@@ -128,27 +127,26 @@ const UploadOrEditViral = ({
 		};
 	}, []);
 
+	tinyMCE && console.log(tinyMCE, 'form');
+
 	useEffect(() => {
 		if (form.mainCategory && !isEdit) {
-			console.log(form.mainCategory, 'if');
 			dispatch(getArticleSubCategories(form.mainCategory.id));
 		} else if (form.mainCategory?.name && isEdit) {
 			let setData = mainCategories.find(
 				(u) => u.name === form.mainCategory?.name
 			);
-			console.log(setData, 'else if');
+
 			dispatch(getArticleSubCategories(setData?.id));
 			// SubCategoryId(specificArticle?.sub_category);
-			// console.log('lallaall');
 		} else {
 			let setData = mainCategories.find((u) => u.name === form.mainCategory);
-			console.log(setData, 'else');
+
 			dispatch(getArticleSubCategories(setData?.id));
 		}
 	}, [form.mainCategory]);
 
 	const mainCategoryId = (categoryString) => {
-		// console.log(categoryString, 'categoryString');
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
 		let setData = mainCategories.find((u) => u.name === categoryString);
 		// console.log(setData, 'onchange  set data main category');
@@ -424,14 +422,6 @@ const UploadOrEditViral = ({
 			setIsError({});
 		}, 5000);
 	};
-	// {
-	// 	console.log(
-	// 		form?.subCategory,
-	// 		!form?.subCategory,
-	// 		!form?.subCategory?.name,
-	// 		'--------'
-	// 	);
-	// }
 
 	const [newLabels, setNewLabels] = useState([]);
 
@@ -526,8 +516,6 @@ const UploadOrEditViral = ({
 			);
 		}
 	}, [specificArticle, editorTextChecker, form]);
-
-	console.log(form, 'edt');
 
 	useEffect(() => {
 		if (specificArticle) {
@@ -971,7 +959,7 @@ const UploadOrEditViral = ({
 											</p>
 										</div>
 									</div>
-									{form?.mainCategory && form?.subCategory && (
+									{(form?.mainCategory && form?.subCategory) || isEdit ? (
 										<>
 											<DragAndDropField
 												uploadedFiles={form.uploadedFiles}
@@ -1376,6 +1364,8 @@ const UploadOrEditViral = ({
 												</div>
 											</div>
 										</>
+									) : (
+										<> </>
 									)}
 								</div>
 
