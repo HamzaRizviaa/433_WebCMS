@@ -11,6 +11,16 @@ export const useStyles = makeStyles((theme) => ({
 	publishDraftDiv: {
 		display: 'flex'
 	},
+	postMediaHeader: {
+		width: '100%',
+		display: 'flex',
+		justifyContent: 'space-between',
+		alignItems: 'center'
+	},
+
+	postMediaContainer: {
+		marginTop: '2.5rem'
+	},
 
 	addMediaBtn: {
 		marginTop: '0.5rem'

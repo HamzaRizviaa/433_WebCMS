@@ -79,6 +79,7 @@ const SignIn = ({ setLoginData }) => {
 		console.log(accessExpire, 'ae');
 		if (accessExpire) {
 			let expiryDate = new Date(
+				// new Date().setMinutes(new Date().getMinutes() + 2)
 				new Date().setHours(new Date().getHours() + 10)
 			);
 			localStorage.setItem('token_expire_time', expiryDate);
@@ -157,7 +158,7 @@ const SignIn = ({ setLoginData }) => {
 										<Logo2 className={classes.Logo} />
 									</div>
 									<div className={classes.welcomeText}>
-										Welcome to 433 Content Magament System
+										Welcome to 433 Content Management System
 									</div>
 									{signInError ? (
 										<div className={classes.errorWrapper}>

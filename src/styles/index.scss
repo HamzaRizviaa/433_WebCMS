@@ -14,7 +14,7 @@ html {
 
 body {
 	margin: 0;
-	font-family: 'Poppins', sans-serif;
+	font-family: 'Poppins', sans-serif !important;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	background-color: $black-color;
@@ -22,6 +22,12 @@ body {
 	scrollbar-width: thin; /* "auto" or "thin" */
 	scrollbar-color: #3f3f3f #3f3f3f; /* scroll thumb and track */
 }
+// Global styles for tineMce starts
+.tox .tox-menu {
+	background-color: black !important;
+}
+
+// Global styles for tineMce ends
 
 h1 {
 	font-size: 2.5rem;

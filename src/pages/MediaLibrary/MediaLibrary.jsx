@@ -25,13 +25,15 @@ import Table from '../../components/table';
 
 // CSS / Material UI
 import 'react-datepicker/dist/react-datepicker.css';
-// import classes from './_mediaLibrary.module.scss';
+import classes2 from './_mediaLibrary.module.scss';
 import Pagination from '@mui/material/Pagination';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import '../PostLibrary/_calender.scss';
+import { toast } from 'react-toastify';
+import { Flip } from 'react-toastify';
 
 // Utils
 import { getDateTime, formatDate, getCalendarText } from '../../utils';
@@ -89,13 +91,35 @@ const MediaLibrary = () => {
 		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));
 		let current_date = new Date();
 		let time_difference_minutes = (expiry_date - current_date) / 1000 / 60; //in minutes
-		// console.log(current_date, 'curr');
+
 		console.log(time_difference_minutes);
 		if (time_difference_minutes <= 1) {
 			alert('Your session has expired');
 			localStorage.removeItem('user_data');
 			localStorage.removeItem('token_expire_time');
 			navigate('/sign-in');
+
+			// toast.warning('Your session has expired!', {
+			// 	position: 'top-center',
+			// 	autoClose: 5000,
+			// 	hideProgressBar: false,
+			// 	closeOnClick: true,
+			// 	onClose: () => {
+			// 		localStorage.removeItem('user_data');
+			// 		localStorage.removeItem('token_expire_time');
+			// 		navigate('/sign-in');
+			// 	},
+			// 	pauseOnHover: true,
+			// 	draggable: true,
+			// 	progress: undefined,
+			// 	theme: 'dark',
+			// 	transition: Flip,
+			// 	icon: ({ theme, type }) => (
+			// 		<img src={Four33Loader} className={classes2.loaderAlert} />
+			// 	),
+			// 	className: `${classes2.toasterWrapper}`,
+			// 	bodyClassName: `${classes2.toastBody}`
+			// });
 		}
 	}, []);
 
@@ -268,7 +292,7 @@ const MediaLibrary = () => {
 							col?.dataField === 'last_edit'
 								? 30
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -285,7 +309,7 @@ const MediaLibrary = () => {
 							col?.dataField === 'last_edit'
 								? 30
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -302,7 +326,7 @@ const MediaLibrary = () => {
 							col?.dataField === 'last_edit'
 								? 30
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);

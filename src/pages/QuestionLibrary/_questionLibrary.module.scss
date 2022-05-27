@@ -172,3 +172,24 @@
 	width: 20%;
 	height: auto;
 }
+
+.loaderAlert {
+	width: 50px;
+	height: auto;
+	//margin-right: 2rem !important;
+}
+
+.toasterWrapper {
+	height: 80px;
+	width: 320px;
+}
+
+.toastBody {
+	font-family: Poppins;
+	color: $neon-yellow;
+	font-size: 1.7rem !important;
+
+	& > div:last-child {
+		margin-left: 3rem;
+	}
+}

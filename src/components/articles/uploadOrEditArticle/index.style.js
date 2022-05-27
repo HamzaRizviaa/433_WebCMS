@@ -1,3 +1,4 @@
+/* eslint-disable no-dupe-keys */
 import { makeStyles } from '@material-ui/core';
 
 export const useStyles = makeStyles((theme) => ({
@@ -15,6 +16,28 @@ export const useStyles = makeStyles((theme) => ({
 			marginBottom: '0.5rem',
 			marginLeft: '1rem'
 		}
+	},
+	categoryContainer: {
+		marginTop: '2.5rem',
+		width: '100%',
+		display: 'flex',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+
+		'& h6': {
+			marginBottom: '0.5rem',
+			marginLeft: '1rem'
+		}
+	},
+
+	mainCategory: {
+		width: '48%',
+		display: 'inline-block'
+	},
+
+	subCategory: {
+		width: '48%',
+		display: 'inline-block'
 	},
 
 	postMediaHeader: {
@@ -41,13 +64,14 @@ export const useStyles = makeStyles((theme) => ({
 			paddingRight: '32px'
 		},
 		width: '100%',
-		color: theme.palette.white,
+		padding: '3px 0',
+		color: `${theme.palette.white} !important`,
 		border: `1px solid ${theme.palette.grey}`,
 		fontSize: ' 1.4rem !important',
 		lineHeight: '1.6 !important',
 		borderRadius: '5rem !important',
 		marginBottom: '1rem !important',
-		backgroundColor: `${theme.palette.black} !important`,
+		backgroundColor: `${theme.palette.black}`,
 		"& div[role='button']": {
 			padding: '1rem 0rem 1rem 2rem'
 		},
@@ -80,7 +104,12 @@ export const useStyles = makeStyles((theme) => ({
 
 	buttonDiv: {
 		width: '100%',
-		marginBottom: '4rem'
+		marginBottom: '4rem',
+		display: 'flex',
+		justifyContent: 'space-between'
+	},
+	publishDraftDiv: {
+		display: 'flex'
 	},
 
 	postBtn: {
@@ -93,7 +122,6 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	editBtn: {
-		width: '30%',
 		display: 'inline-block'
 	},
 
@@ -267,6 +295,135 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	editor: {
-		margin: '10px 0px'
+		margin: '10px 0px',
+		'& > div': {
+			//tox tox-tinymce tox-platform-touch
+			border: `1px solid #404040 !important`,
+			borderRadius: '8px',
+			//top bars and middle box
+			'& > div.tox-editor-container': {
+				//tox-editor-container
+				backgroundColor: '#404040 !important',
+				// top bars
+				'& > div.tox-editor-header': {
+					//tox-editor-header
+					'& > div.tox-menubar': {
+						//tox-menubar
+						backgroundColor: `#404040 !important`,
+						background: `#404040 !important`,
+						'& > button.tox-mbtn': {
+							color: 'white !important',
+							'&:focus': {
+								background: `#404040 !important`
+							},
+							'&:hover': {
+								background: `#404040 !important`
+							},
+							'&:active': {
+								background: `#404040 !important`
+							}
+						}
+					},
+					'& > div.tox-toolbar': {
+						backgroundColor: `#404040 !important`,
+						background: `#404040 !important`,
+						'&  >div.tox-toolbar__group': {
+							'& >button.tox-tbtn': {
+								'& > span.tox-icon': {
+									color: ` white !important`,
+									'& > svg': {
+										fill: `white !important`
+									}
+								},
+								'&:focus': {
+									background: `#404040 !important`
+								},
+								'&:hover': {
+									background: `#404040 !important`
+								},
+								'&:active': {
+									background: `#404040 !important`
+								}
+							},
+							'& >button.tox-tbtn--select': {
+								'& >span.tox-tbtn__select-label': {
+									color: `white !important`
+								},
+								'& >div.tox-tbtn__select-chevron': {
+									color: ` white !important`,
+									'& > svg': {
+										fill: `white !important`
+									}
+								}
+							}
+						}
+					},
+					'& > div.tox-toolbar-overlord': {
+						//tox-toolbar tox-toolbar--scrolling
+						'& > div.tox-toolbar__primary': {
+							//tox-toolbar__group
+							borderTop: `1px solid #404040 !important`,
+							backgroundColor: `#404040 !important`,
+							// border-right: none !important;
+							'& > div > button.tox-tbtn': {
+								// border-right: 1px solid white !important;
+								'& > span.tox-icon': {
+									color: ` white !important`,
+									'& > svg': {
+										fill: `white !important`
+									}
+								},
+								'&:focus': {
+									background: `#404040 !important`
+								},
+								'&:hover': {
+									background: `#404040 !important`
+								},
+								'&:active': {
+									background: `#404040 !important`
+								}
+							}
+						}
+					}
+				},
+				//middle text area
+				'& > div.tox-sidebar-wrap': {
+					//tox-sidebar-wrap
+					'& > div.tox-edit-area': {
+						'& > iframe.tox-edit-area__iframe': {
+							backgroundColor: `black !important`
+							// color: white !important ;
+							// #document {
+							//  color: white !important;
+							// }
+							// > html {
+							//  color: white !important;
+							// }
+							// .mce-content-body {
+							//  color: white !important;
+							// }
+						}
+					}
+				}
+			},
+			//bottom bar
+			'& > div.tox-statusbar': {
+				background: `#404040 !important`,
+				//tox-statusbar
+				'& > div.tox-statusbar__text-container': {
+					'& > div.tox-statusbar__path': {
+						'& > div.tox-statusbar__path-item': {
+							color: ` white !important`
+						}
+					},
+					'& > button.tox-statusbar__wordcount': {
+						color: `white !important`
+					}
+				}
+			}
+			// '& >div .tox-menu': {
+			// 	backgroundColor: '#404040 !important'
+			// }
+		}
 	}
 }));

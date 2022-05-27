@@ -8,7 +8,8 @@ const theme = createTheme({
 					backgroundColor: '#000000',
 					// color: '#ffffff',
 					margin: '1rem',
-					lineHeight: 1.4
+					lineHeight: 1.4,
+					// fontFamily: `['Poppins', 'sans-serif'].join(',') !important`
 				}
 			}
 		},

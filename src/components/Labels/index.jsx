@@ -20,9 +20,16 @@ const Labels = ({
 	//const regex = /[%<>\\$'"\s@#/-=+&^*()!:;.,?{}[|]]/;
 	const regex = /\W/; // all characters that are not numbers and alphabets and underscore
 
+	let draftLabels = selectedLabels.filter((label) => label.id == -1);
+	let drafts = [];
+	draftLabels.forEach((element) => drafts.push(element.name));
+	let newOptions = LabelsOptions.filter(
+		(element) => !drafts.includes(element.name)
+	);
+
 	return (
 		<Autocomplete
-			disabled={isEdit && draftStatus === 'published'}
+			disabled={isEdit && draftStatus !== 'draft'}
 			getOptionLabel={(option) => option.name} // setSelectedLabels name out of array of strings
 			PaperComponent={(props) => {
 				setDisableDropdown(false);
@@ -57,7 +64,7 @@ const Labels = ({
 			value={selectedLabels}
 			autoHighlight={true}
 			onChange={(event, newValue) => {
-				// console.log(event, 'change');
+				console.log(event, 'change', newValue);
 				setDisableDropdown(true);
 				let newLabels = newValue?.filter(
 					(v, i, a) =>
@@ -74,11 +81,11 @@ const Labels = ({
 				</div>
 			}
 			className={`${classes.autoComplete} ${
-				isEdit && draftStatus === 'published' && classes.disableAutoComplete
+				isEdit && draftStatus !== 'draft' && classes.disableAutoComplete
 			}`}
 			id='free-solo-2-demo'
 			disableClearable
-			options={LabelsOptions} //postlabels, medialabels
+			options={isEdit && draftStatus === 'draft' ? newOptions : LabelsOptions} //postlabels, medialabels
 			renderInput={(params) => (
 				<TextField
 					{...params}
@@ -107,15 +114,35 @@ const Labels = ({
 					}}
 				/>
 			)}
+			// filterOptions={(options) => {
+			// 	let drafts = [];
+			// 	let draftLabels = selectedLabels.filter((label) => label.id == -1);
+			// 	draftLabels.forEach((element) => drafts.push(element.name));
+			// 	let newOptions = options.filter(
+			// 		(element) => !drafts.includes(element.name)
+			// 	);
+			// 	return newOptions;
+			// }}
 			renderOption={(props, option) => {
 				//selected in input field,  some -> array to check exists
 				let currentLabelDuplicate = selectedLabels.some(
 					(label) => label.name == option.name
 				);
-				// console.log(selectedLabels, 'subby');
-				// console.log(currentLabelDuplicate, 'mubby');
+
 				let draftLabels = selectedLabels.filter((label) => label.id == -1);
-				// console.log(draftLabels, 'dftl');
+
+				// console.log(LabelsOptions, 'LabelsOptions');
+				// var newArr = LabelsOptions.filter((item) => {
+				// 	return item.id !== draftLabels.id;
+				// });
+				// console.log(newArr, 'newArr');
+
+				var draftedValue = draftLabels.filter(
+					(draft) => draft.name === option.name
+				);
+				//option . name
+				console.log(draftedValue, 'newArr');
+
 				if (option.id == null && !currentLabelDuplicate) {
 					return (
 						<li
@@ -144,8 +171,6 @@ const Labels = ({
 							{option.name}
 						</li>
 					);
-				} else if (draftLabels && currentLabelDuplicate) {
-					return null;
 				} else {
 					return (
 						<div className={classes.liAutocompleteWithButton}>

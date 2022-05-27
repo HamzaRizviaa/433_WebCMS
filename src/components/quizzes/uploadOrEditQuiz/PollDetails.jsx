@@ -23,12 +23,13 @@ export default function PollDetails({
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const previewRef = useRef(null);
+	const dialogWrapper = useRef(null);
 
 	const handlePreviewEscape = () => {
 		setPreviewBool(false);
 		setPreviewFile(null);
 	};
-
+	
 	const muiClasses = useStyles();
 	// Question Library :  click on row with type:poll
 	return (
@@ -45,46 +46,72 @@ export default function PollDetails({
 			previewRef={previewRef}
 			disableDropdown={disableDropdown}
 			quiz={true}
+			dialogRef={dialogWrapper}
 		>
 			<div className={muiClasses.root}>
-				<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
-					<TabsListUnstyled
-						className={muiClasses.tabMainDiv}
-						style={{ width: previewBool ? '60%' : '100%' }}
-					>
-						<TabUnstyled>Poll Results</TabUnstyled>
-						<TabUnstyled>Edit Poll</TabUnstyled>
-					</TabsListUnstyled>
-					<TabPanelUnstyled value={0}>
-						{/* poll results table */}
-						<QuizResults
-							handleClose={() => {
-								handleClose();
-							}}
-							style={{ minWidth: '40% !important' }}
-							type={'poll'}
-						/>
-					</TabPanelUnstyled>
-					<TabPanelUnstyled value={1}>
-						{/*  edit poll */}
-						<UploadOrEditQuiz
-							type={'poll'}
-							editPoll={isEdit}
-							heading1={heading1}
-							open={open}
-							buttonText={buttonText}
-							setPreviewBool={setPreviewBool}
-							previewFile={previewFile}
-							setPreviewFile={setPreviewFile}
-							previewRef={previewRef}
-							setDisableDropdown={setDisableDropdown}
-							handleClose={() => {
-								handleClose();
-							}}
-							status={status}
-						/>
-					</TabPanelUnstyled>
-				</TabsUnstyled>
+				{status === 'draft' ? (
+					<UploadOrEditQuiz
+						type={'poll'}
+						editPoll={isEdit}
+						heading1={heading1}
+						open={open}
+						buttonText={buttonText}
+						setPreviewBool={setPreviewBool}
+						previewFile={previewFile}
+						setPreviewFile={setPreviewFile}
+						previewRef={previewRef}
+						setDisableDropdown={setDisableDropdown}
+						handleClose={() => {
+							handleClose();
+						}}
+						status={status}
+						dialogWrapper={dialogWrapper}
+						publishedStatus='draft'
+					/>
+				) : (
+					<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
+						<TabsListUnstyled
+							className={muiClasses.tabMainDiv}
+							style={{ width: previewBool ? '60%' : '100%' }}
+						>
+							<TabUnstyled>Poll Results</TabUnstyled>
+							<TabUnstyled>Edit Poll</TabUnstyled>
+						</TabsListUnstyled>
+						<TabPanelUnstyled value={0}>
+							{/* poll results table */}
+							<QuizResults
+								handleClose={() => {
+									handleClose();
+								}}
+								style={{ minWidth: '40% !important' }}
+								type={'poll'}
+								status={status}
+								dialogWrapper={dialogWrapper}
+							/>
+						</TabPanelUnstyled>
+						<TabPanelUnstyled value={1}>
+							{/*  edit poll */}
+							<UploadOrEditQuiz
+								type={'poll'}
+								editPoll={isEdit}
+								heading1={heading1}
+								open={open}
+								buttonText={buttonText}
+								setPreviewBool={setPreviewBool}
+								previewFile={previewFile}
+								setPreviewFile={setPreviewFile}
+								previewRef={previewRef}
+								setDisableDropdown={setDisableDropdown}
+								handleClose={() => {
+									handleClose();
+								}}
+								status={status}
+								dialogWrapper={dialogWrapper}
+								publishedStatus='draft'
+							/>
+						</TabPanelUnstyled>
+					</TabsUnstyled>
+				)}
 			</div>
 		</Slider>
 	);

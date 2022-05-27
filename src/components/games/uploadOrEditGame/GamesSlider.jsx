@@ -17,19 +17,22 @@ const GamesSlider = ({
 	heading1,
 	buttonText,
 	gameType,
-	isEdit
+	isEdit,
+	status
 }) => {
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const previewRef = useRef(null);
+	const dialogWrapper = useRef(null);
 
 	const muiClasses = useStyles();
-
+	console.log(status, '---status in slider');
 	const handlePreviewEscape = () => {
 		setPreviewBool(false);
 		setPreviewFile(null);
 	};
+	
 
 	// on upload button in header - to upload new poll or quiz
 
@@ -47,6 +50,7 @@ const GamesSlider = ({
 			previewRef={previewRef}
 			disableDropdown={disableDropdown}
 			games={true}
+			dialogRef={dialogWrapper}
 		>
 			{isEdit ? (
 				<UploadOrEditGames
@@ -59,10 +63,12 @@ const GamesSlider = ({
 					previewRef={previewRef}
 					setDisableDropdown={setDisableDropdown}
 					editJogo={isEdit}
+					status={status}
 					handleClose={() => {
 						handleClose();
 					}}
 					type={gameType === 'JOGO' ? 'jogo' : 'arcade'}
+					dialogWrapper={dialogWrapper}
 				/>
 			) : (
 				<div className={muiClasses.root}>
@@ -85,6 +91,7 @@ const GamesSlider = ({
 								previewRef={previewRef}
 								setDisableDropdown={setDisableDropdown}
 								editJogo={isEdit}
+								status={status}
 								handleClose={() => {
 									handleClose();
 								}}
@@ -105,6 +112,7 @@ const GamesSlider = ({
 									handleClose();
 								}}
 								editArcade={isEdit}
+								status={status}
 								type='arcade'
 							/>
 						</TabPanelUnstyled>
@@ -123,7 +131,8 @@ GamesSlider.propTypes = {
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
 	type: PropTypes.string.isRequired,
-	isEdit: PropTypes.bool.isRequired
+	isEdit: PropTypes.bool.isRequired,
+	status: PropTypes.string.isRequired
 };
 
 export default GamesSlider;
