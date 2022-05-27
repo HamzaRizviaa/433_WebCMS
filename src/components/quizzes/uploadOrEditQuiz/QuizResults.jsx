@@ -20,7 +20,7 @@ import { getLocalStorageDetails } from '../../../utils';
 import { toast } from 'react-toastify';
 import PrimaryLoader from '../../PrimaryLoader';
 import axios from 'axios';
-
+import DeleteModal from '../../DeleteModal';
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	height: '54px',
 	borderRadius: '8px',
@@ -34,7 +34,14 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	}
 }));
 
-export default function QuizResults({ handleClose, page, type }) {
+export default function QuizResults({
+	handleClose,
+	page,
+	type,
+	status,
+	quiz,
+	dialogWrapper
+}) {
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [firstUserPercentage, setFirstUserPercentage] = useState(null);
 	const [secondUserPercentage, setSecondtUserPercentage] = useState(null);
@@ -45,7 +52,7 @@ export default function QuizResults({ handleClose, page, type }) {
 	const [totalParticipants, setTotalParticipants] = useState(null);
 	const [endDate, setEndDate] = useState(null);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
-
+	const [openDeletePopup, setOpenDeletePopup] = useState(false);
 	const dispatch = useDispatch();
 
 	const editQuestionResultDetail = useSelector(
@@ -120,14 +127,19 @@ export default function QuizResults({ handleClose, page, type }) {
 			);
 		return null;
 	};
+	const toggleDeleteModal = () => {
+		setOpenDeletePopup(!openDeletePopup);
+	};
 
-	const deleteQuiz = async (id) => {
+	const deleteQuiz = async (id, draft, qtype) => {
 		setDeleteBtnStatus(true);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/question/delete-question`,
 				{
-					question_id: id
+					question_id: id,
+					is_draft: draft,
+					question_type: qtype
 				},
 				{
 					headers: {
@@ -147,6 +159,7 @@ export default function QuizResults({ handleClose, page, type }) {
 			setDeleteBtnStatus(false);
 			console.log(e);
 		}
+		setOpenDeletePopup(!openDeletePopup);
 	};
 
 	const columns = [
@@ -303,12 +316,25 @@ export default function QuizResults({ handleClose, page, type }) {
 					button2={true}
 					onClick={() => {
 						if (!deleteBtnStatus) {
-							deleteQuiz(editQuestionResultDetail?.id);
+							toggleDeleteModal();
 						}
 					}}
 					text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
 				/>
 			</div>
+			<DeleteModal
+				open={openDeletePopup}
+				toggle={toggleDeleteModal}
+				deleteBtn={() => {
+					deleteQuiz(
+						editQuestionResultDetail?.id,
+						status.toLowerCase(),
+						quiz ? 'quiz' : 'poll'
+					);
+				}}
+				text={type === 'quiz' ? 'Quiz' : 'Poll'}
+				wrapperRef={dialogWrapper}
+			/>
 		</div>
 	);
 }
@@ -316,5 +342,11 @@ export default function QuizResults({ handleClose, page, type }) {
 QuizResults.propTypes = {
 	handleClose: PropTypes.func.isRequired,
 	page: PropTypes.string,
-	type: PropTypes.string
+	type: PropTypes.string,
+	status: PropTypes.string,
+	quiz: PropTypes.bool,
+	dialogWrapper: PropTypes.oneOfType([
+		PropTypes.func,
+		PropTypes.shape({ current: PropTypes.elementType })
+	]).isRequired
 };

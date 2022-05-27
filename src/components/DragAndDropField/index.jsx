@@ -43,7 +43,6 @@ const DragAndDropField = ({
 						className={classes.uploadedFilesContainer}
 					>
 						{uploadedFiles.map((file, index) => {
-							console.log(uploadedFiles, 'uploadedFiles');
 							return (
 								<Draggable
 									key={file.id}
@@ -88,7 +87,7 @@ const DragAndDropField = ({
 													) : (
 														<></>
 													))}
-												{isArticle && (
+												{isArticle && file.media_url && (
 													<>
 														<img
 															src={file.media_url || file.img}

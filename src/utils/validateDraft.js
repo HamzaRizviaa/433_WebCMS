@@ -1,4 +1,5 @@
 const validateDraft = (form) => {
+	console.log(form, 'draft formx');
 	var validate = Object.keys(form).map((key) => {
 		if (key === 'mainCategory' || key === 'subCategory') {
 			return false;
@@ -13,11 +14,17 @@ const validateDraft = (form) => {
 				return !form[key] ? false : true;
 			}
 			if (form[key] === null) {
-				if (form['mediaToggle']) {
-					return false;
-				} else {
-					return true;
+				if (key === 'media_id') {
+					if (form[key] !== null) {
+						return true;
+					} else {
+						return false;
+					}
 				}
+				// if (form['mediaToggle']) {
+				// 	return true;
+				// }
+				return false;
 			}
 			if (Array.isArray(form[key])) {
 				if (key === 'labels') {
@@ -30,7 +37,9 @@ const validateDraft = (form) => {
 			}
 		}
 		if (typeof form[key] === 'boolean') {
-			if (form[key] === false) {
+			if (key === 'mediaToggle') {
+				return false;
+			} else if (form[key] === false) {
 				return false;
 			} else {
 				return true;

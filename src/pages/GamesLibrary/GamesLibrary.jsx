@@ -43,6 +43,7 @@ import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
+import DefaultImage from '../../assets/defaultImage.png';
 import LoadingOverlay from 'react-loading-overlay';
 const GamesLibrary = () => {
 	const muiClasses = useStyles();
@@ -80,6 +81,7 @@ const GamesLibrary = () => {
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
 	const [gameType, setGameType] = useState('');
+	const [rowStatus, setrowStatus] = useState(''); //publish or draft
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -104,7 +106,8 @@ const GamesLibrary = () => {
 		post_date: 'postdate',
 		user: 'user',
 		last_edit: 'lastedit',
-		game_type: 'gametype'
+		game_type: 'gametype',
+		status: 'status'
 	};
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
@@ -260,10 +263,14 @@ const GamesLibrary = () => {
 						left:
 							col?.dataField === 'gametype' || col?.dataField === 'game_type'
 								? 10
-								: col?.dataField === 'post_date'
+								: col?.dataField === 'post_date' || col?.dataField === 'user'
 								? 30
+								: col?.dataField === 'status'
+								? 28
+								: col?.dataField === 'last_edit'
+								? 21
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -275,10 +282,14 @@ const GamesLibrary = () => {
 						left:
 							col?.dataField === 'gametype' || col?.dataField === 'game_type'
 								? 10
-								: col?.dataField === 'post_date'
+								: col?.dataField === 'post_date' || col?.dataField === 'user'
 								? 30
+								: col?.dataField === 'status'
+								? 28
+								: col?.dataField === 'last_edit'
+								? 21
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -290,10 +301,14 @@ const GamesLibrary = () => {
 						left:
 							col?.dataField === 'gametype' || col?.dataField === 'game_type'
 								? 10
-								: col?.dataField === 'post_date'
+								: col?.dataField === 'post_date' || col?.dataField === 'user'
 								? 30
+								: col?.dataField === 'status'
+								? 28
+								: col?.dataField === 'last_edit'
+								? 21
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -307,10 +322,10 @@ const GamesLibrary = () => {
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
-			formatter: (content) => {
+			formatter: (content, row) => {
 				return (
-					<div className={classes.gamesRow}>
-						<Markup content={`${content} `} />
+					<div className={classes.gamesTitleRow}>
+						<Markup content={row?.title !== '' ? row?.title : '-'} />
 					</div>
 				);
 			}
@@ -344,6 +359,9 @@ const GamesLibrary = () => {
 									}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.game_image}`}
 									alt='no img'
+									onError={(e) => (
+										(e.target.onerror = null), (e.target.src = DefaultImage)
+									)}
 								/>
 							}
 							placement='right'
@@ -361,6 +379,9 @@ const GamesLibrary = () => {
 								<img
 									className={classes.mediaIcon}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.game_image}`}
+									onError={(e) => (
+										(e.target.onerror = null), (e.target.src = DefaultImage)
+									)}
 								/>
 							</span>
 						</Tooltip>
@@ -381,7 +402,7 @@ const GamesLibrary = () => {
 							<div>
 								<Markup
 									className={classes.gamesFileName}
-									content={row?.file_name}
+									content={row?.file_name !== '' ? row?.file_name : '-'}
 								/>
 							</div>
 						</Tooltip>
@@ -431,6 +452,30 @@ const GamesLibrary = () => {
 					// <div className={classes.row}>{content}</div>
 					<Markup className={classes.gamesRow} content={`${content}`} />
 				);
+			},
+			headerStyle: () => {
+				return { paddingLeft: '48px' };
+			}
+		},
+		{
+			dataField: 'status',
+			sort: true,
+			sortCaret: sortRows,
+			sortFunc: () => {},
+			text: 'STATUS',
+			formatter: (content) => {
+				return (
+					<div className={`${classes.publish_draft_btn}`}>
+						<Button
+							onClick={() => {}}
+							text={content == 'published' ? 'PUBLISHED' : 'DRAFT'}
+							published={content == 'published' ? true : false}
+						/>
+					</div>
+				);
+			},
+			headerStyle: () => {
+				return { paddingLeft: '48px' };
 			}
 		},
 		{
@@ -441,6 +486,9 @@ const GamesLibrary = () => {
 			text: 'LAST EDIT',
 			formatter: (content) => {
 				return <div className={classes.gamesRow}>{formatDate(content)}</div>;
+			},
+			headerStyle: () => {
+				return { paddingLeft: '38px' };
 			}
 		},
 		{
@@ -472,6 +520,7 @@ const GamesLibrary = () => {
 			dispatch(getSpecificGame(row.id));
 			setEdit(true);
 			setShowSlider(true);
+			setrowStatus(row.status); // pass in slider
 			setGameType(row.game_type);
 		}
 	};
@@ -658,7 +707,10 @@ const GamesLibrary = () => {
 							: 'Upload Game'
 					}
 					heading1={edit ? 'Game Image' : 'Add Game Image'}
-					buttonText={edit ? 'SAVE CHANGES' : 'ADD GAME'}
+					buttonText={
+						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
+					}
+					status={rowStatus}
 				/>
 			</Layout>
 		</LoadingOverlay>

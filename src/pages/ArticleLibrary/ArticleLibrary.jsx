@@ -33,6 +33,7 @@ import {
 } from './articleLibrarySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
+import DefaultImage from '../../assets/defaultImage.png';
 import { useStyles as globalUseStyles } from '../../styles/global.style';
 const ArticleLibrary = () => {
 	// Selectors
@@ -67,6 +68,7 @@ const ArticleLibrary = () => {
 	const [noResultCalendarError, setNoResultCalendarError] = useState('');
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
+	const [rowStatus, setRowStatus] = useState('');
 
 	const navigate = useNavigate();
 
@@ -138,7 +140,8 @@ const ArticleLibrary = () => {
 		post_date: 'postdate',
 		labels: 'label',
 		user: 'user',
-		last_edit: 'lastedit'
+		last_edit: 'lastedit',
+		status: 'status'
 	};
 
 	const sortRows = (order, col) => {
@@ -164,10 +167,11 @@ const ArticleLibrary = () => {
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||
-								  col?.dataField === 'user'
+								  col?.dataField === 'user' ||
+								  col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -182,10 +186,11 @@ const ArticleLibrary = () => {
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||
-								  col?.dataField === 'user'
+								  col?.dataField === 'user' ||
+								  col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -200,10 +205,11 @@ const ArticleLibrary = () => {
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||
-								  col?.dataField === 'user'
+								  col?.dataField === 'user' ||
+								  col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -247,6 +253,9 @@ const ArticleLibrary = () => {
 										row?.thumbnail_url ? row?.thumbnail_url : row?.image
 									}`}
 									alt='no img'
+									onError={(e) => (
+										(e.target.onerror = null), (e.target.src = DefaultImage)
+									)}
 								/>
 							}
 							placement='right'
@@ -258,13 +267,16 @@ const ArticleLibrary = () => {
 								<img
 									className={classes.mediaIcon}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.image}`}
+									onError={(e) => (
+										(e.target.onerror = null), (e.target.src = DefaultImage)
+									)}
 								/>
 							</span>
 						</Tooltip>
 
-						<div>
+						<div className={classes.noWrapLibraryFileName}>
 							<Markup
-								className={classes.libraryFileName}
+								// className={classes.noWrapLibraryFileName}
 								content={row?.title}
 							/>
 						</div>
@@ -342,6 +354,27 @@ const ArticleLibrary = () => {
 			}
 		},
 		{
+			dataField: 'status',
+			sort: true,
+			sortCaret: sortRows,
+			sortFunc: () => {},
+			text: 'STATUS',
+			formatter: (content) => {
+				return (
+					<div className={`${classes.publish_draft_btn}`}>
+						<Button
+							onClick={() => {}}
+							text={content == 'published' ? 'PUBLISHED' : 'DRAFT'}
+							published={content == 'published' ? true : false}
+						/>
+					</div>
+				);
+			},
+			headerStyle: () => {
+				return { paddingLeft: '48px' };
+			}
+		},
+		{
 			dataField: 'options',
 			text: 'OPTIONS',
 			formatter: () => {
@@ -370,6 +403,7 @@ const ArticleLibrary = () => {
 			dispatch(getSpecificArticle(row.id));
 			setEdit(true);
 			setShowSlider(true);
+			setRowStatus(row?.status);
 		}
 	};
 
@@ -667,7 +701,10 @@ const ArticleLibrary = () => {
 					}}
 					title={edit ? 'Edit Article' : 'Upload Article'}
 					heading1={edit ? 'Media File' : 'Add Media File'}
-					buttonText={edit ? 'SAVE CHANGES' : 'POST ARTICLE'}
+					buttonText={
+						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
+					}
+					status={rowStatus}
 				/>
 			</Layout>
 		</LoadingOverlay>

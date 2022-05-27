@@ -5,7 +5,7 @@ import React, { useState, useEffect, useCallback, forwardRef } from 'react';
 import Layout from '../../components/layout';
 import _debounce from 'lodash/debounce';
 import Table from '../../components/table';
-// import classes from './_questionLibrary.module.scss';
+//import classes2 from './_questionLibrary.module.scss';
 import Button from '../../components/button';
 import UploadQuiz from '../../components/quizzes/uploadOrEditQuiz/UploadQuiz';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -30,7 +30,6 @@ import {
 } from '../../utils';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
-import { useNavigate } from 'react-router-dom';
 import { Markup } from 'interweave';
 import { useStyles as globalUseStyles } from '../../styles/global.style';
 // import './_calender.scss';
@@ -44,11 +43,15 @@ import {
 } from './questionLibrarySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
+import LogoutToaster from '../../components/LogoutToaster';
+import { useNavigate } from 'react-router-dom';
 
 const QuestionLibrary = () => {
 	// Selectors
 	const questions = useSelector((state) => state.questionLibrary.questions);
 	const statusQuestionApi = useSelector((state) => state.questionLibrary);
+
+	console.log('questions', questions);
 
 	const totalRecords = useSelector(
 		(state) => state.questionLibrary.totalRecords
@@ -59,13 +62,14 @@ const QuestionLibrary = () => {
 	const noResultStatusCalendar = useSelector(
 		(state) => state.questionLibrary.noResultStatusCalendar
 	);
-
+	const navigate = useNavigate();
 	const muiClasses = useStyles();
 	const classes = globalUseStyles();
 	const [showSlider, setShowSlider] = useState(false);
 	const [showQuizSlider, setShowQuizSlider] = useState(false);
 	const [showPollSlider, setShowPollSlider] = useState(false);
 	const [rowStatus, setrowStatus] = useState(''); //status open closed to pass in poll slider
+	// const [publishedStatus, setPublishedStatus] = useState('');
 	// const [rowType, setRowType] = useState(''); //row type to pass in api
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
@@ -79,22 +83,27 @@ const QuestionLibrary = () => {
 	const [noResultCalendarError, setNoResultCalendarError] = useState('');
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
+	const [logout, setLogout] = useState(false);
 
-	const navigate = useNavigate();
+	// const enabled = (logoutValue) => {
+	// 	console.log(logoutValue, 'logoutVALUE');
+	// 	setLogout(logoutValue);
+	// };
 
 	useEffect(() => {
 		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));
 		let current_date = new Date();
 		let time_difference_minutes = (expiry_date - current_date) / 1000 / 60; //in minutes
-		// console.log(current_date, 'curr');
-		// console.log(time_difference_minutes);
-		if (time_difference_minutes <= 1) {
+		console.log(time_difference_minutes);
+		if (time_difference_minutes <= 1.5) {
+			// setLogout(true);
 			alert('Your session has expired');
 			localStorage.removeItem('user_data');
 			localStorage.removeItem('token_expire_time');
 			navigate('/sign-in');
 		}
 	}, []);
+	console.log(logout, 'log');
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
 		const startDate = formatDate(dateRange[0]);
@@ -179,7 +188,7 @@ const QuestionLibrary = () => {
 							col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -195,7 +204,7 @@ const QuestionLibrary = () => {
 							col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -211,7 +220,7 @@ const QuestionLibrary = () => {
 							col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -226,7 +235,12 @@ const QuestionLibrary = () => {
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			formatter: (content) => {
-				return <div className={classes.questionRow}>{content}</div>;
+				return (
+					//<div className={classes.questionRow}>{content}</div>
+					<div className={classes.questionRow}>
+						<Markup content={`${content}`} />
+					</div>
+				);
 			}
 		},
 		{
@@ -237,8 +251,9 @@ const QuestionLibrary = () => {
 			text: 'QUESTION TYPE',
 			formatter: (content) => {
 				return (
+					//<div className={classes.questionRow}>{content}</div>
 					<div className={classes.questionRow} style={{ paddingLeft: '18px' }}>
-						{content}
+						<Markup content={`${content}`} />
 					</div>
 				);
 			},
@@ -270,7 +285,7 @@ const QuestionLibrary = () => {
 			formatter: (content) => {
 				return (
 					<div className={classes.questionRowType}>
-						{getDateConstantTime(content)}
+						{content === '-' ? '-' : getDateConstantTime(content)}
 					</div>
 				);
 			},
@@ -307,12 +322,8 @@ const QuestionLibrary = () => {
 			text: 'STATUS',
 			formatter: (content) => {
 				return (
-					<div className={`${classes.active_closed_btn}`}>
-						<Button
-							onClick={() => {}}
-							text={content == 'ACTIVE' ? 'ACTIVE' : 'CLOSED'}
-							active={content == 'ACTIVE' ? true : false}
-						/>
+					<div className={classes.active_closed_btn}>
+						<Button onClick={() => {}} text={content} active={content} />
 						{/* <Edit className={classes.editIcon} /> */}
 					</div>
 				);
@@ -321,6 +332,7 @@ const QuestionLibrary = () => {
 				return { paddingLeft: '48px' };
 			}
 		},
+
 		{
 			dataField: 'participants',
 			sort: true,
@@ -329,8 +341,10 @@ const QuestionLibrary = () => {
 			text: 'PARTICIPANTS',
 			formatter: (content) => {
 				return (
-					<div className={classes.questionRow}>{content}</div>
-					// <Markup className={classes.questionRow} content={`${content}`} />
+					//<div className={classes.questionRow}>{content}</div>
+					<div className={classes.questionRow}>
+						<Markup content={`${content}`} />
+					</div>
 				);
 			}
 		},
@@ -342,8 +356,10 @@ const QuestionLibrary = () => {
 			text: 'USER',
 			formatter: (content) => {
 				return (
-					<div className={classes.questionRow}>{content}</div>
-					// <Markup className={classes.questionRow} content={`${content}`} />
+					//<div className={classes.questionRow}>{content}</div>
+					<div className={classes.questionRow}>
+						<Markup content={`${content}`} />
+					</div>
 				);
 			}
 		},
@@ -522,6 +538,12 @@ const QuestionLibrary = () => {
 				/>
 			}
 		>
+			{/* {logout ? (
+				<LogoutToaster text={'Your session has expired!'} enabled={enabled} />
+			) : (
+				<> </>
+			)} */}
+
 			<Layout>
 				<div className={classes.header}>
 					<div className={classes.subheader1}>
@@ -674,7 +696,9 @@ const QuestionLibrary = () => {
 					}}
 					title={edit ? 'Poll Detail' : 'Upload Question'}
 					heading1={edit ? ' ' : 'Add Background Image'}
-					buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
+					buttonText={
+						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
+					}
 				/>
 				<QuizDetails
 					open={showQuizSlider}
@@ -683,9 +707,11 @@ const QuestionLibrary = () => {
 						setShowQuizSlider(false);
 					}}
 					status={rowStatus}
-					title={'Quiz Detail'}
+					title={rowStatus === 'draft' ? 'Edit Quiz' : 'Quiz Detail'}
 					heading1={edit ? 'Add Background Image' : 'Add Background Image'}
-					buttonText={edit ? 'SAVE CHANGES' : 'ADD QUIZ'}
+					buttonText={
+						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
+					}
 				/>
 				<PollDetails
 					open={showPollSlider}
@@ -694,9 +720,11 @@ const QuestionLibrary = () => {
 						setShowPollSlider(false);
 					}}
 					status={rowStatus}
-					title={'Poll Detail'}
+					title={rowStatus === 'draft' ? 'Edit Poll' : 'Poll Detail'}
 					heading1={edit ? 'Add Background Image' : 'Add Background Image'}
-					buttonText={edit ? 'SAVE CHANGES' : 'ADD POLL'}
+					buttonText={
+						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
+					}
 				/>
 			</Layout>
 		</LoadingOverlay>

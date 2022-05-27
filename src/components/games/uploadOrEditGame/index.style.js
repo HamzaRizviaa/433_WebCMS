@@ -98,7 +98,14 @@ export const useStyles = makeStyles((theme) => ({
 
 	buttonDiv: {
 		width: '100%',
-		marginBottom: '4rem'
+		marginBottom: '4rem',
+		display: 'flex',
+		justifyContent: 'space-between',
+		marginTop: '0.5rem'
+	},
+	publishDraftDiv: {
+		display: 'flex',
+		justifyContent: 'flex-end'
 	},
 
 	postBtn: {
@@ -111,18 +118,18 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	editBtn: {
-		width: '30%',
+		// width: '30%',
 		display: 'inline-block'
 	},
+	saveChangesbtn: { '& span': { padding: '1rem 2rem !important' } },
 
 	addQuizBtn: {
-		width: '100% ',
-		marginTop: '0.5rem'
+		// width: '100% '
 	},
 
 	addQuizBtnEdit: {
-		width: '70%',
-		marginTop: '0.5rem',
+		// width: '70%',
+
 		display: 'inline-block'
 	},
 

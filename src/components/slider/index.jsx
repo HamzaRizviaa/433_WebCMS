@@ -14,6 +14,7 @@ const Slider = ({
 	preview,
 	previewRef,
 	orientationRef,
+	dialogRef,
 	edit,
 	media,
 	quiz,
@@ -41,7 +42,10 @@ const Slider = ({
 				wrapperRef.current &&
 				disableDropdown &&
 				!preview &&
-				!wrapperRef.current.contains(event.target)
+				!wrapperRef.current.contains(event.target) &&
+				(dialogRef?.current
+					? dialogRef.current && !dialogRef.current.contains(event.target)
+					: true)
 			) {
 				handleClose();
 			}
@@ -79,7 +83,7 @@ const Slider = ({
 
 		document.addEventListener('mousedown', handleClickOutside);
 		return () => document.removeEventListener('mousedown', handleClickOutside);
-	}, [wrapperRef, disableDropdown, preview]);
+	}, [wrapperRef, disableDropdown, preview, dialogRef]);
 
 	return (
 		<div>
@@ -138,6 +142,10 @@ Slider.propTypes = {
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,
 	orientationRef: PropTypes.oneOfType([
+		PropTypes.func,
+		PropTypes.shape({ current: PropTypes.elementType })
+	]).isRequired,
+	dialogRef: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,

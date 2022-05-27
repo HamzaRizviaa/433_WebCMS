@@ -118,6 +118,14 @@ export const useStyles = makeStyles(() => ({
 			}
 		}
 	},
+	devPost: {
+		'& svg': {
+			'& path': {
+				fill: 'none !important',
+				stroke: 'black'
+			}
+		}
+	},
 	devText: {
 		fontFamily: 'Poppins',
 		fontStyle: 'normal',

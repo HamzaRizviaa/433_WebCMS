@@ -10,16 +10,20 @@ const Button = ({
 	button2,
 	button2AddSave,
 	button3,
+	buttonStop,
 	style = {},
 	active,
 	published,
-	bannerdisabled
+	bannerdisabled,
+	onMouseDown
 }) => {
+	// console.log('Active', active);
 	return (
 		<span
 			onClick={() => {
 				onClick();
 			}}
+			onMouseDown={onMouseDown}
 			style={style}
 			className={[
 				classes.button,
@@ -28,8 +32,10 @@ const Button = ({
 				button2 ? classes.button2 : '',
 				button3 ? classes.button3 : '',
 				button2AddSave ? classes.button2AddSave : '',
-				active ? classes.activebtn : '',
-				active === false ? classes.closedbtn : '',
+				buttonStop ? classes.buttonStop : '',
+				active === 'ACTIVE' ? classes.activebtn : '',
+				active === 'CLOSED' ? classes.closedbtn : '',
+				active === 'draft' ? classes.draftdbtn : '',
 				bannerdisabled && classes.disabled,
 				published ? classes.publishedBtn : '',
 				published === false && classes.draftBtn
@@ -48,10 +54,12 @@ Button.propTypes = {
 	button2: PropTypes.bool,
 	button2AddSave: PropTypes.bool,
 	button3: PropTypes.bool,
+	buttonStop: PropTypes.bool,
 	style: PropTypes.object,
 	active: PropTypes.bool,
 	published: PropTypes.bool,
-	bannerdisabled: PropTypes.bool
+	bannerdisabled: PropTypes.bool,
+	onMouseDown: PropTypes.func
 };
 
 export default Button;

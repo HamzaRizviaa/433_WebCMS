@@ -178,12 +178,18 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	disableTextField: {
-		backgroundColor: '#404040 !important'
+		backgroundColor: '#404040 !important',
+		color: '#C4C4C4 !important'
 	},
 
 	buttonDiv: {
 		width: '100%',
-		marginBottom: '4rem'
+		marginBottom: '4rem',
+		display: 'flex',
+		justifyContent: 'space-between'
+	},
+	publishDraftDiv: {
+		display: 'flex'
 	},
 
 	addQuizBtn: {
@@ -192,16 +198,34 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	addQuizBtnEdit: {
-		width: '70%',
+		width: '40%',
 		marginTop: '0.5rem',
-		display: 'inline-block'
+		display: 'inline-block',
+		'& span': {
+			padding: '1rem 3rem'
+		}
+	},
+	leftButtonDiv: {
+		width: '100%',
+		display: 'flex'
 	},
 
 	editBtn: {
-		width: '30%',
+		width: '45%',
 		display: 'inline-block',
 		marginTop: '0.5rem'
 	},
+
+	editDeleteBtn: {
+		display: 'inline-block'
+	},
+
+	stopBtn: {
+		// width: '35%',
+		display: 'inline-block',
+		
+	},
+	saveChangesbtn: { '& span': { padding: '1rem 2rem !important' } },
 
 	noResultError: {
 		color: theme.palette.red,

@@ -24,7 +24,7 @@ import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import { Markup } from 'interweave';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-// import './_calender.scss';
+import DefaultImage from '../../assets/defaultImage.png';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -67,6 +67,7 @@ const ViralLibrary = () => {
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
 	const [tooltipTitle, setTooltipTitle] = useState(false);
+	const [rowStatus, setrowStatus] = useState(''); //publish or draft
 	const fileNameRef = useRef(null);
 
 	const navigate = useNavigate();
@@ -138,7 +139,8 @@ const ViralLibrary = () => {
 		post_date: 'postdate',
 		last_edit: 'lastedit',
 		labels: 'label',
-		user: 'user'
+		user: 'user',
+		status: 'status'
 	};
 
 	const sortRows = (order, col) => {
@@ -161,8 +163,10 @@ const ViralLibrary = () => {
 						left:
 							col?.dataField === 'user' || col?.dataField === 'last_edit'
 								? 7
+								: col?.dataField === 'status'
+								? 25
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -174,8 +178,10 @@ const ViralLibrary = () => {
 						left:
 							col?.dataField === 'user' || col?.dataField === 'last_edit'
 								? 7
+								: col?.dataField === 'status'
+								? 25
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -187,8 +193,10 @@ const ViralLibrary = () => {
 						left:
 							col?.dataField === 'user' || col?.dataField === 'last_edit'
 								? 7
+								: col?.dataField === 'status'
+								? 25
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -251,6 +259,9 @@ const ViralLibrary = () => {
 											row?.thumbnail_url ? row?.thumbnail_url : row?.media
 										}`}
 										alt='no img'
+										onError={(e) => (
+											(e.target.onerror = null), (e.target.src = DefaultImage)
+										)}
 									/>
 								)
 							}
@@ -274,6 +285,9 @@ const ViralLibrary = () => {
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
 										row?.thumbnail_url ? row?.thumbnail_url : row?.media
 									}`}
+									onError={(e) => (
+										(e.target.onerror = null), (e.target.src = DefaultImage)
+									)}
 								/>
 							</span>
 						</Tooltip>
@@ -361,6 +375,27 @@ const ViralLibrary = () => {
 			}
 		},
 		{
+			dataField: 'status',
+			sort: true,
+			sortCaret: sortRows,
+			sortFunc: () => {},
+			text: 'STATUS',
+			formatter: (content) => {
+				return (
+					<div className={`${classes.publish_draft_btn}`}>
+						<Button
+							onClick={() => {}}
+							text={content == 'published' ? 'PUBLISHED' : 'DRAFT'}
+							published={content == 'published' ? true : false}
+						/>
+					</div>
+				);
+			},
+			headerStyle: () => {
+				return { paddingLeft: '48px' };
+			}
+		},
+		{
 			dataField: 'options',
 			text: 'OPTIONS',
 			formatter: () => {
@@ -386,15 +421,10 @@ const ViralLibrary = () => {
 
 	const tableRowEvents = {
 		onClick: (e, row) => {
-			// if (!edit) {
 			dispatch(getSpecificViral(row.id));
 			setEdit(true);
+			setrowStatus(row.status); // pass in slider
 			setShowSlider(true);
-			// setTimeout(() => {
-			// 	setShowSlider(true);
-			// }, [500]);
-
-			// }
 		}
 	};
 
@@ -642,7 +672,11 @@ const ViralLibrary = () => {
 					}}
 					title={edit ? 'Edit Viral' : 'Upload Viral'}
 					heading1={edit ? 'Media File' : 'Add Media File'}
-					buttonText={edit ? 'SAVE CHANGES' : 'ADD VIRAL'}
+					// buttonText={edit ? 'SAVE CHANGES' : 'ADD VIRAL'}
+					buttonText={
+						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
+					}
+					status={rowStatus}
 				/>
 			</Layout>
 		</LoadingOverlay>
