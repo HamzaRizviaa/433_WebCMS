@@ -94,29 +94,32 @@ const MediaLibrary = () => {
 
 		console.log(time_difference_minutes);
 		if (time_difference_minutes <= 1) {
-			// alert('Your session has expired');
+			alert('Your session has expired');
+			localStorage.removeItem('user_data');
+			localStorage.removeItem('token_expire_time');
+			navigate('/sign-in');
 
-			toast.warning('Your session has expired!', {
-				position: 'top-center',
-				autoClose: 5000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				onClose: () => {
-					localStorage.removeItem('user_data');
-					localStorage.removeItem('token_expire_time');
-					navigate('/sign-in');
-				},
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: 'dark',
-				transition: Flip,
-				icon: ({ theme, type }) => (
-					<img src={Four33Loader} className={classes2.loaderAlert} />
-				),
-				className: `${classes2.toasterWrapper}`,
-				bodyClassName: `${classes2.toastBody}`
-			});
+			// toast.warning('Your session has expired!', {
+			// 	position: 'top-center',
+			// 	autoClose: 5000,
+			// 	hideProgressBar: false,
+			// 	closeOnClick: true,
+			// 	onClose: () => {
+			// 		localStorage.removeItem('user_data');
+			// 		localStorage.removeItem('token_expire_time');
+			// 		navigate('/sign-in');
+			// 	},
+			// 	pauseOnHover: true,
+			// 	draggable: true,
+			// 	progress: undefined,
+			// 	theme: 'dark',
+			// 	transition: Flip,
+			// 	icon: ({ theme, type }) => (
+			// 		<img src={Four33Loader} className={classes2.loaderAlert} />
+			// 	),
+			// 	className: `${classes2.toasterWrapper}`,
+			// 	bodyClassName: `${classes2.toastBody}`
+			// });
 		}
 	}, []);
 

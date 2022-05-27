@@ -24,6 +24,7 @@ const GamesSlider = ({
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const previewRef = useRef(null);
+	const dialogWrapper = useRef(null);
 
 	const muiClasses = useStyles();
 	console.log(status, '---status in slider');
@@ -31,7 +32,7 @@ const GamesSlider = ({
 		setPreviewBool(false);
 		setPreviewFile(null);
 	};
-	const dialogWrapper = useRef(null);
+	
 
 	// on upload button in header - to upload new poll or quiz
 
@@ -67,6 +68,7 @@ const GamesSlider = ({
 						handleClose();
 					}}
 					type={gameType === 'JOGO' ? 'jogo' : 'arcade'}
+					dialogWrapper={dialogWrapper}
 				/>
 			) : (
 				<div className={muiClasses.root}>

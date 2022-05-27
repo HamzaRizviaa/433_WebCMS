@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import classes from './_uploadOrEditQuiz.module.scss';
 import Button from '../../../components/button';
@@ -34,7 +34,14 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	}
 }));
 
-export default function QuizResults({ handleClose, page, type, status, quiz }) {
+export default function QuizResults({
+	handleClose,
+	page,
+	type,
+	status,
+	quiz,
+	dialogWrapper
+}) {
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [firstUserPercentage, setFirstUserPercentage] = useState(null);
 	const [secondUserPercentage, setSecondtUserPercentage] = useState(null);
@@ -47,7 +54,7 @@ export default function QuizResults({ handleClose, page, type, status, quiz }) {
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
 	const dispatch = useDispatch();
-	const dialogWrapper = useRef(null);
+
 	const editQuestionResultDetail = useSelector(
 		(state) => state.questionLibrary.questionResultDetail
 	);
@@ -337,5 +344,9 @@ QuizResults.propTypes = {
 	page: PropTypes.string,
 	type: PropTypes.string,
 	status: PropTypes.string,
-	quiz: PropTypes.bool
+	quiz: PropTypes.bool,
+	dialogWrapper: PropTypes.oneOfType([
+		PropTypes.func,
+		PropTypes.shape({ current: PropTypes.elementType })
+	]).isRequired
 };

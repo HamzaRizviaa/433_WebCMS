@@ -43,6 +43,7 @@ const UploadOreditArcade = ({
 	previewFile,
 	setPreviewFile,
 	previewRef,
+	dialogWrapper,
 	setDisableDropdown,
 	type, // jogo - arcade
 	page,
@@ -106,7 +107,7 @@ const UploadOreditArcade = ({
 
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
-	const dialogWrapper = useRef(null);
+	
 	const loadingRef = useRef(null);
 	const gameExplanationOrientation = ['PORTRAIT', 'LANDSCAPE'];
 	const gameOrientationArray = ['PORTRAIT', 'LANDSCAPE'];
@@ -2299,13 +2300,14 @@ const UploadOreditArcade = ({
 					</div>
 				</Slide>
 			</LoadingOverlay>
+
 			<DeleteModal
 				open={openDeletePopup}
 				toggle={toggleDeleteModal}
 				deleteBtn={() => {
 					deleteGame(specificGamesData?.id, status);
 				}}
-				text={type === 'jogo' ? 'JOGO game' : 'Arcade game'}
+				text={type === 'jogo' ? 'JOGO Game' : 'Arcade Game'}
 				wrapperRef={dialogWrapper}
 			/>
 		</>
@@ -2320,6 +2322,10 @@ UploadOreditArcade.propTypes = {
 	previewFile: PropTypes.bool.isRequired,
 	setPreviewFile: PropTypes.func.isRequired,
 	previewRef: PropTypes.oneOfType([
+		PropTypes.func,
+		PropTypes.shape({ current: PropTypes.elementType })
+	]).isRequired,
+	dialogWrapper: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,

@@ -23,12 +23,13 @@ export default function PollDetails({
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const previewRef = useRef(null);
+	const dialogWrapper = useRef(null);
 
 	const handlePreviewEscape = () => {
 		setPreviewBool(false);
 		setPreviewFile(null);
 	};
-	const dialogWrapper = useRef(null);
+	
 	const muiClasses = useStyles();
 	// Question Library :  click on row with type:poll
 	return (
@@ -64,6 +65,7 @@ export default function PollDetails({
 							handleClose();
 						}}
 						status={status}
+						dialogWrapper={dialogWrapper}
 						publishedStatus='draft'
 					/>
 				) : (
@@ -84,6 +86,7 @@ export default function PollDetails({
 								style={{ minWidth: '40% !important' }}
 								type={'poll'}
 								status={status}
+								dialogWrapper={dialogWrapper}
 							/>
 						</TabPanelUnstyled>
 						<TabPanelUnstyled value={1}>
@@ -103,6 +106,7 @@ export default function PollDetails({
 									handleClose();
 								}}
 								status={status}
+								dialogWrapper={dialogWrapper}
 								publishedStatus='draft'
 							/>
 						</TabPanelUnstyled>

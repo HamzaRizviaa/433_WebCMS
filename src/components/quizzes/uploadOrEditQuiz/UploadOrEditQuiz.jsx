@@ -45,6 +45,7 @@ const UploadOrEditQuiz = ({
 	previewFile,
 	setPreviewFile,
 	previewRef,
+	dialogWrapper,
 	setDisableDropdown,
 	quiz,
 	handleClose,
@@ -80,7 +81,7 @@ const UploadOrEditQuiz = ({
 	});
 	const imgRef = useRef(null);
 	const loadingRef = useRef(null);
-	const dialogWrapper = useRef(null);
+	
 	const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
@@ -1202,6 +1203,10 @@ UploadOrEditQuiz.propTypes = {
 	previewFile: PropTypes.bool.isRequired,
 	setPreviewFile: PropTypes.func.isRequired,
 	previewRef: PropTypes.oneOfType([
+		PropTypes.func,
+		PropTypes.shape({ current: PropTypes.elementType })
+	]).isRequired,
+	dialogWrapper:  PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,

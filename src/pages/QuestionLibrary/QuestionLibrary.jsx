@@ -44,6 +44,7 @@ import {
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
 import LogoutToaster from '../../components/LogoutToaster';
+import { useNavigate } from 'react-router-dom';
 
 const QuestionLibrary = () => {
 	// Selectors
@@ -61,7 +62,7 @@ const QuestionLibrary = () => {
 	const noResultStatusCalendar = useSelector(
 		(state) => state.questionLibrary.noResultStatusCalendar
 	);
-
+	const navigate = useNavigate();
 	const muiClasses = useStyles();
 	const classes = globalUseStyles();
 	const [showSlider, setShowSlider] = useState(false);
@@ -84,10 +85,10 @@ const QuestionLibrary = () => {
 	const [startDate, endDate] = dateRange;
 	const [logout, setLogout] = useState(false);
 
-	const enabled = (logoutValue) => {
-		console.log(logoutValue, 'logoutVALUE');
-		setLogout(logoutValue);
-	};
+	// const enabled = (logoutValue) => {
+	// 	console.log(logoutValue, 'logoutVALUE');
+	// 	setLogout(logoutValue);
+	// };
 
 	useEffect(() => {
 		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));
@@ -95,7 +96,11 @@ const QuestionLibrary = () => {
 		let time_difference_minutes = (expiry_date - current_date) / 1000 / 60; //in minutes
 		console.log(time_difference_minutes);
 		if (time_difference_minutes <= 1.5) {
-			setLogout(true);
+			// setLogout(true);
+			alert('Your session has expired');
+			localStorage.removeItem('user_data');
+			localStorage.removeItem('token_expire_time');
+			navigate('/sign-in');
 		}
 	}, []);
 	console.log(logout, 'log');
@@ -230,7 +235,12 @@ const QuestionLibrary = () => {
 			sortCaret: sortRows,
 			sortFunc: () => {},
 			formatter: (content) => {
-				return <div className={classes.questionRow}>{content}</div>;
+				return (
+					//<div className={classes.questionRow}>{content}</div>
+					<div className={classes.questionRow}>
+						<Markup content={`${content}`} />
+					</div>
+				);
 			}
 		},
 		{
@@ -241,8 +251,9 @@ const QuestionLibrary = () => {
 			text: 'QUESTION TYPE',
 			formatter: (content) => {
 				return (
+					//<div className={classes.questionRow}>{content}</div>
 					<div className={classes.questionRow} style={{ paddingLeft: '18px' }}>
-						{content}
+						<Markup content={`${content}`} />
 					</div>
 				);
 			},
@@ -527,11 +538,11 @@ const QuestionLibrary = () => {
 				/>
 			}
 		>
-			{logout ? (
+			{/* {logout ? (
 				<LogoutToaster text={'Your session has expired!'} enabled={enabled} />
 			) : (
 				<> </>
-			)}
+			)} */}
 
 			<Layout>
 				<div className={classes.header}>

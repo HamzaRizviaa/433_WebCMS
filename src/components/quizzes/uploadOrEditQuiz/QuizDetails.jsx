@@ -23,6 +23,7 @@ export default function QuizDetails({
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const previewRef = useRef(null);
+	const dialogWrapper = useRef(null);
 
 	const handlePreviewEscape = () => {
 		setPreviewBool(false);
@@ -30,7 +31,7 @@ export default function QuizDetails({
 	};
 
 	const muiClasses = useStyles();
-	const dialogWrapper = useRef(null);
+	
 	// Question Library :  click on row with type:quiz
 
 	return (
@@ -67,6 +68,7 @@ export default function QuizDetails({
 						}}
 						status={status}
 						type={'quiz'}
+						dialogWrapper={dialogWrapper}
 						publishedStatus='draft'
 					/>
 				) : (
@@ -88,6 +90,7 @@ export default function QuizDetails({
 								type={'quiz'}
 								status={status}
 								quiz={true}
+								dialogWrapper={dialogWrapper}
 							/>
 						</TabPanelUnstyled>
 						<TabPanelUnstyled value={1}>
@@ -109,6 +112,7 @@ export default function QuizDetails({
 								}}
 								status={status}
 								type={'quiz'}
+								dialogWrapper={dialogWrapper}
 								publishedStatus='draft'
 							/>
 						</TabPanelUnstyled>
