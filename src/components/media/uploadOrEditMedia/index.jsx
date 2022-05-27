@@ -12,6 +12,7 @@ import { useDropzone } from 'react-dropzone';
 import { makeid } from '../../../utils/helper';
 import { useDispatch, useSelector } from 'react-redux';
 import checkFileSize from '../../../utils/validateFileSize';
+import ToggleSwitch from '../../switch';
 import completeUplaod from '../../../utils/completeUploadDraft';
 import {
 	getMainCategories,
@@ -74,7 +75,9 @@ const UploadOrEditMedia = ({
 		description: '',
 		labels: [],
 		uploadedFiles: [],
-		uploadedCoverImage: []
+		uploadedCoverImage: [],
+		show_likes: false,
+		show_comments: false
 	});
 
 	const classes = useStyles();
@@ -152,7 +155,8 @@ const UploadOrEditMedia = ({
 					image_dropbox_url: specificMedia?.image_dropbox_url,
 					mainCategory: specificMedia.media_type,
 					subCategory: specificMedia.sub_category,
-
+					show_likes: specificMedia?.show_likes,
+					show_comments: specificMedia?.show_comments,
 					uploadedFiles: specificMedia?.media_url
 						? [
 								{
@@ -360,7 +364,9 @@ const UploadOrEditMedia = ({
 			subCategory: '',
 			labels: [],
 			uploadedFiles: [],
-			uploadedCoverImage: []
+			uploadedCoverImage: [],
+			show_likes: false,
+			show_comments: false
 		});
 	};
 
@@ -495,6 +501,8 @@ const UploadOrEditMedia = ({
 							...(form.image_dropbox_url
 								? { image_dropbox_url: form.image_dropbox_url }
 								: {}),
+							show_likes: form.show_likes ? true : undefined,
+							show_comments: form.show_comments ? true : undefined,
 							//...(form.labels.length ? { labels: [...form.labels] } : {}),
 
 							data: {
@@ -613,7 +621,9 @@ const UploadOrEditMedia = ({
 						specificMedia?.title.replace(/\s+/g, '')?.trim() ===
 							form.title?.replace(/\s+/g, '')?.trim() &&
 						specificMedia?.description?.replace(/\s+/g, '')?.trim() ===
-							form.description?.replace(/\s+/g, '')?.trim())
+							form.description?.replace(/\s+/g, '')?.trim() &&
+						specificMedia?.show_likes === form.show_likes &&
+						specificMedia?.show_comments === form.show_comments)
 			);
 		}
 	}, [specificMedia, form]);
@@ -655,7 +665,9 @@ const UploadOrEditMedia = ({
 						specificMedia?.description?.replace(/\s+/g, '')?.trim() ===
 							form?.description?.replace(/\s+/g, '')?.trim() &&
 						specificMedia?.labels?.length === form?.labels?.length &&
-						!checkDuplicateLabel())
+						!checkDuplicateLabel() &&
+						specificMedia?.show_likes === form.show_likes &&
+						specificMedia?.show_comments === form.show_comments)
 			);
 		}
 	}, [specificMedia, form]);
@@ -801,6 +813,8 @@ const UploadOrEditMedia = ({
 							save_draft: false,
 							main_category_id: media_type,
 							sub_category_id: subId,
+							show_likes: form.show_likes ? true : undefined,
+							show_comments: form.show_comments ? true : undefined,
 							...(form.media_dropbox_url
 								? { media_dropbox_url: form.media_dropbox_url }
 								: {}),
@@ -978,6 +992,8 @@ const UploadOrEditMedia = ({
 						? form.image_dropbox_url
 						: undefined,
 					labels: [...form.labels],
+					show_likes: form.show_likes ? true : false,
+					show_comments: form.show_comments ? true : false,
 					data: {
 						...(!form.uploadedCoverImage[0] && { image_data: null }),
 						...(!form.uploadedFiles[0] && {
@@ -1614,6 +1630,38 @@ const UploadOrEditMedia = ({
 													? 'You need to enter a Description'
 													: ''}
 											</p>
+											<div className={classes.postMediaContainer}>
+												<div className={classes.postMediaHeader}>
+													<h5>Show comments</h5>
+													<ToggleSwitch
+														id={1}
+														checked={form.show_comments}
+														onChange={(checked) =>
+															setForm((prev) => {
+																return { ...prev, show_comments: checked };
+															})
+														}
+													/>
+												</div>
+											</div>
+
+											<div
+												className={classes.postMediaContainer}
+												style={{ marginBottom: '1rem' }}
+											>
+												<div className={classes.postMediaHeader}>
+													<h5>Show likes</h5>
+													<ToggleSwitch
+														id={2}
+														checked={form.show_likes}
+														onChange={(checked) =>
+															setForm((prev) => {
+																return { ...prev, show_likes: checked };
+															})
+														}
+													/>
+												</div>
+											</div>
 										</>
 									) : (
 										<></>
