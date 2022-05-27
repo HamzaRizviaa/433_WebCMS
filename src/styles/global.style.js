@@ -671,7 +671,11 @@ export const useStyles = makeStyles(() => ({
 		marginBottom: '1.5rem',
 		fontSize: '1.2rem',
 		paddingLeft: '35px',
-		display: 'block'
+		display: 'block',
+		maxWidth: '80%',
+		textOverflow: 'ellipsis',
+		overflow: 'hidden',
+		whiteSpace: 'nowrap'
 	},
 
 	// ------- article page
@@ -703,7 +707,11 @@ export const useStyles = makeStyles(() => ({
 		marginBottom: '1.5rem',
 		fontSize: '1.2rem',
 		paddingRight: '30px',
-		display: 'block'
+		display: 'block',
+		maxWidth: '80%',
+		textOverflow: 'ellipsis',
+		overflow: 'hidden',
+		whiteSpace: 'nowrap'
 	},
 
 	viralFileName: {
@@ -732,7 +740,11 @@ export const useStyles = makeStyles(() => ({
 	questionRowType: {
 		marginBottom: '1.5rem',
 		fontSize: '1.2rem',
-		paddingLeft: '30px'
+		paddingLeft: '30px',
+		maxWidth: '80%',
+		textOverflow: 'ellipsis',
+		overflow: 'hidden',
+		whiteSpace: 'nowrap'
 	},
 
 	// ----- games library

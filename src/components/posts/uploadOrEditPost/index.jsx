@@ -608,7 +608,7 @@ const UploadOrEditPost = ({
 	//console.log(uploadedFiles, 'uploadedFiles');
 
 	const addSavePostBtn = () => {
-		if (!validateForm(form) || editBtnDisabled) {
+		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
 			validatePostBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -1287,12 +1287,18 @@ const UploadOrEditPost = ({
 												// 		: !validateForm(form)
 												// }
 												disabled={
-													isEdit ? editBtnDisabled : !validateForm(form)
+													isEdit && validateForm(form) && status === 'draft'
+														? false
+														: isEdit
+														? editBtnDisabled
+														: !validateForm(form)
 												}
 												onClick={() => {
 													addSavePostBtn();
 												}}
-												text={buttonText}
+												text={
+													isEdit && status === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
+												}
 											/>
 										</div>
 									</div>
