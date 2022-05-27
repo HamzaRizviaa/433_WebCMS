@@ -81,7 +81,7 @@ const UploadOrEditQuiz = ({
 	});
 	const imgRef = useRef(null);
 	const loadingRef = useRef(null);
-	
+
 	const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
@@ -558,8 +558,8 @@ const UploadOrEditQuiz = ({
 						? editQuestionData?.quiz_end_date === convertedDate
 						: editQuestionData?.poll_end_date === convertedDate) &&
 						editQuestionData?.question === form?.question &&
-						editQuestionData?.answers[0].answer === form?.answer1 &&
-						editQuestionData?.answers[1].answer === form?.answer2 &&
+						editQuestionData?.answers[0]?.answer === form?.answer1 &&
+						editQuestionData?.answers[1]?.answer === form?.answer2 &&
 						(editQuestionData?.image || form?.uploadedFiles[0]
 							? editQuestionData?.file_name ===
 							  form?.uploadedFiles[0]?.file_name
@@ -1206,7 +1206,7 @@ UploadOrEditQuiz.propTypes = {
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,
-	dialogWrapper:  PropTypes.oneOfType([
+	dialogWrapper: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,

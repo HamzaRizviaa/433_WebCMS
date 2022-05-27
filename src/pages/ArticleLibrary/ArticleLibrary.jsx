@@ -171,7 +171,7 @@ const ArticleLibrary = () => {
 								  col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -190,7 +190,7 @@ const ArticleLibrary = () => {
 								  col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -209,7 +209,7 @@ const ArticleLibrary = () => {
 								  col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);

@@ -270,7 +270,7 @@ const GamesLibrary = () => {
 								: col?.dataField === 'last_edit'
 								? 21
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -289,7 +289,7 @@ const GamesLibrary = () => {
 								: col?.dataField === 'last_edit'
 								? 21
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);
@@ -308,7 +308,7 @@ const GamesLibrary = () => {
 								: col?.dataField === 'last_edit'
 								? 21
 								: -4,
-						bottom: 0.5
+						bottom: '-2px'
 					}}
 				/>
 			);

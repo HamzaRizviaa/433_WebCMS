@@ -690,7 +690,11 @@ export const useStyles = makeStyles(() => ({
 		marginBottom: '1.5rem',
 		fontSize: '1.2rem',
 		paddingLeft: '35px',
-		display: 'block'
+		display: 'block',
+		maxWidth: '80%',
+		textOverflow: 'ellipsis',
+		overflow: 'hidden',
+		whiteSpace: 'nowrap'
 	},
 
 	// -------- virals library page
