@@ -22,7 +22,7 @@ export const useStyles = makeStyles(() => ({
 	iconWrapper: {
 		marginTop: '2.5rem',
 		padding: '1rem 1.2rem 0.8rem 1.2rem',
-
+		border:'2px solid transparent',
 		borderRadius: '8px',
 		cursor: 'pointer'
 	},
@@ -88,7 +88,7 @@ export const useStyles = makeStyles(() => ({
 
 		'& .iconWrapper': {
 			backgroundColor: theme.palette.neonYellow,
-			border: `2px solid ${theme.palette.neonYellow}`,
+			border:'2px solid transparent',
 			marginTop: '2.5rem',
 			padding: '1rem 1.2rem 0.8rem 1.2rem',
 			borderRadius: '8px',
@@ -156,6 +156,7 @@ export const useStyles = makeStyles(() => ({
 		justifyContent: 'space-between',
 		padding: '3rem 1rem',
 		'& .iconWrapperDev': {
+			border:'2px solid transparent',
 			marginTop: '2.5rem',
 			padding: '1rem 1.2rem 0.8rem 1.2rem',
 			borderRadius: '8px',
@@ -217,6 +218,7 @@ export const useStyles = makeStyles(() => ({
 		justifyContent: 'space-between',
 		padding: '3rem 1rem',
 		'& .iconWrapperDev': {
+			border:'2px solid transparent',
 			marginTop: '2.5rem',
 			padding: '1rem 1.2rem 0.8rem 1.2rem',
 			borderRadius: '8px',
