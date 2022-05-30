@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 // import classes from './_uploadOrEditArticle.module.scss';
 import { useDropzone } from 'react-dropzone';
+import ArticleBuilderSidebar from '../../ArticleBuilderSidebar';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { MenuItem, TextField, Select, Grid } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -30,6 +31,8 @@ import { useStyles } from './index.style';
 import ToggleSwitch from '../../switch';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
+
+import Instragram from '../../../assets/Instagram.svg';
 //api calls
 import {
 	getAllArticlesApi,
@@ -105,6 +108,13 @@ const UploadOrEditViral = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
+
+	const sidebarData = [
+		{
+			image: <Instragram />,
+			text: 'Instagram'
+		}
+	];
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png',
@@ -773,7 +783,7 @@ const UploadOrEditViral = ({
 							)}
 							<Grid container>
 								<Grid item md={3}>
-									<h2>Element Sidebar </h2>
+									<ArticleBuilderSidebar data={sidebarData} />
 								</Grid>
 								<Grid item md={6}>
 									<h2>Article Builder</h2>
