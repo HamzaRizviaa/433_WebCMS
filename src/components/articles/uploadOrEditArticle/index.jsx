@@ -1285,7 +1285,7 @@ const UploadOrEditViral = ({
 																	]
 																}
 															],
-															menubar: 'edit insert tools format',
+															menubar: 'edit insert format',
 															menu: {
 																edit: {
 																	title: 'Edit',
@@ -1295,17 +1295,17 @@ const UploadOrEditViral = ({
 																insert: {
 																	title: 'Insert',
 																	items:
-																		'image link charmap hr anchor insertdatetime'
+																		' hr insertdatetime'
 																},
 																format: {
 																	title: 'Format',
 																	items:
-																		'bold italic underline strikethrough | formats  fontsizes align lineheight  '
+																		' underline strikethrough | formats  align lineheight  '
 																},
-																tools: {
-																	title: 'Tools',
-																	items: 'wordcount'
-																}
+																// tools: {
+																// 	title: 'Tools',
+																// 	items: 'wordcount'
+																// }
 															},
 															plugins: [
 																'lists advlist link image anchor',
@@ -1313,10 +1313,10 @@ const UploadOrEditViral = ({
 																'insertdatetime table paste wordcount  charmap textcolor colorpicker'
 															],
 
-															toolbar:
-																'undo redo  bold italic underline strikethrough fontsizeselect | ' +
-																'alignleft aligncenter ' +
-																'alignright alignjustify | bullist numlist | '
+															// toolbar:
+															// 	'undo redo  bold italic underline strikethrough fontsizeselect | ' +
+															// 	'alignleft aligncenter ' +
+															// 	'alignright alignjustify | bullist numlist | '
 														}}
 														onEditorChange={() => handleEditorChange()}
 														onMouseEnter={() => setDisableDropdown(false)}
