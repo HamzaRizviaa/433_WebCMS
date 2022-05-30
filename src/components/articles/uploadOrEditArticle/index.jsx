@@ -94,8 +94,8 @@ const UploadOrEditViral = ({
 		dropbox_url: '',
 		uploadedFiles: [],
 		labels: [],
-		show_likes: false,
-		show_comments: false,
+		show_likes: true,
+		show_comments: true,
 		mainCategory: '',
 		subCategory: ''
 	});
@@ -393,8 +393,8 @@ const UploadOrEditViral = ({
 			labels: [],
 			mainCategory: '',
 			subCategory: '',
-			show_likes: false,
-			show_comments: false
+			show_likes: true,
+			show_comments: true
 		});
 	};
 

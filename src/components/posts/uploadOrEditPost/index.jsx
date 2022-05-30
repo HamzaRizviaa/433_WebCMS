@@ -86,8 +86,8 @@ const UploadOrEditPost = ({
 		dropbox_url: '',
 		uploadedFiles: [],
 		labels: [],
-		show_likes: false,
-		show_comments: false,
+		show_likes: true,
+		show_comments: true,
 		media_id: null,
 		mediaToggle: false
 	});
@@ -330,8 +330,8 @@ const UploadOrEditPost = ({
 			dropbox_url: '',
 			uploadedFiles: [],
 			labels: [],
-			show_likes: false,
-			show_comments: false,
+			show_likes: true,
+			show_comments: true,
 			media_id: null,
 			mediaToggle: false
 		});
