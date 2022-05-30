@@ -359,31 +359,32 @@ export const useStyles = makeStyles((theme) => ({
 						}
 					},
 					'& > div.tox-toolbar-overlord': {
+						display:'none !important',
 						//tox-toolbar tox-toolbar--scrolling
-						'& > div.tox-toolbar__primary': {
-							//tox-toolbar__group
-							borderTop: `1px solid #404040 !important`,
-							backgroundColor: `#404040 !important`,
-							// border-right: none !important;
-							'& > div > button.tox-tbtn': {
-								// border-right: 1px solid white !important;
-								'& > span.tox-icon': {
-									color: ` white !important`,
-									'& > svg': {
-										fill: `white !important`
-									}
-								},
-								'&:focus': {
-									background: `#404040 !important`
-								},
-								'&:hover': {
-									background: `#404040 !important`
-								},
-								'&:active': {
-									background: `#404040 !important`
-								}
-							}
-						}
+						// '& > div.tox-toolbar__primary': {
+						// 	//tox-toolbar__group
+						// 	borderTop: `1px solid #404040 !important`,
+						// 	backgroundColor: `#404040 !important`,
+						// 	// border-right: none !important;
+						// 	'& > div > button.tox-tbtn': {
+						// 		// border-right: 1px solid white !important;
+						// 		'& > span.tox-icon': {
+						// 			color: ` white !important`,
+						// 			'& > svg': {
+						// 				fill: `white !important`
+						// 			}
+						// 		},
+						// 		'&:focus': {
+						// 			background: `#404040 !important`
+						// 		},
+						// 		'&:hover': {
+						// 			background: `#404040 !important`
+						// 		},
+						// 		'&:active': {
+						// 			background: `#404040 !important`
+						// 		}
+						// 	}
+						// }
 					}
 				},
 				//middle text area
