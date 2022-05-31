@@ -699,7 +699,7 @@ const ArticleLibrary = () => {
 						setShowSlider(false);
 						// setTimeout(() => setEdit(false), 600);
 					}}
-					title={edit ? 'Edit Article' : 'Upload Article'}
+					title={edit ? 'Edit Article' : 'Article Builder'}
 					heading1={edit ? 'Media File' : 'Add Media File'}
 					buttonText={
 						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'

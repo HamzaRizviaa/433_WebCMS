@@ -4,13 +4,13 @@ import React, { useState, useEffect, useRef } from 'react';
 // import classes from './_uploadOrEditArticle.module.scss';
 import { useDropzone } from 'react-dropzone';
 import Editor from '../../Editor';
+import ArticleElements from '../../ArticleElements';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { MenuItem, TextField, Select, Grid } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
 import ArticleSlider from '../../articleSlider';
-import ArticleSlide from '../../articleSlide';
 import Button from '../../button';
 import DragAndDropField from '../../DragAndDropField';
 import Labels from '../../Labels';
@@ -33,6 +33,10 @@ import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
 
 import Instragram from '../../../assets/Instagram.svg';
+import Text from '../../../assets/Text.svg';
+import ImageVideo from '../../../assets/Image.svg';
+import Tweet from '../../../assets/Twitter Line.svg';
+
 //api calls
 import {
 	getAllArticlesApi,
@@ -111,10 +115,27 @@ const UploadOrEditViral = ({
 
 	const sidebarData = [
 		{
-			image: <Instragram />,
-			text: 'Instagram'
+			id: 1,
+			image: Text,
+			text: 'Text'
+		},
+		{
+			id: 2,
+			image: ImageVideo,
+			text: 'Image / Video'
+		},
+		{
+			id: 3,
+			image: Tweet,
+			text: 'Tweet'
+		},
+		{
+			id: 4,
+			image: Instragram,
+			text: 'IG post'
 		}
 	];
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png',
@@ -783,9 +804,20 @@ const UploadOrEditViral = ({
 							)}
 							<Grid container>
 								<Grid item md={3}></Grid>
+								<Grid item md={3}>
+									<h2>Elements</h2>
+									<ArticleElements data={sidebarData} />
+								</Grid>
 								<Grid item md={6}>
 									<h2>Article Builder</h2>
-									<Editor description={form.description} />
+									<Editor
+										description={form.description}
+										onMouseEnter={() => setDisableDropdown(false)}
+										onBlur={() => setDisableDropdown(true)}
+										handleEditorChange={() => {
+											handleEditorChange;
+										}}
+									/>
 								</Grid>
 								<Grid item md={3}>
 									<h2>Preview Panel </h2>
