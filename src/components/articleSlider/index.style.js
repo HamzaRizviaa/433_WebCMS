@@ -31,9 +31,10 @@ export const useStyles = makeStyles((theme) => ({
 		height: '3.2rem !important',
 		marginRight: '1.6rem !important',
 		padding: '0.5rem !important',
-		background: `${theme.palette.neonYellow} !important`,
+		background: `${theme.palette.grey} !important`,
 		borderRadius: '50% !important',
-		cursor: 'pointer !important'
+		cursor: 'pointer !important',
+		color: 'white'
 	},
 
 	header: {
