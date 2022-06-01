@@ -803,7 +803,6 @@ const UploadOrEditViral = ({
 								<></>
 							)}
 							<Grid container>
-								<Grid item md={3}></Grid>
 								<Grid item md={3}>
 									<h2>Elements</h2>
 									<ArticleElements data={sidebarData} />
