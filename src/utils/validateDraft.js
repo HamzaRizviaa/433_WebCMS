@@ -39,7 +39,7 @@ const validateDraft = (form) => {
 		if (typeof form[key] === 'boolean') {
 			if (key === 'mediaToggle') {
 				return false;
-			} else if (form[key] === false) {
+			} else if (form[key] === true) {
 				return false;
 			} else {
 				return true;

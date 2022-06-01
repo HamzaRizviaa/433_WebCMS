@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 // import classes from './_uploadOrEditArticle.module.scss';
 import { useDropzone } from 'react-dropzone';
+import Editor from '../../Editor';
 import ArticleElements from '../../ArticleElements';
 import ArticleGeneralInfo from '../../ArticleGeneralInfo';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -44,28 +45,28 @@ import {
 	getArticleSubCategories
 } from '../../../pages/ArticleLibrary/articleLibrarySlice';
 //tinymce
-import { Editor } from '@tinymce/tinymce-react';
-import 'tinymce/tinymce';
-import 'tinymce/icons/default';
-import 'tinymce/themes/silver';
-import 'tinymce/plugins/paste';
-import 'tinymce/plugins/link';
-import 'tinymce/plugins/image';
-import 'tinymce/plugins/searchreplace';
-import 'tinymce/plugins/emoticons/js/emojiimages.min.js';
-import 'tinymce/plugins/hr';
-import 'tinymce/plugins/anchor';
-import 'tinymce/plugins/insertdatetime';
-import 'tinymce/plugins/wordcount';
-import 'tinymce/plugins/lists';
-import 'tinymce/plugins/advlist';
-import 'tinymce/plugins/textcolor';
-import 'tinymce/plugins/colorpicker';
-import 'tinymce/plugins/fullscreen';
-import 'tinymce/plugins/charmap';
-import 'tinymce/skins/ui/oxide/skin.min.css';
-import 'tinymce/skins/ui/oxide/content.min.css';
-import 'tinymce/skins/content/default/content.min.css';
+
+// import 'tinymce/tinymce';
+// import 'tinymce/icons/default';
+// import 'tinymce/themes/silver';
+// import 'tinymce/plugins/paste';
+// import 'tinymce/plugins/link';
+// import 'tinymce/plugins/image';
+// import 'tinymce/plugins/searchreplace';
+// import 'tinymce/plugins/emoticons/js/emojiimages.min.js';
+// import 'tinymce/plugins/hr';
+// import 'tinymce/plugins/anchor';
+// import 'tinymce/plugins/insertdatetime';
+// import 'tinymce/plugins/wordcount';
+// import 'tinymce/plugins/lists';
+// import 'tinymce/plugins/advlist';
+// import 'tinymce/plugins/textcolor';
+// import 'tinymce/plugins/colorpicker';
+// import 'tinymce/plugins/fullscreen';
+// import 'tinymce/plugins/charmap';
+// import 'tinymce/skins/ui/oxide/skin.min.css';
+// import 'tinymce/skins/ui/oxide/content.min.css';
+// import 'tinymce/skins/content/default/content.min.css';
 import LoadingOverlay from 'react-loading-overlay';
 
 const UploadOrEditViral = ({
@@ -821,6 +822,15 @@ const UploadOrEditViral = ({
 										SubCategoryId={SubCategoryId}
 										handleDeleteFile={handleDeleteFile}
 									/>
+									
+									{/* <Editor
+										description={form.description}
+										onMouseEnter={() => setDisableDropdown(false)}
+										onBlur={() => setDisableDropdown(true)}
+										handleEditorChange={() => {
+											handleEditorChange;
+										}}
+									/> */}
 								</Grid>
 								<Grid item md={3}>
 									<h2>Preview</h2>
