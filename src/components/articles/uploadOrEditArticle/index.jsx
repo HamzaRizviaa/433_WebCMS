@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 // import classes from './_uploadOrEditArticle.module.scss';
 import { useDropzone } from 'react-dropzone';
 import ArticleElements from '../../ArticleElements';
+import ArticleGeneralInfo from '../../ArticleGeneralInfo';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { MenuItem, TextField, Select, Grid } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -112,7 +113,7 @@ const UploadOrEditViral = ({
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
 
-	const sidebarData = [
+	const elementData = [
 		{
 			id: 1,
 			image: Text,
@@ -804,13 +805,25 @@ const UploadOrEditViral = ({
 							<Grid container>
 								<Grid item md={3}>
 									<h2>Elements</h2>
-									<ArticleElements data={sidebarData} />
+									<ArticleElements data={elementData} />
 								</Grid>
 								<Grid item md={6}>
-									<h2>Article Builder</h2>
+									<h2>Builder</h2>
+									<ArticleGeneralInfo
+										isEdit={isEdit}
+										form={form}
+										setForm={setForm}
+										status={status}
+										setDisableDropdown={setDisableDropdown}
+										mainCategoryId={mainCategoryId}
+										mainCategories={mainCategories}
+										subCategories={subCategories}
+										SubCategoryId={SubCategoryId}
+										handleDeleteFile={handleDeleteFile}
+									/>
 								</Grid>
 								<Grid item md={3}>
-									<h2>Preview Panel </h2>
+									<h2>Preview</h2>
 								</Grid>
 							</Grid>
 						</div>
