@@ -1,7 +1,8 @@
 /* eslint-disable no-dupe-keys */
 import { makeStyles } from '@material-ui/core';
+import theme from '../../../assets/theme';
 
-export const useStyles = makeStyles((theme) => ({
+export const useStyles = makeStyles(() => ({
 	textField: {
 		width: '100%'
 	},
@@ -10,7 +11,10 @@ export const useStyles = makeStyles((theme) => ({
 		...theme.components.textFieldInput
 		// @include textFieldInput,
 	},
-
+	mainTitleDescription: {
+		'& h2': { fontSize: '20px', fontWeight: 800, color: theme.palette.white },
+		'& p': { fontSize: '14px', color: theme.palette.white }
+	},
 	captionContainer: {
 		'& h6': {
 			marginBottom: '0.5rem',

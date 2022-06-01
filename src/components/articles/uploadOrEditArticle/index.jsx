@@ -7,7 +7,7 @@ import Editor from '../../Editor';
 import ArticleElements from '../../ArticleElements';
 import ArticleGeneralInfo from '../../ArticleGeneralInfo';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import { MenuItem, TextField, Select, Grid } from '@material-ui/core';
+import { Box, MenuItem, TextField, Select, Grid } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
@@ -822,7 +822,7 @@ const UploadOrEditViral = ({
 										SubCategoryId={SubCategoryId}
 										handleDeleteFile={handleDeleteFile}
 									/>
-									
+
 									{/* <Editor
 										description={form.description}
 										onMouseEnter={() => setDisableDropdown(false)}
@@ -833,7 +833,18 @@ const UploadOrEditViral = ({
 									/> */}
 								</Grid>
 								<Grid item md={3}>
-									<h2>Preview</h2>
+									<Box px={3}>
+										<Box mb={3.5} className={classes.mainTitleDescription}>
+											<h2>Preview</h2>
+											<p>Review the result here before publishing</p>
+										</Box>
+										<Box>
+											<img
+												src='https://via.placeholder.com/298x596?text=Preview'
+												alt='placeholder'
+											/>
+										</Box>
+									</Box>
 								</Grid>
 							</Grid>
 						</div>
