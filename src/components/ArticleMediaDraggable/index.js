@@ -19,7 +19,7 @@ const ArticleMediaDraggable = ({ item, form }) => {
 	};
 	return (
 		<>
-			{' '}
+			
 			<Draggable
 				draggableId={`draggable-${item}`}
 				//	isDragDisabled={uploadeddatas.length <= 1}
@@ -65,18 +65,18 @@ const ArticleMediaDraggable = ({ item, form }) => {
 									uploadedFiles={form.uploadedFiles}
 									// isEdit={isEdit}
 									// handleDeleteFile={handleDeleteFile}
-									setPreviewBool={setPreviewBool}
-									setPreviewFile={setPreviewFile}
-									imgEl={imgEl}
-									videoRef={videoRef}
-									imageOnload={() => {
-										setFileWidth(imgEl.current.naturalWidth);
-										setFileHeight(imgEl.current.naturalHeight);
-									}}
-									onLoadedVideodata={() => {
-										setFileWidth(videoRef.current.videoWidth);
-										setFileHeight(videoRef.current.videoHeight);
-									}}
+									// setPreviewBool={setPreviewBool}
+									// setPreviewFile={setPreviewFile}
+									// imgEl={imgEl}
+									// videoRef={videoRef}
+									// imageOnload={() => {
+									// 	setFileWidth(imgEl.current.naturalWidth);
+									// 	setFileHeight(imgEl.current.naturalHeight);
+									// }}
+									// onLoadedVideodata={() => {
+									// 	setFileWidth(videoRef.current.videoWidth);
+									// 	setFileHeight(videoRef.current.videoHeight);
+									// }}
 									isArticle
 								/>
 							</div>

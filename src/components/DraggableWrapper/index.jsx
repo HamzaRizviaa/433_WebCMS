@@ -11,6 +11,7 @@ import { ReactComponent as Union } from '../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../assets/Delete.svg';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+
 const DraggableWrapper = ({ heading, children, data, ItemToAdd }) => {
 	// const reorder = (list, startIndex, endIndex) => {
 	// 	const result = Array.from(list);

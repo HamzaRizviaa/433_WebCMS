@@ -6,7 +6,7 @@ const ArticleElements = ({ data, onClick }) => {
 	const classes = useStyles();
 
 	return (
-		<>
+		<div>
 			{data.map((dataItem) => (
 				<button
 					onClick={() => onClick(dataItem)}
@@ -17,7 +17,7 @@ const ArticleElements = ({ data, onClick }) => {
 					<p className={classes.elementText}>Add {dataItem.text}</p>
 				</button>
 			))}
-		</>
+		</div>
 	);
 };
 

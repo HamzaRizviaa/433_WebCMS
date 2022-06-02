@@ -872,14 +872,16 @@ const UploadOrEditViral = ({
 							)}
 							<Grid container>
 								<Grid item md={3}>
-									<h2>Elements</h2>
-									<ArticleElements
-										data={elementData}
-										onClick={(dataItem) => {
-											console.log(dataItem, 'index');
-											setDataItem(dataItem);
-										}}
-									/>
+									<div className={classes.gridDivSmall}>
+										<h2>Elements</h2>
+										<ArticleElements
+											data={elementData}
+											onClick={(dataItem) => {
+												console.log(dataItem, 'index');
+												setDataItem(dataItem);
+											}}
+										/>
+									</div>
 								</Grid>
 								<Grid item md={6}>
 									<h2>Builder</h2>
@@ -925,7 +927,7 @@ const UploadOrEditViral = ({
 									</DraggableWrapper>
 								</Grid>
 								<Grid item md={3}>
-									<Box px={3}>
+									<Box px={3} className={classes.gridDivSmall}>
 										<Box mb={3.5} className={classes.mainTitleDescription}>
 											<h2>Preview</h2>
 											<p>Review the result here before publishing</p>

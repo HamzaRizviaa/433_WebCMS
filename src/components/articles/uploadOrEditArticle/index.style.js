@@ -3,6 +3,14 @@ import { makeStyles } from '@material-ui/core';
 import theme from '../../../assets/theme';
 
 export const useStyles = makeStyles(() => ({
+	gridDivSmall: {
+		position: 'fixed'
+		// height: '100%',
+		// overflow: 'hidden'
+	},
+	gridMainDiv: {
+		overflowY: 'scroll'
+	},
 	textField: {
 		width: '100%'
 	},
