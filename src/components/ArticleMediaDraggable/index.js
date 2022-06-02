@@ -4,25 +4,28 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 // import Close from '@material-ui/icons/Close';
+import { useStyles } from './index.style';
 import { ReactComponent as Union } from '../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../assets/Delete.svg';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import DragAndDropField from '../DragAndDropField';
 
-const ArticleMediaDraggable = () => {
+const ArticleMediaDraggable = ({ item, form }) => {
+	const classes = useStyles();
+	const [clickExpandIcon, setClickExpandIcon] = useState(false);
+	const clickExpand = () => {
+		setClickExpandIcon(!clickExpandIcon);
+	};
 	return (
 		<>
 			{' '}
 			<Draggable
-				key={data.id}
-				draggableId={`draggable-${data.id}`}
-				index={index}
+				draggableId={`draggable-${item}`}
 				//	isDragDisabled={uploadeddatas.length <= 1}
 			>
 				{(provided) => (
 					<div
-						key={index}
 						ref={provided.innerRef}
 						{...provided.draggableProps}
 						style={{
@@ -40,7 +43,7 @@ const ArticleMediaDraggable = () => {
 										/>
 									</span>
 								</div>
-								<div className={classes.wrapperHeading}>{heading}</div>
+								<div className={classes.wrapperHeading}>Add Media</div>
 							</div>
 							<div className={classes.rightDiv}>
 								<div className={classes.deleteIconDiv}>
@@ -61,7 +64,7 @@ const ArticleMediaDraggable = () => {
 								<DragAndDropField
 									uploadedFiles={form.uploadedFiles}
 									// isEdit={isEdit}
-									handleDeleteFile={handleDeleteFile}
+									// handleDeleteFile={handleDeleteFile}
 									setPreviewBool={setPreviewBool}
 									setPreviewFile={setPreviewFile}
 									imgEl={imgEl}
@@ -85,6 +88,11 @@ const ArticleMediaDraggable = () => {
 			</Draggable>
 		</>
 	);
+};
+
+ArticleMediaDraggable.propTypes = {
+	item: PropTypes.number,
+	form: PropTypes.object
 };
 
 export default ArticleMediaDraggable;

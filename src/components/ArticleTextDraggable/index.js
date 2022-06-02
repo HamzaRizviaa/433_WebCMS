@@ -5,23 +5,26 @@ import PropTypes from 'prop-types';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 // import Close from '@material-ui/icons/Close';
 import Editor from '../Editor';
+import { useStyles } from './index.style';
 import { ReactComponent as Union } from '../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../assets/Delete.svg';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-const ArticleTextDraggable = () => {
+
+const ArticleTextDraggable = ({ item, form }) => {
+	const classes = useStyles();
+	const [clickExpandIcon, setClickExpandIcon] = useState(false);
+	const clickExpand = () => {
+		setClickExpandIcon(!clickExpandIcon);
+	};
 	return (
 		<>
-			{' '}
 			<Draggable
-				key={data.id}
-				draggableId={`draggable-${data.id}`}
-				index={index}
+				draggableId={`draggable-${item}`}
 				//	isDragDisabled={uploadeddatas.length <= 1}
 			>
 				{(provided) => (
 					<div
-						key={index}
 						ref={provided.innerRef}
 						{...provided.draggableProps}
 						style={{
@@ -39,7 +42,7 @@ const ArticleTextDraggable = () => {
 										/>
 									</span>
 								</div>
-								<div className={classes.wrapperHeading}>{heading}</div>
+								<div className={classes.wrapperHeading}>Add Text</div>
 							</div>
 							<div className={classes.rightDiv}>
 								<div className={classes.deleteIconDiv}>
@@ -74,6 +77,11 @@ const ArticleTextDraggable = () => {
 			</Draggable>
 		</>
 	);
+};
+
+ArticleTextDraggable.propTypes = {
+	item: PropTypes.number,
+	form: PropTypes.object
 };
 
 export default ArticleTextDraggable;

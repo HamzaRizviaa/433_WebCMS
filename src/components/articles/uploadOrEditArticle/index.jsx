@@ -141,8 +141,8 @@ const UploadOrEditViral = ({
 		}
 	];
 	const data = [
-		{ id: 1, component: <ArticleTextDraggable /> },
-		{ id: 2, component: <ArticleMediaDraggable /> }
+		{ id: 1, component: ArticleTextDraggable },
+		{ id: 2, component: ArticleMediaDraggable }
 	];
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
@@ -843,8 +843,12 @@ const UploadOrEditViral = ({
 										ItemToAdd={dataItem}
 									>
 										{data.map((item) => {
-											console.log('Data children', data);
-											return ReactDOM.render(data.component);
+											console.log('Item children', item);
+											return React.createElement(item.component, {
+												item: item.id,
+												key: item.id,
+												form: form
+											});
 										})}
 									</DraggableWrapper>
 								</Grid>
