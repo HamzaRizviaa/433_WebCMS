@@ -65,6 +65,9 @@ export const useStyles = makeStyles(() => ({
 							}
 						}
 					},
+					'& >div.tox .tox-toolbar--scrolling': {
+						display: 'none !important'
+					},
 					'& > div.tox-toolbar-overlord': {
 						display: 'none !important'
 						//tox-toolbar tox-toolbar--scrolling

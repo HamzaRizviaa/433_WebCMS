@@ -7,8 +7,9 @@ import Editor from '../../Editor';
 import ArticleElements from '../../ArticleElements';
 import ArticleGeneralInfo from '../../ArticleGeneralInfo';
 import ArticleFooter from '../../ArticleFooter';
+import DraggableWrapper from '../../DraggableWrapper';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import { MenuItem, TextField, Select, Grid } from '@material-ui/core';
+import { Box, MenuItem, TextField, Select, Grid } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
@@ -38,6 +39,8 @@ import Text from '../../../assets/Text.svg';
 import ImageVideo from '../../../assets/Image.svg';
 import Tweet from '../../../assets/Twitter Line.svg';
 import Profile433 from '../../../assets/Profile433.svg';
+import ArticleTextDraggable from '../../ArticleTextDraggable';
+import ArticleMediaDraggable from '../../ArticleMediaDraggable';
 
 //api calls
 import {
@@ -97,6 +100,7 @@ const UploadOrEditViral = ({
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
+	const [dataItem, setDataItem] = useState('');
 	const imgEl = useRef(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
@@ -138,6 +142,10 @@ const UploadOrEditViral = ({
 			image: Instragram,
 			text: 'IG post'
 		}
+	];
+	const data = [
+		{ id: 1, component: <ArticleTextDraggable /> },
+		{ id: 2, component: <ArticleMediaDraggable /> }
 	];
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
@@ -865,7 +873,13 @@ const UploadOrEditViral = ({
 							<Grid container>
 								<Grid item md={3}>
 									<h2>Elements</h2>
-									<ArticleElements data={elementData} />
+									<ArticleElements
+										data={elementData}
+										onClick={(dataItem) => {
+											console.log(dataItem, 'index');
+											setDataItem(dataItem);
+										}}
+									/>
 								</Grid>
 								<Grid item md={6}>
 									<h2>Builder</h2>
@@ -894,9 +908,31 @@ const UploadOrEditViral = ({
 										handleChangeExtraLabel={handleChangeExtraLabel}
 										isError={isError}
 									/>
+
+									<DraggableWrapper
+										heading={'Add Text'}
+										data={data}
+										ItemToAdd={dataItem}
+									>
+										{data.map((item) => {
+											console.log('Data children', data);
+											return ReactDOM.render(data.component);
+										})}
+									</DraggableWrapper>
 								</Grid>
 								<Grid item md={3}>
-									<h2>Preview</h2>
+									<Box px={3}>
+										<Box mb={3.5} className={classes.mainTitleDescription}>
+											<h2>Preview</h2>
+											<p>Review the result here before publishing</p>
+										</Box>
+										<Box>
+											<img
+												src='https://via.placeholder.com/298x596?text=Preview'
+												alt='placeholder'
+											/>
+										</Box>
+									</Box>
 								</Grid>
 							</Grid>
 							<ArticleFooter

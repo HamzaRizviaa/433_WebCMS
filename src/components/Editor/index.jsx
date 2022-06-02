@@ -32,10 +32,7 @@ const Articleditor = ({
 	handleEditorChange
 }) => {
 	const classes = useStyles();
-	// const handleEditorChange = () => {
-	// 	const editorTextContent = tinymce?.activeEditor?.getContent();
-	// 	return editorTextContent;
-	// };
+
 	return (
 		<>
 			<div className={classes.editor}>
@@ -58,7 +55,7 @@ const Articleditor = ({
 						branding: false,
 						statusbar: true,
 						skin: false,
-						emoticons_database: 'emojiimages',
+
 						formats: {
 							title_h1: {
 								inline: 'span',
