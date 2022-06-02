@@ -814,7 +814,6 @@ const UploadOrEditViral = ({
 		const result = Array.from(list);
 		const [removed] = result.splice(startIndex, 1);
 		result.splice(endIndex, 0, removed);
-		console.log('Result Array', result);
 		return result;
 	};
 
@@ -822,13 +821,11 @@ const UploadOrEditViral = ({
 		if (!result.destination) {
 			return;
 		}
-		console.log('result', result);
 		const items = reorder(
 			data,
 			result.source.index, // pick
 			result.destination.index // drop
 		);
-		console.log('items', items);
 		setData(items);
 	};
 
@@ -898,7 +895,6 @@ const UploadOrEditViral = ({
 									<ArticleElements
 										data={elementData}
 										onClick={(dataItem) => {
-											console.log(dataItem, 'index');
 											setDataItem(dataItem);
 										}}
 									/>
