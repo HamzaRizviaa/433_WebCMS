@@ -143,10 +143,10 @@ const UploadOrEditViral = ({
 			text: 'IG post'
 		}
 	];
-	const data = [
+	const [data, setData] = useState([
 		{ id: 1, component: ArticleTextDraggable },
 		{ id: 2, component: ArticleMediaDraggable }
-	];
+	]);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -810,6 +810,28 @@ const UploadOrEditViral = ({
 		}
 	};
 
+	const reorder = (list, startIndex, endIndex) => {
+		const result = Array.from(list);
+		const [removed] = result.splice(startIndex, 1);
+		result.splice(endIndex, 0, removed);
+		console.log('Result Array', result);
+		return result;
+	};
+
+	const onDragEnd = (result) => {
+		if (!result.destination) {
+			return;
+		}
+		console.log('result', result);
+		const items = reorder(
+			data,
+			result.source.index, // pick
+			result.destination.index // drop
+		);
+		console.log('items', items);
+		setData(items);
+	};
+
 	return (
 		<>
 			{/* <Slider
@@ -909,18 +931,16 @@ const UploadOrEditViral = ({
 										isError={isError}
 									/>
 
-									<DraggableWrapper
-										heading={'Add Text'}
-										data={data}
-										ItemToAdd={dataItem}
-									>
-										{data.map((item) => {
-											console.log('Item children', item);
-											return React.createElement(item.component, {
-												item: item.id,
-												key: item.id,
-												form: form
-											});
+									<DraggableWrapper heading={'Add Text'} onDragEnd={onDragEnd}>
+										{data.map((item, index) => {
+											if (item !== undefined) {
+												return React.createElement(item?.component, {
+													item,
+													key: item?.id,
+													form: form,
+													index
+												});
+											}
 										})}
 									</DraggableWrapper>
 								</Grid>

@@ -11,7 +11,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import DragAndDropField from '../DragAndDropField';
 
-const ArticleMediaDraggable = ({ item, form }) => {
+const ArticleMediaDraggable = ({ item, form, key, index }) => {
 	const classes = useStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(false);
 	const clickExpand = () => {
@@ -19,9 +19,10 @@ const ArticleMediaDraggable = ({ item, form }) => {
 	};
 	return (
 		<>
-			{' '}
 			<Draggable
-				draggableId={`draggable-${item}`}
+				draggableId={`draggable-${item.id}`}
+				index={index}
+				key={key}
 				//	isDragDisabled={uploadeddatas.length <= 1}
 			>
 				{(provided) => (
@@ -92,7 +93,9 @@ const ArticleMediaDraggable = ({ item, form }) => {
 
 ArticleMediaDraggable.propTypes = {
 	item: PropTypes.number,
-	form: PropTypes.object
+	form: PropTypes.object,
+	key: PropTypes.number,
+	index: PropTypes.number
 };
 
 export default ArticleMediaDraggable;
