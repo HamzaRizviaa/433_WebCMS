@@ -144,41 +144,6 @@ const UploadOrEditViral = ({
 			text: 'IG post'
 		}
 	];
-	const [data, setData] = useState([
-		{
-			id: 1,
-			heading: 'Add Text',
-			component: (
-				<Editor
-					description={form.description}
-					onMouseEnter={() => setDisableDropdown(false)}
-					onBlur={() => setDisableDropdown(true)}
-					handleEditorChange={() => {
-						handleEditorChange;
-					}}
-				/>
-			)
-		},
-		{
-			id: 2,
-			heading: 'Add Image / Video',
-			component: (
-				<DragAndDropField
-					uploadedFiles={form.uploadedFiles}
-					// isEdit={isEdit}
-					// handleDeleteFile={handleDeleteFile}
-					setPreviewBool={setPreviewBool}
-					setPreviewFile={setPreviewFile}
-					imgEl={imgEl}
-					imageOnload={() => {
-						setFileWidth(imgEl.current.naturalWidth);
-						setFileHeight(imgEl.current.naturalHeight);
-					}}
-					isArticle
-				/>
-			)
-		}
-	]);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -860,6 +825,74 @@ const UploadOrEditViral = ({
 		);
 		setData(items);
 	};
+
+	const [data, setData] = useState([
+		{
+			id: 1,
+			heading: 'Add Text',
+			component: (
+				<Editor
+					description={form.description}
+					onMouseEnter={() => setDisableDropdown(false)}
+					onBlur={() => setDisableDropdown(true)}
+					handleEditorChange={() => {
+						handleEditorChange;
+					}}
+				/>
+			)
+		},
+		{
+			id: 2,
+			heading: 'Add Image / Video',
+			component: (
+				<div>
+					<DragAndDropField
+						uploadedFiles={form.uploadedFiles}
+						// handleDeleteFile={handleDeleteFile}
+						isArticle
+						isArticleNew
+						imgEl={imgEl}
+						imageOnload={() => {
+							setFileWidth(imgEl.current.naturalWidth);
+							setFileHeight(imgEl.current.naturalHeight);
+						}}
+					/>
+					{!form.uploadedFiles.length ? (
+						<section
+							className={globalClasses.dropZoneContainer}
+							style={{
+								borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
+							}}
+						>
+							<div
+								{...getRootProps({
+									className: globalClasses.dropzone
+								})}
+							>
+								<input {...getInputProps()} />
+								<AddCircleOutlineIcon className={globalClasses.addFilesIcon} />
+								<p className={globalClasses.dragMsg}>
+									Click or drag files to this area to upload
+								</p>
+								<p className={globalClasses.formatMsg}>
+									Supported formats are jpeg and png
+								</p>
+								<p className={globalClasses.uploadMediaError}>
+									{isError.uploadedFiles
+										? 'You need to upload a media in order to post'
+										: ''}
+								</p>
+							</div>
+						</section>
+					) : (
+						<>
+							<br />
+						</>
+					)}
+				</div>
+			)
+		}
+	]);
 
 	return (
 		<>
