@@ -41,6 +41,7 @@ import Tweet from '../../../assets/Twitter Line.svg';
 import Profile433 from '../../../assets/Profile433.svg';
 import ArticleTextDraggable from '../../ArticleTextDraggable';
 import ArticleMediaDraggable from '../../ArticleMediaDraggable';
+import ArticleDraggables from '../../ArticleDraggables';
 
 //api calls
 import {
@@ -144,8 +145,37 @@ const UploadOrEditViral = ({
 		}
 	];
 	const [data, setData] = useState([
-		{ id: 1, component: ArticleTextDraggable },
-		{ id: 2, component: ArticleMediaDraggable }
+		{
+			id: 1,
+			component: (
+				<Editor
+					description={form.description}
+					onMouseEnter={() => setDisableDropdown(false)}
+					onBlur={() => setDisableDropdown(true)}
+					handleEditorChange={() => {
+						handleEditorChange;
+					}}
+				/>
+			)
+		},
+		{
+			id: 2,
+			component: (
+				<DragAndDropField
+					uploadedFiles={form.uploadedFiles}
+					// isEdit={isEdit}
+					// handleDeleteFile={handleDeleteFile}
+					setPreviewBool={setPreviewBool}
+					setPreviewFile={setPreviewFile}
+					imgEl={imgEl}
+					imageOnload={() => {
+						setFileWidth(imgEl.current.naturalWidth);
+						setFileHeight(imgEl.current.naturalHeight);
+					}}
+					isArticle
+				/>
+			)
+		}
 	]);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
@@ -931,16 +961,28 @@ const UploadOrEditViral = ({
 										isError={isError}
 									/>
 
-									<DraggableWrapper heading={'Add Text'} onDragEnd={onDragEnd}>
-										{data.map((item, index) => {
-											if (item !== undefined) {
+									{/* if (item !== undefined) {
 												return React.createElement(item?.component, {
 													item,
 													key: item?.id,
 													form: form,
 													index
 												});
-											}
+											} */}
+
+									<DraggableWrapper heading={'Add Text'} onDragEnd={onDragEnd}>
+										{data.map((item, index) => {
+											return (
+												<>
+													<ArticleDraggables
+														item={item}
+														key={item.id}
+														index={index}
+													>
+														{item.component}
+													</ArticleDraggables>
+												</>
+											);
 										})}
 									</DraggableWrapper>
 								</Grid>
