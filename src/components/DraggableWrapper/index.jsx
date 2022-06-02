@@ -6,7 +6,6 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 // import Close from '@material-ui/icons/Close';
 import Editor from '../Editor';
 import { useStyles } from './index.style';
-import ArticleTextDraggable from '../ArticleTextDraggable';
 import { ReactComponent as Union } from '../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../assets/Delete.svg';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';

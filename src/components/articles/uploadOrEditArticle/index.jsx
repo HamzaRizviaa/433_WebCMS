@@ -8,6 +8,7 @@ import ArticleElements from '../../ArticleElements';
 import ArticleGeneralInfo from '../../ArticleGeneralInfo';
 import ArticleFooter from '../../ArticleFooter';
 import DraggableWrapper from '../../DraggableWrapper';
+import ArticleElementMedia from '../../ArticleElementMedia';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { Box, MenuItem, TextField, Select, Grid } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -39,8 +40,6 @@ import Text from '../../../assets/Text.svg';
 import ImageVideo from '../../../assets/Image.svg';
 import Tweet from '../../../assets/Twitter Line.svg';
 import Profile433 from '../../../assets/Profile433.svg';
-import ArticleTextDraggable from '../../ArticleTextDraggable';
-import ArticleMediaDraggable from '../../ArticleMediaDraggable';
 import ArticleDraggables from '../../ArticleDraggables';
 
 //api calls
@@ -49,29 +48,7 @@ import {
 	getArticleMainCategories,
 	getArticleSubCategories
 } from '../../../pages/ArticleLibrary/articleLibrarySlice';
-//tinymce
 
-// import 'tinymce/tinymce';
-// import 'tinymce/icons/default';
-// import 'tinymce/themes/silver';
-// import 'tinymce/plugins/paste';
-// import 'tinymce/plugins/link';
-// import 'tinymce/plugins/image';
-// import 'tinymce/plugins/searchreplace';
-// import 'tinymce/plugins/emoticons/js/emojiimages.min.js';
-// import 'tinymce/plugins/hr';
-// import 'tinymce/plugins/anchor';
-// import 'tinymce/plugins/insertdatetime';
-// import 'tinymce/plugins/wordcount';
-// import 'tinymce/plugins/lists';
-// import 'tinymce/plugins/advlist';
-// import 'tinymce/plugins/textcolor';
-// import 'tinymce/plugins/colorpicker';
-// import 'tinymce/plugins/fullscreen';
-// import 'tinymce/plugins/charmap';
-// import 'tinymce/skins/ui/oxide/skin.min.css';
-// import 'tinymce/skins/ui/oxide/content.min.css';
-// import 'tinymce/skins/content/default/content.min.css';
 import LoadingOverlay from 'react-loading-overlay';
 
 const UploadOrEditViral = ({
@@ -111,6 +88,7 @@ const UploadOrEditViral = ({
 		description: '',
 		dropbox_url: '',
 		uploadedFiles: [],
+		elementMediaFiles: [],
 		avatarProfilePicture: [{ media_url: Profile433 }],
 		labels: [],
 		show_likes: true,
@@ -825,7 +803,10 @@ const UploadOrEditViral = ({
 		);
 		setData(items);
 	};
-
+	const handleFileWidthHeight = (height, width) => {
+		console.log('Width Height', height, width);
+	};
+	console.log(form, 'f');
 	const [data, setData] = useState([
 		{
 			id: 1,
@@ -845,51 +826,11 @@ const UploadOrEditViral = ({
 			id: 2,
 			heading: 'Add Image / Video',
 			component: (
-				<div>
-					<DragAndDropField
-						uploadedFiles={form.uploadedFiles}
-						// handleDeleteFile={handleDeleteFile}
-						isArticle
-						isArticleNew
-						imgEl={imgEl}
-						imageOnload={() => {
-							setFileWidth(imgEl.current.naturalWidth);
-							setFileHeight(imgEl.current.naturalHeight);
-						}}
-					/>
-					{!form.uploadedFiles.length ? (
-						<section
-							className={globalClasses.dropZoneContainer}
-							style={{
-								borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
-							}}
-						>
-							<div
-								{...getRootProps({
-									className: globalClasses.dropzone
-								})}
-							>
-								<input {...getInputProps()} />
-								<AddCircleOutlineIcon className={globalClasses.addFilesIcon} />
-								<p className={globalClasses.dragMsg}>
-									Click or drag files to this area to upload
-								</p>
-								<p className={globalClasses.formatMsg}>
-									Supported formats are jpeg and png
-								</p>
-								<p className={globalClasses.uploadMediaError}>
-									{isError.uploadedFiles
-										? 'You need to upload a media in order to post'
-										: ''}
-								</p>
-							</div>
-						</section>
-					) : (
-						<>
-							<br />
-						</>
-					)}
-				</div>
+				<ArticleElementMedia
+					form={form}
+					setForm={setForm}
+					WidthHeightCallback={handleFileWidthHeight}
+				/>
 			)
 		}
 	]);
