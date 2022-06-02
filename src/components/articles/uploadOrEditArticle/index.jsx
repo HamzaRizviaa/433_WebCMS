@@ -147,6 +147,7 @@ const UploadOrEditViral = ({
 	const [data, setData] = useState([
 		{
 			id: 1,
+			heading: 'Add Text',
 			component: (
 				<Editor
 					description={form.description}
@@ -160,6 +161,7 @@ const UploadOrEditViral = ({
 		},
 		{
 			id: 2,
+			heading: 'Add Image / Video',
 			component: (
 				<DragAndDropField
 					uploadedFiles={form.uploadedFiles}

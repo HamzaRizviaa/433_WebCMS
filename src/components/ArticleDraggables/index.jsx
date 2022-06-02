@@ -43,7 +43,7 @@ const ArticleDraggables = ({ item, key, index, children }) => {
 										/>
 									</span>
 								</div>
-								<div className={classes.wrapperHeading}>Add Media</div>
+								<div className={classes.wrapperHeading}>{item.heading}</div>
 							</div>
 							<div className={classes.rightDiv}>
 								<div className={classes.deleteIconDiv}>
