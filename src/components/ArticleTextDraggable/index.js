@@ -11,7 +11,7 @@ import { ReactComponent as Deletes } from '../../assets/Delete.svg';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
-const ArticleTextDraggable = ({ item, form }) => {
+const ArticleTextDraggable = ({ item, form, key, index }) => {
 	const classes = useStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(false);
 	const clickExpand = () => {
@@ -20,7 +20,9 @@ const ArticleTextDraggable = ({ item, form }) => {
 	return (
 		<>
 			<Draggable
-				draggableId={`draggable-${item}`}
+				draggableId={`draggable-${item.id}`}
+				index={index}
+				key={key}
 				//	isDragDisabled={uploadeddatas.length <= 1}
 			>
 				{(provided) => (
@@ -81,7 +83,9 @@ const ArticleTextDraggable = ({ item, form }) => {
 
 ArticleTextDraggable.propTypes = {
 	item: PropTypes.number,
-	form: PropTypes.object
+	form: PropTypes.object,
+	key: PropTypes.number,
+	index: PropTypes.number
 };
 
 export default ArticleTextDraggable;

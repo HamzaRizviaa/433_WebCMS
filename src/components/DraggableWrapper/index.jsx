@@ -11,40 +11,26 @@ import { ReactComponent as Union } from '../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../assets/Delete.svg';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-
-const DraggableWrapper = ({ heading, children, data, ItemToAdd }) => {
-	// const reorder = (list, startIndex, endIndex) => {
-	// 	const result = Array.from(list);
-	// 	const [removed] = result.splice(startIndex, 1);
-	// 	result.splice(endIndex, 0, removed);
-	// 	return result;
-	// };
+const DraggableWrapper = ({
+	heading,
+	children,
+	data,
+	ItemToAdd,
+	onDragEnd
+}) => {
 	// const data = [{ id: 1 }, { id: 2 }];
 	const [clickExpandIcon, setClickExpandIcon] = useState(false);
 	const classes = useStyles();
-	const onDragEnd = (result) => {
-		if (!result.destination) {
-			return;
-		}
-		// const items = reorder(
-		// 	bannerData,
-		// 	result.source.index, // pick
-		// 	result.destination.index // drop
-		// );
 
-		// setBannerData(items);
-	};
 	// - autocomplete ends
 
 	const clickExpand = () => {
 		setClickExpandIcon(!clickExpandIcon);
 	};
-	console.log('data', data);
-	console.log(ItemToAdd, '============ItemToAdd');
 	return (
 		<div>
 			<DragDropContext onDragEnd={onDragEnd}>
-				<Droppable droppableId='droppable-1'>
+				<Droppable droppableId='articleDroppable-1'>
 					{(provided) => (
 						<div {...provided.droppableProps} ref={provided.innerRef}>
 							{children}
@@ -61,7 +47,8 @@ DraggableWrapper.propTypes = {
 	children: PropTypes.node,
 	heading: PropTypes.string.isRequired,
 	data: PropTypes.array,
-	ItemToAdd: PropTypes.object
+	ItemToAdd: PropTypes.object,
+	onDragEnd: PropTypes.func
 	// handleClose: PropTypes.func.isRequired,
 };
 
