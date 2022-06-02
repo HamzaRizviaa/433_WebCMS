@@ -25,6 +25,7 @@ const DragAndDropField = ({
 	isPost, // image and video
 	isMedia, // image and video without thumbnail
 	isArticle, // image
+	isArticleNew, //NO PREVIEW
 	imgEl,
 	imageOnload,
 	videoRef,
@@ -172,16 +173,27 @@ const DragAndDropField = ({
 																	/>
 																</span>
 															)}
-															<EyeIcon
-																onClick={() => {
-																	setPreviewBool(true);
-																	setPreviewFile(file);
-																}}
-																className={classes.filePreviewIcons}
-															/>
+															{isArticleNew ? (
+																<></>
+															) : (
+																<EyeIcon
+																	onClick={() => {
+																		setPreviewBool(true);
+																		setPreviewFile(file);
+																	}}
+																	className={classes.filePreviewIcons}
+																/>
+															)}
 
 															{quizPollStatus === 'CLOSED' ? (
 																<></>
+															) : isArticleNew ? (
+																<Deletes
+																	className={classes.filePreviewIcons}
+																	onClick={() => {
+																		handleDeleteFile(file.id);
+																	}}
+																/>
 															) : (
 																<Deletes
 																	className={classes.filePreviewIcons}
@@ -202,7 +214,7 @@ const DragAndDropField = ({
 													className={classes.filePreviewRight}
 													style={{ display: 'flex' }}
 												>
-													{isMedia ? (
+													{isMedia || isArticleNew ? (
 														<></>
 													) : (
 														<EyeIcon
@@ -221,14 +233,23 @@ const DragAndDropField = ({
 															/>
 														</span>
 													)}
-													<Deletes
-														className={classes.filePreviewIcons}
-														onClick={() => {
-															handleDeleteFile(file.id);
-															setPreviewBool(false);
-															setPreviewFile(null);
-														}}
-													/>
+													{isArticleNew ? (
+														<Deletes
+															className={classes.filePreviewIcons}
+															onClick={() => {
+																handleDeleteFile(file.id);
+															}}
+														/>
+													) : (
+														<Deletes
+															className={classes.filePreviewIcons}
+															onClick={() => {
+																handleDeleteFile(file.id);
+																setPreviewBool(false);
+																setPreviewFile(null);
+															}}
+														/>
+													)}
 												</div>
 											)}
 										</div>
@@ -259,6 +280,7 @@ DragAndDropField.propTypes = {
 	isPost: PropTypes.bool,
 	isMedia: PropTypes.bool,
 	isArticle: PropTypes.bool,
+	isArticleNew: PropTypes.bool,
 	videoRef: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })

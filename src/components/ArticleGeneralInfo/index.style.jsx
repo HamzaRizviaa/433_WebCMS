@@ -100,7 +100,13 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	authorAvatar: {
-		display: 'inline-block'
+		display: 'inline-block',
+		cursor: 'pointer'
+	},
+
+	authorName: {
+		display: 'inline-block',
+		width: '100%'
 	},
 
 	textField: {
