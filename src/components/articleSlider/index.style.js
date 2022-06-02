@@ -10,11 +10,11 @@ export const useStyles = makeStyles((theme) => ({
 	paper: {
 		color: `${theme.palette.neonYellow} !important`,
 		right: '0 !important',
-		borderLeft: `1px solid ${theme.palette.neonYellow} !important`,
+		borderLeft: `1px solid ${theme.palette.grey} !important`,
 		height: '100vh !important',
 		zIndex: '5 !important',
 		position: 'fixed !important',
-		minWidth: 'calc(100% - 82px)',
+		minWidth: 'calc(100% - 74px)',
 		transform: 'none !important',
 		overflowY: ' auto !important',
 		overflowX: 'hidden',

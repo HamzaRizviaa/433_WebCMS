@@ -10,7 +10,10 @@ import { useStyles as globalUseStyles } from '../../styles/global.style';
 import { MenuItem, TextField, Select } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import Avatar from '@mui/material/Avatar';
-import Profile433 from '../../assets/Profile433.svg';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import DragAndDropField from '../DragAndDropField';
+import Labels from '../Labels';
+import ToggleSwitch from '../switch';
 
 const ArticleGeneralInfo = ({
 	isEdit,
@@ -22,11 +25,24 @@ const ArticleGeneralInfo = ({
 	mainCategories,
 	subCategories,
 	SubCategoryId,
-	handleDeleteFile
+	handleDeleteFile,
+	imgRef,
+	setFileWidth,
+	setFileHeight,
+	getRootProps,
+	getInputProps,
+	fileRejectionError,
+	getRootPropsAvatar,
+	getInputPropsAvatar,
+	fileRejectionError2,
+	postLabels,
+	extraLabel,
+	handleChangeExtraLabel,
+	isError
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
-
+	console.log(form.avatarProfilePicture, 'f');
 	return (
 		<div className={classes.root}>
 			<Accordion defaultExpanded>
@@ -38,11 +54,11 @@ const ArticleGeneralInfo = ({
 					<div className={classes.categoryContainer}>
 						<div className={classes.mainCategory}>
 							<h6
-							// className={[
-							// 	isError.mainCategory
-							// 		? globalClasses.errorState
-							// 		: globalClasses.noErrorState
-							// ].join(' ')}
+								className={[
+									isError.mainCategory
+										? globalClasses.errorState
+										: globalClasses.noErrorState
+								].join(' ')}
 							>
 								MAIN CATEGORY
 							</h6>
@@ -112,22 +128,22 @@ const ArticleGeneralInfo = ({
 								})}
 							</Select>
 
-							{/* <div className={classes.catergoryErrorContainer}>
+							<div className={classes.catergoryErrorContainer}>
 								<p className={globalClasses.uploadMediaError}>
 									{isError.mainCategory
 										? 'You need to select main category'
 										: ''}
 								</p>
-							</div> */}
+							</div>
 						</div>
 
 						<div className={classes.subCategory}>
 							<h6
-							// className={[
-							// 	isError.subCategory && form.mainCategory
-							// 		? globalClasses.errorState
-							// 		: globalClasses.noErrorState
-							// ].join(' ')}
+								className={[
+									isError.subCategory && form.mainCategory
+										? globalClasses.errorState
+										: globalClasses.noErrorState
+								].join(' ')}
 							>
 								SUB CATEGORY
 							</h6>
@@ -197,24 +213,24 @@ const ArticleGeneralInfo = ({
 								})}
 							</Select>
 
-							{/* <p className={globalClasses.uploadMediaError}>
+							<p className={globalClasses.uploadMediaError}>
 								{isEdit && status === 'published'
 									? ' '
 									: form.mainCategory?.name || form.mainCategory
 									? isError.subCategory && 'You need to select sub category'
 									: ''}
-								
-							</p> */}
+							</p>
 						</div>
 					</div>
 
-					<h6>Author</h6>
+					<h6 style={{ marginTop: '10px' }}>Author</h6>
 					<div className={classes.authorContainer}>
-						<div className={classes.authorAvatar}>
-							<Avatar src={Profile433} />
+						<div {...getRootPropsAvatar({ className: classes.authorAvatar })}>
+							<input {...getInputPropsAvatar()} />
+							<Avatar src={form.avatarProfilePicture[0]?.media_url} />
 						</div>
 
-						<div className={globalClasses.dropBoxUrlContainer}>
+						<div className={classes.authorName}>
 							<TextField
 								// value={form.dropbox_url}
 								defaultValue={'433 Team'}
@@ -231,6 +247,202 @@ const ArticleGeneralInfo = ({
 									disableUnderline: true,
 									className: classes.textFieldInput
 								}}
+							/>
+						</div>
+					</div>
+
+					<p className={globalClasses.fileRejectionError}>
+						{fileRejectionError2}
+					</p>
+
+					<h5>Add Media File</h5>
+					<div>
+						<DragAndDropField
+							uploadedFiles={form.uploadedFiles}
+							handleDeleteFile={handleDeleteFile}
+							isArticle
+							isArticleNew
+							imgEl={imgRef}
+							imageOnload={() => {
+								setFileWidth(imgRef.current.naturalWidth);
+								setFileHeight(imgRef.current.naturalHeight);
+							}}
+						/>
+						{!form.uploadedFiles.length ? (
+							<section
+								className={globalClasses.dropZoneContainer}
+								style={{
+									borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
+								}}
+							>
+								<div
+									{...getRootProps({
+										className: globalClasses.dropzone
+									})}
+								>
+									<input {...getInputProps()} />
+									<AddCircleOutlineIcon
+										className={globalClasses.addFilesIcon}
+									/>
+									<p className={globalClasses.dragMsg}>
+										Click or drag files to this area to upload
+									</p>
+									<p className={globalClasses.formatMsg}>
+										Supported formats are jpeg and png
+									</p>
+									<p className={globalClasses.uploadMediaError}>
+										{isError.uploadedFiles
+											? 'You need to upload a media in order to post'
+											: ''}
+									</p>
+								</div>
+							</section>
+						) : (
+							<>
+								<br />
+							</>
+						)}
+					</div>
+
+					<p className={globalClasses.fileRejectionError}>
+						{fileRejectionError}
+					</p>
+
+					<div className={globalClasses.dropBoxUrlContainer}>
+						<h6>DROPBOX URL</h6>
+						<TextField
+							value={form.dropbox_url}
+							onChange={(e) =>
+								setForm((prev) => {
+									return { ...prev, dropbox_url: e.target.value };
+								})
+							}
+							placeholder={'Please drop the dropbox URL here'}
+							className={classes.textField}
+							multiline
+							maxRows={2}
+							InputProps={{
+								disableUnderline: true,
+								className: classes.textFieldInput
+							}}
+						/>
+					</div>
+
+					<div className={globalClasses.captionContainer}>
+						<div className={globalClasses.characterCount}>
+							<h6
+								className={
+									isError.articleTitle || isError.articleTitleExists
+										? globalClasses.errorState
+										: globalClasses.noErrorState
+								}
+							>
+								ARTICLE TITLE
+							</h6>
+							<h6
+								style={{
+									color:
+										form.title?.length >= 39 && form.title?.length <= 42
+											? 'pink'
+											: form.title?.length === 43
+											? 'red'
+											: 'white'
+								}}
+							>
+								{form.title?.length}/43
+							</h6>
+						</div>
+
+						<TextField
+							value={form.title}
+							onChange={(e) =>
+								setForm((prev) => {
+									return { ...prev, title: e.target.value };
+								})
+							}
+							placeholder={'Please write your title here'}
+							className={classes.textField}
+							InputProps={{
+								disableUnderline: true,
+								className: classes.textFieldInput
+							}}
+							inputProps={{ maxLength: 43 }}
+							multiline
+							maxRows={2}
+						/>
+					</div>
+
+					<p className={globalClasses.mediaError}>
+						{isError.articleTitle
+							? 'This field is required'
+							: isError.articleTitleExists
+							? 'This title aready Exists'
+							: ''}
+					</p>
+
+					<div className={globalClasses.captionContainer}>
+						<h6
+						// className={
+						// 	isError.selectedLabels
+						// 		? globalClasses.errorState
+						// 		: globalClasses.noErrorState
+						// }
+						>
+							LABELS
+						</h6>
+						<Labels
+							isEdit={isEdit}
+							setDisableDropdown={setDisableDropdown}
+							selectedLabels={form.labels}
+							LabelsOptions={postLabels}
+							extraLabel={extraLabel}
+							draftStatus={status}
+							handleChangeExtraLabel={handleChangeExtraLabel}
+							setSelectedLabels={(newVal) => {
+								setForm((prev) => {
+									return { ...prev, labels: [...newVal] };
+								});
+							}}
+						/>
+					</div>
+
+					<p className={globalClasses.mediaError}>
+						{isError.selectedLabels
+							? `You need to add  ${
+									7 - form.labels.length
+							  }  more labels in order to post`
+							: ''}
+					</p>
+
+					<div className={globalClasses.postMediaContainer}>
+						<div className={globalClasses.postMediaHeader}>
+							<h5>Show comments</h5>
+							<ToggleSwitch
+								id={1}
+								checked={form.show_comments}
+								onChange={(checked) =>
+									setForm((prev) => {
+										return { ...prev, show_comments: checked };
+									})
+								}
+							/>
+						</div>
+					</div>
+
+					<div
+						className={globalClasses.postMediaContainer}
+						style={{ marginBottom: '1rem' }}
+					>
+						<div className={globalClasses.postMediaHeader}>
+							<h5>Show likes</h5>
+							<ToggleSwitch
+								id={2}
+								checked={form.show_likes}
+								onChange={(checked) =>
+									setForm((prev) => {
+										return { ...prev, show_likes: checked };
+									})
+								}
 							/>
 						</div>
 					</div>
@@ -252,5 +464,21 @@ ArticleGeneralInfo.propTypes = {
 	SubCategoryId: PropTypes.func.isRequired,
 	handleDeleteFile: PropTypes.func.isRequired,
 	mainCategories: PropTypes.array.isRequired,
-	subCategories: PropTypes.array.isRequired
+	subCategories: PropTypes.array.isRequired,
+	imgRef: PropTypes.oneOfType([
+		PropTypes.func,
+		PropTypes.shape({ current: PropTypes.elementType })
+	]),
+	setFileWidth: PropTypes.func.isRequired,
+	setFileHeight: PropTypes.func.isRequired,
+	getRootProps: PropTypes.any,
+	getInputProps: PropTypes.any,
+	fileRejectionError: PropTypes.string,
+	getRootPropsAvatar: PropTypes.any,
+	getInputPropsAvatar: PropTypes.any,
+	fileRejectionError2: PropTypes.string,
+	postLabels: PropTypes.array,
+	extraLabel: PropTypes.string,
+	handleChangeExtraLabel: PropTypes.func.isRequired,
+	isError: PropTypes.object.isRequired
 };

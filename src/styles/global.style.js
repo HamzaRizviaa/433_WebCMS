@@ -264,8 +264,11 @@ export const useStyles = makeStyles(() => ({
 	},
 
 	editBtn: {
-		width: '30%',
 		display: 'inline-block'
+	},
+	
+	publishDraftDiv: {
+		display: 'flex'
 	},
 
 	previewContentWrapper: {

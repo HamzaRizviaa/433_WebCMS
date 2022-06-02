@@ -313,7 +313,7 @@ const UploadOreditArcade = ({
 
 	useEffect(() => {
 		if (fileRejections2.length) {
-			fileRejections.forEach(({ errors }) => {
+			fileRejections2.forEach(({ errors }) => {
 				return errors.forEach((e) => setFileRejectionError2(e.message));
 			});
 			setTimeout(() => {

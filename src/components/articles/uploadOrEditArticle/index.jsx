@@ -6,13 +6,14 @@ import { useDropzone } from 'react-dropzone';
 import Editor from '../../Editor';
 import ArticleElements from '../../ArticleElements';
 import ArticleGeneralInfo from '../../ArticleGeneralInfo';
+import ArticleFooter from '../../ArticleFooter';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { MenuItem, TextField, Select, Grid } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
 import ArticleSlider from '../../articleSlider';
-import Button from '../../button';
+
 import DragAndDropField from '../../DragAndDropField';
 import Labels from '../../Labels';
 import { makeid } from '../../../utils/helper';
@@ -29,7 +30,6 @@ import validateForm from '../../../utils/validateForm';
 import validateDraft from '../../../utils/validateDraft';
 import PrimaryLoader from '../../PrimaryLoader';
 import { useStyles } from './index.style';
-import ToggleSwitch from '../../switch';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
 
@@ -37,6 +37,7 @@ import Instragram from '../../../assets/Instagram.svg';
 import Text from '../../../assets/Text.svg';
 import ImageVideo from '../../../assets/Image.svg';
 import Tweet from '../../../assets/Twitter Line.svg';
+import Profile433 from '../../../assets/Profile433.svg';
 
 //api calls
 import {
@@ -81,6 +82,7 @@ const UploadOrEditViral = ({
 }) => {
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
+	const [fileRejectionError2, setFileRejectionError2] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -104,6 +106,7 @@ const UploadOrEditViral = ({
 		description: '',
 		dropbox_url: '',
 		uploadedFiles: [],
+		avatarProfilePicture: [{ media_url: Profile433 }],
 		labels: [],
 		show_likes: true,
 		show_comments: true,
@@ -144,6 +147,52 @@ const UploadOrEditViral = ({
 			validator: checkFileSize
 		});
 
+	const {
+		acceptedFiles: acceptedFileAvatar,
+		fileRejections: fileRejectionsAvatar,
+		getRootProps: getRootPropsAvatar,
+		getInputProps: getInputPropsAvatar
+	} = useDropzone({
+		accept: '.jpeg,.jpg,.png',
+		maxFiles: 1,
+		validator: checkFileSize
+	});
+
+	useEffect(() => {
+		if (acceptedFileAvatar?.length) {
+			let newFiles = acceptedFileAvatar.map((file) => {
+				let id = makeid(10);
+				return {
+					id: id,
+					file_name: file.name,
+					media_url: URL.createObjectURL(file),
+					fileExtension: `.${getFileType(file.type)}`,
+					mime_type: file.type,
+					file: file,
+					type: file.type === 'video/mp4' ? 'video' : 'image'
+				};
+			});
+
+			setForm((prev) => {
+				return {
+					...prev,
+					avatarProfilePicture: [...newFiles]
+				};
+			});
+		}
+	}, [acceptedFileAvatar]);
+
+	useEffect(() => {
+		if (fileRejectionsAvatar.length) {
+			fileRejectionsAvatar.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError2(e.message));
+			});
+			setTimeout(() => {
+				setFileRejectionError2('');
+			}, [5000]);
+		}
+	}, [fileRejectionsAvatar]);
+
 	const labels = useSelector((state) => state.postLibrary.labels);
 	const {
 		specificArticle,
@@ -161,8 +210,6 @@ const UploadOrEditViral = ({
 			resetState();
 		};
 	}, []);
-
-	tinyMCE && console.log(tinyMCE, 'form');
 
 	useEffect(() => {
 		if (form.mainCategory && !isEdit) {
@@ -184,7 +231,7 @@ const UploadOrEditViral = ({
 	const mainCategoryId = (categoryString) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
 		let setData = mainCategories.find((u) => u.name === categoryString);
-		// console.log(setData, 'onchange  set data main category');
+
 		setForm((prev) => {
 			return { ...prev, mainCategory: setData };
 		});
@@ -425,6 +472,7 @@ const UploadOrEditViral = ({
 			description: tinyMCE.activeEditor?.setContent(''),
 			dropbox_url: '',
 			uploadedFiles: [],
+			avatarProfilePicture: [{ media_url: Profile433 }],
 			labels: [],
 			mainCategory: '',
 			subCategory: '',
@@ -438,6 +486,17 @@ const UploadOrEditViral = ({
 			return {
 				...prev,
 				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
+			};
+		});
+	};
+
+	const handleDeleteAvatarPicture = (id) => {
+		setForm((prev) => {
+			return {
+				...prev,
+				avatarProfilePicture: form.avatarProfilePicture.filter(
+					(file) => file.id !== id
+				)
 			};
 		});
 	};
@@ -821,21 +880,39 @@ const UploadOrEditViral = ({
 										subCategories={subCategories}
 										SubCategoryId={SubCategoryId}
 										handleDeleteFile={handleDeleteFile}
+										imgRef={imgEl}
+										setFileWidth={setFileWidth}
+										setFileHeight={setFileHeight}
+										getRootProps={getRootProps}
+										getInputProps={getInputProps}
+										fileRejectionError={fileRejectionError}
+										getRootPropsAvatar={getRootPropsAvatar}
+										getInputPropsAvatar={getInputPropsAvatar}
+										fileRejectionError2={fileRejectionError2}
+										postLabels={postLabels}
+										extraLabel={extraLabel}
+										handleChangeExtraLabel={handleChangeExtraLabel}
+										isError={isError}
 									/>
-									
-									{/* <Editor
-										description={form.description}
-										onMouseEnter={() => setDisableDropdown(false)}
-										onBlur={() => setDisableDropdown(true)}
-										handleEditorChange={() => {
-											handleEditorChange;
-										}}
-									/> */}
 								</Grid>
 								<Grid item md={3}>
 									<h2>Preview</h2>
 								</Grid>
 							</Grid>
+							<ArticleFooter
+								buttonText={buttonText}
+								isEdit={isEdit}
+								form={form}
+								setForm={setForm}
+								status={status}
+								deleteBtnStatus={deleteBtnStatus}
+								toggleDeleteModal={toggleDeleteModal}
+								validateDraft={validateDraft}
+								handleDraftSave={handleDraftSave}
+								validateForm={validateForm}
+								editBtnDisabled={editBtnDisabled}
+								handleAddSaveBtn={handleAddSaveBtn}
+							/>
 						</div>
 					</Slide>
 					{/* </ArticleSlide> */}
