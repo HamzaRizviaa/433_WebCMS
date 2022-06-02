@@ -66,18 +66,18 @@ const ArticleMediaDraggable = ({ item, form, key, index }) => {
 									uploadedFiles={form.uploadedFiles}
 									// isEdit={isEdit}
 									// handleDeleteFile={handleDeleteFile}
-									setPreviewBool={setPreviewBool}
-									setPreviewFile={setPreviewFile}
-									imgEl={imgEl}
-									videoRef={videoRef}
-									imageOnload={() => {
-										setFileWidth(imgEl.current.naturalWidth);
-										setFileHeight(imgEl.current.naturalHeight);
-									}}
-									onLoadedVideodata={() => {
-										setFileWidth(videoRef.current.videoWidth);
-										setFileHeight(videoRef.current.videoHeight);
-									}}
+									// setPreviewBool={setPreviewBool}
+									// setPreviewFile={setPreviewFile}
+									// imgEl={imgEl}
+									// videoRef={videoRef}
+									// imageOnload={() => {
+									// 	setFileWidth(imgEl.current.naturalWidth);
+									// 	setFileHeight(imgEl.current.naturalHeight);
+									// }}
+									// onLoadedVideodata={() => {
+									// 	setFileWidth(videoRef.current.videoWidth);
+									// 	setFileHeight(videoRef.current.videoHeight);
+									// }}
 									isArticle
 								/>
 							</div>

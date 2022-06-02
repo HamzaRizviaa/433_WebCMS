@@ -1,6 +1,11 @@
 import { makeStyles } from '@material-ui/core';
 
 export const useStyles = makeStyles((theme) => ({
+	elementsDiv: {
+		position: 'fixed'
+		// overflowY: 'hidden',
+		// overflowX: 'hidden'
+	},
 	elementContainter: {
 		width: '220px',
 		background: `${theme.palette.black}`,
