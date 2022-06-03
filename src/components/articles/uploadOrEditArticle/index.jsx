@@ -6,6 +6,7 @@ import { useDropzone } from 'react-dropzone';
 import Editor from '../../Editor';
 import ArticleElements from '../../ArticleElements';
 import ArticleGeneralInfo from '../../ArticleGeneralInfo';
+import ArticleMediaDraggable from '../../articleMediaDraggable';
 import ArticleFooter from '../../ArticleFooter';
 import DraggableWrapper from '../../DraggableWrapper';
 import ArticleElementMedia from '../../ArticleElementMedia';
@@ -455,6 +456,7 @@ const UploadOrEditViral = ({
 			description: tinyMCE.activeEditor?.setContent(''),
 			dropbox_url: '',
 			uploadedFiles: [],
+			elementMediaFiles: [],
 			avatarProfilePicture: [{ media_url: Profile433 }],
 			labels: [],
 			mainCategory: '',
@@ -469,6 +471,27 @@ const UploadOrEditViral = ({
 			return {
 				...prev,
 				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
+			};
+		});
+	};
+
+	const handleMediaDelete = (id) => {
+		setForm((prev) => {
+			return {
+				...prev,
+				elementMediaFiles: form.elementMediaFiles.filter(
+					(file) => file.id !== id
+				)
+			};
+		});
+	};
+
+	const setNewFile = (file) => {
+		console.log('File Parent', file);
+		setForm((prev) => {
+			return {
+				...prev,
+				elementMediaFiles: [...form.elementMediaFiles, ...file]
 			};
 		});
 	};
@@ -803,10 +826,11 @@ const UploadOrEditViral = ({
 		);
 		setData(items);
 	};
+
 	const handleFileWidthHeight = (height, width) => {
 		console.log('Width Height', height, width);
 	};
-	console.log(form, 'f');
+
 	const [data, setData] = useState([
 		{
 			id: 1,
@@ -825,15 +849,23 @@ const UploadOrEditViral = ({
 		{
 			id: 2,
 			heading: 'Add Image / Video',
-			component: (
-				<ArticleElementMedia
-					form={form}
-					setForm={setForm}
-					WidthHeightCallback={handleFileWidthHeight}
-				/>
-			)
+			component: ArticleMediaDraggable
+		},
+		{
+			id: 3,
+			heading: 'Add Image',
+			component: ArticleMediaDraggable
+		},
+		{
+			id: 4,
+			heading: 'Add Video',
+			component: ArticleMediaDraggable
 		}
 	]);
+
+	console.log('Data Main', data);
+
+	console.log('elementMediaFiles Main', form.elementMediaFiles);
 
 	return (
 		<>
@@ -902,7 +934,6 @@ const UploadOrEditViral = ({
 										<ArticleElements
 											data={elementData}
 											onClick={(dataItem) => {
-												console.log(dataItem, 'index');
 												setDataItem(dataItem);
 											}}
 										/>
@@ -949,13 +980,15 @@ const UploadOrEditViral = ({
 										{data.map((item, index) => {
 											return (
 												<>
-													<ArticleDraggables
-														item={item}
-														key={item.id}
-														index={index}
-													>
-														{item.component}
-													</ArticleDraggables>
+													{item.id > 1 &&
+														React.createElement(item.component, {
+															sendFileToParent: setNewFile,
+															handleDeleteFile: handleMediaDelete,
+															WidthHeightCallback: handleFileWidthHeight,
+															item,
+															key: item.id,
+															index
+														})}
 												</>
 											);
 										})}

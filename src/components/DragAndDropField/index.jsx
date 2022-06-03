@@ -43,13 +43,13 @@ const DragAndDropField = ({
 						ref={provided.innerRef}
 						className={classes.uploadedFilesContainer}
 					>
-						{uploadedFiles.map((file, index) => {
+						{uploadedFiles?.map((file, index) => {
 							return (
 								<Draggable
 									key={file.id}
 									draggableId={`droppable-${file.id}`}
 									index={index}
-									isDragDisabled={uploadedFiles.length <= 1}
+									isDragDisabled={uploadedFiles?.length <= 1}
 								>
 									{(provided) => (
 										<div
@@ -165,7 +165,7 @@ const DragAndDropField = ({
 														</>
 													) : file?.media_url ? (
 														<div style={{ display: 'flex' }}>
-															{isPost && uploadedFiles.length > 1 && (
+															{isPost && uploadedFiles?.length > 1 && (
 																<span {...provided.dragHandleProps}>
 																	<MenuIcon
 																		style={{ cursor: 'grab' }}
@@ -225,7 +225,7 @@ const DragAndDropField = ({
 															}}
 														/>
 													)}
-													{isPost && uploadedFiles.length > 1 && (
+													{isPost && uploadedFiles?.length > 1 && (
 														<span {...provided.dragHandleProps}>
 															<MenuIcon
 																style={{ cursor: 'grab' }}

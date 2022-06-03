@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
 // import { useStyles } from './index.styles';
 import PropTypes from 'prop-types';
@@ -8,27 +9,21 @@ import DragAndDropField from '../DragAndDropField';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { makeid } from '../../utils/helper';
 
-const ArticleElementMedia = ({ form, setForm, WidthHeightCallback }) => {
+const ArticleElementMedia = ({
+	sendFileToParent,
+	WidthHeightCallback,
+	handleDeleteFile
+}) => {
 	const globalClasses = globalUseStyles();
 
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
 	// const [form, setForm] = useState({  elementMediaFiles: [],});
+	const [newFile, setNewFile] = useState([]);
 
 	const imgEl = useRef(null);
 	const videoRef = useRef(null);
-
-	const handleDeleteFile = (id) => {
-		setForm((prev) => {
-			return {
-				...prev,
-				elementMediaFiles: form.elementMediaFiles.filter(
-					(file) => file.id !== id
-				)
-			};
-		});
-	};
 
 	const getFileType = (type) => {
 		if (type) {
@@ -58,13 +53,9 @@ const ArticleElementMedia = ({ form, setForm, WidthHeightCallback }) => {
 					type: file.type === 'video/mp4' ? 'video' : 'image'
 				};
 			});
-			setForm((prev) => {
-				return {
-					...prev,
-					elementMediaFiles: [...form.elementMediaFiles, ...newFiles]
-				};
-			});
 			WidthHeightCallback(fileHeight, fileWidth);
+			setNewFile([...newFiles]);
+			sendFileToParent(newFiles);
 		}
 	}, [acceptedFiles]);
 
@@ -78,13 +69,18 @@ const ArticleElementMedia = ({ form, setForm, WidthHeightCallback }) => {
 			}, [5000]);
 		}
 	}, [fileRejections]);
-	// console.log(form.elementMediaFiles.length, 'lll');
+
+	console.log('elementMediaFiles Article', newFile);
+
 	return (
 		<div>
 			<DragAndDropField
-				uploadedFiles={form.elementMediaFiles}
-				handleDeleteFile={handleDeleteFile}
-				isPost
+				uploadedFiles={newFile}
+				handleDeleteFile={(id) => {
+					setNewFile(newFile.filter((file) => file.id !== id));
+					handleDeleteFile(id);
+				}}
+				isArticle
 				isArticleNew
 				imgEl={imgEl}
 				videoRef={videoRef}
@@ -97,7 +93,7 @@ const ArticleElementMedia = ({ form, setForm, WidthHeightCallback }) => {
 					setFileHeight(videoRef.current.videoHeight);
 				}}
 			/>
-			{!form.elementMediaFiles?.length ? (
+			{!newFile?.length ? (
 				<section
 					className={globalClasses.dropZoneContainer}
 					// style={{
@@ -137,9 +133,9 @@ const ArticleElementMedia = ({ form, setForm, WidthHeightCallback }) => {
 export default ArticleElementMedia;
 
 ArticleElementMedia.propTypes = {
-	form: PropTypes.object.isRequired,
-	setForm: PropTypes.func.isRequired,
-	WidthHeightCallback: PropTypes.func
+	sendFileToParent: PropTypes.func.isRequired,
+	WidthHeightCallback: PropTypes.func,
+	handleDeleteFile: PropTypes.func
 	// handleDeleteFile: PropTypes.func.isRequired,
 	// imgEl: PropTypes.oneOfType([
 	// 	PropTypes.func,

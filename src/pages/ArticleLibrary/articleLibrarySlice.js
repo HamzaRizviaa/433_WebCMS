@@ -12,7 +12,6 @@ export const getAllArticlesApi = createAsyncThunk(
 		endDate,
 		fromCalendar = false
 	}) => {
-		console.log(sortby, 'sortby');
 		let endPoint = `article/all-articles?limit=20&page=1`;
 		if (page) {
 			endPoint = `article/all-articles?limit=20&page=${page}`;
@@ -29,7 +28,6 @@ export const getAllArticlesApi = createAsyncThunk(
 		const result = await ArticleLibraryService.getAllArticlesServiceCall(
 			endPoint
 		);
-		console.log(result, 'articles api');
 		return { ...result.data.data, fromCalendar };
 	}
 );
@@ -69,7 +67,6 @@ export const getArticleMainCategories = createAsyncThunk(
 export const getArticleSubCategories = createAsyncThunk(
 	'articleLibary/getSubCategories',
 	async (id) => {
-		console.log(id, 'api - main cat id');
 		const response = await ArticleLibraryService.getArticleSubCategoriesApi(id); //id  - main category id
 		if (response?.data?.data) {
 			return response.data.data;
