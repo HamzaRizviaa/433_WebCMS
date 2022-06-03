@@ -42,7 +42,6 @@ const ArticleGeneralInfo = ({
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
-	console.log(form.avatarProfilePicture, 'f');
 	return (
 		<div className={classes.root}>
 			<Accordion defaultExpanded>
