@@ -40,7 +40,8 @@ export const useStyles = makeStyles((theme) => ({
 	header: {
 		display: 'flex',
 		alignItems: 'center',
-		marginBottom: '2.5rem'
+		marginBottom: '2.5rem',
+		// position: 'fixed'
 	},
 
 	heading: {

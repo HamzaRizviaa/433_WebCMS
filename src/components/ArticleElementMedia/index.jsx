@@ -14,8 +14,10 @@ const ArticleElementMedia = ({ form, setForm, WidthHeightCallback }) => {
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
+	// const [form, setForm] = useState({  elementMediaFiles: [],});
 
 	const imgEl = useRef(null);
+	const videoRef = useRef(null);
 
 	const handleDeleteFile = (id) => {
 		setForm((prev) => {
@@ -56,13 +58,13 @@ const ArticleElementMedia = ({ form, setForm, WidthHeightCallback }) => {
 					type: file.type === 'video/mp4' ? 'video' : 'image'
 				};
 			});
-			WidthHeightCallback(fileHeight, fileWidth);
 			setForm((prev) => {
 				return {
 					...prev,
 					elementMediaFiles: [...form.elementMediaFiles, ...newFiles]
 				};
 			});
+			WidthHeightCallback(fileHeight, fileWidth);
 		}
 	}, [acceptedFiles]);
 
@@ -76,21 +78,26 @@ const ArticleElementMedia = ({ form, setForm, WidthHeightCallback }) => {
 			}, [5000]);
 		}
 	}, [fileRejections]);
-	console.log(form.elementMediaFiles.length, 'lll');
+	// console.log(form.elementMediaFiles.length, 'lll');
 	return (
 		<div>
 			<DragAndDropField
 				uploadedFiles={form.elementMediaFiles}
 				handleDeleteFile={handleDeleteFile}
-				isArticle
+				isPost
 				isArticleNew
 				imgEl={imgEl}
+				videoRef={videoRef}
 				imageOnload={() => {
 					setFileWidth(imgEl.current.naturalWidth);
 					setFileHeight(imgEl.current.naturalHeight);
 				}}
+				onLoadedVideodata={() => {
+					setFileWidth(videoRef.current.videoWidth);
+					setFileHeight(videoRef.current.videoHeight);
+				}}
 			/>
-			{!form.elementMediaFiles.length ? (
+			{!form.elementMediaFiles?.length ? (
 				<section
 					className={globalClasses.dropZoneContainer}
 					// style={{
@@ -108,7 +115,7 @@ const ArticleElementMedia = ({ form, setForm, WidthHeightCallback }) => {
 							Click or drag files to this area to upload
 						</p>
 						<p className={globalClasses.formatMsg}>
-							Supported formats are jpeg and png
+							Supported formats are jpeg, png and mp4
 						</p>
 						{/* <p className={globalClasses.uploadMediaError}>
 							{isError.uploadedFiles

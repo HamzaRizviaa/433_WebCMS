@@ -971,6 +971,7 @@ const UploadOrEditViral = ({
 											<img
 												src='https://via.placeholder.com/298x596?text=Preview'
 												alt='placeholder'
+												style={{width: '250px' ,height : '350px'}}
 											/>
 										</Box>
 									</Box>

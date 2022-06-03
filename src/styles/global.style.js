@@ -44,8 +44,8 @@ export const useStyles = makeStyles(() => ({
 		fontSize: '1.4rem',
 		lineHeight: '2.4rem',
 		fontWeight: 400,
-		...theme.components.preventSelect
-		// @include preventSelect,
+		...theme.components.preventSelect,
+		color: theme.palette.white
 	},
 
 	formatMsg: {
@@ -61,7 +61,7 @@ export const useStyles = makeStyles(() => ({
 		height: '2rem !important',
 		width: '2rem !important',
 		marginBottom: '1.5rem',
-		color: theme.palette.neonYellow
+		color: `${theme.palette.neonYellow} !important`
 	},
 
 	dropzone: {
@@ -266,7 +266,7 @@ export const useStyles = makeStyles(() => ({
 	editBtn: {
 		display: 'inline-block'
 	},
-	
+
 	publishDraftDiv: {
 		display: 'flex'
 	},
