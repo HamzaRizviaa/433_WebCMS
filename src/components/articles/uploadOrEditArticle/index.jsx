@@ -963,16 +963,6 @@ const UploadOrEditViral = ({
 										handleChangeExtraLabel={handleChangeExtraLabel}
 										isError={isError}
 									/>
-
-									{/* if (item !== undefined) {
-												return React.createElement(item?.component, {
-													item,
-													key: item?.id,
-													form: form,
-													index
-												});
-											} */}
-
 									<DraggableWrapper onDragEnd={onDragEnd}>
 										{data.map((item, index) => {
 											return (
@@ -983,7 +973,7 @@ const UploadOrEditViral = ({
 														handleDeleteFile: handleMediaDelete,
 														WidthHeightCallback: handleFileWidthHeight,
 														item,
-														key: item.id,
+														key: index,
 														index,
 														initialData: item.data && item?.data[0]
 													})}

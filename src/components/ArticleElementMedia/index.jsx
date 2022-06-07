@@ -70,8 +70,6 @@ const ArticleElementMedia = ({
 		}
 	}, [fileRejections]);
 
-	console.log('elementMediaFiles Article', newFile);
-
 	return (
 		<div>
 			<DragAndDropField

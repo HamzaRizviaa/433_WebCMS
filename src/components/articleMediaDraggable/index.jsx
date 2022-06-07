@@ -34,8 +34,6 @@ const ArticleMediaDraggable = ({
 	const [fileHeight, setFileHeight] = useState(0);
 	const [newFile, setNewFile] = useState(initialData ? [initialData] : []);
 
-	console.log('newFile', newFile);
-
 	const imgEl = useRef(null);
 
 	const getFileType = (type) => {
@@ -91,7 +89,7 @@ const ArticleMediaDraggable = ({
 	return (
 		<>
 			<Draggable
-				draggableId={`draggable-${item?.id}`}
+				draggableId={`draggable-${index}`}
 				index={index}
 				key={key}
 				//	isDragDisabled={uploadeddatas.length <= 1}
