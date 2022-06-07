@@ -19,9 +19,11 @@ const ArticleElementMedia = ({
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
+	// const [form, setForm] = useState({  elementMediaFiles: [],});
 	const [newFile, setNewFile] = useState([]);
 
 	const imgEl = useRef(null);
+	const videoRef = useRef(null);
 
 	const getFileType = (type) => {
 		if (type) {
@@ -81,9 +83,14 @@ const ArticleElementMedia = ({
 				isArticle
 				isArticleNew
 				imgEl={imgEl}
+				videoRef={videoRef}
 				imageOnload={() => {
 					setFileWidth(imgEl.current.naturalWidth);
 					setFileHeight(imgEl.current.naturalHeight);
+				}}
+				onLoadedVideodata={() => {
+					setFileWidth(videoRef.current.videoWidth);
+					setFileHeight(videoRef.current.videoHeight);
 				}}
 			/>
 			{!newFile?.length ? (
@@ -104,7 +111,7 @@ const ArticleElementMedia = ({
 							Click or drag files to this area to upload
 						</p>
 						<p className={globalClasses.formatMsg}>
-							Supported formats are jpeg and png
+							Supported formats are jpeg, png and mp4
 						</p>
 						{/* <p className={globalClasses.uploadMediaError}>
 							{isError.uploadedFiles
