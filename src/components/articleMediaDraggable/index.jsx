@@ -22,15 +22,16 @@ const ArticleMediaDraggable = ({
 	index,
 	sendFileToParent,
 	WidthHeightCallback,
-	handleDeleteFile
+	handleDeleteFile,
+	initialData
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
-	const [clickExpandIcon, setClickExpandIcon] = useState(false);
+	const [clickExpandIcon, setClickExpandIcon] = useState(!!initialData);
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
-	const [newFile, setNewFile] = useState([]);
+	const [newFile, setNewFile] = useState([initialData]);
 
 	const imgEl = useRef(null);
 
@@ -201,7 +202,8 @@ ArticleMediaDraggable.propTypes = {
 	index: PropTypes.number,
 	sendFileToParent: PropTypes.func.isRequired,
 	WidthHeightCallback: PropTypes.func,
-	handleDeleteFile: PropTypes.func
+	handleDeleteFile: PropTypes.func,
+	initialData: PropTypes.object
 };
 
 export default ArticleMediaDraggable;

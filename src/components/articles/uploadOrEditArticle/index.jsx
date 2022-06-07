@@ -97,6 +97,37 @@ const UploadOrEditViral = ({
 		mainCategory: '',
 		subCategory: ''
 	});
+	const [data, setData] = useState([
+		{
+			id: 1,
+			heading: 'Add Text',
+			component: (
+				<Editor
+					description={form.description}
+					onMouseEnter={() => setDisableDropdown(false)}
+					onBlur={() => setDisableDropdown(true)}
+					handleEditorChange={() => {
+						handleEditorChange;
+					}}
+				/>
+			)
+		},
+		{
+			id: 2,
+			heading: 'Add Image / Video',
+			component: ArticleMediaDraggable
+		},
+		{
+			id: 3,
+			heading: 'Add Image',
+			component: ArticleMediaDraggable
+		},
+		{
+			id: 4,
+			heading: 'Add Video',
+			component: ArticleMediaDraggable
+		}
+	]);
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
@@ -486,15 +517,20 @@ const UploadOrEditViral = ({
 		});
 	};
 
-	const setNewFile = (file) => {
-		console.log('File Parent', file);
+	const setNewFile = (file, index) => {
+		console.log('File Parent', file, index);
 		setForm((prev) => {
 			return {
 				...prev,
 				elementMediaFiles: [...form.elementMediaFiles, ...file]
 			};
 		});
+		let dataCopy = [...data];
+		dataCopy[index].data = { ...file };
+		setData(dataCopy);
 	};
+
+	console.log('Data with Copy', data);
 
 	const handleDeleteAvatarPicture = (id) => {
 		setForm((prev) => {
@@ -831,38 +867,6 @@ const UploadOrEditViral = ({
 		console.log('Width Height', height, width);
 	};
 
-	const [data, setData] = useState([
-		{
-			id: 1,
-			heading: 'Add Text',
-			component: (
-				<Editor
-					description={form.description}
-					onMouseEnter={() => setDisableDropdown(false)}
-					onBlur={() => setDisableDropdown(true)}
-					handleEditorChange={() => {
-						handleEditorChange;
-					}}
-				/>
-			)
-		},
-		{
-			id: 2,
-			heading: 'Add Image / Video',
-			component: ArticleMediaDraggable
-		},
-		{
-			id: 3,
-			heading: 'Add Image',
-			component: ArticleMediaDraggable
-		},
-		{
-			id: 4,
-			heading: 'Add Video',
-			component: ArticleMediaDraggable
-		}
-	]);
-
 	console.log('Data Main', data);
 
 	console.log('elementMediaFiles Main', form.elementMediaFiles);
@@ -982,12 +986,14 @@ const UploadOrEditViral = ({
 												<>
 													{item.id > 1 &&
 														React.createElement(item.component, {
-															sendFileToParent: setNewFile,
+															sendFileToParent: (file) =>
+																setNewFile(file, index),
 															handleDeleteFile: handleMediaDelete,
 															WidthHeightCallback: handleFileWidthHeight,
 															item,
 															key: item.id,
-															index
+															index,
+															initialData: item.data ? item?.data[0] : false
 														})}
 												</>
 											);
