@@ -115,17 +115,20 @@ const UploadOrEditViral = ({
 		{
 			id: 2,
 			heading: 'Add Image / Video',
-			component: ArticleMediaDraggable
+			component: ArticleMediaDraggable,
+			isOpen: true
 		},
 		{
 			id: 3,
 			heading: 'Add Image',
-			component: ArticleMediaDraggable
+			component: ArticleMediaDraggable,
+			isOpen: true
 		},
 		{
 			id: 4,
 			heading: 'Add Video',
-			component: ArticleMediaDraggable
+			component: ArticleMediaDraggable,
+			isOpen: true
 		}
 	]);
 	const classes = useStyles();
@@ -527,6 +530,12 @@ const UploadOrEditViral = ({
 		});
 		let dataCopy = [...data];
 		dataCopy[index].data = { ...file };
+		setData(dataCopy);
+	};
+
+	const handleExpand = (isOpen, index) => {
+		let dataCopy = [...data];
+		dataCopy[index].isOpen = isOpen;
 		setData(dataCopy);
 	};
 
@@ -1003,12 +1012,14 @@ const UploadOrEditViral = ({
 														React.createElement(item.component, {
 															sendFileToParent: (file) =>
 																setNewFile(file, index),
+															setIsOpen: (isOpen) =>
+																handleExpand(isOpen, index),
 															handleDeleteFile: handleMediaDelete,
 															WidthHeightCallback: handleFileWidthHeight,
 															item,
 															key: item.id,
 															index,
-															initialData: item.data ? item?.data[0] : false
+															initialData: item.data && item?.data[0]
 														})}
 												</>
 											);

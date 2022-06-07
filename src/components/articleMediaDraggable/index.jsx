@@ -21,17 +21,20 @@ const ArticleMediaDraggable = ({
 	key,
 	index,
 	sendFileToParent,
+	setIsOpen,
 	WidthHeightCallback,
 	handleDeleteFile,
 	initialData
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
-	const [clickExpandIcon, setClickExpandIcon] = useState(!!initialData);
+	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
-	const [newFile, setNewFile] = useState([initialData]);
+	const [newFile, setNewFile] = useState(initialData ? [initialData] : []);
+
+	console.log('newFile', newFile);
 
 	const imgEl = useRef(null);
 
@@ -82,14 +85,13 @@ const ArticleMediaDraggable = ({
 
 	const clickExpand = () => {
 		setClickExpandIcon(!clickExpandIcon);
+		setIsOpen(!clickExpandIcon);
 	};
-
-	console.log('newFile Draggable', newFile);
 
 	return (
 		<>
 			<Draggable
-				draggableId={`draggable-${item.id}`}
+				draggableId={`draggable-${item?.id}`}
 				index={index}
 				key={key}
 				//	isDragDisabled={uploadeddatas.length <= 1}
@@ -135,7 +137,7 @@ const ArticleMediaDraggable = ({
 									<DragAndDropField
 										uploadedFiles={newFile}
 										handleDeleteFile={(id) => {
-											setNewFile(newFile.filter((file) => file.id !== id));
+											setNewFile(newFile.filter((file) => file?.id !== id));
 											handleDeleteFile(id);
 										}}
 										isArticle
@@ -203,7 +205,8 @@ ArticleMediaDraggable.propTypes = {
 	sendFileToParent: PropTypes.func.isRequired,
 	WidthHeightCallback: PropTypes.func,
 	handleDeleteFile: PropTypes.func,
-	initialData: PropTypes.object
+	initialData: PropTypes.object,
+	setIsOpen: PropTypes.func
 };
 
 export default ArticleMediaDraggable;
