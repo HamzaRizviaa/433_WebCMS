@@ -106,25 +106,21 @@ const UploadOrEditViral = ({
 
 	const elementData = [
 		{
-			id: 1,
 			image: Text,
 			text: 'Add Text',
 			component: ArticleMediaDraggable
 		},
 		{
-			id: 2,
 			image: ImageVideo,
 			text: 'Add Image / Video',
 			component: ArticleMediaDraggable
 		},
 		{
-			id: 3,
 			image: Tweet,
 			text: 'Add Tweet',
 			component: ArticleMediaDraggable
 		},
 		{
-			id: 4,
 			image: Instragram,
 			text: 'Add IG post',
 			component: ArticleMediaDraggable

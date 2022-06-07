@@ -10,7 +10,7 @@ const ArticleElements = ({ data, onClick }) => {
 			{data.map((dataItem, index) => (
 				<button
 					onClick={() => onClick(dataItem, index)}
-					key={dataItem.id}
+					key={index}
 					className={classes.elementContainter}
 				>
 					<img src={dataItem.image} />
