@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import Button from '../button';
 
 const ArticleFooter = ({
-    buttonText,
+	buttonText,
 	isEdit,
 	form,
 	status,
@@ -13,13 +13,14 @@ const ArticleFooter = ({
 	toggleDeleteModal,
 	draftBtnDisabled,
 	validateDraft,
-    handleDraftSave,
-    validateForm,
-    editBtnDisabled,
-    handleAddSaveBtn
+	handleDraftSave,
+	validateForm,
+	editBtnDisabled,
+	handleAddSaveBtn
 }) => {
 	const classes = useStyles();
-    const globalClasses = globalUseStyles();
+	const globalClasses = globalUseStyles();
+	console.log(form, 'ff');
 
 	return (
 		<div className={classes.footer}>
@@ -88,16 +89,16 @@ const ArticleFooter = ({
 export default ArticleFooter;
 
 ArticleFooter.propTypes = {
-    buttonText: PropTypes.string.isRequired,
+	buttonText: PropTypes.string.isRequired,
 	isEdit: PropTypes.bool.isRequired,
 	form: PropTypes.object.isRequired,
 	status: PropTypes.string.isRequired,
 	deleteBtnStatus: PropTypes.bool.isRequired,
 	toggleDeleteModal: PropTypes.func.isRequired,
 	draftBtnDisabled: PropTypes.bool.isRequired,
-    validateDraft: PropTypes.func.isRequired,
-    handleDraftSave: PropTypes.func.isRequired,
-    validateForm :  PropTypes.func.isRequired,
-    editBtnDisabled:  PropTypes.bool.isRequired,
-    handleAddSaveBtn: PropTypes.func.isRequired
+	validateDraft: PropTypes.func.isRequired,
+	handleDraftSave: PropTypes.func.isRequired,
+	validateForm: PropTypes.func.isRequired,
+	editBtnDisabled: PropTypes.bool.isRequired,
+	handleAddSaveBtn: PropTypes.func.isRequired
 };

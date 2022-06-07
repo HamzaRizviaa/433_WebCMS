@@ -86,11 +86,12 @@ const UploadOrEditViral = ({
 	const loadingRef = useRef(null);
 	const [form, setForm] = useState({
 		title: '',
-		description: '',
+		// description: '',
 		dropbox_url: '',
 		uploadedFiles: [],
+		author_text: '433 Team',
+		author_image: [{ media_url: Profile433 }],
 		elementMediaFiles: [],
-		avatarProfilePicture: [{ media_url: Profile433 }],
 		labels: [],
 		show_likes: true,
 		show_comments: true,
@@ -165,7 +166,7 @@ const UploadOrEditViral = ({
 			setForm((prev) => {
 				return {
 					...prev,
-					avatarProfilePicture: [...newFiles]
+					author_image: [...newFiles]
 				};
 			});
 		}
@@ -277,11 +278,21 @@ const UploadOrEditViral = ({
 								}
 						  ]
 						: [],
-					description:
-						specificArticle?.length === 0
-							? ''
-							: // eslint-disable-next-line no-undef
-							  tinyMCE.activeEditor?.setContent(specificArticle?.description)
+					author_text: specificArticle?.author_text,
+					author_image: specificArticle?.author_image
+						? [
+								{
+									id: makeid(10),
+									media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificArticle?.author_image}`,
+									type: 'image'
+								}
+						  ]
+						: [{ media_url: Profile433 }]
+					// description:
+					// 	specificArticle?.length === 0
+					// 		? ''
+					// 		: // eslint-disable-next-line no-undef
+					// 		  tinyMCE.activeEditor?.setContent(specificArticle?.description)
 				};
 			});
 
@@ -390,7 +401,6 @@ const UploadOrEditViral = ({
 					main_category_id: form?.mainCategory.id,
 					sub_category_id: form.subCategory.id,
 					save_draft: draft,
-					description: form.description,
 					show_likes: form.show_likes ? true : undefined,
 					show_comments: form.show_comments ? true : undefined,
 					dropbox_url: form.dropbox_url ? form.dropbox_url : '',
@@ -401,7 +411,10 @@ const UploadOrEditViral = ({
 						? mediaFiles[0]?.media_url.split('cloudfront.net/')[1] ||
 						  mediaFiles[0]?.media_url
 						: '',
-
+					author_text: form.author_text,
+					author_image: form?.author_image?.length
+						? form?.author_image?.media_url
+						: '',
 					...(isEdit && id ? { article_id: id } : {}),
 					...((!isEdit || status !== 'published') &&
 					(form.labels?.length || status == 'draft')
@@ -458,11 +471,12 @@ const UploadOrEditViral = ({
 		setIsError({});
 		setForm({
 			title: '',
-			description: tinyMCE.activeEditor?.setContent(''),
+			// description: tinyMCE.activeEditor?.setContent(''),
 			dropbox_url: '',
 			uploadedFiles: [],
 			elementMediaFiles: [],
-			avatarProfilePicture: [{ media_url: Profile433 }],
+			author_text: '433 Team',
+			author_image: [{ media_url: Profile433 }],
 			labels: [],
 			mainCategory: '',
 			subCategory: '',
@@ -510,15 +524,13 @@ const UploadOrEditViral = ({
 		setData(dataCopy);
 	};
 
-	console.log('Data with Copy', data);
+	// console.log('Data with Copy', data);
 
 	const handleDeleteAvatarPicture = (id) => {
 		setForm((prev) => {
 			return {
 				...prev,
-				avatarProfilePicture: form.avatarProfilePicture.filter(
-					(file) => file.id !== id
-				)
+				author_image: form.author_image.filter((file) => file.id !== id)
 			};
 		});
 	};
@@ -528,7 +540,7 @@ const UploadOrEditViral = ({
 			articleTitle: !form.title,
 			uploadedFiles: form.uploadedFiles.length < 1,
 			selectedLabels: form.labels.length < 7,
-			editorText: !form.description,
+			// editorText: !form.description,
 			mainCategory: !form.mainCategory,
 			subCategory: form?.subCategory
 				? !form?.subCategory
@@ -621,14 +633,15 @@ const UploadOrEditViral = ({
 				postButtonStatus ||
 					!form.uploadedFiles.length ||
 					!form.title ||
-					!form.description ||
 					(specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
 						specificArticle?.title?.trim() === form?.title?.trim() &&
 						specificArticle?.dropbox_url?.trim() ===
 							form?.dropbox_url?.trim() &&
-						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
+						specificArticle?.author_text?.trim() ===
+							form?.author_text?.trim() &&
 						specificArticle?.show_likes === form.show_likes &&
-						specificArticle?.show_comments === form.show_comments)
+						specificArticle?.show_comments === form.show_comments &&
+						specificArticleTextTrimmed === editorTextCheckerTrimmed)
 			);
 		}
 	}, [specificArticle, editorTextChecker, form]);
@@ -647,6 +660,8 @@ const UploadOrEditViral = ({
 						specificArticle?.title?.trim() === form?.title?.trim() &&
 						specificArticle?.dropbox_url?.trim() ===
 							form?.dropbox_url?.trim() &&
+						specificArticle?.author_text?.trim() ===
+							form?.author_text?.trim() &&
 						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
 						specificArticle?.labels?.length === form?.labels?.length &&
 						specificArticle?.show_likes === form.show_likes &&
@@ -746,7 +761,7 @@ const UploadOrEditViral = ({
 				articleTitle: !form.title,
 				uploadedFiles: form.uploadedFiles.length < 1,
 				selectedLabels: form.labels.length < 1,
-				editorText: !form.description,
+				// editorText: !form.description,
 				mainCategory: !form.mainCategory,
 				subCategory: form?.subCategory?.name
 					? !form?.subCategory?.name
@@ -847,9 +862,9 @@ const UploadOrEditViral = ({
 		console.log('Width Height', height, width);
 	};
 
-	console.log('Data Main', data);
+	// console.log('Data Main', data);
 
-	console.log('elementMediaFiles Main', form.elementMediaFiles);
+	// console.log('elementMediaFiles Main', form.elementMediaFiles);
 
 	return (
 		<>

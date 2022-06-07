@@ -226,16 +226,15 @@ const ArticleGeneralInfo = ({
 					<div className={classes.authorContainer}>
 						<div {...getRootPropsAvatar({ className: classes.authorAvatar })}>
 							<input {...getInputPropsAvatar()} />
-							<Avatar src={form.avatarProfilePicture[0]?.media_url} />
+							<Avatar src={form.author_image[0]?.media_url} />
 						</div>
 
 						<div className={classes.authorName}>
 							<TextField
-								// value={form.dropbox_url}
-								defaultValue={'433 Team'}
+								value={form.author_text}
 								onChange={(e) =>
 									setForm((prev) => {
-										return { ...prev, dropbox_url: e.target.value };
+										return { ...prev, author_text: e.target.value };
 									})
 								}
 								placeholder={'Please enter your name here'}
