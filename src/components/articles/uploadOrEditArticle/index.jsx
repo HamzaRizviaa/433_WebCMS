@@ -939,6 +939,21 @@ const UploadOrEditViral = ({
 											data={elementData}
 											onClick={(dataItem) => {
 												setDataItem(dataItem);
+												console.log(dataItem, 'dataItem');
+												dataItem.text === 'Image / Video'
+													? setData([
+															...data,
+															{
+																id: dataItem.id,
+																heading: dataItem.text,
+																component:
+																	// <DraggableWrapper onDragEnd={onDragEnd}>
+																	ArticleElementMedia
+																// </DraggableWrapper>
+															}
+													  ])
+													: '';
+												console.log(data, '----- data ----');
 											}}
 										/>
 									</div>
@@ -980,7 +995,7 @@ const UploadOrEditViral = ({
 												});
 											} */}
 
-									<DraggableWrapper heading={'Add Text'} onDragEnd={onDragEnd}>
+									<DraggableWrapper onDragEnd={onDragEnd}>
 										{data.map((item, index) => {
 											return (
 												<>
@@ -1010,7 +1025,7 @@ const UploadOrEditViral = ({
 											<img
 												src='https://via.placeholder.com/298x596?text=Preview'
 												alt='placeholder'
-												style={{width: '250px' ,height : '350px'}}
+												style={{ width: '250px', height: '350px' }}
 											/>
 										</Box>
 									</Box>
