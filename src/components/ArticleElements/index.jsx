@@ -14,7 +14,7 @@ const ArticleElements = ({ data, onClick }) => {
 					className={classes.elementContainter}
 				>
 					<img src={dataItem.image} />
-					<p className={classes.elementText}>Add {dataItem.text}</p>
+					<p className={classes.elementText}>{dataItem.text}</p>
 				</button>
 			))}
 		</div>

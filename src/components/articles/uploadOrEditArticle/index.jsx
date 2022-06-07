@@ -97,40 +97,7 @@ const UploadOrEditViral = ({
 		mainCategory: '',
 		subCategory: ''
 	});
-	const [data, setData] = useState([
-		{
-			id: 1,
-			heading: 'Add Text',
-			component: (
-				<Editor
-					description={form.description}
-					onMouseEnter={() => setDisableDropdown(false)}
-					onBlur={() => setDisableDropdown(true)}
-					handleEditorChange={() => {
-						handleEditorChange;
-					}}
-				/>
-			)
-		},
-		{
-			id: 2,
-			heading: 'Add Image / Video',
-			component: ArticleMediaDraggable,
-			isOpen: true
-		},
-		{
-			id: 3,
-			heading: 'Add Image',
-			component: ArticleMediaDraggable,
-			isOpen: true
-		},
-		{
-			id: 4,
-			heading: 'Add Video',
-			component: ArticleMediaDraggable,
-			isOpen: true
-		}
-	]);
+	const [data, setData] = useState([]);
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
@@ -139,22 +106,26 @@ const UploadOrEditViral = ({
 		{
 			id: 1,
 			image: Text,
-			text: 'Text'
+			text: 'Add Text',
+			component: ArticleMediaDraggable
 		},
 		{
 			id: 2,
 			image: ImageVideo,
-			text: 'Image / Video'
+			text: 'Add Image / Video',
+			component: ArticleMediaDraggable
 		},
 		{
 			id: 3,
 			image: Tweet,
-			text: 'Tweet'
+			text: 'Add Tweet',
+			component: ArticleMediaDraggable
 		},
 		{
 			id: 4,
 			image: Instragram,
-			text: 'IG post'
+			text: 'Add IG post',
+			component: ArticleMediaDraggable
 		}
 	];
 
@@ -947,22 +918,20 @@ const UploadOrEditViral = ({
 										<ArticleElements
 											data={elementData}
 											onClick={(dataItem) => {
-												setDataItem(dataItem);
-												console.log(dataItem, 'dataItem');
-												dataItem.text === 'Image / Video'
-													? setData([
-															...data,
-															{
-																id: dataItem.id,
-																heading: dataItem.text,
-																component:
-																	// <DraggableWrapper onDragEnd={onDragEnd}>
-																	ArticleElementMedia
-																// </DraggableWrapper>
-															}
-													  ])
-													: '';
-												console.log(data, '----- data ----');
+												// setDataItem(dataItem);
+												setData((prev) => {
+													return [
+														...prev,
+														{
+															id: dataItem.id,
+															heading: dataItem.text,
+															component: dataItem.component,
+															isOpen: true
+															// <DraggableWrapper onDragEnd={onDragEnd}>
+															// </DraggableWrapper>
+														}
+													];
+												});
 											}}
 										/>
 									</div>
@@ -1008,19 +977,16 @@ const UploadOrEditViral = ({
 										{data.map((item, index) => {
 											return (
 												<>
-													{item.id > 1 &&
-														React.createElement(item.component, {
-															sendFileToParent: (file) =>
-																setNewFile(file, index),
-															setIsOpen: (isOpen) =>
-																handleExpand(isOpen, index),
-															handleDeleteFile: handleMediaDelete,
-															WidthHeightCallback: handleFileWidthHeight,
-															item,
-															key: item.id,
-															index,
-															initialData: item.data && item?.data[0]
-														})}
+													{React.createElement(item.component, {
+														sendFileToParent: (file) => setNewFile(file, index),
+														setIsOpen: (isOpen) => handleExpand(isOpen, index),
+														handleDeleteFile: handleMediaDelete,
+														WidthHeightCallback: handleFileWidthHeight,
+														item,
+														key: item.id,
+														index,
+														initialData: item.data && item?.data[0]
+													})}
 												</>
 											);
 										})}
