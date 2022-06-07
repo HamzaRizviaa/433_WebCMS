@@ -102,6 +102,8 @@ const UploadOrEditViral = ({
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
 
+	console.log('Data', data);
+
 	const elementData = [
 		{
 			id: 1,
@@ -492,7 +494,6 @@ const UploadOrEditViral = ({
 	};
 
 	const setNewFile = (file, index) => {
-		console.log('File Parent', file, index);
 		setForm((prev) => {
 			return {
 				...prev,
@@ -509,8 +510,6 @@ const UploadOrEditViral = ({
 		dataCopy[index].isOpen = isOpen;
 		setData(dataCopy);
 	};
-
-	console.log('Data with Copy', data);
 
 	const handleDeleteAvatarPicture = (id) => {
 		setForm((prev) => {
@@ -847,10 +846,6 @@ const UploadOrEditViral = ({
 		console.log('Width Height', height, width);
 	};
 
-	console.log('Data Main', data);
-
-	console.log('elementMediaFiles Main', form.elementMediaFiles);
-
 	return (
 		<>
 			{/* <Slider
@@ -923,7 +918,7 @@ const UploadOrEditViral = ({
 													return [
 														...prev,
 														{
-															id: dataItem.id,
+															id: data.length + 1,
 															heading: dataItem.text,
 															component: dataItem.component,
 															isOpen: true
@@ -973,8 +968,8 @@ const UploadOrEditViral = ({
 														handleDeleteFile: handleMediaDelete,
 														WidthHeightCallback: handleFileWidthHeight,
 														item,
-														key: index,
 														index,
+														key: item.id,
 														initialData: item.data && item?.data[0]
 													})}
 												</>

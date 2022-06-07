@@ -7,9 +7,9 @@ const ArticleElements = ({ data, onClick }) => {
 
 	return (
 		<div>
-			{data.map((dataItem) => (
+			{data.map((dataItem, index) => (
 				<button
-					onClick={() => onClick(dataItem)}
+					onClick={() => onClick(dataItem, index)}
 					key={dataItem.id}
 					className={classes.elementContainter}
 				>
