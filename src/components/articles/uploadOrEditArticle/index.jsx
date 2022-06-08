@@ -7,6 +7,7 @@ import Editor from '../../Editor';
 import ArticleElements from '../../ArticleElements';
 import ArticleGeneralInfo from '../../ArticleGeneralInfo';
 import ArticleMediaDraggable from '../../articleMediaDraggable';
+import ArticleTextDraggable from '../../articleTextDraggable';
 import ArticleFooter from '../../ArticleFooter';
 import DraggableWrapper from '../../DraggableWrapper';
 import ArticleElementMedia from '../../ArticleElementMedia';
@@ -109,7 +110,7 @@ const UploadOrEditViral = ({
 		{
 			image: Text,
 			text: 'Add Text',
-			component: ArticleMediaDraggable
+			component: ArticleTextDraggable
 		},
 		{
 			image: ImageVideo,
