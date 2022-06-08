@@ -40,7 +40,7 @@ const ArticleTextDraggable = ({
 	return (
 		<>
 			<Draggable
-				draggableId={`draggable-${item?.id}`}
+				draggableId={`draggable-${index}`}
 				index={index}
 				key={key}
 				//	isDragDisabled={uploadeddatas.length <= 1}

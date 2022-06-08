@@ -114,7 +114,7 @@ const ArticleMediaDraggable = ({
 										/>
 									</span>
 								</div>
-								<div className={classes.wrapperHeading}>{item.heading}</div>
+								<div className={classes.wrapperHeading}>{item?.heading}</div>
 							</div>
 							<div className={classes.rightDiv}>
 								<div className={classes.deleteIconDiv}>
