@@ -40,7 +40,7 @@ import Instragram from '../../../assets/Instagram.svg';
 import Text from '../../../assets/Text.svg';
 import ImageVideo from '../../../assets/Image.svg';
 import Tweet from '../../../assets/Twitter Line.svg';
-import Profile433 from '../../../assets/Profile433.svg';
+// import Profile433 from '../../../assets/Profile433.svg';
 import ArticleDraggables from '../../ArticleDraggables';
 
 //api calls
@@ -84,14 +84,17 @@ const UploadOrEditViral = ({
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const loadingRef = useRef(null);
+
+	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/Profile433.svg`;
+
 	const [form, setForm] = useState({
 		title: '',
-		// description: '',
+		sub_text: '',
 		dropbox_url: '',
 		uploadedFiles: [],
 		author_text: '433 Team',
 		author_image: [{ media_url: Profile433 }],
-		elementMediaFiles: [],
+		elementMediaFiles: ['abc'],
 		labels: [],
 		show_likes: true,
 		show_comments: true,
@@ -102,8 +105,6 @@ const UploadOrEditViral = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
-
-	console.log('Data', data);
 
 	const elementData = [
 		{
@@ -262,6 +263,7 @@ const UploadOrEditViral = ({
 				return {
 					...prev,
 					title: specificArticle?.title,
+					sub_text: specificArticle?.sub_text,
 					dropbox_url: specificArticle?.dropbox_url,
 					// subCategory: specificArticle.sub_category,
 					show_likes: specificArticle?.show_likes,
@@ -394,13 +396,14 @@ const UploadOrEditViral = ({
 				`${process.env.REACT_APP_API_ENDPOINT}/article/post-article`,
 				{
 					title: form.title,
+					sub_text: form.sub_text,
 					height: form.uploadedFiles.length > 0 ? fileHeight : 0,
 					width: form.uploadedFiles.length > 0 ? fileWidth : 0,
 					main_category_id: form?.mainCategory.id,
 					sub_category_id: form.subCategory.id,
 					save_draft: draft,
-					show_likes: form.show_likes ? true : undefined,
-					show_comments: form.show_comments ? true : undefined,
+					show_likes: form.show_likes ? true : false,
+					show_comments: form.show_comments ? true : false,
 					dropbox_url: form.dropbox_url ? form.dropbox_url : '',
 					file_name: form?.uploadedFiles?.length
 						? mediaFiles[0]?.file_name
@@ -411,7 +414,8 @@ const UploadOrEditViral = ({
 						: '',
 					author_text: form.author_text,
 					author_image: form?.author_image?.length
-						? form?.author_image?.media_url
+						? mediaFiles[1]?.media_url.split('cloudfront.net/')[1] ||
+						  mediaFiles[1]?.media_url
 						: '',
 					...(isEdit && id ? { article_id: id } : {}),
 					...((!isEdit || status !== 'published') &&
@@ -469,10 +473,11 @@ const UploadOrEditViral = ({
 		setIsError({});
 		setForm({
 			title: '',
+			sub_text: '',
 			// description: tinyMCE.activeEditor?.setContent(''),
 			dropbox_url: '',
 			uploadedFiles: [],
-			elementMediaFiles: [],
+			elementMediaFiles: ['abc'],
 			author_text: '433 Team',
 			author_image: [{ media_url: Profile433 }],
 			labels: [],
@@ -533,6 +538,7 @@ const UploadOrEditViral = ({
 	const validateArticleBtn = () => {
 		setIsError({
 			articleTitle: !form.title,
+			sub_text: !form.sub_text,
 			uploadedFiles: form.uploadedFiles.length < 1,
 			selectedLabels: form.labels.length < 7,
 			// editorText: !form.description,
@@ -622,6 +628,12 @@ const UploadOrEditViral = ({
 		' '
 	); // api response
 
+	const checkNewAuthorImage = () => {
+		return form?.author_image?.some((item) => {
+			return item?.file;
+		});
+	};
+
 	useEffect(() => {
 		if (specificArticle) {
 			setEditBtnDisabled(
@@ -630,13 +642,15 @@ const UploadOrEditViral = ({
 					!form.title ||
 					(specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
 						specificArticle?.title?.trim() === form?.title?.trim() &&
+						specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
 						specificArticle?.dropbox_url?.trim() ===
 							form?.dropbox_url?.trim() &&
 						specificArticle?.author_text?.trim() ===
 							form?.author_text?.trim() &&
 						specificArticle?.show_likes === form.show_likes &&
 						specificArticle?.show_comments === form.show_comments &&
-						specificArticleTextTrimmed === editorTextCheckerTrimmed)
+						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
+						!checkNewAuthorImage())
 			);
 		}
 	}, [specificArticle, editorTextChecker, form]);
@@ -653,6 +667,7 @@ const UploadOrEditViral = ({
 						specificArticle?.sub_category ===
 							(form?.subCategory?.name || form?.subCategory) &&
 						specificArticle?.title?.trim() === form?.title?.trim() &&
+						specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
 						specificArticle?.dropbox_url?.trim() ===
 							form?.dropbox_url?.trim() &&
 						specificArticle?.author_text?.trim() ===
@@ -661,7 +676,8 @@ const UploadOrEditViral = ({
 						specificArticle?.labels?.length === form?.labels?.length &&
 						specificArticle?.show_likes === form.show_likes &&
 						specificArticle?.show_comments === form.show_comments &&
-						!checkDuplicateLabel())
+						!checkDuplicateLabel() &&
+						!checkNewAuthorImage())
 			);
 		}
 	}, [specificArticle, editorTextChecker, form]);
@@ -708,7 +724,20 @@ const UploadOrEditViral = ({
 					}
 				});
 
-				Promise.all([...uploadFilesPromiseArray])
+				let uploadAuthorImagePromiseArray = form.author_image.map(
+					async (_file) => {
+						if (_file.file) {
+							return uploadFileToServer(_file, 'articleLibrary');
+						} else {
+							return _file;
+						}
+					}
+				);
+
+				Promise.all([
+					...uploadFilesPromiseArray,
+					...uploadAuthorImagePromiseArray
+				])
 					.then((mediaFiles) => {
 						createArticle(specificArticle?.id, mediaFiles);
 					})
@@ -728,11 +757,25 @@ const UploadOrEditViral = ({
 					return;
 				}
 				setIsLoading(true);
+
 				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
 					return uploadFileToServer(_file, 'articleLibrary');
 				});
 
-				Promise.all([...uploadFilesPromiseArray])
+				let uploadAuthorImagePromiseArray = form.author_image.map(
+					async (_file) => {
+						if (_file.file) {
+							return uploadFileToServer(_file, 'articleLibrary');
+						} else {
+							return _file;
+						}
+					}
+				);
+
+				Promise.all([
+					...uploadFilesPromiseArray,
+					...uploadAuthorImagePromiseArray
+				])
 					.then((mediaFiles) => {
 						createArticle(null, mediaFiles);
 					})
@@ -754,6 +797,7 @@ const UploadOrEditViral = ({
 		} else {
 			setIsError({
 				articleTitle: !form.title,
+				sub_text: !form.sub_text,
 				uploadedFiles: form.uploadedFiles.length < 1,
 				selectedLabels: form.labels.length < 1,
 				// editorText: !form.description,

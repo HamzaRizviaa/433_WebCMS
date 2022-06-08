@@ -20,7 +20,7 @@ const ArticleFooter = ({
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
-	console.log(form, 'ff');
+	
 
 	return (
 		<div className={classes.footer}>

@@ -379,12 +379,60 @@ const ArticleGeneralInfo = ({
 					</p>
 
 					<div className={globalClasses.captionContainer}>
+						<div className={globalClasses.characterCount}>
+							<h6
+								className={
+									isError.sub_text
+										? globalClasses.errorState
+										: globalClasses.noErrorState
+								}
+							>
+								SUB TITLE
+							</h6>
+							<h6
+								style={{
+									color:
+										form.sub_text?.length >= 76 && form.sub_text?.length <= 83
+											? 'pink'
+											: form.sub_text?.length === 84
+											? 'red'
+											: 'white'
+								}}
+							>
+								{form.sub_text?.length}/84
+							</h6>
+						</div>
+
+						<TextField
+							value={form.sub_text}
+							onChange={(e) =>
+								setForm((prev) => {
+									return { ...prev, sub_text: e.target.value };
+								})
+							}
+							placeholder={'Please write your sub title here'}
+							className={classes.textField}
+							InputProps={{
+								disableUnderline: true,
+								className: classes.textFieldInput
+							}}
+							inputProps={{ maxLength: 84 }}
+							multiline
+							maxRows={2}
+						/>
+					</div>
+
+					<p className={globalClasses.mediaError}>
+						{isError.sub_text ? 'This field is required' : ''}
+					</p>
+
+					<div className={globalClasses.captionContainer}>
 						<h6
-						// className={
-						// 	isError.selectedLabels
-						// 		? globalClasses.errorState
-						// 		: globalClasses.noErrorState
-						// }
+						className={
+							isError.selectedLabels
+								? globalClasses.errorState
+								: globalClasses.noErrorState
+						}
 						>
 							LABELS
 						</h6>
