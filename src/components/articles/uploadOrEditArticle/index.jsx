@@ -8,6 +8,7 @@ import ArticleElements from '../../ArticleElements';
 import ArticleGeneralInfo from '../../ArticleGeneralInfo';
 import ArticleMediaDraggable from '../../articleMediaDraggable';
 import ArticleTextDraggable from '../../articleTextDraggable';
+import ArticleSocialMediaDraggable from '../../ArticleSocialMediaDraggable';
 import ArticleFooter from '../../ArticleFooter';
 import DraggableWrapper from '../../DraggableWrapper';
 import ArticleElementMedia from '../../ArticleElementMedia';
@@ -120,12 +121,12 @@ const UploadOrEditViral = ({
 		{
 			image: Tweet,
 			text: 'Add Tweet',
-			component: ArticleMediaDraggable
+			component: ArticleSocialMediaDraggable
 		},
 		{
 			image: Instragram,
 			text: 'Add IG post',
-			component: ArticleMediaDraggable
+			component: ArticleSocialMediaDraggable
 		}
 	];
 

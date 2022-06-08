@@ -3,14 +3,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-// import Close from '@material-ui/icons/Close';
-import { useStyles } from './index.styles';
-import Editor from '../Editor';
+import { useStyles as globalUseStyles } from '../../styles/global.style';
+import { TextField } from '@material-ui/core';
+import { useStyles } from './index.style';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { ReactComponent as Union } from '../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../assets/Delete.svg';
-const ArticleTextDraggable = ({
+const ArticleSocialMediaDraggable = ({
 	item,
 	key,
 	index,
@@ -20,21 +20,13 @@ const ArticleTextDraggable = ({
 	// handleDeleteFile,
 	// initialData
 }) => {
-	console.log(item, 'item', setIsOpen);
 	const classes = useStyles();
+	const globalClasses = globalUseStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
-
-	// const [newFile, setNewFile] = useState(initialData ? [initialData] : []);
 
 	const clickExpand = () => {
 		setClickExpandIcon(!clickExpandIcon);
 		setIsOpen(!clickExpandIcon);
-	};
-
-	const handleEditorChange = () => {
-		const editorTextContent = tinymce?.activeEditor?.getContent();
-		sendFileToParent(editorTextContent);
-		// setEditorTextChecker(editorTextContent); // to check yellow button condition
 	};
 
 	return (
@@ -81,15 +73,23 @@ const ArticleTextDraggable = ({
 							</div>
 						</div>
 						{clickExpandIcon ? (
-							<div className={classes.editorDrag}>
-								<Editor
-									description={'abc'}
-									// onMouseEnter={() => setDisableDropdown(false)}
-									// onBlur={() => setDisableDropdown(true)}
-									handleEditorChange={() => {
-										handleEditorChange;
-									}}
-								/>
+							<div>
+								{' '}
+								<div className={classes.socialmediaDrags}>
+									<h6> URL</h6>
+									<TextField
+										value={'hello satic text'}
+										onChange={(e) => sendFileToParent(e.target.value)}
+										placeholder={'Please drop the URL here'}
+										className={classes.textField}
+										multiline
+										maxRows={2}
+										InputProps={{
+											disableUnderline: true,
+											className: classes.textFieldInput
+										}}
+									/>
+								</div>
 							</div>
 						) : (
 							<div></div>
@@ -101,7 +101,7 @@ const ArticleTextDraggable = ({
 	);
 };
 
-ArticleTextDraggable.propTypes = {
+ArticleSocialMediaDraggable.propTypes = {
 	item: PropTypes.number,
 	key: PropTypes.number,
 	index: PropTypes.number,
@@ -112,4 +112,4 @@ ArticleTextDraggable.propTypes = {
 	setIsOpen: PropTypes.func
 };
 
-export default ArticleTextDraggable;
+export default ArticleSocialMediaDraggable;

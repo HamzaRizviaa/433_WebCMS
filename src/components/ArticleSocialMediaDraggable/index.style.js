@@ -78,6 +78,7 @@ export const useStyles = makeStyles((theme) => ({
 		marginLeft: '20px',
 		color: `${theme.palette.white} !important`
 	},
+
 	textField: {
 		width: '100%'
 	},
@@ -86,14 +87,11 @@ export const useStyles = makeStyles((theme) => ({
 		...theme.components.textFieldInput
 	},
 	socialmediaDrags: {
-		marginTop: '10px',
+		marginTop: '20px',
 		'& h6': {
 			marginBottom: '0.5rem',
 			marginLeft: '1rem'
 		},
 		marginBottom: '2rem'
-	},
-	horizontalLine: {
-		color: theme.palette.grey
 	}
 }));

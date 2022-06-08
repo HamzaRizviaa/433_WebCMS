@@ -7,6 +7,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useStyles } from './index.style';
 import { useDropzone } from 'react-dropzone';
 import checkFileSize from '../../utils/validateFileSize';
+import { TextField } from '@material-ui/core';
 import { useStyles as globalUseStyles } from '../../styles/global.style';
 import { ReactComponent as Union } from '../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../assets/Delete.svg';
@@ -146,6 +147,13 @@ const ArticleMediaDraggable = ({
 											setFileHeight(imgEl.current.naturalHeight);
 										}}
 									/>
+									<br />
+									{newFile?.length ? (
+										<hr className={classes.horizontalLine} />
+									) : (
+										<></>
+									)}
+
 									{!newFile?.length ? (
 										<section
 											className={globalClasses.dropZoneContainer}
@@ -180,10 +188,29 @@ const ArticleMediaDraggable = ({
 											<br />
 										</>
 									)}
+									<div className={classes.socialmediaDrags}>
+										<h6>DROPBOX URL</h6>
+										<TextField
+											value={'hello satic text'}
+											onChange={(e) => sendFileToParent(e.target.value)}
+											placeholder={'Please drop the URL here'}
+											className={classes.textField}
+											multiline
+											maxRows={2}
+											InputProps={{
+												disableUnderline: true,
+												className: classes.textFieldInput
+											}}
+										/>
+									</div>
 
-									<p className={globalClasses.fileRejectionError}>
-										{fileRejectionError}
-									</p>
+									{fileRejectionError ? (
+										<p className={globalClasses.fileRejectionError}>
+											{fileRejectionError}
+										</p>
+									) : (
+										''
+									)}
 								</div>
 							</div>
 						) : (
