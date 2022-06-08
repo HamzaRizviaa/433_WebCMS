@@ -150,24 +150,6 @@ export const useStyles = makeStyles(() => ({
 	// 	// ...theme.components.textFieldInput
 	// 	// @include textFieldInput,
 	// },
-	// textFieldInput: {
-	// 	color: '#ffffff',
-	// 	border: ' 0.01px solid #404040',
-	// 	padding: '1rem 1rem 1rem 1.5rem !important',
-	// 	fontSize: '1.4rem !important',
-	// 	fontFamily: 'Poppins !important',
-	// 	lineHeight: '1.6 !important',
-	// 	borderRadius: '22px',
-	// 	marginBottom: '1rem',
-	// 	backgroundColor: '#000000',
-	// 	'& svg': {
-	// 		position: 'absolute',
-	// 		color: '#ffff00',
-	// 		right: '2rem !important',
-	// 		top: '-9px !important',
-	// 		fontSize: '3rem'
-	// 	}
-	// },
 
 	textFieldInputStartAdornment: {
 		color: 'white !important',
@@ -670,6 +652,7 @@ export const useStyles = makeStyles(() => ({
 		fontFamily: 'Poppins !important',
 		backgroundColor: ' #000000'
 	},
+
 	rowType: {
 		marginBottom: '1.5rem',
 		fontSize: '1.2rem',
