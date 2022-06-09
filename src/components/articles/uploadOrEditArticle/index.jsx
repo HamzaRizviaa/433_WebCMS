@@ -112,21 +112,25 @@ const UploadOrEditViral = ({
 		{
 			image: Text,
 			text: 'Add Text',
+			type: 'text',
 			component: ArticleTextDraggable
 		},
 		{
 			image: ImageVideo,
 			text: 'Add Image / Video',
+			type: 'image/video',
 			component: ArticleMediaDraggable
 		},
 		{
 			image: Tweet,
 			text: 'Add Tweet',
+			type: 'twitter',
 			component: ArticleSocialMediaDraggable
 		},
 		{
 			image: Instragram,
 			text: 'Add IG post',
+			type: 'instagram',
 			component: ArticleSocialMediaDraggable
 		}
 	];
@@ -424,7 +428,7 @@ const UploadOrEditViral = ({
 					(form.labels?.length || status == 'draft')
 						? { labels: [...form.labels] }
 						: {}),
-
+					elements: data?.length ? data : undefined,
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -489,7 +493,7 @@ const UploadOrEditViral = ({
 			show_comments: true
 		});
 	};
-
+	console.log(form.elementMediaFiles, 'em');
 	const handleDeleteFile = (id) => {
 		setForm((prev) => {
 			return {
@@ -774,9 +778,19 @@ const UploadOrEditViral = ({
 					}
 				);
 
+				let dataMedia;
+				if (data.length) {
+					dataMedia = data.map((item) => {
+						if (item.type === 'image/video' && item.data.file) {
+							return uploadFileToServer(item.data, 'articleLibrary');
+						}
+					});
+				}
+
 				Promise.all([
 					...uploadFilesPromiseArray,
-					...uploadAuthorImagePromiseArray
+					...uploadAuthorImagePromiseArray,
+					...dataMedia
 				])
 					.then((mediaFiles) => {
 						createArticle(null, mediaFiles);
@@ -978,6 +992,7 @@ const UploadOrEditViral = ({
 															id: data.length + 1,
 															heading: dataItem.text,
 															component: dataItem.component,
+															type: dataItem.type,
 															isOpen: true
 															// <DraggableWrapper onDragEnd={onDragEnd}>
 															// </DraggableWrapper>
