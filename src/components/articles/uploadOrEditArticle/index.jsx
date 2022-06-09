@@ -325,9 +325,12 @@ const UploadOrEditViral = ({
 				heading: `Add ${item.element_type}`,
 				isOpen: true,
 				id: item.id,
+				entry: item.element_type === 'TEXT' ? 'old' : undefined,
 				data: [
 					{
-						...(item.description && { description: item.description }),
+						...(item.description && {
+							description: item.description
+						}),
 						...(item.media_url && { media_url: item.media_url }),
 						...(item.file_name && { file_name: item.file_name }),
 						...(item.file_name && { file_name: item.file_name }),
@@ -707,6 +710,18 @@ const UploadOrEditViral = ({
 		});
 	};
 
+	const checkNewElementFile = () => {
+		return data.some((item) => {
+			if (item?.data) {
+				return item?.data[0]?.file;
+			} else {
+				return item?.entry;
+			}
+		});
+	};
+
+	console.log(checkNewElementFile(), 'chk');
+
 	useEffect(() => {
 		if (specificArticle) {
 			setEditBtnDisabled(
@@ -723,10 +738,14 @@ const UploadOrEditViral = ({
 						specificArticle?.show_likes === form.show_likes &&
 						specificArticle?.show_comments === form.show_comments &&
 						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
+						specificArticle.elements.length === data.length &&
+						!checkNewElementFile() &&
 						!checkNewAuthorImage())
 			);
 		}
-	}, [specificArticle, editorTextChecker, form]);
+	}, [specificArticle, editorTextChecker, form, data]);
+
+	console.log(specificArticle?.elements?.length, data.length, 'kaka');
 
 	useEffect(() => {
 		if (specificArticle) {
@@ -810,9 +829,21 @@ const UploadOrEditViral = ({
 					}
 				);
 
+				let dataMedia;
+				if (data.length) {
+					dataMedia = data.map(async (item) => {
+						if (item.element_type === 'MEDIA' && item.data[0].file) {
+							return await uploadFileToServer(item.data[0], 'articleLibrary');
+						} else {
+							return item;
+						}
+					});
+				}
+
 				Promise.all([
 					...uploadFilesPromiseArray,
-					...uploadAuthorImagePromiseArray
+					...uploadAuthorImagePromiseArray,
+					...dataMedia
 				])
 					.then((mediaFiles) => {
 						createArticle(specificArticle?.id, mediaFiles);
