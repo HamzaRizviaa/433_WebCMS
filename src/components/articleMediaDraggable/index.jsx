@@ -118,7 +118,12 @@ const ArticleMediaDraggable = ({
 							</div>
 							<div className={classes.rightDiv}>
 								<div className={classes.deleteIconDiv}>
-									<Deletes className={classes.deleteIcon} />
+									<Deletes
+										className={classes.deleteIcon}
+										onClick={() => {
+											handleDeleteFile(item.sortOrder);
+										}}
+									/>
 								</div>
 								<div
 									className={classes.expandIconDiv}
@@ -137,7 +142,7 @@ const ArticleMediaDraggable = ({
 										uploadedFiles={newFile}
 										handleDeleteFile={(id) => {
 											setNewFile(newFile.filter((file) => file?.id !== id));
-											handleDeleteFile(id);
+											// handleDeleteFile(id);
 										}}
 										isArticle
 										isArticleNew

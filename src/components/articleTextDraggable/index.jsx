@@ -15,9 +15,9 @@ const ArticleTextDraggable = ({
 	key,
 	index,
 	sendFileToParent,
-	setIsOpen
+	setIsOpen,
 	// WidthHeightCallback,
-	// handleDeleteFile,
+	handleDeleteFile
 	// initialData
 }) => {
 	console.log(item, 'item', setIsOpen);
@@ -68,7 +68,12 @@ const ArticleTextDraggable = ({
 							</div>
 							<div className={classes.rightDiv}>
 								<div className={classes.deleteIconDiv}>
-									<Deletes className={classes.deleteIcon} />
+									<Deletes
+										className={classes.deleteIcon}
+										onClick={() => {
+											handleDeleteFile(item.sortOrder);
+										}}
+									/>
 								</div>
 								<div
 									className={classes.expandIconDiv}
@@ -107,7 +112,7 @@ ArticleTextDraggable.propTypes = {
 	index: PropTypes.number,
 	sendFileToParent: PropTypes.func.isRequired,
 	// WidthHeightCallback: PropTypes.func,
-	// handleDeleteFile: PropTypes.func,
+	handleDeleteFile: PropTypes.func,
 	// initialData: PropTypes.object,
 	setIsOpen: PropTypes.func
 };

@@ -494,7 +494,7 @@ const UploadOrEditViral = ({
 		});
 		setData([]);
 	};
-	console.log(form.elementMediaFiles, 'em');
+	console.log(data, 'em');
 	const handleDeleteFile = (id) => {
 		setForm((prev) => {
 			return {
@@ -504,15 +504,11 @@ const UploadOrEditViral = ({
 		});
 	};
 
-	const handleMediaDelete = (id) => {
-		setForm((prev) => {
-			return {
-				...prev,
-				elementMediaFiles: form.elementMediaFiles.filter(
-					(file) => file.id !== id
-				)
-			};
-		});
+	const handleMediaElementDelete = (sortOrder) => {
+		let dataCopy = [...data];
+		if (sortOrder) {
+			setData(dataCopy.filter((file) => file.sortOrder !== sortOrder));
+		}
 	};
 
 	const setNewFile = (file, index) => {
@@ -1038,7 +1034,8 @@ const UploadOrEditViral = ({
 													{React.createElement(item.component, {
 														sendFileToParent: (file) => setNewFile(file, index),
 														setIsOpen: (isOpen) => handleExpand(isOpen, index),
-														handleDeleteFile: handleMediaDelete,
+														handleDeleteFile: (sortOrder) =>
+															handleMediaElementDelete(sortOrder),
 														WidthHeightCallback: handleFileWidthHeight,
 														item,
 														index,
