@@ -21,7 +21,7 @@ const ArticleMediaDraggable = ({
 	item,
 	key,
 	index,
-	sendFileToParent,
+	sendDataToParent,
 	setIsOpen,
 	WidthHeightCallback,
 	handleDeleteFile,
@@ -67,7 +67,7 @@ const ArticleMediaDraggable = ({
 			});
 			WidthHeightCallback(fileHeight, fileWidth);
 			setNewFile([...newFiles]);
-			sendFileToParent(newFiles);
+			sendDataToParent(newFiles);
 		}
 	}, [acceptedFiles]);
 
@@ -192,7 +192,7 @@ const ArticleMediaDraggable = ({
 										<h6>DROPBOX URL</h6>
 										<TextField
 											value={'hello satic text'}
-											onChange={(e) => sendFileToParent(e.target.value)}
+											onChange={(e) => sendDataToParent(e.target.value)}
 											placeholder={'Please drop the URL here'}
 											className={classes.textField}
 											multiline
@@ -227,7 +227,7 @@ ArticleMediaDraggable.propTypes = {
 	item: PropTypes.number,
 	key: PropTypes.number,
 	index: PropTypes.number,
-	sendFileToParent: PropTypes.func.isRequired,
+	sendDataToParent: PropTypes.func.isRequired,
 	WidthHeightCallback: PropTypes.func,
 	handleDeleteFile: PropTypes.func,
 	initialData: PropTypes.object,
