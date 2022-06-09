@@ -394,8 +394,8 @@ const UploadOrEditViral = ({
 	};
 
 	useEffect(() => {
-		validateForm(form);
-	}, [form]);
+		validateForm(form, data);
+	}, [form, data]);
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
@@ -545,6 +545,7 @@ const UploadOrEditViral = ({
 		});
 		setData([]);
 	};
+
 	const handleDeleteFile = (id) => {
 		setForm((prev) => {
 			return {
@@ -558,6 +559,24 @@ const UploadOrEditViral = ({
 		let dataCopy = [...data];
 		if (sortOrder) {
 			setData(dataCopy.filter((file) => file.sortOrder !== sortOrder));
+		}
+	};
+
+	console.log(data, 'dat');
+
+	const handleElementDataDelete = (elementData, index) => {
+		let dataCopy = [...data];
+		if (elementData) {
+			setData(
+				dataCopy.filter((item, i) => {
+					if (index === i) {
+						delete item['data'];
+						return item;
+					} else {
+						return item;
+					}
+				})
+			);
 		}
 	};
 
@@ -748,7 +767,10 @@ const UploadOrEditViral = ({
 	};
 
 	const handleAddSaveBtn = async () => {
-		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
+		if (
+			!validateForm(form, data) ||
+			(editBtnDisabled && status === 'published')
+		) {
 			validateArticleBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -1084,6 +1106,8 @@ const UploadOrEditViral = ({
 														setIsOpen: (isOpen) => handleExpand(isOpen, index),
 														handleDeleteFile: (sortOrder) =>
 															handleMediaElementDelete(sortOrder),
+														handleDeleteData: (data) =>
+															handleElementDataDelete(data, index),
 														WidthHeightCallback: handleFileWidthHeight,
 														item,
 														index,
@@ -1115,6 +1139,7 @@ const UploadOrEditViral = ({
 								buttonText={buttonText}
 								isEdit={isEdit}
 								form={form}
+								dataElement={data}
 								setForm={setForm}
 								status={status}
 								deleteBtnStatus={deleteBtnStatus}
