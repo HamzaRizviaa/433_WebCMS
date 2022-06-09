@@ -14,7 +14,7 @@ const ArticleSocialMediaDraggable = ({
 	item,
 	key,
 	index,
-	sendFileToParent,
+	sendDataToParent,
 	setIsOpen
 	// WidthHeightCallback,
 	// handleDeleteFile,
@@ -23,6 +23,7 @@ const ArticleSocialMediaDraggable = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
+	const [postUrl, setPostUrl] = useState('');
 
 	const clickExpand = () => {
 		setClickExpandIcon(!clickExpandIcon);
@@ -78,8 +79,13 @@ const ArticleSocialMediaDraggable = ({
 								<div className={classes.socialmediaDrags}>
 									<h6> URL</h6>
 									<TextField
-										value={'hello satic text'}
-										onChange={(e) => sendFileToParent(e.target.value)}
+										value={postUrl}
+										onChange={(e) => {
+											setPostUrl(e.target.value);
+											sendDataToParent({
+												[`${item.element_type}_post_url}`]: e.target.value
+											});
+										}}
 										placeholder={'Please drop the URL here'}
 										className={classes.textField}
 										multiline
@@ -105,7 +111,7 @@ ArticleSocialMediaDraggable.propTypes = {
 	item: PropTypes.number,
 	key: PropTypes.number,
 	index: PropTypes.number,
-	sendFileToParent: PropTypes.func.isRequired,
+	sendDataToParent: PropTypes.func.isRequired,
 	// WidthHeightCallback: PropTypes.func,
 	// handleDeleteFile: PropTypes.func,
 	// initialData: PropTypes.object,
