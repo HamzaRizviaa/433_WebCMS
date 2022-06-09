@@ -18,21 +18,20 @@ const ArticleTextDraggable = ({
 	setIsOpen,
 	initialData,
 	// WidthHeightCallback,
-	handleDeleteFile,
+	handleDeleteFile
 }) => {
 	const classes = useStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
 	const [description, setDescription] = useState('');
 
 	// const [newFile, setNewFile] = useState(initialData ? [initialData] : []);
-
 	useEffect(() => {
-		if (initialData) {
+		if (initialData?.description) {
 			setTimeout(() => {
 				setDescription(
 					tinyMCE.activeEditor?.setContent(initialData?.description)
 				);
-			}, 100);
+			}, 500);
 		}
 	}, []);
 
@@ -123,9 +122,8 @@ ArticleTextDraggable.propTypes = {
 	initialData: PropTypes.object,
 	setIsOpen: PropTypes.func,
 	// WidthHeightCallback: PropTypes.func,
-	handleDeleteFile: PropTypes.func,
+	handleDeleteFile: PropTypes.func
 	// initialData: PropTypes.object,
-
-}
+};
 
 export default ArticleTextDraggable;
