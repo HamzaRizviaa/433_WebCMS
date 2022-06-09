@@ -362,8 +362,8 @@ const UploadOrEditViral = ({
 	};
 
 	useEffect(() => {
-		validateForm(form);
-	}, [form]);
+		validateForm(form, data);
+	}, [form, data]);
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
@@ -497,7 +497,7 @@ const UploadOrEditViral = ({
 		});
 		setData([]);
 	};
-	console.log(data, 'em');
+
 	const handleDeleteFile = (id) => {
 		setForm((prev) => {
 			return {
@@ -514,6 +514,24 @@ const UploadOrEditViral = ({
 		}
 	};
 
+	console.log(data, 'dat');
+
+	const handleElementDataDelete = (elementData, index) => {
+		let dataCopy = [...data];
+		if (elementData) {
+			setData(
+				dataCopy.filter((item, i) => {
+					if (index === i) {
+						delete item['data'];
+						return item;
+					} else {
+						return item;
+					}
+				})
+			);
+		}
+	};
+
 	const setNewData = (childData, index) => {
 		console.log('childData Editor', childData);
 		setForm((prev) => {
@@ -526,8 +544,6 @@ const UploadOrEditViral = ({
 		dataCopy[index].data = { ...childData };
 		setData(dataCopy);
 	};
-
-	console.log('data Updated', data);
 
 	const handleExpand = (isOpen, index) => {
 		let dataCopy = [...data];
@@ -703,7 +719,10 @@ const UploadOrEditViral = ({
 	};
 
 	const handleAddSaveBtn = async () => {
-		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
+		if (
+			!validateForm(form, data) ||
+			(editBtnDisabled && status === 'published')
+		) {
 			validateArticleBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -1039,6 +1058,8 @@ const UploadOrEditViral = ({
 														setIsOpen: (isOpen) => handleExpand(isOpen, index),
 														handleDeleteFile: (sortOrder) =>
 															handleMediaElementDelete(sortOrder),
+														handleDeleteData: (data) =>
+															handleElementDataDelete(data, index),
 														WidthHeightCallback: handleFileWidthHeight,
 														item,
 														index,
@@ -1070,6 +1091,7 @@ const UploadOrEditViral = ({
 								buttonText={buttonText}
 								isEdit={isEdit}
 								form={form}
+								dataElement={data}
 								setForm={setForm}
 								status={status}
 								deleteBtnStatus={deleteBtnStatus}

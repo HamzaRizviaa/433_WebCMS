@@ -25,6 +25,7 @@ const ArticleMediaDraggable = ({
 	setIsOpen,
 	WidthHeightCallback,
 	handleDeleteFile,
+	handleDeleteData,
 	initialData
 }) => {
 	const classes = useStyles();
@@ -142,7 +143,7 @@ const ArticleMediaDraggable = ({
 										uploadedFiles={newFile}
 										handleDeleteFile={(id) => {
 											setNewFile(newFile.filter((file) => file?.id !== id));
-											// handleDeleteFile(id);
+											handleDeleteData(item.data);
 										}}
 										isArticle
 										isArticleNew
@@ -235,6 +236,7 @@ ArticleMediaDraggable.propTypes = {
 	sendDataToParent: PropTypes.func.isRequired,
 	WidthHeightCallback: PropTypes.func,
 	handleDeleteFile: PropTypes.func,
+	handleDeleteData: PropTypes.func,
 	initialData: PropTypes.object,
 	setIsOpen: PropTypes.func
 };
