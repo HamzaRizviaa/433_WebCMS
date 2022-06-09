@@ -14,11 +14,11 @@ const ArticleTextDraggable = ({
 	item,
 	key,
 	index,
-	sendFileToParent,
+	sendDataToParent,
 	setIsOpen,
+	initialData,
 	// WidthHeightCallback,
-	handleDeleteFile
-	// initialData
+	handleDeleteFile,
 }) => {
 	const classes = useStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
@@ -121,11 +121,11 @@ ArticleTextDraggable.propTypes = {
 	index: PropTypes.number,
 	sendDataToParent: PropTypes.func.isRequired,
 	initialData: PropTypes.object,
-	setIsOpen: PropTypes.func
+	setIsOpen: PropTypes.func,
 	// WidthHeightCallback: PropTypes.func,
 	handleDeleteFile: PropTypes.func,
 	// initialData: PropTypes.object,
-	setIsOpen: PropTypes.func
-};
+
+}
 
 export default ArticleTextDraggable;
