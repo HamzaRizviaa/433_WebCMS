@@ -492,6 +492,7 @@ const UploadOrEditViral = ({
 			show_likes: true,
 			show_comments: true
 		});
+		setData([]);
 	};
 	console.log(form.elementMediaFiles, 'em');
 	const handleDeleteFile = (id) => {
@@ -989,7 +990,7 @@ const UploadOrEditViral = ({
 													return [
 														...prev,
 														{
-															id: data.length + 1,
+															sortOrder: data.length + 1,
 															heading: dataItem.text,
 															component: dataItem.component,
 															type: dataItem.type,
@@ -1041,7 +1042,7 @@ const UploadOrEditViral = ({
 														WidthHeightCallback: handleFileWidthHeight,
 														item,
 														index,
-														key: item.id,
+														key: item.sortOrder,
 														initialData: item.data && item?.data[0]
 													})}
 												</>
