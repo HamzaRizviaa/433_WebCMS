@@ -304,12 +304,44 @@ const UploadOrEditViral = ({
 					// 		  tinyMCE.activeEditor?.setContent(specificArticle?.description)
 				};
 			});
-
+			setData(updateDataFromAPI(specificArticle.elements));
 			setEditorTextChecker(specificArticle?.description);
 			setFileHeight(specificArticle?.height);
 			setFileWidth(specificArticle?.width);
 		}
 	}, [specificArticle]);
+
+	const updateDataFromAPI = (apiData) => {
+		let modifiedData = apiData?.map((item) => {
+			return {
+				sortOrder: item.sort_order,
+				element_type: item.element_type,
+				component:
+					item.element_type === 'TEXT'
+						? ArticleTextDraggable
+						: item.element_type === 'MEDIA'
+						? ArticleMediaDraggable
+						: ArticleSocialMediaDraggable,
+				heading: `Add ${item.element_type}`,
+				isOpen: true,
+				id: item.id,
+				data: [
+					{
+						...(item.description && { description: item.description }),
+						...(item.media_url && { media_url: item.media_url }),
+						...(item.file_name && { file_name: item.file_name }),
+						...(item.file_name && { file_name: item.file_name }),
+						...(item.ig_post_url && { ig_post_url: item.ig_post_url }),
+						...(item.twitter_post_url && {
+							twitter_post_url: item.twitter_post_url
+						}),
+						dropbox_url: item.dropbox_url || ''
+					}
+				]
+			};
+		});
+		return modifiedData;
+	};
 
 	useEffect(() => {
 		if (specificArticle && subCategories) {
@@ -400,6 +432,22 @@ const UploadOrEditViral = ({
 
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
+		console.log('mediaFiles', mediaFiles);
+		let elementsData;
+		if (data.length) {
+			elementsData = data.map((item) => {
+				return {
+					element_type: item.element_type,
+					description: item?.data[0].description || undefined,
+					media_url: item.data[0].media_url || undefined,
+					file_name: item.data[0].file_name || undefined,
+					dropbox_url: item?.data?.dropbox_url || undefined,
+					ig_post_url: item?.data[0].ig_post_url || undefined,
+					twitter_post_url: item?.data[0].twitter_post_url || undefined,
+					sort_order: item.sortOrder
+				};
+			});
+		}
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/article/post-article`,
@@ -431,7 +479,7 @@ const UploadOrEditViral = ({
 					(form.labels?.length || status == 'draft')
 						? { labels: [...form.labels] }
 						: {}),
-					elements: data?.length ? data : undefined,
+					elements: elementsData?.length ? elementsData : undefined,
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -497,7 +545,6 @@ const UploadOrEditViral = ({
 		});
 		setData([]);
 	};
-	console.log(data, 'em');
 	const handleDeleteFile = (id) => {
 		setForm((prev) => {
 			return {
@@ -526,8 +573,6 @@ const UploadOrEditViral = ({
 		dataCopy[index].data = { ...childData };
 		setData(dataCopy);
 	};
-
-	console.log('data Updated', data);
 
 	const handleExpand = (isOpen, index) => {
 		let dataCopy = [...data];
@@ -783,9 +828,9 @@ const UploadOrEditViral = ({
 
 				let dataMedia;
 				if (data.length) {
-					dataMedia = data.map((item) => {
-						if (item.type === 'MEDIA' && item.data.file) {
-							return uploadFileToServer(item.data, 'articleLibrary');
+					dataMedia = data.map(async (item) => {
+						if (item.element_type === 'MEDIA' && item.data[0].file) {
+							return await uploadFileToServer(item.data[0], 'articleLibrary');
 						}
 					});
 				}
