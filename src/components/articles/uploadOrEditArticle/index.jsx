@@ -112,25 +112,28 @@ const UploadOrEditViral = ({
 		{
 			image: Text,
 			text: 'Add Text',
-			type: 'text',
+			type: 'TEXT',
+			description: '',
 			component: ArticleTextDraggable
 		},
 		{
 			image: ImageVideo,
 			text: 'Add Image / Video',
-			type: 'image/video',
+			type: 'MEDIA',
 			component: ArticleMediaDraggable
 		},
 		{
 			image: Tweet,
 			text: 'Add Tweet',
-			type: 'twitter',
+			type: 'TWITTER',
+			twitter_post_url: '',
 			component: ArticleSocialMediaDraggable
 		},
 		{
 			image: Instragram,
 			text: 'Add IG post',
-			type: 'instagram',
+			type: 'IG',
+			ig_post_url: '',
 			component: ArticleSocialMediaDraggable
 		}
 	];
@@ -511,17 +514,20 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	const setNewFile = (file, index) => {
+	const setNewData = (childData, index) => {
+		console.log('childData Editor', childData);
 		setForm((prev) => {
 			return {
 				...prev,
-				elementMediaFiles: [...form.elementMediaFiles, ...file]
+				elementMediaFiles: [...form.elementMediaFiles, childData]
 			};
 		});
 		let dataCopy = [...data];
-		dataCopy[index].data = { ...file };
+		dataCopy[index].data = { ...childData };
 		setData(dataCopy);
 	};
+
+	console.log('data Updated', data);
 
 	const handleExpand = (isOpen, index) => {
 		let dataCopy = [...data];
@@ -778,7 +784,7 @@ const UploadOrEditViral = ({
 				let dataMedia;
 				if (data.length) {
 					dataMedia = data.map((item) => {
-						if (item.type === 'image/video' && item.data.file) {
+						if (item.type === 'MEDIA' && item.data.file) {
 							return uploadFileToServer(item.data, 'articleLibrary');
 						}
 					});
@@ -981,7 +987,6 @@ const UploadOrEditViral = ({
 										<ArticleElements
 											data={elementData}
 											onClick={(dataItem) => {
-												// setDataItem(dataItem);
 												setData((prev) => {
 													return [
 														...prev,
@@ -989,10 +994,8 @@ const UploadOrEditViral = ({
 															sortOrder: data.length + 1,
 															heading: dataItem.text,
 															component: dataItem.component,
-															type: dataItem.type,
+															element_type: dataItem.type,
 															isOpen: true
-															// <DraggableWrapper onDragEnd={onDragEnd}>
-															// </DraggableWrapper>
 														}
 													];
 												});
@@ -1032,7 +1035,7 @@ const UploadOrEditViral = ({
 											return (
 												<>
 													{React.createElement(item.component, {
-														sendFileToParent: (file) => setNewFile(file, index),
+														sendDataToParent: (data) => setNewData(data, index),
 														setIsOpen: (isOpen) => handleExpand(isOpen, index),
 														handleDeleteFile: (sortOrder) =>
 															handleMediaElementDelete(sortOrder),

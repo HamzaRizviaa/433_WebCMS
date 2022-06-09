@@ -20,11 +20,21 @@ const ArticleTextDraggable = ({
 	handleDeleteFile
 	// initialData
 }) => {
-	console.log(item, 'item', setIsOpen);
 	const classes = useStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
+	const [description, setDescription] = useState('');
 
 	// const [newFile, setNewFile] = useState(initialData ? [initialData] : []);
+
+	useEffect(() => {
+		if (initialData) {
+			setTimeout(() => {
+				setDescription(
+					tinyMCE.activeEditor?.setContent(initialData?.description)
+				);
+			}, 100);
+		}
+	}, []);
 
 	const clickExpand = () => {
 		setClickExpandIcon(!clickExpandIcon);
@@ -33,7 +43,8 @@ const ArticleTextDraggable = ({
 
 	const handleEditorChange = () => {
 		const editorTextContent = tinymce?.activeEditor?.getContent();
-		sendFileToParent(editorTextContent);
+		setDescription(editorTextContent);
+		sendDataToParent([{ description: editorTextContent }]);
 		// setEditorTextChecker(editorTextContent); // to check yellow button condition
 	};
 
@@ -88,12 +99,10 @@ const ArticleTextDraggable = ({
 						{clickExpandIcon ? (
 							<div className={classes.editorDrag}>
 								<Editor
-									description={'abc'}
+									description={description}
 									// onMouseEnter={() => setDisableDropdown(false)}
 									// onBlur={() => setDisableDropdown(true)}
-									handleEditorChange={() => {
-										handleEditorChange;
-									}}
+									handleEditorChange={handleEditorChange}
 								/>
 							</div>
 						) : (
@@ -110,7 +119,9 @@ ArticleTextDraggable.propTypes = {
 	item: PropTypes.number,
 	key: PropTypes.number,
 	index: PropTypes.number,
-	sendFileToParent: PropTypes.func.isRequired,
+	sendDataToParent: PropTypes.func.isRequired,
+	initialData: PropTypes.object,
+	setIsOpen: PropTypes.func
 	// WidthHeightCallback: PropTypes.func,
 	handleDeleteFile: PropTypes.func,
 	// initialData: PropTypes.object,
