@@ -952,13 +952,22 @@ const UploadOrEditViral = ({
 
 				let dataMedia;
 				if (data.length) {
-					dataMedia = data.map(async (item) => {
-						if (item.element_type === 'MEDIA' && item.data[0].file) {
-							return await uploadFileToServer(item.data[0], 'articleLibrary');
-						} else {
-							return item;
-						}
-					});
+					dataMedia = await Promise.all(
+						data.map(async (item, index) => {
+							if (item.element_type === 'MEDIA' && item.data[0].file) {
+								let uploadedFile = await uploadFileToServer(
+									item.data[0],
+									'articleLibrary'
+								);
+								const dataCopy = [...data];
+								dataCopy[index].data[0].media_url = uploadedFile.media_url;
+								await setData(dataCopy);
+								return uploadedFile;
+							} else {
+								return item;
+							}
+						})
+					);
 				}
 
 				Promise.all([
