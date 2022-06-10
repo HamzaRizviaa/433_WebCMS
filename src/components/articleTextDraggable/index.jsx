@@ -43,7 +43,7 @@ const ArticleTextDraggable = ({
 	const handleEditorChange = () => {
 		const editorTextContent = tinymce?.activeEditor?.getContent();
 		setDescription(editorTextContent);
-		sendDataToParent([{ description: editorTextContent }]);
+		sendDataToParent([{ description: editorTextContent}]);
 		// setEditorTextChecker(editorTextContent); // to check yellow button condition
 	};
 
