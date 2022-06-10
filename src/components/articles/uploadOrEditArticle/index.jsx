@@ -312,37 +312,35 @@ const UploadOrEditViral = ({
 	}, [specificArticle]);
 
 	const updateDataFromAPI = (apiData) => {
-		let modifiedData = apiData?.map((item) => {
-			return {
-				sortOrder: item.sort_order,
-				element_type: item.element_type,
-				component:
-					item.element_type === 'TEXT'
-						? ArticleTextDraggable
-						: item.element_type === 'MEDIA'
-						? ArticleMediaDraggable
-						: ArticleSocialMediaDraggable,
-				heading: `Add ${item.element_type}`,
-				isOpen: true,
-				id: item.id,
-				entry: item.element_type === 'TEXT' ? 'old' : undefined,
-				data: [
-					{
-						...(item.description && {
-							description: item.description
-						}),
-						...(item.media_url && { media_url: item.media_url }),
-						...(item.file_name && { file_name: item.file_name }),
-						...(item.file_name && { file_name: item.file_name }),
-						...(item.ig_post_url && { ig_post_url: item.ig_post_url }),
-						...(item.twitter_post_url && {
-							twitter_post_url: item.twitter_post_url
-						}),
-						dropbox_url: item.dropbox_url || ''
-					}
-				]
-			};
-		});
+		let modifiedData = apiData?.map(
+			({ id, sort_order, element_type, ...rest }) => {
+				console.log('rest Param', rest);
+				return {
+					sortOrder: sort_order,
+					element_type,
+					component:
+						element_type === 'TEXT'
+							? ArticleTextDraggable
+							: element_type === 'MEDIA'
+							? ArticleMediaDraggable
+							: ArticleSocialMediaDraggable,
+					heading: `Add ${element_type}`,
+					isOpen: true,
+					id,
+					entry: element_type === 'TEXT' ? 'old' : undefined,
+					data: [
+						{
+							...rest,
+							...(rest.media_url
+								? {
+										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.media_url}`
+								  }
+								: {})
+						}
+					]
+				};
+			}
+		);
 		return modifiedData;
 	};
 
@@ -435,10 +433,9 @@ const UploadOrEditViral = ({
 
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
-		console.log('mediaFiles', mediaFiles);
 		let elementsData;
 		if (data.length) {
-			elementsData = data.map((item) => {
+			elementsData = data.map((item, index) => {
 				return {
 					element_type: item.element_type,
 					description: item?.data[0].description || undefined,
@@ -564,8 +561,6 @@ const UploadOrEditViral = ({
 			setData(dataCopy.filter((file) => file.sortOrder !== sortOrder));
 		}
 	};
-
-	console.log(data, 'dat');
 
 	const handleElementDataDelete = (elementData, index) => {
 		let dataCopy = [...data];
@@ -720,8 +715,6 @@ const UploadOrEditViral = ({
 		});
 	};
 
-	console.log(checkNewElementFile(), 'chk');
-
 	useEffect(() => {
 		if (specificArticle) {
 			setEditBtnDisabled(
@@ -744,8 +737,6 @@ const UploadOrEditViral = ({
 			);
 		}
 	}, [specificArticle, editorTextChecker, form, data]);
-
-	console.log(specificArticle?.elements?.length, data.length, 'kaka');
 
 	useEffect(() => {
 		if (specificArticle) {
@@ -881,13 +872,21 @@ const UploadOrEditViral = ({
 
 				let dataMedia;
 				if (data.length) {
-					dataMedia = data.map(async (item) => {
-						if (item.element_type === 'MEDIA' && item.data[0].file) {
-							return await uploadFileToServer(item.data[0], 'articleLibrary');
-						}
-					});
+					dataMedia = await Promise.all(
+						data.map(async (item, index) => {
+							if (item.element_type === 'MEDIA' && item.data[0].file) {
+								let uploadedFile = await uploadFileToServer(
+									item.data[0],
+									'articleLibrary'
+								);
+								const dataCopy = [...data];
+								dataCopy[index].data[0].media_url = uploadedFile.media_url;
+								await setData(dataCopy);
+								return uploadedFile;
+							}
+						})
+					);
 				}
-
 				Promise.all([
 					...uploadFilesPromiseArray,
 					...uploadAuthorImagePromiseArray,
