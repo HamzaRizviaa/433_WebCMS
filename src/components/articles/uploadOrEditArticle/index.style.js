@@ -137,6 +137,11 @@ export const useStyles = makeStyles(() => ({
 		display: 'inline-block'
 	},
 
+	video: {
+		'&::-webkit-media-controls-fullscreen-button': {
+			display: 'none'
+		}
+	}
 	// uploadedFilesContainer: {
 	// 	marginTop: '4rem',
 	// 	maxHeight: '220px',
@@ -299,12 +304,6 @@ export const useStyles = makeStyles(() => ({
 	// noErrorState: {
 	// 	color: theme.palette.white
 	// },
-
-	video: {
-		'&::-webkit-media-controls-fullscreen-button': {
-			display: 'none'
-		}
-	}
 
 	// editor: {
 	// 	margin: '10px 0px',
