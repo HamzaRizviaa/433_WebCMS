@@ -1199,127 +1199,144 @@ const UploadOrEditViral = ({
 				article={true}
 				dialogRef={dialogWrapper}
 			>
-				<LoadingOverlay active={isLoading} spinner={<PrimaryLoader />}>
+				<LoadingOverlay
+					active={isLoading}
+					spinner={<PrimaryLoader />}
+					style={{ top: '100px' }}
+				>
 					{/* <ArticleSlide in={true} direction='up' {...{ timeout: 400 }}> */}
 					<Slide in={true} direction='up' {...{ timeout: 400 }}>
-						<div
-							ref={loadingRef}
-							className={`${
-								previewFile != null
-									? globalClasses.previewContentWrapper
-									: globalClasses.contentWrapper
-							}`}
-						>
-							{status === 'published' && specificArticleStatus === 'loading' ? (
-								<PrimaryLoader />
-							) : status === 'draft' && specificArticleStatus === 'loading' ? (
-								<PrimaryLoader />
-							) : (
-								<></>
-							)}
-							<Grid container>
-								<Grid item md={3}>
-									<div className={classes.gridDivSmall}>
-										<h2>Elements</h2>
-										<ArticleElements
-											data={elementData}
-											onClick={(dataItem) => {
-												setData((prev) => {
-													return [
-														...prev,
-														{
-															sortOrder: data.length + 1,
-															heading: dataItem.text,
-															component: dataItem.component,
-															element_type: dataItem.type,
-															isOpen: true
-														}
-													];
-												});
-											}}
-										/>
-									</div>
-								</Grid>
-								<Grid item md={6}>
-									<h2>Builder</h2>
-									<ArticleGeneralInfo
-										isEdit={isEdit}
-										form={form}
-										setForm={setForm}
-										status={status}
-										setDisableDropdown={setDisableDropdown}
-										mainCategoryId={mainCategoryId}
-										mainCategories={mainCategories}
-										subCategories={subCategories}
-										SubCategoryId={SubCategoryId}
-										handleDeleteFile={handleDeleteFile}
-										imgRef={imgEl}
-										setFileWidth={setFileWidth}
-										setFileHeight={setFileHeight}
-										getRootProps={getRootProps}
-										getInputProps={getInputProps}
-										fileRejectionError={fileRejectionError}
-										getRootPropsAvatar={getRootPropsAvatar}
-										getInputPropsAvatar={getInputPropsAvatar}
-										fileRejectionError2={fileRejectionError2}
-										postLabels={postLabels}
-										extraLabel={extraLabel}
-										handleChangeExtraLabel={handleChangeExtraLabel}
-										isError={isError}
-									/>
-									<DraggableWrapper onDragEnd={onDragEnd}>
-										{data.map((item, index) => {
-											return (
-												<>
-													{React.createElement(item.component, {
-														sendDataToParent: (data) => setNewData(data, index),
-														setIsOpen: (isOpen) => handleExpand(isOpen, index),
-														handleDeleteFile: (sortOrder) =>
-															handleMediaElementDelete(sortOrder),
-														handleDeleteData: (data) =>
-															handleElementDataDelete(data, index),
-														WidthHeightCallback: handleFileWidthHeight,
-														item,
-														index,
-														key: item.sortOrder,
-														initialData: item.data && item?.data[0]
-													})}
-												</>
-											);
-										})}
-									</DraggableWrapper>
-								</Grid>
-								<Grid item md={3}>
-									<Box px={3} className={classes.gridDivSmall}>
-										<Box mb={3.5} className={classes.mainTitleDescription}>
-											<h2>Preview</h2>
-											<p>Review the result here before publishing</p>
-										</Box>
-										<Box>
-											<img
-												src='https://via.placeholder.com/298x596?text=Preview'
-												alt='placeholder'
-												style={{ width: '250px', height: '350px' }}
+						<div style={{ paddingTop: '100px' }}>
+							<div
+								ref={loadingRef}
+								className={`${
+									previewFile != null
+										? globalClasses.previewContentWrapper
+										: globalClasses.contentWrapper
+								}`}
+							>
+								{status === 'published' &&
+								specificArticleStatus === 'loading' ? (
+									<PrimaryLoader />
+								) : status === 'draft' &&
+								  specificArticleStatus === 'loading' ? (
+									<PrimaryLoader />
+								) : (
+									<></>
+								)}
+								<Grid container>
+									<Grid item md={3}>
+										<div className={classes.gridDivSmall}>
+											<Box mb={3.5} className={classes.mainTitleDescription}>
+												<h2>Elements</h2>
+												<p>Add elements to build your article</p>
+											</Box>
+											<ArticleElements
+												data={elementData}
+												onClick={(dataItem) => {
+													setData((prev) => {
+														return [
+															...prev,
+															{
+																sortOrder: data.length + 1,
+																heading: dataItem.text,
+																component: dataItem.component,
+																element_type: dataItem.type,
+																isOpen: true
+															}
+														];
+													});
+												}}
 											/>
+										</div>
+									</Grid>
+									<Grid item md={6}>
+										<Box mb={3.5} className={classes.mainTitleDescription}>
+											<h2>Builder</h2>
+											<p>Edit, reorder elements here and build your article</p>
 										</Box>
-									</Box>
+
+										<ArticleGeneralInfo
+											isEdit={isEdit}
+											form={form}
+											setForm={setForm}
+											status={status}
+											setDisableDropdown={setDisableDropdown}
+											mainCategoryId={mainCategoryId}
+											mainCategories={mainCategories}
+											subCategories={subCategories}
+											SubCategoryId={SubCategoryId}
+											handleDeleteFile={handleDeleteFile}
+											imgRef={imgEl}
+											setFileWidth={setFileWidth}
+											setFileHeight={setFileHeight}
+											getRootProps={getRootProps}
+											getInputProps={getInputProps}
+											fileRejectionError={fileRejectionError}
+											getRootPropsAvatar={getRootPropsAvatar}
+											getInputPropsAvatar={getInputPropsAvatar}
+											fileRejectionError2={fileRejectionError2}
+											postLabels={postLabels}
+											extraLabel={extraLabel}
+											handleChangeExtraLabel={handleChangeExtraLabel}
+											isError={isError}
+										/>
+										<DraggableWrapper onDragEnd={onDragEnd}>
+											{data.map((item, index) => {
+												return (
+													<>
+														{React.createElement(item.component, {
+															sendDataToParent: (data) =>
+																setNewData(data, index),
+															setIsOpen: (isOpen) =>
+																handleExpand(isOpen, index),
+															handleDeleteFile: (sortOrder) =>
+																handleMediaElementDelete(sortOrder),
+															handleDeleteData: (data) =>
+																handleElementDataDelete(data, index),
+															WidthHeightCallback: handleFileWidthHeight,
+															item,
+															index,
+															key: item.sortOrder,
+															initialData: item.data && item?.data[0]
+														})}
+													</>
+												);
+											})}
+										</DraggableWrapper>
+									</Grid>
+									<Grid item md={3}>
+										<Box px={3} className={classes.gridDivSmall}>
+											<Box mb={3.5} className={classes.mainTitleDescription}>
+												<h2>Preview</h2>
+												<p>Review the result here before publishing</p>
+											</Box>
+											<Box>
+												<img
+													src='https://via.placeholder.com/298x596?text=Preview'
+													alt='placeholder'
+													style={{ width: '250px', height: '350px' }}
+												/>
+											</Box>
+										</Box>
+									</Grid>
 								</Grid>
-							</Grid>
-							<ArticleFooter
-								buttonText={buttonText}
-								isEdit={isEdit}
-								form={form}
-								dataElement={data}
-								setForm={setForm}
-								status={status}
-								deleteBtnStatus={deleteBtnStatus}
-								toggleDeleteModal={toggleDeleteModal}
-								validateDraft={validateDraft}
-								handleDraftSave={handleDraftSave}
-								validateForm={validateForm}
-								editBtnDisabled={editBtnDisabled}
-								handleAddSaveBtn={handleAddSaveBtn}
-							/>
+								<ArticleFooter
+									buttonText={buttonText}
+									isEdit={isEdit}
+									form={form}
+									dataElement={data}
+									setForm={setForm}
+									status={status}
+									deleteBtnStatus={deleteBtnStatus}
+									toggleDeleteModal={toggleDeleteModal}
+									validateDraft={validateDraft}
+									handleDraftSave={handleDraftSave}
+									validateForm={validateForm}
+									editBtnDisabled={editBtnDisabled}
+									handleAddSaveBtn={handleAddSaveBtn}
+								/>
+							</div>
 						</div>
 					</Slide>
 					{/* </ArticleSlide> */}

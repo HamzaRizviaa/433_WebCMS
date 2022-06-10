@@ -114,7 +114,7 @@ const ArticleSlider = ({
 						style={{ maxWidth: `${preview ? 'none' : '40%'}` }}
 					>
 						<div className={classes.content}>
-							<div className={classes.header}>
+							<div className={classes.articleBuilderHeader}>
 								<Close
 									onClick={() => handleClose()}
 									className={classes.closeIcon}

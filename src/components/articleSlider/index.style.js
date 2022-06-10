@@ -37,14 +37,22 @@ export const useStyles = makeStyles((theme) => ({
 		color: 'white'
 	},
 
-	header: {
+	articleBuilderHeader: {
 		display: 'flex',
 		alignItems: 'center',
-		marginBottom: '2.5rem'
+		marginBottom: '2.5rem',
+		position: 'fixed',
+		width: '100%',
+		paddingTop: '4rem',
+		zIndex: '2',
+		background: 'black'
 		// position: 'fixed'
 	},
 
 	heading: {
 		color: theme.palette.neonYellow
+	},
+	content: {
+		padding: '0 4rem 4rem'
 	}
 }));
