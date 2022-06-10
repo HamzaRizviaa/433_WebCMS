@@ -14,7 +14,7 @@ export const useStyles = makeStyles((theme) => ({
 		height: '100vh !important',
 		zIndex: '5 !important',
 		position: 'fixed !important',
-		minWidth: 'calc(100% - 74px)',
+		minWidth: 'calc(100% - 82px)',
 		transform: 'none !important',
 		overflowY: ' auto !important',
 		overflowX: 'hidden',
@@ -40,7 +40,7 @@ export const useStyles = makeStyles((theme) => ({
 	header: {
 		display: 'flex',
 		alignItems: 'center',
-		marginBottom: '2.5rem',
+		marginBottom: '2.5rem'
 		// position: 'fixed'
 	},
 
