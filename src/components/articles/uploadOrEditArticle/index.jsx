@@ -606,10 +606,24 @@ const UploadOrEditViral = ({
 		});
 	};
 
+	console.log(isError, 'ie');
+
 	const validateArticleBtn = () => {
 		setIsError({
 			articleTitle: !form.title,
 			sub_text: !form.sub_text,
+			// elementUnfilled: data?.length ? data.every((item) =>  !item.data) : false,
+			elementUnfilled: function (index) {
+				if (data?.length) {
+					data.forEach((item, i) => {
+						if (i === index) {
+							return !item.data;
+						}
+					});
+				} else {
+					return false;
+				}
+			},
 			uploadedFiles: form.uploadedFiles.length < 1,
 			selectedLabels: form.labels.length < 7,
 			// editorText: !form.description,
@@ -1153,6 +1167,11 @@ const UploadOrEditViral = ({
 														key: item.sortOrder,
 														initialData: item.data && item?.data[0]
 													})}
+
+													<p className={globalClasses.mediaError}>
+														{isError?.elementUnfilled &&
+															'This field is required'}
+													</p>
 												</>
 											);
 										})}
