@@ -314,7 +314,6 @@ const UploadOrEditViral = ({
 	const updateDataFromAPI = (apiData) => {
 		let modifiedData = apiData?.map(
 			({ id, sort_order, element_type, ...rest }) => {
-				console.log('rest Param', rest);
 				return {
 					sortOrder: sort_order,
 					element_type,
@@ -854,15 +853,15 @@ const UploadOrEditViral = ({
 				}
 				setIsLoading(true);
 
-				let uploadFilesPromiseArray;
+				let uploadFilesPromiseArray = form.uploadedFiles[0];
 				if (form.uploadedFiles[0] && form.uploadedFiles[0]?.file) {
 					uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
 						return uploadFileToServer(_file, 'articleLibrary');
 					});
 				}
 
-				let uploadAuthorImagePromiseArray;
-				if (form.uploadedFiles[0] && form.author_image[0]?.file) {
+				let uploadAuthorImagePromiseArray = form.author_image[0];
+				if (form.author_image[0]?.file) {
 					uploadAuthorImagePromiseArray = form.author_image.map(
 						async (_file) => {
 							if (_file.file) {
@@ -891,14 +890,15 @@ const UploadOrEditViral = ({
 						})
 					);
 				}
-				console.log(dataMedia, 'data media');
+				console.log(dataMedia, uploadAuthorImagePromiseArray, 'data media');
 				Promise.all([
 					...(uploadFilesPromiseArray && uploadFilesPromiseArray),
-					...(uploadAuthorImagePromiseArray && uploadAuthorImagePromiseArray),
+					...(uploadAuthorImagePromiseArray.length &&
+						uploadAuthorImagePromiseArray),
 					...(dataMedia.length && dataMedia)
 				])
 					.then((mediaFiles) => {
-						createArticle(null, mediaFiles, true);
+						// createArticle(null, mediaFiles, true);
 					})
 					.catch(() => {
 						setIsLoading(false);
@@ -906,6 +906,7 @@ const UploadOrEditViral = ({
 			}
 		}
 	};
+
 	const handleAddSaveBtn = async () => {
 		if (
 			!validateForm(form, data) ||
