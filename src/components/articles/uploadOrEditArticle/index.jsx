@@ -313,6 +313,7 @@ const UploadOrEditViral = ({
 	}, [specificArticle]);
 
 	const updateDataFromAPI = (apiData) => {
+		console.log('apiData', apiData);
 		let modifiedData = apiData?.map(
 			({ id, sort_order, element_type, ...rest }) => {
 				return {
@@ -438,12 +439,12 @@ const UploadOrEditViral = ({
 			elementsData = data.map((item, index) => {
 				return {
 					element_type: item.element_type,
-					description: item?.data[0].description || undefined,
-					media_url: item.data[0].media_url || undefined,
-					file_name: item.data[0].file_name || undefined,
-					dropbox_url: item?.data?.dropbox_url || undefined,
-					ig_post_url: item?.data[0].ig_post_url || undefined,
-					twitter_post_url: item?.data[0].twitter_post_url || undefined,
+					description: item?.data[0]?.description || undefined,
+					media_url: item.data[0]?.media_url || undefined,
+					file_name: item.data[0]?.file_name || undefined,
+					dropbox_url: item?.data[0]?.dropbox_url || undefined,
+					ig_post_url: item?.data?.ig_post_url || undefined,
+					twitter_post_url: item?.data?.twitter_post_url || undefined,
 					sort_order: item.sortOrder
 				};
 			});
