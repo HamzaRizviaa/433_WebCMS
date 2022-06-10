@@ -251,6 +251,7 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (specificArticle) {
+			console.log('specificArticle', specificArticle);
 			if (specificArticle?.labels) {
 				let _labels = [];
 				specificArticle.labels.map((label) =>
@@ -870,7 +871,7 @@ const UploadOrEditViral = ({
 				let uploadFilesPromiseArray = form.uploadedFiles[0];
 				if (form.uploadedFiles[0] && form.uploadedFiles[0]?.file) {
 					uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-						return uploadFileToServer(_file, 'articleLibrary');
+						return await uploadFileToServer(_file, 'articleLibrary');
 					});
 				}
 
@@ -887,7 +888,7 @@ const UploadOrEditViral = ({
 					);
 				}
 
-				let dataMedia;
+				let dataMedia = [];
 				if (data.length) {
 					dataMedia = await Promise.all(
 						data.map(async (item, index) => {
@@ -904,15 +905,17 @@ const UploadOrEditViral = ({
 						})
 					);
 				}
-				console.log(dataMedia, uploadAuthorImagePromiseArray, 'data media');
-				Promise.all([
-					...(uploadFilesPromiseArray && uploadFilesPromiseArray),
-					...(uploadAuthorImagePromiseArray.length &&
-						uploadAuthorImagePromiseArray),
-					...(dataMedia.length && dataMedia)
-				])
+				let updatedArray = [
+					...uploadFilesPromiseArray,
+					uploadAuthorImagePromiseArray,
+					...dataMedia
+				].filter((item) => item !== undefined && item);
+
+				console.log('updatedArray', updatedArray);
+
+				Promise.all([...updatedArray])
 					.then((mediaFiles) => {
-						// createArticle(null, mediaFiles, true);
+						createArticle(null, mediaFiles, true);
 					})
 					.catch(() => {
 						setIsLoading(false);
