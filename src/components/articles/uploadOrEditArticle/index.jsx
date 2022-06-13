@@ -724,11 +724,29 @@ const UploadOrEditViral = ({
 		return data.some((item) => {
 			if (item?.data) {
 				return item?.data[0]?.file;
-			} else {
-				return item?.entry;
 			}
 		});
 	};
+
+	const checkNewElementDescription = (elements, data) => {
+		for (let i = 0; i < data.length; i++) {
+			if (data[i].data) {
+				if (data[i].data[0].description) {
+					if (data[i].data[0].description !== '') {
+						if (data[i].data[0].description === elements[i].description) {
+							return true;
+						} else {
+							return false;
+						}
+					}
+				}
+			} else {
+				return true;
+			}
+		}
+	};
+
+	console.log(data, 'ddddddd');
 
 	useEffect(() => {
 		if (specificArticle) {
@@ -747,6 +765,7 @@ const UploadOrEditViral = ({
 						specificArticle?.show_comments === form.show_comments &&
 						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
 						specificArticle.elements.length === data.length &&
+						checkNewElementDescription(specificArticle.elements, data) &&
 						!checkNewElementFile() &&
 						!checkNewAuthorImage())
 			);
