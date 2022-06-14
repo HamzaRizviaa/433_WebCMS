@@ -91,10 +91,12 @@ const ArticleSocialMediaDraggable = ({
 										value={postUrl}
 										onChange={(e) => {
 											setPostUrl(e.target.value);
-											sendDataToParent({
-												[`${item.element_type.toLowerCase()}_post_url`]:
-													e.target.value
-											});
+											sendDataToParent([
+												{
+													[`${item.element_type.toLowerCase()}_post_url`]:
+														e.target.value
+												}
+											]);
 										}}
 										placeholder={'Please drop the URL here'}
 										className={classes.textField}

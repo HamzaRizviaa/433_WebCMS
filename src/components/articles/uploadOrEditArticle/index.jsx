@@ -252,7 +252,6 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (specificArticle) {
-			console.log('specificArticle', specificArticle);
 			if (specificArticle?.labels) {
 				let _labels = [];
 				specificArticle.labels.map((label) =>
@@ -314,7 +313,6 @@ const UploadOrEditViral = ({
 	}, [specificArticle]);
 
 	const updateDataFromAPI = (apiData) => {
-		console.log('apiData', apiData);
 		let modifiedData = apiData?.map(
 			({ id, sort_order, element_type, ...rest }) => {
 				return {
@@ -581,7 +579,6 @@ const UploadOrEditViral = ({
 	};
 
 	const setNewData = (childData, index) => {
-		console.log('childData Editor', childData);
 		setForm((prev) => {
 			return {
 				...prev,
@@ -607,8 +604,6 @@ const UploadOrEditViral = ({
 			};
 		});
 	};
-
-	console.log(isError, 'ie');
 
 	const validateArticleBtn = () => {
 		setIsError({
@@ -731,10 +726,10 @@ const UploadOrEditViral = ({
 
 	const checkNewElementDescription = (elements, data) => {
 		for (let i = 0; i < data.length; i++) {
-			if (data[i].data) {
-				if (data[i].data[0].description) {
-					if (data[i].data[0].description !== '') {
-						if (data[i].data[0].description === elements[i].description) {
+			if (data[i]?.data) {
+				if (data[i]?.data[0]?.description) {
+					if (data[i]?.data[0]?.description !== '') {
+						if (data[i]?.data[0]?.description === elements[i]?.description) {
 							return true;
 						} else {
 							return false;
@@ -743,6 +738,41 @@ const UploadOrEditViral = ({
 				}
 			} else {
 				return true;
+			}
+		}
+	};
+
+	const checkNewElementTwitter = (elements, data) => {
+		for (let i = 0; i < data.length; i++) {
+			if (data[i]?.data) {
+				if (data[i]?.data[0]?.twitter_post_url) {
+					if (data[i]?.data[0]?.twitter_post_url !== '') {
+						if (
+							data[i]?.data[0]?.twitter_post_url ===
+							elements[i]?.twitter_post_url
+						) {
+							return true;
+						} else {
+							return false;
+						}
+					}
+				}
+			}
+		}
+	};
+
+	const checkNewElementIG = (elements, data) => {
+		for (let i = 0; i < data.length; i++) {
+			if (data[i]?.data) {
+				if (data[i]?.data[0]?.ig_post_url) {
+					if (data[i]?.data[0]?.ig_post_url !== '') {
+						if (data[i]?.data[0]?.ig_post_url === elements[i]?.ig_post_url) {
+							return true;
+						} else {
+							return false;
+						}
+					}
+				}
 			}
 		}
 	};
@@ -765,8 +795,9 @@ const UploadOrEditViral = ({
 						specificArticle?.show_likes === form.show_likes &&
 						specificArticle?.show_comments === form.show_comments &&
 						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
-						specificArticle.elements.length === data.length &&
-						checkNewElementDescription(specificArticle.elements, data) &&
+						// checkNewElementDescription(specificArticle.elements, data) &&
+						checkNewElementTwitter(specificArticle.elements, data) &&
+						checkNewElementIG(specificArticle.elements, data) &&
 						!checkNewElementFile() &&
 						!checkNewAuthorImage())
 			);
@@ -1064,7 +1095,6 @@ const UploadOrEditViral = ({
 						})
 					);
 				}
-				console.log(dataMedia, 'dataMedia');
 
 				Promise.all([
 					...uploadFilesPromiseArray,
