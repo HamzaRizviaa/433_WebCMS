@@ -442,8 +442,8 @@ const UploadOrEditViral = ({
 					media_url: item.data[0]?.media_url || undefined,
 					file_name: item.data[0]?.file_name || undefined,
 					dropbox_url: item?.data[0]?.dropbox_url || undefined,
-					ig_post_url: item?.data?.ig_post_url || undefined,
-					twitter_post_url: item?.data?.twitter_post_url || undefined,
+					ig_post_url: item?.data[0]?.ig_post_url || undefined,
+					twitter_post_url: item?.data[0]?.twitter_post_url || undefined,
 					sort_order: item.sortOrder
 				};
 			});
@@ -724,6 +724,7 @@ const UploadOrEditViral = ({
 		});
 	};
 
+	console.log(data, 'dddddd');
 	const checkNewElementDescription = (elements, data) => {
 		let result;
 		for (let i = 0; i < data.length; i++) {
@@ -793,8 +794,7 @@ const UploadOrEditViral = ({
 		if (specificArticle) {
 			setEditBtnDisabled(
 				postButtonStatus ||
-					!form.uploadedFiles.length ||
-					!form.title ||
+					!validateForm(form, data) ||
 					(specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
 						specificArticle?.title?.trim() === form?.title?.trim() &&
 						specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
@@ -805,6 +805,7 @@ const UploadOrEditViral = ({
 						specificArticle?.show_likes === form.show_likes &&
 						specificArticle?.show_comments === form.show_comments &&
 						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
+						specificArticle.elements.length === data.length &&
 						checkNewElementDescription(specificArticle.elements, data) &&
 						checkNewElementTwitter(specificArticle.elements, data) &&
 						checkNewElementIG(specificArticle.elements, data) &&
