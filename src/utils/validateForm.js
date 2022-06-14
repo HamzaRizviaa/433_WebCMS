@@ -37,11 +37,13 @@ const validateForm = (form, dataElements) => {
 	var validateData = true;
 	if (dataElements?.length) {
 		validateData = dataElements.every((dataFile) => dataFile.data);
+	} else if (dataElements?.length === 0) {
+		return false;
 	}
-	
+
 	var finalFormValue = validate.every((item) => item === true) && validateData;
 
-	return finalFormValue
+	return finalFormValue;
 };
 
 export default validateForm;

@@ -15,20 +15,24 @@ const ArticleSocialMediaDraggable = ({
 	key,
 	index,
 	sendDataToParent,
-	setIsOpen
+	setIsOpen,
 	// WidthHeightCallback,
 	// handleDeleteFile,
-	// initialData
+	initialData
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
-	const [postUrl, setPostUrl] = useState('');
+	const [postUrl, setPostUrl] = useState(
+		initialData ? initialData?.ig_post_url || initialData.twitter_post_url : ''
+	);
 
 	const clickExpand = () => {
 		setClickExpandIcon(!clickExpandIcon);
 		setIsOpen(!clickExpandIcon);
 	};
+
+	console.log('initialData', initialData);
 
 	return (
 		<>
@@ -83,7 +87,8 @@ const ArticleSocialMediaDraggable = ({
 										onChange={(e) => {
 											setPostUrl(e.target.value);
 											sendDataToParent({
-												[`${item.element_type}_post_url}`]: e.target.value
+												[`${item.element_type.toLowerCase()}_post_url`]:
+													e.target.value
 											});
 										}}
 										placeholder={'Please drop the URL here'}
@@ -114,7 +119,7 @@ ArticleSocialMediaDraggable.propTypes = {
 	sendDataToParent: PropTypes.func.isRequired,
 	// WidthHeightCallback: PropTypes.func,
 	// handleDeleteFile: PropTypes.func,
-	// initialData: PropTypes.object,
+	initialData: PropTypes.object,
 	setIsOpen: PropTypes.func
 };
 
