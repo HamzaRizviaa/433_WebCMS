@@ -38,7 +38,7 @@ const validateForm = (form, dataElements) => {
 	if (dataElements?.length) {
 		validateData = dataElements.every((dataFile) => dataFile.data);
 	} else if (dataElements?.length === 0) {
-		return false;
+		validateData = false;
 	}
 
 	var finalFormValue = validate.every((item) => item === true) && validateData;
