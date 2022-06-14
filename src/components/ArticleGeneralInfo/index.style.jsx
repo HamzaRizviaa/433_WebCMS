@@ -36,7 +36,7 @@ export const useStyles = makeStyles((theme) => ({
 		alignItems: 'center',
 
 		'& h6': {
-			marginBottom: '0.5rem',
+			marginBottom: '0.6rem',
 			marginLeft: '1rem'
 		}
 	},

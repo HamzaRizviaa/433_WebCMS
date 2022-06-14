@@ -428,11 +428,11 @@ const ArticleGeneralInfo = ({
 
 					<div className={globalClasses.captionContainer}>
 						<h6
-						className={
-							isError.selectedLabels
-								? globalClasses.errorState
-								: globalClasses.noErrorState
-						}
+							className={
+								isError.selectedLabels
+									? globalClasses.errorState
+									: globalClasses.noErrorState
+							}
 						>
 							LABELS
 						</h6>
