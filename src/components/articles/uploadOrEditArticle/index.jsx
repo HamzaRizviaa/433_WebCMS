@@ -725,27 +725,31 @@ const UploadOrEditViral = ({
 	};
 
 	const checkNewElementDescription = (elements, data) => {
+		let result;
 		for (let i = 0; i < data.length; i++) {
 			if (data[i]?.data) {
-				if (data[i]?.data[0]?.description) {
+				if ('description' in data[i].data[0]) {
 					if (data[i]?.data[0]?.description !== '') {
 						if (data[i]?.data[0]?.description === elements[i]?.description) {
-							return true;
+							result = true;
 						} else {
-							return false;
+							result = false;
 						}
+					} else {
+						result = true;
 					}
+				} else {
+					result = true;
 				}
-			} else {
-				return true;
 			}
 		}
+		return result;
 	};
 
 	const checkNewElementTwitter = (elements, data) => {
 		for (let i = 0; i < data.length; i++) {
 			if (data[i]?.data) {
-				if (data[i]?.data[0]?.twitter_post_url) {
+				if ('twitter_post_url' in data[i].data[0]) {
 					if (data[i]?.data[0]?.twitter_post_url !== '') {
 						if (
 							data[i]?.data[0]?.twitter_post_url ===
@@ -755,7 +759,11 @@ const UploadOrEditViral = ({
 						} else {
 							return false;
 						}
+					} else {
+						return true;
 					}
+				} else {
+					return true;
 				}
 			}
 		}
@@ -764,20 +772,22 @@ const UploadOrEditViral = ({
 	const checkNewElementIG = (elements, data) => {
 		for (let i = 0; i < data.length; i++) {
 			if (data[i]?.data) {
-				if (data[i]?.data[0]?.ig_post_url) {
+				if ('ig_post_url' in data[i].data[0]) {
 					if (data[i]?.data[0]?.ig_post_url !== '') {
 						if (data[i]?.data[0]?.ig_post_url === elements[i]?.ig_post_url) {
 							return true;
 						} else {
 							return false;
 						}
+					} else {
+						return true;
 					}
+				} else {
+					return true;
 				}
 			}
 		}
 	};
-
-	console.log(data, 'ddddddd');
 
 	useEffect(() => {
 		if (specificArticle) {
@@ -795,7 +805,7 @@ const UploadOrEditViral = ({
 						specificArticle?.show_likes === form.show_likes &&
 						specificArticle?.show_comments === form.show_comments &&
 						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
-						// checkNewElementDescription(specificArticle.elements, data) &&
+						checkNewElementDescription(specificArticle.elements, data) &&
 						checkNewElementTwitter(specificArticle.elements, data) &&
 						checkNewElementIG(specificArticle.elements, data) &&
 						!checkNewElementFile() &&

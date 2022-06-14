@@ -42,8 +42,14 @@ const ArticleTextDraggable = ({
 
 	const handleEditorChange = () => {
 		const editorTextContent = tinymce?.activeEditor?.getContent();
+		const textContent = tinymce?.activeEditor?.getContent({ format: 'text' });
 		setDescription(editorTextContent);
-		sendDataToParent([{ description: editorTextContent}]);
+		if (textContent === '') {
+			console.log('inside Empty');
+			sendDataToParent([{ description: '' }]);
+		} else {
+			sendDataToParent([{ description: editorTextContent }]);
+		}
 		// setEditorTextChecker(editorTextContent); // to check yellow button condition
 	};
 
