@@ -11,6 +11,7 @@ import ArticleTextDraggable from '../../articleTextDraggable';
 import ArticleSocialMediaDraggable from '../../ArticleSocialMediaDraggable';
 import ArticleFooter from '../../ArticleFooter';
 import DraggableWrapper from '../../DraggableWrapper';
+import PreviewWrapper from '../../PreviewWrapper';
 import ArticleElementMedia from '../../ArticleElementMedia';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { Box, MenuItem, TextField, Select, Grid } from '@material-ui/core';
@@ -1329,13 +1330,16 @@ const UploadOrEditViral = ({
 												<h2>Preview</h2>
 												<p>Review the result here before publishing</p>
 											</Box>
-											<Box>
-												<img
-													src='https://via.placeholder.com/298x596?text=Preview'
-													alt='placeholder'
-													style={{ width: '250px', height: '350px' }}
-												/>
-											</Box>
+
+											<PreviewWrapper>
+												<Box>
+													<img
+														src='https://via.placeholder.com/298x596?text=Preview'
+														alt='placeholder'
+														style={{ width: '250px', height: '350px' }}
+													/>
+												</Box>
+											</PreviewWrapper>
 										</Box>
 									</Grid>
 								</Grid>
