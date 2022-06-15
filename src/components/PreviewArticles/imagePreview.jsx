@@ -3,19 +3,19 @@ import PropTypes from 'prop-types';
 import { useStyles } from './index.style';
 const ImagePreview = ({ data }) => {
 	const classes = useStyles();
-	console.log(data, 'data image');
+	console.log('data image ====== ', data);
 	return (
 		<div>
-			{data.length > 1 &&
-				data.map((item, index) => {
-					return (
-						<div key={index} className={classes.textDraggableData}>
-							<div>
-								<img src={item[0].media_url} />
-							</div>
-						</div>
-					);
-				})}
+			{data.map((item, index) => {
+				console.log(item, 'dataaaaaaaa===========');
+				return item.data ? (
+					<div key={index} className={classes.imageDraggableData}>
+						<img src={item?.data[0]?.media_url} alt='' />
+					</div>
+				) : (
+					<></>
+				);
+			})}
 		</div>
 	);
 };
