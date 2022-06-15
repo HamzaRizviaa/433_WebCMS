@@ -728,18 +728,15 @@ const UploadOrEditViral = ({
 
 	console.log(data, 'dddddd');
 	const checkNewElementDescription = (elements, data) => {
+		console.log('Elemets', elements, data);
 		let result;
 		for (let i = 0; i < data.length; i++) {
 			if (data[i]?.data) {
-				if ('description' in data[i].data[0]) {
-					if (data[i]?.data[0]?.description !== '') {
-						if (data[i]?.data[0]?.description === elements[i]?.description) {
-							result = true;
-						} else {
-							result = false;
-						}
-					} else {
+				if (data[i]?.data[0]?.description !== '') {
+					if (data[i]?.data[0]?.description === elements[i]?.description) {
 						result = true;
+					} else {
+						result = false;
 					}
 				} else {
 					result = true;
@@ -750,20 +747,16 @@ const UploadOrEditViral = ({
 	};
 
 	const checkNewElementTwitter = (elements, data) => {
+		console.log('Twitter', elements, data);
 		for (let i = 0; i < data.length; i++) {
 			if (data[i]?.data) {
-				if ('twitter_post_url' in data[i].data[0]) {
-					if (data[i]?.data[0]?.twitter_post_url !== '') {
-						if (
-							data[i]?.data[0]?.twitter_post_url ===
-							elements[i]?.twitter_post_url
-						) {
-							return true;
-						} else {
-							return false;
-						}
-					} else {
+				if (data[i]?.data[0]?.twitter_post_url !== '') {
+					if (
+						data[i]?.data[0]?.twitter_post_url === elements[i]?.twitter_post_url
+					) {
 						return true;
+					} else {
+						return false;
 					}
 				} else {
 					return true;
@@ -773,17 +766,14 @@ const UploadOrEditViral = ({
 	};
 
 	const checkNewElementIG = (elements, data) => {
+		console.log('IG', elements, data);
 		for (let i = 0; i < data.length; i++) {
 			if (data[i]?.data) {
-				if ('ig_post_url' in data[i].data[0]) {
-					if (data[i]?.data[0]?.ig_post_url !== '') {
-						if (data[i]?.data[0]?.ig_post_url === elements[i]?.ig_post_url) {
-							return true;
-						} else {
-							return false;
-						}
-					} else {
+				if (data[i]?.data[0]?.ig_post_url !== '') {
+					if (data[i]?.data[0]?.ig_post_url === elements[i]?.ig_post_url) {
 						return true;
+					} else {
+						return false;
 					}
 				} else {
 					return true;
@@ -808,14 +798,29 @@ const UploadOrEditViral = ({
 						specificArticle?.show_comments === form.show_comments &&
 						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
 						specificArticle.elements.length === data.length &&
-						checkNewElementDescription(specificArticle.elements, data) &&
-						checkNewElementTwitter(specificArticle.elements, data) &&
-						checkNewElementIG(specificArticle.elements, data) &&
+						checkNewElementDescription(
+							specificArticle.elements.filter(
+								(item) => item.element_type === 'TEXT'
+							),
+							data.filter((item) => item.element_type === 'TEXT')
+						) &&
+						checkNewElementTwitter(
+							specificArticle.elements.filter(
+								(item) => item.element_type === 'TWITTER'
+							),
+							data.filter((item) => item.element_type === 'TWITTER')
+						) &&
+						checkNewElementIG(
+							specificArticle.elements.filter(
+								(item) => item.element_type === 'IG'
+							),
+							data.filter((item) => item.element_type === 'IG')
+						) &&
 						!checkNewElementFile() &&
 						!checkNewAuthorImage())
 			);
 		}
-	}, [specificArticle, editorTextChecker, form, data]);
+	}, [specificArticle, editorTextChecker, form, data, setData]);
 
 	useEffect(() => {
 		if (specificArticle) {

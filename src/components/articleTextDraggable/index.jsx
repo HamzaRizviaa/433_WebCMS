@@ -45,7 +45,6 @@ const ArticleTextDraggable = ({
 		const textContent = tinymce?.activeEditor?.getContent({ format: 'text' });
 		setDescription(editorTextContent);
 		if (textContent === '') {
-			console.log('inside Empty');
 			sendDataToParent([{ description: '' }]);
 		} else {
 			sendDataToParent([{ description: editorTextContent }]);
