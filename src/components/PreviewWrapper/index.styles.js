@@ -44,7 +44,8 @@ export const useStyles = makeStyles(() => ({
 		fontWeight: 700,
 		fontSize: '12px',
 		lineHeight: '16px',
-		textTransform: 'uppercase'
+		textTransform: 'uppercase',
+		margin: '10px 0px'
 	},
 	mainTitle: {
 		fontWeight: 800,

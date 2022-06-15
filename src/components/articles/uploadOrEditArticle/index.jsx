@@ -12,6 +12,8 @@ import ArticleSocialMediaDraggable from '../../ArticleSocialMediaDraggable';
 import ArticleFooter from '../../ArticleFooter';
 import DraggableWrapper from '../../DraggableWrapper';
 import PreviewWrapper from '../../PreviewWrapper';
+import ImagePreview from '../../PreviewArticles/imagePreview';
+import TextPreview from '../../PreviewArticles/textPreview';
 import ArticleElementMedia from '../../ArticleElementMedia';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { Box, MenuItem, TextField, Select, Grid } from '@material-ui/core';
@@ -608,8 +610,6 @@ const UploadOrEditViral = ({
 		});
 	};
 
-	console.log(isError, 'ie');
-
 	const validateArticleBtn = () => {
 		setIsError({
 			articleTitle: !form.title,
@@ -746,8 +746,6 @@ const UploadOrEditViral = ({
 			}
 		}
 	};
-
-	console.log(data, 'ddddddd');
 
 	useEffect(() => {
 		if (specificArticle) {
@@ -1355,14 +1353,34 @@ const UploadOrEditViral = ({
 												<p>Review the result here before publishing</p>
 											</Box>
 
-											<PreviewWrapper>
-												<Box>
-													<img
-														src='https://via.placeholder.com/298x596?text=Preview'
-														alt='placeholder'
-														style={{ width: '250px', height: '350px' }}
-													/>
-												</Box>
+											<PreviewWrapper
+												subCategory={form.subCategory}
+												title={form.title}
+												descrption={'abc'}
+												authorName={form.author_text}
+												authorImage={form.author_image[0].media_url}
+												backgroundImage={
+													form.uploadedFiles.length > 0
+														? form.uploadedFiles[0].media_url
+														: ''
+												}
+												showLikes={form.show_likes}
+												showComments={form.show_comments}
+											>
+												{data.map((item, index) => {
+													return (
+														<div key={index}>
+															{/* {item.element_type} */}
+															{item.element_type === 'MEDIA' ? (
+																<ImagePreview data={form.elementMediaFiles} />
+															) : item.element_type === 'TEXT' ? (
+																<TextPreview data={form.elementMediaFiles} />
+															) : (
+																''
+															)}
+														</div>
+													);
+												})}
 											</PreviewWrapper>
 										</Box>
 									</Grid>

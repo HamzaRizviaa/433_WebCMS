@@ -9,18 +9,46 @@ import Avatar from '@mui/material/Avatar';
 // import Close from '@material-ui/icons/Close';
 // import dImage from '../../assets/defaultImage.png';
 
-const PreviewWrapper = ({ children }) => {
+const PreviewWrapper = ({
+	children,
+	subCategory,
+	title,
+	descrption,
+	authorImage,
+	authorName,
+	backgroundImage,
+	showLikes,
+	showComments
+}) => {
 	const classes = useStyles();
 	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/Profile433.svg`;
+	const bg = 'ABC';
+	console.log(
+		bg,
+		children,
+		subCategory,
+		title,
+		descrption,
+		authorImage,
+		backgroundImage,
+		showLikes,
+		showComments,
+		'data'
+	);
 	return (
-		<div style={{ overflow: 'auto' }} className={classes.previewWrapper}>
+		<div
+			className={classes.previewWrapper}
+			style={{ height: '596px', overflowY: 'auto', padding: '5px 10px' }}
+		>
 			<div
 				style={{
-					// backgroundImage: `url('https://via.placeholder.com/298x596?text=Preview')`,
-					backgroundColor: 'grey',
-					width: '250px',
-					height: '596px',
+					backgroundImage: `url(${backgroundImage})`,
+					// width: '250px',
+					backgroundRepeat: 'no-repeat',
+					backgroundSize: 'cover',
+					backgroundPosition: 'center',
 					padding: '10px'
+					// opacity: 0.4
 				}}
 			>
 				<div className={classes.topIcons}>
@@ -32,35 +60,41 @@ const PreviewWrapper = ({ children }) => {
 					</div>
 				</div>
 				<div style={{ marginTop: '297px' }}>
-					<div className={classes.subCatText}>Sub category</div>
-					<div className={classes.mainTitle}>THE HAMZA RIZVI THE UI CHAMP</div>
+					<div className={classes.subCatText}>
+						{subCategory ? subCategory?.name : ''}
+					</div>
+					<div className={classes.mainTitle}>{title}</div>
 
 					<div className={classes.bottomIcons}>
-						<div className={classes.icons}>
-							<img src={Football} className={classes.footballIcon} />
-						</div>
-						<div className={[classes.icons, classes.commentbox].join(' ')}>
-							<img src={Comments} className={classes.commentIcon} />
-						</div>
+						{showLikes ? (
+							<div className={classes.icons}>
+								<img src={Football} className={classes.footballIcon} />
+							</div>
+						) : (
+							''
+						)}
+						{showComments ? (
+							<div className={[classes.icons, classes.commentbox].join(' ')}>
+								<img src={Comments} className={classes.commentIcon} />
+							</div>
+						) : (
+							''
+						)}
 					</div>
 
 					<div className={classes.authordetails}>
 						<div>
-							<Avatar src={Profile433} />
+							<Avatar src={authorImage ? authorImage : Profile433} />
 						</div>
 						<div className={classes.authorSection}>
-							<div className={classes.authorname}>433 Content Team</div>
+							<div className={classes.authorname}>{authorName}</div>
+							{/* 433 Content Team */}
 							<div className={classes.postDateDetails}>
 								31 May 2022 - 10 min read
 							</div>
 						</div>
 					</div>
-					<div className={classes.description}>
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
-						dictum gravida molestie. Proin maximus, nisi vel accumsan convallis,
-						lorem justo ultrices dui, sit amet tincidunt ipsum enim eget ante.
-						Morbi enim nulla, venenatis in enim non, facilisis imperdiet sem.
-					</div>
+					<div className={classes.description}></div>
 				</div>
 			</div>
 			<br />
@@ -70,7 +104,15 @@ const PreviewWrapper = ({ children }) => {
 };
 
 PreviewWrapper.propTypes = {
-	children: PropTypes.element.isRequired
+	children: PropTypes.element.isRequired,
+	subCategory: PropTypes.string,
+	title: PropTypes.string,
+	descrption: PropTypes.string,
+	authorImage: PropTypes.string,
+	authorName: PropTypes.string,
+	backgroundImage: PropTypes.string,
+	showLikes: PropTypes.boolean,
+	showComments: PropTypes.boolean
 };
 
 export default PreviewWrapper;
