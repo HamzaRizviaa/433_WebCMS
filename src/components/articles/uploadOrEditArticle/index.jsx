@@ -254,7 +254,6 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (specificArticle) {
-			console.log('specificArticle', specificArticle);
 			if (specificArticle?.labels) {
 				let _labels = [];
 				specificArticle.labels.map((label) =>
@@ -316,7 +315,6 @@ const UploadOrEditViral = ({
 	}, [specificArticle]);
 
 	const updateDataFromAPI = (apiData) => {
-		console.log('apiData', apiData);
 		let modifiedData = apiData?.map(
 			({ id, sort_order, element_type, ...rest }) => {
 				return {
@@ -446,8 +444,8 @@ const UploadOrEditViral = ({
 					media_url: item.data[0]?.media_url || undefined,
 					file_name: item.data[0]?.file_name || undefined,
 					dropbox_url: item?.data[0]?.dropbox_url || undefined,
-					ig_post_url: item?.data?.ig_post_url || undefined,
-					twitter_post_url: item?.data?.twitter_post_url || undefined,
+					ig_post_url: item?.data[0]?.ig_post_url || undefined,
+					twitter_post_url: item?.data[0]?.twitter_post_url || undefined,
 					sort_order: item.sortOrder
 				};
 			});
@@ -583,7 +581,6 @@ const UploadOrEditViral = ({
 	};
 
 	const setNewData = (childData, index) => {
-		console.log('childData Editor', childData);
 		setForm((prev) => {
 			return {
 				...prev,
@@ -729,20 +726,68 @@ const UploadOrEditViral = ({
 		});
 	};
 
+	console.log(data, 'dddddd');
 	const checkNewElementDescription = (elements, data) => {
+		let result;
 		for (let i = 0; i < data.length; i++) {
-			if (data[i].data) {
-				if (data[i].data[0].description) {
-					if (data[i].data[0].description !== '') {
-						if (data[i].data[0].description === elements[i].description) {
+			if (data[i]?.data) {
+				if ('description' in data[i].data[0]) {
+					if (data[i]?.data[0]?.description !== '') {
+						if (data[i]?.data[0]?.description === elements[i]?.description) {
+							result = true;
+						} else {
+							result = false;
+						}
+					} else {
+						result = true;
+					}
+				} else {
+					result = true;
+				}
+			}
+		}
+		return result;
+	};
+
+	const checkNewElementTwitter = (elements, data) => {
+		for (let i = 0; i < data.length; i++) {
+			if (data[i]?.data) {
+				if ('twitter_post_url' in data[i].data[0]) {
+					if (data[i]?.data[0]?.twitter_post_url !== '') {
+						if (
+							data[i]?.data[0]?.twitter_post_url ===
+							elements[i]?.twitter_post_url
+						) {
 							return true;
 						} else {
 							return false;
 						}
+					} else {
+						return true;
 					}
+				} else {
+					return true;
 				}
-			} else {
-				return true;
+			}
+		}
+	};
+
+	const checkNewElementIG = (elements, data) => {
+		for (let i = 0; i < data.length; i++) {
+			if (data[i]?.data) {
+				if ('ig_post_url' in data[i].data[0]) {
+					if (data[i]?.data[0]?.ig_post_url !== '') {
+						if (data[i]?.data[0]?.ig_post_url === elements[i]?.ig_post_url) {
+							return true;
+						} else {
+							return false;
+						}
+					} else {
+						return true;
+					}
+				} else {
+					return true;
+				}
 			}
 		}
 	};
@@ -751,8 +796,7 @@ const UploadOrEditViral = ({
 		if (specificArticle) {
 			setEditBtnDisabled(
 				postButtonStatus ||
-					!form.uploadedFiles.length ||
-					!form.title ||
+					!validateForm(form, data) ||
 					(specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
 						specificArticle?.title?.trim() === form?.title?.trim() &&
 						specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
@@ -765,6 +809,8 @@ const UploadOrEditViral = ({
 						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
 						specificArticle.elements.length === data.length &&
 						checkNewElementDescription(specificArticle.elements, data) &&
+						checkNewElementTwitter(specificArticle.elements, data) &&
+						checkNewElementIG(specificArticle.elements, data) &&
 						!checkNewElementFile() &&
 						!checkNewAuthorImage())
 			);
@@ -1062,7 +1108,6 @@ const UploadOrEditViral = ({
 						})
 					);
 				}
-				console.log(dataMedia, 'dataMedia');
 
 				Promise.all([
 					...uploadFilesPromiseArray,

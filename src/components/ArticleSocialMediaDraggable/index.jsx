@@ -10,14 +10,14 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { ReactComponent as Union } from '../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../assets/Delete.svg';
+
 const ArticleSocialMediaDraggable = ({
 	item,
 	key,
 	index,
 	sendDataToParent,
 	setIsOpen,
-	// WidthHeightCallback,
-	// handleDeleteFile,
+	handleDeleteFile,
 	initialData
 }) => {
 	const classes = useStyles();
@@ -65,7 +65,12 @@ const ArticleSocialMediaDraggable = ({
 							</div>
 							<div className={classes.rightDiv}>
 								<div className={classes.deleteIconDiv}>
-									<Deletes className={classes.deleteIcon} />
+									<Deletes
+										className={classes.deleteIcon}
+										onClick={() => {
+											handleDeleteFile(item.sortOrder);
+										}}
+									/>
 								</div>
 								<div
 									className={classes.expandIconDiv}
@@ -86,10 +91,12 @@ const ArticleSocialMediaDraggable = ({
 										value={postUrl}
 										onChange={(e) => {
 											setPostUrl(e.target.value);
-											sendDataToParent({
-												[`${item.element_type.toLowerCase()}_post_url`]:
-													e.target.value
-											});
+											sendDataToParent([
+												{
+													[`${item.element_type.toLowerCase()}_post_url`]:
+														e.target.value
+												}
+											]);
 										}}
 										placeholder={'Please drop the URL here'}
 										className={classes.textField}
@@ -117,8 +124,7 @@ ArticleSocialMediaDraggable.propTypes = {
 	key: PropTypes.number,
 	index: PropTypes.number,
 	sendDataToParent: PropTypes.func.isRequired,
-	// WidthHeightCallback: PropTypes.func,
-	// handleDeleteFile: PropTypes.func,
+	handleDeleteFile: PropTypes.func,
 	initialData: PropTypes.object,
 	setIsOpen: PropTypes.func
 };

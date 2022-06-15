@@ -15,7 +15,7 @@ export const useStyles = makeStyles(() => ({
 	uploadMediaError: {
 		color: theme.palette.red,
 		fontWeight: 'bold',
-		marginTop: '1rem',
+		// marginTop: '1rem',
 		height: '1rem'
 	},
 	mediaError: {
@@ -37,7 +37,7 @@ export const useStyles = makeStyles(() => ({
 		fontWeight: 'bold',
 		height: '1rem',
 		textAlign: 'center',
-		marginBottom: '1.5rem'
+		marginBottom: '1rem'
 	},
 
 	dragMsg: {
