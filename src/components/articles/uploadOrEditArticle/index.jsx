@@ -328,6 +328,7 @@ const UploadOrEditViral = ({
 							: ArticleSocialMediaDraggable,
 					heading: `Add ${element_type}`,
 					isOpen: true,
+					isOld: true,
 					id,
 					entry: element_type === 'TEXT' ? 'old' : undefined,
 					data: [
@@ -712,13 +713,28 @@ const UploadOrEditViral = ({
 		' '
 	); // api response
 
+	const handleArticleElement = (dataItem) => {
+		setData((prev) => {
+			return [
+				...prev,
+				{
+					sortOrder: data.length + 1,
+					heading: dataItem.text,
+					component: dataItem.component,
+					element_type: dataItem.type,
+					isOpen: true
+				}
+			];
+		});
+	};
+
 	const checkNewAuthorImage = () => {
 		return form?.author_image?.some((item) => {
 			return item?.file;
 		});
 	};
 
-	const checkNewElementFile = () => {
+	const checkNewElementFile = (data) => {
 		return data.some((item) => {
 			if (item?.data) {
 				return item?.data[0]?.file;
@@ -726,25 +742,39 @@ const UploadOrEditViral = ({
 		});
 	};
 
-	console.log(data, 'dddddd');
 	const checkNewElementDescription = (elements, data) => {
 		console.log('Elemets', elements, data);
 		let result;
 		for (let i = 0; i < data.length; i++) {
 			if (data[i]?.data) {
-				if (data[i]?.data[0]?.description !== '') {
-					if (data[i]?.data[0]?.description === elements[i]?.description) {
-						result = true;
-					} else {
-						result = false;
-					}
-				} else {
+				if (data[i]?.data[0]?.description === elements[i]?.description) {
 					result = true;
+				} else {
+					result = false;
 				}
+			} else {
+				result = true;
 			}
 		}
 		return result;
 	};
+
+	const checkEmptyDescription = (data) => {
+		const filteredData = data.filter((item) => item.element_type === 'TEXT');
+		const validatedData = filteredData.map((item) => {
+			if (item.data) {
+				return !item.data[0].description ? false : true;
+			} else {
+				return false;
+			}
+		});
+		console.log('validatedData', validatedData);
+		return validatedData.every((item) => item === true);
+	};
+
+	useEffect(() => {
+		console.log(checkEmptyDescription(data));
+	}, [data]);
 
 	const checkNewElementTwitter = (elements, data) => {
 		console.log('Twitter', elements, data);
@@ -804,6 +834,7 @@ const UploadOrEditViral = ({
 							),
 							data.filter((item) => item.element_type === 'TEXT')
 						) &&
+						!checkEmptyDescription(data) &&
 						checkNewElementTwitter(
 							specificArticle.elements.filter(
 								(item) => item.element_type === 'TWITTER'
@@ -816,11 +847,17 @@ const UploadOrEditViral = ({
 							),
 							data.filter((item) => item.element_type === 'IG')
 						) &&
-						!checkNewElementFile() &&
+						!checkNewElementFile(
+							data.filter((item) => item.element_type === 'MEDIA')
+						) &&
 						!checkNewAuthorImage())
 			);
 		}
-	}, [specificArticle, editorTextChecker, form, data, setData]);
+	}, [specificArticle, editorTextChecker, form]);
+
+	useEffect(() => {
+		setEditBtnDisabled(!checkEmptyDescription(data));
+	}, [data]);
 
 	useEffect(() => {
 		if (specificArticle) {
@@ -1320,20 +1357,7 @@ const UploadOrEditViral = ({
 											</Box>
 											<ArticleElements
 												data={elementData}
-												onClick={(dataItem) => {
-													setData((prev) => {
-														return [
-															...prev,
-															{
-																sortOrder: data.length + 1,
-																heading: dataItem.text,
-																component: dataItem.component,
-																element_type: dataItem.type,
-																isOpen: true
-															}
-														];
-													});
-												}}
+												onClick={(dataItem) => handleArticleElement(dataItem)}
 											/>
 										</div>
 									</Grid>

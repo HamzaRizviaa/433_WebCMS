@@ -13,7 +13,7 @@ const PreviewWrapper = ({
 	children,
 	subCategory,
 	title,
-	descrption,
+	// descrption,
 	authorImage,
 	authorName,
 	backgroundImage,
@@ -22,19 +22,7 @@ const PreviewWrapper = ({
 }) => {
 	const classes = useStyles();
 	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/Profile433.svg`;
-	const bg = 'ABC';
-	console.log(
-		bg,
-		children,
-		subCategory,
-		title,
-		descrption,
-		authorImage,
-		backgroundImage,
-		showLikes,
-		showComments,
-		'data'
-	);
+
 	return (
 		<div
 			className={classes.previewWrapper}
