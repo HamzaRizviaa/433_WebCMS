@@ -56,6 +56,7 @@ import {
 } from '../../../pages/ArticleLibrary/articleLibrarySlice';
 
 import LoadingOverlay from 'react-loading-overlay';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 const UploadOrEditViral = ({
 	open,
@@ -777,45 +778,112 @@ const UploadOrEditViral = ({
 		return validatedData.every((item) => item === true);
 	};
 
+	const checkEmptyTwitter = (data) => {
+		const filteredData = data.filter((item) => item.element_type === 'TWITTER');
+		const validatedData = filteredData.map((item) => {
+			if (item.data) {
+				return !item.data[0].twitter_post_url ? false : true;
+			} else {
+				return false;
+			}
+		});
+		return validatedData.every((item) => item === true);
+	};
+
+	const checkNewElementTwitter = (elements, data) => {
+		let result;
+		for (let i = 0; i < elements?.length; i++) {
+			if (elements.length === data.length) {
+				if (data[i]?.data[0].twitter_post_url !== '') {
+					if (
+						data[i]?.data[0]?.twitter_post_url === elements[i]?.twitter_post_url
+					) {
+						result = true;
+					} else {
+						result = false;
+					}
+				} else {
+					return true;
+				}
+			} else {
+				return !checkEmptyTwitter(data);
+			}
+		}
+		return result;
+	};
+
+	const checkNewElementIG = (elements, data) => {
+		let result;
+		for (let i = 0; i < elements?.length; i++) {
+			if (elements.length === data.length) {
+				if (data[i]?.data[0].ig_post_url !== '') {
+					if (data[i]?.data[0]?.ig_post_url === elements[i]?.ig_post_url) {
+						result = true;
+					} else {
+						result = false;
+					}
+				} else {
+					return true;
+				}
+			} else {
+				return !checkEmptyIG(data);
+			}
+		}
+		return result;
+	};
+
+	const checkEmptyIG = (data) => {
+		const filteredData = data.filter((item) => item.element_type === 'IG');
+		const validatedData = filteredData.map((item) => {
+			if (item.data) {
+				return !item.data[0].ig_post_url ? false : true;
+			} else {
+				return false;
+			}
+		});
+		return validatedData.every((item) => item === true);
+	};
+
 	// useEffect(() => {
 	// 	// console.log(!checkEmptyDescription(data));
 	// }, [data, specificArticle]);
 
-	const checkNewElementTwitter = (elements, data) => {
-		console.log('Twitter', elements, data);
-		for (let i = 0; i < data.length; i++) {
-			if (data[i]?.data) {
-				if (data[i]?.data[0]?.twitter_post_url !== '') {
-					if (
-						data[i]?.data[0]?.twitter_post_url === elements[i]?.twitter_post_url
-					) {
-						return true;
-					} else {
-						return false;
-					}
-				} else {
-					return true;
-				}
-			}
-		}
-	};
+	// previous twitter function
+	// const checkNewElementTwitter = (elements, data) => {
+	// 	console.log('Twitter', elements, data);
+	// 	for (let i = 0; i < data.length; i++) {
+	// 		if (data[i]?.data) {
+	// 			if (data[i]?.data[0]?.twitter_post_url !== '') {
+	// 				if (
+	// 					data[i]?.data[0]?.twitter_post_url === elements[i]?.twitter_post_url
+	// 				) {
+	// 					return true;
+	// 				} else {
+	// 					return false;
+	// 				}
+	// 			} else {
+	// 				return true;
+	// 			}
+	// 		}
+	// 	}
+	// };
 
-	const checkNewElementIG = (elements, data) => {
-		console.log('IG', elements, data);
-		for (let i = 0; i < data.length; i++) {
-			if (data[i]?.data) {
-				if (data[i]?.data[0]?.ig_post_url !== '') {
-					if (data[i]?.data[0]?.ig_post_url === elements[i]?.ig_post_url) {
-						return true;
-					} else {
-						return false;
-					}
-				} else {
-					return true;
-				}
-			}
-		}
-	};
+	// const checkNewElementIG = (elements, data) => {
+	// 	console.log('IG', elements, data);
+	// 	for (let i = 0; i < data.length; i++) {
+	// 		if (data[i]?.data) {
+	// 			if (data[i]?.data[0]?.ig_post_url !== '') {
+	// 				if (data[i]?.data[0]?.ig_post_url === elements[i]?.ig_post_url) {
+	// 					return true;
+	// 				} else {
+	// 					return false;
+	// 				}
+	// 			} else {
+	// 				return true;
+	// 			}
+	// 		}
+	// 	}
+	// };
 
 	const comparingFields = (specificArticle, form, textFeilds = false) => {
 		if (textFeilds) {
@@ -837,6 +905,27 @@ const UploadOrEditViral = ({
 		return data?.filter((item) => item.element_type === elementType);
 	};
 
+	const checkingDataFields = (data) => {
+		data.map((item) => {
+			if (item.data) {
+				return Object.keys(item.data[0]).map((dataKey) => {
+					console.log(dataKey);
+					if (dataKey === 'dropbox_url') {
+						return validatedData.push(false);
+					} else {
+						return item.data[0][dataKey] === ''
+							? validatedData.push(true)
+							: validatedData.push(false);
+					}
+				});
+			} else {
+				validatedData.push(true);
+			}
+		});
+		console.log('validatedData', validatedData);
+		return validatedData.some((item) => item === true);
+	};
+
 	useEffect(() => {
 		if (specificArticle) {
 			const validationArray = [
@@ -847,15 +936,20 @@ const UploadOrEditViral = ({
 				checkNewElementDescription(
 					filteringByType(specificArticle?.elements, 'TEXT'),
 					filteringByType(data, 'TEXT')
+				),
+				checkNewElementTwitter(
+					filteringByType(specificArticle?.elements, 'TWITTER'),
+					filteringByType(data, 'TWITTER')
+				),
+				checkNewElementIG(
+					filteringByType(specificArticle?.elements, 'IG'),
+					filteringByType(data, 'IG')
 				)
 			];
-			console.log(
-				validationArray,
-				!validationArray.every((item) => item === true)
-			);
 			setEditBtnDisabled(
 				postButtonStatus ||
 					// !validateForm(form, data) ||
+
 					validationArray.every((item) => item === true)
 				// )
 				// checkNewElementTwitter(
