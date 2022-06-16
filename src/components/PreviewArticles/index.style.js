@@ -7,7 +7,7 @@ export const useStyles = makeStyles(() => ({
 		fontSize: '16px',
 		lineHeight: 1.2,
 		color: 'white',
-		textWrap: 'wrap'
+		overflowWrap: 'anywhere'
 	},
 	imageDraggableData: {
 		maxWidth: '100%',
