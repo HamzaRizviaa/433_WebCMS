@@ -1446,9 +1446,9 @@ const UploadOrEditViral = ({
 														<div key={index}>
 															{/* {item.element_type} */}
 															{item.element_type === 'MEDIA' ? (
-																<ImagePreview data={form.elementMediaFiles} />
+																<ImagePreview data={data} />
 															) : item.element_type === 'TEXT' ? (
-																<TextPreview data={form.elementMediaFiles} />
+																<TextPreview data={data} />
 															) : (
 																''
 															)}
