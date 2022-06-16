@@ -6,6 +6,13 @@ export const useStyles = makeStyles(() => ({
 		fontWeight: 400,
 		fontSize: '16px',
 		lineHeight: 1.2,
-		color: 'white'
+		color: 'white',
+		overflowWrap: 'anywhere'
+	},
+	imageDraggableData: {
+		maxWidth: '100%',
+		'& >img': {
+			borderRadius: '8px'
+		}
 	}
 }));

@@ -4,7 +4,6 @@ import { makeStyles } from '@material-ui/core';
 export const useStyles = makeStyles(() => ({
 	previewWrapper: {
 		height: '596px',
-		overflowY: 'auto',
 		padding: '5px 10px'
 	},
 	backgroundSet: {

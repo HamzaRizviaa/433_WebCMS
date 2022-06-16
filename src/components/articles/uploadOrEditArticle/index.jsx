@@ -1120,12 +1120,19 @@ const UploadOrEditViral = ({
 					);
 				}
 				let updatedArray = [
-					...uploadFilesPromiseArray,
+					uploadFilesPromiseArray,
 					uploadAuthorImagePromiseArray,
-					...dataMedia
+					dataMedia && dataMedia[0]
 				].filter((item) => item !== undefined && item);
 
 				console.log('updatedArray', updatedArray);
+
+				console.log(uploadFilesPromiseArray, 'uploadFilesPromiseArray');
+				console.log(
+					uploadAuthorImagePromiseArray,
+					'uploadAuthorImagePromiseArray'
+				);
+				console.log(dataMedia, 'dataMedia');
 
 				Promise.all([...updatedArray])
 					.then((mediaFiles) => {
@@ -1550,7 +1557,7 @@ const UploadOrEditViral = ({
 											>
 												{data.map((item, index) => {
 													return (
-														<div key={index}>
+														<div key={index} style={{ padding: '5px' }}>
 															{item.element_type === 'MEDIA' ? (
 																<ImagePreview data={item} />
 															) : item.element_type === 'TEXT' ? (
