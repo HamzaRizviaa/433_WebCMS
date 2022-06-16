@@ -2,6 +2,17 @@ import { makeStyles } from '@material-ui/core';
 // import theme from '../assets/theme';
 
 export const useStyles = makeStyles(() => ({
+	previewWrapper: {
+		height: '596px',
+		overflowY: 'auto',
+		padding: '5px 10px'
+	},
+	backgroundSet: {
+		backgroundRepeat: 'no-repeat',
+		backgroundSize: 'cover',
+		backgroundPosition: 'center',
+		padding: '10px'
+	},
 	topIcons: {
 		display: 'flex',
 		justifyContent: 'space-between',

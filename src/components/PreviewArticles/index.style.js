@@ -5,7 +5,7 @@ export const useStyles = makeStyles(() => ({
 	textDraggableData: {
 		fontWeight: 400,
 		fontSize: '16px',
-		lineHeight: '24px',
+		lineHeight: 1.2,
 		color: 'white'
 	}
 }));
