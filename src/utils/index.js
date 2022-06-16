@@ -18,6 +18,7 @@ export const getDateConstantTime = (dateTime) => {
 	return `${moment(formatted).format('DD-MM-YYYY')} | 23:59 (UTC +0)`;
 };
 
+//16-06-2022
 export const formatDate = (date) => {
 	if (date === null) return null;
 
@@ -32,6 +33,16 @@ export const formatDate = (date) => {
 		mm = '0' + mm;
 	}
 	return `${dd + '-' + mm + '-' + yyyy}`;
+};
+
+//16 July 2022
+export const formatDate2 = (date) => {
+	if (date === null) return null;
+
+	console.log(date, 'date 2');
+
+	let formatted = new Date(date);
+	return `${moment(formatted).format('DD-MMMM-YYYY')}`;
 };
 
 export const getCalendarText = (startDate, endDate) => {

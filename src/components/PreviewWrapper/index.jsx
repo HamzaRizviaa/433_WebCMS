@@ -6,8 +6,7 @@ import goBack from '../../assets/goBack.svg';
 import Comments from '../../assets/Comment.svg';
 import { useStyles } from './index.styles';
 import Avatar from '@mui/material/Avatar';
-// import Close from '@material-ui/icons/Close';
-// import dImage from '../../assets/defaultImage.png';
+import { formatDate2 } from '../../utils';
 
 const PreviewWrapper = ({
 	children,
@@ -22,21 +21,14 @@ const PreviewWrapper = ({
 }) => {
 	const classes = useStyles();
 	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/Profile433.svg`;
+	const date = formatDate2(new Date());
 
 	return (
-		<div
-			className={classes.previewWrapper}
-			style={{ height: '596px', overflowY: 'auto', padding: '5px 10px' }}
-		>
+		<div className={classes.previewWrapper}>
 			<div
+				className={classes.backgroundSet}
 				style={{
-					backgroundImage: `url(${backgroundImage})`,
-					// width: '250px',
-					backgroundRepeat: 'no-repeat',
-					backgroundSize: 'cover',
-					backgroundPosition: 'center',
-					padding: '10px'
-					// opacity: 0.4
+					backgroundImage: `url(${backgroundImage})`
 				}}
 			>
 				<div className={classes.topIcons}>
@@ -75,10 +67,12 @@ const PreviewWrapper = ({
 							<Avatar src={authorImage ? authorImage : Profile433} />
 						</div>
 						<div className={classes.authorSection}>
-							<div className={classes.authorname}>{authorName}</div>
+							<div className={classes.authorname}>
+								{authorName ? authorName : '-'}
+							</div>
 							{/* 433 Content Team */}
 							<div className={classes.postDateDetails}>
-								31 May 2022 - 10 min read
+								{date} - 10 min read
 							</div>
 						</div>
 					</div>

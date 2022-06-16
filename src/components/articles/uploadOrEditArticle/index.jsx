@@ -1444,11 +1444,10 @@ const UploadOrEditViral = ({
 												{data.map((item, index) => {
 													return (
 														<div key={index}>
-															{/* {item.element_type} */}
 															{item.element_type === 'MEDIA' ? (
-																<ImagePreview data={data} />
+																<ImagePreview data={item} />
 															) : item.element_type === 'TEXT' ? (
-																<TextPreview data={data} />
+																<TextPreview data={item} />
 															) : (
 																''
 															)}
