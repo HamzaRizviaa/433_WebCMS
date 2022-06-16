@@ -24,7 +24,7 @@ const PreviewWrapper = ({
 	const date = formatDate2(new Date());
 
 	return (
-		<div className={classes.previewWrapper}>
+		<div className={classes.previewWrapper} style={{ overflowY: 'auto' }}>
 			<div
 				className={classes.backgroundSet}
 				style={{
