@@ -743,46 +743,43 @@ const UploadOrEditViral = ({
 	};
 
 	const checkNewElementDescription = (elements, data) => {
-		// console.log('Eleemtns', elements, data);
 		let result;
 		for (let i = 0; i < elements?.length; i++) {
-			if (data[i]?.data[0].description !== '') {
-				if (data[i]?.data[0]?.description === elements[i]?.description) {
-					result = true;
+			let sortOrder = elements[i].sort_order - 1;
+			if (elements.length === data.length) {
+				if (data[i]?.data[0].description !== '') {
+					if (
+						data[i]?.data[0]?.description === elements[sortOrder]?.description
+					) {
+						result = true;
+					} else {
+						result = false;
+					}
 				} else {
-					result = false;
+					return true;
 				}
 			} else {
-				return true;
+				return !checkEmptyDescription(data);
 			}
 		}
-		console.log('Result', result);
 		return result;
 	};
 
-	// const checkEmptyDescription = (data) => {
-	// 	const filteredData = data.filter((item) => item.element_type === 'TEXT');
-	// 	const validatedData = filteredData.map((item) => {
-	// 		if (item.data) {
-	// 			if (item.data[0].description === '') {
-	// 				console.log('not empty here');
-	// 				return true;
-	// 			}
-	// 		} else {
-	// 			return false;
-	// 		}
-	// 	});
-	// 	console.log(
-	// 		'Empty',
-	// 		validatedData,
-	// 		!validatedData.every((item) => item === true)
-	// 	);
-	// 	return validatedData.every((item) => item === undefined || item === true);
-	// };
+	const checkEmptyDescription = (data) => {
+		const filteredData = data.filter((item) => item.element_type === 'TEXT');
+		const validatedData = filteredData.map((item) => {
+			if (item.data) {
+				return !item.data[0].description ? false : true;
+			} else {
+				return false;
+			}
+		});
+		return validatedData.every((item) => item === true);
+	};
 
-	useEffect(() => {
-		// console.log(!checkEmptyDescription(data));
-	}, [data, specificArticle]);
+	// useEffect(() => {
+	// 	// console.log(!checkEmptyDescription(data));
+	// }, [data, specificArticle]);
 
 	const checkNewElementTwitter = (elements, data) => {
 		console.log('Twitter', elements, data);
@@ -846,7 +843,7 @@ const UploadOrEditViral = ({
 				specificArticle?.file_name === form.uploadedFiles[0]?.file_name,
 				comparingFields(specificArticle, form, true),
 				comparingFields(specificArticle, form),
-				// checkEmptyDescription(data),
+				// !checkEmptyDescription(data),
 				checkNewElementDescription(
 					filteringByType(specificArticle?.elements, 'TEXT'),
 					filteringByType(data, 'TEXT')

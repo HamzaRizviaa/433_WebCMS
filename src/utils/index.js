@@ -39,8 +39,6 @@ export const formatDate = (date) => {
 export const formatDate2 = (date) => {
 	if (date === null) return null;
 
-	console.log(date, 'date 2');
-
 	let formatted = new Date(date);
 	return `${moment(formatted).format('DD-MMMM-YYYY')}`;
 };
