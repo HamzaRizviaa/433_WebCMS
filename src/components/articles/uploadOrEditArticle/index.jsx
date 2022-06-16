@@ -844,47 +844,6 @@ const UploadOrEditViral = ({
 		return validatedData.every((item) => item === true);
 	};
 
-	// useEffect(() => {
-	// 	// console.log(!checkEmptyDescription(data));
-	// }, [data, specificArticle]);
-
-	// previous twitter function
-	// const checkNewElementTwitter = (elements, data) => {
-	// 	console.log('Twitter', elements, data);
-	// 	for (let i = 0; i < data.length; i++) {
-	// 		if (data[i]?.data) {
-	// 			if (data[i]?.data[0]?.twitter_post_url !== '') {
-	// 				if (
-	// 					data[i]?.data[0]?.twitter_post_url === elements[i]?.twitter_post_url
-	// 				) {
-	// 					return true;
-	// 				} else {
-	// 					return false;
-	// 				}
-	// 			} else {
-	// 				return true;
-	// 			}
-	// 		}
-	// 	}
-	// };
-
-	// const checkNewElementIG = (elements, data) => {
-	// 	console.log('IG', elements, data);
-	// 	for (let i = 0; i < data.length; i++) {
-	// 		if (data[i]?.data) {
-	// 			if (data[i]?.data[0]?.ig_post_url !== '') {
-	// 				if (data[i]?.data[0]?.ig_post_url === elements[i]?.ig_post_url) {
-	// 					return true;
-	// 				} else {
-	// 					return false;
-	// 				}
-	// 			} else {
-	// 				return true;
-	// 			}
-	// 		}
-	// 	}
-	// };
-
 	const comparingFields = (specificArticle, form, textFeilds = false) => {
 		if (textFeilds) {
 			return (
@@ -905,34 +864,12 @@ const UploadOrEditViral = ({
 		return data?.filter((item) => item.element_type === elementType);
 	};
 
-	const checkingDataFields = (data) => {
-		data.map((item) => {
-			if (item.data) {
-				return Object.keys(item.data[0]).map((dataKey) => {
-					console.log(dataKey);
-					if (dataKey === 'dropbox_url') {
-						return validatedData.push(false);
-					} else {
-						return item.data[0][dataKey] === ''
-							? validatedData.push(true)
-							: validatedData.push(false);
-					}
-				});
-			} else {
-				validatedData.push(true);
-			}
-		});
-		console.log('validatedData', validatedData);
-		return validatedData.some((item) => item === true);
-	};
-
 	useEffect(() => {
 		if (specificArticle) {
 			const validationArray = [
 				specificArticle?.file_name === form.uploadedFiles[0]?.file_name,
 				comparingFields(specificArticle, form, true),
 				comparingFields(specificArticle, form),
-				// !checkEmptyDescription(data),
 				checkNewElementDescription(
 					filteringByType(specificArticle?.elements, 'TEXT'),
 					filteringByType(data, 'TEXT')
