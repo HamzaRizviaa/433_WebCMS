@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { useStyles } from './index.style';
 import { Markup } from 'interweave';
 const TextPreview = ({ data }) => {
-	console.log(data, '======== text preview');
 	const classes = useStyles();
 
 	// useEffect(() => {

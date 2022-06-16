@@ -743,38 +743,46 @@ const UploadOrEditViral = ({
 	};
 
 	const checkNewElementDescription = (elements, data) => {
-		console.log('Elemets', elements, data);
+		// console.log('Eleemtns', elements, data);
 		let result;
-		for (let i = 0; i < data.length; i++) {
-			if (data[i]?.data) {
+		for (let i = 0; i < elements?.length; i++) {
+			if (data[i]?.data[0].description !== '') {
 				if (data[i]?.data[0]?.description === elements[i]?.description) {
 					result = true;
 				} else {
 					result = false;
 				}
 			} else {
-				result = true;
+				return true;
 			}
 		}
+		console.log('Result', result);
 		return result;
 	};
 
-	const checkEmptyDescription = (data) => {
-		const filteredData = data.filter((item) => item.element_type === 'TEXT');
-		const validatedData = filteredData.map((item) => {
-			if (item.data) {
-				return !item.data[0].description ? false : true;
-			} else {
-				return false;
-			}
-		});
-		console.log('validatedData', validatedData);
-		return validatedData.every((item) => item === true);
-	};
+	// const checkEmptyDescription = (data) => {
+	// 	const filteredData = data.filter((item) => item.element_type === 'TEXT');
+	// 	const validatedData = filteredData.map((item) => {
+	// 		if (item.data) {
+	// 			if (item.data[0].description === '') {
+	// 				console.log('not empty here');
+	// 				return true;
+	// 			}
+	// 		} else {
+	// 			return false;
+	// 		}
+	// 	});
+	// 	console.log(
+	// 		'Empty',
+	// 		validatedData,
+	// 		!validatedData.every((item) => item === true)
+	// 	);
+	// 	return validatedData.every((item) => item === undefined || item === true);
+	// };
 
 	useEffect(() => {
-		console.log(checkEmptyDescription(data));
-	}, [data]);
+		// console.log(!checkEmptyDescription(data));
+	}, [data, specificArticle]);
 
 	const checkNewElementTwitter = (elements, data) => {
 		console.log('Twitter', elements, data);
@@ -812,52 +820,60 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	useEffect(() => {
-		if (specificArticle) {
-			setEditBtnDisabled(
-				postButtonStatus ||
-					!validateForm(form, data) ||
-					(specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
-						specificArticle?.title?.trim() === form?.title?.trim() &&
-						specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
-						specificArticle?.dropbox_url?.trim() ===
-							form?.dropbox_url?.trim() &&
-						specificArticle?.author_text?.trim() ===
-							form?.author_text?.trim() &&
-						specificArticle?.show_likes === form.show_likes &&
-						specificArticle?.show_comments === form.show_comments &&
-						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
-						specificArticle.elements.length === data.length &&
-						checkNewElementDescription(
-							specificArticle.elements.filter(
-								(item) => item.element_type === 'TEXT'
-							),
-							data.filter((item) => item.element_type === 'TEXT')
-						) &&
-						!checkEmptyDescription(data) &&
-						checkNewElementTwitter(
-							specificArticle.elements.filter(
-								(item) => item.element_type === 'TWITTER'
-							),
-							data.filter((item) => item.element_type === 'TWITTER')
-						) &&
-						checkNewElementIG(
-							specificArticle.elements.filter(
-								(item) => item.element_type === 'IG'
-							),
-							data.filter((item) => item.element_type === 'IG')
-						) &&
-						!checkNewElementFile(
-							data.filter((item) => item.element_type === 'MEDIA')
-						) &&
-						!checkNewAuthorImage())
+	const comparingFields = (specificArticle, form, textFeilds = false) => {
+		if (textFeilds) {
+			return (
+				specificArticle?.title?.trim() === form?.title?.trim() &&
+				specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
+				specificArticle?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
+				specificArticle?.author_text?.trim() === form?.author_text?.trim()
+			);
+		} else {
+			return (
+				specificArticle?.show_likes === form.show_likes &&
+				specificArticle?.show_comments === form.show_comments
 			);
 		}
-	}, [specificArticle, editorTextChecker, form]);
+	};
+
+	const filteringByType = (data, elementType) => {
+		return data?.filter((item) => item.element_type === elementType);
+	};
 
 	useEffect(() => {
-		setEditBtnDisabled(!checkEmptyDescription(data));
-	}, [data]);
+		if (specificArticle) {
+			const validationArray = [
+				specificArticle?.file_name === form.uploadedFiles[0]?.file_name,
+				comparingFields(specificArticle, form, true),
+				comparingFields(specificArticle, form),
+				// checkEmptyDescription(data),
+				checkNewElementDescription(
+					filteringByType(specificArticle?.elements, 'TEXT'),
+					filteringByType(data, 'TEXT')
+				)
+			];
+			console.log(
+				validationArray,
+				!validationArray.every((item) => item === true)
+			);
+			setEditBtnDisabled(
+				postButtonStatus ||
+					// !validateForm(form, data) ||
+					validationArray.every((item) => item === true)
+				// )
+				// checkNewElementTwitter(
+				// 	filteringByType(specificArticle.elements, 'TWITTER'),
+				// 	filteringByType(data, 'TWITTER')
+				// ) &&
+				// checkNewElementIG(
+				// 	filteringByType(specificArticle.elements, 'IG'),
+				// 	filteringByType(data, 'IG')
+				// ) &&
+				// !checkNewElementFile(filteringByType(data, 'MEDIA')) &&
+				// !checkNewAuthorImage()
+			);
+		}
+	}, [specificArticle, form, data]);
 
 	useEffect(() => {
 		if (specificArticle) {
