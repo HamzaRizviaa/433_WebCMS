@@ -900,13 +900,15 @@ const UploadOrEditViral = ({
 					filteringByType(data, 'IG')
 				),
 				!checkNewElementFile(filteringByType(data, 'MEDIA')),
-				!checkNewAuthorImage()
+				!checkNewAuthorImage(),
+				data?.length !== 0
 			];
 			const validationEmptyArray = [
 				checkEmptyDescription(data),
 				checkEmptyTwitter(data),
 				checkEmptyIG(data),
-				!checkNewElementFile(filteringByType(data, 'MEDIA'))
+				!checkNewElementFile(filteringByType(data, 'MEDIA')),
+				data?.length !== 0
 			];
 			if (
 				!validateForm(form, data) ||
