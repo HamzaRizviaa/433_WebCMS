@@ -1,4 +1,4 @@
-const validateForm = (form, dataElements) => {
+const validateForm = (form) => {
 	var validate = Object.keys(form).map((key) => {
 		if (typeof form[key] === 'string') {
 			if (key.includes('dropbox_url')) {
@@ -34,14 +34,14 @@ const validateForm = (form, dataElements) => {
 		}
 	});
 
-	var validateData = true;
-	if (dataElements?.length) {
-		validateData = dataElements.every((dataFile) => dataFile.data);
-	} else if (dataElements?.length === 0) {
-		validateData = false;
-	}
+	// var validateData = true;
+	// if (dataElements?.length) {
+	// 	validateData = dataElements.every((dataFile) => dataFile.data);
+	// } else if (dataElements?.length === 0) {
+	// 	validateData = false;
+	// }
 
-	var finalFormValue = validate.every((item) => item === true) && validateData;
+	var finalFormValue = validate.every((item) => item === true);
 
 	return finalFormValue;
 };
