@@ -736,11 +736,59 @@ const UploadOrEditViral = ({
 	};
 
 	const checkNewElementFile = (data) => {
+		console.log('data of media', data);
 		return data.some((item) => {
 			if (item?.data) {
-				return item?.data[0]?.file;
+				return item?.data[0]?.file ? true : false;
 			}
 		});
+	};
+
+	const checkNewElementMedia = (elements, data) => {
+		let result;
+		if (data.length === 0) {
+			result = true;
+		} else {
+			for (let i = 0; i < elements?.length; i++) {
+				if (elements.length === data.length) {
+					if (data[i].data && data[i]?.data[0].media_url !== '') {
+						console.log('AQ');
+						if (data[i]?.data[0]?.file_name === elements[i]?.file_name) {
+							console.log('AQ2');
+							result = true;
+						} else {
+							result = false;
+						}
+					} else {
+						return true;
+					}
+				} else {
+					return !checkEmptyMedia(data);
+				}
+			}
+		}
+		return result;
+	};
+
+	const checkEmptyMedia = (data) => {
+		const filteredData = data.filter((item) => item.element_type === 'MEDIA');
+		const validatedData = filteredData.map((item) => {
+			if (item.data) {
+				return !item.data[0].media_url ? false : true;
+			} else {
+				return false;
+			}
+		});
+		return validatedData.every((item) => item === true);
+	};
+
+	const checkSortOrderOnEdit = (specificArticle, data) => {
+		let result = [];
+		for (let i = 0; i < data?.length; i++) {
+			result.push(specificArticle.elements[i].sort_order === data[i].sortOrder);
+		}
+
+		return result.some((item) => item === false);
 	};
 
 	const checkNewElementDescription = (elements, data) => {
@@ -877,8 +925,19 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (specificArticle) {
+			const validationEmptyArray = [
+				checkEmptyDescription(data),
+				checkEmptyTwitter(data),
+				checkEmptyIG(data),
+				checkEmptyMedia(data),
+				// checkNewElementFile(filteringByType(data, 'MEDIA')),
+				data?.length !== 0
+			];
+
 			setEditBtnDisabled(
-				!validateForm(form, data) || comparingFields(specificArticle, form)
+				!validateForm(form, data) ||
+					comparingFields(specificArticle, form) ||
+					!validationEmptyArray.every((item) => item === true)
 			);
 		}
 		console.log('form');
@@ -899,17 +958,23 @@ const UploadOrEditViral = ({
 					filteringByType(specificArticle?.elements, 'IG'),
 					filteringByType(data, 'IG')
 				),
-				!checkNewElementFile(filteringByType(data, 'MEDIA')),
-				!checkNewAuthorImage(),
+				checkNewElementMedia(
+					filteringByType(specificArticle?.elements, 'MEDIA'),
+					filteringByType(data, 'MEDIA')
+				),
+				// checkNewElementFile(filteringByType(data, 'MEDIA')),
 				data?.length !== 0
 			];
 			const validationEmptyArray = [
 				checkEmptyDescription(data),
 				checkEmptyTwitter(data),
 				checkEmptyIG(data),
-				!checkNewElementFile(filteringByType(data, 'MEDIA')),
+				checkEmptyMedia(data),
+				// checkNewElementFile(filteringByType(data, 'MEDIA')),
 				data?.length !== 0
 			];
+
+			// console.log(validationEmptyArray, 'please chal ja');
 			if (
 				!validateForm(form, data) ||
 				!comparingFields(specificArticle, form)
