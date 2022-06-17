@@ -751,7 +751,7 @@ const UploadOrEditViral = ({
 		} else {
 			for (let i = 0; i < elements?.length; i++) {
 				if (elements.length === data.length) {
-					if (data[i].data && data[i]?.data[0].media_url !== '') {
+					if (data[i].data && data[i]?.data[0].file_name !== '') {
 						console.log('AQ');
 						if (data[i]?.data[0]?.file_name === elements[i]?.file_name) {
 							console.log('AQ2');
