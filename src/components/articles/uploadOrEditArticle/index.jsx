@@ -1051,60 +1051,60 @@ const UploadOrEditViral = ({
 
 			if (isEdit) {
 				console.log('edit article on draft');
-				// if (specificArticle?.title?.trim() !== form.title?.trim()) {
-				// 	if (
-				// 		(await handleTitleDuplicate(form.title)) ===
-				// 		'The Title Already Exist'
-				// 	) {
-				// 		setIsError({ articleTitleExists: 'This title already exists' });
-				// 		setTimeout(() => {
-				// 			setIsError({});
-				// 		}, [5000]);
+				if (specificArticle?.title?.trim() !== form.title?.trim()) {
+					if (
+						(await handleTitleDuplicate(form.title)) ===
+						'The Title Already Exist'
+					) {
+						setIsError({ articleTitleExists: 'This title already exists' });
+						setTimeout(() => {
+							setIsError({});
+						}, [5000]);
 
-				// 		setPostButtonStatus(false);
-				// 		return;
-				// 	}
-				// }
-				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-				// 	if (_file.file) {
-				// 		return await uploadFileToServer(_file, 'articleLibrary');
-				// 	} else {
-				// 		return _file;
-				// 	}
-				// });
+						setPostButtonStatus(false);
+						return;
+					}
+				}
+				let uploadFilesPromiseArray = form.uploadedFiles[0];
+				if (form.uploadedFiles[0] && form.uploadedFiles[0]?.file) {
+					let uploadFilesPromiseArray = await uploadFileToServer(
+						form.uploadedFiles[0],
+						'articleLibrary'
+					);
+				}
 
-				// let uploadAuthorImagePromiseArray = form.author_image.map(
-				// 	async (_file) => {
-				// 		if (_file.file) {
-				// 			return uploadFileToServer(_file, 'articleLibrary');
-				// 		} else {
-				// 			return _file;
-				// 		}
-				// 	}
-				// );
+				let uploadAuthorImagePromiseArray = form.author_image[0];
+				if (form.author_image[0] && form.author_image[0]?.file) {
+					let uploadAuthorImagePromiseArray = await uploadFileToServer(
+						form.author_image[0],
+						'articleLibrary'
+					);
+				}
 
-				// let dataMedia;
-				// if (data.length) {
-				// 	dataMedia = data.map(async (item) => {
-				// 		if (item.element_type === 'MEDIA' && item.data[0].file) {
-				// 			return await uploadFileToServer(item.data[0], 'articleLibrary');
-				// 		} else {
-				// 			return item;
-				// 		}
-				// 	});
-				// }
+				let dataMedia;
+				if (data.length) {
+					dataMedia = data.map(async (item) => {
+						if (item.element_type === 'MEDIA' && item.data[0].file) {
+							return await uploadFileToServer(item.data[0], 'articleLibrary');
+						} else {
+							return item;
+						}
+					});
+				}
 
-				// Promise.all([
-				// 	...uploadFilesPromiseArray,
-				// 	...uploadAuthorImagePromiseArray,
-				// 	...dataMedia
-				// ])
-				// 	.then((mediaFiles) => {
-				// 		createArticle(specificArticle?.id, mediaFiles);
-				// 	})
-				// 	.catch(() => {
-				// 		setIsLoading(false);
-				// 	});
+				try {
+					createArticle(
+						specificArticle?.id,
+						[
+							uploadFilesPromiseArray && uploadFilesPromiseArray,
+							uploadAuthorImagePromiseArray && uploadAuthorImagePromiseArray,
+							dataMedia && dataMedia[0]
+						],
+						true
+					);
+				} catch {
+					setIsLoading(false);
+				}
 			} else {
 				if (
 					(await handleTitleDuplicate(form.title)) === 'The Title Already Exist'

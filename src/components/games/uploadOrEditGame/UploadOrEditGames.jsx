@@ -107,7 +107,7 @@ const UploadOreditArcade = ({
 
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
-	
+
 	const loadingRef = useRef(null);
 	const gameExplanationOrientation = ['PORTRAIT', 'LANDSCAPE'];
 	const gameOrientationArray = ['PORTRAIT', 'LANDSCAPE'];
@@ -887,7 +887,7 @@ const UploadOreditArcade = ({
 				// 	});
 			} else {
 				setIsLoadingcreateViral(true);
-				// edit draft
+				// new draft
 				let uploadedFile; // first
 				let uploadedExplanationOrIcon; // second
 
