@@ -3,20 +3,29 @@ import { makeStyles } from '@material-ui/core';
 
 export const useStyles = makeStyles(() => ({
 	previewWrapper: {
-		height: '596px',
-		padding: '5px 10px'
+		height: '596px'
+		// padding: '5px 10px'
 	},
 	backgroundSet: {
 		backgroundRepeat: 'no-repeat',
 		backgroundSize: 'cover',
-		backgroundPosition: 'center',
-		padding: '10px'
+		backgroundPosition: 'center'
 	},
 	topIcons: {
 		display: 'flex',
 		justifyContent: 'space-between',
-		padding: '2px'
+		padding: '2px',
+		marginTop: '4px'
 	},
+	topMobileIcons: {
+		display: 'flex',
+		justifyContent: 'space-between',
+		padding: '2px',
+		height: '20px',
+		backgroundColor: 'black'
+	},
+	mobileTopBars: { display: 'flex', padding: '2px 4px' },
+	mobileIcons: { marginLeft: '3px', height: '10px' },
 	icons: {
 		width: '48px',
 		height: '48px',

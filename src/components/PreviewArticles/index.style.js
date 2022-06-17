@@ -12,7 +12,8 @@ export const useStyles = makeStyles(() => ({
 	imageDraggableData: {
 		maxWidth: '100%',
 		'& >img': {
-			borderRadius: '8px'
+			borderRadius: '8px',
+			maxWidth: '100%'
 		}
 	}
 }));

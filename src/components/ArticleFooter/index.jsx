@@ -8,7 +8,7 @@ const ArticleFooter = ({
 	buttonText,
 	isEdit,
 	form,
-	dataElement,
+
 	status,
 	deleteBtnStatus,
 	toggleDeleteModal,
@@ -61,7 +61,7 @@ const ArticleFooter = ({
 
 				<div
 					className={
-						isEdit && validateForm(form, dataElement)
+						isEdit && validateForm(form)
 							? classes.addMediaBtn
 							: isEdit
 							? classes.addMediaBtnEdit
@@ -70,11 +70,11 @@ const ArticleFooter = ({
 				>
 					<Button
 						disabled={
-							isEdit && validateForm(form, dataElement) && status === 'draft'
+							isEdit && validateForm(form) && status === 'draft'
 								? false
 								: isEdit
 								? editBtnDisabled
-								: !validateForm(form, dataElement)
+								: !validateForm(form)
 						}
 						button2AddSave={true}
 						text={buttonText}
@@ -100,6 +100,5 @@ ArticleFooter.propTypes = {
 	handleDraftSave: PropTypes.func.isRequired,
 	validateForm: PropTypes.func.isRequired,
 	editBtnDisabled: PropTypes.bool.isRequired,
-	handleAddSaveBtn: PropTypes.func.isRequired,
-	dataElement: PropTypes.array.isRequired
+	handleAddSaveBtn: PropTypes.func.isRequired
 };
