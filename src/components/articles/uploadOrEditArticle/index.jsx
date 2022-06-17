@@ -56,7 +56,7 @@ import {
 } from '../../../pages/ArticleLibrary/articleLibrarySlice';
 
 import LoadingOverlay from 'react-loading-overlay';
-import { ConstructionOutlined } from '@mui/icons-material';
+// import { ConstructionOutlined } from '@mui/icons-material';
 
 const UploadOrEditViral = ({
 	open,
@@ -399,8 +399,8 @@ const UploadOrEditViral = ({
 	};
 
 	useEffect(() => {
-		validateForm(form, data);
-	}, [form, data]);
+		validateForm(form);
+	}, [form]);
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
@@ -861,7 +861,8 @@ const UploadOrEditViral = ({
 			specificArticle?.author_text?.trim() === form?.author_text?.trim() &&
 			specificArticle?.show_likes === form.show_likes &&
 			specificArticle?.show_comments === form.show_comments &&
-			specificArticle?.file_name === form.uploadedFiles[0]?.file_name
+			specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
+			!checkNewAuthorImage()
 		);
 	};
 
@@ -871,19 +872,29 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (specificArticle) {
-			setEditBtnDisabled(postButtonStatus || !validateForm(form, data));
+			setEditBtnDisabled(postButtonStatus || !validateForm(form));
 		}
 	}, [specificArticle]);
 
 	useEffect(() => {
 		if (specificArticle) {
+			const validationEmptyArray = [
+				checkEmptyDescription(data),
+				checkEmptyTwitter(data),
+				checkEmptyIG(data),
+				!checkNewElementFile(filteringByType(data, 'MEDIA')),
+				data?.length !== 0
+			];
+
 			setEditBtnDisabled(
-				!validateForm(form, data) || comparingFields(specificArticle, form)
+				!validateForm(form) ||
+					comparingFields(specificArticle, form) ||
+					!validationEmptyArray.every((item) => item === true)
 			);
 		}
-		console.log('form');
 	}, [form]);
 
+	console.log(specificArticle?.elements, 'specific');
 	useEffect(() => {
 		if (specificArticle) {
 			const validationCompleteArray = [
@@ -899,28 +910,37 @@ const UploadOrEditViral = ({
 					filteringByType(specificArticle?.elements, 'IG'),
 					filteringByType(data, 'IG')
 				),
-				!checkNewElementFile(filteringByType(data, 'MEDIA')),
-				!checkNewAuthorImage()
+				checkNewElementFile(filteringByType(data, 'MEDIA')),
+				data?.length !== 0
+				// specificArticle?.elements?.length === data?.length
 			];
+
 			const validationEmptyArray = [
 				checkEmptyDescription(data),
 				checkEmptyTwitter(data),
 				checkEmptyIG(data),
-				!checkNewElementFile(filteringByType(data, 'MEDIA'))
+				checkNewElementFile(filteringByType(data, 'MEDIA')),
+				data?.length !== 0
 			];
-			if (
-				!validateForm(form, data) ||
-				!comparingFields(specificArticle, form)
-			) {
+
+			if (!validateForm(form) || !comparingFields(specificArticle, form)) {
 				console.log('Empty check');
 				setEditBtnDisabled(
 					!validationEmptyArray.every((item) => item === true)
 				);
 			} else {
-				console.log('Not Empty check');
-				setEditBtnDisabled(
-					validationCompleteArray.every((item) => item === true)
-				);
+				if (specificArticle?.elements?.length !== data?.length) {
+					console.log('disable ');
+					setEditBtnDisabled(
+						!validationEmptyArray.every((item) => item === true)
+					);
+				} else {
+					console.log('Not Empty check');
+					setEditBtnDisabled(
+						validationCompleteArray.every((item) => item === true) ||
+							!validationEmptyArray.every((item) => item === true)
+					);
+				}
 			}
 		}
 		console.log('data');
@@ -1106,10 +1126,7 @@ const UploadOrEditViral = ({
 	};
 
 	const handleAddSaveBtn = async () => {
-		if (
-			!validateForm(form, data) ||
-			(editBtnDisabled && status === 'published')
-		) {
+		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
 			validateArticleBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -1536,7 +1553,6 @@ const UploadOrEditViral = ({
 									buttonText={buttonText}
 									isEdit={isEdit}
 									form={form}
-									dataElement={data}
 									setForm={setForm}
 									status={status}
 									deleteBtnStatus={deleteBtnStatus}
