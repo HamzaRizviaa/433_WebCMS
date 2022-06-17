@@ -752,9 +752,7 @@ const UploadOrEditViral = ({
 			for (let i = 0; i < elements?.length; i++) {
 				if (elements.length === data.length) {
 					if (data[i].data && data[i]?.data[0].file_name !== '') {
-						console.log('AQ');
 						if (data[i]?.data[0]?.file_name === elements[i]?.file_name) {
-							console.log('AQ2');
 							result = true;
 						} else {
 							result = false;
@@ -780,15 +778,6 @@ const UploadOrEditViral = ({
 			}
 		});
 		return validatedData.every((item) => item === true);
-	};
-
-	const checkSortOrderOnEdit = (specificArticle, data) => {
-		let result = [];
-		for (let i = 0; i < data?.length; i++) {
-			result.push(specificArticle.elements[i].sort_order === data[i].sortOrder);
-		}
-
-		return result.some((item) => item === false);
 	};
 
 	const checkNewElementDescription = (elements, data) => {
@@ -924,6 +913,14 @@ const UploadOrEditViral = ({
 		}
 	}, [specificArticle]);
 
+	const checkSortOrderOnEdit = (specificArticle, data) => {
+		let result = [];
+		for (let i = 0; i < data?.length; i++) {
+			result.push(specificArticle.elements[i].sort_order === data[i].sortOrder);
+		}
+		return result.some((item) => item === false);
+	};
+
 	useEffect(() => {
 		if (specificArticle) {
 			const validationEmptyArray = [
@@ -992,15 +989,21 @@ const UploadOrEditViral = ({
 						!validationEmptyArray.every((item) => item === true)
 					);
 				} else {
-					console.log('Not Empty check');
-					setEditBtnDisabled(
+					if (
 						validationCompleteArray.every((item) => item === true) ||
-							!validationEmptyArray.every((item) => item === true)
-					);
+						!validationEmptyArray.every((item) => item === true)
+					) {
+						setEditBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
+					} else {
+						console.log('Not Empty check');
+						setEditBtnDisabled(
+							validationCompleteArray.every((item) => item === true) ||
+								!validationEmptyArray.every((item) => item === true)
+						);
+					}
 				}
 			}
 		}
-		console.log('data');
 	}, [data]);
 
 	useEffect(() => {
