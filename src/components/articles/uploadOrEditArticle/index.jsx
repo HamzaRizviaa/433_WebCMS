@@ -583,12 +583,12 @@ const UploadOrEditViral = ({
 	};
 
 	const setNewData = (childData, index) => {
-		setForm((prev) => {
-			return {
-				...prev,
-				elementMediaFiles: [...form.elementMediaFiles, childData]
-			};
-		});
+		// setForm((prev) => {
+		// 	return {
+		// 		...prev,
+		// 		elementMediaFiles: [...form.elementMediaFiles, childData]
+		// 	};
+		// });
 		let dataCopy = [...data];
 		dataCopy[index].data = { ...childData };
 		setData(dataCopy);
@@ -748,7 +748,7 @@ const UploadOrEditViral = ({
 		for (let i = 0; i < elements?.length; i++) {
 			let sortOrder = elements[i].sort_order - 1;
 			if (elements.length === data.length) {
-				if (data[i]?.data[0].description !== '') {
+				if (data[i].data && data[i]?.data[0].description !== '') {
 					if (
 						data[i]?.data[0]?.description === elements[sortOrder]?.description
 					) {
@@ -792,21 +792,26 @@ const UploadOrEditViral = ({
 
 	const checkNewElementTwitter = (elements, data) => {
 		let result;
-		for (let i = 0; i < elements?.length; i++) {
-			if (elements.length === data.length) {
-				if (data[i]?.data[0].twitter_post_url !== '') {
-					if (
-						data[i]?.data[0]?.twitter_post_url === elements[i]?.twitter_post_url
-					) {
-						result = true;
+		if (data.length === 0) {
+			result = true;
+		} else {
+			for (let i = 0; i < elements?.length; i++) {
+				if (elements.length === data.length) {
+					if (data[i].data && data[i]?.data[0].twitter_post_url !== '') {
+						if (
+							data[i]?.data[0]?.twitter_post_url ===
+							elements[i]?.twitter_post_url
+						) {
+							result = true;
+						} else {
+							result = false;
+						}
 					} else {
-						result = false;
+						return true;
 					}
 				} else {
-					return true;
+					return !checkEmptyTwitter(data);
 				}
-			} else {
-				return !checkEmptyTwitter(data);
 			}
 		}
 		return result;
@@ -814,19 +819,23 @@ const UploadOrEditViral = ({
 
 	const checkNewElementIG = (elements, data) => {
 		let result;
-		for (let i = 0; i < elements?.length; i++) {
-			if (elements.length === data.length) {
-				if (data[i]?.data[0].ig_post_url !== '') {
-					if (data[i]?.data[0]?.ig_post_url === elements[i]?.ig_post_url) {
-						result = true;
+		if (data.length === 0) {
+			result = true;
+		} else {
+			for (let i = 0; i < elements?.length; i++) {
+				if (elements.length === data.length) {
+					if (data[i].data && data[i]?.data[0].ig_post_url !== '') {
+						if (data[i]?.data[0]?.ig_post_url === elements[i]?.ig_post_url) {
+							result = true;
+						} else {
+							result = false;
+						}
 					} else {
-						result = false;
+						return true;
 					}
 				} else {
-					return true;
+					return !checkEmptyIG(data);
 				}
-			} else {
-				return !checkEmptyIG(data);
 			}
 		}
 		return result;
@@ -844,20 +853,16 @@ const UploadOrEditViral = ({
 		return validatedData.every((item) => item === true);
 	};
 
-	const comparingFields = (specificArticle, form, textFeilds = false) => {
-		if (textFeilds) {
-			return (
-				specificArticle?.title?.trim() === form?.title?.trim() &&
-				specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
-				specificArticle?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
-				specificArticle?.author_text?.trim() === form?.author_text?.trim()
-			);
-		} else {
-			return (
-				specificArticle?.show_likes === form.show_likes &&
-				specificArticle?.show_comments === form.show_comments
-			);
-		}
+	const comparingFields = (specificArticle, form) => {
+		return (
+			specificArticle?.title?.trim() === form?.title?.trim() &&
+			specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
+			specificArticle?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
+			specificArticle?.author_text?.trim() === form?.author_text?.trim() &&
+			specificArticle?.show_likes === form.show_likes &&
+			specificArticle?.show_comments === form.show_comments &&
+			specificArticle?.file_name === form.uploadedFiles[0]?.file_name
+		);
 	};
 
 	const filteringByType = (data, elementType) => {
@@ -866,10 +871,22 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (specificArticle) {
-			const validationArray = [
-				specificArticle?.file_name === form.uploadedFiles[0]?.file_name,
-				comparingFields(specificArticle, form, true),
-				comparingFields(specificArticle, form),
+			setEditBtnDisabled(postButtonStatus || !validateForm(form, data));
+		}
+	}, [specificArticle]);
+
+	useEffect(() => {
+		if (specificArticle) {
+			setEditBtnDisabled(
+				!validateForm(form, data) || comparingFields(specificArticle, form)
+			);
+		}
+		console.log('form');
+	}, [form]);
+
+	useEffect(() => {
+		if (specificArticle) {
+			const validationCompleteArray = [
 				checkNewElementDescription(
 					filteringByType(specificArticle?.elements, 'TEXT'),
 					filteringByType(data, 'TEXT')
@@ -881,27 +898,33 @@ const UploadOrEditViral = ({
 				checkNewElementIG(
 					filteringByType(specificArticle?.elements, 'IG'),
 					filteringByType(data, 'IG')
-				)
+				),
+				!checkNewElementFile(filteringByType(data, 'MEDIA')),
+				!checkNewAuthorImage()
 			];
-			setEditBtnDisabled(
-				postButtonStatus ||
-					// !validateForm(form, data) ||
-
-					validationArray.every((item) => item === true)
-				// )
-				// checkNewElementTwitter(
-				// 	filteringByType(specificArticle.elements, 'TWITTER'),
-				// 	filteringByType(data, 'TWITTER')
-				// ) &&
-				// checkNewElementIG(
-				// 	filteringByType(specificArticle.elements, 'IG'),
-				// 	filteringByType(data, 'IG')
-				// ) &&
-				// !checkNewElementFile(filteringByType(data, 'MEDIA')) &&
-				// !checkNewAuthorImage()
-			);
+			const validationEmptyArray = [
+				checkEmptyDescription(data),
+				checkEmptyTwitter(data),
+				checkEmptyIG(data),
+				!checkNewElementFile(filteringByType(data, 'MEDIA'))
+			];
+			if (
+				!validateForm(form, data) ||
+				!comparingFields(specificArticle, form)
+			) {
+				console.log('Empty check');
+				setEditBtnDisabled(
+					!validationEmptyArray.every((item) => item === true)
+				);
+			} else {
+				console.log('Not Empty check');
+				setEditBtnDisabled(
+					validationCompleteArray.every((item) => item === true)
+				);
+			}
 		}
-	}, [specificArticle, form, data]);
+		console.log('data');
+	}, [data]);
 
 	useEffect(() => {
 		if (specificArticle) {
