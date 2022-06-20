@@ -1582,7 +1582,7 @@ const UploadOrEditViral = ({
 											<PreviewWrapper
 												subCategory={form.subCategory}
 												title={form.title}
-												descrption={'abc'}
+												descrption={form.sub_text}
 												authorName={form.author_text}
 												authorImage={form.author_image[0].media_url}
 												backgroundImage={

@@ -14,7 +14,7 @@ const PreviewWrapper = ({
 	children,
 	subCategory,
 	title,
-	// descrption,
+	descrption,
 	authorImage,
 	authorName,
 	backgroundImage,
@@ -93,7 +93,7 @@ const PreviewWrapper = ({
 								</div>
 							</div>
 						</div>
-						<div className={classes.description}></div>
+						<div className={classes.description}>{descrption}</div>
 					</div>
 				</div>
 			</div>
