@@ -27,12 +27,15 @@ const PreviewWrapper = ({
 	var today = new Date();
 	var time = today.getHours() + ':' + today.getMinutes();
 	return (
-		<div className={classes.previewWrapper} style={{ overflowY: 'auto' }}>
+		<div
+			className={classes.previewWrapper}
+			style={{
+				backgroundImage: `url(${backgroundImage})`,
+				overflowY: 'auto'
+			}}
+		>
 			<div
-				className={classes.backgroundSet}
-				style={{
-					backgroundImage: `url(${backgroundImage})`
-				}}
+			// className={classes.backgroundSet}
 			>
 				<div>
 					<div className={classes.topMobileIcons}>
@@ -46,10 +49,10 @@ const PreviewWrapper = ({
 				</div>
 				<div style={{ padding: '5px 10px' }}>
 					<div className={classes.topIcons}>
-						<div className={classes.icons}>
+						<div className={classes.navIcons}>
 							<img src={goBack} className={classes.goBackIcon} />
 						</div>
-						<div className={classes.icons}>
+						<div className={classes.navIcons}>
 							<img src={Share} className={classes.shareIcon} />
 						</div>
 					</div>
