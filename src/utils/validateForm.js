@@ -36,7 +36,23 @@ const validateForm = (form, dataElements) => {
 
 	var validateData = true;
 	if (dataElements?.length) {
-		validateData = dataElements.every((dataFile) => dataFile.data);
+		validateData = dataElements.every((dataFile) => {
+			if (dataFile.element_type === 'MEDIA') {
+				return dataFile.data;
+			} else if (dataFile.element_type === 'TEXT') {
+				if (dataFile.data) {
+					return dataFile?.data[0]?.description;
+				}
+			} else if (dataFile.element_type === 'IG') {
+				if (dataFile.data) {
+					return dataFile?.data[0]?.ig_post_url;
+				}
+			} else {
+				if (dataFile.data) {
+					return dataFile?.data[0]?.twitter_post_url;
+				}
+			}
+		});
 	} else if (dataElements?.length === 0) {
 		validateData = false;
 	}
