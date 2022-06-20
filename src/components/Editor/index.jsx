@@ -29,7 +29,8 @@ const Articleditor = ({
 	description,
 	onMouseEnter,
 	onBlur,
-	handleEditorChange
+	handleEditorChange,
+	editorId
 }) => {
 	const classes = useStyles();
 
@@ -225,6 +226,7 @@ const Articleditor = ({
 					onEditorChange={() => handleEditorChange()}
 					onMouseEnter={onMouseEnter}
 					onBlur={onBlur}
+					id={editorId}
 					// onMouseEnter={() => setDisableDropdown(false)}
 					// onBlur={() => setDisableDropdown(true)}
 				/>
@@ -237,7 +239,8 @@ Articleditor.propTypes = {
 	description: PropTypes.string.isRequired,
 	handleEditorChange: PropTypes.func,
 	onMouseEnter: PropTypes.func,
-	onBlur: PropTypes.func
+	onBlur: PropTypes.func,
+	editorId: PropTypes.string
 };
 
 export default Articleditor;

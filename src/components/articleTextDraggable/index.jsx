@@ -29,7 +29,9 @@ const ArticleTextDraggable = ({
 		if (initialData?.description) {
 			setTimeout(() => {
 				setDescription(
-					tinyMCE.activeEditor?.setContent(initialData?.description)
+					tinyMCE
+						.get(`text-${item.sortOrder}`)
+						?.setContent(initialData?.description)
 				);
 			}, 500);
 		}
@@ -41,8 +43,12 @@ const ArticleTextDraggable = ({
 	};
 
 	const handleEditorChange = () => {
-		const editorTextContent = tinymce?.activeEditor?.getContent();
-		const textContent = tinymce?.activeEditor?.getContent({ format: 'text' });
+		const editorTextContent = tinymce
+			?.get(`text-${item.sortOrder}`)
+			?.getContent();
+		const textContent = tinymce
+			?.get(`text-${item.sortOrder}`)
+			?.getContent({ format: 'text' });
 		setDescription(editorTextContent);
 		if (textContent === '') {
 			sendDataToParent([{ description: '' }]);
@@ -103,6 +109,7 @@ const ArticleTextDraggable = ({
 						{clickExpandIcon ? (
 							<div className={classes.editorDrag}>
 								<Editor
+									editorId={`text-${item.sortOrder}`}
 									description={description}
 									// onMouseEnter={() => setDisableDropdown(false)}
 									// onBlur={() => setDisableDropdown(true)}

@@ -309,7 +309,7 @@ const UploadOrEditViral = ({
 				};
 			});
 			setData(updateDataFromAPI(specificArticle.elements));
-			setEditorTextChecker(specificArticle?.description);
+			// setEditorTextChecker(specificArticle?.description);
 			setFileHeight(specificArticle?.height);
 			setFileWidth(specificArticle?.width);
 		}
@@ -1428,6 +1428,8 @@ const UploadOrEditViral = ({
 		);
 		setData(items);
 	};
+
+	console.log('Data', data);
 
 	const handleFileWidthHeight = (height, width) => {
 		console.log('Width Height', height, width);
