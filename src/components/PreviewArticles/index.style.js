@@ -17,7 +17,8 @@ export const useStyles = makeStyles(() => ({
 		}
 	},
 	images: {
-		width: '100%'
+		width: '100%',
+		color: 'white'
 	},
 	videos: {
 		width: '100%'
