@@ -15,5 +15,11 @@ export const useStyles = makeStyles(() => ({
 			borderRadius: '8px',
 			maxWidth: '100%'
 		}
+	},
+	images: {
+		width: '100%'
+	},
+	videos: {
+		width: '100%'
 	}
 }));
