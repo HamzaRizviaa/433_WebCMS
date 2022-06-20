@@ -486,6 +486,7 @@ const UploadOrEditQuiz = ({
 	};
 
 	const validatePostBtn = () => {
+		console.log('abc====================');
 		setIsError({
 			endDate: !form.end_date,
 			uploadedFiles: form.uploadedFiles.length < 1,
@@ -572,12 +573,14 @@ const UploadOrEditQuiz = ({
 	}, [editQuestionData, form, convertedDate]);
 
 	// console.log(form, 'form');
-	console.log(form.end_date, 'dft');
+	// console.log(form.end_date, 'dft');
 	// console.log(editQuestionData?.poll_end_date, 'poll');
 	// console.log(convertedDate, 'cd');
 
+	// console.log('validation  ', status, !validateForm(form), editQuizBtnDisabled);
+
 	const handleAddSaveQuizPollBtn = async () => {
-		if (!validateForm(form) || editQuizBtnDisabled) {
+		if (!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')) {
 			validatePostBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -969,7 +972,7 @@ const UploadOrEditQuiz = ({
 
 								<p className={globalClasses.mediaError}>
 									{isError.endDate
-										? 'You need to seelct a date in order to post'
+										? 'You need to select a date in order to post'
 										: ''}
 								</p>
 							</div>
@@ -1133,7 +1136,11 @@ const UploadOrEditQuiz = ({
 													: 'SAVE CHANGES'
 											}
 											disabled={
-												!(editPoll || editQuiz)
+												(editPoll || editQuiz) &&
+												validateForm(form) &&
+												status === 'draft'
+													? false
+													: !(editPoll || editQuiz)
 													? !validateForm(form)
 													: editQuizBtnDisabled
 											}

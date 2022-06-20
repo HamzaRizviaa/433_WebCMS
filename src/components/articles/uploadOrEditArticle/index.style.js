@@ -4,7 +4,8 @@ import theme from '../../../assets/theme';
 
 export const useStyles = makeStyles(() => ({
 	gridDivSmall: {
-		position: 'fixed'
+		position: 'sticky',
+		top: '100px'
 		// height: '100%',
 		// overflow: 'hidden'
 	},

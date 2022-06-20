@@ -3,14 +3,17 @@ import { makeStyles } from '@material-ui/core';
 
 export const useStyles = makeStyles(() => ({
 	previewWrapper: {
-		height: '596px'
-		// padding: '5px 10px'
-	},
-	backgroundSet: {
+		height: '596px',
 		backgroundRepeat: 'no-repeat',
 		backgroundSize: 'cover',
 		backgroundPosition: 'center'
+		// padding: '5px 10px'
 	},
+	// backgroundSet: {
+	// 	backgroundRepeat: 'no-repeat',
+	// 	backgroundSize: 'cover',
+	// 	backgroundPosition: 'center'
+	// },
 	topIcons: {
 		display: 'flex',
 		justifyContent: 'space-between',
@@ -26,34 +29,41 @@ export const useStyles = makeStyles(() => ({
 	},
 	mobileTopBars: { display: 'flex', padding: '2px 4px' },
 	mobileIcons: { marginLeft: '3px', height: '10px' },
+	shareIcon: { height: '18px', paddingTop: '5px' },
 	icons: {
-		width: '48px',
-		height: '48px',
+		width: '40px',
+		height: '40px',
 		background: 'rgba(64, 64, 64, 0.4)',
-		// backdropFilter: 'blur(4px)',
-		/* Note: backdrop-filter has minimal browser support */
-		borderRadius: '48px',
+		borderRadius: '40px',
+		display: 'flex',
+		justifyContent: 'center'
+	},
+	navIcons: {
+		width: '30px',
+		height: '30px',
+		background: 'rgba(64, 64, 64, 0.4)',
+		borderRadius: '30px',
 		display: 'flex',
 		justifyContent: 'center'
 	},
 	goBackIcon: {
-		height: '24px',
-		marginLeft: '-6px',
-		paddingTop: '10px'
+		height: '14px',
+		marginLeft: '-4px',
+		paddingTop: '8px'
 	},
-	shareIcon: { height: '32px', paddingTop: '7px' },
+
 	bottomIcons: {
 		display: 'flex',
 		padding: '2px'
 	},
 	footballIcon: {
-		width: '24px',
-		height: '24px',
+		width: '20px',
+		height: '20px',
 		padding: '11px 0px'
 	},
 	commentIcon: {
-		width: '24px',
-		height: '24px',
+		width: '20px',
+		height: '20px',
 		padding: '11px 0px'
 	},
 	commentbox: {
@@ -70,7 +80,8 @@ export const useStyles = makeStyles(() => ({
 		fontWeight: 800,
 		fontSize: '30px',
 		lineHeight: '54px',
-		color: 'white'
+		color: 'white',
+		overflowWrap: 'anywhere'
 	},
 	authordetails: {
 		display: 'flex',

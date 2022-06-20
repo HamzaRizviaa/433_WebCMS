@@ -56,7 +56,7 @@ import {
 } from '../../../pages/ArticleLibrary/articleLibrarySlice';
 
 import LoadingOverlay from 'react-loading-overlay';
-// import { ConstructionOutlined } from '@mui/icons-material';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 const UploadOrEditViral = ({
 	open,
@@ -302,10 +302,10 @@ const UploadOrEditViral = ({
 						  ]
 						: [{ media_url: Profile433 }]
 					// description:
-					// 	specificArticle?.length === 0
-					// 		? ''
-					// 		: // eslint-disable-next-line no-undef
-					// 		  tinyMCE.activeEditor?.setContent(specificArticle?.description)
+					//  specificArticle?.length === 0
+					//      ? ''
+					//      : // eslint-disable-next-line no-undef
+					//        tinyMCE.activeEditor?.setContent(specificArticle?.description)
 				};
 			});
 			setData(updateDataFromAPI(specificArticle.elements));
@@ -584,10 +584,10 @@ const UploadOrEditViral = ({
 
 	const setNewData = (childData, index) => {
 		// setForm((prev) => {
-		// 	return {
-		// 		...prev,
-		// 		elementMediaFiles: [...form.elementMediaFiles, childData]
-		// 	};
+		//  return {
+		//      ...prev,
+		//      elementMediaFiles: [...form.elementMediaFiles, childData]
+		//  };
 		// });
 		let dataCopy = [...data];
 		dataCopy[index].data = { ...childData };
@@ -615,15 +615,15 @@ const UploadOrEditViral = ({
 			sub_text: !form.sub_text,
 			// elementUnfilled: data?.length ? data.every((item) =>  !item.data) : false,
 			// elementUnfilled: function (index) {
-			// 	if (data?.length) {
-			// 		data.forEach((item, i) => {
-			// 			if (i === index) {
-			// 				return !item.data;
-			// 			}
-			// 		});
-			// 	} else {
-			// 		return false;
-			// 	}
+			//  if (data?.length) {
+			//      data.forEach((item, i) => {
+			//          if (i === index) {
+			//              return !item.data;
+			//          }
+			//      });
+			//  } else {
+			//      return false;
+			//  }
 			// },
 			uploadedFiles: form.uploadedFiles.length < 1,
 			selectedLabels: form.labels.length < 7,
@@ -898,8 +898,7 @@ const UploadOrEditViral = ({
 			specificArticle?.author_text?.trim() === form?.author_text?.trim() &&
 			specificArticle?.show_likes === form.show_likes &&
 			specificArticle?.show_comments === form.show_comments &&
-			specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
-			!checkNewAuthorImage()
+			specificArticle?.file_name === form.uploadedFiles[0]?.file_name
 		);
 	};
 
@@ -929,7 +928,6 @@ const UploadOrEditViral = ({
 				checkEmptyIG(data),
 				checkEmptyMedia(data),
 				// checkNewElementFile(filteringByType(data, 'MEDIA')),
-
 				data?.length !== 0
 			];
 
@@ -939,6 +937,7 @@ const UploadOrEditViral = ({
 					!validationEmptyArray.every((item) => item === true)
 			);
 		}
+		console.log('form');
 	}, [form]);
 
 	useEffect(() => {
@@ -963,7 +962,6 @@ const UploadOrEditViral = ({
 				// checkNewElementFile(filteringByType(data, 'MEDIA')),
 				data?.length !== 0
 			];
-
 			const validationEmptyArray = [
 				checkEmptyDescription(data),
 				checkEmptyTwitter(data),
@@ -1054,60 +1052,60 @@ const UploadOrEditViral = ({
 
 			if (isEdit) {
 				console.log('edit article on draft');
-				if (specificArticle?.title?.trim() !== form.title?.trim()) {
-					if (
-						(await handleTitleDuplicate(form.title)) ===
-						'The Title Already Exist'
-					) {
-						setIsError({ articleTitleExists: 'This title already exists' });
-						setTimeout(() => {
-							setIsError({});
-						}, [5000]);
+				// if (specificArticle?.title?.trim() !== form.title?.trim()) {
+				//  if (
+				//      (await handleTitleDuplicate(form.title)) ===
+				//      'The Title Already Exist'
+				//  ) {
+				//      setIsError({ articleTitleExists: 'This title already exists' });
+				//      setTimeout(() => {
+				//          setIsError({});
+				//      }, [5000]);
 
-						setPostButtonStatus(false);
-						return;
-					}
-				}
-				let uploadFilesPromiseArray = form.uploadedFiles[0];
-				if (form.uploadedFiles[0] && form.uploadedFiles[0]?.file) {
-					let uploadFilesPromiseArray = await uploadFileToServer(
-						form.uploadedFiles[0],
-						'articleLibrary'
-					);
-				}
+				//      setPostButtonStatus(false);
+				//      return;
+				//  }
+				// }
+				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				//  if (_file.file) {
+				//      return await uploadFileToServer(_file, 'articleLibrary');
+				//  } else {
+				//      return _file;
+				//  }
+				// });
 
-				let uploadAuthorImagePromiseArray = form.author_image[0];
-				if (form.author_image[0] && form.author_image[0]?.file) {
-					let uploadAuthorImagePromiseArray = await uploadFileToServer(
-						form.author_image[0],
-						'articleLibrary'
-					);
-				}
+				// let uploadAuthorImagePromiseArray = form.author_image.map(
+				//  async (_file) => {
+				//      if (_file.file) {
+				//          return uploadFileToServer(_file, 'articleLibrary');
+				//      } else {
+				//          return _file;
+				//      }
+				//  }
+				// );
 
-				let dataMedia;
-				if (data.length) {
-					dataMedia = data.map(async (item) => {
-						if (item.element_type === 'MEDIA' && item.data[0].file) {
-							return await uploadFileToServer(item.data[0], 'articleLibrary');
-						} else {
-							return item;
-						}
-					});
-				}
+				// let dataMedia;
+				// if (data.length) {
+				//  dataMedia = data.map(async (item) => {
+				//      if (item.element_type === 'MEDIA' && item.data[0].file) {
+				//          return await uploadFileToServer(item.data[0], 'articleLibrary');
+				//      } else {
+				//          return item;
+				//      }
+				//  });
+				// }
 
-				try {
-					createArticle(
-						specificArticle?.id,
-						[
-							uploadFilesPromiseArray && uploadFilesPromiseArray,
-							uploadAuthorImagePromiseArray && uploadAuthorImagePromiseArray,
-							dataMedia && dataMedia[0]
-						],
-						true
-					);
-				} catch {
-					setIsLoading(false);
-				}
+				// Promise.all([
+				//  ...uploadFilesPromiseArray,
+				//  ...uploadAuthorImagePromiseArray,
+				//  ...dataMedia
+				// ])
+				//  .then((mediaFiles) => {
+				//      createArticle(specificArticle?.id, mediaFiles);
+				//  })
+				//  .catch(() => {
+				//      setIsLoading(false);
+				//  });
 			} else {
 				if (
 					(await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
@@ -1348,68 +1346,68 @@ const UploadOrEditViral = ({
 	};
 
 	// const handleDraftSave = async () => {
-	// 	if (!validateDraft(form) || draftBtnDisabled) {
-	// 		validateDraftBtn();
-	// 	} else {
-	// 		setPostButtonStatus(true);
-	// 		loadingRef.current.scrollIntoView({ behavior: 'smooth' });
-	// 		setIsLoading(true);
-	// 		if (isEdit) {
-	// 			if (specificArticle?.title?.trim() !== form.title?.trim()) {
-	// 				if (
-	// 					(await handleTitleDuplicate(form.title)) ===
-	// 					'The Title Already Exist'
-	// 				) {
-	// 					setIsError({ articleTitleExists: 'This title already exists' });
-	// 					setTimeout(() => {
-	// 						setIsError({});
-	// 					}, [5000]);
+	//  if (!validateDraft(form) || draftBtnDisabled) {
+	//      validateDraftBtn();
+	//  } else {
+	//      setPostButtonStatus(true);
+	//      loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+	//      setIsLoading(true);
+	//      if (isEdit) {
+	//          if (specificArticle?.title?.trim() !== form.title?.trim()) {
+	//              if (
+	//                  (await handleTitleDuplicate(form.title)) ===
+	//                  'The Title Already Exist'
+	//              ) {
+	//                  setIsError({ articleTitleExists: 'This title already exists' });
+	//                  setTimeout(() => {
+	//                      setIsError({});
+	//                  }, [5000]);
 
-	// 					setPostButtonStatus(false);
-	// 					return;
-	// 				}
-	// 			}
-	// 			let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-	// 				if (_file.file) {
-	// 					return await uploadFileToServer(_file, 'articleLibrary');
-	// 				} else {
-	// 					return _file;
-	// 				}
-	// 			});
+	//                  setPostButtonStatus(false);
+	//                  return;
+	//              }
+	//          }
+	//          let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+	//              if (_file.file) {
+	//                  return await uploadFileToServer(_file, 'articleLibrary');
+	//              } else {
+	//                  return _file;
+	//              }
+	//          });
 
-	// 			Promise.all([...uploadFilesPromiseArray])
-	// 				.then((mediaFiles) => {
-	// 					createArticle(specificArticle?.id, mediaFiles, true);
-	// 				})
-	// 				.catch(() => {
-	// 					setIsLoading(false);
-	// 				});
-	// 		} else {
-	// 			if (
-	// 				(await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
-	// 			) {
-	// 				setIsError({ articleTitleExists: 'This title already exists' });
-	// 				setTimeout(() => {
-	// 					setIsError({});
-	// 				}, [5000]);
+	//          Promise.all([...uploadFilesPromiseArray])
+	//              .then((mediaFiles) => {
+	//                  createArticle(specificArticle?.id, mediaFiles, true);
+	//              })
+	//              .catch(() => {
+	//                  setIsLoading(false);
+	//              });
+	//      } else {
+	//          if (
+	//              (await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
+	//          ) {
+	//              setIsError({ articleTitleExists: 'This title already exists' });
+	//              setTimeout(() => {
+	//                  setIsError({});
+	//              }, [5000]);
 
-	// 				setPostButtonStatus(false);
-	// 				return;
-	// 			}
-	// 			setIsLoading(true);
-	// 			let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-	// 				return uploadFileToServer(_file, 'articleLibrary');
-	// 			});
+	//              setPostButtonStatus(false);
+	//              return;
+	//          }
+	//          setIsLoading(true);
+	//          let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+	//              return uploadFileToServer(_file, 'articleLibrary');
+	//          });
 
-	// 			Promise.all([...uploadFilesPromiseArray])
-	// 				.then((mediaFiles) => {
-	// 					createArticle(null, mediaFiles, true);
-	// 				})
-	// 				.catch(() => {
-	// 					setIsLoading(false);
-	// 				});
-	// 		}
-	// 	}
+	//          Promise.all([...uploadFilesPromiseArray])
+	//              .then((mediaFiles) => {
+	//                  createArticle(null, mediaFiles, true);
+	//              })
+	//              .catch(() => {
+	//                  setIsLoading(false);
+	//              });
+	//      }
+	//  }
 	// };
 
 	const reorder = (list, startIndex, endIndex) => {
@@ -1438,25 +1436,25 @@ const UploadOrEditViral = ({
 	return (
 		<>
 			{/* <Slider
-				open={open}
-				handleClose={() => {
-					handleClose();
-					if (form.uploadedFiles.length && !isEdit) {
-						form.uploadedFiles.map((file) => handleDeleteFile(file.id));
-					}
-				}}
-				title={title}
-				disableDropdown={disableDropdown}
-				handlePreview={() => {
-					handlePreviewEscape();
-				}}
-				preview={previewBool}
-				previewRef={previewRef}
-				orientationRef={orientationRef}
-				edit={isEdit}
-				article={true}
-				dialogRef={dialogWrapper}
-			> */}
+                open={open}
+                handleClose={() => {
+                    handleClose();
+                    if (form.uploadedFiles.length && !isEdit) {
+                        form.uploadedFiles.map((file) => handleDeleteFile(file.id));
+                    }
+                }}
+                title={title}
+                disableDropdown={disableDropdown}
+                handlePreview={() => {
+                    handlePreviewEscape();
+                }}
+                preview={previewBool}
+                previewRef={previewRef}
+                orientationRef={orientationRef}
+                edit={isEdit}
+                article={true}
+                dialogRef={dialogWrapper}
+            > */}
 			<ArticleSlider
 				open={open}
 				handleClose={() => {
@@ -1566,9 +1564,9 @@ const UploadOrEditViral = ({
 														})}
 
 														{/* <p className={globalClasses.mediaError}>
-														{isError?.elementUnfilled &&
-															'This field is required'}
-													</p> */}
+                                                        {isError?.elementUnfilled &&
+                                                            'This field is required'}
+                                                    </p> */}
 													</>
 												);
 											})}
@@ -1584,7 +1582,7 @@ const UploadOrEditViral = ({
 											<PreviewWrapper
 												subCategory={form.subCategory}
 												title={form.title}
-												descrption={'abc'}
+												descrption={form.sub_text}
 												authorName={form.author_text}
 												authorImage={form.author_image[0].media_url}
 												backgroundImage={
