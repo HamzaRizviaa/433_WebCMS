@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useStyles } from './index.style';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+
 const ImagePreview = ({ data }) => {
 	console.log(data, '===== data on oimage / video');
 	const classes = useStyles();
@@ -12,30 +12,21 @@ const ImagePreview = ({ data }) => {
 					data?.data[0].mime_type === 'image/png' ? (
 						<img src={data?.data[0].media_url} className={classes.images} />
 					) : (
-						<div>
-							<PlayArrowIcon
-							// className={
-							// 	dimensionSelect === 'portrait'
-							// 		? classes.playIconPortrait
-							// 		: classes.playIcon
-							// }
-							/>
-							<video
-								id={'my-video'}
-								// poster={isEdit ? file.thumbnail_url || file.img : null}
-								className={classes.videos}
-								// style={{
-								// 	maxWidth: `${imageToResizeWidth}px`,
-								// 	maxHeight: `${imageToResizeHeight}px`,
-								// 	objectFit: 'cover',
-								// 	objectPosition: 'center'
-								// }}
-								// ref={videoRef}
-								// onLoadedMetadata={onLoadedVideodata}
-							>
-								<source src={data?.data[0].media_url} />
-							</video>
-						</div>
+						<video
+							id={'my-video'}
+							poster={data?.data[0].media_url}
+							className={classes.previewFile}
+							style={{
+								// width: `${imageToResizeWidth * 4}px`,
+								// height: `${imageToResizeHeight * 4}px`,
+								width: '100%',
+								objectFit: 'cover',
+								objectPosition: 'center'
+							}}
+							controls={true}
+						>
+							<source src={data?.data[0].media_url} />
+						</video>
 					)
 				) : (
 					''
