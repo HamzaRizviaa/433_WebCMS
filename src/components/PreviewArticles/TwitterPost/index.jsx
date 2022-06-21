@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { getLocalStorageDetails } from '../../../utils';
+
 import axios from 'axios';
 // import twitterCall from '../../../globalServices/globalService';
 
@@ -16,7 +16,6 @@ const TwitterPost = () => {
 				`https://publish.twitter.com/oembed?url=${url}`,
 				{
 					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`,
 						'Access-Control-Allow-Origin': '*'
 					}
 				}
