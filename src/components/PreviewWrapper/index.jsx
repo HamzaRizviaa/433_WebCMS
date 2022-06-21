@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Football from '../../assets/FootballYellow.svg';
+import Heart from '../../assets/Heart.svg';
 import Share from '../../assets/shareArticle.svg';
 import goBack from '../../assets/goBack.svg';
 import Comments from '../../assets/Comment.svg';
@@ -26,7 +26,10 @@ const PreviewWrapper = ({
 	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/Profile433.svg`;
 	const date = formatDate2(new Date());
 	var today = new Date();
-	var time = today.getHours() + ':' + today.getMinutes();
+	var time =
+		today.getHours() +
+		':' +
+		(today.getMinutes() < 10 ? '0' + today.getMinutes() : today.getMinutes());
 	return (
 		<div
 			className={classes.previewWrapper}
@@ -37,19 +40,18 @@ const PreviewWrapper = ({
 			<div
 				className={classes.backgroundSet}
 				style={{
-					backgroundImage: `url(${backgroundImage})`,
-					height: `${height}px`,
-					maxHeight: '596px'
+					// height: `${height}px`, linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 100%);
+					maxHeight: '812px',
+					backgroundImage: `linear-gradient(0deg, #000000 -12.5%, rgba(0, 0, 0, 0) 19.68%, rgba(0, 0, 0, 0) 57.99%, #000000 100%),
+					url(${backgroundImage})`
 				}}
 			>
-				<div>
-					<div className={classes.topMobileIcons}>
-						<div style={{ color: 'white' }}>{time}</div>
-						<div className={classes.mobileTopBars}>
-							<img src={Signals} className={classes.mobileIcons} />
-							<img src={WiFi} className={classes.mobileIcons} />
-							<img src={Battery} className={classes.mobileIcons} />
-						</div>
+				<div className={classes.topMobileIcons}>
+					<div style={{ color: 'white' }}>{time}</div>
+					<div className={classes.mobileTopBars}>
+						<img src={Signals} className={classes.mobileIcons} />
+						<img src={WiFi} className={classes.mobileIcons} />
+						<img src={Battery} className={classes.mobileIcons} />
 					</div>
 				</div>
 				<div style={{ padding: '5px 10px' }}>
@@ -61,7 +63,7 @@ const PreviewWrapper = ({
 							<img src={Share} className={classes.shareIcon} />
 						</div>
 					</div>
-					<div style={{ marginTop: '240px' }}>
+					<div style={{ marginTop: '300px' }}>
 						<div className={classes.subCatText}>
 							{subCategory ? subCategory?.name : ''}
 						</div>
@@ -70,7 +72,7 @@ const PreviewWrapper = ({
 						<div className={classes.bottomIcons}>
 							{showLikes ? (
 								<div className={classes.icons}>
-									<img src={Football} className={classes.footballIcon} />
+									<img src={Heart} className={classes.footballIcon} />
 								</div>
 							) : (
 								''
