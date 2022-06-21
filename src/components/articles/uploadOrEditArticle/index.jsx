@@ -102,7 +102,6 @@ const UploadOrEditViral = ({
 		uploadedFiles: [],
 		author_text: '433 Team',
 		author_image: [{ media_url: Profile433 }],
-		elementMediaFiles: ['abc'],
 		labels: [],
 		show_likes: true,
 		show_comments: true,
@@ -110,7 +109,7 @@ const UploadOrEditViral = ({
 		subCategory: ''
 	});
 	const [data, setData] = useState([]);
-	const [dataErrors, setDataErrors] = useState(Array(data.length).fill(false));
+	const [dataErrors, setDataErrors] = useState(Array(data?.length).fill(false));
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
@@ -541,7 +540,7 @@ const UploadOrEditViral = ({
 			// description: tinyMCE.activeEditor?.setContent(''),
 			dropbox_url: '',
 			uploadedFiles: [],
-			elementMediaFiles: ['abc'],
+
 			author_text: '433 Team',
 			author_image: [{ media_url: Profile433 }],
 			labels: [],
@@ -587,12 +586,6 @@ const UploadOrEditViral = ({
 	};
 
 	const setNewData = (childData, index) => {
-		// setForm((prev) => {
-		//  return {
-		//      ...prev,
-		//      elementMediaFiles: [...form.elementMediaFiles, childData]
-		//  };
-		// });
 		let dataCopy = [...data];
 		dataCopy[index].data = { ...childData };
 		setData(dataCopy);
@@ -768,7 +761,6 @@ const UploadOrEditViral = ({
 	};
 
 	const checkNewElementFile = (data) => {
-		console.log('data of media', data);
 		return data.some((item) => {
 			if (item?.data) {
 				return item?.data[0]?.file ? true : false;
@@ -969,7 +961,6 @@ const UploadOrEditViral = ({
 					!validationEmptyArray.every((item) => item === true)
 			);
 		}
-		console.log('form');
 	}, [form]);
 
 	useEffect(() => {
@@ -1003,7 +994,6 @@ const UploadOrEditViral = ({
 				data?.length !== 0
 			];
 
-			// console.log(validationEmptyArray, 'please chal ja');
 			if (
 				!validateForm(form, data) ||
 				!comparingFields(specificArticle, form)
@@ -1073,6 +1063,8 @@ const UploadOrEditViral = ({
 		});
 		return formLabels.some((label) => label === false);
 	};
+
+	console.log(validateDraft(form), 'valDraft');
 
 	const handleDraftSave = async () => {
 		if (!validateDraft(form) || draftBtnDisabled) {
@@ -1194,15 +1186,6 @@ const UploadOrEditViral = ({
 					uploadAuthorImagePromiseArray,
 					dataMedia && dataMedia[0]
 				].filter((item) => item !== undefined && item);
-
-				console.log('updatedArray', updatedArray);
-
-				console.log(uploadFilesPromiseArray, 'uploadFilesPromiseArray');
-				console.log(
-					uploadAuthorImagePromiseArray,
-					'uploadAuthorImagePromiseArray'
-				);
-				console.log(dataMedia, 'dataMedia');
 
 				Promise.all([...updatedArray])
 					.then((mediaFiles) => {

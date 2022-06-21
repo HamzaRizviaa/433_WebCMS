@@ -3,8 +3,17 @@ const validateDraft = (form) => {
 		if (key === 'mainCategory' || key === 'subCategory') {
 			return false;
 		}
+
 		if (typeof form[key] === 'string') {
-			return !form[key] ? false : true;
+			if (key === 'author_text') {
+				if (form[key] === '433 Team') {
+					return false;
+				} else {
+					return true;
+				}
+			} else {
+				return !form[key] ? false : true;
+			}
 		}
 		if (typeof form[key] === 'object') {
 			// array check
@@ -28,6 +37,8 @@ const validateDraft = (form) => {
 			if (Array.isArray(form[key])) {
 				if (key === 'labels') {
 					return form[key]?.length < 1 ? false : true;
+				} else if (key === 'author_image') {
+					return false;
 				} else {
 					return form[key]?.length === 0 ? false : true;
 				}
