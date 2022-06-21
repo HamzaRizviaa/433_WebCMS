@@ -18,9 +18,11 @@ export const useStyles = makeStyles(() => ({
 	},
 	images: {
 		width: '100%',
-		color: 'white'
+		color: 'white',
+		backgroundColor: 'black'
 	},
 	videos: {
-		width: '100%'
+		width: '100%',
+		backgroundColor: 'black'
 	}
 }));

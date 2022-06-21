@@ -57,6 +57,7 @@ import {
 
 import LoadingOverlay from 'react-loading-overlay';
 import { ConstructionOutlined } from '@mui/icons-material';
+import { height } from '@mui/system';
 
 const UploadOrEditViral = ({
 	open,
@@ -1582,9 +1583,9 @@ const UploadOrEditViral = ({
 											</Box>
 
 											<PreviewWrapper
+												height={fileHeight}
 												subCategory={form.subCategory}
 												title={form.title}
-												descrption={form.sub_text}
 												authorName={form.author_text}
 												authorImage={form.author_image[0].media_url}
 												backgroundImage={

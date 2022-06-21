@@ -9,11 +9,11 @@ export const useStyles = makeStyles(() => ({
 		backgroundPosition: 'center'
 		// padding: '5px 10px'
 	},
-	// backgroundSet: {
-	// 	backgroundRepeat: 'no-repeat',
-	// 	backgroundSize: 'cover',
-	// 	backgroundPosition: 'center'
-	// },
+	backgroundSet: {
+		backgroundRepeat: 'no-repeat',
+		backgroundSize: 'cover',
+		backgroundPosition: 'center'
+	},
 	topIcons: {
 		display: 'flex',
 		justifyContent: 'space-between',
@@ -24,8 +24,7 @@ export const useStyles = makeStyles(() => ({
 		display: 'flex',
 		justifyContent: 'space-between',
 		padding: '2px',
-		height: '20px',
-		backgroundColor: 'black'
+		height: '20px'
 	},
 	mobileTopBars: { display: 'flex', padding: '2px 4px' },
 	mobileIcons: { marginLeft: '3px', height: '10px' },
