@@ -610,6 +610,33 @@ const UploadOrEditViral = ({
 			};
 		});
 	};
+	const [dataErrors, setDataErrors] = useState(Array(data.length).fill(false));
+
+	const checkDataErrors = () => {
+		const errors = data.map((item, index) => {
+			if (!item.data) {
+				return true;
+			} else {
+				if (item.element_type === 'TEXT' && !item.data[0].description) {
+					return true;
+				}
+				if (item.element_type === 'MEDIA' && !item.data[0].file_name) {
+					return true;
+				}
+				if (item.element_type === 'TWITTER' && !item.data[0].twitter_post_url) {
+					return true;
+				}
+				if (item.element_type === 'IG' && !item.data[0].ig_post_url) {
+					return true;
+				}
+			}
+		});
+		setDataErrors(errors);
+	};
+
+	useEffect(() => {
+		setDataErrors(Array(data.length).fill(false));
+	}, [data]);
 
 	const validateArticleBtn = () => {
 		setIsError({
@@ -635,8 +662,10 @@ const UploadOrEditViral = ({
 				? !form?.subCategory
 				: !form?.subCategory?.name
 		});
+		checkDataErrors();
 		setTimeout(() => {
 			setIsError({});
+			setDataErrors(Array(data.length).fill(false));
 		}, 5000);
 	};
 
@@ -1567,10 +1596,11 @@ const UploadOrEditViral = ({
 															initialData: item.data && item?.data[0]
 														})}
 
-														{/* <p className={globalClasses.mediaError}>
-                                                        {isError?.elementUnfilled &&
-                                                            'This field is required'}
-                                                    </p> */}
+														<p className={globalClasses.mediaError}>
+															{dataErrors.length &&
+																dataErrors[index] &&
+																'This field is required'}
+														</p>
 													</>
 												);
 											})}
