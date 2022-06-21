@@ -110,6 +110,7 @@ const UploadOrEditViral = ({
 		subCategory: ''
 	});
 	const [data, setData] = useState([]);
+	const [dataErrors, setDataErrors] = useState(Array(data.length).fill(false));
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
@@ -549,6 +550,7 @@ const UploadOrEditViral = ({
 			show_likes: true,
 			show_comments: true
 		});
+		setDataErrors(Array(data.length).fill(false));
 		setData([]);
 	};
 
@@ -610,7 +612,6 @@ const UploadOrEditViral = ({
 			};
 		});
 	};
-	const [dataErrors, setDataErrors] = useState(Array(data.length).fill(false));
 
 	const checkDataErrors = () => {
 		const errors = data.map((item, index) => {
