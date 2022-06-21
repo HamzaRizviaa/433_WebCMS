@@ -1503,7 +1503,7 @@ const UploadOrEditViral = ({
 									<></>
 								)}
 								<Grid container>
-									<Grid item md={3}>
+									<Grid pr={1} item md={2}>
 										<div className={classes.gridDivSmall}>
 											<Box mb={3.5} className={classes.mainTitleDescription}>
 												<h2>Elements</h2>
@@ -1515,7 +1515,7 @@ const UploadOrEditViral = ({
 											/>
 										</div>
 									</Grid>
-									<Grid item md={6}>
+									<Grid item md={6} ml={1}>
 										<Box mb={3.5} className={classes.mainTitleDescription}>
 											<h2>Builder</h2>
 											<p>Edit, reorder elements here and build your article</p>
@@ -1574,8 +1574,8 @@ const UploadOrEditViral = ({
 											})}
 										</DraggableWrapper>
 									</Grid>
-									<Grid item md={3}>
-										<Box px={3} className={classes.gridDivSmall}>
+									<Grid item md={4}>
+										<Box px={2} className={classes.gridDivSmall}>
 											<Box mb={3.5} className={classes.mainTitleDescription}>
 												<h2>Preview</h2>
 												<p>Review the result here before publishing</p>

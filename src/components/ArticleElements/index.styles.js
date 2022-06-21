@@ -7,7 +7,7 @@ export const useStyles = makeStyles((theme) => ({
 		// overflowX: 'hidden'
 	},
 	elementContainter: {
-		width: '20.5vw',
+		width: '100%',
 		background: `${theme.palette.black}`,
 		border: `1px solid ${theme.palette.neonYellow}`,
 		borderRadius: '8px',
