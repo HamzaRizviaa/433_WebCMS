@@ -14,13 +14,14 @@ const PreviewWrapper = ({
 	children,
 	subCategory,
 	title,
-	descrption,
 	authorImage,
 	authorName,
 	backgroundImage,
 	showLikes,
-	showComments
+	showComments,
+	height // to set height of background image
 }) => {
+	console.log(height, 'height');
 	const classes = useStyles();
 	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/Profile433.svg`;
 	const date = formatDate2(new Date());
@@ -30,12 +31,16 @@ const PreviewWrapper = ({
 		<div
 			className={classes.previewWrapper}
 			style={{
-				backgroundImage: `url(${backgroundImage})`,
 				overflowY: 'auto'
 			}}
 		>
 			<div
-			// className={classes.backgroundSet}
+				className={classes.backgroundSet}
+				style={{
+					backgroundImage: `url(${backgroundImage})`,
+					height: `${height}px`,
+					maxHeight: '596px'
+				}}
 			>
 				<div>
 					<div className={classes.topMobileIcons}>
@@ -56,7 +61,7 @@ const PreviewWrapper = ({
 							<img src={Share} className={classes.shareIcon} />
 						</div>
 					</div>
-					<div style={{ marginTop: '297px' }}>
+					<div style={{ marginTop: '240px' }}>
 						<div className={classes.subCatText}>
 							{subCategory ? subCategory?.name : ''}
 						</div>
@@ -93,12 +98,10 @@ const PreviewWrapper = ({
 								</div>
 							</div>
 						</div>
-						<div className={classes.description}>{descrption}</div>
 					</div>
 				</div>
+				<div style={{ padding: '5px 10px' }}>{children}</div>
 			</div>
-			<br />
-			<div style={{ padding: '5px 10px' }}>{children}</div>
 		</div>
 	);
 };
@@ -107,12 +110,12 @@ PreviewWrapper.propTypes = {
 	children: PropTypes.element.isRequired,
 	subCategory: PropTypes.string,
 	title: PropTypes.string,
-	descrption: PropTypes.string,
 	authorImage: PropTypes.string,
 	authorName: PropTypes.string,
 	backgroundImage: PropTypes.string,
 	showLikes: PropTypes.boolean,
-	showComments: PropTypes.boolean
+	showComments: PropTypes.boolean,
+	height: PropTypes.integer
 };
 
 export default PreviewWrapper;
