@@ -611,9 +611,7 @@ const UploadOrEditViral = ({
 	};
 	const [dataErrors, setDataErrors] = useState(Array(data.length).fill(false));
 
-	console.log(Array(data?.length).fill(false));
 	const checkDataErrors = () => {
-		// const dataCopy = [...data];
 		const errors = data.map((item, index) => {
 			if (!item.data) {
 				return true;
@@ -638,7 +636,6 @@ const UploadOrEditViral = ({
 	useEffect(() => {
 		setDataErrors(Array(data.length).fill(false));
 	}, [data]);
-	console.log('Data Errors', dataErrors);
 
 	const validateArticleBtn = () => {
 		setIsError({
