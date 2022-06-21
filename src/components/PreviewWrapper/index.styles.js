@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core';
 
 export const useStyles = makeStyles(() => ({
 	previewWrapper: {
-		height: '596px',
+		height: '812px',
 		backgroundRepeat: 'no-repeat',
 		backgroundSize: 'cover',
 		backgroundPosition: 'center'
@@ -28,7 +28,7 @@ export const useStyles = makeStyles(() => ({
 	},
 	mobileTopBars: { display: 'flex', padding: '2px 4px' },
 	mobileIcons: { marginLeft: '3px', height: '10px' },
-	shareIcon: { height: '18px', paddingTop: '5px' },
+
 	icons: {
 		width: '40px',
 		height: '40px',
@@ -38,18 +38,19 @@ export const useStyles = makeStyles(() => ({
 		justifyContent: 'center'
 	},
 	navIcons: {
-		width: '30px',
-		height: '30px',
+		width: '48px',
+		height: '48px',
 		background: 'rgba(64, 64, 64, 0.4)',
-		borderRadius: '30px',
+		borderRadius: '48px',
 		display: 'flex',
 		justifyContent: 'center'
 	},
 	goBackIcon: {
-		height: '14px',
-		marginLeft: '-4px',
-		paddingTop: '8px'
+		height: '24px',
+		marginLeft: '-6px',
+		paddingTop: '10px'
 	},
+	shareIcon: { height: '32px', paddingTop: '7px' },
 
 	bottomIcons: {
 		display: 'flex',
@@ -61,9 +62,9 @@ export const useStyles = makeStyles(() => ({
 		padding: '11px 0px'
 	},
 	commentIcon: {
-		width: '20px',
-		height: '20px',
-		padding: '11px 0px'
+		width: '24px',
+		height: '24px',
+		padding: '8px 0px 10px 0px'
 	},
 	commentbox: {
 		marginLeft: '5px'
@@ -77,7 +78,7 @@ export const useStyles = makeStyles(() => ({
 	},
 	mainTitle: {
 		fontWeight: 800,
-		fontSize: '30px',
+		fontSize: '24px',
 		lineHeight: '54px',
 		color: 'white',
 		overflowWrap: 'anywhere'

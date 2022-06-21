@@ -14,6 +14,7 @@ import DraggableWrapper from '../../DraggableWrapper';
 import PreviewWrapper from '../../PreviewWrapper';
 import ImagePreview from '../../PreviewArticles/imagePreview';
 import TextPreview from '../../PreviewArticles/textPreview';
+import TwitterPost from '../../PreviewArticles/TwitterPost';
 import ArticleElementMedia from '../../ArticleElementMedia';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { Box, MenuItem, TextField, Select, Grid } from '@material-ui/core';
@@ -1603,6 +1604,8 @@ const UploadOrEditViral = ({
 																<ImagePreview data={item} />
 															) : item.element_type === 'TEXT' ? (
 																<TextPreview data={item} />
+															) : item.element_type === 'TWITTER' ? (
+																<TwitterPost data={item} />
 															) : (
 																''
 															)}
