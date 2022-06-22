@@ -1,4 +1,4 @@
-const validateDraft = (form) => {
+const validateDraft = (form, dataElements) => {
 	var validate = Object.keys(form).map((key) => {
 		if (key === 'mainCategory' || key === 'subCategory') {
 			return false;
@@ -38,7 +38,11 @@ const validateDraft = (form) => {
 				if (key === 'labels') {
 					return form[key]?.length < 1 ? false : true;
 				} else if (key === 'author_image') {
-					return false;
+					if (form[key][0].file) {
+						return true;
+					} else {
+						return false;
+					}
 				} else {
 					return form[key]?.length === 0 ? false : true;
 				}
@@ -57,7 +61,30 @@ const validateDraft = (form) => {
 		}
 	});
 
-	return validate.some((item) => item === true);
+	var validateData;
+	if (dataElements?.length) {
+		validateData = dataElements.every((dataFile) => {
+			if (dataFile.element_type === 'MEDIA') {
+				return dataFile.data;
+			} else if (dataFile.element_type === 'TEXT') {
+				if (dataFile.data) {
+					return dataFile?.data[0]?.description;
+				}
+			} else if (dataFile.element_type === 'IG') {
+				if (dataFile.data) {
+					return dataFile?.data[0]?.ig_post_url;
+				}
+			} else {
+				if (dataFile.data) {
+					return dataFile?.data[0]?.twitter_post_url;
+				}
+			}
+		});
+	}
+
+	var finalDraftValue = validate.some((item) => item === true) || validateData;
+
+	return finalDraftValue;
 };
 
 export default validateDraft;

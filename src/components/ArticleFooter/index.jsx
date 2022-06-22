@@ -47,7 +47,9 @@ const ArticleFooter = ({
 				{status === 'draft' || !isEdit ? (
 					<div className={isEdit ? classes.draftBtnEdit : classes.draftBtn}>
 						<Button
-							disabledDraft={isEdit ? draftBtnDisabled : !validateDraft(form)}
+							disabledDraft={
+								isEdit ? draftBtnDisabled : !validateDraft(form, dataElement)
+							}
 							onClick={() => handleDraftSave()}
 							button3={true}
 							text={

@@ -18,7 +18,8 @@ const ArticleTextDraggable = ({
 	setIsOpen,
 	initialData,
 	// WidthHeightCallback,
-	handleDeleteFile
+	handleDeleteFile,
+	setDisableDropdown
 }) => {
 	const classes = useStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
@@ -111,8 +112,8 @@ const ArticleTextDraggable = ({
 								<Editor
 									editorId={`text-${item.sortOrder}`}
 									description={description}
-									// onMouseEnter={() => setDisableDropdown(false)}
-									// onBlur={() => setDisableDropdown(true)}
+									onMouseEnter={() => setDisableDropdown(false)}
+									onBlur={() => setDisableDropdown(true)}
 									handleEditorChange={handleEditorChange}
 								/>
 							</div>
@@ -134,8 +135,9 @@ ArticleTextDraggable.propTypes = {
 	initialData: PropTypes.object,
 	setIsOpen: PropTypes.func,
 	// WidthHeightCallback: PropTypes.func,
-	handleDeleteFile: PropTypes.func
+	handleDeleteFile: PropTypes.func,
 	// initialData: PropTypes.object,
+	setDisableDropdown: PropTypes.func
 };
 
 export default ArticleTextDraggable;

@@ -1577,7 +1577,8 @@ const UploadOrEditViral = ({
 															item,
 															index,
 															key: item.sortOrder,
-															initialData: item.data && item?.data[0]
+															initialData: item.data && item?.data[0],
+															setDisableDropdown: setDisableDropdown
 														})}
 
 														<p className={globalClasses.mediaError}>
