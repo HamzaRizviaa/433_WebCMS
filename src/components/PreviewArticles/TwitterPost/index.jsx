@@ -10,8 +10,6 @@ const TwitterPost = ({ data }) => {
 	const [result, setResult] = useState('');
 	// const [url, setUrl] = useState('');
 	const url = 'https://twitter.com/433/status/1529108545664438276';
-
-	// setUrl(data?.data.twitter_post_url);
 	const type = 'twitter';
 
 	process.env.REACT_APP_INSTA_APP_ID = '467967928127124';
