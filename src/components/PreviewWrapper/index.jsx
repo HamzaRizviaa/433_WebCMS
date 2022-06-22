@@ -34,7 +34,8 @@ const PreviewWrapper = ({
 		<div
 			className={classes.previewWrapper}
 			style={{
-				overflowY: 'auto'
+				overflowY: 'auto',
+				overflowX: 'hidden'
 			}}
 		>
 			<div
@@ -43,7 +44,7 @@ const PreviewWrapper = ({
 					width: '390px',
 					// height: `${height}px`, linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 100%);
 					height: '812px',
-					backgroundImage: `linear-gradient(0deg, #000000 -12.5%, rgba(0, 0, 0, 0) 19.68%, rgba(0, 0, 0, 0) 57.99%, #000000 100%),
+					backgroundImage: `linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 100%),
 					url(${backgroundImage})`
 				}}
 			>
