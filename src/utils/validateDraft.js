@@ -62,6 +62,8 @@ const validateDraft = (form, dataElements) => {
 	});
 
 	var validateData;
+	var finalDraftValue;
+
 	if (dataElements?.length) {
 		validateData = dataElements.every((dataFile) => {
 			if (dataFile.element_type === 'MEDIA') {
@@ -80,9 +82,11 @@ const validateDraft = (form, dataElements) => {
 				}
 			}
 		});
-	}
 
-	var finalDraftValue = validate.some((item) => item === true) || validateData;
+		finalDraftValue = validateData;
+	} else if (dataElements?.length === 0) {
+		finalDraftValue = validate.some((item) => item === true) || validateData;
+	}
 
 	return finalDraftValue;
 };
