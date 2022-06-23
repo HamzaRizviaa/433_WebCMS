@@ -35,6 +35,9 @@ const ArticleMediaDraggable = ({
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
 	const [newFile, setNewFile] = useState(initialData ? [initialData] : []);
+	const [dropboxUrl, setDropboxUrl] = useState([
+		initialData ? initialData?.postUrl : ''
+	]);
 
 	const imgEl = useRef(null);
 	const videoRef = useRef(null);
@@ -203,8 +206,14 @@ const ArticleMediaDraggable = ({
 									<div className={classes.socialmediaDrags}>
 										<h6>DROPBOX URL</h6>
 										<TextField
-											value={'abc'}
-											onChange={(e) => sendDataToParent(e.target.value)}
+											value={dropboxUrl}
+											onChange={(e) => {
+												setDropboxUrl(e.target.value);
+
+												sendDataToParent((prev) => {
+													return [{ ...prev, dropbox_url: e.target.value }];
+												});
+											}}
 											placeholder={'Please drop the URL here'}
 											className={classes.textField}
 											multiline
