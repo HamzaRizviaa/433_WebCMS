@@ -587,7 +587,6 @@ const UploadOrEditViral = ({
 	};
 
 	const setNewData = (childData, index) => {
-		console.log(childData, index, '==== data ========');
 		let dataCopy = [...data];
 		dataCopy[index].data = {
 			...(dataCopy[index].data ? dataCopy[index].data : {}),
@@ -808,8 +807,6 @@ const UploadOrEditViral = ({
 		});
 		return validatedData.every((item) => item === true);
 	};
-
-	console.log('data', data);
 
 	const checkNewElementDescription = (elements, data) => {
 		let result;
