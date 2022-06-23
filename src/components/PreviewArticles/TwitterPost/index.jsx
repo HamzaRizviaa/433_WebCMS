@@ -71,7 +71,7 @@ const TwitterPost = ({ data }) => {
 	useEffect(() => {
 		setTimeout(() => {
 			if (window) {
-				if (data.element_type === 'twitter') {
+				if (data.element_type === 'TWITTER') {
 					window.twttr.widgets.load();
 				} else {
 					window.instgrm.Embeds.process();
