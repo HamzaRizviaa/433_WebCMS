@@ -222,7 +222,7 @@ const ArticleMediaDraggable = ({
 												setDropboxUrl(e.target.value);
 
 												sendDataToParent({
-													dropboxUrl: e.target.value
+													dropbox_url: e.target.value
 												});
 											}}
 											placeholder={'Please drop the URL here'}
