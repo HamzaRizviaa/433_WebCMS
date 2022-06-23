@@ -589,9 +589,11 @@ const UploadOrEditViral = ({
 	};
 
 	const setNewData = (childData, index) => {
-		console.log(childData, index, '==== data ========');
 		let dataCopy = [...data];
-		dataCopy[index].data = { ...childData };
+		dataCopy[index].data = {
+			...(dataCopy[index].data ? dataCopy[index].data : {}),
+			...childData
+		};
 		setData(dataCopy);
 	};
 
@@ -800,7 +802,7 @@ const UploadOrEditViral = ({
 		const filteredData = data.filter((item) => item.element_type === 'MEDIA');
 		const validatedData = filteredData.map((item) => {
 			if (item.data) {
-				return !item.data[0].media_url ? false : true;
+				return !item.data[0]?.media_url ? false : true;
 			} else {
 				return false;
 			}
@@ -1060,7 +1062,7 @@ const UploadOrEditViral = ({
 		}
 	}, [specificArticle, form]);
 
-	console.log(draftBtnDisabled, 'valDraft');
+	// console.log(draftBtnDisabled, 'valDraft');
 
 	const checkDuplicateLabel = () => {
 		let formLabels = form?.labels?.map((formL) => {
@@ -1388,7 +1390,7 @@ const UploadOrEditViral = ({
 	// console.log('Data', data);
 
 	const handleFileWidthHeight = (width, height) => {
-		console.log('call back in article preview', height, width);
+		// console.log('call back in article preview', height, width);
 		setMediaElementWidth(width);
 		setMediaElementHeight(height);
 	};
@@ -1516,9 +1518,9 @@ const UploadOrEditViral = ({
 																handleMediaElementDelete(sortOrder),
 															handleDeleteData: (data) =>
 																handleElementDataDelete(data, index),
-															// WidthHeightCallback: (width, height) =>
-															// 	handleFileWidthHeight(width, height),
-															WidthHeightCallback: handleFileWidthHeight,
+															WidthHeightCallback: (width, height) =>
+																handleFileWidthHeight(width, height),
+															// WidthHeightCallback: handleFileWidthHeight,
 															item,
 															index,
 															key: item.sortOrder,
