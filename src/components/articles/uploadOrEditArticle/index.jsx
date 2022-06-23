@@ -439,6 +439,7 @@ const UploadOrEditViral = ({
 
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
+		console.log('lollololololol', mediaFiles);
 		let elementsData;
 		if (data.length) {
 			elementsData = data.map((item, index) => {
@@ -983,7 +984,7 @@ const UploadOrEditViral = ({
 					filteringByType(specificArticle?.elements, 'MEDIA'),
 					filteringByType(data, 'MEDIA')
 				),
-				// checkNewElementFile(filteringByType(data, 'MEDIA')),
+
 				data?.length !== 0
 			];
 			const validationEmptyArray = [
@@ -1027,32 +1028,37 @@ const UploadOrEditViral = ({
 		}
 	}, [data]);
 
+	const comparingDraftFields = (specificArticle, form) => {
+		return (
+			specificArticle?.title?.trim() === form?.title?.trim() &&
+			specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
+			specificArticle?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
+			specificArticle?.author_text?.trim() === form?.author_text?.trim() &&
+			specificArticle?.show_likes === form.show_likes &&
+			specificArticle?.show_comments === form.show_comments &&
+			(specificArticle?.image || form?.uploadedFiles[0]
+				? specificArticle?.file_name === form?.uploadedFiles[0]?.file_name
+				: true) &&
+			specificArticle?.media_type ===
+				(form?.mainCategory?.name || form?.mainCategory) &&
+			specificArticle?.sub_category ===
+				(form?.subCategory?.name || form?.subCategory)
+		);
+	};
+
 	useEffect(() => {
 		if (specificArticle) {
 			setDraftBtnDisabled(
-				!validateDraft(form) ||
-					((specificArticle?.image || form?.uploadedFiles[0]
-						? specificArticle?.file_name === form?.uploadedFiles[0]?.file_name
-						: true) &&
-						specificArticle?.media_type ===
-							(form?.mainCategory?.name || form?.mainCategory) &&
-						specificArticle?.sub_category ===
-							(form?.subCategory?.name || form?.subCategory) &&
-						specificArticle?.title?.trim() === form?.title?.trim() &&
-						specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
-						specificArticle?.dropbox_url?.trim() ===
-							form?.dropbox_url?.trim() &&
-						specificArticle?.author_text?.trim() ===
-							form?.author_text?.trim() &&
-						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
+				!validateDraft(form, data) ||
+					(comparingDraftFields(specificArticle, form) &&
 						specificArticle?.labels?.length === form?.labels?.length &&
-						specificArticle?.show_likes === form.show_likes &&
-						specificArticle?.show_comments === form.show_comments &&
 						!checkDuplicateLabel() &&
 						!checkNewAuthorImage())
 			);
 		}
-	}, [specificArticle, editorTextChecker, form]);
+	}, [specificArticle, form]);
+
+	console.log(draftBtnDisabled, 'valDraft');
 
 	const checkDuplicateLabel = () => {
 		let formLabels = form?.labels?.map((formL) => {
@@ -1065,10 +1071,8 @@ const UploadOrEditViral = ({
 		return formLabels.some((label) => label === false);
 	};
 
-	console.log(validateDraft(form), 'valDraft');
-
 	const handleDraftSave = async () => {
-		if (!validateDraft(form) || draftBtnDisabled) {
+		if (!validateDraft(form, data) || draftBtnDisabled) {
 			validateDraftBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -1076,73 +1080,72 @@ const UploadOrEditViral = ({
 			setIsLoading(true);
 
 			if (isEdit) {
-				console.log('edit article on draft');
-				// if (specificArticle?.title?.trim() !== form.title?.trim()) {
-				//  if (
-				//      (await handleTitleDuplicate(form.title)) ===
-				//      'The Title Already Exist'
-				//  ) {
-				//      setIsError({ articleTitleExists: 'This title already exists' });
-				//      setTimeout(() => {
-				//          setIsError({});
-				//      }, [5000]);
+				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file, 'articleLibrary');
+					} else {
+						return _file;
+					}
+				});
 
-				//      setPostButtonStatus(false);
-				//      return;
-				//  }
-				// }
-				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-				//  if (_file.file) {
-				//      return await uploadFileToServer(_file, 'articleLibrary');
-				//  } else {
-				//      return _file;
-				//  }
-				// });
+				let uploadAuthorImagePromiseArray = form.author_image.map(
+					async (_file) => {
+						if (_file.file) {
+							return uploadFileToServer(_file, 'articleLibrary');
+						} else {
+							return _file;
+						}
+					}
+				);
 
-				// let uploadAuthorImagePromiseArray = form.author_image.map(
-				//  async (_file) => {
-				//      if (_file.file) {
-				//          return uploadFileToServer(_file, 'articleLibrary');
-				//      } else {
-				//          return _file;
-				//      }
-				//  }
-				// );
-
-				// let dataMedia;
-				// if (data.length) {
-				//  dataMedia = data.map(async (item) => {
-				//      if (item.element_type === 'MEDIA' && item.data[0].file) {
-				//          return await uploadFileToServer(item.data[0], 'articleLibrary');
-				//      } else {
-				//          return item;
-				//      }
-				//  });
-				// }
-
-				// Promise.all([
-				//  ...uploadFilesPromiseArray,
-				//  ...uploadAuthorImagePromiseArray,
-				//  ...dataMedia
-				// ])
-				//  .then((mediaFiles) => {
-				//      createArticle(specificArticle?.id, mediaFiles);
-				//  })
-				//  .catch(() => {
-				//      setIsLoading(false);
-				//  });
-			} else {
-				if (
-					(await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
-				) {
-					setIsError({ articleTitleExists: 'This title already exists' });
-					setTimeout(() => {
-						setIsError({});
-					}, [5000]);
-
-					setPostButtonStatus(false);
-					return;
+				let dataMedia = [];
+				if (data.length) {
+					dataMedia = await Promise.all(
+						data.map(async (item, index) => {
+							if (item.element_type === 'MEDIA' && item.data[0].file) {
+								let uploadedFile = await uploadFileToServer(
+									item.data[0],
+									'articleLibrary'
+								);
+								const dataCopy = [...data];
+								dataCopy[index].data[0].media_url = uploadedFile.media_url;
+								await setData(dataCopy);
+								return uploadedFile;
+							} else {
+								return item;
+							}
+						})
+					);
 				}
+
+				// let updatedArray = [
+				// 	uploadFilesPromiseArray,
+				// 	uploadAuthorImagePromiseArray,
+				// 	dataMedia && dataMedia[0]
+				// ].filter((item) => item !== undefined && item);
+
+				// Promise.all([...updatedArray])
+				// 	.then((mediaFiles) => {
+				// 		createArticle(specificArticle?.id, mediaFiles, true);
+				// 	})
+				// 	.catch(() => {
+				// 		setIsLoading(false);
+				// 	});
+
+				try {
+					createArticle(
+						specificArticle?.id,
+						[
+							uploadFilesPromiseArray && uploadFilesPromiseArray,
+							uploadAuthorImagePromiseArray && uploadAuthorImagePromiseArray,
+							dataMedia && dataMedia[0]
+						],
+						true
+					);
+				} catch (e) {
+					setIsLoading(false);
+				}
+			} else {
 				setIsLoading(true);
 
 				let uploadFilesPromiseArray = form.uploadedFiles[0];
@@ -1643,6 +1646,7 @@ const UploadOrEditViral = ({
 									status={status}
 									deleteBtnStatus={deleteBtnStatus}
 									toggleDeleteModal={toggleDeleteModal}
+									draftBtnDisabled={draftBtnDisabled}
 									validateDraft={validateDraft}
 									handleDraftSave={handleDraftSave}
 									validateForm={validateForm}
