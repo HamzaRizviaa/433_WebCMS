@@ -475,12 +475,12 @@ const UploadOrEditViral = ({
 						? mediaFiles[0]?.file_name
 						: '',
 					image: form?.uploadedFiles?.length
-						? mediaFiles[0]?.media_url.split('cloudfront.net/')[1] ||
+						? mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
 						  mediaFiles[0]?.media_url
 						: '',
 					author_text: form.author_text,
 					author_image: form?.author_image?.length
-						? mediaFiles[1]?.media_url.split('cloudfront.net/')[1] ||
+						? mediaFiles[1]?.media_url?.split('cloudfront.net/')[1] ||
 						  mediaFiles[1]?.media_url
 						: '',
 					...(isEdit && id ? { article_id: id } : {}),
@@ -1120,33 +1120,33 @@ const UploadOrEditViral = ({
 					);
 				}
 
-				// let updatedArray = [
-				// 	uploadFilesPromiseArray,
-				// 	uploadAuthorImagePromiseArray,
-				// 	dataMedia && dataMedia[0]
-				// ].filter((item) => item !== undefined && item);
+				let updatedArray = [
+					uploadFilesPromiseArray,
+					uploadAuthorImagePromiseArray,
+					dataMedia && dataMedia[0]
+				].filter((item) => item !== undefined && item);
 
-				// Promise.all([...updatedArray])
-				// 	.then((mediaFiles) => {
-				// 		createArticle(specificArticle?.id, mediaFiles, true);
-				// 	})
-				// 	.catch(() => {
-				// 		setIsLoading(false);
-				// 	});
+				Promise.all([...updatedArray])
+					.then((mediaFiles) => {
+						createArticle(specificArticle?.id, mediaFiles, true);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
 
-				try {
-					createArticle(
-						specificArticle?.id,
-						[
-							uploadFilesPromiseArray && uploadFilesPromiseArray,
-							uploadAuthorImagePromiseArray && uploadAuthorImagePromiseArray,
-							dataMedia && dataMedia[0]
-						],
-						true
-					);
-				} catch (e) {
-					setIsLoading(false);
-				}
+				// try {
+				// 	createArticle(
+				// 		specificArticle?.id,
+				// 		[
+				// 			uploadFilesPromiseArray && uploadFilesPromiseArray,
+				// 			uploadAuthorImagePromiseArray && uploadAuthorImagePromiseArray,
+				// 			dataMedia && dataMedia[0]
+				// 		],
+				// 		true
+				// 	);
+				// } catch (e) {
+				// 	setIsLoading(false);
+				// }
 			} else {
 				setIsLoading(true);
 
