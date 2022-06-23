@@ -1,28 +1,39 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Markup } from 'interweave';
+import { Box } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { getLocalStorageDetails } from '../../../utils';
+import useDebounce from '../../../utils/useDebounce';
 // import twitterCall from '../../../globalServices/globalService';
 
 const TwitterPost = ({ data }) => {
-	console.log(data, '========= url');
-	const [result, setResult] = useState('');
+	// const [result, setResult] = useState(null);
+	const [markup, setMarkup] = useState('');
 	// const [url, setUrl] = useState('');
-	const url = 'https://twitter.com/433/status/1529108545664438276';
-	const type = 'twitter';
+	// const url = 'https://twitter.com/433/status/1529108545664438276';
+	// const type = 'twitter';
 
-	process.env.REACT_APP_INSTA_APP_ID = '467967928127124';
-	process.env.REACT_APP_INSTA_CLIENT_ID = '65fba6088f5adc04af7c85dff017918b';
-
-	useEffect(() => {
-		twitterCall();
-	}, [url]);
+	const debouceApiCall = (twitterApiCall, delay) => {
+		let timeout;
+		return () => {
+			timeout = setTimeout(() => {
+				clearTimeout(timeout);
+				twitterApiCall();
+			}, delay);
+		};
+	};
 
 	const twitterCall = async () => {
 		try {
 			const result = await axios.get(
-				`${process.env.REACT_APP_API_ENDPOINT}/social-media/get-embed-data?url=${url}&type=${type}`,
+				`${
+					process.env.REACT_APP_API_ENDPOINT
+				}/social-media/get-embed-data?url=${
+					(data.data && data.data[0].twitter_post_url) ||
+					data.data[0].ig_post_url
+				}&type=${data.element_type === 'IG' ? 'instagram' : 'twitter'}`,
 
 				{
 					headers: {
@@ -30,22 +41,48 @@ const TwitterPost = ({ data }) => {
 					}
 				}
 			);
-			setResult(result);
+			console.log('result tweet', result);
+			if (result.status === 200) {
+				if (result.data.status_code === 200) {
+					setMarkup(result.data?.data?.html);
+				} else {
+					setMarkup('');
+				}
+			}
+			// if (result.data?.status_code === 200) ;
+			// else setMarkup('');
 		} catch (e) {
+			setMarkup('');
 			console.log(e, 'e');
 		}
 	};
-	console.log(result);
+
+	// const debouncedValue = useDebounce(twitterCall, 500);
+
+	// useEffect(() => {
+	// 	// Do fetch here...
+	// 	// Triggers when "debouncedValue" changes
+	// }, [debouncedValue]);
+
+	useEffect(() => {
+		if (data?.data) debouceApiCall(twitterCall(), 1000);
+	}, [data.data]);
+
+	useEffect(() => {
+		setTimeout(() => {
+			if (window) {
+				if (data.element_type === 'twitter') {
+					window.twttr.widgets.load();
+				} else {
+					window.instgrm.Embeds.process();
+				}
+			}
+		}, 500);
+	}, [markup]);
 
 	return (
 		<>
-			<Markup content="<blockquote class='twitter-tweet'><p lang='en' dir='ltr'>WE ARE 5️⃣0️⃣ MILLION on Instagram! 💛<br><br>The journey continues..🙏 <a href='https://t.co/XoIGUd8vdA'>pic.twitter.com/XoIGUd8vdA</a></p>&mdash; 433 (@433) <a href='https://twitter.com/433/status/1529108545664438276?ref_src=twsrc%5Etfw'>May 24, 2022</a></blockquote>" />
-
-			{/* <div
-				dangerouslySetInnerHTML={{
-					__html: result?.data?.data?.html
-				}}
-			/> */}
+			<Box px={3}>{markup && <Markup content={markup} />}</Box>
 		</>
 	);
 };

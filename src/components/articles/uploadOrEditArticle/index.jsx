@@ -587,6 +587,7 @@ const UploadOrEditViral = ({
 	};
 
 	const setNewData = (childData, index) => {
+		console.log(childData, index, '==== data ========');
 		let dataCopy = [...data];
 		dataCopy[index].data = { ...childData };
 		setData(dataCopy);
@@ -1623,6 +1624,8 @@ const UploadOrEditViral = ({
 															) : item.element_type === 'TEXT' ? (
 																<TextPreview data={item} />
 															) : item.element_type === 'TWITTER' ? (
+																<TwitterPost data={item} />
+															) : item.element_type === 'IG' ? (
 																<TwitterPost data={item} />
 															) : (
 																''

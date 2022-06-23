@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useStyles } from './index.style';
 
 const ImagePreview = ({ data }) => {
-	console.log(data, '===== data on oimage / video');
+	console.log(data, '===== data on image / video');
 	const classes = useStyles();
 	return (
 		<div>
