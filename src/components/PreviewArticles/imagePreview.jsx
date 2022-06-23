@@ -10,10 +10,11 @@ const ImagePreview = ({ data }) => {
 		<div>
 			<div className={classes.imageDraggableData}>
 				{data?.data ? (
-					data?.data[0]?.mime_type === 'image/png' ||
-					data?.data[0]?.mime_type === 'image/jpeg' ? (
+					data?.data[0]?.file &&
+					(data?.data[0]?.mime_type === 'image/png' ||
+						data?.data[0]?.mime_type === 'image/jpeg') ? (
 						<img src={data?.data[0]?.media_url} className={classes.images} />
-					) : (
+					) : data?.data[0]?.file && data?.data[0]?.type === 'video' ? (
 						<video
 							id={'my-video'}
 							// poster={data?.data[0]?.media_url}
@@ -21,8 +22,6 @@ const ImagePreview = ({ data }) => {
 							style={{
 								width: `${data?.data[0]?.fileWidth}px`,
 								height: `${data?.data[0]?.fileHeight}px`,
-								// height: 'auto',
-								// width: '100%',
 								objectFit: 'cover',
 								objectPosition: 'center'
 							}}
@@ -30,6 +29,8 @@ const ImagePreview = ({ data }) => {
 						>
 							<source src={data?.data[0]?.media_url} />
 						</video>
+					) : (
+						''
 					)
 				) : (
 					''
