@@ -36,7 +36,7 @@ const ArticleMediaDraggable = ({
 	const [fileHeight, setFileHeight] = useState(0);
 	const [newFile, setNewFile] = useState(initialData ? [initialData] : []);
 	const [dropboxUrl, setDropboxUrl] = useState([
-		initialData ? initialData?.postUrl : ''
+		initialData ? initialData?.dropboxUrl : ''
 	]);
 
 	const imgEl = useRef(null);
@@ -48,6 +48,7 @@ const ArticleMediaDraggable = ({
 			return _type && _type[1];
 		}
 	};
+	console.log(initialData, 'initial data');
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -58,23 +59,33 @@ const ArticleMediaDraggable = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			let newFiles = acceptedFiles.map((file) => {
-				let id = makeid(10);
-				return {
-					id: id,
-					file_name: file.name,
-					media_url: URL.createObjectURL(file),
-					fileExtension: `.${getFileType(file.type)}`,
-					mime_type: file.type,
-					file: file,
-					type: file.type === 'video/mp4' ? 'video' : 'image'
-				};
-			});
-			WidthHeightCallback(fileHeight, fileWidth);
-			setNewFile([...newFiles]);
-			sendDataToParent(newFiles);
+			if (fileHeight > 0) {
+				let newFiles = acceptedFiles.map((file) => {
+					let id = makeid(10);
+					return {
+						id: id,
+						file_name: file.name,
+						media_url: URL.createObjectURL(file),
+						fileExtension: `.${getFileType(file.type)}`,
+						mime_type: file.type,
+						file: file,
+						type: file.type === 'video/mp4' ? 'video' : 'image',
+						fileWidth: videoRef?.current?.videoWidth,
+						fileHeight: videoRef?.current?.videoHeight
+					};
+				});
+
+				WidthHeightCallback(fileWidth, fileHeight);
+				setNewFile([...newFiles]);
+				sendDataToParent(newFiles);
+			}
 		}
 	}, [acceptedFiles]);
+	console.log(
+		fileHeight,
+		fileWidth,
+		'fileHeight, fileWidth article media draggable'
+	);
 
 	useEffect(() => {
 		if (fileRejections.length) {
@@ -149,7 +160,7 @@ const ArticleMediaDraggable = ({
 											setNewFile(newFile.filter((file) => file?.id !== id));
 											handleDeleteData(item.data);
 										}}
-										isArticle
+										isPost
 										isArticleNew
 										imgEl={imgEl}
 										imageOnload={() => {
@@ -210,8 +221,8 @@ const ArticleMediaDraggable = ({
 											onChange={(e) => {
 												setDropboxUrl(e.target.value);
 
-												sendDataToParent((prev) => {
-													return [{ ...prev, dropbox_url: e.target.value }];
+												sendDataToParent({
+													dropboxUrl: e.target.value
 												});
 											}}
 											placeholder={'Please drop the URL here'}

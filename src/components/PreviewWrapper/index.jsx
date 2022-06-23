@@ -35,13 +35,14 @@ const PreviewWrapper = ({
 			className={classes.previewWrapper}
 			style={{
 				overflowY: 'auto',
-				overflowX: 'hidden'
+				overflowX: 'hidden',
+				width: '380px'
 			}}
 		>
 			<div
 				className={classes.backgroundSet}
 				style={{
-					width: '390px',
+					width: '380px',
 					// height: `${height}px`, linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 100%);
 					height: '812px',
 					backgroundImage: `linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 100%),

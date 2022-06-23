@@ -31,8 +31,6 @@ const ArticleSocialMediaDraggable = ({
 		setClickExpandIcon(!clickExpandIcon);
 		setIsOpen(!clickExpandIcon);
 	};
-	console.log(initialData, 'initial data');
-	console.log(postUrl);
 
 	return (
 		<>
