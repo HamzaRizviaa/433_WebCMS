@@ -439,7 +439,7 @@ const UploadOrEditViral = ({
 
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
-		console.log('lollololololol', mediaFiles);
+
 		let elementsData;
 		if (data.length) {
 			elementsData = data.map((item, index) => {
@@ -1363,71 +1363,6 @@ const UploadOrEditViral = ({
 			}, 5000);
 		}
 	};
-
-	// const handleDraftSave = async () => {
-	//  if (!validateDraft(form) || draftBtnDisabled) {
-	//      validateDraftBtn();
-	//  } else {
-	//      setPostButtonStatus(true);
-	//      loadingRef.current.scrollIntoView({ behavior: 'smooth' });
-	//      setIsLoading(true);
-	//      if (isEdit) {
-	//          if (specificArticle?.title?.trim() !== form.title?.trim()) {
-	//              if (
-	//                  (await handleTitleDuplicate(form.title)) ===
-	//                  'The Title Already Exist'
-	//              ) {
-	//                  setIsError({ articleTitleExists: 'This title already exists' });
-	//                  setTimeout(() => {
-	//                      setIsError({});
-	//                  }, [5000]);
-
-	//                  setPostButtonStatus(false);
-	//                  return;
-	//              }
-	//          }
-	//          let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-	//              if (_file.file) {
-	//                  return await uploadFileToServer(_file, 'articleLibrary');
-	//              } else {
-	//                  return _file;
-	//              }
-	//          });
-
-	//          Promise.all([...uploadFilesPromiseArray])
-	//              .then((mediaFiles) => {
-	//                  createArticle(specificArticle?.id, mediaFiles, true);
-	//              })
-	//              .catch(() => {
-	//                  setIsLoading(false);
-	//              });
-	//      } else {
-	//          if (
-	//              (await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
-	//          ) {
-	//              setIsError({ articleTitleExists: 'This title already exists' });
-	//              setTimeout(() => {
-	//                  setIsError({});
-	//              }, [5000]);
-
-	//              setPostButtonStatus(false);
-	//              return;
-	//          }
-	//          setIsLoading(true);
-	//          let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-	//              return uploadFileToServer(_file, 'articleLibrary');
-	//          });
-
-	//          Promise.all([...uploadFilesPromiseArray])
-	//              .then((mediaFiles) => {
-	//                  createArticle(null, mediaFiles, true);
-	//              })
-	//              .catch(() => {
-	//                  setIsLoading(false);
-	//              });
-	//      }
-	//  }
-	// };
 
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
