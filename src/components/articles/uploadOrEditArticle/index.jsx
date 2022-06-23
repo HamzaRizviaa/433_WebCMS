@@ -589,7 +589,10 @@ const UploadOrEditViral = ({
 	const setNewData = (childData, index) => {
 		console.log(childData, index, '==== data ========');
 		let dataCopy = [...data];
-		dataCopy[index].data = { ...childData };
+		dataCopy[index].data = {
+			...(dataCopy[index].data ? dataCopy[index].data : {}),
+			...childData
+		};
 		setData(dataCopy);
 	};
 
@@ -798,13 +801,15 @@ const UploadOrEditViral = ({
 		const filteredData = data.filter((item) => item.element_type === 'MEDIA');
 		const validatedData = filteredData.map((item) => {
 			if (item.data) {
-				return !item.data[0].media_url ? false : true;
+				return !item.data[0]?.media_url ? false : true;
 			} else {
 				return false;
 			}
 		});
 		return validatedData.every((item) => item === true);
 	};
+
+	console.log('data', data);
 
 	const checkNewElementDescription = (elements, data) => {
 		let result;
@@ -1447,8 +1452,6 @@ const UploadOrEditViral = ({
 		);
 		setData(items);
 	};
-
-	console.log('Data', data);
 
 	const handleFileWidthHeight = (height, width) => {
 		console.log('Width Height', height, width);

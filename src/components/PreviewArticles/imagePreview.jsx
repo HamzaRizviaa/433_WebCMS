@@ -3,18 +3,17 @@ import PropTypes from 'prop-types';
 import { useStyles } from './index.style';
 
 const ImagePreview = ({ data }) => {
-	console.log(data, '===== data on image / video');
 	const classes = useStyles();
 	return (
 		<div>
 			<div className={classes.imageDraggableData}>
 				{data?.data ? (
-					data?.data[0].mime_type === 'image/png' ? (
-						<img src={data?.data[0].media_url} className={classes.images} />
+					data?.data[0]?.mime_type === 'image/png' ? (
+						<img src={data?.data[0]?.media_url} className={classes.images} />
 					) : (
 						<video
 							id={'my-video'}
-							poster={data?.data[0].media_url}
+							poster={data?.data[0]?.media_url}
 							className={classes.previewFile}
 							style={{
 								// width: `${imageToResizeWidth * 4}px`,
@@ -25,7 +24,7 @@ const ImagePreview = ({ data }) => {
 							}}
 							controls={true}
 						>
-							<source src={data?.data[0].media_url} />
+							<source src={data?.data[0]?.media_url} />
 						</video>
 					)
 				) : (

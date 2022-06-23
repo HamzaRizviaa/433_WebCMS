@@ -58,21 +58,34 @@ const ArticleMediaDraggable = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			let newFiles = acceptedFiles.map((file) => {
-				let id = makeid(10);
-				return {
-					id: id,
-					file_name: file.name,
-					media_url: URL.createObjectURL(file),
-					fileExtension: `.${getFileType(file.type)}`,
-					mime_type: file.type,
-					file: file,
-					type: file.type === 'video/mp4' ? 'video' : 'image'
-				};
-			});
+			// Promise.all([
+			// 	setFileWidth(videoRef?.current?.videoWidth),
+			// 	setFileHeight(videoRef?.current?.videoHeight)
+			// ]).then((dimensions) => {
+			// 	console.log('dimensions', dimensions);
+
+			// });
+			Promise.resolve()
+				.then(() => setFileWidth(videoRef?.current?.videoWidth))
+				.then(() => {
+					let newFiles = acceptedFiles.map((file) => {
+						let id = makeid(10);
+						return {
+							id: id,
+							file_name: file.name,
+							media_url: URL.createObjectURL(file),
+							fileExtension: `.${getFileType(file.type)}`,
+							mime_type: file.type,
+							file: file,
+							type: file.type === 'video/mp4' ? 'video' : 'image',
+							fileWidth: fileWidth,
+							fileHeight: fileHeight
+						};
+					});
+					setNewFile([...newFiles]);
+					sendDataToParent(newFiles);
+				});
 			WidthHeightCallback(fileHeight, fileWidth);
-			setNewFile([...newFiles]);
-			sendDataToParent(newFiles);
 		}
 	}, [acceptedFiles]);
 
@@ -149,7 +162,7 @@ const ArticleMediaDraggable = ({
 											setNewFile(newFile.filter((file) => file?.id !== id));
 											handleDeleteData(item.data);
 										}}
-										isArticle
+										isPost
 										isArticleNew
 										imgEl={imgEl}
 										imageOnload={() => {
@@ -210,8 +223,8 @@ const ArticleMediaDraggable = ({
 											onChange={(e) => {
 												setDropboxUrl(e.target.value);
 
-												sendDataToParent((prev) => {
-													return [{ ...prev, dropbox_url: e.target.value }];
+												sendDataToParent({
+													dropbox_url: e.target.value
 												});
 											}}
 											placeholder={'Please drop the URL here'}
