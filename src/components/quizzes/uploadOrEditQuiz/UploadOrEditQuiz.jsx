@@ -486,7 +486,6 @@ const UploadOrEditQuiz = ({
 	};
 
 	const validatePostBtn = () => {
-		console.log('abc====================');
 		setIsError({
 			endDate: !form.end_date,
 			uploadedFiles: form.uploadedFiles.length < 1,

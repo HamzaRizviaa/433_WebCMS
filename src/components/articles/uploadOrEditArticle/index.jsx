@@ -586,6 +586,7 @@ const UploadOrEditViral = ({
 	};
 
 	const setNewData = (childData, index) => {
+		console.log(childData, index, '==== data ========');
 		let dataCopy = [...data];
 		dataCopy[index].data = { ...childData };
 		setData(dataCopy);
