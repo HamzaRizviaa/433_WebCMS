@@ -84,7 +84,11 @@ const validateDraft = (form, dataElements) => {
 		});
 
 		finalDraftValue = validateData;
-	} else if (dataElements?.length === 0) {
+	} else if (
+		dataElements?.length === 0 ||
+		dataElements === undefined ||
+		dataElements === null
+	) {
 		finalDraftValue = validate.some((item) => item === true) || validateData;
 	}
 

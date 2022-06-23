@@ -441,6 +441,7 @@ const UploadOrEditViral = ({
 
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
+
 		let elementsData;
 		if (data.length) {
 			elementsData = data.map((item, index) => {
@@ -985,7 +986,7 @@ const UploadOrEditViral = ({
 					filteringByType(specificArticle?.elements, 'MEDIA'),
 					filteringByType(data, 'MEDIA')
 				),
-				// checkNewElementFile(filteringByType(data, 'MEDIA')),
+
 				data?.length !== 0
 			];
 			const validationEmptyArray = [
@@ -1029,32 +1030,37 @@ const UploadOrEditViral = ({
 		}
 	}, [data]);
 
+	const comparingDraftFields = (specificArticle, form) => {
+		return (
+			specificArticle?.title?.trim() === form?.title?.trim() &&
+			specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
+			specificArticle?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
+			specificArticle?.author_text?.trim() === form?.author_text?.trim() &&
+			specificArticle?.show_likes === form.show_likes &&
+			specificArticle?.show_comments === form.show_comments &&
+			(specificArticle?.image || form?.uploadedFiles[0]
+				? specificArticle?.file_name === form?.uploadedFiles[0]?.file_name
+				: true) &&
+			specificArticle?.media_type ===
+				(form?.mainCategory?.name || form?.mainCategory) &&
+			specificArticle?.sub_category ===
+				(form?.subCategory?.name || form?.subCategory)
+		);
+	};
+
 	useEffect(() => {
 		if (specificArticle) {
 			setDraftBtnDisabled(
-				!validateDraft(form) ||
-					((specificArticle?.image || form?.uploadedFiles[0]
-						? specificArticle?.file_name === form?.uploadedFiles[0]?.file_name
-						: true) &&
-						specificArticle?.media_type ===
-							(form?.mainCategory?.name || form?.mainCategory) &&
-						specificArticle?.sub_category ===
-							(form?.subCategory?.name || form?.subCategory) &&
-						specificArticle?.title?.trim() === form?.title?.trim() &&
-						specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
-						specificArticle?.dropbox_url?.trim() ===
-							form?.dropbox_url?.trim() &&
-						specificArticle?.author_text?.trim() ===
-							form?.author_text?.trim() &&
-						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
+				!validateDraft(form, data) ||
+					(comparingDraftFields(specificArticle, form) &&
 						specificArticle?.labels?.length === form?.labels?.length &&
-						specificArticle?.show_likes === form.show_likes &&
-						specificArticle?.show_comments === form.show_comments &&
 						!checkDuplicateLabel() &&
 						!checkNewAuthorImage())
 			);
 		}
-	}, [specificArticle, editorTextChecker, form]);
+	}, [specificArticle, form]);
+
+	console.log(draftBtnDisabled, 'valDraft');
 
 	const checkDuplicateLabel = () => {
 		let formLabels = form?.labels?.map((formL) => {
@@ -1067,10 +1073,8 @@ const UploadOrEditViral = ({
 		return formLabels.some((label) => label === false);
 	};
 
-	console.log(validateDraft(form), 'valDraft');
-
 	const handleDraftSave = async () => {
-		if (!validateDraft(form) || draftBtnDisabled) {
+		if (!validateDraft(form, data) || draftBtnDisabled) {
 			validateDraftBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -1078,40 +1082,23 @@ const UploadOrEditViral = ({
 			setIsLoading(true);
 
 			if (isEdit) {
-				console.log('edit article on draft');
-				if (specificArticle?.title?.trim() !== form.title?.trim()) {
-					if (
-						(await handleTitleDuplicate(form.title)) ===
-						'The Title Already Exist'
-					) {
-						setIsError({ articleTitleExists: 'This title already exists' });
-						setTimeout(() => {
-							setIsError({});
-						}, [5000]);
-
-						setPostButtonStatus(false);
-						return;
-					}
-				}
-				let uploadFilesPromiseArray = form.uploadedFiles[0];
-				if (form.uploadedFiles[0] && form.uploadedFiles[0]?.file) {
-					uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+					if (_file.file) {
 						return await uploadFileToServer(_file, 'articleLibrary');
-					});
-				}
+					} else {
+						return _file;
+					}
+				});
 
-				let uploadAuthorImagePromiseArray = form.author_image[0];
-				if (form.author_image[0]?.file) {
-					uploadAuthorImagePromiseArray = form.author_image.map(
-						async (_file) => {
-							if (_file.file) {
-								return uploadFileToServer(_file, 'articleLibrary');
-							} else {
-								return _file;
-							}
+				let uploadAuthorImagePromiseArray = form.author_image.map(
+					async (_file) => {
+						if (_file.file) {
+							return uploadFileToServer(_file, 'articleLibrary');
+						} else {
+							return _file;
 						}
-					);
-				}
+					}
+				);
 
 				let dataMedia = [];
 				if (data.length) {
@@ -1126,34 +1113,41 @@ const UploadOrEditViral = ({
 								dataCopy[index].data[0].media_url = uploadedFile.media_url;
 								await setData(dataCopy);
 								return uploadedFile;
+							} else {
+								return item;
 							}
 						})
 					);
 				}
 
-				Promise.all([
-					...uploadFilesPromiseArray,
-					...uploadAuthorImagePromiseArray,
-					...dataMedia
-				])
-					.then((mediaFiles) => {
-						createArticle(specificArticle?.id, mediaFiles, true);
-					})
-					.catch(() => {
-						setIsLoading(false);
-					});
-			} else {
-				if (
-					(await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
-				) {
-					setIsError({ articleTitleExists: 'This title already exists' });
-					setTimeout(() => {
-						setIsError({});
-					}, [5000]);
+				// let updatedArray = [
+				// 	uploadFilesPromiseArray,
+				// 	uploadAuthorImagePromiseArray,
+				// 	dataMedia && dataMedia[0]
+				// ].filter((item) => item !== undefined && item);
 
-					setPostButtonStatus(false);
-					return;
+				// Promise.all([...updatedArray])
+				// 	.then((mediaFiles) => {
+				// 		createArticle(specificArticle?.id, mediaFiles, true);
+				// 	})
+				// 	.catch(() => {
+				// 		setIsLoading(false);
+				// 	});
+
+				try {
+					createArticle(
+						specificArticle?.id,
+						[
+							uploadFilesPromiseArray && uploadFilesPromiseArray,
+							uploadAuthorImagePromiseArray && uploadAuthorImagePromiseArray,
+							dataMedia && dataMedia[0]
+						],
+						true
+					);
+				} catch (e) {
+					setIsLoading(false);
 				}
+			} else {
 				setIsLoading(true);
 
 				let uploadFilesPromiseArray = form.uploadedFiles[0];
@@ -1372,71 +1366,6 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	// const handleDraftSave = async () => {
-	//  if (!validateDraft(form) || draftBtnDisabled) {
-	//      validateDraftBtn();
-	//  } else {
-	//      setPostButtonStatus(true);
-	//      loadingRef.current.scrollIntoView({ behavior: 'smooth' });
-	//      setIsLoading(true);
-	//      if (isEdit) {
-	//          if (specificArticle?.title?.trim() !== form.title?.trim()) {
-	//              if (
-	//                  (await handleTitleDuplicate(form.title)) ===
-	//                  'The Title Already Exist'
-	//              ) {
-	//                  setIsError({ articleTitleExists: 'This title already exists' });
-	//                  setTimeout(() => {
-	//                      setIsError({});
-	//                  }, [5000]);
-
-	//                  setPostButtonStatus(false);
-	//                  return;
-	//              }
-	//          }
-	//          let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-	//              if (_file.file) {
-	//                  return await uploadFileToServer(_file, 'articleLibrary');
-	//              } else {
-	//                  return _file;
-	//              }
-	//          });
-
-	//          Promise.all([...uploadFilesPromiseArray])
-	//              .then((mediaFiles) => {
-	//                  createArticle(specificArticle?.id, mediaFiles, true);
-	//              })
-	//              .catch(() => {
-	//                  setIsLoading(false);
-	//              });
-	//      } else {
-	//          if (
-	//              (await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
-	//          ) {
-	//              setIsError({ articleTitleExists: 'This title already exists' });
-	//              setTimeout(() => {
-	//                  setIsError({});
-	//              }, [5000]);
-
-	//              setPostButtonStatus(false);
-	//              return;
-	//          }
-	//          setIsLoading(true);
-	//          let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-	//              return uploadFileToServer(_file, 'articleLibrary');
-	//          });
-
-	//          Promise.all([...uploadFilesPromiseArray])
-	//              .then((mediaFiles) => {
-	//                  createArticle(null, mediaFiles, true);
-	//              })
-	//              .catch(() => {
-	//                  setIsLoading(false);
-	//              });
-	//      }
-	//  }
-	// };
-
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
 		const [removed] = result.splice(startIndex, 1);
@@ -1641,6 +1570,8 @@ const UploadOrEditViral = ({
 																<TextPreview data={item} />
 															) : item.element_type === 'TWITTER' ? (
 																<TwitterPost data={item} />
+															) : item.element_type === 'IG' ? (
+																<TwitterPost data={item} />
 															) : (
 																''
 															)}
@@ -1660,6 +1591,7 @@ const UploadOrEditViral = ({
 									status={status}
 									deleteBtnStatus={deleteBtnStatus}
 									toggleDeleteModal={toggleDeleteModal}
+									draftBtnDisabled={draftBtnDisabled}
 									validateDraft={validateDraft}
 									handleDraftSave={handleDraftSave}
 									validateForm={validateForm}
