@@ -21,7 +21,7 @@ const ArticleFooter = ({
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
-
+	console.log('lakaka', editBtnDisabled);
 	return (
 		<div className={classes.footer}>
 			<div>

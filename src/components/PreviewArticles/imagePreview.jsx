@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useStyles } from './index.style';
 
-const ImagePreview = ({ data }) => {
+const ImagePreview = ({ data, elementWidth, elementHeight }) => {
+	console.log(data, elementWidth, elementHeight, '===== data on image / video');
 	const classes = useStyles();
 	return (
 		<div>
@@ -16,9 +17,10 @@ const ImagePreview = ({ data }) => {
 							poster={data?.data[0]?.media_url}
 							className={classes.previewFile}
 							style={{
-								// width: `${imageToResizeWidth * 4}px`,
-								// height: `${imageToResizeHeight * 4}px`,
-								width: '100%',
+								width: `${elementWidth}px`,
+								height: `${elementHeight}px`,
+								// height: 'auto',
+								// width: '100%',
 								objectFit: 'cover',
 								objectPosition: 'center'
 							}}
@@ -37,5 +39,7 @@ const ImagePreview = ({ data }) => {
 
 export default ImagePreview;
 ImagePreview.propTypes = {
-	data: PropTypes.string.isRequired
+	data: PropTypes.string.isRequired,
+	elementWidth: PropTypes.number.isRequired,
+	elementHeight: PropTypes.number.isRequired
 };

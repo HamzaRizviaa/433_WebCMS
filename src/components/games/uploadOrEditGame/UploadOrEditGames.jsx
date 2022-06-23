@@ -835,7 +835,7 @@ const UploadOreditArcade = ({
 
 			if (editArcade || editJogo) {
 				setIsLoadingcreateViral(true);
-				// new draft
+
 				let uploadedFile; // first
 				let uploadedExplanationOrIcon; // second
 

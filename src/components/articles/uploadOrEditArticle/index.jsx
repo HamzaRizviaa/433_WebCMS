@@ -88,6 +88,8 @@ const UploadOrEditViral = ({
 	const [isError, setIsError] = useState({});
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
 	const [dataItem, setDataItem] = useState('');
+	const [mediaElementWidth, setMediaElementWidth] = useState(0);
+	const [mediaElementHeight, setMediaElementHeight] = useState(0);
 	const imgEl = useRef(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
@@ -439,7 +441,7 @@ const UploadOrEditViral = ({
 
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
-		console.log('lollololololol', mediaFiles);
+
 		let elementsData;
 		if (data.length) {
 			elementsData = data.map((item, index) => {
@@ -1366,71 +1368,6 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	// const handleDraftSave = async () => {
-	//  if (!validateDraft(form) || draftBtnDisabled) {
-	//      validateDraftBtn();
-	//  } else {
-	//      setPostButtonStatus(true);
-	//      loadingRef.current.scrollIntoView({ behavior: 'smooth' });
-	//      setIsLoading(true);
-	//      if (isEdit) {
-	//          if (specificArticle?.title?.trim() !== form.title?.trim()) {
-	//              if (
-	//                  (await handleTitleDuplicate(form.title)) ===
-	//                  'The Title Already Exist'
-	//              ) {
-	//                  setIsError({ articleTitleExists: 'This title already exists' });
-	//                  setTimeout(() => {
-	//                      setIsError({});
-	//                  }, [5000]);
-
-	//                  setPostButtonStatus(false);
-	//                  return;
-	//              }
-	//          }
-	//          let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-	//              if (_file.file) {
-	//                  return await uploadFileToServer(_file, 'articleLibrary');
-	//              } else {
-	//                  return _file;
-	//              }
-	//          });
-
-	//          Promise.all([...uploadFilesPromiseArray])
-	//              .then((mediaFiles) => {
-	//                  createArticle(specificArticle?.id, mediaFiles, true);
-	//              })
-	//              .catch(() => {
-	//                  setIsLoading(false);
-	//              });
-	//      } else {
-	//          if (
-	//              (await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
-	//          ) {
-	//              setIsError({ articleTitleExists: 'This title already exists' });
-	//              setTimeout(() => {
-	//                  setIsError({});
-	//              }, [5000]);
-
-	//              setPostButtonStatus(false);
-	//              return;
-	//          }
-	//          setIsLoading(true);
-	//          let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-	//              return uploadFileToServer(_file, 'articleLibrary');
-	//          });
-
-	//          Promise.all([...uploadFilesPromiseArray])
-	//              .then((mediaFiles) => {
-	//                  createArticle(null, mediaFiles, true);
-	//              })
-	//              .catch(() => {
-	//                  setIsLoading(false);
-	//              });
-	//      }
-	//  }
-	// };
-
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
 		const [removed] = result.splice(startIndex, 1);
@@ -1450,8 +1387,12 @@ const UploadOrEditViral = ({
 		setData(items);
 	};
 
-	const handleFileWidthHeight = (height, width) => {
-		console.log('Width Height', height, width);
+	// console.log('Data', data);
+
+	const handleFileWidthHeight = (width, height) => {
+		console.log('call back in article preview', height, width);
+		setMediaElementWidth(width);
+		setMediaElementHeight(height);
 	};
 
 	return (
@@ -1577,6 +1518,8 @@ const UploadOrEditViral = ({
 																handleMediaElementDelete(sortOrder),
 															handleDeleteData: (data) =>
 																handleElementDataDelete(data, index),
+															// WidthHeightCallback: (width, height) =>
+															// 	handleFileWidthHeight(width, height),
 															WidthHeightCallback: handleFileWidthHeight,
 															item,
 															index,
@@ -1620,7 +1563,11 @@ const UploadOrEditViral = ({
 													return (
 														<div key={index} style={{ padding: '5px' }}>
 															{item.element_type === 'MEDIA' ? (
-																<ImagePreview data={item} />
+																<ImagePreview
+																	data={item}
+																	elementWidth={mediaElementWidth}
+																	elementHeight={mediaElementHeight}
+																/>
 															) : item.element_type === 'TEXT' ? (
 																<TextPreview data={item} />
 															) : item.element_type === 'TWITTER' ? (

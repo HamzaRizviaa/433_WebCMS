@@ -36,7 +36,7 @@ const ArticleMediaDraggable = ({
 	const [fileHeight, setFileHeight] = useState(0);
 	const [newFile, setNewFile] = useState(initialData ? [initialData] : []);
 	const [dropboxUrl, setDropboxUrl] = useState([
-		initialData ? initialData?.postUrl : ''
+		initialData ? initialData?.dropboxUrl : ''
 	]);
 
 	const imgEl = useRef(null);
@@ -48,6 +48,7 @@ const ArticleMediaDraggable = ({
 			return _type && _type[1];
 		}
 	};
+	console.log(initialData, 'initial data');
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -58,36 +59,33 @@ const ArticleMediaDraggable = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			// Promise.all([
-			// 	setFileWidth(videoRef?.current?.videoWidth),
-			// 	setFileHeight(videoRef?.current?.videoHeight)
-			// ]).then((dimensions) => {
-			// 	console.log('dimensions', dimensions);
-
-			// });
-			Promise.resolve()
-				.then(() => setFileWidth(videoRef?.current?.videoWidth))
-				.then(() => {
-					let newFiles = acceptedFiles.map((file) => {
-						let id = makeid(10);
-						return {
-							id: id,
-							file_name: file.name,
-							media_url: URL.createObjectURL(file),
-							fileExtension: `.${getFileType(file.type)}`,
-							mime_type: file.type,
-							file: file,
-							type: file.type === 'video/mp4' ? 'video' : 'image',
-							fileWidth: fileWidth,
-							fileHeight: fileHeight
-						};
-					});
-					setNewFile([...newFiles]);
-					sendDataToParent(newFiles);
+			if (fileHeight > 0) {
+				let newFiles = acceptedFiles.map((file) => {
+					let id = makeid(10);
+					return {
+						id: id,
+						file_name: file.name,
+						media_url: URL.createObjectURL(file),
+						fileExtension: `.${getFileType(file.type)}`,
+						mime_type: file.type,
+						file: file,
+						type: file.type === 'video/mp4' ? 'video' : 'image',
+						fileWidth: videoRef?.current?.videoWidth,
+						fileHeight: videoRef?.current?.videoHeight
+					};
 				});
-			WidthHeightCallback(fileHeight, fileWidth);
+
+				WidthHeightCallback(fileWidth, fileHeight);
+				setNewFile([...newFiles]);
+				sendDataToParent(newFiles);
+			}
 		}
 	}, [acceptedFiles]);
+	console.log(
+		fileHeight,
+		fileWidth,
+		'fileHeight, fileWidth article media draggable'
+	);
 
 	useEffect(() => {
 		if (fileRejections.length) {
