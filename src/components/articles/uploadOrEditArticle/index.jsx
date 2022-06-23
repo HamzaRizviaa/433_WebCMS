@@ -1621,6 +1621,8 @@ const UploadOrEditViral = ({
 																<TextPreview data={item} />
 															) : item.element_type === 'TWITTER' ? (
 																<TwitterPost data={item} />
+															) : item.element_type === 'IG' ? (
+																<TwitterPost data={item} />
 															) : (
 																''
 															)}
