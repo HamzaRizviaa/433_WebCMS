@@ -222,276 +222,277 @@ const ArticleGeneralInfo = ({
 						</div>
 					</div>
 
-					<h6 style={{ marginTop: '10px' }}>Author</h6>
-					<div className={classes.authorContainer}>
-						<div {...getRootPropsAvatar({ className: classes.authorAvatar })}>
-							<input {...getInputPropsAvatar()} />
-							<Avatar src={form.author_image[0]?.media_url} />
-						</div>
-
-						<div className={classes.authorName}>
-							<TextField
-								value={form.author_text}
-								onChange={(e) =>
-									setForm((prev) => {
-										return { ...prev, author_text: e.target.value };
-									})
-								}
-								placeholder={'Please enter your name here'}
-								className={classes.textField}
-								multiline
-								maxRows={2}
-								InputProps={{
-									disableUnderline: true,
-									className: classes.textFieldInput
-								}}
-							/>
-						</div>
-					</div>
-
-					<p className={globalClasses.fileRejectionError}>
-						{fileRejectionError2}
-					</p>
-
-					<h5>Add Media File</h5>
-					<div>
-						<DragAndDropField
-							uploadedFiles={form.uploadedFiles}
-							handleDeleteFile={handleDeleteFile}
-							isArticle
-							isArticleNew
-							imgEl={imgRef}
-							imageOnload={() => {
-								setFileWidth(imgRef.current.naturalWidth);
-								setFileHeight(imgRef.current.naturalHeight);
-							}}
-						/>
-						{!form.uploadedFiles.length ? (
-							<section
-								className={globalClasses.dropZoneContainer}
-								style={{
-									borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
-								}}
-							>
+					{(form.mainCategory &&
+						(form.subCategory?.name || form.subCategory)) ||
+					isEdit ? (
+						<>
+							<h6 style={{ marginTop: '10px' }}>Author</h6>
+							<div className={classes.authorContainer}>
 								<div
-									{...getRootProps({
-										className: globalClasses.dropzone
-									})}
+									{...getRootPropsAvatar({ className: classes.authorAvatar })}
 								>
-									<input {...getInputProps()} />
-									<AddCircleOutlineIcon
-										className={globalClasses.addFilesIcon}
-									/>
-									<p className={globalClasses.dragMsg}>
-										Click or drag files to this area to upload
-									</p>
-									<p className={globalClasses.formatMsg}>
-										Supported formats are jpeg and png
-									</p>
-									<p className={globalClasses.uploadMediaError}>
-										{isError.uploadedFiles
-											? 'You need to upload a media in order to post'
-											: ''}
-									</p>
+									<input {...getInputPropsAvatar()} />
+									<Avatar src={form.author_image[0]?.media_url} />
 								</div>
-							</section>
-						) : (
-							<>
-								<br />
-							</>
-						)}
-					</div>
 
-					<p className={globalClasses.fileRejectionError}>
-						{fileRejectionError}
-					</p>
+								<div className={classes.authorName}>
+									<TextField
+										value={form.author_text}
+										onChange={(e) =>
+											setForm((prev) => {
+												return { ...prev, author_text: e.target.value };
+											})
+										}
+										placeholder={'Please enter your name here'}
+										className={classes.textField}
+										multiline
+										maxRows={2}
+										InputProps={{
+											disableUnderline: true,
+											className: classes.textFieldInput
+										}}
+									/>
+								</div>
+							</div>
+							<p className={globalClasses.fileRejectionError}>
+								{fileRejectionError2}
+							</p>
+							<h5>Add Media File</h5>
+							<div>
+								<DragAndDropField
+									uploadedFiles={form.uploadedFiles}
+									handleDeleteFile={handleDeleteFile}
+									isArticle
+									isArticleNew
+									imgEl={imgRef}
+									imageOnload={() => {
+										setFileWidth(imgRef.current.naturalWidth);
+										setFileHeight(imgRef.current.naturalHeight);
+									}}
+								/>
+								{!form.uploadedFiles.length ? (
+									<section
+										className={globalClasses.dropZoneContainer}
+										style={{
+											borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
+										}}
+									>
+										<div
+											{...getRootProps({
+												className: globalClasses.dropzone
+											})}
+										>
+											<input {...getInputProps()} />
+											<AddCircleOutlineIcon
+												className={globalClasses.addFilesIcon}
+											/>
+											<p className={globalClasses.dragMsg}>
+												Click or drag files to this area to upload
+											</p>
+											<p className={globalClasses.formatMsg}>
+												Supported formats are jpeg and png
+											</p>
+											<p className={globalClasses.uploadMediaError}>
+												{isError.uploadedFiles
+													? 'You need to upload a media in order to post'
+													: ''}
+											</p>
+										</div>
+									</section>
+								) : (
+									<>
+										<br />
+									</>
+								)}
+							</div>
+							<p className={globalClasses.fileRejectionError}>
+								{fileRejectionError}
+							</p>
+							<div className={globalClasses.dropBoxUrlContainer}>
+								<h6>DROPBOX URL</h6>
+								<TextField
+									value={form.dropbox_url}
+									onChange={(e) =>
+										setForm((prev) => {
+											return { ...prev, dropbox_url: e.target.value };
+										})
+									}
+									placeholder={'Please drop the dropbox URL here'}
+									className={classes.textField}
+									multiline
+									maxRows={2}
+									InputProps={{
+										disableUnderline: true,
+										className: classes.textFieldInput
+									}}
+								/>
+							</div>
+							<div className={globalClasses.captionContainer}>
+								<div className={globalClasses.characterCount}>
+									<h6
+										className={
+											isError.articleTitle || isError.articleTitleExists
+												? globalClasses.errorState
+												: globalClasses.noErrorState
+										}
+									>
+										ARTICLE TITLE
+									</h6>
+									<h6
+										style={{
+											color:
+												form.title?.length >= 39 && form.title?.length <= 42
+													? 'pink'
+													: form.title?.length === 43
+													? 'red'
+													: 'white'
+										}}
+									>
+										{form.title?.length}/43
+									</h6>
+								</div>
 
-					<div className={globalClasses.dropBoxUrlContainer}>
-						<h6>DROPBOX URL</h6>
-						<TextField
-							value={form.dropbox_url}
-							onChange={(e) =>
-								setForm((prev) => {
-									return { ...prev, dropbox_url: e.target.value };
-								})
-							}
-							placeholder={'Please drop the dropbox URL here'}
-							className={classes.textField}
-							multiline
-							maxRows={2}
-							InputProps={{
-								disableUnderline: true,
-								className: classes.textFieldInput
-							}}
-						/>
-					</div>
+								<TextField
+									value={form.title}
+									onChange={(e) =>
+										setForm((prev) => {
+											return { ...prev, title: e.target.value };
+										})
+									}
+									placeholder={'Please write your title here'}
+									className={classes.textField}
+									InputProps={{
+										disableUnderline: true,
+										className: classes.textFieldInput
+									}}
+									inputProps={{ maxLength: 43 }}
+									multiline
+									maxRows={2}
+								/>
+							</div>
+							<p className={globalClasses.mediaError}>
+								{isError.articleTitle
+									? 'This field is required'
+									: isError.articleTitleExists
+									? 'This title aready Exists'
+									: ''}
+							</p>
+							<div className={globalClasses.captionContainer}>
+								<div className={globalClasses.characterCount}>
+									<h6
+										className={
+											isError.sub_text
+												? globalClasses.errorState
+												: globalClasses.noErrorState
+										}
+									>
+										SUB TITLE
+									</h6>
+									<h6
+										style={{
+											color:
+												form.sub_text?.length >= 76 &&
+												form.sub_text?.length <= 83
+													? 'pink'
+													: form.sub_text?.length === 84
+													? 'red'
+													: 'white'
+										}}
+									>
+										{form.sub_text?.length}/84
+									</h6>
+								</div>
 
-					<div className={globalClasses.captionContainer}>
-						<div className={globalClasses.characterCount}>
-							<h6
-								className={
-									isError.articleTitle || isError.articleTitleExists
-										? globalClasses.errorState
-										: globalClasses.noErrorState
-								}
+								<TextField
+									value={form.sub_text}
+									onChange={(e) =>
+										setForm((prev) => {
+											return { ...prev, sub_text: e.target.value };
+										})
+									}
+									placeholder={'Please write your sub title here'}
+									className={classes.textField}
+									InputProps={{
+										disableUnderline: true,
+										className: classes.textFieldInput
+									}}
+									inputProps={{ maxLength: 84 }}
+									multiline
+									maxRows={2}
+								/>
+							</div>
+							<p className={globalClasses.mediaError}>
+								{isError.sub_text ? 'This field is required' : ''}
+							</p>
+							<div className={globalClasses.captionContainer}>
+								<h6
+									className={
+										isError.selectedLabels
+											? globalClasses.errorState
+											: globalClasses.noErrorState
+									}
+								>
+									LABELS
+								</h6>
+								<Labels
+									isEdit={isEdit}
+									setDisableDropdown={setDisableDropdown}
+									selectedLabels={form.labels}
+									LabelsOptions={postLabels}
+									extraLabel={extraLabel}
+									draftStatus={status}
+									handleChangeExtraLabel={handleChangeExtraLabel}
+									setSelectedLabels={(newVal) => {
+										setForm((prev) => {
+											return { ...prev, labels: [...newVal] };
+										});
+									}}
+								/>
+							</div>
+							<p className={globalClasses.mediaError}>
+								{isError.selectedLabels
+									? `You need to add  ${
+											7 - form.labels.length
+									  }  more labels in order to post`
+									: ''}
+							</p>
+							<div className={globalClasses.postMediaContainer}>
+								<div className={globalClasses.postMediaHeader}>
+									<h5>Show comments</h5>
+									<ToggleSwitch
+										id={1}
+										checked={form.show_comments}
+										onChange={(checked) =>
+											setForm((prev) => {
+												return { ...prev, show_comments: checked };
+											})
+										}
+									/>
+								</div>
+							</div>
+							<div
+								className={globalClasses.postMediaContainer}
+								style={{ marginBottom: '1rem' }}
 							>
-								ARTICLE TITLE
-							</h6>
-							<h6
-								style={{
-									color:
-										form.title?.length >= 39 && form.title?.length <= 42
-											? 'pink'
-											: form.title?.length === 43
-											? 'red'
-											: 'white'
-								}}
-							>
-								{form.title?.length}/43
-							</h6>
-						</div>
-
-						<TextField
-							value={form.title}
-							onChange={(e) =>
-								setForm((prev) => {
-									return { ...prev, title: e.target.value };
-								})
-							}
-							placeholder={'Please write your title here'}
-							className={classes.textField}
-							InputProps={{
-								disableUnderline: true,
-								className: classes.textFieldInput
-							}}
-							inputProps={{ maxLength: 43 }}
-							multiline
-							maxRows={2}
-						/>
-					</div>
-
-					<p className={globalClasses.mediaError}>
-						{isError.articleTitle
-							? 'This field is required'
-							: isError.articleTitleExists
-							? 'This title aready Exists'
-							: ''}
-					</p>
-
-					<div className={globalClasses.captionContainer}>
-						<div className={globalClasses.characterCount}>
-							<h6
-								className={
-									isError.sub_text
-										? globalClasses.errorState
-										: globalClasses.noErrorState
-								}
-							>
-								SUB TITLE
-							</h6>
-							<h6
-								style={{
-									color:
-										form.sub_text?.length >= 76 && form.sub_text?.length <= 83
-											? 'pink'
-											: form.sub_text?.length === 84
-											? 'red'
-											: 'white'
-								}}
-							>
-								{form.sub_text?.length}/84
-							</h6>
-						</div>
-
-						<TextField
-							value={form.sub_text}
-							onChange={(e) =>
-								setForm((prev) => {
-									return { ...prev, sub_text: e.target.value };
-								})
-							}
-							placeholder={'Please write your sub title here'}
-							className={classes.textField}
-							InputProps={{
-								disableUnderline: true,
-								className: classes.textFieldInput
-							}}
-							inputProps={{ maxLength: 84 }}
-							multiline
-							maxRows={2}
-						/>
-					</div>
-
-					<p className={globalClasses.mediaError}>
-						{isError.sub_text ? 'This field is required' : ''}
-					</p>
-
-					<div className={globalClasses.captionContainer}>
-						<h6
-							className={
-								isError.selectedLabels
-									? globalClasses.errorState
-									: globalClasses.noErrorState
-							}
-						>
-							LABELS
-						</h6>
-						<Labels
-							isEdit={isEdit}
-							setDisableDropdown={setDisableDropdown}
-							selectedLabels={form.labels}
-							LabelsOptions={postLabels}
-							extraLabel={extraLabel}
-							draftStatus={status}
-							handleChangeExtraLabel={handleChangeExtraLabel}
-							setSelectedLabels={(newVal) => {
-								setForm((prev) => {
-									return { ...prev, labels: [...newVal] };
-								});
-							}}
-						/>
-					</div>
-
-					<p className={globalClasses.mediaError}>
-						{isError.selectedLabels
-							? `You need to add  ${
-									7 - form.labels.length
-							  }  more labels in order to post`
-							: ''}
-					</p>
-
-					<div className={globalClasses.postMediaContainer}>
-						<div className={globalClasses.postMediaHeader}>
-							<h5>Show comments</h5>
-							<ToggleSwitch
-								id={1}
-								checked={form.show_comments}
-								onChange={(checked) =>
-									setForm((prev) => {
-										return { ...prev, show_comments: checked };
-									})
-								}
-							/>
-						</div>
-					</div>
-
-					<div
-						className={globalClasses.postMediaContainer}
-						style={{ marginBottom: '1rem' }}
-					>
-						<div className={globalClasses.postMediaHeader}>
-							<h5>Show likes</h5>
-							<ToggleSwitch
-								id={2}
-								checked={form.show_likes}
-								onChange={(checked) =>
-									setForm((prev) => {
-										return { ...prev, show_likes: checked };
-									})
-								}
-							/>
-						</div>
-					</div>
+								<div className={globalClasses.postMediaHeader}>
+									<h5>Show likes</h5>
+									<ToggleSwitch
+										id={2}
+										checked={form.show_likes}
+										onChange={(checked) =>
+											setForm((prev) => {
+												return { ...prev, show_likes: checked };
+											})
+										}
+									/>
+								</div>
+							</div>
+						</>
+					) : (
+						<>
+							<br />
+						</>
+					)}
 				</AccordionDetails>
 			</Accordion>
 		</div>
