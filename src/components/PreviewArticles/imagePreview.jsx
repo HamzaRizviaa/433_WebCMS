@@ -20,8 +20,10 @@ const ImagePreview = ({ data }) => {
 							// poster={data?.data[0]?.media_url}
 							className={classes.previewFile}
 							style={{
-								width: `${data?.data[0]?.fileWidth}px`,
+								// width: `${data?.data[0]?.fileWidth}px`,
 								height: `${data?.data[0]?.fileHeight}px`,
+								maxHeight: '812px',
+								width: '100%',
 								objectFit: 'cover',
 								objectPosition: 'center'
 							}}

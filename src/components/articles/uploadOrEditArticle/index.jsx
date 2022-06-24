@@ -1084,7 +1084,8 @@ const UploadOrEditViral = ({
 			setIsLoading(true);
 
 			if (isEdit) {
-				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				let uploadFilesPromiseArray;
+				uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
 					if (_file.file) {
 						return await uploadFileToServer(_file, 'articleLibrary');
 					} else {
@@ -1092,15 +1093,14 @@ const UploadOrEditViral = ({
 					}
 				});
 
-				let uploadAuthorImagePromiseArray = form.author_image.map(
-					async (_file) => {
-						if (_file.file) {
-							return uploadFileToServer(_file, 'articleLibrary');
-						} else {
-							return _file;
-						}
+				let uploadAuthorImagePromiseArray;
+				uploadAuthorImagePromiseArray = form.author_image.map(async (_file) => {
+					if (_file.file) {
+						return uploadFileToServer(_file, 'articleLibrary');
+					} else {
+						return _file;
 					}
-				);
+				});
 
 				let dataMedia = [];
 				if (data.length) {
@@ -1123,10 +1123,12 @@ const UploadOrEditViral = ({
 				}
 
 				let updatedArray = [
-					uploadFilesPromiseArray,
-					uploadAuthorImagePromiseArray,
+					uploadFilesPromiseArray && uploadFilesPromiseArray,
+					uploadAuthorImagePromiseArray && uploadAuthorImagePromiseArray,
 					dataMedia && dataMedia[0]
 				].filter((item) => item !== undefined && item);
+
+				console.log(updatedArray, 'updatedArray');
 
 				Promise.all([...updatedArray])
 					.then((mediaFiles) => {
@@ -1564,16 +1566,26 @@ const UploadOrEditViral = ({
 														<div key={index} style={{ padding: '5px' }}>
 															{item.element_type === 'MEDIA' ? (
 																<ImagePreview
+																	style={{ width: '100%' }}
 																	data={item}
 																	elementWidth={mediaElementWidth}
 																	elementHeight={mediaElementHeight}
 																/>
 															) : item.element_type === 'TEXT' ? (
-																<TextPreview data={item} />
+																<TextPreview
+																	data={item}
+																	style={{ width: '100%' }}
+																/>
 															) : item.element_type === 'TWITTER' ? (
-																<TwitterPost data={item} />
+																<TwitterPost
+																	data={item}
+																	style={{ width: '100%' }}
+																/>
 															) : item.element_type === 'IG' ? (
-																<TwitterPost data={item} />
+																<TwitterPost
+																	data={item}
+																	style={{ width: '100%' }}
+																/>
 															) : (
 																''
 															)}
