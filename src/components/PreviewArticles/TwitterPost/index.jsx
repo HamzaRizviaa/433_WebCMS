@@ -86,7 +86,7 @@ const TwitterPost = ({ data }) => {
 	return (
 		<>
 			<Box
-				px={3}
+				pr={3}
 				className={
 					data.element_type === 'TWITTER'
 						? classes.twitterBox
