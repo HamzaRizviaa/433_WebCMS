@@ -6,10 +6,13 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { getLocalStorageDetails } from '../../../utils';
 import useDebounce from '../../../utils/useDebounce';
+import { ClassNames } from '@emotion/react';
+import { useStyles } from '../index.style';
 // import twitterCall from '../../../globalServices/globalService';
 
 const TwitterPost = ({ data }) => {
 	// const [result, setResult] = useState(null);
+	const classes = useStyles();
 	const [markup, setMarkup] = useState('');
 	// const [url, setUrl] = useState('');
 	// const url = 'https://twitter.com/433/status/1529108545664438276';
@@ -82,7 +85,16 @@ const TwitterPost = ({ data }) => {
 
 	return (
 		<>
-			<Box px={3}>{markup && <Markup content={markup} />}</Box>
+			<Box
+				pr={3}
+				className={
+					data.element_type === 'TWITTER'
+						? classes.twitterBox
+						: classes.instaBox
+				}
+			>
+				{markup && <Markup content={markup} />}
+			</Box>
 		</>
 	);
 };

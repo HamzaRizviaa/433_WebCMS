@@ -1555,16 +1555,26 @@ const UploadOrEditViral = ({
 														<div key={index} style={{ padding: '5px' }}>
 															{item.element_type === 'MEDIA' ? (
 																<ImagePreview
+																	style={{ width: '100%' }}
 																	data={item}
 																	elementWidth={mediaElementWidth}
 																	elementHeight={mediaElementHeight}
 																/>
 															) : item.element_type === 'TEXT' ? (
-																<TextPreview data={item} />
+																<TextPreview
+																	data={item}
+																	style={{ width: '100%' }}
+																/>
 															) : item.element_type === 'TWITTER' ? (
-																<TwitterPost data={item} />
+																<TwitterPost
+																	data={item}
+																	style={{ width: '100%' }}
+																/>
 															) : item.element_type === 'IG' ? (
-																<TwitterPost data={item} />
+																<TwitterPost
+																	data={item}
+																	style={{ width: '100%' }}
+																/>
 															) : (
 																''
 															)}

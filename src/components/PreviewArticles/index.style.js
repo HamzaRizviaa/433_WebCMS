@@ -24,5 +24,11 @@ export const useStyles = makeStyles(() => ({
 	videos: {
 		width: '100%',
 		backgroundColor: 'black'
+	},
+	instaBox: {
+		'& iframe': {
+			maxHeight: '418px',
+			minWidth: 'unset !important'
+		}
 	}
 }));
