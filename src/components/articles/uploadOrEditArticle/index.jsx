@@ -439,6 +439,8 @@ const UploadOrEditViral = ({
 		setEditorTextChecker(editorTextContent); // to check yellow button condition
 	};
 
+	console.log(form, 'f');
+
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
 
@@ -1095,7 +1097,7 @@ const UploadOrEditViral = ({
 				let uploadAuthorImagePromiseArray = form.author_image.map(
 					async (_file) => {
 						if (_file.file) {
-							return uploadFileToServer(_file, 'articleLibrary');
+							return await uploadFileToServer(_file, 'articleLibrary');
 						} else {
 							return _file;
 						}
@@ -1123,32 +1125,21 @@ const UploadOrEditViral = ({
 				}
 
 				let updatedArray = [
-					uploadFilesPromiseArray,
-					uploadAuthorImagePromiseArray,
+					...(uploadFilesPromiseArray && uploadFilesPromiseArray),
+					...(uploadAuthorImagePromiseArray && uploadAuthorImagePromiseArray),
 					dataMedia && dataMedia[0]
 				].filter((item) => item !== undefined && item);
 
+				console.log(updatedArray, 'uppa');
+
 				Promise.all([...updatedArray])
 					.then((mediaFiles) => {
+						// console.log(mediaFiles, 'uppa');
 						createArticle(specificArticle?.id, mediaFiles, true);
 					})
 					.catch(() => {
 						setIsLoading(false);
 					});
-
-				// try {
-				// 	createArticle(
-				// 		specificArticle?.id,
-				// 		[
-				// 			uploadFilesPromiseArray && uploadFilesPromiseArray,
-				// 			uploadAuthorImagePromiseArray && uploadAuthorImagePromiseArray,
-				// 			dataMedia && dataMedia[0]
-				// 		],
-				// 		true
-				// 	);
-				// } catch (e) {
-				// 	setIsLoading(false);
-				// }
 			} else {
 				setIsLoading(true);
 
