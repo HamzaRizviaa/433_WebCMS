@@ -993,41 +993,99 @@ const UploadOrEditViral = ({
 
 				data?.length !== 0
 			];
+
 			const validationEmptyArray = [
 				checkEmptyDescription(data),
 				checkEmptyTwitter(data),
 				checkEmptyIG(data),
 				checkEmptyMedia(data),
-				// checkNewElementFile(filteringByType(data, 'MEDIA')),
 				data?.length !== 0
 			];
 
-			if (
-				!validateForm(form, data) ||
-				!comparingFields(specificArticle, form)
-			) {
-				console.log('Empty check');
-				setEditBtnDisabled(
-					!validationEmptyArray.every((item) => item === true)
-				);
-			} else {
-				if (specificArticle?.elements?.length !== data?.length) {
-					console.log('disable ');
+			const validationCompleteArrayDraft = [
+				checkNewElementDescription(
+					filteringByType(specificArticle?.elements, 'TEXT'),
+					filteringByType(data, 'TEXT')
+				),
+				checkNewElementTwitter(
+					filteringByType(specificArticle?.elements, 'TWITTER'),
+					filteringByType(data, 'TWITTER')
+				),
+				checkNewElementIG(
+					filteringByType(specificArticle?.elements, 'IG'),
+					filteringByType(data, 'IG')
+				),
+				checkNewElementMedia(
+					filteringByType(specificArticle?.elements, 'MEDIA'),
+					filteringByType(data, 'MEDIA')
+				)
+			];
+
+			const validationDraftEmptyArray = [
+				checkEmptyDescription(data),
+				checkEmptyTwitter(data),
+				checkEmptyIG(data),
+				checkEmptyMedia(data)
+			];
+
+			if (status !== 'draft') {
+				if (
+					!validateForm(form, data) ||
+					!comparingFields(specificArticle, form)
+				) {
+					console.log('Empty check');
 					setEditBtnDisabled(
 						!validationEmptyArray.every((item) => item === true)
 					);
 				} else {
-					if (
-						validationCompleteArray.every((item) => item === true) ||
-						!validationEmptyArray.every((item) => item === true)
-					) {
-						setEditBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
-					} else {
-						console.log('Not Empty check');
+					if (specificArticle?.elements?.length !== data?.length) {
+						console.log('disable ');
 						setEditBtnDisabled(
-							validationCompleteArray.every((item) => item === true) ||
-								!validationEmptyArray.every((item) => item === true)
+							!validationEmptyArray.every((item) => item === true)
 						);
+					} else {
+						if (
+							validationCompleteArray.every((item) => item === true) ||
+							!validationEmptyArray.every((item) => item === true)
+						) {
+							setEditBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
+						} else {
+							console.log('Not Empty check');
+							setEditBtnDisabled(
+								validationCompleteArray.every((item) => item === true) ||
+									!validationEmptyArray.every((item) => item === true)
+							);
+						}
+					}
+				}
+			} else {
+				if (
+					!validateDraft(form, data) ||
+					!comparingDraftFields(specificArticle, form)
+				) {
+					console.log('Empty Draft check');
+					setDraftBtnDisabled(
+						!validationDraftEmptyArray.every((item) => item === true)
+					);
+				} else {
+					if (specificArticle?.elements?.length !== data?.length) {
+						console.log('disable Draft ');
+						setDraftBtnDisabled(
+							!validationDraftEmptyArray.every((item) => item === true)
+						);
+					} else {
+						if (
+							validationCompleteArrayDraft.every((item) => item === true) ||
+							!validationDraftEmptyArray.every((item) => item === true)
+						) {
+							setDraftBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
+						} else {
+							console.log('Not Empty check Draft');
+							setDraftBtnDisabled(
+								validationCompleteArrayDraft.every((item) => item === true) ||
+									!validationDraftEmptyArray.every((item) => item === true)
+							);
+						}
 					}
 				}
 			}
@@ -1180,9 +1238,10 @@ const UploadOrEditViral = ({
 						})
 					);
 				}
+
 				let updatedArray = [
-					uploadFilesPromiseArray,
-					uploadAuthorImagePromiseArray,
+					...(uploadFilesPromiseArray && uploadFilesPromiseArray),
+					...(uploadAuthorImagePromiseArray && uploadAuthorImagePromiseArray),
 					dataMedia && dataMedia[0]
 				].filter((item) => item !== undefined && item);
 
