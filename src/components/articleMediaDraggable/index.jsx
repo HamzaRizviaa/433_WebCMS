@@ -68,8 +68,9 @@ const ArticleMediaDraggable = ({
 					mime_type: file.type,
 					file: file,
 					type: file.type === 'video/mp4' ? 'video' : 'image',
-					fileWidth: fileWidth,
-					fileHeight: fileHeight
+					thumbnail_url: file.type === 'video/mp4' ? '' : null,
+					width: fileWidth,
+					height: fileHeight
 				};
 			});
 

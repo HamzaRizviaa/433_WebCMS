@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { useStyles } from './index.style';
 
 const ImagePreview = ({ data }) => {
-	// console.log(data, elementWidth, elementHeight, '===== data on image / video');
-	console.log(data, 'kaka');
 	const classes = useStyles();
 	return (
 		<div>
@@ -17,11 +15,11 @@ const ImagePreview = ({ data }) => {
 					) : data?.data[0]?.file && data?.data[0]?.type === 'video' ? (
 						<video
 							id={'my-video'}
-							// poster={data?.data[0]?.media_url}
+							// poster={isEdit ? data?.data[0]?.thumbnail_url ? null}
 							className={classes.previewFile}
 							style={{
 								// width: `${data?.data[0]?.fileWidth}px`,
-								height: `${data?.data[0]?.fileHeight}px`,
+								height: `${data?.data[0]?.height}px`,
 								maxHeight: '812px',
 								width: '100%',
 								objectFit: 'cover',
