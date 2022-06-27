@@ -693,6 +693,7 @@ const ArticleLibrary = () => {
 				<UploadOrEditArticle
 					open={showSlider}
 					isEdit={edit}
+					page={page}
 					handleClose={() => {
 						setShowSlider(false);
 						// setTimeout(() => setEdit(false), 600);
