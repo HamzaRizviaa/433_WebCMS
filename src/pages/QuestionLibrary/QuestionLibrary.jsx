@@ -701,6 +701,7 @@ const QuestionLibrary = () => {
 					}
 				/>
 				<QuizDetails
+					page={page}
 					open={showQuizSlider}
 					isEdit={edit}
 					handleClose={() => {
@@ -714,6 +715,7 @@ const QuestionLibrary = () => {
 					}
 				/>
 				<PollDetails
+					page={page}
 					open={showPollSlider}
 					isEdit={edit}
 					handleClose={() => {

@@ -53,6 +53,7 @@ const UploadOrEditQuiz = ({
 	status,
 	type
 }) => {
+	console.log(page, '==== page ====');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [quizLabels, setQuizLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');

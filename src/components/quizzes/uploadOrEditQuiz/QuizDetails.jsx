@@ -17,7 +17,8 @@ export default function QuizDetails({
 	heading1,
 	buttonText,
 	isEdit,
-	status
+	status,
+	page
 }) {
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
@@ -31,7 +32,7 @@ export default function QuizDetails({
 	};
 
 	const muiClasses = useStyles();
-	
+
 	// Question Library :  click on row with type:quiz
 
 	return (
@@ -53,6 +54,7 @@ export default function QuizDetails({
 			<div className={muiClasses.root}>
 				{status === 'draft' ? (
 					<UploadOrEditQuiz
+						page={page}
 						quiz={true}
 						editQuiz={isEdit}
 						heading1={heading1}
@@ -83,6 +85,7 @@ export default function QuizDetails({
 						<TabPanelUnstyled value={0}>
 							{/* quiz results table */}
 							<QuizResults
+								page={page}
 								handleClose={() => {
 									handleClose();
 								}}
@@ -97,6 +100,7 @@ export default function QuizDetails({
 							{/* edit quiz */}
 
 							<UploadOrEditQuiz
+								page={page}
 								quiz={true}
 								editQuiz={isEdit}
 								heading1={heading1}
@@ -130,5 +134,6 @@ QuizDetails.propTypes = {
 	buttonText: PropTypes.string.isRequired,
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
-	type: PropTypes.string.isRequired
+	type: PropTypes.string.isRequired,
+	page: PropTypes.string
 };
