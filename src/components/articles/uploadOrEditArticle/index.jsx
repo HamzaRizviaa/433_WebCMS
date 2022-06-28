@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 import React, { useState, useEffect, useRef } from 'react';
@@ -817,22 +818,26 @@ const UploadOrEditViral = ({
 
 	const checkNewElementDescription = (elements, data) => {
 		let result;
-		for (let i = 0; i < elements?.length; i++) {
-			let sortOrder = elements[i].sort_order - 1;
-			if (elements.length === data.length) {
-				if (data[i].data && data[i]?.data[0].description !== '') {
-					if (
-						data[i]?.data[0]?.description === elements[sortOrder]?.description
-					) {
-						result = true;
+		if (data.length === 0) {
+			result = true;
+		} else {
+			for (let i = 0; i < elements?.length; i++) {
+				console.log('mama loop');
+				// let sortOrder = elements[i].sort_order - 1;
+				if (elements.length === data.length) {
+					if (data[i].data && data[i]?.data[0].description !== '') {
+						console.log('mama');
+						if (data[i]?.data[0]?.description === elements[i]?.description) {
+							result = true;
+						} else {
+							result = false;
+						}
 					} else {
-						result = false;
+						result = true;
 					}
 				} else {
-					return true;
+					return !checkEmptyDescription(data);
 				}
-			} else {
-				return !checkEmptyDescription(data);
 			}
 		}
 		return result;
@@ -1085,6 +1090,7 @@ const UploadOrEditViral = ({
 						} else {
 							console.log('Not Empty check Draft');
 							console.log(
+								validationCompleteArrayDraft,
 								validationCompleteArrayDraft.every((item) => item === true),
 								!validationDraftEmptyArray.every((item) => item === true),
 								'hama'
