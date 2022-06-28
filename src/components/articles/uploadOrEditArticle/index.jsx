@@ -301,7 +301,11 @@ const UploadOrEditViral = ({
 						? [
 								{
 									id: makeid(10),
-									media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificArticle?.author_image}`,
+									media_url: specificArticle?.author_image?.split(
+										'cloudfront.net/'
+									)[1]
+										? specificArticle?.author_image
+										: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificArticle?.author_image}`,
 									type: 'image'
 								}
 						  ]
