@@ -387,9 +387,9 @@ const MediaLibrary = () => {
 							title={
 								<img
 									className={
-										row.width > row.height + 200
+										row.width > row.height + 170
 											? classes.virallandscapePreview
-											: row.height > row.width + 200
+											: row.height > row.width + 170
 											? classes.mediaIconPortraitPreview
 											: classes.mediaIconPreview
 									}
