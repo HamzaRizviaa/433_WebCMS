@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useStyles } from './index.style';
 
-const ImagePreview = ({ data }) => {
+const ImagePreview = ({ data, isEdit }) => {
 	const classes = useStyles();
 	return (
 		<div>
@@ -15,7 +15,7 @@ const ImagePreview = ({ data }) => {
 					) : data?.data[0]?.file && data?.data[0]?.type === 'video' ? (
 						<video
 							id={'my-video'}
-							// poster={isEdit ? data?.data[0]?.thumbnail_url ? null}
+							poster={isEdit ? data?.data[0]?.thumbnail_url : null}
 							className={classes.previewFile}
 							style={{
 								// width: `${data?.data[0]?.fileWidth}px`,
@@ -43,6 +43,5 @@ const ImagePreview = ({ data }) => {
 export default ImagePreview;
 ImagePreview.propTypes = {
 	data: PropTypes.string.isRequired,
-	elementWidth: PropTypes.number.isRequired,
-	elementHeight: PropTypes.number.isRequired
+	isEdit: PropTypes.bool.isRequired
 };

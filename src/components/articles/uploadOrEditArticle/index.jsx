@@ -342,6 +342,20 @@ const UploadOrEditViral = ({
 								? {
 										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.media_url}`
 								  }
+								: {}),
+							...(rest.thumbnail_url
+								? {
+										thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.thumbnail_url}`
+								  }
+								: {}),
+							...(rest.thumbnail_url
+								? {
+										type: 'video'
+								  }
+								: rest.media_url && !rest.thumbnail_url
+								? {
+										type: 'image'
+								  }
 								: {})
 						}
 					]
@@ -483,7 +497,7 @@ const UploadOrEditViral = ({
 						  mediaFiles[0]?.media_url
 						: '',
 					author_text: form.author_text,
-					author_image: form?.author_image?.length
+					author_image: form?.author_image[0]?.file
 						? mediaFiles[1]?.media_url?.split('cloudfront.net/')[1] ||
 						  mediaFiles[1]?.media_url
 						: '',
@@ -525,6 +539,7 @@ const UploadOrEditViral = ({
 		}
 	};
 
+	console.log(form, 'fff');
 	const resetState = () => {
 		setEditorTextChecker('');
 		setFileRejectionError('');
@@ -1635,8 +1650,7 @@ const UploadOrEditViral = ({
 																<ImagePreview
 																	style={{ width: '100%' }}
 																	data={item}
-																	elementWidth={mediaElementWidth}
-																	elementHeight={mediaElementHeight}
+																	isEdit={isEdit}
 																/>
 															) : item.element_type === 'TEXT' ? (
 																<TextPreview
