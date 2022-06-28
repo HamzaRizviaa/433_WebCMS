@@ -341,12 +341,12 @@ const UploadOrEditViral = ({
 							...rest,
 							...(rest.media_url
 								? {
-										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.media_url}`
+										media_url: `${rest.media_url}`
 								  }
 								: {}),
 							...(rest.thumbnail_url
 								? {
-										thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.thumbnail_url}`
+										thumbnail_url: `${rest.thumbnail_url}`
 								  }
 								: {}),
 							...(rest.thumbnail_url

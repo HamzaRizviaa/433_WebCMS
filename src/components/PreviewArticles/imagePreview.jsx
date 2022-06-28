@@ -8,11 +8,9 @@ const ImagePreview = ({ data, isEdit }) => {
 		<div>
 			<div className={classes.imageDraggableData}>
 				{data?.data ? (
-					data?.data[0]?.file &&
-					(data?.data[0]?.mime_type === 'image/png' ||
-						data?.data[0]?.mime_type === 'image/jpeg') ? (
+					data?.data[0]?.type === 'image' ? (
 						<img src={data?.data[0]?.media_url} className={classes.images} />
-					) : data?.data[0]?.file && data?.data[0]?.type === 'video' ? (
+					) : data?.data[0]?.type === 'video' ? (
 						<video
 							id={'my-video'}
 							poster={isEdit ? data?.data[0]?.thumbnail_url : null}
