@@ -472,7 +472,7 @@ const UploadOrEditViral = ({
 					dropbox_url: item?.data[0]?.dropbox_url || undefined,
 					ig_post_url: item?.data[0]?.ig_post_url || undefined,
 					twitter_post_url: item?.data[0]?.twitter_post_url || undefined,
-					sort_order: item.sortOrder
+					sort_order: index + 1
 				};
 			});
 		}
@@ -837,11 +837,9 @@ const UploadOrEditViral = ({
 			result = true;
 		} else {
 			for (let i = 0; i < elements?.length; i++) {
-				console.log('mama loop');
 				// let sortOrder = elements[i].sort_order - 1;
 				if (elements.length === data.length) {
 					if (data[i].data && data[i]?.data[0].description !== '') {
-						console.log('mama');
 						if (data[i]?.data[0]?.description === elements[i]?.description) {
 							result = true;
 						} else {
@@ -1025,6 +1023,41 @@ const UploadOrEditViral = ({
 				data?.length !== 0
 			];
 
+			if (
+				!validateForm(form, data) ||
+				!comparingFields(specificArticle, form)
+			) {
+				console.log('Empty check');
+				setEditBtnDisabled(
+					!validationEmptyArray.every((item) => item === true) ||
+						!validateForm(form, data)
+				);
+			} else {
+				if (specificArticle?.elements?.length !== data?.length) {
+					console.log('disable ');
+					setEditBtnDisabled(
+						!validationEmptyArray.every((item) => item === true)
+					);
+				} else {
+					if (
+						validationCompleteArray.every((item) => item === true) ||
+						!validationEmptyArray.every((item) => item === true)
+					) {
+						setEditBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
+					} else {
+						console.log('Not Empty check');
+						setEditBtnDisabled(
+							validationCompleteArray.every((item) => item === true) ||
+								!validationEmptyArray.every((item) => item === true)
+						);
+					}
+				}
+			}
+		}
+	}, [data]);
+
+	useEffect(() => {
+		if (specificArticle) {
 			const validationCompleteArrayDraft = [
 				checkNewElementDescription(
 					filteringByType(specificArticle?.elements, 'TEXT'),
@@ -1051,71 +1084,33 @@ const UploadOrEditViral = ({
 				checkEmptyMedia(data)
 			];
 
-			if (status !== 'draft') {
-				if (
-					!validateForm(form, data) ||
-					!comparingFields(specificArticle, form)
-				) {
-					console.log('Empty check');
-					setEditBtnDisabled(
-						!validationEmptyArray.every((item) => item === true)
-					);
-				} else {
-					if (specificArticle?.elements?.length !== data?.length) {
-						console.log('disable ');
-						setEditBtnDisabled(
-							!validationEmptyArray.every((item) => item === true)
-						);
-					} else {
-						if (
-							validationCompleteArray.every((item) => item === true) ||
-							!validationEmptyArray.every((item) => item === true)
-						) {
-							setEditBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
-						} else {
-							console.log('Not Empty check');
-							setEditBtnDisabled(
-								validationCompleteArray.every((item) => item === true) ||
-									!validationEmptyArray.every((item) => item === true)
-							);
-						}
-					}
-				}
+			if (
+				!validateDraft(form, data) ||
+				!comparingDraftFields(specificArticle, form)
+			) {
+				console.log('Empty Draft check');
+				setDraftBtnDisabled(
+					!validationDraftEmptyArray.every((item) => item === true)
+				);
 			} else {
-				if (
-					!validateDraft(form, data) ||
-					!comparingDraftFields(specificArticle, form)
-				) {
-					console.log('Empty Draft check');
+				if (specificArticle?.elements?.length !== data?.length) {
+					console.log('disable Draft ');
 					setDraftBtnDisabled(
 						!validationDraftEmptyArray.every((item) => item === true)
 					);
 				} else {
-					if (specificArticle?.elements?.length !== data?.length) {
-						console.log('disable Draft ');
-						setDraftBtnDisabled(
-							!validationDraftEmptyArray.every((item) => item === true)
-						);
+					if (
+						validationCompleteArrayDraft.every((item) => item === true) ||
+						!validationDraftEmptyArray.every((item) => item === true)
+					) {
+						setDraftBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
 					} else {
-						if (
-							validationCompleteArrayDraft.every((item) => item === true) ||
-							!validationDraftEmptyArray.every((item) => item === true)
-						) {
-							setDraftBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
-						} else {
-							console.log('Not Empty check Draft');
-							console.log(
-								validationCompleteArrayDraft,
-								validationCompleteArrayDraft.every((item) => item === true),
-								!validationDraftEmptyArray.every((item) => item === true),
-								'hama'
-							);
+						console.log('Not Empty check Draft');
 
-							setDraftBtnDisabled(
-								validationCompleteArrayDraft.every((item) => item === true) ||
-									!validationDraftEmptyArray.every((item) => item === true)
-							);
-						}
+						setDraftBtnDisabled(
+							validationCompleteArrayDraft.every((item) => item === true) ||
+								!validationDraftEmptyArray.every((item) => item === true)
+						);
 					}
 				}
 			}
@@ -1291,6 +1286,8 @@ const UploadOrEditViral = ({
 		}
 	};
 
+	console.log(isLoading, 'iLOADER');
+
 	const handleAddSaveBtn = async () => {
 		if (
 			!validateForm(form, data) ||
@@ -1317,6 +1314,9 @@ const UploadOrEditViral = ({
 						return;
 					}
 				}
+
+				setIsLoading(true);
+
 				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
 					if (_file.file) {
 						return await uploadFileToServer(_file, 'articleLibrary');
@@ -1366,6 +1366,7 @@ const UploadOrEditViral = ({
 						createArticle(specificArticle?.id, mediaFiles);
 					})
 					.catch(() => {
+						console.log('qqqqqqqqqqq');
 						setIsLoading(false);
 					});
 			} else {
