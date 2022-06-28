@@ -49,6 +49,13 @@ const ArticleMediaDraggable = ({
 		}
 	};
 
+	useEffect(() => {
+		return () => {
+			setFileWidth(0);
+			setFileHeight(0);
+		};
+	}, []);
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png,video/mp4',
