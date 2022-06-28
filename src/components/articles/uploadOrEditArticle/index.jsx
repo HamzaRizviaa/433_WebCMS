@@ -335,7 +335,6 @@ const UploadOrEditViral = ({
 					isOpen: true,
 					isOld: true,
 					id,
-					entry: element_type === 'TEXT' ? 'old' : undefined,
 					data: [
 						{
 							...rest,
@@ -351,6 +350,8 @@ const UploadOrEditViral = ({
 		);
 		return modifiedData;
 	};
+
+	console.log(data, 'd');
 
 	useEffect(() => {
 		if (specificArticle && subCategories) {
@@ -439,8 +440,6 @@ const UploadOrEditViral = ({
 		setEditorTextChecker(editorTextContent); // to check yellow button condition
 	};
 
-	console.log(form, 'f');
-
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
 
@@ -451,6 +450,9 @@ const UploadOrEditViral = ({
 					element_type: item.element_type,
 					description: item?.data[0]?.description || undefined,
 					media_url: item.data[0]?.media_url || undefined,
+					thumbnail_url: item.data[0]?.thumbnail_url || undefined,
+					width: item.data[0]?.width || undefined,
+					height: item.data[0]?.height || undefined,
 					file_name: item.data[0]?.file_name || undefined,
 					dropbox_url: item?.data[0]?.dropbox_url || undefined,
 					ig_post_url: item?.data[0]?.ig_post_url || undefined,
@@ -490,7 +492,7 @@ const UploadOrEditViral = ({
 					(form.labels?.length || status == 'draft')
 						? { labels: [...form.labels] }
 						: {}),
-					elements: elementsData?.length ? elementsData : undefined,
+					elements: elementsData?.length ? elementsData : [],
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -756,7 +758,8 @@ const UploadOrEditViral = ({
 					heading: dataItem.text,
 					component: dataItem.component,
 					element_type: dataItem.type,
-					isOpen: true
+					isOpen: true,
+					deleted: false
 				}
 			];
 		});
@@ -1081,6 +1084,12 @@ const UploadOrEditViral = ({
 							setDraftBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
 						} else {
 							console.log('Not Empty check Draft');
+							console.log(
+								validationCompleteArrayDraft.every((item) => item === true),
+								!validationDraftEmptyArray.every((item) => item === true),
+								'hama'
+							);
+
 							setDraftBtnDisabled(
 								validationCompleteArrayDraft.every((item) => item === true) ||
 									!validationDraftEmptyArray.every((item) => item === true)
@@ -1173,6 +1182,8 @@ const UploadOrEditViral = ({
 								);
 								const dataCopy = [...data];
 								dataCopy[index].data[0].media_url = uploadedFile.media_url;
+								dataCopy[index].data[0].thumbnail_url =
+									uploadedFile.thumbnail_url;
 								await setData(dataCopy);
 								return uploadedFile;
 							} else {
@@ -1230,8 +1241,11 @@ const UploadOrEditViral = ({
 									item.data[0],
 									'articleLibrary'
 								);
+
 								const dataCopy = [...data];
 								dataCopy[index].data[0].media_url = uploadedFile.media_url;
+								dataCopy[index].data[0].thumbnail_url =
+									uploadedFile.thumbnail_url;
 								await setData(dataCopy);
 								return uploadedFile;
 							}
@@ -1240,8 +1254,8 @@ const UploadOrEditViral = ({
 				}
 
 				let updatedArray = [
-					...(uploadFilesPromiseArray && uploadFilesPromiseArray),
-					...(uploadAuthorImagePromiseArray && uploadAuthorImagePromiseArray),
+					uploadFilesPromiseArray && uploadFilesPromiseArray,
+					uploadAuthorImagePromiseArray && uploadAuthorImagePromiseArray,
 					dataMedia && dataMedia[0]
 				].filter((item) => item !== undefined && item);
 
@@ -1311,6 +1325,8 @@ const UploadOrEditViral = ({
 								);
 								const dataCopy = [...data];
 								dataCopy[index].data[0].media_url = uploadedFile.media_url;
+								dataCopy[index].data[0].thumbnail_url =
+									uploadedFile.thumbnail_url;
 								await setData(dataCopy);
 								return uploadedFile;
 							} else {
@@ -1367,8 +1383,11 @@ const UploadOrEditViral = ({
 									item.data[0],
 									'articleLibrary'
 								);
+
 								const dataCopy = [...data];
 								dataCopy[index].data[0].media_url = uploadedFile.media_url;
+								dataCopy[index].data[0].thumbnail_url =
+									uploadedFile.thumbnail_url;
 								await setData(dataCopy);
 								return uploadedFile;
 							}
