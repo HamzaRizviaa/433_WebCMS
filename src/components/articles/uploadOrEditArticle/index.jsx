@@ -341,12 +341,12 @@ const UploadOrEditViral = ({
 							...rest,
 							...(rest.media_url
 								? {
-										media_url: `${rest.media_url}`
+										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.media_url}`
 								  }
 								: {}),
 							...(rest.thumbnail_url
 								? {
-										thumbnail_url: `${rest.thumbnail_url}`
+										thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.thumbnail_url}`
 								  }
 								: {}),
 							...(rest.thumbnail_url
@@ -464,8 +464,14 @@ const UploadOrEditViral = ({
 				return {
 					element_type: item.element_type,
 					description: item?.data[0]?.description || undefined,
-					media_url: item.data[0]?.media_url || undefined,
-					thumbnail_url: item.data[0]?.thumbnail_url || undefined,
+					media_url:
+						item.data[0]?.media_url?.split('cloudfront.net/')[1] ||
+						item.data[0]?.media_url ||
+						undefined,
+					thumbnail_url:
+						item.data[0]?.thumbnail_url?.split('cloudfront.net/')[1] ||
+						item.data[0]?.thumbnail_url ||
+						undefined,
 					width: item.data[0]?.width || undefined,
 					height: item.data[0]?.height || undefined,
 					file_name: item.data[0]?.file_name || undefined,
@@ -1228,25 +1234,29 @@ const UploadOrEditViral = ({
 			} else {
 				setIsLoading(true);
 
-				let uploadFilesPromiseArray = form.uploadedFiles[0];
-				if (form.uploadedFiles[0] && form.uploadedFiles[0]?.file) {
-					uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-						return await uploadFileToServer(_file, 'articleLibrary');
-					});
-				}
+				const fileUploader = async (file) => {
+					return await uploadFileToServer(file, 'articleLibrary');
+				};
 
-				let uploadAuthorImagePromiseArray = form.author_image[0];
-				if (form.author_image[0]?.file) {
-					uploadAuthorImagePromiseArray = form.author_image.map(
-						async (_file) => {
-							if (_file.file) {
-								return uploadFileToServer(_file, 'articleLibrary');
-							} else {
-								return _file;
-							}
-						}
-					);
-				}
+				// let uploadFilesPromiseArray = form.uploadedFiles[0];
+				// if (form.uploadedFiles[0] && form.uploadedFiles[0]?.file) {
+				// 	uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				// 		return await uploadFileToServer(_file, 'articleLibrary');
+				// 	});
+				// }
+
+				// let uploadAuthorImagePromiseArray = form.author_image[0];
+				// if (form.author_image[0]?.file) {
+				// 	uploadAuthorImagePromiseArray = form.author_image.map(
+				// 		async (_file) => {
+				// 			if (_file.file) {
+				// 				return uploadFileToServer(_file, 'articleLibrary');
+				// 			} else {
+				// 				return _file;
+				// 			}
+				// 		}
+				// 	);
+				// }
 
 				let dataMedia = [];
 				if (data.length) {
@@ -1259,9 +1269,9 @@ const UploadOrEditViral = ({
 								);
 
 								const dataCopy = [...data];
-								dataCopy[index].data[0].media_url = uploadedFile.media_url;
+								dataCopy[index].data[0].media_url = uploadedFile?.media_url;
 								dataCopy[index].data[0].thumbnail_url =
-									uploadedFile.thumbnail_url;
+									uploadedFile?.thumbnail_url;
 								await setData(dataCopy);
 								return uploadedFile;
 							}
@@ -1270,10 +1280,10 @@ const UploadOrEditViral = ({
 				}
 
 				let updatedArray = [
-					uploadFilesPromiseArray && uploadFilesPromiseArray,
-					uploadAuthorImagePromiseArray && uploadAuthorImagePromiseArray,
+					form.uploadedFiles[0] && fileUploader(form.uploadedFiles[0]),
+					form.author_image[0] && fileUploader(form.author_image[0]),
 					dataMedia && dataMedia[0]
-				].filter((item) => item !== undefined && item);
+				].filter((item) => item !== undefined);
 
 				Promise.all([...updatedArray])
 					.then((mediaFiles) => {
@@ -1285,8 +1295,6 @@ const UploadOrEditViral = ({
 			}
 		}
 	};
-
-	console.log(isLoading, 'iLOADER');
 
 	const handleAddSaveBtn = async () => {
 		if (
