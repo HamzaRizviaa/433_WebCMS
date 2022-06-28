@@ -10,6 +10,7 @@ import { formatDate2 } from '../../utils';
 import WiFi from '../../assets/Wifi.svg';
 import Battery from '../../assets/Rectangle.svg';
 import Signals from '../../assets/MobileSignal.svg';
+import { Markup } from 'interweave';
 const PreviewWrapper = ({
 	children,
 	subCategory,
@@ -18,10 +19,8 @@ const PreviewWrapper = ({
 	authorName,
 	backgroundImage,
 	showLikes,
-	showComments,
-	height // to set height of background image
+	showComments
 }) => {
-	console.log(height, 'height');
 	const classes = useStyles();
 	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/Profile433.svg`;
 	const date = formatDate2(new Date());
@@ -30,6 +29,7 @@ const PreviewWrapper = ({
 		today.getHours() +
 		':' +
 		(today.getMinutes() < 10 ? '0' + today.getMinutes() : today.getMinutes());
+
 	return (
 		<div
 			className={classes.previewWrapper}
@@ -70,7 +70,9 @@ const PreviewWrapper = ({
 						<div className={classes.subCatText}>
 							{subCategory ? subCategory?.name : ''}
 						</div>
-						<div className={classes.mainTitle}>{title}</div>
+						<div className={classes.mainTitle}>
+							<Markup content={title} />
+						</div>
 
 						<div className={classes.bottomIcons}>
 							{showLikes ? (
@@ -119,8 +121,7 @@ PreviewWrapper.propTypes = {
 	authorName: PropTypes.string,
 	backgroundImage: PropTypes.string,
 	showLikes: PropTypes.boolean,
-	showComments: PropTypes.boolean,
-	height: PropTypes.integer
+	showComments: PropTypes.boolean
 };
 
 export default PreviewWrapper;
