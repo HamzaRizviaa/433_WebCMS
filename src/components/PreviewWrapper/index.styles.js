@@ -79,7 +79,7 @@ export const useStyles = makeStyles(() => ({
 	mainTitle: {
 		fontWeight: 800,
 		fontSize: '24px',
-		lineHeight: '54px',
+		lineHeight: '40px',
 		color: 'white',
 		overflowWrap: 'anywhere'
 	},
