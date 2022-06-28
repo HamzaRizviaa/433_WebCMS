@@ -458,6 +458,8 @@ const UploadOrEditViral = ({
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
 
+		console.log('mediaFiles', mediaFiles);
+
 		let elementsData;
 		if (data.length) {
 			elementsData = data.map((item, index) => {
@@ -1175,6 +1177,13 @@ const UploadOrEditViral = ({
 			setIsLoading(true);
 
 			if (isEdit) {
+				const fileUploader = async (file) => {
+					if (file.file) {
+						return await uploadFileToServer(file, 'articleLibrary');
+					}
+					return file;
+				};
+
 				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
 					if (_file.file) {
 						return await uploadFileToServer(_file, 'articleLibrary');
@@ -1216,10 +1225,10 @@ const UploadOrEditViral = ({
 				}
 
 				let updatedArray = [
-					...(uploadFilesPromiseArray && uploadFilesPromiseArray),
-					...(uploadAuthorImagePromiseArray && uploadAuthorImagePromiseArray),
+					form.uploadedFiles[0] && fileUploader(form.uploadedFiles[0]),
+					form.author_image[0] && fileUploader(form.author_image[0]),
 					dataMedia && dataMedia[0]
-				].filter((item) => item !== undefined && item);
+				];
 
 				console.log(updatedArray, 'uppa');
 
@@ -1235,7 +1244,10 @@ const UploadOrEditViral = ({
 				setIsLoading(true);
 
 				const fileUploader = async (file) => {
-					return await uploadFileToServer(file, 'articleLibrary');
+					if (file.file) {
+						return await uploadFileToServer(file, 'articleLibrary');
+					}
+					return file;
 				};
 
 				// let uploadFilesPromiseArray = form.uploadedFiles[0];
@@ -1283,7 +1295,7 @@ const UploadOrEditViral = ({
 					form.uploadedFiles[0] && fileUploader(form.uploadedFiles[0]),
 					form.author_image[0] && fileUploader(form.author_image[0]),
 					dataMedia && dataMedia[0]
-				].filter((item) => item !== undefined);
+				];
 
 				Promise.all([...updatedArray])
 					.then((mediaFiles) => {
