@@ -29,8 +29,8 @@ const ArticleTextDraggable = ({
 	useEffect(() => {
 		if (initialData?.description) {
 			let editorbyId =
-				tinymce?.get(`text-${item.sortOrder}`) ||
-				tinymce?.get(`text-${item.sortOrder}_ifr`);
+				tinymce?.get(`text-${item.sortOrder}_ifr`) ||
+				tinymce?.get(`text-${item.sortOrder}`);
 			setTimeout(() => {
 				setDescription(editorbyId?.setContent(initialData?.description));
 			}, 500);
