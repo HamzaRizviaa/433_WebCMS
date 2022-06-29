@@ -30,11 +30,11 @@ const AppRoutes = () => {
 					path='/sign-in'
 					element={<SignIn setLoginData={setLoginData} />}
 				/>
-				{/* <Route
+				<Route
 					exact
 					path='/news-library'
 					element={<RequireAuth component={<NewsLibrary />} />}
-				/> */}
+				/>
 
 				<Route
 					exact
