@@ -4,6 +4,8 @@ import { useStyles } from './index.style';
 
 const ImagePreview = ({ data, isEdit }) => {
 	const classes = useStyles();
+
+	console.log('data', data);
 	return (
 		<div>
 			<div className={classes.imageDraggableData}>
@@ -17,7 +19,10 @@ const ImagePreview = ({ data, isEdit }) => {
 							className={classes.previewFile}
 							style={{
 								// width: `${data?.data[0]?.fileWidth}px`,
-								height: `${data?.data[0]?.height}px`,
+								height:
+									data?.data[0]?.height < data?.data[0]?.width + 100
+										? '200px'
+										: `	${data?.data[0]?.height}px`,
 								maxHeight: '750px',
 								width: '100%',
 								objectFit: 'cover',
