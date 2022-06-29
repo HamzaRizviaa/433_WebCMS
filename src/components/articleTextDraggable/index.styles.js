@@ -112,6 +112,7 @@ export const useStyles = makeStyles((theme) => ({
 						}
 					},
 					'& > div.tox-toolbar': {
+						display: 'none !important', // scrolling second tool bar line
 						backgroundColor: `#404040 !important`,
 						background: `#404040 !important`,
 						'&  >div.tox-toolbar__group': {
