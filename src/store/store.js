@@ -6,6 +6,7 @@ import viralLibraryReducer from '../pages/ViralLibrary/viralLibararySlice';
 import articleLibraryReducer from '../pages/ArticleLibrary/articleLibrarySlice';
 import topBannerReducer from '../pages/TopBanner/topBannerSlice';
 import gamesLibraryReducer from '../pages/GamesLibrary/gamesLibrarySlice';
+import newsLibraryReducer from '../pages/NewsLibrary/newsLibrarySlice';
 const store = configureStore({
 	reducer: {
 		postLibrary: postLibraryReducer,
@@ -14,7 +15,8 @@ const store = configureStore({
 		topBanner: topBannerReducer,
 		ViralLibraryStore: viralLibraryReducer,
 		ArticleLibraryStore: articleLibraryReducer,
-		GamesLibraryStore: gamesLibraryReducer
+		GamesLibraryStore: gamesLibraryReducer,
+		NewsLibrary: newsLibraryReducer
 	}
 });
 
