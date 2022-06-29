@@ -20,12 +20,13 @@ import { getDateTime, formatDate, getCalendarText } from '../../utils';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
+import { ReactComponent as MenuIcon } from '../../assets/Union.svg';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import DefaultImage from '../../assets/defaultImage.png';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import Tooltip from '@mui/material/Tooltip';
+
 import Fade from '@mui/material/Fade';
 import UploadOrEditNews from '../../components/news/uploadOrEditNews';
 
@@ -40,6 +41,7 @@ import {
 const NewsLibrary = () => {
 	// Selectors
 	const allNews = useSelector((state) => state.NewsLibrary.news);
+	console.log(allNews, '==== all news api =====');
 	const newsApiStatus = useSelector((state) => state.NewsLibrary);
 	const totalRecords = useSelector((state) => state.NewsLibrary.totalRecords);
 	const noResultStatus = useSelector(
@@ -218,48 +220,28 @@ const NewsLibrary = () => {
 								  classes.mediaWrapper
 						}
 					>
+						<MenuIcon style={{ marginRight: '10px' }} />
 						<Tooltip
 							// TransitionComponent={Fade}
 							// TransitionProps={{ timeout: 600 }}
 
 							title={
-								row?.thumbnail_url ? (
-									<video
-										id={'my-video'}
-										poster={row.thumbnail_url}
-										autoPlay
-										muted
-										className={
-											row.width > row.height + 200
-												? classes.virallandscapePreview
-												: row.height > row.width + 200
-												? classes.mediaIconPortraitPreview
-												: classes.mediaIconPreview
-										}
-										controls={true}
-									>
-										<source
-											src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${row?.media}`}
-										/>
-									</video>
-								) : (
-									<img
-										className={
-											row.width === row.height
-												? classes.mediaIconPreview
-												: row.width > row.height
-												? classes.virallandscapePreview
-												: classes.mediaIconPortraitPreview
-										}
-										src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-											row?.thumbnail_url ? row?.thumbnail_url : row?.media
-										}`}
-										alt='no img'
-										onError={(e) => (
-											(e.target.onerror = null), (e.target.src = DefaultImage)
-										)}
-									/>
-								)
+								<img
+									className={
+										row.width === row.height
+											? classes.mediaIconPreview
+											: row.width > row.height
+											? classes.virallandscapePreview
+											: classes.mediaIconPortraitPreview
+									}
+									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
+										row?.thumbnail_url ? row?.thumbnail_url : row?.media
+									}`}
+									alt='no img'
+									onError={(e) => (
+										(e.target.onerror = null), (e.target.src = DefaultImage)
+									)}
+								/>
 							}
 							placement='right'
 							componentsProps={{
@@ -267,15 +249,6 @@ const NewsLibrary = () => {
 							}}
 						>
 							<span>
-								{/* {row?.thumbnail_url ? (
-									<PlayArrowIcon className={classes.playIcon} />
-								) : (
-									''
-								)} */}
-
-								{row?.thumbnail_url && (
-									<PlayArrowIcon className={classes.libraryPlayIcon} />
-								)}
 								<img
 									className={classes.mediaIcon}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
