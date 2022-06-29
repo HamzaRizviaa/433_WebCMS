@@ -77,35 +77,37 @@ body::-webkit-scrollbar-thumb {
 	border: 3px solid #808080;
 }
 
-
 // Global styles for tineMce starts
 .tox .tox-menu {
 	background-color: black !important;
 }
 .tox-collection__item-icon {
-	>svg{
-		fill:white !important
+	> svg {
+		fill: white !important;
 	}
 }
 
-.tox-collection__item-label{
+.tox-collection__item-label {
 	color: white !important;
 }
 
-.tox-collection__item-accessory{
+.tox-collection__item-accessory {
 	color: white !important;
 }
 .tox .tox-collection--list .tox-collection__item--active {
-    background-color: grey !important;
+	background-color: grey !important;
 }
-.tox .tox-collection__item-caret svg {	
-	fill:white !important	;
-	
+.tox .tox-collection__item-caret svg {
+	fill: white !important	;
 }
 .tox .tox-collection--list .tox-collection__item--enabled {
 	background-color: grey !important;
 }
-.tox .tox-collection__item-checkmark svg, .tox .tox-collection__item-icon svg {
-	fill:white !important	;
+.tox .tox-collection__item-checkmark svg,
+.tox .tox-collection__item-icon svg {
+	fill: white !important	;
+}
+.tox-toolbar .tox-toolbar--scrolling {
+	display: none !important;
 }
 // Global styles for tineMce ends
