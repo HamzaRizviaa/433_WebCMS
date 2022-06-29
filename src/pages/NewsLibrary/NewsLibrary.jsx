@@ -28,6 +28,8 @@ import Four33Loader from '../../assets/Loader_Yellow.gif';
 import Tooltip from '@mui/material/Tooltip';
 
 import Fade from '@mui/material/Fade';
+import UploadOrEditNews from '../../components/news/uploadOrEditNews';
+
 // Api calls
 import {
 	getAllNews,
@@ -631,21 +633,20 @@ const NewsLibrary = () => {
 					/>
 				</div>
 
-				{/* <UploadOrEditViral
+				<UploadOrEditNews
 					open={showSlider}
 					isEdit={edit}
 					handleClose={() => {
 						setShowSlider(false);
 						// setTimeout(() => setEdit(false), 300); //to show edit data after clicking second time
 					}}
-					title={edit ? 'Edit Viral' : 'Upload Viral'}
-					heading1={edit ? 'Media File' : 'Add Media File'}
+					title={edit ? 'Edit Viral' : 'Upload News'}
 					page={page}
 					buttonText={
 						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
 					}
 					status={rowStatus}
-				/> */}
+				/>
 			</Layout>
 		</LoadingOverlay>
 	);

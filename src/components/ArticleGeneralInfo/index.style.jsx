@@ -9,13 +9,7 @@ export const useStyles = makeStyles((theme) => ({
 			border: `1px solid ${theme.palette.grey}`,
 			borderRadius: '6px !important'
 		},
-		'& .MuiAccordionSummary-root': {
-			// backgroundColor: `${theme.palette.black} `,
-			// color: theme.palette.white,
-			// margin: '10px 0px',
-			// border: `0.1px solid ${theme.palette.white}`,
-			// borderRadius: '8px'
-		},
+
 		'& .MuiSvgIcon-root': {
 			color: theme.palette.white,
 			fontSize: '25px'
