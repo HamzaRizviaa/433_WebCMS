@@ -12,6 +12,7 @@ import SignIn from '../pages/SignIn/SignIn';
 import ViralLibrary from '../pages/ViralLibrary/ViralLibrary';
 import ArticleLibrary from '../pages/ArticleLibrary/ArticleLibrary';
 import GamesLibrary from '../pages/GamesLibrary/GamesLibrary';
+import NewsLibrary from '../pages/NewsLibrary/NewsLibrary';
 import RequireAuth from './RequireAuth.js';
 
 const AppRoutes = () => {
@@ -28,6 +29,11 @@ const AppRoutes = () => {
 					exact
 					path='/sign-in'
 					element={<SignIn setLoginData={setLoginData} />}
+				/>
+				<Route
+					exact
+					path='/news-library'
+					element={<RequireAuth component={<NewsLibrary />} />}
 				/>
 
 				<Route

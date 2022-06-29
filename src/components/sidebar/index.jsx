@@ -65,6 +65,17 @@ const Sidebar = () => {
 				</div>
 
 				<NavLink
+					to='/news-library'
+					className={({ isActive }) =>
+						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
+					}
+				>
+					<span className={classes[`${mainClass}Article`]}>
+						<Article className={classes.icon} />
+					</span>
+				</NavLink>
+
+				<NavLink
 					to='/media-library'
 					className={({ isActive }) =>
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
@@ -119,8 +130,6 @@ const Sidebar = () => {
 				>
 					<Games className={[classes.icon, classes.gamesIcon].join(' ')} />
 				</NavLink>
-
-				
 			</div>
 
 			<div onClick={signOut} className={classes.logoutContainer}>
@@ -132,15 +141,16 @@ const Sidebar = () => {
 
 export default Sidebar;
 
-
-{/* <NavLink
+{
+	/* <NavLink
 					to='/post-library'
 					className={({ isActive }) =>
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
-					{' '}
+					
 					<span className={classes[`${mainClass}Post`]}>
 						<Share className={classes.icon} />
 					</span>
-				</NavLink> */}
+				</NavLink> */
+}
