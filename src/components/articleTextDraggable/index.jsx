@@ -34,7 +34,7 @@ const ArticleTextDraggable = ({
 						.get(`text-${item.sortOrder}`)
 						?.setContent(initialData?.description)
 				);
-			}, 500);
+			}, 1500);
 		}
 	}, []);
 
