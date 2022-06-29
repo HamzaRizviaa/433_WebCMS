@@ -28,13 +28,12 @@ const ArticleTextDraggable = ({
 	// const [newFile, setNewFile] = useState(initialData ? [initialData] : []);
 	useEffect(() => {
 		if (initialData?.description) {
+			let editorbyId =
+				tineMCE?.get(`text-${item.sortOrder}`) ||
+				tineMCE?.get(`text-${item.sortOrder}_ifr`);
 			setTimeout(() => {
-				setDescription(
-					tinyMCE
-						.get(`text-${item.sortOrder}`)
-						?.setContent(initialData?.description)
-				);
-			}, 1500);
+				setDescription(editorbyId?.setContent(initialData?.description));
+			}, 500);
 		}
 	}, []);
 
