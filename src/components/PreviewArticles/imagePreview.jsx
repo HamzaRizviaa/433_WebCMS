@@ -18,7 +18,7 @@ const ImagePreview = ({ data, isEdit }) => {
 							style={{
 								// width: `${data?.data[0]?.fileWidth}px`,
 								height: `${data?.data[0]?.height}px`,
-								maxHeight: '812px',
+								maxHeight: '750px',
 								width: '100%',
 								objectFit: 'cover',
 								objectPosition: 'center'

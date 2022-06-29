@@ -301,7 +301,11 @@ const UploadOrEditViral = ({
 						? [
 								{
 									id: makeid(10),
-									media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificArticle?.author_image}`,
+									media_url: specificArticle?.author_image?.split(
+										'cloudfront.net/'
+									)[1]
+										? specificArticle?.author_image
+										: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificArticle?.author_image}`,
 									type: 'image'
 								}
 						  ]
@@ -460,6 +464,8 @@ const UploadOrEditViral = ({
 
 		console.log('mediaFiles', mediaFiles);
 
+		console.log('Form author Image', form.author_image[0]);
+
 		let elementsData;
 		if (data.length) {
 			elementsData = data.map((item, index) => {
@@ -509,7 +515,7 @@ const UploadOrEditViral = ({
 					author_image: form?.author_image[0]?.file
 						? mediaFiles[1]?.media_url?.split('cloudfront.net/')[1] ||
 						  mediaFiles[1]?.media_url
-						: '',
+						: mediaFiles[1]?.media_url,
 					...(isEdit && id ? { article_id: id } : {}),
 					...((!isEdit || status !== 'published') &&
 					(form.labels?.length || status == 'draft')
