@@ -19,13 +19,10 @@ import 'tinymce/plugins/paste';
 import 'tinymce/plugins/link';
 import 'tinymce/plugins/image';
 import 'tinymce/plugins/searchreplace';
-import 'tinymce/plugins/emoticons/js/emojiimages.min.js';
 import 'tinymce/plugins/hr';
 import 'tinymce/plugins/anchor';
-import 'tinymce/plugins/insertdatetime';
 import 'tinymce/plugins/wordcount';
 import 'tinymce/plugins/lists';
-import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/textcolor';
 import 'tinymce/plugins/colorpicker';
 import 'tinymce/plugins/fullscreen';
@@ -49,7 +46,6 @@ const ArticleTextDraggable = ({
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
 	const [description, setDescription] = useState('');
 
-	// const [newFile, setNewFile] = useState(initialData ? [initialData] : []);
 	useEffect(() => {
 		if (initialData?.description) {
 			setTimeout(() => {

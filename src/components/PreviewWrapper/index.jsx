@@ -13,13 +13,14 @@ import Signals from '../../assets/MobileSignal.svg';
 import { Markup } from 'interweave';
 const PreviewWrapper = ({
 	children,
-	subCategory,
-	title,
-	authorImage,
-	authorName,
-	backgroundImage,
-	showLikes,
-	showComments
+	form
+	// subCategory,
+	// title,
+	// authorImage,
+	// authorName,
+	// backgroundImage,
+	// showLikes,
+	// showComments
 }) => {
 	const classes = useStyles();
 	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/Profile433.svg`;
@@ -46,7 +47,7 @@ const PreviewWrapper = ({
 					// height: `${height}px`, linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 100%);
 					height: '812px',
 					backgroundImage: `linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 100%),
-					url(${backgroundImage})`
+					url(${form.uploadedFiles.length > 0 && form?.uploadedFiles[0]?.media_url})`
 				}}
 			>
 				<div className={classes.topMobileIcons}>
@@ -68,21 +69,21 @@ const PreviewWrapper = ({
 					</div>
 					<div style={{ marginTop: '300px' }}>
 						<div className={classes.subCatText}>
-							{subCategory ? subCategory?.name : ''}
+							{form?.subCategory ? form?.subCategory?.name : ''}
 						</div>
 						<div className={classes.mainTitle}>
-							<Markup content={title} />
+							<Markup content={form.title} />
 						</div>
 
 						<div className={classes.bottomIcons}>
-							{showLikes ? (
+							{form.show_likes ? (
 								<div className={classes.icons}>
 									<img src={Heart} className={classes.footballIcon} />
 								</div>
 							) : (
 								''
 							)}
-							{showComments ? (
+							{form.show_comments ? (
 								<div className={[classes.icons, classes.commentbox].join(' ')}>
 									<img src={Comments} className={classes.commentIcon} />
 								</div>
@@ -93,11 +94,17 @@ const PreviewWrapper = ({
 
 						<div className={classes.authordetails}>
 							<div>
-								<Avatar src={authorImage ? authorImage : Profile433} />
+								<Avatar
+									src={
+										form?.author_image[0]
+											? form.author_image[0].media_url
+											: Profile433
+									}
+								/>
 							</div>
 							<div className={classes.authorSection}>
 								<div className={classes.authorname}>
-									{authorName ? authorName : '-'}
+									{form.author_text ? form.author_text : '-'}
 								</div>
 								{/* 433 Content Team */}
 								<div className={classes.postDateDetails}>
@@ -115,13 +122,7 @@ const PreviewWrapper = ({
 
 PreviewWrapper.propTypes = {
 	children: PropTypes.element.isRequired,
-	subCategory: PropTypes.string,
-	title: PropTypes.string,
-	authorImage: PropTypes.string,
-	authorName: PropTypes.string,
-	backgroundImage: PropTypes.string,
-	showLikes: PropTypes.boolean,
-	showComments: PropTypes.boolean
+	form: PropTypes.object
 };
 
 export default PreviewWrapper;

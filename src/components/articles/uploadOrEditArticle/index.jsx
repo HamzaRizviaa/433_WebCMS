@@ -1662,20 +1662,7 @@ const UploadOrEditViral = ({
 												<p>Review the result here before publishing</p>
 											</Box>
 
-											<PreviewWrapper
-												height={fileHeight}
-												subCategory={form.subCategory}
-												title={form.title}
-												authorName={form.author_text}
-												authorImage={form.author_image[0].media_url}
-												backgroundImage={
-													form.uploadedFiles.length > 0
-														? form.uploadedFiles[0].media_url
-														: ''
-												}
-												showLikes={form.show_likes}
-												showComments={form.show_comments}
-											>
+											<PreviewWrapper form={form}>
 												{data.map((item, index) => {
 													return (
 														<div key={index} style={{ padding: '5px' }}>
