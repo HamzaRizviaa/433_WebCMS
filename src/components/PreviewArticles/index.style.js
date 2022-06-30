@@ -1,6 +1,5 @@
 import { makeStyles } from '@material-ui/core';
 // import theme from '../assets/theme';
-
 export const useStyles = makeStyles(() => ({
 	textDraggableData: {
 		fontWeight: 400,
@@ -27,7 +26,8 @@ export const useStyles = makeStyles(() => ({
 	},
 	instaBox: {
 		'& iframe': {
-			maxHeight: '418px',
+			maxHeight: ({ thumbnailHeight, thumbnailWidth }) =>
+				thumbnailHeight > thumbnailWidth ? '459px' : '270px',
 			minWidth: 'unset !important'
 		}
 	}
