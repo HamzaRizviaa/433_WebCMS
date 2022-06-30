@@ -1000,8 +1000,8 @@ const UploadOrEditViral = ({
 
 			setEditBtnDisabled(
 				!validateForm(form, data) ||
-					comparingFields(specificArticle, form) ||
-					!validationEmptyArray.every((item) => item === true)
+					!validationEmptyArray.every((item) => item === true) ||
+					(comparingFields(specificArticle, form) && !checkNewAuthorImage())
 			);
 		}
 	}, [form]);
