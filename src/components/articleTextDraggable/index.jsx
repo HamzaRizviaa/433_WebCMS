@@ -319,8 +319,8 @@ const ArticleTextDraggable = ({
 											},
 											plugins: [
 												'lists advlist link image anchor',
-												'searchreplace  hr visualblocks fullscreen',
-												'insertdatetime table paste wordcount  charmap textcolor colorpicker'
+												'searchreplace  hr fullscreen',
+												'insertdatetime paste wordcount  charmap textcolor colorpicker'
 											]
 
 											// toolbar:
