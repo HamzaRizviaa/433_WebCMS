@@ -43,7 +43,6 @@ const ArticleGeneralInfo = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 
-	console.log('Form prop', form.author_image[0]?.media_url);
 	return (
 		<div className={classes.root}>
 			<Accordion defaultExpanded>
