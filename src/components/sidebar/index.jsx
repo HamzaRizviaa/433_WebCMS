@@ -5,7 +5,7 @@ import { ReactComponent as Logo } from '../../assets/logo.svg';
 import { ReactComponent as Media } from '../../assets/media.svg';
 import { ReactComponent as Quiz } from '../../assets/Quiz.svg';
 import { ReactComponent as Banner } from '../../assets/Star.svg';
-// import { ReactComponent as News } from '../../assets/News.svg';
+import { ReactComponent as News } from '../../assets/News.svg';
 import { ReactComponent as Viral } from '../../assets/Flame.svg';
 import { ReactComponent as Logout } from '../../assets/logout.svg';
 import { ReactComponent as Games } from '../../assets/Games.svg';
@@ -65,7 +65,7 @@ const Sidebar = () => {
 					<p className={classes[`${mainClass}Text`]}> {mainClass} </p>
 				</div>
 
-				{/* <NavLink
+				<NavLink
 					to='/news-library'
 					className={({ isActive }) =>
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
@@ -74,7 +74,7 @@ const Sidebar = () => {
 					<span className={classes[`${mainClass}Article`]}>
 						<News className={classes.icon} />
 					</span>
-				</NavLink> */}
+				</NavLink>
 
 				<NavLink
 					to='/media-library'

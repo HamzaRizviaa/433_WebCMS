@@ -27,8 +27,11 @@ export const useStyles = makeStyles(() => ({
 	},
 	instaBox: {
 		'& iframe': {
-			maxHeight: '418px',
-			minWidth: 'unset !important'
+			// maxHeight: '418px',
+			minWidth: 'unset !important',
+			'& > * > * > body > div.HoverCard': {
+				display: 'none !important'
+			}
 		}
 	}
 }));

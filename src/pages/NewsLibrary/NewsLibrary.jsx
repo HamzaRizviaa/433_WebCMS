@@ -640,7 +640,7 @@ const NewsLibrary = () => {
 						setShowSlider(false);
 						// setTimeout(() => setEdit(false), 300); //to show edit data after clicking second time
 					}}
-					title={edit ? 'Edit Viral' : 'Upload News'}
+					title={edit ? 'Edit News' : 'Upload News'}
 					page={page}
 					buttonText={
 						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
