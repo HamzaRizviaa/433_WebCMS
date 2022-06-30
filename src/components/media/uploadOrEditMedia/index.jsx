@@ -76,8 +76,8 @@ const UploadOrEditMedia = ({
 		labels: [],
 		uploadedFiles: [],
 		uploadedCoverImage: [],
-		show_likes: false,
-		show_comments: false
+		show_likes: true,
+		show_comments: true
 	});
 
 	const classes = useStyles();
@@ -365,8 +365,8 @@ const UploadOrEditMedia = ({
 			labels: [],
 			uploadedFiles: [],
 			uploadedCoverImage: [],
-			show_likes: false,
-			show_comments: false
+			show_likes: true,
+			show_comments: true
 		});
 	};
 

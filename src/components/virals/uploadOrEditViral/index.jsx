@@ -60,8 +60,8 @@ const UploadOrEditViral = ({
 		dropbox_url: '',
 		uploadedFiles: [],
 		labels: [],
-		show_likes: false,
-		show_comments: false
+		show_likes: true,
+		show_comments: true
 	});
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
@@ -247,8 +247,8 @@ const UploadOrEditViral = ({
 			dropbox_url: '',
 			uploadedFiles: [],
 			labels: [],
-			show_likes: false,
-			show_comments: false
+			show_likes: true,
+			show_comments: true
 		});
 	};
 

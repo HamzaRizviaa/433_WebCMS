@@ -1,11 +1,19 @@
-const validateDraft = (form) => {
-	console.log(form, 'draft formx');
+const validateDraft = (form, dataElements) => {
 	var validate = Object.keys(form).map((key) => {
 		if (key === 'mainCategory' || key === 'subCategory') {
 			return false;
 		}
+
 		if (typeof form[key] === 'string') {
-			return !form[key] ? false : true;
+			if (key === 'author_text') {
+				if (form[key] === '433 Team') {
+					return false;
+				} else {
+					return true;
+				}
+			} else {
+				return !form[key] ? false : true;
+			}
 		}
 		if (typeof form[key] === 'object') {
 			// array check
@@ -29,6 +37,12 @@ const validateDraft = (form) => {
 			if (Array.isArray(form[key])) {
 				if (key === 'labels') {
 					return form[key]?.length < 1 ? false : true;
+				} else if (key === 'author_image') {
+					if (form[key][0].file) {
+						return true;
+					} else {
+						return false;
+					}
 				} else {
 					return form[key]?.length === 0 ? false : true;
 				}
@@ -39,7 +53,7 @@ const validateDraft = (form) => {
 		if (typeof form[key] === 'boolean') {
 			if (key === 'mediaToggle') {
 				return false;
-			} else if (form[key] === false) {
+			} else if (form[key] === true) {
 				return false;
 			} else {
 				return true;
@@ -47,7 +61,38 @@ const validateDraft = (form) => {
 		}
 	});
 
-	return validate.some((item) => item === true);
+	var validateData;
+	var finalDraftValue;
+
+	if (dataElements?.length) {
+		validateData = dataElements.every((dataFile) => {
+			if (dataFile.element_type === 'MEDIA') {
+				return dataFile.data;
+			} else if (dataFile.element_type === 'TEXT') {
+				if (dataFile.data) {
+					return dataFile?.data[0]?.description;
+				}
+			} else if (dataFile.element_type === 'IG') {
+				if (dataFile.data) {
+					return dataFile?.data[0]?.ig_post_url;
+				}
+			} else {
+				if (dataFile.data) {
+					return dataFile?.data[0]?.twitter_post_url;
+				}
+			}
+		});
+
+		finalDraftValue = validateData;
+	} else if (
+		dataElements?.length === 0 ||
+		dataElements === undefined ||
+		dataElements === null
+	) {
+		finalDraftValue = validate.some((item) => item === true) || validateData;
+	}
+
+	return finalDraftValue;
 };
 
 export default validateDraft;

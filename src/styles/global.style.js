@@ -15,7 +15,7 @@ export const useStyles = makeStyles(() => ({
 	uploadMediaError: {
 		color: theme.palette.red,
 		fontWeight: 'bold',
-		marginTop: '1rem',
+		// marginTop: '1rem',
 		height: '1rem'
 	},
 	mediaError: {
@@ -37,15 +37,15 @@ export const useStyles = makeStyles(() => ({
 		fontWeight: 'bold',
 		height: '1rem',
 		textAlign: 'center',
-		marginBottom: '1.5rem'
+		marginBottom: '1rem'
 	},
 
 	dragMsg: {
 		fontSize: '1.4rem',
 		lineHeight: '2.4rem',
 		fontWeight: 400,
-		...theme.components.preventSelect
-		// @include preventSelect,
+		...theme.components.preventSelect,
+		color: theme.palette.white
 	},
 
 	formatMsg: {
@@ -61,7 +61,7 @@ export const useStyles = makeStyles(() => ({
 		height: '2rem !important',
 		width: '2rem !important',
 		marginBottom: '1.5rem',
-		color: theme.palette.neonYellow
+		color: `${theme.palette.neonYellow} !important`
 	},
 
 	dropzone: {
@@ -149,24 +149,6 @@ export const useStyles = makeStyles(() => ({
 	// textFieldInput: {
 	// 	// ...theme.components.textFieldInput
 	// 	// @include textFieldInput,
-	// },
-	// textFieldInput: {
-	// 	color: '#ffffff',
-	// 	border: ' 0.01px solid #404040',
-	// 	padding: '1rem 1rem 1rem 1.5rem !important',
-	// 	fontSize: '1.4rem !important',
-	// 	fontFamily: 'Poppins !important',
-	// 	lineHeight: '1.6 !important',
-	// 	borderRadius: '22px',
-	// 	marginBottom: '1rem',
-	// 	backgroundColor: '#000000',
-	// 	'& svg': {
-	// 		position: 'absolute',
-	// 		color: '#ffff00',
-	// 		right: '2rem !important',
-	// 		top: '-9px !important',
-	// 		fontSize: '3rem'
-	// 	}
 	// },
 
 	textFieldInputStartAdornment: {
@@ -264,8 +246,11 @@ export const useStyles = makeStyles(() => ({
 	},
 
 	editBtn: {
-		width: '30%',
 		display: 'inline-block'
+	},
+
+	publishDraftDiv: {
+		display: 'flex'
 	},
 
 	previewContentWrapper: {
@@ -667,6 +652,7 @@ export const useStyles = makeStyles(() => ({
 		fontFamily: 'Poppins !important',
 		backgroundColor: ' #000000'
 	},
+
 	rowType: {
 		marginBottom: '1.5rem',
 		fontSize: '1.2rem',

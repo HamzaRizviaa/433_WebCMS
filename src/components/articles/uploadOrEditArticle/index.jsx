@@ -1,13 +1,29 @@
+/* eslint-disable no-debugger */
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 import React, { useState, useEffect, useRef } from 'react';
 // import classes from './_uploadOrEditArticle.module.scss';
 import { useDropzone } from 'react-dropzone';
+import Editor from '../../Editor';
+import ArticleElements from '../../ArticleElements';
+import ArticleGeneralInfo from '../../ArticleGeneralInfo';
+import ArticleMediaDraggable from '../../articleMediaDraggable';
+import ArticleTextDraggable from '../../articleTextDraggable';
+import ArticleSocialMediaDraggable from '../../ArticleSocialMediaDraggable';
+import ArticleFooter from '../../ArticleFooter';
+import DraggableWrapper from '../../DraggableWrapper';
+import PreviewWrapper from '../../PreviewWrapper';
+import ImagePreview from '../../PreviewArticles/imagePreview';
+import TextPreview from '../../PreviewArticles/textPreview';
+import TwitterPost from '../../PreviewArticles/TwitterPost';
+import ArticleElementMedia from '../../ArticleElementMedia';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import { MenuItem, TextField, Select } from '@material-ui/core';
+import { Box, MenuItem, TextField, Select, Grid } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
-import Button from '../../button';
+import ArticleSlider from '../../articleSlider';
+
 import DragAndDropField from '../../DragAndDropField';
 import Labels from '../../Labels';
 import { makeid } from '../../../utils/helper';
@@ -24,39 +40,26 @@ import validateForm from '../../../utils/validateForm';
 import validateDraft from '../../../utils/validateDraft';
 import PrimaryLoader from '../../PrimaryLoader';
 import { useStyles } from './index.style';
-import ToggleSwitch from '../../switch';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
+
+import Instragram from '../../../assets/Instagram.svg';
+import Text from '../../../assets/Text.svg';
+import ImageVideo from '../../../assets/Image.svg';
+import Tweet from '../../../assets/Twitter Line.svg';
+// import Profile433 from '../../../assets/Profile433.svg';
+import ArticleDraggables from '../../ArticleDraggables';
+
 //api calls
 import {
 	getAllArticlesApi,
 	getArticleMainCategories,
 	getArticleSubCategories
 } from '../../../pages/ArticleLibrary/articleLibrarySlice';
-//tinymce
-import { Editor } from '@tinymce/tinymce-react';
-import 'tinymce/tinymce';
-import 'tinymce/icons/default';
-import 'tinymce/themes/silver';
-import 'tinymce/plugins/paste';
-import 'tinymce/plugins/link';
-import 'tinymce/plugins/image';
-import 'tinymce/plugins/searchreplace';
-import 'tinymce/plugins/emoticons/js/emojiimages.min.js';
-import 'tinymce/plugins/hr';
-import 'tinymce/plugins/anchor';
-import 'tinymce/plugins/insertdatetime';
-import 'tinymce/plugins/wordcount';
-import 'tinymce/plugins/lists';
-import 'tinymce/plugins/advlist';
-import 'tinymce/plugins/textcolor';
-import 'tinymce/plugins/colorpicker';
-import 'tinymce/plugins/fullscreen';
-import 'tinymce/plugins/charmap';
-import 'tinymce/skins/ui/oxide/skin.min.css';
-import 'tinymce/skins/ui/oxide/content.min.css';
-import 'tinymce/skins/content/default/content.min.css';
+
 import LoadingOverlay from 'react-loading-overlay';
+import { ConstructionOutlined } from '@mui/icons-material';
+import { height } from '@mui/system';
 
 const UploadOrEditViral = ({
 	open,
@@ -70,6 +73,7 @@ const UploadOrEditViral = ({
 }) => {
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
+	const [fileRejectionError2, setFileRejectionError2] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -84,30 +88,117 @@ const UploadOrEditViral = ({
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
+	const [dataItem, setDataItem] = useState('');
+	const [mediaElementWidth, setMediaElementWidth] = useState(0);
+	const [mediaElementHeight, setMediaElementHeight] = useState(0);
 	const imgEl = useRef(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const loadingRef = useRef(null);
+
+	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
+
 	const [form, setForm] = useState({
 		title: '',
-		description: '',
+		sub_text: '',
 		dropbox_url: '',
 		uploadedFiles: [],
+		author_text: '433 Team',
+		author_image: [{ media_url: Profile433 }],
 		labels: [],
-		show_likes: false,
-		show_comments: false,
+		show_likes: true,
+		show_comments: true,
 		mainCategory: '',
 		subCategory: ''
 	});
+	const [data, setData] = useState([]);
+	const [dataErrors, setDataErrors] = useState(Array(data?.length).fill(false));
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
+
+	const elementData = [
+		{
+			image: Text,
+			text: 'Add Text',
+			type: 'TEXT',
+			description: '',
+			component: ArticleTextDraggable
+		},
+		{
+			image: ImageVideo,
+			text: 'Add Image / Video',
+			type: 'MEDIA',
+			component: ArticleMediaDraggable
+		},
+		{
+			image: Tweet,
+			text: 'Add Tweet',
+			type: 'TWITTER',
+			twitter_post_url: '',
+			component: ArticleSocialMediaDraggable
+		},
+		{
+			image: Instragram,
+			text: 'Add IG post',
+			type: 'IG',
+			ig_post_url: '',
+			component: ArticleSocialMediaDraggable
+		}
+	];
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png',
 			maxFiles: 1,
 			validator: checkFileSize
 		});
+
+	const {
+		acceptedFiles: acceptedFileAvatar,
+		fileRejections: fileRejectionsAvatar,
+		getRootProps: getRootPropsAvatar,
+		getInputProps: getInputPropsAvatar
+	} = useDropzone({
+		accept: '.jpeg,.jpg,.png',
+		maxFiles: 1,
+		validator: checkFileSize
+	});
+
+	useEffect(() => {
+		if (acceptedFileAvatar?.length) {
+			let newFiles = acceptedFileAvatar.map((file) => {
+				let id = makeid(10);
+				return {
+					id: id,
+					file_name: file.name,
+					media_url: URL.createObjectURL(file),
+					fileExtension: `.${getFileType(file.type)}`,
+					mime_type: file.type,
+					file: file,
+					type: file.type === 'video/mp4' ? 'video' : 'image'
+				};
+			});
+
+			setForm((prev) => {
+				return {
+					...prev,
+					author_image: [...newFiles]
+				};
+			});
+		}
+	}, [acceptedFileAvatar]);
+
+	useEffect(() => {
+		if (fileRejectionsAvatar.length) {
+			fileRejectionsAvatar.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError2(e.message));
+			});
+			setTimeout(() => {
+				setFileRejectionError2('');
+			}, [5000]);
+		}
+	}, [fileRejectionsAvatar]);
 
 	const labels = useSelector((state) => state.postLibrary.labels);
 	const {
@@ -126,8 +217,6 @@ const UploadOrEditViral = ({
 			resetState();
 		};
 	}, []);
-
-	tinyMCE && console.log(tinyMCE, 'form');
 
 	useEffect(() => {
 		if (form.mainCategory && !isEdit) {
@@ -149,7 +238,7 @@ const UploadOrEditViral = ({
 	const mainCategoryId = (categoryString) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
 		let setData = mainCategories.find((u) => u.name === categoryString);
-		// console.log(setData, 'onchange  set data main category');
+
 		setForm((prev) => {
 			return { ...prev, mainCategory: setData };
 		});
@@ -192,6 +281,7 @@ const UploadOrEditViral = ({
 				return {
 					...prev,
 					title: specificArticle?.title,
+					sub_text: specificArticle?.sub_text,
 					dropbox_url: specificArticle?.dropbox_url,
 					// subCategory: specificArticle.sub_category,
 					show_likes: specificArticle?.show_likes,
@@ -206,19 +296,81 @@ const UploadOrEditViral = ({
 								}
 						  ]
 						: [],
-					description:
-						specificArticle?.length === 0
-							? ''
-							: // eslint-disable-next-line no-undef
-							  tinyMCE.activeEditor?.setContent(specificArticle?.description)
+					author_text: specificArticle?.author_text,
+					author_image: specificArticle?.author_image
+						? [
+								{
+									id: makeid(10),
+									media_url: specificArticle?.author_image?.split(
+										'cloudfront.net/'
+									)[1]
+										? specificArticle?.author_image
+										: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificArticle?.author_image}`,
+									type: 'image'
+								}
+						  ]
+						: [{ media_url: Profile433 }]
+					// description:
+					//  specificArticle?.length === 0
+					//      ? ''
+					//      : // eslint-disable-next-line no-undef
+					//        tinyMCE.activeEditor?.setContent(specificArticle?.description)
 				};
 			});
-
-			setEditorTextChecker(specificArticle?.description);
+			setData(updateDataFromAPI(specificArticle.elements));
+			// setEditorTextChecker(specificArticle?.description);
 			setFileHeight(specificArticle?.height);
 			setFileWidth(specificArticle?.width);
 		}
 	}, [specificArticle]);
+
+	const updateDataFromAPI = (apiData) => {
+		let modifiedData = apiData?.map(
+			({ id, sort_order, element_type, ...rest }) => {
+				return {
+					sortOrder: sort_order,
+					element_type,
+					component:
+						element_type === 'TEXT'
+							? ArticleTextDraggable
+							: element_type === 'MEDIA'
+							? ArticleMediaDraggable
+							: ArticleSocialMediaDraggable,
+					heading: `Add ${element_type}`,
+					isOpen: true,
+					isOld: true,
+					id,
+					data: [
+						{
+							...rest,
+							...(rest.media_url
+								? {
+										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.media_url}`
+								  }
+								: {}),
+							...(rest.thumbnail_url
+								? {
+										thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.thumbnail_url}`
+								  }
+								: {}),
+							...(rest.thumbnail_url
+								? {
+										type: 'video'
+								  }
+								: rest.media_url && !rest.thumbnail_url
+								? {
+										type: 'image'
+								  }
+								: {})
+						}
+					]
+				};
+			}
+		);
+		return modifiedData;
+	};
+
+	console.log(data, 'd');
 
 	useEffect(() => {
 		if (specificArticle && subCategories) {
@@ -271,8 +423,8 @@ const UploadOrEditViral = ({
 	};
 
 	useEffect(() => {
-		validateForm(form);
-	}, [form]);
+		validateForm(form, data);
+	}, [form, data]);
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
@@ -309,34 +461,67 @@ const UploadOrEditViral = ({
 
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
+
+		console.log('mediaFiles', mediaFiles);
+
+		console.log('Form author Image', form.author_image[0]);
+
+		let elementsData;
+		if (data.length) {
+			elementsData = data.map((item, index) => {
+				return {
+					element_type: item.element_type,
+					description: item?.data[0]?.description || undefined,
+					media_url:
+						item.data[0]?.media_url?.split('cloudfront.net/')[1] ||
+						item.data[0]?.media_url ||
+						undefined,
+					thumbnail_url:
+						item.data[0]?.thumbnail_url?.split('cloudfront.net/')[1] ||
+						item.data[0]?.thumbnail_url ||
+						undefined,
+					width: item.data[0]?.width || undefined,
+					height: item.data[0]?.height || undefined,
+					file_name: item.data[0]?.file_name || undefined,
+					dropbox_url: item?.data[0]?.dropbox_url || undefined,
+					ig_post_url: item?.data[0]?.ig_post_url || undefined,
+					twitter_post_url: item?.data[0]?.twitter_post_url || undefined,
+					sort_order: index + 1
+				};
+			});
+		}
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/article/post-article`,
 				{
 					title: form.title,
+					sub_text: form.sub_text,
 					height: form.uploadedFiles.length > 0 ? fileHeight : 0,
 					width: form.uploadedFiles.length > 0 ? fileWidth : 0,
 					main_category_id: form?.mainCategory.id,
 					sub_category_id: form.subCategory.id,
 					save_draft: draft,
-					description: form.description,
-					show_likes: form.show_likes ? true : undefined,
-					show_comments: form.show_comments ? true : undefined,
+					show_likes: form.show_likes ? true : false,
+					show_comments: form.show_comments ? true : false,
 					dropbox_url: form.dropbox_url ? form.dropbox_url : '',
 					file_name: form?.uploadedFiles?.length
 						? mediaFiles[0]?.file_name
 						: '',
 					image: form?.uploadedFiles?.length
-						? mediaFiles[0]?.media_url.split('cloudfront.net/')[1] ||
+						? mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
 						  mediaFiles[0]?.media_url
 						: '',
-
+					author_text: form.author_text,
+					author_image: form?.author_image[0]?.file
+						? mediaFiles[1]?.media_url?.split('cloudfront.net/')[1] ||
+						  mediaFiles[1]?.media_url
+						: mediaFiles[1]?.media_url,
 					...(isEdit && id ? { article_id: id } : {}),
 					...((!isEdit || status !== 'published') &&
 					(form.labels?.length || status == 'draft')
 						? { labels: [...form.labels] }
 						: {}),
-
+					elements: elementsData?.length ? elementsData : [],
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -369,6 +554,7 @@ const UploadOrEditViral = ({
 		}
 	};
 
+	console.log(form, 'fff');
 	const resetState = () => {
 		setEditorTextChecker('');
 		setFileRejectionError('');
@@ -387,15 +573,21 @@ const UploadOrEditViral = ({
 		setIsError({});
 		setForm({
 			title: '',
-			description: tinyMCE.activeEditor?.setContent(''),
+			sub_text: '',
+			// description: tinyMCE.activeEditor?.setContent(''),
 			dropbox_url: '',
 			uploadedFiles: [],
+
+			author_text: '433 Team',
+			author_image: [{ media_url: Profile433 }],
 			labels: [],
 			mainCategory: '',
 			subCategory: '',
-			show_likes: false,
-			show_comments: false
+			show_likes: true,
+			show_comments: true
 		});
+		setDataErrors(Array(data.length).fill(false));
+		setData([]);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -407,19 +599,107 @@ const UploadOrEditViral = ({
 		});
 	};
 
+	const handleMediaElementDelete = (sortOrder) => {
+		let dataCopy = [...data];
+		if (sortOrder) {
+			setData(dataCopy.filter((file) => file.sortOrder !== sortOrder));
+		}
+	};
+
+	const handleElementDataDelete = (elementData, index) => {
+		let dataCopy = [...data];
+		if (elementData) {
+			setData(
+				dataCopy.filter((item, i) => {
+					if (index === i) {
+						delete item['data'];
+						return item;
+					} else {
+						return item;
+					}
+				})
+			);
+		}
+	};
+
+	const setNewData = (childData, index) => {
+		let dataCopy = [...data];
+		dataCopy[index].data = {
+			...(dataCopy[index].data ? dataCopy[index].data : {}),
+			...childData
+		};
+		setData(dataCopy);
+	};
+
+	const handleExpand = (isOpen, index) => {
+		let dataCopy = [...data];
+		dataCopy[index].isOpen = isOpen;
+		setData(dataCopy);
+	};
+
+	const handleDeleteAvatarPicture = (id) => {
+		setForm((prev) => {
+			return {
+				...prev,
+				author_image: form.author_image.filter((file) => file.id !== id)
+			};
+		});
+	};
+
+	const checkDataErrors = () => {
+		const errors = data.map((item, index) => {
+			if (!item.data) {
+				return true;
+			} else {
+				if (item.element_type === 'TEXT' && !item.data[0].description) {
+					return true;
+				}
+				if (item.element_type === 'MEDIA' && !item.data[0].file_name) {
+					return true;
+				}
+				if (item.element_type === 'TWITTER' && !item.data[0].twitter_post_url) {
+					return true;
+				}
+				if (item.element_type === 'IG' && !item.data[0].ig_post_url) {
+					return true;
+				}
+			}
+		});
+		setDataErrors(errors);
+	};
+
+	useEffect(() => {
+		setDataErrors(Array(data.length).fill(false));
+	}, [data]);
+
 	const validateArticleBtn = () => {
 		setIsError({
 			articleTitle: !form.title,
+			sub_text: !form.sub_text,
+			// elementUnfilled: data?.length ? data.every((item) =>  !item.data) : false,
+			// elementUnfilled: function (index) {
+			//  if (data?.length) {
+			//      data.forEach((item, i) => {
+			//          if (i === index) {
+			//              return !item.data;
+			//          }
+			//      });
+			//  } else {
+			//      return false;
+			//  }
+			// },
 			uploadedFiles: form.uploadedFiles.length < 1,
 			selectedLabels: form.labels.length < 7,
-			editorText: !form.description,
+			// editorText: !form.description,
 			mainCategory: !form.mainCategory,
 			subCategory: form?.subCategory
 				? !form?.subCategory
 				: !form?.subCategory?.name
 		});
+		checkDataErrors();
 		setTimeout(() => {
 			setIsError({});
+			setDataErrors(Array(data.length).fill(false));
 		}, 5000);
 	};
 
@@ -499,46 +779,389 @@ const UploadOrEditViral = ({
 		' '
 	); // api response
 
+	const handleArticleElement = (dataItem) => {
+		setData((prev) => {
+			return [
+				...prev,
+				{
+					sortOrder: data.length + 1,
+					heading: dataItem.text,
+					component: dataItem.component,
+					element_type: dataItem.type,
+					isOpen: true,
+					deleted: false
+				}
+			];
+		});
+	};
+
+	const checkNewAuthorImage = () => {
+		return form?.author_image?.some((item) => {
+			return item?.file;
+		});
+	};
+
+	const checkNewElementFile = (data) => {
+		return data.some((item) => {
+			if (item?.data) {
+				return item?.data[0]?.file ? true : false;
+			}
+		});
+	};
+
+	const checkNewElementMedia = (elements, data) => {
+		let result;
+		if (data.length === 0) {
+			result = true;
+		} else {
+			for (let i = 0; i < elements?.length; i++) {
+				if (elements.length === data.length) {
+					if (data[i].data && data[i]?.data[0].file_name !== '') {
+						if (data[i]?.data[0]?.file_name === elements[i]?.file_name) {
+							result = true;
+						} else {
+							result = false;
+						}
+					} else {
+						return true;
+					}
+				} else {
+					return !checkEmptyMedia(data);
+				}
+			}
+		}
+		return result;
+	};
+
+	const checkEmptyMedia = (data) => {
+		const filteredData = data.filter((item) => item.element_type === 'MEDIA');
+		const validatedData = filteredData.map((item) => {
+			if (item.data) {
+				return !item.data[0]?.media_url ? false : true;
+			} else {
+				return false;
+			}
+		});
+		return validatedData.every((item) => item === true);
+	};
+
+	const checkNewElementDescription = (elements, data) => {
+		let result;
+		if (data.length === 0) {
+			result = true;
+		} else {
+			for (let i = 0; i < elements?.length; i++) {
+				// let sortOrder = elements[i].sort_order - 1;
+				if (elements.length === data.length) {
+					if (data[i].data && data[i]?.data[0].description !== '') {
+						if (data[i]?.data[0]?.description === elements[i]?.description) {
+							result = true;
+						} else {
+							result = false;
+						}
+					} else {
+						result = true;
+					}
+				} else {
+					return !checkEmptyDescription(data);
+				}
+			}
+		}
+		return result;
+	};
+
+	const checkEmptyDescription = (data) => {
+		const filteredData = data.filter((item) => item.element_type === 'TEXT');
+		const validatedData = filteredData.map((item) => {
+			if (item.data) {
+				return !item.data[0].description ? false : true;
+			} else {
+				return false;
+			}
+		});
+		return validatedData.every((item) => item === true);
+	};
+
+	const checkEmptyTwitter = (data) => {
+		const filteredData = data.filter((item) => item.element_type === 'TWITTER');
+		const validatedData = filteredData.map((item) => {
+			if (item.data) {
+				return !item.data[0].twitter_post_url ? false : true;
+			} else {
+				return false;
+			}
+		});
+		return validatedData.every((item) => item === true);
+	};
+
+	const checkNewElementTwitter = (elements, data) => {
+		let result;
+		if (data.length === 0) {
+			result = true;
+		} else {
+			for (let i = 0; i < elements?.length; i++) {
+				if (elements.length === data.length) {
+					if (data[i].data && data[i]?.data[0].twitter_post_url !== '') {
+						if (
+							data[i]?.data[0]?.twitter_post_url ===
+							elements[i]?.twitter_post_url
+						) {
+							result = true;
+						} else {
+							result = false;
+						}
+					} else {
+						return true;
+					}
+				} else {
+					return !checkEmptyTwitter(data);
+				}
+			}
+		}
+		return result;
+	};
+
+	const checkNewElementIG = (elements, data) => {
+		let result;
+		if (data.length === 0) {
+			result = true;
+		} else {
+			for (let i = 0; i < elements?.length; i++) {
+				if (elements.length === data.length) {
+					if (data[i].data && data[i]?.data[0].ig_post_url !== '') {
+						if (data[i]?.data[0]?.ig_post_url === elements[i]?.ig_post_url) {
+							result = true;
+						} else {
+							result = false;
+						}
+					} else {
+						return true;
+					}
+				} else {
+					return !checkEmptyIG(data);
+				}
+			}
+		}
+		return result;
+	};
+
+	const checkEmptyIG = (data) => {
+		const filteredData = data.filter((item) => item.element_type === 'IG');
+		const validatedData = filteredData.map((item) => {
+			if (item.data) {
+				return !item.data[0].ig_post_url ? false : true;
+			} else {
+				return false;
+			}
+		});
+		return validatedData.every((item) => item === true);
+	};
+
+	const comparingFields = (specificArticle, form) => {
+		return (
+			specificArticle?.title?.trim() === form?.title?.trim() &&
+			specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
+			specificArticle?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
+			specificArticle?.author_text?.trim() === form?.author_text?.trim() &&
+			specificArticle?.show_likes === form.show_likes &&
+			specificArticle?.show_comments === form.show_comments &&
+			specificArticle?.file_name === form.uploadedFiles[0]?.file_name
+		);
+	};
+
+	const filteringByType = (data, elementType) => {
+		return data?.filter((item) => item.element_type === elementType);
+	};
+
 	useEffect(() => {
 		if (specificArticle) {
+			setEditBtnDisabled(postButtonStatus || !validateForm(form, data));
+		}
+	}, [specificArticle]);
+
+	const checkSortOrderOnEdit = (specificArticle, data) => {
+		let result = [];
+		for (let i = 0; i < data?.length; i++) {
+			result.push(specificArticle.elements[i].sort_order === data[i].sortOrder);
+		}
+		return result.some((item) => item === false);
+	};
+
+	useEffect(() => {
+		if (specificArticle) {
+			const validationEmptyArray = [
+				checkEmptyDescription(data),
+				checkEmptyTwitter(data),
+				checkEmptyIG(data),
+				checkEmptyMedia(data),
+				// checkNewElementFile(filteringByType(data, 'MEDIA')),
+				data?.length !== 0
+			];
+
 			setEditBtnDisabled(
-				postButtonStatus ||
-					!form.uploadedFiles.length ||
-					!form.title ||
-					!form.description ||
-					(specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
-						specificArticle?.title?.trim() === form?.title?.trim() &&
-						specificArticle?.dropbox_url?.trim() ===
-							form?.dropbox_url?.trim() &&
-						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
-						specificArticle?.show_likes === form.show_likes &&
-						specificArticle?.show_comments === form.show_comments)
+				!validateForm(form, data) ||
+					!validationEmptyArray.every((item) => item === true) ||
+					(comparingFields(specificArticle, form) && !checkNewAuthorImage())
 			);
 		}
-	}, [specificArticle, editorTextChecker, form]);
+	}, [form]);
+
+	useEffect(() => {
+		if (specificArticle) {
+			const validationCompleteArray = [
+				checkNewElementDescription(
+					filteringByType(specificArticle?.elements, 'TEXT'),
+					filteringByType(data, 'TEXT')
+				),
+				checkNewElementTwitter(
+					filteringByType(specificArticle?.elements, 'TWITTER'),
+					filteringByType(data, 'TWITTER')
+				),
+				checkNewElementIG(
+					filteringByType(specificArticle?.elements, 'IG'),
+					filteringByType(data, 'IG')
+				),
+				checkNewElementMedia(
+					filteringByType(specificArticle?.elements, 'MEDIA'),
+					filteringByType(data, 'MEDIA')
+				),
+
+				data?.length !== 0
+			];
+
+			const validationEmptyArray = [
+				checkEmptyDescription(data),
+				checkEmptyTwitter(data),
+				checkEmptyIG(data),
+				checkEmptyMedia(data),
+				data?.length !== 0
+			];
+
+			if (
+				!validateForm(form, data) ||
+				!comparingFields(specificArticle, form)
+			) {
+				console.log('Empty check');
+				setEditBtnDisabled(
+					!validationEmptyArray.every((item) => item === true) ||
+						!validateForm(form, data)
+				);
+			} else {
+				if (specificArticle?.elements?.length !== data?.length) {
+					console.log('disable ');
+					setEditBtnDisabled(
+						!validationEmptyArray.every((item) => item === true)
+					);
+				} else {
+					if (
+						validationCompleteArray.every((item) => item === true) ||
+						!validationEmptyArray.every((item) => item === true)
+					) {
+						setEditBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
+					} else {
+						console.log('Not Empty check');
+						setEditBtnDisabled(
+							validationCompleteArray.every((item) => item === true) ||
+								!validationEmptyArray.every((item) => item === true)
+						);
+					}
+				}
+			}
+		}
+	}, [data]);
+
+	useEffect(() => {
+		if (specificArticle) {
+			const validationCompleteArrayDraft = [
+				checkNewElementDescription(
+					filteringByType(specificArticle?.elements, 'TEXT'),
+					filteringByType(data, 'TEXT')
+				),
+				checkNewElementTwitter(
+					filteringByType(specificArticle?.elements, 'TWITTER'),
+					filteringByType(data, 'TWITTER')
+				),
+				checkNewElementIG(
+					filteringByType(specificArticle?.elements, 'IG'),
+					filteringByType(data, 'IG')
+				),
+				checkNewElementMedia(
+					filteringByType(specificArticle?.elements, 'MEDIA'),
+					filteringByType(data, 'MEDIA')
+				)
+			];
+
+			const validationDraftEmptyArray = [
+				checkEmptyDescription(data),
+				checkEmptyTwitter(data),
+				checkEmptyIG(data),
+				checkEmptyMedia(data)
+			];
+
+			if (
+				!validateDraft(form, data) ||
+				!comparingDraftFields(specificArticle, form)
+			) {
+				console.log('Empty Draft check');
+				setDraftBtnDisabled(
+					!validationDraftEmptyArray.every((item) => item === true)
+				);
+			} else {
+				if (specificArticle?.elements?.length !== data?.length) {
+					console.log('disable Draft ');
+					setDraftBtnDisabled(
+						!validationDraftEmptyArray.every((item) => item === true)
+					);
+				} else {
+					if (
+						validationCompleteArrayDraft.every((item) => item === true) ||
+						!validationDraftEmptyArray.every((item) => item === true)
+					) {
+						setDraftBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
+					} else {
+						console.log('Not Empty check Draft');
+
+						setDraftBtnDisabled(
+							validationCompleteArrayDraft.every((item) => item === true) ||
+								!validationDraftEmptyArray.every((item) => item === true)
+						);
+					}
+				}
+			}
+		}
+	}, [data]);
+
+	const comparingDraftFields = (specificArticle, form) => {
+		return (
+			specificArticle?.title?.trim() === form?.title?.trim() &&
+			specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
+			specificArticle?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
+			specificArticle?.author_text?.trim() === form?.author_text?.trim() &&
+			specificArticle?.show_likes === form.show_likes &&
+			specificArticle?.show_comments === form.show_comments &&
+			(specificArticle?.image || form?.uploadedFiles[0]
+				? specificArticle?.file_name === form?.uploadedFiles[0]?.file_name
+				: true) &&
+			specificArticle?.media_type ===
+				(form?.mainCategory?.name || form?.mainCategory) &&
+			specificArticle?.sub_category ===
+				(form?.subCategory?.name || form?.subCategory)
+		);
+	};
 
 	useEffect(() => {
 		if (specificArticle) {
 			setDraftBtnDisabled(
-				!validateDraft(form) ||
-					((specificArticle?.image || form?.uploadedFiles[0]
-						? specificArticle?.file_name === form?.uploadedFiles[0]?.file_name
-						: true) &&
-						specificArticle?.media_type ===
-							(form?.mainCategory?.name || form?.mainCategory) &&
-						specificArticle?.sub_category ===
-							(form?.subCategory?.name || form?.subCategory) &&
-						specificArticle?.title?.trim() === form?.title?.trim() &&
-						specificArticle?.dropbox_url?.trim() ===
-							form?.dropbox_url?.trim() &&
-						specificArticleTextTrimmed === editorTextCheckerTrimmed &&
+				!validateDraft(form, data) ||
+					(comparingDraftFields(specificArticle, form) &&
 						specificArticle?.labels?.length === form?.labels?.length &&
-						specificArticle?.show_likes === form.show_likes &&
-						specificArticle?.show_comments === form.show_comments &&
-						!checkDuplicateLabel())
+						!checkDuplicateLabel() &&
+						!checkNewAuthorImage())
 			);
 		}
-	}, [specificArticle, editorTextChecker, form]);
+	}, [specificArticle, form]);
+
+	// console.log(draftBtnDisabled, 'valDraft');
 
 	const checkDuplicateLabel = () => {
 		let formLabels = form?.labels?.map((formL) => {
@@ -551,8 +1174,151 @@ const UploadOrEditViral = ({
 		return formLabels.some((label) => label === false);
 	};
 
+	const handleDraftSave = async () => {
+		if (!validateDraft(form, data) || draftBtnDisabled) {
+			validateDraftBtn();
+		} else {
+			setPostButtonStatus(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			setIsLoading(true);
+
+			if (isEdit) {
+				const fileUploader = async (file) => {
+					if (file.file) {
+						return await uploadFileToServer(file, 'articleLibrary');
+					}
+					return file;
+				};
+
+				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+					if (_file.file) {
+						return await uploadFileToServer(_file, 'articleLibrary');
+					} else {
+						return _file;
+					}
+				});
+
+				let uploadAuthorImagePromiseArray = form.author_image.map(
+					async (_file) => {
+						if (_file.file) {
+							return await uploadFileToServer(_file, 'articleLibrary');
+						} else {
+							return _file;
+						}
+					}
+				);
+
+				let dataMedia = [];
+				if (data.length) {
+					dataMedia = await Promise.all(
+						data.map(async (item, index) => {
+							if (item.element_type === 'MEDIA' && item.data[0].file) {
+								let uploadedFile = await uploadFileToServer(
+									item.data[0],
+									'articleLibrary'
+								);
+								const dataCopy = [...data];
+								dataCopy[index].data[0].media_url = uploadedFile.media_url;
+								dataCopy[index].data[0].thumbnail_url =
+									uploadedFile.thumbnail_url;
+								await setData(dataCopy);
+								return uploadedFile;
+							} else {
+								return item;
+							}
+						})
+					);
+				}
+
+				let updatedArray = [
+					form.uploadedFiles[0] && fileUploader(form.uploadedFiles[0]),
+					form.author_image[0] && fileUploader(form.author_image[0]),
+					dataMedia && dataMedia[0]
+				];
+
+				console.log(updatedArray, 'uppa');
+
+				Promise.all([...updatedArray])
+					.then((mediaFiles) => {
+						// console.log(mediaFiles, 'uppa');
+						createArticle(specificArticle?.id, mediaFiles, true);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
+			} else {
+				setIsLoading(true);
+
+				const fileUploader = async (file) => {
+					if (file.file) {
+						return await uploadFileToServer(file, 'articleLibrary');
+					}
+					return file;
+				};
+
+				// let uploadFilesPromiseArray = form.uploadedFiles[0];
+				// if (form.uploadedFiles[0] && form.uploadedFiles[0]?.file) {
+				// 	uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				// 		return await uploadFileToServer(_file, 'articleLibrary');
+				// 	});
+				// }
+
+				// let uploadAuthorImagePromiseArray = form.author_image[0];
+				// if (form.author_image[0]?.file) {
+				// 	uploadAuthorImagePromiseArray = form.author_image.map(
+				// 		async (_file) => {
+				// 			if (_file.file) {
+				// 				return uploadFileToServer(_file, 'articleLibrary');
+				// 			} else {
+				// 				return _file;
+				// 			}
+				// 		}
+				// 	);
+				// }
+
+				let dataMedia = [];
+				if (data.length) {
+					dataMedia = await Promise.all(
+						data.map(async (item, index) => {
+							if (item.element_type === 'MEDIA' && item.data[0].file) {
+								let uploadedFile = await uploadFileToServer(
+									item.data[0],
+									'articleLibrary'
+								);
+
+								const dataCopy = [...data];
+								dataCopy[index].data[0].media_url = uploadedFile?.media_url;
+								dataCopy[index].data[0].thumbnail_url =
+									uploadedFile?.thumbnail_url;
+								await setData(dataCopy);
+								return uploadedFile;
+							}
+						})
+					);
+				}
+
+				let updatedArray = [
+					form.uploadedFiles[0] && fileUploader(form.uploadedFiles[0]),
+					form.author_image[0] && fileUploader(form.author_image[0]),
+					dataMedia && dataMedia[0]
+				];
+
+				Promise.all([...updatedArray])
+					.then((mediaFiles) => {
+						createArticle(null, mediaFiles, true);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
+			}
+		}
+	};
+
 	const handleAddSaveBtn = async () => {
-		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
+		if (
+			!validateForm(form, data) ||
+			(editBtnDisabled && status === 'published')
+		) {
 			validateArticleBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -574,6 +1340,9 @@ const UploadOrEditViral = ({
 						return;
 					}
 				}
+
+				setIsLoading(true);
+
 				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
 					if (_file.file) {
 						return await uploadFileToServer(_file, 'articleLibrary');
@@ -582,11 +1351,48 @@ const UploadOrEditViral = ({
 					}
 				});
 
-				Promise.all([...uploadFilesPromiseArray])
+				let uploadAuthorImagePromiseArray = form.author_image.map(
+					async (_file) => {
+						if (_file.file) {
+							return uploadFileToServer(_file, 'articleLibrary');
+						} else {
+							return _file;
+						}
+					}
+				);
+
+				let dataMedia;
+				if (data.length) {
+					dataMedia = await Promise.all(
+						data.map(async (item, index) => {
+							if (item.element_type === 'MEDIA' && item.data[0].file) {
+								let uploadedFile = await uploadFileToServer(
+									item.data[0],
+									'articleLibrary'
+								);
+								const dataCopy = [...data];
+								dataCopy[index].data[0].media_url = uploadedFile.media_url;
+								dataCopy[index].data[0].thumbnail_url =
+									uploadedFile.thumbnail_url;
+								await setData(dataCopy);
+								return uploadedFile;
+							} else {
+								return item;
+							}
+						})
+					);
+				}
+
+				Promise.all([
+					...uploadFilesPromiseArray,
+					...uploadAuthorImagePromiseArray,
+					...dataMedia
+				])
 					.then((mediaFiles) => {
 						createArticle(specificArticle?.id, mediaFiles);
 					})
 					.catch(() => {
+						console.log('qqqqqqqqqqq');
 						setIsLoading(false);
 					});
 			} else {
@@ -602,11 +1408,46 @@ const UploadOrEditViral = ({
 					return;
 				}
 				setIsLoading(true);
+
 				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
 					return uploadFileToServer(_file, 'articleLibrary');
 				});
 
-				Promise.all([...uploadFilesPromiseArray])
+				let uploadAuthorImagePromiseArray = form.author_image.map(
+					async (_file) => {
+						if (_file.file) {
+							return uploadFileToServer(_file, 'articleLibrary');
+						} else {
+							return _file;
+						}
+					}
+				);
+				let dataMedia;
+				if (data.length) {
+					dataMedia = await Promise.all(
+						data.map(async (item, index) => {
+							if (item.element_type === 'MEDIA' && item.data[0].file) {
+								let uploadedFile = await uploadFileToServer(
+									item.data[0],
+									'articleLibrary'
+								);
+
+								const dataCopy = [...data];
+								dataCopy[index].data[0].media_url = uploadedFile.media_url;
+								dataCopy[index].data[0].thumbnail_url =
+									uploadedFile.thumbnail_url;
+								await setData(dataCopy);
+								return uploadedFile;
+							}
+						})
+					);
+				}
+
+				Promise.all([
+					...uploadFilesPromiseArray,
+					...uploadAuthorImagePromiseArray,
+					...dataMedia
+				])
 					.then((mediaFiles) => {
 						createArticle(null, mediaFiles);
 					})
@@ -628,9 +1469,10 @@ const UploadOrEditViral = ({
 		} else {
 			setIsError({
 				articleTitle: !form.title,
+				sub_text: !form.sub_text,
 				uploadedFiles: form.uploadedFiles.length < 1,
 				selectedLabels: form.labels.length < 1,
-				editorText: !form.description,
+				// editorText: !form.description,
 				mainCategory: !form.mainCategory,
 				subCategory: form?.subCategory?.name
 					? !form?.subCategory?.name
@@ -643,74 +1485,56 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	const handleDraftSave = async () => {
-		if (!validateDraft(form) || draftBtnDisabled) {
-			validateDraftBtn();
-		} else {
-			setPostButtonStatus(true);
-			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
-			setIsLoading(true);
-			if (isEdit) {
-				if (specificArticle?.title?.trim() !== form.title?.trim()) {
-					if (
-						(await handleTitleDuplicate(form.title)) ===
-						'The Title Already Exist'
-					) {
-						setIsError({ articleTitleExists: 'This title already exists' });
-						setTimeout(() => {
-							setIsError({});
-						}, [5000]);
+	const reorder = (list, startIndex, endIndex) => {
+		const result = Array.from(list);
+		const [removed] = result.splice(startIndex, 1);
+		result.splice(endIndex, 0, removed);
+		return result;
+	};
 
-						setPostButtonStatus(false);
-						return;
-					}
-				}
-				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-					if (_file.file) {
-						return await uploadFileToServer(_file, 'articleLibrary');
-					} else {
-						return _file;
-					}
-				});
-
-				Promise.all([...uploadFilesPromiseArray])
-					.then((mediaFiles) => {
-						createArticle(specificArticle?.id, mediaFiles, true);
-					})
-					.catch(() => {
-						setIsLoading(false);
-					});
-			} else {
-				if (
-					(await handleTitleDuplicate(form.title)) === 'The Title Already Exist'
-				) {
-					setIsError({ articleTitleExists: 'This title already exists' });
-					setTimeout(() => {
-						setIsError({});
-					}, [5000]);
-
-					setPostButtonStatus(false);
-					return;
-				}
-				setIsLoading(true);
-				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-					return uploadFileToServer(_file, 'articleLibrary');
-				});
-
-				Promise.all([...uploadFilesPromiseArray])
-					.then((mediaFiles) => {
-						createArticle(null, mediaFiles, true);
-					})
-					.catch(() => {
-						setIsLoading(false);
-					});
-			}
+	const onDragEnd = (result) => {
+		if (!result.destination) {
+			return;
 		}
+		const items = reorder(
+			data,
+			result.source.index, // pick
+			result.destination.index // drop
+		);
+		setData(items);
+	};
+
+	// console.log('Data', data);
+
+	const handleFileWidthHeight = (width, height) => {
+		// console.log('call back in article preview', height, width);
+		setMediaElementWidth(width);
+		setMediaElementHeight(height);
 	};
 
 	return (
 		<>
-			<Slider
+			{/* <Slider
+                open={open}
+                handleClose={() => {
+                    handleClose();
+                    if (form.uploadedFiles.length && !isEdit) {
+                        form.uploadedFiles.map((file) => handleDeleteFile(file.id));
+                    }
+                }}
+                title={title}
+                disableDropdown={disableDropdown}
+                handlePreview={() => {
+                    handlePreviewEscape();
+                }}
+                preview={previewBool}
+                previewRef={previewRef}
+                orientationRef={orientationRef}
+                edit={isEdit}
+                article={true}
+                dialogRef={dialogWrapper}
+            > */}
+			<ArticleSlider
 				open={open}
 				handleClose={() => {
 					handleClose();
@@ -730,779 +1554,172 @@ const UploadOrEditViral = ({
 				article={true}
 				dialogRef={dialogWrapper}
 			>
-				<LoadingOverlay active={isLoading} spinner={<PrimaryLoader />}>
+				<LoadingOverlay
+					active={isLoading}
+					spinner={<PrimaryLoader />}
+					style={{ top: '100px' }}
+				>
+					{/* <ArticleSlide in={true} direction='up' {...{ timeout: 400 }}> */}
 					<Slide in={true} direction='up' {...{ timeout: 400 }}>
-						<div
-							ref={loadingRef}
-							className={`${
-								previewFile != null
-									? globalClasses.previewContentWrapper
-									: globalClasses.contentWrapper
-							}`}
-						>
-							{status === 'published' && specificArticleStatus === 'loading' ? (
-								<PrimaryLoader />
-							) : status === 'draft' && specificArticleStatus === 'loading' ? (
-								<PrimaryLoader />
-							) : (
-								<></>
-							)}
-
+						<div style={{ paddingTop: '100px' }}>
 							<div
-								className={globalClasses.contentWrapperNoPreview}
-								style={{ width: previewFile != null ? '60%' : 'auto' }}
+								ref={loadingRef}
+								className={`${
+									previewFile != null
+										? globalClasses.previewContentWrapper
+										: globalClasses.contentWrapper
+								}`}
 							>
-								<div>
-									<h5>{heading1}</h5>
-
-									<div className={classes.categoryContainer}>
-										<div className={classes.mainCategory}>
-											<h6
-												className={[
-													isError.mainCategory
-														? globalClasses.errorState
-														: globalClasses.noErrorState
-												].join(' ')}
-											>
-												MAIN CATEGORY
-											</h6>
-											<Select
-												onOpen={() => {
-													setDisableDropdown(false);
-												}}
-												onClose={() => {
-													setDisableDropdown(true);
-												}}
-												disabled={
-													isEdit && status === 'published' ? true : false
-												}
-												style={{
-													backgroundColor:
-														isEdit && status === 'published'
-															? '#404040'
-															: '#000000'
-												}}
-												value={
-													isEdit ? form.mainCategory : form.mainCategory?.name
-												}
-												onChange={(event) => {
-													setDisableDropdown(true);
-													// setForm((prev) => {
-													// 	return {
-													// 		...prev,
-													// 		mainCategory: {
-													// 			...form.mainCategory,
-													// 			name: event.target.value
-													// 		}
-													// 	};
-													// });
-
-													mainCategoryId(event.target.value);
-													if (form.uploadedFiles.length) {
-														form.uploadedFiles.map((file) =>
-															handleDeleteFile(file.id)
-														);
-													}
-													if (isEdit) {
-														setForm((prev) => {
-															return { ...prev, subCategory: '' };
-														});
-													}
-												}}
-												className={`${classes.select} ${
-													isEdit && status === 'published'
-														? `${classes.isEditSelect}`
-														: ''
-												}`}
-												disableUnderline={true}
-												IconComponent={(props) => (
-													<KeyboardArrowDownIcon
-														{...props}
-														style={{
-															display:
-																isEdit && status === 'published'
-																	? 'none'
-																	: 'block',
-															top: '4'
-														}}
-													/>
-												)}
-												MenuProps={{
-													anchorOrigin: {
-														vertical: 'bottom',
-														horizontal: 'left'
-													},
-													transformOrigin: {
-														vertical: 'top',
-														horizontal: 'left'
-													},
-													getContentAnchorEl: null
-												}}
-												displayEmpty={true}
-												renderValue={(value) => {
-													return value ? value?.name || value : 'Please Select';
-												}}
-											>
-												{mainCategories.map((category, index) => {
-													return (
-														<MenuItem key={index} value={category.name}>
-															{category.name}
-														</MenuItem>
-													);
-												})}
-											</Select>
-											<div className={classes.catergoryErrorContainer}>
-												<p className={globalClasses.uploadMediaError}>
-													{isError.mainCategory
-														? 'You need to select main category'
-														: ''}
-												</p>
-											</div>
-										</div>
-										<div className={classes.subCategory}>
-											<h6
-												className={[
-													isError.subCategory && form.mainCategory
-														? globalClasses.errorState
-														: globalClasses.noErrorState
-												].join(' ')}
-											>
-												SUB CATEGORY
-											</h6>
-											<Select
-												onOpen={() => {
-													setDisableDropdown(false);
-												}}
-												onClose={() => {
-													setDisableDropdown(true);
-												}}
-												disabled={
-													!form.mainCategory ||
-													(isEdit && status === 'published')
-														? true
-														: false
-												}
-												style={{
-													backgroundColor:
-														isEdit && status === 'published'
-															? '#404040'
-															: '#000000'
-												}}
-												value={
-													isEdit
-														? form.subCategory
-														: form.subCategory?.name || form.subCategory
-												}
-												onChange={(e) => {
-													setDisableDropdown(true);
-													SubCategoryId(e.target.value);
-												}}
-												className={`${classes.select} ${
-													isEdit && status === 'published'
-														? `${classes.isEditSelect}`
-														: ''
-												}`}
-												disableUnderline={true}
-												IconComponent={(props) => (
-													<KeyboardArrowDownIcon
-														{...props}
-														style={{
-															display:
-																isEdit && status === 'published'
-																	? 'none'
-																	: 'block',
-															top: '4'
-														}}
-													/>
-												)}
-												MenuProps={{
-													anchorOrigin: {
-														vertical: 'bottom',
-														horizontal: 'left'
-													},
-													transformOrigin: {
-														vertical: 'top',
-														horizontal: 'left'
-													},
-													getContentAnchorEl: null
-												}}
-												displayEmpty={form.mainCategory ? true : false}
-												renderValue={
-													(value) => {
-														return value
-															? value?.name || value
-															: 'Please Select';
-													}
-													// value?.length
-													// 	? Array.isArray(value)
-													// 		? value.join(', ')
-													// 		: value?.name || value
-													// 	: 'Please Select'
-												}
-											>
-												{subCategories.map((category, index) => {
-													return (
-														<MenuItem key={index} value={category.name}>
-															{category.name}
-														</MenuItem>
-													);
-												})}
-											</Select>
-											<p className={globalClasses.uploadMediaError}>
-												{isEdit && status === 'published'
-													? ' '
-													: form.mainCategory?.name || form.mainCategory
-													? isError.subCategory &&
-													  'You need to select sub category'
-													: ''}
-												{/* {} */}
-											</p>
-										</div>
-									</div>
-									{(form?.mainCategory && form?.subCategory) || isEdit ? (
-										<>
-											<DragAndDropField
-												uploadedFiles={form.uploadedFiles}
-												// isEdit={isEdit}
-												handleDeleteFile={handleDeleteFile}
-												setPreviewBool={setPreviewBool}
-												setPreviewFile={setPreviewFile}
-												isArticle
-												imgEl={imgEl}
-												imageOnload={() => {
-													setFileWidth(imgEl.current.naturalWidth);
-													setFileHeight(imgEl.current.naturalHeight);
-												}}
-											/>
-											{!form.uploadedFiles.length ? (
-												<section
-													className={globalClasses.dropZoneContainer}
-													style={{
-														borderColor: isError.uploadedFiles
-															? '#ff355a'
-															: 'yellow'
-													}}
-												>
-													<div
-														{...getRootProps({
-															className: globalClasses.dropzone
-														})}
-													>
-														<input {...getInputProps()} />
-														<AddCircleOutlineIcon
-															className={globalClasses.addFilesIcon}
-														/>
-														<p className={globalClasses.dragMsg}>
-															Click or drag files to this area to upload
-														</p>
-														<p className={globalClasses.formatMsg}>
-															Supported formats are jpeg and png
-														</p>
-														<p className={globalClasses.uploadMediaError}>
-															{isError.uploadedFiles
-																? 'You need to upload a media in order to post'
-																: ''}
-														</p>
-													</div>
-												</section>
-											) : (
-												<>
-													<br />
-												</>
-											)}
-
-											<p className={globalClasses.fileRejectionError}>
-												{fileRejectionError}
-											</p>
-											<div className={globalClasses.dropBoxUrlContainer}>
-												<h6>DROPBOX URL</h6>
-												<TextField
-													value={form.dropbox_url}
-													onChange={(e) =>
-														setForm((prev) => {
-															return { ...prev, dropbox_url: e.target.value };
-														})
-													}
-													placeholder={'Please drop the dropbox URL here'}
-													className={classes.textField}
-													multiline
-													maxRows={2}
-													InputProps={{
-														disableUnderline: true,
-														className: classes.textFieldInput
-													}}
-												/>
-											</div>
-											<div className={classes.captionContainer}>
-												<div className={globalClasses.characterCount}>
-													<h6
-														className={
-															isError.articleTitle || isError.articleTitleExists
-																? globalClasses.errorState
-																: globalClasses.noErrorState
-														}
-													>
-														ARTICLE TITLE
-													</h6>
-													<h6
-														style={{
-															color:
-																form.title?.length >= 39 &&
-																form.title?.length <= 42
-																	? 'pink'
-																	: form.title?.length === 43
-																	? 'red'
-																	: 'white'
-														}}
-													>
-														{form.title?.length}/43
-													</h6>
-												</div>
-
-												<TextField
-													// disabled={isEdit}
-													value={form.title}
-													onChange={(e) =>
-														setForm((prev) => {
-															return { ...prev, title: e.target.value };
-														})
-													}
-													placeholder={'Please write your title here'}
-													className={classes.textField}
-													InputProps={{
-														disableUnderline: true,
-														className: classes.textFieldInput
-													}}
-													inputProps={{ maxLength: 43 }}
-													multiline
-													maxRows={2}
-												/>
-											</div>
-											<p className={globalClasses.mediaError}>
-												{isError.articleTitle
-													? 'This field is required'
-													: isError.articleTitleExists
-													? 'This title aready Exists'
-													: ''}
-											</p>
-											<div className={classes.captionContainer}>
-												<h6
-													className={
-														isError.selectedLabels
-															? globalClasses.errorState
-															: globalClasses.noErrorState
-													}
-												>
-													LABELS
-												</h6>
-												<Labels
-													isEdit={isEdit}
-													setDisableDropdown={setDisableDropdown}
-													selectedLabels={form.labels}
-													LabelsOptions={postLabels}
-													extraLabel={extraLabel}
-													draftStatus={status}
-													handleChangeExtraLabel={handleChangeExtraLabel}
-													setSelectedLabels={(newVal) => {
-														setForm((prev) => {
-															return { ...prev, labels: [...newVal] };
-														});
-													}}
-												/>
-											</div>
-											<p className={globalClasses.mediaError}>
-												{isError.selectedLabels
-													? `You need to add  ${
-															7 - form.labels.length
-													  }  more labels in order to post`
-													: ''}
-											</p>
-											<div className={classes.captionContainer}>
-												<h6
-													className={
-														isError.editorText
-															? globalClasses.errorState
-															: globalClasses.noErrorState
-													}
-												>
-													ARTICLE TEXT
-												</h6>
-												<div className={classes.editor}>
-													<Editor
-														init={{
-															height: 288,
-															selector: '#myTextarea',
-															id: '#myTextarea',
-															browser_spellcheck: true,
-															contextmenu: false,
-															content_css: '../../index.scss',
-															setup: function (editor) {
-																editor.on('init', function () {
-																	// editorText;
-																	form.description;
-																});
-															},
-															content_style:
-																"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white; line-height:1  }; ",
-
-															branding: false,
-															statusbar: true,
-															skin: false,
-															emoticons_database: 'emojiimages',
-															formats: {
-																title_h1: {
-																	inline: 'span',
-																	styles: {
-																		fontWeight: '800',
-																		fontSize: '64px',
-																		letterSpacing: '-2%',
-																		marginBottom: '3px'
-																	}
-																},
-																title_h2: {
-																	inline: 'span',
-																	styles: {
-																		fontWeight: '800',
-																		fontSize: '40px',
-																		letterSpacing: '-2%'
-																	}
-																},
-																title_h3: {
-																	inline: 'span',
-																	styles: {
-																		fontWeight: '800',
-																		fontSize: '36px',
-																		letterSpacing: '-2%'
-																	}
-																},
-																title_h4: {
-																	inline: 'span',
-																	styles: {
-																		fontWeight: '800',
-																		fontSize: '24px',
-																		letterSpacing: '-2%'
-																	}
-																},
-																title_subtitle: {
-																	inline: 'span',
-																	styles: {
-																		fontWeight: '600',
-																		fontSize: '24px'
-																	}
-																},
-																body_regular: {
-																	inline: 'span',
-																	styles: {
-																		fontWeight: '400',
-																		fontSize: '16px',
-																		lineHeight: '24px'
-																	}
-																},
-																body_bold: {
-																	inline: 'span',
-																	styles: {
-																		fontWeight: '700',
-																		fontSize: '16px',
-																		lineHeight: '24px'
-																	}
-																},
-																body_small: {
-																	inline: 'span',
-																	styles: {
-																		fontWeight: '400',
-																		fontSize: '14px',
-																		lineHeight: '16px'
-																	}
-																},
-																body_tiny: {
-																	inline: 'span',
-																	styles: {
-																		fontWeight: '500',
-																		fontSize: '12px',
-																		lineHeight: '16px',
-																		letterSpacing: '3%'
-																	}
-																},
-																body_boldAndTiny: {
-																	inline: 'span',
-																	styles: {
-																		fontWeight: '700',
-																		fontSize: '12px',
-																		lineHeight: '16px',
-																		letterSpacing: '3%'
-																	}
-																}
-															},
-															style_formats: [
-																{
-																	title: 'Title',
-																	items: [
-																		{
-																			title: 'Header 1',
-																			format: 'title_h1'
-																		},
-																		{
-																			title: 'Header 2',
-																			format: 'title_h2'
-																		},
-																		{
-																			title: 'Header 3',
-																			format: 'title_h3'
-																		},
-																		{
-																			title: 'Header 4',
-																			format: 'title_h4'
-																		},
-																		{
-																			title: 'Subtitle',
-																			format: 'title_subtitle'
-																		}
-																	]
-																},
-																{
-																	title: 'Body',
-																	items: [
-																		{
-																			title: 'Regular',
-																			format: 'body_regular'
-																		},
-																		{
-																			title: 'Bold',
-																			format: 'body_bold'
-																		},
-																		{
-																			title: 'Small',
-																			format: 'body_small'
-																		},
-																		{
-																			title: 'Tiny',
-																			format: 'body_tiny'
-																		},
-																		{
-																			title: 'Bold and Tiny',
-																			format: 'body_boldAndTiny'
-																		}
-																	]
-																}
-															],
-															menubar: 'edit insert tools format',
-															menu: {
-																edit: {
-																	title: 'Edit',
-																	items:
-																		'undo redo | cut copy paste  | searchreplace'
-																},
-																insert: {
-																	title: 'Insert',
-																	items:
-																		'image link charmap hr anchor insertdatetime'
-																},
-																format: {
-																	title: 'Format',
-																	items:
-																		'bold italic underline strikethrough | formats  fontsizes align lineheight  '
-																},
-																tools: {
-																	title: 'Tools',
-																	items: 'wordcount'
-																}
-															},
-															plugins: [
-																'lists advlist link image anchor',
-																'searchreplace  hr visualblocks fullscreen',
-																'insertdatetime table paste wordcount  charmap textcolor colorpicker'
-															],
-
-															toolbar:
-																'undo redo  bold italic underline strikethrough fontsizeselect | ' +
-																'alignleft aligncenter ' +
-																'alignright alignjustify | bullist numlist | '
-														}}
-														onEditorChange={() => handleEditorChange()}
-														onMouseEnter={() => setDisableDropdown(false)}
-														onBlur={() => setDisableDropdown(true)}
-													/>
-												</div>
-											</div>
-											<p className={globalClasses.mediaError}>
-												{isError.editorText ? 'This field is required' : ''}
-											</p>
-											<div className={classes.postMediaContainer}>
-												<div className={classes.postMediaHeader}>
-													<h5>Show comments</h5>
-													<ToggleSwitch
-														id={1}
-														checked={form.show_comments}
-														onChange={(checked) =>
-															setForm((prev) => {
-																return { ...prev, show_comments: checked };
-															})
-														}
-													/>
-												</div>
-											</div>
-
-											<div
-												className={classes.postMediaContainer}
-												style={{ marginBottom: '1rem' }}
-											>
-												<div className={classes.postMediaHeader}>
-													<h5>Show likes</h5>
-													<ToggleSwitch
-														id={2}
-														checked={form.show_likes}
-														// onChange={
-														// 	(checked) => {
-														// 	setValueLikes(checked);
-														// }}
-														onChange={(checked) =>
-															setForm((prev) => {
-																return { ...prev, show_likes: checked };
-															})
-														}
-													/>
-												</div>
-											</div>
-										</>
-									) : (
-										<> </>
-									)}
-								</div>
-
-								{/* <div className={classes.buttonDiv}>
-								{isEdit ? (
-									<div className={classes.editBtn}>
-										<Button
-											disabled={deleteBtnStatus}
-											button2={isEdit ? true : false}
-											onClick={() => {
-												if (!deleteBtnStatus) {
-													deleteArticle(specificArticle?.id);
-												}
-											}}
-											text={'DELETE ARTICLE'}
-										/>
-									</div>
+								{status === 'published' &&
+								specificArticleStatus === 'loading' ? (
+									<PrimaryLoader />
+								) : status === 'draft' &&
+								  specificArticleStatus === 'loading' ? (
+									<PrimaryLoader />
 								) : (
-									<> </>
+									<></>
 								)}
-
-								<div className={isEdit ? classes.postBtnEdit : classes.postBtn}>
-									<Button
-										disabled={isEdit ? editBtnDisabled : !validateForm(form)}
-										onClick={() => handleAddSaveBtn()}
-										text={buttonText}
-									/>
-								</div>
-							</div> */}
-								<p className={globalClasses.mediaError}>
-									{isError.draftError
-										? 'Something needs to be changed to save a draft'
-										: ''}
-								</p>
-								<div className={classes.buttonDiv}>
-									<div>
-										{isEdit || (status === 'draft' && isEdit) ? (
-											<div className={classes.editBtn}>
-												<Button
-													disabled={deleteBtnStatus}
-													button2={isEdit ? true : false}
-													onClick={() => {
-														if (!deleteBtnStatus) {
-															toggleDeleteModal();
-														}
-													}}
-													text={'DELETE ARTICLE'}
-												/>
-											</div>
-										) : (
-											<></>
-										)}
-									</div>
-
-									<div className={classes.publishDraftDiv}>
-										{status === 'draft' || !isEdit ? (
-											<div
-												className={
-													isEdit ? classes.draftBtnEdit : classes.draftBtn
-												}
-											>
-												<Button
-													disabledDraft={
-														isEdit ? draftBtnDisabled : !validateDraft(form)
-													}
-													onClick={() => handleDraftSave()}
-													button3={true}
-													text={
-														status === 'draft' && isEdit
-															? 'SAVE DRAFT'
-															: 'SAVE AS DRAFT'
-													}
-												/>
-											</div>
-										) : (
-											<></>
-										)}
-
-										<div
-											className={
-												isEdit && validateForm(form)
-													? classes.addMediaBtn
-													: isEdit
-													? classes.addMediaBtnEdit
-													: classes.addMediaBtn
-											}
-										>
-											<Button
-												disabled={
-													isEdit && validateForm(form) && status === 'draft'
-														? false
-														: isEdit
-														? editBtnDisabled
-														: !validateForm(form)
-												}
-												button2AddSave={true}
-												text={buttonText}
-												onClick={() => handleAddSaveBtn()}
+								<Grid container>
+									<Grid pr={1} item md={2}>
+										<div className={classes.gridDivSmall}>
+											<Box mb={3.5} className={classes.mainTitleDescription}>
+												<h2>Elements</h2>
+												<p>Add elements to build your article</p>
+											</Box>
+											<ArticleElements
+												data={elementData}
+												onClick={(dataItem) => handleArticleElement(dataItem)}
 											/>
 										</div>
-									</div>
-								</div>
-							</div>
+									</Grid>
+									<Grid item md={6} ml={1}>
+										<Box mb={3.5} className={classes.mainTitleDescription}>
+											<h2>Builder</h2>
+											<p>Edit, reorder elements here and build your article</p>
+										</Box>
+										<ArticleGeneralInfo
+											isEdit={isEdit}
+											form={form}
+											setForm={setForm}
+											status={status}
+											setDisableDropdown={setDisableDropdown}
+											mainCategoryId={mainCategoryId}
+											mainCategories={mainCategories}
+											subCategories={subCategories}
+											SubCategoryId={SubCategoryId}
+											handleDeleteFile={handleDeleteFile}
+											imgRef={imgEl}
+											setFileWidth={setFileWidth}
+											setFileHeight={setFileHeight}
+											getRootProps={getRootProps}
+											getInputProps={getInputProps}
+											fileRejectionError={fileRejectionError}
+											getRootPropsAvatar={getRootPropsAvatar}
+											getInputPropsAvatar={getInputPropsAvatar}
+											fileRejectionError2={fileRejectionError2}
+											postLabels={postLabels}
+											extraLabel={extraLabel}
+											handleChangeExtraLabel={handleChangeExtraLabel}
+											isError={isError}
+										/>
+										<DraggableWrapper onDragEnd={onDragEnd}>
+											{data.map((item, index) => {
+												return (
+													<>
+														{React.createElement(item.component, {
+															sendDataToParent: (data) =>
+																setNewData(data, index),
+															setIsOpen: (isOpen) =>
+																handleExpand(isOpen, index),
+															handleDeleteFile: (sortOrder) =>
+																handleMediaElementDelete(sortOrder),
+															handleDeleteData: (data) =>
+																handleElementDataDelete(data, index),
+															WidthHeightCallback: (width, height) =>
+																handleFileWidthHeight(width, height),
+															// WidthHeightCallback: handleFileWidthHeight,
+															item,
+															index,
+															key: item.sortOrder,
+															initialData: item.data && item?.data[0],
+															setDisableDropdown: setDisableDropdown
+														})}
 
-							{previewFile != null && (
-								<div
-									ref={previewRef}
-									className={globalClasses.previewComponent}
-								>
-									<div className={globalClasses.previewHeader}>
-										<Close
-											onClick={() => {
-												setPreviewBool(false);
-												setPreviewFile(null);
-											}}
-											className={globalClasses.closeIcon}
-										/>
-										<h5>Preview</h5>
-									</div>
-									<div>
-										<img
-											src={previewFile.media_url}
-											className={classes.previewFile}
-											style={{
-												width: `100%`,
-												height: `${8 * 4}rem`,
-												objectFit: 'contain',
-												objectPosition: 'center'
-											}}
-										/>
-									</div>
-								</div>
-							)}
+														<p className={globalClasses.mediaError}>
+															{dataErrors.length &&
+																dataErrors[index] &&
+																'This field is required'}
+														</p>
+													</>
+												);
+											})}
+										</DraggableWrapper>
+									</Grid>
+									<Grid item md={4}>
+										<Box px={2} className={classes.gridDivSmall}>
+											<Box mb={3.5} className={classes.mainTitleDescription}>
+												<h2>Preview</h2>
+												<p>Review the result here before publishing</p>
+											</Box>
+
+											<PreviewWrapper form={form}>
+												{data.map((item, index) => {
+													return (
+														<div key={index} style={{ padding: '5px' }}>
+															{item.element_type === 'MEDIA' ? (
+																<ImagePreview
+																	style={{ width: '100%' }}
+																	data={item}
+																	isEdit={isEdit}
+																/>
+															) : item.element_type === 'TEXT' ? (
+																<TextPreview
+																	data={item}
+																	style={{ width: '100%' }}
+																/>
+															) : item.element_type === 'TWITTER' ? (
+																<TwitterPost
+																	data={item}
+																	style={{ width: '100%' }}
+																/>
+															) : item.element_type === 'IG' ? (
+																<TwitterPost
+																	data={item}
+																	style={{ width: '100%' }}
+																/>
+															) : (
+																''
+															)}
+														</div>
+													);
+												})}
+											</PreviewWrapper>
+										</Box>
+									</Grid>
+								</Grid>
+								<ArticleFooter
+									buttonText={buttonText}
+									isEdit={isEdit}
+									form={form}
+									dataElement={data}
+									setForm={setForm}
+									status={status}
+									deleteBtnStatus={deleteBtnStatus}
+									toggleDeleteModal={toggleDeleteModal}
+									draftBtnDisabled={draftBtnDisabled}
+									validateDraft={validateDraft}
+									handleDraftSave={handleDraftSave}
+									validateForm={validateForm}
+									editBtnDisabled={editBtnDisabled}
+									handleAddSaveBtn={handleAddSaveBtn}
+								/>
+							</div>
 						</div>
 					</Slide>
+					{/* </ArticleSlide> */}
 				</LoadingOverlay>
-			</Slider>
+			</ArticleSlider>
+			{/* </Slider> */}
 			<DeleteModal
 				open={openDeletePopup}
 				toggle={toggleDeleteModal}

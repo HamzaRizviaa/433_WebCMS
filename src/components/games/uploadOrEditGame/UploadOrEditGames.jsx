@@ -107,7 +107,7 @@ const UploadOreditArcade = ({
 
 	const videoRef = useRef(null);
 	const imgRef = useRef(null);
-	
+
 	const loadingRef = useRef(null);
 	const gameExplanationOrientation = ['PORTRAIT', 'LANDSCAPE'];
 	const gameOrientationArray = ['PORTRAIT', 'LANDSCAPE'];
@@ -313,7 +313,7 @@ const UploadOreditArcade = ({
 
 	useEffect(() => {
 		if (fileRejections2.length) {
-			fileRejections.forEach(({ errors }) => {
+			fileRejections2.forEach(({ errors }) => {
 				return errors.forEach((e) => setFileRejectionError2(e.message));
 			});
 			setTimeout(() => {
@@ -835,7 +835,7 @@ const UploadOreditArcade = ({
 
 			if (editArcade || editJogo) {
 				setIsLoadingcreateViral(true);
-				// new draft
+
 				let uploadedFile; // first
 				let uploadedExplanationOrIcon; // second
 
@@ -887,7 +887,7 @@ const UploadOreditArcade = ({
 				// 	});
 			} else {
 				setIsLoadingcreateViral(true);
-				// edit draft
+				// new draft
 				let uploadedFile; // first
 				let uploadedExplanationOrIcon; // second
 

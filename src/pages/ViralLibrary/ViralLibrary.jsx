@@ -672,7 +672,7 @@ const ViralLibrary = () => {
 					}}
 					title={edit ? 'Edit Viral' : 'Upload Viral'}
 					heading1={edit ? 'Media File' : 'Add Media File'}
-					// buttonText={edit ? 'SAVE CHANGES' : 'ADD VIRAL'}
+					page={page}
 					buttonText={
 						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
 					}

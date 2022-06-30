@@ -1,4 +1,4 @@
-const validateForm = (form) => {
+const validateForm = (form, dataElements) => {
 	var validate = Object.keys(form).map((key) => {
 		if (typeof form[key] === 'string') {
 			if (key.includes('dropbox_url')) {
@@ -34,7 +34,32 @@ const validateForm = (form) => {
 		}
 	});
 
-	return validate.every((item) => item === true);
+	var validateData = true;
+	if (dataElements?.length) {
+		validateData = dataElements.every((dataFile) => {
+			if (dataFile.element_type === 'MEDIA') {
+				return dataFile.data;
+			} else if (dataFile.element_type === 'TEXT') {
+				if (dataFile.data) {
+					return dataFile?.data[0]?.description;
+				}
+			} else if (dataFile.element_type === 'IG') {
+				if (dataFile.data) {
+					return dataFile?.data[0]?.ig_post_url;
+				}
+			} else {
+				if (dataFile.data) {
+					return dataFile?.data[0]?.twitter_post_url;
+				}
+			}
+		});
+	} else if (dataElements?.length === 0) {
+		validateData = false;
+	}
+
+	var finalFormValue = validate.every((item) => item === true) && validateData;
+
+	return finalFormValue;
 };
 
 export default validateForm;
