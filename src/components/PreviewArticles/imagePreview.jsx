@@ -5,7 +5,6 @@ import { useStyles } from './index.style';
 const ImagePreview = ({ data, isEdit }) => {
 	const classes = useStyles();
 
-	console.log('data image preview', data);
 	return (
 		<div>
 			<div className={classes.imageDraggableData}>

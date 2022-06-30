@@ -46,6 +46,11 @@ const ArticleTextDraggable = ({
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
 	const [description, setDescription] = useState('');
 
+	const clickExpand = () => {
+		setClickExpandIcon(!clickExpandIcon);
+		setIsOpen(!clickExpandIcon);
+	};
+
 	useEffect(() => {
 		if (initialData?.description) {
 			setTimeout(() => {
@@ -55,12 +60,7 @@ const ArticleTextDraggable = ({
 				setDescription(editorbyId?.setContent(initialData?.description));
 			}, 1000);
 		}
-	}, []);
-
-	const clickExpand = () => {
-		setClickExpandIcon(!clickExpandIcon);
-		setIsOpen(!clickExpandIcon);
-	};
+	}, [clickExpandIcon]);
 
 	const handleEditorChange = () => {
 		const editorTextContent = tinymce
