@@ -16,6 +16,6 @@ const TextPreview = ({ data }) => {
 	);
 };
 TextPreview.propTypes = {
-	data: PropTypes.element
+	data: PropTypes.array
 };
 export default TextPreview;

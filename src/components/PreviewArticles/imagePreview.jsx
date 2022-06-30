@@ -5,7 +5,7 @@ import { useStyles } from './index.style';
 const ImagePreview = ({ data, isEdit }) => {
 	const classes = useStyles();
 
-	console.log('data', data);
+	console.log('data image preview', data);
 	return (
 		<div>
 			<div className={classes.imageDraggableData}>
@@ -45,6 +45,6 @@ const ImagePreview = ({ data, isEdit }) => {
 
 export default ImagePreview;
 ImagePreview.propTypes = {
-	data: PropTypes.string.isRequired,
+	data: PropTypes.array.isRequired,
 	isEdit: PropTypes.bool.isRequired
 };
