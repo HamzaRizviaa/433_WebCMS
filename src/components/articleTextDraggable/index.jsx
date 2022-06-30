@@ -144,7 +144,7 @@ const ArticleTextDraggable = ({
 											id: '#myTextarea',
 											browser_spellcheck: true,
 											contextmenu: false,
-											content_css: '../../index.scss',
+											content_css: '../../styles/index.scss',
 											setup: function (editor) {
 												editor.on('init', function () {
 													description;
