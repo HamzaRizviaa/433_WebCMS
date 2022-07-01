@@ -2,7 +2,7 @@
 @import '../../styles/_mixins.scss';
 
 .uploadedFilesContainer {
-	margin-top: 4rem;
+	margin-top: 2rem;
 	max-height: 220px;
 	overflow-y: auto;
 	-ms-overflow-style: none; /* Internet Explorer 10+ */
@@ -52,6 +52,7 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+	color: #ffffff;
 }
 .fileThumbnail {
 	height: 8rem;

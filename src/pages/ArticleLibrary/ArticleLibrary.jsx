@@ -38,7 +38,6 @@ import { useStyles as globalUseStyles } from '../../styles/global.style';
 const ArticleLibrary = () => {
 	// Selectors
 	const articles = useSelector((state) => state.ArticleLibraryStore.articles);
-	console.log(articles, 'articles');
 
 	const statusArticlesApi = useSelector((state) => state.ArticleLibraryStore);
 
@@ -437,7 +436,6 @@ const ArticleLibrary = () => {
 	}, [sortState]);
 
 	useEffect(() => {
-		console.log('search use effect');
 		if (search) {
 			dispatch(
 				getAllArticlesApi({
@@ -695,11 +693,12 @@ const ArticleLibrary = () => {
 				<UploadOrEditArticle
 					open={showSlider}
 					isEdit={edit}
+					page={page}
 					handleClose={() => {
 						setShowSlider(false);
 						// setTimeout(() => setEdit(false), 600);
 					}}
-					title={edit ? 'Edit Article' : 'Upload Article'}
+					title={edit ? 'Edit Article' : 'Article Builder'}
 					heading1={edit ? 'Media File' : 'Add Media File'}
 					buttonText={
 						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'

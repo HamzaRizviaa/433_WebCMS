@@ -18,7 +18,8 @@ const GamesSlider = ({
 	buttonText,
 	gameType,
 	isEdit,
-	status
+	status,
+	page
 }) => {
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
@@ -32,7 +33,6 @@ const GamesSlider = ({
 		setPreviewBool(false);
 		setPreviewFile(null);
 	};
-	
 
 	// on upload button in header - to upload new poll or quiz
 
@@ -54,6 +54,7 @@ const GamesSlider = ({
 		>
 			{isEdit ? (
 				<UploadOrEditGames
+					page={page}
 					heading1={heading1}
 					open={open}
 					buttonText={buttonText}
@@ -82,6 +83,7 @@ const GamesSlider = ({
 						</TabsListUnstyled>
 						<TabPanelUnstyled value={0}>
 							<UploadOrEditGames
+								page={page}
 								heading1={heading1}
 								open={open}
 								buttonText={buttonText}
@@ -100,6 +102,7 @@ const GamesSlider = ({
 						</TabPanelUnstyled>
 						<TabPanelUnstyled value={1}>
 							<UploadOrEditGames
+								page={page}
 								heading1={heading1}
 								open={open}
 								buttonText={buttonText}
@@ -132,7 +135,8 @@ GamesSlider.propTypes = {
 	buttonText: PropTypes.string.isRequired,
 	type: PropTypes.string.isRequired,
 	isEdit: PropTypes.bool.isRequired,
-	status: PropTypes.string.isRequired
+	status: PropTypes.string.isRequired,
+	page: PropTypes.string
 };
 
 export default GamesSlider;
