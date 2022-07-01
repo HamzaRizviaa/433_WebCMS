@@ -370,8 +370,6 @@ const UploadOrEditViral = ({
 		return modifiedData;
 	};
 
-	console.log(data, 'd');
-
 	useEffect(() => {
 		if (specificArticle && subCategories) {
 			SubCategoryId(specificArticle?.sub_category);
@@ -554,7 +552,6 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	console.log(form, 'fff');
 	const resetState = () => {
 		setEditorTextChecker('');
 		setFileRejectionError('');
@@ -810,27 +807,27 @@ const UploadOrEditViral = ({
 	};
 
 	const checkNewElementMedia = (elements, data) => {
-		let result;
+		let result = [];
 		if (data.length === 0) {
-			result = true;
+			result.push(true);
 		} else {
 			for (let i = 0; i < elements?.length; i++) {
 				if (elements.length === data.length) {
 					if (data[i].data && data[i]?.data[0].file_name !== '') {
 						if (data[i]?.data[0]?.file_name === elements[i]?.file_name) {
-							result = true;
+							result.push(true);
 						} else {
-							result = false;
+							result.push(false);
 						}
 					} else {
-						return true;
+						result.push(true);
 					}
 				} else {
 					return !checkEmptyMedia(data);
 				}
 			}
 		}
-		return result;
+		return result.every((item) => item === true);
 	};
 
 	const checkEmptyMedia = (data) => {
@@ -846,28 +843,28 @@ const UploadOrEditViral = ({
 	};
 
 	const checkNewElementDescription = (elements, data) => {
-		let result;
+		let result = [];
 		if (data.length === 0) {
-			result = true;
+			result.push(true);
 		} else {
 			for (let i = 0; i < elements?.length; i++) {
 				// let sortOrder = elements[i].sort_order - 1;
 				if (elements.length === data.length) {
 					if (data[i].data && data[i]?.data[0].description !== '') {
 						if (data[i]?.data[0]?.description === elements[i]?.description) {
-							result = true;
+							result.push(true);
 						} else {
-							result = false;
+							result.push(false);
 						}
 					} else {
-						result = true;
+						result.push(true);
 					}
 				} else {
 					return !checkEmptyDescription(data);
 				}
 			}
 		}
-		return result;
+		return result.every((item) => item === true);
 	};
 
 	const checkEmptyDescription = (data) => {
@@ -895,9 +892,9 @@ const UploadOrEditViral = ({
 	};
 
 	const checkNewElementTwitter = (elements, data) => {
-		let result;
+		let result = [];
 		if (data.length === 0) {
-			result = true;
+			result.push(true);
 		} else {
 			for (let i = 0; i < elements?.length; i++) {
 				if (elements.length === data.length) {
@@ -906,43 +903,43 @@ const UploadOrEditViral = ({
 							data[i]?.data[0]?.twitter_post_url ===
 							elements[i]?.twitter_post_url
 						) {
-							result = true;
+							result.push(true);
 						} else {
-							result = false;
+							result.push(false);
 						}
 					} else {
-						return true;
+						result.push(true);
 					}
 				} else {
 					return !checkEmptyTwitter(data);
 				}
 			}
 		}
-		return result;
+		return result.every((item) => item === true);
 	};
 
 	const checkNewElementIG = (elements, data) => {
-		let result;
+		let result = [];
 		if (data.length === 0) {
-			result = true;
+			result.push(true);
 		} else {
 			for (let i = 0; i < elements?.length; i++) {
 				if (elements.length === data.length) {
 					if (data[i].data && data[i]?.data[0].ig_post_url !== '') {
 						if (data[i]?.data[0]?.ig_post_url === elements[i]?.ig_post_url) {
-							result = true;
+							result.push(true);
 						} else {
-							result = false;
+							result.push(false);
 						}
 					} else {
-						return true;
+						result.push(true);
 					}
 				} else {
 					return !checkEmptyIG(data);
 				}
 			}
 		}
-		return result;
+		return result.every((item) => item === true);
 	};
 
 	const checkEmptyIG = (data) => {
@@ -1041,14 +1038,12 @@ const UploadOrEditViral = ({
 				!validateForm(form, data) ||
 				!comparingFields(specificArticle, form)
 			) {
-				console.log('Empty check');
 				setEditBtnDisabled(
 					!validationEmptyArray.every((item) => item === true) ||
 						!validateForm(form, data)
 				);
 			} else {
 				if (specificArticle?.elements?.length !== data?.length) {
-					console.log('disable ');
 					setEditBtnDisabled(
 						!validationEmptyArray.every((item) => item === true)
 					);
@@ -1059,7 +1054,6 @@ const UploadOrEditViral = ({
 					) {
 						setEditBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
 					} else {
-						console.log('Not Empty check');
 						setEditBtnDisabled(
 							validationCompleteArray.every((item) => item === true) ||
 								!validationEmptyArray.every((item) => item === true)
@@ -1102,13 +1096,11 @@ const UploadOrEditViral = ({
 				!validateDraft(form, data) ||
 				!comparingDraftFields(specificArticle, form)
 			) {
-				console.log('Empty Draft check');
 				setDraftBtnDisabled(
 					!validationDraftEmptyArray.every((item) => item === true)
 				);
 			} else {
 				if (specificArticle?.elements?.length !== data?.length) {
-					console.log('disable Draft ');
 					setDraftBtnDisabled(
 						!validationDraftEmptyArray.every((item) => item === true)
 					);
@@ -1119,8 +1111,6 @@ const UploadOrEditViral = ({
 					) {
 						setDraftBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
 					} else {
-						console.log('Not Empty check Draft');
-
 						setDraftBtnDisabled(
 							validationCompleteArrayDraft.every((item) => item === true) ||
 								!validationDraftEmptyArray.every((item) => item === true)
