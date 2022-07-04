@@ -1,31 +1,10 @@
 /* eslint-disable no-debugger */
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
+/* eslint-disable no-undef  */
 import React, { useState, useEffect, useRef } from 'react';
-// import classes from './_uploadOrEditArticle.module.scss';
 import { useDropzone } from 'react-dropzone';
-import Editor from '../../Editor';
-import ArticleElements from '../../ArticleElements';
-import ArticleGeneralInfo from '../../ArticleGeneralInfo';
-import ArticleMediaDraggable from '../../articleMediaDraggable';
-import ArticleTextDraggable from '../../articleTextDraggable';
-import ArticleSocialMediaDraggable from '../../ArticleSocialMediaDraggable';
-import ArticleFooter from '../../ArticleFooter';
-import DraggableWrapper from '../../DraggableWrapper';
-import PreviewWrapper from '../../PreviewWrapper';
-import ImagePreview from '../../PreviewArticles/imagePreview';
-import TextPreview from '../../PreviewArticles/textPreview';
-import TwitterPost from '../../PreviewArticles/TwitterPost';
-import ArticleElementMedia from '../../ArticleElementMedia';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import { Box, MenuItem, TextField, Select, Grid } from '@material-ui/core';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import { Box, Grid } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import Slider from '../../slider';
-import ArticleSlider from '../../articleSlider';
-
-import DragAndDropField from '../../DragAndDropField';
-import Labels from '../../Labels';
 import { makeid } from '../../../utils/helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLocalStorageDetails } from '../../../utils';
@@ -33,7 +12,6 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
-import Close from '@material-ui/icons/Close';
 import Slide from '@mui/material/Slide';
 import checkFileSize from '../../../utils/validateFileSize';
 import validateForm from '../../../utils/validateForm';
@@ -42,13 +20,25 @@ import PrimaryLoader from '../../PrimaryLoader';
 import { useStyles } from './index.style';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
-
+import LoadingOverlay from 'react-loading-overlay';
 import Instragram from '../../../assets/Instagram.svg';
 import Text from '../../../assets/Text.svg';
 import ImageVideo from '../../../assets/Image.svg';
 import Tweet from '../../../assets/Twitter Line.svg';
-// import Profile433 from '../../../assets/Profile433.svg';
-import ArticleDraggables from '../../ArticleDraggables';
+
+/*  ArticleBuilder imports  */
+import ArticleElements from '../../ArticleBuilder/ArticleElements'; // left pan of buttons
+import ArticleGeneralInfo from '../../ArticleBuilder/ArticleGeneralInfo'; // general Info
+import ArticleMediaDraggable from '../../ArticleBuilder/articleMediaDraggable'; // image / video
+import ArticleTextDraggable from '../../ArticleBuilder/articleTextDraggable'; // text
+import ArticleSocialMediaDraggable from '../../ArticleBuilder/ArticleSocialMediaDraggable'; // insta and twitter
+import ImagePreview from '../../ArticleBuilder/PreviewArticles/imagePreview';
+import TextPreview from '../../ArticleBuilder/PreviewArticles/textPreview';
+import TwitterPost from '../../ArticleBuilder/PreviewArticles/TwitterPost';
+import DraggableWrapper from '../../ArticleBuilder/DraggableWrapper';
+import PreviewWrapper from '../../ArticleBuilder/PreviewWrapper';
+import ArticleSlider from '../../ArticleBuilder/ArticleSlider';
+import ArticleFooter from '../../ArticleBuilder/ArticleFooter';
 
 //api calls
 import {
@@ -57,16 +47,22 @@ import {
 	getArticleSubCategories
 } from '../../../pages/ArticleLibrary/articleLibrarySlice';
 
-import LoadingOverlay from 'react-loading-overlay';
-import { ConstructionOutlined } from '@mui/icons-material';
-import { height } from '@mui/system';
+import {
+	checkEmptyIG,
+	checkNewElementMedia,
+	checkEmptyMedia,
+	checkNewElementDescription,
+	checkEmptyDescription,
+	checkEmptyTwitter,
+	checkNewElementTwitter,
+	checkNewElementIG
+} from '../../../utils/articleUtils';
 
 const UploadOrEditViral = ({
 	open,
 	handleClose,
 	title,
 	isEdit,
-	heading1,
 	buttonText,
 	page,
 	status
@@ -88,9 +84,6 @@ const UploadOrEditViral = ({
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
-	const [dataItem, setDataItem] = useState('');
-	const [mediaElementWidth, setMediaElementWidth] = useState(0);
-	const [mediaElementHeight, setMediaElementHeight] = useState(0);
 	const imgEl = useRef(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
@@ -448,15 +441,6 @@ const UploadOrEditViral = ({
 		}
 	}, [acceptedFiles]);
 
-	const handleEditorChange = () => {
-		const editorTextContent = tinymce?.activeEditor?.getContent();
-		setForm((prev) => {
-			return { ...prev, description: editorTextContent };
-		});
-
-		setEditorTextChecker(editorTextContent); // to check yellow button condition
-	};
-
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
 
@@ -634,15 +618,6 @@ const UploadOrEditViral = ({
 		setData(dataCopy);
 	};
 
-	const handleDeleteAvatarPicture = (id) => {
-		setForm((prev) => {
-			return {
-				...prev,
-				author_image: form.author_image.filter((file) => file.id !== id)
-			};
-		});
-	};
-
 	const checkDataErrors = () => {
 		const errors = data.map((item, index) => {
 			if (!item.data) {
@@ -770,12 +745,6 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	const editorTextCheckerTrimmed = editorTextChecker?.replace(/&nbsp;/g, ' ');
-	const specificArticleTextTrimmed = specificArticle?.description?.replace(
-		/&nbsp;/g,
-		' '
-	); // api response
-
 	const handleArticleElement = (dataItem) => {
 		setData((prev) => {
 			return [
@@ -798,161 +767,13 @@ const UploadOrEditViral = ({
 		});
 	};
 
-	const checkNewElementFile = (data) => {
-		return data.some((item) => {
-			if (item?.data) {
-				return item?.data[0]?.file ? true : false;
-			}
-		});
-	};
-
-	const checkNewElementMedia = (elements, data) => {
-		let result = [];
-		if (data.length === 0) {
-			result.push(true);
-		} else {
-			for (let i = 0; i < elements?.length; i++) {
-				if (elements.length === data.length) {
-					if (data[i].data && data[i]?.data[0].file_name !== '') {
-						if (data[i]?.data[0]?.file_name === elements[i]?.file_name) {
-							result.push(true);
-						} else {
-							result.push(false);
-						}
-					} else {
-						result.push(true);
-					}
-				} else {
-					return !checkEmptyMedia(data);
-				}
-			}
-		}
-		return result.every((item) => item === true);
-	};
-
-	const checkEmptyMedia = (data) => {
-		const filteredData = data.filter((item) => item.element_type === 'MEDIA');
-		const validatedData = filteredData.map((item) => {
-			if (item.data) {
-				return !item.data[0]?.media_url ? false : true;
-			} else {
-				return false;
-			}
-		});
-		return validatedData.every((item) => item === true);
-	};
-
-	const checkNewElementDescription = (elements, data) => {
-		let result = [];
-		if (data.length === 0) {
-			result.push(true);
-		} else {
-			for (let i = 0; i < elements?.length; i++) {
-				// let sortOrder = elements[i].sort_order - 1;
-				if (elements.length === data.length) {
-					if (data[i].data && data[i]?.data[0].description !== '') {
-						if (data[i]?.data[0]?.description === elements[i]?.description) {
-							result.push(true);
-						} else {
-							result.push(false);
-						}
-					} else {
-						result.push(true);
-					}
-				} else {
-					return !checkEmptyDescription(data);
-				}
-			}
-		}
-		return result.every((item) => item === true);
-	};
-
-	const checkEmptyDescription = (data) => {
-		const filteredData = data.filter((item) => item.element_type === 'TEXT');
-		const validatedData = filteredData.map((item) => {
-			if (item.data) {
-				return !item.data[0].description ? false : true;
-			} else {
-				return false;
-			}
-		});
-		return validatedData.every((item) => item === true);
-	};
-
-	const checkEmptyTwitter = (data) => {
-		const filteredData = data.filter((item) => item.element_type === 'TWITTER');
-		const validatedData = filteredData.map((item) => {
-			if (item.data) {
-				return !item.data[0].twitter_post_url ? false : true;
-			} else {
-				return false;
-			}
-		});
-		return validatedData.every((item) => item === true);
-	};
-
-	const checkNewElementTwitter = (elements, data) => {
-		let result = [];
-		if (data.length === 0) {
-			result.push(true);
-		} else {
-			for (let i = 0; i < elements?.length; i++) {
-				if (elements.length === data.length) {
-					if (data[i].data && data[i]?.data[0].twitter_post_url !== '') {
-						if (
-							data[i]?.data[0]?.twitter_post_url ===
-							elements[i]?.twitter_post_url
-						) {
-							result.push(true);
-						} else {
-							result.push(false);
-						}
-					} else {
-						result.push(true);
-					}
-				} else {
-					return !checkEmptyTwitter(data);
-				}
-			}
-		}
-		return result.every((item) => item === true);
-	};
-
-	const checkNewElementIG = (elements, data) => {
-		let result = [];
-		if (data.length === 0) {
-			result.push(true);
-		} else {
-			for (let i = 0; i < elements?.length; i++) {
-				if (elements.length === data.length) {
-					if (data[i].data && data[i]?.data[0].ig_post_url !== '') {
-						if (data[i]?.data[0]?.ig_post_url === elements[i]?.ig_post_url) {
-							result.push(true);
-						} else {
-							result.push(false);
-						}
-					} else {
-						result.push(true);
-					}
-				} else {
-					return !checkEmptyIG(data);
-				}
-			}
-		}
-		return result.every((item) => item === true);
-	};
-
-	const checkEmptyIG = (data) => {
-		const filteredData = data.filter((item) => item.element_type === 'IG');
-		const validatedData = filteredData.map((item) => {
-			if (item.data) {
-				return !item.data[0].ig_post_url ? false : true;
-			} else {
-				return false;
-			}
-		});
-		return validatedData.every((item) => item === true);
-	};
+	// const checkNewElementFile = (data) => {
+	// 	return data.some((item) => {
+	// 		if (item?.data) {
+	// 			return item?.data[0]?.file ? true : false;
+	// 		}
+	// 	});
+	// };
 
 	const comparingFields = (specificArticle, form) => {
 		return (
@@ -1151,8 +972,6 @@ const UploadOrEditViral = ({
 		}
 	}, [specificArticle, form]);
 
-	// console.log(draftBtnDisabled, 'valDraft');
-
 	const checkDuplicateLabel = () => {
 		let formLabels = form?.labels?.map((formL) => {
 			if (specificArticle?.labels?.includes(formL.name)) {
@@ -1179,24 +998,6 @@ const UploadOrEditViral = ({
 					}
 					return file;
 				};
-
-				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-					if (_file.file) {
-						return await uploadFileToServer(_file, 'articleLibrary');
-					} else {
-						return _file;
-					}
-				});
-
-				let uploadAuthorImagePromiseArray = form.author_image.map(
-					async (_file) => {
-						if (_file.file) {
-							return await uploadFileToServer(_file, 'articleLibrary');
-						} else {
-							return _file;
-						}
-					}
-				);
 
 				let dataMedia = [];
 				if (data.length) {
@@ -1245,26 +1046,6 @@ const UploadOrEditViral = ({
 					}
 					return file;
 				};
-
-				// let uploadFilesPromiseArray = form.uploadedFiles[0];
-				// if (form.uploadedFiles[0] && form.uploadedFiles[0]?.file) {
-				// 	uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-				// 		return await uploadFileToServer(_file, 'articleLibrary');
-				// 	});
-				// }
-
-				// let uploadAuthorImagePromiseArray = form.author_image[0];
-				// if (form.author_image[0]?.file) {
-				// 	uploadAuthorImagePromiseArray = form.author_image.map(
-				// 		async (_file) => {
-				// 			if (_file.file) {
-				// 				return uploadFileToServer(_file, 'articleLibrary');
-				// 			} else {
-				// 				return _file;
-				// 			}
-				// 		}
-				// 	);
-				// }
 
 				let dataMedia = [];
 				if (data.length) {
@@ -1497,33 +1278,11 @@ const UploadOrEditViral = ({
 	// console.log('Data', data);
 
 	const handleFileWidthHeight = (width, height) => {
-		// console.log('call back in article preview', height, width);
-		setMediaElementWidth(width);
-		setMediaElementHeight(height);
+		console.log('call back in article preview', height, width);
 	};
 
 	return (
 		<>
-			{/* <Slider
-                open={open}
-                handleClose={() => {
-                    handleClose();
-                    if (form.uploadedFiles.length && !isEdit) {
-                        form.uploadedFiles.map((file) => handleDeleteFile(file.id));
-                    }
-                }}
-                title={title}
-                disableDropdown={disableDropdown}
-                handlePreview={() => {
-                    handlePreviewEscape();
-                }}
-                preview={previewBool}
-                previewRef={previewRef}
-                orientationRef={orientationRef}
-                edit={isEdit}
-                article={true}
-                dialogRef={dialogWrapper}
-            > */}
 			<ArticleSlider
 				open={open}
 				handleClose={() => {
@@ -1549,7 +1308,6 @@ const UploadOrEditViral = ({
 					spinner={<PrimaryLoader />}
 					style={{ top: '100px' }}
 				>
-					{/* <ArticleSlide in={true} direction='up' {...{ timeout: 400 }}> */}
 					<Slide in={true} direction='up' {...{ timeout: 400 }}>
 						<div style={{ paddingTop: '100px' }}>
 							<div
@@ -1706,10 +1464,9 @@ const UploadOrEditViral = ({
 							</div>
 						</div>
 					</Slide>
-					{/* </ArticleSlide> */}
 				</LoadingOverlay>
 			</ArticleSlider>
-			{/* </Slider> */}
+
 			<DeleteModal
 				open={openDeletePopup}
 				toggle={toggleDeleteModal}

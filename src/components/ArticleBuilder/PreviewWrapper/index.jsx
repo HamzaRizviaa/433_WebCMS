@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Heart from '../../assets/Heart.svg';
-import Share from '../../assets/shareArticle.svg';
-import goBack from '../../assets/goBack.svg';
-import Comments from '../../assets/Comment.svg';
 import { useStyles } from './index.styles';
+import Heart from '../../../assets/Heart.svg';
+import Share from '../../../assets/shareArticle.svg';
+import goBack from '../../../assets/goBack.svg';
+import Comments from '../../../assets/Comment.svg';
+import WiFi from '../../../assets/Wifi.svg';
+import Battery from '../../../assets/Rectangle.svg';
+import Signals from '../../../assets/MobileSignal.svg';
 import Avatar from '@mui/material/Avatar';
-import { formatDate2 } from '../../utils';
-import WiFi from '../../assets/Wifi.svg';
-import Battery from '../../assets/Rectangle.svg';
-import Signals from '../../assets/MobileSignal.svg';
+import { formatDate2 } from '../../../utils';
 import { Markup } from 'interweave';
 const PreviewWrapper = ({
 	children,

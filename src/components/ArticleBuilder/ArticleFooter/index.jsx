@@ -1,8 +1,8 @@
 import React from 'react';
 import { useStyles } from './index.styles';
-import { useStyles as globalUseStyles } from '../../styles/global.style';
+import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import PropTypes from 'prop-types';
-import Button from '../button';
+import Button from '../../button';
 
 const ArticleFooter = ({
 	buttonText,

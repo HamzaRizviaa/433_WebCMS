@@ -6,14 +6,14 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Typography from '@mui/material/Typography';
-import { useStyles as globalUseStyles } from '../../styles/global.style';
+import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { MenuItem, TextField, Select } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import Avatar from '@mui/material/Avatar';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import DragAndDropField from '../DragAndDropField';
-import Labels from '../Labels';
-import ToggleSwitch from '../switch';
+import DragAndDropField from '../../DragAndDropField';
+import Labels from '../../Labels';
+import ToggleSwitch from '../../switch';
 
 const ArticleGeneralInfo = ({
 	isEdit,
