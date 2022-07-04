@@ -51,6 +51,8 @@ const ArticleTextDraggable = ({
 		setIsOpen(!clickExpandIcon);
 	};
 
+	console.log(description, 'desss');
+
 	useEffect(() => {
 		if (initialData?.description) {
 			setTimeout(() => {

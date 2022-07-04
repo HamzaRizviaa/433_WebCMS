@@ -22,6 +22,8 @@ import DeleteModal from '../../DeleteModal';
 import Button from '../../button';
 import validateForm from '../../../utils/validateForm';
 import validateDraft from '../../../utils/validateDraft';
+import NewsSlide from '../NewsSlide';
+import NewsDraggable from '../NewsDraggableWrapper';
 
 const UploadOrEditNews = ({
 	open,
@@ -51,6 +53,7 @@ const UploadOrEditNews = ({
 		show_likes: true,
 		show_comments: true
 	});
+	const [news, setNews] = useState([]);
 
 	const previewRef = useRef(null);
 	const loadingRef = useRef(null);
@@ -90,6 +93,7 @@ const UploadOrEditNews = ({
 			show_likes: true,
 			show_comments: true
 		});
+		setNews([]);
 	};
 
 	useEffect(() => {
@@ -123,6 +127,37 @@ const UploadOrEditNews = ({
 
 	const toggleDeleteModal = () => {
 		setOpenDeletePopup(!openDeletePopup);
+	};
+
+	const reorder = (list, startIndex, endIndex) => {
+		const result = Array.from(list);
+		const [removed] = result.splice(startIndex, 1);
+		result.splice(endIndex, 0, removed);
+		return result;
+	};
+
+	const onDragEnd = (result) => {
+		if (!result.destination) {
+			return;
+		}
+		const items = reorder(
+			news,
+			result.source.index, // pick
+			result.destination.index // drop
+		);
+		setNews(items);
+	};
+
+	const handleNewsSlide = () => {
+		setNews((prev) => {
+			return [
+				...prev,
+				{
+					sortOrder: news.length + 1,
+					deleted: false
+				}
+			];
+		});
 	};
 
 	return (
@@ -161,7 +196,7 @@ const UploadOrEditNews = ({
 								style={{ width: previewFile != null ? '60%' : 'auto' }}
 							>
 								<div>
-									<div className={classes.root}>
+									<div className={globalClasses.accordionRoot}>
 										<Accordion defaultExpanded>
 											<AccordionSummary expandIcon={<ExpandMoreIcon />}>
 												<Typography>General Information</Typography>
@@ -237,6 +272,13 @@ const UploadOrEditNews = ({
 											</AccordionDetails>
 										</Accordion>
 									</div>
+									<NewsDraggable onDragEnd={onDragEnd} />
+									<Button
+										disabled={false}
+										buttonNews={true}
+										onClick={() => handleNewsSlide()}
+										text={'ADD NEWS SLIDE'}
+									/>
 								</div>
 
 								<p className={globalClasses.mediaError}>
