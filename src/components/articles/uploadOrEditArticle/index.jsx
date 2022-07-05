@@ -58,7 +58,7 @@ import {
 	checkNewElementIG
 } from '../../../utils/articleUtils';
 
-const UploadOrEditViral = ({
+const UploadOrEditArticle = ({
 	open,
 	handleClose,
 	title,
@@ -198,9 +198,7 @@ const UploadOrEditViral = ({
 		specificArticle,
 		specificArticleStatus,
 		subCategories,
-		// subCategoriesStatus,
 		mainCategories
-		// mainCategoriesStatus
 	} = useSelector((state) => state.ArticleLibraryStore);
 
 	useEffect(() => {
@@ -520,6 +518,10 @@ const UploadOrEditViral = ({
 				toast.success(
 					isEdit ? 'Article has been edited!' : 'Article has been created!'
 				);
+
+				if (draft === false) {
+					readMoreApi(result?.data?.data?.id);
+				}
 				setIsLoading(false);
 				setPostButtonStatus(false);
 				handleClose();
@@ -533,6 +535,48 @@ const UploadOrEditViral = ({
 			setIsLoading(false);
 			setPostButtonStatus(false);
 			console.log(e, 'Failed - create / edit  Article');
+		}
+	};
+
+	const readMoreApi = async (id) => {
+		console.log('article id : ', id);
+		try {
+			const result = await axios.post(
+				'https://a4ewxelyb9.execute-api.eu-west-2.amazonaws.com/dev/new_article_id/',
+
+				{
+					headers: {
+						'content-type': 'application/json'
+					},
+					body: JSON.stringify({ new_article_id: id })
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				console.log('Success - Read More Api !');
+			}
+		} catch (e) {
+			console.log(e, 'Failed - Read More Api !');
+		}
+	};
+
+	const deleteReadMoreApi = async (id) => {
+		console.log('article id : ', id);
+		try {
+			const result = await axios.post(
+				'https://a4ewxelyb9.execute-api.eu-west-2.amazonaws.com/dev/on_delete/',
+
+				{
+					headers: {
+						'content-type': 'application/json'
+					},
+					body: JSON.stringify({ new_article_id: id })
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				console.log('Success - on Delete Read More Api !');
+			}
+		} catch (e) {
+			console.log(e, 'Failed - On delete Read More Api !');
 		}
 	};
 
@@ -693,6 +737,8 @@ const UploadOrEditViral = ({
 				}
 			);
 			if (result?.data?.status_code === 200) {
+				deleteReadMoreApi(id);
+
 				if (result?.data?.data?.is_deleted === false) {
 					toast.error(
 						'The media or article cannot be deleted because it is used as a top banner'
@@ -1480,7 +1526,7 @@ const UploadOrEditViral = ({
 	);
 };
 
-UploadOrEditViral.propTypes = {
+UploadOrEditArticle.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	isEdit: PropTypes.bool.isRequired,
@@ -1491,4 +1537,4 @@ UploadOrEditViral.propTypes = {
 	status: PropTypes.string
 };
 
-export default UploadOrEditViral;
+export default UploadOrEditArticle;

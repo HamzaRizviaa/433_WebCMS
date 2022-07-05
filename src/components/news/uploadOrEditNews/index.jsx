@@ -16,14 +16,16 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Typography from '@mui/material/Typography';
 import Labels from '../../Labels';
 import { useDispatch, useSelector } from 'react-redux';
-import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import ToggleSwitch from '../../switch';
 import DeleteModal from '../../DeleteModal';
 import Button from '../../button';
 import validateForm from '../../../utils/validateForm';
 import validateDraft from '../../../utils/validateDraft';
-import NewsSlide from '../NewsSlide';
+
 import NewsDraggable from '../NewsDraggableWrapper';
+//api calls
+import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
+import { getSpecificNews } from '../../../pages/NewsLibrary/newsLibrarySlice';
 
 const UploadOrEditNews = ({
 	open,
@@ -31,7 +33,7 @@ const UploadOrEditNews = ({
 	title,
 	buttonText,
 	isEdit,
-	// page,
+	page,
 	status
 }) => {
 	const classes = useStyles();
@@ -61,6 +63,12 @@ const UploadOrEditNews = ({
 
 	const dispatch = useDispatch();
 	const labels = useSelector((state) => state.postLibrary.labels);
+	const { specificNews, specificNewsStatus } = useSelector(
+		(state) => state.NewsLibrary
+	);
+
+	console.log(specificNews, 'specificNews');
+	console.log(page, 'page in news slider');
 
 	useEffect(() => {
 		dispatch(getPostLabels());
@@ -68,6 +76,32 @@ const UploadOrEditNews = ({
 			resetState();
 		};
 	}, []);
+
+	useEffect(() => {
+		if (specificNews) {
+			if (specificNews?.labels) {
+				let _labels = [];
+				specificNews.labels.map((label) =>
+					_labels.push({ id: -1, name: label })
+				);
+
+				setForm((prev) => {
+					return {
+						...prev,
+						labels: _labels
+					};
+				});
+			}
+			setForm((prev) => {
+				return {
+					...prev,
+					show_likes: specificNews?.show_likes,
+					show_comments: specificNews?.show_comments
+				};
+			});
+			// setData(updateDataFromAPI(specificArticle.elements));
+		}
+	}, [specificNews]);
 
 	useEffect(() => {
 		if (!open) {
@@ -191,6 +225,7 @@ const UploadOrEditNews = ({
 									: globalClasses.contentWrapper
 							}`}
 						>
+							{specificNewsStatus === 'loading' ? <PrimaryLoader /> : <></>}
 							<div
 								className={globalClasses.contentWrapperNoPreview}
 								style={{ width: previewFile != null ? '60%' : 'auto' }}
