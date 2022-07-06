@@ -192,6 +192,39 @@ const UploadOrEditNews = ({
 		});
 	};
 
+	const setNewData = (childData, index) => {
+		let dataCopy = [...news];
+		dataCopy[index].data = {
+			...(dataCopy[index].data ? dataCopy[index].data : {}),
+			...childData
+		};
+		setNews(dataCopy);
+	};
+
+	const handleMediaDataDelete = (elementData, index) => {
+		let dataCopy = [...news];
+		if (elementData) {
+			setNews(
+				dataCopy.filter((item, i) => {
+					if (index === i) {
+						delete item['data'][0];
+						return item;
+					} else {
+						return item;
+					}
+				})
+			);
+		}
+	};
+
+	const handleNewsElementDelete = (sortOrder) => {
+		let dataCopy = [...news];
+		if (sortOrder) {
+			setNews(dataCopy.filter((file) => file.sortOrder !== sortOrder));
+		}
+	};
+
+	console.log(news, 'newS');
 	return (
 		<div>
 			<Slider
@@ -314,6 +347,14 @@ const UploadOrEditNews = ({
 														item={item}
 														index={index}
 														key={item.sort_order}
+														sendDataToParent={(data) => setNewData(data, index)}
+														handleDeleteMedia={(data) =>
+															handleMediaDataDelete(data, index)
+														}
+														handleDeleteNews={(sortOrder) =>
+															handleNewsElementDelete(sortOrder)
+														}
+														initialData={item.data}
 													/>
 												</>
 											);
@@ -321,6 +362,7 @@ const UploadOrEditNews = ({
 									</NewsDraggable>
 
 									<Button
+										style={{ marginTop: '4rem' }}
 										disabled={false}
 										buttonNews={true}
 										onClick={() => handleNewsSlide()}

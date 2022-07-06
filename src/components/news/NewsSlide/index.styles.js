@@ -48,5 +48,23 @@ export const useStyles = makeStyles((theme) => ({
 		'& > path': {
 			fill: `${theme.palette.white} !important`
 		}
+	},
+	horizontalLine: {
+		color: theme.palette.grey
+	},
+	textField: {
+		width: '100%'
+	},
+
+	textFieldInput: {
+		...theme.components.textFieldInput
+	},
+	socialmediaDrags: {
+		marginTop: '20px',
+		'& h6': {
+			marginBottom: '0.5rem',
+			marginLeft: '1rem'
+		},
+		marginBottom: '2rem'
 	}
 }));

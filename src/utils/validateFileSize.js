@@ -1,5 +1,4 @@
 const checkFileSize = (file) => {
-	console.log('File', file);
 	if (
 		file.type === 'image/jpeg' ||
 		file.type === 'image/png' ||
