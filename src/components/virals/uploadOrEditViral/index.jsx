@@ -521,7 +521,7 @@ const UploadOrEditViral = ({
 			setIsError({
 				caption: !form.caption,
 				uploadedFiles: form.uploadedFiles.length < 1,
-				selectedLabels: form.labels.length < 1
+				selectedLabelsDraft: form.labels.length < 1
 			});
 
 			setTimeout(() => {

@@ -4,8 +4,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import { useStyles } from './index.styles';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
+import { getLocalStorageDetails } from '../../../utils';
 import LoadingOverlay from 'react-loading-overlay';
 import PrimaryLoader from '../../PrimaryLoader';
 import Slide from '@mui/material/Slide';
@@ -15,19 +19,17 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Typography from '@mui/material/Typography';
 import Labels from '../../Labels';
-import { useDispatch, useSelector } from 'react-redux';
 import ToggleSwitch from '../../switch';
 import DeleteModal from '../../DeleteModal';
 import Button from '../../button';
 import validateForm from '../../../utils/validateForm';
 import validateDraft from '../../../utils/validateDraft';
-
 import NewsDraggable from '../NewsDraggableWrapper';
 import NewsSlide from '../NewsSlide';
 
 //api calls
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
-import { getSpecificNews } from '../../../pages/NewsLibrary/newsLibrarySlice';
+import { getAllNews } from '../../../pages/NewsLibrary/newsLibrarySlice';
 
 const UploadOrEditNews = ({
 	open,
@@ -41,7 +43,7 @@ const UploadOrEditNews = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 
-	const [isLoadingNews, setIsLoadingNews] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [previewBool, setPreviewBool] = useState(false);
@@ -192,6 +194,193 @@ const UploadOrEditNews = ({
 		});
 	};
 
+	const deleteNews = async (id, isDraft) => {
+		setDeleteBtnStatus(true);
+
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/news/delete-news`,
+				{
+					news_id: id,
+					is_draft: isDraft
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success('News has been deleted!');
+				handleClose();
+				dispatch(getAllNews({ page }));
+			}
+		} catch (e) {
+			toast.error('News to delete Viral!');
+			setDeleteBtnStatus(false);
+			console.log(e, 'News to delete Viral');
+		}
+
+		setOpenDeletePopup(!openDeletePopup);
+	};
+
+	const validateDraftBtn = () => {
+		if (isEdit) {
+			setIsError({
+				draftError: draftBtnDisabled
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		} else {
+			setIsError({
+				selectedLabelsDraft: form.labels.length < 1
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		}
+	};
+
+	const validatePublishNewsBtn = () => {
+		setIsError({
+			selectedLabels: form.labels.length < 7
+		});
+		setTimeout(() => {
+			setIsError({});
+		}, 5000);
+	};
+
+	const handleCreateDraft = () => {
+		setIsLoading(false);
+		if (!validateDraft(form) || draftBtnDisabled) {
+			validateDraftBtn();
+		} else {
+			// setPostButtonStatus(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			if (isEdit) {
+				setIsLoading(true);
+
+				try {
+					createNews(specificNews?.id, true);
+				} catch {
+					setIsLoading(false);
+				}
+			} else {
+				setIsLoading(true);
+
+				try {
+					createNews(null, true);
+				} catch {
+					setIsLoading(false);
+				}
+			}
+		}
+	};
+
+	const handlePublishNews = () => {
+		setIsLoading(false);
+		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
+			validatePublishNewsBtn();
+		} else {
+			// setPostButtonStatus(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			if (isEdit) {
+				setIsLoading(true);
+
+				try {
+					createNews(specificNews?.id);
+				} catch {
+					setIsLoading(false);
+				}
+			} else {
+				setIsLoading(true);
+
+				try {
+					createNews(null);
+				} catch {
+					setIsLoading(false);
+				}
+			}
+		}
+	};
+
+	const createNews = async (id, draft = false) => {
+		console.log(id, draft, form.show_likes, 'form.show_likes');
+		// setPostButtonStatus(true);
+		const data = [
+			{
+				id: 0,
+				image: '',
+				height: 420,
+				width: 220,
+				file_name: 'abc',
+				description: 'abc',
+				dropbox_url: 'abc',
+				title: 'abc',
+				name: 'abc',
+				sort_order: 0
+			}
+		];
+		let slides = data.map((item, index) => {
+			return {
+				id: item.id,
+				image: '',
+				height: item.height,
+				width: item.width,
+				file_name: item.file_name,
+				description: item.description,
+				dropbox_url: item.dropbox_url,
+				title: item.title,
+				name: item.name,
+				sort_order: index
+			};
+		});
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/news/add-news`,
+				{
+					save_draft: draft,
+					show_likes: form.show_likes,
+					show_comments: form.show_comments,
+					slides: slides.length > 0 ? slides : [],
+					...(isEdit && id ? { news_id: id } : {}),
+					...((!isEdit || status !== 'published') &&
+					(form.labels?.length || status == 'draft')
+						? { labels: [...form.labels] }
+						: {}),
+					user_data: {
+						id: `${getLocalStorageDetails()?.id}`,
+						first_name: `${getLocalStorageDetails()?.first_name}`,
+						last_name: `${getLocalStorageDetails()?.last_name}`
+					}
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success(
+					isEdit ? 'News has been edited!' : 'News has been created!'
+				);
+				setIsLoading(false);
+				// setPostButtonStatus(false);
+				handleClose();
+				dispatch(getAllNews({ page }));
+				dispatch(getPostLabels());
+			}
+		} catch (e) {
+			toast.error(isEdit ? 'Failed to edit news!' : 'Failed to create news!');
+			setIsLoading(false);
+			// setPostButtonStatus(false);
+			console.log(e, 'Failed create / edit News');
+		}
+	};
+
 	return (
 		<div>
 			<Slider
@@ -210,7 +399,7 @@ const UploadOrEditNews = ({
 				dialogRef={dialogWrapper}
 			>
 				<LoadingOverlay
-					active={isLoadingNews}
+					active={isLoading}
 					className={classes.loadingOverlay}
 					spinner={<PrimaryLoader />}
 				>
@@ -363,7 +552,7 @@ const UploadOrEditNews = ({
 													disabledDraft={
 														isEdit ? draftBtnDisabled : !validateDraft(form)
 													}
-													// onClick={() => handleViralDraftBtn()}
+													onClick={() => handleCreateDraft()}
 													button3={true}
 													text={
 														status === 'draft' && isEdit
@@ -385,7 +574,7 @@ const UploadOrEditNews = ({
 														? editBtnDisabled
 														: !validateForm(form)
 												}
-												// onClick={handlePostSaveBtn}
+												onClick={() => handlePublishNews()}
 												button2AddSave={true}
 												text={buttonText}
 											/>
@@ -401,9 +590,9 @@ const UploadOrEditNews = ({
 			<DeleteModal
 				open={openDeletePopup}
 				toggle={toggleDeleteModal}
-				// deleteBtn={() => {
-				// 	deleteViral(specificViral?.id, status);
-				// }}
+				deleteBtn={() => {
+					deleteNews(specificNews?.id, status);
+				}}
 				text={'News'}
 				wrapperRef={dialogWrapper}
 			/>
