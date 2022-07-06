@@ -10,16 +10,18 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Typography from '@mui/material/Typography';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
-import { ReactComponent as Union } from '../../../assets/drag.svg';
 import { useStyles } from './index.styles';
 
-const NewsSlide = () => {
+import { ReactComponent as Union } from '../../../assets/drag.svg';
+import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
+
+const NewsSlide = ({ item, key, index }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 
 	return (
 		<div>
-			<Draggable draggableId={`draggable-0`}>
+			<Draggable draggableId={`draggable-${index}`} index={index} key={key}>
 				{(provided) => (
 					<div
 						ref={provided.innerRef}
@@ -40,8 +42,21 @@ const NewsSlide = () => {
 												/>
 											</span>
 										</div>
+										<Typography className={classes.heading}>
+											News Slide {index + 1}
+										</Typography>
 									</div>
-									<Typography>News Slide</Typography>
+
+									<div className={classes.rightDiv}>
+										<div className={classes.deleteIconDiv}>
+											<Deletes
+												className={classes.deleteIcon}
+												// onClick={() => {
+												// 	handleDeleteFile(item.sortOrder);
+												// }}
+											/>
+										</div>
+									</div>
 								</AccordionSummary>
 
 								<AccordionDetails>ggg</AccordionDetails>
@@ -54,6 +69,10 @@ const NewsSlide = () => {
 	);
 };
 
-NewsSlide.propTypes = {};
+NewsSlide.propTypes = {
+	item: PropTypes.number,
+	key: PropTypes.number,
+	index: PropTypes.number
+};
 
 export default NewsSlide;

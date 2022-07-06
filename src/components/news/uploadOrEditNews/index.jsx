@@ -23,6 +23,8 @@ import validateForm from '../../../utils/validateForm';
 import validateDraft from '../../../utils/validateDraft';
 
 import NewsDraggable from '../NewsDraggableWrapper';
+import NewsSlide from '../NewsSlide';
+
 //api calls
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import { getSpecificNews } from '../../../pages/NewsLibrary/newsLibrarySlice';
@@ -66,9 +68,6 @@ const UploadOrEditNews = ({
 	const { specificNews, specificNewsStatus } = useSelector(
 		(state) => state.NewsLibrary
 	);
-
-	console.log(specificNews, 'specificNews');
-	console.log(page, 'page in news slider');
 
 	useEffect(() => {
 		dispatch(getPostLabels());
@@ -187,8 +186,7 @@ const UploadOrEditNews = ({
 			return [
 				...prev,
 				{
-					sortOrder: news.length + 1,
-					deleted: false
+					sort_order: news.length + 1
 				}
 			];
 		});
@@ -307,7 +305,21 @@ const UploadOrEditNews = ({
 											</AccordionDetails>
 										</Accordion>
 									</div>
-									<NewsDraggable onDragEnd={onDragEnd} />
+
+									<NewsDraggable onDragEnd={onDragEnd}>
+										{news.map((item, index) => {
+											return (
+												<>
+													<NewsSlide
+														item={item}
+														index={index}
+														key={item.sort_order}
+													/>
+												</>
+											);
+										})}
+									</NewsDraggable>
+
 									<Button
 										disabled={false}
 										buttonNews={true}
