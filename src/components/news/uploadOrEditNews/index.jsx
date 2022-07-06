@@ -26,6 +26,7 @@ import validateForm from '../../../utils/validateForm';
 import validateDraft from '../../../utils/validateDraft';
 import NewsDraggable from '../NewsDraggableWrapper';
 import NewsSlide from '../NewsSlide';
+import Close from '@material-ui/icons/Close';
 
 //api calls
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
@@ -544,6 +545,8 @@ const UploadOrEditNews = ({
 															handleNewsElementDelete(sortOrder)
 														}
 														initialData={item.data}
+														setPreviewBool={setPreviewBool}
+														setPreviewFile={setPreviewFile}
 													/>
 												</>
 											);
@@ -624,6 +627,38 @@ const UploadOrEditNews = ({
 									</div>
 								</div>
 							</div>
+
+							{previewFile != null && (
+								<div
+									ref={previewRef}
+									className={globalClasses.previewComponent}
+								>
+									<div className={globalClasses.previewHeader}>
+										<Close
+											onClick={() => {
+												setPreviewBool(false);
+												setPreviewFile(null);
+											}}
+											className={globalClasses.closeIcon}
+										/>
+										<h5>Preview</h5>
+									</div>
+									<div>
+										{
+											<img
+												src={previewFile.media_url}
+												className={globalClasses.previewFile}
+												style={{
+													width: '100%',
+													height: `${8 * 4}rem`,
+													objectFit: 'contain',
+													objectPosition: 'center'
+												}}
+											/>
+										}
+									</div>
+								</div>
+							)}
 						</div>
 					</Slide>
 				</LoadingOverlay>

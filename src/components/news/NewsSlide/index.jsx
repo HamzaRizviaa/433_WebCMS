@@ -28,7 +28,9 @@ const NewsSlide = ({
 	initialData,
 	sendDataToParent,
 	handleDeleteMedia,
-	handleDeleteNews
+	handleDeleteNews,
+	setPreviewBool,
+	setPreviewFile
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
@@ -151,6 +153,8 @@ const NewsSlide = ({
 												setNewFile(newFile.filter((file) => file?.id !== id));
 												handleDeleteMedia(item.data);
 											}}
+											setPreviewBool={setPreviewBool}
+											setPreviewFile={setPreviewFile}
 											isArticle
 											imgEl={imgEl}
 											imageOnload={() => {
@@ -381,7 +385,9 @@ NewsSlide.propTypes = {
 	initialData: PropTypes.object,
 	sendDataToParent: PropTypes.func.isRequired,
 	handleDeleteMedia: PropTypes.func,
-	handleDeleteNews: PropTypes.func
+	handleDeleteNews: PropTypes.func,
+	setPreviewBool: PropTypes.func.isRequired,
+	setPreviewFile: PropTypes.func.isRequired
 };
 
 export default NewsSlide;
