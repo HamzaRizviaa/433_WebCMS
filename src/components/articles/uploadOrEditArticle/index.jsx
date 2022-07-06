@@ -520,7 +520,7 @@ const UploadOrEditArticle = ({
 				);
 
 				if (draft === false) {
-					readMoreApi(result?.data?.data?.id);
+					publishReadMoreApi(result?.data?.data?.id);
 				}
 				setIsLoading(false);
 				setPostButtonStatus(false);
@@ -538,7 +538,7 @@ const UploadOrEditArticle = ({
 		}
 	};
 
-	const readMoreApi = async (id) => {
+	const publishReadMoreApi = async (id) => {
 		console.log('article id : ', id);
 		try {
 			const result = await axios.post(
