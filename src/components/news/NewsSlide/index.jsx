@@ -4,10 +4,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Draggable } from 'react-beautiful-dnd';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
+import {
+	Accordion,
+	Box,
+	AccordionSummary,
+	AccordionDetails
+} from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import Typography from '@mui/material/Typography';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { useStyles } from './index.styles';
@@ -47,6 +51,7 @@ const NewsSlide = ({
 		initialData ? initialData.description : ''
 	);
 	const [name, setName] = useState(initialData ? initialData.name : '');
+	const [expanded, setExpanded] = useState(false);
 
 	const imgEl = useRef(null);
 
@@ -117,8 +122,8 @@ const NewsSlide = ({
 						}}
 					>
 						<div className={globalClasses.accordionRoot}>
-							<Accordion>
-								<AccordionSummary expandIcon={<ExpandMoreIcon />}>
+							<Accordion expanded={expanded}>
+								<AccordionSummary className={classes.accordionSummary}>
 									<div className={classes.leftDiv}>
 										<div className={classes.grabIconDiv}>
 											<span {...provided.dragHandleProps}>
@@ -133,16 +138,23 @@ const NewsSlide = ({
 										</Typography>
 									</div>
 
-									<div className={classes.rightDiv}>
+									<Box className={classes.rightDiv}>
 										<div className={classes.deleteIconDiv}>
 											<Deletes
 												className={classes.deleteIcon}
 												onClick={() => {
-													handleDeleteNews(item.sortOrder);
+													handleDeleteNews(item.sort_order);
 												}}
 											/>
 										</div>
-									</div>
+										<div className={classes.deleteIconDiv}>
+											{expanded ? (
+												<ExpandLessIcon onClick={() => setExpanded(false)} />
+											) : (
+												<ExpandMoreIcon onClick={() => setExpanded(true)} />
+											)}
+										</div>
+									</Box>
 								</AccordionSummary>
 
 								<AccordionDetails>

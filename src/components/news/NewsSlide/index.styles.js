@@ -1,13 +1,15 @@
 import { makeStyles } from '@material-ui/core';
 
 export const useStyles = makeStyles((theme) => ({
-	// accordionSummary: {
-	// 	display: 'flex !important',
-	// 	justifyContent: 'space-between !important'
-	// },
 	leftDiv: {
 		display: 'flex',
 		alignItems: 'center'
+	},
+	accordionSummary: {
+		'& > div': {
+			display: 'flex',
+			justifyContent: 'space-between'
+		}
 	},
 	grabIconDiv: {
 		width: '26px',
@@ -31,8 +33,9 @@ export const useStyles = makeStyles((theme) => ({
 	rightDiv: {
 		display: 'flex',
 		alignItems: 'center',
+		gap: '10px'
 		// justifyContent: 'flex-end'
-		marginLeft: '40vh'
+		// marginLeft: '40vh'
 	},
 	deleteIconDiv: {
 		width: '27px',

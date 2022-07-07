@@ -223,7 +223,7 @@ const UploadOrEditNews = ({
 	const handleNewsElementDelete = (sortOrder) => {
 		let dataCopy = [...news];
 		if (sortOrder) {
-			setNews(dataCopy.filter((file) => file.sortOrder !== sortOrder));
+			setNews(dataCopy.filter((file) => file.sort_order !== sortOrder));
 		}
 	};
 

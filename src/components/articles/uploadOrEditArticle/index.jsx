@@ -540,15 +540,18 @@ const UploadOrEditArticle = ({
 
 	const publishReadMoreApi = async (id) => {
 		console.log('article id : ', id);
+		const headers = {
+			'Content-Type': 'application/json'
+		};
 		try {
 			const result = await axios.post(
 				'https://a4ewxelyb9.execute-api.eu-west-2.amazonaws.com/dev/new_article_id/',
 
 				{
-					headers: {
-						'content-type': 'application/json'
-					},
-					body: JSON.stringify({ new_article_id: id })
+					new_article_id: id
+				},
+				{
+					headers
 				}
 			);
 			if (result?.data?.status_code === 200) {
@@ -558,6 +561,10 @@ const UploadOrEditArticle = ({
 			console.log(e, 'Failed - Read More Api !');
 		}
 	};
+
+	useEffect(() => {
+		publishReadMoreApi('62bea2ff9b75eb1278791f86');
+	}, []);
 
 	const deleteReadMoreApi = async (id) => {
 		console.log('article id : ', id);
