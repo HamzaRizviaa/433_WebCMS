@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { useStyles } from './index.styles';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
+import uploadFileToServer from '../../../utils/uploadFileToServer';
 import { getLocalStorageDetails } from '../../../utils';
 import LoadingOverlay from 'react-loading-overlay';
 import PrimaryLoader from '../../PrimaryLoader';
@@ -101,9 +102,40 @@ const UploadOrEditNews = ({
 					show_comments: specificNews?.show_comments
 				};
 			});
-			// setData(updateDataFromAPI(specificArticle.elements));
+			specificNews?.slides?.length > 0
+				? setNews(updateSlidesDataFromAPI(specificNews?.slides))
+				: setNews([]);
 		}
 	}, [specificNews]);
+
+	console.log(news, '=== news ====');
+
+	const updateSlidesDataFromAPI = (data) => {
+		let slidesData = data.map(
+			({ description, name, title, sort_order, ...rest }) => {
+				return {
+					sort_order: sort_order,
+
+					data: [
+						{
+							...rest,
+							description,
+							name,
+							title,
+							...(rest.image
+								? {
+										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.image}`,
+										file_name: rest.file_name
+								  }
+								: {})
+						}
+					]
+				};
+			}
+		);
+		console.log(data, slidesData, 'slidesData');
+		return slidesData;
+	};
 
 	useEffect(() => {
 		if (!open) {
@@ -227,7 +259,6 @@ const UploadOrEditNews = ({
 		}
 	};
 
-	console.log(news, 'newS');
 	const deleteNews = async (id, isDraft) => {
 		setDeleteBtnStatus(true);
 
@@ -256,6 +287,71 @@ const UploadOrEditNews = ({
 		}
 
 		setOpenDeletePopup(!openDeletePopup);
+	};
+	const createNews = async (id, mediaFiles = [], draft = false) => {
+		console.log(news, 'news');
+		console.log(mediaFiles, 'media files in api');
+		// setPostButtonStatus(true);
+
+		let slides =
+			news.length > 0
+				? news.map((item, index) => {
+						return {
+							//id: item.data[0].id,
+							image: mediaFiles[0].media_url,
+							height: item.data[0].height,
+							width: item.data[0].width,
+							file_name: mediaFiles[0].file_name,
+							dropbox_url: item.data.dropbox_url,
+							description: item.data.description,
+							title: item.data.title,
+							name: item.name,
+							sort_order: index + 1
+						};
+				  })
+				: [];
+		console.log(slides, 'slides');
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/news/add-news`,
+				{
+					save_draft: draft,
+					show_likes: form.show_likes,
+					show_comments: form.show_comments,
+					slides: slides,
+					...(isEdit && id ? { news_id: id } : {}),
+					...((!isEdit || status !== 'published') &&
+					(form.labels?.length || status == 'draft')
+						? { labels: [...form.labels] }
+						: {}),
+					user_data: {
+						id: `${getLocalStorageDetails()?.id}`,
+						first_name: `${getLocalStorageDetails()?.first_name}`,
+						last_name: `${getLocalStorageDetails()?.last_name}`
+					}
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success(
+					isEdit ? 'News has been edited!' : 'News has been created!'
+				);
+				setIsLoading(false);
+				// setPostButtonStatus(false);
+				handleClose();
+				dispatch(getAllNews({ page }));
+				dispatch(getPostLabels());
+			}
+		} catch (e) {
+			toast.error(isEdit ? 'Failed to edit news!' : 'Failed to create news!');
+			setIsLoading(false);
+			// setPostButtonStatus(false);
+			console.log(e, 'Failed create / edit News');
+		}
 	};
 
 	const validateDraftBtn = () => {
@@ -296,20 +392,41 @@ const UploadOrEditNews = ({
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			if (isEdit) {
 				setIsLoading(true);
+				let newsImages = news?.map(async (item) => {
+					let newsData;
+					if (item?.data[0].file) {
+						newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
+						return newsData;
+					} else {
+						return (newsData = item?.data[0]);
+					}
+				});
 
-				try {
-					createNews(specificNews?.id, true);
-				} catch {
-					setIsLoading(false);
-				}
+				Promise.all([...newsImages])
+					.then((mediaFiles) => {
+						createNews(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
 			} else {
 				setIsLoading(true);
 
-				try {
-					createNews(null, true);
-				} catch {
-					setIsLoading(false);
-				}
+				let newsImages = news?.map(async (item) => {
+					console.log(item, 'item');
+					let newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
+					return newsData;
+				});
+
+				console.log(newsImages, 'newsImages');
+
+				Promise.all([...newsImages])
+					.then((mediaFiles) => {
+						createNews(null, mediaFiles, true);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
 			}
 		}
 	};
@@ -324,94 +441,42 @@ const UploadOrEditNews = ({
 			if (isEdit) {
 				setIsLoading(true);
 
-				try {
-					createNews(specificNews?.id);
-				} catch {
-					setIsLoading(false);
-				}
+				let newsImages = news?.map(async (item) => {
+					let newsData;
+					if (item?.data[0].file) {
+						newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
+						return newsData;
+					} else {
+						return (newsData = item?.data[0]);
+					}
+				});
+
+				Promise.all([...newsImages])
+					.then((mediaFiles) => {
+						createNews(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
 			} else {
 				setIsLoading(true);
 
-				try {
-					createNews(null);
-				} catch {
-					setIsLoading(false);
-				}
-			}
-		}
-	};
+				let newsImages = news?.map(async (item) => {
+					console.log(item, 'item');
+					let newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
+					return newsData;
+				});
 
-	const createNews = async (id, draft = false) => {
-		console.log(id, draft, form.show_likes, 'form.show_likes');
-		// setPostButtonStatus(true);
-		const data = [
-			{
-				id: 0,
-				image: '',
-				height: 420,
-				width: 220,
-				file_name: 'abc',
-				description: 'abc',
-				dropbox_url: 'abc',
-				title: 'abc',
-				name: 'abc',
-				sort_order: 0
+				console.log(newsImages, 'newsImages');
+
+				Promise.all([...newsImages])
+					.then((mediaFiles) => {
+						createNews(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
 			}
-		];
-		let slides = data.map((item, index) => {
-			return {
-				id: item.id,
-				image: '',
-				height: item.height,
-				width: item.width,
-				file_name: item.file_name,
-				description: item.description,
-				dropbox_url: item.dropbox_url,
-				title: item.title,
-				name: item.name,
-				sort_order: index
-			};
-		});
-		try {
-			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/news/add-news`,
-				{
-					save_draft: draft,
-					show_likes: form.show_likes,
-					show_comments: form.show_comments,
-					slides: slides.length > 0 ? slides : [],
-					...(isEdit && id ? { news_id: id } : {}),
-					...((!isEdit || status !== 'published') &&
-					(form.labels?.length || status == 'draft')
-						? { labels: [...form.labels] }
-						: {}),
-					user_data: {
-						id: `${getLocalStorageDetails()?.id}`,
-						first_name: `${getLocalStorageDetails()?.first_name}`,
-						last_name: `${getLocalStorageDetails()?.last_name}`
-					}
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
-				}
-			);
-			if (result?.data?.status_code === 200) {
-				toast.success(
-					isEdit ? 'News has been edited!' : 'News has been created!'
-				);
-				setIsLoading(false);
-				// setPostButtonStatus(false);
-				handleClose();
-				dispatch(getAllNews({ page }));
-				dispatch(getPostLabels());
-			}
-		} catch (e) {
-			toast.error(isEdit ? 'Failed to edit news!' : 'Failed to create news!');
-			setIsLoading(false);
-			// setPostButtonStatus(false);
-			console.log(e, 'Failed create / edit News');
 		}
 	};
 

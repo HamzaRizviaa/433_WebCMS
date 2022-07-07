@@ -708,6 +708,16 @@ export const useStyles = makeStyles(() => ({
 		whiteSpace: 'nowrap !important'
 	},
 
+	// ---------- news library
+
+	newsFileName: {
+		fontSize: ' 1.2rem',
+		maxWidth: '40%',
+		textOverflow: 'ellipsis',
+		overflow: 'hidden',
+		whiteSpace: 'nowrap !important'
+	},
+
 	// -------- question library
 
 	active_closed_btn: {

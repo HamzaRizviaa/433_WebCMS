@@ -220,7 +220,9 @@ const NewsLibrary = () => {
 								  classes.mediaWrapper
 						}
 					>
-						<MenuIcon style={{ marginRight: '10px' }} />
+						<MenuIcon
+							style={{ marginRight: '10px', height: '20px', width: '20px' }}
+						/>
 						<Tooltip
 							// TransitionComponent={Fade}
 							// TransitionProps={{ timeout: 600 }}
@@ -235,7 +237,7 @@ const NewsLibrary = () => {
 											: classes.mediaIconPortraitPreview
 									}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-										row?.thumbnail_url ? row?.thumbnail_url : row?.media
+										row?.media || row?.image
 									}`}
 									alt='no img'
 									onError={(e) => (
@@ -252,7 +254,7 @@ const NewsLibrary = () => {
 								<img
 									className={classes.mediaIcon}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-										row?.thumbnail_url ? row?.thumbnail_url : row?.media
+										row?.media || row?.image
 									}`}
 									onError={(e) => (
 										(e.target.onerror = null), (e.target.src = DefaultImage)
@@ -277,9 +279,9 @@ const NewsLibrary = () => {
 								arrow: { className: classes.libraryToolTipArrow }
 							}}
 						>
-							<div ref={fileNameRef} className={classes.viralFileName}>
+							<div ref={fileNameRef} className={classes.newsFileName}>
 								<Markup
-									className={classes.viralFileName}
+									className={classes.newsFileName}
 									content={row.file_name}
 								/>
 							</div>
