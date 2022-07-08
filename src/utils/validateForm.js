@@ -1,4 +1,4 @@
-const validateForm = (form, dataElements) => {
+const validateForm = (form, dataElements, newsData) => {
 	var validate = Object.keys(form).map((key) => {
 		if (typeof form[key] === 'string') {
 			if (key.includes('dropbox_url')) {
@@ -57,7 +57,11 @@ const validateForm = (form, dataElements) => {
 		validateData = false;
 	}
 
-	var finalFormValue = validate.every((item) => item === true) && validateData;
+	var validateNews = true;
+	console.log(newsData, 'nnn');
+
+	var finalFormValue =
+		validate.every((item) => item === true) && validateData && validateNews;
 
 	return finalFormValue;
 };

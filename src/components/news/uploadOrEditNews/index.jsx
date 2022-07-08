@@ -226,15 +226,10 @@ const UploadOrEditNews = ({
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...news];
-		console.log(
-			'childData in send Data',
-			childData,
-			dataCopy[index].data,
-			dataCopy
-		);
+
 		dataCopy[index].data = [
 			{
-				...(dataCopy[index].data[0] ? dataCopy[index].data[0] : {}),
+				...(dataCopy[index]?.data[0] ? dataCopy[index]?.data[0] : {}),
 				...childData
 			}
 		];
@@ -297,13 +292,11 @@ const UploadOrEditNews = ({
 	};
 
 	const createNews = async (id, mediaFiles = [], draft = false) => {
-		console.log(mediaFiles, 'media files in api');
 		// setPostButtonStatus(true);
 
 		let slides =
 			news.length > 0
 				? news.map((item, index) => {
-						console.log(item, 'item in map of news ');
 						return {
 							//id: item.data[0].id,
 							image:
@@ -687,7 +680,7 @@ const UploadOrEditNews = ({
 														? false
 														: isEdit
 														? editBtnDisabled
-														: !validateForm(form)
+														: !validateForm(form, [], news)
 												}
 												onClick={() => handlePublishNews()}
 												button2AddSave={true}
