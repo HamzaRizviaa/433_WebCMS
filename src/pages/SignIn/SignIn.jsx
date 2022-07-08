@@ -116,7 +116,7 @@ const SignIn = ({ setLoginData }) => {
 				setAccessExpire(true);
 				setIsLoadingSignin(false);
 				//console.log(result?.data);
-				navigate('/media-library');
+				navigate('/news-library');
 				setSignInError(false);
 			}
 		} catch (e) {

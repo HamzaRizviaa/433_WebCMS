@@ -4,8 +4,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import { useStyles } from './index.styles';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
+import uploadFileToServer from '../../../utils/uploadFileToServer';
+import { getLocalStorageDetails } from '../../../utils';
 import LoadingOverlay from 'react-loading-overlay';
 import PrimaryLoader from '../../PrimaryLoader';
 import Slide from '@mui/material/Slide';
@@ -15,13 +20,18 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Typography from '@mui/material/Typography';
 import Labels from '../../Labels';
-import { useDispatch, useSelector } from 'react-redux';
-import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import ToggleSwitch from '../../switch';
 import DeleteModal from '../../DeleteModal';
 import Button from '../../button';
 import validateForm from '../../../utils/validateForm';
 import validateDraft from '../../../utils/validateDraft';
+import NewsDraggable from '../NewsDraggableWrapper';
+import NewsSlide from '../NewsSlide';
+import Close from '@material-ui/icons/Close';
+
+//api calls
+import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
+import { getAllNews } from '../../../pages/NewsLibrary/newsLibrarySlice';
 
 const UploadOrEditNews = ({
 	open,
@@ -29,13 +39,13 @@ const UploadOrEditNews = ({
 	title,
 	buttonText,
 	isEdit,
-	// page,
+	page,
 	status
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 
-	const [isLoadingNews, setIsLoadingNews] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [previewBool, setPreviewBool] = useState(false);
@@ -51,6 +61,7 @@ const UploadOrEditNews = ({
 		show_likes: true,
 		show_comments: true
 	});
+	const [news, setNews] = useState([]);
 
 	const previewRef = useRef(null);
 	const loadingRef = useRef(null);
@@ -58,6 +69,9 @@ const UploadOrEditNews = ({
 
 	const dispatch = useDispatch();
 	const labels = useSelector((state) => state.postLibrary.labels);
+	const { specificNews, specificNewsStatus } = useSelector(
+		(state) => state.NewsLibrary
+	);
 
 	useEffect(() => {
 		dispatch(getPostLabels());
@@ -65,6 +79,60 @@ const UploadOrEditNews = ({
 			resetState();
 		};
 	}, []);
+
+	useEffect(() => {
+		if (specificNews) {
+			if (specificNews?.labels) {
+				let _labels = [];
+				specificNews.labels.map((label) =>
+					_labels.push({ id: -1, name: label })
+				);
+
+				setForm((prev) => {
+					return {
+						...prev,
+						labels: _labels
+					};
+				});
+			}
+			setForm((prev) => {
+				return {
+					...prev,
+					show_likes: specificNews?.show_likes,
+					show_comments: specificNews?.show_comments
+				};
+			});
+			specificNews?.slides?.length > 0
+				? setNews(updateSlidesDataFromAPI(specificNews?.slides))
+				: setNews([]);
+		}
+	}, [specificNews]);
+
+	const updateSlidesDataFromAPI = (data) => {
+		let slidesData = data.map(
+			({ description, name, title, sort_order, ...rest }) => {
+				return {
+					sort_order: sort_order,
+					data: [
+						{
+							...rest,
+							description,
+							name,
+							title,
+							...(rest.image
+								? {
+										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.image}`,
+										file_name: rest.file_name
+								  }
+								: {})
+						}
+					]
+				};
+			}
+		);
+
+		return slidesData;
+	};
 
 	useEffect(() => {
 		if (!open) {
@@ -90,6 +158,7 @@ const UploadOrEditNews = ({
 			show_likes: true,
 			show_comments: true
 		});
+		setNews([]);
 	};
 
 	useEffect(() => {
@@ -125,6 +194,290 @@ const UploadOrEditNews = ({
 		setOpenDeletePopup(!openDeletePopup);
 	};
 
+	const reorder = (list, startIndex, endIndex) => {
+		const result = Array.from(list);
+		const [removed] = result.splice(startIndex, 1);
+		result.splice(endIndex, 0, removed);
+		return result;
+	};
+
+	const onDragEnd = (result) => {
+		if (!result.destination) {
+			return;
+		}
+		const items = reorder(
+			news,
+			result.source.index, // pick
+			result.destination.index // drop
+		);
+		setNews(items);
+	};
+
+	const handleNewsSlide = () => {
+		setNews((prev) => {
+			return [
+				...prev,
+				{
+					sort_order: news.length + 1
+				}
+			];
+		});
+	};
+
+	const setNewData = (childData, index) => {
+		let dataCopy = [...news];
+		dataCopy[index].data = [
+			{
+				...(dataCopy[index]?.data?.length ? dataCopy[index]?.data[0] : {}),
+				...childData
+			}
+		];
+
+		setNews(dataCopy);
+	};
+
+	console.log('NMews', news);
+
+	const handleMediaDataDelete = (elementData, index) => {
+		let dataCopy = [...news];
+		if (elementData) {
+			setNews(
+				dataCopy.filter((item, i) => {
+					if (index === i) {
+						delete item['data'][0];
+						return item;
+					} else {
+						return item;
+					}
+				})
+			);
+		}
+	};
+
+	const handleNewsElementDelete = (sortOrder) => {
+		let dataCopy = [...news];
+		if (sortOrder) {
+			setNews(dataCopy.filter((file) => file.sort_order !== sortOrder));
+		}
+	};
+
+	const deleteNews = async (id, isDraft) => {
+		setDeleteBtnStatus(true);
+
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/news/delete-news`,
+				{
+					news_id: id,
+					is_draft: isDraft
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success('News has been deleted!');
+				handleClose();
+				dispatch(getAllNews({ page }));
+			}
+		} catch (e) {
+			toast.error('News to delete Viral!');
+			setDeleteBtnStatus(false);
+			console.log(e, 'News to delete Viral');
+		}
+
+		setOpenDeletePopup(!openDeletePopup);
+	};
+
+	const createNews = async (id, mediaFiles = [], draft = false) => {
+		// setPostButtonStatus(true);
+
+		let slides =
+			news.length > 0
+				? news.map((item, index) => {
+						return {
+							//id: item.data[0].id,
+							image:
+								mediaFiles[index]?.media_url?.split('cloudfront.net/')[1] ||
+								mediaFiles[index]?.media_url,
+							file_name: mediaFiles[index].file_name,
+							height: item.data[0].height,
+							width: item.data[0].width,
+
+							dropbox_url: item.data[0].dropbox_url,
+							description: item.data[0].description,
+							title: item.data[0].title,
+							name: item.data[0].name,
+							sort_order: index + 1
+						};
+				  })
+				: [];
+
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/news/add-news`,
+				{
+					save_draft: draft,
+					show_likes: form.show_likes,
+					show_comments: form.show_comments,
+					slides: slides,
+					...(isEdit && id ? { news_id: id } : {}),
+					...((!isEdit || status !== 'published') &&
+					(form.labels?.length || status == 'draft')
+						? { labels: [...form.labels] }
+						: {}),
+					user_data: {
+						id: `${getLocalStorageDetails()?.id}`,
+						first_name: `${getLocalStorageDetails()?.first_name}`,
+						last_name: `${getLocalStorageDetails()?.last_name}`
+					}
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success(
+					isEdit ? 'News has been edited!' : 'News has been created!'
+				);
+				setIsLoading(false);
+				// setPostButtonStatus(false);
+				handleClose();
+				dispatch(getAllNews({ page }));
+				dispatch(getPostLabels());
+			}
+		} catch (e) {
+			toast.error(isEdit ? 'Failed to edit news!' : 'Failed to create news!');
+			setIsLoading(false);
+			// setPostButtonStatus(false);
+			console.log(e, 'Failed create / edit News');
+		}
+	};
+
+	const validateDraftBtn = () => {
+		if (isEdit) {
+			setIsError({
+				draftError: draftBtnDisabled
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		} else {
+			setIsError({
+				selectedLabelsDraft: form.labels.length < 1
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		}
+	};
+
+	const validatePublishNewsBtn = () => {
+		setIsError({
+			selectedLabels: form.labels.length < 7
+		});
+		setTimeout(() => {
+			setIsError({});
+		}, 5000);
+	};
+
+	const handleCreateDraft = () => {
+		setIsLoading(false);
+		if (!validateDraft(form) || draftBtnDisabled) {
+			validateDraftBtn();
+		} else {
+			// setPostButtonStatus(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			if (isEdit) {
+				setIsLoading(true);
+				let newsImages = news?.map(async (item) => {
+					let newsData;
+					if (item?.data[0].file) {
+						newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
+						return newsData;
+					} else {
+						return (newsData = item?.data[0]);
+					}
+				});
+
+				Promise.all([...newsImages])
+					.then((mediaFiles) => {
+						createNews(specificNews?.id, mediaFiles, true);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
+			} else {
+				setIsLoading(true);
+
+				let newsImages = news?.map(async (item) => {
+					let newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
+					return newsData;
+				});
+
+				Promise.all([...newsImages])
+					.then((mediaFiles) => {
+						createNews(null, mediaFiles, true);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
+			}
+		}
+	};
+
+	const handlePublishNews = () => {
+		setIsLoading(false);
+		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
+			validatePublishNewsBtn();
+		} else {
+			// setPostButtonStatus(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			if (isEdit) {
+				setIsLoading(true);
+
+				let newsImages = news?.map(async (item) => {
+					let newsData;
+					if (item?.data[0].file) {
+						newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
+						return newsData;
+					} else {
+						return (newsData = item?.data[0]);
+					}
+				});
+
+				Promise.all([...newsImages])
+					.then((mediaFiles) => {
+						createNews(specificNews?.id, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
+			} else {
+				setIsLoading(true);
+
+				let newsImages = news?.map(async (item) => {
+					let newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
+					return newsData;
+				});
+
+				Promise.all([...newsImages])
+					.then((mediaFiles) => {
+						createNews(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
+			}
+		}
+	};
+
 	return (
 		<div>
 			<Slider
@@ -143,7 +496,7 @@ const UploadOrEditNews = ({
 				dialogRef={dialogWrapper}
 			>
 				<LoadingOverlay
-					active={isLoadingNews}
+					active={isLoading}
 					className={classes.loadingOverlay}
 					spinner={<PrimaryLoader />}
 				>
@@ -156,12 +509,13 @@ const UploadOrEditNews = ({
 									: globalClasses.contentWrapper
 							}`}
 						>
+							{specificNewsStatus === 'loading' ? <PrimaryLoader /> : <></>}
 							<div
 								className={globalClasses.contentWrapperNoPreview}
 								style={{ width: previewFile != null ? '60%' : 'auto' }}
 							>
 								<div>
-									<div className={classes.root}>
+									<div className={globalClasses.accordionRoot}>
 										<Accordion defaultExpanded>
 											<AccordionSummary expandIcon={<ExpandMoreIcon />}>
 												<Typography>General Information</Typography>
@@ -237,6 +591,38 @@ const UploadOrEditNews = ({
 											</AccordionDetails>
 										</Accordion>
 									</div>
+
+									<NewsDraggable onDragEnd={onDragEnd}>
+										{news.map((item, index) => {
+											return (
+												<>
+													<NewsSlide
+														item={item}
+														index={index}
+														key={item.sort_order}
+														sendDataToParent={(data) => setNewData(data, index)}
+														handleDeleteMedia={(data) =>
+															handleMediaDataDelete(data, index)
+														}
+														handleDeleteNews={(sortOrder) =>
+															handleNewsElementDelete(sortOrder)
+														}
+														initialData={item.data}
+														setPreviewBool={setPreviewBool}
+														setPreviewFile={setPreviewFile}
+													/>
+												</>
+											);
+										})}
+									</NewsDraggable>
+
+									<Button
+										style={{ marginTop: '4rem' }}
+										disabled={false}
+										buttonNews={true}
+										onClick={() => handleNewsSlide()}
+										text={'ADD NEWS SLIDE'}
+									/>
 								</div>
 
 								<p className={globalClasses.mediaError}>
@@ -245,7 +631,9 @@ const UploadOrEditNews = ({
 										: ''}
 								</p>
 
-								<div className={classes.buttonDiv}>
+								<div
+									className={isEdit ? classes.newsButtonDiv : classes.buttonDiv}
+								>
 									{isEdit || (status === 'draft' && isEdit) ? (
 										<div className={globalClasses.editBtn}>
 											<Button
@@ -274,7 +662,7 @@ const UploadOrEditNews = ({
 													disabledDraft={
 														isEdit ? draftBtnDisabled : !validateDraft(form)
 													}
-													// onClick={() => handleViralDraftBtn()}
+													onClick={() => handleCreateDraft()}
 													button3={true}
 													text={
 														status === 'draft' && isEdit
@@ -294,9 +682,9 @@ const UploadOrEditNews = ({
 														? false
 														: isEdit
 														? editBtnDisabled
-														: !validateForm(form)
+														: !validateForm(form, null, news)
 												}
-												// onClick={handlePostSaveBtn}
+												onClick={() => handlePublishNews()}
 												button2AddSave={true}
 												text={buttonText}
 											/>
@@ -304,6 +692,38 @@ const UploadOrEditNews = ({
 									</div>
 								</div>
 							</div>
+
+							{previewFile != null && (
+								<div
+									ref={previewRef}
+									className={globalClasses.previewComponent}
+								>
+									<div className={globalClasses.previewHeader}>
+										<Close
+											onClick={() => {
+												setPreviewBool(false);
+												setPreviewFile(null);
+											}}
+											className={globalClasses.closeIcon}
+										/>
+										<h5>Preview</h5>
+									</div>
+									<div>
+										{
+											<img
+												src={previewFile.media_url}
+												className={globalClasses.previewFile}
+												style={{
+													width: '100%',
+													height: `${8 * 4}rem`,
+													objectFit: 'contain',
+													objectPosition: 'center'
+												}}
+											/>
+										}
+									</div>
+								</div>
+							)}
 						</div>
 					</Slide>
 				</LoadingOverlay>
@@ -312,9 +732,9 @@ const UploadOrEditNews = ({
 			<DeleteModal
 				open={openDeletePopup}
 				toggle={toggleDeleteModal}
-				// deleteBtn={() => {
-				// 	deleteViral(specificViral?.id, status);
-				// }}
+				deleteBtn={() => {
+					deleteNews(specificNews?.id, status);
+				}}
 				text={'News'}
 				wrapperRef={dialogWrapper}
 			/>

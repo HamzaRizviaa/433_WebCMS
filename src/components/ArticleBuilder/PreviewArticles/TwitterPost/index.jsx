@@ -3,7 +3,7 @@ import { Markup } from 'interweave';
 import { Box } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { getLocalStorageDetails } from '../../../utils';
+import { getLocalStorageDetails } from '../../../../utils';
 import { useStyles } from '../index.style';
 const TwitterPost = ({ data }) => {
 	const [markup, setMarkup] = useState('');

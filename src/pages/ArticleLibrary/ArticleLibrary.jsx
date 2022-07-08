@@ -38,13 +38,10 @@ import { useStyles as globalUseStyles } from '../../styles/global.style';
 const ArticleLibrary = () => {
 	// Selectors
 	const articles = useSelector((state) => state.ArticleLibraryStore.articles);
-
 	const statusArticlesApi = useSelector((state) => state.ArticleLibraryStore);
-
 	const totalRecords = useSelector(
 		(state) => state.ArticleLibraryStore.totalRecords
 	);
-
 	const noResultStatus = useSelector(
 		(state) => state.ArticleLibraryStore.noResultStatus
 	);

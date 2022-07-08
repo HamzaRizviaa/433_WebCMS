@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classes from './_button.module.scss';
+import { ReactComponent as NewsAddIcon } from '../../assets/newsAddIcon.svg';
 
 const Button = ({
 	text,
@@ -11,6 +12,7 @@ const Button = ({
 	button2AddSave,
 	button3,
 	buttonStop,
+	buttonNews,
 	style = {},
 	active,
 	published,
@@ -33,6 +35,7 @@ const Button = ({
 				button3 ? classes.button3 : '',
 				button2AddSave ? classes.button2AddSave : '',
 				buttonStop ? classes.buttonStop : '',
+				buttonNews ? classes.buttonNews : '',
 				active === 'ACTIVE' ? classes.activebtn : '',
 				active === 'CLOSED' ? classes.closedbtn : '',
 				active === 'draft' ? classes.draftdbtn : '',
@@ -42,6 +45,7 @@ const Button = ({
 			].join(' ')}
 		>
 			{text}
+			{buttonNews ? <NewsAddIcon /> : <> </>}
 		</span>
 	);
 };
@@ -55,6 +59,7 @@ Button.propTypes = {
 	button2AddSave: PropTypes.bool,
 	button3: PropTypes.bool,
 	buttonStop: PropTypes.bool,
+	buttonNews: PropTypes.bool,
 	style: PropTypes.object,
 	active: PropTypes.bool,
 	published: PropTypes.bool,

@@ -2188,45 +2188,6 @@ const UploadOreditArcade = ({
 									</div>
 								</div>
 							</div>
-							{/* <div className={classes.buttonDiv}>
-							{editArcade || editJogo ? (
-								<div className={classes.editBtn}>
-									<Button
-										disabled={deleteBtnStatus}
-										button2={editArcade || editJogo ? true : false}
-										onClick={() => {
-											if (!deleteBtnStatus) {
-												deleteGame(specificGamesData?.id);
-											}
-										}}
-										text={'DELETE GAME'}
-									/>
-								</div>
-							) : (
-								<></>
-							)}
-
-							<div
-								className={
-									editArcade || editJogo
-										? classes.addQuizBtnEdit
-										: classes.addQuizBtn
-								}
-							>
-								<Button
-									disabled={
-										editArcade || editJogo
-											? editBtnDisabled
-											: validateGamesForm(type, form, postButtonStatus)
-									}
-									onClick={() => {
-										addSaveGameBtn();
-									}}
-									// text={type === 'quiz' ? 'ADD QUIZ' : 'ADD POLL'}
-									text={buttonText}
-								/>
-							</div>
-						</div> */}
 						</div>
 
 						{previewFile != null && (
