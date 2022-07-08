@@ -680,7 +680,7 @@ const UploadOrEditNews = ({
 														? false
 														: isEdit
 														? editBtnDisabled
-														: !validateForm(form, [], news)
+														: !validateForm(form, null, news)
 												}
 												onClick={() => handlePublishNews()}
 												button2AddSave={true}
