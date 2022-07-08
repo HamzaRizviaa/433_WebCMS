@@ -226,12 +226,22 @@ const UploadOrEditNews = ({
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...news];
-		dataCopy[index].data = {
-			...childData,
-			...(dataCopy[index].data ? dataCopy[index].data : {})
-		};
+		console.log(
+			'childData in send Data',
+			childData,
+			dataCopy[index].data,
+			dataCopy
+		);
+		dataCopy[index].data = [
+			{
+				...(dataCopy[index].data[0] ? dataCopy[index].data[0] : {}),
+				...childData
+			}
+		];
 		setNews(dataCopy);
 	};
+
+	console.log('NMews', news);
 
 	const handleMediaDataDelete = (elementData, index) => {
 		let dataCopy = [...news];
@@ -285,7 +295,7 @@ const UploadOrEditNews = ({
 
 		setOpenDeletePopup(!openDeletePopup);
 	};
-	console.log(news, '=== news ====');
+
 	const createNews = async (id, mediaFiles = [], draft = false) => {
 		console.log(mediaFiles, 'media files in api');
 		// setPostButtonStatus(true);
@@ -303,10 +313,10 @@ const UploadOrEditNews = ({
 							height: item.data[0].height,
 							width: item.data[0].width,
 
-							dropbox_url: item.data.dropbox_url,
-							description: item.data.description,
-							title: item.data.title,
-							name: item.data.name,
+							dropbox_url: item.data[0].dropbox_url,
+							description: item.data[0].description,
+							title: item.data[0].title,
+							name: item.data[0].name,
 							sort_order: index + 1
 						};
 				  })
@@ -591,7 +601,6 @@ const UploadOrEditNews = ({
 
 									<NewsDraggable onDragEnd={onDragEnd}>
 										{news.map((item, index) => {
-											console.log(item, 'item to send in news slide');
 											return (
 												<>
 													<NewsSlide
