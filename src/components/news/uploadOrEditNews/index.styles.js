@@ -6,5 +6,11 @@ export const useStyles = makeStyles(() => ({
 		marginBottom: '4rem',
 		display: 'flex',
 		justifyContent: 'flex-end'
+	},
+	newsButtonDiv: {
+		width: '100%',
+		marginBottom: '4rem',
+		display: 'flex',
+		justifyContent: 'space-between'
 	}
 }));
