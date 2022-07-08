@@ -631,7 +631,9 @@ const UploadOrEditNews = ({
 										: ''}
 								</p>
 
-								<div className={classes.buttonDiv}>
+								<div
+									className={isEdit ? classes.newsButtonDiv : classes.buttonDiv}
+								>
 									{isEdit || (status === 'draft' && isEdit) ? (
 										<div className={globalClasses.editBtn}>
 											<Button
