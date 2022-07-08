@@ -108,14 +108,11 @@ const UploadOrEditNews = ({
 		}
 	}, [specificNews]);
 
-	console.log(news, '=== news ====');
-
 	const updateSlidesDataFromAPI = (data) => {
 		let slidesData = data.map(
 			({ description, name, title, sort_order, ...rest }) => {
 				return {
 					sort_order: sort_order,
-
 					data: [
 						{
 							...rest,
@@ -133,7 +130,7 @@ const UploadOrEditNews = ({
 				};
 			}
 		);
-		console.log(data, slidesData, 'slidesData');
+
 		return slidesData;
 	};
 
@@ -230,8 +227,8 @@ const UploadOrEditNews = ({
 	const setNewData = (childData, index) => {
 		let dataCopy = [...news];
 		dataCopy[index].data = {
-			...(dataCopy[index].data ? dataCopy[index].data : {}),
-			...childData
+			...childData,
+			...(dataCopy[index].data ? dataCopy[index].data : {})
 		};
 		setNews(dataCopy);
 	};
@@ -288,29 +285,33 @@ const UploadOrEditNews = ({
 
 		setOpenDeletePopup(!openDeletePopup);
 	};
+	console.log(news, '=== news ====');
 	const createNews = async (id, mediaFiles = [], draft = false) => {
-		console.log(news, 'news');
 		console.log(mediaFiles, 'media files in api');
 		// setPostButtonStatus(true);
 
 		let slides =
 			news.length > 0
 				? news.map((item, index) => {
+						console.log(item, 'item in map of news ');
 						return {
 							//id: item.data[0].id,
-							image: mediaFiles[0].media_url,
+							image:
+								mediaFiles[index]?.media_url?.split('cloudfront.net/')[1] ||
+								mediaFiles[index]?.media_url,
+							file_name: mediaFiles[index].file_name,
 							height: item.data[0].height,
 							width: item.data[0].width,
-							file_name: mediaFiles[0].file_name,
+
 							dropbox_url: item.data.dropbox_url,
 							description: item.data.description,
 							title: item.data.title,
-							name: item.name,
+							name: item.data.name,
 							sort_order: index + 1
 						};
 				  })
 				: [];
-		console.log(slides, 'slides');
+
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/news/add-news`,
@@ -404,7 +405,7 @@ const UploadOrEditNews = ({
 
 				Promise.all([...newsImages])
 					.then((mediaFiles) => {
-						createNews(null, mediaFiles);
+						createNews(specificNews?.id, mediaFiles, true);
 					})
 					.catch(() => {
 						setIsLoading(false);
@@ -413,12 +414,9 @@ const UploadOrEditNews = ({
 				setIsLoading(true);
 
 				let newsImages = news?.map(async (item) => {
-					console.log(item, 'item');
 					let newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
 					return newsData;
 				});
-
-				console.log(newsImages, 'newsImages');
 
 				Promise.all([...newsImages])
 					.then((mediaFiles) => {
@@ -453,7 +451,7 @@ const UploadOrEditNews = ({
 
 				Promise.all([...newsImages])
 					.then((mediaFiles) => {
-						createNews(null, mediaFiles);
+						createNews(specificNews?.id, mediaFiles);
 					})
 					.catch(() => {
 						setIsLoading(false);
@@ -462,12 +460,9 @@ const UploadOrEditNews = ({
 				setIsLoading(true);
 
 				let newsImages = news?.map(async (item) => {
-					console.log(item, 'item');
 					let newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
 					return newsData;
 				});
-
-				console.log(newsImages, 'newsImages');
 
 				Promise.all([...newsImages])
 					.then((mediaFiles) => {
@@ -596,6 +591,7 @@ const UploadOrEditNews = ({
 
 									<NewsDraggable onDragEnd={onDragEnd}>
 										{news.map((item, index) => {
+											console.log(item, 'item to send in news slide');
 											return (
 												<>
 													<NewsSlide

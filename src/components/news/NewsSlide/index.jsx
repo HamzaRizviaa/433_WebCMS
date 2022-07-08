@@ -21,7 +21,6 @@ import checkFileSize from '../../../utils/validateFileSize';
 import { makeid } from '../../../utils/helper';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { TextField } from '@material-ui/core';
-
 import { ReactComponent as Union } from '../../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 
@@ -62,20 +61,12 @@ const NewsSlide = ({
 
 	const imgEl = useRef(null);
 
-	console.log(newFile, 'new File');
-
 	const getFileType = (type) => {
 		if (type) {
 			let _type = type.split('/');
 			return _type && _type[1];
 		}
 	};
-
-	// useEffect(() => {
-	// 	if (initialData) {
-	// 		setDescription(initialData.description);
-	// 	}
-	// }, [initialData]);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -130,10 +121,7 @@ const NewsSlide = ({
 						}}
 					>
 						<div className={globalClasses.accordionRoot}>
-							<Accordion
-								expanded={expanded}
-								style={{ marginTop: expanded === true ? '20px' : '20px' }}
-							>
+							<Accordion expanded={expanded} style={{ marginTop: '20px' }}>
 								<AccordionSummary className={classes.accordionSummary}>
 									<div className={classes.leftDiv}>
 										<div className={classes.grabIconDiv}>

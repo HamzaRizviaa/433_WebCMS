@@ -41,7 +41,6 @@ import {
 const NewsLibrary = () => {
 	// Selectors
 	const allNews = useSelector((state) => state.NewsLibrary.news);
-	console.log(allNews, '==== all news api =====');
 	const newsApiStatus = useSelector((state) => state.NewsLibrary);
 	const totalRecords = useSelector((state) => state.NewsLibrary.totalRecords);
 	const noResultStatus = useSelector(
@@ -220,9 +219,15 @@ const NewsLibrary = () => {
 								  classes.mediaWrapper
 						}
 					>
-						<MenuIcon
-							style={{ marginRight: '10px', height: '20px', width: '20px' }}
-						/>
+						{row.total_slides > 1 ? (
+							<MenuIcon
+								style={{ marginRight: '10px', height: '20px', width: '20px' }}
+							/>
+						) : (
+							<div
+								style={{ marginRight: '10px', height: '20px', width: '20px' }}
+							></div>
+						)}
 						<Tooltip
 							// TransitionComponent={Fade}
 							// TransitionProps={{ timeout: 600 }}
