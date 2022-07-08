@@ -92,7 +92,7 @@ const NewsSlide = ({
 
 			// WidthHeightCallback(fileWidth, fileHeight);
 			setNewFile([...newFiles]);
-			sendDataToParent(newFiles);
+			sendDataToParent(...newFiles);
 		}
 	}, [acceptedFiles, fileHeight, fileWidth]);
 

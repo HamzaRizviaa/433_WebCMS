@@ -226,13 +226,13 @@ const UploadOrEditNews = ({
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...news];
-
 		dataCopy[index].data = [
 			{
-				...(dataCopy[index]?.data[0] ? dataCopy[index]?.data[0] : {}),
+				...(dataCopy[index]?.data?.length ? dataCopy[index]?.data[0] : {}),
 				...childData
 			}
 		];
+
 		setNews(dataCopy);
 	};
 
