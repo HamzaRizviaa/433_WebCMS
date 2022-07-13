@@ -28,6 +28,10 @@ import validateDraft from '../../../utils/validateDraft';
 import NewsDraggable from '../NewsDraggableWrapper';
 import NewsSlide from '../NewsSlide';
 import Close from '@material-ui/icons/Close';
+import {
+	checkEmptyMediaNews,
+	comparingNewsFields
+} from '../../../utils/newsUtils';
 
 //api calls
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
@@ -108,8 +112,6 @@ const UploadOrEditNews = ({
 		}
 	}, [specificNews]);
 
-	useEffect(() => {}, [specificNews, form]);
-
 	const checkMediaUrlPublish = (news) => {
 		if (news.length === 0) {
 			return true;
@@ -149,6 +151,32 @@ const UploadOrEditNews = ({
 			return validated.some((item) => item === false);
 		}
 	};
+
+	useEffect(() => {
+		if (specificNews) {
+			const validateEmptyNewsArray = [
+				checkEmptyMediaNews(news),
+				news?.length !== 0
+			];
+			setEditBtnDisabled(
+				// !validateForm(form, null, news) ||
+				!validateEmptyNewsArray.every((item) => item === true) ||
+					comparingNewsFields(specificNews, form)
+			);
+
+			// console.log(
+			// 	'val',
+			// 	!validateEmptyNewsArray.every((item) => item === true)
+			// );
+		}
+	}, [specificNews, form]);
+
+	console.log(
+		'val',
+		!validateForm(form, null, news),
+
+		comparingNewsFields(specificNews, form)
+	);
 
 	useEffect(() => {
 		setEditBtnDisabled(checkMediaUrlPublish(news));
