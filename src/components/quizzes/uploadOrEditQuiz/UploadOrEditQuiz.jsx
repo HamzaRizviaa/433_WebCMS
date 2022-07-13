@@ -765,15 +765,15 @@ const UploadOrEditQuiz = ({
 										<h6
 											style={{
 												color:
-													form.question?.length >= 49 &&
-													form.question?.length <= 54
+													form.question?.length >= 22 &&
+													form.question?.length <= 28
 														? 'pink'
-														: form.question?.length === 55
+														: form.question?.length === 29
 														? 'red'
 														: 'white'
 											}}
 										>
-											{form.question?.length}/55
+											{form.question?.length}/29
 										</h6>
 									</div>
 									<TextField
@@ -794,7 +794,7 @@ const UploadOrEditQuiz = ({
 												classes.disableTextField
 											}`
 										}}
-										inputProps={{ maxLength: 55 }}
+										inputProps={{ maxLength: 29 }}
 										multiline
 										maxRows={2}
 									/>
@@ -807,15 +807,30 @@ const UploadOrEditQuiz = ({
 								</p>
 
 								<div className={classes.titleContainer}>
-									<h6
-										className={
-											isError.ans1
-												? globalClasses.errorState
-												: globalClasses.noErrorState
-										}
-									>
-										{quiz || editQuiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
-									</h6>
+									<div className={globalClasses.characterCount}>
+										<h6
+											className={
+												isError.ans1
+													? globalClasses.errorState
+													: globalClasses.noErrorState
+											}
+										>
+											{quiz || editQuiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
+										</h6>
+										<h6
+											style={{
+												color:
+													form.answer1?.length >= 22 &&
+													form.answer1?.length <= 28
+														? 'pink'
+														: form.answer1?.length === 29
+														? 'red'
+														: 'white'
+											}}
+										>
+											{form.answer1?.length}/29
+										</h6>
+									</div>
 									<TextField
 										disabled={(editQuiz || editPoll) && status !== 'draft'}
 										value={form.answer1}
@@ -836,6 +851,7 @@ const UploadOrEditQuiz = ({
 										}}
 										multiline
 										maxRows={1}
+										inputProps={{ maxLength: 29 }}
 									/>
 								</div>
 
@@ -848,15 +864,30 @@ const UploadOrEditQuiz = ({
 								</p>
 
 								<div className={classes.titleContainer}>
-									<h6
-										className={
-											isError.ans2
-												? globalClasses.errorState
-												: globalClasses.noErrorState
-										}
-									>
-										{quiz || editQuiz ? 'WRONG ANSWER' : 'ANSWER 2'}
-									</h6>
+									<div className={globalClasses.characterCount}>
+										<h6
+											className={
+												isError.ans2
+													? globalClasses.errorState
+													: globalClasses.noErrorState
+											}
+										>
+											{quiz || editQuiz ? 'WRONG ANSWER' : 'ANSWER 2'}
+										</h6>
+										<h6
+											style={{
+												color:
+													form.answer2?.length >= 22 &&
+													form.answer2?.length <= 28
+														? 'pink'
+														: form.answer2?.length === 29
+														? 'red'
+														: 'white'
+											}}
+										>
+											{form.answer2?.length}/29
+										</h6>
+									</div>
 									<TextField
 										disabled={(editQuiz || editPoll) && status !== 'draft'}
 										value={form.answer2}
@@ -877,6 +908,7 @@ const UploadOrEditQuiz = ({
 										}}
 										multiline
 										maxRows={1}
+										inputProps={{ maxLength: 29 }}
 									/>
 								</div>
 
