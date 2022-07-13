@@ -59,13 +59,13 @@ const TopBanner = () => {
 							>
 								Media
 							</TabUnstyled>
-							<TabUnstyled
+							{/* <TabUnstyled
 								disabled={
 									allBanners?.length && bannerContent?.length ? false : true
 								}
 							>
 								Game
-							</TabUnstyled>
+							</TabUnstyled> */}
 						</TabsListUnstyled>
 						<TabPanelUnstyled value={0}>
 							<Banners tabValue={'home'} />

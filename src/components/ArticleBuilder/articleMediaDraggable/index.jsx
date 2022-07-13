@@ -207,7 +207,7 @@ const ArticleMediaDraggable = ({
 													Click or drag files to this area to upload
 												</p>
 												<p className={globalClasses.formatMsg}>
-													Supported formats are jpeg and png
+													Supported formats are jpeg, png and mp4
 												</p>
 												{/* <p className={globalClasses.uploadMediaError}>
 							{isError.uploadedFiles
