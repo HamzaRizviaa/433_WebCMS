@@ -108,6 +108,32 @@ const UploadOrEditNews = ({
 		}
 	}, [specificNews]);
 
+	useEffect(() => {}, [specificNews, form]);
+
+	const checkMediaUrl = (news) => {
+		if (news.length === 0) {
+			return true;
+		} else {
+			const validated = news.map((item) => {
+				if (!item?.data) {
+					return false;
+				}
+				if (item.data) {
+					if (!item.data[0]?.media_url) {
+						return false;
+					} else {
+						return true;
+					}
+				}
+			});
+			return !validated.every((item) => item === true);
+		}
+	};
+
+	useEffect(() => {
+		setEditBtnDisabled(checkMediaUrl(news));
+	}, [news]);
+
 	const updateSlidesDataFromAPI = (data) => {
 		let slidesData = data.map(
 			({ description, name, title, sort_order, ...rest }) => {
@@ -660,7 +686,9 @@ const UploadOrEditNews = ({
 											>
 												<Button
 													disabledDraft={
-														isEdit ? draftBtnDisabled : !validateDraft(form)
+														isEdit
+															? draftBtnDisabled
+															: !validateDraft(form, null, news)
 													}
 													onClick={() => handleCreateDraft()}
 													button3={true}
@@ -682,7 +710,7 @@ const UploadOrEditNews = ({
 														? false
 														: isEdit
 														? editBtnDisabled
-														: !validateForm(form, [], news)
+														: !validateForm(form, null, news)
 												}
 												onClick={() => handlePublishNews()}
 												button2AddSave={true}

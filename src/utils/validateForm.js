@@ -58,10 +58,22 @@ const validateForm = (form, dataElements, newsData) => {
 	}
 
 	var validateNews = true;
-	console.log(newsData, 'nnn');
+	// console.log(newsData, 'nnn');
+
+	if (newsData?.length) {
+		validateNews = newsData.every((item) => {
+			if (item?.data) {
+				return item?.data[0]?.media_url;
+			}
+		});
+	} else if (newsData?.length === 0) {
+		validateNews = false;
+	}
 
 	var finalFormValue =
 		validate.every((item) => item === true) && validateData && validateNews;
+
+	console.log(finalFormValue, validateNews, validateData, 'finaAle');
 
 	return finalFormValue;
 };
