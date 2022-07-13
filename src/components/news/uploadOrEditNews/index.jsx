@@ -110,7 +110,7 @@ const UploadOrEditNews = ({
 
 	useEffect(() => {}, [specificNews, form]);
 
-	const checkMediaUrl = (news) => {
+	const checkMediaUrlPublish = (news) => {
 		if (news.length === 0) {
 			return true;
 		} else {
@@ -130,8 +130,32 @@ const UploadOrEditNews = ({
 		}
 	};
 
+	const checkMediaUrlDraft = (news) => {
+		if (news.length === 0) {
+			return true;
+		} else {
+			const validated = news.map((item) => {
+				if (!item?.data) {
+					return false;
+				}
+				if (item.data) {
+					if (!item.data[0]?.media_url) {
+						return false;
+					} else {
+						return true;
+					}
+				}
+			});
+			return validated.some((item) => item === false);
+		}
+	};
+
 	useEffect(() => {
-		setEditBtnDisabled(checkMediaUrl(news));
+		setEditBtnDisabled(checkMediaUrlPublish(news));
+	}, [news]);
+
+	useEffect(() => {
+		setDraftBtnDisabled(checkMediaUrlDraft(news));
 	}, [news]);
 
 	const updateSlidesDataFromAPI = (data) => {
