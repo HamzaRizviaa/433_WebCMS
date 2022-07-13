@@ -12,7 +12,7 @@ export const useStyles = makeStyles(() => ({
 			marginBottom: '2rem'
 		},
 		'& .TabUnstyled-root': {
-			width: '33%',
+			width: '49%',
 			cursor: 'pointer',
 			backgroundColor: '#404040',
 			color: '#ffffff !important',
