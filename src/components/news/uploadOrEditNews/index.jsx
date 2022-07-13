@@ -660,7 +660,9 @@ const UploadOrEditNews = ({
 											>
 												<Button
 													disabledDraft={
-														isEdit ? draftBtnDisabled : !validateDraft(form)
+														isEdit
+															? draftBtnDisabled
+															: !validateDraft(form, null, news)
 													}
 													onClick={() => handleCreateDraft()}
 													button3={true}
