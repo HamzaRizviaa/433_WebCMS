@@ -30,7 +30,9 @@ import NewsSlide from '../NewsSlide';
 import Close from '@material-ui/icons/Close';
 import {
 	checkEmptyMediaNews,
-	comparingNewsFields
+	comparingNewsFields,
+	checkNewElementNEWS,
+	checkSortOrderOnEdit
 } from '../../../utils/newsUtils';
 
 //api calls
@@ -112,25 +114,25 @@ const UploadOrEditNews = ({
 		}
 	}, [specificNews]);
 
-	const checkMediaUrlPublish = (news) => {
-		if (news.length === 0) {
-			return true;
-		} else {
-			const validated = news.map((item) => {
-				if (!item?.data) {
-					return false;
-				}
-				if (item.data) {
-					if (!item.data[0]?.media_url) {
-						return false;
-					} else {
-						return true;
-					}
-				}
-			});
-			return !validated.every((item) => item === true);
-		}
-	};
+	// const checkMediaUrlPublish = (news) => {
+	// 	if (news.length === 0) {
+	// 		return true;
+	// 	} else {
+	// 		const validated = news.map((item) => {
+	// 			if (!item?.data) {
+	// 				return false;
+	// 			}
+	// 			if (item.data) {
+	// 				if (!item.data[0]?.media_url) {
+	// 					return false;
+	// 				} else {
+	// 					return true;
+	// 				}
+	// 			}
+	// 		});
+	// 		return !validated.every((item) => item === true);
+	// 	}
+	// };
 
 	const checkMediaUrlDraft = (news) => {
 		if (news.length === 0) {
@@ -159,27 +161,55 @@ const UploadOrEditNews = ({
 				news?.length !== 0
 			];
 			setEditBtnDisabled(
-				// !validateForm(form, null, news) ||
-				!validateEmptyNewsArray.every((item) => item === true) ||
+				!validateForm(form, null, news) ||
+					!validateEmptyNewsArray.every((item) => item === true) ||
 					comparingNewsFields(specificNews, form)
 			);
-
-			// console.log(
-			// 	'val',
-			// 	!validateEmptyNewsArray.every((item) => item === true)
-			// );
 		}
 	}, [specificNews, form]);
 
-	console.log(
-		'val',
-		!validateForm(form, null, news),
-
-		comparingNewsFields(specificNews, form)
-	);
-
 	useEffect(() => {
-		setEditBtnDisabled(checkMediaUrlPublish(news));
+		const validateEmptyNewsArray = [
+			checkEmptyMediaNews(news),
+			news?.length !== 0
+		];
+
+		const validateEmptyNewsAndEditComparisonArray = [
+			checkNewElementNEWS(specificNews, news),
+			news?.length !== 0
+		];
+
+		if (
+			!validateForm(form, null, news) ||
+			!comparingNewsFields(specificNews, form)
+		) {
+			setEditBtnDisabled(
+				!validateEmptyNewsArray.every((item) => item === true) ||
+					!validateForm(form, null, news)
+			);
+		} else {
+			if (specificNews?.slides?.length !== news?.length) {
+				setEditBtnDisabled(
+					!validateEmptyNewsArray.every((item) => item === true)
+				);
+			} else {
+				if (
+					validateEmptyNewsAndEditComparisonArray.every(
+						(item) => item === true
+					) ||
+					!validateEmptyNewsArray.every((item) => item === true)
+				) {
+					setEditBtnDisabled(!checkSortOrderOnEdit(specificNews, news));
+				} else {
+					setEditBtnDisabled(
+						validateEmptyNewsAndEditComparisonArray.every(
+							(item) => item === true
+						) || !validateEmptyNewsArray.every((item) => item === true)
+					);
+				}
+				// setEditBtnDisabled(checkMediaUrlPublish(news));
+			}
+		}
 	}, [news]);
 
 	useEffect(() => {
