@@ -89,7 +89,9 @@ const Labels = ({
 			renderInput={(params) => (
 				<TextField
 					{...params}
-					placeholder={selectedLabels?.length > 0 ? ' ' : 'Select Label'}
+					placeholder={
+						selectedLabels?.length > 0 ? ' ' : 'Select a minimum of 7 labelsnp'
+					}
 					className={classes.textFieldAuto}
 					value={extraLabel}
 					onChange={handleChangeExtraLabel}
