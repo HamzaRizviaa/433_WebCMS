@@ -89,7 +89,7 @@ const UploadOrEditArticle = ({
 	const orientationRef = useRef(null);
 	const loadingRef = useRef(null);
 
-	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/79344847-5d49-4951-8287-98a89f1f59b0.png`;
+	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
 
 	const [form, setForm] = useState({
 		title: '',
