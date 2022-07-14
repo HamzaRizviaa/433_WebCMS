@@ -90,7 +90,7 @@ const Labels = ({
 				<TextField
 					{...params}
 					placeholder={
-						selectedLabels?.length > 0 ? ' ' : 'Select a minimum of 7 labelsnp'
+						selectedLabels?.length > 0 ? ' ' : 'Select a minimum of 7 labels'
 					}
 					className={classes.textFieldAuto}
 					value={extraLabel}
