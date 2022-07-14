@@ -669,11 +669,11 @@ const UploadOrEditMedia = ({
 						specificMedia?.file_name_image ===
 							form.uploadedCoverImage[0]?.file_name &&
 						specificMedia?.media_dropbox_url ===
-							form.media_dropbox_url.trim() &&
+							form?.media_dropbox_url?.trim() &&
 						specificMedia?.image_dropbox_url ===
-							form.image_dropbox_url.trim() &&
+							form?.image_dropbox_url?.trim() &&
 						specificMedia?.title.replace(/\s+/g, '')?.trim() ===
-							form.title?.replace(/\s+/g, '')?.trim() &&
+							form?.title?.replace(/\s+/g, '')?.trim() &&
 						specificMedia?.description?.replace(/\s+/g, '')?.trim() ===
 							form.description?.replace(/\s+/g, '')?.trim() &&
 						specificMedia?.show_likes === form.show_likes &&
