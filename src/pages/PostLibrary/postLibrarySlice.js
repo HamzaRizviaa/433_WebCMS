@@ -60,16 +60,44 @@ export const getSpecificPost = createAsyncThunk(
 	}
 );
 
+//NEW LABELS ON SEARCH
+
+export const getAllNewLabels = createAsyncThunk(
+	'postLibary/getAllNewLabels',
+	async () => {
+		const result = await PostLibraryService.getAllNewLabels();
+		if (result?.data?.data?.length > 0) {
+			return result.data.data;
+		} else {
+			return [];
+		}
+	}
+);
+
+export const getNewLabelsSearch = createAsyncThunk(
+	'postLibary/getNewLabelsSearch',
+	async (params) => {
+		// console.log(params, 'oppppp');
+		const result = await PostLibraryService.getNewLabelsSearch(params);
+		if (result?.data?.data?.length > 0) {
+			return result.data.data;
+		} else {
+			return [];
+		}
+	}
+);
+
 export const postLibrarySlice = createSlice({
 	name: 'postLibrary',
 	initialState: {
-		labels: [],
+		labels: [], // old labels
 		posts: [], // all posts
 		specificPost: [], //specific posts
 		openUploadPost: false,
 		totalRecords: 0,
 		noResultStatus: false,
-		noResultStatusCalendar: false
+		noResultStatusCalendar: false,
+		newLabelsSearch: [] //new labels on search
 	},
 	reducers: {
 		resetCalendarError: (state) => {
@@ -105,7 +133,12 @@ export const postLibrarySlice = createSlice({
 		[getPostLabels.fulfilled]: (state, action) => {
 			state.labels = action.payload;
 		},
-
+		[getAllNewLabels.fulfilled]: (state, action) => {
+			state.newLabelsSearch = action.payload;
+		},
+		[getNewLabelsSearch.fulfilled]: (state, action) => {
+			state.newLabelsSearch = action.payload;
+		},
 		[getSpecificPost.pending]: (state) => {
 			state.status = 'loading';
 		},

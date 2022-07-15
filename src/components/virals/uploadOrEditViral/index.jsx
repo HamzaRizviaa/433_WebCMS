@@ -30,6 +30,10 @@ import LoadingOverlay from 'react-loading-overlay';
 import { useStyles } from './index.styles';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
+
+//new labels
+import { getAllNewLabels } from '../../../pages/PostLibrary/postLibrarySlice';
+
 const UploadOrEditViral = ({
 	open,
 	handleClose,
@@ -178,7 +182,8 @@ const UploadOrEditViral = ({
 	}, [specificViral]);
 
 	useEffect(() => {
-		dispatch(getPostLabels());
+		// dispatch(getPostLabels());
+		dispatch(getAllNewLabels());
 		return () => {
 			resetState();
 		};
@@ -748,6 +753,7 @@ const UploadOrEditViral = ({
 												});
 											}}
 											draftStatus={status}
+											setExtraLabel={setExtraLabel}
 										/>
 									</div>
 									<p className={globalClasses.mediaError}>
