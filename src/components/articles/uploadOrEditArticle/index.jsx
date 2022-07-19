@@ -35,6 +35,7 @@ import ArticleSocialMediaDraggable from '../../ArticleBuilder/ArticleSocialMedia
 import ImagePreview from '../../ArticleBuilder/PreviewArticles/imagePreview';
 import TextPreview from '../../ArticleBuilder/PreviewArticles/textPreview';
 import TwitterPost from '../../ArticleBuilder/PreviewArticles/TwitterPost';
+import InstagramPost from '../../ArticleBuilder/PreviewArticles/InstagramPost';
 import DraggableWrapper from '../../ArticleBuilder/DraggableWrapper';
 import PreviewWrapper from '../../ArticleBuilder/PreviewWrapper';
 import ArticleSlider from '../../ArticleBuilder/ArticleSlider';
@@ -633,6 +634,7 @@ const UploadOrEditArticle = ({
 
 	const handleMediaElementDelete = (sortOrder) => {
 		let dataCopy = [...data];
+		console.log(sortOrder, 'sortOrder');
 		if (sortOrder) {
 			setData(dataCopy.filter((file) => file.sortOrder !== sortOrder));
 		}
@@ -1481,11 +1483,13 @@ const UploadOrEditArticle = ({
 															) : item.element_type === 'TWITTER' ? (
 																<TwitterPost
 																	data={item}
+																	itemIndex={index}
 																	style={{ width: '100%' }}
 																/>
 															) : item.element_type === 'IG' ? (
-																<TwitterPost
+																<InstagramPost
 																	data={item}
+																	itemIndex={index}
 																	style={{ width: '100%' }}
 																/>
 															) : (
