@@ -13,7 +13,7 @@ import checkFileSize from '../../../utils/validateFileSize';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getAllViralsApi } from '../../../pages/ViralLibrary/viralLibararySlice';
-import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
+// import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import Close from '@material-ui/icons/Close';
 import Labels from '../../Labels';
 import { getLocalStorageDetails } from '../../../utils';
@@ -32,7 +32,7 @@ import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
 
 //new labels
-import { getAllNewLabels } from '../../../pages/PostLibrary/postLibrarySlice';
+//import { getAllNewLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 
 const UploadOrEditViral = ({
 	open,
@@ -182,8 +182,8 @@ const UploadOrEditViral = ({
 	}, [specificViral]);
 
 	useEffect(() => {
-		// dispatch(getPostLabels());
-		dispatch(getAllNewLabels());
+		// dispatch(getPostLabels()); // old labels
+		// dispatch(getAllNewLabels());    // new labels on search
 		return () => {
 			resetState();
 		};
@@ -334,7 +334,7 @@ const UploadOrEditViral = ({
 				setPostButtonStatus(false);
 				handleClose();
 				dispatch(getAllViralsApi({ page }));
-				dispatch(getPostLabels());
+				// dispatch(getPostLabels());
 			}
 		} catch (e) {
 			toast.error(isEdit ? 'Failed to edit viral!' : 'Failed to create viral!');
