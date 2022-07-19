@@ -38,6 +38,7 @@ import {
 //api calls
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import { getAllNews } from '../../../pages/NewsLibrary/newsLibrarySlice';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 const UploadOrEditNews = ({
 	open,
@@ -169,6 +170,17 @@ const UploadOrEditNews = ({
 	}, [specificNews, form]);
 
 	useEffect(() => {
+		if (specificNews) {
+			const validateEmptyNewsArray = [checkEmptyMediaNews(news)];
+			setDraftBtnDisabled(
+				!validateDraft(form, null, news) ||
+					!validateEmptyNewsArray.every((item) => item === true) ||
+					comparingNewsFields(specificNews, form)
+			);
+		}
+	}, [specificNews, form]);
+
+	useEffect(() => {
 		const validateEmptyNewsArray = [
 			checkEmptyMediaNews(news),
 			news?.length !== 0
@@ -202,6 +214,46 @@ const UploadOrEditNews = ({
 					setEditBtnDisabled(!checkSortOrderOnEdit(specificNews, news));
 				} else {
 					setEditBtnDisabled(
+						validateEmptyNewsAndEditComparisonArray.every(
+							(item) => item === true
+						) || !validateEmptyNewsArray.every((item) => item === true)
+					);
+				}
+				// setEditBtnDisabled(checkMediaUrlPublish(news));
+			}
+		}
+	}, [news]);
+
+	useEffect(() => {
+		const validateEmptyNewsArray = [checkEmptyMediaNews(news)];
+
+		const validateEmptyNewsAndEditComparisonArray = [
+			checkNewElementNEWS(specificNews, news)
+		];
+
+		if (
+			!validateDraft(form, null, news) ||
+			comparingNewsFields(specificNews, form)
+		) {
+			setDraftBtnDisabled(
+				!validateEmptyNewsArray.every((item) => item === true) ||
+					!validateDraft(form, null, news)
+			);
+		} else {
+			if (specificNews?.slides?.length !== news?.length) {
+				setDraftBtnDisabled(
+					!validateEmptyNewsArray.every((item) => item === true)
+				);
+			} else {
+				if (
+					validateEmptyNewsAndEditComparisonArray.every(
+						(item) => item === true
+					) ||
+					!validateEmptyNewsArray.every((item) => item === true)
+				) {
+					setDraftBtnDisabled(!checkSortOrderOnEdit(specificNews, news));
+				} else {
+					setDraftBtnDisabled(
 						validateEmptyNewsAndEditComparisonArray.every(
 							(item) => item === true
 						) || !validateEmptyNewsArray.every((item) => item === true)
