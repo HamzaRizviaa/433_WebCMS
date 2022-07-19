@@ -400,6 +400,7 @@ const NewsLibrary = () => {
 
 	const tableRowEvents = {
 		onClick: (e, row) => {
+			row.status === 'draft' && dispatch(getPostLabels());
 			dispatch(getSpecificNews(row.id));
 			setEdit(true);
 			setrowStatus(row.status); // pass in slider

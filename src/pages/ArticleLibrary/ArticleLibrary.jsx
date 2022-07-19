@@ -398,6 +398,7 @@ const ArticleLibrary = () => {
 
 	const tableRowEvents = {
 		onClick: (e, row) => {
+			row.status === 'draft' && dispatch(getPostLabels());
 			dispatch(getSpecificArticle(row.id));
 			setEdit(true);
 			setShowSlider(true);

@@ -574,6 +574,7 @@ const MediaLibrary = () => {
 
 	const tableRowEvents = {
 		onClick: (e, row) => {
+			row.status === 'draft' && dispatch(getMediaLabels());
 			dispatch(getSpecificMedia(row.id));
 			setrowStatus(row.status);
 			setEdit(true);

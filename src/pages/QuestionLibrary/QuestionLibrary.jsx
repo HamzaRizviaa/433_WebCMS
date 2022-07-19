@@ -392,6 +392,7 @@ const QuestionLibrary = () => {
 		onClick: (e, row) => {
 			// if (!edit) {
 			// dispatch(getSpecificPost(row.id));
+			row.status === 'draft' && dispatch(getQuestionLabels());
 			dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
 			dispatch(
 				getQuestionResultDetail({ id: row.id, type: row.question_type })

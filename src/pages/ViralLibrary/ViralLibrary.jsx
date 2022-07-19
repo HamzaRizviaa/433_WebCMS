@@ -424,6 +424,7 @@ const ViralLibrary = () => {
 
 	const tableRowEvents = {
 		onClick: (e, row) => {
+			row.status === 'draft' && dispatch(getPostLabels());
 			dispatch(getSpecificViral(row.id));
 			setEdit(true);
 			setrowStatus(row.status); // pass in slider
