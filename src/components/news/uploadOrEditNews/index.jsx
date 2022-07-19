@@ -37,7 +37,7 @@ import {
 } from '../../../utils/newsUtils';
 
 //api calls
-import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
+// import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import { getAllNews } from '../../../pages/NewsLibrary/newsLibrarySlice';
 import { ConstructionOutlined } from '@mui/icons-material';
 
@@ -82,7 +82,7 @@ const UploadOrEditNews = ({
 	);
 
 	useEffect(() => {
-		dispatch(getPostLabels());
+		// dispatch(getPostLabels());
 		return () => {
 			resetState();
 		};
@@ -464,7 +464,7 @@ const UploadOrEditNews = ({
 				// setPostButtonStatus(false);
 				handleClose();
 				dispatch(getAllNews({ page }));
-				dispatch(getPostLabels());
+				// dispatch(getPostLabels());
 			}
 		} catch (e) {
 			toast.error(isEdit ? 'Failed to edit news!' : 'Failed to create news!');

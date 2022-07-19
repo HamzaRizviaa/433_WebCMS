@@ -39,7 +39,8 @@ import {
 	resetNoResultStatus,
 	getQuestionEdit,
 	getQuestionResultDetail,
-	getQuestionResulParticipant
+	getQuestionResulParticipant,
+	getQuestionLabels
 } from './questionLibrarySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
@@ -550,6 +551,7 @@ const QuestionLibrary = () => {
 						<h1 style={{ marginRight: '2rem' }}>QUESTION LIBRARY</h1>
 						<Button
 							onClick={() => {
+								dispatch(getQuestionLabels());
 								setEdit(false);
 								setShowSlider(true);
 							}}

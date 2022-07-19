@@ -15,7 +15,7 @@ import checkFileSize from '../../../utils/validateFileSize';
 import { formatDate, getCalendarText2 } from '../../../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-	getQuestionLabels,
+	// getQuestionLabels,
 	getQuestions
 } from '../../../pages/QuestionLibrary/questionLibrarySlice';
 import { getLocalStorageDetails } from '../../../utils';
@@ -129,9 +129,9 @@ const UploadOrEditQuiz = ({
 		setOpenStopPopup(!openStopPopup);
 	};
 
-	useEffect(() => {
-		dispatch(getQuestionLabels());
-	}, []);
+	// useEffect(() => {
+	// 	dispatch(getQuestionLabels());
+	// }, []);
 
 	// eslint-disable-next-line no-unused-vars
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
@@ -388,7 +388,7 @@ const UploadOrEditQuiz = ({
 				setPostButtonStatus(false);
 				handleClose();
 				dispatch(getQuestions({ page }));
-				dispatch(getQuestionLabels());
+				// dispatch(getQuestionLabels());
 			}
 		} catch (e) {
 			toast.error(

@@ -12,7 +12,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
 	getMedia,
 	resetCalendarError,
-	resetNoResultStatus
+	resetNoResultStatus,
+	getMediaLabels
 } from './mediaLibrarySlice';
 
 import { getSpecificMedia } from './mediaLibrarySlice';
@@ -642,6 +643,7 @@ const MediaLibrary = () => {
 						<h1 style={{ marginRight: '2rem' }}>MEDIA LIBRARY</h1>
 						<Button
 							onClick={() => {
+								dispatch(getMediaLabels());
 								setEdit(false);
 								setShowSlider(true);
 							}}

@@ -203,7 +203,7 @@ const UploadOrEditArticle = ({
 	} = useSelector((state) => state.ArticleLibraryStore);
 
 	useEffect(() => {
-		dispatch(getPostLabels());
+		// dispatch(getPostLabels());
 		dispatch(getArticleMainCategories());
 		return () => {
 			resetState();
@@ -527,7 +527,7 @@ const UploadOrEditArticle = ({
 				setPostButtonStatus(false);
 				handleClose();
 				dispatch(getAllArticlesApi({ page }));
-				dispatch(getPostLabels());
+				// dispatch(getPostLabels());
 			}
 		} catch (e) {
 			toast.error(
