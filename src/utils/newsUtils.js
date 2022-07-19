@@ -56,3 +56,14 @@ export const checkSortOrderOnEdit = (specificNews, news) => {
 	}
 	return result.some((item) => item === false);
 };
+
+export const checkDuplicateLabel = (form, specificNews) => {
+	let formLabels = form?.labels?.map((formL) => {
+		if (specificNews?.labels?.includes(formL.name)) {
+			return true;
+		} else {
+			return false;
+		}
+	});
+	return formLabels.some((label) => label === false);
+};

@@ -32,7 +32,8 @@ import {
 	checkEmptyMediaNews,
 	comparingNewsFields,
 	checkNewElementNEWS,
-	checkSortOrderOnEdit
+	checkSortOrderOnEdit,
+	checkDuplicateLabel
 } from '../../../utils/newsUtils';
 
 //api calls
@@ -115,46 +116,6 @@ const UploadOrEditNews = ({
 		}
 	}, [specificNews]);
 
-	// const checkMediaUrlPublish = (news) => {
-	// 	if (news.length === 0) {
-	// 		return true;
-	// 	} else {
-	// 		const validated = news.map((item) => {
-	// 			if (!item?.data) {
-	// 				return false;
-	// 			}
-	// 			if (item.data) {
-	// 				if (!item.data[0]?.media_url) {
-	// 					return false;
-	// 				} else {
-	// 					return true;
-	// 				}
-	// 			}
-	// 		});
-	// 		return !validated.every((item) => item === true);
-	// 	}
-	// };
-
-	const checkMediaUrlDraft = (news) => {
-		if (news.length === 0) {
-			return true;
-		} else {
-			const validated = news.map((item) => {
-				if (!item?.data) {
-					return false;
-				}
-				if (item.data) {
-					if (!item.data[0]?.media_url) {
-						return false;
-					} else {
-						return true;
-					}
-				}
-			});
-			return validated.some((item) => item === false);
-		}
-	};
-
 	useEffect(() => {
 		if (specificNews) {
 			const validateEmptyNewsArray = [
@@ -171,11 +132,11 @@ const UploadOrEditNews = ({
 
 	useEffect(() => {
 		if (specificNews) {
-			const validateEmptyNewsArray = [checkEmptyMediaNews(news)];
 			setDraftBtnDisabled(
 				!validateDraft(form, null, news) ||
-					!validateEmptyNewsArray.every((item) => item === true) ||
-					comparingNewsFields(specificNews, form)
+					(comparingNewsFields(specificNews, form) &&
+						specificNews?.labels?.length === form?.labels.length &&
+						!checkDuplicateLabel(form, specificNews))
 			);
 		}
 	}, [specificNews, form]);
@@ -233,7 +194,7 @@ const UploadOrEditNews = ({
 
 		if (
 			!validateDraft(form, null, news) ||
-			comparingNewsFields(specificNews, form)
+			!comparingNewsFields(specificNews, form)
 		) {
 			setDraftBtnDisabled(
 				!validateEmptyNewsArray.every((item) => item === true) ||
@@ -259,13 +220,8 @@ const UploadOrEditNews = ({
 						) || !validateEmptyNewsArray.every((item) => item === true)
 					);
 				}
-				// setEditBtnDisabled(checkMediaUrlPublish(news));
 			}
 		}
-	}, [news]);
-
-	useEffect(() => {
-		setDraftBtnDisabled(checkMediaUrlDraft(news));
 	}, [news]);
 
 	const updateSlidesDataFromAPI = (data) => {
