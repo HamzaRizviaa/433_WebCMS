@@ -498,7 +498,8 @@ const UploadOrEditArticle = ({
 					author_image: form?.author_image[0]?.file
 						? mediaFiles[1]?.media_url?.split('cloudfront.net/')[1] ||
 						  mediaFiles[1]?.media_url
-						: mediaFiles[1]?.media_url,
+						: mediaFiles[1]?.media_url?.split('cloudfront.net/')[1] ||
+						  mediaFiles[1]?.media_url,
 					...(isEdit && id ? { article_id: id } : {}),
 					...((!isEdit || status !== 'published') &&
 					(form.labels?.length || status == 'draft')
