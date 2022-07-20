@@ -85,17 +85,22 @@ const UploadOrEditArticle = ({
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
+	const [landscapeFileWidth, setLandscapeFileWidth] = useState(0);
+	const [landscapeFileHeight, setLandscapeFileHeight] = useState(0);
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
 	const imgEl = useRef(null);
+	const imgEl2 = useRef(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const loadingRef = useRef(null);
 
 	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
 
+	console.log('PORTRAIT: ', fileWidth, fileHeight);
+	console.log('LANDSCAPE', landscapeFileWidth, landscapeFileHeight);
 	const [form, setForm] = useState({
 		title: '',
 		sub_text: '',
@@ -346,6 +351,8 @@ const UploadOrEditArticle = ({
 			// setEditorTextChecker(specificArticle?.description);
 			setFileHeight(specificArticle?.height);
 			setFileWidth(specificArticle?.width);
+			setLandscapeFileWidth(specificArticle?.width);
+			setLandscapeFileHeight(specificArticle?.height);
 		}
 	}, [specificArticle]);
 
@@ -564,9 +571,13 @@ const UploadOrEditArticle = ({
 						  mediaFiles[0]?.media_url
 						: '',
 					landscape_height:
-						form.uploadedLandscapeCoverImage.length > 0 ? fileHeight : 0,
+						form.uploadedLandscapeCoverImage.length > 0
+							? landscapeFileHeight
+							: 0,
 					landscape_width:
-						form.uploadedLandscapeCoverImage.length > 0 ? fileWidth : 0,
+						form.uploadedLandscapeCoverImage.length > 0
+							? landscapeFileWidth
+							: 0,
 					landscape_dropbox_url: form.landscape_dropbox_url
 						? form.landscape_dropbox_url
 						: '',
@@ -720,6 +731,8 @@ const UploadOrEditArticle = ({
 		setDisableDropdown(true);
 		setFileHeight(0);
 		setFileWidth(0);
+		setLandscapeFileWidth(0);
+		setLandscapeFileHeight(0);
 		setEditBtnDisabled(false);
 		setDraftBtnDisabled(false);
 		setIsError({});
@@ -1554,8 +1567,11 @@ const UploadOrEditArticle = ({
 											handleDeleteFile={handleDeleteFile}
 											handleDeleteLandscapeFile={handleDeleteLandscapeFile}
 											imgRef={imgEl}
+											imgRef2={imgEl2}
 											setFileWidth={setFileWidth}
 											setFileHeight={setFileHeight}
+											setLandscapeFileWidth={setLandscapeFileWidth}
+											setLandscapeFileHeight={setLandscapeFileHeight}
 											getRootProps={getRootProps}
 											getInputProps={getInputProps}
 											getRootProps2={getRootProps2}

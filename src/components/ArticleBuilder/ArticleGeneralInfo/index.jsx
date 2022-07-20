@@ -28,8 +28,11 @@ const ArticleGeneralInfo = ({
 	handleDeleteFile,
 	handleDeleteLandscapeFile,
 	imgRef,
+	imgRef2,
 	setFileWidth,
 	setFileHeight,
+	setLandscapeFileWidth,
+	setLandscapeFileHeight,
 	getRootProps,
 	getInputProps,
 	getRootProps2,
@@ -298,6 +301,8 @@ const ArticleGeneralInfo = ({
 											</p>
 											<p className={globalClasses.formatMsg}>
 												Supported formats are jpeg and png
+												<br />
+												Required size 720x900
 											</p>
 											<p className={globalClasses.uploadMediaError}>
 												{isError.uploadedFiles
@@ -341,10 +346,10 @@ const ArticleGeneralInfo = ({
 									handleDeleteFile={handleDeleteLandscapeFile}
 									isArticle
 									isArticleNew
-									imgEl={imgRef}
+									imgEl={imgRef2}
 									imageOnload={() => {
-										setFileWidth(imgRef.current.naturalWidth);
-										setFileHeight(imgRef.current.naturalHeight);
+										setLandscapeFileWidth(imgRef2.current.naturalWidth);
+										setLandscapeFileHeight(imgRef2.current.naturalHeight);
 									}}
 								/>
 								{!form.uploadedLandscapeCoverImage.length ? (
@@ -370,6 +375,8 @@ const ArticleGeneralInfo = ({
 											</p>
 											<p className={globalClasses.formatMsg}>
 												Supported formats are jpeg and png
+												<br />
+												Required size 1920x1080
 											</p>
 											<p className={globalClasses.uploadMediaError}>
 												{isError.uploadedLandscapeCoverImage
@@ -598,6 +605,12 @@ ArticleGeneralInfo.propTypes = {
 	]),
 	setFileWidth: PropTypes.func.isRequired,
 	setFileHeight: PropTypes.func.isRequired,
+	imgRef2: PropTypes.oneOfType([
+		PropTypes.func,
+		PropTypes.shape({ current: PropTypes.elementType })
+	]),
+	setLandscapeFileWidth: PropTypes.func.isRequired,
+	setLandscapeFileHeight: PropTypes.func.isRequired,
 	getRootProps: PropTypes.any,
 	getInputProps: PropTypes.any,
 	getRootProps2: PropTypes.any,
