@@ -571,11 +571,11 @@ const UploadOrEditArticle = ({
 						? form.landscape_dropbox_url
 						: '',
 					landscape_file_name: form?.uploadedLandscapeCoverImage?.length
-						? mediaFiles[0]?.landscape_file_name
+						? mediaFiles[2]?.landscape_file_name
 						: '',
 					landscape_image: form?.uploadedLandscapeCoverImage?.length
-						? mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
-						  mediaFiles[0]?.media_url
+						? mediaFiles[2]?.media_url?.split('cloudfront.net/')[1] ||
+						  mediaFiles[2]?.media_url
 						: '',
 					author_text: form.author_text,
 					author_image: form?.author_image[0]?.file
@@ -1379,6 +1379,14 @@ const UploadOrEditArticle = ({
 						}
 					}
 				);
+				let uploadedLandscapeCoverImagePromise =
+					form.uploadedLandscapeCoverImage.map(async (_file) => {
+						if (_file.file) {
+							return uploadFileToServer(_file, 'articleLibrary');
+						} else {
+							return _file;
+						}
+					});
 				let dataMedia;
 				if (data.length) {
 					dataMedia = await Promise.all(
@@ -1403,6 +1411,7 @@ const UploadOrEditArticle = ({
 				Promise.all([
 					...uploadFilesPromiseArray,
 					...uploadAuthorImagePromiseArray,
+					...uploadedLandscapeCoverImagePromise,
 					...dataMedia
 				])
 					.then((mediaFiles) => {
