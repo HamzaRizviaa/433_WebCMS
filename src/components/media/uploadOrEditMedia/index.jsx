@@ -48,7 +48,6 @@ const UploadOrEditMedia = ({
 	const [subCategories, setSubCategories] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
-	const [fileRejectionError3, setFileRejectionError3] = useState('');
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [previewBool, setPreviewBool] = useState(false);
@@ -73,12 +72,10 @@ const UploadOrEditMedia = ({
 		title: '',
 		media_dropbox_url: '',
 		image_dropbox_url: '',
-		landscape_image_dropbox_url: '',
 		description: '',
 		labels: [],
 		uploadedFiles: [],
-		uploadedCoverImage: [], // PORTRAIT
-		uploadedLandscapeCoverImage: [], //LANDSCAPE
+		uploadedCoverImage: [],
 		show_likes: true,
 		show_comments: true
 	});
@@ -198,24 +195,11 @@ const UploadOrEditMedia = ({
 		};
 	}, []);
 
-	//potrait
 	const {
 		acceptedFiles: acceptedFiles2,
 		fileRejections: fileRejections2,
 		getRootProps: getRootProps2,
 		getInputProps: getInputProps2
-	} = useDropzone({
-		accept: '.jpeg, .jpg, .png',
-		maxFiles: 1,
-		validator: checkFileSize
-	});
-
-	//landscape
-	const {
-		acceptedFiles: acceptedFiles3,
-		fileRejections: fileRejections3,
-		getRootProps: getRootProps3,
-		getInputProps: getInputProps3
 	} = useDropzone({
 		accept: '.jpeg, .jpg, .png',
 		maxFiles: 1,
@@ -284,17 +268,6 @@ const UploadOrEditMedia = ({
 			}, [5000]);
 		}
 	}, [fileRejections2]);
-
-	useEffect(() => {
-		if (fileRejections3.length) {
-			fileRejections3.forEach(({ errors }) => {
-				return errors.forEach((e) => setFileRejectionError3(e.message));
-			});
-			setTimeout(() => {
-				setFileRejectionError3('');
-			}, [5000]);
-		}
-	}, [fileRejections3]);
 
 	const getFileType = (type) => {
 		if (type) {
@@ -365,33 +338,6 @@ const UploadOrEditMedia = ({
 			});
 		}
 	}, [acceptedFiles2]);
-
-	useEffect(() => {
-		if (acceptedFiles3?.length) {
-			let newFiles = acceptedFiles3.map((file) => {
-				let id = makeid(10);
-				return {
-					id: id,
-					file_name: file.name,
-					media_url: URL.createObjectURL(file),
-					fileExtension: `.${getFileType(file.type)}`,
-					mime_type: file.type,
-					file: file,
-					type: file.type === 'video/mp4' ? 'video' : 'image'
-				};
-			});
-
-			setForm((prev) => {
-				return {
-					...prev,
-					uploadedLandscapeCoverImage: [
-						...form.uploadedLandscapeCoverImage,
-						...newFiles
-					]
-				};
-			});
-		}
-	}, [acceptedFiles3]);
 
 	const resetState = () => {
 		setFileRejectionError2('');
@@ -669,11 +615,11 @@ const UploadOrEditMedia = ({
 						specificMedia?.file_name_image ===
 							form.uploadedCoverImage[0]?.file_name &&
 						specificMedia?.media_dropbox_url ===
-							form?.media_dropbox_url?.trim() &&
+							form.media_dropbox_url.trim() &&
 						specificMedia?.image_dropbox_url ===
-							form?.image_dropbox_url?.trim() &&
+							form.image_dropbox_url.trim() &&
 						specificMedia?.title.replace(/\s+/g, '')?.trim() ===
-							form?.title?.replace(/\s+/g, '')?.trim() &&
+							form.title?.replace(/\s+/g, '')?.trim() &&
 						specificMedia?.description?.replace(/\s+/g, '')?.trim() ===
 							form.description?.replace(/\s+/g, '')?.trim() &&
 						specificMedia?.show_likes === form.show_likes &&
@@ -1390,6 +1336,7 @@ const UploadOrEditMedia = ({
 											) : (
 												<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
 											)}
+
 											<DragAndDropField
 												uploadedFiles={form.uploadedFiles}
 												isEdit={isEdit}
@@ -1447,6 +1394,7 @@ const UploadOrEditMedia = ({
 													</div>
 												</section>
 											)}
+
 											<p className={globalClasses.fileRejectionError}>
 												{fileRejectionError}
 											</p>
@@ -1477,9 +1425,8 @@ const UploadOrEditMedia = ({
 													}}
 												/>
 											</div>
+
 											<h5>{isEdit ? 'Cover Image' : 'Add Cover Image'}</h5>
-											<br />
-											<h6 className={classes.PotraitImage}>PORTRAIT IMAGE</h6>
 											<DragAndDropField
 												uploadedFiles={form.uploadedCoverImage}
 												isEdit={isEdit}
@@ -1530,11 +1477,12 @@ const UploadOrEditMedia = ({
 													</div>
 												</section>
 											)}
+
 											<p className={globalClasses.fileRejectionError}>
 												{fileRejectionError2}
 											</p>
 											<div className={globalClasses.dropBoxUrlContainer}>
-												<h6>PORTRAIT DROPBOX URL</h6>
+												<h6>DROPBOX URL</h6>
 												<TextField
 													value={form.image_dropbox_url}
 													onChange={(e) =>
@@ -1558,92 +1506,7 @@ const UploadOrEditMedia = ({
 													}}
 												/>
 											</div>
-											{/* landscape image  */}
-											<h6 className={classes.PotraitImage}>LANDSCAPE IMAGE</h6>
-											<DragAndDropField
-												uploadedFiles={form.uploadedLandscapeCoverImage}
-												isEdit={isEdit}
-												handleDeleteFile={handleDeleteFile2}
-												setPreviewBool={setPreviewBool}
-												setPreviewFile={setPreviewFile}
-												isArticle
-												imgEl={imgRef}
-												imageOnload={() => {
-													setFileWidth(imgRef.current.naturalWidth);
-													setFileHeight(imgRef.current.naturalHeight);
-												}}
-											/>
-											{/* !form.uploadedLandscapeCoverImage.length &&  */}
-											{
-												<section
-													className={[
-														globalClasses.dropZoneContainer,
-														isError.uploadedCoverImage
-															? globalClasses.errorState
-															: globalClasses.noErrorState
-													].join(' ')}
-													style={{
-														borderColor: isError.uploadedCoverImage
-															? '#ff355a'
-															: 'yellow'
-													}}
-												>
-													<div
-														{...getRootProps3({
-															className: globalClasses.dropzone
-														})}
-													>
-														<input {...getInputProps3()} />
-														<AddCircleOutlineIcon
-															className={globalClasses.addFilesIcon}
-														/>
-														<p className={globalClasses.dragMsg}>
-															Click or drag file to this area to upload
-														</p>
-														<p className={globalClasses.formatMsg}>
-															Supported formats are <strong>jpeg</strong> and{' '}
-															<strong>png</strong>.
-														</p>
-														<p className={globalClasses.formatMsg}>
-															Required size <strong>1920x1080</strong>
-														</p>
-														<p className={globalClasses.uploadMediaError}>
-															{isError.uploadedLandscapeCoverImage
-																? 'You need to upload a cover image in order to post'
-																: ''}
-														</p>
-													</div>
-												</section>
-											}
-											<p className={globalClasses.fileRejectionError}>
-												{fileRejectionError3}
-											</p>
-											<div className={globalClasses.dropBoxUrlContainer}>
-												<h6>LANDSCAPE DROPBOX URL</h6>
-												<TextField
-													value={form.landscape_image_dropbox_url}
-													onChange={(e) =>
-														setForm((prev) => {
-															return {
-																...prev,
-																landscape_image_dropbox_url: e.target.value
-															};
-														})
-													}
-													placeholder={'Please drop the dropbox URL here'}
-													className={globalClasses.textField}
-													InputProps={{
-														disableUnderline: true,
-														className: classes.textFieldInput,
-														style: {
-															borderRadius: form.image_dropbox_url
-																? '16px'
-																: '40px'
-														}
-													}}
-												/>
-											</div>
-											{/* landscape image  */}
+
 											<div className={classes.titleContainer}>
 												<div className={globalClasses.characterCount}>
 													<h6
@@ -1693,6 +1556,7 @@ const UploadOrEditMedia = ({
 											<p className={globalClasses.mediaError}>
 												{isError.titleMedia ? isError.titleMedia.message : ''}
 											</p>
+
 											<div className={classes.titleContainer}>
 												<h6
 													className={[
@@ -1727,6 +1591,7 @@ const UploadOrEditMedia = ({
 													? 'You need to select atleast 1 label to save as draft'
 													: ''}
 											</p>
+
 											<div className={classes.titleContainer}>
 												<h6
 													className={[
@@ -1779,6 +1644,7 @@ const UploadOrEditMedia = ({
 													/>
 												</div>
 											</div>
+
 											<div
 												className={classes.postMediaContainer}
 												style={{ marginBottom: '1rem' }}
