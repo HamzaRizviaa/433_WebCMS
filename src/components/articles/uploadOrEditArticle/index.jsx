@@ -48,6 +48,8 @@ import {
 	getArticleSubCategories
 } from '../../../pages/ArticleLibrary/articleLibrarySlice';
 
+import { aws4Interceptor } from 'aws4-axios';
+
 import {
 	checkEmptyIG,
 	checkNewElementMedia,
@@ -540,21 +542,38 @@ const UploadOrEditArticle = ({
 	};
 
 	const publishReadMoreApi = async (id) => {
-		console.log('article id : ', id);
 		const headers = {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			Format: 'pandas-split'
 		};
-		try {
-			const result = await axios.post(
-				'https://a4ewxelyb9.execute-api.eu-west-2.amazonaws.com/dev/new_article_id/',
+		const body = {
+			columns: ['operation', 'article_id'],
+			index: [0],
+			data: [['add_article', id]]
+		};
 
-				{
-					new_article_id: id
-				},
+		const client = axios.create();
+		const interceptor = aws4Interceptor(
+			{
+				region: 'eu-west-2',
+				service: 'sagemaker'
+			},
+			{
+				accessKeyId: 'AKIAW2RPSZR2K7SWJSPE',
+				secretAccessKey: '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'
+			}
+		);
+		client.interceptors.request.use(interceptor);
+
+		try {
+			let initialResponse = client.post(
+				'https://runtime.sagemaker.eu-west-2.amazonaws.com/endpoints/model-application-with-path/invocations',
+				body,
 				{
 					headers
 				}
 			);
+			let result = await initialResponse;
 			if (result?.data?.status_code === 200) {
 				console.log('Success - Read More Api !');
 			}
@@ -563,28 +582,44 @@ const UploadOrEditArticle = ({
 		}
 	};
 
-	useEffect(() => {
-		publishReadMoreApi('62bea2ff9b75eb1278791f86');
-	}, []);
-
 	const deleteReadMoreApi = async (id) => {
-		console.log('article id : ', id);
-		try {
-			const result = await axios.post(
-				'https://a4ewxelyb9.execute-api.eu-west-2.amazonaws.com/dev/on_delete/',
+		const headers = {
+			'Content-Type': 'application/json',
+			Format: 'pandas-split'
+		};
+		const body = {
+			columns: ['operation', 'article_id'],
+			index: [0],
+			data: [['delete_article', id]]
+		};
 
+		const client = axios.create();
+		const interceptor = aws4Interceptor(
+			{
+				region: 'eu-west-2',
+				service: 'sagemaker'
+			},
+			{
+				accessKeyId: 'AKIAW2RPSZR2K7SWJSPE',
+				secretAccessKey: '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'
+			}
+		);
+		client.interceptors.request.use(interceptor);
+
+		try {
+			let initialResponse = client.post(
+				'https://runtime.sagemaker.eu-west-2.amazonaws.com/endpoints/model-application-with-path/invocations',
+				body,
 				{
-					headers: {
-						'content-type': 'application/json'
-					},
-					body: JSON.stringify({ new_article_id: id })
+					headers
 				}
 			);
+			let result = await initialResponse;
 			if (result?.data?.status_code === 200) {
-				console.log('Success - on Delete Read More Api !');
+				console.log('Success - Read More Api !');
 			}
 		} catch (e) {
-			console.log(e, 'Failed - On delete Read More Api !');
+			console.log(e, 'Failed - Read More Api !');
 		}
 	};
 
