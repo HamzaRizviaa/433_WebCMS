@@ -19,7 +19,7 @@ const Labels = ({
 	setSelectedLabels,
 	LabelsOptions,
 	extraLabel,
-	// handleChangeExtraLabel,
+	handleChangeExtraLabel,
 	draftStatus = 'published',
 	setExtraLabel
 }) => {
@@ -33,44 +33,57 @@ const Labels = ({
 		(element) => !drafts.includes(element.name)
 	);
 
-	//new labels
+	//------------------------------new labels
 
-	const dispatch = useDispatch();
-	const { newLabelsSearch } = useSelector((state) => state.postLibrary);
+	// const dispatch = useDispatch();
+	// const { newLabelsSearch } = useSelector((state) => state.postLibrary);
 
-	console.log(newLabelsSearch, 'ls');
+	// const emptySearchArray = [{ val: 'empty array' }];
 
-	const handleDebounceFun = () => {
-		let _search;
-		setExtraLabel((prevState) => {
-			_search = prevState;
-			return _search;
-		});
+	// console.log(newLabelsSearch, 'ls');
 
-		if (_search) {
-			dispatch(
-				getNewLabelsSearch({
-					q: _search,
-					already_selected: selectedLabels
-				})
-			);
-		} else {
-			dispatch(
-				getNewLabelsSearch({
-					q: null,
-					already_selected: selectedLabels
-				})
-			);
-		}
-	};
+	// const handleDebounceFun = () => {
+	// 	let _search;
+	// 	setExtraLabel((prevState) => {
+	// 		_search = prevState;
+	// 		return _search;
+	// 	});
 
-	const debounceFun = useCallback(_debounce(handleDebounceFun, 600), []);
+	// 	if (_search) {
+	// 		dispatch(
+	// 			getNewLabelsSearch({
+	// 				q: _search,
+	// 				already_selected: selectedLabels
+	// 			})
+	// 		);
+	// 	} else {
+	// 		dispatch(
+	// 			getNewLabelsSearch({
+	// 				q: null,
+	// 				already_selected: selectedLabels
+	// 			})
+	// 		);
+	// 	}
+	// };
 
-	const handleChangeExtraLabel = (e) => {
-		// setSelectMediaInput(e.target.value);
-		setExtraLabel(e.target.value);
-		debounceFun(e.target.value);
-	};
+	// const debounceFun = useCallback(_debounce(handleDebounceFun, 600), []);
+
+	// const handleChangeExtraLabel = (e) => {
+	// 	// setSelectMediaInput(e.target.value);
+	// 	setExtraLabel(e.target.value);
+	// 	debounceFun(e.target.value);
+	// };
+
+	// const handleNewOptionlabel = () => {
+	// 	console.log('dwadawdw	ad');
+	// 	let currentLabelDuplicate = selectedLabels.some(
+	// 		(label) => label.name == extraLabel
+	// 	);
+
+	// 	if (!currentLabelDuplicate) {
+	// 		setSelectedLabels([{ id: null, name: extraLabel }]);
+	// 	}
+	// };
 
 	return (
 		<Autocomplete
@@ -144,7 +157,7 @@ const Labels = ({
 				// 					padding: '3px 12px',
 				// 					fontWeight: 700
 				// 				}}
-				// 				onClick={() => {}}
+				// 				onClick={() => handleNewOptionlabel}
 				// 			/>
 				// 		</li>
 				// 	)}
@@ -155,8 +168,8 @@ const Labels = ({
 			}`}
 			id='free-solo-2-demo'
 			disableClearable
-			// options={isEdit && draftStatus === 'draft' ? newOptions : LabelsOptions} //postlabels, medialabels
-			options={newLabelsSearch}
+			options={isEdit && draftStatus === 'draft' ? newOptions : LabelsOptions} //old labels
+			// options={newLabelsSearch?.length > 0 ? newLabelsSearch : emptySearchArray} // new labels on search
 			renderInput={(params) => (
 				<TextField
 					{...params}
@@ -203,6 +216,7 @@ const Labels = ({
 				);
 
 				console.log(option, 'op');
+				// if(options.val)     // for new labels on search
 				if (option.id == null && !currentLabelDuplicate) {
 					return (
 						<li
@@ -256,7 +270,7 @@ Labels.propTypes = {
 	setSelectedLabels: PropTypes.func,
 	LabelsOptions: PropTypes.array,
 	extraLabel: PropTypes.string,
-	//handleChangeExtraLabel: PropTypes.func,
+	handleChangeExtraLabel: PropTypes.func,
 	draftStatus: PropTypes.string,
 	setExtraLabel: PropTypes.func
 };

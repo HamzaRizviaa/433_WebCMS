@@ -38,6 +38,8 @@ import {
 	resetNoResultStatus
 } from './newsLibrarySlice';
 
+import { getPostLabels } from '../PostLibrary/postLibrarySlice';
+
 const NewsLibrary = () => {
 	// Selectors
 	const allNews = useSelector((state) => state.NewsLibrary.news);
@@ -398,6 +400,7 @@ const NewsLibrary = () => {
 
 	const tableRowEvents = {
 		onClick: (e, row) => {
+			row.status === 'draft' && dispatch(getPostLabels());
 			dispatch(getSpecificNews(row.id));
 			setEdit(true);
 			setrowStatus(row.status); // pass in slider
@@ -509,6 +512,7 @@ const NewsLibrary = () => {
 						<h1 style={{ marginRight: '2rem' }}>NEWS LIBRARY</h1>
 						<Button
 							onClick={() => {
+								dispatch(getPostLabels());
 								setEdit(false);
 								setShowSlider(true);
 							}}
