@@ -73,8 +73,6 @@ const validateForm = (form, dataElements, newsData) => {
 	var finalFormValue =
 		validate.every((item) => item === true) && validateData && validateNews;
 
-	console.log(finalFormValue, validateNews, validateData, 'finaAle');
-
 	return finalFormValue;
 };
 

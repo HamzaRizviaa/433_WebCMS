@@ -28,10 +28,18 @@ import validateDraft from '../../../utils/validateDraft';
 import NewsDraggable from '../NewsDraggableWrapper';
 import NewsSlide from '../NewsSlide';
 import Close from '@material-ui/icons/Close';
+import {
+	checkEmptyMediaNews,
+	comparingNewsFields,
+	checkNewElementNEWS,
+	checkSortOrderOnEdit,
+	checkDuplicateLabel
+} from '../../../utils/newsUtils';
 
 //api calls
-import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
+// import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import { getAllNews } from '../../../pages/NewsLibrary/newsLibrarySlice';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 const UploadOrEditNews = ({
 	open,
@@ -74,7 +82,7 @@ const UploadOrEditNews = ({
 	);
 
 	useEffect(() => {
-		dispatch(getPostLabels());
+		// dispatch(getPostLabels());
 		return () => {
 			resetState();
 		};
@@ -107,6 +115,114 @@ const UploadOrEditNews = ({
 				: setNews([]);
 		}
 	}, [specificNews]);
+
+	useEffect(() => {
+		if (specificNews) {
+			const validateEmptyNewsArray = [
+				checkEmptyMediaNews(news),
+				news?.length !== 0
+			];
+			setEditBtnDisabled(
+				!validateForm(form, null, news) ||
+					!validateEmptyNewsArray.every((item) => item === true) ||
+					comparingNewsFields(specificNews, form)
+			);
+		}
+	}, [specificNews, form]);
+
+	useEffect(() => {
+		if (specificNews) {
+			setDraftBtnDisabled(
+				!validateDraft(form, null, news) ||
+					(comparingNewsFields(specificNews, form) &&
+						specificNews?.labels?.length === form?.labels.length &&
+						!checkDuplicateLabel(form, specificNews))
+			);
+		}
+	}, [specificNews, form]);
+
+	useEffect(() => {
+		const validateEmptyNewsArray = [
+			checkEmptyMediaNews(news),
+			news?.length !== 0
+		];
+
+		const validateEmptyNewsAndEditComparisonArray = [
+			checkNewElementNEWS(specificNews, news),
+			news?.length !== 0
+		];
+
+		if (
+			!validateForm(form, null, news) ||
+			!comparingNewsFields(specificNews, form)
+		) {
+			setEditBtnDisabled(
+				!validateEmptyNewsArray.every((item) => item === true) ||
+					!validateForm(form, null, news)
+			);
+		} else {
+			if (specificNews?.slides?.length !== news?.length) {
+				setEditBtnDisabled(
+					!validateEmptyNewsArray.every((item) => item === true)
+				);
+			} else {
+				if (
+					validateEmptyNewsAndEditComparisonArray.every(
+						(item) => item === true
+					) ||
+					!validateEmptyNewsArray.every((item) => item === true)
+				) {
+					setEditBtnDisabled(!checkSortOrderOnEdit(specificNews, news));
+				} else {
+					setEditBtnDisabled(
+						validateEmptyNewsAndEditComparisonArray.every(
+							(item) => item === true
+						) || !validateEmptyNewsArray.every((item) => item === true)
+					);
+				}
+				// setEditBtnDisabled(checkMediaUrlPublish(news));
+			}
+		}
+	}, [news]);
+
+	useEffect(() => {
+		const validateEmptyNewsArray = [checkEmptyMediaNews(news)];
+
+		const validateEmptyNewsAndEditComparisonArray = [
+			checkNewElementNEWS(specificNews, news)
+		];
+
+		if (
+			!validateDraft(form, null, news) ||
+			!comparingNewsFields(specificNews, form)
+		) {
+			setDraftBtnDisabled(
+				!validateEmptyNewsArray.every((item) => item === true) ||
+					!validateDraft(form, null, news)
+			);
+		} else {
+			if (specificNews?.slides?.length !== news?.length) {
+				setDraftBtnDisabled(
+					!validateEmptyNewsArray.every((item) => item === true)
+				);
+			} else {
+				if (
+					validateEmptyNewsAndEditComparisonArray.every(
+						(item) => item === true
+					) ||
+					!validateEmptyNewsArray.every((item) => item === true)
+				) {
+					setDraftBtnDisabled(!checkSortOrderOnEdit(specificNews, news));
+				} else {
+					setDraftBtnDisabled(
+						validateEmptyNewsAndEditComparisonArray.every(
+							(item) => item === true
+						) || !validateEmptyNewsArray.every((item) => item === true)
+					);
+				}
+			}
+		}
+	}, [news]);
 
 	const updateSlidesDataFromAPI = (data) => {
 		let slidesData = data.map(
@@ -348,7 +464,7 @@ const UploadOrEditNews = ({
 				// setPostButtonStatus(false);
 				handleClose();
 				dispatch(getAllNews({ page }));
-				dispatch(getPostLabels());
+				// dispatch(getPostLabels());
 			}
 		} catch (e) {
 			toast.error(isEdit ? 'Failed to edit news!' : 'Failed to create news!');
@@ -660,7 +776,9 @@ const UploadOrEditNews = ({
 											>
 												<Button
 													disabledDraft={
-														isEdit ? draftBtnDisabled : !validateDraft(form)
+														isEdit
+															? draftBtnDisabled
+															: !validateDraft(form, null, news)
 													}
 													onClick={() => handleCreateDraft()}
 													button3={true}

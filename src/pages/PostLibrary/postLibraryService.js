@@ -25,4 +25,29 @@ export default class PostLibraryService {
 			}
 		});
 	}
+
+	// NEW LABELS ON SEARCH
+
+	static getAllNewLabels() {
+		return axios.get(`${process.env.REACT_APP_API_ENDPOINT}/label/all-labels`, {
+			headers: {
+				Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+			}
+		});
+	}
+
+	static getNewLabelsSearch(params) {
+		return axios.get(
+			`${process.env.REACT_APP_API_ENDPOINT}/label/search-labels`,
+			{
+				headers: {
+					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+				},
+				params: {
+					q: params.q,
+					already_searched: params.already_searched
+				}
+			}
+		);
+	}
 }

@@ -31,6 +31,8 @@ import {
 	resetNoResultStatus,
 	getSpecificArticle
 } from './articleLibrarySlice';
+import { getPostLabels } from '../PostLibrary/postLibrarySlice';
+
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
 import DefaultImage from '../../assets/defaultImage.png';
@@ -396,6 +398,7 @@ const ArticleLibrary = () => {
 
 	const tableRowEvents = {
 		onClick: (e, row) => {
+			row.status === 'draft' && dispatch(getPostLabels());
 			dispatch(getSpecificArticle(row.id));
 			setEdit(true);
 			setShowSlider(true);
@@ -551,6 +554,7 @@ const ArticleLibrary = () => {
 						<h1 style={{ marginRight: '2rem' }}>ARTICLE LIBRARY</h1>
 						<Button
 							onClick={() => {
+								dispatch(getPostLabels());
 								setEdit(false);
 								setShowSlider(true);
 							}}

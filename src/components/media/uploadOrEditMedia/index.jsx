@@ -15,8 +15,8 @@ import checkFileSize from '../../../utils/validateFileSize';
 import ToggleSwitch from '../../switch';
 import completeUplaod from '../../../utils/completeUploadDraft';
 import {
-	getMainCategories,
-	getMediaLabels
+	getMainCategories
+	// getMediaLabels
 } from './../../../pages/MediaLibrary/mediaLibrarySlice';
 import { getLocalStorageDetails } from '../../../utils';
 import { getMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
@@ -189,7 +189,7 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		dispatch(getMainCategories());
-		dispatch(getMediaLabels());
+		// dispatch(getMediaLabels());
 		return () => {
 			resetState();
 		};

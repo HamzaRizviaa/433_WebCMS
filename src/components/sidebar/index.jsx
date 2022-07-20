@@ -8,8 +8,8 @@ import { ReactComponent as Banner } from '../../assets/Star.svg';
 import { ReactComponent as News } from '../../assets/News.svg';
 import { ReactComponent as Viral } from '../../assets/Flame.svg';
 import { ReactComponent as Logout } from '../../assets/logout.svg';
-import { ReactComponent as Games } from '../../assets/Games.svg';
 import { ReactComponent as Article } from '../../assets/ArticleIcon.svg';
+// import { ReactComponent as Games } from '../../assets/Games.svg';
 // import { ReactComponent as Share } from '../../assets/share.svg';
 // import { ReactComponent as ArticleSelected } from '../../assets/NewsSelected.svg';
 import { useGoogleLogout } from 'react-google-login';
@@ -109,9 +109,7 @@ const Sidebar = () => {
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
-					{/* <span className={classes[`${mainClass}Article`]}> */}
 					<Article className={classes.icon} />
-					{/* </span> */}
 				</NavLink>
 
 				<NavLink
@@ -123,14 +121,14 @@ const Sidebar = () => {
 					<Viral className={classes.icon} />
 				</NavLink>
 
-				<NavLink
+				{/* <NavLink
 					to='/games-library'
 					className={({ isActive }) =>
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
 					<Games className={[classes.icon, classes.gamesIcon].join(' ')} />
-				</NavLink>
+				</NavLink> */}
 			</div>
 
 			<div onClick={signOut} className={classes.logoutContainer}>

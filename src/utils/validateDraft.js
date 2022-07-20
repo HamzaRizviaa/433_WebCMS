@@ -1,4 +1,4 @@
-const validateDraft = (form, dataElements) => {
+const validateDraft = (form, dataElements, newsElement) => {
 	var validate = Object.keys(form).map((key) => {
 		if (key === 'mainCategory' || key === 'subCategory') {
 			return false;
@@ -62,6 +62,7 @@ const validateDraft = (form, dataElements) => {
 	});
 
 	var validateData;
+	var validateNews;
 	var finalDraftValue;
 
 	if (dataElements?.length) {
@@ -84,12 +85,29 @@ const validateDraft = (form, dataElements) => {
 		});
 
 		finalDraftValue = validateData;
+	} else if (newsElement?.length) {
+		validateNews = newsElement.every((newsItem) => {
+			if (newsItem?.data) {
+				return (
+					newsItem?.data[0]?.media_url ||
+					newsItem?.data[0]?.title ||
+					newsItem?.data[0]?.description ||
+					newsItem?.data[0]?.name ||
+					newsItem?.data[0]?.dropbox_url
+				);
+			}
+		});
+
+		finalDraftValue = validateNews;
 	} else if (
-		dataElements?.length === 0 ||
-		dataElements === undefined ||
-		dataElements === null
+		(dataElements?.length === 0 ||
+			dataElements === undefined ||
+			dataElements === null) &&
+		(newsElement?.length === 0 ||
+			newsElement === undefined ||
+			newsElement === null)
 	) {
-		finalDraftValue = validate.some((item) => item === true) || validateData;
+		finalDraftValue = validate.some((item) => item === true);
 	}
 
 	return finalDraftValue;

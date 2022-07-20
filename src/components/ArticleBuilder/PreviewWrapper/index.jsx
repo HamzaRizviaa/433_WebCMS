@@ -46,7 +46,7 @@ const PreviewWrapper = ({
 					width: '380px',
 					// height: `${height}px`, linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 100%);
 					height: '812px',
-					backgroundImage: `linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 100%),
+					backgroundImage: `linear-gradient(180deg, rgba(0, 0, 0, 0) -12.5%, rgba(0, 0, 0, 0) 19.68%, rgba(0, 0, 0, 0) 57.99%, #000000 100%),
 					url(${form.uploadedFiles.length > 0 && form?.uploadedFiles[0]?.media_url})`
 				}}
 			>
