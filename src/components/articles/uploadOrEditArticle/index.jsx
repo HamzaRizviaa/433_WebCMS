@@ -25,6 +25,7 @@ import Instragram from '../../../assets/Instagram.svg';
 import Text from '../../../assets/Text.svg';
 import ImageVideo from '../../../assets/Image.svg';
 import Tweet from '../../../assets/Twitter Line.svg';
+import Question from '../../../assets/Quiz.svg';
 
 /*  ArticleBuilder imports  */
 import ArticleElements from '../../ArticleBuilder/ArticleElements'; // left pan of buttons
@@ -60,6 +61,7 @@ import {
 	checkNewElementTwitter,
 	checkNewElementIG
 } from '../../../utils/articleUtils';
+import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDraggable';
 
 const UploadOrEditArticle = ({
 	open,
@@ -99,6 +101,7 @@ const UploadOrEditArticle = ({
 		sub_text: '',
 		dropbox_url: '',
 		uploadedFiles: [],
+		uploadedLandscapeCoverImage: [],
 		author_text: '433 Team',
 		author_image: [{ media_url: Profile433 }],
 		labels: [],
@@ -140,6 +143,12 @@ const UploadOrEditArticle = ({
 			type: 'IG',
 			ig_post_url: '',
 			component: ArticleSocialMediaDraggable
+		},
+		{
+			image: Question,
+			text: 'Add Question',
+			type: 'QUESTION',
+			component: ArticleQuestionDraggable
 		}
 	];
 
@@ -150,6 +159,17 @@ const UploadOrEditArticle = ({
 			validator: checkFileSize
 		});
 
+	const {
+		acceptedFiles: acceptedFiles2,
+		fileRejections: fileRejections2,
+		getRootProps: getRootProps2,
+		getInputProps: getInputProps2
+	} = useDropzone({
+		accept: '.jpeg, .jpg, .png',
+		maxFiles: 1,
+		validator: checkFileSize
+	});
+	console.log('ACCEPTED FILE 2', acceptedFiles);
 	const {
 		acceptedFiles: acceptedFileAvatar,
 		fileRejections: fileRejectionsAvatar,
@@ -290,6 +310,17 @@ const UploadOrEditArticle = ({
 								}
 						  ]
 						: [],
+					landscape_dropbox_url: specificArticle?.landscape_dropbox_url,
+					uploadedLandscapeCoverImage: specificArticle?.landscape_image
+						? [
+								{
+									id: makeid(10),
+									file_name: specificArticle?.landscape_file_name,
+									media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificArticle?.landscape_image}`,
+									type: 'image'
+								}
+						  ]
+						: [],
 					author_text: specificArticle?.author_text,
 					author_image: specificArticle?.author_image
 						? [
@@ -406,6 +437,16 @@ const UploadOrEditArticle = ({
 			}, [5000]);
 		}
 	}, [fileRejections]);
+	useEffect(() => {
+		if (fileRejections2.length) {
+			fileRejections2.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError(e.message));
+			});
+			setTimeout(() => {
+				setFileRejectionError('');
+			}, [5000]);
+		}
+	}, [fileRejections]);
 
 	const getFileType = (type) => {
 		if (type) {
@@ -441,6 +482,34 @@ const UploadOrEditArticle = ({
 			});
 		}
 	}, [acceptedFiles]);
+
+	useEffect(() => {
+		if (acceptedFiles2?.length) {
+			setIsError({});
+			let newFiles = acceptedFiles2.map((file) => {
+				let id = makeid(10);
+				return {
+					id: id,
+					file_name: file.name,
+					media_url: URL.createObjectURL(file),
+					fileExtension: `.${getFileType(file.type)}`,
+					mime_type: file.type,
+					file: file,
+					type: 'image'
+				};
+			});
+
+			setForm((prev) => {
+				return {
+					...prev,
+					uploadedLandscapeCoverImage: [
+						...form.uploadedLandscapeCoverImage,
+						...newFiles
+					]
+				};
+			});
+		}
+	}, [acceptedFiles2]);
 
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
@@ -491,6 +560,20 @@ const UploadOrEditArticle = ({
 						? mediaFiles[0]?.file_name
 						: '',
 					image: form?.uploadedFiles?.length
+						? mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
+						  mediaFiles[0]?.media_url
+						: '',
+					landscape_height:
+						form.uploadedLandscapeCoverImage.length > 0 ? fileHeight : 0,
+					landscape_width:
+						form.uploadedLandscapeCoverImage.length > 0 ? fileWidth : 0,
+					landscape_dropbox_url: form.landscape_dropbox_url
+						? form.landscape_dropbox_url
+						: '',
+					landscape_file_name: form?.uploadedLandscapeCoverImage?.length
+						? mediaFiles[0]?.landscape_file_name
+						: '',
+					landscape_image: form?.uploadedLandscapeCoverImage?.length
 						? mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
 						  mediaFiles[0]?.media_url
 						: '',
@@ -645,7 +728,8 @@ const UploadOrEditArticle = ({
 			// description: tinyMCE.activeEditor?.setContent(''),
 			dropbox_url: '',
 			uploadedFiles: [],
-
+			landscape_dropbox_url: '',
+			uploadedLandscapeCoverImage: [],
 			author_text: '433 Team',
 			author_image: [{ media_url: Profile433 }],
 			labels: [],
@@ -663,6 +747,17 @@ const UploadOrEditArticle = ({
 			return {
 				...prev,
 				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
+			};
+		});
+	};
+
+	const handleDeleteLandscapeFile = (id) => {
+		setForm((prev) => {
+			return {
+				...prev,
+				uploadedLandscapeCoverImage: form.uploadedLandscapeCoverImage.filter(
+					(file) => file.id !== id
+				)
 			};
 		});
 	};
@@ -749,6 +844,7 @@ const UploadOrEditArticle = ({
 			//  }
 			// },
 			uploadedFiles: form.uploadedFiles.length < 1,
+			uploadedLandscapeCoverImage: form.uploadedLandscapeCoverImage.length < 1,
 			selectedLabels: form.labels.length < 7,
 			// editorText: !form.description,
 			mainCategory: !form.mainCategory,
@@ -1446,11 +1542,14 @@ const UploadOrEditArticle = ({
 											subCategories={subCategories}
 											SubCategoryId={SubCategoryId}
 											handleDeleteFile={handleDeleteFile}
+											handleDeleteLandscapeFile={handleDeleteLandscapeFile}
 											imgRef={imgEl}
 											setFileWidth={setFileWidth}
 											setFileHeight={setFileHeight}
 											getRootProps={getRootProps}
 											getInputProps={getInputProps}
+											getRootProps2={getRootProps2}
+											getInputProps2={getInputProps2}
 											fileRejectionError={fileRejectionError}
 											getRootPropsAvatar={getRootPropsAvatar}
 											getInputPropsAvatar={getInputPropsAvatar}
