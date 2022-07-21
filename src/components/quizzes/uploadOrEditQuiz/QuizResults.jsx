@@ -261,6 +261,7 @@ export default function QuizResults({
 			<div className={classes.QuizQuestion}>
 				{editQuestionResultDetail.question}
 			</div>
+			<div className='articlesQuizDetails'></div>
 			<div className={classes.QuizDetailsProgressBars}>
 				<div className={classes.progressBars}>
 					<BorderLinearProgress

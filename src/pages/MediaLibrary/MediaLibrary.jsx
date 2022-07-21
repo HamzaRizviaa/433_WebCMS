@@ -293,7 +293,7 @@ const MediaLibrary = () => {
 							col?.dataField === 'last_edit'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -310,7 +310,7 @@ const MediaLibrary = () => {
 							col?.dataField === 'last_edit'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -327,7 +327,7 @@ const MediaLibrary = () => {
 							col?.dataField === 'last_edit'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);

@@ -161,7 +161,7 @@ const ArticleLibrary = () => {
 					style={{
 						left:
 							col?.dataField === 'article_title'
-								? 0
+								? -4
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||
@@ -169,7 +169,7 @@ const ArticleLibrary = () => {
 								  col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -180,7 +180,7 @@ const ArticleLibrary = () => {
 					style={{
 						left:
 							col?.dataField === 'article_title'
-								? 0
+								? -4
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||
@@ -188,7 +188,7 @@ const ArticleLibrary = () => {
 								  col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -199,7 +199,7 @@ const ArticleLibrary = () => {
 					style={{
 						left:
 							col?.dataField === 'article_title'
-								? 0
+								? -4
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||
@@ -207,7 +207,7 @@ const ArticleLibrary = () => {
 								  col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);

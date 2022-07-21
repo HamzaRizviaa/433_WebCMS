@@ -14,9 +14,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import checkFileSize from '../../../utils/validateFileSize';
 import ToggleSwitch from '../../switch';
 import completeUplaod from '../../../utils/completeUploadDraft';
+//import uploadFileToServer from '../../../utils/uploadFileToServer';
 import {
-	getMainCategories
-	// getMediaLabels
+	getMainCategories,
+	getMediaLabels
 } from './../../../pages/MediaLibrary/mediaLibrarySlice';
 import { getLocalStorageDetails } from '../../../utils';
 import { getMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
@@ -48,15 +49,20 @@ const UploadOrEditMedia = ({
 	const [subCategories, setSubCategories] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
+	const [fileRejectionError3, setFileRejectionError3] = useState('');
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [previewBool, setPreviewBool] = useState(false);
 	const [isLoadingUploadMedia, setIsLoadingUploadMedia] = useState(false);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [disableDropdown, setDisableDropdown] = useState(true);
-	const [fileWidth, setFileWidth] = useState(0);
+	const [fileWidth, setFileWidth] = useState(0); // media image
 	const [fileHeight, setFileHeight] = useState(0);
 	const [fileDuration, setFileDuration] = useState(0);
+	const [portraitFileWidth, setPortraitFileWidth] = useState(0); // cover portrait
+	const [portraitFileHeight, setPortraitFileHeight] = useState(0);
+	const [landscapeFileWidth, setLandscapeFileWidth] = useState(0); // cover landscape
+	const [landscapeFileHeight, setLandscapeFileHeight] = useState(0);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
@@ -70,12 +76,14 @@ const UploadOrEditMedia = ({
 		mainCategory: '',
 		subCategory: '',
 		title: '',
-		media_dropbox_url: '',
-		image_dropbox_url: '',
+		media_dropbox_url: '', // uploaded file
+		image_dropbox_url: '', //portrait
+		landscape_image_dropbox_url: '', //landscape
 		description: '',
 		labels: [],
 		uploadedFiles: [],
-		uploadedCoverImage: [],
+		uploadedCoverImage: [], // PORTRAIT
+		uploadedLandscapeCoverImage: [], //LANDSCAPE
 		show_likes: true,
 		show_comments: true
 	});
@@ -151,8 +159,10 @@ const UploadOrEditMedia = ({
 					...prev,
 					title: specificMedia?.title,
 					description: specificMedia?.description,
-					media_dropbox_url: specificMedia?.media_dropbox_url,
-					image_dropbox_url: specificMedia?.image_dropbox_url,
+					media_dropbox_url: specificMedia?.dropbox_url?.media,
+					landscape_image_dropbox_url:
+						specificMedia?.dropbox_url?.landscape_cover_image,
+					image_dropbox_url: specificMedia?.dropbox_url?.portrait_cover_image,
 					mainCategory: specificMedia.media_type,
 					subCategory: specificMedia.sub_category,
 					show_likes: specificMedia?.show_likes,
@@ -170,13 +180,26 @@ const UploadOrEditMedia = ({
 								}
 						  ]
 						: [],
-					uploadedCoverImage: specificMedia?.cover_image
+					uploadedCoverImage: specificMedia?.cover_image?.portrait?.image_url
 						? [
 								{
 									id: makeid(10),
-									file_name: specificMedia?.file_name_image,
+									file_name: specificMedia?.file_name_portrait_image,
 									media_url: specificMedia?.cover_image
-										? `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image}`
+										? `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image?.portrait?.image_url}`
+										: '',
+									type: 'image'
+								}
+						  ]
+						: [],
+					uploadedLandscapeCoverImage: specificMedia?.cover_image?.landscape
+						?.image_url
+						? [
+								{
+									id: makeid(10),
+									file_name: specificMedia?.file_name_landscape_image,
+									media_url: specificMedia?.cover_image
+										? `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificMedia?.cover_image?.landscape?.image_url}`
 										: '',
 									type: 'image'
 								}
@@ -189,17 +212,30 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		dispatch(getMainCategories());
-		// dispatch(getMediaLabels());
+		dispatch(getMediaLabels());
 		return () => {
 			resetState();
 		};
 	}, []);
 
+	//potrait
 	const {
 		acceptedFiles: acceptedFiles2,
 		fileRejections: fileRejections2,
 		getRootProps: getRootProps2,
 		getInputProps: getInputProps2
+	} = useDropzone({
+		accept: '.jpeg, .jpg, .png',
+		maxFiles: 1,
+		validator: checkFileSize
+	});
+
+	//landscape
+	const {
+		acceptedFiles: acceptedFiles3,
+		fileRejections: fileRejections3,
+		getRootProps: getRootProps3,
+		getInputProps: getInputProps3
 	} = useDropzone({
 		accept: '.jpeg, .jpg, .png',
 		maxFiles: 1,
@@ -268,6 +304,17 @@ const UploadOrEditMedia = ({
 			}, [5000]);
 		}
 	}, [fileRejections2]);
+
+	useEffect(() => {
+		if (fileRejections3.length) {
+			fileRejections3.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError3(e.message));
+			});
+			setTimeout(() => {
+				setFileRejectionError3('');
+			}, [5000]);
+		}
+	}, [fileRejections3]);
 
 	const getFileType = (type) => {
 		if (type) {
@@ -339,6 +386,33 @@ const UploadOrEditMedia = ({
 		}
 	}, [acceptedFiles2]);
 
+	useEffect(() => {
+		if (acceptedFiles3?.length) {
+			let newFiles = acceptedFiles3.map((file) => {
+				let id = makeid(10);
+				return {
+					id: id,
+					file_name: file.name,
+					media_url: URL.createObjectURL(file),
+					fileExtension: `.${getFileType(file.type)}`,
+					mime_type: file.type,
+					file: file,
+					type: file.type === 'video/mp4' ? 'video' : 'image'
+				};
+			});
+
+			setForm((prev) => {
+				return {
+					...prev,
+					uploadedLandscapeCoverImage: [
+						...form.uploadedLandscapeCoverImage,
+						...newFiles
+					]
+				};
+			});
+		}
+	}, [acceptedFiles3]);
+
 	const resetState = () => {
 		setFileRejectionError2('');
 		setTimeout(() => {
@@ -365,6 +439,7 @@ const UploadOrEditMedia = ({
 			labels: [],
 			uploadedFiles: [],
 			uploadedCoverImage: [],
+			uploadedLandscapeCoverImage: [],
 			show_likes: true,
 			show_comments: true
 		});
@@ -390,11 +465,23 @@ const UploadOrEditMedia = ({
 		});
 	};
 
+	const handleDeleteFile3 = (id) => {
+		setForm((prev) => {
+			return {
+				...prev,
+				uploadedLandscapeCoverImage: form.uploadedLandscapeCoverImage.filter(
+					(file) => file.id !== id
+				)
+			};
+		});
+	};
+
 	const validatePostBtn = () => {
 		setIsError({
 			uploadedFiles: form.uploadedFiles.length < 1,
 			selectedLabels: form.labels.length < 7,
 			uploadedCoverImage: form.uploadedCoverImage.length < 1,
+			uploadedLandscapeCoverImage: form.uploadedLandscapeCoverImage.length < 1,
 			mainCategory: !form.mainCategory,
 			subCategory: form?.subCategory?.name
 				? !form?.subCategory?.name
@@ -425,6 +512,8 @@ const UploadOrEditMedia = ({
 				uploadedFiles: form.uploadedFiles.length < 1,
 				selectedLabelsDraft: form.labels.length < 1,
 				uploadedCoverImage: form.uploadedCoverImage.length < 1,
+				uploadedLandscapeCoverImage:
+					form.uploadedLandscapeCoverImage.length < 1,
 				titleMedia: !form.title && { message: 'You need to enter a Title' },
 				description: !form.description,
 				mainCategory: !form?.mainCategory,
@@ -479,7 +568,7 @@ const UploadOrEditMedia = ({
 
 	const uploadMedia = async (id, payload) => {
 		let media_type = form.mainCategory?.id;
-		// setMediaButtonStatus(true);
+
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media/create-media`,
@@ -495,27 +584,27 @@ const UploadOrEditMedia = ({
 							title: form.title,
 							description: form.description,
 							labels: [...form.labels],
-							...(form.media_dropbox_url
-								? { media_dropbox_url: form.media_dropbox_url }
-								: {}),
-							...(form.image_dropbox_url
-								? { image_dropbox_url: form.image_dropbox_url }
-								: {}),
+							dropbox_url: {
+								media: form.media_dropbox_url
+									? form.media_dropbox_url
+									: undefined,
+								portrait_cover_image: form.image_dropbox_url
+									? form.image_dropbox_url
+									: undefined,
+								landscape_cover_image: form.landscape_image_dropbox_url
+									? form.landscape_image_dropbox_url
+									: undefined
+							},
+
 							show_likes: form.show_likes ? true : undefined,
 							show_comments: form.show_comments ? true : undefined,
-							//...(form.labels.length ? { labels: [...form.labels] } : {}),
+							...payload,
 
-							data: {
-								video_data: payload?.data?.Keys?.VideoKey,
-								image_data: payload?.data?.Keys?.ImageKey,
-								audio_data: payload?.data?.Keys?.AudioKey
-							},
 							user_data: {
 								id: `${getLocalStorageDetails()?.id}`,
 								first_name: `${getLocalStorageDetails()?.first_name}`,
 								last_name: `${getLocalStorageDetails()?.last_name}`
-							},
-							...payload
+							}
 					  },
 				{
 					headers: {
@@ -607,19 +696,24 @@ const UploadOrEditMedia = ({
 			setEditBtnDisabled(
 				!form.uploadedFiles.length ||
 					!form.uploadedCoverImage.length ||
+					!form.uploadedLandscapeCoverImage.length ||
 					!form.title ||
 					!form.description ||
 					form.labels.length < 7 ||
 					(specificMedia?.file_name_media ===
 						form.uploadedFiles[0]?.file_name &&
-						specificMedia?.file_name_image ===
+						specificMedia?.file_name_portrait_image ===
 							form.uploadedCoverImage[0]?.file_name &&
-						specificMedia?.media_dropbox_url ===
-							form.media_dropbox_url.trim() &&
-						specificMedia?.image_dropbox_url ===
-							form.image_dropbox_url.trim() &&
+						specificMedia?.file_name_landscape_image ===
+							form.uploadedLandscapeCoverImage[0]?.file_name &&
+						specificMedia?.dropbox_url?.media ===
+							form?.media_dropbox_url?.trim() &&
+						specificMedia?.dropbox_url?.portrait_cover_image ===
+							form?.image_dropbox_url?.trim() &&
+						specificMedia?.dropbox_url?.landscape_cover_image ===
+							form?.landscape_image_dropbox_url?.trim() &&
 						specificMedia?.title.replace(/\s+/g, '')?.trim() ===
-							form.title?.replace(/\s+/g, '')?.trim() &&
+							form?.title?.replace(/\s+/g, '')?.trim() &&
 						specificMedia?.description?.replace(/\s+/g, '')?.trim() ===
 							form.description?.replace(/\s+/g, '')?.trim() &&
 						specificMedia?.show_likes === form.show_likes &&
@@ -648,18 +742,26 @@ const UploadOrEditMedia = ({
 						? specificMedia?.file_name_media ===
 						  form?.uploadedFiles[0]?.file_name
 						: true) &&
-						(specificMedia?.cover_image || form?.uploadedCoverImage[0]
-							? specificMedia?.file_name_image ===
+						(specificMedia?.cover_image?.portrait?.image_url ||
+						form?.uploadedCoverImage[0]
+							? specificMedia?.file_name_portrait_image ===
 							  form?.uploadedCoverImage[0]?.file_name
+							: true) &&
+						(specificMedia?.cover_image?.landscape?.image_url ||
+						form?.uploadedLandscapeCoverImage[0]
+							? specificMedia?.file_name_landscape_image ===
+							  form?.uploadedLandscapeCoverImage[0]?.file_name
 							: true) &&
 						specificMedia?.media_type ===
 							(form?.mainCategory?.name || form?.mainCategory) &&
 						specificMedia?.sub_category ===
 							(form?.subCategory?.name || form?.subCategory) &&
-						specificMedia?.media_dropbox_url ===
+						specificMedia?.dropbox_url?.media ===
 							form?.media_dropbox_url?.trim() &&
-						specificMedia?.image_dropbox_url ===
+						specificMedia?.dropbox_url?.portrait_cover_image ===
 							form?.image_dropbox_url?.trim() &&
+						specificMedia?.dropbox_url?.landscape_cover_image ===
+							form?.landscape_image_dropbox_url?.trim() &&
 						specificMedia?.title?.replace(/\s+/g, '')?.trim() ===
 							form?.title?.replace(/\s+/g, '')?.trim() &&
 						specificMedia?.description?.replace(/\s+/g, '')?.trim() ===
@@ -672,7 +774,6 @@ const UploadOrEditMedia = ({
 		}
 	}, [specificMedia, form]);
 
-	// console.log(form, 'form');
 	const mainCategoryId = (e) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
 		let setData = mainCategories.find((u) => u.name === e);
@@ -703,6 +804,14 @@ const UploadOrEditMedia = ({
 		validateForm(form);
 	}, [form]);
 
+	console.log(
+		!validateForm(form),
+		editBtnDisabled && status === 'published',
+		'SSSSSshoi'
+	);
+
+	console.log(form, 'form');
+
 	const addSaveMediaBtn = async () => {
 		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
 			validatePostBtn();
@@ -710,6 +819,7 @@ const UploadOrEditMedia = ({
 			setIsLoadingUploadMedia(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			if (isEdit) {
+				console.log(isEdit);
 				if (specificMedia?.title?.trim() !== form.title?.trim()) {
 					if (
 						(await handleTitleDuplicate(form.title)) === 200 &&
@@ -737,9 +847,11 @@ const UploadOrEditMedia = ({
 					subCategories.find((u) => u.name === form?.subCategory)?.id;
 
 				let uploadFilesPromiseArray = [
-					form.uploadedFiles[0],
-					form.uploadedCoverImage[0]
+					form.uploadedFiles[0], //audio/video
+					form.uploadedCoverImage[0], //portrait
+					form.uploadedLandscapeCoverImage[0] //landscape
 				].map(async (_file) => {
+					console.log(_file, '_file to check ');
 					if (_file.file) {
 						return await uploadFileToServer(_file, _file.type);
 					} else {
@@ -747,17 +859,29 @@ const UploadOrEditMedia = ({
 					}
 				});
 
+				console.log(uploadFilesPromiseArray, 'uploadFilesPromiseArray');
+
+				// file_name:
+				// index === 1
+				// 	? form.uploadedCoverImage[0].file_name
+				// 	: index === 2
+				// 	? form.uploadedLandscapeCoverImage[0]?.file_name
+				// 	: form.uploadedFiles[0].file_name,
+
 				Promise.all([...uploadFilesPromiseArray])
 					.then(async (mediaFiles) => {
-						const completedUpload = mediaFiles.map(async (file) => {
+						const completedUpload = mediaFiles.map(async (file, index) => {
 							if (file?.signed_response) {
-								return await axios.post(
+								const newFileUpload = await axios.post(
 									`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
 									{
 										file_name:
-											file.fileType === 'image'
+											index === 1
 												? form.uploadedCoverImage[0].file_name
+												: index === 2
+												? form.uploadedLandscapeCoverImage[0]?.file_name
 												: form.uploadedFiles[0].file_name,
+
 										type: 'medialibrary',
 										data: {
 											bucket: 'media',
@@ -804,38 +928,87 @@ const UploadOrEditMedia = ({
 										}
 									}
 								);
+								return newFileUpload;
+							} else {
+								Promise.resolve();
 							}
 						});
-						await uploadMedia(specificMedia?.id, {
-							title: form.title,
-							description: form.description,
-							type: 'medialibrary',
-							save_draft: false,
-							main_category_id: media_type,
-							sub_category_id: subId,
-							show_likes: form.show_likes ? true : false,
-							show_comments: form.show_comments ? true : false,
-							...(form.media_dropbox_url
-								? { media_dropbox_url: form.media_dropbox_url }
-								: {}),
-							...(form.image_dropbox_url
-								? { image_dropbox_url: form.image_dropbox_url }
-								: {}),
-							...(form.labels.length ? { labels: [...form.labels] } : {}),
-							data: {
-								file_name_media: form.uploadedFiles[0].file_name,
-								file_name_image: form.uploadedCoverImage[0].file_name,
-								image_data: mediaFiles[1]?.keys?.image_key,
-								audio_data: mediaFiles[0]?.keys?.audio_key,
-								video_data: mediaFiles[0]?.keys?.video_key,
-								...completedUpload?.data?.data
-							}
+
+						console.log(completedUpload, 'completedUpload');
+						Promise.all([...completedUpload]).then(async (mediaFiles2) => {
+							console.log('mediaFiles2', mediaFiles2);
+							await uploadMedia(specificMedia?.id, {
+								title: form.title,
+								description: form.description,
+								type: 'medialibrary',
+								save_draft: false,
+								main_category_id: media_type,
+								sub_category_id: subId,
+								show_likes: form.show_likes ? true : false,
+								show_comments: form.show_comments ? true : false,
+								dropbox_url: {
+									media: form.media_dropbox_url // audio video
+										? form.media_dropbox_url
+										: undefined,
+									portrait_cover_image: form.image_dropbox_url //portrait
+										? form.image_dropbox_url
+										: undefined,
+									landscape_cover_image: form.landscape_image_dropbox_url //landscape
+										? form.landscape_image_dropbox_url
+										: undefined
+								},
+								...(form.labels.length ? { labels: [...form.labels] } : {}),
+								media_url:
+									mediaFiles[0]?.keys?.video_key ||
+									mediaFiles[0]?.keys?.audio_key,
+								// uploadedFile1?.data?.data?.video_data ||
+								// uploadedFile1?.data?.data?.audio_data,
+
+								cover_image: {
+									...(mediaFiles[1]?.url
+										? {
+												portrait: {
+													width: portraitFileWidth,
+													height: portraitFileHeight,
+													image_url: mediaFiles[1]?.keys?.image_key
+												}
+										  }
+										: {
+												portrait: { ...form?.uploadedCoverImage[0] }
+										  }),
+									...(mediaFiles[2]?.url
+										? {
+												landscape: {
+													width: landscapeFileWidth,
+													height: landscapeFileHeight,
+													image_url: mediaFiles[2]?.keys?.image_key
+												}
+										  }
+										: {
+												landscape: { ...form?.uploadedLandscapeCoverImage[0] }
+										  })
+								},
+								file_name_media: form?.uploadedFiles[0]?.file_name,
+								file_name_portrait_image:
+									form?.uploadedCoverImage[0]?.file_name,
+								file_name_landscape_image:
+									form?.uploadedLandscapeCoverImage[0]?.file_name
+								// data: {
+								// 	file_name_media: form.uploadedFiles[0].file_name,
+								// 	file_name_image: form.uploadedCoverImage[0].file_name,
+								// 	image_data: mediaFiles[1]?.keys?.image_key,
+								// 	audio_data: mediaFiles[0]?.keys?.audio_key,
+								// 	video_data: mediaFiles[0]?.keys?.video_key,
+
+								// }
+							});
 						});
 					})
 					.catch(() => {
 						setIsLoadingUploadMedia(false);
 					});
 			} else {
+				// new file to publish
 				if (
 					(await handleTitleDuplicate(form.title)) === 200 &&
 					form.title !== specificMedia.title
@@ -853,77 +1026,175 @@ const UploadOrEditMedia = ({
 
 					return;
 				}
-				let uploadFilesPromiseArray = [
-					form.uploadedFiles[0],
-					form.uploadedCoverImage[0]
-				].map(async (_file) => {
-					return uploadFileToServer(_file);
-				});
 
-				Promise.all([...uploadFilesPromiseArray])
-					.then(async (mediaFiles) => {
-						const completeUpload = await axios.post(
-							`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-							{
-								file_name: form.uploadedFiles[0].file_name,
-								type: 'medialibrary',
-								data: {
-									bucket: 'media',
-									multipart_upload:
-										form.uploadedFiles[0]?.mime_type == 'video/mp4'
-											? [
-													{
-														e_tag:
-															mediaFiles[0]?.signed_response?.headers?.etag.replace(
-																/['"]+/g,
-																''
-															),
-														part_number: 1
-													}
-											  ]
-											: ['image'],
-									keys: {
-										image_key: mediaFiles[1]?.keys?.image_key,
-										...(form.mainCategory.name === 'Watch' ||
-										specificMedia?.media_type === 'Watch'
-											? {
-													video_key: mediaFiles[0]?.keys?.video_key,
-													audio_key: ''
-											  }
-											: {
-													audio_key: mediaFiles[0]?.keys?.audio_key,
-													video_key: ''
-											  })
-									},
-									upload_id:
-										form.mainCategory?.name === 'Watch' ||
-										specificMedia?.media_type === 'Watch'
-											? mediaFiles[0].upload_id
-											: 'audio'
-								}
+				let uploadedFile1;
+				let promiseFile1;
+
+				if (form.uploadedFiles[0]) {
+					promiseFile1 = await uploadFileToServer(
+						form.uploadedFiles[0],
+						form.uploadedFiles[0].type
+					);
+				}
+
+				uploadedFile1 = await axios.post(
+					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+					{
+						file_name: form.uploadedFiles[0].file_name,
+						type: 'medialibrary',
+						data: {
+							bucket: 'media',
+							multipart_upload:
+								form.uploadedFiles[0]?.mime_type == 'video/mp4'
+									? [
+											{
+												e_tag:
+													promiseFile1?.signed_response?.headers?.etag.replace(
+														/['"]+/g,
+														''
+													),
+												part_number: 1
+											}
+									  ]
+									: ['image'],
+							keys: {
+								image_key: promiseFile1?.keys?.image_key,
+
+								...(form.mainCategory.name === 'Watch' ||
+								specificMedia?.media_type === 'Watch'
+									? {
+											video_key: promiseFile1?.keys?.video_key,
+											audio_key: ''
+									  }
+									: {
+											audio_key: promiseFile1?.keys?.audio_key,
+											video_key: ''
+									  })
 							},
-							{
-								headers: {
-									Authorization: `Bearer ${
-										getLocalStorageDetails()?.access_token
-									}`
-								}
-							}
-						);
-						await uploadMedia(null, {
-							type: 'medialibrary',
-							data: {
-								file_name_media: form.uploadedFiles[0].file_name,
-								file_name_image: form.uploadedCoverImage[0].file_name,
-								...completeUpload?.data?.data
-							}
-						});
-					})
-					.catch(() => {
-						setIsLoadingUploadMedia(false);
-					});
+							upload_id:
+								form.mainCategory?.name === 'Watch' ||
+								specificMedia?.media_type === 'Watch'
+									? promiseFile1.upload_id
+									: 'audio'
+						}
+					},
+					{
+						headers: {
+							Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+						}
+					}
+				);
+
+				//portrait
+				let promiseFile2;
+				let portraitImageData;
+
+				if (form.uploadedCoverImage[0]) {
+					promiseFile2 = await uploadFileToServer(
+						form.uploadedCoverImage[0],
+						form.uploadedCoverImage[0].type
+					);
+				}
+				portraitImageData = await CompleteUploadMedia(
+					promiseFile2,
+					form.uploadedCoverImage[0]?.file_name
+				);
+
+				//landscape
+				let promiseFile3;
+				let landscapeImageData;
+
+				if (form.uploadedLandscapeCoverImage[0]) {
+					promiseFile3 = await uploadFileToServer(
+						form.uploadedLandscapeCoverImage[0],
+						form.uploadedLandscapeCoverImage[0].type
+					);
+				}
+				landscapeImageData = await CompleteUploadMedia(
+					promiseFile3,
+					form.uploadedLandscapeCoverImage[0]?.file_name
+				);
+
+				await uploadMedia(null, {
+					type: 'medialibrary',
+
+					media_url:
+						uploadedFile1?.data?.data?.video_data ||
+						uploadedFile1?.data?.data?.audio_data,
+
+					cover_image: {
+						portrait: {
+							width: portraitFileWidth,
+							height: portraitFileHeight,
+							image_url:
+								portraitImageData && portraitImageData?.data?.data?.image_data
+						},
+						landscape: {
+							width: landscapeFileWidth,
+							height: landscapeFileHeight,
+							image_url:
+								landscapeImageData && landscapeImageData?.data?.data?.image_data
+						}
+					},
+					file_name_media: form?.uploadedFiles[0]?.file_name,
+					file_name_portrait_image: form?.uploadedCoverImage[0]?.file_name,
+					file_name_landscape_image:
+						form?.uploadedLandscapeCoverImage[0]?.file_name
+				});
 			}
 		}
+	};
+
+	const CompleteUploadMedia = async (mediaFiles, filename) => {
+		console.log(mediaFiles, filename, 'filename', 'mediaFiles');
+		console.log(
+			form.uploadedLandscapeCoverImage[0]?.file_name,
+			'form.uploadedLandscapeCoverImage[0]?.file_name'
+		);
+		let completeUpload = await axios.post(
+			`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+			{
+				file_name: filename,
+				type: 'medialibrary',
+				data: {
+					bucket: 'media',
+					multipart_upload:
+						form.uploadedFiles[0]?.mime_type == 'video/mp4'
+							? [
+									{
+										e_tag: mediaFiles?.signed_response?.headers?.etag.replace(
+											/['"]+/g,
+											''
+										),
+										part_number: 1
+									}
+							  ]
+							: ['image'],
+					keys: {
+						image_key: mediaFiles?.keys?.image_key,
+
+						...(form.mainCategory.name === 'Watch' ||
+						specificMedia?.media_type === 'Watch'
+							? {
+									video_key: mediaFiles?.keys?.video_key,
+									audio_key: ''
+							  }
+							: {
+									audio_key: mediaFiles?.keys?.audio_key,
+									video_key: ''
+							  })
+					},
+					upload_id: 'image'
+				}
+			},
+			{
+				headers: {
+					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+				}
+			}
+		);
+
+		return completeUpload;
 	};
 
 	const saveDraftBtn = async () => {
@@ -934,8 +1205,9 @@ const UploadOrEditMedia = ({
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 
 			if (isEdit) {
-				let uploadedFile;
-				let uploadedCoverImage;
+				let uploadedFile; // audio / video
+				let uploadedCoverImage; //portrait
+				let uploadedLandscapeCoverImage; //landscape
 				let media_type = mainCategories.find(
 					(u) => u.name === form?.mainCategory || form?.mainCategory?.name
 				)?.id;
@@ -972,6 +1244,22 @@ const UploadOrEditMedia = ({
 					);
 				}
 
+				if (
+					form.uploadedLandscapeCoverImage[0] &&
+					form.uploadedLandscapeCoverImage[0]?.file
+				) {
+					let promiseFile = await uploadFileToServer(
+						form.uploadedLandscapeCoverImage[0],
+						form.uploadedLandscapeCoverImage[0].type
+					);
+
+					uploadedLandscapeCoverImage = await completeUplaod(
+						form,
+						promiseFile,
+						'medialibrary',
+						true
+					);
+				}
 				await uploadMedia(specificMedia?.id, {
 					save_draft: true,
 					type: 'medialibrary',
@@ -979,47 +1267,117 @@ const UploadOrEditMedia = ({
 					description: form.description,
 					main_category_id: media_type,
 					sub_category_id: subId,
-					// ...(form.media_dropbox_url
-					// 	? { media_dropbox_url: form.media_dropbox_url }
-					// 	: {}),
-					// ...(form.image_dropbox_url
-					// 	? { image_dropbox_url: form.image_dropbox_url }
-					// 	: {}),
-					media_dropbox_url: form?.media_dropbox_url
-						? form.media_dropbox_url
-						: undefined,
-					image_dropbox_url: form?.image_dropbox_url
-						? form.image_dropbox_url
-						: undefined,
+					dropbox_url: {
+						media: form.media_dropbox_url // audio video
+							? form.media_dropbox_url
+							: undefined,
+						portrait_cover_image: form.image_dropbox_url //portrait
+							? form.image_dropbox_url
+							: undefined,
+						landscape_cover_image: form.landscape_image_dropbox_url //landscape
+							? form.landscape_image_dropbox_url
+							: undefined
+					},
+
 					labels: [...form.labels],
 					show_likes: form.show_likes ? true : false,
 					show_comments: form.show_comments ? true : false,
-					data: {
-						...(!form.uploadedCoverImage[0] && { image_data: null }),
-						...(!form.uploadedFiles[0] && {
-							audio_data: null,
-							video_data: null
-						}),
-						...(uploadedFile &&
-							(form?.uploadedFiles[0]?.file || form?.uploadedFiles[0]) && {
-								...uploadedFile?.data?.data,
-								image_data: uploadedCoverImage?.data?.data?.image_data
-							}),
-						...(uploadedCoverImage &&
-							(form?.uploadedCoverImage[0]?.file ||
-								form?.uploadedCoverImage[0]) && {
-								...uploadedCoverImage?.data?.data,
-								audio_data: uploadedFile?.data?.data?.audio_data,
-								video_data: uploadedFile?.data?.data?.video_data
-							}),
-						file_name_image: form?.uploadedCoverImage[0]?.file_name,
-						file_name_media: form?.uploadedFiles[0]?.file_name
-					}
+					cover_image: {
+						...(form?.uploadedCoverImage[0]?.file
+							? {
+									portrait: {
+										width: portraitFileWidth,
+										height: portraitFileHeight,
+										image_url: uploadedCoverImage?.data?.data?.image_data
+									}
+							  }
+							: {
+									portrait: {
+										...form?.uploadedCoverImage[0],
+										image_url:
+											form?.uploadedCoverImage[0]?.media_url.split(
+												'cloudfront.net/'
+											)[1]
+									}
+							  }),
+
+						...(form?.uploadedLandscapeCoverImage[0]?.file
+							? {
+									landscape: {
+										width: landscapeFileWidth,
+										height: landscapeFileHeight,
+										image_url:
+											uploadedLandscapeCoverImage?.data?.data?.image_data
+									}
+							  }
+							: {
+									landscape: {
+										...form?.uploadedLandscapeCoverImage[0],
+										image_url:
+											form?.uploadedLandscapeCoverImage[0]?.media_url.split(
+												'cloudfront.net/'
+											)[1]
+									}
+							  })
+					},
+					//audio / video
+					...(uploadedFile && {
+						...uploadedFile?.data?.data,
+						media_url:
+							uploadedFile?.data?.data?.video_data === null
+								? uploadedFile?.data?.data?.audio_data
+								: uploadedFile?.data?.data?.video_data
+					}),
+
+					//file names
+					file_name_media: form?.uploadedFiles[0]?.file_name,
+					file_name_portrait_image: form?.uploadedCoverImage[0]?.file_name,
+					file_name_landscape_image:
+						form?.uploadedLandscapeCoverImage[0]?.file_name
+
+					// data: {
+					// 	...(!form.uploadedCoverImage[0] && { image_data: null }),
+					// 	...(!form.uploadedFiles[0] && {
+					// 		audio_data: null,
+					// 		video_data: null
+					// 	}),
+					// 	...(!form.uploadedLandscapeCoverImage[0] && {
+					// 		audio_data: null,
+					// 		video_data: null
+					// 	}),
+					// 	...(uploadedFile &&
+					// 		(form?.uploadedFiles[0]?.file || form?.uploadedFiles[0]) && {
+					// 			...uploadedFile?.data?.data,
+					// 			image_data: uploadedCoverImage?.data?.data?.image_data
+					// 		}),
+
+					// ...(uploadedCoverImage && //portrait
+					// 	(form?.uploadedCoverImage[0]?.file ||
+					// 		form?.uploadedCoverImage[0]) && {
+					// 		...uploadedCoverImage?.data?.data,
+					// 		audio_data: uploadedFile?.data?.data?.audio_data,
+					// 		video_data: uploadedFile?.data?.data?.video_data
+					// 	}),
+
+					// 	...(uploadedLandscapeCoverImage && //landscape
+					// 		(form?.uploadedLandscapeCoverImage[0]?.file ||
+					// 			form?.uploadedCoverImage[0]) && {
+					// 			...uploadedLandscapeCoverImage?.data?.data,
+					// 			image_data: uploadedLandscapeCoverImage?.data?.data?.image_data
+					// 		}),
+
+					// 	file_name_portrait_image: form?.uploadedCoverImage[0]?.file_name,
+					// 	file_name_media: form?.uploadedFiles[0]?.file_name,
+					// 	file_name_landscape_image:
+					// 		form?.uploadedLandscapeCoverImage[0]?.file_name
+					// }
 				});
 			} else {
 				//new draft
 				let uploadedFile;
-				let uploadedCoverImage;
+				let uploadedCoverImage; //portrait cover
+				let uploadedLandscapeCoverImage; //landscape cover
+
 				if (form.uploadedFiles[0]) {
 					let promiseFile = await uploadFileToServer(
 						form.uploadedFiles[0],
@@ -1047,24 +1405,55 @@ const UploadOrEditMedia = ({
 					);
 				}
 
+				if (form.uploadedLandscapeCoverImage[0]) {
+					let promiseFile = await uploadFileToServer(
+						form.uploadedLandscapeCoverImage[0],
+						form.uploadedLandscapeCoverImage[0].type
+					);
+
+					uploadedLandscapeCoverImage = await completeUplaod(
+						form,
+						promiseFile,
+						'medialibrary',
+						true // image/video exists - true
+					);
+				}
+
 				await uploadMedia(null, {
 					save_draft: true,
 					type: 'medialibrary',
 
-					data: {
-						...(uploadedFile && {
-							...uploadedFile?.data?.data,
-							image_data: uploadedCoverImage?.data?.data?.image_data
-						}),
-						...(uploadedCoverImage && {
-							...uploadedCoverImage?.data?.data,
-							audio_data: uploadedFile?.data?.data?.audio_data,
-							video_data: uploadedFile?.data?.data?.video_data
-						}),
-						file_name_media: form?.uploadedFiles[0]?.file_name,
-						file_name_image: form?.uploadedCoverImage[0]?.file_name
-						// ...completeUpload?.data?.data
-					}
+					...(uploadedFile && {
+						...uploadedFile?.data?.data,
+						// audio_data: uploadedFile?.data?.data?.audio_data,
+						// video_data: uploadedFile?.data?.data?.video_data,
+						// image_data: null
+						media_url:
+							uploadedFile?.data?.data?.video_data === null
+								? uploadedFile?.data?.data?.audio_data
+								: uploadedFile?.data?.data?.video_data
+					}),
+
+					cover_image: {
+						portrait: {
+							width: portraitFileWidth,
+							height: portraitFileHeight,
+							image_url:
+								uploadedCoverImage && uploadedCoverImage?.data?.data?.image_data
+						},
+						landscape: {
+							width: landscapeFileWidth,
+							height: landscapeFileHeight,
+							image_url:
+								uploadedLandscapeCoverImage &&
+								uploadedLandscapeCoverImage?.data?.data?.image_data
+						}
+					},
+					file_name_media: form?.uploadedFiles[0]?.file_name,
+					file_name_portrait_image: form?.uploadedCoverImage[0]?.file_name,
+					file_name_landscape_image:
+						form?.uploadedLandscapeCoverImage[0]?.file_name
+					// ...completeUpload?.data?.data
 				});
 			}
 		}
@@ -1081,6 +1470,11 @@ const UploadOrEditMedia = ({
 					}
 					if (form.uploadedCoverImage.length && !isEdit) {
 						form.uploadedCoverImage.map((file) => handleDeleteFile2(file.id));
+					}
+					if (form.uploadedLandscapeCoverImage.length && !isEdit) {
+						form.uploadedLandscapeCoverImage.map((file) =>
+							handleDeleteFile3(file.id)
+						);
 					}
 				}}
 				title={title}
@@ -1336,7 +1730,6 @@ const UploadOrEditMedia = ({
 											) : (
 												<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
 											)}
-
 											<DragAndDropField
 												uploadedFiles={form.uploadedFiles}
 												isEdit={isEdit}
@@ -1394,7 +1787,6 @@ const UploadOrEditMedia = ({
 													</div>
 												</section>
 											)}
-
 											<p className={globalClasses.fileRejectionError}>
 												{fileRejectionError}
 											</p>
@@ -1425,8 +1817,9 @@ const UploadOrEditMedia = ({
 													}}
 												/>
 											</div>
-
 											<h5>{isEdit ? 'Cover Image' : 'Add Cover Image'}</h5>
+											<br />
+											<h6 className={classes.PotraitImage}>PORTRAIT IMAGE</h6>
 											<DragAndDropField
 												uploadedFiles={form.uploadedCoverImage}
 												isEdit={isEdit}
@@ -1436,8 +1829,8 @@ const UploadOrEditMedia = ({
 												isArticle
 												imgEl={imgRef}
 												imageOnload={() => {
-													setFileWidth(imgRef.current.naturalWidth);
-													setFileHeight(imgRef.current.naturalHeight);
+													setPortraitFileWidth(imgRef.current.naturalWidth);
+													setPortraitFileHeight(imgRef.current.naturalHeight);
 												}}
 											/>
 											{!form.uploadedCoverImage.length && (
@@ -1467,22 +1860,31 @@ const UploadOrEditMedia = ({
 															Click or drag file to this area to upload
 														</p>
 														<p className={globalClasses.formatMsg}>
-															Supported formats are jpeg, png
+															Supported formats are <strong>jpeg</strong> and
+															<strong> png</strong>.
+														</p>
+														<p className={globalClasses.formatMsg}>
+															Required size <strong>720x900</strong>
 														</p>
 														<p className={globalClasses.uploadMediaError}>
 															{isError.uploadedCoverImage
 																? 'You need to upload a cover image in order to post'
 																: ''}
 														</p>
+
+														<p className={globalClasses.uploadMediaError}>
+															{isError.portraitDimensions
+																? 'please upload image with proper dimensions'
+																: ''}
+														</p>
 													</div>
 												</section>
 											)}
-
 											<p className={globalClasses.fileRejectionError}>
 												{fileRejectionError2}
 											</p>
 											<div className={globalClasses.dropBoxUrlContainer}>
-												<h6>DROPBOX URL</h6>
+												<h6>PORTRAIT DROPBOX URL</h6>
 												<TextField
 													value={form.image_dropbox_url}
 													onChange={(e) =>
@@ -1506,7 +1908,92 @@ const UploadOrEditMedia = ({
 													}}
 												/>
 											</div>
-
+											{/* landscape image  */}
+											<h6 className={classes.PotraitImage}>LANDSCAPE IMAGE</h6>
+											<DragAndDropField
+												uploadedFiles={form.uploadedLandscapeCoverImage}
+												isEdit={isEdit}
+												handleDeleteFile={handleDeleteFile3}
+												setPreviewBool={setPreviewBool}
+												setPreviewFile={setPreviewFile}
+												isArticle
+												imgEl={imgRef}
+												imageOnload={() => {
+													setLandscapeFileWidth(imgRef.current.naturalWidth);
+													setLandscapeFileHeight(imgRef.current.naturalHeight);
+												}}
+											/>
+											{/* !form.uploadedLandscapeCoverImage.length && */}
+											{!form.uploadedLandscapeCoverImage.length && (
+												<section
+													className={[
+														globalClasses.dropZoneContainer,
+														isError.uploadedLandscapeCoverImage
+															? globalClasses.errorState
+															: globalClasses.noErrorState
+													].join(' ')}
+													style={{
+														borderColor: isError.uploadedLandscapeCoverImage
+															? '#ff355a'
+															: 'yellow'
+													}}
+												>
+													<div
+														{...getRootProps3({
+															className: globalClasses.dropzone
+														})}
+													>
+														<input {...getInputProps3()} />
+														<AddCircleOutlineIcon
+															className={globalClasses.addFilesIcon}
+														/>
+														<p className={globalClasses.dragMsg}>
+															Click or drag file to this area to upload
+														</p>
+														<p className={globalClasses.formatMsg}>
+															Supported formats are <strong>jpeg</strong> and
+															<strong> png</strong>.
+														</p>
+														<p className={globalClasses.formatMsg}>
+															Required size <strong>1920x1080</strong>
+														</p>
+														<p className={globalClasses.uploadMediaError}>
+															{isError.uploadedLandscapeCoverImage
+																? 'You need to upload a cover image in order to post'
+																: ''}
+														</p>
+													</div>
+												</section>
+											)}
+											<p className={globalClasses.fileRejectionError}>
+												{fileRejectionError3}
+											</p>
+											<div className={globalClasses.dropBoxUrlContainer}>
+												<h6>LANDSCAPE DROPBOX URL</h6>
+												<TextField
+													value={form.landscape_image_dropbox_url}
+													onChange={(e) =>
+														setForm((prev) => {
+															return {
+																...prev,
+																landscape_image_dropbox_url: e.target.value
+															};
+														})
+													}
+													placeholder={'Please drop the dropbox URL here'}
+													className={globalClasses.textField}
+													InputProps={{
+														disableUnderline: true,
+														className: classes.textFieldInput,
+														style: {
+															borderRadius: form.image_dropbox_url
+																? '16px'
+																: '40px'
+														}
+													}}
+												/>
+											</div>
+											{/* landscape image  */}
 											<div className={classes.titleContainer}>
 												<div className={globalClasses.characterCount}>
 													<h6
@@ -1556,7 +2043,6 @@ const UploadOrEditMedia = ({
 											<p className={globalClasses.mediaError}>
 												{isError.titleMedia ? isError.titleMedia.message : ''}
 											</p>
-
 											<div className={classes.titleContainer}>
 												<h6
 													className={[
@@ -1591,7 +2077,6 @@ const UploadOrEditMedia = ({
 													? 'You need to select atleast 1 label to save as draft'
 													: ''}
 											</p>
-
 											<div className={classes.titleContainer}>
 												<h6
 													className={[
@@ -1644,7 +2129,6 @@ const UploadOrEditMedia = ({
 													/>
 												</div>
 											</div>
-
 											<div
 												className={classes.postMediaContainer}
 												style={{ marginBottom: '1rem' }}

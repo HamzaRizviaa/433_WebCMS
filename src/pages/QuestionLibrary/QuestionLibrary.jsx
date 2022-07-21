@@ -189,7 +189,7 @@ const QuestionLibrary = () => {
 							col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -205,7 +205,7 @@ const QuestionLibrary = () => {
 							col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -221,7 +221,7 @@ const QuestionLibrary = () => {
 							col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);

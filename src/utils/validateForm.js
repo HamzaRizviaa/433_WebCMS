@@ -4,6 +4,16 @@ const validateForm = (form, dataElements, newsData) => {
 			if (key.includes('dropbox_url')) {
 				return true;
 			}
+			if (key.includes('landscape_dropbox_url')) {
+				return true;
+			}
+			if (
+				key.includes('landscape_image_dropbox_url') ||
+				key.includes('image_dropbox_url') ||
+				key.includes('media_dropbox_url')
+			) {
+				return true;
+			}
 			return !form[key] ? false : true;
 		}
 		if (typeof form[key] === 'object') {

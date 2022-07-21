@@ -12,7 +12,8 @@ const completeUplaodDraft = async (
 		{
 			file_name:
 				form?.uploadedFiles[0]?.file_name ||
-				form?.uploadedCoverImage[0]?.file_name,
+				form?.uploadedCoverImage[0]?.file_name ||
+				form.uploadedLandscapeCoverImage[0].file_name,
 			type: libraryType,
 			data: {
 				bucket: 'media',
@@ -30,7 +31,9 @@ const completeUplaodDraft = async (
 				keys: {
 					image_key: image
 						? promiseFile?.keys?.image_key
-						: form.uploadedCoverImage[0]?.keys?.image_key || '',
+						: form.uploadedCoverImage[0]?.keys?.image_key ||
+						  form.uploadedLandscapeCoverImage[0]?.keys?.image_key ||
+						  '',
 					...(form.mainCategory.name === 'Watch' ||
 					form.mainCategory === 'Watch'
 						? {

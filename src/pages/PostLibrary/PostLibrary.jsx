@@ -284,21 +284,21 @@ const PostLibrary = () => {
 			return (
 				<ArrowDropUpIcon
 					className={classes.sortIcon}
-					style={{ bottom: '-2px' }}
+					style={{ bottom: '1.5px' }}
 				/>
 			);
 		else if (order === 'asc')
 			return (
 				<ArrowDropUpIcon
 					className={classes.sortIconSelected}
-					style={{ bottom: '-2px' }}
+					style={{ bottom: '1.5px' }}
 				/>
 			);
 		else if (order === 'desc')
 			return (
 				<ArrowDropDownIcon
 					className={classes.sortIconSelected}
-					style={{ bottom: '-2px' }}
+					style={{ bottom: '1.5px' }}
 				/>
 			);
 		return null;

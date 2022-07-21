@@ -479,7 +479,7 @@ export const useStyles = makeStyles(() => ({
 	sortIcon: {
 		position: 'absolute',
 		left: '-4px',
-		bottom: '-2px',
+		bottom: '1.5px',
 		height: '2rem !important',
 		width: '2rem !important'
 	},
@@ -487,7 +487,7 @@ export const useStyles = makeStyles(() => ({
 	sortIconSelected: {
 		position: 'absolute',
 		left: '-4px',
-		bottom: '-2px',
+		bottom: '1.5px',
 		height: '2rem !important',
 		width: ' 2rem !important',
 		color: theme.palette.neonYellow
