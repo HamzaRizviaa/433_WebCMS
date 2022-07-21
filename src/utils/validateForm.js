@@ -4,6 +4,9 @@ const validateForm = (form, dataElements, newsData) => {
 			if (key.includes('dropbox_url')) {
 				return true;
 			}
+			if (key.includes('landscape_dropbox_url')) {
+				return true;
+			}
 			return !form[key] ? false : true;
 		}
 		if (typeof form[key] === 'object') {

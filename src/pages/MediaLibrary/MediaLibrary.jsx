@@ -12,7 +12,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
 	getMedia,
 	resetCalendarError,
-	resetNoResultStatus
+	resetNoResultStatus,
+	getMediaLabels
 } from './mediaLibrarySlice';
 
 import { getSpecificMedia } from './mediaLibrarySlice';
@@ -292,7 +293,7 @@ const MediaLibrary = () => {
 							col?.dataField === 'last_edit'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -309,7 +310,7 @@ const MediaLibrary = () => {
 							col?.dataField === 'last_edit'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -326,7 +327,7 @@ const MediaLibrary = () => {
 							col?.dataField === 'last_edit'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -573,6 +574,7 @@ const MediaLibrary = () => {
 
 	const tableRowEvents = {
 		onClick: (e, row) => {
+			row.status === 'draft' && dispatch(getMediaLabels());
 			dispatch(getSpecificMedia(row.id));
 			setrowStatus(row.status);
 			setEdit(true);
@@ -642,6 +644,7 @@ const MediaLibrary = () => {
 						<h1 style={{ marginRight: '2rem' }}>MEDIA LIBRARY</h1>
 						<Button
 							onClick={() => {
+								dispatch(getMediaLabels());
 								setEdit(false);
 								setShowSlider(true);
 							}}

@@ -31,6 +31,8 @@ import {
 	resetNoResultStatus,
 	getSpecificArticle
 } from './articleLibrarySlice';
+import { getPostLabels } from '../PostLibrary/postLibrarySlice';
+
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
 import DefaultImage from '../../assets/defaultImage.png';
@@ -159,7 +161,7 @@ const ArticleLibrary = () => {
 					style={{
 						left:
 							col?.dataField === 'article_title'
-								? 0
+								? -4
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||
@@ -167,7 +169,7 @@ const ArticleLibrary = () => {
 								  col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -178,7 +180,7 @@ const ArticleLibrary = () => {
 					style={{
 						left:
 							col?.dataField === 'article_title'
-								? 0
+								? -4
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||
@@ -186,7 +188,7 @@ const ArticleLibrary = () => {
 								  col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -197,7 +199,7 @@ const ArticleLibrary = () => {
 					style={{
 						left:
 							col?.dataField === 'article_title'
-								? 0
+								? -4
 								: col?.dataField === 'labels' ||
 								  col?.dataField === 'post_date' ||
 								  col?.dataField === 'last_edit' ||
@@ -205,7 +207,7 @@ const ArticleLibrary = () => {
 								  col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -396,6 +398,7 @@ const ArticleLibrary = () => {
 
 	const tableRowEvents = {
 		onClick: (e, row) => {
+			row.status === 'draft' && dispatch(getPostLabels());
 			dispatch(getSpecificArticle(row.id));
 			setEdit(true);
 			setShowSlider(true);
@@ -551,6 +554,7 @@ const ArticleLibrary = () => {
 						<h1 style={{ marginRight: '2rem' }}>ARTICLE LIBRARY</h1>
 						<Button
 							onClick={() => {
+								dispatch(getPostLabels());
 								setEdit(false);
 								setShowSlider(true);
 							}}

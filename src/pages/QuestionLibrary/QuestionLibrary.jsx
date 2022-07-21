@@ -39,7 +39,8 @@ import {
 	resetNoResultStatus,
 	getQuestionEdit,
 	getQuestionResultDetail,
-	getQuestionResulParticipant
+	getQuestionResulParticipant,
+	getQuestionLabels
 } from './questionLibrarySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
@@ -188,7 +189,7 @@ const QuestionLibrary = () => {
 							col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -204,7 +205,7 @@ const QuestionLibrary = () => {
 							col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -220,7 +221,7 @@ const QuestionLibrary = () => {
 							col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -391,6 +392,7 @@ const QuestionLibrary = () => {
 		onClick: (e, row) => {
 			// if (!edit) {
 			// dispatch(getSpecificPost(row.id));
+			row.status === 'draft' && dispatch(getQuestionLabels());
 			dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
 			dispatch(
 				getQuestionResultDetail({ id: row.id, type: row.question_type })
@@ -550,6 +552,7 @@ const QuestionLibrary = () => {
 						<h1 style={{ marginRight: '2rem' }}>QUESTION LIBRARY</h1>
 						<Button
 							onClick={() => {
+								dispatch(getQuestionLabels());
 								setEdit(false);
 								setShowSlider(true);
 							}}

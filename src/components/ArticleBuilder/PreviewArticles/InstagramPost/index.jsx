@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { getLocalStorageDetails } from '../../../../utils';
 import { useStyles } from '../index.style';
-const TwitterPost = ({ data, itemIndex }) => {
+const InstagramPost = ({ data, itemIndex }) => {
 	const [markup, setMarkup] = useState('');
 	const [thumbnailHeight, setThumbnailHeight] = useState(0);
 	const [thumbnailWidth, setThumbnailWidth] = useState(0);
@@ -19,15 +19,16 @@ const TwitterPost = ({ data, itemIndex }) => {
 			}, delay);
 		};
 	};
-	const twitterCall = async () => {
+	const instagramrCall = async () => {
+		console.log('Api Again');
 		setMarkup('');
 		try {
 			const result = await axios.get(
 				`${
 					process.env.REACT_APP_API_ENDPOINT
 				}/social-media/get-embed-data?url=${
-					data.data && data.data[0].twitter_post_url
-				}&type=twitter`,
+					data.data && data.data[0].ig_post_url
+				}&type=instagram`,
 				{
 					headers: {
 						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
@@ -37,25 +38,27 @@ const TwitterPost = ({ data, itemIndex }) => {
 			if (result.status === 200) {
 				if (result.data.status_code === 200) {
 					setMarkup(result.data?.data?.html);
+					setThumbnailHeight(result.data?.data?.thumbnail_height);
+					setThumbnailWidth(result.data?.data?.thumbnail_width);
 				} else {
 					setMarkup('');
 					setThumbnailHeight(0);
 					setThumbnailWidth(0);
 				}
 			}
-		} catch (error) {
+		} catch (e) {
 			setMarkup('');
 			setThumbnailHeight(0);
 			setThumbnailWidth(0);
-			console.log(error, 'error');
+			console.log(e, 'e');
 		}
 	};
 	useEffect(() => {
-		if (data?.data) debouceApiCall(twitterCall(), 1000);
+		if (data?.data) debouceApiCall(instagramrCall(), 1000);
 	}, [data.data]);
 
 	useEffect(() => {
-		twitterCall();
+		instagramrCall();
 
 		return () => {
 			setMarkup('');
@@ -67,20 +70,20 @@ const TwitterPost = ({ data, itemIndex }) => {
 	useEffect(() => {
 		setTimeout(() => {
 			if (window) {
-				window.twttr.widgets.load();
+				window.instgrm.Embeds.process();
 			}
 		}, 500);
 	}, [markup]);
 	return (
 		<>
-			<Box pr={3} className={classes.twitterBox}>
+			<Box pr={3} className={classes.instaBox}>
 				{markup && <Markup content={markup} />}
 			</Box>
 		</>
 	);
 };
-export default TwitterPost;
-TwitterPost.propTypes = {
+export default InstagramPost;
+InstagramPost.propTypes = {
 	data: PropTypes.object.isRequired,
 	itemIndex: PropTypes.number
 };

@@ -32,12 +32,14 @@ import {
 	checkEmptyMediaNews,
 	comparingNewsFields,
 	checkNewElementNEWS,
-	checkSortOrderOnEdit
+	checkSortOrderOnEdit,
+	checkDuplicateLabel
 } from '../../../utils/newsUtils';
 
 //api calls
-import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
+// import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import { getAllNews } from '../../../pages/NewsLibrary/newsLibrarySlice';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 const UploadOrEditNews = ({
 	open,
@@ -80,7 +82,7 @@ const UploadOrEditNews = ({
 	);
 
 	useEffect(() => {
-		dispatch(getPostLabels());
+		// dispatch(getPostLabels());
 		return () => {
 			resetState();
 		};
@@ -114,46 +116,6 @@ const UploadOrEditNews = ({
 		}
 	}, [specificNews]);
 
-	// const checkMediaUrlPublish = (news) => {
-	// 	if (news.length === 0) {
-	// 		return true;
-	// 	} else {
-	// 		const validated = news.map((item) => {
-	// 			if (!item?.data) {
-	// 				return false;
-	// 			}
-	// 			if (item.data) {
-	// 				if (!item.data[0]?.media_url) {
-	// 					return false;
-	// 				} else {
-	// 					return true;
-	// 				}
-	// 			}
-	// 		});
-	// 		return !validated.every((item) => item === true);
-	// 	}
-	// };
-
-	const checkMediaUrlDraft = (news) => {
-		if (news.length === 0) {
-			return true;
-		} else {
-			const validated = news.map((item) => {
-				if (!item?.data) {
-					return false;
-				}
-				if (item.data) {
-					if (!item.data[0]?.media_url) {
-						return false;
-					} else {
-						return true;
-					}
-				}
-			});
-			return validated.some((item) => item === false);
-		}
-	};
-
 	useEffect(() => {
 		if (specificNews) {
 			const validateEmptyNewsArray = [
@@ -164,6 +126,17 @@ const UploadOrEditNews = ({
 				!validateForm(form, null, news) ||
 					!validateEmptyNewsArray.every((item) => item === true) ||
 					comparingNewsFields(specificNews, form)
+			);
+		}
+	}, [specificNews, form]);
+
+	useEffect(() => {
+		if (specificNews) {
+			setDraftBtnDisabled(
+				!validateDraft(form, null, news) ||
+					(comparingNewsFields(specificNews, form) &&
+						specificNews?.labels?.length === form?.labels.length &&
+						!checkDuplicateLabel(form, specificNews))
 			);
 		}
 	}, [specificNews, form]);
@@ -213,7 +186,42 @@ const UploadOrEditNews = ({
 	}, [news]);
 
 	useEffect(() => {
-		setDraftBtnDisabled(checkMediaUrlDraft(news));
+		const validateEmptyNewsArray = [checkEmptyMediaNews(news)];
+
+		const validateEmptyNewsAndEditComparisonArray = [
+			checkNewElementNEWS(specificNews, news)
+		];
+
+		if (
+			!validateDraft(form, null, news) ||
+			!comparingNewsFields(specificNews, form)
+		) {
+			setDraftBtnDisabled(
+				!validateEmptyNewsArray.every((item) => item === true) ||
+					!validateDraft(form, null, news)
+			);
+		} else {
+			if (specificNews?.slides?.length !== news?.length) {
+				setDraftBtnDisabled(
+					!validateEmptyNewsArray.every((item) => item === true)
+				);
+			} else {
+				if (
+					validateEmptyNewsAndEditComparisonArray.every(
+						(item) => item === true
+					) ||
+					!validateEmptyNewsArray.every((item) => item === true)
+				) {
+					setDraftBtnDisabled(!checkSortOrderOnEdit(specificNews, news));
+				} else {
+					setDraftBtnDisabled(
+						validateEmptyNewsAndEditComparisonArray.every(
+							(item) => item === true
+						) || !validateEmptyNewsArray.every((item) => item === true)
+					);
+				}
+			}
+		}
 	}, [news]);
 
 	const updateSlidesDataFromAPI = (data) => {
@@ -456,7 +464,7 @@ const UploadOrEditNews = ({
 				// setPostButtonStatus(false);
 				handleClose();
 				dispatch(getAllNews({ page }));
-				dispatch(getPostLabels());
+				// dispatch(getPostLabels());
 			}
 		} catch (e) {
 			toast.error(isEdit ? 'Failed to edit news!' : 'Failed to create news!');

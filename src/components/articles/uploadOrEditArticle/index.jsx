@@ -25,6 +25,7 @@ import Instragram from '../../../assets/Instagram.svg';
 import Text from '../../../assets/Text.svg';
 import ImageVideo from '../../../assets/Image.svg';
 import Tweet from '../../../assets/Twitter Line.svg';
+import Question from '../../../assets/Quiz.svg';
 
 /*  ArticleBuilder imports  */
 import ArticleElements from '../../ArticleBuilder/ArticleElements'; // left pan of buttons
@@ -35,6 +36,7 @@ import ArticleSocialMediaDraggable from '../../ArticleBuilder/ArticleSocialMedia
 import ImagePreview from '../../ArticleBuilder/PreviewArticles/imagePreview';
 import TextPreview from '../../ArticleBuilder/PreviewArticles/textPreview';
 import TwitterPost from '../../ArticleBuilder/PreviewArticles/TwitterPost';
+import InstagramPost from '../../ArticleBuilder/PreviewArticles/InstagramPost';
 import DraggableWrapper from '../../ArticleBuilder/DraggableWrapper';
 import PreviewWrapper from '../../ArticleBuilder/PreviewWrapper';
 import ArticleSlider from '../../ArticleBuilder/ArticleSlider';
@@ -47,6 +49,8 @@ import {
 	getArticleSubCategories
 } from '../../../pages/ArticleLibrary/articleLibrarySlice';
 
+import { aws4Interceptor } from 'aws4-axios';
+
 import {
 	checkEmptyIG,
 	checkNewElementMedia,
@@ -57,6 +61,7 @@ import {
 	checkNewElementTwitter,
 	checkNewElementIG
 } from '../../../utils/articleUtils';
+import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDraggable';
 
 const UploadOrEditArticle = ({
 	open,
@@ -80,11 +85,14 @@ const UploadOrEditArticle = ({
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
+	const [landscapeFileWidth, setLandscapeFileWidth] = useState(0);
+	const [landscapeFileHeight, setLandscapeFileHeight] = useState(0);
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
 	const imgEl = useRef(null);
+	const imgEl2 = useRef(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const loadingRef = useRef(null);
@@ -95,7 +103,9 @@ const UploadOrEditArticle = ({
 		title: '',
 		sub_text: '',
 		dropbox_url: '',
+		landscape_dropbox_url: '',
 		uploadedFiles: [],
+		uploadedLandscapeCoverImage: [],
 		author_text: '433 Team',
 		author_image: [{ media_url: Profile433 }],
 		labels: [],
@@ -138,6 +148,12 @@ const UploadOrEditArticle = ({
 			ig_post_url: '',
 			component: ArticleSocialMediaDraggable
 		}
+		// {
+		// 	image: Question,
+		// 	text: 'Add Question',
+		// 	type: 'QUESTION',
+		// 	component: ArticleQuestionDraggable
+		// }
 	];
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
@@ -147,6 +163,17 @@ const UploadOrEditArticle = ({
 			validator: checkFileSize
 		});
 
+	const {
+		acceptedFiles: acceptedFiles2,
+		fileRejections: fileRejections2,
+		getRootProps: getRootProps2,
+		getInputProps: getInputProps2
+	} = useDropzone({
+		accept: '.jpeg, .jpg, .png',
+		maxFiles: 1,
+		validator: checkFileSize
+	});
+	console.log('ACCEPTED FILE 2', acceptedFiles);
 	const {
 		acceptedFiles: acceptedFileAvatar,
 		fileRejections: fileRejectionsAvatar,
@@ -202,7 +229,7 @@ const UploadOrEditArticle = ({
 	} = useSelector((state) => state.ArticleLibraryStore);
 
 	useEffect(() => {
-		dispatch(getPostLabels());
+		// dispatch(getPostLabels());
 		dispatch(getArticleMainCategories());
 		return () => {
 			resetState();
@@ -287,6 +314,17 @@ const UploadOrEditArticle = ({
 								}
 						  ]
 						: [],
+					landscape_dropbox_url: specificArticle?.landscape_dropbox_url,
+					uploadedLandscapeCoverImage: specificArticle?.landscape_image
+						? [
+								{
+									id: makeid(10),
+									file_name: specificArticle?.landscape_file_name,
+									media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificArticle?.landscape_image}`,
+									type: 'image'
+								}
+						  ]
+						: [],
 					author_text: specificArticle?.author_text,
 					author_image: specificArticle?.author_image
 						? [
@@ -312,8 +350,16 @@ const UploadOrEditArticle = ({
 			// setEditorTextChecker(specificArticle?.description);
 			setFileHeight(specificArticle?.height);
 			setFileWidth(specificArticle?.width);
+			setLandscapeFileWidth(specificArticle?.landscape_width);
+			setLandscapeFileHeight(specificArticle?.landscape_height);
 		}
 	}, [specificArticle]);
+
+	console.log(fileHeight, fileWidth, 'portr');
+	console.log(landscapeFileHeight, landscapeFileWidth, 'lands');
+
+	// console.log(imgEl, 'port'); // issue is on ref of natural height and width
+	// console.log(imgEl2, 'land');
 
 	const updateDataFromAPI = (apiData) => {
 		let modifiedData = apiData?.map(
@@ -403,6 +449,16 @@ const UploadOrEditArticle = ({
 			}, [5000]);
 		}
 	}, [fileRejections]);
+	useEffect(() => {
+		if (fileRejections2.length) {
+			fileRejections2.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError(e.message));
+			});
+			setTimeout(() => {
+				setFileRejectionError('');
+			}, [5000]);
+		}
+	}, [fileRejections]);
 
 	const getFileType = (type) => {
 		if (type) {
@@ -438,6 +494,34 @@ const UploadOrEditArticle = ({
 			});
 		}
 	}, [acceptedFiles]);
+
+	useEffect(() => {
+		if (acceptedFiles2?.length) {
+			setIsError({});
+			let newFiles = acceptedFiles2.map((file) => {
+				let id = makeid(10);
+				return {
+					id: id,
+					file_name: file.name,
+					media_url: URL.createObjectURL(file),
+					fileExtension: `.${getFileType(file.type)}`,
+					mime_type: file.type,
+					file: file,
+					type: 'image'
+				};
+			});
+
+			setForm((prev) => {
+				return {
+					...prev,
+					uploadedLandscapeCoverImage: [
+						...form.uploadedLandscapeCoverImage,
+						...newFiles
+					]
+				};
+			});
+		}
+	}, [acceptedFiles2]);
 
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
@@ -491,11 +575,30 @@ const UploadOrEditArticle = ({
 						? mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
 						  mediaFiles[0]?.media_url
 						: '',
+					landscape_height:
+						form.uploadedLandscapeCoverImage.length > 0
+							? landscapeFileHeight
+							: 0,
+					landscape_width:
+						form.uploadedLandscapeCoverImage.length > 0
+							? landscapeFileWidth
+							: 0,
+					landscape_dropbox_url: form.landscape_dropbox_url
+						? form.landscape_dropbox_url
+						: '',
+					landscape_file_name: form?.uploadedLandscapeCoverImage?.length
+						? mediaFiles[2]?.landscape_file_name
+						: '',
+					landscape_image: form?.uploadedLandscapeCoverImage?.length
+						? mediaFiles[2]?.media_url?.split('cloudfront.net/')[1] ||
+						  mediaFiles[2]?.media_url
+						: '',
 					author_text: form.author_text,
 					author_image: form?.author_image[0]?.file
 						? mediaFiles[1]?.media_url?.split('cloudfront.net/')[1] ||
 						  mediaFiles[1]?.media_url
-						: mediaFiles[1]?.media_url,
+						: mediaFiles[1]?.media_url?.split('cloudfront.net/')[1] ||
+						  mediaFiles[1]?.media_url,
 					...(isEdit && id ? { article_id: id } : {}),
 					...((!isEdit || status !== 'published') &&
 					(form.labels?.length || status == 'draft')
@@ -526,7 +629,7 @@ const UploadOrEditArticle = ({
 				setPostButtonStatus(false);
 				handleClose();
 				dispatch(getAllArticlesApi({ page }));
-				dispatch(getPostLabels());
+				// dispatch(getPostLabels());
 			}
 		} catch (e) {
 			toast.error(
@@ -539,21 +642,38 @@ const UploadOrEditArticle = ({
 	};
 
 	const publishReadMoreApi = async (id) => {
-		console.log('article id : ', id);
 		const headers = {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			Format: 'pandas-split'
 		};
-		try {
-			const result = await axios.post(
-				'https://a4ewxelyb9.execute-api.eu-west-2.amazonaws.com/dev/new_article_id/',
+		const body = {
+			columns: ['operation', 'article_id'],
+			index: [0],
+			data: [['add_article', id]]
+		};
 
-				{
-					new_article_id: id
-				},
+		const client = axios.create();
+		const interceptor = aws4Interceptor(
+			{
+				region: 'eu-west-2',
+				service: 'sagemaker'
+			},
+			{
+				accessKeyId: 'AKIAW2RPSZR2K7SWJSPE',
+				secretAccessKey: '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'
+			}
+		);
+		client.interceptors.request.use(interceptor);
+
+		try {
+			let initialResponse = client.post(
+				'https://runtime.sagemaker.eu-west-2.amazonaws.com/endpoints/model-application-with-path/invocations',
+				body,
 				{
 					headers
 				}
 			);
+			let result = await initialResponse;
 			if (result?.data?.status_code === 200) {
 				console.log('Success - Read More Api !');
 			}
@@ -562,28 +682,44 @@ const UploadOrEditArticle = ({
 		}
 	};
 
-	useEffect(() => {
-		publishReadMoreApi('62bea2ff9b75eb1278791f86');
-	}, []);
-
 	const deleteReadMoreApi = async (id) => {
-		console.log('article id : ', id);
-		try {
-			const result = await axios.post(
-				'https://a4ewxelyb9.execute-api.eu-west-2.amazonaws.com/dev/on_delete/',
+		const headers = {
+			'Content-Type': 'application/json',
+			Format: 'pandas-split'
+		};
+		const body = {
+			columns: ['operation', 'article_id'],
+			index: [0],
+			data: [['delete_article', id]]
+		};
 
+		const client = axios.create();
+		const interceptor = aws4Interceptor(
+			{
+				region: 'eu-west-2',
+				service: 'sagemaker'
+			},
+			{
+				accessKeyId: 'AKIAW2RPSZR2K7SWJSPE',
+				secretAccessKey: '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'
+			}
+		);
+		client.interceptors.request.use(interceptor);
+
+		try {
+			let initialResponse = client.post(
+				'https://runtime.sagemaker.eu-west-2.amazonaws.com/endpoints/model-application-with-path/invocations',
+				body,
 				{
-					headers: {
-						'content-type': 'application/json'
-					},
-					body: JSON.stringify({ new_article_id: id })
+					headers
 				}
 			);
+			let result = await initialResponse;
 			if (result?.data?.status_code === 200) {
-				console.log('Success - on Delete Read More Api !');
+				console.log('Success - Read More Api !');
 			}
 		} catch (e) {
-			console.log(e, 'Failed - On delete Read More Api !');
+			console.log(e, 'Failed - Read More Api !');
 		}
 	};
 
@@ -600,6 +736,8 @@ const UploadOrEditArticle = ({
 		setDisableDropdown(true);
 		setFileHeight(0);
 		setFileWidth(0);
+		setLandscapeFileWidth(0);
+		setLandscapeFileHeight(0);
 		setEditBtnDisabled(false);
 		setDraftBtnDisabled(false);
 		setIsError({});
@@ -609,7 +747,8 @@ const UploadOrEditArticle = ({
 			// description: tinyMCE.activeEditor?.setContent(''),
 			dropbox_url: '',
 			uploadedFiles: [],
-
+			landscape_dropbox_url: '',
+			uploadedLandscapeCoverImage: [],
 			author_text: '433 Team',
 			author_image: [{ media_url: Profile433 }],
 			labels: [],
@@ -631,8 +770,20 @@ const UploadOrEditArticle = ({
 		});
 	};
 
+	const handleDeleteLandscapeFile = (id) => {
+		setForm((prev) => {
+			return {
+				...prev,
+				uploadedLandscapeCoverImage: form.uploadedLandscapeCoverImage.filter(
+					(file) => file.id !== id
+				)
+			};
+		});
+	};
+
 	const handleMediaElementDelete = (sortOrder) => {
 		let dataCopy = [...data];
+		console.log(sortOrder, 'sortOrder');
 		if (sortOrder) {
 			setData(dataCopy.filter((file) => file.sortOrder !== sortOrder));
 		}
@@ -712,6 +863,7 @@ const UploadOrEditArticle = ({
 			//  }
 			// },
 			uploadedFiles: form.uploadedFiles.length < 1,
+			uploadedLandscapeCoverImage: form.uploadedLandscapeCoverImage.length < 1,
 			selectedLabels: form.labels.length < 7,
 			// editorText: !form.description,
 			mainCategory: !form.mainCategory,
@@ -833,10 +985,14 @@ const UploadOrEditArticle = ({
 			specificArticle?.title?.trim() === form?.title?.trim() &&
 			specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
 			specificArticle?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
+			specificArticle?.landscape_dropbox_url?.trim() ===
+				form?.landscape_dropbox_url?.trim() &&
 			specificArticle?.author_text?.trim() === form?.author_text?.trim() &&
 			specificArticle?.show_likes === form.show_likes &&
 			specificArticle?.show_comments === form.show_comments &&
-			specificArticle?.file_name === form.uploadedFiles[0]?.file_name
+			specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
+			specificArticle?.landscape_file_name ===
+				form.uploadedLandscapeCoverImage[0]?.file_name
 		);
 	};
 
@@ -1000,11 +1156,17 @@ const UploadOrEditArticle = ({
 			specificArticle?.title?.trim() === form?.title?.trim() &&
 			specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
 			specificArticle?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
+			specificArticle?.landscape_dropbox_url?.trim() ===
+				form?.landscape_dropbox_url?.trim() &&
 			specificArticle?.author_text?.trim() === form?.author_text?.trim() &&
 			specificArticle?.show_likes === form.show_likes &&
 			specificArticle?.show_comments === form.show_comments &&
 			(specificArticle?.image || form?.uploadedFiles[0]
 				? specificArticle?.file_name === form?.uploadedFiles[0]?.file_name
+				: true) &&
+			(specificArticle?.landscape_image || form?.uploadedLandscapeCoverImage[0]
+				? specificArticle?.landscape_file_name ===
+				  form?.uploadedLandscapeCoverImage[0]?.file_name
 				: true) &&
 			specificArticle?.media_type ===
 				(form?.mainCategory?.name || form?.mainCategory) &&
@@ -1077,6 +1239,8 @@ const UploadOrEditArticle = ({
 				let updatedArray = [
 					form.uploadedFiles[0] && fileUploader(form.uploadedFiles[0]),
 					form.author_image[0] && fileUploader(form.author_image[0]),
+					form.uploadedLandscapeCoverImage[0] &&
+						fileUploader(form.uploadedLandscapeCoverImage[0]),
 					dataMedia && dataMedia[0]
 				];
 
@@ -1124,6 +1288,8 @@ const UploadOrEditArticle = ({
 				let updatedArray = [
 					form.uploadedFiles[0] && fileUploader(form.uploadedFiles[0]),
 					form.author_image[0] && fileUploader(form.author_image[0]),
+					form.uploadedLandscapeCoverImage[0] &&
+						fileUploader(form.uploadedLandscapeCoverImage[0]),
 					dataMedia && dataMedia[0]
 				];
 
@@ -1185,6 +1351,15 @@ const UploadOrEditArticle = ({
 					}
 				);
 
+				let uploadedLandscapeCoverImagePromise =
+					form.uploadedLandscapeCoverImage.map(async (_file) => {
+						if (_file.file) {
+							return uploadFileToServer(_file, 'articleLibrary');
+						} else {
+							return _file;
+						}
+					});
+
 				let dataMedia;
 				if (data.length) {
 					dataMedia = await Promise.all(
@@ -1210,6 +1385,7 @@ const UploadOrEditArticle = ({
 				Promise.all([
 					...uploadFilesPromiseArray,
 					...uploadAuthorImagePromiseArray,
+					...uploadedLandscapeCoverImagePromise,
 					...dataMedia
 				])
 					.then((mediaFiles) => {
@@ -1246,6 +1422,14 @@ const UploadOrEditArticle = ({
 						}
 					}
 				);
+				let uploadedLandscapeCoverImagePromise =
+					form.uploadedLandscapeCoverImage.map(async (_file) => {
+						if (_file.file) {
+							return uploadFileToServer(_file, 'articleLibrary');
+						} else {
+							return _file;
+						}
+					});
 				let dataMedia;
 				if (data.length) {
 					dataMedia = await Promise.all(
@@ -1270,6 +1454,7 @@ const UploadOrEditArticle = ({
 				Promise.all([
 					...uploadFilesPromiseArray,
 					...uploadAuthorImagePromiseArray,
+					...uploadedLandscapeCoverImagePromise,
 					...dataMedia
 				])
 					.then((mediaFiles) => {
@@ -1409,11 +1594,17 @@ const UploadOrEditArticle = ({
 											subCategories={subCategories}
 											SubCategoryId={SubCategoryId}
 											handleDeleteFile={handleDeleteFile}
+											handleDeleteLandscapeFile={handleDeleteLandscapeFile}
 											imgRef={imgEl}
+											imgRef2={imgEl2}
 											setFileWidth={setFileWidth}
 											setFileHeight={setFileHeight}
+											setLandscapeFileWidth={setLandscapeFileWidth}
+											setLandscapeFileHeight={setLandscapeFileHeight}
 											getRootProps={getRootProps}
 											getInputProps={getInputProps}
+											getRootProps2={getRootProps2}
+											getInputProps2={getInputProps2}
 											fileRejectionError={fileRejectionError}
 											getRootPropsAvatar={getRootPropsAvatar}
 											getInputPropsAvatar={getInputPropsAvatar}
@@ -1481,11 +1672,13 @@ const UploadOrEditArticle = ({
 															) : item.element_type === 'TWITTER' ? (
 																<TwitterPost
 																	data={item}
+																	itemIndex={index}
 																	style={{ width: '100%' }}
 																/>
 															) : item.element_type === 'IG' ? (
-																<TwitterPost
+																<InstagramPost
 																	data={item}
+																	itemIndex={index}
 																	style={{ width: '100%' }}
 																/>
 															) : (

@@ -1,11 +1,16 @@
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Popper, Autocomplete } from '@mui/material';
 import { TextField } from '@material-ui/core';
 import Button from '../button';
 import ClearIcon from '@material-ui/icons/Clear';
 import classes from './_labels.module.scss';
+
+//new labels search
+import { useDispatch, useSelector } from 'react-redux';
+import { getNewLabelsSearch } from '../../pages/PostLibrary/postLibrarySlice';
+import _debounce from 'lodash/debounce';
 
 const Labels = ({
 	isEdit,
@@ -15,7 +20,8 @@ const Labels = ({
 	LabelsOptions,
 	extraLabel,
 	handleChangeExtraLabel,
-	draftStatus = 'published'
+	draftStatus = 'published',
+	setExtraLabel
 }) => {
 	//const regex = /[%<>\\$'"\s@#/-=+&^*()!:;.,?{}[|]]/;
 	const regex = /\W/; // all characters that are not numbers and alphabets and underscore
@@ -26,6 +32,58 @@ const Labels = ({
 	let newOptions = LabelsOptions.filter(
 		(element) => !drafts.includes(element.name)
 	);
+
+	//------------------------------new labels
+
+	// const dispatch = useDispatch();
+	// const { newLabelsSearch } = useSelector((state) => state.postLibrary);
+
+	// const emptySearchArray = [{ val: 'empty array' }];
+
+	// console.log(newLabelsSearch, 'ls');
+
+	// const handleDebounceFun = () => {
+	// 	let _search;
+	// 	setExtraLabel((prevState) => {
+	// 		_search = prevState;
+	// 		return _search;
+	// 	});
+
+	// 	if (_search) {
+	// 		dispatch(
+	// 			getNewLabelsSearch({
+	// 				q: _search,
+	// 				already_selected: selectedLabels
+	// 			})
+	// 		);
+	// 	} else {
+	// 		dispatch(
+	// 			getNewLabelsSearch({
+	// 				q: null,
+	// 				already_selected: selectedLabels
+	// 			})
+	// 		);
+	// 	}
+	// };
+
+	// const debounceFun = useCallback(_debounce(handleDebounceFun, 600), []);
+
+	// const handleChangeExtraLabel = (e) => {
+	// 	// setSelectMediaInput(e.target.value);
+	// 	setExtraLabel(e.target.value);
+	// 	debounceFun(e.target.value);
+	// };
+
+	// const handleNewOptionlabel = () => {
+	// 	console.log('dwadawdw	ad');
+	// 	let currentLabelDuplicate = selectedLabels.some(
+	// 		(label) => label.name == extraLabel
+	// 	);
+
+	// 	if (!currentLabelDuplicate) {
+	// 		setSelectedLabels([{ id: null, name: extraLabel }]);
+	// 	}
+	// };
 
 	return (
 		<Autocomplete
@@ -79,13 +137,39 @@ const Labels = ({
 				<div className={classes.liAutocompleteWithButton}>
 					<p>No results found</p>
 				</div>
+
+				// <>
+				// 	{extraLabel && (
+				// 		<li
+				// 			// {...props}
+				// 			style={{
+				// 				display: 'flex',
+				// 				alignItems: 'center',
+				// 				justifyContent: 'space-between'
+				// 			}}
+				// 			className={classes.liAutocomplete}
+				// 		>
+				// 			{/* {option.name} */}
+				// 			{extraLabel}
+				// 			<Button
+				// 				text='CREATE NEW LABEL'
+				// 				style={{
+				// 					padding: '3px 12px',
+				// 					fontWeight: 700
+				// 				}}
+				// 				onClick={() => handleNewOptionlabel}
+				// 			/>
+				// 		</li>
+				// 	)}
+				// </>
 			}
 			className={`${classes.autoComplete} ${
 				isEdit && draftStatus !== 'draft' && classes.disableAutoComplete
 			}`}
 			id='free-solo-2-demo'
 			disableClearable
-			options={isEdit && draftStatus === 'draft' ? newOptions : LabelsOptions} //postlabels, medialabels
+			options={isEdit && draftStatus === 'draft' ? newOptions : LabelsOptions} //old labels
+			// options={newLabelsSearch?.length > 0 ? newLabelsSearch : emptySearchArray} // new labels on search
 			renderInput={(params) => (
 				<TextField
 					{...params}
@@ -131,20 +215,8 @@ const Labels = ({
 					(label) => label.name == option.name
 				);
 
-				let draftLabels = selectedLabels.filter((label) => label.id == -1);
-
-				// console.log(LabelsOptions, 'LabelsOptions');
-				// var newArr = LabelsOptions.filter((item) => {
-				// 	return item.id !== draftLabels.id;
-				// });
-				// console.log(newArr, 'newArr');
-
-				var draftedValue = draftLabels.filter(
-					(draft) => draft.name === option.name
-				);
-				//option . name
-				console.log(draftedValue, 'newArr');
-
+				console.log(option, 'op');
+				// if(options.val)     // for new labels on search
 				if (option.id == null && !currentLabelDuplicate) {
 					return (
 						<li
@@ -199,7 +271,8 @@ Labels.propTypes = {
 	LabelsOptions: PropTypes.array,
 	extraLabel: PropTypes.string,
 	handleChangeExtraLabel: PropTypes.func,
-	draftStatus: PropTypes.string
+	draftStatus: PropTypes.string,
+	setExtraLabel: PropTypes.func
 };
 
 export default Labels;
