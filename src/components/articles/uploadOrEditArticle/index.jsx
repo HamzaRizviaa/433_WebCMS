@@ -105,6 +105,7 @@ const UploadOrEditArticle = ({
 		title: '',
 		sub_text: '',
 		dropbox_url: '',
+		landscape_dropbox_url: '',
 		uploadedFiles: [],
 		uploadedLandscapeCoverImage: [],
 		author_text: '433 Team',
@@ -148,13 +149,13 @@ const UploadOrEditArticle = ({
 			type: 'IG',
 			ig_post_url: '',
 			component: ArticleSocialMediaDraggable
-		},
-		{
-			image: Question,
-			text: 'Add Question',
-			type: 'QUESTION',
-			component: ArticleQuestionDraggable
 		}
+		// {
+		// 	image: Question,
+		// 	text: 'Add Question',
+		// 	type: 'QUESTION',
+		// 	component: ArticleQuestionDraggable
+		// }
 	];
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
@@ -980,10 +981,14 @@ const UploadOrEditArticle = ({
 			specificArticle?.title?.trim() === form?.title?.trim() &&
 			specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
 			specificArticle?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
+			specificArticle?.landscape_dropbox_url?.trim() ===
+				form?.landscape_dropbox_url?.trim() &&
 			specificArticle?.author_text?.trim() === form?.author_text?.trim() &&
 			specificArticle?.show_likes === form.show_likes &&
 			specificArticle?.show_comments === form.show_comments &&
-			specificArticle?.file_name === form.uploadedFiles[0]?.file_name
+			specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
+			specificArticle?.landscape_file_name ===
+				form.uploadedLandscapeCoverImage[0]?.file_name
 		);
 	};
 
@@ -1147,11 +1152,17 @@ const UploadOrEditArticle = ({
 			specificArticle?.title?.trim() === form?.title?.trim() &&
 			specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
 			specificArticle?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
+			specificArticle?.landscape_dropbox_url?.trim() ===
+				form?.landscape_dropbox_url?.trim() &&
 			specificArticle?.author_text?.trim() === form?.author_text?.trim() &&
 			specificArticle?.show_likes === form.show_likes &&
 			specificArticle?.show_comments === form.show_comments &&
 			(specificArticle?.image || form?.uploadedFiles[0]
 				? specificArticle?.file_name === form?.uploadedFiles[0]?.file_name
+				: true) &&
+			(specificArticle?.landscape_image || form?.uploadedLandscapeCoverImage[0]
+				? specificArticle?.landscape_file_name ===
+				  form?.uploadedLandscapeCoverImage[0]?.file_name
 				: true) &&
 			specificArticle?.media_type ===
 				(form?.mainCategory?.name || form?.mainCategory) &&
@@ -1224,6 +1235,8 @@ const UploadOrEditArticle = ({
 				let updatedArray = [
 					form.uploadedFiles[0] && fileUploader(form.uploadedFiles[0]),
 					form.author_image[0] && fileUploader(form.author_image[0]),
+					form.uploadedLandscapeCoverImage[0] &&
+						fileUploader(form.uploadedLandscapeCoverImage[0]),
 					dataMedia && dataMedia[0]
 				];
 
@@ -1271,6 +1284,8 @@ const UploadOrEditArticle = ({
 				let updatedArray = [
 					form.uploadedFiles[0] && fileUploader(form.uploadedFiles[0]),
 					form.author_image[0] && fileUploader(form.author_image[0]),
+					form.uploadedLandscapeCoverImage[0] &&
+						fileUploader(form.uploadedLandscapeCoverImage[0]),
 					dataMedia && dataMedia[0]
 				];
 
@@ -1332,6 +1347,15 @@ const UploadOrEditArticle = ({
 					}
 				);
 
+				let uploadedLandscapeCoverImagePromise =
+					form.uploadedLandscapeCoverImage.map(async (_file) => {
+						if (_file.file) {
+							return uploadFileToServer(_file, 'articleLibrary');
+						} else {
+							return _file;
+						}
+					});
+
 				let dataMedia;
 				if (data.length) {
 					dataMedia = await Promise.all(
@@ -1357,6 +1381,7 @@ const UploadOrEditArticle = ({
 				Promise.all([
 					...uploadFilesPromiseArray,
 					...uploadAuthorImagePromiseArray,
+					...uploadedLandscapeCoverImagePromise,
 					...dataMedia
 				])
 					.then((mediaFiles) => {
