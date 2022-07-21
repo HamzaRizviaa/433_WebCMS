@@ -974,7 +974,7 @@ const UploadOrEditMedia = ({
 												}
 										  }
 										: {
-												portrait: { ...specificMedia?.cover_image?.portrait }
+												portrait: { ...form?.uploadedCoverImage[0] }
 										  }),
 									...(mediaFiles[2]?.url
 										? {
@@ -985,7 +985,7 @@ const UploadOrEditMedia = ({
 												}
 										  }
 										: {
-												landscape: { ...specificMedia?.cover_image?.landscape }
+												landscape: { ...form?.uploadedLandscapeCoverImage[0] }
 										  })
 								},
 								file_name_media: form?.uploadedFiles[0]?.file_name,
@@ -1291,7 +1291,15 @@ const UploadOrEditMedia = ({
 										image_url: uploadedCoverImage?.data?.data?.image_data
 									}
 							  }
-							: { portrait: { ...specificMedia?.cover_image?.portrait } }),
+							: {
+									portrait: {
+										...form?.uploadedCoverImage[0],
+										image_url:
+											form?.uploadedCoverImage[0]?.media_url.split(
+												'cloudfront.net/'
+											)[1]
+									}
+							  }),
 
 						...(form?.uploadedLandscapeCoverImage[0]?.file
 							? {
@@ -1302,7 +1310,15 @@ const UploadOrEditMedia = ({
 											uploadedLandscapeCoverImage?.data?.data?.image_data
 									}
 							  }
-							: { landscape: { ...specificMedia?.cover_image?.landscape } })
+							: {
+									landscape: {
+										...form?.uploadedLandscapeCoverImage[0],
+										image_url:
+											form?.uploadedLandscapeCoverImage[0]?.media_url.split(
+												'cloudfront.net/'
+											)[1]
+									}
+							  })
 					},
 					//audio / video
 					...(uploadedFile && {
