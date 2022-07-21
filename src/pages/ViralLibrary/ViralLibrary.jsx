@@ -169,7 +169,7 @@ const ViralLibrary = () => {
 								: col?.dataField === 'status'
 								? 25
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -184,7 +184,7 @@ const ViralLibrary = () => {
 								: col?.dataField === 'status'
 								? 25
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -199,7 +199,7 @@ const ViralLibrary = () => {
 								: col?.dataField === 'status'
 								? 25
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);

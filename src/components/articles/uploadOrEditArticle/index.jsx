@@ -99,8 +99,6 @@ const UploadOrEditArticle = ({
 
 	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
 
-	console.log('PORTRAIT: ', fileWidth, fileHeight);
-	console.log('LANDSCAPE', landscapeFileWidth, landscapeFileHeight);
 	const [form, setForm] = useState({
 		title: '',
 		sub_text: '',
@@ -352,10 +350,16 @@ const UploadOrEditArticle = ({
 			// setEditorTextChecker(specificArticle?.description);
 			setFileHeight(specificArticle?.height);
 			setFileWidth(specificArticle?.width);
-			setLandscapeFileWidth(specificArticle?.width);
-			setLandscapeFileHeight(specificArticle?.height);
+			setLandscapeFileWidth(specificArticle?.landscape_width);
+			setLandscapeFileHeight(specificArticle?.landscape_height);
 		}
 	}, [specificArticle]);
+
+	console.log(fileHeight, fileWidth, 'portr');
+	console.log(landscapeFileHeight, landscapeFileWidth, 'lands');
+
+	// console.log(imgEl, 'port'); // issue is on ref of natural height and width
+	// console.log(imgEl2, 'land');
 
 	const updateDataFromAPI = (apiData) => {
 		let modifiedData = apiData?.map(
