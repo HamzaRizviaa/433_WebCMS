@@ -774,7 +774,6 @@ const UploadOrEditMedia = ({
 		}
 	}, [specificMedia, form]);
 
-	// console.log(form, 'form');
 	const mainCategoryId = (e) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
 		let setData = mainCategories.find((u) => u.name === e);
@@ -804,6 +803,14 @@ const UploadOrEditMedia = ({
 	useEffect(() => {
 		validateForm(form);
 	}, [form]);
+
+	console.log(
+		!validateForm(form),
+		editBtnDisabled && status === 'published',
+		'SSSSSshoi'
+	);
+
+	console.log(form, 'form');
 
 	const addSaveMediaBtn = async () => {
 		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
@@ -1300,10 +1307,12 @@ const UploadOrEditMedia = ({
 					//audio / video
 					...(uploadedFile && {
 						...uploadedFile?.data?.data,
-						audio_data: uploadedFile?.data?.data?.audio_data,
-						video_data: uploadedFile?.data?.data?.video_data,
-						image_data: null
+						media_url:
+							uploadedFile?.data?.data?.video_data === null
+								? uploadedFile?.data?.data?.audio_data
+								: uploadedFile?.data?.data?.video_data
 					}),
+
 					//file names
 					file_name_media: form?.uploadedFiles[0]?.file_name,
 					file_name_portrait_image: form?.uploadedCoverImage[0]?.file_name,
