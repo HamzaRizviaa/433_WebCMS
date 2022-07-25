@@ -18,11 +18,13 @@ export const useStyles = makeStyles(() => ({
 	images: {
 		width: '100%',
 		color: 'white',
-		backgroundColor: 'black'
+		backgroundColor: 'black',
+		borderRadius: '8px'
 	},
 	videos: {
 		width: '100%',
-		backgroundColor: 'black'
+		backgroundColor: 'black',
+		borderRadius: '8px'
 	},
 	instaBox: {
 		'& iframe': {
