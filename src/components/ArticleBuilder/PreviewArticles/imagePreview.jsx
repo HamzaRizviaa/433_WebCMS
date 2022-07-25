@@ -22,10 +22,11 @@ const ImagePreview = ({ data, isEdit }) => {
 									data?.data[0]?.height < data?.data[0]?.width + 100
 										? '200px'
 										: `${data?.data[0]?.height}px`,
-								maxHeight: '750px',
+								maxHeight: '640px',
 								width: '100%',
 								objectFit: 'cover',
-								objectPosition: 'center'
+								objectPosition: 'center',
+								borderRadius: '8px'
 							}}
 							controls={true}
 						>

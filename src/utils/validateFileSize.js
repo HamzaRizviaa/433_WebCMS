@@ -1,11 +1,12 @@
 const checkFileSize = (file) => {
-	console.log('File', file);
+	console.log(file, 'file in validate file size');
 	if (
 		file.type === 'image/jpeg' ||
 		file.type === 'image/png' ||
 		file.type === 'image/jpg'
 	) {
 		if (file.size > 52428800) {
+			//bytes
 			return {
 				code: 'size-too-large',
 				message: `the size of the file is too high`

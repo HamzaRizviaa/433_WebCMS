@@ -6,14 +6,14 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Typography from '@mui/material/Typography';
-import { useStyles as globalUseStyles } from '../../styles/global.style';
+import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { MenuItem, TextField, Select } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import Avatar from '@mui/material/Avatar';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import DragAndDropField from '../DragAndDropField';
-import Labels from '../Labels';
-import ToggleSwitch from '../switch';
+import DragAndDropField from '../../DragAndDropField';
+import Labels from '../../Labels';
+import ToggleSwitch from '../../switch';
 
 const ArticleGeneralInfo = ({
 	isEdit,
@@ -26,11 +26,17 @@ const ArticleGeneralInfo = ({
 	subCategories,
 	SubCategoryId,
 	handleDeleteFile,
+	handleDeleteLandscapeFile,
 	imgRef,
+	imgRef2,
 	setFileWidth,
 	setFileHeight,
+	setLandscapeFileWidth,
+	setLandscapeFileHeight,
 	getRootProps,
 	getInputProps,
+	getRootProps2,
+	getInputProps2,
 	fileRejectionError,
 	getRootPropsAvatar,
 	getInputPropsAvatar,
@@ -42,7 +48,8 @@ const ArticleGeneralInfo = ({
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
-
+	console.log('FORMM', form);
+	console.log();
 	return (
 		<div className={classes.root}>
 			<Accordion defaultExpanded>
@@ -259,6 +266,8 @@ const ArticleGeneralInfo = ({
 								{fileRejectionError2}
 							</p>
 							<h5>Add Media File</h5>
+							<br />
+							<h6>PORTRAIT IMAGE</h6>
 							<div>
 								<DragAndDropField
 									uploadedFiles={form.uploadedFiles}
@@ -292,6 +301,8 @@ const ArticleGeneralInfo = ({
 											</p>
 											<p className={globalClasses.formatMsg}>
 												Supported formats are jpeg and png
+												<br />
+												Required size 720x900
 											</p>
 											<p className={globalClasses.uploadMediaError}>
 												{isError.uploadedFiles
@@ -310,12 +321,86 @@ const ArticleGeneralInfo = ({
 								{fileRejectionError}
 							</p>
 							<div className={globalClasses.dropBoxUrlContainer}>
-								<h6>DROPBOX URL</h6>
+								<h6>PORTRAIT DROPBOX URL</h6>
 								<TextField
 									value={form.dropbox_url}
 									onChange={(e) =>
 										setForm((prev) => {
 											return { ...prev, dropbox_url: e.target.value };
+										})
+									}
+									placeholder={'Please drop the dropbox URL here'}
+									className={classes.textField}
+									multiline
+									maxRows={2}
+									InputProps={{
+										disableUnderline: true,
+										className: classes.textFieldInput
+									}}
+								/>
+							</div>
+							<h6>LANDSCAPE IMAGE</h6>
+							<div>
+								<DragAndDropField
+									uploadedFiles={form.uploadedLandscapeCoverImage}
+									handleDeleteFile={handleDeleteLandscapeFile}
+									isArticle
+									isArticleNew
+									imgEl={imgRef2}
+									imageOnload={() => {
+										setLandscapeFileWidth(imgRef2.current.naturalWidth);
+										setLandscapeFileHeight(imgRef2.current.naturalHeight);
+									}}
+								/>
+								{!form.uploadedLandscapeCoverImage.length ? (
+									<section
+										className={globalClasses.dropZoneContainer}
+										style={{
+											borderColor: isError.uploadedLandscapeCoverImage
+												? '#ff355a'
+												: 'yellow'
+										}}
+									>
+										<div
+											{...getRootProps2({
+												className: globalClasses.dropzone
+											})}
+										>
+											<input {...getInputProps2()} />
+											<AddCircleOutlineIcon
+												className={globalClasses.addFilesIcon}
+											/>
+											<p className={globalClasses.dragMsg}>
+												Click or drag files to this area to upload
+											</p>
+											<p className={globalClasses.formatMsg}>
+												Supported formats are jpeg and png
+												<br />
+												Required size 1920x1080
+											</p>
+											<p className={globalClasses.uploadMediaError}>
+												{isError.uploadedLandscapeCoverImage
+													? 'You need to upload a media in order to post'
+													: ''}
+											</p>
+										</div>
+									</section>
+								) : (
+									<>
+										<br />
+									</>
+								)}
+							</div>
+							<p className={globalClasses.fileRejectionError}>
+								{fileRejectionError}
+							</p>
+							<div className={globalClasses.dropBoxUrlContainer}>
+								<h6>LANDSCAPE DROPBOX URL</h6>
+								<TextField
+									value={form.landscape_dropbox_url}
+									onChange={(e) =>
+										setForm((prev) => {
+											return { ...prev, landscape_dropbox_url: e.target.value };
 										})
 									}
 									placeholder={'Please drop the dropbox URL here'}
@@ -511,6 +596,7 @@ ArticleGeneralInfo.propTypes = {
 	mainCategoryId: PropTypes.func.isRequired,
 	SubCategoryId: PropTypes.func.isRequired,
 	handleDeleteFile: PropTypes.func.isRequired,
+	handleDeleteLandscapeFile: PropTypes.func.isRequired,
 	mainCategories: PropTypes.array.isRequired,
 	subCategories: PropTypes.array.isRequired,
 	imgRef: PropTypes.oneOfType([
@@ -519,8 +605,16 @@ ArticleGeneralInfo.propTypes = {
 	]),
 	setFileWidth: PropTypes.func.isRequired,
 	setFileHeight: PropTypes.func.isRequired,
+	imgRef2: PropTypes.oneOfType([
+		PropTypes.func,
+		PropTypes.shape({ current: PropTypes.elementType })
+	]),
+	setLandscapeFileWidth: PropTypes.func.isRequired,
+	setLandscapeFileHeight: PropTypes.func.isRequired,
 	getRootProps: PropTypes.any,
 	getInputProps: PropTypes.any,
+	getRootProps2: PropTypes.any,
+	getInputProps2: PropTypes.any,
 	fileRejectionError: PropTypes.string,
 	getRootPropsAvatar: PropTypes.any,
 	getInputPropsAvatar: PropTypes.any,

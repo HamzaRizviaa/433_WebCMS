@@ -1,15 +1,13 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-// import Close from '@material-ui/icons/Close';
+import { Draggable } from 'react-beautiful-dnd';
 import { useStyles } from './index.styles';
-
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import { ReactComponent as Union } from '../../assets/drag.svg';
-import { ReactComponent as Deletes } from '../../assets/Delete.svg';
+import { ReactComponent as Union } from '../../../assets/drag.svg';
+import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 //tinymce
 import { Editor } from '@tinymce/tinymce-react';
 import 'tinymce/tinymce';
@@ -50,6 +48,8 @@ const ArticleTextDraggable = ({
 		setClickExpandIcon(!clickExpandIcon);
 		setIsOpen(!clickExpandIcon);
 	};
+
+	console.log(description, 'desss');
 
 	useEffect(() => {
 		if (initialData?.description) {

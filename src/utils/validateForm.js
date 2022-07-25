@@ -1,9 +1,20 @@
-const validateForm = (form, dataElements) => {
+const validateForm = (form, dataElements, newsData) => {
 	var validate = Object.keys(form).map((key) => {
 		if (typeof form[key] === 'string') {
 			if (key.includes('dropbox_url')) {
 				return true;
 			}
+			if (key.includes('landscape_dropbox_url')) {
+				return true;
+			}
+			if (
+				key.includes('landscape_image_dropbox_url') ||
+				key.includes('image_dropbox_url') ||
+				key.includes('media_dropbox_url')
+			) {
+				return true;
+			}
+
 			return !form[key] ? false : true;
 		}
 		if (typeof form[key] === 'object') {
@@ -57,7 +68,21 @@ const validateForm = (form, dataElements) => {
 		validateData = false;
 	}
 
-	var finalFormValue = validate.every((item) => item === true) && validateData;
+	var validateNews = true;
+	// console.log(newsData, 'nnn');
+
+	if (newsData?.length) {
+		validateNews = newsData.every((item) => {
+			if (item?.data) {
+				return item?.data[0]?.media_url;
+			}
+		});
+	} else if (newsData?.length === 0) {
+		validateNews = false;
+	}
+
+	var finalFormValue =
+		validate.every((item) => item === true) && validateData && validateNews;
 
 	return finalFormValue;
 };

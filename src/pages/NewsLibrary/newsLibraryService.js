@@ -11,10 +11,13 @@ export default class NewsLibraryService {
 	}
 
 	static getSpecificNewsApi(id) {
-		return axios.get(`${process.env.REACT_APP_API_ENDPOINT}/news/edit/${id}`, {
-			headers: {
-				Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+		return axios.get(
+			`${process.env.REACT_APP_API_ENDPOINT}/news/get-specific-news/${id}`,
+			{
+				headers: {
+					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+				}
 			}
-		});
+		);
 	}
 }

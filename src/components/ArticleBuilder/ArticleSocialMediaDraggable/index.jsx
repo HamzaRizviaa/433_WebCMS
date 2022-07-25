@@ -1,15 +1,12 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { useStyles as globalUseStyles } from '../../styles/global.style';
+import { Draggable } from 'react-beautiful-dnd';
 import { TextField } from '@material-ui/core';
 import { useStyles } from './index.style';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import { ReactComponent as Union } from '../../assets/drag.svg';
-import { ReactComponent as Deletes } from '../../assets/Delete.svg';
+import { ReactComponent as Union } from '../../../assets/drag.svg';
+import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 
 const ArticleSocialMediaDraggable = ({
 	item,
@@ -21,7 +18,7 @@ const ArticleSocialMediaDraggable = ({
 	initialData
 }) => {
 	const classes = useStyles();
-	const globalClasses = globalUseStyles();
+
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
 	const [postUrl, setPostUrl] = useState(
 		initialData ? initialData?.ig_post_url || initialData.twitter_post_url : ''
@@ -35,7 +32,7 @@ const ArticleSocialMediaDraggable = ({
 	return (
 		<>
 			<Draggable
-				draggableId={`draggable-${item?.id}`}
+				draggableId={`draggable-${index}`}
 				index={index}
 				key={key}
 				//	isDragDisabled={uploadeddatas.length <= 1}
@@ -82,7 +79,6 @@ const ArticleSocialMediaDraggable = ({
 						</div>
 						{clickExpandIcon ? (
 							<div>
-								{' '}
 								<div className={classes.socialmediaDrags}>
 									<h6> URL</h6>
 									<TextField

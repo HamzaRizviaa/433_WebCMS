@@ -14,6 +14,7 @@
 		"@testing-library/react": "^11.1.0",
 		"@testing-library/user-event": "^12.1.10",
 		"@tinymce/tinymce-react": "^3.13.1",
+		"aws4-axios": "^2.4.9",
 		"axios": "^0.24.0",
 		"capture-video-frame": "^1.0.0",
 		"cropperjs": "^1.5.12",
@@ -21,7 +22,6 @@
 		"interweave": "^12.9.0",
 		"lodash": "^4.17.21",
 		"moment": "^2.29.1",
-		"node-sass": "^4.14.1",
 		"react": "^17.0.2",
 		"react-beautiful-dnd": "^13.1.0",
 		"react-bootstrap-table-next": "^4.0.3",
@@ -70,6 +70,7 @@
 	"devDependencies": {
 		"eslint": "^8.3.0",
 		"eslint-config-prettier": "^8.3.0",
-		"eslint-plugin-react": "^7.27.1"
+		"eslint-plugin-react": "^7.27.1",
+		"sass": "^1.53.0"
 	}
 }

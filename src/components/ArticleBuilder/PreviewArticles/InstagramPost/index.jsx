@@ -3,9 +3,9 @@ import { Markup } from 'interweave';
 import { Box } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { getLocalStorageDetails } from '../../../utils';
+import { getLocalStorageDetails } from '../../../../utils';
 import { useStyles } from '../index.style';
-const TwitterPost = ({ data }) => {
+const InstagramPost = ({ data, itemIndex }) => {
 	const [markup, setMarkup] = useState('');
 	const [thumbnailHeight, setThumbnailHeight] = useState(0);
 	const [thumbnailWidth, setThumbnailWidth] = useState(0);
@@ -19,15 +19,16 @@ const TwitterPost = ({ data }) => {
 			}, delay);
 		};
 	};
-	const twitterCall = async () => {
+	const instagramrCall = async () => {
+		console.log('Api Again');
+		setMarkup('');
 		try {
 			const result = await axios.get(
 				`${
 					process.env.REACT_APP_API_ENDPOINT
 				}/social-media/get-embed-data?url=${
-					(data.data && data.data[0].twitter_post_url) ||
-					data.data[0].ig_post_url
-				}&type=${data.element_type === 'IG' ? 'instagram' : 'twitter'}`,
+					data.data && data.data[0].ig_post_url
+				}&type=instagram`,
 				{
 					headers: {
 						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
@@ -37,10 +38,8 @@ const TwitterPost = ({ data }) => {
 			if (result.status === 200) {
 				if (result.data.status_code === 200) {
 					setMarkup(result.data?.data?.html);
-					if (data.element_type === 'IG') {
-						setThumbnailHeight(result.data?.data?.thumbnail_height);
-						setThumbnailWidth(result.data?.data?.thumbnail_width);
-					}
+					setThumbnailHeight(result.data?.data?.thumbnail_height);
+					setThumbnailWidth(result.data?.data?.thumbnail_width);
 				} else {
 					setMarkup('');
 					setThumbnailHeight(0);
@@ -55,35 +54,36 @@ const TwitterPost = ({ data }) => {
 		}
 	};
 	useEffect(() => {
-		if (data?.data) debouceApiCall(twitterCall(), 1000);
+		if (data?.data) debouceApiCall(instagramrCall(), 1000);
 	}, [data.data]);
+
+	useEffect(() => {
+		instagramrCall();
+
+		return () => {
+			setMarkup('');
+			setThumbnailHeight(0);
+			setThumbnailWidth(0);
+		};
+	}, [itemIndex]);
+
 	useEffect(() => {
 		setTimeout(() => {
 			if (window) {
-				if (data.element_type === 'TWITTER') {
-					window.twttr.widgets.load();
-				} else {
-					window.instgrm.Embeds.process();
-				}
+				window.instgrm.Embeds.process();
 			}
 		}, 500);
 	}, [markup]);
 	return (
 		<>
-			<Box
-				pr={3}
-				className={
-					data.element_type === 'TWITTER'
-						? classes.twitterBox
-						: classes.instaBox
-				}
-			>
+			<Box pr={3} className={classes.instaBox}>
 				{markup && <Markup content={markup} />}
 			</Box>
 		</>
 	);
 };
-export default TwitterPost;
-TwitterPost.propTypes = {
-	data: PropTypes.object.isRequired
+export default InstagramPost;
+InstagramPost.propTypes = {
+	data: PropTypes.object.isRequired,
+	itemIndex: PropTypes.number
 };

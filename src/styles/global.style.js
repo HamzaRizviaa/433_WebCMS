@@ -479,7 +479,7 @@ export const useStyles = makeStyles(() => ({
 	sortIcon: {
 		position: 'absolute',
 		left: '-4px',
-		bottom: '-2px',
+		bottom: '1.5px',
 		height: '2rem !important',
 		width: '2rem !important'
 	},
@@ -487,7 +487,7 @@ export const useStyles = makeStyles(() => ({
 	sortIconSelected: {
 		position: 'absolute',
 		left: '-4px',
-		bottom: '-2px',
+		bottom: '1.5px',
 		height: '2rem !important',
 		width: ' 2rem !important',
 		color: theme.palette.neonYellow
@@ -708,6 +708,16 @@ export const useStyles = makeStyles(() => ({
 		whiteSpace: 'nowrap !important'
 	},
 
+	// ---------- news library
+
+	newsFileName: {
+		fontSize: ' 1.2rem',
+		maxWidth: '40%',
+		textOverflow: 'ellipsis',
+		overflow: 'hidden',
+		whiteSpace: 'nowrap !important'
+	},
+
 	// -------- question library
 
 	active_closed_btn: {
@@ -790,5 +800,29 @@ export const useStyles = makeStyles(() => ({
 		marginBottom: '1.5rem',
 		fontSize: '1.2rem',
 		display: 'block'
+	},
+
+	accordionRoot: {
+		'& .MuiAccordion-root': {
+			backgroundColor: `${theme.palette.black} `,
+			color: theme.palette.white,
+			margin: '20px 0px',
+			border: `1px solid ${theme.palette.grey}`,
+			borderRadius: '6px !important'
+		},
+		'& .MuiSvgIcon-root': {
+			color: theme.palette.white,
+			fontSize: '25px',
+			backgroundColor: theme.palette.grey,
+			borderRadius: '40px'
+		},
+		'& .MuiTypography-root': {
+			fontFamily: 'Poppins',
+			fontWeight: '800',
+			fontSize: '18px',
+			lineHeight: '30px',
+			display: 'flex',
+			alignItems: 'center'
+		}
 	}
 }));

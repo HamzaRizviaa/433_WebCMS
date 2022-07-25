@@ -11,8 +11,8 @@ import TopBanner from '../pages/TopBanner/TopBanner.jsx';
 import SignIn from '../pages/SignIn/SignIn';
 import ViralLibrary from '../pages/ViralLibrary/ViralLibrary';
 import ArticleLibrary from '../pages/ArticleLibrary/ArticleLibrary';
-import GamesLibrary from '../pages/GamesLibrary/GamesLibrary';
-// import NewsLibrary from '../pages/NewsLibrary/NewsLibrary';
+// import GamesLibrary from '../pages/GamesLibrary/GamesLibrary';
+import NewsLibrary from '../pages/NewsLibrary/NewsLibrary';
 import RequireAuth from './RequireAuth.js';
 
 const AppRoutes = () => {
@@ -30,11 +30,11 @@ const AppRoutes = () => {
 					path='/sign-in'
 					element={<SignIn setLoginData={setLoginData} />}
 				/>
-				{/* <Route
+				<Route
 					exact
 					path='/news-library'
 					element={<RequireAuth component={<NewsLibrary />} />}
-				/> */}
+				/>
 
 				<Route
 					exact
@@ -61,11 +61,11 @@ const AppRoutes = () => {
 					path='/viral-library'
 					element={<RequireAuth component={<ViralLibrary />} />}
 				/>
-				<Route
+				{/* <Route
 					exact
 					path='/games-library'
 					element={<RequireAuth component={<GamesLibrary />} />}
-				/>
+				/> */}
 				{/* <Route
 					path='/post-library'
 					element={<RequireAuth component={<PostLibrary />} />}

@@ -1,31 +1,10 @@
 /* eslint-disable no-debugger */
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
+/* eslint-disable no-undef  */
 import React, { useState, useEffect, useRef } from 'react';
-// import classes from './_uploadOrEditArticle.module.scss';
 import { useDropzone } from 'react-dropzone';
-import Editor from '../../Editor';
-import ArticleElements from '../../ArticleElements';
-import ArticleGeneralInfo from '../../ArticleGeneralInfo';
-import ArticleMediaDraggable from '../../articleMediaDraggable';
-import ArticleTextDraggable from '../../articleTextDraggable';
-import ArticleSocialMediaDraggable from '../../ArticleSocialMediaDraggable';
-import ArticleFooter from '../../ArticleFooter';
-import DraggableWrapper from '../../DraggableWrapper';
-import PreviewWrapper from '../../PreviewWrapper';
-import ImagePreview from '../../PreviewArticles/imagePreview';
-import TextPreview from '../../PreviewArticles/textPreview';
-import TwitterPost from '../../PreviewArticles/TwitterPost';
-import ArticleElementMedia from '../../ArticleElementMedia';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import { Box, MenuItem, TextField, Select, Grid } from '@material-ui/core';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import { Box, Grid } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import Slider from '../../slider';
-import ArticleSlider from '../../articleSlider';
-
-import DragAndDropField from '../../DragAndDropField';
-import Labels from '../../Labels';
 import { makeid } from '../../../utils/helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLocalStorageDetails } from '../../../utils';
@@ -33,7 +12,6 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
-import Close from '@material-ui/icons/Close';
 import Slide from '@mui/material/Slide';
 import checkFileSize from '../../../utils/validateFileSize';
 import validateForm from '../../../utils/validateForm';
@@ -42,13 +20,27 @@ import PrimaryLoader from '../../PrimaryLoader';
 import { useStyles } from './index.style';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
-
+import LoadingOverlay from 'react-loading-overlay';
 import Instragram from '../../../assets/Instagram.svg';
 import Text from '../../../assets/Text.svg';
 import ImageVideo from '../../../assets/Image.svg';
 import Tweet from '../../../assets/Twitter Line.svg';
-// import Profile433 from '../../../assets/Profile433.svg';
-import ArticleDraggables from '../../ArticleDraggables';
+import Question from '../../../assets/Quiz.svg';
+
+/*  ArticleBuilder imports  */
+import ArticleElements from '../../ArticleBuilder/ArticleElements'; // left pan of buttons
+import ArticleGeneralInfo from '../../ArticleBuilder/ArticleGeneralInfo'; // general Info
+import ArticleMediaDraggable from '../../ArticleBuilder/articleMediaDraggable'; // image / video
+import ArticleTextDraggable from '../../ArticleBuilder/articleTextDraggable'; // text
+import ArticleSocialMediaDraggable from '../../ArticleBuilder/ArticleSocialMediaDraggable'; // insta and twitter
+import ImagePreview from '../../ArticleBuilder/PreviewArticles/imagePreview';
+import TextPreview from '../../ArticleBuilder/PreviewArticles/textPreview';
+import TwitterPost from '../../ArticleBuilder/PreviewArticles/TwitterPost';
+import InstagramPost from '../../ArticleBuilder/PreviewArticles/InstagramPost';
+import DraggableWrapper from '../../ArticleBuilder/DraggableWrapper';
+import PreviewWrapper from '../../ArticleBuilder/PreviewWrapper';
+import ArticleSlider from '../../ArticleBuilder/ArticleSlider';
+import ArticleFooter from '../../ArticleBuilder/ArticleFooter';
 
 //api calls
 import {
@@ -57,16 +49,25 @@ import {
 	getArticleSubCategories
 } from '../../../pages/ArticleLibrary/articleLibrarySlice';
 
-import LoadingOverlay from 'react-loading-overlay';
-import { ConstructionOutlined } from '@mui/icons-material';
-import { height } from '@mui/system';
+import { aws4Interceptor } from 'aws4-axios';
 
-const UploadOrEditViral = ({
+import {
+	checkEmptyIG,
+	checkNewElementMedia,
+	checkEmptyMedia,
+	checkNewElementDescription,
+	checkEmptyDescription,
+	checkEmptyTwitter,
+	checkNewElementTwitter,
+	checkNewElementIG
+} from '../../../utils/articleUtils';
+import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDraggable';
+
+const UploadOrEditArticle = ({
 	open,
 	handleClose,
 	title,
 	isEdit,
-	heading1,
 	buttonText,
 	page,
 	status
@@ -84,14 +85,14 @@ const UploadOrEditViral = ({
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
+	const [landscapeFileWidth, setLandscapeFileWidth] = useState(0);
+	const [landscapeFileHeight, setLandscapeFileHeight] = useState(0);
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
-	const [dataItem, setDataItem] = useState('');
-	const [mediaElementWidth, setMediaElementWidth] = useState(0);
-	const [mediaElementHeight, setMediaElementHeight] = useState(0);
 	const imgEl = useRef(null);
+	const imgEl2 = useRef(null);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const loadingRef = useRef(null);
@@ -102,7 +103,9 @@ const UploadOrEditViral = ({
 		title: '',
 		sub_text: '',
 		dropbox_url: '',
+		landscape_dropbox_url: '',
 		uploadedFiles: [],
+		uploadedLandscapeCoverImage: [],
 		author_text: '433 Team',
 		author_image: [{ media_url: Profile433 }],
 		labels: [],
@@ -145,6 +148,12 @@ const UploadOrEditViral = ({
 			ig_post_url: '',
 			component: ArticleSocialMediaDraggable
 		}
+		// {
+		// 	image: Question,
+		// 	text: 'Add Question',
+		// 	type: 'QUESTION',
+		// 	component: ArticleQuestionDraggable
+		// }
 	];
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
@@ -154,6 +163,17 @@ const UploadOrEditViral = ({
 			validator: checkFileSize
 		});
 
+	const {
+		acceptedFiles: acceptedFiles2,
+		fileRejections: fileRejections2,
+		getRootProps: getRootProps2,
+		getInputProps: getInputProps2
+	} = useDropzone({
+		accept: '.jpeg, .jpg, .png',
+		maxFiles: 1,
+		validator: checkFileSize
+	});
+	console.log('ACCEPTED FILE 2', acceptedFiles);
 	const {
 		acceptedFiles: acceptedFileAvatar,
 		fileRejections: fileRejectionsAvatar,
@@ -205,13 +225,11 @@ const UploadOrEditViral = ({
 		specificArticle,
 		specificArticleStatus,
 		subCategories,
-		// subCategoriesStatus,
 		mainCategories
-		// mainCategoriesStatus
 	} = useSelector((state) => state.ArticleLibraryStore);
 
 	useEffect(() => {
-		dispatch(getPostLabels());
+		// dispatch(getPostLabels());
 		dispatch(getArticleMainCategories());
 		return () => {
 			resetState();
@@ -296,6 +314,17 @@ const UploadOrEditViral = ({
 								}
 						  ]
 						: [],
+					landscape_dropbox_url: specificArticle?.landscape_dropbox_url,
+					uploadedLandscapeCoverImage: specificArticle?.landscape_image
+						? [
+								{
+									id: makeid(10),
+									file_name: specificArticle?.landscape_file_name,
+									media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${specificArticle?.landscape_image}`,
+									type: 'image'
+								}
+						  ]
+						: [],
 					author_text: specificArticle?.author_text,
 					author_image: specificArticle?.author_image
 						? [
@@ -321,8 +350,16 @@ const UploadOrEditViral = ({
 			// setEditorTextChecker(specificArticle?.description);
 			setFileHeight(specificArticle?.height);
 			setFileWidth(specificArticle?.width);
+			setLandscapeFileWidth(specificArticle?.landscape_width);
+			setLandscapeFileHeight(specificArticle?.landscape_height);
 		}
 	}, [specificArticle]);
+
+	console.log(fileHeight, fileWidth, 'portr');
+	console.log(landscapeFileHeight, landscapeFileWidth, 'lands');
+
+	// console.log(imgEl, 'port'); // issue is on ref of natural height and width
+	// console.log(imgEl2, 'land');
 
 	const updateDataFromAPI = (apiData) => {
 		let modifiedData = apiData?.map(
@@ -412,6 +449,16 @@ const UploadOrEditViral = ({
 			}, [5000]);
 		}
 	}, [fileRejections]);
+	useEffect(() => {
+		if (fileRejections2.length) {
+			fileRejections2.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError(e.message));
+			});
+			setTimeout(() => {
+				setFileRejectionError('');
+			}, [5000]);
+		}
+	}, [fileRejections]);
 
 	const getFileType = (type) => {
 		if (type) {
@@ -448,14 +495,33 @@ const UploadOrEditViral = ({
 		}
 	}, [acceptedFiles]);
 
-	const handleEditorChange = () => {
-		const editorTextContent = tinymce?.activeEditor?.getContent();
-		setForm((prev) => {
-			return { ...prev, description: editorTextContent };
-		});
+	useEffect(() => {
+		if (acceptedFiles2?.length) {
+			setIsError({});
+			let newFiles = acceptedFiles2.map((file) => {
+				let id = makeid(10);
+				return {
+					id: id,
+					file_name: file.name,
+					media_url: URL.createObjectURL(file),
+					fileExtension: `.${getFileType(file.type)}`,
+					mime_type: file.type,
+					file: file,
+					type: 'image'
+				};
+			});
 
-		setEditorTextChecker(editorTextContent); // to check yellow button condition
-	};
+			setForm((prev) => {
+				return {
+					...prev,
+					uploadedLandscapeCoverImage: [
+						...form.uploadedLandscapeCoverImage,
+						...newFiles
+					]
+				};
+			});
+		}
+	}, [acceptedFiles2]);
 
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
@@ -509,11 +575,30 @@ const UploadOrEditViral = ({
 						? mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
 						  mediaFiles[0]?.media_url
 						: '',
+					landscape_height:
+						form.uploadedLandscapeCoverImage.length > 0
+							? landscapeFileHeight
+							: 0,
+					landscape_width:
+						form.uploadedLandscapeCoverImage.length > 0
+							? landscapeFileWidth
+							: 0,
+					landscape_dropbox_url: form.landscape_dropbox_url
+						? form.landscape_dropbox_url
+						: '',
+					landscape_file_name: form?.uploadedLandscapeCoverImage?.length
+						? mediaFiles[2]?.landscape_file_name
+						: '',
+					landscape_image: form?.uploadedLandscapeCoverImage?.length
+						? mediaFiles[2]?.media_url?.split('cloudfront.net/')[1] ||
+						  mediaFiles[2]?.media_url
+						: '',
 					author_text: form.author_text,
 					author_image: form?.author_image[0]?.file
 						? mediaFiles[1]?.media_url?.split('cloudfront.net/')[1] ||
 						  mediaFiles[1]?.media_url
-						: mediaFiles[1]?.media_url,
+						: mediaFiles[1]?.media_url?.split('cloudfront.net/')[1] ||
+						  mediaFiles[1]?.media_url,
 					...(isEdit && id ? { article_id: id } : {}),
 					...((!isEdit || status !== 'published') &&
 					(form.labels?.length || status == 'draft')
@@ -536,11 +621,15 @@ const UploadOrEditViral = ({
 				toast.success(
 					isEdit ? 'Article has been edited!' : 'Article has been created!'
 				);
+
+				if (draft === false) {
+					publishReadMoreApi(result?.data?.data?.id);
+				}
 				setIsLoading(false);
 				setPostButtonStatus(false);
 				handleClose();
 				dispatch(getAllArticlesApi({ page }));
-				dispatch(getPostLabels());
+				// dispatch(getPostLabels());
 			}
 		} catch (e) {
 			toast.error(
@@ -549,6 +638,88 @@ const UploadOrEditViral = ({
 			setIsLoading(false);
 			setPostButtonStatus(false);
 			console.log(e, 'Failed - create / edit  Article');
+		}
+	};
+
+	const publishReadMoreApi = async (id) => {
+		const headers = {
+			'Content-Type': 'application/json',
+			Format: 'pandas-split'
+		};
+		const body = {
+			columns: ['operation', 'article_id'],
+			index: [0],
+			data: [['add_article', id]]
+		};
+
+		const client = axios.create();
+		const interceptor = aws4Interceptor(
+			{
+				region: 'eu-west-2',
+				service: 'sagemaker'
+			},
+			{
+				accessKeyId: 'AKIAW2RPSZR2K7SWJSPE',
+				secretAccessKey: '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'
+			}
+		);
+		client.interceptors.request.use(interceptor);
+
+		try {
+			let initialResponse = client.post(
+				'https://runtime.sagemaker.eu-west-2.amazonaws.com/endpoints/model-application-with-path/invocations',
+				body,
+				{
+					headers
+				}
+			);
+			let result = await initialResponse;
+			if (result?.data?.status_code === 200) {
+				console.log('Success - Read More Api !');
+			}
+		} catch (e) {
+			console.log(e, 'Failed - Read More Api !');
+		}
+	};
+
+	const deleteReadMoreApi = async (id) => {
+		const headers = {
+			'Content-Type': 'application/json',
+			Format: 'pandas-split'
+		};
+		const body = {
+			columns: ['operation', 'article_id'],
+			index: [0],
+			data: [['delete_article', id]]
+		};
+
+		const client = axios.create();
+		const interceptor = aws4Interceptor(
+			{
+				region: 'eu-west-2',
+				service: 'sagemaker'
+			},
+			{
+				accessKeyId: 'AKIAW2RPSZR2K7SWJSPE',
+				secretAccessKey: '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'
+			}
+		);
+		client.interceptors.request.use(interceptor);
+
+		try {
+			let initialResponse = client.post(
+				'https://runtime.sagemaker.eu-west-2.amazonaws.com/endpoints/model-application-with-path/invocations',
+				body,
+				{
+					headers
+				}
+			);
+			let result = await initialResponse;
+			if (result?.data?.status_code === 200) {
+				console.log('Success - Read More Api !');
+			}
+		} catch (e) {
+			console.log(e, 'Failed - Read More Api !');
 		}
 	};
 
@@ -565,6 +736,8 @@ const UploadOrEditViral = ({
 		setDisableDropdown(true);
 		setFileHeight(0);
 		setFileWidth(0);
+		setLandscapeFileWidth(0);
+		setLandscapeFileHeight(0);
 		setEditBtnDisabled(false);
 		setDraftBtnDisabled(false);
 		setIsError({});
@@ -574,7 +747,8 @@ const UploadOrEditViral = ({
 			// description: tinyMCE.activeEditor?.setContent(''),
 			dropbox_url: '',
 			uploadedFiles: [],
-
+			landscape_dropbox_url: '',
+			uploadedLandscapeCoverImage: [],
 			author_text: '433 Team',
 			author_image: [{ media_url: Profile433 }],
 			labels: [],
@@ -596,8 +770,20 @@ const UploadOrEditViral = ({
 		});
 	};
 
+	const handleDeleteLandscapeFile = (id) => {
+		setForm((prev) => {
+			return {
+				...prev,
+				uploadedLandscapeCoverImage: form.uploadedLandscapeCoverImage.filter(
+					(file) => file.id !== id
+				)
+			};
+		});
+	};
+
 	const handleMediaElementDelete = (sortOrder) => {
 		let dataCopy = [...data];
+		console.log(sortOrder, 'sortOrder');
 		if (sortOrder) {
 			setData(dataCopy.filter((file) => file.sortOrder !== sortOrder));
 		}
@@ -632,15 +818,6 @@ const UploadOrEditViral = ({
 		let dataCopy = [...data];
 		dataCopy[index].isOpen = isOpen;
 		setData(dataCopy);
-	};
-
-	const handleDeleteAvatarPicture = (id) => {
-		setForm((prev) => {
-			return {
-				...prev,
-				author_image: form.author_image.filter((file) => file.id !== id)
-			};
-		});
 	};
 
 	const checkDataErrors = () => {
@@ -686,6 +863,7 @@ const UploadOrEditViral = ({
 			//  }
 			// },
 			uploadedFiles: form.uploadedFiles.length < 1,
+			uploadedLandscapeCoverImage: form.uploadedLandscapeCoverImage.length < 1,
 			selectedLabels: form.labels.length < 7,
 			// editorText: !form.description,
 			mainCategory: !form.mainCategory,
@@ -718,6 +896,8 @@ const UploadOrEditViral = ({
 				}
 			);
 			if (result?.data?.status_code === 200) {
+				deleteReadMoreApi(id);
+
 				if (result?.data?.data?.is_deleted === false) {
 					toast.error(
 						'The media or article cannot be deleted because it is used as a top banner'
@@ -770,12 +950,6 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	const editorTextCheckerTrimmed = editorTextChecker?.replace(/&nbsp;/g, ' ');
-	const specificArticleTextTrimmed = specificArticle?.description?.replace(
-		/&nbsp;/g,
-		' '
-	); // api response
-
 	const handleArticleElement = (dataItem) => {
 		setData((prev) => {
 			return [
@@ -798,171 +972,27 @@ const UploadOrEditViral = ({
 		});
 	};
 
-	const checkNewElementFile = (data) => {
-		return data.some((item) => {
-			if (item?.data) {
-				return item?.data[0]?.file ? true : false;
-			}
-		});
-	};
-
-	const checkNewElementMedia = (elements, data) => {
-		let result = [];
-		if (data.length === 0) {
-			result.push(true);
-		} else {
-			for (let i = 0; i < elements?.length; i++) {
-				if (elements.length === data.length) {
-					if (data[i].data && data[i]?.data[0].file_name !== '') {
-						if (data[i]?.data[0]?.file_name === elements[i]?.file_name) {
-							result.push(true);
-						} else {
-							result.push(false);
-						}
-					} else {
-						result.push(true);
-					}
-				} else {
-					return !checkEmptyMedia(data);
-				}
-			}
-		}
-		return result.every((item) => item === true);
-	};
-
-	const checkEmptyMedia = (data) => {
-		const filteredData = data.filter((item) => item.element_type === 'MEDIA');
-		const validatedData = filteredData.map((item) => {
-			if (item.data) {
-				return !item.data[0]?.media_url ? false : true;
-			} else {
-				return false;
-			}
-		});
-		return validatedData.every((item) => item === true);
-	};
-
-	const checkNewElementDescription = (elements, data) => {
-		let result = [];
-		if (data.length === 0) {
-			result.push(true);
-		} else {
-			for (let i = 0; i < elements?.length; i++) {
-				// let sortOrder = elements[i].sort_order - 1;
-				if (elements.length === data.length) {
-					if (data[i].data && data[i]?.data[0].description !== '') {
-						if (data[i]?.data[0]?.description === elements[i]?.description) {
-							result.push(true);
-						} else {
-							result.push(false);
-						}
-					} else {
-						result.push(true);
-					}
-				} else {
-					return !checkEmptyDescription(data);
-				}
-			}
-		}
-		return result.every((item) => item === true);
-	};
-
-	const checkEmptyDescription = (data) => {
-		const filteredData = data.filter((item) => item.element_type === 'TEXT');
-		const validatedData = filteredData.map((item) => {
-			if (item.data) {
-				return !item.data[0].description ? false : true;
-			} else {
-				return false;
-			}
-		});
-		return validatedData.every((item) => item === true);
-	};
-
-	const checkEmptyTwitter = (data) => {
-		const filteredData = data.filter((item) => item.element_type === 'TWITTER');
-		const validatedData = filteredData.map((item) => {
-			if (item.data) {
-				return !item.data[0].twitter_post_url ? false : true;
-			} else {
-				return false;
-			}
-		});
-		return validatedData.every((item) => item === true);
-	};
-
-	const checkNewElementTwitter = (elements, data) => {
-		let result = [];
-		if (data.length === 0) {
-			result.push(true);
-		} else {
-			for (let i = 0; i < elements?.length; i++) {
-				if (elements.length === data.length) {
-					if (data[i].data && data[i]?.data[0].twitter_post_url !== '') {
-						if (
-							data[i]?.data[0]?.twitter_post_url ===
-							elements[i]?.twitter_post_url
-						) {
-							result.push(true);
-						} else {
-							result.push(false);
-						}
-					} else {
-						result.push(true);
-					}
-				} else {
-					return !checkEmptyTwitter(data);
-				}
-			}
-		}
-		return result.every((item) => item === true);
-	};
-
-	const checkNewElementIG = (elements, data) => {
-		let result = [];
-		if (data.length === 0) {
-			result.push(true);
-		} else {
-			for (let i = 0; i < elements?.length; i++) {
-				if (elements.length === data.length) {
-					if (data[i].data && data[i]?.data[0].ig_post_url !== '') {
-						if (data[i]?.data[0]?.ig_post_url === elements[i]?.ig_post_url) {
-							result.push(true);
-						} else {
-							result.push(false);
-						}
-					} else {
-						result.push(true);
-					}
-				} else {
-					return !checkEmptyIG(data);
-				}
-			}
-		}
-		return result.every((item) => item === true);
-	};
-
-	const checkEmptyIG = (data) => {
-		const filteredData = data.filter((item) => item.element_type === 'IG');
-		const validatedData = filteredData.map((item) => {
-			if (item.data) {
-				return !item.data[0].ig_post_url ? false : true;
-			} else {
-				return false;
-			}
-		});
-		return validatedData.every((item) => item === true);
-	};
+	// const checkNewElementFile = (data) => {
+	// 	return data.some((item) => {
+	// 		if (item?.data) {
+	// 			return item?.data[0]?.file ? true : false;
+	// 		}
+	// 	});
+	// };
 
 	const comparingFields = (specificArticle, form) => {
 		return (
 			specificArticle?.title?.trim() === form?.title?.trim() &&
 			specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
 			specificArticle?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
+			specificArticle?.landscape_dropbox_url?.trim() ===
+				form?.landscape_dropbox_url?.trim() &&
 			specificArticle?.author_text?.trim() === form?.author_text?.trim() &&
 			specificArticle?.show_likes === form.show_likes &&
 			specificArticle?.show_comments === form.show_comments &&
-			specificArticle?.file_name === form.uploadedFiles[0]?.file_name
+			specificArticle?.file_name === form.uploadedFiles[0]?.file_name &&
+			specificArticle?.landscape_file_name ===
+				form.uploadedLandscapeCoverImage[0]?.file_name
 		);
 	};
 
@@ -1126,11 +1156,17 @@ const UploadOrEditViral = ({
 			specificArticle?.title?.trim() === form?.title?.trim() &&
 			specificArticle?.sub_text?.trim() === form?.sub_text?.trim() &&
 			specificArticle?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
+			specificArticle?.landscape_dropbox_url?.trim() ===
+				form?.landscape_dropbox_url?.trim() &&
 			specificArticle?.author_text?.trim() === form?.author_text?.trim() &&
 			specificArticle?.show_likes === form.show_likes &&
 			specificArticle?.show_comments === form.show_comments &&
 			(specificArticle?.image || form?.uploadedFiles[0]
 				? specificArticle?.file_name === form?.uploadedFiles[0]?.file_name
+				: true) &&
+			(specificArticle?.landscape_image || form?.uploadedLandscapeCoverImage[0]
+				? specificArticle?.landscape_file_name ===
+				  form?.uploadedLandscapeCoverImage[0]?.file_name
 				: true) &&
 			specificArticle?.media_type ===
 				(form?.mainCategory?.name || form?.mainCategory) &&
@@ -1150,8 +1186,6 @@ const UploadOrEditViral = ({
 			);
 		}
 	}, [specificArticle, form]);
-
-	// console.log(draftBtnDisabled, 'valDraft');
 
 	const checkDuplicateLabel = () => {
 		let formLabels = form?.labels?.map((formL) => {
@@ -1180,24 +1214,6 @@ const UploadOrEditViral = ({
 					return file;
 				};
 
-				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-					if (_file.file) {
-						return await uploadFileToServer(_file, 'articleLibrary');
-					} else {
-						return _file;
-					}
-				});
-
-				let uploadAuthorImagePromiseArray = form.author_image.map(
-					async (_file) => {
-						if (_file.file) {
-							return await uploadFileToServer(_file, 'articleLibrary');
-						} else {
-							return _file;
-						}
-					}
-				);
-
 				let dataMedia = [];
 				if (data.length) {
 					dataMedia = await Promise.all(
@@ -1223,6 +1239,8 @@ const UploadOrEditViral = ({
 				let updatedArray = [
 					form.uploadedFiles[0] && fileUploader(form.uploadedFiles[0]),
 					form.author_image[0] && fileUploader(form.author_image[0]),
+					form.uploadedLandscapeCoverImage[0] &&
+						fileUploader(form.uploadedLandscapeCoverImage[0]),
 					dataMedia && dataMedia[0]
 				];
 
@@ -1245,26 +1263,6 @@ const UploadOrEditViral = ({
 					}
 					return file;
 				};
-
-				// let uploadFilesPromiseArray = form.uploadedFiles[0];
-				// if (form.uploadedFiles[0] && form.uploadedFiles[0]?.file) {
-				// 	uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-				// 		return await uploadFileToServer(_file, 'articleLibrary');
-				// 	});
-				// }
-
-				// let uploadAuthorImagePromiseArray = form.author_image[0];
-				// if (form.author_image[0]?.file) {
-				// 	uploadAuthorImagePromiseArray = form.author_image.map(
-				// 		async (_file) => {
-				// 			if (_file.file) {
-				// 				return uploadFileToServer(_file, 'articleLibrary');
-				// 			} else {
-				// 				return _file;
-				// 			}
-				// 		}
-				// 	);
-				// }
 
 				let dataMedia = [];
 				if (data.length) {
@@ -1290,6 +1288,8 @@ const UploadOrEditViral = ({
 				let updatedArray = [
 					form.uploadedFiles[0] && fileUploader(form.uploadedFiles[0]),
 					form.author_image[0] && fileUploader(form.author_image[0]),
+					form.uploadedLandscapeCoverImage[0] &&
+						fileUploader(form.uploadedLandscapeCoverImage[0]),
 					dataMedia && dataMedia[0]
 				];
 
@@ -1351,6 +1351,15 @@ const UploadOrEditViral = ({
 					}
 				);
 
+				let uploadedLandscapeCoverImagePromise =
+					form.uploadedLandscapeCoverImage.map(async (_file) => {
+						if (_file.file) {
+							return uploadFileToServer(_file, 'articleLibrary');
+						} else {
+							return _file;
+						}
+					});
+
 				let dataMedia;
 				if (data.length) {
 					dataMedia = await Promise.all(
@@ -1376,6 +1385,7 @@ const UploadOrEditViral = ({
 				Promise.all([
 					...uploadFilesPromiseArray,
 					...uploadAuthorImagePromiseArray,
+					...uploadedLandscapeCoverImagePromise,
 					...dataMedia
 				])
 					.then((mediaFiles) => {
@@ -1412,6 +1422,14 @@ const UploadOrEditViral = ({
 						}
 					}
 				);
+				let uploadedLandscapeCoverImagePromise =
+					form.uploadedLandscapeCoverImage.map(async (_file) => {
+						if (_file.file) {
+							return uploadFileToServer(_file, 'articleLibrary');
+						} else {
+							return _file;
+						}
+					});
 				let dataMedia;
 				if (data.length) {
 					dataMedia = await Promise.all(
@@ -1436,6 +1454,7 @@ const UploadOrEditViral = ({
 				Promise.all([
 					...uploadFilesPromiseArray,
 					...uploadAuthorImagePromiseArray,
+					...uploadedLandscapeCoverImagePromise,
 					...dataMedia
 				])
 					.then((mediaFiles) => {
@@ -1497,33 +1516,11 @@ const UploadOrEditViral = ({
 	// console.log('Data', data);
 
 	const handleFileWidthHeight = (width, height) => {
-		// console.log('call back in article preview', height, width);
-		setMediaElementWidth(width);
-		setMediaElementHeight(height);
+		console.log('call back in article preview', height, width);
 	};
 
 	return (
 		<>
-			{/* <Slider
-                open={open}
-                handleClose={() => {
-                    handleClose();
-                    if (form.uploadedFiles.length && !isEdit) {
-                        form.uploadedFiles.map((file) => handleDeleteFile(file.id));
-                    }
-                }}
-                title={title}
-                disableDropdown={disableDropdown}
-                handlePreview={() => {
-                    handlePreviewEscape();
-                }}
-                preview={previewBool}
-                previewRef={previewRef}
-                orientationRef={orientationRef}
-                edit={isEdit}
-                article={true}
-                dialogRef={dialogWrapper}
-            > */}
 			<ArticleSlider
 				open={open}
 				handleClose={() => {
@@ -1549,7 +1546,6 @@ const UploadOrEditViral = ({
 					spinner={<PrimaryLoader />}
 					style={{ top: '100px' }}
 				>
-					{/* <ArticleSlide in={true} direction='up' {...{ timeout: 400 }}> */}
 					<Slide in={true} direction='up' {...{ timeout: 400 }}>
 						<div style={{ paddingTop: '100px' }}>
 							<div
@@ -1598,11 +1594,17 @@ const UploadOrEditViral = ({
 											subCategories={subCategories}
 											SubCategoryId={SubCategoryId}
 											handleDeleteFile={handleDeleteFile}
+											handleDeleteLandscapeFile={handleDeleteLandscapeFile}
 											imgRef={imgEl}
+											imgRef2={imgEl2}
 											setFileWidth={setFileWidth}
 											setFileHeight={setFileHeight}
+											setLandscapeFileWidth={setLandscapeFileWidth}
+											setLandscapeFileHeight={setLandscapeFileHeight}
 											getRootProps={getRootProps}
 											getInputProps={getInputProps}
+											getRootProps2={getRootProps2}
+											getInputProps2={getInputProps2}
 											fileRejectionError={fileRejectionError}
 											getRootPropsAvatar={getRootPropsAvatar}
 											getInputPropsAvatar={getInputPropsAvatar}
@@ -1670,11 +1672,13 @@ const UploadOrEditViral = ({
 															) : item.element_type === 'TWITTER' ? (
 																<TwitterPost
 																	data={item}
+																	itemIndex={index}
 																	style={{ width: '100%' }}
 																/>
 															) : item.element_type === 'IG' ? (
-																<TwitterPost
+																<InstagramPost
 																	data={item}
+																	itemIndex={index}
 																	style={{ width: '100%' }}
 																/>
 															) : (
@@ -1706,10 +1710,9 @@ const UploadOrEditViral = ({
 							</div>
 						</div>
 					</Slide>
-					{/* </ArticleSlide> */}
 				</LoadingOverlay>
 			</ArticleSlider>
-			{/* </Slider> */}
+
 			<DeleteModal
 				open={openDeletePopup}
 				toggle={toggleDeleteModal}
@@ -1723,7 +1726,7 @@ const UploadOrEditViral = ({
 	);
 };
 
-UploadOrEditViral.propTypes = {
+UploadOrEditArticle.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	isEdit: PropTypes.bool.isRequired,
@@ -1734,4 +1737,4 @@ UploadOrEditViral.propTypes = {
 	status: PropTypes.string
 };
 
-export default UploadOrEditViral;
+export default UploadOrEditArticle;

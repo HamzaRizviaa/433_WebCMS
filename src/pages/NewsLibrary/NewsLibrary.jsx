@@ -38,10 +38,11 @@ import {
 	resetNoResultStatus
 } from './newsLibrarySlice';
 
+import { getPostLabels } from '../PostLibrary/postLibrarySlice';
+
 const NewsLibrary = () => {
 	// Selectors
 	const allNews = useSelector((state) => state.NewsLibrary.news);
-	console.log(allNews, '==== all news api =====');
 	const newsApiStatus = useSelector((state) => state.NewsLibrary);
 	const totalRecords = useSelector((state) => state.NewsLibrary.totalRecords);
 	const noResultStatus = useSelector(
@@ -164,7 +165,7 @@ const NewsLibrary = () => {
 								: col?.dataField === 'status'
 								? 25
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -179,7 +180,7 @@ const NewsLibrary = () => {
 								: col?.dataField === 'status'
 								? 25
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -194,7 +195,7 @@ const NewsLibrary = () => {
 								: col?.dataField === 'status'
 								? 25
 								: -4,
-						bottom: '-2px'
+						bottom: '1.5px'
 					}}
 				/>
 			);
@@ -220,7 +221,15 @@ const NewsLibrary = () => {
 								  classes.mediaWrapper
 						}
 					>
-						<MenuIcon style={{ marginRight: '10px' }} />
+						{row.total_slides > 1 ? (
+							<MenuIcon
+								style={{ marginRight: '10px', height: '20px', width: '20px' }}
+							/>
+						) : (
+							<div
+								style={{ marginRight: '10px', height: '20px', width: '20px' }}
+							></div>
+						)}
 						<Tooltip
 							// TransitionComponent={Fade}
 							// TransitionProps={{ timeout: 600 }}
@@ -235,7 +244,7 @@ const NewsLibrary = () => {
 											: classes.mediaIconPortraitPreview
 									}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-										row?.thumbnail_url ? row?.thumbnail_url : row?.media
+										row?.media || row?.image
 									}`}
 									alt='no img'
 									onError={(e) => (
@@ -252,7 +261,7 @@ const NewsLibrary = () => {
 								<img
 									className={classes.mediaIcon}
 									src={`${process.env.REACT_APP_MEDIA_ENDPOINT}/${
-										row?.thumbnail_url ? row?.thumbnail_url : row?.media
+										row?.media || row?.image
 									}`}
 									onError={(e) => (
 										(e.target.onerror = null), (e.target.src = DefaultImage)
@@ -277,9 +286,9 @@ const NewsLibrary = () => {
 								arrow: { className: classes.libraryToolTipArrow }
 							}}
 						>
-							<div ref={fileNameRef} className={classes.viralFileName}>
+							<div ref={fileNameRef} className={classes.newsFileName}>
 								<Markup
-									className={classes.viralFileName}
+									className={classes.newsFileName}
 									content={row.file_name}
 								/>
 							</div>
@@ -391,6 +400,7 @@ const NewsLibrary = () => {
 
 	const tableRowEvents = {
 		onClick: (e, row) => {
+			row.status === 'draft' && dispatch(getPostLabels());
 			dispatch(getSpecificNews(row.id));
 			setEdit(true);
 			setrowStatus(row.status); // pass in slider
@@ -502,6 +512,7 @@ const NewsLibrary = () => {
 						<h1 style={{ marginRight: '2rem' }}>NEWS LIBRARY</h1>
 						<Button
 							onClick={() => {
+								dispatch(getPostLabels());
 								setEdit(false);
 								setShowSlider(true);
 							}}

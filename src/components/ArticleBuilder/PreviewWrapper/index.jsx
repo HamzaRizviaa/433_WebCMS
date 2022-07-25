@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Heart from '../../assets/Heart.svg';
-import Share from '../../assets/shareArticle.svg';
-import goBack from '../../assets/goBack.svg';
-import Comments from '../../assets/Comment.svg';
 import { useStyles } from './index.styles';
+import Heart from '../../../assets/Heart.svg';
+import Share from '../../../assets/shareArticle.svg';
+import goBack from '../../../assets/goBack.svg';
+import Comments from '../../../assets/Comment.svg';
+import WiFi from '../../../assets/Wifi.svg';
+import Battery from '../../../assets/Rectangle.svg';
+import Signals from '../../../assets/MobileSignal.svg';
 import Avatar from '@mui/material/Avatar';
-import { formatDate2 } from '../../utils';
-import WiFi from '../../assets/Wifi.svg';
-import Battery from '../../assets/Rectangle.svg';
-import Signals from '../../assets/MobileSignal.svg';
+import { formatDate2 } from '../../../utils';
 import { Markup } from 'interweave';
 const PreviewWrapper = ({
 	children,
@@ -46,7 +46,7 @@ const PreviewWrapper = ({
 					width: '380px',
 					// height: `${height}px`, linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 100%);
 					height: '812px',
-					backgroundImage: `linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 100%),
+					backgroundImage: `linear-gradient(180deg, rgba(0, 0, 0, 0) -12.5%, rgba(0, 0, 0, 0) 19.68%, rgba(0, 0, 0, 0) 57.99%, #000000 100%),
 					url(${form.uploadedFiles.length > 0 && form?.uploadedFiles[0]?.media_url})`
 				}}
 			>
