@@ -25,7 +25,8 @@ const ImagePreview = ({ data, isEdit }) => {
 								maxHeight: '640px',
 								width: '100%',
 								objectFit: 'cover',
-								objectPosition: 'center'
+								objectPosition: 'center',
+								borderRadius: '8px'
 							}}
 							controls={true}
 						>
