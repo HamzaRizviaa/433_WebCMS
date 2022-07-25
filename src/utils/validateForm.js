@@ -14,6 +14,7 @@ const validateForm = (form, dataElements, newsData) => {
 			) {
 				return true;
 			}
+
 			return !form[key] ? false : true;
 		}
 		if (typeof form[key] === 'object') {

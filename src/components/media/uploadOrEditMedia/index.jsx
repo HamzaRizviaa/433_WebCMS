@@ -585,15 +585,13 @@ const UploadOrEditMedia = ({
 							description: form.description,
 							labels: [...form.labels],
 							dropbox_url: {
-								media: form.media_dropbox_url
-									? form.media_dropbox_url
-									: undefined,
+								media: form.media_dropbox_url ? form.media_dropbox_url : '',
 								portrait_cover_image: form.image_dropbox_url
 									? form.image_dropbox_url
-									: undefined,
+									: '',
 								landscape_cover_image: form.landscape_image_dropbox_url
 									? form.landscape_image_dropbox_url
-									: undefined
+									: ''
 							},
 
 							show_likes: form.show_likes ? true : undefined,
@@ -851,7 +849,6 @@ const UploadOrEditMedia = ({
 					form.uploadedCoverImage[0], //portrait
 					form.uploadedLandscapeCoverImage[0] //landscape
 				].map(async (_file) => {
-					console.log(_file, '_file to check ');
 					if (_file.file) {
 						return await uploadFileToServer(_file, _file.type);
 					} else {
@@ -860,13 +857,6 @@ const UploadOrEditMedia = ({
 				});
 
 				console.log(uploadFilesPromiseArray, 'uploadFilesPromiseArray');
-
-				// file_name:
-				// index === 1
-				// 	? form.uploadedCoverImage[0].file_name
-				// 	: index === 2
-				// 	? form.uploadedLandscapeCoverImage[0]?.file_name
-				// 	: form.uploadedFiles[0].file_name,
 
 				Promise.all([...uploadFilesPromiseArray])
 					.then(async (mediaFiles) => {
@@ -949,13 +939,13 @@ const UploadOrEditMedia = ({
 								dropbox_url: {
 									media: form.media_dropbox_url // audio video
 										? form.media_dropbox_url
-										: undefined,
+										: '',
 									portrait_cover_image: form.image_dropbox_url //portrait
 										? form.image_dropbox_url
-										: undefined,
+										: '',
 									landscape_cover_image: form.landscape_image_dropbox_url //landscape
 										? form.landscape_image_dropbox_url
-										: undefined
+										: ''
 								},
 								...(form.labels.length ? { labels: [...form.labels] } : {}),
 								media_url:
@@ -974,7 +964,13 @@ const UploadOrEditMedia = ({
 												}
 										  }
 										: {
-												portrait: { ...form?.uploadedCoverImage[0] }
+												portrait: {
+													...form?.uploadedCoverImage[0],
+													image_url:
+														form?.uploadedCoverImage[0]?.media_url.split(
+															'cloudfront.net/'
+														)[1]
+												}
 										  }),
 									...(mediaFiles[2]?.url
 										? {
@@ -985,7 +981,13 @@ const UploadOrEditMedia = ({
 												}
 										  }
 										: {
-												landscape: { ...form?.uploadedLandscapeCoverImage[0] }
+												landscape: {
+													...form?.uploadedLandscapeCoverImage[0],
+													image_url:
+														form?.uploadedLandscapeCoverImage[0]?.media_url.split(
+															'cloudfront.net/'
+														)[1]
+												}
 										  })
 								},
 								file_name_media: form?.uploadedFiles[0]?.file_name,
@@ -1270,13 +1272,13 @@ const UploadOrEditMedia = ({
 					dropbox_url: {
 						media: form.media_dropbox_url // audio video
 							? form.media_dropbox_url
-							: undefined,
+							: '',
 						portrait_cover_image: form.image_dropbox_url //portrait
 							? form.image_dropbox_url
-							: undefined,
+							: '',
 						landscape_cover_image: form.landscape_image_dropbox_url //landscape
 							? form.landscape_image_dropbox_url
-							: undefined
+							: ''
 					},
 
 					labels: [...form.labels],
