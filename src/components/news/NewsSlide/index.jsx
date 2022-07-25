@@ -45,15 +45,11 @@ const NewsSlide = ({
 	const [dropboxUrl, setDropboxUrl] = useState([
 		initialData ? initialData?.dropbox_url || initialData[0]?.dropbox_url : ''
 	]);
-	const [title, setTitle] = useState([
-		initialData ? initialData.title || initialData[0]?.title : ''
-	]);
-	const [description, setDescription] = useState([
-		initialData ? initialData.description || initialData[0]?.description : ''
-	]);
-	const [name, setName] = useState([
-		initialData ? initialData.name || initialData[0]?.name : ''
-	]);
+	const [title, setTitle] = useState(initialData ? initialData[0]?.title : '');
+	const [description, setDescription] = useState(
+		initialData ? initialData[0]?.description : ''
+	);
+	const [name, setName] = useState(initialData ? initialData[0]?.name : '');
 
 	const [expanded, setExpanded] = useState(true);
 
