@@ -33,6 +33,7 @@ import {
 	checkEmptyMediaNewsDraft,
 	comparingNewsFields,
 	checkNewElementNEWS,
+	checkNewElementNEWSDraft,
 	checkSortOrderOnEdit,
 	checkDuplicateLabel
 } from '../../../utils/newsUtils';
@@ -190,19 +191,21 @@ const UploadOrEditNews = ({
 		const validateEmptyNewsArray = [checkEmptyMediaNewsDraft(news)];
 
 		const validateEmptyNewsAndEditComparisonArray = [
-			checkNewElementNEWS(specificNews, news)
+			checkNewElementNEWSDraft(specificNews, news)
 		];
 
 		if (
 			!validateDraft(form, null, news) ||
 			!comparingNewsFields(specificNews, form)
 		) {
+			console.log('1st');
 			setDraftBtnDisabled(
 				!validateEmptyNewsArray.every((item) => item === true) ||
 					!validateDraft(form, null, news)
 			);
 		} else {
 			if (specificNews?.slides?.length !== news?.length) {
+				console.log('2nd');
 				setDraftBtnDisabled(
 					!validateEmptyNewsArray.every((item) => item === true)
 				);
@@ -213,8 +216,10 @@ const UploadOrEditNews = ({
 					) ||
 					!validateEmptyNewsArray.every((item) => item === true)
 				) {
+					console.log('3rd');
 					setDraftBtnDisabled(!checkSortOrderOnEdit(specificNews, news));
 				} else {
+					console.log('4th');
 					setDraftBtnDisabled(
 						validateEmptyNewsAndEditComparisonArray.every(
 							(item) => item === true
@@ -419,14 +424,14 @@ const UploadOrEditNews = ({
 							image:
 								mediaFiles[index]?.media_url?.split('cloudfront.net/')[1] ||
 								mediaFiles[index]?.media_url,
-							file_name: mediaFiles[index].file_name,
-							height: item.data[0].height,
-							width: item.data[0].width,
+							file_name: mediaFiles[index]?.file_name,
+							height: item.data[0]?.height,
+							width: item.data[0]?.width,
 
-							dropbox_url: item.data[0].dropbox_url,
-							description: item.data[0].description,
-							title: item.data[0].title,
-							name: item.data[0].name,
+							dropbox_url: item.data[0]?.dropbox_url,
+							description: item.data[0]?.description,
+							title: item.data[0]?.title,
+							name: item.data[0]?.name,
 							sort_order: index + 1
 						};
 				  })

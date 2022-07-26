@@ -62,6 +62,9 @@ const NewsSlide = ({
 		}
 	};
 
+	console.log(initialData, 'ID');
+	console.log(newFile, 'nF');
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png',
@@ -170,13 +173,13 @@ const NewsSlide = ({
 
 										<br />
 
-										{newFile?.length ? (
+										{newFile[0]?.media_url ? (
 											<hr className={classes.horizontalLine} />
 										) : (
 											<></>
 										)}
 
-										{!newFile?.length ? (
+										{!newFile[0]?.media_url ? (
 											<section
 												className={globalClasses.dropZoneContainer}
 												// style={{
