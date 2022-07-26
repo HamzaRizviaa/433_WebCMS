@@ -667,9 +667,7 @@ const ArticleLibrary = () => {
 					<input
 						style={{
 							border: `${
-								paginationError
-									? '1px solid red !important'
-									: '1px solid #808080 !important'
+								paginationError ? '1px solid red ' : '1px solid #808080 '
 							}`
 						}}
 						type={'number'}
