@@ -30,6 +30,7 @@ import NewsSlide from '../NewsSlide';
 import Close from '@material-ui/icons/Close';
 import {
 	checkEmptyMediaNews,
+	checkEmptyMediaNewsDraft,
 	comparingNewsFields,
 	checkNewElementNEWS,
 	checkSortOrderOnEdit,
@@ -186,7 +187,7 @@ const UploadOrEditNews = ({
 	}, [news]);
 
 	useEffect(() => {
-		const validateEmptyNewsArray = [checkEmptyMediaNews(news)];
+		const validateEmptyNewsArray = [checkEmptyMediaNewsDraft(news)];
 
 		const validateEmptyNewsAndEditComparisonArray = [
 			checkNewElementNEWS(specificNews, news)
@@ -502,6 +503,8 @@ const UploadOrEditNews = ({
 			setIsError({});
 		}, 5000);
 	};
+
+	console.log(!validateDraft(form, null, news), draftBtnDisabled, 'valUES');
 
 	const handleCreateDraft = () => {
 		setIsLoading(false);
