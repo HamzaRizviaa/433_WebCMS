@@ -25,7 +25,6 @@ export const checkEmptyMediaNewsDraft = (news) => {
 			return false;
 		}
 	});
-	console.log(validateNews, 'last1');
 
 	return validateNews.every((item) => item === true);
 };

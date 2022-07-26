@@ -348,6 +348,7 @@ const UploadOrEditNews = ({
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...news];
+		console.log(dataCopy[index].data, 'jjjj090');
 		dataCopy[index].data = [
 			{
 				...(dataCopy[index]?.data?.length ? dataCopy[index]?.data[0] : {}),
@@ -366,7 +367,11 @@ const UploadOrEditNews = ({
 			setNews(
 				dataCopy.filter((item, i) => {
 					if (index === i) {
-						delete item['data'][0];
+						delete item['data'][0]?.file_name;
+						delete item['data'][0]?.height;
+						delete item['data'][0]?.media_url;
+						delete item['data'][0]?.width;
+
 						return item;
 					} else {
 						return item;
@@ -419,6 +424,7 @@ const UploadOrEditNews = ({
 		let slides =
 			news.length > 0
 				? news.map((item, index) => {
+						console.log(item, 'DAAWWADDAWDAWDDW');
 						return {
 							//id: item.data[0].id,
 							image:
@@ -524,9 +530,11 @@ const UploadOrEditNews = ({
 					let newsData;
 					if (item?.data[0].file) {
 						newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
+
 						return newsData;
 					} else {
-						return (newsData = item?.data[0]);
+						newsData = item?.data[0];
+						return newsData;
 					}
 				});
 
@@ -731,7 +739,7 @@ const UploadOrEditNews = ({
 														handleDeleteNews={(sortOrder) =>
 															handleNewsElementDelete(sortOrder)
 														}
-														initialData={item.data}
+														initialData={item.data && item.data}
 														setPreviewBool={setPreviewBool}
 														setPreviewFile={setPreviewFile}
 													/>
