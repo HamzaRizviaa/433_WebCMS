@@ -119,7 +119,8 @@ const UploadOrEditArticle = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
-
+	console.log('DATA', data);
+	console.log('FORMM', form);
 	const elementData = [
 		{
 			image: Text,
@@ -147,13 +148,13 @@ const UploadOrEditArticle = ({
 			type: 'IG',
 			ig_post_url: '',
 			component: ArticleSocialMediaDraggable
+		},
+		{
+			image: Question,
+			text: 'Add Question',
+			type: 'QUESTION',
+			component: ArticleQuestionDraggable
 		}
-		// {
-		// 	image: Question,
-		// 	text: 'Add Question',
-		// 	type: 'QUESTION',
-		// 	component: ArticleQuestionDraggable
-		// }
 	];
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =

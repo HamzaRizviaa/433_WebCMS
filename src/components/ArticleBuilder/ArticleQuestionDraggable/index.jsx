@@ -34,7 +34,7 @@ import {
 	TabsUnstyled,
 	TabUnstyled
 } from '@mui/material';
-import UploadOrEditQuiz from '../../quizzes/uploadOrEditQuiz/UploadOrEditQuiz';
+import ArticleQuestionUpload from '../ArticleQuestionUpload';
 
 const ArticleQuestionDraggable = ({
 	item,
@@ -148,7 +148,8 @@ const ArticleQuestionDraggable = ({
 									<TabUnstyled>Add Quiz</TabUnstyled>
 								</TabsListUnstyled>
 								<TabPanelUnstyled value={0}>
-									<UploadOrEditQuiz
+									<ArticleQuestionUpload
+										questionInsideArticles={true}
 										setPreviewBool={setPreviewBool}
 										previewFile={previewFile}
 										setPreviewFile={setPreviewFile}
@@ -161,7 +162,8 @@ const ArticleQuestionDraggable = ({
 									/>
 								</TabPanelUnstyled>
 								<TabPanelUnstyled value={1}>
-									<UploadOrEditQuiz
+									<ArticleQuestionUpload
+										questionInsideArticles={true}
 										quiz={true}
 										setPreviewBool={setPreviewBool}
 										previewFile={previewFile}
