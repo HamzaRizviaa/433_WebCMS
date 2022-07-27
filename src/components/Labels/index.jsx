@@ -37,6 +37,7 @@ const Labels = ({
 
 	const dispatch = useDispatch();
 	const { newLabelsSearch } = useSelector((state) => state.postLibrary);
+	const already_selected_array = [];
 
 	let draftLabels = selectedLabels.filter((label) => label.id == -1);
 	let drafts = [];
@@ -45,7 +46,7 @@ const Labels = ({
 		(element) => !drafts.includes(element.name)
 	);
 
-	console.log(selectedLabels, 'sL');
+	console.log(already_selected_array, 'ALREADY');
 	console.log(newLabelsSearch, 'ls');
 
 	const handleDebounceFun = () => {
@@ -55,17 +56,21 @@ const Labels = ({
 			return _search;
 		});
 
+		selectedLabels.map((item) => already_selected_array.push(item.name));
+
 		if (_search) {
 			dispatch(
 				getNewLabelsSearch({
 					q: _search,
-					already_selected: selectedLabels
+					already_searched: already_selected_array
 				})
 			);
 		}
 	};
 
-	const debounceFun = useCallback(_debounce(handleDebounceFun, 600), []);
+	const debounceFun = useCallback(_debounce(handleDebounceFun, 600), [
+		selectedLabels
+	]);
 
 	const handleChangeExtraLabel = (e) => {
 		setExtraLabel(e.target.value.toUpperCase());
@@ -193,7 +198,7 @@ const Labels = ({
 					(label) => label.name == option.name
 				);
 
-				console.log(option, 'op');
+				// console.log(option, 'op');
 
 				if (option.id === null && !currentLabelDuplicate) {
 					return (
