@@ -149,11 +149,6 @@ const ArticleQuestionDraggable = ({
 								</TabsListUnstyled>
 								<TabPanelUnstyled value={0}>
 									<ArticleQuestionUpload
-										questionInsideArticles={true}
-										setPreviewBool={setPreviewBool}
-										previewFile={previewFile}
-										setPreviewFile={setPreviewFile}
-										previewRef={previewRef}
 										setDisableDropdown={setDisableDropdown}
 										handleClose={() => {
 											handleClose();
@@ -163,12 +158,7 @@ const ArticleQuestionDraggable = ({
 								</TabPanelUnstyled>
 								<TabPanelUnstyled value={1}>
 									<ArticleQuestionUpload
-										questionInsideArticles={true}
 										quiz={true}
-										setPreviewBool={setPreviewBool}
-										previewFile={previewFile}
-										setPreviewFile={setPreviewFile}
-										previewRef={previewRef}
 										setDisableDropdown={setDisableDropdown}
 										handleClose={() => {
 											handleClose();
