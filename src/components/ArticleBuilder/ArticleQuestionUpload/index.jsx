@@ -53,12 +53,12 @@ const ArticleQuestionUpload = ({
 		uploadedFiles: [],
 		dropbox_url: '',
 		question: '',
-		answer1: '',
-		answer2: '',
-		labels: [],
-		end_date: null
+		answers: [],
+		labels: []
 	});
 	const imgRef = useRef(null);
+	console.log('File Width', fileWidth);
+	console.log('FORMM', form);
 
 	// const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
@@ -96,8 +96,6 @@ const ArticleQuestionUpload = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			setIsError({});
-
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -107,15 +105,17 @@ const ArticleQuestionUpload = ({
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
-					type: file.type === 'image'
+					type: 'image',
+					width: fileWidth,
+					height: fileHeight
 				};
 			});
-			//setUploadedFiles([...uploadedFiles, ...newFiles]);
 			setForm((prev) => {
 				return { ...prev, uploadedFiles: [...form.uploadedFiles, ...newFiles] };
 			});
+			sendDataToParent({ uploadedFiles: [...form.uploadedFiles, ...newFiles] });
 		}
-	}, [acceptedFiles]);
+	}, [acceptedFiles, fileWidth, fileHeight]);
 
 	useEffect(() => {
 		if (fileRejections.length) {
@@ -151,9 +151,7 @@ const ArticleQuestionUpload = ({
 	}, [extraLabel]);
 
 	const handleDeleteFile = (id) => {
-		// setUploadedFiles((uploadedFiles) =>
-		// 	uploadedFiles.filter((file) => file.id !== id)
-		// );
+		setForm(form.uploadedFiles.filter((file) => file.id !== id));
 	};
 
 	const handleChangeExtraLabel = (e) => {
@@ -233,11 +231,15 @@ const ArticleQuestionUpload = ({
 							<h6>DROPBOX URL</h6>
 							<TextField
 								value={form.dropbox_url}
-								onChange={(e) =>
+								onChange={(e) => {
 									setForm((prev) => {
 										return { ...prev, dropbox_url: e.target.value };
-									})
-								}
+									});
+
+									sendDataToParent({
+										dropbox_url: e.target.value
+									});
+								}}
 								placeholder={'Please drop the dropbox URL here'}
 								className={classes.textField}
 								multiline
@@ -246,7 +248,7 @@ const ArticleQuestionUpload = ({
 									disableUnderline: true,
 									className: classes.textFieldInput,
 									style: {
-										borderRadius: form.dropbox_url ? '16px' : '40px'
+										borderRadius: form.dropboxUrl ? '16px' : '40px'
 									}
 								}}
 							/>
@@ -282,6 +284,10 @@ const ArticleQuestionUpload = ({
 								onChange={(e) => {
 									setForm((prev) => {
 										return { ...prev, question: e.target.value };
+									});
+
+									sendDataToParent({
+										question: e.target.value
 									});
 								}}
 								placeholder={'Please write your question here'}
@@ -320,22 +326,42 @@ const ArticleQuestionUpload = ({
 								<h6
 									style={{
 										color:
-											form.answer1?.length >= 22 && form.answer1?.length <= 28
+											form.answers[0]?.answer?.length >= 22 &&
+											form.answers[0]?.answer?.length <= 28
 												? 'pink'
-												: form.answer1?.length === 29
+												: form.answers[0]?.answer?.length === 29
 												? 'red'
 												: 'white'
 									}}
 								>
-									{form.answer1?.length}/29
+									{form.answers[0]?.answer?.length}/29
 								</h6>
 							</div>
 							<TextField
 								disabled={(editQuiz || editPoll) && status !== 'draft'}
-								value={form.answer1}
+								value={form.answers[0]?.answer}
 								onChange={(e) => {
 									setForm((prev) => {
-										return { ...prev, answer1: e.target.value };
+										return {
+											...prev,
+											answers: [
+												{
+													answer: e.target.value,
+													type: type === 'quiz' ? 'right_answer' : 'poll',
+													position: 0
+												}
+											]
+										};
+									});
+
+									sendDataToParent({
+										answers: [
+											{
+												answer: e.target.value,
+												type: type === 'quiz' ? 'right_answer' : 'poll',
+												position: 0
+											}
+										]
 									});
 								}}
 								placeholder={'Please write your answer here'}
@@ -376,22 +402,43 @@ const ArticleQuestionUpload = ({
 								<h6
 									style={{
 										color:
-											form.answer2?.length >= 22 && form.answer2?.length <= 28
+											form.answers[1]?.answer?.length >= 22 &&
+											form.answers[1]?.answer?.length <= 28
 												? 'pink'
-												: form.answer2?.length === 29
+												: form.answers[1]?.answer?.length === 29
 												? 'red'
 												: 'white'
 									}}
 								>
-									{form.answer2?.length}/29
+									{form.answers[1]?.answer?.length}/29
 								</h6>
 							</div>
 							<TextField
 								disabled={(editQuiz || editPoll) && status !== 'draft'}
-								value={form.answer2}
+								value={form.answers[1]?.answer}
 								onChange={(e) => {
 									setForm((prev) => {
-										return { ...prev, answer2: e.target.value };
+										return {
+											...prev,
+											answers: [
+												{
+													answer: e.target.value,
+													type: type === 'quiz' ? 'wrong_answer' : 'poll',
+													position: 1
+												}
+											]
+										};
+									});
+
+									sendDataToParent({
+										answers: [
+											...form.answers,
+											{
+												answer: e.target.value,
+												type: type === 'quiz' ? 'wrong_answer' : 'poll',
+												position: 1
+											}
+										]
 									});
 								}}
 								placeholder={'Please write your answer here'}

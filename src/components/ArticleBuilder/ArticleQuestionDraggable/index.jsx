@@ -8,26 +8,6 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { ReactComponent as Union } from '../../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
-//tinymce
-import { Editor } from '@tinymce/tinymce-react';
-import 'tinymce/tinymce';
-import 'tinymce/icons/default';
-import 'tinymce/themes/silver';
-import 'tinymce/plugins/paste';
-import 'tinymce/plugins/link';
-import 'tinymce/plugins/image';
-import 'tinymce/plugins/searchreplace';
-import 'tinymce/plugins/hr';
-import 'tinymce/plugins/anchor';
-import 'tinymce/plugins/wordcount';
-import 'tinymce/plugins/lists';
-import 'tinymce/plugins/textcolor';
-import 'tinymce/plugins/colorpicker';
-import 'tinymce/plugins/fullscreen';
-import 'tinymce/plugins/charmap';
-import 'tinymce/skins/ui/oxide/skin.min.css';
-import 'tinymce/skins/ui/oxide/content.min.css';
-import 'tinymce/skins/content/default/content.min.css';
 import {
 	TabPanelUnstyled,
 	TabsListUnstyled,
@@ -49,43 +29,10 @@ const ArticleQuestionDraggable = ({
 }) => {
 	const classes = useStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
-	const [description, setDescription] = useState('');
-	const [previewBool, setPreviewBool] = useState(false);
-	const [previewFile, setPreviewFile] = useState(null);
-	const previewRef = useRef(null);
 
 	const clickExpand = () => {
 		setClickExpandIcon(!clickExpandIcon);
 		setIsOpen(!clickExpandIcon);
-	};
-
-	console.log(description, 'desss');
-
-	useEffect(() => {
-		if (initialData?.description) {
-			setTimeout(() => {
-				let editorbyId =
-					tinymce?.get(`text-${item.sortOrder}_ifr`) ||
-					tinymce?.get(`text-${item.sortOrder}`);
-				setDescription(editorbyId?.setContent(initialData?.description));
-			}, 1000);
-		}
-	}, [clickExpandIcon]);
-
-	const handleEditorChange = () => {
-		const editorTextContent = tinymce
-			?.get(`text-${item.sortOrder}`)
-			?.getContent();
-		const textContent = tinymce
-			?.get(`text-${item.sortOrder}`)
-			?.getContent({ format: 'text' });
-		setDescription(editorTextContent);
-		if (textContent === '') {
-			sendDataToParent([{ description: '' }]);
-		} else {
-			sendDataToParent([{ description: editorTextContent }]);
-		}
-		// setEditorTextChecker(editorTextContent); // to check yellow button condition
 	};
 
 	const muiClasses = useStyles();
@@ -138,36 +85,50 @@ const ArticleQuestionDraggable = ({
 								</div>
 							</div>
 						</div>
-						<div className={muiClasses.root}>
-							<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
-								<TabsListUnstyled
-									className={muiClasses.tabMainDiv}
-									style={{ width: previewBool ? '60%' : '100%' }}
-								>
-									<TabUnstyled>Add Poll</TabUnstyled>
-									<TabUnstyled>Add Quiz</TabUnstyled>
-								</TabsListUnstyled>
-								<TabPanelUnstyled value={0}>
-									<ArticleQuestionUpload
-										setDisableDropdown={setDisableDropdown}
-										handleClose={() => {
-											handleClose();
-										}}
-										type='poll'
-									/>
-								</TabPanelUnstyled>
-								<TabPanelUnstyled value={1}>
-									<ArticleQuestionUpload
-										quiz={true}
-										setDisableDropdown={setDisableDropdown}
-										handleClose={() => {
-											handleClose();
-										}}
-										type='quiz'
-									/>
-								</TabPanelUnstyled>
-							</TabsUnstyled>
-						</div>
+						{clickExpandIcon ? (
+							<div className={muiClasses.root}>
+								<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
+									<TabsListUnstyled className={muiClasses.tabMainDiv}>
+										<TabUnstyled>Add Poll</TabUnstyled>
+										<TabUnstyled>Add Quiz</TabUnstyled>
+									</TabsListUnstyled>
+									<TabPanelUnstyled value={0}>
+										<ArticleQuestionUpload
+											setDisableDropdown={setDisableDropdown}
+											item={item}
+											key={key}
+											index={index}
+											sendDataToParent={sendDataToParent}
+											initialData={initialData}
+											setIsOpen={setIsOpen}
+											handleDeleteFile={handleDeleteFile}
+											handleClose={() => {
+												handleClose();
+											}}
+											type='poll'
+										/>
+									</TabPanelUnstyled>
+									<TabPanelUnstyled value={1}>
+										<ArticleQuestionUpload
+											item={item}
+											key={key}
+											index={index}
+											sendDataToParent={sendDataToParent}
+											initialData={initialData}
+											setIsOpen={setIsOpen}
+											handleDeleteFile={handleDeleteFile}
+											setDisableDropdown={setDisableDropdown}
+											handleClose={() => {
+												handleClose();
+											}}
+											type='quiz'
+										/>
+									</TabPanelUnstyled>
+								</TabsUnstyled>
+							</div>
+						) : (
+							<></>
+						)}
 					</div>
 				)}
 			</Draggable>
