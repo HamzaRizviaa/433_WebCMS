@@ -32,5 +32,35 @@ export const useStyles = makeStyles(() => ({
 				thumbnailHeight > thumbnailWidth ? '459px' : '270px',
 			minWidth: 'unset !important'
 		}
+	},
+	questionDraggable: {
+		height: '380px',
+		borderRadius: '8px',
+		marginTop: '16px',
+		marginBottom: '16px'
+	},
+	questionDiv: {
+		paddingLeft: '24px',
+		paddingRight: '24px',
+		textAlign: 'center'
+	},
+	question: {
+		paddingTop: '200px',
+		fontStyle: 'normal',
+		fontWeight: 800,
+		fontSize: '20px',
+		lineHeight: '30px',
+		color: '#FFFFFF'
+	},
+	answer: {
+		fontStyle: 'normal',
+		fontWeight: 800,
+		fontSize: '12px',
+		lineHeight: '30px',
+		color: '#FFFFFF',
+		borderRadius: '40px',
+		padding: '8px 16px',
+		backgroundColor: 'rgba(255, 255, 255, 0.25)',
+		marginTop: '8px'
 	}
 }));
