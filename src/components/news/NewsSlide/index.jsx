@@ -35,25 +35,26 @@ const NewsSlide = ({
 	setPreviewBool,
 	setPreviewFile
 }) => {
+	// console.log(initialData, 'ID');
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 
-	const [newFile, setNewFile] = useState(initialData ? [initialData[0]] : []);
+	const [newFile, setNewFile] = useState(
+		initialData && initialData[0]?.media_url ? [initialData[0]] : []
+	);
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
 	const [dropboxUrl, setDropboxUrl] = useState([
 		initialData ? initialData?.dropbox_url || initialData[0]?.dropbox_url : ''
 	]);
-	const [title, setTitle] = useState([
-		initialData ? initialData.title || initialData[0]?.title : ''
-	]);
-	const [description, setDescription] = useState([
-		initialData ? initialData.description || initialData[0]?.description : ''
-	]);
-	const [name, setName] = useState([
-		initialData ? initialData.name || initialData[0]?.name : ''
-	]);
+	const [title, setTitle] = useState(
+		initialData && initialData[0] ? initialData[0]?.title : ''
+	);
+	const [description, setDescription] = useState(
+		initialData ? initialData[0]?.description : ''
+	);
+	const [name, setName] = useState(initialData ? initialData[0]?.name : '');
 
 	const [expanded, setExpanded] = useState(true);
 
@@ -65,6 +66,8 @@ const NewsSlide = ({
 			return _type && _type[1];
 		}
 	};
+
+	// console.log(newFile, 'nF');
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
