@@ -165,6 +165,16 @@ const ArticleQuestionUpload = ({
 		setIsError({});
 	};
 
+	const handleAnswerChange = (event, index) => {
+		const formCopy = { ...form };
+		formCopy.answers[index] = {
+			answer: event.target.value,
+			position: index,
+			type: type === 'quiz' ? 'right_answer' : 'poll'
+		};
+		setForm(formCopy);
+	};
+
 	// console.log(form, 'form');
 	// console.log(form.end_date, 'dft');
 	// console.log(editQuestionData?.poll_end_date, 'poll');
@@ -341,18 +351,7 @@ const ArticleQuestionUpload = ({
 								disabled={(editQuiz || editPoll) && status !== 'draft'}
 								value={form.answers[0]?.answer}
 								onChange={(e) => {
-									setForm((prev) => {
-										return {
-											...prev,
-											answers: [
-												{
-													answer: e.target.value,
-													type: type === 'quiz' ? 'right_answer' : 'poll',
-													position: 0
-												}
-											]
-										};
-									});
+									handleAnswerChange(e, 0);
 
 									sendDataToParent({
 										answers: [
@@ -417,18 +416,7 @@ const ArticleQuestionUpload = ({
 								disabled={(editQuiz || editPoll) && status !== 'draft'}
 								value={form.answers[1]?.answer}
 								onChange={(e) => {
-									setForm((prev) => {
-										return {
-											...prev,
-											answers: [
-												{
-													answer: e.target.value,
-													type: type === 'quiz' ? 'wrong_answer' : 'poll',
-													position: 1
-												}
-											]
-										};
-									});
+									handleAnswerChange(e, 1);
 
 									sendDataToParent({
 										answers: [
