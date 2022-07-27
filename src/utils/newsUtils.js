@@ -9,6 +9,26 @@ export const checkEmptyMediaNews = (news) => {
 	return validateNews.every((item) => item === true);
 };
 
+export const checkEmptyMediaNewsDraft = (news) => {
+	const validateNews = news.map((item) => {
+		if (item?.data) {
+			if (
+				item?.data[0]?.media_url ||
+				item?.data[0]?.title ||
+				item?.data[0]?.description ||
+				item?.data[0]?.name ||
+				item?.data[0]?.dropbox_url
+			) {
+				return true;
+			}
+		} else {
+			return false;
+		}
+	});
+
+	return validateNews.every((item) => item === true);
+};
+
 export const comparingNewsFields = (specificNews, form) => {
 	return (
 		specificNews?.show_likes === form.show_likes &&
@@ -43,6 +63,39 @@ export const checkNewElementNEWS = (specificNews, news) => {
 				}
 			} else {
 				return !checkEmptyMediaNews(news);
+			}
+		}
+	}
+	return result.every((item) => item === true);
+};
+
+export const checkNewElementNEWSDraft = (specificNews, news) => {
+	let result = [];
+	if (news.length === 0) {
+		result.push(true);
+	} else {
+		for (let i = 0; i < specificNews?.slides?.length; i++) {
+			if (specificNews.slides?.length === news.length) {
+				if (news[i]?.data) {
+					if (
+						news[i]?.data[0]?.file_name ===
+							specificNews?.slides[i]?.file_name &&
+						news[i]?.data[0]?.dropbox_url ===
+							specificNews?.slides[i]?.dropbox_url &&
+						news[i]?.data[0]?.title === specificNews?.slides[i]?.title &&
+						news[i]?.data[0]?.description ===
+							specificNews?.slides[i]?.description &&
+						news[i]?.data[0]?.name === specificNews?.slides[i]?.name
+					) {
+						result.push(true);
+					} else {
+						result.push(false);
+					}
+				} else {
+					result.push(true);
+				}
+			} else {
+				return !checkEmptyMediaNewsDraft(news);
 			}
 		}
 	}
