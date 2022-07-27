@@ -46,8 +46,7 @@ export default class PostLibraryService {
 					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
 				},
 				params: {
-					q: params.q,
-					already_searched: [...params.already_searched]
+					...params
 				}
 			}
 		);

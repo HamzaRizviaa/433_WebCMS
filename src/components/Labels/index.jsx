@@ -49,6 +49,13 @@ const Labels = ({
 	console.log(already_selected_array, 'ALREADY');
 	console.log(newLabelsSearch, 'ls');
 
+	const labelsParams = (labels) => {
+		return labels.reduce((accumulator, currentItem, currentIndex) => {
+			accumulator[`already_searched[${currentIndex}]`] = currentItem.name;
+			return accumulator;
+		}, {});
+	};
+
 	const handleDebounceFun = () => {
 		let _search;
 		setExtraLabel((prevState) => {
@@ -62,7 +69,7 @@ const Labels = ({
 			dispatch(
 				getNewLabelsSearch({
 					q: _search,
-					already_searched: already_selected_array
+					...(selectedLabels.length ? labelsParams(selectedLabels) : {})
 				})
 			);
 		}
