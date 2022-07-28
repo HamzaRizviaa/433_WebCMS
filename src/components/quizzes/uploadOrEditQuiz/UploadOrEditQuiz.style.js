@@ -222,8 +222,7 @@ export const useStyles = makeStyles((theme) => ({
 
 	stopBtn: {
 		// width: '35%',
-		display: 'inline-block',
-		
+		display: 'inline-block'
 	},
 	saveChangesbtn: { '& span': { padding: '1rem 2rem !important' } },
 
@@ -275,5 +274,33 @@ export const useStyles = makeStyles((theme) => ({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center'
+	},
+	articlesQuizDetails: {
+		backgroundColor: ' #1A1A1A',
+		padding: '16px',
+		borderRadius: '8px'
+	},
+	articlesbox: {
+		display: 'flex'
+	},
+	articlesImagebox: {
+		width: '50px',
+		height: '50px',
+		borderRadius: '8px'
+	},
+	articlesTextbox: {
+		marginLeft: '16px',
+		paddingTop: '7px'
+	},
+	articleText: {
+		fontWeight: 700,
+		fontSize: '10px',
+		color: ' #FFFF00'
+	},
+	articleTitle: {
+		fontWeight: 700,
+		fontSize: '14px',
+		lineHeight: '24px',
+		color: ' #FFFFFF'
 	}
 }));
