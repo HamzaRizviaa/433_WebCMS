@@ -791,13 +791,21 @@ const UploadOrEditArticle = ({
 	};
 
 	const handleElementDataDelete = (elementData, index) => {
+		console.log(elementData, 'elementData');
 		let dataCopy = [...data];
 		if (elementData) {
 			setData(
 				dataCopy.filter((item, i) => {
 					if (index === i) {
-						delete item['data'];
-						return item;
+						console.log(item, 'item in main FILE');
+						if (item.element_type === 'QUESTION') {
+							const abc = item.data;
+							delete abc['uploadedFiles'];
+							return abc;
+						} else {
+							delete item['data'];
+							return item;
+						}
 					} else {
 						return item;
 					}
@@ -805,6 +813,8 @@ const UploadOrEditArticle = ({
 			);
 		}
 	};
+
+	//element type == question , uploaded file detee
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...data];
