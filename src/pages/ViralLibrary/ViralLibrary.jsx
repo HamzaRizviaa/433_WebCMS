@@ -33,10 +33,7 @@ import {
 	resetNoResultStatus,
 	getSpecificViral
 } from './viralLibararySlice';
-import {
-	getPostLabels,
-	getAllNewLabels
-} from '../PostLibrary/postLibrarySlice';
+import { getAllNewLabels } from '../PostLibrary/postLibrarySlice';
 
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
@@ -427,7 +424,6 @@ const ViralLibrary = () => {
 
 	const tableRowEvents = {
 		onClick: (e, row) => {
-			// row.status === 'draft' && dispatch(getPostLabels());
 			row.status === 'draft' && dispatch(getAllNewLabels());
 			dispatch(getSpecificViral(row.id));
 			setEdit(true);

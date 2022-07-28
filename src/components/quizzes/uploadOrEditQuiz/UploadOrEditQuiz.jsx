@@ -943,6 +943,7 @@ const UploadOrEditQuiz = ({
 										extraLabel={extraLabel}
 										handleChangeExtraLabel={handleChangeExtraLabel}
 										draftStatus={status}
+										setExtraLabel={setExtraLabel}
 									/>
 								</div>
 
