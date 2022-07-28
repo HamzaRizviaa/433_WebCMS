@@ -46,7 +46,7 @@ const Sidebar = () => {
 			return 'dev';
 		} else if (href.includes('staging')) {
 			return 'staging';
-		} else if (href.includes('production')) {
+		} else {
 			return 'prod';
 		}
 	};
