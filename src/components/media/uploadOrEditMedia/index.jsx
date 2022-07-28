@@ -15,10 +15,7 @@ import checkFileSize from '../../../utils/validateFileSize';
 import ToggleSwitch from '../../switch';
 import completeUplaod from '../../../utils/completeUploadDraft';
 //import uploadFileToServer from '../../../utils/uploadFileToServer';
-import {
-	getMainCategories,
-	getMediaLabels
-} from './../../../pages/MediaLibrary/mediaLibrarySlice';
+import { getMainCategories } from './../../../pages/MediaLibrary/mediaLibrarySlice';
 import { getLocalStorageDetails } from '../../../utils';
 import { getMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
 import Close from '@material-ui/icons/Close';
@@ -212,7 +209,7 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		dispatch(getMainCategories());
-		dispatch(getMediaLabels());
+		// dispatch(getMediaLabels());
 		return () => {
 			resetState();
 		};
@@ -2068,6 +2065,7 @@ const UploadOrEditMedia = ({
 														});
 													}}
 													draftStatus={status}
+													setExtraLabel={setExtraLabel}
 												/>
 											</div>
 											<p className={globalClasses.mediaError}>
