@@ -158,8 +158,8 @@ const QuestionLibrary = () => {
 		labels: 'label',
 		status: 'status',
 		participants: 'participants',
-		user: 'user',
-		location: 'location'
+		user: 'user'
+		//location: 'location'
 	};
 
 	const sortRows = (order, col) => {
@@ -361,20 +361,20 @@ const QuestionLibrary = () => {
 				);
 			}
 		},
-		{
-			dataField: 'location',
-			sort: true,
-			sortCaret: sortRows,
-			sortFunc: () => {},
-			text: 'LOCATION',
-			formatter: (content) => {
-				return (
-					<div className={classes.questionRow}>
-						<div className={classes.questionLocation}>{content}</div>
-					</div>
-				);
-			}
-		},
+		// {
+		// 	dataField: 'location',
+		// 	sort: true,
+		// 	sortCaret: sortRows,
+		// 	sortFunc: () => {},
+		// 	text: 'LOCATION',
+		// 	formatter: (content) => {
+		// 		return (
+		// 			<div className={classes.questionRow}>
+		// 				<div className={classes.questionLocation}>{content}</div>
+		// 			</div>
+		// 		);
+		// 	}
+		// },
 		{
 			dataField: 'options',
 			text: 'OPTIONS',
@@ -412,7 +412,8 @@ const QuestionLibrary = () => {
 				getQuestionResulParticipant({ id: row.id, type: row.question_type })
 			);
 			setrowStatus(row.status);
-			setrowLocation(row.location);
+			// setrowLocation(row.location);
+			setrowLocation('Article');
 			setEdit(true);
 			row.question_type === 'quiz'
 				? setShowQuizSlider(true)
