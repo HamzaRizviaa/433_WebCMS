@@ -26,18 +26,10 @@ const Labels = ({
 	//const regex = /[%<>\\$'"\s@#/-=+&^*()!:;.,?{}[|]]/;
 	const regex = /\W/; // all characters that are not numbers and alphabets and underscore
 
-	// let draftLabels = selectedLabels.filter((label) => label.id == -1);
-	// let drafts = [];
-	// draftLabels.forEach((element) => drafts.push(element.name));
-	// let newOptions = LabelsOptions.filter(
-	// 	(element) => !drafts.includes(element.name)
-	// );
-
 	//------------------------------new labels
 
 	const dispatch = useDispatch();
 	const { newLabelsSearch } = useSelector((state) => state.postLibrary);
-	const already_selected_array = [];
 
 	let draftLabels = selectedLabels.filter((label) => label.id == -1);
 	let drafts = [];
@@ -46,7 +38,6 @@ const Labels = ({
 		(element) => !drafts.includes(element.name)
 	);
 
-	console.log(already_selected_array, 'ALREADY');
 	console.log(newLabelsSearch, 'ls');
 
 	const labelsParams = (labels) => {
@@ -62,8 +53,6 @@ const Labels = ({
 			_search = prevState;
 			return _search;
 		});
-
-		selectedLabels.map((item) => already_selected_array.push(item.name));
 
 		if (_search) {
 			dispatch(
@@ -136,31 +125,6 @@ const Labels = ({
 				<div className={classes.liAutocompleteWithButton}>
 					<p>No results found</p>
 				</div>
-
-				// <>
-				// 	{extraLabel && (
-				// 		<li
-				// 			// {...props}
-				// 			style={{
-				// 				display: 'flex',
-				// 				alignItems: 'center',
-				// 				justifyContent: 'space-between'
-				// 			}}
-				// 			className={classes.liAutocomplete}
-				// 		>
-				// 			{/* {option.name} */}
-				// 			{extraLabel}
-				// 			<Button
-				// 				text='CREATE NEW LABEL'
-				// 				style={{
-				// 					padding: '3px 12px',
-				// 					fontWeight: 700
-				// 				}}
-				// 				onClick={() => handleNewOptionlabel}
-				// 			/>
-				// 		</li>
-				// 	)}
-				// </>
 			}
 			className={`${classes.autoComplete} ${
 				isEdit && draftStatus !== 'draft' && classes.disableAutoComplete
@@ -204,8 +168,6 @@ const Labels = ({
 				let currentLabelDuplicate = selectedLabels.some(
 					(label) => label.name == option.name
 				);
-
-				// console.log(option, 'op');
 
 				if (option.id === null && !currentLabelDuplicate) {
 					return (
