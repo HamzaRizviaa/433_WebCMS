@@ -6,11 +6,12 @@ import Table from '../../../components/table';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import { getDateTime, formatDate } from '../../../utils';
+
 import LinearProgress, {
 	linearProgressClasses
 } from '@mui/material/LinearProgress';
 import PropTypes from 'prop-types';
-
+import { useStyles } from './UploadOrEditQuiz.style';
 import {
 	getQuestions,
 	getQuestionResulParticipant
@@ -21,6 +22,7 @@ import { toast } from 'react-toastify';
 import PrimaryLoader from '../../PrimaryLoader';
 import axios from 'axios';
 import DeleteModal from '../../DeleteModal';
+import DefaultImage from '../../../assets/defaultImage.png';
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	height: '54px',
 	borderRadius: '8px',
@@ -39,6 +41,7 @@ export default function QuizResults({
 	page,
 	type,
 	status,
+	location,
 	quiz,
 	dialogWrapper
 }) {
@@ -47,14 +50,16 @@ export default function QuizResults({
 	const [secondUserPercentage, setSecondtUserPercentage] = useState(null);
 	const [ans1, setAns1] = useState('');
 	const [ans2, setAns2] = useState('');
+	const [endDate, setEndDate] = useState(null);
 	const [ans1Users, setAns1Users] = useState(null);
 	const [ans2Users, setAns2Users] = useState(null);
+	const [articleText, setArticleText] = useState('');
+	const [articleImage, setArticleImage] = useState('');
 	const [totalParticipants, setTotalParticipants] = useState(null);
-	const [endDate, setEndDate] = useState(null);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
 	const dispatch = useDispatch();
-
+	const articleQuestion = useStyles();
 	const editQuestionResultDetail = useSelector(
 		(state) => state.questionLibrary.questionResultDetail
 	);
@@ -246,6 +251,10 @@ export default function QuizResults({
 
 			setAns1(editQuestionResultDetail?.answers[0]?.answer);
 			setAns2(editQuestionResultDetail?.answers[1]?.answer);
+			setArticleImage(
+				`${process.env.REACT_APP_MEDIA_ENDPOINT}/${editQuestionResultDetail?.article_image}`
+			);
+			setArticleText(editQuestionResultDetail?.article_title);
 			setEndDate(
 				formatDate(
 					editQuestionResultDetail?.poll_end_date ??
@@ -258,10 +267,32 @@ export default function QuizResults({
 	return (
 		<div>
 			{questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>}
+			{location === 'article' ? (
+				<div className={articleQuestion.articlesQuizDetails}>
+					<div className={articleQuestion.articlesbox}>
+						<div>
+							<img
+								src={articleImage}
+								className={articleQuestion.articlesImagebox}
+								alt='no img'
+								onError={(e) => (
+									(e.target.onerror = null), (e.target.src = DefaultImage)
+								)}
+							/>
+						</div>
+						<div className={articleQuestion.articlesTextbox}>
+							<div className={articleQuestion.articleText}>ARTICLE</div>
+							<div className={articleQuestion.articleTitle}>{articleText}</div>
+						</div>
+					</div>
+				</div>
+			) : (
+				<></>
+			)}
 			<div className={classes.QuizQuestion}>
 				{editQuestionResultDetail.question}
 			</div>
-			<div className='articlesQuizDetails'></div>
+
 			<div className={classes.QuizDetailsProgressBars}>
 				<div className={classes.progressBars}>
 					<BorderLinearProgress
@@ -301,28 +332,40 @@ export default function QuizResults({
 					{totalParticipants}{' '}
 					{totalParticipants === 1 ? 'Participant' : 'Participants'}
 				</span>
-				<span>Ends {endDate} </span>
+				{location === 'article' ? '' : <span>Ends {endDate} </span>}
 			</div>
 			<div className={classes.QuizDetailsHeading}>Participants</div>
 			<div className={classes.QuizDetailstableContainer}>
 				<Table
 					// rowEvents={tableRowEvents}
 					columns={columns}
-					data={participants}
+					data={participants.length > 0 ? participants : ''}
 				/>
 			</div>
-			<div style={{ width: '100%', paddingBottom: '10%' }}>
-				<Button
-					disabled={deleteBtnStatus}
-					button2={true}
-					onClick={() => {
-						if (!deleteBtnStatus) {
-							toggleDeleteModal();
-						}
-					}}
-					text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
-				/>
+
+			<div className={classes.questionRow}>
+				{totalParticipants === 0 && 'No Data Found'}
 			</div>
+			<br />
+			<br />
+
+			{location === 'article' ? (
+				<></>
+			) : (
+				<div style={{ width: '100%', paddingBottom: '10%' }}>
+					<Button
+						disabled={deleteBtnStatus}
+						button2={true}
+						onClick={() => {
+							if (!deleteBtnStatus) {
+								toggleDeleteModal();
+							}
+						}}
+						text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
+					/>
+				</div>
+			)}
+
 			<DeleteModal
 				open={openDeletePopup}
 				toggle={toggleDeleteModal}
@@ -346,6 +389,7 @@ QuizResults.propTypes = {
 	type: PropTypes.string,
 	status: PropTypes.string,
 	quiz: PropTypes.bool,
+	location: PropTypes.string,
 	dialogWrapper: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })

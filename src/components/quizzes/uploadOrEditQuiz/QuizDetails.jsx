@@ -18,6 +18,7 @@ export default function QuizDetails({
 	buttonText,
 	isEdit,
 	status,
+	location,
 	page
 }) {
 	const [previewBool, setPreviewBool] = useState(false);
@@ -73,6 +74,19 @@ export default function QuizDetails({
 						dialogWrapper={dialogWrapper}
 						publishedStatus='draft'
 					/>
+				) : location === 'article' ? (
+					<QuizResults
+						page={page}
+						handleClose={() => {
+							handleClose();
+						}}
+						style={{ minWidth: '40% !important' }}
+						location={location}
+						type={'quiz'}
+						status={status}
+						quiz={true}
+						dialogWrapper={dialogWrapper}
+					/>
 				) : (
 					<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
 						<TabsListUnstyled
@@ -92,6 +106,7 @@ export default function QuizDetails({
 								style={{ minWidth: '40% !important' }}
 								type={'quiz'}
 								status={status}
+								location={location}
 								quiz={true}
 								dialogWrapper={dialogWrapper}
 							/>
@@ -134,6 +149,7 @@ QuizDetails.propTypes = {
 	buttonText: PropTypes.string.isRequired,
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
+	location: PropTypes.string.isRequired,
 	type: PropTypes.string.isRequired,
 	page: PropTypes.string
 };
