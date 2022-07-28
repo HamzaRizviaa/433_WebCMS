@@ -623,7 +623,7 @@ const UploadOrEditArticle = ({
 					isEdit ? 'Article has been edited!' : 'Article has been created!'
 				);
 
-				if (draft === false) {
+				if (draft === false && !isEdit) {
 					publishReadMoreApi(result?.data?.data?.id);
 				}
 				setIsLoading(false);
