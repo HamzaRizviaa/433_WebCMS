@@ -64,8 +64,8 @@ const ArticleQuestionUpload = ({
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
 
-	const { labels } = useSelector((state) => state.questionLibrary);
-
+	const { labels } = useSelector((state) => state.postLibrary);
+	console.log('LABELSS', labels);
 	useEffect(() => {
 		if (labels.length) {
 			setQuizLabels([...labels]);
@@ -111,9 +111,9 @@ const ArticleQuestionUpload = ({
 				};
 			});
 			setForm((prev) => {
-				return { ...prev, uploadedFiles: [...form.uploadedFiles, ...newFiles] };
+				return { ...prev, uploadedFiles: [...newFiles] };
 			});
-			sendDataToParent({ uploadedFiles: [...form.uploadedFiles, ...newFiles] });
+			sendDataToParent({ uploadedFiles: [...newFiles] });
 		}
 	}, [acceptedFiles, fileWidth, fileHeight]);
 
@@ -151,7 +151,12 @@ const ArticleQuestionUpload = ({
 	}, [extraLabel]);
 
 	const handleDeleteFile = (id) => {
-		setForm(form.uploadedFiles.filter((file) => file.id !== id));
+		setForm((prev) => {
+			return {
+				...prev,
+				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
+			};
+		});
 	};
 
 	const handleChangeExtraLabel = (e) => {
@@ -173,6 +178,9 @@ const ArticleQuestionUpload = ({
 			type: type === 'quiz' ? 'right_answer' : 'poll'
 		};
 		setForm(formCopy);
+		console.log('OWAIS', formCopy);
+		let answers = { answers: formCopy.answers };
+		sendDataToParent(answers);
 	};
 
 	// console.log(form, 'form');
@@ -196,6 +204,7 @@ const ArticleQuestionUpload = ({
 							quizPollStatus={status}
 							handleDeleteFile={handleDeleteFile}
 							isArticle
+							isArticleNew
 							isEdit={editPoll || editQuiz}
 							imgEl={imgRef}
 							imageOnload={() => {
@@ -344,7 +353,10 @@ const ArticleQuestionUpload = ({
 												: 'white'
 									}}
 								>
-									{form.answers[0]?.answer?.length}/29
+									{!form.answers[0]?.answer
+										? 0
+										: form.answers[0]?.answer?.length}
+									/29
 								</h6>
 							</div>
 							<TextField
@@ -353,15 +365,15 @@ const ArticleQuestionUpload = ({
 								onChange={(e) => {
 									handleAnswerChange(e, 0);
 
-									sendDataToParent({
-										answers: [
-											{
-												answer: e.target.value,
-												type: type === 'quiz' ? 'right_answer' : 'poll',
-												position: 0
-											}
-										]
-									});
+									// sendDataToParent({
+									// 	answers: [
+									// 		{
+									// 			answer: e.target.value,
+									// 			type: type === 'quiz' ? 'right_answer' : 'poll',
+									// 			position: 0
+									// 		}
+									// 	]
+									// });
 								}}
 								placeholder={'Please write your answer here'}
 								className={classes.textField}
@@ -409,7 +421,10 @@ const ArticleQuestionUpload = ({
 												: 'white'
 									}}
 								>
-									{form.answers[1]?.answer?.length}/29
+									{!form.answers[1]?.answer
+										? 0
+										: form.answers[1]?.answer?.length}
+									/29
 								</h6>
 							</div>
 							<TextField
@@ -418,16 +433,16 @@ const ArticleQuestionUpload = ({
 								onChange={(e) => {
 									handleAnswerChange(e, 1);
 
-									sendDataToParent({
-										answers: [
-											...form.answers,
-											{
-												answer: e.target.value,
-												type: type === 'quiz' ? 'wrong_answer' : 'poll',
-												position: 1
-											}
-										]
-									});
+									// sendDataToParent({
+									// 	answers: [
+									// 		...form.answers,
+									// 		{
+									// 			answer: e.target.value,
+									// 			type: type === 'quiz' ? 'wrong_answer' : 'poll',
+									// 			position: 1
+									// 		}
+									// 	]
+									// });
 								}}
 								placeholder={'Please write your answer here'}
 								className={classes.textField}
@@ -470,6 +485,9 @@ const ArticleQuestionUpload = ({
 								setSelectedLabels={(newVal) => {
 									setForm((prev) => {
 										return { ...prev, labels: [...newVal] };
+									});
+									sendDataToParent({
+										labels: [...newVal]
 									});
 								}} //closure
 								LabelsOptions={quizLabels}
