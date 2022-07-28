@@ -37,6 +37,7 @@ const ArticleQuestionUpload = ({
 	key,
 	index,
 	sendDataToParent,
+	handleDeleteData,
 	setIsOpen,
 	initialData
 	// WidthHeightCallback,
@@ -150,14 +151,16 @@ const ArticleQuestionUpload = ({
 		}
 	}, [extraLabel]);
 
-	const handleDeleteFile = (id) => {
-		setForm((prev) => {
-			return {
-				...prev,
-				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
-			};
-		});
-	};
+	// const handleDeleteFile = (id) => {
+	// 	setForm((prev) => {
+	// 		return {
+	// 			...prev,
+	// 			uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
+	// 		};
+	// 	});
+	// 	handleDeleteData(item.data);
+	// };
+	console.log(item, 'item in QUESTION');
 
 	const handleChangeExtraLabel = (e) => {
 		setExtraLabel(e.target.value.toUpperCase());
@@ -202,7 +205,17 @@ const ArticleQuestionUpload = ({
 						<DragAndDropField
 							uploadedFiles={form.uploadedFiles}
 							quizPollStatus={status}
-							handleDeleteFile={handleDeleteFile}
+							handleDeleteFile={(id) => {
+								setForm((prev) => {
+									return {
+										...prev,
+										uploadedFiles: form.uploadedFiles.filter(
+											(file) => file.id !== id
+										)
+									};
+								});
+								handleDeleteData(item.data?.uploadedFiles);
+							}}
 							isArticle
 							isArticleNew
 							isEdit={editPoll || editQuiz}
@@ -534,7 +547,8 @@ ArticleQuestionUpload.propTypes = {
 	index: PropTypes.number,
 	sendDataToParent: PropTypes.func.isRequired,
 	initialData: PropTypes.object,
-	setIsOpen: PropTypes.func
+	setIsOpen: PropTypes.func,
+	handleDeleteData: PropTypes.func
 	// WidthHeightCallback: PropTypes.func,
 	// initialData: PropTypes.object,
 };

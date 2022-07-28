@@ -25,7 +25,8 @@ const ArticleQuestionDraggable = ({
 	initialData,
 	// WidthHeightCallback,
 	handleDeleteFile,
-	setDisableDropdown
+	setDisableDropdown,
+	handleDeleteData
 }) => {
 	const classes = useStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
@@ -99,6 +100,9 @@ const ArticleQuestionDraggable = ({
 											key={key}
 											index={index}
 											sendDataToParent={sendDataToParent}
+											handleDeleteData={(uploadedFiles) => {
+												handleDeleteData(uploadedFiles);
+											}}
 											initialData={initialData}
 											setIsOpen={setIsOpen}
 											handleDeleteFile={handleDeleteFile}
@@ -114,6 +118,7 @@ const ArticleQuestionDraggable = ({
 											key={key}
 											index={index}
 											sendDataToParent={sendDataToParent}
+											handleDeleteData={handleDeleteData}
 											initialData={initialData}
 											setIsOpen={setIsOpen}
 											handleDeleteFile={handleDeleteFile}
@@ -146,7 +151,8 @@ ArticleQuestionDraggable.propTypes = {
 	// WidthHeightCallback: PropTypes.func,
 	handleDeleteFile: PropTypes.func,
 	// initialData: PropTypes.object,
-	setDisableDropdown: PropTypes.func
+	setDisableDropdown: PropTypes.func,
+	handleDeleteData: PropTypes.func
 };
 
 export default ArticleQuestionDraggable;
