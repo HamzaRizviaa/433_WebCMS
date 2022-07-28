@@ -552,6 +552,18 @@ const UploadOrEditArticle = ({
 					dropbox_url: item?.data[0]?.dropbox_url || undefined,
 					ig_post_url: item?.data[0]?.ig_post_url || undefined,
 					twitter_post_url: item?.data[0]?.twitter_post_url || undefined,
+					...(item.element_type === '    QUESTION'
+						? {
+								question_data: {
+									image: item.data.image,
+									file_name: item.data.uploadedFiles[0].file_name,
+									question: item.data.question,
+									dropbox_url: item.data.dropbox_url,
+									answers: item.data.answers,
+									labels: item.data.labels
+								}
+						  }
+						: undefined),
 					sort_order: index + 1
 				};
 			});
