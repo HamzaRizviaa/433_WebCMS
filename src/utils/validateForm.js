@@ -58,6 +58,15 @@ const validateForm = (form, dataElements, newsData) => {
 				if (dataFile.data) {
 					return dataFile?.data[0]?.ig_post_url;
 				}
+			} else if (dataFile.element_type === 'QUESTION') {
+				if (dataFile.data) {
+					return (
+						dataFile?.data?.question &&
+						dataFile?.data?.answers?.length === 2 &&
+						dataFile?.data?.labels?.length === 7 &&
+						dataFile?.data?.uploadedFiles?.length
+					);
+				}
 			} else {
 				if (dataFile.data) {
 					return dataFile?.data[0]?.twitter_post_url;
