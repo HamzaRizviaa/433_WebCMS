@@ -677,6 +677,7 @@ const UploadOrEditNews = ({
 															});
 														}}
 														draftStatus={status}
+														setExtraLabel={setExtraLabel}
 													/>
 												</div>
 												<p className={globalClasses.mediaError}>

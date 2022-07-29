@@ -1624,6 +1624,7 @@ const UploadOrEditArticle = ({
 											postLabels={postLabels}
 											extraLabel={extraLabel}
 											handleChangeExtraLabel={handleChangeExtraLabel}
+											setExtraLabel={setExtraLabel}
 											isError={isError}
 										/>
 										<DraggableWrapper onDragEnd={onDragEnd}>

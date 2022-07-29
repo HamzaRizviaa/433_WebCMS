@@ -44,6 +44,7 @@ const ArticleGeneralInfo = ({
 	postLabels,
 	extraLabel,
 	handleChangeExtraLabel,
+	setExtraLabel,
 	isError
 }) => {
 	const classes = useStyles();
@@ -533,6 +534,7 @@ const ArticleGeneralInfo = ({
 											return { ...prev, labels: [...newVal] };
 										});
 									}}
+									setExtraLabel={setExtraLabel}
 								/>
 							</div>
 							<p className={globalClasses.mediaError}>
@@ -622,5 +624,6 @@ ArticleGeneralInfo.propTypes = {
 	postLabels: PropTypes.array,
 	extraLabel: PropTypes.string,
 	handleChangeExtraLabel: PropTypes.func.isRequired,
-	isError: PropTypes.object.isRequired
+	isError: PropTypes.object.isRequired,
+	setExtraLabel: PropTypes.func
 };

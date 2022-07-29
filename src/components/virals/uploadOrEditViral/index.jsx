@@ -32,7 +32,7 @@ import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
 
 //new labels
-//import { getAllNewLabels } from '../../../pages/PostLibrary/postLibrarySlice';
+// import { getAllNewLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 
 const UploadOrEditViral = ({
 	open,
@@ -183,7 +183,7 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		// dispatch(getPostLabels()); // old labels
-		// dispatch(getAllNewLabels());    // new labels on search
+		// dispatch(getAllNewLabels()); // new labels on search
 		return () => {
 			resetState();
 		};
@@ -247,6 +247,7 @@ const UploadOrEditViral = ({
 		setFileHeight(0);
 		setFileWidth(0);
 		setIsError({});
+		setExtraLabel('');
 		setForm({
 			caption: '',
 			dropbox_url: '',
