@@ -112,11 +112,11 @@ const ArticleQuestionUpload = ({
 				};
 			});
 			setForm((prev) => {
-				return { ...prev, uploadedFiles: [...newFiles] };
+				return { ...prev, uploadedFiles: [...form.uploadedFiles, ...newFiles] };
 			});
-			sendDataToParent({ uploadedFiles: [...newFiles] });
+			sendDataToParent({ uploadedFiles: [...form.uploadedFiles, ...newFiles] });
 		}
-	}, [acceptedFiles, fileWidth, fileHeight]);
+	}, [acceptedFiles]);
 
 	useEffect(() => {
 		if (fileRejections.length) {
@@ -160,7 +160,7 @@ const ArticleQuestionUpload = ({
 	// 	});
 	// 	handleDeleteData(item.data);
 	// };
-	console.log(item, 'item in QUESTION');
+	// console.log(item, 'item in QUESTION');
 
 	const handleChangeExtraLabel = (e) => {
 		setExtraLabel(e.target.value.toUpperCase());

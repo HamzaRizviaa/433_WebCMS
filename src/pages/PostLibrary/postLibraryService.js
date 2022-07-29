@@ -37,15 +37,16 @@ export default class PostLibraryService {
 	}
 
 	static getNewLabelsSearch(params) {
+		console.log(params, 'ppppp23');
 		return axios.get(
 			`${process.env.REACT_APP_API_ENDPOINT}/label/search-labels`,
+
 			{
 				headers: {
 					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
 				},
 				params: {
-					q: params.q,
-					already_searched: params.already_searched
+					...params
 				}
 			}
 		);
