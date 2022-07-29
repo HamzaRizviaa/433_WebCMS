@@ -37,6 +37,7 @@ import ImagePreview from '../../ArticleBuilder/PreviewArticles/imagePreview';
 import TextPreview from '../../ArticleBuilder/PreviewArticles/textPreview';
 import TwitterPost from '../../ArticleBuilder/PreviewArticles/TwitterPost';
 import InstagramPost from '../../ArticleBuilder/PreviewArticles/InstagramPost';
+// import QuestionPoll from '../../ArticleBuilder/PreviewArticles/QuestionPoll';
 import DraggableWrapper from '../../ArticleBuilder/DraggableWrapper';
 import PreviewWrapper from '../../ArticleBuilder/PreviewWrapper';
 import ArticleSlider from '../../ArticleBuilder/ArticleSlider';
@@ -623,7 +624,7 @@ const UploadOrEditArticle = ({
 					isEdit ? 'Article has been edited!' : 'Article has been created!'
 				);
 
-				if (draft === false) {
+				if (draft === false && !isEdit) {
 					publishReadMoreApi(result?.data?.data?.id);
 				}
 				setIsLoading(false);
@@ -1613,6 +1614,7 @@ const UploadOrEditArticle = ({
 											postLabels={postLabels}
 											extraLabel={extraLabel}
 											handleChangeExtraLabel={handleChangeExtraLabel}
+											setExtraLabel={setExtraLabel}
 											isError={isError}
 										/>
 										<DraggableWrapper onDragEnd={onDragEnd}>
@@ -1656,6 +1658,7 @@ const UploadOrEditArticle = ({
 											</Box>
 
 											<PreviewWrapper form={form}>
+												{/* <QuestionPoll /> */}
 												{data.map((item, index) => {
 													return (
 														<div key={index} style={{ padding: '5px' }}>

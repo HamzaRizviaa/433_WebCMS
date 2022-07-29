@@ -37,6 +37,7 @@ const ArticleQuestionUpload = ({
 	key,
 	index,
 	sendDataToParent,
+	handleDeleteData,
 	setIsOpen,
 	initialData
 	// WidthHeightCallback,
@@ -53,19 +54,19 @@ const ArticleQuestionUpload = ({
 		uploadedFiles: [],
 		dropbox_url: '',
 		question: '',
-		answer1: '',
-		answer2: '',
-		labels: [],
-		end_date: null
+		answers: [],
+		labels: []
 	});
 	const imgRef = useRef(null);
+	console.log('File Width', fileWidth);
+	console.log('FORMM', form);
 
 	// const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
 
-	const { labels } = useSelector((state) => state.questionLibrary);
-
+	const { labels } = useSelector((state) => state.postLibrary);
+	console.log('LABELSS', labels);
 	useEffect(() => {
 		if (labels.length) {
 			setQuizLabels([...labels]);
@@ -96,8 +97,6 @@ const ArticleQuestionUpload = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			setIsError({});
-
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -107,13 +106,15 @@ const ArticleQuestionUpload = ({
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
-					type: file.type === 'image'
+					type: 'image',
+					width: fileWidth,
+					height: fileHeight
 				};
 			});
-			//setUploadedFiles([...uploadedFiles, ...newFiles]);
 			setForm((prev) => {
 				return { ...prev, uploadedFiles: [...form.uploadedFiles, ...newFiles] };
 			});
+			sendDataToParent({ uploadedFiles: [...form.uploadedFiles, ...newFiles] });
 		}
 	}, [acceptedFiles]);
 
@@ -150,11 +151,16 @@ const ArticleQuestionUpload = ({
 		}
 	}, [extraLabel]);
 
-	const handleDeleteFile = (id) => {
-		// setUploadedFiles((uploadedFiles) =>
-		// 	uploadedFiles.filter((file) => file.id !== id)
-		// );
-	};
+	// const handleDeleteFile = (id) => {
+	// 	setForm((prev) => {
+	// 		return {
+	// 			...prev,
+	// 			uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
+	// 		};
+	// 	});
+	// 	handleDeleteData(item.data);
+	// };
+	// console.log(item, 'item in QUESTION');
 
 	const handleChangeExtraLabel = (e) => {
 		setExtraLabel(e.target.value.toUpperCase());
@@ -165,6 +171,19 @@ const ArticleQuestionUpload = ({
 		setExtraLabel('');
 		setDisableDropdown(true);
 		setIsError({});
+	};
+
+	const handleAnswerChange = (event, index) => {
+		const formCopy = { ...form };
+		formCopy.answers[index] = {
+			answer: event.target.value,
+			position: index,
+			type: type === 'quiz' ? 'right_answer' : 'poll'
+		};
+		setForm(formCopy);
+		console.log('OWAIS', formCopy);
+		let answers = { answers: formCopy.answers };
+		sendDataToParent(answers);
 	};
 
 	// console.log(form, 'form');
@@ -186,8 +205,19 @@ const ArticleQuestionUpload = ({
 						<DragAndDropField
 							uploadedFiles={form.uploadedFiles}
 							quizPollStatus={status}
-							handleDeleteFile={handleDeleteFile}
+							handleDeleteFile={(id) => {
+								setForm((prev) => {
+									return {
+										...prev,
+										uploadedFiles: form.uploadedFiles.filter(
+											(file) => file.id !== id
+										)
+									};
+								});
+								handleDeleteData(item.data?.uploadedFiles);
+							}}
 							isArticle
+							isArticleNew
 							isEdit={editPoll || editQuiz}
 							imgEl={imgRef}
 							imageOnload={() => {
@@ -233,11 +263,15 @@ const ArticleQuestionUpload = ({
 							<h6>DROPBOX URL</h6>
 							<TextField
 								value={form.dropbox_url}
-								onChange={(e) =>
+								onChange={(e) => {
 									setForm((prev) => {
 										return { ...prev, dropbox_url: e.target.value };
-									})
-								}
+									});
+
+									sendDataToParent({
+										dropbox_url: e.target.value
+									});
+								}}
 								placeholder={'Please drop the dropbox URL here'}
 								className={classes.textField}
 								multiline
@@ -246,7 +280,7 @@ const ArticleQuestionUpload = ({
 									disableUnderline: true,
 									className: classes.textFieldInput,
 									style: {
-										borderRadius: form.dropbox_url ? '16px' : '40px'
+										borderRadius: form.dropboxUrl ? '16px' : '40px'
 									}
 								}}
 							/>
@@ -282,6 +316,10 @@ const ArticleQuestionUpload = ({
 								onChange={(e) => {
 									setForm((prev) => {
 										return { ...prev, question: e.target.value };
+									});
+
+									sendDataToParent({
+										question: e.target.value
 									});
 								}}
 								placeholder={'Please write your question here'}
@@ -320,23 +358,35 @@ const ArticleQuestionUpload = ({
 								<h6
 									style={{
 										color:
-											form.answer1?.length >= 22 && form.answer1?.length <= 28
+											form.answers[0]?.answer?.length >= 22 &&
+											form.answers[0]?.answer?.length <= 28
 												? 'pink'
-												: form.answer1?.length === 29
+												: form.answers[0]?.answer?.length === 29
 												? 'red'
 												: 'white'
 									}}
 								>
-									{form.answer1?.length}/29
+									{!form.answers[0]?.answer
+										? 0
+										: form.answers[0]?.answer?.length}
+									/29
 								</h6>
 							</div>
 							<TextField
 								disabled={(editQuiz || editPoll) && status !== 'draft'}
-								value={form.answer1}
+								value={form.answers[0]?.answer}
 								onChange={(e) => {
-									setForm((prev) => {
-										return { ...prev, answer1: e.target.value };
-									});
+									handleAnswerChange(e, 0);
+
+									// sendDataToParent({
+									// 	answers: [
+									// 		{
+									// 			answer: e.target.value,
+									// 			type: type === 'quiz' ? 'right_answer' : 'poll',
+									// 			position: 0
+									// 		}
+									// 	]
+									// });
 								}}
 								placeholder={'Please write your answer here'}
 								className={classes.textField}
@@ -376,23 +426,36 @@ const ArticleQuestionUpload = ({
 								<h6
 									style={{
 										color:
-											form.answer2?.length >= 22 && form.answer2?.length <= 28
+											form.answers[1]?.answer?.length >= 22 &&
+											form.answers[1]?.answer?.length <= 28
 												? 'pink'
-												: form.answer2?.length === 29
+												: form.answers[1]?.answer?.length === 29
 												? 'red'
 												: 'white'
 									}}
 								>
-									{form.answer2?.length}/29
+									{!form.answers[1]?.answer
+										? 0
+										: form.answers[1]?.answer?.length}
+									/29
 								</h6>
 							</div>
 							<TextField
 								disabled={(editQuiz || editPoll) && status !== 'draft'}
-								value={form.answer2}
+								value={form.answers[1]?.answer}
 								onChange={(e) => {
-									setForm((prev) => {
-										return { ...prev, answer2: e.target.value };
-									});
+									handleAnswerChange(e, 1);
+
+									// sendDataToParent({
+									// 	answers: [
+									// 		...form.answers,
+									// 		{
+									// 			answer: e.target.value,
+									// 			type: type === 'quiz' ? 'wrong_answer' : 'poll',
+									// 			position: 1
+									// 		}
+									// 	]
+									// });
 								}}
 								placeholder={'Please write your answer here'}
 								className={classes.textField}
@@ -435,6 +498,9 @@ const ArticleQuestionUpload = ({
 								setSelectedLabels={(newVal) => {
 									setForm((prev) => {
 										return { ...prev, labels: [...newVal] };
+									});
+									sendDataToParent({
+										labels: [...newVal]
 									});
 								}} //closure
 								LabelsOptions={quizLabels}
@@ -481,7 +547,8 @@ ArticleQuestionUpload.propTypes = {
 	index: PropTypes.number,
 	sendDataToParent: PropTypes.func.isRequired,
 	initialData: PropTypes.object,
-	setIsOpen: PropTypes.func
+	setIsOpen: PropTypes.func,
+	handleDeleteData: PropTypes.func
 	// WidthHeightCallback: PropTypes.func,
 	// initialData: PropTypes.object,
 };

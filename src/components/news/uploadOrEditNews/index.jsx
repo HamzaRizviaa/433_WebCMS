@@ -30,8 +30,10 @@ import NewsSlide from '../NewsSlide';
 import Close from '@material-ui/icons/Close';
 import {
 	checkEmptyMediaNews,
+	checkEmptyMediaNewsDraft,
 	comparingNewsFields,
 	checkNewElementNEWS,
+	checkNewElementNEWSDraft,
 	checkSortOrderOnEdit,
 	checkDuplicateLabel
 } from '../../../utils/newsUtils';
@@ -186,22 +188,24 @@ const UploadOrEditNews = ({
 	}, [news]);
 
 	useEffect(() => {
-		const validateEmptyNewsArray = [checkEmptyMediaNews(news)];
+		const validateEmptyNewsArray = [checkEmptyMediaNewsDraft(news)];
 
 		const validateEmptyNewsAndEditComparisonArray = [
-			checkNewElementNEWS(specificNews, news)
+			checkNewElementNEWSDraft(specificNews, news)
 		];
 
 		if (
 			!validateDraft(form, null, news) ||
 			!comparingNewsFields(specificNews, form)
 		) {
+			console.log('1st');
 			setDraftBtnDisabled(
 				!validateEmptyNewsArray.every((item) => item === true) ||
 					!validateDraft(form, null, news)
 			);
 		} else {
 			if (specificNews?.slides?.length !== news?.length) {
+				console.log('2nd');
 				setDraftBtnDisabled(
 					!validateEmptyNewsArray.every((item) => item === true)
 				);
@@ -212,8 +216,10 @@ const UploadOrEditNews = ({
 					) ||
 					!validateEmptyNewsArray.every((item) => item === true)
 				) {
+					console.log('3rd');
 					setDraftBtnDisabled(!checkSortOrderOnEdit(specificNews, news));
 				} else {
+					console.log('4th');
 					setDraftBtnDisabled(
 						validateEmptyNewsAndEditComparisonArray.every(
 							(item) => item === true
@@ -342,6 +348,7 @@ const UploadOrEditNews = ({
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...news];
+		console.log(dataCopy[index].data, 'jjjj090');
 		dataCopy[index].data = [
 			{
 				...(dataCopy[index]?.data?.length ? dataCopy[index]?.data[0] : {}),
@@ -360,7 +367,11 @@ const UploadOrEditNews = ({
 			setNews(
 				dataCopy.filter((item, i) => {
 					if (index === i) {
-						delete item['data'][0];
+						delete item['data'][0]?.file_name;
+						delete item['data'][0]?.height;
+						delete item['data'][0]?.media_url;
+						delete item['data'][0]?.width;
+
 						return item;
 					} else {
 						return item;
@@ -413,19 +424,20 @@ const UploadOrEditNews = ({
 		let slides =
 			news.length > 0
 				? news.map((item, index) => {
+						console.log(item, 'DAAWWADDAWDAWDDW');
 						return {
 							//id: item.data[0].id,
 							image:
 								mediaFiles[index]?.media_url?.split('cloudfront.net/')[1] ||
 								mediaFiles[index]?.media_url,
-							file_name: mediaFiles[index].file_name,
-							height: item.data[0].height,
-							width: item.data[0].width,
+							file_name: mediaFiles[index]?.file_name,
+							height: item.data[0]?.height,
+							width: item.data[0]?.width,
 
-							dropbox_url: item.data[0].dropbox_url,
-							description: item.data[0].description,
-							title: item.data[0].title,
-							name: item.data[0].name,
+							dropbox_url: item.data[0]?.dropbox_url,
+							description: item.data[0]?.description,
+							title: item.data[0]?.title,
+							name: item.data[0]?.name,
 							sort_order: index + 1
 						};
 				  })
@@ -503,6 +515,8 @@ const UploadOrEditNews = ({
 		}, 5000);
 	};
 
+	console.log(!validateDraft(form, null, news), draftBtnDisabled, 'valUES');
+
 	const handleCreateDraft = () => {
 		setIsLoading(false);
 		if (!validateDraft(form) || draftBtnDisabled) {
@@ -516,9 +530,11 @@ const UploadOrEditNews = ({
 					let newsData;
 					if (item?.data[0].file) {
 						newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
+
 						return newsData;
 					} else {
-						return (newsData = item?.data[0]);
+						newsData = item?.data[0];
+						return newsData;
 					}
 				});
 
@@ -661,6 +677,7 @@ const UploadOrEditNews = ({
 															});
 														}}
 														draftStatus={status}
+														setExtraLabel={setExtraLabel}
 													/>
 												</div>
 												<p className={globalClasses.mediaError}>
@@ -723,7 +740,7 @@ const UploadOrEditNews = ({
 														handleDeleteNews={(sortOrder) =>
 															handleNewsElementDelete(sortOrder)
 														}
-														initialData={item.data}
+														initialData={item.data && item.data}
 														setPreviewBool={setPreviewBool}
 														setPreviewFile={setPreviewFile}
 													/>

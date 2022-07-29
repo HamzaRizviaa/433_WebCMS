@@ -39,9 +39,9 @@ import {
 	resetNoResultStatus,
 	getQuestionEdit,
 	getQuestionResultDetail,
-	getQuestionResulParticipant,
-	getQuestionLabels
+	getQuestionResulParticipant
 } from './questionLibrarySlice';
+import { getAllNewLabels } from '../PostLibrary/postLibrarySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
 import LogoutToaster from '../../components/LogoutToaster';
@@ -51,9 +51,6 @@ const QuestionLibrary = () => {
 	// Selectors
 	const questions = useSelector((state) => state.questionLibrary.questions);
 	const statusQuestionApi = useSelector((state) => state.questionLibrary);
-
-	console.log('questions', questions);
-
 	const totalRecords = useSelector(
 		(state) => state.questionLibrary.totalRecords
 	);
@@ -70,8 +67,7 @@ const QuestionLibrary = () => {
 	const [showQuizSlider, setShowQuizSlider] = useState(false);
 	const [showPollSlider, setShowPollSlider] = useState(false);
 	const [rowStatus, setrowStatus] = useState(''); //status open closed to pass in poll slider
-	// const [publishedStatus, setPublishedStatus] = useState('');
-	// const [rowType, setRowType] = useState(''); //row type to pass in api
+	const [rowLocation, setrowLocation] = useState(''); // - Article - Homepage (location to pass in slider)
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [paginationError, setPaginationError] = useState(false);
@@ -163,6 +159,7 @@ const QuestionLibrary = () => {
 		status: 'status',
 		participants: 'participants',
 		user: 'user'
+		//location: 'location'
 	};
 
 	const sortRows = (order, col) => {
@@ -364,6 +361,20 @@ const QuestionLibrary = () => {
 				);
 			}
 		},
+		// {
+		// 	dataField: 'location',
+		// 	sort: true,
+		// 	sortCaret: sortRows,
+		// 	sortFunc: () => {},
+		// 	text: 'LOCATION',
+		// 	formatter: (content) => {
+		// 		return (
+		// 			<div className={classes.questionRow}>
+		// 				<div className={classes.questionLocation}>{content}</div>
+		// 			</div>
+		// 		);
+		// 	}
+		// },
 		{
 			dataField: 'options',
 			text: 'OPTIONS',
@@ -392,7 +403,7 @@ const QuestionLibrary = () => {
 		onClick: (e, row) => {
 			// if (!edit) {
 			// dispatch(getSpecificPost(row.id));
-			row.status === 'draft' && dispatch(getQuestionLabels());
+			row.status === 'draft' && dispatch(getAllNewLabels());
 			dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
 			dispatch(
 				getQuestionResultDetail({ id: row.id, type: row.question_type })
@@ -401,6 +412,8 @@ const QuestionLibrary = () => {
 				getQuestionResulParticipant({ id: row.id, type: row.question_type })
 			);
 			setrowStatus(row.status);
+			// setrowLocation(row.location);
+			setrowLocation('Article');
 			setEdit(true);
 			row.question_type === 'quiz'
 				? setShowQuizSlider(true)
@@ -552,7 +565,7 @@ const QuestionLibrary = () => {
 						<h1 style={{ marginRight: '2rem' }}>QUESTION LIBRARY</h1>
 						<Button
 							onClick={() => {
-								dispatch(getQuestionLabels());
+								dispatch(getAllNewLabels());
 								setEdit(false);
 								setShowSlider(true);
 							}}
@@ -710,7 +723,8 @@ const QuestionLibrary = () => {
 					handleClose={() => {
 						setShowQuizSlider(false);
 					}}
-					status={rowStatus}
+					status={rowStatus} //open closed
+					location={rowLocation} //Article / HomePage
 					title={rowStatus === 'draft' ? 'Edit Quiz' : 'Quiz Detail'}
 					heading1={edit ? 'Add Background Image' : 'Add Background Image'}
 					buttonText={
@@ -724,7 +738,8 @@ const QuestionLibrary = () => {
 					handleClose={() => {
 						setShowPollSlider(false);
 					}}
-					status={rowStatus}
+					status={rowStatus} //open / closed
+					location={rowLocation} //Article / HomePage
 					title={rowStatus === 'draft' ? 'Edit Poll' : 'Poll Detail'}
 					heading1={edit ? 'Add Background Image' : 'Add Background Image'}
 					buttonText={

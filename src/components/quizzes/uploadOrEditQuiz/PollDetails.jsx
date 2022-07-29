@@ -17,7 +17,8 @@ export default function PollDetails({
 	heading1,
 	buttonText,
 	isEdit,
-	status
+	status,
+	location
 }) {
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
@@ -29,7 +30,7 @@ export default function PollDetails({
 		setPreviewBool(false);
 		setPreviewFile(null);
 	};
-	
+
 	const muiClasses = useStyles();
 	// Question Library :  click on row with type:poll
 	return (
@@ -68,6 +69,17 @@ export default function PollDetails({
 						dialogWrapper={dialogWrapper}
 						publishedStatus='draft'
 					/>
+				) : location === 'article' ? (
+					<QuizResults
+						handleClose={() => {
+							handleClose();
+						}}
+						style={{ minWidth: '40% !important' }}
+						type={'poll'}
+						status={status}
+						location={location}
+						dialogWrapper={dialogWrapper}
+					/>
 				) : (
 					<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
 						<TabsListUnstyled
@@ -86,6 +98,7 @@ export default function PollDetails({
 								style={{ minWidth: '40% !important' }}
 								type={'poll'}
 								status={status}
+								location={location}
 								dialogWrapper={dialogWrapper}
 							/>
 						</TabPanelUnstyled>
@@ -124,5 +137,6 @@ PollDetails.propTypes = {
 	buttonText: PropTypes.string.isRequired,
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
-	type: PropTypes.string.isRequired
+	type: PropTypes.string.isRequired,
+	location: PropTypes.string.isRequired
 };

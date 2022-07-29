@@ -742,6 +742,7 @@ export const useStyles = makeStyles(() => ({
 		overflow: 'hidden',
 		whiteSpace: 'nowrap'
 	},
+	questionLocation: { textTransform: 'capitalize !important' },
 
 	// ----- games library
 
