@@ -383,10 +383,6 @@ const ArticleQuestionUpload = ({
 								}
 								onChange={(e) => {
 									handleAnswerChange(e, 0);
-
-									sendDataToParent({
-										answers: form.answers
-									});
 								}}
 								placeholder={'Please write your answer here'}
 								className={classes.textField}
@@ -449,10 +445,6 @@ const ArticleQuestionUpload = ({
 								}
 								onChange={(e) => {
 									handleAnswerChange(e, 1);
-
-									sendDataToParent({
-										answers: form.answers
-									});
 								}}
 								placeholder={'Please write your answer here'}
 								className={classes.textField}
