@@ -42,7 +42,7 @@ const ArticleQuestionUpload = ({
 	initialData
 	// WidthHeightCallback,
 }) => {
-	console.log(page, '==== page ====');
+	console.log(initialData, '==== initialData ====');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [quizLabels, setQuizLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
@@ -58,8 +58,6 @@ const ArticleQuestionUpload = ({
 		labels: []
 	});
 	const imgRef = useRef(null);
-	console.log('File Width', fileWidth);
-	console.log('FORMM', form);
 
 	// const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
@@ -160,7 +158,6 @@ const ArticleQuestionUpload = ({
 	// 	});
 	// 	handleDeleteData(item.data);
 	// };
-	console.log(item, 'item in QUESTION');
 
 	const handleChangeExtraLabel = (e) => {
 		setExtraLabel(e.target.value.toUpperCase());
@@ -181,7 +178,7 @@ const ArticleQuestionUpload = ({
 			type: type === 'quiz' ? 'right_answer' : 'poll'
 		};
 		setForm(formCopy);
-		console.log('OWAIS', formCopy);
+
 		let answers = { answers: formCopy.answers };
 		sendDataToParent(answers);
 	};
@@ -203,7 +200,9 @@ const ArticleQuestionUpload = ({
 					<div>
 						<h5 className={classes.QuizQuestion}>{heading1}</h5>
 						<DragAndDropField
-							uploadedFiles={form.uploadedFiles}
+							uploadedFiles={
+								initialData ? initialData?.uploadedFiles : form.uploadedFiles
+							}
 							quizPollStatus={status}
 							handleDeleteFile={(id) => {
 								setForm((prev) => {
@@ -226,7 +225,9 @@ const ArticleQuestionUpload = ({
 							}}
 						/>
 
-						{!form.uploadedFiles.length ? (
+						{initialData?.uploadedFiles ? (
+							''
+						) : form.uploadedFiles.length === 0 ? (
 							<section
 								className={globalClasses.dropZoneContainer}
 								style={{
@@ -262,7 +263,9 @@ const ArticleQuestionUpload = ({
 						<div className={globalClasses.dropBoxUrlContainer}>
 							<h6>DROPBOX URL</h6>
 							<TextField
-								value={form.dropbox_url}
+								value={
+									initialData ? initialData?.dropbox_url : form.dropbox_url
+								}
 								onChange={(e) => {
 									setForm((prev) => {
 										return { ...prev, dropbox_url: e.target.value };
@@ -312,7 +315,7 @@ const ArticleQuestionUpload = ({
 							</div>
 							<TextField
 								disabled={(editQuiz || editPoll) && status !== 'draft'}
-								value={form.question}
+								value={initialData ? initialData?.question : form.question}
 								onChange={(e) => {
 									setForm((prev) => {
 										return { ...prev, question: e.target.value };
@@ -374,7 +377,11 @@ const ArticleQuestionUpload = ({
 							</div>
 							<TextField
 								disabled={(editQuiz || editPoll) && status !== 'draft'}
-								value={form.answers[0]?.answer}
+								value={
+									initialData?.answers
+										? initialData?.answers[0]?.answer
+										: form.answers[0]?.answer
+								}
 								onChange={(e) => {
 									handleAnswerChange(e, 0);
 
@@ -442,7 +449,11 @@ const ArticleQuestionUpload = ({
 							</div>
 							<TextField
 								disabled={(editQuiz || editPoll) && status !== 'draft'}
-								value={form.answers[1]?.answer}
+								value={
+									initialData?.answers
+										? initialData?.answers[1]?.answer
+										: form.answers[1]?.answer
+								}
 								onChange={(e) => {
 									handleAnswerChange(e, 1);
 
@@ -494,7 +505,9 @@ const ArticleQuestionUpload = ({
 							<Labels
 								isEdit={editPoll || editQuiz}
 								setDisableDropdown={setDisableDropdown}
-								selectedLabels={form.labels}
+								selectedLabels={
+									initialData?.labels ? initialData?.labels : form.labels
+								}
 								setSelectedLabels={(newVal) => {
 									setForm((prev) => {
 										return { ...prev, labels: [...newVal] };
