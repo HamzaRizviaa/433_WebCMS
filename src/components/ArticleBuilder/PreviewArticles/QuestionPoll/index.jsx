@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useStyles } from '../index.style';
 
-const QuestionPoll = ({ data, isEdit }) => {
-	console.log(data, isEdit);
+const QuestionPoll = ({ data, itemIndex }) => {
+	console.log(data, itemIndex, 'question poll');
 	const classes = useStyles();
 
 	return (
@@ -11,13 +11,20 @@ const QuestionPoll = ({ data, isEdit }) => {
 			<div
 				className={classes.questionDraggable}
 				style={{
-					backgroundImage: `https://icdn.football-espana.net/wp-content/uploads/2022/05/Kylian-Mbappe-4.jpeg`
+					backgroundImage: `url(${
+						data?.data?.uploadedFiles?.length > 0 &&
+						data?.data?.uploadedFiles[0]?.media_url
+					})`
 				}}
 			>
 				<div className={classes.questionDiv}>
-					<div className={classes.question}>This is a Question</div>
-					<div className={classes.answer}>Answer 1</div>
-					<div className={classes.answer}>Answer 2 </div>
+					<div className={classes.question}>{data?.data?.question}</div>
+					<div className={classes.answer}>
+						{data.data?.answers ? data?.data?.answers[0]?.answer : ' '}
+					</div>
+					<div className={classes.answer}>
+						{data?.data?.answers ? data?.data?.answers[1]?.answer : ' '}
+					</div>
 				</div>
 			</div>
 		</div>
@@ -27,5 +34,5 @@ const QuestionPoll = ({ data, isEdit }) => {
 export default QuestionPoll;
 QuestionPoll.propTypes = {
 	data: PropTypes.array.isRequired,
-	isEdit: PropTypes.bool.isRequired
+	itemIndex: PropTypes.number
 };

@@ -12,9 +12,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
 	getMedia,
 	resetCalendarError,
-	resetNoResultStatus,
-	getMediaLabels
+	resetNoResultStatus
 } from './mediaLibrarySlice';
+import { getAllNewLabels } from '../PostLibrary/postLibrarySlice';
 
 import { getSpecificMedia } from './mediaLibrarySlice';
 
@@ -574,7 +574,7 @@ const MediaLibrary = () => {
 
 	const tableRowEvents = {
 		onClick: (e, row) => {
-			row.status === 'draft' && dispatch(getMediaLabels());
+			row.status === 'draft' && dispatch(getAllNewLabels());
 			dispatch(getSpecificMedia(row.id));
 			setrowStatus(row.status);
 			setEdit(true);
@@ -644,7 +644,7 @@ const MediaLibrary = () => {
 						<h1 style={{ marginRight: '2rem' }}>MEDIA LIBRARY</h1>
 						<Button
 							onClick={() => {
-								dispatch(getMediaLabels());
+								dispatch(getAllNewLabels());
 								setEdit(false);
 								setShowSlider(true);
 							}}
