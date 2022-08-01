@@ -340,7 +340,7 @@ const QuestionLibrary = () => {
 			formatter: (content) => {
 				return (
 					//<div className={classes.questionRow}>{content}</div>
-					<div className={classes.questionRow}>
+					<div className={classes.questionRow} style={{ paddingLeft: '10px' }}>
 						<Markup content={`${content}`} />
 					</div>
 				);
