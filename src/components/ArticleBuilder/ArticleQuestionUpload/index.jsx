@@ -193,7 +193,7 @@ const ArticleQuestionUpload = ({
 		<>
 			<Slide in={true} direction='up' {...{ timeout: 400 }}>
 				<div
-					className={globalClasses.contentWrapperNoPreview}
+					className={classes.contentWrapper}
 					// style={{ width: previewFile != null ? '60%' : 'auto' }}
 				>
 					<div>
