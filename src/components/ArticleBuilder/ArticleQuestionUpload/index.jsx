@@ -44,7 +44,6 @@ const ArticleQuestionUpload = ({
 }) => {
 	console.log(initialData, '==== initialData ====');
 	const [fileRejectionError, setFileRejectionError] = useState('');
-	const [quizLabels, setQuizLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
@@ -63,21 +62,9 @@ const ArticleQuestionUpload = ({
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
 
-	const { labels } = useSelector((state) => state.postLibrary);
-	console.log('LABELSS', labels);
-	useEffect(() => {
-		if (labels.length) {
-			setQuizLabels([...labels]);
-		}
-	}, [labels]);
-
 	useEffect(() => {
 		validateForm(form);
 	}, [form]);
-
-	// useEffect(() => {
-	// 	dispatch(getQuestionLabels());
-	// }, []);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -134,34 +121,6 @@ const ArticleQuestionUpload = ({
 		}
 		!(editPoll || editQuiz) ? resetState() : '';
 	}, [open]);
-
-	useEffect(() => {
-		setQuizLabels((labels) => {
-			return labels.filter((label) => label.id != null);
-		});
-		if (extraLabel) {
-			let flag = quizLabels.some((label) => label.name == extraLabel);
-			if (flag == false) {
-				setQuizLabels((labels) => {
-					return [...labels, { id: null, name: extraLabel }];
-				});
-			}
-		}
-	}, [extraLabel]);
-
-	// const handleDeleteFile = (id) => {
-	// 	setForm((prev) => {
-	// 		return {
-	// 			...prev,
-	// 			uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
-	// 		};
-	// 	});
-	// 	handleDeleteData(item.data);
-	// };
-
-	const handleChangeExtraLabel = (e) => {
-		setExtraLabel(e.target.value.toUpperCase());
-	};
 
 	const resetState = () => {
 		setFileRejectionError('');
@@ -494,10 +453,9 @@ const ArticleQuestionUpload = ({
 										labels: [...newVal]
 									});
 								}} //closure
-								LabelsOptions={quizLabels}
 								extraLabel={extraLabel}
-								handleChangeExtraLabel={handleChangeExtraLabel}
 								draftStatus={status}
+								setExtraLabel={setExtraLabel}
 							/>
 						</div>
 
