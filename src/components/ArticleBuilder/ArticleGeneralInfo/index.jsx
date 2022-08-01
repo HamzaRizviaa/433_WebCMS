@@ -49,8 +49,7 @@ const ArticleGeneralInfo = ({
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
-	console.log('FORMM', form);
-	console.log();
+
 	return (
 		<div className={classes.root}>
 			<Accordion defaultExpanded>

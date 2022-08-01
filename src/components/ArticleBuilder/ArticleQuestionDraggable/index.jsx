@@ -28,6 +28,7 @@ const ArticleQuestionDraggable = ({
 	setDisableDropdown,
 	handleDeleteData
 }) => {
+	console.log(initialData, 'initialData in draggable');
 	const classes = useStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
 

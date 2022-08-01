@@ -37,7 +37,7 @@ import ImagePreview from '../../ArticleBuilder/PreviewArticles/imagePreview';
 import TextPreview from '../../ArticleBuilder/PreviewArticles/textPreview';
 import TwitterPost from '../../ArticleBuilder/PreviewArticles/TwitterPost';
 import InstagramPost from '../../ArticleBuilder/PreviewArticles/InstagramPost';
-// import QuestionPoll from '../../ArticleBuilder/PreviewArticles/QuestionPoll';
+import QuestionPoll from '../../ArticleBuilder/PreviewArticles/QuestionPoll';
 import DraggableWrapper from '../../ArticleBuilder/DraggableWrapper';
 import PreviewWrapper from '../../ArticleBuilder/PreviewWrapper';
 import ArticleSlider from '../../ArticleBuilder/ArticleSlider';
@@ -1641,6 +1641,10 @@ const UploadOrEditArticle = ({
 										/>
 										<DraggableWrapper onDragEnd={onDragEnd}>
 											{data.map((item, index) => {
+												console.log(
+													item,
+													'________ item in map draggable ________'
+												);
 												return (
 													<>
 														{React.createElement(item.component, {
@@ -1658,7 +1662,10 @@ const UploadOrEditArticle = ({
 															item,
 															index,
 															key: item.sortOrder,
-															initialData: item.data && item?.data[0],
+															initialData:
+																item.element_type === 'QUESTION'
+																	? item?.data
+																	: item.data && item?.data[0],
 															setDisableDropdown: setDisableDropdown
 														})}
 
@@ -1682,6 +1689,7 @@ const UploadOrEditArticle = ({
 											<PreviewWrapper form={form}>
 												{/* <QuestionPoll /> */}
 												{data.map((item, index) => {
+													console.log(item, ' item in wrapper ----- ');
 													return (
 														<div key={index} style={{ padding: '5px' }}>
 															{item.element_type === 'MEDIA' ? (
@@ -1703,6 +1711,12 @@ const UploadOrEditArticle = ({
 																/>
 															) : item.element_type === 'IG' ? (
 																<InstagramPost
+																	data={item}
+																	itemIndex={index}
+																	style={{ width: '100%' }}
+																/>
+															) : item.element_type === 'QUESTION' ? (
+																<QuestionPoll
 																	data={item}
 																	itemIndex={index}
 																	style={{ width: '100%' }}

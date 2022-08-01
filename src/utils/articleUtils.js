@@ -146,3 +146,41 @@ export const checkNewElementIG = (elements, data) => {
 	}
 	return result.every((item) => item === true);
 };
+
+export const checkEmptyQuestion = (data) => {
+	const filteredData = data.filter((item) => item.element_type === 'QUESTION');
+	const validatedData = filteredData.map((item) => {
+		if (item.data) {
+			return !item.data[0].twitter_post_url ? false : true;
+		} else {
+			return false;
+		}
+	});
+	return validatedData.every((item) => item === true);
+};
+
+export const checkNewElementQuestion = (elements, data) => {
+	let result = [];
+	if (data.length === 0) {
+		result.push(true);
+	} else {
+		for (let i = 0; i < elements?.length; i++) {
+			if (elements.length === data.length) {
+				if (data[i].data && data[i]?.data[0].twitter_post_url !== '') {
+					if (
+						data[i]?.data[0]?.twitter_post_url === elements[i]?.twitter_post_url
+					) {
+						result.push(true);
+					} else {
+						result.push(false);
+					}
+				} else {
+					result.push(true);
+				}
+			} else {
+				return !checkEmptyQuestion(data);
+			}
+		}
+	}
+	return result.every((item) => item === true);
+};
