@@ -354,13 +354,7 @@ const ArticleQuestionUpload = ({
 									handleAnswerChange(e, 0);
 
 									sendDataToParent({
-										answers: [
-											{
-												answer: e.target.value,
-												type: type === 'quiz' ? 'right_answer' : 'poll',
-												position: 0
-											}
-										]
+										answers: form.answers
 									});
 								}}
 								placeholder={'Please write your answer here'}
@@ -419,14 +413,7 @@ const ArticleQuestionUpload = ({
 									handleAnswerChange(e, 1);
 
 									sendDataToParent({
-										answers: [
-											...form.answers,
-											{
-												answer: e.target.value,
-												type: type === 'quiz' ? 'wrong_answer' : 'poll',
-												position: 1
-											}
-										]
+										answers: form.answers
 									});
 								}}
 								placeholder={'Please write your answer here'}

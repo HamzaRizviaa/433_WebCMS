@@ -62,7 +62,9 @@ const validateForm = (form, dataElements, newsData) => {
 				if (dataFile.data) {
 					return (
 						dataFile?.data?.question &&
-						dataFile?.data?.answers?.length === 2 &&
+						(dataFile?.data?.answers?.length
+							? dataFile?.data?.answers.every((item) => item.answer !== '')
+							: false) &&
 						dataFile?.data?.labels?.length === 7 &&
 						dataFile?.data?.uploadedFiles?.length
 					);
