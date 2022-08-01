@@ -37,7 +37,10 @@ export const useStyles = makeStyles(() => ({
 		height: '380px',
 		borderRadius: '8px',
 		marginTop: '16px',
-		marginBottom: '16px'
+		marginBottom: '16px',
+		backgroundRepeat: 'no-repeat',
+		backgroundSize: 'cover',
+		backgroundPosition: 'center'
 	},
 	questionDiv: {
 		paddingLeft: '24px',
@@ -53,13 +56,14 @@ export const useStyles = makeStyles(() => ({
 		color: '#FFFFFF'
 	},
 	answer: {
+		height: '37px',
 		fontStyle: 'normal',
 		fontWeight: 800,
 		fontSize: '12px',
 		lineHeight: '30px',
 		color: '#FFFFFF',
 		borderRadius: '40px',
-		padding: '8px 16px',
+		padding: '6px 16px 0px 16px',
 		backgroundColor: 'rgba(255, 255, 255, 0.25)',
 		marginTop: '8px'
 	}

@@ -37,11 +37,12 @@ const ArticleQuestionUpload = ({
 	key,
 	index,
 	sendDataToParent,
+	handleDeleteData,
 	setIsOpen,
 	initialData
 	// WidthHeightCallback,
 }) => {
-	console.log(page, '==== page ====');
+	console.log(initialData, '==== initialData ====');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [quizLabels, setQuizLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
@@ -57,15 +58,13 @@ const ArticleQuestionUpload = ({
 		labels: []
 	});
 	const imgRef = useRef(null);
-	console.log('File Width', fileWidth);
-	console.log('FORMM', form);
 
 	// const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
 
-	const { labels } = useSelector((state) => state.questionLibrary);
-
+	const { labels } = useSelector((state) => state.postLibrary);
+	console.log('LABELSS', labels);
 	useEffect(() => {
 		if (labels.length) {
 			setQuizLabels([...labels]);
@@ -111,11 +110,11 @@ const ArticleQuestionUpload = ({
 				};
 			});
 			setForm((prev) => {
-				return { ...prev, uploadedFiles: [...form.uploadedFiles, ...newFiles] };
+				return { ...prev, uploadedFiles: [...newFiles] };
 			});
-			sendDataToParent({ uploadedFiles: [...form.uploadedFiles, ...newFiles] });
+			sendDataToParent({ uploadedFiles: [...newFiles] });
 		}
-	}, [acceptedFiles, fileWidth, fileHeight]);
+	}, [acceptedFiles]);
 
 	useEffect(() => {
 		if (fileRejections.length) {
@@ -150,9 +149,15 @@ const ArticleQuestionUpload = ({
 		}
 	}, [extraLabel]);
 
-	const handleDeleteFile = (id) => {
-		setForm(form.uploadedFiles.filter((file) => file.id !== id));
-	};
+	// const handleDeleteFile = (id) => {
+	// 	setForm((prev) => {
+	// 		return {
+	// 			...prev,
+	// 			uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
+	// 		};
+	// 	});
+	// 	handleDeleteData(item.data);
+	// };
 
 	const handleChangeExtraLabel = (e) => {
 		setExtraLabel(e.target.value.toUpperCase());
@@ -173,6 +178,8 @@ const ArticleQuestionUpload = ({
 			type: type === 'quiz' ? 'right_answer' : 'poll'
 		};
 		setForm(formCopy);
+		let answers = { answers: formCopy.answers };
+		sendDataToParent(answers);
 	};
 
 	// console.log(form, 'form');
@@ -186,16 +193,29 @@ const ArticleQuestionUpload = ({
 		<>
 			<Slide in={true} direction='up' {...{ timeout: 400 }}>
 				<div
-					className={globalClasses.contentWrapperNoPreview}
+					className={classes.contentWrapper}
 					// style={{ width: previewFile != null ? '60%' : 'auto' }}
 				>
 					<div>
 						<h5 className={classes.QuizQuestion}>{heading1}</h5>
 						<DragAndDropField
-							uploadedFiles={form.uploadedFiles}
+							uploadedFiles={
+								initialData ? initialData?.uploadedFiles : form.uploadedFiles
+							}
 							quizPollStatus={status}
-							handleDeleteFile={handleDeleteFile}
+							handleDeleteFile={(id) => {
+								setForm((prev) => {
+									return {
+										...prev,
+										uploadedFiles: form.uploadedFiles.filter(
+											(file) => file.id !== id
+										)
+									};
+								});
+								handleDeleteData(item.data?.uploadedFiles);
+							}}
 							isArticle
+							isArticleNew
 							isEdit={editPoll || editQuiz}
 							imgEl={imgRef}
 							imageOnload={() => {
@@ -204,7 +224,9 @@ const ArticleQuestionUpload = ({
 							}}
 						/>
 
-						{!form.uploadedFiles.length ? (
+						{initialData?.uploadedFiles ? (
+							''
+						) : form.uploadedFiles.length === 0 ? (
 							<section
 								className={globalClasses.dropZoneContainer}
 								style={{
@@ -240,7 +262,9 @@ const ArticleQuestionUpload = ({
 						<div className={globalClasses.dropBoxUrlContainer}>
 							<h6>DROPBOX URL</h6>
 							<TextField
-								value={form.dropbox_url}
+								value={
+									initialData ? initialData?.dropbox_url : form.dropbox_url
+								}
 								onChange={(e) => {
 									setForm((prev) => {
 										return { ...prev, dropbox_url: e.target.value };
@@ -290,7 +314,7 @@ const ArticleQuestionUpload = ({
 							</div>
 							<TextField
 								disabled={(editQuiz || editPoll) && status !== 'draft'}
-								value={form.question}
+								value={initialData ? initialData?.question : form.question}
 								onChange={(e) => {
 									setForm((prev) => {
 										return { ...prev, question: e.target.value };
@@ -344,12 +368,19 @@ const ArticleQuestionUpload = ({
 												: 'white'
 									}}
 								>
-									{form.answers[0]?.answer?.length}/29
+									{!form.answers[0]?.answer
+										? 0
+										: form.answers[0]?.answer?.length}
+									/29
 								</h6>
 							</div>
 							<TextField
 								disabled={(editQuiz || editPoll) && status !== 'draft'}
-								value={form.answers[0]?.answer}
+								value={
+									initialData?.answers
+										? initialData?.answers[0]?.answer
+										: form.answers[0]?.answer
+								}
 								onChange={(e) => {
 									handleAnswerChange(e, 0);
 
@@ -403,12 +434,19 @@ const ArticleQuestionUpload = ({
 												: 'white'
 									}}
 								>
-									{form.answers[1]?.answer?.length}/29
+									{!form.answers[1]?.answer
+										? 0
+										: form.answers[1]?.answer?.length}
+									/29
 								</h6>
 							</div>
 							<TextField
 								disabled={(editQuiz || editPoll) && status !== 'draft'}
-								value={form.answers[1]?.answer}
+								value={
+									initialData?.answers
+										? initialData?.answers[1]?.answer
+										: form.answers[1]?.answer
+								}
 								onChange={(e) => {
 									handleAnswerChange(e, 1);
 
@@ -453,10 +491,15 @@ const ArticleQuestionUpload = ({
 							<Labels
 								isEdit={editPoll || editQuiz}
 								setDisableDropdown={setDisableDropdown}
-								selectedLabels={form.labels}
+								selectedLabels={
+									initialData?.labels ? initialData?.labels : form.labels
+								}
 								setSelectedLabels={(newVal) => {
 									setForm((prev) => {
 										return { ...prev, labels: [...newVal] };
+									});
+									sendDataToParent({
+										labels: [...newVal]
 									});
 								}} //closure
 								LabelsOptions={quizLabels}
@@ -503,7 +546,8 @@ ArticleQuestionUpload.propTypes = {
 	index: PropTypes.number,
 	sendDataToParent: PropTypes.func.isRequired,
 	initialData: PropTypes.object,
-	setIsOpen: PropTypes.func
+	setIsOpen: PropTypes.func,
+	handleDeleteData: PropTypes.func
 	// WidthHeightCallback: PropTypes.func,
 	// initialData: PropTypes.object,
 };
