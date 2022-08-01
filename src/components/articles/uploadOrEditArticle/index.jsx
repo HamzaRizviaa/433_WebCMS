@@ -37,7 +37,7 @@ import ImagePreview from '../../ArticleBuilder/PreviewArticles/imagePreview';
 import TextPreview from '../../ArticleBuilder/PreviewArticles/textPreview';
 import TwitterPost from '../../ArticleBuilder/PreviewArticles/TwitterPost';
 import InstagramPost from '../../ArticleBuilder/PreviewArticles/InstagramPost';
-// import QuestionPoll from '../../ArticleBuilder/PreviewArticles/QuestionPoll';
+import QuestionPoll from '../../ArticleBuilder/PreviewArticles/QuestionPoll';
 import DraggableWrapper from '../../ArticleBuilder/DraggableWrapper';
 import PreviewWrapper from '../../ArticleBuilder/PreviewWrapper';
 import ArticleSlider from '../../ArticleBuilder/ArticleSlider';
@@ -552,6 +552,18 @@ const UploadOrEditArticle = ({
 					dropbox_url: item?.data[0]?.dropbox_url || undefined,
 					ig_post_url: item?.data[0]?.ig_post_url || undefined,
 					twitter_post_url: item?.data[0]?.twitter_post_url || undefined,
+					...(item.element_type === '    QUESTION'
+						? {
+								question_data: {
+									image: item.data.image,
+									file_name: item.data.uploadedFiles[0].file_name,
+									question: item.data.question,
+									dropbox_url: item.data.dropbox_url,
+									answers: item.data.answers,
+									labels: item.data.labels
+								}
+						  }
+						: undefined),
 					sort_order: index + 1
 				};
 			});
@@ -792,13 +804,21 @@ const UploadOrEditArticle = ({
 	};
 
 	const handleElementDataDelete = (elementData, index) => {
+		console.log(elementData, 'elementData');
 		let dataCopy = [...data];
 		if (elementData) {
 			setData(
 				dataCopy.filter((item, i) => {
 					if (index === i) {
-						delete item['data'];
-						return item;
+						console.log(item, 'item in main FILE');
+						if (item.element_type === 'QUESTION') {
+							const abc = item.data;
+							delete abc['uploadedFiles'];
+							return abc;
+						} else {
+							delete item['data'];
+							return item;
+						}
 					} else {
 						return item;
 					}
@@ -806,6 +826,8 @@ const UploadOrEditArticle = ({
 			);
 		}
 	};
+
+	//element type == question , uploaded file detee
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...data];
@@ -1619,6 +1641,10 @@ const UploadOrEditArticle = ({
 										/>
 										<DraggableWrapper onDragEnd={onDragEnd}>
 											{data.map((item, index) => {
+												console.log(
+													item,
+													'________ item in map draggable ________'
+												);
 												return (
 													<>
 														{React.createElement(item.component, {
@@ -1636,7 +1662,10 @@ const UploadOrEditArticle = ({
 															item,
 															index,
 															key: item.sortOrder,
-															initialData: item.data && item?.data[0],
+															initialData:
+																item.element_type === 'QUESTION'
+																	? item?.data
+																	: item.data && item?.data[0],
 															setDisableDropdown: setDisableDropdown
 														})}
 
@@ -1660,6 +1689,7 @@ const UploadOrEditArticle = ({
 											<PreviewWrapper form={form}>
 												{/* <QuestionPoll /> */}
 												{data.map((item, index) => {
+													console.log(item, ' item in wrapper ----- ');
 													return (
 														<div key={index} style={{ padding: '5px' }}>
 															{item.element_type === 'MEDIA' ? (
@@ -1681,6 +1711,12 @@ const UploadOrEditArticle = ({
 																/>
 															) : item.element_type === 'IG' ? (
 																<InstagramPost
+																	data={item}
+																	itemIndex={index}
+																	style={{ width: '100%' }}
+																/>
+															) : item.element_type === 'QUESTION' ? (
+																<QuestionPoll
 																	data={item}
 																	itemIndex={index}
 																	style={{ width: '100%' }}
