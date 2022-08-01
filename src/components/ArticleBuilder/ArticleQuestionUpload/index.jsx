@@ -114,7 +114,7 @@ const ArticleQuestionUpload = ({
 			});
 			sendDataToParent({ uploadedFiles: [...newFiles] });
 		}
-	}, [acceptedFiles, fileWidth, fileHeight]);
+	}, [acceptedFiles]);
 
 	useEffect(() => {
 		if (fileRejections.length) {
@@ -178,7 +178,6 @@ const ArticleQuestionUpload = ({
 			type: type === 'quiz' ? 'right_answer' : 'poll'
 		};
 		setForm(formCopy);
-
 		let answers = { answers: formCopy.answers };
 		sendDataToParent(answers);
 	};

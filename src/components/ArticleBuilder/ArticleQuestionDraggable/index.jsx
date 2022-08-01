@@ -119,7 +119,9 @@ const ArticleQuestionDraggable = ({
 											key={key}
 											index={index}
 											sendDataToParent={sendDataToParent}
-											handleDeleteData={handleDeleteData}
+											handleDeleteData={(uploadedFiles) => {
+												handleDeleteData(uploadedFiles);
+											}}
 											initialData={initialData}
 											setIsOpen={setIsOpen}
 											handleDeleteFile={handleDeleteFile}
