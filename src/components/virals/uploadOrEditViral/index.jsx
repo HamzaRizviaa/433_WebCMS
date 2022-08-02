@@ -69,6 +69,7 @@ const UploadOrEditViral = ({
 		show_comments: true
 	});
 	const [fileOnUpload, setFileOnUpload] = useState();
+	const [deleteSignedUrlKey, setDeleteSignedUrlKey] = useState('');
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const videoRef = useRef(null);
@@ -127,7 +128,7 @@ const UploadOrEditViral = ({
 					_labels.push({ id: -1, name: label })
 				);
 				// setSelectedLabels(_labels);
-				// console.log('Labels', _labels);
+
 				setForm((prev) => {
 					return {
 						...prev,
@@ -242,7 +243,7 @@ const UploadOrEditViral = ({
 			form.uploadedFiles[0],
 			'virallibrary'
 		);
-
+		setDeleteSignedUrlKey(uploadedFile.signedUrlKeyDelete);
 		setFileOnUpload(uploadedFile);
 	};
 
@@ -257,6 +258,9 @@ const UploadOrEditViral = ({
 
 		setFileOnUpload(uploadedFile);
 	};
+
+	console.log(deleteSignedUrlKey, '22');
+	console.log(form.uploadedFiles, 'lol');
 
 	useEffect(() => {
 		if (isEdit) {
@@ -292,19 +296,45 @@ const UploadOrEditViral = ({
 			show_comments: true
 		});
 		setFileOnUpload();
+		setDeleteSignedUrlKey('');
 	};
 
 	const toggleDeleteModal = () => {
 		setOpenDeletePopup(!openDeletePopup);
 	};
 
-	const handleDeleteFile = (id) => {
-		setForm((prev) => {
-			return {
-				...prev,
-				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
-			};
-		});
+	const handleDeleteFile = async (id) => {
+		try {
+			const result = await axios.delete(
+				`${process.env.REACT_APP_API_ENDPOINT}/media-upload`,
+				{
+					data: {
+						keys: [deleteSignedUrlKey]
+					},
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+				// {
+				// 	headers: {
+				// 		Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+				// 	}
+				// }
+			);
+
+			if (result?.data?.status_code === 200) {
+				setForm((prev) => {
+					return {
+						...prev,
+						uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
+					};
+				});
+				toast.success('Media Data  Deleted');
+			}
+		} catch (e) {
+			toast.error('Media Data Can Not be deleted');
+			console.log(e, 'Failed to delete Media Data');
+		}
 	};
 
 	const validateViralBtn = () => {
@@ -462,7 +492,6 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (specificViral) {
-			// console.log(specificViral, Object.keys(specificViral), 'specificViral');
 			setDraftBtnDisabled(
 				!validateDraft(form) ||
 					(specificViral?.file_name === form.uploadedFiles[0]?.file_name &&
@@ -881,7 +910,6 @@ const UploadOrEditViral = ({
 										<h5>Preview</h5>
 									</div>
 									<div>
-										{/* {console.log(previewFile, 'previewFile')} */}
 										{previewFile.mime_type === 'video/mp4' ? (
 											<video
 												id={'my-video'}
