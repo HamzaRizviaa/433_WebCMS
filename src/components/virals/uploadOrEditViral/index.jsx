@@ -68,6 +68,7 @@ const UploadOrEditViral = ({
 		show_likes: true,
 		show_comments: true
 	});
+	const [fileOnUpload, setFileOnUpload] = useState();
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const videoRef = useRef(null);
@@ -238,6 +239,39 @@ const UploadOrEditViral = ({
 		}
 	}, [acceptedFiles]);
 
+	const handleFileOnUpload = async () => {
+		let uploadedFile = await uploadFileToServer(
+			form.uploadedFiles[0],
+			'virallibrary'
+		);
+
+		setFileOnUpload(uploadedFile);
+	};
+
+	const handleFileOnUploadEdit = async () => {
+		let uploadedFile = form.uploadedFiles[0];
+		if (form.uploadedFiles[0]?.file) {
+			uploadedFile = await uploadFileToServer(
+				form.uploadedFiles[0],
+				'virallibrary'
+			);
+		}
+
+		setFileOnUpload(uploadedFile);
+	};
+
+	useEffect(() => {
+		if (isEdit) {
+			handleFileOnUploadEdit();
+		} else {
+			if (form?.uploadedFiles?.length > 0) {
+				handleFileOnUpload();
+			}
+		}
+	}, [form?.uploadedFiles]);
+
+	console.log(fileOnUpload, 'PO0');
+
 	const resetState = () => {
 		setPostButtonStatus(false);
 		setTimeout(() => {
@@ -259,6 +293,7 @@ const UploadOrEditViral = ({
 			show_likes: true,
 			show_comments: true
 		});
+		setFileOnUpload();
 	};
 
 	const toggleDeleteModal = () => {
@@ -471,16 +506,8 @@ const UploadOrEditViral = ({
 				// 	}
 				// });
 
-				let uploadedFile = form.uploadedFiles[0];
-				if (form.uploadedFiles[0]?.file) {
-					uploadedFile = await uploadFileToServer(
-						form.uploadedFiles[0],
-						'virallibrary'
-					);
-				}
-
 				try {
-					createViral(specificViral?.id, uploadedFile);
+					createViral(specificViral?.id, fileOnUpload);
 				} catch {
 					setIsLoadingcreateViral(false);
 				}
@@ -494,15 +521,9 @@ const UploadOrEditViral = ({
 				// 	});
 			} else {
 				setIsLoadingcreateViral(true);
-				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-				// 	return uploadFileToServer(_file, 'virallibrary');
-				// });
-				let uploadedFile = await uploadFileToServer(
-					form.uploadedFiles[0],
-					'virallibrary'
-				);
+
 				try {
-					createViral(null, uploadedFile);
+					createViral(null, fileOnUpload);
 				} catch {
 					setIsLoadingcreateViral(false);
 				}
