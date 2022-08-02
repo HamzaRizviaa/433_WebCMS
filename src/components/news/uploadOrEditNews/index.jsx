@@ -66,6 +66,7 @@ const UploadOrEditNews = ({
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
+	const [notifID, setNotifID] = useState('');
 	const [form, setForm] = useState({
 		labels: [],
 		show_likes: true,
@@ -92,6 +93,7 @@ const UploadOrEditNews = ({
 
 	useEffect(() => {
 		if (specificNews) {
+			setNotifID(specificNews?.id);
 			if (specificNews?.labels) {
 				let _labels = [];
 				specificNews.labels.map((label) =>
@@ -275,6 +277,7 @@ const UploadOrEditNews = ({
 		setDraftBtnDisabled(false);
 		setEditBtnDisabled(false);
 		setIsError({});
+		setNotifID('');
 		setForm({
 			labels: [],
 			show_likes: true,
@@ -626,6 +629,7 @@ const UploadOrEditNews = ({
 				previewRef={previewRef}
 				news={true}
 				dialogRef={dialogWrapper}
+				notifID={notifID}
 			>
 				<LoadingOverlay
 					active={isLoading}

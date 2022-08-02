@@ -59,6 +59,7 @@ const UploadOrEditViral = ({
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
+	const [notifID, setNotifID] = useState('');
 	const [form, setForm] = useState({
 		caption: '',
 		dropbox_url: '',
@@ -118,6 +119,8 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (specificViral) {
+			console.log('HERERERER', specificViral.id);
+			setNotifID(specificViral?.id);
 			if (specificViral?.labels) {
 				let _labels = [];
 				specificViral.labels.map((label) =>
@@ -248,6 +251,7 @@ const UploadOrEditViral = ({
 		setFileWidth(0);
 		setIsError({});
 		setExtraLabel('');
+		setNotifID('');
 		setForm({
 			caption: '',
 			dropbox_url: '',
@@ -623,6 +627,7 @@ const UploadOrEditViral = ({
 				edit={isEdit}
 				viral={true}
 				dialogRef={dialogWrapper}
+				notifID={notifID}
 			>
 				<LoadingOverlay
 					active={isLoadingcreateViral}

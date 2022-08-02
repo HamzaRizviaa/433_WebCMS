@@ -92,6 +92,7 @@ const UploadOrEditArticle = ({
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
+	const [notifID, setNotifID] = useState('');
 	const imgEl = useRef(null);
 	const imgEl2 = useRef(null);
 	const previewRef = useRef(null);
@@ -280,6 +281,7 @@ const UploadOrEditArticle = ({
 
 	useEffect(() => {
 		if (specificArticle) {
+			setNotifID(specificArticle?.id);
 			if (specificArticle?.labels) {
 				let _labels = [];
 				specificArticle.labels.map((label) =>
@@ -366,43 +368,48 @@ const UploadOrEditArticle = ({
 	const updateDataFromAPI = (apiData) => {
 		let modifiedData = apiData?.map(
 			({ id, sort_order, element_type, ...rest }) => {
+				const renderComponent = {
+					TEXT: ArticleTextDraggable,
+					MEDIA: ArticleMediaDraggable,
+					QUESTION: ArticleQuestionDraggable,
+					TWITTER: ArticleSocialMediaDraggable,
+					IG: ArticleSocialMediaDraggable
+				};
 				return {
 					sortOrder: sort_order,
 					element_type,
-					component:
-						element_type === 'TEXT'
-							? ArticleTextDraggable
-							: element_type === 'MEDIA'
-							? ArticleMediaDraggable
-							: ArticleSocialMediaDraggable,
+					component: renderComponent[element_type],
 					heading: `Add ${element_type}`,
 					isOpen: true,
 					isOld: true,
 					id,
-					data: [
-						{
-							...rest,
-							...(rest.media_url
-								? {
-										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.media_url}`
-								  }
-								: {}),
-							...(rest.thumbnail_url
-								? {
-										thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.thumbnail_url}`
-								  }
-								: {}),
-							...(rest.thumbnail_url
-								? {
-										type: 'video'
-								  }
-								: rest.media_url && !rest.thumbnail_url
-								? {
-										type: 'image'
-								  }
-								: {})
-						}
-					]
+					data:
+						element_type === 'QUESTION'
+							? { ...rest }
+							: [
+									{
+										...rest,
+										...(rest.media_url
+											? {
+													media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.media_url}`
+											  }
+											: {}),
+										...(rest.thumbnail_url
+											? {
+													thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.thumbnail_url}`
+											  }
+											: {}),
+										...(rest.thumbnail_url
+											? {
+													type: 'video'
+											  }
+											: rest.media_url && !rest.thumbnail_url
+											? {
+													type: 'image'
+											  }
+											: {})
+									}
+							  ]
 				};
 			}
 		);
@@ -552,7 +559,7 @@ const UploadOrEditArticle = ({
 					dropbox_url: item?.data[0]?.dropbox_url || undefined,
 					ig_post_url: item?.data[0]?.ig_post_url || undefined,
 					twitter_post_url: item?.data[0]?.twitter_post_url || undefined,
-					...(item.element_type === '    QUESTION'
+					...(item.element_type === 'QUESTION'
 						? {
 								question_data: {
 									image: item.data.image,
@@ -755,6 +762,7 @@ const UploadOrEditArticle = ({
 		setEditBtnDisabled(false);
 		setDraftBtnDisabled(false);
 		setIsError({});
+		setNotifID('');
 		setForm({
 			title: '',
 			sub_text: '',
@@ -1564,6 +1572,7 @@ const UploadOrEditArticle = ({
 				edit={isEdit}
 				article={true}
 				dialogRef={dialogWrapper}
+				notifID={notifID}
 			>
 				<LoadingOverlay
 					active={isLoading}

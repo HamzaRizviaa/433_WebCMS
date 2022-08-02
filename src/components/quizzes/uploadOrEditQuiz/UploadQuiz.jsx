@@ -10,14 +10,7 @@ import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import TabUnstyled from '@mui/base/TabUnstyled';
 import { useStyles } from './quizStyles';
 
-const UploadQuiz = ({
-	open,
-	handleClose,
-	title,
-	heading1,
-	buttonText,
-	
-}) => {
+const UploadQuiz = ({ open, handleClose, title, heading1, buttonText }) => {
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
@@ -70,7 +63,6 @@ const UploadQuiz = ({
 								handleClose();
 							}}
 							type='poll'
-							
 						/>
 					</TabPanelUnstyled>
 					<TabPanelUnstyled value={1}>
@@ -88,7 +80,6 @@ const UploadQuiz = ({
 								handleClose();
 							}}
 							type='quiz'
-							
 						/>
 					</TabPanelUnstyled>
 				</TabsUnstyled>
@@ -103,8 +94,7 @@ UploadQuiz.propTypes = {
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
-	type: PropTypes.string.isRequired,
-	
+	type: PropTypes.string.isRequired
 };
 
 export default UploadQuiz;

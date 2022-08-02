@@ -54,5 +54,20 @@ export const useStyles = makeStyles((theme) => ({
 	},
 	content: {
 		padding: '0 4rem 4rem'
+	},
+	notifIDWrapper: {
+		width: '79%',
+		display: 'flex',
+		justifyContent: 'space-between',
+		alignItems: 'center'
+	},
+	notifID: {
+		fontFamily: 'Poppins',
+		fontStyle: 'normal',
+		fontWeight: '700',
+		fontSize: '12px',
+		lineHeight: '16px',
+		letterSpacing: '0.03em',
+		color: '#808080'
 	}
 }));
