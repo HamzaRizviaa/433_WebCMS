@@ -185,8 +185,6 @@ const UploadOrEditViral = ({
 	}, [specificViral]);
 
 	useEffect(() => {
-		// dispatch(getPostLabels()); // old labels
-		// dispatch(getAllNewLabels()); // new labels on search
 		return () => {
 			resetState();
 		};
@@ -498,27 +496,12 @@ const UploadOrEditViral = ({
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			if (isEdit) {
 				setIsLoadingcreateViral(true);
-				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-				// 	if (_file.file) {
-				// 		return await uploadFileToServer(_file, 'virallibrary');
-				// 	} else {
-				// 		return _file;
-				// 	}
-				// });
 
 				try {
 					createViral(specificViral?.id, fileOnUpload);
 				} catch {
 					setIsLoadingcreateViral(false);
 				}
-
-				// Promise.all([...uploadFilesPromiseArray])
-				// 	.then((mediaFiles) => {
-				// 		createViral(specificViral?.id, mediaFiles);
-				// 	})
-				// 	.catch(() => {
-				// 		setIsLoadingcreateViral(false);
-				// 	});
 			} else {
 				setIsLoadingcreateViral(true);
 
@@ -527,14 +510,6 @@ const UploadOrEditViral = ({
 				} catch {
 					setIsLoadingcreateViral(false);
 				}
-
-				// Promise.all([...uploadFilesPromiseArray])
-				// 	.then((mediaFiles) => {
-				// 		createViral(null, mediaFiles);
-				// 	})
-				// 	.catch(() => {
-				// 		setIsLoadingcreateViral(false);
-				// 	});
 			}
 		}
 	};
@@ -568,60 +543,21 @@ const UploadOrEditViral = ({
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			if (isEdit) {
-				// let uploadedFile;
 				setIsLoadingcreateViral(true);
-				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-				// 	if (_file.file) {
-				// 		return await uploadFileToServer(_file, 'virallibrary');
-				// 	} else {
-				// 		return _file;
-				// 	}
-				// });
-				let uploadedFile = form.uploadedFiles[0];
-				if (form.uploadedFiles[0]?.file) {
-					uploadedFile = await uploadFileToServer(
-						form.uploadedFiles[0],
-						'virallibrary'
-					);
-				}
 
 				try {
-					createViral(specificViral?.id, uploadedFile, true);
+					createViral(specificViral?.id, fileOnUpload, true);
 				} catch {
 					setIsLoadingcreateViral(false);
 				}
-
-				// Promise.all([...uploadFilesPromiseArray])
-				// 	.then((mediaFiles) => {
-				// 		createViral(specificViral?.id, mediaFiles);
-				// 	})
-				// 	.catch(() => {
-				// 		setIsLoadingcreateViral(false);
-				// 	});
 			} else {
 				setIsLoadingcreateViral(true);
-				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-				// 	return uploadFileToServer(_file, 'virallibrary');
-				// });
-
-				let uploadedFile = await uploadFileToServer(
-					form.uploadedFiles[0],
-					'virallibrary'
-				);
 
 				try {
-					createViral(null, uploadedFile, true);
+					createViral(null, fileOnUpload, true);
 				} catch {
 					setIsLoadingcreateViral(false);
 				}
-
-				// Promise.all([...uploadFilesPromiseArray])
-				// 	.then((mediaFiles) => {
-				// 		createViral(null, mediaFiles);
-				// 	})
-				// 	.catch(() => {
-
-				// 	});
 			}
 		}
 	};
