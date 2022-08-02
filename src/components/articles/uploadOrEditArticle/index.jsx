@@ -643,9 +643,15 @@ const UploadOrEditArticle = ({
 					isEdit ? 'Article has been edited!' : 'Article has been created!'
 				);
 
-				if (draft === false && !isEdit) {
-					publishReadMoreApi(result?.data?.data?.id);
+				if (draft === true) {
+					// save draft pressed
+					// not hitting the API
+				} else {
+					if (status !== 'published') {
+						publishReadMoreApi(result?.data?.data?.id);
+					}
 				}
+
 				setIsLoading(false);
 				setPostButtonStatus(false);
 				handleClose();
