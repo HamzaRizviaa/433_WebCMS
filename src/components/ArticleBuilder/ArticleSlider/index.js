@@ -20,7 +20,8 @@ const ArticleSlider = ({
 	quiz,
 	viral,
 	article,
-	games
+	games,
+	notifID
 }) => {
 	const wrapperRef = useRef(null);
 	const classes = useStyles();
@@ -119,7 +120,10 @@ const ArticleSlider = ({
 									onClick={() => handleClose()}
 									className={classes.closeIcon}
 								/>
-								<h1 className={classes.heading}>{title}</h1>
+								<div className={classes.notifIDWrapper}>
+									<h1 className={classes.heading}>{title}</h1>
+									<p className={classes.notifID}>{notifID}</p>
+								</div>
 							</div>
 							{children}
 						</div>
@@ -155,7 +159,8 @@ ArticleSlider.propTypes = {
 	quiz: PropTypes.bool,
 	viral: PropTypes.bool,
 	article: PropTypes.bool,
-	games: PropTypes.bool
+	games: PropTypes.bool,
+	notifID: PropTypes.string
 };
 
 export default ArticleSlider;
