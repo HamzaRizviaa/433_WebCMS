@@ -126,7 +126,7 @@ const UploadOrEditArticle = ({
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
 	console.log('DATA', data);
-	console.log('FORMM', form);
+	console.log('FORM', form);
 	const elementData = [
 		{
 			image: Text,
@@ -363,6 +363,16 @@ const UploadOrEditArticle = ({
 		}
 	}, [specificArticle]);
 
+	const updateLabelsFromAPI = (labels) => {
+		let newLabels = [];
+		if (labels) {
+			labels.map((label) => newLabels.push({ id: -1, name: label }));
+			return newLabels;
+		} else {
+			return undefined;
+		}
+	};
+
 	const updateDataFromAPI = (apiData) => {
 		let modifiedData = apiData?.map(
 			({ id, sort_order, element_type, ...rest }) => {
@@ -383,7 +393,18 @@ const UploadOrEditArticle = ({
 					id,
 					data:
 						element_type === 'QUESTION'
-							? { ...rest }
+							? {
+									...rest.question_data,
+									uploadedFiles: [
+										{
+											media_url:
+												`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.question_data.image}` ||
+												undefined,
+											file_name: rest?.question_data.file_name
+										}
+									],
+									labels: updateLabelsFromAPI(rest?.question_data.labels)
+							  }
 							: [
 									{
 										...rest,
@@ -533,8 +554,6 @@ const UploadOrEditArticle = ({
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
 
-		c;
-
 		let elementsData;
 		if (data.length) {
 			elementsData = data.map((item, index) => {
@@ -558,7 +577,7 @@ const UploadOrEditArticle = ({
 					...(item.element_type === 'QUESTION'
 						? {
 								question_data: {
-									image: item.data.image,
+									image: item.data.uploadedFiles[0].image,
 									file_name: item.data.uploadedFiles[0].file_name,
 									question: item.data.question,
 									dropbox_url: item.data.dropbox_url,
@@ -869,10 +888,34 @@ const UploadOrEditArticle = ({
 				if (item.element_type === 'IG' && !item.data[0].ig_post_url) {
 					return true;
 				}
+				if (item.element_type === 'QUESTION') {
+					// console.log(questionValidate(item), 'question validate');
+					// questionValidate(item);
+					return true;
+				}
 			}
 		});
 		setDataErrors(errors);
 	};
+
+	// const questionValidate = (item) => {
+	// 	console.log(item, 'item');
+	// 	var validate = Object.keys.map((key) => {
+	// 		if (!item[key]) {
+	// 			return true;
+	// 		} else {
+	// 			return false;
+	// 		}
+	// 	});
+	// 	console.log(validate, 'validate');
+	// 	var quesValidate = validate.some((item) => {
+	// 		item === true;
+	// 	});
+
+	// 	console.log(quesValidate, 'quesValidate');
+
+	// 	return quesValidate;
+	// };
 
 	useEffect(() => {
 		setDataErrors(Array(data.length).fill(false));
@@ -1431,7 +1474,6 @@ const UploadOrEditArticle = ({
 						createArticle(specificArticle?.id, mediaFiles);
 					})
 					.catch(() => {
-						console.log('qqqqqqqqqqq');
 						setIsLoading(false);
 					});
 			} else {
@@ -1697,7 +1739,6 @@ const UploadOrEditArticle = ({
 											</Box>
 
 											<PreviewWrapper form={form}>
-												{/* <QuestionPoll /> */}
 												{data.map((item, index) => {
 													return (
 														<div key={index} style={{ padding: '5px' }}>
