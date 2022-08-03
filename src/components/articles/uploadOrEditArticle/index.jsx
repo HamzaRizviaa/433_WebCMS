@@ -60,7 +60,11 @@ import {
 	checkEmptyDescription,
 	checkEmptyTwitter,
 	checkNewElementTwitter,
-	checkNewElementIG
+	checkNewElementIG,
+	checkEmptyQuestion,
+	checkNewElementQuestion,
+	checkEmptyQuestionDraft,
+	checkNewElementQuestionDraft
 } from '../../../utils/articleUtils';
 import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDraggable';
 
@@ -122,7 +126,7 @@ const UploadOrEditArticle = ({
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
 	console.log('DATA', data);
-	console.log('FORM', form);
+	// console.log('FORM', form);
 	const elementData = [
 		{
 			image: Text,
@@ -1091,6 +1095,7 @@ const UploadOrEditArticle = ({
 				checkEmptyTwitter(data),
 				checkEmptyIG(data),
 				checkEmptyMedia(data),
+				checkEmptyQuestion(data),
 				// checkNewElementFile(filteringByType(data, 'MEDIA')),
 				data?.length !== 0
 			];
@@ -1122,7 +1127,10 @@ const UploadOrEditArticle = ({
 					filteringByType(specificArticle?.elements, 'MEDIA'),
 					filteringByType(data, 'MEDIA')
 				),
-
+				checkNewElementQuestion(
+					filteringByType(specificArticle?.elements, 'QUESTION'),
+					filteringByType(data, 'QUESTION')
+				),
 				data?.length !== 0
 			];
 
@@ -1131,19 +1139,29 @@ const UploadOrEditArticle = ({
 				checkEmptyTwitter(data),
 				checkEmptyIG(data),
 				checkEmptyMedia(data),
+				checkEmptyQuestion(data),
 				data?.length !== 0
 			];
+
+			// console.log(validationCompleteArray, 'valE');
 
 			if (
 				!validateForm(form, data) ||
 				!comparingFields(specificArticle, form)
 			) {
+				console.log('1');
+				// console.log(
+				// 	!validateForm(form, data),
+				// 	!validationEmptyArray.every((item) => item === true),
+				// 	'CHECK'
+				// );
 				setEditBtnDisabled(
 					!validationEmptyArray.every((item) => item === true) ||
 						!validateForm(form, data)
 				);
 			} else {
 				if (specificArticle?.elements?.length !== data?.length) {
+					console.log('2');
 					setEditBtnDisabled(
 						!validationEmptyArray.every((item) => item === true)
 					);
@@ -1152,8 +1170,20 @@ const UploadOrEditArticle = ({
 						validationCompleteArray.every((item) => item === true) ||
 						!validationEmptyArray.every((item) => item === true)
 					) {
+						console.log('3');
+						// console.log(
+						// 	validationCompleteArray.every((item) => item === true),
+						// 	!validationEmptyArray.every((item) => item === true),
+						// 	'CHECK'
+						// );
 						setEditBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
 					} else {
+						console.log('4');
+						// console.log(
+						// 	validationCompleteArray.every((item) => item === true),
+						// 	!validationEmptyArray.every((item) => item === true),
+						// 	'CHECK2'
+						// );
 						setEditBtnDisabled(
 							validationCompleteArray.every((item) => item === true) ||
 								!validationEmptyArray.every((item) => item === true)
@@ -1182,6 +1212,10 @@ const UploadOrEditArticle = ({
 				checkNewElementMedia(
 					filteringByType(specificArticle?.elements, 'MEDIA'),
 					filteringByType(data, 'MEDIA')
+				),
+				checkNewElementQuestionDraft(
+					filteringByType(specificArticle?.elements, 'QUESTION'),
+					filteringByType(data, 'QUESTION')
 				)
 			];
 
@@ -1189,7 +1223,8 @@ const UploadOrEditArticle = ({
 				checkEmptyDescription(data),
 				checkEmptyTwitter(data),
 				checkEmptyIG(data),
-				checkEmptyMedia(data)
+				checkEmptyMedia(data),
+				checkEmptyQuestionDraft(data)
 			];
 
 			if (

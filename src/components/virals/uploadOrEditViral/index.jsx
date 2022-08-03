@@ -119,7 +119,6 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (specificViral) {
-			console.log('HERERERER', specificViral.id);
 			setNotifID(specificViral?.id);
 			if (specificViral?.labels) {
 				let _labels = [];
