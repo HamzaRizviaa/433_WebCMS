@@ -122,7 +122,7 @@ const UploadOrEditArticle = ({
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
 	console.log('DATA', data);
-	console.log('FORMM', form);
+	console.log('FORM', form);
 	const elementData = [
 		{
 			image: Text,
@@ -176,7 +176,7 @@ const UploadOrEditArticle = ({
 		maxFiles: 1,
 		validator: checkFileSize
 	});
-	console.log('ACCEPTED FILE 2', acceptedFiles);
+
 	const {
 		acceptedFiles: acceptedFileAvatar,
 		fileRejections: fileRejectionsAvatar,
@@ -359,9 +359,6 @@ const UploadOrEditArticle = ({
 		}
 	}, [specificArticle]);
 
-	console.log(fileHeight, fileWidth, 'portr');
-	console.log(landscapeFileHeight, landscapeFileWidth, 'lands');
-
 	const updateLabelsFromAPI = (labels) => {
 		let newLabels = [];
 		if (labels) {
@@ -373,10 +370,8 @@ const UploadOrEditArticle = ({
 	};
 
 	const updateDataFromAPI = (apiData) => {
-		console.log('API DATA', apiData);
 		let modifiedData = apiData?.map(
 			({ id, sort_order, element_type, ...rest }) => {
-				console.log(rest, 'rest');
 				const renderComponent = {
 					TEXT: ArticleTextDraggable,
 					MEDIA: ArticleMediaDraggable,
@@ -554,10 +549,6 @@ const UploadOrEditArticle = ({
 
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
-
-		console.log('mediaFiles', mediaFiles);
-
-		console.log('Form author Image', form.author_image[0]);
 
 		let elementsData;
 		if (data.length) {
@@ -831,20 +822,18 @@ const UploadOrEditArticle = ({
 
 	const handleMediaElementDelete = (sortOrder) => {
 		let dataCopy = [...data];
-		console.log(sortOrder, 'sortOrder');
+
 		if (sortOrder) {
 			setData(dataCopy.filter((file) => file.sortOrder !== sortOrder));
 		}
 	};
 
 	const handleElementDataDelete = (elementData, index) => {
-		console.log(elementData, 'elementData');
 		let dataCopy = [...data];
 		if (elementData) {
 			setData(
 				dataCopy.filter((item, i) => {
 					if (index === i) {
-						console.log(item, 'item in main FILE');
 						if (item.element_type === 'QUESTION') {
 							const abc = item.data;
 							delete abc['uploadedFiles'];
@@ -895,10 +884,34 @@ const UploadOrEditArticle = ({
 				if (item.element_type === 'IG' && !item.data[0].ig_post_url) {
 					return true;
 				}
+				if (item.element_type === 'QUESTION') {
+					// console.log(questionValidate(item), 'question validate');
+					// questionValidate(item);
+					return true;
+				}
 			}
 		});
 		setDataErrors(errors);
 	};
+
+	// const questionValidate = (item) => {
+	// 	console.log(item, 'item');
+	// 	var validate = Object.keys.map((key) => {
+	// 		if (!item[key]) {
+	// 			return true;
+	// 		} else {
+	// 			return false;
+	// 		}
+	// 	});
+	// 	console.log(validate, 'validate');
+	// 	var quesValidate = validate.some((item) => {
+	// 		item === true;
+	// 	});
+
+	// 	console.log(quesValidate, 'quesValidate');
+
+	// 	return quesValidate;
+	// };
 
 	useEffect(() => {
 		setDataErrors(Array(data.length).fill(false));
@@ -1302,11 +1315,8 @@ const UploadOrEditArticle = ({
 					dataMedia && dataMedia[0]
 				];
 
-				console.log(updatedArray, 'uppa');
-
 				Promise.all([...updatedArray])
 					.then((mediaFiles) => {
-						// console.log(mediaFiles, 'uppa');
 						createArticle(specificArticle?.id, mediaFiles, true);
 					})
 					.catch(() => {
@@ -1450,7 +1460,6 @@ const UploadOrEditArticle = ({
 						createArticle(specificArticle?.id, mediaFiles);
 					})
 					.catch(() => {
-						console.log('qqqqqqqqqqq');
 						setIsLoading(false);
 					});
 			} else {
@@ -1571,8 +1580,6 @@ const UploadOrEditArticle = ({
 		setData(items);
 	};
 
-	// console.log('Data', data);
-
 	const handleFileWidthHeight = (width, height) => {
 		console.log('call back in article preview', height, width);
 	};
@@ -1676,10 +1683,6 @@ const UploadOrEditArticle = ({
 										/>
 										<DraggableWrapper onDragEnd={onDragEnd}>
 											{data.map((item, index) => {
-												console.log(
-													item,
-													'________ item in map draggable ________'
-												);
 												return (
 													<>
 														{React.createElement(item.component, {
@@ -1722,9 +1725,7 @@ const UploadOrEditArticle = ({
 											</Box>
 
 											<PreviewWrapper form={form}>
-												{/* <QuestionPoll /> */}
 												{data.map((item, index) => {
-													console.log(item, ' item in wrapper ----- ');
 													return (
 														<div key={index} style={{ padding: '5px' }}>
 															{item.element_type === 'MEDIA' ? (
