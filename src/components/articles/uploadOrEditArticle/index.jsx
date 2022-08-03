@@ -60,7 +60,11 @@ import {
 	checkEmptyDescription,
 	checkEmptyTwitter,
 	checkNewElementTwitter,
-	checkNewElementIG
+	checkNewElementIG,
+	checkEmptyQuestion,
+	checkNewElementQuestion,
+	checkEmptyQuestionDraft,
+	checkNewElementQuestionDraft
 } from '../../../utils/articleUtils';
 import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDraggable';
 
@@ -1049,6 +1053,7 @@ const UploadOrEditArticle = ({
 				checkEmptyTwitter(data),
 				checkEmptyIG(data),
 				checkEmptyMedia(data),
+				checkEmptyQuestion(data),
 				// checkNewElementFile(filteringByType(data, 'MEDIA')),
 				data?.length !== 0
 			];
@@ -1080,7 +1085,10 @@ const UploadOrEditArticle = ({
 					filteringByType(specificArticle?.elements, 'MEDIA'),
 					filteringByType(data, 'MEDIA')
 				),
-
+				checkNewElementQuestion(
+					filteringByType(specificArticle?.elements, 'QUESTION'),
+					filteringByType(data, 'QUESTION')
+				),
 				data?.length !== 0
 			];
 
@@ -1089,6 +1097,7 @@ const UploadOrEditArticle = ({
 				checkEmptyTwitter(data),
 				checkEmptyIG(data),
 				checkEmptyMedia(data),
+				checkEmptyQuestion(data),
 				data?.length !== 0
 			];
 
@@ -1140,6 +1149,10 @@ const UploadOrEditArticle = ({
 				checkNewElementMedia(
 					filteringByType(specificArticle?.elements, 'MEDIA'),
 					filteringByType(data, 'MEDIA')
+				),
+				checkNewElementQuestionDraft(
+					filteringByType(specificArticle?.elements, 'MEDIA'),
+					filteringByType(data, 'MEDIA')
 				)
 			];
 
@@ -1147,7 +1160,8 @@ const UploadOrEditArticle = ({
 				checkEmptyDescription(data),
 				checkEmptyTwitter(data),
 				checkEmptyIG(data),
-				checkEmptyMedia(data)
+				checkEmptyMedia(data),
+				checkEmptyQuestionDraft(data)
 			];
 
 			if (
