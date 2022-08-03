@@ -366,6 +366,7 @@ const UploadOrEditArticle = ({
 	// console.log(imgEl2, 'land');
 
 	const updateDataFromAPI = (apiData) => {
+		console.log('API DATA', apiData);
 		let modifiedData = apiData?.map(
 			({ id, sort_order, element_type, ...rest }) => {
 				const renderComponent = {
@@ -562,7 +563,7 @@ const UploadOrEditArticle = ({
 					...(item.element_type === 'QUESTION'
 						? {
 								question_data: {
-									image: item.data.image,
+									image: item.data.uploadedFiles[0].image,
 									file_name: item.data.uploadedFiles[0].file_name,
 									question: item.data.question,
 									dropbox_url: item.data.dropbox_url,

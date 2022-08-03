@@ -16,12 +16,12 @@ import { useSelector } from 'react-redux';
 
 // import { getLocalStorageDetails } from '../../../utils';
 // import axios from 'axios';
-// import uploadFileToServer from '../../../utils/uploadFileToServer';
 import { useRef } from 'react';
 import Slide from '@mui/material/Slide';
 import validateForm from '../../../utils/validateForm';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { useStyles } from './ArticleQuestionUpload.style';
+import uploadFileToServer from '../../../utils/uploadFileToServer';
 
 const ArticleQuestionUpload = ({
 	heading1,
@@ -80,7 +80,12 @@ const ArticleQuestionUpload = ({
 		}
 	};
 
+	const uploadedFile = async (newFiles) => {
+		return await uploadFileToServer(newFiles, 'articleLibrary');
+	};
+
 	useEffect(() => {
+		console.log('HERERE');
 		if (acceptedFiles?.length) {
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
@@ -96,10 +101,24 @@ const ArticleQuestionUpload = ({
 					height: fileHeight
 				};
 			});
-			setForm((prev) => {
-				return { ...prev, uploadedFiles: [...newFiles] };
+			console.log('NEW', newFiles);
+			uploadedFile(newFiles[0], 'articleLibrary').then((res) => {
+				setForm((prev) => {
+					return {
+						...prev,
+						uploadedFiles: [
+							{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
+						]
+					};
+				});
+				sendDataToParent({
+					uploadedFiles: [
+						{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
+					]
+				});
 			});
-			sendDataToParent({ uploadedFiles: [...newFiles] });
+
+			// sendDataToParent({ uploadedFiles: [...newFiles] });
 		}
 	}, [acceptedFiles]);
 
