@@ -885,8 +885,7 @@ const UploadOrEditArticle = ({
 					return true;
 				}
 				if (item.element_type === 'QUESTION') {
-					// console.log(questionValidate(item), 'question validate');
-					// questionValidate(item);
+					// questionValidate(item.data);
 					return true;
 				}
 			}
@@ -896,7 +895,7 @@ const UploadOrEditArticle = ({
 
 	// const questionValidate = (item) => {
 	// 	console.log(item, 'item');
-	// 	var validate = Object.keys.map((key) => {
+	// 	var validate = Object.keys(item).map((key) => {
 	// 		if (!item[key]) {
 	// 			return true;
 	// 		} else {
@@ -1726,6 +1725,7 @@ const UploadOrEditArticle = ({
 
 											<PreviewWrapper form={form}>
 												{data.map((item, index) => {
+													console.log(item, '======= item in map');
 													return (
 														<div key={index} style={{ padding: '5px' }}>
 															{item.element_type === 'MEDIA' ? (
@@ -1753,6 +1753,7 @@ const UploadOrEditArticle = ({
 																/>
 															) : item.element_type === 'QUESTION' ? (
 																<QuestionPoll
+																	status={status}
 																	data={item}
 																	itemIndex={index}
 																	style={{ width: '100%' }}

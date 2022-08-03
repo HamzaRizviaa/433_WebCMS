@@ -159,13 +159,7 @@ const ArticleQuestionUpload = ({
 		let answers = { answers: formCopy.answers };
 		sendDataToParent(answers);
 	};
-
-	// console.log(form, 'form');
-	// console.log(form.end_date, 'dft');
-	// console.log(editQuestionData?.poll_end_date, 'poll');
-	// console.log(convertedDate, 'cd');
-
-	// console.log('validation  ', status, !validateForm(form), editQuizBtnDisabled);
+	console.log(status, editQuiz, editPoll, 'poll / quiz');
 
 	return (
 		<>

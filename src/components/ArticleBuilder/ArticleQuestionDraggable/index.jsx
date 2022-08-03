@@ -26,7 +26,8 @@ const ArticleQuestionDraggable = ({
 	// WidthHeightCallback,
 	handleDeleteFile,
 	setDisableDropdown,
-	handleDeleteData
+	handleDeleteData,
+	status //publish / draft
 }) => {
 	console.log(initialData, 'initialData in draggable');
 	const classes = useStyles();
@@ -110,6 +111,7 @@ const ArticleQuestionDraggable = ({
 											handleClose={() => {
 												handleClose();
 											}}
+											status={status}
 											type='poll'
 										/>
 									</TabPanelUnstyled>
@@ -118,6 +120,7 @@ const ArticleQuestionDraggable = ({
 											item={item}
 											key={key}
 											index={index}
+											status={status}
 											sendDataToParent={sendDataToParent}
 											handleDeleteData={(uploadedFiles) => {
 												handleDeleteData(uploadedFiles);
@@ -155,7 +158,8 @@ ArticleQuestionDraggable.propTypes = {
 	handleDeleteFile: PropTypes.func,
 	// initialData: PropTypes.object,
 	setDisableDropdown: PropTypes.func,
-	handleDeleteData: PropTypes.func
+	handleDeleteData: PropTypes.func,
+	status: PropTypes.string
 };
 
 export default ArticleQuestionDraggable;
