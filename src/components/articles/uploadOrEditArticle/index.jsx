@@ -122,7 +122,7 @@ const UploadOrEditArticle = ({
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
 	console.log('DATA', data);
-	console.log('FORMM', form);
+	console.log('FORM', form);
 	const elementData = [
 		{
 			image: Text,
@@ -176,7 +176,7 @@ const UploadOrEditArticle = ({
 		maxFiles: 1,
 		validator: checkFileSize
 	});
-	console.log('ACCEPTED FILE 2', acceptedFiles);
+
 	const {
 		acceptedFiles: acceptedFileAvatar,
 		fileRejections: fileRejectionsAvatar,
@@ -359,11 +359,15 @@ const UploadOrEditArticle = ({
 		}
 	}, [specificArticle]);
 
-	console.log(fileHeight, fileWidth, 'portr');
-	console.log(landscapeFileHeight, landscapeFileWidth, 'lands');
-
-	// console.log(imgEl, 'port'); // issue is on ref of natural height and width
-	// console.log(imgEl2, 'land');
+	const updateLabelsFromAPI = (labels) => {
+		let newLabels = [];
+		if (labels) {
+			labels.map((label) => newLabels.push({ id: -1, name: label }));
+			return newLabels;
+		} else {
+			return undefined;
+		}
+	};
 
 	const updateDataFromAPI = (apiData) => {
 		let modifiedData = apiData?.map(
@@ -385,7 +389,18 @@ const UploadOrEditArticle = ({
 					id,
 					data:
 						element_type === 'QUESTION'
-							? { ...rest }
+							? {
+									...rest.question_data,
+									uploadedFiles: [
+										{
+											media_url:
+												`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.question_data.image}` ||
+												undefined,
+											file_name: rest?.question_data.file_name
+										}
+									],
+									labels: updateLabelsFromAPI(rest?.question_data.labels)
+							  }
 							: [
 									{
 										...rest,
@@ -535,10 +550,6 @@ const UploadOrEditArticle = ({
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
 
-		console.log('mediaFiles', mediaFiles);
-
-		console.log('Form author Image', form.author_image[0]);
-
 		let elementsData;
 		if (data.length) {
 			elementsData = data.map((item, index) => {
@@ -562,7 +573,7 @@ const UploadOrEditArticle = ({
 					...(item.element_type === 'QUESTION'
 						? {
 								question_data: {
-									image: item.data.image,
+									image: item.data.uploadedFiles[0].image,
 									file_name: item.data.uploadedFiles[0].file_name,
 									question: item.data.question,
 									dropbox_url: item.data.dropbox_url,
@@ -811,20 +822,18 @@ const UploadOrEditArticle = ({
 
 	const handleMediaElementDelete = (sortOrder) => {
 		let dataCopy = [...data];
-		console.log(sortOrder, 'sortOrder');
+
 		if (sortOrder) {
 			setData(dataCopy.filter((file) => file.sortOrder !== sortOrder));
 		}
 	};
 
 	const handleElementDataDelete = (elementData, index) => {
-		console.log(elementData, 'elementData');
 		let dataCopy = [...data];
 		if (elementData) {
 			setData(
 				dataCopy.filter((item, i) => {
 					if (index === i) {
-						console.log(item, 'item in main FILE');
 						if (item.element_type === 'QUESTION') {
 							const abc = item.data;
 							delete abc['uploadedFiles'];
@@ -875,10 +884,33 @@ const UploadOrEditArticle = ({
 				if (item.element_type === 'IG' && !item.data[0].ig_post_url) {
 					return true;
 				}
+				if (item.element_type === 'QUESTION') {
+					// questionValidate(item.data);
+					return true;
+				}
 			}
 		});
 		setDataErrors(errors);
 	};
+
+	// const questionValidate = (item) => {
+	// 	console.log(item, 'item');
+	// 	var validate = Object.keys(item).map((key) => {
+	// 		if (!item[key]) {
+	// 			return true;
+	// 		} else {
+	// 			return false;
+	// 		}
+	// 	});
+	// 	console.log(validate, 'validate');
+	// 	var quesValidate = validate.some((item) => {
+	// 		item === true;
+	// 	});
+
+	// 	console.log(quesValidate, 'quesValidate');
+
+	// 	return quesValidate;
+	// };
 
 	useEffect(() => {
 		setDataErrors(Array(data.length).fill(false));
@@ -1282,11 +1314,8 @@ const UploadOrEditArticle = ({
 					dataMedia && dataMedia[0]
 				];
 
-				console.log(updatedArray, 'uppa');
-
 				Promise.all([...updatedArray])
 					.then((mediaFiles) => {
-						// console.log(mediaFiles, 'uppa');
 						createArticle(specificArticle?.id, mediaFiles, true);
 					})
 					.catch(() => {
@@ -1430,7 +1459,6 @@ const UploadOrEditArticle = ({
 						createArticle(specificArticle?.id, mediaFiles);
 					})
 					.catch(() => {
-						console.log('qqqqqqqqqqq');
 						setIsLoading(false);
 					});
 			} else {
@@ -1551,8 +1579,6 @@ const UploadOrEditArticle = ({
 		setData(items);
 	};
 
-	// console.log('Data', data);
-
 	const handleFileWidthHeight = (width, height) => {
 		console.log('call back in article preview', height, width);
 	};
@@ -1656,10 +1682,6 @@ const UploadOrEditArticle = ({
 										/>
 										<DraggableWrapper onDragEnd={onDragEnd}>
 											{data.map((item, index) => {
-												console.log(
-													item,
-													'________ item in map draggable ________'
-												);
 												return (
 													<>
 														{React.createElement(item.component, {
@@ -1702,9 +1724,8 @@ const UploadOrEditArticle = ({
 											</Box>
 
 											<PreviewWrapper form={form}>
-												{/* <QuestionPoll /> */}
 												{data.map((item, index) => {
-													console.log(item, ' item in wrapper ----- ');
+													console.log(item, '======= item in map');
 													return (
 														<div key={index} style={{ padding: '5px' }}>
 															{item.element_type === 'MEDIA' ? (
@@ -1732,6 +1753,7 @@ const UploadOrEditArticle = ({
 																/>
 															) : item.element_type === 'QUESTION' ? (
 																<QuestionPoll
+																	status={status}
 																	data={item}
 																	itemIndex={index}
 																	style={{ width: '100%' }}

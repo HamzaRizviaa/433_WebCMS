@@ -180,7 +180,7 @@ const Labels = ({
 							}}
 							className={classes.liAutocomplete}
 						>
-							{option.name || extraLabel}
+							{option.name || option || extraLabel}
 							<Button
 								text='CREATE NEW LABEL'
 								style={{
