@@ -81,6 +81,7 @@ const QuestionLibrary = () => {
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
 	const [logout, setLogout] = useState(false);
+	const [notifID, setNotifID] = useState('');
 
 	// const enabled = (logoutValue) => {
 	// 	console.log(logoutValue, 'logoutVALUE');
@@ -414,6 +415,7 @@ const QuestionLibrary = () => {
 			setrowStatus(row.status);
 			setrowLocation(row.location);
 			setEdit(true);
+			setNotifID(row.id);
 			row.question_type === 'quiz'
 				? setShowQuizSlider(true)
 				: setShowPollSlider(true);
@@ -729,6 +731,7 @@ const QuestionLibrary = () => {
 					buttonText={
 						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
 					}
+					notifID={notifID}
 				/>
 				<PollDetails
 					page={page}
@@ -744,6 +747,7 @@ const QuestionLibrary = () => {
 					buttonText={
 						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
 					}
+					notifID={notifID}
 				/>
 			</Layout>
 		</LoadingOverlay>

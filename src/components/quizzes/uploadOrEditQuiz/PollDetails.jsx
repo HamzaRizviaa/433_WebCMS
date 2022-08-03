@@ -18,7 +18,8 @@ export default function PollDetails({
 	buttonText,
 	isEdit,
 	status,
-	location
+	location,
+	notifID
 }) {
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
@@ -48,6 +49,7 @@ export default function PollDetails({
 			disableDropdown={disableDropdown}
 			quiz={true}
 			dialogRef={dialogWrapper}
+			notifID={notifID}
 		>
 			<div className={muiClasses.root}>
 				{status === 'draft' ? (
@@ -138,5 +140,6 @@ PollDetails.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
 	type: PropTypes.string.isRequired,
-	location: PropTypes.string.isRequired
+	location: PropTypes.string.isRequired,
+	notifID: PropTypes.string
 };

@@ -19,7 +19,8 @@ export default function QuizDetails({
 	isEdit,
 	status,
 	location,
-	page
+	page,
+	notifID
 }) {
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
@@ -51,6 +52,7 @@ export default function QuizDetails({
 			disableDropdown={disableDropdown}
 			quiz={true}
 			dialogRef={dialogWrapper}
+			notifID={notifID}
 		>
 			<div className={muiClasses.root}>
 				{status === 'draft' ? (
@@ -151,5 +153,6 @@ QuizDetails.propTypes = {
 	status: PropTypes.string.isRequired,
 	location: PropTypes.string.isRequired,
 	type: PropTypes.string.isRequired,
-	page: PropTypes.string
+	page: PropTypes.string,
+	notifID: PropTypes.string
 };
