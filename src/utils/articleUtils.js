@@ -247,7 +247,7 @@ export const checkNewElementQuestionDraft = (elements, data) => {
 							elements[i]?.question_data?.file_name &&
 						data[i]?.data?.labels?.length ===
 							elements[i]?.question_data?.labels?.length &&
-						!checkDuplicateLabel(elements, data)
+						!checkDuplicateLabel(elements, data[i]?.data)
 					) {
 						result.push(true);
 					} else {
