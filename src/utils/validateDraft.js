@@ -77,6 +77,19 @@ const validateDraft = (form, dataElements, newsElement) => {
 				if (dataFile.data) {
 					return dataFile?.data[0]?.ig_post_url;
 				}
+			} else if (dataFile.element_type === 'QUESTION') {
+				if (dataFile.data) {
+					return (
+						dataFile?.data?.question ||
+						dataFile?.data?.dropbox_url ||
+						dataFile?.data?.labels?.length > 0 ||
+						dataFile?.data?.uploadedFiles?.length(
+							dataFile?.data?.answers?.length > 0
+								? dataFile?.data?.answers.some((item) => item?.answer !== '')
+								: false
+						)
+					);
+				}
 			} else {
 				if (dataFile.data) {
 					return dataFile?.data[0]?.twitter_post_url;

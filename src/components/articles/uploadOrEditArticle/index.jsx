@@ -176,7 +176,7 @@ const UploadOrEditArticle = ({
 		maxFiles: 1,
 		validator: checkFileSize
 	});
-	console.log('ACCEPTED FILE 2', acceptedFiles);
+
 	const {
 		acceptedFiles: acceptedFileAvatar,
 		fileRejections: fileRejectionsAvatar,
@@ -359,12 +359,6 @@ const UploadOrEditArticle = ({
 		}
 	}, [specificArticle]);
 
-	console.log(fileHeight, fileWidth, 'portr');
-	console.log(landscapeFileHeight, landscapeFileWidth, 'lands');
-
-	// console.log(imgEl, 'port'); // issue is on ref of natural height and width
-	// console.log(imgEl2, 'land');
-
 	const updateDataFromAPI = (apiData) => {
 		let modifiedData = apiData?.map(
 			({ id, sort_order, element_type, ...rest }) => {
@@ -535,9 +529,7 @@ const UploadOrEditArticle = ({
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
 
-		console.log('mediaFiles', mediaFiles);
-
-		console.log('Form author Image', form.author_image[0]);
+		c;
 
 		let elementsData;
 		if (data.length) {
@@ -811,20 +803,18 @@ const UploadOrEditArticle = ({
 
 	const handleMediaElementDelete = (sortOrder) => {
 		let dataCopy = [...data];
-		console.log(sortOrder, 'sortOrder');
+
 		if (sortOrder) {
 			setData(dataCopy.filter((file) => file.sortOrder !== sortOrder));
 		}
 	};
 
 	const handleElementDataDelete = (elementData, index) => {
-		console.log(elementData, 'elementData');
 		let dataCopy = [...data];
 		if (elementData) {
 			setData(
 				dataCopy.filter((item, i) => {
 					if (index === i) {
-						console.log(item, 'item in main FILE');
 						if (item.element_type === 'QUESTION') {
 							const abc = item.data;
 							delete abc['uploadedFiles'];
@@ -1282,11 +1272,8 @@ const UploadOrEditArticle = ({
 					dataMedia && dataMedia[0]
 				];
 
-				console.log(updatedArray, 'uppa');
-
 				Promise.all([...updatedArray])
 					.then((mediaFiles) => {
-						// console.log(mediaFiles, 'uppa');
 						createArticle(specificArticle?.id, mediaFiles, true);
 					})
 					.catch(() => {
@@ -1551,8 +1538,6 @@ const UploadOrEditArticle = ({
 		setData(items);
 	};
 
-	// console.log('Data', data);
-
 	const handleFileWidthHeight = (width, height) => {
 		console.log('call back in article preview', height, width);
 	};
@@ -1656,10 +1641,6 @@ const UploadOrEditArticle = ({
 										/>
 										<DraggableWrapper onDragEnd={onDragEnd}>
 											{data.map((item, index) => {
-												console.log(
-													item,
-													'________ item in map draggable ________'
-												);
 												return (
 													<>
 														{React.createElement(item.component, {
@@ -1704,7 +1685,6 @@ const UploadOrEditArticle = ({
 											<PreviewWrapper form={form}>
 												{/* <QuestionPoll /> */}
 												{data.map((item, index) => {
-													console.log(item, ' item in wrapper ----- ');
 													return (
 														<div key={index} style={{ padding: '5px' }}>
 															{item.element_type === 'MEDIA' ? (
