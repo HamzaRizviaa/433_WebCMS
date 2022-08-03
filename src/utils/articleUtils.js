@@ -151,14 +151,16 @@ export const checkEmptyQuestion = (data) => {
 	const filteredData = data.filter((item) => item.element_type === 'QUESTION');
 	const validatedData = filteredData.map((item) => {
 		if (item.data) {
-			return (
+			if (
 				item?.data?.question &&
 				(item?.data?.answers?.length === 2
 					? item?.data?.answers.every((everyItem) => everyItem?.answer !== '')
 					: false) &&
 				item?.data?.labels?.length > 6 &&
 				item?.data?.uploadedFiles?.length
-			);
+			) {
+				return true;
+			}
 		} else {
 			return false;
 		}
@@ -175,14 +177,12 @@ export const checkNewElementQuestion = (elements, data) => {
 			if (elements.length === data.length) {
 				if (data[i].data) {
 					if (
-						data[i]?.data?.question === elements[i]?.question_data?.question &&
-						data[i]?.data?.answers[0]?.answer ===
-							elements[i]?.question_data?.answers[0]?.answer &&
-						data[i]?.data?.answers[1]?.answer ===
-							elements[i]?.question_data?.answers[1]?.answer &&
 						data[i]?.data?.dropbox_url ===
 							elements[i]?.question_data?.dropbox_url &&
-						data[i]?.data?.file_name === elements[i]?.question_data?.file_name
+						(data[i]?.data?.uploadedFiles
+							? data[i]?.data?.uploadedFiles[0]?.file_name ===
+							  elements[i]?.question_data?.file_name
+							: false)
 					) {
 						result.push(true);
 					} else {
@@ -211,7 +211,7 @@ export const checkEmptyQuestionDraft = (data) => {
 	const filteredData = data.filter((item) => item.element_type === 'QUESTION');
 	const validatedData = filteredData.map((item) => {
 		if (item.data) {
-			return (
+			if (
 				item?.data?.question ||
 				(item?.data?.answers?.length > 0
 					? item?.data?.answers.some((everyItem) => everyItem?.answer !== '')
@@ -219,7 +219,9 @@ export const checkEmptyQuestionDraft = (data) => {
 				item?.data?.labels?.length > 1 ||
 				item?.data?.dropbox_url ||
 				item?.data?.uploadedFiles?.length
-			);
+			) {
+				return true;
+			}
 		} else {
 			return false;
 		}
@@ -237,10 +239,14 @@ export const checkNewElementQuestionDraft = (elements, data) => {
 				if (data[i].data) {
 					if (
 						data[i]?.data?.question === elements[i]?.question_data?.question &&
-						data[i]?.data?.answers[0]?.answer ===
-							elements[i]?.question_data?.answers[0]?.answer &&
-						data[i]?.data?.answers[1]?.answer ===
-							elements[i]?.question_data?.answers[1]?.answer &&
+						(data[i]?.data?.answers?.length === 2
+							? data[i]?.data?.answers[0]?.answer ===
+							  elements[i]?.question_data?.answers[0]?.answer
+							: false) &&
+						(data[i]?.data?.answers?.length === 2
+							? data[i]?.data?.answers[1]?.answer ===
+							  elements[i]?.question_data?.answers[1]?.answer
+							: false) &&
 						data[i]?.data?.dropbox_url ===
 							elements[i]?.question_data?.dropbox_url &&
 						data[i]?.data?.file_name ===

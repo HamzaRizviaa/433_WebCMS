@@ -83,11 +83,10 @@ const validateDraft = (form, dataElements, newsElement) => {
 						dataFile?.data?.question ||
 						dataFile?.data?.dropbox_url ||
 						dataFile?.data?.labels?.length > 0 ||
-						dataFile?.data?.uploadedFiles?.length(
-							dataFile?.data?.answers?.length > 0
-								? dataFile?.data?.answers.some((item) => item?.answer !== '')
-								: false
-						)
+						dataFile?.data?.uploadedFiles?.length ||
+						(dataFile?.data?.answers?.length > 0
+							? dataFile?.data?.answers.some((item) => item?.answer !== '')
+							: false)
 					);
 				}
 			} else {

@@ -38,7 +38,7 @@ const Labels = ({
 		(element) => !drafts.includes(element.name)
 	);
 
-	console.log(newLabelsSearch, 'ls');
+	// console.log(newLabelsSearch, 'ls');
 
 	const labelsParams = (labels) => {
 		return labels.reduce((accumulator, currentItem, currentIndex) => {

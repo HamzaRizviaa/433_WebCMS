@@ -42,7 +42,6 @@ const ArticleQuestionUpload = ({
 	initialData
 	// WidthHeightCallback,
 }) => {
-	console.log(initialData, '==== initialData ====');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [extraLabel, setExtraLabel] = useState('');
 	const [fileWidth, setFileWidth] = useState(0);
@@ -85,7 +84,6 @@ const ArticleQuestionUpload = ({
 	};
 
 	useEffect(() => {
-		console.log('HERERE');
 		if (acceptedFiles?.length) {
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
