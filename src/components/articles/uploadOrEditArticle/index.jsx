@@ -362,13 +362,21 @@ const UploadOrEditArticle = ({
 	console.log(fileHeight, fileWidth, 'portr');
 	console.log(landscapeFileHeight, landscapeFileWidth, 'lands');
 
-	// console.log(imgEl, 'port'); // issue is on ref of natural height and width
-	// console.log(imgEl2, 'land');
+	const updateLabelsFromAPI = (labels) => {
+		let newLabels = [];
+		if (labels) {
+			labels.map((label) => newLabels.push({ id: -1, name: label }));
+			return newLabels;
+		} else {
+			return undefined;
+		}
+	};
 
 	const updateDataFromAPI = (apiData) => {
 		console.log('API DATA', apiData);
 		let modifiedData = apiData?.map(
 			({ id, sort_order, element_type, ...rest }) => {
+				console.log(rest, 'rest');
 				const renderComponent = {
 					TEXT: ArticleTextDraggable,
 					MEDIA: ArticleMediaDraggable,
@@ -386,7 +394,18 @@ const UploadOrEditArticle = ({
 					id,
 					data:
 						element_type === 'QUESTION'
-							? { ...rest }
+							? {
+									...rest.question_data,
+									uploadedFiles: [
+										{
+											media_url:
+												`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.question_data.image}` ||
+												undefined,
+											file_name: rest?.question_data.file_name
+										}
+									],
+									labels: updateLabelsFromAPI(rest?.question_data.labels)
+							  }
 							: [
 									{
 										...rest,
