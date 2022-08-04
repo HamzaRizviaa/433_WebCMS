@@ -29,7 +29,7 @@ const ArticleQuestionDraggable = ({
 	handleDeleteData,
 	status //publish / draft
 }) => {
-	console.log(initialData, 'initialData in draggable');
+	console.log(status, 'status in draggable');
 	const classes = useStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
 

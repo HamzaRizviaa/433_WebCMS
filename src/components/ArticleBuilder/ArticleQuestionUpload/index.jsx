@@ -285,7 +285,8 @@ const ArticleQuestionUpload = ({
 								</h6>
 							</div>
 							<TextField
-								disabled={(editQuiz || editPoll) && status !== 'draft'}
+								// disabled={status === 'published' ? true : false}
+								disabled={true}
 								value={initialData ? initialData?.question : form.question}
 								onChange={(e) => {
 									setForm((prev) => {

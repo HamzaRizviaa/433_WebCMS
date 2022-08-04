@@ -97,7 +97,8 @@ export const postLibrarySlice = createSlice({
 		totalRecords: 0,
 		noResultStatus: false,
 		noResultStatusCalendar: false,
-		newLabelsSearch: [] //new labels on search
+		newLabelsSearch: [], //new labels on search
+		labelsSearchStatus: ''
 	},
 	reducers: {
 		resetCalendarError: (state) => {
@@ -133,12 +134,6 @@ export const postLibrarySlice = createSlice({
 		[getPostLabels.fulfilled]: (state, action) => {
 			state.labels = action.payload;
 		},
-		[getAllNewLabels.fulfilled]: (state, action) => {
-			state.newLabelsSearch = action.payload;
-		},
-		[getNewLabelsSearch.fulfilled]: (state, action) => {
-			state.newLabelsSearch = action.payload;
-		},
 		[getSpecificPost.pending]: (state) => {
 			state.status = 'loading';
 		},
@@ -148,6 +143,22 @@ export const postLibrarySlice = createSlice({
 		},
 		[getSpecificPost.rejected]: (state) => {
 			state.status = 'failed';
+		},
+		// all labels
+		[getAllNewLabels.fulfilled]: (state, action) => {
+			state.newLabelsSearch = action.payload;
+		},
+		//search labels from api
+		[getNewLabelsSearch.pending]: (state) => {
+			state.labelsSearchStatus = 'pending';
+		},
+		[getNewLabelsSearch.fulfilled]: (state, action) => {
+			state.labelsSearchStatus = 'success';
+			state.newLabelsSearch = action.payload;
+		},
+
+		[getNewLabelsSearch.rejected]: (state) => {
+			state.labelsSearchStatus = 'rejected';
 		}
 	}
 });
