@@ -22,6 +22,7 @@ import validateForm from '../../../utils/validateForm';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { useStyles } from './ArticleQuestionUpload.style';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
+import SecondaryLoader from '../../SecondaryLoader';
 
 const ArticleQuestionUpload = ({
 	heading1,
@@ -47,7 +48,8 @@ const ArticleQuestionUpload = ({
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
 	const [isError, setIsError] = useState({});
-	console.log('TYPE: ', type);
+	const [loading, setLoading] = useState(false);
+
 	const [form, setForm] = useState({
 		uploadedFiles: [],
 		dropbox_url: '',
@@ -92,6 +94,7 @@ const ArticleQuestionUpload = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
+			setLoading(true);
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -106,7 +109,6 @@ const ArticleQuestionUpload = ({
 					height: fileHeight
 				};
 			});
-			console.log('NEW', newFiles);
 			uploadedFile(newFiles[0], 'articleLibrary').then((res) => {
 				setForm((prev) => {
 					return {
@@ -121,6 +123,7 @@ const ArticleQuestionUpload = ({
 						{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
 					]
 				});
+				setLoading(false);
 			});
 
 			// sendDataToParent({ uploadedFiles: [...newFiles] });
@@ -213,15 +216,22 @@ const ArticleQuestionUpload = ({
 							>
 								<div {...getRootProps({ className: globalClasses.dropzone })}>
 									<input {...getInputProps()} />
-									<AddCircleOutlineIcon
-										className={globalClasses.addFilesIcon}
-									/>
-									<p className={globalClasses.dragMsg}>
-										Click or drag file to this area to upload
-									</p>
-									<p className={globalClasses.formatMsg}>
-										Supported formats are jpeg and png
-									</p>
+									{loading ? (
+										<SecondaryLoader loading={true} />
+									) : (
+										<>
+											<AddCircleOutlineIcon
+												className={globalClasses.addFilesIcon}
+											/>
+											<p className={globalClasses.dragMsg}>
+												Click or drag file to this area to upload
+											</p>
+											<p className={globalClasses.formatMsg}>
+												Supported formats are jpeg and png
+											</p>
+										</>
+									)}
+
 									<p className={globalClasses.uploadMediaError}>
 										{isError.uploadedFiles
 											? 'You need to upload a media in order to post'

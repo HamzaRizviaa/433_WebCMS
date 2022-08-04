@@ -32,7 +32,6 @@ const ArticleQuestionDraggable = ({
 }) => {
 	const classes = useStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
-	console.log('ITEM', item.data.question_type);
 	const clickExpand = () => {
 		setClickExpandIcon(!clickExpandIcon);
 		setIsOpen(!clickExpandIcon);
