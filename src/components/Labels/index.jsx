@@ -38,7 +38,7 @@ const Labels = ({
 		(element) => !drafts.includes(element.name)
 	);
 
-	// console.log(newLabelsSearch, 'ls');
+	console.log(newLabelsSearch, 'ls');
 
 	const labelsParams = (labels) => {
 		return labels.reduce((accumulator, currentItem, currentIndex) => {
@@ -110,7 +110,6 @@ const Labels = ({
 			value={selectedLabels}
 			autoHighlight={true}
 			onChange={(event, newValue) => {
-				console.log(event, 'change', newValue);
 				setDisableDropdown(true);
 				let newLabels = newValue?.filter(
 					(v, i, a) =>
@@ -165,11 +164,20 @@ const Labels = ({
 			)}
 			renderOption={(props, option) => {
 				//selected in input field,  some -> array to check exists
+
 				let currentLabelDuplicate = selectedLabels.some(
 					(label) => label.name == option.name
 				);
 
-				if (option.id === null && !currentLabelDuplicate) {
+				let arrayResultedDuplicate = newLabelsSearch.some(
+					(label) => label.name == extraLabel && label.id !== null
+				);
+
+				if (
+					option.id === null &&
+					!currentLabelDuplicate &&
+					!arrayResultedDuplicate
+				) {
 					return (
 						<li
 							{...props}
@@ -192,11 +200,15 @@ const Labels = ({
 						</li>
 					);
 				} else if (!currentLabelDuplicate) {
-					return (
-						<li {...props} className={classes.liAutocomplete}>
-							{option.name}
-						</li>
-					);
+					if (arrayResultedDuplicate && option.id == null) {
+						return null;
+					} else {
+						return (
+							<li {...props} className={classes.liAutocomplete}>
+								{option.name}
+							</li>
+						);
+					}
 				} else {
 					return (
 						<div className={classes.liAutocompleteWithButton}>
