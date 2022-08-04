@@ -399,12 +399,12 @@ const UploadOrEditArticle = ({
 									uploadedFiles: [
 										{
 											media_url:
-												`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.question_data.image}` ||
+												`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest?.question_data?.image}` ||
 												undefined,
-											file_name: rest?.question_data.file_name
+											file_name: rest?.question_data?.file_name
 										}
 									],
-									labels: updateLabelsFromAPI(rest?.question_data.labels)
+									labels: updateLabelsFromAPI(rest?.question_data?.labels)
 							  }
 							: [
 									{
