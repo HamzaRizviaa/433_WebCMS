@@ -29,7 +29,6 @@ const ArticleQuestionUpload = ({
 	// editQuiz,
 	// editPoll,
 	setDisableDropdown,
-	quiz,
 	page,
 	status,
 	type,
@@ -48,7 +47,7 @@ const ArticleQuestionUpload = ({
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
 	const [isError, setIsError] = useState({});
-
+	console.log('TYPE: ', type);
 	const [form, setForm] = useState({
 		uploadedFiles: [],
 		dropbox_url: '',
@@ -66,6 +65,13 @@ const ArticleQuestionUpload = ({
 		validateForm(form);
 	}, [form]);
 
+	useEffect(() => {
+		if (!isEdit) {
+			sendDataToParent({
+				question_type: type === 'quiz' ? 'quiz' : 'poll'
+			});
+		}
+	}, []);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png',
@@ -158,6 +164,8 @@ const ArticleQuestionUpload = ({
 		let answers = { answers: formCopy.answers };
 		sendDataToParent(answers);
 	};
+
+	console.log('initial', initialData);
 
 	return (
 		<>
@@ -324,7 +332,7 @@ const ArticleQuestionUpload = ({
 											: globalClasses.noErrorState
 									}
 								>
-									{quiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
+									{type === 'quiz' ? 'RIGHT ANSWER' : 'ANSWER 1'}
 								</h6>
 								<h6
 									style={{
@@ -369,7 +377,7 @@ const ArticleQuestionUpload = ({
 
 						<p className={globalClasses.mediaError}>
 							{isError.ans1
-								? quiz
+								? type === 'quiz'
 									? 'You need to provide right answer in order to post'
 									: 'You need to provide first answer in order to post'
 								: ''}
@@ -384,7 +392,7 @@ const ArticleQuestionUpload = ({
 											: globalClasses.noErrorState
 									}
 								>
-									{quiz ? 'WRONG ANSWER' : 'ANSWER 2'}
+									{type === 'quiz' ? 'WRONG ANSWER' : 'ANSWER 2'}
 								</h6>
 								<h6
 									style={{
@@ -429,7 +437,7 @@ const ArticleQuestionUpload = ({
 
 						<p className={globalClasses.mediaError}>
 							{isError.ans2
-								? quiz
+								? type === 'quiz'
 									? 'You need to provide wrong answer in order to post'
 									: 'You need to provide second answer in order to post'
 								: ''}
