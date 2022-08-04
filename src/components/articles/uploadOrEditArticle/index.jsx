@@ -77,6 +77,7 @@ const UploadOrEditArticle = ({
 	page,
 	status
 }) => {
+	console.log(status, 'status in edit article');
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
@@ -889,8 +890,7 @@ const UploadOrEditArticle = ({
 					return true;
 				}
 				if (item.element_type === 'QUESTION') {
-					// console.log(questionValidate(item), 'question validate');
-					// questionValidate(item);
+					// questionValidate(item.data);
 					return true;
 				}
 			}
@@ -900,7 +900,7 @@ const UploadOrEditArticle = ({
 
 	// const questionValidate = (item) => {
 	// 	console.log(item, 'item');
-	// 	var validate = Object.keys.map((key) => {
+	// 	var validate = Object.keys(item).map((key) => {
 	// 		if (!item[key]) {
 	// 			return true;
 	// 		} else {
@@ -1735,6 +1735,8 @@ const UploadOrEditArticle = ({
 															item,
 															index,
 															key: item.sortOrder,
+															isEdit: isEdit,
+															status: isEdit ? status : undefined,
 															initialData:
 																item.element_type === 'QUESTION'
 																	? item?.data
@@ -1761,6 +1763,7 @@ const UploadOrEditArticle = ({
 
 											<PreviewWrapper form={form}>
 												{data.map((item, index) => {
+													console.log(item, '======= item in map');
 													return (
 														<div key={index} style={{ padding: '5px' }}>
 															{item.element_type === 'MEDIA' ? (

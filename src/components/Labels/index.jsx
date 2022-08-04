@@ -6,7 +6,7 @@ import { TextField } from '@material-ui/core';
 import Button from '../button';
 import ClearIcon from '@material-ui/icons/Clear';
 import classes from './_labels.module.scss';
-
+import Four33Loader from '../../assets/Loader_Yellow.gif';
 //new labels search
 import { useDispatch, useSelector } from 'react-redux';
 import { getNewLabelsSearch } from '../../pages/PostLibrary/postLibrarySlice';
@@ -29,7 +29,9 @@ const Labels = ({
 	//------------------------------new labels
 
 	const dispatch = useDispatch();
-	const { newLabelsSearch } = useSelector((state) => state.postLibrary);
+	const { newLabelsSearch, labelsSearchStatus } = useSelector(
+		(state) => state.postLibrary
+	);
 
 	let draftLabels = selectedLabels.filter((label) => label.id == -1);
 	let drafts = [];
@@ -120,10 +122,18 @@ const Labels = ({
 				setSelectedLabels([...newLabels]);
 			}}
 			popupIcon={''}
+			//loader implement
+			// <div className={classes.liAutocompleteWithButton}>
+			// 	<p>No results found</p>
+			// </div>
 			noOptionsText={
-				<div className={classes.liAutocompleteWithButton}>
-					<p>No results found</p>
-				</div>
+				labelsSearchStatus === 'pending' ? (
+					<div className={classes.labelsLoader}>
+						<img src={Four33Loader} />
+					</div>
+				) : (
+					''
+				)
 			}
 			className={`${classes.autoComplete} ${
 				isEdit && draftStatus !== 'draft' && classes.disableAutoComplete
@@ -188,7 +198,7 @@ const Labels = ({
 							}}
 							className={classes.liAutocomplete}
 						>
-							{option.name || option || extraLabel}
+							{option.name || extraLabel}
 							<Button
 								text='CREATE NEW LABEL'
 								style={{

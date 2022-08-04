@@ -26,7 +26,9 @@ const ArticleQuestionDraggable = ({
 	// WidthHeightCallback,
 	handleDeleteFile,
 	setDisableDropdown,
-	handleDeleteData
+	handleDeleteData,
+	status, //   publish / draft
+	isEdit //    true / false
 }) => {
 	const classes = useStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
@@ -109,6 +111,8 @@ const ArticleQuestionDraggable = ({
 											handleClose={() => {
 												handleClose();
 											}}
+											status={status}
+											isEdit={isEdit}
 											type='poll'
 										/>
 									</TabPanelUnstyled>
@@ -117,6 +121,8 @@ const ArticleQuestionDraggable = ({
 											item={item}
 											key={key}
 											index={index}
+											status={status}
+											isEdit={isEdit}
 											sendDataToParent={sendDataToParent}
 											handleDeleteData={(uploadedFiles) => {
 												handleDeleteData(uploadedFiles);
@@ -154,7 +160,9 @@ ArticleQuestionDraggable.propTypes = {
 	handleDeleteFile: PropTypes.func,
 	// initialData: PropTypes.object,
 	setDisableDropdown: PropTypes.func,
-	handleDeleteData: PropTypes.func
+	handleDeleteData: PropTypes.func,
+	status: PropTypes.string,
+	isEdit: PropTypes.bool
 };
 
 export default ArticleQuestionDraggable;

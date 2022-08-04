@@ -26,8 +26,8 @@ import uploadFileToServer from '../../../utils/uploadFileToServer';
 const ArticleQuestionUpload = ({
 	heading1,
 	open,
-	editQuiz,
-	editPoll,
+	// editQuiz,
+	// editPoll,
 	setDisableDropdown,
 	quiz,
 	page,
@@ -39,7 +39,8 @@ const ArticleQuestionUpload = ({
 	sendDataToParent,
 	handleDeleteData,
 	setIsOpen,
-	initialData
+	initialData,
+	isEdit
 	// WidthHeightCallback,
 }) => {
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -136,7 +137,7 @@ const ArticleQuestionUpload = ({
 			resetState();
 			//resetForm(form);
 		}
-		!(editPoll || editQuiz) ? resetState() : '';
+		!isEdit ? resetState() : '';
 	}, [open]);
 
 	const resetState = () => {
@@ -157,13 +158,6 @@ const ArticleQuestionUpload = ({
 		let answers = { answers: formCopy.answers };
 		sendDataToParent(answers);
 	};
-
-	// console.log(form, 'form');
-	// console.log(form.end_date, 'dft');
-	// console.log(editQuestionData?.poll_end_date, 'poll');
-	// console.log(convertedDate, 'cd');
-
-	// console.log('validation  ', status, !validateForm(form), editQuizBtnDisabled);
 
 	return (
 		<>
@@ -192,7 +186,7 @@ const ArticleQuestionUpload = ({
 							}}
 							isArticle
 							isArticleNew
-							isEdit={editPoll || editQuiz}
+							isEdit={isEdit}
 							imgEl={imgRef}
 							imageOnload={() => {
 								setFileWidth(imgRef.current.naturalWidth);
@@ -289,7 +283,8 @@ const ArticleQuestionUpload = ({
 								</h6>
 							</div>
 							<TextField
-								disabled={(editQuiz || editPoll) && status !== 'draft'}
+								// disabled={status === 'published' ? true : false}
+								disabled={isEdit}
 								value={initialData ? initialData?.question : form.question}
 								onChange={(e) => {
 									setForm((prev) => {
@@ -305,9 +300,7 @@ const ArticleQuestionUpload = ({
 								InputProps={{
 									disableUnderline: true,
 									className: `${classes.textFieldInput}  ${
-										(editQuiz || editPoll) &&
-										status !== 'draft' &&
-										classes.disableTextField
+										isEdit && status !== 'draft' && classes.disableTextField
 									}`
 								}}
 								inputProps={{ maxLength: 29 }}
@@ -331,7 +324,7 @@ const ArticleQuestionUpload = ({
 											: globalClasses.noErrorState
 									}
 								>
-									{quiz || editQuiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
+									{quiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
 								</h6>
 								<h6
 									style={{
@@ -351,7 +344,7 @@ const ArticleQuestionUpload = ({
 								</h6>
 							</div>
 							<TextField
-								disabled={(editQuiz || editPoll) && status !== 'draft'}
+								disabled={isEdit && status !== 'draft'}
 								value={
 									initialData?.answers
 										? initialData?.answers[0]?.answer
@@ -365,9 +358,7 @@ const ArticleQuestionUpload = ({
 								InputProps={{
 									disableUnderline: true,
 									className: `${classes.textFieldInput}  ${
-										(editQuiz || editPoll) &&
-										status !== 'draft' &&
-										classes.disableTextField
+										isEdit && status !== 'draft' && classes.disableTextField
 									}`
 								}}
 								multiline
@@ -393,7 +384,7 @@ const ArticleQuestionUpload = ({
 											: globalClasses.noErrorState
 									}
 								>
-									{quiz || editQuiz ? 'WRONG ANSWER' : 'ANSWER 2'}
+									{quiz ? 'WRONG ANSWER' : 'ANSWER 2'}
 								</h6>
 								<h6
 									style={{
@@ -413,7 +404,7 @@ const ArticleQuestionUpload = ({
 								</h6>
 							</div>
 							<TextField
-								disabled={(editQuiz || editPoll) && status !== 'draft'}
+								disabled={isEdit && status !== 'draft'}
 								value={
 									initialData?.answers
 										? initialData?.answers[1]?.answer
@@ -427,9 +418,7 @@ const ArticleQuestionUpload = ({
 								InputProps={{
 									disableUnderline: true,
 									className: `${classes.textFieldInput}  ${
-										(editQuiz || editPoll) &&
-										status !== 'draft' &&
-										classes.disableTextField
+										isEdit && status !== 'draft' && classes.disableTextField
 									}`
 								}}
 								multiline
@@ -457,7 +446,7 @@ const ArticleQuestionUpload = ({
 								LABELS
 							</h6>
 							<Labels
-								isEdit={editPoll || editQuiz}
+								isEdit={isEdit}
 								setDisableDropdown={setDisableDropdown}
 								selectedLabels={
 									initialData?.labels ? initialData?.labels : form.labels
@@ -496,14 +485,14 @@ ArticleQuestionUpload.propTypes = {
 	heading1: PropTypes.string.isRequired,
 	open: PropTypes.bool.isRequired,
 	buttonText: PropTypes.string.isRequired,
-	editQuiz: PropTypes.bool,
+	// editQuiz: PropTypes.bool,
 	dialogWrapper: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,
 	setDisableDropdown: PropTypes.func.isRequired,
 	quiz: PropTypes.bool,
-	editPoll: PropTypes.bool,
+	// editPoll: PropTypes.bool,
 	handleClose: PropTypes.func.isRequired,
 	page: PropTypes.string,
 	status: PropTypes.string,
@@ -514,7 +503,8 @@ ArticleQuestionUpload.propTypes = {
 	sendDataToParent: PropTypes.func.isRequired,
 	initialData: PropTypes.object,
 	setIsOpen: PropTypes.func,
-	handleDeleteData: PropTypes.func
+	handleDeleteData: PropTypes.func,
+	isEdit: PropTypes.bool
 	// WidthHeightCallback: PropTypes.func,
 	// initialData: PropTypes.object,
 };
