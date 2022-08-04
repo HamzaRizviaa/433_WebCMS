@@ -2,8 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useStyles } from '../index.style';
 
-const QuestionPoll = ({ data, itemIndex }) => {
-	console.log(data, itemIndex, 'question poll');
+const QuestionPoll = ({ data }) => {
 	const classes = useStyles();
 
 	return (

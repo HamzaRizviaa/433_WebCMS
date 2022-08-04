@@ -30,7 +30,6 @@ const ArticleQuestionDraggable = ({
 	status, //   publish / draft
 	isEdit //    true / false
 }) => {
-	console.log(status, 'status in draggable');
 	const classes = useStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
 
