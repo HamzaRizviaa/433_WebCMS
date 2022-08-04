@@ -384,6 +384,7 @@ const UploadOrEditArticle = ({
 					TWITTER: ArticleSocialMediaDraggable,
 					IG: ArticleSocialMediaDraggable
 				};
+				console.log('REST DATA', rest.question_data.question_type);
 				return {
 					sortOrder: sort_order,
 					element_type,
@@ -583,7 +584,8 @@ const UploadOrEditArticle = ({
 									question: item.data.question,
 									dropbox_url: item.data.dropbox_url,
 									answers: item.data.answers,
-									labels: item.data.labels
+									labels: item.data.labels,
+									question_type: item.data.question_type
 								}
 						  }
 						: undefined),
