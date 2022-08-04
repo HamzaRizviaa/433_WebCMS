@@ -90,7 +90,7 @@ const ArticleQuestionDraggable = ({
 						{clickExpandIcon ? (
 							<div className={muiClasses.root}>
 								<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
-									{!isEdit ? (
+									{!initialData?.question_id ? (
 										<>
 											<TabsListUnstyled className={muiClasses.tabMainDiv}>
 												<TabUnstyled>Add Poll</TabUnstyled>
@@ -99,10 +99,12 @@ const ArticleQuestionDraggable = ({
 										</>
 									) : (
 										<div className={classes.wrapperHeading}>
-											{item?.data?.question_type === 'poll' ? 'Poll' : 'Quiz'}
+											{item?.data && item?.data?.question_type === 'poll'
+												? 'Poll'
+												: 'Quiz'}
 										</div>
 									)}
-									{isEdit && item.data.question_type === 'poll' ? (
+									{isEdit && item?.data?.question_type === 'poll' ? (
 										<TabPanelUnstyled value={0}>
 											<ArticleQuestionUpload
 												setDisableDropdown={setDisableDropdown}
@@ -124,7 +126,7 @@ const ArticleQuestionDraggable = ({
 												type='poll'
 											/>
 										</TabPanelUnstyled>
-									) : isEdit && item.data.question_type === 'quiz' ? (
+									) : isEdit && item?.data?.question_type === 'quiz' ? (
 										<TabPanelUnstyled value={0}>
 											<ArticleQuestionUpload
 												item={item}

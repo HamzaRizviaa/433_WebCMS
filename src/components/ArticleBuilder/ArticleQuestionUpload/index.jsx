@@ -300,9 +300,12 @@ const ArticleQuestionUpload = ({
 									{form.question?.length}/29
 								</h6>
 							</div>
+							{console.log('Init', initialData)}
 							<TextField
 								// disabled={status === 'published' ? true : false}
-								disabled={isEdit}
+								disabled={
+									initialData?.question_id && status !== 'draft' ? true : false
+								}
 								value={initialData ? initialData?.question : form.question}
 								onChange={(e) => {
 									setForm((prev) => {
@@ -318,7 +321,9 @@ const ArticleQuestionUpload = ({
 								InputProps={{
 									disableUnderline: true,
 									className: `${classes.textFieldInput}  ${
-										isEdit && status !== 'draft' && classes.disableTextField
+										initialData?.question_id &&
+										status !== 'draft' &&
+										classes.disableTextField
 									}`
 								}}
 								inputProps={{ maxLength: 29 }}
@@ -362,7 +367,9 @@ const ArticleQuestionUpload = ({
 								</h6>
 							</div>
 							<TextField
-								disabled={isEdit && status !== 'draft'}
+								disabled={
+									initialData?.question_id && status !== 'draft' ? true : false
+								}
 								value={
 									initialData?.answers
 										? initialData?.answers[0]?.answer
@@ -376,7 +383,9 @@ const ArticleQuestionUpload = ({
 								InputProps={{
 									disableUnderline: true,
 									className: `${classes.textFieldInput}  ${
-										isEdit && status !== 'draft' && classes.disableTextField
+										initialData?.question_id &&
+										status !== 'draft' &&
+										classes.disableTextField
 									}`
 								}}
 								multiline
@@ -422,7 +431,9 @@ const ArticleQuestionUpload = ({
 								</h6>
 							</div>
 							<TextField
-								disabled={isEdit && status !== 'draft'}
+								disabled={
+									initialData?.question_id && status !== 'draft' ? true : false
+								}
 								value={
 									initialData?.answers
 										? initialData?.answers[1]?.answer
@@ -436,7 +447,9 @@ const ArticleQuestionUpload = ({
 								InputProps={{
 									disableUnderline: true,
 									className: `${classes.textFieldInput}  ${
-										isEdit && status !== 'draft' && classes.disableTextField
+										initialData?.question_id &&
+										status !== 'draft' &&
+										classes.disableTextField
 									}`
 								}}
 								multiline
@@ -464,7 +477,7 @@ const ArticleQuestionUpload = ({
 								LABELS
 							</h6>
 							<Labels
-								isEdit={isEdit}
+								isEdit={initialData?.question_id && status !== 'draft'}
 								setDisableDropdown={setDisableDropdown}
 								selectedLabels={
 									initialData?.labels ? initialData?.labels : form.labels
