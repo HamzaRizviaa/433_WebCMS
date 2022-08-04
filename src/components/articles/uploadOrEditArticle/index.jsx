@@ -557,6 +557,7 @@ const UploadOrEditArticle = ({
 
 		let elementsData;
 		if (data.length) {
+			console.log('DATA ID ', data);
 			elementsData = data.map((item, index) => {
 				return {
 					element_type: item.element_type,
@@ -588,7 +589,8 @@ const UploadOrEditArticle = ({
 									dropbox_url: item.data.dropbox_url,
 									answers: item.data.answers,
 									labels: item.data.labels,
-									question_type: item.data.question_type
+									question_type: item.data.question_type,
+									question_id: item.data.question_id || undefined
 								}
 						  }
 						: undefined),
