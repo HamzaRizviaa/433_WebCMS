@@ -77,6 +77,7 @@ const UploadOrEditArticle = ({
 	page,
 	status
 }) => {
+	console.log(status, 'status in edit article');
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
@@ -1734,6 +1735,8 @@ const UploadOrEditArticle = ({
 															item,
 															index,
 															key: item.sortOrder,
+															isEdit: isEdit,
+															status: isEdit ? status : undefined,
 															initialData:
 																item.element_type === 'QUESTION'
 																	? item?.data
@@ -1788,7 +1791,6 @@ const UploadOrEditArticle = ({
 																/>
 															) : item.element_type === 'QUESTION' ? (
 																<QuestionPoll
-																	status={status}
 																	data={item}
 																	itemIndex={index}
 																	style={{ width: '100%' }}
