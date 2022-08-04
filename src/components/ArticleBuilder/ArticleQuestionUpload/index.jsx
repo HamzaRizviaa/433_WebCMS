@@ -22,6 +22,7 @@ import validateForm from '../../../utils/validateForm';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { useStyles } from './ArticleQuestionUpload.style';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
+import SecondaryLoader from '../../SecondaryLoader';
 
 const ArticleQuestionUpload = ({
 	heading1,
@@ -29,7 +30,6 @@ const ArticleQuestionUpload = ({
 	// editQuiz,
 	// editPoll,
 	setDisableDropdown,
-	quiz,
 	page,
 	status,
 	type,
@@ -48,6 +48,7 @@ const ArticleQuestionUpload = ({
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
 	const [isError, setIsError] = useState({});
+	const [loading, setLoading] = useState(false);
 
 	const [form, setForm] = useState({
 		uploadedFiles: [],
@@ -66,6 +67,13 @@ const ArticleQuestionUpload = ({
 		validateForm(form);
 	}, [form]);
 
+	useEffect(() => {
+		if (!isEdit) {
+			sendDataToParent({
+				question_type: type === 'quiz' ? 'quiz' : 'poll'
+			});
+		}
+	}, []);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png',
@@ -86,6 +94,7 @@ const ArticleQuestionUpload = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
+			setLoading(true);
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -100,7 +109,6 @@ const ArticleQuestionUpload = ({
 					height: fileHeight
 				};
 			});
-			console.log('NEW', newFiles);
 			uploadedFile(newFiles[0], 'articleLibrary').then((res) => {
 				setForm((prev) => {
 					return {
@@ -115,6 +123,7 @@ const ArticleQuestionUpload = ({
 						{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
 					]
 				});
+				setLoading(false);
 			});
 
 			// sendDataToParent({ uploadedFiles: [...newFiles] });
@@ -158,6 +167,8 @@ const ArticleQuestionUpload = ({
 		let answers = { answers: formCopy.answers };
 		sendDataToParent(answers);
 	};
+
+	console.log('initial', initialData);
 
 	return (
 		<>
@@ -205,15 +216,22 @@ const ArticleQuestionUpload = ({
 							>
 								<div {...getRootProps({ className: globalClasses.dropzone })}>
 									<input {...getInputProps()} />
-									<AddCircleOutlineIcon
-										className={globalClasses.addFilesIcon}
-									/>
-									<p className={globalClasses.dragMsg}>
-										Click or drag file to this area to upload
-									</p>
-									<p className={globalClasses.formatMsg}>
-										Supported formats are jpeg and png
-									</p>
+									{loading ? (
+										<SecondaryLoader loading={true} />
+									) : (
+										<>
+											<AddCircleOutlineIcon
+												className={globalClasses.addFilesIcon}
+											/>
+											<p className={globalClasses.dragMsg}>
+												Click or drag file to this area to upload
+											</p>
+											<p className={globalClasses.formatMsg}>
+												Supported formats are jpeg and png
+											</p>
+										</>
+									)}
+
 									<p className={globalClasses.uploadMediaError}>
 										{isError.uploadedFiles
 											? 'You need to upload a media in order to post'
@@ -324,7 +342,7 @@ const ArticleQuestionUpload = ({
 											: globalClasses.noErrorState
 									}
 								>
-									{quiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
+									{type === 'quiz' ? 'RIGHT ANSWER' : 'ANSWER 1'}
 								</h6>
 								<h6
 									style={{
@@ -369,7 +387,7 @@ const ArticleQuestionUpload = ({
 
 						<p className={globalClasses.mediaError}>
 							{isError.ans1
-								? quiz
+								? type === 'quiz'
 									? 'You need to provide right answer in order to post'
 									: 'You need to provide first answer in order to post'
 								: ''}
@@ -384,7 +402,7 @@ const ArticleQuestionUpload = ({
 											: globalClasses.noErrorState
 									}
 								>
-									{quiz ? 'WRONG ANSWER' : 'ANSWER 2'}
+									{type === 'quiz' ? 'WRONG ANSWER' : 'ANSWER 2'}
 								</h6>
 								<h6
 									style={{
@@ -429,7 +447,7 @@ const ArticleQuestionUpload = ({
 
 						<p className={globalClasses.mediaError}>
 							{isError.ans2
-								? quiz
+								? type === 'quiz'
 									? 'You need to provide wrong answer in order to post'
 									: 'You need to provide second answer in order to post'
 								: ''}
