@@ -384,7 +384,6 @@ const UploadOrEditArticle = ({
 					TWITTER: ArticleSocialMediaDraggable,
 					IG: ArticleSocialMediaDraggable
 				};
-				console.log('REST DATA', rest.question_data.question_type);
 				return {
 					sortOrder: sort_order,
 					element_type,
