@@ -32,7 +32,7 @@ const ArticleQuestionDraggable = ({
 }) => {
 	const classes = useStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
-	console.log('ITEM', item);
+	console.log('ITEM', item.data.question_type);
 	const clickExpand = () => {
 		setClickExpandIcon(!clickExpandIcon);
 		setIsOpen(!clickExpandIcon);
@@ -126,7 +126,7 @@ const ArticleQuestionDraggable = ({
 											/>
 										</TabPanelUnstyled>
 									) : isEdit && item.data.question_type === 'quiz' ? (
-										<TabPanelUnstyled value={1}>
+										<TabPanelUnstyled value={0}>
 											<ArticleQuestionUpload
 												item={item}
 												key={key}

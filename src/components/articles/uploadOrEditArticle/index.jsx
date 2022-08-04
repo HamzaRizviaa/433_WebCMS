@@ -384,7 +384,6 @@ const UploadOrEditArticle = ({
 					TWITTER: ArticleSocialMediaDraggable,
 					IG: ArticleSocialMediaDraggable
 				};
-				console.log('REST DATA', rest.question_data.question_type);
 				return {
 					sortOrder: sort_order,
 					element_type,
@@ -579,7 +578,11 @@ const UploadOrEditArticle = ({
 					...(item.element_type === 'QUESTION'
 						? {
 								question_data: {
-									image: item.data.uploadedFiles[0].image,
+									image:
+										item.data.uploadedFiles[0].image ||
+										item.data.uploadedFiles[0].media_url?.split(
+											'cloudfront.net/'
+										)[1],
 									file_name: item.data.uploadedFiles[0].file_name,
 									question: item.data.question,
 									dropbox_url: item.data.dropbox_url,
