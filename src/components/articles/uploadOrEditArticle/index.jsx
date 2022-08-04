@@ -1700,6 +1700,7 @@ const UploadOrEditArticle = ({
 															item,
 															index,
 															key: item.sortOrder,
+															isEdit: isEdit,
 															status: isEdit ? status : undefined,
 															initialData:
 																item.element_type === 'QUESTION'
