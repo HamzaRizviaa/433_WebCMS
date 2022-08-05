@@ -551,7 +551,8 @@ const UploadOrEditArticle = ({
 					dropbox_url: item?.data[0]?.dropbox_url || undefined,
 					ig_post_url: item?.data[0]?.ig_post_url || undefined,
 					twitter_post_url: item?.data[0]?.twitter_post_url || undefined,
-					sort_order: index + 1
+					sort_order: index + 1,
+					id: item.id || undefined
 				};
 			});
 		}
