@@ -77,7 +77,6 @@ const UploadOrEditArticle = ({
 	page,
 	status
 }) => {
-	console.log(status, 'status in edit article');
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
@@ -396,14 +395,17 @@ const UploadOrEditArticle = ({
 						element_type === 'QUESTION'
 							? {
 									...rest.question_data,
-									uploadedFiles: [
-										{
-											media_url:
-												`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest?.question_data?.image}` ||
-												undefined,
-											file_name: rest?.question_data?.file_name
-										}
-									],
+
+									uploadedFiles: rest?.question_data?.image
+										? [
+												{
+													media_url:
+														`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest?.question_data?.image}` ||
+														undefined,
+													file_name: rest?.question_data?.file_name
+												}
+										  ]
+										: undefined,
 									labels: updateLabelsFromAPI(rest?.question_data?.labels)
 							  }
 							: [
@@ -579,18 +581,21 @@ const UploadOrEditArticle = ({
 					...(item.element_type === 'QUESTION'
 						? {
 								question_data: {
-									image:
-										item.data.uploadedFiles[0].image ||
-										item.data.uploadedFiles[0].media_url?.split(
-											'cloudfront.net/'
-										)[1],
-									file_name: item.data.uploadedFiles[0].file_name,
-									question: item.data.question,
-									dropbox_url: item.data.dropbox_url,
-									answers: item.data.answers,
-									labels: item.data.labels,
-									question_type: item.data.question_type,
-									question_id: item.data.question_id || undefined
+									image: item?.data?.uploadedFiles
+										? item?.data?.uploadedFiles[0]?.image ||
+										  item?.data?.uploadedFiles[0]?.media_url?.split(
+												'cloudfront.net/'
+										  )[1]
+										: undefined,
+									file_name: item?.data?.uploadedFiles
+										? item?.data?.uploadedFiles[0]?.file_name
+										: undefined,
+									question: item?.data?.question || undefined,
+									dropbox_url: item?.data?.dropbox_url || undefined,
+									answers: item?.data?.answers || undefined,
+									labels: item?.data?.labels || undefined,
+									question_type: item?.data?.question_type || undefined,
+									question_id: item?.data?.question_id || undefined
 								}
 						  }
 						: undefined),
@@ -1158,7 +1163,7 @@ const UploadOrEditArticle = ({
 				!validateForm(form, data) ||
 				!comparingFields(specificArticle, form)
 			) {
-				console.log('1');
+				// console.log('1');
 				// console.log(
 				// 	!validateForm(form, data),
 				// 	!validationEmptyArray.every((item) => item === true),
@@ -1170,7 +1175,7 @@ const UploadOrEditArticle = ({
 				);
 			} else {
 				if (specificArticle?.elements?.length !== data?.length) {
-					console.log('2');
+					// console.log('2');
 					setEditBtnDisabled(
 						!validationEmptyArray.every((item) => item === true)
 					);
@@ -1179,7 +1184,7 @@ const UploadOrEditArticle = ({
 						validationCompleteArray.every((item) => item === true) ||
 						!validationEmptyArray.every((item) => item === true)
 					) {
-						console.log('3');
+						// console.log('3');
 						// console.log(
 						// 	validationCompleteArray.every((item) => item === true),
 						// 	!validationEmptyArray.every((item) => item === true),
@@ -1187,7 +1192,7 @@ const UploadOrEditArticle = ({
 						// );
 						setEditBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
 					} else {
-						console.log('4');
+						// console.log('4');
 						// console.log(
 						// 	validationCompleteArray.every((item) => item === true),
 						// 	!validationEmptyArray.every((item) => item === true),
@@ -1236,15 +1241,18 @@ const UploadOrEditArticle = ({
 				checkEmptyQuestionDraft(data)
 			];
 
+			console.log(validationCompleteArrayDraft, 'validate');
 			if (
 				!validateDraft(form, data) ||
 				!comparingDraftFields(specificArticle, form)
 			) {
+				console.log('1D');
 				setDraftBtnDisabled(
 					!validationDraftEmptyArray.every((item) => item === true)
 				);
 			} else {
 				if (specificArticle?.elements?.length !== data?.length) {
+					console.log('2D');
 					setDraftBtnDisabled(
 						!validationDraftEmptyArray.every((item) => item === true)
 					);
@@ -1253,8 +1261,20 @@ const UploadOrEditArticle = ({
 						validationCompleteArrayDraft.every((item) => item === true) ||
 						!validationDraftEmptyArray.every((item) => item === true)
 					) {
+						console.log('3D');
+						console.log(
+							validationCompleteArrayDraft.every((item) => item === true),
+							!validationDraftEmptyArray.every((item) => item === true),
+							'CHECK'
+						);
 						setDraftBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
 					} else {
+						console.log('4D');
+						console.log(
+							validationCompleteArrayDraft.every((item) => item === true),
+							!validationDraftEmptyArray.every((item) => item === true),
+							'CHECK--2'
+						);
 						setDraftBtnDisabled(
 							validationCompleteArrayDraft.every((item) => item === true) ||
 								!validationDraftEmptyArray.every((item) => item === true)
@@ -1771,7 +1791,6 @@ const UploadOrEditArticle = ({
 
 											<PreviewWrapper form={form}>
 												{data.map((item, index) => {
-													console.log(item, '======= item in map');
 													return (
 														<div key={index} style={{ padding: '5px' }}>
 															{item.element_type === 'MEDIA' ? (
