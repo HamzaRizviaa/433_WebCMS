@@ -594,7 +594,8 @@ const UploadOrEditArticle = ({
 								}
 						  }
 						: undefined),
-					sort_order: index + 1
+					sort_order: index + 1,
+					id: item.id || undefined
 				};
 			});
 		}
