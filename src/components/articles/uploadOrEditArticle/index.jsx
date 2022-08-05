@@ -1668,7 +1668,7 @@ const UploadOrEditArticle = ({
 				edit={isEdit}
 				article={true}
 				dialogRef={dialogWrapper}
-				notifID={notifID}
+				notifID={status === 'draft' ? '' : notifID}
 			>
 				<LoadingOverlay
 					active={isLoading}

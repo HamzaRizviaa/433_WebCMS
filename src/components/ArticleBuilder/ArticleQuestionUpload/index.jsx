@@ -55,7 +55,8 @@ const ArticleQuestionUpload = ({
 		dropbox_url: '',
 		question: '',
 		answers: [],
-		labels: []
+		labels: [],
+		question_type: type
 	});
 	const imgRef = useRef(null);
 
@@ -68,7 +69,7 @@ const ArticleQuestionUpload = ({
 	}, [form]);
 
 	useEffect(() => {
-		if (!isEdit) {
+		if (!initialData?.question_id) {
 			sendDataToParent({
 				question_type: type === 'quiz' ? 'quiz' : 'poll'
 			});
