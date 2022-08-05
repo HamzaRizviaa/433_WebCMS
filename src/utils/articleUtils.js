@@ -239,18 +239,22 @@ export const checkNewElementQuestionDraft = (elements, data) => {
 				if (data[i].data) {
 					if (
 						data[i]?.data?.question === elements[i]?.question_data?.question &&
-						(data[i]?.data?.answers?.length === 2
+						(data[i]?.data?.answers?.length > 0 &&
+						data[i]?.data?.answers[0]?.answer !== ''
 							? data[i]?.data?.answers[0]?.answer ===
 							  elements[i]?.question_data?.answers[0]?.answer
 							: false) &&
-						(data[i]?.data?.answers?.length === 2
+						(data[i]?.data?.answers?.length > 0 &&
+						data[i]?.data?.answers[1]?.answer
 							? data[i]?.data?.answers[1]?.answer ===
 							  elements[i]?.question_data?.answers[1]?.answer
 							: false) &&
 						data[i]?.data?.dropbox_url ===
 							elements[i]?.question_data?.dropbox_url &&
-						data[i]?.data?.file_name ===
-							elements[i]?.question_data?.file_name &&
+						(data[i]?.data?.uploadedFiles
+							? data[i]?.data?.uploadedFiles[0]?.file_name ===
+							  elements[i]?.question_data?.file_name
+							: false) &&
 						data[i]?.data?.labels?.length ===
 							elements[i]?.question_data?.labels?.length &&
 						!checkDuplicateLabel(elements, data[i]?.data)

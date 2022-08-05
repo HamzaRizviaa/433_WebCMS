@@ -169,7 +169,7 @@ const ArticleQuestionUpload = ({
 		sendDataToParent(answers);
 	};
 
-	console.log('initial', initialData);
+	// console.log('initial', initialData);
 
 	return (
 		<>
@@ -301,7 +301,7 @@ const ArticleQuestionUpload = ({
 									{form.question?.length}/29
 								</h6>
 							</div>
-							{console.log('Init', initialData)}
+
 							<TextField
 								// disabled={status === 'published' ? true : false}
 								disabled={
