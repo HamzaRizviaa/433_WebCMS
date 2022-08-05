@@ -1488,7 +1488,7 @@ const UploadOrEditMedia = ({
 				previewRef={previewRef}
 				media={true}
 				dialogRef={dialogWrapper}
-				notifID={notifID}
+				notifID={status === 'draft' ? '' : notifID}
 			>
 				<LoadingOverlay
 					active={isLoadingUploadMedia}

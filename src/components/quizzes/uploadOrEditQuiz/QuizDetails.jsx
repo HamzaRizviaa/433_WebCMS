@@ -36,7 +36,12 @@ export default function QuizDetails({
 	const muiClasses = useStyles();
 
 	// Question Library :  click on row with type:quiz
-
+	// console.log(
+	// 	location === 'article' || status === 'CLOSED' || status === 'draft',
+	// 	status,
+	// 	location,
+	// 	'status is ?? '
+	// );
 	return (
 		<Slider
 			open={open}
@@ -52,7 +57,11 @@ export default function QuizDetails({
 			disableDropdown={disableDropdown}
 			quiz={true}
 			dialogRef={dialogWrapper}
-			notifID={location === 'article' ? '' : notifID}
+			notifID={
+				location === 'article' || status === 'CLOSED' || status === 'draft'
+					? ''
+					: notifID
+			}
 		>
 			<div className={muiClasses.root}>
 				{status === 'draft' ? (

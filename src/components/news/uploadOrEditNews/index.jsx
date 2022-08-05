@@ -629,7 +629,7 @@ const UploadOrEditNews = ({
 				previewRef={previewRef}
 				news={true}
 				dialogRef={dialogWrapper}
-				notifID={notifID}
+				notifID={status === 'draft' ? '' : notifID}
 			>
 				<LoadingOverlay
 					active={isLoading}
