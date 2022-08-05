@@ -77,6 +77,7 @@ const UploadOrEditArticle = ({
 	page,
 	status
 }) => {
+	console.log(status, 'status in edit article');
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
@@ -398,12 +399,12 @@ const UploadOrEditArticle = ({
 									uploadedFiles: [
 										{
 											media_url:
-												`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.question_data.image}` ||
+												`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest?.question_data?.image}` ||
 												undefined,
-											file_name: rest?.question_data.file_name
+											file_name: rest?.question_data?.file_name
 										}
 									],
-									labels: updateLabelsFromAPI(rest?.question_data.labels)
+									labels: updateLabelsFromAPI(rest?.question_data?.labels)
 							  }
 							: [
 									{
@@ -556,6 +557,7 @@ const UploadOrEditArticle = ({
 
 		let elementsData;
 		if (data.length) {
+			console.log('DATA ID ', data);
 			elementsData = data.map((item, index) => {
 				return {
 					element_type: item.element_type,
@@ -577,12 +579,18 @@ const UploadOrEditArticle = ({
 					...(item.element_type === 'QUESTION'
 						? {
 								question_data: {
-									image: item.data.uploadedFiles[0].image,
+									image:
+										item.data.uploadedFiles[0].image ||
+										item.data.uploadedFiles[0].media_url?.split(
+											'cloudfront.net/'
+										)[1],
 									file_name: item.data.uploadedFiles[0].file_name,
 									question: item.data.question,
 									dropbox_url: item.data.dropbox_url,
 									answers: item.data.answers,
-									labels: item.data.labels
+									labels: item.data.labels,
+									question_type: item.data.question_type,
+									question_id: item.data.question_id || undefined
 								}
 						  }
 						: undefined),
@@ -889,8 +897,7 @@ const UploadOrEditArticle = ({
 					return true;
 				}
 				if (item.element_type === 'QUESTION') {
-					// console.log(questionValidate(item), 'question validate');
-					// questionValidate(item);
+					// questionValidate(item.data);
 					return true;
 				}
 			}
@@ -900,7 +907,7 @@ const UploadOrEditArticle = ({
 
 	// const questionValidate = (item) => {
 	// 	console.log(item, 'item');
-	// 	var validate = Object.keys.map((key) => {
+	// 	var validate = Object.keys(item).map((key) => {
 	// 		if (!item[key]) {
 	// 			return true;
 	// 		} else {
@@ -1735,6 +1742,8 @@ const UploadOrEditArticle = ({
 															item,
 															index,
 															key: item.sortOrder,
+															isEdit: isEdit,
+															status: isEdit ? status : undefined,
 															initialData:
 																item.element_type === 'QUESTION'
 																	? item?.data
@@ -1761,6 +1770,7 @@ const UploadOrEditArticle = ({
 
 											<PreviewWrapper form={form}>
 												{data.map((item, index) => {
+													console.log(item, '======= item in map');
 													return (
 														<div key={index} style={{ padding: '5px' }}>
 															{item.element_type === 'MEDIA' ? (

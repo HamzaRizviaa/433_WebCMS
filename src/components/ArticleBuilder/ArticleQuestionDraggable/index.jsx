@@ -26,11 +26,12 @@ const ArticleQuestionDraggable = ({
 	// WidthHeightCallback,
 	handleDeleteFile,
 	setDisableDropdown,
-	handleDeleteData
+	handleDeleteData,
+	status, //   publish / draft
+	isEdit //    true / false
 }) => {
 	const classes = useStyles();
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
-
 	const clickExpand = () => {
 		setClickExpandIcon(!clickExpandIcon);
 		setIsOpen(!clickExpandIcon);
@@ -89,48 +90,110 @@ const ArticleQuestionDraggable = ({
 						{clickExpandIcon ? (
 							<div className={muiClasses.root}>
 								<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
-									<TabsListUnstyled className={muiClasses.tabMainDiv}>
-										<TabUnstyled>Add Poll</TabUnstyled>
-										<TabUnstyled>Add Quiz</TabUnstyled>
-									</TabsListUnstyled>
-									<TabPanelUnstyled value={0}>
-										<ArticleQuestionUpload
-											setDisableDropdown={setDisableDropdown}
-											item={item}
-											key={key}
-											index={index}
-											sendDataToParent={sendDataToParent}
-											handleDeleteData={(uploadedFiles) => {
-												handleDeleteData(uploadedFiles);
-											}}
-											initialData={initialData}
-											setIsOpen={setIsOpen}
-											handleDeleteFile={handleDeleteFile}
-											handleClose={() => {
-												handleClose();
-											}}
-											type='poll'
-										/>
-									</TabPanelUnstyled>
-									<TabPanelUnstyled value={1}>
-										<ArticleQuestionUpload
-											item={item}
-											key={key}
-											index={index}
-											sendDataToParent={sendDataToParent}
-											handleDeleteData={(uploadedFiles) => {
-												handleDeleteData(uploadedFiles);
-											}}
-											initialData={initialData}
-											setIsOpen={setIsOpen}
-											handleDeleteFile={handleDeleteFile}
-											setDisableDropdown={setDisableDropdown}
-											handleClose={() => {
-												handleClose();
-											}}
-											type='quiz'
-										/>
-									</TabPanelUnstyled>
+									{!initialData?.question_id ? (
+										<>
+											<TabsListUnstyled className={muiClasses.tabMainDiv}>
+												<TabUnstyled>Add Poll</TabUnstyled>
+												<TabUnstyled>Add Quiz</TabUnstyled>
+											</TabsListUnstyled>
+										</>
+									) : (
+										<div className={classes.wrapperHeading}>
+											{item?.data && item?.data?.question_type === 'poll'
+												? 'Poll'
+												: 'Quiz'}
+										</div>
+									)}
+									{isEdit && item?.data?.question_type === 'poll' ? (
+										<TabPanelUnstyled value={0}>
+											<ArticleQuestionUpload
+												setDisableDropdown={setDisableDropdown}
+												item={item}
+												key={key}
+												index={index}
+												sendDataToParent={sendDataToParent}
+												handleDeleteData={(uploadedFiles) => {
+													handleDeleteData(uploadedFiles);
+												}}
+												initialData={initialData}
+												setIsOpen={setIsOpen}
+												handleDeleteFile={handleDeleteFile}
+												handleClose={() => {
+													handleClose();
+												}}
+												status={status}
+												isEdit={isEdit}
+												type='poll'
+											/>
+										</TabPanelUnstyled>
+									) : isEdit && item?.data?.question_type === 'quiz' ? (
+										<TabPanelUnstyled value={0}>
+											<ArticleQuestionUpload
+												item={item}
+												key={key}
+												index={index}
+												status={status}
+												isEdit={isEdit}
+												sendDataToParent={sendDataToParent}
+												handleDeleteData={(uploadedFiles) => {
+													handleDeleteData(uploadedFiles);
+												}}
+												initialData={initialData}
+												setIsOpen={setIsOpen}
+												handleDeleteFile={handleDeleteFile}
+												setDisableDropdown={setDisableDropdown}
+												handleClose={() => {
+													handleClose();
+												}}
+												type='quiz'
+											/>
+										</TabPanelUnstyled>
+									) : (
+										<>
+											<TabPanelUnstyled value={0}>
+												<ArticleQuestionUpload
+													setDisableDropdown={setDisableDropdown}
+													item={item}
+													key={key}
+													index={index}
+													sendDataToParent={sendDataToParent}
+													handleDeleteData={(uploadedFiles) => {
+														handleDeleteData(uploadedFiles);
+													}}
+													initialData={initialData}
+													setIsOpen={setIsOpen}
+													handleDeleteFile={handleDeleteFile}
+													handleClose={() => {
+														handleClose();
+													}}
+													status={status}
+													isEdit={isEdit}
+													type='poll'
+												/>
+											</TabPanelUnstyled>
+											<TabPanelUnstyled value={1}>
+												<ArticleQuestionUpload
+													item={item}
+													key={key}
+													index={index}
+													status={status}
+													isEdit={isEdit}
+													sendDataToParent={sendDataToParent}
+													handleDeleteData={(uploadedFiles) => {
+														handleDeleteData(uploadedFiles);
+													}}
+													initialData={initialData}
+													setIsOpen={setIsOpen}
+													handleDeleteFile={handleDeleteFile}
+													setDisableDropdown={setDisableDropdown}
+													handleClose={() => {
+														handleClose();
+													}}
+													type='quiz'
+												/>
+											</TabPanelUnstyled>
+										</>
+									)}
 								</TabsUnstyled>
 							</div>
 						) : (
@@ -154,7 +217,9 @@ ArticleQuestionDraggable.propTypes = {
 	handleDeleteFile: PropTypes.func,
 	// initialData: PropTypes.object,
 	setDisableDropdown: PropTypes.func,
-	handleDeleteData: PropTypes.func
+	handleDeleteData: PropTypes.func,
+	status: PropTypes.string,
+	isEdit: PropTypes.bool
 };
 
 export default ArticleQuestionDraggable;

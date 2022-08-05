@@ -22,14 +22,14 @@ import validateForm from '../../../utils/validateForm';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { useStyles } from './ArticleQuestionUpload.style';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
+import SecondaryLoader from '../../SecondaryLoader';
 
 const ArticleQuestionUpload = ({
 	heading1,
 	open,
-	editQuiz,
-	editPoll,
+	// editQuiz,
+	// editPoll,
 	setDisableDropdown,
-	quiz,
 	page,
 	status,
 	type,
@@ -39,7 +39,8 @@ const ArticleQuestionUpload = ({
 	sendDataToParent,
 	handleDeleteData,
 	setIsOpen,
-	initialData
+	initialData,
+	isEdit
 	// WidthHeightCallback,
 }) => {
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -47,6 +48,7 @@ const ArticleQuestionUpload = ({
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
 	const [isError, setIsError] = useState({});
+	const [loading, setLoading] = useState(false);
 
 	const [form, setForm] = useState({
 		uploadedFiles: [],
@@ -65,6 +67,13 @@ const ArticleQuestionUpload = ({
 		validateForm(form);
 	}, [form]);
 
+	useEffect(() => {
+		if (!isEdit) {
+			sendDataToParent({
+				question_type: type === 'quiz' ? 'quiz' : 'poll'
+			});
+		}
+	}, []);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png',
@@ -85,6 +94,7 @@ const ArticleQuestionUpload = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
+			setLoading(true);
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -99,7 +109,6 @@ const ArticleQuestionUpload = ({
 					height: fileHeight
 				};
 			});
-			console.log('NEW', newFiles);
 			uploadedFile(newFiles[0], 'articleLibrary').then((res) => {
 				setForm((prev) => {
 					return {
@@ -114,6 +123,7 @@ const ArticleQuestionUpload = ({
 						{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
 					]
 				});
+				setLoading(false);
 			});
 
 			// sendDataToParent({ uploadedFiles: [...newFiles] });
@@ -136,7 +146,7 @@ const ArticleQuestionUpload = ({
 			resetState();
 			//resetForm(form);
 		}
-		!(editPoll || editQuiz) ? resetState() : '';
+		!isEdit ? resetState() : '';
 	}, [open]);
 
 	const resetState = () => {
@@ -158,12 +168,7 @@ const ArticleQuestionUpload = ({
 		sendDataToParent(answers);
 	};
 
-	// console.log(form, 'form');
-	// console.log(form.end_date, 'dft');
-	// console.log(editQuestionData?.poll_end_date, 'poll');
-	// console.log(convertedDate, 'cd');
-
-	// console.log('validation  ', status, !validateForm(form), editQuizBtnDisabled);
+	console.log('initial', initialData);
 
 	return (
 		<>
@@ -192,7 +197,7 @@ const ArticleQuestionUpload = ({
 							}}
 							isArticle
 							isArticleNew
-							isEdit={editPoll || editQuiz}
+							isEdit={isEdit}
 							imgEl={imgRef}
 							imageOnload={() => {
 								setFileWidth(imgRef.current.naturalWidth);
@@ -211,15 +216,22 @@ const ArticleQuestionUpload = ({
 							>
 								<div {...getRootProps({ className: globalClasses.dropzone })}>
 									<input {...getInputProps()} />
-									<AddCircleOutlineIcon
-										className={globalClasses.addFilesIcon}
-									/>
-									<p className={globalClasses.dragMsg}>
-										Click or drag file to this area to upload
-									</p>
-									<p className={globalClasses.formatMsg}>
-										Supported formats are jpeg and png
-									</p>
+									{loading ? (
+										<SecondaryLoader loading={true} />
+									) : (
+										<>
+											<AddCircleOutlineIcon
+												className={globalClasses.addFilesIcon}
+											/>
+											<p className={globalClasses.dragMsg}>
+												Click or drag file to this area to upload
+											</p>
+											<p className={globalClasses.formatMsg}>
+												Supported formats are jpeg and png
+											</p>
+										</>
+									)}
+
 									<p className={globalClasses.uploadMediaError}>
 										{isError.uploadedFiles
 											? 'You need to upload a media in order to post'
@@ -288,8 +300,12 @@ const ArticleQuestionUpload = ({
 									{form.question?.length}/29
 								</h6>
 							</div>
+							{console.log('Init', initialData)}
 							<TextField
-								disabled={(editQuiz || editPoll) && status !== 'draft'}
+								// disabled={status === 'published' ? true : false}
+								disabled={
+									initialData?.question_id && status !== 'draft' ? true : false
+								}
 								value={initialData ? initialData?.question : form.question}
 								onChange={(e) => {
 									setForm((prev) => {
@@ -305,7 +321,7 @@ const ArticleQuestionUpload = ({
 								InputProps={{
 									disableUnderline: true,
 									className: `${classes.textFieldInput}  ${
-										(editQuiz || editPoll) &&
+										initialData?.question_id &&
 										status !== 'draft' &&
 										classes.disableTextField
 									}`
@@ -331,7 +347,7 @@ const ArticleQuestionUpload = ({
 											: globalClasses.noErrorState
 									}
 								>
-									{quiz || editQuiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
+									{type === 'quiz' ? 'RIGHT ANSWER' : 'ANSWER 1'}
 								</h6>
 								<h6
 									style={{
@@ -351,7 +367,9 @@ const ArticleQuestionUpload = ({
 								</h6>
 							</div>
 							<TextField
-								disabled={(editQuiz || editPoll) && status !== 'draft'}
+								disabled={
+									initialData?.question_id && status !== 'draft' ? true : false
+								}
 								value={
 									initialData?.answers
 										? initialData?.answers[0]?.answer
@@ -365,7 +383,7 @@ const ArticleQuestionUpload = ({
 								InputProps={{
 									disableUnderline: true,
 									className: `${classes.textFieldInput}  ${
-										(editQuiz || editPoll) &&
+										initialData?.question_id &&
 										status !== 'draft' &&
 										classes.disableTextField
 									}`
@@ -378,7 +396,7 @@ const ArticleQuestionUpload = ({
 
 						<p className={globalClasses.mediaError}>
 							{isError.ans1
-								? quiz
+								? type === 'quiz'
 									? 'You need to provide right answer in order to post'
 									: 'You need to provide first answer in order to post'
 								: ''}
@@ -393,7 +411,7 @@ const ArticleQuestionUpload = ({
 											: globalClasses.noErrorState
 									}
 								>
-									{quiz || editQuiz ? 'WRONG ANSWER' : 'ANSWER 2'}
+									{type === 'quiz' ? 'WRONG ANSWER' : 'ANSWER 2'}
 								</h6>
 								<h6
 									style={{
@@ -413,7 +431,9 @@ const ArticleQuestionUpload = ({
 								</h6>
 							</div>
 							<TextField
-								disabled={(editQuiz || editPoll) && status !== 'draft'}
+								disabled={
+									initialData?.question_id && status !== 'draft' ? true : false
+								}
 								value={
 									initialData?.answers
 										? initialData?.answers[1]?.answer
@@ -427,7 +447,7 @@ const ArticleQuestionUpload = ({
 								InputProps={{
 									disableUnderline: true,
 									className: `${classes.textFieldInput}  ${
-										(editQuiz || editPoll) &&
+										initialData?.question_id &&
 										status !== 'draft' &&
 										classes.disableTextField
 									}`
@@ -440,7 +460,7 @@ const ArticleQuestionUpload = ({
 
 						<p className={globalClasses.mediaError}>
 							{isError.ans2
-								? quiz
+								? type === 'quiz'
 									? 'You need to provide wrong answer in order to post'
 									: 'You need to provide second answer in order to post'
 								: ''}
@@ -457,7 +477,7 @@ const ArticleQuestionUpload = ({
 								LABELS
 							</h6>
 							<Labels
-								isEdit={editPoll || editQuiz}
+								isEdit={initialData?.question_id && status !== 'draft'}
 								setDisableDropdown={setDisableDropdown}
 								selectedLabels={
 									initialData?.labels ? initialData?.labels : form.labels
@@ -496,14 +516,14 @@ ArticleQuestionUpload.propTypes = {
 	heading1: PropTypes.string.isRequired,
 	open: PropTypes.bool.isRequired,
 	buttonText: PropTypes.string.isRequired,
-	editQuiz: PropTypes.bool,
+	// editQuiz: PropTypes.bool,
 	dialogWrapper: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,
 	setDisableDropdown: PropTypes.func.isRequired,
 	quiz: PropTypes.bool,
-	editPoll: PropTypes.bool,
+	// editPoll: PropTypes.bool,
 	handleClose: PropTypes.func.isRequired,
 	page: PropTypes.string,
 	status: PropTypes.string,
@@ -514,7 +534,8 @@ ArticleQuestionUpload.propTypes = {
 	sendDataToParent: PropTypes.func.isRequired,
 	initialData: PropTypes.object,
 	setIsOpen: PropTypes.func,
-	handleDeleteData: PropTypes.func
+	handleDeleteData: PropTypes.func,
+	isEdit: PropTypes.bool
 	// WidthHeightCallback: PropTypes.func,
 	// initialData: PropTypes.object,
 };
