@@ -347,11 +347,6 @@ const UploadOrEditArticle = ({
 								}
 						  ]
 						: [{ media_url: Profile433 }]
-					// description:
-					//  specificArticle?.length === 0
-					//      ? ''
-					//      : // eslint-disable-next-line no-undef
-					//        tinyMCE.activeEditor?.setContent(specificArticle?.description)
 				};
 			});
 			setData(updateDataFromAPI(specificArticle.elements));

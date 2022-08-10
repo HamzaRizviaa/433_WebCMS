@@ -49,6 +49,8 @@ const ArticleQuestionUpload = ({
 	const [fileHeight, setFileHeight] = useState(0);
 	const [isError, setIsError] = useState({});
 	const [loading, setLoading] = useState(false);
+	const [ans1Id, setAns1Id] = useState('');
+	const [ans2Id, setAns2Id] = useState('');
 
 	const [form, setForm] = useState({
 		uploadedFiles: [],
@@ -67,6 +69,13 @@ const ArticleQuestionUpload = ({
 	useEffect(() => {
 		validateForm(form);
 	}, [form]);
+
+	useEffect(() => {
+		if (isEdit && status === 'draft' && item?.data?.answers) {
+			setAns1Id(item?.data?.answers[0]?.id || '');
+			setAns2Id(item?.data?.answers[1]?.id || '');
+		}
+	}, [isEdit]);
 
 	useEffect(() => {
 		if (!initialData?.question_id) {
@@ -162,14 +171,18 @@ const ArticleQuestionUpload = ({
 		formCopy.answers[index] = {
 			answer: event.target.value,
 			position: index,
-			type: type === 'quiz' ? 'right_answer' : 'poll'
+			type: type === 'quiz' ? 'right_answer' : 'poll',
+			id:
+				status === 'draft' && index === 0
+					? ans1Id
+					: status === 'draft' && index === 1
+					? ans2Id
+					: undefined
 		};
 		setForm(formCopy);
 		let answers = { answers: formCopy.answers };
 		sendDataToParent(answers);
 	};
-
-	// console.log('initial', initialData);
 
 	return (
 		<>
