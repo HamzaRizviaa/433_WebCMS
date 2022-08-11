@@ -58,7 +58,11 @@ const ArticleQuestionUpload = ({
 					...initialData,
 					uploadedFiles: initialData?.uploadedFiles
 						? initialData?.uploadedFiles
-						: []
+						: [],
+					answers: [
+						{ ...(initialData?.answers[0] ? initialData.answers[0] : {}) },
+						{ ...(initialData?.answers[1] ? initialData.answers[1] : {}) }
+					]
 			  }
 			: {
 					uploadedFiles: [],
@@ -70,6 +74,7 @@ const ArticleQuestionUpload = ({
 			  }
 	);
 	const imgRef = useRef(null);
+	console.log(form, 'form inistial');
 
 	// const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
@@ -187,7 +192,6 @@ const ArticleQuestionUpload = ({
 			// 	position: index,
 			// 	type: type === 'quiz' ? 'right_answer' : 'poll'
 			// }));
-			console.log(formCopy, 'FC');
 			formCopy.answers[index] = {
 				answer: event.target.value,
 				position: index,
