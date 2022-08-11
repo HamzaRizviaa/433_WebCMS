@@ -199,7 +199,12 @@ const ArticleQuestionUpload = ({
 				...formCopy.answers[index],
 				answer: event.target.value,
 				position: index,
-				type: type === 'quiz' ? 'right_answer' : 'poll'
+				type:
+					type === 'quiz' && index === 0
+						? 'right_answer'
+						: type === 'quiz' && index === 1
+						? 'wrong_answer'
+						: 'poll'
 				// id:
 				// 	status === 'draft' && index === 0
 				// 		? ans1Id
@@ -216,7 +221,12 @@ const ArticleQuestionUpload = ({
 			formCopy.answers[index] = {
 				answer: event.target.value,
 				position: index,
-				type: type === 'quiz' ? 'right_answer' : 'poll'
+				type:
+					type === 'quiz' && index === 0
+						? 'right_answer'
+						: type === 'quiz' && index === 1
+						? 'wrong_answer'
+						: 'poll'
 			};
 			setForm(formCopy);
 			let answers = { answers: formCopy.answers };

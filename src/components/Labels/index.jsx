@@ -33,9 +33,9 @@ const Labels = ({
 		(state) => state.postLibrary
 	);
 
-	let draftLabels = selectedLabels.filter((label) => label.id == -1);
+	let draftLabels = selectedLabels?.filter((label) => label.id == -1);
 	let drafts = [];
-	draftLabels.forEach((element) => drafts.push(element.name));
+	draftLabels?.forEach((element) => drafts.push(element.name));
 	let newOptions = newLabelsSearch.filter(
 		(element) => !drafts.includes(element.name)
 	);
