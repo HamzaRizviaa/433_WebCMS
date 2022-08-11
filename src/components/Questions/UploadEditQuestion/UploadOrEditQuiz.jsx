@@ -1,8 +1,8 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
 import React, { forwardRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-// import classes from './_uploadOrEditQuiz.module.scss';
 import { useDropzone } from 'react-dropzone';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { makeid } from '../../../utils/helper';
@@ -14,28 +14,37 @@ import DatePicker from 'react-datepicker';
 import checkFileSize from '../../../utils/validateFileSize';
 import { formatDate, getCalendarText2 } from '../../../utils';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-	// getQuestionLabels,
-	getQuestions
-} from '../../../pages/QuestionLibrary/questionLibrarySlice';
+import { getQuestions } from '../../../pages/QuestionLibrary/questionLibrarySlice';
 import { getLocalStorageDetails } from '../../../utils';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import LoadingOverlay from 'react-loading-overlay';
+import Slider from '../../slider';
+
 import uploadFileToServer from '../../../utils/uploadFileToServer';
-import Close from '@material-ui/icons/Close';
+
 import { ReactComponent as CalenderYellow } from '../../../assets/Calender_Yellow.svg';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../../../pages/PostLibrary/_calender.scss';
 import { useRef } from 'react';
-import Slide from '@mui/material/Slide';
-import PrimaryLoader from '../../PrimaryLoader';
+
 import DeleteModal from '../../DeleteModal';
 import validateForm from '../../../utils/validateForm';
 import validateDraft from '../../../utils/validateDraft';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { useStyles } from './UploadOrEditQuiz.style';
-
+import { useStyles as tabPansStyles } from '../quizStyles';
+// upload or edit quiz / poll form , API's are also there
+import TabsUnstyled from '@mui/base/TabsUnstyled';
+import TabsListUnstyled from '@mui/base/TabsListUnstyled';
+import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
+import TabUnstyled from '@mui/base/TabUnstyled';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Typography from '@mui/material/Typography';
+import QuestionDraggable from '../QuestionDraggableWrapper';
+import QuestionForm from '../QuestionForm';
 const UploadOrEditQuiz = ({
 	heading1,
 	open,
@@ -51,9 +60,12 @@ const UploadOrEditQuiz = ({
 	handleClose,
 	page,
 	status,
-	type
+	type,
+	//new
+	// open,
+	//handleClose,
+	title //heading1, buttonText
 }) => {
-	console.log(page, '==== page ====');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [quizLabels, setQuizLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
@@ -71,6 +83,10 @@ const UploadOrEditQuiz = ({
 	const [openStopPopup, setOpenStopPopup] = useState(false);
 	const [stopStatus, setStopStatus] = useState(false);
 
+	// new work
+	const [questiontype, setQuestionType] = useState('poll');
+	const [questionSlides, setQuestionSlides] = useState([]);
+
 	const [form, setForm] = useState({
 		uploadedFiles: [],
 		dropbox_url: '',
@@ -84,8 +100,28 @@ const UploadOrEditQuiz = ({
 	const loadingRef = useRef(null);
 
 	const dispatch = useDispatch();
-	const globalClasses = globalUseStyles();
 	const classes = useStyles();
+	const globalClasses = globalUseStyles();
+	const muiClasses = tabPansStyles();
+
+	const reorder = (list, startIndex, endIndex) => {
+		const result = Array.from(list);
+		const [removed] = result.splice(startIndex, 1);
+		result.splice(endIndex, 0, removed);
+		return result;
+	};
+
+	const onDragEnd = (result) => {
+		if (!result.destination) {
+			return;
+		}
+		const items = reorder(
+			questionSlides,
+			result.source.index, // pick
+			result.destination.index // drop
+		);
+		setQuestionSlides(items);
+	};
 
 	const {
 		labels,
@@ -461,11 +497,12 @@ const UploadOrEditQuiz = ({
 	};
 
 	const resetState = () => {
+		setQuestionSlides([]);
 		setFileRejectionError('');
-		setPreviewFile(null);
-		setPreviewBool(false);
+		//	setPreviewFile(null);
+		//setPreviewBool(false);
 		setExtraLabel('');
-		setDisableDropdown(true);
+		//setDisableDropdown(true);
 		setConvertedDate(null);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
@@ -661,559 +698,228 @@ const UploadOrEditQuiz = ({
 
 	return (
 		<>
-			<LoadingOverlay active={isLoadingcreateViral} spinner={<PrimaryLoader />}>
-				<Slide in={true} direction='up' {...{ timeout: 400 }}>
-					<div
-						ref={loadingRef}
-						className={`${
-							previewFile != null
-								? classes.previewContentWrapper
-								: classes.contentWrapper
-						}`}
-					>
-						{questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>}
-						<div
-							className={globalClasses.contentWrapperNoPreview}
-							style={{ width: previewFile != null ? '60%' : 'auto' }}
-						>
-							<div>
-								<h5 className={classes.QuizQuestion}>{heading1}</h5>
-								<DragAndDropField
-									uploadedFiles={form.uploadedFiles}
-									quizPollStatus={status}
-									handleDeleteFile={handleDeleteFile}
+			<Slider
+				open={open}
+				handleClose={() => {
+					handleClose();
+				}}
+				title={title}
+
+				// handlePreview={() => {
+				// 	handlePreviewEscape();
+				// }}
+			>
+				<div className={globalClasses.accordionRoot}>
+					<Accordion defaultExpanded>
+						<AccordionSummary expandIcon={<ExpandMoreIcon />}>
+							<Typography>General Information</Typography>
+						</AccordionSummary>
+
+						<AccordionDetails>
+							<div className={muiClasses.root}>
+								<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
+									<TabsListUnstyled
+										className={muiClasses.tabMainDiv}
+										// style={{ width: previewBool ? '60%' : '100%' }}
+									>
+										<TabUnstyled
+											onClick={() => {
+												setQuestionType('poll');
+											}}
+										>
+											Add Poll
+										</TabUnstyled>
+										<TabUnstyled
+											onClick={() => {
+												setQuestionType('quiz');
+											}}
+										>
+											Add Quiz
+										</TabUnstyled>
+									</TabsListUnstyled>
+									<TabPanelUnstyled value={0}></TabPanelUnstyled>
+									<TabPanelUnstyled value={1}></TabPanelUnstyled>
+								</TabsUnstyled>
+							</div>
+
+							<br />
+							<div className={classes.datePickerContainer}>
+								<h6
+									className={
+										isError.endDate
+											? globalClasses.errorState
+											: globalClasses.noErrorState
+									}
+								>
+									{questiontype === 'quiz' ? 'QUIZ END DATE' : 'POLL END DATE'}
+								</h6>
+								<div
+									className={classes.datePicker}
+									style={{ marginBottom: calenderOpen ? '250px' : '' }}
+								>
+									<DatePicker
+										customInput={<ExampleCustomInput />}
+										disabled={
+											(editPoll || editQuiz) && status === 'CLOSED'
+												? true
+												: false
+										}
+										startDate={form.end_date}
+										minDate={new Date()}
+										onChange={(update) => {
+											setForm((prev) => {
+												return { ...prev, end_date: update };
+											});
+										}}
+										popperPlacement='bottom'
+										onCalendarOpen={() => {
+											setCalenderOpen(true);
+											//	setDisableDropdown(false);
+										}}
+										onCalendarClose={() => {
+											setCalenderOpen(false);
+											//setDisableDropdown(true);
+										}}
+										isClearable={
+											(editPoll || editQuiz) && status === 'CLOSED'
+												? false
+												: true
+										}
+									/>
+								</div>
+							</div>
+						</AccordionDetails>
+					</Accordion>
+				</div>
+
+				{/* <QuestionDraggable onDragEnd={onDragEnd}>
+					{questionSlides.map((item, index) => {
+						return (
+							<>
+								<QuestionForm
+									item={item}
+									index={index}
+									key={item.sort_order}
+									// sendDataToParent={(data) => setNewData(data, index)}
+									// handleDeleteMedia={(data) =>
+									// 	handleMediaDataDelete(data, index)
+									// }
+									// handleDeleteNews={(sortOrder) =>
+									// 	handleNewsElementDelete(sortOrder)
+									// }
+									// initialData={item.data && item.data}
 									setPreviewBool={setPreviewBool}
 									setPreviewFile={setPreviewFile}
-									isArticle
-									isEdit={editPoll || editQuiz}
-									imgEl={imgRef}
-									imageOnload={() => {
-										setFileWidth(imgRef.current.naturalWidth);
-										setFileHeight(imgRef.current.naturalHeight);
-									}}
 								/>
+							</>
+						);
+					})}
+				</QuestionDraggable> */}
 
-								{!form.uploadedFiles.length ? (
-									<section
-										className={globalClasses.dropZoneContainer}
-										style={{
-											borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
-										}}
-									>
-										<div
-											{...getRootProps({ className: globalClasses.dropzone })}
-										>
-											<input {...getInputProps()} />
-											<AddCircleOutlineIcon
-												className={globalClasses.addFilesIcon}
-											/>
-											<p className={globalClasses.dragMsg}>
-												Click or drag file to this area to upload
-											</p>
-											<p className={globalClasses.formatMsg}>
-												Supported formats are jpeg and png
-											</p>
-											<p className={globalClasses.uploadMediaError}>
-												{isError.uploadedFiles
-													? 'You need to upload a media in order to post'
-													: ''}
-											</p>
-										</div>
-									</section>
-								) : (
-									''
-								)}
-
-								<p className={globalClasses.fileRejectionError}>
-									{fileRejectionError}
-								</p>
-
-								<div className={globalClasses.dropBoxUrlContainer}>
-									<h6>DROPBOX URL</h6>
-									<TextField
-										value={form.dropbox_url}
-										onChange={(e) =>
-											setForm((prev) => {
-												return { ...prev, dropbox_url: e.target.value };
-											})
+				<br />
+				<div className={classes.buttonDiv}>
+					<div className={classes.leftButtonDiv}>
+						{editQuiz || editPoll ? (
+							<div className={classes.editDeleteBtn}>
+								<Button
+									disabled={deleteBtnStatus}
+									button2={editQuiz || editPoll ? true : false}
+									onClick={() => {
+										if (!deleteBtnStatus) {
+											toggleDeleteModal();
 										}
-										placeholder={'Please drop the dropbox URL here'}
-										className={classes.textField}
-										multiline
-										maxRows={2}
-										InputProps={{
-											disableUnderline: true,
-											className: classes.textFieldInput,
-											style: {
-												borderRadius: form.dropbox_url ? '16px' : '40px'
-											}
-										}}
-									/>
-								</div>
-
-								<div className={classes.titleContainer}>
-									<div className={globalClasses.characterCount}>
-										<h6
-											className={
-												isError.question
-													? globalClasses.errorState
-													: globalClasses.noErrorState
-											}
-										>
-											QUESTION
-										</h6>
-										<h6
-											style={{
-												color:
-													form.question?.length >= 46 &&
-													form.question?.length <= 54
-														? 'pink'
-														: form.question?.length === 55
-														? 'red'
-														: 'white'
-											}}
-										>
-											{form.question?.length}/55
-										</h6>
-									</div>
-									<TextField
-										disabled={(editQuiz || editPoll) && status !== 'draft'}
-										value={form.question}
-										onChange={(e) => {
-											setForm((prev) => {
-												return { ...prev, question: e.target.value };
-											});
-										}}
-										placeholder={'Please write your question here'}
-										className={classes.textField}
-										InputProps={{
-											disableUnderline: true,
-											className: `${classes.textFieldInput}  ${
-												(editQuiz || editPoll) &&
-												status !== 'draft' &&
-												classes.disableTextField
-											}`
-										}}
-										inputProps={{ maxLength: 55 }}
-										multiline
-										maxRows={2}
-									/>
-								</div>
-
-								<p className={globalClasses.mediaError}>
-									{isError.question
-										? 'You need to provide a question in order to post.'
-										: ''}
-								</p>
-
-								<div className={classes.titleContainer}>
-									<div className={globalClasses.characterCount}>
-										<h6
-											className={
-												isError.ans1
-													? globalClasses.errorState
-													: globalClasses.noErrorState
-											}
-										>
-											{quiz || editQuiz ? 'RIGHT ANSWER' : 'ANSWER 1'}
-										</h6>
-										<h6
-											style={{
-												color:
-													form.answer1?.length >= 22 &&
-													form.answer1?.length <= 28
-														? 'pink'
-														: form.answer1?.length === 29
-														? 'red'
-														: 'white'
-											}}
-										>
-											{form.answer1?.length}/29
-										</h6>
-									</div>
-									<TextField
-										disabled={(editQuiz || editPoll) && status !== 'draft'}
-										value={form.answer1}
-										onChange={(e) => {
-											setForm((prev) => {
-												return { ...prev, answer1: e.target.value };
-											});
-										}}
-										placeholder={'Please write your answer here'}
-										className={classes.textField}
-										InputProps={{
-											disableUnderline: true,
-											className: `${classes.textFieldInput}  ${
-												(editQuiz || editPoll) &&
-												status !== 'draft' &&
-												classes.disableTextField
-											}`
-										}}
-										multiline
-										maxRows={1}
-										inputProps={{ maxLength: 29 }}
-									/>
-								</div>
-
-								<p className={globalClasses.mediaError}>
-									{isError.ans1
-										? quiz
-											? 'You need to provide right answer in order to post'
-											: 'You need to provide first answer in order to post'
-										: ''}
-								</p>
-
-								<div className={classes.titleContainer}>
-									<div className={globalClasses.characterCount}>
-										<h6
-											className={
-												isError.ans2
-													? globalClasses.errorState
-													: globalClasses.noErrorState
-											}
-										>
-											{quiz || editQuiz ? 'WRONG ANSWER' : 'ANSWER 2'}
-										</h6>
-										<h6
-											style={{
-												color:
-													form.answer2?.length >= 22 &&
-													form.answer2?.length <= 28
-														? 'pink'
-														: form.answer2?.length === 29
-														? 'red'
-														: 'white'
-											}}
-										>
-											{form.answer2?.length}/29
-										</h6>
-									</div>
-									<TextField
-										disabled={(editQuiz || editPoll) && status !== 'draft'}
-										value={form.answer2}
-										onChange={(e) => {
-											setForm((prev) => {
-												return { ...prev, answer2: e.target.value };
-											});
-										}}
-										placeholder={'Please write your answer here'}
-										className={classes.textField}
-										InputProps={{
-											disableUnderline: true,
-											className: `${classes.textFieldInput}  ${
-												(editQuiz || editPoll) &&
-												status !== 'draft' &&
-												classes.disableTextField
-											}`
-										}}
-										multiline
-										maxRows={1}
-										inputProps={{ maxLength: 29 }}
-									/>
-								</div>
-
-								<p className={globalClasses.mediaError}>
-									{isError.ans2
-										? quiz
-											? 'You need to provide wrong answer in order to post'
-											: 'You need to provide second answer in order to post'
-										: ''}
-								</p>
-
-								<div className={classes.titleContainer}>
-									<h6
-										className={
-											isError.selectedLabels
-												? globalClasses.errorState
-												: globalClasses.noErrorState
-										}
-									>
-										LABELS
-									</h6>
-									<Labels
-										isEdit={editPoll || editQuiz}
-										setDisableDropdown={setDisableDropdown}
-										selectedLabels={form.labels}
-										setSelectedLabels={(newVal) => {
-											setForm((prev) => {
-												return { ...prev, labels: [...newVal] };
-											});
-										}} //closure
-										LabelsOptions={quizLabels}
-										extraLabel={extraLabel}
-										handleChangeExtraLabel={handleChangeExtraLabel}
-										draftStatus={status}
-										setExtraLabel={setExtraLabel}
-									/>
-								</div>
-
-								<p className={globalClasses.mediaError}>
-									{isError.selectedLabels
-										? `You need to add ${
-												7 - form.labels.length
-										  } more labels in order to upload media`
-										: isError.selectedLabelsDraft
-										? 'You need to select atleast 1 label to save as draft'
-										: ''}
-								</p>
-
-								<div className={classes.datePickerContainer}>
-									<h6
-										className={
-											isError.endDate
-												? globalClasses.errorState
-												: globalClasses.noErrorState
-										}
-									>
-										{quiz || editQuiz ? 'QUIZ END DATE' : 'POLL END DATE'}
-									</h6>
-									<div
-										className={classes.datePicker}
-										style={{ marginBottom: calenderOpen ? '250px' : '' }}
-									>
-										<DatePicker
-											customInput={<ExampleCustomInput />}
-											disabled={
-												(editPoll || editQuiz) && status === 'CLOSED'
-													? true
-													: false
-											}
-											startDate={form.end_date}
-											minDate={new Date()}
-											onChange={(update) => {
-												setForm((prev) => {
-													return { ...prev, end_date: update };
-												});
-											}}
-											popperPlacement='bottom'
-											onCalendarOpen={() => {
-												setCalenderOpen(true);
-												setDisableDropdown(false);
-											}}
-											onCalendarClose={() => {
-												setCalenderOpen(false);
-												setDisableDropdown(true);
-											}}
-											isClearable={
-												(editPoll || editQuiz) && status === 'CLOSED'
-													? false
-													: true
-											}
-										/>
-									</div>
-								</div>
-
-								<p className={globalClasses.mediaError}>
-									{isError.endDate
-										? 'You need to select a date in order to post'
-										: ''}
-								</p>
+									}}
+									text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
+								/>
 							</div>
+						) : (
+							<></>
+						)}
 
-							{/* <div className={classes.buttonDiv}>
-							<div className={classes.leftButtonDiv}>
-								{editQuiz || editPoll ? (
-									<div className={classes.editBtn}>
-										<Button
-											disabled={deleteBtnStatus}
-											button2={editQuiz || editPoll ? true : false}
-											onClick={() => {
-												if (!deleteBtnStatus) {
-													deleteQuiz(editQuestionData?.id);
-												}
-											}}
-											text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
-										/>
-									</div>
-								) : (
-									<></>
-								)}
+						{(editQuiz || editPoll) && status === 'ACTIVE' ? (
+							<>
+								<div className={classes.stopBtn}>
+									<Button
+										// disabled={deleteBtnStatus}
+										buttonStop={true}
+										onClick={() => {
+											if (!deleteBtnStatus) {
+												toggleStopModal();
+											}
+										}}
+										text={type === 'quiz' ? 'STOP QUIZ' : 'STOP POLL'}
+									/>
+								</div>
+							</>
+						) : (
+							<></>
+						)}
+					</div>
 
-								{(editQuiz || editPoll) && status === 'ACTIVE' ? (
-									<>
-										<div className={classes.stopBtn}>
-											<Button
-												// disabled={deleteBtnStatus}
-												button2={editQuiz || editPoll ? true : false}
-												onClick={() => {
-													if (!deleteBtnStatus) {
-														stopQuizPoll(editQuestionData?.id);
-													}
-												}}
-												text={type === 'quiz' ? 'STOP QUIZ' : 'STOP POLL'}
-											/>
-										</div>
-									</>
-								) : (
-									<></>
-								)}
-							</div>
+					<div className={classes.publishDraftDiv}>
+						{status === 'draft' || !(editPoll || editQuiz) ? (
 							<div
 								className={
-									editQuiz || editPoll
-										? classes.addQuizBtnEdit
-										: classes.addQuizBtn
+									editPoll || editQuiz ? classes.draftBtnEdit : classes.draftBtn
 								}
 							>
 								<Button
-									disabled={
-										!(editPoll || editQuiz)
-											? !validateForm(form)
-											: editQuizBtnDisabled
+									disabledDraft={
+										editPoll || editQuiz
+											? draftBtnDisabled
+											: !validateDraft(form)
 									}
-									onClick={() => {
-										handleAddSaveQuizPollBtn();
-									}}
+									onClick={() => handleDraftSave()}
+									button3={true}
 									text={
-										type === 'quiz' && !(editPoll || editQuiz)
-											? 'ADD QUIZ'
-											: type === 'poll' && !(editPoll || editQuiz)
-											? 'ADD POLL'
-											: 'SAVE CHANGES'
+										status === 'draft' && (editPoll || editQuiz)
+											? 'SAVE DRAFT'
+											: 'SAVE AS DRAFT'
 									}
 								/>
 							</div>
-						</div> */}
-
-							<p className={globalClasses.mediaError}>
-								{isError.draftError
-									? 'Something needs to be changed to save a draft'
-									: ''}
-							</p>
-
-							<div className={classes.buttonDiv}>
-								<div className={classes.leftButtonDiv}>
-									{editQuiz || editPoll ? (
-										<div className={classes.editDeleteBtn}>
-											<Button
-												disabled={deleteBtnStatus}
-												button2={editQuiz || editPoll ? true : false}
-												onClick={() => {
-													if (!deleteBtnStatus) {
-														toggleDeleteModal();
-													}
-												}}
-												text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
-											/>
-										</div>
-									) : (
-										<></>
-									)}
-
-									{(editQuiz || editPoll) && status === 'ACTIVE' ? (
-										<>
-											<div className={classes.stopBtn}>
-												<Button
-													// disabled={deleteBtnStatus}
-													buttonStop={true}
-													onClick={() => {
-														if (!deleteBtnStatus) {
-															toggleStopModal();
-														}
-													}}
-													text={type === 'quiz' ? 'STOP QUIZ' : 'STOP POLL'}
-												/>
-											</div>
-										</>
-									) : (
-										<></>
-									)}
-								</div>
-
-								<div className={classes.publishDraftDiv}>
-									{status === 'draft' || !(editPoll || editQuiz) ? (
-										<div
-											className={
-												editPoll || editQuiz
-													? classes.draftBtnEdit
-													: classes.draftBtn
-											}
-										>
-											<Button
-												disabledDraft={
-													editPoll || editQuiz
-														? draftBtnDisabled
-														: !validateDraft(form)
-												}
-												onClick={() => handleDraftSave()}
-												button3={true}
-												text={
-													status === 'draft' && (editPoll || editQuiz)
-														? 'SAVE DRAFT'
-														: 'SAVE AS DRAFT'
-												}
-											/>
-										</div>
-									) : (
-										<></>
-									)}
-
-									<div
-										className={[
-											(editPoll || editQuiz) && validateForm(form)
-												? classes.addMediaBtn
-												: editPoll || editQuiz
-												? classes.addMediaBtnEdit
-												: classes.addMediaBtn,
-											classes.saveChangesbtn
-										].join(' ')}
-									>
-										<Button
-											text={
-												type === 'quiz' && !(editPoll || editQuiz)
-													? 'ADD QUIZ'
-													: type === 'poll' && !(editPoll || editQuiz)
-													? 'ADD POLL'
-													: status === 'draft'
-													? 'PUBLISH'
-													: 'SAVE CHANGES'
-											}
-											disabled={
-												(editPoll || editQuiz) &&
-												validateForm(form) &&
-												status === 'draft'
-													? false
-													: !(editPoll || editQuiz)
-													? !validateForm(form)
-													: editQuizBtnDisabled
-											}
-											onClick={() => {
-												handleAddSaveQuizPollBtn();
-											}}
-										/>
-									</div>
-								</div>
-							</div>
-						</div>
-						{previewFile != null && (
-							<div ref={previewRef} className={globalClasses.previewComponent}>
-								<div className={globalClasses.previewHeader}>
-									<Close
-										onClick={() => {
-											setPreviewBool(false);
-											setPreviewFile(null);
-										}}
-										className={globalClasses.closeIcon}
-									/>
-									<h5>Preview</h5>
-								</div>
-								<div>
-									<img
-										src={previewFile.media_url}
-										className={classes.previewFile}
-										style={{
-											width: '100%',
-											height: `${8 * 4}rem`,
-											objectFit: 'contain',
-											objectPosition: 'center'
-										}}
-									/>
-								</div>
-							</div>
+						) : (
+							<></>
 						)}
+
+						<div
+							className={[
+								(editPoll || editQuiz) && validateForm(form)
+									? classes.addMediaBtn
+									: editPoll || editQuiz
+									? classes.addMediaBtnEdit
+									: classes.addMediaBtn,
+								classes.saveChangesbtn
+							].join(' ')}
+						>
+							<Button
+								text={
+									type === 'quiz' && !(editPoll || editQuiz)
+										? 'ADD QUIZ'
+										: type === 'poll' && !(editPoll || editQuiz)
+										? 'ADD POLL'
+										: status === 'draft'
+										? 'PUBLISH'
+										: 'SAVE CHANGES'
+								}
+								disabled={
+									(editPoll || editQuiz) &&
+									validateForm(form) &&
+									status === 'draft'
+										? false
+										: !(editPoll || editQuiz)
+										? !validateForm(form)
+										: editQuizBtnDisabled
+								}
+								onClick={() => {
+									handleAddSaveQuizPollBtn();
+								}}
+							/>
+						</div>
 					</div>
-				</Slide>
-			</LoadingOverlay>
+				</div>
+			</Slider>
+
 			<DeleteModal
 				open={stopStatus ? openStopPopup : openDeletePopup}
 				toggle={stopStatus ? toggleStopModal : toggleDeleteModal}
@@ -1235,12 +941,11 @@ const UploadOrEditQuiz = ({
 };
 
 UploadOrEditQuiz.propTypes = {
-	heading1: PropTypes.string.isRequired,
+	heading1: PropTypes.string,
 	open: PropTypes.bool.isRequired,
 	buttonText: PropTypes.string.isRequired,
 	editQuiz: PropTypes.bool,
-	setPreviewBool: PropTypes.func.isRequired,
-	previewFile: PropTypes.bool.isRequired,
+
 	setPreviewFile: PropTypes.func.isRequired,
 	previewRef: PropTypes.oneOfType([
 		PropTypes.func,
@@ -1250,13 +955,20 @@ UploadOrEditQuiz.propTypes = {
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,
-	setDisableDropdown: PropTypes.func.isRequired,
+	setDisableDropdown: PropTypes.func,
 	quiz: PropTypes.bool,
 	editPoll: PropTypes.bool,
 	handleClose: PropTypes.func.isRequired,
 	page: PropTypes.string,
 	status: PropTypes.string,
-	type: PropTypes.string //poll or quiz
+	type: PropTypes.string, //poll or quiz,
+	//new
+	// open: PropTypes.bool.isRequired,
+	// handleClose: PropTypes.func.isRequired,
+	title: PropTypes.string.isRequired
+	// heading1: PropTypes.string.isRequired,
+	// buttonText: PropTypes.string.isRequired,
+	// type: PropTypes.string.isRequired
 };
 
 export default UploadOrEditQuiz;

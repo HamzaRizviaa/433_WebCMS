@@ -1,16 +1,18 @@
 import React, { useState, useRef } from 'react';
-
-import Slider from '../../slider';
 import PropTypes from 'prop-types';
 import TabsUnstyled from '@mui/base/TabsUnstyled';
 import TabsListUnstyled from '@mui/base/TabsListUnstyled';
 import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import TabUnstyled from '@mui/base/TabUnstyled';
-import { useStyles } from './quizStyles';
-import UploadOrEditQuiz from './UploadOrEditQuiz';
-import QuizResults from './QuizResults';
 
-export default function PollDetails({
+import Slider from '../../slider';
+import { useStyles } from '../quizStyles';
+import UploadOrEditQuiz from '../UploadEditQuestion/UploadOrEditQuiz';
+import QuizResults from '../QuestionResults/QuizResults';
+
+//Question Library : this slider slides when click on row with type : quiz
+
+export default function QuizDetails({
 	open,
 	handleClose,
 	title,
@@ -19,6 +21,7 @@ export default function PollDetails({
 	isEdit,
 	status,
 	location,
+	page,
 	notifID
 }) {
 	const [previewBool, setPreviewBool] = useState(false);
@@ -33,7 +36,7 @@ export default function PollDetails({
 	};
 
 	const muiClasses = useStyles();
-	// Question Library :  click on row with type:poll
+
 	return (
 		<Slider
 			open={open}
@@ -58,8 +61,9 @@ export default function PollDetails({
 			<div className={muiClasses.root}>
 				{status === 'draft' ? (
 					<UploadOrEditQuiz
-						type={'poll'}
-						editPoll={isEdit}
+						page={page}
+						quiz={true}
+						editQuiz={isEdit}
 						heading1={heading1}
 						open={open}
 						buttonText={buttonText}
@@ -72,18 +76,21 @@ export default function PollDetails({
 							handleClose();
 						}}
 						status={status}
+						type={'quiz'}
 						dialogWrapper={dialogWrapper}
 						publishedStatus='draft'
 					/>
 				) : location === 'article' ? (
 					<QuizResults
+						page={page}
 						handleClose={() => {
 							handleClose();
 						}}
 						style={{ minWidth: '40% !important' }}
-						type={'poll'}
-						status={status}
 						location={location}
+						type={'quiz'}
+						status={status}
+						quiz={true}
 						dialogWrapper={dialogWrapper}
 					/>
 				) : (
@@ -92,27 +99,31 @@ export default function PollDetails({
 							className={muiClasses.tabMainDiv}
 							style={{ width: previewBool ? '60%' : '100%' }}
 						>
-							<TabUnstyled>Poll Results</TabUnstyled>
-							<TabUnstyled>Edit Poll</TabUnstyled>
+							<TabUnstyled>Quiz Results</TabUnstyled>
+							<TabUnstyled>Edit Quiz</TabUnstyled>
 						</TabsListUnstyled>
 						<TabPanelUnstyled value={0}>
-							{/* poll results table */}
+							{/* quiz results table */}
 							<QuizResults
+								page={page}
 								handleClose={() => {
 									handleClose();
 								}}
 								style={{ minWidth: '40% !important' }}
-								type={'poll'}
+								type={'quiz'}
 								status={status}
 								location={location}
+								quiz={true}
 								dialogWrapper={dialogWrapper}
 							/>
 						</TabPanelUnstyled>
 						<TabPanelUnstyled value={1}>
-							{/*  edit poll */}
+							{/* edit quiz */}
+
 							<UploadOrEditQuiz
-								type={'poll'}
-								editPoll={isEdit}
+								page={page}
+								quiz={true}
+								editQuiz={isEdit}
 								heading1={heading1}
 								open={open}
 								buttonText={buttonText}
@@ -125,6 +136,7 @@ export default function PollDetails({
 									handleClose();
 								}}
 								status={status}
+								type={'quiz'}
 								dialogWrapper={dialogWrapper}
 								publishedStatus='draft'
 							/>
@@ -135,7 +147,7 @@ export default function PollDetails({
 		</Slider>
 	);
 }
-PollDetails.propTypes = {
+QuizDetails.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	title: PropTypes.string.isRequired,
@@ -143,7 +155,8 @@ PollDetails.propTypes = {
 	buttonText: PropTypes.string.isRequired,
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
-	type: PropTypes.string.isRequired,
 	location: PropTypes.string.isRequired,
+	type: PropTypes.string.isRequired,
+	page: PropTypes.string,
 	notifID: PropTypes.string
 };

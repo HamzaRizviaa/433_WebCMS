@@ -7,13 +7,14 @@ import _debounce from 'lodash/debounce';
 import Table from '../../components/table';
 //import classes2 from './_questionLibrary.module.scss';
 import Button from '../../components/button';
-import UploadQuiz from '../../components/quizzes/uploadOrEditQuiz/UploadQuiz';
+
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
-import QuizDetails from '../../components/quizzes/uploadOrEditQuiz/QuizDetails';
-import PollDetails from '../../components/quizzes/uploadOrEditQuiz/PollDetails';
+import UploadOrEditQuiz from '../../components/Questions/UploadEditQuestion/UploadOrEditQuiz';
+import QuizDetails from '../../components/Questions/QuestionDetails/QuizDetails';
+import PollDetails from '../../components/Questions/QuestionDetails/PollDetails';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import Pagination from '@mui/material/Pagination';
 import { useStyles } from '../../utils/styles';
@@ -705,14 +706,14 @@ const QuestionLibrary = () => {
 					/>
 				</div>
 
-				<UploadQuiz
+				<UploadOrEditQuiz
 					open={showSlider}
 					isEdit={edit}
 					handleClose={() => {
 						setShowSlider(false);
 					}}
 					title={edit ? 'Poll Detail' : 'Upload Question'}
-					heading1={edit ? ' ' : 'Add Background Image'}
+					// heading1={edit ? ' ' : 'Add Background Image'}
 					buttonText={
 						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
 					}
