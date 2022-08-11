@@ -33,9 +33,9 @@ const Labels = ({
 		(state) => state.postLibrary
 	);
 
-	let draftLabels = selectedLabels.filter((label) => label.id == -1);
+	let draftLabels = selectedLabels?.filter((label) => label.id == -1);
 	let drafts = [];
-	draftLabels.forEach((element) => drafts.push(element.name));
+	draftLabels?.forEach((element) => drafts.push(element.name));
 	let newOptions = newLabelsSearch.filter(
 		(element) => !drafts.includes(element.name)
 	);
@@ -60,7 +60,7 @@ const Labels = ({
 			dispatch(
 				getNewLabelsSearch({
 					q: _search,
-					...(selectedLabels.length ? labelsParams(selectedLabels) : {})
+					...(selectedLabels?.length ? labelsParams(selectedLabels) : {})
 				})
 			);
 		}
@@ -175,7 +175,7 @@ const Labels = ({
 			renderOption={(props, option) => {
 				//selected in input field,  some -> array to check exists
 
-				let currentLabelDuplicate = selectedLabels.some(
+				let currentLabelDuplicate = selectedLabels?.some(
 					(label) => label.name == option.name
 				);
 

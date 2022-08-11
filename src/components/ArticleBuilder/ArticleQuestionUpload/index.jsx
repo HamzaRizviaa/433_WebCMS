@@ -49,15 +49,40 @@ const ArticleQuestionUpload = ({
 	const [fileHeight, setFileHeight] = useState(0);
 	const [isError, setIsError] = useState({});
 	const [loading, setLoading] = useState(false);
-
-	const [form, setForm] = useState({
-		uploadedFiles: [],
-		dropbox_url: '',
-		question: '',
-		answers: [],
-		labels: [],
-		question_type: type
-	});
+	const [ans1Id, setAns1Id] = useState('');
+	const [ans2Id, setAns2Id] = useState('');
+	console.log(type, 'ttt');
+	const [form, setForm] = useState(
+		initialData
+			? {
+					...initialData,
+					uploadedFiles: initialData?.uploadedFiles
+						? initialData?.uploadedFiles
+						: [],
+					answers: [
+						{
+							...(initialData?.answers?.length > 0 &&
+							initialData?.answers[0]?.answer !== ''
+								? initialData.answers[0]
+								: {})
+						},
+						{
+							...(initialData?.answers?.length > 0 &&
+							initialData?.answers[1]?.answer !== ''
+								? initialData.answers[1]
+								: {})
+						}
+					]
+			  }
+			: {
+					uploadedFiles: [],
+					dropbox_url: '',
+					question: '',
+					answers: [],
+					labels: [],
+					question_type: type
+			  }
+	);
 	const imgRef = useRef(null);
 
 	// const dispatch = useDispatch();
@@ -69,12 +94,19 @@ const ArticleQuestionUpload = ({
 	}, [form]);
 
 	useEffect(() => {
+		if (isEdit && status === 'draft' && item?.data?.answers) {
+			setAns1Id(item?.data?.answers[0]?.id || undefined);
+			setAns2Id(item?.data?.answers[1]?.id || undefined);
+		}
+	}, [isEdit]);
+
+	useEffect(() => {
 		if (!initialData?.question_id) {
 			sendDataToParent({
 				question_type: type === 'quiz' ? 'quiz' : 'poll'
 			});
 		}
-	}, []);
+	}, [type]);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png',
@@ -157,19 +189,43 @@ const ArticleQuestionUpload = ({
 		setIsError({});
 	};
 
-	const handleAnswerChange = (event, index) => {
-		const formCopy = { ...form };
-		formCopy.answers[index] = {
-			answer: event.target.value,
-			position: index,
-			type: type === 'quiz' ? 'right_answer' : 'poll'
-		};
-		setForm(formCopy);
-		let answers = { answers: formCopy.answers };
-		sendDataToParent(answers);
-	};
+	console.log(form, 'ID');
 
-	// console.log('initial', initialData);
+	const handleAnswerChange = (event, index) => {
+		if (initialData?.question_id) {
+			const formCopy = { ...form };
+
+			formCopy.answers[index] = {
+				...formCopy.answers[index],
+				answer: event.target.value,
+				position: index,
+				type:
+					type === 'quiz' && index === 0
+						? 'right_answer'
+						: type === 'quiz' && index === 1
+						? 'wrong_answer'
+						: 'poll'
+			};
+			setForm(formCopy);
+			let answers = { answers: formCopy.answers };
+			sendDataToParent(answers);
+		} else {
+			const formCopy = { ...form };
+			formCopy.answers[index] = {
+				answer: event.target.value,
+				position: index,
+				type:
+					type === 'quiz' && index === 0
+						? 'right_answer'
+						: type === 'quiz' && index === 1
+						? 'wrong_answer'
+						: 'poll'
+			};
+			setForm(formCopy);
+			let answers = { answers: formCopy.answers };
+			sendDataToParent(answers);
+		}
+	};
 
 	return (
 		<>
@@ -182,7 +238,7 @@ const ArticleQuestionUpload = ({
 						<h5 className={classes.QuizQuestion}>{heading1}</h5>
 						<DragAndDropField
 							uploadedFiles={
-								initialData ? initialData?.uploadedFiles : form.uploadedFiles
+								initialData ? initialData?.uploadedFiles : form?.uploadedFiles
 							}
 							quizPollStatus={status}
 							handleDeleteFile={(id) => {
