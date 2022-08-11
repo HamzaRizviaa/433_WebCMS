@@ -51,7 +51,7 @@ const ArticleQuestionUpload = ({
 	const [loading, setLoading] = useState(false);
 	const [ans1Id, setAns1Id] = useState('');
 	const [ans2Id, setAns2Id] = useState('');
-
+	console.log(type, 'ttt');
 	const [form, setForm] = useState(
 		initialData
 			? {
@@ -106,7 +106,7 @@ const ArticleQuestionUpload = ({
 				question_type: type === 'quiz' ? 'quiz' : 'poll'
 			});
 		}
-	}, []);
+	}, [type]);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png',
@@ -205,18 +205,11 @@ const ArticleQuestionUpload = ({
 						: type === 'quiz' && index === 1
 						? 'wrong_answer'
 						: 'poll'
-				// id:
-				// 	status === 'draft' && index === 0
-				// 		? ans1Id
-				// 		: status === 'draft' && index === 1
-				// 		? ans2Id
-				// 		: undefined
 			};
 			setForm(formCopy);
 			let answers = { answers: formCopy.answers };
 			sendDataToParent(answers);
 		} else {
-			console.log('oooo');
 			const formCopy = { ...form };
 			formCopy.answers[index] = {
 				answer: event.target.value,
