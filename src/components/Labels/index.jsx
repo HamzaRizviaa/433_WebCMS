@@ -60,7 +60,7 @@ const Labels = ({
 			dispatch(
 				getNewLabelsSearch({
 					q: _search,
-					...(selectedLabels.length ? labelsParams(selectedLabels) : {})
+					...(selectedLabels?.length ? labelsParams(selectedLabels) : {})
 				})
 			);
 		}
@@ -175,7 +175,7 @@ const Labels = ({
 			renderOption={(props, option) => {
 				//selected in input field,  some -> array to check exists
 
-				let currentLabelDuplicate = selectedLabels.some(
+				let currentLabelDuplicate = selectedLabels?.some(
 					(label) => label.name == option.name
 				);
 
