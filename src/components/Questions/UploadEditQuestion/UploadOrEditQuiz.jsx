@@ -3,15 +3,8 @@
 /* eslint-disable react/display-name */
 import React, { forwardRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useDropzone } from 'react-dropzone';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import { makeid } from '../../../utils/helper';
-import { TextField } from '@material-ui/core';
-import DragAndDropField from '../../DragAndDropField';
-import Labels from '../../Labels';
 import Button from '../../button';
 import DatePicker from 'react-datepicker';
-import checkFileSize from '../../../utils/validateFileSize';
 import { formatDate, getCalendarText2 } from '../../../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { getQuestions } from '../../../pages/QuestionLibrary/questionLibrarySlice';
@@ -19,7 +12,7 @@ import { getLocalStorageDetails } from '../../../utils';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import Slider from '../../slider';
-
+import { makeid } from '../../../utils/helper';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
 
 import { ReactComponent as CalenderYellow } from '../../../assets/Calender_Yellow.svg';
@@ -66,9 +59,6 @@ const UploadOrEditQuiz = ({
 	//handleClose,
 	title //heading1, buttonText
 }) => {
-	const [fileRejectionError, setFileRejectionError] = useState('');
-	const [quizLabels, setQuizLabels] = useState([]);
-	const [extraLabel, setExtraLabel] = useState('');
 	const [convertedDate, setConvertedDate] = useState(null);
 	const [calenderOpen, setCalenderOpen] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
@@ -76,8 +66,6 @@ const UploadOrEditQuiz = ({
 	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
 	const [editQuizBtnDisabled, setEditQuizBtnDisabled] = useState(false);
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
-	const [fileWidth, setFileWidth] = useState(0);
-	const [fileHeight, setFileHeight] = useState(0);
 	const [isError, setIsError] = useState({});
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
 	const [openStopPopup, setOpenStopPopup] = useState(false);
@@ -85,7 +73,7 @@ const UploadOrEditQuiz = ({
 
 	// new work
 	const [questiontype, setQuestionType] = useState('poll');
-	const [questionSlides, setQuestionSlides] = useState([]);
+	const [questionSlides, setQuestionSlides] = useState([]); // data
 
 	const [form, setForm] = useState({
 		uploadedFiles: [],
@@ -96,13 +84,19 @@ const UploadOrEditQuiz = ({
 		labels: [],
 		end_date: null
 	});
-	const imgRef = useRef(null);
+
 	const loadingRef = useRef(null);
 
 	const dispatch = useDispatch();
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const muiClasses = tabPansStyles();
+
+	const {
+		labels,
+		questionEditStatus,
+		questionEdit: editQuestionData
+	} = useSelector((state) => state.questionLibrary);
 
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
@@ -123,11 +117,43 @@ const UploadOrEditQuiz = ({
 		setQuestionSlides(items);
 	};
 
-	const {
-		labels,
-		questionEditStatus,
-		questionEdit: editQuestionData
-	} = useSelector((state) => state.questionLibrary);
+	const handleNewSlide = () => {
+		setQuestionSlides((prev) => {
+			return [
+				...prev,
+				{
+					sort_order: questionSlides.length + 1
+				}
+			];
+		});
+	};
+
+	const setNewData = (childData, index) => {
+		let dataCopy = [...questionSlides];
+		console.log(dataCopy);
+		// dataCopy[index].data = [
+		// 	{
+		// 		...(dataCopy[index]?.data?.length ? dataCopy[index]?.data[0] : {}),
+		// 		...childData
+		// 	}
+		// ];
+
+		// setNews(dataCopy);
+	};
+
+	const handleElementDelete = (sortOrder) => {
+		let dataCopy = [...questionSlides];
+		if (sortOrder) {
+			setQuestionSlides(
+				dataCopy.filter((file) => file.sort_order !== sortOrder)
+			);
+		}
+	};
+
+	const handleMediaDataDelete = (elementData, index) => {
+		let dataCopy = [...questionSlides];
+		console.log(dataCopy);
+	};
 
 	useEffect(() => {
 		if (
@@ -146,12 +172,6 @@ const UploadOrEditQuiz = ({
 			setConvertedDate(toSend);
 		}
 	}, [form.end_date]);
-
-	useEffect(() => {
-		if (labels.length) {
-			setQuizLabels([...labels]);
-		}
-	}, [labels]);
 
 	useEffect(() => {
 		validateForm(form);
@@ -194,20 +214,6 @@ const UploadOrEditQuiz = ({
 			</div>
 		);
 	});
-
-	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
-		useDropzone({
-			accept: 'image/jpeg, image/png',
-			maxFiles: 1,
-			validator: checkFileSize
-		});
-
-	const getFileType = (type) => {
-		if (type) {
-			let _type = type.split('/');
-			return _type && _type[1];
-		}
-	};
 
 	useEffect(() => {
 		if (editQuestionData) {
@@ -257,185 +263,120 @@ const UploadOrEditQuiz = ({
 	}, [editQuestionData]);
 
 	useEffect(() => {
-		if (acceptedFiles?.length) {
-			setIsError({});
-
-			let newFiles = acceptedFiles.map((file) => {
-				let id = makeid(10);
-				return {
-					id: id,
-					file_name: file.name,
-					media_url: URL.createObjectURL(file),
-					fileExtension: `.${getFileType(file.type)}`,
-					mime_type: file.type,
-					file: file,
-					type: file.type === 'image'
-				};
-			});
-			//setUploadedFiles([...uploadedFiles, ...newFiles]);
-			setForm((prev) => {
-				return { ...prev, uploadedFiles: [...form.uploadedFiles, ...newFiles] };
-			});
-		}
-	}, [acceptedFiles]);
-
-	useEffect(() => {
-		if (fileRejections.length) {
-			fileRejections.forEach(({ errors }) => {
-				return errors.forEach((e) => setFileRejectionError(e.message));
-			});
-			setTimeout(() => {
-				setFileRejectionError('');
-			}, [5000]);
-		}
-	}, [fileRejections]);
-
-	useEffect(() => {
 		if (!open) {
 			resetState();
-			//resetForm(form);
 		}
 		!(editPoll || editQuiz) ? resetState() : '';
 	}, [open]);
-
-	useEffect(() => {
-		setQuizLabels((labels) => {
-			return labels.filter((label) => label.id != null);
-		});
-		if (extraLabel) {
-			let flag = quizLabels.some((label) => label.name == extraLabel);
-			if (flag == false) {
-				setQuizLabels((labels) => {
-					return [...labels, { id: null, name: extraLabel }];
-				});
-			}
-		}
-	}, [extraLabel]);
-
-	const handleDeleteFile = (id) => {
-		// setUploadedFiles((uploadedFiles) =>
-		// 	uploadedFiles.filter((file) => file.id !== id)
-		// );
-		setForm((prev) => {
-			return {
-				...prev,
-				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
-			};
-		});
-	};
-
-	const handleChangeExtraLabel = (e) => {
-		setExtraLabel(e.target.value.toUpperCase());
-	};
 
 	const createQuestion = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
 
 		//setIsLoadingcreateViral(false);
-		try {
-			const result = await axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/question/add-question`,
-				{
-					width: fileWidth,
-					height: fileHeight,
-					save_draft: draft,
-					image: form.uploadedFiles.length
-						? mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
-						  mediaFiles[0]?.media_url
-						: undefined,
-					file_name: form.uploadedFiles.length
-						? mediaFiles[0]?.file_name
-						: undefined,
-					...(form.question ? { question: form.question } : { question: '' }),
-					...(form.dropbox_url ? { dropbox_url: form.dropbox_url } : {}),
+		// try {
+		// 	const result = await axios.post(
+		// 		`${process.env.REACT_APP_API_ENDPOINT}/question/add-question`,
+		// 		{
+		// 			width: fileWidth,
+		// 			height: fileHeight,
+		// 			save_draft: draft,
+		// 			image: form.uploadedFiles.length
+		// 				? mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
+		// 				  mediaFiles[0]?.media_url
+		// 				: undefined,
+		// 			file_name: form.uploadedFiles.length
+		// 				? mediaFiles[0]?.file_name
+		// 				: undefined,
+		// 			...(form.question ? { question: form.question } : { question: '' }),
+		// 			...(form.dropbox_url ? { dropbox_url: form.dropbox_url } : {}),
 
-					...(!(editQuiz || editPoll)
-						? convertedDate
-							? { end_date: convertedDate }
-							: { end_date: '' }
-						: (editQuiz || editPoll) && form.end_date != null
-						? { end_date: convertedDate }
-						: { end_date: '' }),
+		// 			...(!(editQuiz || editPoll)
+		// 				? convertedDate
+		// 					? { end_date: convertedDate }
+		// 					: { end_date: '' }
+		// 				: (editQuiz || editPoll) && form.end_date != null
+		// 				? { end_date: convertedDate }
+		// 				: { end_date: '' }),
 
-					...(!(editQuiz || editPoll)
-						? quiz
-							? { question_type: 'quiz' }
-							: { question_type: 'poll' }
-						: status === 'draft'
-						? quiz
-							? { question_type: 'quiz' }
-							: { question_type: 'poll' }
-						: {}),
-					...(!(editQuiz || editPoll)
-						? {
-								answers: [
-									{
-										answer: form.answer1 ? form.answer1 : '',
-										type: quiz ? 'right_answer' : 'poll',
-										position: 0
-									},
-									{
-										answer: form.answer2 ? form.answer2 : '',
-										type: quiz ? 'wrong_answer' : 'poll',
-										position: 1
-									}
-								]
-						  }
-						: status === 'draft'
-						? {
-								answers: [
-									{
-										answer: form.answer1 ? form.answer1 : '',
-										id: editQuestionData?.answers[0]?.id,
-										type: quiz ? 'right_answer' : 'poll'
-									},
-									{
-										answer: form.answer2 ? form.answer2 : '',
-										id: editQuestionData?.answers[1]?.id,
-										type: quiz ? 'wrong_answer' : 'poll'
-									}
-								]
-						  }
-						: {}),
-					...((!(editQuiz || editPoll) || status === 'draft') && {
-						labels: [...form.labels]
-					}),
+		// 			...(!(editQuiz || editPoll)
+		// 				? quiz
+		// 					? { question_type: 'quiz' }
+		// 					: { question_type: 'poll' }
+		// 				: status === 'draft'
+		// 				? quiz
+		// 					? { question_type: 'quiz' }
+		// 					: { question_type: 'poll' }
+		// 				: {}),
+		// 			...(!(editQuiz || editPoll)
+		// 				? {
+		// 						answers: [
+		// 							{
+		// 								answer: form.answer1 ? form.answer1 : '',
+		// 								type: quiz ? 'right_answer' : 'poll',
+		// 								position: 0
+		// 							},
+		// 							{
+		// 								answer: form.answer2 ? form.answer2 : '',
+		// 								type: quiz ? 'wrong_answer' : 'poll',
+		// 								position: 1
+		// 							}
+		// 						]
+		// 				  }
+		// 				: status === 'draft'
+		// 				? {
+		// 						answers: [
+		// 							{
+		// 								answer: form.answer1 ? form.answer1 : '',
+		// 								id: editQuestionData?.answers[0]?.id,
+		// 								type: quiz ? 'right_answer' : 'poll'
+		// 							},
+		// 							{
+		// 								answer: form.answer2 ? form.answer2 : '',
+		// 								id: editQuestionData?.answers[1]?.id,
+		// 								type: quiz ? 'wrong_answer' : 'poll'
+		// 							}
+		// 						]
+		// 				  }
+		// 				: {}),
+		// 			...((!(editQuiz || editPoll) || status === 'draft') && {
+		// 				labels: [...form.labels]
+		// 			}),
 
-					// ...((!isEdit || status !== 'published') &&
-					// (form.labels?.length || status == 'draft')
-					// 	? { labels: [...form.labels] }
-					// 	: {}),
+		// 			// ...((!isEdit || status !== 'published') &&
+		// 			// (form.labels?.length || status == 'draft')
+		// 			// 	? { labels: [...form.labels] }
+		// 			// 	: {}),
 
-					...((editQuiz || editPoll) && id ? { question_id: id } : {})
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
-				}
-			);
-			if (result?.data?.status_code === 200) {
-				toast.success(
-					editQuiz || editPoll
-						? 'Question has been edited!'
-						: 'Question has been created!'
-				);
-				setIsLoadingcreateViral(false);
-				setPostButtonStatus(false);
-				handleClose();
-				dispatch(getQuestions({ page }));
-				// dispatch(getQuestionLabels());
-			}
-		} catch (e) {
-			toast.error(
-				editQuiz || editPoll
-					? 'Failed to edit question!'
-					: 'Failed to create question!'
-			);
-			setIsLoadingcreateViral(false);
-			setPostButtonStatus(false);
-			console.log(e, 'failed create/edit question');
-		}
+		// 			...((editQuiz || editPoll) && id ? { question_id: id } : {})
+		// 		},
+		// 		{
+		// 			headers: {
+		// 				Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+		// 			}
+		// 		}
+		// 	);
+		// 	if (result?.data?.status_code === 200) {
+		// 		toast.success(
+		// 			editQuiz || editPoll
+		// 				? 'Question has been edited!'
+		// 				: 'Question has been created!'
+		// 		);
+		// 		setIsLoadingcreateViral(false);
+		// 		setPostButtonStatus(false);
+		// 		handleClose();
+		// 		dispatch(getQuestions({ page }));
+		// 		// dispatch(getQuestionLabels());
+		// 	}
+		// } catch (e) {
+		// 	toast.error(
+		// 		editQuiz || editPoll
+		// 			? 'Failed to edit question!'
+		// 			: 'Failed to create question!'
+		// 	);
+		// 	setIsLoadingcreateViral(false);
+		// 	setPostButtonStatus(false);
+		// 	console.log(e, 'failed create/edit question');
+		// }
 	};
 
 	const deleteQuiz = async (id, draft, qtype) => {
@@ -498,10 +439,10 @@ const UploadOrEditQuiz = ({
 
 	const resetState = () => {
 		setQuestionSlides([]);
-		setFileRejectionError('');
+		// setFileRejectionError('');
 		//	setPreviewFile(null);
 		//setPreviewBool(false);
-		setExtraLabel('');
+
 		//setDisableDropdown(true);
 		setConvertedDate(null);
 		setTimeout(() => {
@@ -792,29 +733,38 @@ const UploadOrEditQuiz = ({
 					</Accordion>
 				</div>
 
-				{/* <QuestionDraggable onDragEnd={onDragEnd}>
+				<QuestionDraggable onDragEnd={onDragEnd}>
 					{questionSlides.map((item, index) => {
 						return (
 							<>
 								<QuestionForm
 									item={item}
 									index={index}
+									type={questiontype}
 									key={item.sort_order}
-									// sendDataToParent={(data) => setNewData(data, index)}
-									// handleDeleteMedia={(data) =>
-									// 	handleMediaDataDelete(data, index)
-									// }
-									// handleDeleteNews={(sortOrder) =>
-									// 	handleNewsElementDelete(sortOrder)
-									// }
-									// initialData={item.data && item.data}
+									sendDataToParent={(data) => setNewData(data, index)}
+									handleDeleteMedia={(data) =>
+										handleMediaDataDelete(data, index)
+									}
+									handleDeleteQuestionSlide={(sortOrder) =>
+										handleElementDelete(sortOrder)
+									}
+									initialData={item.data && item.data}
 									setPreviewBool={setPreviewBool}
 									setPreviewFile={setPreviewFile}
 								/>
 							</>
 						);
 					})}
-				</QuestionDraggable> */}
+				</QuestionDraggable>
+				<br />
+				<Button
+					style={{ marginTop: '4rem' }}
+					disabled={false}
+					buttonNews={true}
+					onClick={() => handleNewSlide()}
+					text={'ADD QUESTION '}
+				/>
 
 				<br />
 				<div className={classes.buttonDiv}>
