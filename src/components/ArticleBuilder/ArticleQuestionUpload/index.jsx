@@ -60,8 +60,18 @@ const ArticleQuestionUpload = ({
 						? initialData?.uploadedFiles
 						: [],
 					answers: [
-						{ ...(initialData?.answers[0] ? initialData.answers[0] : {}) },
-						{ ...(initialData?.answers[1] ? initialData.answers[1] : {}) }
+						{
+							...(initialData?.answers?.length > 0 &&
+							initialData?.answers[0]?.answer !== ''
+								? initialData.answers[0]
+								: {})
+						},
+						{
+							...(initialData?.answers?.length > 0 &&
+							initialData?.answers[1]?.answer !== ''
+								? initialData.answers[1]
+								: {})
+						}
 					]
 			  }
 			: {
@@ -74,7 +84,6 @@ const ArticleQuestionUpload = ({
 			  }
 	);
 	const imgRef = useRef(null);
-	console.log(form, 'form inistial');
 
 	// const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
@@ -183,30 +192,26 @@ const ArticleQuestionUpload = ({
 	console.log(form, 'ID');
 
 	const handleAnswerChange = (event, index) => {
-		if (isEdit && status === 'draft') {
+		if (initialData?.question_id) {
 			const formCopy = { ...form };
 
-			// formCopy?.answers.map((item) => ({
-			// 	...item,
-			// 	answer: event.target.value,
-			// 	position: index,
-			// 	type: type === 'quiz' ? 'right_answer' : 'poll'
-			// }));
 			formCopy.answers[index] = {
+				...formCopy.answers[index],
 				answer: event.target.value,
 				position: index,
-				type: type === 'quiz' ? 'right_answer' : 'poll',
-				id:
-					status === 'draft' && index === 0
-						? ans1Id
-						: status === 'draft' && index === 1
-						? ans2Id
-						: undefined
+				type: type === 'quiz' ? 'right_answer' : 'poll'
+				// id:
+				// 	status === 'draft' && index === 0
+				// 		? ans1Id
+				// 		: status === 'draft' && index === 1
+				// 		? ans2Id
+				// 		: undefined
 			};
 			setForm(formCopy);
 			let answers = { answers: formCopy.answers };
 			sendDataToParent(answers);
 		} else {
+			console.log('oooo');
 			const formCopy = { ...form };
 			formCopy.answers[index] = {
 				answer: event.target.value,
