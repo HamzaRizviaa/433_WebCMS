@@ -236,6 +236,14 @@ export const checkNewElementQuestionDraft = (elements, data) => {
 	} else {
 		for (let i = 0; i < elements?.length; i++) {
 			if (elements.length === data.length) {
+				console.log(
+					data[i]?.data?.answers?.length > 0 &&
+						data[i]?.data?.answers[1]?.answer !== ''
+						? data[i]?.data?.answers[1]?.answer ===
+								elements[i]?.question_data?.answers[1]?.answer
+						: false,
+					'tapatha'
+				);
 				if (data[i].data) {
 					if (
 						data[i]?.data?.question === elements[i]?.question_data?.question &&
@@ -245,7 +253,7 @@ export const checkNewElementQuestionDraft = (elements, data) => {
 							  elements[i]?.question_data?.answers[0]?.answer
 							: false) &&
 						(data[i]?.data?.answers?.length > 0 &&
-						data[i]?.data?.answers[1]?.answer
+						data[i]?.data?.answers[1]?.answer !== ''
 							? data[i]?.data?.answers[1]?.answer ===
 							  elements[i]?.question_data?.answers[1]?.answer
 							: false) &&

@@ -1055,14 +1055,6 @@ const UploadOrEditArticle = ({
 		});
 	};
 
-	// const checkNewElementFile = (data) => {
-	// 	return data.some((item) => {
-	// 		if (item?.data) {
-	// 			return item?.data[0]?.file ? true : false;
-	// 		}
-	// 	});
-	// };
-
 	const comparingFields = (specificArticle, form) => {
 		return (
 			specificArticle?.title?.trim() === form?.title?.trim() &&
@@ -1105,7 +1097,6 @@ const UploadOrEditArticle = ({
 				checkEmptyIG(data),
 				checkEmptyMedia(data),
 				checkEmptyQuestion(data),
-				// checkNewElementFile(filteringByType(data, 'MEDIA')),
 				data?.length !== 0
 			];
 
