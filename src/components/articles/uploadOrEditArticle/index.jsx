@@ -1226,7 +1226,11 @@ const UploadOrEditArticle = ({
 				checkEmptyQuestionDraft(data)
 			];
 
-			console.log(validationCompleteArrayDraft, 'validate');
+			// console.log(
+			// 	validationDraftEmptyArray,
+			// 	validationCompleteArrayDraft,
+			// 	'validate'
+			// );
 			if (
 				!validateDraft(form, data) ||
 				!comparingDraftFields(specificArticle, form)
