@@ -429,7 +429,9 @@ const ArticleQuestionUpload = ({
 								}
 								value={
 									initialData?.answers
-										? initialData?.answers[0]?.answer
+										? initialData?.answers?.find(
+												(item) => item.type === 'right_answer'
+										  )?.answer
 										: form.answers[0]?.answer
 								}
 								onChange={(e) => {
@@ -493,7 +495,9 @@ const ArticleQuestionUpload = ({
 								}
 								value={
 									initialData?.answers
-										? initialData?.answers[1]?.answer
+										? initialData?.answers?.find(
+												(item) => item.type === 'wrong_answer'
+										  )?.answer
 										: form.answers[1]?.answer
 								}
 								onChange={(e) => {
