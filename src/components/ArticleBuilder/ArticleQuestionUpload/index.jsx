@@ -427,7 +427,7 @@ const ArticleQuestionUpload = ({
 									initialData?.question_id && status !== 'draft' ? true : false
 								}
 								value={
-									initialData?.answers
+									initialData?.answers && initialData?.question_type === 'quiz'
 										? initialData?.answers?.find(
 												(item) => item.type === 'right_answer'
 										  )?.answer
@@ -493,7 +493,7 @@ const ArticleQuestionUpload = ({
 									initialData?.question_id && status !== 'draft' ? true : false
 								}
 								value={
-									initialData?.answers
+									initialData?.answers && initialData?.question_type === 'quiz'
 										? initialData?.answers?.find(
 												(item) => item.type === 'wrong_answer'
 										  )?.answer
