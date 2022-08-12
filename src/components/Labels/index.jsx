@@ -45,6 +45,12 @@ const Labels = ({
 
 	console.log(newLabelsSearch, 'ls');
 
+	let duplicateRemoval = [];
+	selectedLabels?.map((item) => duplicateRemoval.push(item.id));
+	let selectedLabelsRemoved = newLabelsSearch.filter(
+		(item) => !duplicateRemoval.includes(item.id)
+	);
+
 	const labelsParams = (labels) => {
 		return labels.reduce((accumulator, currentItem, currentIndex) => {
 			accumulator[`already_searched[${currentIndex}]`] = currentItem.name;
