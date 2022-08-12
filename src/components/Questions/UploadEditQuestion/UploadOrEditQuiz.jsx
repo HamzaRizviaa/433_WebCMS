@@ -752,6 +752,7 @@ const UploadOrEditQuiz = ({
 									initialData={item.data && item.data}
 									setPreviewBool={setPreviewBool}
 									setPreviewFile={setPreviewFile}
+									isEdit={editPoll || editQuiz}
 								/>
 							</>
 						);
@@ -763,7 +764,7 @@ const UploadOrEditQuiz = ({
 					disabled={false}
 					buttonNews={true}
 					onClick={() => handleNewSlide()}
-					text={'ADD QUESTION '}
+					text={'ADD QUESTION'}
 				/>
 
 				<br />

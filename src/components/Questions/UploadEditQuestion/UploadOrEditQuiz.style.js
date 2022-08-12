@@ -366,5 +366,14 @@ export const useStyles = makeStyles((theme) => ({
 			marginLeft: '1rem'
 		},
 		marginBottom: '2rem'
+	},
+	addNewAnswer: {
+		display: 'flex',
+		alignItems: 'center',
+		marginTop: '1.5rem',
+		marginBottom: '1.5rem',
+		'& h6': {
+			marginLeft: '1rem'
+		}
 	}
 }));

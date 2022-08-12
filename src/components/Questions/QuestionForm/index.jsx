@@ -22,11 +22,14 @@ import { useStyles } from '../UploadEditQuestion/UploadOrEditQuiz.style';
 import { Draggable } from 'react-beautiful-dnd';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import { ReactComponent as NewsAddIcon } from '../../../assets/newsAddIcon.svg';
+import { ReactComponent as DeleteBin } from '../../../assets/DeleteBin.svg';
 import {
 	Accordion,
 	Box,
 	AccordionSummary,
-	AccordionDetails
+	AccordionDetails,
+	InputAdornment
 } from '@mui/material';
 
 const QuestionForm = ({
@@ -39,7 +42,8 @@ const QuestionForm = ({
 	handleDeleteMedia,
 	handleDeleteQuestionSlide,
 	setPreviewBool = false, //to be set
-	setPreviewFile = false //to be set
+	setPreviewFile = false, //to be set
+	isEdit
 }) => {
 	//dummy
 	var editPoll = false; // need to remove
@@ -56,11 +60,14 @@ const QuestionForm = ({
 		uploadedFiles: [],
 		dropbox_url: '',
 		question: '',
-		answer1: '',
-		answer2: '',
+		answers: [
+			{ answer: '', type: 'right_answer', position: 0 },
+			{ answer: '', type: 'wrong_answer', position: 1 }
+		],
 		labels: [],
 		end_date: null
 	});
+	console.log('FORM', form);
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const imgRef = useRef(null);
@@ -147,6 +154,44 @@ const QuestionForm = ({
 	// 	}
 	// }, [labels]);
 
+	const handleNewAnswer = () => {
+		setForm((prev) => {
+			return {
+				...prev,
+				answers: [...form.answers, { answer: '' }]
+			};
+		});
+	};
+
+	const handleAnswerDelete = (index) => {
+		let dataCopy = [...form.answers];
+		console.log('COPY FORM', dataCopy);
+		if (index > 1) {
+			setForm(
+				dataCopy.filter((file, position) => {
+					console.log('THISSS', index);
+					position !== index;
+				})
+			);
+		}
+	};
+
+	const handleAnswerChange = (event, index) => {
+		const formCopy = { ...form };
+		formCopy.answers[index] = {
+			answer: event.target.value,
+			position: index,
+			type:
+				type === 'quiz' && index === 0
+					? 'right_answer'
+					: type === 'quiz' && index > 0
+					? 'wrong_answer'
+					: 'poll'
+		};
+		setForm(formCopy);
+		let answers = { answers: formCopy.answers };
+		// sendDataToParent(answers);
+	};
 	return (
 		<div>
 			<Draggable draggableId={`draggable-${index}`} index={index} key={key}>
@@ -216,13 +261,13 @@ const QuestionForm = ({
 												>
 													<div>
 														<DragAndDropField
-															uploadedFiles={form.uploadedFiles}
+															uploadedFiles={form?.uploadedFiles}
 															quizPollStatus={status}
 															handleDeleteFile={handleDeleteFile}
 															setPreviewBool={setPreviewBool}
 															setPreviewFile={setPreviewFile}
 															isArticle
-															isEdit={editPoll || editQuiz}
+															isEdit={isEdit}
 															imgEl={imgRef}
 															imageOnload={() => {
 																setFileWidth(imgRef.current.naturalWidth);
@@ -230,40 +275,40 @@ const QuestionForm = ({
 															}}
 														/>
 
-														{!form.uploadedFiles.length ? (
-															<section
-																className={globalClasses.dropZoneContainer}
-																style={{
-																	borderColor: isError.uploadedFiles
-																		? '#ff355a'
-																		: 'yellow'
-																}}
+														{/* {!form?.uploadedFiles.length ? ( */}
+														<section
+															className={globalClasses.dropZoneContainer}
+															style={{
+																borderColor: isError.uploadedFiles
+																	? '#ff355a'
+																	: 'yellow'
+															}}
+														>
+															<div
+																{...getRootProps({
+																	className: globalClasses.dropzone
+																})}
 															>
-																<div
-																	{...getRootProps({
-																		className: globalClasses.dropzone
-																	})}
-																>
-																	<input {...getInputProps()} />
-																	<AddCircleOutlineIcon
-																		className={globalClasses.addFilesIcon}
-																	/>
-																	<p className={globalClasses.dragMsg}>
-																		Click or drag file to this area to upload
-																	</p>
-																	<p className={globalClasses.formatMsg}>
-																		Supported formats are jpeg and png
-																	</p>
-																	<p className={globalClasses.uploadMediaError}>
-																		{isError.uploadedFiles
-																			? 'You need to upload a media in order to post'
-																			: ''}
-																	</p>
-																</div>
-															</section>
-														) : (
+																<input {...getInputProps()} />
+																<AddCircleOutlineIcon
+																	className={globalClasses.addFilesIcon}
+																/>
+																<p className={globalClasses.dragMsg}>
+																	Click or drag file to this area to upload
+																</p>
+																<p className={globalClasses.formatMsg}>
+																	Supported formats are jpeg and png
+																</p>
+																<p className={globalClasses.uploadMediaError}>
+																	{isError.uploadedFiles
+																		? 'You need to upload a media in order to post'
+																		: ''}
+																</p>
+															</div>
+														</section>
+														{/* ) : (
 															''
-														)}
+														)} */}
 
 														<p className={globalClasses.fileRejectionError}>
 															{fileRejectionError}
@@ -323,9 +368,7 @@ const QuestionForm = ({
 																</h6>
 															</div>
 															<TextField
-																disabled={
-																	(editQuiz || editPoll) && status !== 'draft'
-																}
+																disabled={isEdit && status !== 'draft'}
 																value={form.question}
 																onChange={(e) => {
 																	setForm((prev) => {
@@ -340,7 +383,7 @@ const QuestionForm = ({
 																InputProps={{
 																	disableUnderline: true,
 																	className: `${classes.textFieldInput}  ${
-																		(editQuiz || editPoll) &&
+																		isEdit &&
 																		status !== 'draft' &&
 																		classes.disableTextField
 																	}`
@@ -351,13 +394,13 @@ const QuestionForm = ({
 															/>
 														</div>
 
-														<p className={globalClasses.mediaError}>
+														{/* <p className={globalClasses.mediaError}>
 															{isError.question
 																? 'You need to provide a question in order to post.'
 																: ''}
-														</p>
+														</p> */}
 
-														<div className={classes.titleContainer}>
+														{/* <div className={classes.titleContainer}>
 															<div className={globalClasses.characterCount}>
 																<h6
 																	className={
@@ -385,9 +428,7 @@ const QuestionForm = ({
 																</h6>
 															</div>
 															<TextField
-																disabled={
-																	(editQuiz || editPoll) && status !== 'draft'
-																}
+																disabled={isEdit && status !== 'draft'}
 																value={form.answer1}
 																onChange={(e) => {
 																	setForm((prev) => {
@@ -399,7 +440,7 @@ const QuestionForm = ({
 																InputProps={{
 																	disableUnderline: true,
 																	className: `${classes.textFieldInput}  ${
-																		(editQuiz || editPoll) &&
+																		isEdit &&
 																		status !== 'draft' &&
 																		classes.disableTextField
 																	}`
@@ -408,76 +449,120 @@ const QuestionForm = ({
 																maxRows={1}
 																inputProps={{ maxLength: 29 }}
 															/>
-														</div>
+														</div> */}
 
-														<p className={globalClasses.mediaError}>
+														{/* <p className={globalClasses.mediaError}>
 															{isError.ans1
 																? type === 'quiz'
 																	? 'You need to provide right answer in order to post'
 																	: 'You need to provide first answer in order to post'
 																: ''}
-														</p>
+														</p> */}
+														{form?.answers.length > 0 &&
+															form?.answers.map((item, index) => {
+																console.log('ITEM ANSWER', item);
+																return (
+																	<div
+																		className={classes.titleContainer}
+																		item={item}
+																		index={index}
+																		key={item.sort_order}
+																	>
+																		<div
+																			className={globalClasses.characterCount}
+																		>
+																			<h6
+																				className={
+																					isError.ans2
+																						? globalClasses.errorState
+																						: globalClasses.noErrorState
+																				}
+																			>
+																				{type === 'quiz' && index === 0
+																					? 'RIGHT ANSWER'
+																					: index > 0
+																					? 'WRONG ANSWER ' + index
+																					: 'ANSWER 2'}
+																			</h6>
+																			<h6
+																				style={{
+																					color:
+																						form.answers[index]?.answer
+																							.length >= 22 &&
+																						form.answers[index]?.answer
+																							.length <= 28
+																							? 'pink'
+																							: form.answers[index]?.answer
+																									.length === 29
+																							? 'red'
+																							: 'white'
+																				}}
+																			>
+																				{form.answers[index]?.answer.length}/29
+																			</h6>
+																		</div>
+																		<TextField
+																			disabled={isEdit && status !== 'draft'}
+																			value={form.answers[index]?.answer}
+																			onChange={(e) => {
+																				handleAnswerChange(e, index);
+																			}}
+																			placeholder={
+																				'Please write your answer here'
+																			}
+																			className={classes.textField}
+																			InputProps={{
+																				disableUnderline: true,
+																				className: `${
+																					classes.textFieldInput
+																				}  ${
+																					isEdit &&
+																					status !== 'draft' &&
+																					classes.disableTextField
+																				}`,
+																				startAdornment: (
+																					<InputAdornment position='end'>
+																						{index < 2 ? (
+																							<> </>
+																						) : (
+																							<DeleteBin
+																								style={{ marginTop: '20px' }}
+																								onClick={() => {
+																									handleAnswerDelete(index);
+																								}}
+																							/>
+																						)}
+																					</InputAdornment>
+																				)
+																			}}
+																			multiline
+																			maxRows={1}
+																			inputProps={{ maxLength: 29 }}
+																		/>
+																	</div>
+																);
+															})}
 
-														<div className={classes.titleContainer}>
-															<div className={globalClasses.characterCount}>
-																<h6
-																	className={
-																		isError.ans2
-																			? globalClasses.errorState
-																			: globalClasses.noErrorState
-																	}
-																>
-																	{type === 'quiz'
-																		? 'WRONG ANSWER'
-																		: 'ANSWER 2'}
-																</h6>
-																<h6
-																	style={{
-																		color:
-																			form.answer2?.length >= 22 &&
-																			form.answer2?.length <= 28
-																				? 'pink'
-																				: form.answer2?.length === 29
-																				? 'red'
-																				: 'white'
-																	}}
-																>
-																	{form.answer2?.length}/29
-																</h6>
-															</div>
-															<TextField
-																disabled={
-																	(editQuiz || editPoll) && status !== 'draft'
-																}
-																value={form.answer2}
-																onChange={(e) => {
-																	setForm((prev) => {
-																		return { ...prev, answer2: e.target.value };
-																	});
-																}}
-																placeholder={'Please write your answer here'}
-																className={classes.textField}
-																InputProps={{
-																	disableUnderline: true,
-																	className: `${classes.textFieldInput}  ${
-																		(editQuiz || editPoll) &&
-																		status !== 'draft' &&
-																		classes.disableTextField
-																	}`
-																}}
-																multiline
-																maxRows={1}
-																inputProps={{ maxLength: 29 }}
-															/>
+														<div
+															className={classes.addNewAnswer}
+															onClick={() => handleNewAnswer()}
+															style={{
+																pointerEvents:
+																	form?.answers.length < 5 ? 'auto' : 'none',
+																cursor: 'pointer'
+															}}
+														>
+															<NewsAddIcon />
+															<h6>ADD ANSWER</h6>
 														</div>
 
-														<p className={globalClasses.mediaError}>
+														{/* <p className={globalClasses.mediaError}>
 															{isError.ans2
 																? type === 'quiz'
 																	? 'You need to provide wrong answer in order to post'
 																	: 'You need to provide second answer in order to post'
 																: ''}
-														</p>
+														</p> */}
 
 														<div className={classes.titleContainer}>
 															<h6
@@ -490,7 +575,7 @@ const QuestionForm = ({
 																LABELS
 															</h6>
 															<Labels
-																isEdit={editPoll || editQuiz}
+																isEdit={isEdit}
 																//	setDisableDropdown={setDisableDropdown}
 																selectedLabels={form.labels}
 																setSelectedLabels={(newVal) => {
