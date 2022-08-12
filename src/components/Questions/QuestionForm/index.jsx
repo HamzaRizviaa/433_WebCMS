@@ -165,14 +165,15 @@ const QuestionForm = ({
 
 	const handleAnswerDelete = (index) => {
 		let dataCopy = [...form.answers];
-		console.log('COPY FORM', dataCopy);
 		if (index > 1) {
-			setForm(
-				dataCopy.filter((file, position) => {
-					console.log('THISSS', index);
-					position !== index;
-				})
-			);
+			setForm((prev) => {
+				return {
+					...prev,
+					answers: dataCopy.filter((val) => {
+						return val.position !== index;
+					})
+				};
+			});
 		}
 	};
 
@@ -394,11 +395,11 @@ const QuestionForm = ({
 															/>
 														</div>
 
-														{/* <p className={globalClasses.mediaError}>
+														<p className={globalClasses.mediaError}>
 															{isError.question
 																? 'You need to provide a question in order to post.'
 																: ''}
-														</p> */}
+														</p>
 
 														{/* <div className={classes.titleContainer}>
 															<div className={globalClasses.characterCount}>
