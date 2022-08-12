@@ -9,7 +9,10 @@ import classes from './_labels.module.scss';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 //new labels search
 import { useDispatch, useSelector } from 'react-redux';
-import { getNewLabelsSearch } from '../../pages/PostLibrary/postLibrarySlice';
+import {
+	getAllNewLabels,
+	getNewLabelsSearch
+} from '../../pages/PostLibrary/postLibrarySlice';
 import _debounce from 'lodash/debounce';
 
 const Labels = ({
@@ -42,6 +45,12 @@ const Labels = ({
 
 	console.log(newLabelsSearch, 'ls');
 
+	let duplicateRemoval = [];
+	selectedLabels?.map((item) => duplicateRemoval.push(item.id));
+	let selectedLabelsRemoved = newLabelsSearch.filter(
+		(item) => !duplicateRemoval.includes(item.id)
+	);
+
 	const labelsParams = (labels) => {
 		return labels.reduce((accumulator, currentItem, currentIndex) => {
 			accumulator[`already_searched[${currentIndex}]`] = currentItem.name;
@@ -63,6 +72,8 @@ const Labels = ({
 					...(selectedLabels?.length ? labelsParams(selectedLabels) : {})
 				})
 			);
+		} else {
+			dispatch(getAllNewLabels());
 		}
 	};
 
@@ -141,7 +152,9 @@ const Labels = ({
 			id='free-solo-2-demo'
 			disableClearable
 			// options={isEdit && draftStatus === 'draft' ? newOptions : LabelsOptions} //old labels
-			options={isEdit && draftStatus === 'draft' ? newOptions : newLabelsSearch} // new labels on search
+			options={
+				isEdit && draftStatus === 'draft' ? newOptions : selectedLabelsRemoved
+			} // new labels on search
 			renderInput={(params) => (
 				<TextField
 					{...params}

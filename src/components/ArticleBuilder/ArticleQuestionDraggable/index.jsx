@@ -36,6 +36,7 @@ const ArticleQuestionDraggable = ({
 		setClickExpandIcon(!clickExpandIcon);
 		setIsOpen(!clickExpandIcon);
 	};
+	const [qtype, setQtype] = useState('poll');
 
 	const muiClasses = useStyles();
 
@@ -93,8 +94,12 @@ const ArticleQuestionDraggable = ({
 									{!initialData?.question_id ? (
 										<>
 											<TabsListUnstyled className={muiClasses.tabMainDiv}>
-												<TabUnstyled>Add Poll</TabUnstyled>
-												<TabUnstyled>Add Quiz</TabUnstyled>
+												<TabUnstyled onClick={() => setQtype('poll')}>
+													Add Poll
+												</TabUnstyled>
+												<TabUnstyled onClick={() => setQtype('quiz')}>
+													Add Quiz
+												</TabUnstyled>
 											</TabsListUnstyled>
 										</>
 									) : (
@@ -104,7 +109,8 @@ const ArticleQuestionDraggable = ({
 												: 'Edit Quiz'}
 										</div>
 									)}
-									{isEdit && item?.data?.question_type === 'poll' ? (
+									{initialData?.question_id &&
+									item?.data?.question_type === 'poll' ? (
 										<TabPanelUnstyled value={0}>
 											<ArticleQuestionUpload
 												setDisableDropdown={setDisableDropdown}
@@ -124,9 +130,11 @@ const ArticleQuestionDraggable = ({
 												status={status}
 												isEdit={isEdit}
 												type='poll'
+												qtype={qtype}
 											/>
 										</TabPanelUnstyled>
-									) : isEdit && item?.data?.question_type === 'quiz' ? (
+									) : initialData?.question_id &&
+									  item?.data?.question_type === 'quiz' ? (
 										<TabPanelUnstyled value={0}>
 											<ArticleQuestionUpload
 												item={item}
@@ -146,6 +154,7 @@ const ArticleQuestionDraggable = ({
 													handleClose();
 												}}
 												type='quiz'
+												qtype={qtype}
 											/>
 										</TabPanelUnstyled>
 									) : (
@@ -169,6 +178,7 @@ const ArticleQuestionDraggable = ({
 													status={status}
 													isEdit={isEdit}
 													type='poll'
+													qtype={qtype}
 												/>
 											</TabPanelUnstyled>
 											<TabPanelUnstyled value={1}>
@@ -190,6 +200,7 @@ const ArticleQuestionDraggable = ({
 														handleClose();
 													}}
 													type='quiz'
+													qtype={qtype}
 												/>
 											</TabPanelUnstyled>
 										</>
