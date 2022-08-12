@@ -554,7 +554,6 @@ const UploadOrEditArticle = ({
 
 		let elementsData;
 		if (data.length) {
-			console.log('DATA ID ', data);
 			elementsData = data.map((item, index) => {
 				return {
 					element_type: item.element_type,

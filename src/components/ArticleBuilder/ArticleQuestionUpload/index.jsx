@@ -40,7 +40,8 @@ const ArticleQuestionUpload = ({
 	handleDeleteData,
 	setIsOpen,
 	initialData,
-	isEdit
+	isEdit,
+	qtype
 	// WidthHeightCallback,
 }) => {
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -51,7 +52,7 @@ const ArticleQuestionUpload = ({
 	const [loading, setLoading] = useState(false);
 	const [ans1Id, setAns1Id] = useState('');
 	const [ans2Id, setAns2Id] = useState('');
-	console.log(type, 'ttt');
+
 	const [form, setForm] = useState(
 		initialData
 			? {
@@ -106,7 +107,7 @@ const ArticleQuestionUpload = ({
 				question_type: type === 'quiz' ? 'quiz' : 'poll'
 			});
 		}
-	}, [type]);
+	}, []);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png',
@@ -188,8 +189,6 @@ const ArticleQuestionUpload = ({
 		setDisableDropdown(true);
 		setIsError({});
 	};
-
-	console.log(form, 'ID');
 
 	const handleAnswerChange = (event, index) => {
 		if (initialData?.question_id) {
