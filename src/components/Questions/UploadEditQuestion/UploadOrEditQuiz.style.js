@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 export const useStyles = makeStyles((theme) => ({
 	contentWrapper: {
-		minHeight: 'calc(100vh - 107px)',
+		//	minHeight: 'calc(100vh - 107px)',
 		position: 'relative',
 		display: 'flex',
 		flexDirection: 'column',

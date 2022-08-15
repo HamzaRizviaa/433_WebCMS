@@ -15,6 +15,7 @@ import checkFileSize from '../../../utils/validateFileSize';
 import Labels from '../../Labels';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import Typography from '@mui/material/Typography';
+import uploadFileToServer from '../../../utils/uploadFileToServer';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { ReactComponent as Union } from '../../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
@@ -22,6 +23,7 @@ import { useStyles } from '../UploadEditQuestion/UploadOrEditQuiz.style';
 import { Draggable } from 'react-beautiful-dnd';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import SecondaryLoader from '../../SecondaryLoader';
 import { ReactComponent as NewsAddIcon } from '../../../assets/newsAddIcon.svg';
 import { ReactComponent as DeleteBin } from '../../../assets/DeleteBin.svg';
 import {
@@ -53,6 +55,7 @@ const QuestionForm = ({
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
 	const [isError, setIsError] = useState({});
+	const [loading, setLoading] = useState(false);
 	const [form, setForm] = useState({
 		uploadedFiles: [],
 		dropbox_url: '',
@@ -77,8 +80,13 @@ const QuestionForm = ({
 			validator: checkFileSize
 		});
 
+	const uploadedFile = async (newFiles) => {
+		return await uploadFileToServer(newFiles, 'articleLibrary');
+	};
+
 	useEffect(() => {
 		if (acceptedFiles?.length) {
+			setLoading(true);
 			setIsError({});
 
 			let newFiles = acceptedFiles.map((file) => {
@@ -93,9 +101,21 @@ const QuestionForm = ({
 					type: file.type === 'image'
 				};
 			});
-			//setUploadedFiles([...uploadedFiles, ...newFiles]);
-			setForm((prev) => {
-				return { ...prev, uploadedFiles: [...form.uploadedFiles, ...newFiles] };
+			uploadedFile(newFiles[0], 'articleLibrary').then((res) => {
+				setForm((prev) => {
+					return {
+						...prev,
+						uploadedFiles: [
+							{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
+						]
+					};
+				});
+				sendDataToParent({
+					uploadedFiles: [
+						{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
+					]
+				});
+				setLoading(false);
 			});
 		}
 	}, [acceptedFiles]);
@@ -171,8 +191,6 @@ const QuestionForm = ({
 					})
 				};
 			});
-
-			console.log(form, '=== FORM ====');
 		}
 	};
 
@@ -190,7 +208,7 @@ const QuestionForm = ({
 		};
 		setForm(formCopy);
 		let answers = { answers: formCopy.answers };
-		// sendDataToParent(answers);
+		sendDataToParent(answers);
 	};
 	return (
 		<div>
@@ -290,20 +308,32 @@ const QuestionForm = ({
 																	})}
 																>
 																	<input {...getInputProps()} />
-																	<AddCircleOutlineIcon
-																		className={globalClasses.addFilesIcon}
-																	/>
-																	<p className={globalClasses.dragMsg}>
-																		Click or drag file to this area to upload
-																	</p>
-																	<p className={globalClasses.formatMsg}>
-																		Supported formats are jpeg and png
-																	</p>
-																	<p className={globalClasses.uploadMediaError}>
-																		{isError.uploadedFiles
-																			? 'You need to upload a media in order to post'
-																			: ''}
-																	</p>
+
+																	{loading ? (
+																		<SecondaryLoader loading={true} />
+																	) : (
+																		<>
+																			<AddCircleOutlineIcon
+																				className={globalClasses.addFilesIcon}
+																			/>
+																			<p className={globalClasses.dragMsg}>
+																				Click or drag file to this area to
+																				upload
+																			</p>
+																			<p className={globalClasses.formatMsg}>
+																				Supported formats are jpeg and png
+																			</p>
+																			<p
+																				className={
+																					globalClasses.uploadMediaError
+																				}
+																			>
+																				{isError.uploadedFiles
+																					? 'You need to upload a media in order to post'
+																					: ''}
+																			</p>
+																		</>
+																	)}
 																</div>
 															</section>
 														) : (
@@ -318,14 +348,18 @@ const QuestionForm = ({
 															<h6>DROPBOX URL</h6>
 															<TextField
 																value={form.dropbox_url}
-																onChange={(e) =>
+																onChange={(e) => {
 																	setForm((prev) => {
 																		return {
 																			...prev,
 																			dropbox_url: e.target.value
 																		};
-																	})
-																}
+																	});
+
+																	sendDataToParent({
+																		dropbox_url: e.target.value
+																	});
+																}}
 																placeholder={'Please drop the dropbox URL here'}
 																className={classes.textField}
 																multiline
@@ -377,6 +411,9 @@ const QuestionForm = ({
 																			question: e.target.value
 																		};
 																	});
+																	sendDataToParent({
+																		question: e.target.value
+																	});
 																}}
 																placeholder={'Please write your question here'}
 																className={classes.textField}
@@ -400,67 +437,8 @@ const QuestionForm = ({
 																: ''}
 														</p>
 
-														{/* <div className={classes.titleContainer}>
-															<div className={globalClasses.characterCount}>
-																<h6
-																	className={
-																		isError.ans1
-																			? globalClasses.errorState
-																			: globalClasses.noErrorState
-																	}
-																>
-																	{type === 'quiz'
-																		? 'RIGHT ANSWER'
-																		: 'ANSWER 1'}
-																</h6>
-																<h6
-																	style={{
-																		color:
-																			form.answer1?.length >= 22 &&
-																			form.answer1?.length <= 28
-																				? 'pink'
-																				: form.answer1?.length === 29
-																				? 'red'
-																				: 'white'
-																	}}
-																>
-																	{form.answer1?.length}/29
-																</h6>
-															</div>
-															<TextField
-																disabled={isEdit && status !== 'draft'}
-																value={form.answer1}
-																onChange={(e) => {
-																	setForm((prev) => {
-																		return { ...prev, answer1: e.target.value };
-																	});
-																}}
-																placeholder={'Please write your answer here'}
-																className={classes.textField}
-																InputProps={{
-																	disableUnderline: true,
-																	className: `${classes.textFieldInput}  ${
-																		isEdit &&
-																		status !== 'draft' &&
-																		classes.disableTextField
-																	}`
-																}}
-																multiline
-																maxRows={1}
-																inputProps={{ maxLength: 29 }}
-															/>
-														</div> */}
-
-														{/* <p className={globalClasses.mediaError}>
-															{isError.ans1
-																? type === 'quiz'
-																	? 'You need to provide right answer in order to post'
-																	: 'You need to provide first answer in order to post'
-																: ''}
-														</p> */}
 														{form?.answers.length > 0 &&
 															form?.answers.map((item, index) => {
-																console.log('ITEM ANSWER', item);
 																return (
 																	<div
 																		className={classes.titleContainer}
@@ -582,6 +560,9 @@ const QuestionForm = ({
 																	setForm((prev) => {
 																		return { ...prev, labels: [...newVal] };
 																	});
+																	sendDataToParent({
+																		labels: [...newVal]
+																	});
 																}} //closure
 																LabelsOptions={quizLabels}
 																extraLabel={extraLabel}
@@ -598,12 +579,6 @@ const QuestionForm = ({
 																  } more labels in order to upload media`
 																: isError.selectedLabelsDraft
 																? 'You need to select atleast 1 label to save as draft'
-																: ''}
-														</p>
-
-														<p className={globalClasses.mediaError}>
-															{isError.endDate
-																? 'You need to select a date in order to post'
 																: ''}
 														</p>
 													</div>

@@ -7,7 +7,7 @@ import _debounce from 'lodash/debounce';
 import Table from '../../components/table';
 //import classes2 from './_questionLibrary.module.scss';
 import Button from '../../components/button';
-
+import { ReactComponent as MenuIcon } from '../../assets/Union.svg';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Tooltip from '@mui/material/Tooltip';
@@ -237,7 +237,17 @@ const QuestionLibrary = () => {
 			formatter: (content) => {
 				return (
 					//<div className={classes.questionRow}>{content}</div>
-					<div className={classes.questionRow}>
+					<div className={classes.questionRow} style={{ display: 'flex' }}>
+						{/* {row.total_slides > 1 ? ( 
+						<MenuIcon
+							style={{ marginRight: '10px', height: '20px', width: '20px' }}
+						/>
+						 ) : (
+							<div
+								style={{ marginRight: '10px', height: '20px', width: '20px' }}
+							></div>
+						)} */}
+
 						<Markup content={`${content}`} />
 					</div>
 				);
