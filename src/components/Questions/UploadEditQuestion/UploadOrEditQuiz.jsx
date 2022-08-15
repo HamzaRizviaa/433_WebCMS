@@ -42,19 +42,16 @@ import LoadingOverlay from 'react-loading-overlay';
 import PrimaryLoader from '../../PrimaryLoader';
 import Slide from '@mui/material/Slide';
 const UploadOrEditQuiz = ({
-	heading1,
 	open,
-	editQuiz,
-	editPoll,
-
 	previewRef,
 	dialogWrapper,
-
 	quiz,
 	handleClose,
 	page,
 	status,
 	type,
+	editQuiz,
+	editPoll,
 	//new
 	// open,
 	//handleClose,
@@ -77,7 +74,7 @@ const UploadOrEditQuiz = ({
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
-	const [questiontype, setQuestionType] = useState('poll');
+	const [questionType, setQuestionType] = useState('poll');
 	const [questionSlides, setQuestionSlides] = useState([]); // data
 
 	const [form, setForm] = useState({
@@ -91,17 +88,14 @@ const UploadOrEditQuiz = ({
 	});
 
 	const loadingRef = useRef(null);
-
 	const dispatch = useDispatch();
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const muiClasses = tabPansStyles();
 
-	const {
-		labels,
-		questionEditStatus,
-		questionEdit: editQuestionData
-	} = useSelector((state) => state.questionLibrary);
+	const { questionEditStatus, questionEdit: editQuestionData } = useSelector(
+		(state) => state.questionLibrary
+	);
 
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
@@ -189,14 +183,11 @@ const UploadOrEditQuiz = ({
 	const toggleDeleteModal = () => {
 		setOpenDeletePopup(!openDeletePopup);
 	};
+
 	const toggleStopModal = () => {
 		setStopStatus(true);
 		setOpenStopPopup(!openStopPopup);
 	};
-
-	// useEffect(() => {
-	// 	dispatch(getQuestionLabels());
-	// }, []);
 
 	// eslint-disable-next-line no-unused-vars
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
@@ -448,10 +439,8 @@ const UploadOrEditQuiz = ({
 
 	const resetState = () => {
 		setQuestionSlides([]);
-		// setFileRejectionError('');
-		//	setPreviewFile(null);
-		//setPreviewBool(false);
-
+		setPreviewFile(null);
+		setPreviewBool(false);
 		setDisableDropdown(true);
 		setConvertedDate(null);
 		setTimeout(() => {
@@ -461,26 +450,14 @@ const UploadOrEditQuiz = ({
 		setIsError({});
 		setEditQuizBtnDisabled(false);
 		setDraftBtnDisabled(false);
-		//resetForm(form);
 		setForm({
-			uploadedFiles: [],
-			dropbox_url: '',
-			question: '',
-			answer1: '',
-			answer2: '',
-			labels: [],
 			end_date: null
 		});
 	};
 
 	const validatePostBtn = () => {
 		setIsError({
-			endDate: !form.end_date,
-			uploadedFiles: form.uploadedFiles.length < 1,
-			selectedLabels: form.labels.length < 7,
-			question: !form.question,
-			ans1: !form.answer1,
-			ans2: !form.answer2
+			endDate: !form.end_date
 		});
 		setTimeout(() => {
 			setIsError({});
@@ -498,12 +475,7 @@ const UploadOrEditQuiz = ({
 			}, 5000);
 		} else {
 			setIsError({
-				endDate: !form.end_date,
-				uploadedFiles: form.uploadedFiles.length < 1,
-				selectedLabelsDraft: form.labels.length < 1,
-				question: !form.question,
-				ans1: !form.answer1,
-				ans2: !form.answer2
+				endDate: !form.end_date
 			});
 			setTimeout(() => {
 				setIsError({});
@@ -515,27 +487,14 @@ const UploadOrEditQuiz = ({
 		if (editQuestionData) {
 			setEditQuizBtnDisabled(
 				postButtonStatus ||
-					!form.uploadedFiles.length ||
 					!form.end_date ||
-					((type === 'quiz'
+					(type === 'quiz'
 						? editQuestionData?.quiz_end_date === convertedDate
-						: editQuestionData?.poll_end_date === convertedDate) &&
-						editQuestionData?.file_name === form.uploadedFiles[0]?.file_name &&
-						editQuestionData?.dropbox_url?.trim() === form.dropbox_url.trim())
+						: editQuestionData?.poll_end_date === convertedDate)
 			);
 		}
 	}, [editQuestionData, form, convertedDate]);
 
-	const checkDuplicateLabel = () => {
-		let formLabels = form?.labels?.map((formL) => {
-			if (editQuestionData?.labels?.includes(formL.name)) {
-				return true;
-			} else {
-				return false;
-			}
-		});
-		return formLabels.some((label) => label === false);
-	};
 	const handlePreviewEscape = () => {
 		setPreviewBool(false);
 		setPreviewFile(null);
@@ -546,19 +505,9 @@ const UploadOrEditQuiz = ({
 			setDraftBtnDisabled(
 				!validateDraft(form) ||
 					postButtonStatus ||
-					((type === 'quiz'
+					(type === 'quiz'
 						? editQuestionData?.quiz_end_date === convertedDate
-						: editQuestionData?.poll_end_date === convertedDate) &&
-						editQuestionData?.question === form?.question &&
-						editQuestionData?.answers[0]?.answer === form?.answer1 &&
-						editQuestionData?.answers[1]?.answer === form?.answer2 &&
-						(editQuestionData?.image || form?.uploadedFiles[0]
-							? editQuestionData?.file_name ===
-							  form?.uploadedFiles[0]?.file_name
-							: true) &&
-						editQuestionData?.dropbox_url?.trim() === form.dropbox_url.trim() &&
-						editQuestionData?.labels?.length === form?.labels?.length &&
-						!checkDuplicateLabel())
+						: editQuestionData?.poll_end_date === convertedDate)
 			);
 		}
 	}, [editQuestionData, form, convertedDate]);
@@ -643,6 +592,15 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
+	const resetSlides = (type) => {
+		if (type !== questionType) {
+			setQuestionSlides([]);
+			setForm({
+				end_date: null
+			});
+		}
+	};
+
 	return (
 		<>
 			<Slider
@@ -696,6 +654,7 @@ const UploadOrEditQuiz = ({
 															<TabUnstyled
 																onClick={() => {
 																	setQuestionType('poll');
+																	resetSlides('poll');
 																}}
 															>
 																Add Poll
@@ -703,6 +662,7 @@ const UploadOrEditQuiz = ({
 															<TabUnstyled
 																onClick={() => {
 																	setQuestionType('quiz');
+																	resetSlides('quiz');
 																}}
 															>
 																Add Quiz
@@ -712,7 +672,6 @@ const UploadOrEditQuiz = ({
 														<TabPanelUnstyled value={1}></TabPanelUnstyled>
 													</TabsUnstyled>
 												</div>
-
 												<br />
 												<div className={classes.datePickerContainer}>
 													<h6
@@ -722,7 +681,7 @@ const UploadOrEditQuiz = ({
 																: globalClasses.noErrorState
 														}
 													>
-														{questiontype === 'quiz'
+														{questionType === 'quiz'
 															? 'QUIZ END DATE'
 															: 'POLL END DATE'}
 													</h6>
@@ -763,6 +722,14 @@ const UploadOrEditQuiz = ({
 														/>
 													</div>
 												</div>
+												<p className={globalClasses.mediaError}>
+													{isError.endDate
+														? `${
+																'You need to select date to post ' +
+																questionType
+														  }`
+														: ''}
+												</p>
 											</AccordionDetails>
 										</Accordion>
 									</div>
@@ -774,7 +741,7 @@ const UploadOrEditQuiz = ({
 													<QuestionForm
 														item={item}
 														index={index}
-														type={questiontype}
+														type={questionType}
 														key={item.sort_order}
 														sendDataToParent={(data) => setNewData(data, index)}
 														handleDeleteMedia={(data) =>
