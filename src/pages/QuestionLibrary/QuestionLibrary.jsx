@@ -716,6 +716,7 @@ const QuestionLibrary = () => {
 					buttonText={
 						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
 					}
+					location={rowLocation}
 				/>
 				<QuizDetails
 					page={page}

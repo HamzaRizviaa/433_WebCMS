@@ -35,13 +35,6 @@ export default function QuizDetails({
 
 	const muiClasses = useStyles();
 
-	// Question Library :  click on row with type:quiz
-	// console.log(
-	// 	location === 'article' || status === 'CLOSED' || status === 'draft',
-	// 	status,
-	// 	location,
-	// 	'status is ?? '
-	// );
 	return (
 		<Slider
 			open={open}
@@ -84,6 +77,7 @@ export default function QuizDetails({
 						type={'quiz'}
 						dialogWrapper={dialogWrapper}
 						publishedStatus='draft'
+						location={location}
 					/>
 				) : location === 'article' ? (
 					<QuizResults
@@ -144,6 +138,7 @@ export default function QuizDetails({
 								type={'quiz'}
 								dialogWrapper={dialogWrapper}
 								publishedStatus='draft'
+								location={location}
 							/>
 						</TabPanelUnstyled>
 					</TabsUnstyled>

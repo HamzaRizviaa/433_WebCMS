@@ -24,7 +24,8 @@ const Labels = ({
 	extraLabel,
 	// handleChangeExtraLabel,
 	draftStatus = 'published',
-	setExtraLabel
+	setExtraLabel,
+	location
 }) => {
 	//const regex = /[%<>\\$'"\s@#/-=+&^*()!:;.,?{}[|]]/;
 	const regex = /\W/; // all characters that are not numbers and alphabets and underscore
@@ -146,8 +147,12 @@ const Labels = ({
 					''
 				)
 			}
-			className={`${classes.autoComplete} ${
-				isEdit && draftStatus !== 'draft' && classes.disableAutoComplete
+			className={`${classes.autoComplete}  ${
+				location === 'article'
+					? classes.disableAutoComplete
+					: isEdit && draftStatus !== 'draft'
+					? classes.disableAutoComplete
+					: ''
 			}`}
 			id='free-solo-2-demo'
 			disableClearable
@@ -259,7 +264,8 @@ Labels.propTypes = {
 	extraLabel: PropTypes.string,
 	handleChangeExtraLabel: PropTypes.func,
 	draftStatus: PropTypes.string,
-	setExtraLabel: PropTypes.func
+	setExtraLabel: PropTypes.func,
+	location: PropTypes.string
 };
 
 export default Labels;
