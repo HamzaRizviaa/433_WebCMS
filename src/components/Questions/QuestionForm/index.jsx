@@ -40,15 +40,12 @@ const QuestionForm = ({
 	initialData,
 	sendDataToParent,
 	handleDeleteMedia,
+	setDisableDropdown,
 	handleDeleteQuestionSlide,
-	setPreviewBool = false, //to be set
-	setPreviewFile = false, //to be set
+	setPreviewBool,
+	setPreviewFile,
 	isEdit
 }) => {
-	//dummy
-	var editPoll = false; // need to remove
-	var editQuiz = false; //need to remove
-	console.log(type, 'type');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [expanded, setExpanded] = useState(true);
 	const [quizLabels, setQuizLabels] = useState([]);
@@ -174,6 +171,8 @@ const QuestionForm = ({
 					})
 				};
 			});
+
+			console.log(form, '=== FORM ====');
 		}
 	};
 
@@ -276,40 +275,40 @@ const QuestionForm = ({
 															}}
 														/>
 
-														{/* {!form?.uploadedFiles.length ? ( */}
-														<section
-															className={globalClasses.dropZoneContainer}
-															style={{
-																borderColor: isError.uploadedFiles
-																	? '#ff355a'
-																	: 'yellow'
-															}}
-														>
-															<div
-																{...getRootProps({
-																	className: globalClasses.dropzone
-																})}
+														{!form?.uploadedFiles.length ? (
+															<section
+																className={globalClasses.dropZoneContainer}
+																style={{
+																	borderColor: isError.uploadedFiles
+																		? '#ff355a'
+																		: 'yellow'
+																}}
 															>
-																<input {...getInputProps()} />
-																<AddCircleOutlineIcon
-																	className={globalClasses.addFilesIcon}
-																/>
-																<p className={globalClasses.dragMsg}>
-																	Click or drag file to this area to upload
-																</p>
-																<p className={globalClasses.formatMsg}>
-																	Supported formats are jpeg and png
-																</p>
-																<p className={globalClasses.uploadMediaError}>
-																	{isError.uploadedFiles
-																		? 'You need to upload a media in order to post'
-																		: ''}
-																</p>
-															</div>
-														</section>
-														{/* ) : (
+																<div
+																	{...getRootProps({
+																		className: globalClasses.dropzone
+																	})}
+																>
+																	<input {...getInputProps()} />
+																	<AddCircleOutlineIcon
+																		className={globalClasses.addFilesIcon}
+																	/>
+																	<p className={globalClasses.dragMsg}>
+																		Click or drag file to this area to upload
+																	</p>
+																	<p className={globalClasses.formatMsg}>
+																		Supported formats are jpeg and png
+																	</p>
+																	<p className={globalClasses.uploadMediaError}>
+																		{isError.uploadedFiles
+																			? 'You need to upload a media in order to post'
+																			: ''}
+																	</p>
+																</div>
+															</section>
+														) : (
 															''
-														)} */}
+														)}
 
 														<p className={globalClasses.fileRejectionError}>
 															{fileRejectionError}
@@ -481,9 +480,9 @@ const QuestionForm = ({
 																			>
 																				{type === 'quiz' && index === 0
 																					? 'RIGHT ANSWER'
-																					: index > 0
+																					: type === 'quiz' && index > 0
 																					? 'WRONG ANSWER ' + index
-																					: 'ANSWER 2'}
+																					: 'ANSWER ' + `${index + 1}`}
 																			</h6>
 																			<h6
 																				style={{
@@ -577,7 +576,7 @@ const QuestionForm = ({
 															</h6>
 															<Labels
 																isEdit={isEdit}
-																//	setDisableDropdown={setDisableDropdown}
+																setDisableDropdown={setDisableDropdown}
 																selectedLabels={form.labels}
 																setSelectedLabels={(newVal) => {
 																	setForm((prev) => {
@@ -664,7 +663,8 @@ QuestionForm.propTypes = {
 	handleDeleteMedia: PropTypes.func,
 	handleDeleteQuestionSlide: PropTypes.func,
 	setPreviewBool: PropTypes.func.isRequired,
-	setPreviewFile: PropTypes.func.isRequired
+	setPreviewFile: PropTypes.func.isRequired,
+	setDisableDropdown: PropTypes.func
 };
 
 export default QuestionForm;

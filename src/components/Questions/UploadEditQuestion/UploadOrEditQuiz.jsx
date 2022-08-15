@@ -43,12 +43,10 @@ const UploadOrEditQuiz = ({
 	open,
 	editQuiz,
 	editPoll,
-	setPreviewBool,
-	previewFile,
-	setPreviewFile,
+
 	previewRef,
 	dialogWrapper,
-	setDisableDropdown,
+
 	quiz,
 	handleClose,
 	page,
@@ -72,6 +70,9 @@ const UploadOrEditQuiz = ({
 	const [stopStatus, setStopStatus] = useState(false);
 
 	// new work
+	const [previewBool, setPreviewBool] = useState(false);
+	const [previewFile, setPreviewFile] = useState(null);
+	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [questiontype, setQuestionType] = useState('poll');
 	const [questionSlides, setQuestionSlides] = useState([]); // data
 
@@ -443,7 +444,7 @@ const UploadOrEditQuiz = ({
 		//	setPreviewFile(null);
 		//setPreviewBool(false);
 
-		//setDisableDropdown(true);
+		setDisableDropdown(true);
 		setConvertedDate(null);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
@@ -526,6 +527,10 @@ const UploadOrEditQuiz = ({
 			}
 		});
 		return formLabels.some((label) => label === false);
+	};
+	const handlePreviewEscape = () => {
+		setPreviewBool(false);
+		setPreviewFile(null);
 	};
 
 	useEffect(() => {
@@ -645,10 +650,11 @@ const UploadOrEditQuiz = ({
 					handleClose();
 				}}
 				title={title}
-
-				// handlePreview={() => {
-				// 	handlePreviewEscape();
-				// }}
+				disableDropdown={disableDropdown}
+				preview={previewBool}
+				handlePreview={() => {
+					handlePreviewEscape();
+				}}
 			>
 				<div className={globalClasses.accordionRoot}>
 					<Accordion defaultExpanded>
@@ -715,11 +721,11 @@ const UploadOrEditQuiz = ({
 										popperPlacement='bottom'
 										onCalendarOpen={() => {
 											setCalenderOpen(true);
-											//	setDisableDropdown(false);
+											setDisableDropdown(false);
 										}}
 										onCalendarClose={() => {
 											setCalenderOpen(false);
-											//setDisableDropdown(true);
+											setDisableDropdown(true);
 										}}
 										isClearable={
 											(editPoll || editQuiz) && status === 'CLOSED'
@@ -753,6 +759,7 @@ const UploadOrEditQuiz = ({
 									setPreviewBool={setPreviewBool}
 									setPreviewFile={setPreviewFile}
 									isEdit={editPoll || editQuiz}
+									setDisableDropdown={setDisableDropdown}
 								/>
 							</>
 						);
