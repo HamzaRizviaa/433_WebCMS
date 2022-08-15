@@ -677,7 +677,10 @@ const UploadOrEditQuiz = ({
 							className={globalClasses.contentWrapperNoPreview}
 							style={{
 								width: previewFile != null ? '60%' : 'auto',
-								pointerEvents: location === 'article' ? 'none' : 'auto'
+								pointerEvents:
+									(editPoll || editQuiz) && location === 'article'
+										? 'none'
+										: 'auto'
 							}}
 						>
 							<div>
@@ -704,7 +707,9 @@ const UploadOrEditQuiz = ({
 										style={{
 											borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow',
 											backgroundColor:
-												location === 'article' ? '#404040' : 'transparent'
+												(editPoll || editQuiz) && location === 'article'
+													? '#404040'
+													: 'transparent'
 										}}
 									>
 										<div
@@ -751,7 +756,9 @@ const UploadOrEditQuiz = ({
 										InputProps={{
 											disableUnderline: true,
 											className: `${classes.textFieldInput}  ${
-												location === 'article' && classes.disableTextField
+												(editPoll || editQuiz) &&
+												location === 'article' &&
+												classes.disableTextField
 											}`,
 											style: {
 												borderRadius: form.dropbox_url ? '16px' : '40px'
@@ -798,7 +805,7 @@ const UploadOrEditQuiz = ({
 										InputProps={{
 											disableUnderline: true,
 											className: `${classes.textFieldInput}   ${
-												location === 'article'
+												(editPoll || editQuiz) && location === 'article'
 													? classes.disableTextField
 													: (editQuiz || editPoll) && status !== 'draft'
 													? classes.disableTextField
@@ -855,7 +862,7 @@ const UploadOrEditQuiz = ({
 										InputProps={{
 											disableUnderline: true,
 											className: `${classes.textFieldInput}  ${
-												location === 'article'
+												(editPoll || editQuiz) && location === 'article'
 													? classes.disableTextField
 													: (editQuiz || editPoll) && status !== 'draft'
 													? classes.disableTextField
@@ -914,7 +921,7 @@ const UploadOrEditQuiz = ({
 										InputProps={{
 											disableUnderline: true,
 											className: `${classes.textFieldInput}  ${
-												location === 'article'
+												(editPoll || editQuiz) && location === 'article'
 													? classes.disableTextField
 													: (editQuiz || editPoll) && status !== 'draft'
 													? classes.disableTextField
@@ -973,7 +980,7 @@ const UploadOrEditQuiz = ({
 										: ''}
 								</p>
 
-								{location === 'article' ? (
+								{(editPoll || editQuiz) && location === 'article' ? (
 									<></>
 								) : (
 									<>
@@ -1038,7 +1045,7 @@ const UploadOrEditQuiz = ({
 									: ''}
 							</p>
 
-							{location === 'article' ? (
+							{(editPoll || editQuiz) && location === 'article' ? (
 								<></>
 							) : (
 								<>

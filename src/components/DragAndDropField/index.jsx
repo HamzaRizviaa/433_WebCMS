@@ -164,7 +164,7 @@ const DragAndDropField = ({
 																}}
 															/>
 														</>
-													) : location === 'article' ? (
+													) : isEdit && location === 'article' ? (
 														<></>
 													) : file?.media_url ? (
 														<div style={{ display: 'flex' }}>

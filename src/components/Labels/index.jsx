@@ -148,7 +148,7 @@ const Labels = ({
 				)
 			}
 			className={`${classes.autoComplete}  ${
-				location === 'article'
+				isEdit && location === 'article'
 					? classes.disableAutoComplete
 					: isEdit && draftStatus !== 'draft'
 					? classes.disableAutoComplete
