@@ -169,8 +169,8 @@ const QuestionForm = ({
 			setForm((prev) => {
 				return {
 					...prev,
-					answers: dataCopy.filter((val) => {
-						return val.position !== index;
+					answers: dataCopy.filter((val, ind) => {
+						return ind !== index;
 					})
 				};
 			});
