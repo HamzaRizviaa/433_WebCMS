@@ -46,9 +46,9 @@ const Labels = ({
 	console.log(newLabelsSearch, 'ls');
 
 	let duplicateRemoval = [];
-	selectedLabels?.map((item) => duplicateRemoval.push(item.id));
+	selectedLabels?.map((item) => duplicateRemoval.push(item.name));
 	let selectedLabelsRemoved = newLabelsSearch.filter(
-		(item) => !duplicateRemoval.includes(item.id)
+		(item) => !duplicateRemoval.includes(item.name)
 	);
 
 	const labelsParams = (labels) => {
