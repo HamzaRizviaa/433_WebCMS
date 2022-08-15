@@ -74,6 +74,7 @@ export default function PollDetails({
 						status={status}
 						dialogWrapper={dialogWrapper}
 						publishedStatus='draft'
+						location={location}
 					/>
 				) : location === 'article' ? (
 					<QuizResults
@@ -127,6 +128,7 @@ export default function PollDetails({
 								status={status}
 								dialogWrapper={dialogWrapper}
 								publishedStatus='draft'
+								location={location}
 							/>
 						</TabPanelUnstyled>
 					</TabsUnstyled>

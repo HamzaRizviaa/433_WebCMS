@@ -51,7 +51,8 @@ const UploadOrEditQuiz = ({
 	handleClose,
 	page,
 	status,
-	type
+	type,
+	location
 }) => {
 	console.log(page, '==== page ====');
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -674,7 +675,10 @@ const UploadOrEditQuiz = ({
 						{questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>}
 						<div
 							className={globalClasses.contentWrapperNoPreview}
-							style={{ width: previewFile != null ? '60%' : 'auto' }}
+							style={{
+								width: previewFile != null ? '60%' : 'auto',
+								pointerEvents: location === 'article' ? 'none' : 'auto'
+							}}
 						>
 							<div>
 								<h5 className={classes.QuizQuestion}>{heading1}</h5>
@@ -691,13 +695,16 @@ const UploadOrEditQuiz = ({
 										setFileWidth(imgRef.current.naturalWidth);
 										setFileHeight(imgRef.current.naturalHeight);
 									}}
+									location={location}
 								/>
 
 								{!form.uploadedFiles.length ? (
 									<section
 										className={globalClasses.dropZoneContainer}
 										style={{
-											borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
+											borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow',
+											backgroundColor:
+												location === 'article' ? '#404040' : 'transparent'
 										}}
 									>
 										<div
@@ -743,7 +750,9 @@ const UploadOrEditQuiz = ({
 										maxRows={2}
 										InputProps={{
 											disableUnderline: true,
-											className: classes.textFieldInput,
+											className: `${classes.textFieldInput}  ${
+												location === 'article' && classes.disableTextField
+											}`,
 											style: {
 												borderRadius: form.dropbox_url ? '16px' : '40px'
 											}
@@ -788,11 +797,13 @@ const UploadOrEditQuiz = ({
 										className={classes.textField}
 										InputProps={{
 											disableUnderline: true,
-											className: `${classes.textFieldInput}  ${
-												(editQuiz || editPoll) &&
-												status !== 'draft' &&
-												classes.disableTextField
-											}`
+											className: `${classes.textFieldInput}   ${
+												location === 'article'
+													? classes.disableTextField
+													: (editQuiz || editPoll) && status !== 'draft'
+													? classes.disableTextField
+													: ''
+											} `
 										}}
 										inputProps={{ maxLength: 55 }}
 										multiline
@@ -844,10 +855,12 @@ const UploadOrEditQuiz = ({
 										InputProps={{
 											disableUnderline: true,
 											className: `${classes.textFieldInput}  ${
-												(editQuiz || editPoll) &&
-												status !== 'draft' &&
-												classes.disableTextField
-											}`
+												location === 'article'
+													? classes.disableTextField
+													: (editQuiz || editPoll) && status !== 'draft'
+													? classes.disableTextField
+													: ''
+											} `
 										}}
 										multiline
 										maxRows={1}
@@ -901,10 +914,12 @@ const UploadOrEditQuiz = ({
 										InputProps={{
 											disableUnderline: true,
 											className: `${classes.textFieldInput}  ${
-												(editQuiz || editPoll) &&
-												status !== 'draft' &&
-												classes.disableTextField
-											}`
+												location === 'article'
+													? classes.disableTextField
+													: (editQuiz || editPoll) && status !== 'draft'
+													? classes.disableTextField
+													: ''
+											} `
 										}}
 										multiline
 										maxRows={1}
@@ -944,6 +959,7 @@ const UploadOrEditQuiz = ({
 										handleChangeExtraLabel={handleChangeExtraLabel}
 										draftStatus={status}
 										setExtraLabel={setExtraLabel}
+										location={location}
 									/>
 								</div>
 
@@ -957,123 +973,64 @@ const UploadOrEditQuiz = ({
 										: ''}
 								</p>
 
-								<div className={classes.datePickerContainer}>
-									<h6
-										className={
-											isError.endDate
-												? globalClasses.errorState
-												: globalClasses.noErrorState
-										}
-									>
-										{quiz || editQuiz ? 'QUIZ END DATE' : 'POLL END DATE'}
-									</h6>
-									<div
-										className={classes.datePicker}
-										style={{ marginBottom: calenderOpen ? '250px' : '' }}
-									>
-										<DatePicker
-											customInput={<ExampleCustomInput />}
-											disabled={
-												(editPoll || editQuiz) && status === 'CLOSED'
-													? true
-													: false
-											}
-											startDate={form.end_date}
-											minDate={new Date()}
-											onChange={(update) => {
-												setForm((prev) => {
-													return { ...prev, end_date: update };
-												});
-											}}
-											popperPlacement='bottom'
-											onCalendarOpen={() => {
-												setCalenderOpen(true);
-												setDisableDropdown(false);
-											}}
-											onCalendarClose={() => {
-												setCalenderOpen(false);
-												setDisableDropdown(true);
-											}}
-											isClearable={
-												(editPoll || editQuiz) && status === 'CLOSED'
-													? false
-													: true
-											}
-										/>
-									</div>
-								</div>
-
-								<p className={globalClasses.mediaError}>
-									{isError.endDate
-										? 'You need to select a date in order to post'
-										: ''}
-								</p>
-							</div>
-
-							{/* <div className={classes.buttonDiv}>
-							<div className={classes.leftButtonDiv}>
-								{editQuiz || editPoll ? (
-									<div className={classes.editBtn}>
-										<Button
-											disabled={deleteBtnStatus}
-											button2={editQuiz || editPoll ? true : false}
-											onClick={() => {
-												if (!deleteBtnStatus) {
-													deleteQuiz(editQuestionData?.id);
-												}
-											}}
-											text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
-										/>
-									</div>
-								) : (
+								{location === 'article' ? (
 									<></>
-								)}
-
-								{(editQuiz || editPoll) && status === 'ACTIVE' ? (
+								) : (
 									<>
-										<div className={classes.stopBtn}>
-											<Button
-												// disabled={deleteBtnStatus}
-												button2={editQuiz || editPoll ? true : false}
-												onClick={() => {
-													if (!deleteBtnStatus) {
-														stopQuizPoll(editQuestionData?.id);
+										<div className={classes.datePickerContainer}>
+											<h6
+												className={
+													isError.endDate
+														? globalClasses.errorState
+														: globalClasses.noErrorState
+												}
+											>
+												{quiz || editQuiz ? 'QUIZ END DATE' : 'POLL END DATE'}
+											</h6>
+											<div
+												className={classes.datePicker}
+												style={{ marginBottom: calenderOpen ? '250px' : '' }}
+											>
+												<DatePicker
+													customInput={<ExampleCustomInput />}
+													disabled={
+														(editPoll || editQuiz) && status === 'CLOSED'
+															? true
+															: false
 													}
-												}}
-												text={type === 'quiz' ? 'STOP QUIZ' : 'STOP POLL'}
-											/>
+													startDate={form.end_date}
+													minDate={new Date()}
+													onChange={(update) => {
+														setForm((prev) => {
+															return { ...prev, end_date: update };
+														});
+													}}
+													popperPlacement='bottom'
+													onCalendarOpen={() => {
+														setCalenderOpen(true);
+														setDisableDropdown(false);
+													}}
+													onCalendarClose={() => {
+														setCalenderOpen(false);
+														setDisableDropdown(true);
+													}}
+													isClearable={
+														(editPoll || editQuiz) && status === 'CLOSED'
+															? false
+															: true
+													}
+												/>
+											</div>
 										</div>
+
+										<p className={globalClasses.mediaError}>
+											{isError.endDate
+												? 'You need to select a date in order to post'
+												: ''}
+										</p>
 									</>
-								) : (
-									<></>
 								)}
 							</div>
-							<div
-								className={
-									editQuiz || editPoll
-										? classes.addQuizBtnEdit
-										: classes.addQuizBtn
-								}
-							>
-								<Button
-									disabled={
-										!(editPoll || editQuiz)
-											? !validateForm(form)
-											: editQuizBtnDisabled
-									}
-									onClick={() => {
-										handleAddSaveQuizPollBtn();
-									}}
-									text={
-										type === 'quiz' && !(editPoll || editQuiz)
-											? 'ADD QUIZ'
-											: type === 'poll' && !(editPoll || editQuiz)
-											? 'ADD POLL'
-											: 'SAVE CHANGES'
-									}
-								/>
-							</div>
-						</div> */}
 
 							<p className={globalClasses.mediaError}>
 								{isError.draftError
@@ -1081,110 +1038,119 @@ const UploadOrEditQuiz = ({
 									: ''}
 							</p>
 
-							<div className={classes.buttonDiv}>
-								<div className={classes.leftButtonDiv}>
-									{editQuiz || editPoll ? (
-										<div className={classes.editDeleteBtn}>
-											<Button
-												disabled={deleteBtnStatus}
-												button2={editQuiz || editPoll ? true : false}
-												onClick={() => {
-													if (!deleteBtnStatus) {
-														toggleDeleteModal();
-													}
-												}}
-												text={type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'}
-											/>
-										</div>
-									) : (
-										<></>
-									)}
-
-									{(editQuiz || editPoll) && status === 'ACTIVE' ? (
-										<>
-											<div className={classes.stopBtn}>
-												<Button
-													// disabled={deleteBtnStatus}
-													buttonStop={true}
-													onClick={() => {
-														if (!deleteBtnStatus) {
-															toggleStopModal();
+							{location === 'article' ? (
+								<></>
+							) : (
+								<>
+									<div className={classes.buttonDiv}>
+										<div className={classes.leftButtonDiv}>
+											{editQuiz || editPoll ? (
+												<div className={classes.editDeleteBtn}>
+													<Button
+														disabled={deleteBtnStatus}
+														button2={editQuiz || editPoll ? true : false}
+														onClick={() => {
+															if (!deleteBtnStatus) {
+																toggleDeleteModal();
+															}
+														}}
+														text={
+															type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'
 														}
+													/>
+												</div>
+											) : (
+												<></>
+											)}
+
+											{(editQuiz || editPoll) && status === 'ACTIVE' ? (
+												<>
+													<div className={classes.stopBtn}>
+														<Button
+															// disabled={deleteBtnStatus}
+															buttonStop={true}
+															onClick={() => {
+																if (!deleteBtnStatus) {
+																	toggleStopModal();
+																}
+															}}
+															text={type === 'quiz' ? 'STOP QUIZ' : 'STOP POLL'}
+														/>
+													</div>
+												</>
+											) : (
+												<></>
+											)}
+										</div>
+
+										<div className={classes.publishDraftDiv}>
+											{status === 'draft' || !(editPoll || editQuiz) ? (
+												<div
+													className={
+														editPoll || editQuiz
+															? classes.draftBtnEdit
+															: classes.draftBtn
+													}
+												>
+													<Button
+														disabledDraft={
+															editPoll || editQuiz
+																? draftBtnDisabled
+																: !validateDraft(form)
+														}
+														onClick={() => handleDraftSave()}
+														button3={true}
+														text={
+															status === 'draft' && (editPoll || editQuiz)
+																? 'SAVE DRAFT'
+																: 'SAVE AS DRAFT'
+														}
+													/>
+												</div>
+											) : (
+												<></>
+											)}
+
+											<div
+												className={[
+													(editPoll || editQuiz) && validateForm(form)
+														? classes.addMediaBtn
+														: editPoll || editQuiz
+														? classes.addMediaBtnEdit
+														: classes.addMediaBtn,
+													classes.saveChangesbtn
+												].join(' ')}
+											>
+												<Button
+													text={
+														type === 'quiz' && !(editPoll || editQuiz)
+															? 'ADD QUIZ'
+															: type === 'poll' && !(editPoll || editQuiz)
+															? 'ADD POLL'
+															: status === 'draft'
+															? 'PUBLISH'
+															: 'SAVE CHANGES'
+													}
+													disabled={
+														(editPoll || editQuiz) &&
+														validateForm(form) &&
+														status === 'draft'
+															? false
+															: !(editPoll || editQuiz)
+															? !validateForm(form)
+															: editQuizBtnDisabled
+													}
+													onClick={() => {
+														handleAddSaveQuizPollBtn();
 													}}
-													text={type === 'quiz' ? 'STOP QUIZ' : 'STOP POLL'}
 												/>
 											</div>
-										</>
-									) : (
-										<></>
-									)}
-								</div>
-
-								<div className={classes.publishDraftDiv}>
-									{status === 'draft' || !(editPoll || editQuiz) ? (
-										<div
-											className={
-												editPoll || editQuiz
-													? classes.draftBtnEdit
-													: classes.draftBtn
-											}
-										>
-											<Button
-												disabledDraft={
-													editPoll || editQuiz
-														? draftBtnDisabled
-														: !validateDraft(form)
-												}
-												onClick={() => handleDraftSave()}
-												button3={true}
-												text={
-													status === 'draft' && (editPoll || editQuiz)
-														? 'SAVE DRAFT'
-														: 'SAVE AS DRAFT'
-												}
-											/>
 										</div>
-									) : (
-										<></>
-									)}
-
-									<div
-										className={[
-											(editPoll || editQuiz) && validateForm(form)
-												? classes.addMediaBtn
-												: editPoll || editQuiz
-												? classes.addMediaBtnEdit
-												: classes.addMediaBtn,
-											classes.saveChangesbtn
-										].join(' ')}
-									>
-										<Button
-											text={
-												type === 'quiz' && !(editPoll || editQuiz)
-													? 'ADD QUIZ'
-													: type === 'poll' && !(editPoll || editQuiz)
-													? 'ADD POLL'
-													: status === 'draft'
-													? 'PUBLISH'
-													: 'SAVE CHANGES'
-											}
-											disabled={
-												(editPoll || editQuiz) &&
-												validateForm(form) &&
-												status === 'draft'
-													? false
-													: !(editPoll || editQuiz)
-													? !validateForm(form)
-													: editQuizBtnDisabled
-											}
-											onClick={() => {
-												handleAddSaveQuizPollBtn();
-											}}
-										/>
 									</div>
-								</div>
-							</div>
+								</>
+							)}
 						</div>
+
 						{previewFile != null && (
 							<div ref={previewRef} className={globalClasses.previewComponent}>
 								<div className={globalClasses.previewHeader}>
@@ -1256,7 +1222,8 @@ UploadOrEditQuiz.propTypes = {
 	handleClose: PropTypes.func.isRequired,
 	page: PropTypes.string,
 	status: PropTypes.string,
-	type: PropTypes.string //poll or quiz
+	type: PropTypes.string, //poll or quiz
+	location: PropTypes.string.isRequired
 };
 
 export default UploadOrEditQuiz;
