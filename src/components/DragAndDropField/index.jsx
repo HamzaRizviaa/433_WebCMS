@@ -32,6 +32,7 @@ const DragAndDropField = ({
 	onLoadedVideodata,
 	onLoadedAudiodata,
 	quizPollStatus,
+	location,
 	...props
 }) => {
 	return (
@@ -163,6 +164,8 @@ const DragAndDropField = ({
 																}}
 															/>
 														</>
+													) : location === 'article' ? (
+														<></>
 													) : file?.media_url ? (
 														<div style={{ display: 'flex' }}>
 															{isPost && uploadedFiles?.length > 1 && (
@@ -292,7 +295,8 @@ DragAndDropField.propTypes = {
 	imageOnload: PropTypes.func,
 	onLoadedVideodata: PropTypes.func,
 	onLoadedAudiodata: PropTypes.func,
-	quizPollStatus: PropTypes.string
+	quizPollStatus: PropTypes.string,
+	location: PropTypes.string
 };
 
 export default DragAndDropField;

@@ -695,13 +695,16 @@ const UploadOrEditQuiz = ({
 										setFileWidth(imgRef.current.naturalWidth);
 										setFileHeight(imgRef.current.naturalHeight);
 									}}
+									location={location}
 								/>
 
 								{!form.uploadedFiles.length ? (
 									<section
 										className={globalClasses.dropZoneContainer}
 										style={{
-											borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
+											borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow',
+											backgroundColor:
+												location === 'article' ? '#404040' : 'transparent'
 										}}
 									>
 										<div
