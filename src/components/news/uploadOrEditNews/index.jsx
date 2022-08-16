@@ -517,8 +517,6 @@ const UploadOrEditNews = ({
 		}, 5000);
 	};
 
-	console.log(!validateDraft(form, null, news), draftBtnDisabled, 'valUES');
-
 	const handleCreateDraft = () => {
 		setIsLoading(false);
 		if (!validateDraft(form) || draftBtnDisabled) {

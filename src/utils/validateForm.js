@@ -1,4 +1,4 @@
-const validateForm = (form, dataElements, newsData) => {
+const validateForm = (form, dataElements, newsData, quesData) => {
 	var validate = Object.keys(form).map((key) => {
 		if (typeof form[key] === 'string') {
 			if (key.includes('dropbox_url')) {
@@ -79,11 +79,12 @@ const validateForm = (form, dataElements, newsData) => {
 		validateData = false;
 	}
 
+	//new validate
 	var validateNews = true;
-	// console.log(newsData, 'nnn');
 
 	if (newsData?.length) {
 		validateNews = newsData.every((item) => {
+			// and , sab true - true
 			if (item?.data) {
 				return item?.data[0]?.media_url;
 			}
@@ -92,8 +93,39 @@ const validateForm = (form, dataElements, newsData) => {
 		validateNews = false;
 	}
 
+	//new validate
+	var validateQuestion = true;
+
+	if (quesData?.length > 0) {
+		validateQuestion = quesData.every((item) => {
+			console.log(item, ' items in ques data');
+			if (item?.data) {
+				return (
+					item?.data[0]?.uploadedFiles?.length > 0 &&
+					item?.data[0]?.question &&
+					item?.data[0]?.labels?.length > 6 &&
+					(item?.data[0]?.answers?.length > 2
+						? item?.data?.answers.every((item) => item?.answer !== '')
+						: false)
+				);
+			}
+		});
+	} else if (quesData?.length === 0) {
+		validateQuestion = false;
+	}
+
+	console.log(
+		validateQuestion,
+		quesData,
+		quesData?.length,
+		'validateQuestion in form validate'
+	);
+
 	var finalFormValue =
-		validate.every((item) => item === true) && validateData && validateNews;
+		validate.every((item) => item === true) &&
+		validateData &&
+		validateNews &&
+		validateQuestion;
 
 	return finalFormValue;
 };

@@ -511,7 +511,10 @@ const UploadOrEditQuiz = ({
 			);
 		}
 	}, [editQuestionData, form, convertedDate]);
-
+	console.log(
+		!validateForm(form, null, null, questionSlides),
+		'!validateForm(form)  quies'
+	);
 	const handleAddSaveQuizPollBtn = async () => {
 		if (!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')) {
 			validatePostBtn();
@@ -537,17 +540,24 @@ const UploadOrEditQuiz = ({
 					});
 			} else {
 				setIsLoadingcreateViral(true);
-				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-					return uploadFileToServer(_file, 'questionLibrary');
-				});
+				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				// 	return uploadFileToServer(_file, 'questionLibrary');
+				// });
 
-				Promise.all([...uploadFilesPromiseArray])
-					.then((mediaFiles) => {
-						createQuestion(null, mediaFiles);
-					})
-					.catch(() => {
-						setIsLoadingcreateViral(false);
-					});
+				// Promise.all([...uploadFilesPromiseArray])
+				// 	.then((mediaFiles) => {
+				// 		createQuestion(null, mediaFiles);
+				// 	})
+				// 	.catch(() => {
+				// 		setIsLoadingcreateViral(false);
+				// 	});
+
+				try {
+					createQuestion(null);
+				} catch (err) {
+					setIsLoadingcreateViral(false);
+					console.log(err);
+				}
 			}
 		}
 	};
@@ -737,32 +747,30 @@ const UploadOrEditQuiz = ({
 									<QuestionDraggable onDragEnd={onDragEnd}>
 										{questionSlides.map((item, index) => {
 											return (
-												<>
-													<QuestionForm
-														item={item}
-														index={index}
-														type={questionType}
-														key={item.sort_order}
-														sendDataToParent={(data) => setNewData(data, index)}
-														handleDeleteMedia={(data) =>
-															handleMediaDataDelete(data, index)
-														}
-														handleDeleteQuestionSlide={(sortOrder) =>
-															handleElementDelete(sortOrder)
-														}
-														initialData={item.data && item.data}
-														setPreviewBool={setPreviewBool}
-														setPreviewFile={setPreviewFile}
-														isEdit={editPoll || editQuiz}
-														setDisableDropdown={setDisableDropdown}
-													/>
-												</>
+												<QuestionForm
+													item={item}
+													index={index}
+													type={questionType}
+													key={item.sort_order}
+													sendDataToParent={(data) => setNewData(data, index)}
+													handleDeleteMedia={(data) =>
+														handleMediaDataDelete(data, index)
+													}
+													handleDeleteQuestionSlide={(sortOrder) =>
+														handleElementDelete(sortOrder)
+													}
+													initialData={item.data && item.data}
+													setPreviewBool={setPreviewBool}
+													setPreviewFile={setPreviewFile}
+													isEdit={editPoll || editQuiz}
+													setDisableDropdown={setDisableDropdown}
+												/>
 											);
 										})}
 									</QuestionDraggable>
-									<br />
+
 									<Button
-										style={{ marginTop: '4rem' }}
+										style={{ marginTop: '2rem' }}
 										disabled={false}
 										buttonNews={true}
 										onClick={() => handleNewSlide()}
@@ -808,7 +816,6 @@ const UploadOrEditQuiz = ({
 											<></>
 										)}
 									</div>
-
 									<div className={classes.publishDraftDiv}>
 										{status === 'draft' || !(editPoll || editQuiz) ? (
 											<div
@@ -849,22 +856,25 @@ const UploadOrEditQuiz = ({
 										>
 											<Button
 												text={
-													type === 'quiz' && !(editPoll || editQuiz)
-														? 'ADD QUIZ'
-														: type === 'poll' && !(editPoll || editQuiz)
-														? 'ADD POLL'
-														: status === 'draft'
-														? 'PUBLISH'
-														: 'SAVE CHANGES'
+													questionType === 'quiz' ? 'ADD QUIZ' : 'ADD POLL'
+
+													// type === 'quiz' && !(editPoll || editQuiz)
+													// 	? 'ADD QUIZ'
+													// 	: type === 'poll' && !(editPoll || editQuiz)
+													// 	? 'ADD POLL'
+													// 	: status === 'draft'
+													// 	? 'PUBLISH'
+													// 	: 'SAVE CHANGES'
 												}
 												disabled={
-													(editPoll || editQuiz) &&
-													validateForm(form) &&
-													status === 'draft'
-														? false
-														: !(editPoll || editQuiz)
-														? !validateForm(form)
-														: editQuizBtnDisabled
+													!validateForm(form, null, null, questionSlides)
+													// (editPoll || editQuiz) &&
+													// validateForm(form) &&
+													// status === 'draft'
+													// 	? false
+													// 	: !(editPoll || editQuiz)
+													// 	? !validateForm(form)
+													// 	: editQuizBtnDisabled
 												}
 												onClick={() => {
 													handleAddSaveQuizPollBtn();
@@ -874,6 +884,7 @@ const UploadOrEditQuiz = ({
 									</div>
 								</div>
 							</div>
+
 							{previewFile != null && (
 								<div
 									ref={previewRef}
