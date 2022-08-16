@@ -104,8 +104,10 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 					item?.data[0]?.uploadedFiles?.length > 0 &&
 					item?.data[0]?.question &&
 					item?.data[0]?.labels?.length > 6 &&
-					(item?.data[0]?.answers?.length > 2
-						? item?.data?.answers.every((item) => item?.answer !== '')
+					(item?.data[0]?.answers?.length > 1
+						? // ? item?.data[0]?.answers.every((item) => item?.answer !== '')
+						  // : item?.data[0]?.answers?.length === 2
+						  item?.data[0]?.answers.every((item) => item?.answer !== '')
 						: false)
 				);
 			}

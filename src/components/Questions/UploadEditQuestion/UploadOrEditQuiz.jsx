@@ -215,6 +215,13 @@ const UploadOrEditQuiz = ({
 		);
 	});
 
+	// useEffect(() => {
+	// 	const validateEmptyNewsArray = [
+	// 		checkEmptyMediaQuestions(questionSlides),
+	// 		questionSlides?.length !== 0
+	// 	];
+	// }, [questionSlides]);
+
 	useEffect(() => {
 		if (editQuestionData) {
 			if (editQuestionData?.labels) {
