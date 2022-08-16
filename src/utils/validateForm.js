@@ -98,8 +98,9 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 
 	if (quesData?.length > 0) {
 		validateQuestion = quesData.every((item) => {
-			console.log(item, ' items in ques data');
+			console.log(item, ' items in ques data==========');
 			if (item?.data) {
+				console.log('HERERE');
 				return (
 					item?.data[0]?.uploadedFiles?.length > 0 &&
 					item?.data[0]?.question &&
@@ -116,18 +117,17 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 		validateQuestion = false;
 	}
 
-	console.log(
-		validateQuestion,
-		quesData,
-		quesData?.length,
-		'validateQuestion in form validate'
-	);
-
 	var finalFormValue =
 		validate.every((item) => item === true) &&
 		validateData &&
 		validateNews &&
 		validateQuestion;
+
+	console.log(
+		validateQuestion,
+		finalFormValue,
+		'validateQuestion in form validate'
+	);
 
 	return finalFormValue;
 };
