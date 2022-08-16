@@ -67,7 +67,7 @@ const QuestionForm = ({
 		labels: [],
 		end_date: null
 	});
-	console.log('FORM', form);
+	// console.log('FORM', form)
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const imgRef = useRef(null);
@@ -147,6 +147,7 @@ const QuestionForm = ({
 				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
 			};
 		});
+		handleDeleteMedia(item?.data);
 	};
 
 	const handleChangeExtraLabel = (e) => {
@@ -178,6 +179,14 @@ const QuestionForm = ({
 				answers: [...form.answers, { answer: '' }]
 			};
 		});
+
+		const formCopy = { ...form };
+		let answerLenght = formCopy?.answers?.length;
+		formCopy.answers[answerLenght] = {
+			answer: ''
+		};
+		let answers = { answers: formCopy.answers };
+		sendDataToParent(answers);
 	};
 
 	const handleAnswerDelete = (index) => {

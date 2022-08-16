@@ -87,6 +87,8 @@ const UploadOrEditQuiz = ({
 		end_date: null
 	});
 
+	console.log('quesss', questionSlides);
+
 	const loadingRef = useRef(null);
 	const dispatch = useDispatch();
 	const classes = useStyles();
@@ -118,7 +120,6 @@ const UploadOrEditQuiz = ({
 
 	const handleNewSlide = () => {
 		setQuestionSlides((prev) => {
-			console.log('abc');
 			return [
 				...prev,
 				{
@@ -155,7 +156,19 @@ const UploadOrEditQuiz = ({
 
 	const handleMediaDataDelete = (elementData, index) => {
 		let dataCopy = [...questionSlides];
-		console.log(dataCopy);
+		if (elementData) {
+			setQuestionSlides(
+				dataCopy.filter((item, i) => {
+					if (index === i) {
+						delete item['data'][0]?.uploadedFiles;
+
+						return item;
+					} else {
+						return item;
+					}
+				})
+			);
+		}
 	};
 
 	useEffect(() => {
@@ -176,9 +189,9 @@ const UploadOrEditQuiz = ({
 		}
 	}, [form.end_date]);
 
-	useEffect(() => {
-		validateForm(form);
-	}, [form]);
+	// useEffect(() => {
+	// 	validateForm(form);
+	// }, [form]);
 
 	const toggleDeleteModal = () => {
 		setOpenDeletePopup(!openDeletePopup);
@@ -518,10 +531,7 @@ const UploadOrEditQuiz = ({
 			);
 		}
 	}, [editQuestionData, form, convertedDate]);
-	console.log(
-		!validateForm(form, null, null, questionSlides),
-		'!validateForm(form)  quies'
-	);
+
 	const handleAddSaveQuizPollBtn = async () => {
 		if (!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')) {
 			validatePostBtn();

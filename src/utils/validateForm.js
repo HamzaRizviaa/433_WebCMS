@@ -95,7 +95,7 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 
 	//new validate
 	var validateQuestion = true;
-
+	console.log(quesData, 'qd');
 	if (quesData?.length > 0) {
 		validateQuestion = quesData.every((item) => {
 			console.log(item, ' items in ques data==========');
@@ -123,11 +123,7 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 		validateNews &&
 		validateQuestion;
 
-	console.log(
-		validateQuestion,
-		finalFormValue,
-		'validateQuestion in form validate'
-	);
+	console.log(validateQuestion, finalFormValue, 'val');
 
 	return finalFormValue;
 };
