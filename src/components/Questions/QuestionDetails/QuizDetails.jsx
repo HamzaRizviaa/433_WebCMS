@@ -1,14 +1,16 @@
 import React, { useState, useRef } from 'react';
-
-import Slider from '../../slider';
 import PropTypes from 'prop-types';
 import TabsUnstyled from '@mui/base/TabsUnstyled';
 import TabsListUnstyled from '@mui/base/TabsListUnstyled';
 import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import TabUnstyled from '@mui/base/TabUnstyled';
-import { useStyles } from './quizStyles';
-import UploadOrEditQuiz from './UploadOrEditQuiz';
-import QuizResults from './QuizResults';
+
+import Slider from '../../slider';
+import { useStyles } from '../quizStyles';
+import UploadOrEditQuiz from '../UploadEditQuestion/UploadOrEditQuiz';
+import QuizResults from '../QuestionResults/QuizResults';
+
+//Question Library : this slider slides when click on row with type : quiz
 
 export default function QuizDetails({
 	open,

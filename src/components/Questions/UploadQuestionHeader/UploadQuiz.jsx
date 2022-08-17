@@ -1,14 +1,15 @@
 import React, { useState, useRef } from 'react';
-import Slider from '../../slider';
 import PropTypes from 'prop-types';
-//import classes from './_uploadOrEditQuiz.module.scss';
-import UploadOrEditQuiz from './UploadOrEditQuiz';
-
 import TabsUnstyled from '@mui/base/TabsUnstyled';
 import TabsListUnstyled from '@mui/base/TabsListUnstyled';
 import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import TabUnstyled from '@mui/base/TabUnstyled';
-import { useStyles } from './quizStyles';
+
+import Slider from '../../slider';
+import { useStyles } from '../quizStyles';
+import UploadOrEditQuiz from '../UploadEditQuestion/UploadOrEditQuiz';
+
+// on upload button in header - to upload new poll or quiz
 
 const UploadQuiz = ({
 	open,
@@ -29,8 +30,6 @@ const UploadQuiz = ({
 		setPreviewBool(false);
 		setPreviewFile(null);
 	};
-
-	// on upload button in header - to upload new poll or quiz
 
 	return (
 		<Slider

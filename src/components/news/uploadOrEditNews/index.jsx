@@ -427,7 +427,6 @@ const UploadOrEditNews = ({
 		let slides =
 			news.length > 0
 				? news.map((item, index) => {
-						console.log(item, 'DAAWWADDAWDAWDDW');
 						return {
 							//id: item.data[0].id,
 							image:
@@ -517,8 +516,6 @@ const UploadOrEditNews = ({
 			setIsError({});
 		}, 5000);
 	};
-
-	console.log(!validateDraft(form, null, news), draftBtnDisabled, 'valUES');
 
 	const handleCreateDraft = () => {
 		setIsLoading(false);
