@@ -898,7 +898,9 @@ const UploadOrEditQuiz = ({
 															? draftBtnDisabled
 															: !validateDraft(form)
 													}
-													// onClick={() => handleDraftSave()}
+													onClick={() => 
+														//handleDraftSave()
+													}
 													button3={true}
 													text={
 														status === 'draft' && (editPoll || editQuiz)
@@ -943,9 +945,9 @@ const UploadOrEditQuiz = ({
 													// 	? !validateForm(form)
 													// 	: editQuizBtnDisabled
 												}
-												// onClick={() => {
-												// 	handlePostQuizPollBtn();
-												// }}
+												onClick={() => {
+													// handlePostQuizPollBtn();
+												}}
 											/>
 										</div>
 									</div>
