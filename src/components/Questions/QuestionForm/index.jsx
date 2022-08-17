@@ -179,27 +179,42 @@ const QuestionForm = ({
 				answers: [...form.answers, { answer: '' }]
 			};
 		});
-
-		const formCopy = { ...form };
-		let answerLenght = formCopy?.answers?.length;
-		formCopy.answers[answerLenght] = {
-			answer: ''
-		};
-		let answers = { answers: formCopy.answers };
+		let answers = { answers: [...form.answers, { answer: '' }] };
 		sendDataToParent(answers);
+
+		// const formCopy = { ...form };
+		// let answerLength = formCopy?.answers?.length;
+		// formCopy.answers[answerLength] = {
+		// 	answer: ''
+		// };
+		// let answers = { answers: formCopy.answers };
+		// sendDataToParent(answers);
 	};
 
+	console.log('FORMMMM', form);
+
 	const handleAnswerDelete = (index) => {
-		let dataCopy = [...form.answers];
+		let dataCopy = { ...form };
+
 		if (index > 1) {
 			setForm((prev) => {
 				return {
 					...prev,
-					answers: dataCopy.filter((val, ind) => {
+					answers: dataCopy?.answers.filter((val, ind) => {
 						return ind !== index;
 					})
 				};
 			});
+			const formCopy = { ...form };
+			// formCopy.answers[index] = {
+			// 	answer: ''
+			// };
+			let answers = {
+				answers: formCopy?.answers.filter((val, ind) => {
+					return ind !== index;
+				})
+			};
+			sendDataToParent(answers);
 		}
 	};
 
