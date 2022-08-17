@@ -95,12 +95,10 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 
 	//new validate
 	var validateQuestion = true;
-	console.log(quesData, 'qd');
+
 	if (quesData?.length > 0) {
 		validateQuestion = quesData.every((item) => {
-			console.log(item, ' items in ques data==========');
 			if (item?.data) {
-				console.log('HERERE');
 				return (
 					item?.data[0]?.uploadedFiles?.length > 0 &&
 					item?.data[0]?.question &&
@@ -122,8 +120,6 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 		validateData &&
 		validateNews &&
 		validateQuestion;
-
-	console.log(validateQuestion, finalFormValue, 'val');
 
 	return finalFormValue;
 };

@@ -98,7 +98,9 @@ const QuestionForm = ({
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
-					type: file.type === 'image'
+					type: file.type === 'image',
+					width: fileWidth,
+					height: fileHeight
 				};
 			});
 			uploadedFile(newFiles[0], 'articleLibrary').then((res) => {

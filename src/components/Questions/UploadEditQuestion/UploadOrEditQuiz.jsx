@@ -289,8 +289,32 @@ const UploadOrEditQuiz = ({
 		!(editPoll || editQuiz) ? resetState() : '';
 	}, [open]);
 
-	const createQuestion = async (id, mediaFiles = [], draft = false) => {
+	const createQuestion = async (id, draft = false) => {
 		setPostButtonStatus(true);
+
+		let slides =
+			questionSlides.length > 0
+				? questionSlides.map((item, index) => {
+						console.log(item, 'item in api');
+						return {
+							//id: item.data[0].id,
+							// height: item.data[0]?.height,
+							// width: item.data[0]?.width,
+							image:
+								item.data[0]?.uploadedFiles[0]?.media_url?.split(
+									'cloudfront.net/'
+								)[1] || item.data[0]?.uploadedFiles[0]?.media_url,
+							file_name: item.data[0]?.uploadedFiles[0]?.file_name,
+							labels: item.data[0]?.labels,
+							answers: item.data[0]?.answers,
+							question: item.data[0]?.question,
+							dropbox_url: item.data[0]?.dropbox_url,
+							sort_order: index + 1
+						};
+				  })
+				: [];
+
+		console.log(slides, 'slides');
 
 		//setIsLoadingcreateViral(false);
 		// try {
@@ -532,43 +556,69 @@ const UploadOrEditQuiz = ({
 		}
 	}, [editQuestionData, form, convertedDate]);
 
-	const handleAddSaveQuizPollBtn = async () => {
+	// const handleAddSaveQuizPollBtn = async () => {
+	// 	if (!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')) {
+	// 		validatePostBtn();
+	// 	} else {
+	// 		setPostButtonStatus(true);
+	// 		loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+	// 		setIsLoadingcreateViral(true);
+	// 		if (editQuiz || editPoll) {
+	// 			let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+	// 				if (_file.file) {
+	// 					return await uploadFileToServer(_file, 'questionLibrary');
+	// 				} else {
+	// 					return _file;
+	// 				}
+	// 			});
+
+	// 			Promise.all([...uploadFilesPromiseArray])
+	// 				.then((mediaFiles) => {
+	// 					createQuestion(editQuestionData?.id, mediaFiles);
+	// 				})
+	// 				.catch(() => {
+	// 					setIsLoadingcreateViral(false);
+	// 				});
+	// 		} else {
+	// 			setIsLoadingcreateViral(true);
+	// 			// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+	// 			// 	return uploadFileToServer(_file, 'questionLibrary');
+	// 			// });
+
+	// 			// Promise.all([...uploadFilesPromiseArray])
+	// 			// 	.then((mediaFiles) => {
+	// 			// 		createQuestion(null, mediaFiles);
+	// 			// 	})
+	// 			// 	.catch(() => {
+	// 			// 		setIsLoadingcreateViral(false);
+	// 			// 	});
+
+	// 			try {
+	// 				createQuestion(null);
+	// 			} catch (err) {
+	// 				setIsLoadingcreateViral(false);
+	// 				console.log(err);
+	// 			}
+	// 		}
+	// 	}
+	// };
+
+	const handlePostQuizPollBtn = () => {
 		if (!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')) {
 			validatePostBtn();
 		} else {
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			setIsLoadingcreateViral(true);
-			if (editQuiz || editPoll) {
-				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-					if (_file.file) {
-						return await uploadFileToServer(_file, 'questionLibrary');
-					} else {
-						return _file;
-					}
-				});
-
-				Promise.all([...uploadFilesPromiseArray])
-					.then((mediaFiles) => {
-						createQuestion(editQuestionData?.id, mediaFiles);
-					})
-					.catch(() => {
-						setIsLoadingcreateViral(false);
-					});
+			if (editPoll || editQuiz) {
+				//isEdit - update code
+				try {
+					createQuestion(editQuestionData?.id);
+				} catch (err) {
+					setIsLoadingcreateViral(false);
+					console.log(err);
+				}
 			} else {
-				setIsLoadingcreateViral(true);
-				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-				// 	return uploadFileToServer(_file, 'questionLibrary');
-				// });
-
-				// Promise.all([...uploadFilesPromiseArray])
-				// 	.then((mediaFiles) => {
-				// 		createQuestion(null, mediaFiles);
-				// 	})
-				// 	.catch(() => {
-				// 		setIsLoadingcreateViral(false);
-				// 	});
-
 				try {
 					createQuestion(null);
 				} catch (err) {
@@ -894,7 +944,7 @@ const UploadOrEditQuiz = ({
 													// 	: editQuizBtnDisabled
 												}
 												onClick={() => {
-													handleAddSaveQuizPollBtn();
+													handlePostQuizPollBtn();
 												}}
 											/>
 										</div>
