@@ -589,7 +589,8 @@ const UploadOrEditArticle = ({
 									answers: item?.data?.answers || undefined,
 									labels: item?.data?.labels || undefined,
 									question_type: item?.data?.question_type || undefined,
-									question_id: item?.data?.question_id || undefined
+									question_id: item?.data?.question_id || undefined,
+									id: item?.data?.id || undefined
 								}
 						  }
 						: undefined),
