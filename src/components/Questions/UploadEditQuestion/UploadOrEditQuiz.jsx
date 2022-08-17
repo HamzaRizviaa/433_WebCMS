@@ -292,29 +292,29 @@ const UploadOrEditQuiz = ({
 	const createQuestion = async (id, draft = false) => {
 		setPostButtonStatus(true);
 
-		let slides =
-			questionSlides.length > 0
-				? questionSlides.map((item, index) => {
-						console.log(item, 'item in api');
-						return {
-							//id: item.data[0].id,
-							// height: item.data[0]?.height,
-							// width: item.data[0]?.width,
-							image:
-								item.data[0]?.uploadedFiles[0]?.media_url?.split(
-									'cloudfront.net/'
-								)[1] || item.data[0]?.uploadedFiles[0]?.media_url,
-							file_name: item.data[0]?.uploadedFiles[0]?.file_name,
-							labels: item.data[0]?.labels,
-							answers: item.data[0]?.answers,
-							question: item.data[0]?.question,
-							dropbox_url: item.data[0]?.dropbox_url,
-							sort_order: index + 1
-						};
-				  })
-				: [];
+		// let slides =
+		// 	questionSlides.length > 0
+		// 		? questionSlides.map((item, index) => {
+		// 				console.log(item, 'item in api');
+		// 				return {
+		// 					//id: item.data[0].id,
+		// 					// height: item.data[0]?.height,
+		// 					// width: item.data[0]?.width,
+		// 					image:
+		// 						item.data[0]?.uploadedFiles[0]?.media_url?.split(
+		// 							'cloudfront.net/'
+		// 						)[1] || item.data[0]?.uploadedFiles[0]?.media_url,
+		// 					file_name: item.data[0]?.uploadedFiles[0]?.file_name,
+		// 					labels: item.data[0]?.labels,
+		// 					answers: item.data[0]?.answers,
+		// 					question: item.data[0]?.question,
+		// 					dropbox_url: item.data[0]?.dropbox_url,
+		// 					sort_order: index + 1
+		// 				};
+		// 		  })
+		// 		: [];
 
-		console.log(slides, 'slides');
+		// console.log(slides, 'slides');
 
 		//setIsLoadingcreateViral(false);
 		// try {
