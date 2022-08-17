@@ -188,7 +188,7 @@ const QuestionLibrary = () => {
 							col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '1.5px'
+						bottom: '6px'
 					}}
 				/>
 			);
@@ -204,7 +204,7 @@ const QuestionLibrary = () => {
 							col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '1.5px'
+						bottom: '6px'
 					}}
 				/>
 			);
@@ -220,7 +220,7 @@ const QuestionLibrary = () => {
 							col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '1.5px'
+						bottom: '6px'
 					}}
 				/>
 			);
@@ -727,6 +727,7 @@ const QuestionLibrary = () => {
 					buttonText={
 						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
 					}
+					location={rowLocation}
 				/>
 				<QuizDetails
 					page={page}

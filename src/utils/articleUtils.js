@@ -200,10 +200,10 @@ export const checkNewElementQuestion = (elements, data) => {
 };
 
 const checkDuplicateLabel = (specificArticleElements, data) => {
-	// console.log('specificArticleElements,', specificArticleElements, data);
 	let dataLabels = data?.labels?.map((dataL) => {
 		return specificArticleElements?.question_data?.labels?.includes(dataL.name);
 	});
+
 	return dataLabels.some((label) => label === false);
 };
 
@@ -213,10 +213,13 @@ export const checkEmptyQuestionDraft = (data) => {
 		if (item.data) {
 			if (
 				item?.data?.question ||
-				(item?.data?.answers?.length > 0
-					? item?.data?.answers.some((everyItem) => everyItem?.answer !== '')
+				(item?.data?.answers?.length > 0 && item?.data?.answers[0]?.answer
+					? item?.data?.answers[0]?.answer != ''
 					: false) ||
-				item?.data?.labels?.length > 1 ||
+				(item?.data?.answers?.length > 0 && item?.data?.answers[1]?.answer
+					? item?.data?.answers[1]?.answer != ''
+					: false) ||
+				item?.data?.labels?.length > 0 ||
 				item?.data?.dropbox_url ||
 				item?.data?.uploadedFiles?.length
 			) {
@@ -226,6 +229,7 @@ export const checkEmptyQuestionDraft = (data) => {
 			return false;
 		}
 	});
+
 	return validatedData.every((item) => item === true);
 };
 
@@ -240,24 +244,27 @@ export const checkNewElementQuestionDraft = (elements, data) => {
 					if (
 						data[i]?.data?.question === elements[i]?.question_data?.question &&
 						(data[i]?.data?.answers?.length > 0 &&
-						data[i]?.data?.answers[0]?.answer !== ''
+						data[i]?.data?.answers[0]?.answer
 							? data[i]?.data?.answers[0]?.answer ===
 							  elements[i]?.question_data?.answers[0]?.answer
-							: false) &&
+							: true) &&
 						(data[i]?.data?.answers?.length > 0 &&
 						data[i]?.data?.answers[1]?.answer
 							? data[i]?.data?.answers[1]?.answer ===
 							  elements[i]?.question_data?.answers[1]?.answer
-							: false) &&
+							: true) &&
 						data[i]?.data?.dropbox_url ===
 							elements[i]?.question_data?.dropbox_url &&
 						(data[i]?.data?.uploadedFiles
 							? data[i]?.data?.uploadedFiles[0]?.file_name ===
 							  elements[i]?.question_data?.file_name
-							: false) &&
+							: elements[i]?.question_data?.file_name &&
+							  !data[i]?.data?.uploadedFiles
+							? false
+							: true) &&
 						data[i]?.data?.labels?.length ===
 							elements[i]?.question_data?.labels?.length &&
-						!checkDuplicateLabel(elements, data[i]?.data)
+						!checkDuplicateLabel(elements[i], data[i]?.data)
 					) {
 						result.push(true);
 					} else {

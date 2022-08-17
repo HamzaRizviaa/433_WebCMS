@@ -347,11 +347,6 @@ const UploadOrEditArticle = ({
 								}
 						  ]
 						: [{ media_url: Profile433 }]
-					// description:
-					//  specificArticle?.length === 0
-					//      ? ''
-					//      : // eslint-disable-next-line no-undef
-					//        tinyMCE.activeEditor?.setContent(specificArticle?.description)
 				};
 			});
 			setData(updateDataFromAPI(specificArticle.elements));
@@ -559,7 +554,6 @@ const UploadOrEditArticle = ({
 
 		let elementsData;
 		if (data.length) {
-			console.log('DATA ID ', data);
 			elementsData = data.map((item, index) => {
 				return {
 					element_type: item.element_type,
@@ -595,7 +589,8 @@ const UploadOrEditArticle = ({
 									answers: item?.data?.answers || undefined,
 									labels: item?.data?.labels || undefined,
 									question_type: item?.data?.question_type || undefined,
-									question_id: item?.data?.question_id || undefined
+									question_id: item?.data?.question_id || undefined,
+									id: item?.data?.id || undefined
 								}
 						  }
 						: undefined),
@@ -1060,14 +1055,6 @@ const UploadOrEditArticle = ({
 		});
 	};
 
-	// const checkNewElementFile = (data) => {
-	// 	return data.some((item) => {
-	// 		if (item?.data) {
-	// 			return item?.data[0]?.file ? true : false;
-	// 		}
-	// 	});
-	// };
-
 	const comparingFields = (specificArticle, form) => {
 		return (
 			specificArticle?.title?.trim() === form?.title?.trim() &&
@@ -1110,7 +1097,6 @@ const UploadOrEditArticle = ({
 				checkEmptyIG(data),
 				checkEmptyMedia(data),
 				checkEmptyQuestion(data),
-				// checkNewElementFile(filteringByType(data, 'MEDIA')),
 				data?.length !== 0
 			];
 
@@ -1241,7 +1227,11 @@ const UploadOrEditArticle = ({
 				checkEmptyQuestionDraft(data)
 			];
 
-			console.log(validationCompleteArrayDraft, 'validate');
+			// console.log(
+			// 	validationDraftEmptyArray,
+			// 	validationCompleteArrayDraft,
+			// 	'validate'
+			// );
 			if (
 				!validateDraft(form, data) ||
 				!comparingDraftFields(specificArticle, form)

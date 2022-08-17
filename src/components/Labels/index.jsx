@@ -9,7 +9,10 @@ import classes from './_labels.module.scss';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 //new labels search
 import { useDispatch, useSelector } from 'react-redux';
-import { getNewLabelsSearch } from '../../pages/PostLibrary/postLibrarySlice';
+import {
+	getAllNewLabels,
+	getNewLabelsSearch
+} from '../../pages/PostLibrary/postLibrarySlice';
 import _debounce from 'lodash/debounce';
 
 const Labels = ({
@@ -21,7 +24,8 @@ const Labels = ({
 	extraLabel,
 	// handleChangeExtraLabel,
 	draftStatus = 'published',
-	setExtraLabel
+	setExtraLabel,
+	location
 }) => {
 	//const regex = /[%<>\\$'"\s@#/-=+&^*()!:;.,?{}[|]]/;
 	const regex = /\W/; // all characters that are not numbers and alphabets and underscore
@@ -33,9 +37,9 @@ const Labels = ({
 		(state) => state.postLibrary
 	);
 
-	let draftLabels = selectedLabels.filter((label) => label.id == -1);
+	let draftLabels = selectedLabels?.filter((label) => label.id == -1);
 	let drafts = [];
-	draftLabels.forEach((element) => drafts.push(element.name));
+	draftLabels?.forEach((element) => drafts.push(element.name));
 	let newOptions = newLabelsSearch.filter(
 		(element) => !drafts.includes(element.name)
 	);
@@ -58,9 +62,11 @@ const Labels = ({
 			dispatch(
 				getNewLabelsSearch({
 					q: _search,
-					...(selectedLabels.length ? labelsParams(selectedLabels) : {})
+					...(selectedLabels?.length ? labelsParams(selectedLabels) : {})
 				})
 			);
+		} else {
+			dispatch(getAllNewLabels());
 		}
 	};
 
@@ -133,13 +139,19 @@ const Labels = ({
 					''
 				)
 			}
-			className={`${classes.autoComplete} ${
-				isEdit && draftStatus !== 'draft' && classes.disableAutoComplete
+			className={`${classes.autoComplete}  ${
+				isEdit && location === 'article'
+					? classes.disableAutoComplete
+					: isEdit && draftStatus !== 'draft'
+					? classes.disableAutoComplete
+					: ''
 			}`}
 			id='free-solo-2-demo'
 			disableClearable
 			// options={isEdit && draftStatus === 'draft' ? newOptions : LabelsOptions} //old labels
-			options={isEdit && draftStatus === 'draft' ? newOptions : newLabelsSearch} // new labels on search
+			options={
+				isEdit && draftStatus === 'draft' ? newOptions : selectedLabelsRemoved
+			} // new labels on search
 			renderInput={(params) => (
 				<TextField
 					{...params}
@@ -173,7 +185,7 @@ const Labels = ({
 			renderOption={(props, option) => {
 				//selected in input field,  some -> array to check exists
 
-				let currentLabelDuplicate = selectedLabels.some(
+				let currentLabelDuplicate = selectedLabels?.some(
 					(label) => label.name == option.name
 				);
 
@@ -244,7 +256,8 @@ Labels.propTypes = {
 	extraLabel: PropTypes.string,
 	handleChangeExtraLabel: PropTypes.func,
 	draftStatus: PropTypes.string,
-	setExtraLabel: PropTypes.func
+	setExtraLabel: PropTypes.func,
+	location: PropTypes.string
 };
 
 export default Labels;

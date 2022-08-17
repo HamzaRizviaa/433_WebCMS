@@ -11,7 +11,14 @@ import UploadOrEditQuiz from '../UploadEditQuestion/UploadOrEditQuiz';
 
 // on upload button in header - to upload new poll or quiz
 
-const UploadQuiz = ({ open, handleClose, title, heading1, buttonText }) => {
+const UploadQuiz = ({
+	open,
+	handleClose,
+	title,
+	heading1,
+	buttonText,
+	location
+}) => {
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
@@ -62,6 +69,7 @@ const UploadQuiz = ({ open, handleClose, title, heading1, buttonText }) => {
 								handleClose();
 							}}
 							type='poll'
+							location={location}
 						/>
 					</TabPanelUnstyled>
 					<TabPanelUnstyled value={1}>
@@ -79,6 +87,7 @@ const UploadQuiz = ({ open, handleClose, title, heading1, buttonText }) => {
 								handleClose();
 							}}
 							type='quiz'
+							location={location}
 						/>
 					</TabPanelUnstyled>
 				</TabsUnstyled>
@@ -93,7 +102,8 @@ UploadQuiz.propTypes = {
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
-	type: PropTypes.string.isRequired
+	type: PropTypes.string.isRequired,
+	location: PropTypes.string.isRequired
 };
 
 export default UploadQuiz;

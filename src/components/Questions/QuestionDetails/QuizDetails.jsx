@@ -79,6 +79,7 @@ export default function QuizDetails({
 						type={'quiz'}
 						dialogWrapper={dialogWrapper}
 						publishedStatus='draft'
+						location={location}
 					/>
 				) : location === 'article' ? (
 					<QuizResults
@@ -139,6 +140,7 @@ export default function QuizDetails({
 								type={'quiz'}
 								dialogWrapper={dialogWrapper}
 								publishedStatus='draft'
+								location={location}
 							/>
 						</TabPanelUnstyled>
 					</TabsUnstyled>
