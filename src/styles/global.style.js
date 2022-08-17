@@ -136,7 +136,7 @@ export const useStyles = makeStyles(() => ({
 		lineHeight: '24px'
 	},
 	contentWrapperNoPreview: {
-		minHeight: 'calc(100vh - 107px)',
+		//minHeight: 'calc(100vh - 107px)',
 		position: 'relative',
 		display: 'flex',
 		flexDirection: 'column',
@@ -254,14 +254,14 @@ export const useStyles = makeStyles(() => ({
 	},
 
 	previewContentWrapper: {
-		minHeight: 'calc(100vh - 107px)',
+		//	minHeight: 'calc(100vh - 107px)',
 		position: 'relative',
 		display: 'flex',
 		width: '1000px'
 	},
 
 	contentWrapper: {
-		minHeight: 'calc(100vh - 107px)',
+		//minHeight: 'calc(100vh - 107px)',
 		position: 'relative',
 		display: 'flex',
 		flexDirection: 'column',

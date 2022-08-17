@@ -6,9 +6,11 @@ import TabsUnstyled from '@mui/base/TabsUnstyled';
 import TabsListUnstyled from '@mui/base/TabsListUnstyled';
 import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import TabUnstyled from '@mui/base/TabUnstyled';
-import { useStyles } from './quizStyles';
-import UploadOrEditQuiz from './UploadOrEditQuiz';
-import QuizResults from './QuizResults';
+import { useStyles } from '../quizStyles';
+import UploadOrEditQuiz from '../UploadEditQuestion/UploadOrEditQuiz';
+import QuizResults from '../QuestionResults/QuizResults';
+
+//Question Library : this slider slides when click on row with type : poll
 
 export default function PollDetails({
 	open,
@@ -33,7 +35,7 @@ export default function PollDetails({
 	};
 
 	const muiClasses = useStyles();
-	// Question Library :  click on row with type:poll
+
 	return (
 		<Slider
 			open={open}
@@ -107,6 +109,7 @@ export default function PollDetails({
 								status={status}
 								location={location}
 								dialogWrapper={dialogWrapper}
+								sak
 							/>
 						</TabPanelUnstyled>
 						<TabPanelUnstyled value={1}>

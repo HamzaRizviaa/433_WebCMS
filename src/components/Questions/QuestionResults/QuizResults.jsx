@@ -1,21 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
-import classes from './_uploadOrEditQuiz.module.scss';
-import Button from '../../../components/button';
-import Table from '../../../components/table';
+import Button from '../../button';
+import Table from '../../table';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import { getDateTime, formatDate } from '../../../utils';
-
-import LinearProgress, {
-	linearProgressClasses
-} from '@mui/material/LinearProgress';
-import PropTypes from 'prop-types';
-import { useStyles } from './UploadOrEditQuiz.style';
-import {
-	getQuestions,
-	getQuestionResulParticipant
-} from '../../../pages/QuestionLibrary/questionLibrarySlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLocalStorageDetails } from '../../../utils';
 import { toast } from 'react-toastify';
@@ -23,6 +11,20 @@ import PrimaryLoader from '../../PrimaryLoader';
 import axios from 'axios';
 import DeleteModal from '../../DeleteModal';
 import DefaultImage from '../../../assets/defaultImage.png';
+
+import LinearProgress, {
+	linearProgressClasses
+} from '@mui/material/LinearProgress';
+import PropTypes from 'prop-types';
+import {
+	getQuestions,
+	getQuestionResulParticipant
+} from '../../../pages/QuestionLibrary/questionLibrarySlice';
+
+import { styled } from '@mui/material/styles';
+import classes from '../UploadEditQuestion/_uploadOrEditQuiz.module.scss';
+import { useStyles } from '../UploadEditQuestion/UploadOrEditQuiz.style';
+
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	height: '54px',
 	borderRadius: '8px',
@@ -35,6 +37,8 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 		backgroundColor: theme.palette.mode === '#404040' ? 'red' : '#808080'
 	}
 }));
+
+// quiz and polls results tables
 
 export default function QuizResults({
 	handleClose,
@@ -132,6 +136,7 @@ export default function QuizResults({
 			);
 		return null;
 	};
+
 	const toggleDeleteModal = () => {
 		setOpenDeletePopup(!openDeletePopup);
 	};
