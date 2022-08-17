@@ -258,6 +258,9 @@ export const checkNewElementQuestionDraft = (elements, data) => {
 						(data[i]?.data?.uploadedFiles
 							? data[i]?.data?.uploadedFiles[0]?.file_name ===
 							  elements[i]?.question_data?.file_name
+							: elements[i]?.question_data?.file_name &&
+							  !data[i]?.data?.uploadedFiles
+							? false
 							: true) &&
 						data[i]?.data?.labels?.length ===
 							elements[i]?.question_data?.labels?.length &&
