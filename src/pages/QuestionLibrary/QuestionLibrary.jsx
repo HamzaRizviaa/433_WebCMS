@@ -83,7 +83,7 @@ const QuestionLibrary = () => {
 	const [startDate, endDate] = dateRange;
 	const [logout, setLogout] = useState(false);
 	const [notifID, setNotifID] = useState('');
-
+	const [editSlider, showEditSlider] = useState(false);
 	// const enabled = (logoutValue) => {
 	// 	console.log(logoutValue, 'logoutVALUE');
 	// 	setLogout(logoutValue);
@@ -237,15 +237,14 @@ const QuestionLibrary = () => {
 			formatter: (content, row) => {
 				return (
 					//<div className={classes.questionRow}>{content}</div>
-					<div className={classes.questionRow} style={{ display: 'flex' }}>
+					<div
+						className={classes.questionRow}
+						style={{ display: 'flex', alignItems: 'center' }}
+					>
 						{row.total_questions > 1 ? (
-							<MenuIcon
-								style={{ marginRight: '10px', height: '20px', width: '20px' }}
-							/>
+							<MenuIcon style={{ marginRight: '10px', minWidth: '20px' }} />
 						) : (
-							<div
-								style={{ marginRight: '10px', height: '20px', width: '20px' }}
-							></div>
+							<div style={{ marginRight: '10px', minWidth: '20px' }}></div>
 						)}
 
 						<Markup content={`${content}`} />
@@ -415,6 +414,7 @@ const QuestionLibrary = () => {
 		onClick: (e, row) => {
 			// if (!edit) {
 			// dispatch(getSpecificPost(row.id));
+			//api calls
 			row.status === 'draft' && dispatch(getAllNewLabels());
 			dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
 			dispatch(
@@ -427,9 +427,10 @@ const QuestionLibrary = () => {
 			setrowLocation(row.location);
 			setEdit(true);
 			setNotifID(row.id);
-			row.question_type === 'quiz'
-				? setShowQuizSlider(true)
-				: setShowPollSlider(true);
+			showEditSlider(true);
+			// row.question_type === 'quiz'
+			// 	? setShowQuizSlider(true)
+			// 	: setShowPollSlider(true);
 			// }
 		}
 	};
@@ -715,14 +716,28 @@ const QuestionLibrary = () => {
 						className={classes.gotoInput}
 					/>
 				</div>
-
+				{/* upload */}
 				<UploadOrEditQuiz
 					open={showSlider}
-					notifID={notifID}
 					location={rowLocation}
 					status={rowStatus} //open closed draft
 					handleClose={() => {
 						setShowSlider(false);
+					}}
+					isEdit={edit}
+					buttonText={
+						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
+					}
+				/>
+				{/* edit question */}
+				<UploadOrEditQuiz
+					isEdit={edit}
+					open={editSlider}
+					notifID={notifID}
+					location={rowLocation}
+					status={rowStatus} //open closed draft
+					handleClose={() => {
+						showEditSlider(false);
 					}}
 					buttonText={
 						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'

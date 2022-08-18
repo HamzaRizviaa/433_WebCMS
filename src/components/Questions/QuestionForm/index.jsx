@@ -63,7 +63,7 @@ const QuestionForm = ({
 		question: '',
 		answers: [
 			{ answer: '', type: 'right_answer', position: 0 },
-			{ answer: '', type: 'wrong_answer', position: 1 }
+			{ answer: '', type: 'wrong_answer_1', position: 1 }
 		],
 		labels: [],
 		end_date: null
@@ -222,6 +222,7 @@ const QuestionForm = ({
 	};
 
 	const handleAnswerChange = (event, index) => {
+		console.log(index, 'index ');
 		const formCopy = { ...form };
 		formCopy.answers[index] = {
 			answer: event.target.value,
@@ -230,7 +231,7 @@ const QuestionForm = ({
 				type === 'quiz' && index === 0
 					? 'right_answer'
 					: type === 'quiz' && index > 0
-					? 'wrong_answer'
+					? 'wrong_answer_' + index
 					: 'poll'
 		};
 		setForm(formCopy);
@@ -238,340 +239,246 @@ const QuestionForm = ({
 		sendDataToParent(answers);
 	};
 	return (
-		<div>
-			<Draggable draggableId={`draggable-${index}`} index={index} key={key}>
-				{(provided) => (
-					<div
-						ref={provided.innerRef}
-						{...provided.draggableProps}
-						style={{
-							...provided.draggableProps.style
+		<>
+			{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
+			<div
+				className={globalClasses.contentWrapperNoPreview}
+				//style={{ width: previewFile != null ? '60%' : 'auto' }}
+			>
+				<div>
+					<DragAndDropField
+						uploadedFiles={form?.uploadedFiles}
+						quizPollStatus={status}
+						handleDeleteFile={handleDeleteFile}
+						setPreviewBool={setPreviewBool}
+						setPreviewFile={setPreviewFile}
+						isArticle
+						isEdit={isEdit}
+						imgEl={imgRef}
+						imageOnload={() => {
+							setFileWidth(imgRef.current.naturalWidth);
+							setFileHeight(imgRef.current.naturalHeight);
 						}}
-					>
-						<div
-							className={
-								location === 'article'
-									? globalClasses.accordionArticleRoot
-									: globalClasses.accordionRoot
-							}
+					/>
+
+					{!form?.uploadedFiles.length ? (
+						<section
+							className={globalClasses.dropZoneContainer}
+							style={{
+								borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
+							}}
 						>
-							<Accordion expanded={expanded} style={{ marginTop: '20px' }}>
-								{location === 'article' ? (
-									<></>
+							<div
+								{...getRootProps({
+									className: globalClasses.dropzone
+								})}
+							>
+								<input {...getInputProps()} />
+
+								{loading ? (
+									<SecondaryLoader loading={true} />
 								) : (
-									<AccordionSummary className={classes.accordionSummary}>
-										<div className={classes.leftDiv}>
-											<div className={classes.grabIconDiv}>
-												<span {...provided.dragHandleProps}>
-													<Union
-														style={{ cursor: 'grab' }}
-														className={classes.grabIcon}
-													/>
-												</span>
-											</div>
-											<Typography
-												className={classes.heading}
-												style={{ textTransform: 'capitalize' }}
-											>
-												{type} {index + 1}
-											</Typography>
-										</div>
-
-										<Box className={classes.rightDiv}>
-											<div className={classes.deleteIconDiv}>
-												<Deletes
-													className={classes.deleteIcon}
-													onClick={() => {
-														handleDeleteQuestionSlide(item.sort_order);
-													}}
-												/>
-											</div>
-											<div className={classes.deleteIconDiv}>
-												{expanded ? (
-													<ExpandLessIcon onClick={() => setExpanded(false)} />
-												) : (
-													<ExpandMoreIcon onClick={() => setExpanded(true)} />
-												)}
-											</div>
-										</Box>
-									</AccordionSummary>
+									<>
+										<AddCircleOutlineIcon
+											className={globalClasses.addFilesIcon}
+										/>
+										<p className={globalClasses.dragMsg}>
+											Click or drag file to this area to upload
+										</p>
+										<p className={globalClasses.formatMsg}>
+											Supported formats are jpeg and png
+										</p>
+										<p className={globalClasses.uploadMediaError}>
+											{isError.uploadedFiles
+												? 'You need to upload a media in order to post'
+												: ''}
+										</p>
+									</>
 								)}
+							</div>
+						</section>
+					) : (
+						''
+					)}
 
-								<AccordionDetails>
-									<LoadingOverlay active={false} spinner={<PrimaryLoader />}>
-										<Slide in={true} direction='up' {...{ timeout: 400 }}>
-											<div
-												ref={loadingRef}
-												className={`${
-													// previewFile != null
-													// 	? classes.previewContentWrapper
-													// 	:
-													classes.contentWrapper
-												}`}
-											>
-												{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
-												<div
-													className={globalClasses.contentWrapperNoPreview}
-													//style={{ width: previewFile != null ? '60%' : 'auto' }}
-												>
-													<div>
-														<DragAndDropField
-															uploadedFiles={form?.uploadedFiles}
-															quizPollStatus={status}
-															handleDeleteFile={handleDeleteFile}
-															setPreviewBool={setPreviewBool}
-															setPreviewFile={setPreviewFile}
-															isArticle
-															isEdit={isEdit}
-															imgEl={imgRef}
-															imageOnload={() => {
-																setFileWidth(imgRef.current.naturalWidth);
-																setFileHeight(imgRef.current.naturalHeight);
+					<p className={globalClasses.fileRejectionError}>
+						{fileRejectionError}
+					</p>
+
+					<div className={globalClasses.dropBoxUrlContainer}>
+						<h6>DROPBOX URL</h6>
+						<TextField
+							value={form.dropbox_url}
+							onChange={(e) => {
+								setForm((prev) => {
+									return {
+										...prev,
+										dropbox_url: e.target.value
+									};
+								});
+
+								sendDataToParent({
+									dropbox_url: e.target.value
+								});
+							}}
+							placeholder={'Please drop the dropbox URL here'}
+							className={classes.textField}
+							multiline
+							maxRows={2}
+							InputProps={{
+								disableUnderline: true,
+								className: classes.textFieldInput,
+								style: {
+									borderRadius: form.dropbox_url ? '16px' : '40px'
+								}
+							}}
+						/>
+					</div>
+
+					<div className={classes.titleContainer}>
+						<div className={globalClasses.characterCount}>
+							<h6
+								className={
+									isError.question
+										? globalClasses.errorState
+										: globalClasses.noErrorState
+								}
+							>
+								QUESTION
+							</h6>
+							<h6
+								style={{
+									color:
+										form.question?.length >= 46 && form.question?.length <= 54
+											? 'pink'
+											: form.question?.length === 55
+											? 'red'
+											: 'white'
+								}}
+							>
+								{form.question?.length}/55
+							</h6>
+						</div>
+						<TextField
+							disabled={isEdit && status !== 'draft'}
+							value={form.question}
+							onChange={(e) => {
+								setForm((prev) => {
+									return {
+										...prev,
+										question: e.target.value
+									};
+								});
+								sendDataToParent({
+									question: e.target.value
+								});
+							}}
+							placeholder={'Please write your question here'}
+							className={classes.textField}
+							InputProps={{
+								disableUnderline: true,
+								className: `${classes.textFieldInput}  ${
+									isEdit && status !== 'draft' && classes.disableTextField
+								}`
+							}}
+							inputProps={{ maxLength: 55 }}
+							multiline
+							maxRows={2}
+						/>
+					</div>
+
+					<p className={globalClasses.mediaError}>
+						{isError.question
+							? 'You need to provide a question in order to post.'
+							: ''}
+					</p>
+
+					{form?.answers.length > 0 &&
+						form?.answers.map((item, index) => {
+							return (
+								<div
+									className={classes.titleContainer}
+									item={item}
+									index={index}
+									key={item.sort_order}
+								>
+									<div className={globalClasses.characterCount}>
+										<h6
+											className={
+												isError.ans2
+													? globalClasses.errorState
+													: globalClasses.noErrorState
+											}
+										>
+											{type === 'quiz' && index === 0
+												? 'RIGHT ANSWER'
+												: type === 'quiz' && index > 0
+												? 'WRONG ANSWER ' + index
+												: 'ANSWER ' + `${index + 1}`}
+										</h6>
+										<h6
+											style={{
+												color:
+													form.answers[index]?.answer.length >= 22 &&
+													form.answers[index]?.answer.length <= 28
+														? 'pink'
+														: form.answers[index]?.answer.length === 29
+														? 'red'
+														: 'white'
+											}}
+										>
+											{form.answers[index]?.answer.length}/29
+										</h6>
+									</div>
+									<TextField
+										disabled={isEdit && status !== 'draft'}
+										value={form.answers[index]?.answer}
+										onChange={(e) => {
+											handleAnswerChange(e, index);
+										}}
+										placeholder={'Please write your answer here'}
+										className={classes.textField}
+										InputProps={{
+											disableUnderline: true,
+											className: `${classes.textFieldInput}  ${
+												isEdit && status !== 'draft' && classes.disableTextField
+											}`,
+											startAdornment: (
+												<InputAdornment position='end'>
+													{index < 2 ? (
+														<> </>
+													) : (
+														<DeleteBin
+															style={{ marginTop: '20px' }}
+															onClick={() => {
+																handleAnswerDelete(index);
 															}}
 														/>
+													)}
+												</InputAdornment>
+											)
+										}}
+										multiline
+										maxRows={1}
+										inputProps={{ maxLength: 29 }}
+									/>
+								</div>
+							);
+						})}
 
-														{!form?.uploadedFiles.length ? (
-															<section
-																className={globalClasses.dropZoneContainer}
-																style={{
-																	borderColor: isError.uploadedFiles
-																		? '#ff355a'
-																		: 'yellow'
-																}}
-															>
-																<div
-																	{...getRootProps({
-																		className: globalClasses.dropzone
-																	})}
-																>
-																	<input {...getInputProps()} />
+					<div
+						className={classes.addNewAnswer}
+						onClick={() => handleNewAnswer()}
+						style={{
+							pointerEvents: form?.answers.length < 5 ? 'auto' : 'none',
+							cursor: 'pointer'
+						}}
+					>
+						<NewsAddIcon />
+						<h6>ADD ANSWER</h6>
+					</div>
 
-																	{loading ? (
-																		<SecondaryLoader loading={true} />
-																	) : (
-																		<>
-																			<AddCircleOutlineIcon
-																				className={globalClasses.addFilesIcon}
-																			/>
-																			<p className={globalClasses.dragMsg}>
-																				Click or drag file to this area to
-																				upload
-																			</p>
-																			<p className={globalClasses.formatMsg}>
-																				Supported formats are jpeg and png
-																			</p>
-																			<p
-																				className={
-																					globalClasses.uploadMediaError
-																				}
-																			>
-																				{isError.uploadedFiles
-																					? 'You need to upload a media in order to post'
-																					: ''}
-																			</p>
-																		</>
-																	)}
-																</div>
-															</section>
-														) : (
-															''
-														)}
-
-														<p className={globalClasses.fileRejectionError}>
-															{fileRejectionError}
-														</p>
-
-														<div className={globalClasses.dropBoxUrlContainer}>
-															<h6>DROPBOX URL</h6>
-															<TextField
-																value={form.dropbox_url}
-																onChange={(e) => {
-																	setForm((prev) => {
-																		return {
-																			...prev,
-																			dropbox_url: e.target.value
-																		};
-																	});
-
-																	sendDataToParent({
-																		dropbox_url: e.target.value
-																	});
-																}}
-																placeholder={'Please drop the dropbox URL here'}
-																className={classes.textField}
-																multiline
-																maxRows={2}
-																InputProps={{
-																	disableUnderline: true,
-																	className: classes.textFieldInput,
-																	style: {
-																		borderRadius: form.dropbox_url
-																			? '16px'
-																			: '40px'
-																	}
-																}}
-															/>
-														</div>
-
-														<div className={classes.titleContainer}>
-															<div className={globalClasses.characterCount}>
-																<h6
-																	className={
-																		isError.question
-																			? globalClasses.errorState
-																			: globalClasses.noErrorState
-																	}
-																>
-																	QUESTION
-																</h6>
-																<h6
-																	style={{
-																		color:
-																			form.question?.length >= 46 &&
-																			form.question?.length <= 54
-																				? 'pink'
-																				: form.question?.length === 55
-																				? 'red'
-																				: 'white'
-																	}}
-																>
-																	{form.question?.length}/55
-																</h6>
-															</div>
-															<TextField
-																disabled={isEdit && status !== 'draft'}
-																value={form.question}
-																onChange={(e) => {
-																	setForm((prev) => {
-																		return {
-																			...prev,
-																			question: e.target.value
-																		};
-																	});
-																	sendDataToParent({
-																		question: e.target.value
-																	});
-																}}
-																placeholder={'Please write your question here'}
-																className={classes.textField}
-																InputProps={{
-																	disableUnderline: true,
-																	className: `${classes.textFieldInput}  ${
-																		isEdit &&
-																		status !== 'draft' &&
-																		classes.disableTextField
-																	}`
-																}}
-																inputProps={{ maxLength: 55 }}
-																multiline
-																maxRows={2}
-															/>
-														</div>
-
-														<p className={globalClasses.mediaError}>
-															{isError.question
-																? 'You need to provide a question in order to post.'
-																: ''}
-														</p>
-
-														{form?.answers.length > 0 &&
-															form?.answers.map((item, index) => {
-																return (
-																	<div
-																		className={classes.titleContainer}
-																		item={item}
-																		index={index}
-																		key={item.sort_order}
-																	>
-																		<div
-																			className={globalClasses.characterCount}
-																		>
-																			<h6
-																				className={
-																					isError.ans2
-																						? globalClasses.errorState
-																						: globalClasses.noErrorState
-																				}
-																			>
-																				{type === 'quiz' && index === 0
-																					? 'RIGHT ANSWER'
-																					: type === 'quiz' && index > 0
-																					? 'WRONG ANSWER ' + index
-																					: 'ANSWER ' + `${index + 1}`}
-																			</h6>
-																			<h6
-																				style={{
-																					color:
-																						form.answers[index]?.answer
-																							.length >= 22 &&
-																						form.answers[index]?.answer
-																							.length <= 28
-																							? 'pink'
-																							: form.answers[index]?.answer
-																									.length === 29
-																							? 'red'
-																							: 'white'
-																				}}
-																			>
-																				{form.answers[index]?.answer.length}/29
-																			</h6>
-																		</div>
-																		<TextField
-																			disabled={isEdit && status !== 'draft'}
-																			value={form.answers[index]?.answer}
-																			onChange={(e) => {
-																				handleAnswerChange(e, index);
-																			}}
-																			placeholder={
-																				'Please write your answer here'
-																			}
-																			className={classes.textField}
-																			InputProps={{
-																				disableUnderline: true,
-																				className: `${
-																					classes.textFieldInput
-																				}  ${
-																					isEdit &&
-																					status !== 'draft' &&
-																					classes.disableTextField
-																				}`,
-																				startAdornment: (
-																					<InputAdornment position='end'>
-																						{index < 2 ? (
-																							<> </>
-																						) : (
-																							<DeleteBin
-																								style={{ marginTop: '20px' }}
-																								onClick={() => {
-																									handleAnswerDelete(index);
-																								}}
-																							/>
-																						)}
-																					</InputAdornment>
-																				)
-																			}}
-																			multiline
-																			maxRows={1}
-																			inputProps={{ maxLength: 29 }}
-																		/>
-																	</div>
-																);
-															})}
-
-														<div
-															className={classes.addNewAnswer}
-															onClick={() => handleNewAnswer()}
-															style={{
-																pointerEvents:
-																	form?.answers.length < 5 ? 'auto' : 'none',
-																cursor: 'pointer'
-															}}
-														>
-															<NewsAddIcon />
-															<h6>ADD ANSWER</h6>
-														</div>
-
-														{/* <p className={globalClasses.mediaError}>
+					{/* <p className={globalClasses.mediaError}>
 															{isError.ans2
 																? type === 'quiz'
 																	? 'You need to provide wrong answer in order to post'
@@ -579,89 +486,54 @@ const QuestionForm = ({
 																: ''}
 														</p> */}
 
-														<div className={classes.titleContainer}>
-															<h6
-																className={
-																	isError.selectedLabels
-																		? globalClasses.errorState
-																		: globalClasses.noErrorState
-																}
-															>
-																LABELS
-															</h6>
-															<Labels
-																isEdit={isEdit}
-																setDisableDropdown={setDisableDropdown}
-																selectedLabels={form.labels}
-																setSelectedLabels={(newVal) => {
-																	setForm((prev) => {
-																		return { ...prev, labels: [...newVal] };
-																	});
-																	sendDataToParent({
-																		labels: [...newVal]
-																	});
-																}} //closure
-																LabelsOptions={quizLabels}
-																extraLabel={extraLabel}
-																handleChangeExtraLabel={handleChangeExtraLabel}
-																draftStatus={status}
-																setExtraLabel={setExtraLabel}
-															/>
-														</div>
-
-														<p className={globalClasses.mediaError}>
-															{isError.selectedLabels
-																? `You need to add ${
-																		7 - form.labels.length
-																  } more labels in order to upload media`
-																: isError.selectedLabelsDraft
-																? 'You need to select atleast 1 label to save as draft'
-																: ''}
-														</p>
-													</div>
-
-													<p className={globalClasses.mediaError}>
-														{isError.draftError
-															? 'Something needs to be changed to save a draft'
-															: ''}
-													</p>
-												</div>
-												{/* {previewFile != null && (
-			<div ref={previewRef} className={globalClasses.previewComponent}>
-				<div className={globalClasses.previewHeader}>
-					<Close
-						onClick={() => {
-							setPreviewBool(false);
-							setPreviewFile(null);
-						}}
-						className={globalClasses.closeIcon}
-					/>
-					<h5>Preview</h5>
-				</div>
-				<div>
-					<img
-						src={previewFile.media_url}
-						className={classes.previewFile}
-						style={{
-							width: '100%',
-							height: `${8 * 4}rem`,
-							objectFit: 'contain',
-							objectPosition: 'center'
-						}}
-					/>
-				</div>
-			</div>
-		)} */}
-											</div>
-										</Slide>
-									</LoadingOverlay>
-								</AccordionDetails>
-							</Accordion>
-						</div>
+					<div className={classes.titleContainer}>
+						<h6
+							className={
+								isError.selectedLabels
+									? globalClasses.errorState
+									: globalClasses.noErrorState
+							}
+						>
+							LABELS
+						</h6>
+						<Labels
+							isEdit={isEdit}
+							setDisableDropdown={setDisableDropdown}
+							selectedLabels={form.labels}
+							setSelectedLabels={(newVal) => {
+								setForm((prev) => {
+									return { ...prev, labels: [...newVal] };
+								});
+								sendDataToParent({
+									labels: [...newVal]
+								});
+							}} //closure
+							LabelsOptions={quizLabels}
+							extraLabel={extraLabel}
+							handleChangeExtraLabel={handleChangeExtraLabel}
+							draftStatus={status}
+							setExtraLabel={setExtraLabel}
+						/>
 					</div>
-				)}
-			</Draggable>
-		</div>
+
+					<p className={globalClasses.mediaError}>
+						{isError.selectedLabels
+							? `You need to add ${
+									7 - form.labels.length
+							  } more labels in order to upload media`
+							: isError.selectedLabelsDraft
+							? 'You need to select atleast 1 label to save as draft'
+							: ''}
+					</p>
+				</div>
+
+				<p className={globalClasses.mediaError}>
+					{isError.draftError
+						? 'Something needs to be changed to save a draft'
+						: ''}
+				</p>
+			</div>
+		</>
 	);
 };
 

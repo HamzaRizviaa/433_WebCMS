@@ -14,7 +14,7 @@ import axios from 'axios';
 import Slider from '../../slider';
 import { makeid } from '../../../utils/helper';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
-
+import QuestionTabPanes from '../UploadQuestionHeader/QuestionTabPanes';
 import { ReactComponent as CalenderYellow } from '../../../assets/Calender_Yellow.svg';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../../../pages/PostLibrary/_calender.scss';
@@ -41,6 +41,7 @@ import QuestionForm from '../QuestionForm';
 import LoadingOverlay from 'react-loading-overlay';
 import PrimaryLoader from '../../PrimaryLoader';
 import Slide from '@mui/material/Slide';
+import DraggableContainers from '../DraggableContainers';
 const UploadOrEditQuiz = ({
 	open,
 	previewRef,
@@ -717,6 +718,10 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
+	const setQuesType = (type) => {
+		setQuestionType(type);
+	};
+
 	return (
 		<>
 			<Slider
@@ -724,7 +729,13 @@ const UploadOrEditQuiz = ({
 				handleClose={() => {
 					handleClose();
 				}}
-				title={location === 'article' ? `${'Edit ' + type}` : ''}
+				title={
+					!isEdit
+						? 'Upload Question'
+						: isEdit && location === 'article'
+						? `${'Edit ' + type}`
+						: 'Edit Question'
+				}
 				disableDropdown={disableDropdown}
 				preview={previewBool}
 				handlePreview={() => {
@@ -776,39 +787,20 @@ const UploadOrEditQuiz = ({
 													</AccordionSummary>
 
 													<AccordionDetails>
-														<div className={muiClasses.root}>
-															<TabsUnstyled
-																defaultValue={0}
-																className={muiClasses.tabRoot}
-															>
-																<TabsListUnstyled
-																	className={muiClasses.tabMainDiv}
-																	style={{
-																		width: previewBool ? '60%' : '100%'
-																	}}
-																>
-																	<TabUnstyled
-																		onClick={() => {
-																			setQuestionType('poll');
-																			resetSlides('poll');
-																		}}
-																	>
-																		Add Poll
-																	</TabUnstyled>
-																	<TabUnstyled
-																		onClick={() => {
-																			setQuestionType('quiz');
-																			resetSlides('quiz');
-																		}}
-																	>
-																		Add Quiz
-																	</TabUnstyled>
-																</TabsListUnstyled>
-																<TabPanelUnstyled value={0}></TabPanelUnstyled>
-																<TabPanelUnstyled value={1}></TabPanelUnstyled>
-															</TabsUnstyled>
-														</div>
-														<br />
+														{/* tab panes on first upload*/}
+														{!isEdit && (
+															<>
+																<QuestionTabPanes
+																	edit={isEdit}
+																	location={location}
+																	type={questionType}
+																	resetSlides={(type) => resetSlides(type)}
+																	setQuesType={(type) => setQuesType(type)}
+																/>
+																<br />
+															</>
+														)}
+
 														<div className={classes.datePickerContainer}>
 															<h6
 																className={
@@ -867,10 +859,12 @@ const UploadOrEditQuiz = ({
 											</div>
 
 											<QuestionDraggable onDragEnd={onDragEnd}>
-												isEdit ? //tab panes // question form // quiz results :
+												{/* isEdit ? //tab panes // question form // quiz results : question form */}
+
 												{questionSlides.map((item, index) => {
 													return (
-														<QuestionForm
+														<DraggableContainers
+															isEdit={isEdit}
 															item={item}
 															index={index}
 															type={questionType}
@@ -885,10 +879,12 @@ const UploadOrEditQuiz = ({
 																handleElementDelete(sortOrder)
 															}
 															initialData={item.data && item.data}
-															setPreviewBool={setPreviewBool}
 															setPreviewFile={setPreviewFile}
-															isEdit={isEdit}
+															setPreviewBool={setPreviewBool}
 															setDisableDropdown={setDisableDropdown}
+															//tab panes
+															resetSlides={(type) => resetSlides(type)}
+															setQuesType={(type) => setQuesType(type)}
 														/>
 													);
 												})}
