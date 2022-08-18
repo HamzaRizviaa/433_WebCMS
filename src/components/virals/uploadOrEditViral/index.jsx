@@ -182,6 +182,9 @@ const UploadOrEditViral = ({
 					};
 				});
 			}
+			if (specificViral?.url) {
+				setDeleteSignedUrlKey(specificViral?.url);
+			}
 		}
 	}, [specificViral]);
 
@@ -254,6 +257,7 @@ const UploadOrEditViral = ({
 				form.uploadedFiles[0],
 				'virallibrary'
 			);
+			setDeleteSignedUrlKey(uploadedFile.signedUrlKeyDelete);
 		}
 
 		setFileOnUpload(uploadedFile);
@@ -309,7 +313,9 @@ const UploadOrEditViral = ({
 				`${process.env.REACT_APP_API_ENDPOINT}/media-upload`,
 				{
 					data: {
-						keys: [deleteSignedUrlKey]
+						data: {
+							keys: [deleteSignedUrlKey]
+						}
 					},
 					headers: {
 						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
@@ -329,6 +335,7 @@ const UploadOrEditViral = ({
 						uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
 					};
 				});
+				setDeleteSignedUrlKey('');
 				toast.success('Media Data  Deleted');
 			}
 		} catch (e) {
