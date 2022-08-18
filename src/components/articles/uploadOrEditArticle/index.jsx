@@ -718,7 +718,7 @@ const UploadOrEditArticle = ({
 
 		try {
 			let initialResponse = client.post(
-				'https://runtime.sagemaker.eu-west-2.amazonaws.com/endpoints/model-application-with-path/invocations',
+				process.env.REACT_APP_INVOCATIONS_ENDPOINT,
 				body,
 				{
 					headers
@@ -759,7 +759,7 @@ const UploadOrEditArticle = ({
 
 		try {
 			let initialResponse = client.post(
-				'https://runtime.sagemaker.eu-west-2.amazonaws.com/endpoints/model-application-with-path/invocations',
+				process.env.REACT_APP_INVOCATIONS_ENDPOINT,
 				body,
 				{
 					headers
