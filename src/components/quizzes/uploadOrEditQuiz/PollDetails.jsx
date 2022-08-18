@@ -18,7 +18,8 @@ export default function PollDetails({
 	buttonText,
 	isEdit,
 	status,
-	location
+	location,
+	notifID
 }) {
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
@@ -48,6 +49,11 @@ export default function PollDetails({
 			disableDropdown={disableDropdown}
 			quiz={true}
 			dialogRef={dialogWrapper}
+			notifID={
+				location === 'article' || status === 'CLOSED' || status === 'draft'
+					? ''
+					: notifID
+			}
 		>
 			<div className={muiClasses.root}>
 				{status === 'draft' ? (
@@ -68,6 +74,7 @@ export default function PollDetails({
 						status={status}
 						dialogWrapper={dialogWrapper}
 						publishedStatus='draft'
+						location={location}
 					/>
 				) : location === 'article' ? (
 					<QuizResults
@@ -121,6 +128,7 @@ export default function PollDetails({
 								status={status}
 								dialogWrapper={dialogWrapper}
 								publishedStatus='draft'
+								location={location}
 							/>
 						</TabPanelUnstyled>
 					</TabsUnstyled>
@@ -138,5 +146,6 @@ PollDetails.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
 	type: PropTypes.string.isRequired,
-	location: PropTypes.string.isRequired
+	location: PropTypes.string.isRequired,
+	notifID: PropTypes.string
 };

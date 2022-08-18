@@ -72,6 +72,13 @@
 		cursor: pointer;
 	}
 }
+.labelsLoader {
+	text-align: center;
+	> img {
+		height: 50px;
+		width: 50px;
+	}
+}
 
 .tagYellow {
 	background-color: $neon-yellow !important;

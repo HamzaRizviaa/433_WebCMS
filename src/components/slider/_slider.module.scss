@@ -43,3 +43,18 @@
 .heading {
 	color: $neon-yellow;
 }
+.notifIDWrapper {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.notifID {
+	font-family: 'Poppins';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 12px;
+	line-height: 16px;
+	letter-spacing: 0.03em;
+	color: #808080;
+}

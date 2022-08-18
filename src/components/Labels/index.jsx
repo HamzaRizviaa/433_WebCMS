@@ -6,10 +6,13 @@ import { TextField } from '@material-ui/core';
 import Button from '../button';
 import ClearIcon from '@material-ui/icons/Clear';
 import classes from './_labels.module.scss';
-
+import Four33Loader from '../../assets/Loader_Yellow.gif';
 //new labels search
 import { useDispatch, useSelector } from 'react-redux';
-import { getNewLabelsSearch } from '../../pages/PostLibrary/postLibrarySlice';
+import {
+	getAllNewLabels,
+	getNewLabelsSearch
+} from '../../pages/PostLibrary/postLibrarySlice';
 import _debounce from 'lodash/debounce';
 
 const Labels = ({
@@ -19,71 +22,70 @@ const Labels = ({
 	setSelectedLabels,
 	LabelsOptions,
 	extraLabel,
-	handleChangeExtraLabel,
+	// handleChangeExtraLabel,
 	draftStatus = 'published',
-	setExtraLabel
+	setExtraLabel,
+	location
 }) => {
 	//const regex = /[%<>\\$'"\s@#/-=+&^*()!:;.,?{}[|]]/;
 	const regex = /\W/; // all characters that are not numbers and alphabets and underscore
 
-	let draftLabels = selectedLabels.filter((label) => label.id == -1);
+	//------------------------------new labels
+
+	const dispatch = useDispatch();
+	const { newLabelsSearch, labelsSearchStatus } = useSelector(
+		(state) => state.postLibrary
+	);
+
+	let draftLabels = selectedLabels?.filter((label) => label.id == -1);
 	let drafts = [];
-	draftLabels.forEach((element) => drafts.push(element.name));
-	let newOptions = LabelsOptions.filter(
+	draftLabels?.forEach((element) => drafts.push(element.name));
+	let newOptions = newLabelsSearch.filter(
 		(element) => !drafts.includes(element.name)
 	);
 
-	//------------------------------new labels
+	console.log(newLabelsSearch, 'ls');
 
-	// const dispatch = useDispatch();
-	// const { newLabelsSearch } = useSelector((state) => state.postLibrary);
+	let duplicateRemoval = [];
+	selectedLabels?.map((item) => duplicateRemoval.push(item.name));
+	let selectedLabelsRemoved = newLabelsSearch.filter(
+		(item) => !duplicateRemoval.includes(item.name)
+	);
 
-	// const emptySearchArray = [{ val: 'empty array' }];
+	const labelsParams = (labels) => {
+		return labels.reduce((accumulator, currentItem, currentIndex) => {
+			accumulator[`already_searched[${currentIndex}]`] = currentItem.name;
+			return accumulator;
+		}, {});
+	};
 
-	// console.log(newLabelsSearch, 'ls');
+	const handleDebounceFun = () => {
+		let _search;
+		setExtraLabel((prevState) => {
+			_search = prevState;
+			return _search;
+		});
 
-	// const handleDebounceFun = () => {
-	// 	let _search;
-	// 	setExtraLabel((prevState) => {
-	// 		_search = prevState;
-	// 		return _search;
-	// 	});
+		if (_search) {
+			dispatch(
+				getNewLabelsSearch({
+					q: _search,
+					...(selectedLabels?.length ? labelsParams(selectedLabels) : {})
+				})
+			);
+		} else {
+			dispatch(getAllNewLabels());
+		}
+	};
 
-	// 	if (_search) {
-	// 		dispatch(
-	// 			getNewLabelsSearch({
-	// 				q: _search,
-	// 				already_selected: selectedLabels
-	// 			})
-	// 		);
-	// 	} else {
-	// 		dispatch(
-	// 			getNewLabelsSearch({
-	// 				q: null,
-	// 				already_selected: selectedLabels
-	// 			})
-	// 		);
-	// 	}
-	// };
+	const debounceFun = useCallback(_debounce(handleDebounceFun, 600), [
+		selectedLabels
+	]);
 
-	// const debounceFun = useCallback(_debounce(handleDebounceFun, 600), []);
-
-	// const handleChangeExtraLabel = (e) => {
-	// 	// setSelectMediaInput(e.target.value);
-	// 	setExtraLabel(e.target.value);
-	// 	debounceFun(e.target.value);
-	// };
-
-	// const handleNewOptionlabel = () => {
-	// 	console.log('dwadawdw	ad');
-	// 	let currentLabelDuplicate = selectedLabels.some(
-	// 		(label) => label.name == extraLabel
-	// 	);
-
-	// 	if (!currentLabelDuplicate) {
-	// 		setSelectedLabels([{ id: null, name: extraLabel }]);
-	// 	}
-	// };
+	const handleChangeExtraLabel = (e) => {
+		setExtraLabel(e.target.value.toUpperCase());
+		debounceFun(e.target.value.toUpperCase());
+	};
 
 	return (
 		<Autocomplete
@@ -122,7 +124,6 @@ const Labels = ({
 			value={selectedLabels}
 			autoHighlight={true}
 			onChange={(event, newValue) => {
-				console.log(event, 'change', newValue);
 				setDisableDropdown(true);
 				let newLabels = newValue?.filter(
 					(v, i, a) =>
@@ -133,43 +134,32 @@ const Labels = ({
 				setSelectedLabels([...newLabels]);
 			}}
 			popupIcon={''}
+			//loader implement
+			// <div className={classes.liAutocompleteWithButton}>
+			// 	<p>No results found</p>
+			// </div>
 			noOptionsText={
-				<div className={classes.liAutocompleteWithButton}>
-					<p>No results found</p>
-				</div>
-
-				// <>
-				// 	{extraLabel && (
-				// 		<li
-				// 			// {...props}
-				// 			style={{
-				// 				display: 'flex',
-				// 				alignItems: 'center',
-				// 				justifyContent: 'space-between'
-				// 			}}
-				// 			className={classes.liAutocomplete}
-				// 		>
-				// 			{/* {option.name} */}
-				// 			{extraLabel}
-				// 			<Button
-				// 				text='CREATE NEW LABEL'
-				// 				style={{
-				// 					padding: '3px 12px',
-				// 					fontWeight: 700
-				// 				}}
-				// 				onClick={() => handleNewOptionlabel}
-				// 			/>
-				// 		</li>
-				// 	)}
-				// </>
+				labelsSearchStatus === 'pending' ? (
+					<div className={classes.labelsLoader}>
+						<img src={Four33Loader} />
+					</div>
+				) : (
+					''
+				)
 			}
-			className={`${classes.autoComplete} ${
-				isEdit && draftStatus !== 'draft' && classes.disableAutoComplete
+			className={`${classes.autoComplete}  ${
+				isEdit && location === 'article'
+					? classes.disableAutoComplete
+					: isEdit && draftStatus !== 'draft'
+					? classes.disableAutoComplete
+					: ''
 			}`}
 			id='free-solo-2-demo'
 			disableClearable
-			options={isEdit && draftStatus === 'draft' ? newOptions : LabelsOptions} //old labels
-			// options={newLabelsSearch?.length > 0 ? newLabelsSearch : emptySearchArray} // new labels on search
+			// options={isEdit && draftStatus === 'draft' ? newOptions : LabelsOptions} //old labels
+			options={
+				isEdit && draftStatus === 'draft' ? newOptions : selectedLabelsRemoved
+			} // new labels on search
 			renderInput={(params) => (
 				<TextField
 					{...params}
@@ -200,24 +190,22 @@ const Labels = ({
 					}}
 				/>
 			)}
-			// filterOptions={(options) => {
-			// 	let drafts = [];
-			// 	let draftLabels = selectedLabels.filter((label) => label.id == -1);
-			// 	draftLabels.forEach((element) => drafts.push(element.name));
-			// 	let newOptions = options.filter(
-			// 		(element) => !drafts.includes(element.name)
-			// 	);
-			// 	return newOptions;
-			// }}
 			renderOption={(props, option) => {
 				//selected in input field,  some -> array to check exists
-				let currentLabelDuplicate = selectedLabels.some(
+
+				let currentLabelDuplicate = selectedLabels?.some(
 					(label) => label.name == option.name
 				);
 
-				console.log(option, 'op');
-				// if(options.val)     // for new labels on search
-				if (option.id == null && !currentLabelDuplicate) {
+				let arrayResultedDuplicate = newLabelsSearch.some(
+					(label) => label.name == extraLabel && label.id !== null
+				);
+
+				if (
+					option.id === null &&
+					!currentLabelDuplicate &&
+					!arrayResultedDuplicate
+				) {
 					return (
 						<li
 							{...props}
@@ -228,7 +216,7 @@ const Labels = ({
 							}}
 							className={classes.liAutocomplete}
 						>
-							{option.name}
+							{option.name || extraLabel}
 							<Button
 								text='CREATE NEW LABEL'
 								style={{
@@ -240,11 +228,15 @@ const Labels = ({
 						</li>
 					);
 				} else if (!currentLabelDuplicate) {
-					return (
-						<li {...props} className={classes.liAutocomplete}>
-							{option.name}
-						</li>
-					);
+					if (arrayResultedDuplicate && option.id == null) {
+						return null;
+					} else {
+						return (
+							<li {...props} className={classes.liAutocomplete}>
+								{option.name}
+							</li>
+						);
+					}
 				} else {
 					return (
 						<div className={classes.liAutocompleteWithButton}>
@@ -272,7 +264,8 @@ Labels.propTypes = {
 	extraLabel: PropTypes.string,
 	handleChangeExtraLabel: PropTypes.func,
 	draftStatus: PropTypes.string,
-	setExtraLabel: PropTypes.func
+	setExtraLabel: PropTypes.func,
+	location: PropTypes.string
 };
 
 export default Labels;

@@ -39,9 +39,9 @@ import {
 	resetNoResultStatus,
 	getQuestionEdit,
 	getQuestionResultDetail,
-	getQuestionResulParticipant,
-	getQuestionLabels
+	getQuestionResulParticipant
 } from './questionLibrarySlice';
+import { getAllNewLabels } from '../PostLibrary/postLibrarySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
 import LogoutToaster from '../../components/LogoutToaster';
@@ -81,6 +81,7 @@ const QuestionLibrary = () => {
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
 	const [logout, setLogout] = useState(false);
+	const [notifID, setNotifID] = useState('');
 
 	// const enabled = (logoutValue) => {
 	// 	console.log(logoutValue, 'logoutVALUE');
@@ -158,8 +159,8 @@ const QuestionLibrary = () => {
 		labels: 'label',
 		status: 'status',
 		participants: 'participants',
-		user: 'user'
-		//location: 'location'
+		user: 'user',
+		location: 'location'
 	};
 
 	const sortRows = (order, col) => {
@@ -186,7 +187,7 @@ const QuestionLibrary = () => {
 							col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '1.5px'
+						bottom: '6px'
 					}}
 				/>
 			);
@@ -202,7 +203,7 @@ const QuestionLibrary = () => {
 							col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '1.5px'
+						bottom: '6px'
 					}}
 				/>
 			);
@@ -218,7 +219,7 @@ const QuestionLibrary = () => {
 							col?.dataField === 'status'
 								? 30
 								: -4,
-						bottom: '1.5px'
+						bottom: '6px'
 					}}
 				/>
 			);
@@ -340,7 +341,7 @@ const QuestionLibrary = () => {
 			formatter: (content) => {
 				return (
 					//<div className={classes.questionRow}>{content}</div>
-					<div className={classes.questionRow}>
+					<div className={classes.questionRow} style={{ paddingLeft: '10px' }}>
 						<Markup content={`${content}`} />
 					</div>
 				);
@@ -361,20 +362,20 @@ const QuestionLibrary = () => {
 				);
 			}
 		},
-		// {
-		// 	dataField: 'location',
-		// 	sort: true,
-		// 	sortCaret: sortRows,
-		// 	sortFunc: () => {},
-		// 	text: 'LOCATION',
-		// 	formatter: (content) => {
-		// 		return (
-		// 			<div className={classes.questionRow}>
-		// 				<div className={classes.questionLocation}>{content}</div>
-		// 			</div>
-		// 		);
-		// 	}
-		// },
+		{
+			dataField: 'location',
+			sort: true,
+			sortCaret: sortRows,
+			sortFunc: () => {},
+			text: 'LOCATION',
+			formatter: (content) => {
+				return (
+					<div className={classes.questionRow}>
+						<div className={classes.questionLocation}>{content}</div>
+					</div>
+				);
+			}
+		},
 		{
 			dataField: 'options',
 			text: 'OPTIONS',
@@ -403,7 +404,7 @@ const QuestionLibrary = () => {
 		onClick: (e, row) => {
 			// if (!edit) {
 			// dispatch(getSpecificPost(row.id));
-			row.status === 'draft' && dispatch(getQuestionLabels());
+			row.status === 'draft' && dispatch(getAllNewLabels());
 			dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
 			dispatch(
 				getQuestionResultDetail({ id: row.id, type: row.question_type })
@@ -412,9 +413,9 @@ const QuestionLibrary = () => {
 				getQuestionResulParticipant({ id: row.id, type: row.question_type })
 			);
 			setrowStatus(row.status);
-			// setrowLocation(row.location);
-			setrowLocation('Article');
+			setrowLocation(row.location);
 			setEdit(true);
+			setNotifID(row.id);
 			row.question_type === 'quiz'
 				? setShowQuizSlider(true)
 				: setShowPollSlider(true);
@@ -565,7 +566,7 @@ const QuestionLibrary = () => {
 						<h1 style={{ marginRight: '2rem' }}>QUESTION LIBRARY</h1>
 						<Button
 							onClick={() => {
-								dispatch(getQuestionLabels());
+								dispatch(getAllNewLabels());
 								setEdit(false);
 								setShowSlider(true);
 							}}
@@ -715,6 +716,7 @@ const QuestionLibrary = () => {
 					buttonText={
 						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
 					}
+					location={rowLocation}
 				/>
 				<QuizDetails
 					page={page}
@@ -730,6 +732,7 @@ const QuestionLibrary = () => {
 					buttonText={
 						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
 					}
+					notifID={notifID}
 				/>
 				<PollDetails
 					page={page}
@@ -745,6 +748,7 @@ const QuestionLibrary = () => {
 					buttonText={
 						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
 					}
+					notifID={notifID}
 				/>
 			</Layout>
 		</LoadingOverlay>

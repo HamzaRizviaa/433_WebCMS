@@ -21,7 +21,8 @@ const Slider = ({
 	viral,
 	article,
 	games,
-	news
+	news,
+	notifID
 }) => {
 	const wrapperRef = useRef(null);
 
@@ -120,7 +121,10 @@ const Slider = ({
 									onClick={() => handleClose()}
 									className={classes.closeIcon}
 								/>
-								<h1 className={classes.heading}>{title}</h1>
+								<div className={classes.notifIDWrapper}>
+									<h1 className={classes.heading}>{title}</h1>
+									<p className={classes.notifID}>{notifID}</p>
+								</div>
 							</div>
 							{children}
 						</div>
@@ -157,7 +161,8 @@ Slider.propTypes = {
 	viral: PropTypes.bool,
 	article: PropTypes.bool,
 	games: PropTypes.bool,
-	news: PropTypes.bool
+	news: PropTypes.bool,
+	notifID: PropTypes.string
 };
 
 export default Slider;

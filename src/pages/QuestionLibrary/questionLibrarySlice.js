@@ -47,6 +47,7 @@ export const getQuestionLabels = createAsyncThunk(
 export const getQuestionEdit = createAsyncThunk(
 	'questionLibrary/getQuestionEdit',
 	async ({ id, type }) => {
+		console.log(id, type, 'id and type');
 		let endPoint = `question/get-question-edit?question_id=${id}`;
 
 		if (id && type) {

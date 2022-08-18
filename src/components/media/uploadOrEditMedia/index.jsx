@@ -15,10 +15,7 @@ import checkFileSize from '../../../utils/validateFileSize';
 import ToggleSwitch from '../../switch';
 import completeUplaod from '../../../utils/completeUploadDraft';
 //import uploadFileToServer from '../../../utils/uploadFileToServer';
-import {
-	getMainCategories,
-	getMediaLabels
-} from './../../../pages/MediaLibrary/mediaLibrarySlice';
+import { getMainCategories } from './../../../pages/MediaLibrary/mediaLibrarySlice';
 import { getLocalStorageDetails } from '../../../utils';
 import { getMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
 import Close from '@material-ui/icons/Close';
@@ -72,6 +69,7 @@ const UploadOrEditMedia = ({
 	const previewRef = useRef(null);
 	const loadingRef = useRef(null);
 	const dialogWrapper = useRef(null);
+	const [notifID, setNotifID] = useState('');
 	const [form, setForm] = useState({
 		mainCategory: '',
 		subCategory: '',
@@ -139,6 +137,7 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		if (specificMedia) {
+			setNotifID(specificMedia?.id);
 			if (specificMedia?.labels) {
 				let _labels = [];
 				specificMedia.labels.map((label) => {
@@ -212,7 +211,7 @@ const UploadOrEditMedia = ({
 
 	useEffect(() => {
 		dispatch(getMainCategories());
-		dispatch(getMediaLabels());
+		// dispatch(getMediaLabels());
 		return () => {
 			resetState();
 		};
@@ -429,6 +428,7 @@ const UploadOrEditMedia = ({
 		setEditBtnDisabled(false);
 		setDraftBtnDisabled(false);
 		setIsError({});
+		setNotifID('');
 		setForm({
 			title: '',
 			description: '',
@@ -1488,6 +1488,7 @@ const UploadOrEditMedia = ({
 				previewRef={previewRef}
 				media={true}
 				dialogRef={dialogWrapper}
+				notifID={status === 'draft' ? '' : notifID}
 			>
 				<LoadingOverlay
 					active={isLoadingUploadMedia}
@@ -2068,6 +2069,7 @@ const UploadOrEditMedia = ({
 														});
 													}}
 													draftStatus={status}
+													setExtraLabel={setExtraLabel}
 												/>
 											</div>
 											<p className={globalClasses.mediaError}>
