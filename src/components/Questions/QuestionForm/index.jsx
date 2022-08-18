@@ -46,7 +46,8 @@ const QuestionForm = ({
 	handleDeleteQuestionSlide,
 	setPreviewBool,
 	setPreviewFile,
-	isEdit
+	isEdit,
+	location
 }) => {
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [expanded, setExpanded] = useState(true);
@@ -120,7 +121,7 @@ const QuestionForm = ({
 				setLoading(false);
 			});
 		}
-	}, [acceptedFiles]);
+	}, [acceptedFiles, fileHeight, fileWidth]);
 
 	const getFileType = (type) => {
 		if (type) {
@@ -247,44 +248,54 @@ const QuestionForm = ({
 							...provided.draggableProps.style
 						}}
 					>
-						<div className={globalClasses.accordionRoot}>
+						<div
+							className={
+								location === 'article'
+									? globalClasses.accordionArticleRoot
+									: globalClasses.accordionRoot
+							}
+						>
 							<Accordion expanded={expanded} style={{ marginTop: '20px' }}>
-								<AccordionSummary className={classes.accordionSummary}>
-									<div className={classes.leftDiv}>
-										<div className={classes.grabIconDiv}>
-											<span {...provided.dragHandleProps}>
-												<Union
-													style={{ cursor: 'grab' }}
-													className={classes.grabIcon}
-												/>
-											</span>
+								{location === 'article' ? (
+									<></>
+								) : (
+									<AccordionSummary className={classes.accordionSummary}>
+										<div className={classes.leftDiv}>
+											<div className={classes.grabIconDiv}>
+												<span {...provided.dragHandleProps}>
+													<Union
+														style={{ cursor: 'grab' }}
+														className={classes.grabIcon}
+													/>
+												</span>
+											</div>
+											<Typography
+												className={classes.heading}
+												style={{ textTransform: 'capitalize' }}
+											>
+												{type} {index + 1}
+											</Typography>
 										</div>
-										<Typography
-											className={classes.heading}
-											style={{ textTransform: 'capitalize' }}
-										>
-											{type} {index + 1}
-										</Typography>
-									</div>
 
-									<Box className={classes.rightDiv}>
-										<div className={classes.deleteIconDiv}>
-											<Deletes
-												className={classes.deleteIcon}
-												onClick={() => {
-													handleDeleteQuestionSlide(item.sort_order);
-												}}
-											/>
-										</div>
-										<div className={classes.deleteIconDiv}>
-											{expanded ? (
-												<ExpandLessIcon onClick={() => setExpanded(false)} />
-											) : (
-												<ExpandMoreIcon onClick={() => setExpanded(true)} />
-											)}
-										</div>
-									</Box>
-								</AccordionSummary>
+										<Box className={classes.rightDiv}>
+											<div className={classes.deleteIconDiv}>
+												<Deletes
+													className={classes.deleteIcon}
+													onClick={() => {
+														handleDeleteQuestionSlide(item.sort_order);
+													}}
+												/>
+											</div>
+											<div className={classes.deleteIconDiv}>
+												{expanded ? (
+													<ExpandLessIcon onClick={() => setExpanded(false)} />
+												) : (
+													<ExpandMoreIcon onClick={() => setExpanded(true)} />
+												)}
+											</div>
+										</Box>
+									</AccordionSummary>
+								)}
 
 								<AccordionDetails>
 									<LoadingOverlay active={false} spinner={<PrimaryLoader />}>
@@ -659,12 +670,14 @@ QuestionForm.propTypes = {
 	key: PropTypes.number,
 	index: PropTypes.number,
 	type: PropTypes.string,
+	location: PropTypes.string,
+	isEdit: PropTypes.bool,
 	initialData: PropTypes.object,
-	sendDataToParent: PropTypes.func.isRequired,
+	sendDataToParent: PropTypes.func,
 	handleDeleteMedia: PropTypes.func,
 	handleDeleteQuestionSlide: PropTypes.func,
-	setPreviewBool: PropTypes.func.isRequired,
-	setPreviewFile: PropTypes.func.isRequired,
+	setPreviewBool: PropTypes.func,
+	setPreviewFile: PropTypes.func,
 	setDisableDropdown: PropTypes.func
 };
 

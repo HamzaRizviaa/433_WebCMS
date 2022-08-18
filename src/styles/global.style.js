@@ -802,6 +802,12 @@ export const useStyles = makeStyles(() => ({
 		fontSize: '1.2rem',
 		display: 'block'
 	},
+	accordionArticleRoot: {
+		'& .MuiAccordion-root': {
+			backgroundColor: `${theme.palette.black} `,
+			color: theme.palette.white
+		}
+	},
 
 	accordionRoot: {
 		'& .MuiAccordion-root': {

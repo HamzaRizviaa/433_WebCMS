@@ -234,19 +234,19 @@ const QuestionLibrary = () => {
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
-			formatter: (content) => {
+			formatter: (content, row) => {
 				return (
 					//<div className={classes.questionRow}>{content}</div>
 					<div className={classes.questionRow} style={{ display: 'flex' }}>
-						{/* {row.total_slides > 1 ? ( 
-						<MenuIcon
-							style={{ marginRight: '10px', height: '20px', width: '20px' }}
-						/>
-						 ) : (
+						{row.total_questions > 1 ? (
+							<MenuIcon
+								style={{ marginRight: '10px', height: '20px', width: '20px' }}
+							/>
+						) : (
 							<div
 								style={{ marginRight: '10px', height: '20px', width: '20px' }}
 							></div>
-						)} */}
+						)}
 
 						<Markup content={`${content}`} />
 					</div>
@@ -718,16 +718,15 @@ const QuestionLibrary = () => {
 
 				<UploadOrEditQuiz
 					open={showSlider}
-					isEdit={edit}
+					notifID={notifID}
+					location={rowLocation}
+					status={rowStatus} //open closed draft
 					handleClose={() => {
 						setShowSlider(false);
 					}}
-					title={edit ? 'Poll Detail' : 'Upload Question'}
-					// heading1={edit ? ' ' : 'Add Background Image'}
 					buttonText={
 						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
 					}
-					location={rowLocation}
 				/>
 				<QuizDetails
 					page={page}
