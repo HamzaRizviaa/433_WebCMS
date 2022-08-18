@@ -143,6 +143,7 @@ const ArticleQuestionUpload = ({
 					height: fileHeight
 				};
 			});
+			sendDataToParent({ previewImage: [...newFiles] });
 			uploadedFile(newFiles[0], 'articleLibrary').then((res) => {
 				setForm((prev) => {
 					return {
@@ -249,6 +250,7 @@ const ArticleQuestionUpload = ({
 										)
 									};
 								});
+								sendDataToParent({ previewImage: null });
 								handleDeleteData(item.data?.uploadedFiles);
 							}}
 							isArticle
