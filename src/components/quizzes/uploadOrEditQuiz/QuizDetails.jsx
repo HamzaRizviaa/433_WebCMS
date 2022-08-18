@@ -19,7 +19,8 @@ export default function QuizDetails({
 	isEdit,
 	status,
 	location,
-	page
+	page,
+	notifID
 }) {
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
@@ -33,8 +34,6 @@ export default function QuizDetails({
 	};
 
 	const muiClasses = useStyles();
-
-	// Question Library :  click on row with type:quiz
 
 	return (
 		<Slider
@@ -51,6 +50,11 @@ export default function QuizDetails({
 			disableDropdown={disableDropdown}
 			quiz={true}
 			dialogRef={dialogWrapper}
+			notifID={
+				location === 'article' || status === 'CLOSED' || status === 'draft'
+					? ''
+					: notifID
+			}
 		>
 			<div className={muiClasses.root}>
 				{status === 'draft' ? (
@@ -73,6 +77,7 @@ export default function QuizDetails({
 						type={'quiz'}
 						dialogWrapper={dialogWrapper}
 						publishedStatus='draft'
+						location={location}
 					/>
 				) : location === 'article' ? (
 					<QuizResults
@@ -133,6 +138,7 @@ export default function QuizDetails({
 								type={'quiz'}
 								dialogWrapper={dialogWrapper}
 								publishedStatus='draft'
+								location={location}
 							/>
 						</TabPanelUnstyled>
 					</TabsUnstyled>
@@ -151,5 +157,6 @@ QuizDetails.propTypes = {
 	status: PropTypes.string.isRequired,
 	location: PropTypes.string.isRequired,
 	type: PropTypes.string.isRequired,
-	page: PropTypes.string
+	page: PropTypes.string,
+	notifID: PropTypes.string
 };

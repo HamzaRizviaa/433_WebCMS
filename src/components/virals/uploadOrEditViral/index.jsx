@@ -32,7 +32,7 @@ import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
 
 //new labels
-//import { getAllNewLabels } from '../../../pages/PostLibrary/postLibrarySlice';
+// import { getAllNewLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 
 const UploadOrEditViral = ({
 	open,
@@ -59,6 +59,7 @@ const UploadOrEditViral = ({
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
+	const [notifID, setNotifID] = useState('');
 	const [form, setForm] = useState({
 		caption: '',
 		dropbox_url: '',
@@ -118,6 +119,7 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (specificViral) {
+			setNotifID(specificViral?.id);
 			if (specificViral?.labels) {
 				let _labels = [];
 				specificViral.labels.map((label) =>
@@ -183,7 +185,7 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		// dispatch(getPostLabels()); // old labels
-		// dispatch(getAllNewLabels());    // new labels on search
+		// dispatch(getAllNewLabels()); // new labels on search
 		return () => {
 			resetState();
 		};
@@ -247,6 +249,8 @@ const UploadOrEditViral = ({
 		setFileHeight(0);
 		setFileWidth(0);
 		setIsError({});
+		setExtraLabel('');
+		setNotifID('');
 		setForm({
 			caption: '',
 			dropbox_url: '',
@@ -622,6 +626,7 @@ const UploadOrEditViral = ({
 				edit={isEdit}
 				viral={true}
 				dialogRef={dialogWrapper}
+				notifID={status === 'draft' ? '' : notifID}
 			>
 				<LoadingOverlay
 					active={isLoadingcreateViral}

@@ -37,7 +37,7 @@ import ImagePreview from '../../ArticleBuilder/PreviewArticles/imagePreview';
 import TextPreview from '../../ArticleBuilder/PreviewArticles/textPreview';
 import TwitterPost from '../../ArticleBuilder/PreviewArticles/TwitterPost';
 import InstagramPost from '../../ArticleBuilder/PreviewArticles/InstagramPost';
-// import QuestionPoll from '../../ArticleBuilder/PreviewArticles/QuestionPoll';
+import QuestionPoll from '../../ArticleBuilder/PreviewArticles/QuestionPoll';
 import DraggableWrapper from '../../ArticleBuilder/DraggableWrapper';
 import PreviewWrapper from '../../ArticleBuilder/PreviewWrapper';
 import ArticleSlider from '../../ArticleBuilder/ArticleSlider';
@@ -60,7 +60,11 @@ import {
 	checkEmptyDescription,
 	checkEmptyTwitter,
 	checkNewElementTwitter,
-	checkNewElementIG
+	checkNewElementIG,
+	checkEmptyQuestion,
+	checkNewElementQuestion,
+	checkEmptyQuestionDraft,
+	checkNewElementQuestionDraft
 } from '../../../utils/articleUtils';
 import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDraggable';
 
@@ -92,6 +96,7 @@ const UploadOrEditArticle = ({
 	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
+	const [notifID, setNotifID] = useState('');
 	const imgEl = useRef(null);
 	const imgEl2 = useRef(null);
 	const previewRef = useRef(null);
@@ -120,7 +125,8 @@ const UploadOrEditArticle = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
-
+	console.log('DATA', data);
+	// console.log('FORM', form);
 	const elementData = [
 		{
 			image: Text,
@@ -148,13 +154,13 @@ const UploadOrEditArticle = ({
 			type: 'IG',
 			ig_post_url: '',
 			component: ArticleSocialMediaDraggable
+		},
+		{
+			image: Question,
+			text: 'Add Question',
+			type: 'QUESTION',
+			component: ArticleQuestionDraggable
 		}
-		// {
-		// 	image: Question,
-		// 	text: 'Add Question',
-		// 	type: 'QUESTION',
-		// 	component: ArticleQuestionDraggable
-		// }
 	];
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
@@ -174,7 +180,7 @@ const UploadOrEditArticle = ({
 		maxFiles: 1,
 		validator: checkFileSize
 	});
-	console.log('ACCEPTED FILE 2', acceptedFiles);
+
 	const {
 		acceptedFiles: acceptedFileAvatar,
 		fileRejections: fileRejectionsAvatar,
@@ -279,6 +285,7 @@ const UploadOrEditArticle = ({
 
 	useEffect(() => {
 		if (specificArticle) {
+			setNotifID(specificArticle?.id);
 			if (specificArticle?.labels) {
 				let _labels = [];
 				specificArticle.labels.map((label) =>
@@ -340,11 +347,6 @@ const UploadOrEditArticle = ({
 								}
 						  ]
 						: [{ media_url: Profile433 }]
-					// description:
-					//  specificArticle?.length === 0
-					//      ? ''
-					//      : // eslint-disable-next-line no-undef
-					//        tinyMCE.activeEditor?.setContent(specificArticle?.description)
 				};
 			});
 			setData(updateDataFromAPI(specificArticle.elements));
@@ -356,52 +358,75 @@ const UploadOrEditArticle = ({
 		}
 	}, [specificArticle]);
 
-	console.log(fileHeight, fileWidth, 'portr');
-	console.log(landscapeFileHeight, landscapeFileWidth, 'lands');
-
-	// console.log(imgEl, 'port'); // issue is on ref of natural height and width
-	// console.log(imgEl2, 'land');
+	const updateLabelsFromAPI = (labels) => {
+		let newLabels = [];
+		if (labels) {
+			labels.map((label) => newLabels.push({ id: -1, name: label }));
+			return newLabels;
+		} else {
+			return undefined;
+		}
+	};
 
 	const updateDataFromAPI = (apiData) => {
 		let modifiedData = apiData?.map(
 			({ id, sort_order, element_type, ...rest }) => {
+				const renderComponent = {
+					TEXT: ArticleTextDraggable,
+					MEDIA: ArticleMediaDraggable,
+					QUESTION: ArticleQuestionDraggable,
+					TWITTER: ArticleSocialMediaDraggable,
+					IG: ArticleSocialMediaDraggable
+				};
 				return {
 					sortOrder: sort_order,
 					element_type,
-					component:
-						element_type === 'TEXT'
-							? ArticleTextDraggable
-							: element_type === 'MEDIA'
-							? ArticleMediaDraggable
-							: ArticleSocialMediaDraggable,
+					component: renderComponent[element_type],
 					heading: `Add ${element_type}`,
 					isOpen: true,
 					isOld: true,
 					id,
-					data: [
-						{
-							...rest,
-							...(rest.media_url
-								? {
-										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.media_url}`
-								  }
-								: {}),
-							...(rest.thumbnail_url
-								? {
-										thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.thumbnail_url}`
-								  }
-								: {}),
-							...(rest.thumbnail_url
-								? {
-										type: 'video'
-								  }
-								: rest.media_url && !rest.thumbnail_url
-								? {
-										type: 'image'
-								  }
-								: {})
-						}
-					]
+					data:
+						element_type === 'QUESTION'
+							? {
+									...rest.question_data,
+
+									uploadedFiles: rest?.question_data?.image
+										? [
+												{
+													media_url:
+														`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest?.question_data?.image}` ||
+														undefined,
+													file_name: rest?.question_data?.file_name
+												}
+										  ]
+										: undefined,
+									labels: updateLabelsFromAPI(rest?.question_data?.labels)
+							  }
+							: [
+									{
+										...rest,
+										...(rest.media_url
+											? {
+													media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.media_url}`
+											  }
+											: {}),
+										...(rest.thumbnail_url
+											? {
+													thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.thumbnail_url}`
+											  }
+											: {}),
+										...(rest.thumbnail_url
+											? {
+													type: 'video'
+											  }
+											: rest.media_url && !rest.thumbnail_url
+											? {
+													type: 'image'
+											  }
+											: {})
+									}
+							  ]
 				};
 			}
 		);
@@ -527,10 +552,6 @@ const UploadOrEditArticle = ({
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
 
-		console.log('mediaFiles', mediaFiles);
-
-		console.log('Form author Image', form.author_image[0]);
-
 		let elementsData;
 		if (data.length) {
 			elementsData = data.map((item, index) => {
@@ -551,6 +572,28 @@ const UploadOrEditArticle = ({
 					dropbox_url: item?.data[0]?.dropbox_url || undefined,
 					ig_post_url: item?.data[0]?.ig_post_url || undefined,
 					twitter_post_url: item?.data[0]?.twitter_post_url || undefined,
+					...(item.element_type === 'QUESTION'
+						? {
+								question_data: {
+									image: item?.data?.uploadedFiles
+										? item?.data?.uploadedFiles[0]?.image ||
+										  item?.data?.uploadedFiles[0]?.media_url?.split(
+												'cloudfront.net/'
+										  )[1]
+										: undefined,
+									file_name: item?.data?.uploadedFiles
+										? item?.data?.uploadedFiles[0]?.file_name
+										: undefined,
+									question: item?.data?.question || undefined,
+									dropbox_url: item?.data?.dropbox_url || undefined,
+									answers: item?.data?.answers || undefined,
+									labels: item?.data?.labels || undefined,
+									question_type: item?.data?.question_type || undefined,
+									question_id: item?.data?.question_id || undefined,
+									id: item?.data?.id || undefined
+								}
+						  }
+						: undefined),
 					sort_order: index + 1,
 					id: item.id || undefined
 				};
@@ -749,6 +792,7 @@ const UploadOrEditArticle = ({
 		setEditBtnDisabled(false);
 		setDraftBtnDisabled(false);
 		setIsError({});
+		setNotifID('');
 		setForm({
 			title: '',
 			sub_text: '',
@@ -791,7 +835,7 @@ const UploadOrEditArticle = ({
 
 	const handleMediaElementDelete = (sortOrder) => {
 		let dataCopy = [...data];
-		console.log(sortOrder, 'sortOrder');
+
 		if (sortOrder) {
 			setData(dataCopy.filter((file) => file.sortOrder !== sortOrder));
 		}
@@ -803,8 +847,14 @@ const UploadOrEditArticle = ({
 			setData(
 				dataCopy.filter((item, i) => {
 					if (index === i) {
-						delete item['data'];
-						return item;
+						if (item.element_type === 'QUESTION') {
+							const abc = item.data;
+							delete abc['uploadedFiles'];
+							return abc;
+						} else {
+							delete item['data'];
+							return item;
+						}
 					} else {
 						return item;
 					}
@@ -812,6 +862,8 @@ const UploadOrEditArticle = ({
 			);
 		}
 	};
+
+	//element type == question , uploaded file detee
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...data];
@@ -845,10 +897,33 @@ const UploadOrEditArticle = ({
 				if (item.element_type === 'IG' && !item.data[0].ig_post_url) {
 					return true;
 				}
+				if (item.element_type === 'QUESTION') {
+					// questionValidate(item.data);
+					return true;
+				}
 			}
 		});
 		setDataErrors(errors);
 	};
+
+	// const questionValidate = (item) => {
+	// 	console.log(item, 'item');
+	// 	var validate = Object.keys(item).map((key) => {
+	// 		if (!item[key]) {
+	// 			return true;
+	// 		} else {
+	// 			return false;
+	// 		}
+	// 	});
+	// 	console.log(validate, 'validate');
+	// 	var quesValidate = validate.some((item) => {
+	// 		item === true;
+	// 	});
+
+	// 	console.log(quesValidate, 'quesValidate');
+
+	// 	return quesValidate;
+	// };
 
 	useEffect(() => {
 		setDataErrors(Array(data.length).fill(false));
@@ -980,14 +1055,6 @@ const UploadOrEditArticle = ({
 		});
 	};
 
-	// const checkNewElementFile = (data) => {
-	// 	return data.some((item) => {
-	// 		if (item?.data) {
-	// 			return item?.data[0]?.file ? true : false;
-	// 		}
-	// 	});
-	// };
-
 	const comparingFields = (specificArticle, form) => {
 		return (
 			specificArticle?.title?.trim() === form?.title?.trim() &&
@@ -1029,7 +1096,7 @@ const UploadOrEditArticle = ({
 				checkEmptyTwitter(data),
 				checkEmptyIG(data),
 				checkEmptyMedia(data),
-				// checkNewElementFile(filteringByType(data, 'MEDIA')),
+				checkEmptyQuestion(data),
 				data?.length !== 0
 			];
 
@@ -1060,7 +1127,10 @@ const UploadOrEditArticle = ({
 					filteringByType(specificArticle?.elements, 'MEDIA'),
 					filteringByType(data, 'MEDIA')
 				),
-
+				checkNewElementQuestion(
+					filteringByType(specificArticle?.elements, 'QUESTION'),
+					filteringByType(data, 'QUESTION')
+				),
 				data?.length !== 0
 			];
 
@@ -1069,19 +1139,29 @@ const UploadOrEditArticle = ({
 				checkEmptyTwitter(data),
 				checkEmptyIG(data),
 				checkEmptyMedia(data),
+				checkEmptyQuestion(data),
 				data?.length !== 0
 			];
+
+			// console.log(validationCompleteArray, 'valE');
 
 			if (
 				!validateForm(form, data) ||
 				!comparingFields(specificArticle, form)
 			) {
+				// console.log('1');
+				// console.log(
+				// 	!validateForm(form, data),
+				// 	!validationEmptyArray.every((item) => item === true),
+				// 	'CHECK'
+				// );
 				setEditBtnDisabled(
 					!validationEmptyArray.every((item) => item === true) ||
 						!validateForm(form, data)
 				);
 			} else {
 				if (specificArticle?.elements?.length !== data?.length) {
+					// console.log('2');
 					setEditBtnDisabled(
 						!validationEmptyArray.every((item) => item === true)
 					);
@@ -1090,8 +1170,20 @@ const UploadOrEditArticle = ({
 						validationCompleteArray.every((item) => item === true) ||
 						!validationEmptyArray.every((item) => item === true)
 					) {
+						// console.log('3');
+						// console.log(
+						// 	validationCompleteArray.every((item) => item === true),
+						// 	!validationEmptyArray.every((item) => item === true),
+						// 	'CHECK'
+						// );
 						setEditBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
 					} else {
+						// console.log('4');
+						// console.log(
+						// 	validationCompleteArray.every((item) => item === true),
+						// 	!validationEmptyArray.every((item) => item === true),
+						// 	'CHECK2'
+						// );
 						setEditBtnDisabled(
 							validationCompleteArray.every((item) => item === true) ||
 								!validationEmptyArray.every((item) => item === true)
@@ -1120,6 +1212,10 @@ const UploadOrEditArticle = ({
 				checkNewElementMedia(
 					filteringByType(specificArticle?.elements, 'MEDIA'),
 					filteringByType(data, 'MEDIA')
+				),
+				checkNewElementQuestionDraft(
+					filteringByType(specificArticle?.elements, 'QUESTION'),
+					filteringByType(data, 'QUESTION')
 				)
 			];
 
@@ -1127,18 +1223,26 @@ const UploadOrEditArticle = ({
 				checkEmptyDescription(data),
 				checkEmptyTwitter(data),
 				checkEmptyIG(data),
-				checkEmptyMedia(data)
+				checkEmptyMedia(data),
+				checkEmptyQuestionDraft(data)
 			];
 
+			// console.log(
+			// 	validationDraftEmptyArray,
+			// 	validationCompleteArrayDraft,
+			// 	'validate'
+			// );
 			if (
 				!validateDraft(form, data) ||
 				!comparingDraftFields(specificArticle, form)
 			) {
+				console.log('1D');
 				setDraftBtnDisabled(
 					!validationDraftEmptyArray.every((item) => item === true)
 				);
 			} else {
 				if (specificArticle?.elements?.length !== data?.length) {
+					console.log('2D');
 					setDraftBtnDisabled(
 						!validationDraftEmptyArray.every((item) => item === true)
 					);
@@ -1147,8 +1251,20 @@ const UploadOrEditArticle = ({
 						validationCompleteArrayDraft.every((item) => item === true) ||
 						!validationDraftEmptyArray.every((item) => item === true)
 					) {
+						console.log('3D');
+						console.log(
+							validationCompleteArrayDraft.every((item) => item === true),
+							!validationDraftEmptyArray.every((item) => item === true),
+							'CHECK'
+						);
 						setDraftBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
 					} else {
+						console.log('4D');
+						console.log(
+							validationCompleteArrayDraft.every((item) => item === true),
+							!validationDraftEmptyArray.every((item) => item === true),
+							'CHECK--2'
+						);
 						setDraftBtnDisabled(
 							validationCompleteArrayDraft.every((item) => item === true) ||
 								!validationDraftEmptyArray.every((item) => item === true)
@@ -1252,11 +1368,8 @@ const UploadOrEditArticle = ({
 					dataMedia && dataMedia[0]
 				];
 
-				console.log(updatedArray, 'uppa');
-
 				Promise.all([...updatedArray])
 					.then((mediaFiles) => {
-						// console.log(mediaFiles, 'uppa');
 						createArticle(specificArticle?.id, mediaFiles, true);
 					})
 					.catch(() => {
@@ -1400,7 +1513,6 @@ const UploadOrEditArticle = ({
 						createArticle(specificArticle?.id, mediaFiles);
 					})
 					.catch(() => {
-						console.log('qqqqqqqqqqq');
 						setIsLoading(false);
 					});
 			} else {
@@ -1521,8 +1633,6 @@ const UploadOrEditArticle = ({
 		setData(items);
 	};
 
-	// console.log('Data', data);
-
 	const handleFileWidthHeight = (width, height) => {
 		console.log('call back in article preview', height, width);
 	};
@@ -1548,6 +1658,7 @@ const UploadOrEditArticle = ({
 				edit={isEdit}
 				article={true}
 				dialogRef={dialogWrapper}
+				notifID={status === 'draft' ? '' : notifID}
 			>
 				<LoadingOverlay
 					active={isLoading}
@@ -1620,6 +1731,7 @@ const UploadOrEditArticle = ({
 											postLabels={postLabels}
 											extraLabel={extraLabel}
 											handleChangeExtraLabel={handleChangeExtraLabel}
+											setExtraLabel={setExtraLabel}
 											isError={isError}
 										/>
 										<DraggableWrapper onDragEnd={onDragEnd}>
@@ -1641,7 +1753,12 @@ const UploadOrEditArticle = ({
 															item,
 															index,
 															key: item.sortOrder,
-															initialData: item.data && item?.data[0],
+															isEdit: isEdit,
+															status: isEdit ? status : undefined,
+															initialData:
+																item.element_type === 'QUESTION'
+																	? item?.data
+																	: item.data && item?.data[0],
 															setDisableDropdown: setDisableDropdown
 														})}
 
@@ -1663,7 +1780,6 @@ const UploadOrEditArticle = ({
 											</Box>
 
 											<PreviewWrapper form={form}>
-												{/* <QuestionPoll /> */}
 												{data.map((item, index) => {
 													return (
 														<div key={index} style={{ padding: '5px' }}>
@@ -1686,6 +1802,12 @@ const UploadOrEditArticle = ({
 																/>
 															) : item.element_type === 'IG' ? (
 																<InstagramPost
+																	data={item}
+																	itemIndex={index}
+																	style={{ width: '100%' }}
+																/>
+															) : item.element_type === 'QUESTION' ? (
+																<QuestionPoll
 																	data={item}
 																	itemIndex={index}
 																	style={{ width: '100%' }}
