@@ -311,7 +311,7 @@ const UploadOrEditQuiz = ({
 							image:
 								item.data[0]?.uploadedFiles[0]?.media_url?.split(
 									'cloudfront.net/'
-								)[1] || item.data[0]?.uploadedFiles[0]?.media_url,
+								)[1] || item.data[0]?.uploadedFiles[0]?.image,
 							file_name: item.data[0]?.uploadedFiles[0]?.file_name,
 							labels: item.data[0]?.labels,
 							answers: item.data[0]?.answers,
@@ -775,14 +775,23 @@ const UploadOrEditQuiz = ({
 							{/* {specificNewsStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
 							{location === 'article' ? (
 								<QuestionDraggable>
-									<QuestionForm
-										isEdit={isEdit}
-										location={location}
-										type={questionType}
-										setPreviewBool={setPreviewBool}
-										setPreviewFile={setPreviewFile}
-										setDisableDropdown={setDisableDropdown}
-									/>
+									{questionSlides.map((item, index) => {
+										console.log(item, 'item data');
+										return (
+											<QuestionForm
+												isEdit={isEdit}
+												location={location}
+												type={questionType}
+												item={item}
+												index={index}
+												key={item.sort_order}
+												setPreviewBool={setPreviewBool}
+												setPreviewFile={setPreviewFile}
+												setDisableDropdown={setDisableDropdown}
+												// initialData={isEdit && item}
+											/>
+										);
+									})}
 								</QuestionDraggable>
 							) : (
 								<>
