@@ -46,6 +46,7 @@ const DraggableContainers = ({
 	setQuesType,
 	resetSlides
 }) => {
+	console.log(initialData, 'initialData');
 	const [expanded, setExpanded] = useState(true);
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
@@ -137,7 +138,7 @@ const DraggableContainers = ({
 																		</TabUnstyled>
 																	</TabsListUnstyled>
 																	<TabPanelUnstyled value={0}>
-																		<QuizResults />
+																		<QuizResults initialData={initialData} />
 																	</TabPanelUnstyled>
 																	<TabPanelUnstyled value={1}>
 																		<QuestionForm
@@ -154,7 +155,7 @@ const DraggableContainers = ({
 																			handleDeleteQuestionSlide={(sortOrder) =>
 																				handleDeleteQuestionSlide(sortOrder)
 																			}
-																			initialData={item.data && item.data}
+																			initialData={initialData}
 																			setPreviewFile={setPreviewFile}
 																			isEdit={isEdit}
 																			setPreviewBool={setPreviewBool}
@@ -180,7 +181,7 @@ const DraggableContainers = ({
 															handleDeleteQuestionSlide={(sortOrder) =>
 																handleDeleteQuestionSlide(sortOrder)
 															}
-															initialData={item.data && item.data}
+															initialData={initialData}
 															setPreviewFile={setPreviewFile}
 															isEdit={isEdit}
 															setPreviewBool={setPreviewBool}

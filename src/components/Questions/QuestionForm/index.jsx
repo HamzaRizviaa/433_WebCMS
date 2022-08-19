@@ -49,6 +49,7 @@ const QuestionForm = ({
 	isEdit,
 	location
 }) => {
+	console.log(initialData, 'initialData in questions ');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [expanded, setExpanded] = useState(true);
 	const [quizLabels, setQuizLabels] = useState([]);
@@ -65,8 +66,7 @@ const QuestionForm = ({
 			{ answer: '', type: 'right_answer', position: 0 },
 			{ answer: '', type: 'wrong_answer_1', position: 1 }
 		],
-		labels: [],
-		end_date: null
+		labels: []
 	});
 	// console.log('FORM', form)
 	const classes = useStyles();
@@ -122,6 +122,10 @@ const QuestionForm = ({
 			});
 		}
 	}, [acceptedFiles, fileHeight, fileWidth]);
+
+	// useEffect(() => {
+	// 	initialData ? setForm(initialData) : '';
+	// }, [initialData]);
 
 	const getFileType = (type) => {
 		if (type) {
@@ -247,7 +251,9 @@ const QuestionForm = ({
 			>
 				<div>
 					<DragAndDropField
-						uploadedFiles={form?.uploadedFiles}
+						uploadedFiles={
+							initialData ? initialData?.uploadedFiles : form?.uploadedFiles
+						}
 						quizPollStatus={status}
 						handleDeleteFile={handleDeleteFile}
 						setPreviewBool={setPreviewBool}
@@ -261,20 +267,17 @@ const QuestionForm = ({
 						}}
 					/>
 
-					{!form?.uploadedFiles.length ? (
+					{initialData?.uploadedFiles ? (
+						''
+					) : form.uploadedFiles.length === 0 ? (
 						<section
 							className={globalClasses.dropZoneContainer}
 							style={{
 								borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
 							}}
 						>
-							<div
-								{...getRootProps({
-									className: globalClasses.dropzone
-								})}
-							>
+							<div {...getRootProps({ className: globalClasses.dropzone })}>
 								<input {...getInputProps()} />
-
 								{loading ? (
 									<SecondaryLoader loading={true} />
 								) : (
@@ -288,13 +291,14 @@ const QuestionForm = ({
 										<p className={globalClasses.formatMsg}>
 											Supported formats are jpeg and png
 										</p>
-										<p className={globalClasses.uploadMediaError}>
-											{isError.uploadedFiles
-												? 'You need to upload a media in order to post'
-												: ''}
-										</p>
 									</>
 								)}
+
+								<p className={globalClasses.uploadMediaError}>
+									{isError.uploadedFiles
+										? 'You need to upload a media in order to post'
+										: ''}
+								</p>
 							</div>
 						</section>
 					) : (
@@ -308,7 +312,7 @@ const QuestionForm = ({
 					<div className={globalClasses.dropBoxUrlContainer}>
 						<h6>DROPBOX URL</h6>
 						<TextField
-							value={form.dropbox_url}
+							value={initialData ? initialData?.dropbox_url : form.dropbox_url}
 							onChange={(e) => {
 								setForm((prev) => {
 									return {
@@ -361,7 +365,7 @@ const QuestionForm = ({
 						</div>
 						<TextField
 							disabled={isEdit && status !== 'draft'}
-							value={form.question}
+							value={initialData ? initialData?.question : form.question}
 							onChange={(e) => {
 								setForm((prev) => {
 									return {
@@ -432,7 +436,11 @@ const QuestionForm = ({
 									</div>
 									<TextField
 										disabled={isEdit && status !== 'draft'}
-										value={form.answers[index]?.answer}
+										value={
+											initialData
+												? initialData?.answers[index]?.answer
+												: form.answers[index]?.answer
+										}
 										onChange={(e) => {
 											handleAnswerChange(e, index);
 										}}
@@ -499,7 +507,7 @@ const QuestionForm = ({
 						<Labels
 							isEdit={isEdit}
 							setDisableDropdown={setDisableDropdown}
-							selectedLabels={form.labels}
+							selectedLabels={initialData ? initialData?.labels : form.labels}
 							setSelectedLabels={(newVal) => {
 								setForm((prev) => {
 									return { ...prev, labels: [...newVal] };

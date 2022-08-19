@@ -47,6 +47,7 @@ import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
 import LogoutToaster from '../../components/LogoutToaster';
 import { useNavigate } from 'react-router-dom';
+import QuizResults from '../../components/Questions/QuestionResults/QuizResults';
 
 const QuestionLibrary = () => {
 	// Selectors
@@ -69,6 +70,7 @@ const QuestionLibrary = () => {
 	const [showPollSlider, setShowPollSlider] = useState(false);
 	const [rowStatus, setrowStatus] = useState(''); //status open closed to pass in poll slider
 	const [rowLocation, setrowLocation] = useState(''); // - Article - Homepage (location to pass in slider)
+	const [rowType, setRowType] = useState('');
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [paginationError, setPaginationError] = useState(false);
@@ -414,24 +416,36 @@ const QuestionLibrary = () => {
 		onClick: (e, row) => {
 			// if (!edit) {
 			// dispatch(getSpecificPost(row.id));
+			setEdit(true);
+			setNotifID(row.id);
+			setRowType(row.question_type);
+			setrowStatus(row.status);
+			setrowLocation(row.location);
 			//api calls
 			row.status === 'draft' && dispatch(getAllNewLabels());
 			dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
+
+			rowLocation === 'article' &&
+				dispatch(
+					getQuestionResultDetail({
+						id: row.question_id,
+						type: row.question_type
+					})
+				);
 			dispatch(
-				getQuestionResultDetail({ id: row.id, type: row.question_type })
+				getQuestionResulParticipant({
+					id: row.question_id,
+					type: row.question_type
+				})
 			);
-			dispatch(
-				getQuestionResulParticipant({ id: row.id, type: row.question_type })
-			);
-			setrowStatus(row.status);
-			setrowLocation(row.location);
-			setEdit(true);
-			setNotifID(row.id);
-			showEditSlider(true);
-			// row.question_type === 'quiz'
-			// 	? setShowQuizSlider(true)
-			// 	: setShowPollSlider(true);
-			// }
+
+			if (rowStatus === 'ACTIVE' && rowLocation === 'article') {
+				row.question_type === 'quiz'
+					? setShowQuizSlider(true)
+					: setShowPollSlider(true);
+			} else if (rowLocation === 'homepage' || rowStatus === 'draft') {
+				showEditSlider(true);
+			}
 		}
 	};
 
@@ -720,7 +734,7 @@ const QuestionLibrary = () => {
 				<UploadOrEditQuiz
 					open={showSlider}
 					location={rowLocation}
-					status={rowStatus} //open closed draft
+					status={rowStatus} //active closed draft
 					handleClose={() => {
 						setShowSlider(false);
 					}}
@@ -735,7 +749,8 @@ const QuestionLibrary = () => {
 					open={editSlider}
 					notifID={notifID}
 					location={rowLocation}
-					status={rowStatus} //open closed draft
+					rowType={rowType}
+					status={rowStatus} //active closed draft
 					handleClose={() => {
 						showEditSlider(false);
 					}}
@@ -743,6 +758,7 @@ const QuestionLibrary = () => {
 						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
 					}
 				/>
+
 				<QuizDetails
 					page={page}
 					open={showQuizSlider}

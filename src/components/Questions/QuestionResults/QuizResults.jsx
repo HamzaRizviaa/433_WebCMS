@@ -18,6 +18,7 @@ import LinearProgress, {
 import PropTypes from 'prop-types';
 import {
 	getQuestions,
+	getQuestionResultDetail,
 	getQuestionResulParticipant
 } from '../../../pages/QuestionLibrary/questionLibrarySlice';
 
@@ -47,7 +48,8 @@ export default function QuizResults({
 	status,
 	location,
 	quiz,
-	dialogWrapper
+	dialogWrapper,
+	initialData
 }) {
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [firstUserPercentage, setFirstUserPercentage] = useState(null);
@@ -64,6 +66,24 @@ export default function QuizResults({
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
 	const dispatch = useDispatch();
 	const articleQuestion = useStyles();
+	console.log(initialData, 'initialData in quiz');
+	useEffect(() => {
+		if (location === 'homepage') {
+			dispatch(
+				getQuestionResultDetail({
+					id: initialData?.id,
+					type: initialData?.question_type
+				})
+			);
+			dispatch(
+				getQuestionResulParticipant({
+					id: initialData?.id,
+					type: initialData?.question_type
+				})
+			);
+		}
+	}, [initialData]);
+
 	const editQuestionResultDetail = useSelector(
 		(state) => state.questionLibrary.questionResultDetail
 	);
@@ -262,7 +282,7 @@ export default function QuizResults({
 			setArticleText(editQuestionResultDetail?.article_title);
 			setEndDate(
 				formatDate(
-					editQuestionResultDetail?.poll_end_date ??
+					editQuestionResultDetail?.poll_end_date ||
 						editQuestionResultDetail?.quiz_end_date
 				)
 			);
@@ -394,6 +414,7 @@ QuizResults.propTypes = {
 	type: PropTypes.string,
 	status: PropTypes.string,
 	quiz: PropTypes.bool,
+	initialData: PropTypes.obj,
 	location: PropTypes.string,
 	dialogWrapper: PropTypes.oneOfType([
 		PropTypes.func,

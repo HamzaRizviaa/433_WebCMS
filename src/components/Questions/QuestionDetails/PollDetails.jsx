@@ -23,6 +23,7 @@ export default function PollDetails({
 	location,
 	notifID
 }) {
+	console.log('POLL SLIDER');
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);

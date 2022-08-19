@@ -54,6 +54,7 @@ const UploadOrEditQuiz = ({
 	location,
 	isEdit,
 	notifID,
+	rowType,
 	title //heading1, buttonText
 }) => {
 	const [convertedDate, setConvertedDate] = useState(null);
@@ -77,12 +78,6 @@ const UploadOrEditQuiz = ({
 	const [questionSlides, setQuestionSlides] = useState([]); // data
 
 	const [form, setForm] = useState({
-		uploadedFiles: [],
-		dropbox_url: '',
-		question: '',
-		answer1: '',
-		answer2: '',
-		labels: [],
 		end_date: null
 	});
 
@@ -97,6 +92,8 @@ const UploadOrEditQuiz = ({
 	const { questionEditStatus, questionEdit: editQuestionData } = useSelector(
 		(state) => state.questionLibrary
 	);
+
+	console.log(editQuestionData, 'EDIT SLIDER');
 
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
@@ -122,7 +119,7 @@ const UploadOrEditQuiz = ({
 			return [
 				...prev,
 				{
-					sort_order: questionSlides.length + 1
+					sort_order: questionSlides?.length + 1
 				}
 			];
 		});
@@ -236,50 +233,62 @@ const UploadOrEditQuiz = ({
 
 	useEffect(() => {
 		if (editQuestionData) {
-			if (editQuestionData?.labels) {
-				let _labels = [];
-				editQuestionData.labels.map((label) =>
-					_labels.push({ id: -1, name: label })
-				);
-				setForm((prev) => {
-					return { ...prev, labels: _labels };
-				});
-			}
-
+			setQuestionType(editQuestionData?.question_type);
 			setForm((prev) => {
 				return {
 					...prev,
-					dropbox_url: editQuestionData?.dropbox_url,
-					question: editQuestionData?.question,
-					uploadedFiles: editQuestionData?.image
-						? [
-								{
-									id: makeid(10),
-									file_name: editQuestionData?.file_name,
-									media_url: editQuestionData?.image
-										? `${process.env.REACT_APP_MEDIA_ENDPOINT}/${editQuestionData?.image}`
-										: '',
-									type: 'image'
-								}
-						  ]
-						: [],
-					answer1:
-						editQuestionData?.answers?.length > 0
-							? editQuestionData?.answers[0]?.answer
-							: '',
-					answer2:
-						editQuestionData?.answers?.length > 0
-							? editQuestionData?.answers[1]?.answer
-							: '',
-					end_date: editQuestionData?.quiz_end_date
-						? editQuestionData?.quiz_end_date
-						: editQuestionData?.poll_end_date
-						? editQuestionData?.poll_end_date
+					end_date: editQuestionData?.end_date
+						? editQuestionData?.end_date
 						: null
 				};
 			});
+			setQuestionSlides(
+				updateDataFromAPI(
+					editQuestionData.questions,
+					editQuestionData?.question_type,
+					editQuestionData?.end_date
+				)
+			);
 		}
 	}, [editQuestionData]);
+
+	const updateLabelsFromAPI = (labels) => {
+		let newLabels = [];
+		if (labels) {
+			labels.map((label) => newLabels.push({ id: -1, name: label }));
+			return newLabels;
+		} else {
+			return undefined;
+		}
+	};
+
+	const updateDataFromAPI = (apiData, question_type, end_date) => {
+		let modifiedData = apiData?.map((rest) => {
+			console.log('rest data ', rest);
+			return {
+				question_type: question_type,
+				end_date: end_date,
+				sortOrder: rest?.position,
+				id: rest?.id,
+				...rest,
+				uploadedFiles: rest?.image
+					? [
+							{
+								media_url:
+									`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest?.image}` ||
+									undefined,
+								file_name: rest?.file_name,
+								width: rest?.width,
+								height: rest?.height
+							}
+					  ]
+					: undefined,
+				labels: updateLabelsFromAPI(rest?.labels)
+			};
+		});
+		console.log('modifiedData', modifiedData);
+		return modifiedData;
+	};
 
 	useEffect(() => {
 		if (!open) {
@@ -733,7 +742,9 @@ const UploadOrEditQuiz = ({
 					!isEdit
 						? 'Upload Question'
 						: isEdit && location === 'article'
-						? `${'Edit ' + type}`
+						? rowType === 'poll'
+							? 'Edit Poll'
+							: 'Edit Quiz'
 						: 'Edit Question'
 				}
 				disableDropdown={disableDropdown}
@@ -859,9 +870,10 @@ const UploadOrEditQuiz = ({
 											</div>
 
 											<QuestionDraggable onDragEnd={onDragEnd}>
-												{/* isEdit ? //tab panes // question form // quiz results : question form */}
+												{/* isEdit ? {//tab panes // question form // quiz results } : question form */}
 
 												{questionSlides.map((item, index) => {
+													console.log(item, 'item data');
 													return (
 														<DraggableContainers
 															isEdit={isEdit}
@@ -878,7 +890,7 @@ const UploadOrEditQuiz = ({
 															handleDeleteQuestionSlide={(sortOrder) =>
 																handleElementDelete(sortOrder)
 															}
-															initialData={item.data && item.data}
+															initialData={isEdit && item}
 															setPreviewFile={setPreviewFile}
 															setPreviewBool={setPreviewBool}
 															setDisableDropdown={setDisableDropdown}
@@ -889,14 +901,15 @@ const UploadOrEditQuiz = ({
 													);
 												})}
 											</QuestionDraggable>
-
-											<Button
-												style={{ marginTop: '2rem' }}
-												disabled={false}
-												buttonNews={true}
-												onClick={() => handleNewSlide()}
-												text={'ADD QUESTION'}
-											/>
+											{!isEdit && (
+												<Button
+													style={{ marginTop: '2rem' }}
+													disabled={false}
+													buttonNews={true}
+													onClick={() => handleNewSlide()}
+													text={'ADD QUESTION'}
+												/>
+											)}
 										</>
 										<br />
 										<div className={classes.buttonDiv}>
@@ -1068,6 +1081,7 @@ const UploadOrEditQuiz = ({
 
 UploadOrEditQuiz.propTypes = {
 	heading1: PropTypes.string,
+	rowType: PropTypes.string,
 	open: PropTypes.bool.isRequired,
 	buttonText: PropTypes.string.isRequired,
 	notifID: PropTypes.string,
