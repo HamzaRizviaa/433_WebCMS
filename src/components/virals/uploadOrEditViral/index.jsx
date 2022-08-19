@@ -30,6 +30,7 @@ import LoadingOverlay from 'react-loading-overlay';
 import { useStyles } from './index.styles';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
+import SecondaryLoader from '../../SecondaryLoader';
 
 //new labels
 // import { getAllNewLabels } from '../../../pages/PostLibrary/postLibrarySlice';
@@ -81,6 +82,7 @@ const UploadOrEditViral = ({
 	const { specificViralStatus } = useSelector(
 		(state) => state.ViralLibraryStore
 	);
+	const [loading, setLoading] = useState(false);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -221,7 +223,7 @@ const UploadOrEditViral = ({
 	useEffect(() => {
 		if (acceptedFiles?.length) {
 			setIsError({});
-
+			setLoading(true);
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -265,13 +267,14 @@ const UploadOrEditViral = ({
 
 	console.log(deleteSignedUrlKey, '22');
 	console.log(form.uploadedFiles, 'lol');
+	console.log(loading, 'loader');
 
 	useEffect(() => {
 		if (isEdit) {
 			handleFileOnUploadEdit();
 		} else {
 			if (form?.uploadedFiles?.length > 0) {
-				handleFileOnUpload();
+				handleFileOnUpload().then(() => setLoading(false));
 			}
 		}
 	}, [form?.uploadedFiles]);
@@ -301,6 +304,7 @@ const UploadOrEditViral = ({
 		});
 		setFileOnUpload();
 		setDeleteSignedUrlKey('');
+		setLoading(false);
 	};
 
 	const toggleDeleteModal = () => {
@@ -688,15 +692,21 @@ const UploadOrEditViral = ({
 												{...getRootProps({ className: globalClasses.dropzone })}
 											>
 												<input {...getInputProps()} />
-												<AddCircleOutlineIcon
-													className={globalClasses.addFilesIcon}
-												/>
-												<p className={globalClasses.dragMsg}>
-													Click or drag files to this area to upload
-												</p>
-												<p className={globalClasses.formatMsg}>
-													Supported formats are jpeg, png and mp4
-												</p>
+												{loading ? (
+													<SecondaryLoader loading={true} />
+												) : (
+													<>
+														<AddCircleOutlineIcon
+															className={globalClasses.addFilesIcon}
+														/>
+														<p className={globalClasses.dragMsg}>
+															Click or drag files to this area to upload
+														</p>
+														<p className={globalClasses.formatMsg}>
+															Supported formats are jpeg, png and mp4
+														</p>
+													</>
+												)}
 												<p className={globalClasses.uploadMediaError}>
 													{isError.uploadedFiles
 														? 'You need to upload a media in order to post'
