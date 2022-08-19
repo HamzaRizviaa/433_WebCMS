@@ -48,10 +48,10 @@ export const getQuestionEdit = createAsyncThunk(
 	'questionLibrary/getQuestionEdit',
 	async ({ id, type }) => {
 		console.log(id, type, 'id and type');
-		let endPoint = `question/get-question-edit?question_id=${id}`;
+		let endPoint = `question/get-question-edit?question_meta_id=${id}`;
 
 		if (id && type) {
-			endPoint = `question/get-question-edit?question_id=${id}&question_type=${type}`;
+			endPoint = `question/get-question-edit?question_meta_id=${id}&question_type=${type}`;
 		}
 		const response = await QuestionLibraryService.getQuestionEditApi(endPoint);
 		if (response?.data?.data) {
@@ -73,6 +73,7 @@ export const getQuestionResultDetail = createAsyncThunk(
 		const response = await QuestionLibraryService.getQuestionResultDetialApi(
 			endPoint
 		);
+		console.log(response, ' r e s u l t ');
 		if (response?.data?.data) {
 			return response.data.data;
 		} else {

@@ -1,13 +1,14 @@
-import React, { useState, useRef } from 'react';
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */ import React, {
+	useState,
+	useRef
+} from 'react';
 import PropTypes from 'prop-types';
-import TabsUnstyled from '@mui/base/TabsUnstyled';
-import TabsListUnstyled from '@mui/base/TabsListUnstyled';
-import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
-import TabUnstyled from '@mui/base/TabUnstyled';
 
 import Slider from '../../slider';
 import { useStyles } from '../quizStyles';
-import UploadOrEditQuiz from '../UploadEditQuestion/UploadOrEditQuiz';
+
 import QuizResults from '../QuestionResults/QuizResults';
 
 //Question Library : this slider slides when click on row with type : quiz
@@ -59,92 +60,18 @@ export default function QuizDetails({
 			}
 		>
 			<div className={muiClasses.root}>
-				{status === 'draft' ? (
-					<UploadOrEditQuiz
-						page={page}
-						quiz={true}
-						editQuiz={isEdit}
-						heading1={heading1}
-						open={open}
-						buttonText={buttonText}
-						setPreviewBool={setPreviewBool}
-						previewFile={previewFile}
-						setPreviewFile={setPreviewFile}
-						previewRef={previewRef}
-						setDisableDropdown={setDisableDropdown}
-						handleClose={() => {
-							handleClose();
-						}}
-						status={status}
-						type={'quiz'}
-						dialogWrapper={dialogWrapper}
-						publishedStatus='draft'
-						location={location}
-					/>
-				) : location === 'article' ? (
-					<QuizResults
-						page={page}
-						handleClose={() => {
-							handleClose();
-						}}
-						style={{ minWidth: '40% !important' }}
-						location={location}
-						type={'quiz'}
-						status={status}
-						quiz={true}
-						dialogWrapper={dialogWrapper}
-					/>
-				) : (
-					<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
-						<TabsListUnstyled
-							className={muiClasses.tabMainDiv}
-							style={{ width: previewBool ? '60%' : '100%' }}
-						>
-							<TabUnstyled>Quiz Results</TabUnstyled>
-							<TabUnstyled>Edit Quiz</TabUnstyled>
-						</TabsListUnstyled>
-						<TabPanelUnstyled value={0}>
-							{/* quiz results table */}
-							<QuizResults
-								page={page}
-								handleClose={() => {
-									handleClose();
-								}}
-								style={{ minWidth: '40% !important' }}
-								type={'quiz'}
-								status={status}
-								location={location}
-								quiz={true}
-								dialogWrapper={dialogWrapper}
-							/>
-						</TabPanelUnstyled>
-						<TabPanelUnstyled value={1}>
-							{/* edit quiz */}
-
-							<UploadOrEditQuiz
-								page={page}
-								quiz={true}
-								editQuiz={isEdit}
-								heading1={heading1}
-								open={open}
-								buttonText={buttonText}
-								setPreviewBool={setPreviewBool}
-								previewFile={previewFile}
-								setPreviewFile={setPreviewFile}
-								previewRef={previewRef}
-								setDisableDropdown={setDisableDropdown}
-								handleClose={() => {
-									handleClose();
-								}}
-								status={status}
-								type={'quiz'}
-								dialogWrapper={dialogWrapper}
-								publishedStatus='draft'
-								location={location}
-							/>
-						</TabPanelUnstyled>
-					</TabsUnstyled>
-				)}
+				<QuizResults
+					page={page}
+					handleClose={() => {
+						handleClose();
+					}}
+					style={{ minWidth: '40% !important' }}
+					location={location}
+					type={'quiz'}
+					status={status}
+					quiz={true}
+					dialogWrapper={dialogWrapper}
+				/>
 			</div>
 		</Slider>
 	);
