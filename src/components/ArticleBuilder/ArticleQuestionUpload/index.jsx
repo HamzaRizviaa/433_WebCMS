@@ -346,14 +346,14 @@ const ArticleQuestionUpload = ({
 								<h6
 									style={{
 										color:
-											form.question?.length >= 22 && form.question?.length <= 28
+											form.question?.length >= 47 && form.question?.length <= 54
 												? 'pink'
-												: form.question?.length === 29
+												: form.question?.length === 55
 												? 'red'
 												: 'white'
 									}}
 								>
-									{form.question?.length}/29
+									{!form?.question ? 0 : form.question?.length}/55
 								</h6>
 							</div>
 
@@ -382,7 +382,7 @@ const ArticleQuestionUpload = ({
 										classes.disableTextField
 									}`
 								}}
-								inputProps={{ maxLength: 29 }}
+								inputProps={{ maxLength: 55 }}
 								multiline
 								maxRows={2}
 							/>
