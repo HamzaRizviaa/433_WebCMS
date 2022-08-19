@@ -104,7 +104,7 @@ const QuestionForm = ({
 					height: fileHeight
 				};
 			});
-			uploadedFile(newFiles[0], 'articleLibrary').then((res) => {
+			uploadedFile(newFiles[0], 'questionLibrary').then((res) => {
 				setForm((prev) => {
 					return {
 						...prev,
