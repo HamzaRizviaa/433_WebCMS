@@ -34,6 +34,7 @@ const DraggableContainers = ({
 	key,
 	index,
 	type,
+	status,
 	initialData,
 	sendDataToParent,
 	handleDeleteMedia,
@@ -43,10 +44,19 @@ const DraggableContainers = ({
 	setPreviewFile,
 	isEdit,
 	location,
+	endDate,
 	setQuesType,
 	resetSlides
 }) => {
-	console.log(initialData, 'initialData');
+	console.log(
+		initialData,
+		type,
+		status,
+		isEdit,
+		location,
+		endDate,
+		'initialData DRAGABBLEE'
+	);
 	const [expanded, setExpanded] = useState(true);
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
@@ -77,13 +87,27 @@ const DraggableContainers = ({
 								) : (
 									<AccordionSummary className={classes.accordionSummary}>
 										<div className={classes.leftDiv}>
-											<div className={classes.grabIconDiv}>
-												<span {...provided.dragHandleProps}>
-													<Union
-														style={{ cursor: 'grab' }}
-														className={classes.grabIcon}
-													/>
-												</span>
+											<div
+												className={
+													!isEdit || status === 'draft'
+														? classes.grabIconDiv
+														: classes.grabIconDivDisbaled
+												}
+											>
+												{!isEdit || status === 'draft' ? (
+													<span {...provided.dragHandleProps}>
+														<Union
+															style={{
+																cursor: 'grab'
+															}}
+															className={classes.grabIcon}
+														/>
+													</span>
+												) : (
+													<span>
+														<Union className={classes.grabIcon} />
+													</span>
+												)}
 											</div>
 											<Typography
 												className={classes.heading}
@@ -94,11 +118,18 @@ const DraggableContainers = ({
 										</div>
 
 										<Box className={classes.rightDiv}>
-											<div className={classes.deleteIconDiv}>
+											<div
+												className={
+													!isEdit || status === 'draft'
+														? classes.deleteIconDiv
+														: classes.deleteIconDivDisabled
+												}
+											>
 												<Deletes
 													className={classes.deleteIcon}
 													onClick={() => {
-														handleDeleteQuestionSlide(item.sort_order);
+														(!isEdit || status === 'draft') &&
+															handleDeleteQuestionSlide(item.sort_order);
 													}}
 												/>
 											</div>
@@ -138,14 +169,25 @@ const DraggableContainers = ({
 																		</TabUnstyled>
 																	</TabsListUnstyled>
 																	<TabPanelUnstyled value={0}>
-																		<QuizResults initialData={initialData} />
+																		<QuizResults
+																			initialData={initialData}
+																			status={status}
+																			location={location}
+																			endDate={endDate}
+																		/>
 																	</TabPanelUnstyled>
 																	<TabPanelUnstyled value={1}>
 																		<QuestionForm
 																			item={item}
 																			index={index}
 																			type={type}
+																			isEdit={isEdit}
+																			status={status}
 																			key={item.sort_order}
+																			initialData={initialData}
+																			setPreviewFile={setPreviewFile}
+																			setPreviewBool={setPreviewBool}
+																			setDisableDropdown={setDisableDropdown}
 																			sendDataToParent={(data) =>
 																				sendDataToParent(data, index)
 																			}
@@ -155,11 +197,6 @@ const DraggableContainers = ({
 																			handleDeleteQuestionSlide={(sortOrder) =>
 																				handleDeleteQuestionSlide(sortOrder)
 																			}
-																			initialData={initialData}
-																			setPreviewFile={setPreviewFile}
-																			isEdit={isEdit}
-																			setPreviewBool={setPreviewBool}
-																			setDisableDropdown={setDisableDropdown}
 																		/>
 																	</TabPanelUnstyled>
 																</TabsUnstyled>
@@ -217,7 +254,9 @@ DraggableContainers.propTypes = {
 	setPreviewFile: PropTypes.func,
 	setDisableDropdown: PropTypes.func,
 	setQuesType: PropTypes.func.isRequired,
-	resetSlides: PropTypes.func.isRequired
+	resetSlides: PropTypes.func.isRequired,
+	status: PropTypes.string,
+	endDate: PropTypes.any
 };
 
 export default DraggableContainers;

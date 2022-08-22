@@ -321,6 +321,15 @@ export const useStyles = makeStyles((theme) => ({
 		borderRadius: '40px',
 		textAlign: 'center'
 	},
+	grabIconDivDisbaled: {
+		width: '26px',
+		height: '26px',
+		background: ' #404040',
+		borderRadius: '40px',
+		textAlign: 'center',
+		pointerEvent: 'none',
+		opacity: 0.5
+	},
 	grabIcon: {
 		height: '10px',
 		width: '16px',
@@ -347,6 +356,16 @@ export const useStyles = makeStyles((theme) => ({
 		borderRadius: '40px',
 		textAlign: 'center',
 		cursor: 'pointer'
+	},
+	deleteIconDivDisabled: {
+		width: '27px',
+		height: '27px',
+		background: ' #404040',
+		borderRadius: '40px',
+		textAlign: 'center',
+		cursor: 'pointer',
+		pointerEvent: 'none',
+		opacity: 0.5
 	},
 	deleteIcon: {
 		padding: '2px 0px',

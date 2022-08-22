@@ -73,7 +73,7 @@ export const getQuestionResultDetail = createAsyncThunk(
 		const response = await QuestionLibraryService.getQuestionResultDetialApi(
 			endPoint
 		);
-		console.log(response, ' r e s u l t ');
+
 		if (response?.data?.data) {
 			return response.data.data;
 		} else {

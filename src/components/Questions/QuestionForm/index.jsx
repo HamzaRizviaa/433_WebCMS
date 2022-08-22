@@ -38,6 +38,7 @@ const QuestionForm = ({
 	item,
 	key,
 	index,
+	status,
 	type,
 	initialData,
 	sendDataToParent,
@@ -49,7 +50,6 @@ const QuestionForm = ({
 	isEdit,
 	location
 }) => {
-	console.log(initialData, 'initialData in questions ');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [expanded, setExpanded] = useState(true);
 	const [quizLabels, setQuizLabels] = useState([]);
@@ -64,7 +64,11 @@ const QuestionForm = ({
 		question: '',
 		answers: [
 			{ answer: '', type: 'right_answer', position: 0 },
-			{ answer: '', type: 'wrong_answer_1', position: 1 }
+			{
+				answer: '',
+				type: location === 'article' ? 'wrong_answer' : 'wrong_answer_1',
+				position: 1
+			}
 		],
 		labels: []
 	});
@@ -230,7 +234,7 @@ const QuestionForm = ({
 		const formCopy = { ...form };
 		formCopy.answers[index] = {
 			answer: event.target.value,
-			position: index,
+			position: index + 1,
 			type:
 				type === 'quiz' && index === 0
 					? 'right_answer'
@@ -434,10 +438,11 @@ const QuestionForm = ({
 											{form.answers[index]?.answer.length}/29
 										</h6>
 									</div>
+									{console.log(initialData, '===== article draft')}
 									<TextField
 										disabled={isEdit && status !== 'draft'}
 										value={
-											initialData
+											initialData?.answers?.length > 0
 												? initialData?.answers[index]?.answer
 												: form.answers[index]?.answer
 										}
@@ -474,17 +479,21 @@ const QuestionForm = ({
 							);
 						})}
 
-					<div
-						className={classes.addNewAnswer}
-						onClick={() => handleNewAnswer()}
-						style={{
-							pointerEvents: form?.answers.length < 5 ? 'auto' : 'none',
-							cursor: 'pointer'
-						}}
-					>
-						<NewsAddIcon />
-						<h6>ADD ANSWER</h6>
-					</div>
+					{isEdit && status !== 'draft' ? (
+						<></>
+					) : (
+						<div
+							className={classes.addNewAnswer}
+							onClick={() => handleNewAnswer()}
+							style={{
+								pointerEvents: form?.answers.length < 4 ? 'auto' : 'none',
+								cursor: 'pointer'
+							}}
+						>
+							<NewsAddIcon />
+							<h6>ADD ANSWER</h6>
+						</div>
+					)}
 
 					{/* <p className={globalClasses.mediaError}>
 															{isError.ans2
@@ -550,6 +559,7 @@ QuestionForm.propTypes = {
 	key: PropTypes.number,
 	index: PropTypes.number,
 	type: PropTypes.string,
+	status: PropTypes.string,
 	location: PropTypes.string,
 	isEdit: PropTypes.bool,
 	initialData: PropTypes.object,

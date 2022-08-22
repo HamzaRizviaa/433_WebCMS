@@ -533,6 +533,7 @@ const UploadOrEditQuiz = ({
 	const resetState = () => {
 		setQuestionSlides([]);
 		setPreviewFile(null);
+		setQuestionType('poll');
 		setPreviewBool(false);
 		setDisableDropdown(true);
 		setConvertedDate(null);
@@ -726,8 +727,10 @@ const UploadOrEditQuiz = ({
 			});
 		}
 	};
+	console.log('question type ', questionType);
 
 	const setQuesType = (type) => {
+		console.log('hi');
 		setQuestionType(type);
 	};
 
@@ -776,20 +779,19 @@ const UploadOrEditQuiz = ({
 							{location === 'article' ? (
 								<QuestionDraggable>
 									{questionSlides.map((item, index) => {
-										console.log(item, 'item data');
 										return (
-											<QuestionForm
-												isEdit={isEdit}
-												location={location}
-												type={questionType}
-												item={item}
-												index={index}
-												key={item.sort_order}
-												setPreviewBool={setPreviewBool}
-												setPreviewFile={setPreviewFile}
-												setDisableDropdown={setDisableDropdown}
-												// initialData={isEdit && item}
-											/>
+											<>
+												<QuestionForm
+													isEdit={isEdit}
+													location={location}
+													type={questionType}
+													key={item.sort_order}
+													setPreviewBool={setPreviewBool}
+													setPreviewFile={setPreviewFile}
+													setDisableDropdown={setDisableDropdown}
+													initialData={item}
+												/>
+											</>
 										);
 									})}
 								</QuestionDraggable>
@@ -817,7 +819,6 @@ const UploadOrEditQuiz = ({
 																	resetSlides={(type) => resetSlides(type)}
 																	setQuesType={(type) => setQuesType(type)}
 																/>
-																<br />
 															</>
 														)}
 
@@ -882,14 +883,17 @@ const UploadOrEditQuiz = ({
 												{/* isEdit ? {//tab panes // question form // quiz results } : question form */}
 
 												{questionSlides.map((item, index) => {
-													console.log(item, 'item data');
+													console.log(item, questionType, 'item data');
 													return (
 														<DraggableContainers
+															location={location}
 															isEdit={isEdit}
 															item={item}
 															index={index}
 															type={questionType}
 															key={item.sort_order}
+															status={status}
+															endDate={form.end_date}
 															sendDataToParent={(data) =>
 																setNewData(data, index)
 															}

@@ -738,7 +738,7 @@ const QuestionLibrary = () => {
 					handleClose={() => {
 						setShowSlider(false);
 					}}
-					isEdit={edit}
+					isEdit={false}
 					buttonText={
 						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
 					}

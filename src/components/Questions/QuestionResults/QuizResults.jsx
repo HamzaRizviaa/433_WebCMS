@@ -11,21 +11,15 @@ import PrimaryLoader from '../../PrimaryLoader';
 import axios from 'axios';
 import DeleteModal from '../../DeleteModal';
 import DefaultImage from '../../../assets/defaultImage.png';
-
-import LinearProgress, {
-	linearProgressClasses
-} from '@mui/material/LinearProgress';
 import PropTypes from 'prop-types';
-import {
-	getQuestions,
-	getQuestionResultDetail,
-	getQuestionResulParticipant
-} from '../../../pages/QuestionLibrary/questionLibrarySlice';
-
+import { getQuestions } from '../../../pages/QuestionLibrary/questionLibrarySlice';
 import { styled } from '@mui/material/styles';
 import classes from '../UploadEditQuestion/_uploadOrEditQuiz.module.scss';
 import { useStyles } from '../UploadEditQuestion/UploadOrEditQuiz.style';
 
+import LinearProgress, {
+	linearProgressClasses
+} from '@mui/material/LinearProgress';
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	height: '54px',
 	borderRadius: '8px',
@@ -45,9 +39,10 @@ export default function QuizResults({
 	handleClose,
 	page,
 	type,
-	status,
+	endDate,
 	location,
 	quiz,
+	status,
 	dialogWrapper,
 	initialData
 }) {
@@ -56,7 +51,7 @@ export default function QuizResults({
 	const [secondUserPercentage, setSecondtUserPercentage] = useState(null);
 	const [ans1, setAns1] = useState('');
 	const [ans2, setAns2] = useState('');
-	const [endDate, setEndDate] = useState(null);
+	// const [endDate, setEndDate] = useState(null);
 	const [ans1Users, setAns1Users] = useState(null);
 	const [ans2Users, setAns2Users] = useState(null);
 	const [articleText, setArticleText] = useState('');
@@ -66,33 +61,60 @@ export default function QuizResults({
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
 	const dispatch = useDispatch();
 	const articleQuestion = useStyles();
-	console.log(initialData, 'initialData in quiz');
+
+	const [editQuestionResultDetail, setEditQuestionResultDetail] = useState('');
+	const [participants, setParticipants] = useState([]);
+
+	// const editQuestionResultDetail = useSelector(
+	// 	(state) => state.questionLibrary.questionResultDetail
+	// );
+
+	// const participants = useSelector(
+	// 	(state) => state.questionLibrary.questionResultParticipant
+	// );
+	const { questionEditStatus } = useSelector((state) => state.questionLibrary);
+
+	console.log('quuuiiiiizzzzzzz', initialData, location);
 	useEffect(() => {
-		if (location === 'homepage') {
-			dispatch(
-				getQuestionResultDetail({
-					id: initialData?.id,
-					type: initialData?.question_type
-				})
-			);
-			dispatch(
-				getQuestionResulParticipant({
-					id: initialData?.id,
-					type: initialData?.question_type
-				})
-			);
+		if (initialData?.id && initialData?.question_type) {
+			getQuestionResultDetail(initialData?.id, initialData?.question_type);
+			getQuestionResulParticipant(initialData?.id, initialData?.question_type);
 		}
 	}, [initialData]);
 
-	const editQuestionResultDetail = useSelector(
-		(state) => state.questionLibrary.questionResultDetail
-	);
+	const getQuestionResultDetail = async (id, type) => {
+		const response = await axios.get(
+			`${process.env.REACT_APP_API_ENDPOINT}/question/get-question-result-detail?question_id=${id}&question_type=${type}`,
+			{
+				headers: {
+					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+				}
+			}
+		);
 
-	const participants = useSelector(
-		(state) => state.questionLibrary.questionResultParticipant
-	);
+		if (response?.data?.data) {
+			return setEditQuestionResultDetail(response.data.data);
+		} else {
+			return [];
+		}
+	};
 
-	const { questionEditStatus } = useSelector((state) => state.questionLibrary);
+	const getQuestionResulParticipant = async (id, type) => {
+		const response = await axios.get(
+			`${process.env.REACT_APP_API_ENDPOINT}/question/get-question-participant-listing?question_id=${id}&question_type=${type}`,
+			{
+				headers: {
+					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+				}
+			}
+		);
+
+		if (response?.data?.data) {
+			return setParticipants(response.data.data);
+		} else {
+			return [];
+		}
+	};
 
 	const sortKeysMapping = {
 		username: 'username',
@@ -280,12 +302,7 @@ export default function QuizResults({
 				`${process.env.REACT_APP_MEDIA_ENDPOINT}/${editQuestionResultDetail?.article_image}`
 			);
 			setArticleText(editQuestionResultDetail?.article_title);
-			setEndDate(
-				formatDate(
-					editQuestionResultDetail?.poll_end_date ||
-						editQuestionResultDetail?.quiz_end_date
-				)
-			);
+			//setEndDate(endDate);
 		}
 	}, [editQuestionResultDetail]);
 
@@ -357,7 +374,7 @@ export default function QuizResults({
 					{totalParticipants}{' '}
 					{totalParticipants === 1 ? 'Participant' : 'Participants'}
 				</span>
-				{location === 'article' ? '' : <span>Ends {endDate} </span>}
+				{location === 'article' ? '' : <span>Ends {formatDate(endDate)} </span>}
 			</div>
 			<div className={classes.QuizDetailsHeading}>Participants</div>
 			<div className={classes.QuizDetailstableContainer}>
@@ -374,7 +391,7 @@ export default function QuizResults({
 			<br />
 			<br />
 
-			{location === 'article' ? (
+			{location === 'article' || status !== 'draft' ? (
 				<></>
 			) : (
 				<div style={{ width: '100%', paddingBottom: '10%' }}>
@@ -419,5 +436,6 @@ QuizResults.propTypes = {
 	dialogWrapper: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
-	]).isRequired
+	]).isRequired,
+	endDate: PropTypes.any
 };
