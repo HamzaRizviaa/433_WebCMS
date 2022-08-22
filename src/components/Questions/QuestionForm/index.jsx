@@ -400,7 +400,6 @@ const QuestionForm = ({
 							? 'You need to provide a question in order to post.'
 							: ''}
 					</p>
-
 					{form?.answers.length > 0 &&
 						form?.answers.map((item, index) => {
 							return (
