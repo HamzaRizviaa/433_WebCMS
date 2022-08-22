@@ -62,14 +62,17 @@ const QuestionForm = ({
 		uploadedFiles: [],
 		dropbox_url: '',
 		question: '',
-		answers: [
-			{ answer: '', type: 'right_answer', position: 0 },
-			{
-				answer: '',
-				type: location === 'article' ? 'wrong_answer' : 'wrong_answer_1',
-				position: 1
-			}
-		],
+		answers:
+			initialData?.answers.length > 0
+				? initialData?.answers
+				: [
+						{ answer: '', type: 'right_answer', position: 0 },
+						{
+							answer: '',
+							type: location === 'article' ? 'wrong_answer' : 'wrong_answer_1',
+							position: 1
+						}
+				  ],
 		labels: []
 	});
 	// console.log('FORM', form)
@@ -437,7 +440,7 @@ const QuestionForm = ({
 											{form.answers[index]?.answer.length}/29
 										</h6>
 									</div>
-									{console.log(initialData, '===== article draft')}
+
 									<TextField
 										disabled={isEdit && status !== 'draft'}
 										value={
@@ -459,6 +462,10 @@ const QuestionForm = ({
 												<InputAdornment position='end'>
 													{index < 2 ? (
 														<> </>
+													) : status !== 'draft' ? (
+														<DeleteBin
+															style={{ marginTop: '20px', opacity: 0.5 }}
+														/>
 													) : (
 														<DeleteBin
 															style={{ marginTop: '20px' }}
