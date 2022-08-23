@@ -70,7 +70,7 @@ const UploadOrEditViral = ({
 		show_comments: true
 	});
 	const [fileOnUpload, setFileOnUpload] = useState();
-	const [deleteSignedUrlKey, setDeleteSignedUrlKey] = useState('');
+	const [deleteSignedUrlKey, setDeleteSignedUrlKey] = useState([]);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const videoRef = useRef(null);
@@ -185,7 +185,7 @@ const UploadOrEditViral = ({
 				});
 			}
 			if (specificViral?.url) {
-				setDeleteSignedUrlKey(specificViral?.url);
+				setDeleteSignedUrlKey((prev) => [...prev, specificViral?.url]);
 			}
 		}
 	}, [specificViral]);
@@ -248,7 +248,7 @@ const UploadOrEditViral = ({
 			form.uploadedFiles[0],
 			'virallibrary'
 		);
-		setDeleteSignedUrlKey(uploadedFile.signedUrlKeyDelete);
+		setDeleteSignedUrlKey((prev) => [...prev, uploadedFile.signedUrlKeyDelete]);
 		setFileOnUpload(uploadedFile);
 	};
 
@@ -259,7 +259,10 @@ const UploadOrEditViral = ({
 				form.uploadedFiles[0],
 				'virallibrary'
 			);
-			setDeleteSignedUrlKey(uploadedFile.signedUrlKeyDelete);
+			setDeleteSignedUrlKey((prev) => [
+				...prev,
+				uploadedFile.signedUrlKeyDelete
+			]);
 		}
 
 		setFileOnUpload(uploadedFile);
@@ -303,7 +306,7 @@ const UploadOrEditViral = ({
 			show_comments: true
 		});
 		setFileOnUpload();
-		setDeleteSignedUrlKey('');
+		setDeleteSignedUrlKey([]);
 		setLoading(false);
 	};
 
@@ -318,7 +321,10 @@ const UploadOrEditViral = ({
 				{
 					data: {
 						data: {
-							keys: [deleteSignedUrlKey]
+							keys:
+								deleteSignedUrlKey?.length === 1
+									? []
+									: deleteSignedUrlKey.slice(0, deleteSignedUrlKey?.length - 1)
 						}
 					},
 					headers: {
