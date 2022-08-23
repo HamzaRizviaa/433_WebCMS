@@ -45,7 +45,7 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 		}
 	});
 
-	var validateData = true;
+	var validateData = true; //article
 	if (dataElements?.length) {
 		validateData = dataElements.every((dataFile) => {
 			if (dataFile.element_type === 'MEDIA') {
@@ -79,9 +79,8 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 		validateData = false;
 	}
 
-	//new validate
+	//news validate
 	var validateNews = true;
-
 	if (newsData?.length) {
 		validateNews = newsData.every((item) => {
 			// and , sab true - true
@@ -93,9 +92,8 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 		validateNews = false;
 	}
 
-	//new validate
+	//question validate
 	var validateQuestion = true;
-
 	if (quesData?.length > 0) {
 		validateQuestion = quesData.every((item) => {
 			if (item?.data) {
@@ -104,9 +102,7 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 					item?.data[0]?.question &&
 					item?.data[0]?.labels?.length > 6 &&
 					(item?.data[0]?.answers?.length > 1
-						? // ? item?.data[0]?.answers.every((item) => item?.answer !== '')
-						  // : item?.data[0]?.answers?.length === 2
-						  item?.data[0]?.answers.every((item) => item?.answer !== '')
+						? item?.data[0]?.answers.every((item) => item?.answer !== '')
 						: false)
 				);
 			}

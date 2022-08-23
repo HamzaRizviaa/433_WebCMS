@@ -19,15 +19,14 @@ import TabsListUnstyled from '@mui/base/TabsListUnstyled';
 import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import TabUnstyled from '@mui/base/TabUnstyled';
 import { useStyles as quizStyles } from '../quizStyles';
+import QuizResults from '../QuestionResults/QuizResults';
 import QuestionForm from '../QuestionForm';
 import {
 	Accordion,
 	Box,
 	AccordionSummary,
-	AccordionDetails,
-	InputAdornment
+	AccordionDetails
 } from '@mui/material';
-import QuizResults from '../QuestionResults/QuizResults';
 
 const DraggableContainers = ({
 	item,
@@ -44,9 +43,7 @@ const DraggableContainers = ({
 	setPreviewFile,
 	isEdit,
 	location,
-	endDate,
-	setQuesType,
-	resetSlides
+	endDate
 }) => {
 	console.log(
 		initialData,
@@ -200,6 +197,7 @@ const DraggableContainers = ({
 																		/>
 																	</TabPanelUnstyled>
 																</TabsUnstyled>
+																<br />
 															</div>
 														</>
 													) : (
@@ -253,8 +251,6 @@ DraggableContainers.propTypes = {
 	setPreviewBool: PropTypes.func,
 	setPreviewFile: PropTypes.func,
 	setDisableDropdown: PropTypes.func,
-	setQuesType: PropTypes.func.isRequired,
-	resetSlides: PropTypes.func.isRequired,
 	status: PropTypes.string,
 	endDate: PropTypes.any
 };

@@ -5,7 +5,6 @@ import React, { useState, useEffect, useCallback, forwardRef } from 'react';
 import Layout from '../../components/layout';
 import _debounce from 'lodash/debounce';
 import Table from '../../components/table';
-//import classes2 from './_questionLibrary.module.scss';
 import Button from '../../components/button';
 import { ReactComponent as MenuIcon } from '../../assets/Union.svg';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -38,16 +37,12 @@ import {
 	getQuestions,
 	resetCalendarError,
 	resetNoResultStatus,
-	getQuestionEdit,
-	getQuestionResultDetail,
-	getQuestionResulParticipant
+	getQuestionEdit
 } from './questionLibrarySlice';
 import { getAllNewLabels } from '../PostLibrary/postLibrarySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
-import LogoutToaster from '../../components/LogoutToaster';
 import { useNavigate } from 'react-router-dom';
-import QuizResults from '../../components/Questions/QuestionResults/QuizResults';
 
 const QuestionLibrary = () => {
 	// Selectors
@@ -62,14 +57,15 @@ const QuestionLibrary = () => {
 	const noResultStatusCalendar = useSelector(
 		(state) => state.questionLibrary.noResultStatusCalendar
 	);
+
 	const navigate = useNavigate();
 	const muiClasses = useStyles();
 	const classes = globalUseStyles();
 	const [showSlider, setShowSlider] = useState(false);
 	const [showQuizSlider, setShowQuizSlider] = useState(false);
 	const [showPollSlider, setShowPollSlider] = useState(false);
-	const [rowStatus, setrowStatus] = useState(''); //status open closed to pass in poll slider
-	const [rowLocation, setrowLocation] = useState(''); // - Article - Homepage (location to pass in slider)
+	const [rowStatus, setrowStatus] = useState('');
+	const [rowLocation, setrowLocation] = useState('');
 	const [rowType, setRowType] = useState('');
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
@@ -83,13 +79,9 @@ const QuestionLibrary = () => {
 	const [noResultCalendarError, setNoResultCalendarError] = useState('');
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
-	const [logout, setLogout] = useState(false);
 	const [notifID, setNotifID] = useState('');
 	const [editSlider, showEditSlider] = useState(false);
-	// const enabled = (logoutValue) => {
-	// 	console.log(logoutValue, 'logoutVALUE');
-	// 	setLogout(logoutValue);
-	// };
+	const [questionId, setQuestionId] = useState('');
 
 	useEffect(() => {
 		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));
@@ -104,7 +96,6 @@ const QuestionLibrary = () => {
 			navigate('/sign-in');
 		}
 	}, []);
-	console.log(logout, 'log');
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
 		const startDate = formatDate(dateRange[0]);
@@ -313,9 +304,6 @@ const QuestionLibrary = () => {
 			formatter: (content) => {
 				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
 				return (
-					// <div className={classes.questionRowType}>
-					// 	{content[0] + `, ` + content[1]}
-					// </div>
 					<div className={classes.questionRowType}>
 						<Markup content={`${content[0]} ${secondLabel}`} />
 					</div>
@@ -352,7 +340,6 @@ const QuestionLibrary = () => {
 			text: 'PARTICIPANTS',
 			formatter: (content) => {
 				return (
-					//<div className={classes.questionRow}>{content}</div>
 					<div className={classes.questionRow} style={{ paddingLeft: '10px' }}>
 						<Markup content={`${content}`} />
 					</div>
@@ -367,7 +354,6 @@ const QuestionLibrary = () => {
 			text: 'USER',
 			formatter: (content) => {
 				return (
-					//<div className={classes.questionRow}>{content}</div>
 					<div className={classes.questionRow}>
 						<Markup content={`${content}`} />
 					</div>
@@ -418,27 +404,16 @@ const QuestionLibrary = () => {
 			// dispatch(getSpecificPost(row.id));
 			setEdit(true);
 			setNotifID(row.id);
-			setRowType(row.question_type);
-			setrowStatus(row.status);
-			setrowLocation(row.location);
+			setRowType(row.question_type); // quiz , poll
+			setrowStatus(row.status); // active , closed , draft
+			setrowLocation(row.location); // home page , article
+			setQuestionId(row.question_id);
+
 			//api calls
 			row.status === 'draft' && dispatch(getAllNewLabels());
 			dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
 
-			rowLocation === 'article' &&
-				dispatch(
-					getQuestionResultDetail({
-						id: row.question_id,
-						type: row.question_type
-					})
-				);
-			dispatch(
-				getQuestionResulParticipant({
-					id: row.question_id,
-					type: row.question_type
-				})
-			);
-
+			//slider calls
 			if (rowStatus === 'ACTIVE' && rowLocation === 'article') {
 				row.question_type === 'quiz'
 					? setShowQuizSlider(true)
@@ -766,6 +741,8 @@ const QuestionLibrary = () => {
 					handleClose={() => {
 						setShowQuizSlider(false);
 					}}
+					questionId={questionId}
+					questionType={rowType}
 					status={rowStatus} //open closed
 					location={rowLocation} //Article / HomePage
 					title={rowStatus === 'draft' ? 'Edit Quiz' : 'Quiz Detail'}
@@ -782,6 +759,8 @@ const QuestionLibrary = () => {
 					handleClose={() => {
 						setShowPollSlider(false);
 					}}
+					questionId={questionId}
+					questionType={rowType}
 					status={rowStatus} //open / closed
 					location={rowLocation} //Article / HomePage
 					title={rowStatus === 'draft' ? 'Edit Poll' : 'Poll Detail'}

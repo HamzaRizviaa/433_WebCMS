@@ -63,7 +63,7 @@ const QuestionForm = ({
 		dropbox_url: '',
 		question: '',
 		answers:
-			initialData?.answers.length > 0
+			initialData?.answers?.length > 0
 				? initialData?.answers
 				: [
 						{ answer: '', type: 'right_answer', position: 0 },
@@ -249,6 +249,13 @@ const QuestionForm = ({
 		let answers = { answers: formCopy.answers };
 		sendDataToParent(answers);
 	};
+
+	console.log(
+		initialData,
+		form,
+		isEdit && status !== 'draft',
+		'--- aa rr tt ii cc ll ee ---------'
+	);
 	return (
 		<>
 			{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
@@ -267,6 +274,7 @@ const QuestionForm = ({
 						setPreviewFile={setPreviewFile}
 						isArticle
 						isEdit={isEdit}
+						location={location}
 						imgEl={imgRef}
 						imageOnload={() => {
 							setFileWidth(imgRef.current.naturalWidth);
@@ -320,6 +328,7 @@ const QuestionForm = ({
 						<h6>DROPBOX URL</h6>
 						<TextField
 							value={initialData ? initialData?.dropbox_url : form.dropbox_url}
+							disabled={location === 'article' ? true : false}
 							onChange={(e) => {
 								setForm((prev) => {
 									return {
@@ -338,7 +347,9 @@ const QuestionForm = ({
 							maxRows={2}
 							InputProps={{
 								disableUnderline: true,
-								className: classes.textFieldInput,
+								className: `${classes.textFieldInput}  ${
+									location === 'article' && classes.disableTextField
+								}`,
 								style: {
 									borderRadius: form.dropbox_url ? '16px' : '40px'
 								}
@@ -403,7 +414,7 @@ const QuestionForm = ({
 							? 'You need to provide a question in order to post.'
 							: ''}
 					</p>
-					{form?.answers.length > 0 &&
+					{form?.answers?.length > 0 &&
 						form?.answers.map((item, index) => {
 							return (
 								<div
@@ -462,7 +473,7 @@ const QuestionForm = ({
 												<InputAdornment position='end'>
 													{index < 2 ? (
 														<> </>
-													) : status !== 'draft' ? (
+													) : status === 'ACTIVE' || status === 'CLOSED' ? (
 														<DeleteBin
 															style={{ marginTop: '20px', opacity: 0.5 }}
 														/>

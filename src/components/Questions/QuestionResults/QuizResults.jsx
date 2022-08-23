@@ -1,3 +1,7 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
+
 import React, { useState, useEffect } from 'react';
 import Button from '../../button';
 import Table from '../../table';
@@ -44,37 +48,25 @@ export default function QuizResults({
 	quiz,
 	status,
 	dialogWrapper,
-	initialData
+	initialData,
+	questionType,
+	questionId
 }) {
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
-	const [firstUserPercentage, setFirstUserPercentage] = useState(null);
-	const [secondUserPercentage, setSecondtUserPercentage] = useState(null);
-	const [ans1, setAns1] = useState('');
-	const [ans2, setAns2] = useState('');
-	// const [endDate, setEndDate] = useState(null);
-	const [ans1Users, setAns1Users] = useState(null);
-	const [ans2Users, setAns2Users] = useState(null);
 	const [articleText, setArticleText] = useState('');
 	const [articleImage, setArticleImage] = useState('');
 	const [totalParticipants, setTotalParticipants] = useState(null);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
-	const dispatch = useDispatch();
-	const articleQuestion = useStyles();
-
+	const [answers, setAnswers] = useState([]);
+	const [loading, setLoading] = useState(false);
+	//api responses
 	const [editQuestionResultDetail, setEditQuestionResultDetail] = useState('');
 	const [participants, setParticipants] = useState([]);
 
-	// const editQuestionResultDetail = useSelector(
-	// 	(state) => state.questionLibrary.questionResultDetail
-	// );
+	const dispatch = useDispatch();
+	const articleQuestion = useStyles();
 
-	// const participants = useSelector(
-	// 	(state) => state.questionLibrary.questionResultParticipant
-	// );
-	const { questionEditStatus } = useSelector((state) => state.questionLibrary);
-
-	console.log('quuuiiiiizzzzzzz', initialData, location);
 	useEffect(() => {
 		if (initialData?.id && initialData?.question_type) {
 			getQuestionResultDetail(initialData?.id, initialData?.question_type);
@@ -82,7 +74,15 @@ export default function QuizResults({
 		}
 	}, [initialData]);
 
+	useEffect(() => {
+		if (questionType && questionId) {
+			getQuestionResultDetail(questionId, questionType);
+			getQuestionResulParticipant(questionId, questionType);
+		}
+	}, [questionType, questionId]);
+
 	const getQuestionResultDetail = async (id, type) => {
+		setLoading(true);
 		const response = await axios.get(
 			`${process.env.REACT_APP_API_ENDPOINT}/question/get-question-result-detail?question_id=${id}&question_type=${type}`,
 			{
@@ -93,6 +93,7 @@ export default function QuizResults({
 		);
 
 		if (response?.data?.data) {
+			setLoading(false);
 			return setEditQuestionResultDetail(response.data.data);
 		} else {
 			return [];
@@ -139,6 +140,7 @@ export default function QuizResults({
 				<ArrowDropUpIcon
 					className={classes.sortIcon}
 					style={{
+						backgroundColor: 'transparent',
 						left:
 							col?.dataField === 'answer' ||
 							col?.dataField === 'labels' ||
@@ -153,6 +155,7 @@ export default function QuizResults({
 				<ArrowDropUpIcon
 					className={classes.sortIconSelected}
 					style={{
+						backgroundColor: 'transparent',
 						left:
 							col?.dataField === 'answer' ||
 							col?.dataField === 'username' ||
@@ -167,6 +170,7 @@ export default function QuizResults({
 				<ArrowDropDownIcon
 					className={classes.sortIconSelected}
 					style={{
+						backgroundColor: 'transparent',
 						left:
 							col?.dataField === 'answer' ||
 							col?.dataField === 'username' ||
@@ -275,40 +279,17 @@ export default function QuizResults({
 	useEffect(() => {
 		if (editQuestionResultDetail?.answers) {
 			setTotalParticipants(editQuestionResultDetail?.total_participants);
-			setAns1Users(editQuestionResultDetail?.answers[0]?.users_count);
-			setAns2Users(editQuestionResultDetail?.answers[1]?.users_count);
-			setFirstUserPercentage(
-				editQuestionResultDetail?.total_participants !== 0
-					? Math.round(
-							(editQuestionResultDetail?.answers[0]?.users_count /
-								editQuestionResultDetail?.total_participants) *
-								100
-					  )
-					: 0
-			);
-			setSecondtUserPercentage(
-				editQuestionResultDetail?.total_participants !== 0
-					? Math.round(
-							(editQuestionResultDetail?.answers[1]?.users_count /
-								editQuestionResultDetail?.total_participants) *
-								100
-					  )
-					: 0
-			);
-
-			setAns1(editQuestionResultDetail?.answers[0]?.answer);
-			setAns2(editQuestionResultDetail?.answers[1]?.answer);
 			setArticleImage(
 				`${process.env.REACT_APP_MEDIA_ENDPOINT}/${editQuestionResultDetail?.article_image}`
 			);
 			setArticleText(editQuestionResultDetail?.article_title);
-			//setEndDate(endDate);
+			setAnswers(editQuestionResultDetail?.answers);
 		}
 	}, [editQuestionResultDetail]);
 
 	return (
 		<div>
-			{questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>}
+			{/* {loading === true ? <PrimaryLoader /> : <></>} */}
 			{location === 'article' ? (
 				<div className={articleQuestion.articlesQuizDetails}>
 					<div className={articleQuestion.articlesbox}>
@@ -334,41 +315,41 @@ export default function QuizResults({
 			<div className={classes.QuizQuestion}>
 				{editQuestionResultDetail.question}
 			</div>
+			{answers?.length > 0 &&
+				answers.map((data, index) => {
+					//console.log(data, editQuestionResultDetail, 'data in quiz sliders');
+					return (
+						<div className={classes.QuizDetailsProgressBars} key={index}>
+							<div className={classes.progressBars}>
+								<BorderLinearProgress
+									variant='determinate'
+									value={
+										totalParticipants !== 0
+											? Math.round(data?.users_count / totalParticipants) * 100
+											: 0
+									}
+								/>
+								<div className={classes.progressbarTextBox}>
+									<div>
+										<span className={classes.leftprogressbarText}>
+											{data?.answer}
+										</span>
+										<span className={classes.rightProgressText}>
+											%
+											{totalParticipants !== 0
+												? Math.round(data?.users_count / totalParticipants) *
+												  100
+												: 0}
+											| {data?.users_count}
+											{data?.users_count === 1 ? 'User' : 'Users'}
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					);
+				})}
 
-			<div className={classes.QuizDetailsProgressBars}>
-				<div className={classes.progressBars}>
-					<BorderLinearProgress
-						variant='determinate'
-						value={firstUserPercentage}
-					/>
-					<div className={classes.progressbarTextBox}>
-						<div>
-							<span className={classes.leftprogressbarText}>{ans1}</span>
-							<span className={classes.rightProgressText}>
-								%{firstUserPercentage} | {ans1Users}{' '}
-								{ans1Users === 1 ? 'User' : 'Users'}
-							</span>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div className={classes.QuizDetailsProgressBars}>
-				<div className={classes.progressBars}>
-					<BorderLinearProgress
-						variant='determinate'
-						value={secondUserPercentage}
-					/>
-					<div className={classes.progressbarTextBox}>
-						<div>
-							<span className={classes.leftprogressbarText}>{ans2}</span>
-							<span className={classes.rightProgressText}>
-								%{secondUserPercentage} | {ans2Users}{' '}
-								{ans2Users === 1 ? 'User' : 'Users'}
-							</span>
-						</div>
-					</div>
-				</div>
-			</div>
 			<div className={classes.QuizDetailstextUsers}>
 				<span>
 					{totalParticipants}{' '}
@@ -430,6 +411,8 @@ QuizResults.propTypes = {
 	page: PropTypes.string,
 	type: PropTypes.string,
 	status: PropTypes.string,
+	questionType: PropTypes.string,
+	questionId: PropTypes.number,
 	quiz: PropTypes.bool,
 	initialData: PropTypes.obj,
 	location: PropTypes.string,
