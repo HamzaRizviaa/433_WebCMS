@@ -149,13 +149,17 @@ const ArticleQuestionUpload = ({
 					return {
 						...prev,
 						uploadedFiles: [
-							{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
+							{
+								image: res?.media_url,
+								file_name: res?.file_name,
+								...newFiles[0]
+							}
 						]
 					};
 				});
 				sendDataToParent({
 					uploadedFiles: [
-						{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
+						{ image: res?.media_url, file_name: res?.file_name, ...newFiles[0] }
 					]
 				});
 				setLoading(false);

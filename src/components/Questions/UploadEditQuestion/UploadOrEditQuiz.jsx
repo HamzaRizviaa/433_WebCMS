@@ -4,33 +4,25 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Button from '../../button';
+import axios from 'axios';
+import Slider from '../../slider';
 import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import '../../../pages/PostLibrary/_calender.scss';
+import Close from '@material-ui/icons/Close';
+import DeleteModal from '../../DeleteModal';
+import { toast } from 'react-toastify';
 import { formatDate, getCalendarText2 } from '../../../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { getQuestions } from '../../../pages/QuestionLibrary/questionLibrarySlice';
 import { getLocalStorageDetails } from '../../../utils';
-import { toast } from 'react-toastify';
-import axios from 'axios';
-import Slider from '../../slider';
-import { makeid } from '../../../utils/helper';
-import uploadFileToServer from '../../../utils/uploadFileToServer';
 import QuestionTabPanes from '../UploadQuestionHeader/QuestionTabPanes';
 import { ReactComponent as CalenderYellow } from '../../../assets/Calender_Yellow.svg';
-import 'react-datepicker/dist/react-datepicker.css';
-import '../../../pages/PostLibrary/_calender.scss';
 import { useRef } from 'react';
-import Close from '@material-ui/icons/Close';
-import DeleteModal from '../../DeleteModal';
-import validateForm from '../../../utils/validateForm';
-import validateDraft from '../../../utils/validateDraft';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { useStyles } from './UploadOrEditQuiz.style';
-import { useStyles as tabPansStyles } from '../quizStyles';
-// upload or edit quiz / poll form , API's are also there
-import TabsUnstyled from '@mui/base/TabsUnstyled';
-import TabsListUnstyled from '@mui/base/TabsListUnstyled';
-import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
-import TabUnstyled from '@mui/base/TabUnstyled';
+import validateForm from '../../../utils/validateForm';
+import validateDraft from '../../../utils/validateDraft';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -54,8 +46,7 @@ const UploadOrEditQuiz = ({
 	location,
 	isEdit,
 	notifID,
-	rowType,
-	title //heading1, buttonText
+	rowType
 }) => {
 	const [convertedDate, setConvertedDate] = useState(null);
 	const [calenderOpen, setCalenderOpen] = useState(false);
@@ -68,32 +59,24 @@ const UploadOrEditQuiz = ({
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
 	const [openStopPopup, setOpenStopPopup] = useState(false);
 	const [stopStatus, setStopStatus] = useState(false);
-
-	// new work
 	const [isLoading, setIsLoading] = useState(false);
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [questionType, setQuestionType] = useState('poll');
-	const [questionSlides, setQuestionSlides] = useState([]); // data
-
+	const [questionSlides, setQuestionSlides] = useState([]); // data in slides
 	const [form, setForm] = useState({
 		end_date: null
 	});
-
-	console.log('quesss', questionSlides);
 
 	const loadingRef = useRef(null);
 	const dispatch = useDispatch();
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
-	const muiClasses = tabPansStyles();
 
 	const { questionEditStatus, questionEdit: editQuestionData } = useSelector(
 		(state) => state.questionLibrary
 	);
-
-	console.log(editQuestionData, 'EDIT SLIDER');
 
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
@@ -157,7 +140,6 @@ const UploadOrEditQuiz = ({
 				dataCopy.filter((item, i) => {
 					if (index === i) {
 						delete item['data'][0]?.uploadedFiles;
-
 						return item;
 					} else {
 						return item;
@@ -184,10 +166,6 @@ const UploadOrEditQuiz = ({
 			setConvertedDate(toSend);
 		}
 	}, [form.end_date]);
-
-	// useEffect(() => {
-	// 	validateForm(form);
-	// }, [form]);
 
 	const toggleDeleteModal = () => {
 		setOpenDeletePopup(!openDeletePopup);
@@ -224,13 +202,6 @@ const UploadOrEditQuiz = ({
 		);
 	});
 
-	// useEffect(() => {
-	// 	const validateEmptyNewsArray = [
-	// 		checkEmptyMediaQuestions(questionSlides),
-	// 		questionSlides?.length !== 0
-	// 	];
-	// }, [questionSlides]);
-
 	useEffect(() => {
 		if (editQuestionData) {
 			setQuestionType(editQuestionData?.question_type);
@@ -264,7 +235,6 @@ const UploadOrEditQuiz = ({
 
 	const updateDataFromAPI = (apiData, question_type, end_date) => {
 		let modifiedData = apiData?.map((rest) => {
-			console.log('rest data ', rest);
 			return {
 				question_type: question_type,
 				end_date: end_date,
@@ -286,7 +256,7 @@ const UploadOrEditQuiz = ({
 				labels: updateLabelsFromAPI(rest?.labels)
 			};
 		});
-		console.log('modifiedData', modifiedData);
+
 		return modifiedData;
 	};
 
@@ -301,18 +271,27 @@ const UploadOrEditQuiz = ({
 		setPostButtonStatus(true);
 
 		let slidesData =
-			questionSlides.length > 0
+			questionSlides?.length > 0
 				? questionSlides.map((item, index) => {
-						console.log(item, 'item in api');
 						return {
-							//id: item.data[0].id,
-							height: item.data[0]?.uploadedFiles[0]?.height,
-							width: item.data[0]?.uploadedFiles[0]?.width,
+							height:
+								item.data[0]?.uploadedFiles?.length > 0
+									? item.data[0]?.uploadedFiles[0]?.height
+									: 0,
+							width:
+								item.data[0]?.uploadedFiles?.length > 0
+									? item.data[0]?.uploadedFiles[0]?.width
+									: 0,
 							image:
-								item.data[0]?.uploadedFiles[0]?.media_url?.split(
-									'cloudfront.net/'
-								)[1] || item.data[0]?.uploadedFiles[0]?.image,
-							file_name: item.data[0]?.uploadedFiles[0]?.file_name,
+								item.data[0]?.uploadedFiles?.length > 0
+									? item.data[0]?.uploadedFiles[0]?.media_url?.split(
+											'cloudfront.net/'
+									  )[1] || item.data[0]?.uploadedFiles[0]?.image
+									: '',
+							file_name:
+								item.data[0]?.uploadedFiles?.length > 0
+									? item.data[0]?.uploadedFiles[0]?.file_name
+									: '',
 							labels: item.data[0]?.labels,
 							answers: item.data[0]?.answers,
 							question: item.data[0]?.question,
@@ -321,8 +300,6 @@ const UploadOrEditQuiz = ({
 						};
 				  })
 				: [];
-
-		console.log(slidesData, 'slides');
 
 		try {
 			const result = await axios.post(
@@ -364,112 +341,6 @@ const UploadOrEditQuiz = ({
 			// setPostButtonStatus(false);
 			console.log(e, 'Failed create / edit Question');
 		}
-
-		//setIsLoadingcreateViral(false);
-		// try {
-		// 	const result = await axios.post(
-		// 		`${process.env.REACT_APP_API_ENDPOINT}/question/add-question`,
-		// 		{
-		// 			width: fileWidth,
-		// 			height: fileHeight,
-		// 			save_draft: draft,
-		// 			image: form.uploadedFiles.length
-		// 				? mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
-		// 				  mediaFiles[0]?.media_url
-		// 				: undefined,
-		// 			file_name: form.uploadedFiles.length
-		// 				? mediaFiles[0]?.file_name
-		// 				: undefined,
-		// 			...(form.question ? { question: form.question } : { question: '' }),
-		// 			...(form.dropbox_url ? { dropbox_url: form.dropbox_url } : {}),
-
-		// 			...(!(editQuiz || editPoll)
-		// 				? convertedDate
-		// 					? { end_date: convertedDate }
-		// 					: { end_date: '' }
-		// 				: (editQuiz || editPoll) && form.end_date != null
-		// 				? { end_date: convertedDate }
-		// 				: { end_date: '' }),
-
-		// 			...(!(editQuiz || editPoll)
-		// 				? quiz
-		// 					? { question_type: 'quiz' }
-		// 					: { question_type: 'poll' }
-		// 				: status === 'draft'
-		// 				? quiz
-		// 					? { question_type: 'quiz' }
-		// 					: { question_type: 'poll' }
-		// 				: {}),
-		// 			...(!(editQuiz || editPoll)
-		// 				? {
-		// 						answers: [
-		// 							{
-		// 								answer: form.answer1 ? form.answer1 : '',
-		// 								type: quiz ? 'right_answer' : 'poll',
-		// 								position: 0
-		// 							},
-		// 							{
-		// 								answer: form.answer2 ? form.answer2 : '',
-		// 								type: quiz ? 'wrong_answer' : 'poll',
-		// 								position: 1
-		// 							}
-		// 						]
-		// 				  }
-		// 				: status === 'draft'
-		// 				? {
-		// 						answers: [
-		// 							{
-		// 								answer: form.answer1 ? form.answer1 : '',
-		// 								id: editQuestionData?.answers[0]?.id,
-		// 								type: quiz ? 'right_answer' : 'poll'
-		// 							},
-		// 							{
-		// 								answer: form.answer2 ? form.answer2 : '',
-		// 								id: editQuestionData?.answers[1]?.id,
-		// 								type: quiz ? 'wrong_answer' : 'poll'
-		// 							}
-		// 						]
-		// 				  }
-		// 				: {}),
-		// 			...((!(editQuiz || editPoll) || status === 'draft') && {
-		// 				labels: [...form.labels]
-		// 			}),
-
-		// 			// ...((!isEdit || status !== 'published') &&
-		// 			// (form.labels?.length || status == 'draft')
-		// 			// 	? { labels: [...form.labels] }
-		// 			// 	: {}),
-
-		// 			...((editQuiz || editPoll) && id ? { question_id: id } : {})
-		// 		},
-		// 		{
-		// 			headers: {
-		// 				Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-		// 			}
-		// 		}
-		// 	);
-		// 	if (result?.data?.status_code === 200) {
-		// 		toast.success(
-		// 			editQuiz || editPoll
-		// 				? 'Question has been edited!'
-		// 				: 'Question has been created!'
-		// 		);
-		// 		setIsLoadingcreateViral(false);
-		// 		setPostButtonStatus(false);
-		// 		handleClose();
-		// 		dispatch(getQuestions({ page }));
-		// 		// dispatch(getQuestionLabels());
-		// 	}
-		// } catch (e) {
-		// 	toast.error(
-		// 		editQuiz || editPoll
-		// 			? 'Failed to edit question!'
-		// 			: 'Failed to create question!'
-		// 	);
-		// 	setIsLoadingcreateViral(false);
-		// 	setPostButtonStatus(false);
-		// 	console.log(e, 'failed create/edit question');
-		// }
 	};
 
 	const deleteQuiz = async (id, draft, qtype) => {
@@ -533,16 +404,17 @@ const UploadOrEditQuiz = ({
 	const resetState = () => {
 		setQuestionSlides([]);
 		setPreviewFile(null);
+		setQuestionType('poll');
 		setPreviewBool(false);
 		setDisableDropdown(true);
 		setConvertedDate(null);
-		setTimeout(() => {
-			setDeleteBtnStatus(false);
-		}, 1000);
 		setPostButtonStatus(false);
 		setIsError({});
 		setEditQuizBtnDisabled(false);
 		setDraftBtnDisabled(false);
+		setTimeout(() => {
+			setDeleteBtnStatus(false);
+		}, 1000);
 		setForm({
 			end_date: null
 		});
@@ -605,53 +477,7 @@ const UploadOrEditQuiz = ({
 		}
 	}, [editQuestionData, form, convertedDate]);
 
-	// const handleAddSaveQuizPollBtn = async () => {
-	// 	if (!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')) {
-	// 		validatePostBtn();
-	// 	} else {
-	// 		setPostButtonStatus(true);
-	// 		loadingRef.current.scrollIntoView({ behavior: 'smooth' });
-	// 		setIsLoadingcreateViral(true);
-	// 		if (editQuiz || editPoll) {
-	// 			let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-	// 				if (_file.file) {
-	// 					return await uploadFileToServer(_file, 'questionLibrary');
-	// 				} else {
-	// 					return _file;
-	// 				}
-	// 			});
-
-	// 			Promise.all([...uploadFilesPromiseArray])
-	// 				.then((mediaFiles) => {
-	// 					createQuestion(editQuestionData?.id, mediaFiles);
-	// 				})
-	// 				.catch(() => {
-	// 					setIsLoadingcreateViral(false);
-	// 				});
-	// 		} else {
-	// 			setIsLoadingcreateViral(true);
-	// 			// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-	// 			// 	return uploadFileToServer(_file, 'questionLibrary');
-	// 			// });
-
-	// 			// Promise.all([...uploadFilesPromiseArray])
-	// 			// 	.then((mediaFiles) => {
-	// 			// 		createQuestion(null, mediaFiles);
-	// 			// 	})
-	// 			// 	.catch(() => {
-	// 			// 		setIsLoadingcreateViral(false);
-	// 			// 	});
-
-	// 			try {
-	// 				createQuestion(null);
-	// 			} catch (err) {
-	// 				setIsLoadingcreateViral(false);
-	// 				console.log(err);
-	// 			}
-	// 		}
-	// 	}
-	// };
-
+	//editQuizBtnDisabled button - whether you can click or not
 	const handlePostQuizPollBtn = () => {
 		if (!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')) {
 			validatePostBtn();
@@ -660,9 +486,9 @@ const UploadOrEditQuiz = ({
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			setIsLoadingcreateViral(true);
 			if (isEdit) {
-				//isEdit - update code
 				try {
-					createQuestion(editQuestionData?.id);
+					console.log('edit api on post , save changes button');
+					// createQuestion(editQuestionData?.id);
 				} catch (err) {
 					setIsLoadingcreateViral(false);
 					console.log(err);
@@ -678,6 +504,8 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
+	//draftBtnDisabled button - whether you can click or not
+	//validateDraft - color grey or yellow
 	const handleDraftSave = async () => {
 		if (!validateDraft(form) || draftBtnDisabled) {
 			validateDraftBtn();
@@ -686,34 +514,20 @@ const UploadOrEditQuiz = ({
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			setIsLoadingcreateViral(true);
 			if (isEdit) {
-				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-					if (_file.file) {
-						return await uploadFileToServer(_file, 'questionLibrary');
-					} else {
-						return _file;
-					}
-				});
-
-				Promise.all([...uploadFilesPromiseArray])
-					.then((mediaFiles) => {
-						createQuestion(editQuestionData?.id, mediaFiles, true);
-					})
-					.catch(() => {
-						setIsLoadingcreateViral(true);
-					});
+				try {
+					console.log('edit api on draft');
+					// createQuestion(editQuestionData?.id, true);
+				} catch (err) {
+					setIsLoadingcreateViral(false);
+					console.log(err);
+				}
 			} else {
-				setIsLoadingcreateViral(true);
-				let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
-					return uploadFileToServer(_file, 'questionLibrary');
-				});
-
-				Promise.all([...uploadFilesPromiseArray])
-					.then((mediaFiles) => {
-						createQuestion(null, mediaFiles, true);
-					})
-					.catch(() => {
-						setIsLoadingcreateViral(true);
-					});
+				try {
+					createQuestion(null, true);
+				} catch (err) {
+					setIsLoadingcreateViral(false);
+					console.log(err);
+				}
 			}
 		}
 	};
@@ -745,6 +559,8 @@ const UploadOrEditQuiz = ({
 						? rowType === 'poll'
 							? 'Edit Poll'
 							: 'Edit Quiz'
+						: status === 'draft'
+						? 'Drafted Question'
 						: 'Edit Question'
 				}
 				disableDropdown={disableDropdown}
@@ -776,20 +592,19 @@ const UploadOrEditQuiz = ({
 							{location === 'article' ? (
 								<QuestionDraggable>
 									{questionSlides.map((item, index) => {
-										console.log(item, 'item data');
 										return (
-											<QuestionForm
-												isEdit={isEdit}
-												location={location}
-												type={questionType}
-												item={item}
-												index={index}
-												key={item.sort_order}
-												setPreviewBool={setPreviewBool}
-												setPreviewFile={setPreviewFile}
-												setDisableDropdown={setDisableDropdown}
-												// initialData={isEdit && item}
-											/>
+											<>
+												<QuestionForm
+													isEdit={isEdit}
+													location={location}
+													type={questionType}
+													key={item.sort_order}
+													setPreviewBool={setPreviewBool}
+													setPreviewFile={setPreviewFile}
+													setDisableDropdown={setDisableDropdown}
+													initialData={item}
+												/>
+											</>
 										);
 									})}
 								</QuestionDraggable>
@@ -817,10 +632,9 @@ const UploadOrEditQuiz = ({
 																	resetSlides={(type) => resetSlides(type)}
 																	setQuesType={(type) => setQuesType(type)}
 																/>
-																<br />
 															</>
 														)}
-
+														<br />
 														<div className={classes.datePickerContainer}>
 															<h6
 																className={
@@ -882,14 +696,16 @@ const UploadOrEditQuiz = ({
 												{/* isEdit ? {//tab panes // question form // quiz results } : question form */}
 
 												{questionSlides.map((item, index) => {
-													console.log(item, 'item data');
 													return (
 														<DraggableContainers
+															location={location}
 															isEdit={isEdit}
 															item={item}
 															index={index}
 															type={questionType}
 															key={item.sort_order}
+															status={status}
+															endDate={form.end_date}
 															sendDataToParent={(data) =>
 																setNewData(data, index)
 															}
@@ -972,12 +788,16 @@ const UploadOrEditQuiz = ({
 													>
 														<Button
 															disabledDraft={
-																isEdit ? draftBtnDisabled : !validateDraft(form)
+																isEdit
+																	? draftBtnDisabled
+																	: !validateDraft(
+																			form,
+																			null,
+																			null,
+																			questionSlides
+																	  )
 															}
-															onClick={
-																() => console.log('draft')
-																// handleDraftSave()
-															}
+															onClick={() => handleDraftSave()}
 															button3={true}
 															text={
 																status === 'draft' && isEdit
@@ -1002,15 +822,13 @@ const UploadOrEditQuiz = ({
 												>
 													<Button
 														text={
-															questionType === 'quiz' ? 'ADD QUIZ' : 'ADD POLL'
-
-															// type === 'quiz' && !(isEdit)
-															// 	? 'ADD QUIZ'
-															// 	: type === 'poll' && !(isEdit)
-															// 	? 'ADD POLL'
-															// 	: status === 'draft'
-															// 	? 'PUBLISH'
-															// 	: 'SAVE CHANGES'
+															!isEdit && questionType === 'quiz'
+																? 'ADD QUIZ'
+																: !isEdit && questionType === 'poll'
+																? 'ADD POLL'
+																: status === 'draft'
+																? 'PUBLISH'
+																: 'SAVE CHANGES'
 														}
 														disabled={
 															!validateForm(form, null, null, questionSlides)
@@ -1095,6 +913,12 @@ UploadOrEditQuiz.propTypes = {
 	buttonText: PropTypes.string.isRequired,
 	notifID: PropTypes.string,
 	setPreviewFile: PropTypes.func.isRequired,
+	setDisableDropdown: PropTypes.func,
+	quiz: PropTypes.bool,
+	handleClose: PropTypes.func.isRequired,
+	page: PropTypes.string,
+	status: PropTypes.string,
+	type: PropTypes.string,
 	previewRef: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
@@ -1102,21 +926,7 @@ UploadOrEditQuiz.propTypes = {
 	dialogWrapper: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
-	]).isRequired,
-	setDisableDropdown: PropTypes.func,
-	quiz: PropTypes.bool,
-
-	handleClose: PropTypes.func.isRequired,
-	page: PropTypes.string,
-	status: PropTypes.string,
-	type: PropTypes.string, //poll or quiz,
-	//new
-	// open: PropTypes.bool.isRequired,
-	// handleClose: PropTypes.func.isRequired,
-	title: PropTypes.string.isRequired
-	// heading1: PropTypes.string.isRequired,
-	// buttonText: PropTypes.string.isRequired,
-	// type: PropTypes.string.isRequired
+	]).isRequired
 };
 
 export default UploadOrEditQuiz;
