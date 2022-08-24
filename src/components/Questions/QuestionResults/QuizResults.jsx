@@ -1,3 +1,7 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
+
 import React, { useState, useEffect } from 'react';
 import Button from '../../button';
 import Table from '../../table';
@@ -11,20 +15,15 @@ import PrimaryLoader from '../../PrimaryLoader';
 import axios from 'axios';
 import DeleteModal from '../../DeleteModal';
 import DefaultImage from '../../../assets/defaultImage.png';
-
-import LinearProgress, {
-	linearProgressClasses
-} from '@mui/material/LinearProgress';
 import PropTypes from 'prop-types';
-import {
-	getQuestions,
-	getQuestionResulParticipant
-} from '../../../pages/QuestionLibrary/questionLibrarySlice';
-
+import { getQuestions } from '../../../pages/QuestionLibrary/questionLibrarySlice';
 import { styled } from '@mui/material/styles';
 import classes from '../UploadEditQuestion/_uploadOrEditQuiz.module.scss';
 import { useStyles } from '../UploadEditQuestion/UploadOrEditQuiz.style';
 
+import LinearProgress, {
+	linearProgressClasses
+} from '@mui/material/LinearProgress';
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	height: '54px',
 	borderRadius: '8px',
@@ -44,35 +43,79 @@ export default function QuizResults({
 	handleClose,
 	page,
 	type,
-	status,
+	endDate,
 	location,
 	quiz,
-	dialogWrapper
+	status,
+	dialogWrapper,
+	initialData,
+	questionType,
+	questionId
 }) {
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
-	const [firstUserPercentage, setFirstUserPercentage] = useState(null);
-	const [secondUserPercentage, setSecondtUserPercentage] = useState(null);
-	const [ans1, setAns1] = useState('');
-	const [ans2, setAns2] = useState('');
-	const [endDate, setEndDate] = useState(null);
-	const [ans1Users, setAns1Users] = useState(null);
-	const [ans2Users, setAns2Users] = useState(null);
 	const [articleText, setArticleText] = useState('');
 	const [articleImage, setArticleImage] = useState('');
 	const [totalParticipants, setTotalParticipants] = useState(null);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
+	const [answers, setAnswers] = useState([]);
+	const [loading, setLoading] = useState(false);
+	//api responses
+	const [editQuestionResultDetail, setEditQuestionResultDetail] = useState('');
+	const [participants, setParticipants] = useState([]);
+
 	const dispatch = useDispatch();
 	const articleQuestion = useStyles();
-	const editQuestionResultDetail = useSelector(
-		(state) => state.questionLibrary.questionResultDetail
-	);
 
-	const participants = useSelector(
-		(state) => state.questionLibrary.questionResultParticipant
-	);
+	useEffect(() => {
+		if (initialData?.id && initialData?.question_type) {
+			getQuestionResultDetail(initialData?.id, initialData?.question_type);
+			getQuestionResulParticipant(initialData?.id, initialData?.question_type);
+		}
+	}, [initialData]);
 
-	const { questionEditStatus } = useSelector((state) => state.questionLibrary);
+	useEffect(() => {
+		if (questionType && questionId) {
+			getQuestionResultDetail(questionId, questionType);
+			getQuestionResulParticipant(questionId, questionType);
+		}
+	}, [questionType, questionId]);
+
+	const getQuestionResultDetail = async (id, type) => {
+		setLoading(true);
+		const response = await axios.get(
+			`${process.env.REACT_APP_API_ENDPOINT}/question/get-question-result-detail?question_id=${id}&question_type=${type}`,
+			{
+				headers: {
+					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+				}
+			}
+		);
+
+		if (response?.data?.data) {
+			setLoading(false);
+			return setEditQuestionResultDetail(response.data.data);
+		} else {
+			return [];
+		}
+	};
+
+	const getQuestionResulParticipant = async (id, type) => {
+		const response = await axios.get(
+			`${process.env.REACT_APP_API_ENDPOINT}/question/get-question-participant-listing?question_id=${id}&question_type=${type}`,
+			{
+				headers: {
+					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+				}
+			}
+		);
+
+		if (response?.data?.data) {
+			return setParticipants(response.data.data);
+		} else {
+			return [];
+		}
+	};
 
 	const sortKeysMapping = {
 		username: 'username',
@@ -97,6 +140,7 @@ export default function QuizResults({
 				<ArrowDropUpIcon
 					className={classes.sortIcon}
 					style={{
+						backgroundColor: 'transparent',
 						left:
 							col?.dataField === 'answer' ||
 							col?.dataField === 'labels' ||
@@ -111,6 +155,7 @@ export default function QuizResults({
 				<ArrowDropUpIcon
 					className={classes.sortIconSelected}
 					style={{
+						backgroundColor: 'transparent',
 						left:
 							col?.dataField === 'answer' ||
 							col?.dataField === 'username' ||
@@ -125,6 +170,7 @@ export default function QuizResults({
 				<ArrowDropDownIcon
 					className={classes.sortIconSelected}
 					style={{
+						backgroundColor: 'transparent',
 						left:
 							col?.dataField === 'answer' ||
 							col?.dataField === 'username' ||
@@ -233,45 +279,17 @@ export default function QuizResults({
 	useEffect(() => {
 		if (editQuestionResultDetail?.answers) {
 			setTotalParticipants(editQuestionResultDetail?.total_participants);
-			setAns1Users(editQuestionResultDetail?.answers[0]?.users_count);
-			setAns2Users(editQuestionResultDetail?.answers[1]?.users_count);
-			setFirstUserPercentage(
-				editQuestionResultDetail?.total_participants !== 0
-					? Math.round(
-							(editQuestionResultDetail?.answers[0]?.users_count /
-								editQuestionResultDetail?.total_participants) *
-								100
-					  )
-					: 0
-			);
-			setSecondtUserPercentage(
-				editQuestionResultDetail?.total_participants !== 0
-					? Math.round(
-							(editQuestionResultDetail?.answers[1]?.users_count /
-								editQuestionResultDetail?.total_participants) *
-								100
-					  )
-					: 0
-			);
-
-			setAns1(editQuestionResultDetail?.answers[0]?.answer);
-			setAns2(editQuestionResultDetail?.answers[1]?.answer);
 			setArticleImage(
 				`${process.env.REACT_APP_MEDIA_ENDPOINT}/${editQuestionResultDetail?.article_image}`
 			);
 			setArticleText(editQuestionResultDetail?.article_title);
-			setEndDate(
-				formatDate(
-					editQuestionResultDetail?.poll_end_date ??
-						editQuestionResultDetail?.quiz_end_date
-				)
-			);
+			setAnswers(editQuestionResultDetail?.answers);
 		}
 	}, [editQuestionResultDetail]);
 
 	return (
 		<div>
-			{questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>}
+			{/* {loading === true ? <PrimaryLoader /> : <></>} */}
 			{location === 'article' ? (
 				<div className={articleQuestion.articlesQuizDetails}>
 					<div className={articleQuestion.articlesbox}>
@@ -297,47 +315,47 @@ export default function QuizResults({
 			<div className={classes.QuizQuestion}>
 				{editQuestionResultDetail.question}
 			</div>
+			{answers?.length > 0 &&
+				answers.map((data, index) => {
+					//console.log(data, editQuestionResultDetail, 'data in quiz sliders');
+					return (
+						<div className={classes.QuizDetailsProgressBars} key={index}>
+							<div className={classes.progressBars}>
+								<BorderLinearProgress
+									variant='determinate'
+									value={
+										totalParticipants !== 0
+											? Math.round(data?.users_count / totalParticipants) * 100
+											: 0
+									}
+								/>
+								<div className={classes.progressbarTextBox}>
+									<div>
+										<span className={classes.leftprogressbarText}>
+											{data?.answer}
+										</span>
+										<span className={classes.rightProgressText}>
+											%
+											{totalParticipants !== 0
+												? Math.round(data?.users_count / totalParticipants) *
+												  100
+												: 0}
+											| {data?.users_count}
+											{data?.users_count === 1 ? 'User' : 'Users'}
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					);
+				})}
 
-			<div className={classes.QuizDetailsProgressBars}>
-				<div className={classes.progressBars}>
-					<BorderLinearProgress
-						variant='determinate'
-						value={firstUserPercentage}
-					/>
-					<div className={classes.progressbarTextBox}>
-						<div>
-							<span className={classes.leftprogressbarText}>{ans1}</span>
-							<span className={classes.rightProgressText}>
-								%{firstUserPercentage} | {ans1Users}{' '}
-								{ans1Users === 1 ? 'User' : 'Users'}
-							</span>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div className={classes.QuizDetailsProgressBars}>
-				<div className={classes.progressBars}>
-					<BorderLinearProgress
-						variant='determinate'
-						value={secondUserPercentage}
-					/>
-					<div className={classes.progressbarTextBox}>
-						<div>
-							<span className={classes.leftprogressbarText}>{ans2}</span>
-							<span className={classes.rightProgressText}>
-								%{secondUserPercentage} | {ans2Users}{' '}
-								{ans2Users === 1 ? 'User' : 'Users'}
-							</span>
-						</div>
-					</div>
-				</div>
-			</div>
 			<div className={classes.QuizDetailstextUsers}>
 				<span>
 					{totalParticipants}{' '}
 					{totalParticipants === 1 ? 'Participant' : 'Participants'}
 				</span>
-				{location === 'article' ? '' : <span>Ends {endDate} </span>}
+				{location === 'article' ? '' : <span>Ends {formatDate(endDate)} </span>}
 			</div>
 			<div className={classes.QuizDetailsHeading}>Participants</div>
 			<div className={classes.QuizDetailstableContainer}>
@@ -354,7 +372,7 @@ export default function QuizResults({
 			<br />
 			<br />
 
-			{location === 'article' ? (
+			{location === 'article' || status !== 'draft' ? (
 				<></>
 			) : (
 				<div style={{ width: '100%', paddingBottom: '10%' }}>
@@ -393,10 +411,14 @@ QuizResults.propTypes = {
 	page: PropTypes.string,
 	type: PropTypes.string,
 	status: PropTypes.string,
+	questionType: PropTypes.string,
+	questionId: PropTypes.number,
 	quiz: PropTypes.bool,
+	initialData: PropTypes.obj,
 	location: PropTypes.string,
 	dialogWrapper: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
-	]).isRequired
+	]).isRequired,
+	endDate: PropTypes.any
 };
