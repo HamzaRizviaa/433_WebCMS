@@ -1,4 +1,4 @@
-const validateForm = (form, dataElements, newsData) => {
+const validateForm = (form, dataElements, newsData, quesData) => {
 	var validate = Object.keys(form).map((key) => {
 		if (typeof form[key] === 'string') {
 			if (key.includes('dropbox_url')) {
@@ -45,7 +45,7 @@ const validateForm = (form, dataElements, newsData) => {
 		}
 	});
 
-	var validateData = true;
+	var validateData = true; //article
 	if (dataElements?.length) {
 		validateData = dataElements.every((dataFile) => {
 			if (dataFile.element_type === 'MEDIA') {
@@ -79,11 +79,11 @@ const validateForm = (form, dataElements, newsData) => {
 		validateData = false;
 	}
 
+	//news validate
 	var validateNews = true;
-	// console.log(newsData, 'nnn');
-
 	if (newsData?.length) {
 		validateNews = newsData.every((item) => {
+			// and , sab true - true
 			if (item?.data) {
 				return item?.data[0]?.media_url;
 			}
@@ -92,8 +92,30 @@ const validateForm = (form, dataElements, newsData) => {
 		validateNews = false;
 	}
 
+	//question validate
+	var validateQuestion = true;
+	if (quesData?.length > 0) {
+		validateQuestion = quesData.every((item) => {
+			if (item?.data) {
+				return (
+					item?.data[0]?.uploadedFiles?.length > 0 &&
+					item?.data[0]?.question &&
+					item?.data[0]?.labels?.length > 6 &&
+					(item?.data[0]?.answers?.length > 1
+						? item?.data[0]?.answers.every((item) => item?.answer !== '')
+						: false)
+				);
+			}
+		});
+	} else if (quesData?.length === 0) {
+		validateQuestion = false;
+	}
+
 	var finalFormValue =
-		validate.every((item) => item === true) && validateData && validateNews;
+		validate.every((item) => item === true) &&
+		validateData &&
+		validateNews &&
+		validateQuestion;
 
 	return finalFormValue;
 };
