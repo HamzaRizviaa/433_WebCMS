@@ -38,6 +38,7 @@ const QuestionForm = ({
 	item,
 	key,
 	index,
+	status,
 	type,
 	initialData,
 	sendDataToParent,
@@ -49,7 +50,6 @@ const QuestionForm = ({
 	isEdit,
 	location
 }) => {
-	console.log(initialData, 'initialData in questions ');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [expanded, setExpanded] = useState(true);
 	const [quizLabels, setQuizLabels] = useState([]);
@@ -62,10 +62,17 @@ const QuestionForm = ({
 		uploadedFiles: [],
 		dropbox_url: '',
 		question: '',
-		answers: [
-			{ answer: '', type: 'right_answer', position: 0 },
-			{ answer: '', type: 'wrong_answer_1', position: 1 }
-		],
+		answers:
+			initialData?.answers?.length > 0
+				? initialData?.answers
+				: [
+						{ answer: '', type: 'right_answer', position: 0 },
+						{
+							answer: '',
+							type: location === 'article' ? 'wrong_answer' : 'wrong_answer_1',
+							position: 1
+						}
+				  ],
 		labels: []
 	});
 	// console.log('FORM', form)
@@ -230,7 +237,7 @@ const QuestionForm = ({
 		const formCopy = { ...form };
 		formCopy.answers[index] = {
 			answer: event.target.value,
-			position: index,
+			position: index + 1,
 			type:
 				type === 'quiz' && index === 0
 					? 'right_answer'
@@ -242,6 +249,13 @@ const QuestionForm = ({
 		let answers = { answers: formCopy.answers };
 		sendDataToParent(answers);
 	};
+
+	console.log(
+		initialData,
+		form,
+		isEdit && status !== 'draft',
+		'--- aa rr tt ii cc ll ee ---------'
+	);
 	return (
 		<>
 			{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
@@ -260,6 +274,7 @@ const QuestionForm = ({
 						setPreviewFile={setPreviewFile}
 						isArticle
 						isEdit={isEdit}
+						location={location}
 						imgEl={imgRef}
 						imageOnload={() => {
 							setFileWidth(imgRef.current.naturalWidth);
@@ -313,6 +328,7 @@ const QuestionForm = ({
 						<h6>DROPBOX URL</h6>
 						<TextField
 							value={initialData ? initialData?.dropbox_url : form.dropbox_url}
+							disabled={location === 'article' ? true : false}
 							onChange={(e) => {
 								setForm((prev) => {
 									return {
@@ -331,7 +347,9 @@ const QuestionForm = ({
 							maxRows={2}
 							InputProps={{
 								disableUnderline: true,
-								className: classes.textFieldInput,
+								className: `${classes.textFieldInput}  ${
+									location === 'article' && classes.disableTextField
+								}`,
 								style: {
 									borderRadius: form.dropbox_url ? '16px' : '40px'
 								}
@@ -396,8 +414,7 @@ const QuestionForm = ({
 							? 'You need to provide a question in order to post.'
 							: ''}
 					</p>
-
-					{form?.answers.length > 0 &&
+					{form?.answers?.length > 0 &&
 						form?.answers.map((item, index) => {
 							return (
 								<div
@@ -434,10 +451,11 @@ const QuestionForm = ({
 											{form.answers[index]?.answer.length}/29
 										</h6>
 									</div>
+
 									<TextField
 										disabled={isEdit && status !== 'draft'}
 										value={
-											initialData
+											initialData?.answers?.length > 0
 												? initialData?.answers[index]?.answer
 												: form.answers[index]?.answer
 										}
@@ -455,6 +473,10 @@ const QuestionForm = ({
 												<InputAdornment position='end'>
 													{index < 2 ? (
 														<> </>
+													) : status === 'ACTIVE' || status === 'CLOSED' ? (
+														<DeleteBin
+															style={{ marginTop: '20px', opacity: 0.5 }}
+														/>
 													) : (
 														<DeleteBin
 															style={{ marginTop: '20px' }}
@@ -474,17 +496,21 @@ const QuestionForm = ({
 							);
 						})}
 
-					<div
-						className={classes.addNewAnswer}
-						onClick={() => handleNewAnswer()}
-						style={{
-							pointerEvents: form?.answers.length < 5 ? 'auto' : 'none',
-							cursor: 'pointer'
-						}}
-					>
-						<NewsAddIcon />
-						<h6>ADD ANSWER</h6>
-					</div>
+					{isEdit && status !== 'draft' ? (
+						<></>
+					) : (
+						<div
+							className={classes.addNewAnswer}
+							onClick={() => handleNewAnswer()}
+							style={{
+								pointerEvents: form?.answers.length < 4 ? 'auto' : 'none',
+								cursor: 'pointer'
+							}}
+						>
+							<NewsAddIcon />
+							<h6>ADD ANSWER</h6>
+						</div>
+					)}
 
 					{/* <p className={globalClasses.mediaError}>
 															{isError.ans2
@@ -550,6 +576,7 @@ QuestionForm.propTypes = {
 	key: PropTypes.number,
 	index: PropTypes.number,
 	type: PropTypes.string,
+	status: PropTypes.string,
 	location: PropTypes.string,
 	isEdit: PropTypes.bool,
 	initialData: PropTypes.object,

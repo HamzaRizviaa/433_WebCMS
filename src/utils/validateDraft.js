@@ -1,4 +1,4 @@
-const validateDraft = (form, dataElements, newsElement) => {
+const validateDraft = (form, dataElements, newsElement, quesElement) => {
 	var validate = Object.keys(form).map((key) => {
 		if (key === 'mainCategory' || key === 'subCategory') {
 			return false;
@@ -61,8 +61,9 @@ const validateDraft = (form, dataElements, newsElement) => {
 		}
 	});
 
-	var validateData;
-	var validateNews;
+	var validateData; //article draft validate
+	var validateNews; // news draft validate
+	var validateQuestion; //question draft validate
 	var finalDraftValue;
 
 	if (dataElements?.length) {
@@ -95,7 +96,6 @@ const validateDraft = (form, dataElements, newsElement) => {
 				}
 			}
 		});
-
 		finalDraftValue = validateData;
 	} else if (newsElement?.length) {
 		validateNews = newsElement.every((newsItem) => {
@@ -109,15 +109,30 @@ const validateDraft = (form, dataElements, newsElement) => {
 				);
 			}
 		});
-
 		finalDraftValue = validateNews;
+	} else if (quesElement?.length) {
+		validateQuestion = quesElement.every((quesItem) => {
+			if (quesItem?.data) {
+				return (
+					quesItem?.data[0]?.uploadedFiles?.length > 0 ||
+					quesItem?.data[0]?.question ||
+					quesItem?.data[0]?.answers?.length > 0 ||
+					quesItem?.data[0]?.labels?.length > 0 ||
+					quesItem?.data[0]?.dropbox_url
+				);
+			}
+		});
+		finalDraftValue = validateQuestion;
 	} else if (
 		(dataElements?.length === 0 ||
 			dataElements === undefined ||
 			dataElements === null) &&
 		(newsElement?.length === 0 ||
 			newsElement === undefined ||
-			newsElement === null)
+			newsElement === null) &&
+		(quesElement?.length === 0 ||
+			quesElement === undefined ||
+			quesElement === null)
 	) {
 		finalDraftValue = validate.some((item) => item === true);
 	}

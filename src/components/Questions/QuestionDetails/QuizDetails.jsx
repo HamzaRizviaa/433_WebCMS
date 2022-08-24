@@ -23,7 +23,9 @@ export default function QuizDetails({
 	status,
 	location,
 	page,
-	notifID
+	notifID,
+	questionId,
+	questionType
 }) {
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
@@ -67,6 +69,8 @@ export default function QuizDetails({
 					}}
 					style={{ minWidth: '40% !important' }}
 					location={location}
+					questionId={questionId}
+					questionType={questionType}
 					type={'quiz'}
 					status={status}
 					quiz={true}
@@ -77,6 +81,8 @@ export default function QuizDetails({
 	);
 }
 QuizDetails.propTypes = {
+	questionId: PropTypes.number.isRequired,
+	questionType: PropTypes.string.isRequired,
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	title: PropTypes.string.isRequired,
