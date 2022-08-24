@@ -351,7 +351,7 @@ const UploadOrEditQuiz = ({
 
 	const deleteQuiz = async (id, draft, type) => {
 		setDeleteBtnStatus(true);
-		console.log('abc in delete');
+
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/question/delete-question`,
