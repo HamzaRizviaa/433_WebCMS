@@ -65,6 +65,7 @@ const UploadOrEditQuiz = ({
 	const [disableDropdown, setDisableDropdown] = useState(true);
 	const [questionType, setQuestionType] = useState('poll');
 	const [questionSlides, setQuestionSlides] = useState([]); // data in slides
+	const [questionIds, setQuestionIds] = useState([]);
 	const [form, setForm] = useState({
 		end_date: null
 	});
@@ -204,6 +205,11 @@ const UploadOrEditQuiz = ({
 
 	useEffect(() => {
 		if (editQuestionData) {
+			let allQuestionIds = [];
+			allQuestionIds =
+				editQuestionData?.questions?.length > 0 &&
+				editQuestionData?.questions?.map((data) => data?.id);
+			setQuestionIds(allQuestionIds); //to pass to delete data
 			setQuestionType(editQuestionData?.question_type);
 			setForm((prev) => {
 				return {
@@ -343,15 +349,17 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
-	const deleteQuiz = async (id, draft, qtype) => {
+	const deleteQuiz = async (id, draft, type) => {
 		setDeleteBtnStatus(true);
+
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/question/delete-question`,
 				{
-					question_id: id,
+					question_meta_id: id,
 					is_draft: draft,
-					question_type: qtype
+					question_type: type,
+					question_ids: questionIds
 				},
 				{
 					headers: {
@@ -380,7 +388,7 @@ const UploadOrEditQuiz = ({
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/question/stop-question`,
 				{
-					question_id: id
+					question_meta_id: id
 				},
 				{
 					headers: {
@@ -399,6 +407,7 @@ const UploadOrEditQuiz = ({
 			toast.error('Failed to stop Question!');
 			setDeleteBtnStatus(false);
 		}
+		setOpenStopPopup(!openStopPopup);
 	};
 
 	const resetState = () => {
@@ -706,8 +715,8 @@ const UploadOrEditQuiz = ({
 															key={item.sort_order}
 															status={status}
 															endDate={form.end_date}
-															sendDataToParent={(data) =>
-																setNewData(data, index)
+															sendDataToParent={
+																(data) => setNewData(data, index) //getting data from child
 															}
 															handleDeleteMedia={(data) =>
 																handleMediaDataDelete(data, index)
@@ -715,7 +724,7 @@ const UploadOrEditQuiz = ({
 															handleDeleteQuestionSlide={(sortOrder) =>
 																handleElementDelete(sortOrder)
 															}
-															initialData={isEdit && item}
+															initialData={isEdit && item} // passing data to child
 															setPreviewFile={setPreviewFile}
 															setPreviewBool={setPreviewBool}
 															setDisableDropdown={setDisableDropdown}
@@ -750,7 +759,9 @@ const UploadOrEditQuiz = ({
 																}
 															}}
 															text={
-																type === 'quiz' ? 'DELETE QUIZ' : 'DELETE POLL'
+																questionType === 'quiz'
+																	? 'DELETE QUIZ'
+																	: 'DELETE POLL'
 															}
 														/>
 													</div>
@@ -770,7 +781,9 @@ const UploadOrEditQuiz = ({
 																	}
 																}}
 																text={
-																	type === 'quiz' ? 'STOP QUIZ' : 'STOP POLL'
+																	questionType === 'quiz'
+																		? 'STOP QUIZ'
+																		: 'STOP POLL'
 																}
 															/>
 														</div>
@@ -895,10 +908,10 @@ const UploadOrEditQuiz = ({
 						: deleteQuiz(
 								editQuestionData?.id,
 								status.toLowerCase(),
-								quiz ? 'quiz' : 'poll'
+								questionType
 						  );
 				}}
-				text={quiz ? 'Quiz' : 'Poll'}
+				text={questionType === 'quiz' ? 'Quiz' : 'Poll'}
 				wrapperRef={dialogWrapper}
 				stop={stopStatus ? true : false}
 			/>
