@@ -309,21 +309,42 @@ const UploadOrEditViral = ({
 		setFileOnUpload();
 	};
 
-	const handleDeleteFileFromApi = async (sliderClose = false) => {
+	useEffect(() => {
+		const handleTabClose = () => {
+			alert('lakaka');
+		};
+
+		window.addEventListener('beforeunload', handleTabClose);
+
+		return () => {
+			window.removeEventListener('beforeunload', handleTabClose);
+		};
+	}, []);
+
+	const deleteMediaSignedUrlKey = (sliderClose) => {
+		if (sliderClose && !isEdit) {
+			return deleteSignedUrlKey;
+		} else if (sliderClose && isEdit && status == 'draft') {
+			if (specificViral?.url) {
+				return deleteSignedUrlKey.slice(1);
+			} else {
+				return deleteSignedUrlKey;
+			}
+		} else if (sliderClose && isEdit && status !== 'draft') {
+			return deleteSignedUrlKey.slice(1);
+		} else {
+			return deleteSignedUrlKey.slice(0, deleteSignedUrlKey?.length - 1);
+		}
+	};
+
+	const deleteMediaApiCall = async (sliderClose) => {
 		try {
 			const result = await axios.delete(
 				`${process.env.REACT_APP_API_ENDPOINT}/media-upload`,
 				{
 					data: {
 						data: {
-							keys:
-								sliderClose && !isEdit
-									? deleteSignedUrlKey
-									: sliderClose && isEdit && status == 'draft'
-									? deleteSignedUrlKey
-									: sliderClose && isEdit && status !== 'draft'
-									? deleteSignedUrlKey.slice(1)
-									: deleteSignedUrlKey.slice(0, deleteSignedUrlKey?.length - 1)
+							keys: deleteMediaSignedUrlKey(sliderClose)
 						}
 					},
 					headers: {
@@ -337,6 +358,21 @@ const UploadOrEditViral = ({
 			}
 		} catch (e) {
 			console.log(e, 'Failed to delete Media Data');
+		}
+	};
+
+	const handleDeleteFileFromApi = (sliderClose = false) => {
+		if (!isEdit && sliderClose) {
+			deleteMediaApiCall(sliderClose);
+		} else if (isEdit && sliderClose && status === 'draft') {
+			if (specificViral?.url && deleteSignedUrlKey?.length > 1) {
+				return deleteSignedUrlKey.slice(1);
+			} else if (!specificViral?.url && deleteSignedUrlKey?.length > 0) {
+				return deleteSignedUrlKey;
+			}
+		} else if (deleteSignedUrlKey?.length > 1) {
+			// clicking on draft/publish button
+			deleteMediaApiCall(sliderClose);
 		}
 	};
 
