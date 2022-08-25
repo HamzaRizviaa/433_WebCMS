@@ -205,7 +205,7 @@ const QuestionForm = ({
 		// sendDataToParent(answers);
 	};
 
-	console.log('FORMMMM', form);
+	// console.log('FORMMMM', form);
 
 	const handleAnswerDelete = (index) => {
 		let dataCopy = { ...form };
@@ -233,29 +233,51 @@ const QuestionForm = ({
 	};
 
 	const handleAnswerChange = (event, index) => {
-		console.log(index, 'index ');
-		const formCopy = { ...form };
-		formCopy.answers[index] = {
-			answer: event.target.value,
-			position: index + 1,
-			type:
-				type === 'quiz' && index === 0
-					? 'right_answer'
-					: type === 'quiz' && index > 0
-					? 'wrong_answer_' + index
-					: 'poll'
-		};
-		setForm(formCopy);
-		let answers = { answers: formCopy.answers };
-		sendDataToParent(answers);
+		if (!isEdit) {
+			const formCopy = { ...form };
+			formCopy.answers[index] = {
+				answer: event.target.value,
+				position: index + 1,
+				type:
+					type === 'quiz' && index === 0
+						? 'right_answer'
+						: type === 'quiz' && index > 0
+						? 'wrong_answer_' + index
+						: 'poll'
+			};
+			setForm(formCopy);
+			let answers = { answers: formCopy.answers };
+			sendDataToParent(answers);
+		} else {
+			const answers = [
+				...(initialData.data && initialData.data[0].answers
+					? initialData.data[0].answers
+					: initialData.answers)
+			];
+
+			answers[index] = {
+				answer: event.target.value,
+				position: index,
+				type:
+					type === 'quiz' && index === 0
+						? 'right_answer'
+						: type === 'quiz' && index > 0
+						? 'wrong_answer_' + index
+						: 'poll'
+			};
+
+			setForm({ ...form, answers });
+			sendDataToParent({ answers });
+		}
 	};
 
-	console.log(
+	console.log({
 		initialData,
 		form,
-		isEdit && status !== 'draft',
-		'--- aa rr tt ii cc ll ee ---------'
-	);
+		isEdit,
+		status: isEdit && status !== 'draft'
+	});
+
 	return (
 		<>
 			{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
@@ -327,7 +349,13 @@ const QuestionForm = ({
 					<div className={globalClasses.dropBoxUrlContainer}>
 						<h6>DROPBOX URL</h6>
 						<TextField
-							value={initialData ? initialData?.dropbox_url : form.dropbox_url}
+							value={
+								initialData
+									? initialData.data
+										? initialData.data.dropbox_url
+										: initialData?.dropbox_url
+									: form.dropbox_url
+							}
 							disabled={location === 'article' ? true : false}
 							onChange={(e) => {
 								setForm((prev) => {
@@ -383,7 +411,13 @@ const QuestionForm = ({
 						</div>
 						<TextField
 							disabled={isEdit && status !== 'draft'}
-							value={initialData ? initialData?.question : form.question}
+							value={
+								initialData
+									? initialData.data
+										? initialData.data.question
+										: initialData.question
+									: form.question
+							}
 							onChange={(e) => {
 								setForm((prev) => {
 									return {
@@ -456,7 +490,9 @@ const QuestionForm = ({
 										disabled={isEdit && status !== 'draft'}
 										value={
 											initialData?.answers?.length > 0
-												? initialData?.answers[index]?.answer
+												? initialData.data && initialData.data[0].answers
+													? initialData.data[0].answers[index]?.answer
+													: initialData?.answers[index]?.answer
 												: form.answers[index]?.answer
 										}
 										onChange={(e) => {

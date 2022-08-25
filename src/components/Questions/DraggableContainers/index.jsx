@@ -45,15 +45,15 @@ const DraggableContainers = ({
 	location,
 	endDate
 }) => {
-	console.log(
-		initialData,
-		type,
-		status,
-		isEdit,
-		location,
-		endDate,
-		'initialData DRAGABBLEE'
-	);
+	// console.log(
+	// 	initialData,
+	// 	type,
+	// 	status,
+	// 	isEdit,
+	// 	location,
+	// 	endDate,
+	// 	'initialData DRAGABBLEE'
+	// );
 	const [expanded, setExpanded] = useState(true);
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
