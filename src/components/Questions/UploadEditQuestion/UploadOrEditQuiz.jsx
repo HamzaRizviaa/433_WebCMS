@@ -115,6 +115,7 @@ const UploadOrEditQuiz = ({
 
 	const setNewData = (childData, index) => {
 		// [ 0 : data [ {},{}] ]
+		console.log(childData, index, 'childData');
 		let dataCopy = [...questionSlides];
 		dataCopy[index].data = [
 			{
@@ -122,9 +123,10 @@ const UploadOrEditQuiz = ({
 				...childData
 			}
 		];
+
 		setQuestionSlides(dataCopy);
 	};
-
+	console.log(questionSlides, 'ques slides ');
 	const handleElementDelete = (sortOrder) => {
 		let dataCopy = [...questionSlides];
 		if (sortOrder) {
@@ -486,9 +488,17 @@ const UploadOrEditQuiz = ({
 		}
 	}, [editQuestionData, form, convertedDate]);
 
+	console.log(
+		!validateForm(form),
+		!validateForm(form, null, null, questionSlides),
+		questionSlides,
+		'question validation'
+	);
+
 	//editQuizBtnDisabled button - whether you can click or not
+	//!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')
 	const handlePostQuizPollBtn = () => {
-		if (!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')) {
+		if (editQuizBtnDisabled) {
 			validatePostBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -497,7 +507,7 @@ const UploadOrEditQuiz = ({
 			if (isEdit) {
 				try {
 					console.log('edit api on post , save changes button');
-					// createQuestion(editQuestionData?.id);
+					createQuestion(editQuestionData?.id);
 				} catch (err) {
 					setIsLoadingcreateViral(false);
 					console.log(err);
@@ -516,7 +526,7 @@ const UploadOrEditQuiz = ({
 	//draftBtnDisabled button - whether you can click or not
 	//validateDraft - color grey or yellow
 	const handleDraftSave = async () => {
-		if (!validateDraft(form) || draftBtnDisabled) {
+		if (!validateDraft(form, null, null, questionSlides) || draftBtnDisabled) {
 			validateDraftBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -525,7 +535,7 @@ const UploadOrEditQuiz = ({
 			if (isEdit) {
 				try {
 					console.log('edit api on draft');
-					// createQuestion(editQuestionData?.id, true);
+					createQuestion(editQuestionData?.id, true);
 				} catch (err) {
 					setIsLoadingcreateViral(false);
 					console.log(err);
@@ -735,16 +745,24 @@ const UploadOrEditQuiz = ({
 													);
 												})}
 											</QuestionDraggable>
-											{!isEdit && (
-												<Button
-													style={{ marginTop: '2rem' }}
-													disabled={false}
-													buttonNews={true}
-													onClick={() => handleNewSlide()}
-													text={'ADD QUESTION'}
-												/>
-											)}
+
+											{!isEdit &&
+												(questionSlides?.length < 10 ? (
+													<Button
+														style={{
+															marginTop: '2rem'
+														}}
+														buttonNews={true}
+														disabled={false}
+														onClick={() => handleNewSlide()}
+														text={'ADD QUESTION'}
+													/>
+												) : (
+													''
+												))}
 										</>
+										<br />
+										<p className={globalClasses.mediaError}></p>
 										<br />
 										<div className={classes.buttonDiv}>
 											<div className={classes.leftButtonDiv}>

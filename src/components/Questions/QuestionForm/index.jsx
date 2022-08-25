@@ -58,23 +58,43 @@ const QuestionForm = ({
 	const [fileHeight, setFileHeight] = useState(0);
 	const [isError, setIsError] = useState({});
 	const [loading, setLoading] = useState(false);
-	const [form, setForm] = useState({
-		uploadedFiles: [],
-		dropbox_url: '',
-		question: '',
-		answers:
-			initialData?.answers?.length > 0
-				? initialData?.answers
-				: [
+	const [form, setForm] = useState(
+		initialData
+			? {
+					...initialData,
+					uploadedFiles: initialData?.uploadedFiles
+						? initialData?.uploadedFiles
+						: [],
+					answers:
+						initialData?.answers?.length > 0
+							? initialData?.answers
+							: [
+									{ answer: '', type: 'right_answer', position: 0 },
+									{
+										answer: '',
+										type:
+											location === 'article'
+												? 'wrong_answer'
+												: 'wrong_answer_1',
+										position: 1
+									}
+							  ]
+			  }
+			: {
+					uploadedFiles: [],
+					labels: [],
+					dropbox_url: '',
+					question: '',
+					answers: [
 						{ answer: '', type: 'right_answer', position: 0 },
 						{
 							answer: '',
 							type: location === 'article' ? 'wrong_answer' : 'wrong_answer_1',
 							position: 1
 						}
-				  ],
-		labels: []
-	});
+					]
+			  }
+	);
 	// console.log('FORM', form)
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
@@ -233,28 +253,45 @@ const QuestionForm = ({
 	};
 
 	const handleAnswerChange = (event, index) => {
-		console.log(index, 'index ');
-		const formCopy = { ...form };
-		formCopy.answers[index] = {
-			answer: event.target.value,
-			position: index + 1,
-			type:
-				type === 'quiz' && index === 0
-					? 'right_answer'
-					: type === 'quiz' && index > 0
-					? 'wrong_answer_' + index
-					: 'poll'
-		};
-		setForm(formCopy);
-		let answers = { answers: formCopy.answers };
-		sendDataToParent(answers);
+		if (initialData?.question_id) {
+			const formCopy = { ...form };
+
+			formCopy.answers[index] = {
+				...formCopy.answers[index],
+				answer: event.target.value,
+				position: index,
+				type:
+					type === 'quiz' && index === 0
+						? 'right_answer'
+						: type === 'quiz' && index > 0
+						? 'wrong_answer_' + index
+						: 'poll'
+			};
+			setForm(formCopy);
+			let answers = { answers: formCopy.answers };
+			sendDataToParent(answers);
+		} else {
+			const formCopy = { ...form };
+			formCopy.answers[index] = {
+				answer: event.target.value,
+				position: index + 1,
+				type:
+					type === 'quiz' && index === 0
+						? 'right_answer'
+						: type === 'quiz' && index > 0
+						? 'wrong_answer_' + index
+						: 'poll'
+			};
+			setForm(formCopy);
+			let answers = { answers: formCopy.answers };
+			sendDataToParent(answers);
+		}
 	};
 
 	console.log(
 		initialData,
-		form,
-		isEdit && status !== 'draft',
-		'--- aa rr tt ii cc ll ee ---------'
+
+		'--- initial data in Q U E S T I O N F O R M ---------'
 	);
 	return (
 		<>
@@ -327,8 +364,7 @@ const QuestionForm = ({
 					<div className={globalClasses.dropBoxUrlContainer}>
 						<h6>DROPBOX URL</h6>
 						<TextField
-							value={initialData ? initialData?.dropbox_url : form.dropbox_url}
-							disabled={location === 'article' ? true : false}
+							value={form.dropbox_url}
 							onChange={(e) => {
 								setForm((prev) => {
 									return {
@@ -382,7 +418,6 @@ const QuestionForm = ({
 							</h6>
 						</div>
 						<TextField
-							disabled={isEdit && status !== 'draft'}
 							value={initialData ? initialData?.question : form.question}
 							onChange={(e) => {
 								setForm((prev) => {
@@ -400,7 +435,9 @@ const QuestionForm = ({
 							InputProps={{
 								disableUnderline: true,
 								className: `${classes.textFieldInput}  ${
-									isEdit && status !== 'draft' && classes.disableTextField
+									initialData?.question_id &&
+									status !== 'draft' &&
+									classes.disableTextField
 								}`
 							}}
 							inputProps={{ maxLength: 55 }}
@@ -471,12 +508,9 @@ const QuestionForm = ({
 											}`,
 											startAdornment: (
 												<InputAdornment position='end'>
-													{index < 2 ? (
+													{index < 2 &&
+													(status === 'ACTIVE' || status === 'CLOSED') ? (
 														<> </>
-													) : status === 'ACTIVE' || status === 'CLOSED' ? (
-														<DeleteBin
-															style={{ marginTop: '20px', opacity: 0.5 }}
-														/>
 													) : (
 														<DeleteBin
 															style={{ marginTop: '20px' }}

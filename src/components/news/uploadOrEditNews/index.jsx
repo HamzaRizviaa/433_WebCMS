@@ -566,6 +566,7 @@ const UploadOrEditNews = ({
 
 	const handlePublishNews = () => {
 		setIsLoading(false);
+		//false || false
 		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
 			validatePublishNewsBtn();
 		} else {
