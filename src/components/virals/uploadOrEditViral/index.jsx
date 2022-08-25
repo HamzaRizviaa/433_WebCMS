@@ -204,7 +204,6 @@ const UploadOrEditViral = ({
 			resetState();
 		}
 	}, [open]);
-	console.log(open, 'open');
 
 	useEffect(() => {
 		if (fileRejections.length) {
@@ -309,20 +308,33 @@ const UploadOrEditViral = ({
 		setFileOnUpload();
 	};
 
-	useEffect(() => {
-		const handleTabClose = () => {
-			alert('lakaka');
-		};
+	// useEffect(() => {
+	// 	const handleTabClose = (e) => {
+	// 		e.preventDefault();
+	// 		console.log(deleteSignedUrlKey, 'dddd');
+	// 		handleDeleteFileFromApi(false, true);
+	// 		return false;
+	// 	};
+	// 	window.addEventListener('beforeunload', handleTabClose);
+	// 	return () => {
+	// 		window.removeEventListener('beforeunload', handleTabClose);
+	// 	};
+	// }, []);
 
-		window.addEventListener('beforeunload', handleTabClose);
+	window.onbeforeunload = function (ev) {
+		ev.prevenDefault();
+		handleDeleteFileFromApi(false, true).then((res) => {
+			if (res) {
+				window.location.reload();
+			}
+		});
+		return false;
+	};
 
-		return () => {
-			window.removeEventListener('beforeunload', handleTabClose);
-		};
-	}, []);
-
-	const deleteMediaSignedUrlKey = (sliderClose) => {
-		if (sliderClose && !isEdit) {
+	const deleteMediaSignedUrlKey = (sliderClose, reloader) => {
+		if (reloader) {
+			return deleteSignedUrlKey;
+		} else if (sliderClose && !isEdit) {
 			return deleteSignedUrlKey;
 		} else if (sliderClose && isEdit && status == 'draft') {
 			if (specificViral?.url) {
@@ -337,14 +349,14 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	const deleteMediaApiCall = async (sliderClose) => {
+	const deleteMediaApiCall = async (sliderClose, reloader) => {
 		try {
 			const result = await axios.delete(
 				`${process.env.REACT_APP_API_ENDPOINT}/media-upload`,
 				{
 					data: {
 						data: {
-							keys: deleteMediaSignedUrlKey(sliderClose)
+							keys: deleteMediaSignedUrlKey(sliderClose, reloader)
 						}
 					},
 					headers: {
@@ -361,15 +373,17 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	const handleDeleteFileFromApi = (sliderClose = false) => {
+	const handleDeleteFileFromApi = (sliderClose = false, reloader = false) => {
 		if (!isEdit && sliderClose) {
 			deleteMediaApiCall(sliderClose);
 		} else if (isEdit && sliderClose && status === 'draft') {
 			if (specificViral?.url && deleteSignedUrlKey?.length > 1) {
-				return deleteSignedUrlKey.slice(1);
+				deleteMediaApiCall(sliderClose);
 			} else if (!specificViral?.url && deleteSignedUrlKey?.length > 0) {
-				return deleteSignedUrlKey;
+				deleteMediaApiCall(sliderClose);
 			}
+		} else if (reloader && deleteSignedUrlKey?.length > 0) {
+			deleteMediaApiCall(sliderClose, reloader);
 		} else if (deleteSignedUrlKey?.length > 1) {
 			// clicking on draft/publish button
 			deleteMediaApiCall(sliderClose);
@@ -882,6 +896,7 @@ const UploadOrEditViral = ({
 												onClick={() => {
 													if (!deleteBtnStatus) {
 														toggleDeleteModal();
+														handleDeleteFileFromApi();
 													}
 												}}
 												text={'DELETE VIRAL'}
