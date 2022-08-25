@@ -115,12 +115,17 @@ const UploadOrEditQuiz = ({
 	const setNewData = (childData, index) => {
 		// [ 0 : data [ {},{}] ]
 		let dataCopy = [...questionSlides];
+		console.log('before', { selected: dataCopy[index] });
+
 		dataCopy[index].data = [
 			{
 				...(dataCopy[index]?.data?.length ? dataCopy[index]?.data[0] : {}),
 				...childData
 			}
 		];
+
+		console.log('after', { selected: dataCopy[index] });
+
 		setQuestionSlides(dataCopy);
 	};
 
