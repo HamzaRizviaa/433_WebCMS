@@ -83,6 +83,7 @@ const UploadOrEditViral = ({
 		(state) => state.ViralLibraryStore
 	);
 	const [loading, setLoading] = useState(false);
+	const [sliderCloseCause, setSliderCloseCause] = useState(false); // false - click outside or reload, true - publish/draft/delete pressed
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -197,7 +198,7 @@ const UploadOrEditViral = ({
 	}, []);
 
 	useEffect(() => {
-		if (!open && form?.uploadedFiles?.length) {
+		if (!open && form?.uploadedFiles?.length && !sliderCloseCause) {
 			handleDeleteFileFromApi(true);
 		}
 		if (!open) {
@@ -292,6 +293,7 @@ const UploadOrEditViral = ({
 		setFileOnUpload();
 		setDeleteSignedUrlKey([]);
 		setLoading(false);
+		setSliderCloseCause(false);
 	};
 
 	const toggleDeleteModal = () => {
@@ -311,6 +313,7 @@ const UploadOrEditViral = ({
 	useEffect(() => {
 		const handleTabClose = (ev) => {
 			ev.preventDefault();
+
 			return handleDeleteFileFromApi(false, true);
 		};
 
@@ -351,6 +354,7 @@ const UploadOrEditViral = ({
 						}
 					}),
 					headers: {
+						'Content-Type': 'application/json',
 						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
 					},
 					keepalive: true
@@ -365,20 +369,73 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	const handleDeleteFileFromApi = (sliderClose = false, reloader = false) => {
-		if (!isEdit && sliderClose) {
-			deleteMediaApiCall(sliderClose);
-		} else if (isEdit && sliderClose && status === 'draft') {
-			if (specificViral?.url && deleteSignedUrlKey?.length > 1) {
+	const handleDeleteFileFromApi = (
+		sliderClose = false,
+		reloader = false,
+		draft = false
+	) => {
+		if (sliderClose) {
+			if (!isEdit) {
 				deleteMediaApiCall(sliderClose);
-			} else if (!specificViral?.url && deleteSignedUrlKey?.length > 0) {
-				deleteMediaApiCall(sliderClose);
+			} else if (isEdit) {
+				if (specificViral?.url && deleteSignedUrlKey?.length > 1) {
+					deleteMediaApiCall(sliderClose);
+				} else if (!specificViral?.url && deleteSignedUrlKey?.length > 0) {
+					deleteMediaApiCall(sliderClose);
+				}
 			}
-		} else if (reloader && deleteSignedUrlKey?.length > 0) {
-			deleteMediaApiCall(sliderClose, reloader);
-		} else if (deleteSignedUrlKey?.length > 1) {
-			// clicking on draft/publish button
-			deleteMediaApiCall(sliderClose);
+		} else if (reloader) {
+			if (!isEdit && deleteSignedUrlKey?.length > 0) {
+				// doing this condition because we are not getting the "open" prop for reloading the page
+				deleteMediaApiCall(sliderClose);
+			} else if (isEdit) {
+				if (specificViral?.url && deleteSignedUrlKey?.length > 1) {
+					deleteMediaApiCall(sliderClose, reloader);
+				} else if (!specificViral?.url && deleteSignedUrlKey?.length > 0) {
+					deleteMediaApiCall(sliderClose, reloader);
+				}
+			}
+		} else {
+			if (!isEdit) {
+				if (draft) {
+					if (deleteSignedUrlKey?.length > 1) {
+						deleteMediaApiCall(); //remove all images except last one
+					} else if (
+						deleteSignedUrlKey?.length > 0 &&
+						form?.uploadedFiles?.length === 0
+					) {
+						deleteMediaApiCall(); //remove only if the uploaded image was deleted and saved as draft
+					}
+				}
+			} else if (isEdit) {
+				if (draft) {
+					if (specificViral?.url) {
+						if (deleteSignedUrlKey?.length > 1) {
+							deleteMediaApiCall(); //remove all images except last one
+						} else if (
+							deleteSignedUrlKey?.length > 0 &&
+							form?.uploadedFiles?.length === 0
+						) {
+							deleteMediaApiCall(); //remove only if the uploaded image was deleted and saved as draft
+						}
+						//one more case remaining that if deletesignedurlkey is > 1 and user also deletes the last one.
+					} else if (!specificViral?.url && deleteSignedUrlKey?.length > 0) {
+						if (deleteSignedUrlKey?.length > 1) {
+							deleteMediaApiCall(); //remove all images except last one
+						} else if (
+							deleteSignedUrlKey?.length > 0 &&
+							form?.uploadedFiles?.length === 0
+						) {
+							deleteMediaApiCall(); //remove only if the uploaded image was deleted and saved as draft
+						}
+					}
+				}
+			}
+
+			// else if (deleteSignedUrlKey?.length > 1) {
+			// 	// clicking on draft/publish/delete button
+			// 	deleteMediaApiCall();
+			// }
 		}
 	};
 
@@ -444,6 +501,7 @@ const UploadOrEditViral = ({
 				);
 				setIsLoadingcreateViral(false);
 				setPostButtonStatus(false);
+				setSliderCloseCause(true);
 				handleClose();
 				dispatch(getAllViralsApi({ page }));
 				// dispatch(getPostLabels());
@@ -474,6 +532,7 @@ const UploadOrEditViral = ({
 			);
 			if (result?.data?.status_code === 200) {
 				toast.success('Viral has been deleted!');
+				setSliderCloseCause(true);
 				handleClose();
 				dispatch(getAllViralsApi({ page }));
 			}
@@ -618,7 +677,7 @@ const UploadOrEditViral = ({
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			if (isEdit) {
 				setIsLoadingcreateViral(true);
-				handleDeleteFileFromApi();
+				handleDeleteFileFromApi(false, false, true);
 				try {
 					createViral(specificViral?.id, fileOnUpload, true);
 				} catch {
@@ -626,7 +685,7 @@ const UploadOrEditViral = ({
 				}
 			} else {
 				setIsLoadingcreateViral(true);
-				handleDeleteFileFromApi();
+				handleDeleteFileFromApi(false, false, true);
 				try {
 					createViral(null, fileOnUpload, true);
 				} catch {
