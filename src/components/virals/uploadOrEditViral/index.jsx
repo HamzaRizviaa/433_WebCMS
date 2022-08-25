@@ -308,28 +308,18 @@ const UploadOrEditViral = ({
 		setFileOnUpload();
 	};
 
-	// useEffect(() => {
-	// 	const handleTabClose = (e) => {
-	// 		e.preventDefault();
-	// 		console.log(deleteSignedUrlKey, 'dddd');
-	// 		handleDeleteFileFromApi(false, true);
-	// 		return false;
-	// 	};
-	// 	window.addEventListener('beforeunload', handleTabClose);
-	// 	return () => {
-	// 		window.removeEventListener('beforeunload', handleTabClose);
-	// 	};
-	// }, []);
+	useEffect(() => {
+		const handleTabClose = (ev) => {
+			ev.preventDefault();
+			return handleDeleteFileFromApi(false, true);
+		};
 
-	window.onbeforeunload = function (ev) {
-		ev.prevenDefault();
-		handleDeleteFileFromApi(false, true).then((res) => {
-			if (res) {
-				window.location.reload();
-			}
-		});
-		return false;
-	};
+		window.addEventListener('beforeunload', handleTabClose);
+
+		return () => {
+			window.removeEventListener('beforeunload', handleTabClose);
+		};
+	}, [deleteSignedUrlKey, specificViral]);
 
 	const deleteMediaSignedUrlKey = (sliderClose, reloader) => {
 		if (reloader) {
@@ -351,17 +341,19 @@ const UploadOrEditViral = ({
 
 	const deleteMediaApiCall = async (sliderClose, reloader) => {
 		try {
-			const result = await axios.delete(
+			const result = await fetch(
 				`${process.env.REACT_APP_API_ENDPOINT}/media-upload`,
 				{
-					data: {
+					method: 'DELETE',
+					body: JSON.stringify({
 						data: {
 							keys: deleteMediaSignedUrlKey(sliderClose, reloader)
 						}
-					},
+					}),
 					headers: {
 						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
+					},
+					keepalive: true
 				}
 			);
 
