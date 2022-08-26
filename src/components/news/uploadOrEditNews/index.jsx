@@ -43,6 +43,7 @@ import {
 import { getAllNews } from '../../../pages/NewsLibrary/newsLibrarySlice';
 import { ConstructionOutlined } from '@mui/icons-material';
 import { TextField } from '@material-ui/core';
+import { ToastErrorNotifications } from '../../../constants';
 
 const UploadOrEditNews = ({
 	open,
@@ -419,7 +420,7 @@ const UploadOrEditNews = ({
 				dispatch(getAllNews({ page }));
 			}
 		} catch (e) {
-			toast.error('News to delete Viral!');
+			toast.error(ToastErrorNotifications.deleteBannerItemText);
 			setDeleteBtnStatus(false);
 			console.log(e, 'News to delete Viral');
 		}
