@@ -50,7 +50,7 @@ export default function PollDetails({
 			quiz={true}
 			dialogRef={dialogWrapper}
 			notifID={
-				location === 'article' || status === 'CLOSED' || status === 'draft'
+			status === 'CLOSED' 
 					? ''
 					: notifID
 			}

@@ -626,7 +626,7 @@ const UploadOrEditViral = ({
 				edit={isEdit}
 				viral={true}
 				dialogRef={dialogWrapper}
-				notifID={status === 'draft' ? '' : notifID}
+				notifID={notifID}
 			>
 				<LoadingOverlay
 					active={isLoadingcreateViral}
