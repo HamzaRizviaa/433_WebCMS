@@ -364,7 +364,7 @@ const QuestionForm = ({
 					<div className={globalClasses.dropBoxUrlContainer}>
 						<h6>DROPBOX URL</h6>
 						<TextField
-							value={form.dropbox_url}
+							value={initialData ? initialData?.dropbox_url : form.dropbox_url}
 							onChange={(e) => {
 								setForm((prev) => {
 									return {
@@ -420,6 +420,7 @@ const QuestionForm = ({
 						<TextField
 							value={initialData ? initialData?.question : form.question}
 							onChange={(e) => {
+								console.log(e, 'e');
 								setForm((prev) => {
 									return {
 										...prev,
@@ -508,9 +509,12 @@ const QuestionForm = ({
 											}`,
 											startAdornment: (
 												<InputAdornment position='end'>
-													{index < 2 &&
-													(status === 'ACTIVE' || status === 'CLOSED') ? (
+													{index < 2 ? (
 														<> </>
+													) : status === 'ACTIVE' || status === 'CLOSED' ? (
+														<DeleteBin
+															style={{ marginTop: '20px', opacity: 0.5 }}
+														/>
 													) : (
 														<DeleteBin
 															style={{ marginTop: '20px' }}
@@ -530,29 +534,24 @@ const QuestionForm = ({
 							);
 						})}
 
-					{isEdit && status !== 'draft' ? (
-						<></>
+					{form?.answers.length < 4 ? (
+						isEdit && status !== 'draft' ? (
+							<></>
+						) : (
+							<div
+								className={classes.addNewAnswer}
+								onClick={() => handleNewAnswer()}
+								style={{
+									cursor: 'pointer'
+								}}
+							>
+								<NewsAddIcon />
+								<h6>ADD ANSWER</h6>
+							</div>
+						)
 					) : (
-						<div
-							className={classes.addNewAnswer}
-							onClick={() => handleNewAnswer()}
-							style={{
-								pointerEvents: form?.answers.length < 4 ? 'auto' : 'none',
-								cursor: 'pointer'
-							}}
-						>
-							<NewsAddIcon />
-							<h6>ADD ANSWER</h6>
-						</div>
+						''
 					)}
-
-					{/* <p className={globalClasses.mediaError}>
-															{isError.ans2
-																? type === 'quiz'
-																	? 'You need to provide wrong answer in order to post'
-																	: 'You need to provide second answer in order to post'
-																: ''}
-														</p> */}
 
 					<div className={classes.titleContainer}>
 						<h6

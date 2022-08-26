@@ -351,7 +351,7 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
-	const deleteQuiz = async (id, draft, type) => {
+	const deleteQuiz = async (id, draft) => {
 		setDeleteBtnStatus(true);
 
 		try {
@@ -360,7 +360,6 @@ const UploadOrEditQuiz = ({
 				{
 					question_meta_id: id,
 					is_draft: draft,
-					question_type: type,
 					question_ids: questionIds
 				},
 				{
@@ -488,17 +487,13 @@ const UploadOrEditQuiz = ({
 		}
 	}, [editQuestionData, form, convertedDate]);
 
-	console.log(
-		!validateForm(form),
-		!validateForm(form, null, null, questionSlides),
-		questionSlides,
-		'question validation'
-	);
-
 	//editQuizBtnDisabled button - whether you can click or not
 	//!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')
 	const handlePostQuizPollBtn = () => {
-		if (editQuizBtnDisabled) {
+		if (
+			!validateForm(form, null, null, questionSlides) ||
+			(editQuizBtnDisabled && status === 'ACTIVE')
+		) {
 			validatePostBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -923,11 +918,7 @@ const UploadOrEditQuiz = ({
 				deleteBtn={() => {
 					stopStatus
 						? stopQuizPoll(editQuestionData?.id)
-						: deleteQuiz(
-								editQuestionData?.id,
-								status.toLowerCase(),
-								questionType
-						  );
+						: deleteQuiz(editQuestionData?.id, status.toLowerCase());
 				}}
 				text={questionType === 'quiz' ? 'Quiz' : 'Poll'}
 				wrapperRef={dialogWrapper}

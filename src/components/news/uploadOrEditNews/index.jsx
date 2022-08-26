@@ -146,11 +146,12 @@ const UploadOrEditNews = ({
 	}, [specificNews, form]);
 
 	useEffect(() => {
+		//empty news , news = 0
 		const validateEmptyNewsArray = [
 			checkEmptyMediaNews(news),
 			news?.length !== 0
 		];
-
+		//
 		const validateEmptyNewsAndEditComparisonArray = [
 			checkNewElementNEWS(specificNews, news),
 			news?.length !== 0
