@@ -50,11 +50,8 @@ export default function QuizDetails({
 			disableDropdown={disableDropdown}
 			quiz={true}
 			dialogRef={dialogWrapper}
-			notifID={
-				location === 'article' || status === 'CLOSED' || status === 'draft'
-					? ''
-					: notifID
-			}
+			notifID={ status === 'CLOSED' ? '' : notifID }
+
 		>
 			<div className={muiClasses.root}>
 				{status === 'draft' ? (
