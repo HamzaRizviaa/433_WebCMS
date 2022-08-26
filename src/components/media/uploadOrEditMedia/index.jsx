@@ -32,6 +32,7 @@ import validateDraft from '../../../utils/validateDraft';
 import { useStyles } from './index.style';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
+import { ToastErrorNotifications } from '../../../constants';
 const UploadOrEditMedia = ({
 	open,
 	handleClose,
@@ -544,7 +545,7 @@ const UploadOrEditMedia = ({
 			if (result?.data?.status_code === 200) {
 				if (result?.data?.data?.is_deleted === false) {
 					toast.error(
-						'The media or article cannot be deleted because it is used as a top banner'
+						ToastErrorNotifications.deleteBannerItemText
 					);
 					dispatch(getMedia({ page }));
 				} else {
