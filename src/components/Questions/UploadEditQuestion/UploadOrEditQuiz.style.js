@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 export const useStyles = makeStyles((theme) => ({
 	contentWrapper: {
-		minHeight: 'calc(100vh - 107px)',
+		//	minHeight: 'calc(100vh - 107px)',
 		position: 'relative',
 		display: 'flex',
 		flexDirection: 'column',
@@ -302,5 +302,97 @@ export const useStyles = makeStyles((theme) => ({
 		fontSize: '14px',
 		lineHeight: '24px',
 		color: ' #FFFFFF'
+	},
+	//draggable
+	leftDiv: {
+		display: 'flex',
+		alignItems: 'center'
+	},
+	accordionSummary: {
+		'& > div': {
+			display: 'flex',
+			justifyContent: 'space-between'
+		}
+	},
+	grabIconDiv: {
+		width: '26px',
+		height: '26px',
+		background: ' #404040',
+		borderRadius: '40px',
+		textAlign: 'center'
+	},
+	grabIconDivDisbaled: {
+		width: '26px',
+		height: '26px',
+		background: ' #404040',
+		borderRadius: '40px',
+		textAlign: 'center',
+		pointerEvent: 'none',
+		opacity: 0.5
+	},
+	grabIcon: {
+		height: '10px',
+		width: '16px',
+
+		padding: '8px 0px',
+		'& > path': {
+			fill: `${theme.palette.white} !important`
+		}
+	},
+	heading: {
+		marginLeft: '20px !important'
+	},
+	rightDiv: {
+		display: 'flex',
+		alignItems: 'center',
+		gap: '10px'
+		// justifyContent: 'flex-end'
+		// marginLeft: '40vh'
+	},
+	deleteIconDiv: {
+		width: '27px',
+		height: '27px',
+		background: ' #404040',
+		borderRadius: '40px',
+		textAlign: 'center',
+		cursor: 'pointer'
+	},
+	deleteIconDivDisabled: {
+		width: '27px',
+		height: '27px',
+		background: ' #404040',
+		borderRadius: '40px',
+		textAlign: 'center',
+		cursor: 'pointer',
+		pointerEvent: 'none',
+		opacity: 0.5
+	},
+	deleteIcon: {
+		padding: '2px 0px',
+		width: '16px',
+		'& > path': {
+			fill: `${theme.palette.white} !important`
+		}
+	},
+	horizontalLine: {
+		color: theme.palette.grey
+	},
+
+	socialmediaDrags: {
+		marginTop: '20px',
+		'& h6': {
+			marginBottom: '0.5rem',
+			marginLeft: '1rem'
+		},
+		marginBottom: '2rem'
+	},
+	addNewAnswer: {
+		display: 'flex',
+		alignItems: 'center',
+		marginTop: '1.5rem',
+		marginBottom: '1.5rem',
+		'& h6': {
+			marginLeft: '1rem'
+		}
 	}
 }));

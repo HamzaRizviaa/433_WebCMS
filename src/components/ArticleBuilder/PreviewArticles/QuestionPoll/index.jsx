@@ -11,8 +11,8 @@ const QuestionPoll = ({ data }) => {
 				className={classes.questionDraggable}
 				style={{
 					backgroundImage: `url(${
-						data?.data?.uploadedFiles?.length > 0 &&
-						data?.data?.uploadedFiles[0]?.media_url
+						data?.data?.previewImage?.length > 0 &&
+						data?.data?.previewImage[0]?.media_url
 					})`
 				}}
 			>
