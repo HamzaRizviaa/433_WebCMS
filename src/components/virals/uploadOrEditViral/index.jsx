@@ -702,7 +702,7 @@ const UploadOrEditViral = ({
 				handleClose={() => {
 					handleClose();
 
-					if (form.uploadedFiles.length) {
+					if (form?.uploadedFiles?.length) {
 						form.uploadedFiles.map((file) => handleDeleteFile(file.id));
 					}
 				}}
