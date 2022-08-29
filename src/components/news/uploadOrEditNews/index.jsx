@@ -135,8 +135,8 @@ const UploadOrEditNews = ({
 			console.log(
 				'validateEmptyNewsArray',
 				validateEmptyNewsArray,
-				validateEmptyNewsArray.every((item) => item === true),
-				news
+				!validateForm(form, null, news),
+				comparingNewsFields(specificNews, form)
 			);
 			setEditBtnDisabled(
 				!validateForm(form, null, news) ||
@@ -144,7 +144,9 @@ const UploadOrEditNews = ({
 					comparingNewsFields(specificNews, form)
 			);
 		}
-	}, [specificNews, form, news]);
+	}, [specificNews, form]);
+
+	console.log(editBtnDisabled, 'eee[[[');
 
 	useEffect(() => {
 		if (specificNews) {
@@ -911,7 +913,9 @@ const UploadOrEditNews = ({
 										<div>
 											<Button
 												disabled={
-													isEdit && validateForm(form) && status === 'draft'
+													isEdit &&
+													validateForm(form, null, news) &&
+													status === 'draft'
 														? false
 														: isEdit
 														? editBtnDisabled
