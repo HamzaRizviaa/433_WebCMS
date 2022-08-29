@@ -16,8 +16,12 @@ const TopBanner = () => {
 
 	const navigate = useNavigate();
 
-	const allBanners = useSelector((state) => state.topBanner.allBanners);
-	const bannerContent = useSelector((state) => state.topBanner.content);
+	// const allBanners = useSelector((state) => state.topBanner.allBanners);
+	const getBannerContentState = useSelector(
+		(state) => state.topBanner.getBannerContentState
+	);
+	// const bannerContent = useSelector((state) => state.topBanner.content);
+	const bannerState = useSelector((state) => state.topBanner.getBannerStatus);
 
 	useEffect(() => {
 		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));
@@ -46,23 +50,17 @@ const TopBanner = () => {
 					<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
 						<TabsListUnstyled className={muiClasses.tabMainDiv}>
 							<TabUnstyled
-								disabled={
-									allBanners?.length && bannerContent?.length ? false : true
-								}
+								disabled={getBannerContentState && bannerState ? false : true}
 							>
 								Home
 							</TabUnstyled>
 							<TabUnstyled
-								disabled={
-									allBanners?.length && bannerContent?.length ? false : true
-								}
+								disabled={getBannerContentState && bannerState ? false : true}
 							>
 								Media
 							</TabUnstyled>
 							{/* <TabUnstyled
-								disabled={
-									allBanners?.length && bannerContent?.length ? false : true
-								}
+								disabled={getBannerContentState && bannerState ? false : true}
 							>
 								Game
 							</TabUnstyled> */}

@@ -132,13 +132,19 @@ const UploadOrEditNews = ({
 				checkEmptyMediaNews(news),
 				news?.length !== 0
 			];
+			console.log(
+				'validateEmptyNewsArray',
+				validateEmptyNewsArray,
+				validateEmptyNewsArray.every((item) => item === true),
+				news
+			);
 			setEditBtnDisabled(
 				!validateForm(form, null, news) ||
 					!validateEmptyNewsArray.every((item) => item === true) ||
 					comparingNewsFields(specificNews, form)
 			);
 		}
-	}, [specificNews, form]);
+	}, [specificNews, form, news]);
 
 	useEffect(() => {
 		if (specificNews) {
