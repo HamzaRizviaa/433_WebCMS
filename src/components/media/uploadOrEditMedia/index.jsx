@@ -544,7 +544,7 @@ const UploadOrEditMedia = ({
 			if (result?.data?.status_code === 200) {
 				if (result?.data?.data?.is_deleted === false) {
 					toast.error(
-						'The media or article cannot be deleted because it is used as a top banner'
+						'This item cannot be deleted because it is inside the top banners.'
 					);
 					dispatch(getMedia({ page }));
 				} else {
@@ -1488,7 +1488,7 @@ const UploadOrEditMedia = ({
 				previewRef={previewRef}
 				media={true}
 				dialogRef={dialogWrapper}
-				notifID={status === 'draft' ? '' : notifID}
+				notifID={notifID}
 			>
 				<LoadingOverlay
 					active={isLoadingUploadMedia}

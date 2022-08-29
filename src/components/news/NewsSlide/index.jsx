@@ -368,7 +368,7 @@ const NewsSlide = ({
 														name: e.target.value
 													});
 												}}
-												placeholder={'Please write your name here'}
+												placeholder={'Please write the topic name here'}
 												className={classes.textField}
 												InputProps={{
 													disableUnderline: true,
