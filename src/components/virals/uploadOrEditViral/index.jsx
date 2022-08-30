@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
 // import classes from './_uploadOrEditViral.module.scss';
 import { useDropzone } from 'react-dropzone';
@@ -31,7 +30,6 @@ import LoadingOverlay from 'react-loading-overlay';
 import { useStyles } from './index.styles';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
-import SecondaryLoader from '../../SecondaryLoader';
 
 //new labels
 // import { getAllNewLabels } from '../../../pages/PostLibrary/postLibrarySlice';
@@ -70,8 +68,6 @@ const UploadOrEditViral = ({
 		show_likes: true,
 		show_comments: true
 	});
-	const [fileOnUpload, setFileOnUpload] = useState();
-	const [deleteSignedUrlKey, setDeleteSignedUrlKey] = useState([]);
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const videoRef = useRef(null);
@@ -83,8 +79,6 @@ const UploadOrEditViral = ({
 	const { specificViralStatus } = useSelector(
 		(state) => state.ViralLibraryStore
 	);
-	const [loading, setLoading] = useState(false);
-	const [sliderCloseCause, setSliderCloseCause] = useState(false); // false - click outside or reload, true - publish/draft/delete pressed
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -132,7 +126,7 @@ const UploadOrEditViral = ({
 					_labels.push({ id: -1, name: label })
 				);
 				// setSelectedLabels(_labels);
-
+				// console.log('Labels', _labels);
 				setForm((prev) => {
 					return {
 						...prev,
@@ -186,22 +180,18 @@ const UploadOrEditViral = ({
 					};
 				});
 			}
-			if (specificViral?.url) {
-				setDeleteSignedUrlKey((prev) => [...prev, specificViral?.url]);
-			}
 		}
 	}, [specificViral]);
 
 	useEffect(() => {
+		// dispatch(getPostLabels()); // old labels
+		// dispatch(getAllNewLabels()); // new labels on search
 		return () => {
 			resetState();
 		};
 	}, []);
 
 	useEffect(() => {
-		// if (!open && form?.uploadedFiles?.length && !sliderCloseCause) {
-		// 	handleDeleteFileFromApi(true);
-		// }
 		if (!open) {
 			resetState();
 		}
@@ -228,7 +218,7 @@ const UploadOrEditViral = ({
 	useEffect(() => {
 		if (acceptedFiles?.length) {
 			setIsError({});
-			setLoading(true);
+
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -242,29 +232,11 @@ const UploadOrEditViral = ({
 				};
 			});
 
-			handleFileOnUpload(newFiles[0]).then((res) => {
-				setForm((prev) => {
-					return {
-						...prev,
-						uploadedFiles: [...form.uploadedFiles, ...newFiles]
-					};
-				});
-				setDeleteSignedUrlKey((prev) => [...prev, res?.signedUrlKeyDelete]); // to delete the signed url keys
-				setFileOnUpload(res);
-				setLoading(false);
+			setForm((prev) => {
+				return { ...prev, uploadedFiles: [...form.uploadedFiles, ...newFiles] };
 			});
 		}
 	}, [acceptedFiles]);
-
-	const handleFileOnUpload = async (newFile) => {
-		return await uploadFileToServer(newFile, 'virallibrary');
-	};
-
-	useEffect(() => {
-		if (isEdit) {
-			setFileOnUpload(form?.uploadedFiles[0]);
-		}
-	}, [form?.uploadedFiles]);
 
 	const resetState = () => {
 		setPostButtonStatus(false);
@@ -287,10 +259,6 @@ const UploadOrEditViral = ({
 			show_likes: true,
 			show_comments: true
 		});
-		setFileOnUpload();
-		setDeleteSignedUrlKey([]);
-		setLoading(false);
-		setSliderCloseCause(false);
 	};
 
 	const toggleDeleteModal = () => {
@@ -304,140 +272,7 @@ const UploadOrEditViral = ({
 				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
 			};
 		});
-		setFileOnUpload();
 	};
-
-	// useEffect(() => {
-	// 	const handleTabClose = (ev) => {
-	// 		ev.preventDefault();
-
-	// 		return handleDeleteFileFromApi(false, true);
-	// 	};
-
-	// 	window.addEventListener('beforeunload', handleTabClose);
-
-	// 	return () => {
-	// 		window.removeEventListener('beforeunload', handleTabClose);
-	// 	};
-	// }, [deleteSignedUrlKey, specificViral]);
-
-	//gives out the signed url keys for specific scenarios.
-	const deleteMediaSignedUrlKey = (sliderClose, reloader) => {
-		if (reloader) {
-			return deleteSignedUrlKey;
-		} else if (sliderClose && !isEdit) {
-			return deleteSignedUrlKey;
-		} else if (sliderClose && isEdit && status == 'draft') {
-			if (specificViral?.url) {
-				return deleteSignedUrlKey.slice(1);
-			} else {
-				return deleteSignedUrlKey;
-			}
-		} else if (sliderClose && isEdit && status !== 'draft') {
-			return deleteSignedUrlKey.slice(1);
-		} else {
-			return deleteSignedUrlKey.slice(0, deleteSignedUrlKey?.length - 1);
-		}
-	};
-
-	//api call for delete media
-	const deleteMediaApiCall = async (sliderClose, reloader) => {
-		try {
-			const result = await fetch(
-				`${process.env.REACT_APP_API_ENDPOINT}/media-upload`,
-				{
-					method: 'DELETE',
-					body: JSON.stringify({
-						data: {
-							keys: deleteMediaSignedUrlKey(sliderClose, reloader)
-						}
-					}),
-					headers: {
-						'Content-Type': 'application/json',
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					},
-					keepalive: true
-				}
-			);
-
-			if (result?.data?.status_code === 200) {
-				setDeleteSignedUrlKey([]);
-			}
-		} catch (e) {
-			console.log(e, 'Failed to delete Media Data');
-		}
-	};
-
-	//calls the api on specific conditions.
-	// const handleDeleteFileFromApi = (
-	// 	sliderClose = false,
-	// 	reloader = false,
-	// 	draft = false
-	// ) => {
-	// 	if (sliderClose) {
-	// 		if (!isEdit) {
-	// 			deleteMediaApiCall(sliderClose);
-	// 		} else if (isEdit) {
-	// 			if (specificViral?.url && deleteSignedUrlKey?.length > 1) {
-	// 				deleteMediaApiCall(sliderClose);
-	// 			} else if (!specificViral?.url && deleteSignedUrlKey?.length > 0) {
-	// 				deleteMediaApiCall(sliderClose);
-	// 			}
-	// 		}
-	// 	} else if (reloader) {
-	// 		if (!isEdit && deleteSignedUrlKey?.length > 0) {
-	// 			// doing this condition because we are not getting the "open" prop for reloading the page
-	// 			deleteMediaApiCall(sliderClose);
-	// 		} else if (isEdit) {
-	// 			if (specificViral?.url && deleteSignedUrlKey?.length > 1) {
-	// 				deleteMediaApiCall(sliderClose, reloader);
-	// 			} else if (!specificViral?.url && deleteSignedUrlKey?.length > 0) {
-	// 				deleteMediaApiCall(sliderClose, reloader);
-	// 			}
-	// 		}
-	// 	} else {
-	// 		if (!isEdit) {
-	// 			if (draft) {
-	// 				if (deleteSignedUrlKey?.length > 1) {
-	// 					deleteMediaApiCall(); //remove all images except last one
-	// 				} else if (
-	// 					deleteSignedUrlKey?.length > 0 &&
-	// 					form?.uploadedFiles?.length === 0
-	// 				) {
-	// 					deleteMediaApiCall(); //remove only if the uploaded image was deleted and saved as draft
-	// 				}
-	// 			}
-	// 		} else if (isEdit) {
-	// 			if (draft) {
-	// 				if (specificViral?.url) {
-	// 					if (deleteSignedUrlKey?.length > 1) {
-	// 						deleteMediaApiCall(); //remove all images except last one
-	// 					} else if (
-	// 						deleteSignedUrlKey?.length > 0 &&
-	// 						form?.uploadedFiles?.length === 0
-	// 					) {
-	// 						deleteMediaApiCall(); //remove only if the uploaded image was deleted and saved as draft
-	// 					}
-	// 					//one more case remaining that if deletesignedurlkey is > 1 and user also deletes the last one.
-	// 				} else if (!specificViral?.url && deleteSignedUrlKey?.length > 0) {
-	// 					if (deleteSignedUrlKey?.length > 1) {
-	// 						deleteMediaApiCall(); //remove all images except last one
-	// 					} else if (
-	// 						deleteSignedUrlKey?.length > 0 &&
-	// 						form?.uploadedFiles?.length === 0
-	// 					) {
-	// 						deleteMediaApiCall(); //remove only if the uploaded image was deleted and saved as draft
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-
-	// 		// else if (deleteSignedUrlKey?.length > 1) {
-	// 		// 	// clicking on draft/publish/delete button
-	// 		// 	deleteMediaApiCall();
-	// 		// }
-	// 	}
-	// };
 
 	const validateViralBtn = () => {
 		setIsError({
@@ -501,7 +336,6 @@ const UploadOrEditViral = ({
 				);
 				setIsLoadingcreateViral(false);
 				setPostButtonStatus(false);
-				setSliderCloseCause(true);
 				handleClose();
 				dispatch(getAllViralsApi({ page }));
 				// dispatch(getPostLabels());
@@ -532,7 +366,6 @@ const UploadOrEditViral = ({
 			);
 			if (result?.data?.status_code === 200) {
 				toast.success('Viral has been deleted!');
-				setSliderCloseCause(true);
 				handleClose();
 				dispatch(getAllViralsApi({ page }));
 			}
@@ -596,13 +429,14 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (specificViral) {
+			// console.log(specificViral, Object.keys(specificViral), 'specificViral');
 			setDraftBtnDisabled(
 				!validateDraft(form) ||
-					(specificViral?.file_name === form?.uploadedFiles[0]?.file_name &&
-						specificViral?.caption?.trim() === form?.caption?.trim() &&
-						specificViral?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
-						specificViral?.show_likes === form?.show_likes &&
-						specificViral?.show_comments === form?.show_comments &&
+					(specificViral?.file_name === form.uploadedFiles[0]?.file_name &&
+						specificViral?.caption?.trim() === form.caption.trim() &&
+						specificViral?.dropbox_url?.trim() === form.dropbox_url.trim() &&
+						specificViral?.show_likes === form.show_likes &&
+						specificViral?.show_comments === form.show_comments &&
 						specificViral?.labels?.length === form?.labels?.length &&
 						!checkDuplicateLabel())
 			);
@@ -629,20 +463,57 @@ const UploadOrEditViral = ({
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			if (isEdit) {
 				setIsLoadingcreateViral(true);
-				// handleDeleteFileFromApi();
+				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				// 	if (_file.file) {
+				// 		return await uploadFileToServer(_file, 'virallibrary');
+				// 	} else {
+				// 		return _file;
+				// 	}
+				// });
+
+				let uploadedFile = form.uploadedFiles[0];
+				if (form.uploadedFiles[0]?.file) {
+					uploadedFile = await uploadFileToServer(
+						form.uploadedFiles[0],
+						'virallibrary'
+					);
+				}
+
 				try {
-					createViral(specificViral?.id, fileOnUpload);
+					createViral(specificViral?.id, uploadedFile);
 				} catch {
 					setIsLoadingcreateViral(false);
 				}
+
+				// Promise.all([...uploadFilesPromiseArray])
+				// 	.then((mediaFiles) => {
+				// 		createViral(specificViral?.id, mediaFiles);
+				// 	})
+				// 	.catch(() => {
+				// 		setIsLoadingcreateViral(false);
+				// 	});
 			} else {
 				setIsLoadingcreateViral(true);
-				// handleDeleteFileFromApi();
+				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				// 	return uploadFileToServer(_file, 'virallibrary');
+				// });
+				let uploadedFile = await uploadFileToServer(
+					form.uploadedFiles[0],
+					'virallibrary'
+				);
 				try {
-					createViral(null, fileOnUpload);
+					createViral(null, uploadedFile);
 				} catch {
 					setIsLoadingcreateViral(false);
 				}
+
+				// Promise.all([...uploadFilesPromiseArray])
+				// 	.then((mediaFiles) => {
+				// 		createViral(null, mediaFiles);
+				// 	})
+				// 	.catch(() => {
+				// 		setIsLoadingcreateViral(false);
+				// 	});
 			}
 		}
 	};
@@ -676,21 +547,60 @@ const UploadOrEditViral = ({
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			if (isEdit) {
+				// let uploadedFile;
 				setIsLoadingcreateViral(true);
-				// handleDeleteFileFromApi(false, false, true);
+				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				// 	if (_file.file) {
+				// 		return await uploadFileToServer(_file, 'virallibrary');
+				// 	} else {
+				// 		return _file;
+				// 	}
+				// });
+				let uploadedFile = form.uploadedFiles[0];
+				if (form.uploadedFiles[0]?.file) {
+					uploadedFile = await uploadFileToServer(
+						form.uploadedFiles[0],
+						'virallibrary'
+					);
+				}
+
 				try {
-					createViral(specificViral?.id, fileOnUpload, true);
+					createViral(specificViral?.id, uploadedFile, true);
 				} catch {
 					setIsLoadingcreateViral(false);
 				}
+
+				// Promise.all([...uploadFilesPromiseArray])
+				// 	.then((mediaFiles) => {
+				// 		createViral(specificViral?.id, mediaFiles);
+				// 	})
+				// 	.catch(() => {
+				// 		setIsLoadingcreateViral(false);
+				// 	});
 			} else {
 				setIsLoadingcreateViral(true);
-				// handleDeleteFileFromApi(false, false, true);
+				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				// 	return uploadFileToServer(_file, 'virallibrary');
+				// });
+
+				let uploadedFile = await uploadFileToServer(
+					form.uploadedFiles[0],
+					'virallibrary'
+				);
+
 				try {
-					createViral(null, fileOnUpload, true);
+					createViral(null, uploadedFile, true);
 				} catch {
 					setIsLoadingcreateViral(false);
 				}
+
+				// Promise.all([...uploadFilesPromiseArray])
+				// 	.then((mediaFiles) => {
+				// 		createViral(null, mediaFiles);
+				// 	})
+				// 	.catch(() => {
+
+				// 	});
 			}
 		}
 	};
@@ -701,8 +611,7 @@ const UploadOrEditViral = ({
 				open={open}
 				handleClose={() => {
 					handleClose();
-
-					if (form?.uploadedFiles?.length) {
+					if (form.uploadedFiles.length && !isEdit) {
 						form.uploadedFiles.map((file) => handleDeleteFile(file.id));
 					}
 				}}
@@ -717,7 +626,7 @@ const UploadOrEditViral = ({
 				edit={isEdit}
 				viral={true}
 				dialogRef={dialogWrapper}
-				notifID={status === 'draft' ? '' : notifID}
+				notifID={notifID}
 			>
 				<LoadingOverlay
 					active={isLoadingcreateViral}
@@ -786,21 +695,15 @@ const UploadOrEditViral = ({
 												{...getRootProps({ className: globalClasses.dropzone })}
 											>
 												<input {...getInputProps()} />
-												{loading ? (
-													<SecondaryLoader loading={true} />
-												) : (
-													<>
-														<AddCircleOutlineIcon
-															className={globalClasses.addFilesIcon}
-														/>
-														<p className={globalClasses.dragMsg}>
-															Click or drag files to this area to upload
-														</p>
-														<p className={globalClasses.formatMsg}>
-															Supported formats are jpeg, png and mp4
-														</p>
-													</>
-												)}
+												<AddCircleOutlineIcon
+													className={globalClasses.addFilesIcon}
+												/>
+												<p className={globalClasses.dragMsg}>
+													Click or drag files to this area to upload
+												</p>
+												<p className={globalClasses.formatMsg}>
+													Supported formats are jpeg, png and mp4
+												</p>
 												<p className={globalClasses.uploadMediaError}>
 													{isError.uploadedFiles
 														? 'You need to upload a media in order to post'
@@ -947,7 +850,6 @@ const UploadOrEditViral = ({
 												onClick={() => {
 													if (!deleteBtnStatus) {
 														toggleDeleteModal();
-														// handleDeleteFileFromApi();
 													}
 												}}
 												text={'DELETE VIRAL'}
@@ -1022,6 +924,7 @@ const UploadOrEditViral = ({
 										<h5>Preview</h5>
 									</div>
 									<div>
+										{/* {console.log(previewFile, 'previewFile')} */}
 										{previewFile.mime_type === 'video/mp4' ? (
 											<video
 												id={'my-video'}
