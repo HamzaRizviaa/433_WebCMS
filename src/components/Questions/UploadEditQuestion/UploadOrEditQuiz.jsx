@@ -34,7 +34,6 @@ import LoadingOverlay from 'react-loading-overlay';
 import PrimaryLoader from '../../PrimaryLoader';
 import Slide from '@mui/material/Slide';
 import DraggableContainers from '../DraggableContainers';
-import moment from 'moment';
 import { compact } from 'lodash';
 
 const UploadOrEditQuiz = ({
@@ -311,7 +310,7 @@ const UploadOrEditQuiz = ({
 				{
 					general_info: {
 						save_draft: draft,
-						end_date: moment(new Date(convertedDate)).format('YYYY-MM-DD'),
+						end_date: convertedDate.split('T')[0],
 						question_type: questionType
 					},
 					user_data: {
