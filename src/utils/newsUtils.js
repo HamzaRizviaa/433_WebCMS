@@ -1,4 +1,5 @@
 export const checkEmptyMediaNews = (news) => {
+	console.log(news, 'news');
 	const validateNews = news.map((item) => {
 		if (item?.data) {
 			return !item?.data[0]?.media_url ? false : true;
@@ -6,8 +7,9 @@ export const checkEmptyMediaNews = (news) => {
 			return false;
 		}
 	});
+	console.log(validateNews, 'validateNews');
 	return validateNews.every((item) => item === true);
-};
+}; //mandatory
 
 export const checkEmptyMediaNewsDraft = (news) => {
 	const validateNews = news.map((item) => {
@@ -28,6 +30,7 @@ export const checkEmptyMediaNewsDraft = (news) => {
 
 	return validateNews.every((item) => item === true);
 };
+//draft iniiial
 
 export const comparingNewsFields = (specificNews, form) => {
 	return (
@@ -66,6 +69,7 @@ export const checkNewElementNEWS = (specificNews, news) => {
 			}
 		}
 	}
+	console.log(result, 'result');
 	return result.every((item) => item === true);
 };
 

@@ -364,7 +364,7 @@ const QuestionForm = ({
 					<div className={globalClasses.dropBoxUrlContainer}>
 						<h6>DROPBOX URL</h6>
 						<TextField
-							value={initialData ? initialData?.dropbox_url : form.dropbox_url}
+							value={form.dropbox_url}
 							onChange={(e) => {
 								setForm((prev) => {
 									return {

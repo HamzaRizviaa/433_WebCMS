@@ -122,6 +122,7 @@ const UploadOrEditNews = ({
 
 	useEffect(() => {
 		if (specificNews) {
+			//new is empty or not
 			const validateEmptyNewsArray = [
 				checkEmptyMediaNews(news),
 				news?.length !== 0

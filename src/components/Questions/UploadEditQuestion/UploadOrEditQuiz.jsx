@@ -34,6 +34,12 @@ import LoadingOverlay from 'react-loading-overlay';
 import PrimaryLoader from '../../PrimaryLoader';
 import Slide from '@mui/material/Slide';
 import DraggableContainers from '../DraggableContainers';
+import {
+	checkEmptyQuestion, //empty data
+	checkNewElementQuestion, // api data and question form data
+	comparingFormFields, // api end date and form end date
+	checkSortOrderOnEdit
+} from '../../../utils/questionUtils';
 const UploadOrEditQuiz = ({
 	open,
 	previewRef,
@@ -165,7 +171,7 @@ const UploadOrEditQuiz = ({
 			var da = new Date(form.end_date);
 			var toSend = `${da?.getFullYear()}-${('0' + (da?.getMonth() + 1)).slice(
 				-2
-			)}-${('0' + da?.getDate()).slice(-2)}T00:00:00.000Z`;
+			)}-${('0' + da?.getDate()).slice(-2)}`;
 			setConvertedDate(toSend);
 		}
 	}, [form.end_date]);
@@ -458,18 +464,6 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
-	useEffect(() => {
-		if (editQuestionData) {
-			setEditQuizBtnDisabled(
-				postButtonStatus ||
-					!form.end_date ||
-					(type === 'quiz'
-						? editQuestionData?.quiz_end_date === convertedDate
-						: editQuestionData?.poll_end_date === convertedDate)
-			);
-		}
-	}, [editQuestionData, form, convertedDate]);
-
 	const handlePreviewEscape = () => {
 		setPreviewBool(false);
 		setPreviewFile(null);
@@ -486,6 +480,73 @@ const UploadOrEditQuiz = ({
 			);
 		}
 	}, [editQuestionData, form, convertedDate]);
+
+	useEffect(() => {
+		if (editQuestionData) {
+			const validateEmptyQuestionArray = [
+				checkEmptyQuestion(questionSlides),
+				questionSlides?.length !== 0
+			];
+
+			setEditQuizBtnDisabled(
+				!validateForm(form, null, null, questionSlides) ||
+					!validateEmptyQuestionArray.every((item) => item === true) ||
+					comparingFormFields(editQuestionData, form)
+			);
+		}
+	}, [editQuestionData, form, convertedDate]);
+
+	useEffect(() => {
+		//empty questionSlides
+		const validateEmptyQuestionArray = [
+			checkEmptyQuestion(questionSlides),
+			questionSlides?.length !== 0
+		];
+
+		console.log(questionSlides, 'questionSlidesquestionSlidesquestionSlides');
+
+		//check question slides is zero , and edit data from api
+		const validateEmptyQuestionSlidesAndEditComparisonArray = [
+			checkNewElementQuestion(editQuestionData, questionSlides),
+			questionSlides?.length !== 0
+		];
+
+		//validate form with question form and compare generalInformation form
+		if (
+			!validateForm(form, null, null, questionSlides) ||
+			!comparingFormFields(editQuestionData, form) //date
+		) {
+			setEditQuizBtnDisabled(
+				!validateEmptyQuestionArray.every((item) => item === true) ||
+					!validateForm(form, null, null, questionSlides)
+			);
+		}
+
+		//validate form with api data and compare generalInformation form
+		if (
+			!validateForm(form, null, null, editQuestionData) ||
+			!comparingFormFields(editQuestionData, form)
+		) {
+			setEditQuizBtnDisabled(
+				!validateEmptyQuestionArray.every((item) => item === true) ||
+					!validateForm(form, null, null, questionSlides)
+			);
+		} else {
+			if (editQuestionData?.question?.length !== questionSlides?.length) {
+				setEditQuizBtnDisabled(
+					!validateEmptyQuestionArray.every((item) => item === true)
+				);
+			} else {
+				setEditQuizBtnDisabled(
+					validateEmptyQuestionSlidesAndEditComparisonArray.every(
+						(item) => item === true
+					) || !validateEmptyQuestionArray.every((item) => item === true)
+				);
+
+				// setEditBtnDisabled(checkMediaUrlPublish(news));
+			}
+		}
+	}, [questionSlides]);
 
 	//editQuizBtnDisabled button - whether you can click or not
 	//!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')
@@ -508,6 +569,7 @@ const UploadOrEditQuiz = ({
 					console.log(err);
 				}
 			} else {
+				console.log('hit create ');
 				try {
 					createQuestion(null);
 				} catch (err) {
@@ -517,6 +579,7 @@ const UploadOrEditQuiz = ({
 			}
 		}
 	};
+	console.log(editQuizBtnDisabled, 'editQuizBtnDisabled');
 
 	//draftBtnDisabled button - whether you can click or not
 	//validateDraft - color grey or yellow
@@ -857,7 +920,14 @@ const UploadOrEditQuiz = ({
 																: 'SAVE CHANGES'
 														}
 														disabled={
-															!validateForm(form, null, null, questionSlides)
+															isEdit && status === 'ACTIVE'
+																? editQuizBtnDisabled
+																: !validateForm(
+																		form,
+																		null,
+																		null,
+																		questionSlides
+																  )
 															// (isEdit) &&
 															// validateForm(form) &&
 															// status === 'draft'
