@@ -197,7 +197,6 @@ export default function Banners({ tabValue }) {
 				sort_order: index
 			};
 		});
-		// console.log(bannerPayload, bannerData);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/top-banner/publish-banner`,
