@@ -75,7 +75,7 @@ const QuestionForm = ({
 				  ],
 		labels: []
 	});
-	// console.log('FORM', form)
+
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const imgRef = useRef(null);
@@ -151,7 +151,7 @@ const QuestionForm = ({
 			}, [5000]);
 		}
 	}, [fileRejections]);
-	
+
 	const handleDeleteFile = (id) => {
 		// setUploadedFiles((uploadedFiles) =>
 		// 	uploadedFiles.filter((file) => file.id !== id)
@@ -207,8 +207,6 @@ const QuestionForm = ({
 		// sendDataToParent(answers);
 	};
 
-	// console.log('FORMMMM', form);
-
 	const handleAnswerDelete = (index) => {
 		let dataCopy = { ...form };
 
@@ -251,6 +249,8 @@ const QuestionForm = ({
 			let answers = { answers: formCopy.answers };
 			sendDataToParent(answers);
 		} else {
+			// This block of code will only be executed if the question is in draft
+			// Then only the question answers will be editable
 			const isAnswersEdited = initialData.data && initialData.data[0].answers;
 			const answers = [
 				...(isAnswersEdited ? initialData.data[0].answers : [...form.answers])
@@ -271,13 +271,6 @@ const QuestionForm = ({
 			sendDataToParent({ answers });
 		}
 	};
-
-	console.log({
-		initialData,
-		form,
-		isEdit,
-		status: isEdit && status !== 'draft'
-	});
 
 	return (
 		<>
@@ -352,8 +345,8 @@ const QuestionForm = ({
 						<TextField
 							value={
 								initialData
-									? initialData.data
-										? initialData.data.dropbox_url
+									? initialData?.data
+										? initialData?.data?.dropbox_url
 										: initialData?.dropbox_url
 									: form.dropbox_url
 							}
@@ -414,9 +407,9 @@ const QuestionForm = ({
 							disabled={isEdit && status !== 'draft'}
 							value={
 								initialData
-									? initialData.data
-										? initialData.data.question
-										: initialData.question
+									? initialData?.data
+										? initialData?.data?.question
+										: initialData?.question
 									: form.question
 							}
 							onChange={(e) => {
@@ -491,8 +484,8 @@ const QuestionForm = ({
 										disabled={isEdit && status !== 'draft'}
 										value={
 											initialData?.answers?.length > 0
-												? initialData.data && initialData.data[0].answers
-													? initialData.data[0].answers[index]?.answer
+												? initialData?.data && initialData?.data[0].answers
+													? initialData?.data[0].answers[index]?.answer
 													: initialData?.answers[index]?.answer
 												: form.answers[index]?.answer
 										}
