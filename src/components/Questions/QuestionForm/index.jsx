@@ -151,6 +151,7 @@ const QuestionForm = ({
 			}, [5000]);
 		}
 	}, [fileRejections]);
+	
 	const handleDeleteFile = (id) => {
 		// setUploadedFiles((uploadedFiles) =>
 		// 	uploadedFiles.filter((file) => file.id !== id)
@@ -167,6 +168,7 @@ const QuestionForm = ({
 	const handleChangeExtraLabel = (e) => {
 		setExtraLabel(e.target.value.toUpperCase());
 	};
+
 	useEffect(() => {
 		setQuizLabels((labels) => {
 			return labels.filter((label) => label.id != null);
@@ -249,10 +251,9 @@ const QuestionForm = ({
 			let answers = { answers: formCopy.answers };
 			sendDataToParent(answers);
 		} else {
+			const isAnswersEdited = initialData.data && initialData.data[0].answers;
 			const answers = [
-				...(initialData.data && initialData.data[0].answers
-					? initialData.data[0].answers
-					: initialData.answers)
+				...(isAnswersEdited ? initialData.data[0].answers : [...form.answers])
 			];
 
 			answers[index] = {
@@ -455,7 +456,7 @@ const QuestionForm = ({
 									className={classes.titleContainer}
 									item={item}
 									index={index}
-									key={item.sort_order}
+									key={item.sortOrder}
 								>
 									<div className={globalClasses.characterCount}>
 										<h6
