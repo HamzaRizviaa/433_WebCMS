@@ -278,9 +278,14 @@ export default function Banners({ tabValue }) {
 		if (data.length === 0) return [];
 		setBannerItems(
 			data?.filter((item) => {
-				return !bannerData.some((subItem) => {
-					return item.id === subItem?.selectedMedia?.id;
-				});
+				if (item.id) {
+					return !bannerData.some((subItem) => {
+						if (item.id) {
+							return item.id === subItem?.selectedMedia?.id;
+						}
+					});
+				}
+				return item;
 			})
 		);
 	};
@@ -288,8 +293,6 @@ export default function Banners({ tabValue }) {
 	useEffect(() => {
 		filterBannerContent(bannerContent);
 	}, [bannerData, bannerContent]);
-
-	console.log('bannerItems', bannerItems, bannerData);
 
 	return (
 		<div className={classes.Banner}>
