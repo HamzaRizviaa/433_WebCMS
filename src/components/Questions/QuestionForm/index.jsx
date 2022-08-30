@@ -171,6 +171,7 @@ const QuestionForm = ({
 			}, [5000]);
 		}
 	}, [fileRejections]);
+
 	const handleDeleteFile = (id) => {
 		// setUploadedFiles((uploadedFiles) =>
 		// 	uploadedFiles.filter((file) => file.id !== id)
@@ -187,6 +188,7 @@ const QuestionForm = ({
 	const handleChangeExtraLabel = (e) => {
 		setExtraLabel(e.target.value.toUpperCase());
 	};
+
 	useEffect(() => {
 		setQuizLabels((labels) => {
 			return labels.filter((label) => label.id != null);
@@ -225,7 +227,7 @@ const QuestionForm = ({
 		// sendDataToParent(answers);
 	};
 
-	console.log('FORMMMM', form);
+	// console.log('FORMMMM', form);
 
 	const handleAnswerDelete = (index) => {
 		let dataCopy = { ...form };
@@ -253,24 +255,7 @@ const QuestionForm = ({
 	};
 
 	const handleAnswerChange = (event, index) => {
-		if (initialData?.question_id) {
-			const formCopy = { ...form };
-
-			formCopy.answers[index] = {
-				...formCopy.answers[index],
-				answer: event.target.value,
-				position: index,
-				type:
-					type === 'quiz' && index === 0
-						? 'right_answer'
-						: type === 'quiz' && index > 0
-						? 'wrong_answer_' + index
-						: 'poll'
-			};
-			setForm(formCopy);
-			let answers = { answers: formCopy.answers };
-			sendDataToParent(answers);
-		} else {
+		if (!isEdit) {
 			const formCopy = { ...form };
 			formCopy.answers[index] = {
 				answer: event.target.value,
@@ -285,14 +270,28 @@ const QuestionForm = ({
 			setForm(formCopy);
 			let answers = { answers: formCopy.answers };
 			sendDataToParent(answers);
+		} else {
+			const isAnswersEdited = initialData.data && initialData.data[0].answers;
+			const answers = [
+				...(isAnswersEdited ? initialData.data[0].answers : [...form.answers])
+			];
+
+			answers[index] = {
+				answer: event.target.value,
+				position: index,
+				type:
+					type === 'quiz' && index === 0
+						? 'right_answer'
+						: type === 'quiz' && index > 0
+						? 'wrong_answer_' + index
+						: 'poll'
+			};
+
+			setForm({ ...form, answers });
+			sendDataToParent({ answers });
 		}
 	};
 
-	console.log(
-		initialData,
-
-		'--- initial data in Q U E S T I O N F O R M ---------'
-	);
 	return (
 		<>
 			{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
@@ -364,7 +363,14 @@ const QuestionForm = ({
 					<div className={globalClasses.dropBoxUrlContainer}>
 						<h6>DROPBOX URL</h6>
 						<TextField
-							value={form.dropbox_url}
+							value={
+								initialData
+									? initialData.data
+										? initialData.data.dropbox_url
+										: initialData?.dropbox_url
+									: form.dropbox_url
+							}
+							disabled={location === 'article' ? true : false}
 							onChange={(e) => {
 								setForm((prev) => {
 									return {
@@ -418,7 +424,14 @@ const QuestionForm = ({
 							</h6>
 						</div>
 						<TextField
-							value={initialData ? initialData?.question : form.question}
+							disabled={isEdit && status !== 'draft'}
+							value={
+								initialData
+									? initialData.data
+										? initialData.data.question
+										: initialData.question
+									: form.question
+							}
 							onChange={(e) => {
 								console.log(e, 'e');
 								setForm((prev) => {
@@ -459,7 +472,7 @@ const QuestionForm = ({
 									className={classes.titleContainer}
 									item={item}
 									index={index}
-									key={item.sort_order}
+									key={item.sortOrder}
 								>
 									<div className={globalClasses.characterCount}>
 										<h6
@@ -494,7 +507,9 @@ const QuestionForm = ({
 										disabled={isEdit && status !== 'draft'}
 										value={
 											initialData?.answers?.length > 0
-												? initialData?.answers[index]?.answer
+												? initialData.data && initialData.data[0].answers
+													? initialData.data[0].answers[index]?.answer
+													: initialData?.answers[index]?.answer
 												: form.answers[index]?.answer
 										}
 										onChange={(e) => {

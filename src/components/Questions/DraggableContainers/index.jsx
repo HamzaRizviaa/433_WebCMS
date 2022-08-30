@@ -45,21 +45,13 @@ const DraggableContainers = ({
 	location,
 	endDate
 }) => {
-	console.log(
-		initialData,
-		type,
-		status,
-		isEdit,
-		location,
-		endDate,
-		'initialData DRAGABBLEE'
-	);
 	const [expanded, setExpanded] = useState(true);
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const muiClasses = quizStyles();
 	const imgRef = useRef(null);
 	const loadingRef = useRef(null);
+	
 	return (
 		<div>
 			<Draggable draggableId={`draggable-${index}`} index={index} key={key}>
@@ -126,7 +118,7 @@ const DraggableContainers = ({
 													className={classes.deleteIcon}
 													onClick={() => {
 														(!isEdit || status === 'draft') &&
-															handleDeleteQuestionSlide(item.sort_order);
+															handleDeleteQuestionSlide(item.sortOrder);
 													}}
 												/>
 											</div>
@@ -180,7 +172,7 @@ const DraggableContainers = ({
 																			type={type}
 																			isEdit={isEdit}
 																			status={status}
-																			key={item.sort_order}
+																			key={item.sortOrder}
 																			initialData={initialData}
 																			setPreviewFile={setPreviewFile}
 																			setPreviewBool={setPreviewBool}
@@ -206,7 +198,7 @@ const DraggableContainers = ({
 															item={item}
 															index={index}
 															type={type}
-															key={item.sort_order}
+															key={item.sortOrder}
 															sendDataToParent={(data) =>
 																sendDataToParent(data, index)
 															}
