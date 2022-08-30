@@ -216,6 +216,12 @@ export default function Banners({ tabValue }) {
 			if (result?.data?.status_code === 200) {
 				toast.success('banner has been created/updated!');
 				dispatch(getAllBanners(tabValue));
+				dispatch(
+					getBannerContent({
+						type: tabValue,
+						title: null
+					})
+				);
 			}
 		} catch (error) {
 			toast.error('Failed to add a new banner');
