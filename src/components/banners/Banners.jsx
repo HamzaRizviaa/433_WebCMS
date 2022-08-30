@@ -22,6 +22,7 @@ export default function Banners({ tabValue }) {
 	const [firstCheck, setFirstRowCheck] = useState(''); //row check 1
 	const [btnDisable, setbtnDisable] = useState(false);
 	const [btnSetBannerDisable, setbtnSetBannerDisable] = useState(false);
+	const [bannerItems, setBannerItems] = useState([]);
 
 	const [bannerData, setBannerData] = useState([
 		{
@@ -273,6 +274,23 @@ export default function Banners({ tabValue }) {
 		return errValidate;
 	};
 
+	const filterBannerContent = (data) => {
+		if (data.length === 0) return [];
+		setBannerItems(
+			data?.filter((item) => {
+				return !bannerData.some((subItem) => {
+					return item.id === subItem?.selectedMedia?.id;
+				});
+			})
+		);
+	};
+
+	useEffect(() => {
+		filterBannerContent(bannerContent);
+	}, [bannerData, bannerContent]);
+
+	console.log('bannerItems', bannerItems, bannerData);
+
 	return (
 		<div className={classes.Banner}>
 			{getBannerStatus === 'loading' ? <PrimaryLoader /> : <></>}
@@ -313,7 +331,7 @@ export default function Banners({ tabValue }) {
 													validateRow={validateRow}
 													data={data}
 													setBannerData={setBannerData} //?
-													bannerContent={bannerContent}
+													bannerContent={bannerItems}
 													key={data.id}
 													provided={provided}
 													index={index}
