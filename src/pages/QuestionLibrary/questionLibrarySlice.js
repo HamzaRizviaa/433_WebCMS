@@ -62,47 +62,47 @@ export const getQuestionEdit = createAsyncThunk(
 	}
 );
 
-export const getQuestionResultDetail = createAsyncThunk(
-	'questionLibrary/getQuestionResultDetail',
-	async ({ id, type }) => {
-		let endPoint = `question/get-question-result-detail?question_id=${id}`;
+// export const getQuestionResultDetail = createAsyncThunk(
+// 	'questionLibrary/getQuestionResultDetail',
+// 	async ({ id, type }) => {
+// 		let endPoint = `question/get-question-result-detail?question_id=${id}`;
 
-		if (id && type) {
-			endPoint = `question/get-question-result-detail?question_id=${id}&question_type=${type}`;
-		}
-		const response = await QuestionLibraryService.getQuestionResultDetialApi(
-			endPoint
-		);
+// 		if (id && type) {
+// 			endPoint = `question/get-question-result-detail?question_id=${id}&question_type=${type}`;
+// 		}
+// 		const response = await QuestionLibraryService.getQuestionResultDetialApi(
+// 			endPoint
+// 		);
 
-		if (response?.data?.data) {
-			return response.data.data;
-		} else {
-			return [];
-		}
-	}
-);
+// 		if (response?.data?.data) {
+// 			return response.data.data;
+// 		} else {
+// 			return [];
+// 		}
+// 	}
+// );
 
-export const getQuestionResulParticipant = createAsyncThunk(
-	'questionLibrary/getQuestionResulParticipant',
-	async ({ id, type, order_type, sortby }) => {
-		let endPoint = `question/get-question-participant-listing?question_id=${id}`;
+// export const getQuestionResulParticipant = createAsyncThunk(
+// 	'questionLibrary/getQuestionResulParticipant',
+// 	async ({ id, type, order_type, sortby }) => {
+// 		let endPoint = `question/get-question-participant-listing?question_id=${id}`;
 
-		if (id && type) {
-			endPoint = `question/get-question-participant-listing?question_id=${id}&question_type=${type}`;
-		}
-		if (order_type && sortby) {
-			endPoint += `&order_type=${order_type}&sort_by=${sortby}`;
-		}
-		const response =
-			await QuestionLibraryService.getQuestionResultParticipantApi(endPoint);
+// 		if (id && type) {
+// 			endPoint = `question/get-question-participant-listing?question_id=${id}&question_type=${type}`;
+// 		}
+// 		if (order_type && sortby) {
+// 			endPoint += `&order_type=${order_type}&sort_by=${sortby}`;
+// 		}
+// 		const response =
+// 			await QuestionLibraryService.getQuestionResultParticipantApi(endPoint);
 
-		if (response?.data?.data) {
-			return response.data.data;
-		} else {
-			return [];
-		}
-	}
-);
+// 		if (response?.data?.data) {
+// 			return response.data.data;
+// 		} else {
+// 			return [];
+// 		}
+// 	}
+// );
 
 export const quizLibrarySlice = createSlice({
 	name: 'questionLibrary',
@@ -164,32 +164,32 @@ export const quizLibrarySlice = createSlice({
 		[getQuestionEdit.rejected]: (state) => {
 			state.status = 'failed';
 			state.questionEditStatus = 'failed';
-		},
-
-		[getQuestionResultDetail.pending]: (state) => {
-			state.status = 'loading';
-			state.questionEditStatus = 'loading';
-		},
-		[getQuestionResultDetail.fulfilled]: (state, action) => {
-			state.questionResultDetail = action.payload;
-			state.status = 'success';
-			state.questionEditStatus = 'success';
-		},
-		[getQuestionResultDetail.rejected]: (state) => {
-			state.status = 'failed';
-			state.questionEditStatus = 'failed';
-		},
-
-		[getQuestionResulParticipant.pending]: (state) => {
-			state.status = 'loading';
-		},
-		[getQuestionResulParticipant.fulfilled]: (state, action) => {
-			state.questionResultParticipant = action.payload;
-			state.status = 'success';
-		},
-		[getQuestionResulParticipant.rejected]: (state) => {
-			state.status = 'failed';
 		}
+
+		// [getQuestionResultDetail.pending]: (state) => {
+		// 	state.status = 'loading';
+		// 	state.questionEditStatus = 'loading';
+		// },
+		// [getQuestionResultDetail.fulfilled]: (state, action) => {
+		// 	state.questionResultDetail = action.payload;
+		// 	state.status = 'success';
+		// 	state.questionEditStatus = 'success';
+		// },
+		// [getQuestionResultDetail.rejected]: (state) => {
+		// 	state.status = 'failed';
+		// 	state.questionEditStatus = 'failed';
+		// },
+
+		// [getQuestionResulParticipant.pending]: (state) => {
+		// 	state.status = 'loading';
+		// },
+		// [getQuestionResulParticipant.fulfilled]: (state, action) => {
+		// 	state.questionResultParticipant = action.payload;
+		// 	state.status = 'success';
+		// },
+		// [getQuestionResulParticipant.rejected]: (state) => {
+		// 	state.status = 'failed';
+		// }
 	}
 });
 
