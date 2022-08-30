@@ -278,7 +278,6 @@ const UploadOrEditQuiz = ({
 	}, [open]);
 
 	const createQuestion = async (id, draft = false) => {
-		console.log('createQuestion', { questionSlides, id, draft });
 		setPostButtonStatus(true);
 
 		let slidesData =
@@ -385,7 +384,6 @@ const UploadOrEditQuiz = ({
 		} catch (e) {
 			toast.error('Failed to delete Question!');
 			setDeleteBtnStatus(false);
-			console.log(e, 'Failed to delete Question!');
 		}
 		setOpenDeletePopup(!openDeletePopup);
 	};
@@ -504,7 +502,6 @@ const UploadOrEditQuiz = ({
 			setIsLoadingcreateViral(true);
 			if (isEdit) {
 				try {
-					console.log('edit api on post , save changes button');
 					createQuestion(editQuestionData?.id);
 				} catch (err) {
 					setIsLoadingcreateViral(false);
@@ -527,24 +524,20 @@ const UploadOrEditQuiz = ({
 		if (!validateDraft(form) || draftBtnDisabled) {
 			validateDraftBtn();
 		} else {
-			console.log({ editQuestionData });
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			setIsLoadingcreateViral(true);
 			if (isEdit) {
 				try {
-					console.log('edit api on draft');
 					createQuestion(editQuestionData?.id, true);
 				} catch (err) {
 					setIsLoadingcreateViral(false);
-					console.log(err);
 				}
 			} else {
 				try {
 					createQuestion(null, true);
 				} catch (err) {
 					setIsLoadingcreateViral(false);
-					console.log(err);
 				}
 			}
 		}
