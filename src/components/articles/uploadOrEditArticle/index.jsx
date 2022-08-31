@@ -591,7 +591,13 @@ const UploadOrEditArticle = ({
 									labels: item?.data?.labels || undefined,
 									question_type: item?.data?.question_type || undefined,
 									question_id: item?.data?.question_id || undefined,
-									id: item?.data?.id || undefined
+									id: item?.data?.id || undefined,
+									height: item?.data?.uploadedFiles
+										? item?.data?.uploadedFiles[0]?.height
+										: undefined,
+									width: item?.data?.uploadedFiles
+										? item?.data?.uploadedFiles[0]?.width
+										: undefined
 								}
 						  }
 						: undefined),
