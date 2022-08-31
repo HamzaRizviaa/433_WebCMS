@@ -110,7 +110,6 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 	} else if (quesData?.length === 0) {
 		validateQuestion = false;
 	}
-	console.log(validateQuestion, 'upload');
 
 	var finalFormValue =
 		validate.every((item) => item === true) &&

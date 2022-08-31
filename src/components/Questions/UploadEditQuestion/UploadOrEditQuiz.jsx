@@ -120,14 +120,12 @@ const UploadOrEditQuiz = ({
 		});
 	};
 
+	console.log(questionSlides, 'DATA QSLIDES');
 	useEffect(() => {
 		handleNewSlide();
 	}, [open]);
 
 	const setNewData = (childData, index) => {
-		console.log(childData, index, 'child data , new data');
-		// [ 0 : data [ {},{}] ]
-
 		let dataCopy = [...questionSlides];
 		dataCopy[index].data = [
 			{
@@ -135,7 +133,7 @@ const UploadOrEditQuiz = ({
 				...childData
 			}
 		];
-		console.log(dataCopy, 'dataCopy');
+
 		setQuestionSlides(dataCopy);
 	};
 
@@ -505,22 +503,23 @@ const UploadOrEditQuiz = ({
 		const validateEmptyQuestionArray = [
 			checkEmptyQuestionDraft(questionSlides)
 		];
-		console.log(validateEmptyQuestionArray, 'DRAFT 1');
 
 		const validateEmptyQuestionAndEditComparisonArray = [
 			checkNewElementQuestionDraft(editQuestionData, questionSlides)
 		];
-		console.log(validateEmptyQuestionAndEditComparisonArray, 'DRAFT 2');
+
 		if (
 			!validateDraft(form, null, null, questionSlides) ||
 			!comparingFormFields(editQuestionData, form)
 		) {
+			console.log('1D');
 			setDraftBtnDisabled(
 				!validateEmptyQuestionArray.every((item) => item === true) ||
 					!validateDraft(form, null, null, questionSlides)
 			);
 		} else {
 			if (editQuestionData?.questions?.length !== questionSlides?.length) {
+				console.log('2D');
 				setDraftBtnDisabled(
 					!validateEmptyQuestionArray.every((item) => item === true)
 				);
@@ -531,12 +530,12 @@ const UploadOrEditQuiz = ({
 					) ||
 					!validateEmptyQuestionArray.every((item) => item === true)
 				) {
-					console.log('3rd');
+					console.log('3D');
 					setDraftBtnDisabled(
 						!checkSortOrderOnEdit(editQuestionData, questionSlides)
 					);
 				} else {
-					console.log('4th');
+					console.log('4D');
 					setDraftBtnDisabled(
 						validateEmptyQuestionAndEditComparisonArray.every(
 							(item) => item === true
@@ -561,60 +560,45 @@ const UploadOrEditQuiz = ({
 			);
 		}
 	}, [editQuestionData, form, convertedDate]);
-	console.log(
-		editQuizBtnDisabled,
-		draftBtnDisabled,
-		'======= edit Disabled , draft ======='
-	);
-	console.log(questionSlides, '======= questionSlides =======');
+
 	useEffect(() => {
 		//empty questionSlides
 		const validateEmptyQuestionArray = [
 			checkEmptyQuestion(questionSlides),
 			questionSlides?.length !== 0
 		];
-		console.log(validateEmptyQuestionArray, 'empty 1st');
 
 		//check question slides is zero , and edit data from api
 		const validateEmptyQuestionSlidesAndEditComparisonArray = [
 			checkNewElementQuestion(editQuestionData, questionSlides),
 			questionSlides?.length !== 0
 		];
-		console.log(
-			validateEmptyQuestionSlidesAndEditComparisonArray,
-			'compare 2nd'
-		);
-		console.log(
-			!validateForm(form, null, null, questionSlides),
-			!comparingFormFields(editQuestionData, form)
-		);
 
 		//validate form OR compare generalInformation form
 		if (
 			!validateForm(form, null, null, questionSlides) &&
 			!comparingFormFields(editQuestionData, form)
 		) {
-			console.log('if');
+			console.log('1');
 			setEditQuizBtnDisabled(
 				!validateEmptyQuestionArray.every((item) => item === true) ||
 					!validateForm(form, null, null, questionSlides)
 			);
 		} else {
-			console.log('else');
 			if (editQuestionData?.questions?.length !== questionSlides?.length) {
+				console.log('2');
 				setEditQuizBtnDisabled(
 					!validateEmptyQuestionSlidesAndEditComparisonArray.every(
 						(item) => item === true
 					) || !validateEmptyQuestionArray.every((item) => item === true)
 				);
 			} else {
+				console.log('3');
 				setEditQuizBtnDisabled(
 					validateEmptyQuestionSlidesAndEditComparisonArray.every(
 						(item) => item === true
 					) || !validateEmptyQuestionArray.every((item) => item === true)
 				);
-
-				// setEditBtnDisabled(checkMediaUrlPublish(news));
 			}
 		}
 	}, [questionSlides]);
