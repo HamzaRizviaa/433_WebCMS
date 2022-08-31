@@ -302,15 +302,18 @@ const QuestionForm = ({
 		}
 	};
 
-	// useEffect(() => {
-	// 	if (initialData && initialData?.uploadedFiles) {
-	// 		const uploadedFiles = initialData?.uploadedFiles.map((file, index) => ({
-	// 			...file,
-	// 			id: index
-	// 		}));
-	// 		sendDataToParent({ uploadedFiles });
-	// 	}
-	// }, [initialData?.uploadedFiles]);
+	useEffect(() => {
+		if (initialData && initialData?.uploadedFiles) {
+			const uploadedFiles = initialData?.uploadedFiles.map((file, index) => ({
+				...file,
+				id: index
+			}));
+			sendDataToParent({ uploadedFiles });
+			// sendDataToParent(uploadedFiles[0].file);
+		}
+	}, [initialData?.uploadedFiles]);
+
+	console.log(initialData, 'initialDatainitialDatainitialDatainitialData');
 
 	return (
 		<>
@@ -342,9 +345,10 @@ const QuestionForm = ({
 						}}
 					/>
 
-					{initialData?.uploadedFiles ? (
+					{initialData?.uploadedFiles.length !== 0 ? (
 						''
-					) : form.uploadedFiles.length === 0 ? (
+					) : form.uploadedFiles.length === 0 ||
+					  initialData?.uploadedFiles.length === 0 ? (
 						<section
 							className={globalClasses.dropZoneContainer}
 							style={{
@@ -353,21 +357,18 @@ const QuestionForm = ({
 						>
 							<div {...getRootProps({ className: globalClasses.dropzone })}>
 								<input {...getInputProps()} />
-								{loading ? (
-									<SecondaryLoader loading={true} />
-								) : (
-									<>
-										<AddCircleOutlineIcon
-											className={globalClasses.addFilesIcon}
-										/>
-										<p className={globalClasses.dragMsg}>
-											Click or drag file to this area to upload
-										</p>
-										<p className={globalClasses.formatMsg}>
-											Supported formats are jpeg and png
-										</p>
-									</>
-								)}
+
+								<>
+									<AddCircleOutlineIcon
+										className={globalClasses.addFilesIcon}
+									/>
+									<p className={globalClasses.dragMsg}>
+										Click or drag file to this area to upload
+									</p>
+									<p className={globalClasses.formatMsg}>
+										Supported formats are jpeg and png
+									</p>
+								</>
 
 								<p className={globalClasses.uploadMediaError}>
 									{isError.uploadedFiles

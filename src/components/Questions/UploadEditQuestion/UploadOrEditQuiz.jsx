@@ -302,7 +302,6 @@ const UploadOrEditQuiz = ({
 		let slidesData =
 			questionSlides?.length > 0
 				? questionSlides.map((item, index) => {
-						console.log(item, 'item');
 						if (!item.data)
 							return { ...item, position: index, sortOrder: index + 1 };
 
