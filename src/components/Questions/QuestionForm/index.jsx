@@ -69,12 +69,18 @@ const QuestionForm = ({
 						initialData?.answers?.length > 0
 							? initialData?.answers
 							: [
-									{ answer: '', type: 'right_answer', position: 0 },
+									{
+										answer: '',
+										type: type === 'poll' ? 'poll' : 'right_answer',
+										position: 0
+									},
 									{
 										answer: '',
 										type:
 											location === 'article'
 												? 'wrong_answer'
+												: type === 'poll'
+												? 'poll'
 												: 'wrong_answer_1',
 										position: 1
 									}
@@ -86,10 +92,19 @@ const QuestionForm = ({
 					dropbox_url: '',
 					question: '',
 					answers: [
-						{ answer: '', type: 'right_answer', position: 0 },
 						{
 							answer: '',
-							type: location === 'article' ? 'wrong_answer' : 'wrong_answer_1',
+							type: type === 'poll' ? 'poll' : 'right_answer',
+							position: 0
+						},
+						{
+							answer: '',
+							type:
+								location === 'article'
+									? 'wrong_answer'
+									: type === 'poll'
+									? 'poll'
+									: 'wrong_answer_1',
 							position: 1
 						}
 					]
@@ -449,9 +464,7 @@ const QuestionForm = ({
 							InputProps={{
 								disableUnderline: true,
 								className: `${classes.textFieldInput}  ${
-									initialData?.question_id &&
-									status !== 'draft' &&
-									classes.disableTextField
+									isEdit && status !== 'draft' && classes.disableTextField
 								}`
 							}}
 							inputProps={{ maxLength: 55 }}

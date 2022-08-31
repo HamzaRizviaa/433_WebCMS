@@ -38,7 +38,9 @@ import {
 	checkEmptyQuestion, //empty data
 	checkNewElementQuestion, // api data and question form data
 	comparingFormFields, // api end date and form end date
-	checkSortOrderOnEdit
+	checkSortOrderOnEdit,
+	checkEmptyQuestionDraft,
+	checkNewElementQuestionDraft
 } from '../../../utils/questionUtils';
 import moment from 'moment';
 import { compact } from 'lodash';
@@ -123,20 +125,20 @@ const UploadOrEditQuiz = ({
 	}, [open]);
 
 	const setNewData = (childData, index) => {
+		console.log(childData, index, 'child data , new data');
 		// [ 0 : data [ {},{}] ]
-		console.log(childData, index, 'childData');
-		let dataCopy = [...questionSlides];
 
+		let dataCopy = [...questionSlides];
 		dataCopy[index].data = [
 			{
 				...(dataCopy[index]?.data?.length ? dataCopy[index]?.data[0] : {}),
 				...childData
 			}
 		];
-
+		console.log(dataCopy, 'dataCopy');
 		setQuestionSlides(dataCopy);
 	};
-	console.log(questionSlides, 'ques slides ');
+
 	const handleElementDelete = (sortOrder) => {
 		const slides = [...questionSlides];
 		const updatedSlides = slides.filter((file) => file.sortOrder !== sortOrder);
@@ -284,8 +286,7 @@ const UploadOrEditQuiz = ({
 		!isEdit ? resetState() : '';
 	}, [open]);
 
-	const createQuestion = async (id, draft = false) => {
-		console.log('createQuestion', { questionSlides, id, draft });
+	const createQuestion = async (id, draft) => {
 		setPostButtonStatus(true);
 
 		let slidesData =
@@ -328,13 +329,13 @@ const UploadOrEditQuiz = ({
 						end_date: moment(new Date(convertedDate)).format('YYYY-MM-DD'),
 						question_type: questionType
 					},
+					questions: slidesData,
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
 						last_name: `${getLocalStorageDetails()?.last_name}`
 					},
-					...(isEdit && id ? { question_id: id } : {}),
-					...(slidesData.length ? { questions: slidesData } : {})
+					...(isEdit && id ? { question_id: id } : {})
 				},
 				{
 					headers: {
@@ -362,7 +363,7 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
-	const deleteQuiz = async (id, draft, qtype) => {
+	const deleteQuiz = async (draft) => {
 		if (!editQuestionData) return;
 		const question_ids = editQuestionData.questions?.map((q) => q.id) || [];
 
@@ -477,17 +478,74 @@ const UploadOrEditQuiz = ({
 		setPreviewFile(null);
 	};
 
+	// useEffect(() => {
+	// 	if (editQuestionData) {
+	// 		setDraftBtnDisabled(
+	// 			!validateDraft(form) ||
+	// 				postButtonStatus ||
+	// 				(type === 'quiz'
+	// 					? editQuestionData?.quiz_end_date === convertedDate
+	// 					: editQuestionData?.poll_end_date === convertedDate)
+	// 		);
+	// 	}
+	// }, [editQuestionData, form, convertedDate]);
 	useEffect(() => {
 		if (editQuestionData) {
 			setDraftBtnDisabled(
-				!validateDraft(form) ||
-					postButtonStatus ||
-					(type === 'quiz'
-						? editQuestionData?.quiz_end_date === convertedDate
-						: editQuestionData?.poll_end_date === convertedDate)
+				!validateDraft(form, null, null, questionSlides) ||
+					comparingFormFields(editQuestionData, form)
+				// &&
+				// editQuestionData?.labels?.length === questionSlides?.labels.length &&
+				// 	!checkDuplicateLabel(form, editQuestionData)
 			);
 		}
 	}, [editQuestionData, form, convertedDate]);
+
+	useEffect(() => {
+		const validateEmptyQuestionArray = [
+			checkEmptyQuestionDraft(questionSlides)
+		];
+		console.log(validateEmptyQuestionArray, 'DRAFT 1');
+
+		const validateEmptyQuestionAndEditComparisonArray = [
+			checkNewElementQuestionDraft(editQuestionData, questionSlides)
+		];
+		console.log(validateEmptyQuestionAndEditComparisonArray, 'DRAFT 2');
+		if (
+			!validateDraft(form, null, null, questionSlides) ||
+			!comparingFormFields(editQuestionData, form)
+		) {
+			setDraftBtnDisabled(
+				!validateEmptyQuestionArray.every((item) => item === true) ||
+					!validateDraft(form, null, null, questionSlides)
+			);
+		} else {
+			if (editQuestionData?.questions?.length !== questionSlides?.length) {
+				setDraftBtnDisabled(
+					!validateEmptyQuestionArray.every((item) => item === true)
+				);
+			} else {
+				if (
+					validateEmptyQuestionAndEditComparisonArray.every(
+						(item) => item === true
+					) ||
+					!validateEmptyQuestionArray.every((item) => item === true)
+				) {
+					console.log('3rd');
+					setDraftBtnDisabled(
+						!checkSortOrderOnEdit(editQuestionData, questionSlides)
+					);
+				} else {
+					console.log('4th');
+					setDraftBtnDisabled(
+						validateEmptyQuestionAndEditComparisonArray.every(
+							(item) => item === true
+						) || !validateEmptyQuestionArray.every((item) => item === true)
+					);
+				}
+			}
+		}
+	}, [questionSlides]);
 
 	useEffect(() => {
 		if (editQuestionData) {
@@ -503,46 +561,51 @@ const UploadOrEditQuiz = ({
 			);
 		}
 	}, [editQuestionData, form, convertedDate]);
-
+	console.log(
+		editQuizBtnDisabled,
+		draftBtnDisabled,
+		'======= edit Disabled , draft ======='
+	);
+	console.log(questionSlides, '======= questionSlides =======');
 	useEffect(() => {
 		//empty questionSlides
 		const validateEmptyQuestionArray = [
 			checkEmptyQuestion(questionSlides),
 			questionSlides?.length !== 0
 		];
-
-		console.log(questionSlides, 'questionSlidesquestionSlidesquestionSlides');
+		console.log(validateEmptyQuestionArray, 'empty 1st');
 
 		//check question slides is zero , and edit data from api
 		const validateEmptyQuestionSlidesAndEditComparisonArray = [
 			checkNewElementQuestion(editQuestionData, questionSlides),
 			questionSlides?.length !== 0
 		];
+		console.log(
+			validateEmptyQuestionSlidesAndEditComparisonArray,
+			'compare 2nd'
+		);
+		console.log(
+			!validateForm(form, null, null, questionSlides),
+			!comparingFormFields(editQuestionData, form)
+		);
 
-		//validate form with question form and compare generalInformation form
+		//validate form OR compare generalInformation form
 		if (
-			!validateForm(form, null, null, questionSlides) ||
-			!comparingFormFields(editQuestionData, form) //date
-		) {
-			setEditQuizBtnDisabled(
-				!validateEmptyQuestionArray.every((item) => item === true) ||
-					!validateForm(form, null, null, questionSlides)
-			);
-		}
-
-		//validate form with api data and compare generalInformation form
-		if (
-			!validateForm(form, null, null, editQuestionData) ||
+			!validateForm(form, null, null, questionSlides) &&
 			!comparingFormFields(editQuestionData, form)
 		) {
+			console.log('if');
 			setEditQuizBtnDisabled(
 				!validateEmptyQuestionArray.every((item) => item === true) ||
 					!validateForm(form, null, null, questionSlides)
 			);
 		} else {
-			if (editQuestionData?.question?.length !== questionSlides?.length) {
+			console.log('else');
+			if (editQuestionData?.questions?.length !== questionSlides?.length) {
 				setEditQuizBtnDisabled(
-					!validateEmptyQuestionArray.every((item) => item === true)
+					!validateEmptyQuestionSlidesAndEditComparisonArray.every(
+						(item) => item === true
+					) || !validateEmptyQuestionArray.every((item) => item === true)
 				);
 			} else {
 				setEditQuizBtnDisabled(
@@ -560,8 +623,10 @@ const UploadOrEditQuiz = ({
 	//!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')
 	const handlePostQuizPollBtn = () => {
 		if (
-			!validateForm(form, null, null, questionSlides) ||
-			(editQuizBtnDisabled && status === 'ACTIVE')
+			isEdit
+				? !validateForm(form)
+				: !validateForm(form, null, null, questionSlides) ||
+				  (editQuizBtnDisabled && status === 'ACTIVE')
 		) {
 			validatePostBtn();
 		} else {
@@ -570,16 +635,14 @@ const UploadOrEditQuiz = ({
 			setIsLoadingcreateViral(true);
 			if (isEdit) {
 				try {
-					console.log('edit api on post , save changes button');
-					createQuestion(editQuestionData?.id);
+					createQuestion(editQuestionData?.id, false);
 				} catch (err) {
 					setIsLoadingcreateViral(false);
 					console.log(err);
 				}
 			} else {
-				console.log('hit create ');
 				try {
-					createQuestion(null);
+					createQuestion(null, false);
 				} catch (err) {
 					setIsLoadingcreateViral(false);
 					console.log(err);
@@ -587,21 +650,18 @@ const UploadOrEditQuiz = ({
 			}
 		}
 	};
-	console.log(editQuizBtnDisabled, 'editQuizBtnDisabled');
 
 	//draftBtnDisabled button - whether you can click or not
 	//validateDraft - color grey or yellow
 	const handleDraftSave = async () => {
-		if (!validateDraft(form, null, null, questionSlides) || draftBtnDisabled) {
+		if (!validateDraft(form) || draftBtnDisabled) {
 			validateDraftBtn();
 		} else {
-			console.log({ editQuestionData });
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			setIsLoadingcreateViral(true);
 			if (isEdit) {
 				try {
-					console.log('edit api on draft');
 					createQuestion(editQuestionData?.id, true);
 				} catch (err) {
 					setIsLoadingcreateViral(false);
@@ -709,10 +769,11 @@ const UploadOrEditQuiz = ({
 
 													<AccordionDetails>
 														{/* tab panes on first upload*/}
-														{!isEdit && (
+														{((isEdit && status === 'draft') || !isEdit) && (
 															<>
 																<QuestionTabPanes
 																	edit={isEdit}
+																	status={status}
 																	location={location}
 																	type={questionType}
 																	resetSlides={(type) => resetSlides(type)}
@@ -813,7 +874,8 @@ const UploadOrEditQuiz = ({
 												})}
 											</QuestionDraggable>
 
-											{!isEdit &&
+											{/* {isEdit &&
+												editQuestionData?.questions?.length === 0 &&
 												(questionSlides?.length < 10 ? (
 													<Button
 														style={{
@@ -826,7 +888,30 @@ const UploadOrEditQuiz = ({
 													/>
 												) : (
 													''
-												))}
+												))} */}
+											{!isEdit && questionSlides?.length < 10 ? (
+												<Button
+													style={{
+														marginTop: '2rem'
+													}}
+													buttonNews={true}
+													disabled={false}
+													onClick={() => handleNewSlide()}
+													text={'ADD QUESTION'}
+												/>
+											) : isEdit && status === 'draft' ? (
+												<Button
+													style={{
+														marginTop: '2rem'
+													}}
+													buttonNews={true}
+													disabled={false}
+													onClick={() => handleNewSlide()}
+													text={'ADD QUESTION'}
+												/>
+											) : (
+												''
+											)}
 										</>
 										<br />
 										<p className={globalClasses.mediaError}></p>
@@ -997,7 +1082,7 @@ const UploadOrEditQuiz = ({
 				deleteBtn={() => {
 					stopStatus
 						? stopQuizPoll(editQuestionData?.id)
-						: deleteQuiz(editQuestionData?.id, status.toLowerCase());
+						: deleteQuiz(status.toLowerCase());
 				}}
 				text={questionType === 'quiz' ? 'Quiz' : 'Poll'}
 				wrapperRef={dialogWrapper}

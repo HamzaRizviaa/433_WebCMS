@@ -30,7 +30,6 @@ export const checkEmptyMediaNewsDraft = (news) => {
 
 	return validateNews.every((item) => item === true);
 };
-//draft iniiial
 
 export const comparingNewsFields = (specificNews, form) => {
 	return (
