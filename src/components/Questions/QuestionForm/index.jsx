@@ -3,11 +3,7 @@
 /* eslint-disable react/display-name */
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import LoadingOverlay from 'react-loading-overlay';
-import Close from '@material-ui/icons/Close';
 import { useDropzone } from 'react-dropzone';
-import Slide from '@mui/material/Slide';
-import PrimaryLoader from '../../PrimaryLoader';
 import { TextField } from '@material-ui/core';
 import DragAndDropField from '../../DragAndDropField';
 import { makeid } from '../../../utils/helper';
@@ -17,22 +13,12 @@ import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import Typography from '@mui/material/Typography';
 // import uploadFileToServer from '../../../utils/uploadFileToServer';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
-import { ReactComponent as Union } from '../../../assets/drag.svg';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 import { useStyles } from '../UploadEditQuestion/UploadOrEditQuiz.style';
-import { Draggable } from 'react-beautiful-dnd';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import SecondaryLoader from '../../SecondaryLoader';
 import { ReactComponent as NewsAddIcon } from '../../../assets/newsAddIcon.svg';
 import { ReactComponent as DeleteBin } from '../../../assets/DeleteBin.svg';
-import {
-	Accordion,
-	Box,
-	AccordionSummary,
-	AccordionDetails,
-	InputAdornment
-} from '@mui/material';
+import { InputAdornment } from '@mui/material';
+import { isEmpty } from 'lodash';
 
 const QuestionForm = ({
 	item,
@@ -196,7 +182,7 @@ const QuestionForm = ({
 	}, [fileRejections]);
 
 	const handleDeleteFile = (id) => {
-		console.log(id, 'handleDeleteFile');
+		console.log('handleDeleteFile', { id, item });
 		// setUploadedFiles((uploadedFiles) =>
 		// 	uploadedFiles.filter((file) => file.id !== id)
 		// );
@@ -251,8 +237,6 @@ const QuestionForm = ({
 		// sendDataToParent(answers);
 	};
 
-	// console.log('FORMMMM', form);
-
 	const handleAnswerDelete = (index) => {
 		let dataCopy = { ...form };
 
@@ -295,6 +279,8 @@ const QuestionForm = ({
 			let answers = { answers: formCopy.answers };
 			sendDataToParent(answers);
 		} else {
+			// This block of code will only be executed if the question is in draft
+			// Then only the question answers will be editable
 			const isAnswersEdited = initialData.data && initialData.data[0].answers;
 			const answers = [
 				...(isAnswersEdited ? initialData.data[0].answers : [...form.answers])
@@ -316,6 +302,16 @@ const QuestionForm = ({
 		}
 	};
 
+	// useEffect(() => {
+	// 	if (initialData && initialData?.uploadedFiles) {
+	// 		const uploadedFiles = initialData?.uploadedFiles.map((file, index) => ({
+	// 			...file,
+	// 			id: index
+	// 		}));
+	// 		sendDataToParent({ uploadedFiles });
+	// 	}
+	// }, [initialData?.uploadedFiles]);
+
 	return (
 		<>
 			{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
@@ -326,7 +322,11 @@ const QuestionForm = ({
 				<div>
 					<DragAndDropField
 						uploadedFiles={
-							initialData ? initialData?.uploadedFiles : form?.uploadedFiles
+							initialData
+								? initialData?.data
+									? initialData?.data[0]?.uploadedFiles
+									: initialData?.uploadedFiles
+								: form?.uploadedFiles
 						}
 						quizPollStatus={status}
 						handleDeleteFile={handleDeleteFile}
@@ -389,8 +389,8 @@ const QuestionForm = ({
 						<TextField
 							value={
 								initialData
-									? initialData.data
-										? initialData.data.dropbox_url
+									? initialData?.data
+										? initialData?.data?.dropbox_url
 										: initialData?.dropbox_url
 									: form.dropbox_url
 							}
@@ -451,9 +451,9 @@ const QuestionForm = ({
 							disabled={isEdit && status !== 'draft'}
 							value={
 								initialData
-									? initialData.data
-										? initialData.data.question
-										: initialData.question
+									? initialData?.data
+										? initialData?.data?.question
+										: initialData?.question
 									: form.question
 							}
 							onChange={(e) => {
@@ -529,8 +529,8 @@ const QuestionForm = ({
 										disabled={isEdit && status !== 'draft'}
 										value={
 											initialData?.answers?.length > 0
-												? initialData.data && initialData.data[0].answers
-													? initialData.data[0].answers[index]?.answer
+												? initialData?.data && initialData?.data[0].answers
+													? initialData?.data[0].answers[index]?.answer
 													: initialData?.answers[index]?.answer
 												: form.answers[index]?.answer
 										}

@@ -43,7 +43,7 @@ import {
 	checkEmptyQuestionDraft,
 	checkNewElementQuestionDraft
 } from '../../../utils/questionUtils';
-import moment from 'moment';
+// import moment from 'moment';
 import { compact } from 'lodash';
 
 const UploadOrEditQuiz = ({
@@ -152,10 +152,19 @@ const UploadOrEditQuiz = ({
 		let dataCopy = [...questionSlides];
 		if (elementData) {
 			setQuestionSlides(
-				dataCopy.filter((item, i) => {
+				dataCopy.map((item, i) => {
 					if (index === i) {
-						delete item['data'][0]?.uploadedFiles;
-						return item;
+						const newItem = {
+							...item,
+							uploadedFiles: [],
+							data: [
+								{
+									...item.data[0],
+									uploadedFiles: []
+								}
+							]
+						};
+						return newItem;
 					} else {
 						return item;
 					}
@@ -328,7 +337,7 @@ const UploadOrEditQuiz = ({
 				{
 					general_info: {
 						save_draft: draft,
-						end_date: moment(new Date(convertedDate)).format('YYYY-MM-DD'),
+						end_date: convertedDate.split('T')[0],
 						question_type: questionType
 					},
 					questions: slidesData,
@@ -395,7 +404,6 @@ const UploadOrEditQuiz = ({
 		} catch (e) {
 			toast.error('Failed to delete Question!');
 			setDeleteBtnStatus(false);
-			console.log(e, 'Failed to delete Question!');
 		}
 		setOpenDeletePopup(!openDeletePopup);
 	};
