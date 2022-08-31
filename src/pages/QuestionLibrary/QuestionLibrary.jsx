@@ -429,7 +429,7 @@ const QuestionLibrary = () => {
 	};
 
 	useEffect(() => {
-		// console.log('sort state use effect');
+		console.log('sort state use effect');
 		if (sortState.sortby && sortState.order_type && !search) {
 			dispatch(
 				getQuestions({

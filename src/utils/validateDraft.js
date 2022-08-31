@@ -114,7 +114,7 @@ const validateDraft = (form, dataElements, newsElement, quesElement) => {
 		validateQuestion = quesElement.every((quesItem) => {
 			if (quesItem?.data) {
 				return (
-					quesItem?.data[0]?.uploadedFiles?.length > 0 ||
+					quesItem?.data[0]?.media_url ||
 					quesItem?.data[0]?.question ||
 					(quesItem?.data[0]?.answers?.length > 0
 						? quesItem?.data[0]?.answers.some((item) => item?.answer !== '')

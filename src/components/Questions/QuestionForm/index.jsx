@@ -3,11 +3,7 @@
 /* eslint-disable react/display-name */
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import LoadingOverlay from 'react-loading-overlay';
-import Close from '@material-ui/icons/Close';
 import { useDropzone } from 'react-dropzone';
-import Slide from '@mui/material/Slide';
-import PrimaryLoader from '../../PrimaryLoader';
 import { TextField } from '@material-ui/core';
 import DragAndDropField from '../../DragAndDropField';
 import { makeid } from '../../../utils/helper';
@@ -15,24 +11,14 @@ import checkFileSize from '../../../utils/validateFileSize';
 import Labels from '../../Labels';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import Typography from '@mui/material/Typography';
-import uploadFileToServer from '../../../utils/uploadFileToServer';
+// import uploadFileToServer from '../../../utils/uploadFileToServer';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
-import { ReactComponent as Union } from '../../../assets/drag.svg';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 import { useStyles } from '../UploadEditQuestion/UploadOrEditQuiz.style';
-import { Draggable } from 'react-beautiful-dnd';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import SecondaryLoader from '../../SecondaryLoader';
 import { ReactComponent as NewsAddIcon } from '../../../assets/newsAddIcon.svg';
 import { ReactComponent as DeleteBin } from '../../../assets/DeleteBin.svg';
-import {
-	Accordion,
-	Box,
-	AccordionSummary,
-	AccordionDetails,
-	InputAdornment
-} from '@mui/material';
+import { InputAdornment } from '@mui/material';
+import { isEmpty } from 'lodash';
 
 const QuestionForm = ({
 	item,
@@ -110,7 +96,7 @@ const QuestionForm = ({
 					]
 			  }
 	);
-	// console.log('FORM', form)
+
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const imgRef = useRef(null);
@@ -123,9 +109,9 @@ const QuestionForm = ({
 			validator: checkFileSize
 		});
 
-	const uploadedFile = async (newFiles) => {
-		return await uploadFileToServer(newFiles, 'articleLibrary');
-	};
+	// const uploadedFile = async (newFiles) => {
+	// 	return await uploadFileToServer(newFiles, 'articleLibrary');
+	// };
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
@@ -146,22 +132,30 @@ const QuestionForm = ({
 					height: fileHeight
 				};
 			});
-			uploadedFile(newFiles[0], 'questionLibrary').then((res) => {
-				setForm((prev) => {
-					return {
-						...prev,
-						uploadedFiles: [
-							{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
-						]
-					};
-				});
-				sendDataToParent({
-					uploadedFiles: [
-						{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
-					]
-				});
-				setLoading(false);
+			setForm((prev) => {
+				return {
+					...prev,
+					uploadedFiles: [...newFiles]
+				};
 			});
+
+			sendDataToParent({ uploadedFiles: newFiles });
+			// uploadedFile(newFiles[0], 'questionLibrary').then((res) => {
+			// 	setForm((prev) => {
+			// 		return {
+			// 			...prev,
+			// 			uploadedFiles: [
+			// 				{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
+			// 			]
+			// 		};
+			// 	});
+			// 	sendDataToParent({
+			// 		uploadedFiles: [
+			// 			{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
+			// 		]
+			// 	});
+			// 	setLoading(false);
+			// });
 		}
 	}, [acceptedFiles, fileHeight, fileWidth]);
 
@@ -188,9 +182,6 @@ const QuestionForm = ({
 	}, [fileRejections]);
 
 	const handleDeleteFile = (id) => {
-		// setUploadedFiles((uploadedFiles) =>
-		// 	uploadedFiles.filter((file) => file.id !== id)
-		// );
 		setForm((prev) => {
 			return {
 				...prev,
@@ -242,8 +233,6 @@ const QuestionForm = ({
 		// sendDataToParent(answers);
 	};
 
-	// console.log('FORMMMM', form);
-
 	const handleAnswerDelete = (index) => {
 		let dataCopy = { ...form };
 
@@ -286,6 +275,8 @@ const QuestionForm = ({
 			let answers = { answers: formCopy.answers };
 			sendDataToParent(answers);
 		} else {
+			// This block of code will only be executed if the question is in draft
+			// Then only the question answers will be editable
 			const isAnswersEdited = initialData.data && initialData.data[0].answers;
 			const answers = [
 				...(isAnswersEdited ? initialData.data[0].answers : [...form.answers])
@@ -307,6 +298,19 @@ const QuestionForm = ({
 		}
 	};
 
+	useEffect(() => {
+		if (initialData && initialData?.uploadedFiles) {
+			const uploadedFiles = initialData?.uploadedFiles.map((file, index) => ({
+				...file,
+				id: index
+			}));
+			sendDataToParent({ uploadedFiles });
+			// sendDataToParent(uploadedFiles[0].file);
+		}
+	}, [initialData?.uploadedFiles]);
+
+	console.log({ initialData, form });
+
 	return (
 		<>
 			{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
@@ -317,7 +321,11 @@ const QuestionForm = ({
 				<div>
 					<DragAndDropField
 						uploadedFiles={
-							initialData ? initialData?.uploadedFiles : form?.uploadedFiles
+							initialData
+								? initialData?.data
+									? initialData?.data[0]?.uploadedFiles
+									: initialData?.uploadedFiles
+								: form?.uploadedFiles
 						}
 						quizPollStatus={status}
 						handleDeleteFile={handleDeleteFile}
@@ -333,9 +341,11 @@ const QuestionForm = ({
 						}}
 					/>
 
-					{initialData?.uploadedFiles ? (
+					{initialData?.uploadedFiles.length !== 0 ? (
 						''
-					) : form.uploadedFiles.length === 0 ? (
+					) : form.uploadedFiles.length === 0 ||
+					  (initialData?.data[0]?.uploadedFiles.length === 0 &&
+							initialData?.uploadedFiles.length === 0) ? (
 						<section
 							className={globalClasses.dropZoneContainer}
 							style={{
@@ -344,21 +354,18 @@ const QuestionForm = ({
 						>
 							<div {...getRootProps({ className: globalClasses.dropzone })}>
 								<input {...getInputProps()} />
-								{loading ? (
-									<SecondaryLoader loading={true} />
-								) : (
-									<>
-										<AddCircleOutlineIcon
-											className={globalClasses.addFilesIcon}
-										/>
-										<p className={globalClasses.dragMsg}>
-											Click or drag file to this area to upload
-										</p>
-										<p className={globalClasses.formatMsg}>
-											Supported formats are jpeg and png
-										</p>
-									</>
-								)}
+
+								<>
+									<AddCircleOutlineIcon
+										className={globalClasses.addFilesIcon}
+									/>
+									<p className={globalClasses.dragMsg}>
+										Click or drag file to this area to upload
+									</p>
+									<p className={globalClasses.formatMsg}>
+										Supported formats are jpeg and png
+									</p>
+								</>
 
 								<p className={globalClasses.uploadMediaError}>
 									{isError.uploadedFiles
@@ -380,8 +387,8 @@ const QuestionForm = ({
 						<TextField
 							value={
 								initialData
-									? initialData.data
-										? initialData.data.dropbox_url
+									? initialData?.data
+										? initialData?.data?.dropbox_url
 										: initialData?.dropbox_url
 									: form.dropbox_url
 							}
@@ -442,13 +449,12 @@ const QuestionForm = ({
 							disabled={isEdit && status !== 'draft'}
 							value={
 								initialData
-									? initialData.data
-										? initialData.data.question
-										: initialData.question
+									? initialData?.data
+										? initialData?.data?.question
+										: initialData?.question
 									: form.question
 							}
 							onChange={(e) => {
-								console.log(e, 'e');
 								setForm((prev) => {
 									return {
 										...prev,
@@ -520,8 +526,8 @@ const QuestionForm = ({
 										disabled={isEdit && status !== 'draft'}
 										value={
 											initialData?.answers?.length > 0
-												? initialData.data && initialData.data[0].answers
-													? initialData.data[0].answers[index]?.answer
+												? initialData?.data && initialData?.data[0].answers
+													? initialData?.data[0].answers[index]?.answer
 													: initialData?.answers[index]?.answer
 												: form.answers[index]?.answer
 										}
