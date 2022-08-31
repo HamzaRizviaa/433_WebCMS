@@ -471,8 +471,7 @@ const UploadOrEditNews = ({
 					show_comments: form.show_comments,
 					slides: slides,
 					...(isEdit && id ? { news_id: id } : {}),
-					...((!isEdit || status !== 'published') &&
-					(form.labels?.length || status == 'draft')
+					...(form.labels?.length || status == 'draft'
 						? { labels: [...form.labels] }
 						: {}),
 					user_data: {
