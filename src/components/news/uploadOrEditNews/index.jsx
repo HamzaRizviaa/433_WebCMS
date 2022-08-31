@@ -42,6 +42,8 @@ import {
 // import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 import { getAllNews } from '../../../pages/NewsLibrary/newsLibrarySlice';
 import { ConstructionOutlined } from '@mui/icons-material';
+import { TextField } from '@material-ui/core';
+import { ToastErrorNotifications } from '../../../constants';
 
 const UploadOrEditNews = ({
 	open,
@@ -69,6 +71,8 @@ const UploadOrEditNews = ({
 	const [notifID, setNotifID] = useState('');
 	const [form, setForm] = useState({
 		labels: [],
+		banner_title: '',
+		banner_description: '',
 		show_likes: true,
 		show_comments: true
 	});
@@ -111,7 +115,9 @@ const UploadOrEditNews = ({
 				return {
 					...prev,
 					show_likes: specificNews?.show_likes,
-					show_comments: specificNews?.show_comments
+					show_comments: specificNews?.show_comments,
+					banner_title: specificNews?.banner_title,
+					banner_description: specificNews?.banner_description
 				};
 			});
 			specificNews?.slides?.length > 0
@@ -126,6 +132,12 @@ const UploadOrEditNews = ({
 				checkEmptyMediaNews(news),
 				news?.length !== 0
 			];
+			console.log(
+				'validateEmptyNewsArray',
+				validateEmptyNewsArray,
+				!validateForm(form, null, news),
+				comparingNewsFields(specificNews, form)
+			);
 			setEditBtnDisabled(
 				!validateForm(form, null, news) ||
 					!validateEmptyNewsArray.every((item) => item === true) ||
@@ -133,6 +145,8 @@ const UploadOrEditNews = ({
 			);
 		}
 	}, [specificNews, form]);
+
+	console.log(editBtnDisabled, 'eee[[[');
 
 	useEffect(() => {
 		if (specificNews) {
@@ -280,6 +294,8 @@ const UploadOrEditNews = ({
 		setNotifID('');
 		setForm({
 			labels: [],
+			banner_title: '',
+			banner_description: '',
 			show_likes: true,
 			show_comments: true
 		});
@@ -351,7 +367,6 @@ const UploadOrEditNews = ({
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...news];
-		console.log(dataCopy[index].data, 'jjjj090');
 		dataCopy[index].data = [
 			{
 				...(dataCopy[index]?.data?.length ? dataCopy[index]?.data[0] : {}),
@@ -413,7 +428,7 @@ const UploadOrEditNews = ({
 				dispatch(getAllNews({ page }));
 			}
 		} catch (e) {
-			toast.error('News to delete Viral!');
+			toast.error(ToastErrorNotifications.deleteBannerItemText);
 			setDeleteBtnStatus(false);
 			console.log(e, 'News to delete Viral');
 		}
@@ -427,7 +442,6 @@ const UploadOrEditNews = ({
 		let slides =
 			news.length > 0
 				? news.map((item, index) => {
-						console.log(item, 'DAAWWADDAWDAWDDW');
 						return {
 							//id: item.data[0].id,
 							image:
@@ -451,12 +465,13 @@ const UploadOrEditNews = ({
 				`${process.env.REACT_APP_API_ENDPOINT}/news/add-news`,
 				{
 					save_draft: draft,
+					banner_title: form.banner_title,
+					banner_description: form.banner_description,
 					show_likes: form.show_likes,
 					show_comments: form.show_comments,
 					slides: slides,
 					...(isEdit && id ? { news_id: id } : {}),
-					...((!isEdit || status !== 'published') &&
-					(form.labels?.length || status == 'draft')
+					...(form.labels?.length || status == 'draft'
 						? { labels: [...form.labels] }
 						: {}),
 					user_data: {
@@ -517,8 +532,6 @@ const UploadOrEditNews = ({
 			setIsError({});
 		}, 5000);
 	};
-
-	console.log(!validateDraft(form, null, news), draftBtnDisabled, 'valUES');
 
 	const handleCreateDraft = () => {
 		setIsLoading(false);
@@ -693,7 +706,89 @@ const UploadOrEditNews = ({
 														? 'You need to select atleast 1 label to save as draft'
 														: ''}
 												</p>
+												<div className={globalClasses.captionContainer}>
+													<div className={globalClasses.characterCount}>
+														<h6>BANNER TITLE</h6>
+														<h6
+															style={{
+																color:
+																	form?.banner_title?.length >= 39 &&
+																	form?.banner_title?.length <= 42
+																		? 'pink'
+																		: form?.banner_title?.length === 43
+																		? 'red'
+																		: 'white'
+															}}
+														>
+															{form?.banner_title?.length}/43
+														</h6>
+													</div>
 
+													<TextField
+														value={form.banner_title}
+														onChange={(e) => {
+															setForm((prev) => {
+																return {
+																	...prev,
+																	banner_title: e.target.value
+																};
+															});
+														}}
+														placeholder={'Please write you caption here'}
+														className={classes.textField}
+														InputProps={{
+															disableUnderline: true,
+															className: classes.textFieldInput
+														}}
+														inputProps={{ maxLength: 43 }}
+														multiline
+														maxRows={2}
+													/>
+												</div>
+
+												<div
+													style={{ marginTop: '15px' }}
+													className={globalClasses.captionContainer}
+												>
+													<div className={globalClasses.characterCount}>
+														<h6>BANNER DESCRIPTION</h6>
+														<h6
+															style={{
+																color:
+																	form?.banner_description?.length >= 75 &&
+																	form?.banner_description?.length <= 83
+																		? 'pink'
+																		: form?.banner_description?.length === 84
+																		? 'red'
+																		: 'white'
+															}}
+														>
+															{form?.banner_description?.length}/84
+														</h6>
+													</div>
+
+													<TextField
+														value={form.banner_description}
+														onChange={(e) => {
+															setForm((prev) => {
+																return {
+																	...prev,
+																	banner_description: e.target.value
+																};
+															});
+														}}
+														placeholder={'Please write you caption here'}
+														className={classes.textField}
+														InputProps={{
+															disableUnderline: true,
+															className: classes.textFieldInput
+														}}
+														inputProps={{ maxLength: 84 }}
+														multiline
+														minRows={3}
+														maxRows={4}
+													/>
+												</div>
 												<div className={globalClasses.postMediaContainer}>
 													<div className={globalClasses.postMediaHeader}>
 														<h5>Show comments</h5>
@@ -817,7 +912,9 @@ const UploadOrEditNews = ({
 										<div>
 											<Button
 												disabled={
-													isEdit && validateForm(form) && status === 'draft'
+													isEdit &&
+													validateForm(form, null, news) &&
+													status === 'draft'
 														? false
 														: isEdit
 														? editBtnDisabled

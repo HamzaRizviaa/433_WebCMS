@@ -138,23 +138,26 @@ const ArticleQuestionUpload = ({
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
-					type: 'image',
-					width: fileWidth,
-					height: fileHeight
+					type: 'image'
 				};
 			});
+			sendDataToParent({ previewImage: [...newFiles] });
 			uploadedFile(newFiles[0], 'articleLibrary').then((res) => {
 				setForm((prev) => {
 					return {
 						...prev,
 						uploadedFiles: [
-							{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
+							{
+								image: res?.media_url,
+								file_name: res?.file_name,
+								...newFiles[0]
+							}
 						]
 					};
 				});
 				sendDataToParent({
 					uploadedFiles: [
-						{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
+						{ image: res?.media_url, file_name: res?.file_name, ...newFiles[0] }
 					]
 				});
 				setLoading(false);
@@ -163,6 +166,21 @@ const ArticleQuestionUpload = ({
 			// sendDataToParent({ uploadedFiles: [...newFiles] });
 		}
 	}, [acceptedFiles]);
+
+	useEffect(() => {
+		if (fileHeight && fileWidth && item?.data?.uploadedFiles?.length) {
+			sendDataToParent({
+				...item?.data,
+				uploadedFiles: [
+					{
+						width: fileWidth,
+						height: fileHeight,
+						...item?.data?.uploadedFiles[0]
+					}
+				]
+			});
+		}
+	}, [fileHeight, fileWidth]);
 
 	useEffect(() => {
 		if (fileRejections.length) {
@@ -249,6 +267,7 @@ const ArticleQuestionUpload = ({
 										)
 									};
 								});
+								sendDataToParent({ previewImage: null });
 								handleDeleteData(item.data?.uploadedFiles);
 							}}
 							isArticle

@@ -67,6 +67,7 @@ import {
 	checkNewElementQuestionDraft
 } from '../../../utils/articleUtils';
 import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDraggable';
+import { ToastErrorNotifications } from '../../../constants';
 
 const UploadOrEditArticle = ({
 	open,
@@ -590,7 +591,13 @@ const UploadOrEditArticle = ({
 									labels: item?.data?.labels || undefined,
 									question_type: item?.data?.question_type || undefined,
 									question_id: item?.data?.question_id || undefined,
-									id: item?.data?.id || undefined
+									id: item?.data?.id || undefined,
+									height: item?.data?.uploadedFiles
+										? item?.data?.uploadedFiles[0]?.height
+										: undefined,
+									width: item?.data?.uploadedFiles
+										? item?.data?.uploadedFiles[0]?.width
+										: undefined
 								}
 						  }
 						: undefined),
@@ -982,9 +989,7 @@ const UploadOrEditArticle = ({
 				deleteReadMoreApi(id);
 
 				if (result?.data?.data?.is_deleted === false) {
-					toast.error(
-						'This item cannot be deleted because it is inside the top banners.'
-					);
+					toast.error(ToastErrorNotifications.deleteBannerItemText);
 					dispatch(getAllArticlesApi({ page }));
 				} else {
 					toast.success('Article has been deleted!');
