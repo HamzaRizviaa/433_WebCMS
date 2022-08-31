@@ -141,10 +141,19 @@ const UploadOrEditQuiz = ({
 		let dataCopy = [...questionSlides];
 		if (elementData) {
 			setQuestionSlides(
-				dataCopy.filter((item, i) => {
+				dataCopy.map((item, i) => {
 					if (index === i) {
-						delete item['data'][0]?.uploadedFiles;
-						return item;
+						const newItem = {
+							...item,
+							uploadedFiles: [],
+							data: [
+								{
+									...item.data[0],
+									uploadedFiles: []
+								}
+							]
+						};
+						return newItem;
 					} else {
 						return item;
 					}

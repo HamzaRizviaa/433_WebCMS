@@ -3,36 +3,21 @@
 /* eslint-disable react/display-name */
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import LoadingOverlay from 'react-loading-overlay';
-import Close from '@material-ui/icons/Close';
 import { useDropzone } from 'react-dropzone';
-import Slide from '@mui/material/Slide';
-import PrimaryLoader from '../../PrimaryLoader';
 import { TextField } from '@material-ui/core';
 import DragAndDropField from '../../DragAndDropField';
 import { makeid } from '../../../utils/helper';
 import checkFileSize from '../../../utils/validateFileSize';
 import Labels from '../../Labels';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import Typography from '@mui/material/Typography';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
-import { ReactComponent as Union } from '../../../assets/drag.svg';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 import { useStyles } from '../UploadEditQuestion/UploadOrEditQuiz.style';
-import { Draggable } from 'react-beautiful-dnd';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import SecondaryLoader from '../../SecondaryLoader';
 import { ReactComponent as NewsAddIcon } from '../../../assets/newsAddIcon.svg';
 import { ReactComponent as DeleteBin } from '../../../assets/DeleteBin.svg';
-import {
-	Accordion,
-	Box,
-	AccordionSummary,
-	AccordionDetails,
-	InputAdornment
-} from '@mui/material';
+import { InputAdornment } from '@mui/material';
+import { isEmpty } from 'lodash';
 
 const QuestionForm = ({
 	item,
@@ -153,6 +138,7 @@ const QuestionForm = ({
 	}, [fileRejections]);
 
 	const handleDeleteFile = (id) => {
+		console.log('handleDeleteFile', { id, item });
 		// setUploadedFiles((uploadedFiles) =>
 		// 	uploadedFiles.filter((file) => file.id !== id)
 		// );
@@ -272,6 +258,16 @@ const QuestionForm = ({
 		}
 	};
 
+	useEffect(() => {
+		if (initialData && initialData?.uploadedFiles) {
+			const uploadedFiles = initialData?.uploadedFiles.map((file, index) => ({
+				...file,
+				id: index
+			}));
+			sendDataToParent({ uploadedFiles });
+		}
+	}, [initialData?.uploadedFiles]);
+
 	return (
 		<>
 			{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
@@ -282,7 +278,11 @@ const QuestionForm = ({
 				<div>
 					<DragAndDropField
 						uploadedFiles={
-							initialData ? initialData?.uploadedFiles : form?.uploadedFiles
+							initialData
+								? initialData?.data
+									? initialData?.data[0]?.uploadedFiles
+									: initialData?.uploadedFiles
+								: form?.uploadedFiles
 						}
 						quizPollStatus={status}
 						handleDeleteFile={handleDeleteFile}
