@@ -983,9 +983,7 @@ const UploadOrEditArticle = ({
 				deleteReadMoreApi(id);
 
 				if (result?.data?.data?.is_deleted === false) {
-					toast.error(
-						ToastErrorNotifications.deleteBannerItemText
-					);
+					toast.error(ToastErrorNotifications.deleteBannerItemText);
 					dispatch(getAllArticlesApi({ page }));
 				} else {
 					toast.success('Article has been deleted!');

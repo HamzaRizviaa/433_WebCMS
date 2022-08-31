@@ -544,9 +544,7 @@ const UploadOrEditMedia = ({
 			);
 			if (result?.data?.status_code === 200) {
 				if (result?.data?.data?.is_deleted === false) {
-					toast.error(
-						ToastErrorNotifications.deleteBannerItemText
-					);
+					toast.error(ToastErrorNotifications.deleteBannerItemText);
 					dispatch(getMedia({ page }));
 				} else {
 					toast.success('Media has been deleted!');
