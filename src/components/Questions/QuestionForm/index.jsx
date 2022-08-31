@@ -139,7 +139,7 @@ const QuestionForm = ({
 				};
 			});
 
-			sendDataToParent(...newFiles);
+			sendDataToParent({ uploadedFiles: newFiles });
 			// uploadedFile(newFiles[0], 'questionLibrary').then((res) => {
 			// 	setForm((prev) => {
 			// 		return {
@@ -313,8 +313,6 @@ const QuestionForm = ({
 		}
 	}, [initialData?.uploadedFiles]);
 
-	console.log(initialData, 'initialDatainitialDatainitialDatainitialData');
-
 	return (
 		<>
 			{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
@@ -348,7 +346,8 @@ const QuestionForm = ({
 					{initialData?.uploadedFiles.length !== 0 ? (
 						''
 					) : form.uploadedFiles.length === 0 ||
-					  initialData?.uploadedFiles.length === 0 ? (
+					  (initialData?.data[0]?.uploadedFiles.length === 0 &&
+							initialData?.uploadedFiles.length === 0) ? (
 						<section
 							className={globalClasses.dropZoneContainer}
 							style={{
