@@ -126,7 +126,6 @@ const UploadOrEditQuiz = ({
 	}, [open]);
 
 	const setNewData = (childData, index) => {
-		console.log(childData, index, 'child data , new data');
 		// [ 0 : data [ {},{}] ]
 
 		let dataCopy = [...questionSlides];
@@ -136,7 +135,7 @@ const UploadOrEditQuiz = ({
 				...childData
 			}
 		];
-		console.log(dataCopy, 'dataCopy');
+
 		setQuestionSlides(dataCopy);
 	};
 
@@ -298,7 +297,8 @@ const UploadOrEditQuiz = ({
 
 	const createQuestion = async (id, mediaFiles, draft) => {
 		setPostButtonStatus(true);
-		console.log(mediaFiles, 'mediaFiles');
+		console.log('createQuestion', { questionSlides, mediaFiles });
+
 		let slidesData =
 			questionSlides?.length > 0
 				? questionSlides.map((item, index) => {
@@ -690,7 +690,6 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
-	console.log(draftBtnDisabled, 'dft');
 	//draftBtnDisabled button - whether you can click or not
 	//validateDraft - color grey or yellow
 	const handleDraftSave = async () => {

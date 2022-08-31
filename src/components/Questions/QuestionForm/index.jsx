@@ -96,7 +96,7 @@ const QuestionForm = ({
 					]
 			  }
 	);
-	// console.log('FORM', form)
+
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const imgRef = useRef(null);
@@ -182,10 +182,6 @@ const QuestionForm = ({
 	}, [fileRejections]);
 
 	const handleDeleteFile = (id) => {
-		console.log('handleDeleteFile', { id, item });
-		// setUploadedFiles((uploadedFiles) =>
-		// 	uploadedFiles.filter((file) => file.id !== id)
-		// );
 		setForm((prev) => {
 			return {
 				...prev,
@@ -312,6 +308,8 @@ const QuestionForm = ({
 			// sendDataToParent(uploadedFiles[0].file);
 		}
 	}, [initialData?.uploadedFiles]);
+
+	console.log({ initialData, form });
 
 	return (
 		<>
@@ -457,7 +455,6 @@ const QuestionForm = ({
 									: form.question
 							}
 							onChange={(e) => {
-								console.log(e, 'e');
 								setForm((prev) => {
 									return {
 										...prev,
