@@ -15,7 +15,7 @@ import checkFileSize from '../../../utils/validateFileSize';
 import Labels from '../../Labels';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import Typography from '@mui/material/Typography';
-import uploadFileToServer from '../../../utils/uploadFileToServer';
+// import uploadFileToServer from '../../../utils/uploadFileToServer';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { ReactComponent as Union } from '../../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
@@ -123,9 +123,9 @@ const QuestionForm = ({
 			validator: checkFileSize
 		});
 
-	const uploadedFile = async (newFiles) => {
-		return await uploadFileToServer(newFiles, 'articleLibrary');
-	};
+	// const uploadedFile = async (newFiles) => {
+	// 	return await uploadFileToServer(newFiles, 'articleLibrary');
+	// };
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
@@ -146,22 +146,30 @@ const QuestionForm = ({
 					height: fileHeight
 				};
 			});
-			uploadedFile(newFiles[0], 'questionLibrary').then((res) => {
-				setForm((prev) => {
-					return {
-						...prev,
-						uploadedFiles: [
-							{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
-						]
-					};
-				});
-				sendDataToParent({
-					uploadedFiles: [
-						{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
-					]
-				});
-				setLoading(false);
+			setForm((prev) => {
+				return {
+					...prev,
+					uploadedFiles: [...newFiles]
+				};
 			});
+
+			sendDataToParent(...newFiles);
+			// uploadedFile(newFiles[0], 'questionLibrary').then((res) => {
+			// 	setForm((prev) => {
+			// 		return {
+			// 			...prev,
+			// 			uploadedFiles: [
+			// 				{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
+			// 			]
+			// 		};
+			// 	});
+			// 	sendDataToParent({
+			// 		uploadedFiles: [
+			// 			{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
+			// 		]
+			// 	});
+			// 	setLoading(false);
+			// });
 		}
 	}, [acceptedFiles, fileHeight, fileWidth]);
 
@@ -188,6 +196,7 @@ const QuestionForm = ({
 	}, [fileRejections]);
 
 	const handleDeleteFile = (id) => {
+		console.log(id, 'handleDeleteFile');
 		// setUploadedFiles((uploadedFiles) =>
 		// 	uploadedFiles.filter((file) => file.id !== id)
 		// );
