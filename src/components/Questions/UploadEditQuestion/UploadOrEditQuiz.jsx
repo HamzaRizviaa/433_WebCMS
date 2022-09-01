@@ -127,7 +127,6 @@ const UploadOrEditQuiz = ({
 	}, [open]);
 
 	const setNewData = (childData, index) => {
-		console.log(childData, index, 'child data , new data');
 		// [ 0 : data [ {},{}] ]
 
 		let dataCopy = [...questionSlides];

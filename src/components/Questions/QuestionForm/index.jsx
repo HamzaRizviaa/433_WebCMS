@@ -132,6 +132,7 @@ const QuestionForm = ({
 					height: fileHeight
 				};
 			});
+
 			setForm((prev) => {
 				return {
 					...prev,
@@ -309,7 +310,10 @@ const QuestionForm = ({
 		}
 	}, [initialData?.uploadedFiles]);
 
-	console.log({ initialData, form });
+	const showImageInput = initialData
+		? initialData?.uploadedFiles?.length === 0 &&
+		  initialData?.data[0]?.uploadedFiles?.length === 0
+		: form?.uploadedFiles?.length === 0;
 
 	return (
 		<>
@@ -341,11 +345,7 @@ const QuestionForm = ({
 						}}
 					/>
 
-					{initialData?.uploadedFiles.length !== 0 ? (
-						''
-					) : form.uploadedFiles.length === 0 ||
-					  (initialData?.data[0]?.uploadedFiles.length === 0 &&
-							initialData?.uploadedFiles.length === 0) ? (
+					{showImageInput && (
 						<section
 							className={globalClasses.dropZoneContainer}
 							style={{
@@ -374,8 +374,6 @@ const QuestionForm = ({
 								</p>
 							</div>
 						</section>
-					) : (
-						''
 					)}
 
 					<p className={globalClasses.fileRejectionError}>
