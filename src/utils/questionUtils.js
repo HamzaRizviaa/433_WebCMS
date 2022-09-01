@@ -1,7 +1,5 @@
 export const checkEmptyQuestion = (question) => {
-	console.log(question, 'question');
 	const validateQuestion = question.map((item) => {
-		console.log(item, 'item in 1st');
 		if (item) {
 			return (
 				item?.uploadedFiles?.length > 0 &&
@@ -15,17 +13,12 @@ export const checkEmptyQuestion = (question) => {
 			return false;
 		}
 	});
-	console.log(validateQuestion, 'validateQuestion');
+
 	return validateQuestion.every((item) => item === true);
 };
 
 // compare main form data
 export const comparingFormFields = (specificQuestion, form) => {
-	console.log(
-		specificQuestion?.end_date,
-		form?.end_date,
-		'specificQuestion?.end_date === form?.end_date'
-	);
 	return specificQuestion?.end_date === form?.end_date;
 };
 
@@ -56,7 +49,7 @@ export const checkNewElementQuestion = (specificQuestion, question) => {
 			}
 		}
 	}
-	console.log(result, 'result');
+
 	return result.every((item) => item === true);
 };
 

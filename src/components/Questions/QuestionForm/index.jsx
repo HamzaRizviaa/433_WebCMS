@@ -96,7 +96,7 @@ const QuestionForm = ({
 					]
 			  }
 	);
-	// console.log('FORM', form)
+
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const imgRef = useRef(null);
@@ -132,6 +132,7 @@ const QuestionForm = ({
 					height: fileHeight
 				};
 			});
+
 			setForm((prev) => {
 				return {
 					...prev,
@@ -182,10 +183,6 @@ const QuestionForm = ({
 	}, [fileRejections]);
 
 	const handleDeleteFile = (id) => {
-		console.log('handleDeleteFile', { id, item });
-		// setUploadedFiles((uploadedFiles) =>
-		// 	uploadedFiles.filter((file) => file.id !== id)
-		// );
 		setForm((prev) => {
 			return {
 				...prev,
@@ -303,25 +300,6 @@ const QuestionForm = ({
 		}
 	};
 
-	// useEffect(() => {
-	// 	if (initialData && initialData?.uploadedFiles) {
-	// 		const uploadedFiles = initialData?.uploadedFiles.map((file, index) => ({
-	// 			...file,
-	// 			id: index
-	// 		}));
-	// 		sendDataToParent({ uploadedFiles });
-	// 		// sendDataToParent(uploadedFiles[0].file);
-	// 	}
-	// }, [initialData?.uploadedFiles]);
-	console.log(
-		//initialData ?  initialData?.uploadedFiles : form?.uploadedFiles
-		initialData,
-		initialData?.data,
-		//initialData?.data[0]?.uploadedFiles,
-		initialData?.uploadedFiles,
-		form?.uploadedFiles,
-		'uploaded files C O N D I T I O N'
-	);
 	return (
 		<>
 			{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
@@ -461,7 +439,6 @@ const QuestionForm = ({
 									: form.question
 							}
 							onChange={(e) => {
-								console.log(e, 'e');
 								setForm((prev) => {
 									return {
 										...prev,

@@ -120,6 +120,7 @@ const UploadOrEditQuiz = ({
 		});
 	};
 
+	console.log(questionSlides, 'DATA QSLIDES');
 	useEffect(() => {
 		handleNewSlide();
 	}, [open]);
@@ -316,7 +317,8 @@ const UploadOrEditQuiz = ({
 
 	const createQuestion = async (id, mediaFiles, draft) => {
 		setPostButtonStatus(true);
-		console.log(mediaFiles, 'mediaFiles');
+		console.log('createQuestion', { questionSlides, mediaFiles });
+
 		let slidesData =
 			questionSlides?.length > 0
 				? questionSlides.map((item, index) => {
@@ -541,12 +543,14 @@ const UploadOrEditQuiz = ({
 			!validateDraft(form, null, null, questionSlides) ||
 			!comparingFormFields(editQuestionData, form)
 		) {
+			console.log('1D');
 			setDraftBtnDisabled(
 				!validateEmptyQuestionArray.every((item) => item === true) ||
 					!validateDraft(form, null, null, questionSlides)
 			);
 		} else {
 			if (editQuestionData?.questions?.length !== questionSlides?.length) {
+				console.log('2D');
 				setDraftBtnDisabled(
 					!validateEmptyQuestionArray.every((item) => item === true)
 				);
@@ -611,19 +615,19 @@ const UploadOrEditQuiz = ({
 			);
 		} else {
 			if (editQuestionData?.questions?.length !== questionSlides?.length) {
+				console.log('2');
 				setEditQuizBtnDisabled(
 					!validateEmptyQuestionSlidesAndEditComparisonArray.every(
 						(item) => item === true
 					) || !validateEmptyQuestionArray.every((item) => item === true)
 				);
 			} else {
+				console.log('3');
 				setEditQuizBtnDisabled(
 					validateEmptyQuestionSlidesAndEditComparisonArray.every(
 						(item) => item === true
 					) || !validateEmptyQuestionArray.every((item) => item === true)
 				);
-
-				// setEditBtnDisabled(checkMediaUrlPublish(news));
 			}
 		}
 	}, [questionSlides]);
@@ -688,7 +692,6 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
-	console.log(draftBtnDisabled, 'dft');
 	//draftBtnDisabled button - whether you can click or not
 	//validateDraft - color grey or yellow
 	const handleDraftSave = async () => {
