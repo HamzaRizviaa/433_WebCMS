@@ -139,7 +139,7 @@ const QuestionForm = ({
 				};
 			});
 
-			sendDataToParent(...newFiles);
+			sendDataToParent({ uploadedFiles: [...newFiles] });
 			// uploadedFile(newFiles[0], 'questionLibrary').then((res) => {
 			// 	setForm((prev) => {
 			// 		return {
@@ -281,14 +281,15 @@ const QuestionForm = ({
 		} else {
 			// This block of code will only be executed if the question is in draft
 			// Then only the question answers will be editable
-			const isAnswersEdited = initialData.data && initialData.data[0].answers;
+			const isAnswersEdited =
+				initialData?.data && initialData?.data[0]?.answers;
 			const answers = [
-				...(isAnswersEdited ? initialData.data[0].answers : [...form.answers])
+				...(isAnswersEdited ? initialData?.data[0]?.answers : [...form.answers])
 			];
 
 			answers[index] = {
 				answer: event.target.value,
-				position: index,
+				position: index + 1,
 				type:
 					type === 'quiz' && index === 0
 						? 'right_answer'
@@ -302,19 +303,25 @@ const QuestionForm = ({
 		}
 	};
 
-	useEffect(() => {
-		if (initialData && initialData?.uploadedFiles) {
-			const uploadedFiles = initialData?.uploadedFiles.map((file, index) => ({
-				...file,
-				id: index
-			}));
-			sendDataToParent({ uploadedFiles });
-			// sendDataToParent(uploadedFiles[0].file);
-		}
-	}, [initialData?.uploadedFiles]);
-
-	console.log(initialData, 'initialDatainitialDatainitialDatainitialData');
-
+	// useEffect(() => {
+	// 	if (initialData && initialData?.uploadedFiles) {
+	// 		const uploadedFiles = initialData?.uploadedFiles.map((file, index) => ({
+	// 			...file,
+	// 			id: index
+	// 		}));
+	// 		sendDataToParent({ uploadedFiles });
+	// 		// sendDataToParent(uploadedFiles[0].file);
+	// 	}
+	// }, [initialData?.uploadedFiles]);
+	console.log(
+		//initialData ?  initialData?.uploadedFiles : form?.uploadedFiles
+		initialData,
+		initialData?.data,
+		//initialData?.data[0]?.uploadedFiles,
+		initialData?.uploadedFiles,
+		form?.uploadedFiles,
+		'uploaded files C O N D I T I O N'
+	);
 	return (
 		<>
 			{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
@@ -326,10 +333,8 @@ const QuestionForm = ({
 					<DragAndDropField
 						uploadedFiles={
 							//initialData ?  initialData?.uploadedFiles : form?.uploadedFiles
-							initialData
-								? initialData?.data
-									? initialData?.data[0]?.uploadedFiles
-									: initialData?.uploadedFiles
+							initialData?.data
+								? initialData?.uploadedFiles
 								: form?.uploadedFiles
 						}
 						quizPollStatus={status}
@@ -345,11 +350,8 @@ const QuestionForm = ({
 							setFileHeight(imgRef.current.naturalHeight);
 						}}
 					/>
-
-					{initialData?.uploadedFiles.length !== 0 ? (
-						''
-					) : form.uploadedFiles.length === 0 ||
-					  initialData?.uploadedFiles.length === 0 ? (
+					{(isEdit && initialData?.uploadedFiles?.length === 0) ||
+					form?.uploadedFiles?.length === 0 ? (
 						<section
 							className={globalClasses.dropZoneContainer}
 							style={{
@@ -379,7 +381,7 @@ const QuestionForm = ({
 							</div>
 						</section>
 					) : (
-						''
+						<></>
 					)}
 
 					<p className={globalClasses.fileRejectionError}>

@@ -67,6 +67,8 @@ export default function QuizResults({
 	const dispatch = useDispatch();
 	const articleQuestion = useStyles();
 
+	console.log(initialData, ' 000000000 data initial 0-0000000');
+
 	useEffect(() => {
 		if (initialData?.id) {
 			getQuestionResultDetail(initialData?.id);

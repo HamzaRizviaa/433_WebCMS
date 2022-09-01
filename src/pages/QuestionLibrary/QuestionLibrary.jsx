@@ -418,7 +418,7 @@ const QuestionLibrary = () => {
 				row.question_type === 'quiz'
 					? setShowQuizSlider(true)
 					: setShowPollSlider(true);
-			} else if (rowLocation === 'homepage') {
+			} else {
 				showEditSlider(true);
 			}
 		}

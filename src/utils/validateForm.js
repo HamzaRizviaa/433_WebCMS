@@ -91,7 +91,6 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 	} else if (newsData?.length === 0) {
 		validateNews = false;
 	}
-	console.log(quesData, '===== quesData===== ');
 
 	//question validate
 	var validateQuestion = true;
@@ -99,7 +98,7 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 		validateQuestion = quesData.every((item) => {
 			if (item?.data) {
 				return (
-					item?.data[0]?.media_url &&
+					item?.data[0]?.uploadedFiles?.length > 0 &&
 					item?.data[0]?.question &&
 					item?.data[0]?.labels?.length > 6 &&
 					(item?.data[0]?.answers?.length > 1
@@ -111,7 +110,6 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 	} else if (quesData?.length === 0) {
 		validateQuestion = false;
 	}
-	console.log(validateQuestion, 'upload');
 
 	var finalFormValue =
 		validate.every((item) => item === true) &&

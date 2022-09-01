@@ -64,7 +64,6 @@ const UploadOrEditQuiz = ({
 	const [calenderOpen, setCalenderOpen] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
-	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
 	const [editQuizBtnDisabled, setEditQuizBtnDisabled] = useState(false);
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
@@ -126,17 +125,16 @@ const UploadOrEditQuiz = ({
 	}, [open]);
 
 	const setNewData = (childData, index) => {
-		console.log(childData, index, 'child data , new data');
 		// [ 0 : data [ {},{}] ]
 
 		let dataCopy = [...questionSlides];
 		dataCopy[index].data = [
 			{
-				...(dataCopy[index]?.data?.length ? dataCopy[index]?.data[0] : {}),
+				...(dataCopy[index]?.data ? dataCopy[index]?.data[0] : {}),
 				...childData
 			}
 		];
-		console.log(dataCopy, 'dataCopy');
+
 		setQuestionSlides(dataCopy);
 	};
 
@@ -156,11 +154,12 @@ const UploadOrEditQuiz = ({
 					if (index === i) {
 						const newItem = {
 							...item,
-							uploadedFiles: [],
 							data: [
 								{
 									...item.data[0],
-									uploadedFiles: []
+									uploadedFiles: [],
+									file_name: '',
+									image: ''
 								}
 							]
 						};
@@ -269,37 +268,39 @@ const UploadOrEditQuiz = ({
 				end_date: end_date,
 				sortOrder: position,
 				id: id,
-				// data: [
-				// 	{
-				// 		uploadedFiles: rest?.image
-				// 			? [
-				// 					{
-				// 						media_url:
-				// 							`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest?.image}` ||
-				// 							undefined,
-				// 						file_name: rest?.file_name,
-				// 						width: rest?.width,
-				// 						height: rest?.height
-				// 					}
-				// 			  ]
-				// 			: undefined
-				// 	}
-				// ],
-				uploadedFiles: rest?.image
-					? [
-							{
-								media_url:
-									`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest?.image}` ||
-									undefined,
-								file_name: rest?.file_name,
-								width: rest?.width,
-								height: rest?.height
-							}
-					  ]
-					: undefined,
+				data: [
+					{
+						...rest,
+						id: id,
+						labels: updateLabelsFromAPI(rest?.labels),
+						uploadedFiles: rest?.image
+							? [
+									{
+										media_url:
+											`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest?.image}` ||
+											undefined,
+										file_name: rest?.file_name,
+										width: rest?.width,
+										height: rest?.height
+									}
+							  ]
+							: undefined
+					}
+				]
+				// uploadedFiles: rest?.image
+				// 	? [
+				// 			{
+				// 				media_url:
+				// 					`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest?.image}` ||
+				// 					undefined,
+				// 				file_name: rest?.file_name,
+				// 				width: rest?.width,
+				// 				height: rest?.height
+				// 			}
+				// 	  ]
+				// 	: undefined,
 
-				...rest,
-				labels: updateLabelsFromAPI(rest?.labels)
+				// ...rest,
 			};
 		});
 
@@ -531,12 +532,11 @@ const UploadOrEditQuiz = ({
 		const validateEmptyQuestionArray = [
 			checkEmptyQuestionDraft(questionSlides)
 		];
-		console.log(validateEmptyQuestionArray, 'DRAFT 1');
 
 		const validateEmptyQuestionAndEditComparisonArray = [
 			checkNewElementQuestionDraft(editQuestionData, questionSlides)
 		];
-		console.log(validateEmptyQuestionAndEditComparisonArray, 'DRAFT 2');
+
 		if (
 			!validateDraft(form, null, null, questionSlides) ||
 			!comparingFormFields(editQuestionData, form)
@@ -557,12 +557,10 @@ const UploadOrEditQuiz = ({
 					) ||
 					!validateEmptyQuestionArray.every((item) => item === true)
 				) {
-					console.log('3rd');
 					setDraftBtnDisabled(
 						!checkSortOrderOnEdit(editQuestionData, questionSlides)
 					);
 				} else {
-					console.log('4th');
 					setDraftBtnDisabled(
 						validateEmptyQuestionAndEditComparisonArray.every(
 							(item) => item === true
@@ -587,11 +585,7 @@ const UploadOrEditQuiz = ({
 			);
 		}
 	}, [editQuestionData, form, convertedDate]);
-	console.log(
-		editQuizBtnDisabled,
-		draftBtnDisabled,
-		'======= edit Disabled , draft ======='
-	);
+
 	console.log(questionSlides, '======= questionSlides =======');
 	useEffect(() => {
 		//empty questionSlides
@@ -599,34 +593,23 @@ const UploadOrEditQuiz = ({
 			checkEmptyQuestion(questionSlides),
 			questionSlides?.length !== 0
 		];
-		console.log(validateEmptyQuestionArray, 'empty 1st');
 
 		//check question slides is zero , and edit data from api
 		const validateEmptyQuestionSlidesAndEditComparisonArray = [
 			checkNewElementQuestion(editQuestionData, questionSlides),
 			questionSlides?.length !== 0
 		];
-		console.log(
-			validateEmptyQuestionSlidesAndEditComparisonArray,
-			'compare 2nd'
-		);
-		console.log(
-			!validateForm(form, null, null, questionSlides),
-			!comparingFormFields(editQuestionData, form)
-		);
 
 		//validate form OR compare generalInformation form
 		if (
 			!validateForm(form, null, null, questionSlides) &&
 			!comparingFormFields(editQuestionData, form)
 		) {
-			console.log('if');
 			setEditQuizBtnDisabled(
 				!validateEmptyQuestionArray.every((item) => item === true) ||
 					!validateForm(form, null, null, questionSlides)
 			);
 		} else {
-			console.log('else');
 			if (editQuestionData?.questions?.length !== questionSlides?.length) {
 				setEditQuizBtnDisabled(
 					!validateEmptyQuestionSlidesAndEditComparisonArray.every(
@@ -648,27 +631,25 @@ const UploadOrEditQuiz = ({
 	//editQuizBtnDisabled button - whether you can click or not
 	//!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')
 	const handlePostQuizPollBtn = () => {
-		if (
-			!validateForm(form, null, null, questionSlides) ||
-			(editQuizBtnDisabled && status === 'ACTIVE')
-		) {
+		if (!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')) {
 			validatePostBtn();
 		} else {
+			setIsLoading(true);
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
-			setIsLoadingcreateViral(true);
+
 			if (isEdit) {
-				let images = questionSlides?.map(async (item) => {
+				let images = questionSlides?.map(async (item, index) => {
 					let quesData;
-					if (item?.data[0]?.file) {
+					if (item?.data[index]?.file) {
 						quesData = await uploadFileToServer(
-							item?.data[0],
+							item?.data[index]?.uploadedFiles[0],
 							'questionlibrary'
 						);
 
 						return quesData;
 					} else {
-						quesData = item?.data[0];
+						quesData = item?.data[index]?.uploadedFiles[0];
 						return quesData;
 					}
 				});
@@ -681,9 +662,9 @@ const UploadOrEditQuiz = ({
 						setIsLoading(false);
 					});
 			} else {
-				let images = questionSlides?.map(async (item) => {
+				let images = questionSlides?.map(async (item, index) => {
 					let quesData = await uploadFileToServer(
-						item?.data[0],
+						item?.data[index]?.uploadedFiles[0],
 						'questionlibrary'
 					);
 					return quesData;
@@ -712,24 +693,24 @@ const UploadOrEditQuiz = ({
 	//validateDraft - color grey or yellow
 	const handleDraftSave = async () => {
 		if (!validateDraft(form) || draftBtnDisabled) {
-			console.log('alaba');
 			validateDraftBtn();
 		} else {
+			setIsLoading(true);
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
-			setIsLoadingcreateViral(true);
+
 			if (isEdit) {
-				let images = questionSlides?.map(async (item) => {
+				let images = questionSlides?.map(async (item, index) => {
 					let quesData;
-					if (item?.data[0]?.file) {
+					if (item?.data[index]?.uploadedFiles[0]?.file) {
 						quesData = await uploadFileToServer(
-							item?.data[0],
+							item?.data[index]?.uploadedFiles[0],
 							'questionlibrary'
 						);
 
 						return quesData;
 					} else {
-						quesData = item?.data[0];
+						quesData = item?.data[index]?.uploadedFiles[0];
 						return quesData;
 					}
 				});
@@ -741,16 +722,10 @@ const UploadOrEditQuiz = ({
 					.catch(() => {
 						setIsLoading(false);
 					});
-				// try {
-				// 	createQuestion(editQuestionData?.id, true);
-				// } catch (err) {
-				// 	setIsLoadingcreateViral(false);
-				// 	console.log(err);
-				// }
 			} else {
-				let images = questionSlides?.map(async (item) => {
+				let images = questionSlides?.map(async (item, index) => {
 					let quesData = await uploadFileToServer(
-						item?.data[0],
+						item?.data[index]?.uploadedFiles[0],
 						'questionlibrary'
 					);
 					return quesData;
@@ -843,7 +818,7 @@ const UploadOrEditQuiz = ({
 													setPreviewBool={setPreviewBool}
 													setPreviewFile={setPreviewFile}
 													setDisableDropdown={setDisableDropdown}
-													initialData={item}
+													initialData={isEdit && item?.data && item?.data[0]}
 												/>
 											</>
 										);
@@ -957,7 +932,9 @@ const UploadOrEditQuiz = ({
 															handleDeleteQuestionSlide={(sortOrder) =>
 																handleElementDelete(sortOrder)
 															}
-															initialData={isEdit && item} // passing data to child
+															initialData={
+																isEdit && item?.data && item?.data[0]
+															} // passing data to child
 															setPreviewFile={setPreviewFile}
 															setPreviewBool={setPreviewBool}
 															setDisableDropdown={setDisableDropdown}
@@ -1109,21 +1086,25 @@ const UploadOrEditQuiz = ({
 																: 'SAVE CHANGES'
 														}
 														disabled={
-															isEdit && status === 'ACTIVE'
-																? editQuizBtnDisabled
-																: !validateForm(
+															// ? true
+															// : !validateForm(
+															// 		form,
+															// 		null,
+															// 		null,
+															// 		questionSlides
+															//   )
+															isEdit &&
+															validateForm(form, null, null, questionSlides) &&
+															status === 'draft'
+																? false
+																: !isEdit
+																? !validateForm(
 																		form,
 																		null,
 																		null,
 																		questionSlides
 																  )
-															// (isEdit) &&
-															// validateForm(form) &&
-															// status === 'draft'
-															// 	? false
-															// 	: !(isEdit)
-															// 	? !validateForm(form)
-															// 	: editQuizBtnDisabled
+																: editQuizBtnDisabled
 														}
 														onClick={() => {
 															handlePostQuizPollBtn();
