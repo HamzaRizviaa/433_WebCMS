@@ -126,8 +126,6 @@ const UploadOrEditQuiz = ({
 	}, [open]);
 
 	const setNewData = (childData, index) => {
-		// [ 0 : data [ {},{}] ]
-
 		let dataCopy = [...questionSlides];
 		dataCopy[index].data = [
 			{
@@ -317,7 +315,6 @@ const UploadOrEditQuiz = ({
 
 	const createQuestion = async (id, mediaFiles, draft) => {
 		setPostButtonStatus(true);
-		console.log('createQuestion', { questionSlides, mediaFiles });
 
 		let slidesData =
 			questionSlides?.length > 0
@@ -332,10 +329,10 @@ const UploadOrEditQuiz = ({
 						return {
 							height: item?.data[0] ? item?.data[0]?.height : 0,
 							width: item?.data[0] ? item?.data[0]?.width : 0,
-							file_name: mediaFiles ? mediaFiles[0]?.file_name : '',
+							file_name: mediaFiles ? mediaFiles[index]?.file_name : '',
 							image: mediaFiles
-								? mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
-								  mediaFiles[0]?.media_url
+								? mediaFiles[index]?.media_url?.split('cloudfront.net/')[1] ||
+								  mediaFiles[index]?.media_url
 								: '',
 							labels: item.data[0]?.labels || item.labels || [],
 							answers: item.data[0]?.answers || item.answers,
@@ -590,7 +587,6 @@ const UploadOrEditQuiz = ({
 		}
 	}, [editQuestionData, form, convertedDate]);
 
-	console.log(questionSlides, '======= questionSlides =======');
 	useEffect(() => {
 		//empty questionSlides
 		const validateEmptyQuestionArray = [
@@ -666,9 +662,9 @@ const UploadOrEditQuiz = ({
 						setIsLoading(false);
 					});
 			} else {
-				let images = questionSlides?.map(async (item, index) => {
+				let images = questionSlides?.map(async (item) => {
 					let quesData = await uploadFileToServer(
-						item?.data[index]?.uploadedFiles[0],
+						item?.data[0]?.uploadedFiles[0],
 						'questionlibrary'
 					);
 					return quesData;
@@ -681,13 +677,6 @@ const UploadOrEditQuiz = ({
 					.catch(() => {
 						setIsLoading(false);
 					});
-
-				// try {
-				// 	createQuestion(null, false);
-				// } catch (err) {
-				// 	setIsLoadingcreateViral(false);
-				// 	console.log(err);
-				// }
 			}
 		}
 	};
@@ -741,12 +730,6 @@ const UploadOrEditQuiz = ({
 					.catch(() => {
 						setIsLoading(false);
 					});
-				// try {
-				// 	createQuestion(null, true);
-				// } catch (err) {
-				// 	setIsLoadingcreateViral(false);
-				// 	console.log(err);
-				// }
 			}
 		}
 	};
