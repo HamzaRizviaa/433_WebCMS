@@ -5,8 +5,6 @@ import { useStyles } from '../index.style';
 const QuestionPoll = ({ data }) => {
 	const classes = useStyles();
 
-	console.log('data Questions', data);
-
 	return (
 		<div>
 			<div
