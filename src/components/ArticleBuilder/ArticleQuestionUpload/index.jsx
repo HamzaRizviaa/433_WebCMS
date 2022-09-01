@@ -220,7 +220,7 @@ const ArticleQuestionUpload = ({
 					type === 'quiz' && index === 0
 						? 'right_answer'
 						: type === 'quiz' && index === 1
-						? 'wrong_answer'
+						? 'wrong_answer_1'
 						: 'poll'
 			};
 			setForm(formCopy);
@@ -235,7 +235,7 @@ const ArticleQuestionUpload = ({
 					type === 'quiz' && index === 0
 						? 'right_answer'
 						: type === 'quiz' && index === 1
-						? 'wrong_answer'
+						? 'wrong_answer_1'
 						: 'poll'
 			};
 			setForm(formCopy);
