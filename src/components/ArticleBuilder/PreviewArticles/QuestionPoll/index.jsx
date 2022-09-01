@@ -5,14 +5,18 @@ import { useStyles } from '../index.style';
 const QuestionPoll = ({ data }) => {
 	const classes = useStyles();
 
+	console.log('data Questions', data);
+
 	return (
 		<div>
 			<div
 				className={classes.questionDraggable}
 				style={{
 					backgroundImage: `url(${
-						data?.data?.previewImage?.length > 0 &&
-						data?.data?.previewImage[0]?.media_url
+						data?.data?.previewImage?.length > 0
+							? data?.data?.previewImage[0]?.media_url
+							: data?.data?.uploadedFiles?.length &&
+							  data?.data?.uploadedFiles[0].media_url
 					})`
 				}}
 			>
