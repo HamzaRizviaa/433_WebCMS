@@ -1442,7 +1442,23 @@ const UploadOrEditArticle = ({
 			setIsLoading(true);
 
 			if (isEdit) {
-				if (specificArticle?.title?.trim() !== form.title?.trim()) {
+				if (
+					specificArticle?.title?.trim() !== form.title?.trim() &&
+					status === 'published'
+				) {
+					if (
+						(await handleTitleDuplicate(form.title)) ===
+						'The Title Already Exist'
+					) {
+						setIsError({ articleTitleExists: 'This title already exists' });
+						setTimeout(() => {
+							setIsError({});
+						}, [5000]);
+
+						setPostButtonStatus(false);
+						return;
+					}
+				} else if (status === 'draft') {
 					if (
 						(await handleTitleDuplicate(form.title)) ===
 						'The Title Already Exist'
