@@ -1460,7 +1460,6 @@ const UploadOrEditArticle = ({
 						return;
 					}
 				} else if (status === 'draft') {
-					console.log('lalal');
 					if (
 						(await handleTitleDuplicate(form.title)) ===
 						'The Title Already Exist'
