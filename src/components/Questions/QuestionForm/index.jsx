@@ -44,6 +44,7 @@ const QuestionForm = ({
 	const [fileHeight, setFileHeight] = useState(0);
 	const [isError, setIsError] = useState({});
 	const [loading, setLoading] = useState(false);
+	console.log(initialData, 'id');
 	const [form, setForm] = useState(
 		initialData
 			? {
@@ -186,7 +187,7 @@ const QuestionForm = ({
 		setForm((prev) => {
 			return {
 				...prev,
-				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
+				uploadedFiles: form.uploadedFiles?.filter((file) => file.id !== id)
 			};
 		});
 		handleDeleteMedia(item?.data);
@@ -198,7 +199,7 @@ const QuestionForm = ({
 
 	useEffect(() => {
 		setQuizLabels((labels) => {
-			return labels.filter((label) => label.id != null);
+			return labels?.filter((label) => label.id != null);
 		});
 		if (extraLabel) {
 			let flag = quizLabels.some((label) => label.name == extraLabel);
@@ -241,7 +242,7 @@ const QuestionForm = ({
 			setForm((prev) => {
 				return {
 					...prev,
-					answers: dataCopy?.answers.filter((val, ind) => {
+					answers: dataCopy?.answers?.filter((val, ind) => {
 						return ind !== index;
 					})
 				};
@@ -251,7 +252,7 @@ const QuestionForm = ({
 			// 	answer: ''
 			// };
 			let answers = {
-				answers: formCopy?.answers.filter((val, ind) => {
+				answers: formCopy?.answers?.filter((val, ind) => {
 					return ind !== index;
 				})
 			};
@@ -278,13 +279,30 @@ const QuestionForm = ({
 		} else {
 			// This block of code will only be executed if the question is in draft
 			// Then only the question answers will be editable
-			const isAnswersEdited =
-				initialData?.data && initialData?.data[0]?.answers;
-			const answers = [
-				...(isAnswersEdited ? initialData?.data[0]?.answers : [...form.answers])
-			];
 
-			answers[index] = {
+			// const isAnswersEdited = initialData?.data;
+			// const answers = [
+			// 	...(isAnswersEdited ? initialData?.data[0]?.answers : [...form.answers])
+			// ];
+
+			// console.log(answers, 'anss');
+			// answers[index] = {
+			// 	answer: event.target.value,
+			// 	position: index + 1,
+			// 	type:
+			// 		type === 'quiz' && index === 0
+			// 			? 'right_answer'
+			// 			: type === 'quiz' && index > 0
+			// 			? 'wrong_answer_' + index
+			// 			: 'poll'
+			// };
+
+			// setForm({ ...form, answers });
+			// sendDataToParent({ answers });
+
+			const formCopy = { ...form };
+			formCopy.answers[index] = {
+				...formCopy.answers[index],
 				answer: event.target.value,
 				position: index + 1,
 				type:
@@ -294,9 +312,9 @@ const QuestionForm = ({
 						? 'wrong_answer_' + index
 						: 'poll'
 			};
-
-			setForm({ ...form, answers });
-			sendDataToParent({ answers });
+			setForm(formCopy);
+			let answers = { answers: formCopy.answers };
+			sendDataToParent(answers);
 		}
 	};
 

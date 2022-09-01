@@ -67,8 +67,6 @@ export default function QuizResults({
 	const dispatch = useDispatch();
 	const articleQuestion = useStyles();
 
-	console.log(initialData, ' 000000000 data initial 0-0000000');
-
 	useEffect(() => {
 		if (initialData?.id) {
 			getQuestionResultDetail(initialData?.id);
@@ -319,7 +317,6 @@ export default function QuizResults({
 			</div>
 			{answers?.length > 0 &&
 				answers.map((data, index) => {
-					//console.log(data, editQuestionResultDetail, 'data in quiz sliders');
 					return (
 						<div className={classes.QuizDetailsProgressBars} key={index}>
 							<div className={classes.progressBars}>

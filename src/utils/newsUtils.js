@@ -1,5 +1,4 @@
 export const checkEmptyMediaNews = (news) => {
-	console.log(news, 'news');
 	const validateNews = news.map((item) => {
 		if (item?.data) {
 			return !item?.data[0]?.media_url ? false : true;
@@ -7,7 +6,7 @@ export const checkEmptyMediaNews = (news) => {
 			return false;
 		}
 	});
-	console.log(validateNews, 'validateNews');
+
 	return validateNews.every((item) => item === true);
 }; //mandatory
 

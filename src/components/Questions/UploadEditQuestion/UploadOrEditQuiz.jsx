@@ -184,7 +184,7 @@ const UploadOrEditQuiz = ({
 			var da = new Date(form.end_date);
 			var toSend = `${da?.getFullYear()}-${('0' + (da?.getMonth() + 1)).slice(
 				-2
-			)}-${('0' + da?.getDate()).slice(-2)}`;
+			)}-${('0' + da?.getDate()).slice(-2)}T00:00:00.000Z`;
 			setConvertedDate(toSend);
 		}
 	}, [form.end_date]);
@@ -519,13 +519,13 @@ const UploadOrEditQuiz = ({
 		if (editQuestionData) {
 			setDraftBtnDisabled(
 				!validateDraft(form, null, null, questionSlides) ||
-					comparingFormFields(editQuestionData, form)
+					comparingFormFields(editQuestionData, convertedDate)
 				// &&
 				// editQuestionData?.labels?.length === questionSlides?.labels.length &&
 				// 	!checkDuplicateLabel(form, editQuestionData)
 			);
 		}
-	}, [editQuestionData, form]);
+	}, [editQuestionData, form, convertedDate]);
 
 	useEffect(() => {
 		const validateEmptyQuestionArray = [
@@ -538,7 +538,7 @@ const UploadOrEditQuiz = ({
 
 		if (
 			!validateDraft(form, null, null, questionSlides) ||
-			!comparingFormFields(editQuestionData, form)
+			!comparingFormFields(editQuestionData, convertedDate)
 		) {
 			console.log('1D');
 			setDraftBtnDisabled(
@@ -579,10 +579,11 @@ const UploadOrEditQuiz = ({
 				questionSlides?.length !== 0
 			];
 
+			console.log(validateEmptyQuestionArray, 'cf');
 			setEditQuizBtnDisabled(
 				!validateForm(form, null, null, questionSlides) ||
 					!validateEmptyQuestionArray.every((item) => item === true) ||
-					comparingFormFields(editQuestionData, form)
+					comparingFormFields(editQuestionData, convertedDate)
 			);
 		}
 	}, [editQuestionData, form, convertedDate]);
@@ -603,7 +604,7 @@ const UploadOrEditQuiz = ({
 		//validate form OR compare generalInformation form
 		if (
 			!validateForm(form, null, null, questionSlides) &&
-			!comparingFormFields(editQuestionData, form)
+			!comparingFormFields(editQuestionData, convertedDate)
 		) {
 			setEditQuizBtnDisabled(
 				!validateEmptyQuestionArray.every((item) => item === true) ||

@@ -1,12 +1,12 @@
 export const checkEmptyQuestion = (question) => {
 	const validateQuestion = question.map((item) => {
-		if (item) {
+		if (item?.data) {
 			return (
-				item?.uploadedFiles?.length > 0 &&
-				item?.question &&
-				item?.labels?.length > 6 &&
-				(item?.answers?.length > 1
-					? item?.answers.every((item) => item?.answer !== '')
+				item?.data[0]?.uploadedFiles?.length > 0 &&
+				item?.data[0]?.question &&
+				item?.data[0]?.labels?.length > 6 &&
+				(item?.data[0]?.answers?.length > 1
+					? item?.data[0]?.answers.every((item) => item?.answer !== '')
 					: false)
 			);
 		} else {
@@ -18,8 +18,8 @@ export const checkEmptyQuestion = (question) => {
 };
 
 // compare main form data
-export const comparingFormFields = (specificQuestion, form) => {
-	return specificQuestion?.end_date === form?.end_date;
+export const comparingFormFields = (specificQuestion, convertedDate) => {
+	return specificQuestion?.end_date === convertedDate;
 };
 
 // compare api data and new data
@@ -32,10 +32,10 @@ export const checkNewElementQuestion = (specificQuestion, question) => {
 			if (specificQuestion?.questions?.length === question?.length) {
 				if (question[i]?.data?.length) {
 					if (
-						// question[i]?.uploadedFiles[0]?.file_name ===
-						// 	specificQuestion?.questions[i]?.file_name &&
+						question[i]?.data[0]?.uploadedFiles[0]?.file_name ===
+							specificQuestion?.questions[i]?.file_name &&
 						question[i]?.data[0]?.dropbox_url ===
-						specificQuestion?.questions[i]?.dropbox_url
+							specificQuestion?.questions[i]?.dropbox_url
 					) {
 						result.push(true);
 					} else {
