@@ -325,6 +325,7 @@ const QuestionForm = ({
 				<div>
 					<DragAndDropField
 						uploadedFiles={
+							//initialData ?  initialData?.uploadedFiles : form?.uploadedFiles
 							initialData
 								? initialData?.data
 									? initialData?.data[0]?.uploadedFiles

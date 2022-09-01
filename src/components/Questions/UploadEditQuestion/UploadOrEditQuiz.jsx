@@ -263,13 +263,28 @@ const UploadOrEditQuiz = ({
 	};
 
 	const updateDataFromAPI = (apiData, question_type, end_date) => {
-		let modifiedData = apiData?.map((rest) => {
+		let modifiedData = apiData?.map(({ id, position, ...rest }) => {
 			return {
 				question_type: question_type,
 				end_date: end_date,
-				sortOrder: rest?.position,
-				id: rest?.id,
-				...rest,
+				sortOrder: position,
+				id: id,
+				// data: [
+				// 	{
+				// 		uploadedFiles: rest?.image
+				// 			? [
+				// 					{
+				// 						media_url:
+				// 							`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest?.image}` ||
+				// 							undefined,
+				// 						file_name: rest?.file_name,
+				// 						width: rest?.width,
+				// 						height: rest?.height
+				// 					}
+				// 			  ]
+				// 			: undefined
+				// 	}
+				// ],
 				uploadedFiles: rest?.image
 					? [
 							{
@@ -282,6 +297,8 @@ const UploadOrEditQuiz = ({
 							}
 					  ]
 					: undefined,
+
+				...rest,
 				labels: updateLabelsFromAPI(rest?.labels)
 			};
 		});
