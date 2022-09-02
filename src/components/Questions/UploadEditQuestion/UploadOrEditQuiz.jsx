@@ -349,7 +349,7 @@ const UploadOrEditQuiz = ({
 
 	const deleteQuiz = async (id, draft, qtype) => {
 		if (!editQuestionData) return;
-		const question_ids = editQuestionData.questions?.map((q) => q.id) || [];
+		const questions_ids = editQuestionData.questions?.map((q) => q.id) || [];
 
 		setDeleteBtnStatus(true);
 		try {
@@ -357,7 +357,7 @@ const UploadOrEditQuiz = ({
 				`${process.env.REACT_APP_API_ENDPOINT}/question/delete-question`,
 				{
 					question_meta_id: editQuestionData.id,
-					question_ids,
+					questions_ids,
 					is_draft: draft
 				},
 				{
@@ -570,7 +570,7 @@ const UploadOrEditQuiz = ({
 				handlePreview={() => {
 					handlePreviewEscape();
 				}}
-				notifID={ status === 'CLOSED' ? '' : notifID }
+				notifID={status === 'CLOSED' ? '' : notifID}
 			>
 				<LoadingOverlay
 					active={isLoading}
