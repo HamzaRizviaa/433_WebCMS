@@ -157,7 +157,7 @@ const DraggableContainers = ({
 																	setPreviewBool={setPreviewBool}
 																	setDisableDropdown={setDisableDropdown}
 																	sendDataToParent={(data) =>
-																		sendDataToParent(data, index)
+																		sendDataToParent(data)
 																	}
 																	handleDeleteMedia={(data) =>
 																		handleDeleteMedia(data, index)

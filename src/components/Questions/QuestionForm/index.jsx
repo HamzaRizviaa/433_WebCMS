@@ -249,12 +249,11 @@ const QuestionForm = ({
 			// Then only the question answers will be editable
 
 			const answers = [
-				...(initialData?.data && initialData?.answers?.length > 0
+				...(initialData?.answers?.length > 0
 					? initialData?.answers
 					: [...form.answers])
 			];
 
-			console.log(answers, 'anss');
 			// answers[index] = {
 			// 	answer: event.target.value,
 			// 	position: index + 1,
@@ -277,9 +276,8 @@ const QuestionForm = ({
 						: 'poll'
 			};
 
-			console.log('answers', answers);
 			setForm({ ...form, answers });
-			console.log(form, 'form');
+
 			sendDataToParent({ answers });
 			// sendDataToParent(answers);
 		}
@@ -557,7 +555,9 @@ const QuestionForm = ({
 						<Labels
 							isEdit={isEdit}
 							setDisableDropdown={setDisableDropdown}
-							selectedLabels={initialData ? initialData?.labels : form.labels}
+							selectedLabels={
+								initialData?.labels ? initialData?.labels : form.labels
+							}
 							setSelectedLabels={(newVal) => {
 								setForm((prev) => {
 									return { ...prev, labels: [...newVal] };
