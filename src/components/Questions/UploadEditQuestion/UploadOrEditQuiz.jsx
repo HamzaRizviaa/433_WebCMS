@@ -120,12 +120,12 @@ const UploadOrEditQuiz = ({
 		});
 	};
 
-	console.log(questionSlides, 'DATA QSLIDES');
 	useEffect(() => {
 		handleNewSlide();
 	}, [open]);
 
 	const setNewData = (childData, index) => {
+		console.log(questionSlides, childData, 'questionSlides');
 		let dataCopy = [...questionSlides];
 		dataCopy[index].data = [
 			{
@@ -315,7 +315,7 @@ const UploadOrEditQuiz = ({
 
 	const createQuestion = async (id, mediaFiles, draft) => {
 		setPostButtonStatus(true);
-
+		console.log(mediaFiles, 'mediaFiles');
 		let slidesData =
 			questionSlides?.length > 0
 				? questionSlides.map((item, index) => {
@@ -687,6 +687,7 @@ const UploadOrEditQuiz = ({
 	const handleDraftSave = async () => {
 		if (!validateDraft(form) || draftBtnDisabled) {
 			validateDraftBtn();
+			console.log('if validate');
 		} else {
 			setIsLoading(true);
 			setPostButtonStatus(true);
@@ -694,8 +695,12 @@ const UploadOrEditQuiz = ({
 
 			if (isEdit) {
 				let images = questionSlides?.map(async (item, index) => {
+					console.log(item, 'item');
 					let quesData;
-					if (item?.data[index]?.uploadedFiles[0]?.file) {
+					if (
+						item?.data[index]?.uploadedFiles?.length > 0 &&
+						item?.data[index]?.uploadedFiles[0]?.file
+					) {
 						quesData = await uploadFileToServer(
 							item?.data[index]?.uploadedFiles[0],
 							'questionlibrary'
@@ -707,7 +712,7 @@ const UploadOrEditQuiz = ({
 						return quesData;
 					}
 				});
-
+				console.log(' create draft', questionSlides, images);
 				Promise.all([...images])
 					.then((mediaFiles) => {
 						createQuestion(editQuestionData?.id, mediaFiles, true);
@@ -716,13 +721,15 @@ const UploadOrEditQuiz = ({
 						setIsLoading(false);
 					});
 			} else {
-				let images = questionSlides?.map(async (item, index) => {
-					let quesData = await uploadFileToServer(
-						item?.data[index]?.uploadedFiles[0],
-						'questionlibrary'
-					);
-					return quesData;
-				});
+				let images =
+					questionSlides?.length > 0 &&
+					questionSlides?.map(async (item, index) => {
+						let quesData = await uploadFileToServer(
+							item?.data[index]?.uploadedFiles[0],
+							'questionlibrary'
+						);
+						return quesData;
+					});
 
 				Promise.all([...images])
 					.then((mediaFiles) => {

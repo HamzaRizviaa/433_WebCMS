@@ -25,7 +25,7 @@ export const comparingFormFields = (specificQuestion, convertedDate) => {
 // compare api data and new data
 export const checkNewElementQuestion = (specificQuestion, question) => {
 	let result = [];
-	if (question.length === 0) {
+	if (question?.length === 0) {
 		result.push(true);
 	} else {
 		for (let i = 0; i < specificQuestion?.questions?.length; i++) {

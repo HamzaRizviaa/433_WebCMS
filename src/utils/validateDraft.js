@@ -112,6 +112,7 @@ const validateDraft = (form, dataElements, newsElement, quesElement) => {
 		finalDraftValue = validateNews;
 	} else if (quesElement?.length) {
 		validateQuestion = quesElement.every((quesItem) => {
+			console.log(quesItem, 'quesItem');
 			if (quesItem?.data) {
 				return (
 					quesItem?.data[0]?.uploadedFiles?.length > 0 ||
@@ -124,6 +125,7 @@ const validateDraft = (form, dataElements, newsElement, quesElement) => {
 				);
 			}
 		});
+		console.log(validateQuestion, 'validateQuestion');
 		finalDraftValue = validateQuestion;
 	} else if (
 		(dataElements?.length === 0 ||

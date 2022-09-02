@@ -18,7 +18,6 @@ import SecondaryLoader from '../../SecondaryLoader';
 import { ReactComponent as NewsAddIcon } from '../../../assets/newsAddIcon.svg';
 import { ReactComponent as DeleteBin } from '../../../assets/DeleteBin.svg';
 import { InputAdornment } from '@mui/material';
-import { isEmpty } from 'lodash';
 
 const QuestionForm = ({
 	item,
@@ -37,13 +36,12 @@ const QuestionForm = ({
 	location
 }) => {
 	const [fileRejectionError, setFileRejectionError] = useState('');
-	const [expanded, setExpanded] = useState(true);
+
 	const [quizLabels, setQuizLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
 	const [isError, setIsError] = useState({});
-	const [loading, setLoading] = useState(false);
 	console.log(initialData, 'id');
 	const [form, setForm] = useState(
 		initialData
@@ -97,11 +95,10 @@ const QuestionForm = ({
 					]
 			  }
 	);
-
+	console.log(form, 'FORM');
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const imgRef = useRef(null);
-	const loadingRef = useRef(null);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -110,13 +107,8 @@ const QuestionForm = ({
 			validator: checkFileSize
 		});
 
-	// const uploadedFile = async (newFiles) => {
-	// 	return await uploadFileToServer(newFiles, 'articleLibrary');
-	// };
-
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			setLoading(true);
 			setIsError({});
 
 			let newFiles = acceptedFiles.map((file) => {
@@ -142,28 +134,8 @@ const QuestionForm = ({
 			});
 
 			sendDataToParent({ uploadedFiles: [...newFiles] });
-			// uploadedFile(newFiles[0], 'questionLibrary').then((res) => {
-			// 	setForm((prev) => {
-			// 		return {
-			// 			...prev,
-			// 			uploadedFiles: [
-			// 				{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
-			// 			]
-			// 		};
-			// 	});
-			// 	sendDataToParent({
-			// 		uploadedFiles: [
-			// 			{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
-			// 		]
-			// 	});
-			// 	setLoading(false);
-			// });
 		}
 	}, [acceptedFiles, fileHeight, fileWidth]);
-
-	// useEffect(() => {
-	// 	initialData ? setForm(initialData) : '';
-	// }, [initialData]);
 
 	const getFileType = (type) => {
 		if (type) {
@@ -210,11 +182,6 @@ const QuestionForm = ({
 			}
 		}
 	}, [extraLabel]);
-	// useEffect(() => {
-	// 	if (labels.length) {
-	// 		setQuizLabels([...labels]);
-	// 	}
-	// }, [labels]);
 
 	const handleNewAnswer = () => {
 		setForm((prev) => {
@@ -263,6 +230,7 @@ const QuestionForm = ({
 	const handleAnswerChange = (event, index) => {
 		if (!isEdit) {
 			const formCopy = { ...form };
+			console.log(form, 'answers', formCopy.answers[index]);
 			formCopy.answers[index] = {
 				answer: event.target.value,
 				position: index + 1,
@@ -280,12 +248,13 @@ const QuestionForm = ({
 			// This block of code will only be executed if the question is in draft
 			// Then only the question answers will be editable
 
-			// const isAnswersEdited = initialData?.data;
-			// const answers = [
-			// 	...(isAnswersEdited ? initialData?.data[0]?.answers : [...form.answers])
-			// ];
+			const answers = [
+				...(initialData?.data && initialData?.answers?.length > 0
+					? initialData?.answers
+					: [...form.answers])
+			];
 
-			// console.log(answers, 'anss');
+			console.log(answers, 'anss');
 			// answers[index] = {
 			// 	answer: event.target.value,
 			// 	position: index + 1,
@@ -297,12 +266,7 @@ const QuestionForm = ({
 			// 			: 'poll'
 			// };
 
-			// setForm({ ...form, answers });
-			// sendDataToParent({ answers });
-
-			const formCopy = { ...form };
-			formCopy.answers[index] = {
-				...formCopy.answers[index],
+			answers[index] = {
 				answer: event.target.value,
 				position: index + 1,
 				type:
@@ -312,9 +276,12 @@ const QuestionForm = ({
 						? 'wrong_answer_' + index
 						: 'poll'
 			};
-			setForm(formCopy);
-			let answers = { answers: formCopy.answers };
-			sendDataToParent(answers);
+
+			console.log('answers', answers);
+			setForm({ ...form, answers });
+			console.log(form, 'form');
+			sendDataToParent({ answers });
+			// sendDataToParent(answers);
 		}
 	};
 
@@ -387,13 +354,7 @@ const QuestionForm = ({
 					<div className={globalClasses.dropBoxUrlContainer}>
 						<h6>DROPBOX URL</h6>
 						<TextField
-							value={
-								initialData
-									? initialData?.data
-										? initialData?.data?.dropbox_url
-										: initialData?.dropbox_url
-									: form.dropbox_url
-							}
+							value={initialData ? initialData?.dropbox_url : form.dropbox_url}
 							disabled={location === 'article' ? true : false}
 							onChange={(e) => {
 								setForm((prev) => {
@@ -449,13 +410,7 @@ const QuestionForm = ({
 						</div>
 						<TextField
 							disabled={isEdit && status !== 'draft'}
-							value={
-								initialData
-									? initialData?.data
-										? initialData?.data?.question
-										: initialData?.question
-									: form.question
-							}
+							value={initialData ? initialData?.question : form?.question}
 							onChange={(e) => {
 								setForm((prev) => {
 									return {
@@ -528,10 +483,10 @@ const QuestionForm = ({
 										disabled={isEdit && status !== 'draft'}
 										value={
 											initialData?.answers?.length > 0
-												? initialData?.data && initialData?.data[0].answers
-													? initialData?.data[0].answers[index]?.answer
-													: initialData?.answers[index]?.answer
-												: form.answers[index]?.answer
+												? initialData && initialData?.answers[index]?.answer
+												: // ? initialData?.data[0].answers[index]?.answer
+												  // : initialData?.answers[index]?.answer
+												  form.answers[index]?.answer
 										}
 										onChange={(e) => {
 											handleAnswerChange(e, index);
