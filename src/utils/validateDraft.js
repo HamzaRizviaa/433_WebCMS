@@ -112,16 +112,20 @@ const validateDraft = (form, dataElements, newsElement, quesElement) => {
 		finalDraftValue = validateNews;
 	} else if (quesElement?.length) {
 		validateQuestion = quesElement.every((quesItem) => {
+			console.log(quesItem, 'quesItem');
 			if (quesItem?.data) {
 				return (
 					quesItem?.data[0]?.uploadedFiles?.length > 0 ||
 					quesItem?.data[0]?.question ||
-					quesItem?.data[0]?.answers?.length > 0 ||
+					(quesItem?.data[0]?.answers?.length > 0
+						? quesItem?.data[0]?.answers.some((item) => item?.answer !== '')
+						: false) ||
 					quesItem?.data[0]?.labels?.length > 0 ||
 					quesItem?.data[0]?.dropbox_url
 				);
 			}
 		});
+		console.log(validateQuestion, 'validateQuestion');
 		finalDraftValue = validateQuestion;
 	} else if (
 		(dataElements?.length === 0 ||

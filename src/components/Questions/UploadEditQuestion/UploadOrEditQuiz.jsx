@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
+
 import React, { forwardRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Button from '../../button';
@@ -13,6 +14,7 @@ import Close from '@material-ui/icons/Close';
 import DeleteModal from '../../DeleteModal';
 import { toast } from 'react-toastify';
 import { formatDate, getCalendarText2 } from '../../../utils';
+import uploadFileToServer from '../../../utils/uploadFileToServer';
 import { useDispatch, useSelector } from 'react-redux';
 import { getQuestions } from '../../../pages/QuestionLibrary/questionLibrarySlice';
 import { getLocalStorageDetails } from '../../../utils';
@@ -34,6 +36,15 @@ import LoadingOverlay from 'react-loading-overlay';
 import PrimaryLoader from '../../PrimaryLoader';
 import Slide from '@mui/material/Slide';
 import DraggableContainers from '../DraggableContainers';
+import {
+	checkEmptyQuestion, //empty data
+	checkNewElementQuestion, // api data and question form data
+	comparingFormFields, // api end date and form end date
+	checkSortOrderOnEdit,
+	checkEmptyQuestionDraft,
+	checkNewElementQuestionDraft
+} from '../../../utils/questionUtils';
+// import moment from 'moment';
 import { compact } from 'lodash';
 
 const UploadOrEditQuiz = ({
@@ -54,7 +65,6 @@ const UploadOrEditQuiz = ({
 	const [calenderOpen, setCalenderOpen] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
-	const [isLoadingcreateViral, setIsLoadingcreateViral] = useState(false);
 	const [editQuizBtnDisabled, setEditQuizBtnDisabled] = useState(false);
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
@@ -115,13 +125,13 @@ const UploadOrEditQuiz = ({
 		handleNewSlide();
 	}, [open]);
 
-	const setNewData = (childData, index) => {
-		// [ 0 : data [ {},{}] ]
-		let dataCopy = [...questionSlides];
+	console.log(questionSlides, 'QSSS');
 
+	const setNewData = (childData, index) => {
+		let dataCopy = [...questionSlides];
 		dataCopy[index].data = [
 			{
-				...(dataCopy[index]?.data?.length ? dataCopy[index]?.data[0] : {}),
+				...(dataCopy[index]?.data ? dataCopy[index]?.data[0] : {}),
 				...childData
 			}
 		];
@@ -141,10 +151,20 @@ const UploadOrEditQuiz = ({
 		let dataCopy = [...questionSlides];
 		if (elementData) {
 			setQuestionSlides(
-				dataCopy.filter((item, i) => {
+				dataCopy.map((item, i) => {
 					if (index === i) {
-						delete item['data'][0]?.uploadedFiles;
-						return item;
+						const newItem = {
+							...item,
+							data: [
+								{
+									...item.data[0],
+									uploadedFiles: [],
+									file_name: '',
+									image: ''
+								}
+							]
+						};
+						return newItem;
 					} else {
 						return item;
 					}
@@ -243,26 +263,45 @@ const UploadOrEditQuiz = ({
 	};
 
 	const updateDataFromAPI = (apiData, question_type, end_date) => {
-		let modifiedData = apiData?.map((rest) => {
+		let modifiedData = apiData?.map(({ id, position, ...rest }) => {
 			return {
 				question_type: question_type,
 				end_date: end_date,
-				sortOrder: rest?.position,
-				id: rest?.id,
-				...rest,
-				uploadedFiles: rest?.image
-					? [
-							{
-								media_url:
-									`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest?.image}` ||
-									undefined,
-								file_name: rest?.file_name,
-								width: rest?.width,
-								height: rest?.height
-							}
-					  ]
-					: undefined,
-				labels: updateLabelsFromAPI(rest?.labels)
+				sortOrder: position,
+				id: id,
+				data: [
+					{
+						...rest,
+						id: id,
+						labels: updateLabelsFromAPI(rest?.labels),
+						uploadedFiles: rest?.image
+							? [
+									{
+										media_url:
+											`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest?.image}` ||
+											undefined,
+										file_name: rest?.file_name,
+										width: rest?.width,
+										height: rest?.height
+									}
+							  ]
+							: undefined
+					}
+				]
+				// uploadedFiles: rest?.image
+				// 	? [
+				// 			{
+				// 				media_url:
+				// 					`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest?.image}` ||
+				// 					undefined,
+				// 				file_name: rest?.file_name,
+				// 				width: rest?.width,
+				// 				height: rest?.height
+				// 			}
+				// 	  ]
+				// 	: undefined,
+
+				// ...rest,
 			};
 		});
 
@@ -276,26 +315,26 @@ const UploadOrEditQuiz = ({
 		!isEdit ? resetState() : '';
 	}, [open]);
 
-	const createQuestion = async (id, draft = false) => {
+	const createQuestion = async (id, mediaFiles, draft) => {
 		setPostButtonStatus(true);
-
+		console.log(mediaFiles, 'mediaFiles');
 		let slidesData =
 			questionSlides?.length > 0
 				? questionSlides.map((item, index) => {
 						if (!item.data)
 							return { ...item, position: index, sortOrder: index + 1 };
 
-						const uploadedFiles = item.data[0]?.uploadedFiles
-							? item.data[0]?.uploadedFiles
-							: item.uploadedFiles;
+						// const uploadedFiles = item.data[0]?.uploadedFiles
+						// 	? item.data[0]?.uploadedFiles
+						// 	: item.uploadedFiles;
 
 						return {
-							height: uploadedFiles ? uploadedFiles[0]?.height : 0,
-							width: uploadedFiles ? uploadedFiles[0]?.width : 0,
-							file_name: uploadedFiles ? uploadedFiles[0]?.file_name : '',
-							image: uploadedFiles
-								? uploadedFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
-								  uploadedFiles[0]?.image
+							height: item?.data[0] ? item?.data[0]?.height : 0,
+							width: item?.data[0] ? item?.data[0]?.width : 0,
+							file_name: mediaFiles ? mediaFiles[index]?.file_name : '',
+							image: mediaFiles
+								? mediaFiles[index]?.media_url?.split('cloudfront.net/')[1] ||
+								  mediaFiles[index]?.media_url
 								: '',
 							labels: item.data[0]?.labels || item.labels || [],
 							answers: item.data[0]?.answers || item.answers,
@@ -319,13 +358,13 @@ const UploadOrEditQuiz = ({
 						end_date: convertedDate.split('T')[0],
 						question_type: questionType
 					},
+					questions: slidesData,
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
 						last_name: `${getLocalStorageDetails()?.last_name}`
 					},
-					...(isEdit && id ? { question_id: id } : {}),
-					...(slidesData.length ? { questions: slidesData } : {})
+					...(isEdit && id ? { question_id: id } : {})
 				},
 				{
 					headers: {
@@ -353,7 +392,7 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
-	const deleteQuiz = async (id, draft, qtype) => {
+	const deleteQuiz = async (draft) => {
 		if (!editQuestionData) return;
 		const question_ids = editQuestionData.questions?.map((q) => q.id) || [];
 
@@ -462,57 +501,185 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
-	useEffect(() => {
-		if (editQuestionData) {
-			setEditQuizBtnDisabled(
-				postButtonStatus ||
-					!form.end_date ||
-					(type === 'quiz'
-						? editQuestionData?.quiz_end_date === convertedDate
-						: editQuestionData?.poll_end_date === convertedDate)
-			);
-		}
-	}, [editQuestionData, form, convertedDate]);
-
 	const handlePreviewEscape = () => {
 		setPreviewBool(false);
 		setPreviewFile(null);
 	};
 
+	// useEffect(() => {
+	// 	if (editQuestionData) {
+	// 		setDraftBtnDisabled(
+	// 			!validateDraft(form) ||
+	// 				postButtonStatus ||
+	// 				(type === 'quiz'
+	// 					? editQuestionData?.quiz_end_date === convertedDate
+	// 					: editQuestionData?.poll_end_date === convertedDate)
+	// 		);
+	// 	}
+	// }, [editQuestionData, form, convertedDate]);
 	useEffect(() => {
 		if (editQuestionData) {
 			setDraftBtnDisabled(
-				!validateDraft(form) ||
-					postButtonStatus ||
-					(type === 'quiz'
-						? editQuestionData?.quiz_end_date === convertedDate
-						: editQuestionData?.poll_end_date === convertedDate)
+				!validateDraft(form, null, null, questionSlides) ||
+					comparingFormFields(editQuestionData, convertedDate)
+				// &&
+				// editQuestionData?.labels?.length === questionSlides?.labels.length &&
+				// 	!checkDuplicateLabel(form, editQuestionData)
 			);
 		}
 	}, [editQuestionData, form, convertedDate]);
 
+	useEffect(() => {
+		const validateEmptyQuestionArray = [
+			checkEmptyQuestionDraft(questionSlides)
+		];
+
+		const validateEmptyQuestionAndEditComparisonArray = [
+			checkNewElementQuestionDraft(editQuestionData, questionSlides)
+		];
+
+		if (
+			!validateDraft(form, null, null, questionSlides) ||
+			!comparingFormFields(editQuestionData, convertedDate)
+		) {
+			console.log('1D');
+			setDraftBtnDisabled(
+				!validateEmptyQuestionArray.every((item) => item === true) ||
+					!validateDraft(form, null, null, questionSlides)
+			);
+		} else {
+			if (editQuestionData?.questions?.length !== questionSlides?.length) {
+				console.log('2D');
+				setDraftBtnDisabled(
+					!validateEmptyQuestionArray.every((item) => item === true)
+				);
+			} else {
+				if (
+					validateEmptyQuestionAndEditComparisonArray.every(
+						(item) => item === true
+					) ||
+					!validateEmptyQuestionArray.every((item) => item === true)
+				) {
+					setDraftBtnDisabled(
+						!checkSortOrderOnEdit(editQuestionData, questionSlides)
+					);
+				} else {
+					setDraftBtnDisabled(
+						validateEmptyQuestionAndEditComparisonArray.every(
+							(item) => item === true
+						) || !validateEmptyQuestionArray.every((item) => item === true)
+					);
+				}
+			}
+		}
+	}, [questionSlides]);
+
+	useEffect(() => {
+		if (editQuestionData) {
+			const validateEmptyQuestionArray = [
+				checkEmptyQuestion(questionSlides),
+				questionSlides?.length !== 0
+			];
+
+			console.log(validateEmptyQuestionArray, 'cf');
+			setEditQuizBtnDisabled(
+				!validateForm(form, null, null, questionSlides) ||
+					!validateEmptyQuestionArray.every((item) => item === true) ||
+					comparingFormFields(editQuestionData, convertedDate)
+			);
+		}
+	}, [editQuestionData, form, convertedDate]);
+
+	useEffect(() => {
+		//empty questionSlides
+		const validateEmptyQuestionArray = [
+			checkEmptyQuestion(questionSlides),
+			questionSlides?.length !== 0
+		];
+
+		//check question slides is zero , and edit data from api
+		const validateEmptyQuestionSlidesAndEditComparisonArray = [
+			checkNewElementQuestion(editQuestionData, questionSlides),
+			questionSlides?.length !== 0
+		];
+
+		//validate form OR compare generalInformation form
+		if (
+			!validateForm(form, null, null, questionSlides) &&
+			!comparingFormFields(editQuestionData, convertedDate)
+		) {
+			setEditQuizBtnDisabled(
+				!validateEmptyQuestionArray.every((item) => item === true) ||
+					!validateForm(form, null, null, questionSlides)
+			);
+		} else {
+			if (editQuestionData?.questions?.length !== questionSlides?.length) {
+				console.log('2');
+				setEditQuizBtnDisabled(
+					!validateEmptyQuestionSlidesAndEditComparisonArray.every(
+						(item) => item === true
+					) || !validateEmptyQuestionArray.every((item) => item === true)
+				);
+			} else {
+				console.log('3');
+				setEditQuizBtnDisabled(
+					validateEmptyQuestionSlidesAndEditComparisonArray.every(
+						(item) => item === true
+					) || !validateEmptyQuestionArray.every((item) => item === true)
+				);
+			}
+		}
+	}, [questionSlides]);
+
 	//editQuizBtnDisabled button - whether you can click or not
+	//!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')
 	const handlePostQuizPollBtn = () => {
 		if (!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')) {
 			validatePostBtn();
 		} else {
+			setIsLoading(true);
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
-			setIsLoadingcreateViral(true);
+
 			if (isEdit) {
-				try {
-					createQuestion(editQuestionData?.id);
-				} catch (err) {
-					setIsLoadingcreateViral(false);
-					console.log(err);
-				}
+				let images = questionSlides?.map(async (item, index) => {
+					let quesData;
+					if (item?.data[index]?.file) {
+						quesData = await uploadFileToServer(
+							item?.data[index]?.uploadedFiles[0],
+							'questionlibrary'
+						);
+
+						return quesData;
+					} else {
+						quesData = item?.data[index]?.uploadedFiles[0];
+						return quesData;
+					}
+				});
+
+				Promise.all([...images])
+					.then((mediaFiles) => {
+						createQuestion(editQuestionData?.id, mediaFiles, false);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
 			} else {
-				try {
-					createQuestion(null);
-				} catch (err) {
-					setIsLoadingcreateViral(false);
-					console.log(err);
-				}
+				let images = questionSlides?.map(async (item) => {
+					let quesData = await uploadFileToServer(
+						item?.data[0]?.uploadedFiles[0],
+						'questionlibrary'
+					);
+					return quesData;
+				});
+
+				Promise.all([...images])
+					.then((mediaFiles) => {
+						createQuestion(null, mediaFiles, false);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
 			}
 		}
 	};
@@ -523,21 +690,49 @@ const UploadOrEditQuiz = ({
 		if (!validateDraft(form) || draftBtnDisabled) {
 			validateDraftBtn();
 		} else {
+			setIsLoading(true);
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
-			setIsLoadingcreateViral(true);
+
 			if (isEdit) {
-				try {
-					createQuestion(editQuestionData?.id, true);
-				} catch (err) {
-					setIsLoadingcreateViral(false);
-				}
+				let images = questionSlides?.map(async (item, index) => {
+					let quesData;
+					if (item?.data[index]?.uploadedFiles[0]?.file) {
+						quesData = await uploadFileToServer(
+							item?.data[index]?.uploadedFiles[0],
+							'questionlibrary'
+						);
+
+						return quesData;
+					} else {
+						quesData = item?.data[index]?.uploadedFiles[0];
+						return quesData;
+					}
+				});
+
+				Promise.all([...images])
+					.then((mediaFiles) => {
+						createQuestion(editQuestionData?.id, mediaFiles, true);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
 			} else {
-				try {
-					createQuestion(null, true);
-				} catch (err) {
-					setIsLoadingcreateViral(false);
-				}
+				let images = questionSlides?.map(async (item, index) => {
+					let quesData = await uploadFileToServer(
+						item?.data[index]?.uploadedFiles[0],
+						'questionlibrary'
+					);
+					return quesData;
+				});
+
+				Promise.all([...images])
+					.then((mediaFiles) => {
+						createQuestion(null, mediaFiles, true);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
 			}
 		}
 	};
@@ -612,7 +807,7 @@ const UploadOrEditQuiz = ({
 													setPreviewBool={setPreviewBool}
 													setPreviewFile={setPreviewFile}
 													setDisableDropdown={setDisableDropdown}
-													initialData={item}
+													initialData={isEdit && item?.data && item?.data[0]}
 												/>
 											</>
 										);
@@ -633,10 +828,11 @@ const UploadOrEditQuiz = ({
 
 													<AccordionDetails>
 														{/* tab panes on first upload*/}
-														{!isEdit && (
+														{((isEdit && status === 'draft') || !isEdit) && (
 															<>
 																<QuestionTabPanes
 																	edit={isEdit}
+																	status={status}
 																	location={location}
 																	type={questionType}
 																	resetSlides={(type) => resetSlides(type)}
@@ -725,7 +921,9 @@ const UploadOrEditQuiz = ({
 															handleDeleteQuestionSlide={(sortOrder) =>
 																handleElementDelete(sortOrder)
 															}
-															initialData={isEdit && item} // passing data to child
+															initialData={
+																isEdit && item?.data && item?.data[0]
+															} // passing data to child
 															setPreviewFile={setPreviewFile}
 															setPreviewBool={setPreviewBool}
 															setDisableDropdown={setDisableDropdown}
@@ -736,16 +934,48 @@ const UploadOrEditQuiz = ({
 													);
 												})}
 											</QuestionDraggable>
-											{!isEdit && (
+
+											{/* {isEdit &&
+												editQuestionData?.questions?.length === 0 &&
+												(questionSlides?.length < 10 ? (
+													<Button
+														style={{
+															marginTop: '2rem'
+														}}
+														buttonNews={true}
+														disabled={false}
+														onClick={() => handleNewSlide()}
+														text={'ADD QUESTION'}
+													/>
+												) : (
+													''
+												))} */}
+											{!isEdit && questionSlides?.length < 10 ? (
 												<Button
-													style={{ marginTop: '2rem' }}
-													disabled={false}
+													style={{
+														marginTop: '2rem'
+													}}
 													buttonNews={true}
+													disabled={false}
 													onClick={() => handleNewSlide()}
 													text={'ADD QUESTION'}
 												/>
+											) : isEdit && status === 'draft' ? (
+												<Button
+													style={{
+														marginTop: '2rem'
+													}}
+													buttonNews={true}
+													disabled={false}
+													onClick={() => handleNewSlide()}
+													text={'ADD QUESTION'}
+												/>
+											) : (
+												''
 											)}
 										</>
+										<br />
+										<p className={globalClasses.mediaError}></p>
 										<br />
 										<div className={classes.buttonDiv}>
 											<div className={classes.leftButtonDiv}>
@@ -845,14 +1075,25 @@ const UploadOrEditQuiz = ({
 																: 'SAVE CHANGES'
 														}
 														disabled={
-															!validateForm(form, null, null, questionSlides)
-															// (isEdit) &&
-															// validateForm(form) &&
-															// status === 'draft'
-															// 	? false
-															// 	: !(isEdit)
-															// 	? !validateForm(form)
-															// 	: editQuizBtnDisabled
+															// ? true
+															// : !validateForm(
+															// 		form,
+															// 		null,
+															// 		null,
+															// 		questionSlides
+															//   )
+															isEdit &&
+															validateForm(form, null, null, questionSlides) &&
+															status === 'draft'
+																? false
+																: !isEdit
+																? !validateForm(
+																		form,
+																		null,
+																		null,
+																		questionSlides
+																  )
+																: editQuizBtnDisabled
 														}
 														onClick={() => {
 															handlePostQuizPollBtn();
@@ -906,11 +1147,7 @@ const UploadOrEditQuiz = ({
 				deleteBtn={() => {
 					stopStatus
 						? stopQuizPoll(editQuestionData?.id)
-						: deleteQuiz(
-								editQuestionData?.id,
-								status.toLowerCase(),
-								questionType
-						  );
+						: deleteQuiz(status.toLowerCase());
 				}}
 				text={questionType === 'quiz' ? 'Quiz' : 'Poll'}
 				wrapperRef={dialogWrapper}

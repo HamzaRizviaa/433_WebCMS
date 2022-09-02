@@ -10,7 +10,8 @@ const QuestionTabPanes = ({
 	edit,
 	setQuesType,
 	resetSlides,
-	type
+	type,
+	status
 }) => {
 	const muiClasses = useStyles();
 	console.log(location, edit, 'abc');
@@ -25,7 +26,7 @@ const QuestionTabPanes = ({
 							resetSlides('poll');
 						}}
 					>
-						{edit ? 'Result' : 'Poll'}
+						{edit && status !== 'draft' ? 'Result' : 'Poll'}
 					</TabUnstyled>
 					<TabUnstyled
 						onClick={() => {
@@ -33,7 +34,7 @@ const QuestionTabPanes = ({
 							resetSlides('quiz');
 						}}
 					>
-						{edit ? `${'Edit ' + type}` : 'Quiz'}
+						{edit && status !== 'draft' ? `${'Edit ' + type}` : 'Quiz'}
 					</TabUnstyled>
 				</TabsListUnstyled>
 				<TabPanelUnstyled value={0}></TabPanelUnstyled>
@@ -48,7 +49,7 @@ QuestionTabPanes.propTypes = {
 	resetSlides: PropTypes.func.isRequired,
 	edit: PropTypes.bool.isRequired,
 	location: PropTypes.string.isRequired,
-	type: PropTypes.string.isRequired
+	type: PropTypes.string.isRequired,
+	status: PropTypes.string
 };
-
 export default QuestionTabPanes;

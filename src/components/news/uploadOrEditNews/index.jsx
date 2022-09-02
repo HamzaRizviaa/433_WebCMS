@@ -122,6 +122,7 @@ const UploadOrEditNews = ({
 
 	useEffect(() => {
 		if (specificNews) {
+			//new is empty or not
 			const validateEmptyNewsArray = [
 				checkEmptyMediaNews(news),
 				news?.length !== 0
@@ -146,11 +147,12 @@ const UploadOrEditNews = ({
 	}, [specificNews, form]);
 
 	useEffect(() => {
+		//empty news , news = 0
 		const validateEmptyNewsArray = [
 			checkEmptyMediaNews(news),
 			news?.length !== 0
 		];
-
+		//
 		const validateEmptyNewsAndEditComparisonArray = [
 			checkNewElementNEWS(specificNews, news),
 			news?.length !== 0
@@ -160,11 +162,13 @@ const UploadOrEditNews = ({
 			!validateForm(form, null, news) ||
 			!comparingNewsFields(specificNews, form)
 		) {
+			console.log('if');
 			setEditBtnDisabled(
 				!validateEmptyNewsArray.every((item) => item === true) ||
 					!validateForm(form, null, news)
 			);
 		} else {
+			console.log('else');
 			if (specificNews?.slides?.length !== news?.length) {
 				setEditBtnDisabled(
 					!validateEmptyNewsArray.every((item) => item === true)
@@ -200,14 +204,12 @@ const UploadOrEditNews = ({
 			!validateDraft(form, null, news) ||
 			!comparingNewsFields(specificNews, form)
 		) {
-			console.log('1st');
 			setDraftBtnDisabled(
 				!validateEmptyNewsArray.every((item) => item === true) ||
 					!validateDraft(form, null, news)
 			);
 		} else {
 			if (specificNews?.slides?.length !== news?.length) {
-				console.log('2nd');
 				setDraftBtnDisabled(
 					!validateEmptyNewsArray.every((item) => item === true)
 				);
@@ -351,7 +353,7 @@ const UploadOrEditNews = ({
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...news];
-		console.log(dataCopy[index].data, 'jjjj090');
+
 		dataCopy[index].data = [
 			{
 				...(dataCopy[index]?.data?.length ? dataCopy[index]?.data[0] : {}),
@@ -361,8 +363,6 @@ const UploadOrEditNews = ({
 
 		setNews(dataCopy);
 	};
-
-	console.log('NMews', news);
 
 	const handleMediaDataDelete = (elementData, index) => {
 		let dataCopy = [...news];
@@ -413,9 +413,9 @@ const UploadOrEditNews = ({
 				dispatch(getAllNews({ page }));
 			}
 		} catch (e) {
-			toast.error('News to delete Viral!');
+			toast.error('Failed to delete News!');
 			setDeleteBtnStatus(false);
-			console.log(e, 'News to delete Viral');
+			console.log(e, 'Failed to delete News');
 		}
 
 		setOpenDeletePopup(!openDeletePopup);
@@ -566,6 +566,7 @@ const UploadOrEditNews = ({
 
 	const handlePublishNews = () => {
 		setIsLoading(false);
+		//false || false
 		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
 			validatePublishNewsBtn();
 		} else {
