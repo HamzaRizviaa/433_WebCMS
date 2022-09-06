@@ -7,9 +7,11 @@ export const useStyles = makeStyles(() => ({
 			border: 'none',
 			backgroundColor: '#404040',
 			borderRadius: '8px',
-			padding: '6px 0px',
+			padding: '6px 5px',
 			marginTop: '2.5rem',
-			marginBottom: '2rem'
+			marginBottom: '2rem',
+			display:"flex",
+			justifyContent:"space-between",
 		},
 		'& .TabUnstyled-root': {
 			width: '49%',
@@ -19,7 +21,7 @@ export const useStyles = makeStyles(() => ({
 			border: 'none !important',
 			fontFamily: 'Poppins',
 			fontStyle: 'normal',
-			fontWeight: 'bold',
+			fontWeight: 'bold', 
 			fontSize: '12px',
 			lineHeight: '16px',
 			textTransform: 'capitalize'
@@ -28,8 +30,8 @@ export const useStyles = makeStyles(() => ({
 			color: '#000000 !important',
 			border: 'none !important',
 			backgroundColor: '#ffff00 !important',
-			marginRight: '4px !important',
-			marginLeft: '4px !important',
+			// marginRight: '4px !important',
+			// marginLeft: '4px !important',
 			borderRadius: '4px !important',
 			padding: '8px 0px'
 		}
