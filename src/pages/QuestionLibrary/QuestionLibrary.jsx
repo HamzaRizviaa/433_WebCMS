@@ -606,7 +606,7 @@ const QuestionLibrary = () => {
 									setSearch(e.target.value);
 									//setIsSearch(true);
 								}}
-								placeholder={'Search post, user, label'}
+								placeholder='Search for Question, User, Label, ID'
 								InputProps={{
 									disableUnderline: true,
 									className: classes.textFieldInput,

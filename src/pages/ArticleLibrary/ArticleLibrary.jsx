@@ -595,7 +595,7 @@ const ArticleLibrary = () => {
 								// 	//setIsSearch(true);
 								// }}
 								onChange={handleChangeSearch}
-								placeholder={'Search post, user, label'}
+								placeholder='Search for Article, User, Label, ID'
 								InputProps={{
 									disableUnderline: true,
 									className: classes.textFieldInput,
