@@ -575,7 +575,7 @@ const ViralLibrary = () => {
 									setSearch(e.target.value);
 									//setIsSearch(true);
 								}}
-								placeholder={'Search viral, user, label'}
+								placeholder='Search for Viral, User, Label, ID'
 								InputProps={{
 									disableUnderline: true,
 									className: classes.textFieldInput,

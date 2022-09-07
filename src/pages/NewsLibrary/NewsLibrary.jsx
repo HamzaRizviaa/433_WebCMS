@@ -550,7 +550,7 @@ const NewsLibrary = () => {
 									setSearch(e.target.value);
 									//setIsSearch(true);
 								}}
-								placeholder={'Search news, user, label'}
+								placeholder='Search for News, User, Label, ID'
 								InputProps={{
 									disableUnderline: true,
 									className: classes.textFieldInput,
