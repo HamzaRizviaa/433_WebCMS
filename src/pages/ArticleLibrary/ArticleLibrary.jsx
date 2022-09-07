@@ -6,7 +6,7 @@ import Layout from '../../components/layout';
 import Table from '../../components/table';
 // import classes from './_articleLibrary.module.scss';
 import Button from '../../components/button';
-import _debounce from 'lodash/debounce';
+// import _debounce from 'lodash/debounce';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Tooltip from '@mui/material/Tooltip';
@@ -530,11 +530,11 @@ const ArticleLibrary = () => {
 		setPage(1);
 	};
 
-	const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
-	const handleChangeSearch = (e) => {
-		setSearch(e.target.value);
-		debounceFun(e.target.value);
-	};
+	// const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
+	// const handleChangeSearch = (e) => {
+	// 	setSearch(e.target.value);
+	// 	debounceFun(e.target.value);
+	// };
 
 	return (
 		<LoadingOverlay
@@ -589,12 +589,9 @@ const ArticleLibrary = () => {
 										);
 									}
 								}}
-								// onChange={(e) => {
-
-								// 	setSearch(e.target.value);
-								// 	//setIsSearch(true);
-								// }}
-								onChange={handleChangeSearch}
+								onChange={(e) => {
+									setSearch(e.target.value);
+								}}
 								placeholder='Search for Article, User, Label, ID'
 								InputProps={{
 									disableUnderline: true,

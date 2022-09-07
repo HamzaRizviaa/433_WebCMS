@@ -4,7 +4,7 @@
 import React, { forwardRef, useCallback, useEffect, useState } from 'react';
 import { Markup } from 'interweave';
 import DatePicker from 'react-datepicker';
-import _debounce from 'lodash/debounce';
+// import _debounce from 'lodash/debounce';
 import { useNavigate } from 'react-router-dom';
 
 // Redux
@@ -612,12 +612,12 @@ const MediaLibrary = () => {
 		setPage(1);
 	};
 
-	const debounceFun = useCallback(_debounce(handleDebounceFun, 600), []);
+	// const debounceFun = useCallback(_debounce(handleDebounceFun, 600), []);
 
-	const handleChangeSearch = (e) => {
-		setSearch(e.target.value);
-		debounceFun(e.target.value);
-	};
+	// const handleChangeSearch = (e) => {
+	// 	setSearch(e.target.value);
+	// 	debounceFun(e.target.value);
+	// };
 
 	useEffect(() => {
 		let tableBody = document.getElementsByTagName('tbody')[0];
@@ -656,29 +656,31 @@ const MediaLibrary = () => {
 							<TextField
 								className={`${classes.searchField} ${muiClasses2.root}`}
 								value={search}
-								// onKeyPress={(e) => {
-								// 	if (e.key === 'Enter' && search) {
-								// 		dispatch(
-								// 			getMedia({
-								// 				q: search,
-								// 				page,
-								// 				startDate: formatDate(dateRange[0]),
-								// 				endDate: formatDate(dateRange[1]),
-								// 				...sortState
-								// 			})
-								// 		);
-								// 	} else if (e.key === 'Enter' && !search) {
-								// 		dispatch(
-								// 			getMedia({
-								// 				page,
-								// 				startDate: formatDate(dateRange[0]),
-								// 				endDate: formatDate(dateRange[1]),
-								// 				...sortState
-								// 			})
-								// 		);
-								// 	}
-								// }}
-								onChange={handleChangeSearch}
+								onKeyPress={(e) => {
+									if (e.key === 'Enter' && search) {
+										dispatch(
+											getMedia({
+												q: search,
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									} else if (e.key === 'Enter' && !search) {
+										dispatch(
+											getMedia({
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									}
+								}}
+								onChange={(e) => {
+									setSearch(e.target.value);
+								}}
 								placeholder='Search for Media, User, Label, ID'
 								InputProps={{
 									disableUnderline: true,
