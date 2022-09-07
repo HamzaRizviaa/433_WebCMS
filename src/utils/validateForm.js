@@ -97,10 +97,11 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 	if (quesData?.length > 0) {
 		validateQuestion = quesData.every((item) => {
 			if (item?.data) {
+				console.log(item?.data[0], 'item?.data');
 				return (
-					item?.data[0]?.uploadedFiles?.length > 0 &&
-					item?.data[0]?.question &&
-					item?.data[0]?.labels?.length > 6 &&
+					(item?.data[0]?.uploadedFiles?.length ? true : false) &&
+					(item?.data[0]?.question ? true : false) &&
+					(item?.data[0]?.labels?.length > 6 ? true : false) &&
 					(item?.data[0]?.answers?.length > 1
 						? item?.data[0]?.answers.every((item) => item?.answer !== '')
 						: false)
@@ -110,12 +111,15 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 	} else if (quesData?.length === 0) {
 		validateQuestion = false;
 	}
+	console.log(validateQuestion, 'validateQuestion');
 
 	var finalFormValue =
 		validate.every((item) => item === true) &&
 		validateData &&
 		validateNews &&
 		validateQuestion;
+
+	console.log(finalFormValue, 'finalFormValue');
 
 	return finalFormValue;
 };

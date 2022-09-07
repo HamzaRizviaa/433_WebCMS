@@ -233,7 +233,7 @@ const QuestionForm = ({
 			console.log(form, 'answers', formCopy.answers[index]);
 			formCopy.answers[index] = {
 				answer: event.target.value,
-				position: index + 1,
+				position: index,
 				type:
 					type === 'quiz' && index === 0
 						? 'right_answer'
@@ -267,7 +267,7 @@ const QuestionForm = ({
 
 			answers[index] = {
 				answer: event.target.value,
-				position: index + 1,
+				position: index,
 				type:
 					type === 'quiz' && index === 0
 						? 'right_answer'

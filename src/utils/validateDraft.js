@@ -115,7 +115,7 @@ const validateDraft = (form, dataElements, newsElement, quesElement) => {
 			console.log(quesItem, 'quesItem');
 			if (quesItem?.data) {
 				return (
-					quesItem?.data[0]?.uploadedFiles?.length > 0 ||
+					quesItem?.data[0]?.uploadedFiles?.length ||
 					quesItem?.data[0]?.question ||
 					(quesItem?.data[0]?.answers?.length > 0
 						? quesItem?.data[0]?.answers.some((item) => item?.answer !== '')

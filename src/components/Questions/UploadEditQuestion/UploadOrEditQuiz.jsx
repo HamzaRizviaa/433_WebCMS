@@ -355,8 +355,10 @@ const UploadOrEditQuiz = ({
 				{
 					general_info: {
 						save_draft: draft,
-						end_date: convertedDate.split('T')[0],
-						question_type: questionType
+						question_type: questionType,
+						...(status === 'CLOSED'
+							? {}
+							: { end_date: convertedDate.split('T')[0] })
 					},
 					questions: slidesData,
 					user_data: {
@@ -581,7 +583,6 @@ const UploadOrEditQuiz = ({
 				questionSlides?.length !== 0
 			];
 
-			console.log(validateEmptyQuestionArray, 'cf');
 			setEditQuizBtnDisabled(
 				!validateForm(form, null, null, questionSlides) ||
 					!validateEmptyQuestionArray.every((item) => item === true) ||
@@ -589,7 +590,7 @@ const UploadOrEditQuiz = ({
 			);
 		}
 	}, [editQuestionData, form, convertedDate]);
-
+	console.log(editQuizBtnDisabled, 'add btn disabled');
 	useEffect(() => {
 		//empty questionSlides
 		const validateEmptyQuestionArray = [
@@ -605,7 +606,7 @@ const UploadOrEditQuiz = ({
 
 		//validate form OR compare generalInformation form
 		if (
-			!validateForm(form, null, null, questionSlides) &&
+			!validateForm(form, null, null, questionSlides) ||
 			!comparingFormFields(editQuestionData, convertedDate)
 		) {
 			setEditQuizBtnDisabled(
@@ -613,13 +614,16 @@ const UploadOrEditQuiz = ({
 					!validateForm(form, null, null, questionSlides)
 			);
 		} else {
+			console.log('else');
 			if (editQuestionData?.questions?.length !== questionSlides?.length) {
-				console.log('2');
 				setEditQuizBtnDisabled(
-					!validateEmptyQuestionSlidesAndEditComparisonArray.every(
-						(item) => item === true
-					) || !validateEmptyQuestionArray.every((item) => item === true)
+					!validateEmptyQuestionArray.every((item) => item === true)
 				);
+				// setEditQuizBtnDisabled(
+				// 	!validateEmptyQuestionSlidesAndEditComparisonArray.every(
+				// 		(item) => item === true
+				// 	) || !validateEmptyQuestionArray.every((item) => item === true)
+				// );
 			} else {
 				console.log('3');
 				setEditQuizBtnDisabled(
@@ -643,8 +647,9 @@ const UploadOrEditQuiz = ({
 
 			if (isEdit) {
 				let images = questionSlides?.map(async (item, index) => {
+					console.log(item, 'edit');
 					let quesData;
-					if (item?.data[index]?.file) {
+					if (item?.data[index]?.uploadedFiles[0]?.file) {
 						quesData = await uploadFileToServer(
 							item?.data[index]?.uploadedFiles[0],
 							'questionlibrary'
