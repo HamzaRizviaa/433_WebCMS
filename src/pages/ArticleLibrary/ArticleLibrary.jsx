@@ -600,29 +600,29 @@ const ArticleLibrary = () => {
 									endAdornment: (
 										<InputAdornment>
 											<Search
-												// onClick={() => {
-												// 	console.log('search onclick');
-												// 	if (search) {
-												// 		dispatch(
-												// 			getAllArticlesApi({
-												// 				q: search,
-												// 				page,
-												// 				startDate: formatDate(dateRange[0]),
-												// 				endDate: formatDate(dateRange[1]),
-												// 				...sortState
-												// 			})
-												// 		);
-												// 	} else {
-												// 		dispatch(
-												// 			getAllArticlesApi({
-												// 				page,
-												// 				startDate: formatDate(dateRange[0]),
-												// 				endDate: formatDate(dateRange[1]),
-												// 				...sortState
-												// 			})
-												// 		);
-												// 	}
-												// }}
+												onClick={() => {
+													console.log('search onclick');
+													if (search) {
+														dispatch(
+															getAllArticlesApi({
+																q: search,
+																page,
+																startDate: formatDate(dateRange[0]),
+																endDate: formatDate(dateRange[1]),
+																...sortState
+															})
+														);
+													} else {
+														dispatch(
+															getAllArticlesApi({
+																page,
+																startDate: formatDate(dateRange[0]),
+																endDate: formatDate(dateRange[1]),
+																...sortState
+															})
+														);
+													}
+												}}
 												className={classes.searchIcon}
 											/>
 										</InputAdornment>
