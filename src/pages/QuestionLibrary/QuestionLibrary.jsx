@@ -581,26 +581,26 @@ const QuestionLibrary = () => {
 								value={search}
 								onKeyPress={(e) => {
 									console.log(e, 'on key press');
-									// if (e.key === 'Enter' && search) {
-									// 	dispatch(
-									// 		getQuestions({
-									// 			q: search,
-									// 			page,
-									// 			startDate: formatDate(dateRange[0]),
-									// 			endDate: formatDate(dateRange[1]),
-									// 			...sortState
-									// 		})
-									// 	);
-									// } else if (e.key === 'Enter' && !search) {
-									// 	dispatch(
-									// 		getQuestions({
-									// 			page,
-									// 			startDate: formatDate(dateRange[0]),
-									// 			endDate: formatDate(dateRange[1]),
-									// 			...sortState
-									// 		})
-									// 	);
-									// }
+									if (e.key === 'Enter' && search) {
+										dispatch(
+											getQuestions({
+												q: search,
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									} else if (e.key === 'Enter' && !search) {
+										dispatch(
+											getQuestions({
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									}
 								}}
 								onChange={(e) => {
 									setSearch(e.target.value);

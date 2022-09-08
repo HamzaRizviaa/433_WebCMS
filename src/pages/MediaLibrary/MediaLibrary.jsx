@@ -688,7 +688,31 @@ const MediaLibrary = () => {
 									style: { borderColor: noResultBorder },
 									endAdornment: (
 										<InputAdornment>
-											<Search className={classes.searchIcon} />
+											<Search
+												onClick={() => {
+													if (search) {
+														dispatch(
+															getMedia({
+																q: search,
+																page,
+																startDate: formatDate(dateRange[0]),
+																endDate: formatDate(dateRange[1]),
+																...sortState
+															})
+														);
+													} else {
+														dispatch(
+															getMedia({
+																page,
+																startDate: formatDate(dateRange[0]),
+																endDate: formatDate(dateRange[1]),
+																...sortState
+															})
+														);
+													}
+												}}
+												className={classes.searchIcon}
+											/>
 										</InputAdornment>
 									)
 								}}
