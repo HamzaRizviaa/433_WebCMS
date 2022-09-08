@@ -75,7 +75,7 @@ const QuestionForm = ({
 				  ],
 		labels: []
 	});
-	// console.log('FORM', form)
+
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const imgRef = useRef(null);
@@ -151,6 +151,7 @@ const QuestionForm = ({
 			}, [5000]);
 		}
 	}, [fileRejections]);
+
 	const handleDeleteFile = (id) => {
 		// setUploadedFiles((uploadedFiles) =>
 		// 	uploadedFiles.filter((file) => file.id !== id)
@@ -167,6 +168,7 @@ const QuestionForm = ({
 	const handleChangeExtraLabel = (e) => {
 		setExtraLabel(e.target.value.toUpperCase());
 	};
+
 	useEffect(() => {
 		setQuizLabels((labels) => {
 			return labels.filter((label) => label.id != null);
@@ -205,8 +207,6 @@ const QuestionForm = ({
 		// sendDataToParent(answers);
 	};
 
-	console.log('FORMMMM', form);
-
 	const handleAnswerDelete = (index) => {
 		let dataCopy = { ...form };
 
@@ -233,29 +233,45 @@ const QuestionForm = ({
 	};
 
 	const handleAnswerChange = (event, index) => {
-		console.log(index, 'index ');
-		const formCopy = { ...form };
-		formCopy.answers[index] = {
-			answer: event.target.value,
-			position: index + 1,
-			type:
-				type === 'quiz' && index === 0
-					? 'right_answer'
-					: type === 'quiz' && index > 0
-					? 'wrong_answer_' + index
-					: 'poll'
-		};
-		setForm(formCopy);
-		let answers = { answers: formCopy.answers };
-		sendDataToParent(answers);
+		if (!isEdit) {
+			const formCopy = { ...form };
+			formCopy.answers[index] = {
+				answer: event.target.value,
+				position: index + 1,
+				type:
+					type === 'quiz' && index === 0
+						? 'right_answer'
+						: type === 'quiz' && index > 0
+						? 'wrong_answer_' + index
+						: 'poll'
+			};
+			setForm(formCopy);
+			let answers = { answers: formCopy.answers };
+			sendDataToParent(answers);
+		} else {
+			// This block of code will only be executed if the question is in draft
+			// Then only the question answers will be editable
+			const isAnswersEdited = initialData.data && initialData.data[0].answers;
+			const answers = [
+				...(isAnswersEdited ? initialData.data[0].answers : [...form.answers])
+			];
+
+			answers[index] = {
+				answer: event.target.value,
+				position: index,
+				type:
+					type === 'quiz' && index === 0
+						? 'right_answer'
+						: type === 'quiz' && index > 0
+						? 'wrong_answer_' + index
+						: 'poll'
+			};
+
+			setForm({ ...form, answers });
+			sendDataToParent({ answers });
+		}
 	};
 
-	console.log(
-		initialData,
-		form,
-		isEdit && status !== 'draft',
-		'--- aa rr tt ii cc ll ee ---------'
-	);
 	return (
 		<>
 			{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
@@ -327,7 +343,13 @@ const QuestionForm = ({
 					<div className={globalClasses.dropBoxUrlContainer}>
 						<h6>DROPBOX URL</h6>
 						<TextField
-							value={initialData ? initialData?.dropbox_url : form.dropbox_url}
+							value={
+								initialData
+									? initialData?.data
+										? initialData?.data?.dropbox_url
+										: initialData?.dropbox_url
+									: form.dropbox_url
+							}
 							disabled={location === 'article' ? true : false}
 							onChange={(e) => {
 								setForm((prev) => {
@@ -383,7 +405,13 @@ const QuestionForm = ({
 						</div>
 						<TextField
 							disabled={isEdit && status !== 'draft'}
-							value={initialData ? initialData?.question : form.question}
+							value={
+								initialData
+									? initialData?.data
+										? initialData?.data?.question
+										: initialData?.question
+									: form.question
+							}
 							onChange={(e) => {
 								setForm((prev) => {
 									return {
@@ -421,7 +449,7 @@ const QuestionForm = ({
 									className={classes.titleContainer}
 									item={item}
 									index={index}
-									key={item.sort_order}
+									key={item.sortOrder}
 								>
 									<div className={globalClasses.characterCount}>
 										<h6
@@ -456,7 +484,9 @@ const QuestionForm = ({
 										disabled={isEdit && status !== 'draft'}
 										value={
 											initialData?.answers?.length > 0
-												? initialData?.answers[index]?.answer
+												? initialData?.data && initialData?.data[0].answers
+													? initialData?.data[0].answers[index]?.answer
+													: initialData?.answers[index]?.answer
 												: form.answers[index]?.answer
 										}
 										onChange={(e) => {

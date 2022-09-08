@@ -138,9 +138,7 @@ const ArticleQuestionUpload = ({
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
-					type: 'image',
-					width: fileWidth,
-					height: fileHeight
+					type: 'image'
 				};
 			});
 			sendDataToParent({ previewImage: [...newFiles] });
@@ -168,6 +166,21 @@ const ArticleQuestionUpload = ({
 			// sendDataToParent({ uploadedFiles: [...newFiles] });
 		}
 	}, [acceptedFiles]);
+
+	useEffect(() => {
+		if (fileHeight && fileWidth && item?.data?.uploadedFiles?.length) {
+			sendDataToParent({
+				...item?.data,
+				uploadedFiles: [
+					{
+						width: fileWidth,
+						height: fileHeight,
+						...item?.data?.uploadedFiles[0]
+					}
+				]
+			});
+		}
+	}, [fileHeight, fileWidth]);
 
 	useEffect(() => {
 		if (fileRejections.length) {
@@ -207,7 +220,7 @@ const ArticleQuestionUpload = ({
 					type === 'quiz' && index === 0
 						? 'right_answer'
 						: type === 'quiz' && index === 1
-						? 'wrong_answer'
+						? 'wrong_answer_1'
 						: 'poll'
 			};
 			setForm(formCopy);
@@ -222,7 +235,7 @@ const ArticleQuestionUpload = ({
 					type === 'quiz' && index === 0
 						? 'right_answer'
 						: type === 'quiz' && index === 1
-						? 'wrong_answer'
+						? 'wrong_answer_1'
 						: 'poll'
 			};
 			setForm(formCopy);

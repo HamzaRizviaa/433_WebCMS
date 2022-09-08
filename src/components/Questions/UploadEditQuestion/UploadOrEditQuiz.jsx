@@ -34,6 +34,8 @@ import LoadingOverlay from 'react-loading-overlay';
 import PrimaryLoader from '../../PrimaryLoader';
 import Slide from '@mui/material/Slide';
 import DraggableContainers from '../DraggableContainers';
+import { compact } from 'lodash';
+
 const UploadOrEditQuiz = ({
 	open,
 	previewRef,
@@ -103,7 +105,7 @@ const UploadOrEditQuiz = ({
 			return [
 				...prev,
 				{
-					sort_order: questionSlides?.length + 1
+					sortOrder: questionSlides?.length + 1
 				}
 			];
 		});
@@ -116,21 +118,22 @@ const UploadOrEditQuiz = ({
 	const setNewData = (childData, index) => {
 		// [ 0 : data [ {},{}] ]
 		let dataCopy = [...questionSlides];
+
 		dataCopy[index].data = [
 			{
 				...(dataCopy[index]?.data?.length ? dataCopy[index]?.data[0] : {}),
 				...childData
 			}
 		];
+
 		setQuestionSlides(dataCopy);
 	};
 
 	const handleElementDelete = (sortOrder) => {
-		let dataCopy = [...questionSlides];
+		const slides = [...questionSlides];
+		const updatedSlides = slides.filter((file) => file.sortOrder !== sortOrder);
 		if (sortOrder) {
-			setQuestionSlides(
-				dataCopy.filter((file) => file.sort_order !== sortOrder)
-			);
+			setQuestionSlides(updatedSlides);
 		}
 	};
 
@@ -279,50 +282,50 @@ const UploadOrEditQuiz = ({
 		let slidesData =
 			questionSlides?.length > 0
 				? questionSlides.map((item, index) => {
+						if (!item.data)
+							return { ...item, position: index, sortOrder: index + 1 };
+
+						const uploadedFiles = item.data[0]?.uploadedFiles
+							? item.data[0]?.uploadedFiles
+							: item.uploadedFiles;
+
 						return {
-							height:
-								item.data[0]?.uploadedFiles?.length > 0
-									? item.data[0]?.uploadedFiles[0]?.height
-									: 0,
-							width:
-								item.data[0]?.uploadedFiles?.length > 0
-									? item.data[0]?.uploadedFiles[0]?.width
-									: 0,
-							image:
-								item.data[0]?.uploadedFiles?.length > 0
-									? item.data[0]?.uploadedFiles[0]?.media_url?.split(
-											'cloudfront.net/'
-									  )[1] || item.data[0]?.uploadedFiles[0]?.image
-									: '',
-							file_name:
-								item.data[0]?.uploadedFiles?.length > 0
-									? item.data[0]?.uploadedFiles[0]?.file_name
-									: '',
-							labels: item.data[0]?.labels,
-							answers: item.data[0]?.answers,
-							question: item.data[0]?.question,
-							dropbox_url: item.data[0]?.dropbox_url,
-							sort_order: index + 1
+							height: uploadedFiles ? uploadedFiles[0]?.height : 0,
+							width: uploadedFiles ? uploadedFiles[0]?.width : 0,
+							file_name: uploadedFiles ? uploadedFiles[0]?.file_name : '',
+							image: uploadedFiles
+								? uploadedFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
+								  uploadedFiles[0]?.image
+								: '',
+							labels: item.data[0]?.labels || item.labels || [],
+							answers: item.data[0]?.answers || item.answers,
+							question: item.data[0]?.question || item.question,
+							dropbox_url: item.data[0]?.dropbox_url || item.dropbox_url,
+							sortOrder: index + 1,
+							position: index,
+							...(item.id ? { id: item.id } : {})
 						};
 				  })
 				: [];
+
+		slidesData = compact(slidesData);
 
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/question/add-question`,
 				{
-					questions: slidesData,
 					general_info: {
 						save_draft: draft,
-						end_date: convertedDate,
+						end_date: convertedDate.split('T')[0],
 						question_type: questionType
 					},
-					...(isEdit && id ? { question_id: id } : {}),
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
 						last_name: `${getLocalStorageDetails()?.last_name}`
-					}
+					},
+					...(isEdit && id ? { question_id: id } : {}),
+					...(slidesData.length ? { questions: slidesData } : {})
 				},
 				{
 					headers: {
@@ -330,6 +333,7 @@ const UploadOrEditQuiz = ({
 					}
 				}
 			);
+
 			if (result?.data?.status_code === 200) {
 				toast.success(
 					isEdit ? 'Question has been edited!' : 'Question has been created!'
@@ -349,17 +353,19 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
-	const deleteQuiz = async (id, draft, type) => {
+	const deleteQuiz = async (id, draft, qtype) => {
+		if (!editQuestionData) return;
+		const questions_ids = editQuestionData.questions?.map((q) => q.id) || [];
+
 		setDeleteBtnStatus(true);
 
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/question/delete-question`,
 				{
-					question_meta_id: id,
-					is_draft: draft,
-					question_type: type,
-					question_ids: questionIds
+					question_meta_id: editQuestionData.id,
+					questions_ids,
+					is_draft: draft
 				},
 				{
 					headers: {
@@ -377,7 +383,6 @@ const UploadOrEditQuiz = ({
 		} catch (e) {
 			toast.error('Failed to delete Question!');
 			setDeleteBtnStatus(false);
-			console.log(e, 'Failed to delete Question!');
 		}
 		setOpenDeletePopup(!openDeletePopup);
 	};
@@ -496,8 +501,7 @@ const UploadOrEditQuiz = ({
 			setIsLoadingcreateViral(true);
 			if (isEdit) {
 				try {
-					console.log('edit api on post , save changes button');
-					// createQuestion(editQuestionData?.id);
+					createQuestion(editQuestionData?.id);
 				} catch (err) {
 					setIsLoadingcreateViral(false);
 					console.log(err);
@@ -524,18 +528,15 @@ const UploadOrEditQuiz = ({
 			setIsLoadingcreateViral(true);
 			if (isEdit) {
 				try {
-					console.log('edit api on draft');
-					// createQuestion(editQuestionData?.id, true);
+					createQuestion(editQuestionData?.id, true);
 				} catch (err) {
 					setIsLoadingcreateViral(false);
-					console.log(err);
 				}
 			} else {
 				try {
 					createQuestion(null, true);
 				} catch (err) {
 					setIsLoadingcreateViral(false);
-					console.log(err);
 				}
 			}
 		}
@@ -577,11 +578,7 @@ const UploadOrEditQuiz = ({
 				handlePreview={() => {
 					handlePreviewEscape();
 				}}
-				notifID={
-					location === 'article' || status === 'CLOSED' || status === 'draft'
-						? ''
-						: notifID
-				}
+				notifID={status === 'CLOSED' ? '' : notifID}
 			>
 				<LoadingOverlay
 					active={isLoading}
@@ -607,7 +604,7 @@ const UploadOrEditQuiz = ({
 													isEdit={isEdit}
 													location={location}
 													type={questionType}
-													key={item.sort_order}
+													key={item.sortOrder}
 													setPreviewBool={setPreviewBool}
 													setPreviewFile={setPreviewFile}
 													setDisableDropdown={setDisableDropdown}
@@ -712,7 +709,7 @@ const UploadOrEditQuiz = ({
 															item={item}
 															index={index}
 															type={questionType}
-															key={item.sort_order}
+															key={item.sortOrder}
 															status={status}
 															endDate={form.end_date}
 															sendDataToParent={
