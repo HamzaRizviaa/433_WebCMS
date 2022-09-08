@@ -111,15 +111,12 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 	} else if (quesData?.length === 0) {
 		validateQuestion = false;
 	}
-	console.log(validateQuestion, 'validateQuestion');
 
 	var finalFormValue =
 		validate.every((item) => item === true) &&
 		validateData &&
 		validateNews &&
 		validateQuestion;
-
-	console.log(finalFormValue, 'finalFormValue');
 
 	return finalFormValue;
 };

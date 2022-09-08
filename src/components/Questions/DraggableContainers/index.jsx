@@ -117,7 +117,7 @@ const DraggableContainers = ({
 												<Deletes
 													className={classes.deleteIcon}
 													onClick={() => {
-														(!isEdit || status === 'draft') &&
+														((isEdit && status === 'draft') || !isEdit) &&
 															handleDeleteQuestionSlide(item.sortOrder);
 													}}
 												/>

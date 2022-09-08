@@ -32,8 +32,10 @@ export const checkNewElementQuestion = (specificQuestion, question) => {
 			if (specificQuestion?.questions?.length === question?.length) {
 				if (question[i]?.data?.length) {
 					if (
-						question[i]?.data[0]?.uploadedFiles[0]?.file_name ===
-							specificQuestion?.questions[i]?.file_name &&
+						(question[i]?.data[0]?.uploadedFiles
+							? question[i]?.data[0]?.uploadedFiles[0]?.file_name ===
+							  specificQuestion?.questions[i]?.file_name
+							: false) &&
 						question[i]?.data[0]?.dropbox_url ===
 							specificQuestion?.questions[i]?.dropbox_url
 					) {
@@ -65,6 +67,14 @@ export const checkSortOrderOnEdit = (specificQuestion, question) => {
 	return result.some((item) => item === false);
 };
 
+const checkDuplicateLabel = (specificQuestion, data) => {
+	let dataLabels = data?.labels?.map((dataL) => {
+		return specificQuestion?.labels.includes(dataL.name);
+	});
+
+	return dataLabels.some((label) => label === false);
+};
+
 export const checkEmptyQuestionDraft = (question) => {
 	const validateQuestionDraft = question.map((item) => {
 		if (item?.data) {
@@ -93,16 +103,30 @@ export const checkNewElementQuestionDraft = (specificQuestion, question) => {
 			if (specificQuestion?.questions?.length === question.length) {
 				if (question[i]?.data) {
 					if (
-						question[i]?.data[0]?.file_name ===
-							specificQuestion?.questions[i]?.file_name &&
+						(question[i]?.data[0]?.uploadedFiles
+							? question[i]?.data[0]?.uploadedFiles[0]?.file_name ===
+							  specificQuestion?.questions[i]?.file_name
+							: true) &&
 						question[i]?.data[0]?.dropbox_url ===
 							specificQuestion?.questions[i]?.dropbox_url &&
 						question[i]?.data[0]?.labels?.length ===
 							specificQuestion?.questions[i]?.labels?.length &&
+						!checkDuplicateLabel(
+							specificQuestion?.questions[i],
+							question[i]?.data[0]
+						) &&
 						question[i]?.data[0]?.question ===
 							specificQuestion?.questions[i]?.question &&
-						question[i]?.data[0]?.answers?.length ===
-							specificQuestion?.questions[i]?.answers?.length
+						(question[i]?.data[0]?.answers?.length > 0 &&
+						question[i]?.data[0]?.answers[0]?.answer
+							? question[i]?.data[0]?.answers[0]?.answer ===
+							  specificQuestion?.questions[i]?.answers[0]?.answer
+							: true) &&
+						(question[i]?.data[0]?.answers?.length > 0 &&
+						question[i]?.data[0]?.answers[1]?.answer
+							? question[i]?.data[0]?.answers[1]?.answer ===
+							  specificQuestion?.questions[i]?.answers[1]?.answer
+							: true)
 					) {
 						result.push(true);
 					} else {

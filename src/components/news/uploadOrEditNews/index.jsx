@@ -516,7 +516,7 @@ const UploadOrEditNews = ({
 			setIsError({});
 		}, 5000);
 	};
-
+	console.log(news);
 	const handleCreateDraft = () => {
 		setIsLoading(false);
 		if (!validateDraft(form) || draftBtnDisabled) {
@@ -552,6 +552,7 @@ const UploadOrEditNews = ({
 					let newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
 					return newsData;
 				});
+				console.log(newsImages, 'lakaka');
 
 				Promise.all([...newsImages])
 					.then((mediaFiles) => {

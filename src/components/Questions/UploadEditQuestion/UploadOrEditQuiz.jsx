@@ -142,7 +142,8 @@ const UploadOrEditQuiz = ({
 	const handleElementDelete = (sortOrder) => {
 		const slides = [...questionSlides];
 		const updatedSlides = slides.filter((file) => file.sortOrder !== sortOrder);
-		if (sortOrder) {
+		console.log(sortOrder, 'so');
+		if (sortOrder || sortOrder === 0) {
 			setQuestionSlides(updatedSlides);
 		}
 	};
@@ -317,7 +318,7 @@ const UploadOrEditQuiz = ({
 
 	const createQuestion = async (id, mediaFiles, draft) => {
 		setPostButtonStatus(true);
-		console.log(mediaFiles, 'mediaFiles');
+
 		let slidesData =
 			questionSlides?.length > 0
 				? questionSlides.map((item, index) => {
@@ -562,10 +563,12 @@ const UploadOrEditQuiz = ({
 					) ||
 					!validateEmptyQuestionArray.every((item) => item === true)
 				) {
+					console.log('3D');
 					setDraftBtnDisabled(
 						!checkSortOrderOnEdit(editQuestionData, questionSlides)
 					);
 				} else {
+					console.log('4D');
 					setDraftBtnDisabled(
 						validateEmptyQuestionAndEditComparisonArray.every(
 							(item) => item === true
@@ -590,7 +593,7 @@ const UploadOrEditQuiz = ({
 			);
 		}
 	}, [editQuestionData, form, convertedDate]);
-	console.log(editQuizBtnDisabled, 'add btn disabled');
+
 	useEffect(() => {
 		//empty questionSlides
 		const validateEmptyQuestionArray = [
@@ -614,7 +617,6 @@ const UploadOrEditQuiz = ({
 					!validateForm(form, null, null, questionSlides)
 			);
 		} else {
-			console.log('else');
 			if (editQuestionData?.questions?.length !== questionSlides?.length) {
 				setEditQuizBtnDisabled(
 					!validateEmptyQuestionArray.every((item) => item === true)
@@ -638,7 +640,10 @@ const UploadOrEditQuiz = ({
 	//editQuizBtnDisabled button - whether you can click or not
 	//!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')
 	const handlePostQuizPollBtn = () => {
-		if (!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')) {
+		if (
+			!validateForm(form, null, null, questionSlides) ||
+			(editQuizBtnDisabled && status === 'ACTIVE')
+		) {
 			validatePostBtn();
 		} else {
 			setIsLoading(true);
@@ -647,7 +652,6 @@ const UploadOrEditQuiz = ({
 
 			if (isEdit) {
 				let images = questionSlides?.map(async (item, index) => {
-					console.log(item, 'edit');
 					let quesData;
 					if (item?.data[index]?.uploadedFiles[0]?.file) {
 						quesData = await uploadFileToServer(
@@ -688,11 +692,16 @@ const UploadOrEditQuiz = ({
 			}
 		}
 	};
-
+	console.log(
+		!validateDraft(form, null, null, questionSlides),
+		draftBtnDisabled,
+		'lopo'
+	);
 	//draftBtnDisabled button - whether you can click or not
 	//validateDraft - color grey or yellow
+
 	const handleDraftSave = async () => {
-		if (!validateDraft(form) || draftBtnDisabled) {
+		if (!validateDraft(form, null, null, questionSlides) || draftBtnDisabled) {
 			validateDraftBtn();
 		} else {
 			setIsLoading(true);
@@ -702,16 +711,18 @@ const UploadOrEditQuiz = ({
 			if (isEdit) {
 				let images = questionSlides?.map(async (item, index) => {
 					let quesData;
-					if (item?.data[index]?.uploadedFiles[0]?.file) {
-						quesData = await uploadFileToServer(
-							item?.data[index]?.uploadedFiles[0],
-							'questionlibrary'
-						);
+					if (item?.data[0]?.uploadedFiles?.length) {
+						if (item?.data[0]?.uploadedFiles[0]?.file) {
+							quesData = await uploadFileToServer(
+								item?.data[index]?.uploadedFiles[0],
+								'questionlibrary'
+							);
 
-						return quesData;
-					} else {
-						quesData = item?.data[index]?.uploadedFiles[0];
-						return quesData;
+							return quesData;
+						} else {
+							quesData = item?.data[0]?.uploadedFiles[0];
+							return quesData;
+						}
 					}
 				});
 
@@ -723,11 +734,15 @@ const UploadOrEditQuiz = ({
 						setIsLoading(false);
 					});
 			} else {
-				let images = questionSlides?.map(async (item, index) => {
-					let quesData = await uploadFileToServer(
-						item?.data[index]?.uploadedFiles[0],
-						'questionlibrary'
-					);
+				let images = questionSlides?.map(async (item) => {
+					let quesData;
+					if (item?.data[0]?.uploadedFiles?.length) {
+						quesData = await uploadFileToServer(
+							item?.data[0]?.uploadedFiles[0],
+							'questionlibrary'
+						);
+					}
+
 					return quesData;
 				});
 
