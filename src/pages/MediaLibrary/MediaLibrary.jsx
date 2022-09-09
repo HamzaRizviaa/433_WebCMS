@@ -27,7 +27,6 @@ import Table from '../../components/table';
 // CSS / Material UI
 import 'react-datepicker/dist/react-datepicker.css';
 import classes2 from './_mediaLibrary.module.scss';
-import Pagination from '@mui/material/Pagination';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 import TextField from '@material-ui/core/TextField';
@@ -38,7 +37,7 @@ import { Flip } from 'react-toastify';
 
 // Utils
 import { getDateTime, formatDate, getCalendarText } from '../../utils';
-import { useStyles, useStyles2 } from './../../utils/styles';
+import { useStyles2 } from './../../utils/styles';
 import { useStyles as globalUseStyles } from '../../styles/global.style';
 
 // Icons
@@ -50,8 +49,10 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
+import CustomPagination from '../../components/ui/Pagination';
+import { PaginationContext } from '../../utils/context';
+
 const MediaLibrary = () => {
-	const muiClasses = useStyles();
 	const muiClasses2 = useStyles2();
 	const classes = globalUseStyles();
 	// Selctor
@@ -181,10 +182,6 @@ const MediaLibrary = () => {
 			</div>
 		);
 	});
-
-	const handleChange = (event, value) => {
-		setPage(value);
-	};
 
 	useEffect(() => {
 		if (sortState.sortby && sortState.order_type && !search) {
@@ -627,6 +624,7 @@ const MediaLibrary = () => {
 	}, [page]);
 
 	return (
+		<PaginationContext.Provider value={[ page, setPage, paginationError, setPaginationError ]}>
 		<LoadingOverlay
 			active={mediaApiStatus.status === 'pending' ? true : false}
 			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
@@ -713,40 +711,7 @@ const MediaLibrary = () => {
 				<div className={classes.tableContainer}>
 					<Table rowEvents={tableRowEvents} columns={columns} data={media} />
 				</div>
-
-				<div className={classes.paginationRow}>
-					<Pagination
-						className={muiClasses.root}
-						page={page}
-						onChange={handleChange}
-						count={Math.ceil(totalRecords / 20)}
-						variant='outlined'
-						shape='rounded'
-					/>
-					<div className={classes.gotoText}>Go to page</div>
-					<input
-						style={{
-							border: `${
-								paginationError ? '1px solid red' : '1px solid #808080'
-							}`
-						}}
-						type={'number'}
-						min={1}
-						onChange={(e) => {
-							setPaginationError(false);
-							const value = Number(e.target.value);
-							if (value > Math.ceil(totalRecords / 20)) {
-								setPaginationError(true);
-								setPage(1);
-							} else if (value) {
-								setPage(value);
-							} else {
-								setPage(1);
-							}
-						}}
-						className={classes.gotoInput}
-					/>
-				</div>
+				<CustomPagination totalRecords={totalRecords} page={page} paginationError={paginationError} />
 
 				<UploadOrEditMedia
 					open={showSlider}
@@ -765,6 +730,7 @@ const MediaLibrary = () => {
 				/>
 			</Layout>
 		</LoadingOverlay>
+		</PaginationContext.Provider>
 	);
 };
 

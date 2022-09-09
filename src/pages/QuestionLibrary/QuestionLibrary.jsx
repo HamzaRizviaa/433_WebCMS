@@ -15,8 +15,6 @@ import UploadOrEditQuiz from '../../components/Questions/UploadEditQuestion/Uplo
 import QuizDetails from '../../components/Questions/QuestionDetails/QuizDetails';
 import PollDetails from '../../components/Questions/QuestionDetails/PollDetails';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
-import Pagination from '@mui/material/Pagination';
-import { useStyles } from '../../utils/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -43,6 +41,8 @@ import { getAllNewLabels } from '../PostLibrary/postLibrarySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
 import { useNavigate } from 'react-router-dom';
+import CustomPagination from '../../components/ui/Pagination';
+import { PaginationContext } from '../../utils/context';
 
 const QuestionLibrary = () => {
 	// Selectors
@@ -59,7 +59,6 @@ const QuestionLibrary = () => {
 	);
 
 	const navigate = useNavigate();
-	const muiClasses = useStyles();
 	const classes = globalUseStyles();
 	const [showSlider, setShowSlider] = useState(false);
 	const [showQuizSlider, setShowQuizSlider] = useState(false);
@@ -424,10 +423,6 @@ const QuestionLibrary = () => {
 		}
 	};
 
-	const handleChange = (event, value) => {
-		setPage(value);
-	};
-
 	useEffect(() => {
 		console.log('sort state use effect');
 		if (sortState.sortby && sortState.order_type && !search) {
@@ -544,6 +539,7 @@ const QuestionLibrary = () => {
 	const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
 
 	return (
+		<PaginationContext.Provider value={[ page, setPage, paginationError, setPaginationError ]}>
 		<LoadingOverlay
 			active={statusQuestionApi.status === 'pending' ? true : false}
 			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
@@ -669,42 +665,8 @@ const QuestionLibrary = () => {
 						data={questions}
 					/>
 				</div>
-
-				<div className={classes.paginationRow}>
-					<Pagination
-						className={muiClasses.root}
-						page={page}
-						onChange={handleChange}
-						count={Math.ceil(totalRecords / 20)}
-						variant='outlined'
-						shape='rounded'
-					/>
-					<div className={classes.gotoText}>Go to page</div>
-					<input
-						style={{
-							border: `${
-								paginationError ? '1px solid red' : '1px solid #808080'
-							}`
-						}}
-						type={'number'}
-						min={1}
-						onChange={(e) => {
-							// console.log(e, 'onchange', page);
-							setPaginationError(false);
-							const value = Number(e.target.value);
-							if (value > Math.ceil(totalRecords / 20)) {
-								// if (value > Math.ceil(60 / 20)) {
-								setPaginationError(true);
-								setPage(1);
-							} else if (value) {
-								setPage(value);
-							} else {
-								setPage(1);
-							}
-						}}
-						className={classes.gotoInput}
-					/>
-				</div>
+				<CustomPagination totalRecords={totalRecords} page={page} paginationError={paginationError} />
+				
 				{/* upload */}
 				<UploadOrEditQuiz
 					open={showSlider}
@@ -772,6 +734,7 @@ const QuestionLibrary = () => {
 				/>
 			</Layout>
 		</LoadingOverlay>
+		</PaginationContext.Provider>
 	);
 };
 

@@ -4,7 +4,6 @@
 import React, { useState, useEffect, forwardRef, useCallback } from 'react';
 import Layout from '../../components/layout';
 import Table from '../../components/table';
-// import classes from './_articleLibrary.module.scss';
 import Button from '../../components/button';
 import _debounce from 'lodash/debounce';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -12,8 +11,6 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
-import Pagination from '@mui/material/Pagination';
-import { useStyles } from './../../utils/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -37,6 +34,9 @@ import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
 import DefaultImage from '../../assets/defaultImage.png';
 import { useStyles as globalUseStyles } from '../../styles/global.style';
+import CustomPagination from '../../components/ui/Pagination';
+import { PaginationContext } from '../../utils/context';
+
 const ArticleLibrary = () => {
 	// Selectors
 	const articles = useSelector((state) => state.ArticleLibraryStore.articles);
@@ -51,7 +51,6 @@ const ArticleLibrary = () => {
 		(state) => state.ArticleLibraryStore.noResultStatusCalendar
 	);
 
-	const muiClasses = useStyles();
 	const classes = globalUseStyles();
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
@@ -406,10 +405,6 @@ const ArticleLibrary = () => {
 		}
 	};
 
-	const handleChange = (event, value) => {
-		setPage(value);
-	};
-
 	useEffect(() => {
 		// console.log('sort state use effect');
 		if (sortState.sortby && sortState.order_type && !search) {
@@ -537,6 +532,7 @@ const ArticleLibrary = () => {
 	};
 
 	return (
+		<PaginationContext.Provider value={[ page, setPage, paginationError, setPaginationError ]}>
 		<LoadingOverlay
 			active={statusArticlesApi.status === 'pending' ? true : false}
 			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
@@ -654,41 +650,7 @@ const ArticleLibrary = () => {
 				<div className={classes.tableContainer}>
 					<Table rowEvents={tableRowEvents} columns={columns} data={articles} />
 				</div>
-				<div className={classes.paginationRow}>
-					<Pagination
-						className={muiClasses.root}
-						page={page}
-						onChange={handleChange}
-						count={Math.ceil(totalRecords / 20)}
-						variant='outlined'
-						shape='rounded'
-					/>
-					<div className={classes.gotoText}>Go to page</div>
-					<input
-						style={{
-							border: `${
-								paginationError ? '1px solid red ' : '1px solid #808080 '
-							}`
-						}}
-						type={'number'}
-						min={1}
-						onChange={(e) => {
-							console.log(e, 'onchange', page);
-							setPaginationError(false);
-							const value = Number(e.target.value);
-							if (value > Math.ceil(totalRecords / 20)) {
-								// if (value > Math.ceil(60 / 20)) {
-								setPaginationError(true);
-								setPage(1);
-							} else if (value) {
-								setPage(value);
-							} else {
-								setPage(1);
-							}
-						}}
-						className={classes.gotoInput}
-					/>
-				</div>
+				<CustomPagination totalRecords={totalRecords} page={page} paginationError={paginationError} />
 				<UploadOrEditArticle
 					open={showSlider}
 					isEdit={edit}
@@ -706,6 +668,7 @@ const ArticleLibrary = () => {
 				/>
 			</Layout>
 		</LoadingOverlay>
+		</PaginationContext.Provider>
 	);
 };
 
