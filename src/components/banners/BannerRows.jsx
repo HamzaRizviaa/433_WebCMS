@@ -412,16 +412,18 @@ export default function BannerRows({
 													return _bannerData;
 												});
 												// re fetching the banner content to poplulate the list again
-												console.log('bannerContent', bannerContent);
 												if (bannerContent.length < 7) {
 													const selectedItems = selectedBannerData.map(
 														(item) => item?.selectedMedia?.id
+													);
+													const filterOutNullItem = selectedItems.filter(
+														(item) => item
 													);
 													dispatch(
 														getBannerContent({
 															type: tabValue,
 															title: null,
-															exclude: selectedItems
+															exclude: [...filterOutNullItem, newVal?.id]
 														})
 													);
 												}
