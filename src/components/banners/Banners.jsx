@@ -49,8 +49,34 @@ export default function Banners({ tabValue }) {
 			id: '5',
 			bannerType: '',
 			selectedMedia: null
+		},
+		{
+			id: '6',
+			bannerType: '',
+			selectedMedia: null
+		},
+		{
+			id: '7',
+			bannerType: '',
+			selectedMedia: null
+		},
+		{
+			id: '8',
+			bannerType: '',
+			selectedMedia: null
+		},
+		{
+			id: '9',
+			bannerType: '',
+			selectedMedia: null
+		},
+		{
+			id: '10',
+			bannerType: '',
+			selectedMedia: null
 		}
 	]);
+	console.log('BANNER DATa', bannerData);
 
 	const dispatch = useDispatch();
 	const {
@@ -105,6 +131,31 @@ export default function Banners({ tabValue }) {
 			},
 			{
 				id: '5',
+				bannerType: '',
+				selectedMedia: null
+			},
+			{
+				id: '6',
+				bannerType: '',
+				selectedMedia: null
+			},
+			{
+				id: '7',
+				bannerType: '',
+				selectedMedia: null
+			},
+			{
+				id: '8',
+				bannerType: '',
+				selectedMedia: null
+			},
+			{
+				id: '9',
+				bannerType: '',
+				selectedMedia: null
+			},
+			{
+				id: '10',
 				bannerType: '',
 				selectedMedia: null
 			}
@@ -195,7 +246,12 @@ export default function Banners({ tabValue }) {
 					data?.id === '2' ||
 					data?.id === '3' ||
 					data?.id === '4' ||
-					data?.id === '5'
+					data?.id === '5' ||
+					data?.id === '6' ||
+					data?.id === '7' ||
+					data?.id === '8' ||
+					data?.id === '9' ||
+					data?.id === '10'
 						? null
 						: data?.id,
 				sort_order: index
@@ -254,7 +310,7 @@ export default function Banners({ tabValue }) {
 	const handleBannerPositionAndFirstBanner = () => {
 		console.log('click other banner');
 		let errValidate = { flag: '', rowId: undefined, errMsg: '' };
-		for (let i = 4; i >= 1; i--) {
+		for (let i = 9; i >= 1; i--) {
 			// start from max to min
 			if (bannerData[i]?.bannerType && bannerData[i]?.selectedMedia) {
 				//check data in both field
@@ -303,16 +359,6 @@ export default function Banners({ tabValue }) {
 		<div className={classes.Banner}>
 			{getBannerStatus === 'loading' ? <PrimaryLoader /> : <></>}
 			<div className={classes.bannerRow}>
-				<div className={classes.bannersLeft}>
-					{[1, 2, 3, 4, 5].length > 0 &&
-						[1, 2, 3, 4, 5].map((id, index) => {
-							return (
-								<div className={classes.bannertext} key={index}>
-									Banner {id}
-								</div>
-							);
-						})}
-				</div>
 				<div
 					className={classes.dragbale}
 					//disableDropdown={disableDropdown}
@@ -324,28 +370,36 @@ export default function Banners({ tabValue }) {
 									{bannerData.length > 0 &&
 										bannerData.map((data, index) => {
 											return (
-												<BannerRows
-													otherRowsErrMsg={
-														validateRow.rowId === index ? validateRow : ''
-													}
-													firstrowErrMsg={
-														index === validateRow.rowId && validateRow
-															? ''
-															: index === firstCheck.rowId
-															? firstCheck
-															: ''
-													}
-													//firstBannerErr={firstBannerErr}
-													validateRow={validateRow}
-													data={data}
-													setBannerData={setBannerData} //?
-													bannerContent={bannerItems}
-													selectedBannerData={bannerData}
-													key={data.id}
-													provided={provided}
-													index={index}
-													tabValue={tabValue}
-												/>
+												<div className={classes.bannerMain} key={index}>
+													{Array.from({ length: 10 }, (_, i) => i + 1).length >
+														0 && (
+														<div className={classes.bannertext} key={index}>
+															Banner {index + 1}
+														</div>
+													)}
+													<BannerRows
+														otherRowsErrMsg={
+															validateRow.rowId === index ? validateRow : ''
+														}
+														firstrowErrMsg={
+															index === validateRow.rowId && validateRow
+																? ''
+																: index === firstCheck.rowId
+																? firstCheck
+																: ''
+														}
+														//firstBannerErr={firstBannerErr}
+														validateRow={validateRow}
+														data={data}
+														setBannerData={setBannerData} //?
+														bannerContent={bannerItems}
+														selectedBannerData={bannerData}
+														key={data.id}
+														provided={provided}
+														index={index}
+														tabValue={tabValue}
+													/>
+												</div>
 											);
 										})}
 									{provided.placeholder}
