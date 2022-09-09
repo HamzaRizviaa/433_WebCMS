@@ -16,8 +16,6 @@ export const useStyles = makeStyles(() => ({
 			lineHeight: '16px',
 			paddingLeft: '16px',
 			paddingRight: '15px'
-			// color: ({ mainClass }) =>
-			// 	mainClass === 'prod' ? theme.palette.neonYellow : theme.palette.white
 		},
 		'& .MuiSvgIcon-root': {
 			marginTop: '10px',
