@@ -73,24 +73,6 @@ export default function Banners({ tabValue }) {
 		};
 	}, []);
 
-	// useEffect(() => {
-	// 	if (bannerItems.length && bannerItems.length < 7) {
-	// 		const selectedItems = bannerItems.map((item) => item.id);
-	// 		console.log('length is less than 6', selectedItems);
-	// 		dispatch(getAllBanners(tabValue));
-	// 		dispatch(
-	// 			getBannerContent({
-	// 				type: tabValue,
-	// 				title: null,
-	// 				exclude: selectedItems
-	// 			})
-	// 		);
-	// 		setBannerItems(bannerContent);
-	// 	}
-	// }, [bannerData, bannerContent]);
-
-	console.log('bannerData', bannerData);
-
 	useEffect(() => {
 		filterBannerContent(bannerContent);
 	}, [bannerData, bannerContent]);
@@ -131,7 +113,6 @@ export default function Banners({ tabValue }) {
 
 	//get banners from get api and map on your own data
 	const updateBannerObject = () => {
-		console.log('Update Running');
 		let _filterData = [];
 		_filterData = allBanners.map((data) => {
 			return {
