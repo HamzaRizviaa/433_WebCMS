@@ -95,12 +95,15 @@ const Labels = ({
 				display={'flex'}
 				alignItems='center'
 				justifyContent={'space-between'}
-				maxWidth="calc(100% - 10px)"
+				maxWidth='calc(100% - 10px)'
 			>
 				<h6 className={titleClasses}>LABELS</h6>
-				<h6 className={titleClasses}>
-					CURRENT LABELS: {selectedLabels?.length || '0'}
-				</h6>
+				<Box component={'h6'} className={titleClasses} minWidth='125px'>
+					CURRENT LABELS:{' '}
+					<Box component={'span'} width='10px'>
+						{selectedLabels?.length || '0'}
+					</Box>
+				</Box>
 			</Box>
 
 			<Autocomplete
