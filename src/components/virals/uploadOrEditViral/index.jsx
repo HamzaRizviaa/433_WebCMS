@@ -68,6 +68,15 @@ const UploadOrEditViral = ({
 		show_likes: true,
 		show_comments: true
 	});
+	const [translated, setTranslated] = useState(false);
+	const [translatedLanguages, setTranslatedLanguages] = useState();
+	const [lang, setLang] = useState({
+		id: 0,
+		name: 'English', //language name
+		prefix: 'ENG', // figma
+		shortName: 'en' //api
+	});
+
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const videoRef = useRef(null);
@@ -259,6 +268,14 @@ const UploadOrEditViral = ({
 			show_likes: true,
 			show_comments: true
 		});
+		setTranslated(false);
+		setTranslatedLanguages();
+		setLang({
+			id: 0,
+			name: 'English',
+			prefix: 'ENG',
+			shortName: 'en'
+		});
 	};
 
 	const toggleDeleteModal = () => {
@@ -283,6 +300,47 @@ const UploadOrEditViral = ({
 		setTimeout(() => {
 			setIsError({});
 		}, 5000);
+	};
+
+	console.log(translatedLanguages, translated, 'tL');
+	console.log(form, 'forma');
+
+	useEffect(() => {
+		if (translatedLanguages) {
+			let selectedLanguage = lang?.shortName;
+			let translatedLangData = translatedLanguages[selectedLanguage];
+			console.log(translatedLangData, 'dta');
+			setForm((prev) => {
+				return { ...prev, caption: translatedLangData?.caption };
+			});
+		}
+	}, [lang]);
+
+	const translateAPI = async () => {
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/translations/translate`,
+				{
+					caption: form.caption
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+
+			if (result?.data?.status_code === 200) {
+				setTranslatedLanguages(result?.data?.data);
+				setTranslated(true);
+				setIsLoadingcreateViral(false);
+			}
+		} catch (e) {
+			toast.error('Failed to translate');
+			setTranslated(false);
+			setIsLoadingcreateViral(false);
+			console.log(e, 'Failed to translate');
+		}
 	};
 
 	const createViral = async (id, file, draft = false) => {
@@ -418,9 +476,9 @@ const UploadOrEditViral = ({
 					!form.caption ||
 					!form.uploadedFiles.length ||
 					form.labels.length < 7 ||
-					(specificViral?.file_name === form.uploadedFiles[0]?.file_name &&
-						specificViral?.caption?.trim() === form.caption.trim() &&
-						specificViral?.dropbox_url?.trim() === form.dropbox_url.trim() &&
+					(specificViral?.file_name === form?.uploadedFiles[0]?.file_name &&
+						specificViral?.caption?.trim() === form?.caption?.trim() &&
+						specificViral?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
 						specificViral?.show_likes === form.show_likes &&
 						specificViral?.show_comments === form.show_comments)
 			);
@@ -432,9 +490,9 @@ const UploadOrEditViral = ({
 			// console.log(specificViral, Object.keys(specificViral), 'specificViral');
 			setDraftBtnDisabled(
 				!validateDraft(form) ||
-					(specificViral?.file_name === form.uploadedFiles[0]?.file_name &&
-						specificViral?.caption?.trim() === form.caption.trim() &&
-						specificViral?.dropbox_url?.trim() === form.dropbox_url.trim() &&
+					(specificViral?.file_name === form?.uploadedFiles[0]?.file_name &&
+						specificViral?.caption?.trim() === form?.caption?.trim() &&
+						specificViral?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
 						specificViral?.show_likes === form.show_likes &&
 						specificViral?.show_comments === form.show_comments &&
 						specificViral?.labels?.length === form?.labels?.length &&
@@ -605,6 +663,28 @@ const UploadOrEditViral = ({
 		}
 	};
 
+	const handleTranslateBtn = () => {
+		if (!validateForm(form) || draftBtnDisabled) {
+			validateViralBtn();
+		} else {
+			setPostButtonStatus(true);
+			setIsLoadingcreateViral(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			if (isEdit) {
+				try {
+					translateAPI();
+				} catch {
+					setIsLoadingcreateViral(false);
+				}
+			} else {
+				try {
+					translateAPI();
+				} catch {
+					setIsLoadingcreateViral(false);
+				}
+			}
+		}
+	};
 	return (
 		<>
 			<Slider
@@ -783,11 +863,12 @@ const UploadOrEditViral = ({
 										</h6>
 										<TextField
 											value={form.caption}
-											onChange={(e) =>
+											onChange={(e) => {
+												setTranslated(false);
 												setForm((prev) => {
 													return { ...prev, caption: e.target.value };
-												})
-											}
+												});
+											}}
 											placeholder={'Please write your caption here'}
 											className={classes.textField}
 											InputProps={{
@@ -840,8 +921,15 @@ const UploadOrEditViral = ({
 										? 'Something needs to be changed to save a draft'
 										: ''}
 								</p>
-								<Divider color={'grey'} sx={{ mb: '10px' }} />
-								<TranslationCarousal />
+								{translated ? (
+									<>
+										<Divider color={'grey'} sx={{ mb: '10px' }} />
+										<TranslationCarousal lang={lang} setLang={setLang} />
+									</>
+								) : (
+									<></>
+								)}
+
 								<div className={classes.buttonDiv}>
 									{isEdit || (status === 'draft' && isEdit) ? (
 										<div className={classes.editBtn}>
@@ -902,8 +990,10 @@ const UploadOrEditViral = ({
 														: !validateForm(form)
 												}
 												// disabled={isEdit ? editBtnDisabled : !validateForm(form)}
-												onClick={handlePostSaveBtn}
-												text={buttonText}
+												onClick={
+													translated ? handlePostSaveBtn : handleTranslateBtn
+												}
+												text={translated ? buttonText : 'TRANSLATE'}
 											/>
 										</div>
 									</div>

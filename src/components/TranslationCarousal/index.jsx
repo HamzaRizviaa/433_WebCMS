@@ -9,79 +9,73 @@ import Divider from '@mui/material/Divider';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
-const TranslationCarousal = () => {
+const TranslationCarousal = ({ lang, setLang }) => {
 	const classes = useStyles();
 	const [next, setNext] = useState(false);
 	const [prev, setPrev] = useState(false);
-	const [lang, setLang] = useState({
-		id: 0,
-		name: 'English', //language name
-		prefix: 'ENG', // figma
-		shortName: 'en' //api
-	});
-	const [language, setLanguage] = useState([
-		{
-			id: 0,
-			name: 'Indonesia',
-			prefix: 'IDN',
-			shortName: 'ind'
-		},
+
+	const languages = [
 		{
 			id: 1,
-			name: 'Italian',
-			prefix: 'ITA',
-			shortName: 'it'
+			name: 'German',
+			prefix: 'GER',
+			shortName: 'de'
 		},
 		{
 			id: 2,
-			name: 'Portuguese',
-			prefix: 'PRT',
-			shortName: 'pt'
-		},
-		{
-			id: 3,
-			name: 'Portuguese (Brazilian)',
-			prefix: 'BRA',
-			shortName: 'pt-br'
-		},
-
-		{
-			id: 4,
-			name: 'Russian',
-			prefix: 'RUS',
-			shortName: 'ru'
-		},
-		{
-			id: 5,
-			name: 'Turkish',
-			prefix: 'TUR',
-			shortName: 'tr'
-		},
-		{
-			id: 6,
 			name: 'Spanish',
 			prefix: 'ESP',
 			shortName: 'es'
 		},
 		{
-			id: 7,
+			id: 3,
 			name: 'French',
 			prefix: 'FRA',
 			shortName: 'fr'
 		},
 		{
+			id: 4,
+			name: 'Italian',
+			prefix: 'ITA',
+			shortName: 'it'
+		},
+		{
+			id: 5,
+			name: 'Dutch',
+			prefix: 'NLD',
+			shortName: 'nl'
+		},
+		{
+			id: 6,
+			name: 'Indonesia',
+			prefix: 'IDN',
+			shortName: 'ind'
+		},
+		{
+			id: 7,
+			name: 'Portuguese',
+			prefix: 'PRT',
+			shortName: 'pt'
+		},
+		{
 			id: 8,
-			name: 'German',
-			prefix: 'GER',
-			shortName: 'DE'
+			name: 'Portuguese (Brazilian)',
+			prefix: 'BRA',
+			shortName: 'pt_br'
 		},
 		{
 			id: 9,
-			name: 'DUTCH',
-			prefix: 'NLD',
-			shortName: 'nl'
+			name: 'Russian',
+			prefix: 'RUS',
+			shortName: 'ru'
+		},
+		{
+			id: 10,
+			name: 'Turkish',
+			prefix: 'TUR',
+			shortName: 'tr'
 		}
-	]);
+	];
 
 	const handleClick = (data) => {
 		setLang({
@@ -122,8 +116,8 @@ const TranslationCarousal = () => {
 				<div className={classes.allChips}>
 					<NavigateBeforeIcon fontSize='large' onClick={() => setPrev(!prev)} />
 					<div className={classes.carousalChips}>
-						{language?.length > 0 &&
-							language.map((data, index) => {
+						{languages?.length > 0 &&
+							languages.map((data, index) => {
 								return (
 									<Chip
 										sx={{
@@ -150,4 +144,10 @@ const TranslationCarousal = () => {
 		</>
 	);
 };
+
+TranslationCarousal.propTypes = {
+	lang: PropTypes.object.isRequired,
+	setLang: PropTypes.func.isRequired
+};
+
 export default TranslationCarousal;
