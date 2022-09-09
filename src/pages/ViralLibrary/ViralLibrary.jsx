@@ -58,7 +58,7 @@ const ViralLibrary = () => {
 	const classes = globalUseStyles();
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
-	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
+	const [sortState, setSortState] = useState({ sortby: '', orderType: '' });
 	const [paginationError, setPaginationError] = useState(false);
 	const [page, setPage] = useState(1);
 	const [search, setSearch] = useState('');
@@ -149,12 +149,12 @@ const ViralLibrary = () => {
 	const sortRows = (order, col) => {
 		if (order && col.dataField) {
 			if (
-				order.toUpperCase() != sortState.order_type ||
+				order.toUpperCase() != sortState.orderType ||
 				sortKeysMapping[col.dataField] != sortState.sortby
 			) {
 				setSortState({
 					sortby: sortKeysMapping[col.dataField],
-					order_type: order.toUpperCase()
+					orderType: order.toUpperCase()
 				});
 			}
 		}
@@ -437,7 +437,7 @@ const ViralLibrary = () => {
 	};
 
 	useEffect(() => {
-		if (sortState.sortby && sortState.order_type && !search) {
+		if (sortState.sortby && sortState.orderType && !search) {
 			dispatch(
 				getAllViralsApi({
 					page,
@@ -447,7 +447,7 @@ const ViralLibrary = () => {
 				})
 			);
 		}
-		if (sortState.sortby && sortState.order_type && search) {
+		if (sortState.sortby && sortState.orderType && search) {
 			dispatch(
 				getAllViralsApi({
 					q: search,
