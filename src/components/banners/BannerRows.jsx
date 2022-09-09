@@ -36,7 +36,8 @@ export default function BannerRows({
 	firstrowErrMsg, // 1
 	validateRow,
 	bannerContent, // content dropdown
-	tabValue
+	tabValue,
+	selectedBannerData
 }) {
 	//styles
 	const muiClasses = useStyles();
@@ -410,6 +411,22 @@ export default function BannerRows({
 													});
 													return _bannerData;
 												});
+												// re fetching the banner content to poplulate the list again
+												if (bannerContent.length < 7) {
+													const selectedItems = selectedBannerData.map(
+														(item) => item?.selectedMedia?.id
+													);
+													const filterOutNullItem = selectedItems.filter(
+														(item) => item
+													);
+													dispatch(
+														getBannerContent({
+															type: tabValue,
+															title: null,
+															exclude: [...filterOutNullItem, newVal?.id]
+														})
+													);
+												}
 											}}
 											options={bannerContent}
 											getOptionLabel={(option) => option.title}
@@ -489,5 +506,6 @@ BannerRows.propTypes = {
 	firstrowErrMsg: PropTypes.object,
 	validateRow: PropTypes.object,
 	bannerContent: PropTypes.array,
-	tabValue: PropTypes.string
+	tabValue: PropTypes.string,
+	selectedBannerData: PropTypes.array
 };

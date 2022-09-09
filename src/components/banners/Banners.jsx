@@ -74,6 +74,10 @@ export default function Banners({ tabValue }) {
 	}, []);
 
 	useEffect(() => {
+		filterBannerContent(bannerContent);
+	}, [bannerData, bannerContent]);
+
+	useEffect(() => {
 		updateBannerObject();
 	}, [allBanners]);
 
@@ -295,10 +299,6 @@ export default function Banners({ tabValue }) {
 		);
 	};
 
-	useEffect(() => {
-		filterBannerContent(bannerContent);
-	}, [bannerData, bannerContent]);
-
 	return (
 		<div className={classes.Banner}>
 			{getBannerStatus === 'loading' ? <PrimaryLoader /> : <></>}
@@ -340,6 +340,7 @@ export default function Banners({ tabValue }) {
 													data={data}
 													setBannerData={setBannerData} //?
 													bannerContent={bannerItems}
+													selectedBannerData={bannerData}
 													key={data.id}
 													provided={provided}
 													index={index}
