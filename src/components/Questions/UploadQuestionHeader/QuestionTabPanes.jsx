@@ -5,20 +5,23 @@ import TabsListUnstyled from '@mui/base/TabsListUnstyled';
 import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import TabUnstyled from '@mui/base/TabUnstyled';
 import { useStyles } from '../quizStyles';
-const QuestionTabPanes = ({
-	location,
-	edit,
-	setQuesType,
-	resetSlides,
-	type,
-	status
-}) => {
-	const muiClasses = useStyles();
-	console.log(location, edit, 'abc');
 
+const QuestionTabPanes = ({ edit, setQuesType, resetSlides, type, status }) => {
+	const muiClasses = useStyles();
+	// const [tab,setTab] = useState(0)
+	console.log(type, 'qqqqT');
+
+	// useEffect(() => {
+
+	// }, [type])
 	return (
 		<div className={muiClasses.root}>
-			<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
+			<TabsUnstyled
+				defaultValue={
+					edit && type === 'poll' ? 0 : edit && type === 'quiz' ? 1 : 0
+				}
+				className={muiClasses.tabRoot}
+			>
 				<TabsListUnstyled className={muiClasses.tabMainDiv}>
 					<TabUnstyled
 						onClick={() => {
@@ -48,7 +51,7 @@ QuestionTabPanes.propTypes = {
 	setQuesType: PropTypes.func.isRequired,
 	resetSlides: PropTypes.func.isRequired,
 	edit: PropTypes.bool.isRequired,
-	location: PropTypes.string.isRequired,
+
 	type: PropTypes.string.isRequired,
 	status: PropTypes.string
 };

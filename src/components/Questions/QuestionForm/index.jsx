@@ -47,9 +47,7 @@ const QuestionForm = ({
 		initialData
 			? {
 					...initialData,
-					uploadedFiles: initialData?.uploadedFiles
-						? initialData?.uploadedFiles
-						: [],
+					uploadedFiles: initialData ? initialData?.uploadedFiles : [],
 					answers:
 						initialData?.answers?.length > 0
 							? initialData?.answers
@@ -283,6 +281,8 @@ const QuestionForm = ({
 		}
 	};
 
+	console.log('ID', initialData);
+
 	return (
 		<>
 			{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
@@ -294,9 +294,7 @@ const QuestionForm = ({
 					<DragAndDropField
 						uploadedFiles={
 							//initialData ?  initialData?.uploadedFiles : form?.uploadedFiles
-							initialData?.data
-								? initialData?.uploadedFiles
-								: form?.uploadedFiles
+							initialData ? initialData?.uploadedFiles : form?.uploadedFiles
 						}
 						quizPollStatus={status}
 						handleDeleteFile={handleDeleteFile}

@@ -423,7 +423,7 @@ const UploadOrEditNews = ({
 
 	const createNews = async (id, mediaFiles = [], draft = false) => {
 		// setPostButtonStatus(true);
-
+		console.log(mediaFiles, 'MFfFf');
 		let slides =
 			news.length > 0
 				? news.map((item, index) => {
@@ -537,7 +537,7 @@ const UploadOrEditNews = ({
 						return newsData;
 					}
 				});
-
+				console.log(newsImages, 'IMHHHH');
 				Promise.all([...newsImages])
 					.then((mediaFiles) => {
 						createNews(specificNews?.id, mediaFiles, true);
