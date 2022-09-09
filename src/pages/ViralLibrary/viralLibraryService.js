@@ -5,11 +5,11 @@ export default class ViralLibraryService {
 		const params = {
 			limit: 20,
 			page: queryParams.page,
-			order_type: queryParams.orderType,
-			sort_by: queryParams.sortby,
-			start_date: queryParams.startDate,
-			end_date: queryParams.endDate,
-			q: queryParams.q,
+			order_type: queryParams.orderType || null,
+			sort_by: queryParams.sortby || null,
+			start_date: queryParams.startDate || null,
+			end_date: queryParams.endDate || null,
+			q: queryParams.q || null,
 			...(!!queryParams.q && { is_search: true })
 		};
 

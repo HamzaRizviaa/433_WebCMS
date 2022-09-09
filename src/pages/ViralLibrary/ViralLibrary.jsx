@@ -107,22 +107,13 @@ const ViralLibrary = () => {
 						onClick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
-							if (startDate && endDate) {
+							if (startDate || endDate) {
 								dispatch(
 									getAllViralsApi({
 										q: search,
 										page,
 										startDate,
 										endDate,
-										fromCalendar: true,
-										...sortState
-									})
-								);
-							} else {
-								dispatch(
-									getAllViralsApi({
-										q: search,
-										page,
 										fromCalendar: true,
 										...sortState
 									})
@@ -518,6 +509,22 @@ const ViralLibrary = () => {
 		};
 	}, []);
 
+	const handleDateChange = (dateRange) => {
+		setDateRange(dateRange);
+
+		const [start, end] = dateRange;
+
+		if (!start && !end) {
+			dispatch(
+				getAllViralsApi({
+					q: search,
+					page,
+					...sortState
+				})
+			);
+		}
+	};
+
 	return (
 		<LoadingOverlay
 			active={viralsApiStatus.status === 'pending' ? true : false}
@@ -620,9 +627,7 @@ const ViralLibrary = () => {
 								startDate={startDate}
 								endDate={endDate}
 								maxDate={new Date()}
-								onChange={(update) => {
-									setDateRange(update);
-								}}
+								onChange={handleDateChange}
 								placement='center'
 								isClearable={true}
 							/>
