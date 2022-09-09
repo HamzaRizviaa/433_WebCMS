@@ -197,7 +197,6 @@ const UploadOrEditQuiz = ({
 	};
 
 	const toggleStopModal = () => {
-		setStopStatus(true);
 		setOpenStopPopup(!openStopPopup);
 	};
 
@@ -324,11 +323,6 @@ const UploadOrEditQuiz = ({
 				? questionSlides.map((item, index) => {
 						if (!item.data)
 							return { ...item, position: index, sortOrder: index + 1 };
-
-						// const uploadedFiles = item.data[0]?.uploadedFiles
-						// 	? item.data[0]?.uploadedFiles
-						// 	: item.uploadedFiles;
-
 						return {
 							height: item?.data[0] ? item?.data[0]?.height : 0,
 							width: item?.data[0] ? item?.data[0]?.width : 0,
@@ -337,13 +331,13 @@ const UploadOrEditQuiz = ({
 								? mediaFiles[index]?.media_url?.split('cloudfront.net/')[1] ||
 								  mediaFiles[index]?.media_url
 								: '',
-							labels: item.data[0]?.labels || item.labels || [],
-							answers: item.data[0]?.answers || item.answers,
-							question: item.data[0]?.question || item.question,
-							dropbox_url: item.data[0]?.dropbox_url || item.dropbox_url,
+							labels: item.data[0]?.labels || [],
+							answers: item.data[0]?.answers || [],
+							question: item.data[0]?.question || '',
+							dropbox_url: item.data[0]?.dropbox_url || '',
 							sortOrder: index + 1,
 							position: index,
-							...(item.id ? { id: item.id } : {})
+							...(item.id ? { id: item?.id } : {})
 						};
 				  })
 				: [];
@@ -397,7 +391,7 @@ const UploadOrEditQuiz = ({
 
 	const deleteQuiz = async (draft) => {
 		if (!editQuestionData) return;
-		const question_ids = editQuestionData.questions?.map((q) => q.id) || [];
+		const questions_ids = editQuestionData.questions?.map((q) => q.id) || [];
 
 		setDeleteBtnStatus(true);
 
@@ -406,7 +400,7 @@ const UploadOrEditQuiz = ({
 				`${process.env.REACT_APP_API_ENDPOINT}/question/delete-question`,
 				{
 					question_meta_id: editQuestionData.id,
-					question_ids,
+					questions_ids,
 					is_draft: draft
 				},
 				{
@@ -955,21 +949,6 @@ const UploadOrEditQuiz = ({
 												})}
 											</QuestionDraggable>
 
-											{/* {isEdit &&
-												editQuestionData?.questions?.length === 0 &&
-												(questionSlides?.length < 10 ? (
-													<Button
-														style={{
-															marginTop: '2rem'
-														}}
-														buttonNews={true}
-														disabled={false}
-														onClick={() => handleNewSlide()}
-														text={'ADD QUESTION'}
-													/>
-												) : (
-													''
-												))} */}
 											{!isEdit && questionSlides?.length < 10 ? (
 												<Button
 													style={{
@@ -980,7 +959,9 @@ const UploadOrEditQuiz = ({
 													onClick={() => handleNewSlide()}
 													text={'ADD QUESTION'}
 												/>
-											) : isEdit && status === 'draft' ? (
+											) : isEdit &&
+											  status === 'draft' &&
+											  questionSlides?.length < 10 ? (
 												<Button
 													style={{
 														marginTop: '2rem'
