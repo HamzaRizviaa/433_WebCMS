@@ -153,22 +153,13 @@ const MediaLibrary = () => {
 						onClick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
-							if (startDate && endDate) {
+							if (startDate || endDate) {
 								dispatch(
 									getMedia({
 										q: search,
 										page: 1,
 										startDate,
 										endDate,
-										fromCalendar: true,
-										...sortState
-									})
-								);
-							} else {
-								dispatch(
-									getMedia({
-										q: search,
-										page: 1,
 										fromCalendar: true,
 										...sortState
 									})
@@ -626,6 +617,22 @@ const MediaLibrary = () => {
 		}
 	}, [page]);
 
+	const handleDateChange = (dateRange) => {
+		setDateRange(dateRange);
+
+		const [start, end] = dateRange;
+
+		if (!start && !end) {
+			dispatch(
+				getMedia({
+					q: search,
+					page,
+					...sortState
+				})
+			);
+		}
+	};
+
 	return (
 		<LoadingOverlay
 			active={mediaApiStatus.status === 'pending' ? true : false}
@@ -726,9 +733,7 @@ const MediaLibrary = () => {
 								startDate={startDate}
 								endDate={endDate}
 								maxDate={new Date()}
-								onChange={(update) => {
-									setDateRange(update);
-								}}
+								onChange={handleDateChange}
 								placement='center'
 								isClearable={true}
 							/>

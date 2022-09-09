@@ -103,22 +103,13 @@ const NewsLibrary = () => {
 						onClick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
-							if (startDate && endDate) {
+							if (startDate || endDate) {
 								dispatch(
 									getAllNews({
 										q: search,
 										page,
 										startDate,
 										endDate,
-										fromCalendar: true,
-										...sortState
-									})
-								);
-							} else {
-								dispatch(
-									getAllNews({
-										q: search,
-										page,
 										fromCalendar: true,
 										...sortState
 									})
@@ -494,6 +485,22 @@ const NewsLibrary = () => {
 		};
 	}, []);
 
+	const handleDateChange = (dateRange) => {
+		setDateRange(dateRange);
+
+		const [start, end] = dateRange;
+
+		if (!start && !end) {
+			dispatch(
+				getAllNews({
+					q: search,
+					page,
+					...sortState
+				})
+			);
+		}
+	};
+
 	return (
 		<LoadingOverlay
 			active={newsApiStatus.status === 'pending' ? true : false}
@@ -595,9 +602,7 @@ const NewsLibrary = () => {
 								startDate={startDate}
 								endDate={endDate}
 								maxDate={new Date()}
-								onChange={(update) => {
-									setDateRange(update);
-								}}
+								onChange={handleDateChange}
 								placement='center'
 								isClearable={true}
 							/>

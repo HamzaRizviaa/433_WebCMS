@@ -115,22 +115,13 @@ const QuestionLibrary = () => {
 						onClick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
-							if (startDate && endDate) {
+							if (startDate || endDate) {
 								dispatch(
 									getQuestions({
 										q: search,
 										page,
 										startDate,
 										endDate,
-										fromCalendar: true,
-										...sortState
-									})
-								);
-							} else {
-								dispatch(
-									getQuestions({
-										q: search,
-										page,
 										fromCalendar: true,
 										...sortState
 									})
@@ -512,36 +503,52 @@ const QuestionLibrary = () => {
 		};
 	}, []);
 
-	const handleDebounceFun = () => {
-		let _search;
-		setSearch((prevState) => {
-			_search = prevState;
-			return _search;
-		});
-		if (_search) {
+	// const handleDebounceFun = () => {
+	// 	let _search;
+	// 	setSearch((prevState) => {
+	// 		_search = prevState;
+	// 		return _search;
+	// 	});
+	// 	if (_search) {
+	// 		dispatch(
+	// 			getQuestions({
+	// 				q: _search,
+	// 				page: 1,
+	// 				startDate: formatDate(dateRange[0]),
+	// 				endDate: formatDate(dateRange[1]),
+	// 				...sortState
+	// 			})
+	// 		);
+	// 	} else {
+	// 		dispatch(
+	// 			getQuestions({
+	// 				page: 1,
+	// 				startDate: formatDate(dateRange[0]),
+	// 				endDate: formatDate(dateRange[1]),
+	// 				...sortState
+	// 			})
+	// 		);
+	// 	}
+	// 	setPage(1);
+	// };
+
+	// const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
+
+	const handleDateChange = (dateRange) => {
+		setDateRange(dateRange);
+
+		const [start, end] = dateRange;
+
+		if (!start && !end) {
 			dispatch(
 				getQuestions({
-					q: _search,
-					page: 1,
-					startDate: formatDate(dateRange[0]),
-					endDate: formatDate(dateRange[1]),
-					...sortState
-				})
-			);
-		} else {
-			dispatch(
-				getQuestions({
-					page: 1,
-					startDate: formatDate(dateRange[0]),
-					endDate: formatDate(dateRange[1]),
+					q: search,
+					page,
 					...sortState
 				})
 			);
 		}
-		setPage(1);
 	};
-
-	const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
 
 	return (
 		<LoadingOverlay
@@ -652,9 +659,7 @@ const QuestionLibrary = () => {
 								startDate={startDate}
 								endDate={endDate}
 								maxDate={new Date()}
-								onChange={(update) => {
-									setDateRange(update);
-								}}
+								onChange={handleDateChange}
 								placement='center'
 								isClearable={true}
 							/>

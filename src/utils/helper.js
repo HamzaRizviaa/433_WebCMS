@@ -9,3 +9,20 @@ export function makeid(length) {
 	}
 	return result;
 }
+
+/**
+ *
+ * @param {URLSearchParams} query - URLSearchParams instance
+ * @param {object} queryObject - query parameters in form of key value pair
+ * @returns {string} returns query params converted into string form like this "abc=xyz&foo=bar"
+ */
+export function changeQueryParameters(query, queryObject) {
+	Object.entries(queryObject).forEach(([key, value]) => {
+		if (value) {
+			query.set(key, value);
+		} else {
+			query.delete(key);
+		}
+	});
+	return query.toString();
+}

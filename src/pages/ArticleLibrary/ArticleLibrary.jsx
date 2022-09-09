@@ -103,22 +103,13 @@ const ArticleLibrary = () => {
 						onClick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
-							if (startDate && endDate) {
+							if (startDate || endDate) {
 								dispatch(
 									getAllArticlesApi({
 										q: search,
 										page,
 										startDate,
 										endDate,
-										fromCalendar: true,
-										...sortState
-									})
-								);
-							} else {
-								dispatch(
-									getAllArticlesApi({
-										q: search,
-										page,
 										fromCalendar: true,
 										...sortState
 									})
@@ -501,40 +492,56 @@ const ArticleLibrary = () => {
 		}
 	}, [page]);
 
-	const handleDebounceFun = () => {
-		let _search;
-		setSearch((prevState) => {
-			_search = prevState;
-			return _search;
-		});
-		if (_search) {
-			dispatch(
-				getAllArticlesApi({
-					q: _search,
-					page: 1,
-					startDate: formatDate(dateRange[0]),
-					endDate: formatDate(dateRange[1]),
-					...sortState
-				})
-			);
-		} else {
-			dispatch(
-				getAllArticlesApi({
-					page: 1,
-					startDate: formatDate(dateRange[0]),
-					endDate: formatDate(dateRange[1]),
-					...sortState
-				})
-			);
-		}
-		setPage(1);
-	};
+	// const handleDebounceFun = () => {
+	// 	let _search;
+	// 	setSearch((prevState) => {
+	// 		_search = prevState;
+	// 		return _search;
+	// 	});
+	// 	if (_search) {
+	// 		dispatch(
+	// 			getAllArticlesApi({
+	// 				q: _search,
+	// 				page: 1,
+	// 				startDate: formatDate(dateRange[0]),
+	// 				endDate: formatDate(dateRange[1]),
+	// 				...sortState
+	// 			})
+	// 		);
+	// 	} else {
+	// 		dispatch(
+	// 			getAllArticlesApi({
+	// 				page: 1,
+	// 				startDate: formatDate(dateRange[0]),
+	// 				endDate: formatDate(dateRange[1]),
+	// 				...sortState
+	// 			})
+	// 		);
+	// 	}
+	// 	setPage(1);
+	// };
 
 	// const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
 	// const handleChangeSearch = (e) => {
 	// 	setSearch(e.target.value);
 	// 	debounceFun(e.target.value);
 	// };
+
+	const handleDateChange = (dateRange) => {
+		setDateRange(dateRange);
+
+		const [start, end] = dateRange;
+
+		if (!start && !end) {
+			dispatch(
+				getAllArticlesApi({
+					q: search,
+					page,
+					...sortState
+				})
+			);
+		}
+	};
 
 	return (
 		<LoadingOverlay
@@ -638,9 +645,7 @@ const ArticleLibrary = () => {
 								startDate={startDate}
 								endDate={endDate}
 								maxDate={new Date()}
-								onChange={(update) => {
-									setDateRange(update);
-								}}
+								onChange={handleDateChange}
 								placement='center'
 								isClearable={true}
 							/>
