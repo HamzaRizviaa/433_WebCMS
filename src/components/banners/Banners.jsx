@@ -22,6 +22,7 @@ export default function Banners({ tabValue }) {
 	const [firstCheck, setFirstRowCheck] = useState(''); //row check 1
 	const [btnDisable, setbtnDisable] = useState(false);
 	const [btnSetBannerDisable, setbtnSetBannerDisable] = useState(false);
+	const [bannerItems, setBannerItems] = useState([]);
 
 	const [bannerData, setBannerData] = useState([
 		{
@@ -196,7 +197,6 @@ export default function Banners({ tabValue }) {
 				sort_order: index
 			};
 		});
-		// console.log(bannerPayload, bannerData);
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/top-banner/publish-banner`,
@@ -215,6 +215,12 @@ export default function Banners({ tabValue }) {
 			if (result?.data?.status_code === 200) {
 				toast.success('banner has been created/updated!');
 				dispatch(getAllBanners(tabValue));
+				dispatch(
+					getBannerContent({
+						type: tabValue,
+						title: null
+					})
+				);
 			}
 		} catch (error) {
 			toast.error('Failed to add a new banner');
@@ -273,6 +279,26 @@ export default function Banners({ tabValue }) {
 		return errValidate;
 	};
 
+	const filterBannerContent = (data) => {
+		if (data.length === 0) return [];
+		setBannerItems(
+			data?.filter((item) => {
+				if (item.id) {
+					return !bannerData.some((subItem) => {
+						if (item.id) {
+							return item.id === subItem?.selectedMedia?.id;
+						}
+					});
+				}
+				return item;
+			})
+		);
+	};
+
+	useEffect(() => {
+		filterBannerContent(bannerContent);
+	}, [bannerData, bannerContent]);
+
 	return (
 		<div className={classes.Banner}>
 			{getBannerStatus === 'loading' ? <PrimaryLoader /> : <></>}
@@ -313,7 +339,7 @@ export default function Banners({ tabValue }) {
 													validateRow={validateRow}
 													data={data}
 													setBannerData={setBannerData} //?
-													bannerContent={bannerContent}
+													bannerContent={bannerItems}
 													key={data.id}
 													provided={provided}
 													index={index}

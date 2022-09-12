@@ -129,6 +129,7 @@ const UploadOrEditQuiz = ({
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...questionSlides];
+
 		dataCopy[index].data = [
 			{
 				...(dataCopy[index]?.data ? dataCopy[index]?.data[0] : {}),
@@ -392,9 +393,9 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
-	const deleteQuiz = async (draft) => {
+	const deleteQuiz = async (id, draft, qtype) => {
 		if (!editQuestionData) return;
-		const question_ids = editQuestionData.questions?.map((q) => q.id) || [];
+		const questions_ids = editQuestionData.questions?.map((q) => q.id) || [];
 
 		setDeleteBtnStatus(true);
 
@@ -403,7 +404,7 @@ const UploadOrEditQuiz = ({
 				`${process.env.REACT_APP_API_ENDPOINT}/question/delete-question`,
 				{
 					question_meta_id: editQuestionData.id,
-					question_ids,
+					questions_ids,
 					is_draft: draft
 				},
 				{
@@ -773,11 +774,7 @@ const UploadOrEditQuiz = ({
 				handlePreview={() => {
 					handlePreviewEscape();
 				}}
-				notifID={
-					location === 'article' || status === 'CLOSED' || status === 'draft'
-						? ''
-						: notifID
-				}
+				notifID={status === 'CLOSED' ? '' : notifID}
 			>
 				<LoadingOverlay
 					active={isLoading}

@@ -67,6 +67,7 @@ import {
 	checkNewElementQuestionDraft
 } from '../../../utils/articleUtils';
 import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDraggable';
+import { ToastErrorNotifications } from '../../../constants';
 
 const UploadOrEditArticle = ({
 	open,
@@ -989,9 +990,7 @@ const UploadOrEditArticle = ({
 				deleteReadMoreApi(id);
 
 				if (result?.data?.data?.is_deleted === false) {
-					toast.error(
-						'The media or article cannot be deleted because it is used as a top banner'
-					);
+					toast.error(ToastErrorNotifications.deleteBannerItemText);
 					dispatch(getAllArticlesApi({ page }));
 				} else {
 					toast.success('Article has been deleted!');
@@ -1681,7 +1680,7 @@ const UploadOrEditArticle = ({
 				edit={isEdit}
 				article={true}
 				dialogRef={dialogWrapper}
-				notifID={status === 'draft' ? '' : notifID}
+				notifID={notifID}
 			>
 				<LoadingOverlay
 					active={isLoading}
