@@ -419,9 +419,10 @@ const UploadOrEditNews = ({
 				dispatch(getAllNews({ page }));
 			}
 		} catch (e) {
-			toast.error('News to delete Viral!');
+			toast.error(
+				'This item cannot be deleted because it is inside the top banners.'
+			);
 			setDeleteBtnStatus(false);
-			console.log(e, 'News to delete Viral');
 		}
 
 		setOpenDeletePopup(!openDeletePopup);
@@ -463,10 +464,7 @@ const UploadOrEditNews = ({
 					show_comments: form.show_comments,
 					slides: slides,
 					...(isEdit && id ? { news_id: id } : {}),
-					...((!isEdit || status !== 'published') &&
-					(form.labels?.length || status == 'draft')
-						? { labels: [...form.labels] }
-						: {}),
+					...(form.labels?.length ? { labels: [...form.labels] } : {}),
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -496,6 +494,8 @@ const UploadOrEditNews = ({
 			console.log(e, 'Failed create / edit News');
 		}
 	};
+
+	console.log('Labels', form.labels);
 
 	const validateDraftBtn = () => {
 		if (isEdit) {
