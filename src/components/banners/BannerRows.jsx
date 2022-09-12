@@ -413,7 +413,7 @@ export default function BannerRows({
 													return _bannerData;
 												});
 												// re fetching the banner content to poplulate the list again
-												if (bannerContent.length < 7) {
+												if (bannerContent.length < 10) {
 													const selectedItems = selectedBannerData.map(
 														(item) => item?.selectedMedia?.id
 													);
