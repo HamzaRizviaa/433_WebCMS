@@ -921,14 +921,10 @@ const UploadOrEditViral = ({
 										? 'Something needs to be changed to save a draft'
 										: ''}
 								</p>
-								{translated ? (
-									<>
-										<Divider color={'grey'} sx={{ mb: '10px' }} />
-										<TranslationCarousal lang={lang} setLang={setLang} />
-									</>
-								) : (
-									<></>
-								)}
+								<>
+									<Divider color={'grey'} sx={{ mb: '10px' }} />
+									<TranslationCarousal lang={lang} setLang={setLang} />
+								</>
 
 								<div className={classes.buttonDiv}>
 									{isEdit || (status === 'draft' && isEdit) ? (

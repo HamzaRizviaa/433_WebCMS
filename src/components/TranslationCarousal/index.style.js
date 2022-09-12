@@ -29,7 +29,9 @@ export const useStyles = makeStyles(() => ({
 		display: 'flex'
 	},
 	carousalChips: {
-		height: '40px',
+		display: 'flex',
+		flexWrap: 'nowrap',
+		maxWidth: '300px',
 		overflowX: 'hidden',
 		overflowY: 'hidden'
 	}

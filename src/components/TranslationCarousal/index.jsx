@@ -11,8 +11,9 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 const TranslationCarousal = ({ lang, setLang }) => {
 	const classes = useStyles();
-	const [next, setNext] = useState(false);
-	const [prev, setPrev] = useState(false);
+	const [slide, setSlide] = useState(0);
+	const [next, setNext] = useState('0px');
+	const [prev, setPrev] = useState('0px');
 
 	const languages = [
 		{
@@ -114,13 +115,22 @@ const TranslationCarousal = ({ lang, setLang }) => {
 					sx={{ ml: '8px', mr: '6px' }}
 				/>
 				<div className={classes.allChips}>
-					<NavigateBeforeIcon fontSize='large' onClick={() => setPrev(!prev)} />
+					<NavigateBeforeIcon
+						fontSize='large'
+						onClick={() =>
+							setSlide((prev) => {
+								return slide < 0 && prev + 40;
+							})
+						}
+					/>
 					<div className={classes.carousalChips}>
 						{languages?.length > 0 &&
 							languages.map((data, index) => {
 								return (
 									<Chip
 										sx={{
+											transform: `translateX(${slide}px)`,
+											transition: 'all .3s ease-in-out',
 											border:
 												lang?.shortName === data?.shortName
 													? '1px solid yellow !important'
@@ -138,7 +148,14 @@ const TranslationCarousal = ({ lang, setLang }) => {
 								);
 							})}
 					</div>
-					<NavigateNextIcon fontSize='large' onClick={() => setNext(!next)} />
+					<NavigateNextIcon
+						fontSize='large'
+						onClick={() =>
+							setSlide((prev) => {
+								return slide > -400 && prev + -40;
+							})
+						}
+					/>
 				</div>
 			</div>
 		</>
