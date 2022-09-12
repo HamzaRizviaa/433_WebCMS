@@ -72,7 +72,11 @@ const Sidebar = () => {
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
-					<Tooltip title='News Library' placement='right' arrow>
+					<Tooltip
+						title={<div style={{ fontSize: '12px' }}>News</div>}
+						placement='right'
+						arrow
+					>
 						<span className={classes[`${mainClass}Article`]}>
 							<News className={classes.icon} />
 						</span>
@@ -85,7 +89,11 @@ const Sidebar = () => {
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
-					<Tooltip title='Media Library' placement='right' arrow>
+					<Tooltip
+						title={<div style={{ fontSize: '12px' }}>Media</div>}
+						placement='right'
+						arrow
+					>
 						<Media className={classes.icon} />
 					</Tooltip>
 				</NavLink>
@@ -96,7 +104,11 @@ const Sidebar = () => {
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
-					<Tooltip title='Question Library' placement='right' arrow>
+					<Tooltip
+						title={<div style={{ fontSize: '12px' }}>Questions</div>}
+						placement='right'
+						arrow
+					>
 						<Quiz className={classes.icon} />
 					</Tooltip>
 				</NavLink>
@@ -107,7 +119,11 @@ const Sidebar = () => {
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
-					<Tooltip title='Top Banner' placement='right' arrow>
+					<Tooltip
+						title={<div style={{ fontSize: '12px' }}>Top Banners</div>}
+						placement='right'
+						arrow
+					>
 						<Banner className={classes.icon} />
 					</Tooltip>
 				</NavLink>
@@ -118,7 +134,11 @@ const Sidebar = () => {
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
-					<Tooltip title='Articles Library' placement='right' arrow>
+					<Tooltip
+						title={<div style={{ fontSize: '12px' }}>Articles</div>}
+						placement='right'
+						arrow
+					>
 						<Article className={classes.icon} />
 					</Tooltip>
 				</NavLink>
@@ -129,7 +149,11 @@ const Sidebar = () => {
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
-					<Tooltip title='Virals Library' placement='right' arrow>
+					<Tooltip
+						title={<div style={{ fontSize: '12px' }}>Virals</div>}
+						placement='right'
+						arrow
+					>
 						<Viral className={classes.icon} />
 					</Tooltip>
 				</NavLink>
