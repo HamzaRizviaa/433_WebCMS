@@ -39,7 +39,7 @@ import {
 } from '../../../utils/newsUtils';
 
 //api calls
-// import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
+
 import { getAllNews } from '../../../pages/NewsLibrary/newsLibrarySlice';
 import { ConstructionOutlined } from '@mui/icons-material';
 import { TextField } from '@material-ui/core';
@@ -89,7 +89,6 @@ const UploadOrEditNews = ({
 	);
 
 	useEffect(() => {
-		// dispatch(getPostLabels());
 		return () => {
 			resetState();
 		};
@@ -128,17 +127,11 @@ const UploadOrEditNews = ({
 
 	useEffect(() => {
 		if (specificNews) {
-			//new is empty or not
 			const validateEmptyNewsArray = [
 				checkEmptyMediaNews(news),
 				news?.length !== 0
 			];
-			console.log(
-				'validateEmptyNewsArray',
-				validateEmptyNewsArray,
-				!validateForm(form, null, news),
-				comparingNewsFields(specificNews, form)
-			);
+
 			setEditBtnDisabled(
 				!validateForm(form, null, news) ||
 					!validateEmptyNewsArray.every((item) => item === true) ||
@@ -146,8 +139,6 @@ const UploadOrEditNews = ({
 			);
 		}
 	}, [specificNews, form]);
-
-	console.log(editBtnDisabled, 'eee[[[');
 
 	useEffect(() => {
 		if (specificNews) {
@@ -161,12 +152,11 @@ const UploadOrEditNews = ({
 	}, [specificNews, form]);
 
 	useEffect(() => {
-		//empty news , news = 0
 		const validateEmptyNewsArray = [
 			checkEmptyMediaNews(news),
 			news?.length !== 0
 		];
-		//
+
 		const validateEmptyNewsAndEditComparisonArray = [
 			checkNewElementNEWS(specificNews, news),
 			news?.length !== 0
@@ -176,13 +166,13 @@ const UploadOrEditNews = ({
 			!validateForm(form, null, news) ||
 			!comparingNewsFields(specificNews, form)
 		) {
-			console.log('if');
+			//console.log('if');
 			setEditBtnDisabled(
 				!validateEmptyNewsArray.every((item) => item === true) ||
 					!validateForm(form, null, news)
 			);
 		} else {
-			console.log('else');
+			//console.log('else');
 			if (specificNews?.slides?.length !== news?.length) {
 				setEditBtnDisabled(
 					!validateEmptyNewsArray.every((item) => item === true)
@@ -234,10 +224,10 @@ const UploadOrEditNews = ({
 					) ||
 					!validateEmptyNewsArray.every((item) => item === true)
 				) {
-					console.log('3rd');
+					//console.log('3rd');
 					setDraftBtnDisabled(!checkSortOrderOnEdit(specificNews, news));
 				} else {
-					console.log('4th');
+					//	console.log('4th');
 					setDraftBtnDisabled(
 						validateEmptyNewsAndEditComparisonArray.every(
 							(item) => item === true
@@ -281,15 +271,12 @@ const UploadOrEditNews = ({
 	}, [open]);
 
 	const resetState = () => {
-		// setPostButtonStatus(false);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
 		setPreviewFile(null);
 		setPreviewBool(false);
 		setDisableDropdown(true);
-		// setFileHeight(0);
-		// setFileWidth(0);
 		setDraftBtnDisabled(false);
 		setEditBtnDisabled(false);
 		setIsError({});
@@ -439,7 +426,7 @@ const UploadOrEditNews = ({
 
 	const createNews = async (id, mediaFiles = [], draft = false) => {
 		// setPostButtonStatus(true);
-		console.log(mediaFiles, 'MFfFf');
+
 		let slides =
 			news.length > 0
 				? news.map((item, index) => {
@@ -492,15 +479,14 @@ const UploadOrEditNews = ({
 					isEdit ? 'News has been edited!' : 'News has been created!'
 				);
 				setIsLoading(false);
-				// setPostButtonStatus(false);
+
 				handleClose();
 				dispatch(getAllNews({ page }));
-				// dispatch(getPostLabels());
 			}
 		} catch (e) {
 			toast.error(isEdit ? 'Failed to edit news!' : 'Failed to create news!');
 			setIsLoading(false);
-			// setPostButtonStatus(false);
+
 			console.log(e, 'Failed create / edit News');
 		}
 	};
@@ -533,13 +519,12 @@ const UploadOrEditNews = ({
 			setIsError({});
 		}, 5000);
 	};
-	console.log(news);
+
 	const handleCreateDraft = () => {
 		setIsLoading(false);
 		if (!validateDraft(form) || draftBtnDisabled) {
 			validateDraftBtn();
 		} else {
-			// setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			if (isEdit) {
 				setIsLoading(true);
@@ -554,7 +539,7 @@ const UploadOrEditNews = ({
 						return newsData;
 					}
 				});
-				console.log(newsImages, 'IMHHHH');
+
 				Promise.all([...newsImages])
 					.then((mediaFiles) => {
 						createNews(specificNews?.id, mediaFiles, true);
@@ -569,7 +554,6 @@ const UploadOrEditNews = ({
 					let newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
 					return newsData;
 				});
-				console.log(newsImages, 'lakaka');
 
 				Promise.all([...newsImages])
 					.then((mediaFiles) => {
@@ -584,11 +568,10 @@ const UploadOrEditNews = ({
 
 	const handlePublishNews = () => {
 		setIsLoading(false);
-		//false || false
+
 		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
 			validatePublishNewsBtn();
 		} else {
-			// setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			if (isEdit) {
 				setIsLoading(true);

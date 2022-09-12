@@ -44,7 +44,7 @@ import {
 	checkEmptyQuestionDraft,
 	checkNewElementQuestionDraft
 } from '../../../utils/questionUtils';
-// import moment from 'moment';
+
 import { compact } from 'lodash';
 
 const UploadOrEditQuiz = ({
@@ -286,20 +286,6 @@ const UploadOrEditQuiz = ({
 							: undefined
 					}
 				]
-				// uploadedFiles: rest?.image
-				// 	? [
-				// 			{
-				// 				media_url:
-				// 					`${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest?.image}` ||
-				// 					undefined,
-				// 				file_name: rest?.file_name,
-				// 				width: rest?.width,
-				// 				height: rest?.height
-				// 			}
-				// 	  ]
-				// 	: undefined,
-
-				// ...rest,
 			};
 		});
 
@@ -375,7 +361,7 @@ const UploadOrEditQuiz = ({
 					isEdit ? 'Question has been edited!' : 'Question has been created!'
 				);
 				setIsLoading(false);
-				// setPostButtonStatus(false);
+
 				handleClose();
 				dispatch(getQuestions({ page }));
 			}
@@ -384,7 +370,7 @@ const UploadOrEditQuiz = ({
 				isEdit ? 'Failed to edit Question!' : 'Failed to create Question!'
 			);
 			setIsLoading(false);
-			// setPostButtonStatus(false);
+
 			console.log(e, 'Failed create / edit Question');
 		}
 	};
@@ -503,25 +489,11 @@ const UploadOrEditQuiz = ({
 		setPreviewFile(null);
 	};
 
-	// useEffect(() => {
-	// 	if (editQuestionData) {
-	// 		setDraftBtnDisabled(
-	// 			!validateDraft(form) ||
-	// 				postButtonStatus ||
-	// 				(type === 'quiz'
-	// 					? editQuestionData?.quiz_end_date === convertedDate
-	// 					: editQuestionData?.poll_end_date === convertedDate)
-	// 		);
-	// 	}
-	// }, [editQuestionData, form, convertedDate]);
 	useEffect(() => {
 		if (editQuestionData) {
 			setDraftBtnDisabled(
 				!validateDraft(form, null, null, questionSlides) ||
 					comparingFormFields(editQuestionData, convertedDate)
-				// &&
-				// editQuestionData?.labels?.length === questionSlides?.labels.length &&
-				// 	!checkDuplicateLabel(form, editQuestionData)
 			);
 		}
 	}, [editQuestionData, form, convertedDate]);
@@ -539,14 +511,12 @@ const UploadOrEditQuiz = ({
 			!validateDraft(form, null, null, questionSlides) ||
 			!comparingFormFields(editQuestionData, convertedDate)
 		) {
-			// console.log('1D');
 			setDraftBtnDisabled(
 				!validateEmptyQuestionArray.every((item) => item === true) ||
 					!validateDraft(form, null, null, questionSlides)
 			);
 		} else {
 			if (editQuestionData?.questions?.length !== questionSlides?.length) {
-				// console.log('2D');
 				setDraftBtnDisabled(
 					!validateEmptyQuestionArray.every((item) => item === true)
 				);
@@ -557,12 +527,10 @@ const UploadOrEditQuiz = ({
 					) ||
 					!validateEmptyQuestionArray.every((item) => item === true)
 				) {
-					// console.log('3D');
 					setDraftBtnDisabled(
 						!checkSortOrderOnEdit(editQuestionData, questionSlides)
 					);
 				} else {
-					// console.log('4D');
 					setDraftBtnDisabled(
 						validateEmptyQuestionAndEditComparisonArray.every(
 							(item) => item === true
@@ -625,8 +593,6 @@ const UploadOrEditQuiz = ({
 		}
 	}, [questionSlides]);
 
-	//editQuizBtnDisabled button - whether you can click or not
-	//!validateForm(form) || (editQuizBtnDisabled && status === 'ACTIVE')
 	const handlePostQuizPollBtn = () => {
 		if (
 			!validateForm(form, null, null, questionSlides) ||
@@ -680,9 +646,6 @@ const UploadOrEditQuiz = ({
 			}
 		}
 	};
-
-	//draftBtnDisabled button - whether you can click or not
-	//validateDraft - color grey or yellow
 
 	const handleDraftSave = async () => {
 		if (!validateDraft(form, null, null, questionSlides) || draftBtnDisabled) {
@@ -924,8 +887,8 @@ const UploadOrEditQuiz = ({
 																	key={item.sortOrder}
 																	status={status}
 																	endDate={form.end_date}
-																	sendDataToParent={
-																		(data) => setNewData(data, index) //getting data from child
+																	sendDataToParent={(data) =>
+																		setNewData(data, index)
 																	}
 																	handleDeleteMedia={(data) =>
 																		handleMediaDataDelete(data, index)
@@ -1003,7 +966,6 @@ const UploadOrEditQuiz = ({
 															<>
 																<div className={classes.stopBtn}>
 																	<Button
-																		// disabled={deleteBtnStatus}
 																		buttonStop={true}
 																		onClick={() => {
 																			if (!deleteBtnStatus) {
@@ -1076,13 +1038,6 @@ const UploadOrEditQuiz = ({
 																		: 'SAVE CHANGES'
 																}
 																disabled={
-																	// ? true
-																	// : !validateForm(
-																	// 		form,
-																	// 		null,
-																	// 		null,
-																	// 		questionSlides
-																	//   )
 																	isEdit &&
 																	validateForm(
 																		form,

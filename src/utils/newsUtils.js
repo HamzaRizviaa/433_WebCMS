@@ -8,7 +8,7 @@ export const checkEmptyMediaNews = (news) => {
 	});
 
 	return validateNews.every((item) => item === true);
-}; //mandatory
+};
 
 export const checkEmptyMediaNewsDraft = (news) => {
 	const validateNews = news.map((item) => {
@@ -69,7 +69,7 @@ export const checkNewElementNEWS = (specificNews, news) => {
 			}
 		}
 	}
-	console.log(result, 'result');
+
 	return result.every((item) => item === true);
 };
 
