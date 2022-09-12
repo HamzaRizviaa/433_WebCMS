@@ -31,8 +31,20 @@ export const useStyles = makeStyles(() => ({
 	carousalChips: {
 		display: 'flex',
 		flexWrap: 'nowrap',
-		maxWidth: '300px',
+		maxWidth: '370px',
 		overflowX: 'hidden',
 		overflowY: 'hidden'
+	},
+	singleChip: {
+		transition: 'all .3s ease-in-out',
+		transform: ({ slide }) => `translateX(${slide}px)`,
+		border: '1px solid grey !important',
+		color: 'grey !important'
+	},
+	activeChip: {
+		transition: 'all .3s ease-in-out',
+		transform: ({ slide }) => `translateX(${slide}px)`,
+		border: '1px solid yellow !important',
+		color: 'white !important'
 	}
 }));

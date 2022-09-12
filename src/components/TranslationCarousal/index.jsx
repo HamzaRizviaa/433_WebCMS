@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
-import React, { forwardRef, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useStyles } from './index.style';
 import Chip from '@mui/material/Chip';
@@ -10,11 +10,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 const TranslationCarousal = ({ lang, setLang }) => {
-	const classes = useStyles();
 	const [slide, setSlide] = useState(0);
-	const [next, setNext] = useState('0px');
-	const [prev, setPrev] = useState('0px');
-
 	const languages = [
 		{
 			id: 1,
@@ -77,6 +73,7 @@ const TranslationCarousal = ({ lang, setLang }) => {
 			shortName: 'tr'
 		}
 	];
+	const classes = useStyles({ slide });
 
 	const handleClick = (data) => {
 		setLang({
@@ -119,7 +116,7 @@ const TranslationCarousal = ({ lang, setLang }) => {
 						fontSize='large'
 						onClick={() =>
 							setSlide((prev) => {
-								return slide < 0 && prev + 40;
+								return slide < 0 && prev + 55;
 							})
 						}
 					/>
@@ -128,22 +125,15 @@ const TranslationCarousal = ({ lang, setLang }) => {
 							languages.map((data, index) => {
 								return (
 									<Chip
-										sx={{
-											transform: `translateX(${slide}px)`,
-											transition: 'all .3s ease-in-out',
-											border:
-												lang?.shortName === data?.shortName
-													? '1px solid yellow !important'
-													: '1px solid grey !important',
-											color:
-												lang?.shortName === data?.shortName
-													? 'white !important'
-													: 'grey !important'
-										}}
 										key={index}
 										label={data?.prefix}
 										variant='outlined'
 										onClick={() => handleClick(data)}
+										className={
+											lang?.shortName === data?.shortName
+												? classes.activeChip
+												: classes.singleChip
+										}
 									/>
 								);
 							})}
@@ -152,7 +142,7 @@ const TranslationCarousal = ({ lang, setLang }) => {
 						fontSize='large'
 						onClick={() =>
 							setSlide((prev) => {
-								return slide > -400 && prev + -40;
+								return slide > -250 && prev + -55;
 							})
 						}
 					/>
