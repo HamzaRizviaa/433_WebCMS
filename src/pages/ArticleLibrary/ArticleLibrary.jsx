@@ -103,7 +103,7 @@ const ArticleLibrary = () => {
 						onClick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
-							if (startDate || endDate) {
+							if (startDate && endDate) {
 								dispatch(
 									getAllArticlesApi({
 										q: search,
