@@ -216,7 +216,8 @@ export default function BannerRows({
 					ref={provided.innerRef}
 					{...provided.draggableProps}
 					style={{
-						...provided.draggableProps.style
+						...provided.draggableProps.style,
+						width: '100%'
 					}}
 				>
 					<div>
