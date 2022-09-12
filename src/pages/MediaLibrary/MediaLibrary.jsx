@@ -572,15 +572,13 @@ const MediaLibrary = () => {
 		}
 	];
 
-	const tableRowEvents = {
-		onClick: (e, row) => {
-			row.status === 'draft' && dispatch(getAllNewLabels());
-			dispatch(getSpecificMedia(row.id));
-			setrowStatus(row.status);
-			setEdit(true);
-			setShowSlider(true);
-		}
-	};
+	const onRowClick = (e, row) => {
+		row.status === 'draft' && dispatch(getAllNewLabels());
+		dispatch(getSpecificMedia(row.id));
+		setrowStatus(row.status);
+		setEdit(true);
+		setShowSlider(true);
+	}
 
 	const handleDebounceFun = () => {
 		let _search;
@@ -711,7 +709,7 @@ const MediaLibrary = () => {
 					</div>
 				</div>
 				<div className={classes.tableContainer}>
-					<Table rowEvents={tableRowEvents} columns={columns} data={media} />
+					<Table columns={columns} data={media} onRowClick={onRowClick}/>
 				</div>
 
 				<div className={classes.paginationRow}>

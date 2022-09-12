@@ -398,31 +398,27 @@ const QuestionLibrary = () => {
 		}
 	];
 
-	const tableRowEvents = {
-		onClick: (e, row) => {
-			// if (!edit) {
-			// dispatch(getSpecificPost(row.id));
-			setEdit(true);
-			setNotifID(row.id);
-			setRowType(row.question_type); // quiz , poll
-			setrowStatus(row.status); // active , closed , draft
-			setrowLocation(row.location); // home page , article
-			setQuestionId(row.question_id);
+	const onRowClick = (e, row) => {
+		setEdit(true);
+		setNotifID(row.id);
+		setRowType(row.question_type); // quiz , poll
+		setrowStatus(row.status); // active , closed , draft
+		setrowLocation(row.location); // home page , article
+		setQuestionId(row.question_id);
 
-			//api calls
-			row.status === 'draft' && dispatch(getAllNewLabels());
-			dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
+		//api calls
+		row.status === 'draft' && dispatch(getAllNewLabels());
+		dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
 
-			//slider calls
-			if (rowStatus === 'ACTIVE' && rowLocation === 'article') {
-				row.question_type === 'quiz'
-					? setShowQuizSlider(true)
-					: setShowPollSlider(true);
-			} else if (rowLocation === 'homepage' || rowStatus === 'draft') {
-				showEditSlider(true);
-			}
+		//slider calls
+		if (rowStatus === 'ACTIVE' && rowLocation === 'article') {
+			row.question_type === 'quiz'
+				? setShowQuizSlider(true)
+				: setShowPollSlider(true);
+		} else if (rowLocation === 'homepage' || rowStatus === 'draft') {
+			showEditSlider(true);
 		}
-	};
+	}
 
 	const handleChange = (event, value) => {
 		setPage(value);
@@ -664,9 +660,9 @@ const QuestionLibrary = () => {
 				</div>
 				<div className={classes.tableContainer}>
 					<Table
-						rowEvents={tableRowEvents}
 						columns={columns}
 						data={questions}
+						onRowClick={onRowClick}
 					/>
 				</div>
 

@@ -398,15 +398,13 @@ const NewsLibrary = () => {
 		}
 	];
 
-	const tableRowEvents = {
-		onClick: (e, row) => {
-			row.status === 'draft' && dispatch(getAllNewLabels());
-			dispatch(getSpecificNews(row.id));
-			setEdit(true);
-			setrowStatus(row.status); // pass in slider
-			setShowSlider(true);
-		}
-	};
+	const onRowClick = (e, row) => {
+		row.status === 'draft' && dispatch(getAllNewLabels());
+		dispatch(getSpecificNews(row.id));
+		setEdit(true);
+		setrowStatus(row.status); // pass in slider
+		setShowSlider(true);
+	}
 
 	const handleChange = (event, value) => {
 		setPage(value);
@@ -606,7 +604,7 @@ const NewsLibrary = () => {
 					</div>
 				</div>
 				<div className={classes.tableContainer}>
-					<Table rowEvents={tableRowEvents} columns={columns} data={allNews} />
+					<Table columns={columns} data={allNews} onRowClick={onRowClick}/>
 				</div>
 
 				<div className={classes.paginationRow}>

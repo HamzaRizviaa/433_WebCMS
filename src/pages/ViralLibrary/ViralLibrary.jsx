@@ -422,15 +422,13 @@ const ViralLibrary = () => {
 		}
 	];
 
-	const tableRowEvents = {
-		onClick: (e, row) => {
-			row.status === 'draft' && dispatch(getAllNewLabels());
-			dispatch(getSpecificViral(row.id));
-			setEdit(true);
-			setrowStatus(row.status); // pass in slider
-			setShowSlider(true);
-		}
-	};
+	const onRowClick = (e, row) => {
+		row.status === 'draft' && dispatch(getAllNewLabels());
+		dispatch(getSpecificViral(row.id));
+		setEdit(true);
+		setrowStatus(row.status); // pass in slider
+		setShowSlider(true);
+	}
 
 	const handleChange = (event, value) => {
 		setPage(value);
@@ -631,7 +629,7 @@ const ViralLibrary = () => {
 					</div>
 				</div>
 				<div className={classes.tableContainer}>
-					<Table rowEvents={tableRowEvents} columns={columns} data={virals} />
+					<Table columns={columns} data={virals} onRowClick={onRowClick}/>
 				</div>
 
 				<div className={classes.paginationRow}>

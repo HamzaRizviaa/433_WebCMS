@@ -396,15 +396,13 @@ const ArticleLibrary = () => {
 		}
 	];
 
-	const tableRowEvents = {
-		onClick: (e, row) => {
-			row.status === 'draft' && dispatch(getAllNewLabels());
-			dispatch(getSpecificArticle(row.id));
-			setEdit(true);
-			setShowSlider(true);
-			setRowStatus(row?.status);
-		}
-	};
+	const onRowClick = (e, row) => {
+		row.status === 'draft' && dispatch(getAllNewLabels());
+		dispatch(getSpecificArticle(row.id));
+		setEdit(true);
+		setShowSlider(true);
+		setRowStatus(row?.status);
+	}
 
 	const handleChange = (event, value) => {
 		setPage(value);
@@ -652,7 +650,7 @@ const ArticleLibrary = () => {
 					</div>
 				</div>
 				<div className={classes.tableContainer}>
-					<Table rowEvents={tableRowEvents} columns={columns} data={articles} />
+					<Table columns={columns} data={articles} onRowClick={onRowClick}/>
 				</div>
 				<div className={classes.paginationRow}>
 					<Pagination
