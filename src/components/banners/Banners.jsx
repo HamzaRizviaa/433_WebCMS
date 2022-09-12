@@ -271,7 +271,6 @@ export default function Banners({ tabValue }) {
 				}
 			);
 
-			console.log(result);
 			if (result?.data?.status_code === 200) {
 				toast.success('banner has been created/updated!');
 				dispatch(getAllBanners(tabValue));
@@ -289,7 +288,6 @@ export default function Banners({ tabValue }) {
 	};
 
 	const handleCheckFirstRow = () => {
-		console.log('click first banner');
 		let errValidate = { flag: '', rowId: undefined, errMsg: '' };
 		if (!bannerData[0]?.bannerType ^ !bannerData[0]?.selectedMedia) {
 			errValidate = {
@@ -310,7 +308,7 @@ export default function Banners({ tabValue }) {
 	const handleBannerPositionAndFirstBanner = () => {
 		console.log('click other banner');
 		let errValidate = { flag: '', rowId: undefined, errMsg: '' };
-		for (let i = 9; i >= 1; i--) {
+		for (let i = bannerData.length - 1; i >= 1; i--) {
 			// start from max to min
 			if (bannerData[i]?.bannerType && bannerData[i]?.selectedMedia) {
 				//check data in both field
