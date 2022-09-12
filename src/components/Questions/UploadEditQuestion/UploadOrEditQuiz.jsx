@@ -70,7 +70,6 @@ const UploadOrEditQuiz = ({
 	const [isError, setIsError] = useState({});
 	const [openDeletePopup, setOpenDeletePopup] = useState(false);
 	const [openStopPopup, setOpenStopPopup] = useState(false);
-
 	const [isLoading, setIsLoading] = useState(false);
 	const [previewBool, setPreviewBool] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
@@ -125,7 +124,7 @@ const UploadOrEditQuiz = ({
 		handleNewSlide();
 	}, [open]);
 
-	console.log(questionSlides, 'QSSS');
+	console.log(questionSlides, 'QSSS QUESTION SLIDES DATA');
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...questionSlides];
@@ -142,7 +141,7 @@ const UploadOrEditQuiz = ({
 	const handleElementDelete = (sortOrder) => {
 		const slides = [...questionSlides];
 		const updatedSlides = slides.filter((file) => file.sortOrder !== sortOrder);
-		console.log(sortOrder, 'so');
+
 		if (sortOrder || sortOrder === 0) {
 			setQuestionSlides(updatedSlides);
 		}
@@ -317,7 +316,7 @@ const UploadOrEditQuiz = ({
 
 	const createQuestion = async (id, mediaFiles, draft) => {
 		setPostButtonStatus(true);
-		console.log(mediaFiles, 'mFfF');
+
 		let slidesData =
 			questionSlides?.length > 0
 				? questionSlides.map((item, index) => {
@@ -541,14 +540,14 @@ const UploadOrEditQuiz = ({
 			!validateDraft(form, null, null, questionSlides) ||
 			!comparingFormFields(editQuestionData, convertedDate)
 		) {
-			console.log('1D');
+			// console.log('1D');
 			setDraftBtnDisabled(
 				!validateEmptyQuestionArray.every((item) => item === true) ||
 					!validateDraft(form, null, null, questionSlides)
 			);
 		} else {
 			if (editQuestionData?.questions?.length !== questionSlides?.length) {
-				console.log('2D');
+				// console.log('2D');
 				setDraftBtnDisabled(
 					!validateEmptyQuestionArray.every((item) => item === true)
 				);
@@ -559,12 +558,12 @@ const UploadOrEditQuiz = ({
 					) ||
 					!validateEmptyQuestionArray.every((item) => item === true)
 				) {
-					console.log('3D');
+					// console.log('3D');
 					setDraftBtnDisabled(
 						!checkSortOrderOnEdit(editQuestionData, questionSlides)
 					);
 				} else {
-					console.log('4D');
+					// console.log('4D');
 					setDraftBtnDisabled(
 						validateEmptyQuestionAndEditComparisonArray.every(
 							(item) => item === true
@@ -617,13 +616,7 @@ const UploadOrEditQuiz = ({
 				setEditQuizBtnDisabled(
 					!validateEmptyQuestionArray.every((item) => item === true)
 				);
-				// setEditQuizBtnDisabled(
-				// 	!validateEmptyQuestionSlidesAndEditComparisonArray.every(
-				// 		(item) => item === true
-				// 	) || !validateEmptyQuestionArray.every((item) => item === true)
-				// );
 			} else {
-				console.log('3');
 				setEditQuizBtnDisabled(
 					validateEmptyQuestionSlidesAndEditComparisonArray.every(
 						(item) => item === true
@@ -688,11 +681,7 @@ const UploadOrEditQuiz = ({
 			}
 		}
 	};
-	console.log(
-		!validateDraft(form, null, null, questionSlides),
-		draftBtnDisabled,
-		'lopo'
-	);
+
 	//draftBtnDisabled button - whether you can click or not
 	//validateDraft - color grey or yellow
 
@@ -721,10 +710,10 @@ const UploadOrEditQuiz = ({
 							return quesData;
 						}
 					}
-					console.log(quesData, 'qd');
+
 					return quesData;
 				});
-				console.log(images, 'iNG');
+
 				Promise.all([...images])
 					.then((mediaFiles) => {
 						createQuestion(editQuestionData?.id, mediaFiles, true);

@@ -42,7 +42,6 @@ const QuestionForm = ({
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
 	const [isError, setIsError] = useState({});
-	console.log(initialData, 'id');
 	const [form, setForm] = useState(
 		initialData
 			? {
@@ -93,10 +92,13 @@ const QuestionForm = ({
 					]
 			  }
 	);
-	console.log(form, 'FORM');
+
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const imgRef = useRef(null);
+
+	console.log(initialData, 'INITIAL DATA IN QUESTION FORM ');
+	console.log(form, 'FORM  IN QUESTION FORM');
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -228,7 +230,7 @@ const QuestionForm = ({
 	const handleAnswerChange = (event, index) => {
 		if (!isEdit) {
 			const formCopy = { ...form };
-			console.log(form, 'answers', formCopy.answers[index]);
+
 			formCopy.answers[index] = {
 				answer: event.target.value,
 				position: index,
@@ -281,8 +283,6 @@ const QuestionForm = ({
 		}
 	};
 
-	console.log('ID', initialData);
-
 	return (
 		<>
 			{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
@@ -310,7 +310,7 @@ const QuestionForm = ({
 						}}
 					/>
 					{(isEdit && initialData?.uploadedFiles?.length === 0) ||
-					form?.uploadedFiles?.length === 0 ? (
+					(!isEdit && form?.uploadedFiles?.length === 0) ? (
 						<section
 							className={globalClasses.dropZoneContainer}
 							style={{

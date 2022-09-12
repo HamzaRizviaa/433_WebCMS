@@ -97,7 +97,6 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 	if (quesData?.length > 0) {
 		validateQuestion = quesData.every((item) => {
 			if (item?.data) {
-				console.log(item?.data[0], 'item?.data');
 				return (
 					(item?.data[0]?.uploadedFiles?.length ? true : false) &&
 					(item?.data[0]?.question ? true : false) &&
