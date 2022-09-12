@@ -51,7 +51,7 @@ const DraggableContainers = ({
 	const muiClasses = quizStyles();
 	const imgRef = useRef(null);
 	const loadingRef = useRef(null);
-	// console.log(initialData, 'initialData');
+
 	return (
 		<div>
 			<Draggable draggableId={`draggable-${index}`} index={index} key={key}>

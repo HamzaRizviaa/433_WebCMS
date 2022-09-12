@@ -124,8 +124,6 @@ const UploadOrEditQuiz = ({
 		handleNewSlide();
 	}, [open]);
 
-	console.log(questionSlides, 'QSSS QUESTION SLIDES DATA');
-
 	const setNewData = (childData, index) => {
 		let dataCopy = [...questionSlides];
 

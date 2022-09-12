@@ -9,7 +9,6 @@ import { useStyles } from '../quizStyles';
 const QuestionTabPanes = ({ edit, setQuesType, resetSlides, type, status }) => {
 	const muiClasses = useStyles();
 	const [tab, setTab] = useState(0);
-	console.log(type, 'qqqqT');
 
 	useEffect(() => {
 		if (edit) {

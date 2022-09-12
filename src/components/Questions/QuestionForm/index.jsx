@@ -10,8 +10,6 @@ import { makeid } from '../../../utils/helper';
 import checkFileSize from '../../../utils/validateFileSize';
 import Labels from '../../Labels';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import Typography from '@mui/material/Typography';
-// import uploadFileToServer from '../../../utils/uploadFileToServer';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { useStyles } from '../UploadEditQuestion/UploadOrEditQuiz.style';
 import { ReactComponent as NewsAddIcon } from '../../../assets/newsAddIcon.svg';
@@ -95,9 +93,6 @@ const QuestionForm = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const imgRef = useRef(null);
-
-	console.log(initialData, 'INITIAL DATA IN QUESTION FORM ');
-	console.log(form, 'FORM  IN QUESTION FORM');
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -191,14 +186,6 @@ const QuestionForm = ({
 		});
 		let answers = { answers: [...form.answers, { answer: '' }] };
 		sendDataToParent(answers);
-
-		// const formCopy = { ...form };
-		// let answerLength = formCopy?.answers?.length;
-		// formCopy.answers[answerLength] = {
-		// 	answer: ''
-		// };
-		// let answers = { answers: formCopy.answers };
-		// sendDataToParent(answers);
 	};
 
 	const handleAnswerDelete = (index) => {
@@ -214,9 +201,7 @@ const QuestionForm = ({
 				};
 			});
 			const formCopy = { ...form };
-			// formCopy.answers[index] = {
-			// 	answer: ''
-			// };
+
 			let answers = {
 				answers: formCopy?.answers?.filter((val, ind) => {
 					return ind !== index;
@@ -268,15 +253,10 @@ const QuestionForm = ({
 
 	return (
 		<>
-			{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
-			<div
-				className={globalClasses.contentWrapperNoPreview}
-				//style={{ width: previewFile != null ? '60%' : 'auto' }}
-			>
+			<div className={globalClasses.contentWrapperNoPreview}>
 				<div>
 					<DragAndDropField
 						uploadedFiles={
-							//initialData ?  initialData?.uploadedFiles : form?.uploadedFiles
 							initialData ? initialData?.uploadedFiles : form?.uploadedFiles
 						}
 						quizPollStatus={status}
@@ -469,9 +449,7 @@ const QuestionForm = ({
 										value={
 											initialData?.answers?.length > 0
 												? initialData && initialData?.answers[index]?.answer
-												: // ? initialData?.data[0].answers[index]?.answer
-												  // : initialData?.answers[index]?.answer
-												  form.answers[index]?.answer
+												: form.answers[index]?.answer
 										}
 										onChange={(e) => {
 											handleAnswerChange(e, index);
@@ -552,7 +530,7 @@ const QuestionForm = ({
 								sendDataToParent({
 									labels: [...newVal]
 								});
-							}} //closure
+							}}
 							LabelsOptions={quizLabels}
 							extraLabel={extraLabel}
 							handleChangeExtraLabel={handleChangeExtraLabel}
