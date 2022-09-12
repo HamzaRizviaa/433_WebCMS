@@ -19,7 +19,10 @@ export const useStyles = makeStyles(() => ({
 		},
 		'& .MuiSvgIcon-root': {
 			marginTop: '10px',
-			color: 'grey'
+			color: 'grey',
+			paddingLeft: '5px',
+			paddingRight: '5px',
+			cursor: 'pointer'
 		},
 		'& .enableLanguage': {
 			border: '1px solid yellow'

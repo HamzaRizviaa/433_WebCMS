@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
 // import classes from './_uploadOrEditViral.module.scss';
 import { useDropzone } from 'react-dropzone';
@@ -76,6 +77,8 @@ const UploadOrEditViral = ({
 		prefix: 'ENG', // figma
 		shortName: 'en' //api
 	});
+	const [captionValue, setCaptionValue] = useState('');
+	const [translatedOnEdit, setTranslatedOnEdit] = useState(false);
 
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
@@ -143,6 +146,15 @@ const UploadOrEditViral = ({
 					};
 				});
 			}
+			if (status === 'draft') {
+				if (specificViral?.translations) {
+					setTranslatedOnEdit(false);
+					setTranslatedLanguages(specificViral?.translations);
+				} else {
+					setTranslatedOnEdit(true);
+				}
+			}
+			setCaptionValue(specificViral?.caption);
 			setForm((prev) => {
 				return {
 					...prev,
@@ -276,6 +288,8 @@ const UploadOrEditViral = ({
 			prefix: 'ENG',
 			shortName: 'en'
 		});
+		setCaptionValue('');
+		setTranslatedOnEdit(false);
 	};
 
 	const toggleDeleteModal = () => {
@@ -310,9 +324,7 @@ const UploadOrEditViral = ({
 			let selectedLanguage = lang?.shortName;
 			let translatedLangData = translatedLanguages[selectedLanguage];
 			console.log(translatedLangData, 'dta');
-			setForm((prev) => {
-				return { ...prev, caption: translatedLangData?.caption };
-			});
+			setCaptionValue(translatedLangData?.caption);
 		}
 	}, [lang]);
 
@@ -333,11 +345,13 @@ const UploadOrEditViral = ({
 			if (result?.data?.status_code === 200) {
 				setTranslatedLanguages(result?.data?.data);
 				setTranslated(true);
+				setTranslatedOnEdit(false);
 				setIsLoadingcreateViral(false);
 			}
 		} catch (e) {
 			toast.error('Failed to translate');
 			setTranslated(false);
+			setTranslatedOnEdit(true);
 			setIsLoadingcreateViral(false);
 			console.log(e, 'Failed to translate');
 		}
@@ -364,6 +378,7 @@ const UploadOrEditViral = ({
 						: '',
 					height: fileHeight,
 					width: fileWidth,
+					translations: translated ? translatedLanguages : undefined,
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -468,12 +483,19 @@ const UploadOrEditViral = ({
 
 	// 	return values.every((item) => item === false);
 	// };
+	// console.log(
+	// 	specificViral?.caption?.trim() === form?.caption?.trim(),
+	// 	editBtnDisabled,
+	// 	specificViral?.caption?.trim(),
+	// 	form?.caption?.trim(),
 
+	// 	'hamza'
+	// );
 	useEffect(() => {
 		if (specificViral) {
 			setEditBtnDisabled(
-				postButtonStatus ||
-					!form.caption ||
+				// postButtonStatus ||
+				!form.caption ||
 					!form.uploadedFiles.length ||
 					form.labels.length < 7 ||
 					(specificViral?.file_name === form?.uploadedFiles[0]?.file_name &&
@@ -664,7 +686,7 @@ const UploadOrEditViral = ({
 	};
 
 	const handleTranslateBtn = () => {
-		if (!validateForm(form) || draftBtnDisabled) {
+		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
 			validateViralBtn();
 		} else {
 			setPostButtonStatus(true);
@@ -685,6 +707,17 @@ const UploadOrEditViral = ({
 			}
 		}
 	};
+
+	// const handleButtonText = () => {
+	// 	if (translated && !isEdit) {
+	// 		return buttonText;
+	// 	} else if (isEdit && status === 'published' && !translated) {
+	// 		return buttonText;
+	// 	} else if (isEdit && status === 'published' && translated) {
+	// 		return 'TRANSLATE';
+	// 	}
+	// };
+
 	return (
 		<>
 			<Slider
@@ -862,12 +895,19 @@ const UploadOrEditViral = ({
 											CAPTION
 										</h6>
 										<TextField
-											value={form.caption}
+											value={captionValue}
 											onChange={(e) => {
-												setTranslated(false);
+												if (translated && lang?.shortName === 'en') {
+													setTranslated(false);
+												}
+												if (isEdit && lang?.shortName === 'en') {
+													setTranslatedOnEdit(true);
+												}
 												setForm((prev) => {
 													return { ...prev, caption: e.target.value };
 												});
+
+												setCaptionValue(e.target.value);
 											}}
 											placeholder={'Please write your caption here'}
 											className={classes.textField}
@@ -921,10 +961,20 @@ const UploadOrEditViral = ({
 										? 'Something needs to be changed to save a draft'
 										: ''}
 								</p>
-								<>
-									<Divider color={'grey'} sx={{ mb: '10px' }} />
-									<TranslationCarousal lang={lang} setLang={setLang} />
-								</>
+
+								{translated ? (
+									<>
+										<Divider color={'grey'} sx={{ mb: '10px' }} />
+										<TranslationCarousal lang={lang} setLang={setLang} />
+									</>
+								) : isEdit && status === 'draft' && !translatedOnEdit ? (
+									<>
+										<Divider color={'grey'} sx={{ mb: '10px' }} />
+										<TranslationCarousal lang={lang} setLang={setLang} />
+									</>
+								) : (
+									<></>
+								)}
 
 								<div className={classes.buttonDiv}>
 									{isEdit || (status === 'draft' && isEdit) ? (
@@ -987,9 +1037,27 @@ const UploadOrEditViral = ({
 												}
 												// disabled={isEdit ? editBtnDisabled : !validateForm(form)}
 												onClick={
-													translated ? handlePostSaveBtn : handleTranslateBtn
+													!translated && !isEdit
+														? handleTranslateBtn
+														: isEdit &&
+														  status === 'published' &&
+														  translatedOnEdit
+														? handleTranslateBtn
+														: isEdit && status === 'draft' && translatedOnEdit
+														? handleTranslateBtn
+														: handlePostSaveBtn
 												}
-												text={translated ? buttonText : 'TRANSLATE'}
+												text={
+													!translated && !isEdit
+														? 'TRANSLATE'
+														: isEdit &&
+														  status === 'published' &&
+														  translatedOnEdit
+														? 'TRANSLATE'
+														: isEdit && status === 'draft' && translatedOnEdit
+														? 'TRANSLATE'
+														: buttonText
+												}
 											/>
 										</div>
 									</div>
