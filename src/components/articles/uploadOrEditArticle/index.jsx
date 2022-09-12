@@ -67,6 +67,7 @@ import {
 	checkNewElementQuestionDraft
 } from '../../../utils/articleUtils';
 import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDraggable';
+import { ToastErrorNotifications } from '../../../constants';
 
 const UploadOrEditArticle = ({
 	open,
@@ -127,6 +128,7 @@ const UploadOrEditArticle = ({
 	const dialogWrapper = useRef(null);
 	console.log('DATA', data);
 	// console.log('FORM', form);
+
 	const elementData = [
 		{
 			image: Text,
@@ -590,7 +592,13 @@ const UploadOrEditArticle = ({
 									labels: item?.data?.labels || undefined,
 									question_type: item?.data?.question_type || undefined,
 									question_id: item?.data?.question_id || undefined,
-									id: item?.data?.id || undefined
+									id: item?.data?.id || undefined,
+									height: item?.data?.uploadedFiles
+										? item?.data?.uploadedFiles[0]?.height
+										: undefined,
+									width: item?.data?.uploadedFiles
+										? item?.data?.uploadedFiles[0]?.width
+										: undefined
 								}
 						  }
 						: undefined),
@@ -982,9 +990,7 @@ const UploadOrEditArticle = ({
 				deleteReadMoreApi(id);
 
 				if (result?.data?.data?.is_deleted === false) {
-					toast.error(
-						'The media or article cannot be deleted because it is used as a top banner'
-					);
+					toast.error(ToastErrorNotifications.deleteBannerItemText);
 					dispatch(getAllArticlesApi({ page }));
 				} else {
 					toast.success('Article has been deleted!');
@@ -1437,7 +1443,23 @@ const UploadOrEditArticle = ({
 			setIsLoading(true);
 
 			if (isEdit) {
-				if (specificArticle?.title?.trim() !== form.title?.trim()) {
+				if (
+					specificArticle?.title?.trim() !== form.title?.trim() &&
+					status === 'published'
+				) {
+					if (
+						(await handleTitleDuplicate(form.title)) ===
+						'The Title Already Exist'
+					) {
+						setIsError({ articleTitleExists: 'This title already exists' });
+						setTimeout(() => {
+							setIsError({});
+						}, [5000]);
+
+						setPostButtonStatus(false);
+						return;
+					}
+				} else if (status === 'draft') {
 					if (
 						(await handleTitleDuplicate(form.title)) ===
 						'The Title Already Exist'
@@ -1658,7 +1680,7 @@ const UploadOrEditArticle = ({
 				edit={isEdit}
 				article={true}
 				dialogRef={dialogWrapper}
-				notifID={status === 'draft' ? '' : notifID}
+				notifID={notifID}
 			>
 				<LoadingOverlay
 					active={isLoading}

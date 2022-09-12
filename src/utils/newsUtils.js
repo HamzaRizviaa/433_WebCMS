@@ -33,6 +33,8 @@ export const checkEmptyMediaNewsDraft = (news) => {
 export const comparingNewsFields = (specificNews, form) => {
 	return (
 		specificNews?.show_likes === form.show_likes &&
+		specificNews?.banner_title === form.banner_title &&
+		specificNews?.banner_description === form.banner_description &&
 		specificNews?.show_comments === form.show_comments
 	);
 };

@@ -14,7 +14,6 @@ import Typography from '@mui/material/Typography';
 // import uploadFileToServer from '../../../utils/uploadFileToServer';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { useStyles } from '../UploadEditQuestion/UploadOrEditQuiz.style';
-import SecondaryLoader from '../../SecondaryLoader';
 import { ReactComponent as NewsAddIcon } from '../../../assets/newsAddIcon.svg';
 import { ReactComponent as DeleteBin } from '../../../assets/DeleteBin.svg';
 import { InputAdornment } from '@mui/material';
@@ -230,7 +229,6 @@ const QuestionForm = ({
 	const handleAnswerChange = (event, index) => {
 		if (!isEdit) {
 			const formCopy = { ...form };
-
 			formCopy.answers[index] = {
 				answer: event.target.value,
 				position: index,
@@ -247,23 +245,10 @@ const QuestionForm = ({
 		} else {
 			// This block of code will only be executed if the question is in draft
 			// Then only the question answers will be editable
-
+			const isAnswersEdited = initialData.data && initialData.data[0].answers;
 			const answers = [
-				...(initialData?.answers?.length > 0
-					? initialData?.answers
-					: [...form.answers])
+				...(isAnswersEdited ? initialData.data[0].answers : [...form.answers])
 			];
-
-			// answers[index] = {
-			// 	answer: event.target.value,
-			// 	position: index + 1,
-			// 	type:
-			// 		type === 'quiz' && index === 0
-			// 			? 'right_answer'
-			// 			: type === 'quiz' && index > 0
-			// 			? 'wrong_answer_' + index
-			// 			: 'poll'
-			// };
 
 			answers[index] = {
 				answer: event.target.value,
@@ -277,9 +262,7 @@ const QuestionForm = ({
 			};
 
 			setForm({ ...form, answers });
-
 			sendDataToParent({ answers });
-			// sendDataToParent(answers);
 		}
 	};
 
@@ -350,7 +333,13 @@ const QuestionForm = ({
 					<div className={globalClasses.dropBoxUrlContainer}>
 						<h6>DROPBOX URL</h6>
 						<TextField
-							value={initialData ? initialData?.dropbox_url : form.dropbox_url}
+							value={
+								initialData
+									? initialData?.data
+										? initialData?.data?.dropbox_url
+										: initialData?.dropbox_url
+									: form.dropbox_url
+							}
 							disabled={location === 'article' ? true : false}
 							onChange={(e) => {
 								setForm((prev) => {

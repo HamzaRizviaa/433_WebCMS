@@ -128,6 +128,7 @@ const UploadOrEditQuiz = ({
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...questionSlides];
+
 		dataCopy[index].data = [
 			{
 				...(dataCopy[index]?.data ? dataCopy[index]?.data[0] : {}),
@@ -390,7 +391,7 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
-	const deleteQuiz = async (draft) => {
+	const deleteQuiz = async (id, draft, qtype) => {
 		if (!editQuestionData) return;
 		const questions_ids = editQuestionData.questions?.map((q) => q.id) || [];
 
@@ -781,11 +782,7 @@ const UploadOrEditQuiz = ({
 				handlePreview={() => {
 					handlePreviewEscape();
 				}}
-				notifID={
-					location === 'article' || status === 'CLOSED' || status === 'draft'
-						? ''
-						: notifID
-				}
+				notifID={status === 'CLOSED' ? '' : notifID}
 			>
 				<LoadingOverlay
 					active={isLoading}
