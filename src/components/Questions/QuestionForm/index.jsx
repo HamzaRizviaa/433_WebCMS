@@ -3,36 +3,18 @@
 /* eslint-disable react/display-name */
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import LoadingOverlay from 'react-loading-overlay';
-import Close from '@material-ui/icons/Close';
 import { useDropzone } from 'react-dropzone';
-import Slide from '@mui/material/Slide';
-import PrimaryLoader from '../../PrimaryLoader';
 import { TextField } from '@material-ui/core';
 import DragAndDropField from '../../DragAndDropField';
 import { makeid } from '../../../utils/helper';
 import checkFileSize from '../../../utils/validateFileSize';
 import Labels from '../../Labels';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import Typography from '@mui/material/Typography';
-import uploadFileToServer from '../../../utils/uploadFileToServer';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
-import { ReactComponent as Union } from '../../../assets/drag.svg';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 import { useStyles } from '../UploadEditQuestion/UploadOrEditQuiz.style';
-import { Draggable } from 'react-beautiful-dnd';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import SecondaryLoader from '../../SecondaryLoader';
 import { ReactComponent as NewsAddIcon } from '../../../assets/newsAddIcon.svg';
 import { ReactComponent as DeleteBin } from '../../../assets/DeleteBin.svg';
-import {
-	Accordion,
-	Box,
-	AccordionSummary,
-	AccordionDetails,
-	InputAdornment
-} from '@mui/material';
+import { InputAdornment } from '@mui/material';
 
 const QuestionForm = ({
 	item,
@@ -51,35 +33,66 @@ const QuestionForm = ({
 	location
 }) => {
 	const [fileRejectionError, setFileRejectionError] = useState('');
-	const [expanded, setExpanded] = useState(true);
+
 	const [quizLabels, setQuizLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
 	const [isError, setIsError] = useState({});
-	const [loading, setLoading] = useState(false);
-	const [form, setForm] = useState({
-		uploadedFiles: [],
-		dropbox_url: '',
-		question: '',
-		answers:
-			initialData?.answers?.length > 0
-				? initialData?.answers
-				: [
-						{ answer: '', type: 'right_answer', position: 0 },
+	const [form, setForm] = useState(
+		initialData
+			? {
+					...initialData,
+					uploadedFiles: initialData ? initialData?.uploadedFiles : [],
+					answers:
+						initialData?.answers?.length > 0
+							? initialData?.answers
+							: [
+									{
+										answer: '',
+										type: type === 'poll' ? 'poll' : 'right_answer',
+										position: 0
+									},
+									{
+										answer: '',
+										type:
+											location === 'article'
+												? 'wrong_answer'
+												: type === 'poll'
+												? 'poll'
+												: 'wrong_answer_1',
+										position: 1
+									}
+							  ]
+			  }
+			: {
+					uploadedFiles: [],
+					labels: [],
+					dropbox_url: '',
+					question: '',
+					answers: [
 						{
 							answer: '',
-							type: location === 'article' ? 'wrong_answer' : 'wrong_answer_1',
+							type: type === 'poll' ? 'poll' : 'right_answer',
+							position: 0
+						},
+						{
+							answer: '',
+							type:
+								location === 'article'
+									? 'wrong_answer'
+									: type === 'poll'
+									? 'poll'
+									: 'wrong_answer_1',
 							position: 1
 						}
-				  ],
-		labels: []
-	});
+					]
+			  }
+	);
 
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const imgRef = useRef(null);
-	const loadingRef = useRef(null);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -88,13 +101,8 @@ const QuestionForm = ({
 			validator: checkFileSize
 		});
 
-	const uploadedFile = async (newFiles) => {
-		return await uploadFileToServer(newFiles, 'articleLibrary');
-	};
-
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			setLoading(true);
 			setIsError({});
 
 			let newFiles = acceptedFiles.map((file) => {
@@ -111,28 +119,17 @@ const QuestionForm = ({
 					height: fileHeight
 				};
 			});
-			uploadedFile(newFiles[0], 'questionLibrary').then((res) => {
-				setForm((prev) => {
-					return {
-						...prev,
-						uploadedFiles: [
-							{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
-						]
-					};
-				});
-				sendDataToParent({
-					uploadedFiles: [
-						{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
-					]
-				});
-				setLoading(false);
+
+			setForm((prev) => {
+				return {
+					...prev,
+					uploadedFiles: [...newFiles]
+				};
 			});
+
+			sendDataToParent({ uploadedFiles: [...newFiles] });
 		}
 	}, [acceptedFiles, fileHeight, fileWidth]);
-
-	// useEffect(() => {
-	// 	initialData ? setForm(initialData) : '';
-	// }, [initialData]);
 
 	const getFileType = (type) => {
 		if (type) {
@@ -153,13 +150,10 @@ const QuestionForm = ({
 	}, [fileRejections]);
 
 	const handleDeleteFile = (id) => {
-		// setUploadedFiles((uploadedFiles) =>
-		// 	uploadedFiles.filter((file) => file.id !== id)
-		// );
 		setForm((prev) => {
 			return {
 				...prev,
-				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
+				uploadedFiles: form.uploadedFiles?.filter((file) => file.id !== id)
 			};
 		});
 		handleDeleteMedia(item?.data);
@@ -171,7 +165,7 @@ const QuestionForm = ({
 
 	useEffect(() => {
 		setQuizLabels((labels) => {
-			return labels.filter((label) => label.id != null);
+			return labels?.filter((label) => label.id != null);
 		});
 		if (extraLabel) {
 			let flag = quizLabels.some((label) => label.name == extraLabel);
@@ -182,11 +176,6 @@ const QuestionForm = ({
 			}
 		}
 	}, [extraLabel]);
-	// useEffect(() => {
-	// 	if (labels.length) {
-	// 		setQuizLabels([...labels]);
-	// 	}
-	// }, [labels]);
 
 	const handleNewAnswer = () => {
 		setForm((prev) => {
@@ -197,14 +186,6 @@ const QuestionForm = ({
 		});
 		let answers = { answers: [...form.answers, { answer: '' }] };
 		sendDataToParent(answers);
-
-		// const formCopy = { ...form };
-		// let answerLength = formCopy?.answers?.length;
-		// formCopy.answers[answerLength] = {
-		// 	answer: ''
-		// };
-		// let answers = { answers: formCopy.answers };
-		// sendDataToParent(answers);
 	};
 
 	const handleAnswerDelete = (index) => {
@@ -214,17 +195,15 @@ const QuestionForm = ({
 			setForm((prev) => {
 				return {
 					...prev,
-					answers: dataCopy?.answers.filter((val, ind) => {
+					answers: dataCopy?.answers?.filter((val, ind) => {
 						return ind !== index;
 					})
 				};
 			});
 			const formCopy = { ...form };
-			// formCopy.answers[index] = {
-			// 	answer: ''
-			// };
+
 			let answers = {
-				answers: formCopy?.answers.filter((val, ind) => {
+				answers: formCopy?.answers?.filter((val, ind) => {
 					return ind !== index;
 				})
 			};
@@ -237,7 +216,7 @@ const QuestionForm = ({
 			const formCopy = { ...form };
 			formCopy.answers[index] = {
 				answer: event.target.value,
-				position: index + 1,
+				position: index,
 				type:
 					type === 'quiz' && index === 0
 						? 'right_answer'
@@ -274,11 +253,7 @@ const QuestionForm = ({
 
 	return (
 		<>
-			{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
-			<div
-				className={globalClasses.contentWrapperNoPreview}
-				//style={{ width: previewFile != null ? '60%' : 'auto' }}
-			>
+			<div className={globalClasses.contentWrapperNoPreview}>
 				<div>
 					<DragAndDropField
 						uploadedFiles={
@@ -297,10 +272,8 @@ const QuestionForm = ({
 							setFileHeight(imgRef.current.naturalHeight);
 						}}
 					/>
-
-					{initialData?.uploadedFiles ? (
-						''
-					) : form.uploadedFiles.length === 0 ? (
+					{(isEdit && initialData?.uploadedFiles?.length === 0) ||
+					(!isEdit && form?.uploadedFiles?.length === 0) ? (
 						<section
 							className={globalClasses.dropZoneContainer}
 							style={{
@@ -309,21 +282,18 @@ const QuestionForm = ({
 						>
 							<div {...getRootProps({ className: globalClasses.dropzone })}>
 								<input {...getInputProps()} />
-								{loading ? (
-									<SecondaryLoader loading={true} />
-								) : (
-									<>
-										<AddCircleOutlineIcon
-											className={globalClasses.addFilesIcon}
-										/>
-										<p className={globalClasses.dragMsg}>
-											Click or drag file to this area to upload
-										</p>
-										<p className={globalClasses.formatMsg}>
-											Supported formats are jpeg and png
-										</p>
-									</>
-								)}
+
+								<>
+									<AddCircleOutlineIcon
+										className={globalClasses.addFilesIcon}
+									/>
+									<p className={globalClasses.dragMsg}>
+										Click or drag file to this area to upload
+									</p>
+									<p className={globalClasses.formatMsg}>
+										Supported formats are jpeg and png
+									</p>
+								</>
 
 								<p className={globalClasses.uploadMediaError}>
 									{isError.uploadedFiles
@@ -333,7 +303,7 @@ const QuestionForm = ({
 							</div>
 						</section>
 					) : (
-						''
+						<></>
 					)}
 
 					<p className={globalClasses.fileRejectionError}>
@@ -405,13 +375,7 @@ const QuestionForm = ({
 						</div>
 						<TextField
 							disabled={isEdit && status !== 'draft'}
-							value={
-								initialData
-									? initialData?.data
-										? initialData?.data?.question
-										: initialData?.question
-									: form.question
-							}
+							value={initialData ? initialData?.question : form?.question}
 							onChange={(e) => {
 								setForm((prev) => {
 									return {
@@ -484,9 +448,7 @@ const QuestionForm = ({
 										disabled={isEdit && status !== 'draft'}
 										value={
 											initialData?.answers?.length > 0
-												? initialData?.data && initialData?.data[0].answers
-													? initialData?.data[0].answers[index]?.answer
-													: initialData?.answers[index]?.answer
+												? initialData && initialData?.answers[index]?.answer
 												: form.answers[index]?.answer
 										}
 										onChange={(e) => {
@@ -526,29 +488,24 @@ const QuestionForm = ({
 							);
 						})}
 
-					{isEdit && status !== 'draft' ? (
-						<></>
+					{form?.answers.length < 4 ? (
+						isEdit && status !== 'draft' ? (
+							<></>
+						) : (
+							<div
+								className={classes.addNewAnswer}
+								onClick={() => handleNewAnswer()}
+								style={{
+									cursor: 'pointer'
+								}}
+							>
+								<NewsAddIcon />
+								<h6>ADD ANSWER</h6>
+							</div>
+						)
 					) : (
-						<div
-							className={classes.addNewAnswer}
-							onClick={() => handleNewAnswer()}
-							style={{
-								pointerEvents: form?.answers.length < 4 ? 'auto' : 'none',
-								cursor: 'pointer'
-							}}
-						>
-							<NewsAddIcon />
-							<h6>ADD ANSWER</h6>
-						</div>
+						''
 					)}
-
-					{/* <p className={globalClasses.mediaError}>
-															{isError.ans2
-																? type === 'quiz'
-																	? 'You need to provide wrong answer in order to post'
-																	: 'You need to provide second answer in order to post'
-																: ''}
-														</p> */}
 
 					<div className={classes.titleContainer}>
 						<h6
@@ -563,7 +520,9 @@ const QuestionForm = ({
 						<Labels
 							isEdit={isEdit}
 							setDisableDropdown={setDisableDropdown}
-							selectedLabels={initialData ? initialData?.labels : form.labels}
+							selectedLabels={
+								initialData?.labels ? initialData?.labels : form.labels
+							}
 							setSelectedLabels={(newVal) => {
 								setForm((prev) => {
 									return { ...prev, labels: [...newVal] };
@@ -571,7 +530,7 @@ const QuestionForm = ({
 								sendDataToParent({
 									labels: [...newVal]
 								});
-							}} //closure
+							}}
 							LabelsOptions={quizLabels}
 							extraLabel={extraLabel}
 							handleChangeExtraLabel={handleChangeExtraLabel}

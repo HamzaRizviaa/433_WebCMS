@@ -35,7 +35,6 @@ const NewsSlide = ({
 	setPreviewBool,
 	setPreviewFile
 }) => {
-	// console.log(initialData, 'ID');
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 
@@ -67,8 +66,6 @@ const NewsSlide = ({
 		}
 	};
 
-	// console.log(newFile, 'nF');
-
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png',
@@ -93,7 +90,6 @@ const NewsSlide = ({
 				};
 			});
 
-			// WidthHeightCallback(fileWidth, fileHeight);
 			setNewFile([...newFiles]);
 			sendDataToParent(...newFiles);
 		}
@@ -184,12 +180,7 @@ const NewsSlide = ({
 										)}
 
 										{!newFile?.length ? (
-											<section
-												className={globalClasses.dropZoneContainer}
-												// style={{
-												// 	borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
-												// }}
-											>
+											<section className={globalClasses.dropZoneContainer}>
 												<div
 													{...getRootProps({
 														className: globalClasses.dropzone
@@ -245,15 +236,7 @@ const NewsSlide = ({
 
 										<div className={globalClasses.captionContainer}>
 											<div className={globalClasses.characterCount}>
-												<h6
-												// className={
-												// 	isError.articleTitle || isError.articleTitleExists
-												// 		? globalClasses.errorState
-												// 		: globalClasses.noErrorState
-												// }
-												>
-													TITLE
-												</h6>
+												<h6>TITLE</h6>
 												<h6
 													style={{
 														color:
@@ -290,15 +273,7 @@ const NewsSlide = ({
 
 										<div className={globalClasses.captionContainer}>
 											<div className={globalClasses.characterCount}>
-												<h6
-												// className={
-												// 	isError.articleTitle || isError.articleTitleExists
-												// 		? globalClasses.errorState
-												// 		: globalClasses.noErrorState
-												// }
-												>
-													DESCRIPTION
-												</h6>
+												<h6>DESCRIPTION</h6>
 												<h6
 													style={{
 														color:
@@ -337,15 +312,7 @@ const NewsSlide = ({
 
 										<div className={globalClasses.captionContainer}>
 											<div className={globalClasses.characterCount}>
-												<h6
-												// className={
-												// 	isError.articleTitle || isError.articleTitleExists
-												// 		? globalClasses.errorState
-												// 		: globalClasses.noErrorState
-												// }
-												>
-													NAME
-												</h6>
+												<h6>NAME</h6>
 												<h6
 													style={{
 														color:
