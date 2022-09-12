@@ -115,7 +115,7 @@ const QuestionLibrary = () => {
 						onClick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
-							if (startDate || endDate) {
+							if (startDate && endDate) {
 								dispatch(
 									getQuestions({
 										q: search,
