@@ -24,18 +24,23 @@
 		flex-direction: column;
 		margin-top: 1.5rem;
 	}
+	.bannerMain {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+	}
 	.bannertext {
 		//styleName: Body/Bold;
 		font-family: Poppins;
 		font-size: 16px;
 		font-style: normal;
 		font-weight: 700;
-		line-height: 24px;
 		letter-spacing: 0em;
 		text-align: left;
 		padding-right: 24px;
-		padding-top: 40px;
-		padding-bottom: 40px;
+		width: 100px;
+		display: flex;
+		align-items: center;
 	}
 	.bannerRight {
 		border: 1px solid #404040;

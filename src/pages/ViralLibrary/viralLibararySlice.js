@@ -4,33 +4,12 @@ import ViralLibraryService from './viralLibraryService';
 
 export const getAllViralsApi = createAsyncThunk(
 	'viralLibary/getAllViralsApi',
-	async ({
-		page,
-		order_type,
-		sortby,
-		q,
-		startDate,
-		endDate,
-		fromCalendar = false
-	}) => {
-		let endPoint = `viral/all-virals?limit=20&page=1`;
-		if (page) {
-			endPoint = `viral/all-virals?limit=20&page=${page}`;
-		}
-		if (order_type && sortby) {
-			endPoint += `&order_type=${order_type}&sort_by=${sortby}`;
-		}
-		if (q) {
-			endPoint += `&q=${q}&is_search=true`;
-		}
-		if (startDate && endDate) {
-			endPoint += `&start_date=${startDate}&end_date=${endDate}`;
-		}
-		const result = await ViralLibraryService.getAllViralsServiceCall(endPoint);
-		//console.log(result, 'virals api');
-		return { ...result.data.data, fromCalendar };
+	async (params) => {
+		const result = await ViralLibraryService.getAllViralsServiceCall(params);
+		return { ...result.data.data, fromCalendar: params.fromCalendar || false };
 	}
 );
+
 export const getLabels = createAsyncThunk(
 	'viralLibary/getViralsLabels',
 	async () => {
@@ -54,6 +33,7 @@ export const getSpecificViral = createAsyncThunk(
 		}
 	}
 );
+
 export const viralLibararySlice = createSlice({
 	name: 'viralLibrary',
 	initialState: {
