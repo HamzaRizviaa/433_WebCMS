@@ -45,7 +45,7 @@ const Labels = ({
 		(element) => !drafts.includes(element.name)
 	);
 
-	console.log(newLabelsSearch, 'ls');
+	// console.log(newLabelsSearch, 'ls');
 
 	let duplicateRemoval = [];
 	selectedLabels?.map((item) => duplicateRemoval.push(item.name));

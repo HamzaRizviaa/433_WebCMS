@@ -128,6 +128,7 @@ const UploadOrEditArticle = ({
 	const dialogWrapper = useRef(null);
 	console.log('DATA', data);
 	// console.log('FORM', form);
+
 	const elementData = [
 		{
 			image: Text,

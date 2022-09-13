@@ -68,23 +68,23 @@ export default function QuizResults({
 	const articleQuestion = useStyles();
 
 	useEffect(() => {
-		if (initialData?.id && initialData?.question_type) {
-			getQuestionResultDetail(initialData?.id, initialData?.question_type);
-			getQuestionResulParticipant(initialData?.id, initialData?.question_type);
+		if (initialData?.id) {
+			getQuestionResultDetail(initialData?.id);
+			getQuestionResulParticipant(initialData?.id);
 		}
 	}, [initialData]);
 
 	useEffect(() => {
-		if (questionType && questionId) {
-			getQuestionResultDetail(questionId, questionType);
-			getQuestionResulParticipant(questionId, questionType);
+		if (questionType) {
+			getQuestionResultDetail(questionId);
+			getQuestionResulParticipant(questionId);
 		}
-	}, [questionType, questionId]);
+	}, [questionId]);
 
-	const getQuestionResultDetail = async (id, type) => {
+	const getQuestionResultDetail = async (id) => {
 		setLoading(true);
 		const response = await axios.get(
-			`${process.env.REACT_APP_API_ENDPOINT}/question/get-question-result-detail?question_id=${id}&question_type=${type}`,
+			`${process.env.REACT_APP_API_ENDPOINT}/question/get-question-result-detail?question_id=${id}`,
 			{
 				headers: {
 					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
@@ -100,9 +100,9 @@ export default function QuizResults({
 		}
 	};
 
-	const getQuestionResulParticipant = async (id, type) => {
+	const getQuestionResulParticipant = async (id) => {
 		const response = await axios.get(
-			`${process.env.REACT_APP_API_ENDPOINT}/question/get-question-participant-listing?question_id=${id}&question_type=${type}`,
+			`${process.env.REACT_APP_API_ENDPOINT}/question/get-question-participant-listing?question_id=${id}`,
 			{
 				headers: {
 					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
@@ -317,7 +317,6 @@ export default function QuizResults({
 			</div>
 			{answers?.length > 0 &&
 				answers.map((data, index) => {
-					//console.log(data, editQuestionResultDetail, 'data in quiz sliders');
 					return (
 						<div className={classes.QuizDetailsProgressBars} key={index}>
 							<div className={classes.progressBars}>
