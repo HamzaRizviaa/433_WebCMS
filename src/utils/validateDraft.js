@@ -125,7 +125,8 @@ const validateDraft = (form, dataElements, newsElement, quesElement) => {
 			}
 		});
 
-		finalDraftValue = validateQuestion;
+		finalDraftValue =
+			validate.some((item) => item === true) && validateQuestion;
 	} else if (
 		(dataElements?.length === 0 ||
 			dataElements === undefined ||
