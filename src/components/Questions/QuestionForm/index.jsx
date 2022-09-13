@@ -272,11 +272,7 @@ const QuestionForm = ({
 							setFileHeight(imgRef.current.naturalHeight);
 						}}
 					/>
-					{console.log(
-						isEdit && initialData?.uploadedFiles === 0,
-						'data ',
-						initialData
-					)}
+
 					{(isEdit &&
 						(initialData?.uploadedFiles?.length === 0 ||
 							initialData?.uploadedFiles === undefined)) ||
