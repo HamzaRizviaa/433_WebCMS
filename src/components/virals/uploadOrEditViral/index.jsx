@@ -138,7 +138,7 @@ const UploadOrEditViral = ({
 					_labels.push({ id: -1, name: label })
 				);
 				// setSelectedLabels(_labels);
-				// console.log('Labels', _labels);
+
 				setForm((prev) => {
 					return {
 						...prev,
@@ -316,14 +316,11 @@ const UploadOrEditViral = ({
 		}, 5000);
 	};
 
-	console.log(translatedLanguages, translated, 'tL');
-	console.log(form, 'forma');
-
 	useEffect(() => {
 		if (translatedLanguages) {
 			let selectedLanguage = lang?.shortName;
 			let translatedLangData = translatedLanguages[selectedLanguage];
-			console.log(translatedLangData, 'dta');
+
 			setCaptionValue(translatedLangData?.caption);
 		}
 	}, [lang]);
@@ -466,31 +463,6 @@ const UploadOrEditViral = ({
 		setPreviewFile(null);
 	};
 
-	// const viralBtnDisabled =
-	// 	!uploadedFiles.length ||
-	// 	postButtonStatus ||
-	// 	selectedLabels.length < 10 ||
-	// 	!caption;
-
-	// const compareValues = (form, specificViral) => {
-	// 	const values = Object.keys(form).map((key) => {
-	// 		if (typeof form[key] === 'string')
-	// 			if (form[key].trim() === specificViral[key].trim()) {
-	// 				return true;
-	// 			}
-	// 		return false;
-	// 	});
-
-	// 	return values.every((item) => item === false);
-	// };
-	// console.log(
-	// 	specificViral?.caption?.trim() === form?.caption?.trim(),
-	// 	editBtnDisabled,
-	// 	specificViral?.caption?.trim(),
-	// 	form?.caption?.trim(),
-
-	// 	'hamza'
-	// );
 	useEffect(() => {
 		if (specificViral) {
 			setEditBtnDisabled(
@@ -509,7 +481,6 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (specificViral) {
-			// console.log(specificViral, Object.keys(specificViral), 'specificViral');
 			setDraftBtnDisabled(
 				!validateDraft(form) ||
 					(specificViral?.file_name === form?.uploadedFiles[0]?.file_name &&
@@ -1035,7 +1006,6 @@ const UploadOrEditViral = ({
 														? editBtnDisabled
 														: !validateForm(form)
 												}
-												// disabled={isEdit ? editBtnDisabled : !validateForm(form)}
 												onClick={
 													!translated && !isEdit
 														? handleTranslateBtn
@@ -1079,7 +1049,6 @@ const UploadOrEditViral = ({
 										<h5>Preview</h5>
 									</div>
 									<div>
-										{/* {console.log(previewFile, 'previewFile')} */}
 										{previewFile.mime_type === 'video/mp4' ? (
 											<video
 												id={'my-video'}
