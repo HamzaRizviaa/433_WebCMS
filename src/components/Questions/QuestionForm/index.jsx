@@ -272,7 +272,14 @@ const QuestionForm = ({
 							setFileHeight(imgRef.current.naturalHeight);
 						}}
 					/>
-					{(isEdit && initialData?.uploadedFiles?.length === 0) ||
+					{console.log(
+						isEdit && initialData?.uploadedFiles === 0,
+						'data ',
+						initialData
+					)}
+					{(isEdit &&
+						(initialData?.uploadedFiles?.length === 0 ||
+							initialData?.uploadedFiles === undefined)) ||
 					(!isEdit && form?.uploadedFiles?.length === 0) ? (
 						<section
 							className={globalClasses.dropZoneContainer}
@@ -305,11 +312,9 @@ const QuestionForm = ({
 					) : (
 						<></>
 					)}
-
 					<p className={globalClasses.fileRejectionError}>
 						{fileRejectionError}
 					</p>
-
 					<div className={globalClasses.dropBoxUrlContainer}>
 						<h6>DROPBOX URL</h6>
 						<TextField
@@ -348,7 +353,6 @@ const QuestionForm = ({
 							}}
 						/>
 					</div>
-
 					<div className={classes.titleContainer}>
 						<div className={globalClasses.characterCount}>
 							<h6
@@ -400,7 +404,6 @@ const QuestionForm = ({
 							maxRows={2}
 						/>
 					</div>
-
 					<p className={globalClasses.mediaError}>
 						{isError.question
 							? 'You need to provide a question in order to post.'
@@ -487,7 +490,6 @@ const QuestionForm = ({
 								</div>
 							);
 						})}
-
 					{form?.answers.length < 4 ? (
 						isEdit && status !== 'draft' ? (
 							<></>
@@ -506,7 +508,6 @@ const QuestionForm = ({
 					) : (
 						''
 					)}
-
 					<div className={classes.titleContainer}>
 						<h6
 							className={
@@ -538,7 +539,6 @@ const QuestionForm = ({
 							setExtraLabel={setExtraLabel}
 						/>
 					</div>
-
 					<p className={globalClasses.mediaError}>
 						{isError.selectedLabels
 							? `You need to add ${
