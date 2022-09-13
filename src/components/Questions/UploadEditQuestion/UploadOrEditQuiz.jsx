@@ -375,7 +375,7 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
-	const deleteQuiz = async (id, draft, qtype) => {
+	const deleteQuiz = async (draft) => {
 		if (!editQuestionData) return;
 		const questions_ids = editQuestionData.questions?.map((q) => q.id) || [];
 
