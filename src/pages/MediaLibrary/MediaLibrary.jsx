@@ -153,7 +153,7 @@ const MediaLibrary = () => {
 						onClick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
-							if (startDate || endDate) {
+							if (startDate && endDate) {
 								dispatch(
 									getMedia({
 										q: search,

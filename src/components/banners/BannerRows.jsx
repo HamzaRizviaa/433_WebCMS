@@ -216,7 +216,8 @@ export default function BannerRows({
 					ref={provided.innerRef}
 					{...provided.draggableProps}
 					style={{
-						...provided.draggableProps.style
+						...provided.draggableProps.style,
+						width: '100%'
 					}}
 				>
 					<div>
@@ -412,7 +413,7 @@ export default function BannerRows({
 													return _bannerData;
 												});
 												// re fetching the banner content to poplulate the list again
-												if (bannerContent.length < 7) {
+												if (bannerContent.length < 10) {
 													const selectedItems = selectedBannerData.map(
 														(item) => item?.selectedMedia?.id
 													);
