@@ -548,10 +548,10 @@ const UploadOrEditArticle = ({
 			});
 		}
 	}, [acceptedFiles2]);
-	console.log(form, 'form');
+
 	const createArticle = async (id, mediaFiles = [], draft = false) => {
 		setPostButtonStatus(true);
-		console.log(mediaFiles, 'item');
+
 		let elementsData;
 		if (data.length) {
 			elementsData = data.map((item, index) => {
@@ -611,6 +611,7 @@ const UploadOrEditArticle = ({
 				{
 					title: form.title,
 					sub_text: form.sub_text,
+					labels: [...form.labels],
 					height: form.uploadedFiles.length > 0 ? fileHeight : 0,
 					width: form.uploadedFiles.length > 0 ? fileWidth : 0,
 					main_category_id: form?.mainCategory.id,
@@ -650,11 +651,12 @@ const UploadOrEditArticle = ({
 						  mediaFiles[1]?.media_url
 						: mediaFiles[1]?.media_url?.split('cloudfront.net/')[1] ||
 						  mediaFiles[1]?.media_url,
+
 					...(isEdit && id ? { article_id: id } : {}),
-					...((!isEdit || status !== 'published') &&
-					(form.labels?.length || status == 'draft')
-						? { labels: [...form.labels] }
-						: {}),
+					// ...((!isEdit || status !== 'published') &&
+					// (form.labels?.length || status == 'draft')
+					// 	? { labels: [...form.labels] }
+					// 	: {}),
 					elements: elementsData?.length ? elementsData : [],
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
