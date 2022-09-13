@@ -337,7 +337,7 @@ const UploadOrEditQuiz = ({
 					general_info: {
 						save_draft: draft,
 						question_type: questionType,
-						...(status === 'CLOSED'
+						...(isEdit && status === 'CLOSED'
 							? {}
 							: { end_date: convertedDate.split('T')[0] })
 					},
