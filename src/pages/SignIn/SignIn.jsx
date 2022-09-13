@@ -12,6 +12,7 @@ import { ReactComponent as Logo2 } from '../../assets/Logo2.svg';
 //import { ReactComponent as BGImage } from '../../assets/BG.svg';
 // import { ReactComponent as BGImage } from '../../assets/GlobeBG.svg';
 import { ReactComponent as DeniedError } from '../../assets/AccesDenied.svg';
+import { setAccessTokenInHeader } from '../../globalServices/httpService';
 
 const SignIn = ({ setLoginData }) => {
 	const [signInError, setSignInError] = useState(false);
@@ -93,17 +94,20 @@ const SignIn = ({ setLoginData }) => {
 	const handleLogin = async (googleData) => {
 		setIsLoadingSignin(true);
 		try {
-			const result = await axios.post(
+			const { data: userData } = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/cmsuser/verify-google-user`,
 				{
 					token: googleData.tokenId
 				}
 			);
 
-			if (result?.data?.status_code === 200) {
+			if (userData?.status_code === 200) {
 				setLoginData(
-					localStorage.setItem('user_data', JSON.stringify(result?.data?.data))
+					localStorage.setItem('user_data', JSON.stringify(userData?.data))
 				);
+
+				console.log(userData);
+				setAccessTokenInHeader(userData?.data.access_token);
 				// console.log(result, 'try - login result');
 
 				// setTimeout(() => {

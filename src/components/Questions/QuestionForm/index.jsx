@@ -505,16 +505,12 @@ const QuestionForm = ({
 						''
 					)}
 					<div className={classes.titleContainer}>
-						<h6
-							className={
+						<Labels
+							titleClasses={
 								isError.selectedLabels
 									? globalClasses.errorState
 									: globalClasses.noErrorState
 							}
-						>
-							LABELS
-						</h6>
-						<Labels
 							isEdit={isEdit}
 							setDisableDropdown={setDisableDropdown}
 							selectedLabels={

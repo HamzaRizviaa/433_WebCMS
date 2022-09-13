@@ -102,7 +102,6 @@ const ArticleMediaDraggable = ({
 		setClickExpandIcon(!clickExpandIcon);
 		setIsOpen(!clickExpandIcon);
 	};
-	console.log(item, 'item in MEDIA');
 
 	return (
 		<>

@@ -252,13 +252,11 @@ const UploadOrEditArticle = ({
 			let setData = mainCategories.find(
 				(u) => u.name === form.mainCategory?.name
 			);
-
-			dispatch(getArticleSubCategories(setData?.id));
+			if (setData?.id) dispatch(getArticleSubCategories(setData?.id));
 			// SubCategoryId(specificArticle?.sub_category);
 		} else {
 			let setData = mainCategories.find((u) => u.name === form.mainCategory);
-
-			dispatch(getArticleSubCategories(setData?.id));
+			if (setData?.id) dispatch(getArticleSubCategories(setData?.id));
 		}
 	}, [form.mainCategory]);
 
