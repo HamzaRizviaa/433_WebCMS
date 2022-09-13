@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
 // import classes from './_uploadOrEditViral.module.scss';
 import { useDropzone } from 'react-dropzone';
@@ -20,7 +21,7 @@ import { getLocalStorageDetails } from '../../../utils';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
 import validateForm from '../../../utils/validateForm';
 import validateDraft from '../../../utils/validateDraft';
-import { Tooltip, Fade } from '@mui/material';
+import { Tooltip, Fade, Divider } from '@mui/material';
 import ToggleSwitch from '../../switch';
 // import Fade from '@mui/material/Fade';
 import Slide from '@mui/material/Slide';
@@ -30,7 +31,7 @@ import LoadingOverlay from 'react-loading-overlay';
 import { useStyles } from './index.styles';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
-
+import TranslationCarousal from '../../TranslationCarousal';
 //new labels
 // import { getAllNewLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 
@@ -68,6 +69,17 @@ const UploadOrEditViral = ({
 		show_likes: true,
 		show_comments: true
 	});
+	const [translated, setTranslated] = useState(false);
+	const [translatedLanguages, setTranslatedLanguages] = useState();
+	const [lang, setLang] = useState({
+		id: 0,
+		name: 'English', //language name
+		prefix: 'ENG', // figma
+		shortName: 'en' //api
+	});
+	const [captionValue, setCaptionValue] = useState('');
+	const [translatedOnEdit, setTranslatedOnEdit] = useState(false);
+
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const videoRef = useRef(null);
@@ -126,7 +138,7 @@ const UploadOrEditViral = ({
 					_labels.push({ id: -1, name: label })
 				);
 				// setSelectedLabels(_labels);
-				// console.log('Labels', _labels);
+
 				setForm((prev) => {
 					return {
 						...prev,
@@ -134,6 +146,15 @@ const UploadOrEditViral = ({
 					};
 				});
 			}
+			if (status === 'draft') {
+				if (specificViral?.translations) {
+					setTranslatedOnEdit(false);
+					setTranslatedLanguages(specificViral?.translations);
+				} else {
+					setTranslatedOnEdit(true);
+				}
+			}
+			setCaptionValue(specificViral?.caption);
 			setForm((prev) => {
 				return {
 					...prev,
@@ -259,6 +280,16 @@ const UploadOrEditViral = ({
 			show_likes: true,
 			show_comments: true
 		});
+		setTranslated(false);
+		setTranslatedLanguages();
+		setLang({
+			id: 0,
+			name: 'English',
+			prefix: 'ENG',
+			shortName: 'en'
+		});
+		setCaptionValue('');
+		setTranslatedOnEdit(false);
 	};
 
 	const toggleDeleteModal = () => {
@@ -285,6 +316,44 @@ const UploadOrEditViral = ({
 		}, 5000);
 	};
 
+	useEffect(() => {
+		if (translatedLanguages) {
+			let selectedLanguage = lang?.shortName;
+			let translatedLangData = translatedLanguages[selectedLanguage];
+
+			setCaptionValue(translatedLangData?.caption);
+		}
+	}, [lang]);
+
+	const translateAPI = async () => {
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/translations/translate`,
+				{
+					caption: form.caption
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+
+			if (result?.data?.status_code === 200) {
+				setTranslatedLanguages(result?.data?.data);
+				setTranslated(true);
+				setTranslatedOnEdit(false);
+				setIsLoadingcreateViral(false);
+			}
+		} catch (e) {
+			toast.error('Failed to translate');
+			setTranslated(false);
+			setTranslatedOnEdit(true);
+			setIsLoadingcreateViral(false);
+			console.log(e, 'Failed to translate');
+		}
+	};
+
 	const createViral = async (id, file, draft = false) => {
 		setPostButtonStatus(true);
 		try {
@@ -306,6 +375,7 @@ const UploadOrEditViral = ({
 						: '',
 					height: fileHeight,
 					width: fileWidth,
+					translations: translated ? translatedLanguages : undefined,
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -393,34 +463,16 @@ const UploadOrEditViral = ({
 		setPreviewFile(null);
 	};
 
-	// const viralBtnDisabled =
-	// 	!uploadedFiles.length ||
-	// 	postButtonStatus ||
-	// 	selectedLabels.length < 10 ||
-	// 	!caption;
-
-	// const compareValues = (form, specificViral) => {
-	// 	const values = Object.keys(form).map((key) => {
-	// 		if (typeof form[key] === 'string')
-	// 			if (form[key].trim() === specificViral[key].trim()) {
-	// 				return true;
-	// 			}
-	// 		return false;
-	// 	});
-
-	// 	return values.every((item) => item === false);
-	// };
-
 	useEffect(() => {
 		if (specificViral) {
 			setEditBtnDisabled(
-				postButtonStatus ||
-					!form.caption ||
+				// postButtonStatus ||
+				!form.caption ||
 					!form.uploadedFiles.length ||
 					form.labels.length < 7 ||
-					(specificViral?.file_name === form.uploadedFiles[0]?.file_name &&
-						specificViral?.caption?.trim() === form.caption.trim() &&
-						specificViral?.dropbox_url?.trim() === form.dropbox_url.trim() &&
+					(specificViral?.file_name === form?.uploadedFiles[0]?.file_name &&
+						specificViral?.caption?.trim() === form?.caption?.trim() &&
+						specificViral?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
 						specificViral?.show_likes === form.show_likes &&
 						specificViral?.show_comments === form.show_comments)
 			);
@@ -429,12 +481,11 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (specificViral) {
-			// console.log(specificViral, Object.keys(specificViral), 'specificViral');
 			setDraftBtnDisabled(
 				!validateDraft(form) ||
-					(specificViral?.file_name === form.uploadedFiles[0]?.file_name &&
-						specificViral?.caption?.trim() === form.caption.trim() &&
-						specificViral?.dropbox_url?.trim() === form.dropbox_url.trim() &&
+					(specificViral?.file_name === form?.uploadedFiles[0]?.file_name &&
+						specificViral?.caption?.trim() === form?.caption?.trim() &&
+						specificViral?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
 						specificViral?.show_likes === form.show_likes &&
 						specificViral?.show_comments === form.show_comments &&
 						specificViral?.labels?.length === form?.labels?.length &&
@@ -604,6 +655,39 @@ const UploadOrEditViral = ({
 			}
 		}
 	};
+
+	const handleTranslateBtn = () => {
+		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
+			validateViralBtn();
+		} else {
+			setPostButtonStatus(true);
+			setIsLoadingcreateViral(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			if (isEdit) {
+				try {
+					translateAPI();
+				} catch {
+					setIsLoadingcreateViral(false);
+				}
+			} else {
+				try {
+					translateAPI();
+				} catch {
+					setIsLoadingcreateViral(false);
+				}
+			}
+		}
+	};
+
+	// const handleButtonText = () => {
+	// 	if (translated && !isEdit) {
+	// 		return buttonText;
+	// 	} else if (isEdit && status === 'published' && !translated) {
+	// 		return buttonText;
+	// 	} else if (isEdit && status === 'published' && translated) {
+	// 		return 'TRANSLATE';
+	// 	}
+	// };
 
 	return (
 		<>
@@ -778,12 +862,20 @@ const UploadOrEditViral = ({
 											CAPTION
 										</h6>
 										<TextField
-											value={form.caption}
-											onChange={(e) =>
+											value={captionValue}
+											onChange={(e) => {
+												if (translated && lang?.shortName === 'en') {
+													setTranslated(false);
+												}
+												if (isEdit && lang?.shortName === 'en') {
+													setTranslatedOnEdit(true);
+												}
 												setForm((prev) => {
 													return { ...prev, caption: e.target.value };
-												})
-											}
+												});
+
+												setCaptionValue(e.target.value);
+											}}
 											placeholder={'Please write your caption here'}
 											className={classes.textField}
 											InputProps={{
@@ -836,6 +928,20 @@ const UploadOrEditViral = ({
 										? 'Something needs to be changed to save a draft'
 										: ''}
 								</p>
+
+								{translated ? (
+									<>
+										<Divider color={'grey'} sx={{ mb: '10px' }} />
+										<TranslationCarousal lang={lang} setLang={setLang} />
+									</>
+								) : isEdit && status === 'draft' && !translatedOnEdit ? (
+									<>
+										<Divider color={'grey'} sx={{ mb: '10px' }} />
+										<TranslationCarousal lang={lang} setLang={setLang} />
+									</>
+								) : (
+									<></>
+								)}
 
 								<div className={classes.buttonDiv}>
 									{isEdit || (status === 'draft' && isEdit) ? (
@@ -896,9 +1002,28 @@ const UploadOrEditViral = ({
 														? editBtnDisabled
 														: !validateForm(form)
 												}
-												// disabled={isEdit ? editBtnDisabled : !validateForm(form)}
-												onClick={handlePostSaveBtn}
-												text={buttonText}
+												onClick={
+													!translated && !isEdit
+														? handleTranslateBtn
+														: isEdit &&
+														  status === 'published' &&
+														  translatedOnEdit
+														? handleTranslateBtn
+														: isEdit && status === 'draft' && translatedOnEdit
+														? handleTranslateBtn
+														: handlePostSaveBtn
+												}
+												text={
+													!translated && !isEdit
+														? 'TRANSLATE'
+														: isEdit &&
+														  status === 'published' &&
+														  translatedOnEdit
+														? 'TRANSLATE'
+														: isEdit && status === 'draft' && translatedOnEdit
+														? 'TRANSLATE'
+														: buttonText
+												}
 											/>
 										</div>
 									</div>
@@ -920,7 +1045,6 @@ const UploadOrEditViral = ({
 										<h5>Preview</h5>
 									</div>
 									<div>
-										{/* {console.log(previewFile, 'previewFile')} */}
 										{previewFile.mime_type === 'video/mp4' ? (
 											<video
 												id={'my-video'}
