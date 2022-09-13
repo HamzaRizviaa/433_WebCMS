@@ -405,11 +405,11 @@ const QuestionLibrary = () => {
 			dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
 
 			//slider calls
-			if (rowStatus === 'ACTIVE' && rowLocation === 'article') {
+			if (rowLocation === 'article') {
 				row.question_type === 'quiz'
 					? setShowQuizSlider(true)
 					: setShowPollSlider(true);
-			} else if (rowLocation === 'homepage' || rowStatus === 'draft') {
+			} else {
 				showEditSlider(true);
 			}
 		}
@@ -420,7 +420,7 @@ const QuestionLibrary = () => {
 	};
 
 	useEffect(() => {
-		// console.log('sort state use effect');
+		console.log('sort state use effect');
 		if (sortState.sortby && sortState.order_type && !search) {
 			dispatch(
 				getQuestions({
