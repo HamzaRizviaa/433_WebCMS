@@ -373,8 +373,8 @@ const NewsLibrary = () => {
 					<div className={classes.viralRow}>
 						<Tooltip
 							TransitionComponent={Fade}
-							TransitionProps={{ timeout: 600 }}
-							title={'EDIT VIRAL'}
+							TransitionProps={{ timeout: 700 }}
+							title={'EDIT NEWS'}
 							arrow
 							componentsProps={{
 								tooltip: { className: classes.libraryToolTip },
