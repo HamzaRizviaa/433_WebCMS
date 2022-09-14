@@ -24,6 +24,7 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import DefaultImage from '../../assets/defaultImage.png';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import Tooltip from '@mui/material/Tooltip';
+import { useSearchParams } from 'react-router-dom';
 
 import Fade from '@mui/material/Fade';
 import UploadOrEditNews from '../../components/news/uploadOrEditNews';
@@ -38,10 +39,10 @@ import {
 
 import { getAllNewLabels } from '../PostLibrary/postLibrarySlice';
 import CustomPagination from '../../components/ui/Pagination';
-import { PaginationContext } from '../../utils/context';
 
 const NewsLibrary = () => {
 	// Selectors
+	const [searchParams] = useSearchParams();
 	const allNews = useSelector((state) => state.NewsLibrary.news);
 	const newsApiStatus = useSelector((state) => state.NewsLibrary);
 	const totalRecords = useSelector((state) => state.NewsLibrary.totalRecords);
@@ -59,8 +60,6 @@ const NewsLibrary = () => {
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
-	const [paginationError, setPaginationError] = useState(false);
-	const [page, setPage] = useState(1);
 	const [search, setSearch] = useState('');
 	const [noResultBorder, setNoResultBorder] = useState('#404040');
 	const [noResultError, setNoResultError] = useState('');
@@ -71,6 +70,8 @@ const NewsLibrary = () => {
 	const [startDate, endDate] = dateRange;
 	const [tooltipTitle, setTooltipTitle] = useState(false);
 	const [rowStatus, setrowStatus] = useState(''); //publish or draft
+
+	const page = searchParams.get('page')
 
 	useEffect(() => {
 		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));
@@ -490,7 +491,6 @@ const NewsLibrary = () => {
 	}, []);
 
 	return (
-		<PaginationContext.Provider value={[ page, setPage, paginationError, setPaginationError ]}>
 		<LoadingOverlay
 			active={newsApiStatus.status === 'pending' ? true : false}
 			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
@@ -604,7 +604,7 @@ const NewsLibrary = () => {
 				<div className={classes.tableContainer}>
 					<Table rowEvents={tableRowEvents} columns={columns} data={allNews} />
 				</div>
-				<CustomPagination totalRecords={totalRecords} page={page} paginationError={paginationError} />
+				<CustomPagination totalRecords={totalRecords} />
 
 				<UploadOrEditNews
 					open={showSlider}
@@ -622,7 +622,7 @@ const NewsLibrary = () => {
 				/>
 			</Layout>
 		</LoadingOverlay>
-		</PaginationContext.Provider>
+		// </PaginationContext.Provider>
 	);
 };
 
