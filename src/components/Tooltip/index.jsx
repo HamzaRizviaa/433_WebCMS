@@ -5,7 +5,7 @@ import { useStyles } from './index.style';
 
 const Tooltip = (props) => {
 	const { title = 'title', placement, children } = props;
-	const globalClasses = useStyles();
+	const classes = useStyles();
 	return (
 		<MuiTooltip
 			TransitionComponent={Fade}
@@ -13,8 +13,8 @@ const Tooltip = (props) => {
 			title={title}
 			arrow
 			componentsProps={{
-				tooltip: { className: globalClasses.toolTip },
-				arrow: { className: globalClasses.toolTipArrow }
+				tooltip: { className: classes.toolTip },
+				arrow: { className: classes.toolTipArrow }
 			}}
 			{...props}
 			placement={placement || 'bottom-start'}
