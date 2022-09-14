@@ -387,9 +387,10 @@ export default function BannerRows({
 												setDisableDropdown(true);
 												setDropdownPosition(false);
 											}}
-											onChange={(e, newVal) => {
+											onChange={(e, newVal, reason) => {
 												setSelectedMedia(newVal);
 												setDisableDropdown(true);
+												let tempBannerData = [];
 												setBannerData((bannerData) => {
 													// eslint-disable-next-line no-unused-vars
 													let _bannerData = bannerData.map((banner) => {
@@ -410,23 +411,41 @@ export default function BannerRows({
 															...banner
 														};
 													});
+													tempBannerData = _bannerData;
 													return _bannerData;
 												});
 												// re fetching the banner content to poplulate the list again
-												if (bannerContent.length < 10) {
-													const selectedItems = selectedBannerData.map(
+												if (reason === 'clear') {
+													const selectedItems = tempBannerData.map(
 														(item) => item?.selectedMedia?.id
 													);
 													const filterOutNullItem = selectedItems.filter(
 														(item) => item
 													);
+													console.log('filterOutNullItem', filterOutNullItem);
 													dispatch(
 														getBannerContent({
 															type: tabValue,
 															title: null,
-															exclude: [...filterOutNullItem, newVal?.id]
+															exclude: [...filterOutNullItem]
 														})
 													);
+												} else {
+													if (bannerContent.length < 10) {
+														const selectedItems = selectedBannerData.map(
+															(item) => item?.selectedMedia?.id
+														);
+														const filterOutNullItem = selectedItems.filter(
+															(item) => item
+														);
+														dispatch(
+															getBannerContent({
+																type: tabValue,
+																title: null,
+																exclude: [...filterOutNullItem, newVal?.id]
+															})
+														);
+													}
 												}
 											}}
 											options={bannerContent}
