@@ -252,13 +252,11 @@ const UploadOrEditArticle = ({
 			let setData = mainCategories.find(
 				(u) => u.name === form.mainCategory?.name
 			);
-
-			dispatch(getArticleSubCategories(setData?.id));
+			if (setData?.id) dispatch(getArticleSubCategories(setData?.id));
 			// SubCategoryId(specificArticle?.sub_category);
 		} else {
 			let setData = mainCategories.find((u) => u.name === form.mainCategory);
-
-			dispatch(getArticleSubCategories(setData?.id));
+			if (setData?.id) dispatch(getArticleSubCategories(setData?.id));
 		}
 	}, [form.mainCategory]);
 
@@ -613,6 +611,7 @@ const UploadOrEditArticle = ({
 				{
 					title: form.title,
 					sub_text: form.sub_text,
+					labels: [...form.labels],
 					height: form.uploadedFiles.length > 0 ? fileHeight : 0,
 					width: form.uploadedFiles.length > 0 ? fileWidth : 0,
 					main_category_id: form?.mainCategory.id,
@@ -640,7 +639,7 @@ const UploadOrEditArticle = ({
 						? form.landscape_dropbox_url
 						: '',
 					landscape_file_name: form?.uploadedLandscapeCoverImage?.length
-						? mediaFiles[2]?.landscape_file_name
+						? mediaFiles[2]?.file_name
 						: '',
 					landscape_image: form?.uploadedLandscapeCoverImage?.length
 						? mediaFiles[2]?.media_url?.split('cloudfront.net/')[1] ||
@@ -652,11 +651,12 @@ const UploadOrEditArticle = ({
 						  mediaFiles[1]?.media_url
 						: mediaFiles[1]?.media_url?.split('cloudfront.net/')[1] ||
 						  mediaFiles[1]?.media_url,
+
 					...(isEdit && id ? { article_id: id } : {}),
-					...((!isEdit || status !== 'published') &&
-					(form.labels?.length || status == 'draft')
-						? { labels: [...form.labels] }
-						: {}),
+					// ...((!isEdit || status !== 'published') &&
+					// (form.labels?.length || status == 'draft')
+					// 	? { labels: [...form.labels] }
+					// 	: {}),
 					elements: elementsData?.length ? elementsData : [],
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,

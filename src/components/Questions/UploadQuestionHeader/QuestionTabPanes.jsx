@@ -1,23 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import TabsUnstyled from '@mui/base/TabsUnstyled';
 import TabsListUnstyled from '@mui/base/TabsListUnstyled';
 import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import TabUnstyled from '@mui/base/TabUnstyled';
 import { useStyles } from '../quizStyles';
-const QuestionTabPanes = ({
-	location,
-	edit,
-	setQuesType,
-	resetSlides,
-	type
-}) => {
-	const muiClasses = useStyles();
-	console.log(location, edit, 'abc');
 
+const QuestionTabPanes = ({ edit, setQuesType, resetSlides, type, status }) => {
+	const muiClasses = useStyles();
+	const [tab, setTab] = useState(0);
+
+	useEffect(() => {
+		if (edit) {
+			setTab(type === 'quiz' ? 1 : 0);
+		}
+	}, [edit]);
 	return (
 		<div className={muiClasses.root}>
-			<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
+			<TabsUnstyled defaultValue={tab ? tab : 0} className={muiClasses.tabRoot}>
 				<TabsListUnstyled className={muiClasses.tabMainDiv}>
 					<TabUnstyled
 						onClick={() => {
@@ -25,7 +25,7 @@ const QuestionTabPanes = ({
 							resetSlides('poll');
 						}}
 					>
-						{edit ? 'Result' : 'Poll'}
+						{edit && status !== 'draft' ? 'Result' : 'Poll'}
 					</TabUnstyled>
 					<TabUnstyled
 						onClick={() => {
@@ -33,7 +33,7 @@ const QuestionTabPanes = ({
 							resetSlides('quiz');
 						}}
 					>
-						{edit ? `${'Edit ' + type}` : 'Quiz'}
+						{edit && status !== 'draft' ? `${'Edit ' + type}` : 'Quiz'}
 					</TabUnstyled>
 				</TabsListUnstyled>
 				<TabPanelUnstyled value={0}></TabPanelUnstyled>
@@ -47,8 +47,8 @@ QuestionTabPanes.propTypes = {
 	setQuesType: PropTypes.func.isRequired,
 	resetSlides: PropTypes.func.isRequired,
 	edit: PropTypes.bool.isRequired,
-	location: PropTypes.string.isRequired,
-	type: PropTypes.string.isRequired
-};
 
+	type: PropTypes.string.isRequired,
+	status: PropTypes.string
+};
 export default QuestionTabPanes;

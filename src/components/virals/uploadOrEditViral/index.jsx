@@ -21,7 +21,7 @@ import { getLocalStorageDetails } from '../../../utils';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
 import validateForm from '../../../utils/validateForm';
 import validateDraft from '../../../utils/validateDraft';
-import { Tooltip, Fade } from '@mui/material';
+import { Tooltip, Fade, Divider } from '@mui/material';
 import ToggleSwitch from '../../switch';
 // import Fade from '@mui/material/Fade';
 import Slide from '@mui/material/Slide';
@@ -31,8 +31,7 @@ import LoadingOverlay from 'react-loading-overlay';
 import { useStyles } from './index.styles';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
-import SecondaryLoader from '../../SecondaryLoader';
-
+import TranslationCarousal from '../../TranslationCarousal';
 //new labels
 // import { getAllNewLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 
@@ -70,8 +69,17 @@ const UploadOrEditViral = ({
 		show_likes: true,
 		show_comments: true
 	});
-	const [fileOnUpload, setFileOnUpload] = useState();
-	const [deleteSignedUrlKey, setDeleteSignedUrlKey] = useState([]);
+	const [translated, setTranslated] = useState(false);
+	const [translatedLanguages, setTranslatedLanguages] = useState();
+	const [lang, setLang] = useState({
+		id: 0,
+		name: 'English', //language name
+		prefix: 'ENG', // figma
+		shortName: 'en' //api
+	});
+	const [captionValue, setCaptionValue] = useState('');
+	const [translatedOnEdit, setTranslatedOnEdit] = useState(false);
+
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const videoRef = useRef(null);
@@ -83,8 +91,6 @@ const UploadOrEditViral = ({
 	const { specificViralStatus } = useSelector(
 		(state) => state.ViralLibraryStore
 	);
-	const [loading, setLoading] = useState(false);
-	const [sliderCloseCause, setSliderCloseCause] = useState(false); // false - click outside or reload, true - publish/draft/delete pressed
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -140,6 +146,15 @@ const UploadOrEditViral = ({
 					};
 				});
 			}
+			if (status === 'draft') {
+				if (specificViral?.translations) {
+					setTranslatedOnEdit(false);
+					setTranslatedLanguages(specificViral?.translations);
+				} else {
+					setTranslatedOnEdit(true);
+				}
+			}
+			setCaptionValue(specificViral?.caption);
 			setForm((prev) => {
 				return {
 					...prev,
@@ -186,22 +201,18 @@ const UploadOrEditViral = ({
 					};
 				});
 			}
-			if (specificViral?.url) {
-				setDeleteSignedUrlKey((prev) => [...prev, specificViral?.url]);
-			}
 		}
 	}, [specificViral]);
 
 	useEffect(() => {
+		// dispatch(getPostLabels()); // old labels
+		// dispatch(getAllNewLabels()); // new labels on search
 		return () => {
 			resetState();
 		};
 	}, []);
 
 	useEffect(() => {
-		// if (!open && form?.uploadedFiles?.length && !sliderCloseCause) {
-		// 	handleDeleteFileFromApi(true);
-		// }
 		if (!open) {
 			resetState();
 		}
@@ -228,7 +239,7 @@ const UploadOrEditViral = ({
 	useEffect(() => {
 		if (acceptedFiles?.length) {
 			setIsError({});
-			setLoading(true);
+
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -242,29 +253,11 @@ const UploadOrEditViral = ({
 				};
 			});
 
-			handleFileOnUpload(newFiles[0]).then((res) => {
-				setForm((prev) => {
-					return {
-						...prev,
-						uploadedFiles: [...form.uploadedFiles, ...newFiles]
-					};
-				});
-				setDeleteSignedUrlKey((prev) => [...prev, res?.signedUrlKeyDelete]); // to delete the signed url keys
-				setFileOnUpload(res);
-				setLoading(false);
+			setForm((prev) => {
+				return { ...prev, uploadedFiles: [...form.uploadedFiles, ...newFiles] };
 			});
 		}
 	}, [acceptedFiles]);
-
-	const handleFileOnUpload = async (newFile) => {
-		return await uploadFileToServer(newFile, 'virallibrary');
-	};
-
-	useEffect(() => {
-		if (isEdit) {
-			setFileOnUpload(form?.uploadedFiles[0]);
-		}
-	}, [form?.uploadedFiles]);
 
 	const resetState = () => {
 		setPostButtonStatus(false);
@@ -287,10 +280,16 @@ const UploadOrEditViral = ({
 			show_likes: true,
 			show_comments: true
 		});
-		setFileOnUpload();
-		setDeleteSignedUrlKey([]);
-		setLoading(false);
-		setSliderCloseCause(false);
+		setTranslated(false);
+		setTranslatedLanguages();
+		setLang({
+			id: 0,
+			name: 'English',
+			prefix: 'ENG',
+			shortName: 'en'
+		});
+		setCaptionValue('');
+		setTranslatedOnEdit(false);
 	};
 
 	const toggleDeleteModal = () => {
@@ -304,140 +303,7 @@ const UploadOrEditViral = ({
 				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
 			};
 		});
-		setFileOnUpload();
 	};
-
-	// useEffect(() => {
-	// 	const handleTabClose = (ev) => {
-	// 		ev.preventDefault();
-
-	// 		return handleDeleteFileFromApi(false, true);
-	// 	};
-
-	// 	window.addEventListener('beforeunload', handleTabClose);
-
-	// 	return () => {
-	// 		window.removeEventListener('beforeunload', handleTabClose);
-	// 	};
-	// }, [deleteSignedUrlKey, specificViral]);
-
-	//gives out the signed url keys for specific scenarios.
-	const deleteMediaSignedUrlKey = (sliderClose, reloader) => {
-		if (reloader) {
-			return deleteSignedUrlKey;
-		} else if (sliderClose && !isEdit) {
-			return deleteSignedUrlKey;
-		} else if (sliderClose && isEdit && status == 'draft') {
-			if (specificViral?.url) {
-				return deleteSignedUrlKey.slice(1);
-			} else {
-				return deleteSignedUrlKey;
-			}
-		} else if (sliderClose && isEdit && status !== 'draft') {
-			return deleteSignedUrlKey.slice(1);
-		} else {
-			return deleteSignedUrlKey.slice(0, deleteSignedUrlKey?.length - 1);
-		}
-	};
-
-	//api call for delete media
-	const deleteMediaApiCall = async (sliderClose, reloader) => {
-		try {
-			const result = await fetch(
-				`${process.env.REACT_APP_API_ENDPOINT}/media-upload`,
-				{
-					method: 'DELETE',
-					body: JSON.stringify({
-						data: {
-							keys: deleteMediaSignedUrlKey(sliderClose, reloader)
-						}
-					}),
-					headers: {
-						'Content-Type': 'application/json',
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					},
-					keepalive: true
-				}
-			);
-
-			if (result?.data?.status_code === 200) {
-				setDeleteSignedUrlKey([]);
-			}
-		} catch (e) {
-			console.log(e, 'Failed to delete Media Data');
-		}
-	};
-
-	//calls the api on specific conditions.
-	// const handleDeleteFileFromApi = (
-	// 	sliderClose = false,
-	// 	reloader = false,
-	// 	draft = false
-	// ) => {
-	// 	if (sliderClose) {
-	// 		if (!isEdit) {
-	// 			deleteMediaApiCall(sliderClose);
-	// 		} else if (isEdit) {
-	// 			if (specificViral?.url && deleteSignedUrlKey?.length > 1) {
-	// 				deleteMediaApiCall(sliderClose);
-	// 			} else if (!specificViral?.url && deleteSignedUrlKey?.length > 0) {
-	// 				deleteMediaApiCall(sliderClose);
-	// 			}
-	// 		}
-	// 	} else if (reloader) {
-	// 		if (!isEdit && deleteSignedUrlKey?.length > 0) {
-	// 			// doing this condition because we are not getting the "open" prop for reloading the page
-	// 			deleteMediaApiCall(sliderClose);
-	// 		} else if (isEdit) {
-	// 			if (specificViral?.url && deleteSignedUrlKey?.length > 1) {
-	// 				deleteMediaApiCall(sliderClose, reloader);
-	// 			} else if (!specificViral?.url && deleteSignedUrlKey?.length > 0) {
-	// 				deleteMediaApiCall(sliderClose, reloader);
-	// 			}
-	// 		}
-	// 	} else {
-	// 		if (!isEdit) {
-	// 			if (draft) {
-	// 				if (deleteSignedUrlKey?.length > 1) {
-	// 					deleteMediaApiCall(); //remove all images except last one
-	// 				} else if (
-	// 					deleteSignedUrlKey?.length > 0 &&
-	// 					form?.uploadedFiles?.length === 0
-	// 				) {
-	// 					deleteMediaApiCall(); //remove only if the uploaded image was deleted and saved as draft
-	// 				}
-	// 			}
-	// 		} else if (isEdit) {
-	// 			if (draft) {
-	// 				if (specificViral?.url) {
-	// 					if (deleteSignedUrlKey?.length > 1) {
-	// 						deleteMediaApiCall(); //remove all images except last one
-	// 					} else if (
-	// 						deleteSignedUrlKey?.length > 0 &&
-	// 						form?.uploadedFiles?.length === 0
-	// 					) {
-	// 						deleteMediaApiCall(); //remove only if the uploaded image was deleted and saved as draft
-	// 					}
-	// 					//one more case remaining that if deletesignedurlkey is > 1 and user also deletes the last one.
-	// 				} else if (!specificViral?.url && deleteSignedUrlKey?.length > 0) {
-	// 					if (deleteSignedUrlKey?.length > 1) {
-	// 						deleteMediaApiCall(); //remove all images except last one
-	// 					} else if (
-	// 						deleteSignedUrlKey?.length > 0 &&
-	// 						form?.uploadedFiles?.length === 0
-	// 					) {
-	// 						deleteMediaApiCall(); //remove only if the uploaded image was deleted and saved as draft
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-
-	// 		// else if (deleteSignedUrlKey?.length > 1) {
-	// 		// 	// clicking on draft/publish/delete button
-	// 		// 	deleteMediaApiCall();
-	// 		// }
-	// 	}
-	// };
 
 	const validateViralBtn = () => {
 		setIsError({
@@ -448,6 +314,44 @@ const UploadOrEditViral = ({
 		setTimeout(() => {
 			setIsError({});
 		}, 5000);
+	};
+
+	useEffect(() => {
+		if (translatedLanguages) {
+			let selectedLanguage = lang?.shortName;
+			let translatedLangData = translatedLanguages[selectedLanguage];
+
+			setCaptionValue(translatedLangData?.caption);
+		}
+	}, [lang]);
+
+	const translateAPI = async () => {
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/translations/translate`,
+				{
+					caption: form.caption
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+
+			if (result?.data?.status_code === 200) {
+				setTranslatedLanguages(result?.data?.data);
+				setTranslated(true);
+				setTranslatedOnEdit(false);
+				setIsLoadingcreateViral(false);
+			}
+		} catch (e) {
+			toast.error('Failed to translate');
+			setTranslated(false);
+			setTranslatedOnEdit(true);
+			setIsLoadingcreateViral(false);
+			console.log(e, 'Failed to translate');
+		}
 	};
 
 	const createViral = async (id, file, draft = false) => {
@@ -471,6 +375,7 @@ const UploadOrEditViral = ({
 						: '',
 					height: fileHeight,
 					width: fileWidth,
+					translations: translated ? translatedLanguages : undefined,
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -501,7 +406,6 @@ const UploadOrEditViral = ({
 				);
 				setIsLoadingcreateViral(false);
 				setPostButtonStatus(false);
-				setSliderCloseCause(true);
 				handleClose();
 				dispatch(getAllViralsApi({ page }));
 				// dispatch(getPostLabels());
@@ -532,7 +436,6 @@ const UploadOrEditViral = ({
 			);
 			if (result?.data?.status_code === 200) {
 				toast.success('Viral has been deleted!');
-				setSliderCloseCause(true);
 				handleClose();
 				dispatch(getAllViralsApi({ page }));
 			}
@@ -560,34 +463,16 @@ const UploadOrEditViral = ({
 		setPreviewFile(null);
 	};
 
-	// const viralBtnDisabled =
-	// 	!uploadedFiles.length ||
-	// 	postButtonStatus ||
-	// 	selectedLabels.length < 10 ||
-	// 	!caption;
-
-	// const compareValues = (form, specificViral) => {
-	// 	const values = Object.keys(form).map((key) => {
-	// 		if (typeof form[key] === 'string')
-	// 			if (form[key].trim() === specificViral[key].trim()) {
-	// 				return true;
-	// 			}
-	// 		return false;
-	// 	});
-
-	// 	return values.every((item) => item === false);
-	// };
-
 	useEffect(() => {
 		if (specificViral) {
 			setEditBtnDisabled(
-				postButtonStatus ||
-					!form.caption ||
+				// postButtonStatus ||
+				!form.caption ||
 					!form.uploadedFiles.length ||
 					form.labels.length < 7 ||
-					(specificViral?.file_name === form.uploadedFiles[0]?.file_name &&
-						specificViral?.caption?.trim() === form.caption.trim() &&
-						specificViral?.dropbox_url?.trim() === form.dropbox_url.trim() &&
+					(specificViral?.file_name === form?.uploadedFiles[0]?.file_name &&
+						specificViral?.caption?.trim() === form?.caption?.trim() &&
+						specificViral?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
 						specificViral?.show_likes === form.show_likes &&
 						specificViral?.show_comments === form.show_comments)
 			);
@@ -601,8 +486,8 @@ const UploadOrEditViral = ({
 					(specificViral?.file_name === form?.uploadedFiles[0]?.file_name &&
 						specificViral?.caption?.trim() === form?.caption?.trim() &&
 						specificViral?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
-						specificViral?.show_likes === form?.show_likes &&
-						specificViral?.show_comments === form?.show_comments &&
+						specificViral?.show_likes === form.show_likes &&
+						specificViral?.show_comments === form.show_comments &&
 						specificViral?.labels?.length === form?.labels?.length &&
 						!checkDuplicateLabel())
 			);
@@ -629,20 +514,57 @@ const UploadOrEditViral = ({
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			if (isEdit) {
 				setIsLoadingcreateViral(true);
-				// handleDeleteFileFromApi();
+				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				// 	if (_file.file) {
+				// 		return await uploadFileToServer(_file, 'virallibrary');
+				// 	} else {
+				// 		return _file;
+				// 	}
+				// });
+
+				let uploadedFile = form.uploadedFiles[0];
+				if (form.uploadedFiles[0]?.file) {
+					uploadedFile = await uploadFileToServer(
+						form.uploadedFiles[0],
+						'virallibrary'
+					);
+				}
+
 				try {
-					createViral(specificViral?.id, fileOnUpload);
+					createViral(specificViral?.id, uploadedFile);
 				} catch {
 					setIsLoadingcreateViral(false);
 				}
+
+				// Promise.all([...uploadFilesPromiseArray])
+				// 	.then((mediaFiles) => {
+				// 		createViral(specificViral?.id, mediaFiles);
+				// 	})
+				// 	.catch(() => {
+				// 		setIsLoadingcreateViral(false);
+				// 	});
 			} else {
 				setIsLoadingcreateViral(true);
-				// handleDeleteFileFromApi();
+				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				// 	return uploadFileToServer(_file, 'virallibrary');
+				// });
+				let uploadedFile = await uploadFileToServer(
+					form.uploadedFiles[0],
+					'virallibrary'
+				);
 				try {
-					createViral(null, fileOnUpload);
+					createViral(null, uploadedFile);
 				} catch {
 					setIsLoadingcreateViral(false);
 				}
+
+				// Promise.all([...uploadFilesPromiseArray])
+				// 	.then((mediaFiles) => {
+				// 		createViral(null, mediaFiles);
+				// 	})
+				// 	.catch(() => {
+				// 		setIsLoadingcreateViral(false);
+				// 	});
 			}
 		}
 	};
@@ -676,18 +598,80 @@ const UploadOrEditViral = ({
 			setPostButtonStatus(true);
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 			if (isEdit) {
+				// let uploadedFile;
 				setIsLoadingcreateViral(true);
-				// handleDeleteFileFromApi(false, false, true);
+				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				// 	if (_file.file) {
+				// 		return await uploadFileToServer(_file, 'virallibrary');
+				// 	} else {
+				// 		return _file;
+				// 	}
+				// });
+				let uploadedFile = form.uploadedFiles[0];
+				if (form.uploadedFiles[0]?.file) {
+					uploadedFile = await uploadFileToServer(
+						form.uploadedFiles[0],
+						'virallibrary'
+					);
+				}
+
 				try {
-					createViral(specificViral?.id, fileOnUpload, true);
+					createViral(specificViral?.id, uploadedFile, true);
+				} catch {
+					setIsLoadingcreateViral(false);
+				}
+
+				// Promise.all([...uploadFilesPromiseArray])
+				// 	.then((mediaFiles) => {
+				// 		createViral(specificViral?.id, mediaFiles);
+				// 	})
+				// 	.catch(() => {
+				// 		setIsLoadingcreateViral(false);
+				// 	});
+			} else {
+				setIsLoadingcreateViral(true);
+				// let uploadFilesPromiseArray = form.uploadedFiles.map(async (_file) => {
+				// 	return uploadFileToServer(_file, 'virallibrary');
+				// });
+
+				let uploadedFile = await uploadFileToServer(
+					form.uploadedFiles[0],
+					'virallibrary'
+				);
+
+				try {
+					createViral(null, uploadedFile, true);
+				} catch {
+					setIsLoadingcreateViral(false);
+				}
+
+				// Promise.all([...uploadFilesPromiseArray])
+				// 	.then((mediaFiles) => {
+				// 		createViral(null, mediaFiles);
+				// 	})
+				// 	.catch(() => {
+
+				// 	});
+			}
+		}
+	};
+
+	const handleTranslateBtn = () => {
+		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
+			validateViralBtn();
+		} else {
+			setPostButtonStatus(true);
+			setIsLoadingcreateViral(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			if (isEdit) {
+				try {
+					translateAPI();
 				} catch {
 					setIsLoadingcreateViral(false);
 				}
 			} else {
-				setIsLoadingcreateViral(true);
-				// handleDeleteFileFromApi(false, false, true);
 				try {
-					createViral(null, fileOnUpload, true);
+					translateAPI();
 				} catch {
 					setIsLoadingcreateViral(false);
 				}
@@ -695,14 +679,23 @@ const UploadOrEditViral = ({
 		}
 	};
 
+	// const handleButtonText = () => {
+	// 	if (translated && !isEdit) {
+	// 		return buttonText;
+	// 	} else if (isEdit && status === 'published' && !translated) {
+	// 		return buttonText;
+	// 	} else if (isEdit && status === 'published' && translated) {
+	// 		return 'TRANSLATE';
+	// 	}
+	// };
+
 	return (
 		<>
 			<Slider
 				open={open}
 				handleClose={() => {
 					handleClose();
-
-					if (form?.uploadedFiles?.length) {
+					if (form.uploadedFiles.length && !isEdit) {
 						form.uploadedFiles.map((file) => handleDeleteFile(file.id));
 					}
 				}}
@@ -786,21 +779,15 @@ const UploadOrEditViral = ({
 												{...getRootProps({ className: globalClasses.dropzone })}
 											>
 												<input {...getInputProps()} />
-												{loading ? (
-													<SecondaryLoader loading={true} />
-												) : (
-													<>
-														<AddCircleOutlineIcon
-															className={globalClasses.addFilesIcon}
-														/>
-														<p className={globalClasses.dragMsg}>
-															Click or drag files to this area to upload
-														</p>
-														<p className={globalClasses.formatMsg}>
-															Supported formats are jpeg, png and mp4
-														</p>
-													</>
-												)}
+												<AddCircleOutlineIcon
+													className={globalClasses.addFilesIcon}
+												/>
+												<p className={globalClasses.dragMsg}>
+													Click or drag files to this area to upload
+												</p>
+												<p className={globalClasses.formatMsg}>
+													Supported formats are jpeg, png and mp4
+												</p>
 												<p className={globalClasses.uploadMediaError}>
 													{isError.uploadedFiles
 														? 'You need to upload a media in order to post'
@@ -833,16 +820,12 @@ const UploadOrEditViral = ({
 									</div>
 
 									<div className={classes.captionContainer}>
-										<h6
-											className={
+										<Labels
+											titleClasses={
 												isError.selectedLabels
 													? globalClasses.errorState
 													: globalClasses.noErrorState
 											}
-										>
-											LABELS
-										</h6>
-										<Labels
 											isEdit={isEdit}
 											setDisableDropdown={setDisableDropdown}
 											selectedLabels={form.labels}
@@ -879,12 +862,20 @@ const UploadOrEditViral = ({
 											CAPTION
 										</h6>
 										<TextField
-											value={form.caption}
-											onChange={(e) =>
+											value={captionValue}
+											onChange={(e) => {
+												if (translated && lang?.shortName === 'en') {
+													setTranslated(false);
+												}
+												if (isEdit && lang?.shortName === 'en') {
+													setTranslatedOnEdit(true);
+												}
 												setForm((prev) => {
 													return { ...prev, caption: e.target.value };
-												})
-											}
+												});
+
+												setCaptionValue(e.target.value);
+											}}
 											placeholder={'Please write your caption here'}
 											className={classes.textField}
 											InputProps={{
@@ -938,6 +929,20 @@ const UploadOrEditViral = ({
 										: ''}
 								</p>
 
+								{translated ? (
+									<>
+										<Divider color={'grey'} sx={{ mb: '10px' }} />
+										<TranslationCarousal lang={lang} setLang={setLang} />
+									</>
+								) : isEdit && status === 'draft' && !translatedOnEdit ? (
+									<>
+										<Divider color={'grey'} sx={{ mb: '10px' }} />
+										<TranslationCarousal lang={lang} setLang={setLang} />
+									</>
+								) : (
+									<></>
+								)}
+
 								<div className={classes.buttonDiv}>
 									{isEdit || (status === 'draft' && isEdit) ? (
 										<div className={classes.editBtn}>
@@ -947,7 +952,6 @@ const UploadOrEditViral = ({
 												onClick={() => {
 													if (!deleteBtnStatus) {
 														toggleDeleteModal();
-														// handleDeleteFileFromApi();
 													}
 												}}
 												text={'DELETE VIRAL'}
@@ -998,9 +1002,28 @@ const UploadOrEditViral = ({
 														? editBtnDisabled
 														: !validateForm(form)
 												}
-												// disabled={isEdit ? editBtnDisabled : !validateForm(form)}
-												onClick={handlePostSaveBtn}
-												text={buttonText}
+												onClick={
+													!translated && !isEdit
+														? handleTranslateBtn
+														: isEdit &&
+														  status === 'published' &&
+														  translatedOnEdit
+														? handleTranslateBtn
+														: isEdit && status === 'draft' && translatedOnEdit
+														? handleTranslateBtn
+														: handlePostSaveBtn
+												}
+												text={
+													!translated && !isEdit
+														? 'TRANSLATE'
+														: isEdit &&
+														  status === 'published' &&
+														  translatedOnEdit
+														? 'TRANSLATE'
+														: isEdit && status === 'draft' && translatedOnEdit
+														? 'TRANSLATE'
+														: buttonText
+												}
 											/>
 										</div>
 									</div>

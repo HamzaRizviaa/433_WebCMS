@@ -4,7 +4,7 @@
 import React, { forwardRef, useCallback, useEffect, useState } from 'react';
 import { Markup } from 'interweave';
 import DatePicker from 'react-datepicker';
-import _debounce from 'lodash/debounce';
+// import _debounce from 'lodash/debounce';
 import { useNavigate } from 'react-router-dom';
 
 // Redux
@@ -27,6 +27,7 @@ import Table from '../../components/table';
 // CSS / Material UI
 import 'react-datepicker/dist/react-datepicker.css';
 import classes2 from './_mediaLibrary.module.scss';
+import Pagination from '@mui/material/Pagination';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 import TextField from '@material-ui/core/TextField';
@@ -37,7 +38,7 @@ import { Flip } from 'react-toastify';
 
 // Utils
 import { getDateTime, formatDate, getCalendarText } from '../../utils';
-import { useStyles2 } from './../../utils/styles';
+import { useStyles, useStyles2 } from './../../utils/styles';
 import { useStyles as globalUseStyles } from '../../styles/global.style';
 
 // Icons
@@ -49,10 +50,9 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
-import CustomPagination from '../../components/ui/Pagination';
-import { PaginationContext } from '../../utils/context';
 
 const MediaLibrary = () => {
+	const muiClasses = useStyles();
 	const muiClasses2 = useStyles2();
 	const classes = globalUseStyles();
 	// Selctor
@@ -165,15 +165,6 @@ const MediaLibrary = () => {
 										...sortState
 									})
 								);
-							} else {
-								dispatch(
-									getMedia({
-										q: search,
-										page: 1,
-										fromCalendar: true,
-										...sortState
-									})
-								);
 							}
 							setPage(1);
 						}}
@@ -182,6 +173,9 @@ const MediaLibrary = () => {
 			</div>
 		);
 	});
+	const handleChange = (event, value) => {
+		setPage(value);
+	};
 
 	useEffect(() => {
 		if (sortState.sortby && sortState.order_type && !search) {
@@ -579,43 +573,6 @@ const MediaLibrary = () => {
 		}
 	};
 
-	const handleDebounceFun = () => {
-		let _search;
-		setSearch((prevState) => {
-			_search = prevState;
-			return _search;
-		});
-
-		if (_search) {
-			dispatch(
-				getMedia({
-					q: _search,
-					page: 1,
-					startDate: formatDate(dateRange[0]),
-					endDate: formatDate(dateRange[1]),
-					...sortState
-				})
-			);
-		} else {
-			dispatch(
-				getMedia({
-					page: 1,
-					startDate: formatDate(dateRange[0]),
-					endDate: formatDate(dateRange[1]),
-					...sortState
-				})
-			);
-		}
-		setPage(1);
-	};
-
-	const debounceFun = useCallback(_debounce(handleDebounceFun, 600), []);
-
-	const handleChangeSearch = (e) => {
-		setSearch(e.target.value);
-		debounceFun(e.target.value);
-	};
-
 	useEffect(() => {
 		let tableBody = document.getElementsByTagName('tbody')[0];
 		if (tableBody) {
@@ -623,8 +580,23 @@ const MediaLibrary = () => {
 		}
 	}, [page]);
 
+	const handleDateChange = (dateRange) => {
+		setDateRange(dateRange);
+
+		const [start, end] = dateRange;
+
+		if (!start && !end) {
+			dispatch(
+				getMedia({
+					q: search,
+					page,
+					...sortState
+				})
+			);
+		}
+	};
+
 	return (
-		<PaginationContext.Provider value={[ page, setPage, paginationError, setPaginationError ]}>
 		<LoadingOverlay
 			active={mediaApiStatus.status === 'pending' ? true : false}
 			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
@@ -654,37 +626,63 @@ const MediaLibrary = () => {
 							<TextField
 								className={`${classes.searchField} ${muiClasses2.root}`}
 								value={search}
-								// onKeyPress={(e) => {
-								// 	if (e.key === 'Enter' && search) {
-								// 		dispatch(
-								// 			getMedia({
-								// 				q: search,
-								// 				page,
-								// 				startDate: formatDate(dateRange[0]),
-								// 				endDate: formatDate(dateRange[1]),
-								// 				...sortState
-								// 			})
-								// 		);
-								// 	} else if (e.key === 'Enter' && !search) {
-								// 		dispatch(
-								// 			getMedia({
-								// 				page,
-								// 				startDate: formatDate(dateRange[0]),
-								// 				endDate: formatDate(dateRange[1]),
-								// 				...sortState
-								// 			})
-								// 		);
-								// 	}
-								// }}
-								onChange={handleChangeSearch}
-								placeholder={'Search post, user, label'}
+								onKeyPress={(e) => {
+									if (e.key === 'Enter' && search) {
+										dispatch(
+											getMedia({
+												q: search,
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									} else if (e.key === 'Enter' && !search) {
+										dispatch(
+											getMedia({
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									}
+								}}
+								onChange={(e) => {
+									setSearch(e.target.value);
+								}}
+								placeholder='Search for Media, User, Label, ID'
 								InputProps={{
 									disableUnderline: true,
 									className: classes.textFieldInput,
 									style: { borderColor: noResultBorder },
 									endAdornment: (
 										<InputAdornment>
-											<Search className={classes.searchIcon} />
+											<Search
+												onClick={() => {
+													if (search) {
+														dispatch(
+															getMedia({
+																q: search,
+																page,
+																startDate: formatDate(dateRange[0]),
+																endDate: formatDate(dateRange[1]),
+																...sortState
+															})
+														);
+													} else {
+														dispatch(
+															getMedia({
+																page,
+																startDate: formatDate(dateRange[0]),
+																endDate: formatDate(dateRange[1]),
+																...sortState
+															})
+														);
+													}
+												}}
+												className={classes.searchIcon}
+											/>
 										</InputAdornment>
 									)
 								}}
@@ -698,9 +696,7 @@ const MediaLibrary = () => {
 								startDate={startDate}
 								endDate={endDate}
 								maxDate={new Date()}
-								onChange={(update) => {
-									setDateRange(update);
-								}}
+								onChange={handleDateChange}
 								placement='center'
 								isClearable={true}
 							/>
@@ -711,7 +707,39 @@ const MediaLibrary = () => {
 				<div className={classes.tableContainer}>
 					<Table rowEvents={tableRowEvents} columns={columns} data={media} />
 				</div>
-				<CustomPagination totalRecords={totalRecords} page={page} paginationError={paginationError} />
+				<div className={classes.paginationRow}>
+					<Pagination
+						className={muiClasses.root}
+						page={page}
+						onChange={handleChange}
+						count={Math.ceil(totalRecords / 20)}
+						variant='outlined'
+						shape='rounded'
+					/>
+					<div className={classes.gotoText}>Go to page</div>
+					<input
+						style={{
+							border: `${
+								paginationError ? '1px solid red' : '1px solid #808080'
+							}`
+						}}
+						type={'number'}
+						min={1}
+						onChange={(e) => {
+							setPaginationError(false);
+							const value = Number(e.target.value);
+							if (value > Math.ceil(totalRecords / 20)) {
+								setPaginationError(true);
+								setPage(1);
+							} else if (value) {
+								setPage(value);
+							} else {
+								setPage(1);
+							}
+						}}
+						className={classes.gotoInput}
+					/>
+				</div>
 
 				<UploadOrEditMedia
 					open={showSlider}
@@ -730,7 +758,6 @@ const MediaLibrary = () => {
 				/>
 			</Layout>
 		</LoadingOverlay>
-		</PaginationContext.Provider>
 	);
 };
 

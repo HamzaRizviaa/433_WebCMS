@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Pagination from '@mui/material/Pagination';
-import { useStyles } from '../../../utils/styles';
+import { useStyles } from './index.style';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { useSearchParams } from 'react-router-dom';
 import { changeQueryParameters } from '../../../utils/helper';
@@ -15,8 +15,7 @@ const CustomPagination = ({ totalRecords }) => {
 		if(isNaN(Number(queryParam))){
 			return 1
 		}
-		muiClasses.root
-		return Number(queryParam)
+		return Number(queryParam) || 1
 	})
     const [paginationError, setPaginationError] = useState(false)
     const classes = globalUseStyles();
@@ -49,8 +48,6 @@ const CustomPagination = ({ totalRecords }) => {
 						min={1}
 						onChange={(e) => {
 							setPaginationError(false);
-							// let queryParams = changeQueryParameters(searchParams, { paginationError: false });
-							// setSearchParams(queryParams);
 							const value = Number(e.target.value);
 							if (value > Math.ceil(totalRecords / 20)) {
 								setPaginationError(true);

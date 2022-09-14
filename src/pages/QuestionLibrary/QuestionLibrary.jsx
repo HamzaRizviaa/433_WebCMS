@@ -15,6 +15,8 @@ import UploadOrEditQuiz from '../../components/Questions/UploadEditQuestion/Uplo
 import QuizDetails from '../../components/Questions/QuestionDetails/QuizDetails';
 import PollDetails from '../../components/Questions/QuestionDetails/PollDetails';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
+import Pagination from '@mui/material/Pagination';
+import { useStyles } from '../../utils/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -41,8 +43,6 @@ import { getAllNewLabels } from '../PostLibrary/postLibrarySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
 import { useNavigate } from 'react-router-dom';
-import CustomPagination from '../../components/ui/Pagination';
-import { PaginationContext } from '../../utils/context';
 
 const QuestionLibrary = () => {
 	// Selectors
@@ -59,6 +59,7 @@ const QuestionLibrary = () => {
 	);
 
 	const navigate = useNavigate();
+	const muiClasses = useStyles();
 	const classes = globalUseStyles();
 	const [showSlider, setShowSlider] = useState(false);
 	const [showQuizSlider, setShowQuizSlider] = useState(false);
@@ -121,15 +122,6 @@ const QuestionLibrary = () => {
 										page,
 										startDate,
 										endDate,
-										fromCalendar: true,
-										...sortState
-									})
-								);
-							} else {
-								dispatch(
-									getQuestions({
-										q: search,
-										page,
 										fromCalendar: true,
 										...sortState
 									})
@@ -413,14 +405,18 @@ const QuestionLibrary = () => {
 			dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
 
 			//slider calls
-			if (rowStatus === 'ACTIVE' && rowLocation === 'article') {
+			if (rowLocation === 'article') {
 				row.question_type === 'quiz'
 					? setShowQuizSlider(true)
 					: setShowPollSlider(true);
-			} else if (rowLocation === 'homepage' || rowStatus === 'draft') {
+			} else {
 				showEditSlider(true);
 			}
 		}
+	};
+
+	const handleChange = (event, value) => {
+		setPage(value);
 	};
 
 	useEffect(() => {
@@ -507,39 +503,54 @@ const QuestionLibrary = () => {
 		};
 	}, []);
 
-	const handleDebounceFun = () => {
-		let _search;
-		setSearch((prevState) => {
-			_search = prevState;
-			return _search;
-		});
-		if (_search) {
+	// const handleDebounceFun = () => {
+	// 	let _search;
+	// 	setSearch((prevState) => {
+	// 		_search = prevState;
+	// 		return _search;
+	// 	});
+	// 	if (_search) {
+	// 		dispatch(
+	// 			getQuestions({
+	// 				q: _search,
+	// 				page: 1,
+	// 				startDate: formatDate(dateRange[0]),
+	// 				endDate: formatDate(dateRange[1]),
+	// 				...sortState
+	// 			})
+	// 		);
+	// 	} else {
+	// 		dispatch(
+	// 			getQuestions({
+	// 				page: 1,
+	// 				startDate: formatDate(dateRange[0]),
+	// 				endDate: formatDate(dateRange[1]),
+	// 				...sortState
+	// 			})
+	// 		);
+	// 	}
+	// 	setPage(1);
+	// };
+
+	// const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
+
+	const handleDateChange = (dateRange) => {
+		setDateRange(dateRange);
+
+		const [start, end] = dateRange;
+
+		if (!start && !end) {
 			dispatch(
 				getQuestions({
-					q: _search,
-					page: 1,
-					startDate: formatDate(dateRange[0]),
-					endDate: formatDate(dateRange[1]),
-					...sortState
-				})
-			);
-		} else {
-			dispatch(
-				getQuestions({
-					page: 1,
-					startDate: formatDate(dateRange[0]),
-					endDate: formatDate(dateRange[1]),
+					q: search,
+					page,
 					...sortState
 				})
 			);
 		}
-		setPage(1);
 	};
 
-	const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
-
 	return (
-		<PaginationContext.Provider value={[ page, setPage, paginationError, setPaginationError ]}>
 		<LoadingOverlay
 			active={statusQuestionApi.status === 'pending' ? true : false}
 			// spinner={<LogoSpinner className={classes._loading_overlay_spinner} />}
@@ -577,32 +588,32 @@ const QuestionLibrary = () => {
 								value={search}
 								onKeyPress={(e) => {
 									console.log(e, 'on key press');
-									// if (e.key === 'Enter' && search) {
-									// 	dispatch(
-									// 		getQuestions({
-									// 			q: search,
-									// 			page,
-									// 			startDate: formatDate(dateRange[0]),
-									// 			endDate: formatDate(dateRange[1]),
-									// 			...sortState
-									// 		})
-									// 	);
-									// } else if (e.key === 'Enter' && !search) {
-									// 	dispatch(
-									// 		getQuestions({
-									// 			page,
-									// 			startDate: formatDate(dateRange[0]),
-									// 			endDate: formatDate(dateRange[1]),
-									// 			...sortState
-									// 		})
-									// 	);
-									// }
+									if (e.key === 'Enter' && search) {
+										dispatch(
+											getQuestions({
+												q: search,
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									} else if (e.key === 'Enter' && !search) {
+										dispatch(
+											getQuestions({
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									}
 								}}
 								onChange={(e) => {
 									setSearch(e.target.value);
 									//setIsSearch(true);
 								}}
-								placeholder={'Search post, user, label'}
+								placeholder='Search for Question, User, Label, ID'
 								InputProps={{
 									disableUnderline: true,
 									className: classes.textFieldInput,
@@ -648,9 +659,7 @@ const QuestionLibrary = () => {
 								startDate={startDate}
 								endDate={endDate}
 								maxDate={new Date()}
-								onChange={(update) => {
-									setDateRange(update);
-								}}
+								onChange={handleDateChange}
 								placement='center'
 								isClearable={true}
 							/>
@@ -665,7 +674,42 @@ const QuestionLibrary = () => {
 						data={questions}
 					/>
 				</div>
-				<CustomPagination totalRecords={totalRecords} page={page} paginationError={paginationError} />
+				
+				<div className={classes.paginationRow}>
+					<Pagination
+						className={muiClasses.root}
+						page={page}
+						onChange={handleChange}
+						count={Math.ceil(totalRecords / 20)}
+						variant='outlined'
+						shape='rounded'
+					/>
+					<div className={classes.gotoText}>Go to page</div>
+					<input
+						style={{
+							border: `${
+								paginationError ? '1px solid red' : '1px solid #808080'
+							}`
+						}}
+						type={'number'}
+						min={1}
+						onChange={(e) => {
+							// console.log(e, 'onchange', page);
+							setPaginationError(false);
+							const value = Number(e.target.value);
+							if (value > Math.ceil(totalRecords / 20)) {
+								// if (value > Math.ceil(60 / 20)) {
+								setPaginationError(true);
+								setPage(1);
+							} else if (value) {
+								setPage(value);
+							} else {
+								setPage(1);
+							}
+						}}
+						className={classes.gotoInput}
+					/>
+				</div>
 				
 				{/* upload */}
 				<UploadOrEditQuiz
@@ -734,7 +778,6 @@ const QuestionLibrary = () => {
 				/>
 			</Layout>
 		</LoadingOverlay>
-		</PaginationContext.Provider>
 	);
 };
 

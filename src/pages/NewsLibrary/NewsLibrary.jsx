@@ -8,9 +8,11 @@ import Layout from '../../components/layout';
 import Table from '../../components/table';
 import Button from '../../components/button';
 import LoadingOverlay from 'react-loading-overlay';
+import { useStyles } from './../../utils/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import Pagination from '@mui/material/Pagination';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { useStyles as globalUseStyles } from '../../styles/global.style';
@@ -24,7 +26,6 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import DefaultImage from '../../assets/defaultImage.png';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import Tooltip from '@mui/material/Tooltip';
-import { useSearchParams } from 'react-router-dom';
 
 import Fade from '@mui/material/Fade';
 import UploadOrEditNews from '../../components/news/uploadOrEditNews';
@@ -38,11 +39,9 @@ import {
 } from './newsLibrarySlice';
 
 import { getAllNewLabels } from '../PostLibrary/postLibrarySlice';
-import CustomPagination from '../../components/ui/Pagination';
 
 const NewsLibrary = () => {
 	// Selectors
-	const [searchParams] = useSearchParams();
 	const allNews = useSelector((state) => state.NewsLibrary.news);
 	const newsApiStatus = useSelector((state) => state.NewsLibrary);
 	const totalRecords = useSelector((state) => state.NewsLibrary.totalRecords);
@@ -53,6 +52,7 @@ const NewsLibrary = () => {
 		(state) => state.NewsLibrary.noResultStatusCalendar
 	);
 
+	const muiClasses = useStyles();
 	const classes = globalUseStyles();
 	const navigate = useNavigate();
 	const fileNameRef = useRef(null);
@@ -60,6 +60,8 @@ const NewsLibrary = () => {
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
+	const [paginationError, setPaginationError] = useState(false);
+	const [page, setPage] = useState(1);
 	const [search, setSearch] = useState('');
 	const [noResultBorder, setNoResultBorder] = useState('#404040');
 	const [noResultError, setNoResultError] = useState('');
@@ -70,8 +72,6 @@ const NewsLibrary = () => {
 	const [startDate, endDate] = dateRange;
 	const [tooltipTitle, setTooltipTitle] = useState(false);
 	const [rowStatus, setrowStatus] = useState(''); //publish or draft
-
-	const page = searchParams.get('page')
 
 	useEffect(() => {
 		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));
@@ -110,15 +110,6 @@ const NewsLibrary = () => {
 										page,
 										startDate,
 										endDate,
-										fromCalendar: true,
-										...sortState
-									})
-								);
-							} else {
-								dispatch(
-									getAllNews({
-										q: search,
-										page,
 										fromCalendar: true,
 										...sortState
 									})
@@ -408,6 +399,10 @@ const NewsLibrary = () => {
 		}
 	};
 
+	const handleChange = (event, value) => {
+		setPage(value);
+	};
+
 	useEffect(() => {
 		if (sortState.sortby && sortState.order_type && !search) {
 			dispatch(
@@ -490,6 +485,22 @@ const NewsLibrary = () => {
 		};
 	}, []);
 
+	const handleDateChange = (dateRange) => {
+		setDateRange(dateRange);
+
+		const [start, end] = dateRange;
+
+		if (!start && !end) {
+			dispatch(
+				getAllNews({
+					q: search,
+					page,
+					...sortState
+				})
+			);
+		}
+	};
+
 	return (
 		<LoadingOverlay
 			active={newsApiStatus.status === 'pending' ? true : false}
@@ -546,7 +557,7 @@ const NewsLibrary = () => {
 									setSearch(e.target.value);
 									//setIsSearch(true);
 								}}
-								placeholder={'Search news, user, label'}
+								placeholder='Search for News, User, Label, ID'
 								InputProps={{
 									disableUnderline: true,
 									className: classes.textFieldInput,
@@ -591,9 +602,7 @@ const NewsLibrary = () => {
 								startDate={startDate}
 								endDate={endDate}
 								maxDate={new Date()}
-								onChange={(update) => {
-									setDateRange(update);
-								}}
+								onChange={handleDateChange}
 								placement='center'
 								isClearable={true}
 							/>
@@ -604,7 +613,41 @@ const NewsLibrary = () => {
 				<div className={classes.tableContainer}>
 					<Table rowEvents={tableRowEvents} columns={columns} data={allNews} />
 				</div>
-				<CustomPagination totalRecords={totalRecords} />
+
+				<div className={classes.paginationRow}>
+					<Pagination
+						className={muiClasses.root}
+						page={page}
+						onChange={handleChange}
+						count={Math.ceil(totalRecords / 20)}
+						variant='outlined'
+						shape='rounded'
+					/>
+					<div className={classes.gotoText}>Go to page</div>
+					<input
+						style={{
+							border: `${
+								paginationError ? '1px solid red' : '1px solid #808080'
+							}`
+						}}
+						type={'number'}
+						min={1}
+						onChange={(e) => {
+							setPaginationError(false);
+							const value = Number(e.target.value);
+							if (value > Math.ceil(totalRecords / 20)) {
+								// if (value > Math.ceil(60 / 20)) {
+								setPaginationError(true);
+								setPage(1);
+							} else if (value) {
+								setPage(value);
+							} else {
+								setPage(1);
+							}
+						}}
+						className={classes.gotoInput}
+					/>
+				</div>
 
 				<UploadOrEditNews
 					open={showSlider}

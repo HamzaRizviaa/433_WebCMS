@@ -51,7 +51,7 @@ const DraggableContainers = ({
 	const muiClasses = quizStyles();
 	const imgRef = useRef(null);
 	const loadingRef = useRef(null);
-	
+
 	return (
 		<div>
 			<Draggable draggableId={`draggable-${index}`} index={index} key={key}>
@@ -117,7 +117,7 @@ const DraggableContainers = ({
 												<Deletes
 													className={classes.deleteIcon}
 													onClick={() => {
-														(!isEdit || status === 'draft') &&
+														((isEdit && status === 'draft') || !isEdit) &&
 															handleDeleteQuestionSlide(item.sortOrder);
 													}}
 												/>
@@ -144,53 +144,79 @@ const DraggableContainers = ({
 												<div className={globalClasses.contentWrapperNoPreview}>
 													{isEdit ? (
 														<>
-															<div className={muiClasses.root}>
-																<TabsUnstyled
-																	defaultValue={0}
-																	className={muiClasses.tabRoot}
-																>
-																	<TabsListUnstyled
-																		className={muiClasses.tabMainDiv}
+															{status === 'draft' ? (
+																<QuestionForm
+																	item={item}
+																	index={index}
+																	type={type}
+																	isEdit={isEdit}
+																	status={status}
+																	key={item.sortOrder}
+																	initialData={initialData}
+																	setPreviewFile={setPreviewFile}
+																	setPreviewBool={setPreviewBool}
+																	setDisableDropdown={setDisableDropdown}
+																	sendDataToParent={(data) =>
+																		sendDataToParent(data)
+																	}
+																	handleDeleteMedia={(data) =>
+																		handleDeleteMedia(data, index)
+																	}
+																	handleDeleteQuestionSlide={(sortOrder) =>
+																		handleDeleteQuestionSlide(sortOrder)
+																	}
+																/>
+															) : (
+																<div className={muiClasses.root}>
+																	<TabsUnstyled
+																		defaultValue={0}
+																		className={muiClasses.tabRoot}
 																	>
-																		<TabUnstyled>{'Result'}</TabUnstyled>
-																		<TabUnstyled>
-																			{`${'Edit ' + type}`}
-																		</TabUnstyled>
-																	</TabsListUnstyled>
-																	<TabPanelUnstyled value={0}>
-																		<QuizResults
-																			initialData={initialData}
-																			status={status}
-																			location={location}
-																			endDate={endDate}
-																		/>
-																	</TabPanelUnstyled>
-																	<TabPanelUnstyled value={1}>
-																		<QuestionForm
-																			item={item}
-																			index={index}
-																			type={type}
-																			isEdit={isEdit}
-																			status={status}
-																			key={item.sortOrder}
-																			initialData={initialData}
-																			setPreviewFile={setPreviewFile}
-																			setPreviewBool={setPreviewBool}
-																			setDisableDropdown={setDisableDropdown}
-																			sendDataToParent={(data) =>
-																				sendDataToParent(data, index)
-																			}
-																			handleDeleteMedia={(data) =>
-																				handleDeleteMedia(data, index)
-																			}
-																			handleDeleteQuestionSlide={(sortOrder) =>
-																				handleDeleteQuestionSlide(sortOrder)
-																			}
-																		/>
-																	</TabPanelUnstyled>
-																</TabsUnstyled>
-																<br />
-															</div>
+																		<TabsListUnstyled
+																			className={muiClasses.tabMainDiv}
+																		>
+																			<TabUnstyled>{'Result'}</TabUnstyled>
+																			<TabUnstyled>
+																				{`${'Edit ' + type}`}
+																			</TabUnstyled>
+																		</TabsListUnstyled>
+																		<TabPanelUnstyled value={0}>
+																			<QuizResults
+																				initialData={initialData}
+																				status={status}
+																				location={location}
+																				endDate={endDate}
+																			/>
+																		</TabPanelUnstyled>
+																		<TabPanelUnstyled value={1}>
+																			<QuestionForm
+																				item={item}
+																				index={index}
+																				type={type}
+																				isEdit={isEdit}
+																				status={status}
+																				key={item.sortOrder}
+																				initialData={initialData}
+																				setPreviewFile={setPreviewFile}
+																				setPreviewBool={setPreviewBool}
+																				setDisableDropdown={setDisableDropdown}
+																				sendDataToParent={(data) =>
+																					sendDataToParent(data, index)
+																				}
+																				handleDeleteMedia={(data) =>
+																					handleDeleteMedia(data, index)
+																				}
+																				handleDeleteQuestionSlide={(
+																					sortOrder
+																				) =>
+																					handleDeleteQuestionSlide(sortOrder)
+																				}
+																			/>
+																		</TabPanelUnstyled>
+																	</TabsUnstyled>
+																	<br />
+																</div>
+															)}
 														</>
 													) : (
 														//first time upload
@@ -211,6 +237,7 @@ const DraggableContainers = ({
 															initialData={initialData}
 															setPreviewFile={setPreviewFile}
 															isEdit={isEdit}
+															status={status}
 															setPreviewBool={setPreviewBool}
 															setDisableDropdown={setDisableDropdown}
 														/>
