@@ -640,7 +640,7 @@ const UploadOrEditArticle = ({
 						? form.landscape_dropbox_url
 						: '',
 					landscape_file_name: form?.uploadedLandscapeCoverImage?.length
-						? mediaFiles[2]?.landscape_file_name
+						? mediaFiles[2]?.file_name
 						: '',
 					landscape_image: form?.uploadedLandscapeCoverImage?.length
 						? mediaFiles[2]?.media_url?.split('cloudfront.net/')[1] ||
