@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Tooltip, Zoom } from '@mui/material';
+import Tooltip from '../Tooltip';
 import { useState } from 'react';
-
-const TooltipTitle = () => <div style={{ fontSize: '12px' }}>Copied!</div>;
 
 
 const CopyToClipboard = ({ children, tooltipProps }) => {
@@ -20,10 +18,8 @@ const CopyToClipboard = ({ children, tooltipProps }) => {
 		<div style={{ cursor: 'pointer' }}>
 			<Tooltip
 				open={showTooltip}
-				TransitionComponent={Zoom}
 				placement='top'
-				arrow
-				title={<TooltipTitle />}
+				title={'Copied!'}
 				leaveDelay={500}
 				onClose={handleClose}
 				{...(tooltipProps || {})}
