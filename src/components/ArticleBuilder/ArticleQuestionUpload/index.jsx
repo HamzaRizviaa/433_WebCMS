@@ -89,6 +89,7 @@ const ArticleQuestionUpload = ({
 	// const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
+
 	console.log(initialData, 'initialData');
 	// useEffect(() => {
 	// 	if (type !== initialData) {
@@ -103,6 +104,45 @@ const ArticleQuestionUpload = ({
 	// 	}
 	// }, [type]);
 
+	console.log(initialData, type, 'initialData');
+
+	useEffect(() => {
+		if (type !== initialData?.question_type) {
+			setForm({
+				uploadedFiles: [],
+				dropbox_url: '',
+				question: '',
+				answers: [
+					{
+						answer: '',
+						type:
+							type === 'quiz' && index === 0
+								? 'right_answer'
+								: type === 'quiz' && index === 1
+								? 'wrong_answer_1'
+								: 'poll'
+					},
+					{
+						answer: '',
+						type:
+							type === 'quiz' && index === 0
+								? 'right_answer'
+								: type === 'quiz' && index === 1
+								? 'wrong_answer_1'
+								: 'poll'
+					}
+				],
+				labels: [],
+				question_type:
+					type !== initialData?.question_type && type === 'quiz'
+						? 'quiz'
+						: type !== initialData?.question_type && type === 'poll'
+						? 'poll'
+						: ''
+			});
+		}
+	}, [type]);
+
 	useEffect(() => {
 		validateForm(form);
 	}, [form]);
@@ -114,13 +154,20 @@ const ArticleQuestionUpload = ({
 		}
 	}, [isEdit]);
 
-	useEffect(() => {
-		if (!initialData?.question_id) {
-			sendDataToParent({
-				question_type: type === 'quiz' ? 'quiz' : 'poll'
-			});
-		}
-	}, []);
+	// useEffect(() => {
+	// 	if (!initialData?.question_id) {
+	// 		console.log('KAKAKAKA');
+	// 		sendDataToParent({
+	// 			question_type:
+	// 				type !== initialData?.question_type && type === 'quiz'
+	// 					? 'quiz'
+	// 					: type !== initialData?.question_type && type === 'poll'
+	// 					? 'poll'
+	// 					: type
+	// 		});
+	// 	}
+	// }, []);
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: 'image/jpeg, image/png',
@@ -220,6 +267,7 @@ const ArticleQuestionUpload = ({
 		setDisableDropdown(true);
 		setIsError({});
 	};
+	console.log(form, 'FORM');
 
 	const handleAnswerChange = (event, index) => {
 		if (initialData?.question_id) {
@@ -268,7 +316,11 @@ const ArticleQuestionUpload = ({
 						<h5 className={classes.QuizQuestion}>{heading1}</h5>
 						<DragAndDropField
 							uploadedFiles={
-								initialData ? initialData?.uploadedFiles : form?.uploadedFiles
+								type !== initialData?.question_type
+									? form?.uploadedFiles
+									: initialData
+									? initialData?.uploadedFiles
+									: form?.uploadedFiles
 							}
 							quizPollStatus={status}
 							handleDeleteFile={(id) => {
@@ -293,7 +345,43 @@ const ArticleQuestionUpload = ({
 							}}
 						/>
 
-						{initialData?.uploadedFiles ? (
+						{type !== initialData?.question_type &&
+						form?.uploadedFiles.length === 0 ? (
+							<>
+								{' '}
+								<section
+									className={globalClasses.dropZoneContainer}
+									style={{
+										borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
+									}}
+								>
+									<div {...getRootProps({ className: globalClasses.dropzone })}>
+										<input {...getInputProps()} />
+										{loading ? (
+											<SecondaryLoader loading={true} />
+										) : (
+											<>
+												<AddCircleOutlineIcon
+													className={globalClasses.addFilesIcon}
+												/>
+												<p className={globalClasses.dragMsg}>
+													Click or drag file to this area to upload
+												</p>
+												<p className={globalClasses.formatMsg}>
+													Supported formats are jpeg and png
+												</p>
+											</>
+										)}
+
+										<p className={globalClasses.uploadMediaError}>
+											{isError.uploadedFiles
+												? 'You need to upload a media in order to post'
+												: ''}
+										</p>
+									</div>
+								</section>
+							</>
+						) : initialData?.uploadedFiles ? (
 							''
 						) : form.uploadedFiles.length === 0 ? (
 							<section
@@ -339,7 +427,11 @@ const ArticleQuestionUpload = ({
 							<h6>DROPBOX URL</h6>
 							<TextField
 								value={
-									initialData ? initialData?.dropbox_url : form.dropbox_url
+									type !== initialData?.question_type
+										? form?.dropbox_url
+										: initialData
+										? initialData?.dropbox_url
+										: form.dropbox_url
 								}
 								onChange={(e) => {
 									setForm((prev) => {
@@ -394,7 +486,13 @@ const ArticleQuestionUpload = ({
 								disabled={
 									initialData?.question_id && status !== 'draft' ? true : false
 								}
-								value={initialData ? initialData?.question : form.question}
+								value={
+									type !== initialData?.question_type
+										? form?.question
+										: initialData
+										? initialData?.question
+										: form.question
+								}
 								onChange={(e) => {
 									setForm((prev) => {
 										return { ...prev, question: e.target.value };
@@ -459,7 +557,10 @@ const ArticleQuestionUpload = ({
 									initialData?.question_id && status !== 'draft' ? true : false
 								}
 								value={
-									initialData?.answers && initialData?.question_type === 'quiz'
+									type !== initialData?.question_type
+										? form?.answers[0]?.answer
+										: initialData?.answers &&
+										  initialData?.question_type === 'quiz'
 										? initialData?.answers?.find(
 												(item) => item.type === 'right_answer'
 										  )?.answer
@@ -525,9 +626,12 @@ const ArticleQuestionUpload = ({
 									initialData?.question_id && status !== 'draft' ? true : false
 								}
 								value={
-									initialData?.answers && initialData?.question_type === 'quiz'
+									type !== initialData?.question_type
+										? form?.answers[1]?.answer
+										: initialData?.answers &&
+										  initialData?.question_type === 'quiz'
 										? initialData?.answers?.find(
-												(item) => item.type === 'wrong_answer'
+												(item) => item.type === 'wrong_answer_1'
 										  )?.answer
 										: form.answers[1]?.answer
 								}
@@ -568,7 +672,11 @@ const ArticleQuestionUpload = ({
 								isEdit={initialData?.question_id && status !== 'draft'}
 								setDisableDropdown={setDisableDropdown}
 								selectedLabels={
-									initialData?.labels ? initialData?.labels : form.labels
+									type !== initialData?.question_type
+										? form?.labels
+										: initialData?.labels
+										? initialData?.labels
+										: form.labels
 								}
 								setSelectedLabels={(newVal) => {
 									setForm((prev) => {
