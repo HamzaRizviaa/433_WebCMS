@@ -94,8 +94,9 @@ const ArticleQuestionDraggable = ({
 									defaultValue={initialData?.question_type === 'quiz' ? 1 : 0}
 									className={muiClasses.tabRoot}
 								>
-									{(initialData?.question_id && status === 'draft') ||
-									!initialData?.question_id ? (
+									{/* {(initialData?.question_id && status === 'draft') ||
+									!initialData?.question_id ? ( */}
+									{!initialData?.question_id ? (
 										<>
 											<TabsListUnstyled className={muiClasses.tabMainDiv}>
 												<TabUnstyled onClick={() => setQtype('poll')}>
@@ -114,8 +115,8 @@ const ArticleQuestionDraggable = ({
 										</div>
 									)}
 									{initialData?.question_id &&
-									item?.data?.question_type === 'poll' &&
-									status === 'published' ? (
+									item?.data?.question_type === 'poll' ? (
+										//&& status === 'published'
 										<TabPanelUnstyled value={0}>
 											<ArticleQuestionUpload
 												setDisableDropdown={setDisableDropdown}
@@ -139,8 +140,8 @@ const ArticleQuestionDraggable = ({
 											/>
 										</TabPanelUnstyled>
 									) : initialData?.question_id &&
-									  item?.data?.question_type === 'quiz' &&
-									  status === 'published' ? (
+									  item?.data?.question_type === 'quiz' ? (
+										// && status === 'published'
 										<TabPanelUnstyled value={0}>
 											<ArticleQuestionUpload
 												item={item}
