@@ -16,9 +16,9 @@ const http = axios.create({
 
 export function setAccessTokenInHeader(token) {
 	if (token) {
-		http.defaults.headers.common.Authorization = `Bearer ${token}`;
+		http.defaults.headers.Authorization = `Bearer ${token}`;
 	} else {
-		delete http.defaults.headers.common.Authorization;
+		delete http.defaults.headers.Authorization;
 	}
 }
 
