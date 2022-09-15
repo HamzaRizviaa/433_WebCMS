@@ -4,9 +4,7 @@ import React, { useCallback } from 'react';
 import { useField } from 'formik';
 import InputField from '../../InputField';
 
-function FormikField(props) {
-	const { name, onChange, onBlur, ...restProps } = props;
-
+const FormikField = ({ name, onChange, onBlur, ...restProps }) => {
 	const [field, meta] = useField(name);
 
 	const {
@@ -23,7 +21,7 @@ function FormikField(props) {
 			onValueChange(event);
 			if (onChange) onChange(name, event.target.value);
 		},
-		[value, onChange]
+		[onValueChange, onChange]
 	);
 
 	const handleBlur = useCallback(
@@ -31,7 +29,7 @@ function FormikField(props) {
 			onFieldBlur(event);
 			if (onBlur) onBlur(name, event.target.value);
 		},
-		[value, onBlur]
+		[onFieldBlur, onBlur]
 	);
 
 	return (
@@ -46,6 +44,6 @@ function FormikField(props) {
 			helperText={touched && error ? error : ''}
 		/>
 	);
-}
+};
 
 export default FormikField;

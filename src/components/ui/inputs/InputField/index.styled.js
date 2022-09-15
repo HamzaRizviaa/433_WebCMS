@@ -12,12 +12,16 @@ export const useStyles = makeStyles((theme) => ({
 			marginLeft: '1rem'
 		}
 	},
+	labelsContainer: {
+		display: 'flex',
+		justifyContent: 'space-between',
+		margin: '0 1rem'
+	},
 	inputLabel: {
 		position: 'relative',
 		display: 'inline-block',
 		fontSize: '1.2rem',
 		fontWeight: 'bold',
-		marginLeft: '1rem',
 		marginBottom: '0.5rem',
 		color: (props) => (props.isError ? theme.palette.red : theme.palette.white),
 

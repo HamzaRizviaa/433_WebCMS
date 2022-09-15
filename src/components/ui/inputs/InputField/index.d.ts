@@ -3,6 +3,7 @@ import { TextFieldProps } from '@material-ui/core';
 export type InputFieldProps = Omit<TextFieldProps, 'variant'> & {
 	name: string;
 	label?: string;
+	rightLabel?: string;
 	textArea?: boolean;
 	required?: boolean;
 	isError?: boolean;

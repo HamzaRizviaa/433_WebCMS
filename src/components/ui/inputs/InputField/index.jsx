@@ -6,24 +6,23 @@ import { InputAdornment, IconButton, TextField } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useStyles } from './index.styled';
 
-const INPUT_DELAY = 200;
+const INPUT_DELAY = 200; // Miliseconds
 
-function InputField(props) {
-	const {
-		value,
-		label,
-		className,
-		startIcon,
-		endIcon,
-		onChange,
-		type = 'text',
-		textArea = false,
-		required = false,
-		isError = false,
-		rows = 4,
-		...restProps
-	} = props;
-
+const InputField = ({
+	value,
+	label,
+	rightLabel,
+	className,
+	startIcon,
+	endIcon,
+	onChange,
+	type = 'text',
+	textArea = false,
+	required = false,
+	isError = false,
+	rows = 4,
+	...restProps
+}) => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [innerValue, setInnerValue] = useState('');
 
@@ -54,7 +53,14 @@ function InputField(props) {
 
 	return (
 		<div className={classes.inputFieldContainer}>
-			{!!label && <span className={classes.inputLabel}>{label}</span>}
+			{(!!label || !!rightLabel) && (
+				<div className={classes.labelsContainer}>
+					{!!label && <span className={classes.inputLabel}>{label}</span>}
+					{!!rightLabel && (
+						<span className={classes.inputLabel}>{rightLabel}</span>
+					)}
+				</div>
+			)}
 			<TextField
 				{...restProps}
 				className={className}
@@ -69,12 +75,12 @@ function InputField(props) {
 				InputProps={{
 					disableUnderline: true,
 					className: classes.textFieldInput,
-					startAdornment: startIcon && (
+					startAdornment: !!startIcon && (
 						<InputAdornment position='start' className={classes.endIcon}>
 							{startIcon}
 						</InputAdornment>
 					),
-					endAdornment: (endIcon || isPasswordField) && (
+					endAdornment: (!!endIcon || isPasswordField) && (
 						<InputAdornment position='end'>
 							{isPasswordField ? (
 								<IconButton
@@ -92,6 +98,6 @@ function InputField(props) {
 			/>
 		</div>
 	);
-}
+};
 
 export default InputField;
