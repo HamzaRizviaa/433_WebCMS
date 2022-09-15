@@ -338,7 +338,7 @@ const UploadOrEditQuiz = ({
 					general_info: {
 						save_draft: draft,
 						question_type: questionType,
-						...(status === 'CLOSED'
+						...(isEdit && status === 'CLOSED'
 							? {}
 							: { end_date: convertedDate.split('T')[0] })
 					},
@@ -608,15 +608,15 @@ const UploadOrEditQuiz = ({
 			if (isEdit) {
 				let images = questionSlides?.map(async (item, index) => {
 					let quesData;
-					if (item?.data[index]?.uploadedFiles[0]?.file) {
+					if (item?.data[0]?.uploadedFiles[0]?.file) {
 						quesData = await uploadFileToServer(
-							item?.data[index]?.uploadedFiles[0],
+							item?.data[0]?.uploadedFiles[0],
 							'questionlibrary'
 						);
 
 						return quesData;
 					} else {
-						quesData = item?.data[index]?.uploadedFiles[0];
+						quesData = item?.data[0]?.uploadedFiles[0];
 						return quesData;
 					}
 				});
@@ -662,7 +662,7 @@ const UploadOrEditQuiz = ({
 					if (item?.data[0]?.uploadedFiles?.length) {
 						if (item?.data[0]?.uploadedFiles[0]?.file) {
 							quesData = await uploadFileToServer(
-								item?.data[index]?.uploadedFiles[0],
+								item?.data[0]?.uploadedFiles[0],
 								'questionlibrary'
 							);
 
@@ -895,7 +895,7 @@ const UploadOrEditQuiz = ({
 																	index={index}
 																	// sortingPosition={item?.position}
 																	type={questionType}
-																	key={item.sortOrder}
+																	key={item.position + 1}
 																	status={status}
 																	endDate={form.end_date}
 																	sendDataToParent={(data) =>

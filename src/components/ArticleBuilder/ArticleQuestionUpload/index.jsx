@@ -90,19 +90,7 @@ const ArticleQuestionUpload = ({
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
 
-	console.log(initialData, 'initialData');
-	// useEffect(() => {
-	// 	if (type !== initialData) {
-	// 		setForm({
-	// 			uploadedFiles: [],
-	// 			dropbox_url: '',
-	// 			question: '',
-	// 			answers: [],
-	// 			labels: [],
-	// 			question_type: type
-	// 		});
-	// 	}
-	// }, [type]);
+	// console.log(initialData, 'initialData');
 
 	console.log(initialData, type, 'initialData');
 
@@ -154,19 +142,14 @@ const ArticleQuestionUpload = ({
 		}
 	}, [isEdit]);
 
-	// useEffect(() => {
-	// 	if (!initialData?.question_id) {
-	// 		console.log('KAKAKAKA');
-	// 		sendDataToParent({
-	// 			question_type:
-	// 				type !== initialData?.question_type && type === 'quiz'
-	// 					? 'quiz'
-	// 					: type !== initialData?.question_type && type === 'poll'
-	// 					? 'poll'
-	// 					: type
-	// 		});
-	// 	}
-	// }, []);
+	useEffect(() => {
+		if (!initialData?.question_id) {
+			// console.log('KAKAKAKA');
+			sendDataToParent({
+				question_type: type === 'quiz' ? 'quiz' : 'poll'
+			});
+		}
+	}, []);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
