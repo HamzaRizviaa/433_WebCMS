@@ -461,7 +461,7 @@ export const useStyles = makeStyles(() => ({
 	//search and error msgs
 
 	searchField: {
-		width: '271px'
+		width: '300px'
 	},
 
 	searchIcon: {

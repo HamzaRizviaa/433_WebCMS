@@ -4,9 +4,8 @@
 import React, { useState, useEffect, forwardRef, useCallback } from 'react';
 import Layout from '../../components/layout';
 import Table from '../../components/table';
-// import classes from './_articleLibrary.module.scss';
 import Button from '../../components/button';
-import _debounce from 'lodash/debounce';
+// import _debounce from 'lodash/debounce';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Tooltip from '@mui/material/Tooltip';
@@ -37,6 +36,7 @@ import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
 import DefaultImage from '../../assets/defaultImage.png';
 import { useStyles as globalUseStyles } from '../../styles/global.style';
+
 const ArticleLibrary = () => {
 	// Selectors
 	const articles = useSelector((state) => state.ArticleLibraryStore.articles);
@@ -110,15 +110,6 @@ const ArticleLibrary = () => {
 										page,
 										startDate,
 										endDate,
-										fromCalendar: true,
-										...sortState
-									})
-								);
-							} else {
-								dispatch(
-									getAllArticlesApi({
-										q: search,
-										page,
 										fromCalendar: true,
 										...sortState
 									})
@@ -396,13 +387,15 @@ const ArticleLibrary = () => {
 		}
 	];
 
-	const onRowClick = (e, row) => {
-		row.status === 'draft' && dispatch(getAllNewLabels());
-		dispatch(getSpecificArticle(row.id));
-		setEdit(true);
-		setShowSlider(true);
-		setRowStatus(row?.status);
-	}
+	const tableRowEvents = {
+		onClick: (e, row) => {
+			row.status === 'draft' && dispatch(getAllNewLabels());
+			dispatch(getSpecificArticle(row.id));
+			setEdit(true);
+			setShowSlider(true);
+			setRowStatus(row?.status);
+		}
+	};
 
 	const handleChange = (event, value) => {
 		setPage(value);
@@ -499,39 +492,55 @@ const ArticleLibrary = () => {
 		}
 	}, [page]);
 
-	const handleDebounceFun = () => {
-		let _search;
-		setSearch((prevState) => {
-			_search = prevState;
-			return _search;
-		});
-		if (_search) {
+	// const handleDebounceFun = () => {
+	// 	let _search;
+	// 	setSearch((prevState) => {
+	// 		_search = prevState;
+	// 		return _search;
+	// 	});
+	// 	if (_search) {
+	// 		dispatch(
+	// 			getAllArticlesApi({
+	// 				q: _search,
+	// 				page: 1,
+	// 				startDate: formatDate(dateRange[0]),
+	// 				endDate: formatDate(dateRange[1]),
+	// 				...sortState
+	// 			})
+	// 		);
+	// 	} else {
+	// 		dispatch(
+	// 			getAllArticlesApi({
+	// 				page: 1,
+	// 				startDate: formatDate(dateRange[0]),
+	// 				endDate: formatDate(dateRange[1]),
+	// 				...sortState
+	// 			})
+	// 		);
+	// 	}
+	// 	setPage(1);
+	// };
+
+	// const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
+	// const handleChangeSearch = (e) => {
+	// 	setSearch(e.target.value);
+	// 	debounceFun(e.target.value);
+	// };
+
+	const handleDateChange = (dateRange) => {
+		setDateRange(dateRange);
+
+		const [start, end] = dateRange;
+
+		if (!start && !end) {
 			dispatch(
 				getAllArticlesApi({
-					q: _search,
-					page: 1,
-					startDate: formatDate(dateRange[0]),
-					endDate: formatDate(dateRange[1]),
-					...sortState
-				})
-			);
-		} else {
-			dispatch(
-				getAllArticlesApi({
-					page: 1,
-					startDate: formatDate(dateRange[0]),
-					endDate: formatDate(dateRange[1]),
+					q: search,
+					page,
 					...sortState
 				})
 			);
 		}
-		setPage(1);
-	};
-
-	const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
-	const handleChangeSearch = (e) => {
-		setSearch(e.target.value);
-		debounceFun(e.target.value);
 	};
 
 	return (
@@ -587,13 +596,10 @@ const ArticleLibrary = () => {
 										);
 									}
 								}}
-								// onChange={(e) => {
-
-								// 	setSearch(e.target.value);
-								// 	//setIsSearch(true);
-								// }}
-								onChange={handleChangeSearch}
-								placeholder={'Search post, user, label'}
+								onChange={(e) => {
+									setSearch(e.target.value);
+								}}
+								placeholder='Search for Article, User, Label, ID'
 								InputProps={{
 									disableUnderline: true,
 									className: classes.textFieldInput,
@@ -601,29 +607,29 @@ const ArticleLibrary = () => {
 									endAdornment: (
 										<InputAdornment>
 											<Search
-												// onClick={() => {
-												// 	console.log('search onclick');
-												// 	if (search) {
-												// 		dispatch(
-												// 			getAllArticlesApi({
-												// 				q: search,
-												// 				page,
-												// 				startDate: formatDate(dateRange[0]),
-												// 				endDate: formatDate(dateRange[1]),
-												// 				...sortState
-												// 			})
-												// 		);
-												// 	} else {
-												// 		dispatch(
-												// 			getAllArticlesApi({
-												// 				page,
-												// 				startDate: formatDate(dateRange[0]),
-												// 				endDate: formatDate(dateRange[1]),
-												// 				...sortState
-												// 			})
-												// 		);
-												// 	}
-												// }}
+												onClick={() => {
+													console.log('search onclick');
+													if (search) {
+														dispatch(
+															getAllArticlesApi({
+																q: search,
+																page,
+																startDate: formatDate(dateRange[0]),
+																endDate: formatDate(dateRange[1]),
+																...sortState
+															})
+														);
+													} else {
+														dispatch(
+															getAllArticlesApi({
+																page,
+																startDate: formatDate(dateRange[0]),
+																endDate: formatDate(dateRange[1]),
+																...sortState
+															})
+														);
+													}
+												}}
 												className={classes.searchIcon}
 											/>
 										</InputAdornment>
@@ -639,9 +645,7 @@ const ArticleLibrary = () => {
 								startDate={startDate}
 								endDate={endDate}
 								maxDate={new Date()}
-								onChange={(update) => {
-									setDateRange(update);
-								}}
+								onChange={handleDateChange}
 								placement='center'
 								isClearable={true}
 							/>
@@ -650,7 +654,7 @@ const ArticleLibrary = () => {
 					</div>
 				</div>
 				<div className={classes.tableContainer}>
-					<Table columns={columns} data={articles} onRowClick={onRowClick}/>
+					<Table rowEvents={tableRowEvents} columns={columns} data={articles} />
 				</div>
 				<div className={classes.paginationRow}>
 					<Pagination

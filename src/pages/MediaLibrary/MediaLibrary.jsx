@@ -4,7 +4,7 @@
 import React, { forwardRef, useCallback, useEffect, useState } from 'react';
 import { Markup } from 'interweave';
 import DatePicker from 'react-datepicker';
-import _debounce from 'lodash/debounce';
+// import _debounce from 'lodash/debounce';
 import { useNavigate } from 'react-router-dom';
 
 // Redux
@@ -50,6 +50,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
+
 const MediaLibrary = () => {
 	const muiClasses = useStyles();
 	const muiClasses2 = useStyles2();
@@ -164,15 +165,6 @@ const MediaLibrary = () => {
 										...sortState
 									})
 								);
-							} else {
-								dispatch(
-									getMedia({
-										q: search,
-										page: 1,
-										fromCalendar: true,
-										...sortState
-									})
-								);
 							}
 							setPage(1);
 						}}
@@ -181,7 +173,6 @@ const MediaLibrary = () => {
 			</div>
 		);
 	});
-
 	const handleChange = (event, value) => {
 		setPage(value);
 	};
@@ -572,49 +563,14 @@ const MediaLibrary = () => {
 		}
 	];
 
-	const onRowClick = (e, row) => {
-		row.status === 'draft' && dispatch(getAllNewLabels());
-		dispatch(getSpecificMedia(row.id));
-		setrowStatus(row.status);
-		setEdit(true);
-		setShowSlider(true);
-	}
-
-	const handleDebounceFun = () => {
-		let _search;
-		setSearch((prevState) => {
-			_search = prevState;
-			return _search;
-		});
-
-		if (_search) {
-			dispatch(
-				getMedia({
-					q: _search,
-					page: 1,
-					startDate: formatDate(dateRange[0]),
-					endDate: formatDate(dateRange[1]),
-					...sortState
-				})
-			);
-		} else {
-			dispatch(
-				getMedia({
-					page: 1,
-					startDate: formatDate(dateRange[0]),
-					endDate: formatDate(dateRange[1]),
-					...sortState
-				})
-			);
+	const tableRowEvents = {
+		onClick: (e, row) => {
+			row.status === 'draft' && dispatch(getAllNewLabels());
+			dispatch(getSpecificMedia(row.id));
+			setrowStatus(row.status);
+			setEdit(true);
+			setShowSlider(true);
 		}
-		setPage(1);
-	};
-
-	const debounceFun = useCallback(_debounce(handleDebounceFun, 600), []);
-
-	const handleChangeSearch = (e) => {
-		setSearch(e.target.value);
-		debounceFun(e.target.value);
 	};
 
 	useEffect(() => {
@@ -623,6 +579,22 @@ const MediaLibrary = () => {
 			tableBody.scrollTop = 0;
 		}
 	}, [page]);
+
+	const handleDateChange = (dateRange) => {
+		setDateRange(dateRange);
+
+		const [start, end] = dateRange;
+
+		if (!start && !end) {
+			dispatch(
+				getMedia({
+					q: search,
+					page,
+					...sortState
+				})
+			);
+		}
+	};
 
 	return (
 		<LoadingOverlay
@@ -654,37 +626,63 @@ const MediaLibrary = () => {
 							<TextField
 								className={`${classes.searchField} ${muiClasses2.root}`}
 								value={search}
-								// onKeyPress={(e) => {
-								// 	if (e.key === 'Enter' && search) {
-								// 		dispatch(
-								// 			getMedia({
-								// 				q: search,
-								// 				page,
-								// 				startDate: formatDate(dateRange[0]),
-								// 				endDate: formatDate(dateRange[1]),
-								// 				...sortState
-								// 			})
-								// 		);
-								// 	} else if (e.key === 'Enter' && !search) {
-								// 		dispatch(
-								// 			getMedia({
-								// 				page,
-								// 				startDate: formatDate(dateRange[0]),
-								// 				endDate: formatDate(dateRange[1]),
-								// 				...sortState
-								// 			})
-								// 		);
-								// 	}
-								// }}
-								onChange={handleChangeSearch}
-								placeholder={'Search post, user, label'}
+								onKeyPress={(e) => {
+									if (e.key === 'Enter' && search) {
+										dispatch(
+											getMedia({
+												q: search,
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									} else if (e.key === 'Enter' && !search) {
+										dispatch(
+											getMedia({
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									}
+								}}
+								onChange={(e) => {
+									setSearch(e.target.value);
+								}}
+								placeholder='Search for Media, User, Label, ID'
 								InputProps={{
 									disableUnderline: true,
 									className: classes.textFieldInput,
 									style: { borderColor: noResultBorder },
 									endAdornment: (
 										<InputAdornment>
-											<Search className={classes.searchIcon} />
+											<Search
+												onClick={() => {
+													if (search) {
+														dispatch(
+															getMedia({
+																q: search,
+																page,
+																startDate: formatDate(dateRange[0]),
+																endDate: formatDate(dateRange[1]),
+																...sortState
+															})
+														);
+													} else {
+														dispatch(
+															getMedia({
+																page,
+																startDate: formatDate(dateRange[0]),
+																endDate: formatDate(dateRange[1]),
+																...sortState
+															})
+														);
+													}
+												}}
+												className={classes.searchIcon}
+											/>
 										</InputAdornment>
 									)
 								}}
@@ -698,9 +696,7 @@ const MediaLibrary = () => {
 								startDate={startDate}
 								endDate={endDate}
 								maxDate={new Date()}
-								onChange={(update) => {
-									setDateRange(update);
-								}}
+								onChange={handleDateChange}
 								placement='center'
 								isClearable={true}
 							/>
@@ -709,9 +705,8 @@ const MediaLibrary = () => {
 					</div>
 				</div>
 				<div className={classes.tableContainer}>
-					<Table columns={columns} data={media} onRowClick={onRowClick}/>
+					<Table rowEvents={tableRowEvents} columns={columns} data={media} />
 				</div>
-
 				<div className={classes.paginationRow}>
 					<Pagination
 						className={muiClasses.root}

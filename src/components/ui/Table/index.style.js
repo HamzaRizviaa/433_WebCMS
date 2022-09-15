@@ -2,9 +2,10 @@ import { makeStyles } from "@material-ui/core";
 
 export const useStyles = makeStyles(() => ({
     tableContainer: {
+        margin: ' 1rem 0rem',
         "& .table": {
             width: '100%',
-            borderCollapse: 'seperate',
+            borderCollapse: 'separate',
             borderSpacing: '0px 10px',
             "& tr th": {
                 position: 'relative'
@@ -36,7 +37,6 @@ export const useStyles = makeStyles(() => ({
         }
     },
     tableHeader: {
-        "& .table-header": {
             "& th": {
                 fontSize: '1rem',
                 fontWeight: 'bold',
@@ -44,6 +44,5 @@ export const useStyles = makeStyles(() => ({
                 textAlign: 'initial',
                 textTransform: 'uppercase'
             }
-        }
     }
 }))

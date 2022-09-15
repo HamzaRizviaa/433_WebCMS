@@ -114,15 +114,6 @@ const NewsLibrary = () => {
 										...sortState
 									})
 								);
-							} else {
-								dispatch(
-									getAllNews({
-										q: search,
-										page,
-										fromCalendar: true,
-										...sortState
-									})
-								);
 							}
 						}}
 					/>
@@ -398,23 +389,15 @@ const NewsLibrary = () => {
 		}
 	];
 
-	// const tableRowEvents = {
-	// 	onClick: (e, row) => {
-	// 		row.status === 'draft' && dispatch(getAllNewLabels());
-	// 		dispatch(getSpecificNews(row.id));
-	// 		setEdit(true);
-	// 		setrowStatus(row.status); // pass in slider
-	// 		setShowSlider(true);
-	// 	}
-	// };
-
-	const onRowClick = (e, row) => {
-		row.status === 'draft' && dispatch(getAllNewLabels());
-		dispatch(getSpecificNews(row.id));
-		setEdit(true);
-		setrowStatus(row.status); // pass in slider
-		setShowSlider(true);
-	}
+	const tableRowEvents = {
+		onClick: (e, row) => {
+			row.status === 'draft' && dispatch(getAllNewLabels());
+			dispatch(getSpecificNews(row.id));
+			setEdit(true);
+			setrowStatus(row.status); // pass in slider
+			setShowSlider(true);
+		}
+	};
 
 	const handleChange = (event, value) => {
 		setPage(value);
@@ -502,6 +485,22 @@ const NewsLibrary = () => {
 		};
 	}, []);
 
+	const handleDateChange = (dateRange) => {
+		setDateRange(dateRange);
+
+		const [start, end] = dateRange;
+
+		if (!start && !end) {
+			dispatch(
+				getAllNews({
+					q: search,
+					page,
+					...sortState
+				})
+			);
+		}
+	};
+
 	return (
 		<LoadingOverlay
 			active={newsApiStatus.status === 'pending' ? true : false}
@@ -558,7 +557,7 @@ const NewsLibrary = () => {
 									setSearch(e.target.value);
 									//setIsSearch(true);
 								}}
-								placeholder={'Search news, user, label'}
+								placeholder='Search for News, User, Label, ID'
 								InputProps={{
 									disableUnderline: true,
 									className: classes.textFieldInput,
@@ -603,9 +602,7 @@ const NewsLibrary = () => {
 								startDate={startDate}
 								endDate={endDate}
 								maxDate={new Date()}
-								onChange={(update) => {
-									setDateRange(update);
-								}}
+								onChange={handleDateChange}
 								placement='center'
 								isClearable={true}
 							/>
@@ -614,7 +611,7 @@ const NewsLibrary = () => {
 					</div>
 				</div>
 				<div className={classes.tableContainer}>
-					<Table columns={columns} data={allNews} onRowClick={onRowClick} />
+					<Table rowEvents={tableRowEvents} columns={columns} data={allNews} />
 				</div>
 
 				<div className={classes.paginationRow}>
