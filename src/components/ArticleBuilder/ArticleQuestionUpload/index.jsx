@@ -514,7 +514,7 @@ const ArticleQuestionUpload = ({
 								value={
 									initialData?.answers && initialData?.question_type === 'quiz'
 										? initialData?.answers?.find(
-												(item) => item.type === 'wrong_answer'
+												(item) => item.type === 'wrong_answer_1'
 										  )?.answer
 										: form.answers[1]?.answer
 								}
