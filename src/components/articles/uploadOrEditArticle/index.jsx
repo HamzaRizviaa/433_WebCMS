@@ -605,6 +605,7 @@ const UploadOrEditArticle = ({
 				};
 			});
 		}
+		// console.log(elementsData, 'elementsData');
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/article/post-article`,

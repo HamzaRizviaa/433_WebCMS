@@ -52,9 +52,16 @@ const DraggableContainers = ({
 	const imgRef = useRef(null);
 	const loadingRef = useRef(null);
 
+	{
+		console.log(key, item.sortOrder, '------- KEY DRAGGABLE ------- ');
+	}
 	return (
 		<div>
-			<Draggable draggableId={`draggable-${index}`} index={index} key={key}>
+			<Draggable
+				draggableId={`draggable-${index}`}
+				index={index}
+				key={item.sortOrder}
+			>
 				{(provided) => (
 					<div
 						ref={provided.innerRef}
@@ -63,6 +70,7 @@ const DraggableContainers = ({
 							...provided.draggableProps.style
 						}}
 					>
+						{console.log(key, index, '------- DRAGGABLE ------- ')}
 						<div
 							className={
 								location === 'article'

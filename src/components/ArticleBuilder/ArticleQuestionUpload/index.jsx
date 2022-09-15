@@ -89,6 +89,19 @@ const ArticleQuestionUpload = ({
 	// const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
+	console.log(initialData, 'initialData');
+	// useEffect(() => {
+	// 	if (type !== initialData) {
+	// 		setForm({
+	// 			uploadedFiles: [],
+	// 			dropbox_url: '',
+	// 			question: '',
+	// 			answers: [],
+	// 			labels: [],
+	// 			question_type: type
+	// 		});
+	// 	}
+	// }, [type]);
 
 	useEffect(() => {
 		validateForm(form);
