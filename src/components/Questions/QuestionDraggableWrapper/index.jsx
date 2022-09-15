@@ -6,7 +6,7 @@ const QuestionDraggable = ({ children, onDragEnd }) => {
 	return (
 		<div>
 			<DragDropContext onDragEnd={onDragEnd}>
-				<Droppable droppableId='newsDroppable-1'>
+				<Droppable droppableId='draggable-1'>
 					{(provided) => (
 						<div {...provided.droppableProps} ref={provided.innerRef}>
 							{children}

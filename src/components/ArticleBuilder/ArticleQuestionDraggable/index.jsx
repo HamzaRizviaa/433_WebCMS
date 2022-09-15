@@ -135,7 +135,7 @@ const ArticleQuestionDraggable = ({
 										</TabPanelUnstyled>
 									) : initialData?.question_id &&
 									  item?.data?.question_type === 'quiz' ? (
-										<TabPanelUnstyled value={0}>
+										<TabPanelUnstyled value={1}>
 											<ArticleQuestionUpload
 												item={item}
 												key={key}

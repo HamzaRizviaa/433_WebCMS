@@ -88,7 +88,7 @@ const Labels = ({
 		debounceFun(e.target.value.toUpperCase());
 	};
 	// debugger
-	console.log('classes', titleClasses);
+	// console.log('classes', titleClasses);
 	return (
 		<div>
 			<Box
