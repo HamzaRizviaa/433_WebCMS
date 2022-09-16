@@ -375,7 +375,7 @@ export const useStyles = makeStyles((theme) => ({
 		}
 	},
 	horizontalLine: {
-		color: theme.palette.grey
+		color: theme.palette.normalGrey
 	},
 
 	socialmediaDrags: {

@@ -80,7 +80,7 @@ export const useStyles = makeStyles(() => ({
 		width: '100%',
 		padding: '3px 0',
 		color: `${theme.palette.white} !important`,
-		border: `1px solid ${theme.palette.grey}`,
+		border: `1px solid ${theme.palette.normalGrey}`,
 		fontSize: ' 1.4rem !important',
 		lineHeight: '1.6 !important',
 		borderRadius: '5rem !important',
@@ -100,7 +100,7 @@ export const useStyles = makeStyles(() => ({
 
 	textFieldInput2: {
 		color: ` ${theme.palette.white} !important`,
-		border: `0.01px solid ${theme.palette.grey}`,
+		border: `0.01px solid ${theme.palette.normalGrey}`,
 		padding: '1rem 1rem 1rem 1.5rem !important',
 		fontSize: '1.4rem !important',
 		lineHeight: '1.6 !important',
@@ -260,7 +260,7 @@ export const useStyles = makeStyles(() => ({
 
 	// dimensionWrapper: {
 	// 	borderRadius: '8px',
-	// 	backgroundColor: theme.palette.grey,
+	// 	backgroundColor: theme.palette.normalGrey,
 	// 	display: 'flex',
 	// 	alignItems: 'center',
 	// 	justifyContent: 'space-between',
@@ -281,7 +281,7 @@ export const useStyles = makeStyles(() => ({
 
 	// previewComponent: {
 	// 	width: '35%',
-	// 	borderLeft: `1px solid ${theme.palette.grey}`,
+	// 	borderLeft: `1px solid ${theme.palette.normalGrey}`,
 	// 	marginLeft: '3rem',
 	// 	paddingLeft: '3rem',
 	// 	marginBottom: '10rem'

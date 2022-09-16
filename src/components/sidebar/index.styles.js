@@ -22,7 +22,7 @@ export const useStyles = makeStyles(() => ({
 	iconWrapper: {
 		marginTop: '2.5rem',
 		padding: '1rem 1.2rem 0.8rem 1.2rem',
-		border:'2px solid transparent',
+		border: '2px solid transparent',
 		borderRadius: '8px',
 		cursor: 'pointer'
 	},
@@ -55,7 +55,7 @@ export const useStyles = makeStyles(() => ({
 	},
 	mainActiveRoute: {
 		border: `2px solid ${theme.palette.black}`,
-		backgroundColor: theme.palette.grey,
+		backgroundColor: theme.palette.normalGrey,
 		marginTop: '2.5rem',
 		padding: '1rem 1.2rem 0.8rem 1.2rem',
 		borderRadius: '8px',
@@ -88,7 +88,7 @@ export const useStyles = makeStyles(() => ({
 
 		'& .iconWrapper': {
 			backgroundColor: theme.palette.neonYellow,
-			border:'2px solid transparent',
+			border: '2px solid transparent',
 			marginTop: '2.5rem',
 			padding: '1rem 1.2rem 0.8rem 1.2rem',
 			borderRadius: '8px',
@@ -156,7 +156,7 @@ export const useStyles = makeStyles(() => ({
 		justifyContent: 'space-between',
 		padding: '3rem 1rem',
 		'& .iconWrapperDev': {
-			border:'2px solid transparent',
+			border: '2px solid transparent',
 			marginTop: '2.5rem',
 			padding: '1rem 1.2rem 0.8rem 1.2rem',
 			borderRadius: '8px',
@@ -212,13 +212,13 @@ export const useStyles = makeStyles(() => ({
 		backgroundColor: theme.palette.black,
 		height: ' calc(100vh - 6rem)',
 		width: '5rem',
-		borderRight: `1.5px solid ${theme.palette.grey}`,
+		borderRight: `1.5px solid ${theme.palette.normalGrey}`,
 		display: 'flex',
 		flexDirection: 'column',
 		justifyContent: 'space-between',
 		padding: '3rem 1rem',
 		'& .iconWrapperDev': {
-			border:'2px solid transparent',
+			border: '2px solid transparent',
 			marginTop: '2.5rem',
 			padding: '1rem 1.2rem 0.8rem 1.2rem',
 			borderRadius: '8px',
@@ -260,7 +260,7 @@ export const useStyles = makeStyles(() => ({
 		color: `${theme.palette.white} !important`
 	},
 	prodActiveRoute: {
-		backgroundColor: theme.palette.grey,
+		backgroundColor: theme.palette.normalGrey,
 		marginTop: '2.5rem',
 		padding: '1rem 1.2rem 0.8rem 1.2rem',
 		borderRadius: '8px',
