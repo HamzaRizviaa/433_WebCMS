@@ -177,13 +177,44 @@ const QuestionForm = ({
 	}, [extraLabel]);
 
 	const handleNewAnswer = () => {
+		// setForm((prev) => {
+		// 	return {
+		// 		...prev,
+		// 		answers: [...form.answers, { answer: '' }]
+		// 	};
+		// });
+		// let answers = { answers: [...form.answers, { answer: '' }] };
+		// sendDataToParent(answers);
+
+		const answers = [
+			...(initialData?.answers?.length === 0
+				? [
+						{
+							answer: '',
+							type: type === 'poll' ? 'poll' : 'right_answer',
+							position: 0
+						},
+						{
+							answer: '',
+							type:
+								location === 'article'
+									? 'wrong_answer'
+									: type === 'poll'
+									? 'poll'
+									: 'wrong_answer_1',
+							position: 1
+						}
+				  ]
+				: initialData?.answers?.length > 0
+				? initialData?.answers
+				: form.answers)
+		];
 		setForm((prev) => {
 			return {
 				...prev,
-				answers: [...form.answers, { answer: '' }]
+				answers: [...answers, { answer: '' }]
 			};
 		});
-		let answers = { answers: [...form.answers, { answer: '' }] };
 		sendDataToParent(answers);
 	};
 
@@ -253,7 +284,7 @@ const QuestionForm = ({
 					? initialData?.answers
 					: form.answers)
 			];
-
+			console.log(answers, 'answers');
 			answers[index] = {
 				answer: event.target.value,
 				position: index,
