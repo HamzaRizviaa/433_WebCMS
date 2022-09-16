@@ -229,9 +229,29 @@ const QuestionForm = ({
 		} else {
 			// This block of code will only be executed if the question is in draft
 			// Then only the question answers will be editable
-			const isAnswersEdited = initialData && initialData.answers;
+			// const isAnswersEdited = initialData && initialData.answers;
 			const answers = [
-				...(isAnswersEdited ? initialData.answers : [...form.answers])
+				...(initialData?.answers?.length === 0
+					? [
+							{
+								answer: '',
+								type: type === 'poll' ? 'poll' : 'right_answer',
+								position: 0
+							},
+							{
+								answer: '',
+								type:
+									location === 'article'
+										? 'wrong_answer'
+										: type === 'poll'
+										? 'poll'
+										: 'wrong_answer_1',
+								position: 1
+							}
+					  ]
+					: initialData?.answers?.length > 0
+					? initialData?.answers
+					: [...form.answers])
 			];
 
 			answers[index] = {
@@ -405,12 +425,13 @@ const QuestionForm = ({
 					</p>
 					{form?.answers?.length > 0 &&
 						form?.answers.map((item, index) => {
+							console.log(item, 'item in answer');
 							return (
 								<div
 									className={classes.titleContainer}
 									item={item}
 									index={index}
-									key={item.sortOrder}
+									key={item.position}
 								>
 									<div className={globalClasses.characterCount}>
 										<h6
