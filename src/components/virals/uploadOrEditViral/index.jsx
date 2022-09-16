@@ -149,11 +149,11 @@ const UploadOrEditViral = ({
 			if (status === 'draft') {
 				if (specificViral?.translations) {
 					setTranslatedOnEdit(false);
-					setTranslatedLanguages(specificViral?.translations);
 				} else {
 					setTranslatedOnEdit(true);
 				}
 			}
+			setTranslatedLanguages(specificViral?.translations);
 			setCaptionValue(specificViral?.caption);
 			setForm((prev) => {
 				return {
@@ -399,10 +399,7 @@ const UploadOrEditViral = ({
 					// ...(form.show_likes ? { show_likes: true } : {}),
 					// ...(form.show_comments ? { show_comments: true } : {}),
 					...(isEdit && id ? { viral_id: id } : {}),
-					...((!isEdit || status !== 'published') &&
-					(form.labels?.length || status == 'draft')
-						? { labels: [...form.labels] }
-						: {})
+					...(form.labels?.length ? { labels: [...form.labels] } : {})
 					// ...(status !== 'published' && form.labels?.length
 					// 	? { labels: [...form.labels] }
 					// 	: {})
@@ -884,11 +881,16 @@ const UploadOrEditViral = ({
 											onChange={(e) => {
 												if (translated && lang?.shortName === 'en') {
 													setTranslated(false);
+													setTranslatedLanguages();
 												}
 												if (isEdit && lang?.shortName === 'en') {
 													setTranslatedOnEdit(true);
+													setTranslatedLanguages();
 												}
-												handletranslatedLanguages(e);
+												if (lang?.shortName !== 'en') {
+													handletranslatedLanguages(e);
+												}
+
 												setForm((prev) => {
 													return { ...prev, caption: e.target.value };
 												});
