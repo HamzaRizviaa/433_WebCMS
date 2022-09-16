@@ -674,7 +674,7 @@ const QuestionLibrary = () => {
 						data={questions}
 					/>
 				</div>
-
+				
 				<div className={classes.paginationRow}>
 					<Pagination
 						className={muiClasses.root}
@@ -710,6 +710,7 @@ const QuestionLibrary = () => {
 						className={classes.gotoInput}
 					/>
 				</div>
+				
 				{/* upload */}
 				<UploadOrEditQuiz
 					open={showSlider}
