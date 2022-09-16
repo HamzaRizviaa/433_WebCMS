@@ -89,7 +89,6 @@ const ArticleQuestionUpload = ({
 	// const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
-	console.log(initialData, 'initialData');
 	// useEffect(() => {
 	// 	if (type !== initialData) {
 	// 		setForm({

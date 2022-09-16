@@ -210,7 +210,7 @@ const QuestionForm = ({
 			sendDataToParent(answers);
 		}
 	};
-	console.log(initialData, 'initialData');
+
 	const handleAnswerChange = (event, index) => {
 		if (!isEdit) {
 			const formCopy = { ...form };
@@ -234,7 +234,7 @@ const QuestionForm = ({
 			const answers = [
 				...(isAnswersEdited ? initialData.answers : [...form.answers])
 			];
-			console.log(answers, isAnswersEdited, 'answer');
+
 			answers[index] = {
 				answer: event.target.value,
 				position: index,
@@ -250,8 +250,6 @@ const QuestionForm = ({
 			sendDataToParent({ answers });
 		}
 	};
-
-	console.log(form, 'form');
 
 	return (
 		<>
