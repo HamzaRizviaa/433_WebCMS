@@ -54,11 +54,7 @@ const DraggableContainers = ({
 
 	return (
 		<div>
-			<Draggable
-				draggableId={`draggable-${index}`}
-				index={index}
-				key={item.sortOrder}
-			>
+			<Draggable draggableId={`draggable-${index}`} index={index} key={key}>
 				{(provided) => (
 					<div
 						ref={provided.innerRef}

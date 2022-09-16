@@ -149,11 +149,11 @@ const UploadOrEditViral = ({
 			if (status === 'draft') {
 				if (specificViral?.translations) {
 					setTranslatedOnEdit(false);
-					setTranslatedLanguages(specificViral?.translations);
 				} else {
 					setTranslatedOnEdit(true);
 				}
 			}
+			setTranslatedLanguages(specificViral?.translations);
 			setCaptionValue(specificViral?.caption);
 			setForm((prev) => {
 				return {
@@ -325,6 +325,17 @@ const UploadOrEditViral = ({
 		}
 	}, [lang]);
 
+	const handletranslatedLanguages = (e) => {
+		if (translatedLanguages) {
+			let translatedLanguagesCopy = { ...translatedLanguages };
+			let selectedLanguage = lang?.shortName;
+			translatedLanguagesCopy[selectedLanguage] = { caption: e.target.value };
+			setTranslatedLanguages(translatedLanguagesCopy);
+		}
+	};
+
+	console.log(translatedLanguages, 'tL');
+
 	const translateAPI = async () => {
 		try {
 			const result = await axios.post(
@@ -361,7 +372,9 @@ const UploadOrEditViral = ({
 				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
 				{
 					save_draft: draft,
-					caption: form.caption,
+					caption: translatedLanguages
+						? translatedLanguages['en']?.caption
+						: form.caption,
 					dropbox_url: form.dropbox_url,
 					media_url: form.uploadedFiles.length
 						? file?.media_url?.split('cloudfront.net/')[1] || file?.media_url
@@ -375,7 +388,7 @@ const UploadOrEditViral = ({
 						: '',
 					height: fileHeight,
 					width: fileWidth,
-					translations: translated ? translatedLanguages : undefined,
+					translations: translatedLanguages ? translatedLanguages : undefined,
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -386,10 +399,7 @@ const UploadOrEditViral = ({
 					// ...(form.show_likes ? { show_likes: true } : {}),
 					// ...(form.show_comments ? { show_comments: true } : {}),
 					...(isEdit && id ? { viral_id: id } : {}),
-					...((!isEdit || status !== 'published') &&
-					(form.labels?.length || status == 'draft')
-						? { labels: [...form.labels] }
-						: {})
+					...(form.labels?.length ? { labels: [...form.labels] } : {})
 					// ...(status !== 'published' && form.labels?.length
 					// 	? { labels: [...form.labels] }
 					// 	: {})
@@ -489,10 +499,11 @@ const UploadOrEditViral = ({
 						specificViral?.show_likes === form.show_likes &&
 						specificViral?.show_comments === form.show_comments &&
 						specificViral?.labels?.length === form?.labels?.length &&
-						!checkDuplicateLabel())
+						!checkDuplicateLabel() &&
+						!translated)
 			);
 		}
-	}, [specificViral, form]);
+	}, [specificViral, form, translated]);
 
 	const checkDuplicateLabel = () => {
 		let formLabels = form?.labels?.map((formL) => {
@@ -866,14 +877,19 @@ const UploadOrEditViral = ({
 											onChange={(e) => {
 												if (translated && lang?.shortName === 'en') {
 													setTranslated(false);
+													setTranslatedLanguages();
 												}
 												if (isEdit && lang?.shortName === 'en') {
 													setTranslatedOnEdit(true);
+													setTranslatedLanguages();
 												}
+												if (lang?.shortName !== 'en') {
+													handletranslatedLanguages(e);
+												}
+
 												setForm((prev) => {
 													return { ...prev, caption: e.target.value };
 												});
-
 												setCaptionValue(e.target.value);
 											}}
 											placeholder={'Please write your caption here'}

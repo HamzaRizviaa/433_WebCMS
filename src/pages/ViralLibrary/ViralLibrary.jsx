@@ -638,7 +638,7 @@ const ViralLibrary = () => {
 				<div className={classes.tableContainer}>
 					<Table rowEvents={tableRowEvents} columns={columns} data={virals} />
 				</div>
-
+				
 				<div className={classes.paginationRow}>
 					<Pagination
 						className={muiClasses.root}

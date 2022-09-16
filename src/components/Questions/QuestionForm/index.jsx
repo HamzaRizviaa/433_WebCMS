@@ -33,7 +33,6 @@ const QuestionForm = ({
 	location
 }) => {
 	const [fileRejectionError, setFileRejectionError] = useState('');
-
 	const [quizLabels, setQuizLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [fileWidth, setFileWidth] = useState(0);
@@ -178,13 +177,44 @@ const QuestionForm = ({
 	}, [extraLabel]);
 
 	const handleNewAnswer = () => {
+		// setForm((prev) => {
+		// 	return {
+		// 		...prev,
+		// 		answers: [...form.answers, { answer: '' }]
+		// 	};
+		// });
+		// let answers = { answers: [...form.answers, { answer: '' }] };
+		// sendDataToParent(answers);
+
+		const answers = [
+			...(initialData?.answers?.length === 0
+				? [
+						{
+							answer: '',
+							type: type === 'poll' ? 'poll' : 'right_answer',
+							position: 0
+						},
+						{
+							answer: '',
+							type:
+								location === 'article'
+									? 'wrong_answer'
+									: type === 'poll'
+									? 'poll'
+									: 'wrong_answer_1',
+							position: 1
+						}
+				  ]
+				: initialData?.answers?.length > 0
+				? initialData?.answers
+				: form.answers)
+		];
 		setForm((prev) => {
 			return {
 				...prev,
-				answers: [...form.answers, { answer: '' }]
+				answers: [...answers, { answer: '' }]
 			};
 		});
-		let answers = { answers: [...form.answers, { answer: '' }] };
 		sendDataToParent(answers);
 	};
 
@@ -230,9 +260,29 @@ const QuestionForm = ({
 		} else {
 			// This block of code will only be executed if the question is in draft
 			// Then only the question answers will be editable
-			const isAnswersEdited = initialData && initialData.answers;
+			// const isAnswersEdited = initialData && initialData.answers;
 			const answers = [
-				...(isAnswersEdited ? initialData.answers : [...form.answers])
+				...(initialData?.answers?.length === 0
+					? [
+							{
+								answer: '',
+								type: type === 'poll' ? 'poll' : 'right_answer',
+								position: 0
+							},
+							{
+								answer: '',
+								type:
+									location === 'article'
+										? 'wrong_answer'
+										: type === 'poll'
+										? 'poll'
+										: 'wrong_answer_1',
+								position: 1
+							}
+					  ]
+					: initialData?.answers?.length > 0
+					? initialData?.answers
+					: form.answers)
 			];
 
 			answers[index] = {
@@ -273,9 +323,8 @@ const QuestionForm = ({
 						}}
 					/>
 
-					{(isEdit &&
-						(initialData?.uploadedFiles?.length === 0 ||
-							initialData?.uploadedFiles === undefined)) ||
+					{initialData?.uploadedFiles?.length === 0 ||
+					initialData?.uploadedFiles === undefined ||
 					(!isEdit && form?.uploadedFiles?.length === 0) ? (
 						<section
 							className={globalClasses.dropZoneContainer}
@@ -412,7 +461,7 @@ const QuestionForm = ({
 									className={classes.titleContainer}
 									item={item}
 									index={index}
-									key={item.sortOrder}
+									key={item.position}
 								>
 									<div className={globalClasses.characterCount}>
 										<h6
