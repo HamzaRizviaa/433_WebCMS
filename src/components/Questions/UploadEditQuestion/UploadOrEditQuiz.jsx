@@ -260,6 +260,8 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
+	console.log(questionSlides, 'QSS');
+
 	const updateDataFromAPI = (apiData, question_type, end_date) => {
 		let modifiedData = apiData?.map(({ id, position, ...rest }) => {
 			return {
