@@ -900,9 +900,7 @@ const UploadOrEditQuiz = ({
 																	handleDeleteQuestionSlide={(sortOrder) =>
 																		handleElementDelete(sortOrder)
 																	}
-																	initialData={
-																		isEdit && item?.data && item?.data[0]
-																	} // passing data to child
+																	initialData={item?.data && item?.data[0]} // passing data to child
 																	setPreviewFile={setPreviewFile}
 																	setPreviewBool={setPreviewBool}
 																	setDisableDropdown={setDisableDropdown}

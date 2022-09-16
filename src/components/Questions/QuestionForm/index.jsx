@@ -33,7 +33,6 @@ const QuestionForm = ({
 	location
 }) => {
 	const [fileRejectionError, setFileRejectionError] = useState('');
-
 	const [quizLabels, setQuizLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [fileWidth, setFileWidth] = useState(0);
@@ -273,9 +272,8 @@ const QuestionForm = ({
 						}}
 					/>
 
-					{(isEdit &&
-						(initialData?.uploadedFiles?.length === 0 ||
-							initialData?.uploadedFiles === undefined)) ||
+					{initialData?.uploadedFiles?.length === 0 ||
+					initialData?.uploadedFiles === undefined ||
 					(!isEdit && form?.uploadedFiles?.length === 0) ? (
 						<section
 							className={globalClasses.dropZoneContainer}
