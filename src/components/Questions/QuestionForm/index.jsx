@@ -230,9 +230,9 @@ const QuestionForm = ({
 		} else {
 			// This block of code will only be executed if the question is in draft
 			// Then only the question answers will be editable
-			const isAnswersEdited = initialData.data && initialData.data[0].answers;
+			const isAnswersEdited = initialData && initialData.answers;
 			const answers = [
-				...(isAnswersEdited ? initialData.data[0].answers : [...form.answers])
+				...(isAnswersEdited ? initialData.answers : [...form.answers])
 			];
 
 			answers[index] = {

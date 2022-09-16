@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import TabsUnstyled from '@mui/base/TabsUnstyled';
 import TabsListUnstyled from '@mui/base/TabsListUnstyled';
@@ -8,16 +8,13 @@ import { useStyles } from '../quizStyles';
 
 const QuestionTabPanes = ({ edit, setQuesType, resetSlides, type, status }) => {
 	const muiClasses = useStyles();
-	const [tab, setTab] = useState(0);
 
-	useEffect(() => {
-		if (edit) {
-			setTab(type === 'quiz' ? 1 : 0);
-		}
-	}, [edit]);
 	return (
 		<div className={muiClasses.root}>
-			<TabsUnstyled defaultValue={tab ? tab : 0} className={muiClasses.tabRoot}>
+			<TabsUnstyled
+				defaultValue={type === 'quiz' ? 1 : 0}
+				className={muiClasses.tabRoot}
+			>
 				<TabsListUnstyled className={muiClasses.tabMainDiv}>
 					<TabUnstyled
 						onClick={() => {

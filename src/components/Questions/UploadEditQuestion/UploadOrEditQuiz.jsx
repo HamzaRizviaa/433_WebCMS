@@ -306,7 +306,7 @@ const UploadOrEditQuiz = ({
 			questionSlides?.length > 0
 				? questionSlides.map((item, index) => {
 						if (!item.data)
-							return { ...item, position: index, sortOrder: index + 1 };
+							return { ...item, position: index + 1, sortOrder: index + 1 };
 						return {
 							height: item?.data[0] ? item?.data[0]?.height : 0,
 							width: item?.data[0] ? item?.data[0]?.width : 0,
@@ -322,7 +322,7 @@ const UploadOrEditQuiz = ({
 							question: item.data[0]?.question || '',
 							dropbox_url: item.data[0]?.dropbox_url || '',
 							sortOrder: index + 1,
-							position: index,
+							position: index + 1,
 							...(item.id ? { id: item?.id } : {})
 						};
 				  })
@@ -803,9 +803,12 @@ const UploadOrEditQuiz = ({
 																	!isEdit) && (
 																	<>
 																		<QuestionTabPanes
-																			edit={isEdit}
+																			edit={
+																				editQuestionData?.question_type &&
+																				isEdit
+																			}
 																			status={status}
-																			type={questionType}
+																			type={editQuestionData?.question_type}
 																			resetSlides={(type) => resetSlides(type)}
 																			setQuesType={(type) => setQuesType(type)}
 																		/>
@@ -883,8 +886,9 @@ const UploadOrEditQuiz = ({
 																	isEdit={isEdit}
 																	item={item}
 																	index={index}
+																	// sortingPosition={item?.position}
 																	type={questionType}
-																	key={item.sortOrder}
+																	key={item.position + 1}
 																	status={status}
 																	endDate={form.end_date}
 																	sendDataToParent={(data) =>

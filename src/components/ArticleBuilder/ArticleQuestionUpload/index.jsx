@@ -89,6 +89,18 @@ const ArticleQuestionUpload = ({
 	// const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
+	// useEffect(() => {
+	// 	if (type !== initialData) {
+	// 		setForm({
+	// 			uploadedFiles: [],
+	// 			dropbox_url: '',
+	// 			question: '',
+	// 			answers: [],
+	// 			labels: [],
+	// 			question_type: type
+	// 		});
+	// 	}
+	// }, [type]);
 
 	useEffect(() => {
 		validateForm(form);
@@ -225,6 +237,7 @@ const ArticleQuestionUpload = ({
 			};
 			setForm(formCopy);
 			let answers = { answers: formCopy.answers };
+
 			sendDataToParent(answers);
 		} else {
 			const formCopy = { ...form };
