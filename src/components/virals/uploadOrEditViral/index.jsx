@@ -146,9 +146,9 @@ const UploadOrEditViral = ({
 					};
 				});
 			}
-			if (status === 'draft') {
+			if (isEdit) {
 				if (specificViral?.translations) {
-					setTranslatedOnEdit(false);
+					setTranslatedOnEdit(false); // works in reverse logic of transalted(not Edit)
 				} else {
 					setTranslatedOnEdit(true);
 				}
@@ -334,7 +334,7 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	console.log(translatedLanguages, 'tL');
+	// console.log(translatedLanguages, 'tL');
 
 	const translateAPI = async () => {
 		try {
@@ -690,15 +690,25 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	// const handleButtonText = () => {
-	// 	if (translated && !isEdit) {
-	// 		return buttonText;
-	// 	} else if (isEdit && status === 'published' && !translated) {
-	// 		return buttonText;
-	// 	} else if (isEdit && status === 'published' && translated) {
-	// 		return 'TRANSLATE';
-	// 	}
-	// };
+	const handlePublishTranslateButtonText = () => {
+		if (!translated && !isEdit) {
+			return 'TRANSLATE';
+		} else if (isEdit && translatedOnEdit) {
+			return 'TRANSLATE';
+		} else {
+			return buttonText;
+		}
+	};
+
+	const handlePublishTranslateButtonOnClick = () => {
+		if (!translated && !isEdit) {
+			return handleTranslateBtn;
+		} else if (isEdit && translatedOnEdit) {
+			return handleTranslateBtn;
+		} else {
+			return handlePostSaveBtn;
+		}
+	};
 
 	return (
 		<>
@@ -954,7 +964,7 @@ const UploadOrEditViral = ({
 										<Divider color={'grey'} sx={{ mb: '10px' }} />
 										<TranslationCarousal lang={lang} setLang={setLang} />
 									</>
-								) : isEdit && status === 'draft' && !translatedOnEdit ? (
+								) : isEdit && !translatedOnEdit ? (
 									<>
 										<Divider color={'grey'} sx={{ mb: '10px' }} />
 										<TranslationCarousal lang={lang} setLang={setLang} />
@@ -1022,28 +1032,8 @@ const UploadOrEditViral = ({
 														? editBtnDisabled
 														: !validateForm(form)
 												}
-												onClick={
-													!translated && !isEdit
-														? handleTranslateBtn
-														: isEdit &&
-														  status === 'published' &&
-														  translatedOnEdit
-														? handleTranslateBtn
-														: isEdit && status === 'draft' && translatedOnEdit
-														? handleTranslateBtn
-														: handlePostSaveBtn
-												}
-												text={
-													!translated && !isEdit
-														? 'TRANSLATE'
-														: isEdit &&
-														  status === 'published' &&
-														  translatedOnEdit
-														? 'TRANSLATE'
-														: isEdit && status === 'draft' && translatedOnEdit
-														? 'TRANSLATE'
-														: buttonText
-												}
+												onClick={handlePublishTranslateButtonOnClick()}
+												text={handlePublishTranslateButtonText()}
 											/>
 										</div>
 									</div>
