@@ -237,6 +237,7 @@ const ArticleQuestionUpload = ({
 			};
 			setForm(formCopy);
 			let answers = { answers: formCopy.answers };
+
 			sendDataToParent(answers);
 		} else {
 			const formCopy = { ...form };
