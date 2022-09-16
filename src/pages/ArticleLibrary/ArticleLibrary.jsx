@@ -4,7 +4,6 @@
 import React, { useState, useEffect, forwardRef, useCallback } from 'react';
 import Layout from '../../components/layout';
 import Table from '../../components/table';
-// import classes from './_articleLibrary.module.scss';
 import Button from '../../components/button';
 // import _debounce from 'lodash/debounce';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -37,6 +36,7 @@ import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
 import DefaultImage from '../../assets/defaultImage.png';
 import { useStyles as globalUseStyles } from '../../styles/global.style';
+
 const ArticleLibrary = () => {
 	// Selectors
 	const articles = useSelector((state) => state.ArticleLibraryStore.articles);

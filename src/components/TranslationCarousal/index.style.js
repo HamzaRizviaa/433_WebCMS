@@ -6,7 +6,8 @@ export const useStyles = makeStyles(() => ({
 		marginBottom: '20px',
 		'& .MuiChip-root': {
 			marginLeft: '4px',
-			marginTop: '4px'
+			marginTop: '4px',
+			marginBottom: '2px'
 		},
 		'& .MuiChip-label': {
 			fontFamily: 'Poppins',
@@ -42,12 +43,18 @@ export const useStyles = makeStyles(() => ({
 		transition: 'all .3s ease-in-out',
 		transform: ({ slide }) => `translateX(${slide}px)`,
 		border: '1px solid grey !important',
-		color: 'grey !important'
+		color: 'grey !important',
+
+		'&:hover': {
+			color: 'yellow !important',
+			boxShadow: '0 1px 10px rgba(216, 204, 127, 1)'
+		}
 	},
 	activeChip: {
 		transition: 'all .3s ease-in-out',
 		transform: ({ slide }) => `translateX(${slide}px)`,
 		border: '1px solid yellow !important',
-		color: 'white !important'
+		color: 'white !important',
+		boxShadow: '0 1px 10px rgba(216, 204, 127, 1)'
 	}
 }));
