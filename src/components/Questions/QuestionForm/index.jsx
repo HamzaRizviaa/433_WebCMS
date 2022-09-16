@@ -284,7 +284,7 @@ const QuestionForm = ({
 					? initialData?.answers
 					: form.answers)
 			];
-			console.log(answers, 'answers');
+
 			answers[index] = {
 				answer: event.target.value,
 				position: index,
