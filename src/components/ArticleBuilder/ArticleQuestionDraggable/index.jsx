@@ -114,6 +114,7 @@ const ArticleQuestionDraggable = ({
 												: 'Edit Quiz'}
 										</div>
 									)}
+
 									{initialData?.question_id &&
 									item?.data?.question_type === 'poll' ? (
 										//&& status === 'published'
@@ -142,7 +143,7 @@ const ArticleQuestionDraggable = ({
 									) : initialData?.question_id &&
 									  item?.data?.question_type === 'quiz' ? (
 										// && status === 'published'
-										<TabPanelUnstyled value={0}>
+										<TabPanelUnstyled value={1}>
 											<ArticleQuestionUpload
 												item={item}
 												key={key}

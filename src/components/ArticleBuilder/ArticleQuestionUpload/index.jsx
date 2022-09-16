@@ -89,7 +89,6 @@ const ArticleQuestionUpload = ({
 	// const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
-	console.log(initialData, 'initialData');
 	// useEffect(() => {
 	// 	if (type !== initialData) {
 	// 		setForm({
@@ -238,6 +237,7 @@ const ArticleQuestionUpload = ({
 			};
 			setForm(formCopy);
 			let answers = { answers: formCopy.answers };
+
 			sendDataToParent(answers);
 		} else {
 			const formCopy = { ...form };

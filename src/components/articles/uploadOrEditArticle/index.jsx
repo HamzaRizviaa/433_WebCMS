@@ -126,8 +126,6 @@ const UploadOrEditArticle = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
-	console.log('DATA', data);
-	// console.log('FORM', form);
 
 	const elementData = [
 		{
@@ -605,7 +603,7 @@ const UploadOrEditArticle = ({
 				};
 			});
 		}
-		// console.log(elementsData, 'elementsData');
+
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/article/post-article`,
@@ -915,25 +913,6 @@ const UploadOrEditArticle = ({
 		setDataErrors(errors);
 	};
 
-	// const questionValidate = (item) => {
-	// 	console.log(item, 'item');
-	// 	var validate = Object.keys(item).map((key) => {
-	// 		if (!item[key]) {
-	// 			return true;
-	// 		} else {
-	// 			return false;
-	// 		}
-	// 	});
-	// 	console.log(validate, 'validate');
-	// 	var quesValidate = validate.some((item) => {
-	// 		item === true;
-	// 	});
-
-	// 	console.log(quesValidate, 'quesValidate');
-
-	// 	return quesValidate;
-	// };
-
 	useEffect(() => {
 		setDataErrors(Array(data.length).fill(false));
 	}, [data]);
@@ -942,18 +921,7 @@ const UploadOrEditArticle = ({
 		setIsError({
 			articleTitle: !form.title,
 			sub_text: !form.sub_text,
-			// elementUnfilled: data?.length ? data.every((item) =>  !item.data) : false,
-			// elementUnfilled: function (index) {
-			//  if (data?.length) {
-			//      data.forEach((item, i) => {
-			//          if (i === index) {
-			//              return !item.data;
-			//          }
-			//      });
-			//  } else {
-			//      return false;
-			//  }
-			// },
+
 			uploadedFiles: form.uploadedFiles.length < 1,
 			uploadedLandscapeCoverImage: form.uploadedLandscapeCoverImage.length < 1,
 			selectedLabels: form.labels.length < 7,
@@ -1150,8 +1118,6 @@ const UploadOrEditArticle = ({
 				data?.length !== 0
 			];
 
-			// console.log(validationCompleteArray, 'valE');
-
 			if (
 				!validateForm(form, data) ||
 				!comparingFields(specificArticle, form)
@@ -1243,13 +1209,13 @@ const UploadOrEditArticle = ({
 				!validateDraft(form, data) ||
 				!comparingDraftFields(specificArticle, form)
 			) {
-				console.log('1D');
+				// console.log('1D');
 				setDraftBtnDisabled(
 					!validationDraftEmptyArray.every((item) => item === true)
 				);
 			} else {
 				if (specificArticle?.elements?.length !== data?.length) {
-					console.log('2D');
+					// console.log('2D');
 					setDraftBtnDisabled(
 						!validationDraftEmptyArray.every((item) => item === true)
 					);
@@ -1258,20 +1224,20 @@ const UploadOrEditArticle = ({
 						validationCompleteArrayDraft.every((item) => item === true) ||
 						!validationDraftEmptyArray.every((item) => item === true)
 					) {
-						console.log('3D');
-						console.log(
-							validationCompleteArrayDraft.every((item) => item === true),
-							!validationDraftEmptyArray.every((item) => item === true),
-							'CHECK'
-						);
+						// console.log('3D');
+						// console.log(
+						// 	validationCompleteArrayDraft.every((item) => item === true),
+						// 	!validationDraftEmptyArray.every((item) => item === true),
+						// 	'CHECK'
+						// );
 						setDraftBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
 					} else {
-						console.log('4D');
-						console.log(
-							validationCompleteArrayDraft.every((item) => item === true),
-							!validationDraftEmptyArray.every((item) => item === true),
-							'CHECK--2'
-						);
+						// console.log('4D');
+						// console.log(
+						// 	validationCompleteArrayDraft.every((item) => item === true),
+						// 	!validationDraftEmptyArray.every((item) => item === true),
+						// 	'CHECK--2'
+						// );
 						setDraftBtnDisabled(
 							validationCompleteArrayDraft.every((item) => item === true) ||
 								!validationDraftEmptyArray.every((item) => item === true)
