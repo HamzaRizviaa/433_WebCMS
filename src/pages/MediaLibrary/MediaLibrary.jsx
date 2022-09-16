@@ -573,6 +573,43 @@ const MediaLibrary = () => {
 		}
 	};
 
+	const handleDebounceFun = () => {
+		let _search;
+		setSearch((prevState) => {
+			_search = prevState;
+			return _search;
+		});
+
+		if (_search) {
+			dispatch(
+				getMedia({
+					q: _search,
+					page: 1,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		} else {
+			dispatch(
+				getMedia({
+					page: 1,
+					startDate: formatDate(dateRange[0]),
+					endDate: formatDate(dateRange[1]),
+					...sortState
+				})
+			);
+		}
+		setPage(1);
+	};
+
+	// const debounceFun = useCallback(_debounce(handleDebounceFun, 600), []);
+
+	// const handleChangeSearch = (e) => {
+	// 	setSearch(e.target.value);
+	// 	debounceFun(e.target.value);
+	// };
+
 	useEffect(() => {
 		let tableBody = document.getElementsByTagName('tbody')[0];
 		if (tableBody) {

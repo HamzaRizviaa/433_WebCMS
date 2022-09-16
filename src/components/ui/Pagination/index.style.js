@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core';
 
 export const useStyles = makeStyles(() => ({
-    root: {
+	root: {
 		'& .MuiPagination-ul': {
 			display: 'flex',
 			justifyContent: 'flex-end',
@@ -65,4 +65,4 @@ export const useStyles = makeStyles(() => ({
 			display: 'none !important'
 		}
 	}
-}))
+}));

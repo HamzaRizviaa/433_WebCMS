@@ -6,7 +6,7 @@ import CustomPagination from '../Pagination';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 
 const Table = ({ data, columns, totalRecords, onRowClick }) => {
-	const classes = useStyles()
+	const classes = useStyles();
 
 	const tableRowEvents = {
 		onClick: onRowClick
@@ -25,7 +25,7 @@ const Table = ({ data, columns, totalRecords, onRowClick }) => {
 			</div>
 			<CustomPagination totalRecords={totalRecords} />
 		</div>
-	)
+	);
 };
 
 Table.propTypes = {
