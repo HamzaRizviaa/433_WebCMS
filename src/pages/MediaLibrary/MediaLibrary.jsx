@@ -50,6 +50,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
+
 const MediaLibrary = () => {
 	const muiClasses = useStyles();
 	const muiClasses2 = useStyles2();
@@ -172,7 +173,6 @@ const MediaLibrary = () => {
 			</div>
 		);
 	});
-
 	const handleChange = (event, value) => {
 		setPage(value);
 	};
@@ -744,7 +744,6 @@ const MediaLibrary = () => {
 				<div className={classes.tableContainer}>
 					<Table rowEvents={tableRowEvents} columns={columns} data={media} />
 				</div>
-
 				<div className={classes.paginationRow}>
 					<Pagination
 						className={muiClasses.root}

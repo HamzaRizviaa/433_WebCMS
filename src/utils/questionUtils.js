@@ -95,6 +95,8 @@ export const checkEmptyQuestionDraft = (question) => {
 	return validateQuestionDraft.every((item) => item === true);
 };
 export const checkNewElementQuestionDraft = (specificQuestion, question) => {
+	console.log(question, 'qD');
+	console.log(specificQuestion, 'sQ');
 	let result = [];
 	if (question.length === 0) {
 		result.push(true);
@@ -126,7 +128,9 @@ export const checkNewElementQuestionDraft = (specificQuestion, question) => {
 						question[i]?.data[0]?.answers[1]?.answer
 							? question[i]?.data[0]?.answers[1]?.answer ===
 							  specificQuestion?.questions[i]?.answers[1]?.answer
-							: true)
+							: true) &&
+						question[i]?.data[0]?.answers?.length ===
+							specificQuestion?.questions[i]?.answers?.length
 					) {
 						result.push(true);
 					} else {

@@ -260,9 +260,10 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
+	console.log(questionSlides, 'QSS');
+
 	const updateDataFromAPI = (apiData, question_type, end_date) => {
 		let modifiedData = apiData?.map(({ id, position, ...rest }) => {
-			console.log(position, rest?.question, '---- index values ----');
 			return {
 				question_type: question_type,
 				end_date: end_date,
@@ -881,12 +882,6 @@ const UploadOrEditQuiz = ({
 														{/* isEdit ? {//tab panes // question form // quiz results } : question form */}
 
 														{questionSlides.map((item, index) => {
-															console.log(
-																index,
-																item.sortOrder,
-																item,
-																'index on MAIN QUIZ '
-															);
 															return (
 																<DraggableContainers
 																	location={location}
@@ -907,9 +902,7 @@ const UploadOrEditQuiz = ({
 																	handleDeleteQuestionSlide={(sortOrder) =>
 																		handleElementDelete(sortOrder)
 																	}
-																	initialData={
-																		isEdit && item?.data && item?.data[0]
-																	} // passing data to child
+																	initialData={item?.data && item?.data[0]} // passing data to child
 																	setPreviewFile={setPreviewFile}
 																	setPreviewBool={setPreviewBool}
 																	setDisableDropdown={setDisableDropdown}
