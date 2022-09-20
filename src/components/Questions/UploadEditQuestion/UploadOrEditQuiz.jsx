@@ -90,6 +90,8 @@ const UploadOrEditQuiz = ({
 		(state) => state.questionLibrary
 	);
 
+	console.log(editQuestionData, 'editQuestionData');
+
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
 		const [removed] = result.splice(startIndex, 1);
@@ -810,7 +812,11 @@ const UploadOrEditQuiz = ({
 																				isEdit
 																			}
 																			status={status}
-																			type={editQuestionData?.question_type}
+																			type={
+																				isEdit
+																					? editQuestionData?.question_type
+																					: 'poll'
+																			}
 																			resetSlides={(type) => resetSlides(type)}
 																			setQuesType={(type) => setQuesType(type)}
 																		/>
