@@ -334,7 +334,6 @@ const QuestionForm = ({
 						? 'wrong_answer_' + index
 						: 'poll'
 			};
-			console.log(answers, 'answers2', form);
 
 			setForm({ ...form, answers });
 			sendDataToParent({ answers });
