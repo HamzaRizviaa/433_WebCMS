@@ -100,15 +100,29 @@ export default function QuizResults({
 		}
 	};
 
-	const getQuestionResulParticipant = async (id) => {
-		const response = await axios.get(
-			`${process.env.REACT_APP_API_ENDPOINT}/question/get-question-participant-listing?question_id=${id}`,
-			{
-				headers: {
-					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+	const getQuestionResulParticipant = async (id, sortby, order_type) => {
+		let response = [];
+
+		if (id) {
+			response = await axios.get(
+				`${process.env.REACT_APP_API_ENDPOINT}/question/get-question-participant-listing?question_id=${id}`,
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
 				}
-			}
-		);
+			);
+		}
+		if (id && order_type && sortby) {
+			response = await axios.get(
+				`${process.env.REACT_APP_API_ENDPOINT}/question/get-question-participant-listing?question_id=${id}&order_type=${order_type}&sort_by=${sortby}`,
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+		}
 
 		if (response?.data?.data) {
 			return setParticipants(response.data.data);
@@ -266,8 +280,10 @@ export default function QuizResults({
 
 	useEffect(() => {
 		if (sortState.sortby && sortState.order_type) {
-			dispatch(
-				getQuestionResulParticipant(editQuestionResultDetail?.id, ...sortState)
+			getQuestionResulParticipant(
+				editQuestionResultDetail?.id,
+				sortState.sortby,
+				sortState.order_type
 			);
 		}
 	}, [sortState]);
