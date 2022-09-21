@@ -3,6 +3,7 @@ import captureVideoFrame from 'capture-video-frame';
 import { getLocalStorageDetails } from './index';
 
 const uploadFileToServer = async (uploadedFile, libraryType) => {
+	let signedUrlKeyDelete = '';
 	try {
 		const result = await axios.post(
 			`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`, //converting files into smaller parts if file is huge
@@ -18,6 +19,13 @@ const uploadFileToServer = async (uploadedFile, libraryType) => {
 		);
 
 		if (result?.data?.data?.url) {
+			signedUrlKeyDelete =
+				result?.data?.data?.upload_id === 'image'
+					? result?.data?.data?.keys?.image_key
+					: result?.data?.data?.upload_id === 'audio'
+					? result?.data?.data?.keys?.audio_key
+					: result?.data?.data?.keys?.video_key;
+
 			const _result = await axios.put(
 				//to get e_tag
 				result?.data?.data?.url,
@@ -68,6 +76,7 @@ const uploadFileToServer = async (uploadedFile, libraryType) => {
 					}
 				);
 				if (uploadResult?.data?.status_code === 200) {
+					uploadResult.data.data.signedUrlKeyDelete = signedUrlKeyDelete;
 					return uploadResult.data.data;
 				} else {
 					throw 'Error';

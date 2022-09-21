@@ -126,8 +126,7 @@ const UploadOrEditArticle = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
-	console.log('DATA', data);
-	// console.log('FORM', form);
+
 	const elementData = [
 		{
 			image: Text,
@@ -251,13 +250,11 @@ const UploadOrEditArticle = ({
 			let setData = mainCategories.find(
 				(u) => u.name === form.mainCategory?.name
 			);
-
-			dispatch(getArticleSubCategories(setData?.id));
+			if (setData?.id) dispatch(getArticleSubCategories(setData?.id));
 			// SubCategoryId(specificArticle?.sub_category);
 		} else {
 			let setData = mainCategories.find((u) => u.name === form.mainCategory);
-
-			dispatch(getArticleSubCategories(setData?.id));
+			if (setData?.id) dispatch(getArticleSubCategories(setData?.id));
 		}
 	}, [form.mainCategory]);
 
@@ -606,12 +603,14 @@ const UploadOrEditArticle = ({
 				};
 			});
 		}
+
 		try {
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/article/post-article`,
 				{
 					title: form.title,
 					sub_text: form.sub_text,
+					labels: [...form.labels],
 					height: form.uploadedFiles.length > 0 ? fileHeight : 0,
 					width: form.uploadedFiles.length > 0 ? fileWidth : 0,
 					main_category_id: form?.mainCategory.id,
@@ -639,7 +638,7 @@ const UploadOrEditArticle = ({
 						? form.landscape_dropbox_url
 						: '',
 					landscape_file_name: form?.uploadedLandscapeCoverImage?.length
-						? mediaFiles[2]?.landscape_file_name
+						? mediaFiles[2]?.file_name
 						: '',
 					landscape_image: form?.uploadedLandscapeCoverImage?.length
 						? mediaFiles[2]?.media_url?.split('cloudfront.net/')[1] ||
@@ -651,11 +650,12 @@ const UploadOrEditArticle = ({
 						  mediaFiles[1]?.media_url
 						: mediaFiles[1]?.media_url?.split('cloudfront.net/')[1] ||
 						  mediaFiles[1]?.media_url,
+
 					...(isEdit && id ? { article_id: id } : {}),
-					...((!isEdit || status !== 'published') &&
-					(form.labels?.length || status == 'draft')
-						? { labels: [...form.labels] }
-						: {}),
+					// ...((!isEdit || status !== 'published') &&
+					// (form.labels?.length || status == 'draft')
+					// 	? { labels: [...form.labels] }
+					// 	: {}),
 					elements: elementsData?.length ? elementsData : [],
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
@@ -913,25 +913,6 @@ const UploadOrEditArticle = ({
 		setDataErrors(errors);
 	};
 
-	// const questionValidate = (item) => {
-	// 	console.log(item, 'item');
-	// 	var validate = Object.keys(item).map((key) => {
-	// 		if (!item[key]) {
-	// 			return true;
-	// 		} else {
-	// 			return false;
-	// 		}
-	// 	});
-	// 	console.log(validate, 'validate');
-	// 	var quesValidate = validate.some((item) => {
-	// 		item === true;
-	// 	});
-
-	// 	console.log(quesValidate, 'quesValidate');
-
-	// 	return quesValidate;
-	// };
-
 	useEffect(() => {
 		setDataErrors(Array(data.length).fill(false));
 	}, [data]);
@@ -940,18 +921,7 @@ const UploadOrEditArticle = ({
 		setIsError({
 			articleTitle: !form.title,
 			sub_text: !form.sub_text,
-			// elementUnfilled: data?.length ? data.every((item) =>  !item.data) : false,
-			// elementUnfilled: function (index) {
-			//  if (data?.length) {
-			//      data.forEach((item, i) => {
-			//          if (i === index) {
-			//              return !item.data;
-			//          }
-			//      });
-			//  } else {
-			//      return false;
-			//  }
-			// },
+
 			uploadedFiles: form.uploadedFiles.length < 1,
 			uploadedLandscapeCoverImage: form.uploadedLandscapeCoverImage.length < 1,
 			selectedLabels: form.labels.length < 7,
@@ -1148,8 +1118,6 @@ const UploadOrEditArticle = ({
 				data?.length !== 0
 			];
 
-			// console.log(validationCompleteArray, 'valE');
-
 			if (
 				!validateForm(form, data) ||
 				!comparingFields(specificArticle, form)
@@ -1241,13 +1209,13 @@ const UploadOrEditArticle = ({
 				!validateDraft(form, data) ||
 				!comparingDraftFields(specificArticle, form)
 			) {
-				console.log('1D');
+				// console.log('1D');
 				setDraftBtnDisabled(
 					!validationDraftEmptyArray.every((item) => item === true)
 				);
 			} else {
 				if (specificArticle?.elements?.length !== data?.length) {
-					console.log('2D');
+					// console.log('2D');
 					setDraftBtnDisabled(
 						!validationDraftEmptyArray.every((item) => item === true)
 					);
@@ -1256,20 +1224,20 @@ const UploadOrEditArticle = ({
 						validationCompleteArrayDraft.every((item) => item === true) ||
 						!validationDraftEmptyArray.every((item) => item === true)
 					) {
-						console.log('3D');
-						console.log(
-							validationCompleteArrayDraft.every((item) => item === true),
-							!validationDraftEmptyArray.every((item) => item === true),
-							'CHECK'
-						);
+						// console.log('3D');
+						// console.log(
+						// 	validationCompleteArrayDraft.every((item) => item === true),
+						// 	!validationDraftEmptyArray.every((item) => item === true),
+						// 	'CHECK'
+						// );
 						setDraftBtnDisabled(!checkSortOrderOnEdit(specificArticle, data));
 					} else {
-						console.log('4D');
-						console.log(
-							validationCompleteArrayDraft.every((item) => item === true),
-							!validationDraftEmptyArray.every((item) => item === true),
-							'CHECK--2'
-						);
+						// console.log('4D');
+						// console.log(
+						// 	validationCompleteArrayDraft.every((item) => item === true),
+						// 	!validationDraftEmptyArray.every((item) => item === true),
+						// 	'CHECK--2'
+						// );
 						setDraftBtnDisabled(
 							validationCompleteArrayDraft.every((item) => item === true) ||
 								!validationDraftEmptyArray.every((item) => item === true)
@@ -1442,7 +1410,23 @@ const UploadOrEditArticle = ({
 			setIsLoading(true);
 
 			if (isEdit) {
-				if (specificArticle?.title?.trim() !== form.title?.trim()) {
+				if (
+					specificArticle?.title?.trim() !== form.title?.trim() &&
+					status === 'published'
+				) {
+					if (
+						(await handleTitleDuplicate(form.title)) ===
+						'The Title Already Exist'
+					) {
+						setIsError({ articleTitleExists: 'This title already exists' });
+						setTimeout(() => {
+							setIsError({});
+						}, [5000]);
+
+						setPostButtonStatus(false);
+						return;
+					}
+				} else if (status === 'draft') {
 					if (
 						(await handleTitleDuplicate(form.title)) ===
 						'The Title Already Exist'

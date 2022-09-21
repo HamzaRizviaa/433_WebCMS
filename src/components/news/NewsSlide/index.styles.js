@@ -34,8 +34,6 @@ export const useStyles = makeStyles((theme) => ({
 		display: 'flex',
 		alignItems: 'center',
 		gap: '10px'
-		// justifyContent: 'flex-end'
-		// marginLeft: '40vh'
 	},
 	deleteIconDiv: {
 		width: '27px',

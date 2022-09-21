@@ -3,36 +3,18 @@
 /* eslint-disable react/display-name */
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import LoadingOverlay from 'react-loading-overlay';
-import Close from '@material-ui/icons/Close';
 import { useDropzone } from 'react-dropzone';
-import Slide from '@mui/material/Slide';
-import PrimaryLoader from '../../PrimaryLoader';
 import { TextField } from '@material-ui/core';
 import DragAndDropField from '../../DragAndDropField';
 import { makeid } from '../../../utils/helper';
 import checkFileSize from '../../../utils/validateFileSize';
 import Labels from '../../Labels';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import Typography from '@mui/material/Typography';
-import uploadFileToServer from '../../../utils/uploadFileToServer';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
-import { ReactComponent as Union } from '../../../assets/drag.svg';
-import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 import { useStyles } from '../UploadEditQuestion/UploadOrEditQuiz.style';
-import { Draggable } from 'react-beautiful-dnd';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import SecondaryLoader from '../../SecondaryLoader';
 import { ReactComponent as NewsAddIcon } from '../../../assets/newsAddIcon.svg';
 import { ReactComponent as DeleteBin } from '../../../assets/DeleteBin.svg';
-import {
-	Accordion,
-	Box,
-	AccordionSummary,
-	AccordionDetails,
-	InputAdornment
-} from '@mui/material';
+import { InputAdornment } from '@mui/material';
 
 const QuestionForm = ({
 	item,
@@ -51,35 +33,91 @@ const QuestionForm = ({
 	location
 }) => {
 	const [fileRejectionError, setFileRejectionError] = useState('');
-	const [expanded, setExpanded] = useState(true);
 	const [quizLabels, setQuizLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
 	const [isError, setIsError] = useState({});
-	const [loading, setLoading] = useState(false);
 	const [form, setForm] = useState({
-		uploadedFiles: [],
-		dropbox_url: '',
-		question: '',
+		uploadedFiles: initialData ? initialData?.uploadedFiles : [],
+		labels: initialData?.labels?.length > 0 ? initialData?.labels : [],
+		dropbox_url: initialData ? initialData?.dropbox_url : '',
+		question: initialData ? initialData?.question : '',
 		answers:
 			initialData?.answers?.length > 0
 				? initialData?.answers
 				: [
-						{ answer: '', type: 'right_answer', position: 0 },
 						{
 							answer: '',
-							type: location === 'article' ? 'wrong_answer' : 'wrong_answer_1',
+							type: type === 'poll' ? 'poll' : 'right_answer',
+							position: 0
+						},
+						{
+							answer: '',
+							type:
+								location === 'article'
+									? 'wrong_answer'
+									: type === 'poll'
+									? 'poll'
+									: 'wrong_answer_1',
 							position: 1
 						}
-				  ],
-		labels: []
+				  ]
 	});
-	// console.log('FORM', form)
+	// const [form, setForm] = useState(
+	// 	initialData
+	// 		? {
+	// 				...initialData,
+	// 				uploadedFiles: initialData ? initialData?.uploadedFiles : [],
+	// 				answers:
+	// 					initialData?.answers?.length > 0
+	// 						? initialData?.answers
+	// 						: [
+	// 								{
+	// 									answer: '',
+	// 									type: type === 'poll' ? 'poll' : 'right_answer',
+	// 									position: 0
+	// 								},
+	// 								{
+	// 									answer: '',
+	// 									type:
+	// 										location === 'article'
+	// 											? 'wrong_answer'
+	// 											: type === 'poll'
+	// 											? 'poll'
+	// 											: 'wrong_answer_1',
+	// 									position: 1
+	// 								}
+	// 						  ]
+	// 		  }
+	// 		: {
+	// 				uploadedFiles: [],
+	// 				labels: [],
+	// 				dropbox_url: '',
+	// 				question: '',
+	// 				answers: [
+	// 					{
+	// 						answer: '',
+	// 						type: type === 'poll' ? 'poll' : 'right_answer',
+	// 						position: 0
+	// 					},
+	// 					{
+	// 						answer: '',
+	// 						type:
+	// 							location === 'article'
+	// 								? 'wrong_answer'
+	// 								: type === 'poll'
+	// 								? 'poll'
+	// 								: 'wrong_answer_1',
+	// 						position: 1
+	// 					}
+	// 				]
+	// 		  }
+	// );
+
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const imgRef = useRef(null);
-	const loadingRef = useRef(null);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -88,13 +126,8 @@ const QuestionForm = ({
 			validator: checkFileSize
 		});
 
-	const uploadedFile = async (newFiles) => {
-		return await uploadFileToServer(newFiles, 'articleLibrary');
-	};
-
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			setLoading(true);
 			setIsError({});
 
 			let newFiles = acceptedFiles.map((file) => {
@@ -111,28 +144,24 @@ const QuestionForm = ({
 					height: fileHeight
 				};
 			});
-			uploadedFile(newFiles[0], 'questionLibrary').then((res) => {
-				setForm((prev) => {
-					return {
-						...prev,
-						uploadedFiles: [
-							{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
-						]
-					};
-				});
-				sendDataToParent({
-					uploadedFiles: [
-						{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
-					]
-				});
-				setLoading(false);
+
+			setForm((prev) => {
+				return {
+					...prev,
+					uploadedFiles: [...newFiles]
+				};
 			});
+
+			sendDataToParent({ uploadedFiles: [...newFiles] });
 		}
 	}, [acceptedFiles, fileHeight, fileWidth]);
 
-	// useEffect(() => {
-	// 	initialData ? setForm(initialData) : '';
-	// }, [initialData]);
+	useEffect(() => {
+		if (initialData?.answers?.length > 0)
+			setForm((prev) => {
+				return { ...prev, answers: initialData?.answers };
+			});
+	}, [initialData?.answers]);
 
 	const getFileType = (type) => {
 		if (type) {
@@ -151,14 +180,12 @@ const QuestionForm = ({
 			}, [5000]);
 		}
 	}, [fileRejections]);
+
 	const handleDeleteFile = (id) => {
-		// setUploadedFiles((uploadedFiles) =>
-		// 	uploadedFiles.filter((file) => file.id !== id)
-		// );
 		setForm((prev) => {
 			return {
 				...prev,
-				uploadedFiles: form.uploadedFiles.filter((file) => file.id !== id)
+				uploadedFiles: form.uploadedFiles?.filter((file) => file.id !== id)
 			};
 		});
 		handleDeleteMedia(item?.data);
@@ -167,9 +194,10 @@ const QuestionForm = ({
 	const handleChangeExtraLabel = (e) => {
 		setExtraLabel(e.target.value.toUpperCase());
 	};
+
 	useEffect(() => {
 		setQuizLabels((labels) => {
-			return labels.filter((label) => label.id != null);
+			return labels?.filter((label) => label.id != null);
 		});
 		if (extraLabel) {
 			let flag = quizLabels.some((label) => label.name == extraLabel);
@@ -180,13 +208,9 @@ const QuestionForm = ({
 			}
 		}
 	}, [extraLabel]);
-	// useEffect(() => {
-	// 	if (labels.length) {
-	// 		setQuizLabels([...labels]);
-	// 	}
-	// }, [labels]);
 
 	const handleNewAnswer = () => {
+		// if (!isEdit) {
 		setForm((prev) => {
 			return {
 				...prev,
@@ -195,74 +219,130 @@ const QuestionForm = ({
 		});
 		let answers = { answers: [...form.answers, { answer: '' }] };
 		sendDataToParent(answers);
+		// } else {
+		// 	//edit (draft)
+		// 	const answers = [
+		// 		...(initialData?.answers?.length === 0
+		// 			? [
+		// 					{
+		// 						answer: '',
+		// 						type: type === 'poll' ? 'poll' : 'right_answer',
+		// 						position: 0
+		// 					},
+		// 					{
+		// 						answer: '',
+		// 						type:
+		// 							location === 'article'
+		// 								? 'wrong_answer'
+		// 								: type === 'poll'
+		// 								? 'poll'
+		// 								: 'wrong_answer_1',
+		// 						position: 1
+		// 					}
+		// 			  ]
+		// 			: initialData?.answers?.length > 0 && initialData?.answers?.length < 4
+		// 			? initialData?.answers
+		// 			: form.answers)
+		// 	];
+		// 	console.log(answers, 'answers');
+		// 	setForm((prev) => {
+		// 		return {
+		// 			...prev,
+		// 			answers: [...answers, { answer: '' }]
+		// 		};
+		// 	});
 
-		// const formCopy = { ...form };
-		// let answerLength = formCopy?.answers?.length;
-		// formCopy.answers[answerLength] = {
-		// 	answer: ''
-		// };
-		// let answers = { answers: formCopy.answers };
-		// sendDataToParent(answers);
+		// 	sendDataToParent(answers);
+		// }
 	};
-
-	console.log('FORMMMM', form);
 
 	const handleAnswerDelete = (index) => {
 		let dataCopy = { ...form };
-
-		if (index > 1) {
-			setForm((prev) => {
-				return {
-					...prev,
-					answers: dataCopy?.answers.filter((val, ind) => {
-						return ind !== index;
-					})
-				};
-			});
-			const formCopy = { ...form };
-			// formCopy.answers[index] = {
-			// 	answer: ''
-			// };
-			let answers = {
-				answers: formCopy?.answers.filter((val, ind) => {
+		setForm((prev) => {
+			return {
+				...prev,
+				answers: dataCopy?.answers?.filter((val, ind) => {
 					return ind !== index;
 				})
 			};
-			sendDataToParent(answers);
-		}
-	};
-
-	const handleAnswerChange = (event, index) => {
-		console.log(index, 'index ');
+		});
 		const formCopy = { ...form };
-		formCopy.answers[index] = {
-			answer: event.target.value,
-			position: index + 1,
-			type:
-				type === 'quiz' && index === 0
-					? 'right_answer'
-					: type === 'quiz' && index > 0
-					? 'wrong_answer_' + index
-					: 'poll'
+		let answers = {
+			answers: formCopy?.answers?.filter((val, ind) => {
+				return ind !== index;
+			})
 		};
-		setForm(formCopy);
-		let answers = { answers: formCopy.answers };
 		sendDataToParent(answers);
 	};
 
-	console.log(
-		initialData,
-		form,
-		isEdit && status !== 'draft',
-		'--- aa rr tt ii cc ll ee ---------'
-	);
+	const handleAnswerChange = (event, index) => {
+		if (!isEdit) {
+			const formCopy = { ...form };
+			formCopy.answers[index] = {
+				answer: event.target.value,
+				position: index,
+				type:
+					type === 'quiz' && index === 0
+						? 'right_answer'
+						: type === 'quiz' && index > 0
+						? 'wrong_answer_' + index
+						: 'poll'
+			};
+			setForm(formCopy);
+			let answers = { answers: formCopy.answers };
+			sendDataToParent(answers);
+		} else {
+			// This block of code will only be executed if the question is in draft
+			// Then only the question answers will be editable
+			// const isAnswersEdited = initialData && initialData.answers;
+
+			// const answers = [
+			// 	...(isAnswersEdited ? initialData?.answers : [...form.answers])
+			// ];
+
+			const answers = [
+				...(initialData?.answers?.length === 0
+					? [
+							{
+								answer: '',
+								type: type === 'poll' ? 'poll' : 'right_answer',
+								position: 0
+							},
+							{
+								answer: '',
+								type:
+									location === 'article'
+										? 'wrong_answer'
+										: type === 'poll'
+										? 'poll'
+										: 'wrong_answer_1',
+								position: 1
+							}
+					  ]
+					: initialData?.answers?.length > 0
+					? initialData?.answers
+					: form.answers)
+			];
+
+			answers[index] = {
+				answer: event.target.value,
+				position: index,
+				type:
+					type === 'quiz' && index === 0
+						? 'right_answer'
+						: type === 'quiz' && index > 0
+						? 'wrong_answer_' + index
+						: 'poll'
+			};
+
+			setForm({ ...form, answers });
+			sendDataToParent({ answers });
+		}
+	};
+
 	return (
 		<>
-			{/* {questionEditStatus === 'loading' ? <PrimaryLoader /> : <></>} */}
-			<div
-				className={globalClasses.contentWrapperNoPreview}
-				//style={{ width: previewFile != null ? '60%' : 'auto' }}
-			>
+			<div className={globalClasses.contentWrapperNoPreview}>
 				<div>
 					<DragAndDropField
 						uploadedFiles={
@@ -282,9 +362,9 @@ const QuestionForm = ({
 						}}
 					/>
 
-					{initialData?.uploadedFiles ? (
-						''
-					) : form.uploadedFiles.length === 0 ? (
+					{initialData?.uploadedFiles?.length === 0 ||
+					initialData?.uploadedFiles === undefined ||
+					(!isEdit && form?.uploadedFiles?.length === 0) ? (
 						<section
 							className={globalClasses.dropZoneContainer}
 							style={{
@@ -293,21 +373,18 @@ const QuestionForm = ({
 						>
 							<div {...getRootProps({ className: globalClasses.dropzone })}>
 								<input {...getInputProps()} />
-								{loading ? (
-									<SecondaryLoader loading={true} />
-								) : (
-									<>
-										<AddCircleOutlineIcon
-											className={globalClasses.addFilesIcon}
-										/>
-										<p className={globalClasses.dragMsg}>
-											Click or drag file to this area to upload
-										</p>
-										<p className={globalClasses.formatMsg}>
-											Supported formats are jpeg and png
-										</p>
-									</>
-								)}
+
+								<>
+									<AddCircleOutlineIcon
+										className={globalClasses.addFilesIcon}
+									/>
+									<p className={globalClasses.dragMsg}>
+										Click or drag file to this area to upload
+									</p>
+									<p className={globalClasses.formatMsg}>
+										Supported formats are jpeg and png
+									</p>
+								</>
 
 								<p className={globalClasses.uploadMediaError}>
 									{isError.uploadedFiles
@@ -317,17 +394,21 @@ const QuestionForm = ({
 							</div>
 						</section>
 					) : (
-						''
+						<></>
 					)}
-
 					<p className={globalClasses.fileRejectionError}>
 						{fileRejectionError}
 					</p>
-
 					<div className={globalClasses.dropBoxUrlContainer}>
 						<h6>DROPBOX URL</h6>
 						<TextField
-							value={initialData ? initialData?.dropbox_url : form.dropbox_url}
+							value={
+								initialData
+									? initialData?.data
+										? initialData?.data?.dropbox_url
+										: initialData?.dropbox_url
+									: form.dropbox_url
+							}
 							disabled={location === 'article' ? true : false}
 							onChange={(e) => {
 								setForm((prev) => {
@@ -356,7 +437,6 @@ const QuestionForm = ({
 							}}
 						/>
 					</div>
-
 					<div className={classes.titleContainer}>
 						<div className={globalClasses.characterCount}>
 							<h6
@@ -383,7 +463,7 @@ const QuestionForm = ({
 						</div>
 						<TextField
 							disabled={isEdit && status !== 'draft'}
-							value={initialData ? initialData?.question : form.question}
+							value={initialData ? initialData?.question : form?.question}
 							onChange={(e) => {
 								setForm((prev) => {
 									return {
@@ -408,12 +488,12 @@ const QuestionForm = ({
 							maxRows={2}
 						/>
 					</div>
-
 					<p className={globalClasses.mediaError}>
 						{isError.question
 							? 'You need to provide a question in order to post.'
 							: ''}
 					</p>
+
 					{form?.answers?.length > 0 &&
 						form?.answers.map((item, index) => {
 							return (
@@ -421,7 +501,7 @@ const QuestionForm = ({
 									className={classes.titleContainer}
 									item={item}
 									index={index}
-									key={item.sort_order}
+									key={`answer-${index}`}
 								>
 									<div className={globalClasses.characterCount}>
 										<h6
@@ -475,11 +555,15 @@ const QuestionForm = ({
 														<> </>
 													) : status === 'ACTIVE' || status === 'CLOSED' ? (
 														<DeleteBin
-															style={{ marginTop: '20px', opacity: 0.5 }}
+															style={{
+																marginTop: '20px',
+																opacity: 0.5,
+																cursor: 'pointer'
+															}}
 														/>
 													) : (
 														<DeleteBin
-															style={{ marginTop: '20px' }}
+															style={{ marginTop: '20px', cursor: 'pointer' }}
 															onClick={() => {
 																handleAnswerDelete(index);
 															}}
@@ -495,45 +579,36 @@ const QuestionForm = ({
 								</div>
 							);
 						})}
-
-					{isEdit && status !== 'draft' ? (
-						<></>
+					{form?.answers.length < 4 ? (
+						isEdit && status !== 'draft' ? (
+							<></>
+						) : (
+							<div
+								className={classes.addNewAnswer}
+								onClick={() => handleNewAnswer()}
+								style={{
+									cursor: 'pointer'
+								}}
+							>
+								<NewsAddIcon />
+								<h6>ADD ANSWER</h6>
+							</div>
+						)
 					) : (
-						<div
-							className={classes.addNewAnswer}
-							onClick={() => handleNewAnswer()}
-							style={{
-								pointerEvents: form?.answers.length < 4 ? 'auto' : 'none',
-								cursor: 'pointer'
-							}}
-						>
-							<NewsAddIcon />
-							<h6>ADD ANSWER</h6>
-						</div>
+						''
 					)}
-
-					{/* <p className={globalClasses.mediaError}>
-															{isError.ans2
-																? type === 'quiz'
-																	? 'You need to provide wrong answer in order to post'
-																	: 'You need to provide second answer in order to post'
-																: ''}
-														</p> */}
-
 					<div className={classes.titleContainer}>
-						<h6
-							className={
+						<Labels
+							titleClasses={
 								isError.selectedLabels
 									? globalClasses.errorState
 									: globalClasses.noErrorState
 							}
-						>
-							LABELS
-						</h6>
-						<Labels
 							isEdit={isEdit}
 							setDisableDropdown={setDisableDropdown}
-							selectedLabels={initialData ? initialData?.labels : form.labels}
+							selectedLabels={
+								initialData?.labels ? initialData?.labels : form.labels
+							}
 							setSelectedLabels={(newVal) => {
 								setForm((prev) => {
 									return { ...prev, labels: [...newVal] };
@@ -541,7 +616,7 @@ const QuestionForm = ({
 								sendDataToParent({
 									labels: [...newVal]
 								});
-							}} //closure
+							}}
 							LabelsOptions={quizLabels}
 							extraLabel={extraLabel}
 							handleChangeExtraLabel={handleChangeExtraLabel}
@@ -549,7 +624,6 @@ const QuestionForm = ({
 							setExtraLabel={setExtraLabel}
 						/>
 					</div>
-
 					<p className={globalClasses.mediaError}>
 						{isError.selectedLabels
 							? `You need to add ${

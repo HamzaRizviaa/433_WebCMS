@@ -89,6 +89,18 @@ const ArticleQuestionUpload = ({
 	// const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
+	// useEffect(() => {
+	// 	if (type !== initialData) {
+	// 		setForm({
+	// 			uploadedFiles: [],
+	// 			dropbox_url: '',
+	// 			question: '',
+	// 			answers: [],
+	// 			labels: [],
+	// 			question_type: type
+	// 		});
+	// 	}
+	// }, [type]);
 
 	useEffect(() => {
 		validateForm(form);
@@ -225,6 +237,7 @@ const ArticleQuestionUpload = ({
 			};
 			setForm(formCopy);
 			let answers = { answers: formCopy.answers };
+
 			sendDataToParent(answers);
 		} else {
 			const formCopy = { ...form };
@@ -514,7 +527,7 @@ const ArticleQuestionUpload = ({
 								value={
 									initialData?.answers && initialData?.question_type === 'quiz'
 										? initialData?.answers?.find(
-												(item) => item.type === 'wrong_answer'
+												(item) => item.type === 'wrong_answer_1'
 										  )?.answer
 										: form.answers[1]?.answer
 								}
@@ -546,16 +559,12 @@ const ArticleQuestionUpload = ({
 						</p>
 
 						<div className={classes.titleContainer}>
-							<h6
-								className={
+							<Labels
+								titleClasses={
 									isError.selectedLabels
 										? globalClasses.errorState
 										: globalClasses.noErrorState
 								}
-							>
-								LABELS
-							</h6>
-							<Labels
 								isEdit={initialData?.question_id && status !== 'draft'}
 								setDisableDropdown={setDisableDropdown}
 								selectedLabels={

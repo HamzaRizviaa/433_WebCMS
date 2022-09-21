@@ -87,12 +87,6 @@ const ArticleMediaDraggable = ({
 		}
 	}, [acceptedFiles, fileHeight, fileWidth]);
 
-	// console.log(
-	// 	fileHeight,
-	// 	fileWidth,
-	// 	'fileHeight, fileWidth article media draggable'
-	// );
-
 	useEffect(() => {
 		if (fileRejections.length) {
 			fileRejections.forEach(({ errors }) => {
@@ -108,7 +102,6 @@ const ArticleMediaDraggable = ({
 		setClickExpandIcon(!clickExpandIcon);
 		setIsOpen(!clickExpandIcon);
 	};
-	console.log(item, 'item in MEDIA');
 
 	return (
 		<>

@@ -126,15 +126,6 @@ const QuestionLibrary = () => {
 										...sortState
 									})
 								);
-							} else {
-								dispatch(
-									getQuestions({
-										q: search,
-										page,
-										fromCalendar: true,
-										...sortState
-									})
-								);
 							}
 						}}
 					/>
@@ -414,11 +405,11 @@ const QuestionLibrary = () => {
 			dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
 
 			//slider calls
-			if (rowStatus === 'ACTIVE' && rowLocation === 'article') {
+			if (rowLocation === 'article') {
 				row.question_type === 'quiz'
 					? setShowQuizSlider(true)
 					: setShowPollSlider(true);
-			} else if (rowLocation === 'homepage' || rowStatus === 'draft') {
+			} else {
 				showEditSlider(true);
 			}
 		}
@@ -429,7 +420,7 @@ const QuestionLibrary = () => {
 	};
 
 	useEffect(() => {
-		// console.log('sort state use effect');
+		console.log('sort state use effect');
 		if (sortState.sortby && sortState.order_type && !search) {
 			dispatch(
 				getQuestions({
@@ -512,36 +503,52 @@ const QuestionLibrary = () => {
 		};
 	}, []);
 
-	const handleDebounceFun = () => {
-		let _search;
-		setSearch((prevState) => {
-			_search = prevState;
-			return _search;
-		});
-		if (_search) {
+	// const handleDebounceFun = () => {
+	// 	let _search;
+	// 	setSearch((prevState) => {
+	// 		_search = prevState;
+	// 		return _search;
+	// 	});
+	// 	if (_search) {
+	// 		dispatch(
+	// 			getQuestions({
+	// 				q: _search,
+	// 				page: 1,
+	// 				startDate: formatDate(dateRange[0]),
+	// 				endDate: formatDate(dateRange[1]),
+	// 				...sortState
+	// 			})
+	// 		);
+	// 	} else {
+	// 		dispatch(
+	// 			getQuestions({
+	// 				page: 1,
+	// 				startDate: formatDate(dateRange[0]),
+	// 				endDate: formatDate(dateRange[1]),
+	// 				...sortState
+	// 			})
+	// 		);
+	// 	}
+	// 	setPage(1);
+	// };
+
+	// const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
+
+	const handleDateChange = (dateRange) => {
+		setDateRange(dateRange);
+
+		const [start, end] = dateRange;
+
+		if (!start && !end) {
 			dispatch(
 				getQuestions({
-					q: _search,
-					page: 1,
-					startDate: formatDate(dateRange[0]),
-					endDate: formatDate(dateRange[1]),
-					...sortState
-				})
-			);
-		} else {
-			dispatch(
-				getQuestions({
-					page: 1,
-					startDate: formatDate(dateRange[0]),
-					endDate: formatDate(dateRange[1]),
+					q: search,
+					page,
 					...sortState
 				})
 			);
 		}
-		setPage(1);
 	};
-
-	const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
 
 	return (
 		<LoadingOverlay
@@ -581,32 +588,32 @@ const QuestionLibrary = () => {
 								value={search}
 								onKeyPress={(e) => {
 									console.log(e, 'on key press');
-									// if (e.key === 'Enter' && search) {
-									// 	dispatch(
-									// 		getQuestions({
-									// 			q: search,
-									// 			page,
-									// 			startDate: formatDate(dateRange[0]),
-									// 			endDate: formatDate(dateRange[1]),
-									// 			...sortState
-									// 		})
-									// 	);
-									// } else if (e.key === 'Enter' && !search) {
-									// 	dispatch(
-									// 		getQuestions({
-									// 			page,
-									// 			startDate: formatDate(dateRange[0]),
-									// 			endDate: formatDate(dateRange[1]),
-									// 			...sortState
-									// 		})
-									// 	);
-									// }
+									if (e.key === 'Enter' && search) {
+										dispatch(
+											getQuestions({
+												q: search,
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									} else if (e.key === 'Enter' && !search) {
+										dispatch(
+											getQuestions({
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									}
 								}}
 								onChange={(e) => {
 									setSearch(e.target.value);
 									//setIsSearch(true);
 								}}
-								placeholder={'Search post, user, label'}
+								placeholder='Search for Question, User, Label, ID'
 								InputProps={{
 									disableUnderline: true,
 									className: classes.textFieldInput,
@@ -652,9 +659,7 @@ const QuestionLibrary = () => {
 								startDate={startDate}
 								endDate={endDate}
 								maxDate={new Date()}
-								onChange={(update) => {
-									setDateRange(update);
-								}}
+								onChange={handleDateChange}
 								placement='center'
 								isClearable={true}
 							/>
@@ -669,7 +674,7 @@ const QuestionLibrary = () => {
 						data={questions}
 					/>
 				</div>
-
+				
 				<div className={classes.paginationRow}>
 					<Pagination
 						className={muiClasses.root}
@@ -705,6 +710,7 @@ const QuestionLibrary = () => {
 						className={classes.gotoInput}
 					/>
 				</div>
+				
 				{/* upload */}
 				<UploadOrEditQuiz
 					open={showSlider}

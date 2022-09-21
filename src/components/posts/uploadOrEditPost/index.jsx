@@ -976,6 +976,11 @@ const UploadOrEditPost = ({
 											LABELS
 										</h6>
 										<Labels
+										titleClasses={
+											isError.selectedLabels
+												? classes.errorState
+												: classes.noErrorState
+										}
 											isEdit={isEdit}
 											setDisableDropdown={setDisableDropdown}
 											selectedLabels={form?.labels}

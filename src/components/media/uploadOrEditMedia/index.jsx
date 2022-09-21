@@ -2211,16 +2211,12 @@ const UploadOrEditMedia = ({
 												{isError.titleMedia ? isError.titleMedia.message : ''}
 											</p>
 											<div className={classes.titleContainer}>
-												<h6
-													className={[
+												<Labels
+													titleClasses={
 														isError.selectedLabels
 															? globalClasses.errorState
 															: globalClasses.noErrorState
-													].join(' ')}
-												>
-													LABELS
-												</h6>
-												<Labels
+													}
 													isEdit={isEdit}
 													setDisableDropdown={setDisableDropdown}
 													LabelsOptions={mediaLabels}
@@ -2367,54 +2363,55 @@ const UploadOrEditMedia = ({
 									) : (
 										<></>
 									)}
+									{form?.mainCategory && form?.subCategory && (
+										<div className={classes.publishDraftDiv}>
+											{status === 'draft' || !isEdit ? (
+												<div
+													className={
+														isEdit ? classes.draftBtnEdit : classes.draftBtn
+													}
+												>
+													<Button
+														disabledDraft={
+															isEdit ? draftBtnDisabled : !validateDraft(form)
+														}
+														onClick={() => saveDraftBtn()}
+														button3={true}
+														text={
+															status === 'draft' && isEdit
+																? 'SAVE DRAFT'
+																: 'SAVE AS DRAFT'
+														}
+													/>
+												</div>
+											) : (
+												<></>
+											)}
 
-									<div className={classes.publishDraftDiv}>
-										{status === 'draft' || !isEdit ? (
 											<div
 												className={
-													isEdit ? classes.draftBtnEdit : classes.draftBtn
+													isEdit && validateForm(form)
+														? classes.addMediaBtn
+														: isEdit
+														? classes.addMediaBtnEdit
+														: classes.addMediaBtn
 												}
 											>
 												<Button
-													disabledDraft={
-														isEdit ? draftBtnDisabled : !validateDraft(form)
+													disabled={
+														isEdit && validateForm(form) && status === 'draft'
+															? false
+															: isEdit
+															? editBtnDisabled
+															: !validateForm(form)
 													}
-													onClick={() => saveDraftBtn()}
-													button3={true}
-													text={
-														status === 'draft' && isEdit
-															? 'SAVE DRAFT'
-															: 'SAVE AS DRAFT'
-													}
+													onClick={handlePublishTranslateButtonOnClick()}
+													button2AddSave={true}
+													text={handlePublishTranslateButtonText()}
 												/>
 											</div>
-										) : (
-											<></>
-										)}
-
-										<div
-											className={
-												isEdit && validateForm(form)
-													? classes.addMediaBtn
-													: isEdit
-													? classes.addMediaBtnEdit
-													: classes.addMediaBtn
-											}
-										>
-											<Button
-												disabled={
-													isEdit && validateForm(form) && status === 'draft'
-														? false
-														: isEdit
-														? editBtnDisabled
-														: !validateForm(form)
-												}
-												onClick={handlePublishTranslateButtonOnClick()}
-												button2AddSave={true}
-												text={handlePublishTranslateButtonText()}
-											/>
 										</div>
-									</div>
+									)}
 								</div>
 							</div>
 							{previewFile != null && (
