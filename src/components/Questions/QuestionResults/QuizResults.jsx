@@ -267,11 +267,7 @@ export default function QuizResults({
 	useEffect(() => {
 		if (sortState.sortby && sortState.order_type) {
 			dispatch(
-				getQuestionResulParticipant({
-					id: editQuestionResultDetail?.id,
-					type: editQuestionResultDetail?.question_type,
-					...sortState
-				})
+				getQuestionResulParticipant(editQuestionResultDetail?.id, ...sortState)
 			);
 		}
 	}, [sortState]);
