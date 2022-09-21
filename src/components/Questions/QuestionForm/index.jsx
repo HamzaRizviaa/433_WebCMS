@@ -210,50 +210,50 @@ const QuestionForm = ({
 	}, [extraLabel]);
 
 	const handleNewAnswer = () => {
-		if (!isEdit) {
-			setForm((prev) => {
-				return {
-					...prev,
-					answers: [...form.answers, { answer: '' }]
-				};
-			});
-			let answers = { answers: [...form.answers, { answer: '' }] };
-			sendDataToParent(answers);
-		} else {
-			//edit (draft)
-			const answers = [
-				...(initialData?.answers?.length === 0
-					? [
-							{
-								answer: '',
-								type: type === 'poll' ? 'poll' : 'right_answer',
-								position: 0
-							},
-							{
-								answer: '',
-								type:
-									location === 'article'
-										? 'wrong_answer'
-										: type === 'poll'
-										? 'poll'
-										: 'wrong_answer_1',
-								position: 1
-							}
-					  ]
-					: initialData?.answers?.length > 0 && initialData?.answers?.length < 4
-					? initialData?.answers
-					: form.answers)
-			];
+		// if (!isEdit) {
+		setForm((prev) => {
+			return {
+				...prev,
+				answers: [...form.answers, { answer: '' }]
+			};
+		});
+		let answers = { answers: [...form.answers, { answer: '' }] };
+		sendDataToParent(answers);
+		// } else {
+		// 	//edit (draft)
+		// 	const answers = [
+		// 		...(initialData?.answers?.length === 0
+		// 			? [
+		// 					{
+		// 						answer: '',
+		// 						type: type === 'poll' ? 'poll' : 'right_answer',
+		// 						position: 0
+		// 					},
+		// 					{
+		// 						answer: '',
+		// 						type:
+		// 							location === 'article'
+		// 								? 'wrong_answer'
+		// 								: type === 'poll'
+		// 								? 'poll'
+		// 								: 'wrong_answer_1',
+		// 						position: 1
+		// 					}
+		// 			  ]
+		// 			: initialData?.answers?.length > 0 && initialData?.answers?.length < 4
+		// 			? initialData?.answers
+		// 			: form.answers)
+		// 	];
+		// 	console.log(answers, 'answers');
+		// 	setForm((prev) => {
+		// 		return {
+		// 			...prev,
+		// 			answers: [...answers, { answer: '' }]
+		// 		};
+		// 	});
 
-			setForm((prev) => {
-				return {
-					...prev,
-					answers: [...answers, { answer: '' }]
-				};
-			});
-
-			sendDataToParent(answers);
-		}
+		// 	sendDataToParent(answers);
+		// }
 	};
 
 	const handleAnswerDelete = (index) => {
@@ -501,7 +501,7 @@ const QuestionForm = ({
 									className={classes.titleContainer}
 									item={item}
 									index={index}
-									key={item.position}
+									key={`answer-${index}`}
 								>
 									<div className={globalClasses.characterCount}>
 										<h6
@@ -555,11 +555,15 @@ const QuestionForm = ({
 														<> </>
 													) : status === 'ACTIVE' || status === 'CLOSED' ? (
 														<DeleteBin
-															style={{ marginTop: '20px', opacity: 0.5 }}
+															style={{
+																marginTop: '20px',
+																opacity: 0.5,
+																cursor: 'pointer'
+															}}
 														/>
 													) : (
 														<DeleteBin
-															style={{ marginTop: '20px' }}
+															style={{ marginTop: '20px', cursor: 'pointer' }}
 															onClick={() => {
 																handleAnswerDelete(index);
 															}}

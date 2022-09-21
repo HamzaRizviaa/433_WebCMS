@@ -810,7 +810,11 @@ const UploadOrEditQuiz = ({
 																				isEdit
 																			}
 																			status={status}
-																			type={editQuestionData?.question_type}
+																			type={
+																				isEdit
+																					? editQuestionData?.question_type
+																					: 'poll'
+																			}
 																			resetSlides={(type) => resetSlides(type)}
 																			setQuesType={(type) => setQuesType(type)}
 																		/>
