@@ -211,13 +211,19 @@ const QuestionForm = ({
 
 	const handleNewAnswer = () => {
 		// if (!isEdit) {
+		const length = form.answers?.length;
 		setForm((prev) => {
 			return {
 				...prev,
-				answers: [...form.answers, { answer: '' }]
+				answers: [
+					...form.answers,
+					{ answer: '', position: length === 2 ? 3 : 4 }
+				]
 			};
 		});
-		let answers = { answers: [...form.answers, { answer: '' }] };
+		let answers = {
+			answers: [...form.answers, { answer: '', position: length === 2 ? 3 : 4 }]
+		};
 		sendDataToParent(answers);
 		// } else {
 		// 	//edit (draft)
