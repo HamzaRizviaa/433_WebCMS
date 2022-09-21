@@ -129,6 +129,16 @@ export const checkNewElementQuestionDraft = (specificQuestion, question) => {
 							? question[i]?.data[0]?.answers[1]?.answer ===
 							  specificQuestion?.questions[i]?.answers[1]?.answer
 							: true) &&
+						(question[i]?.data[0]?.answers?.length > 0 &&
+						question[i]?.data[0]?.answers[2]?.answer
+							? question[i]?.data[0]?.answers[2]?.answer ===
+							  specificQuestion?.questions[i]?.answers[2]?.answer
+							: true) &&
+						(question[i]?.data[0]?.answers?.length > 0 &&
+						question[i]?.data[0]?.answers[3]?.answer
+							? question[i]?.data[0]?.answers[3]?.answer ===
+							  specificQuestion?.questions[i]?.answers[3]?.answer
+							: true) &&
 						question[i]?.data[0]?.answers?.length ===
 							specificQuestion?.questions[i]?.answers?.length
 					) {
