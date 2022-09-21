@@ -559,12 +559,12 @@ const QuestionForm = ({
 												<InputAdornment position='end'>
 													{index < 2 ? (
 														<> </>
-													) : status === 'ACTIVE' || status === 'CLOSED' ? (
+													) : isEdit &&
+													  (status === 'ACTIVE' || status === 'CLOSED') ? (
 														<DeleteBin
 															style={{
 																marginTop: '20px',
-																opacity: 0.5,
-																cursor: 'pointer'
+																opacity: 0.5
 															}}
 														/>
 													) : (
