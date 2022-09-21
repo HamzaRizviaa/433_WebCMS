@@ -501,7 +501,7 @@ const QuestionForm = ({
 									className={classes.titleContainer}
 									item={item}
 									index={index}
-									key={item.position}
+									key={`answer-${index}`}
 								>
 									<div className={globalClasses.characterCount}>
 										<h6
