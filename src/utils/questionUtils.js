@@ -95,8 +95,6 @@ export const checkEmptyQuestionDraft = (question) => {
 	return validateQuestionDraft.every((item) => item === true);
 };
 export const checkNewElementQuestionDraft = (specificQuestion, question) => {
-	console.log(question, 'qD');
-	console.log(specificQuestion, 'sQ');
 	let result = [];
 	if (question.length === 0) {
 		result.push(true);
