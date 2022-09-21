@@ -38,6 +38,8 @@ import {
 	checkDuplicateLabel
 } from '../../../utils/newsUtils';
 
+import { message } from '../../../firebase';
+
 //api calls
 
 import { getAllNews } from '../../../pages/NewsLibrary/newsLibrarySlice';
@@ -87,6 +89,8 @@ const UploadOrEditNews = ({
 	const { specificNews, specificNewsStatus } = useSelector(
 		(state) => state.NewsLibrary
 	);
+
+	console.log(message, 'message');
 
 	useEffect(() => {
 		return () => {
