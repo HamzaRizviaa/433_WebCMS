@@ -217,12 +217,33 @@ const QuestionForm = ({
 				...prev,
 				answers: [
 					...form.answers,
-					{ answer: '', position: length === 2 ? 3 : 4 }
+					{
+						answer: '',
+						position: length === 2 ? 3 : 4,
+						type:
+							type === 'quiz' && length === 2
+								? 'wrong_answer_2'
+								: type === 'quiz' && length === 3
+								? 'wrong_answer_3'
+								: 'poll'
+					}
 				]
 			};
 		});
 		let answers = {
-			answers: [...form.answers, { answer: '', position: length === 2 ? 3 : 4 }]
+			answers: [
+				...form.answers,
+				{
+					answer: '',
+					position: length === 2 ? 3 : 4,
+					type:
+						type === 'quiz' && length === 2
+							? 'wrong_answer_2'
+							: type === 'quiz' && length === 3
+							? 'wrong_answer_3'
+							: 'poll'
+				}
+			]
 		};
 		sendDataToParent(answers);
 		// } else {
