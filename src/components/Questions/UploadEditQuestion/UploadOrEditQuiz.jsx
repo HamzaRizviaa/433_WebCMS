@@ -442,7 +442,6 @@ const UploadOrEditQuiz = ({
 	const resetState = () => {
 		setQuestionSlides([]);
 		setPreviewFile(null);
-		setQuestionType('poll');
 		setPreviewBool(false);
 		setDisableDropdown(true);
 		setConvertedDate(null);
@@ -453,6 +452,9 @@ const UploadOrEditQuiz = ({
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
+		setTimeout(() => {
+			setQuestionType('poll');
+		}, 1500);
 		setForm({
 			end_date: null
 		});
@@ -1120,7 +1122,7 @@ const UploadOrEditQuiz = ({
 						? stopQuizPoll(editQuestionData?.id)
 						: deleteQuiz(status.toLowerCase());
 				}}
-				text={questionType === 'quiz' ? 'Quiz' : 'Poll'}
+				text={questionType}
 				wrapperRef={dialogWrapper}
 				stop={openStopPopup ? true : false}
 			/>
