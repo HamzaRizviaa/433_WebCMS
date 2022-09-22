@@ -64,6 +64,37 @@ const QuestionForm = ({
 						}
 				  ]
 	});
+
+	useEffect(() => {
+		if (isEdit && status === 'draft') {
+			setForm((prev) => {
+				return {
+					...prev,
+					answers:
+						initialData?.answers?.length > 0
+							? initialData?.answers
+							: [
+									{
+										answer: '',
+										type: type === 'poll' ? 'poll' : 'right_answer',
+										position: 0
+									},
+									{
+										answer: '',
+										type:
+											location === 'article'
+												? 'wrong_answer'
+												: type === 'poll'
+												? 'poll'
+												: 'wrong_answer_1',
+										position: 1
+									}
+							  ]
+				};
+			});
+		}
+	}, [type]);
+
 	// const [form, setForm] = useState(
 	// 	initialData
 	// 		? {
@@ -217,12 +248,33 @@ const QuestionForm = ({
 				...prev,
 				answers: [
 					...form.answers,
-					{ answer: '', position: length === 2 ? 3 : 4 }
+					{
+						answer: '',
+						position: length,
+						type:
+							type === 'quiz' && length === 2
+								? 'wrong_answer_2'
+								: type === 'quiz' && length === 3
+								? 'wrong_answer_3'
+								: 'poll'
+					}
 				]
 			};
 		});
 		let answers = {
-			answers: [...form.answers, { answer: '', position: length === 2 ? 3 : 4 }]
+			answers: [
+				...form.answers,
+				{
+					answer: '',
+					position: length,
+					type:
+						type === 'quiz' && length === 2
+							? 'wrong_answer_2'
+							: type === 'quiz' && length === 3
+							? 'wrong_answer_3'
+							: 'poll'
+				}
+			]
 		};
 		sendDataToParent(answers);
 		// } else {
@@ -331,14 +383,15 @@ const QuestionForm = ({
 			];
 
 			answers[index] = {
+				...answers[index],
 				answer: event.target.value,
-				position: index,
-				type:
-					type === 'quiz' && index === 0
-						? 'right_answer'
-						: type === 'quiz' && index > 0
-						? 'wrong_answer_' + index
-						: 'poll'
+				position: index
+				// type:
+				// 	type === 'quiz' && index === 0
+				// 		? 'right_answer'
+				// 		: type === 'quiz' && index > 0
+				// 		? 'wrong_answer_' + index
+				// 		: 'poll'
 			};
 
 			setForm({ ...form, answers });
