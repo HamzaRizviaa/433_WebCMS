@@ -77,6 +77,8 @@ const UploadOrEditQuiz = ({
 	const [questionType, setQuestionType] = useState('poll');
 	const [questionSlides, setQuestionSlides] = useState([]); // data in slides
 	const [questionIds, setQuestionIds] = useState([]);
+	const [questionTypeonStopDelete, setQuestionTypeonStopDelete] =
+		useState('poll');
 	const [form, setForm] = useState({
 		end_date: null
 	});
@@ -232,6 +234,7 @@ const UploadOrEditQuiz = ({
 				editQuestionData?.questions?.map((data) => data?.id);
 			setQuestionIds(allQuestionIds); //to pass to delete data
 			setQuestionType(editQuestionData?.question_type);
+			setQuestionTypeonStopDelete(editQuestionData?.question_type); // to update in delete and stop quiz/poll
 			setForm((prev) => {
 				return {
 					...prev,
@@ -444,6 +447,7 @@ const UploadOrEditQuiz = ({
 		setPreviewFile(null);
 		setPreviewBool(false);
 		setDisableDropdown(true);
+		setQuestionType('poll');
 		setConvertedDate(null);
 		setPostButtonStatus(false);
 		setIsError({});
@@ -453,7 +457,7 @@ const UploadOrEditQuiz = ({
 			setDeleteBtnStatus(false);
 		}, 1000);
 		setTimeout(() => {
-			setQuestionType('poll');
+			setQuestionTypeonStopDelete('poll');
 		}, 1500);
 		setForm({
 			end_date: null
@@ -1122,7 +1126,7 @@ const UploadOrEditQuiz = ({
 						? stopQuizPoll(editQuestionData?.id)
 						: deleteQuiz(status.toLowerCase());
 				}}
-				text={questionType}
+				text={questionTypeonStopDelete}
 				wrapperRef={dialogWrapper}
 				stop={openStopPopup ? true : false}
 			/>
