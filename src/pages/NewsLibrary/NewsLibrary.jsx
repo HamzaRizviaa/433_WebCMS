@@ -39,9 +39,6 @@ import {
 } from './newsLibrarySlice';
 
 import { getAllNewLabels } from '../PostLibrary/postLibrarySlice';
-import { getFormatter } from '../../components/formatter';
-import OptionsFormatter from '../../components/formatter/optionsFormatter';
-import StatusFormatter from '../../components/formatter/statusFormatter';
 
 const NewsLibrary = () => {
 	// Selectors
@@ -195,64 +192,6 @@ const NewsLibrary = () => {
 			);
 		return null;
 	};
-
-	const mod_columns = [
-		{
-			dataField: 'media',
-			text: 'MEDIA',
-			sort: true,
-			formatter: (content, row) => getFormatter('media', row)
-		},
-		{
-			dataField: 'post_date',
-			text: 'POST DATE | TIME',
-			sort: true,
-			formatter: (content) => {
-				return <div className={classes.viralRow}>{getDateTime(content)}</div>;
-			}
-		},
-		{
-			dataField: 'labels',
-			text: 'LABELS',
-			sort: true,
-			formatter: (content) => {
-				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
-				return (
-					<Markup
-						className={classes.viralRow}
-						content={`${content[0]} ${secondLabel}`}
-					/>
-				);
-			}
-		},
-		{
-			dataField: 'user',
-			text: 'USER',
-			sort: true,
-			formatter: (content) => {
-				return <Markup className={classes.viralRow} content={`${content}`} />;
-			},
-		},
-		{
-			dataField: 'status',
-			text: 'STATUS',
-			sort: true,
-			formatter: (content) => getFormatter('status', classes.publish_draft_btn, content)
-		},
-		{
-			dataField: 'last_edit',
-			text: 'LAST EDIT',
-			sort: true,
-			formatter: (content) => {
-				return <div className={classes.viralRow}>{getDateTime(content)}</div>;
-			},
-		},
-		{
-			dataField: 'options',
-			text: 'OPTIONS',
-			formatter: () => getFormatter('options', classes.viralRow, 'EDIT NEWS')
-		},
-	]
 
 	const columns = [
 		{
