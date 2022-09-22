@@ -95,7 +95,6 @@ const QuestionForm = ({
 		}
 	}, [type]);
 
-	console.log(form, type, 'FORM');
 	// const [form, setForm] = useState(
 	// 	initialData
 	// 		? {
