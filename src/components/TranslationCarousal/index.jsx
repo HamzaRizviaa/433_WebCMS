@@ -11,6 +11,7 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 const TranslationCarousal = ({ lang, setLang }) => {
 	const [slide, setSlide] = useState(0);
+
 	const languages = [
 		{
 			id: 1,
@@ -142,7 +143,12 @@ const TranslationCarousal = ({ lang, setLang }) => {
 						fontSize='large'
 						onClick={() =>
 							setSlide((prev) => {
-								return slide > -250 && prev + -55;
+								if (slide < -250) {
+									return 0;
+								} else {
+									return prev + -55;
+								}
+								// return slide > -250 && prev + -55;
 							})
 						}
 					/>
