@@ -385,7 +385,7 @@ const QuestionForm = ({
 			answers[index] = {
 				...answers[index],
 				answer: event.target.value,
-				position: index
+				position: !answers[index].id ? index : answers[index].position
 				// type:
 				// 	type === 'quiz' && index === 0
 				// 		? 'right_answer'
