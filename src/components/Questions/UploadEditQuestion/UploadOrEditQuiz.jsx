@@ -309,13 +309,21 @@ const UploadOrEditQuiz = ({
 		let slidesData =
 			questionSlides?.length > 0
 				? questionSlides.map((item, index) => {
-						const answers = item.data[0]?.answers;
-						const answersToSend = answers.map((item, index) => {
-							return {
-								...item,
-								position: index
-							};
-						});
+						const answersToSend =
+							item.data[0]?.answers?.length > 0
+								? item.data[0]?.answers.map((item, index) => {
+										return {
+											...item,
+											position: index,
+											type:
+												questionType === 'quiz' && index === 0
+													? 'right_answer'
+													: questionType === 'quiz' && index > 0
+													? 'wrong_answer_' + index
+													: 'poll'
+										};
+								  })
+								: [];
 
 						if (!item.data)
 							return { ...item, position: index + 1, sortOrder: index + 1 };
