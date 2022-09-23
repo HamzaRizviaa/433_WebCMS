@@ -243,6 +243,7 @@ const QuestionForm = ({
 	const handleNewAnswer = () => {
 		// if (!isEdit) {
 		const length = form.answers?.length;
+
 		setForm((prev) => {
 			return {
 				...prev,
@@ -382,10 +383,11 @@ const QuestionForm = ({
 					: form.answers)
 			];
 
+			//if no id , means new answer so index will be position , otherwise position will be same coming from api .
 			answers[index] = {
 				...answers[index],
 				answer: event.target.value,
-				position: index
+				position: !answers[index].id ? index : answers[index].position
 				// type:
 				// 	type === 'quiz' && index === 0
 				// 		? 'right_answer'
