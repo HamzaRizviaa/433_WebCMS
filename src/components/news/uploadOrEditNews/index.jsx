@@ -37,6 +37,7 @@ import {
 	checkSortOrderOnEdit,
 	checkDuplicateLabel
 } from '../../../utils/newsUtils';
+import FeatureWrapper from '../../../components/FeatureWrapper';
 
 //api calls
 
@@ -84,6 +85,7 @@ const UploadOrEditNews = ({
 
 	const dispatch = useDispatch();
 	const labels = useSelector((state) => state.postLibrary.labels);
+	const { features } = useSelector((state) => state.remoteConfig);
 	const { specificNews, specificNewsStatus } = useSelector(
 		(state) => state.NewsLibrary
 	);

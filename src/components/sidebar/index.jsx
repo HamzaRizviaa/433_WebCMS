@@ -14,8 +14,14 @@ import { ReactComponent as Article } from '../../assets/ArticleIcon.svg';
 // import { ReactComponent as ArticleSelected } from '../../assets/NewsSelected.svg';
 import { useGoogleLogout } from 'react-google-login';
 import Tooltip from '../Tooltip';
+import { remoteConfig } from '../../firebase';
+import { getAll, fetchAndActivate } from 'firebase/remote-config';
+import { setRemoteConfig } from '../../store/remoteConfigSlice';
+import { useDispatch } from 'react-redux';
+
 const Sidebar = () => {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
 	const [mainClass, setMainClass] = useState('main');
 	const classes = useStyles({ mainClass });
@@ -50,6 +56,19 @@ const Sidebar = () => {
 			return 'prod';
 		}
 	};
+
+	useEffect(() => {
+		fetchAndActivate(remoteConfig)
+			.then(() => {
+				let configs = getAll(remoteConfig);
+				console.log('Configs getAll', configs);
+				dispatch(setRemoteConfig(configs));
+			})
+			.catch((err) => {
+				console.log('err fetch and activate', err);
+				dispatch(setRemoteConfig({}));
+			});
+	}, []);
 
 	useEffect(() => {
 		if (window && window.location) {
