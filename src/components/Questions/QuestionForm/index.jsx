@@ -240,8 +240,6 @@ const QuestionForm = ({
 		}
 	}, [extraLabel]);
 
-	console.log('form', form.answers);
-
 	const handleNewAnswer = () => {
 		// if (!isEdit) {
 		const length = form.answers?.length;
@@ -385,7 +383,7 @@ const QuestionForm = ({
 					: form.answers)
 			];
 
-			console.log(answers, answers[index].answer, 'answers');
+			// console.log(answers, answers[index].answer, 'answers');
 
 			answers[index] = {
 				...answers[index],

@@ -439,9 +439,8 @@ const UploadOrEditQuiz = ({
 		}
 		setOpenStopPopup(!openStopPopup);
 	};
-	console.log('reset 2', questionType);
+
 	const resetState = () => {
-		console.log('reset', questionType);
 		setQuestionSlides([]);
 		setPreviewFile(null);
 		setPreviewBool(false);
