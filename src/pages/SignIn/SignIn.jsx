@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import classes from './_signIn.module.scss';
 import GoogleLogin from 'react-google-login';
@@ -13,8 +14,13 @@ import { ReactComponent as Logo2 } from '../../assets/Logo2.svg';
 // import { ReactComponent as BGImage } from '../../assets/GlobeBG.svg';
 import { ReactComponent as DeniedError } from '../../assets/AccesDenied.svg';
 import { setAccessTokenInHeader } from '../../globalServices/httpService';
+import { remoteConfig } from '../../firebase';
+import { getAll, fetchAndActivate } from 'firebase/remote-config';
+import { setRemoteConfig } from '../../store/remoteConfigSlice';
+import { useDispatch } from 'react-redux';
 
 const SignIn = ({ setLoginData }) => {
+	const dispatch = useDispatch();
 	const [signInError, setSignInError] = useState(false);
 	const [isLoadingSignIn, setIsLoadingSignin] = useState(false);
 	const [accessExpire, setAccessExpire] = useState(false);
@@ -142,6 +148,19 @@ const SignIn = ({ setLoginData }) => {
 	// 	localStorage.removeItem('loginData');
 	// 	setLoginData(null);
 	// };
+
+	useEffect(() => {
+		fetchAndActivate(remoteConfig)
+			.then(() => {
+				let configs = getAll(remoteConfig);
+				console.log('Configs getAll', configs);
+				dispatch(setRemoteConfig(configs));
+			})
+			.catch((err) => {
+				console.log('err fetch and activate', err);
+				dispatch(setRemoteConfig({}));
+			});
+	}, []);
 
 	return (
 		<>

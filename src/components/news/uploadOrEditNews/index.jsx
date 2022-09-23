@@ -37,8 +37,7 @@ import {
 	checkSortOrderOnEdit,
 	checkDuplicateLabel
 } from '../../../utils/newsUtils';
-
-import { message } from '../../../firebase';
+import FeatureWrapper from '../../../components/FeatureWrapper';
 
 //api calls
 
@@ -86,11 +85,10 @@ const UploadOrEditNews = ({
 
 	const dispatch = useDispatch();
 	const labels = useSelector((state) => state.postLibrary.labels);
+	const { features } = useSelector((state) => state.remoteConfig);
 	const { specificNews, specificNewsStatus } = useSelector(
 		(state) => state.NewsLibrary
 	);
-
-	console.log(message, 'message');
 
 	useEffect(() => {
 		return () => {
