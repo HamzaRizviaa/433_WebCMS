@@ -46,6 +46,7 @@ import { TextField } from '@material-ui/core';
 import { ToastErrorNotifications } from '../../../constants';
 import { Divider } from '@mui/material';
 import TranslationCarousal from '../../TranslationCarousal';
+import { useGetTranslationsMutation } from '../../../features/translations.query';
 
 // mock data for news object
 const mockNews = {
@@ -147,6 +148,12 @@ const mockNews = {
 		}
 	]
 };
+const prefix = 'slide';
+const defaultLanguage = {
+	name: 'English',
+	prefix: 'ENG',
+	shortName: 'en'
+};
 const UploadOrEditNews = ({
 	open,
 	handleClose,
@@ -159,14 +166,12 @@ const UploadOrEditNews = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 
+	// use mutation
+	const [getTranslations, mutationResponse, sd] = useGetTranslationsMutation();
 	// need retranslation?
 	const [reTranslate, setRetranslate] = useState(false);
 	// currently selected language
-	const [currentLanguage, setCurrentLanguage] = useState({
-		name: 'English',
-		prefix: 'ENG',
-		shortName: 'en'
-	});
+	const [currentLanguage, setCurrentLanguage] = useState(defaultLanguage);
 	// raw translations
 	const [rawTranslations, setRawTranslations] = useState({
 		en: {}
@@ -210,6 +215,10 @@ const UploadOrEditNews = ({
 	);
 
 	useEffect(() => {
+		console.log(mutationResponse, sd);
+		mutationResponse.isSuccess && setRawTranslations(mutationResponse.data);
+	}, [mutationResponse]);
+	useEffect(() => {
 		return () => {
 			resetState();
 		};
@@ -217,8 +226,8 @@ const UploadOrEditNews = ({
 
 	useEffect(() => {
 		if (specificNews) {
-			console.log(specificNews);
-			setRawTranslations(parseNewsObject(mockNews));
+			// console.log(specificNews);
+			// setRawTranslations(parseNewsObject(mockNews));
 
 			setNotifID(specificNews?.id);
 			if (specificNews?.labels) {
@@ -414,6 +423,11 @@ const UploadOrEditNews = ({
 			show_comments: true
 		});
 		setNews([]);
+
+		//resetting states of translations
+		setRawTranslations({ en: {} });
+		setCurrentLanguage(defaultLanguage);
+		setRetranslate(false);
 	};
 
 	useEffect(() => {
@@ -785,11 +799,16 @@ const UploadOrEditNews = ({
 				translations[currentLanguage.shortName]['slides'] = {
 					...translations[currentLanguage.shortName]['slides']
 				};
-				translations[currentLanguage.shortName]['slides'][slideId] = {
-					...translations[currentLanguage.shortName]['slides'][slideId]
+				translations[currentLanguage.shortName]['slides'][
+					`${prefix}_${slideId}`
+				] = {
+					...translations[currentLanguage.shortName]['slides'][
+						`${prefix}_${slideId}`
+					]
 				};
-				translations[currentLanguage.shortName]['slides'][slideId][fieldName] =
-					value;
+				translations[currentLanguage.shortName]['slides'][
+					`${prefix}_${slideId}`
+				][fieldName] = value;
 
 				setRawTranslations(translations);
 			} else {
@@ -819,16 +838,16 @@ const UploadOrEditNews = ({
 		if (slideIdIndicator) {
 			if (currentLanguage.shortName === 'en') {
 				let fieldFromTranslations =
-					rawTranslations[currentLanguage.shortName]?.['slides']?.[slideId]?.[
-						fieldName
-					];
+					rawTranslations[currentLanguage.shortName]?.['slides']?.[
+						`${prefix}_${slideId}`
+					]?.[fieldName];
 				let fieldFromSlide = news[slideIndex]?.['data']?.[0]?.[fieldName];
 				return fieldFromTranslations || fieldFromSlide;
 			} else {
 				return (
-					rawTranslations[currentLanguage.shortName]?.['slides']?.[slideId]?.[
-						fieldName
-					] || ''
+					rawTranslations[currentLanguage.shortName]?.['slides']?.[
+						`${prefix}_${slideId}`
+					]?.[fieldName] || ''
 				);
 			}
 		} else {
@@ -938,7 +957,11 @@ const UploadOrEditNews = ({
 												</p>
 												<div className={globalClasses.captionContainer}>
 													<div className={globalClasses.characterCount}>
-														<h6 onClick={() => setRetranslate(false)}>
+														<h6
+															onClick={() =>
+																getTranslations(rawTranslations['en'])
+															}
+														>
 															BANNER TITLE
 														</h6>
 														<h6
