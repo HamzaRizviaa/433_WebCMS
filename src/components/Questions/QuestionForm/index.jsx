@@ -240,8 +240,15 @@ const QuestionForm = ({
 		}
 	}, [extraLabel]);
 
+	const findAnswerType = () => {
+		const answerType = form.answers.some(
+			(item) => item.type == 'wrong_answer_3'
+		);
+
+		return answerType;
+	};
+
 	const handleNewAnswer = () => {
-		// if (!isEdit) {
 		const length = form.answers?.length;
 		setForm((prev) => {
 			return {
@@ -254,13 +261,16 @@ const QuestionForm = ({
 						type:
 							type === 'quiz' && length === 2
 								? 'wrong_answer_2'
-								: type === 'quiz' && length === 3
+								: type === 'quiz' && length === 3 && !findAnswerType()
 								? 'wrong_answer_3'
+								: type === 'quiz' && length === 3 && findAnswerType() // true , true , true
+								? 'wrong_answer_2'
 								: 'poll'
 					}
 				]
 			};
 		});
+
 		let answers = {
 			answers: [
 				...form.answers,
@@ -270,48 +280,15 @@ const QuestionForm = ({
 					type:
 						type === 'quiz' && length === 2
 							? 'wrong_answer_2'
-							: type === 'quiz' && length === 3
+							: type === 'quiz' && length === 3 && !findAnswerType()
 							? 'wrong_answer_3'
+							: type === 'quiz' && length === 3 && findAnswerType() // true , true , true
+							? 'wrong_answer_2'
 							: 'poll'
 				}
 			]
 		};
 		sendDataToParent(answers);
-		// } else {
-		// 	//edit (draft)
-		// 	const answers = [
-		// 		...(initialData?.answers?.length === 0
-		// 			? [
-		// 					{
-		// 						answer: '',
-		// 						type: type === 'poll' ? 'poll' : 'right_answer',
-		// 						position: 0
-		// 					},
-		// 					{
-		// 						answer: '',
-		// 						type:
-		// 							location === 'article'
-		// 								? 'wrong_answer'
-		// 								: type === 'poll'
-		// 								? 'poll'
-		// 								: 'wrong_answer_1',
-		// 						position: 1
-		// 					}
-		// 			  ]
-		// 			: initialData?.answers?.length > 0 && initialData?.answers?.length < 4
-		// 			? initialData?.answers
-		// 			: form.answers)
-		// 	];
-		// 	console.log(answers, 'answers');
-		// 	setForm((prev) => {
-		// 		return {
-		// 			...prev,
-		// 			answers: [...answers, { answer: '' }]
-		// 		};
-		// 	});
-
-		// 	sendDataToParent(answers);
-		// }
 	};
 
 	const handleAnswerDelete = (index) => {
@@ -352,11 +329,6 @@ const QuestionForm = ({
 		} else {
 			// This block of code will only be executed if the question is in draft
 			// Then only the question answers will be editable
-			// const isAnswersEdited = initialData && initialData.answers;
-
-			// const answers = [
-			// 	...(isAnswersEdited ? initialData?.answers : [...form.answers])
-			// ];
 
 			const answers = [
 				...(initialData?.answers?.length === 0
@@ -384,14 +356,7 @@ const QuestionForm = ({
 
 			answers[index] = {
 				...answers[index],
-				answer: event.target.value,
-				position: !answers[index].id ? index : answers[index].position
-				// type:
-				// 	type === 'quiz' && index === 0
-				// 		? 'right_answer'
-				// 		: type === 'quiz' && index > 0
-				// 		? 'wrong_answer_' + index
-				// 		: 'poll'
+				answer: event.target.value
 			};
 
 			setForm({ ...form, answers });
