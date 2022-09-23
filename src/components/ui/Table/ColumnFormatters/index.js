@@ -1,6 +1,6 @@
 import React from "react";
-import OptionsFormatter from "./optionsFormatter";
-import StatusFormatter from "./statusFormatter";
+import OptionsFormatter from "./OptionsFormatter";
+import StatusFormatter from "./StatusFormatter";
 
 const formatter = {
     status: StatusFormatter,

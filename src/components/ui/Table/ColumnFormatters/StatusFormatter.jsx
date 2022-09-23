@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from '../button';
+import Button from '../../../button';
 import PropTypes from 'prop-types';
 
 const StatusFormatter = ({ params, styledClass }) => {

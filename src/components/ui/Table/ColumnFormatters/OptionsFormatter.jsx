@@ -3,7 +3,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { useStyles } from './index.style';
 import Fade from '@mui/material/Fade';
 import PropTypes from 'prop-types';
-import { ReactComponent as Edit } from '../../assets/edit.svg';
+import { ReactComponent as Edit } from '../../../../assets/edit.svg';
 
 const OptionsFormatter = ({ params, styledClass }) => {
     const classes = useStyles()
