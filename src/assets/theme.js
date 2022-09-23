@@ -53,6 +53,7 @@ const theme = createTheme({
 		black: '#000000',
 		white: '#ffffff',
 		neonYellow: '#ffff00',
+		normalGrey: '#404040',
 		grey: '#404040',
 		lightGrey: '#c4c4c4',
 		lightGreen: '#00d87d',

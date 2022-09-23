@@ -383,8 +383,7 @@ const QuestionForm = ({
 					: form.answers)
 			];
 
-			// console.log(answers, answers[index].answer, 'answers');
-
+			//if no id , means new answer so index will be position , otherwise position will be same coming from api .
 			answers[index] = {
 				...answers[index],
 				answer: event.target.value,
