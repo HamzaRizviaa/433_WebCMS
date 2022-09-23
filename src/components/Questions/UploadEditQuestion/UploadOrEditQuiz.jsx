@@ -309,6 +309,14 @@ const UploadOrEditQuiz = ({
 		let slidesData =
 			questionSlides?.length > 0
 				? questionSlides.map((item, index) => {
+						const answers = item.data[0]?.answers;
+						const answersToSend = answers.map((item, index) => {
+							return {
+								...item,
+								position: index
+							};
+						});
+
 						if (!item.data)
 							return { ...item, position: index + 1, sortOrder: index + 1 };
 						return {
@@ -322,7 +330,7 @@ const UploadOrEditQuiz = ({
 								  mediaFiles[index]?.media_url
 								: '',
 							labels: item.data[0]?.labels || [],
-							answers: item.data[0]?.answers || [],
+							answers: answersToSend || [],
 							question: item.data[0]?.question || '',
 							dropbox_url: item.data[0]?.dropbox_url || '',
 							sortOrder: index + 1,
@@ -755,363 +763,351 @@ const UploadOrEditQuiz = ({
 					className={classes.loadingOverlay}
 					spinner={<PrimaryLoader />}
 				>
-					<Slide in={true} direction='up' {...{ timeout: 400 }}>
-						<div
-							ref={loadingRef}
-							className={`${
-								previewFile != null
-									? globalClasses.previewContentWrapper
-									: globalClasses.contentWrapper
-							}`}
-						>
-							{questionEditStatus === 'loading' ? (
-								<PrimaryLoader />
-							) : (
-								<>
-									{location === 'article' ? (
-										<QuestionDraggable>
-											{questionSlides.map((item, index) => {
-												return (
-													<>
-														<QuestionForm
-															isEdit={isEdit}
-															location={location}
-															type={questionType}
-															key={item.sortOrder}
-															setPreviewBool={setPreviewBool}
-															setPreviewFile={setPreviewFile}
-															setDisableDropdown={setDisableDropdown}
-															initialData={
-																isEdit && item?.data && item?.data[0]
-															}
-														/>
-													</>
-												);
-											})}
-										</QuestionDraggable>
-									) : (
-										<>
-											<div
-												className={globalClasses.contentWrapperNoPreview}
-												style={{ width: previewFile != null ? '60%' : 'auto' }}
-											>
+					<div
+						ref={loadingRef}
+						className={`${
+							previewFile != null
+								? globalClasses.previewContentWrapper
+								: globalClasses.contentWrapper
+						}`}
+					>
+						{questionEditStatus === 'loading' ? (
+							<PrimaryLoader />
+						) : (
+							<>
+								{location === 'article' ? (
+									<QuestionDraggable>
+										{questionSlides.map((item, index) => {
+											return (
 												<>
-													<div className={globalClasses.accordionRoot}>
-														<Accordion defaultExpanded>
-															<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-																<Typography>General Information</Typography>
-															</AccordionSummary>
-
-															<AccordionDetails>
-																{/* tab panes on first upload*/}
-																{((isEdit && status === 'draft') ||
-																	!isEdit) && (
-																	<>
-																		<QuestionTabPanes
-																			edit={
-																				editQuestionData?.question_type &&
-																				isEdit
-																			}
-																			status={status}
-																			type={
-																				isEdit
-																					? editQuestionData?.question_type
-																					: 'poll'
-																			}
-																			resetSlides={(type) => resetSlides(type)}
-																			setQuesType={(type) => setQuesType(type)}
-																		/>
-																	</>
-																)}
-																<br />
-																<div className={classes.datePickerContainer}>
-																	<h6
-																		className={
-																			isError.endDate
-																				? globalClasses.errorState
-																				: globalClasses.noErrorState
-																		}
-																	>
-																		{questionType === 'quiz'
-																			? 'QUIZ END DATE'
-																			: 'POLL END DATE'}
-																	</h6>
-																	<div
-																		className={classes.datePicker}
-																		style={{
-																			marginBottom: calenderOpen ? '250px' : ''
-																		}}
-																	>
-																		<DatePicker
-																			customInput={<ExampleCustomInput />}
-																			disabled={
-																				isEdit && status === 'CLOSED'
-																					? true
-																					: false
-																			}
-																			startDate={form.end_date}
-																			minDate={new Date()}
-																			onChange={(update) => {
-																				setForm((prev) => {
-																					return { ...prev, end_date: update };
-																				});
-																			}}
-																			popperPlacement='bottom'
-																			onCalendarOpen={() => {
-																				setCalenderOpen(true);
-																				setDisableDropdown(false);
-																			}}
-																			onCalendarClose={() => {
-																				setCalenderOpen(false);
-																				setDisableDropdown(true);
-																			}}
-																			isClearable={
-																				isEdit && status === 'CLOSED'
-																					? false
-																					: true
-																			}
-																		/>
-																	</div>
-																</div>
-																<p className={globalClasses.mediaError}>
-																	{isError.endDate
-																		? `${
-																				'You need to select date to post ' +
-																				questionType
-																		  }`
-																		: ''}
-																</p>
-															</AccordionDetails>
-														</Accordion>
-													</div>
-
-													<QuestionDraggable onDragEnd={onDragEnd}>
-														{/* isEdit ? {//tab panes // question form // quiz results } : question form */}
-
-														{questionSlides.map((item, index) => {
-															return (
-																<DraggableContainers
-																	location={location}
-																	isEdit={isEdit}
-																	item={item}
-																	index={index}
-																	// sortingPosition={item?.position}
-																	type={questionType}
-																	key={item.position + 1}
-																	status={status}
-																	endDate={form.end_date}
-																	sendDataToParent={(data) =>
-																		setNewData(data, index)
-																	}
-																	handleDeleteMedia={(data) =>
-																		handleMediaDataDelete(data, index)
-																	}
-																	handleDeleteQuestionSlide={(sortOrder) =>
-																		handleElementDelete(sortOrder)
-																	}
-																	initialData={item?.data && item?.data[0]} // passing data to child
-																	setPreviewFile={setPreviewFile}
-																	setPreviewBool={setPreviewBool}
-																	setDisableDropdown={setDisableDropdown}
-																	//tab panes
-																	resetSlides={(type) => resetSlides(type)}
-																	setQuesType={(type) => setQuesType(type)}
-																/>
-															);
-														})}
-													</QuestionDraggable>
-
-													{!isEdit && questionSlides?.length < 10 ? (
-														<Button
-															style={{
-																marginTop: '2rem'
-															}}
-															buttonNews={true}
-															disabled={false}
-															onClick={() => handleNewSlide()}
-															text={'ADD QUESTION'}
-														/>
-													) : isEdit &&
-													  status === 'draft' &&
-													  questionSlides?.length < 10 ? (
-														<Button
-															style={{
-																marginTop: '2rem'
-															}}
-															buttonNews={true}
-															disabled={false}
-															onClick={() => handleNewSlide()}
-															text={'ADD QUESTION'}
-														/>
-													) : (
-														''
-													)}
+													<QuestionForm
+														isEdit={isEdit}
+														location={location}
+														type={questionType}
+														key={item.sortOrder}
+														setPreviewBool={setPreviewBool}
+														setPreviewFile={setPreviewFile}
+														setDisableDropdown={setDisableDropdown}
+														initialData={isEdit && item?.data && item?.data[0]}
+													/>
 												</>
-												<br />
-												<p className={globalClasses.mediaError}></p>
-												<br />
-												<div className={classes.buttonDiv}>
-													<div className={classes.leftButtonDiv}>
-														{isEdit ? (
-															<div className={classes.editDeleteBtn}>
+											);
+										})}
+									</QuestionDraggable>
+								) : (
+									<>
+										<div
+											className={globalClasses.contentWrapperNoPreview}
+											style={{ width: previewFile != null ? '60%' : 'auto' }}
+										>
+											<>
+												<div className={globalClasses.accordionRoot}>
+													<Accordion defaultExpanded>
+														<AccordionSummary expandIcon={<ExpandMoreIcon />}>
+															<Typography>General Information</Typography>
+														</AccordionSummary>
+
+														<AccordionDetails>
+															{/* tab panes on first upload*/}
+															{((isEdit && status === 'draft') || !isEdit) && (
+																<>
+																	<QuestionTabPanes
+																		edit={
+																			editQuestionData?.question_type && isEdit
+																		}
+																		status={status}
+																		type={questionType}
+																		resetSlides={(type) => resetSlides(type)}
+																		setQuesType={(type) => setQuesType(type)}
+																	/>
+																</>
+															)}
+															<br />
+															<div className={classes.datePickerContainer}>
+																<h6
+																	className={
+																		isError.endDate
+																			? globalClasses.errorState
+																			: globalClasses.noErrorState
+																	}
+																>
+																	{questionType === 'quiz'
+																		? 'QUIZ END DATE'
+																		: 'POLL END DATE'}
+																</h6>
+																<div
+																	className={classes.datePicker}
+																	style={{
+																		marginBottom: calenderOpen ? '250px' : ''
+																	}}
+																>
+																	<DatePicker
+																		customInput={<ExampleCustomInput />}
+																		disabled={
+																			isEdit && status === 'CLOSED'
+																				? true
+																				: false
+																		}
+																		startDate={form.end_date}
+																		minDate={new Date()}
+																		onChange={(update) => {
+																			setForm((prev) => {
+																				return { ...prev, end_date: update };
+																			});
+																		}}
+																		popperPlacement='bottom'
+																		onCalendarOpen={() => {
+																			setCalenderOpen(true);
+																			setDisableDropdown(false);
+																		}}
+																		onCalendarClose={() => {
+																			setCalenderOpen(false);
+																			setDisableDropdown(true);
+																		}}
+																		isClearable={
+																			isEdit && status === 'CLOSED'
+																				? false
+																				: true
+																		}
+																	/>
+																</div>
+															</div>
+															<p className={globalClasses.mediaError}>
+																{isError.endDate
+																	? `${
+																			'You need to select date to post ' +
+																			questionType
+																	  }`
+																	: ''}
+															</p>
+														</AccordionDetails>
+													</Accordion>
+												</div>
+
+												<QuestionDraggable onDragEnd={onDragEnd}>
+													{/* isEdit ? {//tab panes // question form // quiz results } : question form */}
+
+													{questionSlides.map((item, index) => {
+														return (
+															<DraggableContainers
+																location={location}
+																isEdit={isEdit}
+																item={item}
+																index={index}
+																// sortingPosition={item?.position}
+																type={questionType}
+																key={item.position + 1}
+																status={status}
+																endDate={form.end_date}
+																sendDataToParent={(data) =>
+																	setNewData(data, index)
+																}
+																handleDeleteMedia={(data) =>
+																	handleMediaDataDelete(data, index)
+																}
+																handleDeleteQuestionSlide={(sortOrder) =>
+																	handleElementDelete(sortOrder)
+																}
+																initialData={item?.data && item?.data[0]} // passing data to child
+																setPreviewFile={setPreviewFile}
+																setPreviewBool={setPreviewBool}
+																setDisableDropdown={setDisableDropdown}
+																//tab panes
+																resetSlides={(type) => resetSlides(type)}
+																setQuesType={(type) => setQuesType(type)}
+															/>
+														);
+													})}
+												</QuestionDraggable>
+
+												{!isEdit && questionSlides?.length < 10 ? (
+													<Button
+														style={{
+															marginTop: '2rem'
+														}}
+														buttonNews={true}
+														disabled={false}
+														onClick={() => handleNewSlide()}
+														text={'ADD QUESTION'}
+													/>
+												) : isEdit &&
+												  status === 'draft' &&
+												  questionSlides?.length < 10 ? (
+													<Button
+														style={{
+															marginTop: '2rem'
+														}}
+														buttonNews={true}
+														disabled={false}
+														onClick={() => handleNewSlide()}
+														text={'ADD QUESTION'}
+													/>
+												) : (
+													''
+												)}
+											</>
+											<br />
+											<p className={globalClasses.mediaError}></p>
+											<br />
+											<div className={classes.buttonDiv}>
+												<div className={classes.leftButtonDiv}>
+													{isEdit ? (
+														<div className={classes.editDeleteBtn}>
+															<Button
+																disabled={deleteBtnStatus}
+																button2={isEdit ? true : false}
+																onClick={() => {
+																	if (!deleteBtnStatus) {
+																		toggleDeleteModal();
+																	}
+																}}
+																text={
+																	questionType === 'quiz'
+																		? 'DELETE QUIZ'
+																		: 'DELETE POLL'
+																}
+															/>
+														</div>
+													) : (
+														<></>
+													)}
+
+													{isEdit && status === 'ACTIVE' ? (
+														<>
+															<div className={classes.stopBtn}>
 																<Button
-																	disabled={deleteBtnStatus}
-																	button2={isEdit ? true : false}
+																	buttonStop={true}
 																	onClick={() => {
 																		if (!deleteBtnStatus) {
-																			toggleDeleteModal();
+																			toggleStopModal();
 																		}
 																	}}
 																	text={
 																		questionType === 'quiz'
-																			? 'DELETE QUIZ'
-																			: 'DELETE POLL'
+																			? 'STOP QUIZ'
+																			: 'STOP POLL'
 																	}
 																/>
 															</div>
-														) : (
-															<></>
-														)}
-
-														{isEdit && status === 'ACTIVE' ? (
-															<>
-																<div className={classes.stopBtn}>
-																	<Button
-																		buttonStop={true}
-																		onClick={() => {
-																			if (!deleteBtnStatus) {
-																				toggleStopModal();
-																			}
-																		}}
-																		text={
-																			questionType === 'quiz'
-																				? 'STOP QUIZ'
-																				: 'STOP POLL'
-																		}
-																	/>
-																</div>
-															</>
-														) : (
-															<></>
-														)}
-													</div>
-													<div className={classes.publishDraftDiv}>
-														{status === 'draft' || !isEdit ? (
-															<div
-																className={
-																	isEdit
-																		? classes.draftBtnEdit
-																		: classes.draftBtn
-																}
-															>
-																<Button
-																	disabledDraft={
-																		isEdit
-																			? draftBtnDisabled
-																			: !validateDraft(
-																					form,
-																					null,
-																					null,
-																					questionSlides
-																			  )
-																	}
-																	onClick={() => handleDraftSave()}
-																	button3={true}
-																	text={
-																		status === 'draft' && isEdit
-																			? 'SAVE DRAFT'
-																			: 'SAVE AS DRAFT'
-																	}
-																/>
-															</div>
-														) : (
-															<></>
-														)}
-
+														</>
+													) : (
+														<></>
+													)}
+												</div>
+												<div className={classes.publishDraftDiv}>
+													{status === 'draft' || !isEdit ? (
 														<div
-															className={[
-																isEdit && validateForm(form)
-																	? classes.addMediaBtn
-																	: isEdit
-																	? classes.addMediaBtnEdit
-																	: classes.addMediaBtn,
-																classes.saveChangesbtn
-															].join(' ')}
+															className={
+																isEdit ? classes.draftBtnEdit : classes.draftBtn
+															}
 														>
 															<Button
-																text={
-																	!isEdit && questionType === 'quiz'
-																		? 'ADD QUIZ'
-																		: !isEdit && questionType === 'poll'
-																		? 'ADD POLL'
-																		: status === 'draft'
-																		? 'PUBLISH'
-																		: 'SAVE CHANGES'
-																}
-																disabled={
-																	isEdit &&
-																	validateForm(
-																		form,
-																		null,
-																		null,
-																		questionSlides
-																	) &&
-																	status === 'draft'
-																		? false
-																		: !isEdit
-																		? !validateForm(
+																disabledDraft={
+																	isEdit
+																		? draftBtnDisabled
+																		: !validateDraft(
 																				form,
 																				null,
 																				null,
 																				questionSlides
 																		  )
-																		: editQuizBtnDisabled
 																}
-																onClick={() => {
-																	handlePostQuizPollBtn();
-																}}
+																onClick={() => handleDraftSave()}
+																button3={true}
+																text={
+																	status === 'draft' && isEdit
+																		? 'SAVE DRAFT'
+																		: 'SAVE AS DRAFT'
+																}
 															/>
 														</div>
+													) : (
+														<></>
+													)}
+
+													<div
+														className={[
+															isEdit && validateForm(form)
+																? classes.addMediaBtn
+																: isEdit
+																? classes.addMediaBtnEdit
+																: classes.addMediaBtn,
+															classes.saveChangesbtn
+														].join(' ')}
+													>
+														<Button
+															text={
+																!isEdit && questionType === 'quiz'
+																	? 'ADD QUIZ'
+																	: !isEdit && questionType === 'poll'
+																	? 'ADD POLL'
+																	: status === 'draft'
+																	? 'PUBLISH'
+																	: 'SAVE CHANGES'
+															}
+															disabled={
+																isEdit &&
+																validateForm(
+																	form,
+																	null,
+																	null,
+																	questionSlides
+																) &&
+																status === 'draft'
+																	? false
+																	: !isEdit
+																	? !validateForm(
+																			form,
+																			null,
+																			null,
+																			questionSlides
+																	  )
+																	: editQuizBtnDisabled
+															}
+															onClick={() => {
+																handlePostQuizPollBtn();
+															}}
+														/>
 													</div>
 												</div>
 											</div>
-											{previewFile != null && (
-												<div
-													ref={previewRef}
-													className={globalClasses.previewComponent}
-												>
-													<div className={globalClasses.previewHeader}>
-														<Close
-															onClick={() => {
-																setPreviewBool(false);
-																setPreviewFile(null);
-															}}
-															className={globalClasses.closeIcon}
-														/>
-														<h5>Preview</h5>
-													</div>
-													<div>
-														{
-															<img
-																src={previewFile.media_url}
-																className={globalClasses.previewFile}
-																style={{
-																	width: '100%',
-																	height: `${8 * 4}rem`,
-																	objectFit: 'contain',
-																	objectPosition: 'center'
-																}}
-															/>
-														}
-													</div>
+										</div>
+										{previewFile != null && (
+											<div
+												ref={previewRef}
+												className={globalClasses.previewComponent}
+											>
+												<div className={globalClasses.previewHeader}>
+													<Close
+														onClick={() => {
+															setPreviewBool(false);
+															setPreviewFile(null);
+														}}
+														className={globalClasses.closeIcon}
+													/>
+													<h5>Preview</h5>
 												</div>
-											)}
-										</>
-									)}
-								</>
-							)}
-						</div>
-					</Slide>
+												<div>
+													{
+														<img
+															src={previewFile.media_url}
+															className={globalClasses.previewFile}
+															style={{
+																width: '100%',
+																height: `${8 * 4}rem`,
+																objectFit: 'contain',
+																objectPosition: 'center'
+															}}
+														/>
+													}
+												</div>
+											</div>
+										)}
+									</>
+								)}
+							</>
+						)}
+					</div>
 				</LoadingOverlay>
 			</Slider>
 
