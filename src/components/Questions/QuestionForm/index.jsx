@@ -240,13 +240,13 @@ const QuestionForm = ({
 		}
 	}, [extraLabel]);
 
-	const findAnswerType = () => {
-		const answerType = form.answers.some(
-			(item) => item.type == 'wrong_answer_3'
-		);
+	// const findAnswerType = () => {
+	// 	const answerType = form.answers.some(
+	// 		(item) => item.type == 'wrong_answer_3'
+	// 	);
 
-		return answerType;
-	};
+	// 	return answerType;
+	// };
 
 	const handleNewAnswer = () => {
 		const length = form.answers?.length;
@@ -258,14 +258,14 @@ const QuestionForm = ({
 					{
 						answer: '',
 						position: length,
-						type:
-							type === 'quiz' && length === 2
-								? 'wrong_answer_2'
-								: type === 'quiz' && length === 3 && !findAnswerType()
-								? 'wrong_answer_3'
-								: type === 'quiz' && length === 3 && findAnswerType() // true , true , true
-								? 'wrong_answer_2'
-								: 'poll'
+						type: type
+						// === 'quiz' && length === 2
+						// 	? 'wrong_answer_2'
+						// 	: type === 'quiz' && length === 3 && !findAnswerType()
+						// 	? 'wrong_answer_3'
+						// 	: type === 'quiz' && length === 3 && findAnswerType() // true , true , true
+						// 	? 'wrong_answer_2'
+						// 	: 'poll'
 					}
 				]
 			};
@@ -277,14 +277,14 @@ const QuestionForm = ({
 				{
 					answer: '',
 					position: length,
-					type:
-						type === 'quiz' && length === 2
-							? 'wrong_answer_2'
-							: type === 'quiz' && length === 3 && !findAnswerType()
-							? 'wrong_answer_3'
-							: type === 'quiz' && length === 3 && findAnswerType() // true , true , true
-							? 'wrong_answer_2'
-							: 'poll'
+					type: type
+					// type === 'quiz' && length === 2
+					// 	? 'wrong_answer_2'
+					// 	: type === 'quiz' && length === 3 && !findAnswerType()
+					// 	? 'wrong_answer_3'
+					// 	: type === 'quiz' && length === 3 && findAnswerType() // true , true , true
+					// 	? 'wrong_answer_2'
+					// 	: 'poll'
 				}
 			]
 		};
@@ -316,12 +316,12 @@ const QuestionForm = ({
 			formCopy.answers[index] = {
 				answer: event.target.value,
 				position: index,
-				type:
-					type === 'quiz' && index === 0
-						? 'right_answer'
-						: type === 'quiz' && index > 0
-						? 'wrong_answer_' + index
-						: 'poll'
+				type: type
+				// === 'quiz' && index === 0
+				// 	? 'right_answer'
+				// 	: type === 'quiz' && index > 0
+				// 	? 'wrong_answer_' + index
+				// 	: 'poll'
 			};
 			setForm(formCopy);
 			let answers = { answers: formCopy.answers };
