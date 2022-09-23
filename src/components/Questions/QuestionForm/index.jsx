@@ -240,9 +240,12 @@ const QuestionForm = ({
 		}
 	}, [extraLabel]);
 
+	console.log('form', form.answers);
+
 	const handleNewAnswer = () => {
 		// if (!isEdit) {
 		const length = form.answers?.length;
+
 		setForm((prev) => {
 			return {
 				...prev,
@@ -382,10 +385,12 @@ const QuestionForm = ({
 					: form.answers)
 			];
 
+			console.log(answers, answers[index].answer, 'answers');
+
 			answers[index] = {
 				...answers[index],
 				answer: event.target.value,
-				position: index
+				position: !answers[index].id ? index : answers[index].position
 				// type:
 				// 	type === 'quiz' && index === 0
 				// 		? 'right_answer'
