@@ -24,6 +24,7 @@ import { useStyles } from '../UploadEditQuestion/UploadOrEditQuiz.style';
 import LinearProgress, {
 	linearProgressClasses
 } from '@mui/material/LinearProgress';
+
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	height: '54px',
 	borderRadius: '8px',

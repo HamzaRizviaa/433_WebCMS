@@ -247,7 +247,7 @@ const QuestionForm = ({
 
 		return answerType;
 	};
-	console.log(findAnswerType(), 'answerType');
+
 	const handleNewAnswer = () => {
 		const length = form.answers?.length;
 		setForm((prev) => {
