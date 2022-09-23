@@ -33,8 +33,11 @@ const NewsSlide = ({
 	handleDeleteMedia,
 	handleDeleteNews,
 	setPreviewBool,
-	setPreviewFile
+	setPreviewFile,
+	onTranslationChange,
+	getField
 }) => {
+	console.log(item, initialData);
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 
@@ -215,7 +218,12 @@ const NewsSlide = ({
 										<div className={classes.socialmediaDrags}>
 											<h6>DROPBOX URL</h6>
 											<TextField
-												value={dropboxUrl}
+												value={getField(
+													'dropbox_url',
+													false,
+													index,
+													item?.data?.[0].id || index
+												)}
 												onChange={(e) => {
 													setDropboxUrl(e.target.value);
 
@@ -252,12 +260,24 @@ const NewsSlide = ({
 											</div>
 
 											<TextField
-												value={title}
+												value={getField(
+													'title',
+													true,
+													index,
+													item?.data?.[0].id || index
+												)}
 												onChange={(e) => {
 													setTitle(e.target.value);
-													sendDataToParent({
-														title: e.target.value
-													});
+													// sendDataToParent({
+													// 	title: e.target.value
+													// });
+													onTranslationChange(
+														'title',
+														e.target.value,
+														true,
+														index,
+														item?.data?.[0].id || index
+													);
 												}}
 												placeholder={'Please write your title here'}
 												className={classes.textField}
@@ -290,12 +310,24 @@ const NewsSlide = ({
 											</div>
 
 											<TextField
-												value={description}
+												value={getField(
+													'description',
+													true,
+													index,
+													item?.data?.[0].id || index
+												)}
 												onChange={(e) => {
 													setDescription(e.target.value);
-													sendDataToParent({
-														description: e.target.value
-													});
+													// sendDataToParent({
+													// 	description: e.target.value
+													// });
+													onTranslationChange(
+														'description',
+														e.target.value,
+														true,
+														index,
+														item?.data?.[0].id || index
+													);
 												}}
 												placeholder={'Please write your DESCRIPTION here'}
 												className={classes.textField}
@@ -366,7 +398,9 @@ NewsSlide.propTypes = {
 	handleDeleteMedia: PropTypes.func,
 	handleDeleteNews: PropTypes.func,
 	setPreviewBool: PropTypes.func.isRequired,
-	setPreviewFile: PropTypes.func.isRequired
+	setPreviewFile: PropTypes.func.isRequired,
+	onTranslationChange: PropTypes.func.isRequired,
+	getField: PropTypes.func.isRequired
 };
 
 export default NewsSlide;

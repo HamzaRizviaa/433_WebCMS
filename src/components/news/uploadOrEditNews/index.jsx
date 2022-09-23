@@ -44,7 +44,109 @@ import { getAllNews } from '../../../pages/NewsLibrary/newsLibrarySlice';
 import { ConstructionOutlined } from '@mui/icons-material';
 import { TextField } from '@material-ui/core';
 import { ToastErrorNotifications } from '../../../constants';
+import { Divider } from '@mui/material';
+import TranslationCarousal from '../../TranslationCarousal';
 
+// mock data for news object
+const mockNews = {
+	id: '632c32afb93b899ea4940051',
+	labels: [
+		'TEST4',
+		'QUOMAXIMEACCUSANTI',
+		'NIHILHICNULLAQUAE',
+		'AB',
+		'13',
+		'321',
+		'A',
+		'EXCEPTURIAQUOBLAN'
+	],
+	banner_title: 'draft title updated again',
+	banner_description: 'draft description updated again',
+	show_likes: true,
+	show_comments: true,
+	is_draft: false,
+	translations: {
+		en: {
+			banner_title: 'draft title updated again',
+			banner_description: 'draft description updated again'
+		},
+		de: {
+			banner_title: 'draft title updated again Germen',
+			banner_description: 'draft description updated again Germen'
+		}
+	},
+	slides: [
+		{
+			id: '632cfc7e304eaa23b417795c',
+			image: 'media/photos/fed9e969-84c8-4891-912c-8fadc4eafa9b.png',
+			parent_id: '632c32afb93b899ea4940051',
+			file_name: 'Screenshot 2022-09-06 at 12.12.01 PM.png',
+			dropbox_url: '',
+			title: 'slide 2 english',
+			width: 1190,
+			height: 344,
+			description: 'slide 2 english desc',
+			name: 'hello name',
+			sort_order: 1,
+			translations: {
+				en: {
+					title: 'hello name',
+					description: 'slide 2 english desc'
+				},
+				de: {
+					title: 'hello name German',
+					description: 'slide 2 english desc German'
+				}
+			}
+		},
+		{
+			id: '632cfc7e304eaa23b417795d',
+			image: 'media/photos/4aa6b942-3c6b-49af-9b24-b4cbd3a9542b.jpeg',
+			parent_id: '632c32afb93b899ea4940051',
+			file_name: '64390d22-0285-4036-91fe-22a5595a7a08_1080p.0000000 (1).jpg',
+			dropbox_url: '',
+			title: '123 updated eng',
+			width: 1920,
+			height: 1080,
+			description: '123 updated',
+			name: '41234',
+			sort_order: 2,
+			translations: {
+				en: {
+					title: '41234',
+					description: '123 updated'
+				},
+				de: {
+					title: '41234 name German',
+					description: '123 updated German'
+				}
+			}
+		},
+		{
+			id: '632cfc7e304eaa23b417795e',
+			image: 'media/photos/424fb9ef-858e-4733-ba58-241c1a215312.png',
+			parent_id: '632c32afb93b899ea4940051',
+			file_name: 'Screenshot 2022-09-06 at 12.12.01 PM.png',
+			dropbox_url: 'empty url',
+			title: 'Hello slide 3',
+			width: 1190,
+			height: 344,
+			description: 'hello slide 3 desc',
+			name: 'slide 3 ',
+			sort_order: 3,
+			translations: {
+				en: {
+					title: 'slide 3',
+					description: 'hello slide 3 desc'
+				},
+				de: {
+					title: 'slide 3 German',
+					description: 'hello slide 3 descGerman'
+				}
+			}
+		}
+	]
+};
 const UploadOrEditNews = ({
 	open,
 	handleClose,
@@ -56,6 +158,19 @@ const UploadOrEditNews = ({
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
+
+	// need retranslation?
+	const [reTranslate, setRetranslate] = useState(false);
+	// currently selected language
+	const [currentLanguage, setCurrentLanguage] = useState({
+		name: 'English',
+		prefix: 'ENG',
+		shortName: 'en'
+	});
+	// raw translations
+	const [rawTranslations, setRawTranslations] = useState({
+		en: {}
+	});
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
@@ -74,8 +189,14 @@ const UploadOrEditNews = ({
 		banner_title: '',
 		banner_description: '',
 		show_likes: true,
-		show_comments: true
+		show_comments: true,
+		rawTranslations: {
+			en: {
+				slides: {}
+			}
+		}
 	});
+
 	const [news, setNews] = useState([]);
 
 	const previewRef = useRef(null);
@@ -96,6 +217,9 @@ const UploadOrEditNews = ({
 
 	useEffect(() => {
 		if (specificNews) {
+			console.log(specificNews);
+			setRawTranslations(parseNewsObject(mockNews));
+
 			setNotifID(specificNews?.id);
 			if (specificNews?.labels) {
 				let _labels = [];
@@ -123,6 +247,7 @@ const UploadOrEditNews = ({
 				? setNews(updateSlidesDataFromAPI(specificNews?.slides))
 				: setNews([]);
 		}
+		console.log(specificNews);
 	}, [specificNews]);
 
 	useEffect(() => {
@@ -348,7 +473,8 @@ const UploadOrEditNews = ({
 			return [
 				...prev,
 				{
-					sort_order: news.length + 1
+					sort_order: news.length + 1,
+					data: [{}]
 				}
 			];
 		});
@@ -612,6 +738,128 @@ const UploadOrEditNews = ({
 		}
 	};
 
+	const handleChange = (
+		fieldName,
+		value,
+		translate = false,
+		slideIndex,
+		slideId
+	) => {
+		// debugger
+		let slideIdIndicator = slideId === 0 ? true : slideId;
+		if (slideIdIndicator) {
+			// slides change in real array
+			if (currentLanguage.shortName === 'en') {
+				let newsSlides = [...news]; // JSON.parse(JSON.stringify(news));
+				let currentSlide = { ...newsSlides[slideIndex] }; //JSON.parse(JSON.stringify(newsSlides[slideIndex]));
+				currentSlide['data'][0] = {
+					...currentSlide['data']?.[0],
+					[fieldName]: value
+				};
+				// newsSlides[slideIndex] = {
+				// 	...newsSlides[slideIndex]?.['data'],
+				// 	data:[ { ...newsSlides[slideIndex]?.['data']?.[0], [fieldName]: value }]
+				// };
+				newsSlides[slideIndex] = currentSlide;
+				setNews(newsSlides);
+			}
+		} else {
+			if (currentLanguage.shortName === 'en') {
+				setForm({
+					...form,
+					[fieldName]: value
+				});
+			}
+		}
+		if (translate) {
+			currentLanguage.shortName === 'en' &&
+				!reTranslate &&
+				setRetranslate(true);
+
+			if (slideIdIndicator) {
+				let translations = JSON.parse(JSON.stringify(rawTranslations));
+
+				translations[currentLanguage.shortName] = {
+					...translations[currentLanguage.shortName]
+				};
+				translations[currentLanguage.shortName]['slides'] = {
+					...translations[currentLanguage.shortName]['slides']
+				};
+				translations[currentLanguage.shortName]['slides'][slideId] = {
+					...translations[currentLanguage.shortName]['slides'][slideId]
+				};
+				translations[currentLanguage.shortName]['slides'][slideId][fieldName] =
+					value;
+
+				setRawTranslations(translations);
+			} else {
+				let translations = JSON.parse(JSON.stringify(rawTranslations));
+				translations[currentLanguage.shortName] = {
+					...translations[currentLanguage.shortName]
+				};
+				translations[currentLanguage.shortName][fieldName] = value;
+				setRawTranslations(translations);
+			}
+		}
+
+		console.log(rawTranslations, news, form);
+	};
+
+	const getField = (fieldName, translate, slideIndex, slideId) => {
+		let slideIdIndicator = slideId === 0 ? true : slideId;
+		// let result = '';
+		if (!translate) {
+			if (slideIdIndicator) {
+				return news[slideIndex]?.['data']?.[0]?.[fieldName];
+			} else {
+				return form[fieldName];
+			}
+		}
+
+		if (slideIdIndicator) {
+			if (currentLanguage.shortName === 'en') {
+				let fieldFromTranslations =
+					rawTranslations[currentLanguage.shortName]?.['slides']?.[slideId]?.[
+						fieldName
+					];
+				let fieldFromSlide = news[slideIndex]?.['data']?.[0]?.[fieldName];
+				return fieldFromTranslations || fieldFromSlide;
+			} else {
+				return (
+					rawTranslations[currentLanguage.shortName]?.['slides']?.[slideId]?.[
+						fieldName
+					] || ''
+				);
+			}
+		} else {
+			if (currentLanguage.shortName === 'en') {
+				return (
+					rawTranslations[currentLanguage.shortName]?.[fieldName] ||
+					form[fieldName]
+				);
+			} else {
+				return rawTranslations[currentLanguage.shortName]?.[fieldName] || '';
+			}
+		}
+		// return result;
+	};
+
+	const parseNewsObject = (obj) => {
+		let transObj = {};
+		transObj = JSON.parse(JSON.stringify(obj.translations)); //
+
+		let languages = Object.keys(transObj); //['en','fr']
+
+		languages.forEach((lan) => {
+			obj.slides.forEach((slide, i) => {
+				transObj[lan]['slides'] = { ...transObj[lan]['slides'] };
+				transObj[lan]['slides'][slide.id] = slide.translations[lan];
+			});
+		});
+		console.log(transObj);
+		return transObj;
+	};
+
 	return (
 		<div>
 			<Slider
@@ -690,7 +938,9 @@ const UploadOrEditNews = ({
 												</p>
 												<div className={globalClasses.captionContainer}>
 													<div className={globalClasses.characterCount}>
-														<h6>BANNER TITLE</h6>
+														<h6 onClick={() => setRetranslate(false)}>
+															BANNER TITLE
+														</h6>
 														<h6
 															style={{
 																color:
@@ -707,14 +957,20 @@ const UploadOrEditNews = ({
 													</div>
 
 													<TextField
-														value={form.banner_title}
+														value={getField('banner_title', true)}
+														defaultValue={''}
 														onChange={(e) => {
-															setForm((prev) => {
-																return {
-																	...prev,
-																	banner_title: e.target.value
-																};
-															});
+															handleChange(
+																'banner_title',
+																e.target.value,
+																true
+															);
+															// setForm((prev) => {
+															// 	return {
+															// 		...prev,
+															// 		banner_title: e.target.value
+															// 	};
+															// });
 														}}
 														placeholder={'Please write you caption here'}
 														className={classes.textField}
@@ -750,14 +1006,20 @@ const UploadOrEditNews = ({
 													</div>
 
 													<TextField
-														value={form.banner_description}
+														defaultValue={''}
+														value={getField('banner_description', true)}
 														onChange={(e) => {
-															setForm((prev) => {
-																return {
-																	...prev,
-																	banner_description: e.target.value
-																};
-															});
+															handleChange(
+																'banner_description',
+																e.target.value,
+																true
+															);
+															// setForm((prev) => {
+															// 	return {
+															// 		...prev,
+															// 		banner_description: e.target.value
+															// 	};
+															// });
 														}}
 														placeholder={'Please write you caption here'}
 														className={classes.textField}
@@ -824,6 +1086,8 @@ const UploadOrEditNews = ({
 														initialData={item.data && item.data}
 														setPreviewBool={setPreviewBool}
 														setPreviewFile={setPreviewFile}
+														onTranslationChange={handleChange}
+														getField={getField}
 													/>
 												</>
 											);
@@ -844,6 +1108,16 @@ const UploadOrEditNews = ({
 										? 'Something needs to be changed to save a draft'
 										: ''}
 								</p>
+
+								{reTranslate && (
+									<>
+										<Divider color={'grey'} sx={{ mb: '10px' }} />
+										<TranslationCarousal
+											lang={currentLanguage}
+											setLang={setCurrentLanguage}
+										/>
+									</>
+								)}
 
 								<div
 									className={isEdit ? classes.newsButtonDiv : classes.buttonDiv}
