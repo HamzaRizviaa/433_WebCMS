@@ -46,7 +46,10 @@ import { TextField } from '@material-ui/core';
 import { ToastErrorNotifications } from '../../../constants';
 import { Divider } from '@mui/material';
 import TranslationCarousal from '../../TranslationCarousal';
-import { useGetTranslationsMutation } from '../../../features/translations.query';
+import {
+	useGetTranslationsMutation,
+	useLazyGetTranslationQuery
+} from '../../../features/translations.query';
 
 // mock data for news object
 const mockNews = {
@@ -167,7 +170,10 @@ const UploadOrEditNews = ({
 	const globalClasses = globalUseStyles();
 
 	// use mutation
-	const [getTranslations, mutationResponse, sd] = useGetTranslationsMutation();
+	const [
+		getTranslations,
+		{ isFetching: isTranslating, ...translationResponse }
+	] = useLazyGetTranslationQuery();
 	// need retranslation?
 	const [reTranslate, setRetranslate] = useState(false);
 	// currently selected language
@@ -215,9 +221,13 @@ const UploadOrEditNews = ({
 	);
 
 	useEffect(() => {
-		console.log(mutationResponse, sd);
-		mutationResponse.isSuccess && setRawTranslations(mutationResponse.data);
-	}, [mutationResponse]);
+		console.log(translationResponse, isTranslating);
+		if (translationResponse.isSuccess) {
+			setRawTranslations(translationResponse.data);
+			setRetranslate(false);
+		}
+	}, [translationResponse.data]);
+	
 	useEffect(() => {
 		return () => {
 			resetState();
@@ -898,7 +908,7 @@ const UploadOrEditNews = ({
 				notifID={notifID}
 			>
 				<LoadingOverlay
-					active={isLoading}
+					active={isTranslating || isLoading}
 					className={classes.loadingOverlay}
 					spinner={<PrimaryLoader />}
 				>
@@ -1132,7 +1142,7 @@ const UploadOrEditNews = ({
 										: ''}
 								</p>
 
-								{reTranslate && (
+								{Object.keys(rawTranslations).length > 1 && !reTranslate && (
 									<>
 										<Divider color={'grey'} sx={{ mb: '10px' }} />
 										<TranslationCarousal
@@ -1189,7 +1199,7 @@ const UploadOrEditNews = ({
 										)}
 
 										<div>
-											<Button
+											{/* <Button
 												disabled={
 													isEdit &&
 													validateForm(form, null, news) &&
@@ -1202,6 +1212,12 @@ const UploadOrEditNews = ({
 												onClick={() => handlePublishNews()}
 												button2AddSave={true}
 												text={buttonText}
+											/> */}
+											<Button
+												disabled={!reTranslate}
+												onClick={() => getTranslations(rawTranslations['en'])}
+												button2AddSave={true}
+												text={'TRANSLATE'}
 											/>
 										</div>
 									</div>

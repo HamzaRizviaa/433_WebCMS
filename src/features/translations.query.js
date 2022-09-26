@@ -2,11 +2,12 @@ import rootRtkQuery from './rootRTKQuery';
 
 const translationsQuery = rootRtkQuery.injectEndpoints({
 	endpoints: (build) => ({
-		getTranslations: build.mutation({
+		getTranslation: build.query({
 			query: (data) => ({
 				url: `/translations/translate`,
 				method: 'POST',
-				body: data
+				body: data,
+				keepUnusedDataFor: 60 * 60 * 10
 			}),
 			transformResponse: (response) => response.data
 		})
@@ -14,4 +15,4 @@ const translationsQuery = rootRtkQuery.injectEndpoints({
 	overrideExisting: false
 });
 
-export const { useGetTranslationsMutation } = translationsQuery;
+export const { useLazyGetTranslationQuery } = translationsQuery;
