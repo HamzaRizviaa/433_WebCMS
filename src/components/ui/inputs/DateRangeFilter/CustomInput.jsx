@@ -24,7 +24,7 @@ const CustomInput = forwardRef(
 		return (
 			<div className={classes.customDateInput} onClick={onClick} ref={ref}>
 				<span className={classes.inputField}>
-					{formattedStartDate || 'Start Date'} <ArrowForwardIosIcon />{' '}
+					{formattedStartDate || 'Start Date'} <ArrowForwardIosIcon />
 					{formattedEndDate || 'End Date'}
 				</span>
 				<span className={classes.inputIcon}>
