@@ -16,9 +16,7 @@ function SearchFilter({ placeholder, isError, errorMessage }) {
 
 	const handleKeyPress = (e) => {
 		if (e.key === 'Enter') {
-			const queryParams = changeQueryParameters(searchParams, {
-				query: search
-			});
+			const queryParams = changeQueryParameters(searchParams, { q: search });
 
 			setSearchParams(queryParams);
 		}
