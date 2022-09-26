@@ -49,7 +49,6 @@ const DraggableContainers = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const muiClasses = quizStyles();
-	const imgRef = useRef(null);
 	const loadingRef = useRef(null);
 
 	return (
