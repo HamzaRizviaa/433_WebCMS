@@ -12,7 +12,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import '../../../pages/PostLibrary/_calender.scss';
 import Close from '@material-ui/icons/Close';
 import DeleteModal from '../../DeleteModal';
-import StopModal from '../../DeleteModal';
+import StopModal from '../../StopModal';
 import { toast } from 'react-toastify';
 import { formatDate, getCalendarText2 } from '../../../utils';
 import uploadFileToServer from '../../../utils/uploadFileToServer';

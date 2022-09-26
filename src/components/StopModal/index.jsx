@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import useSound from 'use-sound';
-import { useStyles } from './deleteModal.style';
+import { useStyles } from './index.style';
 import soundOpen from '../../assets/openSound.mp3';
 import soundClose from '../../assets/closeSound.mp3';
 
