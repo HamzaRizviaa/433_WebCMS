@@ -20,13 +20,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Grow in={true} ref={ref} {...props} />;
 });
 
-export default function DeleteModal({
-	text,
-	open,
-	toggle,
-	deleteBtn,
-	wrapperRef
-}) {
+export default function StopModal({ text, open, toggle, stopBtn, wrapperRef }) {
 	const classes = useStyles();
 	const [playOpen] = useSound(soundOpen, { volume: 0.5 });
 	const [playClose] = useSound(soundClose, { volume: 0.5 });
@@ -49,7 +43,7 @@ export default function DeleteModal({
 					className={classes.dialogTitle}
 					classes={{ root: classes.root }}
 				>
-					{`Delete this ${text}?`}
+					{`Stop this ${text}?`}
 					<IconButton
 						onClick={toggle}
 						onMouseDown={playClose}
@@ -64,8 +58,8 @@ export default function DeleteModal({
 						className={classes.dialogContentText}
 					>
 						<p>
-							You are about to delete this <strong> {text}.</strong> You won’t
-							be able to retrieve the post.
+							You are about to stop this <strong> {text} </strong>. You won’t be
+							able to restart the {text} again.
 						</p>
 					</DialogContentText>
 				</DialogContent>
@@ -78,9 +72,9 @@ export default function DeleteModal({
 					/>
 
 					<Button
-						button2AddSave={true}
-						onClick={deleteBtn}
-						text={`Delete ${text}`.toUpperCase()}
+						buttonStop={true}
+						onClick={stopBtn}
+						text={`STOP ${text}`.toUpperCase()}
 						onMouseDown={playOpen}
 					/>
 				</DialogActions>
@@ -89,11 +83,11 @@ export default function DeleteModal({
 	);
 }
 
-DeleteModal.propTypes = {
+StopModal.propTypes = {
 	text: PropTypes.string,
 	open: PropTypes.bool,
 	toggle: PropTypes.func.isRequired,
-	deleteBtn: PropTypes.func.isRequired,
+	stopBtn: PropTypes.func.isRequired,
 	wrapperRef: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })

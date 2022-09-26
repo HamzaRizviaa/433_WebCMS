@@ -12,6 +12,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import '../../../pages/PostLibrary/_calender.scss';
 import Close from '@material-ui/icons/Close';
 import DeleteModal from '../../DeleteModal';
+import StopModal from '../../DeleteModal';
 import { toast } from 'react-toastify';
 import { formatDate, getCalendarText2 } from '../../../utils';
 import uploadFileToServer from '../../../utils/uploadFileToServer';
@@ -50,7 +51,7 @@ import { compact } from 'lodash';
 const UploadOrEditQuiz = ({
 	open,
 	previewRef,
-	dialogWrapper,
+
 	quiz,
 	handleClose,
 	page,
@@ -77,11 +78,11 @@ const UploadOrEditQuiz = ({
 	const [questionType, setQuestionType] = useState('poll');
 	const [questionSlides, setQuestionSlides] = useState([]); // data in slides
 	const [questionIds, setQuestionIds] = useState([]);
-
+	const [stopDeleteQuestionType, setStopDeleteQuestionType] = useState('poll');
 	const [form, setForm] = useState({
 		end_date: null
 	});
-
+	const dialogWrapper = useRef(null);
 	const loadingRef = useRef(null);
 	const dispatch = useDispatch();
 	const classes = useStyles();
@@ -224,7 +225,7 @@ const UploadOrEditQuiz = ({
 			</div>
 		);
 	});
-
+	console.log(stopDeleteQuestionType, 'stop delete');
 	useEffect(() => {
 		if (editQuestionData) {
 			let allQuestionIds = [];
@@ -233,7 +234,7 @@ const UploadOrEditQuiz = ({
 				editQuestionData?.questions?.map((data) => data?.id);
 			setQuestionIds(allQuestionIds); //to pass to delete data
 			setQuestionType(editQuestionData?.question_type);
-
+			setStopDeleteQuestionType(editQuestionData?.question_type); //to pass in delete stop modal .
 			setForm((prev) => {
 				return {
 					...prev,
@@ -744,6 +745,7 @@ const UploadOrEditQuiz = ({
 	return (
 		<>
 			<Slider
+				dialogRef={dialogWrapper}
 				open={open}
 				handleClose={() => {
 					handleClose();
@@ -1120,16 +1122,24 @@ const UploadOrEditQuiz = ({
 			</Slider>
 
 			<DeleteModal
-				open={openStopPopup ? openStopPopup : openDeletePopup}
-				toggle={openStopPopup ? toggleStopModal : toggleDeleteModal}
+				open={openDeletePopup}
+				toggle={toggleDeleteModal}
 				deleteBtn={() => {
-					openStopPopup
-						? stopQuizPoll(editQuestionData?.id)
-						: deleteQuiz(status.toLowerCase());
+					deleteQuiz(status.toLowerCase());
 				}}
-				text={questionType}
+				text={stopDeleteQuestionType}
 				wrapperRef={dialogWrapper}
-				stop={openStopPopup ? true : false}
+				stop={false}
+			/>
+			<StopModal
+				open={openStopPopup}
+				toggle={toggleStopModal}
+				deleteBtn={() => {
+					stopQuizPoll(editQuestionData?.id);
+				}}
+				text={stopDeleteQuestionType}
+				wrapperRef={dialogWrapper}
+				stop={true}
 			/>
 		</>
 	);
@@ -1151,11 +1161,11 @@ UploadOrEditQuiz.propTypes = {
 	previewRef: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
-	]).isRequired,
-	dialogWrapper: PropTypes.oneOfType([
-		PropTypes.func,
-		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired
+	// dialogWrapper: PropTypes.oneOfType([
+	// 	PropTypes.func,
+	// 	PropTypes.shape({ current: PropTypes.elementType })
+	// ]).isRequired
 };
 
 export default UploadOrEditQuiz;
