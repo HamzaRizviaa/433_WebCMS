@@ -1134,7 +1134,7 @@ const UploadOrEditQuiz = ({
 			<StopModal
 				open={openStopPopup}
 				toggle={toggleStopModal}
-				deleteBtn={() => {
+				stopBtn={() => {
 					stopQuizPoll(editQuestionData?.id);
 				}}
 				text={stopDeleteQuestionType}
