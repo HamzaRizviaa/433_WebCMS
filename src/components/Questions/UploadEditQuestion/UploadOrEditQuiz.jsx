@@ -35,7 +35,6 @@ import QuestionDraggable from '../QuestionDraggableWrapper';
 import QuestionForm from '../QuestionForm';
 import LoadingOverlay from 'react-loading-overlay';
 import PrimaryLoader from '../../PrimaryLoader';
-import Slide from '@mui/material/Slide';
 import DraggableContainers from '../DraggableContainers';
 import {
 	checkEmptyQuestion, //empty data
@@ -51,7 +50,6 @@ import { compact } from 'lodash';
 const UploadOrEditQuiz = ({
 	open,
 	previewRef,
-
 	quiz,
 	handleClose,
 	page,
@@ -225,7 +223,7 @@ const UploadOrEditQuiz = ({
 			</div>
 		);
 	});
-	console.log(stopDeleteQuestionType, 'stop delete');
+
 	useEffect(() => {
 		if (editQuestionData) {
 			let allQuestionIds = [];
@@ -263,7 +261,7 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
-	console.log(questionSlides, 'QSS');
+	// console.log(questionSlides, 'QSS');
 
 	const updateDataFromAPI = (apiData, question_type, end_date) => {
 		let modifiedData = apiData?.map(({ id, position, ...rest }) => {
@@ -904,7 +902,6 @@ const UploadOrEditQuiz = ({
 																isEdit={isEdit}
 																item={item}
 																index={index}
-																// sortingPosition={item?.position}
 																type={questionType}
 																key={item.position + 1}
 																status={status}
@@ -1162,10 +1159,6 @@ UploadOrEditQuiz.propTypes = {
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired
-	// dialogWrapper: PropTypes.oneOfType([
-	// 	PropTypes.func,
-	// 	PropTypes.shape({ current: PropTypes.elementType })
-	// ]).isRequired
 };
 
 export default UploadOrEditQuiz;

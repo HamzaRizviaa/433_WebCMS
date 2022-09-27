@@ -252,9 +252,6 @@ export default function QuizResults({
 			formatter: (content) => {
 				return <div className={classes.rowData}>{content}</div>;
 			}
-			// headerStyle: () => {
-			// 	return { paddingLeft: '20px' };
-			// }
 		},
 		{
 			dataField: 'date_and_time',
