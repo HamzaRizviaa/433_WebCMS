@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { ThemeProvider } from '@material-ui/core/styles';
 import LoadingOverlay from 'react-loading-overlay';
 import theme from '../../../assets/theme';
-import Sidebar from '../DashboardSidebar';
-import Topbar from '../DashboardTopbar';
+import Sidebar from '../../common/DashboardSidebar';
+import Topbar from '../../common/DashboardTopbar';
 import { useLayoutStyles } from './index.style';
 import Four33Loader from '../../../assets/Loader_Yellow.gif';
 
