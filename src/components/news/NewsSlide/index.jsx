@@ -222,7 +222,7 @@ const NewsSlide = ({
 													'dropbox_url',
 													false,
 													index,
-													item?.data?.[0].id || index
+													item?.data?.[0].translationId || index
 												)}
 												onChange={(e) => {
 													setDropboxUrl(e.target.value);
@@ -264,7 +264,7 @@ const NewsSlide = ({
 													'title',
 													true,
 													index,
-													item?.data?.[0].id || index
+													item?.data?.[0].translationId || index
 												)}
 												onChange={(e) => {
 													setTitle(e.target.value);
@@ -276,7 +276,7 @@ const NewsSlide = ({
 														e.target.value,
 														true,
 														index,
-														item?.data?.[0].id || index
+														item?.data?.[0].translationId || index
 													);
 												}}
 												placeholder={'Please write your title here'}
@@ -314,7 +314,7 @@ const NewsSlide = ({
 													'description',
 													true,
 													index,
-													item?.data?.[0].id || index
+													item?.data?.[0].translationId || index
 												)}
 												onChange={(e) => {
 													setDescription(e.target.value);
@@ -326,7 +326,7 @@ const NewsSlide = ({
 														e.target.value,
 														true,
 														index,
-														item?.data?.[0].id || index
+														item?.data?.[0].translationId || index
 													);
 												}}
 												placeholder={'Please write your DESCRIPTION here'}

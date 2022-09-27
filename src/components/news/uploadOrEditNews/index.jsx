@@ -51,106 +51,6 @@ import {
 	useLazyGetTranslationQuery
 } from '../../../features/translations.query';
 
-// mock data for news object
-const mockNews = {
-	id: '632c32afb93b899ea4940051',
-	labels: [
-		'TEST4',
-		'QUOMAXIMEACCUSANTI',
-		'NIHILHICNULLAQUAE',
-		'AB',
-		'13',
-		'321',
-		'A',
-		'EXCEPTURIAQUOBLAN'
-	],
-	banner_title: 'draft title updated again',
-	banner_description: 'draft description updated again',
-	show_likes: true,
-	show_comments: true,
-	is_draft: false,
-	translations: {
-		en: {
-			banner_title: 'draft title updated again',
-			banner_description: 'draft description updated again'
-		},
-		de: {
-			banner_title: 'draft title updated again Germen',
-			banner_description: 'draft description updated again Germen'
-		}
-	},
-	slides: [
-		{
-			id: '632cfc7e304eaa23b417795c',
-			image: 'media/photos/fed9e969-84c8-4891-912c-8fadc4eafa9b.png',
-			parent_id: '632c32afb93b899ea4940051',
-			file_name: 'Screenshot 2022-09-06 at 12.12.01 PM.png',
-			dropbox_url: '',
-			title: 'slide 2 english',
-			width: 1190,
-			height: 344,
-			description: 'slide 2 english desc',
-			name: 'hello name',
-			sort_order: 1,
-			translations: {
-				en: {
-					title: 'hello name',
-					description: 'slide 2 english desc'
-				},
-				de: {
-					title: 'hello name German',
-					description: 'slide 2 english desc German'
-				}
-			}
-		},
-		{
-			id: '632cfc7e304eaa23b417795d',
-			image: 'media/photos/4aa6b942-3c6b-49af-9b24-b4cbd3a9542b.jpeg',
-			parent_id: '632c32afb93b899ea4940051',
-			file_name: '64390d22-0285-4036-91fe-22a5595a7a08_1080p.0000000 (1).jpg',
-			dropbox_url: '',
-			title: '123 updated eng',
-			width: 1920,
-			height: 1080,
-			description: '123 updated',
-			name: '41234',
-			sort_order: 2,
-			translations: {
-				en: {
-					title: '41234',
-					description: '123 updated'
-				},
-				de: {
-					title: '41234 name German',
-					description: '123 updated German'
-				}
-			}
-		},
-		{
-			id: '632cfc7e304eaa23b417795e',
-			image: 'media/photos/424fb9ef-858e-4733-ba58-241c1a215312.png',
-			parent_id: '632c32afb93b899ea4940051',
-			file_name: 'Screenshot 2022-09-06 at 12.12.01 PM.png',
-			dropbox_url: 'empty url',
-			title: 'Hello slide 3',
-			width: 1190,
-			height: 344,
-			description: 'hello slide 3 desc',
-			name: 'slide 3 ',
-			sort_order: 3,
-			translations: {
-				en: {
-					title: 'slide 3',
-					description: 'hello slide 3 desc'
-				},
-				de: {
-					title: 'slide 3 German',
-					description: 'hello slide 3 descGerman'
-				}
-			}
-		}
-	]
-};
 const prefix = 'slide';
 const defaultLanguage = {
 	name: 'English',
@@ -168,7 +68,6 @@ const UploadOrEditNews = ({
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
-
 	// use mutation
 	const [
 		getTranslations,
@@ -227,7 +126,7 @@ const UploadOrEditNews = ({
 			setRetranslate(false);
 		}
 	}, [translationResponse.data]);
-	
+
 	useEffect(() => {
 		return () => {
 			resetState();
@@ -237,7 +136,9 @@ const UploadOrEditNews = ({
 	useEffect(() => {
 		if (specificNews) {
 			// console.log(specificNews);
-			// setRawTranslations(parseNewsObject(mockNews));
+			let dd = parseNewsObject(specificNews);
+			console.log('hello', dd);
+			setRawTranslations(dd);
 
 			setNotifID(specificNews?.id);
 			if (specificNews?.labels) {
@@ -393,6 +294,7 @@ const UploadOrEditNews = ({
 							description,
 							name,
 							title,
+							translationId: rest.id,
 							...(rest.image
 								? {
 										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.image}`,
@@ -404,7 +306,6 @@ const UploadOrEditNews = ({
 				};
 			}
 		);
-
 		return slidesData;
 	};
 
@@ -498,7 +399,7 @@ const UploadOrEditNews = ({
 				...prev,
 				{
 					sort_order: news.length + 1,
-					data: [{}]
+					data: [{ translationId: Math.random() }]
 				}
 			];
 		});
@@ -576,7 +477,7 @@ const UploadOrEditNews = ({
 
 	const createNews = async (id, mediaFiles = [], draft = false) => {
 		// setPostButtonStatus(true);
-
+		console.log(news);
 		let slides =
 			news.length > 0
 				? news.map((item, index) => {
@@ -593,31 +494,33 @@ const UploadOrEditNews = ({
 							description: item.data[0]?.description,
 							title: item.data[0]?.title,
 							name: item.data[0]?.name,
-							sort_order: index + 1
+							sort_order: index + 1,
+							translationId: item.data[0].translationId
 						};
 				  })
 				: [];
-
 		try {
+			const newsBody = {
+				save_draft: draft,
+				banner_title: form.banner_title,
+				banner_description: form.banner_description,
+				show_likes: form.show_likes,
+				show_comments: form.show_comments,
+				slides: slides,
+				...(isEdit && id ? { news_id: id } : {}),
+				...(form.labels?.length || status == 'draft'
+					? { labels: [...form.labels] }
+					: {}),
+				user_data: {
+					id: `${getLocalStorageDetails()?.id}`,
+					first_name: `${getLocalStorageDetails()?.first_name}`,
+					last_name: `${getLocalStorageDetails()?.last_name}`
+				}
+			};
+			let body = addLanguagesToPayload(rawTranslations, newsBody);
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/news/add-news`,
-				{
-					save_draft: draft,
-					banner_title: form.banner_title,
-					banner_description: form.banner_description,
-					show_likes: form.show_likes,
-					show_comments: form.show_comments,
-					slides: slides,
-					...(isEdit && id ? { news_id: id } : {}),
-					...(form.labels?.length || status == 'draft'
-						? { labels: [...form.labels] }
-						: {}),
-					user_data: {
-						id: `${getLocalStorageDetails()?.id}`,
-						first_name: `${getLocalStorageDetails()?.first_name}`,
-						last_name: `${getLocalStorageDetails()?.last_name}`
-					}
-				},
+				body,
 				{
 					headers: {
 						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
@@ -874,19 +777,56 @@ const UploadOrEditNews = ({
 	};
 
 	const parseNewsObject = (obj) => {
+		console.log('specificNews', obj);
 		let transObj = {};
-		transObj = JSON.parse(JSON.stringify(obj.translations)); //
+		transObj = JSON.parse(JSON.stringify(obj.translations || {})); //
 
 		let languages = Object.keys(transObj); //['en','fr']
 
 		languages.forEach((lan) => {
 			obj.slides.forEach((slide, i) => {
 				transObj[lan]['slides'] = { ...transObj[lan]['slides'] };
-				transObj[lan]['slides'][slide.id] = slide.translations[lan];
+				transObj[lan]['slides'][`${prefix}_${slide.id}`] =
+					slide.translations[lan];
 			});
 		});
 		console.log(transObj);
 		return transObj;
+	};
+
+	const addLanguagesToPayload = (object, newsObject) => {
+		let aa = {};
+		let langs = Object.keys(object);
+		langs.forEach((lan) => {
+			let internalKeys = Object.keys(object[lan]);
+			internalKeys.forEach((internalKey) => {
+				let current = object[lan][internalKey];
+
+				if (internalKey === 'slides') {
+					let slideKeys = Object.keys(current);
+					slideKeys.forEach((slide) => {
+						let c = object[lan]['slides'][slide];
+						aa['slides'] = { ...aa['slides'] };
+						aa['slides'][slide] = { ...aa['slides'][slide] };
+						aa['slides'][slide][lan] = { ...aa['slides'][slide][lan] };
+						aa['slides'][slide][lan] = c;
+					});
+				} else {
+					aa['root'] = { ...aa['root'] };
+					aa['root'][lan] = { ...aa['root'][lan] };
+					aa['root'][lan][internalKey] = current;
+				}
+			});
+		});
+		newsObject = { ...newsObject, translations: { ...aa.root } };
+		newsObject.slides.forEach((slide, i) => {
+			newsObject.slides[i] = {
+				...slide,
+				translations: aa.slides[`slide_${slide.translationId}`]
+			};
+		});
+
+		return newsObject;
 	};
 
 	return (
@@ -1199,26 +1139,29 @@ const UploadOrEditNews = ({
 										)}
 
 										<div>
-											{/* <Button
-												disabled={
-													isEdit &&
-													validateForm(form, null, news) &&
-													status === 'draft'
-														? false
-														: isEdit
-														? editBtnDisabled
-														: !validateForm(form, null, news)
-												}
-												onClick={() => handlePublishNews()}
-												button2AddSave={true}
-												text={buttonText}
-											/> */}
-											<Button
-												disabled={!reTranslate}
-												onClick={() => getTranslations(rawTranslations['en'])}
-												button2AddSave={true}
-												text={'TRANSLATE'}
-											/>
+											{!reTranslate ? (
+												<Button
+													disabled={
+														isEdit &&
+														validateForm(form, null, news) &&
+														status === 'draft'
+															? false
+															: isEdit
+															? editBtnDisabled
+															: !validateForm(form, null, news)
+													}
+													onClick={() => handlePublishNews()}
+													button2AddSave={true}
+													text={buttonText}
+												/>
+											) : (
+												<Button
+													disabled={!reTranslate}
+													onClick={() => getTranslations(rawTranslations['en'])}
+													button2AddSave={true}
+													text={'TRANSLATE'}
+												/>
+											)}
 										</div>
 									</div>
 								</div>
