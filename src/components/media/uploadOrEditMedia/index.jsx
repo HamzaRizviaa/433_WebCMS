@@ -101,6 +101,10 @@ const UploadOrEditMedia = ({
 	);
 	const labels = useSelector((state) => state.mediaLibraryOriginal.labels);
 
+	const {
+		features: { translationsOnMedia }
+	} = useSelector((state) => state.remoteConfig);
+
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: `${

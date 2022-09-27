@@ -32,6 +32,7 @@ import { useStyles } from './index.styles';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
 import TranslationCarousal from '../../TranslationCarousal';
+import FeatureWrapper from '../../FeatureWrapper';
 //new labels
 // import { getAllNewLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 
@@ -91,6 +92,12 @@ const UploadOrEditViral = ({
 	const { specificViralStatus } = useSelector(
 		(state) => state.ViralLibraryStore
 	);
+
+	const {
+		features: { translationsOnVirals }
+	} = useSelector((state) => state.remoteConfig);
+
+	console.log('translationsOnVirals', translationsOnVirals);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -944,20 +951,21 @@ const UploadOrEditViral = ({
 										? 'Something needs to be changed to save a draft'
 										: ''}
 								</p>
-
-								{translated ? (
-									<>
-										<Divider color={'grey'} sx={{ mb: '10px' }} />
-										<TranslationCarousal lang={lang} setLang={setLang} />
-									</>
-								) : isEdit && status === 'draft' && !translatedOnEdit ? (
-									<>
-										<Divider color={'grey'} sx={{ mb: '10px' }} />
-										<TranslationCarousal lang={lang} setLang={setLang} />
-									</>
-								) : (
-									<></>
-								)}
+								<FeatureWrapper name='translationsOnVirals'>
+									{translated ? (
+										<>
+											<Divider color={'grey'} sx={{ mb: '10px' }} />
+											{/* <TranslationCarousal lang={lang} setLang={setLang} /> */}
+										</>
+									) : isEdit && status === 'draft' && !translatedOnEdit ? (
+										<>
+											<Divider color={'grey'} sx={{ mb: '10px' }} />
+											{/* <TranslationCarousal lang={lang} setLang={setLang} /> */}
+										</>
+									) : (
+										<></>
+									)}
+								</FeatureWrapper>
 
 								<div className={classes.buttonDiv}>
 									{isEdit || (status === 'draft' && isEdit) ? (
