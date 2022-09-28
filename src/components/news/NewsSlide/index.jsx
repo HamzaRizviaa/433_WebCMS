@@ -268,9 +268,9 @@ const NewsSlide = ({
 												)}
 												onChange={(e) => {
 													setTitle(e.target.value);
-													// sendDataToParent({
-													// 	title: e.target.value
-													// });
+													sendDataToParent({
+														title: e.target.value
+													});
 													onTranslationChange(
 														'title',
 														e.target.value,
@@ -318,9 +318,9 @@ const NewsSlide = ({
 												)}
 												onChange={(e) => {
 													setDescription(e.target.value);
-													// sendDataToParent({
-													// 	description: e.target.value
-													// });
+													sendDataToParent({
+														description: e.target.value
+													});
 													onTranslationChange(
 														'description',
 														e.target.value,

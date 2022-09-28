@@ -68,7 +68,8 @@ const UploadOrEditNews = ({
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
-	// use mutation
+	const extractField = useRef({});
+	// use query
 	const [
 		getTranslations,
 		{ isFetching: isTranslating, ...translationResponse }
@@ -765,10 +766,17 @@ const UploadOrEditNews = ({
 			}
 		} else {
 			if (currentLanguage.shortName === 'en') {
-				return (
-					rawTranslations[currentLanguage.shortName]?.[fieldName] ||
-					form[fieldName]
-				);
+				let fieldFromTranslation =
+					rawTranslations[currentLanguage.shortName]?.[fieldName];
+				if (fieldFromTranslation) {
+					return fieldFromTranslation;
+				} else {
+					extractField.current = {
+						...extractField.current,
+						[fieldName]: form[fieldName]
+					};
+					return form[fieldName];
+				}
 			} else {
 				return rawTranslations[currentLanguage.shortName]?.[fieldName] || '';
 			}
@@ -795,6 +803,7 @@ const UploadOrEditNews = ({
 	};
 
 	const addLanguagesToPayload = (object, newsObject) => {
+		if (Object.entries(object).length <= 1) return newsObject;
 		let aa = {};
 		let langs = Object.keys(object);
 		langs.forEach((lan) => {
@@ -829,6 +838,22 @@ const UploadOrEditNews = ({
 		return newsObject;
 	};
 
+
+	const handleTranslate = ()=>{
+		console.log(extractField.current)
+
+		// getTranslations(rawTranslations['en']);
+
+	}
+	const isValidToPush = () =>
+		!(isEdit &&
+		!reTranslate &&
+		validateForm(form, null, news) &&
+		status === 'draft'
+			? false
+			: isEdit
+			? editBtnDisabled
+			: !validateForm(form, null, news));
 	return (
 		<div>
 			<Slider
@@ -938,12 +963,12 @@ const UploadOrEditNews = ({
 																e.target.value,
 																true
 															);
-															// setForm((prev) => {
-															// 	return {
-															// 		...prev,
-															// 		banner_title: e.target.value
-															// 	};
-															// });
+															setForm((prev) => {
+																return {
+																	...prev,
+																	banner_title: e.target.value
+																};
+															});
 														}}
 														placeholder={'Please write you caption here'}
 														className={classes.textField}
@@ -987,12 +1012,12 @@ const UploadOrEditNews = ({
 																e.target.value,
 																true
 															);
-															// setForm((prev) => {
-															// 	return {
-															// 		...prev,
-															// 		banner_description: e.target.value
-															// 	};
-															// });
+															setForm((prev) => {
+																return {
+																	...prev,
+																	banner_description: e.target.value
+																};
+															});
 														}}
 														placeholder={'Please write you caption here'}
 														className={classes.textField}
@@ -1139,29 +1164,33 @@ const UploadOrEditNews = ({
 										)}
 
 										<div>
-											{!reTranslate ? (
-												<Button
-													disabled={
-														isEdit &&
-														validateForm(form, null, news) &&
-														status === 'draft'
-															? false
-															: isEdit
-															? editBtnDisabled
-															: !validateForm(form, null, news)
+											{/* {!reTranslate ? ( */}
+											<Button
+												disabled={!isValidToPush()}
+												onClick={() => {
+													if (reTranslate) {
+														if (!isValidToPush()) return;
+														handleTranslate();
+													} else {
+														handlePublishNews();
 													}
-													onClick={() => handlePublishNews()}
-													button2AddSave={true}
-													text={buttonText}
-												/>
-											) : (
-												<Button
-													disabled={!reTranslate}
-													onClick={() => getTranslations(rawTranslations['en'])}
-													button2AddSave={true}
-													text={'TRANSLATE'}
-												/>
-											)}
+												}}
+												button2AddSave={true}
+												text={
+													Object.keys(rawTranslations).length > 1 &&
+													!reTranslate
+														? buttonText
+														: 'TRANSLATE'
+												}
+											/>
+											{/* // ) : (
+											// 	<Button
+											// 		disabled={!reTranslate}
+											// 		onClick={() => getTranslations(rawTranslations['en'])}
+											// 		button2AddSave={true}
+											// 		text={'TRANSLATE'}
+											// 	/>
+											// )} */}
 										</div>
 									</div>
 								</div>
