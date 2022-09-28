@@ -50,6 +50,7 @@ import {
 	useGetTranslationsMutation,
 	useLazyGetTranslationQuery
 } from '../../../features/translations.query';
+import useTranslations from '../../../hooks/useTranslations';
 
 const prefix = 'slide';
 const defaultLanguage = {
@@ -69,15 +70,16 @@ const UploadOrEditNews = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const extractField = useRef({});
+
 	// use query
-	const [
-		getTranslations,
-		{ isFetching: isTranslating, ...translationResponse }
-	] = useLazyGetTranslationQuery();
+	// const [
+	// 	getTranslations,
+	// 	{ isFetching: isTranslating, ...translationResponse }
+	// ] = useLazyGetTranslationQuery();
 	// need retranslation?
-	const [reTranslate, setRetranslate] = useState(false);
+	// const [reTranslate, setRetranslate] = useState(false);
 	// currently selected language
-	const [currentLanguage, setCurrentLanguage] = useState(defaultLanguage);
+	// const [currentLanguage, setCurrentLanguage] = useState(defaultLanguage);
 	// raw translations
 	const [rawTranslations, setRawTranslations] = useState({
 		en: {}
@@ -120,13 +122,32 @@ const UploadOrEditNews = ({
 		(state) => state.NewsLibrary
 	);
 
-	useEffect(() => {
-		console.log(translationResponse, isTranslating);
-		if (translationResponse.isSuccess) {
-			setRawTranslations(translationResponse.data);
-			setRetranslate(false);
+	/// custom hook
+	const [
+		getTranslations,
+		{
+			isFetching: isTranslating,
+			compilePayload,
+			getField,
+			setField,
+			currentLanguage,
+			setCurrentLanguage,
+			reTranslate,
+			translationsAvailable,
+			resetTranslations
 		}
-	}, [translationResponse.data]);
+	] = useTranslations({
+		rootData: form || {},
+		slidesData: news || [],
+		specificItem: specificNews || {},
+		setData: (data) => {
+			handleSetParentData && handleSetParentData(data);
+		}
+	});
+
+	useEffect(() => {
+		console.log('available trans', translationsAvailable);
+	}, [translationsAvailable]);
 
 	useEffect(() => {
 		return () => {
@@ -137,9 +158,9 @@ const UploadOrEditNews = ({
 	useEffect(() => {
 		if (specificNews) {
 			// console.log(specificNews);
-			let dd = parseNewsObject(specificNews);
-			console.log('hello', dd);
-			setRawTranslations(dd);
+			// let dd = parseNewsObject(specificNews);
+			// console.log('hello', dd);
+			// setRawTranslations(dd);
 
 			setNotifID(specificNews?.id);
 			if (specificNews?.labels) {
@@ -337,9 +358,7 @@ const UploadOrEditNews = ({
 		setNews([]);
 
 		//resetting states of translations
-		setRawTranslations({ en: {} });
-		setCurrentLanguage(defaultLanguage);
-		setRetranslate(false);
+		resetTranslations();
 	};
 
 	useEffect(() => {
@@ -518,7 +537,7 @@ const UploadOrEditNews = ({
 					last_name: `${getLocalStorageDetails()?.last_name}`
 				}
 			};
-			let body = addLanguagesToPayload(rawTranslations, newsBody);
+			let body = compilePayload(newsBody);
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/news/add-news`,
 				body,
@@ -666,185 +685,16 @@ const UploadOrEditNews = ({
 		}
 	};
 
-	const handleChange = (
-		fieldName,
-		value,
-		translate = false,
-		slideIndex,
-		slideId
-	) => {
-		// debugger
-		let slideIdIndicator = slideId === 0 ? true : slideId;
-		if (slideIdIndicator) {
-			// slides change in real array
-			if (currentLanguage.shortName === 'en') {
-				let newsSlides = [...news]; // JSON.parse(JSON.stringify(news));
-				let currentSlide = { ...newsSlides[slideIndex] }; //JSON.parse(JSON.stringify(newsSlides[slideIndex]));
-				currentSlide['data'][0] = {
-					...currentSlide['data']?.[0],
-					[fieldName]: value
-				};
-				// newsSlides[slideIndex] = {
-				// 	...newsSlides[slideIndex]?.['data'],
-				// 	data:[ { ...newsSlides[slideIndex]?.['data']?.[0], [fieldName]: value }]
-				// };
-				newsSlides[slideIndex] = currentSlide;
-				setNews(newsSlides);
-			}
-		} else {
-			if (currentLanguage.shortName === 'en') {
-				setForm({
-					...form,
-					[fieldName]: value
-				});
-			}
-		}
-		if (translate) {
-			currentLanguage.shortName === 'en' &&
-				!reTranslate &&
-				setRetranslate(true);
-
-			if (slideIdIndicator) {
-				let translations = JSON.parse(JSON.stringify(rawTranslations));
-
-				translations[currentLanguage.shortName] = {
-					...translations[currentLanguage.shortName]
-				};
-				translations[currentLanguage.shortName]['slides'] = {
-					...translations[currentLanguage.shortName]['slides']
-				};
-				translations[currentLanguage.shortName]['slides'][
-					`${prefix}_${slideId}`
-				] = {
-					...translations[currentLanguage.shortName]['slides'][
-						`${prefix}_${slideId}`
-					]
-				};
-				translations[currentLanguage.shortName]['slides'][
-					`${prefix}_${slideId}`
-				][fieldName] = value;
-
-				setRawTranslations(translations);
-			} else {
-				let translations = JSON.parse(JSON.stringify(rawTranslations));
-				translations[currentLanguage.shortName] = {
-					...translations[currentLanguage.shortName]
-				};
-				translations[currentLanguage.shortName][fieldName] = value;
-				setRawTranslations(translations);
-			}
-		}
-
-		console.log(rawTranslations, news, form);
+	const handleSetParentData = ({ rootData, slidesData }) => {
+		rootData && setForm(rootData);
+		slidesData && setNews(slidesData);
 	};
 
-	const getField = (fieldName, translate, slideIndex, slideId) => {
-		let slideIdIndicator = slideId === 0 ? true : slideId;
-		// let result = '';
-		if (!translate) {
-			if (slideIdIndicator) {
-				return news[slideIndex]?.['data']?.[0]?.[fieldName];
-			} else {
-				return form[fieldName];
-			}
-		}
+	const handleTranslate = () => {
+		console.log(extractField.current);
 
-		if (slideIdIndicator) {
-			if (currentLanguage.shortName === 'en') {
-				let fieldFromTranslations =
-					rawTranslations[currentLanguage.shortName]?.['slides']?.[
-						`${prefix}_${slideId}`
-					]?.[fieldName];
-				let fieldFromSlide = news[slideIndex]?.['data']?.[0]?.[fieldName];
-				return fieldFromTranslations || fieldFromSlide;
-			} else {
-				return (
-					rawTranslations[currentLanguage.shortName]?.['slides']?.[
-						`${prefix}_${slideId}`
-					]?.[fieldName] || ''
-				);
-			}
-		} else {
-			if (currentLanguage.shortName === 'en') {
-				let fieldFromTranslation =
-					rawTranslations[currentLanguage.shortName]?.[fieldName];
-				if (fieldFromTranslation) {
-					return fieldFromTranslation;
-				} else {
-					extractField.current = {
-						...extractField.current,
-						[fieldName]: form[fieldName]
-					};
-					return form[fieldName];
-				}
-			} else {
-				return rawTranslations[currentLanguage.shortName]?.[fieldName] || '';
-			}
-		}
-		// return result;
+		getTranslations();
 	};
-
-	const parseNewsObject = (obj) => {
-		console.log('specificNews', obj);
-		let transObj = {};
-		transObj = JSON.parse(JSON.stringify(obj.translations || {})); //
-
-		let languages = Object.keys(transObj); //['en','fr']
-
-		languages.forEach((lan) => {
-			obj.slides.forEach((slide, i) => {
-				transObj[lan]['slides'] = { ...transObj[lan]['slides'] };
-				transObj[lan]['slides'][`${prefix}_${slide.id}`] =
-					slide.translations[lan];
-			});
-		});
-		console.log(transObj);
-		return transObj;
-	};
-
-	const addLanguagesToPayload = (object, newsObject) => {
-		if (Object.entries(object).length <= 1) return newsObject;
-		let aa = {};
-		let langs = Object.keys(object);
-		langs.forEach((lan) => {
-			let internalKeys = Object.keys(object[lan]);
-			internalKeys.forEach((internalKey) => {
-				let current = object[lan][internalKey];
-
-				if (internalKey === 'slides') {
-					let slideKeys = Object.keys(current);
-					slideKeys.forEach((slide) => {
-						let c = object[lan]['slides'][slide];
-						aa['slides'] = { ...aa['slides'] };
-						aa['slides'][slide] = { ...aa['slides'][slide] };
-						aa['slides'][slide][lan] = { ...aa['slides'][slide][lan] };
-						aa['slides'][slide][lan] = c;
-					});
-				} else {
-					aa['root'] = { ...aa['root'] };
-					aa['root'][lan] = { ...aa['root'][lan] };
-					aa['root'][lan][internalKey] = current;
-				}
-			});
-		});
-		newsObject = { ...newsObject, translations: { ...aa.root } };
-		newsObject.slides.forEach((slide, i) => {
-			newsObject.slides[i] = {
-				...slide,
-				translations: aa.slides[`slide_${slide.translationId}`]
-			};
-		});
-
-		return newsObject;
-	};
-
-
-	const handleTranslate = ()=>{
-		console.log(extractField.current)
-
-		// getTranslations(rawTranslations['en']);
-
-	}
 	const isValidToPush = () =>
 		!(isEdit &&
 		!reTranslate &&
@@ -932,13 +782,7 @@ const UploadOrEditNews = ({
 												</p>
 												<div className={globalClasses.captionContainer}>
 													<div className={globalClasses.characterCount}>
-														<h6
-															onClick={() =>
-																getTranslations(rawTranslations['en'])
-															}
-														>
-															BANNER TITLE
-														</h6>
+														<h6>BANNER TITLE</h6>
 														<h6
 															style={{
 																color:
@@ -958,17 +802,13 @@ const UploadOrEditNews = ({
 														value={getField('banner_title', true)}
 														defaultValue={''}
 														onChange={(e) => {
-															handleChange(
-																'banner_title',
-																e.target.value,
-																true
-															);
-															setForm((prev) => {
-																return {
-																	...prev,
-																	banner_title: e.target.value
-																};
-															});
+															setField('banner_title', e.target.value, true);
+															// setForm((prev) => {
+															// 	return {
+															// 		...prev,
+															// 		banner_title: e.target.value
+															// 	};
+															// });
 														}}
 														placeholder={'Please write you caption here'}
 														className={classes.textField}
@@ -1007,17 +847,17 @@ const UploadOrEditNews = ({
 														defaultValue={''}
 														value={getField('banner_description', true)}
 														onChange={(e) => {
-															handleChange(
+															setField(
 																'banner_description',
 																e.target.value,
 																true
 															);
-															setForm((prev) => {
-																return {
-																	...prev,
-																	banner_description: e.target.value
-																};
-															});
+															// setForm((prev) => {
+															// 	return {
+															// 		...prev,
+															// 		banner_description: e.target.value
+															// 	};
+															// });
 														}}
 														placeholder={'Please write you caption here'}
 														className={classes.textField}
@@ -1084,7 +924,7 @@ const UploadOrEditNews = ({
 														initialData={item.data && item.data}
 														setPreviewBool={setPreviewBool}
 														setPreviewFile={setPreviewFile}
-														onTranslationChange={handleChange}
+														onTranslationChange={setField}
 														getField={getField}
 													/>
 												</>
@@ -1107,7 +947,7 @@ const UploadOrEditNews = ({
 										: ''}
 								</p>
 
-								{Object.keys(rawTranslations).length > 1 && !reTranslate && (
+								{!reTranslate && translationsAvailable && (
 									<>
 										<Divider color={'grey'} sx={{ mb: '10px' }} />
 										<TranslationCarousal
@@ -1168,7 +1008,7 @@ const UploadOrEditNews = ({
 											<Button
 												disabled={!isValidToPush()}
 												onClick={() => {
-													if (reTranslate) {
+													if (!translationsAvailable) {
 														if (!isValidToPush()) return;
 														handleTranslate();
 													} else {
@@ -1177,8 +1017,7 @@ const UploadOrEditNews = ({
 												}}
 												button2AddSave={true}
 												text={
-													Object.keys(rawTranslations).length > 1 &&
-													!reTranslate
+													translationsAvailable
 														? buttonText
 														: 'TRANSLATE'
 												}
