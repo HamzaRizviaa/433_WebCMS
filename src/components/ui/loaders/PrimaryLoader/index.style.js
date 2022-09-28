@@ -10,11 +10,11 @@ export const useStyles = makeStyles((theme) => ({
 		display: 'flex',
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+		backgroundColor: ({ secondary }) => secondary ? theme.palette.black : 'rgba(0, 0, 0, 0.5)',
 		zIndex: 100
 	},
 	loader: {
-		width: '80px',
+		width: ({ secondary }) => secondary ? '50px' : '80px',
 		height: 'auto',
 		position: 'absolute',
 		display: 'flex',
@@ -27,5 +27,10 @@ export const useStyles = makeStyles((theme) => ({
 		position: 'relative',
 		height: ({ loading, mainPage }) => loading && !mainPage ? 'calc(100vh - 140px)' : '100%',
 		overflow: ({loading}) => loading ? 'hidden' : 'unset'
-	  },
+	},
+	secondaryBackdrop:{
+		position: 'relative',
+		height: '100%',
+		overflow: ({loading}) => loading ? 'hidden' : 'unset'
+	}
 }));
