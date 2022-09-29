@@ -144,6 +144,18 @@ const UploadOrEditNews = ({
 			setDraftBtnDisabled(false);
 		}
 	}, [reTranslate]);
+	useEffect(() => {
+		if (translationsAvailable) {
+			if (validateDraft(form, null, news)){
+				setDraftBtnDisabled(false)
+			};
+		} else {
+			if (isTranslationChange || isEdit) {
+				setDraftBtnDisabled(false)
+				
+			}
+		}
+	}, [translationsAvailable, isTranslationChange, isEdit,form,news]);
 
 	useEffect(() => {
 		if (specificNews) {
@@ -966,9 +978,12 @@ const UploadOrEditNews = ({
 											>
 												<Button
 													disabledDraft={
-														isEdit
-															? draftBtnDisabled
-															: !validateDraft(form, null, news)
+														// !(translationsAvailable &&
+														// 	validateForm(form, null, news))
+														// isEdit || isTranslationChange || reTranslate
+														// 	? draftBtnDisabled
+														// 	: !validateDraft(form, null, news)
+													draftBtnDisabled
 													}
 													onClick={() => handleCreateDraft()}
 													button3={true}
