@@ -1,10 +1,13 @@
 export interface PrimaryLoaderProps {
-    loading: bool, 
-    children: element, 
-    mainPage: bool, 
-    secondary: bool
+	loading: boolean;
+	children?: JSX.Element[] | JSX.Element;
+	mainPage: boolean;
+	secondary: boolean;
 }
 
-/* The "PrimaryLoader" component is a wrapper that will be used in place for the loading overlay and secondary loader */
+/** The "PrimaryLoader" component is a wrapper that is used to show the loading. 
+ * This will be used in place for the loading overlay component and the secondary loader component
+ * that is being used on the main libraries and their sub pages 
+ */
 
-export default function PrimaryLoader(props: PrimaryLoaderProps): JSX.Element
+export default function PrimaryLoader(props: PrimaryLoaderProps): JSX.Element;

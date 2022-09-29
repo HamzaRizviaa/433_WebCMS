@@ -63,12 +63,6 @@ const Table = ({ data, columns, totalRecords, onRowClick, onDataReload }) => {
 		return value;
 	});
 
-	//to be added on all libraries w.r.t specific functions
-
-	// const onDataReload = (params) => {
-	// 	dispatch(getAllNews({...params}))
-	// }
-
 	useEffect(() => {
 		onDataReload({...sortState, page})
 	},[sortState.sortby, sortState.order_type, page])
