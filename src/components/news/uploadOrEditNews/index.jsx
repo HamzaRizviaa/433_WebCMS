@@ -64,7 +64,6 @@ const UploadOrEditNews = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 
-
 	const [isLoading, setIsLoading] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
@@ -131,7 +130,6 @@ const UploadOrEditNews = ({
 		};
 	}, []);
 
-
 	/**
 	 * validations for buttons on translation changes
 	 */
@@ -141,12 +139,11 @@ const UploadOrEditNews = ({
 		setDraftBtnDisabled(!isTranslationChange);
 	}, [isTranslationChange]);
 	useEffect(() => {
-		setEditBtnDisabled(!reTranslate);
-		setDraftBtnDisabled(!reTranslate);
+		if (!reTranslate) {
+			setEditBtnDisabled(false);
+			setDraftBtnDisabled(false);
+		}
 	}, [reTranslate]);
-
-
-
 
 	useEffect(() => {
 		if (specificNews) {

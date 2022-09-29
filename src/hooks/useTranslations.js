@@ -57,7 +57,6 @@ const useTranslations = ({
 			setRawTranslations(translationResponse.data);
 			setRetranslate(false);
 			setIsTranslationChange(false);
-			// setTranslationsAvailable(true);
 		}
 	}, [translationResponse.data]);
 
@@ -72,16 +71,14 @@ const useTranslations = ({
 	useEffect(() => {
 		if (reTranslate) {
 			setRawTranslations({ en: rawTranslations['en'] });
-			// setTranslationsAvailable(false);
 		}
 	}, [reTranslate]);
-
 
 	// to check if the translations are available or not.
 	useEffect(() => {
 		let status = Object.keys(rawTranslations).length > 1;
 		setTranslationsAvailable(status);
-	}, [rawTranslations,reTranslate]);
+	}, [rawTranslations, reTranslate]);
 
 	// if error show toast notification
 	useEffect(() => {
@@ -96,10 +93,6 @@ const useTranslations = ({
 
 	// getTranslations from api
 	const fetchTranslations = () => {
-		// let mergedObject = Object.assign(
-		// 	extractField.current,
-		// 	rawTranslations[defaultLanguageShortName]
-		// );
 		let mergedObject = _.merge(
 			extractField.current,
 			rawTranslations[defaultLanguageShortName]
@@ -124,16 +117,12 @@ const useTranslations = ({
 		if (slideIdIndicator) {
 			// slides change in real array
 			if (isBaseLanguage) {
-				let allSlides = [...slidesData]; // JSON.parse(JSON.stringify(news));
-				let currentSlide = { ...allSlides[slideIndex] }; //JSON.parse(JSON.stringify(allSlides[slideIndex]));
+				let allSlides = [...slidesData];
+				let currentSlide = { ...allSlides[slideIndex] };
 				currentSlide['data'][0] = {
 					...currentSlide['data']?.[0],
 					[fieldName]: value
 				};
-				// allSlides[slideIndex] = {
-				// 	...allSlides[slideIndex]?.['data'],
-				// 	data:[ { ...allSlides[slideIndex]?.['data']?.[0], [fieldName]: value }]
-				// };
 				allSlides[slideIndex] = currentSlide;
 				slidesData = allSlides;
 				setData({ slidesData });
@@ -200,7 +189,7 @@ const useTranslations = ({
 
 	const getField = (fieldName, translate, slideIndex, slideId) => {
 		let slideIdIndicator = slideId === 0 ? true : slideId;
-		// let result = '';
+
 		if (!translate) {
 			if (slideIdIndicator) {
 				return slidesData[slideIndex]?.['data']?.[0]?.[fieldName];
@@ -220,7 +209,7 @@ const useTranslations = ({
 					return fieldFromTranslations;
 				} else {
 					if (fieldFromSlide) {
-						// setField(fieldName,fieldFromSlide,true,slideIndex,slideId)
+						// setField(fieldName,fieldFromSlde,true,slideIndex,slideId)
 						extractField.current = {
 							...extractField.current,
 							[prefix_plural]: {
@@ -250,7 +239,6 @@ const useTranslations = ({
 				if (fieldFromTranslation) {
 					return fieldFromTranslation;
 				} else {
-					// setField(fieldName,rootData[fieldName],true)
 					let fieldFromRoot = rootData[fieldName];
 					if (fieldFromRoot) {
 						extractField.current = {
@@ -264,7 +252,6 @@ const useTranslations = ({
 				return rawTranslations[currentLanguage.shortName]?.[fieldName] || '';
 			}
 		}
-		// return result;
 	};
 
 	/**
@@ -335,11 +322,13 @@ const useTranslations = ({
 			translations: { ...segrigatedTranslations.root }
 		};
 		itemPayload.slides.forEach((slide, i) => {
-			itemPayload.slides[i] = {
-				...slide,
-				translations:
-					segrigatedTranslations.slides[`${prefix}_${slide.translationId}`]
-			};
+			if (segrigatedTranslations.slides?.[`${prefix}_${slide.translationId}`]) {
+				itemPayload.slides[i] = {
+					...slide,
+					translations:
+						segrigatedTranslations.slides[`${prefix}_${slide.translationId}`]
+				};
+			}
 		});
 
 		return itemPayload;
