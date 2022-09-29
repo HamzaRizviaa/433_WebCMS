@@ -46,10 +46,6 @@ import { TextField } from '@material-ui/core';
 import { ToastErrorNotifications } from '../../../constants';
 import { Divider } from '@mui/material';
 import TranslationCarousal from '../../TranslationCarousal';
-import {
-	useGetTranslationsMutation,
-	useLazyGetTranslationQuery
-} from '../../../features/translations.query';
 import useTranslations from '../../../hooks/useTranslations';
 
 const UploadOrEditNews = ({
@@ -146,16 +142,15 @@ const UploadOrEditNews = ({
 	}, [reTranslate]);
 	useEffect(() => {
 		if (translationsAvailable) {
-			if (validateDraft(form, null, news)){
-				setDraftBtnDisabled(false)
-			};
+			if (validateDraft(form, null, news)) {
+				setDraftBtnDisabled(false);
+			}
 		} else {
 			if (isTranslationChange || isEdit) {
-				setDraftBtnDisabled(false)
-				
+				setDraftBtnDisabled(false);
 			}
 		}
-	}, [translationsAvailable, isTranslationChange, isEdit,form,news]);
+	}, [translationsAvailable, isTranslationChange, isEdit, form, news]);
 
 	useEffect(() => {
 		if (specificNews) {
@@ -983,7 +978,7 @@ const UploadOrEditNews = ({
 														// isEdit || isTranslationChange || reTranslate
 														// 	? draftBtnDisabled
 														// 	: !validateDraft(form, null, news)
-													draftBtnDisabled
+														draftBtnDisabled
 													}
 													onClick={() => handleCreateDraft()}
 													button3={true}

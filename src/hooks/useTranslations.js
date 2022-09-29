@@ -19,7 +19,6 @@ const useTranslations = ({
 } = {}) => {
 	let prefix = customPrefix || defaultPrefix;
 	let baseLanguage = customBaseLanguage || defaultLanguage;
-
 	const prefix_plural = `${prefix}s`;
 	// short name destructuring
 	const { shortName: defaultLanguageShortName } = baseLanguage;
@@ -63,6 +62,7 @@ const useTranslations = ({
 	// set parsed translations in state for further manipulation
 
 	useEffect(() => {
+		if (translationsAvailable) return; // to avoid again & again parsing on every field first time
 		const parsedTranslations = parseTranslationsFromItem(specificItem || {});
 		parsedTranslations && setRawTranslations(parsedTranslations);
 	}, [specificItem]);
@@ -182,7 +182,6 @@ const useTranslations = ({
 				}
 			}
 		}
-		console.log(rawTranslations);
 	};
 
 	// Get field value from translations & root
@@ -223,7 +222,7 @@ const useTranslations = ({
 							}
 						};
 					}
-					return fieldFromSlide || "";
+					return fieldFromSlide || '';
 				}
 			} else {
 				return (
@@ -246,7 +245,7 @@ const useTranslations = ({
 							[fieldName]: rootData[fieldName]
 						};
 					}
-					return fieldFromRoot || ""; 
+					return fieldFromRoot || '';
 				}
 			} else {
 				return rawTranslations[currentLanguage.shortName]?.[fieldName] || '';
@@ -261,7 +260,6 @@ const useTranslations = ({
 	// Parse languages and translations from an item eg: news
 
 	const parseTranslationsFromItem = (obj) => {
-		console.log('specificNews', obj);
 		let transObj = {};
 		transObj = JSON.parse(JSON.stringify(obj.translations || {})); //
 
@@ -274,7 +272,6 @@ const useTranslations = ({
 					slide.translations[lan];
 			});
 		});
-		console.log(transObj);
 		return transObj;
 	};
 
@@ -283,7 +280,6 @@ const useTranslations = ({
 	const compilePayloadWithTranslations = (itemPayload) => {
 		let translationsObject = JSON.parse(JSON.stringify(rawTranslations || {}));
 		if (Object.entries(translationsObject).length <= 1) return itemPayload;
-		console.log(translationsObject);
 		let segrigatedTranslations = {};
 		let langs = Object.keys(translationsObject);
 		langs.forEach((lan) => {
