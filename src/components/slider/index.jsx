@@ -2,7 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classes from './_slider.module.scss';
 import Close from '@material-ui/icons/Close';
-import { Backdrop, Paper, Slide } from '@material-ui/core';
+import { Backdrop, Box, Paper, Slide } from '@material-ui/core';
+import CopyToClipboard from '../CopyToClipboard';
+import { ReactComponent as CopyIcon } from '../../assets/Copy.svg';
 
 const Slider = ({
 	children,
@@ -123,7 +125,22 @@ const Slider = ({
 								/>
 								<div className={classes.notifIDWrapper}>
 									<h1 className={classes.heading}>{title}</h1>
-									<p className={classes.notifID}>{notifID}</p>
+									{notifID && (
+										<CopyToClipboard>
+											{({ copy }) => (
+												<Box
+													display='flex'
+													alignItems='center'
+													onClick={() => copy(notifID)}
+												>
+													<CopyIcon />
+													<Box ml={'4px'} className={classes.notifID}>
+														{notifID}
+													</Box>
+												</Box>
+											)}
+										</CopyToClipboard>
+									)}
 								</div>
 							</div>
 							{children}

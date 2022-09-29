@@ -32,6 +32,7 @@ import validateDraft from '../../../utils/validateDraft';
 import { useStyles } from './index.style';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
+import { ToastErrorNotifications } from '../../../constants';
 const UploadOrEditMedia = ({
 	open,
 	handleClose,
@@ -543,9 +544,7 @@ const UploadOrEditMedia = ({
 			);
 			if (result?.data?.status_code === 200) {
 				if (result?.data?.data?.is_deleted === false) {
-					toast.error(
-						'This item cannot be deleted because it is inside the top banners.'
-					);
+					toast.error(ToastErrorNotifications.deleteBannerItemText);
 					dispatch(getMedia({ page }));
 				} else {
 					toast.success('Media has been deleted!');
@@ -2047,16 +2046,12 @@ const UploadOrEditMedia = ({
 												{isError.titleMedia ? isError.titleMedia.message : ''}
 											</p>
 											<div className={classes.titleContainer}>
-												<h6
-													className={[
+												<Labels
+													titleClasses={
 														isError.selectedLabels
 															? globalClasses.errorState
 															: globalClasses.noErrorState
-													].join(' ')}
-												>
-													LABELS
-												</h6>
-												<Labels
+													}
 													isEdit={isEdit}
 													setDisableDropdown={setDisableDropdown}
 													LabelsOptions={mediaLabels}
@@ -2179,54 +2174,55 @@ const UploadOrEditMedia = ({
 									) : (
 										<></>
 									)}
+									{form?.mainCategory && form?.subCategory && (
+										<div className={classes.publishDraftDiv}>
+											{status === 'draft' || !isEdit ? (
+												<div
+													className={
+														isEdit ? classes.draftBtnEdit : classes.draftBtn
+													}
+												>
+													<Button
+														disabledDraft={
+															isEdit ? draftBtnDisabled : !validateDraft(form)
+														}
+														onClick={() => saveDraftBtn()}
+														button3={true}
+														text={
+															status === 'draft' && isEdit
+																? 'SAVE DRAFT'
+																: 'SAVE AS DRAFT'
+														}
+													/>
+												</div>
+											) : (
+												<></>
+											)}
 
-									<div className={classes.publishDraftDiv}>
-										{status === 'draft' || !isEdit ? (
 											<div
 												className={
-													isEdit ? classes.draftBtnEdit : classes.draftBtn
+													isEdit && validateForm(form)
+														? classes.addMediaBtn
+														: isEdit
+														? classes.addMediaBtnEdit
+														: classes.addMediaBtn
 												}
 											>
 												<Button
-													disabledDraft={
-														isEdit ? draftBtnDisabled : !validateDraft(form)
+													disabled={
+														isEdit && validateForm(form) && status === 'draft'
+															? false
+															: isEdit
+															? editBtnDisabled
+															: !validateForm(form)
 													}
-													onClick={() => saveDraftBtn()}
-													button3={true}
-													text={
-														status === 'draft' && isEdit
-															? 'SAVE DRAFT'
-															: 'SAVE AS DRAFT'
-													}
+													onClick={() => addSaveMediaBtn()}
+													button2AddSave={true}
+													text={buttonText}
 												/>
 											</div>
-										) : (
-											<></>
-										)}
-
-										<div
-											className={
-												isEdit && validateForm(form)
-													? classes.addMediaBtn
-													: isEdit
-													? classes.addMediaBtnEdit
-													: classes.addMediaBtn
-											}
-										>
-											<Button
-												disabled={
-													isEdit && validateForm(form) && status === 'draft'
-														? false
-														: isEdit
-														? editBtnDisabled
-														: !validateForm(form)
-												}
-												onClick={() => addSaveMediaBtn()}
-												button2AddSave={true}
-												text={buttonText}
-											/>
 										</div>
-									</div>
+									)}
 								</div>
 							</div>
 							{previewFile != null && (

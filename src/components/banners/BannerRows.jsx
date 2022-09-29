@@ -36,7 +36,8 @@ export default function BannerRows({
 	firstrowErrMsg, // 1
 	validateRow,
 	bannerContent, // content dropdown
-	tabValue
+	tabValue,
+	selectedBannerData
 }) {
 	//styles
 	const muiClasses = useStyles();
@@ -215,7 +216,8 @@ export default function BannerRows({
 					ref={provided.innerRef}
 					{...provided.draggableProps}
 					style={{
-						...provided.draggableProps.style
+						...provided.draggableProps.style,
+						width: '100%'
 					}}
 				>
 					<div>
@@ -385,9 +387,10 @@ export default function BannerRows({
 												setDisableDropdown(true);
 												setDropdownPosition(false);
 											}}
-											onChange={(e, newVal) => {
+											onChange={(e, newVal, reason) => {
 												setSelectedMedia(newVal);
 												setDisableDropdown(true);
+												let tempBannerData = [];
 												setBannerData((bannerData) => {
 													// eslint-disable-next-line no-unused-vars
 													let _bannerData = bannerData.map((banner) => {
@@ -408,8 +411,42 @@ export default function BannerRows({
 															...banner
 														};
 													});
+													tempBannerData = _bannerData;
 													return _bannerData;
 												});
+												// re fetching the banner content to poplulate the list again
+												if (reason === 'clear') {
+													const selectedItems = tempBannerData.map(
+														(item) => item?.selectedMedia?.id
+													);
+													const filterOutNullItem = selectedItems.filter(
+														(item) => item
+													);
+													console.log('filterOutNullItem', filterOutNullItem);
+													dispatch(
+														getBannerContent({
+															type: tabValue,
+															title: null,
+															exclude: [...filterOutNullItem]
+														})
+													);
+												} else {
+													if (bannerContent.length < 10) {
+														const selectedItems = selectedBannerData.map(
+															(item) => item?.selectedMedia?.id
+														);
+														const filterOutNullItem = selectedItems.filter(
+															(item) => item
+														);
+														dispatch(
+															getBannerContent({
+																type: tabValue,
+																title: null,
+																exclude: [...filterOutNullItem, newVal?.id]
+															})
+														);
+													}
+												}
 											}}
 											options={bannerContent}
 											getOptionLabel={(option) => option.title}
@@ -489,5 +526,6 @@ BannerRows.propTypes = {
 	firstrowErrMsg: PropTypes.object,
 	validateRow: PropTypes.object,
 	bannerContent: PropTypes.array,
-	tabValue: PropTypes.string
+	tabValue: PropTypes.string,
+	selectedBannerData: PropTypes.array
 };

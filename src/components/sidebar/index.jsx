@@ -13,7 +13,7 @@ import { ReactComponent as Article } from '../../assets/ArticleIcon.svg';
 // import { ReactComponent as Share } from '../../assets/share.svg';
 // import { ReactComponent as ArticleSelected } from '../../assets/NewsSelected.svg';
 import { useGoogleLogout } from 'react-google-login';
-
+import Tooltip from '../Tooltip';
 const Sidebar = () => {
 	const navigate = useNavigate();
 
@@ -71,9 +71,11 @@ const Sidebar = () => {
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
-					<span className={classes[`${mainClass}Article`]}>
-						<News className={classes.icon} />
-					</span>
+					<Tooltip title={'News'} placement='right'>
+						<span className={classes[`${mainClass}Article`]}>
+							<News className={classes.icon} />
+						</span>
+					</Tooltip>
 				</NavLink>
 
 				<NavLink
@@ -82,7 +84,9 @@ const Sidebar = () => {
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
-					<Media className={classes.icon} />
+					<Tooltip title={'Media'} placement='right'>
+						<Media className={classes.icon} />
+					</Tooltip>
 				</NavLink>
 
 				<NavLink
@@ -91,7 +95,9 @@ const Sidebar = () => {
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
-					<Quiz className={classes.icon} />
+					<Tooltip title={'Questions'} placement='right'>
+						<Quiz className={classes.icon} />
+					</Tooltip>
 				</NavLink>
 
 				<NavLink
@@ -100,7 +106,9 @@ const Sidebar = () => {
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
-					<Banner className={classes.icon} />
+					<Tooltip title={'Top Banners'} placement='right'>
+						<Banner className={classes.icon} />
+					</Tooltip>
 				</NavLink>
 
 				<NavLink
@@ -109,7 +117,9 @@ const Sidebar = () => {
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
-					<Article className={classes.icon} />
+					<Tooltip title={'Articles'} placement='right'>
+						<Article className={classes.icon} />
+					</Tooltip>
 				</NavLink>
 
 				<NavLink
@@ -118,9 +128,10 @@ const Sidebar = () => {
 						isActive ? classes[`${mainClass}ActiveRoute`] : classes.iconWrapper
 					}
 				>
-					<Viral className={classes.icon} />
+					<Tooltip title={'Virals'} placement='right'>
+						<Viral className={classes.icon} />
+					</Tooltip>
 				</NavLink>
-
 				{/* <NavLink
 					to='/games-library'
 					className={({ isActive }) =>

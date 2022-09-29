@@ -68,6 +68,7 @@ const UploadOrEditViral = ({
 		show_likes: true,
 		show_comments: true
 	});
+
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const videoRef = useRef(null);
@@ -126,7 +127,7 @@ const UploadOrEditViral = ({
 					_labels.push({ id: -1, name: label })
 				);
 				// setSelectedLabels(_labels);
-				// console.log('Labels', _labels);
+
 				setForm((prev) => {
 					return {
 						...prev,
@@ -134,6 +135,7 @@ const UploadOrEditViral = ({
 					};
 				});
 			}
+
 			setForm((prev) => {
 				return {
 					...prev,
@@ -306,6 +308,7 @@ const UploadOrEditViral = ({
 						: '',
 					height: fileHeight,
 					width: fileWidth,
+
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -316,10 +319,7 @@ const UploadOrEditViral = ({
 					// ...(form.show_likes ? { show_likes: true } : {}),
 					// ...(form.show_comments ? { show_comments: true } : {}),
 					...(isEdit && id ? { viral_id: id } : {}),
-					...((!isEdit || status !== 'published') &&
-					(form.labels?.length || status == 'draft')
-						? { labels: [...form.labels] }
-						: {})
+					...(form.labels?.length ? { labels: [...form.labels] } : {})
 					// ...(status !== 'published' && form.labels?.length
 					// 	? { labels: [...form.labels] }
 					// 	: {})
@@ -393,24 +393,6 @@ const UploadOrEditViral = ({
 		setPreviewFile(null);
 	};
 
-	// const viralBtnDisabled =
-	// 	!uploadedFiles.length ||
-	// 	postButtonStatus ||
-	// 	selectedLabels.length < 10 ||
-	// 	!caption;
-
-	// const compareValues = (form, specificViral) => {
-	// 	const values = Object.keys(form).map((key) => {
-	// 		if (typeof form[key] === 'string')
-	// 			if (form[key].trim() === specificViral[key].trim()) {
-	// 				return true;
-	// 			}
-	// 		return false;
-	// 	});
-
-	// 	return values.every((item) => item === false);
-	// };
-
 	useEffect(() => {
 		if (specificViral) {
 			setEditBtnDisabled(
@@ -418,9 +400,9 @@ const UploadOrEditViral = ({
 					!form.caption ||
 					!form.uploadedFiles.length ||
 					form.labels.length < 7 ||
-					(specificViral?.file_name === form.uploadedFiles[0]?.file_name &&
-						specificViral?.caption?.trim() === form.caption.trim() &&
-						specificViral?.dropbox_url?.trim() === form.dropbox_url.trim() &&
+					(specificViral?.file_name === form?.uploadedFiles[0]?.file_name &&
+						specificViral?.caption?.trim() === form?.caption?.trim() &&
+						specificViral?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
 						specificViral?.show_likes === form.show_likes &&
 						specificViral?.show_comments === form.show_comments)
 			);
@@ -429,12 +411,11 @@ const UploadOrEditViral = ({
 
 	useEffect(() => {
 		if (specificViral) {
-			// console.log(specificViral, Object.keys(specificViral), 'specificViral');
 			setDraftBtnDisabled(
 				!validateDraft(form) ||
-					(specificViral?.file_name === form.uploadedFiles[0]?.file_name &&
-						specificViral?.caption?.trim() === form.caption.trim() &&
-						specificViral?.dropbox_url?.trim() === form.dropbox_url.trim() &&
+					(specificViral?.file_name === form?.uploadedFiles[0]?.file_name &&
+						specificViral?.caption?.trim() === form?.caption?.trim() &&
+						specificViral?.dropbox_url?.trim() === form?.dropbox_url?.trim() &&
 						specificViral?.show_likes === form.show_likes &&
 						specificViral?.show_comments === form.show_comments &&
 						specificViral?.labels?.length === form?.labels?.length &&
@@ -736,16 +717,12 @@ const UploadOrEditViral = ({
 									</div>
 
 									<div className={classes.captionContainer}>
-										<h6
-											className={
+										<Labels
+											titleClasses={
 												isError.selectedLabels
 													? globalClasses.errorState
 													: globalClasses.noErrorState
 											}
-										>
-											LABELS
-										</h6>
-										<Labels
 											isEdit={isEdit}
 											setDisableDropdown={setDisableDropdown}
 											selectedLabels={form.labels}
@@ -783,11 +760,11 @@ const UploadOrEditViral = ({
 										</h6>
 										<TextField
 											value={form.caption}
-											onChange={(e) =>
+											onChange={(e) => {
 												setForm((prev) => {
 													return { ...prev, caption: e.target.value };
-												})
-											}
+												});
+											}}
 											placeholder={'Please write your caption here'}
 											className={classes.textField}
 											InputProps={{
@@ -900,7 +877,6 @@ const UploadOrEditViral = ({
 														? editBtnDisabled
 														: !validateForm(form)
 												}
-												// disabled={isEdit ? editBtnDisabled : !validateForm(form)}
 												onClick={handlePostSaveBtn}
 												text={buttonText}
 											/>
@@ -924,7 +900,6 @@ const UploadOrEditViral = ({
 										<h5>Preview</h5>
 									</div>
 									<div>
-										{/* {console.log(previewFile, 'previewFile')} */}
 										{previewFile.mime_type === 'video/mp4' ? (
 											<video
 												id={'my-video'}

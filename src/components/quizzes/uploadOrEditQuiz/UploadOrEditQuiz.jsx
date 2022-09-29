@@ -943,16 +943,12 @@ const UploadOrEditQuiz = ({
 								</p>
 
 								<div className={classes.titleContainer}>
-									<h6
-										className={
+									<Labels
+										titleClasses={
 											isError.selectedLabels
 												? globalClasses.errorState
 												: globalClasses.noErrorState
 										}
-									>
-										LABELS
-									</h6>
-									<Labels
 										isEdit={editPoll || editQuiz}
 										setDisableDropdown={setDisableDropdown}
 										selectedLabels={form.labels}
