@@ -37,12 +37,12 @@ import {
 	checkSortOrderOnEdit,
 	checkDuplicateLabel
 } from '../../../utils/newsUtils';
+import { TextField } from '@material-ui/core';
 
 //api calls
 
 import { getAllNews } from '../../../pages/NewsLibrary/newsLibrarySlice';
 import { ConstructionOutlined } from '@mui/icons-material';
-import { TextField } from '@material-ui/core';
 import { ToastErrorNotifications } from '../../../constants';
 
 const UploadOrEditNews = ({
@@ -356,7 +356,10 @@ const UploadOrEditNews = ({
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...news];
+<<<<<<< HEAD
 
+=======
+>>>>>>> staging
 		dataCopy[index].data = [
 			{
 				...(dataCopy[index]?.data?.length ? dataCopy[index]?.data[0] : {}),
@@ -459,9 +462,7 @@ const UploadOrEditNews = ({
 					show_comments: form.show_comments,
 					slides: slides,
 					...(isEdit && id ? { news_id: id } : {}),
-					...(form.labels?.length || status == 'draft'
-						? { labels: [...form.labels] }
-						: {}),
+					...(form.labels?.length ? { labels: [...form.labels] } : {}),
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -490,6 +491,8 @@ const UploadOrEditNews = ({
 			console.log(e, 'Failed create / edit News');
 		}
 	};
+
+	console.log('Labels', form.labels);
 
 	const validateDraftBtn = () => {
 		if (isEdit) {

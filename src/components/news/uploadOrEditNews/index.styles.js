@@ -16,7 +16,6 @@ export const useStyles = makeStyles((theme) => ({
 	textField: {
 		width: '100%'
 	},
-
 	textFieldInput: {
 		...theme.components.textFieldInput
 	}
