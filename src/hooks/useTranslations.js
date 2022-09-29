@@ -223,7 +223,7 @@ const useTranslations = ({
 							}
 						};
 					}
-					return fieldFromSlide;
+					return fieldFromSlide || "";
 				}
 			} else {
 				return (
@@ -246,7 +246,7 @@ const useTranslations = ({
 							[fieldName]: rootData[fieldName]
 						};
 					}
-					return fieldFromRoot;
+					return fieldFromRoot || ""; 
 				}
 			} else {
 				return rawTranslations[currentLanguage.shortName]?.[fieldName] || '';
