@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-debugger */
 import React, { useState, useEffect, useRef } from 'react';
 //import classes from './_uploadOrEditMedia.module.scss';
@@ -100,6 +101,10 @@ const UploadOrEditMedia = ({
 		(state) => state.mediaLibraryOriginal
 	);
 	const labels = useSelector((state) => state.mediaLibraryOriginal.labels);
+
+	const {
+		features: { translationsOnMedia }
+	} = useSelector((state) => state.remoteConfig);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({

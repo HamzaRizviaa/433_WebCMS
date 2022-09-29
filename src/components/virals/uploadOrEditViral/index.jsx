@@ -32,6 +32,7 @@ import { useStyles } from './index.styles';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
 import TranslationCarousal from '../../TranslationCarousal';
+import FeatureWrapper from '../../FeatureWrapper';
 //new labels
 // import { getAllNewLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 
@@ -91,6 +92,12 @@ const UploadOrEditViral = ({
 	const { specificViralStatus } = useSelector(
 		(state) => state.ViralLibraryStore
 	);
+
+	const {
+		features: { translationsOnVirals }
+	} = useSelector((state) => state.remoteConfig);
+
+	const isTranslationsEnabled = translationsOnVirals?._value === 'true';
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -388,7 +395,10 @@ const UploadOrEditViral = ({
 						: '',
 					height: fileHeight,
 					width: fileWidth,
-					translations: translatedLanguages ? translatedLanguages : undefined,
+					translations:
+						translatedLanguages && isTranslationsEnabled
+							? translatedLanguages
+							: undefined,
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -407,6 +417,9 @@ const UploadOrEditViral = ({
 				{
 					headers: {
 						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					},
+					params: {
+						api_version: isTranslationsEnabled ? 1 : 2
 					}
 				}
 			);
@@ -690,15 +703,17 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	// const handleButtonText = () => {
-	// 	if (translated && !isEdit) {
-	// 		return buttonText;
-	// 	} else if (isEdit && status === 'published' && !translated) {
-	// 		return buttonText;
-	// 	} else if (isEdit && status === 'published' && translated) {
-	// 		return 'TRANSLATE';
-	// 	}
-	// };
+	const handlePublishTranslateButtonOnClick = () => {
+		if (!translated && !isEdit) {
+			handleTranslateBtn();
+		} else if (isEdit && translatedOnEdit) {
+			handleTranslateBtn();
+			return;
+		} else {
+			handlePostSaveBtn();
+			return;
+		}
+	};
 
 	return (
 		<>
@@ -944,20 +959,21 @@ const UploadOrEditViral = ({
 										? 'Something needs to be changed to save a draft'
 										: ''}
 								</p>
-
-								{translated ? (
-									<>
-										<Divider color={'grey'} sx={{ mb: '10px' }} />
-										<TranslationCarousal lang={lang} setLang={setLang} />
-									</>
-								) : isEdit && status === 'draft' && !translatedOnEdit ? (
-									<>
-										<Divider color={'grey'} sx={{ mb: '10px' }} />
-										<TranslationCarousal lang={lang} setLang={setLang} />
-									</>
-								) : (
-									<></>
-								)}
+								<FeatureWrapper name='translationsOnVirals'>
+									{translated ? (
+										<>
+											<Divider color={'grey'} sx={{ mb: '10px' }} />
+											<TranslationCarousal lang={lang} setLang={setLang} />
+										</>
+									) : isEdit && status === 'draft' && !translatedOnEdit ? (
+										<>
+											<Divider color={'grey'} sx={{ mb: '10px' }} />
+											<TranslationCarousal lang={lang} setLang={setLang} />
+										</>
+									) : (
+										<></>
+									)}
+								</FeatureWrapper>
 
 								<div className={classes.buttonDiv}>
 									{isEdit || (status === 'draft' && isEdit) ? (
@@ -1019,25 +1035,17 @@ const UploadOrEditViral = ({
 														: !validateForm(form)
 												}
 												onClick={
-													!translated && !isEdit
-														? handleTranslateBtn
-														: isEdit &&
-														  status === 'published' &&
-														  translatedOnEdit
-														? handleTranslateBtn
-														: isEdit && status === 'draft' && translatedOnEdit
-														? handleTranslateBtn
+													isTranslationsEnabled
+														? handlePublishTranslateButtonOnClick
 														: handlePostSaveBtn
 												}
 												text={
-													!translated && !isEdit
-														? 'TRANSLATE'
-														: isEdit &&
-														  status === 'published' &&
-														  translatedOnEdit
-														? 'TRANSLATE'
-														: isEdit && status === 'draft' && translatedOnEdit
-														? 'TRANSLATE'
+													isTranslationsEnabled
+														? !translated && !isEdit
+															? 'TRANSLATE'
+															: isEdit && translatedOnEdit
+															? 'TRANSLATE'
+															: buttonText
 														: buttonText
 												}
 											/>
