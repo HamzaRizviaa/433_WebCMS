@@ -97,7 +97,7 @@ const UploadOrEditViral = ({
 		features: { translationsOnVirals }
 	} = useSelector((state) => state.remoteConfig);
 
-	console.log('translationsOnVirals', translationsOnVirals);
+	const isTranslationsEnabled = translationsOnVirals?._value === 'true';
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -395,7 +395,10 @@ const UploadOrEditViral = ({
 						: '',
 					height: fileHeight,
 					width: fileWidth,
-					translations: translatedLanguages ? translatedLanguages : undefined,
+					translations:
+						translatedLanguages && isTranslationsEnabled
+							? translatedLanguages
+							: undefined,
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -414,6 +417,9 @@ const UploadOrEditViral = ({
 				{
 					headers: {
 						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					},
+					params: {
+						api_version: isTranslationsEnabled ? 1 : 2
 					}
 				}
 			);
@@ -697,15 +703,17 @@ const UploadOrEditViral = ({
 		}
 	};
 
-	// const handleButtonText = () => {
-	// 	if (translated && !isEdit) {
-	// 		return buttonText;
-	// 	} else if (isEdit && status === 'published' && !translated) {
-	// 		return buttonText;
-	// 	} else if (isEdit && status === 'published' && translated) {
-	// 		return 'TRANSLATE';
-	// 	}
-	// };
+	const handlePublishTranslateButtonOnClick = () => {
+		if (!translated && !isEdit) {
+			handleTranslateBtn();
+		} else if (isEdit && translatedOnEdit) {
+			handleTranslateBtn();
+			return;
+		} else {
+			handlePostSaveBtn();
+			return;
+		}
+	};
 
 	return (
 		<>
@@ -955,12 +963,12 @@ const UploadOrEditViral = ({
 									{translated ? (
 										<>
 											<Divider color={'grey'} sx={{ mb: '10px' }} />
-											{/* <TranslationCarousal lang={lang} setLang={setLang} /> */}
+											<TranslationCarousal lang={lang} setLang={setLang} />
 										</>
 									) : isEdit && status === 'draft' && !translatedOnEdit ? (
 										<>
 											<Divider color={'grey'} sx={{ mb: '10px' }} />
-											{/* <TranslationCarousal lang={lang} setLang={setLang} /> */}
+											<TranslationCarousal lang={lang} setLang={setLang} />
 										</>
 									) : (
 										<></>
@@ -1027,25 +1035,17 @@ const UploadOrEditViral = ({
 														: !validateForm(form)
 												}
 												onClick={
-													!translated && !isEdit
-														? handleTranslateBtn
-														: isEdit &&
-														  status === 'published' &&
-														  translatedOnEdit
-														? handleTranslateBtn
-														: isEdit && status === 'draft' && translatedOnEdit
-														? handleTranslateBtn
+													isTranslationsEnabled
+														? handlePublishTranslateButtonOnClick
 														: handlePostSaveBtn
 												}
 												text={
-													!translated && !isEdit
-														? 'TRANSLATE'
-														: isEdit &&
-														  status === 'published' &&
-														  translatedOnEdit
-														? 'TRANSLATE'
-														: isEdit && status === 'draft' && translatedOnEdit
-														? 'TRANSLATE'
+													isTranslationsEnabled
+														? !translated && !isEdit
+															? 'TRANSLATE'
+															: isEdit && translatedOnEdit
+															? 'TRANSLATE'
+															: buttonText
 														: buttonText
 												}
 											/>
