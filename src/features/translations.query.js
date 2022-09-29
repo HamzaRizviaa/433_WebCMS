@@ -7,7 +7,7 @@ const translationsQuery = rootRtkQuery.injectEndpoints({
 				url: `/translations/translate`,
 				method: 'POST',
 				body: data,
-				keepUnusedDataFor: 60 * 60 * 10
+				keepUnusedDataFor:0 //60 * 60 * 10
 			}),
 			transformResponse: (response) => response.data
 		})

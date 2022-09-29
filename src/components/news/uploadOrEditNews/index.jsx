@@ -69,7 +69,6 @@ const UploadOrEditNews = ({
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
-	const extractField = useRef({});
 
 	// use query
 	// const [
@@ -122,7 +121,15 @@ const UploadOrEditNews = ({
 		(state) => state.NewsLibrary
 	);
 
-	/// custom hook
+	/// custom hook for translations
+	const useTransParams = {
+		rootData: form || {},
+		slidesData: news || [],
+		specificItem: specificNews || {},
+		setData: (data) => {
+			handleSetParentData && handleSetParentData(data);
+		}
+	};
 	const [
 		getTranslations,
 		{
@@ -135,14 +142,7 @@ const UploadOrEditNews = ({
 			resetTranslations
 		},
 		{ reTranslate, translationsAvailable, isTranslationChange }
-	] = useTranslations({
-		rootData: form || {},
-		slidesData: news || [],
-		specificItem: specificNews || {},
-		setData: (data) => {
-			handleSetParentData && handleSetParentData(data);
-		}
-	});
+	] = useTranslations(useTransParams);
 
 	useEffect(() => {
 		console.log('available trans', translationsAvailable);
@@ -706,8 +706,6 @@ const UploadOrEditNews = ({
 		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
 			validatePublishNewsBtn();
 		} else {
-			console.log(extractField.current);
-
 			getTranslations();
 		}
 	};
@@ -840,6 +838,7 @@ const UploadOrEditNews = ({
 														defaultValue={''}
 														onChange={(e) => {
 															setField('banner_title', e.target.value, true);
+															console.log(form, news);
 															// setForm((prev) => {
 															// 	return {
 															// 		...prev,

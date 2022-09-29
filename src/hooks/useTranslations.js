@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLazyGetTranslationQuery } from '../features/translations.query';
 import _ from 'lodash';
+import { ToastErrorNotifications } from '../constants';
+import { toast } from 'react-toastify';
 const defaultPrefix = 'slide';
 const defaultLanguage = {
 	name: 'English',
@@ -42,7 +44,7 @@ const useTranslations = ({
 	const [currentLanguage, setCurrentLanguage] = useState(baseLanguage);
 
 	// query for get translations from api
-	const [getTranslations, { isFetching, ...translationResponse }] =
+	const [getTranslations, { isFetching, isError, ...translationResponse }] =
 		useLazyGetTranslationQuery();
 
 	/**
@@ -80,6 +82,13 @@ const useTranslations = ({
 		setTranslationsAvailable(status);
 	}, [rawTranslations]);
 
+	// if error show toast notification
+	useEffect(() => {
+		if (isError) {
+			toast.error(ToastErrorNotifications.translationsFailed);
+		}
+	}, [isError]);
+
 	/**
 	 * Methods for manipulating translations
 	 */
@@ -94,6 +103,9 @@ const useTranslations = ({
 			extractField.current,
 			rawTranslations[defaultLanguageShortName]
 		);
+		if (_.isEmpty(mergedObject[prefix_plural])) {
+			delete mergedObject[prefix_plural];
+		}
 		getTranslations(mergedObject);
 	};
 
@@ -336,6 +348,7 @@ const useTranslations = ({
 		//basic methods and data
 		{
 			isFetching,
+			isError,
 			compilePayload: compilePayloadWithTranslations,
 			getField,
 			setField,
