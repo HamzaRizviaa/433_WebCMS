@@ -118,10 +118,11 @@ const useTranslations = ({
 		slideId
 	) => {
 		// debugger
+		let isBaseLanguage = currentLanguage.shortName === defaultLanguageShortName;
 		let slideIdIndicator = slideId === 0 ? true : slideId;
 		if (slideIdIndicator) {
 			// slides change in real array
-			if (currentLanguage.shortName === defaultLanguageShortName) {
+			if (isBaseLanguage) {
 				let allSlides = [...slidesData]; // JSON.parse(JSON.stringify(news));
 				let currentSlide = { ...allSlides[slideIndex] }; //JSON.parse(JSON.stringify(allSlides[slideIndex]));
 				currentSlide['data'][0] = {
@@ -137,7 +138,7 @@ const useTranslations = ({
 				setData({ slidesData });
 			}
 		} else {
-			if (currentLanguage.shortName === defaultLanguageShortName) {
+			if (isBaseLanguage) {
 				rootData = {
 					...rootData,
 					[fieldName]: value
@@ -147,8 +148,9 @@ const useTranslations = ({
 		}
 
 		if (translate) {
-			if (currentLanguage.shortName === defaultLanguageShortName) {
+			if (isBaseLanguage) {
 				!reTranslate && setRetranslate(true);
+				extractField.current = defaultTranslationsState;
 			} else {
 				setIsTranslationChange(true);
 			}
@@ -172,15 +174,22 @@ const useTranslations = ({
 				translations[currentLanguage.shortName][`${prefix_plural}`][
 					`${prefix}_${slideId}`
 				][fieldName] = value;
-
-				setRawTranslations(translations);
+				if (isBaseLanguage) {
+					setRawTranslations(translations[defaultLanguageShortName]);
+				} else {
+					setRawTranslations(translations);
+				}
 			} else {
 				let translations = JSON.parse(JSON.stringify(rawTranslations));
 				translations[currentLanguage.shortName] = {
 					...translations[currentLanguage.shortName]
 				};
 				translations[currentLanguage.shortName][fieldName] = value;
-				setRawTranslations(translations);
+				if (isBaseLanguage) {
+					setRawTranslations(translations[defaultLanguageShortName]);
+				} else {
+					setRawTranslations(translations);
+				}
 			}
 		}
 		console.log(rawTranslations);
