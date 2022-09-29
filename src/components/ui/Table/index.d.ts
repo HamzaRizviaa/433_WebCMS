@@ -1,6 +1,6 @@
 export interface TableProps {
-    data: array<any>,
-    columns: array<any>,
+    data: Array<any>,
+    columns: Array<any>,
     totalRecords: number,
     onRowClick: () => void,
     onDataReload: () => void
