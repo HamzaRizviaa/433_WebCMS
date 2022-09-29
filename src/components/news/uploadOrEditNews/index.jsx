@@ -132,10 +132,9 @@ const UploadOrEditNews = ({
 			setField,
 			currentLanguage,
 			setCurrentLanguage,
-			reTranslate,
-			translationsAvailable,
 			resetTranslations
-		}
+		},
+		{ reTranslate, translationsAvailable, isTranslationChange }
 	] = useTranslations({
 		rootData: form || {},
 		slidesData: news || [],
@@ -154,6 +153,19 @@ const UploadOrEditNews = ({
 			resetState();
 		};
 	}, []);
+
+	useEffect(() => {
+		// if (editBtnDisabled !== isTranslationChange) return;
+		console.log(!isTranslationChange);
+		setEditBtnDisabled(!isTranslationChange);
+		setDraftBtnDisabled(!isTranslationChange);
+	}, [isTranslationChange]);
+	useEffect(() => {
+		// if (editBtnDisabled !== isTranslationChange) return;
+		// console.log(!isTranslationChange);
+		setEditBtnDisabled(!reTranslate);
+		setDraftBtnDisabled(!reTranslate);
+	}, [reTranslate]);
 
 	useEffect(() => {
 		if (specificNews) {
@@ -691,9 +703,13 @@ const UploadOrEditNews = ({
 	};
 
 	const handleTranslate = () => {
-		console.log(extractField.current);
+		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
+			validatePublishNewsBtn();
+		} else {
+			console.log(extractField.current);
 
-		getTranslations();
+			getTranslations();
+		}
 	};
 	const isValidToPush = () =>
 		!(isEdit &&
@@ -704,6 +720,27 @@ const UploadOrEditNews = ({
 			: isEdit
 			? editBtnDisabled
 			: !validateForm(form, null, news));
+
+	const handlePublishTranslateButtonText = () => {
+		if (reTranslate && !isEdit) {
+			return 'TRANSLATE';
+		} else if (isEdit && isTranslationChange) {
+			return 'TRANSLATE';
+		} else {
+			return buttonText;
+		}
+	};
+
+	const handlePublishTranslateButtonOnClick = () => {
+		if (reTranslate && !isEdit) {
+			return handleTranslate;
+		} else if (isEdit && isTranslationChange) {
+			return handleTranslate;
+		} else {
+			return handlePublishNews;
+		}
+	};
+
 	return (
 		<div>
 			<Slider
@@ -1004,32 +1041,35 @@ const UploadOrEditNews = ({
 										)}
 
 										<div>
-											{/* {!reTranslate ? ( */}
-											<Button
-												disabled={!isValidToPush()}
-												onClick={() => {
-													if (!translationsAvailable) {
-														if (!isValidToPush()) return;
-														handleTranslate();
-													} else {
-														handlePublishNews();
+											{reTranslate || !translationsAvailable ? (
+												<Button
+													disabled={
+														validateForm(form, null, news) ? false : true
+														// (!validateForm(form, null, news) && !reTranslate)
 													}
-												}}
-												button2AddSave={true}
-												text={
-													translationsAvailable
-														? buttonText
-														: 'TRANSLATE'
-												}
-											/>
-											{/* // ) : (
-											// 	<Button
-											// 		disabled={!reTranslate}
-											// 		onClick={() => getTranslations(rawTranslations['en'])}
-											// 		button2AddSave={true}
-											// 		text={'TRANSLATE'}
-											// 	/>
-											// )} */}
+													onClick={handleTranslate}
+													button2AddSave={true}
+													text={'TRANSLATE'}
+												/>
+											) : (
+												<Button
+													disabled={
+														isTranslationChange &&
+														validateForm(form, null, news)
+															? false
+															: isEdit &&
+															  validateForm(form, null, news) &&
+															  status === 'draft'
+															? false
+															: isEdit
+															? editBtnDisabled
+															: !validateForm(form, null, news)
+													}
+													onClick={() => handlePublishNews()}
+													button2AddSave={true}
+													text={buttonText}
+												/>
+											)}
 										</div>
 									</div>
 								</div>

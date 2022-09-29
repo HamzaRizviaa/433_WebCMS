@@ -34,6 +34,8 @@ const useTranslations = ({
 	);
 	//Retranslation flag
 	const [reTranslate, setRetranslate] = useState(false);
+	// if translations changes or edited flad
+	const [isTranslationChange, setIsTranslationChange] = useState(false);
 	// translations available
 	const [translationsAvailable, setTranslationsAvailable] = useState(false);
 	// currently selected language
@@ -52,6 +54,7 @@ const useTranslations = ({
 		if (translationResponse.isSuccess) {
 			setRawTranslations(translationResponse.data);
 			setRetranslate(false);
+			setIsTranslationChange(false);
 			// setTranslationsAvailable(true);
 		}
 	}, [translationResponse.data]);
@@ -72,8 +75,8 @@ const useTranslations = ({
 	}, [reTranslate]);
 
 	useEffect(() => {
-        let status = Object.keys(rawTranslations).length > 1
-        console.log('hello',rawTranslations,status)
+		let status = Object.keys(rawTranslations).length > 1;
+		console.log('hello', rawTranslations, status);
 		setTranslationsAvailable(status);
 	}, [rawTranslations]);
 
@@ -118,23 +121,25 @@ const useTranslations = ({
 				// 	data:[ { ...allSlides[slideIndex]?.['data']?.[0], [fieldName]: value }]
 				// };
 				allSlides[slideIndex] = currentSlide;
-				setData({ slides: allSlides });
+				slidesData = allSlides;
+				setData({ slidesData });
 			}
 		} else {
 			if (currentLanguage.shortName === defaultLanguageShortName) {
-				setData({
-					root: {
-						...rootData,
-						[fieldName]: value
-					}
-				});
+				rootData = {
+					...rootData,
+					[fieldName]: value
+				};
+				setData({ rootData });
 			}
 		}
 
 		if (translate) {
-			currentLanguage.shortName === defaultLanguageShortName &&
-				!reTranslate &&
-				setRetranslate(true);
+			if (currentLanguage.shortName === defaultLanguageShortName) {
+				!reTranslate && setRetranslate(true);
+			} else {
+				setIsTranslationChange(true);
+			}
 
 			if (slideIdIndicator) {
 				let translations = JSON.parse(JSON.stringify(rawTranslations));
@@ -321,11 +326,14 @@ const useTranslations = ({
 	const resetTranslations = () => {
 		setRawTranslations(defaultTranslationsState);
 		setRetranslate(false);
+		setIsTranslationChange(false);
 		setCurrentLanguage(baseLanguage);
 		extractField.current = defaultTranslationsState;
 	};
 	return [
+		//trigger
 		fetchTranslations,
+		//basic methods and data
 		{
 			isFetching,
 			compilePayload: compilePayloadWithTranslations,
@@ -333,9 +341,13 @@ const useTranslations = ({
 			setField,
 			setCurrentLanguage,
 			currentLanguage,
+			resetTranslations
+		},
+		// basic validation flags of translations
+		{
 			reTranslate,
-			resetTranslations,
-			translationsAvailable
+			translationsAvailable,
+			isTranslationChange
 		}
 	];
 };
