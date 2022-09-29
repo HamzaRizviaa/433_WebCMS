@@ -76,11 +76,12 @@ const useTranslations = ({
 		}
 	}, [reTranslate]);
 
+
+	// to check if the translations are available or not.
 	useEffect(() => {
 		let status = Object.keys(rawTranslations).length > 1;
-		console.log('hello', rawTranslations, status);
 		setTranslationsAvailable(status);
-	}, [rawTranslations]);
+	}, [rawTranslations,reTranslate]);
 
 	// if error show toast notification
 	useEffect(() => {

@@ -52,12 +52,6 @@ import {
 } from '../../../features/translations.query';
 import useTranslations from '../../../hooks/useTranslations';
 
-const prefix = 'slide';
-const defaultLanguage = {
-	name: 'English',
-	prefix: 'ENG',
-	shortName: 'en'
-};
 const UploadOrEditNews = ({
 	open,
 	handleClose,
@@ -70,19 +64,6 @@ const UploadOrEditNews = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 
-	// use query
-	// const [
-	// 	getTranslations,
-	// 	{ isFetching: isTranslating, ...translationResponse }
-	// ] = useLazyGetTranslationQuery();
-	// need retranslation?
-	// const [reTranslate, setRetranslate] = useState(false);
-	// currently selected language
-	// const [currentLanguage, setCurrentLanguage] = useState(defaultLanguage);
-	// raw translations
-	const [rawTranslations, setRawTranslations] = useState({
-		en: {}
-	});
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
@@ -145,35 +126,30 @@ const UploadOrEditNews = ({
 	] = useTranslations(useTransParams);
 
 	useEffect(() => {
-		console.log('available trans', translationsAvailable);
-	}, [translationsAvailable]);
-
-	useEffect(() => {
 		return () => {
 			resetState();
 		};
 	}, []);
 
+
+	/**
+	 * validations for buttons on translation changes
+	 */
 	useEffect(() => {
-		// if (editBtnDisabled !== isTranslationChange) return;
 		console.log(!isTranslationChange);
 		setEditBtnDisabled(!isTranslationChange);
 		setDraftBtnDisabled(!isTranslationChange);
 	}, [isTranslationChange]);
 	useEffect(() => {
-		// if (editBtnDisabled !== isTranslationChange) return;
-		// console.log(!isTranslationChange);
 		setEditBtnDisabled(!reTranslate);
 		setDraftBtnDisabled(!reTranslate);
 	}, [reTranslate]);
 
+
+
+
 	useEffect(() => {
 		if (specificNews) {
-			// console.log(specificNews);
-			// let dd = parseNewsObject(specificNews);
-			// console.log('hello', dd);
-			// setRawTranslations(dd);
-
 			setNotifID(specificNews?.id);
 			if (specificNews?.labels) {
 				let _labels = [];
@@ -709,35 +685,6 @@ const UploadOrEditNews = ({
 			getTranslations();
 		}
 	};
-	const isValidToPush = () =>
-		!(isEdit &&
-		!reTranslate &&
-		validateForm(form, null, news) &&
-		status === 'draft'
-			? false
-			: isEdit
-			? editBtnDisabled
-			: !validateForm(form, null, news));
-
-	const handlePublishTranslateButtonText = () => {
-		if (reTranslate && !isEdit) {
-			return 'TRANSLATE';
-		} else if (isEdit && isTranslationChange) {
-			return 'TRANSLATE';
-		} else {
-			return buttonText;
-		}
-	};
-
-	const handlePublishTranslateButtonOnClick = () => {
-		if (reTranslate && !isEdit) {
-			return handleTranslate;
-		} else if (isEdit && isTranslationChange) {
-			return handleTranslate;
-		} else {
-			return handlePublishNews;
-		}
-	};
 
 	return (
 		<div>
@@ -983,7 +930,7 @@ const UploadOrEditNews = ({
 										: ''}
 								</p>
 
-								{!reTranslate && translationsAvailable && (
+								{translationsAvailable && (
 									<>
 										<Divider color={'grey'} sx={{ mb: '10px' }} />
 										<TranslationCarousal
