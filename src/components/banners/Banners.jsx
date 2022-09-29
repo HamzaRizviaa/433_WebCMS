@@ -49,32 +49,32 @@ export default function Banners({ tabValue }) {
 			id: '5',
 			bannerType: '',
 			selectedMedia: null
-		},
-		{
-			id: '6',
-			bannerType: '',
-			selectedMedia: null
-		},
-		{
-			id: '7',
-			bannerType: '',
-			selectedMedia: null
-		},
-		{
-			id: '8',
-			bannerType: '',
-			selectedMedia: null
-		},
-		{
-			id: '9',
-			bannerType: '',
-			selectedMedia: null
-		},
-		{
-			id: '10',
-			bannerType: '',
-			selectedMedia: null
 		}
+		// {
+		// 	id: '6',
+		// 	bannerType: '',
+		// 	selectedMedia: null
+		// },
+		// {
+		// 	id: '7',
+		// 	bannerType: '',
+		// 	selectedMedia: null
+		// },
+		// {
+		// 	id: '8',
+		// 	bannerType: '',
+		// 	selectedMedia: null
+		// },
+		// {
+		// 	id: '9',
+		// 	bannerType: '',
+		// 	selectedMedia: null
+		// },
+		// {
+		// 	id: '10',
+		// 	bannerType: '',
+		// 	selectedMedia: null
+		// }
 	]);
 	console.log('BANNER DATa', bannerData);
 
@@ -133,32 +133,32 @@ export default function Banners({ tabValue }) {
 				id: '5',
 				bannerType: '',
 				selectedMedia: null
-			},
-			{
-				id: '6',
-				bannerType: '',
-				selectedMedia: null
-			},
-			{
-				id: '7',
-				bannerType: '',
-				selectedMedia: null
-			},
-			{
-				id: '8',
-				bannerType: '',
-				selectedMedia: null
-			},
-			{
-				id: '9',
-				bannerType: '',
-				selectedMedia: null
-			},
-			{
-				id: '10',
-				bannerType: '',
-				selectedMedia: null
 			}
+			// {
+			// 	id: '6',
+			// 	bannerType: '',
+			// 	selectedMedia: null
+			// },
+			// {
+			// 	id: '7',
+			// 	bannerType: '',
+			// 	selectedMedia: null
+			// },
+			// {
+			// 	id: '8',
+			// 	bannerType: '',
+			// 	selectedMedia: null
+			// },
+			// {
+			// 	id: '9',
+			// 	bannerType: '',
+			// 	selectedMedia: null
+			// },
+			// {
+			// 	id: '10',
+			// 	bannerType: '',
+			// 	selectedMedia: null
+			// }
 		]);
 	}, [tabValue]);
 
@@ -246,13 +246,13 @@ export default function Banners({ tabValue }) {
 					data?.id === '2' ||
 					data?.id === '3' ||
 					data?.id === '4' ||
-					data?.id === '5' ||
-					data?.id === '6' ||
-					data?.id === '7' ||
-					data?.id === '8' ||
-					data?.id === '9' ||
-					data?.id === '10'
-						? null
+					data?.id === '5'
+						? // data?.id === '6' ||
+						  // data?.id === '7' ||
+						  // data?.id === '8' ||
+						  // data?.id === '9' ||
+						  // data?.id === '10'
+						  null
 						: data?.id,
 				sort_order: index
 			};
@@ -369,7 +369,7 @@ export default function Banners({ tabValue }) {
 										bannerData.map((data, index) => {
 											return (
 												<div className={classes.bannerMain} key={index}>
-													{Array.from({ length: 10 }, (_, i) => i + 1).length >
+													{Array.from({ length: 5 }, (_, i) => i + 1).length >
 														0 && (
 														<div className={classes.bannertext} key={index}>
 															Banner {index + 1}
