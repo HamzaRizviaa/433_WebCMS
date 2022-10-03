@@ -16,12 +16,12 @@ const TopBanner = () => {
 
 	const navigate = useNavigate();
 
-	// const allBanners = useSelector((state) => state.topBanner.allBanners);
+	// const allBanners = useSelector((state) => state.rootReducer.topBanner.allBanners);
 	const getBannerContentState = useSelector(
-		(state) => state.topBanner.getBannerContentState
+		(state) => state.rootReducer.topBanner.getBannerContentState
 	);
-	// const bannerContent = useSelector((state) => state.topBanner.content);
-	const bannerState = useSelector((state) => state.topBanner.getBannerStatus);
+	// const bannerContent = useSelector((state) => state.rootReducer.topBanner.content);
+	const bannerState = useSelector((state) => state.rootReducer.topBanner.getBannerStatus);
 
 	useEffect(() => {
 		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));

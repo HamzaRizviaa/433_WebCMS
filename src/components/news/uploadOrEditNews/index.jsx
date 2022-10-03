@@ -9,8 +9,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { useStyles } from './index.styles';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
-import uploadFileToServer from '../../../utils/uploadFileToServer';
-import { getLocalStorageDetails } from '../../../utils';
 import LoadingOverlay from 'react-loading-overlay';
 import PrimaryLoader from '../../PrimaryLoader';
 import Slide from '@mui/material/Slide';
@@ -23,8 +21,6 @@ import Labels from '../../Labels';
 import ToggleSwitch from '../../switch';
 import DeleteModal from '../../DeleteModal';
 import Button from '../../button';
-import validateForm from '../../../utils/validateForm';
-import validateDraft from '../../../utils/validateDraft';
 import NewsDraggable from '../NewsDraggableWrapper';
 import NewsSlide from '../NewsSlide';
 import Close from '@material-ui/icons/Close';
@@ -35,15 +31,22 @@ import {
 	checkNewElementNEWS,
 	checkNewElementNEWSDraft,
 	checkSortOrderOnEdit,
-	checkDuplicateLabel
-} from '../../../utils/newsUtils';
-import { TextField } from '@material-ui/core';
+	checkDuplicateLabel,
+	validateForm,
+	validateDraft,
+	getLocalStorageDetails,
+	uploadFileToServer
+} from '../../../data/utils';
 
 //api calls
 
-import { getAllNews } from '../../../pages/NewsLibrary/newsLibrarySlice';
+import { getAllNews } from "../../../data/features/newsLibrary/newsLibrarySlice";
 import { ConstructionOutlined } from '@mui/icons-material';
-import { ToastErrorNotifications } from '../../../constants';
+import { TextField } from '@material-ui/core';
+import { ToastErrorNotifications } from '../../../data/constants';
+import { Divider } from '@mui/material';
+import TranslationCarousal from '../../TranslationCarousal';
+import useTranslations from '../../../hooks/useTranslations';
 
 const UploadOrEditNews = ({
 	open,
@@ -74,8 +77,14 @@ const UploadOrEditNews = ({
 		banner_title: '',
 		banner_description: '',
 		show_likes: true,
-		show_comments: true
+		show_comments: true,
+		rawTranslations: {
+			en: {
+				slides: {}
+			}
+		}
 	});
+
 	const [news, setNews] = useState([]);
 
 	const previewRef = useRef(null);
@@ -83,16 +92,65 @@ const UploadOrEditNews = ({
 	const dialogWrapper = useRef(null);
 
 	const dispatch = useDispatch();
-	const labels = useSelector((state) => state.postLibrary.labels);
+	const labels = useSelector((state) => state.rootReducer.postsLibrary.labels);
 	const { specificNews, specificNewsStatus } = useSelector(
-		(state) => state.NewsLibrary
+		(state) => state.rootReducer.newsLibrary
 	);
+
+	/// custom hook for translations
+	const useTransParams = {
+		rootData: form || {},
+		slidesData: news || [],
+		specificItem: specificNews || {},
+		setData: (data) => {
+			handleSetParentData && handleSetParentData(data);
+		}
+	};
+	const [
+		getTranslations,
+		{
+			isFetching: isTranslating,
+			compilePayload,
+			getField,
+			setField,
+			currentLanguage,
+			setCurrentLanguage,
+			resetTranslations
+		},
+		{ reTranslate, translationsAvailable, isTranslationChange }
+	] = useTranslations(useTransParams);
 
 	useEffect(() => {
 		return () => {
 			resetState();
 		};
 	}, []);
+
+	/**
+	 * validations for buttons on translation changes
+	 */
+	useEffect(() => {
+		console.log(!isTranslationChange);
+		setEditBtnDisabled(!isTranslationChange);
+		setDraftBtnDisabled(!isTranslationChange);
+	}, [isTranslationChange]);
+	useEffect(() => {
+		if (!reTranslate) {
+			setEditBtnDisabled(false);
+			setDraftBtnDisabled(false);
+		}
+	}, [reTranslate]);
+	useEffect(() => {
+		if (translationsAvailable) {
+			if (validateDraft(form, null, news)) {
+				setDraftBtnDisabled(false);
+			}
+		} else {
+			if (isTranslationChange || isEdit) {
+				setDraftBtnDisabled(false);
+			}
+		}
+	}, [translationsAvailable, isTranslationChange, isEdit, form, news]);
 
 	useEffect(() => {
 		if (specificNews) {
@@ -123,6 +181,7 @@ const UploadOrEditNews = ({
 				? setNews(updateSlidesDataFromAPI(specificNews?.slides))
 				: setNews([]);
 		}
+		console.log(specificNews);
 	}, [specificNews]);
 
 	useEffect(() => {
@@ -249,6 +308,7 @@ const UploadOrEditNews = ({
 							description,
 							name,
 							title,
+							translationId: rest.id,
 							...(rest.image
 								? {
 										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.image}`,
@@ -260,7 +320,6 @@ const UploadOrEditNews = ({
 				};
 			}
 		);
-
 		return slidesData;
 	};
 
@@ -289,6 +348,9 @@ const UploadOrEditNews = ({
 			show_comments: true
 		});
 		setNews([]);
+
+		//resetting states of translations
+		resetTranslations();
 	};
 
 	useEffect(() => {
@@ -348,7 +410,8 @@ const UploadOrEditNews = ({
 			return [
 				...prev,
 				{
-					sort_order: news.length + 1
+					sort_order: news.length + 1,
+					data: [{ translationId: Math.random() }]
 				}
 			];
 		});
@@ -425,7 +488,7 @@ const UploadOrEditNews = ({
 
 	const createNews = async (id, mediaFiles = [], draft = false) => {
 		// setPostButtonStatus(true);
-
+		console.log(news);
 		let slides =
 			news.length > 0
 				? news.map((item, index) => {
@@ -442,12 +505,30 @@ const UploadOrEditNews = ({
 							description: item.data[0]?.description,
 							title: item.data[0]?.title,
 							name: item.data[0]?.name,
-							sort_order: index + 1
+							sort_order: index + 1,
+							translationId: item.data[0].translationId
 						};
 				  })
 				: [];
-
 		try {
+			const newsBody = {
+				save_draft: draft,
+				banner_title: form.banner_title,
+				banner_description: form.banner_description,
+				show_likes: form.show_likes,
+				show_comments: form.show_comments,
+				slides: slides,
+				...(isEdit && id ? { news_id: id } : {}),
+				...(form.labels?.length || status == 'draft'
+					? { labels: [...form.labels] }
+					: {}),
+				user_data: {
+					id: `${getLocalStorageDetails()?.id}`,
+					first_name: `${getLocalStorageDetails()?.first_name}`,
+					last_name: `${getLocalStorageDetails()?.last_name}`
+				}
+			};
+			let body = compilePayload(newsBody);
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/news/add-news`,
 				{
@@ -611,6 +692,19 @@ const UploadOrEditNews = ({
 		}
 	};
 
+	const handleSetParentData = ({ rootData, slidesData }) => {
+		rootData && setForm(rootData);
+		slidesData && setNews(slidesData);
+	};
+
+	const handleTranslate = () => {
+		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
+			validatePublishNewsBtn();
+		} else {
+			getTranslations();
+		}
+	};
+
 	return (
 		<div>
 			<Slider
@@ -630,7 +724,7 @@ const UploadOrEditNews = ({
 				notifID={notifID}
 			>
 				<LoadingOverlay
-					active={isLoading}
+					active={isTranslating || isLoading}
 					className={classes.loadingOverlay}
 					spinner={<PrimaryLoader />}
 				>
@@ -706,14 +800,17 @@ const UploadOrEditNews = ({
 													</div>
 
 													<TextField
-														value={form.banner_title}
+														value={getField('banner_title', true)}
+														defaultValue={''}
 														onChange={(e) => {
-															setForm((prev) => {
-																return {
-																	...prev,
-																	banner_title: e.target.value
-																};
-															});
+															setField('banner_title', e.target.value, true);
+															console.log(form, news);
+															// setForm((prev) => {
+															// 	return {
+															// 		...prev,
+															// 		banner_title: e.target.value
+															// 	};
+															// });
 														}}
 														placeholder={'Please write you caption here'}
 														className={classes.textField}
@@ -749,14 +846,20 @@ const UploadOrEditNews = ({
 													</div>
 
 													<TextField
-														value={form.banner_description}
+														defaultValue={''}
+														value={getField('banner_description', true)}
 														onChange={(e) => {
-															setForm((prev) => {
-																return {
-																	...prev,
-																	banner_description: e.target.value
-																};
-															});
+															setField(
+																'banner_description',
+																e.target.value,
+																true
+															);
+															// setForm((prev) => {
+															// 	return {
+															// 		...prev,
+															// 		banner_description: e.target.value
+															// 	};
+															// });
 														}}
 														placeholder={'Please write you caption here'}
 														className={classes.textField}
@@ -823,6 +926,8 @@ const UploadOrEditNews = ({
 														initialData={item.data && item.data}
 														setPreviewBool={setPreviewBool}
 														setPreviewFile={setPreviewFile}
+														onTranslationChange={setField}
+														getField={getField}
 													/>
 												</>
 											);
@@ -843,6 +948,16 @@ const UploadOrEditNews = ({
 										? 'Something needs to be changed to save a draft'
 										: ''}
 								</p>
+
+								{translationsAvailable && (
+									<>
+										<Divider color={'grey'} sx={{ mb: '10px' }} />
+										<TranslationCarousal
+											lang={currentLanguage}
+											setLang={setCurrentLanguage}
+										/>
+									</>
+								)}
 
 								<div
 									className={isEdit ? classes.newsButtonDiv : classes.buttonDiv}
@@ -873,9 +988,12 @@ const UploadOrEditNews = ({
 											>
 												<Button
 													disabledDraft={
-														isEdit
-															? draftBtnDisabled
-															: !validateDraft(form, null, news)
+														// !(translationsAvailable &&
+														// 	validateForm(form, null, news))
+														// isEdit || isTranslationChange || reTranslate
+														// 	? draftBtnDisabled
+														// 	: !validateDraft(form, null, news)
+														draftBtnDisabled
 													}
 													onClick={() => handleCreateDraft()}
 													button3={true}
@@ -891,20 +1009,35 @@ const UploadOrEditNews = ({
 										)}
 
 										<div>
-											<Button
-												disabled={
-													isEdit &&
-													validateForm(form, null, news) &&
-													status === 'draft'
-														? false
-														: isEdit
-														? editBtnDisabled
-														: !validateForm(form, null, news)
-												}
-												onClick={() => handlePublishNews()}
-												button2AddSave={true}
-												text={buttonText}
-											/>
+											{reTranslate || !translationsAvailable ? (
+												<Button
+													disabled={
+														validateForm(form, null, news) ? false : true
+														// (!validateForm(form, null, news) && !reTranslate)
+													}
+													onClick={handleTranslate}
+													button2AddSave={true}
+													text={'TRANSLATE'}
+												/>
+											) : (
+												<Button
+													disabled={
+														isTranslationChange &&
+														validateForm(form, null, news)
+															? false
+															: isEdit &&
+															  validateForm(form, null, news) &&
+															  status === 'draft'
+															? false
+															: isEdit
+															? editBtnDisabled
+															: !validateForm(form, null, news)
+													}
+													onClick={() => handlePublishNews()}
+													button2AddSave={true}
+													text={buttonText}
+												/>
+											)}
 										</div>
 									</div>
 								</div>

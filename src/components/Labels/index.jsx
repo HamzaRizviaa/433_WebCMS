@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
 	getAllNewLabels,
 	getNewLabelsSearch
-} from '../../pages/PostLibrary/postLibrarySlice';
+} from "../../data/features/postsLibrary/postsLibrarySlice";
 import _debounce from 'lodash/debounce';
 
 const Labels = ({
@@ -35,7 +35,7 @@ const Labels = ({
 
 	const dispatch = useDispatch();
 	const { newLabelsSearch, labelsSearchStatus } = useSelector(
-		(state) => state.postLibrary
+		(state) => state.rootReducer.postsLibrary
 	);
 
 	let draftLabels = selectedLabels?.filter((label) => label.id == -1);
