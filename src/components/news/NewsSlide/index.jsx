@@ -33,9 +33,7 @@ const NewsSlide = ({
 	handleDeleteMedia,
 	handleDeleteNews,
 	setPreviewBool,
-	setPreviewFile,
-	onTranslationChange,
-	getField
+	setPreviewFile
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
@@ -217,12 +215,7 @@ const NewsSlide = ({
 										<div className={classes.socialmediaDrags}>
 											<h6>DROPBOX URL</h6>
 											<TextField
-												value={getField(
-													'dropbox_url',
-													false,
-													index,
-													item?.data?.[0].translationId || index
-												)}
+												value={dropboxUrl}
 												onChange={(e) => {
 													setDropboxUrl(e.target.value);
 
@@ -259,24 +252,12 @@ const NewsSlide = ({
 											</div>
 
 											<TextField
-												value={getField(
-													'title',
-													true,
-													index,
-													item?.data?.[0].translationId || index
-												)}
+												value={title}
 												onChange={(e) => {
 													setTitle(e.target.value);
-													// sendDataToParent({
-													// 	title: e.target.value
-													// });
-													onTranslationChange(
-														'title',
-														e.target.value,
-														true,
-														index,
-														item?.data?.[0].translationId || index
-													);
+													sendDataToParent({
+														title: e.target.value
+													});
 												}}
 												placeholder={'Please write your title here'}
 												className={classes.textField}
@@ -309,24 +290,12 @@ const NewsSlide = ({
 											</div>
 
 											<TextField
-												value={getField(
-													'description',
-													true,
-													index,
-													item?.data?.[0].translationId || index
-												)}
+												value={description}
 												onChange={(e) => {
 													setDescription(e.target.value);
-													// sendDataToParent({
-													// 	description: e.target.value
-													// });
-													onTranslationChange(
-														'description',
-														e.target.value,
-														true,
-														index,
-														item?.data?.[0].translationId || index
-													);
+													sendDataToParent({
+														description: e.target.value
+													});
 												}}
 												placeholder={'Please write your DESCRIPTION here'}
 												className={classes.textField}
@@ -397,9 +366,7 @@ NewsSlide.propTypes = {
 	handleDeleteMedia: PropTypes.func,
 	handleDeleteNews: PropTypes.func,
 	setPreviewBool: PropTypes.func.isRequired,
-	setPreviewFile: PropTypes.func.isRequired,
-	onTranslationChange: PropTypes.func.isRequired,
-	getField: PropTypes.func.isRequired
+	setPreviewFile: PropTypes.func.isRequired
 };
 
 export default NewsSlide;
