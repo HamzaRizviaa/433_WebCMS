@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLazyGetTranslationQuery } from '../features/translations.query';
-import _ from 'lodash';
-import { ToastErrorNotifications } from '../constants';
 import { toast } from 'react-toastify';
+import { merge, isEmpty } from 'lodash';
+import { useLazyGetTranslationQuery } from '../data/features/translation/translationQueries';
+import { ToastErrorNotifications } from '../data/constants';
+
 const defaultPrefix = 'slide';
+
 const defaultLanguage = {
 	name: 'English',
 	prefix: 'ENG',
 	shortName: 'en'
 };
+
 const useTranslations = ({
 	customPrefix,
 	customBaseLanguage,
@@ -93,11 +96,11 @@ const useTranslations = ({
 
 	// getTranslations from api
 	const fetchTranslations = () => {
-		let mergedObject = _.merge(
+		let mergedObject = merge(
 			extractField.current,
 			rawTranslations[defaultLanguageShortName]
 		);
-		if (_.isEmpty(mergedObject[prefix_plural])) {
+		if (isEmpty(mergedObject[prefix_plural])) {
 			delete mergedObject[prefix_plural];
 		}
 		getTranslations(mergedObject);

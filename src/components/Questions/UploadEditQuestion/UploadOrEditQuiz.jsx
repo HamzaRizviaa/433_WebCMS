@@ -13,18 +13,18 @@ import '../../../pages/PostLibrary/_calender.scss';
 import Close from '@material-ui/icons/Close';
 import DeleteModal from '../../DeleteModal';
 import { toast } from 'react-toastify';
-import { formatDate, getCalendarText2 } from '../../../utils';
-import uploadFileToServer from '../../../utils/uploadFileToServer';
+import { formatDate, getCalendarText2 } from '../../../data/utils';
+import uploadFileToServer from '../../../data/utils/uploadFileToServer';
 import { useDispatch, useSelector } from 'react-redux';
-import { getQuestions } from '../../../pages/QuestionLibrary/questionLibrarySlice';
-import { getLocalStorageDetails } from '../../../utils';
+import { getQuestions } from "../../../data/features/questionsLibrary/questionsLibrarySlice";
+import { getLocalStorageDetails } from '../../../data/utils';
 import QuestionTabPanes from '../UploadQuestionHeader/QuestionTabPanes';
 import { ReactComponent as CalenderYellow } from '../../../assets/Calender_Yellow.svg';
 import { useRef } from 'react';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { useStyles } from './UploadOrEditQuiz.style';
-import validateForm from '../../../utils/validateForm';
-import validateDraft from '../../../utils/validateDraft';
+import validateForm from '../../../data/utils/validateForm';
+import validateDraft from '../../../data/utils/validateDraft';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -43,7 +43,7 @@ import {
 	checkSortOrderOnEdit,
 	checkEmptyQuestionDraft,
 	checkNewElementQuestionDraft
-} from '../../../utils/questionUtils';
+} from '../../../data/utils/questionUtils';
 
 import { compact } from 'lodash';
 
@@ -87,7 +87,7 @@ const UploadOrEditQuiz = ({
 	const globalClasses = globalUseStyles();
 
 	const { questionEditStatus, questionEdit: editQuestionData } = useSelector(
-		(state) => state.questionLibrary
+		(state) => state.rootReducer.questionsLibrary
 	);
 
 	const reorder = (list, startIndex, endIndex) => {

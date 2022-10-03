@@ -19,11 +19,11 @@ import { ReactComponent as Deletes } from '../../assets/Delete.svg';
 import { useStyles, useStyles2 } from './bannerStyles';
 
 import { useDispatch, useSelector } from 'react-redux';
-//import { getLocalStorageDetails } from '../../utils';
+//import { getLocalStorageDetails } from '../../data/utils';
 import _debounce from 'lodash/debounce';
 //import axios from 'axios';
 //import { toast } from 'react-toastify';
-import { getBannerContent } from './../../pages/TopBanner/topBannerSlice';
+import { getBannerContent } from "../../data/features/topBanner/topBannerSlice";
 
 // eslint-disable-next-line no-unused-vars
 export default function BannerRows({

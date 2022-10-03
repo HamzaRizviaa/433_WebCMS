@@ -8,9 +8,9 @@ import {
 	getAllBanners,
 	getBannerContent,
 	resetBanner
-} from './../../pages/TopBanner/topBannerSlice';
+} from "../../data/features/topBanner/topBannerSlice";
 import { useDispatch, useSelector } from 'react-redux';
-import { getLocalStorageDetails } from '../../utils';
+import { getLocalStorageDetails } from '../../data/utils';
 import PropTypes from 'prop-types';
 import PrimaryLoader from '../PrimaryLoader';
 
@@ -83,7 +83,7 @@ export default function Banners({ tabValue }) {
 		allBanners,
 		getBannerStatus,
 		content: bannerContent
-	} = useSelector((state) => state.topBanner);
+	} = useSelector((state) => state.rootReducer.topBanner);
 
 	useEffect(() => {
 		dispatch(getAllBanners(tabValue));

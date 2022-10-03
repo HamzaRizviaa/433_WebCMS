@@ -9,8 +9,9 @@ import WiFi from '../../../assets/Wifi.svg';
 import Battery from '../../../assets/Rectangle.svg';
 import Signals from '../../../assets/MobileSignal.svg';
 import Avatar from '@mui/material/Avatar';
-import { formatDate2 } from '../../../utils';
+import { formatDate2 } from '../../../data/utils';
 import { Markup } from 'interweave';
+
 const PreviewWrapper = ({
 	children,
 	form

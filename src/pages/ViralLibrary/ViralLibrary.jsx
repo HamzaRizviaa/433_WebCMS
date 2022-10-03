@@ -13,13 +13,13 @@ import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import Pagination from '@mui/material/Pagination';
-import { useStyles } from './../../utils/styles';
+import { useStyles } from './../../data/utils/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import { getDateTime, formatDate, getCalendarText } from '../../utils';
+import { getDateTime, formatDate, getCalendarText } from '../../data/utils';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import { Markup } from 'interweave';
@@ -32,8 +32,8 @@ import {
 	resetCalendarError,
 	resetNoResultStatus,
 	getSpecificViral
-} from './viralLibararySlice';
-import { getAllNewLabels } from '../PostLibrary/postLibrarySlice';
+} from '../../data/features/viralLibrary/viralLibrarySlice';
+import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
@@ -41,17 +41,19 @@ import { useStyles as globalUseStyles } from '../../styles/global.style';
 
 const ViralLibrary = () => {
 	// Selectors
-	const virals = useSelector((state) => state.ViralLibraryStore.virals);
-	const viralsApiStatus = useSelector((state) => state.ViralLibraryStore);
+	const virals = useSelector((state) => state.rootReducer.viralLibrary.virals);
+	const viralsApiStatus = useSelector(
+		(state) => state.rootReducer.viralLibrary
+	);
 	const totalRecords = useSelector(
-		(state) => state.ViralLibraryStore.totalRecords
+		(state) => state.rootReducer.viralLibrary.totalRecords
 	);
 
 	const noResultStatus = useSelector(
-		(state) => state.ViralLibraryStore.noResultStatus
+		(state) => state.rootReducer.viralLibrary.noResultStatus
 	);
 	const noResultStatusCalendar = useSelector(
-		(state) => state.ViralLibraryStore.noResultStatusCalendar
+		(state) => state.rootReducer.viralLibrary.noResultStatusCalendar
 	);
 
 	const muiClasses = useStyles();
@@ -638,7 +640,7 @@ const ViralLibrary = () => {
 				<div className={classes.tableContainer}>
 					<Table rowEvents={tableRowEvents} columns={columns} data={virals} />
 				</div>
-				
+
 				<div className={classes.paginationRow}>
 					<Pagination
 						className={muiClasses.root}

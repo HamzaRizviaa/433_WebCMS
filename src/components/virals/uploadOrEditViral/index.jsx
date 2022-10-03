@@ -9,18 +9,17 @@ import { TextField } from '@material-ui/core';
 import Button from '../../button';
 import DragAndDropField from '../../DragAndDropField';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeid } from '../../../utils/helper';
-import checkFileSize from '../../../utils/validateFileSize';
+import { makeid } from '../../../data/utils/helper';
+import checkFileSize from '../../../data/utils/validateFileSize';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { getAllViralsApi } from '../../../pages/ViralLibrary/viralLibararySlice';
-// import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
+import { getAllViralsApi } from "../../../data/features/viralLibrary/viralLibrarySlice";
 import Close from '@material-ui/icons/Close';
 import Labels from '../../Labels';
-import { getLocalStorageDetails } from '../../../utils';
-import uploadFileToServer from '../../../utils/uploadFileToServer';
-import validateForm from '../../../utils/validateForm';
-import validateDraft from '../../../utils/validateDraft';
+import { getLocalStorageDetails } from '../../../data/utils';
+import uploadFileToServer from '../../../data/utils/uploadFileToServer';
+import validateForm from '../../../data/utils/validateForm';
+import validateDraft from '../../../data/utils/validateDraft';
 import { Tooltip, Fade, Divider } from '@mui/material';
 import ToggleSwitch from '../../switch';
 // import Fade from '@mui/material/Fade';
@@ -33,7 +32,6 @@ import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
 import TranslationCarousal from '../../TranslationCarousal';
 //new labels
-// import { getAllNewLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 
 const UploadOrEditViral = ({
 	open,
@@ -89,7 +87,7 @@ const UploadOrEditViral = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const { specificViralStatus } = useSelector(
-		(state) => state.ViralLibraryStore
+		(state) => state.rootReducer.viralLibrary
 	);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
@@ -99,9 +97,9 @@ const UploadOrEditViral = ({
 			validator: checkFileSize
 		});
 
-	const labels = useSelector((state) => state.postLibrary.labels);
+	const labels = useSelector((state) => state.rootReducer.postsLibrary.labels);
 	const specificViral = useSelector(
-		(state) => state.ViralLibraryStore.specificViral
+		(state) => state.rootReducer.viralLibrary.specificViral
 	);
 	const dispatch = useDispatch();
 

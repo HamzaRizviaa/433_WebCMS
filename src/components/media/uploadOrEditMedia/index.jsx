@@ -9,15 +9,17 @@ import { MenuItem, TextField, Select } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { useDropzone } from 'react-dropzone';
-import { makeid } from '../../../utils/helper';
+import { makeid } from '../../../data/utils/helper';
 import { useDispatch, useSelector } from 'react-redux';
-import checkFileSize from '../../../utils/validateFileSize';
+import checkFileSize from '../../../data/utils/validateFileSize';
 import ToggleSwitch from '../../switch';
-import completeUplaod from '../../../utils/completeUploadDraft';
-//import uploadFileToServer from '../../../utils/uploadFileToServer';
-import { getMainCategories } from './../../../pages/MediaLibrary/mediaLibrarySlice';
-import { getLocalStorageDetails } from '../../../utils';
-import { getMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
+import completeUplaod from '../../../data/utils/completeUploadDraft';
+//import uploadFileToServer from '../../../data/utils/uploadFileToServer';
+import {
+	getMainCategories,
+	getMedia
+} from '../../../data/features/mediaLibrary/mediaLibrarySlice';
+import { getLocalStorageDetails } from '../../../data/utils';
 import Close from '@material-ui/icons/Close';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -27,12 +29,12 @@ import { Tooltip, Fade, Divider } from '@mui/material';
 import Slide from '@mui/material/Slide';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 import PrimaryLoader from '../../PrimaryLoader';
-import validateForm from '../../../utils/validateForm';
-import validateDraft from '../../../utils/validateDraft';
+import validateForm from '../../../data/utils/validateForm';
+import validateDraft from '../../../data/utils/validateDraft';
 import { useStyles } from './index.style';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
-import { ToastErrorNotifications } from '../../../constants';
+import { ToastErrorNotifications } from '../../../data/constants';
 import TranslationCarousal from '../../TranslationCarousal';
 
 const UploadOrEditMedia = ({
@@ -105,15 +107,15 @@ const UploadOrEditMedia = ({
 	const globalClasses = globalUseStyles();
 
 	const specificMedia = useSelector(
-		(state) => state.mediaLibraryOriginal.specificMedia
+		(state) => state.rootReducer.mediaLibrary.specificMedia
 	);
 	const mainCategories = useSelector(
-		(state) => state.mediaLibraryOriginal.mainCategories
+		(state) => state.rootReducer.mediaLibrary.mainCategories
 	);
 	const specificMediaStatus = useSelector(
-		(state) => state.mediaLibraryOriginal
+		(state) => state.rootReducer.mediaLibrary
 	);
-	const labels = useSelector((state) => state.mediaLibraryOriginal.labels);
+	const labels = useSelector((state) => state.rootReducer.mediaLibrary.labels);
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({

@@ -5,7 +5,7 @@ import { useStyles } from './index.style';
 import { useSearchParams } from 'react-router-dom';
 import CustomPagination from '../Pagination';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-import { changeQueryParameters } from '../../../utils/helper';
+import { changeQueryParameters } from '../../../data/utils/helper';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 
