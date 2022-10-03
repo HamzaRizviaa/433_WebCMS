@@ -12,7 +12,7 @@ const QuestionTabPanes = ({ edit, setQuesType, resetSlides, type, status }) => {
 	return (
 		<div className={muiClasses.root}>
 			<TabsUnstyled
-				defaultValue={type === 'quiz' ? 1 : 0}
+				value={type === 'quiz' ? 1 : 0}
 				className={muiClasses.tabRoot}
 			>
 				<TabsListUnstyled className={muiClasses.tabMainDiv}>

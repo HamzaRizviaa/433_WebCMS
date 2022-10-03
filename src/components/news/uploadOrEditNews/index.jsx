@@ -419,7 +419,6 @@ const UploadOrEditNews = ({
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...news];
-
 		dataCopy[index].data = [
 			{
 				...(dataCopy[index]?.data?.length ? dataCopy[index]?.data[0] : {}),
@@ -532,7 +531,21 @@ const UploadOrEditNews = ({
 			let body = compilePayload(newsBody);
 			const result = await axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/news/add-news`,
-				body,
+				{
+					save_draft: draft,
+					banner_title: form.banner_title,
+					banner_description: form.banner_description,
+					show_likes: form.show_likes,
+					show_comments: form.show_comments,
+					slides: slides,
+					...(isEdit && id ? { news_id: id } : {}),
+					...(form.labels?.length ? { labels: [...form.labels] } : {}),
+					user_data: {
+						id: `${getLocalStorageDetails()?.id}`,
+						first_name: `${getLocalStorageDetails()?.first_name}`,
+						last_name: `${getLocalStorageDetails()?.last_name}`
+					}
+				},
 				{
 					headers: {
 						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
@@ -555,6 +568,8 @@ const UploadOrEditNews = ({
 			console.log(e, 'Failed create / edit News');
 		}
 	};
+
+	console.log('Labels', form.labels);
 
 	const validateDraftBtn = () => {
 		if (isEdit) {

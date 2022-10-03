@@ -2,7 +2,6 @@ import { makeStyles } from '@material-ui/core/styles';
 
 export const useStyles = makeStyles((theme) => ({
 	contentWrapper: {
-		//	minHeight: 'calc(100vh - 107px)',
 		position: 'relative',
 		display: 'flex',
 		flexDirection: 'column',
@@ -221,7 +220,6 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	stopBtn: {
-		// width: '35%',
 		display: 'inline-block'
 	},
 	saveChangesbtn: { '& span': { padding: '1rem 2rem !important' } },
@@ -251,13 +249,10 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	customDateInput: {
-		// border: 0,
 		margin: 0,
 		display: ' inline-flex',
-		// padding: 0,
 		position: 'relative',
 		minWidth: 0,
-		// flexDirection: 'column',
 		verticalAlign: 'top',
 		width: '96%',
 		color: theme.palette.white,
@@ -270,7 +265,6 @@ export const useStyles = makeStyles((theme) => ({
 		borderColor: 'rgb(64, 64, 64)',
 		height: '17.5px',
 		boxSizing: 'content-box',
-		// padding: '6px 0 7px',
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center'
@@ -346,8 +340,6 @@ export const useStyles = makeStyles((theme) => ({
 		display: 'flex',
 		alignItems: 'center',
 		gap: '10px'
-		// justifyContent: 'flex-end'
-		// marginLeft: '40vh'
 	},
 	deleteIconDiv: {
 		width: '27px',

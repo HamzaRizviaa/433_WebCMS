@@ -95,57 +95,6 @@ const QuestionForm = ({
 		}
 	}, [type]);
 
-	// const [form, setForm] = useState(
-	// 	initialData
-	// 		? {
-	// 				...initialData,
-	// 				uploadedFiles: initialData ? initialData?.uploadedFiles : [],
-	// 				answers:
-	// 					initialData?.answers?.length > 0
-	// 						? initialData?.answers
-	// 						: [
-	// 								{
-	// 									answer: '',
-	// 									type: type === 'poll' ? 'poll' : 'right_answer',
-	// 									position: 0
-	// 								},
-	// 								{
-	// 									answer: '',
-	// 									type:
-	// 										location === 'article'
-	// 											? 'wrong_answer'
-	// 											: type === 'poll'
-	// 											? 'poll'
-	// 											: 'wrong_answer_1',
-	// 									position: 1
-	// 								}
-	// 						  ]
-	// 		  }
-	// 		: {
-	// 				uploadedFiles: [],
-	// 				labels: [],
-	// 				dropbox_url: '',
-	// 				question: '',
-	// 				answers: [
-	// 					{
-	// 						answer: '',
-	// 						type: type === 'poll' ? 'poll' : 'right_answer',
-	// 						position: 0
-	// 					},
-	// 					{
-	// 						answer: '',
-	// 						type:
-	// 							location === 'article'
-	// 								? 'wrong_answer'
-	// 								: type === 'poll'
-	// 								? 'poll'
-	// 								: 'wrong_answer_1',
-	// 						position: 1
-	// 					}
-	// 				]
-	// 		  }
-	// );
-
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const imgRef = useRef(null);
@@ -241,7 +190,6 @@ const QuestionForm = ({
 	}, [extraLabel]);
 
 	const handleNewAnswer = () => {
-		// if (!isEdit) {
 		const length = form.answers?.length;
 
 		setForm((prev) => {
@@ -252,67 +200,23 @@ const QuestionForm = ({
 					{
 						answer: '',
 						position: length,
-						type:
-							type === 'quiz' && length === 2
-								? 'wrong_answer_2'
-								: type === 'quiz' && length === 3
-								? 'wrong_answer_3'
-								: 'poll'
+						type: type
 					}
 				]
 			};
 		});
+
 		let answers = {
 			answers: [
 				...form.answers,
 				{
 					answer: '',
 					position: length,
-					type:
-						type === 'quiz' && length === 2
-							? 'wrong_answer_2'
-							: type === 'quiz' && length === 3
-							? 'wrong_answer_3'
-							: 'poll'
+					type: type
 				}
 			]
 		};
 		sendDataToParent(answers);
-		// } else {
-		// 	//edit (draft)
-		// 	const answers = [
-		// 		...(initialData?.answers?.length === 0
-		// 			? [
-		// 					{
-		// 						answer: '',
-		// 						type: type === 'poll' ? 'poll' : 'right_answer',
-		// 						position: 0
-		// 					},
-		// 					{
-		// 						answer: '',
-		// 						type:
-		// 							location === 'article'
-		// 								? 'wrong_answer'
-		// 								: type === 'poll'
-		// 								? 'poll'
-		// 								: 'wrong_answer_1',
-		// 						position: 1
-		// 					}
-		// 			  ]
-		// 			: initialData?.answers?.length > 0 && initialData?.answers?.length < 4
-		// 			? initialData?.answers
-		// 			: form.answers)
-		// 	];
-		// 	console.log(answers, 'answers');
-		// 	setForm((prev) => {
-		// 		return {
-		// 			...prev,
-		// 			answers: [...answers, { answer: '' }]
-		// 		};
-		// 	});
-
-		// 	sendDataToParent(answers);
-		// }
 	};
 
 	const handleAnswerDelete = (index) => {
@@ -340,12 +244,7 @@ const QuestionForm = ({
 			formCopy.answers[index] = {
 				answer: event.target.value,
 				position: index,
-				type:
-					type === 'quiz' && index === 0
-						? 'right_answer'
-						: type === 'quiz' && index > 0
-						? 'wrong_answer_' + index
-						: 'poll'
+				type: type
 			};
 			setForm(formCopy);
 			let answers = { answers: formCopy.answers };
@@ -353,11 +252,6 @@ const QuestionForm = ({
 		} else {
 			// This block of code will only be executed if the question is in draft
 			// Then only the question answers will be editable
-			// const isAnswersEdited = initialData && initialData.answers;
-
-			// const answers = [
-			// 	...(isAnswersEdited ? initialData?.answers : [...form.answers])
-			// ];
 
 			const answers = [
 				...(initialData?.answers?.length === 0
@@ -386,14 +280,7 @@ const QuestionForm = ({
 			//if no id , means new answer so index will be position , otherwise position will be same coming from api .
 			answers[index] = {
 				...answers[index],
-				answer: event.target.value,
-				position: !answers[index].id ? index : answers[index].position
-				// type:
-				// 	type === 'quiz' && index === 0
-				// 		? 'right_answer'
-				// 		: type === 'quiz' && index > 0
-				// 		? 'wrong_answer_' + index
-				// 		: 'poll'
+				answer: event.target.value
 			};
 
 			setForm({ ...form, answers });

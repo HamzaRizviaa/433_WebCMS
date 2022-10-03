@@ -24,6 +24,7 @@ import { useStyles } from '../UploadEditQuestion/UploadOrEditQuiz.style';
 import LinearProgress, {
 	linearProgressClasses
 } from '@mui/material/LinearProgress';
+
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	height: '54px',
 	borderRadius: '8px',
@@ -251,9 +252,6 @@ export default function QuizResults({
 			formatter: (content) => {
 				return <div className={classes.rowData}>{content}</div>;
 			}
-			// headerStyle: () => {
-			// 	return { paddingLeft: '20px' };
-			// }
 		},
 		{
 			dataField: 'date_and_time',
