@@ -5,15 +5,15 @@ import React, { useState, useEffect, useCallback, forwardRef } from 'react';
 import Layout from '../../components/layout';
 import _debounce from 'lodash/debounce';
 import Table from '../../components/table';
-//import classes2 from './_questionLibrary.module.scss';
 import Button from '../../components/button';
-import UploadQuiz from '../../components/quizzes/uploadOrEditQuiz/UploadQuiz';
+import { ReactComponent as MenuIcon } from '../../assets/Union.svg';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
-import QuizDetails from '../../components/quizzes/uploadOrEditQuiz/QuizDetails';
-import PollDetails from '../../components/quizzes/uploadOrEditQuiz/PollDetails';
+import UploadOrEditQuiz from '../../components/Questions/UploadEditQuestion/UploadOrEditQuiz';
+import QuizDetails from '../../components/Questions/QuestionDetails/QuizDetails';
+import PollDetails from '../../components/Questions/QuestionDetails/PollDetails';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import Pagination from '@mui/material/Pagination';
 import { useStyles } from '../../utils/styles';
@@ -37,14 +37,11 @@ import {
 	getQuestions,
 	resetCalendarError,
 	resetNoResultStatus,
-	getQuestionEdit,
-	getQuestionResultDetail,
-	getQuestionResulParticipant
+	getQuestionEdit
 } from './questionLibrarySlice';
 import { getAllNewLabels } from '../PostLibrary/postLibrarySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
-import LogoutToaster from '../../components/LogoutToaster';
 import { useNavigate } from 'react-router-dom';
 
 const QuestionLibrary = () => {
@@ -60,14 +57,16 @@ const QuestionLibrary = () => {
 	const noResultStatusCalendar = useSelector(
 		(state) => state.questionLibrary.noResultStatusCalendar
 	);
+
 	const navigate = useNavigate();
 	const muiClasses = useStyles();
 	const classes = globalUseStyles();
 	const [showSlider, setShowSlider] = useState(false);
 	const [showQuizSlider, setShowQuizSlider] = useState(false);
 	const [showPollSlider, setShowPollSlider] = useState(false);
-	const [rowStatus, setrowStatus] = useState(''); //status open closed to pass in poll slider
-	const [rowLocation, setrowLocation] = useState(''); // - Article - Homepage (location to pass in slider)
+	const [rowStatus, setrowStatus] = useState('');
+	const [rowLocation, setrowLocation] = useState('');
+	const [rowType, setRowType] = useState('');
 	const [edit, setEdit] = useState(false);
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [paginationError, setPaginationError] = useState(false);
@@ -80,13 +79,9 @@ const QuestionLibrary = () => {
 	const [noResultCalendarError, setNoResultCalendarError] = useState('');
 	const [dateRange, setDateRange] = useState([null, null]);
 	const [startDate, endDate] = dateRange;
-	const [logout, setLogout] = useState(false);
 	const [notifID, setNotifID] = useState('');
-
-	// const enabled = (logoutValue) => {
-	// 	console.log(logoutValue, 'logoutVALUE');
-	// 	setLogout(logoutValue);
-	// };
+	const [editSlider, showEditSlider] = useState(false);
+	const [questionId, setQuestionId] = useState('');
 
 	useEffect(() => {
 		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));
@@ -101,7 +96,6 @@ const QuestionLibrary = () => {
 			navigate('/sign-in');
 		}
 	}, []);
-	console.log(logout, 'log');
 
 	const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
 		const startDate = formatDate(dateRange[0]);
@@ -128,15 +122,6 @@ const QuestionLibrary = () => {
 										page,
 										startDate,
 										endDate,
-										fromCalendar: true,
-										...sortState
-									})
-								);
-							} else {
-								dispatch(
-									getQuestions({
-										q: search,
-										page,
 										fromCalendar: true,
 										...sortState
 									})
@@ -233,10 +218,19 @@ const QuestionLibrary = () => {
 			sort: true,
 			sortCaret: sortRows,
 			sortFunc: () => {},
-			formatter: (content) => {
+			formatter: (content, row) => {
 				return (
 					//<div className={classes.questionRow}>{content}</div>
-					<div className={classes.questionRow}>
+					<div
+						className={classes.questionRow}
+						style={{ display: 'flex', alignItems: 'center' }}
+					>
+						{row.total_questions > 1 ? (
+							<MenuIcon style={{ marginRight: '10px', minWidth: '20px' }} />
+						) : (
+							<div style={{ marginRight: '10px', minWidth: '20px' }}></div>
+						)}
+
 						<Markup content={`${content}`} />
 					</div>
 				);
@@ -301,9 +295,6 @@ const QuestionLibrary = () => {
 			formatter: (content) => {
 				let secondLabel = content[1] !== undefined ? `, ${content[1]}` : '';
 				return (
-					// <div className={classes.questionRowType}>
-					// 	{content[0] + `, ` + content[1]}
-					// </div>
 					<div className={classes.questionRowType}>
 						<Markup content={`${content[0]} ${secondLabel}`} />
 					</div>
@@ -340,7 +331,6 @@ const QuestionLibrary = () => {
 			text: 'PARTICIPANTS',
 			formatter: (content) => {
 				return (
-					//<div className={classes.questionRow}>{content}</div>
 					<div className={classes.questionRow} style={{ paddingLeft: '10px' }}>
 						<Markup content={`${content}`} />
 					</div>
@@ -355,7 +345,6 @@ const QuestionLibrary = () => {
 			text: 'USER',
 			formatter: (content) => {
 				return (
-					//<div className={classes.questionRow}>{content}</div>
 					<div className={classes.questionRow}>
 						<Markup content={`${content}`} />
 					</div>
@@ -404,22 +393,25 @@ const QuestionLibrary = () => {
 		onClick: (e, row) => {
 			// if (!edit) {
 			// dispatch(getSpecificPost(row.id));
-			row.status === 'draft' && dispatch(getAllNewLabels());
-			dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
-			dispatch(
-				getQuestionResultDetail({ id: row.id, type: row.question_type })
-			);
-			dispatch(
-				getQuestionResulParticipant({ id: row.id, type: row.question_type })
-			);
-			setrowStatus(row.status);
-			setrowLocation(row.location);
 			setEdit(true);
 			setNotifID(row.id);
-			row.question_type === 'quiz'
-				? setShowQuizSlider(true)
-				: setShowPollSlider(true);
-			// }
+			setRowType(row.question_type); // quiz , poll
+			setrowStatus(row.status); // active , closed , draft
+			setrowLocation(row.location); // home page , article
+			setQuestionId(row.question_id);
+
+			//api calls
+			row.status === 'draft' && dispatch(getAllNewLabels());
+			dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
+
+			//slider calls
+			if (rowLocation === 'article') {
+				row.question_type === 'quiz'
+					? setShowQuizSlider(true)
+					: setShowPollSlider(true);
+			} else {
+				showEditSlider(true);
+			}
 		}
 	};
 
@@ -428,7 +420,7 @@ const QuestionLibrary = () => {
 	};
 
 	useEffect(() => {
-		// console.log('sort state use effect');
+		console.log('sort state use effect');
 		if (sortState.sortby && sortState.order_type && !search) {
 			dispatch(
 				getQuestions({
@@ -511,36 +503,52 @@ const QuestionLibrary = () => {
 		};
 	}, []);
 
-	const handleDebounceFun = () => {
-		let _search;
-		setSearch((prevState) => {
-			_search = prevState;
-			return _search;
-		});
-		if (_search) {
+	// const handleDebounceFun = () => {
+	// 	let _search;
+	// 	setSearch((prevState) => {
+	// 		_search = prevState;
+	// 		return _search;
+	// 	});
+	// 	if (_search) {
+	// 		dispatch(
+	// 			getQuestions({
+	// 				q: _search,
+	// 				page: 1,
+	// 				startDate: formatDate(dateRange[0]),
+	// 				endDate: formatDate(dateRange[1]),
+	// 				...sortState
+	// 			})
+	// 		);
+	// 	} else {
+	// 		dispatch(
+	// 			getQuestions({
+	// 				page: 1,
+	// 				startDate: formatDate(dateRange[0]),
+	// 				endDate: formatDate(dateRange[1]),
+	// 				...sortState
+	// 			})
+	// 		);
+	// 	}
+	// 	setPage(1);
+	// };
+
+	// const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
+
+	const handleDateChange = (dateRange) => {
+		setDateRange(dateRange);
+
+		const [start, end] = dateRange;
+
+		if (!start && !end) {
 			dispatch(
 				getQuestions({
-					q: _search,
-					page: 1,
-					startDate: formatDate(dateRange[0]),
-					endDate: formatDate(dateRange[1]),
-					...sortState
-				})
-			);
-		} else {
-			dispatch(
-				getQuestions({
-					page: 1,
-					startDate: formatDate(dateRange[0]),
-					endDate: formatDate(dateRange[1]),
+					q: search,
+					page,
 					...sortState
 				})
 			);
 		}
-		setPage(1);
 	};
-
-	const debounceFun = useCallback(_debounce(handleDebounceFun, 1000), []);
 
 	return (
 		<LoadingOverlay
@@ -580,32 +588,32 @@ const QuestionLibrary = () => {
 								value={search}
 								onKeyPress={(e) => {
 									console.log(e, 'on key press');
-									// if (e.key === 'Enter' && search) {
-									// 	dispatch(
-									// 		getQuestions({
-									// 			q: search,
-									// 			page,
-									// 			startDate: formatDate(dateRange[0]),
-									// 			endDate: formatDate(dateRange[1]),
-									// 			...sortState
-									// 		})
-									// 	);
-									// } else if (e.key === 'Enter' && !search) {
-									// 	dispatch(
-									// 		getQuestions({
-									// 			page,
-									// 			startDate: formatDate(dateRange[0]),
-									// 			endDate: formatDate(dateRange[1]),
-									// 			...sortState
-									// 		})
-									// 	);
-									// }
+									if (e.key === 'Enter' && search) {
+										dispatch(
+											getQuestions({
+												q: search,
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									} else if (e.key === 'Enter' && !search) {
+										dispatch(
+											getQuestions({
+												page,
+												startDate: formatDate(dateRange[0]),
+												endDate: formatDate(dateRange[1]),
+												...sortState
+											})
+										);
+									}
 								}}
 								onChange={(e) => {
 									setSearch(e.target.value);
 									//setIsSearch(true);
 								}}
-								placeholder={'Search post, user, label'}
+								placeholder='Search for Question, User, Label, ID'
 								InputProps={{
 									disableUnderline: true,
 									className: classes.textFieldInput,
@@ -651,9 +659,7 @@ const QuestionLibrary = () => {
 								startDate={startDate}
 								endDate={endDate}
 								maxDate={new Date()}
-								onChange={(update) => {
-									setDateRange(update);
-								}}
+								onChange={handleDateChange}
 								placement='center'
 								isClearable={true}
 							/>
@@ -668,7 +674,7 @@ const QuestionLibrary = () => {
 						data={questions}
 					/>
 				</div>
-
+				
 				<div className={classes.paginationRow}>
 					<Pagination
 						className={muiClasses.root}
@@ -704,20 +710,36 @@ const QuestionLibrary = () => {
 						className={classes.gotoInput}
 					/>
 				</div>
-
-				<UploadQuiz
+				
+				{/* upload */}
+				<UploadOrEditQuiz
 					open={showSlider}
-					isEdit={edit}
+					location={rowLocation}
+					status={rowStatus} //active closed draft
 					handleClose={() => {
 						setShowSlider(false);
 					}}
-					title={edit ? 'Poll Detail' : 'Upload Question'}
-					heading1={edit ? ' ' : 'Add Background Image'}
+					isEdit={false}
 					buttonText={
 						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
 					}
-					location={rowLocation}
 				/>
+				{/* edit question */}
+				<UploadOrEditQuiz
+					isEdit={edit}
+					open={editSlider}
+					notifID={notifID}
+					location={rowLocation}
+					rowType={rowType}
+					status={rowStatus} //active closed draft
+					handleClose={() => {
+						showEditSlider(false);
+					}}
+					buttonText={
+						edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'
+					}
+				/>
+
 				<QuizDetails
 					page={page}
 					open={showQuizSlider}
@@ -725,6 +747,8 @@ const QuestionLibrary = () => {
 					handleClose={() => {
 						setShowQuizSlider(false);
 					}}
+					questionId={questionId}
+					questionType={rowType}
 					status={rowStatus} //open closed
 					location={rowLocation} //Article / HomePage
 					title={rowStatus === 'draft' ? 'Edit Quiz' : 'Quiz Detail'}
@@ -741,6 +765,8 @@ const QuestionLibrary = () => {
 					handleClose={() => {
 						setShowPollSlider(false);
 					}}
+					questionId={questionId}
+					questionType={rowType}
 					status={rowStatus} //open / closed
 					location={rowLocation} //Article / HomePage
 					title={rowStatus === 'draft' ? 'Edit Poll' : 'Poll Detail'}

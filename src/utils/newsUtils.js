@@ -6,6 +6,7 @@ export const checkEmptyMediaNews = (news) => {
 			return false;
 		}
 	});
+
 	return validateNews.every((item) => item === true);
 };
 
@@ -68,6 +69,7 @@ export const checkNewElementNEWS = (specificNews, news) => {
 			}
 		}
 	}
+
 	return result.every((item) => item === true);
 };
 

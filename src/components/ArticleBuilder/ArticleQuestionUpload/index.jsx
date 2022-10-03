@@ -89,6 +89,18 @@ const ArticleQuestionUpload = ({
 	// const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
+	// useEffect(() => {
+	// 	if (type !== initialData) {
+	// 		setForm({
+	// 			uploadedFiles: [],
+	// 			dropbox_url: '',
+	// 			question: '',
+	// 			answers: [],
+	// 			labels: [],
+	// 			question_type: type
+	// 		});
+	// 	}
+	// }, [type]);
 
 	useEffect(() => {
 		validateForm(form);
@@ -138,23 +150,26 @@ const ArticleQuestionUpload = ({
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
-					type: 'image',
-					width: fileWidth,
-					height: fileHeight
+					type: 'image'
 				};
 			});
+			sendDataToParent({ previewImage: [...newFiles] });
 			uploadedFile(newFiles[0], 'articleLibrary').then((res) => {
 				setForm((prev) => {
 					return {
 						...prev,
 						uploadedFiles: [
-							{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
+							{
+								image: res?.media_url,
+								file_name: res?.file_name,
+								...newFiles[0]
+							}
 						]
 					};
 				});
 				sendDataToParent({
 					uploadedFiles: [
-						{ image: res.media_url, file_name: res.file_name, ...newFiles[0] }
+						{ image: res?.media_url, file_name: res?.file_name, ...newFiles[0] }
 					]
 				});
 				setLoading(false);
@@ -163,6 +178,21 @@ const ArticleQuestionUpload = ({
 			// sendDataToParent({ uploadedFiles: [...newFiles] });
 		}
 	}, [acceptedFiles]);
+
+	useEffect(() => {
+		if (fileHeight && fileWidth && item?.data?.uploadedFiles?.length) {
+			sendDataToParent({
+				...item?.data,
+				uploadedFiles: [
+					{
+						width: fileWidth,
+						height: fileHeight,
+						...item?.data?.uploadedFiles[0]
+					}
+				]
+			});
+		}
+	}, [fileHeight, fileWidth]);
 
 	useEffect(() => {
 		if (fileRejections.length) {
@@ -202,11 +232,12 @@ const ArticleQuestionUpload = ({
 					type === 'quiz' && index === 0
 						? 'right_answer'
 						: type === 'quiz' && index === 1
-						? 'wrong_answer'
+						? 'wrong_answer_1'
 						: 'poll'
 			};
 			setForm(formCopy);
 			let answers = { answers: formCopy.answers };
+
 			sendDataToParent(answers);
 		} else {
 			const formCopy = { ...form };
@@ -217,7 +248,7 @@ const ArticleQuestionUpload = ({
 					type === 'quiz' && index === 0
 						? 'right_answer'
 						: type === 'quiz' && index === 1
-						? 'wrong_answer'
+						? 'wrong_answer_1'
 						: 'poll'
 			};
 			setForm(formCopy);
@@ -249,6 +280,7 @@ const ArticleQuestionUpload = ({
 										)
 									};
 								});
+								sendDataToParent({ previewImage: null });
 								handleDeleteData(item.data?.uploadedFiles);
 							}}
 							isArticle
@@ -495,7 +527,7 @@ const ArticleQuestionUpload = ({
 								value={
 									initialData?.answers && initialData?.question_type === 'quiz'
 										? initialData?.answers?.find(
-												(item) => item.type === 'wrong_answer'
+												(item) => item.type === 'wrong_answer_1'
 										  )?.answer
 										: form.answers[1]?.answer
 								}
@@ -527,16 +559,12 @@ const ArticleQuestionUpload = ({
 						</p>
 
 						<div className={classes.titleContainer}>
-							<h6
-								className={
+							<Labels
+								titleClasses={
 									isError.selectedLabels
 										? globalClasses.errorState
 										: globalClasses.noErrorState
 								}
-							>
-								LABELS
-							</h6>
-							<Labels
 								isEdit={initialData?.question_id && status !== 'draft'}
 								setDisableDropdown={setDisableDropdown}
 								selectedLabels={

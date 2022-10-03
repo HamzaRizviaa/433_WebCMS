@@ -114,15 +114,6 @@ const NewsLibrary = () => {
 										...sortState
 									})
 								);
-							} else {
-								dispatch(
-									getAllNews({
-										q: search,
-										page,
-										fromCalendar: true,
-										...sortState
-									})
-								);
 							}
 						}}
 					/>
@@ -382,8 +373,8 @@ const NewsLibrary = () => {
 					<div className={classes.viralRow}>
 						<Tooltip
 							TransitionComponent={Fade}
-							TransitionProps={{ timeout: 600 }}
-							title={'EDIT VIRAL'}
+							TransitionProps={{ timeout: 700 }}
+							title={'EDIT NEWS'}
 							arrow
 							componentsProps={{
 								tooltip: { className: classes.libraryToolTip },
@@ -494,6 +485,22 @@ const NewsLibrary = () => {
 		};
 	}, []);
 
+	const handleDateChange = (dateRange) => {
+		setDateRange(dateRange);
+
+		const [start, end] = dateRange;
+
+		if (!start && !end) {
+			dispatch(
+				getAllNews({
+					q: search,
+					page,
+					...sortState
+				})
+			);
+		}
+	};
+
 	return (
 		<LoadingOverlay
 			active={newsApiStatus.status === 'pending' ? true : false}
@@ -550,7 +557,7 @@ const NewsLibrary = () => {
 									setSearch(e.target.value);
 									//setIsSearch(true);
 								}}
-								placeholder={'Search news, user, label'}
+								placeholder='Search for News, User, Label, ID'
 								InputProps={{
 									disableUnderline: true,
 									className: classes.textFieldInput,
@@ -595,9 +602,7 @@ const NewsLibrary = () => {
 								startDate={startDate}
 								endDate={endDate}
 								maxDate={new Date()}
-								onChange={(update) => {
-									setDateRange(update);
-								}}
+								onChange={handleDateChange}
 								placement='center'
 								isClearable={true}
 							/>

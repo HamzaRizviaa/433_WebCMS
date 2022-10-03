@@ -136,7 +136,7 @@ export const useStyles = makeStyles(() => ({
 		lineHeight: '24px'
 	},
 	contentWrapperNoPreview: {
-		minHeight: 'calc(100vh - 107px)',
+		//minHeight: 'calc(100vh - 107px)',
 		position: 'relative',
 		display: 'flex',
 		flexDirection: 'column',
@@ -254,14 +254,14 @@ export const useStyles = makeStyles(() => ({
 	},
 
 	previewContentWrapper: {
-		minHeight: 'calc(100vh - 107px)',
+		//	minHeight: 'calc(100vh - 107px)',
 		position: 'relative',
 		display: 'flex',
 		width: '1000px'
 	},
 
 	contentWrapper: {
-		minHeight: 'calc(100vh - 107px)',
+		//minHeight: 'calc(100vh - 107px)',
 		position: 'relative',
 		display: 'flex',
 		flexDirection: 'column',
@@ -461,7 +461,7 @@ export const useStyles = makeStyles(() => ({
 	//search and error msgs
 
 	searchField: {
-		width: '271px'
+		width: '300px'
 	},
 
 	searchIcon: {
@@ -801,6 +801,12 @@ export const useStyles = makeStyles(() => ({
 		marginBottom: '1.5rem',
 		fontSize: '1.2rem',
 		display: 'block'
+	},
+	accordionArticleRoot: {
+		'& .MuiAccordion-root': {
+			backgroundColor: `${theme.palette.black} `,
+			color: theme.palette.white
+		}
 	},
 
 	accordionRoot: {
