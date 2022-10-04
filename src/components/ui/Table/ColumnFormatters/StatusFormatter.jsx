@@ -2,13 +2,13 @@ import React from 'react';
 import Button from '../../../button';
 import PropTypes from 'prop-types';
 
-const StatusFormatter = ({ params, styledClass }) => {
+const StatusFormatter = ({ text, styledClass }) => {
 	return (
 		<div className={styledClass}>
 			<Button
 				onClick={() => {}}
-				text={params == 'published' ? 'PUBLISHED' : 'DRAFT'}
-				published={params == 'published' ? true : false}
+				text={text == 'published' ? 'PUBLISHED' : 'DRAFT'}
+				published={text == 'published' ? true : false}
 			/>
 		</div>
 	);
