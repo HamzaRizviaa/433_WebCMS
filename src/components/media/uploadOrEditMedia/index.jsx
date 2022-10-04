@@ -34,6 +34,8 @@ import { useStyles } from './index.style';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
 import { ToastErrorNotifications } from '../../../constants';
+import FeatureWrapper from '../../FeatureWrapper';
+
 const UploadOrEditMedia = ({
 	open,
 	handleClose,
@@ -105,6 +107,8 @@ const UploadOrEditMedia = ({
 	const {
 		features: { translationsOnMedia }
 	} = useSelector((state) => state.remoteConfig);
+
+	const isTranslationsEnabled = translationsOnMedia?._value === 'true';
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -611,6 +615,9 @@ const UploadOrEditMedia = ({
 				{
 					headers: {
 						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					},
+					params: {
+						api_version: isTranslationsEnabled ? 1 : 2
 					}
 				}
 			);
