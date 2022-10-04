@@ -111,7 +111,7 @@ export const useStyles = makeStyles((theme) => ({
 		padding: ' 3px 0px',
 		paddingRright: ' 10px',
 		color: `${theme.palette.white} !important`,
-		border: `1px solid ${theme.palette.grey}`,
+		border: `1px solid ${theme.palette.normalGrey}`,
 		fontSize: ' 1.4rem !important',
 		lineHeight: '1.6 !important',
 		borderRadius: '5rem !important',

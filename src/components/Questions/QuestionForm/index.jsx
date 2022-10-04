@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 import { useDropzone } from 'react-dropzone';
 import { TextField } from '@material-ui/core';
 import DragAndDropField from '../../DragAndDropField';
-import { makeid } from '../../../utils/helper';
-import checkFileSize from '../../../utils/validateFileSize';
+import { makeid } from '../../../data/utils/helper';
+import checkFileSize from '../../../data/utils/validateFileSize';
 import Labels from '../../Labels';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
@@ -38,11 +38,38 @@ const QuestionForm = ({
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
 	const [isError, setIsError] = useState({});
-	const [form, setForm] = useState(
-		initialData
-			? {
-					...initialData,
-					uploadedFiles: initialData ? initialData?.uploadedFiles : [],
+	const [form, setForm] = useState({
+		uploadedFiles: initialData ? initialData?.uploadedFiles : [],
+		labels: initialData?.labels?.length > 0 ? initialData?.labels : [],
+		dropbox_url: initialData ? initialData?.dropbox_url : '',
+		question: initialData ? initialData?.question : '',
+		answers:
+			initialData?.answers?.length > 0
+				? initialData?.answers
+				: [
+						{
+							answer: '',
+							type: type === 'poll' ? 'poll' : 'right_answer',
+							position: 0
+						},
+						{
+							answer: '',
+							type:
+								location === 'article'
+									? 'wrong_answer'
+									: type === 'poll'
+									? 'poll'
+									: 'wrong_answer_1',
+							position: 1
+						}
+				  ]
+	});
+
+	useEffect(() => {
+		if (isEdit && status === 'draft') {
+			setForm((prev) => {
+				return {
+					...prev,
 					answers:
 						initialData?.answers?.length > 0
 							? initialData?.answers
@@ -63,31 +90,10 @@ const QuestionForm = ({
 										position: 1
 									}
 							  ]
-			  }
-			: {
-					uploadedFiles: [],
-					labels: [],
-					dropbox_url: '',
-					question: '',
-					answers: [
-						{
-							answer: '',
-							type: type === 'poll' ? 'poll' : 'right_answer',
-							position: 0
-						},
-						{
-							answer: '',
-							type:
-								location === 'article'
-									? 'wrong_answer'
-									: type === 'poll'
-									? 'poll'
-									: 'wrong_answer_1',
-							position: 1
-						}
-					]
-			  }
-	);
+				};
+			});
+		}
+	}, [type]);
 
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
@@ -129,6 +135,13 @@ const QuestionForm = ({
 			sendDataToParent({ uploadedFiles: [...newFiles] });
 		}
 	}, [acceptedFiles, fileHeight, fileWidth]);
+
+	useEffect(() => {
+		if (initialData?.answers?.length > 0)
+			setForm((prev) => {
+				return { ...prev, answers: initialData?.answers };
+			});
+	}, [initialData?.answers]);
 
 	const getFileType = (type) => {
 		if (type) {
@@ -177,68 +190,52 @@ const QuestionForm = ({
 	}, [extraLabel]);
 
 	const handleNewAnswer = () => {
-		// setForm((prev) => {
-		// 	return {
-		// 		...prev,
-		// 		answers: [...form.answers, { answer: '' }]
-		// 	};
-		// });
-		// let answers = { answers: [...form.answers, { answer: '' }] };
-		// sendDataToParent(answers);
+		const length = form.answers?.length;
 
-		const answers = [
-			...(initialData?.answers?.length === 0
-				? [
-						{
-							answer: '',
-							type: type === 'poll' ? 'poll' : 'right_answer',
-							position: 0
-						},
-						{
-							answer: '',
-							type:
-								location === 'article'
-									? 'wrong_answer'
-									: type === 'poll'
-									? 'poll'
-									: 'wrong_answer_1',
-							position: 1
-						}
-				  ]
-				: initialData?.answers?.length > 0
-				? initialData?.answers
-				: form.answers)
-		];
 		setForm((prev) => {
 			return {
 				...prev,
-				answers: [...answers, { answer: '' }]
+				answers: [
+					...form.answers,
+					{
+						answer: '',
+						position: length,
+						type: type
+					}
+				]
 			};
 		});
+
+		let answers = {
+			answers: [
+				...form.answers,
+				{
+					answer: '',
+					position: length,
+					type: type
+				}
+			]
+		};
 		sendDataToParent(answers);
 	};
 
 	const handleAnswerDelete = (index) => {
 		let dataCopy = { ...form };
-
-		if (index > 1) {
-			setForm((prev) => {
-				return {
-					...prev,
-					answers: dataCopy?.answers?.filter((val, ind) => {
-						return ind !== index;
-					})
-				};
-			});
-			const formCopy = { ...form };
-
-			let answers = {
-				answers: formCopy?.answers?.filter((val, ind) => {
+		setForm((prev) => {
+			return {
+				...prev,
+				answers: dataCopy?.answers?.filter((val, ind) => {
 					return ind !== index;
 				})
 			};
-			sendDataToParent(answers);
-		}
+		});
+		const formCopy = { ...form };
+		let answers = {
+			answers: formCopy?.answers?.filter((val, ind) => {
+				return ind !== index;
+			})
+		};
+		sendDataToParent(answers);
 	};
 
 	const handleAnswerChange = (event, index) => {
@@ -247,12 +244,7 @@ const QuestionForm = ({
 			formCopy.answers[index] = {
 				answer: event.target.value,
 				position: index,
-				type:
-					type === 'quiz' && index === 0
-						? 'right_answer'
-						: type === 'quiz' && index > 0
-						? 'wrong_answer_' + index
-						: 'poll'
+				type: type
 			};
 			setForm(formCopy);
 			let answers = { answers: formCopy.answers };
@@ -260,7 +252,7 @@ const QuestionForm = ({
 		} else {
 			// This block of code will only be executed if the question is in draft
 			// Then only the question answers will be editable
-			// const isAnswersEdited = initialData && initialData.answers;
+
 			const answers = [
 				...(initialData?.answers?.length === 0
 					? [
@@ -285,15 +277,10 @@ const QuestionForm = ({
 					: form.answers)
 			];
 
+			//if no id , means new answer so index will be position , otherwise position will be same coming from api .
 			answers[index] = {
-				answer: event.target.value,
-				position: index,
-				type:
-					type === 'quiz' && index === 0
-						? 'right_answer'
-						: type === 'quiz' && index > 0
-						? 'wrong_answer_' + index
-						: 'poll'
+				...answers[index],
+				answer: event.target.value
 			};
 
 			setForm({ ...form, answers });
@@ -454,6 +441,7 @@ const QuestionForm = ({
 							? 'You need to provide a question in order to post.'
 							: ''}
 					</p>
+
 					{form?.answers?.length > 0 &&
 						form?.answers.map((item, index) => {
 							return (
@@ -461,7 +449,7 @@ const QuestionForm = ({
 									className={classes.titleContainer}
 									item={item}
 									index={index}
-									key={item.position}
+									key={`answer-${index}`}
 								>
 									<div className={globalClasses.characterCount}>
 										<h6
@@ -496,7 +484,7 @@ const QuestionForm = ({
 										disabled={isEdit && status !== 'draft'}
 										value={
 											initialData?.answers?.length > 0
-												? initialData && initialData?.answers[index]?.answer
+												? initialData?.answers[index]?.answer
 												: form.answers[index]?.answer
 										}
 										onChange={(e) => {
@@ -513,13 +501,17 @@ const QuestionForm = ({
 												<InputAdornment position='end'>
 													{index < 2 ? (
 														<> </>
-													) : status === 'ACTIVE' || status === 'CLOSED' ? (
+													) : isEdit &&
+													  (status === 'ACTIVE' || status === 'CLOSED') ? (
 														<DeleteBin
-															style={{ marginTop: '20px', opacity: 0.5 }}
+															style={{
+																marginTop: '20px',
+																opacity: 0.5
+															}}
 														/>
 													) : (
 														<DeleteBin
-															style={{ marginTop: '20px' }}
+															style={{ marginTop: '20px', cursor: 'pointer' }}
 															onClick={() => {
 																handleAnswerDelete(index);
 															}}

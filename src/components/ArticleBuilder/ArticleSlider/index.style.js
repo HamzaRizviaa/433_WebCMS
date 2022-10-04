@@ -10,7 +10,7 @@ export const useStyles = makeStyles((theme) => ({
 	paper: {
 		color: `${theme.palette.neonYellow} !important`,
 		right: '0 !important',
-		borderLeft: `1px solid ${theme.palette.grey} !important`,
+		borderLeft: `1px solid ${theme.palette.normalGrey} !important`,
 		height: '100vh !important',
 		zIndex: '5 !important',
 		position: 'fixed !important',
@@ -31,7 +31,7 @@ export const useStyles = makeStyles((theme) => ({
 		height: '3.2rem !important',
 		marginRight: '1.6rem !important',
 		padding: '0.5rem !important',
-		background: `${theme.palette.grey} !important`,
+		background: `${theme.palette.normalGrey} !important`,
 		borderRadius: '50% !important',
 		cursor: 'pointer !important',
 		color: 'white'

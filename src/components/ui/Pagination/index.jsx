@@ -3,7 +3,7 @@ import Pagination from '@material-ui/lab/Pagination';
 import { useStyles } from './index.style';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { useSearchParams } from 'react-router-dom';
-import { changeQueryParameters } from '../../../utils/helper';
+import { changeQueryParameters } from '../../../data/utils/helper';
 import PropTypes from 'prop-types';
 
 const CustomPagination = ({ totalRecords }) => {

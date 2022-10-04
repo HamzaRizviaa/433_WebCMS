@@ -41,6 +41,7 @@
 		"react-scripts": "4.0.3",
 		"react-toastify": "^8.1.0",
 		"redux": "^4.1.1",
+		"reselect": "^4.1.6",
 		"use-debounce": "^8.0.4",
 		"use-sound": "^4.0.1",
 		"web-vitals": "^1.0.1"
@@ -51,7 +52,7 @@
 		"build": "react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
-		"deploy": "aws s3 sync build/ s3://433-cms-dev"
+		"deploy": "aws s3 sync build/ s3://433-cms-production"
 	},
 	"eslintConfig": {
 		"extends": [

@@ -7,16 +7,16 @@ import Button from '../../button';
 import Table from '../../table';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
-import { getDateTime, formatDate } from '../../../utils';
+import { getDateTime, formatDate } from '../../../data/utils';
 import { useDispatch, useSelector } from 'react-redux';
-import { getLocalStorageDetails } from '../../../utils';
+import { getLocalStorageDetails } from '../../../data/utils';
 import { toast } from 'react-toastify';
 import PrimaryLoader from '../../PrimaryLoader';
 import axios from 'axios';
 import DeleteModal from '../../DeleteModal';
 import DefaultImage from '../../../assets/defaultImage.png';
 import PropTypes from 'prop-types';
-import { getQuestions } from '../../../pages/QuestionLibrary/questionLibrarySlice';
+import { getQuestions } from "../../../data/features/questionsLibrary/questionsLibrarySlice";
 import { styled } from '@mui/material/styles';
 import classes from '../UploadEditQuestion/_uploadOrEditQuiz.module.scss';
 import { useStyles } from '../UploadEditQuestion/UploadOrEditQuiz.style';
@@ -24,12 +24,12 @@ import { useStyles } from '../UploadEditQuestion/UploadOrEditQuiz.style';
 import LinearProgress, {
 	linearProgressClasses
 } from '@mui/material/LinearProgress';
+
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	height: '54px',
 	borderRadius: '8px',
 	[`&.${linearProgressClasses.colorPrimary}`]: {
-		backgroundColor:
-			theme.palette.grey[theme.palette.mode === '#404040' ? 200 : 800]
+		backgroundColor: '#404040 !important'
 	},
 	[`& .${linearProgressClasses.bar}`]: {
 		borderRadius: '8px',
@@ -100,15 +100,29 @@ export default function QuizResults({
 		}
 	};
 
-	const getQuestionResulParticipant = async (id) => {
-		const response = await axios.get(
-			`${process.env.REACT_APP_API_ENDPOINT}/question/get-question-participant-listing?question_id=${id}`,
-			{
-				headers: {
-					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+	const getQuestionResulParticipant = async (id, sortby, order_type) => {
+		let response = [];
+
+		if (id) {
+			response = await axios.get(
+				`${process.env.REACT_APP_API_ENDPOINT}/question/get-question-participant-listing?question_id=${id}`,
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
 				}
-			}
-		);
+			);
+		}
+		if (id && order_type && sortby) {
+			response = await axios.get(
+				`${process.env.REACT_APP_API_ENDPOINT}/question/get-question-participant-listing?question_id=${id}&order_type=${order_type}&sort_by=${sortby}`,
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+		}
 
 		if (response?.data?.data) {
 			return setParticipants(response.data.data);
@@ -238,9 +252,6 @@ export default function QuizResults({
 			formatter: (content) => {
 				return <div className={classes.rowData}>{content}</div>;
 			}
-			// headerStyle: () => {
-			// 	return { paddingLeft: '20px' };
-			// }
 		},
 		{
 			dataField: 'date_and_time',
@@ -266,12 +277,10 @@ export default function QuizResults({
 
 	useEffect(() => {
 		if (sortState.sortby && sortState.order_type) {
-			dispatch(
-				getQuestionResulParticipant({
-					id: editQuestionResultDetail?.id,
-					type: editQuestionResultDetail?.question_type,
-					...sortState
-				})
+			getQuestionResulParticipant(
+				editQuestionResultDetail?.id,
+				sortState.sortby,
+				sortState.order_type
 			);
 		}
 	}, [sortState]);

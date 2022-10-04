@@ -25,8 +25,7 @@ export default function DeleteModal({
 	open,
 	toggle,
 	deleteBtn,
-	wrapperRef,
-	stop
+	wrapperRef
 }) {
 	const classes = useStyles();
 	const [playOpen] = useSound(soundOpen, { volume: 0.5 });
@@ -41,7 +40,7 @@ export default function DeleteModal({
 				onClose={() => {
 					toggle();
 				}}
-				onMouseEnter={playOpen}
+				// onMouseEnter={playOpen}
 				aria-describedby='alert-dialog-slide-description'
 				classes={{ paper: classes.dialogBox, root: classes.root }}
 				ref={wrapperRef}
@@ -50,7 +49,7 @@ export default function DeleteModal({
 					className={classes.dialogTitle}
 					classes={{ root: classes.root }}
 				>
-					{stop ? `Stop this ${text}?` : `Delete this ${text}?`}
+					{`Delete this ${text}?`}
 					<IconButton
 						onClick={toggle}
 						onMouseDown={playClose}
@@ -64,17 +63,10 @@ export default function DeleteModal({
 						id='alert-dialog-slide-description'
 						className={classes.dialogContentText}
 					>
-						{stop ? (
-							<p>
-								You are about to stop this <strong> {text} </strong>. You won’t
-								be able to restart the {text} again.
-							</p>
-						) : (
-							<p>
-								You are about to delete this <strong> {text}.</strong> You won’t
-								be able to retrieve the post.
-							</p>
-						)}
+						<p>
+							You are about to delete this <strong> {text}.</strong> You won’t
+							be able to retrieve the post.
+						</p>
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions classes={{ root: classes.dialogActions }}>
@@ -84,21 +76,13 @@ export default function DeleteModal({
 						text={'GO BACK'}
 						onMouseDown={playClose}
 					/>
-					{stop ? (
-						<Button
-							buttonStop={true}
-							onClick={deleteBtn}
-							text={`STOP ${text}`.toUpperCase()}
-							onMouseDown={playOpen}
-						/>
-					) : (
-						<Button
-							button2AddSave={true}
-							onClick={deleteBtn}
-							text={`Delete ${text}`.toUpperCase()}
-							onMouseDown={playOpen}
-						/>
-					)}
+
+					<Button
+						button2AddSave={true}
+						onClick={deleteBtn}
+						text={`Delete ${text}`.toUpperCase()}
+						onMouseDown={playOpen}
+					/>
 				</DialogActions>
 			</Dialog>
 		</div>
@@ -108,7 +92,6 @@ export default function DeleteModal({
 DeleteModal.propTypes = {
 	text: PropTypes.string,
 	open: PropTypes.bool,
-	stop: PropTypes.bool,
 	toggle: PropTypes.func.isRequired,
 	deleteBtn: PropTypes.func.isRequired,
 	wrapperRef: PropTypes.oneOfType([

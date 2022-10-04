@@ -9,19 +9,18 @@ import { TextField } from '@material-ui/core';
 import Button from '../../button';
 import DragAndDropField from '../../DragAndDropField';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeid } from '../../../utils/helper';
-import checkFileSize from '../../../utils/validateFileSize';
+import { makeid } from '../../../data/utils/helper';
+import checkFileSize from '../../../data/utils/validateFileSize';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { getAllViralsApi } from '../../../pages/ViralLibrary/viralLibararySlice';
-// import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
+import { getAllViralsApi } from '../../../data/features/viralLibrary/viralLibrarySlice';
 import Close from '@material-ui/icons/Close';
 import Labels from '../../Labels';
-import { getLocalStorageDetails } from '../../../utils';
-import uploadFileToServer from '../../../utils/uploadFileToServer';
-import validateForm from '../../../utils/validateForm';
-import validateDraft from '../../../utils/validateDraft';
-import { Tooltip, Fade, Divider } from '@mui/material';
+import { getLocalStorageDetails } from '../../../data/utils';
+import uploadFileToServer from '../../../data/utils/uploadFileToServer';
+import validateForm from '../../../data/utils/validateForm';
+import validateDraft from '../../../data/utils/validateDraft';
+import { Tooltip, Fade } from '@mui/material';
 import ToggleSwitch from '../../switch';
 // import Fade from '@mui/material/Fade';
 import Slide from '@mui/material/Slide';
@@ -34,7 +33,6 @@ import DeleteModal from '../../DeleteModal';
 import TranslationCarousal from '../../TranslationCarousal';
 import FeatureWrapper from '../../FeatureWrapper';
 //new labels
-// import { getAllNewLabels } from '../../../pages/PostLibrary/postLibrarySlice';
 
 const UploadOrEditViral = ({
 	open,
@@ -90,7 +88,7 @@ const UploadOrEditViral = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const { specificViralStatus } = useSelector(
-		(state) => state.ViralLibraryStore
+		(state) => state.rootReducer.viralLibrary
 	);
 
 	const {
@@ -106,9 +104,9 @@ const UploadOrEditViral = ({
 			validator: checkFileSize
 		});
 
-	const labels = useSelector((state) => state.postLibrary.labels);
+	const labels = useSelector((state) => state.rootReducer.postsLibrary.labels);
 	const specificViral = useSelector(
-		(state) => state.ViralLibraryStore.specificViral
+		(state) => state.rootReducer.viralLibrary.specificViral
 	);
 	const dispatch = useDispatch();
 
@@ -153,15 +151,6 @@ const UploadOrEditViral = ({
 					};
 				});
 			}
-			if (status === 'draft') {
-				if (specificViral?.translations) {
-					setTranslatedOnEdit(false);
-				} else {
-					setTranslatedOnEdit(true);
-				}
-			}
-			setTranslatedLanguages(specificViral?.translations);
-			setCaptionValue(specificViral?.caption);
 			setForm((prev) => {
 				return {
 					...prev,
@@ -287,16 +276,6 @@ const UploadOrEditViral = ({
 			show_likes: true,
 			show_comments: true
 		});
-		setTranslated(false);
-		setTranslatedLanguages();
-		setLang({
-			id: 0,
-			name: 'English',
-			prefix: 'ENG',
-			shortName: 'en'
-		});
-		setCaptionValue('');
-		setTranslatedOnEdit(false);
 	};
 
 	const toggleDeleteModal = () => {
@@ -378,9 +357,7 @@ const UploadOrEditViral = ({
 				`${process.env.REACT_APP_API_ENDPOINT}/viral/add-viral`,
 				{
 					save_draft: draft,
-					caption: translatedLanguages
-						? translatedLanguages['en']?.caption
-						: form.caption,
+					caption: form.caption,
 					dropbox_url: form.dropbox_url,
 					media_url: form.uploadedFiles.length
 						? file?.media_url?.split('cloudfront.net/')[1] || file?.media_url
@@ -488,8 +465,8 @@ const UploadOrEditViral = ({
 	useEffect(() => {
 		if (specificViral) {
 			setEditBtnDisabled(
-				// postButtonStatus ||
-				!form.caption ||
+				postButtonStatus ||
+					!form.caption ||
 					!form.uploadedFiles.length ||
 					form.labels.length < 7 ||
 					(specificViral?.file_name === form?.uploadedFiles[0]?.file_name &&
@@ -511,11 +488,10 @@ const UploadOrEditViral = ({
 						specificViral?.show_likes === form.show_likes &&
 						specificViral?.show_comments === form.show_comments &&
 						specificViral?.labels?.length === form?.labels?.length &&
-						!checkDuplicateLabel() &&
-						!translated)
+						!checkDuplicateLabel())
 			);
 		}
-	}, [specificViral, form, translated]);
+	}, [specificViral, form]);
 
 	const checkDuplicateLabel = () => {
 		let formLabels = form?.labels?.map((formL) => {
@@ -887,24 +863,11 @@ const UploadOrEditViral = ({
 											CAPTION
 										</h6>
 										<TextField
-											value={captionValue}
+											value={form.caption}
 											onChange={(e) => {
-												if (translated && lang?.shortName === 'en') {
-													setTranslated(false);
-													setTranslatedLanguages();
-												}
-												if (isEdit && lang?.shortName === 'en') {
-													setTranslatedOnEdit(true);
-													setTranslatedLanguages();
-												}
-												if (lang?.shortName !== 'en') {
-													handletranslatedLanguages(e);
-												}
-
 												setForm((prev) => {
 													return { ...prev, caption: e.target.value };
 												});
-												setCaptionValue(e.target.value);
 											}}
 											placeholder={'Please write your caption here'}
 											className={classes.textField}
