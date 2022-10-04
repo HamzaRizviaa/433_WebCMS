@@ -930,6 +930,7 @@ const UploadOrEditMedia = ({
 							await uploadMedia(specificMedia?.id, {
 								title: form.title,
 								description: form.description,
+								duration: Math.round(fileDuration),
 								type: 'medialibrary',
 								save_draft: false,
 								main_category_id: media_type,
@@ -1267,6 +1268,7 @@ const UploadOrEditMedia = ({
 					type: 'medialibrary',
 					title: form.title,
 					description: form.description,
+					duration: Math.round(fileDuration),
 					main_category_id: media_type,
 					sub_category_id: subId,
 					dropbox_url: {
