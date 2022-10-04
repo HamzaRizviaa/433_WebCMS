@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 import { useDropzone } from 'react-dropzone';
 import { TextField } from '@material-ui/core';
 import DragAndDropField from '../../DragAndDropField';
-import { makeid } from '../../../utils/helper';
-import checkFileSize from '../../../utils/validateFileSize';
+import { makeid } from '../../../data/utils/helper';
+import checkFileSize from '../../../data/utils/validateFileSize';
 import Labels from '../../Labels';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
@@ -191,6 +191,7 @@ const QuestionForm = ({
 
 	const handleNewAnswer = () => {
 		const length = form.answers?.length;
+
 		setForm((prev) => {
 			return {
 				...prev,
@@ -276,6 +277,7 @@ const QuestionForm = ({
 					: form.answers)
 			];
 
+			//if no id , means new answer so index will be position , otherwise position will be same coming from api .
 			answers[index] = {
 				...answers[index],
 				answer: event.target.value

@@ -13,7 +13,12 @@ export const useStyles = makeStyles(() => ({
 		borderRadius: '40px',
 		fontFamily: 'Poppins !important',
 		backgroundColor: ' #000000',
-		borderColor: (props) => (props.isError ? '#FF355A' : '#404040')
+		borderColor: (props) => (props.isError ? '#FF355A' : '#404040'),
+
+		'& > input': {
+			height: '2.95rem',
+			padding: 0
+		}
 	},
 	searchIcon: {
 		cursor: 'pointer',

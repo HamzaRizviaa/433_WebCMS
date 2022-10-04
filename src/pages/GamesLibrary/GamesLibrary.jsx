@@ -33,8 +33,8 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import '../PostLibrary/_calender.scss';
 
 // Utils
-import { getDateTime, formatDate, getCalendarText } from '../../utils';
-import { useStyles, useStyles2 } from './../../utils/styles';
+import { getDateTime, formatDate, getCalendarText } from '../../data/utils';
+import { useStyles, useStyles2 } from './../../data/utils/styles';
 import { useStyles as globalUseStyles } from '../../styles/global.style';
 // Icons
 import { ReactComponent as Edit } from '../../assets/edit.svg';

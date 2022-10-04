@@ -12,11 +12,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
 	getMedia,
 	resetCalendarError,
-	resetNoResultStatus
-} from './mediaLibrarySlice';
-import { getAllNewLabels } from '../PostLibrary/postLibrarySlice';
-
-import { getSpecificMedia } from './mediaLibrarySlice';
+	resetNoResultStatus,
+	getSpecificMedia
+} from '../../data/features/mediaLibrary/mediaLibrarySlice';
+import { getAllNewLabels } from "../../data/features/postsLibrary/postsLibrarySlice";
 
 // Components
 import UploadOrEditMedia from '../../components/media/uploadOrEditMedia';
@@ -37,8 +36,8 @@ import { toast } from 'react-toastify';
 import { Flip } from 'react-toastify';
 
 // Utils
-import { getDateTime, formatDate, getCalendarText } from '../../utils';
-import { useStyles, useStyles2 } from './../../utils/styles';
+import { getDateTime, formatDate, getCalendarText } from '../../data/utils';
+import { useStyles, useStyles2 } from './../../data/utils/styles';
 import { useStyles as globalUseStyles } from '../../styles/global.style';
 
 // Icons
@@ -56,18 +55,18 @@ const MediaLibrary = () => {
 	const muiClasses2 = useStyles2();
 	const classes = globalUseStyles();
 	// Selctor
-	const media = useSelector((state) => state.mediaLibraryOriginal.media);
+	const media = useSelector((state) => state.rootReducer.mediaLibrary.media);
 
-	const mediaApiStatus = useSelector((state) => state.mediaLibraryOriginal);
+	const mediaApiStatus = useSelector((state) => state.rootReducer.mediaLibrary);
 
 	const totalRecords = useSelector(
-		(state) => state.mediaLibraryOriginal.totalRecords
+		(state) => state.rootReducer.mediaLibrary.totalRecords
 	);
 	const noResultStatus = useSelector(
-		(state) => state.mediaLibraryOriginal.noResultStatus
+		(state) => state.rootReducer.mediaLibrary.noResultStatus
 	);
 	const noResultStatusCalendar = useSelector(
-		(state) => state.mediaLibraryOriginal.noResultStatusCalendar
+		(state) => state.rootReducer.mediaLibrary.noResultStatusCalendar
 	);
 
 	// State
