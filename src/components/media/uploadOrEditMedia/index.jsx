@@ -565,7 +565,6 @@ const UploadOrEditMedia = ({
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
-	console.log('fileDuration', fileDuration);
 	const uploadMedia = async (id, payload) => {
 		let media_type = form.mainCategory?.id;
 
