@@ -371,7 +371,6 @@ const UploadOrEditViral = ({
 			console.log(e, 'Failed to translate');
 		}
 	};
-
 	const createViral = async (id, file, draft = false) => {
 		setPostButtonStatus(true);
 		try {
