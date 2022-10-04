@@ -38,7 +38,7 @@ export const useStyles = makeStyles((theme) => ({
 	},
 	textFieldInput: {
 		color: theme.palette.white,
-		border: `0.01px solid ${theme.palette.grey}`,
+		border: `0.01px solid ${theme.palette.normalGrey}`,
 		padding: '1rem 1rem 1rem 1.5rem !important',
 		fontSize: '1.4rem !important',
 		fontFamily: 'Poppins !important',
@@ -46,7 +46,7 @@ export const useStyles = makeStyles((theme) => ({
 		borderRadius: '22px',
 		backgroundColor: theme.palette.black,
 		borderColor: (props) =>
-			props.isError ? theme.palette.red : theme.palette.grey,
+			props.isError ? theme.palette.red : theme.palette.normalGrey,
 
 		'& svg': {
 			fontSize: '2.5rem'

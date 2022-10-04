@@ -3,8 +3,9 @@ import { Markup } from 'interweave';
 import { Box } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { getLocalStorageDetails } from '../../../../utils';
+import { getLocalStorageDetails } from '../../../../data/utils/dateTimeUtils';
 import { useStyles } from '../index.style';
+
 const InstagramPost = ({ data, itemIndex }) => {
 	const [markup, setMarkup] = useState('');
 	const [thumbnailHeight, setThumbnailHeight] = useState(0);

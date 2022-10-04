@@ -44,5 +44,21 @@ export const useStyles = makeStyles(() => ({
 			textAlign: 'initial',
 			textTransform: 'uppercase'
 		}
-	}
+	},
+	sortIcon: {
+		position: 'absolute',
+		left: '-4px',
+		bottom: '1.5px',
+		height: '2rem !important',
+		width: '2rem !important'
+	},
+
+	sortIconSelected: {
+		position: 'absolute',
+		left: '-4px',
+		bottom: '1.5px',
+		height: '2rem !important',
+		width: ' 2rem !important',
+		color: theme.palette.neonYellow
+	},
 }));

@@ -4,9 +4,9 @@ import { useSearchParams } from 'react-router-dom';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 import { ReactComponent as Calendar } from '../../../../assets/Calendar.svg';
-import { formatDate } from '../../../../utils';
+import { formatDate } from '../../../../data/utils';
 import { useStyles } from './index.styled';
-import { changeQueryParameters } from '../../../../utils/helper';
+import { changeQueryParameters } from '../../../../data/utils/helper';
 
 const CustomInput = forwardRef(
 	({ onClick, startDate, endDate, isError }, ref) => {
@@ -24,7 +24,7 @@ const CustomInput = forwardRef(
 		return (
 			<div className={classes.customDateInput} onClick={onClick} ref={ref}>
 				<span className={classes.inputField}>
-					{formattedStartDate || 'Start Date'} <ArrowForwardIosIcon />{' '}
+					{formattedStartDate || 'Start Date'} <ArrowForwardIosIcon />
 					{formattedEndDate || 'End Date'}
 				</span>
 				<span className={classes.inputIcon}>

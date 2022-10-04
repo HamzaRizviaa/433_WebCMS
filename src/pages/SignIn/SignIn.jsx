@@ -12,7 +12,7 @@ import { ReactComponent as Logo2 } from '../../assets/Logo2.svg';
 //import { ReactComponent as BGImage } from '../../assets/BG.svg';
 // import { ReactComponent as BGImage } from '../../assets/GlobeBG.svg';
 import { ReactComponent as DeniedError } from '../../assets/AccesDenied.svg';
-import { setAccessTokenInHeader } from '../../globalServices/httpService';
+import { setAccessTokenInHeader } from '../../data/axiosInstance';
 
 const SignIn = ({ setLoginData }) => {
 	const [signInError, setSignInError] = useState(false);

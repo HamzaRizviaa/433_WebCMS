@@ -5,7 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import moment from 'moment';
 import CustomInput from './CustomInput';
 import { useStyles } from './index.styled';
-import { changeQueryParameters } from '../../../../utils/helper';
+import { changeQueryParameters } from '../../../../data/utils/helper';
 import 'react-datepicker/dist/react-datepicker.css';
 
 function DateRangeFilter({ isError, errorMessage }) {

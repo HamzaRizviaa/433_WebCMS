@@ -15,7 +15,7 @@ import {
 	resetCalendarError,
 	resetNoResultStatus,
 	getSpecificPost
-} from './postLibrarySlice';
+} from '../data/features/postsLibrary/postsLibrarySlice';
 
 // CSS / Material UI
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
@@ -28,8 +28,8 @@ import classes from './_postLibrary.module.scss';
 import './_calender.scss';
 
 // Utils
-import { getDateTime, formatDate, getCalendarText } from '../../utils';
-import { useStyles, useStyles2 } from './../../utils/styles';
+import { getDateTime, formatDate, getCalendarText } from '../../data/utils';
+import { useStyles, useStyles2 } from './../../data/utils/styles';
 
 // Components
 import UploadOrEditPost from '../../components/posts/uploadOrEditPost';
@@ -54,14 +54,16 @@ const PostLibrary = () => {
 	const muiClasses2 = useStyles2();
 
 	// Selectors
-	const posts = useSelector((state) => state.postLibrary.posts);
-	const statusApi = useSelector((state) => state.postLibrary);
-	const totalRecords = useSelector((state) => state.postLibrary.totalRecords);
+	const posts = useSelector((state) => state.rootReducer.postsLibrary.posts);
+	const statusApi = useSelector((state) => state.rootReducer.postsLibrary);
+	const totalRecords = useSelector(
+		(state) => state.rootReducer.postsLibrary.totalRecords
+	);
 	const noResultStatus = useSelector(
-		(state) => state.postLibrary.noResultStatus
+		(state) => state.rootReducer.postsLibrary.noResultStatus
 	);
 	const noResultStatusCalendar = useSelector(
-		(state) => state.postLibrary.noResultStatusCalendar
+		(state) => state.rootReducer.postsLibrary.noResultStatusCalendar
 	);
 
 	// State

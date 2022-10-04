@@ -94,6 +94,6 @@ export const useStyles = makeStyles((theme) => ({
 		marginBottom: '2rem'
 	},
 	horizontalLine: {
-		color: theme.palette.grey
+		color: theme.palette.normalGrey
 	}
 }));
