@@ -127,10 +127,10 @@ const UploadOrEditArticle = ({
 	const dialogWrapper = useRef(null);
 
 	const {
-		features: { translationsOnVirals }
+		features: { translationsOnArticles }
 	} = useSelector((state) => state.rootReducer.remoteConfig);
 
-	const isTranslationsEnabled = translationsOnVirals?._value === 'true';
+	const isTranslationsEnabled = translationsOnArticles?._value === 'true';
 
 	const elementData = [
 		{
