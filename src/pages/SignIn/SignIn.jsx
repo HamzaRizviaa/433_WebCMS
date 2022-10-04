@@ -14,7 +14,7 @@ import { ReactComponent as Logo2 } from '../../assets/Logo2.svg';
 // import { ReactComponent as BGImage } from '../../assets/GlobeBG.svg';
 import { ReactComponent as DeniedError } from '../../assets/AccesDenied.svg';
 import { setAccessTokenInHeader } from '../../data/axiosInstance';
-import { remoteConfig } from '../../firebase';
+import { remoteConfig } from '../../data/integrations/firebase';
 import { getAll, fetchAndActivate } from 'firebase/remote-config';
 import { setRemoteConfig } from '../../data/features/remoteConfigSlice';
 import { useDispatch } from 'react-redux';

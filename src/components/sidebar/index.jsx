@@ -14,7 +14,7 @@ import { ReactComponent as Article } from '../../assets/ArticleIcon.svg';
 // import { ReactComponent as ArticleSelected } from '../../assets/NewsSelected.svg';
 import { useGoogleLogout } from 'react-google-login';
 import Tooltip from '../Tooltip';
-import { remoteConfig } from '../../firebase';
+import { remoteConfig } from '../../data/integrations/firebase';
 import { getAll, fetchAndActivate } from 'firebase/remote-config';
 import { setRemoteConfig } from '../../data/features/remoteConfigSlice';
 import { useDispatch } from 'react-redux';
