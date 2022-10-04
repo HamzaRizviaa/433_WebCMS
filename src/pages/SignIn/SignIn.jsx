@@ -16,7 +16,7 @@ import { ReactComponent as DeniedError } from '../../assets/AccesDenied.svg';
 import { setAccessTokenInHeader } from '../../data/axiosInstance';
 import { remoteConfig } from '../../firebase';
 import { getAll, fetchAndActivate } from 'firebase/remote-config';
-import { setRemoteConfig } from '../../store/remoteConfigSlice';
+import { setRemoteConfig } from '../../data/features/remoteConfigSlice';
 import { useDispatch } from 'react-redux';
 
 const SignIn = ({ setLoginData }) => {

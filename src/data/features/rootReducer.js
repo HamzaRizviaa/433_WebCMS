@@ -7,6 +7,7 @@ import newsLibrary from './newsLibrary/newsLibrarySlice';
 import postsLibrary from './postsLibrary/postsLibrarySlice';
 import questionsLibrary from './questionsLibrary/questionsLibrarySlice';
 import viralLibrary from './viralLibrary/viralLibrarySlice';
+import remoteConfig from './remoteConfigSlice';
 
 const rootReducer = combineReducers({
 	topBanner,
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
 	newsLibrary,
 	postsLibrary,
 	questionsLibrary,
-	viralLibrary
+	viralLibrary,
+	remoteConfig
 });
 
 export default rootReducer;

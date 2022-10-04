@@ -32,7 +32,7 @@ import {
 	checkNewElementNEWSDraft,
 	checkSortOrderOnEdit
 	// checkDuplicateLabel
-} from '../../../utils/newsUtils';
+} from '../../../data/utils/newsUtils';
 import FeatureWrapper from '../../../components/FeatureWrapper';
 import {
 	checkDuplicateLabel,
@@ -86,7 +86,7 @@ const UploadOrEditNews = ({
 	const dialogWrapper = useRef(null);
 
 	const dispatch = useDispatch();
-	const { features } = useSelector((state) => state.remoteConfig);
+	const { features } = useSelector((state) => state.rootReducer.remoteConfig);
 	const labels = useSelector((state) => state.rootReducer.postsLibrary.labels);
 	const { specificNews, specificNewsStatus } = useSelector(
 		(state) => state.rootReducer.newsLibrary

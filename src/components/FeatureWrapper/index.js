@@ -3,7 +3,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 const FeatureWrapper = ({ name, children }) => {
-	const { features } = useSelector((state) => state.remoteConfig);
+	const { features } = useSelector((state) => state.rootReducer.remoteConfig);
 	const feature = features[name]._value;
 
 	if (feature === 'true') {

@@ -16,7 +16,7 @@ import { useGoogleLogout } from 'react-google-login';
 import Tooltip from '../Tooltip';
 import { remoteConfig } from '../../firebase';
 import { getAll, fetchAndActivate } from 'firebase/remote-config';
-import { setRemoteConfig } from '../../store/remoteConfigSlice';
+import { setRemoteConfig } from '../../data/features/remoteConfigSlice';
 import { useDispatch } from 'react-redux';
 
 const Sidebar = () => {

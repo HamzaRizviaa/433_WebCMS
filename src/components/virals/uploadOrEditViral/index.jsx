@@ -20,7 +20,7 @@ import { getLocalStorageDetails } from '../../../data/utils';
 import uploadFileToServer from '../../../data/utils/uploadFileToServer';
 import validateForm from '../../../data/utils/validateForm';
 import validateDraft from '../../../data/utils/validateDraft';
-import { Tooltip, Fade } from '@mui/material';
+import { Tooltip, Fade, Divider } from '@mui/material';
 import ToggleSwitch from '../../switch';
 // import Fade from '@mui/material/Fade';
 import Slide from '@mui/material/Slide';
@@ -93,7 +93,7 @@ const UploadOrEditViral = ({
 
 	const {
 		features: { translationsOnVirals }
-	} = useSelector((state) => state.remoteConfig);
+	} = useSelector((state) => state.rootReducer.remoteConfig);
 
 	const isTranslationsEnabled = translationsOnVirals?._value === 'true';
 
