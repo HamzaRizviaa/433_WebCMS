@@ -289,6 +289,21 @@ const ArticleTextDraggable = ({
 															format: 'body_boldAndTiny'
 														}
 													]
+												},
+												{
+													title: 'Custom 433',
+													items: [
+														{
+															title: 'Regular',
+															inline: 'span',
+															styles: { color: '#ffff00' }
+														},
+														{
+															title: 'Bold',
+															inline: 'span',
+															styles: { color: '#ffff00', fontWeight: 'bold' }
+														}
+													]
 												}
 											],
 											menubar: 'edit insert format',
@@ -314,9 +329,8 @@ const ArticleTextDraggable = ({
 											plugins: [
 												'lists advlist link image anchor',
 												'searchreplace  hr fullscreen',
-												'insertdatetime paste wordcount  charmap textcolor colorpicker'
+												'insertdatetime paste wordcount charmap textcolor colorpicker'
 											]
-
 											// toolbar:
 											// 	'undo redo  bold italic underline strikethrough fontsizeselect | ' +
 											// 	'alignleft aligncenter ' +
