@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-debugger */
 import React, { useState, useEffect, useRef } from 'react';
 //import classes from './_uploadOrEditMedia.module.scss';
@@ -35,6 +36,7 @@ import { useStyles } from './index.style';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
 import { ToastErrorNotifications } from '../../../data/constants';
+import FeatureWrapper from '../../FeatureWrapper';
 import TranslationCarousal from '../../TranslationCarousal';
 
 const UploadOrEditMedia = ({
@@ -116,6 +118,12 @@ const UploadOrEditMedia = ({
 		(state) => state.rootReducer.mediaLibrary
 	);
 	const labels = useSelector((state) => state.rootReducer.mediaLibrary.labels);
+
+	const {
+		features: { translationsOnMedia }
+	} = useSelector((state) => state.rootReducer.remoteConfig);
+
+	const isTranslationsEnabled = translationsOnMedia?._value === 'true';
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -684,9 +692,10 @@ const UploadOrEditMedia = ({
 							description: translatedLanguages
 								? translatedLanguages['en']?.description
 								: form.description,
-							translations: translatedLanguages
-								? translatedLanguages
-								: undefined,
+							translations:
+								translatedLanguages && isTranslationsEnabled
+									? translatedLanguages
+									: undefined,
 							labels: [...form.labels],
 							dropbox_url: {
 								media: form.media_dropbox_url ? form.media_dropbox_url : '',
@@ -711,6 +720,9 @@ const UploadOrEditMedia = ({
 				{
 					headers: {
 						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					},
+					params: {
+						api_version: isTranslationsEnabled ? 1 : 2
 					}
 				}
 			);
@@ -1606,11 +1618,14 @@ const UploadOrEditMedia = ({
 
 	const handlePublishTranslateButtonOnClick = () => {
 		if (!translated && !isEdit) {
-			return handleTranslateBtn;
+			handleTranslateBtn();
+			return;
 		} else if (isEdit && translatedOnEdit) {
-			return handleTranslateBtn;
+			handleTranslateBtn();
+			return;
 		} else {
-			return addSaveMediaBtn;
+			addSaveMediaBtn();
+			return;
 		}
 	};
 
@@ -2336,20 +2351,21 @@ const UploadOrEditMedia = ({
 										? 'Something needs to be changed to save a draft'
 										: ''}
 								</p>
-
-								{translated ? (
-									<>
-										<Divider color={'grey'} sx={{ mb: '10px' }} />
-										<TranslationCarousal lang={lang} setLang={setLang} />
-									</>
-								) : isEdit && !translatedOnEdit ? (
-									<>
-										<Divider color={'grey'} sx={{ mb: '10px' }} />
-										<TranslationCarousal lang={lang} setLang={setLang} />
-									</>
-								) : (
-									<></>
-								)}
+								<FeatureWrapper name='translationsOnMedia'>
+									{translated ? (
+										<>
+											<Divider color={'grey'} sx={{ mb: '10px' }} />
+											<TranslationCarousal lang={lang} setLang={setLang} />
+										</>
+									) : isEdit && !translatedOnEdit ? (
+										<>
+											<Divider color={'grey'} sx={{ mb: '10px' }} />
+											<TranslationCarousal lang={lang} setLang={setLang} />
+										</>
+									) : (
+										<></>
+									)}
+								</FeatureWrapper>
 
 								<div className={classes.buttonDiv}>
 									{isEdit || (status === 'draft' && isEdit) ? (
@@ -2410,9 +2426,21 @@ const UploadOrEditMedia = ({
 															? editBtnDisabled
 															: !validateForm(form)
 													}
-													onClick={handlePublishTranslateButtonOnClick()}
+													onClick={
+														isTranslationsEnabled
+															? handlePublishTranslateButtonOnClick
+															: addSaveMediaBtn
+													}
 													button2AddSave={true}
-													text={handlePublishTranslateButtonText()}
+													text={
+														isTranslationsEnabled
+															? !translated && !isEdit
+																? 'TRANSLATE'
+																: isEdit && translatedOnEdit
+																? 'TRANSLATE'
+																: buttonText
+															: buttonText
+													}
 												/>
 											</div>
 										</div>

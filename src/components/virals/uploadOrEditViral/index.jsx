@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
 // import classes from './_uploadOrEditViral.module.scss';
 import { useDropzone } from 'react-dropzone';
@@ -19,7 +20,7 @@ import { getLocalStorageDetails } from '../../../data/utils';
 import uploadFileToServer from '../../../data/utils/uploadFileToServer';
 import validateForm from '../../../data/utils/validateForm';
 import validateDraft from '../../../data/utils/validateDraft';
-import { Tooltip, Fade } from '@mui/material';
+import { Tooltip, Fade, Divider } from '@mui/material';
 import ToggleSwitch from '../../switch';
 // import Fade from '@mui/material/Fade';
 import Slide from '@mui/material/Slide';
@@ -29,7 +30,8 @@ import LoadingOverlay from 'react-loading-overlay';
 import { useStyles } from './index.styles';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
-
+import TranslationCarousal from '../../TranslationCarousal';
+import FeatureWrapper from '../../FeatureWrapper';
 //new labels
 
 const UploadOrEditViral = ({
@@ -66,6 +68,16 @@ const UploadOrEditViral = ({
 		show_likes: true,
 		show_comments: true
 	});
+	const [translated, setTranslated] = useState(false);
+	const [translatedLanguages, setTranslatedLanguages] = useState();
+	const [lang, setLang] = useState({
+		id: 0,
+		name: 'English', //language name
+		prefix: 'ENG', // figma
+		shortName: 'en' //api
+	});
+	const [captionValue, setCaptionValue] = useState('');
+	const [translatedOnEdit, setTranslatedOnEdit] = useState(false);
 
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
@@ -78,6 +90,12 @@ const UploadOrEditViral = ({
 	const { specificViralStatus } = useSelector(
 		(state) => state.rootReducer.viralLibrary
 	);
+
+	const {
+		features: { translationsOnVirals }
+	} = useSelector((state) => state.rootReducer.remoteConfig);
+
+	const isTranslationsEnabled = translationsOnVirals?._value === 'true';
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -284,6 +302,54 @@ const UploadOrEditViral = ({
 		}, 5000);
 	};
 
+	useEffect(() => {
+		if (translatedLanguages) {
+			let selectedLanguage = lang?.shortName;
+			let translatedLangData = translatedLanguages[selectedLanguage];
+
+			setCaptionValue(translatedLangData?.caption);
+		}
+	}, [lang]);
+
+	const handletranslatedLanguages = (e) => {
+		if (translatedLanguages) {
+			let translatedLanguagesCopy = { ...translatedLanguages };
+			let selectedLanguage = lang?.shortName;
+			translatedLanguagesCopy[selectedLanguage] = { caption: e.target.value };
+			setTranslatedLanguages(translatedLanguagesCopy);
+		}
+	};
+
+	console.log(translatedLanguages, 'tL');
+
+	const translateAPI = async () => {
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/translations/translate`,
+				{
+					caption: form.caption
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+
+			if (result?.data?.status_code === 200) {
+				setTranslatedLanguages(result?.data?.data);
+				setTranslated(true);
+				setTranslatedOnEdit(false);
+				setIsLoadingcreateViral(false);
+			}
+		} catch (e) {
+			toast.error('Failed to translate');
+			setTranslated(false);
+			setTranslatedOnEdit(true);
+			setIsLoadingcreateViral(false);
+			console.log(e, 'Failed to translate');
+		}
+	};
 	const createViral = async (id, file, draft = false) => {
 		setPostButtonStatus(true);
 		try {
@@ -305,7 +371,10 @@ const UploadOrEditViral = ({
 						: '',
 					height: fileHeight,
 					width: fileWidth,
-
+					translations:
+						translatedLanguages && isTranslationsEnabled
+							? translatedLanguages
+							: undefined,
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
 						first_name: `${getLocalStorageDetails()?.first_name}`,
@@ -324,6 +393,9 @@ const UploadOrEditViral = ({
 				{
 					headers: {
 						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					},
+					params: {
+						api_version: isTranslationsEnabled ? 1 : 2
 					}
 				}
 			);
@@ -583,6 +655,41 @@ const UploadOrEditViral = ({
 		}
 	};
 
+	const handleTranslateBtn = () => {
+		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
+			validateViralBtn();
+		} else {
+			setPostButtonStatus(true);
+			setIsLoadingcreateViral(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			if (isEdit) {
+				try {
+					translateAPI();
+				} catch {
+					setIsLoadingcreateViral(false);
+				}
+			} else {
+				try {
+					translateAPI();
+				} catch {
+					setIsLoadingcreateViral(false);
+				}
+			}
+		}
+	};
+
+	const handlePublishTranslateButtonOnClick = () => {
+		if (!translated && !isEdit) {
+			handleTranslateBtn();
+		} else if (isEdit && translatedOnEdit) {
+			handleTranslateBtn();
+			return;
+		} else {
+			handlePostSaveBtn();
+			return;
+		}
+	};
+
 	return (
 		<>
 			<Slider
@@ -814,6 +921,21 @@ const UploadOrEditViral = ({
 										? 'Something needs to be changed to save a draft'
 										: ''}
 								</p>
+								<FeatureWrapper name='translationsOnVirals'>
+									{translated ? (
+										<>
+											<Divider color={'grey'} sx={{ mb: '10px' }} />
+											<TranslationCarousal lang={lang} setLang={setLang} />
+										</>
+									) : isEdit && status === 'draft' && !translatedOnEdit ? (
+										<>
+											<Divider color={'grey'} sx={{ mb: '10px' }} />
+											<TranslationCarousal lang={lang} setLang={setLang} />
+										</>
+									) : (
+										<></>
+									)}
+								</FeatureWrapper>
 
 								<div className={classes.buttonDiv}>
 									{isEdit || (status === 'draft' && isEdit) ? (
@@ -874,8 +996,20 @@ const UploadOrEditViral = ({
 														? editBtnDisabled
 														: !validateForm(form)
 												}
-												onClick={handlePostSaveBtn}
-												text={buttonText}
+												onClick={
+													isTranslationsEnabled
+														? handlePublishTranslateButtonOnClick
+														: handlePostSaveBtn
+												}
+												text={
+													isTranslationsEnabled
+														? !translated && !isEdit
+															? 'TRANSLATE'
+															: isEdit && translatedOnEdit
+															? 'TRANSLATE'
+															: buttonText
+														: buttonText
+												}
 											/>
 										</div>
 									</div>

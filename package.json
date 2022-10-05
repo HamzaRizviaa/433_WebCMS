@@ -20,6 +20,7 @@
 		"capture-video-frame": "^1.0.0",
 		"cropperjs": "^1.5.12",
 		"env-cmd": "^10.1.0",
+		"firebase": "^9.10.0",
 		"formik": "^2.2.9",
 		"interweave": "^12.9.0",
 		"lodash": "^4.17.21",

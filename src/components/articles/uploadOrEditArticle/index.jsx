@@ -126,6 +126,12 @@ const UploadOrEditArticle = ({
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
 
+	const {
+		features: { translationsOnArticles }
+	} = useSelector((state) => state.rootReducer.remoteConfig);
+
+	const isTranslationsEnabled = translationsOnArticles?._value === 'true';
+
 	const elementData = [
 		{
 			image: Text,
@@ -665,6 +671,9 @@ const UploadOrEditArticle = ({
 				{
 					headers: {
 						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					},
+					params: {
+						api_version: isTranslationsEnabled ? 1 : 2
 					}
 				}
 			);
