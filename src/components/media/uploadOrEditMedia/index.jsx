@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-debugger */
 import React, { useState, useEffect, useRef } from 'react';
 //import classes from './_uploadOrEditMedia.module.scss';
@@ -9,30 +10,35 @@ import { MenuItem, TextField, Select } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { useDropzone } from 'react-dropzone';
-import { makeid } from '../../../utils/helper';
+import { makeid } from '../../../data/utils/helper';
 import { useDispatch, useSelector } from 'react-redux';
-import checkFileSize from '../../../utils/validateFileSize';
+import checkFileSize from '../../../data/utils/validateFileSize';
 import ToggleSwitch from '../../switch';
-import completeUplaod from '../../../utils/completeUploadDraft';
-//import uploadFileToServer from '../../../utils/uploadFileToServer';
-import { getMainCategories } from './../../../pages/MediaLibrary/mediaLibrarySlice';
-import { getLocalStorageDetails } from '../../../utils';
-import { getMedia } from '../../../pages/MediaLibrary/mediaLibrarySlice';
+import completeUplaod from '../../../data/utils/completeUploadDraft';
+//import uploadFileToServer from '../../../data/utils/uploadFileToServer';
+import {
+	getMainCategories,
+	getMedia
+} from '../../../data/features/mediaLibrary/mediaLibrarySlice';
+import { getLocalStorageDetails } from '../../../data/utils';
 import Close from '@material-ui/icons/Close';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import DragAndDropField from '../../DragAndDropField';
 import Labels from '../../Labels';
-import { Tooltip, Fade } from '@mui/material';
+import { Tooltip, Fade, Divider } from '@mui/material';
 import Slide from '@mui/material/Slide';
 import { ReactComponent as Info } from '../../../assets/InfoButton.svg';
 import PrimaryLoader from '../../PrimaryLoader';
-import validateForm from '../../../utils/validateForm';
-import validateDraft from '../../../utils/validateDraft';
+import validateForm from '../../../data/utils/validateForm';
+import validateDraft from '../../../data/utils/validateDraft';
 import { useStyles } from './index.style';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
-import { ToastErrorNotifications } from '../../../constants';
+import { ToastErrorNotifications } from '../../../data/constants';
+import FeatureWrapper from '../../FeatureWrapper';
+import TranslationCarousal from '../../TranslationCarousal';
+
 const UploadOrEditMedia = ({
 	open,
 	handleClose,
@@ -87,19 +93,37 @@ const UploadOrEditMedia = ({
 		show_comments: true
 	});
 
+	const [translated, setTranslated] = useState(false);
+	const [translatedLanguages, setTranslatedLanguages] = useState();
+	const [lang, setLang] = useState({
+		id: 0,
+		name: 'English', //language name
+		prefix: 'ENG', // figma
+		shortName: 'en' //api
+	});
+	const [titleValue, setTitleValue] = useState('');
+	const [descriptionValue, setDescriptionValue] = useState('');
+	const [translatedOnEdit, setTranslatedOnEdit] = useState(false);
+
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 
 	const specificMedia = useSelector(
-		(state) => state.mediaLibraryOriginal.specificMedia
+		(state) => state.rootReducer.mediaLibrary.specificMedia
 	);
 	const mainCategories = useSelector(
-		(state) => state.mediaLibraryOriginal.mainCategories
+		(state) => state.rootReducer.mediaLibrary.mainCategories
 	);
 	const specificMediaStatus = useSelector(
-		(state) => state.mediaLibraryOriginal
+		(state) => state.rootReducer.mediaLibrary
 	);
-	const labels = useSelector((state) => state.mediaLibraryOriginal.labels);
+	const labels = useSelector((state) => state.rootReducer.mediaLibrary.labels);
+
+	const {
+		features: { translationsOnMedia }
+	} = useSelector((state) => state.rootReducer.remoteConfig);
+
+	const isTranslationsEnabled = translationsOnMedia?._value === 'true';
 
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
@@ -154,6 +178,16 @@ const UploadOrEditMedia = ({
 				});
 			}
 			setFileDuration(specificMedia?.duration);
+			if (isEdit) {
+				if (specificMedia?.translations) {
+					setTranslatedOnEdit(false); // works in reverse logic of transalted(not Edit)
+				} else {
+					setTranslatedOnEdit(true);
+				}
+			}
+			setTranslatedLanguages(specificMedia?.translations);
+			setTitleValue(specificMedia?.title);
+			setDescriptionValue(specificMedia?.description);
 			setForm((prev) => {
 				return {
 					...prev,
@@ -444,6 +478,17 @@ const UploadOrEditMedia = ({
 			show_likes: true,
 			show_comments: true
 		});
+		setTranslated(false);
+		setTranslatedLanguages();
+		setLang({
+			id: 0,
+			name: 'English',
+			prefix: 'ENG',
+			shortName: 'en'
+		});
+		setTitleValue('');
+		setDescriptionValue('');
+		setTranslatedOnEdit(false);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -565,7 +610,67 @@ const UploadOrEditMedia = ({
 		setExtraLabel(e.target.value.toUpperCase());
 	};
 
-	console.log('fileDuration', fileDuration);
+	useEffect(() => {
+		if (translatedLanguages) {
+			let selectedLanguage = lang?.shortName;
+			let translatedLangData = translatedLanguages[selectedLanguage];
+			setDescriptionValue(translatedLangData?.description);
+			setTitleValue(translatedLangData?.title);
+		}
+	}, [lang]);
+
+	const handletranslatedLanguages = (e, title, desc) => {
+		if (translatedLanguages) {
+			let translatedLanguagesCopy = { ...translatedLanguages };
+			let selectedLanguage = lang?.shortName;
+			if (title) {
+				translatedLanguagesCopy[selectedLanguage] = {
+					...translatedLanguagesCopy[selectedLanguage],
+					title: e.target.value
+				};
+			} else if (desc) {
+				translatedLanguagesCopy[selectedLanguage] = {
+					...translatedLanguagesCopy[selectedLanguage],
+					description: e.target.value
+				};
+			}
+
+			setTranslatedLanguages(translatedLanguagesCopy);
+		}
+	};
+
+	console.log(translatedLanguages, 'tL');
+
+	const translateAPI = async () => {
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/translations/translate`,
+				{
+					title: form.title,
+					description: form.description
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+
+			if (result?.data?.status_code === 200) {
+				setTranslatedLanguages(result?.data?.data);
+				setTranslated(true);
+				setTranslatedOnEdit(false);
+				setIsLoadingUploadMedia(false);
+			}
+		} catch (e) {
+			toast.error('Failed to translate');
+			setTranslated(false);
+			setTranslatedOnEdit(true);
+			setIsLoadingUploadMedia(false);
+			console.log(e, 'Failed to translate');
+		}
+	};
+
 	const uploadMedia = async (id, payload) => {
 		let media_type = form.mainCategory?.id;
 
@@ -581,8 +686,16 @@ const UploadOrEditMedia = ({
 							save_draft: false,
 							width: fileWidth,
 							height: fileHeight,
-							title: form.title,
-							description: form.description,
+							title: translatedLanguages
+								? translatedLanguages['en']?.title
+								: form.title,
+							description: translatedLanguages
+								? translatedLanguages['en']?.description
+								: form.description,
+							translations:
+								translatedLanguages && isTranslationsEnabled
+									? translatedLanguages
+									: undefined,
 							labels: [...form.labels],
 							dropbox_url: {
 								media: form.media_dropbox_url ? form.media_dropbox_url : '',
@@ -607,6 +720,9 @@ const UploadOrEditMedia = ({
 				{
 					headers: {
 						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					},
+					params: {
+						api_version: isTranslationsEnabled ? 1 : 2
 					}
 				}
 			);
@@ -767,10 +883,11 @@ const UploadOrEditMedia = ({
 						specificMedia?.labels?.length === form?.labels?.length &&
 						!checkDuplicateLabel() &&
 						specificMedia?.show_likes === form.show_likes &&
-						specificMedia?.show_comments === form.show_comments)
+						specificMedia?.show_comments === form.show_comments &&
+						!translated)
 			);
 		}
-	}, [specificMedia, form]);
+	}, [specificMedia, form, translated]);
 
 	const mainCategoryId = (e) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
@@ -928,8 +1045,15 @@ const UploadOrEditMedia = ({
 						Promise.all([...completedUpload]).then(async (mediaFiles2) => {
 							console.log('mediaFiles2', mediaFiles2);
 							await uploadMedia(specificMedia?.id, {
-								title: form.title,
-								description: form.description,
+								title: translatedLanguages
+									? translatedLanguages['en']?.title
+									: form.title,
+								translations: translatedLanguages
+									? translatedLanguages
+									: undefined,
+								description: translatedLanguages
+									? translatedLanguages['en']?.description
+									: form.description,
 								duration: Math.round(fileDuration),
 								type: 'medialibrary',
 								save_draft: false,
@@ -1266,8 +1390,13 @@ const UploadOrEditMedia = ({
 				await uploadMedia(specificMedia?.id, {
 					save_draft: true,
 					type: 'medialibrary',
-					title: form.title,
-					description: form.description,
+					title: translatedLanguages
+						? translatedLanguages['en']?.title
+						: form.title,
+					translations: translatedLanguages ? translatedLanguages : undefined,
+					description: translatedLanguages
+						? translatedLanguages['en']?.description
+						: form.description,
 					duration: Math.round(fileDuration),
 					main_category_id: media_type,
 					sub_category_id: subId,
@@ -1460,6 +1589,43 @@ const UploadOrEditMedia = ({
 					// ...completeUpload?.data?.data
 				});
 			}
+		}
+	};
+
+	const handleTranslateBtn = () => {
+		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
+			validatePostBtn();
+		} else {
+			setIsLoadingUploadMedia(true);
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			try {
+				translateAPI();
+			} catch {
+				setIsLoadingUploadMedia(false);
+			}
+		}
+	};
+
+	const handlePublishTranslateButtonText = () => {
+		if (!translated && !isEdit) {
+			return 'TRANSLATE';
+		} else if (isEdit && translatedOnEdit) {
+			return 'TRANSLATE';
+		} else {
+			return buttonText;
+		}
+	};
+
+	const handlePublishTranslateButtonOnClick = () => {
+		if (!translated && !isEdit) {
+			handleTranslateBtn();
+			return;
+		} else if (isEdit && translatedOnEdit) {
+			handleTranslateBtn();
+			return;
+		} else {
+			addSaveMediaBtn();
+			return;
 		}
 	};
 
@@ -2010,37 +2176,53 @@ const UploadOrEditMedia = ({
 													>
 														TITLE
 													</h6>
-													<h6
-														style={{
-															color:
-																form.title?.length >= 38 &&
-																form.title?.length <= 42
-																	? 'pink'
-																	: form.title?.length === 43
-																	? 'red'
-																	: 'white'
-														}}
-													>
-														{form.title?.length}/43
-													</h6>
+													{lang?.shortName === 'en' ? (
+														<h6
+															style={{
+																color:
+																	titleValue?.length >= 38 &&
+																	titleValue?.length <= 42
+																		? 'pink'
+																		: titleValue?.length === 43
+																		? 'red'
+																		: 'white'
+															}}
+														>
+															{titleValue?.length}/43
+														</h6>
+													) : (
+														<></>
+													)}
 												</div>
 												<TextField
-													value={form.title}
-													onChange={(e) =>
+													value={titleValue}
+													onChange={(e) => {
+														if (translated && lang?.shortName === 'en') {
+															setTranslated(false);
+															setTranslatedLanguages();
+														}
+														if (isEdit && lang?.shortName === 'en') {
+															setTranslatedOnEdit(true);
+															setTranslatedLanguages();
+														}
+														if (lang?.shortName !== 'en') {
+															handletranslatedLanguages(e, true);
+														}
+
 														setForm((prev) => {
-															return {
-																...prev,
-																title: e.target.value
-															};
-														})
-													}
+															return { ...prev, title: e.target.value };
+														});
+														setTitleValue(e.target.value);
+													}}
 													placeholder={'Please write your title here'}
 													className={globalClasses.textField}
 													InputProps={{
 														disableUnderline: true,
 														className: classes.textFieldInput
 													}}
-													inputProps={{ maxLength: 43 }}
+													inputProps={
+														lang?.shortName === 'en' ? { maxLength: 43 } : ''
+													}
 													multiline
 													maxRows={2}
 												/>
@@ -2090,15 +2272,25 @@ const UploadOrEditMedia = ({
 													DESCRIPTION
 												</h6>
 												<TextField
-													value={form.description}
-													onChange={(e) =>
+													value={descriptionValue}
+													onChange={(e) => {
+														if (translated && lang?.shortName === 'en') {
+															setTranslated(false);
+															setTranslatedLanguages();
+														}
+														if (isEdit && lang?.shortName === 'en') {
+															setTranslatedOnEdit(true);
+															setTranslatedLanguages();
+														}
+														if (lang?.shortName !== 'en') {
+															handletranslatedLanguages(e, false, true);
+														}
+
 														setForm((prev) => {
-															return {
-																...prev,
-																description: e.target.value
-															};
-														})
-													}
+															return { ...prev, description: e.target.value };
+														});
+														setDescriptionValue(e.target.value);
+													}}
 													placeholder={'Please write your description here'}
 													className={globalClasses.textField}
 													InputProps={{
@@ -2159,6 +2351,21 @@ const UploadOrEditMedia = ({
 										? 'Something needs to be changed to save a draft'
 										: ''}
 								</p>
+								<FeatureWrapper name='translationsOnMedia'>
+									{translated ? (
+										<>
+											<Divider color={'grey'} sx={{ mb: '10px' }} />
+											<TranslationCarousal lang={lang} setLang={setLang} />
+										</>
+									) : isEdit && !translatedOnEdit ? (
+										<>
+											<Divider color={'grey'} sx={{ mb: '10px' }} />
+											<TranslationCarousal lang={lang} setLang={setLang} />
+										</>
+									) : (
+										<></>
+									)}
+								</FeatureWrapper>
 
 								<div className={classes.buttonDiv}>
 									{isEdit || (status === 'draft' && isEdit) ? (
@@ -2219,9 +2426,21 @@ const UploadOrEditMedia = ({
 															? editBtnDisabled
 															: !validateForm(form)
 													}
-													onClick={() => addSaveMediaBtn()}
+													onClick={
+														isTranslationsEnabled
+															? handlePublishTranslateButtonOnClick
+															: addSaveMediaBtn
+													}
 													button2AddSave={true}
-													text={buttonText}
+													text={
+														isTranslationsEnabled
+															? !translated && !isEdit
+																? 'TRANSLATE'
+																: isEdit && translatedOnEdit
+																? 'TRANSLATE'
+																: buttonText
+															: buttonText
+													}
 												/>
 											</div>
 										</div>

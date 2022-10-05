@@ -9,7 +9,7 @@ export const useStyles = makeStyles(() => ({
 		padding: '4px 24px !important'
 	},
 	dialogBox: {
-		backgroundColor: ` ${theme.palette.grey} !important`,
+		backgroundColor: ` ${theme.palette.normalGrey} !important`,
 		// padding: '16px',
 		borderRadius: '8px !important',
 		width: '420px',

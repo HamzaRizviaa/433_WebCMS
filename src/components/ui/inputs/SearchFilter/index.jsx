@@ -4,7 +4,7 @@ import { InputAdornment, TextField } from '@material-ui/core';
 import { useSearchParams } from 'react-router-dom';
 import { ReactComponent as SearchIcon } from '../../../../assets/SearchIcon.svg';
 import { useStyles } from './index.styled';
-import { changeQueryParameters } from '../../../../utils/helper';
+import { changeQueryParameters } from '../../../../data/utils/helper';
 
 function SearchFilter({ placeholder, isError, errorMessage }) {
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -16,9 +16,7 @@ function SearchFilter({ placeholder, isError, errorMessage }) {
 
 	const handleKeyPress = (e) => {
 		if (e.key === 'Enter') {
-			const queryParams = changeQueryParameters(searchParams, {
-				query: search
-			});
+			const queryParams = changeQueryParameters(searchParams, { q: search });
 
 			setSearchParams(queryParams);
 		}

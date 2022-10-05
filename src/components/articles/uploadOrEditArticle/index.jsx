@@ -5,17 +5,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Box, Grid } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import { makeid } from '../../../utils/helper';
+import { makeid } from '../../../data/utils/helper';
 import { useDispatch, useSelector } from 'react-redux';
-import { getLocalStorageDetails } from '../../../utils';
+import { getLocalStorageDetails } from '../../../data/utils';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
-import uploadFileToServer from '../../../utils/uploadFileToServer';
+import uploadFileToServer from '../../../data/utils/uploadFileToServer';
 import Slide from '@mui/material/Slide';
-import checkFileSize from '../../../utils/validateFileSize';
-import validateForm from '../../../utils/validateForm';
-import validateDraft from '../../../utils/validateDraft';
+import checkFileSize from '../../../data/utils/validateFileSize';
+import validateForm from '../../../data/utils/validateForm';
+import validateDraft from '../../../data/utils/validateDraft';
 import PrimaryLoader from '../../PrimaryLoader';
 import { useStyles } from './index.style';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
@@ -48,7 +47,7 @@ import {
 	getAllArticlesApi,
 	getArticleMainCategories,
 	getArticleSubCategories
-} from '../../../pages/ArticleLibrary/articleLibrarySlice';
+} from '../../../data/features/articleLibrary/articleLibrarySlice';
 
 import { aws4Interceptor } from 'aws4-axios';
 
@@ -65,9 +64,9 @@ import {
 	checkNewElementQuestion,
 	checkEmptyQuestionDraft,
 	checkNewElementQuestionDraft
-} from '../../../utils/articleUtils';
+} from '../../../data/utils/articleUtils';
 import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDraggable';
-import { ToastErrorNotifications } from '../../../constants';
+import { ToastErrorNotifications } from '../../../data/constants';
 
 const UploadOrEditArticle = ({
 	open,
@@ -126,6 +125,12 @@ const UploadOrEditArticle = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
+
+	const {
+		features: { translationsOnArticles }
+	} = useSelector((state) => state.rootReducer.remoteConfig);
+
+	const isTranslationsEnabled = translationsOnArticles?._value === 'true';
 
 	const elementData = [
 		{
@@ -227,13 +232,13 @@ const UploadOrEditArticle = ({
 		}
 	}, [fileRejectionsAvatar]);
 
-	const labels = useSelector((state) => state.postLibrary.labels);
+	const labels = useSelector((state) => state.rootReducer.postsLibrary.labels);
 	const {
 		specificArticle,
 		specificArticleStatus,
 		subCategories,
 		mainCategories
-	} = useSelector((state) => state.ArticleLibraryStore);
+	} = useSelector((state) => state.rootReducer.articleLibrary);
 
 	useEffect(() => {
 		// dispatch(getPostLabels());
@@ -666,6 +671,9 @@ const UploadOrEditArticle = ({
 				{
 					headers: {
 						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					},
+					params: {
+						api_version: isTranslationsEnabled ? 1 : 2
 					}
 				}
 			);

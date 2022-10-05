@@ -16,7 +16,7 @@ import QuizDetails from '../../components/Questions/QuestionDetails/QuizDetails'
 import PollDetails from '../../components/Questions/QuestionDetails/PollDetails';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import Pagination from '@mui/material/Pagination';
-import { useStyles } from '../../utils/styles';
+import { useStyles } from '../../data/utils/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -27,7 +27,7 @@ import {
 	getDateConstantTime,
 	formatDate,
 	getCalendarText
-} from '../../utils';
+} from '../../data/utils';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import { Markup } from 'interweave';
@@ -38,24 +38,28 @@ import {
 	resetCalendarError,
 	resetNoResultStatus,
 	getQuestionEdit
-} from './questionLibrarySlice';
-import { getAllNewLabels } from '../PostLibrary/postLibrarySlice';
+} from '../../data/features/questionsLibrary/questionsLibrarySlice';
+import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
 import { useNavigate } from 'react-router-dom';
 
 const QuestionLibrary = () => {
 	// Selectors
-	const questions = useSelector((state) => state.questionLibrary.questions);
-	const statusQuestionApi = useSelector((state) => state.questionLibrary);
+	const questions = useSelector(
+		(state) => state.rootReducer.questionsLibrary.questions
+	);
+	const statusQuestionApi = useSelector(
+		(state) => state.rootReducer.questionsLibrary
+	);
 	const totalRecords = useSelector(
-		(state) => state.questionLibrary.totalRecords
+		(state) => state.rootReducer.questionsLibrary.totalRecords
 	);
 	const noResultStatus = useSelector(
-		(state) => state.questionLibrary.noResultStatus
+		(state) => state.rootReducer.questionsLibrary.noResultStatus
 	);
 	const noResultStatusCalendar = useSelector(
-		(state) => state.questionLibrary.noResultStatusCalendar
+		(state) => state.rootReducer.questionsLibrary.noResultStatusCalendar
 	);
 
 	const navigate = useNavigate();
@@ -674,7 +678,7 @@ const QuestionLibrary = () => {
 						data={questions}
 					/>
 				</div>
-				
+
 				<div className={classes.paginationRow}>
 					<Pagination
 						className={muiClasses.root}
@@ -710,7 +714,7 @@ const QuestionLibrary = () => {
 						className={classes.gotoInput}
 					/>
 				</div>
-				
+
 				{/* upload */}
 				<UploadOrEditQuiz
 					open={showSlider}

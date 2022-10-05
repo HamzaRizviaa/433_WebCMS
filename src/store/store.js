@@ -7,6 +7,8 @@ import articleLibraryReducer from '../pages/ArticleLibrary/articleLibrarySlice';
 import topBannerReducer from '../pages/TopBanner/topBannerSlice';
 import gamesLibraryReducer from '../pages/GamesLibrary/gamesLibrarySlice';
 import newsLibraryReducer from '../pages/NewsLibrary/newsLibrarySlice';
+import remoteConfigSlice from './remoteConfigSlice';
+
 const store = configureStore({
 	reducer: {
 		postLibrary: postLibraryReducer,
@@ -16,7 +18,8 @@ const store = configureStore({
 		ViralLibraryStore: viralLibraryReducer,
 		ArticleLibraryStore: articleLibraryReducer,
 		GamesLibraryStore: gamesLibraryReducer,
-		NewsLibrary: newsLibraryReducer
+		NewsLibrary: newsLibraryReducer,
+		remoteConfig: remoteConfigSlice
 	}
 });
 

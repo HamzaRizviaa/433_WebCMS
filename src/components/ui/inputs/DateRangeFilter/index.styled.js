@@ -27,7 +27,11 @@ export const useStyles = makeStyles(() => ({
 		whiteSpace: 'pre-wrap',
 		display: 'flex',
 		alignItems: 'center',
-		color: (props) => (props.hasData ? '#fff' : '#808080')
+		color: (props) => (props.hasData ? '#fff' : '#808080'),
+
+		'& svg': {
+			marginRight: 4
+		}
 	},
 	inputIcon: { display: 'flex', alignItems: 'center', cursor: 'pointer' },
 	dateRangePickerWrapper: {

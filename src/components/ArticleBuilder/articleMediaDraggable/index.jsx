@@ -6,14 +6,14 @@ import { Draggable } from 'react-beautiful-dnd';
 // import Close from '@material-ui/icons/Close';
 import { useStyles } from './index.style';
 import { useDropzone } from 'react-dropzone';
-import checkFileSize from '../../../utils/validateFileSize';
+import checkFileSize from '../../../data/utils/validateFileSize';
 import { TextField } from '@material-ui/core';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DragAndDropField from '../../DragAndDropField';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import { makeid } from '../../../utils/helper';
+import { makeid } from '../../../data/utils/helper';
 import { ReactComponent as Union } from '../../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 const ArticleMediaDraggable = ({

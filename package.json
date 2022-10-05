@@ -20,6 +20,7 @@
 		"capture-video-frame": "^1.0.0",
 		"cropperjs": "^1.5.12",
 		"env-cmd": "^10.1.0",
+		"firebase": "^9.10.0",
 		"formik": "^2.2.9",
 		"interweave": "^12.9.0",
 		"lodash": "^4.17.21",
@@ -40,6 +41,7 @@
 		"react-scripts": "4.0.3",
 		"react-toastify": "^8.1.0",
 		"redux": "^4.1.1",
+		"reselect": "^4.1.6",
 		"use-debounce": "^8.0.4",
 		"use-sound": "^4.0.1",
 		"web-vitals": "^1.0.1"
