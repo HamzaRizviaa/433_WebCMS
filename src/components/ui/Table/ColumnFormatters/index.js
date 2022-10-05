@@ -1,15 +1,17 @@
 import React from "react";
 import OptionsFormatter from "./OptionsFormatter";
-import StatusFormatter from "./StatusFormatter";
+import StatusBadge from "../../StatusBadge";
+import MediaPreviewer from "../../../common/MediaPreviewer";
 
 const formatter = {
-    status: StatusFormatter,
-    options: OptionsFormatter
+    status: StatusBadge,
+    options: OptionsFormatter,
+    media: MediaPreviewer
 }
 
-export const getFormatter = (option, styledClass = null, props) => {
+export const getFormatter = (option, props) => {
     if(Object.prototype.hasOwnProperty.call(formatter, `${option}`)){
         const Formatter = formatter[option]
-        return <Formatter params={props} styledClass={styledClass ? styledClass : null} />
+        return <Formatter {...props} />
     }
 }
