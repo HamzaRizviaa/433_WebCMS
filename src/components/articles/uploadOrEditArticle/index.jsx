@@ -25,6 +25,7 @@ import Text from '../../../assets/Text.svg';
 import ImageVideo from '../../../assets/Image.svg';
 import Tweet from '../../../assets/Twitter Line.svg';
 import Question from '../../../assets/Quiz.svg';
+import ToggleSwitch from '../../switch';
 
 /*  ArticleBuilder imports  */
 import ArticleElements from '../../ArticleBuilder/ArticleElements'; // left pan of buttons
@@ -102,6 +103,8 @@ const UploadOrEditArticle = ({
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const loadingRef = useRef(null);
+	const scrollRef = useRef(null);
+	const topElementRef = useRef(null);
 
 	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
 
@@ -122,6 +125,7 @@ const UploadOrEditArticle = ({
 	});
 	const [data, setData] = useState([]);
 	const [dataErrors, setDataErrors] = useState(Array(data?.length).fill(false));
+	const [itemsOnTop, setItemsOnTop] = useState(false);
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
@@ -826,6 +830,7 @@ const UploadOrEditArticle = ({
 		});
 		setDataErrors(Array(data.length).fill(false));
 		setData([]);
+		setItemsOnTop(false);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -1017,19 +1022,44 @@ const UploadOrEditArticle = ({
 	};
 
 	const handleArticleElement = (dataItem) => {
-		setData((prev) => {
-			return [
-				...prev,
-				{
-					sortOrder: data.length + 1,
-					heading: dataItem.text,
-					component: dataItem.component,
-					element_type: dataItem.type,
-					isOpen: true,
-					deleted: false
-				}
-			];
-		});
+		if (itemsOnTop) {
+			setData((prev) => {
+				return [
+					{
+						sortOrder: data.length + 1,
+						heading: dataItem.text,
+						component: dataItem.component,
+						element_type: dataItem.type,
+						isOpen: true,
+						deleted: false
+					},
+					...prev
+				];
+			});
+			setTimeout(() => {
+				topElementRef?.current?.scrollIntoView({
+					block: 'end',
+					behavior: 'smooth'
+				});
+			});
+		} else {
+			setData((prev) => {
+				return [
+					...prev,
+					{
+						sortOrder: data.length + 1,
+						heading: dataItem.text,
+						component: dataItem.component,
+						element_type: dataItem.type,
+						isOpen: true,
+						deleted: false
+					}
+				];
+			});
+			setTimeout(() => {
+				scrollRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' });
+			});
+		}
 	};
 
 	const checkNewAuthorImage = () => {
@@ -1688,6 +1718,27 @@ const UploadOrEditArticle = ({
 												<h2>Elements</h2>
 												<p>Add elements to build your article</p>
 											</Box>
+											<Box
+												sx={{
+													display: 'flex',
+													alignItems: 'center',
+													justifyContent: 'space-between',
+													width: '100%'
+												}}
+											>
+												<h4 style={{ fontSize: '14px', color: 'white' }}>
+													Add elements to the top
+												</h4>
+												<Box>
+													<ToggleSwitch
+														id={1}
+														checked={itemsOnTop}
+														onChange={(checked) => {
+															setItemsOnTop(checked);
+														}}
+													/>
+												</Box>
+											</Box>
 											<ArticleElements
 												data={elementData}
 												onClick={(dataItem) => handleArticleElement(dataItem)}
@@ -1731,10 +1782,16 @@ const UploadOrEditArticle = ({
 											setExtraLabel={setExtraLabel}
 											isError={isError}
 										/>
+										<Box
+											sx={{
+												scrollMarginBottom: '400px'
+											}}
+											ref={topElementRef}
+										></Box>
 										<DraggableWrapper onDragEnd={onDragEnd}>
 											{data.map((item, index) => {
 												return (
-													<>
+													<div ref={scrollRef} key={index}>
 														{React.createElement(item.component, {
 															sendDataToParent: (data) =>
 																setNewData(data, index),
@@ -1764,7 +1821,7 @@ const UploadOrEditArticle = ({
 																dataErrors[index] &&
 																'This field is required'}
 														</p>
-													</>
+													</div>
 												);
 											})}
 										</DraggableWrapper>
