@@ -291,12 +291,17 @@ const ArticleTextDraggable = ({
 													]
 												},
 												{
-													title: 'Custom Color',
+													title: 'Color',
 													items: [
 														{
-															title: '433 Default',
+															title: '433 Yello',
 															inline: 'span',
 															styles: { color: '#ffff00' }
+														},
+														{
+															title: 'White',
+															inline: 'span',
+															styles: { color: '#ffffff' }
 														}
 													]
 												}
