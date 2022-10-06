@@ -9,6 +9,8 @@ import { useTopbarStyles } from './index.style';
 const DashboardTopbar = ({
 	title,
 	onButtonClick,
+	isSearchFilterError = false,
+	isDateFilterError = false,
 	hideBtn = false,
 	hideSearchFilter = false,
 	hideDateFilter = false
@@ -30,9 +32,16 @@ const DashboardTopbar = ({
 				{!hideSearchFilter && (
 					<SearchFilter
 						placeholder={`Search for ${capitalize(title)}, User, Label, ID`}
+						errorMessage='No results found'
+						isError={isSearchFilterError}
 					/>
 				)}
-				{!hideDateFilter && <DateRangeFilter />}
+				{!hideDateFilter && (
+					<DateRangeFilter
+						errorMessage='No results found'
+						isError={isDateFilterError}
+					/>
+				)}
 			</div>
 		</div>
 	);
@@ -41,6 +50,8 @@ const DashboardTopbar = ({
 DashboardTopbar.propTypes = {
 	title: PropTypes.string.isRequired,
 	onButtonClick: PropTypes.func,
+	isSearchFilterError: PropTypes.bool,
+	isDateFilterError: PropTypes.bool,
 	hideBtn: PropTypes.bool,
 	hideSearchFilter: PropTypes.bool,
 	hideDateFilter: PropTypes.bool

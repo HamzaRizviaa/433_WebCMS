@@ -30,7 +30,11 @@ import {
 	comparingNewsFields,
 	checkNewElementNEWS,
 	checkNewElementNEWSDraft,
-	checkSortOrderOnEdit,
+	checkSortOrderOnEdit
+	// checkDuplicateLabel
+} from '../../../data/utils/newsUtils';
+import FeatureWrapper from '../../../components/FeatureWrapper';
+import {
 	checkDuplicateLabel,
 	validateForm,
 	validateDraft,
@@ -40,7 +44,7 @@ import {
 
 //api calls
 
-import { getAllNews } from "../../../data/features/newsLibrary/newsLibrarySlice";
+import { getAllNews } from '../../../data/features/newsLibrary/newsLibrarySlice';
 import { TextField } from '@material-ui/core';
 import { ToastErrorNotifications } from '../../../data/constants';
 
@@ -82,6 +86,7 @@ const UploadOrEditNews = ({
 	const dialogWrapper = useRef(null);
 
 	const dispatch = useDispatch();
+	const { features } = useSelector((state) => state.rootReducer.remoteConfig);
 	const labels = useSelector((state) => state.rootReducer.postsLibrary.labels);
 	const { specificNews, specificNewsStatus } = useSelector(
 		(state) => state.rootReducer.newsLibrary

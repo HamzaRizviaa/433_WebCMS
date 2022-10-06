@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 
-export const useStyles = makeStyles(() => ({
+export const useStyles = makeStyles((theme) => ({
 	root: {
 		'& .MuiPagination-ul': {
 			display: 'flex',
@@ -63,6 +63,41 @@ export const useStyles = makeStyles(() => ({
 		},
 		'&. Mui-focused': {
 			display: 'none !important'
+		}
+	},
+
+	paginationRow: {
+		display: 'flex',
+		justifyContent: 'flex-end',
+		alignItems: 'center',
+		position: 'absolute',
+		bottom: '0',
+		right: '0',
+		padding: '1vw 2vw'
+	},
+
+	gotoText: {
+		fontSize: '12px',
+		fontWeight: 700,
+		margin: '0px 10px'
+	},
+
+	gotoInput: {
+		border: ({ paginationError }) =>
+			paginationError
+				? `1px solid ${theme.palette.red}`
+				: `1px solid ${theme.palette.normalGrey}`,
+		background: '#000000',
+		color: 'white',
+		borderRadius: '8px',
+		padding: '6px',
+		width: '50px',
+		'&:focus': {
+			border: ({ paginationError }) =>
+				paginationError
+					? `1px solid ${theme.palette.red}`
+					: `1px solid ${theme.palette.neonYellow}`,
+			outline: 'none'
 		}
 	}
 }));

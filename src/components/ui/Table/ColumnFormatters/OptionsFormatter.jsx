@@ -17,8 +17,8 @@ const OptionsFormatter = ({ title, styledClass }) => {
 };
 
 OptionsFormatter.propTypes = {
-	styledClass: PropTypes.string.isRequired,
-	params: PropTypes.string.isRequired
+	title: PropTypes.string.isRequired,
+	styledClass: PropTypes.string
 };
 
 export default OptionsFormatter;
