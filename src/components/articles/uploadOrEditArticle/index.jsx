@@ -1010,8 +1010,9 @@ const UploadOrEditArticle = ({
 	};
 
 	const handleArticleElement = (dataItem) => {
-		scrollRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' });
-		console.log('HERER', scrollRef);
+		setTimeout(() => {
+			scrollRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' });
+		});
 		setData((prev) => {
 			return [
 				...prev,
