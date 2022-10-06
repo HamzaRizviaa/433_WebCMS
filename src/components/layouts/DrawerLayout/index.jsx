@@ -1,5 +1,5 @@
 import React from 'react';
-import Slider from '../../slider';
+import DrawerLayoutSlider from '../../common/DrawerLayoutSlider';
 import PrimaryLoader from '../../ui/loaders/PrimaryLoader';
 import Slide from '@mui/material/Slide';
 import PropTypes from 'prop-types';
@@ -9,25 +9,29 @@ const DrawerLayout = ({
     handleClose,
     title,
     disableDropdown,
-    handlePreviewEscape,
-    previewBool,
+    handlePreview,
+    preview,
     previewRef,
     dialogWrapper,
     notifID,
     isLoading,
     mainPage,
-    children
+    children,
+    edit,
+    fromArticle
 }) => {
     return(
-        <Slider
+        <DrawerLayoutSlider
 			open={open}
 			handleClose={handleClose}
 			title={title}
 			disableDropdown={disableDropdown}
-			handlePreview={handlePreviewEscape}
-			preview={previewBool}
+			handlePreview={handlePreview}
+			preview={preview}
 			previewRef={previewRef}
-			news={true}
+            edit={edit}
+            fromArticle={fromArticle}
+			imagePreview={true}
 			dialogRef={dialogWrapper}
 			notifID={notifID}
 		>
@@ -36,17 +40,19 @@ const DrawerLayout = ({
                     {children}
                 </Slide>
             </PrimaryLoader>
-        </Slider>
+        </DrawerLayoutSlider>
     )
 }
 
 DrawerLayout.propTypes = {
     open: PropTypes.bool.isRequired,
+    edit: PropTypes.bool.isRequired,
+    fromArticle: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
     disableDropdown: PropTypes.func.isRequired,
-    handlePreviewEscape: PropTypes.func.isRequired,
-    previewBool: PropTypes.bool.isRequired,
+    handlePreview: PropTypes.func.isRequired,
+    preview: PropTypes.bool.isRequired,
     previewRef: PropTypes.oneOfType([
         PropTypes.func,
         PropTypes.shape({ current: PropTypes.instanceOf(Element) })

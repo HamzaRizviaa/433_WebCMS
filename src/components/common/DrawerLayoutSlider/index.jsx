@@ -1,14 +1,13 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import classes from './_slider.module.scss';
+import { DrawerLayoutStyles } from './index.style';
 import Close from '@material-ui/icons/Close';
 import { Backdrop, Box, Paper, Slide } from '@material-ui/core';
-import CopyToClipboard from '../CopyToClipboard';
-import { ReactComponent as CopyIcon } from '../../assets/Copy.svg';
+import CopyToClipboard from '../../CopyToClipboard';
+import { ReactComponent as CopyIcon } from '../../../assets/Copy.svg';
 
-const Slider = ({
-	children,
+const DrawerLayoutSlider = ({
+    children,
 	open,
 	handleClose,
 	title,
@@ -16,18 +15,14 @@ const Slider = ({
 	handlePreview,
 	preview,
 	previewRef,
-	orientationRef,
 	dialogRef,
 	edit,
-	media,
-	quiz,
-	viral,
-	article,
-	games,
-	news,
-	notifID
+    fromArticle,
+	notifID,
+	imagePreview
 }) => {
-	const wrapperRef = useRef(null);
+    const classes = DrawerLayoutStyles({ fromArticle })
+    const wrapperRef = useRef(null);
 
 	useEffect(() => {
 		const close = (e) => {
@@ -43,32 +38,6 @@ const Slider = ({
 
 	useEffect(() => {
 		function handleClickOutside(event) {
-			// if (
-			// 	wrapperRef.current &&
-			// 	disableDropdown &&
-			// 	!preview &&
-			// 	!wrapperRef.current.contains(event.target) &&
-			// 	(dialogRef?.current
-			// 		? dialogRef.current && !dialogRef.current.contains(event.target)
-			// 		: true)
-			// ) {
-			// 	handleClose();
-			// }
-			if (
-				!media &&
-				!quiz &&
-				!games &&
-				!news &&
-				!viral &&
-				!article &&
-				preview &&
-				previewRef?.current &&
-				!previewRef?.current.contains(event.target) &&
-				orientationRef?.current &&
-				!orientationRef?.current.contains(event.target)
-			) {
-				handlePreview();
-			}
 			if (
 				edit &&
 				preview &&
@@ -78,7 +47,7 @@ const Slider = ({
 				handlePreview();
 			}
 			if (
-				(media || quiz || games || viral || article || news) &&
+				imagePreview &&
 				preview &&
 				previewRef.current &&
 				!previewRef.current.contains(event.target)
@@ -91,10 +60,9 @@ const Slider = ({
 		return () => document.removeEventListener('mousedown', handleClickOutside);
 	}, [wrapperRef, disableDropdown, preview, dialogRef]);
 
-	return (
-		<div>
-			<Backdrop
-				//onClick={() => handleClose()}
+    return (
+        <div>
+            <Backdrop
 				className={classes.backdrop}
 				open={open}
 			>
@@ -107,19 +75,12 @@ const Slider = ({
 					ref={wrapperRef}
 				>
 					<Paper
-						// tabIndex='0'
-						// onKeyDown={(e) => {
-						// 	if (e.key === 'Escape') {
-						// 		handleClose();
-						// 	}
-						// }}
-
 						elevation={4}
 						className={classes.paper}
 						style={{ maxWidth: `${preview ? 'none' : '40%'}` }}
 					>
 						<div className={classes.content}>
-							<div className={classes.header}>
+							<div className={fromArticle ? classes.articleBuilderHeader : classes.header}>
 								<Close
 									onClick={() => handleClose()}
 									className={classes.closeIcon}
@@ -149,16 +110,18 @@ const Slider = ({
 					</Paper>
 				</Slide>
 			</Backdrop>
-		</div>
-	);
-};
+        </div>
+    )
+}
 
-Slider.propTypes = {
+DrawerLayoutSlider.propTypes = {
 	children: PropTypes.element.isRequired,
 	open: PropTypes.bool.isRequired,
+    fromArticle: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	title: PropTypes.string.isRequired,
 	disableDropdown: PropTypes.bool.isRequired,
+	imagePreview: PropTypes.bool.isRequired,
 	handlePreview: PropTypes.func.isRequired,
 	preview: PropTypes.bool.isRequired,
 	previewRef: PropTypes.oneOfType([
@@ -174,13 +137,7 @@ Slider.propTypes = {
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,
 	edit: PropTypes.bool.isRequired,
-	media: PropTypes.bool,
-	quiz: PropTypes.bool,
-	viral: PropTypes.bool,
-	article: PropTypes.bool,
-	games: PropTypes.bool,
-	news: PropTypes.bool,
 	notifID: PropTypes.string
 };
 
-export default Slider;
+export default DrawerLayoutSlider;
