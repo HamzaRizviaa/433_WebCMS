@@ -830,6 +830,7 @@ const UploadOrEditArticle = ({
 		});
 		setDataErrors(Array(data.length).fill(false));
 		setData([]);
+		setItemsOnTop(false);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -1728,10 +1729,10 @@ const UploadOrEditArticle = ({
 												<h4 style={{ fontSize: '14px', color: 'white' }}>
 													Add elements to the top
 												</h4>
-												<Box px={0.5}>
+												<Box>
 													<ToggleSwitch
 														id={1}
-														checked={form.itemsOnTop}
+														checked={itemsOnTop}
 														onChange={(checked) => {
 															setItemsOnTop(checked);
 														}}
