@@ -291,7 +291,7 @@ const ArticleTextDraggable = ({
 													]
 												},
 												{
-													title: 'Color',
+													title: 'Colours',
 													items: [
 														{
 															title: '433 Yellow',
