@@ -1782,7 +1782,12 @@ const UploadOrEditArticle = ({
 											setExtraLabel={setExtraLabel}
 											isError={isError}
 										/>
-										<div ref={topElementRef}></div>
+										<Box
+											sx={{
+												scrollMarginBottom: '400px'
+											}}
+											ref={topElementRef}
+										></Box>
 										<DraggableWrapper onDragEnd={onDragEnd}>
 											{data.map((item, index) => {
 												return (
