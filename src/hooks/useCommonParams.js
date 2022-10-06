@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { sanitizeDates } from '../data/utils';
 
-const orderTypes = ['ASC', 'DESC'];
+const orderTypes = ['asc', 'desc'];
 
 function useCommonParams() {
 	const [searchParams] = useSearchParams();
@@ -24,7 +24,9 @@ function useCommonParams() {
 			page: Number(page) || 1,
 			q: query || null,
 			sort_by: sortBy || null,
-			order_type: orderTypes.includes(orderType) ? orderType : null,
+			order_type: orderTypes.includes(orderType)
+				? orderType.toUpperCase()
+				: null,
 			start_date: formattedStartDate,
 			end_date: formattedEndDate,
 			...(!!query && { is_search: true })

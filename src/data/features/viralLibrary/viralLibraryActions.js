@@ -4,8 +4,14 @@ import { ViralLibraryService } from '../../services';
 export const getAllViralsApi = createAsyncThunk(
 	'viralLibary/getAllViralsApi',
 	async (params) => {
-		const result = await ViralLibraryService.getAllViralsServiceCall(params);
-		return { ...result.data.data, fromCalendar: params.fromCalendar || false };
+		const { data: virals } = await ViralLibraryService.getAllViralsServiceCall(
+			params
+		);
+		return {
+			...virals.data,
+			fromCalendar: !!params.start_date || !!params.end_date,
+			isSearch: !!params.is_search
+		};
 	}
 );
 

@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 /* eslint-disable no-unused-vars */
 export function makeid(length) {
@@ -37,14 +37,12 @@ export function changeQueryParameters(query, queryObject) {
  */
 export function sanitizeDates(startDate, endDate) {
 	const formattedStartDate = startDate
-		? moment(startDate, 'DD-MM-YYYY').toDate()
+		? dayjs(startDate).format('DD-MM-YYYY')
 		: null;
-	const formattedEndDate = endDate
-		? moment(endDate, 'DD-MM-YYYY').toDate()
-		: null;
+	const formattedEndDate = endDate ? dayjs(endDate).format('DD-MM-YYYY') : null;
 
-	const isStartDateValid = moment(formattedStartDate).isValid();
-	const isEndDateValid = moment(formattedEndDate).isValid();
+	const isStartDateValid = dayjs(startDate).isValid();
+	const isEndDateValid = dayjs(endDate).isValid();
 
 	return {
 		formattedStartDate: isStartDateValid ? formattedStartDate : null,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { InputAdornment, TextField } from '@material-ui/core';
 import { useSearchParams } from 'react-router-dom';
@@ -8,7 +8,13 @@ import { changeQueryParameters } from '../../../../data/utils/helper';
 
 function SearchFilter({ placeholder, isError, errorMessage }) {
 	const [searchParams, setSearchParams] = useSearchParams();
-	const [search, setSearch] = useState(searchParams.get('q') || '');
+	const query = searchParams.get('q');
+
+	const [search, setSearch] = useState(query || '');
+
+	useEffect(() => {
+		setSearch(query || '');
+	}, [query]);
 
 	const handleChange = (e) => {
 		setSearch(e.target.value);
@@ -16,14 +22,20 @@ function SearchFilter({ placeholder, isError, errorMessage }) {
 
 	const handleKeyPress = (e) => {
 		if (e.key === 'Enter') {
-			const queryParams = changeQueryParameters(searchParams, { q: search });
+			const queryParams = changeQueryParameters(searchParams, {
+				q: search,
+				page: null
+			});
 
 			setSearchParams(queryParams);
 		}
 	};
 
 	const handleClick = () => {
-		const queryParams = changeQueryParameters(searchParams, { q: search });
+		const queryParams = changeQueryParameters(searchParams, {
+			q: search,
+			page: null
+		});
 
 		setSearchParams(queryParams);
 	};
@@ -42,7 +54,7 @@ function SearchFilter({ placeholder, isError, errorMessage }) {
 					disableUnderline: true,
 					className: classes.textFieldInput,
 					endAdornment: (
-						<InputAdornment>
+						<InputAdornment position='end'>
 							<SearchIcon
 								onClick={handleClick}
 								className={classes.searchIcon}

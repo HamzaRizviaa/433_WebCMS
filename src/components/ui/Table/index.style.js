@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 
-export const useStyles = makeStyles(() => ({
+export const useStyles = makeStyles((theme) => ({
 	tableContainer: {
 		margin: ' 1rem 0rem',
 		'& .table': {
@@ -60,5 +60,5 @@ export const useStyles = makeStyles(() => ({
 		height: '2rem !important',
 		width: ' 2rem !important',
 		color: theme.palette.neonYellow
-	},
+	}
 }));

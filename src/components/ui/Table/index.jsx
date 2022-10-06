@@ -1,61 +1,68 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import BootstrapTable from 'react-bootstrap-table-next';
 import { useSearchParams } from 'react-router-dom';
-import CustomPagination from '../Pagination';
-import { changeQueryParameters } from '../../../data/utils/helper';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
-import { changeQueryParameters } from '../../../utils/helper';
+import CustomPagination from '../Pagination';
+import { changeQueryParameters } from '../../../data/utils/helper';
 import { useStyles } from './index.style';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 
 const Table = ({ data, columns, totalRecords, onRowClick }) => {
 	const [searchParams, setSearchParams] = useSearchParams();
-
-	const sortState = useMemo(() => {
-		const sortBy = searchParams.get('sortBy');
-		const orderType = searchParams.get('orderType');
-		return { sortBy: sortBy || '', orderType: orderType || '' };
-	}, [searchParams]);
+	const sortBy = searchParams.get('sortBy');
+	const orderType = searchParams.get('orderType');
 
 	const classes = useStyles();
 
-	const tableRowEvents = {
-		onClick: onRowClick
-	};
-
-	const sortRows = (order, col) => {
-		if (order && col.dataField) {
-			if (
-				order.toUpperCase() !== sortState.orderType ||
-				col.dataField != sortState.sortBy
-			) {
-				let queryParams = changeQueryParameters(searchParams, {
-					sortBy: col.dataField,
-					orderType: order.toUpperCase()
-				});
-				setSearchParams(queryParams);
-			}
-		}
+	const sortCaret = useCallback((order) => {
 		if (order === 'asc')
 			return <ArrowDropUpIcon className={classes.sortIconSelected} />;
 		if (order === 'desc') {
 			return <ArrowDropDownIcon className={classes.sortIconSelected} />;
 		}
 		return <ArrowDropUpIcon className={classes.sortIcon} />;
-	};
+	}, []);
 
-	const modifiedColumns = useMemo(
-		() =>
-			columns.map((value) => {
-				if (value.dataField !== 'options') {
-					return { ...value, sortCaret: sortRows, sortFunc: () => {} };
+	const sortFunc = useCallback(
+		(a, b, order, dataField) => {
+			if (order && dataField) {
+				if (order !== orderType || dataField !== sortBy) {
+					const queryParams = changeQueryParameters(searchParams, {
+						sortBy: dataField,
+						orderType: order,
+						page: null
+					});
+
+					setSearchParams(queryParams);
 				}
-				return value;
-			}),
-		[columns]
+			}
+		},
+		[searchParams, sortBy, orderType]
 	);
+
+	const sort = useMemo(
+		() => ({
+			sortCaret,
+			sortFunc
+		}),
+		[sortFunc, sortCaret]
+	);
+
+	const defaultSorted = useMemo(
+		() => [
+			{
+				dataField: sortBy || '',
+				order: orderType || 'asc'
+			}
+		],
+		[]
+	);
+
+	const tableRowEvents = {
+		onClick: onRowClick
+	};
 
 	return (
 		<div>
@@ -63,10 +70,12 @@ const Table = ({ data, columns, totalRecords, onRowClick }) => {
 				<BootstrapTable
 					keyField='id'
 					data={data}
-					columns={modifiedColumns}
+					columns={columns}
 					bordered={false}
 					headerClasses={classes.tableHeader}
 					rowEvents={tableRowEvents}
+					sort={sort}
+					defaultSorted={defaultSorted}
 				/>
 			</div>
 			<CustomPagination totalRecords={totalRecords} />
