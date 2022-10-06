@@ -53,7 +53,7 @@ export const useStyles = makeStyles((theme) => ({
 		color: theme.palette.neonYellow
 	},
 	content: {
-		padding: '0 4rem 4rem'
+		padding: '0 1rem 4rem 1rem'
 	},
 	notifIDWrapper: {
 		width: '79%',

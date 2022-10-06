@@ -25,6 +25,7 @@ import Text from '../../../assets/Text.svg';
 import ImageVideo from '../../../assets/Image.svg';
 import Tweet from '../../../assets/Twitter Line.svg';
 import Question from '../../../assets/Quiz.svg';
+import ToggleSwitch from '../../switch';
 
 /*  ArticleBuilder imports  */
 import ArticleElements from '../../ArticleBuilder/ArticleElements'; // left pan of buttons
@@ -122,6 +123,7 @@ const UploadOrEditArticle = ({
 	});
 	const [data, setData] = useState([]);
 	const [dataErrors, setDataErrors] = useState(Array(data?.length).fill(false));
+	const [itemsOnTop, setItemsOnTop] = useState(false);
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
@@ -1017,19 +1019,35 @@ const UploadOrEditArticle = ({
 	};
 
 	const handleArticleElement = (dataItem) => {
-		setData((prev) => {
-			return [
-				...prev,
-				{
-					sortOrder: data.length + 1,
-					heading: dataItem.text,
-					component: dataItem.component,
-					element_type: dataItem.type,
-					isOpen: true,
-					deleted: false
-				}
-			];
-		});
+		if (itemsOnTop) {
+			setData((prev) => {
+				return [
+					{
+						sortOrder: data.length + 1,
+						heading: dataItem.text,
+						component: dataItem.component,
+						element_type: dataItem.type,
+						isOpen: true,
+						deleted: false
+					},
+					...prev
+				];
+			});
+		} else {
+			setData((prev) => {
+				return [
+					...prev,
+					{
+						sortOrder: data.length + 1,
+						heading: dataItem.text,
+						component: dataItem.component,
+						element_type: dataItem.type,
+						isOpen: true,
+						deleted: false
+					}
+				];
+			});
+		}
 	};
 
 	const checkNewAuthorImage = () => {
@@ -1687,6 +1705,24 @@ const UploadOrEditArticle = ({
 											<Box mb={3.5} className={classes.mainTitleDescription}>
 												<h2>Elements</h2>
 												<p>Add elements to build your article</p>
+											</Box>
+											<Box
+												sx={{
+													display: 'flex',
+													alignItems: 'center',
+													justifyContent: 'space-between',
+													width: '100%'
+												}}
+											>
+												<h4 style={{ fontSize: '14px', color: 'white' }}>
+													Add Elements to the top
+												</h4>
+												<ToggleSwitch
+													id={1}
+													checked={form.itemsOnTop}
+													onChange={(checked) => setItemsOnTop(checked)}
+												/>
+												{console.log('itemsOnTop', itemsOnTop)}
 											</Box>
 											<ArticleElements
 												data={elementData}
