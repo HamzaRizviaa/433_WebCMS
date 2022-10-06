@@ -297,12 +297,12 @@ const ArticleTextDraggable = ({
 															title: '433 Yellow',
 															inline: 'span',
 															styles: { color: '#ffff00' }
-														},
-														{
-															title: 'White',
-															inline: 'span',
-															styles: { color: '#ffffff' }
 														}
+														// {
+														// 	title: 'White',
+														// 	inline: 'span',
+														// 	styles: { color: '#ffffff' }
+														// }
 													]
 												}
 											],
