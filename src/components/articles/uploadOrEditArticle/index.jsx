@@ -1034,6 +1034,9 @@ const UploadOrEditArticle = ({
 					...prev
 				];
 			});
+			setTimeout(() => {
+				scrollRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' });
+			});
 		} else {
 			setData((prev) => {
 				return [
