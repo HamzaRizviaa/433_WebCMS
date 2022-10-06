@@ -43,17 +43,6 @@ const ArticleSlider = ({
 	useEffect(() => {
 		function handleClickOutside(event) {
 			if (
-				wrapperRef.current &&
-				disableDropdown &&
-				!preview &&
-				!wrapperRef.current.contains(event.target) &&
-				(dialogRef?.current
-					? dialogRef.current && !dialogRef.current.contains(event.target)
-					: true)
-			) {
-				handleClose();
-			}
-			if (
 				!media &&
 				!quiz &&
 				!games &&
