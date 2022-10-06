@@ -294,7 +294,7 @@ const ArticleTextDraggable = ({
 													title: 'Color',
 													items: [
 														{
-															title: '433 Yello',
+															title: '433 Yellow',
 															inline: 'span',
 															styles: { color: '#ffff00' }
 														},
