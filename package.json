@@ -19,6 +19,7 @@
 		"axios": "^0.24.0",
 		"capture-video-frame": "^1.0.0",
 		"cropperjs": "^1.5.12",
+		"dayjs": "^1.11.5",
 		"env-cmd": "^10.1.0",
 		"formik": "^2.2.9",
 		"interweave": "^12.9.0",

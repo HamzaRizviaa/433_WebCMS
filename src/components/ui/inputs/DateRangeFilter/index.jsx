@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
 import { useSearchParams } from 'react-router-dom';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import CustomInput from './CustomInput';
 import { useStyles } from './index.styled';
 import { changeQueryParameters } from '../../../../data/utils/helper';
@@ -13,14 +13,14 @@ function DateRangeFilter({ isError, errorMessage }) {
 
 	const [dateRange, setDateRange] = useState(() => {
 		const queryParamStartDate = searchParams.get('startDate')
-			? moment(searchParams.get('startDate'), 'DD-MM-YYYY').toDate()
+			? dayjs(searchParams.get('startDate')).toDate()
 			: null;
 		const queryParamEndDate = searchParams.get('endDate')
-			? moment(searchParams.get('endDate'), 'DD-MM-YYYY').toDate()
+			? dayjs(searchParams.get('endDate')).toDate()
 			: null;
 
-		const isStartDateValid = moment(queryParamStartDate).isValid();
-		const isEndDateValid = moment(queryParamEndDate).isValid();
+		const isStartDateValid = dayjs(queryParamStartDate).isValid();
+		const isEndDateValid = dayjs(queryParamEndDate).isValid();
 
 		return [
 			isStartDateValid ? queryParamStartDate : null,

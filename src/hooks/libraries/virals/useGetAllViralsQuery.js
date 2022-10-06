@@ -1,15 +1,14 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
 import {
 	getAllViralsApi,
 	resetCalendarError,
 	resetNoResultStatus
-} from '../data/features/viralLibrary/viralLibrarySlice';
+} from '../../../data/features/viralLibrary/viralLibrarySlice';
+import useCommonParams from '../../useCommonParams';
 
 export default function useGetAllViralsQuery() {
 	const dispatch = useDispatch();
-	const [searchParams] = useSearchParams();
 
 	const {
 		virals,
@@ -19,26 +18,11 @@ export default function useGetAllViralsQuery() {
 		noResultStatusCalendar
 	} = useSelector((state) => state.rootReducer.viralLibrary);
 
-	const page = searchParams.get('page');
-	const query = searchParams.get('q');
-	const sortby = searchParams.get('sortby');
-	const orderType = searchParams.get('order_type');
-	const startDate = searchParams.get('startDate');
-	const endDate = searchParams.get('endDate');
+	const queryParams = useCommonParams();
 
 	useEffect(() => {
-		dispatch(
-			getAllViralsApi({
-				page,
-				query,
-				sortby,
-				orderType,
-				startDate,
-				endDate,
-				...((!!startDate || !!endDate) && { fromCalendar: true })
-			})
-		);
-	}, [page, query, sortby, orderType, startDate, endDate]);
+		dispatch(getAllViralsApi(queryParams));
+	}, [queryParams]);
 
 	useEffect(() => {
 		if (noResultStatus) {
