@@ -1728,13 +1728,15 @@ const UploadOrEditArticle = ({
 												<h4 style={{ fontSize: '14px', color: 'white' }}>
 													Add elements to the top
 												</h4>
-												<ToggleSwitch
-													id={1}
-													checked={form.itemsOnTop}
-													onChange={(checked) => {
-														setItemsOnTop(checked);
-													}}
-												/>
+												<Box px={0.5}>
+													<ToggleSwitch
+														id={1}
+														checked={form.itemsOnTop}
+														onChange={(checked) => {
+															setItemsOnTop(checked);
+														}}
+													/>
+												</Box>
 											</Box>
 											<ArticleElements
 												data={elementData}
