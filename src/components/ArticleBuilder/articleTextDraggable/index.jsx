@@ -291,17 +291,12 @@ const ArticleTextDraggable = ({
 													]
 												},
 												{
-													title: 'Custom 433',
+													title: 'Custom Color',
 													items: [
 														{
-															title: 'Regular',
+															title: '433 Default',
 															inline: 'span',
 															styles: { color: '#ffff00' }
-														},
-														{
-															title: 'Bold',
-															inline: 'span',
-															styles: { color: '#ffff00', fontWeight: 'bold' }
 														}
 													]
 												}
