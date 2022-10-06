@@ -103,6 +103,7 @@ const UploadOrEditArticle = ({
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const loadingRef = useRef(null);
+	const scrollRef = useRef(null);
 
 	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
 
@@ -1047,6 +1048,9 @@ const UploadOrEditArticle = ({
 					}
 				];
 			});
+			setTimeout(() => {
+				scrollRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' });
+			});
 		}
 	};
 
@@ -1770,7 +1774,7 @@ const UploadOrEditArticle = ({
 										<DraggableWrapper onDragEnd={onDragEnd}>
 											{data.map((item, index) => {
 												return (
-													<>
+													<div ref={scrollRef} key={index}>
 														{React.createElement(item.component, {
 															sendDataToParent: (data) =>
 																setNewData(data, index),
@@ -1800,7 +1804,7 @@ const UploadOrEditArticle = ({
 																dataErrors[index] &&
 																'This field is required'}
 														</p>
-													</>
+													</div>
 												);
 											})}
 										</DraggableWrapper>
