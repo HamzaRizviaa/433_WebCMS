@@ -14,7 +14,7 @@ export const useStyles = makeStyles((theme) => ({
 		height: '100vh !important',
 		zIndex: '5 !important',
 		position: 'fixed !important',
-		minWidth: 'calc(100% - 82px)',
+		minWidth: 'calc(100% - 72px)',
 		transform: 'none !important',
 		overflowY: ' auto !important',
 		overflowX: 'hidden',
