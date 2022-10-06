@@ -289,6 +289,21 @@ const ArticleTextDraggable = ({
 															format: 'body_boldAndTiny'
 														}
 													]
+												},
+												{
+													title: 'Colours',
+													items: [
+														{
+															title: '433 Yellow',
+															inline: 'span',
+															styles: { color: '#ffff00' }
+														}
+														// {
+														// 	title: 'White',
+														// 	inline: 'span',
+														// 	styles: { color: '#ffffff' }
+														// }
+													]
 												}
 											],
 											menubar: 'edit insert format',
@@ -314,9 +329,8 @@ const ArticleTextDraggable = ({
 											plugins: [
 												'lists advlist link image anchor',
 												'searchreplace  hr fullscreen',
-												'insertdatetime paste wordcount  charmap textcolor colorpicker'
+												'insertdatetime paste wordcount charmap textcolor colorpicker'
 											]
-
 											// toolbar:
 											// 	'undo redo  bold italic underline strikethrough fontsizeselect | ' +
 											// 	'alignleft aligncenter ' +
