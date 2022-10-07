@@ -11,7 +11,7 @@ export const useMediaPreviewerStyle = makeStyles((theme) => ({
 		height: '48px',
 		width: '48px',
 		borderRadius: ' 8px',
-		objectFit: 'contain',
+		objectFit: 'cover',
 		marginRight: '1.5rem'
 	},
 	mediaIconPreview: (props) => ({
@@ -54,7 +54,7 @@ export const useMediaPreviewerStyle = makeStyles((theme) => ({
 	},
 	mediaFileName: {
 		fontSize: ' 1.2rem',
-		maxWidth: '60%',
+		maxWidth: '40%',
 		textOverflow: 'ellipsis',
 		overflow: 'hidden',
 		whiteSpace: 'nowrap !important'
