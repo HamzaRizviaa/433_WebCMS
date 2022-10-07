@@ -6,10 +6,8 @@ import { newsColumns } from '../../data/helpers/newsHelpers';
 import Table from '../../components/ui/Table';
 import useGetAllNews from '../../hooks/libraries/news/useGetAllNews';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
-
-// Api calls
 import { getSpecificNews } from '../../data/features/newsLibrary/newsLibrarySlice';
-import { getAllNewLabels } from "../../data/features/postsLibrary/postsLibrarySlice";
+import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 
 const NewsLibrary = () => {
 	const navigate = useNavigate();
@@ -37,13 +35,13 @@ const NewsLibrary = () => {
 		isLoading,
 		noResultStatus,
 		noResultStatusCalendar
-	} = useGetAllNews()
+	} = useGetAllNews();
 
 	const onUploadNewsClick = () => {
 		dispatch(getAllNewLabels());
 		setEdit(false);
 		setShowSlider(true);
-	}
+	};
 
 	const dispatch = useDispatch();
 
@@ -53,7 +51,7 @@ const NewsLibrary = () => {
 		setEdit(true);
 		setrowStatus(row.status); // pass in slider
 		setShowSlider(true);
-	}
+	};
 
 	return (
 		<DashboardLayout
@@ -63,20 +61,25 @@ const NewsLibrary = () => {
 			isSearchFilterError={noResultStatus}
 			isDateFilterError={noResultStatusCalendar}
 		>
-			<Table onRowClick={onRowClick} data={data} columns={newsColumns} totalRecords={totalRecords} />
+			<Table
+				onRowClick={onRowClick}
+				data={data}
+				columns={newsColumns}
+				totalRecords={totalRecords}
+			/>
 			<UploadOrEditNews
-					open={showSlider}
-					isEdit={edit}
-					handleClose={() => {
-						setShowSlider(false);
-					}}
-					title={edit ? 'Edit News' : 'Upload News'}
-					page={page}
-					buttonText={
-						edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
-					}
-					status={rowStatus}
-				/>
+				open={showSlider}
+				isEdit={edit}
+				handleClose={() => {
+					setShowSlider(false);
+				}}
+				title={edit ? 'Edit News' : 'Upload News'}
+				page={page}
+				buttonText={
+					edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
+				}
+				status={rowStatus}
+			/>
 		</DashboardLayout>
 	);
 };
