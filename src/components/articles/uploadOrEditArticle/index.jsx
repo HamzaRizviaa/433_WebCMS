@@ -1712,7 +1712,7 @@ const UploadOrEditArticle = ({
 									<></>
 								)}
 								<Grid container>
-									<Grid pr={1} item md={2}>
+									<Grid className={classes.firstGridItem} pr={1} item md={3}>
 										<div className={classes.gridDivSmall}>
 											<Box mb={3.5} className={classes.mainTitleDescription}>
 												<h2>Elements</h2>
@@ -1726,12 +1726,12 @@ const UploadOrEditArticle = ({
 													width: '100%'
 												}}
 											>
-												<h4 style={{ fontSize: '14px', color: 'white' }}>
+												<h4 style={{ fontSize: '16px', color: 'white' }}>
 													Add elements to the top
 												</h4>
 												<Box>
 													<ToggleSwitch
-														id={1}
+														id={`itemsOnTop-button`}
 														checked={itemsOnTop}
 														onChange={(checked) => {
 															setItemsOnTop(checked);
@@ -1745,7 +1745,7 @@ const UploadOrEditArticle = ({
 											/>
 										</div>
 									</Grid>
-									<Grid item md={6} ml={1}>
+									<Grid className={classes.secondGridItem} item px={1.5} md={6}>
 										<Box mb={3.5} className={classes.mainTitleDescription}>
 											<h2>Builder</h2>
 											<p>Edit, reorder elements here and build your article</p>
@@ -1826,7 +1826,7 @@ const UploadOrEditArticle = ({
 											})}
 										</DraggableWrapper>
 									</Grid>
-									<Grid item md={4}>
+									<Grid className={classes.lastGridItem} item md={3}>
 										<Box px={2} className={classes.gridDivSmall}>
 											<Box mb={3.5} className={classes.mainTitleDescription}>
 												<h2>Preview</h2>
