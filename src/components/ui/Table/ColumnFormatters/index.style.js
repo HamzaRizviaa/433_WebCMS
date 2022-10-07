@@ -29,5 +29,15 @@ export const useStyles = makeStyles(() => ({
 		textOverflow: 'ellipsis',
 		overflow: 'hidden',
 		whiteSpace: 'nowrap'
-	}
+	},
+
+	textWithIconWrapper: {
+		display: 'flex',
+		alignItems: 'center',
+		marginBottom: '1.5rem',
+		fontSize: '1.2rem',
+		paddingRight: 18
+	},
+
+	iconWrapper: { marginRight: '10px', minWidth: '20px' }
 }));
