@@ -13,6 +13,18 @@ export const useStyles = makeStyles(() => ({
 	gridMainDiv: {
 		overflowY: 'scroll'
 	},
+	firstGridItem: {
+		maxWidth: '22%',
+		flexBasis: '22%'
+	},
+	secondGridItem: {
+		maxWidth: '45%',
+		flexBasis: '45%'
+	},
+	lastGridItem: {
+		maxWidth: '33%',
+		flexBasis: '33%'
+	},
 	textField: {
 		width: '100%'
 	},
