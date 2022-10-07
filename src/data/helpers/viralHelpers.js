@@ -53,6 +53,6 @@ export const tableColumns = [
 	{
 		dataField: 'options',
 		text: 'OPTIONS',
-		formatter: () => getFormatter('options', { title: 'EDIT NEWS' })
+		formatter: () => getFormatter('options', { title: 'EDIT VIRAL' })
 	}
 ];
