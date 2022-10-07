@@ -17,7 +17,7 @@ const DrawerLayout = ({
     isLoading,
     mainPage,
     children,
-    edit,
+    isEdit,
     fromArticle
 }) => {
     return(
@@ -29,7 +29,7 @@ const DrawerLayout = ({
 			handlePreview={handlePreview}
 			preview={preview}
 			previewRef={previewRef}
-            edit={edit}
+            isEdit={isEdit}
             fromArticle={fromArticle}
 			imagePreview={true}
 			dialogRef={dialogWrapper}
@@ -46,7 +46,7 @@ const DrawerLayout = ({
 
 DrawerLayout.propTypes = {
     open: PropTypes.bool.isRequired,
-    edit: PropTypes.bool.isRequired,
+    isEdit: PropTypes.bool.isRequired,
     fromArticle: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,

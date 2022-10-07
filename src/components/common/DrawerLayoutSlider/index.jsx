@@ -16,7 +16,7 @@ const DrawerLayoutSlider = ({
 	preview,
 	previewRef,
 	dialogRef,
-	edit,
+	isEdit,
     fromArticle,
 	notifID,
 	imagePreview
@@ -38,21 +38,8 @@ const DrawerLayoutSlider = ({
 
 	useEffect(() => {
 		function handleClickOutside(event) {
-			if (
-				edit &&
-				preview &&
-				previewRef.current &&
-				!previewRef.current.contains(event.target)
-			) {
-				handlePreview();
-			}
-			if (
-				imagePreview &&
-				preview &&
-				previewRef.current &&
-				!previewRef.current.contains(event.target)
-			) {
-				handlePreview();
+			if( (isEdit || imagePreview) && preview && previewRef.current && !previewRef.current.contains(event.target)){
+				handlePreview()
 			}
 		}
 
@@ -136,7 +123,7 @@ DrawerLayoutSlider.propTypes = {
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,
-	edit: PropTypes.bool.isRequired,
+	isEdit: PropTypes.bool.isRequired,
 	notifID: PropTypes.string
 };
 
