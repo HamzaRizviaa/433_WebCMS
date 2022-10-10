@@ -41,7 +41,7 @@ const newsLibrarySlice = createSlice({
 			if (action.payload.fromCalendar) {
 				state.noResultStatusCalendar =
 					action.payload.data.length > 0 ? false : true;
-			} else {
+			} if(action.payload.isSearch) {
 				state.noResultStatus = action.payload.data.length > 0 ? false : true;
 			}
 		});
