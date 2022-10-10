@@ -17,7 +17,17 @@ function SearchFilter({ placeholder, isError, errorMessage }) {
 	}, [query]);
 
 	const handleChange = (e) => {
-		setSearch(e.target.value);
+		const { value } = e.target;
+		setSearch(value);
+
+		if (!value) {
+			const queryParams = changeQueryParameters(searchParams, {
+				q: null,
+				page: null
+			});
+
+			setSearchParams(queryParams);
+		}
 	};
 
 	const handleKeyPress = (e) => {
