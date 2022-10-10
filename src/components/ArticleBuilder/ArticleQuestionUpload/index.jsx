@@ -85,7 +85,7 @@ const ArticleQuestionUpload = ({
 			  }
 	);
 	const imgRef = useRef(null);
-	console.log(initialData, 'initialData', form);
+
 	// const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
@@ -134,8 +134,6 @@ const ArticleQuestionUpload = ({
 			maxFiles: 1,
 			validator: checkFileSize
 		});
-
-	console.log(type, qtype, 'TYPE QTYPE');
 
 	const getFileType = (type) => {
 		if (type) {
@@ -266,14 +264,6 @@ const ArticleQuestionUpload = ({
 			sendDataToParent(answers);
 		}
 	};
-	console.log(
-		initialData?.answers &&
-			initialData?.question_type === 'quiz' &&
-			type === initialData?.question_type,
-		initialData?.answers[1]?.answer,
-		form.answers[1]?.answer,
-		'abc'
-	);
 
 	return (
 		<>
