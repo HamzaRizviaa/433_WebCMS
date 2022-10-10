@@ -115,6 +115,7 @@ const ArticleQuestionUpload = ({
 				question: '',
 				dropbox_url: '',
 				uploadedFiles: [],
+				previewImage: [],
 				answers: [
 					{
 						answer: '',
