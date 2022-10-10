@@ -11,6 +11,7 @@ import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySl
 
 const NewsLibrary = () => {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
@@ -42,8 +43,6 @@ const NewsLibrary = () => {
 		setEdit(false);
 		setShowSlider(true);
 	};
-
-	const dispatch = useDispatch();
 
 	const onRowClick = (e, row) => {
 		row.status === 'draft' && dispatch(getAllNewLabels());
