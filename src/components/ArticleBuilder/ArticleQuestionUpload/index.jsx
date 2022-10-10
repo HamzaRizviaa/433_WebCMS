@@ -95,7 +95,18 @@ const ArticleQuestionUpload = ({
 				uploadedFiles: [],
 				dropbox_url: '',
 				question: '',
-				answers: [],
+				answers: [
+					{
+						answer: '',
+						position: 0,
+						type: type === 'quiz' ? 'right_answer' : 'poll'
+					},
+					{
+						answer: '',
+						position: 1,
+						type: type === 'quiz' ? 'wrong_answer_1' : 'poll'
+					}
+				],
 				labels: [],
 				question_type: type
 			});
@@ -104,7 +115,18 @@ const ArticleQuestionUpload = ({
 				question: '',
 				dropbox_url: '',
 				uploadedFiles: [],
-				answers: [],
+				answers: [
+					{
+						answer: '',
+						position: 0,
+						type: type === 'quiz' ? 'right_answer' : 'poll'
+					},
+					{
+						answer: '',
+						position: 1,
+						type: type === 'quiz' ? 'wrong_answer_1' : 'poll'
+					}
+				],
 				labels: []
 			});
 		}
@@ -261,6 +283,7 @@ const ArticleQuestionUpload = ({
 			};
 			setForm(formCopy);
 			let answers = { answers: formCopy.answers };
+
 			sendDataToParent(answers);
 		}
 	};
