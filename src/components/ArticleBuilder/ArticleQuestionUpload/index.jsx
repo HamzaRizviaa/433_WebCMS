@@ -89,18 +89,26 @@ const ArticleQuestionUpload = ({
 	// const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
 	const classes = useStyles();
-	// useEffect(() => {
-	// 	if (type !== initialData) {
-	// 		setForm({
-	// 			uploadedFiles: [],
-	// 			dropbox_url: '',
-	// 			question: '',
-	// 			answers: [],
-	// 			labels: [],
-	// 			question_type: type
-	// 		});
-	// 	}
-	// }, [type]);
+	useEffect(() => {
+		if (type !== initialData?.question_type) {
+			setForm({
+				uploadedFiles: [],
+				dropbox_url: '',
+				question: '',
+				answers: [],
+				labels: [],
+				question_type: type
+			});
+			sendDataToParent({
+				question_type: type,
+				question: '',
+				dropbox_url: '',
+				uploadedFiles: [],
+				answers: [],
+				labels: []
+			});
+		}
+	}, [type, initialData?.question_type]);
 
 	useEffect(() => {
 		validateForm(form);
@@ -268,7 +276,10 @@ const ArticleQuestionUpload = ({
 						<h5 className={classes.QuizQuestion}>{heading1}</h5>
 						<DragAndDropField
 							uploadedFiles={
-								initialData ? initialData?.uploadedFiles : form?.uploadedFiles
+								initialData?.uploadedFiles?.length &&
+								type === initialData?.question_type
+									? initialData?.uploadedFiles
+									: form?.uploadedFiles
 							}
 							quizPollStatus={status}
 							handleDeleteFile={(id) => {
@@ -293,9 +304,11 @@ const ArticleQuestionUpload = ({
 							}}
 						/>
 
-						{initialData?.uploadedFiles ? (
+						{initialData?.uploadedFiles?.length > 0 ? (
 							''
-						) : form.uploadedFiles.length === 0 ? (
+						) : form.uploadedFiles.length === 0 ||
+						  (initialData?.uploadedFiles === 0 &&
+								type === initialData?.question_type) ? (
 							<section
 								className={globalClasses.dropZoneContainer}
 								style={{
@@ -339,7 +352,9 @@ const ArticleQuestionUpload = ({
 							<h6>DROPBOX URL</h6>
 							<TextField
 								value={
-									initialData ? initialData?.dropbox_url : form.dropbox_url
+									initialData && type === initialData?.question_type
+										? initialData?.dropbox_url
+										: form.dropbox_url
 								}
 								onChange={(e) => {
 									setForm((prev) => {
@@ -394,7 +409,11 @@ const ArticleQuestionUpload = ({
 								disabled={
 									initialData?.question_id && status !== 'draft' ? true : false
 								}
-								value={initialData ? initialData?.question : form.question}
+								value={
+									initialData && type === initialData?.question_type
+										? initialData?.question
+										: form.question
+								}
 								onChange={(e) => {
 									setForm((prev) => {
 										return { ...prev, question: e.target.value };
@@ -459,11 +478,19 @@ const ArticleQuestionUpload = ({
 									initialData?.question_id && status !== 'draft' ? true : false
 								}
 								value={
-									initialData?.answers && initialData?.question_type === 'quiz'
+									initialData?.answers &&
+									type === initialData?.question_type &&
+									initialData?.question_type === 'quiz'
 										? initialData?.answers?.find(
-												(item) => item.type === 'right_answer'
-										  )?.answer
-										: form.answers[0]?.answer
+												(item) => item?.type === 'right_answer'
+										  )?.answer === undefined
+											? ''
+											: initialData?.answers?.find(
+													(item) => item?.type === 'right_answer'
+											  )?.answer
+										: form?.answers[0]?.answer === undefined
+										? ''
+										: form?.answers[0]?.answer
 								}
 								onChange={(e) => {
 									handleAnswerChange(e, 0);
@@ -520,16 +547,25 @@ const ArticleQuestionUpload = ({
 									/29
 								</h6>
 							</div>
+
 							<TextField
 								disabled={
 									initialData?.question_id && status !== 'draft' ? true : false
 								}
 								value={
-									initialData?.answers && initialData?.question_type === 'quiz'
+									initialData?.answers &&
+									initialData?.question_type === 'quiz' &&
+									type === initialData?.question_type
 										? initialData?.answers?.find(
-												(item) => item.type === 'wrong_answer_1'
-										  )?.answer
-										: form.answers[1]?.answer
+												(item) => item?.type === 'wrong_answer_1'
+										  )?.answer === undefined
+											? ''
+											: initialData?.answers?.find(
+													(item) => item?.type === 'wrong_answer_1'
+											  )?.answer
+										: form?.answers[1]?.answer === undefined
+										? ''
+										: form?.answers[1]?.answer
 								}
 								onChange={(e) => {
 									handleAnswerChange(e, 1);
@@ -568,7 +604,9 @@ const ArticleQuestionUpload = ({
 								isEdit={initialData?.question_id && status !== 'draft'}
 								setDisableDropdown={setDisableDropdown}
 								selectedLabels={
-									initialData?.labels ? initialData?.labels : form.labels
+									initialData?.labels && type === initialData?.question_type
+										? initialData?.labels
+										: form.labels
 								}
 								setSelectedLabels={(newVal) => {
 									setForm((prev) => {
