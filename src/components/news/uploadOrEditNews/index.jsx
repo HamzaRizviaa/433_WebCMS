@@ -47,7 +47,7 @@ import {
 import { getAllNews } from '../../../data/features/newsLibrary/newsLibrarySlice';
 import { TextField } from '@material-ui/core';
 import { ToastErrorNotifications } from '../../../data/constants';
-import { useSearchParams } from 'react-router-dom';
+import useCommonParams from '../../../hooks/useCommonParams';
 
 const UploadOrEditNews = ({
 	open,
@@ -60,6 +60,7 @@ const UploadOrEditNews = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 
+	const queryParams = useCommonParams();
 	const [isLoading, setIsLoading] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
@@ -72,7 +73,6 @@ const UploadOrEditNews = ({
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
 	const [notifID, setNotifID] = useState('');
-	const [searchParams, setSearchParams] = useSearchParams();
 	const [form, setForm] = useState({
 		labels: [],
 		banner_title: '',
@@ -85,9 +85,6 @@ const UploadOrEditNews = ({
 	const previewRef = useRef(null);
 	const loadingRef = useRef(null);
 	const dialogWrapper = useRef(null);
-
-	const parsedPage = Number(searchParams.get('page'));
-	const page = isNaN(parsedPage) ? 1 : parsedPage || 1;
 
 	const dispatch = useDispatch();
 	const { features } = useSelector((state) => state.rootReducer.remoteConfig);
@@ -420,7 +417,7 @@ const UploadOrEditNews = ({
 			if (result?.data?.status_code === 200) {
 				toast.success('News has been deleted!');
 				handleClose();
-				dispatch(getAllNews({ page }));
+				dispatch(getAllNews({ queryParams }));
 			}
 		} catch (e) {
 			toast.error(ToastErrorNotifications.deleteBannerItemText);
@@ -486,7 +483,7 @@ const UploadOrEditNews = ({
 				setIsLoading(false);
 
 				handleClose();
-				dispatch(getAllNews({ page }));
+				dispatch(getAllNews({ queryParams }));
 			}
 		} catch (e) {
 			toast.error(isEdit ? 'Failed to edit news!' : 'Failed to create news!');
