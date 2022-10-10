@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useDebouncedCallback } from 'use-debounce';
 import Pagination from '@material-ui/lab/Pagination';
 import { useSearchParams } from 'react-router-dom';
 import { changeQueryParameters } from '../../../data/utils/helper';
 import { useStyles } from './index.style';
+
+const INPUT_DELAY = 200;
 
 const CustomPagination = ({ totalRecords }) => {
 	const noOfPages = Math.ceil(totalRecords / 20);
@@ -19,15 +22,20 @@ const CustomPagination = ({ totalRecords }) => {
 		setSearchParams(queryParams);
 	};
 
-	const handleInputChange = (e) => {
+	const debouncedHandleChange = useDebouncedCallback((event) => {
 		setPaginationError(false);
-		const value = Number(e.target.value);
-		if (value > noOfPages || value < 1) {
+		const value = Number(event.target.value);
+
+		if (!!value && (value > noOfPages || value < 1)) {
 			setPaginationError(true);
 		} else if (value) {
 			const queryParams = changeQueryParameters(searchParams, { page: value });
 			setSearchParams(queryParams);
 		}
+	}, INPUT_DELAY);
+
+	const handleInputChange = (event) => {
+		debouncedHandleChange(event);
 	};
 
 	const classes = useStyles({ paginationError });

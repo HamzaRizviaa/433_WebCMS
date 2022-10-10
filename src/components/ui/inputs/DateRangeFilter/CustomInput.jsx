@@ -18,11 +18,20 @@ const CustomInput = forwardRef(
 			? dayjs(endDate).format('MM-DD-YYYY')
 			: null;
 
-		const queryParams = changeQueryParameters(searchParams, {
-			startDate: formattedStartDate,
-			endDate: formattedEndDate,
-			page: null
-		});
+		const handleClick = (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+
+			const queryParams = changeQueryParameters(searchParams, {
+				startDate: formattedStartDate,
+				endDate: formattedEndDate,
+				page: null
+			});
+
+			if (formattedStartDate && formattedEndDate) {
+				setSearchParams(queryParams);
+			}
+		};
 
 		const classes = useStyles({ hasData: !!startDate || !!endDate, isError });
 
@@ -33,13 +42,7 @@ const CustomInput = forwardRef(
 					{formattedEndDate || 'End Date'}
 				</span>
 				<span className={classes.inputIcon}>
-					<Calendar
-						onClick={(e) => {
-							e.preventDefault();
-							e.stopPropagation();
-							setSearchParams(queryParams);
-						}}
-					/>
+					<Calendar onClick={handleClick} />
 				</span>
 			</div>
 		);
