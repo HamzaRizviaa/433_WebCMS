@@ -3,31 +3,12 @@ import { NewsLibraryService } from '../../services';
 
 export const getAllNews = createAsyncThunk(
 	'newsLibary/getAllNews',
-	async ({
-		page,
-		order_type,
-		sortby,
-		q,
-		startDate,
-		endDate,
-		fromCalendar = false
-	}) => {
-		let endPoint = `news/all-news?limit=20&page=1`;
-		if (page) {
-			endPoint = `news/all-news?limit=20&page=${page}`;
-		}
-		if (order_type && sortby) {
-			endPoint += `&order_type=${order_type}&sort_by=${sortby}`;
-		}
-		if (q) {
-			endPoint += `&q=${q}&is_search=true`;
-		}
-		if (startDate && endDate) {
-			endPoint += `&start_date=${startDate}&end_date=${endDate}`;
-		}
-		const result = await NewsLibraryService.getAllNewsApi(endPoint);
+	async (params) => {
+		const { data: news } = await NewsLibraryService.getAllNewsApi(params);
 
-		return { ...result.data.data, fromCalendar };
+		return { ...news.data, 
+			fromCalendar: !!params.start_date || !!params.end_date,
+			isSearch: !!params.is_search };
 	}
 );
 

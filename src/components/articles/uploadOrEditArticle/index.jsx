@@ -68,15 +68,18 @@ import {
 import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDraggable';
 import { ToastErrorNotifications } from '../../../data/constants';
 
+import useCommonParams from '../../../hooks/useCommonParams';
+
 const UploadOrEditArticle = ({
 	open,
 	handleClose,
 	title,
 	isEdit,
 	buttonText,
-	page,
 	status
 }) => {
+	const queryParams = useCommonParams();
+
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
@@ -694,7 +697,7 @@ const UploadOrEditArticle = ({
 				setIsLoading(false);
 				setPostButtonStatus(false);
 				handleClose();
-				dispatch(getAllArticlesApi({ page }));
+				dispatch(getAllArticlesApi(queryParams));
 				// dispatch(getPostLabels());
 			}
 		} catch (e) {
@@ -968,12 +971,12 @@ const UploadOrEditArticle = ({
 
 				if (result?.data?.data?.is_deleted === false) {
 					toast.error(ToastErrorNotifications.deleteBannerItemText);
-					dispatch(getAllArticlesApi({ page }));
+					dispatch(getAllArticlesApi(queryParams));
 				} else {
 					toast.success('Article has been deleted!');
 					handleClose();
 					//setting a timeout for getting post after delete.
-					dispatch(getAllArticlesApi({ page }));
+					dispatch(getAllArticlesApi(queryParams));
 				}
 			}
 		} catch (e) {

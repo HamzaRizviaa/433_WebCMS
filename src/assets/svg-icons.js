@@ -7,4 +7,5 @@ export { ReactComponent as Viral } from './Flame.svg';
 export { ReactComponent as Logout } from './logout.svg';
 export { ReactComponent as Article } from './ArticleIcon.svg';
 export { ReactComponent as Edit } from './edit.svg';
+export { ReactComponent as MenuIcon } from './Union.svg';
 export { ReactComponent as Calendar } from './Calendar.svg';

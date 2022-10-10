@@ -57,7 +57,7 @@ const MediaPreviewer = ({
 		<div className={classes.mediaWrapper}>
 			{showSlidesIcon && (
 				<div className={classes.slidesIcon}>
-					{noOfSlides > 0 && <SlidesIcon />}
+					{noOfSlides > 1 && <SlidesIcon />}
 				</div>
 			)}
 			<Tooltip

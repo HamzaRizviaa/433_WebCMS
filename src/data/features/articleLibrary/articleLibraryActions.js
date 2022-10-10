@@ -3,34 +3,15 @@ import { ArticleLibraryService } from '../../services';
 
 export const getAllArticlesApi = createAsyncThunk(
 	'articlesLibrary/getAllArticlesApi',
-	async ({
-		page,
-		order_type,
-		sortby,
-		q,
-		startDate,
-		endDate,
-		fromCalendar = false
-	}) => {
-		let endPoint = `article/all-articles?limit=20&page=1`;
+	async (params) => {
+		const { data: articles } =
+			await ArticleLibraryService.getAllArticlesServiceCall(params);
 
-		if (page) {
-			endPoint = `article/all-articles?limit=20&page=${page}`;
-		}
-		if (order_type && sortby) {
-			endPoint += `&order_type=${order_type}&sort_by=${sortby}`;
-		}
-		if (q) {
-			endPoint += `&q=${q}&is_search=true`;
-		}
-		if (startDate && endDate) {
-			endPoint += `&start_date=${startDate}&end_date=${endDate}`;
-		}
-
-		const result = await ArticleLibraryService.getAllArticlesServiceCall(
-			endPoint
-		);
-		return { ...result.data.data, fromCalendar };
+		return {
+			...articles.data,
+			fromCalendar: !!params.start_date || !!params.end_date,
+			isSearch: !!params.is_search
+		};
 	}
 );
 

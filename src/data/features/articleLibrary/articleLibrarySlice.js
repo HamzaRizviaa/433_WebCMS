@@ -45,21 +45,27 @@ const articlesLibrarySlice = createSlice({
 		builder.addCase(getAllArticlesApi.pending, (state) => {
 			state.status = 'pending';
 		});
+
 		builder.addCase(getAllArticlesApi.fulfilled, (state, action) => {
 			state.articles =
 				action.payload.data.length > 0 ? action.payload.data : state.articles;
+
 			state.totalRecords =
 				action.payload.data.length > 0
 					? action.payload.total
 					: state.totalRecords;
+
 			state.status = 'success';
+
 			if (action.payload.fromCalendar) {
 				state.noResultStatusCalendar =
 					action.payload.data.length > 0 ? false : true;
-			} else {
+			}
+			if (action.payload.isSearch) {
 				state.noResultStatus = action.payload.data.length > 0 ? false : true;
 			}
 		});
+
 		builder.addCase(getAllArticlesApi.rejected, (state) => {
 			state.status = 'failed';
 		});
@@ -69,11 +75,13 @@ const articlesLibrarySlice = createSlice({
 			state.status = 'loading';
 			state.specificArticleStatus = 'loading';
 		});
+
 		builder.addCase(getSpecificArticle.fulfilled, (state, action) => {
 			state.specificArticle = action.payload;
 			state.status = 'success';
 			state.specificArticleStatus = 'success';
 		});
+
 		builder.addCase(getSpecificArticle.rejected, (state) => {
 			state.status = 'failed';
 			state.specificArticleStatus = 'failed';
@@ -83,10 +91,12 @@ const articlesLibrarySlice = createSlice({
 		builder.addCase(getArticleMainCategories.pending, (state) => {
 			state.mainCategoriesStatus = true;
 		});
+
 		builder.addCase(getArticleMainCategories.fulfilled, (state, action) => {
 			state.mainCategories = action.payload;
 			state.mainCategoriesStatus = false;
 		});
+
 		builder.addCase(getArticleMainCategories.rejected, (state) => {
 			state.mainCategoriesStatus = false;
 		});
@@ -95,10 +105,12 @@ const articlesLibrarySlice = createSlice({
 		builder.addCase(getArticleSubCategories.pending, (state) => {
 			state.subCategoriesStatus = true;
 		});
+
 		builder.addCase(getArticleSubCategories.fulfilled, (state, action) => {
 			state.subCategories = action.payload;
 			state.subCategoriesStatus = false;
 		});
+
 		builder.addCase(getArticleSubCategories.rejected, (state) => {
 			state.subCategoriesStatus = false;
 		});
