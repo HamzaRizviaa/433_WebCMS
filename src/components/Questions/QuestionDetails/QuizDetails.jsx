@@ -22,7 +22,6 @@ export default function QuizDetails({
 	isEdit,
 	status,
 	location,
-	page,
 	notifID,
 	questionId,
 	questionType
@@ -63,7 +62,6 @@ export default function QuizDetails({
 		>
 			<div className={muiClasses.root}>
 				<QuizResults
-					page={page}
 					handleClose={() => {
 						handleClose();
 					}}
@@ -92,6 +90,5 @@ QuizDetails.propTypes = {
 	status: PropTypes.string.isRequired,
 	location: PropTypes.string.isRequired,
 	type: PropTypes.string.isRequired,
-	page: PropTypes.string,
 	notifID: PropTypes.string
 };

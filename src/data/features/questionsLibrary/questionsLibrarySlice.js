@@ -36,21 +36,28 @@ const questionsLibrarySlice = createSlice({
 		builder.addCase(getQuestions.pending, (state) => {
 			state.status = 'pending';
 		});
+
 		builder.addCase(getQuestions.fulfilled, (state, action) => {
 			state.questions =
 				action.payload.data.length > 0 ? action.payload.data : state.questions;
+
 			state.totalRecords =
 				action.payload.data.length > 0
 					? action.payload.total
 					: state.totalRecords;
+
 			state.status = 'success';
+
 			if (action.payload.fromCalendar) {
 				state.noResultStatusCalendar =
 					action.payload.data.length > 0 ? false : true;
-			} else {
+			}
+
+			if (action.payload.isSearch) {
 				state.noResultStatus = action.payload.data.length > 0 ? false : true;
 			}
 		});
+
 		builder.addCase(getQuestions.rejected, (state) => {
 			state.status = 'failed';
 		});
@@ -60,11 +67,13 @@ const questionsLibrarySlice = createSlice({
 			state.status = 'loading';
 			state.questionEditStatus = 'loading';
 		});
+
 		builder.addCase(getQuestionEdit.fulfilled, (state, action) => {
 			state.questionEdit = action.payload;
 			state.status = 'success';
 			state.questionEditStatus = 'success';
 		});
+
 		builder.addCase(getQuestionEdit.rejected, (state) => {
 			state.status = 'failed';
 			state.questionEditStatus = 'failed';
