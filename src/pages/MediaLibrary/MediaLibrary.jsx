@@ -2,7 +2,7 @@
 /* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { getSpecificMedia } from '../../data/features/mediaLibrary/mediaLibrarySlice';
 import { getAllNewLabels } from "../../data/features/postsLibrary/postsLibrarySlice";
@@ -14,26 +14,13 @@ import useGetAllMedia from '../../hooks/libraries/media/useGetAllMedia';
 
 const MediaLibrary = () => {
 	const dispatch = useDispatch();
-	const navigate = useNavigate();
 
 	const [showSlider, setShowSlider] = useState(false);
+	const [searchParams, setSearchParams] = useSearchParams();
 	const [edit, setEdit] = useState(false);
-	const [page, setPage] = useState(1);
-		useState('#404040');
+	const parsedPage = Number(searchParams.get('page'));
+	const page = isNaN(parsedPage) ? 1 : parsedPage || 1;
 	const [rowStatus, setrowStatus] = useState(''); //status PUBLISHED DRAFT to pass in UPLOADOREDITMEDIA
-
-	useEffect(() => {
-		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));
-		let current_date = new Date();
-		let time_difference_minutes = (expiry_date - current_date) / 1000 / 60; //in minutes
-
-		if (time_difference_minutes <= 1) {
-			alert('Your session has expired');
-			localStorage.removeItem('user_data');
-			localStorage.removeItem('token_expire_time');
-			navigate('/sign-in');
-		}
-	}, []);
 
 	const {
 		data,

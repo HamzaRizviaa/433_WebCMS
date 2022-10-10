@@ -47,6 +47,7 @@ import {
 import { getAllNews } from '../../../data/features/newsLibrary/newsLibrarySlice';
 import { TextField } from '@material-ui/core';
 import { ToastErrorNotifications } from '../../../data/constants';
+import { useSearchParams } from 'react-router-dom';
 
 const UploadOrEditNews = ({
 	open,
@@ -54,7 +55,6 @@ const UploadOrEditNews = ({
 	title,
 	buttonText,
 	isEdit,
-	page,
 	status
 }) => {
 	const classes = useStyles();
@@ -72,6 +72,7 @@ const UploadOrEditNews = ({
 	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
 	const [isError, setIsError] = useState({});
 	const [notifID, setNotifID] = useState('');
+	const [searchParams, setSearchParams] = useSearchParams();
 	const [form, setForm] = useState({
 		labels: [],
 		banner_title: '',
@@ -84,6 +85,9 @@ const UploadOrEditNews = ({
 	const previewRef = useRef(null);
 	const loadingRef = useRef(null);
 	const dialogWrapper = useRef(null);
+
+	const parsedPage = Number(searchParams.get('page'));
+	const page = isNaN(parsedPage) ? 1 : parsedPage || 1;
 
 	const dispatch = useDispatch();
 	const { features } = useSelector((state) => state.rootReducer.remoteConfig);
@@ -969,7 +973,6 @@ UploadOrEditNews.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	title: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
-	page: PropTypes.string,
 	status: PropTypes.string.isRequired
 };
 
