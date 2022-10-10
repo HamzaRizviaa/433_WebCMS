@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-import { ReactComponent as Calendar } from '../../../../assets/Calendar.svg';
+import { Calendar } from '../../../../assets/svg-icons';
 import { useStyles } from './index.styled';
 import { changeQueryParameters } from '../../../../data/utils/helper';
 
@@ -29,7 +29,9 @@ const CustomInput = forwardRef(
 				page: null
 			});
 
-			setSearchParams(queryParams);
+			if (formattedStartDate && formattedEndDate) {
+				setSearchParams(queryParams);
+			}
 		};
 
 		const startDateInput = dayjs(startDate).isValid()
