@@ -5,24 +5,23 @@ import PropTypes from 'prop-types';
 // import classes from './_uploadOrEditQuiz.module.scss';
 import { useDropzone } from 'react-dropzone';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import { makeid } from '../../../utils/helper';
+import { makeid } from '../../../data/utils/helper';
 import { TextField } from '@material-ui/core';
 import DragAndDropField from '../../DragAndDropField';
 import Labels from '../../Labels';
 import Button from '../../button';
 import DatePicker from 'react-datepicker';
-import checkFileSize from '../../../utils/validateFileSize';
-import { formatDate, getCalendarText2 } from '../../../utils';
+import checkFileSize from '../../../data/utils/validateFileSize';
+import { formatDate, getCalendarText2 } from '../../../data/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-	// getQuestionLabels,
 	getQuestions
-} from '../../../pages/QuestionLibrary/questionLibrarySlice';
-import { getLocalStorageDetails } from '../../../utils';
+} from "../../../data/features/questionsLibrary/questionsLibrarySlice";
+import { getLocalStorageDetails } from '../../../data/utils';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import LoadingOverlay from 'react-loading-overlay';
-import uploadFileToServer from '../../../utils/uploadFileToServer';
+import uploadFileToServer from '../../../data/utils/uploadFileToServer';
 import Close from '@material-ui/icons/Close';
 import { ReactComponent as CalenderYellow } from '../../../assets/Calender_Yellow.svg';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -31,8 +30,8 @@ import { useRef } from 'react';
 import Slide from '@mui/material/Slide';
 import PrimaryLoader from '../../PrimaryLoader';
 import DeleteModal from '../../DeleteModal';
-import validateForm from '../../../utils/validateForm';
-import validateDraft from '../../../utils/validateDraft';
+import validateForm from '../../../data/utils/validateForm';
+import validateDraft from '../../../data/utils/validateDraft';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { useStyles } from './UploadOrEditQuiz.style';
 
@@ -92,7 +91,7 @@ const UploadOrEditQuiz = ({
 		labels,
 		questionEditStatus,
 		questionEdit: editQuestionData
-	} = useSelector((state) => state.questionLibrary);
+	} = useSelector((state) => state.rootReducer.questionsLibrary);
 
 	useEffect(() => {
 		if (

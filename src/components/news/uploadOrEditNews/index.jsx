@@ -9,8 +9,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { useStyles } from './index.styles';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
-import uploadFileToServer from '../../../utils/uploadFileToServer';
-import { getLocalStorageDetails } from '../../../utils';
 import LoadingOverlay from 'react-loading-overlay';
 import PrimaryLoader from '../../PrimaryLoader';
 import Slide from '@mui/material/Slide';
@@ -23,8 +21,6 @@ import Labels from '../../Labels';
 import ToggleSwitch from '../../switch';
 import DeleteModal from '../../DeleteModal';
 import Button from '../../button';
-import validateForm from '../../../utils/validateForm';
-import validateDraft from '../../../utils/validateDraft';
 import NewsDraggable from '../NewsDraggableWrapper';
 import NewsSlide from '../NewsSlide';
 import Close from '@material-ui/icons/Close';
@@ -34,16 +30,23 @@ import {
 	comparingNewsFields,
 	checkNewElementNEWS,
 	checkNewElementNEWSDraft,
-	checkSortOrderOnEdit,
-	checkDuplicateLabel
-} from '../../../utils/newsUtils';
-import { TextField } from '@material-ui/core';
+	checkSortOrderOnEdit
+	// checkDuplicateLabel
+} from '../../../data/utils/newsUtils';
+import FeatureWrapper from '../../../components/FeatureWrapper';
+import {
+	checkDuplicateLabel,
+	validateForm,
+	validateDraft,
+	getLocalStorageDetails,
+	uploadFileToServer
+} from '../../../data/utils';
 
 //api calls
 
-import { getAllNews } from '../../../pages/NewsLibrary/newsLibrarySlice';
-import { ConstructionOutlined } from '@mui/icons-material';
-import { ToastErrorNotifications } from '../../../constants';
+import { getAllNews } from '../../../data/features/newsLibrary/newsLibrarySlice';
+import { TextField } from '@material-ui/core';
+import { ToastErrorNotifications } from '../../../data/constants';
 
 const UploadOrEditNews = ({
 	open,
@@ -83,9 +86,10 @@ const UploadOrEditNews = ({
 	const dialogWrapper = useRef(null);
 
 	const dispatch = useDispatch();
-	const labels = useSelector((state) => state.postLibrary.labels);
+	const { features } = useSelector((state) => state.rootReducer.remoteConfig);
+	const labels = useSelector((state) => state.rootReducer.postsLibrary.labels);
 	const { specificNews, specificNewsStatus } = useSelector(
-		(state) => state.NewsLibrary
+		(state) => state.rootReducer.newsLibrary
 	);
 
 	useEffect(() => {

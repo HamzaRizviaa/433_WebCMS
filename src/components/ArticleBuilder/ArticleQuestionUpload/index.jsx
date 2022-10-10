@@ -6,22 +6,22 @@ import PropTypes from 'prop-types';
 // import classes from './_ArticleQuestionUpload.module.scss';
 import { useDropzone } from 'react-dropzone';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import { makeid } from '../../../utils/helper';
+import { makeid } from '../../../data/utils/helper';
 import { TextField } from '@material-ui/core';
 import DragAndDropField from '../../DragAndDropField';
 import Labels from '../../Labels';
 
-import checkFileSize from '../../../utils/validateFileSize';
+import checkFileSize from '../../../data/utils/validateFileSize';
 import { useSelector } from 'react-redux';
 
-// import { getLocalStorageDetails } from '../../../utils';
+// import { getLocalStorageDetails } from '../../../data/utils';
 // import axios from 'axios';
 import { useRef } from 'react';
 import Slide from '@mui/material/Slide';
-import validateForm from '../../../utils/validateForm';
+import validateForm from '../../../data/utils/validateForm';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { useStyles } from './ArticleQuestionUpload.style';
-import uploadFileToServer from '../../../utils/uploadFileToServer';
+import uploadFileToServer from '../../../data/utils/uploadFileToServer';
 import SecondaryLoader from '../../SecondaryLoader';
 
 const ArticleQuestionUpload = ({

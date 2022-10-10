@@ -1,12 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './styles/index.scss';
 import { Provider } from 'react-redux';
-import store from './store/store';
 import { BrowserRouter as Router } from 'react-router-dom';
-import AppRoutes from './routes';
-import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import store from './data/store';
+import AppRoutes from './routes';
+
+import './styles/index.scss';
+import 'react-toastify/dist/ReactToastify.css';
 
 ReactDOM.render(
 	<Provider store={store}>

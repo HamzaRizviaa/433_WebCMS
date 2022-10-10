@@ -42,7 +42,7 @@ export const useStyles = makeStyles((theme) => ({
 		},
 		width: '100%',
 		color: theme.palette.white,
-		border: `1px solid ${theme.palette.grey}`,
+		border: `1px solid ${theme.palette.normalGrey}`,
 		fontSize: ' 1.4rem !important',
 		lineHeight: '1.6 !important',
 		borderRadius: '5rem !important',
@@ -62,7 +62,7 @@ export const useStyles = makeStyles((theme) => ({
 
 	textFieldInput2: {
 		color: ` ${theme.palette.white} !important`,
-		border: `0.01px solid ${theme.palette.grey}`,
+		border: `0.01px solid ${theme.palette.normalGrey}`,
 		padding: '1rem 1rem 1rem 1.5rem !important',
 		fontSize: '1.4rem !important',
 		lineHeight: '1.6 !important',

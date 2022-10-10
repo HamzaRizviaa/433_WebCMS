@@ -6,7 +6,7 @@ export const useStyles = makeStyles((theme) => ({
 			backgroundColor: `${theme.palette.black} `,
 			color: theme.palette.white,
 			margin: '20px 0px',
-			border: `1px solid ${theme.palette.grey}`,
+			border: `1px solid ${theme.palette.normalGrey}`,
 			borderRadius: '6px !important'
 		},
 
@@ -51,7 +51,7 @@ export const useStyles = makeStyles((theme) => ({
 		width: '100%',
 		padding: '3px 0',
 		color: `${theme.palette.white} !important`,
-		border: `1px solid ${theme.palette.grey}`,
+		border: `1px solid ${theme.palette.normalGrey}`,
 		fontSize: ' 1.4rem !important',
 		lineHeight: '1.6 !important',
 		borderRadius: '5rem !important',

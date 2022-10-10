@@ -8,7 +8,7 @@ import Layout from '../../components/layout';
 import Table from '../../components/table';
 import Button from '../../components/button';
 import LoadingOverlay from 'react-loading-overlay';
-import { useStyles } from './../../utils/styles';
+import { useStyles } from './../../data/utils/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -16,7 +16,7 @@ import Pagination from '@mui/material/Pagination';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import { useStyles as globalUseStyles } from '../../styles/global.style';
-import { getDateTime, formatDate, getCalendarText } from '../../utils';
+import { getDateTime, formatDate, getCalendarText } from '../../data/utils';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
@@ -36,21 +36,24 @@ import {
 	getSpecificNews,
 	resetCalendarError,
 	resetNoResultStatus
-} from './newsLibrarySlice';
+} from '../../data/features/newsLibrary/newsLibrarySlice';
 
-import { getAllNewLabels } from '../PostLibrary/postLibrarySlice';
+import { getAllNewLabels } from "../../data/features/postsLibrary/postsLibrarySlice";
+import {
+	selectAllNews,
+	selectNewsApiStatus,
+	selectNewsTotalRecords,
+	selectNewsNoResultStatus,
+	selectNewsResultStatusCalendar
+} from '../../data/selectors';
 
 const NewsLibrary = () => {
 	// Selectors
-	const allNews = useSelector((state) => state.NewsLibrary.news);
-	const newsApiStatus = useSelector((state) => state.NewsLibrary);
-	const totalRecords = useSelector((state) => state.NewsLibrary.totalRecords);
-	const noResultStatus = useSelector(
-		(state) => state.NewsLibrary.noResultStatus
-	);
-	const noResultStatusCalendar = useSelector(
-		(state) => state.NewsLibrary.noResultStatusCalendar
-	);
+	const allNews = useSelector(selectAllNews);
+	const newsApiStatus = useSelector(selectNewsApiStatus);
+	const totalRecords = useSelector(selectNewsTotalRecords);
+	const noResultStatus = useSelector(selectNewsNoResultStatus);
+	const noResultStatusCalendar = useSelector(selectNewsResultStatusCalendar);
 
 	const muiClasses = useStyles();
 	const classes = globalUseStyles();
