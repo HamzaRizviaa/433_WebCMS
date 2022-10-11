@@ -64,7 +64,7 @@ const QuestionLibrary = () => {
 
 	return (
 		<DashboardLayout
-			title='Question'
+			title='Question Library'
 			isLoading={isLoading}
 			onButtonClick={handleUploadQuestionClick}
 			isSearchFilterError={noResultStatus}

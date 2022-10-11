@@ -21,7 +21,6 @@ const TopBanner = () => {
 			hideBtn={true}
 			hideSearchFilter={true}
 			hideDateFilter={true}
-			isNotLibrary={true}
 		>
 
 				<div className={muiClasses.root}>

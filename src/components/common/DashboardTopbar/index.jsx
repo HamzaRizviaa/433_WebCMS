@@ -13,15 +13,14 @@ const DashboardTopbar = ({
 	isDateFilterError = false,
 	hideBtn = false,
 	hideSearchFilter = false,
-	hideDateFilter = false,
-	isNotLibrary
+	hideDateFilter = false
 }) => {
 	const classes = useTopbarStyles();
 
 	return (
 		<div className={classes.header}>
 			<div className={classes.leftSection}>
-				<h1 className={classes.title}>{title} {!isNotLibrary ? 'LIBRARY' : ''}</h1>
+				<h1 className={classes.title}>{title}</h1>
 				{!hideBtn && (
 					<Button
 						onClick={onButtonClick}
@@ -52,7 +51,6 @@ DashboardTopbar.propTypes = {
 	title: PropTypes.string.isRequired,
 	onButtonClick: PropTypes.func,
 	isSearchFilterError: PropTypes.bool,
-	isNotLibrary: PropTypes.bool,
 	isDateFilterError: PropTypes.bool,
 	hideBtn: PropTypes.bool,
 	hideSearchFilter: PropTypes.bool,

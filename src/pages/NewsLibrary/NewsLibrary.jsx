@@ -54,7 +54,7 @@ const NewsLibrary = () => {
 
 	return (
 		<DashboardLayout
-			title='News'
+			title='News Library'
 			isLoading={isLoading}
 			onButtonClick={onUploadNewsClick}
 			isSearchFilterError={noResultStatus}
