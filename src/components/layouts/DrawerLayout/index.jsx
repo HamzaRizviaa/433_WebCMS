@@ -12,13 +12,12 @@ const DrawerLayout = ({
     handlePreview,
     preview,
     previewRef,
-    dialogWrapper,
     notifID,
     isLoading,
     mainPage,
     children,
     isEdit,
-    fromArticle
+    fromArticle = false
 }) => {
     return(
         <DrawerLayoutSlider
@@ -31,8 +30,6 @@ const DrawerLayout = ({
 			previewRef={previewRef}
             isEdit={isEdit}
             fromArticle={fromArticle}
-			imagePreview={true}
-			dialogRef={dialogWrapper}
 			notifID={notifID}
 		>
             <PrimaryLoader loading={isLoading} mainPage={mainPage}>
@@ -54,10 +51,6 @@ DrawerLayout.propTypes = {
     handlePreview: PropTypes.func.isRequired,
     preview: PropTypes.bool.isRequired,
     previewRef: PropTypes.oneOfType([
-        PropTypes.func,
-        PropTypes.shape({ current: PropTypes.instanceOf(Element) })
-    ]),
-    dialogWrapper: PropTypes.oneOfType([
         PropTypes.func,
         PropTypes.shape({ current: PropTypes.instanceOf(Element) })
     ]),

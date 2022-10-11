@@ -7,7 +7,7 @@ import CopyToClipboard from '../../CopyToClipboard';
 import { ReactComponent as CopyIcon } from '../../../assets/Copy.svg';
 
 const DrawerLayoutSlider = ({
-    children,
+	children,
 	open,
 	handleClose,
 	title,
@@ -15,14 +15,13 @@ const DrawerLayoutSlider = ({
 	handlePreview,
 	preview,
 	previewRef,
-	dialogRef,
 	isEdit,
-    fromArticle,
-	notifID,
-	imagePreview
+	fromArticle = false,
+	notifID
 }) => {
-    const classes = DrawerLayoutStyles({ fromArticle })
-    const wrapperRef = useRef(null);
+	const classes = DrawerLayoutStyles({ fromArticle });
+	const wrapperRef = useRef(null);
+	const imagePreview = true;
 
 	useEffect(() => {
 		const close = (e) => {
@@ -38,21 +37,23 @@ const DrawerLayoutSlider = ({
 
 	useEffect(() => {
 		function handleClickOutside(event) {
-			if( (isEdit || imagePreview) && preview && previewRef.current && !previewRef.current.contains(event.target)){
-				handlePreview()
+			if (
+				(isEdit || imagePreview) &&
+				preview &&
+				previewRef.current &&
+				!previewRef.current.contains(event.target)
+			) {
+				handlePreview();
 			}
 		}
 
 		document.addEventListener('mousedown', handleClickOutside);
 		return () => document.removeEventListener('mousedown', handleClickOutside);
-	}, [wrapperRef, disableDropdown, preview, dialogRef]);
+	}, [wrapperRef, disableDropdown, preview]);
 
-    return (
-        <div>
-            <Backdrop
-				className={classes.backdrop}
-				open={open}
-			>
+	return (
+		<div>
+			<Backdrop className={classes.backdrop} open={open}>
 				<Slide
 					direction='left'
 					mountOnEnter
@@ -67,7 +68,11 @@ const DrawerLayoutSlider = ({
 						style={{ maxWidth: `${preview ? 'none' : '40%'}` }}
 					>
 						<div className={classes.content}>
-							<div className={fromArticle ? classes.articleBuilderHeader : classes.header}>
+							<div
+								className={
+									fromArticle ? classes.articleBuilderHeader : classes.header
+								}
+							>
 								<Close
 									onClick={() => handleClose()}
 									className={classes.closeIcon}
@@ -97,29 +102,20 @@ const DrawerLayoutSlider = ({
 					</Paper>
 				</Slide>
 			</Backdrop>
-        </div>
-    )
-}
+		</div>
+	);
+};
 
 DrawerLayoutSlider.propTypes = {
 	children: PropTypes.element.isRequired,
 	open: PropTypes.bool.isRequired,
-    fromArticle: PropTypes.bool.isRequired,
+	fromArticle: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	title: PropTypes.string.isRequired,
 	disableDropdown: PropTypes.bool.isRequired,
-	imagePreview: PropTypes.bool.isRequired,
 	handlePreview: PropTypes.func.isRequired,
 	preview: PropTypes.bool.isRequired,
 	previewRef: PropTypes.oneOfType([
-		PropTypes.func,
-		PropTypes.shape({ current: PropTypes.elementType })
-	]).isRequired,
-	orientationRef: PropTypes.oneOfType([
-		PropTypes.func,
-		PropTypes.shape({ current: PropTypes.elementType })
-	]).isRequired,
-	dialogRef: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,
