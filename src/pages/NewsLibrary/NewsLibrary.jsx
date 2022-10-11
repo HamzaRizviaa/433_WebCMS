@@ -15,7 +15,7 @@ const NewsLibrary = () => {
 	const [edit, setEdit] = useState(false);
 	const [page] = useState(1);
 	const [rowStatus, setrowStatus] = useState(''); //publish or draft
-
+  
 	const { data, totalRecords, isLoading } = useGetAllNews();
 
 	const onUploadNewsClick = () => {

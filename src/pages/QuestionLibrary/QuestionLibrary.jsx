@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-
 import Table from '../../components/ui/Table';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import UploadOrEditQuiz from '../../components/Questions/UploadEditQuestion/UploadOrEditQuiz';
@@ -37,14 +36,23 @@ const QuestionLibrary = () => {
 		setQuestionId(row.question_id);
 
 		//api calls
+
 		row.status === 'draft' && dispatch(getAllNewLabels());
 		dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
 
 		//slider calls
-		if (rowLocation === 'article') {
-			row.question_type === 'quiz'
-				? setShowQuizSlider(true)
-				: setShowPollSlider(true);
+		if (
+			row.location === 'article' &&
+			row.question_type === 'quiz' &&
+			row.status === 'ACTIVE'
+		) {
+			setShowQuizSlider(true);
+		} else if (
+			row.location === 'article' &&
+			row.question_type === 'poll' &&
+			row.status === 'ACTIVE'
+		) {
+			setShowPollSlider(true);
 		} else {
 			showEditSlider(true);
 		}
