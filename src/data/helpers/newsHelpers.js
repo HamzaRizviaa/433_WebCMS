@@ -18,6 +18,12 @@ export const newsColumns = [
 			})
 	},
 	{
+		dataField: 'news_title',
+		text: 'NEWS TITLE',
+		sort: true,
+		formatter: (content) => getFormatter('markup', { content })
+	},
+	{
 		dataField: 'post_date',
 		text: 'POST DATE | TIME',
 		sort: true,
