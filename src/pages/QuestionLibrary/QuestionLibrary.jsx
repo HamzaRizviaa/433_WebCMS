@@ -42,7 +42,6 @@ const QuestionLibrary = () => {
 		setQuestionId(row.question_id);
 
 		//api calls
-
 		row.status === 'draft' && dispatch(getAllNewLabels());
 		dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
 
@@ -89,10 +88,11 @@ const QuestionLibrary = () => {
 				open={showSlider}
 				location={rowLocation}
 				status={rowStatus} //active closed draft
+				rowType={rowType}
+				isEdit={false}
 				handleClose={() => {
 					setShowSlider(false);
 				}}
-				isEdit={false}
 				buttonText={edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'}
 			/>
 			{/* edit question */}
