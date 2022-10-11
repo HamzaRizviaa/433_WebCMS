@@ -1,13 +1,12 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import classes from './_slider.module.scss';
+import { DrawerLayoutStyles } from './index.style';
 import Close from '@material-ui/icons/Close';
 import { Backdrop, Box, Paper, Slide } from '@material-ui/core';
-import CopyToClipboard from '../CopyToClipboard';
-import { ReactComponent as CopyIcon } from '../../assets/Copy.svg';
+import CopyToClipboard from '../../CopyToClipboard';
+import { ReactComponent as CopyIcon } from '../../../assets/Copy.svg';
 
-const Slider = ({
+const DrawerLayoutSlider = ({
 	children,
 	open,
 	handleClose,
@@ -16,18 +15,13 @@ const Slider = ({
 	handlePreview,
 	preview,
 	previewRef,
-	orientationRef,
-	dialogRef,
-	edit,
-	media,
-	quiz,
-	viral,
-	article,
-	games,
-	news,
+	isEdit,
+	fromArticle = false,
 	notifID
 }) => {
+	const classes = DrawerLayoutStyles({ fromArticle });
 	const wrapperRef = useRef(null);
+	const imagePreview = true;
 
 	useEffect(() => {
 		const close = (e) => {
@@ -43,42 +37,8 @@ const Slider = ({
 
 	useEffect(() => {
 		function handleClickOutside(event) {
-			// if (
-			// 	wrapperRef.current &&
-			// 	disableDropdown &&
-			// 	!preview &&
-			// 	!wrapperRef.current.contains(event.target) &&
-			// 	(dialogRef?.current
-			// 		? dialogRef.current && !dialogRef.current.contains(event.target)
-			// 		: true)
-			// ) {
-			// 	handleClose();
-			// }
 			if (
-				!media &&
-				!quiz &&
-				!games &&
-				!news &&
-				!viral &&
-				!article &&
-				preview &&
-				previewRef?.current &&
-				!previewRef?.current.contains(event.target) &&
-				orientationRef?.current &&
-				!orientationRef?.current.contains(event.target)
-			) {
-				handlePreview();
-			}
-			if (
-				edit &&
-				preview &&
-				previewRef.current &&
-				!previewRef.current.contains(event.target)
-			) {
-				handlePreview();
-			}
-			if (
-				(media || quiz || games || viral || article || news) &&
+				(isEdit || imagePreview) &&
 				preview &&
 				previewRef.current &&
 				!previewRef.current.contains(event.target)
@@ -89,15 +49,11 @@ const Slider = ({
 
 		document.addEventListener('mousedown', handleClickOutside);
 		return () => document.removeEventListener('mousedown', handleClickOutside);
-	}, [wrapperRef, disableDropdown, preview, dialogRef]);
+	}, [wrapperRef, disableDropdown, preview]);
 
 	return (
 		<div>
-			<Backdrop
-				//onClick={() => handleClose()}
-				className={classes.backdrop}
-				open={open}
-			>
+			<Backdrop className={classes.backdrop} open={open}>
 				<Slide
 					direction='left'
 					mountOnEnter
@@ -107,19 +63,16 @@ const Slider = ({
 					ref={wrapperRef}
 				>
 					<Paper
-						// tabIndex='0'
-						// onKeyDown={(e) => {
-						// 	if (e.key === 'Escape') {
-						// 		handleClose();
-						// 	}
-						// }}
-
 						elevation={4}
 						className={classes.paper}
 						style={{ maxWidth: `${preview ? 'none' : '40%'}` }}
 					>
 						<div className={classes.content}>
-							<div className={classes.header}>
+							<div
+								className={
+									fromArticle ? classes.articleBuilderHeader : classes.header
+								}
+							>
 								<Close
 									onClick={() => handleClose()}
 									className={classes.closeIcon}
@@ -153,9 +106,10 @@ const Slider = ({
 	);
 };
 
-Slider.propTypes = {
+DrawerLayoutSlider.propTypes = {
 	children: PropTypes.element.isRequired,
 	open: PropTypes.bool.isRequired,
+	fromArticle: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	title: PropTypes.string.isRequired,
 	disableDropdown: PropTypes.bool.isRequired,
@@ -165,22 +119,8 @@ Slider.propTypes = {
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,
-	orientationRef: PropTypes.oneOfType([
-		PropTypes.func,
-		PropTypes.shape({ current: PropTypes.elementType })
-	]).isRequired,
-	dialogRef: PropTypes.oneOfType([
-		PropTypes.func,
-		PropTypes.shape({ current: PropTypes.elementType })
-	]).isRequired,
-	edit: PropTypes.bool.isRequired,
-	media: PropTypes.bool,
-	quiz: PropTypes.bool,
-	viral: PropTypes.bool,
-	article: PropTypes.bool,
-	games: PropTypes.bool,
-	news: PropTypes.bool,
+	isEdit: PropTypes.bool.isRequired,
 	notifID: PropTypes.string
 };
 
-export default Slider;
+export default DrawerLayoutSlider;

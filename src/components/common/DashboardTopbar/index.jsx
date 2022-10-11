@@ -20,7 +20,7 @@ const DashboardTopbar = ({
 	return (
 		<div className={classes.header}>
 			<div className={classes.leftSection}>
-				<h1 className={classes.title}>{title} LIBRARY</h1>
+				<h1 className={classes.title}>{title}</h1>
 				{!hideBtn && (
 					<Button
 						onClick={onButtonClick}

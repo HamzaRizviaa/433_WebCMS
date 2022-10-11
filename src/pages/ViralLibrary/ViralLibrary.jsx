@@ -34,7 +34,7 @@ const ViralLibrary = () => {
 
 	return (
 		<DashboardLayout
-			title='Viral'
+			title='Viral Library'
 			isLoading={isLoading}
 			onButtonClick={onUploadViralClick}
 		>

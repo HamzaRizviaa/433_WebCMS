@@ -13,7 +13,6 @@ const NewsLibrary = () => {
 
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
-	const [page] = useState(1);
 	const [rowStatus, setrowStatus] = useState(''); //publish or draft
   
 	const { data, totalRecords, isLoading } = useGetAllNews();
@@ -34,7 +33,7 @@ const NewsLibrary = () => {
 
 	return (
 		<DashboardLayout
-			title='News'
+			title='News Library'
 			isLoading={isLoading}
 			onButtonClick={onUploadNewsClick}
 		>
@@ -53,7 +52,6 @@ const NewsLibrary = () => {
 					setShowSlider(false);
 				}}
 				title={edit ? 'Edit News' : 'Upload News'}
-				page={page}
 				buttonText={
 					edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
 				}
