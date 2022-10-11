@@ -6,9 +6,7 @@ export const getAllNews = createAsyncThunk(
 	async (params) => {
 		const { data: news } = await NewsLibraryService.getAllNewsApi(params);
 
-		return { ...news.data, 
-			fromCalendar: !!params.start_date || !!params.end_date,
-			isSearch: !!params.is_search };
+		return news.data;
 	}
 );
 

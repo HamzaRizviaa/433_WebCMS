@@ -40,24 +40,9 @@ export const viralLibararySlice = createSlice({
 		});
 
 		builder.addCase(getAllViralsApi.fulfilled, (state, action) => {
-			state.virals =
-				action.payload.data.length > 0 ? action.payload.data : state.virals;
-
-			state.totalRecords =
-				action.payload.data.length > 0
-					? action.payload.total
-					: state.totalRecords;
-
+			state.virals = action.payload.data;
+			state.totalRecords = action.payload.total;
 			state.status = 'success';
-
-			if (action.payload.fromCalendar) {
-				state.noResultStatusCalendar =
-					action.payload.data.length > 0 ? false : true;
-			}
-
-			if (action.payload.isSearch) {
-				state.noResultStatus = action.payload.data.length > 0 ? false : true;
-			}
 		});
 
 		builder.addCase(getAllViralsApi.rejected, (state) => {

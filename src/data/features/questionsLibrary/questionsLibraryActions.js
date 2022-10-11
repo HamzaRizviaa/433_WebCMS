@@ -7,11 +7,7 @@ export const getQuestions = createAsyncThunk(
 		const { data: questions } =
 			await QuestionsLibraryService.getAllQuestionsApi(params);
 
-		return {
-			...questions.data,
-			fromCalendar: !!params.start_date || !!params.end_date,
-			isSearch: !!params.is_search
-		};
+		return questions.data;
 	}
 );
 

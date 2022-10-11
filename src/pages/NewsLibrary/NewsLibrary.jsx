@@ -13,15 +13,9 @@ const NewsLibrary = () => {
 
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
-	const [rowStatus, setrowStatus] = useState('');
-
-	const {
-		data,
-		totalRecords,
-		isLoading,
-		noResultStatus,
-		noResultStatusCalendar
-	} = useGetAllNews();
+	const [rowStatus, setrowStatus] = useState(''); //publish or draft
+  
+	const { data, totalRecords, isLoading } = useGetAllNews();
 
 	const onUploadNewsClick = () => {
 		dispatch(getAllNewLabels());
@@ -42,14 +36,14 @@ const NewsLibrary = () => {
 			title='News Library'
 			isLoading={isLoading}
 			onButtonClick={onUploadNewsClick}
-			isSearchFilterError={noResultStatus}
-			isDateFilterError={noResultStatusCalendar}
 		>
 			<Table
 				onRowClick={onRowClick}
 				data={data}
 				columns={newsColumns}
 				totalRecords={totalRecords}
+				isLoading={isLoading}
+				noDataText='No News Found'
 			/>
 			<UploadOrEditNews
 				open={showSlider}
