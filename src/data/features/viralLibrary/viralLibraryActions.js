@@ -7,11 +7,7 @@ export const getAllViralsApi = createAsyncThunk(
 		const { data: virals } = await ViralLibraryService.getAllViralsServiceCall(
 			params
 		);
-		return {
-			...virals.data,
-			fromCalendar: !!params.start_date || !!params.end_date,
-			isSearch: !!params.is_search
-		};
+		return virals.data;
 	}
 );
 

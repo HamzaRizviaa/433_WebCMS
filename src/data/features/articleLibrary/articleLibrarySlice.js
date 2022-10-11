@@ -47,23 +47,9 @@ const articlesLibrarySlice = createSlice({
 		});
 
 		builder.addCase(getAllArticlesApi.fulfilled, (state, action) => {
-			state.articles =
-				action.payload.data.length > 0 ? action.payload.data : state.articles;
-
-			state.totalRecords =
-				action.payload.data.length > 0
-					? action.payload.total
-					: state.totalRecords;
-
+			state.articles = action.payload.data;
+			state.totalRecords = action.payload.total;
 			state.status = 'success';
-
-			if (action.payload.fromCalendar) {
-				state.noResultStatusCalendar =
-					action.payload.data.length > 0 ? false : true;
-			}
-			if (action.payload.isSearch) {
-				state.noResultStatus = action.payload.data.length > 0 ? false : true;
-			}
 		});
 
 		builder.addCase(getAllArticlesApi.rejected, (state) => {

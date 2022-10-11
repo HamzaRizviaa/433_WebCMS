@@ -5,16 +5,24 @@ import { useSearchParams } from 'react-router-dom';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import CustomPagination from '../Pagination';
+import NoDataIndicator from './NoDataIndicator';
 import { changeQueryParameters } from '../../../data/utils/helper';
 import { useStyles } from './index.style';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 
-const Table = ({ data, columns, totalRecords, onRowClick }) => {
+const Table = ({
+	data,
+	columns,
+	totalRecords,
+	onRowClick,
+	isLoading,
+	noDataText
+}) => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const sortBy = searchParams.get('sortBy');
 	const orderType = searchParams.get('orderType');
 
-	const classes = useStyles();
+	const classes = useStyles({ isEmpty: totalRecords === 0 });
 
 	const sortCaret = useCallback((order) => {
 		if (order === 'asc')
@@ -64,8 +72,12 @@ const Table = ({ data, columns, totalRecords, onRowClick }) => {
 		onClick: onRowClick
 	};
 
+	const noDataIndication = isLoading ? undefined : (
+		<NoDataIndicator noDataText={noDataText} />
+	);
+
 	return (
-		<div>
+		<div className={classes.tableWrapper}>
 			<div className={classes.tableContainer}>
 				<BootstrapTable
 					keyField='id'
@@ -76,9 +88,10 @@ const Table = ({ data, columns, totalRecords, onRowClick }) => {
 					rowEvents={tableRowEvents}
 					sort={sort}
 					defaultSorted={defaultSorted}
+					noDataIndication={noDataIndication}
 				/>
 			</div>
-			<CustomPagination totalRecords={totalRecords} />
+			{totalRecords > 0 && <CustomPagination totalRecords={totalRecords} />}
 		</div>
 	);
 };
@@ -87,7 +100,9 @@ Table.propTypes = {
 	data: PropTypes.array.isRequired,
 	columns: PropTypes.array.isRequired,
 	onRowClick: PropTypes.func.isRequired,
-	totalRecords: PropTypes.number.isRequired
+	totalRecords: PropTypes.number.isRequired,
+	isLoading: PropTypes.bool,
+	noDataText: PropTypes.string
 };
 
 export default Table;

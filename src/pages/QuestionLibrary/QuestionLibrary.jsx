@@ -15,13 +15,7 @@ import { questionTableColumns } from '../../data/helpers/questionHelpers';
 const QuestionLibrary = () => {
 	const dispatch = useDispatch();
 
-	const {
-		data,
-		isLoading,
-		totalRecords,
-		noResultStatus,
-		noResultStatusCalendar
-	} = useGetAllQuestionsQuery();
+	const { data, isLoading, totalRecords } = useGetAllQuestionsQuery();
 
 	const [showSlider, setShowSlider] = useState(false);
 	const [showQuizSlider, setShowQuizSlider] = useState(false);
@@ -67,14 +61,14 @@ const QuestionLibrary = () => {
 			title='Question'
 			isLoading={isLoading}
 			onButtonClick={handleUploadQuestionClick}
-			isSearchFilterError={noResultStatus}
-			isDateFilterError={noResultStatusCalendar}
 		>
 			<Table
 				onRowClick={handleRowClick}
 				columns={questionTableColumns}
 				data={data}
 				totalRecords={totalRecords}
+				isLoading={isLoading}
+				noDataText='No Questions Found'
 			/>
 			{/* upload */}
 			<UploadOrEditQuiz

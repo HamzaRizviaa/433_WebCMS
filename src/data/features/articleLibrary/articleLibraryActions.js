@@ -7,11 +7,7 @@ export const getAllArticlesApi = createAsyncThunk(
 		const { data: articles } =
 			await ArticleLibraryService.getAllArticlesServiceCall(params);
 
-		return {
-			...articles.data,
-			fromCalendar: !!params.start_date || !!params.end_date,
-			isSearch: !!params.is_search
-		};
+		return articles.data;
 	}
 );
 

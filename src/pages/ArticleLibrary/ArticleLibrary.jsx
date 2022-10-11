@@ -12,13 +12,7 @@ import { articleTableColumns } from '../../data/helpers/articleHelpers';
 const ArticleLibrary = () => {
 	const dispatch = useDispatch();
 
-	const {
-		data,
-		isLoading,
-		totalRecords,
-		noResultStatus,
-		noResultStatusCalendar
-	} = useGetAllArticlesQuery();
+	const { data, isLoading, totalRecords } = useGetAllArticlesQuery();
 
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
@@ -43,14 +37,14 @@ const ArticleLibrary = () => {
 			title='Article'
 			isLoading={isLoading}
 			onButtonClick={handleUploadArticleClick}
-			isSearchFilterError={noResultStatus}
-			isDateFilterError={noResultStatusCalendar}
 		>
 			<Table
 				onRowClick={handleRowClick}
 				columns={articleTableColumns}
 				data={data}
 				totalRecords={totalRecords}
+				isLoading={isLoading}
+				noDataText='No Articles Found'
 			/>
 			<UploadOrEditArticle
 				open={showSlider}

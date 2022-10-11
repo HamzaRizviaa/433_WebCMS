@@ -12,13 +12,7 @@ import { tableColumns } from '../../data/helpers/viralHelpers';
 const ViralLibrary = () => {
 	const dispatch = useDispatch();
 
-	const {
-		data,
-		isLoading,
-		totalRecords,
-		noResultStatus,
-		noResultStatusCalendar
-	} = useGetAllViralsQuery();
+	const { data, isLoading, totalRecords } = useGetAllViralsQuery();
 
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
@@ -43,14 +37,14 @@ const ViralLibrary = () => {
 			title='Viral'
 			isLoading={isLoading}
 			onButtonClick={onUploadViralClick}
-			isSearchFilterError={noResultStatus}
-			isDateFilterError={noResultStatusCalendar}
 		>
 			<Table
 				onRowClick={onRowClick}
 				columns={tableColumns}
 				data={data}
 				totalRecords={totalRecords}
+				isLoading={isLoading}
+				noDataText='No Virals Found'
 			/>
 			<UploadOrEditViral
 				open={showSlider}

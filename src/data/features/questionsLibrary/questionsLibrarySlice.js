@@ -38,24 +38,9 @@ const questionsLibrarySlice = createSlice({
 		});
 
 		builder.addCase(getQuestions.fulfilled, (state, action) => {
-			state.questions =
-				action.payload.data.length > 0 ? action.payload.data : state.questions;
-
-			state.totalRecords =
-				action.payload.data.length > 0
-					? action.payload.total
-					: state.totalRecords;
-
+			state.questions = action.payload.data;
+			state.totalRecords = action.payload.total;
 			state.status = 'success';
-
-			if (action.payload.fromCalendar) {
-				state.noResultStatusCalendar =
-					action.payload.data.length > 0 ? false : true;
-			}
-
-			if (action.payload.isSearch) {
-				state.noResultStatus = action.payload.data.length > 0 ? false : true;
-			}
 		});
 
 		builder.addCase(getQuestions.rejected, (state) => {
