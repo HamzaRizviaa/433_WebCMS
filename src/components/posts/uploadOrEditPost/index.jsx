@@ -16,9 +16,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
 	getMedia,
 	getAllMedia
-} from './../../../pages/MediaLibrary/mediaLibrarySlice';
-import { makeid } from '../../../utils/helper';
-import { getLocalStorageDetails } from '../../../utils';
+} from '../../../data/features/mediaLibrary/mediaLibrarySlice';
+import { makeid } from '../../../data/utils/helper';
+import { getLocalStorageDetails } from '../../../data/utils';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import {
@@ -28,10 +28,10 @@ import {
 import Close from '@material-ui/icons/Close';
 import ClearIcon from '@material-ui/icons/Clear';
 import { Autocomplete, Popper, Paper, Tooltip, Fade } from '@mui/material';
-import uploadFileToServer from '../../../utils/uploadFileToServer';
-import checkFileSize from '../../../utils/validateFileSize';
-import validateForm from '../../../utils/validateForm';
-import validateDraft from '../../../utils/validateDraft';
+import uploadFileToServer from '../../../data/utils/uploadFileToServer';
+import checkFileSize from '../../../data/utils/validateFileSize';
+import validateForm from '../../../data/utils/validateForm';
+import validateDraft from '../../../data/utils/validateDraft';
 import DeleteModal from '../../DeleteModal';
 import { ReactComponent as SquareCrop } from '../../../assets/Square.svg';
 import { ReactComponent as PortraitCrop } from '../../../assets/portrait_rect.svg';
@@ -100,10 +100,16 @@ const UploadOrEditPost = ({
 			validator: checkFileSize
 		});
 
-	const allMedia = useSelector((state) => state.mediaLibraryOriginal.allMedia);
-	const labels = useSelector((state) => state.postLibrary.labels);
-	const specificPost = useSelector((state) => state.postLibrary.specificPost);
-	const specificPostStatus = useSelector((state) => state.postLibrary);
+	const allMedia = useSelector(
+		(state) => state.rootReducer.mediaLibrary.allMedia
+	);
+	const labels = useSelector((state) => state.rootReducer.postsLibrary.labels);
+	const specificPost = useSelector(
+		(state) => state.rootReducer.postsLibrary.specificPost
+	);
+	const specificPostStatus = useSelector(
+		(state) => state.rootReducer.postsLibrary
+	);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -976,11 +982,11 @@ const UploadOrEditPost = ({
 											LABELS
 										</h6>
 										<Labels
-										titleClasses={
-											isError.selectedLabels
-												? classes.errorState
-												: classes.noErrorState
-										}
+											titleClasses={
+												isError.selectedLabels
+													? classes.errorState
+													: classes.noErrorState
+											}
 											isEdit={isEdit}
 											setDisableDropdown={setDisableDropdown}
 											selectedLabels={form?.labels}
@@ -1302,7 +1308,9 @@ const UploadOrEditPost = ({
 													addSavePostBtn();
 												}}
 												text={
-													isEdit && status === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
+													isEdit && status === 'published'
+														? 'SAVE CHANGES'
+														: 'PUBLISH'
 												}
 											/>
 										</div>

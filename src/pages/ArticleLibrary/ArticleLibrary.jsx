@@ -12,13 +12,13 @@ import Tooltip from '@mui/material/Tooltip';
 import Fade from '@mui/material/Fade';
 import { ReactComponent as Edit } from '../../assets/edit.svg';
 import Pagination from '@mui/material/Pagination';
-import { useStyles } from './../../utils/styles';
+import { useStyles } from './../../data/utils/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import { getDateTime, formatDate, getCalendarText } from '../../utils';
+import { getDateTime, formatDate, getCalendarText } from '../../data/utils';
 import { ReactComponent as Search } from '../../assets/SearchIcon.svg';
 import { ReactComponent as Calendar } from '../../assets/Calendar.svg';
 import UploadOrEditArticle from '../../components/articles/uploadOrEditArticle';
@@ -29,8 +29,8 @@ import {
 	resetCalendarError,
 	resetNoResultStatus,
 	getSpecificArticle
-} from './articleLibrarySlice';
-import { getAllNewLabels } from '../PostLibrary/postLibrarySlice';
+} from '../../data/features/articleLibrary/articleLibrarySlice';
+import { getAllNewLabels } from "../../data/features/postsLibrary/postsLibrarySlice";
 
 import Four33Loader from '../../assets/Loader_Yellow.gif';
 import LoadingOverlay from 'react-loading-overlay';
@@ -39,16 +39,20 @@ import { useStyles as globalUseStyles } from '../../styles/global.style';
 
 const ArticleLibrary = () => {
 	// Selectors
-	const articles = useSelector((state) => state.ArticleLibraryStore.articles);
-	const statusArticlesApi = useSelector((state) => state.ArticleLibraryStore);
+	const articles = useSelector(
+		(state) => state.rootReducer.articleLibrary.articles
+	);
+	const statusArticlesApi = useSelector(
+		(state) => state.rootReducer.articleLibrary
+	);
 	const totalRecords = useSelector(
-		(state) => state.ArticleLibraryStore.totalRecords
+		(state) => state.rootReducer.articleLibrary.totalRecords
 	);
 	const noResultStatus = useSelector(
-		(state) => state.ArticleLibraryStore.noResultStatus
+		(state) => state.rootReducer.articleLibrary.noResultStatus
 	);
 	const noResultStatusCalendar = useSelector(
-		(state) => state.ArticleLibraryStore.noResultStatusCalendar
+		(state) => state.rootReducer.articleLibrary.noResultStatusCalendar
 	);
 
 	const muiClasses = useStyles();

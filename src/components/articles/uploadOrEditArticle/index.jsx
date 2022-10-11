@@ -5,17 +5,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Box, Grid } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import { makeid } from '../../../utils/helper';
+import { makeid } from '../../../data/utils/helper';
 import { useDispatch, useSelector } from 'react-redux';
-import { getLocalStorageDetails } from '../../../utils';
+import { getLocalStorageDetails } from '../../../data/utils';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { getPostLabels } from '../../../pages/PostLibrary/postLibrarySlice';
-import uploadFileToServer from '../../../utils/uploadFileToServer';
+import uploadFileToServer from '../../../data/utils/uploadFileToServer';
 import Slide from '@mui/material/Slide';
-import checkFileSize from '../../../utils/validateFileSize';
-import validateForm from '../../../utils/validateForm';
-import validateDraft from '../../../utils/validateDraft';
+import checkFileSize from '../../../data/utils/validateFileSize';
+import validateForm from '../../../data/utils/validateForm';
+import validateDraft from '../../../data/utils/validateDraft';
 import PrimaryLoader from '../../PrimaryLoader';
 import { useStyles } from './index.style';
 import { useStyles as globalUseStyles } from '../../../styles/global.style';
@@ -26,6 +25,7 @@ import Text from '../../../assets/Text.svg';
 import ImageVideo from '../../../assets/Image.svg';
 import Tweet from '../../../assets/Twitter Line.svg';
 import Question from '../../../assets/Quiz.svg';
+import ToggleSwitch from '../../switch';
 
 /*  ArticleBuilder imports  */
 import ArticleElements from '../../ArticleBuilder/ArticleElements'; // left pan of buttons
@@ -48,7 +48,7 @@ import {
 	getAllArticlesApi,
 	getArticleMainCategories,
 	getArticleSubCategories
-} from '../../../pages/ArticleLibrary/articleLibrarySlice';
+} from '../../../data/features/articleLibrary/articleLibrarySlice';
 
 import { aws4Interceptor } from 'aws4-axios';
 
@@ -65,9 +65,9 @@ import {
 	checkNewElementQuestion,
 	checkEmptyQuestionDraft,
 	checkNewElementQuestionDraft
-} from '../../../utils/articleUtils';
+} from '../../../data/utils/articleUtils';
 import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDraggable';
-import { ToastErrorNotifications } from '../../../constants';
+import { ToastErrorNotifications } from '../../../data/constants';
 
 const UploadOrEditArticle = ({
 	open,
@@ -103,6 +103,8 @@ const UploadOrEditArticle = ({
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const loadingRef = useRef(null);
+	const scrollRef = useRef(null);
+	const topElementRef = useRef(null);
 
 	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
 
@@ -123,9 +125,16 @@ const UploadOrEditArticle = ({
 	});
 	const [data, setData] = useState([]);
 	const [dataErrors, setDataErrors] = useState(Array(data?.length).fill(false));
+	const [itemsOnTop, setItemsOnTop] = useState(false);
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
+
+	const {
+		features: { translationsOnArticles }
+	} = useSelector((state) => state.rootReducer.remoteConfig);
+
+	const isTranslationsEnabled = translationsOnArticles?._value === 'true';
 
 	const elementData = [
 		{
@@ -227,13 +236,13 @@ const UploadOrEditArticle = ({
 		}
 	}, [fileRejectionsAvatar]);
 
-	const labels = useSelector((state) => state.postLibrary.labels);
+	const labels = useSelector((state) => state.rootReducer.postsLibrary.labels);
 	const {
 		specificArticle,
 		specificArticleStatus,
 		subCategories,
 		mainCategories
-	} = useSelector((state) => state.ArticleLibraryStore);
+	} = useSelector((state) => state.rootReducer.articleLibrary);
 
 	useEffect(() => {
 		// dispatch(getPostLabels());
@@ -666,6 +675,9 @@ const UploadOrEditArticle = ({
 				{
 					headers: {
 						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					},
+					params: {
+						api_version: isTranslationsEnabled ? 1 : 2
 					}
 				}
 			);
@@ -818,6 +830,7 @@ const UploadOrEditArticle = ({
 		});
 		setDataErrors(Array(data.length).fill(false));
 		setData([]);
+		setItemsOnTop(false);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -1009,19 +1022,44 @@ const UploadOrEditArticle = ({
 	};
 
 	const handleArticleElement = (dataItem) => {
-		setData((prev) => {
-			return [
-				...prev,
-				{
-					sortOrder: data.length + 1,
-					heading: dataItem.text,
-					component: dataItem.component,
-					element_type: dataItem.type,
-					isOpen: true,
-					deleted: false
-				}
-			];
-		});
+		if (itemsOnTop) {
+			setData((prev) => {
+				return [
+					{
+						sortOrder: data.length + 1,
+						heading: dataItem.text,
+						component: dataItem.component,
+						element_type: dataItem.type,
+						isOpen: true,
+						deleted: false
+					},
+					...prev
+				];
+			});
+			setTimeout(() => {
+				topElementRef?.current?.scrollIntoView({
+					block: 'end',
+					behavior: 'smooth'
+				});
+			});
+		} else {
+			setData((prev) => {
+				return [
+					...prev,
+					{
+						sortOrder: data.length + 1,
+						heading: dataItem.text,
+						component: dataItem.component,
+						element_type: dataItem.type,
+						isOpen: true,
+						deleted: false
+					}
+				];
+			});
+			setTimeout(() => {
+				scrollRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' });
+			});
+		}
 	};
 
 	const checkNewAuthorImage = () => {
@@ -1674,11 +1712,32 @@ const UploadOrEditArticle = ({
 									<></>
 								)}
 								<Grid container>
-									<Grid pr={1} item md={2}>
+									<Grid className={classes.firstGridItem} pr={1} item md={3}>
 										<div className={classes.gridDivSmall}>
 											<Box mb={3.5} className={classes.mainTitleDescription}>
 												<h2>Elements</h2>
 												<p>Add elements to build your article</p>
+											</Box>
+											<Box
+												sx={{
+													display: 'flex',
+													alignItems: 'center',
+													justifyContent: 'space-between',
+													width: '100%'
+												}}
+											>
+												<h4 style={{ fontSize: '16px', color: 'white' }}>
+													Add elements to the top
+												</h4>
+												<Box>
+													<ToggleSwitch
+														id={`itemsOnTop-button`}
+														checked={itemsOnTop}
+														onChange={(checked) => {
+															setItemsOnTop(checked);
+														}}
+													/>
+												</Box>
 											</Box>
 											<ArticleElements
 												data={elementData}
@@ -1686,7 +1745,7 @@ const UploadOrEditArticle = ({
 											/>
 										</div>
 									</Grid>
-									<Grid item md={6} ml={1}>
+									<Grid className={classes.secondGridItem} item px={1.5} md={6}>
 										<Box mb={3.5} className={classes.mainTitleDescription}>
 											<h2>Builder</h2>
 											<p>Edit, reorder elements here and build your article</p>
@@ -1723,10 +1782,16 @@ const UploadOrEditArticle = ({
 											setExtraLabel={setExtraLabel}
 											isError={isError}
 										/>
+										<Box
+											sx={{
+												scrollMarginBottom: '400px'
+											}}
+											ref={topElementRef}
+										></Box>
 										<DraggableWrapper onDragEnd={onDragEnd}>
 											{data.map((item, index) => {
 												return (
-													<>
+													<div ref={scrollRef} key={index}>
 														{React.createElement(item.component, {
 															sendDataToParent: (data) =>
 																setNewData(data, index),
@@ -1756,12 +1821,12 @@ const UploadOrEditArticle = ({
 																dataErrors[index] &&
 																'This field is required'}
 														</p>
-													</>
+													</div>
 												);
 											})}
 										</DraggableWrapper>
 									</Grid>
-									<Grid item md={4}>
+									<Grid className={classes.lastGridItem} item md={3}>
 										<Box px={2} className={classes.gridDivSmall}>
 											<Box mb={3.5} className={classes.mainTitleDescription}>
 												<h2>Preview</h2>
