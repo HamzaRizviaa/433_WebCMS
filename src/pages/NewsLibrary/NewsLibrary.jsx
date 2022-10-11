@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import UploadOrEditNews from '../../components/news/uploadOrEditNews';
 import { newsColumns } from '../../data/helpers/newsHelpers';
@@ -10,25 +9,12 @@ import { getSpecificNews } from '../../data/features/newsLibrary/newsLibrarySlic
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 
 const NewsLibrary = () => {
-	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [page] = useState(1);
 	const [rowStatus, setrowStatus] = useState(''); //publish or draft
-
-	useEffect(() => {
-		let expiry_date = Date.parse(localStorage.getItem('token_expire_time'));
-		let current_date = new Date();
-		let time_difference_minutes = (expiry_date - current_date) / 1000 / 60; //in minutes
-		if (time_difference_minutes <= 1) {
-			alert('Your session has expired');
-			localStorage.removeItem('user_data');
-			localStorage.removeItem('token_expire_time');
-			navigate('/sign-in');
-		}
-	}, []);
 
 	const {
 		data,
