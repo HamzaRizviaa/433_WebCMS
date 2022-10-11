@@ -34,7 +34,7 @@ const ArticleLibrary = () => {
 
 	return (
 		<DashboardLayout
-			title='Article Library'
+			title='Article'
 			isLoading={isLoading}
 			onButtonClick={handleUploadArticleClick}
 		>
