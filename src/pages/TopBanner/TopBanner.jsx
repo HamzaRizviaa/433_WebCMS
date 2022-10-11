@@ -13,7 +13,9 @@ const TopBanner = () => {
 	const getBannerContentState = useSelector(
 		(state) => state.rootReducer.topBanner.getBannerContentState
 	);
-	const bannerState = useSelector((state) => state.rootReducer.topBanner.getBannerStatus);
+	const bannerState = useSelector(
+		(state) => state.rootReducer.topBanner.getBannerStatus
+	);
 
 	return (
 		<DashboardLayout
@@ -22,38 +24,37 @@ const TopBanner = () => {
 			hideSearchFilter={true}
 			hideDateFilter={true}
 		>
-
-				<div className={muiClasses.root}>
-					<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
-						<TabsListUnstyled className={muiClasses.tabMainDiv}>
-							<TabUnstyled
-								disabled={getBannerContentState && bannerState ? false : true}
-							>
-								Home
-							</TabUnstyled>
-							<TabUnstyled
-								disabled={getBannerContentState && bannerState ? false : true}
-							>
-								Media
-							</TabUnstyled>
-							{/* <TabUnstyled
+			<div className={muiClasses.root}>
+				<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
+					<TabsListUnstyled className={muiClasses.tabMainDiv}>
+						<TabUnstyled
+							disabled={getBannerContentState && bannerState ? false : true}
+						>
+							Home
+						</TabUnstyled>
+						<TabUnstyled
+							disabled={getBannerContentState && bannerState ? false : true}
+						>
+							Media
+						</TabUnstyled>
+						{/* <TabUnstyled
 								disabled={getBannerContentState && bannerState ? false : true}
 							>
 								Game
 							</TabUnstyled> */}
-						</TabsListUnstyled>
-						<TabPanelUnstyled value={0}>
-							<Banners tabValue={'home'} />
-						</TabPanelUnstyled>
-						<TabPanelUnstyled value={1}>
-							<Banners tabValue={'media'} />
-						</TabPanelUnstyled>
-						<TabPanelUnstyled value={2}>
-							<Banners tabValue={'game'} />
-						</TabPanelUnstyled>
-					</TabsUnstyled>
-				</div>
-				</DashboardLayout>
+					</TabsListUnstyled>
+					<TabPanelUnstyled value={0}>
+						<Banners tabValue={'home'} />
+					</TabPanelUnstyled>
+					<TabPanelUnstyled value={1}>
+						<Banners tabValue={'media'} />
+					</TabPanelUnstyled>
+					<TabPanelUnstyled value={2}>
+						<Banners tabValue={'game'} />
+					</TabPanelUnstyled>
+				</TabsUnstyled>
+			</div>
+		</DashboardLayout>
 	);
 };
 
