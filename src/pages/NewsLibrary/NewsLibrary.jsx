@@ -13,8 +13,7 @@ const NewsLibrary = () => {
 
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
-	const [page] = useState(1);
-	const [rowStatus, setrowStatus] = useState(''); //publish or draft
+	const [rowStatus, setrowStatus] = useState('');
 
 	const {
 		data,
@@ -59,7 +58,6 @@ const NewsLibrary = () => {
 					setShowSlider(false);
 				}}
 				title={edit ? 'Edit News' : 'Upload News'}
-				page={page}
 				buttonText={
 					edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
 				}

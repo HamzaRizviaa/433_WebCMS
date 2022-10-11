@@ -47,6 +47,7 @@ import {
 import { getAllNews } from '../../../data/features/newsLibrary/newsLibrarySlice';
 import { TextField } from '@material-ui/core';
 import { ToastErrorNotifications } from '../../../data/constants';
+import useCommonParams from '../../../hooks/useCommonParams';
 
 const UploadOrEditNews = ({
 	open,
@@ -54,12 +55,12 @@ const UploadOrEditNews = ({
 	title,
 	buttonText,
 	isEdit,
-	page,
 	status
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 
+	const queryParams = useCommonParams();
 	const [isLoading, setIsLoading] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
@@ -416,7 +417,7 @@ const UploadOrEditNews = ({
 			if (result?.data?.status_code === 200) {
 				toast.success('News has been deleted!');
 				handleClose();
-				dispatch(getAllNews({ page }));
+				dispatch(getAllNews({ queryParams }));
 			}
 		} catch (e) {
 			toast.error(ToastErrorNotifications.deleteBannerItemText);
@@ -482,7 +483,7 @@ const UploadOrEditNews = ({
 				setIsLoading(false);
 
 				handleClose();
-				dispatch(getAllNews({ page }));
+				dispatch(getAllNews({ queryParams }));
 			}
 		} catch (e) {
 			toast.error(isEdit ? 'Failed to edit news!' : 'Failed to create news!');
@@ -969,7 +970,6 @@ UploadOrEditNews.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	title: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
-	page: PropTypes.string,
 	status: PropTypes.string.isRequired
 };
 
