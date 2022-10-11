@@ -21,6 +21,7 @@ const DashboardLayout = ({
 	hideSearchFilter = false,
 	hideDateFilter = false,
 	isLoading = false,
+	isNotLibrary = false,
 	children
 }) => {
 	const dispatch = useDispatch();
@@ -68,6 +69,7 @@ const DashboardLayout = ({
 							hideBtn={hideBtn}
 							hideSearchFilter={hideSearchFilter}
 							hideDateFilter={hideDateFilter}
+							isNotLibrary={isNotLibrary}
 						/>
 						{children}
 					</div>
@@ -83,6 +85,7 @@ DashboardLayout.propTypes = {
 	isSearchFilterError: PropTypes.bool,
 	isDateFilterError: PropTypes.bool,
 	hideBtn: PropTypes.bool,
+	isNotLibrary: PropTypes.bool,
 	hideSearchFilter: PropTypes.bool,
 	hideDateFilter: PropTypes.bool,
 	isLoading: PropTypes.bool,
