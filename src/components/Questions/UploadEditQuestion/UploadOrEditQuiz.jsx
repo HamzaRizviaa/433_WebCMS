@@ -784,7 +784,7 @@ const UploadOrEditQuiz = ({
 							<PrimaryLoader />
 						) : (
 							<>
-								{location === 'article' ? (
+								{location === 'article' && isEdit ? (
 									<QuestionDraggable>
 										{questionSlides.map((item, index) => {
 											return (

@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-
 import Table from '../../components/ui/Table';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import UploadOrEditQuiz from '../../components/Questions/UploadEditQuestion/UploadOrEditQuiz';
@@ -47,10 +46,18 @@ const QuestionLibrary = () => {
 		dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
 
 		//slider calls
-		if (rowLocation === 'article') {
-			row.question_type === 'quiz'
-				? setShowQuizSlider(true)
-				: setShowPollSlider(true);
+		if (
+			row.location === 'article' &&
+			row.question_type === 'quiz' &&
+			row.status === 'ACTIVE'
+		) {
+			setShowQuizSlider(true);
+		} else if (
+			row.location === 'article' &&
+			row.question_type === 'poll' &&
+			row.status === 'ACTIVE'
+		) {
+			setShowPollSlider(true);
 		} else {
 			showEditSlider(true);
 		}
@@ -81,10 +88,11 @@ const QuestionLibrary = () => {
 				open={showSlider}
 				location={rowLocation}
 				status={rowStatus} //active closed draft
+				rowType={rowType}
+				isEdit={false}
 				handleClose={() => {
 					setShowSlider(false);
 				}}
-				isEdit={false}
 				buttonText={edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'}
 			/>
 			{/* edit question */}
