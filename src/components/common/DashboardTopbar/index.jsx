@@ -9,6 +9,7 @@ import { useTopbarStyles } from './index.style';
 const DashboardTopbar = ({
 	title,
 	onButtonClick,
+	hideLibraryText = false,
 	hideBtn = false,
 	hideSearchFilter = false,
 	hideDateFilter = false
@@ -18,7 +19,10 @@ const DashboardTopbar = ({
 	return (
 		<div className={classes.header}>
 			<div className={classes.leftSection}>
-				<h1 className={classes.title}>{title} LIBRARY</h1>
+				<h1 className={classes.title}>
+					{title}
+					{!hideLibraryText && ' Library'}
+				</h1>
 				{!hideBtn && (
 					<Button
 						onClick={onButtonClick}
@@ -43,7 +47,8 @@ DashboardTopbar.propTypes = {
 	onButtonClick: PropTypes.func,
 	hideBtn: PropTypes.bool,
 	hideSearchFilter: PropTypes.bool,
-	hideDateFilter: PropTypes.bool
+	hideDateFilter: PropTypes.bool,
+	hideLibraryText: PropTypes.bool
 };
 
 export default DashboardTopbar;

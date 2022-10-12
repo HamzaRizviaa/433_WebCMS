@@ -17,7 +17,7 @@ import { toast } from 'react-toastify';
 import { formatDate, getCalendarText2 } from '../../../data/utils';
 import uploadFileToServer from '../../../data/utils/uploadFileToServer';
 import { useDispatch, useSelector } from 'react-redux';
-import { getQuestions } from "../../../data/features/questionsLibrary/questionsLibrarySlice";
+import { getQuestions } from '../../../data/features/questionsLibrary/questionsLibrarySlice';
 import { getLocalStorageDetails } from '../../../data/utils';
 import QuestionTabPanes from '../UploadQuestionHeader/QuestionTabPanes';
 import { ReactComponent as CalenderYellow } from '../../../assets/Calender_Yellow.svg';
@@ -784,7 +784,7 @@ const UploadOrEditQuiz = ({
 							<PrimaryLoader />
 						) : (
 							<>
-								{location === 'article' ? (
+								{location === 'article' && isEdit ? (
 									<QuestionDraggable>
 										{questionSlides.map((item, index) => {
 											return (

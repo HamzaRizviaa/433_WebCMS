@@ -38,21 +38,13 @@ export const viralLibararySlice = createSlice({
 		builder.addCase(getAllViralsApi.pending, (state) => {
 			state.status = 'pending';
 		});
+
 		builder.addCase(getAllViralsApi.fulfilled, (state, action) => {
-			state.virals =
-				action.payload.data.length > 0 ? action.payload.data : state.virals;
-			state.totalRecords =
-				action.payload.data.length > 0
-					? action.payload.total
-					: state.totalRecords;
+			state.virals = action.payload.data;
+			state.totalRecords = action.payload.total;
 			state.status = 'success';
-			if (action.payload.fromCalendar) {
-				state.noResultStatusCalendar =
-					action.payload.data.length > 0 ? false : true;
-			} else {
-				state.noResultStatus = action.payload.data.length > 0 ? false : true;
-			}
 		});
+
 		builder.addCase(getAllViralsApi.rejected, (state) => {
 			state.status = 'failed';
 		});
@@ -62,11 +54,13 @@ export const viralLibararySlice = createSlice({
 			state.status = 'loading';
 			state.specificViralStatus = 'loading';
 		});
+
 		builder.addCase(getSpecificViral.fulfilled, (state, action) => {
 			state.specificViral = action.payload;
 			state.status = 'success';
 			state.specificViralStatus = 'success';
 		});
+
 		builder.addCase(getSpecificViral.rejected, (state) => {
 			state.status = 'failed';
 			state.specificViralStatus = 'failed';
