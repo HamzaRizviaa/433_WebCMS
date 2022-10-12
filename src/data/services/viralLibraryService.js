@@ -1,16 +1,20 @@
 import axiosInstance from '../axiosInstance';
 
+const sortKeysMapping = {
+	viral: 'viral',
+	post_date: 'postdate',
+	last_edit: 'lastedit',
+	labels: 'label',
+	user: 'user',
+	status: 'status'
+};
+
 class ViralLibraryService {
 	static getAllViralsServiceCall(queryParams) {
 		const params = {
+			...queryParams,
 			limit: 20,
-			page: queryParams.page,
-			order_type: queryParams.orderType || null,
-			sort_by: queryParams.sortby || null,
-			start_date: queryParams.startDate || null,
-			end_date: queryParams.endDate || null,
-			q: queryParams.q || null,
-			...(!!queryParams.q && { is_search: true })
+			sort_by: sortKeysMapping[queryParams.sort_by] || null
 		};
 
 		return axiosInstance.get('/viral/all-virals', { params });

@@ -3,6 +3,8 @@ export interface TableProps {
 	columns: Array<any>;
 	totalRecords: number;
 	onRowClick: () => void;
+	isLoading: boolean;
+	noDataText: string;
 }
 
 /**

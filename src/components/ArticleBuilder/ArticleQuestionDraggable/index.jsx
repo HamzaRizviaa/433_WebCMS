@@ -39,6 +39,9 @@ const ArticleQuestionDraggable = ({
 	const [qtype, setQtype] = useState('poll');
 
 	const muiClasses = useStyles();
+	const questionTypes = (type) => {
+		setQtype(type);
+	};
 
 	return (
 		<>
@@ -94,15 +97,14 @@ const ArticleQuestionDraggable = ({
 									defaultValue={initialData?.question_type === 'quiz' ? 1 : 0}
 									className={muiClasses.tabRoot}
 								>
-									{/* {(initialData?.question_id && status === 'draft') ||
-									!initialData?.question_id ? ( */}
-									{!initialData?.question_id ? (
+									{(initialData?.question_id && status === 'draft') ||
+									!initialData?.question_id ? (
 										<>
 											<TabsListUnstyled className={muiClasses.tabMainDiv}>
-												<TabUnstyled onClick={() => setQtype('poll')}>
+												<TabUnstyled onClick={() => questionTypes('poll')}>
 													Add Poll
 												</TabUnstyled>
-												<TabUnstyled onClick={() => setQtype('quiz')}>
+												<TabUnstyled onClick={() => questionTypes('quiz')}>
 													Add Quiz
 												</TabUnstyled>
 											</TabsListUnstyled>
@@ -116,7 +118,8 @@ const ArticleQuestionDraggable = ({
 									)}
 
 									{initialData?.question_id &&
-									item?.data?.question_type === 'poll' ? (
+									item?.data?.question_type === 'poll' &&
+									status === 'published' ? (
 										//&& status === 'published'
 										<TabPanelUnstyled value={0}>
 											<ArticleQuestionUpload
@@ -141,7 +144,8 @@ const ArticleQuestionDraggable = ({
 											/>
 										</TabPanelUnstyled>
 									) : initialData?.question_id &&
-									  item?.data?.question_type === 'quiz' ? (
+									  item?.data?.question_type === 'quiz' &&
+									  status === 'published' ? (
 										// && status === 'published'
 										<TabPanelUnstyled value={1}>
 											<ArticleQuestionUpload
@@ -186,6 +190,7 @@ const ArticleQuestionDraggable = ({
 													status={status}
 													isEdit={isEdit}
 													type='poll'
+													// type={qtype}
 													qtype={qtype}
 												/>
 											</TabPanelUnstyled>
@@ -208,6 +213,7 @@ const ArticleQuestionDraggable = ({
 														handleClose();
 													}}
 													type='quiz'
+													// type={qtype}
 													qtype={qtype}
 												/>
 											</TabPanelUnstyled>

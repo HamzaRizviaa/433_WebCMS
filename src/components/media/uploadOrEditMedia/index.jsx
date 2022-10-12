@@ -38,6 +38,7 @@ import DeleteModal from '../../DeleteModal';
 import { ToastErrorNotifications } from '../../../data/constants';
 import FeatureWrapper from '../../FeatureWrapper';
 import TranslationCarousal from '../../TranslationCarousal';
+import useCommonParams from '../../../hooks/useCommonParams';
 
 const UploadOrEditMedia = ({
 	open,
@@ -46,9 +47,9 @@ const UploadOrEditMedia = ({
 	heading1,
 	buttonText,
 	isEdit,
-	page,
 	status
 }) => {
+	const queryParams = useCommonParams();
 	const [mediaLabels, setMediaLabels] = useState([]);
 	const [subCategories, setSubCategories] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -590,12 +591,12 @@ const UploadOrEditMedia = ({
 			if (result?.data?.status_code === 200) {
 				if (result?.data?.data?.is_deleted === false) {
 					toast.error(ToastErrorNotifications.deleteBannerItemText);
-					dispatch(getMedia({ page }));
+					dispatch(getMedia( queryParams ));
 				} else {
 					toast.success('Media has been deleted!');
 					handleClose();
 					//setting a timeout for getting post after delete.
-					dispatch(getMedia({ page }));
+					dispatch(getMedia( queryParams ));
 				}
 			}
 		} catch (e) {
@@ -726,6 +727,7 @@ const UploadOrEditMedia = ({
 					}
 				}
 			);
+			console.log('result...........', result)
 			if (result?.data?.status_code === 200) {
 				toast.success(
 					isEdit
@@ -735,8 +737,7 @@ const UploadOrEditMedia = ({
 						: 'Media has been uploaded!'
 				);
 				setIsLoadingUploadMedia(false);
-
-				dispatch(getMedia({ page }));
+				dispatch(getMedia( queryParams ));
 				handleClose();
 			}
 		} catch (e) {
@@ -2500,7 +2501,6 @@ UploadOrEditMedia.propTypes = {
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
-	page: PropTypes.string,
 	status: PropTypes.string.isRequired
 };
 

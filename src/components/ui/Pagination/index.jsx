@@ -1,67 +1,59 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import { useDebouncedCallback } from 'use-debounce';
 import Pagination from '@material-ui/lab/Pagination';
-import { useStyles } from './index.style';
-import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import { useSearchParams } from 'react-router-dom';
 import { changeQueryParameters } from '../../../data/utils/helper';
-import PropTypes from 'prop-types';
+import { useStyles } from './index.style';
+
+const INPUT_DELAY = 200;
 
 const CustomPagination = ({ totalRecords }) => {
-	const muiClasses = useStyles();
+	const noOfPages = Math.ceil(totalRecords / 20);
 
 	const [searchParams, setSearchParams] = useSearchParams();
-	const [page, setPage] = useState(() => {
-		let queryParam = searchParams.get('page');
-		if (isNaN(Number(queryParam))) {
-			return 1;
-		}
-		return Number(queryParam) || 1;
-	});
-	const [paginationError, setPaginationError] = useState(false);
-	const classes = globalUseStyles();
+	const parsedPage = Number(searchParams.get('page'));
+	const page = isNaN(parsedPage) ? 1 : parsedPage || 1;
 
-	const handleChange = (event, value) => {
-		setPage(value);
-		let queryParams = changeQueryParameters(searchParams, { page: value });
+	const [paginationError, setPaginationError] = useState(false);
+
+	const handleChange = (_, value) => {
+		const queryParams = changeQueryParameters(searchParams, { page: value });
 		setSearchParams(queryParams);
 	};
 
-	const handleInputChange = (e) => {
+	const debouncedHandleChange = useDebouncedCallback((event) => {
 		setPaginationError(false);
-		const value = Number(e.target.value);
-		if (value > Math.ceil(totalRecords / 20)) {
+		const value = Number(event.target.value);
+
+		if (!!value && (value > noOfPages || value < 1)) {
 			setPaginationError(true);
-			setPage(1);
-			let queryParams = changeQueryParameters(searchParams, { page: value });
-			setSearchParams(queryParams);
 		} else if (value) {
-			setPage(value);
-			let queryParams = changeQueryParameters(searchParams, { page: value });
-			setSearchParams(queryParams);
-		} else {
-			setPage(1);
-			let queryParams = changeQueryParameters(searchParams, { page: value });
+			const queryParams = changeQueryParameters(searchParams, { page: value });
 			setSearchParams(queryParams);
 		}
+	}, INPUT_DELAY);
+
+	const handleInputChange = (event) => {
+		debouncedHandleChange(event);
 	};
+
+	const classes = useStyles({ paginationError });
 
 	return (
 		<div className={classes.paginationRow}>
 			<Pagination
-				className={muiClasses.root}
+				className={classes.root}
 				page={page}
 				onChange={handleChange}
-				count={Math.ceil(totalRecords / 20)}
+				count={noOfPages}
 				variant='outlined'
 				shape='rounded'
 				defaultPage={page}
 			/>
 			<div className={classes.gotoText}>Go to page</div>
 			<input
-				style={{
-					border: `${paginationError ? '1px solid red' : '1px solid #808080'}`
-				}}
-				type={'number'}
+				type='number'
 				min={1}
 				onChange={handleInputChange}
 				className={classes.gotoInput}

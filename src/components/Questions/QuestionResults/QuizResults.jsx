@@ -16,10 +16,12 @@ import axios from 'axios';
 import DeleteModal from '../../DeleteModal';
 import DefaultImage from '../../../assets/defaultImage.png';
 import PropTypes from 'prop-types';
-import { getQuestions } from "../../../data/features/questionsLibrary/questionsLibrarySlice";
+import { getQuestions } from '../../../data/features/questionsLibrary/questionsLibrarySlice';
 import { styled } from '@mui/material/styles';
 import classes from '../UploadEditQuestion/_uploadOrEditQuiz.module.scss';
 import { useStyles } from '../UploadEditQuestion/UploadOrEditQuiz.style';
+
+import useCommonParams from '../../../hooks/useCommonParams';
 
 import LinearProgress, {
 	linearProgressClasses
@@ -41,7 +43,6 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 
 export default function QuizResults({
 	handleClose,
-	page,
 	type,
 	endDate,
 	location,
@@ -52,6 +53,8 @@ export default function QuizResults({
 	questionType,
 	questionId
 }) {
+	const queryParams = useCommonParams();
+
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [articleText, setArticleText] = useState('');
 	const [articleImage, setArticleImage] = useState('');
@@ -222,7 +225,7 @@ export default function QuizResults({
 				handleClose();
 
 				//setting a timeout for getting post after delete.
-				dispatch(getQuestions({ page }));
+				dispatch(getQuestions(queryParams));
 			}
 		} catch (e) {
 			toast.error('Failed to delete Question!');
