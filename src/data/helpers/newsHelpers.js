@@ -61,7 +61,6 @@ export const newsColumns = [
 	{
 		dataField: 'options',
 		text: 'OPTIONS',
-		sort: true,
 		formatter: () => getFormatter('options', { title: 'EDIT NEWS' })
 	}
 ];

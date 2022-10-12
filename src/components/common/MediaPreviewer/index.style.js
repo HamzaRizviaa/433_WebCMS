@@ -5,7 +5,7 @@ export const useMediaPreviewerStyle = makeStyles((theme) => ({
 		display: 'flex',
 		alignItems: 'center',
 		marginLeft: ' 0.5rem',
-		marginBottom: (props) => (props.isLandscape ? '2.5rem' : '1.5rem')
+		marginBottom: '1.5rem'
 	},
 	mediaIcon: {
 		height: '48px',
@@ -53,6 +53,7 @@ export const useMediaPreviewerStyle = makeStyles((theme) => ({
 		color: `${theme.palette.black} !important`
 	},
 	mediaFileName: {
+		display: 'block',
 		fontSize: ' 1.2rem',
 		maxWidth: '40%',
 		textOverflow: 'ellipsis',
