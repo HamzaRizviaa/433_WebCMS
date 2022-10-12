@@ -15,8 +15,7 @@ import { useLayoutStyles } from './index.style';
 const DashboardLayout = ({
 	title,
 	onButtonClick,
-	isSearchFilterError = false,
-	isDateFilterError = false,
+	hideLibraryText = false,
 	hideBtn = false,
 	hideSearchFilter = false,
 	hideDateFilter = false,
@@ -63,11 +62,10 @@ const DashboardLayout = ({
 						<Topbar
 							title={title}
 							onButtonClick={onButtonClick}
-							isSearchFilterError={isSearchFilterError}
-							isDateFilterError={isDateFilterError}
 							hideBtn={hideBtn}
 							hideSearchFilter={hideSearchFilter}
 							hideDateFilter={hideDateFilter}
+							hideLibraryText={hideLibraryText}
 						/>
 						{children}
 					</div>
@@ -80,11 +78,10 @@ const DashboardLayout = ({
 DashboardLayout.propTypes = {
 	title: PropTypes.string.isRequired,
 	onButtonClick: PropTypes.func,
-	isSearchFilterError: PropTypes.bool,
-	isDateFilterError: PropTypes.bool,
 	hideBtn: PropTypes.bool,
 	hideSearchFilter: PropTypes.bool,
 	hideDateFilter: PropTypes.bool,
+	hideLibraryText: PropTypes.bool,
 	isLoading: PropTypes.bool,
 	children: PropTypes.oneOfType([
 		PropTypes.element,

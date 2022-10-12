@@ -20,9 +20,10 @@ const TopBanner = () => {
 	return (
 		<DashboardLayout
 			title='Top Banner'
-			hideBtn={true}
-			hideSearchFilter={true}
-			hideDateFilter={true}
+			hideBtn
+			hideSearchFilter
+			hideDateFilter
+			hideLibraryText
 		>
 			<div className={muiClasses.root}>
 				<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>

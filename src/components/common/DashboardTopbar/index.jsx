@@ -9,8 +9,7 @@ import { useTopbarStyles } from './index.style';
 const DashboardTopbar = ({
 	title,
 	onButtonClick,
-	isSearchFilterError = false,
-	isDateFilterError = false,
+	hideLibraryText = false,
 	hideBtn = false,
 	hideSearchFilter = false,
 	hideDateFilter = false
@@ -20,7 +19,10 @@ const DashboardTopbar = ({
 	return (
 		<div className={classes.header}>
 			<div className={classes.leftSection}>
-				<h1 className={classes.title}>{title}</h1>
+				<h1 className={classes.title}>
+					{title}
+					{!hideLibraryText && ' Library'}
+				</h1>
 				{!hideBtn && (
 					<Button
 						onClick={onButtonClick}
@@ -32,16 +34,9 @@ const DashboardTopbar = ({
 				{!hideSearchFilter && (
 					<SearchFilter
 						placeholder={`Search for ${capitalize(title)}, User, Label, ID`}
-						errorMessage='No results found'
-						isError={isSearchFilterError}
 					/>
 				)}
-				{!hideDateFilter && (
-					<DateRangeFilter
-						errorMessage='No results found'
-						isError={isDateFilterError}
-					/>
-				)}
+				{!hideDateFilter && <DateRangeFilter />}
 			</div>
 		</div>
 	);
@@ -50,11 +45,10 @@ const DashboardTopbar = ({
 DashboardTopbar.propTypes = {
 	title: PropTypes.string.isRequired,
 	onButtonClick: PropTypes.func,
-	isSearchFilterError: PropTypes.bool,
-	isDateFilterError: PropTypes.bool,
 	hideBtn: PropTypes.bool,
 	hideSearchFilter: PropTypes.bool,
-	hideDateFilter: PropTypes.bool
+	hideDateFilter: PropTypes.bool,
+	hideLibraryText: PropTypes.bool
 };
 
 export default DashboardTopbar;
