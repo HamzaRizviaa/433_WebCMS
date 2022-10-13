@@ -1,14 +1,14 @@
-import { getFormatter } from "../../components/ui/Table/ColumnFormatters";
-import { getDateTime } from "../utils";
+import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
+import { getDateTime } from '../utils';
 
 export const mediaColumns = [
-    {
-        dataField: 'title',
+	{
+		dataField: 'title',
 		text: 'TITLE',
 		sort: true,
 		formatter: (content) => getFormatter('markup', { content })
-    },
-    {
+	},
+	{
 		dataField: 'file_name',
 		text: 'MEDIA',
 		sort: true,
@@ -37,7 +37,7 @@ export const mediaColumns = [
 				content: `${content[0]}${content[1] ? `, ${content[1]}` : ''}`
 			})
 	},
-    {
+	{
 		dataField: 'type',
 		text: 'TYPE',
 		sort: true,
@@ -65,7 +65,6 @@ export const mediaColumns = [
 	{
 		dataField: 'options',
 		text: 'OPTIONS',
-		sort: true,
 		formatter: () => getFormatter('options', { title: 'EDIT MEDIA' })
 	}
-]
+];

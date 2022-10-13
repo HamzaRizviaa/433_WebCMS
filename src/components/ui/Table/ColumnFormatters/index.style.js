@@ -17,7 +17,8 @@ export const useStyles = makeStyles(() => ({
 	editIcon: {
 		width: '2.5rem',
 		height: 'auto',
-		cursor: 'pointer'
+		cursor: 'pointer',
+		marginBottom: '1rem'
 	},
 
 	tableCell: {

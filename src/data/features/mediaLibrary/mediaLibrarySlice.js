@@ -47,19 +47,9 @@ const mediaLibrarySlice = createSlice({
 			state.status = 'pending';
 		});
 		builder.addCase(getMedia.fulfilled, (state, action) => {
-			state.media =
-				action.payload.data.length > 0 ? action.payload.data : state.media;
-			state.totalRecords =
-				action.payload.data.length > 0
-					? action.payload.total
-					: state.totalRecords;
+			state.media = action.payload.data;
+			state.totalRecords = action.payload.total;
 			state.status = 'success';
-			if (action.payload.fromCalendar) {
-				state.noResultStatusCalendar =
-					action.payload.data.length > 0 ? false : true;
-			} if(action.payload.isSearch) {
-				state.noResultStatus = action.payload.data.length > 0 ? false : true;
-			}
 		});
 		builder.addCase(getMedia.rejected, (state) => {
 			state.status = 'failed';

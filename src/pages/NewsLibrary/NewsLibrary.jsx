@@ -14,7 +14,7 @@ const NewsLibrary = () => {
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [rowStatus, setrowStatus] = useState(''); //publish or draft
-  
+
 	const { data, totalRecords, isLoading } = useGetAllNews();
 
 	const onUploadNewsClick = () => {
@@ -23,7 +23,7 @@ const NewsLibrary = () => {
 		setShowSlider(true);
 	};
 
-	const onRowClick = (e, row) => {
+	const onRowClick = (_, row) => {
 		row.status === 'draft' && dispatch(getAllNewLabels());
 		dispatch(getSpecificNews(row.id));
 		setEdit(true);
@@ -33,7 +33,7 @@ const NewsLibrary = () => {
 
 	return (
 		<DashboardLayout
-			title='News Library'
+			title='News'
 			isLoading={isLoading}
 			onButtonClick={onUploadNewsClick}
 		>
