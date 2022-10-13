@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import BootstrapTable from 'react-bootstrap-table-next';
 import { useSearchParams } from 'react-router-dom';
@@ -24,49 +24,32 @@ const Table = ({
 
 	const classes = useStyles({ isEmpty: totalRecords === 0 });
 
-	const sortCaret = useCallback((order) => {
-		if (order === 'asc')
+	const sortCaret = (_, column) => {
+		if (orderType === 'asc' && sortBy === column.dataField)
 			return <ArrowDropUpIcon className={classes.sortIconSelected} />;
-		if (order === 'desc') {
+		if (orderType === 'desc' && sortBy === column.dataField) {
 			return <ArrowDropDownIcon className={classes.sortIconSelected} />;
 		}
 		return <ArrowDropUpIcon className={classes.sortIcon} />;
-	}, []);
+	};
 
-	const sortFunc = useCallback(
-		(a, b, order, dataField) => {
-			if (order && dataField) {
-				if (order !== orderType || dataField !== sortBy) {
-					const queryParams = changeQueryParameters(searchParams, {
-						sortBy: dataField,
-						orderType: order,
-						page: null
-					});
+	const handleTableChange = (type, { sortOrder, sortField }) => {
+		if (type === 'sort' && sortOrder && sortField) {
+			if (sortOrder !== orderType || sortField !== sortBy) {
+				const queryParams = changeQueryParameters(searchParams, {
+					sortBy: sortField,
+					orderType: sortOrder,
+					page: null
+				});
 
-					setSearchParams(queryParams);
-				}
+				setSearchParams(queryParams);
 			}
-		},
-		[searchParams, sortBy, orderType]
-	);
+		}
+	};
 
-	const sort = useMemo(
-		() => ({
-			sortCaret,
-			sortFunc
-		}),
-		[sortFunc, sortCaret]
-	);
-
-	const defaultSorted = useMemo(
-		() => [
-			{
-				dataField: sortBy || '',
-				order: orderType || 'asc'
-			}
-		],
-		[]
-	);
+	const sort = {
+		sortCaret
+	};
 
 	const tableRowEvents = {
 		onClick: onRowClick
@@ -87,8 +70,9 @@ const Table = ({
 					headerClasses={classes.tableHeader}
 					rowEvents={tableRowEvents}
 					sort={sort}
-					defaultSorted={defaultSorted}
 					noDataIndication={noDataIndication}
+					remote={{ sort: true }}
+					onTableChange={handleTableChange}
 				/>
 			</div>
 			{totalRecords > 0 && <CustomPagination totalRecords={totalRecords} />}
