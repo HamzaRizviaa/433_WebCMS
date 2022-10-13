@@ -32,10 +32,10 @@ const Table = ({
 		}
 	}, [sortBy, orderType]);
 
-	const sortCaret = (order) => {
-		if (order === 'asc')
+	const sortCaret = (_, column) => {
+		if (orderType === 'asc' && sortBy === column.dataField)
 			return <ArrowDropUpIcon className={classes.sortIconSelected} />;
-		if (order === 'desc') {
+		if (orderType === 'desc' && sortBy === column.dataField) {
 			return <ArrowDropDownIcon className={classes.sortIconSelected} />;
 		}
 		return <ArrowDropUpIcon className={classes.sortIcon} />;
