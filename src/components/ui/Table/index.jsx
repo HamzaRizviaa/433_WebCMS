@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import BootstrapTable from 'react-bootstrap-table-next';
 import { useSearchParams } from 'react-router-dom';
@@ -18,55 +18,53 @@ const Table = ({
 	isLoading,
 	noDataText
 }) => {
+	const tableRef = useRef(null);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const sortBy = searchParams.get('sortBy');
 	const orderType = searchParams.get('orderType');
 
 	const classes = useStyles({ isEmpty: totalRecords === 0 });
 
-	const sortCaret = useCallback((order) => {
+	// Resetting sort state
+	useEffect(() => {
+		if (tableRef.current && (!sortBy || !orderType)) {
+			tableRef.current.sortContext.handleSort({});
+		}
+	}, [sortBy, orderType]);
+
+	const sortCaret = (order) => {
 		if (order === 'asc')
 			return <ArrowDropUpIcon className={classes.sortIconSelected} />;
 		if (order === 'desc') {
 			return <ArrowDropDownIcon className={classes.sortIconSelected} />;
 		}
 		return <ArrowDropUpIcon className={classes.sortIcon} />;
-	}, []);
+	};
 
-	const sortFunc = useCallback(
-		(a, b, order, dataField) => {
-			if (order && dataField) {
-				if (order !== orderType || dataField !== sortBy) {
-					const queryParams = changeQueryParameters(searchParams, {
-						sortBy: dataField,
-						orderType: order,
-						page: null
-					});
+	const handleTableChange = (type, { sortOrder, sortField }) => {
+		if (type === 'sort' && sortOrder && sortField) {
+			if (sortOrder !== orderType || sortField !== sortBy) {
+				const queryParams = changeQueryParameters(searchParams, {
+					sortBy: sortField,
+					orderType: sortOrder,
+					page: null
+				});
 
-					setSearchParams(queryParams);
-				}
+				setSearchParams(queryParams);
 			}
-		},
-		[searchParams, sortBy, orderType]
-	);
+		}
+	};
 
-	const sort = useMemo(
-		() => ({
-			sortCaret,
-			sortFunc
-		}),
-		[sortFunc, sortCaret]
-	);
+	const sort = {
+		sortCaret
+	};
 
-	const defaultSorted = useMemo(
-		() => [
-			{
-				dataField: sortBy || '',
-				order: orderType || 'asc'
-			}
-		],
-		[]
-	);
+	const defaultSorted = [
+		{
+			dataField: sortBy || '',
+			order: orderType || 'asc'
+		}
+	];
 
 	const tableRowEvents = {
 		onClick: onRowClick
@@ -89,6 +87,9 @@ const Table = ({
 					sort={sort}
 					defaultSorted={defaultSorted}
 					noDataIndication={noDataIndication}
+					remote={{ sort: true }}
+					onTableChange={handleTableChange}
+					ref={tableRef}
 				/>
 			</div>
 			{totalRecords > 0 && <CustomPagination totalRecords={totalRecords} />}
