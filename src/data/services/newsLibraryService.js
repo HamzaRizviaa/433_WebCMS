@@ -2,7 +2,7 @@ import axiosInstance from '../axiosInstance';
 
 const sortKeysMapping = {
 	media: 'media',
-	news_title: 'newstitle',
+	news_title: 'title',
 	post_date: 'postdate',
 	last_edit: 'lastedit',
 	labels: 'label',
