@@ -16,6 +16,10 @@ import NewsLibrary from '../pages/NewsLibrary/NewsLibrary';
 // import GamesLibrary from '../pages/GamesLibrary/GamesLibrary';
 // import PostLibrary from '../pages/PostLibrary/PostLibrary';
 
+/**
+ * AppRoutes component where all the routing for the project is setup.
+ * @component
+ */
 const AppRoutes = () => {
 	const [loginData, setLoginData] = useState(
 		localStorage.getItem('user_data')
