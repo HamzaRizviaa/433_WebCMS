@@ -87,7 +87,7 @@ const MediaPreviewer = ({
 					arrow: classes.fileNameToolTipArrow
 				}}
 			>
-				<div className={classes.mediaFileName}>{fileName}</div>
+				<Markup className={classes.mediaFileName} content={fileName} />
 			</Tooltip>
 		</div>
 	);
