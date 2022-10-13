@@ -32,6 +32,8 @@ import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
 import TranslationCarousal from '../../TranslationCarousal';
 import FeatureWrapper from '../../FeatureWrapper';
+import useCommonParams from '../../../hooks/useCommonParams';
+
 //new labels
 
 const UploadOrEditViral = ({
@@ -41,9 +43,9 @@ const UploadOrEditViral = ({
 	isEdit,
 	heading1,
 	buttonText,
-	page,
 	status //draft or publish
 }) => {
+	const queryParams = useCommonParams();
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
@@ -406,7 +408,7 @@ const UploadOrEditViral = ({
 				setIsLoadingcreateViral(false);
 				setPostButtonStatus(false);
 				handleClose();
-				dispatch(getAllViralsApi({ page }));
+				dispatch(getAllViralsApi(queryParams));
 				// dispatch(getPostLabels());
 			}
 		} catch (e) {
@@ -436,7 +438,7 @@ const UploadOrEditViral = ({
 			if (result?.data?.status_code === 200) {
 				toast.success('Viral has been deleted!');
 				handleClose();
-				dispatch(getAllViralsApi({ page }));
+				dispatch(getAllViralsApi(queryParams));
 			}
 		} catch (e) {
 			toast.error('Failed to delete Viral!');
@@ -1101,8 +1103,7 @@ UploadOrEditViral.propTypes = {
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
 	buttonText: PropTypes.string.isRequired,
-	status: PropTypes.string.isRequired,
-	page: PropTypes.string
+	status: PropTypes.string.isRequired
 };
 
 export default UploadOrEditViral;

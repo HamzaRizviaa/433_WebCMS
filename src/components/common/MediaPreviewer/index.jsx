@@ -57,7 +57,7 @@ const MediaPreviewer = ({
 		<div className={classes.mediaWrapper}>
 			{showSlidesIcon && (
 				<div className={classes.slidesIcon}>
-					{noOfSlides > 0 && <SlidesIcon />}
+					{noOfSlides > 1 && <SlidesIcon />}
 				</div>
 			)}
 			<Tooltip
@@ -87,9 +87,7 @@ const MediaPreviewer = ({
 					arrow: classes.fileNameToolTipArrow
 				}}
 			>
-				<div className={classes.mediaFileName}>
-					<Markup className={classes.mediaFileName} content={fileName} />
-				</div>
+				<Markup className={classes.mediaFileName} content={fileName} />
 			</Tooltip>
 		</div>
 	);
