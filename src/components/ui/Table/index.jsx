@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import BootstrapTable from 'react-bootstrap-table-next';
 import { useSearchParams } from 'react-router-dom';
@@ -18,19 +18,11 @@ const Table = ({
 	isLoading,
 	noDataText
 }) => {
-	const tableRef = useRef(null);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const sortBy = searchParams.get('sortBy');
 	const orderType = searchParams.get('orderType');
 
 	const classes = useStyles({ isEmpty: totalRecords === 0 });
-
-	// Resetting sort state
-	useEffect(() => {
-		if (tableRef.current && (!sortBy || !orderType)) {
-			tableRef.current.sortContext.handleSort({});
-		}
-	}, [sortBy, orderType]);
 
 	const sortCaret = (_, column) => {
 		if (orderType === 'asc' && sortBy === column.dataField)
@@ -59,13 +51,6 @@ const Table = ({
 		sortCaret
 	};
 
-	const defaultSorted = [
-		{
-			dataField: sortBy || '',
-			order: orderType || 'asc'
-		}
-	];
-
 	const tableRowEvents = {
 		onClick: onRowClick
 	};
@@ -85,11 +70,9 @@ const Table = ({
 					headerClasses={classes.tableHeader}
 					rowEvents={tableRowEvents}
 					sort={sort}
-					defaultSorted={defaultSorted}
 					noDataIndication={noDataIndication}
 					remote={{ sort: true }}
 					onTableChange={handleTableChange}
-					ref={tableRef}
 				/>
 			</div>
 			{totalRecords > 0 && <CustomPagination totalRecords={totalRecords} />}
