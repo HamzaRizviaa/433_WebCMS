@@ -17,7 +17,7 @@ export const questionTableColumns = [
 		text: 'QUESTION TYPE',
 		sort: true,
 		formatter: (content) =>
-			getFormatter('wrapper', { content: content?.toUpperCase() })
+			getFormatter('markup', { content: content?.toUpperCase() })
 	},
 	{
 		dataField: 'post_date',
