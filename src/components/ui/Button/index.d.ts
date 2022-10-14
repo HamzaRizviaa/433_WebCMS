@@ -1,7 +1,7 @@
 import React from 'react';
 
 export type ButtonProps = React.ComponentProps<'button'> & {
-	icon?: boolean;
+	icon?: JSX.Element[] | JSX.Element;
 	type?: 'button' | 'submit' | 'reset';
 	variant?: 'contained' | 'outlined' | 'text';
 	size?: 'small' | 'medium' | 'large';
