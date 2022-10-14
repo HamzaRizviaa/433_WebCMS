@@ -5,6 +5,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { InputAdornment, IconButton, TextField } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useStyles } from './index.styled';
+import { useInputsStyles } from '../inputs.style';
 
 const INPUT_DELAY = 200; // Miliseconds
 
@@ -21,6 +22,7 @@ const InputField = ({
 	required = false,
 	isError = false,
 	rows = 4,
+	height = 'medium',
 	...restProps
 }) => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -51,13 +53,19 @@ const InputField = ({
 
 	const classes = useStyles({ isError, isRequired: required });
 
+	const inputsClasses = useInputsStyles({
+		isError,
+		isRequired: required,
+		height
+	});
+
 	return (
 		<div className={classes.inputFieldContainer}>
 			{(!!label || !!rightLabel) && (
-				<div className={classes.labelsContainer}>
-					{!!label && <span className={classes.inputLabel}>{label}</span>}
+				<div className={inputsClasses.labelsContainer}>
+					{!!label && <span className={inputsClasses.inputLabel}>{label}</span>}
 					{!!rightLabel && (
-						<span className={classes.inputLabel}>{rightLabel}</span>
+						<span className={inputsClasses.inputLabel}>{rightLabel}</span>
 					)}
 				</div>
 			)}
@@ -74,7 +82,7 @@ const InputField = ({
 				fullWidth
 				InputProps={{
 					disableUnderline: true,
-					className: classes.textFieldInput,
+					className: inputsClasses.textFieldInput,
 					startAdornment: !!startIcon && (
 						<InputAdornment position='start' className={classes.endIcon}>
 							{startIcon}

@@ -2,7 +2,7 @@
 import React, { useCallback } from 'react';
 import { MenuItem, Select } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import { useSelectFieldStyles } from './index.style';
+import { useSelectFieldStyles } from '../index.style';
 import { useInputsStyles } from '../../inputs.style';
 
 const CustomSelect = ({
@@ -14,9 +14,11 @@ const CustomSelect = ({
 	placeholder,
 	label,
 	error,
+	mapOptions,
 	className = '',
 	required = false,
-	mapOptions,
+	disabled = false,
+	height = 'medium',
 	...rest
 }) => {
 	const labelKey = mapOptions?.labelKey || 'label';
@@ -40,7 +42,14 @@ const CustomSelect = ({
 		[options, placeholder]
 	);
 
-	const classes = useSelectFieldStyles({ hasValue: !!value, isError: !!error });
+	const classes = useSelectFieldStyles({
+		hasValue: !!value,
+		isError: !!error,
+		isDisabled: disabled,
+		isAutocomplete: false,
+		height
+	});
+
 	const inputsClasses = useInputsStyles({
 		isError: !!error,
 		isRequired: required
@@ -60,9 +69,6 @@ const CustomSelect = ({
 				className={classes.select}
 				onChange={handleSelectChange}
 				onBlur={onBlur}
-				disableUnderline
-				fullWidth
-				displayEmpty
 				IconComponent={(props) => <KeyboardArrowDownIcon {...props} />}
 				MenuProps={{
 					anchorOrigin: {
@@ -80,6 +86,10 @@ const CustomSelect = ({
 				}}
 				inputProps={{ classes: { root: classes.input } }}
 				renderValue={handleRenderValue}
+				disabled={disabled}
+				disableUnderline
+				fullWidth
+				displayEmpty
 			>
 				{options.map((item) => (
 					<MenuItem
