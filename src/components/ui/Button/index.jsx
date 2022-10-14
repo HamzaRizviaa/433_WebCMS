@@ -2,7 +2,7 @@ import React from 'react';
 import { useButtonStyles } from './index.style';
 import PropTypes from 'prop-types';
 
-const CustomButton = ({
+const Button = ({
 	icon,
 	type = 'button',
 	variant = 'contained', // contained, outlined, text 
@@ -34,7 +34,7 @@ const CustomButton = ({
 	);
 };
 
-CustomButton.propTypes = {
+Button.propTypes = {
 	icon: PropTypes.element,
 	type: PropTypes.string,
 	variant: PropTypes.string,
@@ -45,4 +45,4 @@ CustomButton.propTypes = {
 	buttonText: PropTypes.string
 }
 
-export default CustomButton;
+export default Button;
