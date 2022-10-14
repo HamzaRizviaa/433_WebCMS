@@ -290,6 +290,8 @@ const UploadOrEditArticle = ({
 	};
 	const dispatch = useDispatch();
 
+	console.log(data, 'DATA');
+	console.log(form, 'form');
 	useEffect(() => {
 		if (specificArticle) {
 			setNotifID(specificArticle?.id);

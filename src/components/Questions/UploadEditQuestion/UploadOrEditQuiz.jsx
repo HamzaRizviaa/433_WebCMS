@@ -150,6 +150,7 @@ const UploadOrEditQuiz = ({
 	}, [open]);
 
 	useEffect(() => {
+		if (isEdit && status !== 'draft') return;
 		if (questionType === 'quiz') {
 			setForm((prev) => {
 				return {
@@ -407,6 +408,51 @@ const UploadOrEditQuiz = ({
 			setForm((prev) => {
 				return {
 					...prev,
+					...(editQuestionData?.question_type === 'poll' && {
+						results_image: editQuestionData?.summary?.results_image
+							? [
+									{
+										id: makeid(10),
+										file_name: editQuestionData?.summary?.results_filename,
+										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${editQuestionData?.summary?.results_image}`,
+										type: 'image'
+									}
+							  ]
+							: [],
+						results: editQuestionData?.summary?.results,
+						results_dropbox_url: editQuestionData?.summary?.results_dropbox_url
+					}),
+					...(editQuestionData?.question_type === 'quiz' && {
+						results_image: editQuestionData?.summary?.positive_results_image
+							? [
+									{
+										id: makeid(10),
+										file_name:
+											editQuestionData?.summary?.positive_results_filename,
+										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${editQuestionData?.summary?.positive_results_image}`,
+										type: 'image'
+									}
+							  ]
+							: [],
+						results: editQuestionData?.summary?.positive_results,
+						results_dropbox_url:
+							editQuestionData?.summary?.positive_results_dropbox_url,
+						negative_results_image: editQuestionData?.summary
+							?.negative_results_image
+							? [
+									{
+										id: makeid(10),
+										file_name:
+											editQuestionData?.summary?.negative_results_filename,
+										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${editQuestionData?.summary?.negative_results_image}`,
+										type: 'image'
+									}
+							  ]
+							: [],
+						negative_results: editQuestionData?.summary?.negative_results,
+						negative_results_dropbox_url:
+							editQuestionData?.summary?.negative_results_dropbox_url
+					}),
 					end_date: editQuestionData?.end_date
 						? editQuestionData?.end_date
 						: null
@@ -432,9 +478,8 @@ const UploadOrEditQuiz = ({
 		}
 	};
 
-	// console.log(questionSlides, 'QSS');
+	console.log(questionSlides, 'QSS');
 	console.log(form, 'FORM');
-	console.log(questionType, 'qT');
 
 	const updateDataFromAPI = (apiData, question_type, end_date) => {
 		let modifiedData = apiData?.map(({ id, position, ...rest }) => {
@@ -481,6 +526,7 @@ const UploadOrEditQuiz = ({
 		let slidesData =
 			questionSlides?.length > 0
 				? questionSlides.map((item, index) => {
+						console.log(item, 'khadija');
 						const answersToSend =
 							item.data[0]?.answers?.length > 0
 								? item.data[0]?.answers.map((item, index) => {
@@ -502,12 +548,13 @@ const UploadOrEditQuiz = ({
 						return {
 							height: item?.data[0] ? item?.data[0]?.height : 0,
 							width: item?.data[0] ? item?.data[0]?.width : 0,
-							file_name: mediaFiles[index]?.file_name
-								? mediaFiles[index]?.file_name
+							file_name: item?.data[0]?.uploadedFiles
+								? item?.data[0]?.uploadedFiles[0]?.file_name
 								: '',
-							image: mediaFiles[index]?.media_url
-								? mediaFiles[index]?.media_url?.split('cloudfront.net/')[1] ||
-								  mediaFiles[index]?.media_url
+							image: item?.data[0]?.uploadedFiles
+								? item?.data[0]?.uploadedFiles[0]?.media_url?.split(
+										'cloudfront.net/'
+								  )[1] || item?.data[0]?.uploadedFiles[0]?.media_url
 								: '',
 							labels: item.data[0]?.labels || [],
 							answers: answersToSend || [],
@@ -538,6 +585,9 @@ const UploadOrEditQuiz = ({
 								? mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
 								  mediaFiles[0]?.media_url
 								: '',
+							results_filename: form?.results_image?.length
+								? mediaFiles[0]?.file_name
+								: '',
 							results_dropbox_url: form?.results_dropbox_url
 						}),
 						...(questionType === 'quiz' && {
@@ -546,11 +596,17 @@ const UploadOrEditQuiz = ({
 								? mediaFiles[0]?.media_url?.split('cloudfront.net/')[1] ||
 								  mediaFiles[0]?.media_url
 								: '',
+							positive_results_filename: form?.results_image?.length
+								? mediaFiles[0]?.file_name
+								: '',
 							positive_results_dropbox_url: form?.results_dropbox_url,
 							negative_results: form?.negative_results,
 							negative_results_image: form?.negative_results_image?.length
 								? mediaFiles[1]?.media_url?.split('cloudfront.net/')[1] ||
 								  mediaFiles[1]?.media_url
+								: '',
+							negative_results_filename: form?.negative_results_image?.length
+								? mediaFiles[1]?.file_name
 								: '',
 							negative_results_dropbox_url: form?.negative_results_dropbox_url
 						})
@@ -814,7 +870,7 @@ const UploadOrEditQuiz = ({
 		}
 	}, [questionSlides]);
 
-	const handlePostQuizPollBtn = () => {
+	const handlePostQuizPollBtn = async () => {
 		if (
 			!validateForm(form, null, null, questionSlides) ||
 			(editQuizBtnDisabled && status === 'ACTIVE')
@@ -826,6 +882,27 @@ const UploadOrEditQuiz = ({
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 
 			if (isEdit) {
+				let resultsImage = form?.results_image?.map(async (file) => {
+					if (file.file) {
+						return await uploadFileToServer(file, 'questionLibrary');
+					} else {
+						return file;
+					}
+				});
+
+				let negativeResultsImage;
+				if (questionType === 'quiz' && form?.negative_results_image) {
+					negativeResultsImage = form?.negative_results_image.map(
+						async (file) => {
+							if (file.file) {
+								return await uploadFileToServer(file, 'questionLibrary');
+							} else {
+								return file;
+							}
+						}
+					);
+				}
+
 				let images = questionSlides?.map(async (item, index) => {
 					let quesData;
 					if (item?.data[0]?.uploadedFiles[0]?.file) {
@@ -834,6 +911,10 @@ const UploadOrEditQuiz = ({
 							'questionlibrary'
 						);
 
+						const questionCopy = [...questionSlides];
+						questionCopy[index].data[0].uploadedFiles[0].media_url =
+							quesData.media_url;
+						setQuestionSlides(questionCopy);
 						return quesData;
 					} else {
 						quesData = item?.data[0]?.uploadedFiles[0];
@@ -841,7 +922,11 @@ const UploadOrEditQuiz = ({
 					}
 				});
 
-				Promise.all([...images])
+				Promise.all([
+					...resultsImage,
+					...(negativeResultsImage || []),
+					...images
+				])
 					.then((mediaFiles) => {
 						createQuestion(editQuestionData?.id, mediaFiles, false);
 					})
@@ -861,15 +946,24 @@ const UploadOrEditQuiz = ({
 					);
 				}
 
-				let images = questionSlides?.map(async (item) => {
+				let images = questionSlides?.map(async (item, index) => {
 					let quesData = await uploadFileToServer(
 						item?.data[0]?.uploadedFiles[0],
 						'questionlibrary'
 					);
+
+					const questionCopy = [...questionSlides];
+					questionCopy[index].data[0].uploadedFiles[0].media_url =
+						quesData.media_url;
+					setQuestionSlides(questionCopy);
 					return quesData;
 				});
 
-				Promise.all([...resultsImage, ...negativeResultsImage, ...images])
+				Promise.all([
+					...resultsImage,
+					...(negativeResultsImage || []),
+					...images
+				])
 					.then((mediaFiles) => {
 						console.log(mediaFiles, 'mFwow');
 						createQuestion(null, mediaFiles, false);
@@ -890,27 +984,44 @@ const UploadOrEditQuiz = ({
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
 
 			if (isEdit) {
-				let images = questionSlides?.map(async (item, index) => {
-					let quesData = {};
-					if (item?.data[0]?.uploadedFiles?.length) {
-						if (item?.data[0]?.uploadedFiles[0]?.file) {
-							quesData = await uploadFileToServer(
-								item?.data[0]?.uploadedFiles[0],
-								'questionlibrary'
-							);
-
-							return quesData;
-						} else {
-							quesData = item?.data[0]?.uploadedFiles[0];
-
-							return quesData;
-						}
+				const fileUploader = async (file) => {
+					if (file.file) {
+						return await uploadFileToServer(file, 'questionlibrary');
 					}
+					return file;
+				};
 
-					return quesData;
-				});
+				let images = await Promise.all(
+					questionSlides?.map(async (item, index) => {
+						let quesData = {};
+						if (item?.data[0]?.uploadedFiles?.length) {
+							if (item?.data[0]?.uploadedFiles[0]?.file) {
+								quesData = await uploadFileToServer(
+									item?.data[0]?.uploadedFiles[0],
+									'questionlibrary'
+								);
 
-				Promise.all([...images])
+								const questionCopy = [...questionSlides];
+								questionCopy[index].data[0].uploadedFiles[0].media_url =
+									quesData?.media_url;
+								setQuestionSlides(questionCopy);
+							} else {
+								quesData = item?.data[0]?.uploadedFiles[0];
+							}
+						}
+						return quesData;
+					})
+				);
+
+				let updatedArray = [
+					form?.results_image[0] && fileUploader(form?.results_image[0]),
+					(form?.negative_results_image?.length &&
+						fileUploader(form?.negative_results_image[0])) ||
+						[],
+					images && images[0]
+				];
+
+				Promise.all([...updatedArray])
 					.then((mediaFiles) => {
 						createQuestion(editQuestionData?.id, mediaFiles, true);
 					})
@@ -918,19 +1029,45 @@ const UploadOrEditQuiz = ({
 						setIsLoading(false);
 					});
 			} else {
-				let images = questionSlides?.map(async (item) => {
-					let quesData;
-					if (item?.data[0]?.uploadedFiles?.length) {
-						quesData = await uploadFileToServer(
-							item?.data[0]?.uploadedFiles[0],
-							'questionlibrary'
-						);
+				const fileUploader = async (file) => {
+					if (file.file) {
+						return await uploadFileToServer(file, 'questionlibrary');
 					}
+					return file;
+				};
 
-					return quesData;
-				});
+				let images = await Promise.all(
+					questionSlides?.map(async (item, index) => {
+						let quesData;
+						if (item?.data[0]?.uploadedFiles?.length) {
+							quesData = await uploadFileToServer(
+								item?.data[0]?.uploadedFiles[0],
+								'questionlibrary'
+							);
 
-				Promise.all([...images])
+							const questionCopy = [...questionSlides];
+							questionCopy[index].data[0].uploadedFiles[0].media_url =
+								quesData?.media_url;
+							setQuestionSlides(questionCopy);
+						}
+
+						return quesData;
+					})
+				);
+
+				let updatedArray = [
+					form?.results_image[0] && fileUploader(form?.results_image[0]),
+					// ...((questionType === 'quiz'
+					// 	? form?.negative_results_image[0] &&
+					// 	  fileUploader(form?.negative_results_image[0])
+					// 	: []) || []),   // working fine on poll
+					(form?.negative_results_image?.length &&
+						fileUploader(form?.negative_results_image[0])) ||
+						[], //working fine on quiz and poll
+					images && images[0]
+				];
+
+				Promise.all([...updatedArray])
 					.then((mediaFiles) => {
 						createQuestion(null, mediaFiles, true);
 					})
@@ -1265,6 +1402,189 @@ const UploadOrEditQuiz = ({
 																	}}
 																/>
 															</div>
+
+															{questionType === 'quiz' ? (
+																<>
+																	<div className={classes.titleContainer}>
+																		<div
+																			className={globalClasses.characterCount}
+																		>
+																			<h6
+																				className={
+																					isError.negative_results
+																						? globalClasses.errorState
+																						: globalClasses.noErrorState
+																				}
+																			>
+																				NEGATIVE RESULTS
+																			</h6>
+																			<h6
+																				style={{
+																					color:
+																						form?.negative_results?.length >=
+																							18 &&
+																						form?.negative_results?.length <= 23
+																							? 'pink'
+																							: form?.negative_results
+																									?.length === 24
+																							? 'red'
+																							: 'white'
+																				}}
+																			>
+																				{form?.negative_results?.length}/24
+																			</h6>
+																		</div>
+																		<TextField
+																			disabled={isEdit && status !== 'draft'}
+																			value={form?.negative_results}
+																			onChange={(e) => {
+																				setForm((prev) => {
+																					return {
+																						...prev,
+																						negative_results: e.target.value
+																					};
+																				});
+																			}}
+																			placeholder={
+																				'Please write your question here'
+																			}
+																			className={classes.textField}
+																			InputProps={{
+																				disableUnderline: true,
+																				className: `${
+																					classes.textFieldInput
+																				}  ${
+																					isEdit &&
+																					status !== 'draft' &&
+																					classes.disableTextField
+																				}`
+																			}}
+																			inputProps={{ maxLength: 24 }}
+																			multiline
+																			maxRows={2}
+																		/>
+																	</div>
+																	<p className={globalClasses.mediaError}>
+																		{isError.negative_results
+																			? 'You need to provide a result in order to post.'
+																			: ''}
+																	</p>
+
+																	<DragAndDropField
+																		uploadedFiles={form?.negative_results_image}
+																		quizPollStatus={status}
+																		handleDeleteFile={handleDeleteFile2}
+																		setPreviewBool={setPreviewBool}
+																		setPreviewFile={setPreviewFile}
+																		isArticle
+																		isEdit={isEdit}
+																		imgEl={imgRef2}
+																		imageOnload={() => {
+																			setFileWidth2(
+																				imgRef2.current.naturalWidth
+																			);
+																			setFileHeight2(
+																				imgRef2.current.naturalHeight
+																			);
+																		}}
+																	/>
+
+																	{form?.negative_results_image?.length ===
+																	0 ? (
+																		<section
+																			className={
+																				globalClasses.dropZoneContainer
+																			}
+																			style={{
+																				borderColor: isError.results_image
+																					? '#ff355a'
+																					: 'yellow'
+																			}}
+																		>
+																			<div
+																				{...getRootProps2({
+																					className: globalClasses.dropzone
+																				})}
+																			>
+																				<input {...getInputProps2()} />
+
+																				<>
+																					<AddCircleOutlineIcon
+																						className={
+																							globalClasses.addFilesIcon
+																						}
+																					/>
+																					<p className={globalClasses.dragMsg}>
+																						Click or drag file to this area to
+																						upload
+																					</p>
+																					<p
+																						className={globalClasses.formatMsg}
+																					>
+																						Supported formats are jpeg and png
+																					</p>
+																				</>
+
+																				<p
+																					className={
+																						globalClasses.uploadMediaError
+																					}
+																				>
+																					{isError.results_image
+																						? 'You need to upload a media in order to post'
+																						: ''}
+																				</p>
+																			</div>
+																		</section>
+																	) : (
+																		<></>
+																	)}
+
+																	<p
+																		className={globalClasses.fileRejectionError}
+																	>
+																		{fileRejectionError2}
+																	</p>
+
+																	<div
+																		className={
+																			globalClasses.dropBoxUrlContainer
+																		}
+																	>
+																		<h6>DROPBOX URL</h6>
+																		<TextField
+																			value={form.negative_results_dropbox_url}
+																			onChange={(e) => {
+																				setForm((prev) => {
+																					return {
+																						...prev,
+																						negative_results_dropbox_url:
+																							e.target.value
+																					};
+																				});
+																			}}
+																			placeholder={
+																				'Please drop the dropbox URL here'
+																			}
+																			className={classes.textField}
+																			multiline
+																			maxRows={2}
+																			InputProps={{
+																				disableUnderline: true,
+																				className: `${classes.textFieldInput}  `,
+																				style: {
+																					borderRadius:
+																						form.negative_results_dropbox_url
+																							? '16px'
+																							: '40px'
+																				}
+																			}}
+																		/>
+																	</div>
+																</>
+															) : (
+																<> </>
+															)}
 														</AccordionDetails>
 													</Accordion>
 												</div>
