@@ -22,7 +22,7 @@ export const useStyles = makeStyles(() => ({
 	},
 	searchIcon: {
 		cursor: 'pointer',
-		marginRight: '8'
+		marginRight: 10
 	},
 	noResultError: {
 		color: '#ff355a',

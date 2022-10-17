@@ -1,8 +1,24 @@
-import axiosInstance from "../axiosInstance";
+import axiosInstance from '../axiosInstance';
+
+const sortKeysMapping = {
+	article_title: 'title',
+	post_date: 'postdate',
+	labels: 'label',
+	user: 'user',
+	last_edit: 'lastedit',
+	status: 'status'
+};
 
 class ArticleLibraryService {
-	static getAllArticlesServiceCall = (endPoint) =>
-		axiosInstance.get(`/${endPoint}`);
+	static getAllArticlesServiceCall(queryParams) {
+		const params = {
+			...queryParams,
+			limit: 20,
+			sort_by: sortKeysMapping[queryParams.sort_by] || null
+		};
+
+		return axiosInstance.get('/article/all-articles', { params });
+	}
 
 	static getLabelsApi = () => axiosInstance.get(`/label/all-labels`);
 
