@@ -5,6 +5,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
 import axios from 'axios';
+import { isEmpty } from 'lodash';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { useStyles } from './index.styles';
@@ -60,6 +62,7 @@ const UploadOrEditNews = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 
+	const navigate = useNavigate();
 	const queryParams = useCommonParams();
 	const [isLoading, setIsLoading] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
@@ -417,7 +420,7 @@ const UploadOrEditNews = ({
 			if (result?.data?.status_code === 200) {
 				toast.success('News has been deleted!');
 				handleClose();
-				dispatch(getAllNews({ queryParams }));
+				dispatch(getAllNews(queryParams));
 			}
 		} catch (e) {
 			toast.error(ToastErrorNotifications.deleteBannerItemText);
@@ -483,7 +486,14 @@ const UploadOrEditNews = ({
 				setIsLoading(false);
 
 				handleClose();
-				dispatch(getAllNews({ queryParams }));
+
+				if (isEdit && !(status === 'draft' && draft === false)) {
+					dispatch(getAllNews(queryParams));
+				} else if (isEmpty(queryParams)) {
+					dispatch(getAllNews());
+				} else {
+					navigate('/news-library');
+				}
 			}
 		} catch (e) {
 			toast.error(isEdit ? 'Failed to edit news!' : 'Failed to create news!');
