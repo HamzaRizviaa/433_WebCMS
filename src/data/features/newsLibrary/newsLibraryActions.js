@@ -3,7 +3,7 @@ import { NewsLibraryService } from '../../services';
 
 export const getAllNews = createAsyncThunk(
 	'newsLibary/getAllNews',
-	async (params) => {
+	async (params = {}) => {
 		const { data: news } = await NewsLibraryService.getAllNewsApi(params);
 
 		return news.data;
