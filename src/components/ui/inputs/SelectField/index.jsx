@@ -28,8 +28,8 @@ const SelectField = ({
 	const [innerValue, setInnerValue] = useState('');
 
 	const handleSelectChange = useCallback(
-		(event) => {
-			if (onChange) onChange(event.target.value, name);
+		(event, { props }) => {
+			if (onChange) onChange(event.target.value, name, props.metadeta);
 		},
 		[onChange]
 	);
@@ -171,6 +171,7 @@ const SelectField = ({
 							key={item.value}
 							value={item.value}
 							className={classes.selectOption}
+							metadeta={item.data || {}}
 						>
 							{item.label}
 						</MenuItem>

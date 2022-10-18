@@ -27,6 +27,7 @@ import Tweet from '../../../assets/Twitter Line.svg';
 import Question from '../../../assets/Quiz.svg';
 
 /*  ArticleBuilder imports  */
+import AddMatchElement from '../../ArticleBuilder/AddMatchElement/index';
 import ArticleElements from '../../ArticleBuilder/ArticleElements'; // left pan of buttons
 import ArticleGeneralInfo from '../../ArticleBuilder/ArticleGeneralInfo'; // general Info
 import ArticleMediaDraggable from '../../ArticleBuilder/articleMediaDraggable'; // image / video
@@ -69,6 +70,23 @@ import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDragga
 import { ToastErrorNotifications } from '../../../data/constants';
 
 import useCommonParams from '../../../hooks/useCommonParams';
+import MatchPost from '../../ArticleBuilder/PreviewArticles/MatchPost';
+
+// TEST OBJECT FOR MATCHES
+const matchObj = {
+	Day: 'Wed, 23 Jan',
+	Time: '17:30',
+	Team_1: {
+		Name: 'FC BAYERN MUNCHEN',
+		Logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg/1200px-FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg.png',
+		Team_Color: 'rgba(255,0,0,1)'
+	},
+	Team_2: {
+		Name: 'BORUSSIA DORTMUND',
+		Logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Borussia_Dortmund_logo.svg/560px-Borussia_Dortmund_logo.svg.png',
+		Team_Color: 'rgba(249,255,0,1)'
+	}
+};
 
 const UploadOrEditArticle = ({
 	open,
@@ -168,6 +186,12 @@ const UploadOrEditArticle = ({
 			text: 'Add Question',
 			type: 'QUESTION',
 			component: ArticleQuestionDraggable
+		},
+		{
+			image: Question,
+			text: 'Add Match',
+			type: 'MATCH',
+			component: AddMatchElement
 		}
 	];
 
@@ -1809,6 +1833,13 @@ const UploadOrEditArticle = ({
 															) : item.element_type === 'QUESTION' ? (
 																<QuestionPoll
 																	data={item}
+																	itemIndex={index}
+																	style={{ width: '100%' }}
+																/>
+															) : item.element_type === 'MATCH' ? (
+																<MatchPost
+																	data={matchObj}
+																	item={item}
 																	itemIndex={index}
 																	style={{ width: '100%' }}
 																/>
