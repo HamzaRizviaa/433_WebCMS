@@ -299,7 +299,11 @@ const ArticleQuestionUpload = ({
 							<section
 								className={globalClasses.dropZoneContainer}
 								style={{
-									borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
+									borderColor: fileRejectionError
+										? '#ff355a'
+										: isError.uploadedFiles
+										? '#ff355a'
+										: 'yellow'
 								}}
 							>
 								<div {...getRootProps({ className: globalClasses.dropzone })}>
@@ -316,12 +320,16 @@ const ArticleQuestionUpload = ({
 											</p>
 											<p className={globalClasses.formatMsg}>
 												Supported formats are jpeg and png
+												<br />
+												Image File size should not exceed 1MB.
 											</p>
 										</>
 									)}
 
 									<p className={globalClasses.uploadMediaError}>
-										{isError.uploadedFiles
+										{fileRejectionError
+											? fileRejectionError
+											: isError.uploadedFiles
 											? 'You need to upload a media in order to post'
 											: ''}
 									</p>
@@ -330,11 +338,7 @@ const ArticleQuestionUpload = ({
 						) : (
 							''
 						)}
-
-						<p className={globalClasses.fileRejectionError}>
-							{fileRejectionError}
-						</p>
-
+						<br />
 						<div className={globalClasses.dropBoxUrlContainer}>
 							<h6>DROPBOX URL</h6>
 							<TextField
