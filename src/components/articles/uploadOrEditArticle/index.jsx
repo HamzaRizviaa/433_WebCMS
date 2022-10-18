@@ -87,6 +87,7 @@ const UploadOrEditArticle = ({
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
+	const [fileRejectionErrorAvatar, setFileRejectionErrorAvatar] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -234,10 +235,10 @@ const UploadOrEditArticle = ({
 	useEffect(() => {
 		if (fileRejectionsAvatar.length) {
 			fileRejectionsAvatar.forEach(({ errors }) => {
-				return errors.forEach((e) => setFileRejectionError2(e.message));
+				return errors.forEach((e) => setFileRejectionErrorAvatar(e.message));
 			});
 			setTimeout(() => {
-				setFileRejectionError2('');
+				setFileRejectionErrorAvatar('');
 			}, [5000]);
 		}
 	}, [fileRejectionsAvatar]);
@@ -491,13 +492,13 @@ const UploadOrEditArticle = ({
 	useEffect(() => {
 		if (fileRejections2.length) {
 			fileRejections2.forEach(({ errors }) => {
-				return errors.forEach((e) => setFileRejectionError(e.message));
+				return errors.forEach((e) => setFileRejectionError2(e.message));
 			});
 			setTimeout(() => {
-				setFileRejectionError('');
+				setFileRejectionError2('');
 			}, [5000]);
 		}
-	}, [fileRejections]);
+	}, [fileRejections2]);
 
 	const getFileType = (type) => {
 		if (type) {
@@ -808,6 +809,8 @@ const UploadOrEditArticle = ({
 	const resetState = () => {
 		setEditorTextChecker('');
 		setFileRejectionError('');
+		setFileRejectionError2('');
+		setFileRejectionErrorAvatar('');
 		setPostButtonStatus(false);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
@@ -1788,6 +1791,7 @@ const UploadOrEditArticle = ({
 											getRootPropsAvatar={getRootPropsAvatar}
 											getInputPropsAvatar={getInputPropsAvatar}
 											fileRejectionError2={fileRejectionError2}
+											fileRejectionErrorAvatar={fileRejectionErrorAvatar}
 											postLabels={postLabels}
 											extraLabel={extraLabel}
 											handleChangeExtraLabel={handleChangeExtraLabel}

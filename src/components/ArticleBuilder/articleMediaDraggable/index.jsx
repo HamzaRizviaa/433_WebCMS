@@ -184,9 +184,9 @@ const ArticleMediaDraggable = ({
 									{!newFile?.length ? (
 										<section
 											className={globalClasses.dropZoneContainer}
-											// style={{
-											// 	borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
-											// }}
+											style={{
+												borderColor: fileRejectionError ? '#ff355a' : 'yellow'
+											}}
 										>
 											<div
 												{...getRootProps({
@@ -202,12 +202,12 @@ const ArticleMediaDraggable = ({
 												</p>
 												<p className={globalClasses.formatMsg}>
 													Supported formats are jpeg, png and mp4
+													<br />
+													Image File size should not exceed 1MB.
 												</p>
-												{/* <p className={globalClasses.uploadMediaError}>
-							{isError.uploadedFiles
-								? 'You need to upload a media in order to post'
-								: ''}
-						</p> */}
+												<p className={globalClasses.uploadMediaError}>
+													{fileRejectionError ? fileRejectionError : ''}
+												</p>
 											</div>
 										</section>
 									) : (
@@ -236,14 +236,6 @@ const ArticleMediaDraggable = ({
 											}}
 										/>
 									</div>
-
-									{fileRejectionError ? (
-										<p className={globalClasses.fileRejectionError}>
-											{fileRejectionError}
-										</p>
-									) : (
-										''
-									)}
 								</div>
 							</div>
 						) : (

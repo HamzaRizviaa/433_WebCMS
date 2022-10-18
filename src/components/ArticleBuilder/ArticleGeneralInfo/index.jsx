@@ -41,6 +41,7 @@ const ArticleGeneralInfo = ({
 	getRootPropsAvatar,
 	getInputPropsAvatar,
 	fileRejectionError2,
+	fileRejectionErrorAvatar,
 	postLabels,
 	extraLabel,
 	handleChangeExtraLabel,
@@ -263,7 +264,7 @@ const ArticleGeneralInfo = ({
 								</div>
 							</div>
 							<p className={globalClasses.fileRejectionError}>
-								{fileRejectionError2}
+								{fileRejectionErrorAvatar}
 							</p>
 							<h5>Add Media File</h5>
 							<br />
@@ -284,7 +285,11 @@ const ArticleGeneralInfo = ({
 									<section
 										className={globalClasses.dropZoneContainer}
 										style={{
-											borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
+											borderColor: fileRejectionError
+												? '#ff355a'
+												: isError.uploadedFiles
+												? '#ff355a'
+												: 'yellow'
 										}}
 									>
 										<div
@@ -303,9 +308,13 @@ const ArticleGeneralInfo = ({
 												Supported formats are jpeg and png
 												<br />
 												Required size 720x900
+												<br />
+												Image File size should not exceed 1MB.
 											</p>
 											<p className={globalClasses.uploadMediaError}>
-												{isError.uploadedFiles
+												{fileRejectionError
+													? fileRejectionError
+													: isError.uploadedFiles
 													? 'You need to upload a media in order to post'
 													: ''}
 											</p>
@@ -317,9 +326,7 @@ const ArticleGeneralInfo = ({
 									</>
 								)}
 							</div>
-							<p className={globalClasses.fileRejectionError}>
-								{fileRejectionError}
-							</p>
+							<br />
 							<div className={globalClasses.dropBoxUrlContainer}>
 								<h6>PORTRAIT DROPBOX URL</h6>
 								<TextField
@@ -356,7 +363,9 @@ const ArticleGeneralInfo = ({
 									<section
 										className={globalClasses.dropZoneContainer}
 										style={{
-											borderColor: isError.uploadedLandscapeCoverImage
+											borderColor: fileRejectionError2
+												? '#ff355a'
+												: isError.uploadedLandscapeCoverImage
 												? '#ff355a'
 												: 'yellow'
 										}}
@@ -377,9 +386,13 @@ const ArticleGeneralInfo = ({
 												Supported formats are jpeg and png
 												<br />
 												Required size 1920x1080
+												<br />
+												Image File size should not exceed 1MB.
 											</p>
 											<p className={globalClasses.uploadMediaError}>
-												{isError.uploadedLandscapeCoverImage
+												{fileRejectionError2
+													? fileRejectionError2
+													: isError.uploadedLandscapeCoverImage
 													? 'You need to upload a media in order to post'
 													: ''}
 											</p>
@@ -391,9 +404,7 @@ const ArticleGeneralInfo = ({
 									</>
 								)}
 							</div>
-							<p className={globalClasses.fileRejectionError}>
-								{fileRejectionError}
-							</p>
+							<br />
 							<div className={globalClasses.dropBoxUrlContainer}>
 								<h6>LANDSCAPE DROPBOX URL</h6>
 								<TextField
@@ -616,6 +627,7 @@ ArticleGeneralInfo.propTypes = {
 	getRootPropsAvatar: PropTypes.any,
 	getInputPropsAvatar: PropTypes.any,
 	fileRejectionError2: PropTypes.string,
+	fileRejectionErrorAvatar: PropTypes.string,
 	postLabels: PropTypes.array,
 	extraLabel: PropTypes.string,
 	handleChangeExtraLabel: PropTypes.func.isRequired,
