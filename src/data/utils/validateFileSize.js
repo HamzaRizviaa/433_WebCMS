@@ -5,11 +5,11 @@ const checkFileSize = (file) => {
 		file.type === 'image/png' ||
 		file.type === 'image/jpg'
 	) {
-		if (file.size > 52428800) {
+		if (file.size > 1000000) {
 			//bytes
 			return {
 				code: 'size-too-large',
-				message: `the size of the file is too high`
+				message: `The size of the file is too high`
 			};
 		}
 	}
