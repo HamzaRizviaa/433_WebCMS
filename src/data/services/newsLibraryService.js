@@ -2,12 +2,14 @@ import axiosInstance from '../axiosInstance';
 
 const sortKeysMapping = {
 	media: 'media',
+	news_title: 'title',
 	post_date: 'postdate',
 	last_edit: 'lastedit',
 	labels: 'label',
 	user: 'user',
 	status: 'status'
 };
+
 class NewsLibraryService {
 	static getAllNewsApi(queryParams) {
 		const params = {

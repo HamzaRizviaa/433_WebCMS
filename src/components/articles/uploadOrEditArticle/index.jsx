@@ -69,6 +69,8 @@ import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDragga
 import { ToastErrorNotifications } from '../../../data/constants';
 
 import useCommonParams from '../../../hooks/useCommonParams';
+import { isEmpty } from 'lodash';
+import { useNavigate } from 'react-router-dom';
 
 const UploadOrEditArticle = ({
 	open,
@@ -78,6 +80,7 @@ const UploadOrEditArticle = ({
 	buttonText,
 	status
 }) => {
+	const navigate = useNavigate();
 	const queryParams = useCommonParams();
 
 	const [editorTextChecker, setEditorTextChecker] = useState('');
@@ -697,8 +700,14 @@ const UploadOrEditArticle = ({
 				setIsLoading(false);
 				setPostButtonStatus(false);
 				handleClose();
-				dispatch(getAllArticlesApi(queryParams));
-				// dispatch(getPostLabels());
+
+				if (isEdit && !(status === 'draft' && draft === false)) {
+					dispatch(getAllArticlesApi(queryParams));
+				} else if (isEmpty(queryParams)) {
+					dispatch(getAllArticlesApi());
+				} else {
+					navigate('/article-library');
+				}
 			}
 		} catch (e) {
 			toast.error(
