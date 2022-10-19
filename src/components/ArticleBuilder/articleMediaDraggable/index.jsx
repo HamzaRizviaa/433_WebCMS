@@ -34,9 +34,9 @@ const ArticleMediaDraggable = ({
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
 	const [newFile, setNewFile] = useState(initialData ? [initialData] : []);
-	const [dropboxUrl, setDropboxUrl] = useState([
-		initialData ? initialData?.dropboxUrl : ''
-	]);
+	const [dropboxUrl, setDropboxUrl] = useState(
+		initialData ? initialData?.dropbox_url : ''
+	);
 
 	const imgEl = useRef(null);
 	const videoRef = useRef(null);
@@ -83,7 +83,10 @@ const ArticleMediaDraggable = ({
 			// console.log(fileHeight, fileWidth, 'hama');
 			WidthHeightCallback(fileWidth, fileHeight);
 			setNewFile([...newFiles]);
-			sendDataToParent(newFiles);
+			sendDataToParent({
+				...newFiles[0],
+				...(dropboxUrl ? { dropbox_url: dropboxUrl } : undefined)
+			});
 		}
 	}, [acceptedFiles, fileHeight, fileWidth]);
 
@@ -221,7 +224,6 @@ const ArticleMediaDraggable = ({
 											value={dropboxUrl}
 											onChange={(e) => {
 												setDropboxUrl(e.target.value);
-
 												sendDataToParent({
 													dropbox_url: e.target.value
 												});
