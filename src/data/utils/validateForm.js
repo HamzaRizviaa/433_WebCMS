@@ -69,6 +69,14 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 						dataFile?.data?.uploadedFiles?.length
 					);
 				}
+			} else if (dataFile.element_type === 'MATCH') {
+				if (dataFile.data) {
+					return (
+						dataFile?.data?.league?.value &&
+						dataFile?.data?.team?.value &&
+						dataFile?.data?.match?.value
+					);
+				}
 			} else {
 				if (dataFile.data) {
 					return dataFile?.data[0]?.twitter_post_url;

@@ -64,7 +64,9 @@ import {
 	checkEmptyQuestion,
 	checkNewElementQuestion,
 	checkEmptyQuestionDraft,
-	checkNewElementQuestionDraft
+	checkNewElementQuestionDraft,
+	checkMatchPublishAndDraft,
+	checkEmptyMatchPublishAndDraft
 } from '../../../data/utils/articleUtils';
 import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDraggable';
 import { ToastErrorNotifications } from '../../../data/constants';
@@ -195,6 +197,8 @@ const UploadOrEditArticle = ({
 		}
 	];
 
+	// log
+	console.log('data elements', data);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png',
@@ -406,7 +410,8 @@ const UploadOrEditArticle = ({
 					MEDIA: ArticleMediaDraggable,
 					QUESTION: ArticleQuestionDraggable,
 					TWITTER: ArticleSocialMediaDraggable,
-					IG: ArticleSocialMediaDraggable
+					IG: ArticleSocialMediaDraggable,
+					MATCH: AddMatchElement
 				};
 				return {
 					sortOrder: sort_order,
@@ -587,6 +592,12 @@ const UploadOrEditArticle = ({
 			elementsData = data.map((item, index) => {
 				return {
 					element_type: item.element_type,
+
+					match_id: item?.data?.match?.value,
+					league_name: item?.data?.league?.name,
+					team_name: item?.data?.team?.name,
+					match_title: item?.data?.match?.name,
+
 					description: item?.data[0]?.description || undefined,
 					media_url:
 						item.data[0]?.media_url?.split('cloudfront.net/')[1] ||
@@ -732,6 +743,27 @@ const UploadOrEditArticle = ({
 			setPostButtonStatus(false);
 			console.log(e, 'Failed - create / edit  Article');
 		}
+	};
+
+	const getElements = (elements) => {
+		let ss = elements.map((element) => {
+			if (element.element_type === 'MATCH') {
+				if (element.match_id) return element;
+				let builded = {
+					...element,
+					element_type: 'MATCH',
+					match_id: element?.data?.match?.value,
+					league_name: element?.data?.league?.name,
+					team_name: element?.data?.team?.name,
+					match_title: element?.data?.match?.name
+				};
+				return builded;
+			} else {
+				return element;
+			}
+		});
+
+		return ss;
 	};
 
 	const publishReadMoreApi = async (id) => {
@@ -1118,6 +1150,7 @@ const UploadOrEditArticle = ({
 		}
 	}, [form]);
 
+	// publish validations
 	useEffect(() => {
 		if (specificArticle) {
 			const validationCompleteArray = [
@@ -1141,6 +1174,10 @@ const UploadOrEditArticle = ({
 					filteringByType(specificArticle?.elements, 'QUESTION'),
 					filteringByType(data, 'QUESTION')
 				),
+				checkMatchPublishAndDraft(
+					filteringByType(specificArticle?.elements, 'MATCH'),
+					filteringByType(data, 'MATCH')
+				),
 				data?.length !== 0
 			];
 
@@ -1150,6 +1187,7 @@ const UploadOrEditArticle = ({
 				checkEmptyIG(data),
 				checkEmptyMedia(data),
 				checkEmptyQuestion(data),
+				checkEmptyMatchPublishAndDraft(data),
 				data?.length !== 0
 			];
 
@@ -1202,6 +1240,7 @@ const UploadOrEditArticle = ({
 		}
 	}, [data]);
 
+	// draft validations
 	useEffect(() => {
 		if (specificArticle) {
 			const validationCompleteArrayDraft = [
@@ -1224,6 +1263,10 @@ const UploadOrEditArticle = ({
 				checkNewElementQuestionDraft(
 					filteringByType(specificArticle?.elements, 'QUESTION'),
 					filteringByType(data, 'QUESTION')
+				),
+				checkMatchPublishAndDraft(
+					filteringByType(specificArticle?.elements, 'MATCH'),
+					filteringByType(data, 'MATCH')
 				)
 			];
 
@@ -1232,14 +1275,15 @@ const UploadOrEditArticle = ({
 				checkEmptyTwitter(data),
 				checkEmptyIG(data),
 				checkEmptyMedia(data),
-				checkEmptyQuestionDraft(data)
+				checkEmptyQuestionDraft(data),
+				checkEmptyMatchPublishAndDraft(data)
 			];
 
-			// console.log(
-			// 	validationDraftEmptyArray,
-			// 	validationCompleteArrayDraft,
-			// 	'validate'
-			// );
+			console.log(
+				validationDraftEmptyArray,
+				validationCompleteArrayDraft,
+				'validate'
+			);
 			if (
 				!validateDraft(form, data) ||
 				!comparingDraftFields(specificArticle, form)
@@ -1331,6 +1375,7 @@ const UploadOrEditArticle = ({
 	};
 
 	const handleDraftSave = async () => {
+		console.log(getElements(data));
 		if (!validateDraft(form, data) || draftBtnDisabled) {
 			validateDraftBtn();
 		} else {

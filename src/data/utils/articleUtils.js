@@ -280,3 +280,35 @@ export const checkNewElementQuestionDraft = (elements, data) => {
 	}
 	return result.every((item) => item === true);
 };
+
+export const checkMatchPublishAndDraft = (elements, data) => {
+	console.log('compare validations', elements, data);
+	let isSame = true;
+
+	// if (elements?.length === data?.length) return true;
+	if (data?.length <= 0) return false;
+	for (let i = 0; i < data.length; i++) {
+		const editedElement = data[i];
+		const apiElement = elements[i];
+		if (apiElement?.match_id !== editedElement?.data?.match?.value?.trim()) {
+			isSame = false;
+			return false;
+		}
+	}
+	// console.log(isSame);
+	return isSame;
+};
+export const checkEmptyMatchPublishAndDraft = (data) => {
+	console.log('empty validatoin', data);
+	if (data.length <= 0) return true;
+	let isEmpty = true;
+	for (let i = 0; i < data.length; i++) {
+		const element = data[i];
+		if (!element?.data?.match?.value?.trim()) {
+			isEmpty = false;
+			return false;
+		}
+	}
+	console.log(isEmpty);
+	return isEmpty;
+};

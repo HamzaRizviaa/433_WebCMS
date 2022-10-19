@@ -7,10 +7,10 @@ import { useStyles } from '../../PreviewArticles/MatchPost/index.style';
 import moment from 'moment';
 // TEST OBJECT FOR MATCHES
 
-const MatchPost = ({ data: dd, item }) => {
+const MatchPost = ({ item }) => {
 	// console.log('MATCH DATA', data, item);
 	// const {Team_1,Team_2:team2} = data
-	console.log(dd);
+	// console.log(dd);
 	const data = {
 		Day: moment(item?.data?.match?.data?.startdate).format('ddd, DD MMM'),
 		Time: moment(item?.data?.match?.data?.startdate).format('HH:MM'),
