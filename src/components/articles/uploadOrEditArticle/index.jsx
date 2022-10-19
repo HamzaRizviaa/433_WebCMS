@@ -73,6 +73,7 @@ import { ToastErrorNotifications } from '../../../data/constants';
 
 import useCommonParams from '../../../hooks/useCommonParams';
 import MatchPost from '../../ArticleBuilder/PreviewArticles/MatchPost';
+import { useLazyGetMatchesTreeQuery } from '../../../data/features/articleLibrary/articleLibrary.query';
 
 // TEST OBJECT FOR MATCHES
 const matchObj = {
@@ -127,6 +128,11 @@ const UploadOrEditArticle = ({
 	const loadingRef = useRef(null);
 
 	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
+
+	const [
+		getMatchesTree,
+		{ isFetching: matchesLoading, data: matchesData, ...response }
+	] = useLazyGetMatchesTreeQuery();
 
 	const [form, setForm] = useState({
 		title: '',
@@ -227,6 +233,10 @@ const UploadOrEditArticle = ({
 		maxFiles: 1,
 		validator: checkFileSize
 	});
+
+	useEffect(() => {
+		getMatchesTree();
+	}, []);
 
 	useEffect(() => {
 		if (acceptedFileAvatar?.length) {
@@ -1730,7 +1740,7 @@ const UploadOrEditArticle = ({
 				notifID={notifID}
 			>
 				<LoadingOverlay
-					active={isLoading}
+					active={isLoading || matchesLoading}
 					spinner={<PrimaryLoader />}
 					style={{ top: '100px' }}
 				>
@@ -1828,7 +1838,8 @@ const UploadOrEditArticle = ({
 																item.element_type === 'QUESTION'
 																	? item?.data
 																	: item.data && item?.data[0],
-															setDisableDropdown: setDisableDropdown
+															setDisableDropdown: setDisableDropdown,
+															matchesTree: matchesData
 														})}
 
 														<p className={globalClasses.mediaError}>
@@ -1883,7 +1894,7 @@ const UploadOrEditArticle = ({
 																/>
 															) : item.element_type === 'MATCH' ? (
 																<MatchPost
-																	data={matchObj}
+																	
 																	item={item}
 																	itemIndex={index}
 																	style={{ width: '100%' }}

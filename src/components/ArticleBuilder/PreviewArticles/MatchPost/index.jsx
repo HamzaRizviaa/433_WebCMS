@@ -3,14 +3,9 @@ import PropTypes from 'prop-types';
 import { Box, Divider } from '@material-ui/core';
 import Button from '../../../button';
 import { useStyles } from '../../PreviewArticles/MatchPost/index.style';
-
 import moment from 'moment';
-// TEST OBJECT FOR MATCHES
 
 const MatchPost = ({ item }) => {
-	// console.log('MATCH DATA', data, item);
-	// const {Team_1,Team_2:team2} = data
-	// console.log(dd);
 	const data = {
 		Day: moment(item?.data?.match?.data?.startdate).format('ddd, DD MMM'),
 		Time: moment(item?.data?.match?.data?.startdate).format('HH:MM'),
@@ -63,6 +58,5 @@ const MatchPost = ({ item }) => {
 export default MatchPost;
 
 MatchPost.propTypes = {
-	data: PropTypes.object.isRequired,
-	item: PropTypes.object
+	item: PropTypes.object.isRequired
 };
