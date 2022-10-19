@@ -902,10 +902,20 @@ const UploadOrEditArticle = ({
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...data];
-		dataCopy[index].data = {
-			...(dataCopy[index].data ? dataCopy[index].data : {}),
-			...childData
-		};
+		// handling media seperately here in order
+		if (dataCopy[index].element_type === 'MEDIA') {
+			dataCopy[index].data = [
+				{
+					...(dataCopy[index].data?.length ? dataCopy[index].data[0] : {}),
+					...childData
+				}
+			];
+		} else {
+			dataCopy[index].data = {
+				...(dataCopy[index].data ? dataCopy[index].data : {}),
+				...childData
+			};
+		}
 		setData(dataCopy);
 	};
 
@@ -1415,7 +1425,7 @@ const UploadOrEditArticle = ({
 				if (data.length) {
 					dataMedia = await Promise.all(
 						data.map(async (item, index) => {
-							if (item.element_type === 'MEDIA' && item.data[0].file) {
+							if (item.element_type === 'MEDIA' && item.data[0]?.file) {
 								let uploadedFile = await uploadFileToServer(
 									item.data[0],
 									'articleLibrary'
@@ -1805,7 +1815,7 @@ const UploadOrEditArticle = ({
 											ref={topElementRef}
 										></Box>
 										<DraggableWrapper onDragEnd={onDragEnd}>
-											{data.map((item, index) => {
+											{data?.map((item, index) => {
 												return (
 													<div ref={scrollRef} key={index}>
 														{React.createElement(item.component, {
