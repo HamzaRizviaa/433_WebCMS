@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 
-const heightMapper = {
+const sizeMapper = {
 	small: {
 		height: '2.4rem !important',
 		borderRadius: '2rem',
@@ -23,7 +23,7 @@ export const useSelectFieldStyles = makeStyles((theme) => ({
 		marginBottom: '1rem'
 	},
 
-	select: ({ isError, isDisabled, height }) => ({
+	select: ({ isError, isDisabled, size }) => ({
 		display: 'flex',
 		alignItems: 'center',
 		color: 'white !important',
@@ -31,7 +31,7 @@ export const useSelectFieldStyles = makeStyles((theme) => ({
 		fontSize: '1.4rem !important',
 		lineHeight: '1.6 !important',
 		border: `1px solid ${theme.palette.normalGrey}`,
-		borderRadius: heightMapper[height]?.borderRadius || 40,
+		borderRadius: sizeMapper[size]?.borderRadius || 40,
 		padding: '0 1.5rem',
 		backgroundColor: isDisabled ? theme.palette.disabled : 'transparent',
 		borderColor: isError ? theme.palette.red : theme.palette.normalGrey,
@@ -42,7 +42,7 @@ export const useSelectFieldStyles = makeStyles((theme) => ({
 				isDisabled ? theme.palette.normalGrey : theme.palette.neonYellow
 			} !important`,
 			right: '1rem !important',
-			top: heightMapper[height]?.top || '5px !important',
+			top: sizeMapper[size]?.top || '5px !important',
 			fontSize: '3.5rem !important'
 		}
 	}),
@@ -93,7 +93,7 @@ export const useSelectFieldStyles = makeStyles((theme) => ({
 	input: {
 		display: 'flex',
 		alignItems: 'center',
-		height: ({ height }) => heightMapper[height]?.height || 'auto',
+		height: ({ size }) => sizeMapper[size]?.height || 'auto',
 		color: (props) =>
 			props.hasValue ? theme.palette.white : theme.palette.disabled,
 

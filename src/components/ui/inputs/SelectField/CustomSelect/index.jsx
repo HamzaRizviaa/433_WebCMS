@@ -18,7 +18,7 @@ const CustomSelect = ({
 	className = '',
 	required = false,
 	disabled = false,
-	height = 'medium',
+	size = 'medium',
 	...rest
 }) => {
 	const labelKey = mapOptions?.labelKey || 'label';
@@ -47,7 +47,7 @@ const CustomSelect = ({
 		isError: !!error,
 		isDisabled: disabled,
 		isAutocomplete: false,
-		height
+		size
 	});
 
 	const inputsClasses = useInputsStyles({

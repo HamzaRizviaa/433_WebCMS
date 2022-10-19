@@ -23,7 +23,7 @@ const CustomAutocomplete = ({
 	className = '',
 	required = false,
 	disabled = false,
-	height = 'medium',
+	size = 'medium',
 	...rest
 }) => {
 	const labelKey = mapOptions?.labelKey || 'label';
@@ -65,7 +65,7 @@ const CustomAutocomplete = ({
 	const inputsClasses = useInputsStyles({
 		isError: !!error,
 		isRequired: required,
-		height
+		size
 	});
 
 	return (

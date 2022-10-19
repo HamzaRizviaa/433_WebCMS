@@ -19,7 +19,7 @@ type SelectFieldCustomProps<T> = {
 	placeholder?: string;
 	required?: boolean;
 	error?: string;
-	height?: 'small' | 'medium' | 'large';
+	size?: 'small' | 'medium' | 'large';
 };
 
 type ModifiedSelectProps = Omit<

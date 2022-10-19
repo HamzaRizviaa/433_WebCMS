@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 
-const inputHeightMapper = {
+const inputSizeMapper = {
 	small: {
 		height: '1.8rem',
 		borderRadius: 18
@@ -40,14 +40,14 @@ export const useInputsStyles = makeStyles((theme) => ({
 			display: (props) => (props.isRequired ? 'inline-block' : 'none')
 		}
 	},
-	textFieldInput: ({ isError, height }) => ({
+	textFieldInput: ({ isError, size }) => ({
 		color: theme.palette.white,
 		border: `1px solid ${theme.palette.normalGrey}`,
 		padding: '1rem 1rem 1rem 1.5rem !important',
 		fontSize: '1.4rem !important',
 		fontFamily: 'Poppins !important',
 		lineHeight: '1.6 !important',
-		borderRadius: inputHeightMapper[height]?.borderRadius || '22px',
+		borderRadius: inputSizeMapper[size]?.borderRadius || '22px',
 		backgroundColor: theme.palette.black,
 		borderColor: isError ? theme.palette.red : theme.palette.normalGrey,
 
@@ -56,7 +56,7 @@ export const useInputsStyles = makeStyles((theme) => ({
 		},
 
 		'& > input': {
-			height: inputHeightMapper[height]?.height || 'auto',
+			height: inputSizeMapper[size]?.height || 'auto',
 			padding: 0
 		}
 	}),

@@ -17,12 +17,14 @@ const InputField = ({
 	startIcon,
 	endIcon,
 	onChange,
+	maxLength,
+	error,
+	helperText,
+	inputProps = {},
 	type = 'text',
-	textArea = false,
 	required = false,
-	isError = false,
-	rows = 4,
-	height = 'medium',
+	minRows = 1,
+	size = 'medium',
 	...restProps
 }) => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -51,21 +53,29 @@ const InputField = ({
 		[debouncedHandleOnChange]
 	);
 
-	const classes = useStyles({ isError, isRequired: required });
+	const inputLength = innerValue.length;
+	const inputLengthPercent = maxLength ? (inputLength / maxLength) * 100 : null;
+
+	const classes = useStyles({ isError: !!error, inputLengthPercent });
 
 	const inputsClasses = useInputsStyles({
-		isError,
 		isRequired: required,
-		height
+		isError: !!error,
+		size
 	});
 
 	return (
 		<div className={classes.inputFieldContainer}>
-			{(!!label || !!rightLabel) && (
+			{(!!label || !!rightLabel || !!maxLength) && (
 				<div className={inputsClasses.labelsContainer}>
-					{!!label && <span className={inputsClasses.inputLabel}>{label}</span>}
-					{!!rightLabel && (
-						<span className={inputsClasses.inputLabel}>{rightLabel}</span>
+					{(!!label || !!rightLabel || !!maxLength) && (
+						<span className={inputsClasses.inputLabel}>{label}</span>
+					)}
+					{(!!rightLabel || !!maxLength) && (
+						<span className={classes.rightLabel}>
+							{rightLabel}
+							{maxLength ? ` ${inputLength}/${maxLength}` : ''}
+						</span>
 					)}
 				</div>
 			)}
@@ -73,13 +83,14 @@ const InputField = ({
 				{...restProps}
 				className={className}
 				type={isPasswordField ? (showPassword ? 'text' : 'password') : type}
-				multiline={textArea}
-				rows={textArea ? rows : undefined}
 				autoComplete='nope'
 				onChange={handleChange}
 				value={innerValue}
 				size='small'
+				minRows={minRows}
+				helperText={error || helperText}
 				fullWidth
+				inputProps={{ maxLength, ...inputProps }}
 				InputProps={{
 					disableUnderline: true,
 					className: inputsClasses.textFieldInput,
