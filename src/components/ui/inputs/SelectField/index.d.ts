@@ -2,19 +2,25 @@ import { AutocompleteProps } from '@material-ui/lab';
 import { SelectProps } from '@material-ui/core';
 
 export type SelectOption = {
-	value: string;
-	label: string;
 	[Key: string]: string | number | undefined | null;
+};
+
+type MapOptions<T> = {
+	labelKey: keyof T;
+	valueKey: keyof T;
 };
 
 type SelectFieldCustomProps<T> = {
 	name: string;
 	value: any;
 	options: T[];
+	mapOptions: MapOptions<T>;
 	label?: string;
 	placeholder?: string;
 	required?: boolean;
 	error?: string;
+	noOptionsText?: string;
+	size?: 'small' | 'medium' | 'large';
 };
 
 type ModifiedSelectProps = Omit<
@@ -65,8 +71,15 @@ export type SelectFieldProps<T> =
  * Very important prop as it will be responsible for rendering `Select` or `Autocomplete` component based on its value.
  *
  * ### options:
- * `options` prop has specific shape, that is, it must have two properties `value` and `label` in each element of
- * `options` array. Other than these properties you can add any number of extra properties as well.
+ * `options` prop must be an array of object with N number of key value pairs.
+ *
+ * ### mapOptions:
+ * if you don't have `label` and `value` key in your options object then this prop is required. You need to pass
+ * `labelKey` and `valueKey` in this object.
+ *
+ * **labelKey:** The key in your option which you want to show as label.
+ *
+ * **valueKey:** The key in your options object which you want to use as value.
  *
  * ### onSearchTextChange:
  * You need to pass callback function in this prop and you will get search text field value as prop in its parameter.
