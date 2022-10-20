@@ -19,17 +19,13 @@ import 'tinymce/plugins/charmap';
 import 'tinymce/skins/ui/oxide/skin.min.css';
 import 'tinymce/skins/ui/oxide/content.min.css';
 import 'tinymce/skins/content/default/content.min.css';
-import { formatAndStyle, Menu } from '../../../../data/helpers/textFieldHelpers';
+import {
+	formatAndStyle,
+	Menu
+} from '../../../../data/helpers/textFieldHelpers';
 import { useTextEditorStyles } from './index.style';
 
-const RichTextEditor = ({
-    name,
-	id,
-	initialData,
-    onBlur,
-    onChange,
-    error
-}) => {
+const RichTextEditor = ({ name, id, initialData, onBlur, onChange, error }) => {
 	const classes = useTextEditorStyles();
 	const [description, setDescription] = useState('');
 
@@ -45,13 +41,11 @@ const RichTextEditor = ({
 	}, [initialData]);
 
 	const handleEditorChange = () => {
-		const editorTextContent = window.tinymce
-			?.get(`text-${id}`)
-			?.getContent();
+		const editorTextContent = window.tinymce?.get(`text-${id}`)?.getContent();
 		setDescription(editorTextContent);
-        if(onChange){
-            onChange(editorTextContent)
-        }
+		if (onChange) {
+			onChange(editorTextContent);
+		}
 	};
 	return (
 		<div className={classes.editor}>
@@ -84,22 +78,22 @@ const RichTextEditor = ({
 					]
 				}}
 				onEditorChange={handleEditorChange}
-                onBlur={onBlur}
+				onBlur={onBlur}
 				id={`text-${id}`}
-                name={name}
+				name={name}
 			/>
-            <span>{error}</span>
+			<span>{error}</span>
 		</div>
 	);
 };
 
 RichTextEditor.propTypes = {
-    name: PropTypes.string.isRequired,
+	name: PropTypes.string.isRequired,
 	id: PropTypes.number.isRequired,
 	initialData: PropTypes.string,
-    onBlur: PropTypes.func,
-    onChange: PropTypes.func,
-    error: PropTypes.string
-}
+	onBlur: PropTypes.func,
+	onChange: PropTypes.func,
+	error: PropTypes.string
+};
 
 export default RichTextEditor;

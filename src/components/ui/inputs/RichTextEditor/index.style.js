@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core';
 
 export const useTextEditorStyles = makeStyles(() => ({
-    editor: {
+	editor: {
 		margin: '10px 0px',
 		'& > div': {
 			//tox tox-tinymce tox-platform-touch
@@ -138,4 +138,4 @@ export const useTextEditorStyles = makeStyles(() => ({
 			// }
 		}
 	}
-}))
+}));
