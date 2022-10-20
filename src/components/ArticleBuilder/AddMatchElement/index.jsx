@@ -54,7 +54,7 @@ const AddMatchElement = ({
 		}
 	}, [item.data]);
 
-	const handleSelect = (value, name, data) => {
+	const handleSelect = (value, name, { data }) => {
 		console.log(name, value, data, item?.data);
 
 		switch (name) {
@@ -106,13 +106,11 @@ const AddMatchElement = ({
 				league: {
 					value: data?.league_name,
 					name: data?.league_name,
-					// childs: [{ name: data?.league_name, id: data?.league_name }]
 					childs: [{ name: data?.team_name, id: data?.team_name }]
 				},
 				team: {
 					value: data?.team_name,
 					name: data?.team_name,
-					// childs: [{ name: data?.team_name, id: data?.team_name }]
 					childs: [
 						{
 							name: data?.match_title,
@@ -129,7 +127,6 @@ const AddMatchElement = ({
 					childs: []
 				}
 			};
-			console.log('readonly obj', obj);
 			return obj;
 		}
 		allLeagues.forEach((league) => {
@@ -194,8 +191,6 @@ const AddMatchElement = ({
 
 	const classes = useStyles();
 
-	// const globalClasses = globalUseStyles();
-
 	return (
 		<>
 			<Draggable
@@ -257,8 +252,8 @@ const AddMatchElement = ({
 									label='SELECT LEAGUE'
 									name='league'
 									placeholder='Please Select'
+									noOptionsText="Leagues aren't available"
 									value={item?.data?.league?.value}
-									// defaultValue={defaultState?.league?.value}
 									disabled={readOnly}
 									options={(allLeagues || []).map((league) => ({
 										label: league.name,
@@ -273,8 +268,8 @@ const AddMatchElement = ({
 									label='SELECT TEAM'
 									name='team'
 									placeholder='Please Select'
+									noOptionsText="Teams aren't available"
 									value={item?.data?.team?.value}
-									// defaultValue={defaultState?.team?.value}
 									disabled={readOnly || !item?.data?.league?.childs}
 									options={(item?.data?.league?.childs || []).map((team) => ({
 										label: team.name,
@@ -289,8 +284,8 @@ const AddMatchElement = ({
 									label='SELECT MATCH'
 									name='match'
 									placeholder='Please Select'
+									noOptionsText="Matches aren't available"
 									value={item?.data?.match?.value}
-									// defaultValue={defaultState?.match?.value}
 									disabled={readOnly || !item?.data?.team?.childs}
 									options={(item?.data?.team?.childs || [])
 										.filter((match) => !ifAlreadySelected(match))
@@ -302,7 +297,6 @@ const AddMatchElement = ({
 									onChange={(value, name, data) => {
 										handleSelect(value, name, data);
 									}}
-									// disabled
 								/>
 							</div>
 						)}
