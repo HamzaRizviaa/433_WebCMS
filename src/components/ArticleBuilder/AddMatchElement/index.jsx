@@ -16,6 +16,7 @@ import MenuItem from '@mui/material/MenuItem';
 // import FormHelperText from '@mui/material/FormHelperText';
 import Select from '@mui/material/Select';
 import SelectField from '../../ui/inputs/SelectField';
+import { useRef } from 'react';
 // import { FormControl, InputLabel } from '@mui/material';
 
 const AddMatchElement = ({
@@ -28,55 +29,55 @@ const AddMatchElement = ({
 	initialData,
 	matchesTree
 }) => {
-	// hook
-	// console.table(initialData);
-	// console.table(item);
 
-	const [matchState, setMatchState] = useState({});
+	const firstSet = useRef(true);
 	const [allLeagues, setAllLeagues] = useState([]);
 	const [initial, setInitial] = useState(false);
 
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
-
 	useEffect(() => {
+		if (allLeagues.length > 0) return;
 		matchesTree && setAllLeagues(matchesTree);
 	}, [matchesTree]);
 
 	useEffect(() => {
 		if (allLeagues.length <= 0 && !initialData) return;
 		console.log('hello', buildInitialData(initialData));
-		setMatchState(buildInitialData(initialData));
+		initialData && sendDataToParent(buildInitialData(initialData),index);
 		setTimeout(() => {
 			setInitial(true);
 		});
 	}, [allLeagues]);
 
 	useEffect(() => {
-		// if (isFetching) return;
-		sendDataToParent(matchState, index);
-	}, [matchState]);
+		if (firstSet.current && item?.data?.match?.value) {
+			firstSet.current = false;
+		}
+	}, [item.data]);
 
 	const handleSelect = (value, name, data) => {
-		console.log(name, value, data, matchState);
+		console.log(name, value, data, item?.data);
 
 		switch (name) {
 			case 'league':
-				setMatchState({
-					league: { value, name: data?.name, childs: data?.teams || [] }
-				});
+				sendDataToParent({
+					league: { value, name: data?.name, childs: data?.teams || [] },
+					team:{},
+					match:{},
+				},index);
 				break;
 			case 'team':
-				setMatchState({
-					...matchState,
+				sendDataToParent({
+					...item?.data,
 					team: { value, name: data?.name, childs: data?.matches },
-					match: []
-				});
+					match: {}
+				},index);
 				break;
 			case 'match':
-				setMatchState({
-					...matchState,
+				sendDataToParent({
+					...item?.data,
 					match: { value, name: data?.name, data, childs: [] }
-				});
+				},index);
 				break;
 
 			default:
@@ -166,7 +167,7 @@ const AddMatchElement = ({
 								</div>
 								<div
 									onClick={() => {
-										console.log(matchState);
+										console.log(item?.data);
 									}}
 									className={classes.wrapperHeading}
 								>
@@ -209,7 +210,7 @@ const AddMatchElement = ({
 								<SelectField
 									label='SELECT LEAGUE'
 									name='league'
-									value={matchState?.league?.value}
+									value={item?.data?.league?.value}
 									// defaultValue={defaultState?.league?.value}
 									options={(allLeagues || []).map((league) => ({
 										label: league.name,
@@ -223,9 +224,9 @@ const AddMatchElement = ({
 								<SelectField
 									label='SELECT TEAM'
 									name='team'
-									value={matchState?.team?.value}
+									value={item?.data?.team?.value}
 									// defaultValue={defaultState?.team?.value}
-									options={(matchState?.league?.childs || []).map((team) => ({
+									options={(item?.data?.league?.childs || []).map((team) => ({
 										label: team.name,
 										value: team.id,
 										data: team
@@ -237,9 +238,9 @@ const AddMatchElement = ({
 								<SelectField
 									label='SELECT MATCH'
 									name='match'
-									value={matchState?.match?.value}
+									value={item?.data?.match?.value}
 									// defaultValue={defaultState?.match?.value}
-									options={(matchState?.team?.childs || []).map((match) => ({
+									options={(item?.data?.team?.childs || []).map((match) => ({
 										label: match.name,
 										value: match._id,
 										data: match
@@ -269,7 +270,7 @@ AddMatchElement.propTypes = {
 	matchesTree: PropTypes.object
 };
 
-export default AddMatchElement;
+export default React.memo(AddMatchElement);
 
 const CustomSelect = ({ isError, isEdit, status, name = '', label = '' }) => {
 	const classes = useStyles();
