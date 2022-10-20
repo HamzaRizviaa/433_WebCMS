@@ -1843,9 +1843,13 @@ const UploadOrEditArticle = ({
 														})}
 
 														<p className={globalClasses.mediaError}>
-															{dataErrors.length &&
-																dataErrors[index] &&
-																'This field is required'}
+															{isEdit
+																? dataErrors.length &&
+																  dataErrors[index] &&
+																  'Something needs to be changed'
+																: dataErrors.length &&
+																  dataErrors[index] &&
+																  'This field is required'}
 														</p>
 													</div>
 												);
