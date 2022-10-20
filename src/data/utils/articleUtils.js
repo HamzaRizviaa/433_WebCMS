@@ -283,6 +283,7 @@ export const checkNewElementQuestionDraft = (elements, data) => {
 
 export const checkMatchPublishAndDraft = (elements = [], data = []) => {
 	console.log('compare validations', elements, data);
+	if(data.length === 0) return true
 	let isSame = true;
 
 	// if (elements?.length === data?.length) return true;
@@ -290,7 +291,7 @@ export const checkMatchPublishAndDraft = (elements = [], data = []) => {
 	for (let i = 0; i < data.length; i++) {
 		const editedElement = data[i];
 		const apiElement = elements[i];
-		if (apiElement?.match_id !== editedElement?.data?.match?.value?.trim()) {
+		if (apiElement?.match_id !== editedElement?.data?.match?.value) {
 			isSame = false;
 			return false;
 		}
@@ -304,7 +305,7 @@ export const checkEmptyMatchPublishAndDraft = (data) => {
 	let isEmpty = true;
 	for (let i = 0; i < data.length; i++) {
 		const element = data[i];
-		if (!element?.data?.match?.value?.trim()) {
+		if (!element?.data?.match?.value) {
 			isEmpty = false;
 			return false;
 		}

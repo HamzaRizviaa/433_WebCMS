@@ -1205,10 +1205,9 @@ const UploadOrEditArticle = ({
 				checkEmptyIG(data),
 				checkEmptyMedia(data),
 				checkEmptyQuestion(data),
-				checkEmptyMatchPublishAndDraft(data),
+				checkEmptyMatchPublishAndDraft(filteringByType(data, 'MATCH')),
 				data?.length !== 0
 			];
-
 			if (
 				!validateForm(form, data) ||
 				!comparingFields(specificArticle, form)
@@ -1294,7 +1293,7 @@ const UploadOrEditArticle = ({
 				checkEmptyIG(data),
 				checkEmptyMedia(data),
 				checkEmptyQuestionDraft(data),
-				checkEmptyMatchPublishAndDraft(data)
+				checkEmptyMatchPublishAndDraft(filteringByType(data, 'MATCH'))
 			];
 
 			console.log(
