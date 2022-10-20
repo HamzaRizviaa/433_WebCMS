@@ -29,6 +29,12 @@ const AddMatchElement = ({
 
 	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
 	useEffect(() => {
+		if (readOnly) {
+			setAllLeagues([
+				{ name: initialData?.league_name, id: initialData?.league_name }
+			]);
+			return;
+		}
 		if (allLeagues.length > 0) return;
 		matchesTree && setAllLeagues(matchesTree);
 	}, [matchesTree]);
@@ -95,6 +101,37 @@ const AddMatchElement = ({
 	const buildInitialData = (data) => {
 		if (!data) return;
 		let obj = {};
+		if (readOnly) {
+			obj = {
+				league: {
+					value: data?.league_name,
+					name: data?.league_name,
+					// childs: [{ name: data?.league_name, id: data?.league_name }]
+					childs: [{ name: data?.team_name, id: data?.team_name }]
+				},
+				team: {
+					value: data?.team_name,
+					name: data?.team_name,
+					// childs: [{ name: data?.team_name, id: data?.team_name }]
+					childs: [
+						{
+							name: data?.match_title,
+							_id: data?.match_id,
+							childs: [],
+							data: data?.match
+						}
+					]
+				},
+				match: {
+					value: data?.match_id,
+					name: data?.match_title,
+					data: data?.match,
+					childs: []
+				}
+			};
+			console.log('readonly obj', obj);
+			return obj;
+		}
 		allLeagues.forEach((league) => {
 			if (league.name === data.league_name) {
 				obj.league = {

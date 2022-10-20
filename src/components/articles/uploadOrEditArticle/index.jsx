@@ -244,7 +244,7 @@ const UploadOrEditArticle = ({
 	 */
 
 	useEffect(() => {
-		getMatchesTree();
+		// getMatchesTree();
 	}, []);
 
 	useEffect(() => {
