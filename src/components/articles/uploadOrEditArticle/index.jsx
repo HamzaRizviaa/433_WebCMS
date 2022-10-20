@@ -234,6 +234,14 @@ const UploadOrEditArticle = ({
 		validator: checkFileSize
 	});
 
+	/**
+	 * NOTE: If it needed to fetch matches
+	 * tree more often then put the "OPEN"
+	 * prop in the below dependency array.
+	 *
+	 * It'll re-fetch the data tree on every slider open trigger
+	 */
+
 	useEffect(() => {
 		getMatchesTree();
 	}, []);
