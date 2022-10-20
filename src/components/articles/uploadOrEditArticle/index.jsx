@@ -1839,7 +1839,10 @@ const UploadOrEditArticle = ({
 																	? item?.data
 																	: item.data && item?.data[0],
 															setDisableDropdown: setDisableDropdown,
-															matchesTree: matchesData
+															// props added for match element
+															matchesTree: matchesData,
+															readOnly: status === 'published' && item?.id,
+															allElements: data
 														})}
 
 														<p className={globalClasses.mediaError}>
@@ -1894,7 +1897,6 @@ const UploadOrEditArticle = ({
 																/>
 															) : item.element_type === 'MATCH' ? (
 																<MatchPost
-																	
 																	item={item}
 																	itemIndex={index}
 																	style={{ width: '100%' }}

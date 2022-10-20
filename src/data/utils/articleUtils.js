@@ -281,7 +281,7 @@ export const checkNewElementQuestionDraft = (elements, data) => {
 	return result.every((item) => item === true);
 };
 
-export const checkMatchPublishAndDraft = (elements, data) => {
+export const checkMatchPublishAndDraft = (elements = [], data = []) => {
 	console.log('compare validations', elements, data);
 	let isSame = true;
 

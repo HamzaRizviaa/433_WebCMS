@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Draggable } from 'react-beautiful-dnd';
 import { useStyles } from './index.style';
@@ -9,15 +9,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { ReactComponent as Union } from '../../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
-import { useStyles as globalUseStyles } from '../../../styles/global.style';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-
-import MenuItem from '@mui/material/MenuItem';
-// import FormHelperText from '@mui/material/FormHelperText';
-import Select from '@mui/material/Select';
 import SelectField from '../../ui/inputs/SelectField';
-import { useRef } from 'react';
-// import { FormControl, InputLabel } from '@mui/material';
 
 const AddMatchElement = ({
 	item,
@@ -27,9 +19,10 @@ const AddMatchElement = ({
 	setIsOpen,
 	handleDeleteFile,
 	initialData,
-	matchesTree
+	matchesTree,
+	readOnly = false,
+	allElements = []
 }) => {
-
 	const firstSet = useRef(true);
 	const [allLeagues, setAllLeagues] = useState([]);
 	const [initial, setInitial] = useState(false);
@@ -43,7 +36,7 @@ const AddMatchElement = ({
 	useEffect(() => {
 		if (allLeagues.length <= 0 && !initialData) return;
 		console.log('hello', buildInitialData(initialData));
-		initialData && sendDataToParent(buildInitialData(initialData),index);
+		initialData && sendDataToParent(buildInitialData(initialData), index);
 		setTimeout(() => {
 			setInitial(true);
 		});
@@ -60,24 +53,33 @@ const AddMatchElement = ({
 
 		switch (name) {
 			case 'league':
-				sendDataToParent({
-					league: { value, name: data?.name, childs: data?.teams || [] },
-					team:{},
-					match:{},
-				},index);
+				sendDataToParent(
+					{
+						league: { value, name: data?.name, childs: data?.teams || [] },
+						team: {},
+						match: {}
+					},
+					index
+				);
 				break;
 			case 'team':
-				sendDataToParent({
-					...item?.data,
-					team: { value, name: data?.name, childs: data?.matches },
-					match: {}
-				},index);
+				sendDataToParent(
+					{
+						...item?.data,
+						team: { value, name: data?.name, childs: data?.matches },
+						match: {}
+					},
+					index
+				);
 				break;
 			case 'match':
-				sendDataToParent({
-					...item?.data,
-					match: { value, name: data?.name, data, childs: [] }
-				},index);
+				sendDataToParent(
+					{
+						...item?.data,
+						match: { value, name: data?.name, data, childs: [] }
+					},
+					index
+				);
 				break;
 
 			default:
@@ -127,10 +129,6 @@ const AddMatchElement = ({
 		return obj;
 	};
 
-	const classes = useStyles();
-
-	// const globalClasses = globalUseStyles();
-
 	const haveToShow = () => {
 		if (initialData) {
 			return initial && allLeagues.length > 0 && clickExpandIcon;
@@ -138,6 +136,29 @@ const AddMatchElement = ({
 			return allLeagues.length > 0 && clickExpandIcon;
 		}
 	};
+
+	const ifAlreadySelected = (match) => {
+		for (let i = 0; i < allElements.length; i++) {
+			const element = allElements[i];
+			if (i !== index) {
+				if (element.element_type === 'MATCH') {
+					if (element?.data?.league?.value === item?.data?.league?.value) {
+						if (element?.data?.team?.value === item?.data?.team?.value) {
+							if (element?.data?.match?.value === match?._id) {
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
+	};
+
+	const classes = useStyles();
+
+	// const globalClasses = globalUseStyles();
+
 	return (
 		<>
 			<Draggable
@@ -195,23 +216,12 @@ const AddMatchElement = ({
 						</div>
 						{haveToShow() && (
 							<div>
-								{/* <CustomSelect
-									isEdit={false}
-									isError={false}
-									status='dra'
-									label='SELECT LEAGUE'
-								/>
-								<CustomSelect
-									isEdit={false}
-									isError={false}
-									status='dra'
-									label='SELECT TEAM'
-								/> */}
 								<SelectField
 									label='SELECT LEAGUE'
 									name='league'
 									value={item?.data?.league?.value}
 									// defaultValue={defaultState?.league?.value}
+									disabled={readOnly}
 									options={(allLeagues || []).map((league) => ({
 										label: league.name,
 										value: league.id,
@@ -226,6 +236,7 @@ const AddMatchElement = ({
 									name='team'
 									value={item?.data?.team?.value}
 									// defaultValue={defaultState?.team?.value}
+									disabled={readOnly || !item?.data?.league?.childs}
 									options={(item?.data?.league?.childs || []).map((team) => ({
 										label: team.name,
 										value: team.id,
@@ -240,11 +251,14 @@ const AddMatchElement = ({
 									name='match'
 									value={item?.data?.match?.value}
 									// defaultValue={defaultState?.match?.value}
-									options={(item?.data?.team?.childs || []).map((match) => ({
-										label: match.name,
-										value: match._id,
-										data: match
-									}))}
+									disabled={readOnly || !item?.data?.team?.childs}
+									options={(item?.data?.team?.childs || [])
+										.filter((match) => !ifAlreadySelected(match))
+										.map((match) => ({
+											label: match.name,
+											value: match._id,
+											data: match
+										}))}
 									onChange={(value, name, data) => {
 										handleSelect(value, name, data);
 									}}
@@ -267,106 +281,9 @@ AddMatchElement.propTypes = {
 	handleDeleteFile: PropTypes.func,
 	initialData: PropTypes.object,
 	setIsOpen: PropTypes.func,
-	matchesTree: PropTypes.object
+	matchesTree: PropTypes.object,
+	readOnly: PropTypes.bool,
+	allElements: PropTypes.array
 };
 
 export default React.memo(AddMatchElement);
-
-const CustomSelect = ({ isError, isEdit, status, name = '', label = '' }) => {
-	const classes = useStyles();
-
-	const globalClasses = globalUseStyles();
-
-	return (
-		<div className={classes.mainCategory}>
-			<h6
-				className={[
-					isError ? globalClasses.errorState : globalClasses.noErrorState
-				].join(' ')}
-			>
-				{label}
-			</h6>
-			<Select
-				// onOpen={() => {
-				// 	setDisableDropdown(false);
-				// }}
-				onClose={() => {
-					// setDisableDropdown(true);
-				}}
-				// disabled={true}//isEdit && status === 'published' ? true : false}
-				style={{
-					backgroundColor:
-						isEdit && status === 'published' ? '#404040' : '#000000'
-				}}
-				name={name}
-				// value={isEdit ? form.mainCategory : form.mainCategory?.name}
-				// onChange={(event) => {
-				// 	setDisableDropdown(true);
-				// 	mainCategoryId(event.target.value);
-				// 	if (form.uploadedFiles.length) {
-				// 		form.uploadedFiles.map((file) =>
-				// 			handleDeleteFile(file.id)
-				// 		);
-				// 	}
-				// 	if (isEdit) {
-				// 		setForm((prev) => {
-				// 			return { ...prev, subCategory: '' };
-				// 		});
-				// 	}
-				// }}
-				className={`${classes.select} ${
-					isEdit && status === 'published' ? `${classes.isEditSelect}` : ''
-				}`}
-				disableUnderline={true}
-				IconComponent={(props) => (
-					<KeyboardArrowDownIcon
-						{...props}
-						style={{
-							display: isEdit && status === 'published' ? 'none' : 'block',
-							top: '4'
-						}}
-					/>
-				)}
-				MenuProps={{
-					anchorOrigin: {
-						vertical: 'bottom',
-						horizontal: 'left'
-					},
-					transformOrigin: {
-						vertical: 'top',
-						horizontal: 'left'
-					},
-					getContentAnchorEl: null
-				}}
-				displayEmpty={true}
-				// renderValue={(value) => {
-				// 	return value ? value?.name || value : 'Please Select';
-				// }}
-			>
-				{new Array(10).fill({ name: 'hello' }).map((category, index) => {
-					return (
-						<MenuItem key={index} value={category.name}>
-							{category.name}
-						</MenuItem>
-					);
-				})}
-			</Select>
-
-			{/* <div className={classes.catergoryErrorContainer}>
-										<p className={globalClasses.uploadMediaError}>
-											{isError.mainCategory
-												? 'You need to select main category'
-												: ''}
-										</p>
-									</div> */}
-		</div>
-	);
-};
-
-CustomSelect.propTypes = {
-	isEdit: PropTypes.bool,
-	status: PropTypes.string,
-	name: PropTypes.string,
-	label: PropTypes.string,
-	isError: PropTypes.bool
-};
