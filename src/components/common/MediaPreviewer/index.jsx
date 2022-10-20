@@ -7,6 +7,7 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { MenuIcon } from '../../../assets/svg-icons';
 import DefaultImage from '../../../assets/defaultImage.png';
 import { useMediaPreviewerStyle } from './index.style';
+import { Markup } from 'interweave';
 
 const { REACT_APP_MEDIA_ENDPOINT } = process.env;
 
@@ -87,7 +88,7 @@ const MediaPreviewer = ({
 					arrow: classes.fileNameToolTipArrow
 				}}
 			>
-				<span className={classes.mediaFileName}>{fileName}</span>
+				<Markup className={classes.mediaFileName} content={fileName} />
 			</Tooltip>
 		</div>
 	);
