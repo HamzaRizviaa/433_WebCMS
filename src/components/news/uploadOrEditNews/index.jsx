@@ -5,7 +5,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
 import axios from 'axios';
-import { isEmpty } from 'lodash';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -63,7 +62,7 @@ const UploadOrEditNews = ({
 	const globalClasses = globalUseStyles();
 
 	const navigate = useNavigate();
-	const queryParams = useCommonParams();
+	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 	const [isLoading, setIsLoading] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
@@ -489,7 +488,7 @@ const UploadOrEditNews = ({
 
 				if (isEdit && !(status === 'draft' && draft === false)) {
 					dispatch(getAllNews(queryParams));
-				} else if (isEmpty(queryParams)) {
+				} else if (isSearchParamsEmpty) {
 					dispatch(getAllNews());
 				} else {
 					navigate('/news-library');
