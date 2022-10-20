@@ -26,8 +26,8 @@ const CustomSelect = ({
 	const valueKey = mapOptions?.valueKey || 'value';
 
 	const handleSelectChange = useCallback(
-		(event, { metaData }) => {
-			if (onChange) onChange(event.target.value, name, metaData);
+		(event, { props }) => {
+			if (onChange) onChange(event.target.value, name, props.metaData);
 		},
 		[onChange]
 	);
@@ -91,28 +91,21 @@ const CustomSelect = ({
 				fullWidth
 				displayEmpty
 			>
-				{options.length > 0 ? (
-					<>
-						{options.map((item) => (
-							<MenuItem
-								key={item[valueKey]}
-								value={item[valueKey]}
-								className={classes.selectOption}
-								metaData={item}
-							>
-								{item[labelKey]}
-							</MenuItem>
-						))}
-					</>
-				) : (
-					<MenuItem
-						value=''
-						onClick={() => {}}
-						className={classes.noOptionsText}
-					>
+				{options.length === 0 && (
+					<MenuItem value='' className={classes.noOptionsText}>
 						{noOptionsText}
 					</MenuItem>
 				)}
+				{options.map((item) => (
+					<MenuItem
+						key={item[valueKey]}
+						value={item[valueKey]}
+						className={classes.selectOption}
+						metaData={item}
+					>
+						{item[labelKey]}
+					</MenuItem>
+				))}
 			</Select>
 			<span className={inputsClasses.errorText}>{error}</span>
 		</div>
