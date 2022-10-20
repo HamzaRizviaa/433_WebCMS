@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 // import classes from './_uploadOrEditViral.module.scss';
 import { useDropzone } from 'react-dropzone';
+import { useNavigate } from 'react-router-dom';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
@@ -33,6 +34,7 @@ import DeleteModal from '../../DeleteModal';
 import TranslationCarousal from '../../TranslationCarousal';
 import FeatureWrapper from '../../FeatureWrapper';
 import useCommonParams from '../../../hooks/useCommonParams';
+import { isEmpty } from 'lodash';
 
 //new labels
 
@@ -45,6 +47,7 @@ const UploadOrEditViral = ({
 	buttonText,
 	status //draft or publish
 }) => {
+	const navigate = useNavigate();
 	const queryParams = useCommonParams();
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
@@ -408,8 +411,13 @@ const UploadOrEditViral = ({
 				setIsLoadingcreateViral(false);
 				setPostButtonStatus(false);
 				handleClose();
-				dispatch(getAllViralsApi(queryParams));
-				// dispatch(getPostLabels());
+				if (isEdit && !(status === 'draft' && draft === false)) {
+					dispatch(getAllViralsApi(queryParams));
+				} else if (isEmpty(queryParams)) {
+					dispatch(getAllViralsApi());
+				} else {
+					navigate('/viral-library');
+				}
 			}
 		} catch (e) {
 			toast.error(isEdit ? 'Failed to edit viral!' : 'Failed to create viral!');

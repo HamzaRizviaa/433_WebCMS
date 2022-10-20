@@ -1,10 +1,10 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
 import { Tooltip, Fade } from '@material-ui/core';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import { Markup } from 'interweave';
-import { ReactComponent as SlidesIcon } from '../../../assets/Union.svg';
+import { MenuIcon } from '../../../assets/svg-icons';
 import DefaultImage from '../../../assets/defaultImage.png';
 import { useMediaPreviewerStyle } from './index.style';
 
@@ -57,7 +57,7 @@ const MediaPreviewer = ({
 		<div className={classes.mediaWrapper}>
 			{showSlidesIcon && (
 				<div className={classes.slidesIcon}>
-					{noOfSlides > 1 && <SlidesIcon />}
+					{noOfSlides > 1 && <MenuIcon />}
 				</div>
 			)}
 			<Tooltip
@@ -80,14 +80,14 @@ const MediaPreviewer = ({
 			<Tooltip
 				TransitionComponent={Fade}
 				TransitionProps={{ timeout: 600 }}
-				title={<Markup content={fileName} />}
+				title={fileName}
 				arrow
 				classes={{
 					tooltip: classes.fileNameToolTip,
 					arrow: classes.fileNameToolTipArrow
 				}}
 			>
-				<div className={classes.mediaFileName}>{fileName}</div>
+				<span className={classes.mediaFileName}>{fileName}</span>
 			</Tooltip>
 		</div>
 	);
