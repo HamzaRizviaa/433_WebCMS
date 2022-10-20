@@ -10,7 +10,7 @@ export default function useGetAllNews() {
 		(state) => state.rootReducer.newsLibrary
 	);
 
-	const queryParams = useCommonParams();
+	const { queryParams } = useCommonParams();
 
 	useEffect(() => {
 		dispatch(getAllNews(queryParams));

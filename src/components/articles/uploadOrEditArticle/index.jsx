@@ -3,6 +3,7 @@
 /* eslint-disable no-undef  */
 import React, { useState, useEffect, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useNavigate } from 'react-router-dom';
 import { Box, Grid } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { makeid } from '../../../data/utils/helper';
@@ -69,8 +70,6 @@ import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDragga
 import { ToastErrorNotifications } from '../../../data/constants';
 
 import useCommonParams from '../../../hooks/useCommonParams';
-import { isEmpty } from 'lodash';
-import { useNavigate } from 'react-router-dom';
 
 const UploadOrEditArticle = ({
 	open,
@@ -81,7 +80,7 @@ const UploadOrEditArticle = ({
 	status
 }) => {
 	const navigate = useNavigate();
-	const queryParams = useCommonParams();
+	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -703,7 +702,7 @@ const UploadOrEditArticle = ({
 
 				if (isEdit && !(status === 'draft' && draft === false)) {
 					dispatch(getAllArticlesApi(queryParams));
-				} else if (isEmpty(queryParams)) {
+				} else if (isSearchParamsEmpty) {
 					dispatch(getAllArticlesApi());
 				} else {
 					navigate('/article-library');
