@@ -26,9 +26,11 @@ import Text from '../../../assets/Text.svg';
 import ImageVideo from '../../../assets/Image.svg';
 import Tweet from '../../../assets/Twitter Line.svg';
 import Question from '../../../assets/Quiz.svg';
+import BallIcon from '../../../assets/Ball.svg';
 import ToggleSwitch from '../../switch';
 
 /*  ArticleBuilder imports  */
+import AddMatchElement from '../../ArticleBuilder/AddMatchElement/index';
 import ArticleElements from '../../ArticleBuilder/ArticleElements'; // left pan of buttons
 import ArticleGeneralInfo from '../../ArticleBuilder/ArticleGeneralInfo'; // general Info
 import ArticleMediaDraggable from '../../ArticleBuilder/articleMediaDraggable'; // image / video
@@ -65,12 +67,32 @@ import {
 	checkEmptyQuestion,
 	checkNewElementQuestion,
 	checkEmptyQuestionDraft,
-	checkNewElementQuestionDraft
+	checkNewElementQuestionDraft,
+	checkMatchPublishAndDraft,
+	checkEmptyMatchPublishAndDraft
 } from '../../../data/utils/articleUtils';
 import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDraggable';
 import { ToastErrorNotifications } from '../../../data/constants';
 
 import useCommonParams from '../../../hooks/useCommonParams';
+import MatchPost from '../../ArticleBuilder/PreviewArticles/MatchPost';
+import { useLazyGetMatchesTreeQuery } from '../../../data/features/articleLibrary/articleLibrary.query';
+
+// TEST OBJECT FOR MATCHES
+const matchObj = {
+	Day: 'Wed, 23 Jan',
+	Time: '17:30',
+	Team_1: {
+		Name: 'FC BAYERN MUNCHEN',
+		Logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg/1200px-FC_Bayern_M%C3%BCnchen_logo_%282017%29.svg.png',
+		Team_Color: 'rgba(255,0,0,1)'
+	},
+	Team_2: {
+		Name: 'BORUSSIA DORTMUND',
+		Logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Borussia_Dortmund_logo.svg/560px-Borussia_Dortmund_logo.svg.png',
+		Team_Color: 'rgba(249,255,0,1)'
+	}
+};
 
 const UploadOrEditArticle = ({
 	open,
@@ -113,6 +135,11 @@ const UploadOrEditArticle = ({
 	const topElementRef = useRef(null);
 
 	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
+
+	const [
+		getMatchesTree,
+		{ isFetching: matchesLoading, data: matchesData, ...response }
+	] = useLazyGetMatchesTreeQuery();
 
 	const [form, setForm] = useState({
 		title: '',
@@ -175,9 +202,17 @@ const UploadOrEditArticle = ({
 			text: 'Add Question',
 			type: 'QUESTION',
 			component: ArticleQuestionDraggable
+		},
+		{
+			image: BallIcon,
+			text: 'Add Match',
+			type: 'MATCH',
+			component: AddMatchElement
 		}
 	];
 
+	// log
+	console.log('data elements', data);
 	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
 		useDropzone({
 			accept: '.jpeg,.jpg,.png',
@@ -206,6 +241,18 @@ const UploadOrEditArticle = ({
 		maxFiles: 1,
 		validator: checkFileSize
 	});
+
+	/**
+	 * NOTE: If it needed to fetch matches
+	 * tree more often then put the "OPEN"
+	 * prop in the below dependency array.
+	 *
+	 * It'll re-fetch the data tree on every slider open trigger
+	 */
+
+	useEffect(() => {
+		getMatchesTree();
+	}, []);
 
 	useEffect(() => {
 		if (acceptedFileAvatar?.length) {
@@ -389,7 +436,8 @@ const UploadOrEditArticle = ({
 					MEDIA: ArticleMediaDraggable,
 					QUESTION: ArticleQuestionDraggable,
 					TWITTER: ArticleSocialMediaDraggable,
-					IG: ArticleSocialMediaDraggable
+					IG: ArticleSocialMediaDraggable,
+					MATCH: AddMatchElement
 				};
 				return {
 					sortOrder: sort_order,
@@ -570,6 +618,12 @@ const UploadOrEditArticle = ({
 			elementsData = data.map((item, index) => {
 				return {
 					element_type: item.element_type,
+
+					match_id: item?.data?.match?.value,
+					league_name: item?.data?.league?.name,
+					team_name: item?.data?.team?.name,
+					match_title: item?.data?.match?.name,
+
 					description: item?.data[0]?.description || undefined,
 					media_url:
 						item.data[0]?.media_url?.split('cloudfront.net/')[1] ||
@@ -721,6 +775,27 @@ const UploadOrEditArticle = ({
 			setPostButtonStatus(false);
 			console.log(e, 'Failed - create / edit  Article');
 		}
+	};
+
+	const getElements = (elements) => {
+		let ss = elements.map((element) => {
+			if (element.element_type === 'MATCH') {
+				if (element.match_id) return element;
+				let builded = {
+					...element,
+					element_type: 'MATCH',
+					match_id: element?.data?.match?.value,
+					league_name: element?.data?.league?.name,
+					team_name: element?.data?.team?.name,
+					match_title: element?.data?.match?.name
+				};
+				return builded;
+			} else {
+				return element;
+			}
+		});
+
+		return ss;
 	};
 
 	const publishReadMoreApi = async (id) => {
@@ -1145,6 +1220,7 @@ const UploadOrEditArticle = ({
 		}
 	}, [form]);
 
+	// publish validations
 	useEffect(() => {
 		if (specificArticle) {
 			const validationCompleteArray = [
@@ -1168,6 +1244,10 @@ const UploadOrEditArticle = ({
 					filteringByType(specificArticle?.elements, 'QUESTION'),
 					filteringByType(data, 'QUESTION')
 				),
+				checkMatchPublishAndDraft(
+					filteringByType(specificArticle?.elements, 'MATCH'),
+					filteringByType(data, 'MATCH')
+				),
 				data?.length !== 0
 			];
 
@@ -1177,9 +1257,9 @@ const UploadOrEditArticle = ({
 				checkEmptyIG(data),
 				checkEmptyMedia(data),
 				checkEmptyQuestion(data),
+				checkEmptyMatchPublishAndDraft(filteringByType(data, 'MATCH')),
 				data?.length !== 0
 			];
-
 			if (
 				!validateForm(form, data) ||
 				!comparingFields(specificArticle, form)
@@ -1229,6 +1309,7 @@ const UploadOrEditArticle = ({
 		}
 	}, [data]);
 
+	// draft validations
 	useEffect(() => {
 		if (specificArticle) {
 			const validationCompleteArrayDraft = [
@@ -1251,6 +1332,10 @@ const UploadOrEditArticle = ({
 				checkNewElementQuestionDraft(
 					filteringByType(specificArticle?.elements, 'QUESTION'),
 					filteringByType(data, 'QUESTION')
+				),
+				checkMatchPublishAndDraft(
+					filteringByType(specificArticle?.elements, 'MATCH'),
+					filteringByType(data, 'MATCH')
 				)
 			];
 
@@ -1259,14 +1344,15 @@ const UploadOrEditArticle = ({
 				checkEmptyTwitter(data),
 				checkEmptyIG(data),
 				checkEmptyMedia(data),
-				checkEmptyQuestionDraft(data)
+				checkEmptyQuestionDraft(data),
+				checkEmptyMatchPublishAndDraft(filteringByType(data, 'MATCH'))
 			];
 
-			// console.log(
-			// 	validationDraftEmptyArray,
-			// 	validationCompleteArrayDraft,
-			// 	'validate'
-			// );
+			console.log(
+				validationDraftEmptyArray,
+				validationCompleteArrayDraft,
+				'validate'
+			);
 			if (
 				!validateDraft(form, data) ||
 				!comparingDraftFields(specificArticle, form)
@@ -1358,6 +1444,7 @@ const UploadOrEditArticle = ({
 	};
 
 	const handleDraftSave = async () => {
+		console.log(getElements(data));
 		if (!validateDraft(form, data) || draftBtnDisabled) {
 			validateDraftBtn();
 		} else {
@@ -1712,7 +1799,7 @@ const UploadOrEditArticle = ({
 				notifID={notifID}
 			>
 				<LoadingOverlay
-					active={isLoading}
+					active={isLoading || matchesLoading}
 					spinner={<PrimaryLoader />}
 					style={{ top: '100px' }}
 				>
@@ -1838,7 +1925,11 @@ const UploadOrEditArticle = ({
 																item.element_type === 'QUESTION'
 																	? item?.data
 																	: item.data && item?.data[0],
-															setDisableDropdown: setDisableDropdown
+															setDisableDropdown: setDisableDropdown,
+															// props added for match element
+															matchesTree: matchesData,
+															readOnly: status === 'published' && item?.id,
+															allElements: data
 														})}
 
 														<p className={globalClasses.mediaError}>
@@ -1888,6 +1979,12 @@ const UploadOrEditArticle = ({
 															) : item.element_type === 'QUESTION' ? (
 																<QuestionPoll
 																	data={item}
+																	itemIndex={index}
+																	style={{ width: '100%' }}
+																/>
+															) : item.element_type === 'MATCH' ? (
+																<MatchPost
+																	item={item}
 																	itemIndex={index}
 																	style={{ width: '100%' }}
 																/>
