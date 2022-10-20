@@ -10,7 +10,7 @@ export default function useGetAllArticlesQuery() {
 		(state) => state.rootReducer.articleLibrary
 	);
 
-	const queryParams = useCommonParams();
+	const { queryParams } = useCommonParams();
 
 	useEffect(() => {
 		dispatch(getAllArticlesApi(queryParams));

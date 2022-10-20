@@ -37,11 +37,10 @@ const FormikField = ({ name, onChange, onBlur, ...restProps }) => {
 			{...rest}
 			{...restProps}
 			name={name}
-			isError={touched && !!error}
 			onChange={handleChange}
 			onBlur={handleBlur}
 			value={value}
-			helperText={touched && error ? error : ''}
+			error={touched && error ? error : ''}
 		/>
 	);
 };

@@ -33,7 +33,10 @@ function useCommonParams() {
 		};
 	}, [page, query, sortBy, orderType, startDate, endDate]);
 
-	return queryParams;
+	return {
+		queryParams,
+		isSearchParamsEmpty: searchParams.toString().length === 0
+	};
 }
 
 export default useCommonParams;
