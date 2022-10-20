@@ -27,6 +27,7 @@ import ImageVideo from '../../../assets/Image.svg';
 import Tweet from '../../../assets/Twitter Line.svg';
 import Question from '../../../assets/Quiz.svg';
 import BallIcon from '../../../assets/Ball.svg';
+import ToggleSwitch from '../../switch';
 
 /*  ArticleBuilder imports  */
 import AddMatchElement from '../../ArticleBuilder/AddMatchElement/index';
@@ -107,6 +108,7 @@ const UploadOrEditArticle = ({
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
+	const [fileRejectionErrorAvatar, setFileRejectionErrorAvatar] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -129,6 +131,8 @@ const UploadOrEditArticle = ({
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
 	const loadingRef = useRef(null);
+	const scrollRef = useRef(null);
+	const topElementRef = useRef(null);
 
 	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
 
@@ -154,6 +158,7 @@ const UploadOrEditArticle = ({
 	});
 	const [data, setData] = useState([]);
 	const [dataErrors, setDataErrors] = useState(Array(data?.length).fill(false));
+	const [itemsOnTop, setItemsOnTop] = useState(false);
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
@@ -276,10 +281,10 @@ const UploadOrEditArticle = ({
 	useEffect(() => {
 		if (fileRejectionsAvatar.length) {
 			fileRejectionsAvatar.forEach(({ errors }) => {
-				return errors.forEach((e) => setFileRejectionError2(e.message));
+				return errors.forEach((e) => setFileRejectionErrorAvatar(e.message));
 			});
 			setTimeout(() => {
-				setFileRejectionError2('');
+				setFileRejectionErrorAvatar('');
 			}, [5000]);
 		}
 	}, [fileRejectionsAvatar]);
@@ -534,13 +539,13 @@ const UploadOrEditArticle = ({
 	useEffect(() => {
 		if (fileRejections2.length) {
 			fileRejections2.forEach(({ errors }) => {
-				return errors.forEach((e) => setFileRejectionError(e.message));
+				return errors.forEach((e) => setFileRejectionError2(e.message));
 			});
 			setTimeout(() => {
-				setFileRejectionError('');
+				setFileRejectionError2('');
 			}, [5000]);
 		}
-	}, [fileRejections]);
+	}, [fileRejections2]);
 
 	const getFileType = (type) => {
 		if (type) {
@@ -878,6 +883,8 @@ const UploadOrEditArticle = ({
 	const resetState = () => {
 		setEditorTextChecker('');
 		setFileRejectionError('');
+		setFileRejectionError2('');
+		setFileRejectionErrorAvatar('');
 		setPostButtonStatus(false);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
@@ -912,6 +919,7 @@ const UploadOrEditArticle = ({
 		});
 		setDataErrors(Array(data.length).fill(false));
 		setData([]);
+		setItemsOnTop(false);
 	};
 
 	const handleDeleteFile = (id) => {
@@ -968,10 +976,20 @@ const UploadOrEditArticle = ({
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...data];
-		dataCopy[index].data = {
-			...(dataCopy[index].data ? dataCopy[index].data : {}),
-			...childData
-		};
+		// handling media seperately here in order
+		if (dataCopy[index].element_type === 'MEDIA') {
+			dataCopy[index].data = [
+				{
+					...(dataCopy[index].data?.length ? dataCopy[index].data[0] : {}),
+					...childData
+				}
+			];
+		} else {
+			dataCopy[index].data = {
+				...(dataCopy[index].data ? dataCopy[index].data : {}),
+				...childData
+			};
+		}
 		setData(dataCopy);
 	};
 
@@ -1103,19 +1121,44 @@ const UploadOrEditArticle = ({
 	};
 
 	const handleArticleElement = (dataItem) => {
-		setData((prev) => {
-			return [
-				...prev,
-				{
-					sortOrder: data.length + 1,
-					heading: dataItem.text,
-					component: dataItem.component,
-					element_type: dataItem.type,
-					isOpen: true,
-					deleted: false
-				}
-			];
-		});
+		if (itemsOnTop) {
+			setData((prev) => {
+				return [
+					{
+						sortOrder: data.length + 1,
+						heading: dataItem.text,
+						component: dataItem.component,
+						element_type: dataItem.type,
+						isOpen: true,
+						deleted: false
+					},
+					...prev
+				];
+			});
+			setTimeout(() => {
+				topElementRef?.current?.scrollIntoView({
+					block: 'end',
+					behavior: 'smooth'
+				});
+			});
+		} else {
+			setData((prev) => {
+				return [
+					...prev,
+					{
+						sortOrder: data.length + 1,
+						heading: dataItem.text,
+						component: dataItem.component,
+						element_type: dataItem.type,
+						isOpen: true,
+						deleted: false
+					}
+				];
+			});
+			setTimeout(() => {
+				scrollRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' });
+			});
+		}
 	};
 
 	const checkNewAuthorImage = () => {
@@ -1468,7 +1511,7 @@ const UploadOrEditArticle = ({
 				if (data.length) {
 					dataMedia = await Promise.all(
 						data.map(async (item, index) => {
-							if (item.element_type === 'MEDIA' && item.data[0].file) {
+							if (item.element_type === 'MEDIA' && item.data[0]?.file) {
 								let uploadedFile = await uploadFileToServer(
 									item.data[0],
 									'articleLibrary'
@@ -1780,11 +1823,32 @@ const UploadOrEditArticle = ({
 									<></>
 								)}
 								<Grid container>
-									<Grid pr={1} item md={2}>
+									<Grid className={classes.firstGridItem} pr={1} item md={3}>
 										<div className={classes.gridDivSmall}>
 											<Box mb={3.5} className={classes.mainTitleDescription}>
 												<h2>Elements</h2>
 												<p>Add elements to build your article</p>
+											</Box>
+											<Box
+												sx={{
+													display: 'flex',
+													alignItems: 'center',
+													justifyContent: 'space-between',
+													width: '100%'
+												}}
+											>
+												<h4 style={{ fontSize: '16px', color: 'white' }}>
+													Add elements to the top
+												</h4>
+												<Box>
+													<ToggleSwitch
+														id={`itemsOnTop-button`}
+														checked={itemsOnTop}
+														onChange={(checked) => {
+															setItemsOnTop(checked);
+														}}
+													/>
+												</Box>
 											</Box>
 											<ArticleElements
 												data={elementData}
@@ -1792,7 +1856,7 @@ const UploadOrEditArticle = ({
 											/>
 										</div>
 									</Grid>
-									<Grid item md={6} ml={1}>
+									<Grid className={classes.secondGridItem} item px={1.5} md={6}>
 										<Box mb={3.5} className={classes.mainTitleDescription}>
 											<h2>Builder</h2>
 											<p>Edit, reorder elements here and build your article</p>
@@ -1823,16 +1887,23 @@ const UploadOrEditArticle = ({
 											getRootPropsAvatar={getRootPropsAvatar}
 											getInputPropsAvatar={getInputPropsAvatar}
 											fileRejectionError2={fileRejectionError2}
+											fileRejectionErrorAvatar={fileRejectionErrorAvatar}
 											postLabels={postLabels}
 											extraLabel={extraLabel}
 											handleChangeExtraLabel={handleChangeExtraLabel}
 											setExtraLabel={setExtraLabel}
 											isError={isError}
 										/>
+										<Box
+											sx={{
+												scrollMarginBottom: '400px'
+											}}
+											ref={topElementRef}
+										></Box>
 										<DraggableWrapper onDragEnd={onDragEnd}>
-											{data.map((item, index) => {
+											{data?.map((item, index) => {
 												return (
-													<>
+													<div ref={scrollRef} key={index}>
 														{React.createElement(item.component, {
 															sendDataToParent: (data) =>
 																setNewData(data, index),
@@ -1866,12 +1937,12 @@ const UploadOrEditArticle = ({
 																dataErrors[index] &&
 																'This field is required'}
 														</p>
-													</>
+													</div>
 												);
 											})}
 										</DraggableWrapper>
 									</Grid>
-									<Grid item md={4}>
+									<Grid className={classes.lastGridItem} item md={3}>
 										<Box px={2} className={classes.gridDivSmall}>
 											<Box mb={3.5} className={classes.mainTitleDescription}>
 												<h2>Preview</h2>

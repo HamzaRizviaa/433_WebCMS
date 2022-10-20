@@ -34,9 +34,9 @@ const ArticleMediaDraggable = ({
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
 	const [newFile, setNewFile] = useState(initialData ? [initialData] : []);
-	const [dropboxUrl, setDropboxUrl] = useState([
-		initialData ? initialData?.dropboxUrl : ''
-	]);
+	const [dropboxUrl, setDropboxUrl] = useState(
+		initialData ? initialData?.dropbox_url : ''
+	);
 
 	const imgEl = useRef(null);
 	const videoRef = useRef(null);
@@ -83,7 +83,10 @@ const ArticleMediaDraggable = ({
 			// console.log(fileHeight, fileWidth, 'hama');
 			WidthHeightCallback(fileWidth, fileHeight);
 			setNewFile([...newFiles]);
-			sendDataToParent(newFiles);
+			sendDataToParent({
+				...newFiles[0],
+				...(dropboxUrl ? { dropbox_url: dropboxUrl } : undefined)
+			});
 		}
 	}, [acceptedFiles, fileHeight, fileWidth]);
 
@@ -184,9 +187,9 @@ const ArticleMediaDraggable = ({
 									{!newFile?.length ? (
 										<section
 											className={globalClasses.dropZoneContainer}
-											// style={{
-											// 	borderColor: isError.uploadedFiles ? '#ff355a' : 'yellow'
-											// }}
+											style={{
+												borderColor: fileRejectionError ? '#ff355a' : 'yellow'
+											}}
 										>
 											<div
 												{...getRootProps({
@@ -202,12 +205,12 @@ const ArticleMediaDraggable = ({
 												</p>
 												<p className={globalClasses.formatMsg}>
 													Supported formats are jpeg, png and mp4
+													<br />
+													Image File size should not exceed 1MB.
 												</p>
-												{/* <p className={globalClasses.uploadMediaError}>
-							{isError.uploadedFiles
-								? 'You need to upload a media in order to post'
-								: ''}
-						</p> */}
+												<p className={globalClasses.uploadMediaError}>
+													{fileRejectionError ? fileRejectionError : ''}
+												</p>
 											</div>
 										</section>
 									) : (
@@ -221,7 +224,6 @@ const ArticleMediaDraggable = ({
 											value={dropboxUrl}
 											onChange={(e) => {
 												setDropboxUrl(e.target.value);
-
 												sendDataToParent({
 													dropbox_url: e.target.value
 												});
@@ -236,14 +238,6 @@ const ArticleMediaDraggable = ({
 											}}
 										/>
 									</div>
-
-									{fileRejectionError ? (
-										<p className={globalClasses.fileRejectionError}>
-											{fileRejectionError}
-										</p>
-									) : (
-										''
-									)}
 								</div>
 							</div>
 						) : (

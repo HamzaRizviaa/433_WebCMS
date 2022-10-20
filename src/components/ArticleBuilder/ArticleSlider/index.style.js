@@ -14,7 +14,7 @@ export const useStyles = makeStyles((theme) => ({
 		height: '100vh !important',
 		zIndex: '5 !important',
 		position: 'fixed !important',
-		minWidth: 'calc(100% - 82px)',
+		minWidth: 'calc(100% - 72px)',
 		transform: 'none !important',
 		overflowY: ' auto !important',
 		overflowX: 'hidden',
@@ -53,7 +53,7 @@ export const useStyles = makeStyles((theme) => ({
 		color: theme.palette.neonYellow
 	},
 	content: {
-		padding: '0 4rem 4rem'
+		padding: '0 1rem 4rem 1rem'
 	},
 	notifIDWrapper: {
 		width: '79%',
