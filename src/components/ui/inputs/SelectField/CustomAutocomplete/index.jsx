@@ -4,7 +4,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { Paper, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import ClearIcon from '@material-ui/icons/Clear';
-import { useSelectFieldStyles } from '../index.style';
+import { useAutocompleteStyles } from './index.style';
 import { useInputsStyles } from '../../inputs.style';
 import { useState } from 'react';
 
@@ -20,6 +20,7 @@ const CustomAutocomplete = ({
 	label,
 	error,
 	mapOptions,
+	noOptionsText = 'No options found',
 	className = '',
 	required = false,
 	disabled = false,
@@ -56,16 +57,16 @@ const CustomAutocomplete = ({
 		[debouncedHandleOnChange]
 	);
 
-	const classes = useSelectFieldStyles({
+	const classes = useAutocompleteStyles({
 		hasValue: !!value,
 		isError: !!error,
-		isAutocomplete: true
+		isDisabled: disabled,
+		size
 	});
 
 	const inputsClasses = useInputsStyles({
 		isError: !!error,
-		isRequired: required,
-		size
+		isRequired: required
 	});
 
 	return (
@@ -111,7 +112,6 @@ const CustomAutocomplete = ({
 						InputProps={{
 							disableUnderline: true,
 							...params.InputProps,
-							className: inputsClasses.textFieldInput,
 							classes: {
 								root: classes.input
 							}
@@ -122,7 +122,7 @@ const CustomAutocomplete = ({
 				)}
 				closeIcon={<ClearIcon />}
 				noOptionsText={
-					<div className={classes.noResultText}>No Results Found</div>
+					<div className={classes.noResultText}>{noOptionsText}</div>
 				}
 				popupIcon={null}
 			/>

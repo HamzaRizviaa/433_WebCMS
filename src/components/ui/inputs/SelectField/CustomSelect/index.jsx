@@ -2,7 +2,7 @@
 import React, { useCallback } from 'react';
 import { MenuItem, Select } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import { useSelectFieldStyles } from '../index.style';
+import { useSelectStyles } from './index.style';
 import { useInputsStyles } from '../../inputs.style';
 
 const CustomSelect = ({
@@ -15,6 +15,7 @@ const CustomSelect = ({
 	label,
 	error,
 	mapOptions,
+	noOptionsText = 'No options found',
 	className = '',
 	required = false,
 	disabled = false,
@@ -42,11 +43,10 @@ const CustomSelect = ({
 		[options, placeholder]
 	);
 
-	const classes = useSelectFieldStyles({
+	const classes = useSelectStyles({
 		hasValue: !!value,
 		isError: !!error,
 		isDisabled: disabled,
-		isAutocomplete: false,
 		size
 	});
 
@@ -91,16 +91,28 @@ const CustomSelect = ({
 				fullWidth
 				displayEmpty
 			>
-				{options.map((item) => (
+				{options.length > 0 ? (
+					<>
+						{options.map((item) => (
+							<MenuItem
+								key={item[valueKey]}
+								value={item[valueKey]}
+								className={classes.selectOption}
+								metaData={item}
+							>
+								{item[labelKey]}
+							</MenuItem>
+						))}
+					</>
+				) : (
 					<MenuItem
-						key={item[valueKey]}
-						value={item[valueKey]}
-						className={classes.selectOption}
-						metaData={item}
+						value=''
+						onClick={() => {}}
+						className={classes.noOptionsText}
 					>
-						{item[labelKey]}
+						{noOptionsText}
 					</MenuItem>
-				))}
+				)}
 			</Select>
 			<span className={inputsClasses.errorText}>{error}</span>
 		</div>

@@ -60,6 +60,7 @@ export const useInputsStyles = makeStyles((theme) => ({
 			padding: 0
 		}
 	}),
+
 	errorText: {
 		display: 'inline-block',
 		color: theme.palette.red,

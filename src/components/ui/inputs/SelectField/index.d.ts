@@ -19,6 +19,7 @@ type SelectFieldCustomProps<T> = {
 	placeholder?: string;
 	required?: boolean;
 	error?: string;
+	noOptionsText?: string;
 	size?: 'small' | 'medium' | 'large';
 };
 

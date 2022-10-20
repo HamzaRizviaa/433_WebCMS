@@ -18,7 +18,7 @@ const sizeMapper = {
 	}
 };
 
-export const useSelectFieldStyles = makeStyles((theme) => ({
+export const useSelectStyles = makeStyles((theme) => ({
 	selectFieldContainer: {
 		marginBottom: '1rem'
 	},
@@ -33,13 +33,13 @@ export const useSelectFieldStyles = makeStyles((theme) => ({
 		border: `1px solid ${theme.palette.normalGrey}`,
 		borderRadius: sizeMapper[size]?.borderRadius || 40,
 		padding: '0 1.5rem',
-		backgroundColor: isDisabled ? theme.palette.disabled : 'transparent',
+		backgroundColor: isDisabled ? theme.palette.normalGrey : 'transparent',
 		borderColor: isError ? theme.palette.red : theme.palette.normalGrey,
 
 		'& svg': {
 			display: 'block',
 			color: `${
-				isDisabled ? theme.palette.normalGrey : theme.palette.neonYellow
+				isDisabled ? theme.palette.disabled : theme.palette.neonYellow
 			} !important`,
 			right: '1rem !important',
 			top: sizeMapper[size]?.top || '5px !important',
@@ -56,8 +56,8 @@ export const useSelectFieldStyles = makeStyles((theme) => ({
 		}
 	},
 
-	paper: ({ isAutocomplete }) => ({
-		maxWidth: isAutocomplete ? 'unset' : 'min-content',
+	paper: {
+		maxWidth: 'min-content',
 		maxHeight: 170,
 		background: theme.palette.black,
 		border: `1px solid ${theme.palette.normalGrey}`,
@@ -67,8 +67,8 @@ export const useSelectFieldStyles = makeStyles((theme) => ({
 		fontSize: '14px',
 		fontFamily: 'Poppins !important',
 		marginTop: 10,
-		borderColor: (props) =>
-			props.isError ? theme.palette.red : theme.palette.normalGrey,
+		borderColor: ({ isError }) =>
+			isError ? theme.palette.red : theme.palette.normalGrey,
 
 		'& ul': {
 			padding: 0,
@@ -77,32 +77,36 @@ export const useSelectFieldStyles = makeStyles((theme) => ({
 				color: theme.palette.neonYellow
 			}
 		},
+
 		'& li': {
 			backgroundColor: theme.palette.black,
 			color: theme.palette.white,
-			whiteSpace: isAutocomplete ? 'unset' : 'pre-wrap',
+			whiteSpace: 'pre-wrap',
 			fontSize: 14,
+
 			'&:hover': {
 				color: `${theme.palette.neonYellow} !important`,
 				// backgroundColor: `${theme.palette.normalGrey} !important`,
 				cursor: 'pointer'
 			}
 		}
-	}),
+	},
 
 	input: {
 		display: 'flex',
 		alignItems: 'center',
 		height: ({ size }) => sizeMapper[size]?.height || 'auto',
-		color: (props) =>
-			props.hasValue ? theme.palette.white : theme.palette.disabled,
+		color: ({ hasValue }) =>
+			hasValue ? theme.palette.white : theme.palette.disabled,
 
 		'&:hover': {
-			boxShadow: '0px 16px 40px rgba(255, 255, 255, 0.16)'
+			boxShadow: ({ isDisabled }) =>
+				isDisabled ? 'none' : '0px 16px 40px rgba(255, 255, 255, 0.16)'
 		},
 
 		'&.Mui-disabled': {
-			backgroundColor: theme.palette.disabled
+			backgroundColor: theme.palette.normalGrey,
+			borderRadius: 10
 		},
 
 		'& svg': {
@@ -114,8 +118,11 @@ export const useSelectFieldStyles = makeStyles((theme) => ({
 		}
 	},
 
-	noResultText: {
-		color: theme.palette.disabled,
-		fontSize: 14
+	noOptionsText: {
+		color: `${theme.palette.disabled} !important`,
+		fontSize: 14,
+		pointerEvents: 'none',
+		cursor: 'default',
+		padding: '14px'
 	}
 }));
