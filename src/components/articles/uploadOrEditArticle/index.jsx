@@ -3,6 +3,7 @@
 /* eslint-disable no-undef  */
 import React, { useState, useEffect, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useNavigate } from 'react-router-dom';
 import { Box, Grid } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { makeid } from '../../../data/utils/helper';
@@ -79,11 +80,13 @@ const UploadOrEditArticle = ({
 	buttonText,
 	status
 }) => {
-	const queryParams = useCommonParams();
+	const navigate = useNavigate();
+	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
+	const [fileRejectionErrorAvatar, setFileRejectionErrorAvatar] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -231,10 +234,10 @@ const UploadOrEditArticle = ({
 	useEffect(() => {
 		if (fileRejectionsAvatar.length) {
 			fileRejectionsAvatar.forEach(({ errors }) => {
-				return errors.forEach((e) => setFileRejectionError2(e.message));
+				return errors.forEach((e) => setFileRejectionErrorAvatar(e.message));
 			});
 			setTimeout(() => {
-				setFileRejectionError2('');
+				setFileRejectionErrorAvatar('');
 			}, [5000]);
 		}
 	}, [fileRejectionsAvatar]);
@@ -488,13 +491,13 @@ const UploadOrEditArticle = ({
 	useEffect(() => {
 		if (fileRejections2.length) {
 			fileRejections2.forEach(({ errors }) => {
-				return errors.forEach((e) => setFileRejectionError(e.message));
+				return errors.forEach((e) => setFileRejectionError2(e.message));
 			});
 			setTimeout(() => {
-				setFileRejectionError('');
+				setFileRejectionError2('');
 			}, [5000]);
 		}
-	}, [fileRejections]);
+	}, [fileRejections2]);
 
 	const getFileType = (type) => {
 		if (type) {
@@ -701,8 +704,14 @@ const UploadOrEditArticle = ({
 				setIsLoading(false);
 				setPostButtonStatus(false);
 				handleClose();
-				dispatch(getAllArticlesApi(queryParams));
-				// dispatch(getPostLabels());
+
+				if (isEdit && !(status === 'draft' && draft === false)) {
+					dispatch(getAllArticlesApi(queryParams));
+				} else if (isSearchParamsEmpty) {
+					dispatch(getAllArticlesApi());
+				} else {
+					navigate('/article-library');
+				}
 			}
 		} catch (e) {
 			toast.error(
@@ -799,6 +808,8 @@ const UploadOrEditArticle = ({
 	const resetState = () => {
 		setEditorTextChecker('');
 		setFileRejectionError('');
+		setFileRejectionError2('');
+		setFileRejectionErrorAvatar('');
 		setPostButtonStatus(false);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
@@ -890,10 +901,20 @@ const UploadOrEditArticle = ({
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...data];
-		dataCopy[index].data = {
-			...(dataCopy[index].data ? dataCopy[index].data : {}),
-			...childData
-		};
+		// handling media seperately here in order
+		if (dataCopy[index].element_type === 'MEDIA') {
+			dataCopy[index].data = [
+				{
+					...(dataCopy[index].data?.length ? dataCopy[index].data[0] : {}),
+					...childData
+				}
+			];
+		} else {
+			dataCopy[index].data = {
+				...(dataCopy[index].data ? dataCopy[index].data : {}),
+				...childData
+			};
+		}
 		setData(dataCopy);
 	};
 
@@ -1403,7 +1424,7 @@ const UploadOrEditArticle = ({
 				if (data.length) {
 					dataMedia = await Promise.all(
 						data.map(async (item, index) => {
-							if (item.element_type === 'MEDIA' && item.data[0].file) {
+							if (item.element_type === 'MEDIA' && item.data[0]?.file) {
 								let uploadedFile = await uploadFileToServer(
 									item.data[0],
 									'articleLibrary'
@@ -1779,6 +1800,7 @@ const UploadOrEditArticle = ({
 											getRootPropsAvatar={getRootPropsAvatar}
 											getInputPropsAvatar={getInputPropsAvatar}
 											fileRejectionError2={fileRejectionError2}
+											fileRejectionErrorAvatar={fileRejectionErrorAvatar}
 											postLabels={postLabels}
 											extraLabel={extraLabel}
 											handleChangeExtraLabel={handleChangeExtraLabel}
@@ -1792,7 +1814,7 @@ const UploadOrEditArticle = ({
 											ref={topElementRef}
 										></Box>
 										<DraggableWrapper onDragEnd={onDragEnd}>
-											{data.map((item, index) => {
+											{data?.map((item, index) => {
 												return (
 													<div ref={scrollRef} key={index}>
 														{React.createElement(item.component, {

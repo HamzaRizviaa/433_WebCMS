@@ -46,6 +46,8 @@ import {
 } from '../../../data/utils/questionUtils';
 
 import { compact } from 'lodash';
+import { useNavigate } from 'react-router-dom';
+import useCommonParams from '../../../hooks/useCommonParams';
 
 const UploadOrEditQuiz = ({
 	open,
@@ -60,6 +62,9 @@ const UploadOrEditQuiz = ({
 	notifID,
 	rowType
 }) => {
+	const navigate = useNavigate();
+	const { queryParams, isSearchParamsEmpty } = useCommonParams();
+
 	const [convertedDate, setConvertedDate] = useState(null);
 	const [calenderOpen, setCalenderOpen] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
@@ -383,7 +388,14 @@ const UploadOrEditQuiz = ({
 				setIsLoading(false);
 
 				handleClose();
-				dispatch(getQuestions({ page }));
+
+				if (isEdit && !(status === 'draft' && draft === false)) {
+					dispatch(getQuestions(queryParams));
+				} else if (isSearchParamsEmpty) {
+					dispatch(getQuestions());
+				} else {
+					navigate('/question-library');
+				}
 			}
 		} catch (e) {
 			toast.error(
@@ -420,7 +432,7 @@ const UploadOrEditQuiz = ({
 				handleClose();
 
 				//setting a timeout for getting post after delete.
-				dispatch(getQuestions({ page }));
+				dispatch(getQuestions(queryParams));
 			}
 		} catch (e) {
 			toast.error('Failed to delete Question!');
@@ -448,7 +460,7 @@ const UploadOrEditQuiz = ({
 				handleClose();
 
 				//setting a timeout for getting post after delete.
-				dispatch(getQuestions({ page }));
+				dispatch(getQuestions(queryParams));
 			}
 		} catch (e) {
 			toast.error('Failed to stop Question!');

@@ -5,6 +5,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { InputAdornment, IconButton, TextField } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useStyles } from './index.styled';
+import { useInputsStyles } from '../inputs.style';
 
 const INPUT_DELAY = 200; // Miliseconds
 
@@ -16,11 +17,14 @@ const InputField = ({
 	startIcon,
 	endIcon,
 	onChange,
+	maxLength,
+	error,
+	helperText,
+	inputProps = {},
 	type = 'text',
-	textArea = false,
 	required = false,
-	isError = false,
-	rows = 4,
+	minRows = 1,
+	height = 'medium',
 	...restProps
 }) => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -49,15 +53,29 @@ const InputField = ({
 		[debouncedHandleOnChange]
 	);
 
-	const classes = useStyles({ isError, isRequired: required });
+	const inputLength = innerValue.length;
+	const inputLengthPercent = maxLength ? (inputLength / maxLength) * 100 : null;
+
+	const classes = useStyles({ isError: !!error, inputLengthPercent });
+
+	const inputsClasses = useInputsStyles({
+		isRequired: required,
+		isError: !!error,
+		height
+	});
 
 	return (
 		<div className={classes.inputFieldContainer}>
-			{(!!label || !!rightLabel) && (
-				<div className={classes.labelsContainer}>
-					{!!label && <span className={classes.inputLabel}>{label}</span>}
-					{!!rightLabel && (
-						<span className={classes.inputLabel}>{rightLabel}</span>
+			{(!!label || !!rightLabel || !!maxLength) && (
+				<div className={inputsClasses.labelsContainer}>
+					{(!!label || !!rightLabel || !!maxLength) && (
+						<span className={inputsClasses.inputLabel}>{label}</span>
+					)}
+					{(!!rightLabel || !!maxLength) && (
+						<span className={classes.rightLabel}>
+							{rightLabel}
+							{maxLength ? ` ${inputLength}/${maxLength}` : ''}
+						</span>
 					)}
 				</div>
 			)}
@@ -65,16 +83,17 @@ const InputField = ({
 				{...restProps}
 				className={className}
 				type={isPasswordField ? (showPassword ? 'text' : 'password') : type}
-				multiline={textArea}
-				rows={textArea ? rows : undefined}
 				autoComplete='nope'
 				onChange={handleChange}
 				value={innerValue}
 				size='small'
+				minRows={minRows}
+				helperText={error || helperText}
 				fullWidth
+				inputProps={{ maxLength, ...inputProps }}
 				InputProps={{
 					disableUnderline: true,
-					className: classes.textFieldInput,
+					className: inputsClasses.textFieldInput,
 					startAdornment: !!startIcon && (
 						<InputAdornment position='start' className={classes.endIcon}>
 							{startIcon}

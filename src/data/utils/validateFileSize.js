@@ -1,15 +1,22 @@
-const checkFileSize = (file) => {
-	console.log(file, 'file in validate file size');
+const checkFileSize = (file, library) => {
 	if (
 		file.type === 'image/jpeg' ||
 		file.type === 'image/png' ||
 		file.type === 'image/jpg'
 	) {
-		if (file.size > 52428800) {
+		if (library === 'viral') {
+			if (file.size > 50000000) {
+				//bytes
+				return {
+					code: 'size-too-large',
+					message: `The file size you are trying to upload exceeds the limit of 50MB.`
+				};
+			}
+		} else if (file.size > 1000000) {
 			//bytes
 			return {
 				code: 'size-too-large',
-				message: `the size of the file is too high`
+				message: `The file size you are trying to upload exceeds the limit of 1MB.`
 			};
 		}
 	}
@@ -18,7 +25,7 @@ const checkFileSize = (file) => {
 		if (file.size > 10737418240) {
 			return {
 				code: 'size-too-large',
-				message: `the size of the file is too high`
+				message: `The size of the file is too high`
 			};
 		}
 	} else {
@@ -27,7 +34,7 @@ const checkFileSize = (file) => {
 			console.log("got in audio'");
 			return {
 				code: 'size-too-large',
-				message: `the size of the file is too high`
+				message: `The size of the file is too high`
 			};
 		}
 	}

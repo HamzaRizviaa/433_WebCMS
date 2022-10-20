@@ -3,7 +3,7 @@ import { QuestionsLibraryService } from '../../services';
 
 export const getQuestions = createAsyncThunk(
 	'questionLibrary/getQuestions',
-	async (params) => {
+	async (params = {}) => {
 		const { data: questions } =
 			await QuestionsLibraryService.getAllQuestionsApi(params);
 
