@@ -219,6 +219,7 @@ const AddMatchElement = ({
 								<SelectField
 									label='SELECT LEAGUE'
 									name='league'
+									placeholder='Please Select'
 									value={item?.data?.league?.value}
 									// defaultValue={defaultState?.league?.value}
 									disabled={readOnly}
@@ -234,6 +235,7 @@ const AddMatchElement = ({
 								<SelectField
 									label='SELECT TEAM'
 									name='team'
+									placeholder='Please Select'
 									value={item?.data?.team?.value}
 									// defaultValue={defaultState?.team?.value}
 									disabled={readOnly || !item?.data?.league?.childs}
@@ -249,6 +251,7 @@ const AddMatchElement = ({
 								<SelectField
 									label='SELECT MATCH'
 									name='match'
+									placeholder='Please Select'
 									value={item?.data?.match?.value}
 									// defaultValue={defaultState?.match?.value}
 									disabled={readOnly || !item?.data?.team?.childs}
