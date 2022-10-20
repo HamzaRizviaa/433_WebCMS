@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Editor } from '@tinymce/tinymce-react';
 import 'tinymce/tinymce';
 import 'tinymce/icons/default';
@@ -20,37 +19,39 @@ import 'tinymce/plugins/charmap';
 import 'tinymce/skins/ui/oxide/skin.min.css';
 import 'tinymce/skins/ui/oxide/content.min.css';
 import 'tinymce/skins/content/default/content.min.css';
-import { formatAndStyle, Menu } from '../../../../../data/helpers/textFieldHelpers';
+import { formatAndStyle, Menu } from '../../../../data/helpers/textFieldHelpers';
 import { useTextEditorStyles } from './index.style';
 
-const TextEditor = ({ item, setDisableDropdown, clickExpandIcon, initialData, sendDataToParent }) => {
-    const classes = useTextEditorStyles()
-    const [description, setDescription] = useState('');
+const RichTextEditor = ({
+    name,
+	id,
+	initialData,
+    onBlur,
+    onChange,
+    error
+}) => {
+	const classes = useTextEditorStyles();
+	const [description, setDescription] = useState('');
 
-    useEffect(() => {
+	useEffect(() => {
 		if (initialData?.description) {
 			setTimeout(() => {
 				let editorbyId =
-					window.tinymce?.get(`text-${item.sortOrder}_ifr`) ||
-					window.tinymce?.get(`text-${item.sortOrder}`);
+					window.tinymce?.get(`text-${id}_ifr`) ||
+					window.tinymce?.get(`text-${id}`);
 				setDescription(editorbyId?.setContent(initialData?.description));
 			}, 1000);
 		}
-	}, [clickExpandIcon]);
+	}, [initialData]);
 
-    const handleEditorChange = () => {
+	const handleEditorChange = () => {
 		const editorTextContent = window.tinymce
-			?.get(`text-${item.sortOrder}`)
+			?.get(`text-${id}`)
 			?.getContent();
-		const textContent = window.tinymce
-			?.get(`text-${item.sortOrder}`)
-			?.getContent({ format: 'text' });
 		setDescription(editorTextContent);
-		if (textContent === '') {
-			sendDataToParent([{ description: '' }]);
-		} else {
-			sendDataToParent([{ description: editorTextContent }]);
-		}
+        if(onChange){
+            onChange(editorTextContent)
+        }
 	};
 	return (
 		<div className={classes.editor}>
@@ -73,7 +74,7 @@ const TextEditor = ({ item, setDisableDropdown, clickExpandIcon, initialData, se
 					branding: false,
 					statusbar: true,
 					skin: false,
-                    ...formatAndStyle,
+					...formatAndStyle,
 					menubar: 'edit insert format',
 					menu: Menu,
 					plugins: [
@@ -82,13 +83,23 @@ const TextEditor = ({ item, setDisableDropdown, clickExpandIcon, initialData, se
 						'insertdatetime paste wordcount  charmap textcolor colorpicker'
 					]
 				}}
-				onEditorChange={() => handleEditorChange()}
-				onMouseEnter={() => setDisableDropdown(false)}
-				onBlur={() => setDisableDropdown(true)}
-				id={`text-${item.sortOrder}`}
+				onEditorChange={handleEditorChange}
+                onBlur={onBlur}
+				id={`text-${id}`}
+                name={name}
 			/>
+            <span>{error}</span>
 		</div>
 	);
 };
 
-export default TextEditor;
+RichTextEditor.propTypes = {
+    name: PropTypes.string.isRequired,
+	id: PropTypes.number.isRequired,
+	initialData: PropTypes.string,
+    onBlur: PropTypes.func,
+    onChange: PropTypes.func,
+    error: PropTypes.string
+}
+
+export default RichTextEditor;
