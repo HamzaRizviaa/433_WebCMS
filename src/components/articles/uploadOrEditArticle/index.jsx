@@ -26,6 +26,7 @@ import Text from '../../../assets/Text.svg';
 import ImageVideo from '../../../assets/Image.svg';
 import Tweet from '../../../assets/Twitter Line.svg';
 import Question from '../../../assets/Quiz.svg';
+import BallIcon from '../../../assets/Ball.svg';
 
 /*  ArticleBuilder imports  */
 import AddMatchElement from '../../ArticleBuilder/AddMatchElement/index';
@@ -198,7 +199,7 @@ const UploadOrEditArticle = ({
 			component: ArticleQuestionDraggable
 		},
 		{
-			image: Question,
+			image: BallIcon,
 			text: 'Add Match',
 			type: 'MATCH',
 			component: AddMatchElement
