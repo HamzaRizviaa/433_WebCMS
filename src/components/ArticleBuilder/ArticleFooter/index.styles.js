@@ -10,7 +10,7 @@ export const useStyles = makeStyles((theme) => ({
 		justifyContent: 'space-between',
 		borderBottom: '1px solid #000',
 		position: 'sticky',
-		bottom: 0,
+		bottom: -2,
 		background: '#000',
 		zIndex: '99999'
 	}
