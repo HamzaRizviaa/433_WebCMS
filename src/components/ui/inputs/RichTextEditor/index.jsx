@@ -24,9 +24,11 @@ import {
 	Menu
 } from '../../../../data/helpers/textFieldHelpers';
 import { useTextEditorStyles } from './index.style';
+import { useInputsStyles } from '../inputs.style';
 
 const RichTextEditor = ({ name, id, initialData, onBlur, onChange, error }) => {
 	const classes = useTextEditorStyles();
+    const inputClasses = useInputsStyles();
 	const [description, setDescription] = useState('');
 
 	useEffect(() => {
@@ -82,7 +84,7 @@ const RichTextEditor = ({ name, id, initialData, onBlur, onChange, error }) => {
 				id={`text-${id}`}
 				name={name}
 			/>
-			<span>{error}</span>
+			<span className={inputsClasses.errorText}>{error}</span>
 		</div>
 	);
 };
