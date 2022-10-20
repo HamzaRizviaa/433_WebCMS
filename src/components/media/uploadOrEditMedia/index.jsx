@@ -39,6 +39,7 @@ import { ToastErrorNotifications } from '../../../data/constants';
 import FeatureWrapper from '../../FeatureWrapper';
 import TranslationCarousal from '../../TranslationCarousal';
 import useCommonParams from '../../../hooks/useCommonParams';
+import { useNavigate } from 'react-router-dom';
 
 const UploadOrEditMedia = ({
 	open,
@@ -49,7 +50,9 @@ const UploadOrEditMedia = ({
 	isEdit,
 	status
 }) => {
-	const queryParams = useCommonParams();
+	const navigate = useNavigate();
+	const { queryParams, isSearchParamsEmpty } = useCommonParams();
+
 	const [mediaLabels, setMediaLabels] = useState([]);
 	const [subCategories, setSubCategories] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -591,12 +594,12 @@ const UploadOrEditMedia = ({
 			if (result?.data?.status_code === 200) {
 				if (result?.data?.data?.is_deleted === false) {
 					toast.error(ToastErrorNotifications.deleteBannerItemText);
-					dispatch(getMedia( queryParams ));
+					dispatch(getMedia(queryParams));
 				} else {
 					toast.success('Media has been deleted!');
 					handleClose();
 					//setting a timeout for getting post after delete.
-					dispatch(getMedia( queryParams ));
+					dispatch(getMedia(queryParams));
 				}
 			}
 		} catch (e) {
@@ -727,7 +730,7 @@ const UploadOrEditMedia = ({
 					}
 				}
 			);
-			console.log('result...........', result)
+			console.log('result...........', result);
 			if (result?.data?.status_code === 200) {
 				toast.success(
 					isEdit
@@ -737,8 +740,16 @@ const UploadOrEditMedia = ({
 						: 'Media has been uploaded!'
 				);
 				setIsLoadingUploadMedia(false);
-				dispatch(getMedia( queryParams ));
+				dispatch(getMedia(queryParams));
 				handleClose();
+
+				if (isEdit && !(status === 'draft' && payload.save_draft === false)) {
+					dispatch(getMedia(queryParams));
+				} else if (isSearchParamsEmpty) {
+					dispatch(getMedia());
+				} else {
+					navigate('/media-library');
+				}
 			}
 		} catch (e) {
 			toast.error(

@@ -10,7 +10,7 @@ export default function useGetAllViralsQuery() {
 		(state) => state.rootReducer.viralLibrary
 	);
 
-	const queryParams = useCommonParams();
+	const { queryParams } = useCommonParams();
 
 	useEffect(() => {
 		dispatch(getAllViralsApi(queryParams));

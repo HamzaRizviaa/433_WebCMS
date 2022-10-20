@@ -3,6 +3,7 @@
 /* eslint-disable no-undef  */
 import React, { useState, useEffect, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useNavigate } from 'react-router-dom';
 import { Box, Grid } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { makeid } from '../../../data/utils/helper';
@@ -99,7 +100,8 @@ const UploadOrEditArticle = ({
 	buttonText,
 	status
 }) => {
-	const queryParams = useCommonParams();
+	const navigate = useNavigate();
+	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -750,8 +752,14 @@ const UploadOrEditArticle = ({
 				setIsLoading(false);
 				setPostButtonStatus(false);
 				handleClose();
-				dispatch(getAllArticlesApi(queryParams));
-				// dispatch(getPostLabels());
+
+				if (isEdit && !(status === 'draft' && draft === false)) {
+					dispatch(getAllArticlesApi(queryParams));
+				} else if (isSearchParamsEmpty) {
+					dispatch(getAllArticlesApi());
+				} else {
+					navigate('/article-library');
+				}
 			}
 		} catch (e) {
 			toast.error(

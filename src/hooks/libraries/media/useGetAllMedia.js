@@ -10,7 +10,7 @@ export default function useGetAllMedia() {
 		(state) => state.rootReducer.mediaLibrary
 	);
 
-	const queryParams = useCommonParams();
+	const { queryParams } = useCommonParams();
 
 	useEffect(() => {
 		dispatch(getMedia(queryParams));
