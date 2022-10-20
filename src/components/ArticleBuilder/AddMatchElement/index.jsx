@@ -176,8 +176,8 @@ const AddMatchElement = ({
 			const element = allElements[i];
 			if (i !== index) {
 				if (element.element_type === 'MATCH') {
-					if (element?.data?.league?.value === item?.data?.league?.value) {
-						if (element?.data?.team?.value === item?.data?.team?.value) {
+					if (element?.data?.league?.name === item?.data?.league?.name) {
+						if (element?.data?.team?.name === item?.data?.team?.name) {
 							if (element?.data?.match?.value === match?._id) {
 								return true;
 							}
