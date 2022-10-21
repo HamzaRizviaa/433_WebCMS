@@ -90,6 +90,14 @@ const validateDraft = (form, dataElements, newsElement, quesElement) => {
 							: false)
 					);
 				}
+			} else if (dataFile.element_type === 'MATCH') {
+				if (dataFile.data) {
+					return (
+						dataFile?.data?.league?.value &&
+						dataFile?.data?.team?.value &&
+						dataFile?.data?.match?.value
+					);
+				}
 			} else {
 				if (dataFile.data) {
 					return dataFile?.data[0]?.twitter_post_url;
