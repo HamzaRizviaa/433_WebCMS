@@ -66,7 +66,7 @@ DraggableHeader.propTypes = {
 	index: PropTypes.number,
 	key: PropTypes.number,
 	children: PropTypes.element,
-    handleDeleteFile: PropTypes.func
+	handleDeleteFile: PropTypes.func
 };
 
 export default DraggableHeader;
