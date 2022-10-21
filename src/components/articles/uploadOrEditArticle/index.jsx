@@ -141,6 +141,15 @@ const UploadOrEditArticle = ({
 		{ isFetching: matchesLoading, data: matchesData, ...response }
 	] = useLazyGetMatchesTreeQuery();
 
+	// feature flags
+
+	const {
+		features: { articleMatchElement, translationsOnArticles }
+	} = useSelector((state) => state.rootReducer.remoteConfig);
+
+	const matchFlagEnabled = articleMatchElement?._value === 'true';
+	const isTranslationsEnabled = translationsOnArticles?._value === 'true';
+
 	const [form, setForm] = useState({
 		title: '',
 		sub_text: '',
@@ -162,12 +171,6 @@ const UploadOrEditArticle = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
-
-	const {
-		features: { translationsOnArticles }
-	} = useSelector((state) => state.rootReducer.remoteConfig);
-
-	const isTranslationsEnabled = translationsOnArticles?._value === 'true';
 
 	const elementData = [
 		{
@@ -202,14 +205,23 @@ const UploadOrEditArticle = ({
 			text: 'Add Question',
 			type: 'QUESTION',
 			component: ArticleQuestionDraggable
-		},
-		{
+		}
+		// {
+		// 	image: BallIcon,
+		// 	text: 'Add Match',
+		// 	type: 'MATCH',
+		// 	component: AddMatchElement
+		// }
+	];
+
+	// to push match element on element data
+	matchFlagEnabled &&
+		elementData.push({
 			image: BallIcon,
 			text: 'Add Match',
 			type: 'MATCH',
 			component: AddMatchElement
-		}
-	];
+		});
 
 	// log
 	console.log('data elements', data);
