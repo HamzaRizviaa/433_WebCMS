@@ -8,7 +8,7 @@ import moment from 'moment';
 const MatchPost = ({ item }) => {
 	const data = {
 		Day: moment(item?.data?.match?.data?.startdate).format('ddd, DD MMM'),
-		Time: moment(item?.data?.match?.data?.startdate).format('HH:MM'),
+		Time: moment(item?.data?.match?.data?.startdate).format('HH:mm'),
 		Team_1: {
 			Name: item?.data?.match?.data?.participant_teams_data[0]?.name,
 			Logo: item?.data?.match?.data?.participant_teams_data[0]?.team_logo,
