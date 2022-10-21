@@ -193,6 +193,9 @@ const AddMatchElement = ({
 		return false;
 	};
 
+	const getMatchName = (date, name) =>
+		`${moment(date).format('DD-MM-YY')} - ${name}`;
+
 	const classes = useStyles();
 
 	return (
@@ -294,9 +297,7 @@ const AddMatchElement = ({
 									options={(item?.data?.team?.childs || [])
 										.filter((match) => !ifAlreadySelected(match))
 										.map((match) => ({
-											label: `${moment(
-												match?.data?.startdate
-											).format('DD-MM-YY')} - ${match.name}`,
+											label: getMatchName(match?.data?.startdate, match?.name),
 											value: match._id,
 											data: match
 										}))}
