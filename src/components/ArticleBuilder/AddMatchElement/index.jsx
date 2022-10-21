@@ -10,7 +10,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { ReactComponent as Union } from '../../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 import SelectField from '../../ui/inputs/SelectField';
-
+import moment from 'moment';
 const AddMatchElement = ({
 	item,
 	key,
@@ -86,6 +86,10 @@ const AddMatchElement = ({
 					},
 					index
 				);
+				console.log('match select', {
+					...item?.data,
+					match: { value, name: data?.name, data, childs: [] }
+				});
 				break;
 
 			default:
@@ -290,7 +294,9 @@ const AddMatchElement = ({
 									options={(item?.data?.team?.childs || [])
 										.filter((match) => !ifAlreadySelected(match))
 										.map((match) => ({
-											label: match.name,
+											label: `${moment(
+												match?.data?.startdate
+											).format('DD-MM-YY')} - ${match.name}`,
 											value: match._id,
 											data: match
 										}))}
