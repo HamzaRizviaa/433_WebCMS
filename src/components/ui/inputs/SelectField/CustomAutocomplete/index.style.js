@@ -79,7 +79,8 @@ export const useAutocompleteStyles = makeStyles((theme) => ({
 		},
 
 		'&.Mui-disabled': {
-			backgroundColor: theme.palette.normalGrey
+			backgroundColor: theme.palette.normalGrey,
+			color: theme.palette.lightGrey
 		},
 
 		'& svg': {
