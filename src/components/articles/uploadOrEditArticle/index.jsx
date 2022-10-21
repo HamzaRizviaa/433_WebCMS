@@ -141,6 +141,18 @@ const UploadOrEditArticle = ({
 		{ isFetching: matchesLoading, data: matchesData, ...response }
 	] = useLazyGetMatchesTreeQuery();
 
+	const {
+		features: { articleMatchElement }
+	} = useSelector((state) => state.rootReducer.remoteConfig);
+
+	const matchFlagEnabled = articleMatchElement?._value === 'true';
+
+	console.log(
+		'articleMatchElement',
+		articleMatchElement,
+		'vsss',
+		matchFlagEnabled
+	);
 	const [form, setForm] = useState({
 		title: '',
 		sub_text: '',
@@ -169,47 +181,84 @@ const UploadOrEditArticle = ({
 
 	const isTranslationsEnabled = translationsOnArticles?._value === 'true';
 
-	const elementData = [
-		{
-			image: Text,
-			text: 'Add Text',
-			type: 'TEXT',
-			description: '',
-			component: ArticleTextDraggable
-		},
-		{
-			image: ImageVideo,
-			text: 'Add Image / Video',
-			type: 'MEDIA',
-			component: ArticleMediaDraggable
-		},
-		{
-			image: Tweet,
-			text: 'Add Tweet',
-			type: 'TWITTER',
-			twitter_post_url: '',
-			component: ArticleSocialMediaDraggable
-		},
-		{
-			image: Instragram,
-			text: 'Add IG post',
-			type: 'IG',
-			ig_post_url: '',
-			component: ArticleSocialMediaDraggable
-		},
-		{
-			image: Question,
-			text: 'Add Question',
-			type: 'QUESTION',
-			component: ArticleQuestionDraggable
-		},
-		{
-			image: BallIcon,
-			text: 'Add Match',
-			type: 'MATCH',
-			component: AddMatchElement
-		}
-	];
+	const elementData = matchFlagEnabled
+		? [
+				{
+					image: Text,
+					text: 'Add Text',
+					type: 'TEXT',
+					description: '',
+					component: ArticleTextDraggable
+				},
+				{
+					image: ImageVideo,
+					text: 'Add Image / Video',
+					type: 'MEDIA',
+					component: ArticleMediaDraggable
+				},
+				{
+					image: Tweet,
+					text: 'Add Tweet',
+					type: 'TWITTER',
+					twitter_post_url: '',
+					component: ArticleSocialMediaDraggable
+				},
+				{
+					image: Instragram,
+					text: 'Add IG post',
+					type: 'IG',
+					ig_post_url: '',
+					component: ArticleSocialMediaDraggable
+				},
+				{
+					image: Question,
+					text: 'Add Question',
+					type: 'QUESTION',
+					component: ArticleQuestionDraggable
+				},
+
+				{
+					image: BallIcon,
+					text: 'Add Match',
+					type: 'MATCH',
+					component: AddMatchElement
+				}
+		  ]
+		: [
+				{
+					image: Text,
+					text: 'Add Text',
+					type: 'TEXT',
+					description: '',
+					component: ArticleTextDraggable
+				},
+				{
+					image: ImageVideo,
+					text: 'Add Image / Video',
+					type: 'MEDIA',
+					component: ArticleMediaDraggable
+				},
+				{
+					image: Tweet,
+					text: 'Add Tweet',
+					type: 'TWITTER',
+					twitter_post_url: '',
+					component: ArticleSocialMediaDraggable
+				},
+				{
+					image: Instragram,
+					text: 'Add IG post',
+					type: 'IG',
+					ig_post_url: '',
+					component: ArticleSocialMediaDraggable
+				},
+				{
+					image: Question,
+					text: 'Add Question',
+					type: 'QUESTION',
+					component: ArticleQuestionDraggable
+				}
+		  ];
 
 	// log
 	console.log('data elements', data);
