@@ -36,7 +36,7 @@ const CustomSelect = ({
 		(value) => {
 			if (value) {
 				const selectedOption = options.find((item) => item[valueKey] === value);
-				return selectedOption ? selectedOption[labelKey] : null;
+				return selectedOption ? selectedOption[labelKey] : placeholder; // Was null before, replaced with place holder ( return placeholder if value not found)
 			}
 			return placeholder;
 		},
