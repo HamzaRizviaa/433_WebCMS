@@ -53,7 +53,7 @@ export default function QuizResults({
 	questionType,
 	questionId
 }) {
-	const queryParams = useCommonParams();
+	const { queryParams } = useCommonParams();
 
 	const [sortState, setSortState] = useState({ sortby: '', order_type: '' });
 	const [articleText, setArticleText] = useState('');

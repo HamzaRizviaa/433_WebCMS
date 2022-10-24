@@ -3,7 +3,7 @@ import { ViralLibraryService } from '../../services';
 
 export const getAllViralsApi = createAsyncThunk(
 	'viralLibary/getAllViralsApi',
-	async (params) => {
+	async (params = {}) => {
 		const { data: virals } = await ViralLibraryService.getAllViralsServiceCall(
 			params
 		);

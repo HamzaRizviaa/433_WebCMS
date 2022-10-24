@@ -10,7 +10,7 @@ export default function useGetAllQuestionsQuery() {
 		(state) => state.rootReducer.questionsLibrary
 	);
 
-	const queryParams = useCommonParams();
+	const { queryParams } = useCommonParams();
 
 	useEffect(() => {
 		dispatch(getQuestions(queryParams));

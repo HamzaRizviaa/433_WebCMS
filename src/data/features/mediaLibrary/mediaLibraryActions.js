@@ -3,7 +3,7 @@ import { MediaLibraryService } from '../../services';
 
 export const getMedia = createAsyncThunk(
 	'mediaLibrary/getMedia',
-	async (params) => {
+	async (params = {}) => {
 		const { data: media } = await MediaLibraryService.getMediaApi(params);
 		return media.data;
 	}

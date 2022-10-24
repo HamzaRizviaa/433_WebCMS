@@ -3,7 +3,7 @@ import { ArticleLibraryService } from '../../services';
 
 export const getAllArticlesApi = createAsyncThunk(
 	'articlesLibrary/getAllArticlesApi',
-	async (params) => {
+	async (params = {}) => {
 		const { data: articles } =
 			await ArticleLibraryService.getAllArticlesServiceCall(params);
 

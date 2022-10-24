@@ -39,6 +39,7 @@ import { ToastErrorNotifications } from '../../../data/constants';
 import FeatureWrapper from '../../FeatureWrapper';
 import TranslationCarousal from '../../TranslationCarousal';
 import useCommonParams from '../../../hooks/useCommonParams';
+import { useNavigate } from 'react-router-dom';
 
 const UploadOrEditMedia = ({
 	open,
@@ -49,7 +50,9 @@ const UploadOrEditMedia = ({
 	isEdit,
 	status
 }) => {
-	const queryParams = useCommonParams();
+	const navigate = useNavigate();
+	const { queryParams, isSearchParamsEmpty } = useCommonParams();
+
 	const [mediaLabels, setMediaLabels] = useState([]);
 	const [subCategories, setSubCategories] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -591,12 +594,12 @@ const UploadOrEditMedia = ({
 			if (result?.data?.status_code === 200) {
 				if (result?.data?.data?.is_deleted === false) {
 					toast.error(ToastErrorNotifications.deleteBannerItemText);
-					dispatch(getMedia( queryParams ));
+					dispatch(getMedia(queryParams));
 				} else {
 					toast.success('Media has been deleted!');
 					handleClose();
 					//setting a timeout for getting post after delete.
-					dispatch(getMedia( queryParams ));
+					dispatch(getMedia(queryParams));
 				}
 			}
 		} catch (e) {
@@ -727,7 +730,7 @@ const UploadOrEditMedia = ({
 					}
 				}
 			);
-			console.log('result...........', result)
+			console.log('result...........', result);
 			if (result?.data?.status_code === 200) {
 				toast.success(
 					isEdit
@@ -737,8 +740,16 @@ const UploadOrEditMedia = ({
 						: 'Media has been uploaded!'
 				);
 				setIsLoadingUploadMedia(false);
-				dispatch(getMedia( queryParams ));
+				dispatch(getMedia(queryParams));
 				handleClose();
+
+				if (isEdit && !(status === 'draft' && payload.save_draft === false)) {
+					dispatch(getMedia(queryParams));
+				} else if (isSearchParamsEmpty) {
+					dispatch(getMedia());
+				} else {
+					navigate('/media-library');
+				}
 			}
 		} catch (e) {
 			toast.error(
@@ -2014,7 +2025,9 @@ const UploadOrEditMedia = ({
 															: globalClasses.noErrorState
 													].join(' ')}
 													style={{
-														borderColor: isError.uploadedCoverImage
+														borderColor: fileRejectionError2
+															? '#ff355a'
+															: isError.uploadedCoverImage
 															? '#ff355a'
 															: 'yellow'
 													}}
@@ -2037,6 +2050,8 @@ const UploadOrEditMedia = ({
 														</p>
 														<p className={globalClasses.formatMsg}>
 															Required size <strong>720x900</strong>
+															<br />
+															Image File size should not exceed 1MB.
 														</p>
 														<p className={globalClasses.uploadMediaError}>
 															{isError.uploadedCoverImage
@@ -2045,16 +2060,16 @@ const UploadOrEditMedia = ({
 														</p>
 
 														<p className={globalClasses.uploadMediaError}>
-															{isError.portraitDimensions
+															{fileRejectionError2
+																? fileRejectionError2
+																: isError.portraitDimensions
 																? 'please upload image with proper dimensions'
 																: ''}
 														</p>
 													</div>
 												</section>
 											)}
-											<p className={globalClasses.fileRejectionError}>
-												{fileRejectionError2}
-											</p>
+											<br />
 											<div className={globalClasses.dropBoxUrlContainer}>
 												<h6>PORTRAIT DROPBOX URL</h6>
 												<TextField
@@ -2105,7 +2120,9 @@ const UploadOrEditMedia = ({
 															: globalClasses.noErrorState
 													].join(' ')}
 													style={{
-														borderColor: isError.uploadedLandscapeCoverImage
+														borderColor: fileRejectionError3
+															? '#ff355a'
+															: isError.uploadedLandscapeCoverImage
 															? '#ff355a'
 															: 'yellow'
 													}}
@@ -2128,18 +2145,20 @@ const UploadOrEditMedia = ({
 														</p>
 														<p className={globalClasses.formatMsg}>
 															Required size <strong>1920x1080</strong>
+															<br />
+															Image File size should not exceed 1MB.
 														</p>
 														<p className={globalClasses.uploadMediaError}>
-															{isError.uploadedLandscapeCoverImage
+															{fileRejectionError3
+																? fileRejectionError3
+																: isError.uploadedLandscapeCoverImage
 																? 'You need to upload a cover image in order to post'
 																: ''}
 														</p>
 													</div>
 												</section>
 											)}
-											<p className={globalClasses.fileRejectionError}>
-												{fileRejectionError3}
-											</p>
+											<br />
 											<div className={globalClasses.dropBoxUrlContainer}>
 												<h6>LANDSCAPE DROPBOX URL</h6>
 												<TextField
