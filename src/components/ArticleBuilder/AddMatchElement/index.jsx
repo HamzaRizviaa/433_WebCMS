@@ -181,11 +181,11 @@ const AddMatchElement = ({
 			if (i !== index) {
 				if (element.element_type === 'MATCH') {
 					if (element?.data?.league?.name === item?.data?.league?.name) {
-						if (element?.data?.team?.name === item?.data?.team?.name) {
-							if (element?.data?.match?.value === match?._id) {
-								return true;
-							}
+						// if (element?.data?.team?.name === item?.data?.team?.name) {
+						if (element?.data?.match?.value === match?._id) {
+							return true;
 						}
+						// }
 					}
 				}
 			}
