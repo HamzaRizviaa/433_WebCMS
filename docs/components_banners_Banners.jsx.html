@@ -1,4 +1,32 @@
-import React, { useState } from 'react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/banners/Banners.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/banners/Banners.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from 'react';
 import classes from './_banners.module.scss';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import BannerRows from './BannerRows';
@@ -214,7 +242,7 @@ function Banners({ tabValue }) {
 		setValidateRow(validateRow);
 
 		if (btnDisable === '' || null || undefined) {
-			if (bannerData[0]?.bannerType && bannerData[0]?.selectedMedia) {
+			if (bannerData[0]?.bannerType &amp;&amp; bannerData[0]?.selectedMedia) {
 				uploadBanner();
 			} else {
 				console.log('Add or update banner to publish new one ok');
@@ -313,7 +341,7 @@ function Banners({ tabValue }) {
 		let errValidate = { flag: '', rowId: undefined, errMsg: '' };
 		for (let i = bannerData.length - 1; i >= 1; i--) {
 			// start from max to min
-			if (bannerData[i]?.bannerType && bannerData[i]?.selectedMedia) {
+			if (bannerData[i]?.bannerType &amp;&amp; bannerData[i]?.selectedMedia) {
 				//check data in both field
 				if (
 					!bannerData[i - 1]?.bannerType ||
@@ -362,33 +390,33 @@ function Banners({ tabValue }) {
 	};
 
 	return (
-		<div className={classes.Banner}>
-			{getBannerStatus === 'loading' ? <PrimaryLoader /> : <></>}
-			<div className={classes.bannerRow}>
-				<div
+		&lt;div className={classes.Banner}>
+			{getBannerStatus === 'loading' ? &lt;PrimaryLoader /> : &lt;>&lt;/>}
+			&lt;div className={classes.bannerRow}>
+				&lt;div
 					className={classes.dragbale}
 					//disableDropdown={disableDropdown}
 				>
-					<DragDropContext onDragEnd={onDragEnd}>
-						<Droppable droppableId='droppable-1'>
+					&lt;DragDropContext onDragEnd={onDragEnd}>
+						&lt;Droppable droppableId='droppable-1'>
 							{(provided) => (
-								<div {...provided.droppableProps} ref={provided.innerRef}>
-									{bannerData.length > 0 &&
+								&lt;div {...provided.droppableProps} ref={provided.innerRef}>
+									{bannerData.length > 0 &amp;&amp;
 										bannerData.map((data, index) => {
 											return (
-												<div className={classes.bannerMain} key={index}>
+												&lt;div className={classes.bannerMain} key={index}>
 													{Array.from({ length: 5 }, (_, i) => i + 1).length >
-														0 && (
-														<div className={classes.bannertext} key={index}>
+														0 &amp;&amp; (
+														&lt;div className={classes.bannertext} key={index}>
 															Banner {index + 1}
-														</div>
+														&lt;/div>
 													)}
-													<BannerRows
+													&lt;BannerRows
 														otherRowsErrMsg={
 															validateRow.rowId === index ? validateRow : ''
 														}
 														firstrowErrMsg={
-															index === validateRow.rowId && validateRow
+															index === validateRow.rowId &amp;&amp; validateRow
 																? ''
 																: index === firstCheck.rowId
 																? firstCheck
@@ -405,23 +433,23 @@ function Banners({ tabValue }) {
 														index={index}
 														tabValue={tabValue}
 													/>
-												</div>
+												&lt;/div>
 											);
 										})}
 									{provided.placeholder}
-								</div>
+								&lt;/div>
 							)}
-						</Droppable>
-					</DragDropContext>
-				</div>
-			</div>
+						&lt;/Droppable>
+					&lt;/DragDropContext>
+				&lt;/div>
+			&lt;/div>
 
-			<div className={classes.buttonDiv}>
-				<Button
+			&lt;div className={classes.buttonDiv}>
+				&lt;Button
 					disabled={
 						// btnDisable
 
-						bannerData[0]?.bannerType && bannerData[0]?.selectedMedia
+						bannerData[0]?.bannerType &amp;&amp; bannerData[0]?.selectedMedia
 							? btnDisable
 							: true
 					}
@@ -430,8 +458,8 @@ function Banners({ tabValue }) {
 					}}
 					text={`PUBLISH ${tabValue.toUpperCase()} BANNERS`}
 				/>
-			</div>
-		</div>
+			&lt;/div>
+		&lt;/div>
 	);
 }
 
@@ -443,3 +471,26 @@ Banners.propTypes = {
 	 */
 	tabValue: PropTypes.string
 };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AppRoutes.html">AppRoutes</a></li><li><a href="BannerRows.html">BannerRows</a></li><li><a href="Banners.html">Banners</a></li><li><a href="TopBanner.html">TopBanner</a></li></ul><h3>Global</h3><ul><li><a href="global.html#changeQueryParameters">changeQueryParameters</a></li><li><a href="global.html#sanitizeDates">sanitizeDates</a></li><li><a href="global.html#ToastErrorNotifications">ToastErrorNotifications</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Tue Oct 25 2022 15:06:13 GMT+0500 (Pakistan Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
