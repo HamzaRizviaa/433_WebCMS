@@ -195,7 +195,7 @@ const AddMatchElement = ({
 
 	const getMatchName = (date, name) => {
 		let stamp = !readOnly ? date?.startdate : date?.data?.startdate;
-		return `${moment(stamp).format('DD-MM-YY')} - ${name}`;
+		return `${moment(stamp).format('DD-MM-YYYY')} - ${name}`;
 	};
 
 	const classes = useStyles();
