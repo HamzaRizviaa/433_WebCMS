@@ -106,6 +106,7 @@ export const useSelectStyles = makeStyles((theme) => ({
 
 		'&.Mui-disabled': {
 			backgroundColor: theme.palette.normalGrey,
+			color: theme.palette.lightGrey,
 			borderRadius: 10
 		},
 

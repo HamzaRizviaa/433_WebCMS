@@ -106,9 +106,8 @@ const UploadOrEditViral = ({
 		useDropzone({
 			accept: 'image/jpeg, image/png, video/mp4',
 			maxFiles: 1,
-			validator: checkFileSize
+			validator: (file) => checkFileSize(file, 'viral')
 		});
-
 	const labels = useSelector((state) => state.rootReducer.postsLibrary.labels);
 	const specificViral = useSelector(
 		(state) => state.rootReducer.viralLibrary.specificViral
