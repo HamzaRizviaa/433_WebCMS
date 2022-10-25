@@ -9,3 +9,6 @@ export { ReactComponent as Article } from './ArticleIcon.svg';
 export { ReactComponent as Edit } from './edit.svg';
 export { ReactComponent as MenuIcon } from './Union.svg';
 export { ReactComponent as Calendar } from './Calendar.svg';
+export { ReactComponent as MusicIcon } from './Music.svg';
+export { ReactComponent as DeleteIcon } from './Delete.svg';
+export { ReactComponent as EyeIcon } from './Eye.svg';
