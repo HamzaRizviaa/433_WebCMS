@@ -942,8 +942,19 @@ const UploadOrEditArticle = ({
 				if (item.element_type === 'IG' && !item.data[0].ig_post_url) {
 					return true;
 				}
-				if (item.element_type === 'QUESTION') {
-					// questionValidate(item.data);
+				if (
+					item.element_type === 'QUESTION' &&
+					!(
+						item?.data?.question &&
+						(item?.data?.answers?.length === 2
+							? item?.data?.answers.every(
+									(everyItem) => everyItem?.answer !== ''
+							  )
+							: false) &&
+						item?.data?.labels?.length > 6 &&
+						item?.data?.uploadedFiles?.length
+					)
+				) {
 					return true;
 				}
 			}
