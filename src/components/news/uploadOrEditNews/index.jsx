@@ -55,9 +55,9 @@ const UploadOrEditNews = ({
 	open,
 	handleClose,
 	title,
-	buttonText,
+	// buttonText,
 	isEdit,
-	status
+	rowStatus
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
@@ -84,6 +84,7 @@ const UploadOrEditNews = ({
 		show_comments: true
 	});
 	const [news, setNews] = useState([]);
+	const [status, setStatus] = useState(rowStatus);
 
 	const previewRef = useRef(null);
 	const loadingRef = useRef(null);
@@ -118,6 +119,7 @@ const UploadOrEditNews = ({
 					};
 				});
 			}
+			setStatus(specificNews.is_draft ? 'draft' : 'published');
 			setForm((prev) => {
 				return {
 					...prev,
@@ -918,7 +920,11 @@ const UploadOrEditNews = ({
 												}
 												onClick={() => handlePublishNews()}
 												button2AddSave={true}
-												text={buttonText}
+												text={
+													isEdit && status === 'published'
+														? 'SAVE CHANGES'
+														: 'PUBLISH'
+												}
 											/>
 										</div>
 									</div>
@@ -979,8 +985,8 @@ UploadOrEditNews.propTypes = {
 	handleClose: PropTypes.func.isRequired,
 	isEdit: PropTypes.bool.isRequired,
 	title: PropTypes.string.isRequired,
-	buttonText: PropTypes.string.isRequired,
-	status: PropTypes.string.isRequired
+	// buttonText: PropTypes.string.isRequired,
+	rowStatus: PropTypes.string.isRequired
 };
 
 export default UploadOrEditNews;
