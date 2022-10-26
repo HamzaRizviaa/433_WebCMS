@@ -142,6 +142,7 @@ const Labels = ({
 				value={selectedLabels}
 				autoHighlight={true}
 				onChange={(event, newValue) => {
+					console.log('new value', newValue)
 					setDisableDropdown(true);
 					let newLabels = newValue?.filter(
 						(v, i, a) =>

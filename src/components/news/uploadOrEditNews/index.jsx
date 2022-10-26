@@ -684,6 +684,7 @@ const UploadOrEditNews = ({
 														extraLabel={extraLabel}
 														handleChangeExtraLabel={handleChangeExtraLabel}
 														setSelectedLabels={(newVal) => {
+															console.log('new val', newVal)
 															setForm((prev) => {
 																return { ...prev, labels: [...newVal] };
 															});
