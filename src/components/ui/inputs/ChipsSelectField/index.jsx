@@ -10,14 +10,15 @@ const ChipsSelectField = ({
 	title,
 	selectedData,
 	error,
-	isEdit,
-	draftStatus,
-	newLabels,
+	isNotPublished,
+	newData,
+	newOptions,
 	isLoading,
 	onChange,
-	selectedLabelsRemoved,
-	extraLabel,
+	selectedDataRemoved,
+	textValue,
 	onBlur,
+	placeHolderMessage,
 	...restProps
 }) => {
 	const isError = !!error;
@@ -25,7 +26,7 @@ const ChipsSelectField = ({
 
 	const getClassName = () => {
 		let classname = `${classes.autoComplete}`;
-		if (isEdit && (location === 'article' || draftStatus !== 'draft')) {
+		if (isNotPublished) {
 			return classname + `${classes.disableAutoComplete}`;
 		}
 		return classname;
@@ -33,11 +34,11 @@ const ChipsSelectField = ({
 
 	const getRenderOptions = (props, option) => {
 		let currentLabelDuplicate = selectedData?.some(
-			(label) => label.name == option.name
+			(data) => data.name == option.name
 		);
 
-		let arrayResultedDuplicate = newLabels.some(
-			(label) => label.name == extraLabel && label.id !== null
+		let arrayResultedDuplicate = newData.some(
+			(data) => data.name == textValue && data.id !== null
 		);
 
 		if (
@@ -47,7 +48,7 @@ const ChipsSelectField = ({
 		) {
 			return (
 				<li {...props} className={classes.listClassname}>
-					{option.name || extraLabel}
+					{option.name || textValue}
 					<Button
 						text={`CREATE NEW ${title}`}
 						style={{
@@ -96,7 +97,7 @@ const ChipsSelectField = ({
 
 			<Autocomplete
 				{...restProps}
-				disabled={isEdit && draftStatus !== 'draft'}
+				disabled={isNotPublished}
 				getOptionLabel={(option) => option.name} // setSelectedLabels name out of array of strings
 				PaperComponent={(props) => {
 					return (
@@ -131,17 +132,15 @@ const ChipsSelectField = ({
 				onBlur={onBlur}
 				id='free-solo-2-demo'
 				disableClearable
-				options={
-					isEdit && draftStatus === 'draft' ? newOptions : selectedLabelsRemoved
-				}
+				options={isNotPublished ? newOptions : selectedDataRemoved}
 				renderInput={(params) => (
 					<TextField
 						{...params}
 						placeholder={
-							selectedData?.length > 0 ? ' ' : 'Select a minimum of 7 labels'
+							selectedData?.length > 0 ? ' ' : placeHolderMessage
 						}
 						className={classes.textFieldAuto}
-						value={extraLabel}
+						value={textValue}
 						onChange={handleChangeExtraLabel}
 						InputProps={{
 							disableUnderline: true,
@@ -180,14 +179,14 @@ ChipsSelectField.propTypes = {
 	name: PropTypes.string.isRequired,
 	title: PropTypes.string.isRequired,
 	selectedData: PropTypes.array.isRequired,
+	placeHolderMessage: PropTypes.string,
 	error: PropTypes.string,
-	isEdit: PropTypes.bool,
-	draftStatus: PropTypes.string,
-	newLabels: PropTypes.array,
+	isNotPublished: PropTypes.bool,
+	newData: PropTypes.array,
 	isLoading: PropTypes.bool,
 	onChange: PropTypes.func,
-	selectedLabelsRemoved: PropTypes.array,
-	extraLabel: PropTypes.string,
+	selectedDataRemoved: PropTypes.array,
+	textValue: PropTypes.string,
 	onBlur: PropTypes.func
 };
 
