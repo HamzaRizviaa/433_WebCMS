@@ -1,8 +1,9 @@
+/* eslint-disable react/prop-types */
 import React, { useCallback } from 'react';
 import { useField } from 'formik';
 import ToggleSwitchField from '../../ToggleSwitchField';
 
-const FormikSwitchField = ({ name, onChange, onBlur }) => {
+const FormikSwitchField = ({ name, onChange, onBlur, checked, disabled=false }) => {
 	const [field, meta, helpers] = useField(name);
 	const { value } = field;
 	const { touched, error } = meta;
@@ -29,6 +30,8 @@ const FormikSwitchField = ({ name, onChange, onBlur }) => {
 			name={name}
 			value={value}
 			error={touched ? error : ''}
+			checked={checked}
+			disabled={disabled}
 		/>
 	);
 };

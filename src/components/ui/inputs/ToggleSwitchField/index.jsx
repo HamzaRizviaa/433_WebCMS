@@ -5,6 +5,8 @@ import { useInputsStyles } from '../inputs.style';
 
 const ToggleSwitchField = ({
 	name,
+	checked,
+	disabled,
 	id,
 	onBlur,
 	onChange,
@@ -76,6 +78,8 @@ const ToggleSwitchField = ({
 ToggleSwitchField.propTypes = {
 	name: PropTypes.string.isRequired,
 	id: PropTypes.number.isRequired,
+	checked: PropTypes.bool.isRequired,
+	disabled: PropTypes.bool,
 	onBlur: PropTypes.func,
 	onChange: PropTypes.func,
 	onInputChange: PropTypes.func,

@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 
-export const useToggleSwitchStyles = makeStyles((theme) => ({
+export const useToggleSwitchStyles = makeStyles(() => ({
 	toggleSwitch: {
 		'& .toggle-switch': {
 			position: 'relative',
