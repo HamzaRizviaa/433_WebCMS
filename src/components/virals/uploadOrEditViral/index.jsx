@@ -159,7 +159,7 @@ const UploadOrEditViral = ({
 					};
 				});
 			}
-			setStatus(specificViral.status);
+			setStatus(specificViral.status); // setting the api status
 			setForm((prev) => {
 				return {
 					...prev,

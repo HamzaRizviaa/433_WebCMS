@@ -55,7 +55,7 @@ const UploadOrEditQuiz = ({
 	quiz,
 	handleClose,
 	page,
-	status,
+	rowStatus,
 	type,
 	location,
 	isEdit,
@@ -85,6 +85,7 @@ const UploadOrEditQuiz = ({
 	const [form, setForm] = useState({
 		end_date: null
 	});
+	const [status, setStatus] = useState(rowStatus);
 	const dialogWrapper = useRef(null);
 	const loadingRef = useRef(null);
 	const dispatch = useDispatch();
@@ -230,6 +231,10 @@ const UploadOrEditQuiz = ({
 	});
 
 	useEffect(() => {
+		setStatus(rowStatus);
+	}, [rowStatus]);
+
+	useEffect(() => {
 		if (editQuestionData) {
 			let allQuestionIds = [];
 			allQuestionIds =
@@ -237,8 +242,9 @@ const UploadOrEditQuiz = ({
 				editQuestionData?.questions?.map((data) => data?.id);
 			setQuestionIds(allQuestionIds); //to pass to delete data
 			setQuestionType(editQuestionData?.question_type);
-
 			setStopDeleteQuestionType(editQuestionData?.question_type); //to pass in delete stop modal .
+			console.log('editQuestionData', editQuestionData);
+			setStatus(editQuestionData.status);
 			setForm((prev) => {
 				return {
 					...prev,
@@ -1159,14 +1165,14 @@ UploadOrEditQuiz.propTypes = {
 	heading1: PropTypes.string,
 	rowType: PropTypes.string,
 	open: PropTypes.bool.isRequired,
-	buttonText: PropTypes.string.isRequired,
+	// buttonText: PropTypes.string.isRequired,
 	notifID: PropTypes.string,
 	setPreviewFile: PropTypes.func.isRequired,
 	setDisableDropdown: PropTypes.func,
 	quiz: PropTypes.bool,
 	handleClose: PropTypes.func.isRequired,
 	page: PropTypes.string,
-	status: PropTypes.string,
+	rowStatus: PropTypes.string,
 	type: PropTypes.string,
 	previewRef: PropTypes.oneOfType([
 		PropTypes.func,
