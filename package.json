@@ -19,6 +19,7 @@
 		"axios": "^0.24.0",
 		"capture-video-frame": "^1.0.0",
 		"cropperjs": "^1.5.12",
+		"dayjs": "^1.11.5",
 		"env-cmd": "^10.1.0",
 		"firebase": "^9.10.0",
 		"formik": "^2.2.9",
@@ -52,7 +53,8 @@
 		"build": "react-scripts build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
-		"deploy": "aws s3 sync build/ s3://433-cms-production"
+		"deploy": "aws s3 sync build/ s3://433-cms-production",
+		"docs": "jsdoc -c jsdoc.conf.json"
 	},
 	"eslintConfig": {
 		"extends": [
@@ -73,9 +75,11 @@
 		]
 	},
 	"devDependencies": {
+		"better-docs": "^2.7.2",
 		"eslint": "^8.3.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-react": "^7.27.1",
+		"jsdoc": "^3.6.11",
 		"sass": "^1.53.0"
 	}
 }

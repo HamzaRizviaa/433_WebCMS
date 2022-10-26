@@ -5,7 +5,7 @@ export interface PaginationProps {
 /**
  * This component renders the pagination below the table.
  * It is used with the Table component. The Table component recieves the totalRecords
- * and pass it to the Pagination component that needs it to show the total number of records 
+ * and pass it to the Pagination component that needs it to show the total number of records
  * brought by the API
  */
 

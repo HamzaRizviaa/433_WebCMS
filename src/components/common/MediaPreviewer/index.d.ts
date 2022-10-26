@@ -1,9 +1,9 @@
 export interface MediaPreviewerProps {
-	thumbnailUrl: string;
-	mediaUrl: string;
 	fileName: string;
 	fileHeight: number;
 	fileWidth: number;
+	mediaUrl: string;
+	thumbnailUrl?: string;
 	showSlidesIcon?: boolean;
 	noOfSlides?: number;
 }

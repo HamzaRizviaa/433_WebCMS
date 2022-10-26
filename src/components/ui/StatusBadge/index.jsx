@@ -5,7 +5,11 @@ import { useStatusBadgeStyles } from './index.style';
 const StatusBadge = ({ status }) => {
 	const classes = useStatusBadgeStyles({ status });
 
-	return <span className={classes.badge}>{status?.toUpperCase()}</span>;
+	return (
+		<div className={classes.badgeWrapper}>
+			<span className={classes.badge}>{status?.toUpperCase()}</span>
+		</div>
+	);
 };
 
 StatusBadge.propTypes = {

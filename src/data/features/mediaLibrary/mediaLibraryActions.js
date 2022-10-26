@@ -3,30 +3,9 @@ import { MediaLibraryService } from '../../services';
 
 export const getMedia = createAsyncThunk(
 	'mediaLibrary/getMedia',
-	async ({
-		page,
-		order_type,
-		sortby,
-		q,
-		startDate,
-		endDate,
-		fromCalendar = false
-	}) => {
-		let endPoint = `media/get-media?limit=20&page=1`;
-		if (page) {
-			endPoint = `media/get-media?limit=20&page=${page}`;
-		}
-		if (order_type && sortby) {
-			endPoint += `&order_type=${order_type}&sort_by=${sortby}`;
-		}
-		if (q) {
-			endPoint += `&q=${q}&is_search=true`;
-		}
-		if (startDate && endDate) {
-			endPoint += `&start_date=${startDate}&end_date=${endDate}`;
-		}
-		const response = await MediaLibraryService.getMediaApi(endPoint);
-		return { ...response.data.data, fromCalendar };
+	async (params = {}) => {
+		const { data: media } = await MediaLibraryService.getMediaApi(params);
+		return media.data;
 	}
 );
 

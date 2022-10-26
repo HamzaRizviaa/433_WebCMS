@@ -1,6 +1,10 @@
 import { makeStyles } from '@material-ui/core';
 
-export const useStyles = makeStyles(() => ({
+export const useStyles = makeStyles((theme) => ({
+	tableWrapper: {
+		pointerEvents: ({ isEmpty }) => (isEmpty ? 'none' : 'auto')
+	},
+
 	tableContainer: {
 		margin: ' 1rem 0rem',
 		'& .table': {
@@ -31,11 +35,16 @@ export const useStyles = makeStyles(() => ({
 					cursor: 'pointer',
 					'& td': {
 						borderBottom: '1px solid #404040'
+					},
+
+					'& .react-bs-table-no-data': {
+						borderBottom: 0
 					}
 				}
 			}
 		}
 	},
+
 	tableHeader: {
 		'& th': {
 			fontSize: '1rem',
@@ -45,6 +54,7 @@ export const useStyles = makeStyles(() => ({
 			textTransform: 'uppercase'
 		}
 	},
+
 	sortIcon: {
 		position: 'absolute',
 		left: '-4px',
@@ -61,4 +71,11 @@ export const useStyles = makeStyles(() => ({
 		width: ' 2rem !important',
 		color: theme.palette.neonYellow
 	},
+
+	noDataText: {
+		height: 'calc(100vh - 230px)',
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center'
+	}
 }));

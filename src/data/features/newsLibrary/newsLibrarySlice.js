@@ -30,20 +30,9 @@ const newsLibrarySlice = createSlice({
 			state.status = 'pending';
 		});
 		builder.addCase(getAllNews.fulfilled, (state, action) => {
-			state.news =
-				action.payload.data.length > 0 ? action.payload.data : state.news;
-			state.totalRecords =
-				action.payload.data.length > 0
-					? action.payload.total
-					: state.totalRecords;
+			state.news = action.payload.data;
+			state.totalRecords = action.payload.total;
 			state.status = 'success';
-
-			if (action.payload.fromCalendar) {
-				state.noResultStatusCalendar =
-					action.payload.data.length > 0 ? false : true;
-			} else {
-				state.noResultStatus = action.payload.data.length > 0 ? false : true;
-			}
 		});
 		builder.addCase(getAllNews.rejected, (state) => {
 			state.status = 'failed';

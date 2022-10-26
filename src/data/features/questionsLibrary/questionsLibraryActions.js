@@ -1,34 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { QuestionsLibraryService } from "../../services";
+import { QuestionsLibraryService } from '../../services';
 
 export const getQuestions = createAsyncThunk(
 	'questionLibrary/getQuestions',
-	async ({
-		page,
-		order_type,
-		sortby,
-		q,
-		startDate,
-		endDate,
-		fromCalendar = false
-	}) => {
-		let endPoint = `question/questions?limit=20&page=1`;
+	async (params = {}) => {
+		const { data: questions } =
+			await QuestionsLibraryService.getAllQuestionsApi(params);
 
-		if (page) {
-			endPoint = `question/questions?limit=20&page=${page}`;
-		}
-		if (order_type && sortby) {
-			endPoint += `&order_type=${order_type}&sort_by=${sortby}`;
-		}
-		if (q) {
-			endPoint += `&q=${q}&is_search=true`;
-		}
-		if (startDate && endDate) {
-			endPoint += `&start_date=${startDate}&end_date=${endDate}`;
-		}
-
-		const result = await QuestionsLibraryService.getQuestionApi(endPoint);
-		return { ...result.data.data, fromCalendar };
+		return questions.data;
 	}
 );
 

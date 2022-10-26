@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 /* eslint-disable no-unused-vars */
 export function makeid(length) {
 	var result = '';
@@ -25,4 +27,26 @@ export function changeQueryParameters(query, queryObject) {
 		}
 	});
 	return query.toString();
+}
+
+/**
+ *
+ * @param {string} startDate - Query Param start date
+ * @param {string} endDate - Query Param end date
+ * @returns {{formattedStartDate: string | null, formattedEndDate: string | null}}
+ */
+export function sanitizeDates(startDate, endDate) {
+	const formattedStartDate = startDate
+		? dayjs(startDate).format('DD-MM-YYYY')
+		: null;
+	const formattedEndDate = endDate ? dayjs(endDate).format('DD-MM-YYYY') : null;
+
+	const isStartDateValid = dayjs(startDate).isValid();
+	const isEndDateValid = dayjs(endDate).isValid();
+
+	return {
+		formattedStartDate: isStartDateValid ? formattedStartDate : null,
+		formattedEndDate:
+			isStartDateValid && isEndDateValid ? formattedEndDate : null
+	};
 }

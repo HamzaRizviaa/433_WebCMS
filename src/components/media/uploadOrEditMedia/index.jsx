@@ -38,17 +38,22 @@ import DeleteModal from '../../DeleteModal';
 import { ToastErrorNotifications } from '../../../data/constants';
 import FeatureWrapper from '../../FeatureWrapper';
 import TranslationCarousal from '../../TranslationCarousal';
+import useCommonParams from '../../../hooks/useCommonParams';
+import { isEmpty } from 'lodash';
+import { useNavigate } from 'react-router-dom';
 
 const UploadOrEditMedia = ({
 	open,
 	handleClose,
 	title,
 	heading1,
-	buttonText,
+	// buttonText,
 	isEdit,
-	page,
-	status
+	rowStatus
 }) => {
+	const navigate = useNavigate();
+	const queryParams = useCommonParams();
+
 	const [mediaLabels, setMediaLabels] = useState([]);
 	const [subCategories, setSubCategories] = useState([]);
 	const [fileRejectionError, setFileRejectionError] = useState('');
@@ -104,6 +109,9 @@ const UploadOrEditMedia = ({
 	const [titleValue, setTitleValue] = useState('');
 	const [descriptionValue, setDescriptionValue] = useState('');
 	const [translatedOnEdit, setTranslatedOnEdit] = useState(false);
+	const [status, setStatus] = useState(rowStatus);
+	const buttonText =
+		isEdit && status === 'published' ? 'SAVE CHANGES' : 'PUBLISH';
 
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
@@ -169,7 +177,7 @@ const UploadOrEditMedia = ({
 					//let labelId = labels.find((l) => l.name === label)?.id;
 					return _labels.push({ id: -1, name: label });
 				});
-
+				setStatus(specificMedia.is_draft ? 'draft' : 'published');
 				setForm((prev) => {
 					return {
 						...prev,
@@ -590,12 +598,12 @@ const UploadOrEditMedia = ({
 			if (result?.data?.status_code === 200) {
 				if (result?.data?.data?.is_deleted === false) {
 					toast.error(ToastErrorNotifications.deleteBannerItemText);
-					dispatch(getMedia({ page }));
+					dispatch(getMedia(queryParams));
 				} else {
 					toast.success('Media has been deleted!');
 					handleClose();
 					//setting a timeout for getting post after delete.
-					dispatch(getMedia({ page }));
+					dispatch(getMedia(queryParams));
 				}
 			}
 		} catch (e) {
@@ -726,6 +734,7 @@ const UploadOrEditMedia = ({
 					}
 				}
 			);
+			console.log('result...........', result);
 			if (result?.data?.status_code === 200) {
 				toast.success(
 					isEdit
@@ -735,9 +744,16 @@ const UploadOrEditMedia = ({
 						: 'Media has been uploaded!'
 				);
 				setIsLoadingUploadMedia(false);
-
-				dispatch(getMedia({ page }));
+				dispatch(getMedia(queryParams));
 				handleClose();
+
+				if (isEdit && !(status === 'draft' && payload.save_draft === false)) {
+					dispatch(getMedia(queryParams));
+				} else if (isEmpty(queryParams)) {
+					dispatch(getMedia());
+				} else {
+					navigate('/media-library');
+				}
 			}
 		} catch (e) {
 			toast.error(
@@ -2013,7 +2029,9 @@ const UploadOrEditMedia = ({
 															: globalClasses.noErrorState
 													].join(' ')}
 													style={{
-														borderColor: isError.uploadedCoverImage
+														borderColor: fileRejectionError2
+															? '#ff355a'
+															: isError.uploadedCoverImage
 															? '#ff355a'
 															: 'yellow'
 													}}
@@ -2036,6 +2054,8 @@ const UploadOrEditMedia = ({
 														</p>
 														<p className={globalClasses.formatMsg}>
 															Required size <strong>720x900</strong>
+															<br />
+															Image File size should not exceed 1MB.
 														</p>
 														<p className={globalClasses.uploadMediaError}>
 															{isError.uploadedCoverImage
@@ -2044,16 +2064,16 @@ const UploadOrEditMedia = ({
 														</p>
 
 														<p className={globalClasses.uploadMediaError}>
-															{isError.portraitDimensions
+															{fileRejectionError2
+																? fileRejectionError2
+																: isError.portraitDimensions
 																? 'please upload image with proper dimensions'
 																: ''}
 														</p>
 													</div>
 												</section>
 											)}
-											<p className={globalClasses.fileRejectionError}>
-												{fileRejectionError2}
-											</p>
+											<br />
 											<div className={globalClasses.dropBoxUrlContainer}>
 												<h6>PORTRAIT DROPBOX URL</h6>
 												<TextField
@@ -2104,7 +2124,9 @@ const UploadOrEditMedia = ({
 															: globalClasses.noErrorState
 													].join(' ')}
 													style={{
-														borderColor: isError.uploadedLandscapeCoverImage
+														borderColor: fileRejectionError3
+															? '#ff355a'
+															: isError.uploadedLandscapeCoverImage
 															? '#ff355a'
 															: 'yellow'
 													}}
@@ -2127,18 +2149,20 @@ const UploadOrEditMedia = ({
 														</p>
 														<p className={globalClasses.formatMsg}>
 															Required size <strong>1920x1080</strong>
+															<br />
+															Image File size should not exceed 1MB.
 														</p>
 														<p className={globalClasses.uploadMediaError}>
-															{isError.uploadedLandscapeCoverImage
+															{fileRejectionError3
+																? fileRejectionError3
+																: isError.uploadedLandscapeCoverImage
 																? 'You need to upload a cover image in order to post'
 																: ''}
 														</p>
 													</div>
 												</section>
 											)}
-											<p className={globalClasses.fileRejectionError}>
-												{fileRejectionError3}
-											</p>
+											<br />
 											<div className={globalClasses.dropBoxUrlContainer}>
 												<h6>LANDSCAPE DROPBOX URL</h6>
 												<TextField
@@ -2499,9 +2523,8 @@ UploadOrEditMedia.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
-	buttonText: PropTypes.string.isRequired,
-	page: PropTypes.string,
-	status: PropTypes.string.isRequired
+	// buttonText: PropTypes.string.isRequired,
+	rowStatus: PropTypes.string.isRequired
 };
 
 export default UploadOrEditMedia;

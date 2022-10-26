@@ -5,6 +5,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
 import axios from 'axios';
+import { isEmpty } from 'lodash';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { useStyles } from './index.styles';
@@ -47,19 +49,21 @@ import {
 import { getAllNews } from '../../../data/features/newsLibrary/newsLibrarySlice';
 import { TextField } from '@material-ui/core';
 import { ToastErrorNotifications } from '../../../data/constants';
+import useCommonParams from '../../../hooks/useCommonParams';
 
 const UploadOrEditNews = ({
 	open,
 	handleClose,
 	title,
-	buttonText,
+	// buttonText,
 	isEdit,
-	page,
-	status
+	rowStatus
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 
+	const navigate = useNavigate();
+	const queryParams = useCommonParams();
 	const [isLoading, setIsLoading] = useState(false);
 	const [previewFile, setPreviewFile] = useState(null);
 	const [disableDropdown, setDisableDropdown] = useState(true);
@@ -80,6 +84,7 @@ const UploadOrEditNews = ({
 		show_comments: true
 	});
 	const [news, setNews] = useState([]);
+	const [status, setStatus] = useState(rowStatus);
 
 	const previewRef = useRef(null);
 	const loadingRef = useRef(null);
@@ -114,6 +119,7 @@ const UploadOrEditNews = ({
 					};
 				});
 			}
+			setStatus(specificNews.is_draft ? 'draft' : 'published');
 			setForm((prev) => {
 				return {
 					...prev,
@@ -416,7 +422,7 @@ const UploadOrEditNews = ({
 			if (result?.data?.status_code === 200) {
 				toast.success('News has been deleted!');
 				handleClose();
-				dispatch(getAllNews({ page }));
+				dispatch(getAllNews(queryParams));
 			}
 		} catch (e) {
 			toast.error(ToastErrorNotifications.deleteBannerItemText);
@@ -482,7 +488,14 @@ const UploadOrEditNews = ({
 				setIsLoading(false);
 
 				handleClose();
-				dispatch(getAllNews({ page }));
+
+				if (isEdit && !(status === 'draft' && draft === false)) {
+					dispatch(getAllNews(queryParams));
+				} else if (isEmpty(queryParams)) {
+					dispatch(getAllNews());
+				} else {
+					navigate('/news-library');
+				}
 			}
 		} catch (e) {
 			toast.error(isEdit ? 'Failed to edit news!' : 'Failed to create news!');
@@ -907,7 +920,11 @@ const UploadOrEditNews = ({
 												}
 												onClick={() => handlePublishNews()}
 												button2AddSave={true}
-												text={buttonText}
+												text={
+													isEdit && status === 'published'
+														? 'SAVE CHANGES'
+														: 'PUBLISH'
+												}
 											/>
 										</div>
 									</div>
@@ -968,9 +985,8 @@ UploadOrEditNews.propTypes = {
 	handleClose: PropTypes.func.isRequired,
 	isEdit: PropTypes.bool.isRequired,
 	title: PropTypes.string.isRequired,
-	buttonText: PropTypes.string.isRequired,
-	page: PropTypes.string,
-	status: PropTypes.string.isRequired
+	// buttonText: PropTypes.string.isRequired,
+	rowStatus: PropTypes.string.isRequired
 };
 
 export default UploadOrEditNews;

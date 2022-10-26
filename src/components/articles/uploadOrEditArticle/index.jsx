@@ -69,18 +69,25 @@ import {
 import ArticleQuestionDraggable from '../../ArticleBuilder/ArticleQuestionDraggable';
 import { ToastErrorNotifications } from '../../../data/constants';
 
+import useCommonParams from '../../../hooks/useCommonParams';
+import { isEmpty } from 'lodash';
+import { useNavigate } from 'react-router-dom';
+
 const UploadOrEditArticle = ({
 	open,
 	handleClose,
 	title,
 	isEdit,
 	buttonText,
-	page,
 	status
 }) => {
+	const navigate = useNavigate();
+	const queryParams = useCommonParams();
+
 	const [editorTextChecker, setEditorTextChecker] = useState('');
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
+	const [fileRejectionErrorAvatar, setFileRejectionErrorAvatar] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
@@ -228,10 +235,10 @@ const UploadOrEditArticle = ({
 	useEffect(() => {
 		if (fileRejectionsAvatar.length) {
 			fileRejectionsAvatar.forEach(({ errors }) => {
-				return errors.forEach((e) => setFileRejectionError2(e.message));
+				return errors.forEach((e) => setFileRejectionErrorAvatar(e.message));
 			});
 			setTimeout(() => {
-				setFileRejectionError2('');
+				setFileRejectionErrorAvatar('');
 			}, [5000]);
 		}
 	}, [fileRejectionsAvatar]);
@@ -487,13 +494,13 @@ const UploadOrEditArticle = ({
 	useEffect(() => {
 		if (fileRejections2.length) {
 			fileRejections2.forEach(({ errors }) => {
-				return errors.forEach((e) => setFileRejectionError(e.message));
+				return errors.forEach((e) => setFileRejectionError2(e.message));
 			});
 			setTimeout(() => {
-				setFileRejectionError('');
+				setFileRejectionError2('');
 			}, [5000]);
 		}
-	}, [fileRejections]);
+	}, [fileRejections2]);
 
 	const getFileType = (type) => {
 		if (type) {
@@ -700,8 +707,14 @@ const UploadOrEditArticle = ({
 				setIsLoading(false);
 				setPostButtonStatus(false);
 				handleClose();
-				dispatch(getAllArticlesApi({ page }));
-				// dispatch(getPostLabels());
+
+				if (isEdit && !(status === 'draft' && draft === false)) {
+					dispatch(getAllArticlesApi(queryParams));
+				} else if (isEmpty(queryParams)) {
+					dispatch(getAllArticlesApi());
+				} else {
+					navigate('/article-library');
+				}
 			}
 		} catch (e) {
 			toast.error(
@@ -798,6 +811,8 @@ const UploadOrEditArticle = ({
 	const resetState = () => {
 		setEditorTextChecker('');
 		setFileRejectionError('');
+		setFileRejectionError2('');
+		setFileRejectionErrorAvatar('');
 		setPostButtonStatus(false);
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
@@ -889,10 +904,20 @@ const UploadOrEditArticle = ({
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...data];
-		dataCopy[index].data = {
-			...(dataCopy[index].data ? dataCopy[index].data : {}),
-			...childData
-		};
+		// handling media seperately here in order
+		if (dataCopy[index].element_type === 'MEDIA') {
+			dataCopy[index].data = [
+				{
+					...(dataCopy[index].data?.length ? dataCopy[index].data[0] : {}),
+					...childData
+				}
+			];
+		} else {
+			dataCopy[index].data = {
+				...(dataCopy[index].data ? dataCopy[index].data : {}),
+				...childData
+			};
+		}
 		setData(dataCopy);
 	};
 
@@ -919,8 +944,19 @@ const UploadOrEditArticle = ({
 				if (item.element_type === 'IG' && !item.data[0].ig_post_url) {
 					return true;
 				}
-				if (item.element_type === 'QUESTION') {
-					// questionValidate(item.data);
+				if (
+					item.element_type === 'QUESTION' &&
+					!(
+						item?.data?.question &&
+						(item?.data?.answers?.length === 2
+							? item?.data?.answers.every(
+									(everyItem) => everyItem?.answer !== ''
+							  )
+							: false) &&
+						item?.data?.labels?.length > 6 &&
+						item?.data?.uploadedFiles?.length
+					)
+				) {
 					return true;
 				}
 			}
@@ -975,12 +1011,12 @@ const UploadOrEditArticle = ({
 
 				if (result?.data?.data?.is_deleted === false) {
 					toast.error(ToastErrorNotifications.deleteBannerItemText);
-					dispatch(getAllArticlesApi({ page }));
+					dispatch(getAllArticlesApi(queryParams));
 				} else {
 					toast.success('Article has been deleted!');
 					handleClose();
 					//setting a timeout for getting post after delete.
-					dispatch(getAllArticlesApi({ page }));
+					dispatch(getAllArticlesApi(queryParams));
 				}
 			}
 		} catch (e) {
@@ -1402,7 +1438,7 @@ const UploadOrEditArticle = ({
 				if (data.length) {
 					dataMedia = await Promise.all(
 						data.map(async (item, index) => {
-							if (item.element_type === 'MEDIA' && item.data[0].file) {
+							if (item.element_type === 'MEDIA' && item.data[0]?.file) {
 								let uploadedFile = await uploadFileToServer(
 									item.data[0],
 									'articleLibrary'
@@ -1778,6 +1814,7 @@ const UploadOrEditArticle = ({
 											getRootPropsAvatar={getRootPropsAvatar}
 											getInputPropsAvatar={getInputPropsAvatar}
 											fileRejectionError2={fileRejectionError2}
+											fileRejectionErrorAvatar={fileRejectionErrorAvatar}
 											postLabels={postLabels}
 											extraLabel={extraLabel}
 											handleChangeExtraLabel={handleChangeExtraLabel}
@@ -1791,7 +1828,7 @@ const UploadOrEditArticle = ({
 											ref={topElementRef}
 										></Box>
 										<DraggableWrapper onDragEnd={onDragEnd}>
-											{data.map((item, index) => {
+											{data?.map((item, index) => {
 												return (
 													<div ref={scrollRef} key={index}>
 														{React.createElement(item.component, {

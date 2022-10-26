@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 // import classes from './_uploadOrEditViral.module.scss';
 import { useDropzone } from 'react-dropzone';
+import { useNavigate } from 'react-router-dom';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
@@ -32,6 +33,9 @@ import { useStyles as globalUseStyles } from '../../../styles/global.style';
 import DeleteModal from '../../DeleteModal';
 import TranslationCarousal from '../../TranslationCarousal';
 import FeatureWrapper from '../../FeatureWrapper';
+import useCommonParams from '../../../hooks/useCommonParams';
+import { isEmpty } from 'lodash';
+
 //new labels
 
 const UploadOrEditViral = ({
@@ -40,10 +44,11 @@ const UploadOrEditViral = ({
 	title,
 	isEdit,
 	heading1,
-	buttonText,
-	page,
-	status //draft or publish
+	// buttonText,
+	rowStatus //draft or publish
 }) => {
+	const navigate = useNavigate();
+	const queryParams = useCommonParams();
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
@@ -78,6 +83,7 @@ const UploadOrEditViral = ({
 	});
 	const [captionValue, setCaptionValue] = useState('');
 	const [translatedOnEdit, setTranslatedOnEdit] = useState(false);
+	const [status, setStatus] = useState(rowStatus);
 
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
@@ -91,6 +97,9 @@ const UploadOrEditViral = ({
 		(state) => state.rootReducer.viralLibrary
 	);
 
+	const buttonText =
+		isEdit && status === 'published' ? 'SAVE CHANGES' : 'PUBLISH';
+
 	const {
 		features: { translationsOnVirals }
 	} = useSelector((state) => state.rootReducer.remoteConfig);
@@ -101,9 +110,8 @@ const UploadOrEditViral = ({
 		useDropzone({
 			accept: 'image/jpeg, image/png, video/mp4',
 			maxFiles: 1,
-			validator: checkFileSize
+			validator: (file) => checkFileSize(file, 'viral')
 		});
-
 	const labels = useSelector((state) => state.rootReducer.postsLibrary.labels);
 	const specificViral = useSelector(
 		(state) => state.rootReducer.viralLibrary.specificViral
@@ -151,6 +159,7 @@ const UploadOrEditViral = ({
 					};
 				});
 			}
+			setStatus(specificViral.status);
 			setForm((prev) => {
 				return {
 					...prev,
@@ -268,6 +277,7 @@ const UploadOrEditViral = ({
 		setIsError({});
 		setExtraLabel('');
 		setNotifID('');
+		setStatus(rowStatus);
 		setForm({
 			caption: '',
 			dropbox_url: '',
@@ -406,8 +416,13 @@ const UploadOrEditViral = ({
 				setIsLoadingcreateViral(false);
 				setPostButtonStatus(false);
 				handleClose();
-				dispatch(getAllViralsApi({ page }));
-				// dispatch(getPostLabels());
+				if (isEdit && !(status === 'draft' && draft === false)) {
+					dispatch(getAllViralsApi(queryParams));
+				} else if (isEmpty(queryParams)) {
+					dispatch(getAllViralsApi());
+				} else {
+					navigate('/viral-library');
+				}
 			}
 		} catch (e) {
 			toast.error(isEdit ? 'Failed to edit viral!' : 'Failed to create viral!');
@@ -436,7 +451,7 @@ const UploadOrEditViral = ({
 			if (result?.data?.status_code === 200) {
 				toast.success('Viral has been deleted!');
 				handleClose();
-				dispatch(getAllViralsApi({ page }));
+				dispatch(getAllViralsApi(queryParams));
 			}
 		} catch (e) {
 			toast.error('Failed to delete Viral!');
@@ -1100,9 +1115,8 @@ UploadOrEditViral.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
-	buttonText: PropTypes.string.isRequired,
-	status: PropTypes.string.isRequired,
-	page: PropTypes.string
+	// buttonText: PropTypes.string.isRequired,
+	rowStatus: PropTypes.string.isRequired
 };
 
 export default UploadOrEditViral;

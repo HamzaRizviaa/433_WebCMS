@@ -180,7 +180,12 @@ const NewsSlide = ({
 										)}
 
 										{!newFile?.length ? (
-											<section className={globalClasses.dropZoneContainer}>
+											<section
+												className={globalClasses.dropZoneContainer}
+												style={{
+													borderColor: fileRejectionError ? '#ff355a' : 'yellow'
+												}}
+											>
 												<div
 													{...getRootProps({
 														className: globalClasses.dropzone
@@ -195,6 +200,11 @@ const NewsSlide = ({
 													</p>
 													<p className={globalClasses.formatMsg}>
 														Supported formats are jpeg and png
+														<br />
+														Image File size should not exceed 1MB.
+													</p>
+													<p className={globalClasses.uploadMediaError}>
+														{fileRejectionError ? fileRejectionError : ''}
 													</p>
 												</div>
 											</section>
@@ -202,14 +212,6 @@ const NewsSlide = ({
 											<>
 												<br />
 											</>
-										)}
-
-										{fileRejectionError ? (
-											<p className={globalClasses.fileRejectionError}>
-												{fileRejectionError}
-											</p>
-										) : (
-											''
 										)}
 
 										<div className={classes.socialmediaDrags}>

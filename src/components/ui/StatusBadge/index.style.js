@@ -4,17 +4,26 @@ export const useStatusBadgeStyles = makeStyles((theme) => {
 	const statusToColorMapper = {
 		draft: theme.palette.neonYellow,
 		published: theme.palette.green,
-		ACTIVE: theme.palette.green,
-		CLOSED: theme.palette.red
+		active: theme.palette.green,
+		closed: theme.palette.red
 	};
 
 	return {
+		badgeWrapper: {
+			display: 'flex',
+			alignItems: 'center',
+			marginBottom: '1.2rem'
+		},
+
 		badge: {
 			display: 'inline-block',
 			color: (props) =>
-				props.status === 'draft' ? theme.palette.black : theme.palette.white,
+				props.status?.toLowerCase() === 'draft'
+					? theme.palette.black
+					: theme.palette.white,
 			textAlign: 'center',
-			backgroundColor: (props) => statusToColorMapper[props.status],
+			backgroundColor: (props) =>
+				statusToColorMapper[props.status?.toLowerCase()],
 			fontSize: '1.2rem',
 			fontWeight: 800,
 			letterSpacing: '0.03rem',

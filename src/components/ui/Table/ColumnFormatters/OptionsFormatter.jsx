@@ -4,12 +4,12 @@ import TextTooltip from '../../TextTooltip';
 import { Edit } from '../../../../assets/svg-icons';
 import { useStyles } from './index.style';
 
-const OptionsFormatter = ({ params, styledClass }) => {
+const OptionsFormatter = ({ title, styledClass }) => {
 	const classes = useStyles();
 
 	return (
 		<div className={styledClass}>
-			<TextTooltip title={params} placement='bottom'>
+			<TextTooltip title={title} placement='bottom'>
 				<Edit className={classes.editIcon} />
 			</TextTooltip>
 		</div>
@@ -17,8 +17,8 @@ const OptionsFormatter = ({ params, styledClass }) => {
 };
 
 OptionsFormatter.propTypes = {
-	styledClass: PropTypes.string.isRequired,
-	params: PropTypes.string.isRequired
+	title: PropTypes.string.isRequired,
+	styledClass: PropTypes.string
 };
 
 export default OptionsFormatter;

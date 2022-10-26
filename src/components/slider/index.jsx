@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classes from './_slider.module.scss';
@@ -42,17 +43,17 @@ const Slider = ({
 
 	useEffect(() => {
 		function handleClickOutside(event) {
-			if (
-				wrapperRef.current &&
-				disableDropdown &&
-				!preview &&
-				!wrapperRef.current.contains(event.target) &&
-				(dialogRef?.current
-					? dialogRef.current && !dialogRef.current.contains(event.target)
-					: true)
-			) {
-				handleClose();
-			}
+			// if (
+			// 	wrapperRef.current &&
+			// 	disableDropdown &&
+			// 	!preview &&
+			// 	!wrapperRef.current.contains(event.target) &&
+			// 	(dialogRef?.current
+			// 		? dialogRef.current && !dialogRef.current.contains(event.target)
+			// 		: true)
+			// ) {
+			// 	handleClose();
+			// }
 			if (
 				!media &&
 				!quiz &&
