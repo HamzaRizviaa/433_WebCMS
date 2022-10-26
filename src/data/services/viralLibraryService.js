@@ -27,6 +27,19 @@ class ViralLibraryService {
 	static getSpecificViralApi(id) {
 		return axiosInstance.get(`/viral/edit/${id}`);
 	}
+
+	static postViral(data) {
+		return axiosInstance.post('/viral/add-viral', data);
+	}
+
+	/**
+	 * Delete viral service to call the API
+	 * @param {Object} data
+	 * @returns Promise of the AxiosResponse Object
+	 */
+	static deleteViral(data) {
+		return axiosInstance.post('/viral/delete-viral', data);
+	}
 }
 
 export default ViralLibraryService;

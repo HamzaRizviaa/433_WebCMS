@@ -1,4 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
 import { ViralLibraryService } from '../../services';
 
 export const getAllViralsApi = createAsyncThunk(
@@ -31,6 +32,43 @@ export const getSpecificViral = createAsyncThunk(
 			return response.data.data;
 		} else {
 			return [];
+		}
+	}
+);
+
+export const createOrEditViralThunk = createAsyncThunk(
+	'viralLibary/createOrEditViralThunk',
+	async (data) => {
+		try {
+			const response = await ViralLibraryService.postViral(data);
+			console.log(response.data.data);
+
+			if (response.data.status_code === 200) {
+				toast.success(
+					data.viral_id ? 'Viral has been edited!' : 'Viral has been created!'
+				);
+			}
+		} catch (e) {
+			toast.error(
+				data.viral_id ? 'Failed to edit viral!' : 'Failed to create viral!'
+			);
+			console.error(e);
+		}
+	}
+);
+
+export const deleteViralThunk = createAsyncThunk(
+	'viralLibary/deleteViralThunk',
+	async (data) => {
+		try {
+			const response = await ViralLibraryService.deleteViral(data);
+
+			if (response.data.status_code === 200) {
+				toast.success('Viral has been deleted!');
+			}
+		} catch (e) {
+			toast.error('Failed to delete Viral!');
+			console.error(e);
 		}
 	}
 );
