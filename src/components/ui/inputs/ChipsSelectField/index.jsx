@@ -3,97 +3,96 @@ import PropTypes from 'prop-types';
 import { Paper, Popper, Autocomplete, TextField } from '@mui/material';
 import { useChipSelectStyles } from './index.style';
 import ClearIcon from '@material-ui/icons/Clear';
-import Four33Loader from '../../../../assets/Loader_Yellow.gif'
+import Four33Loader from '../../../../assets/Loader_Yellow.gif';
 
-const ChipsSelectField = ({ 
-    name,
-    title,
-    selectedData,
+const ChipsSelectField = ({
+	name,
+	title,
+	selectedData,
 	error,
-    isEdit,
-    draftStatus,
-    newLabels,
-    isLoading,
-    onChange,
-    selectedLabelsRemoved,
-    extraLabel,
-    onBlur,
+	isEdit,
+	draftStatus,
+	newLabels,
+	isLoading,
+	onChange,
+	selectedLabelsRemoved,
+	extraLabel,
+	onBlur,
 	...restProps
 }) => {
 	const isError = !!error;
-    const classes = useChipSelectStyles();
+	const classes = useChipSelectStyles();
 
-    const getClassName = () => {
-        let classname = `${classes.autoComplete}`
-        if(isEdit && (location === 'article' || draftStatus !== 'draft')){
-            return (classname + `${classes.disableAutoComplete}`)
-        }
-        return classname
-    }
+	const getClassName = () => {
+		let classname = `${classes.autoComplete}`;
+		if (isEdit && (location === 'article' || draftStatus !== 'draft')) {
+			return classname + `${classes.disableAutoComplete}`;
+		}
+		return classname;
+	};
 
-    const getRenderOptions = (props, option) => {
-        let currentLabelDuplicate = selectedData?.some(
-            (label) => label.name == option.name
-        );
+	const getRenderOptions = (props, option) => {
+		let currentLabelDuplicate = selectedData?.some(
+			(label) => label.name == option.name
+		);
 
-        let arrayResultedDuplicate = newLabels.some(
-            (label) => label.name == extraLabel && label.id !== null
-        );
+		let arrayResultedDuplicate = newLabels.some(
+			(label) => label.name == extraLabel && label.id !== null
+		);
 
-        if (
-            option.id === null &&
-            !currentLabelDuplicate &&
-            !arrayResultedDuplicate
-        ) {
-            return (
-                <li
-                    {...props}
-                    className={classes.listClassname}
-                >
-                    {option.name || extraLabel}
-                    <Button
-                        text={`CREATE NEW ${title}`}
-                        style={{
-                            padding: '3px 12px',
-                            fontWeight: 700
-                        }}
-                        onClick={() => {}}
-                    />
-                </li>
-            );
-        } else if (!currentLabelDuplicate) {
-            if (arrayResultedDuplicate && option.id == null) {
-                return null;
-            } else {
-                return (
-                    <li {...props} className={classes.liAutocomplete}>
-                        {option.name}
-                    </li>
-                );
-            }
-        } else {
-            return (
-                <div className={classes.liAutocompleteWithButton}>
-                    &apos;{option.name}&apos; is already selected!
-                </div>
-            );
-        }
-    }
+		if (
+			option.id === null &&
+			!currentLabelDuplicate &&
+			!arrayResultedDuplicate
+		) {
+			return (
+				<li {...props} className={classes.listClassname}>
+					{option.name || extraLabel}
+					<Button
+						text={`CREATE NEW ${title}`}
+						style={{
+							padding: '3px 12px',
+							fontWeight: 700
+						}}
+						onClick={() => {}}
+					/>
+				</li>
+			);
+		} else if (!currentLabelDuplicate) {
+			if (arrayResultedDuplicate && option.id == null) {
+				return null;
+			} else {
+				return (
+					<li {...props} className={classes.liAutocomplete}>
+						{option.name}
+					</li>
+				);
+			}
+		} else {
+			return (
+				<div className={classes.liAutocompleteWithButton}>
+					&apos;{option.name}&apos; is already selected!
+				</div>
+			);
+		}
+	};
 
-    const handleInputChange = (event, value) => {
+	const handleInputChange = (event, value) => {
 		if (onChange) {
 			onChange(value);
 		}
 	};
 
-    return(
-        <div>
+	return (
+		<div>
 			<div className={classes.header}>
-				<h6 className={isError ? classes.errorState : classes.noErrorState}>{title}S</h6>
+				<h6 className={isError ? classes.errorState : classes.noErrorState}>
+					{title}S
+				</h6>
 				<div className={isError ? classes.errorState : classes.noErrorState}>
-                    CURRENT {title}:{selectedData?.length || '0'}
-                </div>
-            </div>
+					CURRENT {title}:{selectedData?.length || '0'}
+				</div>
+			</div>
 
 			<Autocomplete
 				{...restProps}
@@ -101,11 +100,7 @@ const ChipsSelectField = ({
 				getOptionLabel={(option) => option.name} // setSelectedLabels name out of array of strings
 				PaperComponent={(props) => {
 					return (
-						<Paper
-							elevation={6}
-							className={classes.paperBody}
-							{...props}
-						/>
+						<Paper elevation={6} className={classes.paperBody} {...props} />
 					);
 				}}
 				PopperComponent={({ style, ...props }) => (
@@ -132,8 +127,8 @@ const ChipsSelectField = ({
 					)
 				}
 				className={getClassName}
-                name={name}
-                onBlur={onBlur}
+				name={name}
+				onBlur={onBlur}
 				id='free-solo-2-demo'
 				disableClearable
 				options={
@@ -178,22 +173,22 @@ const ChipsSelectField = ({
 				clearIcon={''}
 			/>
 		</div>
-    )
-}
+	);
+};
 
 ChipsSelectField.propTypes = {
 	name: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    selectedData: PropTypes.array.isRequired,
+	title: PropTypes.string.isRequired,
+	selectedData: PropTypes.array.isRequired,
 	error: PropTypes.string,
-    isEdit: PropTypes.bool,
-    draftStatus: PropTypes.string,
-    newLabels: PropTypes.array,
-    isLoading: PropTypes.bool,
-    onChange: PropTypes.func,
-    selectedLabelsRemoved: PropTypes.array,
-    extraLabel: PropTypes.string,
-    onBlur: PropTypes.func,
-}
+	isEdit: PropTypes.bool,
+	draftStatus: PropTypes.string,
+	newLabels: PropTypes.array,
+	isLoading: PropTypes.bool,
+	onChange: PropTypes.func,
+	selectedLabelsRemoved: PropTypes.array,
+	extraLabel: PropTypes.string,
+	onBlur: PropTypes.func
+};
 
 export default ChipsSelectField;
