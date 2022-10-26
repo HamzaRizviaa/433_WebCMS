@@ -53,7 +53,7 @@ export const useChipSelectStyles = makeStyles((theme) => ({
             padding: '1rem 0rem 1rem 1rem',
             color: '#ffffff !important'
         },
-        '&svg': {
+        '& svg': {
             color: '#ffff00',
             right: '5rem !important',
             top: '0rem !important',
@@ -93,7 +93,7 @@ export const useChipSelectStyles = makeStyles((theme) => ({
         marginLeft: '3px !important',
         marginTop: '2px !important',
         marginBottom: '2px !important',
-        '&svg': {
+        '& svg': {
             backgroundColor: '#ffff00 !important', // news library issue
             color: 'black !important',
             fontSize: '20px !important'

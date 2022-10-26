@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Paper, Popper, Autocomplete, TextField } from '@mui/material';
 import { useChipSelectStyles } from './index.style';
 import ClearIcon from '@material-ui/icons/Clear';
@@ -8,18 +9,18 @@ const ChipsSelectField = ({
     name,
     title,
     selectedData,
-    isError,
+	error,
     isEdit,
     draftStatus,
-    closeDropdown,
     newLabels,
     isLoading,
     onChange,
-    onInputChange,
     selectedLabelsRemoved,
     extraLabel,
-    onBlur
+    onBlur,
+	...restProps
 }) => {
+	const isError = !!error;
     const classes = useChipSelectStyles();
 
     const getClassName = () => {
@@ -83,7 +84,6 @@ const ChipsSelectField = ({
 		if (onChange) {
 			onChange(value);
 		}
-		onInputChange(value);
 	};
 
     return(
@@ -96,6 +96,7 @@ const ChipsSelectField = ({
             </div>
 
 			<Autocomplete
+				{...restProps}
 				disabled={isEdit && draftStatus !== 'draft'}
 				getOptionLabel={(option) => option.name} // setSelectedLabels name out of array of strings
 				PaperComponent={(props) => {
@@ -114,7 +115,6 @@ const ChipsSelectField = ({
 					style: { maxHeight: 180 },
 					position: 'bottom'
 				}}
-				onClose={closeDropdown}
 				multiple
 				filterSelectedOptions
 				freeSolo={false}
@@ -143,7 +143,7 @@ const ChipsSelectField = ({
 					<TextField
 						{...params}
 						placeholder={
-							selectedLabels?.length > 0 ? ' ' : 'Select a minimum of 7 labels'
+							selectedData?.length > 0 ? ' ' : 'Select a minimum of 7 labels'
 						}
 						className={classes.textFieldAuto}
 						value={extraLabel}
@@ -179,6 +179,21 @@ const ChipsSelectField = ({
 			/>
 		</div>
     )
+}
+
+ChipsSelectField.propTypes = {
+	name: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    selectedData: PropTypes.array.isRequired,
+	error: PropTypes.string,
+    isEdit: PropTypes.bool,
+    draftStatus: PropTypes.string,
+    newLabels: PropTypes.array,
+    isLoading: PropTypes.bool,
+    onChange: PropTypes.func,
+    selectedLabelsRemoved: PropTypes.array,
+    extraLabel: PropTypes.string,
+    onBlur: PropTypes.func,
 }
 
 export default ChipsSelectField;

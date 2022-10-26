@@ -1,7 +1,8 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import ChipsSelectField from '../../ChipsSelectField';
 
-const FormikChipSelect = ({ name, onChange, onBlur }) => {
+const FormikChipSelect = ({ name, onChange, onBlur, ...restProps }) => {
     const [field, meta, helpers] = useField(name);
 	const { value } = field;
 	const { touched, error } = meta;
@@ -26,8 +27,9 @@ const FormikChipSelect = ({ name, onChange, onBlur }) => {
             onChange={handleChange}
 			onBlur={handleBlur}
 			name={name}
-			value={value}
+			selectedData={value}
 			error={touched ? error : ''}
+			{...restProps}
         />
     )
 }
