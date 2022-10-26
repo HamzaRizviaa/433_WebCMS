@@ -88,11 +88,6 @@ const UploadOrEditQuiz = ({
 		results: '', // poll = results AND quiz = positive results
 		results_image: [],
 		results_dropbox_url: ''
-		// ...(questionType === 'quiz' && {
-		// 	negative_results: '',
-		// 	negative_results_image: [],
-		// 	negative_results_dropbox_url: ''
-		// })
 	});
 
 	//summary component
@@ -102,6 +97,8 @@ const UploadOrEditQuiz = ({
 	const [fileWidth2, setFileWidth2] = useState(0);
 	const [fileHeight2, setFileHeight2] = useState(0);
 	const [fileRejectionError2, setFileRejectionError2] = useState('');
+
+	const [tabClickCount, setTabClickCount] = useState(0);
 
 	const dialogWrapper = useRef(null);
 	const loadingRef = useRef(null);
@@ -149,28 +146,36 @@ const UploadOrEditQuiz = ({
 		handleNewSlide();
 	}, [open]);
 
-	useEffect(() => {
-		if (isEdit && status !== 'draft') return;
-		if (questionType === 'quiz') {
-			setForm((prev) => {
-				return {
-					...prev,
-					...{
-						negative_results: '',
-						negative_results_image: [],
-						negative_results_dropbox_url: ''
-					}
-				};
-			});
-		} else {
-			setForm({
-				end_date: null,
-				results: '', // poll = results AND quiz = positive results
-				results_image: [],
-				results_dropbox_url: ''
-			});
-		}
-	}, [questionType]);
+	//BACKUP CODE IF RESET SLIDES FAILS
+
+	// useEffect(() => {
+	// 	if (isEdit && status !== 'draft') return;
+	// 	if (
+	// 		(isEdit && questionType === 'quiz' && tabClickCount !== 0) ||
+	// 		(questionType === 'quiz' && !isEdit)
+	// 	) {
+	// 		setForm((prev) => {
+	// 			return {
+	// 				...prev,
+	// 				...{
+	// 					negative_results: '',
+	// 					negative_results_image: [],
+	// 					negative_results_dropbox_url: ''
+	// 				}
+	// 			};
+	// 		});
+	// 	} else if (
+	// 		(isEdit && questionType === 'poll' && tabClickCount !== 0) ||
+	// 		(questionType === 'poll' && !isEdit)
+	// 	) {
+	// 		setForm({
+	// 			end_date: null,
+	// 			results: '', // poll = results AND quiz = positive results
+	// 			results_image: [],
+	// 			results_dropbox_url: ''
+	// 		});
+	// 	}
+	// }, [questionType]);
 
 	const setNewData = (childData, index) => {
 		let dataCopy = [...questionSlides];
@@ -728,9 +733,10 @@ const UploadOrEditQuiz = ({
 			results_image: [],
 			results_dropbox_url: '',
 			...(questionType === 'quiz' && { negative_results: '' }),
-			...(questionType === 'quiz' && { negative_results_image: '' }),
+			...(questionType === 'quiz' && { negative_results_image: [] }),
 			...(questionType === 'quiz' && { negative_results_dropbox_url: '' })
 		});
+		setTabClickCount(0);
 	};
 
 	const validatePostBtn = () => {
@@ -770,7 +776,7 @@ const UploadOrEditQuiz = ({
 		if (editQuestionData) {
 			setDraftBtnDisabled(
 				!validateDraft(form, null, null, questionSlides) ||
-					comparingFormFields(editQuestionData, convertedDate)
+					comparingFormFields(editQuestionData, convertedDate, form)
 			);
 		}
 	}, [editQuestionData, form, convertedDate]);
@@ -786,7 +792,7 @@ const UploadOrEditQuiz = ({
 
 		if (
 			!validateDraft(form, null, null, questionSlides) ||
-			!comparingFormFields(editQuestionData, convertedDate)
+			!comparingFormFields(editQuestionData, convertedDate, form)
 		) {
 			setDraftBtnDisabled(
 				!validateEmptyQuestionArray.every((item) => item === true) ||
@@ -828,7 +834,7 @@ const UploadOrEditQuiz = ({
 			setEditQuizBtnDisabled(
 				!validateForm(form, null, null, questionSlides) ||
 					!validateEmptyQuestionArray.every((item) => item === true) ||
-					comparingFormFields(editQuestionData, convertedDate)
+					comparingFormFields(editQuestionData, convertedDate, form)
 			);
 		}
 	}, [editQuestionData, form, convertedDate]);
@@ -849,7 +855,7 @@ const UploadOrEditQuiz = ({
 		//validate form OR compare generalInformation form
 		if (
 			!validateForm(form, null, null, questionSlides) ||
-			!comparingFormFields(editQuestionData, convertedDate)
+			!comparingFormFields(editQuestionData, convertedDate, form)
 		) {
 			setEditQuizBtnDisabled(
 				!validateEmptyQuestionArray.every((item) => item === true) ||
@@ -1080,15 +1086,16 @@ const UploadOrEditQuiz = ({
 
 	const resetSlides = (type) => {
 		if (type !== questionType) {
+			console.log('andar');
 			setQuestionSlides([]);
 			setForm({
 				end_date: null,
 				results: '', // poll = results AND quiz = positive results
 				results_image: [],
 				results_dropbox_url: '',
-				...(questionType === 'quiz' && { negative_results: '' }),
-				...(questionType === 'quiz' && { negative_results_image: '' }),
-				...(questionType === 'quiz' && { negative_results_dropbox_url: '' })
+				...(type === 'quiz' && { negative_results: '' }),
+				...(type === 'quiz' && { negative_results_image: [] }),
+				...(type === 'quiz' && { negative_results_dropbox_url: '' })
 			});
 		}
 	};
@@ -1177,6 +1184,7 @@ const UploadOrEditQuiz = ({
 															{((isEdit && status === 'draft') || !isEdit) && (
 																<>
 																	<QuestionTabPanes
+																		setTabClickCount={setTabClickCount}
 																		edit={
 																			editQuestionData?.question_type && isEdit
 																		}
@@ -1276,7 +1284,7 @@ const UploadOrEditQuiz = ({
 																	</h6>
 																</div>
 																<TextField
-																	disabled={isEdit && status !== 'draft'}
+																	disabled={isEdit && status === 'CLOSED'}
 																	value={form?.results}
 																	onChange={(e) => {
 																		setForm((prev) => {
@@ -1286,15 +1294,17 @@ const UploadOrEditQuiz = ({
 																			};
 																		});
 																	}}
-																	placeholder={
-																		'Please write your question here'
-																	}
+																	placeholder={`Please write your ${
+																		questionType === 'poll'
+																			? 'result'
+																			: 'positive result'
+																	} here`}
 																	className={classes.textField}
 																	InputProps={{
 																		disableUnderline: true,
 																		className: `${classes.textFieldInput}  ${
 																			isEdit &&
-																			status !== 'draft' &&
+																			status === 'CLOSED' &&
 																			classes.disableTextField
 																		}`
 																	}}
@@ -1435,7 +1445,7 @@ const UploadOrEditQuiz = ({
 																			</h6>
 																		</div>
 																		<TextField
-																			disabled={isEdit && status !== 'draft'}
+																			disabled={isEdit && status === 'CLOSED'}
 																			value={form?.negative_results}
 																			onChange={(e) => {
 																				setForm((prev) => {
@@ -1446,7 +1456,7 @@ const UploadOrEditQuiz = ({
 																				});
 																			}}
 																			placeholder={
-																				'Please write your question here'
+																				'Please write your negative result here'
 																			}
 																			className={classes.textField}
 																			InputProps={{
@@ -1455,7 +1465,7 @@ const UploadOrEditQuiz = ({
 																					classes.textFieldInput
 																				}  ${
 																					isEdit &&
-																					status !== 'draft' &&
+																					status === 'CLOSED' &&
 																					classes.disableTextField
 																				}`
 																			}}

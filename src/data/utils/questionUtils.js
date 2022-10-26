@@ -18,8 +18,35 @@ export const checkEmptyQuestion = (question) => {
 };
 
 // compare main form data
-export const comparingFormFields = (specificQuestion, convertedDate) => {
-	return specificQuestion?.end_date === convertedDate;
+export const comparingFormFields = (specificQuestion, convertedDate, form) => {
+	return (
+		specificQuestion?.end_date === convertedDate &&
+		(specificQuestion?.question_type === 'poll'
+			? specificQuestion?.summary?.results === form?.results &&
+			  specificQuestion?.summary?.results_dropbox_url ===
+					form?.results_dropbox_url &&
+			  (specificQuestion?.summary?.results_image || form?.results_image[0]
+					? form?.results_image[0]?.file_name ===
+					  specificQuestion?.summary?.results_filename
+					: true)
+			: specificQuestion?.summary?.positive_results === form?.results &&
+			  specificQuestion?.summary?.positive_results_dropbox_url ===
+					form?.results_dropbox_url &&
+			  (specificQuestion?.summary?.positive_results_image ||
+			  form?.results_image[0]
+					? form?.results_image[0]?.file_name ===
+					  specificQuestion?.summary?.positive_results_filename
+					: true) &&
+			  specificQuestion?.summary?.negative_results ===
+					form?.negative_results &&
+			  specificQuestion?.summary?.negative_results_dropbox_url ===
+					form?.negative_results_dropbox_url &&
+			  (specificQuestion?.summary?.negative_results_image ||
+			  form?.negative_results_image[0]
+					? form?.negative_results_image[0]?.file_name ===
+					  specificQuestion?.summary?.negative_results_filename
+					: true))
+	);
 };
 
 // compare api data and new data
