@@ -47,9 +47,9 @@ const UploadOrEditMedia = ({
 	handleClose,
 	title,
 	heading1,
-	buttonText,
+	// buttonText,
 	isEdit,
-	status
+	rowStatus
 }) => {
 	const navigate = useNavigate();
 	const queryParams = useCommonParams();
@@ -109,6 +109,9 @@ const UploadOrEditMedia = ({
 	const [titleValue, setTitleValue] = useState('');
 	const [descriptionValue, setDescriptionValue] = useState('');
 	const [translatedOnEdit, setTranslatedOnEdit] = useState(false);
+	const [status, setStatus] = useState(rowStatus);
+	const buttonText =
+		isEdit && status === 'published' ? 'SAVE CHANGES' : 'PUBLISH';
 
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
@@ -174,7 +177,7 @@ const UploadOrEditMedia = ({
 					//let labelId = labels.find((l) => l.name === label)?.id;
 					return _labels.push({ id: -1, name: label });
 				});
-
+				setStatus(specificMedia.is_draft ? 'draft' : 'published');
 				setForm((prev) => {
 					return {
 						...prev,
@@ -2520,8 +2523,8 @@ UploadOrEditMedia.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
-	buttonText: PropTypes.string.isRequired,
-	status: PropTypes.string.isRequired
+	// buttonText: PropTypes.string.isRequired,
+	rowStatus: PropTypes.string.isRequired
 };
 
 export default UploadOrEditMedia;
