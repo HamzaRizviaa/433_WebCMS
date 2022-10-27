@@ -24,7 +24,7 @@ const InputField = ({
 	type = 'text',
 	required = false,
 	minRows = 1,
-	height = 'medium',
+	size = 'medium',
 	...restProps
 }) => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -61,7 +61,7 @@ const InputField = ({
 	const inputsClasses = useInputsStyles({
 		isRequired: required,
 		isError: !!error,
-		height
+		size
 	});
 
 	return (
