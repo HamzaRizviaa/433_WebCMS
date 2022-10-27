@@ -1,4 +1,5 @@
 const validateDraft = (form, dataElements, newsElement, quesElement) => {
+	let endDateValidation = true;
 	var validate = Object.keys(form).map((key) => {
 		if (key === 'mainCategory' || key === 'subCategory') {
 			return false;
@@ -19,6 +20,9 @@ const validateDraft = (form, dataElements, newsElement, quesElement) => {
 			// array check
 			if (key === 'end_date') {
 				// for question end_Date field
+				if (!form[key]) {
+					endDateValidation = false;
+				}
 				return !form[key] ? false : true;
 			}
 			if (form[key] === null) {
@@ -134,7 +138,9 @@ const validateDraft = (form, dataElements, newsElement, quesElement) => {
 		});
 
 		finalDraftValue =
-			validate.some((item) => item === true) && validateQuestion;
+			validate.some((item) => item === true) &&
+			validateQuestion &&
+			endDateValidation;
 	} else if (
 		(dataElements?.length === 0 ||
 			dataElements === undefined ||
@@ -146,7 +152,8 @@ const validateDraft = (form, dataElements, newsElement, quesElement) => {
 			quesElement === undefined ||
 			quesElement === null)
 	) {
-		finalDraftValue = validate.some((item) => item === true);
+		finalDraftValue =
+			validate.some((item) => item === true) && endDateValidation;
 	}
 
 	return finalDraftValue;
