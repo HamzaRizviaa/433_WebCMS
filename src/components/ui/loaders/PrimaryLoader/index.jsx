@@ -3,11 +3,17 @@ import Four33Loader from '../../../../assets/Loader_Yellow.gif';
 import { useStyles } from './index.style';
 import PropTypes from 'prop-types';
 
-const PrimaryLoader = ({ loading, children, mainPage, secondary }) => {
-	const classes = useStyles({ loading, mainPage, secondary });
+const PrimaryLoader = ({
+	children,
+	loading = false,
+	mainPage = false,
+	secondary = false,
+	opaqueBackground = false
+}) => {
+	const classes = useStyles({ loading, mainPage, secondary, opaqueBackground });
 
 	return (
-		<div className={secondary ? classes.secondaryBackdrop : classes.backdrop}>
+		<div className={classes.backdrop}>
 			{loading && (
 				<div className={classes.loaderContainer}>
 					<img src={Four33Loader} className={classes.loader} />
@@ -19,10 +25,11 @@ const PrimaryLoader = ({ loading, children, mainPage, secondary }) => {
 };
 
 PrimaryLoader.propTypes = {
-	loading: PropTypes.bool.isRequired,
 	children: PropTypes.element,
+	loading: PropTypes.bool.isRequired,
 	mainPage: PropTypes.bool,
-	secondary: PropTypes.bool
+	secondary: PropTypes.bool,
+	opaqueBackground: PropTypes.bool
 };
 
 export default PrimaryLoader;
