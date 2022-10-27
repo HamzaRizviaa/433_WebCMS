@@ -25,6 +25,7 @@ import { ReactComponent as Union } from '../../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 
 /**
+ * News Slide Component
  * @component
  */
 const NewsSlide = ({

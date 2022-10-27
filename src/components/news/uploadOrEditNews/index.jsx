@@ -51,6 +51,7 @@ import { ToastErrorNotifications } from '../../../data/constants';
 import useCommonParams from '../../../hooks/useCommonParams';
 
 /**
+ * Upload or Edit News Component
  * @component
  */
 const UploadOrEditNews = ({
@@ -250,8 +251,8 @@ const UploadOrEditNews = ({
 
 	/**
 	 * Update Slides Data from API
-	 * @param {Array} data - Query param data Array
-	 * @returns {Array} - Slides data with their sort order
+	 * @param {array} data - Query param data Array
+	 * @returns {array} - Slides data with their sort order
 	 */
 	const updateSlidesDataFromAPI = (data) => {
 		let slidesData = data.map(
@@ -287,7 +288,7 @@ const UploadOrEditNews = ({
 
 	/**
 	 * Resets the state
-	 * @returns void
+	 * @returns {void}
 	 */
 	const resetState = () => {
 		setTimeout(() => {
@@ -341,18 +342,18 @@ const UploadOrEditNews = ({
 
 	/**
 	 * Opens the popup for Delete modal
-	 * @returns void
+	 * @returns {void}
 	 */
 	const toggleDeleteModal = () => {
 		setOpenDeletePopup(!openDeletePopup);
 	};
 
 	/**
-	 *
-	 * @param {Array} list - Array of News Slides
+	 * Reorders News Slides
+	 * @param {array} list - Array of News Slides
 	 * @param {number} startIndex - Start index of a specifc News Slide
 	 * @param {number} endIndex - End index of a specific News Slide
-	 * @returns {Array} Returns reordered News Slides
+	 * @returns {array} Returns reordered News Slides
 	 */
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
@@ -362,9 +363,9 @@ const UploadOrEditNews = ({
 	};
 
 	/**
-	 *
+	 * Drags and reorders news slides
 	 * @param {Object} result - Object with specific News Slide drag info
-	 * @returns void
+	 * @returns {void}
 	 */
 	const onDragEnd = (result) => {
 		if (!result.destination) {
@@ -379,8 +380,8 @@ const UploadOrEditNews = ({
 	};
 
 	/**
-	 *
-	 * @returns {Array} Returns News Slide Array when a new slide is added
+	 * Appends new slide to the news slide array
+	 * @returns {array} Returns News Slide array when a new slide is added
 	 */
 	const handleNewsSlide = () => {
 		setNews((prev) => {
@@ -394,10 +395,10 @@ const UploadOrEditNews = ({
 	};
 
 	/**
-	 *
+	 * Sets data for every news slide
 	 * @param {Object} childData - Updates everytime News Slide data is updated
 	 * @param {number} index - News slide index where data is updated
-	 * @returns void
+	 * @returns {void}
 	 */
 	const setNewData = (childData, index) => {
 		let dataCopy = [...news];
@@ -412,8 +413,8 @@ const UploadOrEditNews = ({
 	};
 
 	/**
-	 *
-	 * @param {Array} elementData - Array containing data for deleted media
+	 * Deletes media from each news slide
+	 * @param {array} elementData - Array containing data for deleted media
 	 * @param {number} index - Index for deleted media
 	 * @returns {Object} Returns deleted media object
 	 */
@@ -438,9 +439,9 @@ const UploadOrEditNews = ({
 	};
 
 	/**
-	 *
+	 * Deletes a specific news slide
 	 * @param {number} sortOrder - Order in which a News Slide would be deleted
-	 * @returns void
+	 * @returns {void}
 	 */
 	const handleNewsElementDelete = (sortOrder) => {
 		let dataCopy = [...news];
@@ -453,7 +454,7 @@ const UploadOrEditNews = ({
 	 * Deletes the News Item
 	 * @param {number} id - ID on which the News item is to be deleted
 	 * @param {string} isDraft - String containing the News status whether published or drafted.
-	 * @returns void
+	 * @returns {void}
 	 */
 	const deleteNews = async (id, isDraft) => {
 		setDeleteBtnStatus(true);
@@ -486,11 +487,11 @@ const UploadOrEditNews = ({
 	};
 
 	/**
-	 *
+	 * Post API call to create News Item
 	 * @param {integer} id - Contains the id of the news item
-	 * @param {Array} mediaFiles - Includes all the media files inside a news item
+	 * @param {array} mediaFiles - Includes all the media files inside a news item
 	 * @param {Boolean} draft - Sets draft to false
-	 * @returns void
+	 * @returns {void}
 	 */
 	const createNews = async (id, mediaFiles = [], draft = false) => {
 		// setPostButtonStatus(true);
@@ -568,7 +569,7 @@ const UploadOrEditNews = ({
 
 	/**
 	 * Validates the draft button
-	 * @returns void
+	 * @returns {void}
 	 */
 	const validateDraftBtn = () => {
 		if (isEdit) {
@@ -601,7 +602,7 @@ const UploadOrEditNews = ({
 
 	/**
 	 * Drafts a News Item
-	 * @returns void
+	 * @returns {void}
 	 */
 	const handleCreateDraft = () => {
 		setIsLoading(false);
@@ -651,7 +652,7 @@ const UploadOrEditNews = ({
 
 	/**
 	 * Publishes a News Item
-	 * @returns void
+	 * @returns {void}
 	 */
 	const handlePublishNews = () => {
 		setIsLoading(false);
