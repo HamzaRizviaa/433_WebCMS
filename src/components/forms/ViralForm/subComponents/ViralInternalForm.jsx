@@ -18,8 +18,6 @@ import Button from '../../../ui/Button';
 const ViralInternalForm = ({
 	isEdit,
 	status,
-	previewFile,
-	setDisableDropdown,
 	openPreviewer,
 	onSubmitHandler,
 	toggleDeleteModal
@@ -71,13 +69,8 @@ const ViralInternalForm = ({
 	const saveDraftHandler = () =>
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
 
-	console.log({ values });
-
 	return (
-		<div
-			className={globalClasses.contentWrapperNoPreview}
-			style={{ width: previewFile != null ? '60%' : 'auto' }}
-		>
+		<div>
 			<div>
 				<div className={globalClasses.explanationWrapper}>
 					<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
@@ -127,7 +120,7 @@ const ViralInternalForm = ({
 								: globalClasses.noErrorState
 						}
 						isEdit={isEdit}
-						setDisableDropdown={setDisableDropdown}
+						setDisableDropdown={() => {}}
 						selectedLabels={values.labels}
 						LabelsOptions={postLabels}
 						extraLabel={extraLabel}
