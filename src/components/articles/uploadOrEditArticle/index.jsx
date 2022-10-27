@@ -99,8 +99,8 @@ const UploadOrEditArticle = ({
 	handleClose,
 	title,
 	isEdit,
-	buttonText,
-	status
+	// buttonText,
+	rowStatus
 }) => {
 	const navigate = useNavigate();
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
@@ -171,6 +171,7 @@ const UploadOrEditArticle = ({
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
 	const dialogWrapper = useRef(null);
+	const [status, setStatus] = useState(rowStatus);
 
 	const elementData = [
 		{
@@ -355,6 +356,8 @@ const UploadOrEditArticle = ({
 	};
 	const dispatch = useDispatch();
 
+	console.log(data, 'DATA');
+	console.log(form, 'form');
 	useEffect(() => {
 		if (specificArticle) {
 			setNotifID(specificArticle?.id);
@@ -363,7 +366,7 @@ const UploadOrEditArticle = ({
 				specificArticle.labels.map((label) =>
 					_labels.push({ id: -1, name: label })
 				);
-
+				setStatus(specificArticle.is_draft ? 'draft' : 'published');
 				setForm((prev) => {
 					return {
 						...prev,
@@ -2022,7 +2025,11 @@ const UploadOrEditArticle = ({
 									</Grid>
 								</Grid>
 								<ArticleFooter
-									buttonText={buttonText}
+									buttonText={
+										isEdit && status === 'published'
+											? 'SAVE CHANGES'
+											: 'PUBLISH'
+									}
 									isEdit={isEdit}
 									form={form}
 									dataElement={data}
@@ -2062,9 +2069,9 @@ UploadOrEditArticle.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
-	buttonText: PropTypes.string.isRequired,
+	// buttonText: PropTypes.string.isRequired,
 	page: PropTypes.string,
-	status: PropTypes.string
+	rowStatus: PropTypes.string
 };
 
 export default UploadOrEditArticle;
