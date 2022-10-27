@@ -1362,7 +1362,7 @@ const UploadOrEditQuiz = ({
 																		placeholder={`Please write your ${
 																			questionType === 'poll'
 																				? 'result'
-																				: 'positive result'
+																				: 'positive results message'
 																		} here`}
 																		className={classes.textField}
 																		InputProps={{
@@ -1524,7 +1524,7 @@ const UploadOrEditQuiz = ({
 																					});
 																				}}
 																				placeholder={
-																					'Please write your negative result here'
+																					'Please write your negative results message here'
 																				}
 																				className={classes.textField}
 																				InputProps={{
