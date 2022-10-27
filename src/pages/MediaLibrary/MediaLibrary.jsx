@@ -68,7 +68,7 @@ const MediaLibrary = () => {
 				buttonText={
 					edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
 				}
-				status={rowStatus}
+				rowStatus={rowStatus}
 			/>
 		</DashboardLayout>
 	);
