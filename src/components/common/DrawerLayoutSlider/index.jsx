@@ -11,17 +11,13 @@ const DrawerLayoutSlider = ({
 	open,
 	handleClose,
 	title,
-	disableDropdown,
 	handlePreview,
 	preview,
-	previewRef,
-	isEdit,
 	fromArticle = false,
 	notifID
 }) => {
 	const classes = DrawerLayoutStyles({ fromArticle });
 	const wrapperRef = useRef(null);
-	const imagePreview = true;
 
 	useEffect(() => {
 		const close = (e) => {
@@ -34,22 +30,6 @@ const DrawerLayoutSlider = ({
 		window.addEventListener('keydown', close);
 		return () => window.removeEventListener('keydown', close);
 	}, [preview]);
-
-	useEffect(() => {
-		function handleClickOutside(event) {
-			if (
-				(isEdit || imagePreview) &&
-				preview &&
-				previewRef.current &&
-				!previewRef.current.contains(event.target)
-			) {
-				handlePreview();
-			}
-		}
-
-		document.addEventListener('mousedown', handleClickOutside);
-		return () => document.removeEventListener('mousedown', handleClickOutside);
-	}, [wrapperRef, disableDropdown, preview]);
 
 	return (
 		<div>
