@@ -165,6 +165,7 @@ export const useStyles = makeStyles((theme) => ({
 	},
 	titleContainer: {
 		'& h6': {
+			marginTop: '2rem',
 			marginBottom: '0.5rem',
 			marginLeft: '1rem'
 		}
