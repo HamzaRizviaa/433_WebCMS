@@ -39,7 +39,6 @@ import { ToastErrorNotifications } from '../../../data/constants';
 import FeatureWrapper from '../../FeatureWrapper';
 import TranslationCarousal from '../../TranslationCarousal';
 import useCommonParams from '../../../hooks/useCommonParams';
-import { isEmpty } from 'lodash';
 import { useNavigate } from 'react-router-dom';
 
 const UploadOrEditMedia = ({
@@ -52,7 +51,7 @@ const UploadOrEditMedia = ({
 	rowStatus
 }) => {
 	const navigate = useNavigate();
-	const queryParams = useCommonParams();
+	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 
 	const [mediaLabels, setMediaLabels] = useState([]);
 	const [subCategories, setSubCategories] = useState([]);
@@ -749,7 +748,7 @@ const UploadOrEditMedia = ({
 
 				if (isEdit && !(status === 'draft' && payload.save_draft === false)) {
 					dispatch(getMedia(queryParams));
-				} else if (isEmpty(queryParams)) {
+				} else if (isSearchParamsEmpty) {
 					dispatch(getMedia());
 				} else {
 					navigate('/media-library');

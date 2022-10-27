@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 // import classes from './_uploadOrEditViral.module.scss';
 import { useDropzone } from 'react-dropzone';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import PropTypes from 'prop-types';
 import Slider from '../../slider';
@@ -34,7 +34,6 @@ import DeleteModal from '../../DeleteModal';
 import TranslationCarousal from '../../TranslationCarousal';
 import FeatureWrapper from '../../FeatureWrapper';
 import useCommonParams from '../../../hooks/useCommonParams';
-import { isEmpty } from 'lodash';
 
 //new labels
 
@@ -48,7 +47,8 @@ const UploadOrEditViral = ({
 	rowStatus //draft or publish
 }) => {
 	const navigate = useNavigate();
-	const queryParams = useCommonParams();
+	const { queryParams, isSearchParamsEmpty } = useCommonParams();
+
 	const [fileRejectionError, setFileRejectionError] = useState('');
 	const [postButtonStatus, setPostButtonStatus] = useState(false);
 	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
@@ -416,9 +416,11 @@ const UploadOrEditViral = ({
 				setIsLoadingcreateViral(false);
 				setPostButtonStatus(false);
 				handleClose();
+
 				if (isEdit && !(status === 'draft' && draft === false)) {
 					dispatch(getAllViralsApi(queryParams));
-				} else if (isEmpty(queryParams)) {
+				} else if (isSearchParamsEmpty) {
+					console.log('Called');
 					dispatch(getAllViralsApi());
 				} else {
 					navigate('/viral-library');

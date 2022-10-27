@@ -1,5 +1,20 @@
 import { makeStyles } from '@material-ui/core';
 
+const inputSizeMapper = {
+	small: {
+		height: '1.8rem',
+		borderRadius: 18
+	},
+	medium: {
+		height: '2.2rem',
+		borderRadius: 22
+	},
+	large: {
+		height: '2.94rem',
+		borderRadius: 30
+	}
+};
+
 export const useInputsStyles = makeStyles((theme) => ({
 	labelsContainer: {
 		display: 'flex',
@@ -25,27 +40,27 @@ export const useInputsStyles = makeStyles((theme) => ({
 			display: (props) => (props.isRequired ? 'inline-block' : 'none')
 		}
 	},
-	textFieldInput: {
+	textFieldInput: ({ isError, size }) => ({
 		color: theme.palette.white,
-		border: `0.01px solid ${theme.palette.normalGrey}`,
+		border: `1px solid ${theme.palette.normalGrey}`,
 		padding: '1rem 1rem 1rem 1.5rem !important',
 		fontSize: '1.4rem !important',
 		fontFamily: 'Poppins !important',
 		lineHeight: '1.6 !important',
-		borderRadius: '22px',
+		borderRadius: inputSizeMapper[size]?.borderRadius || '22px',
 		backgroundColor: theme.palette.black,
-		borderColor: (props) =>
-			props.isError ? theme.palette.red : theme.palette.normalGrey,
+		borderColor: isError ? theme.palette.red : theme.palette.normalGrey,
 
 		'& svg': {
 			fontSize: '2.5rem'
 		},
 
 		'& > input': {
-			height: '2.2rem',
+			height: inputSizeMapper[size]?.height || 'auto',
 			padding: 0
 		}
-	},
+	}),
+
 	errorText: {
 		display: 'inline-block',
 		color: theme.palette.red,

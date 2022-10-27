@@ -45,7 +45,7 @@ import {
 	checkNewElementQuestionDraft
 } from '../../../data/utils/questionUtils';
 
-import { compact, isEmpty } from 'lodash';
+import { compact } from 'lodash';
 import { useNavigate } from 'react-router-dom';
 import useCommonParams from '../../../hooks/useCommonParams';
 
@@ -63,7 +63,7 @@ const UploadOrEditQuiz = ({
 	rowType
 }) => {
 	const navigate = useNavigate();
-	const queryParams = useCommonParams();
+	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 
 	const [convertedDate, setConvertedDate] = useState(null);
 	const [calenderOpen, setCalenderOpen] = useState(false);
@@ -391,7 +391,7 @@ const UploadOrEditQuiz = ({
 
 				if (isEdit && !(status === 'draft' && draft === false)) {
 					dispatch(getQuestions(queryParams));
-				} else if (isEmpty(queryParams)) {
+				} else if (isSearchParamsEmpty) {
 					dispatch(getQuestions());
 				} else {
 					navigate('/question-library');
