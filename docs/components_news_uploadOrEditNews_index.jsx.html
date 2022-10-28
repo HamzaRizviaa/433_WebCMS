@@ -1,4 +1,32 @@
-/* eslint-disable no-unused-vars */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/news/uploadOrEditNews/index.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/news/uploadOrEditNews/index.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
 import React, { useState, useRef, useEffect } from 'react';
@@ -155,8 +183,8 @@ const UploadOrEditNews = ({
 		if (specificNews) {
 			setDraftBtnDisabled(
 				!validateDraft(form, null, news) ||
-					(comparingNewsFields(specificNews, form) &&
-						specificNews?.labels?.length === form?.labels.length &&
+					(comparingNewsFields(specificNews, form) &amp;&amp;
+						specificNews?.labels?.length === form?.labels.length &amp;&amp;
 						!checkDuplicateLabel(form, specificNews))
 			);
 		}
@@ -527,7 +555,7 @@ const UploadOrEditNews = ({
 					show_likes: form.show_likes,
 					show_comments: form.show_comments,
 					slides: slides,
-					...(isEdit && id ? { news_id: id } : {}),
+					...(isEdit &amp;&amp; id ? { news_id: id } : {}),
 					...(form.labels?.length ? { labels: [...form.labels] } : {}),
 					user_data: {
 						id: `${getLocalStorageDetails()?.id}`,
@@ -549,7 +577,7 @@ const UploadOrEditNews = ({
 
 				handleClose();
 
-				if (isEdit && !(status === 'draft' && draft === false)) {
+				if (isEdit &amp;&amp; !(status === 'draft' &amp;&amp; draft === false)) {
 					dispatch(getAllNews(queryParams));
 				} else if (isSearchParamsEmpty) {
 					dispatch(getAllNews());
@@ -582,7 +610,7 @@ const UploadOrEditNews = ({
 			}, 5000);
 		} else {
 			setIsError({
-				selectedLabelsDraft: form.labels.length < 1
+				selectedLabelsDraft: form.labels.length &lt; 1
 			});
 
 			setTimeout(() => {
@@ -593,7 +621,7 @@ const UploadOrEditNews = ({
 
 	const validatePublishNewsBtn = () => {
 		setIsError({
-			selectedLabels: form.labels.length < 7
+			selectedLabels: form.labels.length &lt; 7
 		});
 		setTimeout(() => {
 			setIsError({});
@@ -657,7 +685,7 @@ const UploadOrEditNews = ({
 	const handlePublishNews = () => {
 		setIsLoading(false);
 
-		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
+		if (!validateForm(form) || (editBtnDisabled &amp;&amp; status === 'published')) {
 			validatePublishNewsBtn();
 		} else {
 			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -701,8 +729,8 @@ const UploadOrEditNews = ({
 	};
 
 	return (
-		<div>
-			<Slider
+		&lt;div>
+			&lt;Slider
 				open={open}
 				handleClose={() => {
 					handleClose();
@@ -718,13 +746,13 @@ const UploadOrEditNews = ({
 				dialogRef={dialogWrapper}
 				notifID={notifID}
 			>
-				<LoadingOverlay
+				&lt;LoadingOverlay
 					active={isLoading}
 					className={classes.loadingOverlay}
-					spinner={<PrimaryLoader />}
+					spinner={&lt;PrimaryLoader />}
 				>
-					<Slide in={true} direction='up' {...{ timeout: 400 }}>
-						<div
+					&lt;Slide in={true} direction='up' {...{ timeout: 400 }}>
+						&lt;div
 							ref={loadingRef}
 							className={`${
 								previewFile != null
@@ -732,21 +760,21 @@ const UploadOrEditNews = ({
 									: globalClasses.contentWrapper
 							}`}
 						>
-							{specificNewsStatus === 'loading' ? <PrimaryLoader /> : <></>}
-							<div
+							{specificNewsStatus === 'loading' ? &lt;PrimaryLoader /> : &lt;>&lt;/>}
+							&lt;div
 								className={globalClasses.contentWrapperNoPreview}
 								style={{ width: previewFile != null ? '60%' : 'auto' }}
 							>
-								<div>
-									<div className={globalClasses.accordionRoot}>
-										<Accordion defaultExpanded>
-											<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-												<Typography>General Information</Typography>
-											</AccordionSummary>
+								&lt;div>
+									&lt;div className={globalClasses.accordionRoot}>
+										&lt;Accordion defaultExpanded>
+											&lt;AccordionSummary expandIcon={&lt;ExpandMoreIcon />}>
+												&lt;Typography>General Information&lt;/Typography>
+											&lt;/AccordionSummary>
 
-											<AccordionDetails>
-												<div className={globalClasses.captionContainer}>
-													<Labels
+											&lt;AccordionDetails>
+												&lt;div className={globalClasses.captionContainer}>
+													&lt;Labels
 														titleClasses={
 															isError.selectedLabels
 																? globalClasses.errorState
@@ -766,8 +794,8 @@ const UploadOrEditNews = ({
 														draftStatus={status}
 														setExtraLabel={setExtraLabel}
 													/>
-												</div>
-												<p className={globalClasses.mediaError}>
+												&lt;/div>
+												&lt;p className={globalClasses.mediaError}>
 													{isError.selectedLabels
 														? `You need to add ${
 																7 - form.labels.length
@@ -775,15 +803,15 @@ const UploadOrEditNews = ({
 														: isError.selectedLabelsDraft
 														? 'You need to select atleast 1 label to save as draft'
 														: ''}
-												</p>
-												<div className={globalClasses.captionContainer}>
-													<div className={globalClasses.characterCount}>
-														<h6>BANNER TITLE</h6>
-														<h6
+												&lt;/p>
+												&lt;div className={globalClasses.captionContainer}>
+													&lt;div className={globalClasses.characterCount}>
+														&lt;h6>BANNER TITLE&lt;/h6>
+														&lt;h6
 															style={{
 																color:
-																	form?.banner_title?.length >= 39 &&
-																	form?.banner_title?.length <= 42
+																	form?.banner_title?.length >= 39 &amp;&amp;
+																	form?.banner_title?.length &lt;= 42
 																		? 'pink'
 																		: form?.banner_title?.length === 43
 																		? 'red'
@@ -791,10 +819,10 @@ const UploadOrEditNews = ({
 															}}
 														>
 															{form?.banner_title?.length}/43
-														</h6>
-													</div>
+														&lt;/h6>
+													&lt;/div>
 
-													<TextField
+													&lt;TextField
 														value={form.banner_title}
 														onChange={(e) => {
 															setForm((prev) => {
@@ -814,19 +842,19 @@ const UploadOrEditNews = ({
 														multiline
 														maxRows={2}
 													/>
-												</div>
+												&lt;/div>
 
-												<div
+												&lt;div
 													style={{ marginTop: '15px' }}
 													className={globalClasses.captionContainer}
 												>
-													<div className={globalClasses.characterCount}>
-														<h6>BANNER DESCRIPTION</h6>
-														<h6
+													&lt;div className={globalClasses.characterCount}>
+														&lt;h6>BANNER DESCRIPTION&lt;/h6>
+														&lt;h6
 															style={{
 																color:
-																	form?.banner_description?.length >= 75 &&
-																	form?.banner_description?.length <= 83
+																	form?.banner_description?.length >= 75 &amp;&amp;
+																	form?.banner_description?.length &lt;= 83
 																		? 'pink'
 																		: form?.banner_description?.length === 84
 																		? 'red'
@@ -834,10 +862,10 @@ const UploadOrEditNews = ({
 															}}
 														>
 															{form?.banner_description?.length}/84
-														</h6>
-													</div>
+														&lt;/h6>
+													&lt;/div>
 
-													<TextField
+													&lt;TextField
 														value={form.banner_description}
 														onChange={(e) => {
 															setForm((prev) => {
@@ -858,11 +886,11 @@ const UploadOrEditNews = ({
 														minRows={3}
 														maxRows={4}
 													/>
-												</div>
-												<div className={globalClasses.postMediaContainer}>
-													<div className={globalClasses.postMediaHeader}>
-														<h5>Show comments</h5>
-														<ToggleSwitch
+												&lt;/div>
+												&lt;div className={globalClasses.postMediaContainer}>
+													&lt;div className={globalClasses.postMediaHeader}>
+														&lt;h5>Show comments&lt;/h5>
+														&lt;ToggleSwitch
 															id={1}
 															checked={form.show_comments}
 															onChange={(checked) =>
@@ -871,15 +899,15 @@ const UploadOrEditNews = ({
 																})
 															}
 														/>
-													</div>
-												</div>
-												<div
+													&lt;/div>
+												&lt;/div>
+												&lt;div
 													className={globalClasses.postMediaContainer}
 													style={{ marginBottom: '1rem' }}
 												>
-													<div className={globalClasses.postMediaHeader}>
-														<h5>Show likes</h5>
-														<ToggleSwitch
+													&lt;div className={globalClasses.postMediaHeader}>
+														&lt;h5>Show likes&lt;/h5>
+														&lt;ToggleSwitch
 															id={2}
 															checked={form.show_likes}
 															onChange={(checked) =>
@@ -888,17 +916,17 @@ const UploadOrEditNews = ({
 																})
 															}
 														/>
-													</div>
-												</div>
-											</AccordionDetails>
-										</Accordion>
-									</div>
+													&lt;/div>
+												&lt;/div>
+											&lt;/AccordionDetails>
+										&lt;/Accordion>
+									&lt;/div>
 
-									<NewsDraggable onDragEnd={onDragEnd}>
+									&lt;NewsDraggable onDragEnd={onDragEnd}>
 										{news.map((item, index) => {
 											return (
-												<>
-													<NewsSlide
+												&lt;>
+													&lt;NewsSlide
 														item={item}
 														index={index}
 														key={item.sort_order}
@@ -909,36 +937,36 @@ const UploadOrEditNews = ({
 														handleDeleteNews={(sortOrder) =>
 															handleNewsElementDelete(sortOrder)
 														}
-														initialData={item.data && item.data}
+														initialData={item.data &amp;&amp; item.data}
 														setPreviewBool={setPreviewBool}
 														setPreviewFile={setPreviewFile}
 													/>
-												</>
+												&lt;/>
 											);
 										})}
-									</NewsDraggable>
+									&lt;/NewsDraggable>
 
-									<Button
+									&lt;Button
 										style={{ marginTop: '4rem' }}
 										disabled={false}
 										buttonNews={true}
 										onClick={() => handleNewsSlide()}
 										text={'ADD NEWS SLIDE'}
 									/>
-								</div>
+								&lt;/div>
 
-								<p className={globalClasses.mediaError}>
+								&lt;p className={globalClasses.mediaError}>
 									{isError.draftError
 										? 'Something needs to be changed to save a draft'
 										: ''}
-								</p>
+								&lt;/p>
 
-								<div
+								&lt;div
 									className={isEdit ? classes.newsButtonDiv : classes.buttonDiv}
 								>
-									{isEdit || (status === 'draft' && isEdit) ? (
-										<div className={globalClasses.editBtn}>
-											<Button
+									{isEdit || (status === 'draft' &amp;&amp; isEdit) ? (
+										&lt;div className={globalClasses.editBtn}>
+											&lt;Button
 												disabled={deleteBtnStatus}
 												button2={isEdit ? true : false}
 												onClick={() => {
@@ -948,19 +976,19 @@ const UploadOrEditNews = ({
 												}}
 												text={'DELETE NEWS'}
 											/>
-										</div>
+										&lt;/div>
 									) : (
-										<></>
+										&lt;>&lt;/>
 									)}
 
-									<div className={globalClasses.publishDraftDiv}>
+									&lt;div className={globalClasses.publishDraftDiv}>
 										{status === 'draft' || !isEdit ? (
-											<div
+											&lt;div
 												className={
 													isEdit ? classes.draftBtnEdit : classes.draftBtn
 												}
 											>
-												<Button
+												&lt;Button
 													disabledDraft={
 														isEdit
 															? draftBtnDisabled
@@ -969,21 +997,21 @@ const UploadOrEditNews = ({
 													onClick={() => handleCreateDraft()}
 													button3={true}
 													text={
-														status === 'draft' && isEdit
+														status === 'draft' &amp;&amp; isEdit
 															? 'SAVE DRAFT'
 															: 'SAVE AS DRAFT'
 													}
 												/>
-											</div>
+											&lt;/div>
 										) : (
-											<></>
+											&lt;>&lt;/>
 										)}
 
-										<div>
-											<Button
+										&lt;div>
+											&lt;Button
 												disabled={
-													isEdit &&
-													validateForm(form, null, news) &&
+													isEdit &amp;&amp;
+													validateForm(form, null, news) &amp;&amp;
 													status === 'draft'
 														? false
 														: isEdit
@@ -994,29 +1022,29 @@ const UploadOrEditNews = ({
 												button2AddSave={true}
 												text={buttonText}
 											/>
-										</div>
-									</div>
-								</div>
-							</div>
+										&lt;/div>
+									&lt;/div>
+								&lt;/div>
+							&lt;/div>
 
-							{previewFile != null && (
-								<div
+							{previewFile != null &amp;&amp; (
+								&lt;div
 									ref={previewRef}
 									className={globalClasses.previewComponent}
 								>
-									<div className={globalClasses.previewHeader}>
-										<Close
+									&lt;div className={globalClasses.previewHeader}>
+										&lt;Close
 											onClick={() => {
 												setPreviewBool(false);
 												setPreviewFile(null);
 											}}
 											className={globalClasses.closeIcon}
 										/>
-										<h5>Preview</h5>
-									</div>
-									<div>
+										&lt;h5>Preview&lt;/h5>
+									&lt;/div>
+									&lt;div>
 										{
-											<img
+											&lt;img
 												src={previewFile.media_url}
 												className={globalClasses.previewFile}
 												style={{
@@ -1027,15 +1055,15 @@ const UploadOrEditNews = ({
 												}}
 											/>
 										}
-									</div>
-								</div>
+									&lt;/div>
+								&lt;/div>
 							)}
-						</div>
-					</Slide>
-				</LoadingOverlay>
-			</Slider>
+						&lt;/div>
+					&lt;/Slide>
+				&lt;/LoadingOverlay>
+			&lt;/Slider>
 
-			<DeleteModal
+			&lt;DeleteModal
 				open={openDeletePopup}
 				toggle={toggleDeleteModal}
 				deleteBtn={() => {
@@ -1044,7 +1072,7 @@ const UploadOrEditNews = ({
 				text={'News'}
 				wrapperRef={dialogWrapper}
 			/>
-		</div>
+		&lt;/div>
 	);
 };
 
@@ -1058,3 +1086,26 @@ UploadOrEditNews.propTypes = {
 };
 
 export default UploadOrEditNews;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AppRoutes.html">AppRoutes</a></li><li><a href="BannerRows.html">BannerRows</a></li><li><a href="Banners.html">Banners</a></li><li><a href="NewsDraggable.html">NewsDraggable</a></li><li><a href="NewsLibrary.html">NewsLibrary</a></li><li><a href="NewsSlide.html">NewsSlide</a></li><li><a href="TopBanner.html">TopBanner</a></li><li><a href="UploadOrEditNews.html">UploadOrEditNews</a></li></ul><h3>Global</h3><ul><li><a href="global.html#changeQueryParameters">changeQueryParameters</a></li><li><a href="global.html#sanitizeDates">sanitizeDates</a></li><li><a href="global.html#ToastErrorNotifications">ToastErrorNotifications</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Thu Oct 27 2022 16:07:05 GMT+0500 (Pakistan Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

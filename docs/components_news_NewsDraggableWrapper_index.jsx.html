@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: AppRoutes</title>
+    <title>JSDoc: Source: components/news/NewsDraggableWrapper/index.jsx</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,137 +17,49 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: AppRoutes</h1>
+    <h1 class="page-title">Source: components/news/NewsDraggableWrapper/index.jsx</h1>
 
     
 
 
 
-
-<section>
-
-<header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>AppRoutes<span class="signature">()</span><span class="type-signature"></span></h2>
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-    
-
-    
-    <h4 class="name" id="AppRoutes"><span class="type-signature"></span>new AppRoutes<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>AppRoutes component where all the routing for the project is setup.</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="routes_index.js.html">routes/index.js</a>, <a href="routes_index.js.html#line23">line 23</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react';
+import PropTypes from 'prop-types';
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+
+/**
+ * News Draggable Component
+ * @component
+ */
+const NewsDraggable = ({ children, onDragEnd }) => {
+	return (
+		&lt;div>
+			&lt;DragDropContext onDragEnd={onDragEnd}>
+				&lt;Droppable droppableId='newsDroppable-1'>
+					{(provided) => (
+						&lt;div {...provided.droppableProps} ref={provided.innerRef}>
+							{children}
+							{provided.placeholder}
+						&lt;/div>
+					)}
+				&lt;/Droppable>
+			&lt;/DragDropContext>
+		&lt;/div>
+	);
+};
+
+NewsDraggable.propTypes = {
+	children: PropTypes.node,
+	onDragEnd: PropTypes.func
+};
+
+export default NewsDraggable;
+</code></pre>
+        </article>
+    </section>
 
 
 
