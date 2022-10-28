@@ -1,18 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import FormikChipSelect from '../../inputs/formik/FormikChipSelect';
-import { useDispatch, useSelector } from 'react-redux';
+import FormikChipSelect from '../FormikChipSelect';
+import { useDispatch } from 'react-redux';
 import {
 	getNewLabelsSearch,
 	getAllNewLabels
-} from '../../../../data/features/postsLibrary/postsLibraryActions';
-import { useEffect } from 'react';
+} from '../../../../../data/features/postsLibrary/postsLibraryActions';
+import {
+	newLabelsSearch,
+	labelsSearchStatus
+} from '../../../../../data/selectors/labelsSelectors';
 
-const LabelSelect = ({ isEdit, draftStatus, selectedLabels }) => {
+const FormikLabelSelect = ({ name, isEdit, draftStatus, selectedLabels }) => {
 	const dispatch = useDispatch();
-	const { newLabelsSearch, labelsSearchStatus } = useSelector(
-		(state) => state.rootReducer.postsLibrary
-	);
 	const labelName = selectedLabels?.map((label) => label.name);
 	let newOptions = newLabelsSearch.filter(
 		(element) => !labelName.includes(element.name)
@@ -43,7 +43,7 @@ const LabelSelect = ({ isEdit, draftStatus, selectedLabels }) => {
 	};
 	return (
 		<FormikChipSelect
-			name='label'
+			name={name}
 			title='LABELS'
 			disabled={isEdit && draftStatus !== 'draft'}
 			newData={newLabelsSearch}
@@ -55,10 +55,10 @@ const LabelSelect = ({ isEdit, draftStatus, selectedLabels }) => {
 	);
 };
 
-LabelSelect.propTypes = {
+FormikLabelSelect.propTypes = {
 	isEdit: PropTypes.bool,
 	draftStatus: PropTypes.string,
 	selectedLabels: PropTypes.array
 };
 
-export default LabelSelect;
+export default FormikLabelSelect;
