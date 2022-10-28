@@ -2,15 +2,14 @@ export interface ChipsSelectFieldProps {
 	name: string;
 	title: string;
 	selectedData: Array<any>;
-	placeHolderMessage: string;
+	placeholder: string;
 	error: string;
-	isNotPublished: boolean;
+	disabled: boolean;
 	newData: Array<any>;
-	newOptions: Array<any>;
+	options: Array<any>;
 	isLoading: boolean;
 	onChange: (field: string, value: Array<any>) => void;
-	selectedDataRemoved: Array<any>;
-	textValue: string;
+	onSearchTextChange: (value: string) => void;
 	onBlur: () => void;
 }
 
