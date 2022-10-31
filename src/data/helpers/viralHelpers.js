@@ -142,5 +142,5 @@ export const viralFormValidationSchema = Yup.object().shape({
 	uploadedFiles: Yup.array().min(1).required(),
 	labels: Yup.array().min(7).required().label('Labels'),
 	show_likes: Yup.boolean().required(),
-	show_comments: Yup.boolean().required()
+	show_comments: Yup.boolean().required(),
 });

@@ -37,14 +37,12 @@ const ViralForm = ({
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
 	// Refs
-	const contentWrapperRef = useRef(null);
 	const dialogWrapper = useRef(null);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
 	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
 		formikBag.setSubmitting(true);
-		contentWrapperRef.current.scrollIntoView({ behavior: 'smooth' });
 
 		try {
 			const uploadFileRes = await uploadFileToServer(
@@ -56,8 +54,6 @@ const ViralForm = ({
 				uploadFileRes,
 				isDraft
 			);
-
-			console.log({ uploadFileRes, viralData });
 
 			await dispatch(createOrEditViralThunk(viralData, formikBag, isDraft));
 
@@ -117,7 +113,6 @@ const ViralForm = ({
 						handleClose={handleClose}
 						isEdit={isEdit}
 						status={status}
-						contentWrapperRef={contentWrapperRef}
 						onSubmitHandler={onSubmitHandler}
 						toggleDeleteModal={toggleDeleteModal}
 					/>

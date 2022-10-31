@@ -60,10 +60,6 @@ ViralFormDrawer.propTypes = {
 	handleClose: PropTypes.func.isRequired,
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
-	contentWrapperRef: PropTypes.oneOfType([
-		PropTypes.func,
-		PropTypes.shape({ current: PropTypes.elementType })
-	]),
 	onSubmitHandler: PropTypes.func.isRequired,
 	toggleDeleteModal: PropTypes.func.isRequired
 };
