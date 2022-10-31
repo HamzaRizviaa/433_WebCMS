@@ -309,10 +309,7 @@ const UploadOrEditQuiz = ({
 		});
 
 	useEffect(() => {
-		if (
-			(acceptedFiles?.length && !isEdit) ||
-			(acceptedFiles?.length && isEdit && status !== 'CLOSED')
-		) {
+		if (acceptedFiles?.length) {
 			setIsError({});
 
 			let newFiles = acceptedFiles.map((file) => {
@@ -324,9 +321,7 @@ const UploadOrEditQuiz = ({
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
-					type: file.type === 'image',
-					width: fileWidth,
-					height: fileHeight
+					type: file.type === 'image'
 				};
 			});
 
@@ -337,7 +332,24 @@ const UploadOrEditQuiz = ({
 				};
 			});
 		}
-	}, [acceptedFiles, fileHeight, fileWidth]);
+	}, [acceptedFiles]);
+
+	useEffect(() => {
+		if (fileHeight && fileWidth && form?.results_image?.length) {
+			setForm((prev) => {
+				return {
+					...prev,
+					results_image: [
+						{
+							...form?.results_image[0],
+							width: fileWidth,
+							height: fileHeight
+						}
+					]
+				};
+			});
+		}
+	}, [fileHeight, fileWidth]);
 
 	useEffect(() => {
 		if (fileRejections.length) {
@@ -371,10 +383,7 @@ const UploadOrEditQuiz = ({
 	});
 
 	useEffect(() => {
-		if (
-			(acceptedFiles2?.length && !isEdit) ||
-			(acceptedFiles2?.length && isEdit && status !== 'CLOSED')
-		) {
+		if (acceptedFiles2?.length) {
 			setIsError({});
 
 			let newFiles = acceptedFiles2.map((file) => {
@@ -386,9 +395,7 @@ const UploadOrEditQuiz = ({
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
-					type: file.type === 'image',
-					width: fileWidth,
-					height: fileHeight
+					type: file.type === 'image'
 				};
 			});
 
@@ -399,7 +406,24 @@ const UploadOrEditQuiz = ({
 				};
 			});
 		}
-	}, [acceptedFiles2, fileHeight2, fileWidth2]);
+	}, [acceptedFiles2]);
+
+	useEffect(() => {
+		if (fileHeight2 && fileWidth2 && form?.negative_results_image?.length) {
+			setForm((prev) => {
+				return {
+					...prev,
+					negative_results_image: [
+						{
+							...form?.negative_results_image[0],
+							width: fileWidth2,
+							height: fileHeight2
+						}
+					]
+				};
+			});
+		}
+	}, [fileHeight2, fileWidth2]);
 
 	useEffect(() => {
 		if (fileRejections2.length) {
