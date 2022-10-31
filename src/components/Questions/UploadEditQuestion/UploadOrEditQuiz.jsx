@@ -309,7 +309,10 @@ const UploadOrEditQuiz = ({
 		});
 
 	useEffect(() => {
-		if (acceptedFiles?.length) {
+		if (
+			(acceptedFiles?.length && !isEdit) ||
+			(acceptedFiles?.length && isEdit && status !== 'CLOSED')
+		) {
 			setIsError({});
 
 			let newFiles = acceptedFiles.map((file) => {
@@ -368,7 +371,10 @@ const UploadOrEditQuiz = ({
 	});
 
 	useEffect(() => {
-		if (acceptedFiles2?.length) {
+		if (
+			(acceptedFiles2?.length && !isEdit) ||
+			(acceptedFiles2?.length && isEdit && status !== 'CLOSED')
+		) {
 			setIsError({});
 
 			let newFiles = acceptedFiles2.map((file) => {
@@ -761,7 +767,10 @@ const UploadOrEditQuiz = ({
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
-
+		setFileWidth(0);
+		setFileHeight(0);
+		setFileHeight2(0);
+		setFileWidth2(0);
 		setForm({
 			end_date: null,
 			...(isSummaryEnabled
