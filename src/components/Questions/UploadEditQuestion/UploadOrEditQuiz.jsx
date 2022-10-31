@@ -274,7 +274,7 @@ const UploadOrEditQuiz = ({
 		return (
 			<div
 				className={`${classes.customDateInput} ${
-					status === 'CLOSED' && classes.disableTextField
+					isEdit && status === 'CLOSED' && classes.disableTextField
 				}`}
 				onClick={onClick}
 				ref={ref}
