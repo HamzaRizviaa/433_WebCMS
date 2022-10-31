@@ -5,12 +5,12 @@ import PropTypes from 'prop-types';
 const Button = ({
 	icon,
 	type = 'button',
-	variant = 'contained', // contained, outlined, text 
+	variant = 'contained', // contained, outlined, text
 	size = 'medium', // small, medium, large
 	className = '',
 	fullWidth = false,
 	disabled,
-	buttonText,
+	children,
 	...rest
 }) => {
 	const classes = useButtonStyles({
@@ -28,7 +28,7 @@ const Button = ({
 			type={type}
 			disabled={disabled}
 		>
-			{buttonText}
+			{children}
 			{icon ? icon : <></>}
 		</button>
 	);
@@ -42,7 +42,8 @@ Button.propTypes = {
 	className: PropTypes.string,
 	fullWidth: PropTypes.bool,
 	disabled: PropTypes.bool,
-	buttonText: PropTypes.string
-}
+	buttonText: PropTypes.string,
+	children: PropTypes.any
+};
 
 export default Button;
