@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/news/uploadOrEditNews/index.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/news/uploadOrEditNews/index.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
+import React, { useState, useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import Slider from '../../slider';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { useStyles } from './index.styles';
+import { useStyles as globalUseStyles } from '../../../styles/global.style';
+import LoadingOverlay from 'react-loading-overlay';
+import PrimaryLoader from '../../PrimaryLoader';
+import Slide from '@mui/material/Slide';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Typography from '@mui/material/Typography';
+import Labels from '../../Labels';
+import ToggleSwitch from '../../switch';
+import DeleteModal from '../../DeleteModal';
+import Button from '../../button';
+import NewsDraggable from '../NewsDraggableWrapper';
+import NewsSlide from '../NewsSlide';
+import Close from '@material-ui/icons/Close';
+import {
+	checkEmptyMediaNews,
+	checkEmptyMediaNewsDraft,
+	comparingNewsFields,
+	checkNewElementNEWS,
+	checkNewElementNEWSDraft,
+	checkSortOrderOnEdit
+	// checkDuplicateLabel
+} from '../../../data/utils/newsUtils';
+import FeatureWrapper from '../../../components/FeatureWrapper';
+import {
+	checkDuplicateLabel,
+	validateForm,
+	validateDraft,
+	getLocalStorageDetails,
+	uploadFileToServer
+} from '../../../data/utils';
+
+//api calls
+
+import { getAllNews } from '../../../data/features/newsLibrary/newsLibrarySlice';
+import { TextField } from '@material-ui/core';
+import { ToastErrorNotifications } from '../../../data/constants';
+import useCommonParams from '../../../hooks/useCommonParams';
+
+/**
+ * Upload or Edit News Component
+ * @component
+ */
+const UploadOrEditNews = ({
+	open,
+	handleClose,
+	title,
+	buttonText,
+	isEdit,
+	status
+}) => {
+	const classes = useStyles();
+	const globalClasses = globalUseStyles();
+
+	const navigate = useNavigate();
+	const { queryParams, isSearchParamsEmpty } = useCommonParams();
+	const [isLoading, setIsLoading] = useState(false);
+	const [previewFile, setPreviewFile] = useState(null);
+	const [disableDropdown, setDisableDropdown] = useState(true);
+	const [previewBool, setPreviewBool] = useState(false);
+	const [postLabels, setPostLabels] = useState([]);
+	const [extraLabel, setExtraLabel] = useState('');
+	const [deleteBtnStatus, setDeleteBtnStatus] = useState(false);
+	const [openDeletePopup, setOpenDeletePopup] = useState(false);
+	const [editBtnDisabled, setEditBtnDisabled] = useState(false);
+	const [draftBtnDisabled, setDraftBtnDisabled] = useState(false);
+	const [isError, setIsError] = useState({});
+	const [notifID, setNotifID] = useState('');
+	const [form, setForm] = useState({
+		labels: [],
+		banner_title: '',
+		banner_description: '',
+		show_likes: true,
+		show_comments: true
+	});
+	const [news, setNews] = useState([]);
+
+	const previewRef = useRef(null);
+	const loadingRef = useRef(null);
+	const dialogWrapper = useRef(null);
+
+	const dispatch = useDispatch();
+	const { features } = useSelector((state) => state.rootReducer.remoteConfig);
+	const labels = useSelector((state) => state.rootReducer.postsLibrary.labels);
+	const { specificNews, specificNewsStatus } = useSelector(
+		(state) => state.rootReducer.newsLibrary
+	);
+
+	useEffect(() => {
+		return () => {
+			resetState();
+		};
+	}, []);
+
+	useEffect(() => {
+		if (specificNews) {
+			setNotifID(specificNews?.id);
+			if (specificNews?.labels) {
+				let _labels = [];
+				specificNews.labels.map((label) =>
+					_labels.push({ id: -1, name: label })
+				);
+
+				setForm((prev) => {
+					return {
+						...prev,
+						labels: _labels
+					};
+				});
+			}
+			setForm((prev) => {
+				return {
+					...prev,
+					show_likes: specificNews?.show_likes,
+					show_comments: specificNews?.show_comments,
+					banner_title: specificNews?.banner_title,
+					banner_description: specificNews?.banner_description
+				};
+			});
+			specificNews?.slides?.length > 0
+				? setNews(updateSlidesDataFromAPI(specificNews?.slides))
+				: setNews([]);
+		}
+	}, [specificNews]);
+
+	useEffect(() => {
+		if (specificNews) {
+			const validateEmptyNewsArray = [
+				checkEmptyMediaNews(news),
+				news?.length !== 0
+			];
+
+			setEditBtnDisabled(
+				!validateForm(form, null, news) ||
+					!validateEmptyNewsArray.every((item) => item === true) ||
+					comparingNewsFields(specificNews, form)
+			);
+		}
+	}, [specificNews, form]);
+
+	useEffect(() => {
+		if (specificNews) {
+			setDraftBtnDisabled(
+				!validateDraft(form, null, news) ||
+					(comparingNewsFields(specificNews, form) &amp;&amp;
+						specificNews?.labels?.length === form?.labels.length &amp;&amp;
+						!checkDuplicateLabel(form, specificNews))
+			);
+		}
+	}, [specificNews, form]);
+
+	useEffect(() => {
+		const validateEmptyNewsArray = [
+			checkEmptyMediaNews(news),
+			news?.length !== 0
+		];
+
+		const validateEmptyNewsAndEditComparisonArray = [
+			checkNewElementNEWS(specificNews, news),
+			news?.length !== 0
+		];
+
+		if (
+			!validateForm(form, null, news) ||
+			!comparingNewsFields(specificNews, form)
+		) {
+			//console.log('if');
+			setEditBtnDisabled(
+				!validateEmptyNewsArray.every((item) => item === true) ||
+					!validateForm(form, null, news)
+			);
+		} else {
+			//console.log('else');
+			if (specificNews?.slides?.length !== news?.length) {
+				setEditBtnDisabled(
+					!validateEmptyNewsArray.every((item) => item === true)
+				);
+			} else {
+				if (
+					validateEmptyNewsAndEditComparisonArray.every(
+						(item) => item === true
+					) ||
+					!validateEmptyNewsArray.every((item) => item === true)
+				) {
+					setEditBtnDisabled(!checkSortOrderOnEdit(specificNews, news));
+				} else {
+					setEditBtnDisabled(
+						validateEmptyNewsAndEditComparisonArray.every(
+							(item) => item === true
+						) || !validateEmptyNewsArray.every((item) => item === true)
+					);
+				}
+				// setEditBtnDisabled(checkMediaUrlPublish(news));
+			}
+		}
+	}, [news]);
+
+	useEffect(() => {
+		const validateEmptyNewsArray = [checkEmptyMediaNewsDraft(news)];
+
+		const validateEmptyNewsAndEditComparisonArray = [
+			checkNewElementNEWSDraft(specificNews, news)
+		];
+
+		if (
+			!validateDraft(form, null, news) ||
+			!comparingNewsFields(specificNews, form)
+		) {
+			setDraftBtnDisabled(
+				!validateEmptyNewsArray.every((item) => item === true) ||
+					!validateDraft(form, null, news)
+			);
+		} else {
+			if (specificNews?.slides?.length !== news?.length) {
+				setDraftBtnDisabled(
+					!validateEmptyNewsArray.every((item) => item === true)
+				);
+			} else {
+				if (
+					validateEmptyNewsAndEditComparisonArray.every(
+						(item) => item === true
+					) ||
+					!validateEmptyNewsArray.every((item) => item === true)
+				) {
+					//console.log('3rd');
+					setDraftBtnDisabled(!checkSortOrderOnEdit(specificNews, news));
+				} else {
+					//	console.log('4th');
+					setDraftBtnDisabled(
+						validateEmptyNewsAndEditComparisonArray.every(
+							(item) => item === true
+						) || !validateEmptyNewsArray.every((item) => item === true)
+					);
+				}
+			}
+		}
+	}, [news]);
+
+	/**
+	 * Update Slides Data from API
+	 * @param {array} data - Query param data Array
+	 * @returns {array} - Slides data with their sort order
+	 */
+	const updateSlidesDataFromAPI = (data) => {
+		let slidesData = data.map(
+			({ description, name, title, sort_order, ...rest }) => {
+				return {
+					sort_order: sort_order,
+					data: [
+						{
+							...rest,
+							description,
+							name,
+							title,
+							...(rest.image
+								? {
+										media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.image}`,
+										file_name: rest.file_name
+								  }
+								: {})
+						}
+					]
+				};
+			}
+		);
+
+		return slidesData;
+	};
+
+	useEffect(() => {
+		if (!open) {
+			resetState();
+		}
+	}, [open]);
+
+	/**
+	 * Resets the state
+	 * @returns {void}
+	 */
+	const resetState = () => {
+		setTimeout(() => {
+			setDeleteBtnStatus(false);
+		}, 1000);
+		setPreviewFile(null);
+		setPreviewBool(false);
+		setDisableDropdown(true);
+		setDraftBtnDisabled(false);
+		setEditBtnDisabled(false);
+		setIsError({});
+		setNotifID('');
+		setForm({
+			labels: [],
+			banner_title: '',
+			banner_description: '',
+			show_likes: true,
+			show_comments: true
+		});
+		setNews([]);
+	};
+
+	useEffect(() => {
+		setPostLabels((labels) => {
+			return labels.filter((label) => label.id != null);
+		});
+		if (extraLabel) {
+			let flag = postLabels.some((label) => label.name == extraLabel);
+			if (flag == false) {
+				setPostLabels((labels) => {
+					return [...labels, { id: null, name: extraLabel }];
+				});
+			}
+		}
+	}, [extraLabel]);
+
+	useEffect(() => {
+		if (labels.length) {
+			setPostLabels([...labels]);
+		}
+	}, [labels]);
+
+	const handlePreviewEscape = () => {
+		setPreviewBool(false);
+		setPreviewFile(null);
+	};
+
+	const handleChangeExtraLabel = (e) => {
+		setExtraLabel(e.target.value.toUpperCase());
+	};
+
+	/**
+	 * Opens the popup for Delete modal
+	 * @returns {void}
+	 */
+	const toggleDeleteModal = () => {
+		setOpenDeletePopup(!openDeletePopup);
+	};
+
+	/**
+	 * Reorders News Slides
+	 * @param {array} list - Array of News Slides
+	 * @param {number} startIndex - Start index of a specifc News Slide
+	 * @param {number} endIndex - End index of a specific News Slide
+	 * @returns {array} Returns reordered News Slides
+	 */
+	const reorder = (list, startIndex, endIndex) => {
+		const result = Array.from(list);
+		const [removed] = result.splice(startIndex, 1);
+		result.splice(endIndex, 0, removed);
+		return result;
+	};
+
+	/**
+	 * Drags and reorders news slides
+	 * @param {Object} result - Object with specific News Slide drag info
+	 * @returns {void}
+	 */
+	const onDragEnd = (result) => {
+		if (!result.destination) {
+			return;
+		}
+		const items = reorder(
+			news,
+			result.source.index, // pick
+			result.destination.index // drop
+		);
+		setNews(items);
+	};
+
+	/**
+	 * Appends new slide to the news slide array
+	 * @returns {array} Returns News Slide array when a new slide is added
+	 */
+	const handleNewsSlide = () => {
+		setNews((prev) => {
+			return [
+				...prev,
+				{
+					sort_order: news.length + 1
+				}
+			];
+		});
+	};
+
+	/**
+	 * Sets data for every news slide
+	 * @param {Object} childData - Updates everytime News Slide data is updated
+	 * @param {number} index - News slide index where data is updated
+	 * @returns {void}
+	 */
+	const setNewData = (childData, index) => {
+		let dataCopy = [...news];
+		dataCopy[index].data = [
+			{
+				...(dataCopy[index]?.data?.length ? dataCopy[index]?.data[0] : {}),
+				...childData
+			}
+		];
+
+		setNews(dataCopy);
+	};
+
+	/**
+	 * Deletes media from each news slide
+	 * @param {array} elementData - Array containing data for deleted media
+	 * @param {number} index - Index for deleted media
+	 * @returns {Object} Returns deleted media object
+	 */
+	const handleMediaDataDelete = (elementData, index) => {
+		let dataCopy = [...news];
+		if (elementData) {
+			setNews(
+				dataCopy.filter((item, i) => {
+					if (index === i) {
+						delete item['data'][0]?.file_name;
+						delete item['data'][0]?.height;
+						delete item['data'][0]?.media_url;
+						delete item['data'][0]?.width;
+
+						return item;
+					} else {
+						return item;
+					}
+				})
+			);
+		}
+	};
+
+	/**
+	 * Deletes a specific news slide
+	 * @param {number} sortOrder - Order in which a News Slide would be deleted
+	 * @returns {void}
+	 */
+	const handleNewsElementDelete = (sortOrder) => {
+		let dataCopy = [...news];
+		if (sortOrder) {
+			setNews(dataCopy.filter((file) => file.sort_order !== sortOrder));
+		}
+	};
+
+	/**
+	 * Deletes the News Item
+	 * @param {number} id - ID on which the News item is to be deleted
+	 * @param {string} isDraft - String containing the News status whether published or drafted.
+	 * @returns {void}
+	 */
+	const deleteNews = async (id, isDraft) => {
+		setDeleteBtnStatus(true);
+
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/news/delete-news`,
+				{
+					news_id: id,
+					is_draft: isDraft
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success('News has been deleted!');
+				handleClose();
+				dispatch(getAllNews(queryParams));
+			}
+		} catch (e) {
+			toast.error(ToastErrorNotifications.deleteBannerItemText);
+			setDeleteBtnStatus(false);
+			console.log(e, 'Failed to delete News');
+		}
+
+		setOpenDeletePopup(!openDeletePopup);
+	};
+
+	/**
+	 * Post API call to create News Item
+	 * @param {integer} id - Contains the id of the news item
+	 * @param {array} mediaFiles - Includes all the media files inside a news item
+	 * @param {Boolean} draft - Sets draft to false
+	 * @returns {void}
+	 */
+	const createNews = async (id, mediaFiles = [], draft = false) => {
+		// setPostButtonStatus(true);
+
+		let slides =
+			news.length > 0
+				? news.map((item, index) => {
+						return {
+							//id: item.data[0].id,
+							image:
+								mediaFiles[index]?.media_url?.split('cloudfront.net/')[1] ||
+								mediaFiles[index]?.media_url,
+							file_name: mediaFiles[index]?.file_name,
+							height: item.data[0]?.height,
+							width: item.data[0]?.width,
+
+							dropbox_url: item.data[0]?.dropbox_url,
+							description: item.data[0]?.description,
+							title: item.data[0]?.title,
+							name: item.data[0]?.name,
+							sort_order: index + 1
+						};
+				  })
+				: [];
+
+		try {
+			const result = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/news/add-news`,
+				{
+					save_draft: draft,
+					banner_title: form.banner_title,
+					banner_description: form.banner_description,
+					show_likes: form.show_likes,
+					show_comments: form.show_comments,
+					slides: slides,
+					...(isEdit &amp;&amp; id ? { news_id: id } : {}),
+					...(form.labels?.length ? { labels: [...form.labels] } : {}),
+					user_data: {
+						id: `${getLocalStorageDetails()?.id}`,
+						first_name: `${getLocalStorageDetails()?.first_name}`,
+						last_name: `${getLocalStorageDetails()?.last_name}`
+					}
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			if (result?.data?.status_code === 200) {
+				toast.success(
+					isEdit ? 'News has been edited!' : 'News has been created!'
+				);
+				setIsLoading(false);
+
+				handleClose();
+
+				if (isEdit &amp;&amp; !(status === 'draft' &amp;&amp; draft === false)) {
+					dispatch(getAllNews(queryParams));
+				} else if (isSearchParamsEmpty) {
+					dispatch(getAllNews());
+				} else {
+					navigate('/news-library');
+				}
+			}
+		} catch (e) {
+			toast.error(isEdit ? 'Failed to edit news!' : 'Failed to create news!');
+			setIsLoading(false);
+
+			console.log(e, 'Failed create / edit News');
+		}
+	};
+
+	console.log('Labels', form.labels);
+
+	/**
+	 * Validates the draft button
+	 * @returns {void}
+	 */
+	const validateDraftBtn = () => {
+		if (isEdit) {
+			setIsError({
+				draftError: draftBtnDisabled
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		} else {
+			setIsError({
+				selectedLabelsDraft: form.labels.length &lt; 1
+			});
+
+			setTimeout(() => {
+				setIsError({});
+			}, 5000);
+		}
+	};
+
+	const validatePublishNewsBtn = () => {
+		setIsError({
+			selectedLabels: form.labels.length &lt; 7
+		});
+		setTimeout(() => {
+			setIsError({});
+		}, 5000);
+	};
+
+	/**
+	 * Drafts a News Item
+	 * @returns {void}
+	 */
+	const handleCreateDraft = () => {
+		setIsLoading(false);
+		if (!validateDraft(form) || draftBtnDisabled) {
+			validateDraftBtn();
+		} else {
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			if (isEdit) {
+				setIsLoading(true);
+				let newsImages = news?.map(async (item) => {
+					let newsData;
+					if (item?.data[0].file) {
+						newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
+
+						return newsData;
+					} else {
+						newsData = item?.data[0];
+						return newsData;
+					}
+				});
+
+				Promise.all([...newsImages])
+					.then((mediaFiles) => {
+						createNews(specificNews?.id, mediaFiles, true);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
+			} else {
+				setIsLoading(true);
+
+				let newsImages = news?.map(async (item) => {
+					let newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
+					return newsData;
+				});
+
+				Promise.all([...newsImages])
+					.then((mediaFiles) => {
+						createNews(null, mediaFiles, true);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
+			}
+		}
+	};
+
+	/**
+	 * Publishes a News Item
+	 * @returns {void}
+	 */
+	const handlePublishNews = () => {
+		setIsLoading(false);
+
+		if (!validateForm(form) || (editBtnDisabled &amp;&amp; status === 'published')) {
+			validatePublishNewsBtn();
+		} else {
+			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			if (isEdit) {
+				setIsLoading(true);
+
+				let newsImages = news?.map(async (item) => {
+					let newsData;
+					if (item?.data[0].file) {
+						newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
+						return newsData;
+					} else {
+						return (newsData = item?.data[0]);
+					}
+				});
+
+				Promise.all([...newsImages])
+					.then((mediaFiles) => {
+						createNews(specificNews?.id, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
+			} else {
+				setIsLoading(true);
+
+				let newsImages = news?.map(async (item) => {
+					let newsData = await uploadFileToServer(item?.data[0], 'newslibrary');
+					return newsData;
+				});
+
+				Promise.all([...newsImages])
+					.then((mediaFiles) => {
+						createNews(null, mediaFiles);
+					})
+					.catch(() => {
+						setIsLoading(false);
+					});
+			}
+		}
+	};
+
+	return (
+		&lt;div>
+			&lt;Slider
+				open={open}
+				handleClose={() => {
+					handleClose();
+				}}
+				title={title}
+				disableDropdown={disableDropdown}
+				handlePreview={() => {
+					handlePreviewEscape();
+				}}
+				preview={previewBool}
+				previewRef={previewRef}
+				news={true}
+				dialogRef={dialogWrapper}
+				notifID={notifID}
+			>
+				&lt;LoadingOverlay
+					active={isLoading}
+					className={classes.loadingOverlay}
+					spinner={&lt;PrimaryLoader />}
+				>
+					&lt;Slide in={true} direction='up' {...{ timeout: 400 }}>
+						&lt;div
+							ref={loadingRef}
+							className={`${
+								previewFile != null
+									? globalClasses.previewContentWrapper
+									: globalClasses.contentWrapper
+							}`}
+						>
+							{specificNewsStatus === 'loading' ? &lt;PrimaryLoader /> : &lt;>&lt;/>}
+							&lt;div
+								className={globalClasses.contentWrapperNoPreview}
+								style={{ width: previewFile != null ? '60%' : 'auto' }}
+							>
+								&lt;div>
+									&lt;div className={globalClasses.accordionRoot}>
+										&lt;Accordion defaultExpanded>
+											&lt;AccordionSummary expandIcon={&lt;ExpandMoreIcon />}>
+												&lt;Typography>General Information&lt;/Typography>
+											&lt;/AccordionSummary>
+
+											&lt;AccordionDetails>
+												&lt;div className={globalClasses.captionContainer}>
+													&lt;Labels
+														titleClasses={
+															isError.selectedLabels
+																? globalClasses.errorState
+																: globalClasses.noErrorState
+														}
+														isEdit={isEdit}
+														setDisableDropdown={setDisableDropdown}
+														selectedLabels={form.labels}
+														LabelsOptions={postLabels}
+														extraLabel={extraLabel}
+														handleChangeExtraLabel={handleChangeExtraLabel}
+														setSelectedLabels={(newVal) => {
+															setForm((prev) => {
+																return { ...prev, labels: [...newVal] };
+															});
+														}}
+														draftStatus={status}
+														setExtraLabel={setExtraLabel}
+													/>
+												&lt;/div>
+												&lt;p className={globalClasses.mediaError}>
+													{isError.selectedLabels
+														? `You need to add ${
+																7 - form.labels.length
+														  } more labels in order to upload media`
+														: isError.selectedLabelsDraft
+														? 'You need to select atleast 1 label to save as draft'
+														: ''}
+												&lt;/p>
+												&lt;div className={globalClasses.captionContainer}>
+													&lt;div className={globalClasses.characterCount}>
+														&lt;h6>BANNER TITLE&lt;/h6>
+														&lt;h6
+															style={{
+																color:
+																	form?.banner_title?.length >= 39 &amp;&amp;
+																	form?.banner_title?.length &lt;= 42
+																		? 'pink'
+																		: form?.banner_title?.length === 43
+																		? 'red'
+																		: 'white'
+															}}
+														>
+															{form?.banner_title?.length}/43
+														&lt;/h6>
+													&lt;/div>
+
+													&lt;TextField
+														value={form.banner_title}
+														onChange={(e) => {
+															setForm((prev) => {
+																return {
+																	...prev,
+																	banner_title: e.target.value
+																};
+															});
+														}}
+														placeholder={'Please write you caption here'}
+														className={classes.textField}
+														InputProps={{
+															disableUnderline: true,
+															className: classes.textFieldInput
+														}}
+														inputProps={{ maxLength: 43 }}
+														multiline
+														maxRows={2}
+													/>
+												&lt;/div>
+
+												&lt;div
+													style={{ marginTop: '15px' }}
+													className={globalClasses.captionContainer}
+												>
+													&lt;div className={globalClasses.characterCount}>
+														&lt;h6>BANNER DESCRIPTION&lt;/h6>
+														&lt;h6
+															style={{
+																color:
+																	form?.banner_description?.length >= 75 &amp;&amp;
+																	form?.banner_description?.length &lt;= 83
+																		? 'pink'
+																		: form?.banner_description?.length === 84
+																		? 'red'
+																		: 'white'
+															}}
+														>
+															{form?.banner_description?.length}/84
+														&lt;/h6>
+													&lt;/div>
+
+													&lt;TextField
+														value={form.banner_description}
+														onChange={(e) => {
+															setForm((prev) => {
+																return {
+																	...prev,
+																	banner_description: e.target.value
+																};
+															});
+														}}
+														placeholder={'Please write you caption here'}
+														className={classes.textField}
+														InputProps={{
+															disableUnderline: true,
+															className: classes.textFieldInput
+														}}
+														inputProps={{ maxLength: 84 }}
+														multiline
+														minRows={3}
+														maxRows={4}
+													/>
+												&lt;/div>
+												&lt;div className={globalClasses.postMediaContainer}>
+													&lt;div className={globalClasses.postMediaHeader}>
+														&lt;h5>Show comments&lt;/h5>
+														&lt;ToggleSwitch
+															id={1}
+															checked={form.show_comments}
+															onChange={(checked) =>
+																setForm((prev) => {
+																	return { ...prev, show_comments: checked };
+																})
+															}
+														/>
+													&lt;/div>
+												&lt;/div>
+												&lt;div
+													className={globalClasses.postMediaContainer}
+													style={{ marginBottom: '1rem' }}
+												>
+													&lt;div className={globalClasses.postMediaHeader}>
+														&lt;h5>Show likes&lt;/h5>
+														&lt;ToggleSwitch
+															id={2}
+															checked={form.show_likes}
+															onChange={(checked) =>
+																setForm((prev) => {
+																	return { ...prev, show_likes: checked };
+																})
+															}
+														/>
+													&lt;/div>
+												&lt;/div>
+											&lt;/AccordionDetails>
+										&lt;/Accordion>
+									&lt;/div>
+
+									&lt;NewsDraggable onDragEnd={onDragEnd}>
+										{news.map((item, index) => {
+											return (
+												&lt;>
+													&lt;NewsSlide
+														item={item}
+														index={index}
+														key={item.sort_order}
+														sendDataToParent={(data) => setNewData(data, index)}
+														handleDeleteMedia={(data) =>
+															handleMediaDataDelete(data, index)
+														}
+														handleDeleteNews={(sortOrder) =>
+															handleNewsElementDelete(sortOrder)
+														}
+														initialData={item.data &amp;&amp; item.data}
+														setPreviewBool={setPreviewBool}
+														setPreviewFile={setPreviewFile}
+													/>
+												&lt;/>
+											);
+										})}
+									&lt;/NewsDraggable>
+
+									&lt;Button
+										style={{ marginTop: '4rem' }}
+										disabled={false}
+										buttonNews={true}
+										onClick={() => handleNewsSlide()}
+										text={'ADD NEWS SLIDE'}
+									/>
+								&lt;/div>
+
+								&lt;p className={globalClasses.mediaError}>
+									{isError.draftError
+										? 'Something needs to be changed to save a draft'
+										: ''}
+								&lt;/p>
+
+								&lt;div
+									className={isEdit ? classes.newsButtonDiv : classes.buttonDiv}
+								>
+									{isEdit || (status === 'draft' &amp;&amp; isEdit) ? (
+										&lt;div className={globalClasses.editBtn}>
+											&lt;Button
+												disabled={deleteBtnStatus}
+												button2={isEdit ? true : false}
+												onClick={() => {
+													if (!deleteBtnStatus) {
+														toggleDeleteModal();
+													}
+												}}
+												text={'DELETE NEWS'}
+											/>
+										&lt;/div>
+									) : (
+										&lt;>&lt;/>
+									)}
+
+									&lt;div className={globalClasses.publishDraftDiv}>
+										{status === 'draft' || !isEdit ? (
+											&lt;div
+												className={
+													isEdit ? classes.draftBtnEdit : classes.draftBtn
+												}
+											>
+												&lt;Button
+													disabledDraft={
+														isEdit
+															? draftBtnDisabled
+															: !validateDraft(form, null, news)
+													}
+													onClick={() => handleCreateDraft()}
+													button3={true}
+													text={
+														status === 'draft' &amp;&amp; isEdit
+															? 'SAVE DRAFT'
+															: 'SAVE AS DRAFT'
+													}
+												/>
+											&lt;/div>
+										) : (
+											&lt;>&lt;/>
+										)}
+
+										&lt;div>
+											&lt;Button
+												disabled={
+													isEdit &amp;&amp;
+													validateForm(form, null, news) &amp;&amp;
+													status === 'draft'
+														? false
+														: isEdit
+														? editBtnDisabled
+														: !validateForm(form, null, news)
+												}
+												onClick={() => handlePublishNews()}
+												button2AddSave={true}
+												text={buttonText}
+											/>
+										&lt;/div>
+									&lt;/div>
+								&lt;/div>
+							&lt;/div>
+
+							{previewFile != null &amp;&amp; (
+								&lt;div
+									ref={previewRef}
+									className={globalClasses.previewComponent}
+								>
+									&lt;div className={globalClasses.previewHeader}>
+										&lt;Close
+											onClick={() => {
+												setPreviewBool(false);
+												setPreviewFile(null);
+											}}
+											className={globalClasses.closeIcon}
+										/>
+										&lt;h5>Preview&lt;/h5>
+									&lt;/div>
+									&lt;div>
+										{
+											&lt;img
+												src={previewFile.media_url}
+												className={globalClasses.previewFile}
+												style={{
+													width: '100%',
+													height: `${8 * 4}rem`,
+													objectFit: 'contain',
+													objectPosition: 'center'
+												}}
+											/>
+										}
+									&lt;/div>
+								&lt;/div>
+							)}
+						&lt;/div>
+					&lt;/Slide>
+				&lt;/LoadingOverlay>
+			&lt;/Slider>
+
+			&lt;DeleteModal
+				open={openDeletePopup}
+				toggle={toggleDeleteModal}
+				deleteBtn={() => {
+					deleteNews(specificNews?.id, status);
+				}}
+				text={'News'}
+				wrapperRef={dialogWrapper}
+			/>
+		&lt;/div>
+	);
+};
+
+UploadOrEditNews.propTypes = {
+	open: PropTypes.bool.isRequired,
+	handleClose: PropTypes.func.isRequired,
+	isEdit: PropTypes.bool.isRequired,
+	title: PropTypes.string.isRequired,
+	buttonText: PropTypes.string.isRequired,
+	status: PropTypes.string.isRequired
+};
+
+export default UploadOrEditNews;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AppRoutes.html">AppRoutes</a></li><li><a href="BannerRows.html">BannerRows</a></li><li><a href="Banners.html">Banners</a></li><li><a href="NewsDraggable.html">NewsDraggable</a></li><li><a href="NewsLibrary.html">NewsLibrary</a></li><li><a href="NewsSlide.html">NewsSlide</a></li><li><a href="TopBanner.html">TopBanner</a></li><li><a href="UploadOrEditNews.html">UploadOrEditNews</a></li></ul><h3>Global</h3><ul><li><a href="global.html#changeQueryParameters">changeQueryParameters</a></li><li><a href="global.html#sanitizeDates">sanitizeDates</a></li><li><a href="global.html#ToastErrorNotifications">ToastErrorNotifications</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Thu Oct 27 2022 16:07:05 GMT+0500 (Pakistan Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/news/NewsSlide/index.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/news/NewsSlide/index.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
+import React, { useState, useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { Draggable } from 'react-beautiful-dnd';
+import {
+	Accordion,
+	Box,
+	AccordionSummary,
+	AccordionDetails
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import Typography from '@mui/material/Typography';
+import { useStyles as globalUseStyles } from '../../../styles/global.style';
+import { useStyles } from './index.styles';
+import DragAndDropField from '../../DragAndDropField';
+import { useDropzone } from 'react-dropzone';
+import checkFileSize from '../../../data/utils/validateFileSize';
+import { makeid } from '../../../data/utils/helper';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import { TextField } from '@material-ui/core';
+import { ReactComponent as Union } from '../../../assets/drag.svg';
+import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
+
+/**
+ * News Slide Component
+ * @component
+ */
+const NewsSlide = ({
+	item,
+	key,
+	index,
+	initialData,
+	sendDataToParent,
+	handleDeleteMedia,
+	handleDeleteNews,
+	setPreviewBool,
+	setPreviewFile
+}) => {
+	const classes = useStyles();
+	const globalClasses = globalUseStyles();
+
+	const [newFile, setNewFile] = useState(
+		initialData &amp;&amp; initialData[0]?.media_url ? [initialData[0]] : []
+	);
+	const [fileRejectionError, setFileRejectionError] = useState('');
+	const [fileWidth, setFileWidth] = useState(0);
+	const [fileHeight, setFileHeight] = useState(0);
+	const [dropboxUrl, setDropboxUrl] = useState([
+		initialData ? initialData?.dropbox_url || initialData[0]?.dropbox_url : ''
+	]);
+	const [title, setTitle] = useState(
+		initialData &amp;&amp; initialData[0] ? initialData[0]?.title : ''
+	);
+	const [description, setDescription] = useState(
+		initialData ? initialData[0]?.description : ''
+	);
+	const [name, setName] = useState(initialData ? initialData[0]?.name : '');
+
+	const [expanded, setExpanded] = useState(true);
+
+	const imgEl = useRef(null);
+
+	/**
+	 *
+	 * @param {string} type - Contains the type of image e.g. png,jpeg
+	 * @returns {Array} Returns an array splitting the image and image type.
+	 */
+	const getFileType = (type) => {
+		if (type) {
+			let _type = type.split('/');
+			return _type &amp;&amp; _type[1];
+		}
+	};
+
+	const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
+		useDropzone({
+			accept: '.jpeg,.jpg,.png',
+			maxFiles: 1,
+			validator: checkFileSize
+		});
+
+	useEffect(() => {
+		if (acceptedFiles?.length) {
+			let newFiles = acceptedFiles.map((file) => {
+				let id = makeid(10);
+				return {
+					id: id,
+					file_name: file.name,
+					media_url: URL.createObjectURL(file),
+					fileExtension: `.${getFileType(file.type)}`,
+					mime_type: file.type,
+					file: file,
+					type: 'image',
+					width: fileWidth,
+					height: fileHeight
+				};
+			});
+
+			setNewFile([...newFiles]);
+			sendDataToParent(...newFiles);
+		}
+	}, [acceptedFiles, fileHeight, fileWidth]);
+
+	useEffect(() => {
+		if (fileRejections.length) {
+			fileRejections.forEach(({ errors }) => {
+				return errors.forEach((e) => setFileRejectionError(e.message));
+			});
+			setTimeout(() => {
+				setFileRejectionError('');
+			}, [5000]);
+		}
+	}, [fileRejections]);
+
+	return (
+		&lt;div>
+			&lt;Draggable draggableId={`draggable-${index}`} index={index} key={key}>
+				{(provided) => (
+					&lt;div
+						ref={provided.innerRef}
+						{...provided.draggableProps}
+						style={{
+							...provided.draggableProps.style
+						}}
+					>
+						&lt;div className={globalClasses.accordionRoot}>
+							&lt;Accordion expanded={expanded} style={{ marginTop: '20px' }}>
+								&lt;AccordionSummary className={classes.accordionSummary}>
+									&lt;div className={classes.leftDiv}>
+										&lt;div className={classes.grabIconDiv}>
+											&lt;span {...provided.dragHandleProps}>
+												&lt;Union
+													style={{ cursor: 'grab' }}
+													className={classes.grabIcon}
+												/>
+											&lt;/span>
+										&lt;/div>
+										&lt;Typography className={classes.heading}>
+											News Slide {index + 1}
+										&lt;/Typography>
+									&lt;/div>
+
+									&lt;Box className={classes.rightDiv}>
+										&lt;div className={classes.deleteIconDiv}>
+											&lt;Deletes
+												className={classes.deleteIcon}
+												onClick={() => {
+													handleDeleteNews(item.sort_order);
+												}}
+											/>
+										&lt;/div>
+										&lt;div className={classes.deleteIconDiv}>
+											{expanded ? (
+												&lt;ExpandLessIcon onClick={() => setExpanded(false)} />
+											) : (
+												&lt;ExpandMoreIcon onClick={() => setExpanded(true)} />
+											)}
+										&lt;/div>
+									&lt;/Box>
+								&lt;/AccordionSummary>
+
+								&lt;AccordionDetails>
+									&lt;div>
+										&lt;DragAndDropField
+											uploadedFiles={newFile}
+											handleDeleteFile={(id) => {
+												setNewFile(newFile.filter((file) => file?.id !== id));
+												handleDeleteMedia(item.data);
+											}}
+											setPreviewBool={setPreviewBool}
+											setPreviewFile={setPreviewFile}
+											isArticle
+											imgEl={imgEl}
+											imageOnload={() => {
+												setFileWidth(imgEl.current.naturalWidth);
+												setFileHeight(imgEl.current.naturalHeight);
+											}}
+										/>
+
+										&lt;br />
+
+										{newFile?.length ? (
+											&lt;hr className={classes.horizontalLine} />
+										) : (
+											&lt;>&lt;/>
+										)}
+
+										{!newFile?.length ? (
+											&lt;section
+												className={globalClasses.dropZoneContainer}
+												style={{
+													borderColor: fileRejectionError ? '#ff355a' : 'yellow'
+												}}
+											>
+												&lt;div
+													{...getRootProps({
+														className: globalClasses.dropzone
+													})}
+												>
+													&lt;input {...getInputProps()} />
+													&lt;AddCircleOutlineIcon
+														className={globalClasses.addFilesIcon}
+													/>
+													&lt;p className={globalClasses.dragMsg}>
+														Click or drag files to this area to upload
+													&lt;/p>
+													&lt;p className={globalClasses.formatMsg}>
+														Supported formats are jpeg and png
+														&lt;br />
+														Image File size should not exceed 1MB.
+													&lt;/p>
+													&lt;p className={globalClasses.uploadMediaError}>
+														{fileRejectionError ? fileRejectionError : ''}
+													&lt;/p>
+												&lt;/div>
+											&lt;/section>
+										) : (
+											&lt;>
+												&lt;br />
+											&lt;/>
+										)}
+
+										&lt;div className={classes.socialmediaDrags}>
+											&lt;h6>DROPBOX URL&lt;/h6>
+											&lt;TextField
+												value={dropboxUrl}
+												onChange={(e) => {
+													setDropboxUrl(e.target.value);
+
+													sendDataToParent({
+														dropbox_url: e.target.value
+													});
+												}}
+												placeholder={'Please drop the URL here'}
+												className={classes.textField}
+												multiline
+												maxRows={2}
+												InputProps={{
+													disableUnderline: true,
+													className: classes.textFieldInput
+												}}
+											/>
+										&lt;/div>
+
+										&lt;div className={globalClasses.captionContainer}>
+											&lt;div className={globalClasses.characterCount}>
+												&lt;h6>TITLE&lt;/h6>
+												&lt;h6
+													style={{
+														color:
+															title?.length >= 39 &amp;&amp; title?.length &lt;= 42
+																? 'pink'
+																: title?.length === 43
+																? 'red'
+																: 'white'
+													}}
+												>
+													{title?.length}/43
+												&lt;/h6>
+											&lt;/div>
+
+											&lt;TextField
+												value={title}
+												onChange={(e) => {
+													setTitle(e.target.value);
+													sendDataToParent({
+														title: e.target.value
+													});
+												}}
+												placeholder={'Please write your title here'}
+												className={classes.textField}
+												InputProps={{
+													disableUnderline: true,
+													className: classes.textFieldInput
+												}}
+												inputProps={{ maxLength: 43 }}
+												multiline
+												maxRows={2}
+											/>
+										&lt;/div>
+
+										&lt;div className={globalClasses.captionContainer}>
+											&lt;div className={globalClasses.characterCount}>
+												&lt;h6>DESCRIPTION&lt;/h6>
+												&lt;h6
+													style={{
+														color:
+															description?.length >= 230 &amp;&amp;
+															description?.length &lt;= 249
+																? 'pink'
+																: description?.length === 250
+																? 'red'
+																: 'white'
+													}}
+												>
+													{description?.length}/250
+												&lt;/h6>
+											&lt;/div>
+
+											&lt;TextField
+												value={description}
+												onChange={(e) => {
+													setDescription(e.target.value);
+													sendDataToParent({
+														description: e.target.value
+													});
+												}}
+												placeholder={'Please write your DESCRIPTION here'}
+												className={classes.textField}
+												InputProps={{
+													disableUnderline: true,
+													className: classes.textFieldInput
+												}}
+												inputProps={{ maxLength: 250 }}
+												multiline
+												minRows={3}
+												maxRows={4}
+											/>
+										&lt;/div>
+
+										&lt;div className={globalClasses.captionContainer}>
+											&lt;div className={globalClasses.characterCount}>
+												&lt;h6>NAME&lt;/h6>
+												&lt;h6
+													style={{
+														color:
+															name?.length >= 30 &amp;&amp; name?.length &lt;= 49
+																? 'pink'
+																: name?.length === 50
+																? 'red'
+																: 'white'
+													}}
+												>
+													{name?.length}/50
+												&lt;/h6>
+											&lt;/div>
+
+											&lt;TextField
+												value={name}
+												onChange={(e) => {
+													setName(e.target.value);
+													sendDataToParent({
+														name: e.target.value
+													});
+												}}
+												placeholder={'Please write the topic name here'}
+												className={classes.textField}
+												InputProps={{
+													disableUnderline: true,
+													className: classes.textFieldInput
+												}}
+												inputProps={{ maxLength: 50 }}
+												multiline
+												maxRows={2}
+											/>
+										&lt;/div>
+									&lt;/div>
+								&lt;/AccordionDetails>
+							&lt;/Accordion>
+						&lt;/div>
+					&lt;/div>
+				)}
+			&lt;/Draggable>
+		&lt;/div>
+	);
+};
+
+NewsSlide.propTypes = {
+	item: PropTypes.number,
+	key: PropTypes.number,
+	index: PropTypes.number,
+	initialData: PropTypes.object,
+	sendDataToParent: PropTypes.func.isRequired,
+	handleDeleteMedia: PropTypes.func,
+	handleDeleteNews: PropTypes.func,
+	setPreviewBool: PropTypes.func.isRequired,
+	setPreviewFile: PropTypes.func.isRequired
+};
+
+export default NewsSlide;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="AppRoutes.html">AppRoutes</a></li><li><a href="BannerRows.html">BannerRows</a></li><li><a href="Banners.html">Banners</a></li><li><a href="NewsDraggable.html">NewsDraggable</a></li><li><a href="NewsLibrary.html">NewsLibrary</a></li><li><a href="NewsSlide.html">NewsSlide</a></li><li><a href="TopBanner.html">TopBanner</a></li><li><a href="UploadOrEditNews.html">UploadOrEditNews</a></li></ul><h3>Global</h3><ul><li><a href="global.html#changeQueryParameters">changeQueryParameters</a></li><li><a href="global.html#sanitizeDates">sanitizeDates</a></li><li><a href="global.html#ToastErrorNotifications">ToastErrorNotifications</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Thu Oct 27 2022 16:07:05 GMT+0500 (Pakistan Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

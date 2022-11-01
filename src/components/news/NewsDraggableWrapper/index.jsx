@@ -2,6 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
+/**
+ * News Draggable Component
+ * @component
+ */
 const NewsDraggable = ({ children, onDragEnd }) => {
 	return (
 		<div>

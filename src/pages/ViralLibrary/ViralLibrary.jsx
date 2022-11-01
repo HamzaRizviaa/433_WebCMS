@@ -3,11 +3,12 @@ import { useDispatch } from 'react-redux';
 
 import Table from '../../components/ui/Table';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
-import UploadOrEditViral from '../../components/virals/uploadOrEditViral';
+// import UploadOrEditViral from '../../components/virals/uploadOrEditViral';
+import ViralForm from '../../components/forms/ViralForm';
+import useGetAllViralsQuery from '../../hooks/libraries/virals/useGetAllViralsQuery';
 import { getSpecificViral } from '../../data/features/viralLibrary/viralLibrarySlice';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
-import useGetAllViralsQuery from '../../hooks/libraries/virals/useGetAllViralsQuery';
-import { tableColumns } from '../../data/helpers/viralHelpers';
+import { viralTableColumns } from '../../data/helpers/viralHelpers';
 
 const ViralLibrary = () => {
 	const dispatch = useDispatch();
@@ -40,13 +41,13 @@ const ViralLibrary = () => {
 		>
 			<Table
 				onRowClick={onRowClick}
-				columns={tableColumns}
+				columns={viralTableColumns}
 				data={data}
 				totalRecords={totalRecords}
 				isLoading={isLoading}
 				noDataText='No Virals Found'
 			/>
-			<UploadOrEditViral
+			{/* <UploadOrEditViral
 				open={showSlider}
 				isEdit={edit}
 				handleClose={() => {
@@ -57,6 +58,14 @@ const ViralLibrary = () => {
 				buttonText={
 					edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
 				}
+				status={rowStatus}
+			/> */}
+			<ViralForm
+				open={showSlider}
+				isEdit={edit}
+				handleClose={() => {
+					setShowSlider(false);
+				}}
 				status={rowStatus}
 			/>
 		</DashboardLayout>
