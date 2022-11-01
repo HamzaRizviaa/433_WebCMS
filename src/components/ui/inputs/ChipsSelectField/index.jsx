@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Popper, Autocomplete, TextField } from '@mui/material';
 import { useChipSelectStyles } from './index.style';
@@ -10,45 +10,37 @@ const ChipsSelectField = ({
 	title,
 	selectedData,
 	error,
-	isNotPublished,
+	disabled,
 	newData,
-	newOptions,
+	options,
 	isLoading,
 	onChange,
-	selectedDataRemoved,
-	textValue,
+	onSearchTextChange,
 	onBlur,
-	placeHolderMessage,
+	placeholder,
 	...restProps
 }) => {
 	const isError = !!error;
 	const classes = useChipSelectStyles();
+	const [text, setText] = useState('');
 
 	const getClassName = () => {
 		let classname = `${classes.autoComplete}`;
-		if (isNotPublished) {
+		if (disabled) {
 			return classname + `${classes.disableAutoComplete}`;
 		}
 		return classname;
 	};
 
 	const getRenderOptions = (props, option) => {
-		let currentLabelDuplicate = selectedData?.some(
-			(data) => data.name == option.name
-		);
-
 		let arrayResultedDuplicate = newData.some(
-			(data) => data.name == textValue && data.id !== null
+			(data) => data.name == text && data.id !== null
 		);
 
-		if (
-			option.id === null &&
-			!currentLabelDuplicate &&
-			!arrayResultedDuplicate
-		) {
+		if (option.id === null && !arrayResultedDuplicate) {
 			return (
 				<li {...props} className={classes.listClassname}>
-					{option.name || textValue}
+					{option.name || text}
 					<Button
 						text={`CREATE NEW ${title}`}
 						style={{
@@ -59,21 +51,14 @@ const ChipsSelectField = ({
 					/>
 				</li>
 			);
-		} else if (!currentLabelDuplicate) {
-			if (arrayResultedDuplicate && option.id == null) {
-				return null;
-			} else {
-				return (
-					<li {...props} className={classes.liAutocomplete}>
-						{option.name}
-					</li>
-				);
-			}
+		}
+		if (arrayResultedDuplicate && option.id == null) {
+			return null;
 		} else {
 			return (
-				<div className={classes.liAutocompleteWithButton}>
-					&apos;{option.name}&apos; is already selected!
-				</div>
+				<li {...props} className={classes.liAutocomplete}>
+					{option.name}
+				</li>
 			);
 		}
 	};
@@ -82,6 +67,14 @@ const ChipsSelectField = ({
 		if (onChange) {
 			onChange(value);
 		}
+	};
+	const debouncedHandleOnChange = useDebouncedCallback((event) => {
+		if (onSearchTextChange) onSearchTextChange(event.target.value);
+	}, 500);
+
+	const onTextChange = (e) => {
+		setText(e.target.value.toUpperCase());
+		debouncedHandleOnChange(e);
 	};
 
 	return (
@@ -97,7 +90,7 @@ const ChipsSelectField = ({
 
 			<Autocomplete
 				{...restProps}
-				disabled={isNotPublished}
+				disabled={disabled}
 				getOptionLabel={(option) => option.name} // setSelectedLabels name out of array of strings
 				PaperComponent={(props) => {
 					return (
@@ -132,16 +125,14 @@ const ChipsSelectField = ({
 				onBlur={onBlur}
 				id='free-solo-2-demo'
 				disableClearable
-				options={isNotPublished ? newOptions : selectedDataRemoved}
+				options={options}
 				renderInput={(params) => (
 					<TextField
 						{...params}
-						placeholder={
-							selectedData?.length > 0 ? ' ' : placeHolderMessage
-						}
+						placeholder={selectedData?.length > 0 ? ' ' : placeholder}
 						className={classes.textFieldAuto}
-						value={textValue}
-						onChange={handleChangeExtraLabel}
+						value={text}
+						onChange={onTextChange}
 						InputProps={{
 							disableUnderline: true,
 							className: classes.textFieldInput,
@@ -179,15 +170,15 @@ ChipsSelectField.propTypes = {
 	name: PropTypes.string.isRequired,
 	title: PropTypes.string.isRequired,
 	selectedData: PropTypes.array.isRequired,
-	placeHolderMessage: PropTypes.string,
+	placeholder: PropTypes.string,
+	options: PropTypes.array,
 	error: PropTypes.string,
-	isNotPublished: PropTypes.bool,
+	disabled: PropTypes.bool,
 	newData: PropTypes.array,
 	isLoading: PropTypes.bool,
 	onChange: PropTypes.func,
-	selectedDataRemoved: PropTypes.array,
-	textValue: PropTypes.string,
-	onBlur: PropTypes.func
+	onBlur: PropTypes.func,
+	onSearchTextChange: PropTypes.func
 };
 
 export default ChipsSelectField;
