@@ -21,6 +21,7 @@ export const useInputsStyles = makeStyles((theme) => ({
 		justifyContent: 'space-between',
 		margin: '0 1rem'
 	},
+
 	inputLabel: {
 		position: 'relative',
 		display: 'inline-block',
@@ -40,6 +41,15 @@ export const useInputsStyles = makeStyles((theme) => ({
 			display: (props) => (props.isRequired ? 'inline-block' : 'none')
 		}
 	},
+
+	rightLabel: {
+		display: 'inline-block',
+		fontSize: '1.2rem',
+		fontWeight: 'bold',
+		marginBottom: '0.5rem',
+		color: theme.palette.white
+	},
+
 	textFieldInput: ({ isError, size }) => ({
 		color: theme.palette.white,
 		border: `1px solid ${theme.palette.normalGrey}`,
