@@ -1,29 +1,44 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import FormikChipSelect from '../FormikChipSelect';
-import { useDispatch } from 'react-redux';
+/* eslint-disable react/prop-types */
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useField } from 'formik';
+import SelectField from '../../SelectField';
+import Button from '../../../Button';
 import {
-	getNewLabelsSearch,
-	getAllNewLabels
+	getAllNewLabels,
+	getNewLabelsSearch
 } from '../../../../../data/features/postsLibrary/postsLibraryActions';
 import {
 	newLabelsSearch,
 	labelsSearchStatus
 } from '../../../../../data/selectors/labelsSelectors';
+import { useFormikLabelsSelectStyles } from './index.style';
 
-const FormikLabelSelect = ({ name, isEdit, draftStatus, selectedLabels }) => {
+const labelsParams = (labels) => {
+	return labels.reduce((accumulator, currentItem, currentIndex) => {
+		accumulator[`already_searched[${currentIndex}]`] = currentItem.name;
+		return accumulator;
+	}, {});
+};
+
+const FormikLabelsSelect = ({ name, ...restProps }) => {
 	const dispatch = useDispatch();
-	const labelName = selectedLabels?.map((label) => label.name);
-	let newOptions = newLabelsSearch.filter(
-		(element) => !labelName.includes(element.name)
-	);
+	const [searchText, setSearchText] = useState('');
 
-	const labelsParams = (labels) => {
-		return labels.reduce((accumulator, currentItem, currentIndex) => {
-			accumulator[`already_searched[${currentIndex}]`] = currentItem.name;
-			return accumulator;
-		}, {});
-	};
+	// Formik related stuff
+	const [field, meta, helpers] = useField(name);
+	const { value: selectedValues } = field;
+	const { touched, error } = meta;
+	const { setValue, setTouched } = helpers;
+
+	const selectedLabelNames = selectedValues.map((item) => item.name); // Converting array of objects into array of string
+	const labelOptions = useSelector(newLabelsSearch); // getting label options list from redux store
+	const searchLabelStatus = useSelector(labelsSearchStatus); // getting label API status from redux store.
+
+	// Filtering selected labels from options list
+	const filteredLabelOptions = labelOptions.filter(
+		(item) => !selectedLabelNames.includes(item.name)
+	);
 
 	useEffect(() => {
 		dispatch(getAllNewLabels());
@@ -31,34 +46,73 @@ const FormikLabelSelect = ({ name, isEdit, draftStatus, selectedLabels }) => {
 
 	const handleSearchTextChange = (value) => {
 		if (value) {
+			setSearchText(value.toUpperCase());
 			dispatch(
 				getNewLabelsSearch({
-					q: value,
-					...(selectedLabels?.length ? labelsParams(selectedLabels) : {})
+					q: value.toUpperCase(),
+					...(value?.length ? labelsParams(selectedValues) : {})
 				})
 			);
 		} else {
 			dispatch(getAllNewLabels());
 		}
 	};
+
+	const handleChange = (value) => {
+		setValue(value);
+	};
+
+	const handleBlur = () => {
+		setTouched(true);
+	};
+
+	const classes = useFormikLabelsSelectStyles();
+
+	// Custom render option for handling API data and loading state
+	const renderOption = (option) => {
+		const arrayResultedDuplicate = labelOptions.some(
+			(data) => data.name === searchText && data.id !== null
+		);
+
+		if (option.id === null && !arrayResultedDuplicate) {
+			return (
+				<span className={classes.createNewLabelWrapper}>
+					{option.name || searchText}
+					<Button className={classes.createNewLabelBtn} onClick={() => {}}>
+						CREATE NEW LABEL
+					</Button>
+				</span>
+			);
+		}
+		if (option.id === null && selectedLabelNames.includes(option.name)) {
+			return <span>Already Selected</span>;
+		} else {
+			return <span>{option.name}</span>;
+		}
+	};
+
 	return (
-		<FormikChipSelect
+		<SelectField
+			{...restProps}
+			searchable
+			multiple
+			filterSelectedOptions
+			autoHighlight
+			disableClearable
+			freeSolo={false}
 			name={name}
-			title='LABELS'
-			disabled={isEdit && draftStatus !== 'draft'}
-			newData={newLabelsSearch}
-			options={newOptions}
-			isLoading={labelsSearchStatus === 'pending' ? true : false}
+			rightLabel={`CURRENT LABELS: ${selectedValues?.length}`}
+			isLoading={searchLabelStatus === 'pending'}
+			mapOptions={{ labelKey: 'name', valueKey: 'name' }}
+			value={selectedValues}
+			options={filteredLabelOptions}
+			onChange={handleChange}
+			onBlur={handleBlur}
 			onSearchTextChange={handleSearchTextChange}
-			placeholder='Select a minimum of 7 labels'
+			error={touched && error ? error : ''}
+			renderOption={renderOption}
 		/>
 	);
 };
 
-FormikLabelSelect.propTypes = {
-	isEdit: PropTypes.bool,
-	draftStatus: PropTypes.string,
-	selectedLabels: PropTypes.array
-};
-
-export default FormikLabelSelect;
+export default FormikLabelsSelect;
