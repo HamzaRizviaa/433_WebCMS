@@ -109,7 +109,7 @@ const NewsForm = ({
 		>
 			{({ setSubmitting }) => (
 				<div>
-					{/* <NewsFormDrawer
+					<NewsFormDrawer
 						open={open}
 						handleClose={handleClose}
 						isEdit={isEdit}
@@ -123,9 +123,9 @@ const NewsForm = ({
 						deleteBtn={() => {
 							onDeleteHandler(specificNews?.id, status, setSubmitting);
 						}}
-						text={'Viral'}
+						text={'News'}
 						wrapperRef={dialogWrapper}
-					/> */}
+					/>
 				</div>
 			)}
 		</Formik>
