@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: pages/NewsLibrary/NewsLibrary.jsx</title>
+    <title>JSDoc: Source: pages/ViralLibrary/ViralLibrary.jsx</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: pages/NewsLibrary/NewsLibrary.jsx</h1>
+    <h1 class="page-title">Source: pages/ViralLibrary/ViralLibrary.jsx</h1>
 
     
 
@@ -28,82 +28,80 @@
         <article>
             <pre class="prettyprint source linenums"><code>import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import UploadOrEditNews from '../../components/news/uploadOrEditNews';
-import { newsColumns } from '../../data/helpers/newsHelpers';
+
 import Table from '../../components/ui/Table';
-import useGetAllNews from '../../hooks/libraries/news/useGetAllNews';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
-import { getSpecificNews } from '../../data/features/newsLibrary/newsLibrarySlice';
+import ViralForm from '../../components/forms/ViralForm';
+import useGetAllViralsQuery from '../../hooks/libraries/virals/useGetAllViralsQuery';
+import { getSpecificViral } from '../../data/features/viralLibrary/viralLibrarySlice';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
+import { viralTableColumns } from '../../data/helpers/viralHelpers';
 
 /**
- * News Library Component
+ * ViralLibrary Component serves as the starting point for the complete flow of the virals library.
+ * It uses the DashboardLayout, Table, and ViralForm components and manages states and behaviours for these components.
  * @component
  */
-const NewsLibrary = () => {
+const ViralLibrary = () => {
 	const dispatch = useDispatch();
 
-	const [showSlider, setShowSlider] = useState(false);
-	const [edit, setEdit] = useState(false);
-	const [rowStatus, setrowStatus] = useState(''); //publish or draft
+	const { data, isLoading, totalRecords } = useGetAllViralsQuery();
 
-	const { data, totalRecords, isLoading } = useGetAllNews();
+	const [showSlider, setShowSlider] = useState(false);
+	const [isEdit, setEdit] = useState(false);
+	const [rowStatus, setRowStatus] = useState(''); //publish or draft
 
 	/**
-	 * Opens the slider to upload new News Item
-	 * @returns {void}
+	 * onUploadViralClick which is fired whenver the "Upload Viral" button is clicked.
+	 * It's responsible for opening the form in creation mode.
 	 */
-	const onUploadNewsClick = () => {
+	const onUploadViralClick = () => {
 		dispatch(getAllNewLabels());
 		setEdit(false);
 		setShowSlider(true);
 	};
 
 	/**
-	 * Opens up the slider and populates the clicked news item.
-	 * @param {object} row - Contains pecific news item data
-	 * @returns {void}
+	 * onRowClick which is fred whenver any record of the table is clicked.
+	 * It's responsible for opening the form in edit mode.
+	 * @param {*} _
+	 * @param {*} row
 	 */
 	const onRowClick = (_, row) => {
-		console.log('ROWW', row);
 		row.status === 'draft' &amp;&amp; dispatch(getAllNewLabels());
-		dispatch(getSpecificNews(row.id));
+		dispatch(getSpecificViral(row.id));
 		setEdit(true);
-		setrowStatus(row.status); // pass in slider
+		setRowStatus(row.status); // pass in slider
 		setShowSlider(true);
 	};
 
 	return (
 		&lt;DashboardLayout
-			title='News'
+			title='Viral'
 			isLoading={isLoading}
-			onButtonClick={onUploadNewsClick}
+			onButtonClick={onUploadViralClick}
 		>
 			&lt;Table
 				onRowClick={onRowClick}
+				columns={viralTableColumns}
 				data={data}
-				columns={newsColumns}
 				totalRecords={totalRecords}
 				isLoading={isLoading}
-				noDataText='No News Found'
+				noDataText='No Virals Found'
 			/>
-			&lt;UploadOrEditNews
+			&lt;ViralForm
 				open={showSlider}
-				isEdit={edit}
+				isEdit={isEdit}
 				handleClose={() => {
 					setShowSlider(false);
 				}}
-				title={edit ? 'Edit News' : 'Upload News'}
-				buttonText={
-					edit &amp;&amp; rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
-				}
 				status={rowStatus}
 			/>
 		&lt;/DashboardLayout>
 	);
 };
 
-export default NewsLibrary;
+export default ViralLibrary;
 </code></pre>
         </article>
     </section>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Global</title>
+    <title>JSDoc: Class: ViralForm</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Global</h1>
+    <h1 class="page-title">Class: ViralForm</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>ViralForm<span class="signature">()</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -38,7 +38,31 @@
     
         
 
-        
+    
+
+    
+    <h4 class="name" id="ViralForm"><span class="type-signature"></span>new ViralForm<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>ViralForm Component is used as a child of the ViralLibrary and the link to that is given below.
+ViralForm serves the purpose of a form wrapper component which is using formik for form handling.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
 
 
 <dl class="details">
@@ -68,16 +92,45 @@
     
 
     
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_forms_ViralForm_index.jsx.html">components/forms/ViralForm/index.jsx</a>, <a href="components_forms_ViralForm_index.jsx.html#line31">line 31</a>
+    </li></ul></dd>
+    
 
     
 
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="http://127.0.0.1:5500/docs/ViralLibrary.html">ViralLibrary</a></li>
+        </ul>
+    </dd>
     
 
     
 </dl>
 
 
-        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     </div>
 
@@ -94,72 +147,6 @@
     
 
     
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-<h4 class="name" id="ToastErrorNotifications"><span class="type-signature">(constant) </span>ToastErrorNotifications<span class="type-signature"></span></h4>
-
-
-
-
-<div class="description">
-    <p>All TOAST ERROR notifications will be populated inside this object.</p>
-</div>
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="data_constants_toastNotificationText.js.html">data/constants/toastNotificationText.js</a>, <a href="data_constants_toastNotificationText.js.html#line24">line 24</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-    
 
     
         <h3 class="subsection-title">Methods</h3>
@@ -170,193 +157,20 @@
     
 
     
-    <h4 class="name" id="changeQueryParameters"><span class="type-signature"></span>changeQueryParameters<span class="signature">(query, queryObject)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="~onDeleteHandler"><span class="type-signature">(async, inner) </span>onDeleteHandler<span class="signature">(id, isDraft, setSubmitting)</span><span class="type-signature"></span></h4>
     
 
     
 
 
 
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>query</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">URLSearchParams</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>URLSearchParams instance</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>queryObject</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>query parameters in form of key value pair</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="data_utils_helper.js.html">data/utils/helper.js</a>, <a href="data_utils_helper.js.html#line21">line 21</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>returns query params converted into string form like this &quot;abc=xyz&amp;foo=bar&quot;</p>
+<div class="description">
+    <p>onDeleteHandler is fired whenever a user wants to delete a viral.
+It's responsible for calling the backend for deletion of viral and updating the UI accordingly.</p>
 </div>
 
 
 
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">string</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="sanitizeDates"><span class="type-signature"></span>sanitizeDates<span class="signature">(startDate, endDate)</span><span class="type-signature"> &rarr; {Object}</span></h4>
-    
-
-    
-
-
-
-
-
 
 
 
@@ -388,7 +202,7 @@
 
         <tr>
             
-                <td class="name"><code>startDate</code></td>
+                <td class="name"><code>id</code></td>
             
 
             <td class="type">
@@ -404,20 +218,20 @@
 
             
 
-            <td class="description last"><p>Query Param start date</p></td>
+            <td class="description last"><p>Id of the viral which is to be deleted</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>endDate</code></td>
+                <td class="name"><code>isDraft</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">boolean</span>
 
 
             
@@ -427,7 +241,30 @@
 
             
 
-            <td class="description last"><p>Query Param end date</p></td>
+            <td class="description last"><p>isDraft status of a viral</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>setSubmitting</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Function which receives a boolean value as a param and changes the state of form if it is submitting or not</p></td>
         </tr>
 
     
@@ -468,7 +305,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="data_utils_helper.js.html">data/utils/helper.js</a>, <a href="data_utils_helper.js.html#line38">line 38</a>
+        <a href="components_forms_ViralForm_index.jsx.html">components/forms/ViralForm/index.jsx</a>, <a href="components_forms_ViralForm_index.jsx.html#line96">line 96</a>
     </li></ul></dd>
     
 
@@ -493,24 +330,206 @@
 
 
 
-<h5>Returns:</h5>
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~onSubmitHandler"><span class="type-signature">(async, inner) </span>onSubmitHandler<span class="signature">(values, formikBag, isDraft)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>onSubmitHandler is fired whenever a user is saving a Viral as draft, published or saving changes.
+It's responsible for submitting that data to the backend and updating the UI accordingly.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
 
         
 
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
         
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>values</code></td>
+            
+
+            <td class="type">
+            
+                
 <span class="param-type">Object</span>
 
 
-    </dd>
-</dl>
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Formik form values.</p></td>
+        </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>formikBag</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Formik bag object which has all the utilities provided by formik.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isDraft</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>isDraft param is only being passed when the form is being save in draft mode</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_forms_ViralForm_index.jsx.html">components/forms/ViralForm/index.jsx</a>, <a href="components_forms_ViralForm_index.jsx.html#line57">line 57</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
