@@ -10,17 +10,21 @@ type MapOptions<T> = {
 	valueKey: keyof T;
 };
 
-type SelectFieldCustomProps<T> = {
+export type SelectFieldCustomProps<T> = {
 	name: string;
 	value: any;
 	options: T[];
 	mapOptions: MapOptions<T>;
+	searchable?: boolean;
 	label?: string;
+	rightLabel?: string;
 	placeholder?: string;
 	required?: boolean;
 	error?: string;
 	noOptionsText?: string;
 	size?: 'small' | 'medium' | 'large';
+	onSearchTextChange?: (value: string) => void;
+	onClearText?: () => void;
 };
 
 type ModifiedSelectProps = Omit<
@@ -41,8 +45,6 @@ export type SelectFieldProps<T> =
 	| (AutocompleteProps<T, undefined, undefined, undefined> &
 			SelectFieldCustomProps<T> & {
 				searchable: true;
-				onSearchTextChange?: (value: string) => void;
-				onClearText?: () => void;
 				onChange?: (value: T, name: string) => void;
 			})
 	| (ModifiedSelectProps &

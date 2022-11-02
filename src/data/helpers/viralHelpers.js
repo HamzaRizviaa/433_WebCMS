@@ -109,6 +109,8 @@ export const viralDataFormatterForService = (viral, file, isDraft = false) => {
 					height: uploadedFiles[0].height || 0,
 					width: uploadedFiles[0].width || 0
 			  }
+			: uploadedFiles.length
+			? { ...uploadedFiles.length[0] }
 			: {
 					media_url: '',
 					file_name: '',
@@ -142,5 +144,5 @@ export const viralFormValidationSchema = Yup.object().shape({
 	uploadedFiles: Yup.array().min(1).required(),
 	labels: Yup.array().min(7).required().label('Labels'),
 	show_likes: Yup.boolean().required(),
-	show_comments: Yup.boolean().required(),
+	show_comments: Yup.boolean().required()
 });
