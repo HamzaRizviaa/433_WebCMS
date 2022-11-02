@@ -6,3 +6,4 @@ export { default as NewsLibraryService } from './newsLibraryService';
 export { default as PostLibraryService } from "./postLibraryService";
 export { default as QuestionsLibraryService } from "./questionsLibraryService";
 export { default as ViralLibraryService } from "./viralLibraryService"
+export { default as UserService } from './userService';
