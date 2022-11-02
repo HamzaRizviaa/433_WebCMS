@@ -45,7 +45,7 @@ import {
 
 //api calls
 
-import { getAllNews } from '../../../data/features/newsLibrary/newsLibrarySlice';
+import { getAllNewsApi } from '../../../data/features/newsLibrary/newsLibrarySlice';
 import { TextField } from '@material-ui/core';
 import { ToastErrorNotifications } from '../../../data/constants';
 import useCommonParams from '../../../hooks/useCommonParams';
@@ -475,7 +475,7 @@ const UploadOrEditNews = ({
 			if (result?.data?.status_code === 200) {
 				toast.success('News has been deleted!');
 				handleClose();
-				dispatch(getAllNews(queryParams));
+				dispatch(getAllNewsApi(queryParams));
 			}
 		} catch (e) {
 			toast.error(ToastErrorNotifications.deleteBannerItemText);
@@ -550,9 +550,9 @@ const UploadOrEditNews = ({
 				handleClose();
 
 				if (isEdit && !(status === 'draft' && draft === false)) {
-					dispatch(getAllNews(queryParams));
+					dispatch(getAllNewsApi(queryParams));
 				} else if (isSearchParamsEmpty) {
-					dispatch(getAllNews());
+					dispatch(getAllNewsApi());
 				} else {
 					navigate('/news-library');
 				}

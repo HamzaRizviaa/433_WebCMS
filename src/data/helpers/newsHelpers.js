@@ -1,5 +1,8 @@
+import { isEmpty } from 'lodash';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
-import { getDateTime } from '../utils';
+import { getDateTime, makeid } from '../utils';
+import { getUserDataObject } from './index';
+import * as Yup from 'yup';
 
 export const newsColumns = [
 	{
@@ -64,3 +67,75 @@ export const newsColumns = [
 		formatter: () => getFormatter('options', { title: 'EDIT NEWS' })
 	}
 ];
+
+export const newsDataFormatterForForm = (news) => {
+	const formattedNews = { ...news };
+
+	if (formattedNews?.labels) {
+		const updatedLabels = formattedNews?.labels.map((label) => ({
+			id: -1,
+			name: label
+		}));
+		formattedNews.labels = updatedLabels;
+	}
+
+	formattedNews.uploadedFiles = !isEmpty(news.file_name)
+		? [
+				{
+					id: makeid(10),
+					file_name: news?.file_name,
+					media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${news?.url}`,
+					type: news?.thumbnail_url ? 'video' : 'image',
+					...(news?.thumbnail_url
+						? {
+								thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${news?.thumbnail_url}`
+						  }
+						: {})
+				}
+		  ]
+		: [];
+
+	return formattedNews;
+};
+
+export const newsDataFormatterForService = (news, file, isDraft = false) => {
+	const newsData = {
+		save_draft: isDraft,
+		translations: undefined,
+		user_data: getUserDataObject()
+	};
+
+	return newsData;
+};
+
+//
+// Viral Form Helpers
+//
+export const newsFormInitialValues = {
+	uploadedFiles: [],
+	dropbox_url: '',
+	labels: [],
+	banner_title: '',
+	banner_description: '',
+	show_likes: true,
+	show_comments: true,
+	newsSlides: []
+};
+
+export const newsFormValidationSchema = Yup.object().shape({
+	uploadedFiles: Yup.array().min(1).required(),
+	labels: Yup.array().min(7).required().label('Labels'),
+	banner_title: Yup.string().required().label('Banner Title'),
+	banner_description: Yup.string().required().label('Banner Description'),
+	show_likes: Yup.boolean().required(),
+	show_comments: Yup.boolean().required(),
+	newsSlides: Yup.array().of(
+		Yup.object({
+			uploadedFiles: Yup.array().min(1).required(),
+			dropbox_url: Yup.string(),
+			title: Yup.string().label('Title'),
+			description: Yup.string().label('Description'),
+			name: Yup.string().label('Name')
+		})
+	)
+});

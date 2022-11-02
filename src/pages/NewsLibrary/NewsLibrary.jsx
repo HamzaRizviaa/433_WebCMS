@@ -1,6 +1,8 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import UploadOrEditNews from '../../components/news/uploadOrEditNews';
+import NewsForm from '../../components/forms/NewsForm';
 import { newsColumns } from '../../data/helpers/newsHelpers';
 import Table from '../../components/ui/Table';
 import useGetAllNews from '../../hooks/libraries/news/useGetAllNews';
@@ -71,6 +73,14 @@ const NewsLibrary = () => {
 				}
 				status={rowStatus}
 			/>
+			{/* <NewsForm
+				open={showSlider}
+				isEdit={edit}
+				handleClose={() => {
+					setShowSlider(false);
+				}}
+				status={rowStatus}
+			/> */}
 		</DashboardLayout>
 	);
 };
