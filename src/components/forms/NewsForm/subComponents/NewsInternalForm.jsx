@@ -1,28 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-	Accordion,
-	AccordionDetails,
-	AccordionSummary,
-	Typography
-} from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { FieldArray } from 'formik';
 import { useFormikContext } from 'formik';
-import { useStyles } from '../index.styles';
+import { useNewsFormStyles } from '../index.styles';
 import { useStyles as globalUseStyles } from '../../../../styles/global.style';
 
 import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
 import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
 import Button from '../../../ui/Button';
+import NewsSlideForm from './NewsSlideForm';
+import AccordianLayout from '../../../layouts/AccordianLayout';
 
 const NewsInternalForm = ({
 	isEdit,
 	status,
 	onSubmitHandler,
-	toggleDeleteModal
+	toggleDeleteModal,
+	openPreviewer
 }) => {
-	const classes = useStyles();
+	const classes = useNewsFormStyles();
 	const globalClasses = globalUseStyles();
 	const isPublished = isEdit && status === 'published';
 
@@ -35,18 +32,18 @@ const NewsInternalForm = ({
 	return (
 		<div>
 			<div className={globalClasses.accordionRoot}>
-				<Accordion defaultExpanded>
-					<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-						<Typography>General Information</Typography>
-					</AccordionSummary>
+				<AccordianLayout title='General Information'>
+					<div className={globalClasses.captionContainer}>
+						<FormikLabelsSelect
+							name='labels'
+							label='LABELS'
+							placeholder='Select a minimum of 7 labels'
+							required
+						/>
+					</div>
 
-					<AccordionDetails>
-						<div className={globalClasses.captionContainer}>
-							<FormikLabelsSelect name='labels' />
-						</div>
-
-						{/* TODO need to where we are handlign this logic */}
-						{/* <p className={globalClasses.mediaError}>
+					{/* TODO need to where we are handlign this logic */}
+					{/* <p className={globalClasses.mediaError}>
 							{isError.selectedLabels
 								? `You need to add ${
 										7 - form.labels.length
@@ -56,48 +53,54 @@ const NewsInternalForm = ({
 								: ''}
 						</p> */}
 
-						<div className={globalClasses.captionContainer}>
-							<FormikField
-								label='BANNER TITLE'
-								name='banner_title'
-								placeholder='Please write you caption here'
-								multiline
-								maxLength={43}
-								maxRows={2}
-							/>
-						</div>
+					<div className={globalClasses.captionContainer}>
+						<FormikField
+							label='BANNER TITLE'
+							name='banner_title'
+							placeholder='Please write you caption here'
+							multiline
+							maxLength={43}
+							maxRows={2}
+							required
+						/>
+					</div>
 
-						<div
-							style={{ marginTop: '15px' }}
-							className={globalClasses.captionContainer}
-						>
-							<FormikField
-								label='BANNER DESCRIPTION'
-								name='banner_description'
-								placeholder='Please write you caption here'
-								multiline
-								maxLength={84}
-								minRows={3}
-								maxRows={4}
-							/>
+					<div
+						style={{ marginTop: '15px' }}
+						className={globalClasses.captionContainer}
+					>
+						<FormikField
+							label='BANNER DESCRIPTION'
+							name='banner_description'
+							placeholder='Please write you caption here'
+							multiline
+							maxLength={84}
+							minRows={3}
+							maxRows={4}
+						/>
+					</div>
+					<div className={globalClasses.postMediaContainer}>
+						<div className={globalClasses.postMediaHeader}>
+							<h5>Show comments</h5>
+							<FormikSwitchField name={'show_comments'} />
 						</div>
-						<div className={globalClasses.postMediaContainer}>
-							<div className={globalClasses.postMediaHeader}>
-								<h5>Show comments</h5>
-								<FormikSwitchField name={'show_comments'} />
-							</div>
+					</div>
+					<div
+						className={globalClasses.postMediaContainer}
+						style={{ marginBottom: '1rem' }}
+					>
+						<div className={globalClasses.postMediaHeader}>
+							<h5>Show likes</h5>
+							<FormikSwitchField name={'show_likes'} />
 						</div>
-						<div
-							className={globalClasses.postMediaContainer}
-							style={{ marginBottom: '1rem' }}
-						>
-							<div className={globalClasses.postMediaHeader}>
-								<h5>Show likes</h5>
-								<FormikSwitchField name={'show_likes'} />
-							</div>
-						</div>
-					</AccordionDetails>
-				</Accordion>
+					</div>
+				</AccordianLayout>
+				<FieldArray
+					name='newsSlides'
+					render={(props) => (
+						<NewsSlideForm {...props} openPreviewer={openPreviewer} />
+					)}
+				/>
 			</div>
 			<div className={classes.buttonDiv}>
 				{isEdit && (

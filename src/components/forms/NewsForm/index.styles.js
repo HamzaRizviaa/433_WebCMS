@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-export const useStyles = makeStyles(() => ({
+export const useNewsFormStyles = makeStyles(() => ({
 	captionContainer: {
 		'& h6': {
 			marginBottom: '0.5rem',
@@ -74,5 +74,9 @@ export const useStyles = makeStyles(() => ({
 
 	fieldWrapper: {
 		marginBottom: '1.5rem'
+	},
+
+	fieldContainer: {
+		marginTop: 10
 	}
 }));

@@ -6,13 +6,13 @@ import Button from '../../../ui/Button';
 import DraggableCardLayout from '../../../layouts/DraggableCardLayout';
 import DraggableLayoutWrapper from '../../../layouts/DraggableLayoutWrapper';
 import { AddIcon } from '../../../../assets/svg-icons';
-import { useNewsFormStyles } from '../index.style';
+import { useNewsFormStyles } from '../index.styles';
 
 const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 	const classes = useNewsFormStyles();
 
 	const handleDeleteFile = (index) => {
-		form.setFieldValue(`slides.${index}.uploadedFiles`, []);
+		form.setFieldValue(`newsSlides.${index}.uploadedFiles`, []);
 	};
 
 	const handleDeleteSlide = (_, index) => {
@@ -36,7 +36,7 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 	return (
 		<div>
 			<DraggableLayoutWrapper onDragEnd={handleDragEnd}>
-				{form.values.slides.map((item, index) => (
+				{form.values.newsSlides.map((item, index) => (
 					<DraggableCardLayout
 						title={`NEWS SLIDE ${index + 1}`}
 						key={index}
@@ -46,7 +46,7 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 					>
 						<div>
 							<FormikDropzone
-								name={`slides.${index}.uploadedFiles`}
+								name={`newsSlides.${index}.uploadedFiles`}
 								accept='image/jpeg, image/png'
 								formatMessage='Supported formats are jpeg and png'
 								showPreview
@@ -56,32 +56,36 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 						</div>
 						<div className={classes.fieldContainer}>
 							<FormikField
-								name={`slides.${index}.dropbox_url`}
+								name={`newsSlides.${index}.dropbox_url`}
 								label='DROPBOX URL'
+								placeholder='Please drop the URL here'
 								multiline
 								maxRows={2}
 							/>
 						</div>
 						<div className={classes.fieldContainer}>
 							<FormikField
-								name={`slides.${index}.title`}
+								name={`newsSlides.${index}.title`}
 								label='TITLE'
+								placeholder='Please write your title here'
 								multiline
 								maxRows={2}
 							/>
 						</div>
 						<div className={classes.fieldContainer}>
 							<FormikField
-								name={`slides.${index}.description`}
+								name={`newsSlides.${index}.description`}
 								label='DESCRIPTION'
+								placeholder='Please write your description here'
 								multiline
 								maxRows={4}
 							/>
 						</div>
 						<div className={classes.fieldContainer}>
 							<FormikField
-								name={`slides.${index}.name`}
+								name={`newsSlides.${index}.name`}
 								label='NAME'
+								placeholder='Please write the topic name here'
 								multiline
 								maxRows={2}
 							/>
