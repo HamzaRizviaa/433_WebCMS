@@ -9,12 +9,14 @@ export const useAccordionLayoutStyles = makeStyles((theme) => ({
 			border: `1px solid ${theme.palette.normalGrey}`,
 			borderRadius: '6px !important'
 		},
-		'& .MuiAccordionSummary-root  .MuiSvgIcon-root': {
+		'& .MuiAccordionSummary-root .MuiSvgIcon-root': {
 			color: theme.palette.white,
 			fill: theme.palette.white,
 			fontSize: '25px',
 			padding: ({ largeIconsAndLabel }) =>
-				largeIconsAndLabel ? '3px 0px' : '0px'
+				largeIconsAndLabel ? '3px 0px' : '0px',
+			backgroundColor: theme.palette.normalGrey,
+			borderRadius: '40px'
 		},
 		'& .MuiTypography-root': {
 			fontFamily: 'Poppins',

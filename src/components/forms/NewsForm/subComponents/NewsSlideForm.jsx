@@ -6,10 +6,10 @@ import Button from '../../../ui/Button';
 import DraggableCardLayout from '../../../layouts/DraggableCardLayout';
 import DraggableLayoutWrapper from '../../../layouts/DraggableLayoutWrapper';
 import { AddIcon } from '../../../../assets/svg-icons';
-import { useNewsFormStyles } from '../index.styles';
+import { useFormStyles } from '../../forms.style';
 
 const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
-	const classes = useNewsFormStyles();
+	const classes = useFormStyles();
 
 	const handleDeleteFile = (index) => {
 		form.setFieldValue(`newsSlides.${index}.uploadedFiles`, []);
@@ -70,6 +70,7 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 								placeholder='Please write your title here'
 								multiline
 								maxRows={2}
+								maxLength={43}
 							/>
 						</div>
 						<div className={classes.fieldContainer}>
@@ -78,7 +79,9 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 								label='DESCRIPTION'
 								placeholder='Please write your description here'
 								multiline
+								minRows={3}
 								maxRows={4}
+								maxLength={250}
 							/>
 						</div>
 						<div className={classes.fieldContainer}>
@@ -88,19 +91,23 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 								placeholder='Please write the topic name here'
 								multiline
 								maxRows={2}
+								maxLength={50}
 							/>
 						</div>
 					</DraggableCardLayout>
 				))}
 			</DraggableLayoutWrapper>
-			<Button
-				variant='outlined'
-				size='xlarge'
-				icon={<AddIcon />}
-				onClick={handleAddNewsSlide}
-			>
-				ADD NEWS SLIDE
-			</Button>
+			<div className={classes.addNewsBtnWrapper}>
+				<Button
+					variant='outlined'
+					size='xlarge'
+					icon={<AddIcon />}
+					onClick={handleAddNewsSlide}
+					fullWidth
+				>
+					ADD NEWS SLIDE
+				</Button>
+			</div>
 		</div>
 	);
 };

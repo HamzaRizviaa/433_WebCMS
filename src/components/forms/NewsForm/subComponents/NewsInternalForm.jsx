@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FieldArray } from 'formik';
 import { useFormikContext } from 'formik';
-import { useNewsFormStyles } from '../index.styles';
-import { useStyles as globalUseStyles } from '../../../../styles/global.style';
 
 import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
@@ -11,6 +9,7 @@ import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
 import Button from '../../../ui/Button';
 import NewsSlideForm from './NewsSlideForm';
 import AccordianLayout from '../../../layouts/AccordianLayout';
+import { useFormStyles } from '../../forms.style';
 
 const NewsInternalForm = ({
 	isEdit,
@@ -19,8 +18,7 @@ const NewsInternalForm = ({
 	toggleDeleteModal,
 	openPreviewer
 }) => {
-	const classes = useNewsFormStyles();
-	const globalClasses = globalUseStyles();
+	const classes = useFormStyles();
 	const isPublished = isEdit && status === 'published';
 
 	const { values, dirty, isValid, isSubmitting, handleSubmit, setSubmitting } =
@@ -31,19 +29,17 @@ const NewsInternalForm = ({
 
 	return (
 		<div>
-			<div className={globalClasses.accordionRoot}>
-				<AccordianLayout title='General Information'>
-					<div className={globalClasses.captionContainer}>
-						<FormikLabelsSelect
-							name='labels'
-							label='LABELS'
-							placeholder='Select a minimum of 7 labels'
-							required
-						/>
-					</div>
-
-					{/* TODO need to where we are handlign this logic */}
-					{/* <p className={globalClasses.mediaError}>
+			<AccordianLayout title='General Information'>
+				<div>
+					<FormikLabelsSelect
+						name='labels'
+						label='LABELS'
+						placeholder='Select a minimum of 7 labels'
+						required
+					/>
+				</div>
+				{/* TODO need to where we are handlign this logic */}
+				{/* <p className={classes.mediaError}>
 							{isError.selectedLabels
 								? `You need to add ${
 										7 - form.labels.length
@@ -53,72 +49,61 @@ const NewsInternalForm = ({
 								: ''}
 						</p> */}
 
-					<div className={globalClasses.captionContainer}>
-						<FormikField
-							label='BANNER TITLE'
-							name='banner_title'
-							placeholder='Please write you caption here'
-							multiline
-							maxLength={43}
-							maxRows={2}
-							required
-						/>
+				<div className={classes.fieldContainer}>
+					<FormikField
+						label='BANNER TITLE'
+						name='banner_title'
+						placeholder='Please write you caption here'
+						multiline
+						maxLength={43}
+						maxRows={2}
+						required
+					/>
+				</div>
+				<div className={classes.fieldContainer}>
+					<FormikField
+						label='BANNER DESCRIPTION'
+						name='banner_description'
+						placeholder='Please write you caption here'
+						multiline
+						maxLength={84}
+						minRows={3}
+						maxRows={4}
+					/>
+				</div>
+				<div className={classes.fieldContainer}>
+					<div className={classes.switchContainer}>
+						<FormikSwitchField name='show_comments' label='Show Comments' />
 					</div>
-
-					<div
-						style={{ marginTop: '15px' }}
-						className={globalClasses.captionContainer}
-					>
-						<FormikField
-							label='BANNER DESCRIPTION'
-							name='banner_description'
-							placeholder='Please write you caption here'
-							multiline
-							maxLength={84}
-							minRows={3}
-							maxRows={4}
-						/>
+					<div className={classes.switchContainer}>
+						<FormikSwitchField name='show_likes' label='Show Likes' />
 					</div>
-					<div className={globalClasses.postMediaContainer}>
-						<div className={globalClasses.postMediaHeader}>
-							<h5>Show comments</h5>
-							<FormikSwitchField name={'show_comments'} />
-						</div>
-					</div>
-					<div
-						className={globalClasses.postMediaContainer}
-						style={{ marginBottom: '1rem' }}
-					>
-						<div className={globalClasses.postMediaHeader}>
-							<h5>Show likes</h5>
-							<FormikSwitchField name={'show_likes'} />
-						</div>
-					</div>
-				</AccordianLayout>
-				<FieldArray
-					name='newsSlides'
-					render={(props) => (
-						<NewsSlideForm {...props} openPreviewer={openPreviewer} />
-					)}
-				/>
-			</div>
+				</div>
+			</AccordianLayout>
+			<FieldArray
+				name='newsSlides'
+				render={(props) => (
+					<NewsSlideForm {...props} openPreviewer={openPreviewer} />
+				)}
+			/>
 			<div className={classes.buttonDiv}>
-				{isEdit && (
-					<div className={classes.editBtn}>
+				<div>
+					{isEdit && (
 						<Button
-							size='small'
-							variant={'outlined'}
+							size='xsmall'
+							variant='outlined'
+							color='danger'
 							onClick={toggleDeleteModal}
 						>
 							DELETE VIRAL
 						</Button>
-					</div>
-				)}
+					)}
+				</div>
 				<div className={classes.publishDraftDiv}>
 					{(!isEdit || status === 'draft') && (
 						<Button
 							size='small'
-							variant={'outlined'}
+							variant='outlined'
 							disabled={!dirty}
 							onClick={saveDraftHandler}
 						>

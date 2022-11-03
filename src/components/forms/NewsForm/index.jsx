@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
-import { Formik } from 'formik';
+import { Formik, Form } from 'formik';
 import { useCommonParams } from '../../../hooks';
 import { selectSpecificNews } from '../../../data/selectors';
 import {
@@ -108,7 +108,7 @@ const NewsForm = ({
 			onSubmit={onSubmitHandler}
 		>
 			{({ setSubmitting }) => (
-				<div>
+				<Form>
 					<NewsFormDrawer
 						open={open}
 						handleClose={handleClose}
@@ -126,7 +126,7 @@ const NewsForm = ({
 						text={'News'}
 						wrapperRef={dialogWrapper}
 					/>
-				</div>
+				</Form>
 			)}
 		</Formik>
 	);
