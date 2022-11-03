@@ -3,6 +3,9 @@ export const selectAllNews = (state) => state.rootReducer.newsLibrary.news;
 export const selectSpecificNews = (state) =>
 	state.rootReducer.newsLibrary.specificNews;
 
+export const selectSpecificNewsStatus = (state) =>
+	state.rootReducer.viralLibrary.specificNewsStatus;
+
 export const selectNewsApiStatus = (state) => state.rootReducer.newsLibrary;
 
 export const selectNewsTotalRecords = (state) =>

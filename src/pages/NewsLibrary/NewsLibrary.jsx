@@ -61,7 +61,7 @@ const NewsLibrary = () => {
 				isLoading={isLoading}
 				noDataText='No News Found'
 			/>
-			<UploadOrEditNews
+			{/* <UploadOrEditNews
 				open={showSlider}
 				isEdit={edit}
 				handleClose={() => {
@@ -72,15 +72,15 @@ const NewsLibrary = () => {
 					edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
 				}
 				status={rowStatus}
-			/>
-			{/* <NewsForm
+			/> */}
+			<NewsForm
 				open={showSlider}
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
 				}}
 				status={rowStatus}
-			/> */}
+			/>
 		</DashboardLayout>
 	);
 };
