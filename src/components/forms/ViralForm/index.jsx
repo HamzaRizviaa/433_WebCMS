@@ -45,7 +45,9 @@ const ViralForm = ({
 	// Refs
 	const dialogWrapper = useRef(null);
 
-	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
+	const toggleDeleteModal = () => {
+		setOpenDeleteModal(!openDeleteModal);
+	};
 
 	/**
 	 * onSubmitHandler is fired whenever a user is saving a Viral as draft, published or saving changes.
@@ -138,7 +140,7 @@ const ViralForm = ({
 					/>
 					<DeleteModal
 						open={openDeleteModal}
-						toggle={toggleDeleteModal}
+						toggle={() => toggleDeleteModal()}
 						deleteBtn={() => {
 							onDeleteHandler(specificViral?.id, status, setSubmitting);
 						}}
