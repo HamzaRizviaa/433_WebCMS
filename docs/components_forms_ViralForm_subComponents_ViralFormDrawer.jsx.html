@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: pages/TopBanner/TopBanner.jsx</title>
+    <title>JSDoc: Source: components/forms/ViralForm/subComponents/ViralFormDrawer.jsx</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: pages/TopBanner/TopBanner.jsx</h1>
+    <h1 class="page-title">Source: components/forms/ViralForm/subComponents/ViralFormDrawer.jsx</h1>
 
     
 
@@ -26,71 +26,80 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import React from 'react';
-import TabsUnstyled from '@mui/base/TabsUnstyled';
-import TabsListUnstyled from '@mui/base/TabsListUnstyled';
-import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
-import TabUnstyled from '@mui/base/TabUnstyled';
-import { useStyles } from './topBanner';
-import Banners from '../../components/banners/Banners';
+            <pre class="prettyprint source linenums"><code>import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import DashboardLayout from '../../components/layouts/DashboardLayout';
+import { useFormikContext } from 'formik';
+import { selectSpecificViralStatus } from '../../../../data/selectors';
+
+import DrawerLayout from '../../../layouts/DrawerLayout';
+import ViralInternalForm from './ViralInternalForm';
 
 /**
+ * ViralFormDrawer Component is used as a child of the ViralForm and the link to that is given below.
+ * ViralFormDrawer serves the purpose of wrapping up the DrawerLayout and the ViralInternalForm.
+ * The drawer which basically opens up from the side side and the interal form inside that.
  * @component
+ * @see {@link http://127.0.0.1:5500/docs/ViralForm.html|ViralForm}
  */
-const TopBanner = () => {
-	const muiClasses = useStyles();
-	const getBannerContentState = useSelector(
-		(state) => state.rootReducer.topBanner.getBannerContentState
-	);
-	const bannerState = useSelector(
-		(state) => state.rootReducer.topBanner.getBannerStatus
-	);
+const ViralFormDrawer = ({
+	open,
+	handleClose,
+	isEdit,
+	status,
+	onSubmitHandler,
+	toggleDeleteModal
+}) => {
+	const { values, isSubmitting, resetForm, validateForm } = useFormikContext();
+
+	const specificViralStatus = useSelector(selectSpecificViralStatus);
+
+	const [previewFile, setPreviewFile] = useState(null);
+
+	const openPreviewer = (file) => {
+		setPreviewFile(file);
+	};
+
+	const closePreviewer = () => {
+		setPreviewFile(null);
+	};
 
 	return (
-		&lt;DashboardLayout
-			title='Top Banner'
-			hideBtn
-			hideSearchFilter
-			hideDateFilter
-			hideLibraryText
+		&lt;DrawerLayout
+			open={open}
+			handleClose={() => {
+				resetForm();
+				validateForm();
+				handleClose();
+			}}
+			title={isEdit ? 'Edit Viral' : 'Upload Viral'}
+			notifID={isEdit ? values.id : ''}
+			isLoading={isSubmitting || specificViralStatus === 'loading'}
+			handlePreviewClose={closePreviewer}
+			previewFile={previewFile}
 		>
-			&lt;div className={muiClasses.root}>
-				&lt;TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
-					&lt;TabsListUnstyled className={muiClasses.tabMainDiv}>
-						&lt;TabUnstyled
-							disabled={getBannerContentState &amp;&amp; bannerState ? false : true}
-						>
-							Home
-						&lt;/TabUnstyled>
-						&lt;TabUnstyled
-							disabled={getBannerContentState &amp;&amp; bannerState ? false : true}
-						>
-							Media
-						&lt;/TabUnstyled>
-						{/* &lt;TabUnstyled
-								disabled={getBannerContentState &amp;&amp; bannerState ? false : true}
-							>
-								Game
-							&lt;/TabUnstyled> */}
-					&lt;/TabsListUnstyled>
-					&lt;TabPanelUnstyled value={0}>
-						&lt;Banners tabValue={'home'} />
-					&lt;/TabPanelUnstyled>
-					&lt;TabPanelUnstyled value={1}>
-						&lt;Banners tabValue={'media'} />
-					&lt;/TabPanelUnstyled>
-					{/* &lt;TabPanelUnstyled value={2}>
-						&lt;Banners tabValue={'game'} />
-					&lt;/TabPanelUnstyled> */}
-				&lt;/TabsUnstyled>
-			&lt;/div>
-		&lt;/DashboardLayout>
+			&lt;ViralInternalForm
+				isEdit={isEdit}
+				status={status}
+				previewFile={previewFile}
+				openPreviewer={openPreviewer}
+				onSubmitHandler={onSubmitHandler}
+				toggleDeleteModal={toggleDeleteModal}
+			/>
+		&lt;/DrawerLayout>
 	);
 };
 
-export default TopBanner;
+ViralFormDrawer.propTypes = {
+	open: PropTypes.bool.isRequired,
+	handleClose: PropTypes.func.isRequired,
+	isEdit: PropTypes.bool.isRequired,
+	status: PropTypes.string.isRequired,
+	onSubmitHandler: PropTypes.func.isRequired,
+	toggleDeleteModal: PropTypes.func.isRequired
+};
+
+export default ViralFormDrawer;
 </code></pre>
         </article>
     </section>

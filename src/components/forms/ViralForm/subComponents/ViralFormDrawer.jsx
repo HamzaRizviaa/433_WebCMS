@@ -7,6 +7,13 @@ import { selectSpecificViralStatus } from '../../../../data/selectors';
 import DrawerLayout from '../../../layouts/DrawerLayout';
 import ViralInternalForm from './ViralInternalForm';
 
+/**
+ * ViralFormDrawer Component is used as a child of the ViralForm and the link to that is given below.
+ * ViralFormDrawer serves the purpose of wrapping up the DrawerLayout and the ViralInternalForm.
+ * The drawer which basically opens up from the side side and the interal form inside that.
+ * @component
+ * @see {@link http://127.0.0.1:5500/docs/ViralForm.html|ViralForm}
+ */
 const ViralFormDrawer = ({
 	open,
 	handleClose,

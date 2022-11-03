@@ -1,4 +1,32 @@
-import React, { useEffect, useState } from 'react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/forms/ViralForm/subComponents/ViralInternalForm.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/forms/ViralForm/subComponents/ViralInternalForm.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useFormikContext } from 'formik';
@@ -30,7 +58,7 @@ const ViralInternalForm = ({
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
-	const isPublished = isEdit && status === 'published';
+	const isPublished = isEdit &amp;&amp; status === 'published';
 
 	const {
 		values,
@@ -76,11 +104,11 @@ const ViralInternalForm = ({
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
 
 	return (
-		<div>
-			<div>
-				<div className={globalClasses.explanationWrapper}>
-					<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
-					<Tooltip
+		&lt;div>
+			&lt;div>
+				&lt;div className={globalClasses.explanationWrapper}>
+					&lt;h5>{isEdit ? 'Media File' : 'Add Media File'}&lt;/h5>
+					&lt;Tooltip
 						TransitionComponent={Fade}
 						TransitionProps={{ timeout: 800 }}
 						title='Default encoding for videos should be H.264'
@@ -91,12 +119,12 @@ const ViralInternalForm = ({
 						}}
 						placement='bottom-start'
 					>
-						<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
-					</Tooltip>
-				</div>
+						&lt;Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
+					&lt;/Tooltip>
+				&lt;/div>
 
-				<div className={classes.fieldWrapper}>
-					<FormikDropzone
+				&lt;div className={classes.fieldWrapper}>
+					&lt;FormikDropzone
 						name='uploadedFiles'
 						accept='image/jpeg, image/png, video/mp4'
 						formatMessage='Supported formats are jpeg, png and mp4'
@@ -106,22 +134,22 @@ const ViralInternalForm = ({
 						onPreview={openPreviewer}
 						onDelete={() => setFieldValue('uploadedFiles', [])}
 					/>
-				</div>
+				&lt;/div>
 
-				<div className={globalClasses.dropBoxUrlContainer}>
-					<FormikField
+				&lt;div className={globalClasses.dropBoxUrlContainer}>
+					&lt;FormikField
 						label='DROPBOX URL'
 						name='dropbox_url'
 						placeholder='Please drop the dropbox URL here'
 						multiline
 						maxRows={2}
 					/>
-				</div>
+				&lt;/div>
 
-				<div className={classes.captionContainer}>
-					<Labels
+				&lt;div className={classes.captionContainer}>
+					&lt;Labels
 						titleClasses={
-							touched.labels && errors.labels
+							touched.labels &amp;&amp; errors.labels
 								? globalClasses.errorState
 								: globalClasses.noErrorState
 						}
@@ -137,18 +165,18 @@ const ViralInternalForm = ({
 						draftStatus={status}
 						setExtraLabel={setExtraLabel}
 					/>
-				</div>
-				<p className={globalClasses.mediaError}>
-					{touched.labels && errors.labels
+				&lt;/div>
+				&lt;p className={globalClasses.mediaError}>
+					{touched.labels &amp;&amp; errors.labels
 						? `You need to add ${
 								7 - values.labels.length
 						  } more labels in order to upload media`
-						: touched.labels && values.labels.length === 0
+						: touched.labels &amp;&amp; values.labels.length === 0
 						? 'You need to select atleast 1 label to save as draft'
 						: ''}
-				</p>
+				&lt;/p>
 
-				<FormikField
+				&lt;FormikField
 					label='CAPTION'
 					name='caption'
 					placeholder='Please write the caption here'
@@ -156,64 +184,64 @@ const ViralInternalForm = ({
 					maxRows={4}
 				/>
 
-				<div className={classes.postMediaContainer}>
-					<div className={classes.postMediaHeader}>
-						<h5>Show comments</h5>
-						<ToggleSwitch
+				&lt;div className={classes.postMediaContainer}>
+					&lt;div className={classes.postMediaHeader}>
+						&lt;h5>Show comments&lt;/h5>
+						&lt;ToggleSwitch
 							id={1}
 							checked={values.show_comments}
 							onChange={(checked) => setFieldValue('show_comments', checked)}
 						/>
-					</div>
-				</div>
+					&lt;/div>
+				&lt;/div>
 
-				<div
+				&lt;div
 					className={classes.postMediaContainer}
 					style={{ marginBottom: '1rem' }}
 				>
-					<div className={classes.postMediaHeader}>
-						<h5>Show likes</h5>
-						<ToggleSwitch
+					&lt;div className={classes.postMediaHeader}>
+						&lt;h5>Show likes&lt;/h5>
+						&lt;ToggleSwitch
 							id={2}
 							checked={values.show_likes}
 							onChange={(checked) => setFieldValue('show_likes', checked)}
 						/>
-					</div>
-				</div>
-			</div>
-			<div className={classes.buttonDiv}>
-				{isEdit && (
-					<div className={classes.editBtn}>
-						<Button
+					&lt;/div>
+				&lt;/div>
+			&lt;/div>
+			&lt;div className={classes.buttonDiv}>
+				{isEdit &amp;&amp; (
+					&lt;div className={classes.editBtn}>
+						&lt;Button
 							size='small'
 							variant={'outlined'}
 							onClick={toggleDeleteModal}
 						>
 							DELETE VIRAL
-						</Button>
-					</div>
+						&lt;/Button>
+					&lt;/div>
 				)}
-				<div className={classes.publishDraftDiv}>
-					{(!isEdit || status === 'draft') && (
-						<Button
+				&lt;div className={classes.publishDraftDiv}>
+					{(!isEdit || status === 'draft') &amp;&amp; (
+						&lt;Button
 							size='small'
 							variant={'outlined'}
 							disabled={!dirty}
 							onClick={saveDraftHandler}
 						>
-							{status === 'draft' && isEdit ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
-						</Button>
+							{status === 'draft' &amp;&amp; isEdit ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
+						&lt;/Button>
 					)}
-					<Button
+					&lt;Button
 						type='submit'
 						disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
 						onClick={handleSubmit}
 					>
 						{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
-					</Button>
-				</div>
-			</div>
-		</div>
+					&lt;/Button>
+				&lt;/div>
+			&lt;/div>
+		&lt;/div>
 	);
 };
 
@@ -228,3 +256,26 @@ ViralInternalForm.propTypes = {
 };
 
 export default ViralInternalForm;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-features_viralLibrary.html">features/viralLibrary</a></li><li><a href="module-features_viralLibraryActions.html">features/viralLibraryActions</a></li></ul><h3>Classes</h3><ul><li><a href="AppRoutes.html">AppRoutes</a></li><li><a href="BannerRows.html">BannerRows</a></li><li><a href="Banners.html">Banners</a></li><li><a href="NewsDraggable.html">NewsDraggable</a></li><li><a href="NewsLibrary.html">NewsLibrary</a></li><li><a href="NewsSlide.html">NewsSlide</a></li><li><a href="TopBanner.html">TopBanner</a></li><li><a href="UploadOrEditMedia.html">UploadOrEditMedia</a></li><li><a href="UploadOrEditNews.html">UploadOrEditNews</a></li><li><a href="ViralForm.html">ViralForm</a></li><li><a href="ViralFormDrawer.html">ViralFormDrawer</a></li><li><a href="ViralInternalForm.html">ViralInternalForm</a></li><li><a href="ViralLibrary.html">ViralLibrary</a></li><li><a href="ViralLibraryService.html">ViralLibraryService</a></li></ul><h3>Global</h3><ul><li><a href="global.html#changeQueryParameters">changeQueryParameters</a></li><li><a href="global.html#sanitizeDates">sanitizeDates</a></li><li><a href="global.html#ToastErrorNotifications">ToastErrorNotifications</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Wed Nov 02 2022 17:58:27 GMT+0500 (Pakistan Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
