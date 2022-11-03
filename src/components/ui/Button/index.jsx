@@ -6,19 +6,22 @@ const Button = ({
 	icon,
 	type = 'button',
 	variant = 'contained', // contained, outlined, text
-	size = 'medium', // small, medium, large
+	size = 'medium', // xsmall, small, medium, large, xlarge
+	color = 'primary', // primary, secondary, danger
 	className = '',
 	fullWidth = false,
 	disabled,
+	customPadding,
 	children,
 	...rest
 }) => {
 	const classes = useButtonStyles({
 		variant,
-		state: disabled ? 'disabled' : 'active',
+		color: disabled ? 'secondary' : color,
 		size,
 		fullWidth,
-		icon
+		icon,
+		customPadding
 	});
 
 	return (
@@ -28,8 +31,10 @@ const Button = ({
 			type={type}
 			disabled={disabled}
 		>
-			{children}
-			{icon ? icon : <></>}
+			<span className={classes.btnSpan}>
+				{children}
+				{icon}
+			</span>
 		</button>
 	);
 };
@@ -37,12 +42,14 @@ const Button = ({
 Button.propTypes = {
 	icon: PropTypes.element,
 	type: PropTypes.string,
+	color: PropTypes.string,
 	variant: PropTypes.string,
 	size: PropTypes.string,
 	className: PropTypes.string,
 	fullWidth: PropTypes.bool,
 	disabled: PropTypes.bool,
 	buttonText: PropTypes.string,
+	customPadding: PropTypes.string,
 	children: PropTypes.any
 };
 
