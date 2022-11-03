@@ -43,8 +43,8 @@ const DropzoneField = ({
 	onPreview,
 	showPreview,
 	onDrop,
-	maxFiles,
 	accept,
+	maxFiles = 1,
 	...rest
 }) => {
 	const handleDrop = (files) => {
