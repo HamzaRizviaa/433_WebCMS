@@ -106,7 +106,7 @@ const ViralInternalForm = ({
 			</div>
 			<div className={classes.buttonDiv}>
 				{isEdit && (
-					<div className={classes.editBtn}>
+					<div className={classes.deleteBtnWrapper}>
 						<Button
 							size='small'
 							variant={'outlined'}
