@@ -139,6 +139,7 @@ export const useDropzoneStyles = makeStyles((theme) => ({
 	},
 
 	horizontalLine: {
-		color: theme.palette.normalGrey
+		borderColor: theme.palette.normalGrey,
+		borderWidth: '0.5px'
 	}
 }));
