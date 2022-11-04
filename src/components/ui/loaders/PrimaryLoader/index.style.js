@@ -13,7 +13,7 @@ export const useStyles = makeStyles((theme) => ({
 		backgroundColor: ({ secondary, opaqueBackground }) =>
 			secondary || opaqueBackground
 				? theme.palette.black
-				: 'rgba(0, 0, 0, 0.6)',
+				: 'rgba(0, 0, 0, 0.8)',
 		zIndex: 100
 	},
 	loader: {
