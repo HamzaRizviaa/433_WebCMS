@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { pick, isEqual } from 'lodash';
 import { useFormikContext } from 'formik';
 import { useStyles } from '../index.styles';
 import { useStyles as globalUseStyles } from '../../../../styles/global.style';
 
 import { Tooltip, Fade } from '@mui/material';
 import { ReactComponent as Info } from '../../../../assets/InfoButton.svg';
+import { viralFormInitialValues } from '../../../../data/helpers';
 
 import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
@@ -28,8 +30,6 @@ const ViralInternalForm = ({
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
-	const isPublished = isEdit && status === 'published';
-
 	const {
 		values,
 		dirty,
@@ -40,6 +40,15 @@ const ViralInternalForm = ({
 		setSubmitting
 	} = useFormikContext();
 
+	const isPublished = isEdit && status === 'published';
+
+	const isDraftDisabled =
+		!dirty ||
+		isEqual(
+			pick(values, Object.keys(viralFormInitialValues)),
+			viralFormInitialValues
+		);
+
 	const saveDraftHandler = () =>
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
 
@@ -47,7 +56,10 @@ const ViralInternalForm = ({
 		<div>
 			<div>
 				<div className={globalClasses.explanationWrapper}>
-					<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
+					<h5>
+						{isEdit ? 'Media File' : 'Add Media File'}
+						<span style={{ color: '#ff355a' }}>{'*'}</span>
+					</h5>
 					<Tooltip
 						TransitionComponent={Fade}
 						TransitionProps={{ timeout: 800 }}
@@ -87,7 +99,9 @@ const ViralInternalForm = ({
 					label='LABELS'
 					name='labels'
 					placeholder={
-						!values.labels.length ? 'Select a minimum of 7 labels' : ''
+						values && !values.labels.length
+							? 'Select a minimum of 7 labels'
+							: ''
 					}
 					required
 				/>
@@ -121,7 +135,7 @@ const ViralInternalForm = ({
 						<Button
 							size='small'
 							variant={'outlined'}
-							disabled={!dirty}
+							disabled={isDraftDisabled}
 							onClick={saveDraftHandler}
 						>
 							{status === 'draft' && isEdit ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
