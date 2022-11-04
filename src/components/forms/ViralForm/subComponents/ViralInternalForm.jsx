@@ -94,7 +94,7 @@ const ViralInternalForm = ({
 				<FormikField
 					label='CAPTION'
 					name='caption'
-					placeholder='Please write the caption here'
+					placeholder='Please write your caption here'
 					multiline
 					maxRows={4}
 					required
