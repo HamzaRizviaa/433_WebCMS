@@ -19,8 +19,7 @@ export const DrawerLayoutStyles = makeStyles((theme) => ({
         backgroundColor: '#000000 !important'
     },
     content: {
-        padding: '4rem',
-        height: 'calc(100vh - 8rem)'
+        padding: '4rem'
     },
     closeIcon: {
         width: '3.2rem !important',
