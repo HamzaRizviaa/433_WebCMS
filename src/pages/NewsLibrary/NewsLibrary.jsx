@@ -8,6 +8,10 @@ import DashboardLayout from '../../components/layouts/DashboardLayout';
 import { getSpecificNews } from '../../data/features/newsLibrary/newsLibrarySlice';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 
+/**
+ * News Library Component
+ * @component
+ */
 const NewsLibrary = () => {
 	const dispatch = useDispatch();
 
@@ -17,13 +21,23 @@ const NewsLibrary = () => {
 
 	const { data, totalRecords, isLoading } = useGetAllNews();
 
+	/**
+	 * Opens the slider to upload new News Item
+	 * @returns {void}
+	 */
 	const onUploadNewsClick = () => {
 		dispatch(getAllNewLabels());
 		setEdit(false);
 		setShowSlider(true);
 	};
 
+	/**
+	 * Opens up the slider and populates the clicked news item.
+	 * @param {object} row - Contains pecific news item data
+	 * @returns {void}
+	 */
 	const onRowClick = (_, row) => {
+		console.log('ROWW', row);
 		row.status === 'draft' && dispatch(getAllNewLabels());
 		dispatch(getSpecificNews(row.id));
 		setEdit(true);

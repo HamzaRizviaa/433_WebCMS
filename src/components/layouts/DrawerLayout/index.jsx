@@ -3,61 +3,57 @@ import DrawerLayoutSlider from '../../common/DrawerLayoutSlider';
 import PrimaryLoader from '../../ui/loaders/PrimaryLoader';
 import Slide from '@mui/material/Slide';
 import PropTypes from 'prop-types';
+import { useDrawerLayoutStyles } from './index.style';
+import DropzoneFilePreviewer from '../../common/DropzoneFilePreviewer';
 
 const DrawerLayout = ({
-    open,
-    handleClose,
-    title,
-    disableDropdown,
-    handlePreview,
-    preview,
-    previewRef,
-    notifID,
-    isLoading,
-    mainPage,
-    children,
-    isEdit,
-    fromArticle = false
+	open,
+	handleClose,
+	title,
+	handlePreviewClose,
+	previewFile,
+	notifID,
+	isLoading,
+	children,
+	fromArticle = false
 }) => {
-    return(
-        <DrawerLayoutSlider
+	const classes = useDrawerLayoutStyles({ showPreview: !!previewFile });
+
+	return (
+		<DrawerLayoutSlider
 			open={open}
 			handleClose={handleClose}
 			title={title}
-			disableDropdown={disableDropdown}
-			handlePreview={handlePreview}
-			preview={preview}
-			previewRef={previewRef}
-            isEdit={isEdit}
-            fromArticle={fromArticle}
+			handlePreview={handlePreviewClose}
+			preview={!!previewFile}
+			fromArticle={fromArticle}
 			notifID={notifID}
 		>
-            <PrimaryLoader loading={isLoading} mainPage={mainPage}>
-                <Slide in={true} direction='up' {...{ timeout: 400 }}>
-                    {children}
-                </Slide>
-            </PrimaryLoader>
-        </DrawerLayoutSlider>
-    )
-}
+			<PrimaryLoader loading={isLoading}>
+				<Slide in={true} direction='up' timeout={400}>
+					<div className={classes.contentWrapper}>
+						<div className={classes.contentChildrenWrapper}>{children}</div>
+						<DropzoneFilePreviewer
+							previewFile={previewFile}
+							onClose={handlePreviewClose}
+						/>
+					</div>
+				</Slide>
+			</PrimaryLoader>
+		</DrawerLayoutSlider>
+	);
+};
 
 DrawerLayout.propTypes = {
-    open: PropTypes.bool.isRequired,
-    isEdit: PropTypes.bool.isRequired,
-    fromArticle: PropTypes.bool.isRequired,
-    handleClose: PropTypes.func.isRequired,
-    title: PropTypes.string.isRequired,
-    disableDropdown: PropTypes.func.isRequired,
-    handlePreview: PropTypes.func.isRequired,
-    preview: PropTypes.bool.isRequired,
-    previewRef: PropTypes.oneOfType([
-        PropTypes.func,
-        PropTypes.shape({ current: PropTypes.instanceOf(Element) })
-    ]),
-    notifID: PropTypes.string.isRequired,
-    mainPage: PropTypes.bool.isRequired,
-    isLoading: PropTypes.bool.isRequired,
-    children: PropTypes.element.isRequired
-}
+	open: PropTypes.bool.isRequired,
+	fromArticle: PropTypes.bool.isRequired,
+	handleClose: PropTypes.func.isRequired,
+	title: PropTypes.string.isRequired,
+	handlePreviewClose: PropTypes.func.isRequired,
+	previewFile: PropTypes.bool.isRequired,
+	notifID: PropTypes.string.isRequired,
+	isLoading: PropTypes.bool.isRequired,
+	children: PropTypes.element.isRequired
+};
 
-export default DrawerLayout
+export default DrawerLayout;

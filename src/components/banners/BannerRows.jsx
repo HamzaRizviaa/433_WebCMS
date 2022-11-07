@@ -1,8 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useCallback } from 'react';
-// import Backdrop from '@material-ui/core/Backdrop';
-//import { makeStyles } from '@material-ui/core/styles';
 import { TextField } from '@material-ui/core';
 import MenuItem from '@mui/material/MenuItem';
 import { Select } from '@material-ui/core';
@@ -17,21 +15,24 @@ import { ReactComponent as DropdownArrow } from '../../assets/drop_drown_arrow.s
 import { ReactComponent as Union } from '../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../assets/Delete.svg';
 import { useStyles, useStyles2 } from './bannerStyles';
-
 import { useDispatch, useSelector } from 'react-redux';
-//import { getLocalStorageDetails } from '../../data/utils';
+import { getBannerContent } from '../../data/features/topBanner/topBannerSlice';
 import _debounce from 'lodash/debounce';
 //import axios from 'axios';
 //import { toast } from 'react-toastify';
-import { getBannerContent } from "../../data/features/topBanner/topBannerSlice";
+// import Backdrop from '@material-ui/core/Backdrop';
+//import { makeStyles } from '@material-ui/core/styles';
+//import { getLocalStorageDetails } from '../../data/utils';
 
-// eslint-disable-next-line no-unused-vars
-export default function BannerRows({
+/**
+ * @component
+ */
+function BannerRows({
 	key,
 	data,
 	setBannerData,
 	index,
-	handleBanner,
+
 	otherRowsErrMsg, // 2-5
 	firstrowErrMsg, // 1
 	validateRow,
@@ -68,10 +69,19 @@ export default function BannerRows({
 			resetState();
 		}
 	}, [open]);
+
+	/**
+	 * reset dropdown data
+	 * @returns {boolean} - dropdown reset
+	 */
 	const resetState = () => {
 		setDropdownPosition(false);
 	};
 
+	/**
+	 * reset dropdown data
+	 * @returns {boolean} - dropdown reset
+	 */
 	const handleDebounceFun = () => {
 		let _search;
 		setSelectMediaInput((prevState) => {
@@ -98,12 +108,22 @@ export default function BannerRows({
 
 	const debounceFun = useCallback(_debounce(handleDebounceFun, 600), []);
 
+	/**
+	 * Handle input change on Select content dropdown
+	 * @param  {object} e - input change on select content dropdown
+	 * @returns {string} - dropdown reset
+	 */
 	const handleChangeSelectMediaInput = (e) => {
 		//console.log(e.target.value, 'aaa');
 		setSelectMediaInput(e.target.value);
 		debounceFun(e.target.value);
 	};
 
+	/**
+	 * Empty Dropdowns on Trash Icon
+	 * @param  {array} TrashData - Data to remove
+	 * @returns {array} - updated banner data
+	 */
 	const emptyBannerData = (Trashdata) => {
 		setTrashCan(true);
 		console.log(Trashdata);
@@ -135,8 +155,6 @@ export default function BannerRows({
 		// else {
 		// 	deleteBannerData(Trashdata.id);
 		// }
-
-		// handleBanner();
 	};
 
 	// const deleteBannerData = async (id) => {
@@ -279,7 +297,6 @@ export default function BannerRows({
 													});
 													return _bannerData;
 												});
-												// handleBanner();
 											}}
 											className={classes.select}
 											disableUnderline={true}
@@ -515,17 +532,43 @@ export default function BannerRows({
 		</Draggable>
 	);
 }
-
+export default BannerRows;
 BannerRows.propTypes = {
+	/**
+	 * Data object
+	 */
 	data: PropTypes.object,
+	/**
+	 * map key id
+	 */
 	key: PropTypes.integer,
+	/**
+	 * complete bannner data
+	 */
 	setBannerData: PropTypes.func,
-	handleBanner: PropTypes.func,
+	/**
+	 * draggable props
+	 */
 	provided: PropTypes.draggableProps,
+	/**
+	 * error msg object except 1st row
+	 */
 	otherRowsErrMsg: PropTypes.object,
+	/**
+	 * error msg object for 1st row
+	 */
 	firstrowErrMsg: PropTypes.object,
+	/**
+	 * validation check
+	 */
 	validateRow: PropTypes.object,
-	bannerContent: PropTypes.array,
+	/**
+	 * tab values home / media
+	 */
 	tabValue: PropTypes.string,
-	selectedBannerData: PropTypes.array
+	/**
+	 * banner data
+	 */
+	selectedBannerData: PropTypes.array,
+	bannerContent: PropTypes.array
 };

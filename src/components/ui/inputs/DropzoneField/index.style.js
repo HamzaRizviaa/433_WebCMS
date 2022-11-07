@@ -24,7 +24,6 @@ export const useDropzoneStyles = makeStyles((theme) => ({
 	},
 
 	formatMsg: {
-		marginTop: 2,
 		fontSize: '1.2rem',
 		lineHeight: '1.6rem',
 		fontWeight: 400,
@@ -44,8 +43,7 @@ export const useDropzoneStyles = makeStyles((theme) => ({
 		fontWeight: 'bold',
 		height: '1rem',
 		textAlign: 'center',
-		marginTop: 2,
-		marginBottom: '1rem'
+		marginTop: 1
 	},
 
 	uploadedFilesContainer: {
@@ -109,10 +107,9 @@ export const useDropzoneStyles = makeStyles((theme) => ({
 	},
 
 	fileThumbnail: {
-		height: '8rem',
-		maxWidth: '90%',
+		width: '8rem',
 		borderRadius: '4px',
-		objectFit: 'contain',
+		objectFit: 'cover',
 		objectPosition: 'center'
 	},
 
@@ -139,5 +136,10 @@ export const useDropzoneStyles = makeStyles((theme) => ({
 		height: '2.5rem !important',
 		width: 'auto !important',
 		color: theme.palette.neonYellow
+	},
+
+	horizontalLine: {
+		borderColor: theme.palette.normalGrey,
+		borderWidth: '0.5px'
 	}
 }));

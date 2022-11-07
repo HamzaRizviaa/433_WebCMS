@@ -4,26 +4,27 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import BannerRows from './BannerRows';
 import Button from '../button';
 import { useEffect } from 'react';
-import {
-	getAllBanners,
-	getBannerContent,
-	resetBanner
-} from "../../data/features/topBanner/topBannerSlice";
 import { useDispatch, useSelector } from 'react-redux';
 import { getLocalStorageDetails } from '../../data/utils';
 import PropTypes from 'prop-types';
 import PrimaryLoader from '../PrimaryLoader';
-
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import {
+	getAllBanners,
+	getBannerContent,
+	resetBanner
+} from '../../data/features/topBanner/topBannerSlice';
 
-export default function Banners({ tabValue }) {
+/**
+ * @component
+ */
+function Banners({ tabValue }) {
 	const [validateRow, setValidateRow] = useState(''); //row check 2-5
 	const [firstCheck, setFirstRowCheck] = useState(''); //row check 1
 	const [btnDisable, setbtnDisable] = useState(false);
 	const [btnSetBannerDisable, setbtnSetBannerDisable] = useState(false);
 	const [bannerItems, setBannerItems] = useState([]);
-
 	const [bannerData, setBannerData] = useState([
 		{
 			id: '1',
@@ -50,33 +51,7 @@ export default function Banners({ tabValue }) {
 			bannerType: '',
 			selectedMedia: null
 		}
-		// {
-		// 	id: '6',
-		// 	bannerType: '',
-		// 	selectedMedia: null
-		// },
-		// {
-		// 	id: '7',
-		// 	bannerType: '',
-		// 	selectedMedia: null
-		// },
-		// {
-		// 	id: '8',
-		// 	bannerType: '',
-		// 	selectedMedia: null
-		// },
-		// {
-		// 	id: '9',
-		// 	bannerType: '',
-		// 	selectedMedia: null
-		// },
-		// {
-		// 	id: '10',
-		// 	bannerType: '',
-		// 	selectedMedia: null
-		// }
 	]);
-	console.log('BANNER DATa', bannerData);
 
 	const dispatch = useDispatch();
 	const {
@@ -162,7 +137,17 @@ export default function Banners({ tabValue }) {
 		]);
 	}, [tabValue]);
 
-	//get banners from get api and map on your own data
+	//button disable
+	useEffect(() => {
+		setbtnSetBannerDisable(true);
+		const disableContent = handleBannerPositionAndFirstBanner();
+		btnSetBannerDisable === true ? setbtnDisable(disableContent.flag) : '';
+	}, [bannerData]);
+
+	/**
+	 * Map banners data from get api
+	 * @returns {array} - banner data list
+	 */
 	const updateBannerObject = () => {
 		let _filterData = [];
 		_filterData = allBanners.map((data) => {
@@ -183,7 +168,13 @@ export default function Banners({ tabValue }) {
 		setbtnSetBannerDisable(false);
 	};
 
-	//reorder
+	/**
+	 * Reorder function returns the list
+	 * @param {array} list - list to reorder
+	 * @param {number} startIndex - start of index where to pick from
+	 * @param {number} endIndex - end of index where to drop it
+	 * @returns {array} - result reordered list
+	 */
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
 		const [removed] = result.splice(startIndex, 1);
@@ -191,13 +182,17 @@ export default function Banners({ tabValue }) {
 		return result;
 	};
 
+	/**
+	 * function where the item in dropped
+	 * @param   {array} result - updated list
+	 */
 	const onDragEnd = (result) => {
 		// dropped outside the list
 		if (!result.destination) {
 			return;
 		}
 		const items = reorder(
-			bannerData,
+			bannerData, //data
 			result.source.index, // pick
 			result.destination.index // drop
 		);
@@ -207,15 +202,11 @@ export default function Banners({ tabValue }) {
 		setFirstRowCheck({ flag: '', rowId: undefined, errMsg: '' });
 		setValidateRow({ flag: '', rowId: undefined, errMsg: '' });
 	};
-	// - autocomplete ends
 
-	//button disable
-	useEffect(() => {
-		setbtnSetBannerDisable(true);
-		const disableContent = handleBannerPositionAndFirstBanner();
-		btnSetBannerDisable === true ? setbtnDisable(disableContent.flag) : '';
-	}, [bannerData]);
-
+	/**
+	 * check Validations and API function hit when button is clicked
+	 *  @returns void - if no errors API Call otherwise Errors will be consoled
+	 */
 	const clickBanner = () => {
 		const firstrowcheck = handleCheckFirstRow(); // 1
 		const validateRow = handleBannerPositionAndFirstBanner(); // 2- 5
@@ -226,13 +217,17 @@ export default function Banners({ tabValue }) {
 			if (bannerData[0]?.bannerType && bannerData[0]?.selectedMedia) {
 				uploadBanner();
 			} else {
-				console.log('Add or update banner to publish new one ok 	');
+				console.log('Add or update banner to publish new one ok');
 			}
 		} else {
 			console.log('add or update banner to publish new one ');
 		}
 	};
 
+	/**
+	 * Post API Call to publish banners
+	 *  @returns void - Toast of API success / failure message
+	 */
 	const uploadBanner = async () => {
 		let bannerPayload = [];
 		// to post banners , map your own data to api payload data as in docs
@@ -287,6 +282,10 @@ export default function Banners({ tabValue }) {
 		}
 	};
 
+	/**
+	 * Check validations for first bannner
+	 *  @returns  {object} - Top banner should always be filled
+	 */
 	const handleCheckFirstRow = () => {
 		let errValidate = { flag: '', rowId: undefined, errMsg: '' };
 		if (!bannerData[0]?.bannerType ^ !bannerData[0]?.selectedMedia) {
@@ -305,6 +304,10 @@ export default function Banners({ tabValue }) {
 		return errValidate;
 	};
 
+	/**
+	 * Check validations for consecutive and completely filled bannner
+	 *  @returns  {object} - There should be no empty banner in between.
+	 */
 	const handleBannerPositionAndFirstBanner = () => {
 		console.log('click other banner');
 		let errValidate = { flag: '', rowId: undefined, errMsg: '' };
@@ -337,6 +340,11 @@ export default function Banners({ tabValue }) {
 		return errValidate;
 	};
 
+	/**
+	 * Filter for select content type dropdown
+	 * @param {array} data - data
+	 *  @returns  {array} - filtered array
+	 */
 	const filterBannerContent = (data) => {
 		if (data.length === 0) return [];
 		setBannerItems(
@@ -427,6 +435,11 @@ export default function Banners({ tabValue }) {
 	);
 }
 
+export default Banners;
+
 Banners.propTypes = {
+	/**
+	 * tab values i.e. home/media
+	 */
 	tabValue: PropTypes.string
 };
