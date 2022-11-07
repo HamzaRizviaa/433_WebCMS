@@ -47,7 +47,7 @@ export const useInputsStyles = makeStyles((theme) => ({
 		fontSize: '1.2rem',
 		fontWeight: 'bold',
 		marginBottom: '0.5rem',
-		color: theme.palette.white
+		color: (props) => (props.isError ? theme.palette.red : theme.palette.white)
 	},
 
 	textFieldInput: ({ isError, size }) => ({
@@ -76,7 +76,7 @@ export const useInputsStyles = makeStyles((theme) => ({
 		color: theme.palette.red,
 		fontWeight: 'bold',
 		marginTop: '0.2rem',
-		marginLeft: '0.5rem',
+		marginLeft: '1rem',
 		height: '1rem'
 	}
 }));

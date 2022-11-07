@@ -103,6 +103,7 @@ const ViralInternalForm = ({
 							? 'Select a minimum of 7 labels'
 							: ''
 					}
+					disabled={isPublished}
 					required
 				/>
 				<FormikField

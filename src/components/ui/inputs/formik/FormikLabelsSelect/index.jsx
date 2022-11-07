@@ -109,7 +109,13 @@ const FormikLabelsSelect = ({ name, ...restProps }) => {
 			onChange={handleChange}
 			onBlur={handleBlur}
 			onSearchTextChange={handleSearchTextChange}
-			error={touched && error ? error : ''}
+			error={
+				touched && error
+					? `You need to add ${
+							7 - selectedValues.length
+					  } more labels in order to upload media`
+					: ''
+			}
 			renderOption={renderOption}
 		/>
 	);

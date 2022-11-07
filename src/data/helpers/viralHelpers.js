@@ -139,7 +139,7 @@ export const viralFormInitialValues = {
 };
 
 export const viralFormValidationSchema = Yup.object().shape({
-	caption: Yup.string().required().label('Caption'),
+	caption: Yup.string().required('You need to enter a caption'),
 	dropbox_url: Yup.string(),
 	uploadedFiles: Yup.array().min(1).required(),
 	labels: Yup.array().min(7).required().label('Labels'),
