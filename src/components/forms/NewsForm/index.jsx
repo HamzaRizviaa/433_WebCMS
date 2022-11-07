@@ -51,17 +51,14 @@ const NewsForm = ({
 	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
 		formikBag.setSubmitting(true);
 
-		console.log(values);
-
 		try {
-			let newsImages = values?.newsSlides.map(async (item) => {
+			let newsImages = values?.slides.map(async (item) => {
 				let newsData = await uploadFileToServer(
 					item?.uploadedFiles[0],
 					'newslibrary'
 				);
 				return newsData;
 			});
-
 			Promise.all([...newsImages])
 				.then((mediaFiles) => {
 					const newsData = newsDataFormatterForService(
@@ -69,7 +66,6 @@ const NewsForm = ({
 						mediaFiles,
 						isDraft
 					);
-					console.log('PromiseHere');
 					dispatch(createOrEditNewsThunk(newsData, formikBag, isDraft));
 					handleClose();
 					if (isEdit && !(status === 'draft' && isDraft === false)) {

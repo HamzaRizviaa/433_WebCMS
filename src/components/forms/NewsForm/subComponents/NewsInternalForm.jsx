@@ -26,7 +26,7 @@ const NewsInternalForm = ({
 	const classes = useFormStyles();
 	const isPublished = isEdit && status === 'published';
 
-	const { values, dirty, isValid, isSubmitting, setSubmitting } =
+	const { values, dirty, isValid, errors, isSubmitting, setSubmitting } =
 		useFormikContext();
 
 	const saveDraftHandler = () => {
@@ -34,7 +34,7 @@ const NewsInternalForm = ({
 	};
 
 	const isDraftDisabled = useMemo(() => {
-		const isAnyNewsSlideEmpty = values.newsSlides.some((item) =>
+		const isAnyNewsSlideEmpty = values.slides.some((item) =>
 			areAllFieldsEmpty(item)
 		);
 		const isEqualToDefaultValues = isEqual(
@@ -88,7 +88,7 @@ const NewsInternalForm = ({
 				</div>
 			</AccordianLayout>
 			<FieldArray
-				name='newsSlides'
+				name='slides'
 				render={(props) => (
 					<NewsSlideForm {...props} openPreviewer={openPreviewer} />
 				)}

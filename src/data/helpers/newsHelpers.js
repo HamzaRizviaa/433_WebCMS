@@ -91,8 +91,12 @@ export const newsDataFormatterForForm = (news) => {
 				title,
 				...(rest.image
 					? {
-							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.image}`,
-							file_name: rest.file_name
+							uploadedFiles: [
+								{
+									media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.image}`,
+									file_name: rest.file_name
+								}
+							]
 					  }
 					: {})
 			};
@@ -100,6 +104,8 @@ export const newsDataFormatterForForm = (news) => {
 	);
 
 	formattedNews.slides = slidesData;
+
+	console.log('slidesData', slidesData);
 
 	return formattedNews;
 };
@@ -110,11 +116,9 @@ export const newsDataFormatterForService = (
 	isDraft = false
 ) => {
 	let slides =
-		news.newsSlides.length > 0
-			? news.newsSlides.map((item, index) => {
-					console.log('itemSlide', item);
+		news.slides.length > 0
+			? news.slides.map((item, index) => {
 					return {
-						//id: item.data[0].id,
 						image:
 							mediaFiles[index]?.media_url?.split('cloudfront.net/')[1] ||
 							mediaFiles[index]?.media_url,
