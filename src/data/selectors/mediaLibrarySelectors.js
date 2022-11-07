@@ -1,5 +1,4 @@
-export const selectMedia = (state) =>
-	state.rootReducer.mediaLibrary.media;
+export const selectMedia = (state) => state.rootReducer.mediaLibrary.media;
 
 export const selectMediaApiStatus = (state) =>
 	state.rootReducer.mediaLibrary.status;
@@ -12,3 +11,15 @@ export const selectMediaNoResultStatus = (state) =>
 
 export const selectMediaResultStatusCalendar = (state) =>
 	state.rootReducer.mediaLibrary.noResultStatusCalendar;
+
+export const selectSpecificMedia = (state) =>
+	state.rootReducer.mediaLibrary.specificMedia;
+
+export const selectMediaMainCategories = (state) =>
+	state.rootReducer.mediaLibrary.mainCategories;
+
+export const selectSpecificMediaStatus = (state) =>
+	state.rootReducer.mediaLibrary;
+
+export const selectMedialabels = (state) =>
+	state.rootReducer.mediaLibrary.labels;
