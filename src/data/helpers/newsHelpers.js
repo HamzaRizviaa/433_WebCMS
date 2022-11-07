@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 import { isEmpty } from 'lodash';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime, makeid } from '../utils';
@@ -79,30 +81,68 @@ export const newsDataFormatterForForm = (news) => {
 		formattedNews.labels = updatedLabels;
 	}
 
-	formattedNews.uploadedFiles = !isEmpty(news.file_name)
-		? [
-				{
-					id: makeid(10),
-					file_name: news?.file_name,
-					media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${news?.url}`,
-					type: news?.thumbnail_url ? 'video' : 'image',
-					...(news?.thumbnail_url
-						? {
-								thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${news?.thumbnail_url}`
-						  }
-						: {})
-				}
-		  ]
-		: [];
+	let slidesData = news.slides.map(
+		({ name, description, sort_order, title, ...rest }) => {
+			return {
+				...rest,
+				sort_order: sort_order,
+				description,
+				name,
+				title,
+				...(rest.image
+					? {
+							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.image}`,
+							file_name: rest.file_name
+					  }
+					: {})
+			};
+		}
+	);
+
+	formattedNews.slides = slidesData;
 
 	return formattedNews;
 };
 
-export const newsDataFormatterForService = (news, file, isDraft = false) => {
+export const newsDataFormatterForService = (
+	news,
+	mediaFiles,
+	isDraft = false
+) => {
+	let slides =
+		news.newsSlides.length > 0
+			? news.newsSlides.map((item, index) => {
+					console.log('itemSlide', item);
+					return {
+						//id: item.data[0].id,
+						image:
+							mediaFiles[index]?.media_url?.split('cloudfront.net/')[1] ||
+							mediaFiles[index]?.media_url,
+						file_name: mediaFiles[index]?.file_name,
+						height: item.uploadedFiles[0]?.height,
+						width: item.uploadedFiles[0]?.width,
+						dropbox_url: item?.dropbox_url,
+						description: item?.description,
+						title: item?.title,
+						name: item?.name,
+						sort_order: index + 1
+					};
+			  })
+			: [];
+
 	const newsData = {
-		save_draft: isDraft,
 		translations: undefined,
-		user_data: getUserDataObject()
+		user_data: getUserDataObject(),
+		save_draft: isDraft,
+		banner_title: news.banner_title,
+		banner_description: news.banner_description,
+		show_likes: news.show_likes,
+		show_comments: news.show_comments,
+		slides: slides,
+		...(news.labels?.length ? { labels: [...news.labels] } : {}),
+
+		// Destructing the viral id for edit state
+		...(news.id ? { news_id: news.id } : {})
 	};
 
 	return newsData;
@@ -112,7 +152,6 @@ export const newsDataFormatterForService = (news, file, isDraft = false) => {
 // Viral Form Helpers
 //
 export const newsFormInitialValues = {
-	uploadedFiles: [],
 	dropbox_url: '',
 	labels: [],
 	banner_title: '',
@@ -123,7 +162,6 @@ export const newsFormInitialValues = {
 };
 
 export const newsFormValidationSchema = Yup.object().shape({
-	uploadedFiles: Yup.array().min(1).required(),
 	labels: Yup.array().min(7).required().label('Labels'),
 	banner_title: Yup.string().required().label('Banner Title'),
 	banner_description: Yup.string().required().label('Banner Description'),

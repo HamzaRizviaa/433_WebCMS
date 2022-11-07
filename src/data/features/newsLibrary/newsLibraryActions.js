@@ -14,11 +14,15 @@ export const getAllNewsApi = createAsyncThunk(
 export const getSpecificNews = createAsyncThunk(
 	'editButton/getSpecificNews',
 	async (id) => {
-		const response = await NewsLibraryService.getSpecificNewsApi(id);
-		if (response?.data?.data) {
-			return response.data.data;
-		} else {
-			return [];
+		try {
+			const response = await NewsLibraryService.getSpecificNewsApi(id);
+			if (response?.data?.data) {
+				return response.data.data;
+			} else {
+				return [];
+			}
+		} catch (error) {
+			console.error(error);
 		}
 	}
 );

@@ -46,27 +46,35 @@ const NewsForm = ({
 		formikBag.setSubmitting(true);
 
 		try {
-			const uploadFileRes = await uploadFileToServer(
-				values.uploadedFiles[0],
-				'newslibrary'
-			);
-			const newsData = newsDataFormatterForService(
-				values,
-				uploadFileRes,
-				isDraft
-			);
+			let newsImages = values?.newsSlides.map(async (item) => {
+				let newsData = await uploadFileToServer(
+					item?.uploadedFiles[0],
+					'newslibrary'
+				);
+				return newsData;
+			});
 
-			await dispatch(createOrEditNewsThunk(newsData, formikBag, isDraft));
-
-			handleClose();
-
-			if (isEdit && !(status === 'draft' && isDraft === false)) {
-				dispatch(getAllNewsApi(queryParams));
-			} else if (isSearchParamsEmpty) {
-				dispatch(getAllNewsApi());
-			} else {
-				navigate('/news-library');
-			}
+			Promise.all([...newsImages])
+				.then((mediaFiles) => {
+					const newsData = newsDataFormatterForService(
+						values,
+						mediaFiles,
+						isDraft
+					);
+					console.log('PromiseHere');
+					dispatch(createOrEditNewsThunk(newsData, formikBag, isDraft));
+					handleClose();
+					if (isEdit && !(status === 'draft' && isDraft === false)) {
+						dispatch(getAllNewsApi(queryParams));
+					} else if (isSearchParamsEmpty) {
+						dispatch(getAllNewsApi());
+					} else {
+						navigate('/news-library');
+					}
+				})
+				.catch((err) => {
+					console.log('errPromise', err);
+				});
 		} catch (e) {
 			console.error(e);
 		} finally {

@@ -26,7 +26,7 @@ class NewsLibraryService {
 	}
 
 	static getSpecificNewsApi(id) {
-		axiosInstance.get(`/news/get-specific-news/${id}`);
+		return axiosInstance.get(`/news/get-specific-news/${id}`);
 	}
 
 	static postNews(data) {

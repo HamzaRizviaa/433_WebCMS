@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FieldArray } from 'formik';
@@ -21,8 +22,15 @@ const NewsInternalForm = ({
 	const classes = useFormStyles();
 	const isPublished = isEdit && status === 'published';
 
-	const { values, dirty, isValid, isSubmitting, handleSubmit, setSubmitting } =
-		useFormikContext();
+	const {
+		values,
+		dirty,
+		isValid,
+		errors,
+		isSubmitting,
+		handleSubmit,
+		setSubmitting
+	} = useFormikContext();
 
 	const saveDraftHandler = () =>
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
@@ -112,7 +120,7 @@ const NewsInternalForm = ({
 					)}
 					<Button
 						type='submit'
-						disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
+						// disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
 						onClick={handleSubmit}
 					>
 						{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
