@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -40,10 +40,18 @@ const NewsForm = ({
 	// Refs
 	const dialogWrapper = useRef(null);
 
+	const initialValues = useMemo(() => {
+		return isEdit && !isEmpty(specificNews)
+			? newsDataFormatterForForm(specificNews)
+			: newsFormInitialValues;
+	}, [isEdit, specificNews]);
+
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
 	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
 		formikBag.setSubmitting(true);
+
+		console.log(values);
 
 		try {
 			let newsImages = values?.newsSlides.map(async (item) => {
@@ -106,11 +114,7 @@ const NewsForm = ({
 	return (
 		<Formik
 			enableReinitialize
-			initialValues={
-				isEdit && !isEmpty(specificNews)
-					? newsDataFormatterForForm(specificNews)
-					: newsFormInitialValues
-			}
+			initialValues={initialValues}
 			validationSchema={newsFormValidationSchema}
 			validateOnMount
 			onSubmit={onSubmitHandler}

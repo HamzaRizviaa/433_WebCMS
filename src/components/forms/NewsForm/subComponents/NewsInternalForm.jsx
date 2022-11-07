@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { FieldArray } from 'formik';
-import { useFormikContext } from 'formik';
+import { FieldArray, useFormikContext } from 'formik';
+import { isEqual, pick } from 'lodash';
 
 import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
@@ -11,6 +11,10 @@ import Button from '../../../ui/Button';
 import NewsSlideForm from './NewsSlideForm';
 import AccordianLayout from '../../../layouts/AccordianLayout';
 import { useFormStyles } from '../../forms.style';
+import {
+	areAllFieldsEmpty,
+	newsFormInitialValues
+} from '../../../../data/helpers';
 
 const NewsInternalForm = ({
 	isEdit,
@@ -22,18 +26,24 @@ const NewsInternalForm = ({
 	const classes = useFormStyles();
 	const isPublished = isEdit && status === 'published';
 
-	const {
-		values,
-		dirty,
-		isValid,
-		errors,
-		isSubmitting,
-		handleSubmit,
-		setSubmitting
-	} = useFormikContext();
+	const { values, dirty, isValid, isSubmitting, setSubmitting } =
+		useFormikContext();
 
-	const saveDraftHandler = () =>
+	const saveDraftHandler = () => {
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
+	};
+
+	const isDraftDisabled = useMemo(() => {
+		const isAnyNewsSlideEmpty = values.newsSlides.some((item) =>
+			areAllFieldsEmpty(item)
+		);
+		const isEqualToDefaultValues = isEqual(
+			pick(values, Object.keys(newsFormInitialValues)),
+			newsFormInitialValues
+		);
+
+		return !dirty || isAnyNewsSlideEmpty || isEqualToDefaultValues;
+	}, [values]);
 
 	return (
 		<div>
@@ -46,17 +56,6 @@ const NewsInternalForm = ({
 						required
 					/>
 				</div>
-				{/* TODO need to where we are handlign this logic */}
-				{/* <p className={classes.mediaError}>
-							{isError.selectedLabels
-								? `You need to add ${
-										7 - form.labels.length
-								  } more labels in order to upload media`
-								: isError.selectedLabelsDraft
-								? 'You need to select atleast 1 label to save as draft'
-								: ''}
-						</p> */}
-
 				<div className={classes.fieldContainer}>
 					<FormikField
 						label='BANNER TITLE'
@@ -112,7 +111,7 @@ const NewsInternalForm = ({
 						<Button
 							size='small'
 							variant='outlined'
-							disabled={!dirty}
+							disabled={isDraftDisabled}
 							onClick={saveDraftHandler}
 						>
 							{status === 'draft' && isEdit ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
@@ -121,7 +120,6 @@ const NewsInternalForm = ({
 					<Button
 						type='submit'
 						// disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
-						onClick={handleSubmit}
 					>
 						{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
 					</Button>
@@ -135,7 +133,6 @@ NewsInternalForm.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
 	previewFile: PropTypes.any,
-	setDisableDropdown: PropTypes.func.isRequired,
 	openPreviewer: PropTypes.func.isRequired,
 	onSubmitHandler: PropTypes.func.isRequired,
 	toggleDeleteModal: PropTypes.func.isRequired

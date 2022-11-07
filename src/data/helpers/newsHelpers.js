@@ -149,7 +149,7 @@ export const newsDataFormatterForService = (
 };
 
 //
-// Viral Form Helpers
+// News Form Helpers
 //
 export const newsFormInitialValues = {
 	dropbox_url: '',
@@ -158,19 +158,35 @@ export const newsFormInitialValues = {
 	banner_description: '',
 	show_likes: true,
 	show_comments: true,
-	newsSlides: []
+	slides: []
 };
 
 export const newsFormValidationSchema = Yup.object().shape({
-	labels: Yup.array().min(7).required().label('Labels'),
-	banner_title: Yup.string().required().label('Banner Title'),
-	banner_description: Yup.string().required().label('Banner Description'),
+	labels: Yup.array()
+		.min(7, (obj) => {
+			const labelsCount = obj.value?.length;
+			return `You need to add ${
+				7 - labelsCount
+			} more labels in order to upload news`;
+		})
+		.required('You need to enter atleast 7 labels')
+		.label('Labels'),
+	banner_title: Yup.string()
+		.trim()
+		.required('You need to enter a banner title')
+		.label('Banner Title'),
+	banner_description: Yup.string()
+		.trim()
+		.required('You need to enter a banner description')
+		.label('Banner Description'),
 	show_likes: Yup.boolean().required(),
 	show_comments: Yup.boolean().required(),
-	newsSlides: Yup.array().of(
+	slides: Yup.array().of(
 		Yup.object({
-			uploadedFiles: Yup.array().min(1).required(),
-			dropbox_url: Yup.string(),
+			uploadedFiles: Yup.array()
+				.min(1, 'Each News Slide should contain an Image.')
+				.required(),
+			dropbox_url: Yup.string().label('Dropbox URL'),
 			title: Yup.string().label('Title'),
 			description: Yup.string().label('Description'),
 			name: Yup.string().label('Name')

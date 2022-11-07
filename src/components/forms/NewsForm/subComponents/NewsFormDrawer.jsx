@@ -18,8 +18,6 @@ const NewsFormDrawer = ({
 }) => {
 	const { values, isSubmitting, resetForm, validateForm } = useFormikContext();
 
-	console.log(values);
-
 	const specificNewsStatus = useSelector(selectSpecificNewsStatus);
 
 	const [previewFile, setPreviewFile] = useState(null);
