@@ -12,7 +12,7 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 	const classes = useFormStyles();
 
 	const handleDeleteFile = (index) => {
-		form.setFieldValue(`newsSlides.${index}.uploadedFiles`, []);
+		form.setFieldValue(`slides.${index}.uploadedFiles`, []);
 	};
 
 	const handleDeleteSlide = (_, index) => {
@@ -36,7 +36,7 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 	return (
 		<div>
 			<DraggableLayoutWrapper onDragEnd={handleDragEnd}>
-				{form.values.newsSlides.map((item, index) => (
+				{form.values.slides.map((item, index) => (
 					<DraggableCardLayout
 						title={`NEWS SLIDE ${index + 1}`}
 						key={index}
@@ -46,17 +46,17 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 					>
 						<div>
 							<FormikDropzone
-								name={`newsSlides.${index}.uploadedFiles`}
+								name={`slides.${index}.uploadedFiles`}
 								accept='image/jpeg, image/png'
 								formatMessage='Supported formats are jpeg and png'
 								showPreview
 								onPreview={openPreviewer}
-								onDelete={handleDeleteFile}
+								onDelete={() => handleDeleteFile(index)}
 							/>
 						</div>
 						<div className={classes.fieldContainer}>
 							<FormikField
-								name={`newsSlides.${index}.dropbox_url`}
+								name={`slides.${index}.dropbox_url`}
 								label='DROPBOX URL'
 								placeholder='Please drop the URL here'
 								multiline
@@ -65,7 +65,7 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 						</div>
 						<div className={classes.fieldContainer}>
 							<FormikField
-								name={`newsSlides.${index}.title`}
+								name={`slides.${index}.title`}
 								label='TITLE'
 								placeholder='Please write your title here'
 								multiline
@@ -75,7 +75,7 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 						</div>
 						<div className={classes.fieldContainer}>
 							<FormikField
-								name={`newsSlides.${index}.description`}
+								name={`slides.${index}.description`}
 								label='DESCRIPTION'
 								placeholder='Please write your description here'
 								multiline
@@ -86,7 +86,7 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 						</div>
 						<div className={classes.fieldContainer}>
 							<FormikField
-								name={`newsSlides.${index}.name`}
+								name={`slides.${index}.name`}
 								label='NAME'
 								placeholder='Please write the topic name here'
 								multiline
