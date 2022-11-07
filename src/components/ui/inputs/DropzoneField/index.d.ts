@@ -17,6 +17,7 @@ export type DropzoneFieldProps = DropzoneOptions & {
 	name: string;
 	value: FileObject[];
 	formatMessage: string | JSX.Element;
+	fileSizeMessage: string;
 	label?: string;
 	error?: string;
 	onBlur?: React.FocusEventHandler<HTMLInputElement>;

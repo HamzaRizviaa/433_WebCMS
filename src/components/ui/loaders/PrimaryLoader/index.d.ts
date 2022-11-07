@@ -3,6 +3,7 @@ export interface PrimaryLoaderProps {
 	children?: JSX.Element[] | JSX.Element;
 	mainPage?: boolean;
 	secondary?: boolean;
+	opaqueBackground?: boolean;
 }
 
 /** The "PrimaryLoader" component is a wrapper that is used to show the loading.
