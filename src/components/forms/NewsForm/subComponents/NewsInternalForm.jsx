@@ -26,11 +26,22 @@ const NewsInternalForm = ({
 	const classes = useFormStyles();
 	const isPublished = isEdit && status === 'published';
 
-	const { values, dirty, isValid, errors, isSubmitting, setSubmitting } =
-		useFormikContext();
+	const {
+		values,
+		dirty,
+		isValid,
+		errors,
+		isSubmitting,
+		setSubmitting,
+		setFieldError
+	} = useFormikContext();
 
 	const saveDraftHandler = () => {
-		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
+		onSubmitHandler(
+			values,
+			{ setSubmitting, isSubmitting, setFieldError },
+			true
+		);
 	};
 
 	const isDraftDisabled = useMemo(() => {

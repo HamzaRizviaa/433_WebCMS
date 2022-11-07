@@ -22,6 +22,7 @@ import { uploadFileToServer } from '../../../data/utils';
 
 import NewsFormDrawer from './subComponents/NewsFormDrawer';
 import DeleteModal from '../../DeleteModal';
+import { NewsLibraryService } from '../../../data/services';
 
 const NewsForm = ({
 	open,
@@ -50,6 +51,19 @@ const NewsForm = ({
 
 	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
 		formikBag.setSubmitting(true);
+
+		const isTitleDuplicate = await NewsLibraryService.duplicateTitleCheck(
+			values.banner_title
+		).catch((err) => console.log('Title Error', err));
+
+		if (isTitleDuplicate.data.response) {
+			formikBag.setSubmitting(false);
+			formikBag.setFieldError(
+				'banner_title',
+				'A News item with this Banner Title has already been published. Please amend the Banner Title.'
+			);
+			return;
+		}
 
 		try {
 			let newsImages = values?.slides.map(async (item) => {
