@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getAllNews, getSpecificNews } from './newsLibraryActions';
+import { getAllNewsApi, getSpecificNews } from './newsLibraryActions';
 export * from './newsLibraryActions';
 
 const initialState = {
@@ -26,15 +26,15 @@ const newsLibrarySlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		// Get All News Actions
-		builder.addCase(getAllNews.pending, (state) => {
+		builder.addCase(getAllNewsApi.pending, (state) => {
 			state.status = 'pending';
 		});
-		builder.addCase(getAllNews.fulfilled, (state, action) => {
+		builder.addCase(getAllNewsApi.fulfilled, (state, action) => {
 			state.news = action.payload.data;
 			state.totalRecords = action.payload.total;
 			state.status = 'success';
 		});
-		builder.addCase(getAllNews.rejected, (state) => {
+		builder.addCase(getAllNewsApi.rejected, (state) => {
 			state.status = 'failed';
 		});
 

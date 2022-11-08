@@ -1,9 +1,9 @@
 export interface DraggableHeaderProps {
-    item: { isOpen: boolean, heading: string, sortOrder: number}
-    index: number;
-    key: number;
-    children?: JSX.Element[] | JSX.Element;
-    handleDeleteFile: () => void;
+	item: { isOpen: boolean; heading: string; sortOrder: number };
+	index: number;
+	key: number;
+	children?: JSX.Element[] | JSX.Element;
+	onDeleteIconClick: () => void;
 }
 
 /** Draggable Header is a component that needs to be used where there is a need of a draggable field.
@@ -11,4 +11,6 @@ export interface DraggableHeaderProps {
  * Also contains the delete icon that deletes the specific element.
  */
 
-export default function DraggableHeader(props: DraggableHeaderProps): JSX.Element;
+export default function DraggableHeader(
+	props: DraggableHeaderProps
+): JSX.Element;
