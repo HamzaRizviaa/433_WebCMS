@@ -31,5 +31,18 @@ export const useFormStyles = makeStyles(() => ({
 
 	addNewsBtnWrapper: {
 		marginTop: 40
-	}
+	},
+
+	explanationWrapper: {
+		display: 'flex',
+		justifyContent: 'flex-start',
+		margin: '5% 0%',
+		fontFamily: 'Poppins',
+		fontSize: '16px',
+		fontStyle: 'normal',
+		fontWeight: 700,
+		lineHeight: '24px'
+	},
+
+	infoIcon: { cursor: 'pointer', marginLeft: '1rem' }
 }));

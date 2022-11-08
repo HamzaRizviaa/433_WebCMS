@@ -22,7 +22,7 @@ const ViralFormDrawer = ({
 	onSubmitHandler,
 	toggleDeleteModal
 }) => {
-	const { values, isSubmitting, resetForm, validateForm } = useFormikContext();
+	const { values, isSubmitting } = useFormikContext();
 
 	const specificViralStatus = useSelector(selectSpecificViralStatus);
 
@@ -39,11 +39,7 @@ const ViralFormDrawer = ({
 	return (
 		<DrawerLayout
 			open={open}
-			handleClose={() => {
-				resetForm();
-				validateForm();
-				handleClose();
-			}}
+			handleClose={handleClose}
 			title={isEdit ? 'Edit Viral' : 'Upload Viral'}
 			notifID={isEdit && values ? values.id : ''}
 			isLoading={isSubmitting || specificViralStatus === 'loading'}
