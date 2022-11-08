@@ -153,7 +153,6 @@ export const newsDataFormatterForService = (
 // News Form Helpers
 //
 export const newsFormInitialValues = {
-	dropbox_url: '',
 	labels: [],
 	banner_title: '',
 	banner_description: '',
