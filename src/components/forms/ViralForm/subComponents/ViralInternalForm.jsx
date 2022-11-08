@@ -1,18 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { pick, isEqual } from 'lodash';
 import { useFormikContext } from 'formik';
-import { useStyles } from '../index.styles';
-import { useStyles as globalUseStyles } from '../../../../styles/global.style';
+import { useFormStyles } from '../../forms.style';
 
-import { Tooltip, Fade } from '@mui/material';
-import { ReactComponent as Info } from '../../../../assets/InfoButton.svg';
+import { InfoIcon } from '../../../../assets/svg-icons';
 import { viralFormInitialValues } from '../../../../data/helpers';
 
 import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
 import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
 import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
+import TextTooltip from '../../../ui/TextTooltip';
 import Button from '../../../ui/Button';
 
 /**
@@ -28,8 +27,8 @@ const ViralInternalForm = ({
 	onSubmitHandler,
 	toggleDeleteModal
 }) => {
-	const classes = useStyles();
-	const globalClasses = globalUseStyles();
+	const classes = useFormStyles();
+
 	const {
 		values,
 		dirty,
@@ -37,8 +36,17 @@ const ViralInternalForm = ({
 		isSubmitting,
 		handleSubmit,
 		setFieldValue,
-		setSubmitting
+		setSubmitting,
+		validateForm,
+		resetForm
 	} = useFormikContext();
+
+	useEffect(() => {
+		validateForm();
+		return () => {
+			resetForm(viralFormInitialValues);
+		};
+	}, []);
 
 	const isPublished = isEdit && status === 'published';
 
@@ -55,38 +63,31 @@ const ViralInternalForm = ({
 	return (
 		<div>
 			<div>
-				<div className={globalClasses.explanationWrapper}>
+				<div className={classes.explanationWrapper}>
 					<h5>
 						{isEdit ? 'Media File' : 'Add Media File'}
 						<span style={{ color: '#ff355a' }}>{'*'}</span>
 					</h5>
-					<Tooltip
-						TransitionComponent={Fade}
-						TransitionProps={{ timeout: 800 }}
+					<TextTooltip
 						title='Default encoding for videos should be H.264'
-						arrow
-						componentsProps={{
-							tooltip: { className: globalClasses.toolTip },
-							arrow: { className: globalClasses.toolTipArrow }
-						}}
 						placement='bottom-start'
 					>
-						<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
-					</Tooltip>
+						<InfoIcon className={classes.infoIcon} />
+					</TextTooltip>
 				</div>
 				<div className={classes.fieldWrapper}>
 					<FormikDropzone
 						name='uploadedFiles'
 						accept='image/jpeg, image/png, video/mp4'
 						formatMessage='Supported formats are jpeg, png and mp4'
-						maxFiles={3}
+						maxFiles={1}
 						showPreview
 						required
 						onPreview={openPreviewer}
 						onDelete={() => setFieldValue('uploadedFiles', [])}
 					/>
 				</div>
-				<div className={globalClasses.dropBoxUrlContainer}>
+				<div className={classes.fieldContainer}>
 					<FormikField
 						label='DROPBOX URL'
 						name='dropbox_url'
@@ -95,33 +96,35 @@ const ViralInternalForm = ({
 						maxRows={2}
 					/>
 				</div>
-				<FormikLabelsSelect
-					label='LABELS'
-					name='labels'
-					placeholder={
-						values && !values.labels.length
-							? 'Select a minimum of 7 labels'
-							: ''
-					}
-					disabled={isPublished}
-					required
-				/>
-				<FormikField
-					label='CAPTION'
-					name='caption'
-					placeholder='Please write your caption here'
-					multiline
-					maxRows={4}
-					required
-				/>
-				<div className={classes.postMediaContainer}>
-					<FormikSwitchField name='show_comments' label='Show comments' />
-					<FormikSwitchField name='show_likes' label='Show likes' />
+				<div className={classes.fieldContainer}>
+					<FormikLabelsSelect
+						label='LABELS'
+						name='labels'
+						placeholder={'Select a minimum of 7 labels'}
+						disabled={isPublished}
+						required
+					/>
+				</div>
+				<div className={classes.fieldContainer}>
+					<FormikField
+						label='CAPTION'
+						name='caption'
+						placeholder='Please write your caption here'
+						multiline
+						maxRows={4}
+						required
+					/>
+				</div>
+				<div className={classes.fieldContainer}>
+					<div className={classes.switchContainer}>
+						<FormikSwitchField name='show_comments' label='Show comments' />
+						<FormikSwitchField name='show_likes' label='Show likes' />
+					</div>
 				</div>
 			</div>
 			<div className={classes.buttonDiv}>
-				{isEdit && (
-					<div className={classes.deleteBtnWrapper}>
+				<div>
+					{isEdit && (
 						<Button
 							size='small'
 							variant={'outlined'}
@@ -129,8 +132,8 @@ const ViralInternalForm = ({
 						>
 							DELETE VIRAL
 						</Button>
-					</div>
-				)}
+					)}
+				</div>
 				<div className={classes.publishDraftDiv}>
 					{(!isEdit || status === 'draft') && (
 						<Button
