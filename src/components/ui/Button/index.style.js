@@ -19,7 +19,7 @@ export const useButtonStyles = makeStyles((theme) => {
 			border: `1px solid ${variantToColorMapper[variant][color].borderColor}`,
 			position: 'relative',
 			textAlign: 'center',
-			marginRight: '1rem',
+			// marginRight: '1rem',
 			height: 'fit-content',
 			borderRadius: 65,
 			padding: customPadding || btnPaddings[size],
