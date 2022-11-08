@@ -52,7 +52,10 @@ const NewsForm = ({
 		formikBag.setSubmitting(true);
 
 		try {
-			if (!isDraft && specificNews.banner_title !== values.banner_title) {
+			if (
+				(!isDraft && specificNews?.banner_title !== values.banner_title) ||
+				(!isDraft && status === 'draft')
+			) {
 				const { data } = await NewsLibraryService.duplicateTitleCheck(
 					values.banner_title
 				);
