@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { pick, isEqual } from 'lodash';
 import { useFormikContext } from 'formik';
@@ -37,8 +37,17 @@ const ViralInternalForm = ({
 		isSubmitting,
 		handleSubmit,
 		setFieldValue,
-		setSubmitting
+		setSubmitting,
+		validateForm,
+		resetForm
 	} = useFormikContext();
+
+	useEffect(() => {
+		validateForm();
+		return () => {
+			resetForm(viralFormInitialValues);
+		};
+	}, []);
 
 	const isPublished = isEdit && status === 'published';
 
