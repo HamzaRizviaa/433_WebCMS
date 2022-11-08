@@ -26,8 +26,16 @@ const NewsInternalForm = ({
 	const classes = useFormStyles();
 	const isPublished = isEdit && status === 'published';
 
-	const { values, dirty, isValid, isSubmitting, setSubmitting, resetForm } =
-		useFormikContext();
+	const {
+		values,
+		dirty,
+		isValid,
+		isSubmitting,
+		setSubmitting,
+		setFieldError,
+		resetForm,
+		validateForm
+	} = useFormikContext();
 
 	useEffect(() => {
 		return () => {
@@ -35,8 +43,19 @@ const NewsInternalForm = ({
 		};
 	}, []);
 
+	useEffect(() => {
+		if (isEdit) validateForm();
+		return () => {
+			resetForm(newsFormInitialValues);
+		};
+	}, []);
+
 	const saveDraftHandler = () => {
-		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
+		onSubmitHandler(
+			values,
+			{ setSubmitting, isSubmitting, setFieldError },
+			true
+		);
 	};
 
 	const isDraftDisabled = useMemo(() => {

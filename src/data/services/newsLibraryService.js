@@ -29,6 +29,10 @@ class NewsLibraryService {
 		return axiosInstance.get(`/news/get-specific-news/${id}`);
 	}
 
+	static duplicateTitleCheck(title) {
+		return axiosInstance.get(`/news/check/${title}`);
+	}
+
 	static postNews(data) {
 		return axiosInstance.post('/news/add-news', data, {
 			params: {
