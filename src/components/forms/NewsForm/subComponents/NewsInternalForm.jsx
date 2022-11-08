@@ -61,7 +61,7 @@ const NewsInternalForm = ({
 		);
 
 		return !dirty || isAnyNewsSlideEmpty || isEqualToDefaultValues;
-	}, [values]);
+	}, [values, dirty]);
 
 	return (
 		<div>
