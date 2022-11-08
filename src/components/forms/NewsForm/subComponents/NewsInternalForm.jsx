@@ -37,13 +37,7 @@ const NewsInternalForm = ({
 	} = useFormikContext();
 
 	useEffect(() => {
-		return () => {
-			resetForm(newsFormInitialValues);
-		};
-	}, []);
-
-	useEffect(() => {
-		if (isEdit) validateForm();
+		validateForm();
 		return () => {
 			resetForm(newsFormInitialValues);
 		};
