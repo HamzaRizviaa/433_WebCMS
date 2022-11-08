@@ -8,6 +8,9 @@ import Banners from '../../components/banners/Banners';
 import { useSelector } from 'react-redux';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 
+/**
+ * @component
+ */
 const TopBanner = () => {
 	const muiClasses = useStyles();
 	const getBannerContentState = useSelector(
@@ -50,9 +53,9 @@ const TopBanner = () => {
 					<TabPanelUnstyled value={1}>
 						<Banners tabValue={'media'} />
 					</TabPanelUnstyled>
-					<TabPanelUnstyled value={2}>
+					{/* <TabPanelUnstyled value={2}>
 						<Banners tabValue={'game'} />
-					</TabPanelUnstyled>
+					</TabPanelUnstyled> */}
 				</TabsUnstyled>
 			</div>
 		</DashboardLayout>

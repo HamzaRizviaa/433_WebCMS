@@ -52,73 +52,76 @@ const UploadedFilesPreview = ({
 				const fileType = file.type || getFileTypeFromUrl(file.media_url);
 
 				return (
-					<div key={file.id} className={classes.filePreview}>
-						<div className={classes.filePreviewLeft}>
-							{fileType === 'video' && (
-								<div className={classes.previewWrapper}>
-									{showPreview ? (
-										<PlayArrowIcon className={classes.playIcon} />
-									) : (
-										<>
-											<MenuIcon className={classes.playIcon} />
-											<div className={classes.defaultThumbnailBackground} />
-										</>
-									)}
-									<video
-										id={file.id}
-										src={file.media_url}
-										poster={file.thumbnail_url || file.img}
-										className={classes.videoThumbnail}
-										onLoadedMetadata={(e) => {
-											handleVideoLoad(e, file);
-										}}
-									>
-										<source src={file.media_url || file.img} />
-									</video>
-								</div>
-							)}
-							{fileType === 'audio' && (
-								<div className={classes.previewWrapper}>
-									<MusicIcon className={classes.playIcon} />
-									<div className={classes.defaultThumbnailBackground} />
-									<audio
-										id={file.id}
-										src={file.media_url}
-										style={{ display: 'none' }}
-										onLoadedMetadata={(e) => {
-											handleAudioLoad(e, file);
-										}}
+					<div key={file.id} >
+						<div className={classes.filePreview}>
+							<div className={classes.filePreviewLeft}>
+								{fileType === 'video' && (
+									<div className={classes.previewWrapper}>
+										{showPreview ? (
+											<PlayArrowIcon className={classes.playIcon} />
+										) : (
+											<>
+												<MenuIcon className={classes.playIcon} />
+												<div className={classes.defaultThumbnailBackground} />
+											</>
+										)}
+										<video
+											id={file.id}
+											src={file.media_url}
+											poster={file.thumbnail_url || file.img}
+											className={classes.videoThumbnail}
+											onLoadedMetadata={(e) => {
+												handleVideoLoad(e, file);
+											}}
+										>
+											<source src={file.media_url || file.img} />
+										</video>
+									</div>
+								)}
+								{fileType === 'audio' && (
+									<div className={classes.previewWrapper}>
+										<MusicIcon className={classes.playIcon} />
+										<div className={classes.defaultThumbnailBackground} />
+										<audio
+											id={file.id}
+											src={file.media_url}
+											style={{ display: 'none' }}
+											onLoadedMetadata={(e) => {
+												handleAudioLoad(e, file);
+											}}
+										/>
+									</div>
+								)}
+								{fileType === 'image' && (
+									<div className={classes.previewWrapper}>
+										<img
+											id={file.id}
+											src={file.media_url || file.img}
+											className={classes.fileThumbnail}
+											onLoad={(e) => {
+												handleImageLoad(e, file);
+											}}
+										/>
+									</div>
+								)}
+								<p className={classes.fileName}>
+									{file.fileName || file.file_name}
+								</p>
+							</div>
+							<div className={classes.filePreviewRight}>
+								{showPreview && (
+									<EyeIcon
+										onClick={() => handlePreviewFile(file)}
+										className={classes.filePreviewIcons}
 									/>
-								</div>
-							)}
-							{fileType === 'image' && (
-								<div className={classes.previewWrapper}>
-									<img
-										id={file.id}
-										src={file.media_url || file.img}
-										className={classes.fileThumbnail}
-										onLoad={(e) => {
-											handleImageLoad(e, file);
-										}}
-									/>
-								</div>
-							)}
-							<p className={classes.fileName}>
-								{file.fileName || file.file_name}
-							</p>
-						</div>
-						<div className={classes.filePreviewRight}>
-							{showPreview && (
-								<EyeIcon
-									onClick={() => handlePreviewFile(file)}
+								)}
+								<DeleteIcon
+									onClick={() => handleDeleteFile(file)}
 									className={classes.filePreviewIcons}
 								/>
-							)}
-							<DeleteIcon
-								onClick={() => handleDeleteFile(file)}
-								className={classes.filePreviewIcons}
-							/>
+							</div>
 						</div>
+						<hr className={classes.horizontalLine} />
 					</div>
 				);
 			})}
