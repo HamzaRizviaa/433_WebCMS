@@ -1,7 +1,5 @@
-/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import UploadOrEditNews from '../../components/news/uploadOrEditNews';
 import NewsForm from '../../components/forms/NewsForm';
 import { newsColumns } from '../../data/helpers/newsHelpers';
 import Table from '../../components/ui/Table';
@@ -61,18 +59,6 @@ const NewsLibrary = () => {
 				isLoading={isLoading}
 				noDataText='No News Found'
 			/>
-			{/* <UploadOrEditNews
-				open={showSlider}
-				isEdit={edit}
-				handleClose={() => {
-					setShowSlider(false);
-				}}
-				title={edit ? 'Edit News' : 'Upload News'}
-				buttonText={
-					edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
-				}
-				status={rowStatus}
-			/> */}
 			<NewsForm
 				open={showSlider}
 				isEdit={edit}
