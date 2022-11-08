@@ -37,14 +37,15 @@ const DropzoneField = ({
 	error,
 	onBlur,
 	formatMessage,
+	fileSizeMessage,
 	requiredDimension,
 	required = false,
 	onDelete,
 	onPreview,
 	showPreview,
 	onDrop,
-	maxFiles,
 	accept,
+	maxFiles = 1,
 	...rest
 }) => {
 	const handleDrop = (files) => {
@@ -103,6 +104,7 @@ const DropzoneField = ({
 							Click or drag files to this area to upload
 						</p>
 						<div className={classes.formatMsg}>{formatMessage}</div>
+						<div className={classes.formatMsg}>{fileSizeMessage}</div>
 						{!!requiredDimension && (
 							<p className={classes.formatMsg}>
 								Required size <strong>{requiredDimension}</strong>

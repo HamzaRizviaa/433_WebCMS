@@ -274,7 +274,7 @@ const UploadOrEditQuiz = ({
 		return (
 			<div
 				className={`${classes.customDateInput} ${
-					status === 'CLOSED' && classes.disableTextField
+					isEdit && status === 'CLOSED' && classes.disableTextField
 				}`}
 				onClick={onClick}
 				ref={ref}
@@ -321,9 +321,7 @@ const UploadOrEditQuiz = ({
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
-					type: file.type === 'image',
-					width: fileWidth,
-					height: fileHeight
+					type: file.type === 'image'
 				};
 			});
 
@@ -334,7 +332,24 @@ const UploadOrEditQuiz = ({
 				};
 			});
 		}
-	}, [acceptedFiles, fileHeight, fileWidth]);
+	}, [acceptedFiles]);
+
+	useEffect(() => {
+		if (fileHeight && fileWidth && form?.results_image?.length) {
+			setForm((prev) => {
+				return {
+					...prev,
+					results_image: [
+						{
+							...form?.results_image[0],
+							width: fileWidth,
+							height: fileHeight
+						}
+					]
+				};
+			});
+		}
+	}, [fileHeight, fileWidth]);
 
 	useEffect(() => {
 		if (fileRejections.length) {
@@ -380,9 +395,7 @@ const UploadOrEditQuiz = ({
 					fileExtension: `.${getFileType(file.type)}`,
 					mime_type: file.type,
 					file: file,
-					type: file.type === 'image',
-					width: fileWidth,
-					height: fileHeight
+					type: file.type === 'image'
 				};
 			});
 
@@ -393,7 +406,24 @@ const UploadOrEditQuiz = ({
 				};
 			});
 		}
-	}, [acceptedFiles2, fileHeight2, fileWidth2]);
+	}, [acceptedFiles2]);
+
+	useEffect(() => {
+		if (fileHeight2 && fileWidth2 && form?.negative_results_image?.length) {
+			setForm((prev) => {
+				return {
+					...prev,
+					negative_results_image: [
+						{
+							...form?.negative_results_image[0],
+							width: fileWidth2,
+							height: fileHeight2
+						}
+					]
+				};
+			});
+		}
+	}, [fileHeight2, fileWidth2]);
 
 	useEffect(() => {
 		if (fileRejections2.length) {
@@ -761,7 +791,10 @@ const UploadOrEditQuiz = ({
 		setTimeout(() => {
 			setDeleteBtnStatus(false);
 		}, 1000);
-
+		setFileWidth(0);
+		setFileHeight(0);
+		setFileHeight2(0);
+		setFileWidth2(0);
 		setForm({
 			end_date: null,
 			...(isSummaryEnabled
