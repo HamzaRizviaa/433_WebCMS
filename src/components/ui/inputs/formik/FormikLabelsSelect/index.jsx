@@ -21,7 +21,7 @@ const labelsParams = (labels) => {
 	}, {});
 };
 
-const FormikLabelsSelect = ({ name, ...restProps }) => {
+const FormikLabelsSelect = ({ name, placeholder, ...restProps }) => {
 	const dispatch = useDispatch();
 	const [searchText, setSearchText] = useState('');
 
@@ -101,6 +101,7 @@ const FormikLabelsSelect = ({ name, ...restProps }) => {
 			disableClearable
 			freeSolo={false}
 			name={name}
+			placeholder={selectedValues.length > 0 ? '' : placeholder}
 			rightLabel={`CURRENT LABELS: ${selectedValues?.length}`}
 			isLoading={searchLabelStatus === 'pending'}
 			mapOptions={{ labelKey: 'name', valueKey: 'name' }}

@@ -52,33 +52,33 @@ const NewsForm = ({
 		formikBag.setSubmitting(true);
 
 		try {
-			let newsImages = values?.slides.map(async (item) => {
-				let newsData = await uploadFileToServer(
-					item?.uploadedFiles[0],
-					'newslibrary'
-				);
-				return newsData;
-			});
-			Promise.all([...newsImages])
-				.then((mediaFiles) => {
-					const newsData = newsDataFormatterForService(
-						values,
-						mediaFiles,
-						isDraft
+			const newsImages = values?.slides.map(async (item) => {
+				if (item.uploadedFiles[0].file) {
+					const newsData = await uploadFileToServer(
+						item?.uploadedFiles[0],
+						'newslibrary'
 					);
-					dispatch(createOrEditNewsThunk(newsData, formikBag, isDraft));
-					handleClose();
-					if (isEdit && !(status === 'draft' && isDraft === false)) {
-						dispatch(getAllNewsApi(queryParams));
-					} else if (isSearchParamsEmpty) {
-						dispatch(getAllNewsApi());
-					} else {
-						navigate('/news-library');
-					}
-				})
-				.catch((err) => {
-					console.log('errPromise', err);
-				});
+
+					return newsData;
+				}
+
+				return item.uploadedFiles[0];
+			});
+
+			const mediaFiles = await Promise.all([...newsImages]);
+			const newsData = newsDataFormatterForService(values, mediaFiles, isDraft);
+
+			await dispatch(createOrEditNewsThunk(newsData, formikBag, isDraft));
+
+			handleClose();
+
+			if (isEdit && !(status === 'draft' && isDraft === false)) {
+				dispatch(getAllNewsApi(queryParams));
+			} else if (isSearchParamsEmpty) {
+				dispatch(getAllNewsApi());
+			} else {
+				navigate('/news-library');
+			}
 		} catch (e) {
 			console.error(e);
 		} finally {
@@ -92,7 +92,7 @@ const NewsForm = ({
 
 			await dispatch(
 				deleteNewsThunk({
-					viral_id: id,
+					news_id: id,
 					is_draft: isDraft
 				})
 			);
@@ -131,7 +131,7 @@ const NewsForm = ({
 						deleteBtn={() => {
 							onDeleteHandler(specificNews?.id, status, setSubmitting);
 						}}
-						text={'News'}
+						text='News'
 						wrapperRef={dialogWrapper}
 					/>
 				</Form>

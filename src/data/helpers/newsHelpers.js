@@ -82,30 +82,27 @@ export const newsDataFormatterForForm = (news) => {
 	}
 
 	let slidesData = news.slides.map(
-		({ name, description, sort_order, title, ...rest }) => {
+		({ name, description, title, dropbox_url, ...rest }) => {
 			return {
-				...rest,
-				sort_order: sort_order,
+				dropbox_url,
 				description,
 				name,
 				title,
-				...(rest.image
-					? {
-							uploadedFiles: [
-								{
-									media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.image}`,
-									file_name: rest.file_name
-								}
-							]
-					  }
-					: {})
+				uploadedFiles: rest.image
+					? [
+							{
+								media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${rest.image}`,
+								file_name: rest.file_name,
+								width: rest.width,
+								height: rest.height
+							}
+					  ]
+					: []
 			};
 		}
 	);
 
 	formattedNews.slides = slidesData;
-
-	console.log('slidesData', slidesData);
 
 	return formattedNews;
 };
@@ -185,15 +182,17 @@ export const newsFormValidationSchema = Yup.object().shape({
 		.label('Banner Description'),
 	show_likes: Yup.boolean().required(),
 	show_comments: Yup.boolean().required(),
-	slides: Yup.array().of(
-		Yup.object({
-			uploadedFiles: Yup.array()
-				.min(1, 'Each News Slide should contain an Image.')
-				.required(),
-			dropbox_url: Yup.string().label('Dropbox URL'),
-			title: Yup.string().label('Title'),
-			description: Yup.string().label('Description'),
-			name: Yup.string().label('Name')
-		})
-	)
+	slides: Yup.array()
+		.of(
+			Yup.object({
+				uploadedFiles: Yup.array()
+					.min(1, 'Each News Slide should contain an Image.')
+					.required(),
+				dropbox_url: Yup.string().label('Dropbox URL'),
+				title: Yup.string().label('Title'),
+				description: Yup.string().label('Description'),
+				name: Yup.string().label('Name')
+			})
+		)
+		.min(1, 'Atleast one slide is required.')
 });

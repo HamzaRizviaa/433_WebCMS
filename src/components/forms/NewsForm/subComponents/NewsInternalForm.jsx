@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { FieldArray, useFormikContext } from 'formik';
 import { isEqual, pick } from 'lodash';
@@ -26,8 +26,14 @@ const NewsInternalForm = ({
 	const classes = useFormStyles();
 	const isPublished = isEdit && status === 'published';
 
-	const { values, dirty, isValid, errors, isSubmitting, setSubmitting } =
+	const { values, dirty, isValid, isSubmitting, setSubmitting, resetForm } =
 		useFormikContext();
+
+	useEffect(() => {
+		return () => {
+			resetForm(newsFormInitialValues);
+		};
+	}, []);
 
 	const saveDraftHandler = () => {
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
@@ -53,6 +59,7 @@ const NewsInternalForm = ({
 						name='labels'
 						label='LABELS'
 						placeholder='Select a minimum of 7 labels'
+						disabled={isPublished}
 						required
 					/>
 				</div>
@@ -60,7 +67,7 @@ const NewsInternalForm = ({
 					<FormikField
 						label='BANNER TITLE'
 						name='banner_title'
-						placeholder='Please write you caption here'
+						placeholder='Please write your banner title here'
 						multiline
 						maxLength={43}
 						maxRows={2}
@@ -71,11 +78,12 @@ const NewsInternalForm = ({
 					<FormikField
 						label='BANNER DESCRIPTION'
 						name='banner_description'
-						placeholder='Please write you caption here'
+						placeholder='Please write your banner description here'
 						multiline
 						maxLength={84}
 						minRows={3}
 						maxRows={4}
+						required
 					/>
 				</div>
 				<div className={classes.fieldContainer}>
@@ -96,13 +104,8 @@ const NewsInternalForm = ({
 			<div className={classes.buttonDiv}>
 				<div>
 					{isEdit && (
-						<Button
-							size='xsmall'
-							variant='outlined'
-							color='danger'
-							onClick={toggleDeleteModal}
-						>
-							DELETE VIRAL
+						<Button size='small' variant='outlined' onClick={toggleDeleteModal}>
+							DELETE NEWS
 						</Button>
 					)}
 				</div>
@@ -119,7 +122,7 @@ const NewsInternalForm = ({
 					)}
 					<Button
 						type='submit'
-						// disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
+						disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
 					>
 						{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
 					</Button>

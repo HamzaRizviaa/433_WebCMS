@@ -258,7 +258,7 @@ const UploadOrEditNews = ({
 		let slidesData = data.map(
 			({ description, name, title, sort_order, ...rest }) => {
 				return {
-					sort_order: sort_order,
+					sort_order,
 					data: [
 						{
 							...rest,

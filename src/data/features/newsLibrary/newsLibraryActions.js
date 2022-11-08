@@ -54,10 +54,10 @@ export const deleteNewsThunk = createAsyncThunk(
 			const response = await NewsLibraryService.deleteNews(data);
 
 			if (response.data.status_code === 200) {
-				toast.success('Viral has been deleted!');
+				toast.success('News has been deleted!');
 			}
 		} catch (e) {
-			toast.error('Failed to delete Viral!');
+			toast.error('Failed to delete News!');
 			console.error(e);
 		}
 	}

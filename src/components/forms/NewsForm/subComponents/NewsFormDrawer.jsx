@@ -16,7 +16,7 @@ const NewsFormDrawer = ({
 	onSubmitHandler,
 	toggleDeleteModal
 }) => {
-	const { values, isSubmitting, resetForm, validateForm } = useFormikContext();
+	const { values, isSubmitting } = useFormikContext();
 
 	const specificNewsStatus = useSelector(selectSpecificNewsStatus);
 
@@ -33,11 +33,7 @@ const NewsFormDrawer = ({
 	return (
 		<DrawerLayout
 			open={open}
-			handleClose={() => {
-				resetForm();
-				validateForm();
-				handleClose();
-			}}
+			handleClose={handleClose}
 			title={isEdit ? 'Edit News' : 'Upload News'}
 			notifID={isEdit ? values.id : ''}
 			isLoading={isSubmitting || specificNewsStatus === 'loading'}

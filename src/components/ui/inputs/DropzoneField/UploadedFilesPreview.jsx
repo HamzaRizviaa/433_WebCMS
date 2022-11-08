@@ -42,6 +42,7 @@ const UploadedFilesPreview = ({
 	const handleImageLoad = (event, file) => {
 		file.width = event.currentTarget.naturalWidth;
 		file.height = event.currentTarget.naturalHeight;
+		console.log('IMAGE: ', file);
 	};
 
 	const classes = useDropzoneStyles({ showPreview });

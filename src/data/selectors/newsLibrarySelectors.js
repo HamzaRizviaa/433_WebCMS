@@ -4,7 +4,7 @@ export const selectSpecificNews = (state) =>
 	state.rootReducer.newsLibrary.specificNews;
 
 export const selectSpecificNewsStatus = (state) =>
-	state.rootReducer.viralLibrary.specificNewsStatus;
+	state.rootReducer.newsLibrary.specificNewsStatus;
 
 export const selectNewsApiStatus = (state) => state.rootReducer.newsLibrary;
 
