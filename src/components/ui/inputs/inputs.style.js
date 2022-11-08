@@ -43,11 +43,12 @@ export const useInputsStyles = makeStyles((theme) => ({
 	},
 
 	rightLabel: {
+		minWidth: '125px',
 		display: 'inline-block',
 		fontSize: '1.2rem',
 		fontWeight: 'bold',
 		marginBottom: '0.5rem',
-		color: theme.palette.white
+		color: (props) => (props.isError ? theme.palette.red : theme.palette.white)
 	},
 
 	textFieldInput: ({ isError, size }) => ({
@@ -75,8 +76,8 @@ export const useInputsStyles = makeStyles((theme) => ({
 		display: 'inline-block',
 		color: theme.palette.red,
 		fontWeight: 'bold',
-		marginTop: '0.2rem',
-		marginLeft: '0.5rem',
+		marginTop: '0.6rem',
+		marginLeft: '1rem',
 		height: '1rem'
 	}
 }));

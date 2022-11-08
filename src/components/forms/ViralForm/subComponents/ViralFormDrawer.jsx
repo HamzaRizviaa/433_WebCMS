@@ -45,7 +45,7 @@ const ViralFormDrawer = ({
 				handleClose();
 			}}
 			title={isEdit ? 'Edit Viral' : 'Upload Viral'}
-			notifID={isEdit ? values.id : ''}
+			notifID={isEdit && values ? values.id : ''}
 			isLoading={isSubmitting || specificViralStatus === 'loading'}
 			handlePreviewClose={closePreviewer}
 			previewFile={previewFile}

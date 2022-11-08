@@ -37,7 +37,6 @@ const NewsLibrary = () => {
 	 * @returns {void}
 	 */
 	const onRowClick = (_, row) => {
-		console.log('ROWW', row);
 		row.status === 'draft' && dispatch(getAllNewLabels());
 		dispatch(getSpecificNews(row.id));
 		setEdit(true);

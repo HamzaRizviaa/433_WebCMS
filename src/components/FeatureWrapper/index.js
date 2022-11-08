@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 
 const FeatureWrapper = ({ name, children }) => {
 	const { features } = useSelector((state) => state.rootReducer.remoteConfig);
-	const feature = features[name]._value;
+	const feature = features[name]?._value;
 
 	if (feature === 'true') {
 		return children;

@@ -37,6 +37,7 @@ const DropzoneField = ({
 	error,
 	onBlur,
 	formatMessage,
+	fileSizeMessage,
 	requiredDimension,
 	required = false,
 	onDelete,
@@ -103,6 +104,7 @@ const DropzoneField = ({
 							Click or drag files to this area to upload
 						</p>
 						<div className={classes.formatMsg}>{formatMessage}</div>
+						<div className={classes.formatMsg}>{fileSizeMessage}</div>
 						{!!requiredDimension && (
 							<p className={classes.formatMsg}>
 								Required size <strong>{requiredDimension}</strong>
