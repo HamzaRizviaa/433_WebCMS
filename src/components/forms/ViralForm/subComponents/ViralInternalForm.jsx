@@ -67,9 +67,9 @@ const ViralInternalForm = ({
 			).length === 0;
 
 		const isDisabledOnUpload = !dirty || isEqualToDefaultValues;
-
+		
 		return isEdit
-			? isDisabledOnUpload || doLabelsContainSameElements
+			? isDisabledOnUpload && doLabelsContainSameElements
 			: isDisabledOnUpload;
 	}, [dirty, values, specificViral, isEdit]);
 

@@ -73,7 +73,7 @@ const NewsInternalForm = ({
 			!dirty || isAnyNewsSlideEmpty || isEqualToDefaultValues;
 
 		return isEdit
-			? isDisabledOnUpload || doLabelsContainSameElements
+			? isDisabledOnUpload && doLabelsContainSameElements
 			: isDisabledOnUpload;
 	}, [values, dirty, specificNews, isEdit]);
 
