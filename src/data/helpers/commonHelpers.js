@@ -17,3 +17,14 @@ export const areAllFieldsEmpty = (obj) => {
 		.filter((item) => typeof item !== 'boolean')
 		.every((item) => isEmpty(item));
 };
+
+export const removeDuplicateLabel = (labels) => {
+	const searchedLabel = labels.find((item) => item.id === null);
+	const filteredLabels = labels.filter((item) => item.id !== null);
+	const duplicateLabel = labels.find(
+		(item) => item.name === searchedLabel.name && item.id !== null
+	);
+
+	if (duplicateLabel) return filteredLabels;
+	return labels;
+};
