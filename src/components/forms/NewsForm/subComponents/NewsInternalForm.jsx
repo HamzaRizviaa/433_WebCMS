@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import { FieldArray, useFormikContext } from 'formik';
-import { isEqual, pick } from 'lodash';
+import { isEqual, pick, xor } from 'lodash';
 
 import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
@@ -14,6 +15,7 @@ import {
 	areAllFieldsEmpty,
 	newsFormInitialValues
 } from '../../../../data/helpers';
+import { selectSpecificNews } from '../../../../data/selectors';
 
 const NewsInternalForm = ({
 	isEdit,
@@ -23,6 +25,7 @@ const NewsInternalForm = ({
 	openPreviewer
 }) => {
 	const classes = useFormStyles();
+	const specificNews = useSelector(selectSpecificNews);
 	const isPublished = isEdit && status === 'published';
 
 	const {
@@ -59,9 +62,20 @@ const NewsInternalForm = ({
 			pick(values, Object.keys(newsFormInitialValues)),
 			newsFormInitialValues
 		);
+		const doLabelsContainSameElements =
+			specificNews?.labels?.length === values.labels.length &&
+			xor(
+				specificNews?.labels,
+				values.labels.map((item) => item.name)
+			).length === 0;
 
-		return !dirty || isAnyNewsSlideEmpty || isEqualToDefaultValues;
-	}, [values, dirty]);
+		const isDisabledOnUpload =
+			!dirty || isAnyNewsSlideEmpty || isEqualToDefaultValues;
+
+		return isEdit
+			? isDisabledOnUpload || doLabelsContainSameElements
+			: isDisabledOnUpload;
+	}, [values, dirty, specificNews, isEdit]);
 
 	return (
 		<div>
