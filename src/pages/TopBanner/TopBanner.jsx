@@ -11,6 +11,7 @@ import Banners from '../../components/banners/Banners';
 import { useSelector } from 'react-redux';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import TabPanes from '../../components/ui/TabPanes';
+
 /**
  * @component
  */
@@ -22,22 +23,13 @@ const TopBanner = () => {
 	const bannerState = useSelector(
 		(state) => state.rootReducer.topBanner.getBannerStatus
 	);
-	const TabPanesData = [
-		{
-			id: 0,
-			Heading: 'Home',
-			value: 0,
-			disabled: getBannerContentState && bannerState ? false : true,
-			component: <Banners tabValue={'home'} />
-		},
-		{
-			id: 1,
-			Heading: 'Media',
-			value: 1,
-			disabled: getBannerContentState && bannerState ? false : true,
-			component: <Banners tabValue={'media'} />
-		}
-	];
+
+	const headings = ['Home', 'Media'];
+
+	// const options = [
+	// 	{ value: 0, label: 'Home' },
+	// 	{ value: 1, label: 'Media' }
+	// ];
 
 	return (
 		<DashboardLayout
@@ -47,29 +39,17 @@ const TopBanner = () => {
 			hideDateFilter
 			hideLibraryText
 		>
-			<TabPanes data={TabPanesData} />
-			{/* <div className={muiClasses.root}>
-				<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
-					<TabsListUnstyled className={muiClasses.tabMainDiv}>
-						<TabUnstyled
-							disabled={getBannerContentState && bannerState ? false : true}
-						>
-							Home
-						</TabUnstyled>
-						<TabUnstyled
-							disabled={getBannerContentState && bannerState ? false : true}
-						>
-							Media
-						</TabUnstyled>
-					</TabsListUnstyled>
-					<TabPanelUnstyled value={0}>
-						<Banners tabValue={'home'} />
-					</TabPanelUnstyled>
-					<TabPanelUnstyled value={1}>
-						<Banners tabValue={'media'} />
-					</TabPanelUnstyled>
-				</TabsUnstyled>
-			</div> */}
+			<TabPanes
+				headings={headings}
+				disabled={getBannerContentState && bannerState ? false : true}
+			>
+				<TabPanes.TabPanel value={0}>
+					<Banners tabValue={'home'} />
+				</TabPanes.TabPanel>
+				<TabPanes.TabPanel value={1}>
+					<Banners tabValue={'media'} />
+				</TabPanes.TabPanel>
+			</TabPanes>
 		</DashboardLayout>
 	);
 };
