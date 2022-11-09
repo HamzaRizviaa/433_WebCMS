@@ -7,7 +7,7 @@ import TabsListUnstyled from '@mui/base/TabsListUnstyled';
 import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import TabUnstyled from '@mui/base/TabUnstyled';
 import { useStyles } from './topBanner';
-import Banners from '../../components/banners/Banners';
+import BannerForm from '../../components/forms/BannerForm';
 import { useSelector } from 'react-redux';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import TabPanes from '../../components/ui/TabPanes';
@@ -44,10 +44,10 @@ const TopBanner = () => {
 				disabled={getBannerContentState && bannerState ? false : true}
 			>
 				<TabPanes.TabPanel value={0}>
-					<Banners tabValue={'home'} />
+					<BannerForm tabValue={'home'} />
 				</TabPanes.TabPanel>
 				<TabPanes.TabPanel value={1}>
-					<Banners tabValue={'media'} />
+					<BannerForm tabValue={'media'} />
 				</TabPanes.TabPanel>
 			</TabPanes>
 		</DashboardLayout>

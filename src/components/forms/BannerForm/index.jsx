@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { isEmpty } from 'lodash';
 import { FieldArray, Form, Formik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import BannerFormRows from './subComponents/BannerFormRows';
 import {
@@ -16,9 +17,11 @@ import {
 	bannerDataFormatterForForm,
 	bannerDataFormatterForService
 } from '../../../data/helpers';
+import { useBannerFormStyles } from './index.style';
 
-const BannerForm = () => {
+const BannerForm = ({ tabValue }) => {
 	const dispatch = useDispatch();
+	const classes = useBannerFormStyles();
 
 	const allBanners = useSelector(selectAllBanners);
 
@@ -32,7 +35,7 @@ const BannerForm = () => {
 		formikBag.setSubmitting(true);
 
 		try {
-			const data = bannerDataFormatterForService(values);
+			const data = bannerDataFormatterForService(values, tabValue);
 
 			await dispatch(createOrEditTopBanner(data));
 		} catch (error) {
@@ -45,11 +48,11 @@ const BannerForm = () => {
 	useEffect(() => {
 		dispatch(
 			getBannerContent({
-				type: 'home',
+				type: tabValue,
 				title: null
 			})
 		);
-		dispatch(getAllBanners('home'));
+		dispatch(getAllBanners(tabValue));
 	}, []);
 
 	return (
@@ -63,14 +66,16 @@ const BannerForm = () => {
 					name='bannerData'
 					render={(props) => <BannerFormRows {...props} />}
 				/>
-				<Button fullWidth type='submit'>
-					PUBLISH HOME BANNERS
+				<Button fullWidth type='submit' className={classes.publishButton}>
+					PUBLISH {tabValue} BANNERS
 				</Button>
 			</Form>
 		</Formik>
 	);
 };
 
-BannerForm.propTypes = {};
+BannerForm.propTypes = {
+	tabValue: PropTypes.string.isRequired
+};
 
 export default BannerForm;

@@ -35,6 +35,13 @@ export const useBannerFormStyles = makeStyles(() => ({
 	bannerMain: {
 		display: 'flex',
 		flexDirection: 'row',
-		justifyContent: 'space-between'
+		justifyContent: 'space-between',
+		width: '96%',
+		maxHeight: 'calc(100vh - 200px)',
+		overflowY: 'auto',
+		paddingRight: '2%'
+	},
+	publishButton: {
+		textTransform: 'uppercase'
 	}
 }));
