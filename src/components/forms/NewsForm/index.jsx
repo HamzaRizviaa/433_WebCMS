@@ -71,7 +71,7 @@ const NewsForm = ({
 			}
 
 			const newsImages = values?.slides.map(async (item) => {
-				if (item.uploadedFiles[0].file) {
+				if (item.uploadedFiles[0]?.file) {
 					const newsData = await uploadFileToServer(
 						item?.uploadedFiles[0],
 						'newslibrary'
