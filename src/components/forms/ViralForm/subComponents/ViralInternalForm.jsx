@@ -58,7 +58,6 @@ const ViralInternalForm = ({
 			pick(values, Object.keys(viralFormInitialValues)),
 			viralFormInitialValues
 		);
-
 		const doLabelsContainSameElements =
 			specificViral?.labels?.length === values.labels.length &&
 			xor(
@@ -67,9 +66,11 @@ const ViralInternalForm = ({
 			).length === 0;
 
 		const isDisabledOnUpload = !dirty || isEqualToDefaultValues;
-		
-		return isEdit
-			? isDisabledOnUpload && doLabelsContainSameElements
+
+		return isEdit && specificViral?.labels?.length > 0
+			? isDisabledOnUpload
+				? isDisabledOnUpload
+				: doLabelsContainSameElements
 			: isDisabledOnUpload;
 	}, [dirty, values, specificViral, isEdit]);
 
