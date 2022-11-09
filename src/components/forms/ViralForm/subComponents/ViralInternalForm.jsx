@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import { pick, isEqual } from 'lodash';
+import { pick, isEqual, xor } from 'lodash';
 import { useFormikContext } from 'formik';
 import { useFormStyles } from '../../forms.style';
 
@@ -59,14 +59,18 @@ const ViralInternalForm = ({
 			viralFormInitialValues
 		);
 
-		const isLabelsChanged = isEqual(
-			specificViral?.labels,
-			values.labels.map((item) => item.name)
-		);
+		const doLabelsContainSameElements =
+			specificViral?.labels?.length === values.labels.length &&
+			xor(
+				specificViral?.labels,
+				values.labels.map((item) => item.name)
+			).length === 0;
 
 		const isDisabledOnUpload = !dirty || isEqualToDefaultValues;
 
-		return isEdit ? isDisabledOnUpload || isLabelsChanged : isDisabledOnUpload;
+		return isEdit
+			? isDisabledOnUpload || doLabelsContainSameElements
+			: isDisabledOnUpload;
 	}, [dirty, values, specificViral, isEdit]);
 
 	const saveDraftHandler = () =>
