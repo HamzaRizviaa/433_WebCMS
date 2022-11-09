@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import { pick, isEqual } from 'lodash';
 import { useFormikContext } from 'formik';
 import { useFormStyles } from '../../forms.style';
 
 import { InfoIcon } from '../../../../assets/svg-icons';
+import { selectSpecificViral } from '../../../../data/selectors';
 import { viralFormInitialValues } from '../../../../data/helpers';
 
 import FormikField from '../../../ui/inputs/formik/FormikField';
@@ -28,6 +30,7 @@ const ViralInternalForm = ({
 	toggleDeleteModal
 }) => {
 	const classes = useFormStyles();
+	const specificViral = useSelector(selectSpecificViral);
 
 	const {
 		values,
@@ -50,12 +53,21 @@ const ViralInternalForm = ({
 
 	const isPublished = isEdit && status === 'published';
 
-	const isDraftDisabled =
-		!dirty ||
-		isEqual(
+	const isDraftDisabled = useMemo(() => {
+		const isEqualToDefaultValues = isEqual(
 			pick(values, Object.keys(viralFormInitialValues)),
 			viralFormInitialValues
 		);
+
+		const isLabelsChanged = isEqual(
+			specificViral?.labels,
+			values.labels.map((item) => item.name)
+		);
+
+		const isDisabledOnUpload = !dirty || isEqualToDefaultValues;
+
+		return isEdit ? isDisabledOnUpload || isLabelsChanged : isDisabledOnUpload;
+	}, [dirty, values, specificViral, isEdit]);
 
 	const saveDraftHandler = () =>
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
