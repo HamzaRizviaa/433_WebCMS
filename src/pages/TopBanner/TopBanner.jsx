@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
 import React from 'react';
 import TabsUnstyled from '@mui/base/TabsUnstyled';
 import TabsListUnstyled from '@mui/base/TabsListUnstyled';
@@ -7,7 +10,7 @@ import { useStyles } from './topBanner';
 import Banners from '../../components/banners/Banners';
 import { useSelector } from 'react-redux';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
-
+import TabPanes from '../../components/ui/TabPanes';
 /**
  * @component
  */
@@ -19,6 +22,22 @@ const TopBanner = () => {
 	const bannerState = useSelector(
 		(state) => state.rootReducer.topBanner.getBannerStatus
 	);
+	const TabPanesData = [
+		{
+			id: 0,
+			Heading: 'Home',
+			value: 0,
+			disabled: getBannerContentState && bannerState ? false : true,
+			component: <Banners tabValue={'home'} />
+		},
+		{
+			id: 1,
+			Heading: 'Media',
+			value: 1,
+			disabled: getBannerContentState && bannerState ? false : true,
+			component: <Banners tabValue={'media'} />
+		}
+	];
 
 	return (
 		<DashboardLayout
@@ -28,7 +47,8 @@ const TopBanner = () => {
 			hideDateFilter
 			hideLibraryText
 		>
-			<div className={muiClasses.root}>
+			<TabPanes data={TabPanesData} />
+			{/* <div className={muiClasses.root}>
 				<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
 					<TabsListUnstyled className={muiClasses.tabMainDiv}>
 						<TabUnstyled
@@ -41,11 +61,6 @@ const TopBanner = () => {
 						>
 							Media
 						</TabUnstyled>
-						{/* <TabUnstyled
-								disabled={getBannerContentState && bannerState ? false : true}
-							>
-								Game
-							</TabUnstyled> */}
 					</TabsListUnstyled>
 					<TabPanelUnstyled value={0}>
 						<Banners tabValue={'home'} />
@@ -53,11 +68,8 @@ const TopBanner = () => {
 					<TabPanelUnstyled value={1}>
 						<Banners tabValue={'media'} />
 					</TabPanelUnstyled>
-					{/* <TabPanelUnstyled value={2}>
-						<Banners tabValue={'game'} />
-					</TabPanelUnstyled> */}
 				</TabsUnstyled>
-			</div>
+			</div> */}
 		</DashboardLayout>
 	);
 };
