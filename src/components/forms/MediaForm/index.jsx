@@ -8,16 +8,17 @@ import { useCommonParams } from '../../../hooks';
 import { selectSpecificMedia } from '../../../data/selectors';
 import {
 	mediaDataFormatterForForm,
-	mediaDataFormatterForService,
+	mediaDataFormatterForServer,
 	mediaFormInitialValues,
 	mediaFormValidationSchema
 } from '../../../data/helpers';
 import {
 	createOrEditMediaThunk,
 	deleteMediaThunk,
-	getAllMedia
+	getAllMedia,
+	getMedia
 } from '../../../data/features/mediaLibrary/mediaLibrarySlice';
-import { uploadFileToServer } from '../../../data/utils';
+// import { uploadFileToServer } from '../../../data/utils';
 
 import MediaFormDrawer from './subComponents/MediaFormDrawer';
 import DeleteModal from '../../DeleteModal';
@@ -45,14 +46,30 @@ const MediaForm = ({
 		formikBag.setSubmitting(true);
 
 		try {
-			const uploadFileRes = await uploadFileToServer(
-				values.uploadedFiles[0],
-				'medialibrary'
-			);
-			const mediaData = mediaDataFormatterForService(
+			// const uploadedFiles = await uploadFileToServer(
+			// 	values.uploadedFiles[0],
+			// 	'medialibrary'
+			// );
+			// const uploadedCoverImage = await uploadFileToServer(
+			// 	values.uploadedCoverImage[0],
+			// 	'medialibrary'
+			// );
+			// const uploadedLandscapeCoverImage = await uploadFileToServer(
+			// 	values.uploadedLandscapeCoverImage[0],
+			// 	'medialibrary'
+			// );
+
+			let imagesArray = [
+				values.uploadedFiles,
+				values.uploadedCoverImage,
+				values.uploadedLandscapeCoverImage
+			];
+
+			console.log('images', imagesArray);
+			const mediaData = mediaDataFormatterForServer(
 				values,
-				uploadFileRes,
-				isDraft
+				isDraft,
+				imagesArray
 			);
 
 			await dispatch(createOrEditMediaThunk(mediaData, formikBag, isDraft));
@@ -79,13 +96,13 @@ const MediaForm = ({
 
 			await dispatch(
 				deleteMediaThunk({
-					viral_id: id,
+					media_id: id,
 					is_draft: isDraft
 				})
 			);
 
 			handleClose();
-			dispatch(getAllMedia(queryParams));
+			dispatch(getMedia(queryParams));
 		} catch (e) {
 			console.error(e);
 		} finally {

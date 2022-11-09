@@ -12,17 +12,15 @@ export const getMedia = createAsyncThunk(
 
 export const getAllMedia = createAsyncThunk(
 	'mediaLibrary/getAllMedia',
-	async (limit) => {
-		let endPoint = `media/get-limited-media`;
-		if (limit) {
-			endPoint += `?limit=${limit}`;
-		}
-		const response = await MediaLibraryService.getAllMediaApi(endPoint);
-		if (response?.data?.data?.length > 0) {
-			return response.data.data;
-		} else {
-			return [];
-		}
+	async (params = {}) => {
+		// let endPoint = `media/get-limited-media`;
+		// if (limit) {
+		// 	endPoint += `?limit=${limit}`;
+		// }
+		const { data: media } = await MediaLibraryService.getAllMediaServiceCall(
+			params
+		);
+		return media.data || [];
 	}
 );
 
@@ -71,12 +69,12 @@ export const createOrEditMediaThunk = createAsyncThunk(
 
 			if (response.data.status_code === 200) {
 				toast.success(
-					data.viral_id ? 'Media has been edited!' : 'Media has been created!'
+					data.media_id ? 'Media has been edited!' : 'Media has been created!'
 				);
 			}
 		} catch (e) {
 			toast.error(
-				data.viral_id ? 'Failed to edit media!' : 'Failed to create media!'
+				data.media_id ? 'Failed to edit media!' : 'Failed to create media!'
 			);
 			console.error(e);
 		}

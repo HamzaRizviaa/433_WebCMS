@@ -1,9 +1,22 @@
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
-import { getDateTime, makeid } from '../utils';
+import {
+	getDateTime,
+	getLocalStorageDetails,
+	makeid,
+	uploadFileToServer
+} from '../utils';
+import mediaService from '../services/mediaLibraryService';
 import { isEmpty } from 'lodash';
 // import { getUserDataObject } from './index';
+import axios from 'axios';
 import * as Yup from 'yup';
 
+const translatedLanguages = {};
+const fileDuration = 10;
+let portraitFileWidth = 100;
+let portraitFileHeight = 100;
+let landscapeFileWidth = 100;
+let landscapeFileHeight = 100;
 export const mediaColumns = [
 	{
 		dataField: 'title',
@@ -83,18 +96,43 @@ export const mediaDataFormatterForForm = (media) => {
 		formattedMedia.labels = updatedLabels;
 	}
 
-	formattedMedia.uploadedFiles = !isEmpty(media.file_name)
+	formattedMedia.uploadedFiles = !isEmpty(formattedMedia.media_url)
 		? [
 				{
 					id: makeid(10),
-					file_name: media?.file_name,
-					media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${media?.url}`,
-					type: media?.thumbnail_url ? 'video' : 'image',
-					...(media?.thumbnail_url
-						? {
-								thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${media?.thumbnail_url}`
-						  }
-						: {})
+					file_name: media?.file_name_media,
+					media_url: media?.media_url
+						? `${process.env.REACT_APP_MEDIA_ENDPOINT}/${media?.media_url}`
+						: '',
+					type: media?.mainCategory === 'Watch' ? 'video' : 'audio'
+				}
+		  ]
+		: [];
+
+	formattedMedia.uploadedCoverImage = formattedMedia?.cover_image?.portrait
+		?.image_url
+		? [
+				{
+					id: makeid(10),
+					file_name: formattedMedia?.file_name_portrait_image,
+					media_url: formattedMedia?.cover_image
+						? `${process.env.REACT_APP_MEDIA_ENDPOINT}/${formattedMedia?.cover_image?.portrait?.image_url}`
+						: '',
+					type: 'image'
+				}
+		  ]
+		: [];
+
+	formattedMedia.uploadedLandscapeCoverImage = media?.cover_image?.landscape
+		?.image_url
+		? [
+				{
+					id: makeid(10),
+					file_name: media?.file_name_landscape_image,
+					media_url: media?.cover_image
+						? `${process.env.REACT_APP_MEDIA_ENDPOINT}/${media?.cover_image?.landscape?.image_url}`
+						: '',
+					type: 'image'
 				}
 		  ]
 		: [];
@@ -102,9 +140,176 @@ export const mediaDataFormatterForForm = (media) => {
 	return formattedMedia;
 };
 
-export const mediaDataFormatterForService = (id, payload) => {
-	console.log('ID', id);
-	console.log('PAYLOAD', payload);
+export const mediaDataFormatterForServer = (media, isDraft = false) => {
+	console.log(isDraft);
+	let uploadFilesPromiseArray = [
+		media.uploadedFiles[0], //audio/video
+		media.uploadedCoverImage[0], //portrait
+		media.uploadedLandscapeCoverImage[0] //landscape
+	].map(async (_file) => {
+		if (_file.file) {
+			return await uploadFileToServer(_file, _file.type);
+		} else {
+			return _file;
+		}
+	});
+
+	console.log(uploadFilesPromiseArray, 'uploadFilesPromiseArray');
+
+	Promise.all([...uploadFilesPromiseArray])
+		.then(async (mediaFiles) => {
+			const completedUpload = mediaFiles.map(async (file, index) => {
+				if (file?.signed_response) {
+					const newFileUpload = await axios.post(
+						`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+						{
+							file_name:
+								index === 1
+									? media.uploadedCoverImage[0].file_name
+									: index === 2
+									? media.uploadedLandscapeCoverImage[0]?.file_name
+									: media.uploadedFiles[0].file_name,
+
+							type: 'medialibrary',
+							data: {
+								bucket: 'media',
+								multipart_upload:
+									media.uploadedFiles[0]?.mime_type == 'video/mp4'
+										? [
+												{
+													e_tag: file?.signed_response?.headers?.etag.replace(
+														/['"]+/g,
+														''
+													),
+													part_number: 1
+												}
+										  ]
+										: ['image'],
+								keys: {
+									image_key: file?.keys?.image_key,
+									...(media.mainCategory.name === 'Watch' ||
+									media?.mainCategory === 'Watch'
+										? {
+												video_key: file?.keys?.video_key,
+												audio_key: ''
+										  }
+										: {
+												audio_key: file?.keys?.audio_key,
+												video_key: ''
+										  })
+								},
+								upload_id:
+									media.mainCategory.name === 'Watch' ||
+									media?.mainCategory === 'Watch'
+										? file.upload_id || 'image'
+										: file.fileType === 'image'
+										? 'image'
+										: 'audio'
+							}
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${
+									getLocalStorageDetails()?.access_token
+								}`
+							}
+						}
+					);
+					return newFileUpload;
+				} else {
+					Promise.resolve();
+				}
+			});
+
+			console.log(completedUpload, 'completedUpload');
+			Promise.all([...completedUpload]).then(async (mediaFiles2) => {
+				console.log('mediaFiles2', mediaFiles2);
+				await mediaService.postMedia(media?.id, {
+					title: translatedLanguages
+						? translatedLanguages['en']?.title
+						: media.title,
+					translations: translatedLanguages ? translatedLanguages : undefined,
+					description: translatedLanguages
+						? translatedLanguages['en']?.description
+						: media.description,
+					duration: Math.round(fileDuration),
+					type: 'medialibrary',
+					save_draft: false,
+					main_category_id: media.mainCategory,
+					sub_category_id: media.subCategory,
+					show_likes: media.show_likes ? true : false,
+					show_comments: media.show_comments ? true : false,
+					dropbox_url: {
+						media: media.media_dropbox_url // audio video
+							? media.media_dropbox_url
+							: '',
+						portrait_cover_image: media.image_dropbox_url //portrait
+							? media.image_dropbox_url
+							: '',
+						landscape_cover_image: media.landscape_image_dropbox_url //landscape
+							? media.landscape_image_dropbox_url
+							: ''
+					},
+					...(media.labels.length ? { labels: [...media.labels] } : {}),
+					media_url:
+						mediaFiles[0]?.keys?.video_key || mediaFiles[0]?.keys?.audio_key,
+					// uploadedFile1?.data?.data?.video_data ||
+					// uploadedFile1?.data?.data?.audio_data,
+
+					cover_image: {
+						...(mediaFiles[1]?.url
+							? {
+									portrait: {
+										width: portraitFileWidth,
+										height: portraitFileHeight,
+										image_url: mediaFiles[1]?.keys?.image_key
+									}
+							  }
+							: {
+									portrait: {
+										...media?.uploadedCoverImage[0],
+										image_url:
+											media?.uploadedCoverImage[0]?.media_url.split(
+												'cloudfront.net/'
+											)[1]
+									}
+							  }),
+						...(mediaFiles[2]?.url
+							? {
+									landscape: {
+										width: landscapeFileWidth,
+										height: landscapeFileHeight,
+										image_url: mediaFiles[2]?.keys?.image_key
+									}
+							  }
+							: {
+									landscape: {
+										...media?.uploadedLandscapeCoverImage[0],
+										image_url:
+											media?.uploadedLandscapeCoverImage[0]?.media_url.split(
+												'cloudfront.net/'
+											)[1]
+									}
+							  })
+					},
+					file_name_media: media?.uploadedFiles[0]?.file_name,
+					file_name_portrait_image: media?.uploadedCoverImage[0]?.file_name,
+					file_name_landscape_image:
+						media?.uploadedLandscapeCoverImage[0]?.file_name
+					// data: {
+					// 	file_name_media: media.uploadedFiles[0].file_name,
+					// 	file_name_image: media.uploadedCoverImage[0].file_name,
+					// 	image_data: mediaFiles[1]?.keys?.image_key,
+					// 	audio_data: mediaFiles[0]?.keys?.audio_key,
+					// 	video_data: mediaFiles[0]?.keys?.video_key,
+
+					// }
+				});
+			});
+		})
+		.catch(() => {
+			// setIsLoadingUploadMedia(false);
+		});
 };
 
 export const mediaFormInitialValues = {
