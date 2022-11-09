@@ -19,5 +19,22 @@ export const useBannerFormStyles = makeStyles(() => ({
 	},
 	fieldWrapper: {
 		width: '70%'
+	},
+	bannertext: {
+		fontFamily: 'Poppins',
+		fontSize: '16px',
+		fontStyle: 'normal',
+		fontWeight: '700',
+		letterSpacing: '0em',
+		textAlign: 'left',
+		paddingRight: '24px',
+		width: '100px',
+		display: 'flex',
+		alignItems: 'center'
+	},
+	bannerMain: {
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'space-between'
 	}
 }));

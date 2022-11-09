@@ -29,6 +29,7 @@ export const useDraggableBannerLayoutStyles = makeStyles(() => ({
 	bannerTrashIcon: {
 		paddingTop: '0.8rem',
 		paddingLeft: '20px',
-		width: '3%'
+		width: '3%',
+		cursor: 'pointer'
 	}
 }));

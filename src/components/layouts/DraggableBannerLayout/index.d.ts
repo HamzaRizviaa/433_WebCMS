@@ -5,7 +5,7 @@ interface BannerContent {
 }
 
 interface BannerItem {
-	banner_id: string;
+	id: string;
 	banner_type: string;
 	content: BannerContent;
 	sort_order: number;

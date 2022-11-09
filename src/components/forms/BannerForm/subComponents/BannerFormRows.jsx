@@ -4,8 +4,6 @@ import DraggableLayoutWrapper from '../../../layouts/DraggableLayoutWrapper';
 import BannerRow from './BannerRow';
 
 const BannerFormRows = ({ form, swap }) => {
-	const handleDelete = () => {};
-
 	const handleDragData = (data) => {
 		console.log(data);
 		swap(data.source.index, data.destination.index);
@@ -14,12 +12,7 @@ const BannerFormRows = ({ form, swap }) => {
 	return (
 		<DraggableLayoutWrapper onDragEnd={handleDragData}>
 			{form.values.bannerData.map((item, index) => (
-				<BannerRow
-					key={item.id}
-					item={item}
-					index={index}
-					onDeleteIconClick={handleDelete}
-				/>
+				<BannerRow key={item.id} item={item} index={index} />
 			))}
 		</DraggableLayoutWrapper>
 	);

@@ -1,55 +1,46 @@
-import React, { useEffect } from 'react';
-// import PropTypes from 'prop-types';
+import React, { useEffect, useMemo } from 'react';
+import { isEmpty } from 'lodash';
 import { FieldArray, Form, Formik } from 'formik';
-import BannerFormRows from './subComponents/BannerFormRows';
 import { useDispatch, useSelector } from 'react-redux';
+
+import BannerFormRows from './subComponents/BannerFormRows';
 import {
 	getBannerContent,
-	getAllBanners
+	getAllBanners,
+	createOrEditTopBanner
 } from '../../../data/features/topBanner/topBannerSlice';
 import Button from '../../ui/Button';
 import { selectAllBanners } from '../../../data/selectors';
-
-const initialValues = {
-	bannerData: [
-		{
-			banner_id: '1',
-			banner_type: '',
-			content: { id: '', title: '', type: '' },
-			sort_order: 0
-		},
-		{
-			banner_id: '2',
-			banner_type: '',
-			content: { id: '', title: '', type: '' },
-			sort_order: 0
-		},
-		{
-			banner_id: '3',
-			banner_type: '',
-			content: { id: '', title: '', type: '' },
-			sort_order: 0
-		},
-		{
-			banner_id: '4',
-			banner_type: '',
-			content: { id: '', title: '', type: '' },
-			sort_order: 0
-		},
-		{
-			banner_id: '5',
-			banner_type: '',
-			content: { id: '', title: '', type: '' },
-			sort_order: 0
-		}
-	]
-};
+import {
+	topBannerInitialValues,
+	bannerDataFormatterForForm,
+	bannerDataFormatterForService
+} from '../../../data/helpers';
 
 const BannerForm = () => {
 	const dispatch = useDispatch();
 
-	// eslint-disable-next-line no-unused-vars
 	const allBanners = useSelector(selectAllBanners);
+
+	const initialValues = useMemo(() => {
+		return isEmpty(allBanners)
+			? topBannerInitialValues
+			: bannerDataFormatterForForm(allBanners);
+	}, [allBanners]);
+
+	const handleSubmit = async (values, formikBag) => {
+		formikBag.setSubmitting(true);
+
+		try {
+			const data = bannerDataFormatterForService(values);
+
+			await dispatch(createOrEditTopBanner(data));
+		} catch (error) {
+			console.error(error);
+		} finally {
+			formikBag.setSubmitting(false);
+		}
+	};
 
 	useEffect(() => {
 		dispatch(
@@ -58,11 +49,15 @@ const BannerForm = () => {
 				title: null
 			})
 		);
-		dispatch(getAllBanners());
+		dispatch(getAllBanners('home'));
 	}, []);
 
 	return (
-		<Formik initialValues={initialValues}>
+		<Formik
+			enableReinitialize
+			initialValues={initialValues}
+			onSubmit={handleSubmit}
+		>
 			<Form>
 				<FieldArray
 					name='bannerData'
