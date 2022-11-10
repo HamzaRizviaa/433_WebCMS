@@ -197,8 +197,8 @@ export const mediaDataFormatterForServer = (
 		duration: Math.round(fileDuration),
 		type: 'medialibrary',
 		save_draft: isDraft,
-		main_category_id: media.mainCategory,
-		sub_category_id: media.subCategory,
+		main_category_id: media.mainCategoryContent,
+		sub_category_id: media.subCategoryContent,
 		show_likes: media.show_likes ? true : false,
 		show_comments: media.show_comments ? true : false,
 		user_data: userData,
@@ -343,7 +343,9 @@ export const mediaFormInitialValues = {
 	uploadedCoverImage: [], // PORTRAIT
 	uploadedLandscapeCoverImage: [], //LANDSCAPE
 	show_likes: true,
-	show_comments: true
+	show_comments: true,
+	mainCategoryContent: '',
+	subCategoryContent: ''
 };
 
 export const mediaFormValidationSchema = Yup.object().shape({

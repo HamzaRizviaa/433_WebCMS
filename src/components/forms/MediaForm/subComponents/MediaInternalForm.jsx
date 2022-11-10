@@ -82,7 +82,7 @@ const MediaInternalForm = ({
 		setSubmitting
 	} = useFormikContext();
 
-	console.log('VALUESS', values, isLoading);
+	console.log('VALUESS', values);
 	const labels = useSelector(selectLabels);
 
 	const [postLabels, setPostLabels] = useState([]);
@@ -179,6 +179,7 @@ const MediaInternalForm = ({
 									fetchSubCategories(data.id);
 									setFieldValue(name, value);
 									setFieldValue('subCategory', '');
+									setFieldValue('mainCategoryContent', data.id);
 								}}
 							/>
 						</div>
@@ -197,8 +198,9 @@ const MediaInternalForm = ({
 										value: category.name,
 										data: category
 									}))}
-									onChange={(value, name) => {
+									onChange={(value, name, { data }) => {
 										setFieldValue(name, value);
+										setFieldValue('subCategoryContent', data.id);
 									}}
 								/>
 							)}
