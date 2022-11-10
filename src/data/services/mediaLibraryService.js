@@ -21,6 +21,7 @@ class MediaLibraryService {
 		const params = {
 			...queryParams,
 			limit: 20,
+			page: queryParams.page || 1,
 			sort_by: sortKeysMapping[queryParams.sort_by] || null
 		};
 

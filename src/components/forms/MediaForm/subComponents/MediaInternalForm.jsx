@@ -17,7 +17,7 @@ import {
 import { Tooltip, Fade, TextField } from '@mui/material';
 import { ReactComponent as Info } from '../../../../assets/InfoButton.svg';
 
-import Labels from '../../../Labels';
+import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
 import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikSelect from '../../../ui/inputs/formik/FormikSelect';
 import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
@@ -238,8 +238,14 @@ const MediaInternalForm = ({
 						<div className={classes.fieldWrapper}>
 							<FormikDropzone
 								name='uploadedFiles'
-								accept='image/jpeg, image/png, video/mp4'
-								formatMessage='Supported formats are jpeg, png and mp4'
+								accept={
+									values.mainCategory === 'Watch' ? 'video/mp4' : 'audio/mp3'
+								}
+								formatMessage={
+									values.mainCategory === 'Watch'
+										? 'Supported format is mp4'
+										: 'Supported format is mp3'
+								}
 								maxFiles={3}
 								showPreview
 								required
@@ -263,8 +269,9 @@ const MediaInternalForm = ({
 						<div className={classes.fieldWrapper}>
 							<FormikDropzone
 								name='uploadedCoverImage'
-								accept='image/jpeg, image/png, video/mp4'
-								formatMessage='Supported formats are jpeg, png and mp4'
+								accept='image/jpeg, image/png'
+								formatMessage='Supported formats are jpeg and png'
+								fileSizeMessage='Image file size should not exceed 1MB.'
 								maxFiles={3}
 								showPreview
 								required
@@ -288,9 +295,10 @@ const MediaInternalForm = ({
 						<div className={classes.fieldWrapper}>
 							<FormikDropzone
 								name='uploadedLandscapeCoverImage'
-								accept='image/jpeg, image/png, video/mp4'
-								formatMessage='Supported formats are jpeg, png and mp4'
-								maxFiles={3}
+								accept='image/jpeg, image/png'
+								formatMessage='Supported formats are jpeg and png'
+								fileSizeMessage='Image file size should not exceed 1MB.'
+								maxFiles={1}
 								showPreview
 								required
 								onPreview={openPreviewer}
@@ -327,34 +335,14 @@ const MediaInternalForm = ({
 						</div>
 
 						<div className={classes.titleContainer}>
-							<Labels
-								titleClasses={
-									touched.labels && errors.labels
-										? globalClasses.errorState
-										: globalClasses.noErrorState
-								}
-								isEdit={isEdit}
-								setDisableDropdown={() => {}}
-								selectedLabels={values.labels}
-								LabelsOptions={postLabels}
-								extraLabel={extraLabel}
-								handleChangeExtraLabel={handleChangeExtraLabel}
-								setSelectedLabels={(newVal) => {
-									setFieldValue('labels', [...newVal]);
-								}}
-								draftStatus={status}
-								setExtraLabel={setExtraLabel}
+							<FormikLabelsSelect
+								name='labels'
+								label='LABELS'
+								placeholder='Select a minimum of 7 labels'
+								disabled={isPublished}
+								required
 							/>
 						</div>
-						<p className={globalClasses.mediaError}>
-							{touched.labels && errors.labels
-								? `You need to add ${
-										7 - values.labels.length
-								  } more labels in order to upload media`
-								: touched.labels && values.labels.length === 0
-								? 'You need to select atleast 1 label to save as draft'
-								: ''}
-						</p>
 
 						<div className={classes.titleContainer}>
 							<FormikField

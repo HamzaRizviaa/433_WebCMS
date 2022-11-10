@@ -174,7 +174,7 @@ export const fileUploadsArray = (media) => {
 		media.uploadedCoverImage[0], //portrait
 		media.uploadedLandscapeCoverImage[0] //landscape
 	].map(async (_file) => {
-		if (_file.file) {
+		if (_file?.file) {
 			return await uploadFileToServer(_file, _file.type);
 		} else {
 			return _file;
@@ -356,7 +356,15 @@ export const mediaFormValidationSchema = Yup.object().shape({
 	image_dropbox_url: Yup.string(),
 	landscape_image_dropbox_url: Yup.string(),
 	description: Yup.string().required().label('Description'),
-	labels: Yup.array().min(7).required().label('Labels'),
+	labels: Yup.array()
+		.min(7, (obj) => {
+			const labelsCount = obj.value?.length;
+			return `You need to add ${
+				7 - labelsCount
+			} more labels in order to upload news`;
+		})
+		.required('You need to enter atleast 7 labels')
+		.label('Labels'),
 	uploadedFiles: Yup.array().min(1).required(),
 	uploadedCoverImage: Yup.array().min(1).required(),
 	uploadedLandscapeCoverImage: Yup.array().min(1).required(),

@@ -17,9 +17,7 @@ export const getAllMedia = createAsyncThunk(
 		// if (limit) {
 		// 	endPoint += `?limit=${limit}`;
 		// }
-		const { data: media } = await MediaLibraryService.getAllMediaServiceCall(
-			params
-		);
+		const { data: media } = await MediaLibraryService.getMediaApi(params);
 		return media.data || [];
 	}
 );

@@ -18,7 +18,6 @@ import {
 import {
 	createOrEditMediaThunk,
 	deleteMediaThunk,
-	getAllMedia,
 	// getMainCategories,
 	getMedia
 } from '../../../data/features/mediaLibrary/mediaLibrarySlice';
@@ -86,9 +85,9 @@ const MediaForm = ({
 			handleClose();
 
 			if (isEdit && !(status === 'draft' && isDraft === false)) {
-				dispatch(getAllMedia(queryParams));
+				dispatch(getMedia(queryParams));
 			} else if (isSearchParamsEmpty) {
-				dispatch(getAllMedia());
+				dispatch(getMedia());
 			} else {
 				navigate('/media-library');
 			}
