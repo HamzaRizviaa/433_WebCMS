@@ -1,3 +1,5 @@
+import * as Yup from 'yup';
+
 export const topBannerInitialValues = {
 	bannerData: [
 		{
@@ -60,3 +62,43 @@ export const bannerDataFormatterForService = (bannerValues, type = 'home') => {
 
 	return bannerDataForService;
 };
+
+console.log(topBannerInitialValues, 'topBannerInitialValues');
+// banners validations
+
+export const bannersValidations = Yup.object({
+	bannerData: Yup.array()
+		.of(
+			Yup.object({
+				id: Yup.string(),
+				//banner_type: Yup.string().oneOf(['home', 'media']).required(),
+				banner_type: Yup.string(),
+				//.required('Banner Type can not be empty'),
+				content: Yup.mixed().transform((v) => (!v.title ? undefined : v))
+				//.required('Content Type can not be empty')
+			})
+		)
+		.min(1)
+		.required('At least 1 banner is require for submitting')
+});
+
+// .test(
+// 	'invalidOrder',
+// 	'The order of the banner items is not valid',
+// 	(value) => {
+// 		let errFlag = true;
+// 		console.log(value, 'value');
+// 		// for (let i = value.length - 1; i >= 1; i--) {
+// 		// 	if (value[i]?.bannerType && value[i]?.selectedMedia) {
+// 		// 		if (!value[i - 1].bannerType || !value[i - 1].selectedMedia)
+// 		// 			errFlag = false;
+// 		// 		break;
+// 		// 	} else if (value[i].bannerType || value[i].selectedMedia) {
+// 		// 		errFlag = false;
+// 		// 		break;
+// 		// 	}
+// 		// }
+
+// 		return errFlag;
+// 	}
+// )

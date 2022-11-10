@@ -15,7 +15,8 @@ import { selectAllBanners } from '../../../data/selectors';
 import {
 	topBannerInitialValues,
 	bannerDataFormatterForForm,
-	bannerDataFormatterForService
+	bannerDataFormatterForService,
+	bannersValidations
 } from '../../../data/helpers';
 import { useBannerFormStyles } from './index.style';
 
@@ -60,6 +61,8 @@ const BannerForm = ({ tabValue }) => {
 			enableReinitialize
 			initialValues={initialValues}
 			onSubmit={handleSubmit}
+			validationSchema={bannersValidations}
+			validateOnMount
 		>
 			<Form>
 				<div className={classes.bannerMain}>
