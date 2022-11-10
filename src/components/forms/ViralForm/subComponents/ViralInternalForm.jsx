@@ -1,12 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
-import { pick, isEqual, xor } from 'lodash';
+import { pick, isEqual } from 'lodash';
 import { useFormikContext } from 'formik';
 import { useFormStyles } from '../../forms.style';
 
 import { InfoIcon } from '../../../../assets/svg-icons';
-import { selectSpecificViral } from '../../../../data/selectors';
 import { viralFormInitialValues } from '../../../../data/helpers';
 
 import FormikField from '../../../ui/inputs/formik/FormikField';
@@ -30,7 +28,6 @@ const ViralInternalForm = ({
 	toggleDeleteModal
 }) => {
 	const classes = useFormStyles();
-	const specificViral = useSelector(selectSpecificViral);
 
 	const {
 		values,
@@ -59,19 +56,8 @@ const ViralInternalForm = ({
 			viralFormInitialValues
 		);
 
-		const doLabelsContainSameElements =
-			specificViral?.labels?.length === values.labels.length &&
-			xor(
-				specificViral?.labels,
-				values.labels.map((item) => item.name)
-			).length === 0;
-
-		const isDisabledOnUpload = !dirty || isEqualToDefaultValues;
-
-		return isEdit
-			? isDisabledOnUpload || doLabelsContainSameElements
-			: isDisabledOnUpload;
-	}, [dirty, values, specificViral, isEdit]);
+		return !dirty || isEqualToDefaultValues;
+	}, [dirty, values]);
 
 	const saveDraftHandler = () =>
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);

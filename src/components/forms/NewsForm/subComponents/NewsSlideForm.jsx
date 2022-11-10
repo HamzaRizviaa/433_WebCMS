@@ -49,6 +49,7 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 								name={`slides.${index}.uploadedFiles`}
 								accept='image/jpeg, image/png'
 								formatMessage='Supported formats are jpeg and png'
+								fileSizeMessage='Image file size should not exceed 1MB.'
 								showPreview
 								onPreview={openPreviewer}
 								onDelete={() => handleDeleteFile(index)}
