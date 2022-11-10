@@ -44,7 +44,7 @@ const MediaForm = ({
 
 	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
 		formikBag.setSubmitting(true);
-
+		console.table(values);
 		try {
 			// const uploadedFiles = await uploadFileToServer(
 			// 	values.uploadedFiles[0],

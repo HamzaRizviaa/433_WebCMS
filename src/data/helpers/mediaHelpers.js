@@ -86,6 +86,7 @@ export const mediaColumns = [
 ];
 
 export const mediaDataFormatterForForm = (media) => {
+	console.log('prebuild', media);
 	const formattedMedia = { ...media };
 
 	if (formattedMedia?.labels) {
@@ -136,7 +137,9 @@ export const mediaDataFormatterForForm = (media) => {
 				}
 		  ]
 		: [];
-
+	formattedMedia.mainCategory = media?.media_type;
+	formattedMedia.subCategory = media?.sub_category;
+	console.log(formattedMedia);
 	return formattedMedia;
 };
 
@@ -235,8 +238,9 @@ export const mediaDataFormatterForServer = (media, isDraft = false) => {
 					duration: Math.round(fileDuration),
 					type: 'medialibrary',
 					save_draft: false,
-					main_category_id: media.mainCategory,
+					media_type: media.mainCategory,
 					sub_category_id: media.subCategory,
+					sub_category: media.subCategory,
 					show_likes: media.show_likes ? true : false,
 					show_comments: media.show_comments ? true : false,
 					dropbox_url: {

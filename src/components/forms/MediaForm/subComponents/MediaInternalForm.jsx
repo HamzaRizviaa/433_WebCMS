@@ -7,7 +7,12 @@ import { useSelector } from 'react-redux';
 import { useFormikContext } from 'formik';
 import { useStyles } from '../index.styles';
 import { useStyles as globalUseStyles } from '../../../../styles/global.style';
-import { selectLabels } from '../../../../data/selectors';
+import {
+	selectLabels,
+	selectMediaMainCategories,
+	selectMediaSubCategories,
+	selectMediaSubCategoriesLoading
+} from '../../../../data/selectors';
 
 import { Tooltip, Fade, TextField } from '@mui/material';
 import { ReactComponent as Info } from '../../../../assets/InfoButton.svg';
@@ -18,6 +23,15 @@ import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
 import ToggleSwitch from '../../../switch';
 import Button from '../../../ui/Button';
 import SelectField from '../../../ui/inputs/SelectField';
+import { useDispatch } from 'react-redux';
+import {
+	getMainCategories,
+	getSubCategories
+} from '../../../../data/features/mediaLibrary/mediaLibraryActions';
+import {
+	useGetMainCategoriesQuery,
+	useLazyGetSubCategoriesQuery
+} from '../../../../data/features/mediaLibrary/media.query';
 
 // const isEdit = false;
 const isTrue = true;
@@ -32,6 +46,29 @@ const MediaInternalForm = ({
 	const globalClasses = globalUseStyles();
 	const isPublished = isEdit && status === 'published';
 
+	// get categories
+	const {
+		data: mainCategories,
+		error,
+		isLoading: categoriesLoading,
+		isSuccess
+	} = useGetMainCategoriesQuery();
+
+	//get sub categories
+	const [
+		getSubCategories,
+		{
+			isFetching: isLoading,
+			data: subCategories,
+			isError,
+			isSuccess: subCategoriesSuccess,
+			...subResponse
+		}
+	] = useLazyGetSubCategoriesQuery();
+
+	// const mainCategories = useSelector(selectMediaMainCategories);
+	// const subCategories = useSelector(selectMediaSubCategories);
+	// const isLoading = useSelector(selectMediaSubCategoriesLoading);
 	const {
 		values,
 		errors,
@@ -48,6 +85,37 @@ const MediaInternalForm = ({
 
 	const [postLabels, setPostLabels] = useState([]);
 	const [extraLabel, setExtraLabel] = useState('');
+
+	useEffect(() => {
+		if (subCategoriesSuccess) {
+			setTimeout(() => {
+				setFieldValue('subCategory', values.subCategory);
+			});
+		}
+	}, [subCategoriesSuccess, isLoading]);
+
+	// get sub categories when editing an item
+	useEffect(() => {
+		if (
+			!isLoading &&
+			Array.isArray(mainCategories) &&
+			isSuccess &&
+			values?.mainCategory
+		) {
+			let id = mainCategories.filter(
+				(category) => category.name === values.mainCategory
+			);
+			if (id[0]) {
+				fetchSubCategories(id[0]?.id);
+			}
+		}
+	}, [mainCategories, categoriesLoading, isSuccess, values?.mainCategory]);
+
+	// setting sub category
+	useEffect(() => {
+		!!subCategories?.length && setFieldValue('subCategory', values.subCategory);
+		// console.log('haha', values.subCategory, values);
+	}, [subCategories]);
 
 	useEffect(() => {
 		if (labels?.length) {
@@ -75,6 +143,14 @@ const MediaInternalForm = ({
 	const saveDraftHandler = () =>
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
 
+	const fetchSubCategories = (id) => {
+		getSubCategories(id);
+	};
+
+	const ifMediaTypeSelected = () => values?.mainCategory && values.subCategory;
+
+	if (isEdit && mainCategories?.length < 0 && subCategories?.length < 0)
+		return <></>;
 	return (
 		<div>
 			<div
@@ -87,43 +163,53 @@ const MediaInternalForm = ({
 						<div className={classes.mainCategory}>
 							<SelectField
 								label='MAIN CATEGORY'
-								name='league'
+								name='mainCategory'
 								placeholder='Please Select'
-								noOptionsText="Leagues aren't available"
-								// value={item?.data?.league?.value}
+								noOptionsText="Categories aren't available"
+								value={values.mainCategory}
 								// disabled={readOnly}
-								options={[].map((league) => ({
-									label: league.name,
-									value: league.id,
-									data: league
+								options={(mainCategories || []).map((category) => ({
+									label: category.name,
+									value: category.name,
+									data: category
 								}))}
-								// onChange={(value, name, data) => {
-								// 	handleSelect(value, name, data);
-								// }}
+								onChange={(value, name, { data }) => {
+									fetchSubCategories(data.id);
+									setFieldValue(name, value);
+									setFieldValue('subCategory', '');
+								}}
 							/>
 						</div>
 						<div className={classes.subCategory}>
-							<SelectField
-								label='SUB CATEGORY'
-								name='league'
-								placeholder='Please Select'
-								noOptionsText="Leagues aren't available"
-								// value={item?.data?.league?.value}
-								// disabled={readOnly}
-								options={[].map((league) => ({
-									label: league.name,
-									value: league.id,
-									data: league
-								}))}
-								// onChange={(value, name, data) => {
-								// 	handleSelect(value, name, data);
-								// }}
-							/>
+							{subCategoriesSuccess && !isLoading && (
+								<SelectField
+									label='SUB CATEGORY'
+									name='subCategory'
+									placeholder='Please Select'
+									noOptionsText="Sub Categories aren't available"
+									disabled={isLoading || !values.mainCategory}
+									value={values.subCategory}
+									defaultValue={values.subCategory}
+									options={(subCategories || []).map((category) => ({
+										label: category.name,
+										value: category.name,
+										data: category
+									}))}
+									onChange={(value, name) => {
+										setFieldValue(name, value);
+									}}
+								/>
+							)}
+							{(subResponse?.isUninitialized ||
+								isLoading ||
+								!subCategoriesSuccess) && (
+								<SelectField label='SUB CATEGORY' disabled options={[]} />
+							)}
 						</div>
 					</div>
 				</div>
 
-				{isTrue ? (
+				{ifMediaTypeSelected() ? (
 					<>
 						{isTrue ? (
 							<div className={globalClasses.explanationWrapper}>
@@ -179,7 +265,7 @@ const MediaInternalForm = ({
 								showPreview
 								required
 								onPreview={openPreviewer}
-								// onDelete={() => setFieldValue('uploadedFiles', [])}
+								onDelete={() => setFieldValue('uploadedCoverImage', [])}
 							/>
 						</div>
 
@@ -204,7 +290,9 @@ const MediaInternalForm = ({
 								showPreview
 								required
 								onPreview={openPreviewer}
-								// onDelete={() => setFieldValue('uploadedFiles', [])}
+								onDelete={() =>
+									setFieldValue('uploadedLandscapeCoverImage', [])
+								}
 							/>
 						</div>
 
@@ -300,45 +388,49 @@ const MediaInternalForm = ({
 								/>
 							</div>
 						</div>
+
+						{/* buttons */}
+						<div className={classes.buttonDiv}>
+							{isEdit && (
+								<div className={classes.editBtn}>
+									<Button
+										size='small'
+										variant={'outlined'}
+										onClick={toggleDeleteModal}
+									>
+										DELETE MEDIA
+									</Button>
+								</div>
+							)}
+
+							<div className={classes.publishDraftDiv}>
+								{(!isEdit || status === 'draft') && (
+									<Button
+										size='small'
+										variant={'outlined'}
+										disabled={!dirty}
+										onClick={saveDraftHandler}
+									>
+										{status === 'draft' && isEdit
+											? 'SAVE DRAFT'
+											: 'SAVE AS DRAFT'}
+									</Button>
+								)}
+								<Button
+									type='submit'
+									disabled={
+										isPublished ? (!dirty ? isValid : !isValid) : !isValid
+									}
+									onClick={handleSubmit}
+								>
+									{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
+								</Button>
+							</div>
+						</div>
 					</>
 				) : (
 					<></>
 				)}
-
-				{/* buttons */}
-				<div className={classes.buttonDiv}>
-					{isEdit && (
-						<div className={classes.editBtn}>
-							<Button
-								size='small'
-								variant={'outlined'}
-								onClick={toggleDeleteModal}
-							>
-								DELETE MEDIA
-							</Button>
-						</div>
-					)}
-
-					<div className={classes.publishDraftDiv}>
-						{(!isEdit || status === 'draft') && (
-							<Button
-								size='small'
-								variant={'outlined'}
-								disabled={!dirty}
-								onClick={saveDraftHandler}
-							>
-								{status === 'draft' && isEdit ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
-							</Button>
-						)}
-						<Button
-							type='submit'
-							disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
-							onClick={handleSubmit}
-						>
-							{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
-						</Button>
-					</div>
-				</div>
 			</div>
 		</div>
 	);
