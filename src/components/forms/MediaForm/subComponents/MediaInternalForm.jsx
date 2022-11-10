@@ -239,7 +239,9 @@ const MediaInternalForm = ({
 							<FormikDropzone
 								name='uploadedFiles'
 								accept={
-									values.mainCategory === 'Watch' ? 'video/mp4' : 'audio/mp3'
+									values.mainCategory === 'Watch'
+										? 'video/mp4'
+										: 'audio/mp3' || 'audio/mpeg'
 								}
 								formatMessage={
 									values.mainCategory === 'Watch'

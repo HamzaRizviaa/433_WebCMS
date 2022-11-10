@@ -56,11 +56,10 @@ export const useStyles = makeStyles(() => ({
 		display: 'inline-block'
 	},
 
-	editBtn: {
+	deleteBtnWrapper: {
 		width: '100%',
 		display: 'flex',
-		justifySelf: 'flex-start',
-		marginTop: '0.5rem'
+		justifySelf: 'flex-start'
 	},
 
 	postBtn: {

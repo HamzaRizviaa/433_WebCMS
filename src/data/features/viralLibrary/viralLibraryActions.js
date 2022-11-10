@@ -87,12 +87,13 @@ export const createOrEditViralThunk = createAsyncThunk(
 				data.viral_id ? 'Failed to edit viral!' : 'Failed to create viral!'
 			);
 			console.error(e);
+			throw new Error(e);
 		}
 	}
 );
 
 /**
- * This action handler is responsible for the deletion of a viral. 
+ * This action handler is responsible for the deletion of a viral.
  * See {@link ViralLibraryService} if you are interested in the deleteViral function
  * which is used inside this action handler.
  * @type {Function}

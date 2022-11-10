@@ -1,20 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { pick, isEqual } from 'lodash';
 import { useFormikContext } from 'formik';
-import { useStyles } from '../index.styles';
-import { useStyles as globalUseStyles } from '../../../../styles/global.style';
-import { selectLabels } from '../../../../data/selectors';
+import { useFormStyles } from '../../forms.style';
 
-import { Tooltip, Fade } from '@mui/material';
-import { ReactComponent as Info } from '../../../../assets/InfoButton.svg';
+import { InfoIcon } from '../../../../assets/svg-icons';
+import { viralFormInitialValues } from '../../../../data/helpers';
 
-import Labels from '../../../Labels';
 import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
-import ToggleSwitch from '../../../switch';
+import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
+import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
+import TextTooltip from '../../../ui/TextTooltip';
 import Button from '../../../ui/Button';
 
+/**
+ * ViralInternalForm Component is used as a child of the ViralForm and the link to that is given below.
+ * ViralInternalForm serves the purpose of wrapping up all the form fields and buttons inside it.
+ * @component
+ * @see {@link http://127.0.0.1:5500/docs/ViralForm.html|ViralForm}
+ */
 const ViralInternalForm = ({
 	isEdit,
 	status,
@@ -22,49 +27,37 @@ const ViralInternalForm = ({
 	onSubmitHandler,
 	toggleDeleteModal
 }) => {
-	const classes = useStyles();
-	const globalClasses = globalUseStyles();
-	const isPublished = isEdit && status === 'published';
+	const classes = useFormStyles();
 
 	const {
 		values,
-		errors,
-		touched,
 		dirty,
 		isValid,
 		isSubmitting,
 		handleSubmit,
 		setFieldValue,
-		setSubmitting
+		setSubmitting,
+		validateForm,
+		resetForm
 	} = useFormikContext();
 
-	const labels = useSelector(selectLabels);
-
-	const [postLabels, setPostLabels] = useState([]);
-	const [extraLabel, setExtraLabel] = useState('');
-
 	useEffect(() => {
-		if (labels.length) {
-			setPostLabels([...labels]);
-		}
-	}, [labels]);
+		validateForm();
+		return () => {
+			resetForm(viralFormInitialValues);
+		};
+	}, []);
 
-	useEffect(() => {
-		setPostLabels((labels) => {
-			return labels.filter((label) => label.id != null);
-		});
-		if (extraLabel) {
-			let flag = postLabels.some((label) => label.name == extraLabel);
-			if (flag == false) {
-				setPostLabels((labels) => {
-					return [...labels, { id: null, name: extraLabel }];
-				});
-			}
-		}
-	}, [extraLabel]);
+	const isPublished = isEdit && status === 'published';
 
-	const handleChangeExtraLabel = (e) =>
-		setExtraLabel(e.target.value.toUpperCase());
+	const isDraftDisabled = useMemo(() => {
+		const isEqualToDefaultValues = isEqual(
+			pick(values, Object.keys(viralFormInitialValues)),
+			viralFormInitialValues
+		);
+
+		return !dirty || isEqualToDefaultValues;
+	}, [dirty, values]);
 
 	const saveDraftHandler = () =>
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
@@ -72,37 +65,31 @@ const ViralInternalForm = ({
 	return (
 		<div>
 			<div>
-				<div className={globalClasses.explanationWrapper}>
-					<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
-					<Tooltip
-						TransitionComponent={Fade}
-						TransitionProps={{ timeout: 800 }}
+				<div className={classes.explanationWrapper}>
+					<h5>
+						{isEdit ? 'Media File' : 'Add Media File'}
+						<span style={{ color: '#ff355a' }}>{'*'}</span>
+					</h5>
+					<TextTooltip
 						title='Default encoding for videos should be H.264'
-						arrow
-						componentsProps={{
-							tooltip: { className: globalClasses.toolTip },
-							arrow: { className: globalClasses.toolTipArrow }
-						}}
 						placement='bottom-start'
 					>
-						<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
-					</Tooltip>
+						<InfoIcon className={classes.infoIcon} />
+					</TextTooltip>
 				</div>
-
 				<div className={classes.fieldWrapper}>
 					<FormikDropzone
 						name='uploadedFiles'
 						accept='image/jpeg, image/png, video/mp4'
 						formatMessage='Supported formats are jpeg, png and mp4'
-						maxFiles={3}
+						maxFiles={1}
 						showPreview
 						required
 						onPreview={openPreviewer}
 						onDelete={() => setFieldValue('uploadedFiles', [])}
 					/>
 				</div>
-
-				<div className={globalClasses.dropBoxUrlContainer}>
+				<div className={classes.fieldContainer}>
 					<FormikField
 						label='DROPBOX URL'
 						name='dropbox_url'
@@ -111,73 +98,35 @@ const ViralInternalForm = ({
 						maxRows={2}
 					/>
 				</div>
-
-				<div className={classes.captionContainer}>
-					<Labels
-						titleClasses={
-							touched.labels && errors.labels
-								? globalClasses.errorState
-								: globalClasses.noErrorState
-						}
-						isEdit={isEdit}
-						setDisableDropdown={() => {}}
-						selectedLabels={values.labels}
-						LabelsOptions={postLabels}
-						extraLabel={extraLabel}
-						handleChangeExtraLabel={handleChangeExtraLabel}
-						setSelectedLabels={(newVal) => {
-							setFieldValue('labels', [...newVal]);
-						}}
-						draftStatus={status}
-						setExtraLabel={setExtraLabel}
+				<div className={classes.fieldContainer}>
+					<FormikLabelsSelect
+						label='LABELS'
+						name='labels'
+						placeholder={'Select a minimum of 7 labels'}
+						disabled={isPublished}
+						required
 					/>
 				</div>
-				<p className={globalClasses.mediaError}>
-					{touched.labels && errors.labels
-						? `You need to add ${
-								7 - values.labels.length
-						  } more labels in order to upload media`
-						: touched.labels && values.labels.length === 0
-						? 'You need to select atleast 1 label to save as draft'
-						: ''}
-				</p>
-
-				<FormikField
-					label='CAPTION'
-					name='caption'
-					placeholder='Please write the caption here'
-					multiline
-					maxRows={4}
-				/>
-
-				<div className={classes.postMediaContainer}>
-					<div className={classes.postMediaHeader}>
-						<h5>Show comments</h5>
-						<ToggleSwitch
-							id={1}
-							checked={values.show_comments}
-							onChange={(checked) => setFieldValue('show_comments', checked)}
-						/>
-					</div>
+				<div className={classes.fieldContainer}>
+					<FormikField
+						label='CAPTION'
+						name='caption'
+						placeholder='Please write your caption here'
+						multiline
+						maxRows={4}
+						required
+					/>
 				</div>
-
-				<div
-					className={classes.postMediaContainer}
-					style={{ marginBottom: '1rem' }}
-				>
-					<div className={classes.postMediaHeader}>
-						<h5>Show likes</h5>
-						<ToggleSwitch
-							id={2}
-							checked={values.show_likes}
-							onChange={(checked) => setFieldValue('show_likes', checked)}
-						/>
+				<div className={classes.fieldContainer}>
+					<div className={classes.switchContainer}>
+						<FormikSwitchField name='show_comments' label='Show comments' />
+						<FormikSwitchField name='show_likes' label='Show likes' />
 					</div>
 				</div>
 			</div>
 			<div className={classes.buttonDiv}>
-				{isEdit && (
-					<div className={classes.editBtn}>
+				<div>
+					{isEdit && (
 						<Button
 							size='small'
 							variant={'outlined'}
@@ -185,14 +134,14 @@ const ViralInternalForm = ({
 						>
 							DELETE VIRAL
 						</Button>
-					</div>
-				)}
+					)}
+				</div>
 				<div className={classes.publishDraftDiv}>
 					{(!isEdit || status === 'draft') && (
 						<Button
 							size='small'
 							variant={'outlined'}
-							disabled={!dirty}
+							disabled={isDraftDisabled}
 							onClick={saveDraftHandler}
 						>
 							{status === 'draft' && isEdit ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}

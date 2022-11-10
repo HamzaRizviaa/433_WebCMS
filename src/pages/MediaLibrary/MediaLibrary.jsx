@@ -69,6 +69,7 @@ const MediaLibrary = () => {
 				buttonText={
 					edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
 				}
+				rowStatus={rowStatus}
 				status={rowStatus}
 			/> */}
 			<MediaForm
