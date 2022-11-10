@@ -23,6 +23,7 @@ const BannerRow = ({ item, index, errorMsg }) => {
 	const bannerContent = useSelector(selectBannerContent);
 
 	const handleDelete = () => {
+		console.log('abc delete');
 		setFieldValue(`bannerData.${index}.banner_type`, '');
 		setFieldValue(`bannerData.${index}.content`, {
 			id: '',
@@ -32,6 +33,7 @@ const BannerRow = ({ item, index, errorMsg }) => {
 		setFieldValue(`bannerData.${index}.id`, '');
 	};
 
+	console.log();
 	const handleSearchText = (value) => {
 		dispatch(
 			getBannerContent({

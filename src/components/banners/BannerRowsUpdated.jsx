@@ -19,7 +19,6 @@ import { useStyles, useStyles2 } from './bannerStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { getBannerContent } from '../../data/features/topBanner/topBannerSlice';
 import _debounce from 'lodash/debounce';
-
 //refactored components
 import FormikSelect from '../ui/inputs/formik/FormikSelect';
 import { Formik } from 'formik';
@@ -231,7 +230,7 @@ function BannerRowsUpdated({
 			// 		? viralDataFormatterForForm(specificViral)
 			// 		: viralFormInitialValues
 			// }
-			// validationSchema={viralFormValidationSchema}
+
 			validateOnMount
 			// onSubmit={onSubmitHandler}
 		>
