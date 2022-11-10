@@ -9,12 +9,17 @@ const BannerFormRows = ({ form, swap }) => {
 		swap(data.source.index, data.destination.index);
 	};
 
-	console.log(form.errors, 'ERRORS', form);
+	console.log(form.errors, 'ERRORS');
 
 	return (
 		<DraggableLayoutWrapper onDragEnd={handleDragData}>
 			{form.values.bannerData.map((item, index) => (
-				<BannerRow key={item.id} item={item} index={index} />
+				<BannerRow
+					key={item.id}
+					item={item}
+					index={index}
+					errorMsg={form?.errors?.bannerData}
+				/>
 			))}
 		</DraggableLayoutWrapper>
 	);

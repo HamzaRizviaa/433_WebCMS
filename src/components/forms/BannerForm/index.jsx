@@ -69,6 +69,7 @@ const BannerForm = ({ tabValue }) => {
 					name='bannerData'
 					render={(props) => <BannerFormRows {...props} />}
 				/>
+
 				<Button fullWidth type='submit' className={classes.publishButton}>
 					PUBLISH {tabValue} BANNERS
 				</Button>

@@ -80,25 +80,36 @@ export const bannersValidations = Yup.object({
 		)
 		.min(1)
 		.required('At least 1 banner is require for submitting')
+		.test(
+			'invalidOrder',
+			'The order of the banner items is not valid',
+			(value) => {
+				let errFlag = true;
+
+				//2-5
+				for (let i = value.length - 1; i >= 1; i--) {
+					if (value[i]?.banner_type && value[i]?.content?.title) {
+						if (!value[i - 1].banner_type || !value[i - 1].content?.title)
+							errFlag = false;
+						break;
+					} else if (value[i].banner_type || value[i]?.content?.title) {
+						errFlag = false;
+						break;
+					}
+				}
+				return errFlag;
+			}
+		)
+
+		.test('invalidOrder', 'First banner can not be empty', (value) => {
+			let errFlag2 = true;
+
+			if (!value[0]?.banner_type ^ !value[0]?.content?.title) {
+				errFlag2 = false;
+			} else if (!value[0]?.banner_type || !value[0]?.content?.title) {
+				errFlag2 = false;
+			}
+
+			return errFlag2;
+		})
 });
-
-// .test(
-// 	'invalidOrder',
-// 	'The order of the banner items is not valid',
-// 	(value) => {
-// 		let errFlag = true;
-// 		console.log(value, 'value');
-// 		// for (let i = value.length - 1; i >= 1; i--) {
-// 		// 	if (value[i]?.bannerType && value[i]?.selectedMedia) {
-// 		// 		if (!value[i - 1].bannerType || !value[i - 1].selectedMedia)
-// 		// 			errFlag = false;
-// 		// 		break;
-// 		// 	} else if (value[i].bannerType || value[i].selectedMedia) {
-// 		// 		errFlag = false;
-// 		// 		break;
-// 		// 	}
-// 		// }
-
-// 		return errFlag;
-// 	}
-// )
