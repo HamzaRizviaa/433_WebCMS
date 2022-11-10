@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { pick, isEqual } from 'lodash';
 import { useFormikContext } from 'formik';
@@ -50,12 +50,14 @@ const ViralInternalForm = ({
 
 	const isPublished = isEdit && status === 'published';
 
-	const isDraftDisabled =
-		!dirty ||
-		isEqual(
+	const isDraftDisabled = useMemo(() => {
+		const isEqualToDefaultValues = isEqual(
 			pick(values, Object.keys(viralFormInitialValues)),
 			viralFormInitialValues
 		);
+
+		return !dirty || isEqualToDefaultValues;
+	}, [dirty, values]);
 
 	const saveDraftHandler = () =>
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);

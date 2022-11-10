@@ -77,16 +77,20 @@ const ViralForm = ({
 					isDraft
 				);
 
-				await dispatch(createOrEditViralThunk(viralData, formikBag, isDraft));
+				const { type } = await dispatch(
+					createOrEditViralThunk(viralData, formikBag, isDraft)
+				);
 
-				handleClose();
+				if (type === 'viralLibary/createOrEditViralThunk/fulfilled') {
+					handleClose();
 
-				if (isEdit && !(status === 'draft' && isDraft === false)) {
-					dispatch(getAllViralsApi(queryParams));
-				} else if (isSearchParamsEmpty) {
-					dispatch(getAllViralsApi());
-				} else {
-					navigate('/viral-library');
+					if (isEdit && !(status === 'draft' && isDraft === false)) {
+						dispatch(getAllViralsApi(queryParams));
+					} else if (isSearchParamsEmpty) {
+						dispatch(getAllViralsApi());
+					} else {
+						navigate('/viral-library');
+					}
 				}
 			} catch (e) {
 				console.error(e);

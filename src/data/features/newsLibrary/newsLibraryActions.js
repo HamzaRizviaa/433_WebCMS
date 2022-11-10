@@ -43,6 +43,7 @@ export const createOrEditNewsThunk = createAsyncThunk(
 				data.viral_id ? 'Failed to edit news!' : 'Failed to create news!'
 			);
 			console.error(e);
+			throw new Error(e);
 		}
 	}
 );

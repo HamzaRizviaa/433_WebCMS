@@ -71,7 +71,7 @@ const NewsForm = ({
 			}
 
 			const newsImages = values?.slides.map(async (item) => {
-				if (item.uploadedFiles[0].file) {
+				if (item.uploadedFiles[0]?.file) {
 					const newsData = await uploadFileToServer(
 						item?.uploadedFiles[0],
 						'newslibrary'
@@ -87,16 +87,20 @@ const NewsForm = ({
 
 			const newsData = newsDataFormatterForService(values, mediaFiles, isDraft);
 
-			await dispatch(createOrEditNewsThunk(newsData, formikBag, isDraft));
+			const { type } = await dispatch(
+				createOrEditNewsThunk(newsData, formikBag, isDraft)
+			);
 
-			handleClose();
+			if (type === 'newsLibrary/createOrEditNewsThunk/fulfilled') {
+				handleClose();
 
-			if (isEdit && !(status === 'draft' && isDraft === false)) {
-				dispatch(getAllNewsApi(queryParams));
-			} else if (isSearchParamsEmpty) {
-				dispatch(getAllNewsApi());
-			} else {
-				navigate('/news-library');
+				if (isEdit && !(status === 'draft' && isDraft === false)) {
+					dispatch(getAllNewsApi(queryParams));
+				} else if (isSearchParamsEmpty) {
+					dispatch(getAllNewsApi());
+				} else {
+					navigate('/news-library');
+				}
 			}
 		} catch (e) {
 			console.error(e);
