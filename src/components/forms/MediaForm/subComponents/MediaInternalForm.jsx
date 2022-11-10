@@ -179,7 +179,7 @@ const MediaInternalForm = ({
 								showPreview
 								required
 								onPreview={openPreviewer}
-								// onDelete={() => setFieldValue('uploadedFiles', [])}
+								onDelete={() => setFieldValue('uploadedCoverImage', [])}
 							/>
 						</div>
 
@@ -204,7 +204,9 @@ const MediaInternalForm = ({
 								showPreview
 								required
 								onPreview={openPreviewer}
-								// onDelete={() => setFieldValue('uploadedFiles', [])}
+								onDelete={() =>
+									setFieldValue('uploadedLandscapeCoverImage', [])
+								}
 							/>
 						</div>
 
@@ -332,7 +334,7 @@ const MediaInternalForm = ({
 						)}
 						<Button
 							type='submit'
-							disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
+							// disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
 							onClick={handleSubmit}
 						>
 							{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
