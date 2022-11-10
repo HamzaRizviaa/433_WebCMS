@@ -139,8 +139,8 @@ export const newsDataFormatterForService = (
 		banner_description: news.banner_description,
 		show_likes: news.show_likes,
 		show_comments: news.show_comments,
+		labels: news.labels,
 		slides: slides,
-		...(news.labels?.length ? { labels: [...news.labels] } : {}),
 
 		// Destructing the viral id for edit state
 		...(news.id ? { news_id: news.id } : {})
