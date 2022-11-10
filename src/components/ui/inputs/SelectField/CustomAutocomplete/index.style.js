@@ -16,10 +16,6 @@ const sizeMapper = {
 };
 
 export const useAutocompleteStyles = makeStyles((theme) => ({
-	selectFieldContainer: {
-		marginBottom: '1rem'
-	},
-
 	paper: {
 		maxHeight: 170,
 		background: theme.palette.black,

@@ -97,7 +97,7 @@ const CustomAutocomplete = ({
 	});
 
 	return (
-		<div className={`${classes.selectFieldContainer} ${className}`}>
+		<div className={className}>
 			{(!!label || !!rightLabel) && (
 				<div className={inputsClasses.labelsContainer}>
 					{(!!label || !!rightLabel) && (

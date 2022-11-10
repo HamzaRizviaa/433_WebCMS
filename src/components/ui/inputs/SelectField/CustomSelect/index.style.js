@@ -19,10 +19,6 @@ const sizeMapper = {
 };
 
 export const useSelectStyles = makeStyles((theme) => ({
-	selectFieldContainer: {
-		marginBottom: '1rem'
-	},
-
 	select: ({ isError, isDisabled, size }) => ({
 		display: 'flex',
 		alignItems: 'center',
