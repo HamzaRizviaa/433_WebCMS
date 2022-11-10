@@ -13,6 +13,7 @@ import {
 	Logout,
 	Article
 } from '../../../assets/svg-icons';
+import { UserService } from '../../../data/services';
 
 const checkDomain = (href) => {
 	if (href.includes('localhost')) {
@@ -34,10 +35,13 @@ const Sidebar = () => {
 
 	const [env, setEnv] = useState('prod');
 
-	const onLogoutSuccess = (res) => {
+	const onLogoutSuccess = async(res) => {
 		console.log('Logged out Success', res);
-		localStorage.removeItem('user_data');
-		navigate('/sign-in');
+		const response = await UserService.logout()
+		if(response?.data.status_code == 200){
+			localStorage.removeItem('user_data');
+			navigate('/sign-in');
+		}
 	};
 
 	const onFailure = () => {
