@@ -7,6 +7,9 @@ import { Formik } from 'formik';
 import { useCommonParams } from '../../../hooks';
 import { selectSpecificMedia } from '../../../data/selectors';
 import {
+	completeUpload,
+	fileUploadsArray,
+	getUserDataObject,
 	mediaDataFormatterForForm,
 	mediaDataFormatterForServer,
 	mediaFormInitialValues,
@@ -16,8 +19,10 @@ import {
 	createOrEditMediaThunk,
 	deleteMediaThunk,
 	getAllMedia,
+	// getMainCategories,
 	getMedia
 } from '../../../data/features/mediaLibrary/mediaLibrarySlice';
+
 // import { uploadFileToServer } from '../../../data/utils';
 
 import MediaFormDrawer from './subComponents/MediaFormDrawer';
@@ -59,19 +64,23 @@ const MediaForm = ({
 			// 	'medialibrary'
 			// );
 
-			let imagesArray = [
-				values.uploadedFiles,
-				values.uploadedCoverImage,
-				values.uploadedLandscapeCoverImage
-			];
+			const uploadedImgs = await fileUploadsArray(values);
+			await completeUpload(uploadedImgs, values);
 
-			console.log('images', imagesArray);
+			const getUser = getUserDataObject();
+			// const mainCategory = await dispatch(getMainCategories());
+			// const subCategory = await dispatch(getSubCategoryThunk());
+			// console.log('MAIN CATEGORY', mainCategory);
+			// console.log('Sub CAtegory', subCategory);
+
 			const mediaData = mediaDataFormatterForServer(
 				values,
 				isDraft,
-				imagesArray
+				uploadedImgs,
+				getUser
 			);
 
+			console.log('MEDIA DATA', mediaData);
 			await dispatch(createOrEditMediaThunk(mediaData, formikBag, isDraft));
 
 			handleClose();

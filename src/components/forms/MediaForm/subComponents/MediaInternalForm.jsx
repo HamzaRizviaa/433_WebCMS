@@ -19,6 +19,7 @@ import { ReactComponent as Info } from '../../../../assets/InfoButton.svg';
 
 import Labels from '../../../Labels';
 import FormikField from '../../../ui/inputs/formik/FormikField';
+import FormikSelect from '../../../ui/inputs/formik/FormikSelect';
 import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
 import ToggleSwitch from '../../../switch';
 import Button from '../../../ui/Button';
@@ -81,6 +82,7 @@ const MediaInternalForm = ({
 		setSubmitting
 	} = useFormikContext();
 
+	console.log('VALUESS', values, isLoading);
 	const labels = useSelector(selectLabels);
 
 	const [postLabels, setPostLabels] = useState([]);
@@ -161,50 +163,30 @@ const MediaInternalForm = ({
 					<h5>Select Media Type</h5>
 					<div className={classes.categoryContainer}>
 						<div className={classes.mainCategory}>
-							<SelectField
+							<FormikSelect
 								label='MAIN CATEGORY'
 								name='mainCategory'
 								placeholder='Please Select'
 								noOptionsText="Categories aren't available"
-								value={values.mainCategory}
-								// disabled={readOnly}
-								options={(mainCategories || []).map((category) => ({
-									label: category.name,
-									value: category.name,
-									data: category
-								}))}
-								onChange={(value, name, { data }) => {
-									fetchSubCategories(data.id);
+								options={mainCategories || []}
+								mapOptions={{ labelKey: 'name', valueKey: 'id' }}
+								onChange={(_, value) => {
+									fetchSubCategories(value);
 									setFieldValue(name, value);
 									setFieldValue('subCategory', '');
 								}}
 							/>
 						</div>
 						<div className={classes.subCategory}>
-							{subCategoriesSuccess && !isLoading && (
-								<SelectField
-									label='SUB CATEGORY'
-									name='subCategory'
-									placeholder='Please Select'
-									noOptionsText="Sub Categories aren't available"
-									disabled={isLoading || !values.mainCategory}
-									value={values.subCategory}
-									defaultValue={values.subCategory}
-									options={(subCategories || []).map((category) => ({
-										label: category.name,
-										value: category.name,
-										data: category
-									}))}
-									onChange={(value, name) => {
-										setFieldValue(name, value);
-									}}
-								/>
-							)}
-							{(subResponse?.isUninitialized ||
-								isLoading ||
-								!subCategoriesSuccess) && (
-								<SelectField label='SUB CATEGORY' disabled options={[]} />
-							)}
+							<FormikSelect
+								label='SUB CATEGORY'
+								name='subCategory'
+								placeholder='Please Select'
+								noOptionsText="Sub Categories aren't available"
+								disabled={isLoading || !values.mainCategory}
+								options={subCategories || []}
+								mapOptions={{ labelKey: 'name', valueKey: 'id' }}
+							/>
 						</div>
 					</div>
 				</div>
