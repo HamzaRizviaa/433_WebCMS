@@ -19,7 +19,6 @@ const InputField = ({
 	onChange,
 	maxLength,
 	error,
-	helperText,
 	inputProps = {},
 	type = 'text',
 	required = false,
@@ -88,7 +87,6 @@ const InputField = ({
 				value={innerValue}
 				size='small'
 				minRows={minRows}
-				helperText={error || helperText}
 				fullWidth
 				inputProps={{ maxLength, ...inputProps }}
 				InputProps={{
@@ -115,6 +113,7 @@ const InputField = ({
 					)
 				}}
 			/>
+			<span className={inputsClasses.errorText}>{error}</span>
 		</div>
 	);
 };
