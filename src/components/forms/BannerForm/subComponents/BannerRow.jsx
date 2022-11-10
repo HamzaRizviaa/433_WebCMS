@@ -42,7 +42,7 @@ const BannerRow = ({ item, index, errorMsg }) => {
 	};
 
 	return (
-		<div className={classes.bannerMain}>
+		<div className={classes.bannerAndTitle}>
 			<div className={classes.bannertext} key={index}>
 				Banner {index + 1}
 			</div>

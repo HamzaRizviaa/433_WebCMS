@@ -32,16 +32,21 @@ export const useBannerFormStyles = makeStyles(() => ({
 		display: 'flex',
 		alignItems: 'center'
 	},
-	bannerMain: {
+	bannerAndTitle: {
 		display: 'flex',
 		flexDirection: 'row',
-		justifyContent: 'space-between',
+		justifyContent: 'space-between'
+	},
+	bannerMain: {
 		width: '96%',
 		maxHeight: 'calc(100vh - 200px)',
 		overflowY: 'auto',
-		paddingRight: '2%'
+		paddingRight: '30px'
 	},
 	publishButton: {
-		textTransform: 'uppercase'
+		textTransform: 'uppercase',
+		marginTop: '3rem',
+		width: '100%',
+		marginBottom: '4rem'
 	}
 }));

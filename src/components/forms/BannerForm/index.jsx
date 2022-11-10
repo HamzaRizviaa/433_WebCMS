@@ -62,13 +62,15 @@ const BannerForm = ({ tabValue }) => {
 			onSubmit={handleSubmit}
 		>
 			<Form>
-				<FieldArray
-					name='bannerData'
-					render={(props) => <BannerFormRows {...props} />}
-				/>
-				<Button fullWidth type='submit' className={classes.publishButton}>
-					PUBLISH {tabValue} BANNERS
-				</Button>
+				<div className={classes.bannerMain}>
+					<FieldArray
+						name='bannerData'
+						render={(props) => <BannerFormRows {...props} />}
+					/>
+					<Button fullWidth type='submit' className={classes.publishButton}>
+						PUBLISH {tabValue} BANNERS
+					</Button>
+				</div>
 			</Form>
 		</Formik>
 	);

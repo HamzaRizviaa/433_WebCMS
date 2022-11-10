@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 const DraggableLayoutWrapper = ({ onDragEnd, children }) => {
 	return (
 		<DragDropContext onDragEnd={onDragEnd}>
-			<Droppable droppableId='droppable-xyz'>
+			<Droppable droppableId='droppable'>
 				{(provided) => (
 					<div {...provided.droppableProps} ref={provided.innerRef}>
 						{children}
