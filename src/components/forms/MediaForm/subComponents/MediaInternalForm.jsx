@@ -163,30 +163,50 @@ const MediaInternalForm = ({
 					<h5>Select Media Type</h5>
 					<div className={classes.categoryContainer}>
 						<div className={classes.mainCategory}>
-							<FormikSelect
+							<SelectField
 								label='MAIN CATEGORY'
 								name='mainCategory'
 								placeholder='Please Select'
 								noOptionsText="Categories aren't available"
-								options={mainCategories || []}
-								mapOptions={{ labelKey: 'name', valueKey: 'id' }}
-								onChange={(_, value) => {
-									fetchSubCategories(value);
+								value={values.mainCategory}
+								// disabled={readOnly}
+								options={(mainCategories || []).map((category) => ({
+									label: category.name,
+									value: category.name,
+									data: category
+								}))}
+								onChange={(value, name, { data }) => {
+									fetchSubCategories(data.id);
 									setFieldValue(name, value);
 									setFieldValue('subCategory', '');
 								}}
 							/>
 						</div>
 						<div className={classes.subCategory}>
-							<FormikSelect
-								label='SUB CATEGORY'
-								name='subCategory'
-								placeholder='Please Select'
-								noOptionsText="Sub Categories aren't available"
-								disabled={isLoading || !values.mainCategory}
-								options={subCategories || []}
-								mapOptions={{ labelKey: 'name', valueKey: 'id' }}
-							/>
+							{subCategoriesSuccess && !isLoading && (
+								<SelectField
+									label='SUB CATEGORY'
+									name='subCategory'
+									placeholder='Please Select'
+									noOptionsText="Sub Categories aren't available"
+									disabled={isLoading || !values.mainCategory}
+									value={values.subCategory}
+									defaultValue={values.subCategory}
+									options={(subCategories || []).map((category) => ({
+										label: category.name,
+										value: category.name,
+										data: category
+									}))}
+									onChange={(value, name) => {
+										setFieldValue(name, value);
+									}}
+								/>
+							)}
+							{(subResponse?.isUninitialized ||
+								isLoading ||
+								!subCategoriesSuccess) && (
+								<SelectField label='SUB CATEGORY' disabled options={[]} />
+							)}
 						</div>
 					</div>
 				</div>
