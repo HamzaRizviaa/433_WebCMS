@@ -32,6 +32,8 @@ const BannerForm = ({ tabValue }) => {
 			: bannerDataFormatterForForm(allBanners);
 	}, [allBanners]);
 
+	console.log(initialValues, 'initialValues');
+
 	const handleSubmit = async (values, formikBag) => {
 		formikBag.setSubmitting(true);
 

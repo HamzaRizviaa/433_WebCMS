@@ -66,6 +66,15 @@ export const bannerDataFormatterForService = (bannerValues, type = 'home') => {
 console.log(topBannerInitialValues, 'topBannerInitialValues');
 // banners validations
 
+// const bannerDataItem = Yup.object({
+// 	id: Yup.string(),
+// 	//banner_type: Yup.string().oneOf(['home', 'media']).required(),
+// 	banner_type: Yup.string(),
+// 	//.required('Banner Type can not be empty'),
+// 	content: Yup.mixed().transform((v) => (!v.title ? undefined : v))
+// 	//.required('Content Type can not be empty')
+// })
+
 export const bannersValidations = Yup.object({
 	bannerData: Yup.array()
 		.of(
@@ -97,10 +106,17 @@ export const bannersValidations = Yup.object({
 						break;
 					}
 				}
+
 				return errFlag;
+				// return (
+				// 	errFlag ||
+				// 	this.createError({
+				// 		banner: 'The order of the banner items is not valid',
+				// 		banner2: 'Error 2'
+				// 	})
+				// );
 			}
 		)
-
 		.test('invalidOrder', 'First banner can not be empty', (value) => {
 			let errFlag2 = true;
 

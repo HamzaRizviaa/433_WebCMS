@@ -17,7 +17,7 @@ const BannerFormRows = ({ form, swap }) => {
 					key={item.id}
 					item={item}
 					index={index}
-					errorMsg={form?.errors?.bannerData}
+					errorMsg={form?.errors?.bannerData} // check item and valid
 				/>
 			))}
 		</DraggableLayoutWrapper>

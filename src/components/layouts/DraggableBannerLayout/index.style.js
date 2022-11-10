@@ -7,14 +7,13 @@ export const useDraggableBannerLayoutStyles = makeStyles(() => ({
 		borderRadius: '16px',
 		width: '100%',
 		padding: '20px 22px 20px 22px',
-		margin: ({ isError }) => (isError ? '1% 0% 0% 0%' : '2% 0%'),
-
-		errorMsg: {
-			textTransform: 'uppercase',
-			fontWeight: 'bold',
-			color: 'red',
-			marginTop: '1%'
-		}
+		margin: ({ isError }) => (isError ? '1% 0% 0% 0%' : '2% 0%')
+	},
+	errorMsg: {
+		textTransform: 'uppercase',
+		fontWeight: 'bold',
+		color: 'red',
+		marginTop: '1%'
 	},
 	bannerLayout: {
 		display: 'flex'
