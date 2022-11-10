@@ -5,7 +5,6 @@ import BannerRow from './BannerRow';
 
 const BannerFormRows = ({ form, swap }) => {
 	const handleDragData = (data) => {
-		console.log(data);
 		swap(data.source.index, data.destination.index);
 	};
 
