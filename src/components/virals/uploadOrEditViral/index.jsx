@@ -43,8 +43,8 @@ const UploadOrEditViral = ({
 	title,
 	isEdit,
 	heading1,
-	buttonText,
-	status //draft or publish
+	// buttonText,
+	rowStatus //draft or publish
 }) => {
 	const navigate = useNavigate();
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
@@ -83,6 +83,7 @@ const UploadOrEditViral = ({
 	});
 	const [captionValue, setCaptionValue] = useState('');
 	const [translatedOnEdit, setTranslatedOnEdit] = useState(false);
+	const [status, setStatus] = useState(rowStatus);
 
 	const previewRef = useRef(null);
 	const orientationRef = useRef(null);
@@ -95,6 +96,9 @@ const UploadOrEditViral = ({
 	const { specificViralStatus } = useSelector(
 		(state) => state.rootReducer.viralLibrary
 	);
+
+	const buttonText =
+		isEdit && status === 'published' ? 'SAVE CHANGES' : 'PUBLISH';
 
 	const {
 		features: { translationsOnVirals }
@@ -155,6 +159,7 @@ const UploadOrEditViral = ({
 					};
 				});
 			}
+			setStatus(specificViral.status); // setting the api status
 			setForm((prev) => {
 				return {
 					...prev,
@@ -272,6 +277,7 @@ const UploadOrEditViral = ({
 		setIsError({});
 		setExtraLabel('');
 		setNotifID('');
+		setStatus(rowStatus);
 		setForm({
 			caption: '',
 			dropbox_url: '',
@@ -1111,8 +1117,8 @@ UploadOrEditViral.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	title: PropTypes.string.isRequired,
 	heading1: PropTypes.string.isRequired,
-	buttonText: PropTypes.string.isRequired,
-	status: PropTypes.string.isRequired
+	// buttonText: PropTypes.string.isRequired,
+	rowStatus: PropTypes.string.isRequired
 };
 
 export default UploadOrEditViral;

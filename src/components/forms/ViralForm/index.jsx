@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -45,9 +45,15 @@ const ViralForm = ({
 	// Refs
 	const dialogWrapper = useRef(null);
 
-	const toggleDeleteModal = () => {
-		setOpenDeleteModal(!openDeleteModal);
-	};
+	const initialValues = useMemo(
+		() =>
+			isEdit && !isEmpty(specificViral)
+				? viralDataFormatterForForm(specificViral)
+				: viralFormInitialValues,
+		[isEdit, specificViral]
+	);
+
+	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
 	/**
 	 * onSubmitHandler is fired whenever a user is saving a Viral as draft, published or saving changes.
@@ -56,37 +62,44 @@ const ViralForm = ({
 	 * @param {Object} formikBag - Formik bag object which has all the utilities provided by formik.
 	 * @param {boolean} isDraft - isDraft param is only being passed when the form is being save in draft mode
 	 */
-	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
-		formikBag.setSubmitting(true);
+	const onSubmitHandler = useCallback(
+		async (values, formikBag, isDraft = false) => {
+			formikBag.setSubmitting(true);
 
-		try {
-			const uploadFileRes = await uploadFileToServer(
-				values.uploadedFiles[0],
-				'virallibrary'
-			);
-			const viralData = viralDataFormatterForService(
-				values,
-				uploadFileRes,
-				isDraft
-			);
+			try {
+				const uploadFileRes = await uploadFileToServer(
+					values.uploadedFiles[0],
+					'virallibrary'
+				);
+				const viralData = viralDataFormatterForService(
+					values,
+					uploadFileRes,
+					isDraft
+				);
 
-			await dispatch(createOrEditViralThunk(viralData, formikBag, isDraft));
+				const { type } = await dispatch(
+					createOrEditViralThunk(viralData, formikBag, isDraft)
+				);
 
-			handleClose();
+				if (type === 'viralLibary/createOrEditViralThunk/fulfilled') {
+					handleClose();
 
-			if (isEdit && !(status === 'draft' && isDraft === false)) {
-				dispatch(getAllViralsApi(queryParams));
-			} else if (isSearchParamsEmpty) {
-				dispatch(getAllViralsApi());
-			} else {
-				navigate('/viral-library');
+					if (isEdit && !(status === 'draft' && isDraft === false)) {
+						dispatch(getAllViralsApi(queryParams));
+					} else if (isSearchParamsEmpty) {
+						dispatch(getAllViralsApi());
+					} else {
+						navigate('/viral-library');
+					}
+				}
+			} catch (e) {
+				console.error(e);
+			} finally {
+				formikBag.setSubmitting(false);
 			}
-		} catch (e) {
-			console.error(e);
-		} finally {
-			formikBag.setSubmitting(false);
-		}
-	};
+		},
+		[queryParams, isSearchParamsEmpty]
+	);
 
 	/**
 	 * onDeleteHandler is fired whenever a user wants to delete a viral.
@@ -95,35 +108,34 @@ const ViralForm = ({
 	 * @param {boolean} isDraft - isDraft status of a viral
 	 * @param {Function} setSubmitting - Function which receives a boolean value as a param and changes the state of form if it is submitting or not
 	 */
-	const onDeleteHandler = async (id, isDraft, setSubmitting) => {
-		try {
-			setSubmitting(true);
+	const onDeleteHandler = useCallback(
+		async (id, isDraft, setSubmitting) => {
+			try {
+				setSubmitting(true);
 
-			await dispatch(
-				deleteViralThunk({
-					viral_id: id,
-					is_draft: isDraft
-				})
-			);
+				await dispatch(
+					deleteViralThunk({
+						viral_id: id,
+						is_draft: isDraft
+					})
+				);
 
-			handleClose();
-			dispatch(getAllViralsApi(queryParams));
-		} catch (e) {
-			console.error(e);
-		} finally {
-			setSubmitting(false);
-			setOpenDeleteModal(false);
-		}
-	};
+				handleClose();
+				dispatch(getAllViralsApi(queryParams));
+			} catch (e) {
+				console.error(e);
+			} finally {
+				setSubmitting(false);
+				setOpenDeleteModal(false);
+			}
+		},
+		[queryParams]
+	);
 
 	return (
 		<Formik
 			enableReinitialize
-			initialValues={
-				isEdit && !isEmpty(specificViral)
-					? viralDataFormatterForForm(specificViral)
-					: viralFormInitialValues
-			}
+			initialValues={initialValues}
 			validationSchema={viralFormValidationSchema}
 			validateOnMount
 			onSubmit={onSubmitHandler}

@@ -81,7 +81,7 @@ const QuestionLibrary = () => {
 			<UploadOrEditQuiz
 				open={showSlider}
 				location={rowLocation}
-				status={rowStatus} //active closed draft
+				rowStatus={rowStatus} //active closed draft
 				rowType={rowType}
 				isEdit={false}
 				handleClose={() => {
@@ -96,7 +96,7 @@ const QuestionLibrary = () => {
 				notifID={notifID}
 				location={rowLocation}
 				rowType={rowType}
-				status={rowStatus} //active closed draft
+				rowStatus={rowStatus} //active closed draft
 				handleClose={() => {
 					showEditSlider(false);
 				}}

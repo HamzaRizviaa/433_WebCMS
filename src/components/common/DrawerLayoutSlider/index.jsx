@@ -77,7 +77,7 @@ const DrawerLayoutSlider = ({
 									)}
 								</div>
 							</div>
-							{children}
+							{open && children}
 						</div>
 					</Paper>
 				</Slide>

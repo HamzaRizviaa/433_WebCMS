@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import UploadOrEditNews from '../../components/news/uploadOrEditNews';
+import NewsForm from '../../components/forms/NewsForm';
 import { newsColumns } from '../../data/helpers/newsHelpers';
 import Table from '../../components/ui/Table';
 import useGetAllNews from '../../hooks/libraries/news/useGetAllNews';
@@ -37,7 +37,6 @@ const NewsLibrary = () => {
 	 * @returns {void}
 	 */
 	const onRowClick = (_, row) => {
-		console.log('ROWW', row);
 		row.status === 'draft' && dispatch(getAllNewLabels());
 		dispatch(getSpecificNews(row.id));
 		setEdit(true);
@@ -59,16 +58,12 @@ const NewsLibrary = () => {
 				isLoading={isLoading}
 				noDataText='No News Found'
 			/>
-			<UploadOrEditNews
+			<NewsForm
 				open={showSlider}
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
 				}}
-				title={edit ? 'Edit News' : 'Upload News'}
-				buttonText={
-					edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
-				}
 				status={rowStatus}
 			/>
 		</DashboardLayout>
