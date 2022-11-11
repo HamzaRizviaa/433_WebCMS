@@ -11,11 +11,13 @@ const DraggableBannerLayout = ({
 	errorMsg,
 	onDeleteIconClick
 }) => {
-	const classes = useDraggableBannerLayoutStyles({ isError: !!errorMsg });
+	const isError = Array.isArray(errorMsg) ? !!errorMsg[index] : !!errorMsg;
 
 	const handleDelete = () => {
 		onDeleteIconClick(item);
 	};
+
+	const classes = useDraggableBannerLayoutStyles({ isError });
 
 	return (
 		<Draggable draggableId={`draggable-${index}`} index={index}>
@@ -42,7 +44,11 @@ const DraggableBannerLayout = ({
 									onClick={handleDelete}
 								/>
 							</div>
-							<div className={classes.errorMsg}>{errorMsg}</div>
+							{isError && (
+								<div className={classes.errorMsg}>
+									{Array.isArray(errorMsg) ? errorMsg[index] : errorMsg}
+								</div>
+							)}
 						</div>
 					</div>
 				</div>

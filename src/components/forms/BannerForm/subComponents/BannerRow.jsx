@@ -26,7 +26,7 @@ const BannerRow = ({ item, index, errorMsg }) => {
 		console.log('abc delete');
 		setFieldValue(`bannerData.${index}.banner_type`, '');
 		setFieldValue(`bannerData.${index}.content`, {
-			id: '',
+			id: `${index + 1}`,
 			title: '',
 			type: ''
 		});

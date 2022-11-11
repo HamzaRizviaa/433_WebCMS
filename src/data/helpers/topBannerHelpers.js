@@ -129,3 +129,33 @@ export const bannersValidations = Yup.object({
 			return errFlag2;
 		})
 });
+
+export const validateTopBanners = ({ bannerData }) => {
+	const errors = {};
+
+	if (!bannerData[0]?.banner_type && !bannerData[0]?.content?.title) {
+		if (!errors.bannerData) errors.bannerData = [];
+		errors.bannerData[0] = 'First banner cannot be empty';
+	}
+
+	for (let i = bannerData.length - 1; i >= 1; i--) {
+		if (bannerData[i]?.banner_type && bannerData[i]?.content?.title) {
+			if (!bannerData[i - 1].banner_type || !bannerData[i - 1].content?.title) {
+				if (!errors.bannerData) errors.bannerData = [];
+				errors.bannerData[i - 1] = 'This banner cannot be empty';
+				break;
+			}
+		} else if (
+			(!bannerData[i].banner_type && bannerData[i].content?.title) ||
+			(bannerData[i].banner_type && !bannerData[i].content?.title)
+		) {
+			if (!errors.bannerData) errors.bannerData = [];
+			errors.bannerData[i] = 'Both fields should be filled';
+			break;
+		} else {
+			delete errors.bannerData;
+		}
+	}
+
+	return errors;
+};

@@ -15,7 +15,7 @@ export const useBannerFormStyles = makeStyles(() => ({
 		fontWeight: '700',
 		lineHeight: '24px',
 		textTransform: 'uppercase',
-		marginTop: '7px'
+		marginTop: '10px'
 	},
 	fieldWrapper: {
 		width: '70%'
