@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -43,40 +43,45 @@ const MediaForm = ({
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
-	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
-		formikBag.setSubmitting(true);
-		console.table(values);
-		try {
-			const uploadedImgs = await fileUploadsArray(values);
-			await completeUpload(uploadedImgs, values);
+	const onSubmitHandler = useCallback(
+		async (values, formikBag, isDraft = false) => {
+			formikBag.setSubmitting(true);
+			console.table(values);
+			try {
+				const uploadedImgs = await fileUploadsArray(values);
+				await completeUpload(uploadedImgs, values);
 
-			const getUser = getUserDataObject();
+				const getUser = getUserDataObject();
 
-			const mediaData = mediaDataFormatterForServer(
-				values,
-				isDraft,
-				uploadedImgs,
-				getUser
-			);
+				const mediaData = mediaDataFormatterForServer(
+					values,
+					isDraft,
+					uploadedImgs,
+					getUser
+				);
 
-			console.log('MEDIA DATA', mediaData);
-			await dispatch(createOrEditMediaThunk(mediaData, formikBag, isDraft));
+				console.log('MEDIA DATA', mediaData);
 
-			handleClose();
-
-			if (isEdit && !(status === 'draft' && isDraft === false)) {
-				dispatch(getMedia(queryParams));
-			} else if (isSearchParamsEmpty) {
-				dispatch(getMedia());
-			} else {
-				navigate('/media-library');
+				const { type } = await dispatch(
+					createOrEditMediaThunk(mediaData, formikBag, isDraft)
+				);
+				if (type === 'mediaLibrary/createOrEditMediaThunk/fulfilled') {
+					handleClose();
+					if (isEdit && !(status === 'draft' && isDraft === false)) {
+						dispatch(getMedia(queryParams));
+					} else if (isSearchParamsEmpty) {
+						dispatch(getMedia());
+					} else {
+						navigate('/media-library');
+					}
+				}
+			} catch (e) {
+				console.error(e);
+			} finally {
+				formikBag.setSubmitting(false);
 			}
-		} catch (e) {
-			console.error(e);
-		} finally {
-			formikBag.setSubmitting(false);
 		}
-	};
+	);
 
 	const onDeleteHandler = async (id, isDraft, setSubmitting) => {
 		try {

@@ -75,6 +75,7 @@ export const createOrEditMediaThunk = createAsyncThunk(
 				data.media_id ? 'Failed to edit media!' : 'Failed to create media!'
 			);
 			console.error(e);
+			throw new Error(e);
 		}
 	}
 );
