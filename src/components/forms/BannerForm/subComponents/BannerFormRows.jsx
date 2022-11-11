@@ -8,9 +8,6 @@ const BannerFormRows = ({ form, swap }) => {
 		swap(data.source.index, data.destination.index);
 	};
 
-	console.log('ERRORS: ', form.errors);
-	console.log('VALUES: ', form.values);
-
 	return (
 		<DraggableLayoutWrapper onDragEnd={handleDragData}>
 			{form.values.bannerData.map((item, index) => (

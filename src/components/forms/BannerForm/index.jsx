@@ -32,8 +32,6 @@ const BannerForm = ({ tabValue, setFormSubmitting }) => {
 			: bannerDataFormatterForForm(allBanners);
 	}, [allBanners]);
 
-	console.log(initialValues, 'initialValues');
-
 	const handleSubmit = async (values) => {
 		setFormSubmitting(true);
 
@@ -47,6 +45,12 @@ const BannerForm = ({ tabValue, setFormSubmitting }) => {
 		} finally {
 			setFormSubmitting(false);
 		}
+	};
+
+	const isDisabled = (isValid) => {
+		return !isValid.dirty
+			? Object.keys(isValid.errors).length === 0
+			: !(isValid.isValid && Object.keys(isValid.errors).length === 0);
 	};
 
 	useEffect(() => {
@@ -65,18 +69,27 @@ const BannerForm = ({ tabValue, setFormSubmitting }) => {
 			initialValues={initialValues}
 			onSubmit={handleSubmit}
 			validate={validateTopBanners}
+			//validateOnMount
 		>
-			<Form>
-				<div className={classes.bannerMain}>
-					<FieldArray
-						name='bannerData'
-						render={(props) => <BannerFormRows {...props} />}
-					/>
-					<Button fullWidth type='submit' className={classes.publishButton}>
-						PUBLISH {tabValue} BANNERS
-					</Button>
-				</div>
-			</Form>
+			{(isValid) => (
+				<Form>
+					<div className={classes.bannerMain}>
+						<FieldArray
+							name='bannerData'
+							render={(props) => <BannerFormRows {...props} />}
+						/>
+
+						<Button
+							fullWidth
+							type='submit'
+							className={classes.publishButton}
+							disabled={isDisabled(isValid)}
+						>
+							PUBLISH {tabValue} BANNERS
+						</Button>
+					</div>
+				</Form>
+			)}
 		</Formik>
 	);
 };
