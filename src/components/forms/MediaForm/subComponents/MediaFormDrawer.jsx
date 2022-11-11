@@ -6,7 +6,8 @@ import { useFormikContext } from 'formik';
 import { selectSpecificMediaStatus } from '../../../../data/selectors';
 import {
 	mediaUnwantedKeysForDeepEqual,
-	mediaFormStatusInitialValues
+	mediaFormStatusInitialValues,
+	mediaFormInitialValues
 } from '../../../../data/helpers';
 
 import DrawerLayout from '../../../layouts/DrawerLayout';
@@ -18,11 +19,9 @@ const MediaFormDrawer = ({
 	isEdit,
 	status,
 	onSubmitHandler,
-	toggleDeleteModal,
-	initialValues
+	toggleDeleteModal
 }) => {
-	const { values, isSubmitting, resetForm, validateForm, setStatus } =
-		useFormikContext();
+	const { values, isSubmitting, setStatus } = useFormikContext();
 
 	const specificMediaStatus = useSelector(selectSpecificMediaStatus);
 
@@ -37,10 +36,10 @@ const MediaFormDrawer = ({
 		setStatus({
 			dirty: !isEqual(
 				omit(values, mediaUnwantedKeysForDeepEqual),
-				omit(initialValues, mediaUnwantedKeysForDeepEqual)
+				omit(mediaFormInitialValues, mediaUnwantedKeysForDeepEqual)
 			)
 		});
-	}, [values, initialValues]);
+	}, [values]);
 
 	const openPreviewer = (file) => {
 		setPreviewFile(file);
@@ -57,11 +56,7 @@ const MediaFormDrawer = ({
 	return (
 		<DrawerLayout
 			open={open}
-			handleClose={() => {
-				resetForm();
-				validateForm();
-				handleClose();
-			}}
+			handleClose={handleClose}
 			title={isEdit ? 'Edit Media' : 'Upload Media'}
 			notifID={isEdit ? values.id : ''}
 			isLoading={
@@ -90,8 +85,7 @@ MediaFormDrawer.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
 	onSubmitHandler: PropTypes.func.isRequired,
-	toggleDeleteModal: PropTypes.func.isRequired,
-	initialValues: PropTypes.object.isRequired
+	toggleDeleteModal: PropTypes.func.isRequired
 };
 
 export default MediaFormDrawer;
