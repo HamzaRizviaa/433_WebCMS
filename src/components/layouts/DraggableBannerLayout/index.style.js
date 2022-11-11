@@ -2,7 +2,8 @@ import { makeStyles } from '@material-ui/core';
 
 export const useDraggableBannerLayoutStyles = makeStyles(() => ({
 	bannerContent: {
-		border: ({ isError }) => (isError ? '1px dashed red' : '1px solid #404040'),
+		border: ({ isError }) =>
+			isError ? '1px dashed #FF355A' : '1px solid #404040',
 		boxSizing: 'border-box',
 		borderRadius: '16px',
 		width: '100%',
@@ -12,7 +13,7 @@ export const useDraggableBannerLayoutStyles = makeStyles(() => ({
 	errorMsg: {
 		textTransform: 'uppercase',
 		fontWeight: 'bold',
-		color: 'red',
+		color: '#FF355A',
 		marginBottom: '1rem'
 	},
 	bannerLayout: {
