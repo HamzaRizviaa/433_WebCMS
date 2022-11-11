@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 export const useBannerFormStyles = makeStyles(() => ({
 	contentTypeWrapper: {
 		display: 'flex',
-		// justifyContent: 'space-between',
 		width: '52%',
 		marginLeft: '22px'
 	},

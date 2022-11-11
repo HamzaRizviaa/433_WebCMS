@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
+import PropTypes from 'prop-types';
 import DraggableLayoutWrapper from '../../../layouts/DraggableLayoutWrapper';
 import BannerRow from './BannerRow';
 
@@ -8,9 +8,6 @@ const BannerFormRows = ({ form, swap }) => {
 		swap(data.source.index, data.destination.index);
 	};
 
-	console.log('ERRORS: ', form.errors);
-	console.log('VALUES: ', form.values);
-
 	return (
 		<DraggableLayoutWrapper onDragEnd={handleDragData}>
 			{form.values.bannerData.map((item, index) => (
@@ -18,11 +15,16 @@ const BannerFormRows = ({ form, swap }) => {
 					key={index}
 					item={item}
 					index={index}
-					errorMsg={form?.errors?.bannerData} // check item and valid
+					errorMsg={form?.errors?.bannerData}
 				/>
 			))}
 		</DraggableLayoutWrapper>
 	);
+};
+
+BannerFormRows.propTypes = {
+	form: PropTypes.object.isRequired,
+	swap: PropTypes.func.isRequired
 };
 
 export default BannerFormRows;

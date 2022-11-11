@@ -1,5 +1,3 @@
-import * as Yup from 'yup';
-
 export const topBannerInitialValues = {
 	bannerData: [
 		{
@@ -63,71 +61,20 @@ export const bannerDataFormatterForService = (bannerValues, type = 'home') => {
 	return bannerDataForService;
 };
 
-// banners validations
+export const bannerTypeOptions = [
+	{ value: 'Title only', label: 'Title only' },
+	{ value: 'Title + Text', label: 'Title + Text' }
+];
 
-// const bannerDataItem = Yup.object({
-// 	id: Yup.string(),
-// 	//banner_type: Yup.string().oneOf(['home', 'media']).required(),
-// 	banner_type: Yup.string(),
-// 	//.required('Banner Type can not be empty'),
-// 	content: Yup.mixed().transform((v) => (!v.title ? undefined : v))
-// 	//.required('Content Type can not be empty')
-// })
-
-// export const bannersValidations = Yup.object({
-// 	bannerData: Yup.array()
-// 		.of(
-// 			Yup.object({
-// 				id: Yup.string(),
-// 				//banner_type: Yup.string().oneOf(['home', 'media']).required(),
-// 				banner_type: Yup.string(),
-// 				//.required('Banner Type can not be empty'),
-// 				content: Yup.mixed().transform((v) => (!v.title ? undefined : v))
-// 				//.required('Content Type can not be empty')
-// 			})
-// 		)
-// 		.min(1)
-// 		.required('At least 1 banner is require for submitting')
-// 		.test(
-// 			'invalidOrder',
-// 			'The order of the banner items is not valid',
-// 			(value) => {
-// 				let errFlag = true;
-
-// 				//2-5
-// 				for (let i = value.length - 1; i >= 1; i--) {
-// 					if (value[i]?.banner_type && value[i]?.content?.title) {
-// 						if (!value[i - 1].banner_type || !value[i - 1].content?.title)
-// 							errFlag = false;
-// 						break;
-// 					} else if (value[i].banner_type || value[i]?.content?.title) {
-// 						errFlag = false;
-// 						break;
-// 					}
-// 				}
-
-// 				return errFlag;
-// 				// return (
-// 				// 	errFlag ||
-// 				// 	this.createError({
-// 				// 		banner: 'The order of the banner items is not valid',
-// 				// 		banner2: 'Error 2'
-// 				// 	})
-// 				// );
-// 			}
-// 		)
-// 		.test('invalidOrder', 'First banner can not be empty', (value) => {
-// 			let errFlag2 = true;
-
-// 			if (!value[0]?.banner_type ^ !value[0]?.content?.title) {
-// 				errFlag2 = false;
-// 			} else if (!value[0]?.banner_type || !value[0]?.content?.title) {
-// 				errFlag2 = false;
-// 			}
-
-// 			return errFlag2;
-// 		})
-// });
+export const filterBannerContent = (bannerContent, bannerData) => {
+	if (bannerContent?.length === 0) return [];
+	return bannerContent?.filter((item) => {
+		if (item.id) {
+			return !bannerData.some((subItem) => item.id === subItem?.content?.id);
+		}
+		return item;
+	});
+};
 
 export const validateTopBanners = ({ bannerData }) => {
 	const errors = {};
@@ -143,6 +90,7 @@ export const validateTopBanners = ({ bannerData }) => {
 		errors.bannerData[0] = 'Both fields should be filled';
 	}
 
+	//for ahead of first banner
 	for (let i = bannerData.length - 1; i >= 1; i--) {
 		if (bannerData[i]?.banner_type && bannerData[i]?.content?.title) {
 			if (

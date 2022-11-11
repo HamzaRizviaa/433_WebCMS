@@ -39,6 +39,7 @@ const BannerForm = ({ tabValue, setFormSubmitting }) => {
 			const data = bannerDataFormatterForService(values, tabValue);
 
 			await dispatch(createOrEditTopBanner(data));
+			await dispatch(getAllBanners(tabValue));
 			setFormSubmitting(false);
 		} catch (error) {
 			console.error(error);
@@ -47,11 +48,11 @@ const BannerForm = ({ tabValue, setFormSubmitting }) => {
 		}
 	};
 
-	const isDisabled = (isValid) => {
-		return !isValid.dirty
-			? Object.keys(isValid.errors).length === 0
-			: !(isValid.isValid && Object.keys(isValid.errors).length === 0);
-	};
+	// const isDisabled = (formikBag) => {
+	// 	return !formikBag.dirty
+	// 		? Object.keys(formikBag.errors).length === 0
+	// 		: !(formikBag.isValid && Object.keys(formikBag.errors).length === 0);
+	// };
 
 	useEffect(() => {
 		dispatch(
@@ -69,9 +70,8 @@ const BannerForm = ({ tabValue, setFormSubmitting }) => {
 			initialValues={initialValues}
 			onSubmit={handleSubmit}
 			validate={validateTopBanners}
-			//validateOnMount
 		>
-			{(isValid) => (
+			{({ dirty, isValid }) => (
 				<Form>
 					<div className={classes.bannerMain}>
 						<FieldArray
@@ -83,7 +83,8 @@ const BannerForm = ({ tabValue, setFormSubmitting }) => {
 							fullWidth
 							type='submit'
 							className={classes.publishButton}
-							disabled={isDisabled(isValid)}
+							// disabled={isDisabled(formikBag)}
+							disabled={!dirty ? isValid : !isValid}
 						>
 							PUBLISH {tabValue} BANNERS
 						</Button>

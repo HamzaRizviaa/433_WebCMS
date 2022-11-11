@@ -1,26 +1,29 @@
-/* eslint-disable react/prop-types */
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useFormikContext } from 'formik';
 import { useSelector, useDispatch } from 'react-redux';
+import PropTypes from 'prop-types';
 import DraggableBannerLayout from '../../../layouts/DraggableBannerLayout';
 import FormikSelect from '../../../ui/inputs/formik/FormikSelect';
 import { useBannerFormStyles } from '../index.style';
 import { selectBannerContent } from '../../../../data/selectors';
 import { getBannerContent } from '../../../../data/features/topBanner/topBannerActions';
-
-const bannerTypeOptions = [
-	{ value: 'Title only', label: 'Title only' },
-	{ value: 'Title + Text', label: 'Title + Text' }
-];
+import {
+	filterBannerContent,
+	bannerTypeOptions
+} from '../../../../data/helpers/topBannerHelpers';
 
 const BannerRow = ({ item, index, errorMsg }) => {
 	const classes = useBannerFormStyles();
 
 	const dispatch = useDispatch();
 
-	const { setFieldValue } = useFormikContext();
+	const { setFieldValue, values } = useFormikContext();
 
 	const bannerContent = useSelector(selectBannerContent);
+
+	const filteredBannerContent = useMemo(() => {
+		return filterBannerContent(bannerContent, values.bannerData);
+	}, [bannerContent, values.bannerData]);
 
 	const handleDelete = () => {
 		setFieldValue(`bannerData.${index}.banner_type`, '');
@@ -68,7 +71,7 @@ const BannerRow = ({ item, index, errorMsg }) => {
 							searchable
 							onSearchTextChange={handleSearchText}
 							name={`bannerData.${index}.content`}
-							options={bannerContent}
+							options={filteredBannerContent}
 							mapOptions={{ valueKey: 'id', labelKey: 'title' }}
 						/>
 					</div>
@@ -76,6 +79,12 @@ const BannerRow = ({ item, index, errorMsg }) => {
 			</DraggableBannerLayout>
 		</div>
 	);
+};
+
+BannerRow.propTypes = {
+	item: PropTypes.object.isRequired,
+	index: PropTypes.string.isRequired,
+	errorMsg: PropTypes.oneOf([PropTypes.array, PropTypes.string])
 };
 
 export default BannerRow;
