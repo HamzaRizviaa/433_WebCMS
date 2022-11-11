@@ -20,13 +20,15 @@ const topBannerSlice = createSlice({
 		// getBannerContent Action
 		builder.addCase(getBannerContent.pending, (state) => {
 			state.status = 'pending';
+			state.getBannerContentState = true;
 		});
 		builder.addCase(getBannerContent.fulfilled, (state, action) => {
 			state.content = action.payload;
-			state.getBannerContentState = true;
+			state.getBannerContentState = false;
 		});
 		builder.addCase(getBannerContent.rejected, (state) => {
 			state.status = 'failed';
+			state.getBannerContentState = false;
 		});
 
 		// getAllBanners Action
