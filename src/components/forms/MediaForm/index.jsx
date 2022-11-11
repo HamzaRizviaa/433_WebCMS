@@ -123,7 +123,6 @@ const MediaForm = ({
 						status={status}
 						onSubmitHandler={onSubmitHandler}
 						toggleDeleteModal={toggleDeleteModal}
-						initialValues={initialValues}
 					/>
 					<DeleteModal
 						open={openDeleteModal}
