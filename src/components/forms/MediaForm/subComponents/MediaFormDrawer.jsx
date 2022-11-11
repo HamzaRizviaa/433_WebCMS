@@ -6,6 +6,10 @@ import { selectSpecificMediaStatus } from '../../../../data/selectors';
 
 import DrawerLayout from '../../../layouts/DrawerLayout';
 import MediaInternalForm from './MediaInternalForm';
+import {
+	useGetMainCategoriesQuery,
+	useLazyGetSubCategoriesQuery
+} from '../../../../data/features/mediaLibrary/media.query';
 
 const MediaFormDrawer = ({
 	open,
@@ -18,8 +22,15 @@ const MediaFormDrawer = ({
 	const { values, isSubmitting, resetForm, validateForm } = useFormikContext();
 
 	const specificMediaStatus = useSelector(selectSpecificMediaStatus);
+	// get categories
+	const { isLoading: categoriesLoading } = useGetMainCategoriesQuery();
+
+	//get sub categories
+	const [, { isFetching: subFetching, isLoading: subLoading }] =
+		useLazyGetSubCategoriesQuery();
 
 	const [previewFile, setPreviewFile] = useState(null);
+	const [loadingStatus, setLoadingStatus] = useState(false);
 
 	const openPreviewer = (file) => {
 		setPreviewFile(file);
@@ -29,6 +40,19 @@ const MediaFormDrawer = ({
 		setPreviewFile(null);
 	};
 
+	const handleLoading = (status) => {
+		setLoadingStatus(status);
+	};
+
+	const isCategoriesLoading = () =>
+		categoriesLoading || subFetching || subLoading;
+
+	console.table(
+		categoriesLoading,
+		subFetching,
+		subLoading,
+		isCategoriesLoading()
+	);
 	return (
 		<DrawerLayout
 			open={open}
@@ -39,7 +63,9 @@ const MediaFormDrawer = ({
 			}}
 			title={isEdit ? 'Edit Media' : 'Upload Media'}
 			notifID={isEdit ? values.id : ''}
-			isLoading={isSubmitting || specificMediaStatus === 'loading'}
+			isLoading={
+				loadingStatus || isSubmitting || specificMediaStatus === 'loading'
+			}
 			handlePreviewClose={closePreviewer}
 			previewFile={previewFile}
 		>
@@ -50,6 +76,8 @@ const MediaFormDrawer = ({
 				openPreviewer={openPreviewer}
 				onSubmitHandler={onSubmitHandler}
 				toggleDeleteModal={toggleDeleteModal}
+				handleLoading={handleLoading}
+				loadingStatus={loadingStatus}
 			/>
 		</DrawerLayout>
 	);

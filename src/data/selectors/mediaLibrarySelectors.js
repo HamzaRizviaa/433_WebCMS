@@ -19,7 +19,7 @@ export const selectMediaMainCategories = (state) =>
 	state.rootReducer.mediaLibrary.mainCategories;
 
 export const selectSpecificMediaStatus = (state) =>
-	state.rootReducer.mediaLibrary;
+	state.rootReducer.mediaLibrary.specificMediaStatus
 
 export const selectMedialabels = (state) =>
 	state.rootReducer.mediaLibrary.labels;

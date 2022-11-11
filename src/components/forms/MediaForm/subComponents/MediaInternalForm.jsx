@@ -1,47 +1,32 @@
-/* eslint-disable no-debugger */
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 import { useFormikContext } from 'formik';
 import { useStyles } from '../index.styles';
 import { useStyles as globalUseStyles } from '../../../../styles/global.style';
-import {
-	selectLabels,
-	selectMediaMainCategories,
-	selectMediaSubCategories,
-	selectMediaSubCategoriesLoading
-} from '../../../../data/selectors';
 
-import { Tooltip, Fade, TextField } from '@mui/material';
+import { Tooltip, Fade } from '@mui/material';
 import { ReactComponent as Info } from '../../../../assets/InfoButton.svg';
 
 import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
 import FormikField from '../../../ui/inputs/formik/FormikField';
-import FormikSelect from '../../../ui/inputs/formik/FormikSelect';
 import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
 import ToggleSwitch from '../../../switch';
 import Button from '../../../ui/Button';
 import SelectField from '../../../ui/inputs/SelectField';
-import { useDispatch } from 'react-redux';
-import {
-	getMainCategories,
-	getSubCategories
-} from '../../../../data/features/mediaLibrary/mediaLibraryActions';
 import {
 	useGetMainCategoriesQuery,
 	useLazyGetSubCategoriesQuery
 } from '../../../../data/features/mediaLibrary/media.query';
 
-// const isEdit = false;
-const isTrue = true;
+// const isTrue = true;
 const MediaInternalForm = ({
 	isEdit,
 	status,
 	openPreviewer,
 	onSubmitHandler,
-	toggleDeleteModal
+	toggleDeleteModal,
+	handleLoading,
+	loadingStatus
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
@@ -50,7 +35,6 @@ const MediaInternalForm = ({
 	// get categories
 	const {
 		data: mainCategories,
-		error,
 		isLoading: categoriesLoading,
 		isSuccess
 	} = useGetMainCategoriesQuery();
@@ -60,20 +44,15 @@ const MediaInternalForm = ({
 		getSubCategories,
 		{
 			isFetching: isLoading,
+			isLoading: subLoading,
 			data: subCategories,
-			isError,
 			isSuccess: subCategoriesSuccess,
 			...subResponse
 		}
 	] = useLazyGetSubCategoriesQuery();
 
-	// const mainCategories = useSelector(selectMediaMainCategories);
-	// const subCategories = useSelector(selectMediaSubCategories);
-	// const isLoading = useSelector(selectMediaSubCategoriesLoading);
 	const {
 		values,
-		errors,
-		touched,
 		dirty,
 		isValid,
 		isSubmitting,
@@ -81,12 +60,6 @@ const MediaInternalForm = ({
 		setFieldValue,
 		setSubmitting
 	} = useFormikContext();
-
-	console.log('VALUESS', values);
-	const labels = useSelector(selectLabels);
-
-	const [postLabels, setPostLabels] = useState([]);
-	const [extraLabel, setExtraLabel] = useState('');
 
 	useEffect(() => {
 		if (subCategoriesSuccess) {
@@ -116,31 +89,14 @@ const MediaInternalForm = ({
 	// setting sub category
 	useEffect(() => {
 		!!subCategories?.length && setFieldValue('subCategory', values.subCategory);
-		// console.log('haha', values.subCategory, values);
 	}, [subCategories]);
 
+	// handle loading for categories
 	useEffect(() => {
-		if (labels?.length) {
-			setPostLabels([...labels]);
-		}
-	}, [labels]);
-
-	useEffect(() => {
-		setPostLabels((labels) => {
-			return labels.filter((label) => label.id != null);
-		});
-		if (extraLabel) {
-			let flag = postLabels.some((label) => label.name == extraLabel);
-			if (flag == false) {
-				setPostLabels((labels) => {
-					return [...labels, { id: null, name: extraLabel }];
-				});
-			}
-		}
-	}, [extraLabel]);
-
-	const handleChangeExtraLabel = (e) =>
-		setExtraLabel(e.target.value.toUpperCase());
+		let ifLoading = categoriesLoading || isLoading || subLoading;
+		if (loadingStatus === ifLoading) return;
+		handleLoading(isLoading);
+	}, [categoriesLoading, isLoading, subLoading]);
 
 	const saveDraftHandler = () =>
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
@@ -149,16 +105,14 @@ const MediaInternalForm = ({
 		getSubCategories(id);
 	};
 
-	const ifMediaTypeSelected = () => values?.mainCategory && values.subCategory;
+	const ifMediaTypeSelected = () =>
+		isEdit ? true : values?.mainCategory && values.subCategory;
 
 	if (isEdit && mainCategories?.length < 0 && subCategories?.length < 0)
 		return <></>;
 	return (
 		<div>
-			<div
-				className={globalClasses.contentWrapperNoPreview}
-				// style={{ width: previewFile != null ? '60%' : 'auto' }}
-			>
+			<div className={globalClasses.contentWrapperNoPreview}>
 				<div>
 					<h5>Select Media Type</h5>
 					<div className={classes.categoryContainer}>
@@ -169,7 +123,7 @@ const MediaInternalForm = ({
 								placeholder='Please Select'
 								noOptionsText="Categories aren't available"
 								value={values.mainCategory}
-								// disabled={readOnly}
+								disabled={isPublished}
 								options={(mainCategories || []).map((category) => ({
 									label: category.name,
 									value: category.name,
@@ -190,7 +144,7 @@ const MediaInternalForm = ({
 									name='subCategory'
 									placeholder='Please Select'
 									noOptionsText="Sub Categories aren't available"
-									disabled={isLoading || !values.mainCategory}
+									disabled={isPublished || isLoading || !values.mainCategory}
 									value={values.subCategory}
 									defaultValue={values.subCategory}
 									options={(subCategories || []).map((category) => ({
@@ -215,33 +169,30 @@ const MediaInternalForm = ({
 
 				{ifMediaTypeSelected() ? (
 					<>
-						{isTrue ? (
-							<div className={globalClasses.explanationWrapper}>
-								<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
-								<Tooltip
-									TransitionComponent={Fade}
-									TransitionProps={{ timeout: 800 }}
-									title='Default encoding for videos should be H.264'
-									arrow
-									componentsProps={{
-										tooltip: { className: globalClasses.toolTip },
-										arrow: { className: globalClasses.toolTipArrow }
-									}}
-									placement='bottom-start'
-								>
-									<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
-								</Tooltip>
-							</div>
-						) : (
+						<div className={globalClasses.explanationWrapper}>
 							<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
-						)}
+							<Tooltip
+								TransitionComponent={Fade}
+								TransitionProps={{ timeout: 800 }}
+								title='Default encoding for videos should be H.264'
+								arrow
+								componentsProps={{
+									tooltip: { className: globalClasses.toolTip },
+									arrow: { className: globalClasses.toolTipArrow }
+								}}
+								placement='bottom-start'
+							>
+								<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
+							</Tooltip>
+						</div>
+
 						<div className={classes.fieldWrapper}>
 							<FormikDropzone
 								name='uploadedFiles'
 								accept={
 									values.mainCategory === 'Watch'
 										? 'video/mp4'
-										: 'audio/mp3' || 'audio/mpeg'
+										: ['audio/mp3', 'audio/mpeg']
 								}
 								formatMessage={
 									values.mainCategory === 'Watch'
@@ -437,7 +388,9 @@ MediaInternalForm.propTypes = {
 	setDisableDropdown: PropTypes.func.isRequired,
 	openPreviewer: PropTypes.func.isRequired,
 	onSubmitHandler: PropTypes.func.isRequired,
-	toggleDeleteModal: PropTypes.func.isRequired
+	toggleDeleteModal: PropTypes.func.isRequired,
+	handleLoading: PropTypes.func,
+	loadingStatus: PropTypes.bool
 };
 
 export default MediaInternalForm;
