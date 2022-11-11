@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -41,17 +41,21 @@ const MediaForm = ({
 	// Refs
 	const dialogWrapper = useRef(null);
 
+	const initialValues = useMemo(() => {
+		return isEdit && !isEmpty(specificMedia)
+			? mediaDataFormatterForForm(specificMedia)
+			: mediaFormInitialValues;
+	}, [isEdit, specificMedia]);
+
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
 	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
 		formikBag.setSubmitting(true);
-		console.table(values);
+
 		try {
 			const uploadedImgs = await fileUploadsArray(values);
 			await completeUpload(uploadedImgs, values);
-
 			const getUser = getUserDataObject();
-
 			const mediaData = mediaDataFormatterForServer(
 				values,
 				isDraft,
@@ -59,17 +63,20 @@ const MediaForm = ({
 				getUser
 			);
 
-			console.log('MEDIA DATA', mediaData);
-			await dispatch(createOrEditMediaThunk(mediaData, formikBag, isDraft));
+			const { type } = await dispatch(
+				createOrEditMediaThunk(mediaData, formikBag, isDraft)
+			);
 
-			handleClose();
+			if (type === 'mediaLibrary/createOrEditMediaThunk/fulfilled') {
+				handleClose();
 
-			if (isEdit && !(status === 'draft' && isDraft === false)) {
-				dispatch(getMedia(queryParams));
-			} else if (isSearchParamsEmpty) {
-				dispatch(getMedia());
-			} else {
-				navigate('/media-library');
+				if (isEdit && !(status === 'draft' && isDraft === false)) {
+					dispatch(getMedia(queryParams));
+				} else if (isSearchParamsEmpty) {
+					dispatch(getMedia());
+				} else {
+					navigate('/media-library');
+				}
 			}
 		} catch (e) {
 			console.error(e);
@@ -102,11 +109,7 @@ const MediaForm = ({
 	return (
 		<Formik
 			enableReinitialize
-			initialValues={
-				isEdit && !isEmpty(specificMedia)
-					? mediaDataFormatterForForm(specificMedia)
-					: mediaFormInitialValues
-			}
+			initialValues={initialValues}
 			validationSchema={mediaFormValidationSchema}
 			validateOnMount
 			onSubmit={onSubmitHandler}
@@ -120,6 +123,7 @@ const MediaForm = ({
 						status={status}
 						onSubmitHandler={onSubmitHandler}
 						toggleDeleteModal={toggleDeleteModal}
+						initialValues={initialValues}
 					/>
 					<DeleteModal
 						open={openDeleteModal}

@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { isEqual, omit } from 'lodash';
 import { useSelector } from 'react-redux';
 import { useFormikContext } from 'formik';
 import { selectSpecificMediaStatus } from '../../../../data/selectors';
+import {
+	mediaUnwantedKeysForDeepEqual,
+	mediaFormStatusInitialValues
+} from '../../../../data/helpers';
 
 import DrawerLayout from '../../../layouts/DrawerLayout';
 import MediaInternalForm from './MediaInternalForm';
-import {
-	useGetMainCategoriesQuery,
-	useLazyGetSubCategoriesQuery
-} from '../../../../data/features/mediaLibrary/media.query';
 
 const MediaFormDrawer = ({
 	open,
@@ -17,20 +18,29 @@ const MediaFormDrawer = ({
 	isEdit,
 	status,
 	onSubmitHandler,
-	toggleDeleteModal
+	toggleDeleteModal,
+	initialValues
 }) => {
-	const { values, isSubmitting, resetForm, validateForm } = useFormikContext();
+	const { values, isSubmitting, resetForm, validateForm, setStatus } =
+		useFormikContext();
 
 	const specificMediaStatus = useSelector(selectSpecificMediaStatus);
-	// get categories
-	const { isLoading: categoriesLoading } = useGetMainCategoriesQuery();
-
-	//get sub categories
-	const [, { isFetching: subFetching, isLoading: subLoading }] =
-		useLazyGetSubCategoriesQuery();
 
 	const [previewFile, setPreviewFile] = useState(null);
 	const [loadingStatus, setLoadingStatus] = useState(false);
+
+	useEffect(() => {
+		setStatus({ ...mediaFormStatusInitialValues });
+	}, []);
+
+	useEffect(() => {
+		setStatus({
+			dirty: !isEqual(
+				omit(values, mediaUnwantedKeysForDeepEqual),
+				omit(initialValues, mediaUnwantedKeysForDeepEqual)
+			)
+		});
+	}, [values, initialValues]);
 
 	const openPreviewer = (file) => {
 		setPreviewFile(file);
@@ -44,15 +54,6 @@ const MediaFormDrawer = ({
 		setLoadingStatus(status);
 	};
 
-	const isCategoriesLoading = () =>
-		categoriesLoading || subFetching || subLoading;
-
-	console.table(
-		categoriesLoading,
-		subFetching,
-		subLoading,
-		isCategoriesLoading()
-	);
 	return (
 		<DrawerLayout
 			open={open}
@@ -89,7 +90,8 @@ MediaFormDrawer.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
 	onSubmitHandler: PropTypes.func.isRequired,
-	toggleDeleteModal: PropTypes.func.isRequired
+	toggleDeleteModal: PropTypes.func.isRequired,
+	initialValues: PropTypes.object.isRequired
 };
 
 export default MediaFormDrawer;

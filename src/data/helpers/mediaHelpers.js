@@ -9,6 +9,7 @@ let portraitFileWidth = 100;
 let portraitFileHeight = 100;
 let landscapeFileWidth = 100;
 let landscapeFileHeight = 100;
+
 export const mediaColumns = [
 	{
 		dataField: 'title',
@@ -328,6 +329,17 @@ export const completeUpload = (data, media) => {
 			}
 		});
 	});
+};
+
+export const mediaUnwantedKeysForDeepEqual = [
+	'mainCategory',
+	'subCategory',
+	'mainCategoryContent',
+	'subCategoryContent'
+];
+
+export const mediaFormStatusInitialValues = {
+	dirty: false
 };
 
 export const mediaFormInitialValues = {

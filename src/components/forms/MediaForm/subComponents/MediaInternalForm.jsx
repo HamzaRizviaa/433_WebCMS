@@ -56,8 +56,10 @@ const MediaInternalForm = ({
 		dirty,
 		isValid,
 		isSubmitting,
+		status: formikStatus,
 		handleSubmit,
 		setFieldValue,
+		setValues,
 		setSubmitting
 	} = useFormikContext();
 
@@ -109,7 +111,26 @@ const MediaInternalForm = ({
 		isEdit ? true : values?.mainCategory && values.subCategory;
 
 	if (isEdit && mainCategories?.length < 0 && subCategories?.length < 0)
-		return <></>;
+		return null;
+
+	const mainCategoryChangeHandler = (value, name, { data }) => {
+		fetchSubCategories(data.id);
+		setValues({
+			...values,
+			[name]: value,
+			subCategory: '',
+			mainCategoryContent: data.id
+		});
+	};
+
+	const subCategoryChangeHandler = (value, name, { data }) => {
+		setValues({
+			...values,
+			[name]: value,
+			subCategoryContent: data.id
+		});
+	};
+
 	return (
 		<div>
 			<div className={globalClasses.contentWrapperNoPreview}>
@@ -129,12 +150,7 @@ const MediaInternalForm = ({
 									value: category.name,
 									data: category
 								}))}
-								onChange={(value, name, { data }) => {
-									fetchSubCategories(data.id);
-									setFieldValue(name, value);
-									setFieldValue('subCategory', '');
-									setFieldValue('mainCategoryContent', data.id);
-								}}
+								onChange={mainCategoryChangeHandler}
 							/>
 						</div>
 						<div className={classes.subCategory}>
@@ -152,10 +168,7 @@ const MediaInternalForm = ({
 										value: category.name,
 										data: category
 									}))}
-									onChange={(value, name, { data }) => {
-										setFieldValue(name, value);
-										setFieldValue('subCategoryContent', data.id);
-									}}
+									onChange={subCategoryChangeHandler}
 								/>
 							)}
 							{(subResponse?.isUninitialized ||
@@ -167,7 +180,7 @@ const MediaInternalForm = ({
 					</div>
 				</div>
 
-				{ifMediaTypeSelected() ? (
+				{ifMediaTypeSelected() && (
 					<>
 						<div className={globalClasses.explanationWrapper}>
 							<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
@@ -353,7 +366,7 @@ const MediaInternalForm = ({
 									<Button
 										size='small'
 										variant={'outlined'}
-										disabled={!dirty}
+										disabled={isEdit ? !dirty : !formikStatus?.dirty}
 										onClick={saveDraftHandler}
 									>
 										{status === 'draft' && isEdit
@@ -373,8 +386,6 @@ const MediaInternalForm = ({
 							</div>
 						</div>
 					</>
-				) : (
-					<></>
 				)}
 			</div>
 		</div>
