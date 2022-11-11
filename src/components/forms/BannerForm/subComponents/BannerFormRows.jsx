@@ -8,7 +8,8 @@ const BannerFormRows = ({ form, swap }) => {
 		swap(data.source.index, data.destination.index);
 	};
 
-	console.log(form.errors, 'ERRORS');
+	console.log('ERRORS: ', form.errors);
+	console.log('VALUES: ', form.values);
 
 	return (
 		<DraggableLayoutWrapper onDragEnd={handleDragData}>

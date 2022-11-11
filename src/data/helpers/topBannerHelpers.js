@@ -136,24 +136,30 @@ export const validateTopBanners = ({ bannerData }) => {
 	if (!bannerData[0]?.banner_type && !bannerData[0]?.content?.title) {
 		if (!errors.bannerData) errors.bannerData = [];
 		errors.bannerData[0] = 'First banner cannot be empty';
+	} else if (
+		(!bannerData[0].banner_type && bannerData[0].content?.title) ||
+		(bannerData[0].banner_type && !bannerData[0].content?.title)
+	) {
+		if (!errors.bannerData) errors.bannerData = [];
+		errors.bannerData[0] = 'Both fields should be filled';
 	}
 
 	for (let i = bannerData.length - 1; i >= 1; i--) {
 		if (bannerData[i]?.banner_type && bannerData[i]?.content?.title) {
-			if (!bannerData[i - 1].banner_type || !bannerData[i - 1].content?.title) {
+			if (
+				i - 1 !== 0 &&
+				(!bannerData[i - 1].banner_type || !bannerData[i - 1].content?.title)
+			) {
 				if (!errors.bannerData) errors.bannerData = [];
 				errors.bannerData[i - 1] = 'This banner cannot be empty';
-				break;
 			}
-		} else if (
+		}
+		if (
 			(!bannerData[i].banner_type && bannerData[i].content?.title) ||
 			(bannerData[i].banner_type && !bannerData[i].content?.title)
 		) {
 			if (!errors.bannerData) errors.bannerData = [];
 			errors.bannerData[i] = 'Both fields should be filled';
-			break;
-		} else {
-			delete errors.bannerData;
 		}
 	}
 

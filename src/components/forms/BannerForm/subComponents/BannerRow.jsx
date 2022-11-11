@@ -23,17 +23,15 @@ const BannerRow = ({ item, index, errorMsg }) => {
 	const bannerContent = useSelector(selectBannerContent);
 
 	const handleDelete = () => {
-		console.log('abc delete');
 		setFieldValue(`bannerData.${index}.banner_type`, '');
 		setFieldValue(`bannerData.${index}.content`, {
-			id: `${index + 1}`,
+			id: '',
 			title: '',
 			type: ''
 		});
-		setFieldValue(`bannerData.${index}.id`, '');
+		setFieldValue(`bannerData.${index}.id`, `${index + 1}`);
 	};
 
-	console.log();
 	const handleSearchText = (value) => {
 		dispatch(
 			getBannerContent({
@@ -63,13 +61,12 @@ const BannerRow = ({ item, index, errorMsg }) => {
 						/>
 					</div>
 				</div>
-
 				<div className={classes.contentTypeWrapper}>
 					<label className={classes.bannerLabel}>Select Banner Type</label>
 					<div className={classes.fieldWrapper}>
 						<FormikSelect
-							onSearchTextChange={handleSearchText}
 							searchable
+							onSearchTextChange={handleSearchText}
 							name={`bannerData.${index}.content`}
 							options={bannerContent}
 							mapOptions={{ valueKey: 'id', labelKey: 'title' }}

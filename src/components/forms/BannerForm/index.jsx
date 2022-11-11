@@ -16,12 +16,11 @@ import {
 	topBannerInitialValues,
 	bannerDataFormatterForForm,
 	bannerDataFormatterForService,
-	// bannersValidations,
 	validateTopBanners
 } from '../../../data/helpers';
 import { useBannerFormStyles } from './index.style';
 
-const BannerForm = ({ tabValue }) => {
+const BannerForm = ({ tabValue, setFormSubmitting }) => {
 	const dispatch = useDispatch();
 	const classes = useBannerFormStyles();
 
@@ -35,17 +34,18 @@ const BannerForm = ({ tabValue }) => {
 
 	console.log(initialValues, 'initialValues');
 
-	const handleSubmit = async (values, formikBag) => {
-		formikBag.setSubmitting(true);
+	const handleSubmit = async (values) => {
+		setFormSubmitting(true);
 
 		try {
 			const data = bannerDataFormatterForService(values, tabValue);
 
 			await dispatch(createOrEditTopBanner(data));
+			setFormSubmitting(false);
 		} catch (error) {
 			console.error(error);
 		} finally {
-			formikBag.setSubmitting(false);
+			setFormSubmitting(false);
 		}
 	};
 
@@ -64,10 +64,7 @@ const BannerForm = ({ tabValue }) => {
 			enableReinitialize
 			initialValues={initialValues}
 			onSubmit={handleSubmit}
-			// validationSchema={bannersValidations}
 			validate={validateTopBanners}
-			// validateOnMount
-			validateOnChange={false}
 		>
 			<Form>
 				<div className={classes.bannerMain}>
@@ -85,7 +82,8 @@ const BannerForm = ({ tabValue }) => {
 };
 
 BannerForm.propTypes = {
-	tabValue: PropTypes.string.isRequired
+	tabValue: PropTypes.string.isRequired,
+	setFormSubmitting: PropTypes.func.isRequired
 };
 
 export default BannerForm;

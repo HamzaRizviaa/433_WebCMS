@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectBannerStatus } from '../../data/selectors';
 import BannerForm from '../../components/forms/BannerForm';
@@ -9,6 +9,7 @@ import TabPanes from '../../components/ui/TabPanes';
  * @component
  */
 const TopBanner = () => {
+	const [isBannerFormSubmitting, setFormSubmitting] = useState(false);
 	const getBannerContentState = useSelector(
 		(state) => state.rootReducer.topBanner.getBannerContentState
 	);
@@ -24,17 +25,17 @@ const TopBanner = () => {
 			hideSearchFilter
 			hideDateFilter
 			hideLibraryText
-			isLoading={bannerStatus === 'loading'}
+			isLoading={isBannerFormSubmitting || bannerStatus === 'loading'}
 		>
 			<TabPanes
 				headings={headings}
 				disabled={getBannerContentState && bannerStatus ? false : true}
 			>
 				<TabPanes.TabPanel value={0}>
-					<BannerForm tabValue={'home'} />
+					<BannerForm tabValue='home' setFormSubmitting={setFormSubmitting} />
 				</TabPanes.TabPanel>
 				<TabPanes.TabPanel value={1}>
-					<BannerForm tabValue={'media'} />
+					<BannerForm tabValue='media' setFormSubmitting={setFormSubmitting} />
 				</TabPanes.TabPanel>
 			</TabPanes>
 		</DashboardLayout>
