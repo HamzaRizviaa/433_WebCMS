@@ -10,13 +10,13 @@ import { ReactComponent as Info } from '../../../../assets/InfoButton.svg';
 import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
 import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
-import ToggleSwitch from '../../../switch';
 import Button from '../../../ui/Button';
 import SelectField from '../../../ui/inputs/SelectField';
 import {
 	useGetMainCategoriesQuery,
 	useLazyGetSubCategoriesQuery
 } from '../../../../data/features/mediaLibrary/media.query';
+import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
 
 // const isTrue = true;
 const MediaInternalForm = ({
@@ -229,9 +229,11 @@ const MediaInternalForm = ({
 								maxRows={2}
 							/>
 						</div>
-						<h5>{isEdit ? 'Cover Image' : 'Add Cover Image'}</h5>
-						<br />
-						<h6 className={classes.PotraitImage}>PORTRAIT IMAGE</h6>
+						<h5 className={classes.coverText}>
+							{isEdit ? 'Cover Image' : 'Add Cover Image'}
+						</h5>
+
+						<h6 className={classes.imageText}>PORTRAIT IMAGE</h6>
 						<div className={classes.fieldWrapper}>
 							<FormikDropzone
 								name='uploadedCoverImage'
@@ -246,7 +248,6 @@ const MediaInternalForm = ({
 							/>
 						</div>
 
-						<br />
 						<div className={globalClasses.dropBoxUrlContainer}>
 							<FormikField
 								label='PORTRAIT DROPBOX URL'
@@ -257,7 +258,7 @@ const MediaInternalForm = ({
 							/>
 						</div>
 						{/* landscape image  */}
-						<h6 className={classes.PotraitImage}>LANDSCAPE IMAGE</h6>
+						<h6 className={classes.imageText}>LANDSCAPE IMAGE</h6>
 						<div className={classes.fieldWrapper}>
 							<FormikDropzone
 								name='uploadedLandscapeCoverImage'
@@ -274,9 +275,6 @@ const MediaInternalForm = ({
 							/>
 						</div>
 
-						{/* !form.uploadedLandscapeCoverImage.length && */}
-
-						<br />
 						<div className={globalClasses.dropBoxUrlContainer}>
 							<FormikField
 								label='LANDSCAPE DROPBOX URL'
@@ -320,30 +318,10 @@ const MediaInternalForm = ({
 								maxRows={2}
 							/>
 						</div>
-
-						<div className={classes.postMediaContainer}>
-							<div className={classes.postMediaHeader}>
-								<h5>Show comments</h5>
-								<ToggleSwitch
-									id={1}
-									checked={values.show_comments}
-									onChange={(checked) =>
-										setFieldValue('show_comments', checked)
-									}
-								/>
-							</div>
-						</div>
-						<div
-							className={classes.postMediaContainer}
-							style={{ marginBottom: '1rem' }}
-						>
-							<div className={classes.postMediaHeader}>
-								<h5>Show likes</h5>
-								<ToggleSwitch
-									id={2}
-									checked={values.show_likes}
-									onChange={(checked) => setFieldValue('show_likes', checked)}
-								/>
+						<div className={classes.fieldContainer}>
+							<div className={classes.switchContainer}>
+								<FormikSwitchField name='show_comments' label='Show comments' />
+								<FormikSwitchField name='show_likes' label='Show likes' />
 							</div>
 						</div>
 

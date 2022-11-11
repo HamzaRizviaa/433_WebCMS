@@ -6,11 +6,21 @@ export const useStyles = makeStyles((theme) => ({
 	},
 	buttonDiv: {
 		width: '100%',
-		marginBottom: '4rem',
+		marginTop: '3rem',
+		marginBottom: '1rem',
 		display: 'flex',
-		justifyContent: 'flex-end'
-	},
+		justifyContent: 'end',
 
+		'& button + button': {
+			marginLeft: 10
+		}
+	},
+	imageText: {
+		marginBottom: '8px'
+	},
+	coverText: {
+		marginBottom: '2rem'
+	},
 	publishDraftDiv: {
 		display: 'flex'
 	},
@@ -46,8 +56,7 @@ export const useStyles = makeStyles((theme) => ({
 	editBtn: {
 		width: '100%',
 		display: 'flex',
-		justifySelf: 'flex-start',
-		marginTop: '0.5rem'
+		justifySelf: 'flex-start'
 	},
 
 	categoryContainer: {
