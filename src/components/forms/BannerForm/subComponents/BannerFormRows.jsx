@@ -4,8 +4,19 @@ import DraggableLayoutWrapper from '../../../layouts/DraggableLayoutWrapper';
 import BannerRow from './BannerRow';
 
 const BannerFormRows = ({ form, swap }) => {
-	const handleDragData = (data) => {
-		swap(data.source.index, data.destination.index);
+	const handleDragData = ({ source, destination }) => {
+		const sourceData = form.values.bannerData[source.index];
+		const destinationData = form.values.bannerData[destination.index];
+		const isSourceDataEmpty =
+			!sourceData.banner_type && !sourceData.content.title;
+		const isDestinationDataEmpty =
+			!destinationData.banner_type && !destinationData.content.title;
+
+		if (source.index !== destination.index) {
+			if (!isSourceDataEmpty || !isDestinationDataEmpty) {
+				swap(source.index, destination.index);
+			}
+		}
 	};
 
 	return (

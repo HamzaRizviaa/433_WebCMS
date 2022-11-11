@@ -48,12 +48,6 @@ const BannerForm = ({ tabValue, setFormSubmitting }) => {
 		}
 	};
 
-	// const isDisabled = (formikBag) => {
-	// 	return !formikBag.dirty
-	// 		? Object.keys(formikBag.errors).length === 0
-	// 		: !(formikBag.isValid && Object.keys(formikBag.errors).length === 0);
-	// };
-
 	useEffect(() => {
 		dispatch(
 			getBannerContent({
@@ -83,7 +77,6 @@ const BannerForm = ({ tabValue, setFormSubmitting }) => {
 							fullWidth
 							type='submit'
 							className={classes.publishButton}
-							// disabled={isDisabled(formikBag)}
 							disabled={!dirty ? isValid : !isValid}
 						>
 							PUBLISH {tabValue} BANNERS

@@ -5,7 +5,10 @@ import PropTypes from 'prop-types';
 import DraggableBannerLayout from '../../../layouts/DraggableBannerLayout';
 import FormikSelect from '../../../ui/inputs/formik/FormikSelect';
 import { useBannerFormStyles } from '../index.style';
-import { selectBannerContent } from '../../../../data/selectors';
+import {
+	selectBannerContent,
+	selectBannerContentStatus
+} from '../../../../data/selectors';
 import { getBannerContent } from '../../../../data/features/topBanner/topBannerActions';
 import {
 	filterBannerContent,
@@ -20,6 +23,7 @@ const BannerRow = ({ item, index, errorMsg }) => {
 	const { setFieldValue, values } = useFormikContext();
 
 	const bannerContent = useSelector(selectBannerContent);
+	const bannerContentState = useSelector(selectBannerContentStatus);
 
 	const filteredBannerContent = useMemo(() => {
 		return filterBannerContent(bannerContent, values.bannerData);
@@ -68,6 +72,7 @@ const BannerRow = ({ item, index, errorMsg }) => {
 					<label className={classes.bannerLabel}>Select Banner Type</label>
 					<div className={classes.fieldWrapper}>
 						<FormikSelect
+							isLoading={bannerContentState}
 							searchable
 							onSearchTextChange={handleSearchText}
 							name={`bannerData.${index}.content`}

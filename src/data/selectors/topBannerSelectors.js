@@ -1,4 +1,4 @@
-export const selectBannerContentState = (state) =>
+export const selectBannerContentStatus = (state) =>
 	state.rootReducer.topBanner.getBannerContentState;
 
 export const selectBannerStatus = (state) =>

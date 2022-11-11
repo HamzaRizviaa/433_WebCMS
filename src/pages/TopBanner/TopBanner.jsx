@@ -10,9 +10,6 @@ import TabPanes from '../../components/ui/TabPanes';
  */
 const TopBanner = () => {
 	const [isBannerFormSubmitting, setFormSubmitting] = useState(false);
-	const getBannerContentState = useSelector(
-		(state) => state.rootReducer.topBanner.getBannerContentState
-	);
 
 	const bannerStatus = useSelector(selectBannerStatus);
 
@@ -27,10 +24,7 @@ const TopBanner = () => {
 			hideLibraryText
 			isLoading={isBannerFormSubmitting || bannerStatus === 'loading'}
 		>
-			<TabPanes
-				headings={headings}
-				disabled={getBannerContentState && bannerStatus ? false : true}
-			>
+			<TabPanes headings={headings}>
 				<TabPanes.TabPanel value={0}>
 					<BannerForm tabValue='home' setFormSubmitting={setFormSubmitting} />
 				</TabPanes.TabPanel>
