@@ -18,11 +18,8 @@ import {
 import {
 	createOrEditMediaThunk,
 	deleteMediaThunk,
-	// getMainCategories,
 	getMedia
 } from '../../../data/features/mediaLibrary/mediaLibrarySlice';
-
-// import { uploadFileToServer } from '../../../data/utils';
 
 import MediaFormDrawer from './subComponents/MediaFormDrawer';
 import DeleteModal from '../../DeleteModal';
@@ -50,27 +47,10 @@ const MediaForm = ({
 		formikBag.setSubmitting(true);
 		console.table(values);
 		try {
-			// const uploadedFiles = await uploadFileToServer(
-			// 	values.uploadedFiles[0],
-			// 	'medialibrary'
-			// );
-			// const uploadedCoverImage = await uploadFileToServer(
-			// 	values.uploadedCoverImage[0],
-			// 	'medialibrary'
-			// );
-			// const uploadedLandscapeCoverImage = await uploadFileToServer(
-			// 	values.uploadedLandscapeCoverImage[0],
-			// 	'medialibrary'
-			// );
-
 			const uploadedImgs = await fileUploadsArray(values);
 			await completeUpload(uploadedImgs, values);
 
 			const getUser = getUserDataObject();
-			// const mainCategory = await dispatch(getMainCategories());
-			// const subCategory = await dispatch(getSubCategoryThunk());
-			// console.log('MAIN CATEGORY', mainCategory);
-			// console.log('Sub CAtegory', subCategory);
 
 			const mediaData = mediaDataFormatterForServer(
 				values,
