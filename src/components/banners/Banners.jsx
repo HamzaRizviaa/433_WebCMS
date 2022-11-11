@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
 import React, { useState } from 'react';
 import classes from './_banners.module.scss';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
@@ -17,8 +15,6 @@ import {
 	getBannerContent,
 	resetBanner
 } from '../../data/features/topBanner/topBannerSlice';
-
-import BannerRowsUpdated from './BannerRowsUpdated';
 
 /**
  * @component
@@ -387,30 +383,7 @@ function Banners({ tabValue }) {
 															Banner {index + 1}
 														</div>
 													)}
-													{/* <BannerRows
-														otherRowsErrMsg={
-															validateRow.rowId === index ? validateRow : ''
-														}
-														firstrowErrMsg={
-															index === validateRow.rowId && validateRow
-																? ''
-																: index === firstCheck.rowId
-																? firstCheck
-																: ''
-														}
-														//firstBannerErr={firstBannerErr}
-														validateRow={validateRow}
-														data={data}
-														setBannerData={setBannerData} //?
-														bannerContent={bannerItems}
-														selectedBannerData={bannerData}
-														key={data.id}
-														provided={provided}
-														index={index}
-														tabValue={tabValue}
-													/> */}
-
-													<BannerRowsUpdated
+													<BannerRows
 														otherRowsErrMsg={
 															validateRow.rowId === index ? validateRow : ''
 														}
