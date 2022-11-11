@@ -67,6 +67,7 @@ const MediaForm = ({
 				);
 				if (type === 'mediaLibrary/createOrEditMediaThunk/fulfilled') {
 					handleClose();
+					formikBag?.resetForm();
 					if (isEdit && !(status === 'draft' && isDraft === false)) {
 						dispatch(getMedia(queryParams));
 					} else if (isSearchParamsEmpty) {
