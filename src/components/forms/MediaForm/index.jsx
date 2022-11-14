@@ -20,6 +20,7 @@ import {
 	deleteMediaThunk,
 	getMedia
 } from '../../../data/features/mediaLibrary/mediaLibrarySlice';
+import { MediaLibraryService } from '../../../data/services';
 
 import MediaFormDrawer from './subComponents/MediaFormDrawer';
 import DeleteModal from '../../DeleteModal';
@@ -53,6 +54,24 @@ const MediaForm = ({
 		formikBag.setSubmitting(true);
 
 		try {
+			if (
+				(!isDraft && specificMedia?.title !== values.title) ||
+				(!isDraft && status === 'draft')
+			) {
+				const { data } = await MediaLibraryService.checkTitleDuplication(
+					values.title
+				);
+
+				if (data.response) {
+					formikBag.setSubmitting(false);
+					formikBag.setFieldError(
+						'title',
+						'A News item with this Banner Title has already been published. Please amend the Banner Title.'
+					);
+					return;
+				}
+			}
+
 			const uploadedImgs = await fileUploadsArray(values);
 			await completeUpload(uploadedImgs, values);
 			const getUser = getUserDataObject();
