@@ -36,10 +36,12 @@ const BannerRow = ({ item, index, errorMsg, tabValue }) => {
 	};
 
 	const handleSearchText = (value) => {
+		const filteredIds = filterSelectedContentIds(values.bannerData);
 		dispatch(
 			getBannerContent({
 				type: tabValue,
-				title: value
+				title: value,
+				exclude: filteredIds
 			})
 		);
 	};
