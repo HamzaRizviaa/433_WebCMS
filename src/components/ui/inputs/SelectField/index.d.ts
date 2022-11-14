@@ -1,5 +1,5 @@
 import { AutocompleteProps } from '@material-ui/lab';
-import { SelectProps } from '@material-ui/core';
+import { SelectProps, TextFieldProps } from '@material-ui/core';
 
 export type SelectOption = {
 	[Key: string]: string | number | undefined | null;
@@ -26,6 +26,7 @@ export type SelectFieldCustomProps<T> = {
 	size?: 'small' | 'medium' | 'large';
 	onSearchTextChange?: (value: string) => void;
 	onClearText?: () => void;
+	searchBarProps?: TextFieldProps;
 };
 
 type ModifiedSelectProps = Omit<

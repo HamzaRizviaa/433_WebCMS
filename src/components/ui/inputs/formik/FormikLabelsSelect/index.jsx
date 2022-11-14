@@ -21,6 +21,8 @@ const labelsParams = (labels) => {
 	}, {});
 };
 
+const regex = /\W/;
+
 const FormikLabelsSelect = ({ name, placeholder, ...restProps }) => {
 	const dispatch = useDispatch();
 	const [searchText, setSearchText] = useState('');
@@ -64,6 +66,24 @@ const FormikLabelsSelect = ({ name, placeholder, ...restProps }) => {
 
 	const handleBlur = () => {
 		setTouched(true);
+	};
+
+	const handlePaste = (e) => {
+		const newValue = e.clipboardData.getData('Text');
+
+		if (newValue.match(regex)) {
+			e.preventDefault();
+			e.stopPropagation();
+		}
+	};
+
+	const handleKeyPress = (e) => {
+		const newValue = e.key;
+
+		if (newValue.match(regex)) {
+			e.preventDefault();
+			e.stopPropagation();
+		}
 	};
 
 	const classes = useFormikLabelsSelectStyles();
@@ -110,6 +130,7 @@ const FormikLabelsSelect = ({ name, placeholder, ...restProps }) => {
 			onChange={handleChange}
 			onBlur={handleBlur}
 			onSearchTextChange={handleSearchTextChange}
+			searchBarProps={{ onKeyPress: handleKeyPress, onPaste: handlePaste }}
 			error={
 				touched && error
 					? `You need to add ${

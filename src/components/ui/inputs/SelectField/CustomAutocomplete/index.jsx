@@ -8,8 +8,6 @@ import { useAutocompleteStyles } from './index.style';
 import { useInputsStyles } from '../../inputs.style';
 import Four33Loader from '../../../../../assets/Loader_Yellow.gif';
 
-const regex = /\W/;
-
 const CustomAutocomplete = ({
 	name,
 	value,
@@ -30,6 +28,7 @@ const CustomAutocomplete = ({
 	disabled = false,
 	size = 'medium',
 	isLoading = false,
+	searchBarProps = {},
 	...rest
 }) => {
 	const labelKey = mapOptions?.labelKey || 'label';
@@ -61,24 +60,6 @@ const CustomAutocomplete = ({
 		},
 		[debouncedHandleOnChange]
 	);
-
-	const handlePaste = (e) => {
-		const newValue = e.clipboardData.getData('Text');
-
-		if (newValue.match(regex)) {
-			e.preventDefault();
-			e.stopPropagation();
-		}
-	};
-
-	const handleKeyPress = (e) => {
-		const newValue = e.key;
-
-		if (newValue.match(regex)) {
-			e.preventDefault();
-			e.stopPropagation();
-		}
-	};
 
 	const customRenderOption = renderOption
 		? renderOption
@@ -135,6 +116,7 @@ const CustomAutocomplete = ({
 				renderInput={(params) => (
 					<TextField
 						{...params}
+						{...searchBarProps}
 						disabled={disabled}
 						placeholder={placeholder}
 						InputProps={{
@@ -146,8 +128,6 @@ const CustomAutocomplete = ({
 						}}
 						value={innerValue}
 						onChange={handleSearchTextChange}
-						onPaste={handlePaste}
-						onKeyPress={handleKeyPress}
 					/>
 				)}
 				closeIcon={<ClearIcon />}
