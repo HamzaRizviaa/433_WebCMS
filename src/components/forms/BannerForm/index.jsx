@@ -70,7 +70,7 @@ const BannerForm = ({ tabValue, setFormSubmitting }) => {
 					<div className={classes.bannerMain}>
 						<FieldArray
 							name='bannerData'
-							render={(props) => <BannerFormRows {...props} />}
+							render={(props) => <BannerFormRows {...props} tabValue={tabValue} />}
 						/>
 
 						<Button

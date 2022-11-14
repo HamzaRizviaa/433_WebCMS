@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import DraggableLayoutWrapper from '../../../layouts/DraggableLayoutWrapper';
 import BannerRow from './BannerRow';
 
-const BannerFormRows = ({ form, swap }) => {
+const BannerFormRows = ({ form, swap, tabValue }) => {
 	const handleDragData = ({ source, destination }) => {
 		const sourceData = form.values.bannerData[source.index];
 		const destinationData = form.values.bannerData[destination.index];
@@ -27,6 +27,7 @@ const BannerFormRows = ({ form, swap }) => {
 					item={item}
 					index={index}
 					errorMsg={form?.errors?.bannerData}
+					tabValue={tabValue}
 				/>
 			))}
 		</DraggableLayoutWrapper>
@@ -35,7 +36,8 @@ const BannerFormRows = ({ form, swap }) => {
 
 BannerFormRows.propTypes = {
 	form: PropTypes.object.isRequired,
-	swap: PropTypes.func.isRequired
+	swap: PropTypes.func.isRequired,
+	tabValue: PropTypes.string.isRequired
 };
 
 export default BannerFormRows;
