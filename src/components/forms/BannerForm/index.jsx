@@ -40,6 +40,12 @@ const BannerForm = ({ tabValue, setFormSubmitting }) => {
 
 			await dispatch(createOrEditTopBanner(data));
 			await dispatch(getAllBanners(tabValue));
+			await dispatch(
+				getBannerContent({
+					type: tabValue,
+					title: null
+				})
+			);
 			setFormSubmitting(false);
 		} catch (error) {
 			console.error(error);
@@ -70,7 +76,9 @@ const BannerForm = ({ tabValue, setFormSubmitting }) => {
 					<div className={classes.bannerMain}>
 						<FieldArray
 							name='bannerData'
-							render={(props) => <BannerFormRows {...props} tabValue={tabValue} />}
+							render={(props) => (
+								<BannerFormRows {...props} tabValue={tabValue} />
+							)}
 						/>
 
 						<Button
