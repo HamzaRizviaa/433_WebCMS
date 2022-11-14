@@ -184,7 +184,12 @@ const MediaInternalForm = ({
 							{(subResponse?.isUninitialized ||
 								isLoading ||
 								!subCategoriesSuccess) && (
-								<SelectField label='SUB CATEGORY' disabled options={[]} />
+								<SelectField
+									placeholder='Please Select'
+									label='SUB CATEGORY'
+									disabled
+									options={[]}
+								/>
 							)}
 						</div>
 					</div>
@@ -218,9 +223,17 @@ const MediaInternalForm = ({
 										: ['audio/mp3', 'audio/mpeg']
 								}
 								formatMessage={
-									values.mainCategory === 'Watch'
-										? 'Supported format is mp4'
-										: 'Supported format is mp3'
+									values.mainCategory === 'Watch' ? (
+										<div>
+											Supported format is
+											<b> mp4</b>
+										</div>
+									) : (
+										<div>
+											Supported format is
+											<b> mp3</b>
+										</div>
+									)
 								}
 								maxFiles={3}
 								showPreview
@@ -248,7 +261,14 @@ const MediaInternalForm = ({
 							<FormikDropzone
 								name='uploadedCoverImage'
 								accept='image/jpeg, image/png'
-								formatMessage='Supported formats are jpeg and png'
+								formatMessage={
+									<div>
+										Supported formats are
+										<b> jpeg</b> and <b>png</b>
+										<br />
+										Required Size <b>720x900</b>
+									</div>
+								}
 								fileSizeMessage='Image file size should not exceed 1MB.'
 								maxFiles={3}
 								showPreview
@@ -273,7 +293,14 @@ const MediaInternalForm = ({
 							<FormikDropzone
 								name='uploadedLandscapeCoverImage'
 								accept='image/jpeg, image/png'
-								formatMessage='Supported formats are jpeg and png'
+								formatMessage={
+									<div>
+										Supported formats are
+										<b> jpeg</b> and <b>png</b>
+										<br />
+										Required Size <b>1920x1080</b>
+									</div>
+								}
 								fileSizeMessage='Image file size should not exceed 1MB.'
 								maxFiles={1}
 								showPreview
