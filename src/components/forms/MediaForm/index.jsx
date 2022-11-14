@@ -54,10 +54,7 @@ const MediaForm = ({
 		formikBag.setSubmitting(true);
 
 		try {
-			if (
-				(!isDraft && specificMedia?.title !== values.title) ||
-				(!isDraft && status === 'draft')
-			) {
+			if (!isDraft) {
 				const { data } = await MediaLibraryService.checkTitleDuplication(
 					values.title
 				);
@@ -66,7 +63,7 @@ const MediaForm = ({
 					formikBag.setSubmitting(false);
 					formikBag.setFieldError(
 						'title',
-						'A News item with this Banner Title has already been published. Please amend the Banner Title.'
+						'A Media item with this Title has already been published. Please amend the Title.'
 					);
 					return;
 				}
