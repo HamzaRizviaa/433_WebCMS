@@ -72,8 +72,8 @@ const BannerRow = ({ item, index, errorMsg }) => {
 					<label className={classes.bannerLabel}>Select Banner Type</label>
 					<div className={classes.fieldWrapper}>
 						<FormikSelect
-							isLoading={bannerContentState}
 							searchable
+							isLoading={bannerContentState}
 							onSearchTextChange={handleSearchText}
 							name={`bannerData.${index}.content`}
 							options={filteredBannerContent}
