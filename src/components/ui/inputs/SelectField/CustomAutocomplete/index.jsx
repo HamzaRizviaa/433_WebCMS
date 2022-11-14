@@ -36,18 +36,15 @@ const CustomAutocomplete = ({
 
 	const [innerValue, setInnerValue] = useState('');
 
-	const handleChange = useCallback(
-		(_, selected, reason) => {
-			if (selected && onChange) {
-				onChange(selected);
-			}
+	const handleChange = (_, selected, reason) => {
+		if (selected && onChange) {
+			onChange(selected);
+		}
 
-			if (onClearText && reason === 'clear') {
-				onClearText();
-			}
-		},
-		[onChange]
-	);
+		if (onClearText && reason === 'clear') {
+			onClearText();
+		}
+	};
 
 	const debouncedHandleOnChange = useDebouncedCallback((event) => {
 		if (onSearchTextChange) onSearchTextChange(event.target.value);

@@ -65,7 +65,7 @@ export const bannerTypeOptions = [
 	{ value: 'Title only', label: 'Title only' },
 	{ value: 'Title + Text', label: 'Title + Text' }
 ];
-
+//not being used right now because api is already filtering the selected banner content
 export const filterBannerContent = (bannerContent, bannerData) => {
 	if (bannerContent?.length === 0) return [];
 	return bannerContent?.filter((item) => {
@@ -74,6 +74,16 @@ export const filterBannerContent = (bannerContent, bannerData) => {
 		}
 		return item;
 	});
+};
+
+export const filterSelectedContentIds = (bannerData, previousContentValue) => {
+	const selectedItemsIds = bannerData.map((item) => item?.content?.id);
+
+	const filteredIds = selectedItemsIds.filter(
+		(item) => item && previousContentValue?.id !== item
+	);
+
+	return filteredIds;
 };
 
 export const validateTopBanners = ({ bannerData }) => {
