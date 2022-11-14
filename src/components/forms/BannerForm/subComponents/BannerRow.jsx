@@ -15,7 +15,7 @@ import {
 	bannerTypeOptions
 } from '../../../../data/helpers/topBannerHelpers';
 
-const BannerRow = ({ item, index, errorMsg }) => {
+const BannerRow = ({ item, index, errorMsg, tabValue }) => {
 	const classes = useBannerFormStyles();
 
 	const dispatch = useDispatch();
@@ -42,7 +42,7 @@ const BannerRow = ({ item, index, errorMsg }) => {
 	const handleSearchText = (value) => {
 		dispatch(
 			getBannerContent({
-				type: 'home',
+				type: tabValue,
 				title: value
 			})
 		);
@@ -89,7 +89,8 @@ const BannerRow = ({ item, index, errorMsg }) => {
 BannerRow.propTypes = {
 	item: PropTypes.object.isRequired,
 	index: PropTypes.string.isRequired,
-	errorMsg: PropTypes.oneOf([PropTypes.array, PropTypes.string])
+	errorMsg: PropTypes.oneOf([PropTypes.array, PropTypes.string]),
+	tabValue: PropTypes.string.isRequired
 };
 
 export default BannerRow;
