@@ -69,7 +69,7 @@ const BannerRow = ({ item, index, errorMsg, tabValue }) => {
 					</div>
 				</div>
 				<div className={classes.contentTypeWrapper}>
-					<label className={classes.bannerLabel}>Select Banner Type</label>
+					<label className={classes.bannerLabel}>Select Content</label>
 					<div className={classes.fieldWrapper}>
 						<FormikSelect
 							searchable
