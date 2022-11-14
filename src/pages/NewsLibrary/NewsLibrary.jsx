@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import UploadOrEditNews from '../../components/news/uploadOrEditNews';
+import NewsForm from '../../components/forms/NewsForm';
 import { newsColumns } from '../../data/helpers/newsHelpers';
 import Table from '../../components/ui/Table';
 import useGetAllNews from '../../hooks/libraries/news/useGetAllNews';
@@ -8,6 +8,10 @@ import DashboardLayout from '../../components/layouts/DashboardLayout';
 import { getSpecificNews } from '../../data/features/newsLibrary/newsLibrarySlice';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 
+/**
+ * News Library Component
+ * @component
+ */
 const NewsLibrary = () => {
 	const dispatch = useDispatch();
 
@@ -17,12 +21,21 @@ const NewsLibrary = () => {
 
 	const { data, totalRecords, isLoading } = useGetAllNews();
 
+	/**
+	 * Opens the slider to upload new News Item
+	 * @returns {void}
+	 */
 	const onUploadNewsClick = () => {
 		dispatch(getAllNewLabels());
 		setEdit(false);
 		setShowSlider(true);
 	};
 
+	/**
+	 * Opens up the slider and populates the clicked news item.
+	 * @param {object} row - Contains pecific news item data
+	 * @returns {void}
+	 */
 	const onRowClick = (_, row) => {
 		row.status === 'draft' && dispatch(getAllNewLabels());
 		dispatch(getSpecificNews(row.id));
@@ -45,17 +58,13 @@ const NewsLibrary = () => {
 				isLoading={isLoading}
 				noDataText='No News Found'
 			/>
-			<UploadOrEditNews
+			<NewsForm
 				open={showSlider}
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
 				}}
-				title={edit ? 'Edit News' : 'Upload News'}
-				buttonText={
-					edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
-				}
-				rowStatus={rowStatus}
+				status={rowStatus}
 			/>
 		</DashboardLayout>
 	);

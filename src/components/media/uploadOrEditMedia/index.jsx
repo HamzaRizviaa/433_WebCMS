@@ -41,6 +41,9 @@ import TranslationCarousal from '../../TranslationCarousal';
 import useCommonParams from '../../../hooks/useCommonParams';
 import { useNavigate } from 'react-router-dom';
 
+/**
+ * @component
+ */
 const UploadOrEditMedia = ({
 	open,
 	handleClose,
@@ -283,6 +286,11 @@ const UploadOrEditMedia = ({
 		validator: checkFileSize
 	});
 
+	/**
+	 * GET API for getting sub categories based on main category
+	 * @param {{id: string, name: string}} mainCategory - main category object
+	 * @returns {Promise<void>}
+	 */
 	const updateSubCategories = async (mainCategory) => {
 		try {
 			const response = await axios.get(
@@ -357,6 +365,11 @@ const UploadOrEditMedia = ({
 		}
 	}, [fileRejections3]);
 
+	/**
+	 * Get file extension from mime type
+	 * @param {string} type - mime type of file
+	 * @returns {string} - extension of file
+	 */
 	const getFileType = (type) => {
 		if (type) {
 			let _type = type.split('/');
@@ -364,6 +377,11 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	/**
+	 * Extract file type from mime type
+	 * @param {string} type mime type of file
+	 * @returns {string} - type of file. Possible values are image | audio | video
+	 */
 	const selectFileType = (type) => {
 		switch (type) {
 			case 'video/mp4':
@@ -400,8 +418,6 @@ const UploadOrEditMedia = ({
 			});
 		}
 	}, [acceptedFiles]);
-
-	useEffect(() => {}, [videoRef.current]);
 
 	useEffect(() => {
 		if (acceptedFiles2?.length) {
@@ -498,6 +514,11 @@ const UploadOrEditMedia = ({
 		setTranslatedOnEdit(false);
 	};
 
+	/**
+	 * Filter file from FORM state based on id.
+	 * @param {string} id - ID of file
+	 * @returns {void}
+	 */
 	const handleDeleteFile = (id) => {
 		setForm((prev) => {
 			return {
@@ -507,6 +528,11 @@ const UploadOrEditMedia = ({
 		});
 	};
 
+	/**
+	 * Filter file from FORM state based on id.
+	 * @param {string} id - ID of file
+	 * @returns {void}
+	 */
 	const handleDeleteFile2 = (id) => {
 		setForm((prev) => {
 			return {
@@ -518,6 +544,11 @@ const UploadOrEditMedia = ({
 		});
 	};
 
+	/**
+	 * Filter file from FORM state based on id.
+	 * @param {string} id - ID of file
+	 * @returns {void}
+	 */
 	const handleDeleteFile3 = (id) => {
 		setForm((prev) => {
 			return {
@@ -529,6 +560,10 @@ const UploadOrEditMedia = ({
 		});
 	};
 
+	/**
+	 * Run validation on Publish button click.
+	 * @returns {void}
+	 */
 	const validatePostBtn = () => {
 		setIsError({
 			uploadedFiles: form.uploadedFiles.length < 1,
@@ -548,6 +583,10 @@ const UploadOrEditMedia = ({
 		}, 5000);
 	};
 
+	/**
+	 * Run validation on Draft button click.
+	 * @returns {void}
+	 */
 	const validateDraftBtn = () => {
 		if (isEdit) {
 			setIsError({
@@ -579,6 +618,12 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	/**
+	 * POST API call for deleting media
+	 * @param {string} id - ID of specific media
+	 * @param {boolean} isDraft - boolean for checking whether media is Draft or Published
+	 * @returns {Promise<void>}
+	 */
 	const deleteMedia = async (id, isDraft) => {
 		setDeleteBtnStatus(true);
 		try {
@@ -626,6 +671,13 @@ const UploadOrEditMedia = ({
 		}
 	}, [lang]);
 
+	/**
+	 * Setting translation data in state
+	 * @param {React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>} e - input element change handler event
+	 * @param {string} title - Title of media
+	 * @param {string} desc - Description of media
+	 * @returns {void}
+	 */
 	const handletranslatedLanguages = (e, title, desc) => {
 		if (translatedLanguages) {
 			let translatedLanguagesCopy = { ...translatedLanguages };
@@ -646,8 +698,10 @@ const UploadOrEditMedia = ({
 		}
 	};
 
-	console.log(translatedLanguages, 'tL');
-
+	/**
+	 * POST API call for translating content
+	 * @returns {Promise<void>}
+	 */
 	const translateAPI = async () => {
 		try {
 			const result = await axios.post(
@@ -678,6 +732,12 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	/**
+	 * POST API call for uploading media
+	 * @param {string} id - ID of media
+	 * @param {object} payload - media pylaod which needs to be submit in form
+	 * @returns {Promise<void>}
+	 */
 	const uploadMedia = async (id, payload) => {
 		let media_type = form.mainCategory?.id;
 
@@ -764,6 +824,12 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	/**
+	 * Uploading file on signed URL of S3 bucket
+	 * @param {object} file - File object
+	 * @param {string} type - Type of file
+	 * @returns {Promise<object>} - Uploaded file data
+	 */
 	const uploadFileToServer = async (file, type) => {
 		try {
 			const result = await axios.post(
@@ -798,6 +864,11 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	/**
+	 * GET API for handling title duplication
+	 * @param {string} givenTitle
+	 * @returns {Promise<void>}
+	 */
 	const handleTitleDuplicate = async (givenTitle) => {
 		try {
 			const result = await axios.get(
@@ -851,6 +922,10 @@ const UploadOrEditMedia = ({
 		}
 	}, [specificMedia, form]);
 
+	/**
+	 * Check for duplication in labels
+	 * @returns {boolean} - Indicates whether labels are duplicated or not.
+	 */
 	const checkDuplicateLabel = () => {
 		let formLabels = form?.labels?.map((formL) => {
 			if (specificMedia?.labels?.includes(formL.name)) {
@@ -904,6 +979,10 @@ const UploadOrEditMedia = ({
 		}
 	}, [specificMedia, form, translated]);
 
+	/**
+	 * Setting main category in form state
+	 * @param {string} e - category name
+	 */
 	const mainCategoryId = (e) => {
 		//find name and will return whole object  isEdit ? subCategory : subCategory.name
 		let setData = mainCategories.find((u) => u.name === e);
@@ -912,16 +991,10 @@ const UploadOrEditMedia = ({
 		});
 	};
 
-	// useEffect(() => {
-	// 	// //only empty it when its on new one , not on edit / specific media
-	// 	if (!isEdit) {
-	// 		// setSubCategory({ id: null, name: '' });
-	// 		setForm((prev) => {
-	// 			return { ...prev, subCategory: '' };
-	// 		});
-	// 	}
-	// }, [form.mainCategory]);
-
+	/**
+	 * Setting sub category in form state
+	 * @param {string} e - category name
+	 */
 	const SubCategoryId = (e) => {
 		//e -- name
 		//find name and will return whole object
@@ -930,18 +1003,15 @@ const UploadOrEditMedia = ({
 			return { ...prev, subCategory: setData };
 		});
 	};
+
 	useEffect(() => {
 		validateForm(form);
 	}, [form]);
 
-	console.log(
-		!validateForm(form),
-		editBtnDisabled && status === 'published',
-		'SSSSSshoi'
-	);
-
-	console.log(form, 'form');
-
+	/**
+	 * Save media handler
+	 * @returns {Promise<void>}
+	 */
 	const addSaveMediaBtn = async () => {
 		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
 			validatePostBtn();
@@ -1287,6 +1357,12 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	/**
+	 * POST API for getting restructured data of uploaded files
+	 * @param {object[]} mediaFiles
+	 * @param {string} filename
+	 * @returns {Promise<void>}
+	 */
 	const CompleteUploadMedia = async (mediaFiles, filename) => {
 		console.log(mediaFiles, filename, 'filename', 'mediaFiles');
 		console.log(
@@ -1339,6 +1415,10 @@ const UploadOrEditMedia = ({
 		return completeUpload;
 	};
 
+	/**
+	 * Draft button click handler - Handles create and edit media on clicking draft.
+	 * @returns {Promise<void>}
+	 */
 	const saveDraftBtn = async () => {
 		if (!validateDraft(form) || draftBtnDisabled) {
 			validateDraftBtn();
@@ -1607,6 +1687,11 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	/**
+	 * Translate Button click handler
+	 * Responsible for calling translate API after checking validation
+	 * @returns {void}
+	 */
 	const handleTranslateBtn = () => {
 		if (!validateForm(form) || (editBtnDisabled && status === 'published')) {
 			validatePostBtn();
@@ -1631,6 +1716,10 @@ const UploadOrEditMedia = ({
 		}
 	};
 
+	/**
+	 * Publish Translate button click handler
+	 * @returns {void}
+	 */
 	const handlePublishTranslateButtonOnClick = () => {
 		if (!translated && !isEdit) {
 			handleTranslateBtn();

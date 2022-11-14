@@ -5,13 +5,20 @@ import { useInputsStyles } from '../inputs.style';
 
 const ToggleSwitchField = ({
 	name,
-	id,
+	label,
+	checked,
+	disabled,
 	onBlur,
 	onChange,
-	onInputChange,
-	error
+	error,
+	small = false
 }) => {
-	const classes = useToggleSwitchStyles();
+	const classes = useToggleSwitchStyles({
+		isDisabled: disabled,
+		isChecked: checked,
+		isSmall: small
+	});
+
 	const inputClasses = useInputsStyles();
 
 	function handleKeyPress(e) {
@@ -21,52 +28,37 @@ const ToggleSwitchField = ({
 		onChange(!checked);
 	}
 
-	const handleInputChange = (value) => {
+	const handleInputChange = (event) => {
 		if (onChange) {
-			onChange(value);
+			onChange(event.target.checked);
 		}
-		onInputChange(value);
 	};
+
 	return (
 		<div>
-			<div className={classes.toggleSwitch}>
-				<input
-					type='checkbox'
-					name={name}
-					onBlur={onBlur}
-					className={classes.toggleSwitchCheckbox}
-					id={id}
-					checked={checked}
-					onChange={(e) => handleInputChange(e.target.checked)}
-					disabled={disabled}
-				/>
-				{id ? (
+			<div className={classes.toggleSwitchWrapper}>
+				{!!label && <h5>{label}</h5>}
+				<div className={classes.toggleSwitch}>
+					<input
+						type='checkbox'
+						name={name}
+						onBlur={onBlur}
+						className={classes.toggleSwitchCheckbox}
+						id={name}
+						checked={checked}
+						onChange={handleInputChange}
+						disabled={disabled}
+					/>
 					<label
 						className={classes.toggleSwitchLabel}
-						htmlFor={id}
+						htmlFor={name}
 						tabIndex={disabled ? -1 : 1}
-						onKeyDown={(e) => {
-							handleKeyPress(e);
-						}}
+						onKeyDown={handleKeyPress}
 					>
-						<span
-							className={
-								disabled
-									? `${classes.toggleSwitchInner} ${classes.toggleSwitchDisabled}`
-									: `${classes.toggleSwitchInner}`
-							}
-							tabIndex={-1}
-						/>
-						<span
-							className={
-								disabled
-									? `${classes.toggleSwitch2} ${classes.toggleSwitchDisabled}`
-									: `${classes.toggleSwitch2}`
-							}
-							tabIndex={-1}
-						/>
+						<span className={classes.toggleSwitchInner} tabIndex={-1} />
+						<span className={classes.toggleSwitchCircle} tabIndex={-1} />
 					</label>
-				) : null}
+				</div>
 			</div>
 			<span className={inputClasses.errorText}>{error}</span>
 		</div>
@@ -75,11 +67,13 @@ const ToggleSwitchField = ({
 
 ToggleSwitchField.propTypes = {
 	name: PropTypes.string.isRequired,
-	id: PropTypes.number.isRequired,
+	checked: PropTypes.bool.isRequired,
+	label: PropTypes.string,
+	disabled: PropTypes.bool,
 	onBlur: PropTypes.func,
 	onChange: PropTypes.func,
-	onInputChange: PropTypes.func,
-	error: PropTypes.string
+	error: PropTypes.string,
+	small: PropTypes.bool
 };
 
 export default ToggleSwitchField;
