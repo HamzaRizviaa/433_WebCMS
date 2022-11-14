@@ -4,10 +4,11 @@ import { TopBannerService } from '../../services';
 
 export const getBannerContent = createAsyncThunk(
 	'topBanner/getBannerContent',
-	async ({ type, title }) => {
+	async ({ type, title, exclude }) => {
 		const params = {
 			type: type || 'home',
-			title: title || null
+			title: title || null,
+			exclude
 		};
 
 		const result = await TopBannerService.getBannerContentApi(params);
