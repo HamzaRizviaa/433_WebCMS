@@ -79,7 +79,6 @@ export const mediaColumns = [
 ];
 
 export const mediaDataFormatterForForm = (media) => {
-	console.log('prebuild', media);
 	const formattedMedia = { ...media };
 
 	if (formattedMedia?.labels) {
@@ -132,7 +131,7 @@ export const mediaDataFormatterForForm = (media) => {
 		: [];
 	formattedMedia.mainCategory = media?.media_type;
 	formattedMedia.subCategory = media?.sub_category;
-	console.log(formattedMedia);
+
 	return formattedMedia;
 };
 
@@ -191,7 +190,6 @@ export const mediaDataFormatterForServer = (
 	userData,
 	completedUploadFiles
 ) => {
-	console.log('MEDIA FILE WITH', completedUploadFiles);
 	const mediaData = {
 		title: media.title,
 		translations: undefined,
@@ -270,8 +268,8 @@ export const mediaDataFormatterForServer = (
 };
 
 export const completeUpload = async (data, media) => {
-	// let mediaArray = [];
 	const mediaFiles = await Promise.all([...data]);
+
 	const mediaArray = mediaFiles.map((file, index) => {
 		if (file?.signed_response) {
 			const newFileUpload = axios.post(
@@ -330,11 +328,7 @@ export const completeUpload = async (data, media) => {
 		}
 	});
 
-	const resolvedMediaFiles = Promise.all(mediaArray);
-
-	console.log(await resolvedMediaFiles);
-
-	return resolvedMediaFiles;
+	return Promise.all(mediaArray);
 };
 
 export const mediaUnwantedKeysForDeepEqual = [
