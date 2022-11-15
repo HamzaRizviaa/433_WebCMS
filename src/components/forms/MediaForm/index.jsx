@@ -54,7 +54,10 @@ const MediaForm = ({
 		formikBag.setSubmitting(true);
 
 		try {
-			if (!isDraft) {
+			if (
+				(!isDraft && specificMedia?.title !== values.title) ||
+				(!isDraft && status === 'draft')
+			) {
 				const { data } = await MediaLibraryService.checkTitleDuplication(
 					values.title
 				);
