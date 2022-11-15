@@ -98,7 +98,7 @@ export const mediaDataFormatterForForm = (media) => {
 					media_url: media?.media_url
 						? `${process.env.REACT_APP_MEDIA_ENDPOINT}/${media?.media_url}`
 						: '',
-					type: media?.mainCategory === 'Watch' ? 'video' : 'audio'
+					type: media?.media_type === 'Watch' ? 'video' : 'audio'
 				}
 		  ]
 		: [];
@@ -270,11 +270,11 @@ export const mediaDataFormatterForServer = (
 };
 
 export const completeUpload = async (data, media) => {
-	let mediaArray = [];
+	// let mediaArray = [];
 	const mediaFiles = await Promise.all([...data]);
-	mediaFiles.map(async (file, index) => {
+	const mediaArray = mediaFiles.map((file, index) => {
 		if (file?.signed_response) {
-			const newFileUpload = await axios.post(
+			const newFileUpload = axios.post(
 				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
 				{
 					file_name:
@@ -326,10 +326,15 @@ export const completeUpload = async (data, media) => {
 					}
 				}
 			);
-			mediaArray.push(newFileUpload);
+			return newFileUpload;
 		}
 	});
-	return mediaArray;
+
+	const resolvedMediaFiles = Promise.all(mediaArray);
+
+	console.log(await resolvedMediaFiles);
+
+	return resolvedMediaFiles;
 };
 
 export const mediaUnwantedKeysForDeepEqual = [

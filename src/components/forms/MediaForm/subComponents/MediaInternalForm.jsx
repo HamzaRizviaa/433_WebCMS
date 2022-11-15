@@ -236,7 +236,6 @@ const MediaInternalForm = ({
 									)
 								}
 								maxFiles={3}
-								showPreview
 								required
 								onPreview={openPreviewer}
 								onDelete={() => setFieldValue('uploadedFiles', [])}
