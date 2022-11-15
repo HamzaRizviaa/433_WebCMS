@@ -188,9 +188,10 @@ export const mediaDataFormatterForServer = (
 	media,
 	isDraft = false,
 	mediaFiles,
-	userData
+	userData,
+	completedUploadFiles
 ) => {
-	console.log('MEDIA FILE WITH', media);
+	console.log('MEDIA FILE WITH', completedUploadFiles);
 	const mediaData = {
 		title: media.title,
 		translations: undefined,
@@ -215,7 +216,9 @@ export const mediaDataFormatterForServer = (
 				: ''
 		},
 		...(media.labels.length ? { labels: [...media.labels] } : { labels: [] }),
-		media_url: mediaFiles[0]?.keys?.video_key || mediaFiles[0]?.keys?.audio_key,
+		media_url:
+			completedUploadFiles[0]?.data?.data?.video_data ||
+			completedUploadFiles[0]?.data?.data?.audio_data,
 		height: media?.uploadedFiles[0]?.height,
 		width: media?.uploadedFiles[0]?.width,
 		cover_image: {
@@ -259,76 +262,74 @@ export const mediaDataFormatterForServer = (
 		file_name_portrait_image: media?.uploadedCoverImage[0]?.file_name,
 		file_name_landscape_image: media?.uploadedLandscapeCoverImage[0]?.file_name,
 		file_name: media?.uploadedFiles[0]?.file_name,
-		video_data: mediaFiles[0]?.keys?.video_key || null,
-		image_data: mediaFiles[1]?.keys?.image_key || null,
-		audio_data: mediaFiles[0]?.keys?.audio_key || null
+		video_data: completedUploadFiles[0]?.data?.data?.video_data || null,
+		image_data: null,
+		audio_data: completedUploadFiles[0]?.data?.data?.audio_data || null
 	};
 	return mediaData;
 };
 
-export const completeUpload = (data, media) => {
-	return Promise.all([...data]).then(async (mediaFiles) => {
-		mediaFiles.map(async (file, index) => {
-			if (file?.signed_response) {
-				const newFileUpload = await axios.post(
-					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-					{
-						file_name:
-							index === 1
-								? media.uploadedCoverImage[0].file_name
-								: index === 2
-								? media.uploadedLandscapeCoverImage[0]?.file_name
-								: media.uploadedFiles[0].file_name,
-
-						type: 'medialibrary',
-						data: {
-							bucket: 'media',
-							multipart_upload:
-								media.uploadedFiles[0]?.mime_type == 'video/mp4'
-									? [
-											{
-												e_tag: file?.signed_response?.headers?.etag.replace(
-													/['"]+/g,
-													''
-												),
-												part_number: 1
-											}
-									  ]
-									: ['image'],
-							keys: {
-								image_key: file?.keys?.image_key,
-								...(media.mainCategory.name === 'Watch' ||
-								media?.mainCategory === 'Watch'
-									? {
-											video_key: file?.keys?.video_key,
-											audio_key: ''
-									  }
-									: {
-											audio_key: file?.keys?.audio_key,
-											video_key: ''
-									  })
-							},
-							upload_id:
-								media.mainCategory.name === 'Watch' ||
-								media?.mainCategory === 'Watch'
-									? file.upload_id || 'image'
-									: file.fileType === 'image'
-									? 'image'
-									: 'audio'
-						}
-					},
-					{
-						headers: {
-							Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-						}
+export const completeUpload = async (data, media) => {
+	let mediaArray = [];
+	const mediaFiles = await Promise.all([...data]);
+	mediaFiles.map(async (file, index) => {
+		if (file?.signed_response) {
+			const newFileUpload = await axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+				{
+					file_name:
+						index === 1
+							? media.uploadedCoverImage[0].file_name
+							: index === 2
+							? media.uploadedLandscapeCoverImage[0]?.file_name
+							: media.uploadedFiles[0].file_name,
+					type: 'medialibrary',
+					data: {
+						bucket: 'media',
+						multipart_upload:
+							media.uploadedFiles[0]?.mime_type == 'video/mp4'
+								? [
+										{
+											e_tag: file?.signed_response?.headers?.etag.replace(
+												/['"]+/g,
+												''
+											),
+											part_number: 1
+										}
+								  ]
+								: ['image'],
+						keys: {
+							image_key: file?.keys?.image_key,
+							...(media.mainCategory.name === 'Watch' ||
+							media?.mainCategory === 'Watch'
+								? {
+										video_key: file?.keys?.video_key,
+										audio_key: ''
+								  }
+								: {
+										audio_key: file?.keys?.audio_key,
+										video_key: ''
+								  })
+						},
+						upload_id:
+							media.mainCategory.name === 'Watch' ||
+							media?.mainCategory === 'Watch'
+								? file.upload_id || 'image'
+								: file.fileType === 'image'
+								? 'image'
+								: 'audio'
 					}
-				);
-				return newFileUpload;
-			} else {
-				Promise.resolve();
-			}
-		});
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			mediaArray.push(newFileUpload);
+		}
 	});
+	return mediaArray;
 };
 
 export const mediaUnwantedKeysForDeepEqual = [

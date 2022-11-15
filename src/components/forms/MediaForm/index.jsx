@@ -70,13 +70,15 @@ const MediaForm = ({
 			}
 
 			const uploadedImgs = await fileUploadsArray(values);
-			await completeUpload(uploadedImgs, values);
+			console.log('this', uploadedImgs);
+			const completedUploadFiles = await completeUpload(uploadedImgs, values);
 			const getUser = getUserDataObject();
 			const mediaData = mediaDataFormatterForServer(
 				values,
 				isDraft,
 				uploadedImgs,
-				getUser
+				getUser,
+				completedUploadFiles
 			);
 
 			const { type } = await dispatch(
