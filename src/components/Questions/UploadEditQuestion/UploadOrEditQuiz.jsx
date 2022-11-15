@@ -1230,7 +1230,7 @@ const UploadOrEditQuiz = ({
 				handlePreview={() => {
 					handlePreviewEscape();
 				}}
-				notifID={status === 'CLOSED' ? '' : notifID}
+				notifID={notifID}
 			>
 				<LoadingOverlay
 					active={isLoading}
