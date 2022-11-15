@@ -129,9 +129,9 @@ export const mediaDataFormatterForForm = (media) => {
 				}
 		  ]
 		: [];
+
 	formattedMedia.mainCategory = media?.media_type;
 	formattedMedia.subCategory = media?.sub_category;
-
 	return formattedMedia;
 };
 
@@ -163,7 +163,7 @@ const uploadFileToServer = async (file, type) => {
 			throw 'Error';
 		}
 	} catch (error) {
-		console.log('Error');
+		console.error(error);
 		return null;
 	}
 };
@@ -361,8 +361,8 @@ export const mediaFormInitialValues = {
 };
 
 export const mediaFormValidationSchema = Yup.object().shape({
-	mainCategory: Yup.string(),
-	subCategory: Yup.string(),
+	mainCategory: Yup.string().required().label('Main Category'),
+	subCategory: Yup.string().required().label('Sub Category'),
 	title: Yup.string().required().label('Title'),
 	media_dropbox_url: Yup.string(),
 	image_dropbox_url: Yup.string(),

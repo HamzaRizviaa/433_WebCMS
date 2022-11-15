@@ -1,9 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { isEqual, pick, omit } from 'lodash';
 import { useFormikContext } from 'formik';
 import { useStyles } from '../index.styles';
 import { useStyles as globalUseStyles } from '../../../../styles/global.style';
-import { mediaFormInitialValues } from '../../../../data/helpers';
+import {
+	mediaFormInitialValues,
+	mediaUnwantedKeysForDeepEqual
+} from '../../../../data/helpers';
 import {
 	useGetMainCategoriesQuery,
 	useLazyGetSubCategoriesQuery
@@ -109,6 +113,19 @@ const MediaInternalForm = ({
 		if (loadingStatus === ifLoading) return;
 		handleLoading(isLoading);
 	}, [categoriesLoading, isLoading, subLoading]);
+
+	const isDraftDisabled = useMemo(() => {
+		const isEqualToDefaultValues = isEqual(
+			omit(
+				pick(values, Object.keys(mediaFormInitialValues)),
+				mediaUnwantedKeysForDeepEqual
+			),
+			omit(mediaFormInitialValues, mediaUnwantedKeysForDeepEqual)
+		);
+		const isDirty = isEdit ? dirty : formikStatus?.dirty;
+
+		return !isDirty || isEqualToDefaultValues;
+	}, [dirty, values, formikStatus, isEdit]);
 
 	const saveDraftHandler = () =>
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
@@ -380,7 +397,7 @@ const MediaInternalForm = ({
 									<Button
 										size='small'
 										variant={'outlined'}
-										disabled={isEdit ? !dirty : !formikStatus?.dirty}
+										disabled={isDraftDisabled}
 										onClick={saveDraftHandler}
 									>
 										{status === 'draft' && isEdit
