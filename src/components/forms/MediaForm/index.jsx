@@ -70,7 +70,6 @@ const MediaForm = ({
 			}
 
 			const uploadedImgs = await fileUploadsArray(values);
-			console.log('this', uploadedImgs);
 			const completedUploadFiles = await completeUpload(uploadedImgs, values);
 			const getUser = getUserDataObject();
 			const mediaData = mediaDataFormatterForServer(

@@ -331,9 +331,6 @@ export const completeUpload = async (data, media) => {
 	});
 
 	const resolvedMediaFiles = Promise.all(mediaArray);
-
-	console.log(await resolvedMediaFiles);
-
 	return resolvedMediaFiles;
 };
 
