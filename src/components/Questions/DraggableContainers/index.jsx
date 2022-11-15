@@ -106,23 +106,6 @@ const DraggableContainers = ({
 												{type} {index + 1}
 											</Typography>
 										</div>
-										{initialData && initialData.id && (
-											<CopyToClipboard>
-												{({ copy }) => (
-													<Box
-														display='flex'
-														alignItems='center'
-														onClick={() => copy(initialData.id)}
-													>
-														<CopyIcon />
-														<Box ml={'4px'} className={classes.id}>
-															{initialData.id}
-														</Box>
-													</Box>
-												)}
-											</CopyToClipboard>
-										)
-										}
 
 										<Box className={classes.rightDiv}>
 											<div
