@@ -75,3 +75,59 @@ export const questionTableColumns = [
 		formatter: () => getFormatter('options', { title: 'QUIZ DETAIL' })
 	}
 ];
+
+export const questionsFormInitialValues = {
+	resultsUploadedFiles: [],
+	positiveResultsUploadedFiles: [],
+	negativeResultsUploadedFiles: [],
+	general_info: {
+		save_draft: true,
+		question_type: 'poll',
+		end_date: '',
+		results: '',
+		results_image: '',
+		results_filename: '',
+		results_dropbox_url: '',
+		positive_results: '',
+		positive_results_image: '',
+		positive_results_filename: '',
+		positive_results_dropbox_url: '',
+		negative_results: '',
+		negative_results_image: '',
+		negative_results_filename: '',
+		negative_results_dropbox_url: ''
+	},
+	questions: [
+		{
+			question: '',
+			uploadedFiles: [],
+			position: 1,
+			labels: [],
+			dropbox_url: '',
+			pollAnswers: [
+				{
+					answer: '',
+					type: 'poll',
+					position: 0
+				},
+				{
+					answer: '',
+					type: 'poll',
+					position: 1
+				}
+			],
+			quizAnswers: [
+				{
+					answer: '',
+					type: 'right_answer',
+					position: 0
+				},
+				{
+					answer: '',
+					type: 'wrong_answer_1',
+					position: 1
+				}
+			]
+		}
+	]
+};
