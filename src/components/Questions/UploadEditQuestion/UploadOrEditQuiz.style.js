@@ -387,5 +387,13 @@ export const useStyles = makeStyles((theme) => ({
 		'& h6': {
 			marginLeft: '1rem'
 		}
+	},
+	id: {
+		fontFamily: 'Poppins',
+		fontStyle: 'normal',
+		fontWeight: 700,
+		fontSize: '11px',
+		letterSpacing: '0.03em',
+		color: '#808080'
 	}
 }));
