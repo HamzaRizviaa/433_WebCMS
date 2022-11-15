@@ -1,31 +1,25 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import PropTypes from 'prop-types';
 
-/**
- * Draggable Component
- * @component
- */
-const DraggableLayoutWrapper = ({ children, onDragEnd }) => {
+const DraggableLayoutWrapper = ({ onDragEnd, children }) => {
 	return (
-		<div>
-			<DragDropContext onDragEnd={onDragEnd}>
-				<Droppable droppableId='droppable'>
-					{(provided) => (
-						<div {...provided.droppableProps} ref={provided.innerRef}>
-							{children}
-							{provided.placeholder}
-						</div>
-					)}
-				</Droppable>
-			</DragDropContext>
-		</div>
+		<DragDropContext onDragEnd={onDragEnd}>
+			<Droppable droppableId='droppable'>
+				{(provided) => (
+					<div {...provided.droppableProps} ref={provided.innerRef}>
+						{children}
+						{provided.placeholder}
+					</div>
+				)}
+			</Droppable>
+		</DragDropContext>
 	);
 };
 
 DraggableLayoutWrapper.propTypes = {
-	children: PropTypes.node,
-	onDragEnd: PropTypes.func
+	onDragEnd: PropTypes.func.isRequired,
+	children: PropTypes.element
 };
 
 export default DraggableLayoutWrapper;
