@@ -63,7 +63,6 @@ const MediaForm = ({
 	const [getSubCategories, subCategoryStates] = useLazyGetSubCategoriesQuery();
 
 	const { data } = subCategoryStates;
-	console.log('DATA', data);
 
 	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
 		formikBag.setSubmitting(true);

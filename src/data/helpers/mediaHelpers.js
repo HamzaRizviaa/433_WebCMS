@@ -215,9 +215,11 @@ export const mediaDataFormatterForServer = (
 				: ''
 		},
 		...(media.labels.length ? { labels: [...media.labels] } : { labels: [] }),
-		media_url:
-			completedUploadFiles[0]?.data?.data?.video_data ||
-			completedUploadFiles[0]?.data?.data?.audio_data,
+		media_url: media?.uploadedFiles?.length
+			? completedUploadFiles[0]?.data?.data?.video_data ||
+			  completedUploadFiles[0]?.data?.data?.audio_data ||
+			  media?.uploadedFiles[0]?.media_url.split('cloudfront.net/')[1]
+			: '',
 		height: media?.uploadedFiles[0]?.height,
 		width: media?.uploadedFiles[0]?.width,
 		cover_image: {
@@ -259,7 +261,9 @@ export const mediaDataFormatterForServer = (
 				  })
 		},
 		...(media.id ? { media_id: media.id } : {}),
-		file_name_media: media?.uploadedFiles[0]?.file_name,
+		file_name_media: media?.uploadedFiles?.length
+			? media?.uploadedFiles[0]?.file_name
+			: '',
 		file_name_portrait_image: media?.uploadedCoverImage[0]?.file_name,
 		file_name_landscape_image: media?.uploadedLandscapeCoverImage[0]?.file_name,
 		file_name: media?.uploadedFiles[0]?.file_name,
