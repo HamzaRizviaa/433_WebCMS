@@ -30,6 +30,26 @@ class MediaLibraryService {
 	static getSpecificMediaApi = (id) => axiosInstance.get(`/media/edit/${id}`);
 
 	static getMediaLabelsApi = () => axiosInstance.get(`/label/all-labels`);
+
+	static postMedia = (data) => {
+		return axiosInstance.post('/media/create-media', data, {
+			params: {
+				api_version: 2
+			}
+		});
+	};
+
+	static checkTitleDuplication = (title) => {
+		return axiosInstance.get(`/media/check/${title}`);
+	};
+
+	static deleteMedia = (data) => {
+		return axiosInstance.post('/media/delete-media', data, {
+			params: {
+				api_version: 2
+			}
+		});
+	};
 }
 
 export default MediaLibraryService;

@@ -3,15 +3,14 @@ import { TopBannerService } from '../../services';
 
 export const getBannerContent = createAsyncThunk(
 	'topBanner/getBannerContent',
-	async ({ type, title }) => {
-		let endPoint = `top-banner/get-content?type=home`;
-		if (type) {
-			endPoint = `top-banner/get-content?type=${type}`;
-		}
-		if (title) {
-			endPoint += `&title=${title}`;
-		}
-		const result = await TopBannerService.getBannerContentApi(endPoint);
+	async ({ type, title, exclude }) => {
+		const params = {
+			type: type || 'home',
+			title: title || null,
+			exclude
+		};
+
+		const result = await TopBannerService.getBannerContentApi(params);
 
 		if (result?.data?.data?.length > 0) {
 			return result.data.data;
