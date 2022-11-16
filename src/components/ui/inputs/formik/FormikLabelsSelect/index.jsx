@@ -134,7 +134,7 @@ const FormikLabelsSelect = ({ name, placeholder, ...restProps }) => {
 			error={
 				touched && error
 					? `You need to add ${
-							7 - selectedValues.length
+							4 - selectedValues.length
 					  } more labels in order to upload media`
 					: ''
 			}
