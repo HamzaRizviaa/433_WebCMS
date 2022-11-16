@@ -582,7 +582,7 @@ const QuestionForm = ({
 					<p className={globalClasses.mediaError}>
 						{isError.selectedLabels
 							? `You need to add ${
-									7 - form.labels.length
+									1 - form.labels.length
 							  } more labels in order to upload media`
 							: isError.selectedLabelsDraft
 							? 'You need to select atleast 1 label to save as draft'
