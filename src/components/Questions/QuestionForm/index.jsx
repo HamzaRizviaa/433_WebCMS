@@ -553,7 +553,6 @@ const QuestionForm = ({
 					)}
 					<div className={classes.titleContainer}>
 						<Labels
-							//library={'question'}
 							titleClasses={
 								isError.selectedLabels
 									? globalClasses.errorState

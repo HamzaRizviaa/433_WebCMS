@@ -4,6 +4,12 @@ import { isEmpty } from 'lodash';
 import axios from 'axios';
 import * as Yup from 'yup';
 
+const fileDuration = 10;
+let portraitFileWidth = 100;
+let portraitFileHeight = 100;
+let landscapeFileWidth = 100;
+let landscapeFileHeight = 100;
+
 export const mediaColumns = [
 	{
 		dataField: 'title',
@@ -73,7 +79,6 @@ export const mediaColumns = [
 ];
 
 export const mediaDataFormatterForForm = (media) => {
-	console.log('prebuild', media);
 	const formattedMedia = { ...media };
 
 	if (formattedMedia?.labels) {
@@ -124,6 +129,7 @@ export const mediaDataFormatterForForm = (media) => {
 				}
 		  ]
 		: [];
+
 	formattedMedia.mainCategory = media?.media_type;
 	formattedMedia.subCategory = media?.sub_category;
 	formattedMedia.media_dropbox_url = media?.dropbox_url?.media;
@@ -158,11 +164,11 @@ const uploadFileToServer = async (file, type) => {
 				fileType: type
 			};
 		} else {
-			throw Error('Bad Request');
+			throw 'Error';
 		}
 	} catch (error) {
 		console.error(error);
-		throw Error(error.message || 'something went wrong');
+		return null;
 	}
 };
 
@@ -188,16 +194,15 @@ export const mediaDataFormatterForServer = (
 	userData,
 	completedUploadFiles
 ) => {
-	console.log('MEDIAAA', media);
 	const mediaData = {
 		title: media.title,
 		translations: undefined,
 		description: media.description,
-		duration: Math.ceil(media?.uploadedFiles[0]?.duration),
+		duration: Math.round(fileDuration),
 		type: 'medialibrary',
 		save_draft: isDraft,
-		main_category_id: media.mainCategoryContent || media.main_category_id,
-		sub_category_id: media.subCategoryContent || media.sub_category_id,
+		main_category_id: media.mainCategoryContent,
+		sub_category_id: media.subCategoryContent,
 		show_likes: media.show_likes ? true : false,
 		show_comments: media.show_comments ? true : false,
 		user_data: userData,
@@ -222,9 +227,8 @@ export const mediaDataFormatterForServer = (
 			...(mediaFiles[1]?.url
 				? {
 						portrait: {
-							// ...media?.uploadedCoverImage[0],
-							height: media?.uploadedCoverImage[0].height || 100,
-							width: media?.uploadedCoverImage[0].width || 100,
+							width: portraitFileWidth,
+							height: portraitFileHeight,
 							image_url: mediaFiles[1]?.keys?.image_key
 						}
 				  }
@@ -240,9 +244,8 @@ export const mediaDataFormatterForServer = (
 			...(mediaFiles[2]?.url
 				? {
 						landscape: {
-							// ...media?.uploadedLandscapeCoverImage[0],
-							height: media?.uploadedLandscapeCoverImage[0].height || 100,
-							width: media?.uploadedLandscapeCoverImage[0].width || 100,
+							width: landscapeFileWidth,
+							height: landscapeFileHeight,
 							image_url: mediaFiles[2]?.keys?.image_key
 						}
 				  }
@@ -269,8 +272,8 @@ export const mediaDataFormatterForServer = (
 };
 
 export const completeUpload = async (data, media) => {
-	// let mediaArray = [];
 	const mediaFiles = await Promise.all([...data]);
+
 	const mediaArray = mediaFiles.map((file, index) => {
 		if (file?.signed_response) {
 			const newFileUpload = axios.post(
@@ -329,8 +332,7 @@ export const completeUpload = async (data, media) => {
 		}
 	});
 
-	const resolvedMediaFiles = Promise.all(mediaArray);
-	return resolvedMediaFiles;
+	return Promise.all(mediaArray);
 };
 
 export const mediaUnwantedKeysForDeepEqual = [
