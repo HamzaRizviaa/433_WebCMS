@@ -12,15 +12,21 @@ const sortKeysMapping = {
 };
 
 class MediaLibraryService {
+	/**
+	 * This function is responsible for the fetching of all media
+	 * @param {*} queryParams
+	 * @returns Promise of the AxiosResponse Object
+	 */
 	static getMediaApi = (queryParams) => {
 		const params = {
 			...queryParams,
 			limit: 20,
+			page: queryParams.page || 1,
 			sort_by: sortKeysMapping[queryParams.sort_by] || null
 		};
 
 		return axiosInstance.get('/media/get-media', { params });
-	}
+	};
 
 	static getAllMediaApi = (endPoint) => axiosInstance.get(`/${endPoint}`);
 

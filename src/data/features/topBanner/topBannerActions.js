@@ -1,4 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
 import { TopBannerService } from '../../services';
 
 export const getBannerContent = createAsyncThunk(
@@ -28,6 +29,22 @@ export const getAllBanners = createAsyncThunk(
 			return result.data.data;
 		} else {
 			return [];
+		}
+	}
+);
+
+export const createOrEditTopBanner = createAsyncThunk(
+	'topBanner/createOrEditTopBanner',
+	async (data) => {
+		try {
+			const response = await TopBannerService.postTopBanner(data);
+
+			if (response.data.status_code === 200) {
+				toast.success('Banners have been updated');
+			}
+		} catch (e) {
+			toast.error('Failed to update banners');
+			console.error(e);
 		}
 	}
 );

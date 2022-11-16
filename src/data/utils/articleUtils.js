@@ -156,7 +156,7 @@ export const checkEmptyQuestion = (data) => {
 				(item?.data?.answers?.length === 2
 					? item?.data?.answers.every((everyItem) => everyItem?.answer !== '')
 					: false) &&
-				item?.data?.labels?.length > 0 &&
+				item?.data?.labels?.length > 6 &&
 				item?.data?.uploadedFiles?.length
 			) {
 				return true;
@@ -283,7 +283,7 @@ export const checkNewElementQuestionDraft = (elements, data) => {
 
 export const checkMatchPublishAndDraft = (elements = [], data = []) => {
 	console.log('compare validations', elements, data);
-	if (data.length === 0) return true;
+	if(data.length === 0) return true
 	let isSame = true;
 
 	// if (elements?.length === data?.length) return true;
