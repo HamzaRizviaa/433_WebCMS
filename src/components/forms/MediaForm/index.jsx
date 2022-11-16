@@ -43,11 +43,13 @@ const MediaForm = ({
 	// Refs
 	const dialogWrapper = useRef(null);
 
-	const initialValues = useMemo(() => {
-		return isEdit && !isEmpty(specificMedia)
-			? mediaDataFormatterForForm(specificMedia)
-			: mediaFormInitialValues;
-	}, [isEdit, specificMedia]);
+	const initialValues = useMemo(
+		() =>
+			isEdit && !isEmpty(specificMedia)
+				? mediaDataFormatterForForm(specificMedia)
+				: mediaFormInitialValues,
+		[isEdit, specificMedia]
+	);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
