@@ -41,9 +41,7 @@ const ArticleTextDraggable = ({
 	setDisableDropdown
 }) => {
 	const classes = useStyles();
-	const [clickExpandIcon, setClickExpandIcon] = useState(
-		initialData?.description ? false : item?.isOpen
-	);
+	const [clickExpandIcon, setClickExpandIcon] = useState(item?.isOpen);
 	const [description, setDescription] = useState('');
 
 	const clickExpand = () => {
@@ -58,7 +56,7 @@ const ArticleTextDraggable = ({
 					tinymce?.get(`text-${item.sortOrder}_ifr`) ||
 					tinymce?.get(`text-${item.sortOrder}`);
 				setDescription(editorbyId?.setContent(initialData?.description));
-			}, 800);
+			}, 1000);
 		}
 	}, [clickExpandIcon]);
 
