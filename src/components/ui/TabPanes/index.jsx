@@ -1,19 +1,29 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import TabsUnstyled from '@mui/base/TabsUnstyled';
 import TabsListUnstyled from '@mui/base/TabsListUnstyled';
 import TabUnstyled from '@mui/base/TabUnstyled';
-import { useStyles } from './index.styles';
-import PropTypes from 'prop-types';
+
 import TabPanel from './TabPanel';
-const TabPanes = ({ headings, disabled, children }) => {
+import { useStyles } from './index.styles';
+
+const TabPanes = ({ headings, onClick, disabled, children }) => {
 	const muiClasses = useStyles();
+
+	const handleClick = (value) => {
+		if (onClick) onClick(value);
+	};
 
 	return (
 		<div className={muiClasses.root}>
 			<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
 				<TabsListUnstyled className={muiClasses.tabMainDiv}>
 					{headings.map((text, index) => (
-						<TabUnstyled disabled={disabled} key={index}>
+						<TabUnstyled
+							disabled={disabled}
+							key={index}
+							onClick={() => handleClick(text)}
+						>
 							{text}
 						</TabUnstyled>
 					))}
@@ -29,18 +39,8 @@ TabPanes.TabPanel = TabPanel;
 TabPanes.propTypes = {
 	headings: PropTypes.array.isRequired,
 	disabled: PropTypes.boolean,
+	onClick: PropTypes.func,
 	children: PropTypes.element
 };
 
 export default TabPanes;
-
-// heading = [
-// 	{
-// 		value: '0',
-// 		label: 'Home'
-// 	},
-//     {
-// 		value: '1',
-// 		label: 'Media'
-// 	}
-// ];
