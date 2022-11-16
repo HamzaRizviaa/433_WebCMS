@@ -8,6 +8,7 @@ import { MenuIcon } from '../../../assets/svg-icons';
 import DefaultImage from '../../../assets/defaultImage.png';
 import { useMediaPreviewerStyle } from './index.style';
 import { Markup } from 'interweave';
+import ReactPlayer from 'react-player';
 
 const { REACT_APP_MEDIA_ENDPOINT } = process.env;
 
@@ -20,7 +21,9 @@ const MediaPreviewer = ({
 	noOfSlides = 0,
 	showSlidesIcon = false
 }) => {
-	const isVideo = mediaUrl.includes('/vids/');
+	const fileFormats = ['/vids/', '/hls/'];
+
+	const isVideo = fileFormats.some((item) => mediaUrl.includes(item));
 
 	const handleImageError = (e) => {
 		e.target.onerror = null;
@@ -34,17 +37,45 @@ const MediaPreviewer = ({
 		isPortrait: isVideo ? fileWidth + 200 < fileHeight : fileWidth < fileHeight
 	});
 
+	const isLandscape = isVideo
+		? fileWidth > fileHeight + 200
+		: fileWidth > fileHeight;
+
+	const isPortrait = isVideo
+		? fileWidth + 200 < fileHeight
+		: fileWidth < fileHeight;
+
 	const mediaTooltipTitle = isVideo ? (
-		<video
-			id='my-video'
-			poster={thumbnailUrl}
-			autoPlay
+		// <video
+		// 	id='my-video'
+		// 	poster={thumbnailUrl}
+		// 	autoPlay
+		// 	muted
+		// 	className={classes.mediaIconPreview}
+		// 	controls={true}
+		// >
+		// 	<source src={`${REACT_APP_MEDIA_ENDPOINT}/${mediaUrl}`} />
+		// </video>
+		<ReactPlayer
+			width={
+				isLandscape
+					? 'calc(48px * 6)'
+					: isPortrait
+					? 'calc(38.4px * 6)'
+					: 'calc(5rem * 8)'
+			}
+			height={
+				isLandscape
+					? 'calc(25.131px * 6)'
+					: isPortrait
+					? 'calc(48px * 6)'
+					: 'calc(5rem * 5)'
+			}
+			controls
 			muted
-			className={classes.mediaIconPreview}
-			controls={true}
-		>
-			<source src={`${REACT_APP_MEDIA_ENDPOINT}/${mediaUrl}`} />
-		</video>
+			playing
+			url={`${REACT_APP_MEDIA_ENDPOINT}/${mediaUrl}`}
+		/>
 	) : (
 		<img
 			className={classes.mediaIconPreview}
