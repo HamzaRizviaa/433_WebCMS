@@ -47,11 +47,7 @@ export default function PollDetails({
 			disableDropdown={disableDropdown}
 			quiz={true}
 			dialogRef={dialogWrapper}
-			notifID={
-				location === 'article' || status === 'CLOSED' || status === 'draft'
-					? ''
-					: notifID
-			}
+			notifID={notifID}
 		>
 			<div className={muiClasses.root}>
 				<QuizResults
