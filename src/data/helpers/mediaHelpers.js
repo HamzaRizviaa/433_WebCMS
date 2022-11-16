@@ -164,11 +164,11 @@ const uploadFileToServer = async (file, type) => {
 				fileType: type
 			};
 		} else {
-			throw 'Error';
+			throw Error('Bad Request');
 		}
 	} catch (error) {
 		console.error(error);
-		return null;
+		throw Error(error.message || 'something went wrong');
 	}
 };
 
