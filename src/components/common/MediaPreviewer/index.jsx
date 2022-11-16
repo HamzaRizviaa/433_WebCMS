@@ -71,6 +71,7 @@ const MediaPreviewer = ({
 					? 'calc(48px * 6)'
 					: 'calc(5rem * 5)'
 			}
+			config={{ file: { attributes: { poster: thumbnailUrl } } }}
 			controls
 			muted
 			playing
