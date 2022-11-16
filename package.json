@@ -1,6 +1,6 @@
 {
 	"name": "433",
-	"version": "1.6.1",
+	"version": "1.6.4",
 	"private": true,
 	"dependencies": {
 		"@emotion/react": "^11.7.0",

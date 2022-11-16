@@ -32,7 +32,7 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 			}
 			if (Array.isArray(form[key])) {
 				if (key === 'labels') {
-					return form[key]?.length < 7 ? false : true;
+					return form[key]?.length < 4 ? false : true;
 				} else {
 					return form[key]?.length === 0 ? false : true;
 				}
@@ -65,7 +65,7 @@ const validateForm = (form, dataElements, newsData, quesData) => {
 						(dataFile?.data?.answers?.length === 2
 							? dataFile?.data?.answers.every((item) => item?.answer !== '')
 							: false) &&
-						dataFile?.data?.labels?.length > 6 &&
+						dataFile?.data?.labels?.length > 0 &&
 						dataFile?.data?.uploadedFiles?.length
 					);
 				}

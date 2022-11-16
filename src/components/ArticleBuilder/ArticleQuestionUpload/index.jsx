@@ -647,6 +647,7 @@ const ArticleQuestionUpload = ({
 								extraLabel={extraLabel}
 								draftStatus={status}
 								setExtraLabel={setExtraLabel}
+								//library={'question'}
 							/>
 						</div>
 

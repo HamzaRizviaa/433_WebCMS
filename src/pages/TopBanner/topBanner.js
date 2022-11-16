@@ -10,8 +10,8 @@ export const useStyles = makeStyles(() => ({
 			padding: '6px 5px',
 			marginTop: '2.5rem',
 			marginBottom: '2rem',
-			display: 'flex',
-			justifyContent: 'space-between'
+			display:"flex",
+			justifyContent:"space-between",
 		},
 		'& .TabUnstyled-root': {
 			width: '49%',
@@ -21,7 +21,7 @@ export const useStyles = makeStyles(() => ({
 			border: 'none !important',
 			fontFamily: 'Poppins',
 			fontStyle: 'normal',
-			fontWeight: 'bold',
+			fontWeight: 'bold', 
 			fontSize: '12px',
 			lineHeight: '16px',
 			textTransform: 'capitalize'
