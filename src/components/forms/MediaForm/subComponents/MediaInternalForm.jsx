@@ -146,7 +146,9 @@ const MediaInternalForm = ({
 			...values,
 			[name]: value,
 			subCategory: '',
-			mainCategoryContent: data.id
+			mainCategoryContent: data.id,
+			uploadedFiles: []
+			// setFieldValue('uploadedFiles', [])
 		});
 	};
 
