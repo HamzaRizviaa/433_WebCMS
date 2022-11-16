@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { isEqual, pick, omit } from 'lodash';
@@ -9,8 +10,8 @@ import {
 	mediaUnwantedKeysForDeepEqual
 } from '../../../../data/helpers';
 import {
-	useGetMainCategoriesQuery,
-	useLazyGetSubCategoriesQuery
+	useGetMainCategoriesQuery
+	// useLazyGetSubCategoriesQuery
 } from '../../../../data/features/mediaLibrary/media.query';
 
 import { Tooltip, Fade } from '@mui/material';
@@ -25,6 +26,8 @@ import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
 
 // const isTrue = true;
 const MediaInternalForm = ({
+	getSubCategories,
+	subCategoryStates,
 	isEdit,
 	status,
 	openPreviewer,
@@ -44,17 +47,13 @@ const MediaInternalForm = ({
 		isSuccess
 	} = useGetMainCategoriesQuery();
 
-	//get sub categories
-	const [
-		getSubCategories,
-		{
-			isFetching: isLoading,
-			isLoading: subLoading,
-			data: subCategories,
-			isSuccess: subCategoriesSuccess,
-			...subResponse
-		}
-	] = useLazyGetSubCategoriesQuery();
+	const {
+		isFetching: isLoading,
+		isLoading: subLoading,
+		data: subCategories,
+		isSuccess: subCategoriesSuccess,
+		...subResponse
+	} = subCategoryStates;
 
 	const {
 		values,

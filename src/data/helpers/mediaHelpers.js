@@ -188,6 +188,7 @@ export const mediaDataFormatterForServer = (
 	userData,
 	completedUploadFiles
 ) => {
+	console.log('MEDIAAA', media);
 	const mediaData = {
 		title: media.title,
 		translations: undefined,
@@ -195,8 +196,8 @@ export const mediaDataFormatterForServer = (
 		duration: Math.ceil(media?.uploadedFiles[0]?.duration),
 		type: 'medialibrary',
 		save_draft: isDraft,
-		main_category_id: media.mainCategoryContent,
-		sub_category_id: media.subCategoryContent,
+		main_category_id: media.mainCategoryContent || media.main_category_id,
+		sub_category_id: media.subCategoryContent || media.sub_category_id,
 		show_likes: media.show_likes ? true : false,
 		show_comments: media.show_comments ? true : false,
 		user_data: userData,

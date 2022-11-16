@@ -21,6 +21,10 @@ import {
 	getMedia
 } from '../../../data/features/mediaLibrary/mediaLibrarySlice';
 import { MediaLibraryService } from '../../../data/services';
+import {
+	useGetMainCategoriesQuery,
+	useLazyGetSubCategoriesQuery
+} from '../../../data/features/mediaLibrary/media.query';
 
 import MediaFormDrawer from './subComponents/MediaFormDrawer';
 import DeleteModal from '../../DeleteModal';
@@ -53,8 +57,28 @@ const MediaForm = ({
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
+	// get categories
+	const { data: mainCategories } = useGetMainCategoriesQuery();
+	//get sub categories
+	const [getSubCategories, subCategoryStates] = useLazyGetSubCategoriesQuery();
+
+	const { data } = subCategoryStates;
+	console.log('DATA', data);
+
 	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
 		formikBag.setSubmitting(true);
+		const clonedValues = { ...values };
+
+		const mainCategoryId = (mainCategories || []).find(
+			(u) => u.name === values.mainCategory
+		)?.id;
+
+		const subCategoryId = (data || []).find(
+			(u) => u.name === values.subCategory
+		)?.id;
+
+		clonedValues.main_category_id = mainCategoryId;
+		clonedValues.sub_category_id = subCategoryId;
 
 		try {
 			if (
@@ -79,7 +103,7 @@ const MediaForm = ({
 			const completedUploadFiles = await completeUpload(uploadedImgs, values);
 			const getUser = getUserDataObject();
 			const mediaData = mediaDataFormatterForServer(
-				values,
+				clonedValues,
 				isDraft,
 				uploadedImgs,
 				getUser,
@@ -141,6 +165,8 @@ const MediaForm = ({
 			{({ setSubmitting }) => (
 				<div>
 					<MediaFormDrawer
+						getSubCategories={getSubCategories}
+						subCategoryStates={subCategoryStates}
 						open={open}
 						handleClose={handleClose}
 						isEdit={isEdit}
