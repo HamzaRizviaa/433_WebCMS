@@ -546,7 +546,7 @@ const ArticleGeneralInfo = ({
 							<p className={globalClasses.mediaError}>
 								{isError.selectedLabels
 									? `You need to add  ${
-											7 - form.labels.length
+											4 - form.labels.length
 									  }  more labels in order to post`
 									: ''}
 							</p>
