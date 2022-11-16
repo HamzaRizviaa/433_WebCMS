@@ -24,6 +24,7 @@ import { MediaLibraryService } from '../../../data/services';
 
 import MediaFormDrawer from './subComponents/MediaFormDrawer';
 import DeleteModal from '../../DeleteModal';
+import { toast } from 'react-toastify';
 
 const MediaForm = ({
 	open,
@@ -102,6 +103,7 @@ const MediaForm = ({
 			}
 		} catch (e) {
 			console.error(e);
+			toast.error(e.message || 'something comes up');
 		} finally {
 			formikBag.setSubmitting(false);
 		}
