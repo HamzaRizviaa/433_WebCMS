@@ -58,7 +58,7 @@ const ArticleTextDraggable = ({
 					tinymce?.get(`text-${item.sortOrder}_ifr`) ||
 					tinymce?.get(`text-${item.sortOrder}`);
 				setDescription(editorbyId?.setContent(initialData?.description));
-			}, 500);
+			}, 800);
 		}
 	}, [clickExpandIcon]);
 
