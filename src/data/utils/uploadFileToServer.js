@@ -2,8 +2,13 @@ import axios from 'axios';
 import captureVideoFrame from 'capture-video-frame';
 import { getLocalStorageDetails } from './index';
 
-const uploadFileToServer = async (uploadedFile, libraryType) => {
+const uploadFileToServer = async (
+	uploadedFile,
+	libraryType,
+	isHlsFormatEnabled
+) => {
 	let signedUrlKeyDelete = '';
+
 	try {
 		const result = await axios.post(
 			`${process.env.REACT_APP_API_ENDPOINT}/media-upload/get-signed-url`, //converting files into smaller parts if file is huge
@@ -67,7 +72,8 @@ const uploadFileToServer = async (uploadedFile, libraryType) => {
 								uploadedFile?.mime_type == 'video/mp4'
 									? result?.data?.data?.upload_id
 									: 'image'
-						}
+						},
+						api_version: isHlsFormatEnabled ? 2 : 1
 					},
 					{
 						headers: {
