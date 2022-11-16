@@ -1,19 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
+import TabsUnstyled from '@mui/base/TabsUnstyled';
+import TabsListUnstyled from '@mui/base/TabsListUnstyled';
+import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
+import TabUnstyled from '@mui/base/TabUnstyled';
+import { useStyles } from './topBanner';
+import Banners from '../../components/banners/Banners';
 import { useSelector } from 'react-redux';
-import { selectBannerStatus } from '../../data/selectors';
-import BannerForm from '../../components/forms/BannerForm';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
-import TabPanes from '../../components/ui/TabPanes';
 
 /**
  * @component
  */
 const TopBanner = () => {
-	const [isBannerFormSubmitting, setFormSubmitting] = useState(false);
-
-	const bannerStatus = useSelector(selectBannerStatus);
-
-	const headings = ['Home', 'Media'];
+	const muiClasses = useStyles();
+	const getBannerContentState = useSelector(
+		(state) => state.rootReducer.topBanner.getBannerContentState
+	);
+	const bannerState = useSelector(
+		(state) => state.rootReducer.topBanner.getBannerStatus
+	);
 
 	return (
 		<DashboardLayout
@@ -22,16 +27,37 @@ const TopBanner = () => {
 			hideSearchFilter
 			hideDateFilter
 			hideLibraryText
-			isLoading={isBannerFormSubmitting || bannerStatus === 'loading'}
 		>
-			<TabPanes headings={headings}>
-				<TabPanes.TabPanel value={0}>
-					<BannerForm tabValue='home' setFormSubmitting={setFormSubmitting} />
-				</TabPanes.TabPanel>
-				<TabPanes.TabPanel value={1}>
-					<BannerForm tabValue='media' setFormSubmitting={setFormSubmitting} />
-				</TabPanes.TabPanel>
-			</TabPanes>
+			<div className={muiClasses.root}>
+				<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
+					<TabsListUnstyled className={muiClasses.tabMainDiv}>
+						<TabUnstyled
+							disabled={getBannerContentState && bannerState ? false : true}
+						>
+							Home
+						</TabUnstyled>
+						<TabUnstyled
+							disabled={getBannerContentState && bannerState ? false : true}
+						>
+							Media
+						</TabUnstyled>
+						{/* <TabUnstyled
+								disabled={getBannerContentState && bannerState ? false : true}
+							>
+								Game
+							</TabUnstyled> */}
+					</TabsListUnstyled>
+					<TabPanelUnstyled value={0}>
+						<Banners tabValue={'home'} />
+					</TabPanelUnstyled>
+					<TabPanelUnstyled value={1}>
+						<Banners tabValue={'media'} />
+					</TabPanelUnstyled>
+					{/* <TabPanelUnstyled value={2}>
+						<Banners tabValue={'game'} />
+					</TabPanelUnstyled> */}
+				</TabsUnstyled>
+			</div>
 		</DashboardLayout>
 	);
 };

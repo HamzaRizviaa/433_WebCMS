@@ -17,7 +17,6 @@ export type SelectFieldCustomProps<T> = {
 	mapOptions: MapOptions<T>;
 	searchable?: boolean;
 	label?: string;
-	isLoading?: boolean;
 	rightLabel?: string;
 	placeholder?: string;
 	required?: boolean;
