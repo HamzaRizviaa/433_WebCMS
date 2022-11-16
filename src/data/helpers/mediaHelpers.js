@@ -132,6 +132,10 @@ export const mediaDataFormatterForForm = (media) => {
 
 	formattedMedia.mainCategory = media?.media_type;
 	formattedMedia.subCategory = media?.sub_category;
+	formattedMedia.media_dropbox_url = media?.dropbox_url?.media;
+	formattedMedia.image_dropbox_url = media?.dropbox_url?.portrait_cover_image;
+	formattedMedia.landscape_image_dropbox_url =
+		media?.dropbox_url?.landscape_cover_image;
 	return formattedMedia;
 };
 
