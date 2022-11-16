@@ -142,7 +142,7 @@ export const viralFormValidationSchema = Yup.object().shape({
 	caption: Yup.string().required('You need to enter a caption'),
 	dropbox_url: Yup.string(),
 	uploadedFiles: Yup.array().min(1).required(),
-	labels: Yup.array().min(4).required().label('Labels'),
+	labels: Yup.array().min(7).required().label('Labels'),
 	show_likes: Yup.boolean().required(),
 	show_comments: Yup.boolean().required()
 });
