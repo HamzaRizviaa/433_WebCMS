@@ -193,7 +193,9 @@ export const mediaDataFormatterForServer = (
 		title: media.title,
 		translations: undefined,
 		description: media.description,
-		duration: Math.ceil(media?.uploadedFiles[0]?.duration),
+		duration: media?.uploadedFiles[0]?.duration
+			? Math.ceil(media?.uploadedFiles[0]?.duration)
+			: 0,
 		type: 'medialibrary',
 		save_draft: isDraft,
 		main_category_id: media.mainCategoryContent || media.main_category_id,
