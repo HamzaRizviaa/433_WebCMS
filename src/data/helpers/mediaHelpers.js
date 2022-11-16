@@ -1,5 +1,14 @@
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
-import { getDateTime } from '../utils';
+import { getDateTime, getLocalStorageDetails, makeid } from '../utils';
+import { isEmpty } from 'lodash';
+import axios from 'axios';
+import * as Yup from 'yup';
+
+const fileDuration = 10;
+let portraitFileWidth = 100;
+let portraitFileHeight = 100;
+let landscapeFileWidth = 100;
+let landscapeFileHeight = 100;
 
 export const mediaColumns = [
 	{
