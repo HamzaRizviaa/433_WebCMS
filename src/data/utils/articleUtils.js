@@ -156,7 +156,7 @@ export const checkEmptyQuestion = (data) => {
 				(item?.data?.answers?.length === 2
 					? item?.data?.answers.every((everyItem) => everyItem?.answer !== '')
 					: false) &&
-				item?.data?.labels?.length > 0 &&
+				item?.data?.labels?.length > 6 &&
 				item?.data?.uploadedFiles?.length
 			) {
 				return true;
