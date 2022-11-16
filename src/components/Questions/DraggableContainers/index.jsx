@@ -27,8 +27,6 @@ import {
 	AccordionSummary,
 	AccordionDetails
 } from '@mui/material';
-import CopyToClipboard from '../../CopyToClipboard'
-import { ReactComponent as CopyIcon } from '../../../assets/Copy.svg'
 
 const DraggableContainers = ({
 	item,
