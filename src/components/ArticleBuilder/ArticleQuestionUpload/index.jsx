@@ -647,17 +647,17 @@ const ArticleQuestionUpload = ({
 								extraLabel={extraLabel}
 								draftStatus={status}
 								setExtraLabel={setExtraLabel}
-								library={'question'}
+								//library={'question'}
 							/>
 						</div>
 
 						<p className={globalClasses.mediaError}>
 							{isError.selectedLabels
 								? `You need to add ${
-										1 - form.labels.length
+										7 - form.labels.length
 								  } more labels in order to upload media`
 								: isError.selectedLabelsDraft
-								? 'You need to select atleast 1 label to save as draft / post'
+								? 'You need to select atleast 1 label to save as draft'
 								: ''}
 						</p>
 					</div>
