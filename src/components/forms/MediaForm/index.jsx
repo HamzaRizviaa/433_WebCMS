@@ -54,7 +54,10 @@ const MediaForm = ({
 		formikBag.setSubmitting(true);
 
 		try {
-			if (!isDraft) {
+			if (
+				(!isDraft && specificMedia?.title !== values.title) ||
+				(!isDraft && status === 'draft')
+			) {
 				const { data } = await MediaLibraryService.checkTitleDuplication(
 					values.title
 				);
@@ -70,13 +73,14 @@ const MediaForm = ({
 			}
 
 			const uploadedImgs = await fileUploadsArray(values);
-			await completeUpload(uploadedImgs, values);
+			const completedUploadFiles = await completeUpload(uploadedImgs, values);
 			const getUser = getUserDataObject();
 			const mediaData = mediaDataFormatterForServer(
 				values,
 				isDraft,
 				uploadedImgs,
-				getUser
+				getUser,
+				completedUploadFiles
 			);
 
 			const { type } = await dispatch(
