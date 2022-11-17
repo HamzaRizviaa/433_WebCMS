@@ -22,7 +22,7 @@ import {
 } from '../../../data/features/mediaLibrary/mediaLibrarySlice';
 import { MediaLibraryService } from '../../../data/services';
 import {
-	useGetMainCategoriesQuery,
+	// useGetMainCategoriesQuery,
 	useLazyGetSubCategoriesQuery
 } from '../../../data/features/mediaLibrary/media.query';
 
@@ -58,26 +58,26 @@ const MediaForm = ({
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
 	// get categories
-	const { data: mainCategories } = useGetMainCategoriesQuery();
+	// const { data: mainCategories } = useGetMainCategoriesQuery();
 	//get sub categories
 	const [getSubCategories, subCategoryStates] = useLazyGetSubCategoriesQuery();
 
-	const { data } = subCategoryStates;
+	// const { data } = subCategoryStates;
 
 	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
 		formikBag.setSubmitting(true);
 		const clonedValues = { ...values };
 
-		const mainCategoryId = (mainCategories || []).find(
-			(u) => u.name === values.mainCategory
-		)?.id;
+		// const mainCategoryId = (mainCategories || []).find(
+		// 	(u) => u.name === values.mainCategory
+		// )?.id;
 
-		const subCategoryId = (data || []).find(
-			(u) => u.name === values.subCategory
-		)?.id;
+		// const subCategoryId = (data || []).find(
+		// 	(u) => u.name === values.subCategory
+		// )?.id;
 
-		clonedValues.main_category_id = mainCategoryId;
-		clonedValues.sub_category_id = subCategoryId;
+		clonedValues.main_category_id = values?.mainCategory;
+		clonedValues.sub_category_id = values?.subCategory;
 
 		try {
 			if (
