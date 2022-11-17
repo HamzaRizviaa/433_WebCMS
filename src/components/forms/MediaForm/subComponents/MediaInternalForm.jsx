@@ -85,22 +85,6 @@ const MediaInternalForm = ({
 		}
 	}, [subCategoriesSuccess, isLoading]);
 
-	// get sub categories when editing an item
-	// useEffect(() => {
-	// 	if (
-	// 		!isLoading &&
-	// 		Array.isArray(mainCategories) &&
-	// 		isSuccess &&
-	// 		values?.mainCategory
-	// 	) {
-	// 		let id = mainCategories.filter(
-	// 			(category) => category.name === values.mainCategory
-	// 		);
-	// 		if (id[0]) {
-	// 			fetchSubCategories(id[0]?.id);
-	// 		}
-	// 	}
-	// }, [mainCategories, categoriesLoading, isSuccess, values?.mainCategory]);
 	useEffect(() => {
 		if (
 			// !isLoading &&
@@ -147,9 +131,6 @@ const MediaInternalForm = ({
 
 	const ifMediaTypeSelected = () =>
 		isEdit ? true : values?.mainCategory && values.subCategory;
-
-	if (isEdit && mainCategories?.length < 0 && subCategories?.length < 0)
-		return null;
 
 	const mainCategoryChangeHandler = (value, name, { data }) => {
 		fetchSubCategories(data.id);
@@ -233,19 +214,6 @@ const MediaInternalForm = ({
 						<div className={globalClasses.explanationWrapper}>
 							<h5>{isEdit ? 'Media File	' : 'Add Media File'}</h5>
 							<span style={{ color: '#ff355a', fontSize: '16px' }}>{'*'}</span>
-							{/* <Tooltip
-								TransitionComponent={Fade}
-								TransitionProps={{ timeout: 800 }}
-								title='Default encoding for videos should be H.264'
-								arrow
-								componentsProps={{
-									tooltip: { className: globalClasses.toolTip },
-									arrow: { className: globalClasses.toolTipArrow }
-								}}
-								placement='bottom-start'
-							>
-								<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
-							</Tooltip> */}
 						</div>
 
 						<div className={classes.fieldWrapper}>
@@ -417,29 +385,31 @@ const MediaInternalForm = ({
 								</div>
 							)}
 
-							<div className={classes.publishDraftDiv}>
-								{(!isEdit || status === 'draft') && (
+							{(isEdit ? values?.mainCategory && values.subCategory : true) && (
+								<div className={classes.publishDraftDiv}>
+									{(!isEdit || status === 'draft') && (
+										<Button
+											size='small'
+											variant={'outlined'}
+											disabled={isDraftDisabled}
+											onClick={saveDraftHandler}
+										>
+											{status === 'draft' && isEdit
+												? 'SAVE DRAFT'
+												: 'SAVE AS DRAFT'}
+										</Button>
+									)}
 									<Button
-										size='small'
-										variant={'outlined'}
-										disabled={isDraftDisabled}
-										onClick={saveDraftHandler}
+										type='submit'
+										disabled={
+											isPublished ? (!dirty ? isValid : !isValid) : !isValid
+										}
+										onClick={handleSubmit}
 									>
-										{status === 'draft' && isEdit
-											? 'SAVE DRAFT'
-											: 'SAVE AS DRAFT'}
+										{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
 									</Button>
-								)}
-								<Button
-									type='submit'
-									disabled={
-										isPublished ? (!dirty ? isValid : !isValid) : !isValid
-									}
-									onClick={handleSubmit}
-								>
-									{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
-								</Button>
-							</div>
+								</div>
+							)}
 						</div>
 					</>
 				)}
