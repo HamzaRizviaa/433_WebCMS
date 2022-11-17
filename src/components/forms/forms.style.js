@@ -44,5 +44,14 @@ export const useFormStyles = makeStyles(() => ({
 		lineHeight: '24px'
 	},
 
-	infoIcon: { cursor: 'pointer', marginLeft: '1rem' }
+	infoIcon: { cursor: 'pointer', marginLeft: '1rem' },
+
+	mainHeading: {
+		display: 'flex',
+		fontSize: '18px',
+		alignItems: 'center',
+		fontFamily: 'Poppins',
+		fontWeight: '800',
+		lineHeight: '30px'
+	}
 }));

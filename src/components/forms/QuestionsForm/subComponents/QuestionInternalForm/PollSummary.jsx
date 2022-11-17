@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import FormikField from '../../../../ui/inputs/formik/FormikField';
 import { useFormStyles } from '../../../forms.style';
 import { useFormikContext } from 'formik';
+import FormikDatePicker from '../../../../ui/inputs/formik/FormikDatePicker';
 
 const PollSummary = ({ openPreviewer }) => {
 	const classes = useFormStyles();
@@ -16,6 +17,16 @@ const PollSummary = ({ openPreviewer }) => {
 
 	return (
 		<div>
+			<div>
+				<FormikDatePicker
+					name='general_info.end_date'
+					placeholder='Please select an end date'
+					label='POLL END DATE'
+					isClearable
+					required
+				/>
+			</div>
+			<p className={classes.mainHeading}>Summary Component</p>
 			<div className={classes.fieldContainer}>
 				<FormikField
 					name={'general_info.results'}
