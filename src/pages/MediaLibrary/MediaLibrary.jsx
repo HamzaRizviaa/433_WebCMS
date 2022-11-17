@@ -4,11 +4,12 @@ import { useDispatch } from 'react-redux';
 
 import Table from '../../components/ui/Table';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
-import UploadOrEditMedia from '../../components/media/uploadOrEditMedia';
+// import UploadOrEditMedia from '../../components/media/uploadOrEditMedia';
 import useGetAllMedia from '../../hooks/libraries/media/useGetAllMedia';
 import { getSpecificMedia } from '../../data/features/mediaLibrary/mediaLibrarySlice';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 import { mediaColumns } from '../../data/helpers/mediaHelpers';
+import MediaForm from '../../components/forms/MediaForm';
 
 const MediaLibrary = () => {
 	const dispatch = useDispatch();
@@ -57,18 +58,27 @@ const MediaLibrary = () => {
 				isLoading={isLoading}
 				noDataText='No Media Found'
 			/>
-			<UploadOrEditMedia
+			{/* <UploadOrEditMedia
+                open={showSlider}
+                isEdit={edit}
+                handleClose={() => {
+                    setShowSlider(false);
+                }}
+                title={edit ? 'Edit Media' : 'Upload Media'}
+                heading1={edit ? 'Media Type' : 'Select Media Type'}
+                buttonText={
+                    edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
+                }
+                rowStatus={rowStatus}
+                status={rowStatus}
+            /> */}
+			<MediaForm
 				open={showSlider}
 				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
 				}}
-				title={edit ? 'Edit Media' : 'Upload Media'}
-				heading1={edit ? 'Media Type' : 'Select Media Type'}
-				buttonText={
-					edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
-				}
-				rowStatus={rowStatus}
+				status={rowStatus}
 			/>
 		</DashboardLayout>
 	);
