@@ -108,25 +108,21 @@ export const questionsFormInitialValues = {
 			pollAnswers: [
 				{
 					answer: '',
-					type: 'poll',
-					position: 0
+					type: 'poll'
 				},
 				{
 					answer: '',
-					type: 'poll',
-					position: 1
+					type: 'poll'
 				}
 			],
 			quizAnswers: [
 				{
 					answer: '',
-					type: 'right_answer',
-					position: 0
+					type: 'right_answer'
 				},
 				{
 					answer: '',
-					type: 'wrong_answer_1',
-					position: 1
+					type: 'wrong_answer_1'
 				}
 			]
 		}
@@ -194,8 +190,15 @@ export const questionDataFormatterForService = async (values, isDraft) => {
 			height: item.uploadedFiles[0]?.height,
 			answers:
 				values.general_info.question_type === 'poll'
-					? item.pollAnswers
-					: item.quizAnswers
+					? item.pollAnswers.map((item, index) => ({
+							...item,
+							position: index + 1
+					  }))
+					: item.quizAnswers.map((item, index) => ({
+							...item,
+							position: index + 1,
+							type: index > 1 ? `wrong_answer_${index + 1}` : item.type
+					  }))
 		})),
 		...(values.question_id ? { question_id: values.question_id } : {})
 	};
