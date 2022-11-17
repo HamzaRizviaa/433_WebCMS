@@ -1,5 +1,7 @@
+import { omit } from 'lodash';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateConstantTime, getDateTime } from '../utils';
+import uploadFilesToS3 from '../utils/uploadFilesToS3';
 
 export const questionTableColumns = [
 	{
@@ -101,7 +103,6 @@ export const questionsFormInitialValues = {
 		{
 			question: '',
 			uploadedFiles: [],
-			position: 1,
 			labels: [],
 			dropbox_url: '',
 			pollAnswers: [
@@ -130,4 +131,74 @@ export const questionsFormInitialValues = {
 			]
 		}
 	]
+};
+
+export const questionDataFormatterForService = async (values, isDraft) => {
+	const pollFilesToUpload = [values.resultsUploadedFiles[0] || null];
+	const quizFilesToUpload = [
+		values.positiveResultsUploadedFiles[0] || null,
+		values.negativeResultsUploadedFiles[0] || null
+	];
+
+	values.questions.forEach((item) => {
+		if (values.general_info.question_type === 'poll') {
+			pollFilesToUpload.push(item.uploadedFiles[0] || null);
+		} else {
+			quizFilesToUpload.push(item.uploadedFiles[0] || null);
+		}
+	});
+
+	let pollUploadedFiles = [null];
+	let quizUploadedFiles = [null, null];
+
+	if (values.general_info.question_type === 'poll') {
+		pollUploadedFiles = await uploadFilesToS3(
+			pollFilesToUpload,
+			'questionLibrary'
+		);
+	} else {
+		quizUploadedFiles = await uploadFilesToS3(
+			quizFilesToUpload,
+			'questionLibrary'
+		);
+	}
+
+	const [resultsFile, ...pollSlideFiles] = pollUploadedFiles;
+	const [positiveResultsFile, negativeResultFile, ...quizSlideFiles] =
+		quizUploadedFiles;
+
+	const payload = {
+		general_info: {
+			...values.general_info,
+			save_draft: isDraft,
+			results_image: resultsFile?.media_url,
+			results_filename: resultsFile?.file_name,
+			positive_results_image: positiveResultsFile?.media_url,
+			positive_results_filename: positiveResultsFile?.file_name,
+			negative_results_image: negativeResultFile?.media_url,
+			negative_results_filename: negativeResultFile?.file_name
+		},
+		questions: values.questions.map((item, index) => ({
+			position: index + 1,
+			...omit(item, ['uploadedFiles', 'pollAnswers', 'quizAnswers']),
+			...(values.general_info.question_type === 'poll'
+				? {
+						image: pollSlideFiles[index]?.media_url,
+						file_name: pollSlideFiles[index]?.file_name
+				  }
+				: {
+						image: quizSlideFiles[index]?.media_url,
+						file_name: quizSlideFiles[index]?.file_name
+				  }),
+			width: item.uploadedFiles[0]?.width,
+			height: item.uploadedFiles[0]?.height,
+			answers:
+				values.general_info.question_type === 'poll'
+					? item.pollAnswers
+					: item.quizAnswers
+		})),
+		...(values.question_id ? { question_id: values.question_id } : {})
+	};
+
+	return payload;
 };

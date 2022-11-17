@@ -27,8 +27,24 @@ class QuestionsLibraryService {
 		return axiosInstance.get(`/label/all-labels`);
 	}
 
-	static getQuestionEditApi(endPoint) {
-		return axiosInstance.get(`/${endPoint}`);
+	static getQuestionEditApi(params) {
+		return axiosInstance.get('/question/get-question-edit', { params });
+	}
+
+	static postQuestion(data, apiVersion = 2) {
+		return axiosInstance.post('/news/add-question', data, {
+			params: {
+				api_version: apiVersion
+			}
+		});
+	}
+
+	static deleteQuestion(data) {
+		return axiosInstance.post('/news/delete-question', data);
+	}
+
+	static stopQuestion(data) {
+		return axiosInstance.post('/news/stop-question', data);
 	}
 }
 
