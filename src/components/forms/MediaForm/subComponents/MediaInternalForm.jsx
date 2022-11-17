@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { isEqual, pick, omit } from 'lodash';
 import { useFormikContext } from 'formik';
@@ -38,6 +38,7 @@ const MediaInternalForm = ({
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
+	const lastMainCatRef = useRef(null);
 	const isPublished = isEdit && status === 'published';
 
 	// get categories
@@ -85,21 +86,32 @@ const MediaInternalForm = ({
 	}, [subCategoriesSuccess, isLoading]);
 
 	// get sub categories when editing an item
+	// useEffect(() => {
+	// 	if (
+	// 		!isLoading &&
+	// 		Array.isArray(mainCategories) &&
+	// 		isSuccess &&
+	// 		values?.mainCategory
+	// 	) {
+	// 		let id = mainCategories.filter(
+	// 			(category) => category.name === values.mainCategory
+	// 		);
+	// 		if (id[0]) {
+	// 			fetchSubCategories(id[0]?.id);
+	// 		}
+	// 	}
+	// }, [mainCategories, categoriesLoading, isSuccess, values?.mainCategory]);
 	useEffect(() => {
 		if (
-			!isLoading &&
+			// !isLoading &&
 			Array.isArray(mainCategories) &&
-			isSuccess &&
+			lastMainCatRef.current !== values.mainCategory &&
 			values?.mainCategory
 		) {
-			let id = mainCategories.filter(
-				(category) => category.name === values.mainCategory
-			);
-			if (id[0]) {
-				fetchSubCategories(id[0]?.id);
-			}
+			fetchSubCategories(values?.mainCategory);
+			lastMainCatRef.current = values?.mainCategory;
 		}
-	}, [mainCategories, categoriesLoading, isSuccess, values?.mainCategory]);
+	}, [mainCategories, isSuccess, values?.mainCategory]);
 
 	// setting sub category
 	useEffect(() => {
@@ -146,7 +158,9 @@ const MediaInternalForm = ({
 			[name]: value,
 			subCategory: '',
 			mainCategoryContent: data.id,
-			uploadedFiles: []
+			uploadedFiles: [],
+			mainCategoryName: data.name,
+			subCategoryName: ''
 			// setFieldValue('uploadedFiles', [])
 		});
 	};
@@ -155,7 +169,8 @@ const MediaInternalForm = ({
 		setValues({
 			...values,
 			[name]: value,
-			subCategoryContent: data.id
+			subCategoryContent: data.id,
+			subCategoryName: data.name
 		});
 	};
 
@@ -175,7 +190,7 @@ const MediaInternalForm = ({
 								disabled={isPublished}
 								options={(mainCategories || []).map((category) => ({
 									label: category.name,
-									value: category.name,
+									value: category.id,
 									data: category
 								}))}
 								onChange={mainCategoryChangeHandler}
@@ -193,7 +208,7 @@ const MediaInternalForm = ({
 									defaultValue={values.subCategory}
 									options={(subCategories || []).map((category) => ({
 										label: category.name,
-										value: category.name,
+										value: category.id,
 										data: category
 									}))}
 									onChange={subCategoryChangeHandler}
@@ -237,12 +252,12 @@ const MediaInternalForm = ({
 							<FormikDropzone
 								name='uploadedFiles'
 								accept={
-									values.mainCategory === 'Watch'
+									values.mainCategoryName === 'Watch'
 										? 'video/mp4'
 										: ['audio/mp3', 'audio/mpeg']
 								}
 								formatMessage={
-									values.mainCategory === 'Watch' ? (
+									values.mainCategoryName === 'Watch' ? (
 										<div>
 											Supported format is
 											<b> mp4</b>
