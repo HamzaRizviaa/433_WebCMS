@@ -14,8 +14,8 @@ import {
 	// useLazyGetSubCategoriesQuery
 } from '../../../../data/features/mediaLibrary/media.query';
 
-import { Tooltip, Fade } from '@mui/material';
-import { ReactComponent as Info } from '../../../../assets/InfoButton.svg';
+// import { Tooltip, Fade } from '@mui/material';
+// import { ReactComponent as Info } from '../../../../assets/InfoButton.svg';
 
 import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
 import FormikField from '../../../ui/inputs/formik/FormikField';
@@ -216,8 +216,9 @@ const MediaInternalForm = ({
 				{ifMediaTypeSelected() && (
 					<>
 						<div className={globalClasses.explanationWrapper}>
-							<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
-							<Tooltip
+							<h5>{isEdit ? 'Media File	' : 'Add Media File'}</h5>
+							<span style={{ color: '#ff355a', fontSize: '16px' }}>{'*'}</span>
+							{/* <Tooltip
 								TransitionComponent={Fade}
 								TransitionProps={{ timeout: 800 }}
 								title='Default encoding for videos should be H.264'
@@ -229,7 +230,7 @@ const MediaInternalForm = ({
 								placement='bottom-start'
 							>
 								<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
-							</Tooltip>
+							</Tooltip> */}
 						</div>
 
 						<div className={classes.fieldWrapper}>
@@ -273,7 +274,11 @@ const MediaInternalForm = ({
 							{isEdit ? 'Cover Image' : 'Add Cover Image'}
 						</h5>
 
-						<h6 className={classes.imageText}>PORTRAIT IMAGE</h6>
+						<h6 className={classes.imageText}>
+							PORTRAIT IMAGE
+							<span style={{ color: '#ff355a', fontSize: '16px' }}>{'*'}</span>
+						</h6>
+
 						<div className={classes.fieldWrapper}>
 							<FormikDropzone
 								name='uploadedCoverImage'
@@ -305,7 +310,11 @@ const MediaInternalForm = ({
 							/>
 						</div>
 						{/* landscape image  */}
-						<h6 className={classes.imageText}>LANDSCAPE IMAGE</h6>
+						<h6 className={classes.imageText}>
+							LANDSCAPE IMAGE
+							<span style={{ color: '#ff355a', fontSize: '16px' }}>{'*'}</span>
+						</h6>
+
 						<div className={classes.fieldWrapper}>
 							<FormikDropzone
 								name='uploadedLandscapeCoverImage'
@@ -344,7 +353,7 @@ const MediaInternalForm = ({
 							<FormikField
 								label='Title'
 								name='title'
-								placeholder='Please drop the dropbox URL here'
+								placeholder='Please write your title here'
 								multiline
 								required
 								maxLength={43}
@@ -366,7 +375,7 @@ const MediaInternalForm = ({
 							<FormikField
 								label='DESCRIPTION'
 								name='description'
-								placeholder='Please drop the dropbox URL here'
+								placeholder='Please write your description here'
 								multiline
 								required
 								maxRows={2}
