@@ -306,8 +306,8 @@ export const completeUpload = async (data, media) => {
 								: ['image'],
 						keys: {
 							image_key: file?.keys?.image_key,
-							...(media.mainCategory.name === 'Watch' ||
-							media?.mainCategory === 'Watch'
+							...(media.mainCategoryName === 'Watch' ||
+							media?.mainCategoryName === 'Watch'
 								? {
 										video_key: file?.keys?.video_key,
 										audio_key: ''
@@ -318,8 +318,8 @@ export const completeUpload = async (data, media) => {
 								  })
 						},
 						upload_id:
-							media.mainCategory.name === 'Watch' ||
-							media?.mainCategory === 'Watch'
+							media.mainCategoryName === 'Watch' ||
+							media?.mainCategoryName === 'Watch'
 								? file.upload_id || 'image'
 								: file.fileType === 'image'
 								? 'image'
