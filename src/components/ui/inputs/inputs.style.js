@@ -21,6 +21,7 @@ export const useInputsStyles = makeStyles((theme) => ({
 		justifyContent: 'space-between',
 		margin: '0 1rem'
 	},
+
 	inputLabel: {
 		position: 'relative',
 		display: 'inline-block',
@@ -40,6 +41,16 @@ export const useInputsStyles = makeStyles((theme) => ({
 			display: (props) => (props.isRequired ? 'inline-block' : 'none')
 		}
 	},
+
+	rightLabel: {
+		minWidth: '125px',
+		display: 'inline-block',
+		fontSize: '1.2rem',
+		fontWeight: 'bold',
+		marginBottom: '0.5rem',
+		color: (props) => (props.isError ? theme.palette.red : theme.palette.white)
+	},
+
 	textFieldInput: ({ isError, size }) => ({
 		color: theme.palette.white,
 		border: `1px solid ${theme.palette.normalGrey}`,
@@ -65,8 +76,8 @@ export const useInputsStyles = makeStyles((theme) => ({
 		display: 'inline-block',
 		color: theme.palette.red,
 		fontWeight: 'bold',
-		marginTop: '0.2rem',
-		marginLeft: '0.5rem',
+		marginTop: '0.6rem',
+		marginLeft: '1rem',
 		height: '1rem'
 	}
 }));

@@ -1,3 +1,8 @@
+/**
+ * @module features/viralLibrary
+ * @description The viralLibararySlice feature contains it's state, reducers, and extraReducers related to virals
+ */
+
 import { createSlice } from '@reduxjs/toolkit';
 import {
 	getLabels,
@@ -6,18 +11,30 @@ import {
 } from './viralLibraryActions';
 export * from './viralLibraryActions';
 
+/**
+ * @type {Object}
+ * @description The initialState of the viralLibararySlice
+ * @property {array} labels - The list of all the labels fetched
+ * @property {array} virals - The list of all the virals fetched
+ * @property {array | Object} specificViral - The selected viral to be displayed on the drawer
+ * @property {number} totalRecords - The total number of records for virals
+ * @property {string} specificViralStatus - The specific viral status when it's being fetched
+ * @property {boolean} openUploadPost
+ * @property {boolean} noResultStatus
+ * @property {boolean} noResultStatusCalendar
+ */
 const initialState = {
 	labels: [],
 	virals: [], //get api - all virals state
 	specificViral: [],
-	openUploadPost: false,
 	totalRecords: 0,
+	specificViralStatus: '',
+	openUploadPost: false,
 	noResultStatus: false,
-	noResultStatusCalendar: false,
-	specificViralStatus: ''
+	noResultStatusCalendar: false
 };
 
-export const viralLibararySlice = createSlice({
+const viralLibararySlice = createSlice({
 	name: 'viralLibrary',
 	initialState,
 	reducers: {

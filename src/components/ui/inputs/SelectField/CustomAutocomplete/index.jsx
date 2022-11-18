@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
-import React, { useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { Paper, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import ClearIcon from '@material-ui/icons/Clear';
 import { useAutocompleteStyles } from './index.style';
 import { useInputsStyles } from '../../inputs.style';
-import { useState } from 'react';
+import Four33Loader from '../../../../../assets/Loader_Yellow.gif';
 
 const CustomAutocomplete = ({
 	name,
@@ -18,13 +18,17 @@ const CustomAutocomplete = ({
 	onBlur,
 	placeholder,
 	label,
+	rightLabel,
 	error,
 	mapOptions,
+	renderOption,
 	noOptionsText = 'No options found',
 	className = '',
 	required = false,
 	disabled = false,
 	size = 'medium',
+	isLoading = false,
+	searchBarProps = {},
 	...rest
 }) => {
 	const labelKey = mapOptions?.labelKey || 'label';
@@ -32,18 +36,15 @@ const CustomAutocomplete = ({
 
 	const [innerValue, setInnerValue] = useState('');
 
-	const handleChange = useCallback(
-		(_, selected, reason) => {
-			if (selected && onChange) {
-				onChange(selected, name);
-			}
+	const handleChange = (_, selected, reason) => {
+		if (selected && onChange) {
+			onChange(selected);
+		}
 
-			if (onClearText && reason === 'clear') {
-				onClearText();
-			}
-		},
-		[onChange]
-	);
+		if (onClearText && reason === 'clear') {
+			onClearText();
+		}
+	};
 
 	const debouncedHandleOnChange = useDebouncedCallback((event) => {
 		if (onSearchTextChange) onSearchTextChange(event.target.value);
@@ -56,6 +57,10 @@ const CustomAutocomplete = ({
 		},
 		[debouncedHandleOnChange]
 	);
+
+	const customRenderOption = renderOption
+		? renderOption
+		: (props) => <span>{props[labelKey]}</span>;
 
 	const classes = useAutocompleteStyles({
 		hasValue: !!value,
@@ -70,14 +75,20 @@ const CustomAutocomplete = ({
 	});
 
 	return (
-		<div className={`${classes.selectFieldContainer} ${className}`}>
-			{!!label && (
+		<div className={className}>
+			{(!!label || !!rightLabel) && (
 				<div className={inputsClasses.labelsContainer}>
-					<span className={inputsClasses.inputLabel}>{label}</span>
+					{(!!label || !!rightLabel) && (
+						<span className={inputsClasses.inputLabel}>{label}</span>
+					)}
+					{!!rightLabel && (
+						<span className={inputsClasses.rightLabel}>{rightLabel}</span>
+					)}
 				</div>
 			)}
 			<Autocomplete
 				{...rest}
+				name={name}
 				disabled={disabled}
 				value={value}
 				PaperComponent={(props) => (
@@ -91,7 +102,6 @@ const CustomAutocomplete = ({
 				onBlur={onBlur}
 				options={options}
 				getOptionLabel={(option) => {
-					console.log(option[labelKey]);
 					return typeof option === 'string' ? option : option[labelKey];
 				}}
 				getOptionSelected={(option, selectedValue) =>
@@ -99,14 +109,11 @@ const CustomAutocomplete = ({
 						? true
 						: selectedValue && option[valueKey] === selectedValue[valueKey]
 				}
-				renderOption={(props) => {
-					return (
-						<span className={classes.liAutocomplete}>{props[labelKey]}</span>
-					);
-				}}
+				renderOption={customRenderOption}
 				renderInput={(params) => (
 					<TextField
 						{...params}
+						{...searchBarProps}
 						disabled={disabled}
 						placeholder={placeholder}
 						InputProps={{
@@ -122,9 +129,20 @@ const CustomAutocomplete = ({
 				)}
 				closeIcon={<ClearIcon />}
 				noOptionsText={
-					<div className={classes.noResultText}>{noOptionsText}</div>
+					isLoading ? (
+						<div className={classes.labelsLoader}>
+							<img src={Four33Loader} />
+						</div>
+					) : (
+						<div className={classes.noResultText}>{noOptionsText}</div>
+					)
 				}
 				popupIcon={null}
+				ChipProps={{
+					className: classes.tagYellow,
+					size: 'small',
+					deleteIcon: <ClearIcon />
+				}}
 			/>
 			<span className={inputsClasses.errorText}>{error}</span>
 		</div>

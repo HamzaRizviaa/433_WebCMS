@@ -24,6 +24,10 @@ import { TextField } from '@material-ui/core';
 import { ReactComponent as Union } from '../../../assets/drag.svg';
 import { ReactComponent as Deletes } from '../../../assets/Delete.svg';
 
+/**
+ * News Slide Component
+ * @component
+ */
 const NewsSlide = ({
 	item,
 	key,
@@ -59,6 +63,11 @@ const NewsSlide = ({
 
 	const imgEl = useRef(null);
 
+	/**
+	 *
+	 * @param {string} type - Contains the type of image e.g. png,jpeg
+	 * @returns {Array} Returns an array splitting the image and image type.
+	 */
 	const getFileType = (type) => {
 		if (type) {
 			let _type = type.split('/');

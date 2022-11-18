@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/banners/BannerRows.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/banners/BannerRows.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect, useCallback } from 'react';
+import { TextField } from '@material-ui/core';
+import MenuItem from '@mui/material/MenuItem';
+import { Select } from '@material-ui/core';
+import classes from './_banners.module.scss';
+import { Paper, Popper } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
+import ClearIcon from '@material-ui/icons/Clear';
+import { Draggable } from 'react-beautiful-dnd';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import PropTypes from 'prop-types';
+import { ReactComponent as DropdownArrow } from '../../assets/drop_drown_arrow.svg';
+import { ReactComponent as Union } from '../../assets/drag.svg';
+import { ReactComponent as Deletes } from '../../assets/Delete.svg';
+import { useStyles, useStyles2 } from './bannerStyles';
+import { useDispatch, useSelector } from 'react-redux';
+import { getBannerContent } from '../../data/features/topBanner/topBannerSlice';
+import _debounce from 'lodash/debounce';
+//import axios from 'axios';
+//import { toast } from 'react-toastify';
+// import Backdrop from '@material-ui/core/Backdrop';
+//import { makeStyles } from '@material-ui/core/styles';
+//import { getLocalStorageDetails } from '../../data/utils';
+
+/**
+ * @component
+ */
+function BannerRows({
+	key,
+	data,
+	setBannerData,
+	index,
+
+	otherRowsErrMsg, // 2-5
+	firstrowErrMsg, // 1
+	validateRow,
+	bannerContent, // content dropdown
+	tabValue,
+	selectedBannerData
+}) {
+	//styles
+	const muiClasses = useStyles();
+	const muiClasses2 = useStyles2();
+	//states
+	const [disableDropdown, setDisableDropdown] = useState(true);
+	const [dropdownPosition, setDropdownPosition] = useState(false);
+	const [selectedMedia, setSelectedMedia] = useState({ id: '', title: '' });
+	const [selectMediaInput, setSelectMediaInput] = useState('');
+	const [trashcan, setTrashCan] = useState(false);
+	const allMedia = ['Title only', 'Title + Text'];
+	const [errorMsg, setErrMsg] = useState(firstrowErrMsg);
+	const [errMsg2, setErrMsg2] = useState(otherRowsErrMsg);
+
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		setSelectedMedia({
+			id: data?.selectedMedia?.id ? data?.selectedMedia?.id : '',
+			title: data?.selectedMedia?.title ? data?.selectedMedia?.title : '',
+			type: data?.selectedMedia?.type ? data?.selectedMedia?.type : null
+		});
+	}, []);
+
+	useEffect(() => {
+		// console.log(data, 'provided');
+		if (!open) {
+			resetState();
+		}
+	}, [open]);
+
+	/**
+	 * reset dropdown data
+	 * @returns {boolean} - dropdown reset
+	 */
+	const resetState = () => {
+		setDropdownPosition(false);
+	};
+
+	/**
+	 * reset dropdown data
+	 * @returns {boolean} - dropdown reset
+	 */
+	const handleDebounceFun = () => {
+		let _search;
+		setSelectMediaInput((prevState) => {
+			_search = prevState;
+			return _search;
+		});
+		console.log(_search);
+		if (_search) {
+			dispatch(
+				getBannerContent({
+					type: tabValue,
+					title: _search
+				})
+			);
+		} else {
+			dispatch(
+				getBannerContent({
+					type: tabValue,
+					title: null
+				})
+			);
+		}
+	};
+
+	const debounceFun = useCallback(_debounce(handleDebounceFun, 600), []);
+
+	/**
+	 * Handle input change on Select content dropdown
+	 * @param  {object} e - input change on select content dropdown
+	 * @returns {string} - dropdown reset
+	 */
+	const handleChangeSelectMediaInput = (e) => {
+		//console.log(e.target.value, 'aaa');
+		setSelectMediaInput(e.target.value);
+		debounceFun(e.target.value);
+	};
+
+	/**
+	 * Empty Dropdowns on Trash Icon
+	 * @param  {array} TrashData - Data to remove
+	 * @returns {array} - updated banner data
+	 */
+	const emptyBannerData = (Trashdata) => {
+		setTrashCan(true);
+		console.log(Trashdata);
+		// if (
+		// 	Trashdata.id === '1' ||
+		// 	Trashdata.id === '2' ||
+		// 	Trashdata.id === '3' ||
+		// 	Trashdata.id === '4' ||
+		// 	Trashdata.id === '5'
+		// ) {
+		setSelectedMedia(null);
+		setBannerData((data) => {
+			// eslint-disable-next-line no-unused-vars
+			let _bannerData = data.map((banner) => {
+				if (Trashdata.id === banner.id) {
+					return {
+						...banner,
+						bannerType: '',
+						selectedMedia: null
+					};
+				}
+				return {
+					...banner
+				};
+			});
+			return _bannerData;
+		});
+		// }
+		// else {
+		// 	deleteBannerData(Trashdata.id);
+		// }
+	};
+
+	// const deleteBannerData = async (id) => {
+	// 	// setDeleteBtnStatus(true);
+	// 	try {
+	// 		const result = await axios.post(
+	// 			`${process.env.REACT_APP_API_ENDPOINT}/top-banner/delete-banner`,
+	// 			{
+	// 				banner_id: id
+	// 			},
+	// 			{
+	// 				headers: {
+	// 					Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+	// 				}
+	// 			}
+	// 		);
+	// 		if (result?.data?.status_code === 200) {
+	// 			toast.success('banner has been deleted!');
+	// 			window.location.reload();
+	// 			// handleClose();
+
+	// 			setSelectedMedia(null);
+	// 			setBannerData((data) => {
+	// 				// eslint-disable-next-line no-unused-vars
+	// 				let _bannerData = data.map((banner) => {
+	// 					if (id === banner.id) {
+	// 						return {
+	// 							...banner,
+	// 							bannerType: '',
+	// 							selectedMedia: null
+	// 						};
+	// 					}
+	// 					return {
+	// 						...banner
+	// 					};
+	// 				});
+	// 				return _bannerData;
+	// 			});
+	// 			//setting a timeout for getting post after delete.
+	// 			// dispatch(getMedia({ page }));
+	// 		}
+	// 	} catch (e) {
+	// 		toast.error('Failed to delete banner!');
+	// 		// setDeleteBtnStatus(false);
+	// 		console.log(e);
+	// 	}
+	// };
+
+	useEffect(() => {
+		var Message = firstrowErrMsg.errMsg;
+		// console.log(Message, 'first row banner error Message', index);
+		setErrMsg(Message);
+		setTimeout(() => {
+			setErrMsg('');
+		}, [5000]);
+	}, [firstrowErrMsg]); // object as dependecy as one of the value got change , useeffect
+
+	useEffect(() => {
+		var message2 = otherRowsErrMsg.errMsg;
+		// console.log(message2, '2-5 row banner error Message', index);
+		setErrMsg2(message2);
+		setTimeout(() => {
+			setErrMsg2('');
+		}, [5000]);
+	}, [otherRowsErrMsg]);
+
+	return (
+		&lt;Draggable
+			key={data.id}
+			draggableId={`draggable-${data.id}`}
+			index={index}
+			//	isDragDisabled={uploadeddatas.length &lt;= 1}
+		>
+			{(provided) => (
+				&lt;div
+					key={index}
+					ref={provided.innerRef}
+					{...provided.draggableProps}
+					style={{
+						...provided.draggableProps.style,
+						width: '100%'
+					}}
+				>
+					&lt;div>
+						&lt;div
+							className={
+								errorMsg
+									? classes.bannerErrRight
+									: errMsg2
+									? classes.bannerErrRight
+									: classes.bannerRight
+							}
+						>
+							&lt;div className={classes.bannerContentRight}>
+								{/* drag icon */}
+								&lt;div className={classes.dragIcon}>
+									&lt;span {...provided.dragHandleProps}>
+										&lt;Union
+											style={{ cursor: 'grab' }}
+											// className={classes.dataPreviewIcons}
+										/>
+									&lt;/span>
+								&lt;/div>
+
+								{/* select banner dropdown */}
+								&lt;div className={classes.bannerDropdownDiv}>
+									&lt;label className={classes.bannerLabel}>
+										select Banner Type
+									&lt;/label>
+
+									&lt;div className={classes.bannerDropdown}>
+										&lt;Select
+											// className={classUseStyle.bannerSelect}
+											// ref={listElement}
+											// onClick={() => {
+											// 	removeClass();
+											// }}
+											onOpen={() => {
+												setDisableDropdown(false);
+											}}
+											onClose={() => {
+												setDisableDropdown(true);
+											}}
+											disabled={false}
+											value={data.bannerType}
+											onChange={(e) => {
+												setDisableDropdown(true);
+												setBannerData((bannerData) => {
+													// eslint-disable-next-line no-unused-vars
+													let _bannerData = bannerData.map((banner) => {
+														if (banner.id === data.id) {
+															return {
+																...banner,
+																bannerType: e.target.value
+															};
+														}
+														return {
+															...banner
+														};
+													});
+													return _bannerData;
+												});
+											}}
+											className={classes.select}
+											disableUnderline={true}
+											IconComponent={(props) => (
+												&lt;KeyboardArrowDownIcon {...props} />
+											)}
+											MenuProps={{
+												anchorOrigin: {
+													vertical: 'bottom',
+													horizontal: 'left'
+												},
+												transformOrigin: {
+													vertical: 'top',
+													horizontal: 'left'
+												},
+												getContentAnchorEl: null,
+												classes: {
+													paper: muiClasses.paper
+												}
+											}}
+											inputProps={{
+												classes: {
+													root: data.bannerType
+														? muiClasses.input
+														: muiClasses.inputPlaceholder
+												}
+											}}
+											displayEmpty={true}
+											renderValue={(value) =>
+												value?.length
+													? Array.isArray(value)
+														? value.join(', ')
+														: value
+													: 'Please Select'
+											}
+										>
+											{allMedia.length > 0 &amp;&amp;
+												allMedia.map((category, index) => {
+													return (
+														&lt;MenuItem
+															key={index}
+															value={category}
+															style={{
+																fontFamily: 'Poppins !important',
+																fontSize: '14px'
+															}}
+														>
+															{category}
+														&lt;/MenuItem>
+													);
+												})}
+										&lt;/Select>
+									&lt;/div>
+								&lt;/div>
+
+								{/* select content sutocomplete */}
+								{data.bannerType === '' &amp;&amp; trashcan === true ? (
+									&lt;div className={classes.bannerAutocomplete}>&lt;/div>
+								) : (
+									&lt;div
+										className={classes.bannerAutocomplete}
+										style={{
+											marginBottom: dropdownPosition ? 0 : 0
+										}}
+									>
+										&lt;label className={classes.bannerLabel}>
+											select content
+										&lt;/label>
+										&lt;Autocomplete
+											//className={muiClasses.root}
+											value={selectedMedia}
+											PaperComponent={(props) => {
+												setDisableDropdown(false);
+
+												return (
+													&lt;Paper
+														elevation={6}
+														className={classes.popperAuto}
+														style={{
+															marginTop: '12px',
+															background: 'black',
+															border: '1px solid #404040',
+															boxShadow:
+																'0px 16px 40px rgba(255, 255, 255, 0.16)',
+															borderRadius: '8px',
+															color: '#ffffff',
+															fontSize: '14px',
+															fontFamily: 'Poppins'
+														}}
+														{...props}
+													/>
+												);
+											}}
+											PopperComponent={({ style, ...props }) => (
+												&lt;Popper {...props} style={{ ...style, height: 0 }} />
+											)}
+											ListboxProps={{
+												style: { maxHeight: 140 },
+												position: 'bottom'
+											}}
+											onOpen={() => {
+												setDropdownPosition(true);
+											}}
+											onClose={() => {
+												setDisableDropdown(true);
+												setDropdownPosition(false);
+											}}
+											onChange={(e, newVal, reason) => {
+												setSelectedMedia(newVal);
+												setDisableDropdown(true);
+												let tempBannerData = [];
+												setBannerData((bannerData) => {
+													// eslint-disable-next-line no-unused-vars
+													let _bannerData = bannerData.map((banner) => {
+														if (banner.id === data.id) {
+															if (banner.bannerType === 'Please Select') {
+																return {
+																	...banner,
+																	selectedMedia: null
+																};
+															} else {
+																return {
+																	...banner,
+																	selectedMedia: newVal
+																};
+															}
+														}
+														return {
+															...banner
+														};
+													});
+													tempBannerData = _bannerData;
+													return _bannerData;
+												});
+												// re fetching the banner content to poplulate the list again
+												if (reason === 'clear') {
+													const selectedItems = tempBannerData.map(
+														(item) => item?.selectedMedia?.id
+													);
+													const filterOutNullItem = selectedItems.filter(
+														(item) => item
+													);
+													console.log('filterOutNullItem', filterOutNullItem);
+													dispatch(
+														getBannerContent({
+															type: tabValue,
+															title: null,
+															exclude: [...filterOutNullItem]
+														})
+													);
+												} else {
+													if (bannerContent.length &lt; 10) {
+														const selectedItems = selectedBannerData.map(
+															(item) => item?.selectedMedia?.id
+														);
+														const filterOutNullItem = selectedItems.filter(
+															(item) => item
+														);
+														dispatch(
+															getBannerContent({
+																type: tabValue,
+																title: null,
+																exclude: [...filterOutNullItem, newVal?.id]
+															})
+														);
+													}
+												}
+											}}
+											options={bannerContent}
+											getOptionLabel={(option) => option.title}
+											renderOption={(props, option) => {
+												return (
+													&lt;li {...props} className={classes.liAutocomplete}>
+														{option.title}
+													&lt;/li>
+												);
+											}}
+											// filterOptions={(items) => {
+											// 	return items.filter((item) =>
+											// 		item.name
+											// 			.toLowerCase()
+											// 			.includes(selectMediaInput.toLowerCase())
+											// 	);
+											// }}
+											renderInput={(params) => (
+												&lt;TextField
+													{...params}
+													size='small'
+													placeholder='Select Content'
+													InputProps={{
+														disableUnderline: true,
+														...params.InputProps,
+														className: classes.textFieldInput,
+														classes: {
+															root: muiClasses.input
+														}
+													}}
+													// value={selectedMedia?.title}
+													value={selectMediaInput}
+													onChange={handleChangeSelectMediaInput}
+												/>
+											)}
+											clearIcon={&lt;ClearIcon />}
+											noOptionsText={
+												&lt;div
+													style={{
+														color: '#808080',
+														fontSize: 14
+													}}
+												>
+													No Results Found
+												&lt;/div>
+											}
+											popupIcon={''}
+										/>
+									&lt;/div>
+								)}
+
+								{/* delete icon */}
+								&lt;Deletes
+									className={classes.BannertrashCan}
+									onClick={() => {
+										emptyBannerData(data);
+									}}
+								/>
+							&lt;/div>
+							&lt;div className={classes.errorMsg}>{errorMsg}&lt;/div>
+							&lt;div className={classes.errorMsg}>{errMsg2}&lt;/div>
+						&lt;/div>
+					&lt;/div>
+				&lt;/div>
+			)}
+		&lt;/Draggable>
+	);
+}
+export default BannerRows;
+BannerRows.propTypes = {
+	/**
+	 * Data object
+	 */
+	data: PropTypes.object,
+	/**
+	 * map key id
+	 */
+	key: PropTypes.integer,
+	/**
+	 * complete bannner data
+	 */
+	setBannerData: PropTypes.func,
+	/**
+	 * draggable props
+	 */
+	provided: PropTypes.draggableProps,
+	/**
+	 * error msg object except 1st row
+	 */
+	otherRowsErrMsg: PropTypes.object,
+	/**
+	 * error msg object for 1st row
+	 */
+	firstrowErrMsg: PropTypes.object,
+	/**
+	 * validation check
+	 */
+	validateRow: PropTypes.object,
+	/**
+	 * tab values home / media
+	 */
+	tabValue: PropTypes.string,
+	/**
+	 * banner data
+	 */
+	selectedBannerData: PropTypes.array,
+	bannerContent: PropTypes.array
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-features_viralLibrary.html">features/viralLibrary</a></li><li><a href="module-features_viralLibraryActions.html">features/viralLibraryActions</a></li></ul><h3>Classes</h3><ul><li><a href="AppRoutes.html">AppRoutes</a></li><li><a href="BannerRows.html">BannerRows</a></li><li><a href="Banners.html">Banners</a></li><li><a href="NewsDraggable.html">NewsDraggable</a></li><li><a href="NewsLibrary.html">NewsLibrary</a></li><li><a href="NewsSlide.html">NewsSlide</a></li><li><a href="TopBanner.html">TopBanner</a></li><li><a href="UploadOrEditMedia.html">UploadOrEditMedia</a></li><li><a href="UploadOrEditNews.html">UploadOrEditNews</a></li><li><a href="ViralForm.html">ViralForm</a></li><li><a href="ViralFormDrawer.html">ViralFormDrawer</a></li><li><a href="ViralInternalForm.html">ViralInternalForm</a></li><li><a href="ViralLibrary.html">ViralLibrary</a></li><li><a href="ViralLibraryService.html">ViralLibraryService</a></li></ul><h3>Global</h3><ul><li><a href="global.html#changeQueryParameters">changeQueryParameters</a></li><li><a href="global.html#sanitizeDates">sanitizeDates</a></li><li><a href="global.html#ToastErrorNotifications">ToastErrorNotifications</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.11</a> on Wed Nov 02 2022 17:58:27 GMT+0500 (Pakistan Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

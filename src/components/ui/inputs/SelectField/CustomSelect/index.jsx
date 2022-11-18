@@ -56,7 +56,7 @@ const CustomSelect = ({
 	});
 
 	return (
-		<div className={`${classes.selectFieldContainer} ${className}`}>
+		<div className={className}>
 			{!!label && (
 				<div className={inputsClasses.labelsContainer}>
 					<span className={inputsClasses.inputLabel}>{label}</span>

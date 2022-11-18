@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { removeDuplicateLabel } from '../../helpers';
 import {
 	getPosts,
 	getPostLabels,
@@ -82,7 +83,7 @@ const postLibrarySlice = createSlice({
 		});
 		builder.addCase(getNewLabelsSearch.fulfilled, (state, action) => {
 			state.labelsSearchStatus = 'success';
-			state.newLabelsSearch = action.payload;
+			state.newLabelsSearch = removeDuplicateLabel(action.payload);
 		});
 		builder.addCase(getNewLabelsSearch.rejected, (state) => {
 			state.labelsSearchStatus = 'rejected';

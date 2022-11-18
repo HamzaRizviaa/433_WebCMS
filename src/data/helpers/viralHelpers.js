@@ -1,7 +1,10 @@
+import { omit, isEmpty } from 'lodash';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
-import { getDateTime } from '../utils';
+import { getDateTime, makeid } from '../utils';
+import { getUserDataObject } from './index';
+import * as Yup from 'yup';
 
-export const tableColumns = [
+export const viralTableColumns = [
 	{
 		dataField: 'viral',
 		text: 'VIRAL',
@@ -56,3 +59,90 @@ export const tableColumns = [
 		formatter: () => getFormatter('options', { title: 'EDIT VIRAL' })
 	}
 ];
+
+export const viralDataFormatterForForm = (viral) => {
+	const formattedViral = { ...viral };
+
+	if (formattedViral?.labels) {
+		const updatedLabels = formattedViral?.labels.map((label) => ({
+			id: -1,
+			name: label
+		}));
+		formattedViral.labels = updatedLabels;
+	}
+
+	formattedViral.uploadedFiles = !isEmpty(viral.file_name)
+		? [
+				{
+					id: makeid(10),
+					file_name: viral?.file_name,
+					media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${viral?.url}`,
+					type: viral?.thumbnail_url ? 'video' : 'image',
+					...(viral?.thumbnail_url
+						? {
+								thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${viral?.thumbnail_url}`
+						  }
+						: {})
+				}
+		  ]
+		: [];
+
+	return formattedViral;
+};
+
+export const viralDataFormatterForService = (viral, file, isDraft = false) => {
+	const { uploadedFiles } = viral;
+
+	const viralData = {
+		save_draft: isDraft,
+		translations: undefined,
+		user_data: getUserDataObject(),
+
+		// Destructing the properties of viral
+		...omit(viral, ['uploadedFiles', 'id', 'url']),
+		media_url: viral.id ? viral.url : '',
+
+		// Destructing the porperties of files
+		...(uploadedFiles.length && !isEmpty(file)
+			? {
+					...omit(file, ['sort_order', 'signedUrlKeyDelete']),
+					height: uploadedFiles[0].height || 0,
+					width: uploadedFiles[0].width || 0
+			  }
+			: uploadedFiles.length
+			? { ...uploadedFiles.length[0] }
+			: {
+					media_url: '',
+					file_name: '',
+					thumbnail_url: null,
+					height: 0,
+					width: 0
+			  }),
+
+		// Destructing the viral id for edit state
+		...(viral.id ? { viral_id: viral.id } : {})
+	};
+
+	return viralData;
+};
+
+//
+// Viral Form Helpers
+//
+export const viralFormInitialValues = {
+	caption: '',
+	dropbox_url: '',
+	uploadedFiles: [],
+	labels: [],
+	show_likes: true,
+	show_comments: true
+};
+
+export const viralFormValidationSchema = Yup.object().shape({
+	caption: Yup.string().required('You need to enter a caption'),
+	dropbox_url: Yup.string(),
+	uploadedFiles: Yup.array().min(1).required(),
+	labels: Yup.array().min(7).required().label('Labels'),
+	show_likes: Yup.boolean().required(),
+	show_comments: Yup.boolean().required()
+});

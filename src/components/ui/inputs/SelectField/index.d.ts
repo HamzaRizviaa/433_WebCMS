@@ -1,5 +1,5 @@
 import { AutocompleteProps } from '@material-ui/lab';
-import { SelectProps } from '@material-ui/core';
+import { SelectProps, TextFieldProps } from '@material-ui/core';
 
 export type SelectOption = {
 	[Key: string]: string | number | undefined | null;
@@ -10,17 +10,23 @@ type MapOptions<T> = {
 	valueKey: keyof T;
 };
 
-type SelectFieldCustomProps<T> = {
+export type SelectFieldCustomProps<T> = {
 	name: string;
 	value: any;
 	options: T[];
 	mapOptions: MapOptions<T>;
+	searchable?: boolean;
 	label?: string;
+	isLoading?: boolean;
+	rightLabel?: string;
 	placeholder?: string;
 	required?: boolean;
 	error?: string;
 	noOptionsText?: string;
 	size?: 'small' | 'medium' | 'large';
+	onSearchTextChange?: (value: string) => void;
+	onClearText?: () => void;
+	searchBarProps?: TextFieldProps;
 };
 
 type ModifiedSelectProps = Omit<
@@ -41,8 +47,6 @@ export type SelectFieldProps<T> =
 	| (AutocompleteProps<T, undefined, undefined, undefined> &
 			SelectFieldCustomProps<T> & {
 				searchable: true;
-				onSearchTextChange?: (value: string) => void;
-				onClearText?: () => void;
 				onChange?: (value: T, name: string) => void;
 			})
 	| (ModifiedSelectProps &

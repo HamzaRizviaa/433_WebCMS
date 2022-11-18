@@ -12,3 +12,6 @@ export { ReactComponent as Calendar } from './Calendar.svg';
 export { ReactComponent as MusicIcon } from './Music.svg';
 export { ReactComponent as DeleteIcon } from './Delete.svg';
 export { ReactComponent as EyeIcon } from './Eye.svg';
+export { ReactComponent as DragIcon } from './drag.svg';
+export { ReactComponent as AddIcon } from './newsAddIcon.svg';
+export { ReactComponent as InfoIcon } from './InfoButton.svg';

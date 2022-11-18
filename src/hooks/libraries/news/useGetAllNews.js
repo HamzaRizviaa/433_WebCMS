@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllNews } from '../../../data/features/newsLibrary/newsLibraryActions';
+import { getAllNewsApi } from '../../../data/features/newsLibrary/newsLibraryActions';
 import useCommonParams from '../../useCommonParams';
 
 export default function useGetAllNews() {
@@ -13,7 +13,7 @@ export default function useGetAllNews() {
 	const { queryParams } = useCommonParams();
 
 	useEffect(() => {
-		dispatch(getAllNews(queryParams));
+		dispatch(getAllNewsApi(queryParams));
 	}, [queryParams]);
 
 	return {
