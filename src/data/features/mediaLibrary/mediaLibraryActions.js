@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { MediaLibraryService } from '../../services';
 import { toast } from 'react-toastify';
+import { MediaLibraryService } from '../../services';
+import { ToastErrorNotifications } from '../../../data/constants';
 
 export const getMedia = createAsyncThunk(
 	'mediaLibrary/getMedia',
@@ -87,7 +88,9 @@ export const deleteMediaThunk = createAsyncThunk(
 			const response = await MediaLibraryService.deleteMedia(data);
 
 			if (response.data.status_code === 200) {
-				toast.success('Media has been deleted!');
+				response.data?.data?.is_deleted
+					? toast.success('Media has been deleted!')
+					: toast.error(ToastErrorNotifications.deleteBannerItemText);
 			}
 		} catch (e) {
 			toast.error('Failed to delete Media!');
