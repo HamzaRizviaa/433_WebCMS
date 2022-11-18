@@ -42,11 +42,14 @@ export const getQuestionLabels = createAsyncThunk(
 	}
 );
 
-export const createOrEditNewsThunk = createAsyncThunk(
-	'newsLibrary/createOrEditNewsThunk',
+export const createOrEditQuestionThunk = createAsyncThunk(
+	'newsLibrary/createOrEditQuestionThunk',
 	async ({ apiVersion, ...data }) => {
 		try {
-			const response = await QuestionsLibraryService.postNews(data, apiVersion);
+			const response = await QuestionsLibraryService.postQuestion(
+				data,
+				apiVersion
+			);
 
 			if (response.data.status_code === 200) {
 				toast.success(
@@ -67,11 +70,11 @@ export const createOrEditNewsThunk = createAsyncThunk(
 	}
 );
 
-export const deleteNewsThunk = createAsyncThunk(
-	'newsLibary/deleteNewsThunk',
+export const deleteQuestionThunk = createAsyncThunk(
+	'newsLibary/deleteQuestionThunk',
 	async (data) => {
 		try {
-			const response = await QuestionsLibraryService.deleteNews(data);
+			const response = await QuestionsLibraryService.deleteQuestion(data);
 
 			if (response.data.status_code === 200) {
 				toast.success('Question has been deleted!');

@@ -113,7 +113,7 @@ export const questionsFormInitialValues = {
 	general_info: {
 		save_draft: true,
 		question_type: 'poll',
-		end_date: '',
+		end_date: null,
 		results: '',
 		results_image: '',
 		results_filename: '',
