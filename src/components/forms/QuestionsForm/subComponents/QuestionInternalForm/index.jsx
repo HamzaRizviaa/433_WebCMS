@@ -32,7 +32,11 @@ const QuestionInternalForm = ({
 		<div>
 			<AccordianLayout title='General Information'>
 				<div>
-					<TabPanes headings={headings} onClick={handleTabClick}>
+					<TabPanes
+						headings={headings}
+						onClick={handleTabClick}
+						type='questions'
+					>
 						<TabPanes.TabPanel value={0}>
 							<PollSummary openPreviewer={openPreviewer} />
 						</TabPanes.TabPanel>

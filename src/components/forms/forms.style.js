@@ -54,5 +54,8 @@ export const useFormStyles = makeStyles(() => ({
 		fontFamily: 'Poppins',
 		fontWeight: '800',
 		lineHeight: '30px'
+	},
+	dropzoneWrapper: {
+		paddingBottom: '1rem'
 	}
 }));
