@@ -168,27 +168,29 @@ export const questionDataFormatterForService = async (values, isDraft) => {
 		general_info: {
 			...values.general_info,
 			save_draft: isDraft,
-			results_image: resultsFile?.media_url,
-			results_filename: resultsFile?.file_name,
-			positive_results_image: positiveResultsFile?.media_url,
-			positive_results_filename: positiveResultsFile?.file_name,
-			negative_results_image: negativeResultFile?.media_url,
-			negative_results_filename: negativeResultFile?.file_name
+			results_image: resultsFile?.media_url || '',
+			results_filename: resultsFile?.file_name || '',
+			positive_results_image: positiveResultsFile?.media_url || '',
+			positive_results_filename: positiveResultsFile?.file_name || '',
+			negative_results_image: negativeResultFile?.media_url || '',
+			negative_results_filename: negativeResultFile?.file_name || ''
 		},
 		questions: values.questions.map((item, index) => ({
 			position: index + 1,
 			...omit(item, ['uploadedFiles', 'pollAnswers', 'quizAnswers']),
 			...(values.general_info.question_type === 'poll'
 				? {
-						image: pollSlideFiles[index]?.media_url,
-						file_name: pollSlideFiles[index]?.file_name
+						image: pollSlideFiles[index]?.media_url || null,
+						file_name: pollSlideFiles[index]?.file_name || null,
+						height: pollSlideFiles[index]?.height || 0,
+						width: pollSlideFiles[index]?.width || 0
 				  }
 				: {
-						image: quizSlideFiles[index]?.media_url,
-						file_name: quizSlideFiles[index]?.file_name
+						image: quizSlideFiles[index]?.media_url || null,
+						file_name: quizSlideFiles[index]?.file_name || null,
+						height: quizSlideFiles[index]?.height || 0,
+						width: quizSlideFiles[index]?.width || 0
 				  }),
-			width: item.uploadedFiles[0]?.width,
-			height: item.uploadedFiles[0]?.height,
 			answers:
 				values.general_info.question_type === 'poll'
 					? item.pollAnswers.map((item, index) => ({
