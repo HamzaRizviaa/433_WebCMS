@@ -1,4 +1,5 @@
-import { omit } from 'lodash';
+/* eslint-disable no-unused-vars */
+import { omit, rest } from 'lodash';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateConstantTime, getDateTime } from '../utils';
 import uploadFilesToS3 from '../utils/uploadFilesToS3';
@@ -204,4 +205,68 @@ export const questionDataFormatterForService = async (values, isDraft) => {
 	};
 
 	return payload;
+};
+
+const updatingQuestionsSlides = (questionsSlides = [], type) => {
+	return questionsSlides.map(({ answers, ...rest }) => {
+		if (type === ' poll') {
+			return {
+				...rest,
+				pollAnswers: answers
+			};
+		} else {
+			return {
+				...rest,
+				quizAnswers: answers
+			};
+		}
+	});
+};
+
+export const questionDataFormatterForForm = (question) => {
+	const { summary, questions, ...rest } = question;
+
+	const formattedQuestion = {
+		...question,
+		...(question.question_type === 'poll'
+			? {
+					resultsUploadedFiles: [
+						{
+							file_name: summary.results_filename,
+							media_url: summary.results_image
+						}
+					]
+			  }
+			: {
+					positiveResultsUploadedFiles: [
+						{
+							file_name: question.summary.positive_results_filename,
+							media_url: question.summary.positive_results_image
+						}
+					],
+					negativeResultsUploadedFiles: [
+						{
+							file_name: question.summary.negative_results_filename,
+							media_url: question.summary.negative_results_image
+						}
+					]
+			  }),
+		general_info: {
+			...rest,
+			...(question.question_type === ' poll'
+				? {
+						results: summary.results,
+						results_dropbox_url: summary.results_dropbox_url
+				  }
+				: {
+						negative_results: summary.negative_results,
+						negative_results_dropbox_url: summary.negative_results_dropbox_url,
+						positive_results: summary.positive_results,
+						positive_results_dropbox_url: summary.positive_results_dropbox_url
+				  }),
+			questions: updatingQuestionsSlides(questions, question.question_type)
+		}
+	};
+
+	return formattedQuestion;
 };
