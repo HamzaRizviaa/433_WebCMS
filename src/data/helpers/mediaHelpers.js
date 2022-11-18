@@ -4,12 +4,6 @@ import { isEmpty } from 'lodash';
 import axios from 'axios';
 import * as Yup from 'yup';
 
-const fileDuration = 10;
-let portraitFileWidth = 100;
-let portraitFileHeight = 100;
-let landscapeFileWidth = 100;
-let landscapeFileHeight = 100;
-
 export const mediaColumns = [
 	{
 		dataField: 'title',
@@ -79,6 +73,7 @@ export const mediaColumns = [
 ];
 
 export const mediaDataFormatterForForm = (media) => {
+	console.log('prebuild', media);
 	const formattedMedia = { ...media };
 
 	if (formattedMedia?.labels) {
@@ -129,9 +124,9 @@ export const mediaDataFormatterForForm = (media) => {
 				}
 		  ]
 		: [];
-
-	formattedMedia.mainCategory = media?.media_type;
-	formattedMedia.subCategory = media?.sub_category;
+	formattedMedia.mainCategory = media?.main_category_id;
+	formattedMedia.subCategory = media?.sub_category_id;
+	formattedMedia.mainCategoryName = media?.media_type;
 	formattedMedia.media_dropbox_url = media?.dropbox_url?.media;
 	formattedMedia.image_dropbox_url = media?.dropbox_url?.portrait_cover_image;
 	formattedMedia.landscape_image_dropbox_url =
@@ -164,11 +159,11 @@ const uploadFileToServer = async (file, type) => {
 				fileType: type
 			};
 		} else {
-			throw 'Error';
+			throw Error('Bad Request');
 		}
 	} catch (error) {
 		console.error(error);
-		return null;
+		throw Error(error.message || 'something went wrong');
 	}
 };
 
@@ -194,15 +189,18 @@ export const mediaDataFormatterForServer = (
 	userData,
 	completedUploadFiles
 ) => {
+	console.log('MEDIAAA', media);
 	const mediaData = {
 		title: media.title,
 		translations: undefined,
 		description: media.description,
-		duration: Math.round(fileDuration),
+		duration: media?.uploadedFiles[0]?.duration
+			? Math.ceil(media?.uploadedFiles[0]?.duration)
+			: 0,
 		type: 'medialibrary',
 		save_draft: isDraft,
-		main_category_id: media.mainCategoryContent,
-		sub_category_id: media.subCategoryContent,
+		main_category_id: media.mainCategoryContent || media.main_category_id,
+		sub_category_id: media.subCategoryContent || media.sub_category_id,
 		show_likes: media.show_likes ? true : false,
 		show_comments: media.show_comments ? true : false,
 		user_data: userData,
@@ -218,17 +216,20 @@ export const mediaDataFormatterForServer = (
 				: ''
 		},
 		...(media.labels.length ? { labels: [...media.labels] } : { labels: [] }),
-		media_url:
-			completedUploadFiles[0]?.data?.data?.video_data ||
-			completedUploadFiles[0]?.data?.data?.audio_data,
+		media_url: media?.uploadedFiles?.length
+			? completedUploadFiles[0]?.data?.data?.video_data ||
+			  completedUploadFiles[0]?.data?.data?.audio_data ||
+			  media?.uploadedFiles[0]?.media_url.split('cloudfront.net/')[1]
+			: '',
 		height: media?.uploadedFiles[0]?.height,
 		width: media?.uploadedFiles[0]?.width,
 		cover_image: {
 			...(mediaFiles[1]?.url
 				? {
 						portrait: {
-							width: portraitFileWidth,
-							height: portraitFileHeight,
+							// ...media?.uploadedCoverImage[0],
+							height: media?.uploadedCoverImage[0].height || 100,
+							width: media?.uploadedCoverImage[0].width || 100,
 							image_url: mediaFiles[1]?.keys?.image_key
 						}
 				  }
@@ -244,8 +245,9 @@ export const mediaDataFormatterForServer = (
 			...(mediaFiles[2]?.url
 				? {
 						landscape: {
-							width: landscapeFileWidth,
-							height: landscapeFileHeight,
+							// ...media?.uploadedLandscapeCoverImage[0],
+							height: media?.uploadedLandscapeCoverImage[0].height || 100,
+							width: media?.uploadedLandscapeCoverImage[0].width || 100,
 							image_url: mediaFiles[2]?.keys?.image_key
 						}
 				  }
@@ -260,7 +262,9 @@ export const mediaDataFormatterForServer = (
 				  })
 		},
 		...(media.id ? { media_id: media.id } : {}),
-		file_name_media: media?.uploadedFiles[0]?.file_name,
+		file_name_media: media?.uploadedFiles?.length
+			? media?.uploadedFiles[0]?.file_name
+			: '',
 		file_name_portrait_image: media?.uploadedCoverImage[0]?.file_name,
 		file_name_landscape_image: media?.uploadedLandscapeCoverImage[0]?.file_name,
 		file_name: media?.uploadedFiles[0]?.file_name,
@@ -272,8 +276,8 @@ export const mediaDataFormatterForServer = (
 };
 
 export const completeUpload = async (data, media) => {
+	// let mediaArray = [];
 	const mediaFiles = await Promise.all([...data]);
-
 	const mediaArray = mediaFiles.map((file, index) => {
 		if (file?.signed_response) {
 			const newFileUpload = axios.post(
@@ -302,8 +306,8 @@ export const completeUpload = async (data, media) => {
 								: ['image'],
 						keys: {
 							image_key: file?.keys?.image_key,
-							...(media.mainCategory.name === 'Watch' ||
-							media?.mainCategory === 'Watch'
+							...(media.mainCategoryName === 'Watch' ||
+							media?.mainCategoryName === 'Watch'
 								? {
 										video_key: file?.keys?.video_key,
 										audio_key: ''
@@ -314,8 +318,8 @@ export const completeUpload = async (data, media) => {
 								  })
 						},
 						upload_id:
-							media.mainCategory.name === 'Watch' ||
-							media?.mainCategory === 'Watch'
+							media.mainCategoryName === 'Watch' ||
+							media?.mainCategoryName === 'Watch'
 								? file.upload_id || 'image'
 								: file.fileType === 'image'
 								? 'image'
@@ -332,7 +336,8 @@ export const completeUpload = async (data, media) => {
 		}
 	});
 
-	return Promise.all(mediaArray);
+	const resolvedMediaFiles = Promise.all(mediaArray);
+	return resolvedMediaFiles;
 };
 
 export const mediaUnwantedKeysForDeepEqual = [
@@ -373,13 +378,13 @@ export const mediaFormValidationSchema = Yup.object().shape({
 	landscape_image_dropbox_url: Yup.string(),
 	description: Yup.string().required().label('Description'),
 	labels: Yup.array()
-		.min(4, (obj) => {
+		.min(7, (obj) => {
 			const labelsCount = obj.value?.length;
 			return `You need to add ${
-				4 - labelsCount
+				7 - labelsCount
 			} more labels in order to upload news`;
 		})
-		.required('You need to enter atleast 4 labels')
+		.required('You need to enter atleast 7 labels')
 		.label('Labels'),
 	uploadedFiles: Yup.array().min(1).required(),
 	uploadedCoverImage: Yup.array().min(1).required(),

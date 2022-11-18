@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
 	getAllNewLabels,
 	getNewLabelsSearch
-} from '../../data/features/postsLibrary/postsLibrarySlice';
+} from "../../data/features/postsLibrary/postsLibrarySlice";
 import _debounce from 'lodash/debounce';
 
 const Labels = ({
@@ -26,8 +26,7 @@ const Labels = ({
 	draftStatus = 'published',
 	setExtraLabel,
 	location,
-	titleClasses,
-	library
+	titleClasses
 }) => {
 	//const regex = /[%<>\\$'"\s@#/-=+&^*()!:;.,?{}[|]]/;
 	const regex = /\W/; // all characters that are not numbers and alphabets and underscore
@@ -183,11 +182,7 @@ const Labels = ({
 					<TextField
 						{...params}
 						placeholder={
-							selectedLabels?.length > 0
-								? ' '
-								: 'Select a minimum of ' +
-								  `${library === 'question' ? '1' : '4'}` +
-								  ' labels'
+							selectedLabels?.length > 0 ? ' ' : 'Select a minimum of 7 labels'
 						}
 						className={classes.textFieldAuto}
 						value={extraLabel}
@@ -290,8 +285,7 @@ Labels.propTypes = {
 	draftStatus: PropTypes.string,
 	setExtraLabel: PropTypes.func,
 	location: PropTypes.string,
-	titleClasses: PropTypes.string,
-	library: PropTypes.string
+	titleClasses: PropTypes.string
 };
 
 export default Labels;

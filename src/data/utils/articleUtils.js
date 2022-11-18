@@ -283,7 +283,7 @@ export const checkNewElementQuestionDraft = (elements, data) => {
 
 export const checkMatchPublishAndDraft = (elements = [], data = []) => {
 	console.log('compare validations', elements, data);
-	if (data.length === 0) return true;
+	if(data.length === 0) return true
 	let isSame = true;
 
 	// if (elements?.length === data?.length) return true;

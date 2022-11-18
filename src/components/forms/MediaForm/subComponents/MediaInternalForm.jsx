@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo } from 'react';
+/* eslint-disable react/prop-types */
+import React, { useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { isEqual, pick, omit } from 'lodash';
 import { useFormikContext } from 'formik';
@@ -9,12 +10,12 @@ import {
 	mediaUnwantedKeysForDeepEqual
 } from '../../../../data/helpers';
 import {
-	useGetMainCategoriesQuery,
-	useLazyGetSubCategoriesQuery
+	useGetMainCategoriesQuery
+	// useLazyGetSubCategoriesQuery
 } from '../../../../data/features/mediaLibrary/media.query';
 
-import { Tooltip, Fade } from '@mui/material';
-import { ReactComponent as Info } from '../../../../assets/InfoButton.svg';
+// import { Tooltip, Fade } from '@mui/material';
+// import { ReactComponent as Info } from '../../../../assets/InfoButton.svg';
 
 import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
 import FormikField from '../../../ui/inputs/formik/FormikField';
@@ -25,6 +26,8 @@ import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
 
 // const isTrue = true;
 const MediaInternalForm = ({
+	getSubCategories,
+	subCategoryStates,
 	isEdit,
 	status,
 	openPreviewer,
@@ -35,6 +38,7 @@ const MediaInternalForm = ({
 }) => {
 	const classes = useStyles();
 	const globalClasses = globalUseStyles();
+	const lastMainCatRef = useRef(null);
 	const isPublished = isEdit && status === 'published';
 
 	// get categories
@@ -44,17 +48,13 @@ const MediaInternalForm = ({
 		isSuccess
 	} = useGetMainCategoriesQuery();
 
-	//get sub categories
-	const [
-		getSubCategories,
-		{
-			isFetching: isLoading,
-			isLoading: subLoading,
-			data: subCategories,
-			isSuccess: subCategoriesSuccess,
-			...subResponse
-		}
-	] = useLazyGetSubCategoriesQuery();
+	const {
+		isFetching: isLoading,
+		isLoading: subLoading,
+		data: subCategories,
+		isSuccess: subCategoriesSuccess,
+		...subResponse
+	} = subCategoryStates;
 
 	const {
 		values,
@@ -85,22 +85,17 @@ const MediaInternalForm = ({
 		}
 	}, [subCategoriesSuccess, isLoading]);
 
-	// get sub categories when editing an item
 	useEffect(() => {
 		if (
-			!isLoading &&
+			// !isLoading &&
 			Array.isArray(mainCategories) &&
-			isSuccess &&
+			lastMainCatRef.current !== values.mainCategory &&
 			values?.mainCategory
 		) {
-			let id = mainCategories.filter(
-				(category) => category.name === values.mainCategory
-			);
-			if (id[0]) {
-				fetchSubCategories(id[0]?.id);
-			}
+			fetchSubCategories(values?.mainCategory);
+			lastMainCatRef.current = values?.mainCategory;
 		}
-	}, [mainCategories, categoriesLoading, isSuccess, values?.mainCategory]);
+	}, [mainCategories, isSuccess, values?.mainCategory]);
 
 	// setting sub category
 	useEffect(() => {
@@ -137,16 +132,17 @@ const MediaInternalForm = ({
 	const ifMediaTypeSelected = () =>
 		isEdit ? true : values?.mainCategory && values.subCategory;
 
-	if (isEdit && mainCategories?.length < 0 && subCategories?.length < 0)
-		return null;
-
 	const mainCategoryChangeHandler = (value, name, { data }) => {
 		fetchSubCategories(data.id);
 		setValues({
 			...values,
 			[name]: value,
 			subCategory: '',
-			mainCategoryContent: data.id
+			mainCategoryContent: data.id,
+			uploadedFiles: [],
+			mainCategoryName: data.name,
+			subCategoryName: ''
+			// setFieldValue('uploadedFiles', [])
 		});
 	};
 
@@ -154,7 +150,8 @@ const MediaInternalForm = ({
 		setValues({
 			...values,
 			[name]: value,
-			subCategoryContent: data.id
+			subCategoryContent: data.id,
+			subCategoryName: data.name
 		});
 	};
 
@@ -174,7 +171,7 @@ const MediaInternalForm = ({
 								disabled={isPublished}
 								options={(mainCategories || []).map((category) => ({
 									label: category.name,
-									value: category.name,
+									value: category.id,
 									data: category
 								}))}
 								onChange={mainCategoryChangeHandler}
@@ -192,7 +189,7 @@ const MediaInternalForm = ({
 									defaultValue={values.subCategory}
 									options={(subCategories || []).map((category) => ({
 										label: category.name,
-										value: category.name,
+										value: category.id,
 										data: category
 									}))}
 									onChange={subCategoryChangeHandler}
@@ -215,32 +212,20 @@ const MediaInternalForm = ({
 				{ifMediaTypeSelected() && (
 					<>
 						<div className={globalClasses.explanationWrapper}>
-							<h5>{isEdit ? 'Media File' : 'Add Media File'}</h5>
-							<Tooltip
-								TransitionComponent={Fade}
-								TransitionProps={{ timeout: 800 }}
-								title='Default encoding for videos should be H.264'
-								arrow
-								componentsProps={{
-									tooltip: { className: globalClasses.toolTip },
-									arrow: { className: globalClasses.toolTipArrow }
-								}}
-								placement='bottom-start'
-							>
-								<Info style={{ cursor: 'pointer', marginLeft: '1rem' }} />
-							</Tooltip>
+							<h5>{isEdit ? 'Media File	' : 'Add Media File'}</h5>
+							<span style={{ color: '#ff355a', fontSize: '16px' }}>{'*'}</span>
 						</div>
 
 						<div className={classes.fieldWrapper}>
 							<FormikDropzone
 								name='uploadedFiles'
 								accept={
-									values.mainCategory === 'Watch'
+									values.mainCategoryName === 'Watch'
 										? 'video/mp4'
 										: ['audio/mp3', 'audio/mpeg']
 								}
 								formatMessage={
-									values.mainCategory === 'Watch' ? (
+									values.mainCategoryName === 'Watch' ? (
 										<div>
 											Supported format is
 											<b> mp4</b>
@@ -272,7 +257,11 @@ const MediaInternalForm = ({
 							{isEdit ? 'Cover Image' : 'Add Cover Image'}
 						</h5>
 
-						<h6 className={classes.imageText}>PORTRAIT IMAGE</h6>
+						<h6 className={classes.imageText}>
+							PORTRAIT IMAGE
+							<span style={{ color: '#ff355a', fontSize: '16px' }}>{'*'}</span>
+						</h6>
+
 						<div className={classes.fieldWrapper}>
 							<FormikDropzone
 								name='uploadedCoverImage'
@@ -304,7 +293,11 @@ const MediaInternalForm = ({
 							/>
 						</div>
 						{/* landscape image  */}
-						<h6 className={classes.imageText}>LANDSCAPE IMAGE</h6>
+						<h6 className={classes.imageText}>
+							LANDSCAPE IMAGE
+							<span style={{ color: '#ff355a', fontSize: '16px' }}>{'*'}</span>
+						</h6>
+
 						<div className={classes.fieldWrapper}>
 							<FormikDropzone
 								name='uploadedLandscapeCoverImage'
@@ -343,7 +336,7 @@ const MediaInternalForm = ({
 							<FormikField
 								label='Title'
 								name='title'
-								placeholder='Please drop the dropbox URL here'
+								placeholder='Please write your title here'
 								multiline
 								required
 								maxLength={43}
@@ -355,7 +348,7 @@ const MediaInternalForm = ({
 							<FormikLabelsSelect
 								name='labels'
 								label='LABELS'
-								placeholder='Select a minimum of 4 labels'
+								placeholder='Select a minimum of 7 labels'
 								disabled={isPublished}
 								required
 							/>
@@ -365,7 +358,7 @@ const MediaInternalForm = ({
 							<FormikField
 								label='DESCRIPTION'
 								name='description'
-								placeholder='Please drop the dropbox URL here'
+								placeholder='Please write your description here'
 								multiline
 								required
 								maxRows={2}
@@ -392,29 +385,31 @@ const MediaInternalForm = ({
 								</div>
 							)}
 
-							<div className={classes.publishDraftDiv}>
-								{(!isEdit || status === 'draft') && (
+							{(isEdit ? values?.mainCategory && values.subCategory : true) && (
+								<div className={classes.publishDraftDiv}>
+									{(!isEdit || status === 'draft') && (
+										<Button
+											size='small'
+											variant={'outlined'}
+											disabled={isDraftDisabled}
+											onClick={saveDraftHandler}
+										>
+											{status === 'draft' && isEdit
+												? 'SAVE DRAFT'
+												: 'SAVE AS DRAFT'}
+										</Button>
+									)}
 									<Button
-										size='small'
-										variant={'outlined'}
-										disabled={isDraftDisabled}
-										onClick={saveDraftHandler}
+										type='submit'
+										disabled={
+											isPublished ? (!dirty ? isValid : !isValid) : !isValid
+										}
+										onClick={handleSubmit}
 									>
-										{status === 'draft' && isEdit
-											? 'SAVE DRAFT'
-											: 'SAVE AS DRAFT'}
+										{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
 									</Button>
-								)}
-								<Button
-									type='submit'
-									disabled={
-										isPublished ? (!dirty ? isValid : !isValid) : !isValid
-									}
-									onClick={handleSubmit}
-								>
-									{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
-								</Button>
-							</div>
+								</div>
+							)}
 						</div>
 					</>
 				)}
