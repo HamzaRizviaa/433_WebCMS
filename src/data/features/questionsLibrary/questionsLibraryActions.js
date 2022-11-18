@@ -43,7 +43,7 @@ export const getQuestionLabels = createAsyncThunk(
 );
 
 export const createOrEditQuestionThunk = createAsyncThunk(
-	'newsLibrary/createOrEditQuestionThunk',
+	'questionLibrary/createOrEditQuestionThunk',
 	async ({ apiVersion, ...data }) => {
 		try {
 			const response = await QuestionsLibraryService.postQuestion(
@@ -71,7 +71,7 @@ export const createOrEditQuestionThunk = createAsyncThunk(
 );
 
 export const deleteQuestionThunk = createAsyncThunk(
-	'newsLibary/deleteQuestionThunk',
+	'questionLibrary/deleteQuestionThunk',
 	async (data) => {
 		try {
 			const response = await QuestionsLibraryService.deleteQuestion(data);

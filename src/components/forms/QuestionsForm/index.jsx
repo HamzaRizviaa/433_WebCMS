@@ -1,18 +1,19 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-// import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { Formik, Form } from 'formik';
+
 import { useCommonParams } from '../../../hooks';
-import { selectSpecificNews } from '../../../data/selectors';
+import { selectSpecificQuestion } from '../../../data/selectors';
 import {
+	questionDataFormatterForForm,
 	questionDataFormatterForService,
 	questionsFormInitialValues
-	// questionDataFormatterForService
 } from '../../../data/helpers';
 import {
-	// createOrEditQuestionThunk,
+	createOrEditQuestionThunk,
 	deleteQuestionThunk,
 	getQuestions
 } from '../../../data/features/questionsLibrary/questionsLibraryActions';
@@ -26,10 +27,10 @@ const QuestionsForm = ({
 	isEdit,
 	status // draft or publish
 }) => {
-	// const navigate = useNavigate();
-	const { queryParams } = useCommonParams();
+	const navigate = useNavigate();
+	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 	const dispatch = useDispatch();
-	const specificNews = useSelector(selectSpecificNews);
+	const specificQuestion = useSelector(selectSpecificQuestion);
 
 	// States
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -37,11 +38,11 @@ const QuestionsForm = ({
 	// Refs
 	const dialogWrapper = useRef(null);
 
-	// const initialValues = useMemo(() => {
-	// 	return isEdit && !isEmpty(specificNews)
-	// 		? newsDataFormatterForForm(specificNews)
-	// 		: newsFormInitialValues;
-	// }, [isEdit, specificNews]);
+	const initialValues = useMemo(() => {
+		return isEdit && !isEmpty(specificQuestion)
+			? questionDataFormatterForForm(specificQuestion)
+			: questionsFormInitialValues;
+	}, [isEdit, specificQuestion]);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
@@ -51,7 +52,22 @@ const QuestionsForm = ({
 		try {
 			const payload = await questionDataFormatterForService(values, isDraft);
 
-			console.log('PAYLOAD', payload);
+			const modifiedPayload = { apiVersion: 1, ...payload };
+			const { type } = await dispatch(
+				createOrEditQuestionThunk(modifiedPayload)
+			);
+
+			if (type === 'questionLibrary/createOrEditQuestionThunk/fulfilled') {
+				handleClose();
+
+				if (isEdit && !(status === 'draft' && isDraft === false)) {
+					dispatch(getQuestions(queryParams));
+				} else if (isSearchParamsEmpty) {
+					dispatch(getQuestions());
+				} else {
+					navigate('/news-library');
+				}
+			}
 		} catch (e) {
 			console.error(e);
 		} finally {
@@ -83,7 +99,7 @@ const QuestionsForm = ({
 	return (
 		<Formik
 			enableReinitialize
-			initialValues={questionsFormInitialValues}
+			initialValues={initialValues}
 			// validationSchema={newsFormValidationSchema}
 			validateOnMount
 			onSubmit={onSubmitHandler}
@@ -102,7 +118,7 @@ const QuestionsForm = ({
 						open={openDeleteModal}
 						toggle={toggleDeleteModal}
 						deleteBtn={() => {
-							onDeleteHandler(specificNews?.id, status, setSubmitting);
+							onDeleteHandler(specificQuestion?.id, status, setSubmitting);
 						}}
 						text='Question'
 						wrapperRef={dialogWrapper}

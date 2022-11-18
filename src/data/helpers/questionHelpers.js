@@ -1,8 +1,12 @@
 /* eslint-disable no-unused-vars */
-import { omit, rest } from 'lodash';
+import dayjs from 'dayjs';
+import { omit } from 'lodash';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateConstantTime, getDateTime } from '../utils';
 import uploadFilesToS3 from '../utils/uploadFilesToS3';
+import { getRelativePath } from './commonHelpers';
+
+const { REACT_APP_MEDIA_ENDPOINT } = process.env;
 
 export const questionTableColumns = [
 	{
@@ -127,7 +131,7 @@ export const questionsFormInitialValues = {
 		negative_results_filename: '',
 		negative_results_dropbox_url: ''
 	},
-	questions: [questionSlideInitialValues]
+	questions: []
 };
 
 export const questionDataFormatterForService = async (values, isDraft) => {
@@ -168,11 +172,12 @@ export const questionDataFormatterForService = async (values, isDraft) => {
 		general_info: {
 			...values.general_info,
 			save_draft: isDraft,
-			results_image: resultsFile?.media_url || '',
+			end_date: dayjs(values.end_date).format('YYYY-MM-DD'),
+			results_image: getRelativePath(resultsFile?.media_url),
 			results_filename: resultsFile?.file_name || '',
-			positive_results_image: positiveResultsFile?.media_url || '',
+			positive_results_image: getRelativePath(positiveResultsFile?.media_url),
 			positive_results_filename: positiveResultsFile?.file_name || '',
-			negative_results_image: negativeResultFile?.media_url || '',
+			negative_results_image: getRelativePath(negativeResultFile?.media_url),
 			negative_results_filename: negativeResultFile?.file_name || ''
 		},
 		questions: values.questions.map((item, index) => ({
@@ -180,14 +185,14 @@ export const questionDataFormatterForService = async (values, isDraft) => {
 			...omit(item, ['uploadedFiles', 'pollAnswers', 'quizAnswers']),
 			...(values.general_info.question_type === 'poll'
 				? {
-						image: pollSlideFiles[index]?.media_url || null,
-						file_name: pollSlideFiles[index]?.file_name || null,
+						image: getRelativePath(pollSlideFiles[index]?.media_url),
+						file_name: pollSlideFiles[index]?.file_name || '',
 						height: pollSlideFiles[index]?.height || 0,
 						width: pollSlideFiles[index]?.width || 0
 				  }
 				: {
-						image: quizSlideFiles[index]?.media_url || null,
-						file_name: quizSlideFiles[index]?.file_name || null,
+						image: getRelativePath(quizSlideFiles[index]?.media_url),
+						file_name: quizSlideFiles[index]?.file_name || '',
 						height: quizSlideFiles[index]?.height || 0,
 						width: quizSlideFiles[index]?.width || 0
 				  }),
@@ -210,52 +215,88 @@ export const questionDataFormatterForService = async (values, isDraft) => {
 };
 
 const updatingQuestionsSlides = (questionsSlides = [], type) => {
-	return questionsSlides.map(({ answers, ...rest }) => {
-		if (type === ' poll') {
+	return questionsSlides.map(({ answers, labels, ...rest }) => {
+		const labelsArray = labels.map((item) => ({ id: -1, name: item }));
+
+		if (type === 'poll') {
 			return {
 				...rest,
-				pollAnswers: answers
+				uploadedFiles: rest.image
+					? [
+							{
+								file_name: rest.file_name,
+								media_url: `${REACT_APP_MEDIA_ENDPOINT}/${rest.image}`,
+								height: rest.height,
+								width: rest.width
+							}
+					  ]
+					: [],
+				labels: labelsArray,
+				pollAnswers: answers,
+				quizAnswers: questionSlideInitialValues.quizAnswers
 			};
 		} else {
 			return {
 				...rest,
-				quizAnswers: answers
+				uploadedFiles: rest.image
+					? [
+							{
+								file_name: rest.file_name,
+								media_url: rest.image,
+								height: rest.height,
+								width: rest.width
+							}
+					  ]
+					: [],
+				labels: labelsArray,
+				quizAnswers: answers,
+				pollAnswers: questionSlideInitialValues.pollAnswers
 			};
 		}
 	});
 };
 
 export const questionDataFormatterForForm = (question) => {
-	const { summary, questions, ...rest } = question;
+	const { id, summary, questions, ...rest } = question;
 
 	const formattedQuestion = {
-		...question,
+		question_id: id,
 		...(question.question_type === 'poll'
 			? {
-					resultsUploadedFiles: [
-						{
-							file_name: summary.results_filename,
-							media_url: summary.results_image
-						}
-					]
+					resultsUploadedFiles: summary.results_image
+						? [
+								{
+									file_name: summary.results_filename,
+									media_url: `${REACT_APP_MEDIA_ENDPOINT}/${summary.results_image}`
+								}
+						  ]
+						: [],
+					positiveResultsUploadedFiles: [],
+					negativeResultsUploadedFiles: []
 			  }
 			: {
-					positiveResultsUploadedFiles: [
-						{
-							file_name: question.summary.positive_results_filename,
-							media_url: question.summary.positive_results_image
-						}
-					],
-					negativeResultsUploadedFiles: [
-						{
-							file_name: question.summary.negative_results_filename,
-							media_url: question.summary.negative_results_image
-						}
-					]
+					resultsUploadedFiles: [],
+					positiveResultsUploadedFiles: summary.positive_results_image
+						? [
+								{
+									file_name: summary.positive_results_filename,
+									media_url: `${REACT_APP_MEDIA_ENDPOINT}/${summary.positive_results_image}`
+								}
+						  ]
+						: [],
+					negativeResultsUploadedFiles: summary.negative_results_image
+						? [
+								{
+									file_name: summary.negative_results_filename,
+									media_url: `${REACT_APP_MEDIA_ENDPOINT}/${summary.negative_results_image}`
+								}
+						  ]
+						: []
 			  }),
 		general_info: {
-			...rest,
-			...(question.question_type === ' poll'
+			...omit(rest, ['created_at', 'updated_at', 'status']),
+			end_date: new Date(rest.end_date),
+			...(question.question_type === 'poll'
 				? {
 						results: summary.results,
 						results_dropbox_url: summary.results_dropbox_url
@@ -265,9 +306,9 @@ export const questionDataFormatterForForm = (question) => {
 						negative_results_dropbox_url: summary.negative_results_dropbox_url,
 						positive_results: summary.positive_results,
 						positive_results_dropbox_url: summary.positive_results_dropbox_url
-				  }),
-			questions: updatingQuestionsSlides(questions, question.question_type)
-		}
+				  })
+		},
+		questions: updatingQuestionsSlides(questions, question.question_type)
 	};
 
 	return formattedQuestion;

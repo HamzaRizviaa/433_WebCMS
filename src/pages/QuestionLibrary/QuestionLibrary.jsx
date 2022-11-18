@@ -54,7 +54,8 @@ const QuestionLibrary = () => {
 		) {
 			setShowPollSlider(true);
 		} else {
-			showEditSlider(true);
+			setShowSlider(true);
+			// showEditSlider(true);
 		}
 	};
 
@@ -93,6 +94,7 @@ const QuestionLibrary = () => {
 			<QuestionsForm
 				open={showSlider}
 				isEdit={edit}
+				location={rowLocation}
 				handleClose={() => {
 					setShowSlider(false);
 				}}
@@ -111,15 +113,6 @@ const QuestionLibrary = () => {
 					showEditSlider(false);
 				}}
 				buttonText={edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'}
-			/>
-
-			<QuestionsForm
-				open={showSlider}
-				isEdit={edit}
-				handleClose={() => {
-					setShowSlider(false);
-				}}
-				status={rowStatus}
 			/>
 
 			<QuizDetails

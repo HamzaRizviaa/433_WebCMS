@@ -28,3 +28,7 @@ export const removeDuplicateLabel = (labels) => {
 	if (duplicateLabel) return filteredLabels;
 	return labels;
 };
+
+export const getRelativePath = (url = '') => {
+	return url.split('cloudfront.net/')[1] || url;
+};

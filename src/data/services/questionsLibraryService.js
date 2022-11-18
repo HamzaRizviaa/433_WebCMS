@@ -32,7 +32,7 @@ class QuestionsLibraryService {
 	}
 
 	static postQuestion(data, apiVersion = 2) {
-		return axiosInstance.post('/news/add-question', data, {
+		return axiosInstance.post('/question/add-question', data, {
 			params: {
 				api_version: apiVersion
 			}
@@ -40,11 +40,11 @@ class QuestionsLibraryService {
 	}
 
 	static deleteQuestion(data) {
-		return axiosInstance.post('/news/delete-question', data);
+		return axiosInstance.post('/question/delete-question', data);
 	}
 
 	static stopQuestion(data) {
-		return axiosInstance.post('/news/stop-question', data);
+		return axiosInstance.post('/question/stop-question', data);
 	}
 }
 

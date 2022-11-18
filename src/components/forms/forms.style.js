@@ -7,7 +7,10 @@ export const useFormStyles = makeStyles(() => ({
 		marginBottom: '1rem',
 		display: 'flex',
 		justifyContent: 'space-between',
-		textTransform: 'uppercase',
+
+		'& button': {
+			textTransform: 'uppercase'
+		},
 
 		'& button + button': {
 			marginLeft: 10
