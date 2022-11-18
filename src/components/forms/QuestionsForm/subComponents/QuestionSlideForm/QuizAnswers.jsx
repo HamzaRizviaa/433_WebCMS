@@ -21,7 +21,7 @@ const QuizAnswers = ({ form, remove, push, questionIndex }) => {
 			{quizAnswers.map((_, index) => (
 				<div className={classes.answerFieldWrapper} key={index}>
 					<FormikField
-						label={`Answer ${index + 1}`}
+						label={index === 0 ? 'Right Answer' : `Wrong Answer ${index}`}
 						name={`questions.${questionIndex}.quizAnswers.${index}.answer`}
 						placeholder='Please write your answer'
 						maxLength={29}

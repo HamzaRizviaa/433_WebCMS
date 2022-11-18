@@ -1,3 +1,4 @@
+import axios from 'axios';
 import axiosInstance from '../axiosInstance';
 
 class UploadFileService {
@@ -16,7 +17,7 @@ class UploadFileService {
 	}
 
 	static async uploadFileToSignedUrl(url, file, mimeType) {
-		const res = await axiosInstance.put(url, file, {
+		const res = await axios.put(url, file, {
 			headers: {
 				'Content-Type': mimeType
 			}
@@ -26,7 +27,7 @@ class UploadFileService {
 	}
 
 	static async uploadVideoThumbnail(url, payload) {
-		const { data } = await axiosInstance.put(url, payload, {
+		const { data } = await axios.put(url, payload, {
 			headers: { 'Content-Type': 'image/png' }
 		});
 

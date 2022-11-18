@@ -13,7 +13,7 @@ import { FileObject } from '../../components/ui/inputs/DropzoneField';
 const uploadFilesToS3 = async (files, libraryType) => {
 	try {
 		const signedUrlsPromise = files.map((fileObject) => {
-			if (fileObject) {
+			if (fileObject && fileObject.file) {
 				return UploadFileService.getSignedUrl(fileObject.fileExtension);
 			}
 			return null;
@@ -23,7 +23,11 @@ const uploadFilesToS3 = async (files, libraryType) => {
 
 		const uploadedFilesDataPromise = signedUrls.map((item, index) => {
 			if (item) {
-				return uploadFileAndVideoThumbnail(item, files[index]?.file);
+				return uploadFileAndVideoThumbnail(
+					item,
+					files[index]?.file,
+					files[index]?.mime_type
+				);
 			}
 			return null;
 		});
@@ -76,12 +80,14 @@ const uploadFilesToS3 = async (files, libraryType) => {
 		const completeUploads = await Promise.all(completeUploadsPromise);
 
 		const result = completeUploads.map((item, index) => {
-			if (item) {
-				if (!files[index]?.file) return files[index];
+			if (!files[index]?.file) return files[index];
 
+			if (item) {
 				if (item?.status_code === 200) {
 					item.data.signedUrlKeyDelete =
 						uploadedFilesData[index]?.signedUrlKeyDelete;
+					item.data.height = files[index]?.height;
+					item.data.width = files[index]?.width;
 					return item.data;
 				}
 			}
@@ -97,8 +103,8 @@ const uploadFilesToS3 = async (files, libraryType) => {
 
 export default uploadFilesToS3;
 
-const uploadFileAndVideoThumbnail = async (signedUrlData, file) => {
-	if (signedUrlData?.data?.url && file) {
+const uploadFileAndVideoThumbnail = async (signedUrlData, file, mimeType) => {
+	if (signedUrlData?.data?.url) {
 		const signedUrlKeyDelete =
 			signedUrlData?.data?.upload_id === 'image'
 				? signedUrlData?.data?.keys?.image_key
@@ -108,7 +114,8 @@ const uploadFileAndVideoThumbnail = async (signedUrlData, file) => {
 
 		const uploadedFileResult = await UploadFileService.uploadFileToSignedUrl(
 			signedUrlData?.data?.url,
-			file
+			file,
+			mimeType
 		);
 
 		if (signedUrlData?.data?.video_thumbnail_url) {

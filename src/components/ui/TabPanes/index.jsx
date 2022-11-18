@@ -23,6 +23,7 @@ const TabPanes = ({ headings, onClick, disabled, children }) => {
 							disabled={disabled}
 							key={index}
 							onClick={() => handleClick(text)}
+							type='button'
 						>
 							{text}
 						</TabUnstyled>

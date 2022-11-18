@@ -7,6 +7,7 @@ import { Formik, Form } from 'formik';
 import { useCommonParams } from '../../../hooks';
 import { selectSpecificNews } from '../../../data/selectors';
 import {
+	questionDataFormatterForService,
 	questionsFormInitialValues
 	// questionDataFormatterForService
 } from '../../../data/helpers';
@@ -48,7 +49,9 @@ const QuestionsForm = ({
 		formikBag.setSubmitting(true);
 
 		try {
-			console.log(values, isDraft);
+			const payload = await questionDataFormatterForService(values, isDraft);
+
+			console.log('PAYLOAD', payload);
 		} catch (e) {
 			console.error(e);
 		} finally {
