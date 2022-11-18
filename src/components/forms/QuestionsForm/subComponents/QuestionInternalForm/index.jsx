@@ -1,12 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useFormStyles } from '../../../forms.style';
-// import { useFormikContext } from 'formik';
+import { FieldArray, useFormikContext } from 'formik';
 import AccordianLayout from '../../../../layouts/AccordianLayout';
 import TabPanes from '../../../../ui/TabPanes';
 import PollSummary from './PollSummary';
 import QuizSummary from './QuizSummary';
 import Button from '../../../../ui/Button';
+import QuestionSlideForm from '../QuestionSlideForm';
+
+const headings = ['Poll', 'Quiz'];
 
 const QuestionInternalForm = ({
 	isEdit,
@@ -17,13 +20,19 @@ const QuestionInternalForm = ({
 	const classes = useFormStyles();
 	const isPublished = isEdit && status === 'published';
 
-	const headings = ['Poll', 'Quiz'];
+	const { values, setFieldValue } = useFormikContext();
+
+	const handleTabClick = (val) => {
+		setFieldValue('general_info.question_type', val.toLowerCase());
+	};
+
+	const questionType = values.general_info.question_type;
 
 	return (
 		<div>
 			<AccordianLayout title='General Information'>
 				<div>
-					<TabPanes headings={headings}>
+					<TabPanes headings={headings} onClick={handleTabClick}>
 						<TabPanes.TabPanel value={0}>
 							<PollSummary openPreviewer={openPreviewer} />
 						</TabPanes.TabPanel>
@@ -33,12 +42,18 @@ const QuestionInternalForm = ({
 					</TabPanes>
 				</div>
 			</AccordianLayout>
+			<FieldArray
+				name='questions'
+				render={(props) => (
+					<QuestionSlideForm {...props} openPreviewer={openPreviewer} />
+				)}
+			/>
 
 			<div className={classes.buttonDiv}>
 				<div>
 					{isEdit && (
 						<Button size='small' variant='outlined' onClick={toggleDeleteModal}>
-							DELETE Qu
+							DELETE {questionType}
 						</Button>
 					)}
 				</div>
@@ -57,7 +72,7 @@ const QuestionInternalForm = ({
 						type='submit'
 						// disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
 					>
-						{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
+						{isPublished ? 'SAVE CHANGES' : `ADD ${questionType}`}
 					</Button>
 				</div>
 			</div>

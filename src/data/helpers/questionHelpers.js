@@ -1,4 +1,5 @@
-import { omit } from 'lodash';
+/* eslint-disable no-unused-vars */
+import { omit, rest } from 'lodash';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateConstantTime, getDateTime } from '../utils';
 import uploadFilesToS3 from '../utils/uploadFilesToS3';
@@ -134,7 +135,7 @@ export const questionsFormInitialValues = {
 	general_info: {
 		save_draft: true,
 		question_type: 'poll',
-		end_date: '',
+		end_date: null,
 		results: '',
 		results_image: '',
 		results_filename: '',
@@ -189,27 +190,29 @@ export const questionDataFormatterForService = async (values, isDraft) => {
 		general_info: {
 			...values.general_info,
 			save_draft: isDraft,
-			results_image: resultsFile?.media_url,
-			results_filename: resultsFile?.file_name,
-			positive_results_image: positiveResultsFile?.media_url,
-			positive_results_filename: positiveResultsFile?.file_name,
-			negative_results_image: negativeResultFile?.media_url,
-			negative_results_filename: negativeResultFile?.file_name
+			results_image: resultsFile?.media_url || '',
+			results_filename: resultsFile?.file_name || '',
+			positive_results_image: positiveResultsFile?.media_url || '',
+			positive_results_filename: positiveResultsFile?.file_name || '',
+			negative_results_image: negativeResultFile?.media_url || '',
+			negative_results_filename: negativeResultFile?.file_name || ''
 		},
 		questions: values.questions.map((item, index) => ({
 			position: index + 1,
 			...omit(item, ['uploadedFiles', 'pollAnswers', 'quizAnswers']),
 			...(values.general_info.question_type === 'poll'
 				? {
-						image: pollSlideFiles[index]?.media_url,
-						file_name: pollSlideFiles[index]?.file_name
+						image: pollSlideFiles[index]?.media_url || null,
+						file_name: pollSlideFiles[index]?.file_name || null,
+						height: pollSlideFiles[index]?.height || 0,
+						width: pollSlideFiles[index]?.width || 0
 				  }
 				: {
-						image: quizSlideFiles[index]?.media_url,
-						file_name: quizSlideFiles[index]?.file_name
+						image: quizSlideFiles[index]?.media_url || null,
+						file_name: quizSlideFiles[index]?.file_name || null,
+						height: quizSlideFiles[index]?.height || 0,
+						width: quizSlideFiles[index]?.width || 0
 				  }),
-			width: item.uploadedFiles[0]?.width,
-			height: item.uploadedFiles[0]?.height,
 			answers:
 				values.general_info.question_type === 'poll'
 					? item.pollAnswers.map((item, index) => ({
@@ -226,4 +229,68 @@ export const questionDataFormatterForService = async (values, isDraft) => {
 	};
 
 	return payload;
+};
+
+const updatingQuestionsSlides = (questionsSlides = [], type) => {
+	return questionsSlides.map(({ answers, ...rest }) => {
+		if (type === ' poll') {
+			return {
+				...rest,
+				pollAnswers: answers
+			};
+		} else {
+			return {
+				...rest,
+				quizAnswers: answers
+			};
+		}
+	});
+};
+
+export const questionDataFormatterForForm = (question) => {
+	const { summary, questions, ...rest } = question;
+
+	const formattedQuestion = {
+		...question,
+		...(question.question_type === 'poll'
+			? {
+					resultsUploadedFiles: [
+						{
+							file_name: summary.results_filename,
+							media_url: summary.results_image
+						}
+					]
+			  }
+			: {
+					positiveResultsUploadedFiles: [
+						{
+							file_name: question.summary.positive_results_filename,
+							media_url: question.summary.positive_results_image
+						}
+					],
+					negativeResultsUploadedFiles: [
+						{
+							file_name: question.summary.negative_results_filename,
+							media_url: question.summary.negative_results_image
+						}
+					]
+			  }),
+		general_info: {
+			...rest,
+			...(question.question_type === ' poll'
+				? {
+						results: summary.results,
+						results_dropbox_url: summary.results_dropbox_url
+				  }
+				: {
+						negative_results: summary.negative_results,
+						negative_results_dropbox_url: summary.negative_results_dropbox_url,
+						positive_results: summary.positive_results,
+						positive_results_dropbox_url: summary.positive_results_dropbox_url
+				  }),
+			questions: updatingQuestionsSlides(questions, question.question_type)
+		}
+	};
+
+	return formattedQuestion;
 };
