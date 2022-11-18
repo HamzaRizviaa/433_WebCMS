@@ -1,7 +1,120 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
+import PropTypes from 'prop-types';
+// import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+// import { isEmpty } from 'lodash';
+import { Formik, Form } from 'formik';
+import { useCommonParams } from '../../../hooks';
+import { selectSpecificNews } from '../../../data/selectors';
+import {
+	questionsFormInitialValues
+	// questionDataFormatterForService
+} from '../../../data/helpers';
+import {
+	// createOrEditQuestionThunk,
+	deleteQuestionThunk,
+	getQuestions
+} from '../../../data/features/questionsLibrary/questionsLibraryActions';
 
-const QuestionsForm = () => {
-	return <div>QuestionsForm</div>;
+import QuestionsFormDrawer from './subComponents/QuestionsFormDrawer';
+import DeleteModal from '../../DeleteModal';
+
+const QuestionsForm = ({
+	open,
+	handleClose,
+	isEdit,
+	status // draft or publish
+}) => {
+	// const navigate = useNavigate();
+	const { queryParams } = useCommonParams();
+	const dispatch = useDispatch();
+	const specificNews = useSelector(selectSpecificNews);
+
+	// States
+	const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+	// Refs
+	const dialogWrapper = useRef(null);
+
+	// const initialValues = useMemo(() => {
+	// 	return isEdit && !isEmpty(specificNews)
+	// 		? newsDataFormatterForForm(specificNews)
+	// 		: newsFormInitialValues;
+	// }, [isEdit, specificNews]);
+
+	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
+
+	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
+		formikBag.setSubmitting(true);
+
+		try {
+			console.log(values, isDraft);
+		} catch (e) {
+			console.error(e);
+		} finally {
+			formikBag.setSubmitting(false);
+		}
+	};
+
+	const onDeleteHandler = async (id, isDraft, setSubmitting) => {
+		try {
+			setSubmitting(true);
+
+			await dispatch(
+				deleteQuestionThunk({
+					question_meta_id: id,
+					is_draft: isDraft
+				})
+			);
+
+			handleClose();
+			dispatch(getQuestions(queryParams));
+		} catch (e) {
+			console.error(e);
+		} finally {
+			setSubmitting(false);
+			setOpenDeleteModal(false);
+		}
+	};
+
+	return (
+		<Formik
+			enableReinitialize
+			initialValues={questionsFormInitialValues}
+			// validationSchema={newsFormValidationSchema}
+			validateOnMount
+			onSubmit={onSubmitHandler}
+		>
+			{({ setSubmitting }) => (
+				<Form>
+					<QuestionsFormDrawer
+						open={open}
+						handleClose={handleClose}
+						isEdit={isEdit}
+						status={status}
+						onSubmitHandler={onSubmitHandler}
+						toggleDeleteModal={toggleDeleteModal}
+					/>
+					<DeleteModal
+						open={openDeleteModal}
+						toggle={toggleDeleteModal}
+						deleteBtn={() => {
+							onDeleteHandler(specificNews?.id, status, setSubmitting);
+						}}
+						text='Question'
+						wrapperRef={dialogWrapper}
+					/>
+				</Form>
+			)}
+		</Formik>
+	);
+};
+
+QuestionsForm.propTypes = {
+	open: PropTypes.bool.isRequired,
+	handleClose: PropTypes.func.isRequired,
+	isEdit: PropTypes.bool.isRequired,
+	status: PropTypes.string.isRequired
 };
 
 export default QuestionsForm;

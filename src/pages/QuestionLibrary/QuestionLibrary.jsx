@@ -10,6 +10,7 @@ import { getQuestionEdit } from '../../data/features/questionsLibrary/questionsL
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 import useGetAllQuestionsQuery from '../../hooks/libraries/questions/useGetAllQuestionsQuery';
 import { questionTableColumns } from '../../data/helpers/questionHelpers';
+import QuestionsForm from '../../components/forms/QuestionsForm';
 
 const QuestionLibrary = () => {
 	const dispatch = useDispatch();
@@ -78,7 +79,7 @@ const QuestionLibrary = () => {
 				noDataText='No Questions Found'
 			/>
 			{/* upload */}
-			<UploadOrEditQuiz
+			{/* <UploadOrEditQuiz
 				open={showSlider}
 				location={rowLocation}
 				rowStatus={rowStatus} //active closed draft
@@ -88,7 +89,16 @@ const QuestionLibrary = () => {
 					setShowSlider(false);
 				}}
 				buttonText={edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'}
+			/> */}
+			<QuestionsForm
+				open={showSlider}
+				isEdit={edit}
+				handleClose={() => {
+					setShowSlider(false);
+				}}
+				status={rowStatus}
 			/>
+
 			{/* edit question */}
 			<UploadOrEditQuiz
 				isEdit={edit}
@@ -101,6 +111,15 @@ const QuestionLibrary = () => {
 					showEditSlider(false);
 				}}
 				buttonText={edit && rowStatus === 'draft' ? 'PUBLISH' : 'SAVE CHANGES'}
+			/>
+
+			<QuestionsForm
+				open={showSlider}
+				isEdit={edit}
+				handleClose={() => {
+					setShowSlider(false);
+				}}
+				status={rowStatus}
 			/>
 
 			<QuizDetails
