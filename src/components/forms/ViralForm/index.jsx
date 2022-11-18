@@ -39,6 +39,12 @@ const ViralForm = ({
 	const dispatch = useDispatch();
 	const specificViral = useSelector(selectSpecificViral);
 
+	const {
+		features: { hlsVideoFormatOnVirals }
+	} = useSelector((state) => state.rootReducer.remoteConfig);
+
+	const isHlsFormatEnabled = hlsVideoFormatOnVirals?._value === 'true';
+
 	// States
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
@@ -69,7 +75,8 @@ const ViralForm = ({
 			try {
 				const uploadFileRes = await uploadFileToServer(
 					values.uploadedFiles[0],
-					'virallibrary'
+					'virallibrary',
+					isHlsFormatEnabled
 				);
 				const viralData = viralDataFormatterForService(
 					values,
@@ -98,7 +105,7 @@ const ViralForm = ({
 				formikBag.setSubmitting(false);
 			}
 		},
-		[queryParams, isSearchParamsEmpty]
+		[queryParams, isSearchParamsEmpty, isHlsFormatEnabled]
 	);
 
 	/**
