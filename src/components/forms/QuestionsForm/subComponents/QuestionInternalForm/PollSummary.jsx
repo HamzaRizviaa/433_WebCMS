@@ -38,7 +38,7 @@ const PollSummary = ({ openPreviewer }) => {
 					maxRows={2}
 				/>
 			</div>
-			<div>
+			<div className={classes.dropzoneWrapper}>
 				<FormikDropzone
 					name='resultsUploadedFiles'
 					accept='image/jpeg, image/png'

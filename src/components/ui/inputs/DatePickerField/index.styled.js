@@ -32,7 +32,7 @@ export const useDatePickerStyles = makeStyles((theme) => ({
 		position: 'relative',
 		minWidth: 0,
 		verticalAlign: 'top',
-		width: '96%',
+		width: '95%',
 		border: `1px solid ${theme.palette.normalGrey}`,
 		padding: '1.2rem 1rem 1.2rem 1.5rem !important',
 		fontSize: '1.4rem !important',

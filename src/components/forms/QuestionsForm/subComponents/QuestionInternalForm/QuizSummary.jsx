@@ -42,7 +42,7 @@ const QuizSummary = ({ openPreviewer }) => {
 					maxRows={2}
 				/>
 			</div>
-			<div>
+			<div className={classes.dropzoneWrapper}>
 				<FormikDropzone
 					name='positiveResultsUploadedFiles'
 					accept='image/jpeg, image/png'
@@ -73,7 +73,7 @@ const QuizSummary = ({ openPreviewer }) => {
 					maxRows={2}
 				/>
 			</div>
-			<div>
+			<div className={classes.dropzoneWrapper}>
 				<FormikDropzone
 					name='negativeResultsUploadedFiles'
 					accept='image/jpeg, image/png'

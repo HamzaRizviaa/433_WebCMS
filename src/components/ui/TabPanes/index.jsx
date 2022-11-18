@@ -7,8 +7,8 @@ import TabUnstyled from '@mui/base/TabUnstyled';
 import TabPanel from './TabPanel';
 import { useStyles } from './index.styles';
 
-const TabPanes = ({ headings, onClick, disabled, children }) => {
-	const muiClasses = useStyles();
+const TabPanes = ({ headings, onClick, disabled, children, type }) => {
+	const muiClasses = useStyles({ type });
 
 	const handleClick = (value) => {
 		if (onClick) onClick(value);
@@ -41,7 +41,8 @@ TabPanes.propTypes = {
 	headings: PropTypes.array.isRequired,
 	disabled: PropTypes.boolean,
 	onClick: PropTypes.func,
-	children: PropTypes.element
+	children: PropTypes.element,
+	type: PropTypes.string
 };
 
 export default TabPanes;

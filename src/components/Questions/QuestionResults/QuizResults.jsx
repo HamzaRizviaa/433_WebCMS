@@ -102,6 +102,7 @@ export default function QuizResults({
 			return [];
 		}
 	};
+	//slider 1 , 2
 
 	const getQuestionResulParticipant = async (id, sortby, order_type) => {
 		let response = [];
@@ -132,7 +133,7 @@ export default function QuizResults({
 		} else {
 			return [];
 		}
-	};
+	}; //table
 
 	const sortKeysMapping = {
 		username: 'username',

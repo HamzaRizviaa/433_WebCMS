@@ -83,6 +83,28 @@ export const questionTableColumns = [
 	}
 ];
 
+export const questionParticipantsTableColumns = [
+	{
+		dataField: 'username',
+		text: 'USERNAME',
+		sort: true,
+		formatter: (content) => getFormatter('markup', { content: `${content}` })
+	},
+	{
+		dataField: 'answer',
+		text: 'ANSWER',
+		sort: true,
+		formatter: (content) => getFormatter('markup', { content: `${content}` })
+	},
+	{
+		dataField: 'date_and_time',
+		text: 'DATE AND TIME',
+		sort: true,
+		formatter: (content) =>
+			getFormatter('markup', { content: getDateTime(content) })
+	}
+];
+
 export const questionSlideInitialValues = {
 	question: '',
 	uploadedFiles: [],
