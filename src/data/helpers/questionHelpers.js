@@ -78,6 +78,33 @@ export const questionTableColumns = [
 	}
 ];
 
+export const questionSlideInitialValues = {
+	question: '',
+	uploadedFiles: [],
+	labels: [],
+	dropbox_url: '',
+	pollAnswers: [
+		{
+			answer: '',
+			type: 'poll'
+		},
+		{
+			answer: '',
+			type: 'poll'
+		}
+	],
+	quizAnswers: [
+		{
+			answer: '',
+			type: 'right_answer'
+		},
+		{
+			answer: '',
+			type: 'wrong_answer_1'
+		}
+	]
+};
+
 export const questionsFormInitialValues = {
 	resultsUploadedFiles: [],
 	positiveResultsUploadedFiles: [],
@@ -99,34 +126,7 @@ export const questionsFormInitialValues = {
 		negative_results_filename: '',
 		negative_results_dropbox_url: ''
 	},
-	questions: [
-		{
-			question: '',
-			uploadedFiles: [],
-			labels: [],
-			dropbox_url: '',
-			pollAnswers: [
-				{
-					answer: '',
-					type: 'poll'
-				},
-				{
-					answer: '',
-					type: 'poll'
-				}
-			],
-			quizAnswers: [
-				{
-					answer: '',
-					type: 'right_answer'
-				},
-				{
-					answer: '',
-					type: 'wrong_answer_1'
-				}
-			]
-		}
-	]
+	questions: [questionSlideInitialValues]
 };
 
 export const questionDataFormatterForService = async (values, isDraft) => {
