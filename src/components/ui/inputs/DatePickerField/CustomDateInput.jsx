@@ -8,6 +8,7 @@ const CustomDateInput = forwardRef((props, ref) => {
 	const {
 		inputValue,
 		onClick,
+		onBlur,
 		placeHolder,
 		onIconClick = () => {},
 		disabled = false,
@@ -21,7 +22,13 @@ const CustomDateInput = forwardRef((props, ref) => {
 	});
 
 	return (
-		<div className={classes.customDatePickerInput} onClick={onClick} ref={ref}>
+		<div
+			className={classes.customDatePickerInput}
+			onClick={onClick}
+			onBlur={onBlur}
+			ref={ref}
+			tabIndex={-1}
+		>
 			<span className={classes.dateInputText}>
 				{inputValue ? moment(inputValue).format('DD-MM-YYYY') : placeHolder}
 			</span>
@@ -36,6 +43,7 @@ CustomDateInput.displayName = 'CustomDateInput';
 
 CustomDateInput.propTypes = {
 	onClick: PropTypes.func,
+	onBlur: PropTypes.func,
 	inputValue: PropTypes.any,
 	placeHolder: PropTypes.string,
 	onIconClick: PropTypes.func,
