@@ -7,7 +7,14 @@ import TabUnstyled from '@mui/base/TabUnstyled';
 import TabPanel from './TabPanel';
 import { useStyles } from './index.styles';
 
-const TabPanes = ({ headings, onClick, disabled, children, type }) => {
+const TabPanes = ({
+	headings,
+	onClick,
+	disabled,
+	children,
+	type,
+	defaultValue = 0
+}) => {
 	const muiClasses = useStyles({ type });
 
 	const handleClick = (value) => {
@@ -16,7 +23,7 @@ const TabPanes = ({ headings, onClick, disabled, children, type }) => {
 
 	return (
 		<div className={muiClasses.root}>
-			<TabsUnstyled defaultValue={0} className={muiClasses.tabRoot}>
+			<TabsUnstyled defaultValue={defaultValue} className={muiClasses.tabRoot}>
 				<TabsListUnstyled className={muiClasses.tabMainDiv}>
 					{headings.map((text, index) => (
 						<TabUnstyled
@@ -42,7 +49,8 @@ TabPanes.propTypes = {
 	disabled: PropTypes.boolean,
 	onClick: PropTypes.func,
 	children: PropTypes.element,
-	type: PropTypes.string
+	type: PropTypes.string,
+	defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
 export default TabPanes;
