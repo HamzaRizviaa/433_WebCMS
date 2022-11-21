@@ -4,7 +4,7 @@ export const checkEmptyQuestion = (question) => {
 			return (
 				item?.data[0]?.uploadedFiles?.length > 0 &&
 				item?.data[0]?.question &&
-				item?.data[0]?.labels?.length > 6 &&
+				item?.data[0]?.labels?.length > 0 &&
 				(item?.data[0]?.answers?.length > 1
 					? item?.data[0]?.answers.every((item) => item?.answer !== '')
 					: false)
