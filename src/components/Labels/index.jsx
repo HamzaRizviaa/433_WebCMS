@@ -290,7 +290,8 @@ Labels.propTypes = {
 	draftStatus: PropTypes.string,
 	setExtraLabel: PropTypes.func,
 	location: PropTypes.string,
-	titleClasses: PropTypes.string
+	titleClasses: PropTypes.string,
+	library: PropTypes.string
 };
 
 export default Labels;
