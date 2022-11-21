@@ -46,6 +46,24 @@ class QuestionsLibraryService {
 	static stopQuestion(data) {
 		return axiosInstance.post('/question/stop-question', data);
 	}
+
+	static getQuestionResultDetail(id) {
+		return axiosInstance.get(
+			`/question/get-question-result-detail?question_id=${id}`
+		);
+	}
+
+	static getQuestionParticipantListing(queryParams) {
+		const params = {
+			question_id: queryParams.id,
+			order_type: queryParams.order_type,
+			sort_by: queryParams.sort_by
+		};
+
+		return axiosInstance.get('/question/get-question-participant-listing', {
+			params
+		});
+	}
 }
 
 export default QuestionsLibraryService;

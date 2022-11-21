@@ -85,3 +85,31 @@ export const deleteQuestionThunk = createAsyncThunk(
 		}
 	}
 );
+
+export const getQuestionResultDetailThunk = createAsyncThunk(
+	'questionLibrary/getQuestionResultDetailThunk',
+	async (data) => {
+		try {
+			const response = await QuestionsLibraryService.getQuestionResultDetail(
+				data
+			);
+			if (response?.data?.data) {
+				return response.data.data;
+			} else {
+				return [];
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	}
+);
+
+export const getQuestionParticipantListingThunk = createAsyncThunk(
+	'questionLibrary/getQuestionParticipantListingThunk',
+	async (params = {}) => {
+		const { data: questions } =
+			await QuestionsLibraryService.getQuestionParticipantListing(params);
+
+		return questions.data;
+	}
+);
