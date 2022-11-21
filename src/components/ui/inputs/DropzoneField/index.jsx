@@ -46,6 +46,8 @@ const DropzoneField = ({
 	onDrop,
 	accept,
 	maxFiles = 1,
+	hidePreviewIcon = false,
+	hideDeleteIcon = false,
 	...rest
 }) => {
 	const handleDrop = (files) => {
@@ -94,6 +96,8 @@ const DropzoneField = ({
 					onDelete={onDelete}
 					onPreview={onPreview}
 					showPreview={showPreview}
+					hidePreviewIcon={hidePreviewIcon}
+					hideDeleteIcon={hideDeleteIcon}
 				/>
 			) : (
 				<section className={classes.dropZoneContainer}>

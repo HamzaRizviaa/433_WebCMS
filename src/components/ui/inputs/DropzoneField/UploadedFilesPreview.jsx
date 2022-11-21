@@ -19,7 +19,9 @@ const UploadedFilesPreview = ({
 	uploadedFiles,
 	onDelete,
 	onPreview,
-	showPreview
+	showPreview,
+	hidePreviewIcon,
+	hideDeleteIcon
 }) => {
 	const handleDeleteFile = (file) => {
 		if (onDelete) onDelete(file);
@@ -109,16 +111,18 @@ const UploadedFilesPreview = ({
 								</p>
 							</div>
 							<div className={classes.filePreviewRight}>
-								{showPreview && (
+								{showPreview && !hidePreviewIcon && (
 									<EyeIcon
 										onClick={() => handlePreviewFile(file)}
 										className={classes.filePreviewIcons}
 									/>
 								)}
-								<DeleteIcon
-									onClick={() => handleDeleteFile(file)}
-									className={classes.filePreviewIcons}
-								/>
+								{!hideDeleteIcon && (
+									<DeleteIcon
+										onClick={() => handleDeleteFile(file)}
+										className={classes.filePreviewIcons}
+									/>
+								)}
 							</div>
 						</div>
 						<hr className={classes.horizontalLine} />
