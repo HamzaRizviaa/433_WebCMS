@@ -378,13 +378,13 @@ export const mediaFormValidationSchema = Yup.object().shape({
 	landscape_image_dropbox_url: Yup.string(),
 	description: Yup.string().required().label('Description'),
 	labels: Yup.array()
-		.min(7, (obj) => {
+		.min(4, (obj) => {
 			const labelsCount = obj.value?.length;
 			return `You need to add ${
-				7 - labelsCount
+				4 - labelsCount
 			} more labels in order to upload news`;
 		})
-		.required('You need to enter atleast 7 labels')
+		.required('You need to enter atleast 4 labels')
 		.label('Labels'),
 	uploadedFiles: Yup.array().min(1).required(),
 	uploadedCoverImage: Yup.array().min(1).required(),
