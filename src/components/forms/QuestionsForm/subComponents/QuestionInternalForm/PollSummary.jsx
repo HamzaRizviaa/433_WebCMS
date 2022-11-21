@@ -1,10 +1,11 @@
 import React from 'react';
-import FormikDropzone from '../../../../ui/inputs/formik/FormikDropzone';
 import PropTypes from 'prop-types';
-import FormikField from '../../../../ui/inputs/formik/FormikField';
-import { useFormStyles } from '../../../forms.style';
 import { useFormikContext } from 'formik';
+
+import FormikDropzone from '../../../../ui/inputs/formik/FormikDropzone';
+import FormikField from '../../../../ui/inputs/formik/FormikField';
 import FormikDatePicker from '../../../../ui/inputs/formik/FormikDatePicker';
+import { useFormStyles } from '../../../forms.style';
 
 const PollSummary = ({ openPreviewer }) => {
 	const classes = useFormStyles();
@@ -29,7 +30,7 @@ const PollSummary = ({ openPreviewer }) => {
 			<p className={classes.mainHeading}>Summary Component</p>
 			<div className={classes.fieldContainer}>
 				<FormikField
-					name={'general_info.results'}
+					name='general_info.results'
 					label='RESULT'
 					placeholder='Please write your result here'
 					maxLength={24}
@@ -51,7 +52,7 @@ const PollSummary = ({ openPreviewer }) => {
 			</div>
 			<div className={classes.fieldContainer}>
 				<FormikField
-					name={'general_info.results_dropbox_url'}
+					name='general_info.results_dropbox_url'
 					label='DROPBOX URL'
 					placeholder='Please drop the URL here'
 					multiline

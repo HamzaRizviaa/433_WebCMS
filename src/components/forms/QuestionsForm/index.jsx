@@ -1,3 +1,4 @@
+/* eslint-disable no-unreachable */
 import React, { useState, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +11,8 @@ import { selectSpecificQuestion } from '../../../data/selectors';
 import {
 	questionDataFormatterForForm,
 	questionDataFormatterForService,
-	questionsFormInitialValues
+	questionsFormInitialValues,
+	questionsFormValidationSchema
 } from '../../../data/helpers';
 import {
 	createOrEditQuestionThunk,
@@ -100,7 +102,7 @@ const QuestionsForm = ({
 		<Formik
 			enableReinitialize
 			initialValues={initialValues}
-			// validationSchema={newsFormValidationSchema}
+			validationSchema={questionsFormValidationSchema}
 			validateOnMount
 			onSubmit={onSubmitHandler}
 		>

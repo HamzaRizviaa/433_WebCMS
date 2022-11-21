@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import { FieldArray } from 'formik';
 import { capitalize } from 'lodash';
 
-import PollAnswers from './PollAnswers';
-import QuizAnswers from './QuizAnswers';
+import Answers from './Answers';
 import FormikDropzone from '../../../../ui/inputs/formik/FormikDropzone';
 import FormikField from '../../../../ui/inputs/formik/FormikField';
 import FormikLabelsSelect from '../../../../ui/inputs/formik/FormikLabelsSelect';
@@ -78,27 +77,16 @@ const QuestionSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 							/>
 						</div>
 						<div>
-							{questionType === 'Poll' ? (
-								<FieldArray
-									name={`questions.${index}.pollAnswers`}
-									render={(props) => (
-										<PollAnswers {...props} questionIndex={index} />
-									)}
-								/>
-							) : (
-								<FieldArray
-									name={`questions.${index}.quizAnswers`}
-									render={(props) => (
-										<QuizAnswers {...props} questionIndex={index} />
-									)}
-								/>
-							)}
+							<FieldArray
+								name={`questions.${index}.answers`}
+								render={(props) => <Answers {...props} questionIndex={index} />}
+							/>
 						</div>
 						<div className={classes.fieldContainer}>
 							<FormikLabelsSelect
 								label='LABELS'
 								name={`questions.${index}.labels`}
-								placeholder={'Select a minimum of 7 labels'}
+								placeholder='Select a minimum of 1 label'
 								// disabled={isPublished}
 								required
 							/>

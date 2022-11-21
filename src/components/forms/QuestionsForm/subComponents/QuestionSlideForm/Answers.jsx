@@ -5,25 +5,32 @@ import Button from '../../../../ui/Button';
 import { DeleteIcon, AddIcon } from '../../../../../assets/svg-icons';
 import { useQuestionsStyles } from '../../index.style';
 
-const PollAnswers = ({ form, remove, push, questionIndex }) => {
+const Answers = ({ form, remove, push, questionIndex }) => {
 	const classes = useQuestionsStyles();
 
-	const { pollAnswers } = form.values.questions[questionIndex];
+	const { answers } = form.values.questions[questionIndex];
 
 	const handleAdd = () => {
 		push({
-			answer: '',
-			type: 'poll'
+			answer: ''
 		});
 	};
 
+	const questionType = form.values.general_info.question_type;
+
 	return (
 		<div>
-			{pollAnswers.map((_, index) => (
+			{answers.map((_, index) => (
 				<div className={classes.answerFieldWrapper} key={index}>
 					<FormikField
-						label={`Answer ${index + 1}`}
-						name={`questions.${questionIndex}.pollAnswers.${index}.answer`}
+						label={
+							questionType === 'poll'
+								? `Answer ${index + 1}`
+								: index === 0
+								? 'Right Answer'
+								: `Wrong Answer ${index}`
+						}
+						name={`questions.${questionIndex}.answers.${index}.answer`}
 						placeholder='Please write your answer'
 						maxLength={29}
 						maxRows={2}
@@ -38,7 +45,7 @@ const PollAnswers = ({ form, remove, push, questionIndex }) => {
 					)}
 				</div>
 			))}
-			{pollAnswers.length < 4 && (
+			{answers.length < 4 && (
 				<Button variant='text' onClick={handleAdd}>
 					<AddIcon className={classes.addAnswerIcon} /> ADD ANSWER
 				</Button>
@@ -47,11 +54,11 @@ const PollAnswers = ({ form, remove, push, questionIndex }) => {
 	);
 };
 
-PollAnswers.propTypes = {
+Answers.propTypes = {
 	form: PropTypes.object.isRequired,
 	remove: PropTypes.func.isRequired,
 	push: PropTypes.func.isRequired,
 	questionIndex: PropTypes.number.isRequired
 };
 
-export default PollAnswers;
+export default Answers;

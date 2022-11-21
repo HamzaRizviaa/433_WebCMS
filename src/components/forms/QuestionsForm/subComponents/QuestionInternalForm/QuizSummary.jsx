@@ -1,10 +1,11 @@
 import React from 'react';
-import FormikDropzone from '../../../../ui/inputs/formik/FormikDropzone';
 import PropTypes from 'prop-types';
-import FormikField from '../../../../ui/inputs/formik/FormikField';
-import { useFormStyles } from '../../../forms.style';
 import { useFormikContext } from 'formik';
+
+import FormikDropzone from '../../../../ui/inputs/formik/FormikDropzone';
+import FormikField from '../../../../ui/inputs/formik/FormikField';
 import FormikDatePicker from '../../../../ui/inputs/formik/FormikDatePicker';
+import { useFormStyles } from '../../../forms.style';
 
 const QuizSummary = ({ openPreviewer }) => {
 	const classes = useFormStyles();
@@ -33,7 +34,7 @@ const QuizSummary = ({ openPreviewer }) => {
 			<p className={classes.mainHeading}>Summary Component</p>
 			<div className={classes.fieldContainer}>
 				<FormikField
-					name={'general_info.positive_results'}
+					name='general_info.positive_results'
 					label='POSITIVE RESULTS'
 					placeholder='Please write your positive results message here'
 					maxLength={24}
@@ -55,7 +56,7 @@ const QuizSummary = ({ openPreviewer }) => {
 			</div>
 			<div className={classes.fieldContainer}>
 				<FormikField
-					name={'general_info.positive_results_dropbox_url'}
+					name='general_info.positive_results_dropbox_url'
 					label='DROPBOX URL'
 					placeholder='Please drop the URL here'
 					multiline
@@ -64,7 +65,7 @@ const QuizSummary = ({ openPreviewer }) => {
 			</div>
 			<div className={classes.fieldContainer}>
 				<FormikField
-					name={'general_info.negative_results'}
+					name='general_info.negative_results'
 					label='NEGATIVE RESULTS'
 					placeholder='Please write your negative results message here'
 					maxLength={24}
@@ -86,7 +87,7 @@ const QuizSummary = ({ openPreviewer }) => {
 			</div>
 			<div className={classes.fieldContainer}>
 				<FormikField
-					name={'general_info.negative_results_dropbox_url'}
+					name='general_info.negative_results_dropbox_url'
 					label='DROPBOX URL'
 					placeholder='Please drop the URL here'
 					multiline

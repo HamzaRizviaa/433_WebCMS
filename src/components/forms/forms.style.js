@@ -59,6 +59,7 @@ export const useFormStyles = makeStyles(() => ({
 		lineHeight: '30px'
 	},
 	dropzoneWrapper: {
-		paddingBottom: '1rem'
+		marginTop: 15,
+		marginBottom: 20
 	}
 }));

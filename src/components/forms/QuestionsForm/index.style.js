@@ -2,7 +2,8 @@ import { makeStyles } from '@material-ui/core';
 
 export const useQuestionsStyles = makeStyles(() => ({
 	answerFieldWrapper: {
-		position: 'relative'
+		position: 'relative',
+		marginTop: 14
 	},
 
 	answerFieldDeleteIcon: {

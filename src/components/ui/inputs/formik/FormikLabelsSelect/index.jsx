@@ -131,13 +131,7 @@ const FormikLabelsSelect = ({ name, placeholder, ...restProps }) => {
 			onBlur={handleBlur}
 			onSearchTextChange={handleSearchTextChange}
 			searchBarProps={{ onKeyPress: handleKeyPress, onPaste: handlePaste }}
-			error={
-				touched && error
-					? `You need to add ${
-							7 - selectedValues.length
-					  } more labels in order to upload media`
-					: ''
-			}
+			error={touched && error ? error : ''}
 			renderOption={renderOption}
 		/>
 	);

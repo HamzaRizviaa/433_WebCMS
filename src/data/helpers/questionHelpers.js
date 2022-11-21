@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import dayjs from 'dayjs';
+import * as yup from 'yup';
 import { omit } from 'lodash';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateConstantTime, getDateTime } from '../utils';
@@ -110,24 +111,12 @@ export const questionSlideInitialValues = {
 	uploadedFiles: [],
 	labels: [],
 	dropbox_url: '',
-	pollAnswers: [
+	answers: [
 		{
-			answer: '',
-			type: 'poll'
+			answer: ''
 		},
 		{
-			answer: '',
-			type: 'poll'
-		}
-	],
-	quizAnswers: [
-		{
-			answer: '',
-			type: 'right_answer'
-		},
-		{
-			answer: '',
-			type: 'wrong_answer_1'
+			answer: ''
 		}
 	]
 };
@@ -218,17 +207,16 @@ export const questionDataFormatterForService = async (values, isDraft) => {
 						height: quizSlideFiles[index]?.height || 0,
 						width: quizSlideFiles[index]?.width || 0
 				  }),
-			answers:
-				values.general_info.question_type === 'poll'
-					? item.pollAnswers.map((item, index) => ({
-							...item,
-							position: index + 1
-					  }))
-					: item.quizAnswers.map((item, index) => ({
-							...item,
-							position: index + 1,
-							type: index > 1 ? `wrong_answer_${index + 1}` : item.type
-					  }))
+			answers: item.answers.map((item, index) => ({
+				...item,
+				position: index + 1,
+				type:
+					values.general_info.question_type === 'poll'
+						? 'poll'
+						: index === 0
+						? 'right_answer'
+						: `wrong_answer_${index}`
+			}))
 		})),
 		...(values.question_id ? { question_id: values.question_id } : {})
 	};
@@ -236,45 +224,24 @@ export const questionDataFormatterForService = async (values, isDraft) => {
 	return payload;
 };
 
-const updatingQuestionsSlides = (questionsSlides = [], type) => {
-	return questionsSlides.map(({ answers, labels, ...rest }) => {
+const updatingQuestionsSlides = (questionsSlides = []) => {
+	return questionsSlides.map(({ labels, ...rest }) => {
 		const labelsArray = labels.map((item) => ({ id: -1, name: item }));
 
-		if (type === 'poll') {
-			return {
-				...rest,
-				uploadedFiles: rest.image
-					? [
-							{
-								file_name: rest.file_name,
-								media_url: `${REACT_APP_MEDIA_ENDPOINT}/${rest.image}`,
-								height: rest.height,
-								width: rest.width
-							}
-					  ]
-					: [],
-				labels: labelsArray,
-				pollAnswers: answers,
-				quizAnswers: questionSlideInitialValues.quizAnswers
-			};
-		} else {
-			return {
-				...rest,
-				uploadedFiles: rest.image
-					? [
-							{
-								file_name: rest.file_name,
-								media_url: rest.image,
-								height: rest.height,
-								width: rest.width
-							}
-					  ]
-					: [],
-				labels: labelsArray,
-				quizAnswers: answers,
-				pollAnswers: questionSlideInitialValues.pollAnswers
-			};
-		}
+		return {
+			...rest,
+			uploadedFiles: rest.image
+				? [
+						{
+							file_name: rest.file_name,
+							media_url: `${REACT_APP_MEDIA_ENDPOINT}/${rest.image}`,
+							height: rest.height,
+							width: rest.width
+						}
+				  ]
+				: [],
+			labels: labelsArray
+		};
 	});
 };
 
@@ -330,8 +297,94 @@ export const questionDataFormatterForForm = (question) => {
 						positive_results_dropbox_url: summary.positive_results_dropbox_url
 				  })
 		},
-		questions: updatingQuestionsSlides(questions, question.question_type)
+		questions: updatingQuestionsSlides(questions)
 	};
 
 	return formattedQuestion;
 };
+
+export const questionsFormValidationSchema = yup.object({
+	resultsUploadedFiles: yup.array().when('general_info.question_type', {
+		is: (val) => val === 'poll',
+		then: (schema) =>
+			schema.min(1, 'You need to upload an image in order to post'),
+		otherwise: (schema) => schema.min(0)
+	}),
+	positiveResultsUploadedFiles: yup.array().when('general_info.question_type', {
+		is: (val) => val === 'quiz',
+		then: (schema) =>
+			schema.min(1, 'You need to upload an image in order to post'),
+		otherwise: (schema) => schema.min(0)
+	}),
+	negativeResultsUploadedFiles: yup.array().when('general_info.question_type', {
+		is: (val) => val === 'quiz',
+		then: (schema) =>
+			schema.min(1, 'You need to upload an image in order to post'),
+		otherwise: (schema) => schema.min(0)
+	}),
+
+	general_info: yup.object({
+		end_date: yup
+			.date()
+			.nullable()
+			.required('You need to select date to post poll'),
+		results: yup
+			.string()
+			.trim()
+			.when('question_type', {
+				is: (val) => val === 'poll',
+				then: (schema) =>
+					schema.required('You need to enter results in order to post'),
+				otherwise: (schema) => schema
+			}),
+		positive_results: yup
+			.string()
+			.trim()
+			.when('question_type', {
+				is: (val) => val === 'quiz',
+				then: (schema) =>
+					schema.required(
+						'You need to enter positive results in order to post'
+					),
+				otherwise: (schema) => schema
+			}),
+		negative_results: yup
+			.string()
+			.trim()
+			.when('question_type', {
+				is: (val) => val === 'quiz',
+				then: (schema) =>
+					schema.required(
+						'You need to enter negative results in order to post'
+					),
+				otherwise: (schema) => schema
+			})
+	}),
+
+	questions: yup
+		.array()
+		.of(
+			yup.object({
+				question: yup.string().trim().required('You need to enter a question'),
+				uploadedFiles: yup
+					.array()
+					.min(1, 'You need to upload an image in order to post'),
+				dropbox_url: yup.string(),
+				labels: yup
+					.array()
+					.min(1, 'You need to add 1 more label in order to post'),
+				answers: yup
+					.array()
+					.of(
+						yup.object().shape({
+							answer: yup
+								.string()
+								.trim()
+								.required('You need to enter an answer')
+						})
+					)
+					.min(2, 'Atleast 2 answers are required')
+			})
+		)
+		.min(1, 'Atleast 1 question is required')
+});

@@ -460,7 +460,6 @@ const UploadOrEditQuiz = ({
 			setQuestionIds(allQuestionIds); //to pass to delete data
 			setQuestionType(editQuestionData?.question_type);
 			setStopDeleteQuestionType(editQuestionData?.question_type); //to pass in delete stop modal .
-			console.log('editQuestionData', editQuestionData);
 			setStatus(editQuestionData.status);
 			setForm((prev) => {
 				return {
@@ -537,9 +536,6 @@ const UploadOrEditQuiz = ({
 			return undefined;
 		}
 	};
-
-	console.log(questionSlides, 'QSS');
-	console.log(form, 'FORM');
 
 	const updateDataFromAPI = (apiData, question_type, end_date) => {
 		let modifiedData = apiData?.map(({ id, position, ...rest }) => {
