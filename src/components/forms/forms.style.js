@@ -36,7 +36,10 @@ export const useFormStyles = makeStyles(() => ({
 	addNewsBtnWrapper: {
 		marginTop: 40
 	},
-
+	leftButtonSection: {
+		display: 'flex',
+		gap: '1rem'
+	},
 	explanationWrapper: {
 		display: 'flex',
 		justifyContent: 'flex-start',
