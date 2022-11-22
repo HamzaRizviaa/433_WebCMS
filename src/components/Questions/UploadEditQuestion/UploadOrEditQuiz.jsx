@@ -128,7 +128,7 @@ const UploadOrEditQuiz = ({
 	const { questionEditStatus, questionEdit: editQuestionData } = useSelector(
 		(state) => state.rootReducer.questionsLibrary
 	);
-
+	console.log(editQuestionData, 'editQuestionData');
 	const reorder = (list, startIndex, endIndex) => {
 		const result = Array.from(list);
 		const [removed] = result.splice(startIndex, 1);

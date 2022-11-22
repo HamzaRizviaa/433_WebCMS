@@ -129,6 +129,7 @@ export default function QuizResults({
 		}
 
 		if (response?.data?.data) {
+			console.log(response?.data?.data, 'response?.data?.data');
 			return setParticipants(response.data.data);
 		} else {
 			return [];
