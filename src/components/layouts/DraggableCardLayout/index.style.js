@@ -45,17 +45,20 @@ export const useDraggableCardLayoutStyles = makeStyles((theme) => ({
 		width: '100%'
 	},
 
-	grabIconDiv: ({ largeIconsAndLabel }) => ({
+	grabIconDiv: ({ largeIconsAndLabel, disableActions }) => ({
 		width: largeIconsAndLabel ? '32px' : '26px',
 		height: largeIconsAndLabel ? '32px' : '26px',
 		background: ' #404040',
 		borderRadius: '40px',
-		textAlign: 'center'
+		textAlign: 'center',
+		opacity: disableActions ? 0.5 : 1,
+		pointerEvents: disableActions ? 'none' : 'auto'
 	}),
 
 	grabIcon: ({ largeIconsAndLabel }) => ({
 		height: largeIconsAndLabel ? '12px' : '10px',
 		width: '16px',
+		cursor: 'grab',
 
 		padding: largeIconsAndLabel ? '10px 0px' : '8px 0px',
 		'& > path': {
@@ -82,6 +85,11 @@ export const useDraggableCardLayoutStyles = makeStyles((theme) => ({
 		borderRadius: '40px',
 		textAlign: 'center',
 		cursor: 'pointer'
+	}),
+
+	deleteIconWrapper: ({ disableActions }) => ({
+		opacity: disableActions ? 0.5 : 1,
+		pointerEvents: disableActions ? 'none' : 'auto'
 	}),
 
 	deleteIcon: ({ largeIconsAndLabel }) => ({
