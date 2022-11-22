@@ -186,8 +186,8 @@ const Labels = ({
 							selectedLabels?.length > 0
 								? ' '
 								: `Select a minimum of ${
-										library === 'question' ? '1' : '4'
-								  } labels`
+										library === 'question' ? '1 label' : '4 labels'
+								  } `
 						}
 						className={classes.textFieldAuto}
 						value={extraLabel}
