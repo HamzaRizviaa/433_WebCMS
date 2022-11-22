@@ -72,6 +72,7 @@ const QuestionLibrary = () => {
 		setEdit(false);
 		setRowType('');
 		setRowStatus('');
+		setRowLocation('');
 	};
 
 	return (
