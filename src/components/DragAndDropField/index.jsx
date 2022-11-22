@@ -44,11 +44,11 @@ const DragAndDropField = ({
 						ref={provided.innerRef}
 						className={classes.uploadedFilesContainer}
 					>
-						{uploadedFiles?.map((file, index) => {
+						{uploadedFiles.map((file, index) => {
 							return (
 								<Draggable
-									key={file.id}
-									draggableId={`droppable-${file.id}`}
+									key={file?.id}
+									draggableId={`droppable-${file?.id}`}
 									index={index}
 									isDragDisabled={uploadedFiles?.length <= 1}
 								>
@@ -64,23 +64,23 @@ const DragAndDropField = ({
 										>
 											<div className={classes.filePreviewLeft}>
 												{isMedia &&
-													(file.type === 'video' && file.media_url ? (
+													(file?.type === 'video' && file?.media_url ? (
 														<>
 															<Union className={classes.playIcon} />
 															<div className={classes.fileThumbnail2} />
 															<video
-																src={file.media_url}
+																src={file?.media_url}
 																style={{ display: 'none' }}
 																ref={videoRef}
 																onLoadedMetadata={onLoadedVideodata}
 															/>
 														</>
-													) : file.type === 'audio' && file.media_url ? (
+													) : file?.type === 'audio' && file?.media_url ? (
 														<>
 															<MusicIcon className={classes.playIcon} />
 															<div className={classes.fileThumbnail2} />
 															<audio
-																src={file.media_url}
+																src={file?.media_url}
 																style={{ display: 'none' }}
 																ref={videoRef}
 																onLoadedMetadata={onLoadedAudiodata}
@@ -89,10 +89,10 @@ const DragAndDropField = ({
 													) : (
 														<></>
 													))}
-												{isArticle && file.media_url && (
+												{isArticle && file?.media_url && (
 													<>
 														<img
-															src={file.media_url || file.img}
+															src={file?.media_url || file?.img}
 															className={classes.fileThumbnail}
 															style={{
 																objectFit: 'contain',
@@ -104,7 +104,7 @@ const DragAndDropField = ({
 													</>
 												)}
 												{isPost &&
-													(file.type === 'video' ? (
+													(file?.type === 'video' ? (
 														<>
 															<PlayArrowIcon
 																className={
@@ -116,7 +116,9 @@ const DragAndDropField = ({
 															<video
 																id={'my-video'}
 																poster={
-																	isEdit ? file.thumbnail_url || file.img : null
+																	isEdit
+																		? file?.thumbnail_url || file?.img
+																		: null
 																}
 																className={classes.fileThumbnailPost}
 																style={{
@@ -128,13 +130,13 @@ const DragAndDropField = ({
 																ref={videoRef}
 																onLoadedMetadata={onLoadedVideodata}
 															>
-																<source src={file.media_url || file.img} />
+																<source src={file?.media_url || file?.img} />
 															</video>
 														</>
 													) : (
 														<>
 															<img
-																src={file.media_url || file.img}
+																src={file?.media_url || file?.img}
 																className={classes.fileThumbnailPost}
 																style={{
 																	width: `${imageToResizeWidth}px`,
@@ -148,7 +150,7 @@ const DragAndDropField = ({
 														</>
 													))}
 												<p className={classes.fileName}>
-													{file.fileName || file.file_name}
+													{file?.fileName || file?.file_name}
 												</p>
 											</div>
 											{isEdit || editPoll || editQuiz ? (
@@ -158,7 +160,7 @@ const DragAndDropField = ({
 															<Deletes
 																className={classes.filePreviewIcons}
 																onClick={() => {
-																	handleDeleteFile(file.id);
+																	handleDeleteFile(file?.id);
 																	setPreviewBool(false);
 																	setPreviewFile(null);
 																}}
@@ -194,14 +196,14 @@ const DragAndDropField = ({
 																<Deletes
 																	className={classes.filePreviewIcons}
 																	onClick={() => {
-																		handleDeleteFile(file.id);
+																		handleDeleteFile(file?.id);
 																	}}
 																/>
 															) : (
 																<Deletes
 																	className={classes.filePreviewIcons}
 																	onClick={() => {
-																		handleDeleteFile(file.id);
+																		handleDeleteFile(file?.id);
 																		setPreviewBool(false);
 																		setPreviewFile(null);
 																	}}
@@ -240,14 +242,14 @@ const DragAndDropField = ({
 														<Deletes
 															className={classes.filePreviewIcons}
 															onClick={() => {
-																handleDeleteFile(file.id);
+																handleDeleteFile(file?.id);
 															}}
 														/>
 													) : (
 														<Deletes
 															className={classes.filePreviewIcons}
 															onClick={() => {
-																handleDeleteFile(file.id);
+																handleDeleteFile(file?.id);
 																setPreviewBool(false);
 																setPreviewFile(null);
 															}}
