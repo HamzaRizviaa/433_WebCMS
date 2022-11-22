@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 export const useStyles = makeStyles(() => ({
-	root: ({ type }) => ({
+	root: ({ type, hideTabsHead }) => ({
 		'& .TabsListUnstyled-root': {
 			width: type === 'questions' ? '98%' : '70%',
 			border: 'none',
@@ -10,7 +10,7 @@ export const useStyles = makeStyles(() => ({
 			padding: '6px 5px',
 			marginTop: '2.5rem',
 			marginBottom: '2rem',
-			display: 'flex',
+			display: hideTabsHead ? 'none' : 'flex',
 			justifyContent: 'space-between'
 		},
 		'& .TabUnstyled-root': {

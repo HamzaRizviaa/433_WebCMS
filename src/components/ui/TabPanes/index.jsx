@@ -13,9 +13,10 @@ const TabPanes = ({
 	disabled,
 	children,
 	type,
-	defaultValue = 0
+	defaultValue = 0,
+	hideTabsHead = false
 }) => {
-	const muiClasses = useStyles({ type });
+	const muiClasses = useStyles({ type, hideTabsHead });
 
 	const handleClick = (value) => {
 		if (onClick) onClick(value);
@@ -50,6 +51,7 @@ TabPanes.propTypes = {
 	onClick: PropTypes.func,
 	children: PropTypes.element,
 	type: PropTypes.string,
+	hideTabsHead: PropTypes.bool,
 	defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 

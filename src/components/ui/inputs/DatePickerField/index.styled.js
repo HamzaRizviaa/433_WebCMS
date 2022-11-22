@@ -53,13 +53,26 @@ export const useDatePickerStyles = makeStyles((theme) => ({
 
 	dateInputText: {
 		color: (props) =>
-			props.hasData ? theme.palette.white : theme.palette.disabled
+			props.isDisabled
+				? theme.palette.lightGrey
+				: props.hasData
+				? theme.palette.white
+				: theme.palette.disabled
 	},
 
 	datePickerIcon: {
 		display: 'flex',
 		alignItems: 'center',
-		cursor: 'pointer'
+		cursor: 'pointer',
+		marginRight: 10,
+		marginBottom: 3,
+
+		'& svg': {
+			'& path': {
+				fill: ({ isDisabled }) =>
+					isDisabled ? theme.palette.red : theme.palette.neonYellow
+			}
+		}
 	},
 
 	errorText: {
