@@ -23,7 +23,7 @@ const labelsParams = (labels) => {
 
 const regex = /\W/;
 
-const FormikLabelsSelect = ({ name, placeholder, ...restProps }) => {
+const FormikLabelsSelect = ({ name, placeholder, library, ...restProps }) => {
 	const dispatch = useDispatch();
 	const [searchText, setSearchText] = useState('');
 
@@ -135,7 +135,7 @@ const FormikLabelsSelect = ({ name, placeholder, ...restProps }) => {
 				touched && error
 					? `You need to add ${
 							4 - selectedValues.length
-					  } more labels in order to upload media`
+					  } more labels in order to upload ${library}`
 					: ''
 			}
 			renderOption={renderOption}

@@ -105,6 +105,7 @@ const ViralInternalForm = ({
 						placeholder={'Select a minimum of 4 labels'}
 						disabled={isPublished}
 						required
+						library='Viral'
 					/>
 				</div>
 				<div className={classes.fieldContainer}>
