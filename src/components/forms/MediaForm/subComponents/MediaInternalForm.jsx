@@ -334,7 +334,7 @@ const MediaInternalForm = ({
 
 						<div className={classes.titleContainer}>
 							<FormikField
-								label='Title'
+								label='TITLE'
 								name='title'
 								placeholder='Please write your title here'
 								multiline
@@ -348,9 +348,10 @@ const MediaInternalForm = ({
 							<FormikLabelsSelect
 								name='labels'
 								label='LABELS'
-								placeholder='Select a minimum of 7 labels'
+								placeholder='Select a minimum of 4 labels'
 								disabled={isPublished}
 								required
+								library='Media'
 							/>
 						</div>
 

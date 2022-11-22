@@ -48,6 +48,7 @@ const ArticleQuestionUpload = ({
 	const [extraLabel, setExtraLabel] = useState('');
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
+
 	const [isError, setIsError] = useState({});
 	const [loading, setLoading] = useState(false);
 	const [ans1Id, setAns1Id] = useState('');
@@ -85,6 +86,8 @@ const ArticleQuestionUpload = ({
 			  }
 	);
 	const imgRef = useRef(null);
+
+	console.log(form, 'form');
 
 	// const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
@@ -171,7 +174,6 @@ const ArticleQuestionUpload = ({
 
 	useEffect(() => {
 		if (acceptedFiles?.length) {
-			setLoading(true);
 			let newFiles = acceptedFiles.map((file) => {
 				let id = makeid(10);
 				return {
@@ -184,29 +186,13 @@ const ArticleQuestionUpload = ({
 					type: 'image'
 				};
 			});
-			sendDataToParent({ previewImage: [...newFiles] });
-			uploadedFile(newFiles[0], 'articleLibrary').then((res) => {
-				setForm((prev) => {
-					return {
-						...prev,
-						uploadedFiles: [
-							{
-								image: res?.media_url,
-								file_name: res?.file_name,
-								...newFiles[0]
-							}
-						]
-					};
-				});
-				sendDataToParent({
-					uploadedFiles: [
-						{ image: res?.media_url, file_name: res?.file_name, ...newFiles[0] }
-					]
-				});
-				setLoading(false);
-			});
 
-			// sendDataToParent({ uploadedFiles: [...newFiles] });
+			setForm((prev) => {
+				return { ...prev, uploadedFiles: [...newFiles] };
+			});
+			sendDataToParent({ previewImage: [...newFiles] });
+
+			sendDataToParent({ uploadedFiles: [...newFiles] });
 		}
 	}, [acceptedFiles]);
 
@@ -299,12 +285,7 @@ const ArticleQuestionUpload = ({
 					<div>
 						<h5 className={classes.QuizQuestion}>{heading1}</h5>
 						<DragAndDropField
-							uploadedFiles={
-								initialData?.uploadedFiles?.length &&
-								type === initialData?.question_type
-									? initialData?.uploadedFiles
-									: form?.uploadedFiles
-							}
+							uploadedFiles={form?.uploadedFiles}
 							quizPollStatus={status}
 							handleDeleteFile={(id) => {
 								setForm((prev) => {
@@ -328,7 +309,8 @@ const ArticleQuestionUpload = ({
 							}}
 						/>
 
-						{initialData?.uploadedFiles?.length > 0 ? (
+						{form.uploadedFiles.length > 0 ||
+						initialData?.uploadedFiles?.length > 0 ? (
 							''
 						) : form.uploadedFiles.length === 0 ||
 						  (initialData?.uploadedFiles === 0 &&
@@ -345,23 +327,17 @@ const ArticleQuestionUpload = ({
 							>
 								<div {...getRootProps({ className: globalClasses.dropzone })}>
 									<input {...getInputProps()} />
-									{loading ? (
-										<SecondaryLoader loading={true} />
-									) : (
-										<>
-											<AddCircleOutlineIcon
-												className={globalClasses.addFilesIcon}
-											/>
-											<p className={globalClasses.dragMsg}>
-												Click or drag file to this area to upload
-											</p>
-											<p className={globalClasses.formatMsg}>
-												Supported formats are jpeg and png
-												<br />
-												Image File size should not exceed 1MB.
-											</p>
-										</>
-									)}
+									<AddCircleOutlineIcon
+										className={globalClasses.addFilesIcon}
+									/>
+									<p className={globalClasses.dragMsg}>
+										Click or drag file to this area to upload
+									</p>
+									<p className={globalClasses.formatMsg}>
+										Supported formats are jpeg and png
+										<br />
+										Image File size should not exceed 1MB.
+									</p>
 
 									<p className={globalClasses.uploadMediaError}>
 										{fileRejectionError
@@ -624,6 +600,7 @@ const ArticleQuestionUpload = ({
 
 						<div className={classes.titleContainer}>
 							<Labels
+								library={'question'}
 								titleClasses={
 									isError.selectedLabels
 										? globalClasses.errorState
@@ -653,7 +630,7 @@ const ArticleQuestionUpload = ({
 						<p className={globalClasses.mediaError}>
 							{isError.selectedLabels
 								? `You need to add ${
-										7 - form.labels.length
+										1 - form.labels.length
 								  } more labels in order to upload media`
 								: isError.selectedLabelsDraft
 								? 'You need to select atleast 1 label to save as draft'
