@@ -5,8 +5,8 @@ import Button from '../../../../ui/Button';
 import { DeleteIcon, AddIcon } from '../../../../../assets/svg-icons';
 import { useQuestionsStyles } from '../../index.style';
 
-const Answers = ({ form, remove, push, questionIndex }) => {
-	const classes = useQuestionsStyles();
+const Answers = ({ form, remove, push, questionIndex, isDisabled }) => {
+	const classes = useQuestionsStyles({ isDisabled });
 
 	const { answers } = form.values.questions[questionIndex];
 
@@ -34,6 +34,7 @@ const Answers = ({ form, remove, push, questionIndex }) => {
 						placeholder='Please write your answer'
 						maxLength={29}
 						maxRows={2}
+						disabled={isDisabled}
 						multiline
 						required
 					/>
@@ -45,7 +46,7 @@ const Answers = ({ form, remove, push, questionIndex }) => {
 					)}
 				</div>
 			))}
-			{answers.length < 4 && (
+			{answers.length < 4 && !isDisabled && (
 				<Button variant='text' onClick={handleAdd}>
 					<AddIcon className={classes.addAnswerIcon} /> ADD ANSWER
 				</Button>
@@ -58,7 +59,8 @@ Answers.propTypes = {
 	form: PropTypes.object.isRequired,
 	remove: PropTypes.func.isRequired,
 	push: PropTypes.func.isRequired,
-	questionIndex: PropTypes.number.isRequired
+	questionIndex: PropTypes.number.isRequired,
+	isDisabled: PropTypes.bool.isRequired
 };
 
 export default Answers;

@@ -6,6 +6,7 @@ import { useFormikContext } from 'formik';
 import DrawerLayout from '../../../layouts/DrawerLayout';
 import QuestionInternalForm from './QuestionInternalForm';
 import { selectSpecificQuestionStatus } from '../../../../data/selectors';
+import QuestionForm from './QuestionSlideForm/QuestionForm';
 
 const QuestionsFormDrawer = ({
 	open,
@@ -13,7 +14,9 @@ const QuestionsFormDrawer = ({
 	isEdit,
 	status,
 	onSubmitHandler,
-	toggleDeleteModal
+	toggleDeleteModal,
+	questionType,
+	location
 }) => {
 	const { values, isSubmitting } = useFormikContext();
 
@@ -39,13 +42,21 @@ const QuestionsFormDrawer = ({
 			handlePreviewClose={closePreviewer}
 			previewFile={previewFile}
 		>
-			<QuestionInternalForm
-				isEdit={isEdit}
-				status={status}
-				openPreviewer={openPreviewer}
-				onSubmitHandler={onSubmitHandler}
-				toggleDeleteModal={toggleDeleteModal}
-			/>
+			{location === 'article' ? (
+				<>
+					{values.questions.length > 0 && <QuestionForm index={0} isArticle />}
+				</>
+			) : (
+				<QuestionInternalForm
+					isEdit={isEdit}
+					status={status}
+					openPreviewer={openPreviewer}
+					onSubmitHandler={onSubmitHandler}
+					toggleDeleteModal={toggleDeleteModal}
+					defaultQuestionType={questionType}
+					location={location}
+				/>
+			)}
 		</DrawerLayout>
 	);
 };
@@ -56,7 +67,9 @@ QuestionsFormDrawer.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
 	onSubmitHandler: PropTypes.func.isRequired,
-	toggleDeleteModal: PropTypes.func.isRequired
+	toggleDeleteModal: PropTypes.func.isRequired,
+	questionType: PropTypes.string.isRequired,
+	location: PropTypes.string.isRequired
 };
 
 export default QuestionsFormDrawer;

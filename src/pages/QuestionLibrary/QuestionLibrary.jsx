@@ -20,8 +20,8 @@ const QuestionLibrary = () => {
 	const [showSlider, setShowSlider] = useState(false);
 	const [showQuizSlider, setShowQuizSlider] = useState(false);
 	const [showPollSlider, setShowPollSlider] = useState(false);
-	const [rowStatus, setrowStatus] = useState('');
-	const [rowLocation, setrowLocation] = useState('');
+	const [rowStatus, setRowStatus] = useState('');
+	const [rowLocation, setRowLocation] = useState('');
 	const [rowType, setRowType] = useState('');
 	const [edit, setEdit] = useState(false);
 	const [notifID, setNotifID] = useState('');
@@ -32,37 +32,46 @@ const QuestionLibrary = () => {
 		setEdit(true);
 		setNotifID(row.id);
 		setRowType(row.question_type); // quiz , poll
-		setrowStatus(row.status); // active , closed , draft
-		setrowLocation(row.location); // home page , article
+		setRowStatus(row.status); // active , closed , draft
+		setRowLocation(row.location); // home page , article
 		setQuestionId(row.question_id);
 
 		//api calls
 		row.status === 'draft' && dispatch(getAllNewLabels());
 		dispatch(getQuestionEdit({ id: row.id, type: row.question_type }));
 
+		setShowSlider(true);
+
 		//slider calls
-		if (
-			row.location === 'article' &&
-			row.question_type === 'quiz' &&
-			row.status === 'ACTIVE'
-		) {
-			setShowQuizSlider(true);
-		} else if (
-			row.location === 'article' &&
-			row.question_type === 'poll' &&
-			row.status === 'ACTIVE'
-		) {
-			setShowPollSlider(true);
-		} else {
-			setShowSlider(true);
-			// showEditSlider(true);
-		}
+		// if (
+		// 	row.location === 'article' &&
+		// 	row.question_type === 'quiz' &&
+		// 	row.status === 'ACTIVE'
+		// ) {
+		// 	setShowQuizSlider(true);
+		// } else if (
+		// 	row.location === 'article' &&
+		// 	row.question_type === 'poll' &&
+		// 	row.status === 'ACTIVE'
+		// ) {
+		// 	setShowPollSlider(true);
+		// } else {
+		// 	setShowSlider(true);
+		// 	// showEditSlider(true);
+		// }
 	};
 
 	const handleUploadQuestionClick = () => {
 		dispatch(getAllNewLabels());
 		setEdit(false);
 		setShowSlider(true);
+	};
+
+	const handleClose = () => {
+		setShowSlider(false);
+		setEdit(false);
+		setRowType('');
+		setRowStatus('');
 	};
 
 	return (
@@ -95,9 +104,8 @@ const QuestionLibrary = () => {
 				open={showSlider}
 				isEdit={edit}
 				location={rowLocation}
-				handleClose={() => {
-					setShowSlider(false);
-				}}
+				questionType={rowType}
+				handleClose={handleClose}
 				status={rowStatus}
 			/>
 

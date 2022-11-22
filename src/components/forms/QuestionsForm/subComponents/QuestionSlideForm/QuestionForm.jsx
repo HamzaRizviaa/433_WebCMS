@@ -8,7 +8,14 @@ import FormikField from '../../../../ui/inputs/formik/FormikField';
 import FormikLabelsSelect from '../../../../ui/inputs/formik/FormikLabelsSelect';
 import { useFormStyles } from '../../../forms.style';
 
-const QuestionForm = ({ index, handleDeleteFile, openPreviewer }) => {
+const QuestionForm = ({
+	index,
+	handleDeleteFile,
+	openPreviewer,
+	isPublished,
+	isClosed,
+	isArticle
+}) => {
 	const classes = useFormStyles();
 
 	return (
@@ -22,6 +29,8 @@ const QuestionForm = ({ index, handleDeleteFile, openPreviewer }) => {
 					onPreview={openPreviewer}
 					onDelete={() => handleDeleteFile(index)}
 					showPreview
+					hideDeleteIcon={isClosed || isArticle}
+					hidePreviewIcon={isArticle}
 				/>
 			</div>
 			<div className={classes.fieldContainer}>
@@ -41,12 +50,19 @@ const QuestionForm = ({ index, handleDeleteFile, openPreviewer }) => {
 					multiline
 					maxRows={2}
 					maxLength={43}
+					disabled={isPublished || isArticle}
 				/>
 			</div>
 			<div>
 				<FieldArray
 					name={`questions.${index}.answers`}
-					render={(props) => <Answers {...props} questionIndex={index} />}
+					render={(props) => (
+						<Answers
+							{...props}
+							questionIndex={index}
+							isDisabled={isPublished || isArticle}
+						/>
+					)}
 				/>
 			</div>
 			<div className={classes.fieldContainer}>
@@ -54,7 +70,7 @@ const QuestionForm = ({ index, handleDeleteFile, openPreviewer }) => {
 					label='LABELS'
 					name={`questions.${index}.labels`}
 					placeholder='Select a minimum of 1 label'
-					// disabled={isPublished}
+					disabled={isPublished || isArticle}
 					required
 				/>
 			</div>
@@ -64,8 +80,11 @@ const QuestionForm = ({ index, handleDeleteFile, openPreviewer }) => {
 
 QuestionForm.propTypes = {
 	index: PropTypes.number.isRequired,
-	handleDeleteFile: PropTypes.func.isRequired,
-	openPreviewer: PropTypes.func.isRequired
+	handleDeleteFile: PropTypes.func,
+	openPreviewer: PropTypes.func,
+	isPublished: PropTypes.bool,
+	isClosed: PropTypes.bool,
+	isArticle: PropTypes.bool
 };
 
 export default QuestionForm;

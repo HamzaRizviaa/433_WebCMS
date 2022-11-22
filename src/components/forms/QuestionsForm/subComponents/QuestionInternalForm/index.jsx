@@ -22,7 +22,8 @@ const QuestionInternalForm = ({
 	status,
 	toggleDeleteModal,
 	openPreviewer,
-	onSubmitHandler
+	onSubmitHandler,
+	defaultQuestionType
 }) => {
 	const classes = useFormStyles();
 	const isPublished = isEdit && status !== 'draft';
@@ -66,9 +67,8 @@ const QuestionInternalForm = ({
 	const isDraftDisabled = useMemo(() => {
 		const isAnyQuestionSlideEmpty = values.questions.some(
 			(item) =>
-				areAllFieldsEmpty(omit(item, ['pollAnswers', 'quizAnswers'])) &&
-				item.pollAnswers.every((pollAns) => !pollAns.answer) &&
-				item.quizAnswers.every((quizAns) => !quizAns.answer)
+				areAllFieldsEmpty(omit(item, ['answers'])) &&
+				item.answers.every((ans) => !ans.answer)
 		);
 
 		const isEqualToDefaultValues = isEqual(
@@ -84,6 +84,8 @@ const QuestionInternalForm = ({
 		);
 	}, [values, dirty]);
 
+	const defaultSelectedTab = defaultQuestionType === 'quiz' ? 1 : 0;
+
 	return (
 		<div>
 			<AccordianLayout title='General Information'>
@@ -92,12 +94,20 @@ const QuestionInternalForm = ({
 						headings={headings}
 						onClick={handleTabClick}
 						type='questions'
+						defaultValue={defaultSelectedTab}
+						hideTabsHead={isPublished}
 					>
 						<TabPanes.TabPanel value={0}>
-							<PollSummary openPreviewer={openPreviewer} />
+							<PollSummary
+								openPreviewer={openPreviewer}
+								isPublished={isPublished}
+							/>
 						</TabPanes.TabPanel>
 						<TabPanes.TabPanel value={1}>
-							<QuizSummary openPreviewer={openPreviewer} />
+							<QuizSummary
+								openPreviewer={openPreviewer}
+								isPublished={isPublished}
+							/>
 						</TabPanes.TabPanel>
 					</TabPanes>
 				</div>
@@ -105,7 +115,12 @@ const QuestionInternalForm = ({
 			<FieldArray
 				name='questions'
 				render={(props) => (
-					<QuestionSlideForm {...props} openPreviewer={openPreviewer} />
+					<QuestionSlideForm
+						{...props}
+						openPreviewer={openPreviewer}
+						status={status}
+						isEdit={isEdit}
+					/>
 				)}
 			/>
 			<div className={classes.buttonDiv}>
@@ -144,6 +159,7 @@ QuestionInternalForm.propTypes = {
 	status: PropTypes.string.isRequired,
 	openPreviewer: PropTypes.func.isRequired,
 	onSubmitHandler: PropTypes.func.isRequired,
-	toggleDeleteModal: PropTypes.func.isRequired
+	toggleDeleteModal: PropTypes.func.isRequired,
+	defaultQuestionType: PropTypes.string.isRequired
 };
 export default QuestionInternalForm;

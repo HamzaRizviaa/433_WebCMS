@@ -27,7 +27,9 @@ const QuestionsForm = ({
 	open,
 	handleClose,
 	isEdit,
-	status // draft or publish
+	status, // draft or publish
+	questionType,
+	location
 }) => {
 	const navigate = useNavigate();
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
@@ -103,7 +105,6 @@ const QuestionsForm = ({
 			enableReinitialize
 			initialValues={initialValues}
 			validationSchema={questionsFormValidationSchema}
-			validateOnMount
 			onSubmit={onSubmitHandler}
 		>
 			{({ setSubmitting }) => (
@@ -115,6 +116,8 @@ const QuestionsForm = ({
 						status={status}
 						onSubmitHandler={onSubmitHandler}
 						toggleDeleteModal={toggleDeleteModal}
+						questionType={questionType}
+						location={location}
 					/>
 					<DeleteModal
 						open={openDeleteModal}
@@ -135,7 +138,9 @@ QuestionsForm.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	isEdit: PropTypes.bool.isRequired,
-	status: PropTypes.string.isRequired
+	status: PropTypes.string.isRequired,
+	questionType: PropTypes.string.isRequired,
+	location: PropTypes.string.isRequired
 };
 
 export default QuestionsForm;

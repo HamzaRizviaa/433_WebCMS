@@ -7,7 +7,7 @@ import FormikField from '../../../../ui/inputs/formik/FormikField';
 import FormikDatePicker from '../../../../ui/inputs/formik/FormikDatePicker';
 import { useFormStyles } from '../../../forms.style';
 
-const QuizSummary = ({ openPreviewer }) => {
+const QuizSummary = ({ openPreviewer, isPublished }) => {
 	const classes = useFormStyles();
 
 	const { setFieldValue } = useFormikContext();
@@ -27,7 +27,8 @@ const QuizSummary = ({ openPreviewer }) => {
 					name='general_info.end_date'
 					placeholder='Please select an end date'
 					label='QUIZ END DATE'
-					isClearable
+					isClearable={!isPublished}
+					disabled={isPublished}
 					required
 				/>
 			</div>
@@ -99,7 +100,8 @@ const QuizSummary = ({ openPreviewer }) => {
 };
 
 QuizSummary.propTypes = {
-	openPreviewer: PropTypes.func.isRequired
+	openPreviewer: PropTypes.func.isRequired,
+	isPublished: PropTypes.bool.isRequired
 };
 
 export default QuizSummary;

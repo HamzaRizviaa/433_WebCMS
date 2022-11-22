@@ -5,12 +5,21 @@ import { capitalize } from 'lodash';
 import Button from '../../../../ui/Button';
 import DraggableCardLayout from '../../../../layouts/DraggableCardLayout';
 import DraggableLayoutWrapper from '../../../../layouts/DraggableLayoutWrapper';
+import TabPanes from '../../../../ui/TabPanes';
 import QuestionForm from './QuestionForm';
 import { AddIcon } from '../../../../../assets/svg-icons';
 import { questionSlideInitialValues } from '../../../../../data/helpers';
 import { useFormStyles } from '../../../forms.style';
 
-const QuestionSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
+const QuestionSlideForm = ({
+	form,
+	push,
+	remove,
+	swap,
+	openPreviewer,
+	isEdit,
+	status
+}) => {
 	const classes = useFormStyles();
 
 	const handleDeleteFile = (index) => {
@@ -31,6 +40,13 @@ const QuestionSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 
 	const questionType = capitalize(form.values.general_info.question_type);
 
+	const tabHeadings = ['Results', `Edit ${questionType}`];
+
+	const isPublished = isEdit && status !== 'draft';
+	const isClosed = isEdit && status === 'CLOSED';
+
+	const defaultSelectedTab = isPublished ? 0 : 1;
+
 	return (
 		<div>
 			<DraggableLayoutWrapper onDragEnd={handleDragEnd}>
@@ -41,26 +57,43 @@ const QuestionSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 						index={index}
 						item={item}
 						onDeleteIconClick={handleDeleteSlide}
+						disableActions={isPublished}
 					>
-						<QuestionForm
-							index={index}
-							handleDeleteFile={handleDeleteFile}
-							openPreviewer={openPreviewer}
-						/>
+						<TabPanes
+							headings={tabHeadings}
+							type='questions'
+							defaultValue={defaultSelectedTab}
+							hideTabsHead={!isPublished}
+						>
+							<TabPanes.TabPanel value={0}>
+								<h1>RESULTS TAB</h1>
+							</TabPanes.TabPanel>
+							<TabPanes.TabPanel value={1}>
+								<QuestionForm
+									index={index}
+									handleDeleteFile={handleDeleteFile}
+									openPreviewer={openPreviewer}
+									isPublished={isPublished}
+									isClosed={isClosed}
+								/>
+							</TabPanes.TabPanel>
+						</TabPanes>
 					</DraggableCardLayout>
 				))}
 			</DraggableLayoutWrapper>
-			<div className={classes.addNewsBtnWrapper}>
-				<Button
-					variant='outlined'
-					size='xlarge'
-					icon={<AddIcon />}
-					onClick={handleAddQuestionSlide}
-					fullWidth
-				>
-					ADD QUESTION
-				</Button>
-			</div>
+			{!isPublished && (
+				<div className={classes.addNewsBtnWrapper}>
+					<Button
+						variant='outlined'
+						size='xlarge'
+						icon={<AddIcon />}
+						onClick={handleAddQuestionSlide}
+						fullWidth
+					>
+						ADD QUESTION
+					</Button>
+				</div>
+			)}
 		</div>
 	);
 };
@@ -70,7 +103,9 @@ QuestionSlideForm.propTypes = {
 	push: PropTypes.func.isRequired,
 	remove: PropTypes.func.isRequired,
 	swap: PropTypes.func.isRequired,
-	openPreviewer: PropTypes.func.isRequired
+	openPreviewer: PropTypes.func.isRequired,
+	isEdit: PropTypes.bool,
+	status: PropTypes.string
 };
 
 export default QuestionSlideForm;
