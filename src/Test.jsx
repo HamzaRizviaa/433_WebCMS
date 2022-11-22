@@ -9,8 +9,8 @@ import Layout from './components/layouts/DashboardLayout';
 import FormikLabelsSelect from './components/ui/inputs/formik/FormikLabelsSelect';
 import { AddIcon, DeleteIcon } from './assets/svg-icons';
 import { useQuestionsStyles } from './style';
-import QuestionInternalForm from './components/forms/QuestionsForm/subComponents/QuestionInternalForm';
-
+//import QuestionInternalForm from './components/forms/QuestionsForm/subComponents/QuestionInternalForm';
+import QuestionDetails from './components/forms/QuestionsForm/subComponents/QuestionDetails';
 const countryOptions = [
 	{ value: 'pakistan', label: 'Pakistan' },
 	{ value: 'bangladesh', label: 'Bangladesh' },
@@ -36,7 +36,8 @@ function Test() {
 					}}
 				>
 					<Form>
-						<QuestionInternalForm />
+						{/* <QuestionInternalForm /> */}
+						<QuestionDetails />
 						<FormikSelect
 							name='country'
 							label='Country'
