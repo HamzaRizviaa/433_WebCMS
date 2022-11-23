@@ -1,24 +1,22 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuestionsStyles } from '../../index.style';
 import DefaultImage from '../../../../../assets/defaultImage.png';
-import { styled } from '@mui/material/styles';
-import LinearProgress, {
-	linearProgressClasses
-} from '@mui/material/LinearProgress';
-
-// this styles can't be move to styles file.
-const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
-	height: '54px',
-	borderRadius: '8px',
-	[`&.${linearProgressClasses.colorPrimary}`]: {
+import LinearProgress from '@material-ui/core/LinearProgress';
+import { withStyles } from '@material-ui/core/styles';
+const BorderLinearProgress = withStyles((theme) => ({
+	root: {
+		height: '54px',
+		borderRadius: '8px'
+	},
+	colorPrimary: {
 		backgroundColor: '#404040 !important'
 	},
-	[`& .${linearProgressClasses.bar}`]: {
+	bar: {
 		borderRadius: '8px',
 		backgroundColor: theme.palette.mode === '#404040' ? 'red' : '#808080'
 	}
-}));
+}))(LinearProgress);
 
 const ResultSliders = () => {
 	const classes = useQuestionsStyles();
