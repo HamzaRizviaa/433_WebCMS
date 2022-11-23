@@ -192,7 +192,6 @@ export const questionDataFormatterForService = async (values, isDraft) => {
 			negative_results_filename: negativeResultFile?.file_name || ''
 		},
 		questions: values.questions.map((item, index) => ({
-			position: index + 1,
 			...omit(item, ['uploadedFiles', 'pollAnswers', 'quizAnswers']),
 			...(values.general_info.question_type === 'poll'
 				? {
@@ -216,7 +215,8 @@ export const questionDataFormatterForService = async (values, isDraft) => {
 						: index === 0
 						? 'right_answer'
 						: `wrong_answer_${index}`
-			}))
+			})),
+			position: index + 1
 		})),
 		...(values.question_id ? { question_id: values.question_id } : {})
 	};
