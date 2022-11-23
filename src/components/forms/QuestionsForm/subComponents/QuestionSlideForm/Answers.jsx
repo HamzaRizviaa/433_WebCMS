@@ -25,10 +25,10 @@ const Answers = ({ form, remove, push, questionIndex, isDisabled }) => {
 					<FormikField
 						label={
 							questionType === 'poll'
-								? `Answer ${index + 1}`
+								? `ANSWER ${index + 1}`
 								: index === 0
-								? 'Right Answer'
-								: `Wrong Answer ${index}`
+								? 'RIGHT ANSWER'
+								: `WRONG ANSWER ${index}`
 						}
 						name={`questions.${questionIndex}.answers.${index}.answer`}
 						placeholder='Please write your answer'
