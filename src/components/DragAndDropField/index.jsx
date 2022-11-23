@@ -44,7 +44,7 @@ const DragAndDropField = ({
 						ref={provided.innerRef}
 						className={classes.uploadedFilesContainer}
 					>
-						{uploadedFiles.map((file, index) => {
+						{uploadedFiles?.map((file, index) => {
 							return (
 								<Draggable
 									key={file?.id}
