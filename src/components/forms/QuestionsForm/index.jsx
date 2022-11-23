@@ -61,6 +61,9 @@ const QuestionsForm = ({
 			const payload = await questionDataFormatterForService(values, isDraft);
 
 			const modifiedPayload = { apiVersion: 1, ...payload };
+
+			if (status === 'CLOSED') delete modifiedPayload.general_info.end_date;
+
 			const { type } = await dispatch(
 				createOrEditQuestionThunk(modifiedPayload)
 			);
@@ -90,7 +93,7 @@ const QuestionsForm = ({
 			await dispatch(
 				deleteQuestionThunk({
 					question_meta_id: id,
-					is_draft: isDraft
+					is_draft: isDraft?.toLowerCase()
 				})
 			);
 
@@ -151,7 +154,7 @@ const QuestionsForm = ({
 						deleteBtn={() => {
 							onDeleteHandler(specificQuestion?.id, status, setSubmitting);
 						}}
-						text='Question'
+						text={questionType}
 						wrapperRef={dialogWrapper}
 					/>
 					<StopModal
@@ -160,7 +163,7 @@ const QuestionsForm = ({
 						stopBtn={() => {
 							onStopHandler(specificQuestion?.id, setSubmitting);
 						}}
-						text='Question'
+						text={questionType}
 						wrapperRef={dialogWrapper}
 						stop={true}
 					/>

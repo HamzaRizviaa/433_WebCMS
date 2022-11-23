@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import dayjs from 'dayjs';
 import * as yup from 'yup';
 import { omit } from 'lodash';
