@@ -183,7 +183,7 @@ export const questionDataFormatterForService = async (values, isDraft) => {
 		general_info: {
 			...values.general_info,
 			save_draft: isDraft,
-			end_date: dayjs(values.end_date).format('YYYY-MM-DD'),
+			end_date: dayjs(values.general_info.end_date).format('YYYY-MM-DD'),
 			results_image: getRelativePath(resultsFile?.media_url),
 			results_filename: resultsFile?.file_name || '',
 			positive_results_image: getRelativePath(positiveResultsFile?.media_url),
