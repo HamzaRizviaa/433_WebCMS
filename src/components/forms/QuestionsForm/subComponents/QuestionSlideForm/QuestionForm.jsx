@@ -21,7 +21,9 @@ const QuestionForm = ({
 	return (
 		<div>
 			<div>
-				<span className={classes.slideImageLabel}>Add Background Image</span>
+				{!isArticle && (
+					<span className={classes.slideImageLabel}>Add Background Image</span>
+				)}
 				<FormikDropzone
 					name={`questions.${index}.uploadedFiles`}
 					accept='image/jpeg, image/png'
@@ -38,7 +40,7 @@ const QuestionForm = ({
 				<FormikField
 					name={`questions.${index}.dropbox_url`}
 					label='DROPBOX URL'
-					placeholder='Please drop the URL here'
+					placeholder='Please drop the dropbox URL here'
 					multiline
 					maxRows={2}
 					disabled={isArticle}

@@ -32,7 +32,7 @@ const PollSummary = ({ openPreviewer, isClosed }) => {
 			<div className={classes.fieldContainer}>
 				<FormikField
 					name='general_info.results'
-					label='RESULT'
+					label='RESULTS'
 					placeholder='Please write your result here'
 					maxLength={24}
 					required
@@ -57,7 +57,7 @@ const PollSummary = ({ openPreviewer, isClosed }) => {
 				<FormikField
 					name='general_info.results_dropbox_url'
 					label='DROPBOX URL'
-					placeholder='Please drop the URL here'
+					placeholder='Please drop the dropbox URL here'
 					multiline
 					maxRows={2}
 				/>
