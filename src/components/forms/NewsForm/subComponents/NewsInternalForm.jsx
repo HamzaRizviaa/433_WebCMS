@@ -70,9 +70,10 @@ const NewsInternalForm = ({
 					<FormikLabelsSelect
 						name='labels'
 						label='LABELS'
-						placeholder='Select a minimum of 7 labels'
+						placeholder='Select a minimum of 4 labels'
 						disabled={isPublished}
 						required
+						library='News'
 					/>
 				</div>
 				<div className={classes.fieldContainer}>

@@ -1,6 +1,6 @@
 import rootRtkQuery from '../rootRTKQuery';
 
-const mediaQueries = rootRtkQuery.injectEndpoints({
+export const mediaQueries = rootRtkQuery.injectEndpoints({
 	endpoints: (build) => ({
 		getMainCategories: build.query({
 			query: () => ({

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Close from '@material-ui/icons/Close';
 import { useDropzoneFilePreviewerStyles } from './index.style';
 import useClickOutside from '../../../hooks/useClickOutside';
+import ReactPlayer from 'react-player';
 
 const DropzoneFilePreviewer = ({ onClose, previewFile }) => {
 	const previewRef = useRef(null);
@@ -22,14 +23,20 @@ const DropzoneFilePreviewer = ({ onClose, previewFile }) => {
 			<div>
 				{previewFile.type === 'video' ||
 				previewFile.mime_type === 'video/mp4' ? (
-					<video
-						id='my-video'
-						poster={previewFile.thumbnail_url}
-						className={classes.previewFile}
+					// <video
+					// 	id='my-video'
+					// 	poster={previewFile.thumbnail_url}
+					// 	className={classes.previewFile}
+					// 	controls={true}
+					// >
+					// 	<source src={previewFile.media_url} />
+					// </video>
+					<ReactPlayer
+						width={'100%'}
+						height={'32rem'}
 						controls={true}
-					>
-						<source src={previewFile.media_url} />
-					</video>
+						url={previewFile.media_url}
+					/>
 				) : (
 					<img src={previewFile.media_url} className={classes.previewFile} />
 				)}
