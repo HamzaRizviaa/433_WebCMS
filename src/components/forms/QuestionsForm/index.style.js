@@ -11,12 +11,7 @@ export const useQuestionsStyles = makeStyles((theme) => ({
 		right: 20,
 		top: 31,
 		cursor: 'pointer',
-		pointerEvents: ({ isDisabled }) => (isDisabled ? 'none' : 'auto'),
-
-		'& path': {
-			fill: ({ isDisabled }) =>
-				isDisabled ? theme.palette.red : theme.palette.neonYellow
-		}
+		pointerEvents: ({ isDisabled }) => (isDisabled ? 'none' : 'auto')
 	},
 
 	addAnswerIcon: {

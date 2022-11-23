@@ -7,7 +7,7 @@ import FormikField from '../../../../ui/inputs/formik/FormikField';
 import FormikDatePicker from '../../../../ui/inputs/formik/FormikDatePicker';
 import { useFormStyles } from '../../../forms.style';
 
-const PollSummary = ({ openPreviewer, isPublished, isClosed }) => {
+const PollSummary = ({ openPreviewer, isClosed }) => {
 	const classes = useFormStyles();
 
 	const { setFieldValue } = useFormikContext();
@@ -23,8 +23,8 @@ const PollSummary = ({ openPreviewer, isPublished, isClosed }) => {
 					name='general_info.end_date'
 					placeholder='Please select an end date'
 					label='POLL END DATE'
-					isClearable={!isPublished}
-					disabled={isPublished}
+					isClearable={!isClosed}
+					disabled={isClosed}
 					required
 				/>
 			</div>
@@ -68,7 +68,6 @@ const PollSummary = ({ openPreviewer, isPublished, isClosed }) => {
 
 PollSummary.propTypes = {
 	openPreviewer: PropTypes.func.isRequired,
-	isPublished: PropTypes.bool.isRequired,
 	isClosed: PropTypes.bool.isRequired
 };
 

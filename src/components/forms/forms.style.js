@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 
-export const useFormStyles = makeStyles(() => ({
+export const useFormStyles = makeStyles((theme) => ({
 	buttonDiv: {
 		width: '100%',
 		marginTop: '3rem',
@@ -61,8 +61,29 @@ export const useFormStyles = makeStyles(() => ({
 		fontWeight: '800',
 		lineHeight: '30px'
 	},
+
 	dropzoneWrapper: {
 		marginTop: 15,
 		marginBottom: 20
+	},
+
+	slideImageLabel: {
+		marginBottom: 15,
+		position: 'relative',
+		display: 'inline-block',
+		fontSize: 16,
+		fontWeight: 700,
+		lineHeight: '24px',
+
+		'&::before': {
+			content: '"*"',
+			position: 'absolute',
+			right: -9,
+			top: -2,
+			fontSize: '1.5rem',
+			fontWeight: 'bold',
+			color: theme.palette.red,
+			display: 'inline-block'
+		}
 	}
 }));

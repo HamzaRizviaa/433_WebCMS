@@ -5,27 +5,6 @@ export const useDatePickerStyles = makeStyles((theme) => ({
 		marginBottom: '1rem'
 	},
 
-	datePickerLabel: {
-		position: 'relative',
-		display: 'inline-block',
-		fontSize: '1.2rem',
-		fontWeight: 'bold',
-		marginLeft: '1rem',
-		marginBottom: '0.5rem',
-		color: (props) => (props.isError ? theme.palette.red : theme.palette.white),
-
-		'&::before': {
-			content: '"*"',
-			position: 'absolute',
-			right: -9,
-			top: -2,
-			fontSize: '1.5rem',
-			fontWeight: 'bold',
-			color: theme.palette.red,
-			display: (props) => (props.isRequired ? 'inline-block' : 'none')
-		}
-	},
-
 	customDatePickerInput: {
 		margin: 0,
 		display: ' inline-flex',
@@ -65,22 +44,6 @@ export const useDatePickerStyles = makeStyles((theme) => ({
 		alignItems: 'center',
 		cursor: 'pointer',
 		marginRight: 10,
-		marginBottom: 2,
-
-		'& svg': {
-			'& path': {
-				fill: ({ isDisabled }) =>
-					isDisabled ? theme.palette.red : theme.palette.neonYellow
-			}
-		}
-	},
-
-	errorText: {
-		display: 'inline-block',
-		color: theme.palette.red,
-		fontWeight: 'bold',
-		marginTop: '0.2rem',
-		marginLeft: '0.5rem',
-		height: '1rem'
+		marginBottom: 2
 	}
 }));
