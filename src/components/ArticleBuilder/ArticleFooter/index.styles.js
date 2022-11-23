@@ -12,8 +12,7 @@ export const useStyles = makeStyles((theme) => ({
 		position: 'sticky',
 		bottom: -2,
 		background: '#000',
-		zIndex: '99999',
-		opacity: ({ loading }) => (loading ? 0.2 : 1)
+		zIndex: 1
 	},
 	btn: {
 		pointerEvents: ({ loading }) => (loading ? 'none' : 'auto')
