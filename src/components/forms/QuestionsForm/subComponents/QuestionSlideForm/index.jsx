@@ -10,6 +10,7 @@ import QuestionForm from './QuestionForm';
 import { AddIcon } from '../../../../../assets/svg-icons';
 import { questionSlideInitialValues } from '../../../../../data/helpers';
 import { useFormStyles } from '../../../forms.style';
+import QuestionDetails from '../QuestionDetails';
 
 const QuestionSlideForm = ({
 	form,
@@ -66,7 +67,7 @@ const QuestionSlideForm = ({
 							hideTabsHead={!isPublished}
 						>
 							<TabPanes.TabPanel value={0}>
-								<h1>RESULTS TAB</h1>
+								<QuestionDetails questionId={item.id} />
 							</TabPanes.TabPanel>
 							<TabPanes.TabPanel value={1}>
 								<QuestionForm

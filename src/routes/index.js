@@ -13,7 +13,6 @@ import TopBanner from '../pages/TopBanner/TopBanner.jsx';
 import ViralLibrary from '../pages/ViralLibrary/ViralLibrary';
 import ArticleLibrary from '../pages/ArticleLibrary/ArticleLibrary';
 import NewsLibrary from '../pages/NewsLibrary/NewsLibrary';
-import Test from '../Test';
 
 // import GamesLibrary from '../pages/GamesLibrary/GamesLibrary';
 // import PostLibrary from '../pages/PostLibrary/PostLibrary';
@@ -77,7 +76,6 @@ const AppRoutes = () => {
 				element={<RequireAuth component={<PostLibrary />} />}
 			/> */}
 
-			<Route path='/testing' element={<Test />} />
 			<Route path='*' element={<Navigate to='/sign-in' />} />
 		</Routes>
 	);

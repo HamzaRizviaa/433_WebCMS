@@ -1,11 +1,15 @@
-/* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
-import { useQuestionsStyles } from '../../index.style';
-import DefaultImage from '../../../../../assets/defaultImage.png';
+import React from 'react';
+import PropTypes from 'prop-types';
+import Skeleton from '@material-ui/lab/Skeleton';
 import { styled } from '@mui/material/styles';
 import LinearProgress, {
 	linearProgressClasses
 } from '@mui/material/LinearProgress';
+
+import DefaultImage from '../../../../../assets/defaultImage.png';
+import { useQuestionsStyles } from '../../index.style';
+import { formatDate } from '../../../../../data/utils';
+import useGetQuestionResultDetail from '../../../../../hooks/libraries/questions/useGetQuestionResultDetail';
 
 // this styles can't be move to styles file.
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
@@ -20,70 +24,96 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 	}
 }));
 
-const ResultSliders = () => {
+const calculateAnswerPercentage = (totalParticipants, usersCount) => {
+	return totalParticipants !== 0
+		? Math.round(usersCount / totalParticipants) * 100
+		: 0;
+};
+
+const ResultSliders = ({ questionId, isArticle }) => {
+	const { data, isLoading } = useGetQuestionResultDetail(questionId);
+
+	const handleImageError = (e) => {
+		e.target.onerror = null;
+		e.target.src = DefaultImage;
+	};
+
+	const articleImage = `${process.env.REACT_APP_MEDIA_ENDPOINT}/${data?.article_image}`;
+
 	const classes = useQuestionsStyles();
 
-	//dummy data
-	const answers = [{ answer: 'abc' }, { answer: 'abc2' }];
-	//location and end date will come from props
-	const location = 'homepage';
-
-	// const calculateAnswerPercentage = (data) => {
-	// 	return totalParticipants !== 0
-	// 		? Math.round(data?.users_count / totalParticipants) * 100
-	// 		: 0;
-	// };
+	if (isLoading) {
+		return (
+			<>
+				<div className={classes.articlesQuizDetails}>
+					<div className={classes.skeletonWrapper}>
+						<Skeleton variant='rect' animation='wave' height={50} />
+					</div>
+				</div>
+				<div className={classes.QuizQuestion}>
+					<div className={classes.skeletonWrapper} style={{ width: '70%' }}>
+						<Skeleton variant='text' animation='wave' height={30} />
+					</div>
+				</div>
+				<div className={classes.QuizDetailsProgressBars}>
+					<div className={classes.skeletonWrapper}>
+						<Skeleton variant='rect' animation='wave' height={54} />
+					</div>
+				</div>
+				<div className={classes.QuizDetailsProgressBars}>
+					<div className={classes.skeletonWrapper}>
+						<Skeleton variant='rect' animation='wave' height={54} />
+					</div>
+				</div>
+			</>
+		);
+	}
 
 	return (
 		<>
-			{location === 'article' ? (
+			{isArticle && (
 				<div className={classes.articlesQuizDetails}>
 					<div className={classes.articlesbox}>
 						<div>
 							<img
-								//src={articleImage}
+								src={articleImage}
 								className={classes.articlesImagebox}
 								alt='no img'
-								onError={(e) => (
-									(e.target.onerror = null), (e.target.src = DefaultImage)
-								)}
+								onError={handleImageError}
 							/>
 						</div>
 						<div className={classes.articlesTextbox}>
 							<div className={classes.articleText}>ARTICLE</div>
-							<div className={classes.articleTitle}>
-								It is the article title.
-							</div>
+							<div className={classes.articleTitle}>{data?.article_title}</div>
 						</div>
 					</div>
 				</div>
-			) : (
-				<></>
 			)}
-			<div className={classes.QuizQuestion}>
-				{/* {editQuestionResultDetail.question} */}
-				It is a Question
-			</div>
-			{answers?.length > 0 &&
-				answers.map((data, index) => {
+
+			<div className={classes.QuizQuestion}>{data?.question}</div>
+
+			{data?.answers?.length > 0 &&
+				data?.answers.map((ans, index) => {
+					const answerPercent = calculateAnswerPercentage(
+						data?.total_participants,
+						ans?.users_count
+					);
+
 					return (
 						<div className={classes.QuizDetailsProgressBars} key={index}>
 							<div className={classes.progressBars}>
 								<BorderLinearProgress
 									variant='determinate'
-									value={'80'}
-									//value={calculateAnswerPercentage(data)}
+									value={answerPercent}
 								/>
 								<div className={classes.progressbarTextBox}>
 									<div>
 										<span className={classes.leftprogressbarText}>
-											answer
-											{/* {data?.answer} */}
+											{ans?.answer}
 										</span>
 										<span className={classes.rightProgressText}>
-											% 0 | 80 Users
-											{/* {calculateAnswerPercentage(data)}| {data?.users_count} */}
-											{/* {data?.users_count === 1 ? 'User' : 'Users'} */}
+											{answerPercent}% | {ans?.users_count}
+											{ans?.users_count === 1 ? ' User' : ' Users'}
 										</span>
 									</div>
 								</div>
@@ -94,21 +124,18 @@ const ResultSliders = () => {
 
 			<div className={classes.QuizDetailstextUsers}>
 				<span>
-					100 Participants
-					{/* {totalParticipants}{' '}
-					{totalParticipants === 1 ? 'Participant' : 'Participants'} */}
+					{data?.total_participants}
+					{data?.total_participants === 1 ? ' Participant' : ' Participants'}
 				</span>
-				{location === 'article' ? (
-					''
-				) : (
-					<span>
-						Ends 20-11-2022
-						{/* Ends {formatDate(endDate)}  */}
-					</span>
-				)}
+				{!isArticle && <span>Ends {formatDate(data?.end_date)}</span>}
 			</div>
 		</>
 	);
+};
+
+ResultSliders.propTypes = {
+	questionId: PropTypes.string.isRequired,
+	isArticle: PropTypes.bool.isRequired
 };
 
 export default ResultSliders;

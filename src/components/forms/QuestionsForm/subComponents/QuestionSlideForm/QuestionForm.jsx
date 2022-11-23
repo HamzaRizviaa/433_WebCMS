@@ -40,6 +40,7 @@ const QuestionForm = ({
 					placeholder='Please drop the URL here'
 					multiline
 					maxRows={2}
+					disabled={isClosed || isArticle}
 				/>
 			</div>
 			<div className={classes.fieldContainer}>
@@ -51,6 +52,7 @@ const QuestionForm = ({
 					maxRows={2}
 					maxLength={43}
 					disabled={isPublished || isArticle}
+					required
 				/>
 			</div>
 			<div>

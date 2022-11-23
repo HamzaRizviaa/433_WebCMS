@@ -4,9 +4,12 @@ import { useSelector } from 'react-redux';
 import { useFormikContext } from 'formik';
 
 import DrawerLayout from '../../../layouts/DrawerLayout';
+import QuestionFormWrapper from './QuestionFormWrapper';
 import QuestionInternalForm from './QuestionInternalForm';
-import { selectSpecificQuestionStatus } from '../../../../data/selectors';
 import QuestionForm from './QuestionSlideForm/QuestionForm';
+import QuestionDetails from './QuestionDetails';
+import { selectSpecificQuestionStatus } from '../../../../data/selectors';
+import { capitalize } from 'lodash';
 
 const QuestionsFormDrawer = ({
 	open,
@@ -32,31 +35,43 @@ const QuestionsFormDrawer = ({
 		setPreviewFile(null);
 	};
 
+	let title = 'Upload Question';
+
+	if (location === 'article') title = `${capitalize(questionType)} Detail`;
+	else if (isEdit) title = 'Edit Question';
+
 	return (
 		<DrawerLayout
 			open={open}
 			handleClose={handleClose}
-			title={isEdit ? 'Edit Question' : 'Upload Question'}
-			notifID={isEdit ? values.id : ''}
+			title={title}
+			notifID={isEdit ? values.question_id : ''}
 			isLoading={isSubmitting || specificQuestionStatus === 'loading'}
 			handlePreviewClose={closePreviewer}
 			previewFile={previewFile}
 		>
-			{location === 'article' ? (
-				<>
-					{values.questions.length > 0 && <QuestionForm index={0} isArticle />}
-				</>
-			) : (
-				<QuestionInternalForm
-					isEdit={isEdit}
-					status={status}
-					openPreviewer={openPreviewer}
-					onSubmitHandler={onSubmitHandler}
-					toggleDeleteModal={toggleDeleteModal}
-					defaultQuestionType={questionType}
-					location={location}
-				/>
-			)}
+			<QuestionFormWrapper>
+				{location === 'article' ? (
+					<>
+						{status === 'draft' && values.questions.length > 0 && (
+							<QuestionForm index={0} isArticle />
+						)}
+						{status !== 'draft' && values.questions.length > 0 && (
+							<QuestionDetails questionId={values.questions[0].id} isArticle />
+						)}
+					</>
+				) : (
+					<QuestionInternalForm
+						isEdit={isEdit}
+						status={status}
+						openPreviewer={openPreviewer}
+						onSubmitHandler={onSubmitHandler}
+						toggleDeleteModal={toggleDeleteModal}
+						defaultQuestionType={questionType}
+						location={location}
+					/>
+				)}
+			</QuestionFormWrapper>
 		</DrawerLayout>
 	);
 };

@@ -166,5 +166,10 @@ export const useQuestionsStyles = makeStyles((theme) => ({
 		lineHeight: '16px',
 		letterSpacing: '0.03em',
 		textAling: 'right'
+	},
+
+	skeletonWrapper: {
+		backgroundColor: theme.palette.normalGrey,
+		borderRadius: 5
 	}
 }));

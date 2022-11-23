@@ -7,7 +7,7 @@ import FormikField from '../../../../ui/inputs/formik/FormikField';
 import FormikDatePicker from '../../../../ui/inputs/formik/FormikDatePicker';
 import { useFormStyles } from '../../../forms.style';
 
-const PollSummary = ({ openPreviewer, isPublished }) => {
+const PollSummary = ({ openPreviewer, isPublished, isClosed }) => {
 	const classes = useFormStyles();
 
 	const { setFieldValue } = useFormikContext();
@@ -38,6 +38,7 @@ const PollSummary = ({ openPreviewer, isPublished }) => {
 					required
 					multiline
 					maxRows={2}
+					disabled={isClosed}
 				/>
 			</div>
 			<div className={classes.dropzoneWrapper}>
@@ -49,6 +50,7 @@ const PollSummary = ({ openPreviewer, isPublished }) => {
 					showPreview
 					onPreview={openPreviewer}
 					onDelete={() => handleDeleteFile()}
+					hideDeleteIcon={isClosed}
 				/>
 			</div>
 			<div className={classes.fieldContainer}>
@@ -58,6 +60,7 @@ const PollSummary = ({ openPreviewer, isPublished }) => {
 					placeholder='Please drop the URL here'
 					multiline
 					maxRows={2}
+					disabled={isClosed}
 				/>
 			</div>
 		</div>
@@ -66,7 +69,8 @@ const PollSummary = ({ openPreviewer, isPublished }) => {
 
 PollSummary.propTypes = {
 	openPreviewer: PropTypes.func.isRequired,
-	isPublished: PropTypes.bool.isRequired
+	isPublished: PropTypes.bool.isRequired,
+	isClosed: PropTypes.bool.isRequired
 };
 
 export default PollSummary;

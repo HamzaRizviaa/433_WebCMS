@@ -65,7 +65,7 @@ export const useDatePickerStyles = makeStyles((theme) => ({
 		alignItems: 'center',
 		cursor: 'pointer',
 		marginRight: 10,
-		marginBottom: 3,
+		marginBottom: 2,
 
 		'& svg': {
 			'& path': {

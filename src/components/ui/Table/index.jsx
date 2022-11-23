@@ -14,15 +14,23 @@ const Table = ({
 	data,
 	columns,
 	totalRecords,
-	onRowClick,
+	onRowClick = () => {},
 	isLoading,
-	noDataText
+	noDataText,
+	formTable = false,
+	customSortBy,
+	customOrderType,
+	onSort
 }) => {
 	const [searchParams, setSearchParams] = useSearchParams();
-	const sortBy = searchParams.get('sortBy');
-	const orderType = searchParams.get('orderType');
+	const sortBy = customSortBy || searchParams.get('sortBy');
+	const orderType = customOrderType || searchParams.get('orderType');
 
-	const classes = useStyles({ isEmpty: totalRecords === 0 });
+	const classes = useStyles({
+		isEmpty: totalRecords === 0,
+		formTable,
+		isLoading
+	});
 
 	const sortCaret = (_, column) => {
 		if (orderType === 'asc' && sortBy === column.dataField)
@@ -35,7 +43,9 @@ const Table = ({
 
 	const handleTableChange = (type, { sortOrder, sortField }) => {
 		if (type === 'sort' && sortOrder && sortField) {
-			if (sortOrder !== orderType || sortField !== sortBy) {
+			if (onSort) {
+				onSort(sortOrder, sortField);
+			} else if (sortOrder !== orderType || sortField !== sortBy) {
 				const queryParams = changeQueryParameters(searchParams, {
 					sortBy: sortField,
 					orderType: sortOrder,
@@ -56,7 +66,7 @@ const Table = ({
 	};
 
 	const noDataIndication = isLoading ? undefined : (
-		<NoDataIndicator noDataText={noDataText} />
+		<NoDataIndicator noDataText={noDataText} formTable={formTable} />
 	);
 
 	return (
@@ -75,7 +85,9 @@ const Table = ({
 					onTableChange={handleTableChange}
 				/>
 			</div>
-			{totalRecords > 0 && <CustomPagination totalRecords={totalRecords} />}
+			{!formTable && totalRecords > 0 && (
+				<CustomPagination totalRecords={totalRecords} />
+			)}
 		</div>
 	);
 };
@@ -83,10 +95,14 @@ const Table = ({
 Table.propTypes = {
 	data: PropTypes.array.isRequired,
 	columns: PropTypes.array.isRequired,
-	onRowClick: PropTypes.func.isRequired,
+	onRowClick: PropTypes.func,
 	totalRecords: PropTypes.number.isRequired,
 	isLoading: PropTypes.bool,
-	noDataText: PropTypes.string
+	noDataText: PropTypes.string,
+	formTable: PropTypes.bool,
+	customSortBy: PropTypes.string,
+	customOrderType: PropTypes.string,
+	onSort: PropTypes.func
 };
 
 export default Table;
