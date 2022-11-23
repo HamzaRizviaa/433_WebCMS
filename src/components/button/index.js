@@ -17,7 +17,8 @@ const Button = ({
 	active,
 	published,
 	bannerdisabled,
-	onMouseDown
+	onMouseDown,
+	className
 }) => {
 	// console.log('Active', active);
 	return (
@@ -41,7 +42,8 @@ const Button = ({
 				active === 'draft' ? classes.draftdbtn : '',
 				bannerdisabled && classes.disabled,
 				published ? classes.publishedBtn : '',
-				published === false && classes.draftBtn
+				published === false && classes.draftBtn,
+				className
 			].join(' ')}
 		>
 			{text}
@@ -64,7 +66,8 @@ Button.propTypes = {
 	active: PropTypes.bool,
 	published: PropTypes.bool,
 	bannerdisabled: PropTypes.bool,
-	onMouseDown: PropTypes.func
+	onMouseDown: PropTypes.func,
+	className: PropTypes.string
 };
 
 export default Button;

@@ -17,9 +17,10 @@ const ArticleFooter = ({
 	handleDraftSave,
 	validateForm,
 	editBtnDisabled,
-	handleAddSaveBtn
+	handleAddSaveBtn,
+	loading
 }) => {
-	const classes = useStyles();
+	const classes = useStyles({ loading });
 	const globalClasses = globalUseStyles();
 
 	return (
@@ -35,6 +36,7 @@ const ArticleFooter = ({
 									toggleDeleteModal();
 								}
 							}}
+							className={classes.btn}
 							text={'DELETE ARTICLE'}
 						/>
 					</div>
@@ -55,6 +57,7 @@ const ArticleFooter = ({
 							text={
 								status === 'draft' && isEdit ? 'SAVE DRAFT' : 'SAVE AS DRAFT'
 							}
+							className={classes.btn}
 						/>
 					</div>
 				) : (
@@ -81,6 +84,7 @@ const ArticleFooter = ({
 						button2AddSave={true}
 						text={buttonText}
 						onClick={() => handleAddSaveBtn()}
+						className={classes.btn}
 					/>
 				</div>
 			</div>
@@ -103,5 +107,6 @@ ArticleFooter.propTypes = {
 	validateForm: PropTypes.func.isRequired,
 	editBtnDisabled: PropTypes.bool.isRequired,
 	handleAddSaveBtn: PropTypes.func.isRequired,
-	dataElement: PropTypes.array.isRequired
+	dataElement: PropTypes.array.isRequired,
+	loading: PropTypes.bool.isRequired
 };
