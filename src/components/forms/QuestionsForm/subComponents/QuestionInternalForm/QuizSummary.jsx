@@ -27,6 +27,7 @@ const QuizSummary = ({ openPreviewer, isClosed }) => {
 					name='general_info.end_date'
 					placeholder='Please select an end date'
 					label='QUIZ END DATE'
+					minDate={new Date()}
 					isClearable={!isClosed}
 					disabled={isClosed}
 					required
@@ -61,7 +62,7 @@ const QuizSummary = ({ openPreviewer, isClosed }) => {
 				<FormikField
 					name='general_info.positive_results_dropbox_url'
 					label='DROPBOX URL'
-					placeholder='Please drop the URL here'
+					placeholder='Please drop the dropbox URL here'
 					multiline
 					maxRows={2}
 				/>
@@ -94,7 +95,7 @@ const QuizSummary = ({ openPreviewer, isClosed }) => {
 				<FormikField
 					name='general_info.negative_results_dropbox_url'
 					label='DROPBOX URL'
-					placeholder='Please drop the URL here'
+					placeholder='Please drop the dropbox URL here'
 					multiline
 					maxRows={2}
 				/>
