@@ -82,7 +82,7 @@ const QuestionSlideForm = ({
 					</DraggableCardLayout>
 				))}
 			</DraggableLayoutWrapper>
-			{!isPublished && (
+			{!isPublished && form.values.questions.length < 10 && (
 				<div className={classes.addNewsBtnWrapper}>
 					<Button
 						variant='outlined'

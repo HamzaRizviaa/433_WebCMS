@@ -8,7 +8,7 @@ export const useStyles = makeStyles(() => ({
 			backgroundColor: '#404040',
 			borderRadius: '8px',
 			padding: '6px 5px',
-			marginTop: '2.5rem',
+			marginTop: 0,
 			marginBottom: '2rem',
 			display: hideTabsHead ? 'none' : 'flex',
 			justifyContent: 'space-between'

@@ -47,12 +47,12 @@ const QuestionInternalForm = ({
 	useEffect(() => {
 		validateForm();
 		return () => {
-			resetForm(questionsFormInitialValues);
+			resetForm({ values: questionsFormInitialValues });
 		};
 	}, []);
 
 	const handleTabClick = (val) => {
-		resetForm(questionsFormInitialValues);
+		resetForm({ values: questionsFormInitialValues });
 		setFieldValue('general_info.question_type', val.toLowerCase());
 	};
 
@@ -60,7 +60,7 @@ const QuestionInternalForm = ({
 		if (!values.general_info.end_date) {
 			setFieldError(
 				'general_info.end_date',
-				`You need to select end date in order to add ${questionType}`
+				'You need to select date to post question'
 			);
 			return;
 		}

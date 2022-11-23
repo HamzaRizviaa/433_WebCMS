@@ -327,7 +327,7 @@ export const questionsFormValidationSchema = yup.object({
 		end_date: yup
 			.date()
 			.nullable()
-			.required('You need to select date to post poll'),
+			.required('You need to select date to post question'),
 		results: yup
 			.string()
 			.trim()
@@ -372,7 +372,7 @@ export const questionsFormValidationSchema = yup.object({
 				dropbox_url: yup.string(),
 				labels: yup
 					.array()
-					.min(1, 'You need to add 1 more label in order to post'),
+					.min(1, 'You need to add 1 more label in order to post question'),
 				answers: yup
 					.array()
 					.of(

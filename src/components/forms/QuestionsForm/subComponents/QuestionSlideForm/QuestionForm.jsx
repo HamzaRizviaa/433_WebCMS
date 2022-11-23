@@ -21,6 +21,7 @@ const QuestionForm = ({
 	return (
 		<div>
 			<div>
+				<span className={classes.slideImageLabel}>Add Background Image</span>
 				<FormikDropzone
 					name={`questions.${index}.uploadedFiles`}
 					accept='image/jpeg, image/png'
