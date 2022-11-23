@@ -4,6 +4,7 @@ export interface DraggableHeaderProps {
 	key: number;
 	children?: JSX.Element[] | JSX.Element;
 	onDeleteIconClick: () => void;
+	disableActions?: boolean;
 }
 
 /** Draggable Header is a component that needs to be used where there is a need of a draggable field.

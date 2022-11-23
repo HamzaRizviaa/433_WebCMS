@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useStyles } from './index.style';
 
-const NoDataIndicator = ({ noDataText }) => {
-	const classes = useStyles();
+const NoDataIndicator = ({ noDataText, formTable }) => {
+	const classes = useStyles({ formTable });
 
 	return (
 		<div className={classes.noDataText}>
@@ -13,7 +13,8 @@ const NoDataIndicator = ({ noDataText }) => {
 };
 
 NoDataIndicator.propTypes = {
-	noDataText: PropTypes.string.isRequired
+	noDataText: PropTypes.string.isRequired,
+	formTable: PropTypes.bool
 };
 
 export default NoDataIndicator;

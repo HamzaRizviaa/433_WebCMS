@@ -1,13 +1,14 @@
 import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { ReactComponent as CalenderYellow } from '../../../../assets/Calender_Yellow.svg';
+import { CalendarYellowIcon } from '../../../../assets/svg-icons';
 import { useDatePickerStyles } from './index.styled';
 
 const CustomDateInput = forwardRef((props, ref) => {
 	const {
 		inputValue,
 		onClick,
+		onBlur,
 		placeHolder,
 		onIconClick = () => {},
 		disabled = false,
@@ -21,12 +22,18 @@ const CustomDateInput = forwardRef((props, ref) => {
 	});
 
 	return (
-		<div className={classes.customDatePickerInput} onClick={onClick} ref={ref}>
+		<div
+			className={classes.customDatePickerInput}
+			onClick={onClick}
+			onBlur={onBlur}
+			ref={ref}
+			tabIndex={-1}
+		>
 			<span className={classes.dateInputText}>
 				{inputValue ? moment(inputValue).format('DD-MM-YYYY') : placeHolder}
 			</span>
 			<span className={classes.datePickerIcon}>
-				<CalenderYellow onClick={onIconClick} />
+				<CalendarYellowIcon onClick={onIconClick} />
 			</span>
 		</div>
 	);
@@ -36,6 +43,7 @@ CustomDateInput.displayName = 'CustomDateInput';
 
 CustomDateInput.propTypes = {
 	onClick: PropTypes.func,
+	onBlur: PropTypes.func,
 	inputValue: PropTypes.any,
 	placeHolder: PropTypes.string,
 	onIconClick: PropTypes.func,
