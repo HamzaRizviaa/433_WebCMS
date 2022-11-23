@@ -135,22 +135,19 @@ const QuestionInternalForm = ({
 							DELETE {questionType}
 						</Button>
 					)}
-					{isEdit && status === 'ACTIVE' ? (
+					{isEdit && status === 'ACTIVE' && (
 						<>
 							<div className={classes.stopBtn}>
 								<Button
-									buttonStop={true}
 									size='small'
 									variant='outlined'
 									onClick={toggleStopModal}
 									color='danger'
 								>
-									{questionType === 'quiz' ? 'STOP QUIZ' : 'STOP POLL'}
+									{`STOP ${questionType}`}
 								</Button>
 							</div>
 						</>
-					) : (
-						<></>
 					)}
 				</div>
 				<div className={classes.publishDraftDiv}>
