@@ -52,7 +52,7 @@ export const useInputsStyles = makeStyles((theme) => ({
 	},
 
 	textFieldInput: ({ isError, size }) => ({
-		color: theme.palette.white,
+		color: `${theme.palette.white} !important`,
 		border: `1px solid ${theme.palette.normalGrey}`,
 		padding: '1rem 1rem 1rem 1.5rem !important',
 		fontSize: '1.4rem !important',
@@ -76,7 +76,7 @@ export const useInputsStyles = makeStyles((theme) => ({
 		display: 'inline-block',
 		color: theme.palette.red,
 		fontWeight: 'bold',
-		marginTop: '0.6rem',
+		marginTop: '0.2rem',
 		marginLeft: '1rem',
 		height: '1rem'
 	}

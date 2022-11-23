@@ -2,6 +2,7 @@
 import React from 'react';
 import ReactDatePicker from 'react-datepicker';
 import CustomDateInput from './CustomDateInput';
+import { useInputsStyles } from '../inputs.style';
 import { useDatePickerStyles } from './index.styled';
 
 const DatePickerField = ({
@@ -12,6 +13,7 @@ const DatePickerField = ({
 	error,
 	disabled,
 	required,
+	onBlur,
 	...rest
 }) => {
 	const classes = useDatePickerStyles({
@@ -19,9 +21,18 @@ const DatePickerField = ({
 		isRequired: required
 	});
 
+	const inputsClasses = useInputsStyles({
+		isError: !!error,
+		isRequired: required
+	});
+
 	return (
 		<div className={classes.datePickerContainer}>
-			<span className={classes.datePickerLabel}>{label}</span>
+			{!!label && (
+				<div className={inputsClasses.labelsContainer}>
+					<span className={inputsClasses.inputLabel}>{label}</span>
+				</div>
+			)}
 			<div>
 				<ReactDatePicker
 					name={name}
@@ -32,13 +43,15 @@ const DatePickerField = ({
 							placeHolder={placeholder}
 							disabled={disabled}
 							isError={!!error}
+							onBlur={onBlur}
 						/>
 					}
 					disabled={disabled}
 					popperPlacement='bottom'
+					onBlur={onBlur}
 					{...rest}
 				/>
-				<span className={classes.errorText}>{error}</span>
+				<span className={inputsClasses.errorText}>{error}</span>
 			</div>
 		</div>
 	);

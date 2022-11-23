@@ -15,3 +15,4 @@ export { ReactComponent as EyeIcon } from './Eye.svg';
 export { ReactComponent as DragIcon } from './drag.svg';
 export { ReactComponent as AddIcon } from './newsAddIcon.svg';
 export { ReactComponent as InfoIcon } from './InfoButton.svg';
+export { ReactComponent as CalendarYellowIcon } from './Calender_Yellow.svg';

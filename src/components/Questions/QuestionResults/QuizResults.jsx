@@ -102,6 +102,7 @@ export default function QuizResults({
 			return [];
 		}
 	};
+	//slider 1 , 2
 
 	const getQuestionResulParticipant = async (id, sortby, order_type) => {
 		let response = [];
@@ -128,11 +129,12 @@ export default function QuizResults({
 		}
 
 		if (response?.data?.data) {
+			console.log(response?.data?.data, 'response?.data?.data');
 			return setParticipants(response.data.data);
 		} else {
 			return [];
 		}
-	};
+	}; //table
 
 	const sortKeysMapping = {
 		username: 'username',
