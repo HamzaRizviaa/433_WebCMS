@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { isEqual, omit } from 'lodash';
@@ -14,6 +15,8 @@ import DrawerLayout from '../../../layouts/DrawerLayout';
 import MediaInternalForm from './MediaInternalForm';
 
 const MediaFormDrawer = ({
+	getSubCategories,
+	subCategoryStates,
 	open,
 	handleClose,
 	isEdit,
@@ -66,6 +69,8 @@ const MediaFormDrawer = ({
 			previewFile={previewFile}
 		>
 			<MediaInternalForm
+				getSubCategories={getSubCategories}
+				subCategoryStates={subCategoryStates}
 				isEdit={isEdit}
 				status={status}
 				previewFile={previewFile}

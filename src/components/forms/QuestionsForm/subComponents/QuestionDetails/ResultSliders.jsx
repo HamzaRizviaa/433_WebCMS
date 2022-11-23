@@ -1,28 +1,26 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { styled } from '@mui/material/styles';
-import LinearProgress, {
-	linearProgressClasses
-} from '@mui/material/LinearProgress';
-
 import DefaultImage from '../../../../../assets/defaultImage.png';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import { withStyles } from '@material-ui/core/styles';
 import { useQuestionsStyles } from '../../index.style';
 import { formatDate } from '../../../../../data/utils';
+import PropTypes from 'prop-types';
 import useGetQuestionResultDetail from '../../../../../hooks/libraries/questions/useGetQuestionResultDetail';
 import ResultSlidersSkeleton from './ResultSlidersSkeleton';
 
-// this styles can't be move to styles file.
-const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
-	height: '54px',
-	borderRadius: '8px',
-	[`&.${linearProgressClasses.colorPrimary}`]: {
+const BorderLinearProgress = withStyles((theme) => ({
+	root: {
+		height: '54px',
+		borderRadius: '8px'
+	},
+	colorPrimary: {
 		backgroundColor: '#404040 !important'
 	},
-	[`& .${linearProgressClasses.bar}`]: {
+	bar: {
 		borderRadius: '8px',
 		backgroundColor: theme.palette.mode === '#404040' ? 'red' : '#808080'
 	}
-}));
+}))(LinearProgress);
 
 const calculateAnswerPercentage = (totalParticipants, usersCount) => {
 	return totalParticipants !== 0

@@ -4,12 +4,6 @@ import { isEmpty } from 'lodash';
 import axios from 'axios';
 import * as Yup from 'yup';
 
-const fileDuration = 10;
-let portraitFileWidth = 100;
-let portraitFileHeight = 100;
-let landscapeFileWidth = 100;
-let landscapeFileHeight = 100;
-
 export const mediaColumns = [
 	{
 		dataField: 'title',
@@ -98,7 +92,7 @@ export const mediaDataFormatterForForm = (media) => {
 					media_url: media?.media_url
 						? `${process.env.REACT_APP_MEDIA_ENDPOINT}/${media?.media_url}`
 						: '',
-					type: media?.mainCategory === 'Watch' ? 'video' : 'audio'
+					type: media?.media_type === 'Watch' ? 'video' : 'audio'
 				}
 		  ]
 		: [];
@@ -130,9 +124,13 @@ export const mediaDataFormatterForForm = (media) => {
 				}
 		  ]
 		: [];
-	formattedMedia.mainCategory = media?.media_type;
-	formattedMedia.subCategory = media?.sub_category;
-	console.log(formattedMedia);
+	formattedMedia.mainCategory = media?.main_category_id;
+	formattedMedia.subCategory = media?.sub_category_id;
+	formattedMedia.mainCategoryName = media?.media_type;
+	formattedMedia.media_dropbox_url = media?.dropbox_url?.media;
+	formattedMedia.image_dropbox_url = media?.dropbox_url?.portrait_cover_image;
+	formattedMedia.landscape_image_dropbox_url =
+		media?.dropbox_url?.landscape_cover_image;
 	return formattedMedia;
 };
 
@@ -161,11 +159,11 @@ const uploadFileToServer = async (file, type) => {
 				fileType: type
 			};
 		} else {
-			throw 'Error';
+			throw Error('Bad Request');
 		}
 	} catch (error) {
-		console.log('Error');
-		return null;
+		console.error(error);
+		throw Error(error.message || 'something went wrong');
 	}
 };
 
@@ -188,18 +186,21 @@ export const mediaDataFormatterForServer = (
 	media,
 	isDraft = false,
 	mediaFiles,
-	userData
+	userData,
+	completedUploadFiles
 ) => {
-	console.log('MEDIA FILE WITH', media);
+	console.log('MEDIAAA', media);
 	const mediaData = {
 		title: media.title,
 		translations: undefined,
 		description: media.description,
-		duration: Math.round(fileDuration),
+		duration: media?.uploadedFiles[0]?.duration
+			? Math.ceil(media?.uploadedFiles[0]?.duration)
+			: 0,
 		type: 'medialibrary',
 		save_draft: isDraft,
-		main_category_id: media.mainCategoryContent,
-		sub_category_id: media.subCategoryContent,
+		main_category_id: media.mainCategoryContent || media.main_category_id,
+		sub_category_id: media.subCategoryContent || media.sub_category_id,
 		show_likes: media.show_likes ? true : false,
 		show_comments: media.show_comments ? true : false,
 		user_data: userData,
@@ -215,15 +216,20 @@ export const mediaDataFormatterForServer = (
 				: ''
 		},
 		...(media.labels.length ? { labels: [...media.labels] } : { labels: [] }),
-		media_url: mediaFiles[0]?.keys?.video_key || mediaFiles[0]?.keys?.audio_key,
+		media_url: media?.uploadedFiles?.length
+			? completedUploadFiles[0]?.data?.data?.video_data ||
+			  completedUploadFiles[0]?.data?.data?.audio_data ||
+			  media?.uploadedFiles[0]?.media_url.split('cloudfront.net/')[1]
+			: '',
 		height: media?.uploadedFiles[0]?.height,
 		width: media?.uploadedFiles[0]?.width,
 		cover_image: {
 			...(mediaFiles[1]?.url
 				? {
 						portrait: {
-							width: portraitFileWidth,
-							height: portraitFileHeight,
+							// ...media?.uploadedCoverImage[0],
+							height: media?.uploadedCoverImage[0].height || 100,
+							width: media?.uploadedCoverImage[0].width || 100,
 							image_url: mediaFiles[1]?.keys?.image_key
 						}
 				  }
@@ -239,8 +245,9 @@ export const mediaDataFormatterForServer = (
 			...(mediaFiles[2]?.url
 				? {
 						landscape: {
-							width: landscapeFileWidth,
-							height: landscapeFileHeight,
+							// ...media?.uploadedLandscapeCoverImage[0],
+							height: media?.uploadedLandscapeCoverImage[0].height || 100,
+							width: media?.uploadedLandscapeCoverImage[0].width || 100,
 							image_url: mediaFiles[2]?.keys?.image_key
 						}
 				  }
@@ -255,80 +262,82 @@ export const mediaDataFormatterForServer = (
 				  })
 		},
 		...(media.id ? { media_id: media.id } : {}),
-		file_name_media: media?.uploadedFiles[0]?.file_name,
+		file_name_media: media?.uploadedFiles?.length
+			? media?.uploadedFiles[0]?.file_name
+			: '',
 		file_name_portrait_image: media?.uploadedCoverImage[0]?.file_name,
 		file_name_landscape_image: media?.uploadedLandscapeCoverImage[0]?.file_name,
 		file_name: media?.uploadedFiles[0]?.file_name,
-		video_data: mediaFiles[0]?.keys?.video_key || null,
-		image_data: mediaFiles[1]?.keys?.image_key || null,
-		audio_data: mediaFiles[0]?.keys?.audio_key || null
+		video_data: completedUploadFiles[0]?.data?.data?.video_data || null,
+		image_data: null,
+		audio_data: completedUploadFiles[0]?.data?.data?.audio_data || null
 	};
 	return mediaData;
 };
 
-export const completeUpload = (data, media) => {
-	return Promise.all([...data]).then(async (mediaFiles) => {
-		mediaFiles.map(async (file, index) => {
-			if (file?.signed_response) {
-				const newFileUpload = await axios.post(
-					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-					{
-						file_name:
-							index === 1
-								? media.uploadedCoverImage[0].file_name
-								: index === 2
-								? media.uploadedLandscapeCoverImage[0]?.file_name
-								: media.uploadedFiles[0].file_name,
-
-						type: 'medialibrary',
-						data: {
-							bucket: 'media',
-							multipart_upload:
-								media.uploadedFiles[0]?.mime_type == 'video/mp4'
-									? [
-											{
-												e_tag: file?.signed_response?.headers?.etag.replace(
-													/['"]+/g,
-													''
-												),
-												part_number: 1
-											}
-									  ]
-									: ['image'],
-							keys: {
-								image_key: file?.keys?.image_key,
-								...(media.mainCategory.name === 'Watch' ||
-								media?.mainCategory === 'Watch'
-									? {
-											video_key: file?.keys?.video_key,
-											audio_key: ''
-									  }
-									: {
-											audio_key: file?.keys?.audio_key,
-											video_key: ''
-									  })
-							},
-							upload_id:
-								media.mainCategory.name === 'Watch' ||
-								media?.mainCategory === 'Watch'
-									? file.upload_id || 'image'
-									: file.fileType === 'image'
-									? 'image'
-									: 'audio'
-						}
-					},
-					{
-						headers: {
-							Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-						}
+export const completeUpload = async (data, media) => {
+	// let mediaArray = [];
+	const mediaFiles = await Promise.all([...data]);
+	const mediaArray = mediaFiles.map((file, index) => {
+		if (file?.signed_response) {
+			const newFileUpload = axios.post(
+				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+				{
+					file_name:
+						index === 1
+							? media.uploadedCoverImage[0].file_name
+							: index === 2
+							? media.uploadedLandscapeCoverImage[0]?.file_name
+							: media.uploadedFiles[0].file_name,
+					type: 'medialibrary',
+					data: {
+						bucket: 'media',
+						multipart_upload:
+							media.uploadedFiles[0]?.mime_type == 'video/mp4'
+								? [
+										{
+											e_tag: file?.signed_response?.headers?.etag.replace(
+												/['"]+/g,
+												''
+											),
+											part_number: 1
+										}
+								  ]
+								: ['image'],
+						keys: {
+							image_key: file?.keys?.image_key,
+							...(media.mainCategoryName === 'Watch' ||
+							media?.mainCategoryName === 'Watch'
+								? {
+										video_key: file?.keys?.video_key,
+										audio_key: ''
+								  }
+								: {
+										audio_key: file?.keys?.audio_key,
+										video_key: ''
+								  })
+						},
+						upload_id:
+							media.mainCategoryName === 'Watch' ||
+							media?.mainCategoryName === 'Watch'
+								? file.upload_id || 'image'
+								: file.fileType === 'image'
+								? 'image'
+								: 'audio'
 					}
-				);
-				return newFileUpload;
-			} else {
-				Promise.resolve();
-			}
-		});
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+					}
+				}
+			);
+			return newFileUpload;
+		}
 	});
+
+	const resolvedMediaFiles = Promise.all(mediaArray);
+	return resolvedMediaFiles;
 };
 
 export const mediaUnwantedKeysForDeepEqual = [
@@ -361,21 +370,21 @@ export const mediaFormInitialValues = {
 };
 
 export const mediaFormValidationSchema = Yup.object().shape({
-	mainCategory: Yup.string(),
-	subCategory: Yup.string(),
+	mainCategory: Yup.string().required().label('Main Category'),
+	subCategory: Yup.string().required().label('Sub Category'),
 	title: Yup.string().required().label('Title'),
 	media_dropbox_url: Yup.string(),
 	image_dropbox_url: Yup.string(),
 	landscape_image_dropbox_url: Yup.string(),
 	description: Yup.string().required().label('Description'),
 	labels: Yup.array()
-		.min(7, (obj) => {
+		.min(4, (obj) => {
 			const labelsCount = obj.value?.length;
 			return `You need to add ${
-				7 - labelsCount
+				4 - labelsCount
 			} more labels in order to upload news`;
 		})
-		.required('You need to enter atleast 7 labels')
+		.required('You need to enter atleast 4 labels')
 		.label('Labels'),
 	uploadedFiles: Yup.array().min(1).required(),
 	uploadedCoverImage: Yup.array().min(1).required(),

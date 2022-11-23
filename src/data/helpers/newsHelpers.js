@@ -163,13 +163,13 @@ export const newsFormInitialValues = {
 
 export const newsFormValidationSchema = Yup.object().shape({
 	labels: Yup.array()
-		.min(7, (obj) => {
+		.min(4, (obj) => {
 			const labelsCount = obj.value?.length;
 			return `You need to add ${
-				7 - labelsCount
+				4 - labelsCount
 			} more labels in order to upload news`;
 		})
-		.required('You need to enter atleast 7 labels')
+		.required('You need to enter atleast 4 labels')
 		.label('Labels'),
 	banner_title: Yup.string()
 		.trim()
