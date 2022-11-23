@@ -23,6 +23,7 @@ const PollSummary = ({ openPreviewer, isClosed }) => {
 					name='general_info.end_date'
 					placeholder='Please select an end date'
 					label='POLL END DATE'
+					minDate={new Date()}
 					isClearable={!isClosed}
 					disabled={isClosed}
 					required

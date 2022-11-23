@@ -27,6 +27,7 @@ const QuizSummary = ({ openPreviewer, isClosed }) => {
 					name='general_info.end_date'
 					placeholder='Please select an end date'
 					label='QUIZ END DATE'
+					minDate={new Date()}
 					isClearable={!isClosed}
 					disabled={isClosed}
 					required
