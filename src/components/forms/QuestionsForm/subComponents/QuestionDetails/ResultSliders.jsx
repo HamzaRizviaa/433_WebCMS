@@ -45,11 +45,13 @@ const ResultSliders = ({ questionId, isArticle }) => {
 	if (isLoading) {
 		return (
 			<>
-				<div className={classes.articlesQuizDetails}>
-					<div className={classes.skeletonWrapper}>
-						<Skeleton variant='rect' animation='wave' height={50} />
+				{isArticle && (
+					<div className={classes.articlesQuizDetails}>
+						<div className={classes.skeletonWrapper}>
+							<Skeleton variant='rect' animation='wave' height={50} />
+						</div>
 					</div>
-				</div>
+				)}
 				<div className={classes.QuizQuestion}>
 					<div className={classes.skeletonWrapper} style={{ width: '70%' }}>
 						<Skeleton variant='text' animation='wave' height={30} />

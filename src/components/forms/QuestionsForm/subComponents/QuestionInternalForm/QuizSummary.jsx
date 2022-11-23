@@ -64,7 +64,6 @@ const QuizSummary = ({ openPreviewer, isPublished, isClosed }) => {
 					placeholder='Please drop the URL here'
 					multiline
 					maxRows={2}
-					disabled={isClosed}
 				/>
 			</div>
 			<div className={classes.fieldContainer}>
@@ -98,7 +97,6 @@ const QuizSummary = ({ openPreviewer, isPublished, isClosed }) => {
 					placeholder='Please drop the URL here'
 					multiline
 					maxRows={2}
-					disabled={isClosed}
 				/>
 			</div>
 		</div>

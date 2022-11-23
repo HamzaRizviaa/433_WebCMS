@@ -60,7 +60,6 @@ const PollSummary = ({ openPreviewer, isPublished, isClosed }) => {
 					placeholder='Please drop the URL here'
 					multiline
 					maxRows={2}
-					disabled={isClosed}
 				/>
 			</div>
 		</div>

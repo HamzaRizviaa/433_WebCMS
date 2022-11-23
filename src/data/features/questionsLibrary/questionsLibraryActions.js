@@ -53,14 +53,14 @@ export const createOrEditQuestionThunk = createAsyncThunk(
 
 			if (response.data.status_code === 200) {
 				toast.success(
-					data.question_meta_id
+					data.question_id
 						? 'Question has been edited!'
 						: 'Question has been created!'
 				);
 			}
 		} catch (e) {
 			toast.error(
-				data.question_meta_id
+				data.question_id
 					? 'Failed to edit question!'
 					: 'Failed to create question!'
 			);
@@ -99,33 +99,5 @@ export const stopQuestionThunk = createAsyncThunk(
 			// toast.error(ToastErrorNotifications.deleteBannerItemText);
 			console.error(e);
 		}
-	}
-);
-
-export const getQuestionResultDetailThunk = createAsyncThunk(
-	'questionLibrary/getQuestionResultDetailThunk',
-	async (data) => {
-		try {
-			const response = await QuestionsLibraryService.getQuestionResultDetail(
-				data
-			);
-			if (response?.data?.data) {
-				return response.data.data;
-			} else {
-				return [];
-			}
-		} catch (e) {
-			console.log(e);
-		}
-	}
-);
-
-export const getQuestionParticipantListingThunk = createAsyncThunk(
-	'questionLibrary/getQuestionParticipantListingThunk',
-	async (params = {}) => {
-		const { data: questions } =
-			await QuestionsLibraryService.getQuestionParticipantListing(params);
-
-		return questions.data;
 	}
 );
