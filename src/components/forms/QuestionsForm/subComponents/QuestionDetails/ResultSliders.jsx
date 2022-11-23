@@ -21,7 +21,6 @@ const BorderLinearProgress = withStyles((theme) => ({
 		backgroundColor: theme.palette.mode === '#404040' ? 'red' : '#808080'
 	}
 }))(LinearProgress);
-s;
 
 const calculateAnswerPercentage = (totalParticipants, usersCount) => {
 	return totalParticipants !== 0
