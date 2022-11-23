@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Skeleton from '@material-ui/lab/Skeleton';
 import { styled } from '@mui/material/styles';
 import LinearProgress, {
 	linearProgressClasses
@@ -10,6 +9,7 @@ import DefaultImage from '../../../../../assets/defaultImage.png';
 import { useQuestionsStyles } from '../../index.style';
 import { formatDate } from '../../../../../data/utils';
 import useGetQuestionResultDetail from '../../../../../hooks/libraries/questions/useGetQuestionResultDetail';
+import ResultSlidersSkeleton from './ResultSlidersSkeleton';
 
 // this styles can't be move to styles file.
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
@@ -42,34 +42,7 @@ const ResultSliders = ({ questionId, isArticle }) => {
 
 	const classes = useQuestionsStyles();
 
-	if (isLoading) {
-		return (
-			<>
-				{isArticle && (
-					<div className={classes.articlesQuizDetails}>
-						<div className={classes.skeletonWrapper}>
-							<Skeleton variant='rect' animation='wave' height={50} />
-						</div>
-					</div>
-				)}
-				<div className={classes.QuizQuestion}>
-					<div className={classes.skeletonWrapper} style={{ width: '70%' }}>
-						<Skeleton variant='text' animation='wave' height={30} />
-					</div>
-				</div>
-				<div className={classes.QuizDetailsProgressBars}>
-					<div className={classes.skeletonWrapper}>
-						<Skeleton variant='rect' animation='wave' height={54} />
-					</div>
-				</div>
-				<div className={classes.QuizDetailsProgressBars}>
-					<div className={classes.skeletonWrapper}>
-						<Skeleton variant='rect' animation='wave' height={54} />
-					</div>
-				</div>
-			</>
-		);
-	}
+	if (isLoading) return <ResultSlidersSkeleton isArticle={isArticle} />;
 
 	return (
 		<>
