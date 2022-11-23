@@ -388,3 +388,9 @@ export const questionsFormValidationSchema = yup.object({
 		)
 		.min(1, 'Atleast 1 question is required')
 });
+
+export const calculateAnswerPercentage = (totalParticipants, usersCount) => {
+	return totalParticipants !== 0
+		? Math.round(usersCount / totalParticipants) * 100
+		: 0;
+};

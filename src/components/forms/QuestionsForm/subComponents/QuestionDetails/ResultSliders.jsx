@@ -1,32 +1,13 @@
 import React from 'react';
-import DefaultImage from '../../../../../assets/defaultImage.png';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import { withStyles } from '@material-ui/core/styles';
-import { useQuestionsStyles } from '../../index.style';
-import { formatDate } from '../../../../../data/utils';
 import PropTypes from 'prop-types';
-import useGetQuestionResultDetail from '../../../../../hooks/libraries/questions/useGetQuestionResultDetail';
+
 import ResultSlidersSkeleton from './ResultSlidersSkeleton';
-
-const BorderLinearProgress = withStyles((theme) => ({
-	root: {
-		height: '54px',
-		borderRadius: '8px'
-	},
-	colorPrimary: {
-		backgroundColor: '#404040 !important'
-	},
-	bar: {
-		borderRadius: '8px',
-		backgroundColor: theme.palette.mode === '#404040' ? 'red' : '#808080'
-	}
-}))(LinearProgress);
-
-const calculateAnswerPercentage = (totalParticipants, usersCount) => {
-	return totalParticipants !== 0
-		? Math.round(usersCount / totalParticipants) * 100
-		: 0;
-};
+import BorderLinearProgress from './BorderLinearProgress';
+import DefaultImage from '../../../../../assets/defaultImage.png';
+import { formatDate } from '../../../../../data/utils';
+import useGetQuestionResultDetail from '../../../../../hooks/libraries/questions/useGetQuestionResultDetail';
+import { calculateAnswerPercentage } from '../../../../../data/helpers/questionHelpers';
+import { useQuestionsStyles } from '../../index.style';
 
 const ResultSliders = ({ questionId, isArticle }) => {
 	const { data, isLoading } = useGetQuestionResultDetail(questionId);
