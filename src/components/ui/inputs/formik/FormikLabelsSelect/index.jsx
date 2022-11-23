@@ -23,7 +23,7 @@ const labelsParams = (labels) => {
 
 const regex = /\W/;
 
-const FormikLabelsSelect = ({ name, placeholder, ...restProps }) => {
+const FormikLabelsSelect = ({ name, placeholder, library, ...restProps }) => {
 	const dispatch = useDispatch();
 	const [searchText, setSearchText] = useState('');
 

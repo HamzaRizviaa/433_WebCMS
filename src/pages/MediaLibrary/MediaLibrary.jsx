@@ -59,19 +59,19 @@ const MediaLibrary = () => {
 				noDataText='No Media Found'
 			/>
 			{/* <UploadOrEditMedia
-				open={showSlider}
-				isEdit={edit}
-				handleClose={() => {
-					setShowSlider(false);
-				}}
-				title={edit ? 'Edit Media' : 'Upload Media'}
-				heading1={edit ? 'Media Type' : 'Select Media Type'}
-				buttonText={
-					edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
-				}
-				rowStatus={rowStatus}
-				status={rowStatus}
-			/> */}
+                open={showSlider}
+                isEdit={edit}
+                handleClose={() => {
+                    setShowSlider(false);
+                }}
+                title={edit ? 'Edit Media' : 'Upload Media'}
+                heading1={edit ? 'Media Type' : 'Select Media Type'}
+                buttonText={
+                    edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
+                }
+                rowStatus={rowStatus}
+                status={rowStatus}
+            /> */}
 			<MediaForm
 				open={showSlider}
 				isEdit={edit}

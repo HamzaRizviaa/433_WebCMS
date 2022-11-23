@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { pick, isEqual } from 'lodash';
@@ -103,9 +102,10 @@ const ViralInternalForm = ({
 					<FormikLabelsSelect
 						label='LABELS'
 						name='labels'
-						placeholder={'Select a minimum of 7 labels'}
+						placeholder={'Select a minimum of 4 labels'}
 						disabled={isPublished}
 						required
+						library='Viral'
 					/>
 				</div>
 				<div className={classes.fieldContainer}>

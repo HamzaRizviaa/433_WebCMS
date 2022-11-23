@@ -28,6 +28,7 @@ const QuestionInternalForm = ({
 }) => {
 	const classes = useFormStyles();
 	const isPublished = isEdit && status !== 'draft';
+	const isClosed = isEdit && status === 'CLOSED';
 
 	const {
 		dirty,
@@ -51,6 +52,7 @@ const QuestionInternalForm = ({
 	}, []);
 
 	const handleTabClick = (val) => {
+		resetForm(questionsFormInitialValues);
 		setFieldValue('general_info.question_type', val.toLowerCase());
 	};
 
@@ -102,12 +104,14 @@ const QuestionInternalForm = ({
 							<PollSummary
 								openPreviewer={openPreviewer}
 								isPublished={isPublished}
+								isClosed={isClosed}
 							/>
 						</TabPanes.TabPanel>
 						<TabPanes.TabPanel value={1}>
 							<QuizSummary
 								openPreviewer={openPreviewer}
 								isPublished={isPublished}
+								isClosed={isClosed}
 							/>
 						</TabPanes.TabPanel>
 					</TabPanes>
@@ -131,22 +135,19 @@ const QuestionInternalForm = ({
 							DELETE {questionType}
 						</Button>
 					)}
-					{isEdit && status === 'ACTIVE' ? (
+					{isEdit && status === 'ACTIVE' && (
 						<>
 							<div className={classes.stopBtn}>
 								<Button
-									buttonStop={true}
 									size='small'
 									variant='outlined'
 									onClick={toggleStopModal}
 									color='danger'
 								>
-									{questionType === 'quiz' ? 'STOP QUIZ' : 'STOP POLL'}
+									{`STOP ${questionType}`}
 								</Button>
 							</div>
 						</>
-					) : (
-						<></>
 					)}
 				</div>
 				<div className={classes.publishDraftDiv}>

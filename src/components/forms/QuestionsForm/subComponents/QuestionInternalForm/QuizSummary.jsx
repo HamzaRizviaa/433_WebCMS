@@ -7,7 +7,7 @@ import FormikField from '../../../../ui/inputs/formik/FormikField';
 import FormikDatePicker from '../../../../ui/inputs/formik/FormikDatePicker';
 import { useFormStyles } from '../../../forms.style';
 
-const QuizSummary = ({ openPreviewer, isPublished }) => {
+const QuizSummary = ({ openPreviewer, isPublished, isClosed }) => {
 	const classes = useFormStyles();
 
 	const { setFieldValue } = useFormikContext();
@@ -42,6 +42,7 @@ const QuizSummary = ({ openPreviewer, isPublished }) => {
 					required
 					multiline
 					maxRows={2}
+					disabled={isClosed}
 				/>
 			</div>
 			<div className={classes.dropzoneWrapper}>
@@ -53,6 +54,7 @@ const QuizSummary = ({ openPreviewer, isPublished }) => {
 					showPreview
 					onPreview={openPreviewer}
 					onDelete={() => handleDeletePositiveFile()}
+					hideDeleteIcon={isClosed}
 				/>
 			</div>
 			<div className={classes.fieldContainer}>
@@ -73,6 +75,7 @@ const QuizSummary = ({ openPreviewer, isPublished }) => {
 					required
 					multiline
 					maxRows={2}
+					disabled={isClosed}
 				/>
 			</div>
 			<div className={classes.dropzoneWrapper}>
@@ -84,6 +87,7 @@ const QuizSummary = ({ openPreviewer, isPublished }) => {
 					showPreview
 					onPreview={openPreviewer}
 					onDelete={() => handleDeleteNegativeFile()}
+					hideDeleteIcon={isClosed}
 				/>
 			</div>
 			<div className={classes.fieldContainer}>
@@ -101,7 +105,8 @@ const QuizSummary = ({ openPreviewer, isPublished }) => {
 
 QuizSummary.propTypes = {
 	openPreviewer: PropTypes.func.isRequired,
-	isPublished: PropTypes.bool.isRequired
+	isPublished: PropTypes.bool.isRequired,
+	isClosed: PropTypes.bool.isRequired
 };
 
 export default QuizSummary;

@@ -12,6 +12,12 @@ const sortKeysMapping = {
 	location: 'location'
 };
 
+const formSortKeysMapping = {
+	username: 'username',
+	answer: 'answer',
+	date_and_time: 'datetime'
+};
+
 class QuestionsLibraryService {
 	static getAllQuestionsApi(queryParams) {
 		const params = {
@@ -47,22 +53,29 @@ class QuestionsLibraryService {
 		return axiosInstance.post('/question/stop-question', data);
 	}
 
-	static getQuestionResultDetail(id) {
-		return axiosInstance.get(
+	static async getQuestionResultDetail(id) {
+		const { data } = await axiosInstance.get(
 			`/question/get-question-result-detail?question_id=${id}`
 		);
+
+		return data;
 	}
 
-	static getQuestionParticipantListing(queryParams) {
+	static async getQuestionParticipantListing(queryParams) {
 		const params = {
 			question_id: queryParams.id,
-			order_type: queryParams.order_type,
-			sort_by: queryParams.sort_by
+			order_type: queryParams.order_type?.toUpperCase(),
+			sort_by: formSortKeysMapping[queryParams.sort_by] || null
 		};
 
-		return axiosInstance.get('/question/get-question-participant-listing', {
-			params
-		});
+		const { data } = await axiosInstance.get(
+			'/question/get-question-participant-listing',
+			{
+				params
+			}
+		);
+
+		return data;
 	}
 }
 

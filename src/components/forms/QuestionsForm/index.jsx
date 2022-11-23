@@ -130,6 +130,7 @@ const QuestionsForm = ({
 			initialValues={initialValues}
 			validationSchema={questionsFormValidationSchema}
 			onSubmit={onSubmitHandler}
+			validateOnMount
 		>
 			{({ setSubmitting }) => (
 				<Form>

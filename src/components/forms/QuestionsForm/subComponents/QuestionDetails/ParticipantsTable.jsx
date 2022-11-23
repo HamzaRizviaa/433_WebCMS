@@ -1,51 +1,50 @@
-/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import PropTypes from 'prop-types';
+
 import Table from '../../../../ui/Table';
-import { useQuestionsStyles } from '../../index.style';
 import { questionParticipantsTableColumns } from '../../../../../data/helpers/questionHelpers';
+import useGetQuestionParticipantList from '../../../../../hooks/libraries/questions/useGetQuestionParticipantList';
+import { useQuestionsStyles } from '../../index.style';
 
-const ParticipantsTable = () => {
-	const classes = useQuestionsStyles();
-	const [edit, setEdit] = useState(false);
-	// api call const { data, isLoading, totalRecords } = useGetAllQuestionsQuery();
+const ParticipantsTable = ({ questionId }) => {
+	const [sortBy, setSortBy] = useState('');
+	const [orderType, setOrderType] = useState('');
 
-	const handleRowClick = (_, row) => {
-		setEdit(false);
+	const { data, isLoading } = useGetQuestionParticipantList(
+		questionId,
+		sortBy,
+		orderType
+	);
+
+	const handleSort = (sortOrder, sortField) => {
+		if (sortOrder !== orderType || sortField !== sortBy) {
+			setSortBy(sortField);
+			setOrderType(sortOrder);
+		}
 	};
 
-	//dummy data
-	const data = [
-		{
-			username: 'abc',
-			answer: 'answer',
-			date_and_time: '2022-11-26T00:00:00.000Z'
-		},
-		{
-			username: 'abc',
-			answer: 'answer',
-			date_and_time: '2022-11-26T00:00:00.000Z'
-		},
-		{
-			username: 'abc',
-			answer: 'answer',
-			date_and_time: '2022-11-26T00:00:00.000Z'
-		}
-	];
+	const classes = useQuestionsStyles();
 
 	return (
 		<>
 			<div className={classes.QuizDetailsHeading}>Participants</div>
 			<Table
-				onRowClick={handleRowClick}
 				columns={questionParticipantsTableColumns}
 				data={data}
-				totalRecords={200}
-				isLoading={false}
-				noDataText='No Results Found'
+				totalRecords={data?.length || 0}
+				isLoading={isLoading}
+				noDataText='No Participants Found'
+				formTable
+				customSortBy={sortBy}
+				customOrderType={orderType}
+				onSort={handleSort}
 			/>
 		</>
 	);
+};
+
+ParticipantsTable.propTypes = {
+	questionId: PropTypes.string
 };
 
 export default ParticipantsTable;

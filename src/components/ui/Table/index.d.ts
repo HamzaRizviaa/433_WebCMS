@@ -5,6 +5,10 @@ export interface TableProps {
 	onRowClick: () => void;
 	isLoading: boolean;
 	noDataText: string;
+	formTable?: boolean;
+	customSortBy?: string;
+	customOrderType?: 'asc' | 'desc';
+	onSort: (sortOrder: 'asc' | 'desc', sortField: string) => void;
 }
 
 /**
