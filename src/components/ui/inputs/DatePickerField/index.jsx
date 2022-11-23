@@ -12,6 +12,7 @@ const DatePickerField = ({
 	error,
 	disabled,
 	required,
+	onBlur,
 	...rest
 }) => {
 	const classes = useDatePickerStyles({
@@ -32,10 +33,12 @@ const DatePickerField = ({
 							placeHolder={placeholder}
 							disabled={disabled}
 							isError={!!error}
+							onBlur={onBlur}
 						/>
 					}
 					disabled={disabled}
 					popperPlacement='bottom'
+					onBlur={onBlur}
 					{...rest}
 				/>
 				<span className={classes.errorText}>{error}</span>

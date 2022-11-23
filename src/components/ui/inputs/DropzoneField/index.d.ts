@@ -23,9 +23,11 @@ export type DropzoneFieldProps = DropzoneOptions & {
 	onBlur?: React.FocusEventHandler<HTMLInputElement>;
 	requiredDimension?: string;
 	required?: boolean;
-	onDelete: (file: FileObject) => void;
-	onPreview: (file: FileObject) => void;
-	showPreview: boolean;
+	onDelete?: (file: FileObject) => void;
+	onPreview?: (file: FileObject) => void;
+	showPreview?: boolean;
+	hidePreviewIcon?: boolean;
+	hideDeleteIcon?: boolean;
 };
 
 /**

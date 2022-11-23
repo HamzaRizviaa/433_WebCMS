@@ -2,7 +2,8 @@ import { makeStyles } from '@material-ui/core';
 
 export const useStyles = makeStyles((theme) => ({
 	tableWrapper: {
-		pointerEvents: ({ isEmpty }) => (isEmpty ? 'none' : 'auto')
+		pointerEvents: ({ isEmpty, isLoading }) =>
+			isEmpty || isLoading ? 'none' : 'auto'
 	},
 
 	tableContainer: {
@@ -23,9 +24,12 @@ export const useStyles = makeStyles((theme) => ({
 				}
 			},
 			'& tbody': {
+				opacity: ({ isLoading }) => (isLoading ? 0.5 : 1),
 				display: 'block',
-				maxHeight: 'calc(100vh - 200px)',
-				minHeight: 'calc(100vh - 200px)',
+				maxHeight: ({ formTable }) =>
+					formTable ? 'auto' : 'calc(100vh - 200px)',
+				minHeight: ({ formTable }) =>
+					formTable ? 'auto' : 'calc(100vh - 200px)',
 				overflowY: 'auto',
 				overflowX: 'hidden',
 				'& tr': {
@@ -73,9 +77,13 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	noDataText: {
-		height: 'calc(100vh - 230px)',
+		height: ({ formTable }) => (formTable ? 'auto' : 'calc(100vh - 230px)'),
 		display: 'flex',
 		alignItems: 'center',
-		justifyContent: 'center'
+		justifyContent: 'center',
+
+		'& h1': {
+			fontSize: ({ formTable }) => (formTable ? '1.5rem' : '2.5rem')
+		}
 	}
 }));

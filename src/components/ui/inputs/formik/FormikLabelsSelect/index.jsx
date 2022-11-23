@@ -23,7 +23,7 @@ const labelsParams = (labels) => {
 
 const regex = /\W/;
 
-const FormikLabelsSelect = ({ name, placeholder, library, ...restProps }) => {
+const FormikLabelsSelect = ({ name, placeholder, ...restProps }) => {
 	const dispatch = useDispatch();
 	const [searchText, setSearchText] = useState('');
 
@@ -131,13 +131,7 @@ const FormikLabelsSelect = ({ name, placeholder, library, ...restProps }) => {
 			onBlur={handleBlur}
 			onSearchTextChange={handleSearchTextChange}
 			searchBarProps={{ onKeyPress: handleKeyPress, onPaste: handlePaste }}
-			error={
-				touched && error
-					? `You need to add ${
-							4 - selectedValues.length
-					  } more labels in order to upload ${library}`
-					: ''
-			}
+			error={touched && error ? error : ''}
 			renderOption={renderOption}
 		/>
 	);

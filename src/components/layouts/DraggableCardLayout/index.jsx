@@ -19,13 +19,17 @@ const DraggableCardLayout = ({
 	index,
 	onDeleteIconClick,
 	largeIconsAndLabel = false,
+	disableActions = false,
 	children
 }) => {
 	const [expanded, setExpanded] = useState(item?.isOpen || true);
 
 	const toggleExpand = () => setExpanded(!expanded);
 
-	const classes = useDraggableCardLayoutStyles({ largeIconsAndLabel });
+	const classes = useDraggableCardLayoutStyles({
+		largeIconsAndLabel,
+		disableActions
+	});
 
 	return (
 		<Draggable draggableId={`draggable-${index}`} index={index}>
@@ -42,21 +46,26 @@ const DraggableCardLayout = ({
 							<AccordionSummary className={classes.accordionSummary}>
 								<div className={classes.leftDiv}>
 									<div className={classes.grabIconDiv}>
-										<span {...provided.dragHandleProps}>
-											<DragIcon
-												style={{ cursor: 'grab' }}
-												className={classes.grabIcon}
-											/>
-										</span>
+										{disableActions ? (
+											<span>
+												<DragIcon className={classes.grabIcon} />
+											</span>
+										) : (
+											<span {...provided.dragHandleProps}>
+												<DragIcon className={classes.grabIcon} />
+											</span>
+										)}
 									</div>
 									<Typography className={classes.heading}>{title}</Typography>
 								</div>
 								<Box className={classes.rightDiv}>
-									<div className={classes.rightIconsWrapper}>
+									<div
+										className={`${classes.rightIconsWrapper} ${classes.deleteIconWrapper}`}
+									>
 										<DeleteIcon
 											className={classes.deleteIcon}
 											onClick={() => {
-												onDeleteIconClick(item, index);
+												if (!disableActions) onDeleteIconClick(item, index);
 											}}
 										/>
 									</div>
@@ -87,7 +96,8 @@ DraggableCardLayout.propTypes = {
 	children: PropTypes.element,
 	onDeleteIconClick: PropTypes.func,
 	title: PropTypes.string,
-	largeIconsAndLabel: PropTypes.bool
+	largeIconsAndLabel: PropTypes.bool,
+	disableActions: PropTypes.bool
 };
 
 export default DraggableCardLayout;

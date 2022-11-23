@@ -19,7 +19,9 @@ const UploadedFilesPreview = ({
 	uploadedFiles,
 	onDelete,
 	onPreview,
-	showPreview
+	showPreview,
+	hidePreviewIcon,
+	hideDeleteIcon
 }) => {
 	const handleDeleteFile = (file) => {
 		if (onDelete) onDelete(file);
@@ -42,7 +44,6 @@ const UploadedFilesPreview = ({
 	const handleImageLoad = (event, file) => {
 		file.width = event.currentTarget.naturalWidth;
 		file.height = event.currentTarget.naturalHeight;
-		console.log('IMAGE: ', file);
 	};
 
 	const classes = useDropzoneStyles({ showPreview });
@@ -53,7 +54,7 @@ const UploadedFilesPreview = ({
 				const fileType = file.type || getFileTypeFromUrl(file.media_url);
 
 				return (
-					<div key={file.id} >
+					<div key={file.id}>
 						<div className={classes.filePreview}>
 							<div className={classes.filePreviewLeft}>
 								{fileType === 'video' && (
@@ -110,16 +111,18 @@ const UploadedFilesPreview = ({
 								</p>
 							</div>
 							<div className={classes.filePreviewRight}>
-								{showPreview && (
+								{showPreview && !hidePreviewIcon && (
 									<EyeIcon
 										onClick={() => handlePreviewFile(file)}
 										className={classes.filePreviewIcons}
 									/>
 								)}
-								<DeleteIcon
-									onClick={() => handleDeleteFile(file)}
-									className={classes.filePreviewIcons}
-								/>
+								{!hideDeleteIcon && (
+									<DeleteIcon
+										onClick={() => handleDeleteFile(file)}
+										className={classes.filePreviewIcons}
+									/>
+								)}
 							</div>
 						</div>
 						<hr className={classes.horizontalLine} />

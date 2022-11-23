@@ -9,7 +9,7 @@ export * from './questionsLibraryActions';
 const initialState = {
 	labels: [],
 	questions: [],
-	questionEdit: [],
+	questionEdit: null,
 	questionResultDetail: [],
 	questionResultParticipant: [],
 	totalRecords: 0,
@@ -29,6 +29,9 @@ const questionsLibrarySlice = createSlice({
 		},
 		resetNoResultStatus: (state) => {
 			state.noResultStatus = false;
+		},
+		resetQuestionEdit: (state) => {
+			state.questionEdit = null;
 		}
 	},
 	extraReducers: (builder) => {
@@ -71,7 +74,7 @@ const questionsLibrarySlice = createSlice({
 	}
 });
 
-export const { resetCalendarError, resetNoResultStatus } =
+export const { resetCalendarError, resetNoResultStatus, resetQuestionEdit } =
 	questionsLibrarySlice.actions;
 
 export default questionsLibrarySlice.reducer;

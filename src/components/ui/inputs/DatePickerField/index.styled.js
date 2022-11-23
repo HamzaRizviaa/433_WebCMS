@@ -32,7 +32,7 @@ export const useDatePickerStyles = makeStyles((theme) => ({
 		position: 'relative',
 		minWidth: 0,
 		verticalAlign: 'top',
-		width: '96%',
+		width: 'fill-available',
 		border: `1px solid ${theme.palette.normalGrey}`,
 		padding: '1.2rem 1rem 1.2rem 1.5rem !important',
 		fontSize: '1.4rem !important',
@@ -53,13 +53,26 @@ export const useDatePickerStyles = makeStyles((theme) => ({
 
 	dateInputText: {
 		color: (props) =>
-			props.hasData ? theme.palette.white : theme.palette.disabled
+			props.isDisabled
+				? theme.palette.lightGrey
+				: props.hasData
+				? theme.palette.white
+				: theme.palette.disabled
 	},
 
 	datePickerIcon: {
 		display: 'flex',
 		alignItems: 'center',
-		cursor: 'pointer'
+		cursor: 'pointer',
+		marginRight: 10,
+		marginBottom: 2,
+
+		'& svg': {
+			'& path': {
+				fill: ({ isDisabled }) =>
+					isDisabled ? theme.palette.red : theme.palette.neonYellow
+			}
+		}
 	},
 
 	errorText: {

@@ -8,6 +8,10 @@ export const useFormStyles = makeStyles(() => ({
 		display: 'flex',
 		justifyContent: 'space-between',
 
+		'& button': {
+			textTransform: 'uppercase'
+		},
+
 		'& button + button': {
 			marginLeft: 10
 		}
@@ -32,7 +36,10 @@ export const useFormStyles = makeStyles(() => ({
 	addNewsBtnWrapper: {
 		marginTop: 40
 	},
-
+	leftButtonSection: {
+		display: 'flex',
+		gap: '1rem'
+	},
 	explanationWrapper: {
 		display: 'flex',
 		justifyContent: 'flex-start',
@@ -44,5 +51,18 @@ export const useFormStyles = makeStyles(() => ({
 		lineHeight: '24px'
 	},
 
-	infoIcon: { cursor: 'pointer', marginLeft: '1rem' }
+	infoIcon: { cursor: 'pointer', marginLeft: '1rem' },
+
+	mainHeading: {
+		display: 'flex',
+		fontSize: '18px',
+		alignItems: 'center',
+		fontFamily: 'Poppins',
+		fontWeight: '800',
+		lineHeight: '30px'
+	},
+	dropzoneWrapper: {
+		marginTop: 15,
+		marginBottom: 20
+	}
 }));

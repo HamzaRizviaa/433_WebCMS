@@ -76,7 +76,7 @@ export const useInputsStyles = makeStyles((theme) => ({
 		display: 'inline-block',
 		color: theme.palette.red,
 		fontWeight: 'bold',
-		marginTop: '0.6rem',
+		marginTop: '0.2rem',
 		marginLeft: '1rem',
 		height: '1rem'
 	}
