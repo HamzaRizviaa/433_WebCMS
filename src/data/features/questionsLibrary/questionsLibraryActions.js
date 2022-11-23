@@ -86,6 +86,22 @@ export const deleteQuestionThunk = createAsyncThunk(
 	}
 );
 
+export const stopQuestionThunk = createAsyncThunk(
+	'questionLibrary/stopQuestionThunk',
+	async (data) => {
+		try {
+			const response = await QuestionsLibraryService.stopQuestion(data);
+
+			if (response.data.status_code === 200) {
+				toast.success('Question has been Stopped!');
+			}
+		} catch (e) {
+			// toast.error(ToastErrorNotifications.deleteBannerItemText);
+			console.error(e);
+		}
+	}
+);
+
 export const getQuestionResultDetailThunk = createAsyncThunk(
 	'questionLibrary/getQuestionResultDetailThunk',
 	async (data) => {

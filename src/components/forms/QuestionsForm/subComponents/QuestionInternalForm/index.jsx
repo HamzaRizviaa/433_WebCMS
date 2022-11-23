@@ -21,6 +21,7 @@ const QuestionInternalForm = ({
 	isEdit,
 	status,
 	toggleDeleteModal,
+	toggleStopModal,
 	openPreviewer,
 	onSubmitHandler,
 	defaultQuestionType
@@ -128,11 +129,28 @@ const QuestionInternalForm = ({
 				)}
 			/>
 			<div className={classes.buttonDiv}>
-				<div>
+				<div className={classes.leftButtonSection}>
 					{isEdit && (
 						<Button size='small' variant='outlined' onClick={toggleDeleteModal}>
 							DELETE {questionType}
 						</Button>
+					)}
+					{isEdit && status === 'ACTIVE' ? (
+						<>
+							<div className={classes.stopBtn}>
+								<Button
+									buttonStop={true}
+									size='small'
+									variant='outlined'
+									onClick={toggleStopModal}
+									color='danger'
+								>
+									{questionType === 'quiz' ? 'STOP QUIZ' : 'STOP POLL'}
+								</Button>
+							</div>
+						</>
+					) : (
+						<></>
 					)}
 				</div>
 				<div className={classes.publishDraftDiv}>
@@ -164,6 +182,7 @@ QuestionInternalForm.propTypes = {
 	openPreviewer: PropTypes.func.isRequired,
 	onSubmitHandler: PropTypes.func.isRequired,
 	toggleDeleteModal: PropTypes.func.isRequired,
+	toggleStopModal: PropTypes.func.isRequired,
 	defaultQuestionType: PropTypes.string.isRequired
 };
 export default QuestionInternalForm;

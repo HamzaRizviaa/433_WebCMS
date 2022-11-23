@@ -17,11 +17,13 @@ import {
 import {
 	createOrEditQuestionThunk,
 	deleteQuestionThunk,
+	stopQuestionThunk,
 	getQuestions
 } from '../../../data/features/questionsLibrary/questionsLibraryActions';
 
 import QuestionsFormDrawer from './subComponents/QuestionsFormDrawer';
 import DeleteModal from '../../DeleteModal';
+import StopModal from '../../StopModal';
 
 const QuestionsForm = ({
 	open,
@@ -38,6 +40,7 @@ const QuestionsForm = ({
 
 	// States
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
+	const [openStopModal, setOpenStopModal] = useState(false);
 
 	// Refs
 	const dialogWrapper = useRef(null);
@@ -49,6 +52,7 @@ const QuestionsForm = ({
 	}, [isEdit, specificQuestion]);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
+	const toggleStopModal = () => setOpenStopModal(!openStopModal);
 
 	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
 		formikBag.setSubmitting(true);
@@ -100,6 +104,26 @@ const QuestionsForm = ({
 		}
 	};
 
+	const onStopHandler = async (id, setSubmitting) => {
+		try {
+			setSubmitting(true);
+
+			await dispatch(
+				stopQuestionThunk({
+					question_meta_id: id
+				})
+			);
+
+			handleClose();
+			dispatch(getQuestions(queryParams));
+		} catch (e) {
+			console.error(e);
+		} finally {
+			setSubmitting(false);
+			setOpenStopModal(false);
+		}
+	};
+
 	return (
 		<Formik
 			enableReinitialize
@@ -116,6 +140,7 @@ const QuestionsForm = ({
 						status={status}
 						onSubmitHandler={onSubmitHandler}
 						toggleDeleteModal={toggleDeleteModal}
+						toggleStopModal={toggleStopModal}
 						questionType={questionType}
 						location={location}
 					/>
@@ -127,6 +152,16 @@ const QuestionsForm = ({
 						}}
 						text='Question'
 						wrapperRef={dialogWrapper}
+					/>
+					<StopModal
+						open={openStopModal}
+						toggle={toggleStopModal}
+						stopBtn={() => {
+							onStopHandler(specificQuestion?.id, setSubmitting);
+						}}
+						text='Question'
+						wrapperRef={dialogWrapper}
+						stop={true}
 					/>
 				</Form>
 			)}

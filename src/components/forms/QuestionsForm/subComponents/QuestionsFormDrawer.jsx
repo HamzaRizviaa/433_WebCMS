@@ -18,6 +18,7 @@ const QuestionsFormDrawer = ({
 	status,
 	onSubmitHandler,
 	toggleDeleteModal,
+	toggleStopModal,
 	questionType,
 	location
 }) => {
@@ -67,6 +68,7 @@ const QuestionsFormDrawer = ({
 						openPreviewer={openPreviewer}
 						onSubmitHandler={onSubmitHandler}
 						toggleDeleteModal={toggleDeleteModal}
+						toggleStopModal={toggleStopModal}
 						defaultQuestionType={questionType}
 						location={location}
 					/>
@@ -83,6 +85,7 @@ QuestionsFormDrawer.propTypes = {
 	status: PropTypes.string.isRequired,
 	onSubmitHandler: PropTypes.func.isRequired,
 	toggleDeleteModal: PropTypes.func.isRequired,
+	toggleStopModal: PropTypes.func.isRequired,
 	questionType: PropTypes.string.isRequired,
 	location: PropTypes.string.isRequired
 };
