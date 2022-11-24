@@ -37,7 +37,8 @@ const QuestionsForm = ({
 	questionType,
 	location
 }) => {
-	const isSummaryEnabled = useSelector(selectSummaryFeatureFlag);
+	const summaryComponentOnQuestions = useSelector(selectSummaryFeatureFlag);
+	const isSummaryEnabled = summaryComponentOnQuestions?._value === 'true';
 	const navigate = useNavigate();
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 	const dispatch = useDispatch();

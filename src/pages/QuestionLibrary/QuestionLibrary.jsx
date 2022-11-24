@@ -21,8 +21,10 @@ const QuestionLibrary = () => {
 	const [questionId, setQuestionId] = useState('');
 
 	const handleRowClick = (_, row) => {
+		const questionTypeText = row.question_type?.replaceAll(/<[^>]*>/gi, '');
+
 		setEdit(true);
-		setRowType(row.question_type); // quiz , poll
+		setRowType(questionTypeText); // quiz , poll
 		setRowStatus(row.status); // active , closed , draft
 		setRowLocation(row.location); // home page , article
 		setQuestionId(row.question_id);
