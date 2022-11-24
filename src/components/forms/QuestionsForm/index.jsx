@@ -56,8 +56,10 @@ const QuestionsForm = ({
 			: questionsFormInitialValues;
 	}, [isEdit, specificQuestion]);
 
+	const closeDeleteModal = () => setOpenDeleteModal(false);
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 	const toggleStopModal = () => setOpenStopModal(!openStopModal);
+	const closeStopModal = () => setOpenStopModal(false);
 
 	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
 		formikBag.setSubmitting(true);
@@ -154,7 +156,7 @@ const QuestionsForm = ({
 					/>
 					<DeleteModal
 						open={openDeleteModal}
-						toggle={toggleDeleteModal}
+						toggle={closeDeleteModal}
 						deleteBtn={() => {
 							onDeleteHandler(specificQuestion?.id, status, setSubmitting);
 						}}
@@ -164,7 +166,7 @@ const QuestionsForm = ({
 					/>
 					<StopModal
 						open={openStopModal}
-						toggle={toggleStopModal}
+						toggle={closeStopModal}
 						stopBtn={() => {
 							onStopHandler(specificQuestion?.id, setSubmitting);
 						}}
