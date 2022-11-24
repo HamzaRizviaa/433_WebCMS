@@ -145,7 +145,6 @@ export const questionsFormInitialValues = {
 };
 
 export const questionDataFormatterForService = async (values, isDraft) => {
-	console.log('values', values);
 	const pollFilesToUpload = [values.resultsUploadedFiles[0] || null];
 
 	const quizFilesToUpload = [
@@ -209,7 +208,7 @@ export const questionDataFormatterForService = async (values, isDraft) => {
 				  }),
 			answers: item.answers.map((answerItem, answerIndex) => ({
 				...answerItem,
-				position: values.question_id ? answerItem.position : answerIndex + 1,
+				position: answerItem.position || answerIndex + 1,
 				type:
 					values.general_info.question_type === 'poll'
 						? 'poll'
