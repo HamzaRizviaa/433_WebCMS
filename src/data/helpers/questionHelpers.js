@@ -302,6 +302,42 @@ export const questionDataFormatterForForm = (question) => {
 	return formattedQuestion;
 };
 
+const questionsSlideSchema = yup
+	.array()
+	.of(
+		yup.object({
+			question: yup.string().trim().required('You need to enter a question'),
+			uploadedFiles: yup
+				.array()
+				.min(1, 'You need to upload an image in order to post'),
+			dropbox_url: yup.string(),
+			labels: yup
+				.array()
+				.min(1, 'You need to add 1 more label in order to post question'),
+			answers: yup
+				.array()
+				.of(
+					yup.object().shape({
+						answer: yup.string().trim().required('You need to enter an answer')
+					})
+				)
+				.min(2, 'Atleast 2 answers are required')
+		})
+	)
+	.min(1, 'Atleast 1 question is required');
+
+// V1 is without summary component
+export const questionsFormValidationSchemaV1 = yup.object({
+	general_info: yup.object({
+		end_date: yup
+			.date()
+			.nullable()
+			.required('You need to select date to post question')
+	}),
+
+	questions: questionsSlideSchema
+});
+
 export const questionsFormValidationSchema = yup.object({
 	resultsUploadedFiles: yup.array().when('general_info.question_type', {
 		is: (val) => val === 'poll',
@@ -360,33 +396,14 @@ export const questionsFormValidationSchema = yup.object({
 			})
 	}),
 
-	questions: yup
-		.array()
-		.of(
-			yup.object({
-				question: yup.string().trim().required('You need to enter a question'),
-				uploadedFiles: yup
-					.array()
-					.min(1, 'You need to upload an image in order to post'),
-				dropbox_url: yup.string(),
-				labels: yup
-					.array()
-					.min(1, 'You need to add 1 more label in order to post question'),
-				answers: yup
-					.array()
-					.of(
-						yup.object().shape({
-							answer: yup
-								.string()
-								.trim()
-								.required('You need to enter an answer')
-						})
-					)
-					.min(2, 'Atleast 2 answers are required')
-			})
-		)
-		.min(1, 'Atleast 1 question is required')
+	questions: questionsSlideSchema
 });
+
+export const getQuestionsValidationSchema = (isSummaryComponent) => {
+	return isSummaryComponent
+		? questionsFormValidationSchema
+		: questionsFormValidationSchemaV1;
+};
 
 export const calculateAnswerPercentage = (totalParticipants, usersCount) => {
 	return totalParticipants !== 0

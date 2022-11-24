@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { isEqual, pick, omit } from 'lodash';
@@ -14,6 +15,7 @@ import {
 	areAllFieldsEmpty,
 	questionsFormInitialValues
 } from '../../../../../data/helpers';
+import FeatureWrapper from '../../../../../components/FeatureWrapper';
 
 const headings = ['Poll', 'Quiz'];
 

@@ -7,12 +7,16 @@ import { isEmpty } from 'lodash';
 import { Formik, Form } from 'formik';
 
 import { useCommonParams } from '../../../hooks';
-import { selectSpecificQuestion } from '../../../data/selectors';
+import {
+	selectSpecificQuestion,
+	selectSummaryFeatureFlag
+} from '../../../data/selectors';
 import {
 	questionDataFormatterForForm,
 	questionDataFormatterForService,
 	questionsFormInitialValues,
-	questionsFormValidationSchema
+	// questionsFormValidationSchema,
+	getQuestionsValidationSchema
 } from '../../../data/helpers';
 import {
 	createOrEditQuestionThunk,
@@ -33,6 +37,7 @@ const QuestionsForm = ({
 	questionType,
 	location
 }) => {
+	const isSummaryEnabled = useSelector(selectSummaryFeatureFlag);
 	const navigate = useNavigate();
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 	const dispatch = useDispatch();
@@ -51,8 +56,10 @@ const QuestionsForm = ({
 			: questionsFormInitialValues;
 	}, [isEdit, specificQuestion]);
 
+	const closeDeleteModal = () => setOpenDeleteModal(false);
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 	const toggleStopModal = () => setOpenStopModal(!openStopModal);
+	const closeStopModal = () => setOpenStopModal(false);
 
 	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
 		formikBag.setSubmitting(true);
@@ -130,7 +137,7 @@ const QuestionsForm = ({
 		<Formik
 			enableReinitialize
 			initialValues={initialValues}
-			validationSchema={questionsFormValidationSchema}
+			validationSchema={getQuestionsValidationSchema(isSummaryEnabled)}
 			onSubmit={onSubmitHandler}
 			validateOnMount
 		>
@@ -149,7 +156,7 @@ const QuestionsForm = ({
 					/>
 					<DeleteModal
 						open={openDeleteModal}
-						toggle={toggleDeleteModal}
+						toggle={closeDeleteModal}
 						deleteBtn={() => {
 							onDeleteHandler(specificQuestion?.id, status, setSubmitting);
 						}}
@@ -159,7 +166,7 @@ const QuestionsForm = ({
 					/>
 					<StopModal
 						open={openStopModal}
-						toggle={toggleStopModal}
+						toggle={closeStopModal}
 						stopBtn={() => {
 							onStopHandler(specificQuestion?.id, setSubmitting);
 						}}
