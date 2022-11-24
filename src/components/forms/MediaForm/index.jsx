@@ -56,6 +56,7 @@ const MediaForm = ({
 	);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
+	const closeDeleteModal = () => setOpenDeleteModal(false);
 
 	// get categories
 	// const { data: mainCategories } = useGetMainCategoriesQuery();
@@ -173,7 +174,7 @@ const MediaForm = ({
 					/>
 					<DeleteModal
 						open={openDeleteModal}
-						toggle={toggleDeleteModal}
+						toggle={closeDeleteModal}
 						deleteBtn={() => {
 							onDeleteHandler(specificMedia?.id, status, setSubmitting);
 						}}

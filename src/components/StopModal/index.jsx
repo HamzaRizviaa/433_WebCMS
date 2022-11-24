@@ -89,7 +89,7 @@ export default function StopModal({
 						color='danger'
 						disabled={isSubmitting}
 					>
-						{`STOP ${text}`.toUpperCase()}
+						{`STOP ${text}`.toUpperCase()}{' '}
 					</Button>
 				</DialogActions>
 			</Dialog>

@@ -47,6 +47,7 @@ const NewsForm = ({
 	}, [isEdit, specificNews]);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
+	const closeDeleteModal = () => setOpenDeleteModal(false);
 
 	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
 		formikBag.setSubmitting(true);
@@ -149,7 +150,7 @@ const NewsForm = ({
 					/>
 					<DeleteModal
 						open={openDeleteModal}
-						toggle={toggleDeleteModal}
+						toggle={closeDeleteModal}
 						deleteBtn={() => {
 							onDeleteHandler(specificNews?.id, status, setSubmitting);
 						}}

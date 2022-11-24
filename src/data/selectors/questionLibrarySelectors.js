@@ -6,3 +6,6 @@ export const selectSpecificQuestion = (state) =>
 
 export const selectSpecificQuestionStatus = (state) =>
 	state.rootReducer.questionsLibrary.questionEditStatus;
+
+export const selectSummaryFeatureFlag = (state) =>
+	state.rootReducer.remoteConfig.features.summaryComponentOnQuestions;
