@@ -31,6 +31,11 @@ export default function DeleteModal({
 	const [playOpen] = useSound(soundOpen, { volume: 0.5 });
 	const [playClose] = useSound(soundClose, { volume: 0.5 });
 
+	const handleDeleteClick = () => {
+		if (deleteBtn) deleteBtn();
+		toggle();
+	};
+
 	return (
 		<div>
 			<Dialog
@@ -79,7 +84,7 @@ export default function DeleteModal({
 
 					<Button
 						button2AddSave={true}
-						onClick={deleteBtn}
+						onClick={handleDeleteClick}
 						text={`Delete ${text}`.toUpperCase()}
 						onMouseDown={playOpen}
 					/>
