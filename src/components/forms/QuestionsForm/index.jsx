@@ -7,12 +7,16 @@ import { isEmpty } from 'lodash';
 import { Formik, Form } from 'formik';
 
 import { useCommonParams } from '../../../hooks';
-import { selectSpecificQuestion } from '../../../data/selectors';
+import {
+	selectSpecificQuestion,
+	selectSummaryFeatureFlag
+} from '../../../data/selectors';
 import {
 	questionDataFormatterForForm,
 	questionDataFormatterForService,
 	questionsFormInitialValues,
-	questionsFormValidationSchema
+	// questionsFormValidationSchema,
+	getQuestionsValidationSchema
 } from '../../../data/helpers';
 import {
 	createOrEditQuestionThunk,
@@ -33,6 +37,7 @@ const QuestionsForm = ({
 	questionType,
 	location
 }) => {
+	const isSummaryEnabled = useSelector(selectSummaryFeatureFlag);
 	const navigate = useNavigate();
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 	const dispatch = useDispatch();
@@ -130,7 +135,7 @@ const QuestionsForm = ({
 		<Formik
 			enableReinitialize
 			initialValues={initialValues}
-			validationSchema={questionsFormValidationSchema}
+			validationSchema={getQuestionsValidationSchema(isSummaryEnabled)}
 			onSubmit={onSubmitHandler}
 			validateOnMount
 		>
