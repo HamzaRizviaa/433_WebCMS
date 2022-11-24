@@ -16,6 +16,7 @@ import Button from '../ui/Button';
 import soundOpen from '../../assets/openSound.mp3';
 import soundClose from '../../assets/closeSound.mp3';
 import { useStyles } from './index.style';
+import { Markup } from 'interweave';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Grow in={true} ref={ref} {...props} />;
@@ -51,7 +52,8 @@ export default function StopModal({
 					className={classes.dialogTitle}
 					classes={{ root: classes.root }}
 				>
-					{`Stop this ${text}?`}
+					<Markup content={`Stop this ${text}?`} />
+
 					<IconButton
 						onClick={toggle}
 						onMouseDown={playClose}
@@ -66,8 +68,13 @@ export default function StopModal({
 						className={classes.dialogContentText}
 					>
 						<p>
-							You are about to stop this <strong> {text} </strong>. You won’t be
-							able to restart the {text} again.
+							You are about to stop this{' '}
+							<strong>
+								{' '}
+								<Markup content={text} />
+							</strong>
+							. You won’t be able to restart the <Markup content={text} />{' '}
+							again.
 						</p>
 					</DialogContentText>
 				</DialogContent>
@@ -89,7 +96,7 @@ export default function StopModal({
 						color='danger'
 						disabled={isSubmitting}
 					>
-						{`STOP ${text}`.toUpperCase()}
+						<Markup className={classes.stopBtn} content={`STOP ${text}`} />
 					</Button>
 				</DialogActions>
 			</Dialog>
