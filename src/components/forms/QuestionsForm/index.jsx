@@ -97,6 +97,7 @@ const QuestionsForm = ({
 				})
 			);
 
+			handleClose();
 			dispatch(getQuestions(queryParams));
 		} catch (e) {
 			console.error(e);
@@ -106,9 +107,10 @@ const QuestionsForm = ({
 	};
 
 	const onStopHandler = async (id, setSubmitting) => {
-		try {
-			setSubmitting(true);
+		setSubmitting(true);
+		setOpenStopModal(false);
 
+		try {
 			await dispatch(
 				stopQuestionThunk({
 					question_meta_id: id
@@ -121,7 +123,6 @@ const QuestionsForm = ({
 			console.error(e);
 		} finally {
 			setSubmitting(false);
-			setOpenStopModal(false);
 		}
 	};
 
@@ -165,6 +166,7 @@ const QuestionsForm = ({
 						text={questionType}
 						wrapperRef={dialogWrapper}
 						stop={true}
+						isSubmitting={isSubmitting}
 					/>
 				</Form>
 			)}
