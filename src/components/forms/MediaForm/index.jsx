@@ -133,23 +133,21 @@ const MediaForm = ({
 	};
 
 	const onDeleteHandler = async (id, isDraft, setSubmitting) => {
+		setSubmitting(true);
+		setOpenDeleteModal(false);
 		try {
-			setSubmitting(true);
-
 			await dispatch(
 				deleteMediaThunk({
 					media_id: id,
 					is_draft: isDraft
 				})
 			);
-
 			handleClose();
 			dispatch(getMedia(queryParams));
 		} catch (e) {
 			console.error(e);
 		} finally {
 			setSubmitting(false);
-			setOpenDeleteModal(false);
 		}
 	};
 
@@ -161,7 +159,7 @@ const MediaForm = ({
 			validateOnMount
 			onSubmit={onSubmitHandler}
 		>
-			{({ setSubmitting }) => (
+			{({ setSubmitting, isSubmitting }) => (
 				<div>
 					<MediaFormDrawer
 						getSubCategories={getSubCategories}
@@ -181,6 +179,7 @@ const MediaForm = ({
 						}}
 						text={'Media'}
 						wrapperRef={dialogWrapper}
+						isSubmitting={isSubmitting}
 					/>
 				</div>
 			)}
