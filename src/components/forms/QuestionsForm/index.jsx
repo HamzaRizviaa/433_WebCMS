@@ -87,9 +87,9 @@ const QuestionsForm = ({
 	};
 
 	const onDeleteHandler = async (id, isDraft, setSubmitting) => {
+		setSubmitting(true);
+		setOpenDeleteModal(false);
 		try {
-			setSubmitting(true);
-
 			await dispatch(
 				deleteQuestionThunk({
 					question_meta_id: id,
@@ -97,13 +97,11 @@ const QuestionsForm = ({
 				})
 			);
 
-			handleClose();
 			dispatch(getQuestions(queryParams));
 		} catch (e) {
 			console.error(e);
 		} finally {
 			setSubmitting(false);
-			setOpenDeleteModal(false);
 		}
 	};
 
@@ -135,7 +133,7 @@ const QuestionsForm = ({
 			onSubmit={onSubmitHandler}
 			validateOnMount
 		>
-			{({ setSubmitting }) => (
+			{({ setSubmitting, isSubmitting }) => (
 				<Form>
 					<QuestionsFormDrawer
 						open={open}
@@ -156,6 +154,7 @@ const QuestionsForm = ({
 						}}
 						text={questionType}
 						wrapperRef={dialogWrapper}
+						isSubmitting={isSubmitting}
 					/>
 					<StopModal
 						open={openStopModal}
