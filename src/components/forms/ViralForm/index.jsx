@@ -60,6 +60,7 @@ const ViralForm = ({
 	);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
+	const closeDeleteModal = () => setOpenDeleteModal(false);
 
 	/**
 	 * onSubmitHandler is fired whenever a user is saving a Viral as draft, published or saving changes.
@@ -117,9 +118,9 @@ const ViralForm = ({
 	 */
 	const onDeleteHandler = useCallback(
 		async (id, isDraft, setSubmitting) => {
+			setSubmitting(true);
+			setOpenDeleteModal(false);
 			try {
-				setSubmitting(true);
-
 				await dispatch(
 					deleteViralThunk({
 						viral_id: id,
@@ -133,7 +134,6 @@ const ViralForm = ({
 				console.error(e);
 			} finally {
 				setSubmitting(false);
-				setOpenDeleteModal(false);
 			}
 		},
 		[queryParams]
@@ -147,7 +147,7 @@ const ViralForm = ({
 			validateOnMount
 			onSubmit={onSubmitHandler}
 		>
-			{({ setSubmitting }) => (
+			{({ setSubmitting, isSubmitting }) => (
 				<div>
 					<ViralFormDrawer
 						open={open}
@@ -159,12 +159,13 @@ const ViralForm = ({
 					/>
 					<DeleteModal
 						open={openDeleteModal}
-						toggle={() => toggleDeleteModal()}
+						toggle={closeDeleteModal}
 						deleteBtn={() => {
 							onDeleteHandler(specificViral?.id, status, setSubmitting);
 						}}
 						text={'Viral'}
 						wrapperRef={dialogWrapper}
+						isSubmitting={isSubmitting}
 					/>
 				</div>
 			)}
