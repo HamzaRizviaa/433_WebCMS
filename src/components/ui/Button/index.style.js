@@ -79,12 +79,12 @@ function colorMapper(colorPalette) {
 			},
 			secondary: {
 				color: colorPalette.disabled,
-				backgroundColor: theme.palette.black,
+				backgroundColor: 'transparent',
 				borderColor: colorPalette.disabled
 			},
 			danger: {
 				color: colorPalette.white,
-				backgroundColor: theme.palette.black,
+				backgroundColor: 'transparent',
 				borderColor: colorPalette.red
 			}
 		},
