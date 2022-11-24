@@ -88,7 +88,7 @@ const QuestionsForm = ({
 				} else if (isSearchParamsEmpty) {
 					dispatch(getQuestions());
 				} else {
-					navigate('/news-library');
+					navigate('/question-library');
 				}
 			}
 		} catch (e) {
