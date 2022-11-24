@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-unreachable */
 import React, { useState, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +14,6 @@ import {
 	questionDataFormatterForForm,
 	questionDataFormatterForService,
 	questionsFormInitialValues,
-	// questionsFormValidationSchema,
 	getQuestionsValidationSchema
 } from '../../../data/helpers';
 import {

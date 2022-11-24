@@ -208,7 +208,7 @@ export const questionDataFormatterForService = async (values, isDraft) => {
 				  }),
 			answers: item.answers.map((answerItem, answerIndex) => ({
 				...answerItem,
-				position: answerItem.position || answerIndex + 1,
+				position: answerItem.position ?? answerIndex,
 				type:
 					values.general_info.question_type === 'poll'
 						? 'poll'
