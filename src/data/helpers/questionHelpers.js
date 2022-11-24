@@ -146,6 +146,7 @@ export const questionsFormInitialValues = {
 
 export const questionDataFormatterForService = async (values, isDraft) => {
 	const pollFilesToUpload = [values.resultsUploadedFiles[0] || null];
+
 	const quizFilesToUpload = [
 		values.positiveResultsUploadedFiles[0] || null,
 		values.negativeResultsUploadedFiles[0] || null
@@ -205,15 +206,15 @@ export const questionDataFormatterForService = async (values, isDraft) => {
 						height: quizSlideFiles[index]?.height || 0,
 						width: quizSlideFiles[index]?.width || 0
 				  }),
-			answers: item.answers.map((item, index) => ({
-				...item,
-				position: index + 1,
+			answers: item.answers.map((answerItem, answerIndex) => ({
+				...answerItem,
+				position: answerItem.position || answerIndex + 1,
 				type:
 					values.general_info.question_type === 'poll'
 						? 'poll'
-						: index === 0
+						: answerIndex === 0
 						? 'right_answer'
-						: `wrong_answer_${index}`
+						: `wrong_answer_${answerIndex}`
 			})),
 			position: index + 1
 		})),
@@ -298,7 +299,7 @@ export const questionDataFormatterForForm = (question) => {
 		},
 		questions: updatingQuestionsSlides(questions)
 	};
-
+	console.log('formattedQuestion', formattedQuestion);
 	return formattedQuestion;
 };
 
