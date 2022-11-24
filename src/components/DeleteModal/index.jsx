@@ -10,6 +10,7 @@ import {
 	Grow,
 	IconButton
 } from '@mui/material';
+import { Markup } from 'interweave';
 import CloseIcon from '@mui/icons-material/Close';
 import useSound from 'use-sound';
 import { useStyles } from './deleteModal.style';
@@ -55,7 +56,7 @@ export default function DeleteModal({
 					className={classes.dialogTitle}
 					classes={{ root: classes.root }}
 				>
-					{`Delete this ${text}?`}
+					<Markup content={`Delete this ${text}?`} />
 					<IconButton
 						onClick={toggle}
 						onMouseDown={playClose}
@@ -70,8 +71,12 @@ export default function DeleteModal({
 						className={classes.dialogContentText}
 					>
 						<p>
-							You are about to delete this <strong> {text}.</strong> You won’t
-							be able to retrieve the post.
+							You are about to delete this{' '}
+							<strong>
+								{' '}
+								<Markup content={text} />.
+							</strong>{' '}
+							You won’t be able to retrieve the post.
 						</p>
 					</DialogContentText>
 				</DialogContent>
@@ -91,7 +96,7 @@ export default function DeleteModal({
 						onMouseDown={playOpen}
 						disabled={isSubmitting}
 					>
-						{`Delete ${text}`.toUpperCase()}
+						<Markup className={classes.deleteBtn} content={`Delete ${text}`} />
 					</Button>
 				</DialogActions>
 			</Dialog>
