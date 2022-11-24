@@ -74,7 +74,7 @@ function colorMapper(colorPalette) {
 		outlined: {
 			primary: {
 				color: colorPalette.white,
-				backgroundColor: theme.palette.black,
+				backgroundColor: 'transparent',
 				borderColor: colorPalette.neonYellow
 			},
 			secondary: {
