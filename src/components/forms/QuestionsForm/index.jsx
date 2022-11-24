@@ -69,7 +69,10 @@ const QuestionsForm = ({
 		try {
 			const payload = await questionDataFormatterForService(values, isDraft);
 
-			const modifiedPayload = { apiVersion: 1, ...payload };
+			const modifiedPayload = {
+				apiVersion: isSummaryEnabled ? 1 : 2,
+				...payload
+			};
 
 			if (status === 'CLOSED') delete modifiedPayload.general_info.end_date;
 
