@@ -77,7 +77,7 @@ export default function DeleteModal({
 				</DialogContent>
 				<DialogActions classes={{ root: classes.dialogActions }}>
 					<Button
-						onClick={handleDeleteClick}
+						onClick={toggle}
 						size='small'
 						onMouseDown={playOpen}
 						variant='outlined'
