@@ -118,9 +118,9 @@ const ViralForm = ({
 	 */
 	const onDeleteHandler = useCallback(
 		async (id, isDraft, setSubmitting) => {
+			setSubmitting(true);
+			setOpenDeleteModal(false);
 			try {
-				setSubmitting(true);
-
 				await dispatch(
 					deleteViralThunk({
 						viral_id: id,
@@ -134,7 +134,6 @@ const ViralForm = ({
 				console.error(e);
 			} finally {
 				setSubmitting(false);
-				setOpenDeleteModal(false);
 			}
 		},
 		[queryParams]
@@ -148,7 +147,7 @@ const ViralForm = ({
 			validateOnMount
 			onSubmit={onSubmitHandler}
 		>
-			{({ setSubmitting }) => (
+			{({ setSubmitting, isSubmitting }) => (
 				<div>
 					<ViralFormDrawer
 						open={open}
@@ -166,6 +165,7 @@ const ViralForm = ({
 						}}
 						text={'Viral'}
 						wrapperRef={dialogWrapper}
+						isSubmitting={isSubmitting}
 					/>
 				</div>
 			)}
