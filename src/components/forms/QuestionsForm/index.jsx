@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-unreachable */
 import React, { useState, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
