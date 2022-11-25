@@ -54,8 +54,16 @@ const QuestionInternalForm = ({
 	}, []);
 
 	const handleTabClick = (val) => {
-		resetForm({ values: questionsFormInitialValues });
-		setFieldValue('general_info.question_type', val.toLowerCase());
+		const editFormInitValues = {
+			...questionsFormInitialValues,
+			general_info: {
+				...questionsFormInitialValues.general_info,
+				question_type: val.toLowerCase()
+			},
+			question_id: values.question_id
+		};
+
+		resetForm({ values: editFormInitValues });
 	};
 
 	const handleSaveDraft = () => {
