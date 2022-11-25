@@ -59,20 +59,20 @@ export const articleTableColumns = [
 
 export const getFileElementData = (file) => {
 	return {
-		description: file.description || undefined,
+		description: file?.description || undefined,
 		media_url:
-			file.media_url?.split('cloudfront.net/')[1] ||
-			file.media_url ||
+			file?.media_url?.split('cloudfront.net/')[1] ||
+			file?.media_url ||
 			undefined,
 		thumbnail_url:
-			file.thumbnail_url?.split('cloudfront.net/')[1] ||
-			file.thumbnail_url ||
+			file?.thumbnail_url?.split('cloudfront.net/')[1] ||
+			file?.thumbnail_url ||
 			undefined,
-		width: file.width || undefined,
-		height: file.height || undefined,
-		file_name: file.file_name || undefined,
-		dropbox_url: file.dropbox_url || undefined,
-		ig_post_url: file.ig_post_url || undefined,
-		twitter_post_url: file.twitter_post_url || undefined
+		width: file?.width || undefined,
+		height: file?.height || undefined,
+		file_name: file?.file_name || undefined,
+		dropbox_url: file?.dropbox_url || undefined,
+		ig_post_url: file?.ig_post_url || undefined,
+		twitter_post_url: file?.twitter_post_url || undefined
 	};
 };
