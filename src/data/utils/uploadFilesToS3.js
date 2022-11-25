@@ -3,6 +3,7 @@ import UploadFileService from '../services/fileUploadService';
 
 // eslint-disable-next-line no-unused-vars
 import { FileObject } from '../../components/ui/inputs/DropzoneField';
+import { toast } from 'react-toastify';
 
 /**
  *
@@ -98,6 +99,7 @@ const uploadFilesToS3 = async (files, libraryType) => {
 		return result;
 	} catch (err) {
 		console.error(err);
+		toast.error('Failed to upload files. Please try again');
 	}
 };
 
