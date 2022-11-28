@@ -98,8 +98,8 @@ const uploadFilesToS3 = async (files, libraryType) => {
 
 		return result;
 	} catch (err) {
-		console.error(err);
 		toast.error('Failed to upload files. Please try again');
+		throw new Error(err);
 	}
 };
 
