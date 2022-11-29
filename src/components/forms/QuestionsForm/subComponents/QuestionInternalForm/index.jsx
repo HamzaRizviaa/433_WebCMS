@@ -67,13 +67,13 @@ const QuestionInternalForm = ({
 	};
 
 	const handleSaveDraft = () => {
-		if (!values.general_info.end_date) {
-			setFieldError(
-				'general_info.end_date',
-				'You need to select date to post question'
-			);
-			return;
-		}
+		// if (!values.general_info.end_date) {
+		// 	setFieldError(
+		// 		'general_info.end_date',
+		// 		'You need to select date to post question'
+		// 	);
+		// 	return;
+		// }
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
 	};
 
@@ -90,10 +90,8 @@ const QuestionInternalForm = ({
 		);
 
 		return (
-			!dirty ||
-			isAnyQuestionSlideEmpty ||
-			isEqualToDefaultValues ||
-			!values.general_info.end_date
+			!dirty || isAnyQuestionSlideEmpty || isEqualToDefaultValues
+			// !values.general_info.end_date
 		);
 	}, [values, dirty]);
 

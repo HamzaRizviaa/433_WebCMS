@@ -81,7 +81,9 @@ const ResultSliders = ({ questionId, isArticle }) => {
 					{data?.total_participants}
 					{data?.total_participants === 1 ? ' Participant' : ' Participants'}
 				</span>
-				{!isArticle && <span>Ends {formatDate(data?.end_date)}</span>}
+				{!isArticle && data?.close_date && (
+					<span>Ends {formatDate(data?.close_date)}</span>
+				)}
 			</div>
 		</>
 	);

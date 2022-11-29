@@ -4,7 +4,7 @@ import { useFormikContext } from 'formik';
 
 import FormikDropzone from '../../../../ui/inputs/formik/FormikDropzone';
 import FormikField from '../../../../ui/inputs/formik/FormikField';
-import FormikDatePicker from '../../../../ui/inputs/formik/FormikDatePicker';
+// import FormikDatePicker from '../../../../ui/inputs/formik/FormikDatePicker';
 import { useFormStyles } from '../../../forms.style';
 import FeatureWrapper from '../../../../../components/FeatureWrapper';
 
@@ -23,7 +23,7 @@ const QuizSummary = ({ openPreviewer, isClosed }) => {
 
 	return (
 		<div>
-			<div>
+			{/* <div>
 				<FormikDatePicker
 					name='general_info.end_date'
 					placeholder='Please select an end date'
@@ -33,7 +33,7 @@ const QuizSummary = ({ openPreviewer, isClosed }) => {
 					disabled={isClosed}
 					required
 				/>
-			</div>
+			</div> */}
 			<FeatureWrapper name='summaryComponentOnQuestions'>
 				<p className={classes.mainHeading}>Summary Component</p>
 				<div className={classes.fieldContainer}>
