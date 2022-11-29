@@ -28,7 +28,7 @@ export default function Modal({
 	onClose,
 	isSubmitting = false,
 	confirmButtonText = 'CONFIRM',
-	confirmButtonVariant = 'outlined',
+	confirmButtonVariant = 'contained',
 	confirmButtonColor = 'primary',
 	children
 }) {
@@ -48,7 +48,7 @@ export default function Modal({
 			>
 				<DialogTitle classes={{ root: classes.root }}>
 					<div className={classes.dialogTitle}>
-						{title}
+						<span>{title}</span>
 						<IconButton
 							onClick={onClose}
 							onMouseDown={playClose}
