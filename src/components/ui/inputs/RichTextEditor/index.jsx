@@ -33,12 +33,10 @@ const RichTextEditor = ({ name, id, initialData, onBlur, onChange, error }) => {
 
 	useEffect(() => {
 		if (initialData?.description) {
-			setTimeout(() => {
-				let editorbyId =
-					window.tinymce?.get(`text-${id}_ifr`) ||
-					window.tinymce?.get(`text-${id}`);
-				setDescription(editorbyId?.setContent(initialData?.description));
-			}, 1000);
+			let editorbyId =
+				window.tinymce?.get(`text-${id}_ifr`) ||
+				window.tinymce?.get(`text-${id}`);
+			setDescription(editorbyId?.setContent(initialData?.description));
 		}
 	}, [initialData]);
 
@@ -59,11 +57,6 @@ const RichTextEditor = ({ name, id, initialData, onBlur, onChange, error }) => {
 					browser_spellcheck: true,
 					contextmenu: false,
 					content_css: '../../styles/index.scss',
-					setup: function (editor) {
-						editor.on('init', function () {
-							description;
-						});
-					},
 					content_style:
 						"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white; line-height:1  }; ",
 
@@ -83,6 +76,7 @@ const RichTextEditor = ({ name, id, initialData, onBlur, onChange, error }) => {
 				onBlur={onBlur}
 				id={`text-${id}`}
 				name={name}
+				value={description}
 			/>
 			<span className={inputClasses.errorText}>{error}</span>
 		</div>
