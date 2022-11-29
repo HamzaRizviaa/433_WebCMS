@@ -44,11 +44,12 @@ export const getQuestionLabels = createAsyncThunk(
 
 export const createOrEditQuestionThunk = createAsyncThunk(
 	'questionLibrary/createOrEditQuestionThunk',
-	async ({ apiVersion, ...data }) => {
+	async ({ apiVersion, shouldTransition, ...data }) => {
 		try {
 			const response = await QuestionsLibraryService.postQuestion(
 				data,
-				apiVersion
+				apiVersion,
+				shouldTransition
 			);
 
 			if (response.data.status_code === 200) {

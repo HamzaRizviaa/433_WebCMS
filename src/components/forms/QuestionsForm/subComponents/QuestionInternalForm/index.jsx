@@ -1,8 +1,8 @@
-/* eslint-disable no-unused-vars */
-import React, { useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { isEqual, pick, omit } from 'lodash';
 import { FieldArray, useFormikContext } from 'formik';
+import dayjs from 'dayjs';
 
 import { useFormStyles } from '../../../forms.style';
 import AccordianLayout from '../../../../layouts/AccordianLayout';
@@ -15,7 +15,8 @@ import {
 	areAllFieldsEmpty,
 	questionsFormInitialValues
 } from '../../../../../data/helpers';
-import FeatureWrapper from '../../../../../components/FeatureWrapper';
+import { QuestionsLibraryService } from '../../../../../data/services';
+import PublishAndStopModal from '../PublishAndStopModal';
 
 const headings = ['Poll', 'Quiz'];
 
@@ -28,9 +29,17 @@ const QuestionInternalForm = ({
 	onSubmitHandler,
 	defaultQuestionType
 }) => {
-	const classes = useFormStyles();
-	const isPublished = isEdit && status !== 'draft';
-	const isClosed = isEdit && status === 'CLOSED';
+	const [openPublishModal, setPublishModalState] = useState(false);
+	const [activeQuestionTitle, setActiveQuestionTitle] = useState('');
+
+	const closePublishModal = () => {
+		setPublishModalState(false);
+		setActiveQuestionTitle('');
+	};
+
+	const togglePublishModal = () => {
+		setPublishModalState((prevState) => !prevState);
+	};
 
 	const {
 		dirty,
@@ -41,10 +50,14 @@ const QuestionInternalForm = ({
 		setSubmitting,
 		isSubmitting,
 		validateForm,
-		resetForm
+		resetForm,
+		submitForm
 	} = useFormikContext();
 
+	const isPublished = isEdit && status !== 'draft';
+	const isClosed = isEdit && status === 'CLOSED';
 	const questionType = values.general_info.question_type;
+	const defaultSelectedTab = defaultQuestionType === 'quiz' ? 1 : 0;
 
 	useEffect(() => {
 		validateForm();
@@ -77,6 +90,35 @@ const QuestionInternalForm = ({
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
 	};
 
+	const handlePublishBtnClick = async () => {
+		if (!isPublished) {
+			try {
+				const res = await QuestionsLibraryService.shouldRestrictUpload(
+					questionType
+				);
+
+				if (res?.data?.can_upload) {
+					submitForm();
+				} else {
+					setFieldValue('active_question_id', res?.data?.id);
+					setFieldValue(
+						'active_question_end_date',
+						dayjs().format('YYYY-MM-DD')
+					);
+					setActiveQuestionTitle(res?.data?.title);
+					setPublishModalState(true);
+				}
+			} catch (err) {
+				console.error(err);
+			}
+		}
+	};
+
+	const handleConfirm = (val) => {
+		setFieldValue('transition_to', val);
+		submitForm();
+	};
+
 	const isDraftDisabled = useMemo(() => {
 		const isAnyQuestionSlideEmpty = values.questions.some(
 			(item) =>
@@ -97,12 +139,29 @@ const QuestionInternalForm = ({
 		);
 	}, [values, dirty]);
 
-	const defaultSelectedTab = defaultQuestionType === 'quiz' ? 1 : 0;
+	const classes = useFormStyles();
+
+	const actionInfo = (
+		<p>
+			You are about to publish a new quiz on the homepage while{' '}
+			<b>“{activeQuestionTitle}”</b> is currently the quiz active. Where do you
+			want to move this quiz?
+		</p>
+	);
 
 	return (
 		<div>
 			<AccordianLayout title='General Information'>
 				<div>
+					<PublishAndStopModal
+						open={openPublishModal}
+						toggle={togglePublishModal}
+						isSubmitting={isSubmitting}
+						onClose={closePublishModal}
+						questionType={questionType}
+						actionInfo={actionInfo}
+						onConfirm={handleConfirm}
+					/>
 					<TabPanes
 						headings={headings}
 						onClick={handleTabClick}
@@ -172,7 +231,8 @@ const QuestionInternalForm = ({
 						</Button>
 					)}
 					<Button
-						type='submit'
+						onClick={handlePublishBtnClick}
+						type={isPublished ? 'submit' : 'button'}
 						disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
 					>
 						{isPublished ? 'SAVE CHANGES' : `ADD ${questionType}`}

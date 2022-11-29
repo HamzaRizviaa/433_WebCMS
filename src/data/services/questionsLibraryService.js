@@ -37,12 +37,14 @@ class QuestionsLibraryService {
 		return axiosInstance.get('/question/get-question-edit', { params });
 	}
 
-	static postQuestion(data, apiVersion = 2) {
-		return axiosInstance.post('/question/add-question', data, {
-			params: {
-				api_version: apiVersion
-			}
-		});
+	static postQuestion(data, apiVersion = 2, shouldTransition = false) {
+		const params = {
+			api_version: apiVersion,
+			validate_restriction: true,
+			should_transition: shouldTransition
+		};
+
+		return axiosInstance.post('/question/add-question', data, { params });
 	}
 
 	static deleteQuestion(data) {
@@ -55,7 +57,8 @@ class QuestionsLibraryService {
 
 	static async getQuestionResultDetail(id) {
 		const { data } = await axiosInstance.get(
-			`/question/get-question-result-detail?question_id=${id}`
+			'/question/get-question-result-detail',
+			{ params: { question_id: id } }
 		);
 
 		return data;
@@ -70,10 +73,18 @@ class QuestionsLibraryService {
 
 		const { data } = await axiosInstance.get(
 			'/question/get-question-participant-listing',
-			{
-				params
-			}
+			{ params }
 		);
+
+		return data;
+	}
+
+	static async shouldRestrictUpload(questionType) {
+		const params = { question_type: questionType };
+
+		const { data } = await axiosInstance.get('/question/restrict-user', {
+			params
+		});
 
 		return data;
 	}
