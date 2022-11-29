@@ -46,7 +46,6 @@ const QuestionInternalForm = ({
 		isValid,
 		values,
 		setFieldValue,
-		setFieldError,
 		setSubmitting,
 		isSubmitting,
 		validateForm,
@@ -80,13 +79,6 @@ const QuestionInternalForm = ({
 	};
 
 	const handleSaveDraft = () => {
-		// if (!values.general_info.end_date) {
-		// 	setFieldError(
-		// 		'general_info.end_date',
-		// 		'You need to select date to post question'
-		// 	);
-		// 	return;
-		// }
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
 	};
 
@@ -131,10 +123,7 @@ const QuestionInternalForm = ({
 			questionsFormInitialValues
 		);
 
-		return (
-			!dirty || isAnyQuestionSlideEmpty || isEqualToDefaultValues
-			// !values.general_info.end_date
-		);
+		return !dirty || isAnyQuestionSlideEmpty || isEqualToDefaultValues;
 	}, [values, dirty]);
 
 	const classes = useFormStyles();
