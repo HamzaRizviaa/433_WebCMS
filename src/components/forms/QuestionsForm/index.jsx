@@ -25,7 +25,7 @@ import {
 
 import QuestionsFormDrawer from './subComponents/QuestionsFormDrawer';
 import DeleteModal from '../../DeleteModal';
-import StopModal from '../../StopModal';
+import PublishAndStopModal from './subComponents/PublishAndStopModal';
 
 const QuestionsForm = ({
 	open,
@@ -75,6 +75,7 @@ const QuestionsForm = ({
 				...payload
 			};
 
+			if (values.active_question_id) modifiedPayload.shouldTransition = true;
 			if (status === 'CLOSED') delete modifiedPayload.general_info.end_date;
 
 			const { type } = await dispatch(
@@ -119,14 +120,16 @@ const QuestionsForm = ({
 		}
 	};
 
-	const onStopHandler = async (id, setSubmitting) => {
+	const onStopHandler = async (id, setSubmitting, transitionTo) => {
 		setSubmitting(true);
 		setOpenStopModal(false);
 
 		try {
 			await dispatch(
 				stopQuestionThunk({
-					question_meta_id: id
+					question_meta_id: id,
+					transition_to: transitionTo,
+					end_date: new Date().toISOString()
 				})
 			);
 
@@ -138,6 +141,13 @@ const QuestionsForm = ({
 			setSubmitting(false);
 		}
 	};
+
+	const stopModalActionInfo = (
+		<p>
+			You are about to stop this {questionType}. You won’t be able to restart
+			the {questionType} again.
+		</p>
+	);
 
 	return (
 		<Formik
@@ -170,16 +180,16 @@ const QuestionsForm = ({
 						wrapperRef={dialogWrapper}
 						isSubmitting={isSubmitting}
 					/>
-					<StopModal
+					<PublishAndStopModal
 						open={openStopModal}
-						toggle={closeStopModal}
-						stopBtn={() => {
-							onStopHandler(specificQuestion?.id, setSubmitting);
-						}}
-						text={questionType}
-						wrapperRef={dialogWrapper}
-						stop={true}
 						isSubmitting={isSubmitting}
+						onClose={closeStopModal}
+						questionType={questionType}
+						actionInfo={stopModalActionInfo}
+						onConfirm={(val) => {
+							onStopHandler(specificQuestion?.id, setSubmitting, val);
+						}}
+						isStopModal
 					/>
 				</Form>
 			)}

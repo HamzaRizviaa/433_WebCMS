@@ -4,9 +4,8 @@ import { useFormikContext } from 'formik';
 
 import FormikDropzone from '../../../../ui/inputs/formik/FormikDropzone';
 import FormikField from '../../../../ui/inputs/formik/FormikField';
-import FormikDatePicker from '../../../../ui/inputs/formik/FormikDatePicker';
-import { useFormStyles } from '../../../forms.style';
 import FeatureWrapper from '../../../../../components/FeatureWrapper';
+import { useFormStyles } from '../../../forms.style';
 
 const PollSummary = ({ openPreviewer, isClosed }) => {
 	const classes = useFormStyles();
@@ -19,17 +18,6 @@ const PollSummary = ({ openPreviewer, isClosed }) => {
 
 	return (
 		<div>
-			<div>
-				<FormikDatePicker
-					name='general_info.end_date'
-					placeholder='Please select an end date'
-					label='POLL END DATE'
-					minDate={new Date()}
-					isClearable={!isClosed}
-					disabled={isClosed}
-					required
-				/>
-			</div>
 			<FeatureWrapper name='summaryComponentOnQuestions'>
 				<p className={classes.mainHeading}>Summary Component</p>
 				<div className={classes.fieldContainer}>

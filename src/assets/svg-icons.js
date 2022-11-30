@@ -16,3 +16,5 @@ export { ReactComponent as DragIcon } from './drag.svg';
 export { ReactComponent as AddIcon } from './newsAddIcon.svg';
 export { ReactComponent as InfoIcon } from './InfoButton.svg';
 export { ReactComponent as CalendarYellowIcon } from './Calender_Yellow.svg';
+export { ReactComponent as RadioBtnIcon } from './radio-btn.svg';
+export { ReactComponent as RadioBtnCheckedIcon } from './radio-btn-checked.svg';

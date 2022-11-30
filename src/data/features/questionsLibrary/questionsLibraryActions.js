@@ -44,11 +44,12 @@ export const getQuestionLabels = createAsyncThunk(
 
 export const createOrEditQuestionThunk = createAsyncThunk(
 	'questionLibrary/createOrEditQuestionThunk',
-	async ({ apiVersion, ...data }) => {
+	async ({ apiVersion, shouldTransition, ...data }) => {
 		try {
 			const response = await QuestionsLibraryService.postQuestion(
 				data,
-				apiVersion
+				apiVersion,
+				shouldTransition
 			);
 
 			if (response.data.status_code === 200) {
@@ -96,7 +97,9 @@ export const stopQuestionThunk = createAsyncThunk(
 				toast.success('Question has been Stopped!');
 			}
 		} catch (e) {
-			// toast.error(ToastErrorNotifications.deleteBannerItemText);
+			if (e?.response?.status === 422) {
+				toast.error(e.response.data?.message);
+			}
 			console.error(e);
 		}
 	}
