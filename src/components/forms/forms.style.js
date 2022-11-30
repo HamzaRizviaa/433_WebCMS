@@ -92,8 +92,7 @@ export const useFormStyles = makeStyles((theme) => ({
 		textDecoration: 'none',
 
 		'&:hover': {
-			color: theme.palette.neonYellow,
-			textDecoration: 'underline'
+			color: theme.palette.neonYellow
 		}
 	}
 }));
