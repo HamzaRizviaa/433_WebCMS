@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useStyles } from './elementPreviewers.styles';
 import { useLazyGetPostQuery } from '../../../../../data/features/articleLibrary/articleLibrary.query';
 import { ElementTypes } from '../ElementTypes';
-const SocialPostElementPreviewer = ({ data, itemIndex }) => {
+const SocialPostElementPreviewer = ({ data }) => {
 	// extracted urls
 	const extractedTwitterUrl = data.data && data?.data[0]?.twitter_post_url;
 	const extractedIgUrl = data.data && data?.data[0]?.ig_post_url;
@@ -32,14 +32,14 @@ const SocialPostElementPreviewer = ({ data, itemIndex }) => {
 		};
 	}, [data?.data]);
 
-	useEffect(() => {
-		if (data?.data) getPost(generatePostEndPoint());
-		return () => {
-			setMarkup('');
-			setThumbnailHeight(0);
-			setThumbnailWidth(0);
-		};
-	}, [itemIndex]);
+	// useEffect(() => {
+	// 	if (data?.data) getPost(generatePostEndPoint());
+	// 	return () => {
+	// 		setMarkup('');
+	// 		setThumbnailHeight(0);
+	// 		setThumbnailWidth(0);
+	// 	};
+	// }, [itemIndex]);
 
 	/// set markup to load post
 	useEffect(() => {

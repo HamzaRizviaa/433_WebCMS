@@ -5,12 +5,13 @@ import PropTypes from 'prop-types';
 import ImagePreview from '../../../ArticleBuilder/PreviewArticles/imagePreview';
 // import InstagramPost from '../../../ArticleBuilder/PreviewArticles/InstagramPost';
 import QuestionPoll from '../../../ArticleBuilder/PreviewArticles/QuestionPoll';
-import TextPreview from '../../../ArticleBuilder/PreviewArticles/textPreview';
+// import TextPreview from '../../../ArticleBuilder/PreviewArticles/textPreview';
 // import TwitterPost from '../../../ArticleBuilder/PreviewArticles/TwitterPost';
 import PreviewWrapper from '../../../ArticleBuilder/PreviewWrapper';
 import { ElementTypes } from './ElementTypes';
 import MatchElementPreviewer from './previewers/MatchElementPreviewer';
 import SocialPostElementPreviewer from './previewers/SocialPostElementPreviewr';
+import TextElementPreviewer from './previewers/TextElementPreviewer';
 const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 	const classes = useStyles();
 
@@ -22,7 +23,7 @@ const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 					<ImagePreview style={{ width: '100%' }} data={item} isEdit={isEdit} />
 				);
 			case ElementTypes.TEXT:
-				return <TextPreview data={item} style={{ width: '100%' }} />;
+				return <TextElementPreviewer data={item} style={{ width: '100%' }} />;
 			case ElementTypes.TWITTER:
 				return (
 					<SocialPostElementPreviewer
