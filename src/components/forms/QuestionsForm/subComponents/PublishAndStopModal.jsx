@@ -10,10 +10,10 @@ const PublishAndStopModal = ({
 	questionType,
 	actionInfo,
 	open,
-	toggle,
 	onClose,
 	onConfirm,
-	isStopModal = false
+	isStopModal = false,
+	isSubmitting = false
 }) => {
 	const [value, setValue] = useState('closed');
 	const classes = useQuestionsStyles();
@@ -23,8 +23,8 @@ const PublishAndStopModal = ({
 	};
 
 	const handleConfirm = () => {
-		if (onConfirm) onConfirm(value);
 		onClose();
+		if (onConfirm) onConfirm(value);
 	};
 
 	return (
@@ -37,7 +37,7 @@ const PublishAndStopModal = ({
 			open={open}
 			onClose={onClose}
 			onConfirm={handleConfirm}
-			toggle={toggle}
+			isSubmitting={isSubmitting}
 		>
 			<span>{actionInfo}</span>
 			<div className={classes.modalContent}>
@@ -66,7 +66,8 @@ PublishAndStopModal.propTypes = {
 	toggle: PropTypes.func.isRequired,
 	onConfirm: PropTypes.func.isRequired,
 	onClose: PropTypes.func.isRequired,
-	isStopModal: PropTypes.bool
+	isStopModal: PropTypes.bool,
+	isSubmitting: PropTypes.bool
 };
 
 export default PublishAndStopModal;

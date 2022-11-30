@@ -17,6 +17,7 @@ import {
 } from '../../../../../data/helpers';
 import { QuestionsLibraryService } from '../../../../../data/services';
 import PublishAndStopModal from '../PublishAndStopModal';
+import { Link } from 'react-router-dom';
 
 const headings = ['Poll', 'Quiz'];
 
@@ -35,10 +36,6 @@ const QuestionInternalForm = ({
 	const closePublishModal = () => {
 		setPublishModalState(false);
 		setActiveQuestionTitle('');
-	};
-
-	const togglePublishModal = () => {
-		setPublishModalState((prevState) => !prevState);
 	};
 
 	const {
@@ -76,6 +73,7 @@ const QuestionInternalForm = ({
 		};
 
 		resetForm({ values: editFormInitValues });
+		validateForm();
 	};
 
 	const handleSaveDraft = () => {
@@ -85,6 +83,7 @@ const QuestionInternalForm = ({
 	const handlePublishBtnClick = async () => {
 		if (!isPublished) {
 			try {
+				setSubmitting(true);
 				const res = await QuestionsLibraryService.shouldRestrictUpload(
 					questionType
 				);
@@ -92,16 +91,18 @@ const QuestionInternalForm = ({
 				if (res?.data?.can_upload) {
 					submitForm();
 				} else {
+					setSubmitting(false);
 					setFieldValue('active_question_id', res?.data?.id);
 					setFieldValue(
 						'active_question_end_date',
-						dayjs().format('YYYY-MM-DD')
+						dayjs().format('YYYY-MM-DDTHH:mm:ss')
 					);
 					setActiveQuestionTitle(res?.data?.title);
 					setPublishModalState(true);
 				}
 			} catch (err) {
 				console.error(err);
+				setSubmitting(false);
 			}
 		}
 	};
@@ -130,9 +131,16 @@ const QuestionInternalForm = ({
 
 	const actionInfo = (
 		<p>
-			You are about to publish a new quiz on the homepage while{' '}
-			<b>“{activeQuestionTitle}”</b> is currently the quiz active. Where do you
-			want to move this quiz?
+			You are about to publish a new {questionType} on the homepage while{' '}
+			<Link
+				className={classes.link}
+				to={`/question-library?q=${values.active_question_id}`}
+				target='_blank'
+			>
+				<b>“{activeQuestionTitle}”</b>
+			</Link>{' '}
+			is currently the {questionType} active. You have to stop this{' '}
+			{questionType} before publishing the new one.
 		</p>
 	);
 
@@ -142,7 +150,6 @@ const QuestionInternalForm = ({
 				<div>
 					<PublishAndStopModal
 						open={openPublishModal}
-						toggle={togglePublishModal}
 						isSubmitting={isSubmitting}
 						onClose={closePublishModal}
 						questionType={questionType}

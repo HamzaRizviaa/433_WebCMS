@@ -26,6 +26,7 @@ import {
 import QuestionsFormDrawer from './subComponents/QuestionsFormDrawer';
 import DeleteModal from '../../DeleteModal';
 import PublishAndStopModal from './subComponents/PublishAndStopModal';
+import dayjs from 'dayjs';
 
 const QuestionsForm = ({
 	open,
@@ -120,7 +121,7 @@ const QuestionsForm = ({
 		}
 	};
 
-	const onStopHandler = async (id, setSubmitting, status) => {
+	const onStopHandler = async (id, setSubmitting, transitionTo) => {
 		setSubmitting(true);
 		setOpenStopModal(false);
 
@@ -128,7 +129,8 @@ const QuestionsForm = ({
 			await dispatch(
 				stopQuestionThunk({
 					question_meta_id: id,
-					status
+					transition_to: transitionTo,
+					end_date: dayjs().format('YYYY-MM-DDTHH:mm:ss')
 				})
 			);
 
@@ -141,10 +143,10 @@ const QuestionsForm = ({
 		}
 	};
 
-	const actionInfo = (
+	const stopModalActionInfo = (
 		<p>
 			You are about to stop this {questionType}. You won’t be able to restart
-			the poll again.
+			the {questionType} again.
 		</p>
 	);
 
@@ -181,11 +183,10 @@ const QuestionsForm = ({
 					/>
 					<PublishAndStopModal
 						open={openStopModal}
-						toggle={toggleStopModal}
 						isSubmitting={isSubmitting}
 						onClose={closeStopModal}
 						questionType={questionType}
-						actionInfo={actionInfo}
+						actionInfo={stopModalActionInfo}
 						onConfirm={(val) => {
 							onStopHandler(specificQuestion?.id, setSubmitting, val);
 						}}

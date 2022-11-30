@@ -226,6 +226,12 @@ export const questionDataFormatterForService = async (
 		...(values.question_id ? { question_id: values.question_id } : {})
 	};
 
+	if (values.active_question_id) {
+		payload.active_question_id = values.active_question_id;
+		payload.active_question_end_date = values.active_question_end_date;
+		payload.transition_to = values.transition_to;
+	}
+
 	return payload;
 };
 

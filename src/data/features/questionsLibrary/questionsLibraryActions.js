@@ -97,7 +97,9 @@ export const stopQuestionThunk = createAsyncThunk(
 				toast.success('Question has been Stopped!');
 			}
 		} catch (e) {
-			// toast.error(ToastErrorNotifications.deleteBannerItemText);
+			if (e?.response?.status === 422) {
+				toast.error(e.response.data?.message);
+			}
 			console.error(e);
 		}
 	}

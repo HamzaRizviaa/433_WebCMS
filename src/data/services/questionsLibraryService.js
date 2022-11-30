@@ -40,7 +40,6 @@ class QuestionsLibraryService {
 	static postQuestion(data, apiVersion = 2, shouldTransition = false) {
 		const params = {
 			api_version: apiVersion,
-			validate_restriction: true,
 			should_transition: shouldTransition
 		};
 
@@ -52,7 +51,11 @@ class QuestionsLibraryService {
 	}
 
 	static stopQuestion(data) {
-		return axiosInstance.post('/question/stop-question', data);
+		return axiosInstance.post('/question/stop-question', data, {
+			params: {
+				should_transition: true
+			}
+		});
 	}
 
 	static async getQuestionResultDetail(id) {
