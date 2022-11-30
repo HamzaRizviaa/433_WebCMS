@@ -6,7 +6,7 @@ import DraggableCardLayout from '../../../../layouts/DraggableCardLayout';
 const ArticleTextElement = ({ index, item, name, handleDeleteSlide, ...restProps}) => {
     return (
         <DraggableCardLayout
-			title={`ADD TEXT`}
+			title={`Add Text`}
 			key={index}
 			index={index}
 			item={item}
