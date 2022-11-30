@@ -1,8 +1,8 @@
-/* eslint-disable no-unused-vars */
-import React, { useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { isEqual, pick, omit } from 'lodash';
 import { FieldArray, useFormikContext } from 'formik';
+import dayjs from 'dayjs';
 
 import { useFormStyles } from '../../../forms.style';
 import AccordianLayout from '../../../../layouts/AccordianLayout';
@@ -15,7 +15,9 @@ import {
 	areAllFieldsEmpty,
 	questionsFormInitialValues
 } from '../../../../../data/helpers';
-import FeatureWrapper from '../../../../../components/FeatureWrapper';
+import { QuestionsLibraryService } from '../../../../../data/services';
+import PublishAndStopModal from '../PublishAndStopModal';
+import { Link } from 'react-router-dom';
 
 const headings = ['Poll', 'Quiz'];
 
@@ -28,23 +30,30 @@ const QuestionInternalForm = ({
 	onSubmitHandler,
 	defaultQuestionType
 }) => {
-	const classes = useFormStyles();
-	const isPublished = isEdit && status !== 'draft';
-	const isClosed = isEdit && status === 'CLOSED';
+	const [openPublishModal, setPublishModalState] = useState(false);
+	const [activeQuestionTitle, setActiveQuestionTitle] = useState('');
+
+	const closePublishModal = () => {
+		setPublishModalState(false);
+		setActiveQuestionTitle('');
+	};
 
 	const {
 		dirty,
 		isValid,
 		values,
 		setFieldValue,
-		setFieldError,
 		setSubmitting,
 		isSubmitting,
 		validateForm,
-		resetForm
+		resetForm,
+		submitForm
 	} = useFormikContext();
 
+	const isPublished = isEdit && status !== 'draft';
+	const isClosed = isEdit && status === 'CLOSED';
 	const questionType = values.general_info.question_type;
+	const defaultSelectedTab = defaultQuestionType === 'quiz' ? 1 : 0;
 
 	useEffect(() => {
 		validateForm();
@@ -64,17 +73,43 @@ const QuestionInternalForm = ({
 		};
 
 		resetForm({ values: editFormInitValues });
+		validateForm();
 	};
 
 	const handleSaveDraft = () => {
-		if (!values.general_info.end_date) {
-			setFieldError(
-				'general_info.end_date',
-				'You need to select date to post question'
-			);
-			return;
-		}
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
+	};
+
+	const handlePublishBtnClick = async () => {
+		if (!isPublished) {
+			try {
+				setSubmitting(true);
+				const res = await QuestionsLibraryService.shouldRestrictUpload(
+					questionType
+				);
+
+				if (res?.data?.can_upload) {
+					submitForm();
+				} else {
+					setSubmitting(false);
+					setFieldValue('active_question_id', res?.data?.id);
+					setFieldValue(
+						'active_question_end_date',
+						dayjs().format('YYYY-MM-DDTHH:mm:ss')
+					);
+					setActiveQuestionTitle(res?.data?.title);
+					setPublishModalState(true);
+				}
+			} catch (err) {
+				console.error(err);
+				setSubmitting(false);
+			}
+		}
+	};
+
+	const handleConfirm = (val) => {
+		setFieldValue('transition_to', val);
+		submitForm();
 	};
 
 	const isDraftDisabled = useMemo(() => {
@@ -89,20 +124,38 @@ const QuestionInternalForm = ({
 			questionsFormInitialValues
 		);
 
-		return (
-			!dirty ||
-			isAnyQuestionSlideEmpty ||
-			isEqualToDefaultValues ||
-			!values.general_info.end_date
-		);
+		return !dirty || isAnyQuestionSlideEmpty || isEqualToDefaultValues;
 	}, [values, dirty]);
 
-	const defaultSelectedTab = defaultQuestionType === 'quiz' ? 1 : 0;
+	const classes = useFormStyles();
+
+	const actionInfo = (
+		<p>
+			You are about to publish a new {questionType} on the homepage while{' '}
+			<Link
+				className={classes.link}
+				to={`/question-library?q=${values.active_question_id}`}
+				target='_blank'
+			>
+				<b>“{activeQuestionTitle}”</b>
+			</Link>{' '}
+			is currently the {questionType} active. You have to stop this{' '}
+			{questionType} before publishing the new one.
+		</p>
+	);
 
 	return (
 		<div>
 			<AccordianLayout title='General Information'>
 				<div>
+					<PublishAndStopModal
+						open={openPublishModal}
+						isSubmitting={isSubmitting}
+						onClose={closePublishModal}
+						questionType={questionType}
+						actionInfo={actionInfo}
+						onConfirm={handleConfirm}
+					/>
 					<TabPanes
 						headings={headings}
 						onClick={handleTabClick}
@@ -172,7 +225,8 @@ const QuestionInternalForm = ({
 						</Button>
 					)}
 					<Button
-						type='submit'
+						onClick={handlePublishBtnClick}
+						type={isPublished ? 'submit' : 'button'}
 						disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
 					>
 						{isPublished ? 'SAVE CHANGES' : `ADD ${questionType}`}
