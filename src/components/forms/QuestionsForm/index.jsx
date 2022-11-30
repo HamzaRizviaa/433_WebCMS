@@ -26,7 +26,6 @@ import {
 import QuestionsFormDrawer from './subComponents/QuestionsFormDrawer';
 import DeleteModal from '../../DeleteModal';
 import PublishAndStopModal from './subComponents/PublishAndStopModal';
-import dayjs from 'dayjs';
 
 const QuestionsForm = ({
 	open,
@@ -130,7 +129,7 @@ const QuestionsForm = ({
 				stopQuestionThunk({
 					question_meta_id: id,
 					transition_to: transitionTo,
-					end_date: dayjs().format('YYYY-MM-DDTHH:mm:ss')
+					end_date: new Date().toISOString()
 				})
 			);
 

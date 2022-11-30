@@ -2,22 +2,21 @@ import React, { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { isEqual, pick, omit } from 'lodash';
 import { FieldArray, useFormikContext } from 'formik';
-import dayjs from 'dayjs';
+import { Link } from 'react-router-dom';
 
-import { useFormStyles } from '../../../forms.style';
 import AccordianLayout from '../../../../layouts/AccordianLayout';
 import TabPanes from '../../../../ui/TabPanes';
 import PollSummary from './PollSummary';
 import QuizSummary from './QuizSummary';
 import Button from '../../../../ui/Button';
 import QuestionSlideForm from '../QuestionSlideForm';
+import PublishAndStopModal from '../PublishAndStopModal';
 import {
 	areAllFieldsEmpty,
 	questionsFormInitialValues
 } from '../../../../../data/helpers';
 import { QuestionsLibraryService } from '../../../../../data/services';
-import PublishAndStopModal from '../PublishAndStopModal';
-import { Link } from 'react-router-dom';
+import { useFormStyles } from '../../../forms.style';
 
 const headings = ['Poll', 'Quiz'];
 
@@ -93,10 +92,7 @@ const QuestionInternalForm = ({
 				} else {
 					setSubmitting(false);
 					setFieldValue('active_question_id', res?.data?.id);
-					setFieldValue(
-						'active_question_end_date',
-						dayjs().format('YYYY-MM-DDTHH:mm:ss')
-					);
+					setFieldValue('active_question_end_date', new Date().toISOString());
 					setActiveQuestionTitle(res?.data?.title);
 					setPublishModalState(true);
 				}
