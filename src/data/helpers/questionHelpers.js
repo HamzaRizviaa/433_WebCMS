@@ -1,8 +1,7 @@
-import dayjs from 'dayjs';
 import * as yup from 'yup';
 import { omit } from 'lodash';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
-import { getDateConstantTime, getDateTime } from '../utils';
+import { getDateTime } from '../utils';
 import uploadFilesToS3 from '../utils/uploadFilesToS3';
 import { getRelativePath } from './commonHelpers';
 
@@ -35,11 +34,11 @@ export const questionTableColumns = [
 	},
 	{
 		dataField: 'end_date',
-		text: 'END DATE | TIME',
+		text: 'CLOSED DATE | TIME',
 		sort: true,
 		formatter: (content) =>
 			getFormatter('markup', {
-				content: content === '-' ? '-' : getDateConstantTime(content)
+				content: content === '-' ? '-' : getDateTime(content)
 			})
 	},
 	{
@@ -127,7 +126,6 @@ export const questionsFormInitialValues = {
 	general_info: {
 		save_draft: true,
 		question_type: 'poll',
-		end_date: null,
 		results: '',
 		results_image: '',
 		results_filename: '',
@@ -187,7 +185,6 @@ export const questionDataFormatterForService = async (
 		general_info: {
 			...values.general_info,
 			save_draft: isDraft,
-			end_date: dayjs(values.general_info.end_date).format('YYYY-MM-DD'),
 			results_image: getRelativePath(resultsFile?.media_url),
 			results_filename: resultsFile?.file_name || '',
 			positive_results_image: getRelativePath(positiveResultsFile?.media_url),
@@ -225,6 +222,12 @@ export const questionDataFormatterForService = async (
 		})),
 		...(values.question_id ? { question_id: values.question_id } : {})
 	};
+
+	if (values.active_question_id) {
+		payload.active_question_id = values.active_question_id;
+		payload.active_question_end_date = values.active_question_end_date;
+		payload.transition_to = values.transition_to;
+	}
 
 	return payload;
 };
@@ -289,7 +292,6 @@ export const questionDataFormatterForForm = (question) => {
 			  }),
 		general_info: {
 			...omit(rest, ['created_at', 'updated_at', 'status']),
-			end_date: new Date(rest.end_date),
 			...(question.question_type === 'poll'
 				? {
 						results: summary.results,
@@ -304,7 +306,6 @@ export const questionDataFormatterForForm = (question) => {
 		},
 		questions: updatingQuestionsSlides(questions)
 	};
-	console.log('formattedQuestion', formattedQuestion);
 	return formattedQuestion;
 };
 
@@ -334,13 +335,6 @@ const questionsSlideSchema = yup
 
 // V1 is without summary component
 export const questionsFormValidationSchemaV1 = yup.object({
-	general_info: yup.object({
-		end_date: yup
-			.date()
-			.nullable()
-			.required('You need to select date to post question')
-	}),
-
 	questions: questionsSlideSchema
 });
 
@@ -365,10 +359,6 @@ export const questionsFormValidationSchema = yup.object({
 	}),
 
 	general_info: yup.object({
-		end_date: yup
-			.date()
-			.nullable()
-			.required('You need to select date to post question'),
 		results: yup
 			.string()
 			.trim()

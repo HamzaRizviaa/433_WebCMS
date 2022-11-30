@@ -85,5 +85,14 @@ export const useFormStyles = makeStyles((theme) => ({
 			color: theme.palette.red,
 			display: 'inline-block'
 		}
+	},
+
+	link: {
+		color: theme.palette.white,
+		textDecoration: 'none',
+
+		'&:hover': {
+			color: theme.palette.neonYellow
+		}
 	}
 }));
