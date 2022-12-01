@@ -2,60 +2,35 @@ import React from 'react';
 import { Box } from '@material-ui/core';
 import { useStyles } from './subComponents.styles';
 import PropTypes from 'prop-types';
-import ImagePreview from '../../../ArticleBuilder/PreviewArticles/imagePreview';
-// import InstagramPost from '../../../ArticleBuilder/PreviewArticles/InstagramPost';
 import QuestionPoll from '../../../ArticleBuilder/PreviewArticles/QuestionPoll';
-// import TextPreview from '../../../ArticleBuilder/PreviewArticles/textPreview';
-// import TwitterPost from '../../../ArticleBuilder/PreviewArticles/TwitterPost';
 import PreviewWrapper from '../../../ArticleBuilder/PreviewWrapper';
-import { ElementTypes } from './ElementTypes';
 import MatchElementPreviewer from './previewers/MatchElementPreviewer';
 import SocialPostElementPreviewer from './previewers/SocialPostElementPreviewr';
 import TextElementPreviewer from './previewers/TextElementPreviewer';
+import MediaElementPreviewer from './previewers/MediaElementPreviewer';
+import { ElementTypes } from './ElementTypes';
+
 const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 	const classes = useStyles();
 
 	const renderElements = (item, index, isEdit) => {
+		// element type
 		const { element_type: type } = item;
+
+		// conditional rendering
 		switch (type) {
 			case ElementTypes.MEDIA:
-				return (
-					<ImagePreview style={{ width: '100%' }} data={item} isEdit={isEdit} />
-				);
+				return <MediaElementPreviewer data={item} isEdit={isEdit} />;
 			case ElementTypes.TEXT:
-				return <TextElementPreviewer data={item} style={{ width: '100%' }} />;
+				return <TextElementPreviewer data={item} />;
+			// Will return same elements on both cases
 			case ElementTypes.TWITTER:
-				return (
-					<SocialPostElementPreviewer
-						data={item}
-						itemIndex={index}
-						style={{ width: '100%' }}
-					/>
-				);
 			case ElementTypes.IG:
-				return (
-					<SocialPostElementPreviewer
-						data={item}
-						itemIndex={index}
-						style={{ width: '100%' }}
-					/>
-				);
+				return <SocialPostElementPreviewer data={item} itemIndex={index} />;
 			case ElementTypes.QUESTION:
-				return (
-					<QuestionPoll
-						data={item}
-						itemIndex={index}
-						style={{ width: '100%' }}
-					/>
-				);
+				return <QuestionPoll data={item} itemIndex={index} />;
 			case ElementTypes.MATCH:
-				return (
-					<MatchElementPreviewer
-						item={item}
-						itemIndex={index}
-						style={{ width: '100%' }}
-					/>
-				);
+				return <MatchElementPreviewer item={item} itemIndex={index} />;
 			default:
 				return null;
 		}
@@ -70,7 +45,7 @@ const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 			<PreviewWrapper form={form}>
 				{data.map((item, index) => {
 					return (
-						<div key={index} style={{ padding: '5px' }}>
+						<div key={index} className={classes.elementContainer}>
 							{renderElements(item, index, isEdit)}
 						</div>
 					);

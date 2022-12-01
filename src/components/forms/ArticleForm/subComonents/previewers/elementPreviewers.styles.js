@@ -96,6 +96,16 @@ export const useStyles = makeStyles(() => ({
 		backgroundColor: 'black',
 		borderRadius: '8px'
 	},
+	videoElement: {
+		maxHeight: '640px',
+		width: '100%',
+		objectFit: 'cover',
+		objectPosition: 'center',
+		borderRadius: '8px',
+		height: ({ height, width }) =>
+			height < width + 100 ? '200px' : `${height}px`
+	},
+
 	instaBox: {
 		'& iframe': {
 			maxHeight: ({ thumbnailHeight, thumbnailWidth }) =>
