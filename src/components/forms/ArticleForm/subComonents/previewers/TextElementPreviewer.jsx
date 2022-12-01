@@ -9,7 +9,7 @@ const TextElementPreviewer = ({ data }) => {
 		<div>
 			<div className={classes.textDraggableData}>
 				<div>
-					<Markup content={data?.data[0]?.description || ''} />
+					<Markup content={data?.data?.[0]?.description || ''} />
 				</div>
 			</div>
 		</div>
