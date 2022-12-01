@@ -123,6 +123,7 @@ export const questionsFormInitialValues = {
 	resultsUploadedFiles: [],
 	positiveResultsUploadedFiles: [],
 	negativeResultsUploadedFiles: [],
+	coverImageUploadedFiles: [],
 	general_info: {
 		save_draft: true,
 		question_type: 'poll',
@@ -137,7 +138,13 @@ export const questionsFormInitialValues = {
 		negative_results: '',
 		negative_results_image: '',
 		negative_results_filename: '',
-		negative_results_dropbox_url: ''
+		negative_results_dropbox_url: '',
+		question_title: '',
+		cover_image: '',
+		cover_image_file_name: '',
+		cover_image_width: '',
+		cover_image_height: '',
+		cover_image_dropbox_url: ''
 	},
 	questions: []
 };
