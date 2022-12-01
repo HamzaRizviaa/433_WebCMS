@@ -20,7 +20,7 @@ const ImageVideo = ({ index, item }) => {
 	return (
 		<DraggableLayoutWrapper>
 			<DraggableCardLayout
-				title={'Add Image/Video'}
+				title={'Add Image / Video'}
 				key={index}
 				index={index}
 				item={item}
