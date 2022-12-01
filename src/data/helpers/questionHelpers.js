@@ -146,7 +146,10 @@ export const questionsFormInitialValues = {
 		cover_image_height: '',
 		cover_image_dropbox_url: ''
 	},
-	questions: []
+	questions: [],
+	active_question_id: null,
+	active_question_end_date: null,
+	transition_to: null
 };
 
 export const questionDataFormatterForService = async (
@@ -311,7 +314,10 @@ export const questionDataFormatterForForm = (question) => {
 						positive_results_dropbox_url: summary.positive_results_dropbox_url
 				  })
 		},
-		questions: updatingQuestionsSlides(questions)
+		questions: updatingQuestionsSlides(questions),
+		active_question_id: null,
+		active_question_end_date: null,
+		transition_to: null
 	};
 	return formattedQuestion;
 };
