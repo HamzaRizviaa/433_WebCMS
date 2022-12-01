@@ -120,7 +120,8 @@ export const useStyles = makeStyles(() => ({
 		marginBottom: '16px',
 		backgroundRepeat: 'no-repeat',
 		backgroundSize: 'cover',
-		backgroundPosition: 'center'
+		backgroundPosition: 'center',
+		backgroundImage: ({ questionImgUrl }) => `url(${questionImgUrl})`
 	},
 	questionDiv: {
 		paddingLeft: '24px',

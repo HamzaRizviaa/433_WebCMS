@@ -2,12 +2,14 @@ import React from 'react';
 import { Box } from '@material-ui/core';
 import { useStyles } from './subComponents.styles';
 import PropTypes from 'prop-types';
-import QuestionPoll from '../../../ArticleBuilder/PreviewArticles/QuestionPoll';
 import PreviewWrapper from '../../../ArticleBuilder/PreviewWrapper';
-import MatchElementPreviewer from './previewers/MatchElementPreviewer';
-import SocialPostElementPreviewer from './previewers/SocialPostElementPreviewr';
-import TextElementPreviewer from './previewers/TextElementPreviewer';
-import MediaElementPreviewer from './previewers/MediaElementPreviewer';
+import {
+	MatchElementPreviewer,
+	MediaElementPreviewer,
+	QuestionPoolPreviewer,
+	SocialPostElementPreviewer,
+	TextElementPreviewer
+} from './previewers';
 import { ElementTypes } from './ElementTypes';
 
 const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
@@ -28,7 +30,7 @@ const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 			case ElementTypes.IG:
 				return <SocialPostElementPreviewer data={item} itemIndex={index} />;
 			case ElementTypes.QUESTION:
-				return <QuestionPoll data={item} itemIndex={index} />;
+				return <QuestionPoolPreviewer data={item} itemIndex={index} />;
 			case ElementTypes.MATCH:
 				return <MatchElementPreviewer item={item} itemIndex={index} />;
 			default:
