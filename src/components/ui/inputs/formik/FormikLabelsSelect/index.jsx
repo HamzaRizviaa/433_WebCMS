@@ -80,7 +80,7 @@ const FormikLabelsSelect = ({ name, placeholder, ...restProps }) => {
 	const handleKeyPress = (e) => {
 		const newValue = e.key;
 
-		if (newValue.match(regex)) {
+		if (newValue.match(regex) || newValue === 'Enter') {
 			e.preventDefault();
 			e.stopPropagation();
 		}
