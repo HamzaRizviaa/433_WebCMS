@@ -13,6 +13,7 @@ const SocialPostElementPreviewer = ({ data }) => {
 	const [markup, setMarkup] = useState('');
 	const [thumbnailHeight, setThumbnailHeight] = useState(0);
 	const [thumbnailWidth, setThumbnailWidth] = useState(0);
+	
 	// query
 	const [getPost, { isError, data: postData, isSuccess, ...restRes }] =
 		useLazyGetPostQuery();
@@ -32,14 +33,6 @@ const SocialPostElementPreviewer = ({ data }) => {
 		};
 	}, [data?.data]);
 
-	// useEffect(() => {
-	// 	if (data?.data) getPost(generatePostEndPoint());
-	// 	return () => {
-	// 		setMarkup('');
-	// 		setThumbnailHeight(0);
-	// 		setThumbnailWidth(0);
-	// 	};
-	// }, [itemIndex]);
 
 	/// set markup to load post
 	useEffect(() => {

@@ -4,11 +4,12 @@ import { useStyles } from './subComponents.styles';
 import PropTypes from 'prop-types';
 import PreviewWrapper from '../../../ArticleBuilder/PreviewWrapper';
 import {
+	IgElementPreviewer,
 	MatchElementPreviewer,
 	MediaElementPreviewer,
 	QuestionPoolPreviewer,
-	SocialPostElementPreviewer,
-	TextElementPreviewer
+	TextElementPreviewer,
+	TwitterElementPreviewer
 } from './previewers';
 import { ElementTypes } from './ElementTypes';
 
@@ -27,8 +28,9 @@ const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 				return <TextElementPreviewer data={item} />;
 			// Will return same elements on both cases
 			case ElementTypes.TWITTER:
+				return <TwitterElementPreviewer data={item} itemIndex={index} />;
 			case ElementTypes.IG:
-				return <SocialPostElementPreviewer data={item} itemIndex={index} />;
+				return <IgElementPreviewer data={item} itemIndex={index} />;
 			case ElementTypes.QUESTION:
 				return <QuestionPoolPreviewer data={item} itemIndex={index} />;
 			case ElementTypes.MATCH:
