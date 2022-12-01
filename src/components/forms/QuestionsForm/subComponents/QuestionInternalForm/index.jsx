@@ -112,6 +112,7 @@ const QuestionInternalForm = ({
 	const handleConfirm = (val) => {
 		setFieldValue('transition_to', val);
 		submitForm();
+		setPublishModalState(false);
 	};
 
 	const isDraftDisabled = useMemo(() => {

@@ -23,7 +23,6 @@ const PublishAndStopModal = ({
 	};
 
 	const handleConfirm = () => {
-		onClose();
 		if (onConfirm) onConfirm(value);
 	};
 
