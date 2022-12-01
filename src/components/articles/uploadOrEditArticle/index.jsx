@@ -78,6 +78,8 @@ import useCommonParams from '../../../hooks/useCommonParams';
 import MatchPost from '../../ArticleBuilder/PreviewArticles/MatchPost';
 import { useLazyGetMatchesTreeQuery } from '../../../data/features/articleLibrary/articleLibrary.query';
 
+//new refactor element
+//import ArticleElementsSidebar from '../../forms/ArticleForm/subComonents/ArticleElementsSidebar';
 // TEST OBJECT FOR MATCHES
 const matchObj = {
 	Day: 'Wed, 23 Jan',
@@ -1850,6 +1852,11 @@ const UploadOrEditArticle = ({
 								)}
 								<Grid container>
 									<Grid className={classes.firstGridItem} pr={1} item md={3}>
+										{/* <ArticleElementsSidebar
+											heading={'Elements'}
+											elements={elementData}
+											onClick={(dataItem) => handleArticleElement(dataItem)}
+										/> */}
 										<div className={classes.gridDivSmall}>
 											<Box mb={3.5} className={classes.mainTitleDescription}>
 												<h2>Elements</h2>
