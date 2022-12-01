@@ -32,11 +32,6 @@ const QuestionInternalForm = ({
 	const [openPublishModal, setPublishModalState] = useState(false);
 	const [activeQuestionTitle, setActiveQuestionTitle] = useState('');
 
-	const closePublishModal = () => {
-		setPublishModalState(false);
-		setActiveQuestionTitle('');
-	};
-
 	const {
 		dirty,
 		isValid,
@@ -61,6 +56,18 @@ const QuestionInternalForm = ({
 		};
 	}, []);
 
+	useEffect(() => {
+		validateForm();
+	}, [values.general_info.question_type]);
+
+	const handleClosePublishModal = () => {
+		setPublishModalState(false);
+		setActiveQuestionTitle('');
+		setFieldValue('active_question_id', null);
+		setFieldValue('active_question_end_date', null);
+		setFieldValue('transition_to', null);
+	};
+
 	const handleTabClick = (val) => {
 		const editFormInitValues = {
 			...questionsFormInitialValues,
@@ -72,7 +79,6 @@ const QuestionInternalForm = ({
 		};
 
 		resetForm({ values: editFormInitValues });
-		validateForm();
 	};
 
 	const handleSaveDraft = () => {
@@ -147,7 +153,7 @@ const QuestionInternalForm = ({
 					<PublishAndStopModal
 						open={openPublishModal}
 						isSubmitting={isSubmitting}
-						onClose={closePublishModal}
+						onClose={handleClosePublishModal}
 						questionType={questionType}
 						actionInfo={actionInfo}
 						onConfirm={handleConfirm}
