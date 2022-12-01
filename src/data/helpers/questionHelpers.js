@@ -200,7 +200,7 @@ export const questionDataFormatterForService = async (
 			negative_results_filename: negativeResultFile?.file_name || ''
 		},
 		questions: values.questions.map((item, index) => ({
-			...omit(item, ['uploadedFiles', 'pollAnswers', 'quizAnswers']),
+			...omit(item, ['uploadedFiles', 'answers']),
 			...(values.general_info.question_type === 'poll'
 				? {
 						image: getRelativePath(pollSlideFiles[index]?.media_url),
