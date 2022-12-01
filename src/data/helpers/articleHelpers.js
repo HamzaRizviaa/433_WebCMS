@@ -70,7 +70,8 @@ export const articleFormInitialValues = {
 	author_image: [{ media_url: '' }],
 	labels: [],
 	show_likes: true,
-	show_comments: true
+	show_comments: true,
+	elements: []
 };
 
 export const articleFormValidationSchema = Yup.object().shape({
