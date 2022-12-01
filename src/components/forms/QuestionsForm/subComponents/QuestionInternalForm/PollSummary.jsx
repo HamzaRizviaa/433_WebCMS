@@ -4,6 +4,7 @@ import { useFormikContext } from 'formik';
 
 import FormikDropzone from '../../../../ui/inputs/formik/FormikDropzone';
 import FormikField from '../../../../ui/inputs/formik/FormikField';
+import CommonFields from './CommonFields';
 import FeatureWrapper from '../../../../../components/FeatureWrapper';
 import { useFormStyles } from '../../../forms.style';
 
@@ -18,6 +19,11 @@ const PollSummary = ({ openPreviewer, isClosed }) => {
 
 	return (
 		<div>
+			<CommonFields
+				questionType='poll'
+				openPreviewer={openPreviewer}
+				isClosed={isClosed}
+			/>
 			<FeatureWrapper name='summaryComponentOnQuestions'>
 				<p className={classes.mainHeading}>Summary Component</p>
 				<div className={classes.fieldContainer}>

@@ -21,6 +21,7 @@ const CommonFields = ({ questionType, openPreviewer, isClosed }) => {
 				<FormikField
 					name='general_info.question_title'
 					label={`${questionType?.toUpperCase()} TITLE`}
+					placeholder={`Please write ${questionType} title here`}
 					multiline
 					maxRows={2}
 					maxLength={43}
@@ -28,10 +29,10 @@ const CommonFields = ({ questionType, openPreviewer, isClosed }) => {
 					required
 				/>
 			</div>
-			<div className={classes.fieldContainer}>
+			<div>
 				<span className={classes.dropzoneLabel}>Cover Image</span>
 				<FormikDropzone
-					name='resultsUploadedFiles'
+					name='coverImageUploadedFiles'
 					accept='image/jpeg, image/png'
 					formatMessage='Supported formats are jpeg and png'
 					fileSizeMessage='Image file size should not exceed 1MB.'
@@ -45,6 +46,7 @@ const CommonFields = ({ questionType, openPreviewer, isClosed }) => {
 				<FormikField
 					name='general_info.cover_image_dropbox_url'
 					label='DROPBOX URL'
+					placeholder='Please drop the dropbox URL here'
 					multiline
 					maxRows={2}
 					disabled={isClosed}
