@@ -67,7 +67,7 @@ export const useFormStyles = makeStyles((theme) => ({
 		marginBottom: 20
 	},
 
-	slideImageLabel: {
+	dropzoneLabel: {
 		marginBottom: 15,
 		position: 'relative',
 		display: 'inline-block',
