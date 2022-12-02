@@ -57,6 +57,8 @@ export const articleTableColumns = [
 	}
 ];
 
+export const articleDataFormatterForForm = () => {};
+
 export const articleFormInitialValues = {
 	mainCategory: '',
 	subCategory: '',
@@ -67,7 +69,9 @@ export const articleFormInitialValues = {
 	uploadedFiles: [],
 	uploadedLandscapeCoverImage: [],
 	author_text: '433 Team',
-	author_image: [{ media_url: '' }],
+	author_image: [
+		{ media_url: 'media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png' }
+	],
 	labels: [],
 	show_likes: true,
 	show_comments: true
