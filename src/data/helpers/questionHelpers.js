@@ -157,9 +157,13 @@ export const questionDataFormatterForService = async (
 	isDraft,
 	status = 'draft'
 ) => {
-	const pollFilesToUpload = [values.resultsUploadedFiles[0] || null];
+	const pollFilesToUpload = [
+		values.coverImageUploadedFiles[0] || null,
+		values.resultsUploadedFiles[0] || null
+	];
 
 	const quizFilesToUpload = [
+		values.coverImageUploadedFiles[0] || null,
 		values.positiveResultsUploadedFiles[0] || null,
 		values.negativeResultsUploadedFiles[0] || null
 	];
@@ -172,8 +176,8 @@ export const questionDataFormatterForService = async (
 		}
 	});
 
-	let pollUploadedFiles = [null];
-	let quizUploadedFiles = [null, null];
+	let pollUploadedFiles = [null, null];
+	let quizUploadedFiles = [null, null, null];
 
 	if (values.general_info.question_type === 'poll') {
 		pollUploadedFiles = await uploadFilesToS3(
@@ -187,9 +191,16 @@ export const questionDataFormatterForService = async (
 		);
 	}
 
-	const [resultsFile, ...pollSlideFiles] = pollUploadedFiles;
-	const [positiveResultsFile, negativeResultFile, ...quizSlideFiles] =
-		quizUploadedFiles;
+	const [pollCoverImageFile, resultsFile, ...pollSlideFiles] =
+		pollUploadedFiles;
+	const [
+		quizCoverImageFile,
+		positiveResultsFile,
+		negativeResultFile,
+		...quizSlideFiles
+	] = quizUploadedFiles;
+
+	const coverImageFile = pollCoverImageFile || quizCoverImageFile;
 
 	const payload = {
 		general_info: {
@@ -200,7 +211,11 @@ export const questionDataFormatterForService = async (
 			positive_results_image: getRelativePath(positiveResultsFile?.media_url),
 			positive_results_filename: positiveResultsFile?.file_name || '',
 			negative_results_image: getRelativePath(negativeResultFile?.media_url),
-			negative_results_filename: negativeResultFile?.file_name || ''
+			negative_results_filename: negativeResultFile?.file_name || '',
+			cover_image: getRelativePath(coverImageFile?.media_url),
+			cover_image_file_name: coverImageFile?.file_name || '',
+			cover_image_width: coverImageFile?.width || 0,
+			cover_image_height: coverImageFile?.height || 0
 		},
 		questions: values.questions.map((item, index) => ({
 			...omit(item, ['uploadedFiles', 'answers']),
@@ -235,8 +250,11 @@ export const questionDataFormatterForService = async (
 
 	if (values.active_question_id) {
 		payload.active_question_id = values.active_question_id;
-		payload.active_question_end_date = values.active_question_end_date;
 		payload.transition_to = values.transition_to;
+
+		if (values.transition_to === 'closed') {
+			payload.active_question_end_date = values.active_question_end_date;
+		}
 	}
 
 	return payload;
@@ -268,6 +286,16 @@ export const questionDataFormatterForForm = (question) => {
 
 	const formattedQuestion = {
 		question_id: id,
+		coverImageUploadedFiles: rest.cover_image
+			? [
+					{
+						file_name: rest.cover_image_file_name,
+						media_url: `${REACT_APP_MEDIA_ENDPOINT}/${rest.cover_image}`,
+						height: rest.cover_image_height,
+						width: rest.cover_image_width
+					}
+			  ]
+			: [],
 		...(question.question_type === 'poll'
 			? {
 					resultsUploadedFiles: summary.results_image
@@ -301,7 +329,10 @@ export const questionDataFormatterForForm = (question) => {
 						: []
 			  }),
 		general_info: {
-			...omit(rest, ['created_at', 'updated_at', 'status']),
+			save_draft: rest.is_draft,
+			question_type: rest.question_type,
+			question_title: rest.question_title,
+			cover_image_dropbox_url: rest.cover_image_dropbox_url,
 			...(question.question_type === 'poll'
 				? {
 						results: summary.results,
@@ -352,6 +383,9 @@ export const questionsFormValidationSchemaV1 = yup.object({
 });
 
 export const questionsFormValidationSchema = yup.object({
+	coverImageUploadedFiles: yup
+		.array()
+		.min(1, 'You need to upload an image in order to post'),
 	resultsUploadedFiles: yup.array().when('general_info.question_type', {
 		is: (val) => val === 'poll',
 		then: (schema) =>
@@ -372,6 +406,10 @@ export const questionsFormValidationSchema = yup.object({
 	}),
 
 	general_info: yup.object({
+		question_title: yup
+			.string()
+			.trim()
+			.required('You need to enter title in order to post'),
 		results: yup
 			.string()
 			.trim()

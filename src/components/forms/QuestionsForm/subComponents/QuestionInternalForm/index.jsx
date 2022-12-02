@@ -201,7 +201,7 @@ const QuestionInternalForm = ({
 							DELETE {questionType}
 						</Button>
 					)}
-					{isEdit && status === 'ACTIVE' && (
+					{isEdit && (status === 'ACTIVE' || status === 'TRIVIA') && (
 						<>
 							<div className={classes.stopBtn}>
 								<Button
