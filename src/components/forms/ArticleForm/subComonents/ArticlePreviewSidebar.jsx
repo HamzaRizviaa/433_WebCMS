@@ -2,7 +2,6 @@ import React from 'react';
 import { Box } from '@material-ui/core';
 import { useStyles } from './subComponents.styles';
 import PropTypes from 'prop-types';
-import PreviewWrapper from '../../../ArticleBuilder/PreviewWrapper';
 import {
 	IgElementPreviewer,
 	MatchElementPreviewer,
@@ -12,6 +11,7 @@ import {
 	TwitterElementPreviewer
 } from './previewers';
 import { ElementTypes } from './ElementTypes';
+import ArticlePreviewWrapper from './ArticlePreviewWrapper';
 
 const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 	const classes = useStyles();
@@ -46,7 +46,7 @@ const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 				<p>Review the result here before publishing</p>
 			</Box>
 
-			<PreviewWrapper form={form}>
+			<ArticlePreviewWrapper form={form}>
 				{data.map((item, index) => {
 					return (
 						<div key={index} className={classes.elementContainer}>
@@ -54,7 +54,7 @@ const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 						</div>
 					);
 				})}
-			</PreviewWrapper>
+			</ArticlePreviewWrapper>
 		</Box>
 	);
 };
