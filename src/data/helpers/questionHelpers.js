@@ -377,12 +377,71 @@ const questionsSlideSchema = yup
 	)
 	.min(1, 'Atleast 1 question is required');
 
-// V1 is without summary component
+// V1 is with summary component and no trivia component
 export const questionsFormValidationSchemaV1 = yup.object({
+	resultsUploadedFiles: yup.array().when('general_info.question_type', {
+		is: (val) => val === 'poll',
+		then: (schema) =>
+			schema.min(1, 'You need to upload an image in order to post'),
+		otherwise: (schema) => schema.min(0)
+	}),
+	positiveResultsUploadedFiles: yup.array().when('general_info.question_type', {
+		is: (val) => val === 'quiz',
+		then: (schema) =>
+			schema.min(1, 'You need to upload an image in order to post'),
+		otherwise: (schema) => schema.min(0)
+	}),
+	negativeResultsUploadedFiles: yup.array().when('general_info.question_type', {
+		is: (val) => val === 'quiz',
+		then: (schema) =>
+			schema.min(1, 'You need to upload an image in order to post'),
+		otherwise: (schema) => schema.min(0)
+	}),
+
+	general_info: yup.object({
+		results: yup
+			.string()
+			.trim()
+			.when('question_type', {
+				is: (val) => val === 'poll',
+				then: (schema) =>
+					schema.required('You need to enter results in order to post'),
+				otherwise: (schema) => schema
+			}),
+		positive_results: yup
+			.string()
+			.trim()
+			.when('question_type', {
+				is: (val) => val === 'quiz',
+				then: (schema) =>
+					schema.required(
+						'You need to enter positive results in order to post'
+					),
+				otherwise: (schema) => schema
+			}),
+		negative_results: yup
+			.string()
+			.trim()
+			.when('question_type', {
+				is: (val) => val === 'quiz',
+				then: (schema) =>
+					schema.required(
+						'You need to enter negative results in order to post'
+					),
+				otherwise: (schema) => schema
+			})
+	}),
+
 	questions: questionsSlideSchema
 });
 
-export const questionsFormValidationSchema = yup.object({
+// V2 is without summary component and without trivia component
+export const questionsFormValidationSchemaV2 = yup.object({
+	questions: questionsSlideSchema
+});
+
+// V3 is with summary component and with Trivia Component
+export const questionsFormValidationSchemaV3 = yup.object({
 	coverImageUploadedFiles: yup
 		.array()
 		.min(1, 'You need to upload an image in order to post'),
@@ -446,10 +505,16 @@ export const questionsFormValidationSchema = yup.object({
 	questions: questionsSlideSchema
 });
 
-export const getQuestionsValidationSchema = (isSummaryComponent) => {
-	return isSummaryComponent
-		? questionsFormValidationSchema
-		: questionsFormValidationSchemaV1;
+export const getQuestionsValidationSchema = (
+	isSummaryComponent,
+	isTriviaEnabled
+) => {
+	if (isSummaryComponent && isTriviaEnabled)
+		return questionsFormValidationSchemaV3;
+	if (isSummaryComponent && !isTriviaEnabled)
+		return questionsFormValidationSchemaV1;
+	if (!isSummaryComponent && !isTriviaEnabled)
+		return questionsFormValidationSchemaV2;
 };
 
 export const calculateAnswerPercentage = (totalParticipants, usersCount) => {

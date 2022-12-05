@@ -23,11 +23,13 @@ const QuizSummary = ({ openPreviewer, isClosed }) => {
 
 	return (
 		<div>
-			<CommonFields
-				questionType='quiz'
-				openPreviewer={openPreviewer}
-				isClosed={isClosed}
-			/>
+			<FeatureWrapper name='triviaOnQuestions'>
+				<CommonFields
+					questionType='quiz'
+					openPreviewer={openPreviewer}
+					isClosed={isClosed}
+				/>
+			</FeatureWrapper>
 			<FeatureWrapper name='summaryComponentOnQuestions'>
 				<p className={classes.mainHeading}>Summary Component</p>
 				<div className={classes.fieldContainer}>
