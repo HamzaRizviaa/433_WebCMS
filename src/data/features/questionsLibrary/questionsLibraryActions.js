@@ -1,6 +1,5 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
-import { ToastErrorNotifications } from '../../constants';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import { QuestionsLibraryService } from '../../services';
 
 export const getQuestions = createAsyncThunk(
@@ -81,7 +80,7 @@ export const deleteQuestionThunk = createAsyncThunk(
 				toast.success('Question has been deleted!');
 			}
 		} catch (e) {
-			toast.error(ToastErrorNotifications.deleteBannerItemText);
+			toast.error('Failed to delete Question!');
 			console.error(e);
 		}
 	}
@@ -93,13 +92,11 @@ export const stopQuestionThunk = createAsyncThunk(
 		try {
 			const response = await QuestionsLibraryService.stopQuestion(data);
 
-			if (response.data.status_code === 200) {
+			if (response?.data.status_code === 200) {
 				toast.success('Question has been Stopped!');
 			}
 		} catch (e) {
-			if (e?.response?.status === 422) {
-				toast.error(e.response.data?.message);
-			}
+			toast.error('Failed to stop Question!');
 			console.error(e);
 		}
 	}

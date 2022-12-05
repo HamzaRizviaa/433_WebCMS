@@ -29,7 +29,8 @@ export const useStyles = makeStyles(() => ({
 		maxWidth: '80%',
 		textOverflow: 'ellipsis',
 		overflow: 'hidden',
-		whiteSpace: 'nowrap'
+		whiteSpace: 'nowrap',
+		textTransform: 'capitalize'
 	},
 
 	textWithIconWrapper: {

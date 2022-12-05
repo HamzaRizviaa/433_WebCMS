@@ -49,7 +49,6 @@ const CommonFields = ({ questionType, openPreviewer, isClosed }) => {
 					placeholder='Please drop the dropbox URL here'
 					multiline
 					maxRows={2}
-					disabled={isClosed}
 				/>
 			</div>
 		</>
