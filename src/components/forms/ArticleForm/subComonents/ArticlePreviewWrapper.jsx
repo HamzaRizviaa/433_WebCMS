@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { formatDate2 } from '../../../../data/utils';
+import { getArticleDates } from '../../../../data/utils';
 import { Markup } from 'interweave';
 import { Box } from '@material-ui/core';
 import { useStyles } from './subComponents.styles';
@@ -12,20 +12,13 @@ import WiFi from '../../../../assets/Wifi.svg';
 import Battery from '../../../../assets/Rectangle.svg';
 import Signals from '../../../../assets/MobileSignal.svg';
 import Avatar from '@mui/material/Avatar';
+import { default433Profile } from '../../../../data/helpers/articleHelpers';
 
 const ArticlePreviewWrapper = ({ children, form }) => {
-	// Default 433 icon
-	const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/Profile433.svg`;
-
 	/**
 	 * Date & Est time
 	 */
-	const date = formatDate2(new Date());
-	const today = new Date();
-	const time =
-		today.getHours() +
-		':' +
-		(today.getMinutes() < 10 ? '0' + today.getMinutes() : today.getMinutes());
+	const { date, time } = getArticleDates();
 
 	// Get Cover Url From data
 	const getUrl = () =>
@@ -88,7 +81,7 @@ const ArticlePreviewWrapper = ({ children, form }) => {
 									src={
 										form?.author_image[0]
 											? form.author_image[0].media_url
-											: Profile433
+											: default433Profile
 									}
 								/>
 							</div>

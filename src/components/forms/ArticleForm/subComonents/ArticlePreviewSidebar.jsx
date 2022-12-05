@@ -10,8 +10,8 @@ import {
 	TextElementPreviewer,
 	TwitterElementPreviewer
 } from './previewers';
-import { ElementTypes } from './ElementTypes';
 import ArticlePreviewWrapper from './ArticlePreviewWrapper';
+import { ElementTypes } from '../../../../data/helpers/articleHelpers';
 
 const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 	const classes = useStyles();
