@@ -37,18 +37,21 @@ const ArticleMatchElement = ({ index, initialData, data, isPublished }) => {
 				name={`elements.${index}.league`}
 				placeholder='SELECT LEAGUE'
 				options={getLeagueOptions(leagues)}
+                disabled={isPublished}
                 onChange={handleLeagueChange}
 			/>
 			<FormikSelect 
                 name={`elements.${index}.team`} 
                 placeholder='SELECT TEAM' 
                 options={teams}
+                disabled={isPublished || teams.length === 0}
                 onChange={handleTeamChange}
             />
 			<FormikSelect 
                 name={`elements.${index}.match`} 
                 placeholder='SELECT MATCH'
                 options={matches}
+                disabled={isPublished || matches.length === 0}
             />
 		</div>
 	);
