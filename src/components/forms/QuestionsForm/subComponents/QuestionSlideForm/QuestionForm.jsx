@@ -22,7 +22,7 @@ const QuestionForm = ({
 		<div>
 			<div>
 				{!isArticle && (
-					<span className={classes.slideImageLabel}>Add Background Image</span>
+					<span className={classes.dropzoneLabel}>Add Background Image</span>
 				)}
 				<FormikDropzone
 					name={`questions.${index}.uploadedFiles`}

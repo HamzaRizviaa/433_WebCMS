@@ -29,6 +29,7 @@ const QuestionInternalForm = ({
 	onSubmitHandler,
 	defaultQuestionType
 }) => {
+	const isTriviaEnabled = true;
 	const [openPublishModal, setPublishModalState] = useState(false);
 	const [activeQuestionTitle, setActiveQuestionTitle] = useState('');
 
@@ -142,8 +143,10 @@ const QuestionInternalForm = ({
 			>
 				<b>“{activeQuestionTitle}”</b>
 			</Link>{' '}
-			is currently the {questionType} active. You have to stop this{' '}
-			{questionType} before publishing the new one.
+			is currently the {questionType} active.{' '}
+			{isTriviaEnabled
+				? `Where do you want to move this ${questionType}?`
+				: `You have to stop this ${questionType} before publishing the new one.`}
 		</p>
 	);
 
@@ -201,7 +204,7 @@ const QuestionInternalForm = ({
 							DELETE {questionType}
 						</Button>
 					)}
-					{isEdit && status === 'ACTIVE' && (
+					{isEdit && (status === 'ACTIVE' || status === 'TRIVIA') && (
 						<>
 							<div className={classes.stopBtn}>
 								<Button

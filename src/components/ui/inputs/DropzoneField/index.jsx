@@ -100,7 +100,11 @@ const DropzoneField = ({
 					hideDeleteIcon={hideDeleteIcon}
 				/>
 			) : (
-				<section className={classes.dropZoneContainer}>
+				<section
+					tabIndex={-1}
+					className={classes.dropZoneContainer}
+					onBlur={onBlur}
+				>
 					<div {...getRootProps({ className: classes.dropzone })}>
 						<input {...getInputProps({ name, onBlur })} />
 						<AddCircleOutlineIcon className={classes.addFilesIcon} />

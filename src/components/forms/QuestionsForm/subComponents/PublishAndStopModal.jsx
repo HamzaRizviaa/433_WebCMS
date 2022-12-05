@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { RadioGroup } from '@material-ui/core';
 
@@ -13,10 +13,15 @@ const PublishAndStopModal = ({
 	onClose,
 	onConfirm,
 	isStopModal = false,
-	isSubmitting = false
+	isSubmitting = false,
+	isTrivia = false
 }) => {
-	const [value, setValue] = useState('closed');
-	const classes = useQuestionsStyles();
+	const [value, setValue] = useState('trivia');
+
+	useEffect(() => {
+		if (isTrivia) setValue('closed');
+		else setValue('trivia');
+	}, [isTrivia]);
 
 	const handleRadioChange = (event) => {
 		setValue(event.target.value);
@@ -25,6 +30,8 @@ const PublishAndStopModal = ({
 	const handleConfirm = () => {
 		if (onConfirm) onConfirm(value);
 	};
+
+	const classes = useQuestionsStyles();
 
 	return (
 		<Modal
@@ -46,6 +53,13 @@ const PublishAndStopModal = ({
 					value={value}
 					onChange={handleRadioChange}
 				>
+					{!isTrivia && (
+						<RadioButton
+							name='status'
+							value='trivia'
+							label='Move to trivia section'
+						/>
+					)}
 					<RadioButton
 						name='status'
 						value='closed'
@@ -66,7 +80,8 @@ PublishAndStopModal.propTypes = {
 	onConfirm: PropTypes.func.isRequired,
 	onClose: PropTypes.func.isRequired,
 	isStopModal: PropTypes.bool,
-	isSubmitting: PropTypes.bool
+	isSubmitting: PropTypes.bool,
+	isTrivia: PropTypes.bool
 };
 
 export default PublishAndStopModal;
