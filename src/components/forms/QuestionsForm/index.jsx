@@ -37,8 +37,8 @@ const QuestionsForm = ({
 	location
 }) => {
 	const summaryComponentOnQuestions = useSelector(selectSummaryFeatureFlag);
-	const triviaOnQuestions = useSelector(selectTriviaFeatureFlag);
 	const isSummaryEnabled = summaryComponentOnQuestions?._value === 'true';
+	const triviaOnQuestions = useSelector(selectTriviaFeatureFlag);
 	const isTriviaEnabled = triviaOnQuestions?._value === 'true';
 	const navigate = useNavigate();
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
@@ -197,7 +197,8 @@ const QuestionsForm = ({
 						onConfirm={(val) => {
 							onStopHandler(specificQuestion?.id, setSubmitting, val);
 						}}
-						isTrivia={status === 'TRIVIA'}
+						isStatusTrivia={status === 'TRIVIA'}
+						isTriviaEnabled={isTriviaEnabled}
 						isStopModal
 					/>
 				</Form>

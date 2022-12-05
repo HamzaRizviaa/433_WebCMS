@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { isEqual, pick, omit } from 'lodash';
 import { FieldArray, useFormikContext } from 'formik';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import AccordianLayout from '../../../../layouts/AccordianLayout';
 import TabPanes from '../../../../ui/TabPanes';
@@ -11,12 +12,13 @@ import QuizSummary from './QuizSummary';
 import Button from '../../../../ui/Button';
 import QuestionSlideForm from '../QuestionSlideForm';
 import PublishAndStopModal from '../PublishAndStopModal';
+import { QuestionsLibraryService } from '../../../../../data/services';
+import { useFormStyles } from '../../../forms.style';
+import { selectTriviaFeatureFlag } from '../../../../../data/selectors';
 import {
 	areAllFieldsEmpty,
 	questionsFormInitialValues
 } from '../../../../../data/helpers';
-import { QuestionsLibraryService } from '../../../../../data/services';
-import { useFormStyles } from '../../../forms.style';
 
 const headings = ['Poll', 'Quiz'];
 
@@ -29,7 +31,11 @@ const QuestionInternalForm = ({
 	onSubmitHandler,
 	defaultQuestionType
 }) => {
-	const isTriviaEnabled = true;
+	// Feature flag for TRIVIA
+	const triviaOnQuestions = useSelector(selectTriviaFeatureFlag);
+	const isTriviaEnabled = triviaOnQuestions?._value === 'true';
+
+	// States
 	const [openPublishModal, setPublishModalState] = useState(false);
 	const [activeQuestionTitle, setActiveQuestionTitle] = useState('');
 
@@ -161,6 +167,7 @@ const QuestionInternalForm = ({
 						questionType={questionType}
 						actionInfo={actionInfo}
 						onConfirm={handleConfirm}
+						isTriviaEnabled={isTriviaEnabled}
 					/>
 					<TabPanes
 						headings={headings}
