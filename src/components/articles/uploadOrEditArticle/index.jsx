@@ -24,7 +24,7 @@ import LoadingOverlay from 'react-loading-overlay';
 import Instragram from '../../../assets/Instagram.svg';
 import Text from '../../../assets/Text.svg';
 import ImageVideo from '../../../assets/Image.svg';
-import Tweet from '../../../assets/Twitter Line.svg';
+import Tweet from '../../../assets/TwitterLine.svg';
 import Question from '../../../assets/Quiz.svg';
 import BallIcon from '../../../assets/Ball.svg';
 import ToggleSwitch from '../../switch';
@@ -79,7 +79,8 @@ import MatchPost from '../../ArticleBuilder/PreviewArticles/MatchPost';
 import { useLazyGetMatchesTreeQuery } from '../../../data/features/articleLibrary/articleLibrary.query';
 
 //new refactor element
-//import ArticleElementsSidebar from '../../forms/ArticleForm/subComonents/ArticleElementsSidebar';
+import ArticleElementsSidebar from '../../forms/ArticleForm/subComonents/ArticleElementsSidebar';
+import QuestionElement from '../../forms/ArticleForm/subComonents/elements/QuestionElement';
 // TEST OBJECT FOR MATCHES
 const matchObj = {
 	Day: 'Wed, 23 Jan',
@@ -1852,11 +1853,7 @@ const UploadOrEditArticle = ({
 								)}
 								<Grid container>
 									<Grid className={classes.firstGridItem} pr={1} item md={3}>
-										{/* <ArticleElementsSidebar
-											heading={'Elements'}
-											elements={elementData}
-											onClick={(dataItem) => handleArticleElement(dataItem)}
-										/> */}
+										{/* <ArticleElementsSidebar/> */}
 										<div className={classes.gridDivSmall}>
 											<Box mb={3.5} className={classes.mainTitleDescription}>
 												<h2>Elements</h2>
@@ -1894,6 +1891,7 @@ const UploadOrEditArticle = ({
 											<h2>Builder</h2>
 											<p>Edit, reorder elements here and build your article</p>
 										</Box>
+										{/* <QuestionElement /> */}
 										<ArticleGeneralInfo
 											isEdit={isEdit}
 											form={form}

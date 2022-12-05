@@ -1,17 +1,25 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import ToggleSwitch from '../../../switch';
 import { Box, Typography } from '@material-ui/core';
 import { useArticleFormStyles } from '../index.style';
+import ToggleSwitchField from '../../../ui/inputs/ToggleSwitchField';
+import { sidebarElements } from '../../../../data/helpers/articleHelpers';
 
-const ArticleElementsSidebar = ({ heading, elements, onClick }) => {
+const ArticleElementsSidebar = ({ unshift, push }) => {
 	const [itemsOnTop, setItemsOnTop] = useState(false);
+
 	const classes = useArticleFormStyles();
+
+	const handleClick = (dataItem) => {
+		if (itemsOnTop) {
+			unshift(dataItem.data);
+		} else push(dataItem.data);
+	};
 
 	return (
 		<Box className={classes.ArticleElementsSidebar}>
-			<Box mb={3.5}>
-				<Typography className={classes.titleHeading}>{heading}</Typography>
+			<Box mb={3}>
+				<Typography className={classes.titleHeading}>Elements</Typography>
 				<Typography className={classes.titleText}>
 					Add elements to build your article
 				</Typography>
@@ -20,34 +28,27 @@ const ArticleElementsSidebar = ({ heading, elements, onClick }) => {
 				<Typography className={classes.elementsText}>
 					Add elements to the top
 				</Typography>
-				<Box>
-					<ToggleSwitch
-						id={`itemsOnTop-button`}
-						checked={itemsOnTop}
-						onChange={(checked) => {
-							console.log(checked);
-							setItemsOnTop(checked);
-						}}
-					/>
+				<Box className={classes.toggleBtn}>
+					<ToggleSwitchField checked={itemsOnTop} onChange={setItemsOnTop} />
 				</Box>
 			</Box>
 
-			{elements.map((dataItem, index) => (
-				<button
-					onClick={() => onClick(dataItem, index)}
-					key={index}
-					className={classes.elementContainter}
-				>
-					<img src={dataItem.image} />
-					<p className={classes.elementText}>{dataItem.text}</p>
-				</button>
-			))}
+			{sidebarElements?.length > 0 &&
+				sidebarElements.map((dataItem, index) => (
+					<button
+						onClick={() => handleClick(dataItem)}
+						key={index}
+						className={classes.elementContainter}
+					>
+						{dataItem.image}
+						<p className={classes.elementText}>{dataItem.text}</p>
+					</button>
+				))}
 		</Box>
 	);
 };
 ArticleElementsSidebar.propTypes = {
-	elements: PropTypes.array.isRequired,
-	heading: PropTypes.string.isRequired,
-	onClick: PropTypes.func
+	push: PropTypes.func.isRequired,
+	unshift: PropTypes.func.isRequired
 };
 export default ArticleElementsSidebar;

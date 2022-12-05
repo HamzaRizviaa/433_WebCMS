@@ -24,9 +24,10 @@ export const useArticleFormStyles = makeStyles((theme) => ({
 		color: theme.palette.white
 	},
 	titleText: { fontSize: '14px', color: theme.palette.white },
+	toggleBtn: { marginTop: '15px' },
 	elementContainter: {
 		width: '100%',
-		background: `${theme.palette.black}`,
+		background: theme.palette.black,
 		border: `1px solid ${theme.palette.neonYellow}`,
 		borderRadius: '8px',
 		display: 'flex',
@@ -46,6 +47,6 @@ export const useArticleFormStyles = makeStyles((theme) => ({
 		display: 'flex',
 		alignItems: 'center',
 		letterSpacing: '0.02em',
-		color: `${theme.palette.white}`
+		color: theme.palette.white
 	}
 }));

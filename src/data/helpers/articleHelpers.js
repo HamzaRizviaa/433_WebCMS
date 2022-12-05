@@ -1,6 +1,73 @@
 import * as Yup from 'yup';
+import React from 'react';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime } from '../utils';
+import {
+	Text,
+	Instragram,
+	ImageVideo,
+	TwitterLine,
+	BallIcon,
+	Question
+} from '../../assets/svg-icons';
+export const sidebarElements = [
+	{
+		image: <Text />,
+		text: 'Add Text',
+		data: {
+			description: '',
+			dropbox_url: '',
+			element_type: 'TEXT'
+		}
+		// type: 'TEXT'
+	},
+	{
+		image: <ImageVideo />,
+		text: 'Add Image / Video',
+		data: {
+			uploadedFiles: [],
+			dropbox_url: '',
+			element_type: 'MEDIA'
+		}
+	},
+	{
+		image: <TwitterLine />,
+		text: 'Add Tweet',
+		data: {
+			twitter_post_url: '',
+			dropbox_url: '',
+			element_type: 'TWITTER'
+		}
+	},
+	{
+		image: <Instragram />,
+		text: 'Add IG post',
+		data: {
+			instagram_post_url: '',
+			dropbox_url: '',
+			element_type: 'TIGEXT'
+		}
+	},
+	{
+		image: <Question />,
+		text: 'Add Question',
+		data: {
+			question_data: {},
+			element_type: 'QUESTIONN'
+		}
+	},
+	{
+		image: <BallIcon />,
+		text: 'Add Match',
+		data: {
+			league_name: '',
+			match_title: '',
+			team_name: '',
+			match_id: '',
+			element_type: 'MATCH'
+		}
+	}
+];
 
 export const articleTableColumns = [
 	{
