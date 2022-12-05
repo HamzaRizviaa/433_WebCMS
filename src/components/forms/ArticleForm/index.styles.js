@@ -94,8 +94,15 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	authorAvatar: {
-		display: 'inline-block',
-		cursor: 'pointer'
+		position: 'relative'
+	},
+	hiddenAvatarBtn: {
+		position: 'absolute',
+		cursor: 'pointer',
+		height: '100%',
+		width: '100%',
+		top: 0,
+		opacity: 0
 	},
 
 	authorName: {

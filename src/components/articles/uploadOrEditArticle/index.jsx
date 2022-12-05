@@ -1528,6 +1528,7 @@ const UploadOrEditArticle = ({
 				setIsLoading(true);
 
 				const fileUploader = async (file) => {
+					console.log('AUTHOR FILE', file);
 					if (file.file) {
 						return await uploadFileToServer(file, 'articleLibrary');
 					}
@@ -1700,6 +1701,7 @@ const UploadOrEditArticle = ({
 
 				let uploadAuthorImagePromiseArray = form.author_image.map(
 					async (_file) => {
+						console.log('AUTHOR FILE', _file);
 						if (_file.file) {
 							return uploadFileToServer(_file, 'articleLibrary');
 						} else {

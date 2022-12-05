@@ -2,6 +2,8 @@ import * as Yup from 'yup';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime } from '../utils';
 
+const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
+
 export const articleTableColumns = [
 	{
 		dataField: 'article_title',
@@ -60,8 +62,10 @@ export const articleTableColumns = [
 export const articleDataFormatterForForm = () => {};
 
 export const articleFormInitialValues = {
-	mainCategory: '',
-	subCategory: '',
+	mainCategoryId: '',
+	subCategoryId: '',
+	mainCategoryName: '',
+	subCategoryName: '',
 	title: '',
 	sub_text: '',
 	dropbox_url: '',
@@ -69,9 +73,7 @@ export const articleFormInitialValues = {
 	uploadedFiles: [],
 	uploadedLandscapeCoverImage: [],
 	author_text: '433 Team',
-	author_image: [
-		{ media_url: 'media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png' }
-	],
+	author_image: Profile433,
 	labels: [],
 	show_likes: true,
 	show_comments: true
@@ -81,7 +83,7 @@ export const articleFormValidationSchema = Yup.object().shape({
 	mainCategory: Yup.string().required().label('Main Category'),
 	subCategory: Yup.string().required().label('Sub Category'),
 	author_text: Yup.string().required().label('Author Name'),
-	author_image: Yup.array().required().label('Author Image'),
+	author_image: Yup.string().required().label('Author Image'),
 	title: Yup.string().max(43).required().label('Title'),
 	sub_text: Yup.string().max(84).required().label('Sub Title'),
 	uploadedFiles: Yup.array().min(1).required().label('Portrait Image'),
