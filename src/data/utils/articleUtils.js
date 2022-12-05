@@ -1,4 +1,5 @@
 // import React from 'react';
+import moment from 'moment';
 
 export const checkEmptyIG = (data) => {
 	const filteredData = data.filter((item) => item.element_type === 'IG');
@@ -312,4 +313,22 @@ export const checkEmptyMatchPublishAndDraft = (data) => {
 	}
 	console.log(isEmpty);
 	return isEmpty;
+};
+
+export const getLeagueOptions = (data) => {
+	data.map((value) => ({
+		label: value.name,
+		value: value.name,
+		data: value
+	}));
+};
+
+export const getTeamOptions = (data, val) => {
+	return data.find((value) => value === val)?.teams
+}
+
+export const getMatchName = (date, name) => {
+	return `${moment(date).format('DD-MM-YYYY')} - ${name
+		.split('-')
+		.join(' VS ')}`;
 };
