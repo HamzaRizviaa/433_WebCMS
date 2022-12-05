@@ -8,7 +8,8 @@ import { Formik, Form } from 'formik';
 import { useCommonParams } from '../../../hooks';
 import {
 	selectSpecificQuestion,
-	selectSummaryFeatureFlag
+	selectSummaryFeatureFlag,
+	selectTriviaFeatureFlag
 } from '../../../data/selectors';
 import {
 	questionDataFormatterForForm,
@@ -37,6 +38,8 @@ const QuestionsForm = ({
 }) => {
 	const summaryComponentOnQuestions = useSelector(selectSummaryFeatureFlag);
 	const isSummaryEnabled = summaryComponentOnQuestions?._value === 'true';
+	const triviaOnQuestions = useSelector(selectTriviaFeatureFlag);
+	const isTriviaEnabled = triviaOnQuestions?._value === 'true';
 	const navigate = useNavigate();
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 	const dispatch = useDispatch();
@@ -67,8 +70,14 @@ const QuestionsForm = ({
 				status
 			);
 
+			const getApiVersion = (isSummaryEnabled, isTriviaEnabled) => {
+				if (isSummaryEnabled && isTriviaEnabled) return 3;
+				if (isSummaryEnabled && !isTriviaEnabled) return 1;
+				if (!isSummaryEnabled && !isTriviaEnabled) return 2;
+			};
+
 			const modifiedPayload = {
-				apiVersion: 3,
+				apiVersion: getApiVersion(isSummaryEnabled, isTriviaEnabled),
 				...payload
 			};
 
@@ -150,7 +159,10 @@ const QuestionsForm = ({
 		<Formik
 			enableReinitialize
 			initialValues={initialValues}
-			validationSchema={getQuestionsValidationSchema(isSummaryEnabled)}
+			validationSchema={getQuestionsValidationSchema(
+				isSummaryEnabled,
+				isTriviaEnabled
+			)}
 			onSubmit={onSubmitHandler}
 			validateOnMount
 		>
@@ -185,7 +197,8 @@ const QuestionsForm = ({
 						onConfirm={(val) => {
 							onStopHandler(specificQuestion?.id, setSubmitting, val);
 						}}
-						isTrivia={status === 'TRIVIA'}
+						isStatusTrivia={status === 'TRIVIA'}
+						isTriviaEnabled={isTriviaEnabled}
 						isStopModal
 					/>
 				</Form>
