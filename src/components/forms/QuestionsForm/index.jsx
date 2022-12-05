@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,15 +23,15 @@ import {
 	getQuestions
 } from '../../../data/features/questionsLibrary/questionsLibraryActions';
 
-import QuestionsFormDrawer from './subComponents/QuestionsFormDrawer';
 import DeleteModal from '../../DeleteModal';
+import QuestionsFormDrawer from './subComponents/QuestionsFormDrawer';
 import PublishAndStopModal from './subComponents/PublishAndStopModal';
 
 const QuestionsForm = ({
 	open,
 	handleClose,
 	isEdit,
-	status, // draft or publish
+	status,
 	questionType,
 	location
 }) => {
@@ -45,9 +45,6 @@ const QuestionsForm = ({
 	// States
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
 	const [openStopModal, setOpenStopModal] = useState(false);
-
-	// Refs
-	const dialogWrapper = useRef(null);
 
 	const initialValues = useMemo(() => {
 		return isEdit && !isEmpty(specificQuestion)
@@ -71,7 +68,7 @@ const QuestionsForm = ({
 			);
 
 			const modifiedPayload = {
-				apiVersion: isSummaryEnabled ? 1 : 2,
+				apiVersion: 3,
 				...payload
 			};
 
@@ -177,7 +174,6 @@ const QuestionsForm = ({
 							onDeleteHandler(specificQuestion?.id, status, setSubmitting);
 						}}
 						text={questionType}
-						wrapperRef={dialogWrapper}
 						isSubmitting={isSubmitting}
 					/>
 					<PublishAndStopModal
@@ -189,6 +185,7 @@ const QuestionsForm = ({
 						onConfirm={(val) => {
 							onStopHandler(specificQuestion?.id, setSubmitting, val);
 						}}
+						isTrivia={status === 'TRIVIA'}
 						isStopModal
 					/>
 				</Form>

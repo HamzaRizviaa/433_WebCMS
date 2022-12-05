@@ -5,7 +5,8 @@ export const useStatusBadgeStyles = makeStyles((theme) => {
 		draft: theme.palette.neonYellow,
 		published: theme.palette.green,
 		active: theme.palette.green,
-		closed: theme.palette.red
+		closed: theme.palette.red,
+		trivia: theme.palette.purple
 	};
 
 	return {
