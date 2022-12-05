@@ -11,7 +11,7 @@ import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
 import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
 import Avatar from '@mui/material/Avatar';
-import {
+import { 
 	getArticleMainCategories,
 	getArticleSubCategories
 } from '../../../../data/features/articleLibrary/articleLibraryActions';
@@ -61,6 +61,11 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 		if (metaData) setFieldValue('subCategoryName', metaData.name);
 	};
 
+	const handleAvatarChange = (event) =>{
+		console.log(event)
+		setFieldValue("author_image",event)
+	}
+
 	return (
 		<AccordianLayout title='General Information'>
 			<div className={classes.categoryContainer}>
@@ -97,7 +102,7 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 				<>
 					<h6 style={{ marginTop: '10px' }}>Author</h6>
 					<div className={classes.authorContainer}>
-						<ArticleAvatar name={'author_image'} handleChange />
+						<ArticleAvatar name={'author_image'} onChange={handleAvatarChange} />
 						<div className={classes.authorName}>
 							<FormikField
 								name='author_text'

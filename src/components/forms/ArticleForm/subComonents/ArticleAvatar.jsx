@@ -2,12 +2,33 @@
 /* eslint-disable react/prop-types */
 import { Avatar } from '@material-ui/core';
 import { useField, useFormikContext } from 'formik';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
+import { makeid } from '../../../../data/utils';
 // import { uploadFileToServer  from '../../../../data/utils';
 import { useStyles } from '../index.styles';
 
+const getFileExtension = (type) => {
+	if (type) {
+		let _type = type.split('/');
+		return _type && _type[1];
+	}
+};
+const selectFileType = (type) => {
+	switch (type) {
+		case 'video/mp4':
+			return 'video';
+		case 'audio/mp3':
+			return 'audio';
+		case 'audio/mpeg':
+			return 'audio';
+		default:
+			return 'image';
+	}
+};
+
 const ArticleAvatar = (props) => {
 	const { name, onChange, disabled = false, onBlur } = props;
+	const [preview, setPreview] = useState('');
 	const classes = useStyles();
 
 	const { values } = useFormikContext();
@@ -58,9 +79,8 @@ const ArticleAvatar = (props) => {
 
 	const handleChange = useCallback(
 		(event) => {
-			console.log('FFF', event.currentTarget.files[0]);
 			onValueChange(event);
-			if (onChange) onChange(name, event.currentTarget.files[0]);
+			if (onChange) onChange(getFileWithPreview(event.target.files[0]));
 		},
 		[onValueChange, onChange]
 	);
@@ -73,6 +93,19 @@ const ArticleAvatar = (props) => {
 		[onFieldBlur, onBlur]
 	);
 
+	const getFileWithPreview = (file) => {
+		const id = makeid(10);
+
+		return {
+			id: id,
+			file_name: file.name,
+			media_url: URL.createObjectURL(file),
+			fileExtension: `.${getFileExtension(file.type)}`,
+			mime_type: file.type,
+			type: selectFileType(file.type),
+			file: file
+		};
+	};
 	return (
 		<div>
 			<input
@@ -90,7 +123,7 @@ const ArticleAvatar = (props) => {
 			/>
 			<div className={classes.authorAvatar}>
 				<div>
-					<Avatar src={values.author_image} />
+					<Avatar src={values?.author_image?.media_url} />
 				</div>
 				{!disabled && (
 					<button
