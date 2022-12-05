@@ -19,11 +19,14 @@ const PollSummary = ({ openPreviewer, isClosed }) => {
 
 	return (
 		<div>
-			<CommonFields
-				questionType='poll'
-				openPreviewer={openPreviewer}
-				isClosed={isClosed}
-			/>
+			<FeatureWrapper name='triviaOnQuestions'>
+				<CommonFields
+					questionType='poll'
+					openPreviewer={openPreviewer}
+					isClosed={isClosed}
+				/>
+			</FeatureWrapper>
+
 			<FeatureWrapper name='summaryComponentOnQuestions'>
 				<p className={classes.mainHeading}>Summary Component</p>
 				<div className={classes.fieldContainer}>

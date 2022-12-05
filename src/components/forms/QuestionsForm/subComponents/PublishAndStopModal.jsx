@@ -14,14 +14,15 @@ const PublishAndStopModal = ({
 	onConfirm,
 	isStopModal = false,
 	isSubmitting = false,
-	isTrivia = false
+	isStatusTrivia = false,
+	isTriviaEnabled = false
 }) => {
-	const [value, setValue] = useState('trivia');
+	const [value, setValue] = useState('closed');
 
 	useEffect(() => {
-		if (isTrivia) setValue('closed');
-		else setValue('trivia');
-	}, [isTrivia]);
+		if (isStatusTrivia) setValue('closed');
+		else if (!isStatusTrivia && isTriviaEnabled) setValue('trivia');
+	}, [isStatusTrivia, isTriviaEnabled]);
 
 	const handleRadioChange = (event) => {
 		setValue(event.target.value);
@@ -53,7 +54,7 @@ const PublishAndStopModal = ({
 					value={value}
 					onChange={handleRadioChange}
 				>
-					{!isTrivia && (
+					{!isStatusTrivia && isTriviaEnabled && (
 						<RadioButton
 							name='status'
 							value='trivia'
@@ -81,7 +82,8 @@ PublishAndStopModal.propTypes = {
 	onClose: PropTypes.func.isRequired,
 	isStopModal: PropTypes.bool,
 	isSubmitting: PropTypes.bool,
-	isTrivia: PropTypes.bool
+	isStatusTrivia: PropTypes.bool,
+	isTriviaEnabled: PropTypes.bool
 };
 
 export default PublishAndStopModal;
