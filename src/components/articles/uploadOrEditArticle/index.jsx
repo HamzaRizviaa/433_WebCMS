@@ -77,6 +77,7 @@ import { ToastErrorNotifications } from '../../../data/constants';
 import useCommonParams from '../../../hooks/useCommonParams';
 import MatchPost from '../../ArticleBuilder/PreviewArticles/MatchPost';
 import { useLazyGetMatchesTreeQuery } from '../../../data/features/articleLibrary/articleLibrary.query';
+import ArticleForm from '../../forms/ArticleForm';
 import ArticlePreviewSidebar from '../../forms/ArticleForm/subComonents/ArticlePreviewSidebar';
 
 // TEST OBJECT FOR MATCHES
@@ -1528,6 +1529,7 @@ const UploadOrEditArticle = ({
 				setIsLoading(true);
 
 				const fileUploader = async (file) => {
+					console.log('AUTHOR FILE', file);
 					if (file.file) {
 						return await uploadFileToServer(file, 'articleLibrary');
 					}
@@ -1700,6 +1702,7 @@ const UploadOrEditArticle = ({
 
 				let uploadAuthorImagePromiseArray = form.author_image.map(
 					async (_file) => {
+						console.log('AUTHOR FILE', _file);
 						if (_file.file) {
 							return uploadFileToServer(_file, 'articleLibrary');
 						} else {
@@ -1888,7 +1891,7 @@ const UploadOrEditArticle = ({
 											<h2>Builder</h2>
 											<p>Edit, reorder elements here and build your article</p>
 										</Box>
-										<ArticleGeneralInfo
+										{/* <ArticleGeneralInfo
 											isEdit={isEdit}
 											form={form}
 											setForm={setForm}
@@ -1920,6 +1923,12 @@ const UploadOrEditArticle = ({
 											handleChangeExtraLabel={handleChangeExtraLabel}
 											setExtraLabel={setExtraLabel}
 											isError={isError}
+										/> */}
+										<ArticleForm
+											isEdit={isEdit}
+											handleClose={handleClose}
+											open={open}
+											status={status}
 										/>
 										<Box
 											sx={{

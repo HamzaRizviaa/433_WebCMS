@@ -64,7 +64,11 @@ const QuestionsForm = ({
 		formikBag.setSubmitting(true);
 
 		try {
-			const payload = await questionDataFormatterForService(values, isDraft);
+			const payload = await questionDataFormatterForService(
+				values,
+				isDraft,
+				status
+			);
 
 			const modifiedPayload = {
 				apiVersion: isSummaryEnabled ? 1 : 2,

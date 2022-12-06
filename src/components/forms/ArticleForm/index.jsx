@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Formik, Form } from 'formik';
@@ -19,7 +20,7 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 
 	const onSubmitHandler = () => {};
 
-	const onDeleteHandler = () => {};
+	// const onDeleteHandler = () => {};
 
 	return (
 		<Formik
@@ -43,7 +44,7 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 						open={openDeleteModal}
 						toggle={toggleDeleteModal}
 						deleteBtn={() => {
-							onDeleteHandler(specificViral?.id, status, setSubmitting);
+							// onDeleteHandler(specificArticle?.id, status, setSubmitting);
 						}}
 						text={'Article'}
 						wrapperRef={dialogWrapper}

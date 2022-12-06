@@ -14,7 +14,7 @@ const QuestionLibrary = () => {
 	const { data, isLoading, totalRecords } = useGetAllQuestionsQuery();
 
 	const [showSlider, setShowSlider] = useState(false);
-	const [rowStatus, setRowStatus] = useState('');
+	const [rowStatus, setRowStatus] = useState('draft');
 	const [rowLocation, setRowLocation] = useState('');
 	const [rowType, setRowType] = useState('');
 	const [edit, setEdit] = useState(false);
@@ -45,7 +45,7 @@ const QuestionLibrary = () => {
 		setShowSlider(false);
 		setEdit(false);
 		setRowType('');
-		setRowStatus('');
+		setRowStatus('draft');
 		setRowLocation('');
 	};
 

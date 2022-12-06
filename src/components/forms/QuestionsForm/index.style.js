@@ -166,5 +166,12 @@ export const useQuestionsStyles = makeStyles((theme) => ({
 	skeletonWrapper: {
 		backgroundColor: theme.palette.normalGrey,
 		borderRadius: 5
+	},
+
+	modalContent: {
+		backgroundColor: theme.palette.black90,
+		borderRadius: 8,
+		marginBottom: 20,
+		padding: '24px 16px'
 	}
 }));

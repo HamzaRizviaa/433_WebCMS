@@ -11,3 +11,12 @@ export const selectArticlesNoResult = (state) =>
 
 export const selectArticlesResultStatusCalendar = (state) =>
 	state.rootReducer.articleLibrary.noResultStatusCalendar;
+
+export const selectSpecificArticle = (state) =>
+	state.rootReducer.articleLibrary;
+
+export const selectArticleMainCategories = (state) =>
+	state.rootReducer.articleLibrary.mainCategories;
+
+export const selectArticleSubCategories = (state) =>
+	state.rootReducer.articleLibrary.subCategories;
