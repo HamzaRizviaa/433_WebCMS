@@ -1,3 +1,4 @@
+import moment from 'moment';
 import * as Yup from 'yup';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime } from '../utils';
@@ -60,6 +61,35 @@ export const articleTableColumns = [
 ];
 
 export const articleDataFormatterForForm = () => {};
+export const ElementTypes = {
+	MEDIA: 'MEDIA',
+	TEXT: 'TEXT',
+	TWITTER: 'TWITTER',
+	IG: 'IG',
+	QUESTION: 'QUESTION',
+	MATCH: 'MATCH'
+};
+
+export const default433Profile = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/Profile433.svg`;
+
+export const matchElementDataFormatter = (item) => ({
+	Day: moment(item?.data?.match?.data?.startdate).format('ddd, DD MMM'),
+	Time: moment(item?.data?.match?.data?.startdate).format('HH:mm'),
+	Team_1: {
+		Name: item?.data?.match?.data?.participant_teams_data[0]?.name,
+		Logo: item?.data?.match?.data?.participant_teams_data[0]?.team_logo,
+		Team_Color:
+			item?.data?.match?.data?.participant_teams_data[0]?.property
+				?.home_shirt_color_1
+	},
+	Team_2: {
+		Name: item?.data?.match?.data?.participant_teams_data[1]?.name,
+		Logo: item?.data?.match?.data?.participant_teams_data[1]?.team_logo,
+		Team_Color:
+			item?.data?.match?.data?.participant_teams_data[1]?.property
+				?.home_shirt_color_1
+	}
+});
 
 export const articleFormInitialValues = {
 	mainCategoryId: '',
@@ -76,7 +106,8 @@ export const articleFormInitialValues = {
 	author_image: [{ media_url: Profile433 }],
 	labels: [],
 	show_likes: true,
-	show_comments: true
+	show_comments: true,
+	elements: []
 };
 
 export const articleFormValidationSchema = Yup.object().shape({

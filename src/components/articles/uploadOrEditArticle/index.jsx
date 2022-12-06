@@ -78,6 +78,7 @@ import useCommonParams from '../../../hooks/useCommonParams';
 import MatchPost from '../../ArticleBuilder/PreviewArticles/MatchPost';
 import { useLazyGetMatchesTreeQuery } from '../../../data/features/articleLibrary/articleLibrary.query';
 import ArticleForm from '../../forms/ArticleForm';
+import ArticlePreviewSidebar from '../../forms/ArticleForm/subComonents/ArticlePreviewSidebar';
 
 // TEST OBJECT FOR MATCHES
 const matchObj = {
@@ -1978,59 +1979,11 @@ const UploadOrEditArticle = ({
 										</DraggableWrapper>
 									</Grid>
 									<Grid className={classes.lastGridItem} item md={3}>
-										<Box px={2} className={classes.gridDivSmall}>
-											<Box mb={3.5} className={classes.mainTitleDescription}>
-												<h2>Preview</h2>
-												<p>Review the result here before publishing</p>
-											</Box>
-
-											<PreviewWrapper form={form}>
-												{data.map((item, index) => {
-													return (
-														<div key={index} style={{ padding: '5px' }}>
-															{item.element_type === 'MEDIA' ? (
-																<ImagePreview
-																	style={{ width: '100%' }}
-																	data={item}
-																	isEdit={isEdit}
-																/>
-															) : item.element_type === 'TEXT' ? (
-																<TextPreview
-																	data={item}
-																	style={{ width: '100%' }}
-																/>
-															) : item.element_type === 'TWITTER' ? (
-																<TwitterPost
-																	data={item}
-																	itemIndex={index}
-																	style={{ width: '100%' }}
-																/>
-															) : item.element_type === 'IG' ? (
-																<InstagramPost
-																	data={item}
-																	itemIndex={index}
-																	style={{ width: '100%' }}
-																/>
-															) : item.element_type === 'QUESTION' ? (
-																<QuestionPoll
-																	data={item}
-																	itemIndex={index}
-																	style={{ width: '100%' }}
-																/>
-															) : item.element_type === 'MATCH' ? (
-																<MatchPost
-																	item={item}
-																	itemIndex={index}
-																	style={{ width: '100%' }}
-																/>
-															) : (
-																''
-															)}
-														</div>
-													);
-												})}
-											</PreviewWrapper>
-										</Box>
+										<ArticlePreviewSidebar
+											isEdit={isEdit}
+											form={form}
+											data={data}
+										/>
 									</Grid>
 								</Grid>
 								<ArticleFooter

@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import FormikTextEditor from '../../../../ui/inputs/formik/FormikRichTextEditor';
-import DraggableCardLayout from '../../../../layouts/DraggableCardLayout';
+import FormikTextEditor from '../../../../../ui/inputs/formik/FormikRichTextEditor';
+import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 
-const ArticleTextElement = ({ index, item, name, handleDeleteSlide, ...restProps}) => {
+const ArticleTextElement = ({ index, item, handleDeleteSlide, ...restProps}) => {
     return (
         <DraggableCardLayout
 			title={`Add Text`}
@@ -13,7 +13,7 @@ const ArticleTextElement = ({ index, item, name, handleDeleteSlide, ...restProps
 			onDeleteIconClick={handleDeleteSlide}
 		>
             <FormikTextEditor 
-                name={name}
+                name={`elements.${index}.text`}
                 {...restProps}
             />
         </DraggableCardLayout>
@@ -23,7 +23,6 @@ const ArticleTextElement = ({ index, item, name, handleDeleteSlide, ...restProps
 ArticleTextElement.propTypes = {
     index: PropTypes.number.isRequired,
     item: PropTypes.object,
-    name: PropTypes.string.isRequired,
     handleDeleteSlide: PropTypes.func
 }
 
