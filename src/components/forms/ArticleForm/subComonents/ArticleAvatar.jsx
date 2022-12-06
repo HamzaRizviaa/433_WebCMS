@@ -123,7 +123,7 @@ const ArticleAvatar = (props) => {
 			/>
 			<div className={classes.authorAvatar}>
 				<div>
-					<Avatar src={values?.author_image?.media_url} />
+					<Avatar src={values?.author_image[0]?.media_url} />
 				</div>
 				{!disabled && (
 					<button

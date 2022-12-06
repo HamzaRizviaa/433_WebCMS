@@ -73,7 +73,7 @@ export const articleFormInitialValues = {
 	uploadedFiles: [],
 	uploadedLandscapeCoverImage: [],
 	author_text: '433 Team',
-	author_image: Profile433,
+	author_image: [{ media_url: Profile433 }],
 	labels: [],
 	show_likes: true,
 	show_comments: true
