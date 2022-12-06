@@ -83,7 +83,7 @@ export const articleFormValidationSchema = Yup.object().shape({
 	mainCategory: Yup.string().required().label('Main Category'),
 	subCategory: Yup.string().required().label('Sub Category'),
 	author_text: Yup.string().required().label('Author Name'),
-	author_image: Yup.string().required().label('Author Image'),
+	author_image: Yup.array().required().label('Author Image'),
 	title: Yup.string().max(43).required().label('Title'),
 	sub_text: Yup.string().max(84).required().label('Sub Title'),
 	uploadedFiles: Yup.array().min(1).required().label('Portrait Image'),
