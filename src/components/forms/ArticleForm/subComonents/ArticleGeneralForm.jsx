@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect } from 'react';
 import { useStyles } from '../index.styles';
-import { useStyles as globalUseStyles } from '../../../../styles/global.style';
 import { useFormStyles } from '../../forms.style';
 import { useFormikContext } from 'formik';
 import AccordianLayout from '../../../layouts/AccordianLayout';
@@ -10,8 +9,7 @@ import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
 import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
 import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
-import Avatar from '@mui/material/Avatar';
-import { 
+import {
 	getArticleMainCategories,
 	getArticleSubCategories
 } from '../../../../data/features/articleLibrary/articleLibraryActions';
@@ -24,7 +22,6 @@ import ArticleAvatar from './ArticleAvatar';
 
 const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 	const classes = useStyles();
-	const globalClasses = globalUseStyles();
 	const formClasses = useFormStyles();
 	const dispatch = useDispatch();
 
@@ -47,7 +44,8 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 		setValues,
 		setSubmitting,
 		validateForm,
-		resetForm
+		resetForm,
+		errors
 	} = useFormikContext();
 
 	console.log('HerEerere ', values);
@@ -61,10 +59,10 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 		if (metaData) setFieldValue('subCategoryName', metaData.name);
 	};
 
-	const handleAvatarChange = (event) =>{
-		console.log(event)
-		setFieldValue("author_image",event)
-	}
+	const handleAvatarChange = (event) => {
+		console.log(event);
+		setFieldValue('author_image', event);
+	};
 
 	return (
 		<AccordianLayout title='General Information'>
@@ -102,7 +100,7 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 				<>
 					<h6 style={{ marginTop: '10px' }}>Author</h6>
 					<div className={classes.authorContainer}>
-						<ArticleAvatar name={'author_image'} onChange={handleAvatarChange} />
+						<ArticleAvatar name={'author_image'} />
 						<div className={classes.authorName}>
 							<FormikField
 								name='author_text'
@@ -112,6 +110,9 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 							/>
 						</div>
 					</div>
+					<span className={classes.authorImageError}>
+						{errors.author_image}
+					</span>
 					<h5>Add Media File</h5>
 					<h6 className={formClasses.fieldContainer}>
 						PORTRAIT IMAGE
@@ -139,7 +140,7 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 						/>
 					</div>
 
-					<div className={globalClasses.dropBoxUrlContainer}>
+					<div className={classes.dropBoxUrlContainer}>
 						<FormikField
 							label='PORTRAIT DROPBOX URL'
 							name='dropbox_url'
@@ -175,7 +176,7 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 						/>
 					</div>
 
-					<div className={globalClasses.dropBoxUrlContainer}>
+					<div className={classes.dropBoxUrlContainer}>
 						<FormikField
 							label='LANDSCAPE DROPBOX URL'
 							name='landscape_dropbox_url'
