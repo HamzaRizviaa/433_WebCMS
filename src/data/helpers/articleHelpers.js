@@ -1,3 +1,4 @@
+import moment from 'moment';
 import * as Yup from 'yup';
 import React from 'react';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
@@ -69,6 +70,8 @@ export const sidebarElements = [
 	}
 ];
 
+const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
+
 export const articleTableColumns = [
 	{
 		dataField: 'article_title',
@@ -124,9 +127,42 @@ export const articleTableColumns = [
 	}
 ];
 
+export const articleDataFormatterForForm = () => {};
+export const ElementTypes = {
+	MEDIA: 'MEDIA',
+	TEXT: 'TEXT',
+	TWITTER: 'TWITTER',
+	IG: 'IG',
+	QUESTION: 'QUESTION',
+	MATCH: 'MATCH'
+};
+
+export const default433Profile = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/Profile433.svg`;
+
+export const matchElementDataFormatter = (item) => ({
+	Day: moment(item?.data?.match?.data?.startdate).format('ddd, DD MMM'),
+	Time: moment(item?.data?.match?.data?.startdate).format('HH:mm'),
+	Team_1: {
+		Name: item?.data?.match?.data?.participant_teams_data[0]?.name,
+		Logo: item?.data?.match?.data?.participant_teams_data[0]?.team_logo,
+		Team_Color:
+			item?.data?.match?.data?.participant_teams_data[0]?.property
+				?.home_shirt_color_1
+	},
+	Team_2: {
+		Name: item?.data?.match?.data?.participant_teams_data[1]?.name,
+		Logo: item?.data?.match?.data?.participant_teams_data[1]?.team_logo,
+		Team_Color:
+			item?.data?.match?.data?.participant_teams_data[1]?.property
+				?.home_shirt_color_1
+	}
+});
+
 export const articleFormInitialValues = {
-	mainCategory: '',
-	subCategory: '',
+	mainCategoryId: '',
+	subCategoryId: '',
+	mainCategoryName: '',
+	subCategoryName: '',
 	title: '',
 	sub_text: '',
 	dropbox_url: '',
@@ -134,10 +170,11 @@ export const articleFormInitialValues = {
 	uploadedFiles: [],
 	uploadedLandscapeCoverImage: [],
 	author_text: '433 Team',
-	author_image: [{ media_url: '' }],
+	author_image: [{ media_url: Profile433 }],
 	labels: [],
 	show_likes: true,
-	show_comments: true
+	show_comments: true,
+	elements: []
 };
 
 export const articleFormValidationSchema = Yup.object().shape({
