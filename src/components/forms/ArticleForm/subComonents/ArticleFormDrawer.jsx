@@ -6,7 +6,7 @@ import { useFormikContext } from 'formik';
 import { Grid } from '@mui/material';
 import { useStyles } from './subComponents.styles';
 import DrawerLayout from '../../../layouts/DrawerLayout';
-import ArticleElementsSidebar from './ArticleElementsSidebar';
+import ArticleElementsSidebar from './elements/ArticleElementsSidebar';
 import ArticleInternalForm from './ArticleInternalForm/index';
 import ArticlePreviewSidebar from './ArticlePreviewSidebar';
 import ArticleFormFooter from './ArticleFormFooter';
@@ -23,6 +23,8 @@ const ArticleFormDrawer = ({
 	const classes = useStyles();
 	const { values, isSubmitting } = useFormikContext();
 	const specificArticleStatus = useSelector(selectSpecificArticleStatus);
+
+	console.log({ values });
 
 	return (
 		<DrawerLayout

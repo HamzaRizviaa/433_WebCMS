@@ -1,7 +1,9 @@
 import React, { useRef } from 'react';
+import { FieldArray } from 'formik';
 import { Box } from '@mui/material';
-import ArticleGeneralInfoForm from './ArticleGeneralInfoForm';
 import { useStyles } from '../subComponents.styles';
+import ArticleGeneralInfoForm from './ArticleGeneralInfoForm';
+import ArticleElementsFieldArray from '../elements/ArticleElementsFieldArray';
 
 const ArticleInternalForm = () => {
 	const classes = useStyles();
@@ -20,7 +22,10 @@ const ArticleInternalForm = () => {
 				}}
 				ref={topElementRef}
 			></Box>
-			{/** The elements to be rendered over here */}
+			<FieldArray
+				name='elements'
+				render={(props) => <ArticleElementsFieldArray {...props} />}
+			/>
 		</Box>
 	);
 };

@@ -1,14 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import FormikSelect from '../../../../../ui/inputs/formik/FormikSelect';
-import { useState } from 'react';
 import {
 	getLeagueOptions,
 	getTeamOptions,
 	getMatchName
 } from '../../../../../../data/utils';
 
-const ArticleMatchElement = ({ index, initialData, data, isPublished }) => {
+const MatchElement = ({ index, initialData, data, isPublished }) => {
 	const [leagues, setLeagues] = useState([]);
 	const [teams, setTeams] = useState([]);
 	const [matches, setMatches] = useState([]);
@@ -61,11 +60,11 @@ const ArticleMatchElement = ({ index, initialData, data, isPublished }) => {
 	);
 };
 
-ArticleMatchElement.propTypes = {
+MatchElement.propTypes = {
 	index: PropTypes.number.isRequired,
 	initialData: PropTypes.object,
 	data: PropTypes.array,
 	isPublished: PropTypes.bool
 };
 
-export default ArticleMatchElement;
+export default MatchElement;

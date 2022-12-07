@@ -48,13 +48,11 @@ const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 			</Box>
 
 			<ArticlePreviewWrapper form={form}>
-				{data.map((item, index) => {
-					return (
-						<div key={index} className={classes.elementContainer}>
-							{renderElements(item, index, isEdit)}
-						</div>
-					);
-				})}
+				{data.map((item, index) => (
+					<div key={index} className={classes.elementContainer}>
+						{renderElements(item, index, isEdit)}
+					</div>
+				))}
 			</ArticlePreviewWrapper>
 		</Box>
 	);
