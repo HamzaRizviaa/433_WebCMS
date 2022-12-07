@@ -8,7 +8,7 @@ import { useFormStyles } from '../../../../forms.style';
 import FormikDropzone from '../../../../../ui/inputs/formik/FormikDropzone';
 import FormikField from '../../../../../ui/inputs/formik/FormikField';
 
-const ImageVideo = ({ index, item }) => {
+const ImageVideoElement = ({ index, item }) => {
 	const classes = useFormStyles();
 
 	const { setFieldValue } = useFormikContext();
@@ -51,9 +51,9 @@ const ImageVideo = ({ index, item }) => {
 	);
 };
 
-ImageVideo.propTypes = {
+ImageVideoElement.propTypes = {
 	index: PropTypes.number.isRequired,
 	item: PropTypes.object
 };
 
-export default ImageVideo;
+export default ImageVideoElement;

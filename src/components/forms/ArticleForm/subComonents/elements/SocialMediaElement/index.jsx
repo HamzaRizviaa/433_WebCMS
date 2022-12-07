@@ -5,8 +5,9 @@ import FormikField from '../../../../../ui/inputs/formik/FormikField';
 import DraggableLayoutWrapper from '../../../../../layouts/DraggableLayoutWrapper';
 import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 
-const SocialMedia = ({ index, item }) => {
+const SocialMediaElement = ({ index, item }) => {
 	const classes = useFormStyles();
+
 	return (
 		<DraggableLayoutWrapper>
 			<DraggableCardLayout
@@ -29,9 +30,9 @@ const SocialMedia = ({ index, item }) => {
 	);
 };
 
-SocialMedia.propTypes = {
+SocialMediaElement.propTypes = {
 	index: PropTypes.number.isRequired,
 	item: PropTypes.object
 };
 
-export default SocialMedia;
+export default SocialMediaElement;

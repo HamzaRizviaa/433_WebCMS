@@ -39,6 +39,7 @@ const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 				return null;
 		}
 	};
+
 	return (
 		<Box px={2} className={classes.gridDivSmall}>
 			<Box mb={3.5} className={classes.mainTitleDescription}>
@@ -47,22 +48,20 @@ const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 			</Box>
 
 			<ArticlePreviewWrapper form={form}>
-				{data.map((item, index) => {
-					return (
-						<div key={index} className={classes.elementContainer}>
-							{renderElements(item, index, isEdit)}
-						</div>
-					);
-				})}
+				{data.map((item, index) => (
+					<div key={index} className={classes.elementContainer}>
+						{renderElements(item, index, isEdit)}
+					</div>
+				))}
 			</ArticlePreviewWrapper>
 		</Box>
 	);
 };
-
-export default ArticlePreviewSidebar;
 
 ArticlePreviewSidebar.propTypes = {
 	data: PropTypes.array.isRequired,
 	form: PropTypes.object.isRequired,
 	isEdit: PropTypes.bool.isRequired
 };
+
+export default ArticlePreviewSidebar;

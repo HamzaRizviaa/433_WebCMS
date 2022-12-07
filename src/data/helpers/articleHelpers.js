@@ -1,7 +1,76 @@
 import moment from 'moment';
 import * as Yup from 'yup';
+import React from 'react';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime } from '../utils';
+import {
+	Text,
+	Instragram,
+	ImageVideo,
+	TwitterLine,
+	BallIcon,
+	Question
+} from '../../assets/svg-icons';
+export const sidebarElements = [
+	{
+		image: <Text />,
+		text: 'Add Text',
+		data: {
+			description: '',
+			dropbox_url: '',
+			element_type: 'TEXT'
+		}
+		// type: 'TEXT'
+	},
+	{
+		image: <ImageVideo />,
+		text: 'Add Image / Video',
+		data: {
+			uploadedFiles: [],
+			dropbox_url: '',
+			element_type: 'MEDIA'
+		}
+	},
+	{
+		image: <TwitterLine />,
+		text: 'Add Tweet',
+		data: {
+			twitter_post_url: '',
+			dropbox_url: '',
+			element_type: 'TWITTER'
+		}
+	},
+	{
+		image: <Instragram />,
+		text: 'Add IG post',
+		data: {
+			instagram_post_url: '',
+			dropbox_url: '',
+			element_type: 'TIGEXT'
+		}
+	},
+	{
+		image: <Question />,
+		text: 'Add Question',
+		data: {
+			question_data: {},
+			element_type: 'QUESTIONN'
+		}
+	},
+	{
+		image: <BallIcon />,
+		text: 'Add Match',
+		data: {
+			league_name: '',
+			match_title: '',
+			team_name: '',
+			match_id: '',
+			element_type: 'MATCH'
+		}
+	}
+];
+
+const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
 
 export const articleTableColumns = [
 	{
@@ -58,6 +127,7 @@ export const articleTableColumns = [
 	}
 ];
 
+export const articleDataFormatterForForm = () => {};
 export const ElementTypes = {
 	MEDIA: 'MEDIA',
 	TEXT: 'TEXT',
@@ -89,8 +159,10 @@ export const matchElementDataFormatter = (item) => ({
 });
 
 export const articleFormInitialValues = {
-	mainCategory: '',
-	subCategory: '',
+	mainCategoryId: '',
+	subCategoryId: '',
+	mainCategoryName: '',
+	subCategoryName: '',
 	title: '',
 	sub_text: '',
 	dropbox_url: '',
@@ -98,7 +170,7 @@ export const articleFormInitialValues = {
 	uploadedFiles: [],
 	uploadedLandscapeCoverImage: [],
 	author_text: '433 Team',
-	author_image: [{ media_url: '' }],
+	author_image: [{ media_url: Profile433 }],
 	labels: [],
 	show_likes: true,
 	show_comments: true,

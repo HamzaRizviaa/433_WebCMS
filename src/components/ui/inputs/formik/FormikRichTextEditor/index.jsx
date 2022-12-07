@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import PropTypes from 'prop-types';
 import { useField } from 'formik';
 import RichTextEditor from '../../RichTextEditor';
 
@@ -22,6 +23,7 @@ const FormikTextEditor = ({ name, onChange, onBlur }) => {
 		setTouched(true);
 		if (onBlur) onBlur(name, value);
 	}, [value, onBlur]);
+
 	return (
 		<RichTextEditor
 			name={name}
@@ -31,6 +33,12 @@ const FormikTextEditor = ({ name, onChange, onBlur }) => {
 			error={touched ? error : ''}
 		/>
 	);
+};
+
+FormikTextEditor.propTypes = {
+	name: PropTypes.string,
+	onChange: PropTypes.func,
+	onBlur: PropTypes.func
 };
 
 export default FormikTextEditor;
