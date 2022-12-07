@@ -1,26 +1,31 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect } from 'react';
-import { useStyles } from '../index.styles';
-import { useFormStyles } from '../../forms.style';
+import React, { useEffect, Fragment } from 'react';
+import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
 import { useFormikContext } from 'formik';
-import AccordianLayout from '../../../layouts/AccordianLayout';
-import FormikSelect from '../../../ui/inputs/formik/FormikSelect';
-import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
-import FormikField from '../../../ui/inputs/formik/FormikField';
-import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
-import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
+import { useStyles } from '../../index.styles';
+import { useFormStyles } from '../../../forms.style';
+import AccordianLayout from '../../../../layouts/AccordianLayout';
+import FormikSelect from '../../../../ui/inputs/formik/FormikSelect';
+import FormikDropzone from '../../../../ui/inputs/formik/FormikDropzone';
+import FormikField from '../../../../ui/inputs/formik/FormikField';
+import FormikLabelsSelect from '../../../../ui/inputs/formik/FormikLabelsSelect';
+import FormikSwitchField from '../../../../ui/inputs/formik/FormikSwitchField';
+import ArticleAvatarField from './ArticleAvatarField';
 import {
 	getArticleMainCategories,
 	getArticleSubCategories
-} from '../../../../data/features/articleLibrary/articleLibraryActions';
-import { useDispatch, useSelector } from 'react-redux';
+} from '../../../../../data/features/articleLibrary/articleLibraryActions';
 import {
 	selectArticleMainCategories,
 	selectArticleSubCategories
-} from '../../../../data/selectors';
-import ArticleAvatar from './ArticleAvatar';
+} from '../../../../../data/selectors';
 
-const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
+const ArticleGeneralInfoForm = ({
+	previewFile,
+	openPreviewer,
+	handleLoading
+}) => {
 	const classes = useStyles();
 	const formClasses = useFormStyles();
 	const dispatch = useDispatch();
@@ -48,8 +53,6 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 		errors
 	} = useFormikContext();
 
-	console.log('HerEerere ', values);
-
 	const handleMainCategoryChange = (val, metaData) => {
 		if (val) dispatch(getArticleSubCategories(val));
 		if (metaData) setFieldValue('mainCategoryName', metaData.name);
@@ -60,7 +63,6 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 	};
 
 	const handleAvatarChange = (event) => {
-		console.log(event);
 		setFieldValue('author_image', event);
 	};
 
@@ -96,11 +98,11 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 					</div>
 				</div>
 			</div>
-			{values.subCategoryId ? (
-				<>
+			{values.subCategoryId && (
+				<Fragment>
 					<h6 style={{ marginTop: '10px' }}>Author</h6>
 					<div className={classes.authorContainer}>
-						<ArticleAvatar name={'author_image'} />
+						<ArticleAvatarField name={'author_image'} />
 						<div className={classes.authorName}>
 							<FormikField
 								name='author_text'
@@ -118,7 +120,6 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 						PORTRAIT IMAGE
 						<span style={{ color: '#ff355a', fontSize: '16px' }}>{'*'}</span>
 					</h6>
-
 					<div className={formClasses.dropzoneWrapper}>
 						<FormikDropzone
 							name='uploadedFiles'
@@ -139,7 +140,6 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 							onDelete={() => setFieldValue('uploadedFiles', [])}
 						/>
 					</div>
-
 					<div className={classes.dropBoxUrlContainer}>
 						<FormikField
 							label='PORTRAIT DROPBOX URL'
@@ -149,12 +149,10 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 							maxRows={2}
 						/>
 					</div>
-
 					<h6 className={classes.imageText}>
 						LANDSCAPE IMAGE
 						<span style={{ color: '#ff355a', fontSize: '16px' }}>{'*'}</span>
 					</h6>
-
 					<div className={formClasses.dropzoneWrapper}>
 						<FormikDropzone
 							name='uploadedLandscapeCoverImage'
@@ -175,7 +173,6 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 							onDelete={() => setFieldValue('uploadedLandscapeCoverImage', [])}
 						/>
 					</div>
-
 					<div className={classes.dropBoxUrlContainer}>
 						<FormikField
 							label='LANDSCAPE DROPBOX URL'
@@ -196,7 +193,6 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 							maxRows={2}
 						/>
 					</div>
-
 					<div className={formClasses.fieldContainer}>
 						<FormikField
 							label='DESCRIPTION'
@@ -207,7 +203,6 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 							maxRows={2}
 						/>
 					</div>
-
 					<div className={formClasses.fieldContainer}>
 						<FormikLabelsSelect
 							name='labels'
@@ -218,7 +213,6 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 							library='Articles'
 						/>
 					</div>
-
 					<div className={classes.fieldContainer}>
 						<div className={classes.switchContainer}>
 							<FormikSwitchField name='show_comments' label='Show Comments' />
@@ -227,12 +221,16 @@ const ArticleGeneralForm = (previewFile, openPreviewer, handleLoading) => {
 							<FormikSwitchField name='show_likes' label='Show Likes' />
 						</div>
 					</div>
-				</>
-			) : (
-				''
+				</Fragment>
 			)}
 		</AccordianLayout>
 	);
 };
 
-export default ArticleGeneralForm;
+ArticleGeneralInfoForm.propTypes = {
+	previewFile: PropTypes.any,
+	openPreviewer: PropTypes.any,
+	handleLoading: PropTypes.any
+};
+
+export default ArticleGeneralInfoForm;

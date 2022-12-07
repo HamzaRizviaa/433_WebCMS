@@ -1,5 +1,24 @@
-// import React from 'react';
 import moment from 'moment';
+
+export const getFileExtension = (type) => {
+	if (type) {
+		let _type = type.split('/');
+		return _type && _type[1];
+	}
+};
+
+export const selectFileType = (type) => {
+	switch (type) {
+		case 'video/mp4':
+			return 'video';
+		case 'audio/mp3':
+			return 'audio';
+		case 'audio/mpeg':
+			return 'audio';
+		default:
+			return 'image';
+	}
+};
 
 export const checkEmptyIG = (data) => {
 	const filteredData = data.filter((item) => item.element_type === 'IG');
@@ -324,8 +343,8 @@ export const getLeagueOptions = (data) => {
 };
 
 export const getTeamOptions = (data, val) => {
-	return data.find((value) => value === val)?.teams
-}
+	return data.find((value) => value === val)?.teams;
+};
 
 export const getMatchName = (date, name) => {
 	return `${moment(date).format('DD-MM-YYYY')} - ${name

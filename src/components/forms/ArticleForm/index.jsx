@@ -1,30 +1,43 @@
 /* eslint-disable no-unused-vars */
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import { Formik, Form } from 'formik';
+import { isEmpty } from 'lodash';
 import {
 	articleFormInitialValues,
 	articleFormValidationSchema
 } from '../../../data/helpers/articleHelpers';
 import DeleteModal from '../../DeleteModal';
 import ArticleFormDrawer from './subComonents/ArticleFormDrawer';
+import { selectSpecificArticle } from '../../../data/selectors/articleLibrarySelectors';
 
 const ArticleForm = ({ open, handleClose, isEdit, status }) => {
+	const specificArticle = useSelector(selectSpecificArticle);
+
 	// Refs
 	const dialogWrapper = useRef(null);
 
 	// States
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
+	const initialValues = useMemo(
+		() =>
+			isEdit && !isEmpty(specificArticle)
+				? specificArticle
+				: articleFormInitialValues,
+		[isEdit, specificArticle]
+	);
+
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
 	const onSubmitHandler = () => {};
 
-	// const onDeleteHandler = () => {};
+	const onDeleteHandler = (id, isDraft, setSubmitting) => {};
 
 	return (
 		<Formik
-			initialValues={articleFormInitialValues}
+			initialValues={initialValues}
 			validationSchema={articleFormValidationSchema}
 			onSubmit={onSubmitHandler}
 			enableReinitialize
@@ -44,7 +57,7 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 						open={openDeleteModal}
 						toggle={toggleDeleteModal}
 						deleteBtn={() => {
-							// onDeleteHandler(specificArticle?.id, status, setSubmitting);
+							onDeleteHandler(specificArticle?.id, status, setSubmitting);
 						}}
 						text={'Article'}
 						wrapperRef={dialogWrapper}

@@ -15,17 +15,18 @@ import Avatar from '@mui/material/Avatar';
 import { default433Profile } from '../../../../data/helpers/articleHelpers';
 
 const ArticlePreviewWrapper = ({ children, form }) => {
-	/**
-	 * Date & Est time
-	 */
-	const { date, time } = getArticleDates();
-
 	// Get Cover Url From data
 	const getUrl = () =>
 		form.uploadedFiles.length > 0 && form?.uploadedFiles[0]?.media_url;
 
 	// Stylings
 	const classes = useStyles({ url: getUrl() });
+
+	/**
+	 * Date & Est time
+	 */
+	const { date, time } = getArticleDates();
+
 	return (
 		// Main Container
 		<div className={classes.previewWrapper}>
