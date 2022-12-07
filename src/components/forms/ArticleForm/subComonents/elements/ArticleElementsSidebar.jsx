@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Box, Typography } from '@material-ui/core';
 import { useElementsStyles } from './elements.styles';
 import ToggleSwitchField from '../../../../ui/inputs/ToggleSwitchField';
-import { sidebarElements } from '../../../../../data/helpers/articleHelpers';
+import { articleSidebarElements } from '../../../../../data/helpers/articleHelpers';
 
 const ArticleElementsSidebar = ({ unshift, push }) => {
 	const classes = useElementsStyles();
@@ -31,18 +31,16 @@ const ArticleElementsSidebar = ({ unshift, push }) => {
 					<ToggleSwitchField checked={itemsOnTop} onChange={setItemsOnTop} />
 				</Box>
 			</Box>
-
-			{sidebarElements?.length > 0 &&
-				sidebarElements.map((dataItem, index) => (
-					<button
-						onClick={() => handleClick(dataItem)}
-						key={index}
-						className={classes.elementContainter}
-					>
-						{dataItem.image}
-						<p className={classes.elementText}>{dataItem.text}</p>
-					</button>
-				))}
+			{articleSidebarElements.map((dataItem, index) => (
+				<button
+					onClick={() => handleClick(dataItem)}
+					key={index}
+					className={classes.elementContainter}
+				>
+					{dataItem.image}
+					<p className={classes.elementText}>{dataItem.text}</p>
+				</button>
+			))}
 		</Box>
 	);
 };

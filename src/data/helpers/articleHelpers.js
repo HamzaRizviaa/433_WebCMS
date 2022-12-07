@@ -11,66 +11,9 @@ import {
 	BallIcon,
 	Question
 } from '../../assets/svg-icons';
-export const sidebarElements = [
-	{
-		image: <Text />,
-		text: 'Add Text',
-		data: {
-			description: '',
-			dropbox_url: '',
-			element_type: 'TEXT'
-		}
-		// type: 'TEXT'
-	},
-	{
-		image: <ImageVideo />,
-		text: 'Add Image / Video',
-		data: {
-			uploadedFiles: [],
-			dropbox_url: '',
-			element_type: 'MEDIA'
-		}
-	},
-	{
-		image: <TwitterLine />,
-		text: 'Add Tweet',
-		data: {
-			twitter_post_url: '',
-			dropbox_url: '',
-			element_type: 'TWITTER'
-		}
-	},
-	{
-		image: <Instragram />,
-		text: 'Add IG post',
-		data: {
-			instagram_post_url: '',
-			dropbox_url: '',
-			element_type: 'TIGEXT'
-		}
-	},
-	{
-		image: <Question />,
-		text: 'Add Question',
-		data: {
-			question_data: {},
-			element_type: 'QUESTIONN'
-		}
-	},
-	{
-		image: <BallIcon />,
-		text: 'Add Match',
-		data: {
-			league_name: '',
-			match_title: '',
-			team_name: '',
-			match_id: '',
-			element_type: 'MATCH'
-		}
-	}
-];
 
-const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
+export const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
+export const default433Profile = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/Profile433.svg`;
 
 export const articleTableColumns = [
 	{
@@ -127,7 +70,64 @@ export const articleTableColumns = [
 	}
 ];
 
-export const articleDataFormatterForForm = () => {};
+export const articleSidebarElements = [
+	{
+		image: <Text />,
+		text: 'Add Text',
+		data: {
+			description: '',
+			dropbox_url: '',
+			element_type: 'TEXT'
+		}
+	},
+	{
+		image: <ImageVideo />,
+		text: 'Add Image / Video',
+		data: {
+			uploadedFiles: [],
+			dropbox_url: '',
+			element_type: 'MEDIA'
+		}
+	},
+	{
+		image: <TwitterLine />,
+		text: 'Add Tweet',
+		data: {
+			twitter_post_url: '',
+			dropbox_url: '',
+			element_type: 'TWITTER'
+		}
+	},
+	{
+		image: <Instragram />,
+		text: 'Add IG post',
+		data: {
+			instagram_post_url: '',
+			dropbox_url: '',
+			element_type: 'IG'
+		}
+	},
+	{
+		image: <Question />,
+		text: 'Add Question',
+		data: {
+			question_data: {},
+			element_type: 'QUESTIONN'
+		}
+	},
+	{
+		image: <BallIcon />,
+		text: 'Add Match',
+		data: {
+			league_name: '',
+			match_title: '',
+			team_name: '',
+			match_id: '',
+			element_type: 'MATCH'
+		}
+	}
+];
+
 export const ElementTypes = {
 	MEDIA: 'MEDIA',
 	TEXT: 'TEXT',
@@ -136,8 +136,6 @@ export const ElementTypes = {
 	QUESTION: 'QUESTION',
 	MATCH: 'MATCH'
 };
-
-export const default433Profile = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/Profile433.svg`;
 
 export const matchElementDataFormatter = (item) => ({
 	Day: moment(item?.data?.match?.data?.startdate).format('ddd, DD MMM'),
@@ -157,6 +155,10 @@ export const matchElementDataFormatter = (item) => ({
 				?.home_shirt_color_1
 	}
 });
+
+export const articleDataFormatterForForm = () => {};
+
+export const articleDataFormatterForService = () => {};
 
 export const articleFormInitialValues = {
 	mainCategoryId: '',
