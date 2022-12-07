@@ -24,7 +24,7 @@ import LoadingOverlay from 'react-loading-overlay';
 import Instragram from '../../../assets/Instagram.svg';
 import Text from '../../../assets/Text.svg';
 import ImageVideo from '../../../assets/Image.svg';
-import Tweet from '../../../assets/Twitter Line.svg';
+import Tweet from '../../../assets/TwitterLine.svg';
 import Question from '../../../assets/Quiz.svg';
 import BallIcon from '../../../assets/Ball.svg';
 import ToggleSwitch from '../../switch';
@@ -1854,6 +1854,7 @@ const UploadOrEditArticle = ({
 								)}
 								<Grid container>
 									<Grid className={classes.firstGridItem} pr={1} item md={3}>
+										{/* <ArticleElementsSidebar/> */}
 										<div className={classes.gridDivSmall}>
 											<Box mb={3.5} className={classes.mainTitleDescription}>
 												<h2>Elements</h2>
@@ -1891,6 +1892,7 @@ const UploadOrEditArticle = ({
 											<h2>Builder</h2>
 											<p>Edit, reorder elements here and build your article</p>
 										</Box>
+
 										{/* <ArticleGeneralInfo
 											isEdit={isEdit}
 											form={form}
