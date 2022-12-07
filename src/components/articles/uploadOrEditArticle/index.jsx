@@ -78,9 +78,6 @@ import useCommonParams from '../../../hooks/useCommonParams';
 import MatchPost from '../../ArticleBuilder/PreviewArticles/MatchPost';
 import { useLazyGetMatchesTreeQuery } from '../../../data/features/articleLibrary/articleLibrary.query';
 
-//new refactor element
-import ArticleElementsSidebar from '../../forms/ArticleForm/subComonents/ArticleElementsSidebar';
-import QuestionElement from '../../forms/ArticleForm/subComonents/elements/QuestionElement';
 // TEST OBJECT FOR MATCHES
 const matchObj = {
 	Day: 'Wed, 23 Jan',
@@ -1891,7 +1888,7 @@ const UploadOrEditArticle = ({
 											<h2>Builder</h2>
 											<p>Edit, reorder elements here and build your article</p>
 										</Box>
-										{/* <QuestionElement /> */}
+
 										<ArticleGeneralInfo
 											isEdit={isEdit}
 											form={form}
