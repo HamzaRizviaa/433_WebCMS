@@ -9,7 +9,7 @@ import DrawerLayout from '../../../layouts/DrawerLayout';
 import ArticleElementsSidebar from './elements/ArticleElementsSidebar';
 import ArticleInternalForm from './ArticleInternalForm/index';
 import ArticlePreviewSidebar from './ArticlePreviewSidebar';
-import ArticleFormFooter from './ArticleFormFooter';
+import ArticleFormFooter from './ArticleFormFooter/index';
 import { selectSpecificArticleStatus } from '../../../../data/selectors';
 
 const ArticleFormDrawer = ({
@@ -23,8 +23,7 @@ const ArticleFormDrawer = ({
 	const classes = useStyles();
 	const { values, isSubmitting } = useFormikContext();
 	const specificArticleStatus = useSelector(selectSpecificArticleStatus);
-
-	console.log({ values });
+	const isLoading = isSubmitting || specificArticleStatus === 'loading';
 
 	return (
 		<DrawerLayout
@@ -32,7 +31,7 @@ const ArticleFormDrawer = ({
 			handleClose={handleClose}
 			title={isEdit ? 'Edit Article' : 'Article Builder'}
 			notifID={isEdit ? values.id : ''}
-			isLoading={isSubmitting || specificArticleStatus === 'loading'}
+			isLoading={isLoading}
 			fromArticle
 		>
 			<Grid container>
@@ -50,7 +49,13 @@ const ArticleFormDrawer = ({
 					/>
 				</Grid>
 			</Grid>
-			<ArticleFormFooter />
+			<ArticleFormFooter
+				isEdit={isEdit}
+				openDeleteModal={toggleDeleteModal}
+				saveDraft={onSubmitHandler}
+				publishDraft={onSubmitHandler}
+				loading={isLoading}
+			/>
 		</DrawerLayout>
 	);
 };
