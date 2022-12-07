@@ -1,7 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-export const useArticleFormStyles = makeStyles((theme) => ({
-	//article sidebar elements
+export const useElementsStyles = makeStyles((theme) => ({
 	ArticleElementsSidebar: {
 		position: 'sticky',
 		top: '100px',
