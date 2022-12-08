@@ -179,6 +179,42 @@ export const articleFormInitialValues = {
 	elements: []
 };
 
+//
+// Article Validation
+//
+const elementBaseSchema = Yup.object().shape({
+	element_type: Yup.string().required()
+});
+
+const textElementValidationSchema = elementBaseSchema.shape({
+	description: Yup.string().required(),
+	dropbox_url: Yup.string()
+});
+
+const mediaElementValidationSchema = elementBaseSchema.shape({
+	uploadedFiles: Yup.array().min(1).required(),
+	dropbox_url: Yup.string()
+});
+
+const twitterElementValidationSchema = elementBaseSchema.shape({
+	twitter_post_url: Yup.string().required(),
+	dropbox_url: Yup.string()
+});
+
+const igElementValidationSchema = elementBaseSchema.shape({
+	instagram_post_url: Yup.string().required(),
+	dropbox_url: Yup.string()
+});
+
+const questionElementValidationSchema = elementBaseSchema.shape({});
+
+const matchElementValidationSchema = elementBaseSchema.shape({
+	league_name: Yup.string().required(),
+	match_title: Yup.string().required(),
+	team_name: Yup.string().required(),
+	match_id: Yup.string().required()
+});
+
 export const articleFormValidationSchema = Yup.object().shape({
 	mainCategory: Yup.string().required().label('Main Category'),
 	subCategory: Yup.string().required().label('Sub Category'),
@@ -203,5 +239,15 @@ export const articleFormValidationSchema = Yup.object().shape({
 		.required('You need to enter atleast 4 labels')
 		.label('Labels'),
 	show_likes: Yup.boolean().required(),
-	show_comments: Yup.boolean().required()
+	show_comments: Yup.boolean().required(),
+	elements: Yup.array.of(
+		Yup.mixed().oneOf([
+			textElementValidationSchema,
+			mediaElementValidationSchema,
+			twitterElementValidationSchema,
+			igElementValidationSchema,
+			questionElementValidationSchema,
+			matchElementValidationSchema
+		])
+	)
 });
