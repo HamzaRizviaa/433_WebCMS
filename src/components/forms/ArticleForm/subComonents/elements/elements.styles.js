@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 export const useElementsStyles = makeStyles((theme) => ({
+	//article element sidebar
 	ArticleElementsSidebar: {
 		position: 'sticky',
 		top: '100px',
@@ -47,5 +48,17 @@ export const useElementsStyles = makeStyles((theme) => ({
 		alignItems: 'center',
 		letterSpacing: '0.02em',
 		color: theme.palette.white
-	}
+	},
+	//article question element
+	slideImageLabel: {
+		marginBottom: '24px',
+		fontFamily: 'Poppins',
+		fontWeight: 700,
+		fontSize: '16px'
+	},
+	dropzoneWrapper: {
+		marginTop: 15,
+		marginBottom: 20
+	},
+	requiredImage: { color: '#ff355a', fontSize: '16px' }
 }));
