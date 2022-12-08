@@ -1,18 +1,26 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+//import PropTypes from 'prop-types';
 import { Box, Typography } from '@material-ui/core';
 import { useElementsStyles } from './elements.styles';
 import ToggleSwitchField from '../../../../ui/inputs/ToggleSwitchField';
 import { articleSidebarElements } from '../../../../../data/helpers/articleHelpers';
+import { useFormikContext } from 'formik';
 
-const ArticleElementsSidebar = ({ unshift, push }) => {
+const ArticleElementsSidebar = () => {
 	const classes = useElementsStyles();
+	const { values, setFieldValue } = useFormikContext();
 	const [itemsOnTop, setItemsOnTop] = useState(false);
 
 	const handleClick = (dataItem) => {
+		const cloneElements = [...values.elements];
 		if (itemsOnTop) {
-			unshift(dataItem.data);
-		} else push(dataItem.data);
+			cloneElements.unshift(dataItem.data);
+		} else cloneElements.push(dataItem.data);
+		setFieldValue('elements', cloneElements);
+	};
+
+	const handleChange = (value) => {
+		setItemsOnTop(value);
 	};
 
 	return (
@@ -28,7 +36,7 @@ const ArticleElementsSidebar = ({ unshift, push }) => {
 					Add elements to the top
 				</Typography>
 				<Box className={classes.toggleBtn}>
-					<ToggleSwitchField checked={itemsOnTop} onChange={setItemsOnTop} />
+					<ToggleSwitchField checked={itemsOnTop} onChange={handleChange} />
 				</Box>
 			</Box>
 			{articleSidebarElements.map((dataItem, index) => (
@@ -45,9 +53,9 @@ const ArticleElementsSidebar = ({ unshift, push }) => {
 	);
 };
 
-ArticleElementsSidebar.propTypes = {
-	push: PropTypes.func.isRequired,
-	unshift: PropTypes.func.isRequired
-};
+// ArticleElementsSidebar.propTypes = {
+// 	push: PropTypes.func.isRequired,
+// 	unshift: PropTypes.func.isRequired
+// };
 
 export default ArticleElementsSidebar;
