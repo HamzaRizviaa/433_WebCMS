@@ -6,8 +6,10 @@ import {
 	getTeamOptions,
 	getMatchName
 } from '../../../../../../data/utils';
+import DraggableLayoutWrapper from '../../../../../layouts/DraggableLayoutWrapper';
+import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 
-const MatchElement = ({ index, initialData, data, isPublished }) => {
+const MatchElement = ({ index, item, initialData, data, isPublished }) => {
 	const [leagues, setLeagues] = useState([]);
 	const [teams, setTeams] = useState([]);
 	const [matches, setMatches] = useState([]);
@@ -35,33 +37,41 @@ const MatchElement = ({ index, initialData, data, isPublished }) => {
 	};
 
 	return (
-		<div>
+		<DraggableLayoutWrapper>
+			<DraggableCardLayout
+				title={`Add Match`}
+				key={index}
+				index={index}
+				item={item}
+			>
 			<FormikSelect
-				name={`elements.${index}.league`}
+				name={`elements.${index}.league_name`}
 				placeholder='SELECT LEAGUE'
 				options={getLeagueOptions(leagues)}
 				disabled={isPublished}
 				onChange={handleLeagueChange}
 			/>
 			<FormikSelect
-				name={`elements.${index}.team`}
+				name={`elements.${index}.team_name`}
 				placeholder='SELECT TEAM'
 				options={teams}
 				disabled={isPublished || teams.length === 0}
 				onChange={handleTeamChange}
 			/>
 			<FormikSelect
-				name={`elements.${index}.match`}
+				name={`elements.${index}.match_title`}
 				placeholder='SELECT MATCH'
 				options={matches}
 				disabled={isPublished || matches.length === 0}
 			/>
-		</div>
+			</DraggableCardLayout>
+		</DraggableLayoutWrapper>
 	);
 };
 
 MatchElement.propTypes = {
 	index: PropTypes.number.isRequired,
+	item: PropTypes.object,
 	initialData: PropTypes.object,
 	data: PropTypes.array,
 	isPublished: PropTypes.bool
