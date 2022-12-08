@@ -240,7 +240,7 @@ export const articleFormValidationSchema = Yup.object().shape({
 		.label('Labels'),
 	show_likes: Yup.boolean().required(),
 	show_comments: Yup.boolean().required(),
-	elements: Yup.array.of(
+	elements: Yup.array().of(
 		Yup.mixed().oneOf([
 			textElementValidationSchema,
 			mediaElementValidationSchema,
