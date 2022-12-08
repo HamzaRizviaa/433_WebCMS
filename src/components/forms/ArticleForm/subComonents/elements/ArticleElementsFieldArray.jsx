@@ -2,11 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { ElementTypes } from '../../../../../data/helpers/articleHelpers';
 
-// Elements
+// // Elements
 import TextElement from './TextElement';
 import ImageVideoElement from './ImageVideoElement';
 import SocialMediaElement from './SocialMediaElement';
 import MatchElement from './MatchElement';
+import QuestionElement from './QuestionElement';
 
 const ArticleElementsFieldArray = ({ form }) => {
 	const renderArticleElement = (item, index) => {
@@ -22,7 +23,7 @@ const ArticleElementsFieldArray = ({ form }) => {
 			case ElementTypes.IG:
 				return <SocialMediaElement index={index} item={item} />;
 			case ElementTypes.QUESTION:
-				return <div index={index} item={item}></div>;
+				return <QuestionElement index={index} item={item} />;
 			case ElementTypes.MATCH:
 				return <MatchElement index={index} item={item} />;
 			default:
@@ -31,11 +32,13 @@ const ArticleElementsFieldArray = ({ form }) => {
 	};
 
 	return (
-		<div>
-			{form.values.elements.map((item, index) => (
-				<div key={index}>{renderArticleElement(item, index)}</div>
-			))}
-		</div>
+		<>
+			<div>
+				{form.values.elements.map((item, index) => (
+					<div key={index}>{renderArticleElement(item, index)}</div>
+				))}
+			</div>
+		</>
 	);
 };
 

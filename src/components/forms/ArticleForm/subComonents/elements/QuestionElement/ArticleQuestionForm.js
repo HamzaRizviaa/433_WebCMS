@@ -1,0 +1,108 @@
+/* eslint-disable no-unused-vars */
+import React from 'react';
+import PropTypes from 'prop-types';
+import FormikDropzone from '../../../../../ui/inputs/formik/FormikDropzone';
+import FormikField from '../../../../../ui/inputs/formik/FormikField';
+import FormikLabelsSelect from '../../../../../ui/inputs/formik/FormikLabelsSelect';
+import { useElementsStyles } from '../elements.styles';
+const ArticleQuestionForm = ({ openPreviewer, type, isPublished }) => {
+	const classes = useElementsStyles();
+
+	const handleDeleteFile = () => {
+		console.log('abc');
+	};
+	return (
+		<div>
+			<div>
+				<span className={classes.slideImageLabel}>
+					Add Background Image
+					<span className={classes.requiredImage}>{'*'}</span>
+				</span>
+
+				<div className={classes.dropzoneWrapper}>
+					<FormikDropzone
+						name='uploadedFiles'
+						accept='image/jpeg, image/png'
+						formatMessage='Supported formats are jpeg and png'
+						fileSizeMessage='Image file size should not exceed 1MB.'
+						onPreview={openPreviewer}
+						onDelete={() => handleDeleteFile()}
+						hideDeleteIcon={isPublished}
+						showPreview
+						hidePreviewIcon
+					/>
+				</div>
+			</div>
+			<div className={classes.fieldContainer}>
+				<FormikField
+					//name={`questions.${index}.dropbox_url`}
+					name='dropbox_url'
+					label='DROPBOX URL'
+					placeholder='Please drop the dropbox URL here'
+					multiline
+					maxRows={2}
+					//disabled={isArticle}
+				/>
+			</div>
+			<div className={classes.fieldContainer}>
+				<FormikField
+					//	name={`questions.${index}.question`}
+					name='question'
+					label='QUESTION'
+					placeholder='Please write your question here'
+					multiline
+					maxRows={2}
+					maxLength={43}
+					disabled={isPublished}
+					required
+				/>
+			</div>
+			<div className={classes.fieldContainer}>
+				<FormikField
+					//	name={`questions.${index}.question`}
+					name='answer'
+					label={type === 'quiz' ? 'RIGHT ANSWER' : 'ANSWER 1'}
+					placeholder='Please write your answer here'
+					multiline
+					maxRows={2}
+					maxLength={29}
+					disabled={isPublished}
+					required
+				/>
+			</div>
+			<div className={classes.fieldContainer}>
+				<FormikField
+					//	name={`questions.${index}.question`}
+					name='answer2'
+					label={type === 'quiz' ? 'WRONG ANSWER' : 'ANSWER 2'}
+					placeholder='Please write your answer here'
+					multiline
+					maxRows={2}
+					maxLength={29}
+					disabled={isPublished}
+					required
+				/>
+			</div>
+
+			<div className={classes.fieldContainer}>
+				<FormikLabelsSelect
+					name='labels'
+					label='LABELS'
+					placeholder='Select a minimum of 1 labels'
+					disabled={isPublished}
+					required
+					library='Articles'
+				/>
+			</div>
+		</div>
+	);
+};
+
+ArticleQuestionForm.propTypes = {
+	type: PropTypes.string,
+	openPreviewer: PropTypes.any,
+	isPublished: PropTypes.bool
+	//handleLoading: PropTypes.any
+};
+
+export default ArticleQuestionForm;
