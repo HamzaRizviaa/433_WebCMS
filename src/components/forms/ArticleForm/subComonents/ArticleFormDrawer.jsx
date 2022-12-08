@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useFormikContext } from 'formik';
-import { Grid } from '@mui/material';
+import { Grid } from '@material-ui/core';
 import { useStyles } from './subComponents.styles';
 import DrawerLayout from '../../../layouts/DrawerLayout';
 import ArticleElementsSidebar from './elements/ArticleElementsSidebar';

@@ -14,15 +14,19 @@ export const useStyles = makeStyles(() => ({
 	},
 	firstGridItem: {
 		maxWidth: '22%',
-		flexBasis: '22%'
+		flexBasis: '22%',
+		paddingRight: '1rem'
 	},
 	secondGridItem: {
 		maxWidth: '45%',
-		flexBasis: '45%'
+		flexBasis: '45%',
+		padding: '0px 1.5px',
+		paddingTop: '6.5rem'
 	},
 	lastGridItem: {
 		maxWidth: '33%',
-		flexBasis: '33%'
+		flexBasis: '33%',
+		paddingTop: '6.5rem'
 	},
 	textField: {
 		width: '100%'
