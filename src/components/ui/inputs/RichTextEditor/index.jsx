@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Editor } from '@tinymce/tinymce-react';
 import 'tinymce/tinymce';
@@ -26,23 +26,12 @@ import {
 import { useTextEditorStyles } from './index.style';
 import { useInputsStyles } from '../inputs.style';
 
-const RichTextEditor = ({ name, id, initialData, onBlur, onChange, error }) => {
+const RichTextEditor = ({ name, id, value, onBlur, onChange, error }) => {
 	const classes = useTextEditorStyles();
 	const inputClasses = useInputsStyles();
-	const [description, setDescription] = useState('');
-
-	useEffect(() => {
-		if (initialData?.description) {
-			let editorbyId =
-				window.tinymce?.get(`text-${id}_ifr`) ||
-				window.tinymce?.get(`text-${id}`);
-			setDescription(editorbyId?.setContent(initialData?.description));
-		}
-	}, [initialData]);
 
 	const handleEditorChange = () => {
 		const editorTextContent = window.tinymce?.get(`text-${id}`)?.getContent();
-		setDescription(editorTextContent);
 		if (onChange) {
 			onChange(editorTextContent);
 		}
@@ -76,7 +65,7 @@ const RichTextEditor = ({ name, id, initialData, onBlur, onChange, error }) => {
 				onBlur={onBlur}
 				id={`text-${id}`}
 				name={name}
-				value={description}
+				value={value}
 			/>
 			<span className={inputClasses.errorText}>{error}</span>
 		</div>
@@ -86,7 +75,7 @@ const RichTextEditor = ({ name, id, initialData, onBlur, onChange, error }) => {
 RichTextEditor.propTypes = {
 	name: PropTypes.string.isRequired,
 	id: PropTypes.number.isRequired,
-	initialData: PropTypes.string,
+	value: PropTypes.string,
 	onBlur: PropTypes.func,
 	onChange: PropTypes.func,
 	error: PropTypes.string
