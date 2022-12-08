@@ -1,18 +1,33 @@
 /* eslint-disable no-unused-vars */
 import React, { useRef, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form } from 'formik';
 import { isEmpty } from 'lodash';
-import {
-	articleFormInitialValues,
-	articleFormValidationSchema
-} from '../../../data/helpers/articleHelpers';
 import DeleteModal from '../../DeleteModal';
 import ArticleFormDrawer from './subComonents/ArticleFormDrawer';
+import { useCommonParams } from '../../../hooks';
+import { ArticleLibraryService } from '../../../data/services';
 import { selectSpecificArticle } from '../../../data/selectors/articleLibrarySelectors';
+import {
+	articleFormInitialValues,
+	articleFormValidationSchema,
+	articleDataFormatterForForm,
+	articleDataFormatterForService
+} from '../../../data/helpers/articleHelpers';
+import {
+	getAllArticlesApi,
+	createOrEditArticleThunk,
+	deleteArticleThunk
+} from '../../../data/features/articleLibrary/articleLibrarySlice';
 
 const ArticleForm = ({ open, handleClose, isEdit, status }) => {
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
+	const { queryParams, isSearchParamsEmpty } = useCommonParams();
+
+	// Selectors
 	const specificArticle = useSelector(selectSpecificArticle);
 
 	// Refs
@@ -31,9 +46,71 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
-	const onSubmitHandler = () => {};
+	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
+		formikBag.setSubmitting(true);
 
-	const onDeleteHandler = (id, isDraft, setSubmitting) => {};
+		try {
+			if (
+				(!isDraft && specificArticle?.title !== values.title) ||
+				(!isDraft && status === 'draft')
+			) {
+				const { data } = await ArticleLibraryService.getArticleCheckTitle(
+					values.title
+				);
+
+				if (data.response) {
+					formikBag.setSubmitting(false);
+					formikBag.setFieldError(
+						'title',
+						'An article item with this Title has already been published. Please amend the Title.'
+					);
+					return;
+				}
+			}
+
+			const articleData = articleDataFormatterForService(values, {}, isDraft);
+
+			const { type } = await dispatch(
+				createOrEditArticleThunk(articleData, formikBag, isDraft)
+			);
+
+			if (type === 'articleLibary/createOrEditArticleThunk/fulfilled') {
+				handleClose();
+
+				if (isEdit && !(status === 'draft' && isDraft === false)) {
+					dispatch(getAllArticlesApi(queryParams));
+				} else if (isSearchParamsEmpty) {
+					dispatch(getAllArticlesApi());
+				} else {
+					navigate('/article-library');
+				}
+			}
+		} catch (e) {
+			console.error(e);
+		} finally {
+			formikBag.setSubmitting(false);
+		}
+	};
+
+	const onDeleteHandler = async (id, isDraft, setSubmitting) => {
+		setSubmitting(true);
+		setOpenDeleteModal(false);
+		try {
+			await dispatch(
+				deleteArticleThunk({
+					article_id: id,
+					is_draft: isDraft
+				})
+			);
+
+			handleClose();
+			dispatch(getAllArticlesApi(queryParams));
+		} catch (e) {
+			console.error(e);
+		} finally {
+			setSubmitting(false);
+		}
+	};
 
 	return (
 		<Formik
