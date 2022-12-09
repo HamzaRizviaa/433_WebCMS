@@ -15,7 +15,9 @@ const ArticleElementsSidebar = () => {
 		const cloneElements = [...values.elements];
 		if (itemsOnTop) {
 			cloneElements.unshift(dataItem.data);
-		} else cloneElements.push(dataItem.data);
+		} else {
+			cloneElements.push(dataItem.data);
+		}
 		setFieldValue('elements', cloneElements);
 	};
 
@@ -36,7 +38,11 @@ const ArticleElementsSidebar = () => {
 					Add elements to the top
 				</Typography>
 				<Box className={classes.toggleBtn}>
-					<ToggleSwitchField checked={itemsOnTop} onChange={handleChange} />
+					<ToggleSwitchField
+						name='itemsOnTop'
+						checked={itemsOnTop}
+						onChange={handleChange}
+					/>
 				</Box>
 			</Box>
 			{articleSidebarElements.map((dataItem, index) => (
