@@ -17,33 +17,31 @@ const QuestionElement = ({ index, item }) => {
 	const isPublished = false;
 
 	return (
-		<>
-			<DraggableLayoutWrapper>
-				<DraggableCardLayout
-					title={'Add Question'}
-					key={index}
-					index={index}
-					item={item}
-				>
-					<div>
-						<TabPanes
-							headings={headings}
-							// onClick={handleTabClick}
-							type='questions'
-							defaultValue={defaultSelectedTab}
-							//hideTabsHead={isPublished}
-						>
-							<TabPanes.TabPanel value={0}>
-								<ArticleQuestionForm type={'quiz'} isPublished={isPublished} />
-							</TabPanes.TabPanel>
-							<TabPanes.TabPanel value={1}>
-								<ArticleQuestionForm type={'poll'} isPublished={isPublished} />
-							</TabPanes.TabPanel>
-						</TabPanes>
-					</div>
-				</DraggableCardLayout>
-			</DraggableLayoutWrapper>
-		</>
+		<DraggableLayoutWrapper>
+			<DraggableCardLayout
+				title={'Add Question'}
+				key={index}
+				index={index}
+				item={item}
+			>
+				<div>
+					<TabPanes
+						headings={headings}
+						// onClick={handleTabClick}
+						type='questions'
+						defaultValue={defaultSelectedTab}
+						//hideTabsHead={isPublished}
+					>
+						<TabPanes.TabPanel value={0}>
+							<ArticleQuestionForm type={'quiz'} isPublished={isPublished} />
+						</TabPanes.TabPanel>
+						<TabPanes.TabPanel value={1}>
+							<ArticleQuestionForm type={'poll'} isPublished={isPublished} />
+						</TabPanes.TabPanel>
+					</TabPanes>
+				</div>
+			</DraggableCardLayout>
+		</DraggableLayoutWrapper>
 	);
 };
 

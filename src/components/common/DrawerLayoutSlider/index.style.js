@@ -13,7 +13,7 @@ export const DrawerLayoutStyles = makeStyles((theme) => ({
 		right: '0 !important',
 		borderLeft: ({ fromArticle }) =>
 			fromArticle
-				? `1px solid ${theme.palette.normalGrey} !important`
+				? ``
 				: '1px solid #ffff00 !important',
 		height: '100vh !important',
 		zIndex: '5 !important',
@@ -26,7 +26,7 @@ export const DrawerLayoutStyles = makeStyles((theme) => ({
 		backgroundColor: '#000000 !important'
 	},
 	content: {
-		padding: '4rem'
+		padding: ({ fromArticle }) => fromArticle ? '4rem 0' : '4rem'
 	},
 	closeIcon: {
 		width: '3.2rem !important',
