@@ -39,7 +39,7 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 	const initialValues = useMemo(
 		() =>
 			isEdit && !isEmpty(specificArticle)
-				? specificArticle
+				? articleDataFormatterForForm(specificArticle)
 				: articleFormInitialValues,
 		[isEdit, specificArticle]
 	);

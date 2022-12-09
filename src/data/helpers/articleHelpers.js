@@ -156,9 +156,14 @@ export const matchElementDataFormatter = (item) => ({
 	}
 });
 
-export const articleDataFormatterForForm = () => {};
+export const articleDataFormatterForForm = (article) => {
+	const formattedArticle = { ...article };
+	return formattedArticle;
+};
 
-export const articleDataFormatterForService = () => {};
+export const articleDataFormatterForService = (article) => {
+	return article;
+};
 
 export const articleFormInitialValues = {
 	mainCategoryId: '',
