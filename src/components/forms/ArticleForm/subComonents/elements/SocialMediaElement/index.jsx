@@ -5,7 +5,7 @@ import FormikField from '../../../../../ui/inputs/formik/FormikField';
 import DraggableLayoutWrapper from '../../../../../layouts/DraggableLayoutWrapper';
 import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 
-const SocialMediaElement = ({ index, item }) => {
+const SocialMediaElement = ({ index, item, handleRemoveElement }) => {
 	const classes = useFormStyles();
 
 	return (
@@ -15,6 +15,7 @@ const SocialMediaElement = ({ index, item }) => {
 				key={index}
 				index={index}
 				item={item}
+				onDeleteIconClick={handleRemoveElement}
 			>
 				<div className={classes.fieldContainer}>
 					<FormikField
@@ -32,7 +33,8 @@ const SocialMediaElement = ({ index, item }) => {
 
 SocialMediaElement.propTypes = {
 	index: PropTypes.number.isRequired,
-	item: PropTypes.object
+	item: PropTypes.object,
+	handleRemoveElement: PropTypes.func
 };
 
 export default SocialMediaElement;

@@ -9,7 +9,14 @@ import {
 import DraggableLayoutWrapper from '../../../../../layouts/DraggableLayoutWrapper';
 import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 
-const MatchElement = ({ index, item, initialData, data, isPublished }) => {
+const MatchElement = ({
+	index,
+	item,
+	initialData,
+	data,
+	isPublished,
+	handleRemoveElement
+}) => {
 	const [leagues, setLeagues] = useState([]);
 	const [teams, setTeams] = useState([]);
 	const [matches, setMatches] = useState([]);
@@ -43,27 +50,28 @@ const MatchElement = ({ index, item, initialData, data, isPublished }) => {
 				key={index}
 				index={index}
 				item={item}
+				onDeleteIconClick={handleRemoveElement}
 			>
-			<FormikSelect
-				name={`elements.${index}.league_name`}
-				placeholder='SELECT LEAGUE'
-				options={getLeagueOptions(leagues)}
-				disabled={isPublished}
-				onChange={handleLeagueChange}
-			/>
-			<FormikSelect
-				name={`elements.${index}.team_name`}
-				placeholder='SELECT TEAM'
-				options={teams}
-				disabled={isPublished || teams.length === 0}
-				onChange={handleTeamChange}
-			/>
-			<FormikSelect
-				name={`elements.${index}.match_title`}
-				placeholder='SELECT MATCH'
-				options={matches}
-				disabled={isPublished || matches.length === 0}
-			/>
+				<FormikSelect
+					name={`elements.${index}.league_name`}
+					placeholder='SELECT LEAGUE'
+					options={getLeagueOptions(leagues)}
+					disabled={isPublished}
+					onChange={handleLeagueChange}
+				/>
+				<FormikSelect
+					name={`elements.${index}.team_name`}
+					placeholder='SELECT TEAM'
+					options={teams}
+					disabled={isPublished || teams.length === 0}
+					onChange={handleTeamChange}
+				/>
+				<FormikSelect
+					name={`elements.${index}.match_title`}
+					placeholder='SELECT MATCH'
+					options={matches}
+					disabled={isPublished || matches.length === 0}
+				/>
 			</DraggableCardLayout>
 		</DraggableLayoutWrapper>
 	);
@@ -74,7 +82,8 @@ MatchElement.propTypes = {
 	item: PropTypes.object,
 	initialData: PropTypes.object,
 	data: PropTypes.array,
-	isPublished: PropTypes.bool
+	isPublished: PropTypes.bool,
+	handleRemoveElement: PropTypes.func
 };
 
 export default MatchElement;

@@ -8,7 +8,7 @@ import { useFormStyles } from '../../../../forms.style';
 import FormikDropzone from '../../../../../ui/inputs/formik/FormikDropzone';
 import FormikField from '../../../../../ui/inputs/formik/FormikField';
 
-const ImageVideoElement = ({ index, item }) => {
+const ImageVideoElement = ({ index, item, handleRemoveElement }) => {
 	const classes = useFormStyles();
 
 	const { setFieldValue } = useFormikContext();
@@ -24,6 +24,7 @@ const ImageVideoElement = ({ index, item }) => {
 				key={index}
 				index={index}
 				item={item}
+				onDeleteIconClick={handleRemoveElement}
 			>
 				<div className={classes.dropzoneWrapper}>
 					<FormikDropzone
@@ -53,7 +54,8 @@ const ImageVideoElement = ({ index, item }) => {
 
 ImageVideoElement.propTypes = {
 	index: PropTypes.number.isRequired,
-	item: PropTypes.object
+	item: PropTypes.object,
+	handleRemoveElement: PropTypes.func
 };
 
 export default ImageVideoElement;

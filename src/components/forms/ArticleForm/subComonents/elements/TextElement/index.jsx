@@ -4,14 +4,14 @@ import FormikTextEditor from '../../../../../ui/inputs/formik/FormikRichTextEdit
 import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 import DraggableLayoutWrapper from '../../../../../layouts/DraggableLayoutWrapper';
 
-const TextElement = ({ index, item, handleDeleteSlide, ...restProps }) => (
+const TextElement = ({ index, item, handleRemoveElement, ...restProps }) => (
 	<DraggableLayoutWrapper>
 		<DraggableCardLayout
 			title={`Add Text`}
 			key={index}
 			index={index}
 			item={item}
-			onDeleteIconClick={handleDeleteSlide}
+			onDeleteIconClick={handleRemoveElement}
 		>
 			<FormikTextEditor name={`elements.${index}.description`} {...restProps} />
 		</DraggableCardLayout>
@@ -21,7 +21,7 @@ const TextElement = ({ index, item, handleDeleteSlide, ...restProps }) => (
 TextElement.propTypes = {
 	index: PropTypes.number.isRequired,
 	item: PropTypes.object,
-	handleDeleteSlide: PropTypes.func
+	handleRemoveElement: PropTypes.func
 };
 
 export default TextElement;

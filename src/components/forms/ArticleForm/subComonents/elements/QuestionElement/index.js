@@ -7,7 +7,7 @@ import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 import TabPanes from '../../../../../ui/TabPanes';
 import ArticleQuestionForm from './ArticleQuestionForm';
 
-const QuestionElement = ({ index, item }) => {
+const QuestionElement = ({ index, item, handleRemoveElement }) => {
 	const headings = ['Quiz', 'Poll'];
 	const defaultSelectedTab = 0; //later will set according to edit status
 
@@ -23,6 +23,7 @@ const QuestionElement = ({ index, item }) => {
 				key={index}
 				index={index}
 				item={item}
+				onDeleteIconClick={handleRemoveElement}
 			>
 				<div>
 					<TabPanes
@@ -47,7 +48,8 @@ const QuestionElement = ({ index, item }) => {
 
 QuestionElement.propTypes = {
 	index: PropTypes.number.isRequired,
-	item: PropTypes.object
+	item: PropTypes.object,
+	handleRemoveElement: PropTypes.func
 };
 
 export default QuestionElement;

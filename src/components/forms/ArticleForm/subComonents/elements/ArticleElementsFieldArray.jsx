@@ -9,25 +9,65 @@ import SocialMediaElement from './SocialMediaElement';
 import MatchElement from './MatchElement';
 import QuestionElement from './QuestionElement';
 
-const ArticleElementsFieldArray = ({ form }) => {
+const ArticleElementsFieldArray = ({ form, remove }) => {
 	console.log({ values: form.values });
+
+	const handleRemoveElement = (_, index) => {
+		remove(index);
+	};
 
 	const renderArticleElement = (item, index) => {
 		const { element_type: type } = item;
 
 		switch (type) {
 			case ElementTypes.TEXT:
-				return <TextElement index={index} item={item} />;
+				return (
+					<TextElement
+						index={index}
+						item={item}
+						handleRemoveElement={handleRemoveElement}
+					/>
+				);
 			case ElementTypes.MEDIA:
-				return <ImageVideoElement index={index} item={item} />;
+				return (
+					<ImageVideoElement
+						index={index}
+						item={item}
+						handleRemoveElement={handleRemoveElement}
+					/>
+				);
 			case ElementTypes.TWITTER:
-				return <SocialMediaElement index={index} item={item} />;
+				return (
+					<SocialMediaElement
+						index={index}
+						item={item}
+						handleRemoveElement={handleRemoveElement}
+					/>
+				);
 			case ElementTypes.IG:
-				return <SocialMediaElement index={index} item={item} />;
+				return (
+					<SocialMediaElement
+						index={index}
+						item={item}
+						handleRemoveElement={handleRemoveElement}
+					/>
+				);
 			case ElementTypes.QUESTION:
-				return <QuestionElement index={index} item={item} />;
+				return (
+					<QuestionElement
+						index={index}
+						item={item}
+						handleRemoveElement={handleRemoveElement}
+					/>
+				);
 			case ElementTypes.MATCH:
-				return <MatchElement index={index} item={item} />;
+				return (
+					<MatchElement
+						index={index}
+						item={item}
+						handleRemoveElement={handleRemoveElement}
+					/>
+				);
 			default:
 				return null;
 		}
