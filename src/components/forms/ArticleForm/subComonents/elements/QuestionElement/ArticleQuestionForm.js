@@ -1,16 +1,17 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import PropTypes from 'prop-types';
 import FormikDropzone from '../../../../../ui/inputs/formik/FormikDropzone';
 import FormikField from '../../../../../ui/inputs/formik/FormikField';
 import FormikLabelsSelect from '../../../../../ui/inputs/formik/FormikLabelsSelect';
 import { useElementsStyles } from '../elements.styles';
+
 const ArticleQuestionForm = ({ openPreviewer, type, isPublished }) => {
 	const classes = useElementsStyles();
 
 	const handleDeleteFile = () => {
 		console.log('abc');
 	};
+
 	return (
 		<div>
 			<div>
@@ -21,7 +22,7 @@ const ArticleQuestionForm = ({ openPreviewer, type, isPublished }) => {
 
 				<div className={classes.dropzoneWrapper}>
 					<FormikDropzone
-						name='uploadedFiles'
+						name='QuestionUploadedFiles'
 						accept='image/jpeg, image/png'
 						formatMessage='Supported formats are jpeg and png'
 						fileSizeMessage='Image file size should not exceed 1MB.'
@@ -102,7 +103,6 @@ ArticleQuestionForm.propTypes = {
 	type: PropTypes.string,
 	openPreviewer: PropTypes.any,
 	isPublished: PropTypes.bool
-	//handleLoading: PropTypes.any
 };
 
 export default ArticleQuestionForm;

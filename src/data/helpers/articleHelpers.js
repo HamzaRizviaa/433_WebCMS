@@ -112,7 +112,7 @@ export const articleSidebarElements = [
 		text: 'Add Question',
 		data: {
 			question_data: {},
-			element_type: 'QUESTIONN'
+			element_type: 'QUESTION'
 		}
 	},
 	{
