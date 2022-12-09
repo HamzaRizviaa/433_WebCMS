@@ -10,9 +10,10 @@ import MatchElement from './MatchElement';
 import QuestionElement from './QuestionElement';
 
 const ArticleElementsFieldArray = ({ form }) => {
+	console.log({ values: form.values });
+
 	const renderArticleElement = (item, index) => {
 		const { element_type: type } = item;
-		console.log(item, 'ITEM INN FIELD ARRAY');
 
 		switch (type) {
 			case ElementTypes.TEXT:
@@ -33,13 +34,11 @@ const ArticleElementsFieldArray = ({ form }) => {
 	};
 
 	return (
-		<>
-			<div>
-				{form.values.elements.map((item, index) => (
-					<div key={index}>{renderArticleElement(item, index)}</div>
-				))}
-			</div>
-		</>
+		<div>
+			{form.values.elements.map((item, index) => (
+				<div key={index}>{renderArticleElement(item, index)}</div>
+			))}
+		</div>
 	);
 };
 

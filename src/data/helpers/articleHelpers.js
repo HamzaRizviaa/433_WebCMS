@@ -1,8 +1,9 @@
 import moment from 'moment';
 import * as Yup from 'yup';
 import React from 'react';
+import { omit } from 'lodash';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
-import { getDateTime } from '../utils';
+import { getDateTime, makeid } from '../utils';
 import {
 	Text,
 	Instragram,
@@ -157,7 +158,59 @@ export const matchElementDataFormatter = (item) => ({
 });
 
 export const articleDataFormatterForForm = (article) => {
-	const formattedArticle = { ...article };
+	const portraitFileKeys = ['file_name', 'image', 'height', 'width'];
+	const landscapeFileKeys = [
+		'landscape_image',
+		'landscape_file_name',
+		'landscape_width',
+		'landscape_height'
+	];
+
+	const formattedArticle = {
+		...omit(article, [
+			'rules',
+			...portraitFileKeys,
+			...landscapeFileKeys,
+			'main_category_id',
+			'sub_category_id',
+			'media_type',
+			'sub_category'
+		]),
+		author_image: [
+			{
+				media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${article?.author_image}`
+			}
+		],
+		mainCategoryId: article.main_category_id,
+		subCategoryId: article.sub_category_id,
+		mainCategoryName: article.media_type,
+		subCategoryName: article.sub_category
+	};
+
+	const uploadedFiles = [
+		{
+			id: makeid(10),
+			file_name: article?.file_name,
+			media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${article?.image}`,
+			type: 'image',
+			width: article.width,
+			height: article.height
+		}
+	];
+	const uploadedLandscapeCoverImage = [
+		{
+			id: makeid(10),
+			file_name: article?.landscape_file_name,
+			media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${article?.landscape_image}`,
+			type: 'image',
+			width: article.landscape_width,
+			height: article.landscape_height
+		}
+	];
+
+	formattedArticle.uploadedFiles = uploadedFiles;
+	formattedArticle.uploadedLandscapeCoverImage = uploadedLandscapeCoverImage;
+
 	return formattedArticle;
 };
 
