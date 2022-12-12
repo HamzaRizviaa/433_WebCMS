@@ -48,7 +48,7 @@ const ArticleQuestionUpload = ({
 	const [extraLabel, setExtraLabel] = useState('');
 	const [fileWidth, setFileWidth] = useState(0);
 	const [fileHeight, setFileHeight] = useState(0);
-	const [newFile, setNewFile] = useState(initialData && initialData.uploadedFiles ? [initialData.uploadedFiles[0]] : []);
+
 	const [isError, setIsError] = useState({});
 	const [loading, setLoading] = useState(false);
 	const [ans1Id, setAns1Id] = useState('');
@@ -86,6 +86,8 @@ const ArticleQuestionUpload = ({
 			  }
 	);
 	const imgRef = useRef(null);
+
+	console.log(form, 'form');
 
 	// const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
@@ -184,7 +186,10 @@ const ArticleQuestionUpload = ({
 					type: 'image'
 				};
 			});
-			setNewFile([...newFiles]);
+
+			setForm((prev) => {
+				return { ...prev, uploadedFiles: [...newFiles] };
+			});
 			sendDataToParent({ previewImage: [...newFiles] });
 
 			sendDataToParent({ uploadedFiles: [...newFiles] });
@@ -280,10 +285,9 @@ const ArticleQuestionUpload = ({
 					<div>
 						<h5 className={classes.QuizQuestion}>{heading1}</h5>
 						<DragAndDropField
-							uploadedFiles={newFile ? newFile : form?.uploadedFiles}
+							uploadedFiles={form?.uploadedFiles}
 							quizPollStatus={status}
 							handleDeleteFile={(id) => {
-								setNewFile(newFile.filter((file) => file?.id !== id));
 								setForm((prev) => {
 									return {
 										...prev,
@@ -305,7 +309,8 @@ const ArticleQuestionUpload = ({
 							}}
 						/>
 
-						{newFile.length > 0 || initialData?.uploadedFiles?.length > 0 ? (
+						{form.uploadedFiles.length > 0 ||
+						initialData?.uploadedFiles?.length > 0 ? (
 							''
 						) : form.uploadedFiles.length === 0 ||
 						  (initialData?.uploadedFiles === 0 &&
@@ -322,17 +327,17 @@ const ArticleQuestionUpload = ({
 							>
 								<div {...getRootProps({ className: globalClasses.dropzone })}>
 									<input {...getInputProps()} />
-											<AddCircleOutlineIcon
-												className={globalClasses.addFilesIcon}
-											/>
-											<p className={globalClasses.dragMsg}>
-												Click or drag file to this area to upload
-											</p>
-											<p className={globalClasses.formatMsg}>
-												Supported formats are jpeg and png
-												<br />
-												Image File size should not exceed 1MB.
-											</p>
+									<AddCircleOutlineIcon
+										className={globalClasses.addFilesIcon}
+									/>
+									<p className={globalClasses.dragMsg}>
+										Click or drag file to this area to upload
+									</p>
+									<p className={globalClasses.formatMsg}>
+										Supported formats are jpeg and png
+										<br />
+										Image File size should not exceed 1MB.
+									</p>
 
 									<p className={globalClasses.uploadMediaError}>
 										{fileRejectionError
