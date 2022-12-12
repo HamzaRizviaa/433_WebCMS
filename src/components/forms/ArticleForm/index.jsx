@@ -34,16 +34,11 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 
 	// Selectors
 	const specificArticle = useSelector(selectSpecificArticle);
-	const subCategories = useSelector(selectArticleSubCategories);
-
-	console.log('SPECIFIC ARTICLE', specificArticle);
 
 	useEffect(() => {
 		if (specificArticle?.main_category_id)
 			dispatch(getArticleSubCategories(specificArticle.main_category_id));
 	}, [specificArticle]);
-
-	console.log('SUBCATEGORIES', subCategories);
 
 	// Refs
 	const dialogWrapper = useRef(null);
