@@ -1,24 +1,23 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import Button from '../../../../ui/Button';
-import { useArticleFooterStyles } from './index.style';
+import { isEqual, pick } from 'lodash';
 import { useFormikContext } from 'formik';
+import { useArticleFooterStyles } from './index.style';
+import Button from '../../../../ui/Button';
 import {
 	areAllFieldsEmpty,
 	articleFormInitialValues
 } from '../../../../../data/helpers';
-import { isEqual, pick } from 'lodash';
 
 const ArticleFormFooter = ({
 	isEdit,
 	isDraft,
+	loading,
 	openDeleteModal,
-	saveDraft,
-	publishDraft,
-	loading
+	onSubmitHandler
 }) => {
 	const classes = useArticleFooterStyles({ loading });
-	const { values, dirty, isValid } = useFormikContext();
+	const { values, dirty, isValid, setSubmitting } = useFormikContext();
 
 	const isDraftButtonDisabled = useMemo(() => {
 		const isAnyElementEmpty = values.elements.some((item) =>
@@ -49,11 +48,11 @@ const ArticleFormFooter = ({
 			<div className={classes.container}>
 				{isDraft || !isEdit ? (
 					<Button
-						onClick={saveDraft}
 						size='small'
 						variant='outlined'
 						className={classes.draftButton}
 						disabled={isDraftButtonDisabled}
+						onClick={() => onSubmitHandler(values, { setSubmitting }, isDraft)}
 					>
 						{isEdit && isDraft ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
 					</Button>
@@ -61,9 +60,9 @@ const ArticleFormFooter = ({
 				<Button
 					type='submit'
 					size='small'
-					onClick={publishDraft}
 					className={classes.btn}
 					disabled={!isDraft ? (!dirty ? isValid : !isValid) : !isValid}
+					onClick={onSubmitHandler}
 				>
 					{isEdit && !isDraft ? 'SAVE CHANGES' : 'PUBLISH'}
 				</Button>
@@ -77,8 +76,7 @@ ArticleFormFooter.propTypes = {
 	isDraft: PropTypes.bool.isRequired,
 	loading: PropTypes.bool,
 	openDeleteModal: PropTypes.func,
-	saveDraft: PropTypes.func,
-	publishDraft: PropTypes.func
+	onSubmitHandler: PropTypes.func.isRequired
 };
 
 export default ArticleFormFooter;

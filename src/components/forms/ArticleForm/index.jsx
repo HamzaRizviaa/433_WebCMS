@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,17 +9,22 @@ import DeleteModal from '../../DeleteModal';
 import ArticleFormDrawer from './subComonents/ArticleFormDrawer';
 import { useCommonParams } from '../../../hooks';
 import { ArticleLibraryService } from '../../../data/services';
-import { selectSpecificArticle } from '../../../data/selectors/articleLibrarySelectors';
+import {
+	selectArticleSubCategories,
+	selectSpecificArticle
+} from '../../../data/selectors/articleLibrarySelectors';
 import {
 	articleFormInitialValues,
 	articleFormValidationSchema,
 	articleDataFormatterForForm,
-	articleDataFormatterForService
+	articleDataFormatterForService,
+	uploadArticleFiles
 } from '../../../data/helpers/articleHelpers';
 import {
 	getAllArticlesApi,
 	createOrEditArticleThunk,
-	deleteArticleThunk
+	deleteArticleThunk,
+	getArticleSubCategories
 } from '../../../data/features/articleLibrary/articleLibrarySlice';
 
 const ArticleForm = ({ open, handleClose, isEdit, status }) => {
@@ -35,6 +40,11 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 
 	// States
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+	useEffect(() => {
+		if (specificArticle?.main_category_id)
+			dispatch(getArticleSubCategories(specificArticle.main_category_id));
+	}, [specificArticle]);
 
 	const initialValues = useMemo(
 		() =>
@@ -68,23 +78,33 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 				}
 			}
 
-			const articleData = articleDataFormatterForService(values, {}, isDraft);
+			const { uploadedFilesRes, article } = await uploadArticleFiles(values);
 
-			const { type } = await dispatch(
-				createOrEditArticleThunk(articleData, formikBag, isDraft)
+			console.log({ uploadedFilesRes, article, values });
+
+			const articleData = articleDataFormatterForService(
+				values,
+				uploadedFilesRes,
+				isDraft
 			);
 
-			if (type === 'articleLibary/createOrEditArticleThunk/fulfilled') {
-				handleClose();
+			console.log({ articleData });
 
-				if (isEdit && !(status === 'draft' && isDraft === false)) {
-					dispatch(getAllArticlesApi(queryParams));
-				} else if (isSearchParamsEmpty) {
-					dispatch(getAllArticlesApi());
-				} else {
-					navigate('/article-library');
-				}
-			}
+			// const { type } = await dispatch(
+			// 	createOrEditArticleThunk(articleData, formikBag, isDraft)
+			// );
+
+			// if (type === 'articleLibary/createOrEditArticleThunk/fulfilled') {
+			// 	handleClose();
+
+			// 	if (isEdit && !(status === 'draft' && isDraft === false)) {
+			// 		dispatch(getAllArticlesApi(queryParams));
+			// 	} else if (isSearchParamsEmpty) {
+			// 		dispatch(getAllArticlesApi());
+			// 	} else {
+			// 		navigate('/article-library');
+			// 	}
+			// }
 		} catch (e) {
 			console.error(e);
 		} finally {
