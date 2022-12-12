@@ -1,9 +1,10 @@
+/* eslint-disable no-unused-vars */
 import moment from 'moment';
 import * as Yup from 'yup';
 import React from 'react';
-import { omit } from 'lodash';
+import { pick, omit, isEmpty } from 'lodash';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
-import { getDateTime, makeid } from '../utils';
+import { getDateTime, makeid, uploadFileToServer } from '../utils';
 import {
 	Text,
 	Instragram,
@@ -12,6 +13,7 @@ import {
 	BallIcon,
 	Question
 } from '../../assets/svg-icons';
+import { getUserDataObject } from './index';
 
 export const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
 export const default433Profile = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/Profile433.svg`;
@@ -138,6 +140,50 @@ export const ElementTypes = {
 	MATCH: 'MATCH'
 };
 
+export const uploadArticleFiles = async (article) => {
+	const { author_image, uploadedFiles, uploadedLandscapeCoverImage, elements } =
+		article;
+
+	let files = [
+		author_image.length ? author_image[0] : undefined,
+		uploadedFiles.length ? uploadedFiles[0] : undefined,
+		uploadedLandscapeCoverImage.length
+			? uploadedLandscapeCoverImage[0]
+			: undefined
+	];
+
+	files = files.map(async (item) => {
+		if (item?.file) {
+			const file = await uploadFileToServer(item, 'articleLibrary');
+			return { ...file, ...pick(item, ['width', 'height']) };
+		} else {
+			return item;
+		}
+	});
+
+	const elementsFiles = elements.map(async (item, index) => {
+		if (item.element_type === 'MEDIA' && item.data[0].file) {
+			const uploadedFile = await uploadFileToServer(
+				item.data[0],
+				'articleLibrary'
+			);
+			elements[index].data[0].media_url = uploadedFile.media_url;
+			elements[index].data[0].thumbnail_url = uploadedFile.thumbnail_url;
+			return uploadedFile;
+		} else {
+			return item;
+		}
+	});
+	article.elements = elements;
+
+	const response = await Promise.all([...files, ...elementsFiles]);
+
+	return {
+		uploadedFilesRes: response,
+		article
+	};
+};
+
 export const matchElementDataFormatter = (item) => ({
 	Day: moment(item?.data?.match?.data?.startdate).format('ddd, DD MMM'),
 	Time: moment(item?.data?.match?.data?.startdate).format('HH:mm'),
@@ -168,13 +214,15 @@ export const articleDataFormatterForForm = (article) => {
 
 	const formattedArticle = {
 		...omit(article, [
-			'rules',
 			...portraitFileKeys,
 			...landscapeFileKeys,
+			'rules',
 			'main_category_id',
 			'sub_category_id',
 			'media_type',
-			'sub_category'
+			'sub_category',
+			'is_draft',
+			'status'
 		]),
 		author_image: [
 			{
@@ -197,6 +245,7 @@ export const articleDataFormatterForForm = (article) => {
 			height: article.height
 		}
 	];
+
 	const uploadedLandscapeCoverImage = [
 		{
 			id: makeid(10),
@@ -214,8 +263,76 @@ export const articleDataFormatterForForm = (article) => {
 	return formattedArticle;
 };
 
-export const articleDataFormatterForService = (article) => {
-	return article;
+export const articleDataFormatterForService = (
+	article,
+	files,
+	isDraft = false
+) => {
+	const { uploadedFiles, uploadedLandscapeCoverImage } = article;
+	const [authorImgFile, portraitImgFile, landscapeImgFile] = files;
+
+	console.log({ authorImgFile, portraitImgFile, landscapeImgFile });
+
+	const articleData = {
+		save_draft: isDraft,
+		translations: undefined,
+		user_data: getUserDataObject(),
+		main_category_id: article.mainCategoryId,
+		sub_category_id: article.subCategoryId,
+		author_image: authorImgFile?.file_name
+			? authorImgFile.media_url
+			: Profile433,
+
+		// Destructing the viral id for edit state
+		...(article.id ? { article_id: article.id } : {}),
+
+		// Destructing the properties of viral
+		...omit(article, [
+			'id',
+			'uploadedFiles',
+			'uploadedLandscapeCoverImage',
+			'mainCategoryId',
+			'subCategoryId',
+			'mainCategoryName',
+			'subCategoryName'
+		]),
+
+		// Destructing the porperties of portrait file
+		...(uploadedFiles.length && !isEmpty(portraitImgFile)
+			? {
+					file_name: portraitImgFile.file_name,
+					image: portraitImgFile.media_url,
+					height: portraitImgFile.height,
+					width: portraitImgFile.width
+			  }
+			: uploadedFiles.length
+			? { ...uploadedFiles.length[0] }
+			: {
+					file_name: '',
+					image: '',
+					height: 0,
+					width: 0
+			  }),
+
+		// Destructing the porperties of landscape file
+		...(uploadedLandscapeCoverImage.length && !isEmpty(landscapeImgFile)
+			? {
+					landscape_file_name: landscapeImgFile.file_name,
+					landscape_image: landscapeImgFile.media_url,
+					landscape_height: landscapeImgFile.height,
+					landscape_width: landscapeImgFile.width
+			  }
+			: uploadedLandscapeCoverImage.length
+			? { ...uploadedLandscapeCoverImage.length[0] }
+			: {
+					landscape_file_name: '',
+					landscape_image: '',
+					landscape_height: 0,
+					landscape_width: 0
+			  })
+	};
+
+	return articleData;
 };
 
 export const articleFormInitialValues = {

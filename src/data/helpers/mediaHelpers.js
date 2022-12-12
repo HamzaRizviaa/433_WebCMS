@@ -189,7 +189,6 @@ export const mediaDataFormatterForServer = (
 	userData,
 	completedUploadFiles
 ) => {
-	console.log('MEDIAAA', media);
 	const mediaData = {
 		title: media.title,
 		translations: undefined,

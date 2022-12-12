@@ -14,7 +14,8 @@ import {
 	articleFormInitialValues,
 	articleFormValidationSchema,
 	articleDataFormatterForForm,
-	articleDataFormatterForService
+	articleDataFormatterForService,
+	uploadArticleFiles
 } from '../../../data/helpers/articleHelpers';
 import {
 	getAllArticlesApi,
@@ -68,23 +69,33 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 				}
 			}
 
-			const articleData = articleDataFormatterForService(values, {}, isDraft);
+			const { uploadedFilesRes, article } = await uploadArticleFiles(values);
 
-			const { type } = await dispatch(
-				createOrEditArticleThunk(articleData, formikBag, isDraft)
+			console.log({ uploadedFilesRes, article, values });
+
+			const articleData = articleDataFormatterForService(
+				values,
+				uploadedFilesRes,
+				isDraft
 			);
 
-			if (type === 'articleLibary/createOrEditArticleThunk/fulfilled') {
-				handleClose();
+			console.log({ articleData });
 
-				if (isEdit && !(status === 'draft' && isDraft === false)) {
-					dispatch(getAllArticlesApi(queryParams));
-				} else if (isSearchParamsEmpty) {
-					dispatch(getAllArticlesApi());
-				} else {
-					navigate('/article-library');
-				}
-			}
+			// const { type } = await dispatch(
+			// 	createOrEditArticleThunk(articleData, formikBag, isDraft)
+			// );
+
+			// if (type === 'articleLibary/createOrEditArticleThunk/fulfilled') {
+			// 	handleClose();
+
+			// 	if (isEdit && !(status === 'draft' && isDraft === false)) {
+			// 		dispatch(getAllArticlesApi(queryParams));
+			// 	} else if (isSearchParamsEmpty) {
+			// 		dispatch(getAllArticlesApi());
+			// 	} else {
+			// 		navigate('/article-library');
+			// 	}
+			// }
 		} catch (e) {
 			console.error(e);
 		} finally {

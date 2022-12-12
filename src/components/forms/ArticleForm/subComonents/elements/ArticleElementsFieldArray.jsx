@@ -10,8 +10,6 @@ import MatchElement from './MatchElement';
 import QuestionElement from './QuestionElement';
 
 const ArticleElementsFieldArray = ({ form, remove }) => {
-	console.log({ values: form.values });
-
 	const handleRemoveElement = (_, index) => {
 		remove(index);
 	};
