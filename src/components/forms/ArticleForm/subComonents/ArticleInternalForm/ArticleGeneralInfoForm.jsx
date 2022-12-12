@@ -69,10 +69,6 @@ const ArticleGeneralInfoForm = ({
 		setFieldValue('author_image', event);
 	};
 
-	console.log('STATUS', status);
-	console.log('isEdit', isEdit);
-	console.log('IS PUBLISHED', isPublished);
-
 	return (
 		<AccordianLayout title='General Information'>
 			<div className={classes.categoryContainer}>
