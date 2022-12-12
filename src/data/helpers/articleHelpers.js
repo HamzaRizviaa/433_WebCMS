@@ -279,7 +279,7 @@ export const articleDataFormatterForService = (
 		user_data: getUserDataObject(),
 		main_category_id: article.mainCategoryId,
 		sub_category_id: article.subCategoryId,
-		author_image: authorImgFile?.file_name
+		author_image: !isEmpty(authorImgFile.file_name)
 			? authorImgFile.media_url
 			: Profile433,
 

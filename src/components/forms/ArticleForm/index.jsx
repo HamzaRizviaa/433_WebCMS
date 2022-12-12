@@ -35,16 +35,16 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 	// Selectors
 	const specificArticle = useSelector(selectSpecificArticle);
 
-	useEffect(() => {
-		if (specificArticle?.main_category_id)
-			dispatch(getArticleSubCategories(specificArticle.main_category_id));
-	}, [specificArticle]);
-
 	// Refs
 	const dialogWrapper = useRef(null);
 
 	// States
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+	useEffect(() => {
+		if (specificArticle?.main_category_id)
+			dispatch(getArticleSubCategories(specificArticle.main_category_id));
+	}, [specificArticle]);
 
 	const initialValues = useMemo(
 		() =>
