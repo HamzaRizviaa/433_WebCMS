@@ -23,12 +23,11 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function Modal({
 	title,
 	open,
-	toggle,
 	onConfirm,
 	onClose,
 	isSubmitting = false,
 	confirmButtonText = 'CONFIRM',
-	confirmButtonVariant = 'outlined',
+	confirmButtonVariant = 'contained',
 	confirmButtonColor = 'primary',
 	children
 }) {
@@ -42,13 +41,13 @@ export default function Modal({
 				open={open}
 				TransitionComponent={Transition}
 				transitionDuration={{ enter: 600, exit: 400 }}
-				onClose={toggle}
+				onClose={onClose}
 				aria-describedby='alert-dialog-slide-description'
 				classes={{ paper: classes.dialogBox, root: classes.root }}
 			>
 				<DialogTitle classes={{ root: classes.root }}>
 					<div className={classes.dialogTitle}>
-						{title}
+						<span>{title}</span>
 						<IconButton
 							onClick={onClose}
 							onMouseDown={playClose}
@@ -91,7 +90,6 @@ export default function Modal({
 Modal.propTypes = {
 	title: PropTypes.string,
 	open: PropTypes.bool,
-	toggle: PropTypes.func.isRequired,
 	onConfirm: PropTypes.func.isRequired,
 	onClose: PropTypes.func.isRequired,
 	isSubmitting: PropTypes.bool,

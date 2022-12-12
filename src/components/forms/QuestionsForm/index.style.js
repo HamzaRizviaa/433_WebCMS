@@ -171,7 +171,7 @@ export const useQuestionsStyles = makeStyles((theme) => ({
 	modalContent: {
 		backgroundColor: theme.palette.black90,
 		borderRadius: 8,
-		marginBottom: 20,
-		padding: '24px 16px'
+		margin: [[20, 0]],
+		padding: 16
 	}
 }));

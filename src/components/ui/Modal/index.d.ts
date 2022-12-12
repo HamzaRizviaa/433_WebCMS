@@ -4,7 +4,6 @@ import { ButtonProps } from '../Button';
 export interface ModalProps {
 	title: string;
 	open: boolean;
-	toggle: () => void;
 	onConfirm: () => void;
 	onClose: () => void;
 	isSubmitting?: boolean;

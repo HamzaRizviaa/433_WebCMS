@@ -69,7 +69,6 @@ const ViralForm = ({
 	 * @param {Object} formikBag - Formik bag object which has all the utilities provided by formik.
 	 * @param {boolean} isDraft - isDraft param is only being passed when the form is being save in draft mode
 	 */
-
 	const onSubmitHandler = useCallback(
 		async (values, formikBag, isDraft = false) => {
 			formikBag.setSubmitting(true);
