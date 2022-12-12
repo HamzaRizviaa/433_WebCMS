@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,7 +9,10 @@ import DeleteModal from '../../DeleteModal';
 import ArticleFormDrawer from './subComonents/ArticleFormDrawer';
 import { useCommonParams } from '../../../hooks';
 import { ArticleLibraryService } from '../../../data/services';
-import { selectSpecificArticle } from '../../../data/selectors/articleLibrarySelectors';
+import {
+	selectArticleSubCategories,
+	selectSpecificArticle
+} from '../../../data/selectors/articleLibrarySelectors';
 import {
 	articleFormInitialValues,
 	articleFormValidationSchema,
@@ -20,7 +23,8 @@ import {
 import {
 	getAllArticlesApi,
 	createOrEditArticleThunk,
-	deleteArticleThunk
+	deleteArticleThunk,
+	getArticleSubCategories
 } from '../../../data/features/articleLibrary/articleLibrarySlice';
 
 const ArticleForm = ({ open, handleClose, isEdit, status }) => {
@@ -30,6 +34,16 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 
 	// Selectors
 	const specificArticle = useSelector(selectSpecificArticle);
+	const subCategories = useSelector(selectArticleSubCategories);
+
+	console.log('SPECIFIC ARTICLE', specificArticle);
+
+	useEffect(() => {
+		if (specificArticle?.main_category_id)
+			dispatch(getArticleSubCategories(specificArticle.main_category_id));
+	}, [specificArticle]);
+
+	console.log('SUBCATEGORIES', subCategories);
 
 	// Refs
 	const dialogWrapper = useRef(null);

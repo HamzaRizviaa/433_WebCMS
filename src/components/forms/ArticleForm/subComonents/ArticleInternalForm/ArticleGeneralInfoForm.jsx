@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, Fragment } from 'react';
+import React, { useEffect, Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormikContext } from 'formik';
@@ -24,11 +24,14 @@ import {
 const ArticleGeneralInfoForm = ({
 	previewFile,
 	openPreviewer,
-	handleLoading
+	handleLoading,
+	isEdit,
+	status
 }) => {
 	const classes = useStyles();
 	const formClasses = useFormStyles();
 	const dispatch = useDispatch();
+	const isPublished = isEdit && status === 'published';
 
 	useEffect(() => {
 		// dispatch(getPostLabels());
@@ -66,6 +69,10 @@ const ArticleGeneralInfoForm = ({
 		setFieldValue('author_image', event);
 	};
 
+	console.log('STATUS', status);
+	console.log('isEdit', isEdit);
+	console.log('IS PUBLISHED', isPublished);
+
 	return (
 		<AccordianLayout title='General Information'>
 			<div className={classes.categoryContainer}>
@@ -79,6 +86,7 @@ const ArticleGeneralInfoForm = ({
 							options={mainCategories}
 							mapOptions={{ labelKey: 'name', valueKey: 'id' }}
 							onChange={handleMainCategoryChange}
+							disabled={status == 'published' ? true : false}
 						/>
 					</div>
 				</div>
@@ -89,7 +97,9 @@ const ArticleGeneralInfoForm = ({
 							label='SUB CATEGORY'
 							name='subCategoryId'
 							placeholder='Please Select'
-							disabled={!values.mainCategoryName}
+							disabled={
+								!values.mainCategoryName || status == 'published' ? true : false
+							}
 							size='large'
 							options={subCategories}
 							mapOptions={{ labelKey: 'name', valueKey: 'id' }}
@@ -211,6 +221,7 @@ const ArticleGeneralInfoForm = ({
 							// disabled={isPublished}
 							required
 							library='Articles'
+							disabled={status == 'published' ? true : false}
 						/>
 					</div>
 					<div className={classes.fieldContainer}>
@@ -230,7 +241,9 @@ const ArticleGeneralInfoForm = ({
 ArticleGeneralInfoForm.propTypes = {
 	previewFile: PropTypes.any,
 	openPreviewer: PropTypes.any,
-	handleLoading: PropTypes.any
+	handleLoading: PropTypes.any,
+	isEdit: PropTypes.bool.isRequired,
+	status: PropTypes.string.isRequired
 };
 
 export default ArticleGeneralInfoForm;

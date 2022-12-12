@@ -39,7 +39,7 @@ const ArticleFormDrawer = ({
 					<ArticleElementsSidebar />
 				</Grid>
 				<Grid className={classes.secondGridItem} item px={1.5} md={6}>
-					<ArticleInternalForm />
+					<ArticleInternalForm isEdit={isEdit} status={status} />
 				</Grid>
 				<Grid className={classes.lastGridItem} item md={3}>
 					<ArticlePreviewSidebar
