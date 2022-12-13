@@ -47,6 +47,7 @@ const NewsForm = ({
 	}, [isEdit, specificNews]);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
+	const closeDeleteModal = () => setOpenDeleteModal(false);
 
 	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
 		formikBag.setSubmitting(true);
@@ -110,9 +111,9 @@ const NewsForm = ({
 	};
 
 	const onDeleteHandler = async (id, isDraft, setSubmitting) => {
+		setSubmitting(true);
+		setOpenDeleteModal(false);
 		try {
-			setSubmitting(true);
-
 			await dispatch(
 				deleteNewsThunk({
 					news_id: id,
@@ -126,7 +127,6 @@ const NewsForm = ({
 			console.error(e);
 		} finally {
 			setSubmitting(false);
-			setOpenDeleteModal(false);
 		}
 	};
 
@@ -138,7 +138,7 @@ const NewsForm = ({
 			validateOnMount
 			onSubmit={onSubmitHandler}
 		>
-			{({ setSubmitting }) => (
+			{({ setSubmitting, isSubmitting }) => (
 				<Form>
 					<NewsFormDrawer
 						open={open}
@@ -150,12 +150,13 @@ const NewsForm = ({
 					/>
 					<DeleteModal
 						open={openDeleteModal}
-						toggle={toggleDeleteModal}
+						toggle={closeDeleteModal}
 						deleteBtn={() => {
 							onDeleteHandler(specificNews?.id, status, setSubmitting);
 						}}
 						text='News'
 						wrapperRef={dialogWrapper}
+						isSubmitting={isSubmitting}
 					/>
 				</Form>
 			)}

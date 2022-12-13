@@ -24,14 +24,19 @@ const TopBanner = () => {
 			hideLibraryText
 			isLoading={isBannerFormSubmitting || bannerStatus === 'loading'}
 		>
-			<TabPanes headings={headings}>
-				<TabPanes.TabPanel value={0}>
-					<BannerForm tabValue='home' setFormSubmitting={setFormSubmitting} />
-				</TabPanes.TabPanel>
-				<TabPanes.TabPanel value={1}>
-					<BannerForm tabValue='media' setFormSubmitting={setFormSubmitting} />
-				</TabPanes.TabPanel>
-			</TabPanes>
+			<div style={{ marginTop: '2.5rem' }}>
+				<TabPanes headings={headings}>
+					<TabPanes.TabPanel value={0}>
+						<BannerForm tabValue='home' setFormSubmitting={setFormSubmitting} />
+					</TabPanes.TabPanel>
+					<TabPanes.TabPanel value={1}>
+						<BannerForm
+							tabValue='media'
+							setFormSubmitting={setFormSubmitting}
+						/>
+					</TabPanes.TabPanel>
+				</TabPanes>
+			</div>
 		</DashboardLayout>
 	);
 };

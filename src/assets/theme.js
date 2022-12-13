@@ -60,7 +60,9 @@ const theme = createTheme({
 		red: '#ff355a',
 		orange: '#f68216',
 		green: '#00D87D',
-		pink: '#ffc0cb'
+		pink: '#ffc0cb',
+		black90: '#1A1A1A',
+		purple: '#9581FF'
 	},
 	typography: {
 		fontFamily: ['Poppins', 'sans-serif'].join(','),

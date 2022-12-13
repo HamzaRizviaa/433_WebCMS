@@ -33,7 +33,7 @@ const FormikDatePicker = ({ name, onChange, onBlur, ...restProps }) => {
 			onChange={handleChange}
 			onBlur={handleBlur}
 			value={value}
-			error={touched ? error : ''}
+			error={touched && error ? error : ''}
 		/>
 	);
 };

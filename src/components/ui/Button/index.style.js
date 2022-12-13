@@ -22,14 +22,16 @@ export const useButtonStyles = makeStyles((theme) => {
 			// marginRight: '1rem',
 			height: 'fit-content',
 			borderRadius: 65,
-			padding: customPadding || btnPaddings[size],
+			padding: variant === 'text' ? 0 : customPadding || btnPaddings[size],
 			cursor: 'pointer',
 			whiteSpace: 'nowrap',
 			width: fullWidth ? '100%' : 'auto',
 
-			'&:hover': {
-				boxShadow: `0 5px 15px rgba(216, 204, 127, 0.73)`
-			}
+			...(variant !== 'text' && {
+				'&:hover': {
+					boxShadow: `0 5px 15px rgba(216, 204, 127, 0.73)`
+				}
+			})
 		}),
 
 		btnSpan: {
@@ -43,7 +45,7 @@ export const useButtonStyles = makeStyles((theme) => {
 			justifyContent: 'center',
 
 			'& > svg': {
-				position: 'absolute',
+				position: ({ variant }) => (variant === 'text' ? 'unset' : 'absolute'),
 				right: 30
 			}
 		}
@@ -72,17 +74,17 @@ function colorMapper(colorPalette) {
 		outlined: {
 			primary: {
 				color: colorPalette.white,
-				backgroundColor: theme.palette.black,
+				backgroundColor: 'transparent',
 				borderColor: colorPalette.neonYellow
 			},
 			secondary: {
 				color: colorPalette.disabled,
-				backgroundColor: theme.palette.black,
+				backgroundColor: 'transparent',
 				borderColor: colorPalette.disabled
 			},
 			danger: {
 				color: colorPalette.white,
-				backgroundColor: theme.palette.black,
+				backgroundColor: 'transparent',
 				borderColor: colorPalette.red
 			}
 		},

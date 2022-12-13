@@ -1,6 +1,5 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import Button from '../button';
 import {
 	Dialog,
 	DialogTitle,
@@ -12,15 +11,24 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import useSound from 'use-sound';
-import { useStyles } from './index.style';
+
+import Button from '../ui/Button';
 import soundOpen from '../../assets/openSound.mp3';
 import soundClose from '../../assets/closeSound.mp3';
+import { useStyles } from './index.style';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Grow in={true} ref={ref} {...props} />;
 });
 
-export default function StopModal({ text, open, toggle, stopBtn, wrapperRef }) {
+export default function StopModal({
+	text,
+	open,
+	toggle,
+	stopBtn,
+	wrapperRef,
+	isSubmitting = false
+}) {
 	const classes = useStyles();
 	const [playOpen] = useSound(soundOpen, { volume: 0.5 });
 	const [playClose] = useSound(soundClose, { volume: 0.5 });
@@ -65,18 +73,24 @@ export default function StopModal({ text, open, toggle, stopBtn, wrapperRef }) {
 				</DialogContent>
 				<DialogActions classes={{ root: classes.dialogActions }}>
 					<Button
-						button3={true}
 						onClick={toggle}
-						text={'GO BACK'}
 						onMouseDown={playClose}
-					/>
+						size='small'
+						variant='outlined'
+					>
+						GO BACK
+					</Button>
 
 					<Button
-						buttonStop={true}
 						onClick={stopBtn}
-						text={`STOP ${text}`.toUpperCase()}
 						onMouseDown={playOpen}
-					/>
+						size='small'
+						variant='outlined'
+						color='danger'
+						disabled={isSubmitting}
+					>
+						{`STOP ${text}`.toUpperCase()}{' '}
+					</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
@@ -88,6 +102,7 @@ StopModal.propTypes = {
 	open: PropTypes.bool,
 	toggle: PropTypes.func.isRequired,
 	stopBtn: PropTypes.func.isRequired,
+	isSubmitting: PropTypes.bool,
 	wrapperRef: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })

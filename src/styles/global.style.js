@@ -250,7 +250,8 @@ export const useStyles = makeStyles(() => ({
 	},
 
 	publishDraftDiv: {
-		display: 'flex'
+		display: 'flex',
+		marginRight: '20px'
 	},
 
 	previewContentWrapper: {

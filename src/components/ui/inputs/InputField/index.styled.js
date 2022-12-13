@@ -10,6 +10,11 @@ export const useStyles = makeStyles((theme) => ({
 			fontSize: '1rem',
 			fontWeight: 'bold',
 			marginLeft: '1rem'
+		},
+
+		'& .Mui-disabled': {
+			backgroundColor: theme.palette.normalGrey,
+			color: theme.palette.lightGrey
 		}
 	},
 

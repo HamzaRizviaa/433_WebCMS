@@ -2082,6 +2082,7 @@ const UploadOrEditArticle = ({
 									validateForm={validateForm}
 									editBtnDisabled={editBtnDisabled}
 									handleAddSaveBtn={handleAddSaveBtn}
+									loading={isLoading}
 								/>
 							</div>
 						</div>

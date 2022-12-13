@@ -1,12 +1,16 @@
 import { makeStyles } from '@material-ui/core';
 
-export const useFormStyles = makeStyles(() => ({
+export const useFormStyles = makeStyles((theme) => ({
 	buttonDiv: {
 		width: '100%',
 		marginTop: '3rem',
 		marginBottom: '1rem',
 		display: 'flex',
 		justifyContent: 'space-between',
+
+		'& button': {
+			textTransform: 'uppercase'
+		},
 
 		'& button + button': {
 			marginLeft: 10
@@ -32,7 +36,10 @@ export const useFormStyles = makeStyles(() => ({
 	addNewsBtnWrapper: {
 		marginTop: 40
 	},
-
+	leftButtonSection: {
+		display: 'flex',
+		gap: '1rem'
+	},
 	explanationWrapper: {
 		display: 'flex',
 		justifyContent: 'flex-start',
@@ -44,5 +51,48 @@ export const useFormStyles = makeStyles(() => ({
 		lineHeight: '24px'
 	},
 
-	infoIcon: { cursor: 'pointer', marginLeft: '1rem' }
+	infoIcon: { cursor: 'pointer', marginLeft: '1rem' },
+
+	mainHeading: {
+		display: 'flex',
+		fontSize: '18px',
+		alignItems: 'center',
+		fontFamily: 'Poppins',
+		fontWeight: '800',
+		lineHeight: '30px'
+	},
+
+	dropzoneWrapper: {
+		marginTop: 15,
+		marginBottom: 20
+	},
+
+	dropzoneLabel: {
+		marginBottom: 15,
+		position: 'relative',
+		display: 'inline-block',
+		fontSize: 16,
+		fontWeight: 700,
+		lineHeight: '24px',
+
+		'&::before': {
+			content: '"*"',
+			position: 'absolute',
+			right: -9,
+			top: -2,
+			fontSize: '1.5rem',
+			fontWeight: 'bold',
+			color: theme.palette.red,
+			display: 'inline-block'
+		}
+	},
+
+	link: {
+		color: theme.palette.white,
+		textDecoration: 'none',
+
+		'&:hover': {
+			color: theme.palette.neonYellow
+		}
+	}
 }));

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import Button from '../button';
+// import Button from '../button';
 import {
 	Dialog,
 	DialogTitle,
@@ -15,6 +15,7 @@ import useSound from 'use-sound';
 import { useStyles } from './deleteModal.style';
 import soundOpen from '../../assets/openSound.mp3';
 import soundClose from '../../assets/closeSound.mp3';
+import Button from '../ui/Button';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Grow in={true} ref={ref} {...props} />;
@@ -25,11 +26,16 @@ export default function DeleteModal({
 	open,
 	toggle,
 	deleteBtn,
-	wrapperRef
+	wrapperRef,
+	isSubmitting = false
 }) {
 	const classes = useStyles();
 	const [playOpen] = useSound(soundOpen, { volume: 0.5 });
 	const [playClose] = useSound(soundClose, { volume: 0.5 });
+
+	const handleDeleteClick = () => {
+		if (deleteBtn) deleteBtn();
+	};
 
 	return (
 		<div>
@@ -71,18 +77,22 @@ export default function DeleteModal({
 				</DialogContent>
 				<DialogActions classes={{ root: classes.dialogActions }}>
 					<Button
-						button3={true}
 						onClick={toggle}
-						text={'GO BACK'}
-						onMouseDown={playClose}
-					/>
+						size='small'
+						onMouseDown={playOpen}
+						variant='outlined'
+					>
+						{'GO BACK'}
+					</Button>
 
 					<Button
-						button2AddSave={true}
-						onClick={deleteBtn}
-						text={`Delete ${text}`.toUpperCase()}
+						onClick={handleDeleteClick}
+						size='small'
 						onMouseDown={playOpen}
-					/>
+						disabled={isSubmitting}
+					>
+						{`Delete ${text}`.toUpperCase()}
+					</Button>
 				</DialogActions>
 			</Dialog>
 		</div>
@@ -94,6 +104,7 @@ DeleteModal.propTypes = {
 	open: PropTypes.bool,
 	toggle: PropTypes.func.isRequired,
 	deleteBtn: PropTypes.func.isRequired,
+	isSubmitting: PropTypes.bool,
 	wrapperRef: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })

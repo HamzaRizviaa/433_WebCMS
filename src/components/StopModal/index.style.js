@@ -45,5 +45,8 @@ export const useStyles = makeStyles(() => ({
 	},
 	closeIconRoot: {
 		padding: '0px !important'
+	},
+	stopBtn: {
+		textTransform: 'uppercase'
 	}
 }));
