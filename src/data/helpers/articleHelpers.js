@@ -73,6 +73,15 @@ export const articleTableColumns = [
 	}
 ];
 
+export const ARTICLE_ELEMENTS_TYPES = {
+	MEDIA: 'MEDIA',
+	TEXT: 'TEXT',
+	TWITTER: 'TWITTER',
+	IG: 'IG',
+	QUESTION: 'QUESTION',
+	MATCH: 'MATCH'
+};
+
 export const articleSidebarElements = [
 	{
 		image: <Text />,
@@ -80,7 +89,7 @@ export const articleSidebarElements = [
 		data: {
 			description: '',
 			dropbox_url: '',
-			element_type: 'TEXT'
+			element_type: ARTICLE_ELEMENTS_TYPES.TEXT
 		}
 	},
 	{
@@ -89,7 +98,7 @@ export const articleSidebarElements = [
 		data: {
 			uploadedFiles: [],
 			dropbox_url: '',
-			element_type: 'MEDIA'
+			element_type: ARTICLE_ELEMENTS_TYPES.MEDIA
 		}
 	},
 	{
@@ -98,7 +107,7 @@ export const articleSidebarElements = [
 		data: {
 			twitter_post_url: '',
 			dropbox_url: '',
-			element_type: 'TWITTER'
+			element_type: ARTICLE_ELEMENTS_TYPES.TWITTER
 		}
 	},
 	{
@@ -107,7 +116,7 @@ export const articleSidebarElements = [
 		data: {
 			instagram_post_url: '',
 			dropbox_url: '',
-			element_type: 'IG'
+			element_type: ARTICLE_ELEMENTS_TYPES.IG
 		}
 	},
 	{
@@ -115,7 +124,7 @@ export const articleSidebarElements = [
 		text: 'Add Question',
 		data: {
 			question_data: {},
-			element_type: 'QUESTION'
+			element_type: ARTICLE_ELEMENTS_TYPES.QUESTION
 		}
 	},
 	{
@@ -126,19 +135,10 @@ export const articleSidebarElements = [
 			match_title: '',
 			team_name: '',
 			match_id: '',
-			element_type: 'MATCH'
+			element_type: ARTICLE_ELEMENTS_TYPES.MATCH
 		}
 	}
 ];
-
-export const ElementTypes = {
-	MEDIA: 'MEDIA',
-	TEXT: 'TEXT',
-	TWITTER: 'TWITTER',
-	IG: 'IG',
-	QUESTION: 'QUESTION',
-	MATCH: 'MATCH'
-};
 
 export const uploadArticleFiles = async (article) => {
 	const { author_image, uploadedFiles, uploadedLandscapeCoverImage, elements } =
@@ -162,25 +162,34 @@ export const uploadArticleFiles = async (article) => {
 	});
 
 	const elementsFiles = elements.map(async (item, index) => {
-		if (item.element_type === 'MEDIA' && item.data[0].file) {
+		if (item.element_type === 'MEDIA' && item.uploadedFiles[0].file) {
 			const uploadedFile = await uploadFileToServer(
-				item.data[0],
+				item.uploadedFiles[0],
 				'articleLibrary'
 			);
-			elements[index].data[0].media_url = uploadedFile.media_url;
-			elements[index].data[0].thumbnail_url = uploadedFile.thumbnail_url;
+			elements[index] = {
+				...omit(elements[index], 'uploadedFiles'),
+				...omit(uploadedFile, [
+					'signedUrlKeyDelete',
+					'sort_order',
+					'thumbnail_url'
+				]),
+				...pick(item.uploadedFiles[0], ['width', 'height']),
+				...(uploadedFile.thumbnail_url
+					? { thumbnail_url: uploadedFile.thumbnail_url }
+					: {})
+			};
 			return uploadedFile;
 		} else {
 			return item;
 		}
 	});
-	article.elements = elements;
 
 	const response = await Promise.all([...files, ...elementsFiles]);
 
 	return {
 		uploadedFilesRes: response,
-		article
+		elements
 	};
 };
 
@@ -202,6 +211,21 @@ export const matchElementDataFormatter = (item) => ({
 				?.home_shirt_color_1
 	}
 });
+
+const articleElementsFormatterForForm = (elements) => {
+	const MEDIA_KEYS = ['id', 'element_type', 'sort_order', 'dropbox_url'];
+
+	elements.map((elem) => {
+		if (elem.element_type === ARTICLE_ELEMENTS_TYPES.MEDIA) {
+			const formattedElement = {
+				...pick(elem, MEDIA_KEYS),
+				uploadedFiles: [{ ...omit(elem, MEDIA_KEYS) }]
+			};
+			return formattedElement;
+		}
+		return elem;
+	});
+};
 
 export const articleDataFormatterForForm = (article) => {
 	const portraitFileKeys = ['file_name', 'image', 'height', 'width'];
@@ -235,30 +259,36 @@ export const articleDataFormatterForForm = (article) => {
 		subCategoryName: article.sub_category
 	};
 
-	const uploadedFiles = [
-		{
-			id: makeid(10),
-			file_name: article?.file_name,
-			media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${article?.image}`,
-			type: 'image',
-			width: article.width,
-			height: article.height
-		}
-	];
+	const uploadedFiles = !isEmpty(article.image)
+		? [
+				{
+					id: makeid(10),
+					file_name: article?.file_name,
+					media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${article?.image}`,
+					type: 'image',
+					width: article.width,
+					height: article.height
+				}
+		  ]
+		: [];
 
-	const uploadedLandscapeCoverImage = [
-		{
-			id: makeid(10),
-			file_name: article?.landscape_file_name,
-			media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${article?.landscape_image}`,
-			type: 'image',
-			width: article.landscape_width,
-			height: article.landscape_height
-		}
-	];
+	const uploadedLandscapeCoverImage = !isEmpty(article.landscape_image)
+		? [
+				{
+					id: makeid(10),
+					file_name: article?.landscape_file_name,
+					media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${article?.landscape_image}`,
+					type: 'image',
+					width: article.landscape_width,
+					height: article.landscape_height
+				}
+		  ]
+		: [];
 
 	formattedArticle.uploadedFiles = uploadedFiles;
 	formattedArticle.uploadedLandscapeCoverImage = uploadedLandscapeCoverImage;
+
+	articleElementsFormatterForForm()
 
 	return formattedArticle;
 };
@@ -270,8 +300,7 @@ export const articleDataFormatterForService = (
 ) => {
 	const { uploadedFiles, uploadedLandscapeCoverImage } = article;
 	const [authorImgFile, portraitImgFile, landscapeImgFile] = files;
-
-	console.log({ authorImgFile, portraitImgFile, landscapeImgFile });
+	const { media_url: authorMediaUrl } = authorImgFile;
 
 	const articleData = {
 		save_draft: isDraft,
@@ -279,14 +308,11 @@ export const articleDataFormatterForService = (
 		user_data: getUserDataObject(),
 		main_category_id: article.mainCategoryId,
 		sub_category_id: article.subCategoryId,
-		author_image: !isEmpty(authorImgFile.file_name)
-			? authorImgFile.media_url
-			: Profile433,
 
-		// Destructing the viral id for edit state
+		// Destructing the article id for edit state
 		...(article.id ? { article_id: article.id } : {}),
 
-		// Destructing the properties of viral
+		// Destructing the properties of article
 		...omit(article, [
 			'id',
 			'uploadedFiles',
@@ -296,6 +322,10 @@ export const articleDataFormatterForService = (
 			'mainCategoryName',
 			'subCategoryName'
 		]),
+
+		author_image:
+			authorMediaUrl.split('cloudfront.net/')[1] ||
+			Profile433.split('cloudfront.net/')[1],
 
 		// Destructing the porperties of portrait file
 		...(uploadedFiles.length && !isEmpty(portraitImgFile)

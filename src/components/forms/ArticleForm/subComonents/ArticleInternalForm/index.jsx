@@ -1,14 +1,25 @@
-import React, { useRef } from 'react';
-import { FieldArray } from 'formik';
+import React, { useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { FieldArray, useFormikContext } from 'formik';
 import { Box } from '@mui/material';
 import { useStyles } from '../subComponents.styles';
 import ArticleGeneralInfoForm from './ArticleGeneralInfoForm';
 import ArticleElementsFieldArray from '../elements/ArticleElementsFieldArray';
-import PropTypes from 'prop-types';
+import { useLazyGetMatchesTreeQuery } from '../../../../../data/features/articleLibrary/articleLibrary.query';
 
 const ArticleInternalForm = ({ isEdit, status }) => {
 	const classes = useStyles();
 	const topElementRef = useRef(null);
+
+	const { validateForm } = useFormikContext();
+
+	const [getMatchesTree, { isFetching: matchesLoading, data: matchesData }] =
+		useLazyGetMatchesTreeQuery();
+
+	useEffect(() => {
+		validateForm();
+		getMatchesTree();
+	}, []);
 
 	return (
 		<Box>
@@ -25,7 +36,13 @@ const ArticleInternalForm = ({ isEdit, status }) => {
 			></Box>
 			<FieldArray
 				name='elements'
-				render={(props) => <ArticleElementsFieldArray {...props} />}
+				render={(props) => (
+					<ArticleElementsFieldArray
+						{...props}
+						matchesLoading={matchesLoading}
+						matchesData={matchesData}
+					/>
+				)}
 			/>
 		</Box>
 	);

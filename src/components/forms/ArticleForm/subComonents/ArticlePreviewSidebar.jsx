@@ -11,7 +11,7 @@ import {
 	TwitterElementPreviewer
 } from './previewers';
 import ArticlePreviewWrapper from './ArticlePreviewWrapper';
-import { ElementTypes } from '../../../../data/helpers/articleHelpers';
+import { ARTICLE_ELEMENTS_TYPES } from '../../../../data/helpers/articleHelpers';
 
 const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 	const classes = useStyles();
@@ -22,18 +22,18 @@ const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 
 		// conditional rendering
 		switch (type) {
-			case ElementTypes.MEDIA:
+			case ARTICLE_ELEMENTS_TYPES.MEDIA:
 				return <MediaElementPreviewer data={item} isEdit={isEdit} />;
-			case ElementTypes.TEXT:
+			case ARTICLE_ELEMENTS_TYPES.TEXT:
 				return <TextElementPreviewer data={item} />;
 			// Will return same elements on both cases
-			case ElementTypes.TWITTER:
+			case ARTICLE_ELEMENTS_TYPES.TWITTER:
 				return <TwitterElementPreviewer data={item} itemIndex={index} />;
-			case ElementTypes.IG:
+			case ARTICLE_ELEMENTS_TYPES.IG:
 				return <IgElementPreviewer data={item} itemIndex={index} />;
-			case ElementTypes.QUESTION:
+			case ARTICLE_ELEMENTS_TYPES.QUESTION:
 				return <QuestionPoolPreviewer data={item} itemIndex={index} />;
-			case ElementTypes.MATCH:
+			case ARTICLE_ELEMENTS_TYPES.MATCH:
 				return <MatchElementPreviewer item={item} itemIndex={index} />;
 			default:
 				return null;

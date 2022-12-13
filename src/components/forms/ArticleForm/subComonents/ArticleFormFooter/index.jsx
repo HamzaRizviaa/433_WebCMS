@@ -46,6 +46,14 @@ const ArticleFormFooter = ({
 				<div></div>
 			)}
 			<div className={classes.container}>
+				<Button
+					size='small'
+					variant='outlined'
+					className={classes.draftButton}
+					onClick={() => console.log({ values })}
+				>
+					Print Formik
+				</Button>
 				{isDraft || !isEdit ? (
 					<Button
 						size='small'
