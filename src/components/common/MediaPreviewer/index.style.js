@@ -38,8 +38,8 @@ export const useMediaPreviewerStyle = makeStyles((theme) => ({
 	},
 	mediaPlayIcon: {
 		position: 'absolute',
-		left: ' 20px',
-		top: '26px',
+		left: ' 12px',
+		top: '12px',
 		height: ' 2.5rem !important',
 		width: 'auto !important',
 		color: '#ffff00'
