@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useField } from 'formik';
 import SelectField from '../../SelectField';
 
@@ -13,18 +13,15 @@ const FormikSelect = ({ name, onChange, onBlur, ...restProps }) => {
 
 	const { setValue, setTouched } = helpers;
 
-	const handleChange = useCallback(
-		(data) => {
-			setValue(data);
-			if (onChange) onChange(name, data);
-		},
-		[onChange]
-	);
+	const handleChange = (val, _, metaData) => {
+		setValue(val);
+		if (onChange) onChange(val, metaData);
+	};
 
-	const handleBlur = useCallback(() => {
+	const handleBlur = (event) => {
 		setTouched(true);
-		if (onBlur) onBlur(name, value);
-	}, [value, onBlur]);
+		if (onBlur) onBlur(event);
+	};
 
 	return (
 		<SelectField
