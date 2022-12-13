@@ -47,12 +47,12 @@ export type SelectFieldProps<T> =
 	| (AutocompleteProps<T, undefined, undefined, undefined> &
 			SelectFieldCustomProps<T> & {
 				searchable: true;
-				onChange?: (value: T, name: string) => void;
+				onChange?: (value: T) => void;
 			})
 	| (ModifiedSelectProps &
 			SelectFieldCustomProps<T> & {
 				searchable: false;
-				onChange?: (value: string | number, name: string) => void;
+				onChange?: (value: string | number, metaData?: T) => void;
 			});
 
 /**
