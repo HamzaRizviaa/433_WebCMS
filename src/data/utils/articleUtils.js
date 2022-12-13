@@ -334,16 +334,8 @@ export const checkEmptyMatchPublishAndDraft = (data) => {
 	return isEmpty;
 };
 
-export const getLeagueOptions = (data) => {
-	data.map((value) => ({
-		label: value.name,
-		value: value.name,
-		data: value
-	}));
-};
-
 export const getTeamOptions = (data, val) => {
-	return data.find((value) => value === val)?.teams;
+	return data.find((value) => value.id === val)?.teams;
 };
 
 export const getMatchName = (date, name) => {

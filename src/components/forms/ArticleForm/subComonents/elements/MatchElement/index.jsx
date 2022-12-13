@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import FormikSelect from '../../../../../ui/inputs/formik/FormikSelect';
-import {
-	getLeagueOptions,
-	getTeamOptions,
-	getMatchName
-} from '../../../../../../data/utils';
+import { getTeamOptions, getMatchName } from '../../../../../../data/utils';
 import DraggableLayoutWrapper from '../../../../../layouts/DraggableLayoutWrapper';
 import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 
@@ -20,8 +16,6 @@ const MatchElement = ({
 	const [leagues, setLeagues] = useState([]);
 	const [teams, setTeams] = useState([]);
 	const [matches, setMatches] = useState([]);
-
-	console.log({ data });
 
 	useEffect(() => {
 		if (isPublished) {
@@ -39,11 +33,12 @@ const MatchElement = ({
 	};
 
 	const handleTeamChange = (val) => {
-		const teamMatches = teams.map((value) => value.name === val.name)?.matches;
-		teamMatches.map((match) => {
-			match.name = getMatchName(match.startdate, match.name);
-		});
-		setMatches(teamMatches);
+		const teamMatches = teams.find((value) => value.id === val)?.matches;
+		const mappedMatches = teamMatches?.map((match) => ({
+			...match,
+			name : getMatchName(match.startdate, match.name)
+		}));
+		setMatches(mappedMatches);
 	};
 
 	return (
@@ -58,7 +53,8 @@ const MatchElement = ({
 				<FormikSelect
 					name={`elements.${index}.league_name`}
 					placeholder='SELECT LEAGUE'
-					options={getLeagueOptions(leagues)}
+					options={leagues}
+					mapOptions={{labelKey: 'name', valueKey: 'id'}}
 					disabled={isPublished}
 					onChange={handleLeagueChange}
 				/>
@@ -66,14 +62,16 @@ const MatchElement = ({
 					name={`elements.${index}.team_name`}
 					placeholder='SELECT TEAM'
 					options={teams}
-					disabled={isPublished || teams.length === 0}
+					mapOptions={{labelKey: 'name', valueKey: 'id'}}
+					disabled={isPublished || teams?.length === 0}
 					onChange={handleTeamChange}
 				/>
 				<FormikSelect
 					name={`elements.${index}.match_title`}
 					placeholder='SELECT MATCH'
 					options={matches}
-					disabled={isPublished || matches.length === 0}
+					mapOptions={{labelKey: 'name', valueKey: '_id'}}
+					disabled={isPublished || matches?.length === 0}
 				/>
 			</DraggableCardLayout>
 		</DraggableLayoutWrapper>
