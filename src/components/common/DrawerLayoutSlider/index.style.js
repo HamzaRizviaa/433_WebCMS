@@ -12,9 +12,7 @@ export const DrawerLayoutStyles = makeStyles((theme) => ({
 				: '#ffffff !important',
 		right: '0 !important',
 		borderLeft: ({ fromArticle }) =>
-			fromArticle
-				? ``
-				: '1px solid #ffff00 !important',
+			fromArticle ? `` : '1px solid #ffff00 !important',
 		height: '100vh !important',
 		zIndex: '5 !important',
 		position: 'fixed !important',
@@ -26,7 +24,7 @@ export const DrawerLayoutStyles = makeStyles((theme) => ({
 		backgroundColor: '#000000 !important'
 	},
 	content: {
-		padding: ({ fromArticle }) => fromArticle ? '4rem 0' : '4rem'
+		padding: ({ fromArticle }) => (fromArticle ? '4rem 0' : '4rem')
 	},
 	closeIcon: {
 		width: '3.2rem !important',
@@ -44,7 +42,8 @@ export const DrawerLayoutStyles = makeStyles((theme) => ({
 		marginBottom: '2.5rem',
 		position: 'fixed',
 		zIndex: '2',
-		background: 'black'
+		background: 'black',
+		width: '90%'
 	},
 	header: {
 		display: 'flex',
