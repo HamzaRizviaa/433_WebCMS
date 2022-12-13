@@ -4,14 +4,22 @@ import FormikDropzone from '../../../../../ui/inputs/formik/FormikDropzone';
 import FormikField from '../../../../../ui/inputs/formik/FormikField';
 import FormikLabelsSelect from '../../../../../ui/inputs/formik/FormikLabelsSelect';
 import { useElementsStyles } from '../elements.styles';
+import { useFormikContext } from 'formik';
 
-const ArticleQuestionForm = ({ openPreviewer, type, isPublished }) => {
+const ArticleQuestionForm = ({
+	index,
+	item,
+	openPreviewer,
+	type,
+	isPublished
+}) => {
 	const classes = useElementsStyles();
-
+	const { values } = useFormikContext();
 	const handleDeleteFile = () => {
 		console.log('abc');
 	};
 
+	console.log(values, index, item, 'question ');
 	return (
 		<div>
 			<div>
@@ -22,7 +30,7 @@ const ArticleQuestionForm = ({ openPreviewer, type, isPublished }) => {
 
 				<div className={classes.dropzoneWrapper}>
 					<FormikDropzone
-						name='QuestionUploadedFiles'
+						name={`elements.${index}.question_data.uploadedFiles`}
 						accept='image/jpeg, image/png'
 						formatMessage='Supported formats are jpeg and png'
 						fileSizeMessage='Image file size should not exceed 1MB.'
@@ -36,8 +44,8 @@ const ArticleQuestionForm = ({ openPreviewer, type, isPublished }) => {
 			</div>
 			<div className={classes.fieldContainer}>
 				<FormikField
-					//name={`questions.${index}.dropbox_url`}
-					name='dropbox_url'
+					name={`elements.${index}.question_data.dropbox_url`}
+					// name='dropbox_url'
 					label='DROPBOX URL'
 					placeholder='Please drop the dropbox URL here'
 					multiline
@@ -47,8 +55,7 @@ const ArticleQuestionForm = ({ openPreviewer, type, isPublished }) => {
 			</div>
 			<div className={classes.fieldContainer}>
 				<FormikField
-					//	name={`questions.${index}.question`}
-					name='question'
+					name={`elements.${index}.question_data.question`}
 					label='QUESTION'
 					placeholder='Please write your question here'
 					multiline
@@ -60,8 +67,7 @@ const ArticleQuestionForm = ({ openPreviewer, type, isPublished }) => {
 			</div>
 			<div className={classes.fieldContainer}>
 				<FormikField
-					//	name={`questions.${index}.question`}
-					name='answer'
+					name={`elements.${index}.question_data.answers.0.answer`}
 					label={type === 'quiz' ? 'RIGHT ANSWER' : 'ANSWER 1'}
 					placeholder='Please write your answer here'
 					multiline
@@ -74,7 +80,7 @@ const ArticleQuestionForm = ({ openPreviewer, type, isPublished }) => {
 			<div className={classes.fieldContainer}>
 				<FormikField
 					//	name={`questions.${index}.question`}
-					name='answer2'
+					name={`elements.${index}.question_data.answers.1.answer`}
 					label={type === 'quiz' ? 'WRONG ANSWER' : 'ANSWER 2'}
 					placeholder='Please write your answer here'
 					multiline
@@ -87,7 +93,7 @@ const ArticleQuestionForm = ({ openPreviewer, type, isPublished }) => {
 
 			<div className={classes.fieldContainer}>
 				<FormikLabelsSelect
-					name='labels'
+					name={`elements.${index}.question_data.labels`}
 					label='LABELS'
 					placeholder='Select a minimum of 1 labels'
 					disabled={isPublished}
@@ -102,7 +108,9 @@ const ArticleQuestionForm = ({ openPreviewer, type, isPublished }) => {
 ArticleQuestionForm.propTypes = {
 	type: PropTypes.string,
 	openPreviewer: PropTypes.any,
-	isPublished: PropTypes.bool
+	isPublished: PropTypes.bool,
+	index: PropTypes.number.isRequired,
+	item: PropTypes.object
 };
 
 export default ArticleQuestionForm;

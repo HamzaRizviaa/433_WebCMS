@@ -11,11 +11,6 @@ const QuestionElement = ({ index, item, handleRemoveElement }) => {
 	const headings = ['Quiz', 'Poll'];
 	const defaultSelectedTab = 0; //later will set according to edit status
 
-	console.log(index, item, 'article question');
-
-	// temp
-	const isPublished = false;
-
 	return (
 		<DraggableLayoutWrapper>
 			<DraggableCardLayout
@@ -34,10 +29,10 @@ const QuestionElement = ({ index, item, handleRemoveElement }) => {
 						//hideTabsHead={isPublished}
 					>
 						<TabPanes.TabPanel value={0}>
-							<ArticleQuestionForm type={'quiz'} isPublished={isPublished} />
+							<ArticleQuestionForm type={'quiz'} index={index} item={item} />
 						</TabPanes.TabPanel>
 						<TabPanes.TabPanel value={1}>
-							<ArticleQuestionForm type={'poll'} isPublished={isPublished} />
+							<ArticleQuestionForm type={'poll'} index={index} item={item} />
 						</TabPanes.TabPanel>
 					</TabPanes>
 				</div>

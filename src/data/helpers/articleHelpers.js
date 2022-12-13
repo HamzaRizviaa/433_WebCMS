@@ -123,8 +123,21 @@ export const articleSidebarElements = [
 		image: <Question />,
 		text: 'Add Question',
 		data: {
-			question_data: {},
-			element_type: ARTICLE_ELEMENTS_TYPES.QUESTION
+			element_type: ARTICLE_ELEMENTS_TYPES.QUESTION,
+			question_data: {
+				uploadedFiles: [],
+				labels: [],
+				dropbox_url: '',
+				question: '',
+				answers: [
+					{
+						answer: ''
+					},
+					{
+						answer: ''
+					}
+				]
+			}
 		}
 	},
 	{
