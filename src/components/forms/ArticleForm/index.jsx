@@ -57,7 +57,6 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
 	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
-		console.log('onSubmitHandler');
 		formikBag.setSubmitting(true);
 
 		try {

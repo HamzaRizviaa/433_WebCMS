@@ -37,7 +37,6 @@ const ImageVideoElement = ({ index, item, handleRemoveElement }) => {
 						hidePreviewIcon
 					/>
 				</div>
-
 				<div className={classes.fieldContainer}>
 					<FormikField
 						name={`elements.${index}.dropbox_url`}

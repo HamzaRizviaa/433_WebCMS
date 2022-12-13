@@ -82,7 +82,7 @@ const ArticleGeneralInfoForm = ({
 							options={mainCategories}
 							mapOptions={{ labelKey: 'name', valueKey: 'id' }}
 							onChange={handleMainCategoryChange}
-							disabled={status == 'published' ? true : false}
+							disabled={isPublished}
 						/>
 					</div>
 				</div>
@@ -93,9 +93,7 @@ const ArticleGeneralInfoForm = ({
 							label='SUB CATEGORY'
 							name='subCategoryId'
 							placeholder='Please Select'
-							disabled={
-								!values.mainCategoryName || status == 'published' ? true : false
-							}
+							disabled={!values.mainCategoryName || isPublished}
 							size='large'
 							options={subCategories}
 							mapOptions={{ labelKey: 'name', valueKey: 'id' }}
@@ -214,10 +212,9 @@ const ArticleGeneralInfoForm = ({
 							name='labels'
 							label='LABELS'
 							placeholder='Select a minimum of 4 labels'
-							// disabled={isPublished}
 							required
 							library='Articles'
-							disabled={status == 'published' ? true : false}
+							disabled={isPublished}
 						/>
 					</div>
 					<div className={classes.fieldContainer}>
