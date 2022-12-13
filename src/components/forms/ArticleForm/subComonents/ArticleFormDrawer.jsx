@@ -51,7 +51,7 @@ const ArticleFormDrawer = ({
 			</Grid>
 			<ArticleFormFooter
 				isEdit={isEdit}
-				isDraft={status === 'draft'}
+				isDraft={status !== 'published'}
 				loading={isLoading}
 				openDeleteModal={toggleDeleteModal}
 				onSubmitHandler={onSubmitHandler}

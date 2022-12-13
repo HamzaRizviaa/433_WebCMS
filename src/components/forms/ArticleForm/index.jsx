@@ -60,51 +60,51 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 		formikBag.setSubmitting(true);
 
 		try {
-			if (
-				(!isDraft && specificArticle?.title !== values.title) ||
-				(!isDraft && status === 'draft')
-			) {
-				const { data } = await ArticleLibraryService.getArticleCheckTitle(
-					values.title
-				);
+			// if (
+			// 	(!isDraft && specificArticle?.title !== values.title) ||
+			// 	(!isDraft && status === 'draft')
+			// ) {
+			// 	const { data } = await ArticleLibraryService.getArticleCheckTitle(
+			// 		values.title
+			// 	);
 
-				if (data.response) {
-					formikBag.setSubmitting(false);
-					formikBag.setFieldError(
-						'title',
-						'An article item with this Title has already been published. Please amend the Title.'
-					);
-					return;
-				}
-			}
+			// 	if (data.response) {
+			// 		formikBag.setSubmitting(false);
+			// 		formikBag.setFieldError(
+			// 			'title',
+			// 			'An article item with this Title has already been published. Please amend the Title.'
+			// 		);
+			// 		return;
+			// 	}
+			// }
 
-			const { uploadedFilesRes, article } = await uploadArticleFiles(values);
+			const { uploadedFilesRes, elements } = await uploadArticleFiles(values);
 
-			console.log({ uploadedFilesRes, article, values });
+			console.log({ elements });
 
 			const articleData = articleDataFormatterForService(
-				values,
+				{ ...values, elements },
 				uploadedFilesRes,
 				isDraft
 			);
 
 			console.log({ articleData });
 
-			// const { type } = await dispatch(
-			// 	createOrEditArticleThunk(articleData, formikBag, isDraft)
-			// );
+			const { type } = await dispatch(
+				createOrEditArticleThunk(articleData, formikBag, isDraft)
+			);
 
-			// if (type === 'articleLibary/createOrEditArticleThunk/fulfilled') {
-			// 	handleClose();
+			if (type === 'articleLibary/createOrEditArticleThunk/fulfilled') {
+				handleClose();
 
-			// 	if (isEdit && !(status === 'draft' && isDraft === false)) {
-			// 		dispatch(getAllArticlesApi(queryParams));
-			// 	} else if (isSearchParamsEmpty) {
-			// 		dispatch(getAllArticlesApi());
-			// 	} else {
-			// 		navigate('/article-library');
-			// 	}
-			// }
+				if (isEdit && !(status === 'draft' && isDraft === false)) {
+					dispatch(getAllArticlesApi(queryParams));
+				} else if (isSearchParamsEmpty) {
+					dispatch(getAllArticlesApi());
+				} else {
+					navigate('/article-library');
+				}
+			}
 		} catch (e) {
 			console.error(e);
 		} finally {

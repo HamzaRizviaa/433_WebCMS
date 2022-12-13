@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ElementTypes } from '../../../../../data/helpers/articleHelpers';
+import { ARTICLE_ELEMENTS_TYPES } from '../../../../../data/helpers/articleHelpers';
 
 // // Elements
 import TextElement from './TextElement';
@@ -9,7 +9,12 @@ import SocialMediaElement from './SocialMediaElement';
 import MatchElement from './MatchElement';
 import QuestionElement from './QuestionElement';
 
-const ArticleElementsFieldArray = ({ form, remove }) => {
+const ArticleElementsFieldArray = ({
+	form,
+	remove,
+	matchesLoading,
+	matchesData
+}) => {
 	const handleRemoveElement = (_, index) => {
 		remove(index);
 	};
@@ -18,7 +23,7 @@ const ArticleElementsFieldArray = ({ form, remove }) => {
 		const { element_type: type } = item;
 
 		switch (type) {
-			case ElementTypes.TEXT:
+			case ARTICLE_ELEMENTS_TYPES.TEXT:
 				return (
 					<TextElement
 						index={index}
@@ -26,7 +31,7 @@ const ArticleElementsFieldArray = ({ form, remove }) => {
 						handleRemoveElement={handleRemoveElement}
 					/>
 				);
-			case ElementTypes.MEDIA:
+			case ARTICLE_ELEMENTS_TYPES.MEDIA:
 				return (
 					<ImageVideoElement
 						index={index}
@@ -34,7 +39,7 @@ const ArticleElementsFieldArray = ({ form, remove }) => {
 						handleRemoveElement={handleRemoveElement}
 					/>
 				);
-			case ElementTypes.TWITTER:
+			case ARTICLE_ELEMENTS_TYPES.TWITTER:
 				return (
 					<SocialMediaElement
 						index={index}
@@ -42,7 +47,7 @@ const ArticleElementsFieldArray = ({ form, remove }) => {
 						handleRemoveElement={handleRemoveElement}
 					/>
 				);
-			case ElementTypes.IG:
+			case ARTICLE_ELEMENTS_TYPES.IG:
 				return (
 					<SocialMediaElement
 						index={index}
@@ -50,7 +55,7 @@ const ArticleElementsFieldArray = ({ form, remove }) => {
 						handleRemoveElement={handleRemoveElement}
 					/>
 				);
-			case ElementTypes.QUESTION:
+			case ARTICLE_ELEMENTS_TYPES.QUESTION:
 				return (
 					<QuestionElement
 						index={index}
@@ -58,12 +63,14 @@ const ArticleElementsFieldArray = ({ form, remove }) => {
 						handleRemoveElement={handleRemoveElement}
 					/>
 				);
-			case ElementTypes.MATCH:
+			case ARTICLE_ELEMENTS_TYPES.MATCH:
 				return (
 					<MatchElement
 						index={index}
 						item={item}
 						handleRemoveElement={handleRemoveElement}
+						loading={matchesLoading}
+						data={matchesData}
 					/>
 				);
 			default:
@@ -84,7 +91,9 @@ ArticleElementsFieldArray.propTypes = {
 	form: PropTypes.object.isRequired,
 	push: PropTypes.func.isRequired,
 	remove: PropTypes.func.isRequired,
-	swap: PropTypes.func.isRequired
+	swap: PropTypes.func.isRequired,
+	matchesLoading: PropTypes.bool,
+	matchesData: PropTypes.array
 };
 
 export default ArticleElementsFieldArray;

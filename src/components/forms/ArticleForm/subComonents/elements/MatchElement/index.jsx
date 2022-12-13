@@ -21,6 +21,8 @@ const MatchElement = ({
 	const [teams, setTeams] = useState([]);
 	const [matches, setMatches] = useState([]);
 
+	console.log({ data });
+
 	useEffect(() => {
 		if (isPublished) {
 			setLeagues([
@@ -35,6 +37,7 @@ const MatchElement = ({
 		const leagueTeams = getTeamOptions(leagues, val);
 		setTeams(leagueTeams);
 	};
+
 	const handleTeamChange = (val) => {
 		const teamMatches = teams.map((value) => value.name === val.name)?.matches;
 		teamMatches.map((match) => {
