@@ -99,7 +99,7 @@ const MediaPreviewer = ({
 				placement='right'
 				classes={{ tooltip: classes.toolTipPreview }}
 			>
-				<span>
+				<span className={classes.previewIconWrapper}>
 					{isVideo && <PlayArrowIcon className={classes.mediaPlayIcon} />}
 					<img
 						className={classes.mediaIcon}
