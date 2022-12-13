@@ -33,6 +33,9 @@ export const useMediaPreviewerStyle = makeStyles((theme) => ({
 		borderRadius: '8px !important',
 		maxWidth: 'none !important'
 	},
+	previewIconWrapper: {
+		position: 'relative'
+	},
 	mediaPlayIcon: {
 		position: 'absolute',
 		left: ' 20px',
