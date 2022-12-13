@@ -125,6 +125,7 @@ export const articleSidebarElements = [
 		data: {
 			element_type: ARTICLE_ELEMENTS_TYPES.QUESTION,
 			question_data: {
+				question_type: 'quiz',
 				uploadedFiles: [],
 				labels: [],
 				dropbox_url: '',
@@ -267,8 +268,37 @@ const articleElementsFormatterForForm = (elements) => {
 				]
 			};
 			return formattedElement;
+		} else if (elem.element_type === ARTICLE_ELEMENTS_TYPES.QUESTION) {
+			const formattedElement = {
+				id: elem.id,
+				element_type: elem.element_type,
+				sort_order: elem.sort_order,
+				question_data: {
+					...omit(elem.question_data, [
+						'id',
+						'question_id',
+						'image',
+						'file_name',
+						'width',
+						'height',
+						'end_date'
+					]),
+					uploadedFiles: elem.question_data.image
+						? [
+								{
+									media_url:
+										`${process.env.REACT_APP_MEDIA_ENDPOINT}/${elem.question_data.image}` ||
+										undefined,
+									file_name: elem.question_data.file_name
+								}
+						  ]
+						: []
+				}
+			};
+			return formattedElement;
+		} else {
+			return elem;
 		}
-		return elem;
 	});
 };
 

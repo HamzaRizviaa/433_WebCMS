@@ -335,7 +335,7 @@ export const checkEmptyMatchPublishAndDraft = (data) => {
 };
 
 export const getTeamOptions = (data, val) => {
-	return data.find((value) => value.id === val)?.teams;
+	return data.find((value) => value.name === val)?.teams;
 };
 
 export const getMatchName = (date, name) => {

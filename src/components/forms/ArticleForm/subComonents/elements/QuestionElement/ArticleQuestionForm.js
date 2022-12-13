@@ -7,19 +7,18 @@ import { useElementsStyles } from '../elements.styles';
 import { useFormikContext } from 'formik';
 
 const ArticleQuestionForm = ({
-	index,
-	item,
-	openPreviewer,
 	type,
-	isPublished
+	index,
+	isPublished,
+	openPreviewer
 }) => {
 	const classes = useElementsStyles();
-	const { values } = useFormikContext();
+	const { setFieldValue } = useFormikContext();
+
 	const handleDeleteFile = () => {
-		console.log('abc');
+		setFieldValue(`elements.${index}.uploadedFiles`, []);
 	};
 
-	console.log(values, index, item, 'question ');
 	return (
 		<div>
 			<div>
@@ -27,7 +26,6 @@ const ArticleQuestionForm = ({
 					Add Background Image
 					<span className={classes.requiredImage}>{'*'}</span>
 				</span>
-
 				<div className={classes.dropzoneWrapper}>
 					<FormikDropzone
 						name={`elements.${index}.question_data.uploadedFiles`}
@@ -45,12 +43,10 @@ const ArticleQuestionForm = ({
 			<div className={classes.fieldContainer}>
 				<FormikField
 					name={`elements.${index}.question_data.dropbox_url`}
-					// name='dropbox_url'
 					label='DROPBOX URL'
 					placeholder='Please drop the dropbox URL here'
 					multiline
 					maxRows={2}
-					//disabled={isArticle}
 				/>
 			</div>
 			<div className={classes.fieldContainer}>
@@ -79,7 +75,6 @@ const ArticleQuestionForm = ({
 			</div>
 			<div className={classes.fieldContainer}>
 				<FormikField
-					//	name={`questions.${index}.question`}
 					name={`elements.${index}.question_data.answers.1.answer`}
 					label={type === 'quiz' ? 'WRONG ANSWER' : 'ANSWER 2'}
 					placeholder='Please write your answer here'
@@ -90,7 +85,6 @@ const ArticleQuestionForm = ({
 					required
 				/>
 			</div>
-
 			<div className={classes.fieldContainer}>
 				<FormikLabelsSelect
 					name={`elements.${index}.question_data.labels`}

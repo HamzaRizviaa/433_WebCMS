@@ -10,10 +10,12 @@ import MatchElement from './MatchElement';
 import QuestionElement from './QuestionElement';
 
 const ArticleElementsFieldArray = ({
-	form,
-	remove,
+	isEdit,
+	status,
 	matchesLoading,
-	matchesData
+	matchesData,
+	form,
+	remove
 }) => {
 	const handleRemoveElement = (_, index) => {
 		remove(index);
@@ -61,6 +63,8 @@ const ArticleElementsFieldArray = ({
 						index={index}
 						item={item}
 						handleRemoveElement={handleRemoveElement}
+						isEdit={isEdit}
+						status={status}
 					/>
 				);
 			case ARTICLE_ELEMENTS_TYPES.MATCH:
@@ -69,6 +73,8 @@ const ArticleElementsFieldArray = ({
 						index={index}
 						item={item}
 						handleRemoveElement={handleRemoveElement}
+						isEdit={isEdit}
+						status={status}
 						loading={matchesLoading}
 						data={matchesData}
 					/>
@@ -88,12 +94,14 @@ const ArticleElementsFieldArray = ({
 };
 
 ArticleElementsFieldArray.propTypes = {
+	isEdit: PropTypes.bool.isRequired,
+	status: PropTypes.string.isRequired,
+	matchesLoading: PropTypes.bool,
+	matchesData: PropTypes.array,
 	form: PropTypes.object.isRequired,
 	push: PropTypes.func.isRequired,
 	remove: PropTypes.func.isRequired,
-	swap: PropTypes.func.isRequired,
-	matchesLoading: PropTypes.bool,
-	matchesData: PropTypes.array
+	swap: PropTypes.func.isRequired
 };
 
 export default ArticleElementsFieldArray;

@@ -38,9 +38,11 @@ const ArticleInternalForm = ({ isEdit, status }) => {
 				name='elements'
 				render={(props) => (
 					<ArticleElementsFieldArray
-						{...props}
+						isEdit={isEdit}
+						status={status}
 						matchesLoading={matchesLoading}
 						matchesData={matchesData}
+						{...props}
 					/>
 				)}
 			/>

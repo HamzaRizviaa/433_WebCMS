@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-//import PropTypes from 'prop-types';
 import { Box, Typography } from '@material-ui/core';
 import { useElementsStyles } from './elements.styles';
 import ToggleSwitchField from '../../../../ui/inputs/ToggleSwitchField';
@@ -58,10 +57,5 @@ const ArticleElementsSidebar = () => {
 		</Box>
 	);
 };
-
-// ArticleElementsSidebar.propTypes = {
-// 	push: PropTypes.func.isRequired,
-// 	unshift: PropTypes.func.isRequired
-// };
 
 export default ArticleElementsSidebar;
