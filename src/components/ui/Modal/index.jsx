@@ -26,12 +26,14 @@ export default function Modal({
 	onConfirm,
 	onClose,
 	isSubmitting = false,
+	cancelButtonText = 'GO BACK',
 	confirmButtonText = 'CONFIRM',
 	confirmButtonVariant = 'contained',
 	confirmButtonColor = 'primary',
+	size = 'small',
 	children
 }) {
-	const classes = useModalStyles();
+	const classes = useModalStyles({ size });
 	const [playOpen] = useSound(soundOpen, { volume: 0.5 });
 	const [playClose] = useSound(soundClose, { volume: 0.5 });
 
@@ -68,7 +70,7 @@ export default function Modal({
 						size='small'
 						variant='outlined'
 					>
-						GO BACK
+						{cancelButtonText}
 					</Button>
 					<Button
 						onClick={onConfirm}
@@ -93,6 +95,7 @@ Modal.propTypes = {
 	onConfirm: PropTypes.func.isRequired,
 	onClose: PropTypes.func.isRequired,
 	isSubmitting: PropTypes.bool,
+	cancelButtonText: PropTypes.string,
 	confirmButtonText: PropTypes.string,
 	confirmButtonVariant: PropTypes.string,
 	confirmButtonColor: PropTypes.string,
@@ -103,5 +106,6 @@ Modal.propTypes = {
 	children: PropTypes.oneOfType([
 		PropTypes.element,
 		PropTypes.arrayOf(PropTypes.element)
-	])
+	]),
+	size: PropTypes.string
 };

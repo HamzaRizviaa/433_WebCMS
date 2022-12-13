@@ -7,10 +7,12 @@ export interface ModalProps {
 	onConfirm: () => void;
 	onClose: () => void;
 	isSubmitting?: boolean;
+	cancelButtonText?: string;
 	confirmButtonText?: string;
 	confirmButtonVariant?: ButtonProps['variant'];
 	confirmButtonColor?: ButtonProps['color'];
 	children: React.ReactElement;
+	size?: 'small' | 'medium' | 'large';
 }
 
 /**

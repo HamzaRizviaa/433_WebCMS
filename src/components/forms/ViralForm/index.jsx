@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useRef, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +22,7 @@ import { uploadFileToServer } from '../../../data/utils';
 
 import ViralFormDrawer from './subComponents/ViralFormDrawer';
 import DeleteModal from '../../DeleteModal';
+import SchedulerPopup from '../../common/SchedulerPopup';
 
 /**
  * ViralForm Component is used as a child of the ViralLibrary and the link to that is given below.
@@ -157,7 +159,7 @@ const ViralForm = ({
 						onSubmitHandler={onSubmitHandler}
 						toggleDeleteModal={toggleDeleteModal}
 					/>
-					<DeleteModal
+					{/* <DeleteModal
 						open={openDeleteModal}
 						toggle={closeDeleteModal}
 						deleteBtn={() => {
@@ -166,7 +168,8 @@ const ViralForm = ({
 						text={'Viral'}
 						wrapperRef={dialogWrapper}
 						isSubmitting={isSubmitting}
-					/>
+					/> */}
+					<SchedulerPopup open={openDeleteModal} onClose={closeDeleteModal} />
 				</div>
 			)}
 		</Formik>
