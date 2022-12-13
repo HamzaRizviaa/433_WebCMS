@@ -162,24 +162,43 @@ export const uploadArticleFiles = async (article) => {
 	});
 
 	const elementsFiles = elements.map(async (item, index) => {
-		if (item.element_type === 'MEDIA' && item.uploadedFiles[0].file) {
-			const uploadedFile = await uploadFileToServer(
-				item.uploadedFiles[0],
-				'articleLibrary'
-			);
-			elements[index] = {
-				...omit(elements[index], 'uploadedFiles'),
-				...omit(uploadedFile, [
-					'signedUrlKeyDelete',
-					'sort_order',
-					'thumbnail_url'
-				]),
-				...pick(item.uploadedFiles[0], ['width', 'height']),
-				...(uploadedFile.thumbnail_url
-					? { thumbnail_url: uploadedFile.thumbnail_url }
-					: {})
-			};
-			return uploadedFile;
+		if (item.element_type === 'MEDIA') {
+			if (item.uploadedFiles[0].file) {
+				// This block will be executed if a new media file is uploaded
+				const uploadedFile = await uploadFileToServer(
+					item.uploadedFiles[0],
+					'articleLibrary'
+				);
+				elements[index] = {
+					...omit(elements[index], 'uploadedFiles'),
+					...omit(uploadedFile, [
+						'signedUrlKeyDelete',
+						'sort_order',
+						'thumbnail_url'
+					]),
+					...pick(item.uploadedFiles[0], ['width', 'height']),
+					...(uploadedFile.thumbnail_url
+						? { thumbnail_url: uploadedFile.thumbnail_url }
+						: {})
+				};
+				return uploadedFile;
+			} else {
+				// This block will be executed if there isn't any new media file uplaoded
+				elements[index] = {
+					...omit(item, ['uploadedFiles']),
+					...item.uploadedFiles[0],
+					media_url:
+						item.uploadedFiles[0].media_url.split('cloudfront.net/')[1],
+					...(item.uploadedFiles[0].thumbnail_url
+						? {
+								thumbnail_url:
+									item.uploadedFiles[0].thumbnail_url.split(
+										'cloudfront.net/'
+									)[1]
+						  }
+						: {})
+				};
+			}
 		} else {
 			return item;
 		}
@@ -215,11 +234,24 @@ export const matchElementDataFormatter = (item) => ({
 const articleElementsFormatterForForm = (elements) => {
 	const MEDIA_KEYS = ['id', 'element_type', 'sort_order', 'dropbox_url'];
 
-	elements.map((elem) => {
+	return elements.map((elem) => {
 		if (elem.element_type === ARTICLE_ELEMENTS_TYPES.MEDIA) {
 			const formattedElement = {
 				...pick(elem, MEDIA_KEYS),
-				uploadedFiles: [{ ...omit(elem, MEDIA_KEYS) }]
+				uploadedFiles: [
+					{
+						file_name: elem.file_name,
+						media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${elem.media_url}`,
+						width: elem.width,
+						height: elem.height,
+						...(elem.thumbnail_url
+							? {
+									type: 'video',
+									thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${elem.thumbnail_url}`
+							  }
+							: { type: 'image' })
+					}
+				]
 			};
 			return formattedElement;
 		}
@@ -288,7 +320,10 @@ export const articleDataFormatterForForm = (article) => {
 	formattedArticle.uploadedFiles = uploadedFiles;
 	formattedArticle.uploadedLandscapeCoverImage = uploadedLandscapeCoverImage;
 
-	articleElementsFormatterForForm()
+	const elements = articleElementsFormatterForForm(article.elements);
+	formattedArticle.elements = elements;
+
+	console.log({ formattedArticle });
 
 	return formattedArticle;
 };
