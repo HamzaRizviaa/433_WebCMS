@@ -24,7 +24,7 @@ const CommonFields = ({ questionType, openPreviewer, isClosed }) => {
 					placeholder={`Please write ${questionType} title here`}
 					multiline
 					maxRows={2}
-					maxLength={43}
+					maxLength={55}
 					disabled={isClosed}
 					required
 				/>
