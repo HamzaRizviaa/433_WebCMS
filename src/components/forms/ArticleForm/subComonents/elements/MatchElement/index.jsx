@@ -54,6 +54,7 @@ const MatchElement = ({
 	const resetMatchValueInFormik = () => {
 		setFieldValue(`elements.${index}.match_title`, '');
 		setFieldValue(`elements.${index}.match_id`, '');
+		setFieldValue(`elements.${index}.match`, {});
 	};
 
 	const handleLeagueChange = (val) => {
@@ -75,8 +76,9 @@ const MatchElement = ({
 	};
 
 	const handleMatchChange = (val) => {
-		const { _id } = matches.find((value) => value.name === val);
-		setFieldValue(`elements.${index}.match_id`, _id);
+		const match = matches.find((value) => value.name === val);
+		setFieldValue(`elements.${index}.match_id`, match?._id || '');
+		setFieldValue(`elements.${index}.match`, match);
 	};
 
 	return (
