@@ -18,8 +18,12 @@ const AdvancedSettingsForm = () => {
 					<FormikCheckbox
 						name='6385e94da11fe52856b2eb18'
 						label='Geoblock ligue 1'
-						tooltip={`Geoblock: France
-					Duration: 72 hours`}
+						tooltip={
+							<div>
+								Geoblock: France <br />
+								Duration: 72 hours
+							</div>
+						}
 					/>
 				</SettingsLayout>
 			</AccordianLayout>
