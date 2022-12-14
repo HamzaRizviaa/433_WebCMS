@@ -1,31 +1,24 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup } from '@material-ui/core';
 import AccordianLayout from '../../../layouts/AccordianLayout';
 import SettingsLayout from '../../../layouts/SettingsLayout';
-import CheckBox from '../../../ui/inputs/CheckBox';
+import FormikCheckbox from '../../../ui/inputs/formik/FormikCheckbox';
 
 const AdvancedSettingsForm = () => {
 	return (
 		<div>
 			<AccordianLayout title='Advanced Settings'>
 				<SettingsLayout title={'Comments & Likes'}>
-					<FormGroup>
-						<CheckBox label='Show Comments' />
-						<CheckBox label='Show Likes' />
-					</FormGroup>
+					<FormikCheckbox name='show_comments' label='Show Comments' />
+					<FormikCheckbox name='show_likes' label='Show Likes' />
 				</SettingsLayout>
 
 				<SettingsLayout title={'Restrictions'}>
-					<CheckBox
+					<FormikCheckbox
+						name='6385e94da11fe52856b2eb18'
 						label='Geoblock ligue 1'
-						tooltip={`Geoblock: France, Belgium & Monaco
-					Duration: 72 hours`}
-					/>
-					<CheckBox
-						label='Geoblock Bundesliga'
-						tooltip={`Geoblock: France, Belgium & Monaco
+						tooltip={`Geoblock: France
 					Duration: 72 hours`}
 					/>
 				</SettingsLayout>

@@ -22,7 +22,6 @@ function Test() {
 	return (
 		<Layout title='Test'>
 			<div style={{ width: '50%', margin: '0 auto' }}>
-				<AdvancedSettingsForm />
 				<Formik
 					initialValues={{
 						country: '',
@@ -37,6 +36,7 @@ function Test() {
 					}}
 				>
 					<Form>
+						<AdvancedSettingsForm />
 						{/* <FormikSelect
 							name='country'
 							label='Country'
@@ -71,10 +71,10 @@ function Test() {
 
 						<div style={{ marginTop: 10 }}>
 							<FormikSwitchField label='Show Likes' name='show_likes' />
-						</div>
+						</div> */}
 						<Button type='submit' buttonText='Submit' style={{ marginTop: 10 }}>
 							Submit
-						</Button> */}
+						</Button>
 					</Form>
 				</Formik>
 			</div>

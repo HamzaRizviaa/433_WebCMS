@@ -7,11 +7,11 @@ const TextTooltip = ({
 	title = '',
 	placement = 'bottom-start',
 	children,
-	checkBox,
+	secondary,
 	classes,
 	...rest
 }) => {
-	const tooltipClasses = useTextTooltipStyles({ checkBox });
+	const tooltipClasses = useTextTooltipStyles({ secondary });
 
 	return (
 		<Tooltip
@@ -37,7 +37,7 @@ TextTooltip.propTypes = {
 	placement: PropTypes.string,
 	classes: PropTypes.object,
 	children: PropTypes.element.isRequired,
-	checkBox: PropTypes.bool
+	secondary: PropTypes.bool
 };
 
 export default TextTooltip;
