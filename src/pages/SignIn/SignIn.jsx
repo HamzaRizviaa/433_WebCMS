@@ -17,15 +17,13 @@ import { setAccessTokenInHeader } from '../../data/axiosInstance';
 import { remoteConfig } from '../../data/integrations/firebase';
 import { getAll, fetchAndActivate } from 'firebase/remote-config';
 import { setRemoteConfig } from '../../data/features/remoteConfigSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 const SignIn = ({ setLoginData }) => {
 	const dispatch = useDispatch();
 	const [signInError, setSignInError] = useState(false);
 	const [isLoadingSignIn, setIsLoadingSignin] = useState(false);
 	const [accessExpire, setAccessExpire] = useState(false);
-	const { rules } = useSelector((state) => state.rootReducer.rulesSlice);
-	console.log('RULESS after signin', rules);
 
 	// useEffect(() => {
 	// 	return () => {
@@ -110,8 +108,6 @@ const SignIn = ({ setLoginData }) => {
 			);
 
 			if (userData?.status_code === 200) {
-				// dispatch(fetchRules());
-
 				setLoginData(
 					localStorage.setItem('user_data', JSON.stringify(userData?.data))
 				);

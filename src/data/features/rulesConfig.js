@@ -24,7 +24,6 @@ const rulesSlice = createSlice({
 			state.loading = true;
 		});
 		builder.addCase(fetchRules.fulfilled, (state, action) => {
-			console.log('HERERERE', action.payload);
 			state.loading = false;
 			state.rules = action.payload;
 			state.error = '';
