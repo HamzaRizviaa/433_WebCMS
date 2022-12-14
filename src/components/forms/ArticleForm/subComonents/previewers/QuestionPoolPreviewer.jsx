@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import { useStyles } from './elementPreviewers.styles';
 
 const QuestionPoolPreviewer = ({ data }) => {
+	//extracted question data
+	const { question_data } = data;
+	const { uploadedFiles: media } = question_data;
+	
 	// extract url based on data
-	const getUrl = () =>
-		data?.data?.previewImage?.length > 0
-			? data?.data?.previewImage[0]?.media_url
-			: data?.data?.uploadedFiles?.length &&
-			  data?.data?.uploadedFiles[0].media_url;
+	const getUrl = () => media?.[0]?.media_url;
 
 	// pass url to the styles
 	const classes = useStyles({ questionImgUrl: getUrl() });
@@ -16,12 +16,12 @@ const QuestionPoolPreviewer = ({ data }) => {
 		<div>
 			<div className={classes.questionDraggable}>
 				<div className={classes.questionDiv}>
-					<div className={classes.question}>{data?.data?.question}</div>
+					<div className={classes.question}>{question_data?.question}</div>
 					<div className={classes.answer}>
-						{data?.data?.answers?.[0]?.answer || ' '}
+						{question_data?.answers?.[0]?.answer || ' '}
 					</div>
 					<div className={classes.answer}>
-						{data?.data?.answers?.[1]?.answer || ' '}
+						{question_data?.answers?.[1]?.answer || ' '}
 					</div>
 				</div>
 			</div>
