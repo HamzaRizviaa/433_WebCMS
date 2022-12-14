@@ -24,7 +24,7 @@ const CheckBox = ({ label, value, name, tooltip }) => {
 					<Checkbox
 						classes={{ root: classes.root, checked: classes.checked }}
 						icon={<CheckBoxIcon />}
-						// checkedIcon={<CheckBoxCheckedIcon />}
+						checkedIcon={<CheckBoxCheckedIcon />}
 					/>
 				}
 			/>
