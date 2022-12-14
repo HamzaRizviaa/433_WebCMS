@@ -87,36 +87,36 @@ export const articleSidebarElements = [
 		image: <Text />,
 		text: 'Add Text',
 		data: {
+			element_type: ARTICLE_ELEMENTS_TYPES.TEXT,
 			description: '',
-			dropbox_url: '',
-			element_type: ARTICLE_ELEMENTS_TYPES.TEXT
+			dropbox_url: ''
 		}
 	},
 	{
 		image: <ImageVideo />,
 		text: 'Add Image / Video',
 		data: {
+			element_type: ARTICLE_ELEMENTS_TYPES.MEDIA,
 			uploadedFiles: [],
-			dropbox_url: '',
-			element_type: ARTICLE_ELEMENTS_TYPES.MEDIA
+			dropbox_url: ''
 		}
 	},
 	{
 		image: <TwitterLine />,
 		text: 'Add Tweet',
 		data: {
+			element_type: ARTICLE_ELEMENTS_TYPES.TWITTER,
 			twitter_post_url: '',
-			dropbox_url: '',
-			element_type: ARTICLE_ELEMENTS_TYPES.TWITTER
+			dropbox_url: ''
 		}
 	},
 	{
 		image: <Instragram />,
 		text: 'Add IG post',
 		data: {
+			element_type: ARTICLE_ELEMENTS_TYPES.IG,
 			instagram_post_url: '',
-			dropbox_url: '',
-			element_type: ARTICLE_ELEMENTS_TYPES.IG
+			dropbox_url: ''
 		}
 	},
 	{
@@ -145,11 +145,12 @@ export const articleSidebarElements = [
 		image: <BallIcon />,
 		text: 'Add Match',
 		data: {
+			element_type: ARTICLE_ELEMENTS_TYPES.MATCH,
 			league_name: '',
 			match_title: '',
 			team_name: '',
 			match_id: '',
-			element_type: ARTICLE_ELEMENTS_TYPES.MATCH
+			match: {}
 		}
 	}
 ];
