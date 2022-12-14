@@ -227,20 +227,20 @@ export const uploadArticleFiles = async (article) => {
 };
 
 export const matchElementDataFormatter = (item) => ({
-	Day: moment(item?.data?.match?.data?.startdate).format('ddd, DD MMM'),
-	Time: moment(item?.data?.match?.data?.startdate).format('HH:mm'),
+	Day: moment(item?.match?.startdate).format('ddd, DD MMM'),
+	Time: moment(item?.match?.startdate).format('HH:mm'),
 	Team_1: {
-		Name: item?.data?.match?.data?.participant_teams_data[0]?.name,
-		Logo: item?.data?.match?.data?.participant_teams_data[0]?.team_logo,
+		Name: item?.match?.participant_teams_data[0]?.name,
+		Logo: item?.match?.participant_teams_data[0]?.team_logo,
 		Team_Color:
-			item?.data?.match?.data?.participant_teams_data[0]?.property
+			item?.match?.participant_teams_data[0]?.property
 				?.home_shirt_color_1
 	},
 	Team_2: {
-		Name: item?.data?.match?.data?.participant_teams_data[1]?.name,
-		Logo: item?.data?.match?.data?.participant_teams_data[1]?.team_logo,
+		Name: item?.match?.participant_teams_data[1]?.name,
+		Logo: item?.match?.participant_teams_data[1]?.team_logo,
 		Team_Color:
-			item?.data?.match?.data?.participant_teams_data[1]?.property
+			item?.match?.participant_teams_data[1]?.property
 				?.home_shirt_color_1
 	}
 });

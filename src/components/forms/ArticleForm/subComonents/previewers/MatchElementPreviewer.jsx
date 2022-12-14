@@ -6,6 +6,7 @@ import { useStyles } from './elementPreviewers.styles';
 import { matchElementDataFormatter } from '../../../../../data/helpers/articleHelpers';
 
 const MatchElementPreviewer = ({ item }) => {
+	console.log('matchData',item)
 	// formatted data for match element
 	const data = matchElementDataFormatter(item);
 
