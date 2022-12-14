@@ -9,10 +9,7 @@ import DeleteModal from '../../DeleteModal';
 import ArticleFormDrawer from './subComonents/ArticleFormDrawer';
 import { useCommonParams } from '../../../hooks';
 import { ArticleLibraryService } from '../../../data/services';
-import {
-	selectArticleSubCategories,
-	selectSpecificArticle
-} from '../../../data/selectors/articleLibrarySelectors';
+import { selectSpecificArticle } from '../../../data/selectors/articleLibrarySelectors';
 import {
 	articleFormInitialValues,
 	articleFormValidationSchema,

@@ -194,7 +194,8 @@ export const uploadArticleFiles = async (article) => {
 					...pick(item.uploadedFiles[0], ['width', 'height']),
 					...(uploadedFile.thumbnail_url
 						? { thumbnail_url: uploadedFile.thumbnail_url }
-						: {})
+						: {}),
+					sort_order: index + 1
 				};
 				return uploadedFile;
 			} else {
@@ -211,10 +212,12 @@ export const uploadArticleFiles = async (article) => {
 										'cloudfront.net/'
 									)[1]
 						  }
-						: {})
+						: {}),
+					sort_order: index + 1
 				};
 			}
 		} else {
+			elements[index].sort_order = index + 1;
 			return item;
 		}
 	});
@@ -365,8 +368,6 @@ export const articleDataFormatterForForm = (article) => {
 	const elements = articleElementsFormatterForForm(article.elements);
 	formattedArticle.elements = elements;
 
-	console.log({ formattedArticle });
-
 	return formattedArticle;
 };
 
@@ -464,42 +465,30 @@ export const articleFormInitialValues = {
 //
 // Article Validation
 //
-const elementBaseSchema = Yup.object().shape({
-	element_type: Yup.string().required()
-});
-
-const textElementValidationSchema = elementBaseSchema.shape({
-	description: Yup.string().required(),
-	dropbox_url: Yup.string()
-});
-
-const mediaElementValidationSchema = elementBaseSchema.shape({
-	uploadedFiles: Yup.array().min(1).required(),
-	dropbox_url: Yup.string()
-});
-
-const twitterElementValidationSchema = elementBaseSchema.shape({
-	twitter_post_url: Yup.string().required(),
-	dropbox_url: Yup.string()
-});
-
-const igElementValidationSchema = elementBaseSchema.shape({
-	instagram_post_url: Yup.string().required(),
-	dropbox_url: Yup.string()
-});
-
-const questionElementValidationSchema = elementBaseSchema.shape({});
-
-const matchElementValidationSchema = elementBaseSchema.shape({
-	league_name: Yup.string().required(),
-	match_title: Yup.string().required(),
-	team_name: Yup.string().required(),
-	match_id: Yup.string().required()
+const questionElementValidationSchema = Yup.object().shape({
+	question_type: Yup.string().label('Question Type').required(),
+	uploadedFiles: Yup.array()
+		.min(1, 'You need to upload an image in order to upload')
+		.required(),
+	labels: Yup.array()
+		.min(1, 'You need to add 1 more label in order to post question')
+		.required(),
+	dropbox_url: Yup.string(),
+	question: Yup.string().trim().required('You need to enter a question'),
+	answers: Yup.array()
+		.of(
+			Yup.object().shape({
+				answer: Yup.string().trim().required('You need to enter an answer')
+			})
+		)
+		.min(2, 'Atleast 2 answers are required')
 });
 
 export const articleFormValidationSchema = Yup.object().shape({
-	mainCategory: Yup.string().required().label('Main Category'),
-	subCategory: Yup.string().required().label('Sub Category'),
+	mainCategoryId: Yup.string().required(),
+	subCategoryId: Yup.string().required(),
+	mainCategoryName: Yup.string().required().label('Main Category'),
+	subCategoryName: Yup.string().required().label('Sub Category'),
 	author_text: Yup.string().required().label('Author Name'),
 	author_image: Yup.array().required().label('Author Image'),
 	title: Yup.string().max(43).required().label('Title'),
@@ -523,13 +512,95 @@ export const articleFormValidationSchema = Yup.object().shape({
 	show_likes: Yup.boolean().required(),
 	show_comments: Yup.boolean().required(),
 	elements: Yup.array().of(
-		Yup.mixed().oneOf([
-			textElementValidationSchema,
-			mediaElementValidationSchema,
-			twitterElementValidationSchema,
-			igElementValidationSchema,
-			questionElementValidationSchema,
-			matchElementValidationSchema
-		])
+		Yup.object({
+			// Common fields validations
+			id: Yup.string(),
+			element_type: Yup.mixed()
+				.oneOf([...Object.values(ARTICLE_ELEMENTS_TYPES)])
+				.required(),
+			sort_order: Yup.number(),
+			dropbox_url: Yup.string().trim(),
+
+			// Text element validations
+			description: Yup.string()
+				.trim()
+				.label('Text')
+				.when('element_type', {
+					is: (val) => val === ARTICLE_ELEMENTS_TYPES.TEXT,
+					then: (schema) => schema.required(),
+					otherwise: (schema) => schema
+				}),
+
+			// Media element validations
+			uploadedFiles: Yup.array()
+				.label('Media')
+				.when('element_type', {
+					is: (val) => val === ARTICLE_ELEMENTS_TYPES.MEDIA,
+					then: (schema) => schema.min(1).required(),
+					otherwise: (schema) => schema
+				}),
+
+			// Twitter element validations
+			twitter_post_url: Yup.string()
+				.trim()
+				.label('Twitter Post URL')
+				.when('element_type', {
+					is: (val) => val === ARTICLE_ELEMENTS_TYPES.TWITTER,
+					then: (schema) => schema.required(),
+					otherwise: (schema) => schema
+				}),
+
+			// IG element validations
+			instagram_post_url: Yup.string()
+				.trim()
+				.label('Instagram Post URL')
+				.when('element_type', {
+					is: (val) => val === ARTICLE_ELEMENTS_TYPES.IG,
+					then: (schema) => schema.required(),
+					otherwise: (schema) => schema
+				}),
+
+			// Question element validations
+			question_data: Yup.object().when('element_type', {
+				is: (val) => val === ARTICLE_ELEMENTS_TYPES.QUESTION,
+				then: () => questionElementValidationSchema,
+				otherwise: (schema) => schema.optional()
+			}),
+
+			// Match element validations
+			league_name: Yup.string()
+				.label('League Name')
+				.when('element_type', {
+					is: (val) => val === ARTICLE_ELEMENTS_TYPES.MATCH,
+					then: (schema) => schema.required(),
+					otherwise: (schema) => schema.optional()
+				}),
+			team_name: Yup.string()
+				.label('Team Name')
+				.when('element_type', {
+					is: (val) => val === ARTICLE_ELEMENTS_TYPES.MATCH,
+					then: (schema) => schema.required(),
+					otherwise: (schema) => schema.optional()
+				}),
+			match_id: Yup.string()
+				.label('Match Id')
+				.when('element_type', {
+					is: (val) => val === ARTICLE_ELEMENTS_TYPES.MATCH,
+					then: (schema) => schema.required(),
+					otherwise: (schema) => schema.optional()
+				}),
+			match_title: Yup.string()
+				.label('Match Title')
+				.when('element_type', {
+					is: (val) => val === ARTICLE_ELEMENTS_TYPES.MATCH,
+					then: (schema) => schema.required(),
+					otherwise: (schema) => schema.optional()
+				}),
+			match: Yup.object().when('element_type', {
+				is: (val) => val === ARTICLE_ELEMENTS_TYPES.MATCH,
+				then: (schema) => schema.required(),
+				otherwise: (schema) => schema.optional()
+			})
+		})
 	)
 });
