@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import SignIn from '../pages/SignIn/SignIn';
 import RequireAuth from './RequireAuth.js';
@@ -13,6 +13,8 @@ import TopBanner from '../pages/TopBanner/TopBanner.jsx';
 import ViralLibrary from '../pages/ViralLibrary/ViralLibrary';
 import ArticleLibrary from '../pages/ArticleLibrary/ArticleLibrary';
 import NewsLibrary from '../pages/NewsLibrary/NewsLibrary';
+import { useDispatch } from 'react-redux';
+import { fetchRules } from '../data/features/rulesConfig';
 
 // import GamesLibrary from '../pages/GamesLibrary/GamesLibrary';
 // import PostLibrary from '../pages/PostLibrary/PostLibrary';
@@ -27,6 +29,12 @@ const AppRoutes = () => {
 			? JSON.parse(localStorage.getItem('user_data'))
 			: null
 	);
+	const dispatch = useDispatch();
+	useEffect(() => {
+		if (localStorage.getItem('user_data')) {
+			dispatch(fetchRules());
+		}
+	}, [localStorage.getItem('user_data')]);
 
 	return (
 		<Routes>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import NewsForm from '../../components/forms/NewsForm';
 import { newsColumns } from '../../data/helpers/newsHelpers';
 import Table from '../../components/ui/Table';
@@ -14,7 +14,8 @@ import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySl
  */
 const NewsLibrary = () => {
 	const dispatch = useDispatch();
-
+	const { rules } = useSelector((state) => state.rootReducer.rulesSlice);
+	console.log('RULESS NEWs', rules);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [rowStatus, setrowStatus] = useState(''); //publish or draft
