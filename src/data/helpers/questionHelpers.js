@@ -304,7 +304,7 @@ export const questionDataFormatterForForm = (question) => {
 		},
 		questions: updatingQuestionsSlides(questions)
 	};
-	console.log('formattedQuestion', formattedQuestion);
+
 	return formattedQuestion;
 };
 

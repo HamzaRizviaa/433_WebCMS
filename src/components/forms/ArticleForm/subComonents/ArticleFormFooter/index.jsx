@@ -17,7 +17,7 @@ const ArticleFormFooter = ({
 	onSubmitHandler
 }) => {
 	const classes = useArticleFooterStyles({ loading });
-	const { values, dirty, isValid, setSubmitting } = useFormikContext();
+	const { values, dirty, isValid, errors, setSubmitting } = useFormikContext();
 
 	const isDraftButtonDisabled = useMemo(() => {
 		const isAnyElementEmpty = values.elements.some((item) =>
@@ -33,7 +33,7 @@ const ArticleFormFooter = ({
 
 	return (
 		<div className={classes.footer}>
-			{isEdit || isDraft ? (
+			{(isEdit || isDraft) && (
 				<Button
 					onClick={openDeleteModal}
 					size='small'
@@ -42,19 +42,17 @@ const ArticleFormFooter = ({
 				>
 					DELETE ARTICLE
 				</Button>
-			) : (
-				<div></div>
 			)}
 			<div className={classes.container}>
 				<Button
 					size='small'
 					variant='outlined'
 					className={classes.draftButton}
-					onClick={() => console.log({ values })}
+					onClick={() => console.log({ values, isValid, errors })}
 				>
 					Print Formik
 				</Button>
-				{isDraft || !isEdit ? (
+				{(isDraft || !isEdit) && (
 					<Button
 						size='small'
 						variant='outlined'
@@ -64,7 +62,7 @@ const ArticleFormFooter = ({
 					>
 						{isEdit && isDraft ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
 					</Button>
-				) : null}
+				)}
 				<Button
 					type='submit'
 					size='small'

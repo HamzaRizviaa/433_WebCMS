@@ -6,17 +6,12 @@ import FormikLabelsSelect from '../../../../../ui/inputs/formik/FormikLabelsSele
 import { useElementsStyles } from '../elements.styles';
 import { useFormikContext } from 'formik';
 
-const ArticleQuestionForm = ({
-	type,
-	index,
-	isPublished,
-	openPreviewer
-}) => {
+const ArticleQuestionForm = ({ type, index, isPublished, openPreviewer }) => {
 	const classes = useElementsStyles();
 	const { setFieldValue } = useFormikContext();
 
 	const handleDeleteFile = () => {
-		setFieldValue(`elements.${index}.uploadedFiles`, []);
+		setFieldValue(`elements.${index}.question_data.uploadedFiles`, []);
 	};
 
 	return (
@@ -34,7 +29,6 @@ const ArticleQuestionForm = ({
 						fileSizeMessage='Image file size should not exceed 1MB.'
 						onPreview={openPreviewer}
 						onDelete={() => handleDeleteFile()}
-						hideDeleteIcon={isPublished}
 						showPreview
 						hidePreviewIcon
 					/>

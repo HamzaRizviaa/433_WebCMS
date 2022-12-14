@@ -8,6 +8,8 @@ import ImageVideoElement from './ImageVideoElement';
 import SocialMediaElement from './SocialMediaElement';
 import MatchElement from './MatchElement';
 import QuestionElement from './QuestionElement';
+import DraggableLayoutWrapper from '../../../../layouts/DraggableLayoutWrapper';
+import { reorder } from '../../../../../data/helpers';
 
 const ArticleElementsFieldArray = ({
 	isEdit,
@@ -19,6 +21,22 @@ const ArticleElementsFieldArray = ({
 }) => {
 	const handleRemoveElement = (_, index) => {
 		remove(index);
+	};
+
+	const handleDragData = ({ source, destination }) => {
+		if (!destination) {
+			return;
+		}
+
+		if (source.index !== destination.index) {
+			const items = reorder(
+				form.values.elements, //data
+				source.index, // pick
+				destination.index // drop
+			);
+
+			form.setFieldValue('elements', items);
+		}
 	};
 
 	const renderArticleElement = (item, index) => {
@@ -88,9 +106,11 @@ const ArticleElementsFieldArray = ({
 
 	return (
 		<div>
-			{form.values.elements.map((item, index) => (
-				<div key={index}>{renderArticleElement(item, index)}</div>
-			))}
+			<DraggableLayoutWrapper onDragEnd={handleDragData}>
+				{form.values.elements.map((item, index) => (
+					<div key={index}>{renderArticleElement(item, index)}</div>
+				))}
+			</DraggableLayoutWrapper>
 		</div>
 	);
 };

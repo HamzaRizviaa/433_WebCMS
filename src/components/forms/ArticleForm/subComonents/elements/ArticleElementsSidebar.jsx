@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
+import { useFormikContext } from 'formik';
 import { Box, Typography } from '@material-ui/core';
 import { useElementsStyles } from './elements.styles';
 import ToggleSwitchField from '../../../../ui/inputs/ToggleSwitchField';
 import { articleSidebarElements } from '../../../../../data/helpers/articleHelpers';
-import { useFormikContext } from 'formik';
 
 const ArticleElementsSidebar = () => {
 	const classes = useElementsStyles();

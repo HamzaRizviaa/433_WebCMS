@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useFormikContext } from 'formik';
 import FormikSelect from '../../../../../ui/inputs/formik/FormikSelect';
-import { getTeamOptions, getMatchName } from '../../../../../../data/utils';
-import DraggableLayoutWrapper from '../../../../../layouts/DraggableLayoutWrapper';
 import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
+import { getTeamOptions, getMatchName } from '../../../../../../data/utils';
 
 const MatchElement = ({
 	isEdit,
@@ -82,40 +81,38 @@ const MatchElement = ({
 	};
 
 	return (
-		<DraggableLayoutWrapper>
-			<DraggableCardLayout
-				title={`Add Match`}
-				key={index}
-				index={index}
-				item={item}
-				onDeleteIconClick={handleRemoveElement}
-			>
-				<FormikSelect
-					name={`elements.${index}.league_name`}
-					placeholder='SELECT LEAGUE'
-					options={leagues}
-					mapOptions={{ labelKey: 'name', valueKey: 'name' }}
-					disabled={isPublished}
-					onChange={handleLeagueChange}
-				/>
-				<FormikSelect
-					name={`elements.${index}.team_name`}
-					placeholder='SELECT TEAM'
-					options={teams}
-					mapOptions={{ labelKey: 'name', valueKey: 'name' }}
-					disabled={isPublished || teams?.length === 0}
-					onChange={handleTeamChange}
-				/>
-				<FormikSelect
-					name={`elements.${index}.match_title`}
-					placeholder='SELECT MATCH'
-					options={matches}
-					mapOptions={{ labelKey: 'name', valueKey: 'name' }}
-					disabled={isPublished || matches?.length === 0}
-					onChange={handleMatchChange}
-				/>
-			</DraggableCardLayout>
-		</DraggableLayoutWrapper>
+		<DraggableCardLayout
+			title={`Add Match`}
+			key={index}
+			index={index}
+			item={item}
+			onDeleteIconClick={handleRemoveElement}
+		>
+			<FormikSelect
+				name={`elements.${index}.league_name`}
+				placeholder='SELECT LEAGUE'
+				options={leagues}
+				mapOptions={{ labelKey: 'name', valueKey: 'name' }}
+				disabled={isPublished}
+				onChange={handleLeagueChange}
+			/>
+			<FormikSelect
+				name={`elements.${index}.team_name`}
+				placeholder='SELECT TEAM'
+				options={teams}
+				mapOptions={{ labelKey: 'name', valueKey: 'name' }}
+				disabled={isPublished || teams?.length === 0}
+				onChange={handleTeamChange}
+			/>
+			<FormikSelect
+				name={`elements.${index}.match_title`}
+				placeholder='SELECT MATCH'
+				options={matches}
+				mapOptions={{ labelKey: 'name', valueKey: 'name' }}
+				disabled={isPublished || matches?.length === 0}
+				onChange={handleMatchChange}
+			/>
+		</DraggableCardLayout>
 	);
 };
 
