@@ -5,6 +5,7 @@ import SocialPostElementPreviewer from './SocialPostElementPreviewer';
 const IgElementPreviewer = (props) => {
 	return <SocialPostElementPreviewer {...props} />;
 };
+
 export default IgElementPreviewer;
 
 IgElementPreviewer.propTypes = {

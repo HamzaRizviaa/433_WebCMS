@@ -8,8 +8,8 @@ import { ARTICLE_ELEMENTS_TYPES } from '../../../../../data/helpers/articleHelpe
 
 const SocialPostElementPreviewer = ({ data }) => {
 	// extracted urls
-	const extractedTwitterUrl = data.data && data?.data[0]?.twitter_post_url;
-	const extractedIgUrl = data.data && data?.data[0]?.ig_post_url;
+	const extractedTwitterUrl = data && data.twitter_post_url;
+	const extractedIgUrl = data && data.instagram_post_url;
 
 	// states
 	const [markup, setMarkup] = useState('');
@@ -26,12 +26,13 @@ const SocialPostElementPreviewer = ({ data }) => {
 	// debounce api calls
 	useEffect(() => {
 		const timeout = setTimeout(() => {
-			if (data?.data) getPost(generatePostEndPoint());
+			if (data) getPost(generatePostEndPoint());
 		}, 500);
+
 		return () => {
 			clearTimeout(timeout);
 		};
-	}, [data?.data]);
+	}, [data]);
 
 	/// set markup to load post
 	useEffect(() => {
@@ -78,6 +79,7 @@ const SocialPostElementPreviewer = ({ data }) => {
 			window.instgrm.Embeds.process();
 		}
 	};
+
 	return (
 		<Box pr={3} className={classes.twitterBox}>
 			{markup && <Markup content={markup} />}

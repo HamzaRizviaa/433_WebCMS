@@ -46,6 +46,7 @@ const ArticleElementsFieldArray = ({
 					<SocialMediaElement
 						index={index}
 						item={item}
+						name={`elements.${index}.twitter_post_url`}
 						handleRemoveElement={handleRemoveElement}
 					/>
 				);
@@ -54,6 +55,7 @@ const ArticleElementsFieldArray = ({
 					<SocialMediaElement
 						index={index}
 						item={item}
+						name={`elements.${index}.instagram_post_url`}
 						handleRemoveElement={handleRemoveElement}
 					/>
 				);

@@ -5,7 +5,7 @@ import FormikField from '../../../../../ui/inputs/formik/FormikField';
 import DraggableLayoutWrapper from '../../../../../layouts/DraggableLayoutWrapper';
 import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 
-const SocialMediaElement = ({ index, item, handleRemoveElement }) => {
+const SocialMediaElement = ({ index, item, name, handleRemoveElement }) => {
 	const classes = useFormStyles();
 
 	return (
@@ -19,7 +19,7 @@ const SocialMediaElement = ({ index, item, handleRemoveElement }) => {
 			>
 				<div className={classes.fieldContainer}>
 					<FormikField
-						name={`elements.${index}.${item.element_type}_post_url`}
+						name={name}
 						label='URL'
 						placeholder='Please drop the URL here'
 						multiline
@@ -34,6 +34,7 @@ const SocialMediaElement = ({ index, item, handleRemoveElement }) => {
 SocialMediaElement.propTypes = {
 	index: PropTypes.number.isRequired,
 	item: PropTypes.object,
+	name: PropTypes.string,
 	handleRemoveElement: PropTypes.func
 };
 
