@@ -44,7 +44,7 @@ export const DrawerLayoutStyles = makeStyles((theme) => ({
 		position: 'fixed',
 		zIndex: '2',
 		background: 'black',
-		width: '92%'
+		width: '90%'
 	},
 	header: {
 		display: 'flex',
