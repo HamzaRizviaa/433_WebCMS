@@ -57,7 +57,7 @@ const ArticleFormDrawer = ({
 			isLoading={isLoading}
 			fromArticle
 		>
-			<Grid container>
+			<Grid container className={classes.articlesGridBox}>
 				<Grid className={classes.firstGridItem} item pr={1} md={3}>
 					<ArticleElementsSidebar
 						topElementRef={topElementRef}

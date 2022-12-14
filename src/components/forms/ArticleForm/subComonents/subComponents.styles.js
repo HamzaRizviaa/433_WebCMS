@@ -9,6 +9,7 @@ export const useStyles = makeStyles(() => ({
 		top: '100px',
 		paddingRight: '10px'
 	},
+
 	gridMainDiv: {
 		overflowY: 'scroll'
 	},
