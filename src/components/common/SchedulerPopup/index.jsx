@@ -29,6 +29,7 @@ const SchedulerPopup = ({ open, onClose }) => {
 						endDate={endDate}
 						onChange={handleChange}
 						formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 3)}
+						calendarStartDay={1}
 						selectsRange
 					/>
 				</Grid>
