@@ -231,18 +231,16 @@ export const matchElementDataFormatter = (item) => ({
 	Day: moment(item?.match?.startdate).format('ddd, DD MMM'),
 	Time: moment(item?.match?.startdate).format('HH:mm'),
 	Team_1: {
-		Name: item?.match?.participant_teams_data[0]?.name,
-		Logo: item?.match?.participant_teams_data[0]?.team_logo,
+		Name: item?.match?.participant_teams_data?.[0]?.name,
+		Logo: item?.match?.participant_teams_data?.[0]?.team_logo,
 		Team_Color:
-			item?.match?.participant_teams_data[0]?.property
-				?.home_shirt_color_1
+			item?.match?.participant_teams_data?.[0]?.property?.home_shirt_color_1
 	},
 	Team_2: {
-		Name: item?.match?.participant_teams_data[1]?.name,
-		Logo: item?.match?.participant_teams_data[1]?.team_logo,
+		Name: item?.match?.participant_teams_data?.[1]?.name,
+		Logo: item?.match?.participant_teams_data?.[1]?.team_logo,
 		Team_Color:
-			item?.match?.participant_teams_data[1]?.property
-				?.home_shirt_color_1
+			item?.match?.participant_teams_data?.[1]?.property?.home_shirt_color_1
 	}
 });
 
