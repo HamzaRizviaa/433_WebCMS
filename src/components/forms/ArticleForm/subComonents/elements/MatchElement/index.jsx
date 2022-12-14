@@ -33,9 +33,9 @@ const MatchElement = ({
 			const teams = data.find(
 				(value) => value.name === item.league_name
 			)?.teams;
-			const matches = teams.find(
-				(value) => value.name === item.team_name
-			)?.matches;
+			const matches = teams
+				? teams.find((value) => value.name === item.team_name)?.matches
+				: [];
 			const mappedMatches = matches?.map((match) => ({
 				...match,
 				name: getMatchName(match.startdate, match.name)

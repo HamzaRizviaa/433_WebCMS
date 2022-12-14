@@ -1,8 +1,8 @@
-/* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useFormikContext } from 'formik';
+import { omit, isEqual } from 'lodash';
 import { Grid } from '@material-ui/core';
 import { useStyles } from './subComponents.styles';
 import DrawerLayout from '../../../layouts/DrawerLayout';
@@ -11,6 +11,11 @@ import ArticleInternalForm from './ArticleInternalForm/index';
 import ArticlePreviewSidebar from './ArticlePreviewSidebar';
 import ArticleFormFooter from './ArticleFormFooter/index';
 import { selectSpecificArticleStatus } from '../../../../data/selectors';
+import {
+	articleFormInitialValues,
+	articleFormStatusInitialValues,
+	articleUnwantedKeysForDeepEqual
+} from '../../../../data/helpers';
 
 const ArticleFormDrawer = ({
 	open,
@@ -21,9 +26,27 @@ const ArticleFormDrawer = ({
 	toggleDeleteModal
 }) => {
 	const classes = useStyles();
-	const { values, isSubmitting } = useFormikContext();
+	const topElementRef = useRef(null);
+	const elementsWrapperRef = useRef(null);
+
+	const { values, isSubmitting, setStatus } = useFormikContext();
+
 	const specificArticleStatus = useSelector(selectSpecificArticleStatus);
+
 	const isLoading = isSubmitting || specificArticleStatus === 'loading';
+
+	useEffect(() => {
+		setStatus({ ...articleFormStatusInitialValues });
+	}, []);
+
+	useEffect(() => {
+		setStatus({
+			dirty: !isEqual(
+				omit(values, articleUnwantedKeysForDeepEqual),
+				omit(articleFormInitialValues, articleUnwantedKeysForDeepEqual)
+			)
+		});
+	}, [values]);
 
 	return (
 		<DrawerLayout
@@ -36,10 +59,18 @@ const ArticleFormDrawer = ({
 		>
 			<Grid container>
 				<Grid className={classes.firstGridItem} item pr={1} md={3}>
-					<ArticleElementsSidebar />
+					<ArticleElementsSidebar
+						topElementRef={topElementRef}
+						elementsWrapperRef={elementsWrapperRef}
+					/>
 				</Grid>
 				<Grid className={classes.secondGridItem} item px={1.5} md={6}>
-					<ArticleInternalForm isEdit={isEdit} status={status} />
+					<ArticleInternalForm
+						isEdit={isEdit}
+						status={status}
+						topElementRef={topElementRef}
+						elementsWrapperRef={elementsWrapperRef}
+					/>
 				</Grid>
 				<Grid className={classes.lastGridItem} item md={3}>
 					<ArticlePreviewSidebar

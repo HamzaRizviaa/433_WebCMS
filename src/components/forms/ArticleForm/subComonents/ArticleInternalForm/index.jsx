@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { FieldArray, useFormikContext } from 'formik';
 import { Box } from '@mui/material';
@@ -6,12 +6,17 @@ import { useStyles } from '../subComponents.styles';
 import ArticleGeneralInfoForm from './ArticleGeneralInfoForm';
 import ArticleElementsFieldArray from '../elements/ArticleElementsFieldArray';
 import { useLazyGetMatchesTreeQuery } from '../../../../../data/features/articleLibrary/articleLibrary.query';
+import { articleFormInitialValues } from '../../../../../data/helpers';
 
-const ArticleInternalForm = ({ isEdit, status }) => {
+const ArticleInternalForm = ({
+	isEdit,
+	status,
+	topElementRef,
+	elementsWrapperRef
+}) => {
 	const classes = useStyles();
-	const topElementRef = useRef(null);
 
-	const { validateForm } = useFormikContext();
+	const { validateForm, resetForm } = useFormikContext();
 
 	const [getMatchesTree, { isFetching: matchesLoading, data: matchesData }] =
 		useLazyGetMatchesTreeQuery();
@@ -19,6 +24,10 @@ const ArticleInternalForm = ({ isEdit, status }) => {
 	useEffect(() => {
 		validateForm();
 		getMatchesTree();
+
+		return () => {
+			resetForm(articleFormInitialValues);
+		};
 	}, []);
 
 	return (
@@ -40,6 +49,7 @@ const ArticleInternalForm = ({ isEdit, status }) => {
 					<ArticleElementsFieldArray
 						isEdit={isEdit}
 						status={status}
+						elementsWrapperRef={elementsWrapperRef}
 						matchesLoading={matchesLoading}
 						matchesData={matchesData}
 						{...props}
@@ -52,7 +62,9 @@ const ArticleInternalForm = ({ isEdit, status }) => {
 
 ArticleInternalForm.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
-	status: PropTypes.string.isRequired
+	status: PropTypes.string.isRequired,
+	topElementRef: PropTypes.element,
+	elementsWrapperRef: PropTypes.element
 };
 
 export default ArticleInternalForm;

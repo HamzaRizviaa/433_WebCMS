@@ -1,12 +1,13 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { isEqual, pick } from 'lodash';
+import { isEqual, pick, omit } from 'lodash';
 import { useFormikContext } from 'formik';
 import { useArticleFooterStyles } from './index.style';
 import Button from '../../../../ui/Button';
 import {
 	areAllFieldsEmpty,
-	articleFormInitialValues
+	articleFormInitialValues,
+	articleUnwantedKeysForDeepEqual
 } from '../../../../../data/helpers';
 
 const ArticleFormFooter = ({
@@ -17,19 +18,32 @@ const ArticleFormFooter = ({
 	onSubmitHandler
 }) => {
 	const classes = useArticleFooterStyles({ loading });
-	const { values, dirty, isValid, errors, setSubmitting } = useFormikContext();
+
+	const {
+		values,
+		dirty,
+		isValid,
+		errors,
+		status: formikStatus,
+		setSubmitting
+	} = useFormikContext();
 
 	const isDraftButtonDisabled = useMemo(() => {
 		const isAnyElementEmpty = values.elements.some((item) =>
 			areAllFieldsEmpty(item)
 		);
 		const isEqualToDefaultValues = isEqual(
-			pick(values, Object.keys(articleFormInitialValues)),
-			articleFormInitialValues
+			omit(
+				pick(values, Object.keys(articleFormInitialValues)),
+				articleUnwantedKeysForDeepEqual
+			),
+			omit(articleFormInitialValues, articleUnwantedKeysForDeepEqual)
 		);
 
-		return !dirty || isAnyElementEmpty || isEqualToDefaultValues;
-	}, [values, dirty]);
+		const isDirty = isEdit ? dirty : formikStatus?.dirty;
+
+		return !isDirty || isAnyElementEmpty || isEqualToDefaultValues;
+	}, [isEdit, values, dirty, formikStatus]);
 
 	return (
 		<div className={classes.footer}>

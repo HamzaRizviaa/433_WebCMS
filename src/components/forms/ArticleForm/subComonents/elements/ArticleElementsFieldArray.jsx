@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { ARTICLE_ELEMENTS_TYPES } from '../../../../../data/helpers/articleHelpers';
 
-// // Elements
+// Elements
 import TextElement from './TextElement';
 import ImageVideoElement from './ImageVideoElement';
 import SocialMediaElement from './SocialMediaElement';
@@ -14,6 +14,7 @@ import { reorder } from '../../../../../data/helpers';
 const ArticleElementsFieldArray = ({
 	isEdit,
 	status,
+	elementsWrapperRef,
 	matchesLoading,
 	matchesData,
 	form,
@@ -108,7 +109,9 @@ const ArticleElementsFieldArray = ({
 		<div>
 			<DraggableLayoutWrapper onDragEnd={handleDragData}>
 				{form.values.elements.map((item, index) => (
-					<div key={index}>{renderArticleElement(item, index)}</div>
+					<div ref={elementsWrapperRef} key={index}>
+						{renderArticleElement(item, index)}
+					</div>
 				))}
 			</DraggableLayoutWrapper>
 		</div>
@@ -118,12 +121,11 @@ const ArticleElementsFieldArray = ({
 ArticleElementsFieldArray.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
+	elementsWrapperRef: PropTypes.element,
 	matchesLoading: PropTypes.bool,
 	matchesData: PropTypes.array,
 	form: PropTypes.object.isRequired,
-	push: PropTypes.func.isRequired,
-	remove: PropTypes.func.isRequired,
-	swap: PropTypes.func.isRequired
+	remove: PropTypes.func.isRequired
 };
 
 export default ArticleElementsFieldArray;

@@ -1,23 +1,40 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useFormikContext } from 'formik';
 import { Box, Typography } from '@material-ui/core';
 import { useElementsStyles } from './elements.styles';
 import ToggleSwitchField from '../../../../ui/inputs/ToggleSwitchField';
 import { articleSidebarElements } from '../../../../../data/helpers/articleHelpers';
 
-const ArticleElementsSidebar = () => {
+const ArticleElementsSidebar = ({ topElementRef, elementsWrapperRef }) => {
 	const classes = useElementsStyles();
 	const { values, setFieldValue } = useFormikContext();
 	const [itemsOnTop, setItemsOnTop] = useState(false);
 
 	const handleClick = (dataItem) => {
 		const cloneElements = [...values.elements];
+
 		if (itemsOnTop) {
 			cloneElements.unshift(dataItem.data);
+			setFieldValue('elements', cloneElements);
+
+			setTimeout(() => {
+				topElementRef?.current?.scrollIntoView({
+					block: 'end',
+					behavior: 'smooth'
+				});
+			});
 		} else {
 			cloneElements.push(dataItem.data);
+			setFieldValue('elements', cloneElements);
+
+			setTimeout(() => {
+				elementsWrapperRef.current?.scrollIntoView({
+					block: 'end',
+					behavior: 'smooth'
+				});
+			});
 		}
-		setFieldValue('elements', cloneElements);
 	};
 
 	const handleChange = (value) => {
@@ -56,6 +73,11 @@ const ArticleElementsSidebar = () => {
 			))}
 		</Box>
 	);
+};
+
+ArticleElementsSidebar.propTypes = {
+	topElementRef: PropTypes.element,
+	elementsWrapperRef: PropTypes.element
 };
 
 export default ArticleElementsSidebar;

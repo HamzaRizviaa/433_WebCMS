@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import React, { useEffect, Fragment, useState } from 'react';
+import React, { useEffect, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormikContext } from 'formik';
@@ -21,40 +20,20 @@ import {
 	selectArticleSubCategories
 } from '../../../../../data/selectors';
 
-const ArticleGeneralInfoForm = ({
-	previewFile,
-	openPreviewer,
-	handleLoading,
-	isEdit,
-	status
-}) => {
+const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 	const classes = useStyles();
 	const formClasses = useFormStyles();
 	const dispatch = useDispatch();
 	const isPublished = isEdit && status === 'published';
 
 	useEffect(() => {
-		// dispatch(getPostLabels());
 		dispatch(getArticleMainCategories());
 	}, []);
 
 	const mainCategories = useSelector(selectArticleMainCategories);
 	const subCategories = useSelector(selectArticleSubCategories);
 
-	const {
-		values,
-		dirty,
-		isValid,
-		isSubmitting,
-		status: formikStatus,
-		handleSubmit,
-		setFieldValue,
-		setValues,
-		setSubmitting,
-		validateForm,
-		resetForm,
-		errors
-	} = useFormikContext();
+	const { values, setFieldValue, errors } = useFormikContext();
 
 	const handleMainCategoryChange = (val, metaData) => {
 		if (val) dispatch(getArticleSubCategories(val));
@@ -63,10 +42,6 @@ const ArticleGeneralInfoForm = ({
 
 	const handleSubCategoryChange = (_, metaData) => {
 		if (metaData) setFieldValue('subCategoryName', metaData.name);
-	};
-
-	const handleAvatarChange = (event) => {
-		setFieldValue('author_image', event);
 	};
 
 	return (
@@ -140,7 +115,6 @@ const ArticleGeneralInfoForm = ({
 							maxFiles={3}
 							showPreview
 							required
-							onPreview={openPreviewer}
 							onDelete={() => setFieldValue('uploadedFiles', [])}
 						/>
 					</div>
@@ -173,7 +147,6 @@ const ArticleGeneralInfoForm = ({
 							maxFiles={1}
 							showPreview
 							required
-							onPreview={openPreviewer}
 							onDelete={() => setFieldValue('uploadedLandscapeCoverImage', [])}
 						/>
 					</div>
@@ -232,9 +205,6 @@ const ArticleGeneralInfoForm = ({
 };
 
 ArticleGeneralInfoForm.propTypes = {
-	previewFile: PropTypes.any,
-	openPreviewer: PropTypes.any,
-	handleLoading: PropTypes.any,
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired
 };

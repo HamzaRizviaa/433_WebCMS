@@ -443,6 +443,17 @@ export const articleDataFormatterForService = (
 	return articleData;
 };
 
+export const articleUnwantedKeysForDeepEqual = [
+	'mainCategoryId',
+	'subCategoryId',
+	'mainCategoryName',
+	'subCategoryName'
+];
+
+export const articleFormStatusInitialValues = {
+	dirty: false
+};
+
 export const articleFormInitialValues = {
 	mainCategoryId: '',
 	subCategoryId: '',
