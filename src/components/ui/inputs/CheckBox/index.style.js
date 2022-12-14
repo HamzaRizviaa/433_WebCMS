@@ -16,6 +16,10 @@ export const useCheckBoxStyles = makeStyles((theme) => ({
 	checked: {
 		color: `${theme.palette.neonYellow} !important`
 	},
-	label: { fontSize: '12px' },
+	label: {
+		fontSize: '12px !important',
+		fontWeight: '400 !important',
+		lineHeight: '16px !important'
+	},
 	infoIcon: { cursor: 'pointer', height: '16px', width: '16px' }
 }));
