@@ -177,10 +177,11 @@ export const uploadArticleFiles = async (article) => {
 	});
 
 	const elementsFiles = elements.map(async (item, index) => {
-		if (item.element_type === 'MEDIA') {
+		if (item.element_type === ARTICLE_ELEMENTS_TYPES.MEDIA) {
 			if (item.uploadedFiles.length === 0) {
 				elements[index] = {
-					...omit(item, ['uploadedFiles'])
+					...omit(item, ['uploadedFiles']),
+					sort_order: index + 1
 				};
 			} else if (item.uploadedFiles[0].file) {
 				// This block will be executed if a new media file is uploaded
@@ -219,6 +220,57 @@ export const uploadArticleFiles = async (article) => {
 						: {}),
 					sort_order: index + 1
 				};
+			}
+		} else if (item.element_type === ARTICLE_ELEMENTS_TYPES.QUESTION) {
+			elements[index].question_data.answers = item.question_data.answers.map(
+				(answerItem, answerIndex) => ({
+					...answerItem,
+					position: answerIndex,
+					type:
+						item.question_data.question_type === 'poll'
+							? 'poll'
+							: answerIndex === 0
+							? 'right_answer'
+							: `wrong_answer_${answerIndex}`
+				})
+			);
+
+			if (item.question_data.uploadedFiles.length === 0) {
+				elements[index] = {
+					...item,
+					...omit(item.question_data, ['uploadedFiles']),
+					sort_order: index + 1
+				};
+			} else if (item.question_data.uploadedFiles[0].file) {
+				// This block will be executed if a new file is uploaded
+				const uploadedFile = await uploadFileToServer(
+					item.question_data.uploadedFiles[0],
+					'articleLibrary'
+				);
+				const questionData = {
+					...omit(item.question_data, ['uploadedFiles']),
+					...pick(item.question_data.uploadedFiles[0], ['width', 'height']),
+					image: uploadedFile.media_url,
+					file_name: uploadedFile.file_name
+				};
+				elements[index].question_data = questionData;
+				elements[index].sort_order = index + 1;
+				return uploadedFile;
+			} else {
+				const questionData = {
+					...omit(item.question_data, ['uploadedFiles']),
+					...pick(item.question_data.uploadedFiles[0], ['width', 'height']),
+					image: item.question_data.uploadedFiles[0].media_url.includes(
+						'cloudfront.net/'
+					)
+						? item.question_data.uploadedFiles[0].media_url.split(
+								'cloudfront.net/'
+						  )[1]
+						: item.question_data.uploadedFiles[0].media_url,
+					file_name: item.question_data.uploadedFiles[0].file_name
+				};
+				elements[index].question_data = questionData;
+				elements[index].sort_order = index + 1;
 			}
 		} else {
 			elements[index].sort_order = index + 1;
