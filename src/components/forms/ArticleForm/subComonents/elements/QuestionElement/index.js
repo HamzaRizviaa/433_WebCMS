@@ -1,9 +1,7 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useFormikContext } from 'formik';
-import { toLower } from 'lodash';
-import DraggableLayoutWrapper from '../../../../../layouts/DraggableLayoutWrapper';
+import { toLower, isEmpty } from 'lodash';
 import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 import TabPanes from '../../../../../ui/TabPanes';
 import ArticleQuestionForm from './ArticleQuestionForm';
@@ -18,6 +16,7 @@ const QuestionElement = ({
 	status
 }) => {
 	const isPublished = isEdit && status === 'published';
+	const isItemCreated = !isEmpty(item.id);
 	const [defaultSelectedTab, setDefaultSelectedTab] = useState(0);
 
 	const { setFieldValue } = useFormikContext();
@@ -52,7 +51,7 @@ const QuestionElement = ({
 					headings={tabPanesHeadings}
 					defaultValue={defaultSelectedTab}
 					onClick={(value) => setQuestionTypeValue(value)}
-					disabled={isPublished}
+					disabled={isPublished && isItemCreated}
 				>
 					<TabPanes.TabPanel value={0}>
 						<ArticleQuestionForm

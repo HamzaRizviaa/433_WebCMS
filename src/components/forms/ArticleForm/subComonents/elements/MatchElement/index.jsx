@@ -18,6 +18,8 @@ const MatchElement = ({
 	const [teams, setTeams] = useState([]);
 	const [matches, setMatches] = useState([]);
 
+	const isItemCreated = !isEmpty(item.id);
+
 	const { setFieldValue } = useFormikContext();
 
 	useEffect(() => {
@@ -87,7 +89,7 @@ const MatchElement = ({
 				placeholder='Please select'
 				options={leagues}
 				mapOptions={{ labelKey: 'name', valueKey: 'name' }}
-				disabled={isPublished}
+				disabled={isPublished && isItemCreated}
 				onChange={handleLeagueChange}
 			/>
 			<FormikSelect
@@ -95,7 +97,7 @@ const MatchElement = ({
 				placeholder='Please select'
 				options={teams}
 				mapOptions={{ labelKey: 'name', valueKey: 'name' }}
-				disabled={isPublished || isEmpty(item.league_name)}
+				disabled={(isPublished && isItemCreated) || isEmpty(item.league_name)}
 				onChange={handleTeamChange}
 			/>
 			<FormikSelect
@@ -103,7 +105,7 @@ const MatchElement = ({
 				placeholder='Please select'
 				options={matches}
 				mapOptions={{ labelKey: 'name', valueKey: 'name' }}
-				disabled={isPublished || isEmpty(item.team_name)}
+				disabled={(isPublished && isItemCreated) || isEmpty(item.team_name)}
 				onChange={handleMatchChange}
 			/>
 		</DraggableCardLayout>
