@@ -22,7 +22,7 @@ const QuestionForm = ({
 		<div>
 			<div>
 				{!isArticle && (
-					<span className={classes.slideImageLabel}>Add Background Image</span>
+					<span className={classes.dropzoneLabel}>Add Background Image</span>
 				)}
 				<FormikDropzone
 					name={`questions.${index}.uploadedFiles`}
@@ -53,7 +53,7 @@ const QuestionForm = ({
 					placeholder='Please write your question here'
 					multiline
 					maxRows={2}
-					maxLength={43}
+					maxLength={55}
 					disabled={isPublished || isArticle}
 					required
 				/>

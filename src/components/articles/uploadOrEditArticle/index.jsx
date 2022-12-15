@@ -79,6 +79,7 @@ import MatchPost from '../../ArticleBuilder/PreviewArticles/MatchPost';
 import { useLazyGetMatchesTreeQuery } from '../../../data/features/articleLibrary/articleLibrary.query';
 import ArticleForm from '../../forms/ArticleForm';
 import ArticlePreviewSidebar from '../../forms/ArticleForm/subComonents/ArticlePreviewSidebar';
+import { getFileElementData } from '../../../data/helpers';
 
 // TEST OBJECT FOR MATCHES
 const matchObj = {
@@ -358,8 +359,6 @@ const UploadOrEditArticle = ({
 	};
 	const dispatch = useDispatch();
 
-	console.log(data, 'DATA');
-	console.log(form, 'form');
 	useEffect(() => {
 		if (specificArticle) {
 			setNotifID(specificArticle?.id);
@@ -633,6 +632,9 @@ const UploadOrEditArticle = ({
 		let elementsData;
 		if (data.length) {
 			elementsData = data.map((item, index) => {
+				const fileElement = getFileElementData(
+					item.element_type === 'QUESTION' ? item?.data?.uploadedFiles[0] : item?.data[0]
+					)
 				return {
 					element_type: item.element_type,
 
@@ -640,22 +642,6 @@ const UploadOrEditArticle = ({
 					league_name: item?.data?.league?.name,
 					team_name: item?.data?.team?.name,
 					match_title: item?.data?.match?.name,
-
-					description: item?.data[0]?.description || undefined,
-					media_url:
-						item.data[0]?.media_url?.split('cloudfront.net/')[1] ||
-						item.data[0]?.media_url ||
-						undefined,
-					thumbnail_url:
-						item.data[0]?.thumbnail_url?.split('cloudfront.net/')[1] ||
-						item.data[0]?.thumbnail_url ||
-						undefined,
-					width: item.data[0]?.width || undefined,
-					height: item.data[0]?.height || undefined,
-					file_name: item.data[0]?.file_name || undefined,
-					dropbox_url: item?.data[0]?.dropbox_url || undefined,
-					ig_post_url: item?.data[0]?.ig_post_url || undefined,
-					twitter_post_url: item?.data[0]?.twitter_post_url || undefined,
 					...(item.element_type === 'QUESTION'
 						? {
 								question_data: {
@@ -685,7 +671,8 @@ const UploadOrEditArticle = ({
 						  }
 						: undefined),
 					sort_order: index + 1,
-					id: item.id || undefined
+					id: item.id || undefined,
+					...fileElement,
 				};
 			});
 		}
@@ -1472,7 +1459,6 @@ const UploadOrEditArticle = ({
 	};
 
 	const handleDraftSave = async () => {
-		console.log(getElements(data));
 		if (!validateDraft(form, data) || draftBtnDisabled) {
 			validateDraftBtn();
 		} else {
@@ -1503,7 +1489,21 @@ const UploadOrEditArticle = ({
 									uploadedFile.thumbnail_url;
 								await setData(dataCopy);
 								return uploadedFile;
-							} else {
+							} 
+							else if(item.element_type === 'QUESTION' && item.data.uploadedFiles[0].file){
+								let uploadedFile = await uploadFileToServer(
+									item.data.uploadedFiles[0],
+									'articleLibrary'
+								);
+								const dataCopy = [...data];
+								dataCopy[index].data.uploadedFiles[0].image = uploadedFile?.media_url;
+								dataCopy[index].data.uploadedFiles[0].thumbnail_url =
+									uploadedFile?.thumbnail_url;
+
+								await setData(dataCopy);
+								return uploadedFile;
+							}
+							else {
 								return item;
 							}
 						})
@@ -1551,6 +1551,20 @@ const UploadOrEditArticle = ({
 								dataCopy[index].data[0].thumbnail_url =
 									uploadedFile?.thumbnail_url;
 								await setData(dataCopy);
+								return uploadedFile;
+							}
+							if(item.element_type === 'QUESTION' && item.data.uploadedFiles[0].file){
+								let uploadedFile = await uploadFileToServer(
+									item.data.uploadedFiles[0],
+									'articleLibrary'
+								);
+								const dataCopy = [...data];
+								dataCopy[index].data.uploadedFiles[0].image = uploadedFile?.media_url;
+								dataCopy[index].data.uploadedFiles[0].thumbnail_url =
+									uploadedFile?.thumbnail_url;
+
+								await setData(dataCopy);
+								console.log('uploaded file..............', uploadedFile)
 								return uploadedFile;
 							}
 						})
@@ -1663,7 +1677,20 @@ const UploadOrEditArticle = ({
 									uploadedFile.thumbnail_url;
 								await setData(dataCopy);
 								return uploadedFile;
-							} else {
+							} 
+							else if(item.element_type === 'QUESTION' && item.data.uploadedFiles[0].file){
+								let uploadedFile = await uploadFileToServer(
+									item.data.uploadedFiles[0],
+									'articleLibrary'
+								);
+								const dataCopy = [...data];
+								dataCopy[index].data.uploadedFiles[0].image = uploadedFile?.media_url;
+								dataCopy[index].data.uploadedFiles[0].thumbnail_url = uploadedFile?.thumbnail_url;
+								await setData(dataCopy);
+								console.log('uploaded file..............', uploadedFile)
+								return uploadedFile;
+							}
+							else {
 								return item;
 							}
 						})
@@ -1733,6 +1760,18 @@ const UploadOrEditArticle = ({
 								dataCopy[index].data[0].thumbnail_url =
 									uploadedFile.thumbnail_url;
 								await setData(dataCopy);
+								return uploadedFile;
+							}
+							if(item.element_type === 'QUESTION' && item.data.uploadedFiles[0].file){
+								let uploadedFile = await uploadFileToServer(
+									item.data.uploadedFiles[0],
+									'articleLibrary'
+								);
+								const dataCopy = [...data];
+								dataCopy[index].data.uploadedFiles[0].image = uploadedFile?.media_url;
+								dataCopy[index].data.uploadedFiles[0].thumbnail_url = uploadedFile?.thumbnail_url;
+								await setData(dataCopy);
+								console.log('uploaded file..............', uploadedFile)
 								return uploadedFile;
 							}
 						})

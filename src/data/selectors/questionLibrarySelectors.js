@@ -9,3 +9,6 @@ export const selectSpecificQuestionStatus = (state) =>
 
 export const selectSummaryFeatureFlag = (state) =>
 	state.rootReducer.remoteConfig.features.summaryComponentOnQuestions;
+
+export const selectTriviaFeatureFlag = (state) =>
+	state.rootReducer.remoteConfig.features.triviaOnQuestions;

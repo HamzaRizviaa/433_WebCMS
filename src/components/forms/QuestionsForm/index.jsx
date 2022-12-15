@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,7 +8,8 @@ import { Formik, Form } from 'formik';
 import { useCommonParams } from '../../../hooks';
 import {
 	selectSpecificQuestion,
-	selectSummaryFeatureFlag
+	selectSummaryFeatureFlag,
+	selectTriviaFeatureFlag
 } from '../../../data/selectors';
 import {
 	questionDataFormatterForForm,
@@ -23,20 +24,22 @@ import {
 	getQuestions
 } from '../../../data/features/questionsLibrary/questionsLibraryActions';
 
-import QuestionsFormDrawer from './subComponents/QuestionsFormDrawer';
 import DeleteModal from '../../DeleteModal';
-import StopModal from '../../StopModal';
+import QuestionsFormDrawer from './subComponents/QuestionsFormDrawer';
+import PublishAndStopModal from './subComponents/PublishAndStopModal';
 
 const QuestionsForm = ({
 	open,
 	handleClose,
 	isEdit,
-	status, // draft or publish
+	status,
 	questionType,
 	location
 }) => {
 	const summaryComponentOnQuestions = useSelector(selectSummaryFeatureFlag);
 	const isSummaryEnabled = summaryComponentOnQuestions?._value === 'true';
+	const triviaOnQuestions = useSelector(selectTriviaFeatureFlag);
+	const isTriviaEnabled = triviaOnQuestions?._value === 'true';
 	const navigate = useNavigate();
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 	const dispatch = useDispatch();
@@ -45,9 +48,6 @@ const QuestionsForm = ({
 	// States
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
 	const [openStopModal, setOpenStopModal] = useState(false);
-
-	// Refs
-	const dialogWrapper = useRef(null);
 
 	const initialValues = useMemo(() => {
 		return isEdit && !isEmpty(specificQuestion)
@@ -70,11 +70,18 @@ const QuestionsForm = ({
 				status
 			);
 
+			const getApiVersion = (isSummaryEnabled, isTriviaEnabled) => {
+				if (isSummaryEnabled && isTriviaEnabled) return 3;
+				if (isSummaryEnabled && !isTriviaEnabled) return 1;
+				if (!isSummaryEnabled && !isTriviaEnabled) return 2;
+			};
+
 			const modifiedPayload = {
-				apiVersion: isSummaryEnabled ? 1 : 2,
+				apiVersion: getApiVersion(isSummaryEnabled, isTriviaEnabled),
 				...payload
 			};
 
+			if (values.active_question_id) modifiedPayload.shouldTransition = true;
 			if (status === 'CLOSED') delete modifiedPayload.general_info.end_date;
 
 			const { type } = await dispatch(
@@ -119,14 +126,16 @@ const QuestionsForm = ({
 		}
 	};
 
-	const onStopHandler = async (id, setSubmitting) => {
+	const onStopHandler = async (id, setSubmitting, transitionTo) => {
 		setSubmitting(true);
 		setOpenStopModal(false);
 
 		try {
 			await dispatch(
 				stopQuestionThunk({
-					question_meta_id: id
+					question_meta_id: id,
+					transition_to: transitionTo,
+					end_date: new Date().toISOString()
 				})
 			);
 
@@ -139,11 +148,21 @@ const QuestionsForm = ({
 		}
 	};
 
+	const stopModalActionInfo = (
+		<p>
+			You are about to stop this {questionType}. You won’t be able to restart
+			the {questionType} again.
+		</p>
+	);
+
 	return (
 		<Formik
 			enableReinitialize
 			initialValues={initialValues}
-			validationSchema={getQuestionsValidationSchema(isSummaryEnabled)}
+			validationSchema={getQuestionsValidationSchema(
+				isSummaryEnabled,
+				isTriviaEnabled
+			)}
 			onSubmit={onSubmitHandler}
 			validateOnMount
 		>
@@ -167,19 +186,20 @@ const QuestionsForm = ({
 							onDeleteHandler(specificQuestion?.id, status, setSubmitting);
 						}}
 						text={questionType}
-						wrapperRef={dialogWrapper}
 						isSubmitting={isSubmitting}
 					/>
-					<StopModal
+					<PublishAndStopModal
 						open={openStopModal}
-						toggle={closeStopModal}
-						stopBtn={() => {
-							onStopHandler(specificQuestion?.id, setSubmitting);
-						}}
-						text={questionType}
-						wrapperRef={dialogWrapper}
-						stop={true}
 						isSubmitting={isSubmitting}
+						onClose={closeStopModal}
+						questionType={questionType}
+						actionInfo={stopModalActionInfo}
+						onConfirm={(val) => {
+							onStopHandler(specificQuestion?.id, setSubmitting, val);
+						}}
+						isStatusTrivia={status === 'TRIVIA'}
+						isTriviaEnabled={isTriviaEnabled}
+						isStopModal
 					/>
 				</Form>
 			)}

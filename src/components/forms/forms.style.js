@@ -67,7 +67,7 @@ export const useFormStyles = makeStyles((theme) => ({
 		marginBottom: 20
 	},
 
-	slideImageLabel: {
+	dropzoneLabel: {
 		marginBottom: 15,
 		position: 'relative',
 		display: 'inline-block',
@@ -84,6 +84,15 @@ export const useFormStyles = makeStyles((theme) => ({
 			fontWeight: 'bold',
 			color: theme.palette.red,
 			display: 'inline-block'
+		}
+	},
+
+	link: {
+		color: theme.palette.white,
+		textDecoration: 'none',
+
+		'&:hover': {
+			color: theme.palette.neonYellow
 		}
 	}
 }));

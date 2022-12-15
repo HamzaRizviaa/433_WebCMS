@@ -1,8 +1,7 @@
-import dayjs from 'dayjs';
 import * as yup from 'yup';
 import { omit } from 'lodash';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
-import { getDateConstantTime, getDateTime } from '../utils';
+import { getDateTime } from '../utils';
 import uploadFilesToS3 from '../utils/uploadFilesToS3';
 import { getRelativePath } from './commonHelpers';
 
@@ -35,11 +34,11 @@ export const questionTableColumns = [
 	},
 	{
 		dataField: 'end_date',
-		text: 'END DATE | TIME',
+		text: 'CLOSED DATE | TIME',
 		sort: true,
 		formatter: (content) =>
 			getFormatter('markup', {
-				content: content === '-' ? '-' : getDateConstantTime(content)
+				content: content === '-' ? '-' : getDateTime(content)
 			})
 	},
 	{
@@ -124,10 +123,10 @@ export const questionsFormInitialValues = {
 	resultsUploadedFiles: [],
 	positiveResultsUploadedFiles: [],
 	negativeResultsUploadedFiles: [],
+	coverImageUploadedFiles: [],
 	general_info: {
 		save_draft: true,
 		question_type: 'poll',
-		end_date: null,
 		results: '',
 		results_image: '',
 		results_filename: '',
@@ -139,9 +138,18 @@ export const questionsFormInitialValues = {
 		negative_results: '',
 		negative_results_image: '',
 		negative_results_filename: '',
-		negative_results_dropbox_url: ''
+		negative_results_dropbox_url: '',
+		question_title: '',
+		cover_image: '',
+		cover_image_file_name: '',
+		cover_image_width: '',
+		cover_image_height: '',
+		cover_image_dropbox_url: ''
 	},
-	questions: []
+	questions: [],
+	active_question_id: null,
+	active_question_end_date: null,
+	transition_to: null
 };
 
 export const questionDataFormatterForService = async (
@@ -149,9 +157,13 @@ export const questionDataFormatterForService = async (
 	isDraft,
 	status = 'draft'
 ) => {
-	const pollFilesToUpload = [values.resultsUploadedFiles[0] || null];
+	const pollFilesToUpload = [
+		values.coverImageUploadedFiles[0] || null,
+		values.resultsUploadedFiles[0] || null
+	];
 
 	const quizFilesToUpload = [
+		values.coverImageUploadedFiles[0] || null,
 		values.positiveResultsUploadedFiles[0] || null,
 		values.negativeResultsUploadedFiles[0] || null
 	];
@@ -164,8 +176,8 @@ export const questionDataFormatterForService = async (
 		}
 	});
 
-	let pollUploadedFiles = [null];
-	let quizUploadedFiles = [null, null];
+	let pollUploadedFiles = [null, null];
+	let quizUploadedFiles = [null, null, null];
 
 	if (values.general_info.question_type === 'poll') {
 		pollUploadedFiles = await uploadFilesToS3(
@@ -179,24 +191,34 @@ export const questionDataFormatterForService = async (
 		);
 	}
 
-	const [resultsFile, ...pollSlideFiles] = pollUploadedFiles;
-	const [positiveResultsFile, negativeResultFile, ...quizSlideFiles] =
-		quizUploadedFiles;
+	const [pollCoverImageFile, resultsFile, ...pollSlideFiles] =
+		pollUploadedFiles;
+	const [
+		quizCoverImageFile,
+		positiveResultsFile,
+		negativeResultFile,
+		...quizSlideFiles
+	] = quizUploadedFiles;
+
+	const coverImageFile = pollCoverImageFile || quizCoverImageFile;
 
 	const payload = {
 		general_info: {
 			...values.general_info,
 			save_draft: isDraft,
-			end_date: dayjs(values.general_info.end_date).format('YYYY-MM-DD'),
 			results_image: getRelativePath(resultsFile?.media_url),
 			results_filename: resultsFile?.file_name || '',
 			positive_results_image: getRelativePath(positiveResultsFile?.media_url),
 			positive_results_filename: positiveResultsFile?.file_name || '',
 			negative_results_image: getRelativePath(negativeResultFile?.media_url),
-			negative_results_filename: negativeResultFile?.file_name || ''
+			negative_results_filename: negativeResultFile?.file_name || '',
+			cover_image: getRelativePath(coverImageFile?.media_url),
+			cover_image_file_name: coverImageFile?.file_name || '',
+			cover_image_width: coverImageFile?.width || 0,
+			cover_image_height: coverImageFile?.height || 0
 		},
 		questions: values.questions.map((item, index) => ({
-			...omit(item, ['uploadedFiles', 'pollAnswers', 'quizAnswers']),
+			...omit(item, ['uploadedFiles', 'answers']),
 			...(values.general_info.question_type === 'poll'
 				? {
 						image: getRelativePath(pollSlideFiles[index]?.media_url),
@@ -225,6 +247,15 @@ export const questionDataFormatterForService = async (
 		})),
 		...(values.question_id ? { question_id: values.question_id } : {})
 	};
+
+	if (values.active_question_id) {
+		payload.active_question_id = values.active_question_id;
+		payload.transition_to = values.transition_to;
+
+		if (values.transition_to === 'closed') {
+			payload.active_question_end_date = values.active_question_end_date;
+		}
+	}
 
 	return payload;
 };
@@ -255,6 +286,16 @@ export const questionDataFormatterForForm = (question) => {
 
 	const formattedQuestion = {
 		question_id: id,
+		coverImageUploadedFiles: rest.cover_image
+			? [
+					{
+						file_name: rest.cover_image_file_name,
+						media_url: `${REACT_APP_MEDIA_ENDPOINT}/${rest.cover_image}`,
+						height: rest.cover_image_height,
+						width: rest.cover_image_width
+					}
+			  ]
+			: [],
 		...(question.question_type === 'poll'
 			? {
 					resultsUploadedFiles: summary.results_image
@@ -288,8 +329,10 @@ export const questionDataFormatterForForm = (question) => {
 						: []
 			  }),
 		general_info: {
-			...omit(rest, ['created_at', 'updated_at', 'status']),
-			end_date: new Date(rest.end_date),
+			save_draft: rest.is_draft,
+			question_type: rest.question_type,
+			question_title: rest.question_title,
+			cover_image_dropbox_url: rest.cover_image_dropbox_url,
 			...(question.question_type === 'poll'
 				? {
 						results: summary.results,
@@ -302,9 +345,11 @@ export const questionDataFormatterForForm = (question) => {
 						positive_results_dropbox_url: summary.positive_results_dropbox_url
 				  })
 		},
-		questions: updatingQuestionsSlides(questions)
+		questions: updatingQuestionsSlides(questions),
+		active_question_id: null,
+		active_question_end_date: null,
+		transition_to: null
 	};
-
 	return formattedQuestion;
 };
 
@@ -332,19 +377,8 @@ const questionsSlideSchema = yup
 	)
 	.min(1, 'Atleast 1 question is required');
 
-// V1 is without summary component
+// V1 is with summary component and no trivia component
 export const questionsFormValidationSchemaV1 = yup.object({
-	general_info: yup.object({
-		end_date: yup
-			.date()
-			.nullable()
-			.required('You need to select date to post question')
-	}),
-
-	questions: questionsSlideSchema
-});
-
-export const questionsFormValidationSchema = yup.object({
 	resultsUploadedFiles: yup.array().when('general_info.question_type', {
 		is: (val) => val === 'poll',
 		then: (schema) =>
@@ -365,10 +399,6 @@ export const questionsFormValidationSchema = yup.object({
 	}),
 
 	general_info: yup.object({
-		end_date: yup
-			.date()
-			.nullable()
-			.required('You need to select date to post question'),
 		results: yup
 			.string()
 			.trim()
@@ -405,10 +435,86 @@ export const questionsFormValidationSchema = yup.object({
 	questions: questionsSlideSchema
 });
 
-export const getQuestionsValidationSchema = (isSummaryComponent) => {
-	return isSummaryComponent
-		? questionsFormValidationSchema
-		: questionsFormValidationSchemaV1;
+// V2 is without summary component and without trivia component
+export const questionsFormValidationSchemaV2 = yup.object({
+	questions: questionsSlideSchema
+});
+
+// V3 is with summary component and with Trivia Component
+export const questionsFormValidationSchemaV3 = yup.object({
+	coverImageUploadedFiles: yup
+		.array()
+		.min(1, 'You need to upload an image in order to post'),
+	resultsUploadedFiles: yup.array().when('general_info.question_type', {
+		is: (val) => val === 'poll',
+		then: (schema) =>
+			schema.min(1, 'You need to upload an image in order to post'),
+		otherwise: (schema) => schema.min(0)
+	}),
+	positiveResultsUploadedFiles: yup.array().when('general_info.question_type', {
+		is: (val) => val === 'quiz',
+		then: (schema) =>
+			schema.min(1, 'You need to upload an image in order to post'),
+		otherwise: (schema) => schema.min(0)
+	}),
+	negativeResultsUploadedFiles: yup.array().when('general_info.question_type', {
+		is: (val) => val === 'quiz',
+		then: (schema) =>
+			schema.min(1, 'You need to upload an image in order to post'),
+		otherwise: (schema) => schema.min(0)
+	}),
+
+	general_info: yup.object({
+		question_title: yup
+			.string()
+			.trim()
+			.required('You need to enter title in order to post'),
+		results: yup
+			.string()
+			.trim()
+			.when('question_type', {
+				is: (val) => val === 'poll',
+				then: (schema) =>
+					schema.required('You need to enter results in order to post'),
+				otherwise: (schema) => schema
+			}),
+		positive_results: yup
+			.string()
+			.trim()
+			.when('question_type', {
+				is: (val) => val === 'quiz',
+				then: (schema) =>
+					schema.required(
+						'You need to enter positive results in order to post'
+					),
+				otherwise: (schema) => schema
+			}),
+		negative_results: yup
+			.string()
+			.trim()
+			.when('question_type', {
+				is: (val) => val === 'quiz',
+				then: (schema) =>
+					schema.required(
+						'You need to enter negative results in order to post'
+					),
+				otherwise: (schema) => schema
+			})
+	}),
+
+	questions: questionsSlideSchema
+});
+
+export const getQuestionsValidationSchema = (
+	isSummaryComponent,
+	isTriviaEnabled
+) => {
+	if (isSummaryComponent && isTriviaEnabled)
+		return questionsFormValidationSchemaV3;
+	if (isSummaryComponent && !isTriviaEnabled)
+		return questionsFormValidationSchemaV1;
+	if (!isSummaryComponent && !isTriviaEnabled)
+		return questionsFormValidationSchemaV2;
 };
 
 export const calculateAnswerPercentage = (totalParticipants, usersCount) => {

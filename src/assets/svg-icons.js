@@ -22,3 +22,5 @@ export { ReactComponent as ImageVideo } from './Image.svg';
 export { ReactComponent as TwitterLine } from './TwitterLine.svg';
 export { ReactComponent as Question } from './Quiz.svg';
 export { ReactComponent as BallIcon } from './Ball.svg';
+export { ReactComponent as RadioBtnIcon } from './radio-btn.svg';
+export { ReactComponent as RadioBtnCheckedIcon } from './radio-btn-checked.svg';
