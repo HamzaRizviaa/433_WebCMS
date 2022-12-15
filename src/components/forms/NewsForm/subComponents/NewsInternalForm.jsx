@@ -4,7 +4,7 @@ import { FieldArray, useFormikContext } from 'formik';
 import { isEqual, pick } from 'lodash';
 
 import FormikField from '../../../ui/inputs/formik/FormikField';
-import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
+// import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
 import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
 import Button from '../../../ui/Button';
 import NewsSlideForm from './NewsSlideForm';
@@ -14,6 +14,7 @@ import {
 	areAllFieldsEmpty,
 	newsFormInitialValues
 } from '../../../../data/helpers';
+import AdvancedSettingsForm from '../../common/AdvancedSettingsForm';
 
 const NewsInternalForm = ({
 	isEdit,
@@ -99,15 +100,18 @@ const NewsInternalForm = ({
 						required
 					/>
 				</div>
-				<div className={classes.fieldContainer}>
+				{/* <div className={classes.fieldContainer}>
 					<div className={classes.switchContainer}>
 						<FormikSwitchField name='show_comments' label='Show Comments' />
 					</div>
 					<div className={classes.switchContainer}>
 						<FormikSwitchField name='show_likes' label='Show Likes' />
 					</div>
-				</div>
+				</div> */}
 			</AccordianLayout>
+
+			<AdvancedSettingsForm />
+
 			<FieldArray
 				name='slides'
 				render={(props) => (
