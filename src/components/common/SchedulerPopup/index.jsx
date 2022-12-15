@@ -7,7 +7,7 @@ import TimePickerField from '../../ui/inputs/TimePickerField';
 import SchedulerDateField from '../../ui/inputs/SchedulerDateField';
 import { useStyles } from './index.styles';
 
-const SchedulerPopup = ({ open, onClose, selectsRange = false }) => {
+const SchedulerPopup = ({ open, onClose, selectsRange = true }) => {
 	const [startDate, setStartDate] = useState(null);
 	const [endDate, setEndDate] = useState(null);
 

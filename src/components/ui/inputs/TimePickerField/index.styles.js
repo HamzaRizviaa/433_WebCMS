@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core';
-
+const fieldHeight = "24px"
 export const useStyles = makeStyles((theme) => ({
 	continer: {
 		padding: '1rem 0'
@@ -18,7 +18,7 @@ export const useStyles = makeStyles((theme) => ({
 
 		justifyContent: 'space-between',
 		'& .subField': {
-			height: '27px', // '40px',
+			height: fieldHeight, // '40px',
 			left: '0px',
 			width: 'calc(50% - 33px)',
 			top: '20px',

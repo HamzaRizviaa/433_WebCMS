@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core';
+const fieldHeight = '24px';
 
 export const useStyles = makeStyles((theme) => ({
 	continer: {
@@ -13,7 +14,7 @@ export const useStyles = makeStyles((theme) => ({
 		margin: '1rem'
 	},
 	dateField: {
-		height: '27px', // '40px',
+		height: fieldHeight, // '40px',
 		left: '0px',
 		top: '20px',
 		borderRadius: '40px',

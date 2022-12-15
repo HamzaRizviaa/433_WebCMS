@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { useStyles } from './index.styles';
 
 const SchedulerDateField = ({ value, label = 'DATE' }) => {
-
 	//label checking
 	label = label || 'DATE';
 

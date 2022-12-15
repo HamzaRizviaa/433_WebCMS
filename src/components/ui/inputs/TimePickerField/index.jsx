@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useStyles } from './index.styles';
 import clsx from 'clsx';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+// import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import { ReactComponent as ArrowDown } from '../../../../assets/Down.svg';
 import { useState } from 'react';
 import { ClickAwayListener, Popover } from '@material-ui/core';
 import { useRef } from 'react';
@@ -32,6 +33,7 @@ const TimePickerField = ({ value, onSelect, label = 'TIME' }) => {
 	// select hour
 	const selectHour = (hour) => {
 		setSelectedHour(hour);
+		setOpen(false)
 	};
 
 	// set mins
@@ -100,7 +102,7 @@ const TimePickerField = ({ value, onSelect, label = 'TIME' }) => {
 
 					{/* dropwdown arrow  */}
 					<div className='arrowCon'>
-						<KeyboardArrowDownIcon
+						<ArrowDown
 							className={clsx('arrow', classes.arrowIcon)}
 						/>
 						{/* anchor element for dropwdown */}
@@ -121,8 +123,6 @@ const TimePickerField = ({ value, onSelect, label = 'TIME' }) => {
 						/>
 						<span className='greydText'>Mins</span>
 					</div>
-
-					<KeyboardArrowDownIcon className={classes.arrowIcon} />
 				</div>
 			</div>
 

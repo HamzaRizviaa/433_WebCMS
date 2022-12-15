@@ -7,7 +7,8 @@ export const useStyles = makeStyles(() => ({
 		flexDirection: 'column',
 		height: '100%',
 		boxSizing: 'border-box',
-		padding: '5px 20px'
+		padding: '5px 20px',
+		paddingTop:0,
 	},
 	timezoneNote: {
 		//styleName: Body/Small;
