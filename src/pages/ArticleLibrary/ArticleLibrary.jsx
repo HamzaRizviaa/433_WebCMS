@@ -3,7 +3,8 @@ import { useDispatch } from 'react-redux';
 
 import Table from '../../components/ui/Table';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
-import UploadOrEditArticle from '../../components/articles/uploadOrEditArticle';
+// import UploadOrEditArticle from '../../components/articles/uploadOrEditArticle';
+import ArticleForm from '../../components/forms/ArticleForm';
 import useGetAllArticlesQuery from '../../hooks/libraries/articles/useGetAllArticlesQuery';
 import { getSpecificArticle } from '../../data/features/articleLibrary/articleLibrarySlice';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
@@ -46,7 +47,7 @@ const ArticleLibrary = () => {
 				isLoading={isLoading}
 				noDataText='No Articles Found'
 			/>
-			<UploadOrEditArticle
+			{/* <UploadOrEditArticle
 				open={showSlider}
 				isEdit={edit}
 				handleClose={() => setShowSlider(false)}
@@ -55,6 +56,12 @@ const ArticleLibrary = () => {
 				buttonText={
 					edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
 				}
+				status={rowStatus}
+			/> */}
+			<ArticleForm
+				open={showSlider}
+				handleClose={() => setShowSlider(false)}
+				isEdit={edit}
 				status={rowStatus}
 			/>
 		</DashboardLayout>
