@@ -1,11 +1,25 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import PropTypes from 'prop-types';
+//import PropTypes from 'prop-types';
 import AccordianLayout from '../../../layouts/AccordianLayout';
 import SettingsLayout from '../../../layouts/SettingsLayout';
 import FormikCheckbox from '../../../ui/inputs/formik/FormikCheckbox';
 
 const AdvancedSettingsForm = () => {
+	const geoblocking = {
+		countries: ['Germany', 'Austria', 'Switzerland'],
+		duration: 72,
+		CMS: 'hey'
+	};
+
+	const toolTipHandler = (val) => {
+		return Object.entries(val).map(([key, value]) => (
+			<div key={key} style={{ textTransform: 'capitalize' }}>
+				{key} : {value}
+			</div>
+		));
+	};
+
 	return (
 		<div>
 			<AccordianLayout title='Advanced Settings'>
@@ -18,12 +32,7 @@ const AdvancedSettingsForm = () => {
 					<FormikCheckbox
 						name='6385e94da11fe52856b2eb18'
 						label='Geoblock ligue 1'
-						tooltip={
-							<div>
-								Geoblock: France <br />
-								Duration: 72 hours
-							</div>
-						}
+						tooltip={toolTipHandler(geoblocking)}
 					/>
 				</SettingsLayout>
 			</AccordianLayout>
@@ -31,6 +40,6 @@ const AdvancedSettingsForm = () => {
 	);
 };
 
-AdvancedSettingsForm.propTypes = {};
+// AdvancedSettingsForm.propTypes = {};
 
 export default AdvancedSettingsForm;
