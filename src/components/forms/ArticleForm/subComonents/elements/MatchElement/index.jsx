@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useFormikContext } from 'formik';
+import { isEmpty } from 'lodash';
 import FormikSelect from '../../../../../ui/inputs/formik/FormikSelect';
 import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 import { getTeamOptions, getMatchName } from '../../../../../../data/utils';
@@ -83,7 +84,7 @@ const MatchElement = ({
 		>
 			<FormikSelect
 				name={`elements.${index}.league_name`}
-				placeholder='SELECT LEAGUE'
+				placeholder='Please select'
 				options={leagues}
 				mapOptions={{ labelKey: 'name', valueKey: 'name' }}
 				disabled={isPublished}
@@ -91,18 +92,18 @@ const MatchElement = ({
 			/>
 			<FormikSelect
 				name={`elements.${index}.team_name`}
-				placeholder='SELECT TEAM'
+				placeholder='Please select'
 				options={teams}
 				mapOptions={{ labelKey: 'name', valueKey: 'name' }}
-				disabled={isPublished || teams?.length === 0}
+				disabled={isPublished || isEmpty(item.league_name)}
 				onChange={handleTeamChange}
 			/>
 			<FormikSelect
 				name={`elements.${index}.match_title`}
-				placeholder='SELECT MATCH'
+				placeholder='Please select'
 				options={matches}
 				mapOptions={{ labelKey: 'name', valueKey: 'name' }}
-				disabled={isPublished || matches?.length === 0}
+				disabled={isPublished || isEmpty(item.team_name)}
 				onChange={handleMatchChange}
 			/>
 		</DraggableCardLayout>

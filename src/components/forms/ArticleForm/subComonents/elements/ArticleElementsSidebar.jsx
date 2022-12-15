@@ -43,7 +43,7 @@ const ArticleElementsSidebar = ({ topElementRef, elementsWrapperRef }) => {
 
 	return (
 		<Box className={classes.ArticleElementsSidebar}>
-			<Box mb={3}>
+			<Box mb={2.5}>
 				<Typography className={classes.titleHeading}>Elements</Typography>
 				<Typography className={classes.titleText}>
 					Add elements to build your article

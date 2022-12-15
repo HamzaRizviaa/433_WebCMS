@@ -570,8 +570,8 @@ const questionElementValidationSchema = Yup.object().shape({
 });
 
 export const articleFormValidationSchema = Yup.object().shape({
-	mainCategoryId: Yup.string().required(),
-	subCategoryId: Yup.string().required(),
+	mainCategoryId: Yup.string().required().label('Main Category'),
+	subCategoryId: Yup.string().required().label('Sub Category'),
 	mainCategoryName: Yup.string().required().label('Main Category'),
 	subCategoryName: Yup.string().required().label('Sub Category'),
 	author_text: Yup.string().required().label('Author Name'),
