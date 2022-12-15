@@ -13,7 +13,6 @@ export const useArticleFooterStyles = makeStyles((theme) => ({
 		bottom: -2,
 		background: '#000',
 		zIndex: 1
-		// maxHeight: '37px'
 	},
 	container: {
 		display: 'flex',

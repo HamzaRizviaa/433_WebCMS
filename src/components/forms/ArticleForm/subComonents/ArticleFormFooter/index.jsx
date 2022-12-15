@@ -47,8 +47,7 @@ const ArticleFormFooter = ({
 
 	return (
 		<div className={classes.footer}>
-			{isEdit}
-			{(isEdit || isDraft) && (
+			{isEdit && (
 				<Button
 					onClick={openDeleteModal}
 					size='small'
@@ -65,7 +64,7 @@ const ArticleFormFooter = ({
 						variant='outlined'
 						className={classes.draftButton}
 						disabled={isDraftButtonDisabled}
-						onClick={() => onSubmitHandler(values, { setSubmitting }, isDraft)}
+						onClick={() => onSubmitHandler(values, { setSubmitting }, true)}
 					>
 						{isEdit && isDraft ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
 					</Button>
