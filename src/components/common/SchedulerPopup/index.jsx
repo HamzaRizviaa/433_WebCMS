@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import { Box, Grid } from '@material-ui/core';
 import Modal from '../../ui/Modal';
 import InlineDatePicker from '../../ui/inputs/InlineDatePicker';
@@ -21,6 +22,9 @@ const SchedulerPopup = ({ open, onClose, selectsRange = true }) => {
 		}
 	};
 
+	const formateDate = (data) =>
+		moment(data || moment.now()).format('MMM DD, YYYY');
+
 	const classes = useStyles();
 	return (
 		<Modal
@@ -29,6 +33,8 @@ const SchedulerPopup = ({ open, onClose, selectsRange = true }) => {
 			open={open}
 			onClose={onClose}
 			color='secondary'
+			
+
 		>
 			<Grid container>
 				<Grid item md={7}>
@@ -41,6 +47,8 @@ const SchedulerPopup = ({ open, onClose, selectsRange = true }) => {
 						formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 3)}
 						calendarStartDay={1}
 						selectsRange={selectsRange}
+						/// past dates disabled
+						minDate={moment.now()}
 					/>
 				</Grid>
 				{/* RIGHT SECTION */}
@@ -48,15 +56,21 @@ const SchedulerPopup = ({ open, onClose, selectsRange = true }) => {
 					{/* time n date con */}
 					<div className={classes.dateAndTimeCon}>
 						{/* Date field */}
-						<SchedulerDateField label={selectsRange && 'START DATE'} />
+						<SchedulerDateField
+							value={formateDate(startDate)}
+							label={selectsRange && 'START DATE'}
+						/>
 						{/* Time Picker */}
 						<TimePickerField label={selectsRange && 'START TIME'} />
 
 						{/* If Range then it'll display end date time as well */}
 						{selectsRange && (
 							<Box mt={2}>
-								<SchedulerDateField label={'END DATE'} />
-								<TimePickerField label={'END TIME'} />
+								<SchedulerDateField
+									value={formateDate(endDate)}
+									label={'STOP DATE'}
+								/>
+								<TimePickerField label={'STOP TIME'} />
 							</Box>
 						)}
 						{/* Timezone Note Typo */}
