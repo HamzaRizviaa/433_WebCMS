@@ -42,6 +42,16 @@ export const useInlineDatePickerStyles = makeStyles((theme) => ({
 			marginLeft: '-16px !important',
 
 			'& .react-datepicker__week': {
+				'& .react-datepicker__day--disabled': {
+					backgroundColor: 'transparent !important',
+					color: '#404040 !important',
+
+					'&:hover': {
+						backgroundColor: 'transparent !important',
+						color: '#404040 !important'
+					}
+				},
+
 				'& .react-datepicker__day': {
 					textAlign: 'center',
 					verticalAlign: 'middle',
@@ -64,7 +74,10 @@ export const useInlineDatePickerStyles = makeStyles((theme) => ({
 				},
 
 				'& .react-datepicker__day--outside-month': {
-					color: 'rgba(255, 255, 255, 0.3) !important'
+					'&:not(.react-datepicker__day--disabled):not(.react-datepicker__day--range-start):not(.react-datepicker__day--range-end):not(.react-datepicker__day--in-range):not(.react-datepicker__day--selected)':
+						{
+							color: 'rgba(255, 255, 255, 0.3) !important'
+						}
 				},
 
 				'& .react-datepicker__day--in-selecting-range-start': {
@@ -129,17 +142,7 @@ export const useInlineDatePickerStyles = makeStyles((theme) => ({
 						marginLeft: '16px',
 						marginRight: '16px',
 						padding: '6.5px 4px'
-					},
-
-				'& .react-datepicker__day--disabled': {
-					backgroundColor: 'transparent !important',
-					color: '#404040 !important',
-
-					'&:hover': {
-						backgroundColor: 'transparent !important',
-						color: '#404040 !important'
 					}
-				}
 			}
 		},
 
