@@ -1,14 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { isEmpty } from 'lodash';
+import { useFormikContext } from 'formik';
+import { useElementsStyles } from '../elements.styles';
 import FormikDropzone from '../../../../../ui/inputs/formik/FormikDropzone';
 import FormikField from '../../../../../ui/inputs/formik/FormikField';
 import FormikLabelsSelect from '../../../../../ui/inputs/formik/FormikLabelsSelect';
-import { useElementsStyles } from '../elements.styles';
-import { useFormikContext } from 'formik';
 
-const ArticleQuestionForm = ({ type, index, isPublished, openPreviewer }) => {
+const ArticleQuestionForm = ({ type, index, item, isPublished }) => {
 	const classes = useElementsStyles();
 	const { setFieldValue } = useFormikContext();
+	const isItemCreated = !isEmpty(item.id);
 
 	const handleDeleteFile = () => {
 		setFieldValue(`elements.${index}.question_data.uploadedFiles`, []);
@@ -27,7 +29,6 @@ const ArticleQuestionForm = ({ type, index, isPublished, openPreviewer }) => {
 						accept='image/jpeg, image/png'
 						formatMessage='Supported formats are jpeg and png'
 						fileSizeMessage='Image file size should not exceed 1MB.'
-						onPreview={openPreviewer}
 						onDelete={() => handleDeleteFile()}
 						showPreview
 						hidePreviewIcon
@@ -51,7 +52,7 @@ const ArticleQuestionForm = ({ type, index, isPublished, openPreviewer }) => {
 					multiline
 					maxRows={2}
 					maxLength={55}
-					disabled={isPublished}
+					disabled={isPublished && isItemCreated}
 					required
 				/>
 			</div>
@@ -63,7 +64,7 @@ const ArticleQuestionForm = ({ type, index, isPublished, openPreviewer }) => {
 					multiline
 					maxRows={2}
 					maxLength={29}
-					disabled={isPublished}
+					disabled={isPublished && isItemCreated}
 					required
 				/>
 			</div>
@@ -75,7 +76,7 @@ const ArticleQuestionForm = ({ type, index, isPublished, openPreviewer }) => {
 					multiline
 					maxRows={2}
 					maxLength={29}
-					disabled={isPublished}
+					disabled={isPublished && isItemCreated}
 					required
 				/>
 			</div>
@@ -84,7 +85,7 @@ const ArticleQuestionForm = ({ type, index, isPublished, openPreviewer }) => {
 					name={`elements.${index}.question_data.labels`}
 					label='LABELS'
 					placeholder='Select a minimum of 1 labels'
-					disabled={isPublished}
+					disabled={isPublished && isItemCreated}
 					required
 					library='Articles'
 				/>
@@ -94,11 +95,10 @@ const ArticleQuestionForm = ({ type, index, isPublished, openPreviewer }) => {
 };
 
 ArticleQuestionForm.propTypes = {
-	type: PropTypes.string,
-	openPreviewer: PropTypes.any,
-	isPublished: PropTypes.bool,
+	type: PropTypes.string.isRequired,
 	index: PropTypes.number.isRequired,
-	item: PropTypes.object
+	item: PropTypes.object.isRequired,
+	isPublished: PropTypes.bool.isRequired
 };
 
 export default ArticleQuestionForm;
