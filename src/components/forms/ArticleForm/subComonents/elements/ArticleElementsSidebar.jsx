@@ -76,8 +76,8 @@ const ArticleElementsSidebar = ({ topElementRef, elementsWrapperRef }) => {
 };
 
 ArticleElementsSidebar.propTypes = {
-	topElementRef: PropTypes.element,
-	elementsWrapperRef: PropTypes.element
+	topElementRef: PropTypes.any,
+	elementsWrapperRef: PropTypes.any
 };
 
 export default ArticleElementsSidebar;

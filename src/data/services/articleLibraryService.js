@@ -31,7 +31,7 @@ class ArticleLibraryService {
 	static getArticleSubCategoriesApi = (id) =>
 		axiosInstance.get(`/article/get-sub-categories/${id}`);
 
-	static postArticle = (data, apiVersion = 2) => {
+	static postArticle = (data, apiVersion = 4) => {
 		return axiosInstance.post(`/article/post-article`, data, {
 			params: {
 				api_version: apiVersion

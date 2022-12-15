@@ -18,8 +18,7 @@ const ArticleInternalForm = ({
 
 	const { validateForm, resetForm } = useFormikContext();
 
-	const [getMatchesTree, { isFetching: matchesLoading, data: matchesData }] =
-		useLazyGetMatchesTreeQuery();
+	const [getMatchesTree, { data: matchesData }] = useLazyGetMatchesTreeQuery();
 
 	useEffect(() => {
 		validateForm();
@@ -50,7 +49,6 @@ const ArticleInternalForm = ({
 						isEdit={isEdit}
 						status={status}
 						elementsWrapperRef={elementsWrapperRef}
-						matchesLoading={matchesLoading}
 						matchesData={matchesData}
 						{...props}
 					/>
@@ -64,7 +62,7 @@ ArticleInternalForm.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
 	topElementRef: PropTypes.element,
-	elementsWrapperRef: PropTypes.element
+	elementsWrapperRef: PropTypes.any
 };
 
 export default ArticleInternalForm;

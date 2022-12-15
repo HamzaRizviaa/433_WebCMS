@@ -57,35 +57,31 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 		formikBag.setSubmitting(true);
 
 		try {
-			// if (
-			// 	(!isDraft && specificArticle?.title !== values.title) ||
-			// 	(!isDraft && status === 'draft')
-			// ) {
-			// 	const { data } = await ArticleLibraryService.getArticleCheckTitle(
-			// 		values.title
-			// 	);
+			if (
+				(!isDraft && specificArticle?.title !== values.title) ||
+				(!isDraft && status === 'draft')
+			) {
+				const { data } = await ArticleLibraryService.getArticleCheckTitle(
+					values.title
+				);
 
-			// 	if (data.response) {
-			// 		formikBag.setSubmitting(false);
-			// 		formikBag.setFieldError(
-			// 			'title',
-			// 			'An article item with this Title has already been published. Please amend the Title.'
-			// 		);
-			// 		return;
-			// 	}
-			// }
+				if (data.response) {
+					formikBag.setSubmitting(false);
+					formikBag.setFieldError(
+						'title',
+						'An article item with this Title has already been published. Please amend the Title.'
+					);
+					return;
+				}
+			}
 
 			const { uploadedFilesRes, elements } = await uploadArticleFiles(values);
-
-			console.log({ elements });
 
 			const articleData = articleDataFormatterForService(
 				{ ...values, elements },
 				uploadedFilesRes,
 				isDraft
 			);
-
-			console.log({ articleData });
 
 			const { type } = await dispatch(
 				createOrEditArticleThunk(articleData, formikBag, isDraft)

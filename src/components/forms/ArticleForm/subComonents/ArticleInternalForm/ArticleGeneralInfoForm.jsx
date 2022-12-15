@@ -61,7 +61,6 @@ const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 						/>
 					</div>
 				</div>
-
 				<div className={classes.subCategory}>
 					<div className={classes.fieldWrapper}>
 						<FormikSelect

@@ -9,7 +9,6 @@ const MatchElement = ({
 	isEdit,
 	index,
 	item,
-	initialData,
 	data,
 	isPublished,
 	handleRemoveElement
@@ -21,12 +20,6 @@ const MatchElement = ({
 	const { setFieldValue } = useFormikContext();
 
 	useEffect(() => {
-		if (isPublished) {
-			setLeagues([
-				{ name: initialData?.league_name, id: initialData?.league_name }
-			]);
-			return;
-		}
 		data && setLeagues(data);
 
 		if (isEdit && data) {
@@ -119,11 +112,10 @@ const MatchElement = ({
 MatchElement.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
+	isPublished: PropTypes.bool,
 	index: PropTypes.number.isRequired,
 	item: PropTypes.object,
-	initialData: PropTypes.object,
 	data: PropTypes.array,
-	isPublished: PropTypes.bool,
 	handleRemoveElement: PropTypes.func
 };
 

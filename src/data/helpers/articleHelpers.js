@@ -2,7 +2,7 @@
 import moment from 'moment';
 import * as Yup from 'yup';
 import React from 'react';
-import { pick, omit, isEmpty } from 'lodash';
+import { pick, omit, isEmpty, cloneDeep } from 'lodash';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime, makeid, uploadFileToServer } from '../utils';
 import {
@@ -156,8 +156,8 @@ export const articleSidebarElements = [
 ];
 
 export const uploadArticleFiles = async (article) => {
-	const { author_image, uploadedFiles, uploadedLandscapeCoverImage, elements } =
-		article;
+	const { author_image, uploadedFiles, uploadedLandscapeCoverImage } = article;
+	const elements = cloneDeep(article.elements);
 
 	let files = [
 		author_image.length ? author_image[0] : undefined,
@@ -178,7 +178,11 @@ export const uploadArticleFiles = async (article) => {
 
 	const elementsFiles = elements.map(async (item, index) => {
 		if (item.element_type === 'MEDIA') {
-			if (item.uploadedFiles[0].file) {
+			if (item.uploadedFiles.length === 0) {
+				elements[index] = {
+					...omit(item, ['uploadedFiles'])
+				};
+			} else if (item.uploadedFiles[0].file) {
 				// This block will be executed if a new media file is uploaded
 				const uploadedFile = await uploadFileToServer(
 					item.uploadedFiles[0],
@@ -254,20 +258,22 @@ const articleElementsFormatterForForm = (elements) => {
 		if (elem.element_type === ARTICLE_ELEMENTS_TYPES.MEDIA) {
 			const formattedElement = {
 				...pick(elem, MEDIA_KEYS),
-				uploadedFiles: [
-					{
-						file_name: elem.file_name,
-						media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${elem.media_url}`,
-						width: elem.width,
-						height: elem.height,
-						...(elem.thumbnail_url
-							? {
-									type: 'video',
-									thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${elem.thumbnail_url}`
-							  }
-							: { type: 'image' })
-					}
-				]
+				uploadedFiles: elem.media_url
+					? [
+							{
+								file_name: elem.file_name,
+								media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${elem.media_url}`,
+								width: elem.width,
+								height: elem.height,
+								...(elem.thumbnail_url
+									? {
+											type: 'video',
+											thumbnail_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${elem.thumbnail_url}`
+									  }
+									: { type: 'image' })
+							}
+					  ]
+					: []
 			};
 			return formattedElement;
 		} else if (elem.element_type === ARTICLE_ELEMENTS_TYPES.QUESTION) {
@@ -335,6 +341,14 @@ export const articleDataFormatterForForm = (article) => {
 		mainCategoryName: article.media_type,
 		subCategoryName: article.sub_category
 	};
+
+	if (formattedArticle.labels) {
+		const updatedLabels = formattedArticle.labels.map((label) => ({
+			id: -1,
+			name: label
+		}));
+		formattedArticle.labels = updatedLabels;
+	}
 
 	const uploadedFiles = !isEmpty(article.image)
 		? [
@@ -409,12 +423,12 @@ export const articleDataFormatterForService = (
 		...(uploadedFiles.length && !isEmpty(portraitImgFile)
 			? {
 					file_name: portraitImgFile.file_name,
-					image: portraitImgFile.media_url,
+					image: portraitImgFile.media_url.includes('cloudfront.net/')
+						? portraitImgFile.media_url.split('cloudfront.net/')[1]
+						: portraitImgFile.media_url,
 					height: portraitImgFile.height,
 					width: portraitImgFile.width
 			  }
-			: uploadedFiles.length
-			? { ...uploadedFiles.length[0] }
 			: {
 					file_name: '',
 					image: '',
@@ -426,12 +440,14 @@ export const articleDataFormatterForService = (
 		...(uploadedLandscapeCoverImage.length && !isEmpty(landscapeImgFile)
 			? {
 					landscape_file_name: landscapeImgFile.file_name,
-					landscape_image: landscapeImgFile.media_url,
+					landscape_image: landscapeImgFile.media_url.includes(
+						'cloudfront.net/'
+					)
+						? landscapeImgFile.media_url.split('cloudfront.net/')[1]
+						: landscapeImgFile.media_url,
 					landscape_height: landscapeImgFile.height,
 					landscape_width: landscapeImgFile.width
 			  }
-			: uploadedLandscapeCoverImage.length
-			? { ...uploadedLandscapeCoverImage.length[0] }
 			: {
 					landscape_file_name: '',
 					landscape_image: '',
@@ -522,96 +538,98 @@ export const articleFormValidationSchema = Yup.object().shape({
 		.label('Labels'),
 	show_likes: Yup.boolean().required(),
 	show_comments: Yup.boolean().required(),
-	elements: Yup.array().of(
-		Yup.object({
-			// Common fields validations
-			id: Yup.string(),
-			element_type: Yup.mixed()
-				.oneOf([...Object.values(ARTICLE_ELEMENTS_TYPES)])
-				.required(),
-			sort_order: Yup.number(),
-			dropbox_url: Yup.string().trim(),
+	elements: Yup.array()
+		.of(
+			Yup.object({
+				// Common fields validations
+				id: Yup.string(),
+				element_type: Yup.mixed()
+					.oneOf([...Object.values(ARTICLE_ELEMENTS_TYPES)])
+					.required(),
+				sort_order: Yup.number(),
+				dropbox_url: Yup.string().trim(),
 
-			// Text element validations
-			description: Yup.string()
-				.trim()
-				.label('Text')
-				.when('element_type', {
-					is: (val) => val === ARTICLE_ELEMENTS_TYPES.TEXT,
-					then: (schema) => schema.required(),
-					otherwise: (schema) => schema
+				// Text element validations
+				description: Yup.string()
+					.trim()
+					.label('Text')
+					.when('element_type', {
+						is: (val) => val === ARTICLE_ELEMENTS_TYPES.TEXT,
+						then: (schema) => schema.required(),
+						otherwise: (schema) => schema
+					}),
+
+				// Media element validations
+				uploadedFiles: Yup.array()
+					.label('Media')
+					.when('element_type', {
+						is: (val) => val === ARTICLE_ELEMENTS_TYPES.MEDIA,
+						then: (schema) => schema.min(1).required(),
+						otherwise: (schema) => schema
+					}),
+
+				// Twitter element validations
+				twitter_post_url: Yup.string()
+					.trim()
+					.label('Twitter Post URL')
+					.when('element_type', {
+						is: (val) => val === ARTICLE_ELEMENTS_TYPES.TWITTER,
+						then: (schema) => schema.required(),
+						otherwise: (schema) => schema
+					}),
+
+				// IG element validations
+				instagram_post_url: Yup.string()
+					.trim()
+					.label('Instagram Post URL')
+					.when('element_type', {
+						is: (val) => val === ARTICLE_ELEMENTS_TYPES.IG,
+						then: (schema) => schema.required(),
+						otherwise: (schema) => schema
+					}),
+
+				// Question element validations
+				question_data: Yup.object().when('element_type', {
+					is: (val) => val === ARTICLE_ELEMENTS_TYPES.QUESTION,
+					then: () => questionElementValidationSchema,
+					otherwise: (schema) => schema.optional()
 				}),
 
-			// Media element validations
-			uploadedFiles: Yup.array()
-				.label('Media')
-				.when('element_type', {
-					is: (val) => val === ARTICLE_ELEMENTS_TYPES.MEDIA,
-					then: (schema) => schema.min(1).required(),
-					otherwise: (schema) => schema
-				}),
-
-			// Twitter element validations
-			twitter_post_url: Yup.string()
-				.trim()
-				.label('Twitter Post URL')
-				.when('element_type', {
-					is: (val) => val === ARTICLE_ELEMENTS_TYPES.TWITTER,
-					then: (schema) => schema.required(),
-					otherwise: (schema) => schema
-				}),
-
-			// IG element validations
-			instagram_post_url: Yup.string()
-				.trim()
-				.label('Instagram Post URL')
-				.when('element_type', {
-					is: (val) => val === ARTICLE_ELEMENTS_TYPES.IG,
-					then: (schema) => schema.required(),
-					otherwise: (schema) => schema
-				}),
-
-			// Question element validations
-			question_data: Yup.object().when('element_type', {
-				is: (val) => val === ARTICLE_ELEMENTS_TYPES.QUESTION,
-				then: () => questionElementValidationSchema,
-				otherwise: (schema) => schema.optional()
-			}),
-
-			// Match element validations
-			league_name: Yup.string()
-				.label('League Name')
-				.when('element_type', {
+				// Match element validations
+				league_name: Yup.string()
+					.label('League Name')
+					.when('element_type', {
+						is: (val) => val === ARTICLE_ELEMENTS_TYPES.MATCH,
+						then: (schema) => schema.required(),
+						otherwise: (schema) => schema.optional()
+					}),
+				team_name: Yup.string()
+					.label('Team Name')
+					.when('element_type', {
+						is: (val) => val === ARTICLE_ELEMENTS_TYPES.MATCH,
+						then: (schema) => schema.required(),
+						otherwise: (schema) => schema.optional()
+					}),
+				match_id: Yup.string()
+					.label('Match Id')
+					.when('element_type', {
+						is: (val) => val === ARTICLE_ELEMENTS_TYPES.MATCH,
+						then: (schema) => schema.required(),
+						otherwise: (schema) => schema.optional()
+					}),
+				match_title: Yup.string()
+					.label('Match Title')
+					.when('element_type', {
+						is: (val) => val === ARTICLE_ELEMENTS_TYPES.MATCH,
+						then: (schema) => schema.required(),
+						otherwise: (schema) => schema.optional()
+					}),
+				match: Yup.object().when('element_type', {
 					is: (val) => val === ARTICLE_ELEMENTS_TYPES.MATCH,
 					then: (schema) => schema.required(),
 					otherwise: (schema) => schema.optional()
-				}),
-			team_name: Yup.string()
-				.label('Team Name')
-				.when('element_type', {
-					is: (val) => val === ARTICLE_ELEMENTS_TYPES.MATCH,
-					then: (schema) => schema.required(),
-					otherwise: (schema) => schema.optional()
-				}),
-			match_id: Yup.string()
-				.label('Match Id')
-				.when('element_type', {
-					is: (val) => val === ARTICLE_ELEMENTS_TYPES.MATCH,
-					then: (schema) => schema.required(),
-					otherwise: (schema) => schema.optional()
-				}),
-			match_title: Yup.string()
-				.label('Match Title')
-				.when('element_type', {
-					is: (val) => val === ARTICLE_ELEMENTS_TYPES.MATCH,
-					then: (schema) => schema.required(),
-					otherwise: (schema) => schema.optional()
-				}),
-			match: Yup.object().when('element_type', {
-				is: (val) => val === ARTICLE_ELEMENTS_TYPES.MATCH,
-				then: (schema) => schema.required(),
-				otherwise: (schema) => schema.optional()
+				})
 			})
-		})
-	)
+		)
+		.min(1)
 });

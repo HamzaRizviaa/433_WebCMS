@@ -15,11 +15,12 @@ const ArticleElementsFieldArray = ({
 	isEdit,
 	status,
 	elementsWrapperRef,
-	matchesLoading,
 	matchesData,
 	form,
 	remove
 }) => {
+	const isPublished = isEdit && status === 'published';
+
 	const handleRemoveElement = (_, index) => {
 		remove(index);
 	};
@@ -91,13 +92,13 @@ const ArticleElementsFieldArray = ({
 			case ARTICLE_ELEMENTS_TYPES.MATCH:
 				return (
 					<MatchElement
-						index={index}
-						item={item}
-						handleRemoveElement={handleRemoveElement}
 						isEdit={isEdit}
 						status={status}
-						loading={matchesLoading}
+						isPublished={isPublished}
+						index={index}
+						item={item}
 						data={matchesData}
+						handleRemoveElement={handleRemoveElement}
 					/>
 				);
 			default:
@@ -121,8 +122,7 @@ const ArticleElementsFieldArray = ({
 ArticleElementsFieldArray.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
-	elementsWrapperRef: PropTypes.element,
-	matchesLoading: PropTypes.bool,
+	elementsWrapperRef: PropTypes.any,
 	matchesData: PropTypes.array,
 	form: PropTypes.object.isRequired,
 	remove: PropTypes.func.isRequired

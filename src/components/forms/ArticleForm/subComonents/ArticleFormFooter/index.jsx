@@ -25,7 +25,8 @@ const ArticleFormFooter = ({
 		isValid,
 		errors,
 		status: formikStatus,
-		setSubmitting
+		setSubmitting,
+		handleSubmit
 	} = useFormikContext();
 
 	const isDraftButtonDisabled = useMemo(() => {
@@ -82,7 +83,7 @@ const ArticleFormFooter = ({
 					size='small'
 					className={classes.btn}
 					disabled={!isDraft ? (!dirty ? isValid : !isValid) : !isValid}
-					onClick={onSubmitHandler}
+					onClick={handleSubmit}
 				>
 					{isEdit && !isDraft ? 'SAVE CHANGES' : 'PUBLISH'}
 				</Button>
