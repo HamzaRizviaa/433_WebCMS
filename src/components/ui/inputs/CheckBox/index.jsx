@@ -57,7 +57,7 @@ const CheckBox = ({
 					</div>
 				)}
 			</div>
-			<span className={inputClasses.errorText}>{error}</span>
+			{!!error && <span className={inputClasses.errorText}>{error}</span>}
 		</div>
 	);
 };
