@@ -11,7 +11,7 @@ export const useStyles = makeStyles((theme) => ({
 		fontWeight: '700',
 		fontSize: '12px',
 		lineHeight: '16px',
-		margin: '1rem'
+		margin: '0 1rem 0.5rem 1rem'
 	},
 	dateField: {
 		height: fieldHeight, // '40px',

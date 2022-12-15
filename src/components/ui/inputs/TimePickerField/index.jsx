@@ -1,12 +1,10 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { useStyles } from './index.styles';
-import clsx from 'clsx';
-// import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import { ReactComponent as ArrowDown } from '../../../../assets/Down.svg';
-import { useState } from 'react';
 import { ClickAwayListener, Popover } from '@material-ui/core';
-import { useRef } from 'react';
+import clsx from 'clsx';
+
+import { ArrowDown } from '../../../../assets/svg-icons';
+import { useStyles } from './index.styles';
 
 const TimePickerField = ({ value, onSelect, label = 'TIME' }) => {
 	// open or close hours dropdown.
@@ -33,7 +31,7 @@ const TimePickerField = ({ value, onSelect, label = 'TIME' }) => {
 	// select hour
 	const selectHour = (hour) => {
 		setSelectedHour(hour);
-		setOpen(false)
+		setOpen(false);
 	};
 
 	// set mins
@@ -102,9 +100,7 @@ const TimePickerField = ({ value, onSelect, label = 'TIME' }) => {
 
 					{/* dropwdown arrow  */}
 					<div className='arrowCon'>
-						<ArrowDown
-							className={clsx('arrow', classes.arrowIcon)}
-						/>
+						<ArrowDown className={clsx('arrow', classes.arrowIcon)} />
 						{/* anchor element for dropwdown */}
 						<div ref={anchorRef} className='anchorEle' />
 					</div>

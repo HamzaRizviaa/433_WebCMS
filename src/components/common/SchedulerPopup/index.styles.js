@@ -8,7 +8,7 @@ export const useStyles = makeStyles(() => ({
 		height: '100%',
 		boxSizing: 'border-box',
 		padding: '5px 20px',
-		paddingTop:0,
+		paddingTop: 0
 	},
 	timezoneNote: {
 		//styleName: Body/Small;
@@ -19,6 +19,7 @@ export const useStyles = makeStyles(() => ({
 		letterSpacing: '0em',
 		color: '#FFFFFF',
 
-		marginTop: '2rem'
+		marginTop: '2rem',
+		marginBottom: '0.5rem'
 	}
 }));

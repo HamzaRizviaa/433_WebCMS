@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import { Box, Grid } from '@material-ui/core';
+import dayjs from 'dayjs';
+
 import Modal from '../../ui/Modal';
 import InlineDatePicker from '../../ui/inputs/InlineDatePicker';
 import TimePickerField from '../../ui/inputs/TimePickerField';
@@ -23,7 +24,7 @@ const SchedulerPopup = ({ open, onClose, selectsRange = true }) => {
 	};
 
 	const formateDate = (data) =>
-		moment(data || moment.now()).format('MMM DD, YYYY');
+		dayjs(data || new Date()).format('MMM DD, YYYY');
 
 	const classes = useStyles();
 	return (
@@ -33,8 +34,7 @@ const SchedulerPopup = ({ open, onClose, selectsRange = true }) => {
 			open={open}
 			onClose={onClose}
 			color='secondary'
-			
-
+			confirmButtonText='Schedule'
 		>
 			<Grid container>
 				<Grid item md={7}>
@@ -48,7 +48,7 @@ const SchedulerPopup = ({ open, onClose, selectsRange = true }) => {
 						calendarStartDay={1}
 						selectsRange={selectsRange}
 						/// past dates disabled
-						minDate={moment.now()}
+						minDate={new Date()}
 					/>
 				</Grid>
 				{/* RIGHT SECTION */}
@@ -65,7 +65,7 @@ const SchedulerPopup = ({ open, onClose, selectsRange = true }) => {
 
 						{/* If Range then it'll display end date time as well */}
 						{selectsRange && (
-							<Box mt={2}>
+							<Box mt={4}>
 								<SchedulerDateField
 									value={formateDate(endDate)}
 									label={'STOP DATE'}

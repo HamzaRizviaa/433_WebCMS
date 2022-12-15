@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core';
-const fieldHeight = "24px"
+const fieldHeight = '24px';
 export const useStyles = makeStyles((theme) => ({
 	continer: {
 		padding: '1rem 0'
@@ -10,7 +10,7 @@ export const useStyles = makeStyles((theme) => ({
 		fontWeight: '700',
 		fontSize: '12px',
 		lineHeight: '16px',
-		margin: '1rem'
+		margin: '1.5rem 1rem 0.5rem 1rem'
 	},
 	timeFieldContainer: {
 		// width: '100%',
