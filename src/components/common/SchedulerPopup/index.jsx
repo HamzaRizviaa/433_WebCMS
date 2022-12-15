@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Grid } from '@material-ui/core';
+import { Box, Grid } from '@material-ui/core';
 import Modal from '../../ui/Modal';
 import InlineDatePicker from '../../ui/inputs/InlineDatePicker';
 import TimePickerField from '../../ui/inputs/TimePickerField';
 import SchedulerDateField from '../../ui/inputs/SchedulerDateField';
 import { useStyles } from './index.styles';
 
-const SchedulerPopup = ({ open, onClose }) => {
+const SchedulerPopup = ({ open, onClose, isRange = false }) => {
 	const [startDate, setStartDate] = useState(null);
 	const [endDate, setEndDate] = useState(null);
 
@@ -40,9 +40,17 @@ const SchedulerPopup = ({ open, onClose }) => {
 					{/* time n date con */}
 					<div className={classes.dateAndTimeCon}>
 						{/* Date field */}
-						<SchedulerDateField />
+						<SchedulerDateField label={isRange && 'START DATE'} />
 						{/* Time Picker */}
-						<TimePickerField />
+						<TimePickerField label={isRange && 'START TIME'} />
+
+						{/* If Range then it'll display end date time as well */}
+						{isRange && (
+							<Box mt={2}>
+								<SchedulerDateField label={'END DATE'} />
+								<TimePickerField label={'END TIME'} />
+							</Box>
+						)}
 						{/* Timezone Note Typo */}
 						<div className={classes.timezoneNote}>
 							All scheduling times are set to CET, +1
@@ -56,7 +64,8 @@ const SchedulerPopup = ({ open, onClose }) => {
 
 SchedulerPopup.propTypes = {
 	open: PropTypes.bool.isRequired,
-	onClose: PropTypes.func.isRequired
+	onClose: PropTypes.func.isRequired,
+	isRange: PropTypes.bool
 };
 
 export default SchedulerPopup;

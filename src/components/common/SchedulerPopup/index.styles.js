@@ -18,7 +18,6 @@ export const useStyles = makeStyles(() => ({
 		letterSpacing: '0em',
 		color: '#FFFFFF',
 
-        marginTop:"3rem",
-        
+		marginTop: '2rem'
 	}
 }));

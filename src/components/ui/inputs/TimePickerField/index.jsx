@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useStyles } from './index.styles';
 import clsx from 'clsx';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -6,16 +7,22 @@ import { useState } from 'react';
 import { ClickAwayListener, Popover } from '@material-ui/core';
 import { useRef } from 'react';
 
-const TimePickerField = () => {
+const TimePickerField = ({ value, onSelect, label = 'TIME' }) => {
 	// open or close hours dropdown.
-	const [open, setOpen] = useState();
+	const [open, setOpen] = useState(false);
 	// selected Hour
-	const [selectedHour, setSelectedHour] = useState(null);
+	const [selectedHourDefault, setSelectedHourDefault] = useState(null);
 	// selected Mins
 	const [selectedMins, setSelectedMins] = useState('00');
 
 	const anchorRef = useRef();
 	const minsInputRef = useRef();
+
+	/// state checking
+	let selectedHour = value || selectedHourDefault;
+	let setSelectedHour = onSelect || setSelectedHourDefault;
+	//label checking
+	label = label || 'TIME';
 
 	// toggle open
 	const toggleOpen = () => {
@@ -30,7 +37,7 @@ const TimePickerField = () => {
 	// set mins
 	const setMins = (event) => {
 		let value = event.target.value;
-		if (Number(value) > 60 || Number(value) < 0) return;
+		if (Number(value) > 60 || Number(value) < 0 || value.length > 2) return;
 		setSelectedMins(value);
 	};
 
@@ -57,13 +64,30 @@ const TimePickerField = () => {
 			);
 		});
 
+	// Check if given time is from past
+	/**
+	 *
+	 * @param {number} hours
+	 * @param {number} mins
+	 * @param {number} futureDifference
+	 * @returns {boolean}
+	 */
+	// const isPastTime = (hours, mins, futureDifference = 15) => {
+	// 	const date = new Date();
+	// 	const currentHours = date.getHours();
+	// 	const currentMins = date.getMinutes() + futureDifference;
+	// 	if (hours < currentHours) return true;
+	// 	if (hours === currentHours && mins < currentMins) return true;
+	// 	return false;
+	// };
+
 	// styles
 	const classes = useStyles();
 
 	return (
 		<div className={classes.container}>
 			{/* Label */}
-			<div className={classes.label}>TIME</div>
+			<div className={classes.label}>{label}</div>
 
 			{/* Hours & Mins Container  */}
 			<div className={classes.timeFieldContainer}>
@@ -125,3 +149,9 @@ const TimePickerField = () => {
 };
 
 export default TimePickerField;
+
+TimePickerField.propTypes = {
+	value: PropTypes.string,
+	onSelect: PropTypes.func,
+	label: PropTypes.string
+};
