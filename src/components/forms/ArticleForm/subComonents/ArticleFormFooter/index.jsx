@@ -23,7 +23,6 @@ const ArticleFormFooter = ({
 		values,
 		dirty,
 		isValid,
-		errors,
 		status: formikStatus,
 		setSubmitting,
 		handleSubmit
@@ -59,14 +58,6 @@ const ArticleFormFooter = ({
 				</Button>
 			)}
 			<div className={classes.container}>
-				<Button
-					size='small'
-					variant='outlined'
-					className={classes.draftButton}
-					onClick={() => console.log({ values, isValid, errors })}
-				>
-					Print Formik
-				</Button>
 				{(isDraft || !isEdit) && (
 					<Button
 						size='small'
