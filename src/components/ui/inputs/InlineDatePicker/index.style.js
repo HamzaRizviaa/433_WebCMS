@@ -36,6 +36,11 @@ export const useInlineDatePickerStyles = makeStyles((theme) => ({
 			height: '25px !important'
 		},
 
+		'& .react-datepicker__navigation-icon::before': {
+			borderColor: theme.palette.white,
+			borderWidth: '2px 2px 0 0'
+		},
+
 		'& .react-datepicker__month': {
 			padding: '10px 0px !important',
 			margin: '0px !important',
