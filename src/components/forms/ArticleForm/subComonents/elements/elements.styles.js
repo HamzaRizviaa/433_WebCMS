@@ -5,18 +5,21 @@ export const useElementsStyles = makeStyles((theme) => ({
 	ArticleElementsSidebar: {
 		position: 'sticky',
 		top: '100px',
-		paddingRight: '10px'
+		paddingRight: '10px',
+		paddingBottom: '40px'
 	},
 	elementsDesc: {
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		width: '100%'
+		width: '100%',
+		marginTop: '25px'
 	},
 	elementsText: {
 		fontSize: '16px',
 		color: theme.palette.white,
-		fontWeight: 700
+		fontWeight: 700,
+		marginTop: '5px'
 	},
 	titleHeading: {
 		fontSize: '20px',
@@ -24,7 +27,7 @@ export const useElementsStyles = makeStyles((theme) => ({
 		color: theme.palette.white
 	},
 	titleText: { fontSize: '14px', color: theme.palette.white },
-	toggleBtn: { marginTop: '15px' },
+	toggleBtn: { height: '25px' },
 	elementContainter: {
 		width: '100%',
 		background: theme.palette.black,

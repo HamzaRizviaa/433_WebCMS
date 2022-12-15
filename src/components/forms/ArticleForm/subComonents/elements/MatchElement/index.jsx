@@ -83,7 +83,7 @@ const MatchElement = ({
 		>
 			<FormikSelect
 				name={`elements.${index}.league_name`}
-				placeholder='SELECT LEAGUE'
+				placeholder='Please select'
 				options={leagues}
 				mapOptions={{ labelKey: 'name', valueKey: 'name' }}
 				disabled={isPublished}
@@ -91,7 +91,7 @@ const MatchElement = ({
 			/>
 			<FormikSelect
 				name={`elements.${index}.team_name`}
-				placeholder='SELECT TEAM'
+				placeholder='Please select'
 				options={teams}
 				mapOptions={{ labelKey: 'name', valueKey: 'name' }}
 				disabled={isPublished || teams?.length === 0}
@@ -99,7 +99,7 @@ const MatchElement = ({
 			/>
 			<FormikSelect
 				name={`elements.${index}.match_title`}
-				placeholder='SELECT MATCH'
+				placeholder='Please select'
 				options={matches}
 				mapOptions={{ labelKey: 'name', valueKey: 'name' }}
 				disabled={isPublished || matches?.length === 0}

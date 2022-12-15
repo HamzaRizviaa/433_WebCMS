@@ -17,7 +17,7 @@ const ArticleFormFooter = ({
 	openDeleteModal,
 	onSubmitHandler
 }) => {
-	const classes = useArticleFooterStyles({ loading });
+	const classes = useArticleFooterStyles({ loading, isEdit, isDraft });
 
 	const {
 		values,
@@ -47,12 +47,13 @@ const ArticleFormFooter = ({
 
 	return (
 		<div className={classes.footer}>
+			{isEdit}
 			{(isEdit || isDraft) && (
 				<Button
 					onClick={openDeleteModal}
 					size='small'
 					variant='outlined'
-					className={classes.btn}
+					className={[classes.btn, classes.borderColor].join(' ')}
 				>
 					DELETE ARTICLE
 				</Button>

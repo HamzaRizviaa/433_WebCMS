@@ -22,12 +22,12 @@ export const useStyles = makeStyles(() => ({
 		maxWidth: '45%',
 		flexBasis: '45%',
 		padding: '0px 1.5px',
-		paddingTop: '6rem'
+		marginTop: '10rem'
 	},
 	lastGridItem: {
 		maxWidth: '33%',
 		flexBasis: '33%',
-		paddingTop: '6rem'
+		marginTop: '10rem'
 	},
 	textField: {
 		width: '100%'

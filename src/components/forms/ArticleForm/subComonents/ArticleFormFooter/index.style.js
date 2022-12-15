@@ -1,28 +1,32 @@
 import { makeStyles } from '@material-ui/core';
 
 export const useArticleFooterStyles = makeStyles((theme) => ({
-    footer: {
+	footer: {
 		marginTop: '20px',
-		padding: '10px 5px',
+		padding: '20px 40px',
 		borderTop: `1px solid ${theme.palette.normalGrey}`,
-		width: '100%',
+		width: '95%',
 		display: 'flex',
-		justifyContent: 'space-between',
+		justifyContent: ({ isEdit }) => (isEdit ? 'space-between' : 'flex-end'),
 		borderBottom: '1px solid #000',
 		position: 'sticky',
 		bottom: -2,
 		background: '#000',
 		zIndex: 1
+		// maxHeight: '37px'
 	},
-    container: {
+	container: {
 		display: 'flex',
 		marginRight: '20px'
 	},
-    draftButton: {
-        margin: '0 1rem 0 0',
-        pointerEvents: ({ loading }) => (loading ? 'none' : 'auto')
-    },
-    btn: {
+	draftButton: {
+		margin: '0 1rem 0 0',
 		pointerEvents: ({ loading }) => (loading ? 'none' : 'auto')
+	},
+	btn: {
+		pointerEvents: ({ loading }) => (loading ? 'none' : 'auto')
+	},
+	borderColor: {
+		border: '1px solid #FF355A'
 	}
-}))
+}));
