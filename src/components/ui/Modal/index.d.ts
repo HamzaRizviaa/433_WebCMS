@@ -13,6 +13,7 @@ export interface ModalProps {
 	confirmButtonColor?: ButtonProps['color'];
 	children: React.ReactElement;
 	size?: 'small' | 'medium' | 'large';
+	color?: 'primary' | 'secondary';
 }
 
 /**

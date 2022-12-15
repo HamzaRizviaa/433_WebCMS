@@ -2,12 +2,10 @@ import { makeStyles } from '@material-ui/core';
 
 export const useInlineDatePickerStyles = makeStyles((theme) => ({
 	datePickerContainer: {
-		marginBottom: '1rem',
-
 		'& .react-datepicker': {
 			fontFamily: "'Poppins' !important",
 			overflow: 'visible !important',
-			width: '325px !important',
+			width: '385px !important',
 			fontSize: '1.5rem !important',
 			backgroundColor: 'transparent !important',
 			border: 'none !important',
@@ -27,15 +25,21 @@ export const useInlineDatePickerStyles = makeStyles((theme) => ({
 			background: 'transparent !important'
 		},
 
+		'& .react-datepicker__day--selected': {
+			background: '#ffff00 !important',
+			color: '#000000 !important'
+		},
+
 		'& .react-datepicker__navigation': {
 			top: '0px !important',
 			padding: '0 !important',
-			height: '55px !important'
+			height: '25px !important'
 		},
 
 		'& .react-datepicker__month': {
 			padding: '10px 0px !important',
 			margin: '0px !important',
+			marginLeft: '-16px !important',
 
 			'& .react-datepicker__week': {
 				'& .react-datepicker__day': {
@@ -45,7 +49,7 @@ export const useInlineDatePickerStyles = makeStyles((theme) => ({
 					fontSize: '18px',
 					fontWeight: 900,
 					padding: '6.5px 4px',
-					margin: 8,
+					margin: [[2, 14]],
 					borderRadius: '6px',
 					width: 22,
 
@@ -76,11 +80,11 @@ export const useInlineDatePickerStyles = makeStyles((theme) => ({
 					borderRadius: '0px',
 					marginLeft: '0px',
 					marginRight: '0px',
-					padding: '6.5px 12px',
+					padding: '6.5px 18px',
 
 					'&:has(+ .react-datepicker__day--range-end)': {
-						marginRight: '-20px !important',
-						paddingRight: '28px !important'
+						marginRight: '-26px !important',
+						paddingRight: '40px !important'
 					}
 				},
 
@@ -94,25 +98,25 @@ export const useInlineDatePickerStyles = makeStyles((theme) => ({
 						backgroundColor: '#ffff00 !important',
 						color: '#000000 !important',
 						borderRadius: '6px !important',
-						marginLeft: '0px !important',
+						marginLeft: '6px !important',
 						paddingLeft: '12px !important',
 						padding: '6.5px 4px !important',
 
 						'&:hover': {
 							marginLeft: '0 !important',
-							paddingLeft: '12px !important'
+							paddingLeft: '18px !important'
 						}
 					},
 
 				'& .react-datepicker__day--range-start + .react-datepicker__day--in-range':
 					{
 						'&:not(.react-datepicker__day--range-end)': {
-							marginLeft: '-20px !important',
-							paddingLeft: '28px !important',
+							marginLeft: '-26px !important',
+							paddingLeft: '41px !important',
 
 							'&:hover': {
-								marginLeft: '-15px !important',
-								paddingLeft: '22px !important'
+								marginLeft: '-21px !important',
+								paddingLeft: '36px !important'
 							}
 						}
 					},
@@ -122,8 +126,8 @@ export const useInlineDatePickerStyles = makeStyles((theme) => ({
 						backgroundColor: '#ffff00 !important',
 						color: '#000000 !important',
 						borderRadius: '6px',
-						marginLeft: '10px',
-						marginRight: '10px',
+						marginLeft: '16px',
+						marginRight: '16px',
 						padding: '6.5px 4px'
 					},
 
@@ -147,15 +151,17 @@ export const useInlineDatePickerStyles = makeStyles((theme) => ({
 			padding: '0px !important',
 			borderTopRightRadius: '15px !important',
 			borderTopLeftRadius: '15px !important',
+			margin: '0 !important',
+			marginLeft: '-16px !important',
 
 			'& .react-datepicker__day-names': {
-				padding: '16px 15px 4px 12px !important',
+				padding: '16px 15px 4px 15px !important',
 				display: 'flex !important',
 				justifyContent: 'space-between !important',
 				alignItems: 'center !important',
 
 				'& .react-datepicker__day-name': {
-					color: '#ffffff',
+					color: '#CCCCCC',
 					fontSize: 10,
 					fontWeight: 700,
 					textTransform: 'uppercase'
@@ -167,8 +173,8 @@ export const useInlineDatePickerStyles = makeStyles((theme) => ({
 				fontSize: '1.5rem !important',
 				fontWeight: '700 !important',
 				textAlign: 'start !important',
-				padding: '16px 0px !important',
-				textTransform: 'uppercase'
+				textTransform: 'uppercase',
+				marginLeft: 16
 			}
 		}
 	}

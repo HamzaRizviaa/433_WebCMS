@@ -37,7 +37,7 @@ const InlineDatePicker = ({
 					onBlur={onBlur}
 					inline
 				/>
-				<span className={inputsClasses.errorText}>{error}</span>
+				{!!error && <span className={inputsClasses.errorText}>{error}</span>}
 			</div>
 		</div>
 	);

@@ -31,9 +31,10 @@ export default function Modal({
 	confirmButtonVariant = 'contained',
 	confirmButtonColor = 'primary',
 	size = 'small',
+	color = 'primary',
 	children
 }) {
-	const classes = useModalStyles({ size });
+	const classes = useModalStyles({ size, color });
 	const [playOpen] = useSound(soundOpen, { volume: 0.5 });
 	const [playClose] = useSound(soundClose, { volume: 0.5 });
 
@@ -107,5 +108,6 @@ Modal.propTypes = {
 		PropTypes.element,
 		PropTypes.arrayOf(PropTypes.element)
 	]),
-	size: PropTypes.string
+	size: PropTypes.string,
+	color: PropTypes.string
 };
