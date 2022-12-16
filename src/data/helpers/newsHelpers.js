@@ -70,8 +70,17 @@ export const newsColumns = [
 	}
 ];
 
-export const newsDataFormatterForForm = (news) => {
+export const newsDataFormatterForForm = (news, allRules) => {
 	const formattedNews = { ...news };
+	const rules = {};
+
+	allRules.forEach((rule) => {
+		rules[rule._id] = false;
+	});
+	//This loop should always run after the first one.
+	news.rules.forEach((rule) => {
+		rules[rule._id] = true;
+	});
 
 	if (formattedNews?.labels) {
 		const updatedLabels = formattedNews?.labels.map((label) => ({
@@ -103,15 +112,17 @@ export const newsDataFormatterForForm = (news) => {
 	);
 
 	formattedNews.slides = slidesData;
-
+	formattedNews.rules = rules;
 	return formattedNews;
 };
 
 export const newsDataFormatterForService = (
 	news,
 	mediaFiles,
-	isDraft = false
+	isDraft = false,
+	allRules
 ) => {
+	const filteredRules = allRules.filter((rule) => news.rules[rule._id]);
 	let slides =
 		news.slides.length > 0
 			? news.slides.map((item, index) => {
@@ -141,7 +152,7 @@ export const newsDataFormatterForService = (
 		show_comments: news.show_comments,
 		labels: news.labels,
 		slides: slides,
-
+		rules: filteredRules,
 		// Destructing the viral id for edit state
 		...(news.id ? { news_id: news.id } : {})
 	};
@@ -152,13 +163,22 @@ export const newsDataFormatterForService = (
 //
 // News Form Helpers
 //
-export const newsFormInitialValues = {
-	labels: [],
-	banner_title: '',
-	banner_description: '',
-	show_likes: true,
-	show_comments: true,
-	slides: []
+export const newsFormInitialValues = (allRules) => {
+	const rules = {};
+
+	allRules.forEach((rule) => {
+		rules[rule._id] = false;
+	});
+
+	return {
+		labels: [],
+		banner_title: '',
+		banner_description: '',
+		show_likes: true,
+		show_comments: true,
+		slides: [],
+		rules
+	};
 };
 
 export const newsFormValidationSchema = Yup.object().shape({

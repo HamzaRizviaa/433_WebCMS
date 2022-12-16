@@ -11,7 +11,6 @@ import PrimaryLoader from '../../ui/loaders/PrimaryLoader';
 import { remoteConfig } from '../../../data/integrations/firebase';
 import { setRemoteConfig } from '../../../data/features/remoteConfigSlice';
 import { useLayoutStyles } from './index.style';
-import { fetchRules } from '../../../data/features/rulesConfig';
 
 const DashboardLayout = ({
 	title,
@@ -25,12 +24,6 @@ const DashboardLayout = ({
 }) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-
-	useEffect(() => {
-		if (localStorage.getItem('user_data')) {
-			dispatch(fetchRules());
-		}
-	}, [localStorage.getItem('user_data')]);
 
 	useEffect(() => {
 		const expiryDate = Date.parse(localStorage.getItem('token_expire_time'));

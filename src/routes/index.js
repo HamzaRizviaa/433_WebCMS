@@ -14,6 +14,8 @@ import TopBanner from '../pages/TopBanner/TopBanner.jsx';
 import ViralLibrary from '../pages/ViralLibrary/ViralLibrary';
 import ArticleLibrary from '../pages/ArticleLibrary/ArticleLibrary';
 import NewsLibrary from '../pages/NewsLibrary/NewsLibrary';
+import { fetchRules } from '../data/features/rulesConfig';
+import { useDispatch } from 'react-redux';
 
 // import GamesLibrary from '../pages/GamesLibrary/GamesLibrary';
 // import PostLibrary from '../pages/PostLibrary/PostLibrary';
@@ -28,7 +30,12 @@ const AppRoutes = () => {
 			? JSON.parse(localStorage.getItem('user_data'))
 			: null
 	);
-
+	const dispatch = useDispatch();
+	useEffect(() => {
+		if (localStorage.getItem('user_data')) {
+			dispatch(fetchRules());
+		}
+	}, [localStorage.getItem('user_data')]);
 	return (
 		<Routes>
 			<Route
