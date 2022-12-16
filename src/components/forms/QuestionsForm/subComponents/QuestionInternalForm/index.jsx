@@ -129,6 +129,12 @@ const QuestionInternalForm = ({
 		setPublishModalState(false);
 	};
 
+	// Need to implement functionality
+	const handleScheduleConfirm = (values) => {
+		console.log(values);
+		closeSchedulerModal();
+	};
+
 	const isDraftDisabled = useMemo(() => {
 		const isAnyQuestionSlideEmpty = values.questions.some(
 			(item) =>
@@ -168,6 +174,7 @@ const QuestionInternalForm = ({
 			<SchedulerPopup
 				open={schedularModalState}
 				onClose={closeSchedulerModal}
+				onConfirm={handleScheduleConfirm}
 				selectsRange
 			/>
 			<AccordianLayout title='General Information'>

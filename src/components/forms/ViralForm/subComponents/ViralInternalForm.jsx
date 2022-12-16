@@ -66,6 +66,12 @@ const ViralInternalForm = ({
 	const saveDraftHandler = () =>
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
 
+	// Need to implement functionality
+	const handleScheduleConfirm = (values) => {
+		console.log(values);
+		closeSchedulerModal();
+	};
+
 	const classes = useFormStyles();
 
 	return (
@@ -73,6 +79,7 @@ const ViralInternalForm = ({
 			<SchedulerPopup
 				open={schedularModalState}
 				onClose={closeSchedulerModal}
+				onConfirm={handleScheduleConfirm}
 			/>
 			<div>
 				<div className={classes.explanationWrapper}>
