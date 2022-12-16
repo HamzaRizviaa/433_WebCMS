@@ -36,6 +36,7 @@ const MatchElement = ({
 			return matches;
 		}
 
+		const selectedMatch = matches.find((m) => m._id === item.match_id);
 		const filteredMatches = matches.filter((match) => {
 			const foundedMatch = addedMatchesIds.find(
 				(matchId) => matchId === match._id
@@ -43,7 +44,9 @@ const MatchElement = ({
 			return foundedMatch ? false : true;
 		});
 
-		return filteredMatches;
+		return !isEmpty(selectedMatch)
+			? [selectedMatch, ...filteredMatches]
+			: filteredMatches;
 	};
 
 	useEffect(() => {
