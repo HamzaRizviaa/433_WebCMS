@@ -68,12 +68,18 @@ export const createOrEditArticleThunk = createAsyncThunk(
 
 			if (response.data.status_code === 200) {
 				toast.success(
-					data.article_id ? 'Article has been edited!' : 'Article has been created!'
+					data.article_id
+						? 'Article has been edited!'
+						: 'Article has been created!'
 				);
 			}
+
+			return response;
 		} catch (e) {
 			toast.error(
-				data.article_id ? 'Failed to edit Article!' : 'Failed to create Article!'
+				data.article_id
+					? 'Failed to edit Article!'
+					: 'Failed to create Article!'
 			);
 			console.error(e);
 			throw new Error(e);
