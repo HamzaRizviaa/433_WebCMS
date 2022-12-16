@@ -48,7 +48,7 @@ class ViralLibraryService {
 	}
 
 	/**
-	 * This function is responsible for the deletion of a single viral
+	 * This function is responsible for the creation of a single viral
 	 * @param {Object} data - The data field contains the properties of a viral
 	 * @returns Promise of the AxiosResponse Object
 	 */

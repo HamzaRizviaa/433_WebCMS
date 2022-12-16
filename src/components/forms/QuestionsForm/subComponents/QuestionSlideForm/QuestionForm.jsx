@@ -53,7 +53,7 @@ const QuestionForm = ({
 					placeholder='Please write your question here'
 					multiline
 					maxRows={2}
-					maxLength={43}
+					maxLength={55}
 					disabled={isPublished || isArticle}
 					required
 				/>

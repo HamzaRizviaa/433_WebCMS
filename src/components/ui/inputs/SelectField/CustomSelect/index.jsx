@@ -91,12 +91,12 @@ const CustomSelect = ({
 				fullWidth
 				displayEmpty
 			>
-				{options.length === 0 && (
+				{options?.length === 0 && (
 					<MenuItem value='' className={classes.noOptionsText}>
 						{noOptionsText}
 					</MenuItem>
 				)}
-				{options.map((item) => (
+				{options?.map((item) => (
 					<MenuItem
 						key={item[valueKey]}
 						value={item[valueKey]}
