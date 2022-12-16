@@ -38,6 +38,7 @@ const CheckBox = ({
 					label={label}
 					classes={{ label: classes.label }}
 					value={checked}
+					checked={checked}
 					control={
 						<Checkbox
 							disabled={disabled}
