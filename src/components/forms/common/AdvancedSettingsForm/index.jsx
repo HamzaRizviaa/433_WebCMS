@@ -22,10 +22,28 @@ const AdvancedSettingsForm = () => {
 	const { rules, loading } = useSelector(getRules);
 
 	const toolTipHandler = (val) => {
-		const objectsCheck = Object.entries(val).filter(
-			(key) => typeof val[key] !== 'string'
-		);
-		console.log(objectsCheck, 'objectsCheck');
+		const newObj = {};
+
+		Object.keys(val).forEach((key) => {
+			const value = val[key];
+
+			if (
+				typeof value === 'object' &&
+				value !== null &&
+				!Array.isArray(value)
+			) {
+				Object.assign(newObj, toolTipHandler(value));
+			} else {
+				if (typeof value !== 'string') {
+					newObj[key] = value;
+				}
+			}
+		});
+
+		console.log(newObj);
+
+		return newObj;
+
 		// const values = {
 		//  ...val,
 		//  countries: val.countries?.length > 0 ? val.countries.join(‘, ’) : ‘none’
