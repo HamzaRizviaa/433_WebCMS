@@ -32,11 +32,18 @@ const MatchElement = ({
 			)
 		);
 
-		return matches.filter((match) =>
-			addedMatchesIds.some(
-				(matchId) => match._id !== matchId || match._id === item.match_id
-			)
-		);
+		if (addedMatchesIds.length === 0) {
+			return matches;
+		}
+
+		const filteredMatches = matches.filter((match) => {
+			const foundedMatch = addedMatchesIds.find(
+				(matchId) => matchId === match._id
+			);
+			return foundedMatch ? false : true;
+		});
+
+		return filteredMatches;
 	};
 
 	useEffect(() => {

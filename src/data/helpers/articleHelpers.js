@@ -14,6 +14,7 @@ import {
 	Question
 } from '../../assets/svg-icons';
 import { getUserDataObject } from './index';
+import { areAllFieldsEmpty } from './commonHelpers';
 
 export const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
 export const default433Profile = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/Profile433.svg`;
@@ -154,6 +155,16 @@ export const articleSidebarElements = [
 		}
 	}
 ];
+
+export const checkIfAnyArticleElementIsEmpty = (elements) => {
+	return elements.some((item) => {
+		return item.element_type === ARTICLE_ELEMENTS_TYPES.QUESTION
+			? areAllFieldsEmpty(
+					omit(item.question_data, ['question_type', 'answers'])
+			  ) && item.question_data.answers.every((ans) => !ans.answer)
+			: areAllFieldsEmpty({ ...omit(item, ['element_type']) });
+	});
+};
 
 export const uploadArticleFiles = async (article) => {
 	const { author_image, uploadedFiles, uploadedLandscapeCoverImage } = article;

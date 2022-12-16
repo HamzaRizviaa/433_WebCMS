@@ -5,9 +5,9 @@ import { useFormikContext } from 'formik';
 import { useArticleFooterStyles } from './index.style';
 import Button from '../../../../ui/Button';
 import {
-	areAllFieldsEmpty,
 	articleFormInitialValues,
-	articleUnwantedKeysForDeepEqual
+	articleUnwantedKeysForDeepEqual,
+	checkIfAnyArticleElementIsEmpty
 } from '../../../../../data/helpers';
 
 const ArticleFormFooter = ({
@@ -29,9 +29,7 @@ const ArticleFormFooter = ({
 	} = useFormikContext();
 
 	const isDraftButtonDisabled = useMemo(() => {
-		const isAnyElementEmpty = values.elements.some((item) =>
-			areAllFieldsEmpty({ ...omit(item, 'element_type') })
-		);
+		const isAnyElementEmpty = checkIfAnyArticleElementIsEmpty(values.elements);
 		const isEqualToDefaultValues = isEqual(
 			omit(
 				pick(values, Object.keys(articleFormInitialValues)),
