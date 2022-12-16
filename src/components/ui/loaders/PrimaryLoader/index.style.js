@@ -28,8 +28,9 @@ export const useStyles = makeStyles((theme) => ({
 	},
 	backdrop: {
 		position: 'relative',
-		height: ({ loading, mainPage }) =>
-			loading && !mainPage ? 'calc(100vh - 140px)' : '100%',
+		height: '100vh',
+		//  ({ loading, mainPage }) =>
+		// 	loading && !mainPage ? 'calc(100vh - 140px)' : '100vh',
 		overflow: ({ loading }) => (loading ? 'hidden' : 'unset')
 	}
 }));
