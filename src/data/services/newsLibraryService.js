@@ -36,7 +36,7 @@ class NewsLibraryService {
 	static postNews(data) {
 		return axiosInstance.post('/news/add-news', data, {
 			params: {
-				api_version: 2
+				api_version: 3
 			}
 		});
 	}
