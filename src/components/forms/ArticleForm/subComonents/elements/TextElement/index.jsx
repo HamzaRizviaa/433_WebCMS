@@ -11,7 +11,7 @@ const TextElement = ({ index, item, handleRemoveElement, ...restProps }) => (
 		item={item}
 		onDeleteIconClick={handleRemoveElement}
 	>
-		<FormikTextEditor name={`elements.${index}.description`} {...restProps} />
+		<FormikTextEditor name={`elements.${index}.description`} id={index} {...restProps} />
 	</DraggableCardLayout>
 );
 
