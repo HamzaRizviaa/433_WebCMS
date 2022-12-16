@@ -1,3 +1,4 @@
+import React from 'react';
 import { isEmpty } from 'lodash';
 import { getLocalStorageDetails } from '../utils';
 
@@ -40,3 +41,10 @@ export const getRelativePath = (url = '') => {
 	return url.split('cloudfront.net/')[1] || url;
 };
 
+export const toolTipHandler = (val) => {
+	return Object.entries(val).map(([key, value]) => (
+		<div key={key} style={{ textTransform: 'capitalize' }}>
+			{key} : {value}
+		</div>
+	));
+};
