@@ -9,7 +9,7 @@ import { ARTICLE_ELEMENTS_TYPES } from '../../../../../data/helpers/articleHelpe
 const SocialPostElementPreviewer = ({ data }) => {
 	// extracted urls
 	const extractedTwitterUrl = data && data.twitter_post_url;
-	const extractedIgUrl = data && data.instagram_post_url;
+	const extractedIgUrl = data && data.ig_post_url;
 
 	// states
 	const [markup, setMarkup] = useState('');

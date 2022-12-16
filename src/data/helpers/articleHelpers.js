@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import moment from 'moment';
 import * as Yup from 'yup';
 import React from 'react';
@@ -116,7 +115,7 @@ export const articleSidebarElements = [
 		text: 'Add IG post',
 		data: {
 			element_type: ARTICLE_ELEMENTS_TYPES.IG,
-			instagram_post_url: '',
+			ig_post_url: '',
 			dropbox_url: ''
 		}
 	},
@@ -646,7 +645,7 @@ export const articleFormValidationSchema = Yup.object().shape({
 					}),
 
 				// IG element validations
-				instagram_post_url: Yup.string()
+				ig_post_url: Yup.string()
 					.trim()
 					.label('Instagram Post URL')
 					.when('element_type', {
