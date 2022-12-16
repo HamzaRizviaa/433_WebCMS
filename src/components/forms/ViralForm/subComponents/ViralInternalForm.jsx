@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { pick, isEqual } from 'lodash';
 import { useFormikContext } from 'formik';
 import { useFormStyles } from '../../forms.style';
 
-import { InfoIcon } from '../../../../assets/svg-icons';
+import { InfoIcon, Calendar } from '../../../../assets/svg-icons';
 import { viralFormInitialValues } from '../../../../data/helpers';
 
 import FormikField from '../../../ui/inputs/formik/FormikField';
@@ -13,6 +13,7 @@ import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
 import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
 import TextTooltip from '../../../ui/TextTooltip';
 import Button from '../../../ui/Button';
+import SchedulerPopup from '../../../common/SchedulerPopup';
 
 /**
  * ViralInternalForm Component is used as a child of the ViralForm and the link to that is given below.
@@ -27,7 +28,10 @@ const ViralInternalForm = ({
 	onSubmitHandler,
 	toggleDeleteModal
 }) => {
-	const classes = useFormStyles();
+	const [schedularModalState, setSchedulerModalState] = useState(false);
+
+	const closeSchedulerModal = () => setSchedulerModalState(false);
+	const openSchedulerModal = () => setSchedulerModalState(true);
 
 	const {
 		values,
@@ -62,8 +66,14 @@ const ViralInternalForm = ({
 	const saveDraftHandler = () =>
 		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
 
+	const classes = useFormStyles();
+
 	return (
 		<div>
+			<SchedulerPopup
+				open={schedularModalState}
+				onClose={closeSchedulerModal}
+			/>
 			<div>
 				<div className={classes.explanationWrapper}>
 					<h5>
@@ -154,6 +164,13 @@ const ViralInternalForm = ({
 						onClick={handleSubmit}
 					>
 						{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
+					</Button>
+					<Button
+						disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
+						onClick={openSchedulerModal}
+						iconBtn
+					>
+						<Calendar />
 					</Button>
 				</div>
 			</div>
