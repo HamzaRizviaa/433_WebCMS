@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+import { useFormikContext } from 'formik';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { toolTipHandler } from '../../../../data/helpers/commonHelpers';
@@ -26,7 +28,7 @@ const AdvancedSettingsForm = () => {
 						{rules.map((val, index) => {
 							return (
 								<FormikCheckbox
-									name={val._id}
+									name={`rules.${val._id}`}
 									label={val.title}
 									tooltip={toolTipHandler(val.geoblocking)}
 									key={index}
