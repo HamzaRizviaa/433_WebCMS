@@ -116,3 +116,13 @@ export const getLocalStorageDetails = () => {
 
 	return localStorageData;
 };
+
+export const getArticleDates = () => {
+	const date = formatDate2(new Date());
+	const today = new Date();
+	const time =
+		today.getHours() +
+		':' +
+		(today.getMinutes() < 10 ? '0' + today.getMinutes() : today.getMinutes());
+	return { date, today, time };
+};
