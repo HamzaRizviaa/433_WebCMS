@@ -49,11 +49,11 @@ export const useInlineDatePickerStyles = makeStyles((theme) => ({
 			'& .react-datepicker__week': {
 				'& .react-datepicker__day--disabled': {
 					backgroundColor: 'transparent !important',
-					color: '#404040 !important',
+					color: 'rgba(255, 255, 255, 0.3) !important',
 
 					'&:hover': {
 						backgroundColor: 'transparent !important',
-						color: '#404040 !important'
+						color: 'rgba(255, 255, 255, 0.3) !important'
 					}
 				},
 
@@ -81,7 +81,11 @@ export const useInlineDatePickerStyles = makeStyles((theme) => ({
 				'& .react-datepicker__day--outside-month': {
 					'&:not(.react-datepicker__day--disabled):not(.react-datepicker__day--range-start):not(.react-datepicker__day--range-end):not(.react-datepicker__day--in-range):not(.react-datepicker__day--selected)':
 						{
-							color: 'rgba(255, 255, 255, 0.3) !important'
+							color: 'rgba(255, 255, 255, 0.4) !important',
+
+							'&:hover': {
+								color: '#000000 !important'
+							}
 						}
 				},
 

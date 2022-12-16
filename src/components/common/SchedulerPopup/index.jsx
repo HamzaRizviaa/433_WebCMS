@@ -9,18 +9,59 @@ import TimePickerField from '../../ui/inputs/TimePickerField';
 import SchedulerDateField from '../../ui/inputs/SchedulerDateField';
 import { useStyles } from './index.styles';
 
-const SchedulerPopup = ({ open, onClose, selectsRange = false }) => {
-	const [startDate, setStartDate] = useState(null);
-	const [endDate, setEndDate] = useState(null);
+const SchedulerPopup = ({ open, onClose, onConfirm, selectsRange = false }) => {
+	const [values, setValues] = useState({
+		startStamp: {
+			date: null,
+			hour: '00',
+			min: '00'
+		},
+		...(selectsRange && {
+			endStamp: {
+				date: null,
+				hour: '00',
+				min: '00'
+			}
+		})
+	});
 
-	const handleChange = (selectedDate) => {
+	const handleDateChange = (selectedDate) => {
 		if (selectsRange) {
 			const [selectedStartDate, selectedEndDate] = selectedDate;
-			setStartDate(selectedStartDate);
-			setEndDate(selectedEndDate);
+
+			setValues((prevState) => ({
+				startStamp: {
+					...prevState.startStamp,
+					date: selectedStartDate
+				},
+				endStamp: {
+					...prevState.endStamp,
+					date: selectedEndDate
+				}
+			}));
 		} else {
-			setStartDate(selectedDate);
+			setValues((prevState) => ({
+				startStamp: {
+					...prevState.startStamp,
+					date: selectedDate
+				}
+			}));
 		}
+	};
+
+	const handleTimeChange = (name, value) => {
+		setValues((prevState) => ({
+			...prevState,
+			[name]: {
+				date: prevState[name].date,
+				hour: value.hour,
+				min: value.min
+			}
+		}));
+	};
+
+	const handleConfirm = () => {
+		onConfirm(values);
 	};
 
 	const formateDate = (data) =>
@@ -35,19 +76,20 @@ const SchedulerPopup = ({ open, onClose, selectsRange = false }) => {
 			onClose={onClose}
 			color='secondary'
 			confirmButtonText='Schedule'
+			onConfirm={handleConfirm}
 		>
 			<Grid container>
 				<Grid item md={7}>
 					<InlineDatePicker
 						name='schedule_date'
-						startDate={startDate}
-						endDate={endDate}
-						value={startDate}
-						onChange={handleChange}
+						startDate={values.startStamp.date}
+						endDate={values.endStamp?.date || null}
+						value={values.startStamp.date}
+						onChange={handleDateChange}
 						formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 3)}
 						calendarStartDay={1}
 						selectsRange={selectsRange}
-						/// past dates disabled
+						// past dates disabled
 						minDate={new Date()}
 					/>
 				</Grid>
@@ -57,20 +99,30 @@ const SchedulerPopup = ({ open, onClose, selectsRange = false }) => {
 					<div className={classes.dateAndTimeCon}>
 						{/* Date field */}
 						<SchedulerDateField
-							value={formateDate(startDate)}
+							value={formateDate(values.startStamp.date)}
 							label={selectsRange && 'START DATE'}
 						/>
 						{/* Time Picker */}
-						<TimePickerField label={selectsRange && 'START TIME'} />
+						<TimePickerField
+							name='startStamp'
+							label={selectsRange ? 'START TIME' : 'TIME'}
+							value={values.startStamp}
+							onChange={handleTimeChange}
+						/>
 
 						{/* If Range then it'll display end date time as well */}
 						{selectsRange && (
 							<Box mt={4}>
 								<SchedulerDateField
-									value={formateDate(endDate)}
+									value={formateDate(values.endStamp?.date)}
 									label={'STOP DATE'}
 								/>
-								<TimePickerField label={'STOP TIME'} />
+								<TimePickerField
+									name='endStamp'
+									label={'STOP TIME'}
+									value={values.endStamp}
+									onChange={handleTimeChange}
+								/>
 							</Box>
 						)}
 						{/* Timezone Note Typo */}
@@ -87,6 +139,7 @@ const SchedulerPopup = ({ open, onClose, selectsRange = false }) => {
 SchedulerPopup.propTypes = {
 	open: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
+	onConfirm: PropTypes.func.isRequired,
 	selectsRange: PropTypes.bool
 };
 

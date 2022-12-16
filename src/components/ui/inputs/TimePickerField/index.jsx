@@ -6,22 +6,15 @@ import clsx from 'clsx';
 import { ArrowDown } from '../../../../assets/svg-icons';
 import { useStyles } from './index.styles';
 
-const TimePickerField = ({ value, onSelect, label = 'TIME' }) => {
+const TimePickerField = ({ name, value, onChange, label = 'TIME' }) => {
 	// open or close hours dropdown.
 	const [open, setOpen] = useState(false);
-	// selected Hour
-	const [selectedHourDefault, setSelectedHourDefault] = useState(null);
-	// selected Mins
-	const [selectedMins, setSelectedMins] = useState('00');
 
 	const anchorRef = useRef();
 	const minsInputRef = useRef();
 
 	/// state checking
-	let selectedHour = value || selectedHourDefault;
-	let setSelectedHour = onSelect || setSelectedHourDefault;
-	//label checking
-	label = label || 'TIME';
+	const selectedHour = value.hour;
 
 	// toggle open
 	const toggleOpen = () => {
@@ -30,15 +23,16 @@ const TimePickerField = ({ value, onSelect, label = 'TIME' }) => {
 
 	// select hour
 	const selectHour = (hour) => {
-		setSelectedHour(hour);
+		onChange(name, { hour, min: value.min });
 		setOpen(false);
 	};
 
 	// set mins
 	const setMins = (event) => {
-		let value = event.target.value;
-		if (Number(value) > 60 || Number(value) < 0 || value.length > 2) return;
-		setSelectedMins(value);
+		let minValue = event.target.value;
+		if (Number(minValue) > 60 || Number(minValue) < 0 || minValue.length > 2)
+			return;
+		onChange(name, { hour: value.hour, min: minValue });
 	};
 
 	// focus mins field
@@ -49,7 +43,7 @@ const TimePickerField = ({ value, onSelect, label = 'TIME' }) => {
 	//  generate Hours grid
 	const generateHours = () =>
 		new Array(24).fill(0).map((_, ind) => {
-			let i = ind < 10 ? `0${ind}` : ind;
+			let i = ind < 10 ? `0${ind}` : `${ind}`;
 			return (
 				<div
 					onClick={() => selectHour(i)}
@@ -113,8 +107,8 @@ const TimePickerField = ({ value, onSelect, label = 'TIME' }) => {
 						<input
 							className='minsInput'
 							ref={minsInputRef}
-							type={'number'}
-							value={selectedMins}
+							type='number'
+							value={value.min}
 							onChange={setMins}
 						/>
 						<span className='greydText'>Mins</span>
@@ -147,7 +141,8 @@ const TimePickerField = ({ value, onSelect, label = 'TIME' }) => {
 export default TimePickerField;
 
 TimePickerField.propTypes = {
+	name: PropTypes.string.isRequired,
 	value: PropTypes.string,
-	onSelect: PropTypes.func,
+	onChange: PropTypes.func,
 	label: PropTypes.string
 };
