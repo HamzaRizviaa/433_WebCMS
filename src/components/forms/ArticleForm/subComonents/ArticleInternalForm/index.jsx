@@ -37,23 +37,25 @@ const ArticleInternalForm = ({
 			</Box>
 			<ArticleGeneralInfoForm isEdit={isEdit} status={status} />
 			<Box
+				ref={topElementRef}
 				sx={{
 					scrollMarginBottom: '400px'
 				}}
-				ref={topElementRef}
 			></Box>
-			<FieldArray
-				name='elements'
-				render={(props) => (
-					<ArticleElementsFieldArray
-						isEdit={isEdit}
-						status={status}
-						elementsWrapperRef={elementsWrapperRef}
-						matchesData={matchesData}
-						{...props}
-					/>
-				)}
-			/>
+			<Box>
+				<FieldArray
+					name='elements'
+					render={(props) => (
+						<ArticleElementsFieldArray
+							isEdit={isEdit}
+							status={status}
+							elementsWrapperRef={elementsWrapperRef}
+							matchesData={matchesData}
+							{...props}
+						/>
+					)}
+				/>
+			</Box>
 		</Box>
 	);
 };
