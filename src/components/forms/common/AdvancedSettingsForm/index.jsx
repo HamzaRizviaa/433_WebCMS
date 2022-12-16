@@ -7,7 +7,7 @@ import FormikCheckbox from '../../../ui/inputs/formik/FormikCheckbox';
 
 const AdvancedSettingsForm = () => {
 	const geoblocking = {
-		countries: ['Germany', 'Austria', 'Switzerland'],
+		countries: ['Germany', 'Austria', 'Switzerland'].join(', '),
 		duration: 72,
 		CMS: 'hey'
 	};
