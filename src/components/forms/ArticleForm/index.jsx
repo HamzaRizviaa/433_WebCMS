@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useRef, useState, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
@@ -22,10 +23,17 @@ import {
 	deleteArticleThunk,
 	getArticleSubCategories
 } from '../../../data/features/articleLibrary/articleLibrarySlice';
+import { selectReadMoreArticlesFeatureFlag } from '../../../data/selectors';
+import {
+	publishReadMoreApi,
+	deleteReadMoreApi
+} from '../../../data/services/readMoreArticleService';
 
 const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const readMoreFeatureFlag = useSelector(selectReadMoreArticlesFeatureFlag);
+	const isReadMoreAPIEnabled = readMoreFeatureFlag?._value === 'true';
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 
 	// Selectors
@@ -82,12 +90,19 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 				isDraft
 			);
 
-			const { type } = await dispatch(
+			const { type, payload } = await dispatch(
 				createOrEditArticleThunk(articleData, formikBag, isDraft)
 			);
 
 			if (type === 'articleLibary/createOrEditArticleThunk/fulfilled') {
 				handleClose();
+
+				if (isReadMoreAPIEnabled && !isDraft) {
+					if (!isEdit || status !== 'published') {
+						console.log('inside publish');
+						publishReadMoreApi(payload?.data?.data?.id);
+					}
+				}
 
 				if (isEdit && !(status === 'draft' && isDraft === false)) {
 					dispatch(getAllArticlesApi(queryParams));
