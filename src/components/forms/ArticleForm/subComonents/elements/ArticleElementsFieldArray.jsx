@@ -107,15 +107,13 @@ const ArticleElementsFieldArray = ({
 	};
 
 	return (
-		<div>
-			<DraggableLayoutWrapper onDragEnd={handleDragData}>
-				{form.values.elements.map((item, index) => (
-					<div ref={elementsWrapperRef} key={index}>
-						{renderArticleElement(item, index)}
-					</div>
-				))}
-			</DraggableLayoutWrapper>
-		</div>
+		<DraggableLayoutWrapper onDragEnd={handleDragData}>
+			{form.values.elements.map((item, index) => (
+				<div ref={elementsWrapperRef} key={index}>
+					{renderArticleElement(item, index)}
+				</div>
+			))}
+		</DraggableLayoutWrapper>
 	);
 };
 
