@@ -30,7 +30,7 @@ const ArticleFormFooter = ({
 
 	const isDraftButtonDisabled = useMemo(() => {
 		const isAnyElementEmpty = values.elements.some((item) =>
-			areAllFieldsEmpty(item)
+			areAllFieldsEmpty({ ...omit(item, 'element_type') })
 		);
 		const isEqualToDefaultValues = isEqual(
 			omit(

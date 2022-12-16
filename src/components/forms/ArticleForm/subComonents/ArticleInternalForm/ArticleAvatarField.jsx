@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import React, { useCallback, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { Avatar } from '@material-ui/core';
 import { useField } from 'formik';
 import { useStyles } from '../../index.styles';
@@ -10,18 +9,15 @@ import {
 	selectFileType
 } from '../../../../../data/utils';
 
-const ArticleAvatarField = (props) => {
-	const { name, onChange, disabled = false, onBlur } = props;
-
+const ArticleAvatarField = ({ name, onChange, onBlur, disabled = false }) => {
 	const classes = useStyles();
 
 	const inputRef = useRef(null);
 
-	const [field, meta, helpers] = useField(name);
+	const [field, helpers] = useField(name);
 
 	const { onBlur: onFieldBlur, value, ...rest } = field;
 
-	const { touched, error } = meta;
 	const { setValue, setError } = helpers;
 
 	const handleClick = () => {
@@ -74,14 +70,12 @@ const ArticleAvatarField = (props) => {
 			<input
 				{...rest}
 				id={name}
-				// name={name}
 				type='file'
 				ref={inputRef}
 				onChange={handleChange}
 				onBlur={handleBlur}
 				accept='image/jpeg, image/png, image/jpg'
 				disabled={disabled}
-				// value={value}
 				hidden
 			/>
 			<div className={classes.authorAvatar}>
@@ -98,6 +92,13 @@ const ArticleAvatarField = (props) => {
 			</div>
 		</div>
 	);
+};
+
+ArticleAvatarField.propTypes = {
+	name: PropTypes.string,
+	onChange: PropTypes.func,
+	onBlur: PropTypes.func,
+	disabled: PropTypes.bool
 };
 
 export default ArticleAvatarField;

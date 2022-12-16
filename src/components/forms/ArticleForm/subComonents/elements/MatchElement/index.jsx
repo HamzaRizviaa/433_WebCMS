@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useFormikContext } from 'formik';
-import { isEmpty } from 'lodash';
+import { isEmpty, compact } from 'lodash';
 import FormikSelect from '../../../../../ui/inputs/formik/FormikSelect';
 import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 import { getTeamOptions, getMatchName } from '../../../../../../data/utils';
+import { ARTICLE_ELEMENTS_TYPES } from '../../../../../../data/helpers';
 
 const MatchElement = ({
 	isEdit,
@@ -20,7 +21,23 @@ const MatchElement = ({
 
 	const isItemCreated = !isEmpty(item.id);
 
-	const { setFieldValue } = useFormikContext();
+	const { values, setFieldValue } = useFormikContext();
+
+	const removeAddedMatches = (matches) => {
+		const addedMatchesIds = compact(
+			values.elements.map((elem) =>
+				elem.element_type === ARTICLE_ELEMENTS_TYPES.MATCH
+					? elem.match_id
+					: undefined
+			)
+		);
+
+		return matches.filter((match) =>
+			addedMatchesIds.some(
+				(matchId) => match._id !== matchId || match._id === item.match_id
+			)
+		);
+	};
 
 	useEffect(() => {
 		data && setLeagues(data);
@@ -38,7 +55,7 @@ const MatchElement = ({
 			}));
 
 			setTeams(teams || []);
-			setMatches(mappedMatches || []);
+			setMatches(removeAddedMatches(mappedMatches) || []);
 		}
 	}, [data]);
 
@@ -66,7 +83,7 @@ const MatchElement = ({
 			...match,
 			name: getMatchName(match.startdate, match.name)
 		}));
-		setMatches(mappedMatches);
+		setMatches(removeAddedMatches(mappedMatches));
 		resetMatchValueInFormik();
 	};
 

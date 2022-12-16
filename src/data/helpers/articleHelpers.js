@@ -222,12 +222,6 @@ export const uploadArticleFiles = async (article) => {
 				};
 			}
 		} else if (item.element_type === ARTICLE_ELEMENTS_TYPES.QUESTION) {
-			elements[index].question_data.labels = elements[
-				index
-			].question_data.labels.map((label) => ({
-				id: -1,
-				name: label
-			}));
 			elements[index].question_data.answers = item.question_data.answers.map(
 				(answerItem, answerIndex) => ({
 					...answerItem,
@@ -349,6 +343,10 @@ const articleElementsFormatterForForm = (elements) => {
 						'height',
 						'end_date'
 					]),
+					labels: elem.question_data.labels.map((label) => ({
+						id: -1,
+						name: label
+					})),
 					uploadedFiles: elem.question_data.image
 						? [
 								{
