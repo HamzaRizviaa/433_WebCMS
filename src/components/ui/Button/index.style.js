@@ -13,19 +13,29 @@ export const useButtonStyles = makeStyles((theme) => {
 	const variantToColorMapper = colorMapper(theme.palette);
 
 	return {
-		btn: ({ variant, color, size, fullWidth, customPadding }) => ({
+		btn: ({
+			variant,
+			color,
+			size,
+			fullWidth,
+			customPadding,
+			isIconButton
+		}) => ({
 			color: variantToColorMapper[variant][color].color,
 			backgroundColor: variantToColorMapper[variant][color].backgroundColor,
 			border: `1px solid ${variantToColorMapper[variant][color].borderColor}`,
 			position: 'relative',
 			textAlign: 'center',
 			// marginRight: '1rem',
-			height: 'fit-content',
-			borderRadius: 65,
-			padding: variant === 'text' ? 0 : customPadding || btnPaddings[size],
+			height: isIconButton ? 40 : 'fit-content',
+			borderRadius: isIconButton ? '50%' : 65,
+			padding:
+				variant === 'text' || isIconButton
+					? 0
+					: customPadding || btnPaddings[size],
 			cursor: 'pointer',
 			whiteSpace: 'nowrap',
-			width: fullWidth ? '100%' : 'auto',
+			width: isIconButton ? 40 : fullWidth ? '100%' : 'auto',
 
 			...(variant !== 'text' && {
 				'&:hover': {
@@ -45,8 +55,16 @@ export const useButtonStyles = makeStyles((theme) => {
 			justifyContent: 'center',
 
 			'& > svg': {
-				position: ({ variant }) => (variant === 'text' ? 'unset' : 'absolute'),
-				right: 30
+				position: ({ variant, isIconButton }) =>
+					variant === 'text' || isIconButton ? 'static' : 'absolute',
+				right: 30,
+				fill: ({ variant, color }) =>
+					variantToColorMapper[variant][color].color,
+
+				'& path': {
+					fill: ({ variant, color }) =>
+						variantToColorMapper[variant][color].color
+				}
 			}
 		}
 	};
