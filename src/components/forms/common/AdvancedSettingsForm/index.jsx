@@ -20,15 +20,37 @@ const AdvancedSettingsForm = () => {
 	const { rules, loading } = useSelector(getRules);
 
 	const toolTipHandler = (val) => {
-		const values = {
-			...val,
-			countries: val.countries?.length > 0 ? val.countries.join(', ') : 'none'
-		};
-		return Object.entries(values).map(([key, value]) => (
-			<div key={key} className={classes.toolTipText}>
-				{key} : {value}
-			</div>
-		));
+		const newObj = {};
+
+		Object.keys(val).forEach((key) => {
+			const value = val[key];
+
+			if (
+				typeof value === 'object' &&
+				value !== null &&
+				!Array.isArray(value)
+			) {
+				Object.assign(newObj, toolTipHandler(value));
+			} else {
+				if (typeof value !== 'string') {
+					newObj[key] = value;
+				}
+			}
+		});
+
+		console.log(newObj);
+
+		return newObj;
+
+		// const values = {
+		//  ...val,
+		//  countries: val.countries?.length > 0 ? val.countries.join(‘, ’) : ‘none’
+		// };
+		// return Object.entries(values).map(([key, value]) => (
+		//  <div key={key} className={classes.toolTipText}>
+		//      {key} : {value}
+		//  </div>
+		// ));
 	};
 
 	return (
@@ -46,7 +68,7 @@ const AdvancedSettingsForm = () => {
 								<FormikCheckbox
 									name={`rules.${val._id}`}
 									label={val.title}
-									tooltip={toolTipHandler(val.geoblocking)}
+									tooltip={toolTipHandler(val)}
 									key={index}
 								/>
 							);
