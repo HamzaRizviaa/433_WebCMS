@@ -19,6 +19,8 @@ import {
 	areAllFieldsEmpty,
 	questionsFormInitialValues
 } from '../../../../../data/helpers';
+import SchedulerPopup from '../../../../common/SchedulerPopup';
+import { Calendar } from '../../../../../assets/svg-icons';
 
 const headings = ['Poll', 'Quiz'];
 
@@ -39,6 +41,11 @@ const QuestionInternalForm = ({
 	const [openPublishModal, setPublishModalState] = useState(false);
 	const [activeQuestionTitle, setActiveQuestionTitle] = useState('');
 
+	const [schedularModalState, setSchedulerModalState] = useState(false);
+
+	const closeSchedulerModal = () => setSchedulerModalState(false);
+	const openSchedulerModal = () => setSchedulerModalState(true);
+	//
 	const {
 		dirty,
 		isValid,
@@ -158,6 +165,11 @@ const QuestionInternalForm = ({
 
 	return (
 		<div>
+			<SchedulerPopup
+				open={schedularModalState}
+				onClose={closeSchedulerModal}
+				selectsRange
+			/>
 			<AccordianLayout title='General Information'>
 				<div>
 					<PublishAndStopModal
@@ -243,6 +255,13 @@ const QuestionInternalForm = ({
 						disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
 					>
 						{isPublished ? 'SAVE CHANGES' : `ADD ${questionType}`}
+					</Button>
+					<Button
+						disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
+						onClick={openSchedulerModal}
+						iconBtn
+					>
+						<Calendar />
 					</Button>
 				</div>
 			</div>
