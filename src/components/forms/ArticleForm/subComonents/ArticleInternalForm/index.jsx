@@ -16,7 +16,7 @@ const ArticleInternalForm = ({
 }) => {
 	const classes = useStyles();
 
-	const { validateForm, resetForm, touched } = useFormikContext();
+	const { validateForm, resetForm } = useFormikContext();
 
 	const [getMatchesTree, { data: matchesData }] = useLazyGetMatchesTreeQuery();
 
@@ -28,8 +28,6 @@ const ArticleInternalForm = ({
 			resetForm(articleFormInitialValues);
 		};
 	}, []);
-
-	console.log({ touched });
 
 	return (
 		<Box>
