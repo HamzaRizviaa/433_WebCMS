@@ -40,7 +40,7 @@ const AdvancedSettingsForm = () => {
 			}
 		});
 
-		console.log(newObj);
+		// console.log(newObj);
 
 		return newObj;
 
