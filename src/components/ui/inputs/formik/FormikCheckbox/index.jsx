@@ -20,6 +20,7 @@ const FormikCheckbox = ({ name, onChange, onBlur, ...rest }) => {
 		setTouched(true);
 		if (onBlur) onBlur(value);
 	};
+
 	return (
 		<CheckBox
 			{...rest}
