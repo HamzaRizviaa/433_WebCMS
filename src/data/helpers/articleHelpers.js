@@ -125,7 +125,7 @@ export const articleSidebarElements = [
 		data: {
 			element_type: ARTICLE_ELEMENTS_TYPES.QUESTION,
 			question_data: {
-				question_type: 'quiz',
+				question_type: 'poll',
 				uploadedFiles: [],
 				labels: [],
 				dropbox_url: '',
@@ -481,9 +481,9 @@ export const articleDataFormatterForService = (
 			'subCategoryName'
 		]),
 
-		author_image:
-			authorMediaUrl.split('cloudfront.net/')[1] ||
-			Profile433.split('cloudfront.net/')[1],
+		author_image: authorMediaUrl.includes('cloudfront.net/')
+			? authorMediaUrl.split('cloudfront.net/')[1]
+			: authorMediaUrl,
 
 		// Destructing the porperties of portrait file
 		...(uploadedFiles.length && !isEmpty(portraitImgFile)
