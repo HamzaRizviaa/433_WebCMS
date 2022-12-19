@@ -42,8 +42,30 @@ export const getRelativePath = (url = '') => {
 };
 
 export const toolTipHandler = (val) => {
-	return Object.entries(val).map(([key, value]) => (
+	const newObj = {};
+
+	Object.keys(val).forEach((key) => {
+		const value = val[key];
+
+		if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+			Object.assign(newObj, toolTipHandler(value));
+		} else {
+			if (typeof value !== 'string') {
+				newObj[key] = value;
+			}
+		}
+	});
+	return newObj;
+};
+
+export const toolTipFormatter = (obj) => {
+	const values = {
+		...obj,
+		countries: obj.countries?.length > 0 ? obj.countries.join(', ') : ' None'
+	};
+	return Object.entries(values).map(([key, value]) => (
 		<div key={key} style={{ textTransform: 'capitalize' }}>
+			{console.log(key, value, 'key values')}
 			{key} : {value}
 		</div>
 	));
