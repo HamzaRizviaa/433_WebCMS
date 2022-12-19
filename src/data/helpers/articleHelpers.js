@@ -584,12 +584,15 @@ export const articleFormValidationSchema = Yup.object().shape({
 	subCategoryName: Yup.string().required().label('Sub Category'),
 	author_text: Yup.string().required().label('Author Name'),
 	author_image: Yup.array().required().label('Author Image'),
-	title: Yup.string().max(43).required().label('Title'),
+	title: Yup.string().max(43).required().label('Article Title'),
 	sub_text: Yup.string().max(84).required().label('Sub Title'),
-	uploadedFiles: Yup.array().min(1).required().label('Portrait Image'),
+	uploadedFiles: Yup.array()
+		.min(1, 'You need to upload a portrait image in order to post article')
+		.required()
+		.label('Portrait Image'),
 	dropbox_url: Yup.string(),
 	uploadedLandscapeCoverImage: Yup.array()
-		.min(1)
+		.min(1, 'You need to upload a landscape image in order to post article')
 		.required()
 		.label('Landscape Image'),
 	landscape_dropbox_url: Yup.string(),
@@ -630,7 +633,10 @@ export const articleFormValidationSchema = Yup.object().shape({
 					.label('Media')
 					.when('element_type', {
 						is: (val) => val === ARTICLE_ELEMENTS_TYPES.MEDIA,
-						then: (schema) => schema.min(1).required(),
+						then: (schema) =>
+							schema
+								.min(1, 'You need to upload an image/video to post article')
+								.required(),
 						otherwise: (schema) => schema
 					}),
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Avatar } from '@material-ui/core';
@@ -14,7 +15,7 @@ const ArticleAvatarField = ({ name, onChange, onBlur, disabled = false }) => {
 
 	const inputRef = useRef(null);
 
-	const [field, helpers] = useField(name);
+	const [field, meta, helpers] = useField(name);
 
 	const { onBlur: onFieldBlur, value, ...rest } = field;
 

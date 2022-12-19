@@ -5,8 +5,12 @@ import { toLower, isEmpty } from 'lodash';
 import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 import TabPanes from '../../../../../ui/TabPanes';
 import ArticleQuestionForm from './ArticleQuestionForm';
+import {
+	articleSidebarElements,
+	ARTICLE_ELEMENTS_TYPES
+} from '../../../../../../data/helpers';
 
-const tabPanesHeadings = ['Quiz', 'Poll'];
+const tabPanesHeadings = ['Add Poll', 'Add Quiz'];
 
 const QuestionElement = ({
 	index,
@@ -17,24 +21,43 @@ const QuestionElement = ({
 }) => {
 	const isPublished = isEdit && status === 'published';
 	const isItemCreated = !isEmpty(item.id);
-	const [defaultSelectedTab, setDefaultSelectedTab] = useState(0);
+	const [selectedTab, setSelectedTab] = useState(0);
 
 	const { setFieldValue } = useFormikContext();
 
 	useEffect(() => {
 		if (isEdit) {
 			setQuestionTypeValue(item.question_data.question_type);
-			setDefaultSelectedTab(
-				item.question_data.question_type === 'quiz' ? 0 : 1
-			);
 		}
-	}, [item]);
+	}, [isEdit, item]);
 
 	const setQuestionTypeValue = (value) => {
 		setFieldValue(
 			`elements.${index}.question_data.question_type`,
 			toLower(value)
 		);
+		setSelectedTab(toLower(value) === 'poll' ? 0 : 1);
+	};
+
+	const resetQuestionDataField = () => {
+		const questionElement = articleSidebarElements.find(
+			(item) => item.data.element_type === ARTICLE_ELEMENTS_TYPES.QUESTION
+		);
+		setFieldValue(
+			`elements.${index}.question_data`,
+			questionElement.data.question_data
+		);
+	};
+
+	const tabPanesOnClickHanlder = (value) => {
+		if (
+			(toLower(value) === 'poll' && selectedTab === 0) ||
+			(toLower(value) === 'quiz' && selectedTab === 1)
+		)
+			return;
+
+		setQuestionTypeValue(value);
+		resetQuestionDataField();
 	};
 
 	return (
@@ -49,13 +72,14 @@ const QuestionElement = ({
 				<TabPanes
 					type='questions'
 					headings={tabPanesHeadings}
-					defaultValue={defaultSelectedTab}
-					onClick={(value) => setQuestionTypeValue(value)}
+					defaultValue={selectedTab}
+					value={selectedTab}
+					onClick={tabPanesOnClickHanlder}
 					disabled={isPublished && isItemCreated}
 				>
 					<TabPanes.TabPanel value={0}>
 						<ArticleQuestionForm
-							type={'quiz'}
+							type={'poll'}
 							index={index}
 							item={item}
 							isPublished={isPublished}
@@ -63,7 +87,7 @@ const QuestionElement = ({
 					</TabPanes.TabPanel>
 					<TabPanes.TabPanel value={1}>
 						<ArticleQuestionForm
-							type={'poll'}
+							type={'quiz'}
 							index={index}
 							item={item}
 							isPublished={isPublished}

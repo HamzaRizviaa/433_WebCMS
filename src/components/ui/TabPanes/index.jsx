@@ -14,6 +14,7 @@ const TabPanes = ({
 	children,
 	type,
 	defaultValue = 0,
+	value = false,
 	hideTabsHead = false
 }) => {
 	const muiClasses = useStyles({ type, hideTabsHead });
@@ -24,7 +25,11 @@ const TabPanes = ({
 
 	return (
 		<div className={muiClasses.root}>
-			<TabsUnstyled defaultValue={defaultValue} className={muiClasses.tabRoot}>
+			<TabsUnstyled
+				defaultValue={defaultValue}
+				className={muiClasses.tabRoot}
+				{...(value ? { value: value } : {})}
+			>
 				<TabsListUnstyled className={muiClasses.tabMainDiv}>
 					{headings.map((text, index) => (
 						<TabUnstyled
@@ -52,7 +57,8 @@ TabPanes.propTypes = {
 	children: PropTypes.element,
 	type: PropTypes.string,
 	hideTabsHead: PropTypes.bool,
-	defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+	defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+	value: PropTypes.any
 };
 
 export default TabPanes;

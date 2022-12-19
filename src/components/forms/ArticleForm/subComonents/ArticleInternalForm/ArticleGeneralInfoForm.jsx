@@ -160,7 +160,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 					</div>
 					<div className={formClasses.fieldContainer}>
 						<FormikField
-							label='TITLE'
+							label='ARTICLE TITLE'
 							name='title'
 							placeholder='Please write your title here'
 							multiline
@@ -171,12 +171,13 @@ const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 					</div>
 					<div className={formClasses.fieldContainer}>
 						<FormikField
-							label='DESCRIPTION'
+							label='SUB TITLE'
 							name='sub_text'
-							placeholder='Please write your description here'
+							placeholder='Please write your sub title here'
 							multiline
 							required
 							maxRows={2}
+							maxLength={84}
 						/>
 					</div>
 					<div className={formClasses.fieldContainer}>
