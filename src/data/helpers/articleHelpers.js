@@ -161,7 +161,9 @@ export const checkIfAnyArticleElementIsEmpty = (elements) => {
 			? areAllFieldsEmpty(
 					omit(item.question_data, ['question_type', 'answers'])
 			  ) && item.question_data.answers.every((ans) => !ans.answer)
-			: areAllFieldsEmpty({ ...omit(item, ['element_type']) });
+			: areAllFieldsEmpty({
+					...omit(item, ['id', 'element_type', 'sort_order'])
+			  });
 	});
 };
 
