@@ -14,7 +14,11 @@ import QuestionSlideForm from '../QuestionSlideForm';
 import PublishAndStopModal from '../PublishAndStopModal';
 import { QuestionsLibraryService } from '../../../../../data/services';
 import { useFormStyles } from '../../../forms.style';
-import { selectTriviaFeatureFlag } from '../../../../../data/selectors';
+import {
+	getRules,
+	selectTriviaFeatureFlag
+} from '../../../../../data/selectors';
+import AdvancedSettingsForm from '../../../common/AdvancedSettingsForm';
 import {
 	areAllFieldsEmpty,
 	questionsFormInitialValues
@@ -35,6 +39,8 @@ const QuestionInternalForm = ({
 	const triviaOnQuestions = useSelector(selectTriviaFeatureFlag);
 	const isTriviaEnabled = triviaOnQuestions?._value === 'true';
 
+	const { rules } = useSelector(getRules);
+
 	// States
 	const [openPublishModal, setPublishModalState] = useState(false);
 	const [activeQuestionTitle, setActiveQuestionTitle] = useState('');
@@ -51,6 +57,7 @@ const QuestionInternalForm = ({
 		submitForm
 	} = useFormikContext();
 
+	console.log('VALUESS QUESS', values);
 	const isPublished = isEdit && status !== 'draft';
 	const isClosed = isEdit && status === 'CLOSED';
 	const questionType = values.general_info.question_type;
@@ -59,7 +66,7 @@ const QuestionInternalForm = ({
 	useEffect(() => {
 		validateForm();
 		return () => {
-			resetForm({ values: questionsFormInitialValues });
+			resetForm({ values: questionsFormInitialValues(rules) });
 		};
 	}, []);
 
@@ -77,7 +84,7 @@ const QuestionInternalForm = ({
 
 	const handleTabClick = (val) => {
 		const editFormInitValues = {
-			...questionsFormInitialValues,
+			...questionsFormInitialValues(rules),
 			general_info: {
 				...questionsFormInitialValues.general_info,
 				question_type: val.toLowerCase()
@@ -193,6 +200,7 @@ const QuestionInternalForm = ({
 					</TabPanes>
 				</div>
 			</AccordianLayout>
+			<AdvancedSettingsForm isQuestions={true} />
 			<FieldArray
 				name='questions'
 				render={(props) => (

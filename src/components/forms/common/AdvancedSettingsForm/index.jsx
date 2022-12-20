@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
-import { useFormikContext } from 'formik';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { getRules } from '../../../../data/selectors';
 import AccordianLayout from '../../../layouts/AccordianLayout';
@@ -13,18 +12,21 @@ import {
 	toolTipFormatter
 } from '../../../../data/helpers/commonHelpers';
 
-const AdvancedSettingsForm = () => {
+const AdvancedSettingsForm = ({ isQuestions }) => {
 	const classes = useAdvancedSettingsFormStyles();
 
 	const { rules, loading } = useSelector(getRules);
-
 	return (
 		<div className={classes.advancedSettingRoot}>
 			<AccordianLayout title='Advanced Settings'>
-				<SettingsLayout title={'Comments & Likes'}>
-					<FormikCheckbox name='show_comments' label='Show Comments' />
-					<FormikCheckbox name='show_likes' label='Show Likes' />
-				</SettingsLayout>
+				{!isQuestions ? (
+					<SettingsLayout title={'Comments & Likes'}>
+						<FormikCheckbox name='show_comments' label='Show Comments' />
+						<FormikCheckbox name='show_likes' label='Show Likes' />
+					</SettingsLayout>
+				) : (
+					<></>
+				)}
 
 				<SettingsLayout title={'Restrictions'}>
 					<PrimaryLoader loading={loading}>
@@ -45,6 +47,8 @@ const AdvancedSettingsForm = () => {
 	);
 };
 
-// AdvancedSettingsForm.propTypes = {};
+AdvancedSettingsForm.propTypes = {
+	isQuestions: PropTypes.bool.isRequired
+};
 
 export default AdvancedSettingsForm;

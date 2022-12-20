@@ -7,6 +7,7 @@ import { Formik, Form } from 'formik';
 
 import { useCommonParams } from '../../../hooks';
 import {
+	getRules,
 	selectSpecificQuestion,
 	selectSummaryFeatureFlag,
 	selectTriviaFeatureFlag
@@ -44,6 +45,7 @@ const QuestionsForm = ({
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 	const dispatch = useDispatch();
 	const specificQuestion = useSelector(selectSpecificQuestion);
+	const { rules } = useSelector(getRules);
 
 	// States
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -51,9 +53,9 @@ const QuestionsForm = ({
 
 	const initialValues = useMemo(() => {
 		return isEdit && !isEmpty(specificQuestion)
-			? questionDataFormatterForForm(specificQuestion)
-			: questionsFormInitialValues;
-	}, [isEdit, specificQuestion]);
+			? questionDataFormatterForForm(specificQuestion, rules)
+			: questionsFormInitialValues(rules);
+	}, [isEdit, specificQuestion, rules]);
 
 	const closeDeleteModal = () => setOpenDeleteModal(false);
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
@@ -67,7 +69,8 @@ const QuestionsForm = ({
 			const payload = await questionDataFormatterForService(
 				values,
 				isDraft,
-				status
+				status,
+				rules
 			);
 
 			const getApiVersion = (isSummaryEnabled, isTriviaEnabled) => {

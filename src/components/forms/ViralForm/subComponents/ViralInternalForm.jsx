@@ -10,7 +10,6 @@ import { viralFormInitialValues } from '../../../../data/helpers';
 import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
 import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
-// import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
 import TextTooltip from '../../../ui/TextTooltip';
 import Button from '../../../ui/Button';
 import AdvancedSettingsForm from '../../common/AdvancedSettingsForm';
@@ -41,8 +40,6 @@ const ViralInternalForm = ({
 		validateForm,
 		resetForm
 	} = useFormikContext();
-
-	console.log('VIRAL FORM', values);
 
 	useEffect(() => {
 		validateForm();
@@ -121,13 +118,7 @@ const ViralInternalForm = ({
 						required
 					/>
 				</div>
-				{/* <div className={classes.fieldContainer}>
-					<div className={classes.switchContainer}>
-						<FormikSwitchField name='show_comments' label='Show comments' />
-						<FormikSwitchField name='show_likes' label='Show likes' />
-					</div>
-				</div> */}
-				<AdvancedSettingsForm />
+				<AdvancedSettingsForm isQuestions={false} />
 			</div>
 			<div className={classes.buttonDiv}>
 				<div>
