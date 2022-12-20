@@ -635,7 +635,6 @@ const UploadOrEditArticle = ({
 						? item?.data?.uploadedFiles && item?.data?.uploadedFiles[0]
 						: item?.data[0]
 				);
-				console.log('itemANS', item);
 				return {
 					element_type: item.element_type,
 
