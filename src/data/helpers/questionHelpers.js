@@ -4,6 +4,7 @@ import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime } from '../utils';
 import uploadFilesToS3 from '../utils/uploadFilesToS3';
 import { getRelativePath } from './commonHelpers';
+import { advancedSettingsValidationSchemaQuestions } from './advancedSettingsHelpers';
 
 const { REACT_APP_MEDIA_ENDPOINT } = process.env;
 
@@ -401,132 +402,143 @@ const questionsSlideSchema = yup
 	.min(1, 'Atleast 1 question is required');
 
 // V1 is with summary component and no trivia component
-export const questionsFormValidationSchemaV1 = yup.object({
-	resultsUploadedFiles: yup.array().when('general_info.question_type', {
-		is: (val) => val === 'poll',
-		then: (schema) =>
-			schema.min(1, 'You need to upload an image in order to post'),
-		otherwise: (schema) => schema.min(0)
-	}),
-	positiveResultsUploadedFiles: yup.array().when('general_info.question_type', {
-		is: (val) => val === 'quiz',
-		then: (schema) =>
-			schema.min(1, 'You need to upload an image in order to post'),
-		otherwise: (schema) => schema.min(0)
-	}),
-	negativeResultsUploadedFiles: yup.array().when('general_info.question_type', {
-		is: (val) => val === 'quiz',
-		then: (schema) =>
-			schema.min(1, 'You need to upload an image in order to post'),
-		otherwise: (schema) => schema.min(0)
-	}),
-
-	general_info: yup.object({
-		results: yup
-			.string()
-			.trim()
-			.when('question_type', {
-				is: (val) => val === 'poll',
-				then: (schema) =>
-					schema.required('You need to enter results in order to post'),
-				otherwise: (schema) => schema
-			}),
-		positive_results: yup
-			.string()
-			.trim()
-			.when('question_type', {
+export const questionsFormValidationSchemaV1 =
+	advancedSettingsValidationSchemaQuestions.shape({
+		resultsUploadedFiles: yup.array().when('general_info.question_type', {
+			is: (val) => val === 'poll',
+			then: (schema) =>
+				schema.min(1, 'You need to upload an image in order to post'),
+			otherwise: (schema) => schema.min(0)
+		}),
+		positiveResultsUploadedFiles: yup
+			.array()
+			.when('general_info.question_type', {
 				is: (val) => val === 'quiz',
 				then: (schema) =>
-					schema.required(
-						'You need to enter positive results in order to post'
-					),
-				otherwise: (schema) => schema
+					schema.min(1, 'You need to upload an image in order to post'),
+				otherwise: (schema) => schema.min(0)
 			}),
-		negative_results: yup
-			.string()
-			.trim()
-			.when('question_type', {
+		negativeResultsUploadedFiles: yup
+			.array()
+			.when('general_info.question_type', {
 				is: (val) => val === 'quiz',
 				then: (schema) =>
-					schema.required(
-						'You need to enter negative results in order to post'
-					),
-				otherwise: (schema) => schema
-			})
-	}),
+					schema.min(1, 'You need to upload an image in order to post'),
+				otherwise: (schema) => schema.min(0)
+			}),
 
-	questions: questionsSlideSchema
-});
+		general_info: yup.object({
+			results: yup
+				.string()
+				.trim()
+				.when('question_type', {
+					is: (val) => val === 'poll',
+					then: (schema) =>
+						schema.required('You need to enter results in order to post'),
+					otherwise: (schema) => schema
+				}),
+			positive_results: yup
+				.string()
+				.trim()
+				.when('question_type', {
+					is: (val) => val === 'quiz',
+					then: (schema) =>
+						schema.required(
+							'You need to enter positive results in order to post'
+						),
+					otherwise: (schema) => schema
+				}),
+			negative_results: yup
+				.string()
+				.trim()
+				.when('question_type', {
+					is: (val) => val === 'quiz',
+					then: (schema) =>
+						schema.required(
+							'You need to enter negative results in order to post'
+						),
+					otherwise: (schema) => schema
+				})
+		}),
+
+		questions: questionsSlideSchema
+	});
 
 // V2 is without summary component and without trivia component
-export const questionsFormValidationSchemaV2 = yup.object({
-	questions: questionsSlideSchema
-});
+export const questionsFormValidationSchemaV2 =
+	advancedSettingsValidationSchemaQuestions.shape({
+		questions: questionsSlideSchema
+	});
 
 // V3 is with summary component and with Trivia Component
-export const questionsFormValidationSchemaV3 = yup.object({
-	coverImageUploadedFiles: yup
-		.array()
-		.min(1, 'You need to upload an image in order to post'),
-	resultsUploadedFiles: yup.array().when('general_info.question_type', {
-		is: (val) => val === 'poll',
-		then: (schema) =>
-			schema.min(1, 'You need to upload an image in order to post'),
-		otherwise: (schema) => schema.min(0)
-	}),
-	positiveResultsUploadedFiles: yup.array().when('general_info.question_type', {
-		is: (val) => val === 'quiz',
-		then: (schema) =>
-			schema.min(1, 'You need to upload an image in order to post'),
-		otherwise: (schema) => schema.min(0)
-	}),
-	negativeResultsUploadedFiles: yup.array().when('general_info.question_type', {
-		is: (val) => val === 'quiz',
-		then: (schema) =>
-			schema.min(1, 'You need to upload an image in order to post'),
-		otherwise: (schema) => schema.min(0)
-	}),
-
-	general_info: yup.object({
-		question_title: yup
-			.string()
-			.trim()
-			.required('You need to enter title in order to post'),
-		results: yup
-			.string()
-			.trim()
-			.when('question_type', {
-				is: (val) => val === 'poll',
-				then: (schema) =>
-					schema.required('You need to enter results in order to post'),
-				otherwise: (schema) => schema
-			}),
-		positive_results: yup
-			.string()
-			.trim()
-			.when('question_type', {
+export const questionsFormValidationSchemaV3 =
+	advancedSettingsValidationSchemaQuestions.shape({
+		coverImageUploadedFiles: yup
+			.array()
+			.min(1, 'You need to upload an image in order to post'),
+		resultsUploadedFiles: yup.array().when('general_info.question_type', {
+			is: (val) => val === 'poll',
+			then: (schema) =>
+				schema.min(1, 'You need to upload an image in order to post'),
+			otherwise: (schema) => schema.min(0)
+		}),
+		positiveResultsUploadedFiles: yup
+			.array()
+			.when('general_info.question_type', {
 				is: (val) => val === 'quiz',
 				then: (schema) =>
-					schema.required(
-						'You need to enter positive results in order to post'
-					),
-				otherwise: (schema) => schema
+					schema.min(1, 'You need to upload an image in order to post'),
+				otherwise: (schema) => schema.min(0)
 			}),
-		negative_results: yup
-			.string()
-			.trim()
-			.when('question_type', {
+		negativeResultsUploadedFiles: yup
+			.array()
+			.when('general_info.question_type', {
 				is: (val) => val === 'quiz',
 				then: (schema) =>
-					schema.required(
-						'You need to enter negative results in order to post'
-					),
-				otherwise: (schema) => schema
-			})
-	}),
+					schema.min(1, 'You need to upload an image in order to post'),
+				otherwise: (schema) => schema.min(0)
+			}),
 
-	questions: questionsSlideSchema
-});
+		general_info: yup.object({
+			question_title: yup
+				.string()
+				.trim()
+				.required('You need to enter title in order to post'),
+			results: yup
+				.string()
+				.trim()
+				.when('question_type', {
+					is: (val) => val === 'poll',
+					then: (schema) =>
+						schema.required('You need to enter results in order to post'),
+					otherwise: (schema) => schema
+				}),
+			positive_results: yup
+				.string()
+				.trim()
+				.when('question_type', {
+					is: (val) => val === 'quiz',
+					then: (schema) =>
+						schema.required(
+							'You need to enter positive results in order to post'
+						),
+					otherwise: (schema) => schema
+				}),
+			negative_results: yup
+				.string()
+				.trim()
+				.when('question_type', {
+					is: (val) => val === 'quiz',
+					then: (schema) =>
+						schema.required(
+							'You need to enter negative results in order to post'
+						),
+					otherwise: (schema) => schema
+				})
+		}),
+
+		questions: questionsSlideSchema
+	});
 
 export const getQuestionsValidationSchema = (
 	isSummaryComponent,

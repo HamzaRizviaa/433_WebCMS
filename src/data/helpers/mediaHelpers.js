@@ -3,6 +3,7 @@ import { getDateTime, getLocalStorageDetails, makeid } from '../utils';
 import { isEmpty } from 'lodash';
 import axios from 'axios';
 import * as Yup from 'yup';
+import { advancedSettingsValidationSchema } from './advancedSettingsHelpers';
 
 export const mediaColumns = [
 	{
@@ -389,26 +390,26 @@ export const mediaFormInitialValues = (allRules) => {
 	};
 };
 
-export const mediaFormValidationSchema = Yup.object().shape({
-	mainCategory: Yup.string().required().label('Main Category'),
-	subCategory: Yup.string().required().label('Sub Category'),
-	title: Yup.string().required().label('Title'),
-	media_dropbox_url: Yup.string(),
-	image_dropbox_url: Yup.string(),
-	landscape_image_dropbox_url: Yup.string(),
-	description: Yup.string().required().label('Description'),
-	labels: Yup.array()
-		.min(4, (obj) => {
-			const labelsCount = obj.value?.length;
-			return `You need to add ${
-				4 - labelsCount
-			} more labels in order to upload media`;
-		})
-		.required('You need to enter atleast 4 labels')
-		.label('Labels'),
-	uploadedFiles: Yup.array().min(1).required(),
-	uploadedCoverImage: Yup.array().min(1).required(),
-	uploadedLandscapeCoverImage: Yup.array().min(1).required(),
-	show_likes: Yup.boolean().required(),
-	show_comments: Yup.boolean().required()
-});
+export const mediaFormValidationSchema = advancedSettingsValidationSchema.shape(
+	{
+		mainCategory: Yup.string().required().label('Main Category'),
+		subCategory: Yup.string().required().label('Sub Category'),
+		title: Yup.string().required().label('Title'),
+		media_dropbox_url: Yup.string(),
+		image_dropbox_url: Yup.string(),
+		landscape_image_dropbox_url: Yup.string(),
+		description: Yup.string().required().label('Description'),
+		labels: Yup.array()
+			.min(4, (obj) => {
+				const labelsCount = obj.value?.length;
+				return `You need to add ${
+					4 - labelsCount
+				} more labels in order to upload media`;
+			})
+			.required('You need to enter atleast 4 labels')
+			.label('Labels'),
+		uploadedFiles: Yup.array().min(1).required(),
+		uploadedCoverImage: Yup.array().min(1).required(),
+		uploadedLandscapeCoverImage: Yup.array().min(1).required()
+	}
+);

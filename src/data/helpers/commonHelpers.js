@@ -1,4 +1,3 @@
-import React from 'react';
 import { isEmpty } from 'lodash';
 import { getLocalStorageDetails } from '../utils';
 
@@ -39,33 +38,4 @@ export const reorder = (list, startIndex, endIndex) => {
 
 export const getRelativePath = (url = '') => {
 	return url.split('cloudfront.net/')[1] || url;
-};
-
-export const toolTipHandler = (val) => {
-	const newObj = {};
-
-	Object.keys(val).forEach((key) => {
-		const value = val[key];
-
-		if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-			Object.assign(newObj, toolTipHandler(value));
-		} else {
-			if (typeof value !== 'string') {
-				newObj[key] = value;
-			}
-		}
-	});
-	return newObj;
-};
-
-export const toolTipFormatter = (obj) => {
-	const values = {
-		...obj,
-		countries: obj.countries?.length > 0 ? obj.countries.join(', ') : ' None'
-	};
-	return Object.entries(values).map(([key, value]) => (
-		<div key={key} style={{ textTransform: 'capitalize' }}>
-			{key} : {value}
-		</div>
-	));
 };

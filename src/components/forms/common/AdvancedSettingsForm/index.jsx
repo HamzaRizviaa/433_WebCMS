@@ -3,14 +3,11 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { getRules } from '../../../../data/selectors';
 import AccordianLayout from '../../../layouts/AccordianLayout';
-import SettingsLayout from '../../../layouts/SettingsLayout';
+import SubCardLayout from '../../../layouts/SubCardLayout';
 import FormikCheckbox from '../../../ui/inputs/formik/FormikCheckbox';
 import PrimaryLoader from '../../../ui/loaders/PrimaryLoader';
 import { useAdvancedSettingsFormStyles } from './index.style';
-import {
-	toolTipHandler,
-	toolTipFormatter
-} from '../../../../data/helpers/commonHelpers';
+import { toolTipHandler, toolTipFormatter } from '../../../../data/helpers';
 
 const AdvancedSettingsForm = ({ isQuestions }) => {
 	const classes = useAdvancedSettingsFormStyles();
@@ -20,15 +17,15 @@ const AdvancedSettingsForm = ({ isQuestions }) => {
 		<div className={classes.advancedSettingRoot}>
 			<AccordianLayout title='Advanced Settings'>
 				{!isQuestions ? (
-					<SettingsLayout title={'Comments & Likes'}>
+					<SubCardLayout title={'Comments & Likes'}>
 						<FormikCheckbox name='show_comments' label='Show Comments' />
 						<FormikCheckbox name='show_likes' label='Show Likes' />
-					</SettingsLayout>
+					</SubCardLayout>
 				) : (
 					<></>
 				)}
 
-				<SettingsLayout title={'Restrictions'}>
+				<SubCardLayout title={'Restrictions'}>
 					<PrimaryLoader loading={loading}>
 						{rules.map((val, index) => {
 							return (
@@ -41,7 +38,7 @@ const AdvancedSettingsForm = ({ isQuestions }) => {
 							);
 						})}
 					</PrimaryLoader>
-				</SettingsLayout>
+				</SubCardLayout>
 			</AccordianLayout>
 		</div>
 	);

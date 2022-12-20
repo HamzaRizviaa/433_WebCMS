@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import SignIn from '../pages/SignIn/SignIn';
 import RequireAuth from './RequireAuth.js';
-import Test from '../Test.jsx';
+// import Test from '../Test.jsx';
 
 // Libraries
 import MediaLibrary from '../pages/MediaLibrary/MediaLibrary';
@@ -83,7 +83,7 @@ const AppRoutes = () => {
 				path='/post-library'
 				element={<RequireAuth component={<PostLibrary />} />}
 			/> */}
-			<Route path='/testing' element={<Test />} />
+			{/* <Route path='/testing' element={<Test />} /> */}
 			<Route path='*' element={<Navigate to='/sign-in' />} />
 		</Routes>
 	);
