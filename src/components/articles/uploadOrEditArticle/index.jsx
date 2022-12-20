@@ -1557,7 +1557,8 @@ const UploadOrEditArticle = ({
 							}
 							if (
 								item.element_type === 'QUESTION' &&
-								item.data.uploadedFiles[0].file
+								item?.data?.uploadedFiles &&
+								item?.data?.uploadedFiles[0]?.file
 							) {
 								let uploadedFile = await uploadFileToServer(
 									item.data.uploadedFiles[0],
@@ -1570,7 +1571,6 @@ const UploadOrEditArticle = ({
 									uploadedFile?.thumbnail_url;
 
 								await setData(dataCopy);
-								console.log('uploaded file..............', uploadedFile);
 								return uploadedFile;
 							}
 						})
