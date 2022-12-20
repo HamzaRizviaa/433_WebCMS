@@ -2,9 +2,13 @@ import React from 'react';
 import * as Yup from 'yup';
 
 export const advancedSettingsValidationSchema = Yup.object().shape({
-	rules: Yup.array(),
+	rules: Yup.object(),
 	show_likes: Yup.boolean().required(),
 	show_comments: Yup.boolean().required()
+});
+
+export const advancedSettingsValidationSchemaQuestions = Yup.object().shape({
+	rules: Yup.object()
 });
 
 export const toolTipHandler = (val) => {

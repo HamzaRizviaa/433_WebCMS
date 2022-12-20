@@ -1,7 +1,7 @@
 import { omit, isEmpty } from 'lodash';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime, makeid } from '../utils';
-import { getUserDataObject } from './index';
+import { advancedSettingsValidationSchema, getUserDataObject } from './index';
 import * as Yup from 'yup';
 
 export const viralTableColumns = [
@@ -138,19 +138,19 @@ export const viralFormInitialValues = {
 	show_comments: true
 };
 
-export const viralFormValidationSchema = Yup.object().shape({
-	caption: Yup.string().required('You need to enter a caption'),
-	dropbox_url: Yup.string(),
-	uploadedFiles: Yup.array().min(1).required(),
-	labels: Yup.array()
-		.min(4, (obj) => {
-			const labelsCount = obj.value?.length;
-			return `You need to add ${
-				4 - labelsCount
-			} more labels in order to upload viral`;
-		})
-		.required('You need to enter atleast 4 labels')
-		.label('Labels'),
-	show_likes: Yup.boolean().required(),
-	show_comments: Yup.boolean().required()
-});
+export const viralFormValidationSchema = advancedSettingsValidationSchema.shape(
+	{
+		caption: Yup.string().required('You need to enter a caption'),
+		dropbox_url: Yup.string(),
+		uploadedFiles: Yup.array().min(1).required(),
+		labels: Yup.array()
+			.min(4, (obj) => {
+				const labelsCount = obj.value?.length;
+				return `You need to add ${
+					4 - labelsCount
+				} more labels in order to upload viral`;
+			})
+			.required('You need to enter atleast 4 labels')
+			.label('Labels')
+	}
+);
