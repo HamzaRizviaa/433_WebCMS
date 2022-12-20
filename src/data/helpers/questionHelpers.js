@@ -167,7 +167,6 @@ export const questionDataFormatterForService = async (
 	allRules
 ) => {
 	const filteredRules = allRules.filter((rule) => values.rules[rule._id]);
-
 	const pollFilesToUpload = [
 		values.coverImageUploadedFiles[0] || null,
 		values.resultsUploadedFiles[0] || null
@@ -256,8 +255,8 @@ export const questionDataFormatterForService = async (
 			})),
 			position: index + 1
 		})),
-		rules: filteredRules,
-		...(values.question_id ? { question_id: values.question_id } : {})
+		...(values.question_id ? { question_id: values.question_id } : {}),
+		rules: filteredRules
 	};
 
 	if (values.active_question_id) {
@@ -373,6 +372,7 @@ export const questionDataFormatterForForm = (question, allRules) => {
 		active_question_end_date: null,
 		transition_to: null
 	};
+	formattedQuestion.rules = rules;
 	return formattedQuestion;
 };
 

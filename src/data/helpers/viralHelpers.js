@@ -106,10 +106,9 @@ export const viralDataFormatterForService = (
 	isDraft = false,
 	allRules
 ) => {
-	console.log('allRules', allRules);
 	const { uploadedFiles } = viral;
 	const filteredRules = allRules.filter((rule) => viral.rules[rule._id]);
-	console.log('Filtered', filteredRules);
+
 	const viralData = {
 		save_draft: isDraft,
 		translations: undefined,

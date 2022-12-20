@@ -7,6 +7,7 @@ import { Formik, Form } from 'formik';
 
 import { useCommonParams } from '../../../hooks';
 import {
+	getRules,
 	selectSpecificQuestion,
 	selectSummaryFeatureFlag,
 	selectTriviaFeatureFlag,
