@@ -83,7 +83,6 @@ const QuestionInternalForm = ({
 	};
 
 	const handleTabClick = (val) => {
-		console.log(questionsFormInitialValues, 'questionsFormInitialValues');
 		const editFormInitValues = {
 			...questionsFormInitialValues(rules),
 			general_info: {
