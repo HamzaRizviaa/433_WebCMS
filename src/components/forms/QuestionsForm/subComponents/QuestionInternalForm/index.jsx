@@ -19,7 +19,8 @@ import {
 	areAllFieldsEmpty,
 	questionsFormInitialValues
 } from '../../../../../data/helpers';
-
+import { getRules } from '../../../../../data/selectors';
+import AdvancedSettingsForm from '../../../common/AdvancedSettingsForm';
 const headings = ['Poll', 'Quiz'];
 
 const QuestionInternalForm = ({
@@ -34,7 +35,7 @@ const QuestionInternalForm = ({
 	// Feature flag for TRIVIA
 	const triviaOnQuestions = useSelector(selectTriviaFeatureFlag);
 	const isTriviaEnabled = triviaOnQuestions?._value === 'true';
-
+	const { rules } = useSelector(getRules);
 	// States
 	const [openPublishModal, setPublishModalState] = useState(false);
 	const [activeQuestionTitle, setActiveQuestionTitle] = useState('');
@@ -51,6 +52,8 @@ const QuestionInternalForm = ({
 		submitForm
 	} = useFormikContext();
 
+	console.log(values, 'form');
+
 	const isPublished = isEdit && status !== 'draft';
 	const isClosed = isEdit && status === 'CLOSED';
 	const questionType = values.general_info.question_type;
@@ -59,7 +62,7 @@ const QuestionInternalForm = ({
 	useEffect(() => {
 		validateForm();
 		return () => {
-			resetForm({ values: questionsFormInitialValues });
+			resetForm({ values: questionsFormInitialValues(rules) });
 		};
 	}, []);
 
@@ -76,8 +79,9 @@ const QuestionInternalForm = ({
 	};
 
 	const handleTabClick = (val) => {
+		console.log(questionsFormInitialValues, 'questionsFormInitialValues');
 		const editFormInitValues = {
-			...questionsFormInitialValues,
+			...questionsFormInitialValues(rules), //function
 			general_info: {
 				...questionsFormInitialValues.general_info,
 				question_type: val.toLowerCase()
@@ -193,6 +197,7 @@ const QuestionInternalForm = ({
 					</TabPanes>
 				</div>
 			</AccordianLayout>
+			<AdvancedSettingsForm />
 			<FieldArray
 				name='questions'
 				render={(props) => (

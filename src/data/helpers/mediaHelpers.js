@@ -73,8 +73,8 @@ export const mediaColumns = [
 ];
 
 export const mediaDataFormatterForForm = (media, allRules) => {
-	const formattedNews = { ...media };
 	const rules = {};
+	const formattedMedia = { ...media };
 
 	allRules.forEach((rule) => {
 		rules[rule._id] = false;
@@ -83,9 +83,6 @@ export const mediaDataFormatterForForm = (media, allRules) => {
 	media.rules.forEach((rule) => {
 		rules[rule._id] = true;
 	});
-
-	console.log('prebuild', media);
-	const formattedMedia = { ...media };
 
 	if (formattedMedia?.labels) {
 		const updatedLabels = formattedMedia?.labels.map((label) => ({
@@ -142,7 +139,7 @@ export const mediaDataFormatterForForm = (media, allRules) => {
 	formattedMedia.image_dropbox_url = media?.dropbox_url?.portrait_cover_image;
 	formattedMedia.landscape_image_dropbox_url =
 		media?.dropbox_url?.landscape_cover_image;
-	formattedNews.rules = rules;
+	formattedMedia.rules = rules;
 	return formattedMedia;
 };
 
