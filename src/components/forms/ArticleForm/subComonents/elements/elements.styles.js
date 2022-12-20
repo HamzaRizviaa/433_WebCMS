@@ -41,7 +41,6 @@ export const useElementsStyles = makeStyles((theme) => ({
 		cursor: 'pointer',
 		margin: '20px 0px'
 	},
-
 	elementText: {
 		fontFamily: 'Poppins',
 		fontWeight: '400',
@@ -63,5 +62,8 @@ export const useElementsStyles = makeStyles((theme) => ({
 		marginTop: 15,
 		marginBottom: 20
 	},
-	requiredImage: { color: '#ff355a', fontSize: '16px' }
+	requiredImage: { color: '#ff355a', fontSize: '16px' },
+	matchFieldContainer: {
+		marginTop: 6,
+	}
 }));
