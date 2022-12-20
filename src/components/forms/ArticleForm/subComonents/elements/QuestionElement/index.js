@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useFormikContext } from 'formik';
-import { toLower, isEmpty } from 'lodash';
+import { toLower, capitalize, isEmpty } from 'lodash';
 import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 import TabPanes from '../../../../../ui/TabPanes';
 import ArticleQuestionForm from './ArticleQuestionForm';
@@ -19,17 +19,14 @@ const QuestionElement = ({
 	isEdit,
 	status
 }) => {
+	const { setFieldValue } = useFormikContext();
+
 	const isPublished = isEdit && status === 'published';
 	const isItemCreated = !isEmpty(item.id);
 
-	const defaultSelectedTab = useMemo(
-		() => (item.question_data.question_type === 'poll' ? 0 : 1),
-		[item]
+	const [selectedTab, setSelectedTab] = useState(
+		item.question_data.question_type === 'poll' ? 0 : 1
 	);
-
-	const [selectedTab, setSelectedTab] = useState(defaultSelectedTab);
-
-	const { setFieldValue } = useFormikContext();
 
 	useEffect(() => {
 		if (isEdit) {
@@ -80,38 +77,40 @@ const QuestionElement = ({
 
 	return (
 		<DraggableCardLayout
-			title={'Add Question'}
+			title={
+				isPublished && isItemCreated
+					? capitalize(item.question_data.question_type)
+					: 'Add Question'
+			}
 			key={index}
 			index={index}
 			item={item}
 			onDeleteIconClick={handleRemoveElement}
 		>
-			<div>
-				<TabPanes
-					type='questions'
-					headings={tabPanesHeadings}
-					defaultValue={defaultSelectedTab}
-					onClick={tabPanesOnClickHanlder}
-					disabled={isPublished && isItemCreated}
-				>
-					<TabPanes.TabPanel value={0}>
-						<ArticleQuestionForm
-							type={'poll'}
-							index={index}
-							item={item}
-							isPublished={isPublished}
-						/>
-					</TabPanes.TabPanel>
-					<TabPanes.TabPanel value={1}>
-						<ArticleQuestionForm
-							type={'quiz'}
-							index={index}
-							item={item}
-							isPublished={isPublished}
-						/>
-					</TabPanes.TabPanel>
-				</TabPanes>
-			</div>
+			<TabPanes
+				type='questions'
+				headings={tabPanesHeadings}
+				defaultValue={item.question_data.question_type === 'poll' ? 0 : 1}
+				onClick={tabPanesOnClickHanlder}
+				hideTabsHead={isPublished && isItemCreated}
+			>
+				<TabPanes.TabPanel value={0}>
+					<ArticleQuestionForm
+						type={'poll'}
+						index={index}
+						item={item}
+						isPublished={isPublished}
+					/>
+				</TabPanes.TabPanel>
+				<TabPanes.TabPanel value={1}>
+					<ArticleQuestionForm
+						type={'quiz'}
+						index={index}
+						item={item}
+						isPublished={isPublished}
+					/>
+				</TabPanes.TabPanel>
+			</TabPanes>
 		</DraggableCardLayout>
 	);
 };

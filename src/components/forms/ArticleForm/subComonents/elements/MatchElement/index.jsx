@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useFormikContext } from 'formik';
 import { isEmpty, compact } from 'lodash';
+import { useElementsStyles } from '../elements.styles';
 import FormikSelect from '../../../../../ui/inputs/formik/FormikSelect';
 import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 import { getTeamOptions, getMatchName } from '../../../../../../data/utils';
@@ -15,6 +16,7 @@ const MatchElement = ({
 	isPublished,
 	handleRemoveElement
 }) => {
+	const classes = useElementsStyles();
 	const [leagues, setLeagues] = useState([]);
 	const [teams, setTeams] = useState([]);
 	const [matches, setMatches] = useState([]);
@@ -111,33 +113,42 @@ const MatchElement = ({
 			item={item}
 			onDeleteIconClick={handleRemoveElement}
 		>
-			<FormikSelect
-				name={`elements.${index}.league_name`}
-				placeholder='Please select'
-				label='SELECT LEAGUE'
-				options={leagues}
-				mapOptions={{ labelKey: 'name', valueKey: 'name' }}
-				disabled={isPublished && isItemCreated}
-				onChange={handleLeagueChange}
-			/>
-			<FormikSelect
-				name={`elements.${index}.team_name`}
-				placeholder='Please select'
-				label='SELECT TEAM'
-				options={teams}
-				mapOptions={{ labelKey: 'name', valueKey: 'name' }}
-				disabled={(isPublished && isItemCreated) || isEmpty(item.league_name)}
-				onChange={handleTeamChange}
-			/>
-			<FormikSelect
-				name={`elements.${index}.match_title`}
-				placeholder='Please select'
-				label='SELECT MATCH'
-				options={matches}
-				mapOptions={{ labelKey: 'name', valueKey: 'name' }}
-				disabled={(isPublished && isItemCreated) || isEmpty(item.team_name)}
-				onChange={handleMatchChange}
-			/>
+			<div className={classes.fieldContainer}>
+				<FormikSelect
+					name={`elements.${index}.league_name`}
+					placeholder='Please select'
+					label='SELECT LEAGUE'
+					options={leagues}
+					mapOptions={{ labelKey: 'name', valueKey: 'name' }}
+					disabled={isPublished && isItemCreated}
+					onChange={handleLeagueChange}
+					required
+				/>
+			</div>
+			<div className={classes.fieldContainer}>
+				<FormikSelect
+					name={`elements.${index}.team_name`}
+					placeholder='Please select'
+					label='SELECT TEAM'
+					options={teams}
+					mapOptions={{ labelKey: 'name', valueKey: 'name' }}
+					disabled={(isPublished && isItemCreated) || isEmpty(item.league_name)}
+					onChange={handleTeamChange}
+					required
+				/>
+			</div>
+			<div className={classes.fieldContainer}>
+				<FormikSelect
+					name={`elements.${index}.match_title`}
+					placeholder='Please select'
+					label='SELECT MATCH'
+					options={matches}
+					mapOptions={{ labelKey: 'name', valueKey: 'name' }}
+					disabled={(isPublished && isItemCreated) || isEmpty(item.team_name)}
+					onChange={handleMatchChange}
+					required
+				/>
+			</div>
 		</DraggableCardLayout>
 	);
 };
