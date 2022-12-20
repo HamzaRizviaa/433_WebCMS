@@ -1,7 +1,8 @@
 import { omit, isEmpty } from 'lodash';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime, makeid } from '../utils';
-import { advancedSettingsValidationSchema, getUserDataObject } from './index';
+import { getUserDataObject } from './index';
+import { advancedSettingsValidationSchema } from './advancedSettingsHelpers';
 import * as Yup from 'yup';
 
 export const viralTableColumns = [
