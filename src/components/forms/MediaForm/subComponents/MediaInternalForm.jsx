@@ -23,7 +23,7 @@ import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
 import Button from '../../../ui/Button';
 import SelectField from '../../../ui/inputs/SelectField';
 import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
-
+import AdvancedSettingsForm from '../../common/AdvancedSettingsForm';
 // const isTrue = true;
 const MediaInternalForm = ({
 	getSubCategories,
@@ -371,6 +371,7 @@ const MediaInternalForm = ({
 								<FormikSwitchField name='show_likes' label='Show likes' />
 							</div>
 						</div>
+						<AdvancedSettingsForm />
 
 						{/* buttons */}
 						<div className={classes.buttonDiv}>
