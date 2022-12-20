@@ -275,8 +275,6 @@ const ArticleQuestionUpload = ({
 		}
 	};
 
-	console.log('type', type);
-
 	return (
 		<>
 			<Slide in={true} direction='up' {...{ timeout: 400 }}>
