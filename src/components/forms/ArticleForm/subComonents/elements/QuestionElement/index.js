@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useFormikContext } from 'formik';
-import { toLower, capitalize, isEmpty } from 'lodash';
+import { toLower, isEmpty } from 'lodash';
 import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 import TabPanes from '../../../../../ui/TabPanes';
 import ArticleQuestionForm from './ArticleQuestionForm';
@@ -77,11 +77,7 @@ const QuestionElement = ({
 
 	return (
 		<DraggableCardLayout
-			title={
-				isPublished && isItemCreated
-					? capitalize(item.question_data.question_type)
-					: 'Add Question'
-			}
+			title={'Add Question'}
 			key={index}
 			index={index}
 			item={item}

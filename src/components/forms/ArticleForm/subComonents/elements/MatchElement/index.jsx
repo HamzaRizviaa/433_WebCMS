@@ -113,7 +113,7 @@ const MatchElement = ({
 			item={item}
 			onDeleteIconClick={handleRemoveElement}
 		>
-			<div className={classes.fieldContainer}>
+			<div className={classes.matchFieldContainer}>
 				<FormikSelect
 					name={`elements.${index}.league_name`}
 					placeholder='Please select'
@@ -125,7 +125,7 @@ const MatchElement = ({
 					required
 				/>
 			</div>
-			<div className={classes.fieldContainer}>
+			<div className={classes.matchFieldContainer}>
 				<FormikSelect
 					name={`elements.${index}.team_name`}
 					placeholder='Please select'
@@ -137,7 +137,7 @@ const MatchElement = ({
 					required
 				/>
 			</div>
-			<div className={classes.fieldContainer}>
+			<div className={classes.matchFieldContainer}>
 				<FormikSelect
 					name={`elements.${index}.match_title`}
 					placeholder='Please select'
