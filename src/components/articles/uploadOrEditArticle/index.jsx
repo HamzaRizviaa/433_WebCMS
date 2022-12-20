@@ -465,7 +465,6 @@ const UploadOrEditArticle = ({
 						element_type === 'QUESTION'
 							? {
 									...rest.question_data,
-
 									uploadedFiles: rest?.question_data?.image
 										? [
 												{
@@ -630,9 +629,12 @@ const UploadOrEditArticle = ({
 		let elementsData;
 		if (data.length) {
 			elementsData = data.map((item, index) => {
+				console.log('ApiItem', item);
 				const fileElement = getFileElementData(
-					item.element_type === 'QUESTION' ? item?.data?.uploadedFiles[0] : item?.data[0]
-					)
+					item.element_type === 'QUESTION'
+						? item?.data?.uploadedFiles && item?.data?.uploadedFiles[0]
+						: item?.data[0]
+				);
 				return {
 					element_type: item.element_type,
 
@@ -670,7 +672,7 @@ const UploadOrEditArticle = ({
 						: undefined),
 					sort_order: index + 1,
 					id: item.id || undefined,
-					...fileElement,
+					...fileElement
 				};
 			});
 		}
@@ -739,7 +741,7 @@ const UploadOrEditArticle = ({
 						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
 					},
 					params: {
-						api_version: isTranslationsEnabled ? 1 : 2
+						api_version: isTranslationsEnabled ? 1 : 4
 					}
 				}
 			);
@@ -1461,7 +1463,7 @@ const UploadOrEditArticle = ({
 			validateDraftBtn();
 		} else {
 			setPostButtonStatus(true);
-			loadingRef.current.scrollIntoView({ behavior: 'smooth' });
+			loadingRef?.current?.scrollIntoView({ behavior: 'smooth' });
 			setIsLoading(true);
 
 			if (isEdit) {
@@ -1473,10 +1475,10 @@ const UploadOrEditArticle = ({
 				};
 
 				let dataMedia = [];
-				if (data.length) {
+				if (data?.length) {
 					dataMedia = await Promise.all(
 						data.map(async (item, index) => {
-							if (item.element_type === 'MEDIA' && item.data[0].file) {
+							if (item?.element_type === 'MEDIA' && item?.data[0]?.file) {
 								let uploadedFile = await uploadFileToServer(
 									item.data[0],
 									'articleLibrary'
@@ -1485,23 +1487,26 @@ const UploadOrEditArticle = ({
 								dataCopy[index].data[0].media_url = uploadedFile.media_url;
 								dataCopy[index].data[0].thumbnail_url =
 									uploadedFile.thumbnail_url;
-								await setData(dataCopy);
+								setData(dataCopy);
 								return uploadedFile;
-							} 
-							else if(item.element_type === 'QUESTION' && item.data.uploadedFiles[0].file){
+							} else if (
+								item.element_type === 'QUESTION' &&
+								item?.data?.uploadedFiles &&
+								item?.data?.uploadedFiles[0]?.file
+							) {
 								let uploadedFile = await uploadFileToServer(
-									item.data.uploadedFiles[0],
+									item?.data?.uploadedFiles[0],
 									'articleLibrary'
 								);
 								const dataCopy = [...data];
-								dataCopy[index].data.uploadedFiles[0].image = uploadedFile?.media_url;
+								dataCopy[index].data.uploadedFiles[0].image =
+									uploadedFile?.media_url;
 								dataCopy[index].data.uploadedFiles[0].thumbnail_url =
 									uploadedFile?.thumbnail_url;
 
-								await setData(dataCopy);
+								setData(dataCopy);
 								return uploadedFile;
-							}
-							else {
+							} else {
 								return item;
 							}
 						})
@@ -1550,18 +1555,22 @@ const UploadOrEditArticle = ({
 								await setData(dataCopy);
 								return uploadedFile;
 							}
-							if(item.element_type === 'QUESTION' && item.data.uploadedFiles[0].file){
+							if (
+								item.element_type === 'QUESTION' &&
+								item?.data?.uploadedFiles &&
+								item?.data?.uploadedFiles[0]?.file
+							) {
 								let uploadedFile = await uploadFileToServer(
 									item.data.uploadedFiles[0],
 									'articleLibrary'
 								);
 								const dataCopy = [...data];
-								dataCopy[index].data.uploadedFiles[0].image = uploadedFile?.media_url;
+								dataCopy[index].data.uploadedFiles[0].image =
+									uploadedFile?.media_url;
 								dataCopy[index].data.uploadedFiles[0].thumbnail_url =
 									uploadedFile?.thumbnail_url;
 
 								await setData(dataCopy);
-								console.log('uploaded file..............', uploadedFile)
 								return uploadedFile;
 							}
 						})
@@ -1674,20 +1683,23 @@ const UploadOrEditArticle = ({
 									uploadedFile.thumbnail_url;
 								await setData(dataCopy);
 								return uploadedFile;
-							} 
-							else if(item.element_type === 'QUESTION' && item.data.uploadedFiles[0].file){
+							} else if (
+								item.element_type === 'QUESTION' &&
+								item.data.uploadedFiles[0].file
+							) {
 								let uploadedFile = await uploadFileToServer(
 									item.data.uploadedFiles[0],
 									'articleLibrary'
 								);
 								const dataCopy = [...data];
-								dataCopy[index].data.uploadedFiles[0].image = uploadedFile?.media_url;
-								dataCopy[index].data.uploadedFiles[0].thumbnail_url = uploadedFile?.thumbnail_url;
+								dataCopy[index].data.uploadedFiles[0].image =
+									uploadedFile?.media_url;
+								dataCopy[index].data.uploadedFiles[0].thumbnail_url =
+									uploadedFile?.thumbnail_url;
 								await setData(dataCopy);
-								console.log('uploaded file..............', uploadedFile)
+								console.log('uploaded file..............', uploadedFile);
 								return uploadedFile;
-							}
-							else {
+							} else {
 								return item;
 							}
 						})
@@ -1758,16 +1770,21 @@ const UploadOrEditArticle = ({
 								await setData(dataCopy);
 								return uploadedFile;
 							}
-							if(item.element_type === 'QUESTION' && item.data.uploadedFiles[0].file){
+							if (
+								item.element_type === 'QUESTION' &&
+								item.data.uploadedFiles[0].file
+							) {
 								let uploadedFile = await uploadFileToServer(
 									item.data.uploadedFiles[0],
 									'articleLibrary'
 								);
 								const dataCopy = [...data];
-								dataCopy[index].data.uploadedFiles[0].image = uploadedFile?.media_url;
-								dataCopy[index].data.uploadedFiles[0].thumbnail_url = uploadedFile?.thumbnail_url;
+								dataCopy[index].data.uploadedFiles[0].image =
+									uploadedFile?.media_url;
+								dataCopy[index].data.uploadedFiles[0].thumbnail_url =
+									uploadedFile?.thumbnail_url;
 								await setData(dataCopy);
-								console.log('uploaded file..............', uploadedFile)
+								console.log('uploaded file..............', uploadedFile);
 								return uploadedFile;
 							}
 						})
