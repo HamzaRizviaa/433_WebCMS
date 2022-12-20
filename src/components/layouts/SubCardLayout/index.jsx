@@ -2,7 +2,7 @@ import React from 'react';
 import { PropTypes } from 'prop-types';
 import { useSettingsLayoutStyles } from './index.style';
 
-const SettingsLayout = ({ title, children }) => {
+const SubCardLayout = ({ title, children }) => {
 	const classes = useSettingsLayoutStyles();
 
 	return (
@@ -13,9 +13,9 @@ const SettingsLayout = ({ title, children }) => {
 	);
 };
 
-SettingsLayout.propTypes = {
+SubCardLayout.propTypes = {
 	title: PropTypes.string.isRequired,
 	children: PropTypes.element.isRequired
 };
 
-export default SettingsLayout;
+export default SubCardLayout;

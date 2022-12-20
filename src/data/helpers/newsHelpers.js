@@ -5,6 +5,7 @@ import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime, makeid } from '../utils';
 import { getUserDataObject } from './index';
 import * as Yup from 'yup';
+import { advancedSettingsValidationSchema } from './advancedSettingsHelpers';
 
 export const newsColumns = [
 	{
@@ -181,7 +182,7 @@ export const newsFormInitialValues = (allRules) => {
 	};
 };
 
-export const newsFormValidationSchema = Yup.object().shape({
+export const newsFormValidationSchema = advancedSettingsValidationSchema.shape({
 	labels: Yup.array()
 		.min(4, (obj) => {
 			const labelsCount = obj.value?.length;
@@ -199,8 +200,6 @@ export const newsFormValidationSchema = Yup.object().shape({
 		.trim()
 		.required('You need to enter a banner description')
 		.label('Banner Description'),
-	show_likes: Yup.boolean().required(),
-	show_comments: Yup.boolean().required(),
 	slides: Yup.array()
 		.of(
 			Yup.object({
