@@ -10,8 +10,7 @@ import {
 	getRules,
 	selectSpecificQuestion,
 	selectSummaryFeatureFlag,
-	selectTriviaFeatureFlag,
-	getRules
+	selectTriviaFeatureFlag
 } from '../../../data/selectors';
 import {
 	questionDataFormatterForForm,

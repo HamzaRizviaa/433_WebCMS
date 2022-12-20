@@ -23,8 +23,6 @@ import {
 	areAllFieldsEmpty,
 	questionsFormInitialValues
 } from '../../../../../data/helpers';
-import { getRules } from '../../../../../data/selectors';
-import AdvancedSettingsForm from '../../../common/AdvancedSettingsForm';
 const headings = ['Poll', 'Quiz'];
 
 const QuestionInternalForm = ({

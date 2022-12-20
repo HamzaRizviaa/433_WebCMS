@@ -22,7 +22,6 @@ import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
 import Button from '../../../ui/Button';
 import SelectField from '../../../ui/inputs/SelectField';
-import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
 import AdvancedSettingsForm from '../../common/AdvancedSettingsForm';
 // const isTrue = true;
 const MediaInternalForm = ({
@@ -365,13 +364,8 @@ const MediaInternalForm = ({
 								maxRows={2}
 							/>
 						</div>
-						<div className={classes.fieldContainer}>
-							<div className={classes.switchContainer}>
-								<FormikSwitchField name='show_comments' label='Show comments' />
-								<FormikSwitchField name='show_likes' label='Show likes' />
-							</div>
-						</div>
-						<AdvancedSettingsForm />
+
+						<AdvancedSettingsForm isQuestions={false} />
 
 						{/* buttons */}
 						<div className={classes.buttonDiv}>

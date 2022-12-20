@@ -199,7 +199,6 @@ export const mediaDataFormatterForServer = (
 	completedUploadFiles,
 	allRules
 ) => {
-	console.log('MEDIAAA', media);
 	const filteredRules = allRules.filter((rule) => media.rules[rule._id]);
 	const mediaData = {
 		title: media.title,

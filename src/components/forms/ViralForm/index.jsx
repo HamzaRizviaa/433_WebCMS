@@ -39,7 +39,6 @@ const ViralForm = ({
 	const dispatch = useDispatch();
 	const specificViral = useSelector(selectSpecificViral);
 	const { rules } = useSelector(getRules);
-	console.log('RULESS', rules);
 
 	const {
 		features: { hlsVideoFormatOnVirals }
