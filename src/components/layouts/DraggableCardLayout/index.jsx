@@ -20,7 +20,8 @@ const DraggableCardLayout = ({
 	onDeleteIconClick,
 	largeIconsAndLabel = false,
 	disableActions = false,
-	children
+	children,
+	key
 }) => {
 	const [expanded, setExpanded] = useState(item?.isOpen || true);
 
@@ -32,7 +33,7 @@ const DraggableCardLayout = ({
 	});
 
 	return (
-		<Draggable draggableId={`draggable-${index}`} index={index}>
+		<Draggable draggableId={`draggable-${index}`} index={index} key={key}>
 			{(provided) => (
 				<div
 					ref={provided.innerRef}
