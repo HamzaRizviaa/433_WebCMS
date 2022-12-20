@@ -12,6 +12,12 @@ const ArticleQuestionForm = ({ type, index, item, isPublished }) => {
 	const { setFieldValue } = useFormikContext();
 	const isItemCreated = !isEmpty(item.id);
 
+	const displayDropzoneTitle = !(
+		isPublished &&
+		isItemCreated &&
+		item.question_data.uploadedFiles.length
+	);
+
 	const handleDeleteFile = () => {
 		setFieldValue(`elements.${index}.question_data.uploadedFiles`, []);
 	};
@@ -19,10 +25,12 @@ const ArticleQuestionForm = ({ type, index, item, isPublished }) => {
 	return (
 		<div>
 			<div>
-				<span className={classes.slideImageLabel}>
-					Add Background Image
-					<span className={classes.requiredImage}>{'*'}</span>
-				</span>
+				{displayDropzoneTitle && (
+					<span className={classes.slideImageLabel}>
+						Add Background Image
+						<span className={classes.requiredImage}>{'*'}</span>
+					</span>
+				)}
 				<div className={classes.dropzoneWrapper}>
 					<FormikDropzone
 						name={`elements.${index}.question_data.uploadedFiles`}

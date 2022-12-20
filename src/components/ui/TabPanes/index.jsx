@@ -14,7 +14,6 @@ const TabPanes = ({
 	children,
 	type,
 	defaultValue = 0,
-	value = false,
 	hideTabsHead = false
 }) => {
 	const muiClasses = useStyles({ type, hideTabsHead });
@@ -25,11 +24,7 @@ const TabPanes = ({
 
 	return (
 		<div className={muiClasses.root}>
-			<TabsUnstyled
-				defaultValue={defaultValue}
-				className={muiClasses.tabRoot}
-				{...(value ? { value: value } : {})}
-			>
+			<TabsUnstyled defaultValue={defaultValue} className={muiClasses.tabRoot}>
 				<TabsListUnstyled className={muiClasses.tabMainDiv}>
 					{headings.map((text, index) => (
 						<TabUnstyled
@@ -61,4 +56,4 @@ TabPanes.propTypes = {
 	value: PropTypes.any
 };
 
-export default TabPanes;
+export default React.memo(TabPanes);
