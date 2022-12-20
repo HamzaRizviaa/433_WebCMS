@@ -75,10 +75,6 @@ const QuestionElement = ({
 		resetQuestionDataField(formattedValue);
 	};
 
-	console.log({
-		defaultValue: item.question_data.question_type === 'poll' ? 0 : 1
-	});
-
 	return (
 		<DraggableCardLayout
 			title={
