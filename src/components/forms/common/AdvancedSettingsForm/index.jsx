@@ -5,14 +5,13 @@ import { getRules } from '../../../../data/selectors';
 import AccordianLayout from '../../../layouts/AccordianLayout';
 import SubCardLayout from '../../../layouts/SubCardLayout';
 import FormikCheckbox from '../../../ui/inputs/formik/FormikCheckbox';
-import PrimaryLoader from '../../../ui/loaders/PrimaryLoader';
 import { useAdvancedSettingsFormStyles } from './index.style';
 import { toolTipHandler, toolTipFormatter } from '../../../../data/helpers';
 
 const AdvancedSettingsForm = ({ isQuestions = false }) => {
 	const classes = useAdvancedSettingsFormStyles();
 
-	const { rules, loading } = useSelector(getRules);
+	const { rules } = useSelector(getRules);
 
 	return (
 		<div className={classes.advancedSettingRoot}>
@@ -27,18 +26,16 @@ const AdvancedSettingsForm = ({ isQuestions = false }) => {
 				)}
 
 				<SubCardLayout title={'Restrictions'}>
-					<PrimaryLoader loading={loading}>
-						{rules.map((val, index) => {
-							return (
-								<FormikCheckbox
-									name={`rules.${val._id}`}
-									label={val.title}
-									tooltip={toolTipFormatter(toolTipHandler(val))}
-									key={index}
-								/>
-							);
-						})}
-					</PrimaryLoader>
+					{rules.map((val, index) => {
+						return (
+							<FormikCheckbox
+								name={`rules.${val._id}`}
+								label={val.title}
+								tooltip={toolTipFormatter(toolTipHandler(val))}
+								key={index}
+							/>
+						);
+					})}
 				</SubCardLayout>
 			</AccordianLayout>
 		</div>
