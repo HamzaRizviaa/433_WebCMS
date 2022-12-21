@@ -234,6 +234,7 @@ export const uploadArticleFiles = async (article) => {
 				};
 			}
 		} else if (item.element_type === ARTICLE_ELEMENTS_TYPES.QUESTION) {
+			console.log({ item });
 			elements[index].question_data.answers = item.question_data.answers.map(
 				(answerItem, answerIndex) => ({
 					...answerItem,
@@ -261,9 +262,10 @@ export const uploadArticleFiles = async (article) => {
 				);
 				const questionData = {
 					...omit(item.question_data, ['uploadedFiles']),
-					...pick(item.question_data.uploadedFiles[0], ['width', 'height']),
 					image: uploadedFile.media_url,
-					file_name: uploadedFile.file_name
+					file_name: uploadedFile.file_name,
+					width: item.question_data.uploadedFiles[0].width || 0,
+					height: item.question_data.uploadedFiles[0].height || 0
 				};
 				elements[index].question_data = questionData;
 				elements[index].sort_order = index + 1;
@@ -271,7 +273,6 @@ export const uploadArticleFiles = async (article) => {
 			} else {
 				const questionData = {
 					...omit(item.question_data, ['uploadedFiles']),
-					...pick(item.question_data.uploadedFiles[0], ['width', 'height']),
 					image: item.question_data.uploadedFiles[0].media_url.includes(
 						'cloudfront.net/'
 					)
@@ -279,7 +280,9 @@ export const uploadArticleFiles = async (article) => {
 								'cloudfront.net/'
 						  )[1]
 						: item.question_data.uploadedFiles[0].media_url,
-					file_name: item.question_data.uploadedFiles[0].file_name
+					file_name: item.question_data.uploadedFiles[0].file_name,
+					width: item.question_data.uploadedFiles[0].width || 0,
+					height: item.question_data.uploadedFiles[0].height || 0
 				};
 				elements[index].question_data = questionData;
 				elements[index].sort_order = index + 1;
@@ -365,7 +368,9 @@ const articleElementsFormatterForForm = (elements) => {
 									media_url:
 										`${process.env.REACT_APP_MEDIA_ENDPOINT}/${elem.question_data.image}` ||
 										undefined,
-									file_name: elem.question_data.file_name
+									file_name: elem.question_data.file_name,
+									width: elem.question_data.width,
+									height: elem.question_data.height
 								}
 						  ]
 						: []
