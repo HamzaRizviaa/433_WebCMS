@@ -19,7 +19,7 @@ const QuestionElement = ({
 	isEdit,
 	status
 }) => {
-	const { setFieldValue } = useFormikContext();
+	const { setFieldValue, setFieldTouched } = useFormikContext();
 
 	const isPublished = isEdit && status === 'published';
 	const isItemCreated = !isEmpty(item.id);
@@ -59,6 +59,7 @@ const QuestionElement = ({
 			...questionElement.data.question_data,
 			question_type: value
 		});
+		setFieldTouched(`elements.${index}`, false);
 	};
 
 	const tabPanesOnClickHanlder = (value) => {
