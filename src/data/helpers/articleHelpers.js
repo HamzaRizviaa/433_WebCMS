@@ -234,6 +234,7 @@ export const uploadArticleFiles = async (article) => {
 				};
 			}
 		} else if (item.element_type === ARTICLE_ELEMENTS_TYPES.QUESTION) {
+			console.log({ item });
 			elements[index].question_data.answers = item.question_data.answers.map(
 				(answerItem, answerIndex) => ({
 					...answerItem,
@@ -367,7 +368,9 @@ const articleElementsFormatterForForm = (elements) => {
 									media_url:
 										`${process.env.REACT_APP_MEDIA_ENDPOINT}/${elem.question_data.image}` ||
 										undefined,
-									file_name: elem.question_data.file_name
+									file_name: elem.question_data.file_name,
+									width: elem.question_data.width,
+									height: elem.question_data.height
 								}
 						  ]
 						: []
