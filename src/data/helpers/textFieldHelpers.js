@@ -133,6 +133,16 @@ export const formatAndStyle = {
 					format: 'body_boldAndTiny'
 				}
 			]
+		},
+		{
+			title: 'Colours',
+			items: [
+				{
+					title: '433 Yellow',
+					inline: 'span',
+					styles: { color: '#ffff00' }
+				}
+			]
 		}
 	]
 };
