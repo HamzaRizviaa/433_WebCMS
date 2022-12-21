@@ -120,7 +120,7 @@ const ViralInternalForm = ({
 						required
 					/>
 				</div>
-				<AdvancedSettingsForm isQuestions={false} />
+				<AdvancedSettingsForm />
 			</div>
 			<div className={classes.buttonDiv}>
 				<div>

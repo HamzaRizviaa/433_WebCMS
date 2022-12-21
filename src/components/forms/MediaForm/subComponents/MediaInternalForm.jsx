@@ -42,7 +42,6 @@ const MediaInternalForm = ({
 	const lastMainCatRef = useRef(null);
 	const isPublished = isEdit && status === 'published';
 	const { rules } = useSelector(getRules);
-	console.log(rules);
 
 	// get categories
 	const {
@@ -368,7 +367,7 @@ const MediaInternalForm = ({
 							/>
 						</div>
 
-						<AdvancedSettingsForm isQuestions={false} />
+						<AdvancedSettingsForm />
 
 						{/* buttons */}
 						<div className={classes.buttonDiv}>

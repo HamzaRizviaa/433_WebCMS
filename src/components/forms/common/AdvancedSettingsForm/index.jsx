@@ -9,7 +9,7 @@ import PrimaryLoader from '../../../ui/loaders/PrimaryLoader';
 import { useAdvancedSettingsFormStyles } from './index.style';
 import { toolTipHandler, toolTipFormatter } from '../../../../data/helpers';
 
-const AdvancedSettingsForm = ({ isQuestions }) => {
+const AdvancedSettingsForm = ({ isQuestions = false }) => {
 	const classes = useAdvancedSettingsFormStyles();
 
 	const { rules, loading } = useSelector(getRules);

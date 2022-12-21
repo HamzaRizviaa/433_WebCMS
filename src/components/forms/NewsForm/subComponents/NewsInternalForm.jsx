@@ -104,7 +104,7 @@ const NewsInternalForm = ({
 				</div>
 			</AccordianLayout>
 
-			<AdvancedSettingsForm isQuestions={false} />
+			<AdvancedSettingsForm />
 
 			<FieldArray
 				name='slides'
