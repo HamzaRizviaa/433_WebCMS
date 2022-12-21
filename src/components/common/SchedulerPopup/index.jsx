@@ -8,8 +8,11 @@ import InlineDatePicker from '../../ui/inputs/InlineDatePicker';
 import TimePickerField from '../../ui/inputs/TimePickerField';
 import SchedulerDateField from '../../ui/inputs/SchedulerDateField';
 import { useStyles } from './index.styles';
+import { Collapse } from '@mui/material';
+import { isPastTime } from '../../../data/utils';
 
-const SchedulerPopup = ({ open, onClose, onConfirm, selectsRange = false }) => {
+const SchedulerPopup = ({ open, onClose,onConfirm, selectsRange = false }) => {
+	const [isError, setError] = useState(false);
 	const [values, setValues] = useState({
 		startStamp: {
 			date: null,
@@ -61,11 +64,17 @@ const SchedulerPopup = ({ open, onClose, onConfirm, selectsRange = false }) => {
 	};
 
 	const handleConfirm = () => {
-		onConfirm(values);
+		if (isPastTime(values?.startStamp?.hour, values?.startStamp?.min)) {
+			alert('cannot select past time');
+			setError(!isError);
+			return;
+		}
+		// console.log(onConfirm)
+		onConfirm()
 	};
 
-	const formateDate = (data) =>
-		dayjs(data || new Date()).format('MMM DD, YYYY');
+	const formateDate = (date) =>
+		dayjs(date || new Date()).format('MMM DD, YYYY');
 
 	const classes = useStyles();
 	return (
@@ -131,6 +140,51 @@ const SchedulerPopup = ({ open, onClose, onConfirm, selectsRange = false }) => {
 						</div>
 					</div>
 				</Grid>
+
+				{/* Notification */}
+				<Grid item xs={12}>
+					<Collapse in={isError}>
+						<div
+							style={{
+								border: '1px solid red',
+								height: '50px',
+								borderRadius: '8px',
+								background: '#FF355A',
+								margin: '5px 0 10px 0',
+								padding: '16px',
+								//verticle alignment
+								display: 'flex',
+								alignItems: 'center',
+								flexWrap: 'wrap',
+								// typography
+								fontFamily: 'Poppins',
+								fontSize: '12px',
+								lineHeight: '16px',
+								letterSpacing: '0.03em',
+								color: '#fff'
+							}}
+						>
+							<div
+								className='title'
+								style={{
+									flexBasis: '100%',
+									fontWeight: 700
+								}}
+							>
+								Whoops...
+							</div>
+							<div
+								className='content'
+								style={{
+									fontWeight: 400
+								}}
+							>
+								You can’t schedule in the past. Please select a time and date
+								atleast 15 minutes from now.
+							</div>
+						</div>
+					</Collapse>
+				</Grid>
 			</Grid>
 		</Modal>
 	);
@@ -139,7 +193,7 @@ const SchedulerPopup = ({ open, onClose, onConfirm, selectsRange = false }) => {
 SchedulerPopup.propTypes = {
 	open: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
-	onConfirm: PropTypes.func.isRequired,
+	onConfirm: PropTypes.func,
 	selectsRange: PropTypes.bool
 };
 
