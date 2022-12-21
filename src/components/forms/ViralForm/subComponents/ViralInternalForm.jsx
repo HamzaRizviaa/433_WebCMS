@@ -2,11 +2,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { pick, isEqual } from 'lodash';
 import { useFormikContext } from 'formik';
-import { useFormStyles } from '../../forms.style';
+import { useDispatch, useSelector } from 'react-redux';
+import dayjs from 'dayjs';
+import { IconButton } from '@material-ui/core';
 
-import { InfoIcon, Calendar } from '../../../../assets/svg-icons';
-import { viralFormInitialValues } from '../../../../data/helpers';
-
+import { InfoIcon, Calendar, Edit } from '../../../../assets/svg-icons';
 import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
 import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
@@ -14,6 +14,10 @@ import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
 import TextTooltip from '../../../ui/TextTooltip';
 import Button from '../../../ui/Button';
 import SchedulerPopup from '../../../common/SchedulerPopup';
+import { selectSpecificViral } from '../../../../data/selectors';
+import { resetSpecificViral } from '../../../../data/features/viralLibrary/viralLibrarySlice';
+import { viralFormInitialValues } from '../../../../data/helpers';
+import { useFormStyles } from '../../forms.style';
 
 /**
  * ViralInternalForm Component is used as a child of the ViralForm and the link to that is given below.
@@ -28,6 +32,7 @@ const ViralInternalForm = ({
 	onSubmitHandler,
 	toggleDeleteModal
 }) => {
+	const dispatch = useDispatch();
 	const [schedularModalState, setSchedulerModalState] = useState(false);
 
 	const closeSchedulerModal = () => setSchedulerModalState(false);
@@ -38,17 +43,20 @@ const ViralInternalForm = ({
 		dirty,
 		isValid,
 		isSubmitting,
-		handleSubmit,
 		setFieldValue,
 		setSubmitting,
 		validateForm,
-		resetForm
+		resetForm,
+		submitForm
 	} = useFormikContext();
+
+	const specificViral = useSelector(selectSpecificViral);
 
 	useEffect(() => {
 		validateForm();
 		return () => {
 			resetForm(viralFormInitialValues);
+			dispatch(resetSpecificViral());
 		};
 	}, []);
 
@@ -63,13 +71,38 @@ const ViralInternalForm = ({
 		return !dirty || isEqualToDefaultValues;
 	}, [dirty, values]);
 
-	const saveDraftHandler = () =>
-		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
-
-	// Need to implement functionality
 	const handleScheduleConfirm = (values) => {
-		console.log(values);
 		closeSchedulerModal();
+
+		const { date, hour, min } = values.startStamp;
+
+		const selectedDate = dayjs(date).format('YYYY-MM-DD');
+		const selectedTime = `${hour}:${min.length === 1 ? '0' : ''}${min}`;
+		const selectedDateTime = `${selectedDate}T${selectedTime}`;
+
+		setFieldValue('schedule_date', new Date(selectedDateTime).toISOString());
+		setFieldValue('save_draft', true);
+		submitForm();
+	};
+
+	const handleRemoveSchedule = () => {
+		setFieldValue('schedule_date', null);
+		setFieldValue('save_draft', true);
+		submitForm();
+	};
+
+	const handleDraftClick = () => {
+		setFieldValue('save_draft', true);
+		onSubmitHandler(values, { setSubmitting, isSubmitting });
+	};
+
+	const handlePublishClick = () => {
+		setFieldValue('save_draft', false);
+		setFieldValue('schedule_date', null);
+	};
+
+	const handleSaveChangesClick = () => {
+		setFieldValue('save_draft', true);
 	};
 
 	const classes = useFormStyles();
@@ -80,8 +113,26 @@ const ViralInternalForm = ({
 				open={schedularModalState}
 				onClose={closeSchedulerModal}
 				onConfirm={handleScheduleConfirm}
+				onRemove={handleRemoveSchedule}
+				initialStartDate={values.is_scheduled && specificViral?.schedule_date}
+				isScheduled={values.is_scheduled}
 			/>
 			<div>
+				{values.is_scheduled && (
+					<div className={classes.scheduledTime}>
+						<h2>
+							<span className={classes.scheduleTimeLabel}>Scheduled Time:</span>
+							{dayjs(values.schedule_date).format('DD-MM-YYYY, HH:mm')}
+						</h2>
+						<IconButton onClick={openSchedulerModal} disabled={!isValid}>
+							<Edit
+								className={`${classes.editScheduleIcon} ${
+									!isValid ? classes.disabledIcon : ''
+								}`}
+							/>
+						</IconButton>
+					</div>
+				)}
 				<div className={classes.explanationWrapper}>
 					<h5>
 						{isEdit ? 'Media File' : 'Add Media File'}
@@ -156,24 +207,40 @@ const ViralInternalForm = ({
 				</div>
 				<div className={classes.publishDraftDiv}>
 					{(!isEdit || status === 'draft') && (
-						<Button
-							size='small'
-							variant={'outlined'}
-							disabled={isDraftDisabled}
-							onClick={saveDraftHandler}
-						>
-							{status === 'draft' && isEdit ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
-						</Button>
+						<>
+							{values.is_scheduled ? (
+								<Button
+									size='small'
+									variant='outlined'
+									type='submit'
+									disabled={isValid ? !dirty : !isValid}
+									onClick={handleSaveChangesClick}
+								>
+									SAVE CHANGES
+								</Button>
+							) : (
+								<Button
+									size='small'
+									variant='outlined'
+									disabled={isDraftDisabled}
+									onClick={handleDraftClick}
+								>
+									{status === 'draft' && isEdit
+										? 'SAVE DRAFT'
+										: 'SAVE AS DRAFT'}
+								</Button>
+							)}
+						</>
 					)}
 					<Button
 						type='submit'
 						disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
-						onClick={handleSubmit}
+						onClick={handlePublishClick}
 					>
 						{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
 					</Button>
 					<Button
-						disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
+						disabled={values.is_scheduled || isPublished ? true : !isValid}
 						onClick={openSchedulerModal}
 						iconBtn
 					>

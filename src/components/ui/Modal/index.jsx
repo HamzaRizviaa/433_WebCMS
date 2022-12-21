@@ -25,11 +25,15 @@ export default function Modal({
 	open,
 	onConfirm,
 	onClose,
+	onLeftButtonClick,
 	isSubmitting = false,
-	cancelButtonText = 'GO BACK',
 	confirmButtonText = 'CONFIRM',
 	confirmButtonVariant = 'contained',
 	confirmButtonColor = 'primary',
+	leftButtonText = 'GO BACK',
+	leftButtonVariant = 'outlined',
+	leftButtonColor = 'primary',
+	hideLeftButton = false,
 	size = 'small',
 	color = 'primary',
 	children
@@ -37,6 +41,11 @@ export default function Modal({
 	const classes = useModalStyles({ size, color });
 	const [playOpen] = useSound(soundOpen, { volume: 0.5 });
 	const [playClose] = useSound(soundClose, { volume: 0.5 });
+
+	const handleftButtonClick = () => {
+		onClose();
+		if (onLeftButtonClick) onLeftButtonClick();
+	};
 
 	return (
 		<div>
@@ -64,26 +73,33 @@ export default function Modal({
 					<div className={classes.dialogContentText}>{children}</div>
 				</DialogContent>
 				<DialogActions classes={{ root: classes.dialogActions }}>
-					<Button
-						onClick={onClose}
-						onMouseDown={playClose}
-						className={classes.modalBtns}
-						size='small'
-						variant='outlined'
-					>
-						{cancelButtonText}
-					</Button>
-					<Button
-						onClick={onConfirm}
-						onMouseDown={playOpen}
-						className={classes.modalBtns}
-						variant={confirmButtonVariant}
-						color={confirmButtonColor}
-						disabled={isSubmitting}
-						size='small'
-					>
-						{confirmButtonText}
-					</Button>
+					<div>
+						{!hideLeftButton && (
+							<Button
+								onClick={handleftButtonClick}
+								onMouseDown={playClose}
+								className={classes.modalBtns}
+								variant={leftButtonVariant}
+								color={leftButtonColor}
+								size='small'
+							>
+								{leftButtonText}
+							</Button>
+						)}
+					</div>
+					<div>
+						<Button
+							onClick={onConfirm}
+							onMouseDown={playOpen}
+							className={classes.modalBtns}
+							variant={confirmButtonVariant}
+							color={confirmButtonColor}
+							disabled={isSubmitting}
+							size='small'
+						>
+							{confirmButtonText}
+						</Button>
+					</div>
 				</DialogActions>
 			</Dialog>
 		</div>
@@ -95,11 +111,15 @@ Modal.propTypes = {
 	open: PropTypes.bool,
 	onConfirm: PropTypes.func.isRequired,
 	onClose: PropTypes.func.isRequired,
+	onLeftButtonClick: PropTypes.func,
 	isSubmitting: PropTypes.bool,
-	cancelButtonText: PropTypes.string,
 	confirmButtonText: PropTypes.string,
 	confirmButtonVariant: PropTypes.string,
 	confirmButtonColor: PropTypes.string,
+	leftButtonText: PropTypes.string,
+	leftButtonVariant: PropTypes.string,
+	leftButtonColor: PropTypes.string,
+	hideLeftButton: PropTypes.bool,
 	wrapperRef: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })

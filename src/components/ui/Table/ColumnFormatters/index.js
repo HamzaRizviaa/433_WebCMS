@@ -5,6 +5,7 @@ import MediaPreviewer from '../../../common/MediaPreviewer';
 import TextMarkup from './TextMarkup';
 import TextWrapper from './TextWrapper';
 import TextWithMultiIcon from './TextWithMultiIcon';
+import TextWithIcon from './TextWithIcon';
 
 const formatter = {
 	status: StatusBadge,
@@ -12,7 +13,8 @@ const formatter = {
 	media: MediaPreviewer,
 	markup: TextMarkup,
 	wrapper: TextWrapper,
-	textWithIcon: TextWithMultiIcon
+	textWithIcon: TextWithMultiIcon,
+	textAndIcon: TextWithIcon
 };
 
 export const getFormatter = (type, props = {}) => {

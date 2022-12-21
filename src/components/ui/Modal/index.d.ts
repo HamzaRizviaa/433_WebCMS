@@ -6,11 +6,15 @@ export interface ModalProps {
 	open: boolean;
 	onConfirm: () => void;
 	onClose: () => void;
+	onLeftButtonClick: () => void;
 	isSubmitting?: boolean;
-	cancelButtonText?: string;
 	confirmButtonText?: string;
 	confirmButtonVariant?: ButtonProps['variant'];
 	confirmButtonColor?: ButtonProps['color'];
+	leftButtonText?: string;
+	leftButtonVariant?: string;
+	leftButtonColor?: string;
+	hideLeftButton?: boolean;
 	children: React.ReactElement;
 	size?: 'small' | 'medium' | 'large';
 	color?: 'primary' | 'secondary';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Box, Grid } from '@material-ui/core';
 import dayjs from 'dayjs';
@@ -8,8 +8,18 @@ import InlineDatePicker from '../../ui/inputs/InlineDatePicker';
 import TimePickerField from '../../ui/inputs/TimePickerField';
 import SchedulerDateField from '../../ui/inputs/SchedulerDateField';
 import { useStyles } from './index.styles';
+import { formatScheduleDate } from '../../../data/helpers';
 
-const SchedulerPopup = ({ open, onClose, onConfirm, selectsRange = false }) => {
+const SchedulerPopup = ({
+	open,
+	onClose,
+	onConfirm,
+	onRemove,
+	initialStartDate,
+	initialEndDate,
+	selectsRange = false,
+	isScheduled = false
+}) => {
 	const [values, setValues] = useState({
 		startStamp: {
 			date: null,
@@ -24,6 +34,17 @@ const SchedulerPopup = ({ open, onClose, onConfirm, selectsRange = false }) => {
 			}
 		})
 	});
+
+	useEffect(() => {
+		if (initialStartDate) {
+			const formattedSchduleDate = formatScheduleDate(
+				initialStartDate,
+				initialEndDate
+			);
+
+			setValues(formattedSchduleDate);
+		}
+	}, [initialStartDate, initialEndDate]);
 
 	const handleDateChange = (selectedDate) => {
 		if (selectsRange) {
@@ -72,11 +93,14 @@ const SchedulerPopup = ({ open, onClose, onConfirm, selectsRange = false }) => {
 		<Modal
 			title='Pick a date & time'
 			size='medium'
+			color='secondary'
 			open={open}
 			onClose={onClose}
-			color='secondary'
-			confirmButtonText='Schedule'
 			onConfirm={handleConfirm}
+			onLeftButtonClick={onRemove}
+			confirmButtonText='Schedule'
+			leftButtonText='Remove Schedule'
+			hideLeftButton={!isScheduled}
 		>
 			<Grid container>
 				<Grid item md={7}>
@@ -140,7 +164,11 @@ SchedulerPopup.propTypes = {
 	open: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
 	onConfirm: PropTypes.func.isRequired,
-	selectsRange: PropTypes.bool
+	onRemove: PropTypes.func.isRequired,
+	selectsRange: PropTypes.bool,
+	initialStartDate: PropTypes.object,
+	initialEndDate: PropTypes.object,
+	isScheduled: PropTypes.bool
 };
 
 export default SchedulerPopup;

@@ -29,10 +29,9 @@ const TimePickerField = ({ name, value, onChange, label = 'TIME' }) => {
 
 	// set mins
 	const setMins = (event) => {
-		let minValue = event.target.value;
-		if (Number(minValue) > 60 || Number(minValue) < 0 || minValue.length > 2)
-			return;
-		onChange(name, { hour: value.hour, min: minValue });
+		let minute = event.target.value;
+		if (Number(minute) > 60 || Number(minute) < 0 || minute.length > 2) return;
+		onChange(name, { hour: value.hour, min: minute });
 	};
 
 	// focus mins field
