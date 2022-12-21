@@ -123,12 +123,16 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 		setSubmitting(true);
 		setOpenDeleteModal(false);
 		try {
-			await dispatch(
+			const { payload } = await dispatch(
 				deleteArticleThunk({
 					article_id: id,
 					is_draft: isDraft
 				})
 			);
+
+			if (payload.status === 200) {
+				deleteReadMoreApi(id);
+			}
 
 			handleClose();
 			dispatch(getAllArticlesApi(queryParams));
