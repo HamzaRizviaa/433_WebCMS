@@ -14,6 +14,8 @@ import {
 	newsFormInitialValues
 } from '../../../../data/helpers';
 import AdvancedSettingsForm from '../../common/AdvancedSettingsForm';
+import { useSelector } from 'react-redux';
+import { getRules } from '../../../../data/selectors';
 
 const NewsInternalForm = ({
 	isEdit,
@@ -24,6 +26,7 @@ const NewsInternalForm = ({
 }) => {
 	const classes = useFormStyles();
 	const isPublished = isEdit && status === 'published';
+	const { rules } = useSelector(getRules);
 
 	const {
 		values,
@@ -39,7 +42,7 @@ const NewsInternalForm = ({
 	useEffect(() => {
 		validateForm();
 		return () => {
-			resetForm(newsFormInitialValues);
+			resetForm(newsFormInitialValues(rules));
 		};
 	}, []);
 
@@ -56,8 +59,8 @@ const NewsInternalForm = ({
 			areAllFieldsEmpty(item)
 		);
 		const isEqualToDefaultValues = isEqual(
-			pick(values, Object.keys(newsFormInitialValues)),
-			newsFormInitialValues
+			pick(values, Object.keys(newsFormInitialValues(rules))),
+			newsFormInitialValues(rules)
 		);
 
 		return !dirty || isAnyNewsSlideEmpty || isEqualToDefaultValues;
@@ -101,7 +104,7 @@ const NewsInternalForm = ({
 				</div>
 			</AccordianLayout>
 
-			<AdvancedSettingsForm />
+			<AdvancedSettingsForm isQuestions={false} />
 
 			<FieldArray
 				name='slides'

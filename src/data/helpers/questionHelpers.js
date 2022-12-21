@@ -120,44 +120,54 @@ export const questionSlideInitialValues = {
 	]
 };
 
-export const questionsFormInitialValues = {
-	resultsUploadedFiles: [],
-	positiveResultsUploadedFiles: [],
-	negativeResultsUploadedFiles: [],
-	coverImageUploadedFiles: [],
-	general_info: {
-		save_draft: true,
-		question_type: 'poll',
-		results: '',
-		results_image: '',
-		results_filename: '',
-		results_dropbox_url: '',
-		positive_results: '',
-		positive_results_image: '',
-		positive_results_filename: '',
-		positive_results_dropbox_url: '',
-		negative_results: '',
-		negative_results_image: '',
-		negative_results_filename: '',
-		negative_results_dropbox_url: '',
-		question_title: '',
-		cover_image: '',
-		cover_image_file_name: '',
-		cover_image_width: '',
-		cover_image_height: '',
-		cover_image_dropbox_url: ''
-	},
-	questions: [],
-	active_question_id: null,
-	active_question_end_date: null,
-	transition_to: null
+export const questionsFormInitialValues = (allRules) => {
+	const rules = {};
+
+	allRules.forEach((rule) => {
+		rules[rule._id] = false;
+	});
+	return {
+		resultsUploadedFiles: [],
+		positiveResultsUploadedFiles: [],
+		negativeResultsUploadedFiles: [],
+		coverImageUploadedFiles: [],
+		general_info: {
+			save_draft: true,
+			question_type: 'poll',
+			results: '',
+			results_image: '',
+			results_filename: '',
+			results_dropbox_url: '',
+			positive_results: '',
+			positive_results_image: '',
+			positive_results_filename: '',
+			positive_results_dropbox_url: '',
+			negative_results: '',
+			negative_results_image: '',
+			negative_results_filename: '',
+			negative_results_dropbox_url: '',
+			question_title: '',
+			cover_image: '',
+			cover_image_file_name: '',
+			cover_image_width: '',
+			cover_image_height: '',
+			cover_image_dropbox_url: ''
+		},
+		questions: [],
+		active_question_id: null,
+		active_question_end_date: null,
+		transition_to: null,
+		rules
+	};
 };
 
 export const questionDataFormatterForService = async (
 	values,
 	isDraft,
-	status = 'draft'
+	status = 'draft',
+	allRules
 ) => {
+	const filteredRules = allRules.filter((rule) => values.rules[rule._id]);
 	const pollFilesToUpload = [
 		values.coverImageUploadedFiles[0] || null,
 		values.resultsUploadedFiles[0] || null
@@ -246,7 +256,8 @@ export const questionDataFormatterForService = async (
 			})),
 			position: index + 1
 		})),
-		...(values.question_id ? { question_id: values.question_id } : {})
+		...(values.question_id ? { question_id: values.question_id } : {}),
+		rules: filteredRules
 	};
 
 	if (values.active_question_id) {
@@ -282,10 +293,21 @@ const updatingQuestionsSlides = (questionsSlides = []) => {
 	});
 };
 
-export const questionDataFormatterForForm = (question) => {
+export const questionDataFormatterForForm = (question, allRules) => {
 	const { id, summary, questions, ...rest } = question;
 
+	const rules = {};
+
+	allRules.forEach((rule) => {
+		rules[rule._id] = false;
+	});
+	//This loop should always run after the first one.
+	question.rules.forEach((rule) => {
+		rules[rule._id] = true;
+	});
+
 	const formattedQuestion = {
+		rules: rules,
 		question_id: id,
 		coverImageUploadedFiles: rest.cover_image
 			? [
@@ -351,6 +373,7 @@ export const questionDataFormatterForForm = (question) => {
 		active_question_end_date: null,
 		transition_to: null
 	};
+	formattedQuestion.rules = rules;
 	return formattedQuestion;
 };
 

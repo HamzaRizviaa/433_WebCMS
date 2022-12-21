@@ -73,9 +73,17 @@ export const mediaColumns = [
 	}
 ];
 
-export const mediaDataFormatterForForm = (media) => {
-	console.log('prebuild', media);
+export const mediaDataFormatterForForm = (media, allRules) => {
+	const rules = {};
 	const formattedMedia = { ...media };
+
+	allRules.forEach((rule) => {
+		rules[rule._id] = false;
+	});
+	//This loop should always run after the first one.
+	media.rules.forEach((rule) => {
+		rules[rule._id] = true;
+	});
 
 	if (formattedMedia?.labels) {
 		const updatedLabels = formattedMedia?.labels.map((label) => ({
@@ -132,6 +140,7 @@ export const mediaDataFormatterForForm = (media) => {
 	formattedMedia.image_dropbox_url = media?.dropbox_url?.portrait_cover_image;
 	formattedMedia.landscape_image_dropbox_url =
 		media?.dropbox_url?.landscape_cover_image;
+	formattedMedia.rules = rules;
 	return formattedMedia;
 };
 
@@ -188,9 +197,10 @@ export const mediaDataFormatterForServer = (
 	isDraft = false,
 	mediaFiles,
 	userData,
-	completedUploadFiles
+	completedUploadFiles,
+	allRules
 ) => {
-	console.log('MEDIAAA', media);
+	const filteredRules = allRules.filter((rule) => media.rules[rule._id]);
 	const mediaData = {
 		title: media.title,
 		translations: undefined,
@@ -263,6 +273,7 @@ export const mediaDataFormatterForServer = (
 				  })
 		},
 		...(media.id ? { media_id: media.id } : {}),
+		rules: filteredRules,
 		file_name_media: media?.uploadedFiles?.length
 			? media?.uploadedFiles[0]?.file_name
 			: '',
@@ -352,22 +363,31 @@ export const mediaFormStatusInitialValues = {
 	dirty: false
 };
 
-export const mediaFormInitialValues = {
-	mainCategory: '',
-	subCategory: '',
-	title: '',
-	media_dropbox_url: '', // uploaded file
-	image_dropbox_url: '', //portrait
-	landscape_image_dropbox_url: '', //landscape
-	description: '',
-	labels: [],
-	uploadedFiles: [],
-	uploadedCoverImage: [], // PORTRAIT
-	uploadedLandscapeCoverImage: [], //LANDSCAPE
-	show_likes: true,
-	show_comments: true,
-	mainCategoryContent: '',
-	subCategoryContent: ''
+export const mediaFormInitialValues = (allRules) => {
+	const rules = {};
+
+	allRules.forEach((rule) => {
+		rules[rule._id] = false;
+	});
+
+	return {
+		mainCategory: '',
+		subCategory: '',
+		title: '',
+		media_dropbox_url: '', // uploaded file
+		image_dropbox_url: '', //portrait
+		landscape_image_dropbox_url: '', //landscape
+		description: '',
+		labels: [],
+		uploadedFiles: [],
+		uploadedCoverImage: [], // PORTRAIT
+		uploadedLandscapeCoverImage: [], //LANDSCAPE
+		show_likes: true,
+		show_comments: true,
+		mainCategoryContent: '',
+		subCategoryContent: '',
+		rules
+	};
 };
 
 export const mediaFormValidationSchema = advancedSettingsValidationSchema.shape(

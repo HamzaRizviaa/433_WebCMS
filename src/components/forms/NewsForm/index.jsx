@@ -6,6 +6,7 @@ import { isEmpty } from 'lodash';
 import { Formik, Form } from 'formik';
 import { useCommonParams } from '../../../hooks';
 import { getRules, selectSpecificNews } from '../../../data/selectors';
+
 import {
 	newsDataFormatterForForm,
 	newsDataFormatterForService,

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { getRules } from '../../../../data/selectors';
 import AccordianLayout from '../../../layouts/AccordianLayout';
@@ -8,7 +9,7 @@ import PrimaryLoader from '../../../ui/loaders/PrimaryLoader';
 import { useAdvancedSettingsFormStyles } from './index.style';
 import { toolTipHandler, toolTipFormatter } from '../../../../data/helpers';
 
-const AdvancedSettingsForm = () => {
+const AdvancedSettingsForm = ({ isQuestions }) => {
 	const classes = useAdvancedSettingsFormStyles();
 
 	const { rules, loading } = useSelector(getRules);
@@ -16,10 +17,14 @@ const AdvancedSettingsForm = () => {
 	return (
 		<div className={classes.advancedSettingRoot}>
 			<AccordianLayout title='Advanced Settings'>
-				<SubCardLayout title={'Comments & Likes'}>
-					<FormikCheckbox name='show_comments' label='Show Comments' />
-					<FormikCheckbox name='show_likes' label='Show Likes' />
-				</SubCardLayout>
+				{!isQuestions ? (
+					<SubCardLayout title={'Comments & Likes'}>
+						<FormikCheckbox name='show_comments' label='Show Comments' />
+						<FormikCheckbox name='show_likes' label='Show Likes' />
+					</SubCardLayout>
+				) : (
+					<></>
+				)}
 
 				<SubCardLayout title={'Restrictions'}>
 					<PrimaryLoader loading={loading}>
@@ -40,6 +45,8 @@ const AdvancedSettingsForm = () => {
 	);
 };
 
-// AdvancedSettingsForm.propTypes = {};
+AdvancedSettingsForm.propTypes = {
+	isQuestions: PropTypes.bool.isRequired
+};
 
 export default AdvancedSettingsForm;
