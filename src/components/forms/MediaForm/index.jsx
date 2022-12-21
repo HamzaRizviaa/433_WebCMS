@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { Formik } from 'formik';
 import { useCommonParams } from '../../../hooks';
-import { selectSpecificMedia } from '../../../data/selectors';
+import { selectSpecificMedia, getRules } from '../../../data/selectors';
 import {
 	completeUpload,
 	fileUploadsArray,
@@ -40,6 +40,7 @@ const MediaForm = ({
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 	const dispatch = useDispatch();
 	const specificMedia = useSelector(selectSpecificMedia);
+	const { rules } = useSelector(getRules);
 
 	// States
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -50,9 +51,9 @@ const MediaForm = ({
 	const initialValues = useMemo(
 		() =>
 			isEdit && !isEmpty(specificMedia)
-				? mediaDataFormatterForForm(specificMedia)
-				: mediaFormInitialValues,
-		[isEdit, specificMedia]
+				? mediaDataFormatterForForm(specificMedia, rules)
+				: mediaFormInitialValues(rules),
+		[isEdit, specificMedia, rules]
 	);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
@@ -107,7 +108,8 @@ const MediaForm = ({
 				isDraft,
 				uploadedImgs,
 				getUser,
-				completedUploadFiles
+				completedUploadFiles,
+				rules
 			);
 
 			const { type } = await dispatch(

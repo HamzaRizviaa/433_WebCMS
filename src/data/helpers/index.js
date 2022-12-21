@@ -5,3 +5,4 @@ export * from './newsHelpers';
 export * from './questionHelpers';
 export * from './viralHelpers';
 export * from './topBannerHelpers';
+export * from './advancedSettingsHelpers';

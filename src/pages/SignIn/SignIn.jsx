@@ -148,7 +148,6 @@ const SignIn = ({ setLoginData }) => {
 	// 	localStorage.removeItem('loginData');
 	// 	setLoginData(null);
 	// };
-
 	useEffect(() => {
 		fetchAndActivate(remoteConfig)
 			.then(() => {
