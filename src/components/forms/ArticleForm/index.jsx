@@ -134,8 +134,6 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 				deleteReadMoreApi(id);
 			}
 
-			deleteReadMoreApi(id);
-
 			handleClose();
 			dispatch(getAllArticlesApi(queryParams));
 		} catch (e) {
