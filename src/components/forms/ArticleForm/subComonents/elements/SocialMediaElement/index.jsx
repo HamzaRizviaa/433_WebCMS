@@ -22,6 +22,7 @@ const SocialMediaElement = ({ index, item, name, handleRemoveElement }) => {
 					placeholder='Please drop the URL here'
 					multiline
 					maxRows={2}
+					required
 				/>
 			</div>
 		</DraggableCardLayout>

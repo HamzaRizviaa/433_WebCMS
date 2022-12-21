@@ -63,6 +63,7 @@ const ArticleElementsSidebar = ({ topElementRef, elementsWrapperRef }) => {
 			</Box>
 			{articleSidebarElements.map((dataItem, index) => (
 				<button
+					type={'button'}
 					onClick={() => handleClick(dataItem)}
 					key={index}
 					className={classes.elementContainter}

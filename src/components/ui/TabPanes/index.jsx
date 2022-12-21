@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import TabsUnstyled from '@mui/base/TabsUnstyled';
 import TabsListUnstyled from '@mui/base/TabsListUnstyled';
@@ -17,20 +18,30 @@ const TabPanes = ({
 	hideTabsHead = false
 }) => {
 	const muiClasses = useStyles({ type, hideTabsHead });
+	const [value, setValue] = useState(defaultValue);
 
-	const handleClick = (value) => {
+	const handleClick = (value, index) => {
 		if (onClick) onClick(value);
+		setValue(index);
 	};
+
+	useEffect(() => {
+		setValue(defaultValue);
+	}, [defaultValue]);
 
 	return (
 		<div className={muiClasses.root}>
-			<TabsUnstyled defaultValue={defaultValue} className={muiClasses.tabRoot}>
+			<TabsUnstyled
+				className={muiClasses.tabRoot}
+				defaultValue={defaultValue}
+				value={value}
+			>
 				<TabsListUnstyled className={muiClasses.tabMainDiv}>
 					{headings.map((text, index) => (
 						<TabUnstyled
 							disabled={disabled}
 							key={index}
-							onClick={() => handleClick(text)}
+							onClick={() => handleClick(text, index)}
 							type='button'
 						>
 							{text}
@@ -52,7 +63,8 @@ TabPanes.propTypes = {
 	children: PropTypes.element,
 	type: PropTypes.string,
 	hideTabsHead: PropTypes.bool,
-	defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+	defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+	value: PropTypes.any
 };
 
 export default TabPanes;

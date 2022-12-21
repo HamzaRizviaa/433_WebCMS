@@ -42,7 +42,6 @@ const DashboardLayout = ({
 		fetchAndActivate(remoteConfig)
 			.then(() => {
 				let configs = getAll(remoteConfig);
-				console.log('Configs getAll', configs);
 				dispatch(setRemoteConfig(configs));
 			})
 			.catch((err) => {

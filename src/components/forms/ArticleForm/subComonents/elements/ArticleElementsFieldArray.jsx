@@ -75,7 +75,7 @@ const ArticleElementsFieldArray = ({
 					<SocialMediaElement
 						index={index}
 						item={item}
-						name={`elements.${index}.instagram_post_url`}
+						name={`elements.${index}.ig_post_url`}
 						handleRemoveElement={handleRemoveElement}
 					/>
 				);

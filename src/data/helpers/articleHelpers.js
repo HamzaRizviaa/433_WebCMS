@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import moment from 'moment';
 import * as Yup from 'yup';
 import React from 'react';
@@ -116,7 +115,7 @@ export const articleSidebarElements = [
 		text: 'Add IG post',
 		data: {
 			element_type: ARTICLE_ELEMENTS_TYPES.IG,
-			instagram_post_url: '',
+			ig_post_url: '',
 			dropbox_url: ''
 		}
 	},
@@ -126,7 +125,7 @@ export const articleSidebarElements = [
 		data: {
 			element_type: ARTICLE_ELEMENTS_TYPES.QUESTION,
 			question_data: {
-				question_type: 'quiz',
+				question_type: 'poll',
 				uploadedFiles: [],
 				labels: [],
 				dropbox_url: '',
@@ -162,7 +161,9 @@ export const checkIfAnyArticleElementIsEmpty = (elements) => {
 			? areAllFieldsEmpty(
 					omit(item.question_data, ['question_type', 'answers'])
 			  ) && item.question_data.answers.every((ans) => !ans.answer)
-			: areAllFieldsEmpty({ ...omit(item, ['element_type']) });
+			: areAllFieldsEmpty({
+					...omit(item, ['id', 'element_type', 'sort_order'])
+			  });
 	});
 };
 
@@ -482,9 +483,9 @@ export const articleDataFormatterForService = (
 			'subCategoryName'
 		]),
 
-		author_image:
-			authorMediaUrl.split('cloudfront.net/')[1] ||
-			Profile433.split('cloudfront.net/')[1],
+		author_image: authorMediaUrl.includes('cloudfront.net/')
+			? authorMediaUrl.split('cloudfront.net/')[1]
+			: authorMediaUrl,
 
 		// Destructing the porperties of portrait file
 		...(uploadedFiles.length && !isEmpty(portraitImgFile)
@@ -585,12 +586,15 @@ export const articleFormValidationSchema = Yup.object().shape({
 	subCategoryName: Yup.string().required().label('Sub Category'),
 	author_text: Yup.string().required().label('Author Name'),
 	author_image: Yup.array().required().label('Author Image'),
-	title: Yup.string().max(43).required().label('Title'),
+	title: Yup.string().max(43).required().label('Article Title'),
 	sub_text: Yup.string().max(84).required().label('Sub Title'),
-	uploadedFiles: Yup.array().min(1).required().label('Portrait Image'),
+	uploadedFiles: Yup.array()
+		.min(1, 'You need to upload a portrait image in order to post article')
+		.required()
+		.label('Portrait Image'),
 	dropbox_url: Yup.string(),
 	uploadedLandscapeCoverImage: Yup.array()
-		.min(1)
+		.min(1, 'You need to upload a landscape image in order to post article')
 		.required()
 		.label('Landscape Image'),
 	landscape_dropbox_url: Yup.string(),
@@ -631,7 +635,10 @@ export const articleFormValidationSchema = Yup.object().shape({
 					.label('Media')
 					.when('element_type', {
 						is: (val) => val === ARTICLE_ELEMENTS_TYPES.MEDIA,
-						then: (schema) => schema.min(1).required(),
+						then: (schema) =>
+							schema
+								.min(1, 'You need to upload an image/video to post article')
+								.required(),
 						otherwise: (schema) => schema
 					}),
 
@@ -646,7 +653,7 @@ export const articleFormValidationSchema = Yup.object().shape({
 					}),
 
 				// IG element validations
-				instagram_post_url: Yup.string()
+				ig_post_url: Yup.string()
 					.trim()
 					.label('Instagram Post URL')
 					.when('element_type', {

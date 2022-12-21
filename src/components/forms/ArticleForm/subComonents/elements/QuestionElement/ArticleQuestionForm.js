@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
+import { capitalize, isEmpty } from 'lodash';
 import { useFormikContext } from 'formik';
 import { useElementsStyles } from '../elements.styles';
 import FormikDropzone from '../../../../../ui/inputs/formik/FormikDropzone';
@@ -12,6 +12,12 @@ const ArticleQuestionForm = ({ type, index, item, isPublished }) => {
 	const { setFieldValue } = useFormikContext();
 	const isItemCreated = !isEmpty(item.id);
 
+	const displayDropzoneTitle = !(
+		isPublished &&
+		isItemCreated &&
+		item.question_data.uploadedFiles.length
+	);
+
 	const handleDeleteFile = () => {
 		setFieldValue(`elements.${index}.question_data.uploadedFiles`, []);
 	};
@@ -19,10 +25,17 @@ const ArticleQuestionForm = ({ type, index, item, isPublished }) => {
 	return (
 		<div>
 			<div>
-				<span className={classes.slideImageLabel}>
-					Add Background Image
-					<span className={classes.requiredImage}>{'*'}</span>
-				</span>
+				{isPublished && isItemCreated && (
+					<span className={classes.titleHeading}>
+						{capitalize(item.question_data.question_type)}
+					</span>
+				)}
+				{displayDropzoneTitle && (
+					<span className={classes.slideImageLabel}>
+						Add Background Image
+						<span className={classes.requiredImage}>{'*'}</span>
+					</span>
+				)}
 				<div className={classes.dropzoneWrapper}>
 					<FormikDropzone
 						name={`elements.${index}.question_data.uploadedFiles`}
