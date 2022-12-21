@@ -13,6 +13,8 @@ const AdvancedSettingsForm = ({ isQuestions }) => {
 	const classes = useAdvancedSettingsFormStyles();
 
 	const { rules, loading } = useSelector(getRules);
+
+	console.log('RULESS', rules);
 	return (
 		<div className={classes.advancedSettingRoot}>
 			<AccordianLayout title='Advanced Settings'>

@@ -35,7 +35,6 @@ export const toolTipFormatter = (obj) => {
 	};
 	return Object.entries(values).map(([key, value]) => (
 		<div key={key} style={{ textTransform: 'capitalize' }}>
-			{console.log(key, value, 'key values')}
 			{key} : {value}
 		</div>
 	));
