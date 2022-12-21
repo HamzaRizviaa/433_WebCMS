@@ -86,12 +86,12 @@ const SchedulerPopup = ({
 
 	const handleConfirm = () => {
 		if (isPastTime(values?.startStamp?.hour, values?.startStamp?.min)) {
-			alert('cannot select past time');
-			setError(!isError);
+			setError(true);
 			return;
 		}
-		// console.log(onConfirm)
-		onConfirm();
+
+		setError(false);
+		onConfirm(values);
 	};
 
 	const formateDate = (date) =>
@@ -168,41 +168,9 @@ const SchedulerPopup = ({
 				{/* Notification */}
 				<Grid item xs={12}>
 					<Collapse in={isError}>
-						<div
-							style={{
-								border: '1px solid red',
-								height: '50px',
-								borderRadius: '8px',
-								background: '#FF355A',
-								margin: '5px 0 10px 0',
-								padding: '16px',
-								//verticle alignment
-								display: 'flex',
-								alignItems: 'center',
-								flexWrap: 'wrap',
-								// typography
-								fontFamily: 'Poppins',
-								fontSize: '12px',
-								lineHeight: '16px',
-								letterSpacing: '0.03em',
-								color: '#fff'
-							}}
-						>
-							<div
-								className='title'
-								style={{
-									flexBasis: '100%',
-									fontWeight: 700
-								}}
-							>
-								Whoops...
-							</div>
-							<div
-								className='content'
-								style={{
-									fontWeight: 400
-								}}
-							>
+						<div className={classes.schedulerErrorContainer}>
+							<div className={classes.schedulerErrorTitle}>Whoops...</div>
+							<div className={classes.schedulerErrorText}>
 								You can’t schedule in the past. Please select a time and date
 								atleast 15 minutes from now.
 							</div>
