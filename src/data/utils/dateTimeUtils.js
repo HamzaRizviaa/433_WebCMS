@@ -116,3 +116,21 @@ export const getLocalStorageDetails = () => {
 
 	return localStorageData;
 };
+
+// Check if given time is from past
+/**
+ *
+ * @param {number} hours
+ * @param {number} mins
+ * @param {number} futureDifference
+ * @returns {boolean}
+ */
+export const isPastTime = (hours, mins) => {
+	const date = new Date();
+	const currentHours = date.getHours();
+	const currentMins = date.getMinutes() + 15;
+	if (Number(hours) < currentHours) return true;
+	if (Number(hours) > currentHours) return false;
+	if (Number(hours) === currentHours && Number(mins) < currentMins) return true;
+	return false;
+};

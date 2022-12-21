@@ -57,23 +57,6 @@ const TimePickerField = ({ name, value, onChange, label = 'TIME' }) => {
 			);
 		});
 
-	// Check if given time is from past
-	/**
-	 *
-	 * @param {number} hours
-	 * @param {number} mins
-	 * @param {number} futureDifference
-	 * @returns {boolean}
-	 */
-	// const isPastTime = (hours, mins, futureDifference = 15) => {
-	// 	const date = new Date();
-	// 	const currentHours = date.getHours();
-	// 	const currentMins = date.getMinutes() + futureDifference;
-	// 	if (hours < currentHours) return true;
-	// 	if (hours === currentHours && mins < currentMins) return true;
-	// 	return false;
-	// };
-
 	// styles
 	const classes = useStyles();
 
