@@ -2,7 +2,6 @@ import axios from 'axios';
 import captureVideoFrame from 'capture-video-frame';
 import { getLocalStorageDetails } from './index';
 import { toast } from 'react-toastify';
-
 const uploadFileToServer = async (
 	uploadedFile,
 	libraryType,
@@ -95,11 +94,16 @@ const uploadFileToServer = async (
 			throw 'Error';
 		}
 	} catch (error) {
+<<<<<<< HEAD
 		toast.error('Failed to upload files, Please try again');
 		throw new Error();
 
 		// console.log('Error');
 		// return null;
+=======
+		toast.error('Failed to upload files. Please try again');
+		throw new Error('Failed to upload files. Please try again');
+>>>>>>> dev
 	}
 };
 
