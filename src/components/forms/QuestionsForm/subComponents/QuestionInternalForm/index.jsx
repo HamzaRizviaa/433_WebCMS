@@ -135,8 +135,8 @@ const QuestionInternalForm = ({
 		);
 
 		const isEqualToDefaultValues = isEqual(
-			pick(values, Object.keys(questionsFormInitialValues)),
-			questionsFormInitialValues
+			pick(values, Object.keys(questionsFormInitialValues(rules))),
+			questionsFormInitialValues(rules)
 		);
 
 		return !dirty || isAnyQuestionSlideEmpty || isEqualToDefaultValues;

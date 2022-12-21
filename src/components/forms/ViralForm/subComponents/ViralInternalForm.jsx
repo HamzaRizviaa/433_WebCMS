@@ -13,6 +13,8 @@ import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
 import TextTooltip from '../../../ui/TextTooltip';
 import Button from '../../../ui/Button';
 import AdvancedSettingsForm from '../../common/AdvancedSettingsForm';
+import { useSelector } from 'react-redux';
+import { getRules } from '../../../../data/selectors';
 
 /**
  * ViralInternalForm Component is used as a child of the ViralForm and the link to that is given below.
@@ -44,18 +46,18 @@ const ViralInternalForm = ({
 	useEffect(() => {
 		validateForm();
 		return () => {
-			resetForm(viralFormInitialValues);
+			resetForm(viralFormInitialValues(rules));
 		};
 	}, []);
 
 	const isPublished = isEdit && status === 'published';
+	const { rules } = useSelector(getRules);
 
 	const isDraftDisabled = useMemo(() => {
 		const isEqualToDefaultValues = isEqual(
-			pick(values, Object.keys(viralFormInitialValues)),
-			viralFormInitialValues
+			pick(values, Object.keys(viralFormInitialValues(rules))),
+			viralFormInitialValues(rules)
 		);
-
 		return !dirty || isEqualToDefaultValues;
 	}, [dirty, values]);
 
