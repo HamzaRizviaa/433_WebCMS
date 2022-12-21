@@ -58,12 +58,12 @@ export const useButtonStyles = makeStyles((theme) => {
 				position: ({ variant, isIconButton }) =>
 					variant === 'text' || isIconButton ? 'static' : 'absolute',
 				right: 30,
-				fill: ({ variant, color }) =>
-					variantToColorMapper[variant][color].color,
+				fill: ({ variant, color, isIconButton }) =>
+					isIconButton ? variantToColorMapper[variant][color].color : 'auto',
 
 				'& path': {
-					fill: ({ variant, color }) =>
-						variantToColorMapper[variant][color].color
+					fill: ({ variant, color, isIconButton }) =>
+						isIconButton ? variantToColorMapper[variant][color].color : 'auto'
 				}
 			}
 		}
