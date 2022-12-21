@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Grid } from '@material-ui/core';
-import { Collapse } from '@mui/material';
+import { Box, Grid, Collapse } from '@material-ui/core';
 import dayjs from 'dayjs';
 
 import Modal from '../../ui/Modal';
@@ -25,13 +24,13 @@ const SchedulerPopup = ({
 	const [isError, setError] = useState(false);
 	const [values, setValues] = useState({
 		startStamp: {
-			date: null,
+			date: new Date(),
 			hour: '00',
 			min: '00'
 		},
 		...(selectsRange && {
 			endStamp: {
-				date: null,
+				date: new Date(),
 				hour: '00',
 				min: '00'
 			}
@@ -85,13 +84,20 @@ const SchedulerPopup = ({
 	};
 
 	const handleConfirm = () => {
-		if (isPastTime(values?.startStamp?.hour, values?.startStamp?.min)) {
+		const { date, hour, min } = values.startStamp;
+
+		if (isPastTime(date, hour, min)) {
 			setError(true);
 			return;
 		}
 
 		setError(false);
 		onConfirm(values);
+	};
+
+	const handleClose = () => {
+		setError(false);
+		onClose();
 	};
 
 	const formateDate = (date) =>
@@ -104,7 +110,7 @@ const SchedulerPopup = ({
 			size='medium'
 			color='secondary'
 			open={open}
-			onClose={onClose}
+			onClose={handleClose}
 			onConfirm={handleConfirm}
 			onLeftButtonClick={onRemove}
 			confirmButtonText='Schedule'

@@ -103,7 +103,6 @@ export const viralDataFormatterForForm = (viral) => {
 
 	if (viral.is_scheduled) payload.schedule_date = viral.schedule_date;
 
-	console.log(payload);
 	return payload;
 };
 
