@@ -74,11 +74,15 @@ const ViralForm = ({
 			formikBag.setSubmitting(true);
 
 			try {
-				const uploadFileRes = await uploadFileToServer(
-					values.uploadedFiles[0],
-					'virallibrary',
-					isHlsFormatEnabled
-				);
+				let uploadFileRes = null;
+				if (values.uploadedFiles[0]?.file) {
+					uploadFileRes = await uploadFileToServer(
+						values.uploadedFiles[0],
+						'virallibrary',
+						isHlsFormatEnabled
+					);
+				}
+
 				const viralData = viralDataFormatterForService(
 					values,
 					uploadFileRes,
