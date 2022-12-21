@@ -94,8 +94,16 @@ const uploadFileToServer = async (
 			throw 'Error';
 		}
 	} catch (error) {
+<<<<<<< HEAD
+		toast.error('Failed to upload files, Please try again');
+		throw new Error();
+
+		// console.log('Error');
+		// return null;
+=======
 		toast.error('Failed to upload files. Please try again');
 		throw new Error('Failed to upload files. Please try again');
+>>>>>>> dev
 	}
 };
 
