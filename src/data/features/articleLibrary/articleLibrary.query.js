@@ -5,8 +5,16 @@ const articlesQuery = rootRtkQuery.injectEndpoints({
 		getMatchesTree: build.query({
 			query: () => '/matches',
 			transformResponse: (response) => response.data
+		}),
+		getPost: build.query({
+			query: (url) => ({
+				url
+				// responseHandler: (res) => res.text()
+			}),
+			transformResponse: (res) => res.data
 		})
 	})
 });
 
-export const { useLazyGetMatchesTreeQuery } = articlesQuery;
+export const { useLazyGetMatchesTreeQuery, useLazyGetPostQuery } =
+	articlesQuery;

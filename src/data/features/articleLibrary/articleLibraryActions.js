@@ -1,4 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
 import { ArticleLibraryService } from '../../services';
 
 export const getAllArticlesApi = createAsyncThunk(
@@ -55,6 +56,50 @@ export const getArticleSubCategories = createAsyncThunk(
 			return response.data.data;
 		} else {
 			return [];
+		}
+	}
+);
+
+export const createOrEditArticleThunk = createAsyncThunk(
+	'articleLibary/createOrEditArticleThunk',
+	async (data) => {
+		try {
+			const response = await ArticleLibraryService.postArticle(data);
+
+			if (response.data.status_code === 200) {
+				toast.success(
+					data.article_id
+						? 'Article has been edited!'
+						: 'Article has been created!'
+				);
+			}
+
+			return response;
+		} catch (e) {
+			toast.error(
+				data.article_id
+					? 'Failed to edit Article!'
+					: 'Failed to create Article!'
+			);
+			console.error(e);
+			throw new Error(e);
+		}
+	}
+);
+
+export const deleteArticleThunk = createAsyncThunk(
+	'articleLibary/deleteArticleThunk',
+	async (data) => {
+		try {
+			const response = await ArticleLibraryService.deleteArticle(data);
+
+			if (response.data.status_code === 200) {
+				toast.success('Article has been deleted!');
+			}
+			return response;
+		} catch (e) {
+			toast.error('Failed to delete Article!');
+			console.error(e);
 		}
 	}
 );

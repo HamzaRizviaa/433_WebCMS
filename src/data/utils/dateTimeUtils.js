@@ -139,3 +139,13 @@ export const isPastTime = (date, hours, mins) => {
 	if (timeDifference <= 900000) return true; // 900000 is in miliseconds which is equal to 15 minutes
 	return false;
 };
+
+export const getArticleDates = () => {
+	const date = formatDate2(new Date());
+	const today = new Date();
+	const time =
+		today.getHours() +
+		':' +
+		(today.getMinutes() < 10 ? '0' + today.getMinutes() : today.getMinutes());
+	return { date, today, time };
+};

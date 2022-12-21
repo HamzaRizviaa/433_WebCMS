@@ -7,7 +7,7 @@ const ToggleSwitchField = ({
 	name,
 	label,
 	checked,
-	disabled,
+	disabled = false,
 	onBlur,
 	onChange,
 	error,

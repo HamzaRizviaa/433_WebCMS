@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useRef, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
@@ -74,7 +73,7 @@ const ViralForm = ({
 			formikBag.setSubmitting(true);
 
 			try {
-				let uploadFileRes;
+	      let uploadFileRes;
 
 				if (values.uploadedFiles[0]?.file) {
 					uploadFileRes = await uploadFileToServer(
