@@ -9,14 +9,7 @@ import {
 	mediaFormInitialValues,
 	mediaUnwantedKeysForDeepEqual
 } from '../../../../data/helpers';
-import {
-	useGetMainCategoriesQuery
-	// useLazyGetSubCategoriesQuery
-} from '../../../../data/features/mediaLibrary/media.query';
-
-// import { Tooltip, Fade } from '@mui/material';
-// import { ReactComponent as Info } from '../../../../assets/InfoButton.svg';
-
+import { useGetMainCategoriesQuery } from '../../../../data/features/mediaLibrary/media.query';
 import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
 import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
@@ -24,7 +17,6 @@ import Button from '../../../ui/Button';
 import SelectField from '../../../ui/inputs/SelectField';
 import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
 
-// const isTrue = true;
 const MediaInternalForm = ({
 	getSubCategories,
 	subCategoryStates,

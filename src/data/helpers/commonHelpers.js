@@ -39,4 +39,3 @@ export const reorder = (list, startIndex, endIndex) => {
 export const getRelativePath = (url = '') => {
 	return url.split('cloudfront.net/')[1] || url;
 };
-
