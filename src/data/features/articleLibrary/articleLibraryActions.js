@@ -96,6 +96,7 @@ export const deleteArticleThunk = createAsyncThunk(
 			if (response.data.status_code === 200) {
 				toast.success('Article has been deleted!');
 			}
+			return response;
 		} catch (e) {
 			toast.error('Failed to delete Article!');
 			console.error(e);

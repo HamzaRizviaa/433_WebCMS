@@ -23,7 +23,10 @@ import {
 	deleteArticleThunk,
 	getArticleSubCategories
 } from '../../../data/features/articleLibrary/articleLibrarySlice';
-import { selectReadMoreArticlesFeatureFlag } from '../../../data/selectors';
+import {
+	getRules,
+	selectReadMoreArticlesFeatureFlag
+} from '../../../data/selectors';
 import {
 	publishReadMoreApi,
 	deleteReadMoreApi
@@ -38,6 +41,7 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 
 	// Selectors
 	const specificArticle = useSelector(selectSpecificArticle);
+	const { rules } = useSelector(getRules);
 
 	// Refs
 	const dialogWrapper = useRef(null);
@@ -53,9 +57,9 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 	const initialValues = useMemo(
 		() =>
 			isEdit && !isEmpty(specificArticle)
-				? articleDataFormatterForForm(specificArticle)
-				: articleFormInitialValues,
-		[isEdit, specificArticle]
+				? articleDataFormatterForForm(specificArticle, rules)
+				: articleFormInitialValues(rules),
+		[isEdit, specificArticle, rules]
 	);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
@@ -87,7 +91,8 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 			const articleData = articleDataFormatterForService(
 				{ ...values, elements },
 				uploadedFilesRes,
-				isDraft
+				isDraft,
+				rules
 			);
 
 			const { type, payload } = await dispatch(
@@ -123,12 +128,16 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 		setSubmitting(true);
 		setOpenDeleteModal(false);
 		try {
-			await dispatch(
+			const { payload } = await dispatch(
 				deleteArticleThunk({
 					article_id: id,
 					is_draft: isDraft
 				})
 			);
+
+			if (payload.status === 200) {
+				deleteReadMoreApi(id);
+			}
 
 			handleClose();
 			dispatch(getAllArticlesApi(queryParams));
