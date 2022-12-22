@@ -3,6 +3,7 @@ import { getDateTime, getLocalStorageDetails, makeid } from '../utils';
 import { isEmpty } from 'lodash';
 import axios from 'axios';
 import * as Yup from 'yup';
+import { advancedSettingsValidationSchema } from './advancedSettingsHelpers';
 
 export const mediaColumns = [
 	{
@@ -72,9 +73,17 @@ export const mediaColumns = [
 	}
 ];
 
-export const mediaDataFormatterForForm = (media) => {
-	console.log('prebuild', media);
+export const mediaDataFormatterForForm = (media, allRules) => {
+	const rules = {};
 	const formattedMedia = { ...media };
+
+	allRules.forEach((rule) => {
+		rules[rule._id] = false;
+	});
+	//This loop should always run after the first one.
+	media.rules.forEach((rule) => {
+		rules[rule._id] = true;
+	});
 
 	if (formattedMedia?.labels) {
 		const updatedLabels = formattedMedia?.labels.map((label) => ({
@@ -131,6 +140,7 @@ export const mediaDataFormatterForForm = (media) => {
 	formattedMedia.image_dropbox_url = media?.dropbox_url?.portrait_cover_image;
 	formattedMedia.landscape_image_dropbox_url =
 		media?.dropbox_url?.landscape_cover_image;
+	formattedMedia.rules = rules;
 	return formattedMedia;
 };
 
@@ -187,8 +197,10 @@ export const mediaDataFormatterForServer = (
 	isDraft = false,
 	mediaFiles,
 	userData,
-	completedUploadFiles
+	completedUploadFiles,
+	allRules
 ) => {
+	const filteredRules = allRules.filter((rule) => media.rules[rule._id]);
 	const mediaData = {
 		title: media.title,
 		translations: undefined,
@@ -261,6 +273,7 @@ export const mediaDataFormatterForServer = (
 				  })
 		},
 		...(media.id ? { media_id: media.id } : {}),
+		rules: filteredRules,
 		file_name_media: media?.uploadedFiles?.length
 			? media?.uploadedFiles[0]?.file_name
 			: '',
@@ -350,44 +363,53 @@ export const mediaFormStatusInitialValues = {
 	dirty: false
 };
 
-export const mediaFormInitialValues = {
-	mainCategory: '',
-	subCategory: '',
-	title: '',
-	media_dropbox_url: '', // uploaded file
-	image_dropbox_url: '', //portrait
-	landscape_image_dropbox_url: '', //landscape
-	description: '',
-	labels: [],
-	uploadedFiles: [],
-	uploadedCoverImage: [], // PORTRAIT
-	uploadedLandscapeCoverImage: [], //LANDSCAPE
-	show_likes: true,
-	show_comments: true,
-	mainCategoryContent: '',
-	subCategoryContent: ''
+export const mediaFormInitialValues = (allRules) => {
+	const rules = {};
+
+	allRules.forEach((rule) => {
+		rules[rule._id] = false;
+	});
+
+	return {
+		mainCategory: '',
+		subCategory: '',
+		title: '',
+		media_dropbox_url: '', // uploaded file
+		image_dropbox_url: '', //portrait
+		landscape_image_dropbox_url: '', //landscape
+		description: '',
+		labels: [],
+		uploadedFiles: [],
+		uploadedCoverImage: [], // PORTRAIT
+		uploadedLandscapeCoverImage: [], //LANDSCAPE
+		show_likes: true,
+		show_comments: true,
+		mainCategoryContent: '',
+		subCategoryContent: '',
+		rules
+	};
 };
 
-export const mediaFormValidationSchema = Yup.object().shape({
-	mainCategory: Yup.string().required().label('Main Category'),
-	subCategory: Yup.string().required().label('Sub Category'),
-	title: Yup.string().required().label('Title'),
-	media_dropbox_url: Yup.string(),
-	image_dropbox_url: Yup.string(),
-	landscape_image_dropbox_url: Yup.string(),
-	description: Yup.string().required().label('Description'),
-	labels: Yup.array()
-		.min(4, (obj) => {
-			const labelsCount = obj.value?.length;
-			return `You need to add ${
-				4 - labelsCount
-			} more labels in order to upload media`;
-		})
-		.required('You need to enter atleast 4 labels')
-		.label('Labels'),
-	uploadedFiles: Yup.array().min(1).required(),
-	uploadedCoverImage: Yup.array().min(1).required(),
-	uploadedLandscapeCoverImage: Yup.array().min(1).required(),
-	show_likes: Yup.boolean().required(),
-	show_comments: Yup.boolean().required()
-});
+export const mediaFormValidationSchema = advancedSettingsValidationSchema.shape(
+	{
+		mainCategory: Yup.string().required().label('Main Category'),
+		subCategory: Yup.string().required().label('Sub Category'),
+		title: Yup.string().required().label('Title'),
+		media_dropbox_url: Yup.string(),
+		image_dropbox_url: Yup.string(),
+		landscape_image_dropbox_url: Yup.string(),
+		description: Yup.string().required().label('Description'),
+		labels: Yup.array()
+			.min(4, (obj) => {
+				const labelsCount = obj.value?.length;
+				return `You need to add ${
+					4 - labelsCount
+				} more labels in order to upload media`;
+			})
+			.required('You need to enter atleast 4 labels')
+			.label('Labels'),
+		uploadedFiles: Yup.array().min(1).required(),
+		uploadedCoverImage: Yup.array().min(1).required(),
+		uploadedLandscapeCoverImage: Yup.array().min(1).required()
+	}
+);

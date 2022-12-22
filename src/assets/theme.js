@@ -62,6 +62,7 @@ const theme = createTheme({
 		green: '#00D87D',
 		pink: '#ffc0cb',
 		black90: '#1A1A1A',
+		black80: '#333333',
 		purple: '#9581FF'
 	},
 	typography: {

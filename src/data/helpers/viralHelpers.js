@@ -2,6 +2,7 @@ import { omit, isEmpty } from 'lodash';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime, makeid } from '../utils';
 import { getUserDataObject } from './index';
+import { advancedSettingsValidationSchema } from './advancedSettingsHelpers';
 import * as Yup from 'yup';
 
 export const viralTableColumns = [
@@ -60,8 +61,17 @@ export const viralTableColumns = [
 	}
 ];
 
-export const viralDataFormatterForForm = (viral) => {
+export const viralDataFormatterForForm = (viral, allRules) => {
 	const formattedViral = { ...viral };
+	const rules = {};
+
+	allRules.forEach((rule) => {
+		rules[rule._id] = false;
+	});
+	//This loop should always run after the first one.
+	viral.rules.forEach((rule) => {
+		rules[rule._id] = true;
+	});
 
 	if (formattedViral?.labels) {
 		const updatedLabels = formattedViral?.labels.map((label) => ({
@@ -86,12 +96,19 @@ export const viralDataFormatterForForm = (viral) => {
 				}
 		  ]
 		: [];
+	formattedViral.rules = rules;
 
 	return formattedViral;
 };
 
-export const viralDataFormatterForService = (viral, file, isDraft = false) => {
+export const viralDataFormatterForService = (
+	viral,
+	file,
+	isDraft = false,
+	allRules
+) => {
 	const { uploadedFiles } = viral;
+	const filteredRules = allRules.filter((rule) => viral.rules[rule._id]);
 
 	const viralData = {
 		save_draft: isDraft,
@@ -99,7 +116,13 @@ export const viralDataFormatterForService = (viral, file, isDraft = false) => {
 		user_data: getUserDataObject(),
 
 		// Destructing the properties of viral
-		...omit(viral, ['uploadedFiles', 'id', 'url']),
+		...omit(viral, [
+			'uploadedFiles',
+			'id',
+			'url',
+			'schedule_date',
+			'is_scheduled'
+		]),
 		media_url: viral.id ? viral.url : '',
 
 		// Destructing the porperties of files
@@ -118,6 +141,7 @@ export const viralDataFormatterForService = (viral, file, isDraft = false) => {
 					height: 0,
 					width: 0
 			  }),
+		rules: filteredRules,
 
 		// Destructing the viral id for edit state
 		...(viral.id ? { viral_id: viral.id } : {})
@@ -129,28 +153,38 @@ export const viralDataFormatterForService = (viral, file, isDraft = false) => {
 //
 // Viral Form Helpers
 //
-export const viralFormInitialValues = {
-	caption: '',
-	dropbox_url: '',
-	uploadedFiles: [],
-	labels: [],
-	show_likes: true,
-	show_comments: true
+
+export const viralFormInitialValues = (allRules) => {
+	const rules = {};
+
+	allRules.forEach((rule) => {
+		rules[rule._id] = false;
+	});
+
+	return {
+		caption: '',
+		dropbox_url: '',
+		uploadedFiles: [],
+		labels: [],
+		show_likes: true,
+		show_comments: true,
+		rules
+	};
 };
 
-export const viralFormValidationSchema = Yup.object().shape({
-	caption: Yup.string().required('You need to enter a caption'),
-	dropbox_url: Yup.string(),
-	uploadedFiles: Yup.array().min(1).required(),
-	labels: Yup.array()
-		.min(4, (obj) => {
-			const labelsCount = obj.value?.length;
-			return `You need to add ${
-				4 - labelsCount
-			} more labels in order to upload viral`;
-		})
-		.required('You need to enter atleast 4 labels')
-		.label('Labels'),
-	show_likes: Yup.boolean().required(),
-	show_comments: Yup.boolean().required()
-});
+export const viralFormValidationSchema = advancedSettingsValidationSchema.shape(
+	{
+		caption: Yup.string().required('You need to enter a caption'),
+		dropbox_url: Yup.string(),
+		uploadedFiles: Yup.array().min(1).required(),
+		labels: Yup.array()
+			.min(4, (obj) => {
+				const labelsCount = obj.value?.length;
+				return `You need to add ${
+					4 - labelsCount
+				} more labels in order to upload viral`;
+			})
+			.required('You need to enter atleast 4 labels')
+			.label('Labels')
+	}
+);
