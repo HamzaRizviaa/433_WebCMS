@@ -18,9 +18,7 @@ const ArticleInternalForm = ({
 }) => {
 	const classes = useStyles();
 	const { rules } = useSelector(getRules);
-	console.log('RULES', rules);
-	const { values, validateForm, resetForm } = useFormikContext();
-	console.log('ARTICLE VALUES', values);
+	const { validateForm, resetForm } = useFormikContext();
 
 	const [getMatchesTree, { data: matchesData }] = useLazyGetMatchesTreeQuery();
 
