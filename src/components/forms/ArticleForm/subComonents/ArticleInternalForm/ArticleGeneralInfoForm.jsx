@@ -9,7 +9,6 @@ import FormikSelect from '../../../../ui/inputs/formik/FormikSelect';
 import FormikDropzone from '../../../../ui/inputs/formik/FormikDropzone';
 import FormikField from '../../../../ui/inputs/formik/FormikField';
 import FormikLabelsSelect from '../../../../ui/inputs/formik/FormikLabelsSelect';
-import AdvancedSettingsForm from '../../../common/AdvancedSettingsForm';
 import ArticleAvatarField from './ArticleAvatarField';
 import {
 	getArticleMainCategories,
@@ -192,7 +191,6 @@ const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 							disabled={isPublished}
 						/>
 					</div>
-					<AdvancedSettingsForm />
 				</Fragment>
 			)}
 		</AccordianLayout>
