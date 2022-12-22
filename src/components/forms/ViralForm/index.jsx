@@ -73,7 +73,7 @@ const ViralForm = ({
 			formikBag.setSubmitting(true);
 
 			try {
-	      let uploadFileRes;
+				let uploadFileRes;
 
 				if (values.uploadedFiles[0]?.file) {
 					uploadFileRes = await uploadFileToServer(

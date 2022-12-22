@@ -40,6 +40,12 @@ export const getRelativePath = (url = '') => {
 	return url.split('cloudfront.net/')[1] || url;
 };
 
+/**
+ *
+ * @param {string} startDateString - ISO string of start date
+ * @param {string} endDateString - ISO string of end date
+ * @returns {object} formatted start and end date object with, date, hour and min property
+ */
 export const formatScheduleDate = (startDateString, endDateString) => {
 	let startDate, startHour, startMin;
 	let endDate, endHour, endMin;

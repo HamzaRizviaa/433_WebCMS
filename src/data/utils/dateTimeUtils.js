@@ -136,7 +136,7 @@ export const isPastTime = (date, hours, mins) => {
 
 	const timeDifference = selectedDateTime - currentDate;
 
-	if (timeDifference <= 900000) return true; // 900000 is in miliseconds which is equal to 15 minutes
+	if (timeDifference <= 900000) return true; // 900000 is in milliseconds which is equal to 15 minutes
 	return false;
 };
 
