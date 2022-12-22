@@ -7,6 +7,8 @@ import ArticleGeneralInfoForm from './ArticleGeneralInfoForm';
 import ArticleElementsFieldArray from '../elements/ArticleElementsFieldArray';
 import { useLazyGetMatchesTreeQuery } from '../../../../../data/features/articleLibrary/articleLibrary.query';
 import { articleFormInitialValues } from '../../../../../data/helpers';
+import { useSelector } from 'react-redux';
+import { getRules } from '../../../../../data/selectors';
 
 const ArticleInternalForm = ({
 	isEdit,
@@ -15,8 +17,10 @@ const ArticleInternalForm = ({
 	elementsWrapperRef
 }) => {
 	const classes = useStyles();
-
-	const { validateForm, resetForm } = useFormikContext();
+	const { rules } = useSelector(getRules);
+	console.log('RULES', rules);
+	const { values, validateForm, resetForm } = useFormikContext();
+	console.log('ARTICLE VALUES', values);
 
 	const [getMatchesTree, { data: matchesData }] = useLazyGetMatchesTreeQuery();
 
@@ -25,7 +29,7 @@ const ArticleInternalForm = ({
 		getMatchesTree();
 
 		return () => {
-			resetForm(articleFormInitialValues);
+			resetForm(articleFormInitialValues(rules));
 		};
 	}, []);
 
