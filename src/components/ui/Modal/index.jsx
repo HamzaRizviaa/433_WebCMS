@@ -81,6 +81,7 @@ export default function Modal({
 								className={classes.modalBtns}
 								variant={leftButtonVariant}
 								color={leftButtonColor}
+								disabled={isSubmitting}
 								size='small'
 							>
 								{leftButtonText}

@@ -39,8 +39,15 @@ const ViralInternalForm = ({
 	const closeSchedulerModal = () => setSchedulerModalState(false);
 	const openSchedulerModal = () => setSchedulerModalState(true);
 
-	const { values, dirty, isValid, setFieldValue, validateForm, resetForm } =
-		useFormikContext();
+	const {
+		values,
+		dirty,
+		isValid,
+		setFieldValue,
+		validateForm,
+		isSubmitting,
+		resetForm
+	} = useFormikContext();
 
 	const specificViral = useSelector(selectSpecificViral);
 
@@ -82,6 +89,7 @@ const ViralInternalForm = ({
 				onRemove={handleRemoveSchedule}
 				initialStartDate={values.is_scheduled && specificViral?.schedule_date}
 				isScheduled={values.is_scheduled}
+				isSubmitting={isSubmitting}
 			/>
 			<div>
 				{values.is_scheduled && (
@@ -205,13 +213,15 @@ const ViralInternalForm = ({
 					>
 						{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
 					</Button>
-					<Button
-						disabled={values.is_scheduled || isPublished ? true : !isValid}
-						onClick={openSchedulerModal}
-						iconBtn
-					>
-						<Calendar />
-					</Button>
+					{!isPublished && !values.is_scheduled && (
+						<Button
+							disabled={values.is_scheduled || isPublished ? true : !isValid}
+							onClick={openSchedulerModal}
+							iconBtn
+						>
+							<Calendar />
+						</Button>
+					)}
 				</div>
 			</div>
 		</div>

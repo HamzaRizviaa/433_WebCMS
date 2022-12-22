@@ -19,7 +19,8 @@ const SchedulerPopup = ({
 	initialStartDate,
 	initialEndDate,
 	selectsRange = false,
-	isScheduled = false
+	isScheduled = false,
+	isSubmitting = false
 }) => {
 	const [isError, setError] = useState(false);
 	const [values, setValues] = useState({
@@ -115,7 +116,9 @@ const SchedulerPopup = ({
 			onLeftButtonClick={onRemove}
 			confirmButtonText='Schedule'
 			leftButtonText='Remove Schedule'
+			leftButtonColor='danger'
 			hideLeftButton={!isScheduled}
+			isSubmitting={isSubmitting}
 		>
 			<Grid container>
 				<Grid item md={7}>
@@ -196,7 +199,8 @@ SchedulerPopup.propTypes = {
 	selectsRange: PropTypes.bool,
 	initialStartDate: PropTypes.object,
 	initialEndDate: PropTypes.object,
-	isScheduled: PropTypes.bool
+	isScheduled: PropTypes.bool,
+	isSubmitting: PropTypes.bool
 };
 
 export default SchedulerPopup;
