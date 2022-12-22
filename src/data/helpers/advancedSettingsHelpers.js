@@ -31,11 +31,14 @@ export const toolTipHandler = (val) => {
 export const toolTipFormatter = (obj) => {
 	const values = {
 		...obj,
-		countries: obj.countries?.length > 0 ? obj.countries.join(', ') : ' None'
+		countries:
+			obj.countries?.length > 0
+				? obj.countries.join(', ').replace(/, ([^,]*)$/, ' & $1')
+				: 'None'
 	};
 	return Object.entries(values).map(([key, value]) => (
 		<div key={key} style={{ textTransform: 'capitalize' }}>
-			{key} : {value}
+			{key} : {key === 'duration' ? value + ' hours' : value}
 		</div>
 	));
 };
