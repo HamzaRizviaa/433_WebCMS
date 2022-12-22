@@ -13,6 +13,7 @@ const Button = ({
 	disabled,
 	customPadding,
 	children,
+	iconBtn = false,
 	...rest
 }) => {
 	const classes = useButtonStyles({
@@ -21,7 +22,8 @@ const Button = ({
 		size,
 		fullWidth,
 		icon,
-		customPadding
+		customPadding,
+		isIconButton: iconBtn
 	});
 
 	return (
@@ -50,6 +52,7 @@ Button.propTypes = {
 	disabled: PropTypes.bool,
 	buttonText: PropTypes.string,
 	customPadding: PropTypes.string,
+	iconBtn: PropTypes.bool,
 	children: PropTypes.any
 };
 
