@@ -7,6 +7,7 @@ import SubCardLayout from '../../../layouts/SubCardLayout';
 import FormikCheckbox from '../../../ui/inputs/formik/FormikCheckbox';
 import { useAdvancedSettingsFormStyles } from './index.style';
 import { toolTipHandler, toolTipFormatter } from '../../../../data/helpers';
+import FeatureWrapper from '../../../FeatureWrapper';
 
 const AdvancedSettingsForm = ({ isQuestions = false }) => {
 	const classes = useAdvancedSettingsFormStyles();
@@ -24,19 +25,20 @@ const AdvancedSettingsForm = ({ isQuestions = false }) => {
 				) : (
 					<></>
 				)}
-
-				<SubCardLayout title={'Restrictions'}>
-					{rules.map((val, index) => {
-						return (
-							<FormikCheckbox
-								name={`rules.${val._id}`}
-								label={val.title}
-								tooltip={toolTipFormatter(toolTipHandler(val))}
-								key={index}
-							/>
-						);
-					})}
-				</SubCardLayout>
+				<FeatureWrapper name='geoblockingRestrictions'>
+					<SubCardLayout title={'Restrictions'}>
+						{rules.map((val, index) => {
+							return (
+								<FormikCheckbox
+									name={`rules.${val._id}`}
+									label={val.title}
+									tooltip={toolTipFormatter(toolTipHandler(val))}
+									key={index}
+								/>
+							);
+						})}
+					</SubCardLayout>
+				</FeatureWrapper>
 			</AccordianLayout>
 		</div>
 	);
