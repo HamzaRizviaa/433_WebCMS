@@ -7,6 +7,7 @@ import ArticleGeneralInfoForm from './ArticleGeneralInfoForm';
 import ArticleElementsFieldArray from '../elements/ArticleElementsFieldArray';
 import { useLazyGetMatchesTreeQuery } from '../../../../../data/features/articleLibrary/articleLibrary.query';
 import { articleFormInitialValues } from '../../../../../data/helpers';
+import AdvancedSettingsForm from '../../../common/AdvancedSettingsForm';
 import { useSelector } from 'react-redux';
 import { getRules } from '../../../../../data/selectors';
 
@@ -18,8 +19,7 @@ const ArticleInternalForm = ({
 }) => {
 	const classes = useStyles();
 	const { rules } = useSelector(getRules);
-	const { validateForm, resetForm } = useFormikContext();
-
+	const { values, validateForm, resetForm } = useFormikContext();
 	const [getMatchesTree, { data: matchesData }] = useLazyGetMatchesTreeQuery();
 
 	useEffect(() => {
@@ -38,6 +38,8 @@ const ArticleInternalForm = ({
 				<p>Edit, reorder elements here and build your article</p>
 			</Box>
 			<ArticleGeneralInfoForm isEdit={isEdit} status={status} />
+			{values.subCategoryId ? <AdvancedSettingsForm /> : <></>}
+
 			<Box
 				ref={topElementRef}
 				sx={{
