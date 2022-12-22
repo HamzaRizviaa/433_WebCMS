@@ -20,7 +20,7 @@ import {
 	questionsFormInitialValues
 } from '../../../../../data/helpers';
 import SchedulerPopup from '../../../../common/SchedulerPopup';
-import { Calendar } from '../../../../../assets/svg-icons';
+// import { Calendar } from '../../../../../assets/svg-icons';
 
 const headings = ['Poll', 'Quiz'];
 
@@ -44,7 +44,7 @@ const QuestionInternalForm = ({
 	const [schedularModalState, setSchedulerModalState] = useState(false);
 
 	const closeSchedulerModal = () => setSchedulerModalState(false);
-	const openSchedulerModal = () => setSchedulerModalState(true);
+	// const openSchedulerModal = () => setSchedulerModalState(true);
 	//
 	const {
 		dirty,
@@ -263,13 +263,13 @@ const QuestionInternalForm = ({
 					>
 						{isPublished ? 'SAVE CHANGES' : `ADD ${questionType}`}
 					</Button>
-					<Button
+					{/* <Button
 						disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
 						onClick={openSchedulerModal}
 						iconBtn
 					>
 						<Calendar />
-					</Button>
+					</Button> */}
 				</div>
 			</div>
 		</div>
