@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useDebouncedCallback } from 'use-debounce';
 import { Editor } from '@tinymce/tinymce-react';
@@ -41,6 +41,14 @@ const RichTextEditor = ({
 	const inputClasses = useInputsStyles();
 	const [value, setValue] = useState(externalValue || '');
 
+	useEffect(() => {
+		if (externalValue !== undefined && externalValue !== null) {
+			setValue(externalValue);
+		} else {
+			setValue('');
+		}
+	}, [externalValue]);
+
 	// Added debouncing for performance improvement as whole form is re-rendered on a single field change
 	const debouncedHandleOnChange = useDebouncedCallback((newValue) => {
 		if (onChange) onChange(newValue);
@@ -66,7 +74,6 @@ const RichTextEditor = ({
 					content_css: '../../styles/index.scss',
 					content_style:
 						"@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap'); body { font-family: Poppins; color: white; line-height:1  }; ",
-
 					branding: false,
 					statusbar: true,
 					skin: false,

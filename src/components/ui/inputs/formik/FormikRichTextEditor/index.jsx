@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useField } from 'formik';
 import RichTextEditor from '../../RichTextEditor';
 
-const FormikTextEditor = ({ name, id, onChange, onBlur }) => {
+const FormikRichTextEditor = ({ name, id, onChange, onBlur }) => {
 	const [field, meta, helpers] = useField(name);
 	const { value } = field;
 	const { touched, error } = meta;
@@ -33,11 +33,11 @@ const FormikTextEditor = ({ name, id, onChange, onBlur }) => {
 	);
 };
 
-FormikTextEditor.propTypes = {
+FormikRichTextEditor.propTypes = {
 	name: PropTypes.string,
 	id: PropTypes.number,
 	onChange: PropTypes.func,
 	onBlur: PropTypes.func
 };
 
-export default FormikTextEditor;
+export default FormikRichTextEditor;
