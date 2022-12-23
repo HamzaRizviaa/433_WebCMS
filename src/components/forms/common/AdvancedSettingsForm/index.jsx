@@ -9,7 +9,10 @@ import { useAdvancedSettingsFormStyles } from './index.style';
 import { toolTipHandler, toolTipFormatter } from '../../../../data/helpers';
 import FeatureWrapper from '../../../FeatureWrapper';
 
-const AdvancedSettingsForm = ({ isQuestions = false }) => {
+const AdvancedSettingsForm = ({
+	isQuestions = false,
+	questionsClosed = false
+}) => {
 	const classes = useAdvancedSettingsFormStyles();
 
 	const { rules } = useSelector(getRules);
@@ -30,6 +33,7 @@ const AdvancedSettingsForm = ({ isQuestions = false }) => {
 						{rules.map((val, index) => {
 							return (
 								<FormikCheckbox
+									disabled={questionsClosed}
 									name={`rules.${val._id}`}
 									label={val.title}
 									tooltip={toolTipFormatter(toolTipHandler(val))}
@@ -45,7 +49,8 @@ const AdvancedSettingsForm = ({ isQuestions = false }) => {
 };
 
 AdvancedSettingsForm.propTypes = {
-	isQuestions: PropTypes.bool.isRequired
+	isQuestions: PropTypes.bool,
+	questionsClosed: PropTypes.bool
 };
 
 export default AdvancedSettingsForm;
