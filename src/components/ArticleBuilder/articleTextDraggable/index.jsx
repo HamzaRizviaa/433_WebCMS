@@ -64,10 +64,14 @@ const ArticleTextDraggable = ({
 		const editorTextContent = tinymce
 			?.get(`text-${item.sortOrder}`)
 			?.getContent();
-		const textContent = tinymce
+		
+			const textContent = tinymce
 			?.get(`text-${item.sortOrder}`)
 			?.getContent({ format: 'text' });
-		setDescription(editorTextContent);
+		
+			setDescription(editorTextContent);
+
+
 		if (textContent === '') {
 			sendDataToParent([{ description: '' }]);
 		} else {
