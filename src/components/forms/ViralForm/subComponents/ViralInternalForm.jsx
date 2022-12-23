@@ -10,9 +10,11 @@ import { viralFormInitialValues } from '../../../../data/helpers';
 import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
 import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
-import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
 import TextTooltip from '../../../ui/TextTooltip';
 import Button from '../../../ui/Button';
+import AdvancedSettingsForm from '../../common/AdvancedSettingsForm';
+import { useSelector } from 'react-redux';
+import { getRules } from '../../../../data/selectors';
 
 /**
  * ViralInternalForm Component is used as a child of the ViralForm and the link to that is given below.
@@ -44,18 +46,18 @@ const ViralInternalForm = ({
 	useEffect(() => {
 		validateForm();
 		return () => {
-			resetForm(viralFormInitialValues);
+			resetForm(viralFormInitialValues(rules));
 		};
 	}, []);
 
 	const isPublished = isEdit && status === 'published';
+	const { rules } = useSelector(getRules);
 
 	const isDraftDisabled = useMemo(() => {
 		const isEqualToDefaultValues = isEqual(
-			pick(values, Object.keys(viralFormInitialValues)),
-			viralFormInitialValues
+			pick(values, Object.keys(viralFormInitialValues(rules))),
+			viralFormInitialValues(rules)
 		);
-
 		return !dirty || isEqualToDefaultValues;
 	}, [dirty, values]);
 
@@ -118,12 +120,7 @@ const ViralInternalForm = ({
 						required
 					/>
 				</div>
-				<div className={classes.fieldContainer}>
-					<div className={classes.switchContainer}>
-						<FormikSwitchField name='show_comments' label='Show comments' />
-						<FormikSwitchField name='show_likes' label='Show likes' />
-					</div>
-				</div>
+				<AdvancedSettingsForm />
 			</div>
 			<div className={classes.buttonDiv}>
 				<div>

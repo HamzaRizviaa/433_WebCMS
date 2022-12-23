@@ -10,7 +10,10 @@ import ArticleElementsSidebar from './elements/ArticleElementsSidebar';
 import ArticleInternalForm from './ArticleInternalForm/index';
 import ArticlePreviewSidebar from './ArticlePreviewSidebar';
 import ArticleFormFooter from './ArticleFormFooter/index';
-import { selectSpecificArticleStatus } from '../../../../data/selectors';
+import {
+	getRules,
+	selectSpecificArticleStatus
+} from '../../../../data/selectors';
 import {
 	articleFormInitialValues,
 	articleFormStatusInitialValues,
@@ -32,6 +35,7 @@ const ArticleFormDrawer = ({
 	const { values, isSubmitting, setStatus } = useFormikContext();
 
 	const specificArticleStatus = useSelector(selectSpecificArticleStatus);
+	const { rules } = useSelector(getRules);
 
 	const isLoading = isSubmitting || specificArticleStatus === 'loading';
 
@@ -43,7 +47,7 @@ const ArticleFormDrawer = ({
 		setStatus({
 			dirty: !isEqual(
 				omit(values, articleUnwantedKeysForDeepEqual),
-				omit(articleFormInitialValues, articleUnwantedKeysForDeepEqual)
+				omit(articleFormInitialValues(rules), articleUnwantedKeysForDeepEqual)
 			)
 		});
 	}, [values]);
