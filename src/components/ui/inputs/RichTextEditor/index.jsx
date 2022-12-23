@@ -58,7 +58,7 @@ const RichTextEditor = ({ name, id, value, onBlur, onChange, error }) => {
 					plugins: [
 						'lists link image anchor',
 						'searchreplace  hr fullscreen',
-						'insertdatetime paste wordcount  charmap textcolor colorpicker'
+						'paste wordcount  charmap textcolor colorpicker'
 					],
 					setup: function (editor) {
 						editor.on('init', function () {
