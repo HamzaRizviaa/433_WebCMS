@@ -38,7 +38,7 @@ export const toolTipFormatter = (obj) => {
 	};
 	return Object.entries(values).map(([key, value]) => (
 		<div key={key} style={{ textTransform: 'capitalize' }}>
-			{key} :
+			{key} :{' '}
 			{key === 'duration'
 				? value + ' hours'
 				: key === 'min' || key === 'max'
