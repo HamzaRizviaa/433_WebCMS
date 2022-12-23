@@ -94,5 +94,28 @@ export const useFormStyles = makeStyles((theme) => ({
 		'&:hover': {
 			color: theme.palette.neonYellow
 		}
+	},
+
+	scheduledTime: {
+		display: 'flex',
+		justifyContent: 'space-between',
+		alignItems: 'center'
+	},
+
+	scheduleTimeLabel: {
+		marginRight: 15
+	},
+
+	editScheduleIcon: {
+		cursor: 'pointer'
+	},
+
+	disabledIcon: {
+		color: theme.palette.disabled,
+		fill: theme.palette.disabled,
+
+		'& path': {
+			fill: theme.palette.disabled
+		}
 	}
 }));

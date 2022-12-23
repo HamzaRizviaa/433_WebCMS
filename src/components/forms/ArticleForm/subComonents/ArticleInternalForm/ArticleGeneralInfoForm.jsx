@@ -58,6 +58,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 							mapOptions={{ labelKey: 'name', valueKey: 'id' }}
 							onChange={handleMainCategoryChange}
 							disabled={isPublished}
+							required
 						/>
 					</div>
 				</div>
@@ -72,6 +73,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 							options={subCategories}
 							mapOptions={{ labelKey: 'name', valueKey: 'id' }}
 							onChange={handleSubCategoryChange}
+							required
 						/>
 					</div>
 				</div>

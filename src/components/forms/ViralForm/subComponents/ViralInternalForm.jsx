@@ -1,18 +1,24 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { pick, isEqual } from 'lodash';
 import { useFormikContext } from 'formik';
-import { useFormStyles } from '../../forms.style';
+import { useDispatch, useSelector } from 'react-redux';
+import dayjs from 'dayjs';
+import { IconButton } from '@material-ui/core';
 
-import { InfoIcon } from '../../../../assets/svg-icons';
-import { viralFormInitialValues } from '../../../../data/helpers';
-
+import { InfoIcon, Calendar, Edit } from '../../../../assets/svg-icons';
 import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
 import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
 import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
 import TextTooltip from '../../../ui/TextTooltip';
 import Button from '../../../ui/Button';
+import SchedulerPopup from '../../../common/SchedulerPopup';
+import { selectSpecificViral } from '../../../../data/selectors';
+import { resetSpecificViral } from '../../../../data/features/viralLibrary/viralLibrarySlice';
+import { viralFormInitialValues } from '../../../../data/helpers';
+import { useFormStyles } from '../../forms.style';
+import useSchedulerHandlers from '../../../../hooks/useSchedulerHandlers';
 
 /**
  * ViralInternalForm Component is used as a child of the ViralForm and the link to that is given below.
@@ -27,24 +33,29 @@ const ViralInternalForm = ({
 	onSubmitHandler,
 	toggleDeleteModal
 }) => {
-	const classes = useFormStyles();
+	const dispatch = useDispatch();
+	const [schedularModalState, setSchedulerModalState] = useState(false);
+
+	const closeSchedulerModal = () => setSchedulerModalState(false);
+	const openSchedulerModal = () => setSchedulerModalState(true);
 
 	const {
 		values,
 		dirty,
 		isValid,
-		isSubmitting,
-		handleSubmit,
 		setFieldValue,
-		setSubmitting,
 		validateForm,
+		isSubmitting,
 		resetForm
 	} = useFormikContext();
+
+	const specificViral = useSelector(selectSpecificViral);
 
 	useEffect(() => {
 		validateForm();
 		return () => {
 			resetForm(viralFormInitialValues);
+			dispatch(resetSpecificViral());
 		};
 	}, []);
 
@@ -59,12 +70,43 @@ const ViralInternalForm = ({
 		return !dirty || isEqualToDefaultValues;
 	}, [dirty, values]);
 
-	const saveDraftHandler = () =>
-		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
+	const {
+		handleDraftClick,
+		handlePublishClick,
+		handleRemoveSchedule,
+		handleSaveChangesClick,
+		handleScheduleConfirm
+	} = useSchedulerHandlers({ onSubmitHandler, closeSchedulerModal });
+
+	const classes = useFormStyles();
 
 	return (
 		<div>
+			<SchedulerPopup
+				open={schedularModalState}
+				onClose={closeSchedulerModal}
+				onConfirm={handleScheduleConfirm}
+				onRemove={handleRemoveSchedule}
+				initialStartDate={values.is_scheduled && specificViral?.schedule_date}
+				isScheduled={values.is_scheduled}
+				isSubmitting={isSubmitting}
+			/>
 			<div>
+				{values.is_scheduled && (
+					<div className={classes.scheduledTime}>
+						<h2>
+							<span className={classes.scheduleTimeLabel}>Scheduled Time:</span>
+							{dayjs(values.schedule_date).format('DD-MM-YYYY, HH:mm')}
+						</h2>
+						<IconButton onClick={openSchedulerModal} disabled={!isValid}>
+							<Edit
+								className={`${classes.editScheduleIcon} ${
+									!isValid ? classes.disabledIcon : ''
+								}`}
+							/>
+						</IconButton>
+					</div>
+				)}
 				<div className={classes.explanationWrapper}>
 					<h5>
 						{isEdit ? 'Media File' : 'Add Media File'}
@@ -139,22 +181,47 @@ const ViralInternalForm = ({
 				</div>
 				<div className={classes.publishDraftDiv}>
 					{(!isEdit || status === 'draft') && (
-						<Button
-							size='small'
-							variant={'outlined'}
-							disabled={isDraftDisabled}
-							onClick={saveDraftHandler}
-						>
-							{status === 'draft' && isEdit ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
-						</Button>
+						<>
+							{values.is_scheduled ? (
+								<Button
+									size='small'
+									variant='outlined'
+									type='submit'
+									disabled={isValid ? !dirty : !isValid}
+									onClick={handleSaveChangesClick}
+								>
+									SAVE CHANGES
+								</Button>
+							) : (
+								<Button
+									size='small'
+									variant='outlined'
+									disabled={isDraftDisabled}
+									onClick={handleDraftClick}
+								>
+									{status === 'draft' && isEdit
+										? 'SAVE DRAFT'
+										: 'SAVE AS DRAFT'}
+								</Button>
+							)}
+						</>
 					)}
 					<Button
 						type='submit'
 						disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
-						onClick={handleSubmit}
+						onClick={handlePublishClick}
 					>
 						{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
 					</Button>
+					{!isPublished && !values.is_scheduled && (
+						<Button
+							disabled={values.is_scheduled || isPublished ? true : !isValid}
+							onClick={openSchedulerModal}
+							iconBtn
+						>
+							<Calendar />
+						</Button>
+					)}
 				</div>
 			</div>
 		</div>

@@ -24,3 +24,4 @@ export { ReactComponent as Question } from './Quiz.svg';
 export { ReactComponent as BallIcon } from './Ball.svg';
 export { ReactComponent as RadioBtnIcon } from './radio-btn.svg';
 export { ReactComponent as RadioBtnCheckedIcon } from './radio-btn-checked.svg';
+export { ReactComponent as ArrowDown } from './Down.svg';

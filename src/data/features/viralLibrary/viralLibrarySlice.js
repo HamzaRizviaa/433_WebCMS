@@ -26,7 +26,7 @@ export * from './viralLibraryActions';
 const initialState = {
 	labels: [],
 	virals: [], //get api - all virals state
-	specificViral: [],
+	specificViral: null,
 	totalRecords: 0,
 	specificViralStatus: '',
 	openUploadPost: false,
@@ -43,6 +43,9 @@ const viralLibararySlice = createSlice({
 		},
 		resetNoResultStatus: (state) => {
 			state.noResultStatus = false;
+		},
+		resetSpecificViral: (state) => {
+			state.specificViral = null;
 		}
 	},
 	extraReducers: (builder) => {
@@ -85,7 +88,7 @@ const viralLibararySlice = createSlice({
 	}
 });
 
-export const { resetCalendarError, resetNoResultStatus } =
+export const { resetCalendarError, resetNoResultStatus, resetSpecificViral } =
 	viralLibararySlice.actions;
 
 export default viralLibararySlice.reducer;
