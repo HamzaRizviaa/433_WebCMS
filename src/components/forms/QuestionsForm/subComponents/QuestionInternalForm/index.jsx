@@ -198,7 +198,7 @@ const QuestionInternalForm = ({
 					</TabPanes>
 				</div>
 			</AccordianLayout>
-			<AdvancedSettingsForm isQuestions={true} />
+			<AdvancedSettingsForm isQuestions={true} questionsClosed={isClosed} />
 			<FieldArray
 				name='questions'
 				render={(props) => (
