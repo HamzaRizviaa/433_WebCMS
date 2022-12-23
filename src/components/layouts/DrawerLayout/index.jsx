@@ -29,7 +29,7 @@ const DrawerLayout = ({
 			fromArticle={fromArticle}
 			notifID={notifID}
 		>
-			<PrimaryLoader loading={isLoading}>
+			<PrimaryLoader loading={isLoading} mainPage={fromArticle}>
 				<Slide in={true} direction='up' timeout={400}>
 					<div className={classes.contentWrapper}>
 						<div className={classes.contentChildrenWrapper}>{children}</div>
