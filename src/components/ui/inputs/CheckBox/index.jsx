@@ -48,7 +48,7 @@ const CheckBox = ({
 								checked: classes.checked
 							}}
 							icon={<CheckBoxIcon className={classes.icon} />}
-							checkedIcon={<CheckBoxCheckedIcon />}
+							checkedIcon={<CheckBoxCheckedIcon className={classes.icon} />}
 						/>
 					}
 				/>
