@@ -1,7 +1,6 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import topBanner from './topBanner/topBannerSlice';
 import articleLibrary from './articleLibrary/articleLibrarySlice';
-import gamesLibrary from './gamesLibrary/gamesLibrarySlice';
 import mediaLibrary from './mediaLibrary/mediaLibrarySlice';
 import newsLibrary from './newsLibrary/newsLibrarySlice';
 import postsLibrary from './postsLibrary/postsLibrarySlice';
@@ -12,7 +11,6 @@ import remoteConfig from './remoteConfigSlice';
 const rootReducer = combineReducers({
 	topBanner,
 	articleLibrary,
-	gamesLibrary,
 	mediaLibrary,
 	newsLibrary,
 	postsLibrary,
