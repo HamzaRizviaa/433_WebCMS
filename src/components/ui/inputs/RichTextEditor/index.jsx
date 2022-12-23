@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { useDebouncedCallback } from 'use-debounce';
 import { Editor } from '@tinymce/tinymce-react';
 import 'tinymce/tinymce';
 import 'tinymce/icons/default';
@@ -26,16 +27,33 @@ import {
 import { useTextEditorStyles } from './index.style';
 import { useInputsStyles } from '../inputs.style';
 
-const RichTextEditor = ({ name, id, value, onBlur, onChange, error }) => {
+const INPUT_DELAY = 200; // Miliseconds
+
+const RichTextEditor = ({
+	name,
+	id,
+	value: externalValue,
+	onBlur,
+	onChange,
+	error
+}) => {
 	const classes = useTextEditorStyles();
 	const inputClasses = useInputsStyles();
+	const [value, setValue] = useState(externalValue || '');
 
-	const handleEditorChange = () => {
-		const editorTextContent = window.tinymce?.get(`text-${id}`)?.getContent();
-		if (onChange) {
-			onChange(editorTextContent);
-		}
-	};
+	// Added debouncing for performance improvement as whole form is re-rendered on a single field change
+	const debouncedHandleOnChange = useDebouncedCallback((newValue) => {
+		if (onChange) onChange(newValue);
+	}, INPUT_DELAY);
+
+	const handleEditorChange = useCallback(
+		(newValue) => {
+			setValue(newValue);
+			debouncedHandleOnChange(newValue);
+		},
+		[debouncedHandleOnChange]
+	);
+
 	return (
 		<div className={classes.editor}>
 			<Editor
@@ -56,9 +74,9 @@ const RichTextEditor = ({ name, id, value, onBlur, onChange, error }) => {
 					menubar: 'edit insert format',
 					menu: Menu,
 					plugins: [
-						'lists advlist link image anchor',
+						'lists link image anchor',
 						'searchreplace  hr fullscreen',
-						'insertdatetime paste wordcount  charmap textcolor colorpicker'
+						'paste wordcount  charmap textcolor colorpicker'
 					]
 				}}
 				onEditorChange={handleEditorChange}
