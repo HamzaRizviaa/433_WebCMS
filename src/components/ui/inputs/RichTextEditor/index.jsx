@@ -36,6 +36,7 @@ const RichTextEditor = ({ name, id, value, onBlur, onChange, error }) => {
 			onChange(editorTextContent);
 		}
 	};
+	
 	return (
 		<div className={classes.editor}>
 			<Editor
