@@ -11,7 +11,7 @@ export const useCheckBoxStyles = makeStyles((theme) => ({
 	},
 	icon: {
 		'input:disabled ~ &': {
-			fill: `${theme.palette.disabled}`
+			opacity: '0.5'
 		}
 	},
 	label: {
