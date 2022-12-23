@@ -56,10 +56,15 @@ const RichTextEditor = ({ name, id, value, onBlur, onChange, error }) => {
 					menubar: 'edit insert format',
 					menu: Menu,
 					plugins: [
-						'lists advlist link image anchor',
+						'lists link image anchor',
 						'searchreplace  hr fullscreen',
 						'insertdatetime paste wordcount  charmap textcolor colorpicker'
-					]
+					],
+					setup: function (editor) {
+						editor.on('init', function () {
+							console.log('EDITOR INIT', { id });
+						});
+					}
 				}}
 				onEditorChange={handleEditorChange}
 				onBlur={onBlur}
