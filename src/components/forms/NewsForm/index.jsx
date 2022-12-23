@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { Formik, Form } from 'formik';
 import { useCommonParams } from '../../../hooks';
-import { selectSpecificNews } from '../../../data/selectors';
+import { getRules, selectSpecificNews } from '../../../data/selectors';
+
 import {
 	newsDataFormatterForForm,
 	newsDataFormatterForService,
@@ -33,7 +34,7 @@ const NewsForm = ({
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 	const dispatch = useDispatch();
 	const specificNews = useSelector(selectSpecificNews);
-
+	const { rules } = useSelector(getRules);
 	// States
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
@@ -42,9 +43,9 @@ const NewsForm = ({
 
 	const initialValues = useMemo(() => {
 		return isEdit && !isEmpty(specificNews)
-			? newsDataFormatterForForm(specificNews)
-			: newsFormInitialValues;
-	}, [isEdit, specificNews]);
+			? newsDataFormatterForForm(specificNews, rules)
+			: newsFormInitialValues(rules);
+	}, [isEdit, specificNews, rules]);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 	const closeDeleteModal = () => setOpenDeleteModal(false);
@@ -86,7 +87,12 @@ const NewsForm = ({
 
 			const mediaFiles = await Promise.all([...newsImages]);
 
-			const newsData = newsDataFormatterForService(values, mediaFiles, isDraft);
+			const newsData = newsDataFormatterForService(
+				values,
+				mediaFiles,
+				isDraft,
+				rules
+			);
 
 			const { type } = await dispatch(
 				createOrEditNewsThunk(newsData, formikBag, isDraft)

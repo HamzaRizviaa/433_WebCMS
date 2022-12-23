@@ -15,7 +15,10 @@ import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
 import Button from '../../../ui/Button';
 import SelectField from '../../../ui/inputs/SelectField';
-import FormikSwitchField from '../../../ui/inputs/formik/FormikSwitchField';
+import AdvancedSettingsForm from '../../common/AdvancedSettingsForm';
+import { useSelector } from 'react-redux';
+import { getRules } from '../../../../data/selectors';
+// const isTrue = true;
 
 const MediaInternalForm = ({
 	getSubCategories,
@@ -32,6 +35,7 @@ const MediaInternalForm = ({
 	const globalClasses = globalUseStyles();
 	const lastMainCatRef = useRef(null);
 	const isPublished = isEdit && status === 'published';
+	const { rules } = useSelector(getRules);
 
 	// get categories
 	const {
@@ -61,11 +65,10 @@ const MediaInternalForm = ({
 		validateForm,
 		resetForm
 	} = useFormikContext();
-
 	useEffect(() => {
 		validateForm();
 		return () => {
-			resetForm(mediaFormInitialValues);
+			resetForm(mediaFormInitialValues(rules));
 		};
 	}, []);
 
@@ -104,10 +107,10 @@ const MediaInternalForm = ({
 	const isDraftDisabled = useMemo(() => {
 		const isEqualToDefaultValues = isEqual(
 			omit(
-				pick(values, Object.keys(mediaFormInitialValues)),
+				pick(values, Object.keys(mediaFormInitialValues(rules))),
 				mediaUnwantedKeysForDeepEqual
 			),
-			omit(mediaFormInitialValues, mediaUnwantedKeysForDeepEqual)
+			omit(mediaFormInitialValues(rules), mediaUnwantedKeysForDeepEqual)
 		);
 		const isDirty = isEdit ? dirty : formikStatus?.dirty;
 
@@ -357,12 +360,8 @@ const MediaInternalForm = ({
 								maxRows={2}
 							/>
 						</div>
-						<div className={classes.fieldContainer}>
-							<div className={classes.switchContainer}>
-								<FormikSwitchField name='show_comments' label='Show comments' />
-								<FormikSwitchField name='show_likes' label='Show likes' />
-							</div>
-						</div>
+
+						<AdvancedSettingsForm />
 
 						{/* buttons */}
 						<div className={classes.buttonDiv}>

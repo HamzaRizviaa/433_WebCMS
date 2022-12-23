@@ -9,6 +9,8 @@ import {
 	articleUnwantedKeysForDeepEqual,
 	checkIfAnyArticleElementIsEmpty
 } from '../../../../../data/helpers';
+import { useSelector } from 'react-redux';
+import { getRules } from '../../../../../data/selectors';
 
 const ArticleFormFooter = ({
 	isEdit,
@@ -18,6 +20,7 @@ const ArticleFormFooter = ({
 	onSubmitHandler
 }) => {
 	const classes = useArticleFooterStyles({ loading, isEdit, isDraft });
+	const { rules } = useSelector(getRules);
 
 	const {
 		values,
@@ -32,10 +35,10 @@ const ArticleFormFooter = ({
 		const isAnyElementEmpty = checkIfAnyArticleElementIsEmpty(values.elements);
 		const isEqualToDefaultValues = isEqual(
 			omit(
-				pick(values, Object.keys(articleFormInitialValues)),
+				pick(values, Object.keys(articleFormInitialValues(rules))),
 				articleUnwantedKeysForDeepEqual
 			),
-			omit(articleFormInitialValues, articleUnwantedKeysForDeepEqual)
+			omit(articleFormInitialValues(rules), articleUnwantedKeysForDeepEqual)
 		);
 
 		const isDirty = isEdit ? dirty : formikStatus?.dirty;
