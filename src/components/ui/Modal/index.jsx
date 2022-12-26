@@ -36,6 +36,7 @@ export default function Modal({
 	hideLeftButton = false,
 	size = 'small',
 	color = 'primary',
+	isConfirmButtonDisabled = false,
 	children
 }) {
 	const classes = useModalStyles({ size, color });
@@ -95,7 +96,7 @@ export default function Modal({
 							className={classes.modalBtns}
 							variant={confirmButtonVariant}
 							color={confirmButtonColor}
-							disabled={isSubmitting}
+							disabled={isConfirmButtonDisabled || isSubmitting}
 							size='small'
 						>
 							{confirmButtonText}
@@ -121,6 +122,7 @@ Modal.propTypes = {
 	leftButtonVariant: PropTypes.string,
 	leftButtonColor: PropTypes.string,
 	hideLeftButton: PropTypes.bool,
+	isConfirmButtonDisabled: PropTypes.bool,
 	wrapperRef: PropTypes.oneOfType([
 		PropTypes.func,
 		PropTypes.shape({ current: PropTypes.elementType })

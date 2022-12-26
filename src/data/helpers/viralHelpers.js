@@ -1,9 +1,10 @@
 import * as Yup from 'yup';
+import dayjs from 'dayjs';
 import { omit, isEmpty } from 'lodash';
 
 import { CalendarYellowIcon } from '../../assets/svg-icons';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
-import { getDateTime, makeid } from '../utils';
+import { makeid } from '../utils';
 import { advancedSettingsValidationSchema } from './advancedSettingsHelpers';
 import { getRelativePath } from './commonHelpers';
 
@@ -27,7 +28,7 @@ export const viralTableColumns = [
 		sort: true,
 		formatter: (content, row) =>
 			getFormatter('textAndIcon', {
-				content: getDateTime(content),
+				content: dayjs(content).format('DD-MM-YYYY | HH:mm'),
 				Icon: row.is_scheduled ? CalendarYellowIcon : null
 			})
 	},
@@ -51,7 +52,9 @@ export const viralTableColumns = [
 		text: 'LAST EDIT',
 		sort: true,
 		formatter: (content) =>
-			getFormatter('wrapper', { content: getDateTime(content) })
+			getFormatter('wrapper', {
+				content: dayjs(content).format('DD-MM-YYYY | HH:mm')
+			})
 	},
 	{
 		dataField: 'status',

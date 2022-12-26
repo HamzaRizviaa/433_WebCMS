@@ -29,8 +29,13 @@ const TimePickerField = ({ name, value, onChange, label = 'TIME' }) => {
 
 	// set mins
 	const setMins = (event) => {
+		const numberRegex = /^[0-9]+$/;
 		let minute = event.target.value;
-		if (Number(minute) > 60 || Number(minute) < 0 || minute.length > 2) return;
+
+		console.log(minute);
+
+		if (minute && !numberRegex.test(minute)) return;
+		if (Number(minute) > 59 || Number(minute) < 0 || minute.length > 2) return;
 		onChange(name, { hour: value.hour, min: minute });
 	};
 
@@ -89,7 +94,7 @@ const TimePickerField = ({ name, value, onChange, label = 'TIME' }) => {
 						<input
 							className='minsInput'
 							ref={minsInputRef}
-							type='number'
+							type='text'
 							value={value.min}
 							onChange={setMins}
 						/>

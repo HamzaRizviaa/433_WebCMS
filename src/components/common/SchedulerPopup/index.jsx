@@ -104,6 +104,10 @@ const SchedulerPopup = ({
 	const formateDate = (date) =>
 		dayjs(date || new Date()).format('MMM DD, YYYY');
 
+	const isMinEmpty = values.endStamp
+		? !values.startStamp.min || !values.endStamp?.min
+		: !values.startStamp.min;
+
 	const classes = useStyles();
 	return (
 		<Modal
@@ -119,6 +123,7 @@ const SchedulerPopup = ({
 			leftButtonColor='danger'
 			hideLeftButton={!isScheduled}
 			isSubmitting={isSubmitting}
+			isConfirmButtonDisabled={isMinEmpty}
 		>
 			<Grid container>
 				<Grid item md={7}>

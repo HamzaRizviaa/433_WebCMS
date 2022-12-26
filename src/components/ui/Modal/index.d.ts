@@ -15,6 +15,7 @@ export interface ModalProps {
 	leftButtonVariant?: string;
 	leftButtonColor?: string;
 	hideLeftButton?: boolean;
+	isConfirmButtonDisabled?: boolean;
 	children: React.ReactElement;
 	size?: 'small' | 'medium' | 'large';
 	color?: 'primary' | 'secondary';
