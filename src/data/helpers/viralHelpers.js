@@ -5,6 +5,7 @@ import { CalendarYellowIcon } from '../../assets/svg-icons';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime, makeid } from '../utils';
 import { getRelativePath } from './commonHelpers';
+import dayjs from 'dayjs';
 
 export const viralTableColumns = [
 	{
@@ -26,7 +27,7 @@ export const viralTableColumns = [
 		sort: true,
 		formatter: (content, row) =>
 			getFormatter('textAndIcon', {
-				content: getDateTime(content),
+				content: dayjs(content).format('DD-MM-YYYY | HH:mm'),
 				Icon: row.is_scheduled ? CalendarYellowIcon : null
 			})
 	},
