@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { Formik, Form } from 'formik';
 import { useCommonParams } from '../../../hooks';
-import { selectSpecificViral } from '../../../data/selectors';
+import { getRules, selectSpecificViral } from '../../../data/selectors';
 import {
 	viralDataFormatterForForm,
 	viralDataFormatterForService,
@@ -38,6 +38,7 @@ const ViralForm = ({
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 	const dispatch = useDispatch();
 	const specificViral = useSelector(selectSpecificViral);
+	const { rules } = useSelector(getRules);
 
 	const {
 		features: { hlsVideoFormatOnVirals }
@@ -54,9 +55,9 @@ const ViralForm = ({
 	const initialValues = useMemo(
 		() =>
 			isEdit && !isEmpty(specificViral)
-				? viralDataFormatterForForm(specificViral)
-				: viralFormInitialValues,
-		[isEdit, specificViral]
+				? viralDataFormatterForForm(specificViral, rules)
+				: viralFormInitialValues(rules),
+		[isEdit, specificViral, rules]
 	);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
@@ -83,7 +84,11 @@ const ViralForm = ({
 					);
 				}
 
-				const viralData = viralDataFormatterForService(values, uploadFileRes);
+				const viralData = viralDataFormatterForService(
+					values,
+					uploadFileRes,
+					rules
+				);
 
 				const { type } = await dispatch(createOrEditViralThunk(viralData));
 

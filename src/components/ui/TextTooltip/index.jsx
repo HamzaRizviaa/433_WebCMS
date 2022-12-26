@@ -7,10 +7,11 @@ const TextTooltip = ({
 	title = '',
 	placement = 'bottom-start',
 	children,
+	secondary,
 	classes,
 	...rest
 }) => {
-	const tooltipClasses = useTextTooltipStyles();
+	const tooltipClasses = useTextTooltipStyles({ secondary });
 
 	return (
 		<Tooltip
@@ -35,7 +36,8 @@ TextTooltip.propTypes = {
 	title: PropTypes.string.isRequired,
 	placement: PropTypes.string,
 	classes: PropTypes.object,
-	children: PropTypes.element.isRequired
+	children: PropTypes.element.isRequired,
+	secondary: PropTypes.bool
 };
 
 export default TextTooltip;

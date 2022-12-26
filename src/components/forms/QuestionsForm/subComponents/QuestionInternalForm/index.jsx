@@ -14,7 +14,12 @@ import QuestionSlideForm from '../QuestionSlideForm';
 import PublishAndStopModal from '../PublishAndStopModal';
 import { QuestionsLibraryService } from '../../../../../data/services';
 import { useFormStyles } from '../../../forms.style';
-import { selectTriviaFeatureFlag } from '../../../../../data/selectors';
+import {
+	getGeoblockingFeatureFlag,
+	getRules,
+	selectTriviaFeatureFlag
+} from '../../../../../data/selectors';
+import AdvancedSettingsForm from '../../../common/AdvancedSettingsForm';
 import {
 	areAllFieldsEmpty,
 	questionsFormInitialValues
@@ -36,6 +41,11 @@ const QuestionInternalForm = ({
 	// Feature flag for TRIVIA
 	const triviaOnQuestions = useSelector(selectTriviaFeatureFlag);
 	const isTriviaEnabled = triviaOnQuestions?._value === 'true';
+
+	const geoblockingRestrictions = useSelector(getGeoblockingFeatureFlag);
+	const isGeoblockingEnabled = geoblockingRestrictions?._value === 'true';
+
+	const { rules } = useSelector(getRules);
 
 	// States
 	const [openPublishModal, setPublishModalState] = useState(false);
@@ -66,7 +76,7 @@ const QuestionInternalForm = ({
 	useEffect(() => {
 		validateForm();
 		return () => {
-			resetForm({ values: questionsFormInitialValues });
+			resetForm({ values: questionsFormInitialValues(rules) });
 		};
 	}, []);
 
@@ -84,7 +94,7 @@ const QuestionInternalForm = ({
 
 	const handleTabClick = (val) => {
 		const editFormInitValues = {
-			...questionsFormInitialValues,
+			...questionsFormInitialValues(rules),
 			general_info: {
 				...questionsFormInitialValues.general_info,
 				question_type: val.toLowerCase()
@@ -143,8 +153,8 @@ const QuestionInternalForm = ({
 		);
 
 		const isEqualToDefaultValues = isEqual(
-			pick(values, Object.keys(questionsFormInitialValues)),
-			questionsFormInitialValues
+			pick(values, Object.keys(questionsFormInitialValues(rules))),
+			questionsFormInitialValues(rules)
 		);
 
 		return !dirty || isAnyQuestionSlideEmpty || isEqualToDefaultValues;
@@ -212,6 +222,13 @@ const QuestionInternalForm = ({
 					</TabPanes>
 				</div>
 			</AccordianLayout>
+
+			{isGeoblockingEnabled ? (
+				<AdvancedSettingsForm isQuestions={true} questionsClosed={isClosed} />
+			) : (
+				<></>
+			)}
+
 			<FieldArray
 				name='questions'
 				render={(props) => (

@@ -9,7 +9,6 @@ import FormikSelect from '../../../../ui/inputs/formik/FormikSelect';
 import FormikDropzone from '../../../../ui/inputs/formik/FormikDropzone';
 import FormikField from '../../../../ui/inputs/formik/FormikField';
 import FormikLabelsSelect from '../../../../ui/inputs/formik/FormikLabelsSelect';
-import FormikSwitchField from '../../../../ui/inputs/formik/FormikSwitchField';
 import ArticleAvatarField from './ArticleAvatarField';
 import {
 	getArticleMainCategories,
@@ -191,14 +190,6 @@ const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 							library='Articles'
 							disabled={isPublished}
 						/>
-					</div>
-					<div className={classes.fieldContainer}>
-						<div className={classes.switchContainer}>
-							<FormikSwitchField name='show_comments' label='Show Comments' />
-						</div>
-						<div className={classes.switchContainer}>
-							<FormikSwitchField name='show_likes' label='Show Likes' />
-						</div>
 					</div>
 				</Fragment>
 			)}
