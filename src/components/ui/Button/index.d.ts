@@ -11,6 +11,7 @@ export type ButtonProps = React.ComponentProps<'button'> & {
 	fullWidth?: boolean;
 	disabled?: boolean;
 	customPadding?: string;
+	iconBtn?: boolean;
 };
 
 export default function Button(props: ButtonProps): JSX.Element;
