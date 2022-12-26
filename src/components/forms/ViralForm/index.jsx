@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
-import { Formik } from 'formik';
+import { Formik, Form } from 'formik';
 import { useCommonParams } from '../../../hooks';
 import { getRules, selectSpecificViral } from '../../../data/selectors';
 import {
@@ -68,14 +68,14 @@ const ViralForm = ({
 	 * It's responsible for submitting that data to the backend and updating the UI accordingly.
 	 * @param {Object} values - Formik form values.
 	 * @param {Object} formikBag - Formik bag object which has all the utilities provided by formik.
-	 * @param {boolean} isDraft - isDraft param is only being passed when the form is being save in draft mode
 	 */
 	const onSubmitHandler = useCallback(
-		async (values, formikBag, isDraft = false) => {
+		async (values, formikBag) => {
 			formikBag.setSubmitting(true);
 
 			try {
-				let uploadFileRes = null;
+				let uploadFileRes;
+
 				if (values.uploadedFiles[0]?.file) {
 					uploadFileRes = await uploadFileToServer(
 						values.uploadedFiles[0],
@@ -87,18 +87,15 @@ const ViralForm = ({
 				const viralData = viralDataFormatterForService(
 					values,
 					uploadFileRes,
-					isDraft,
 					rules
 				);
 
-				const { type } = await dispatch(
-					createOrEditViralThunk(viralData, formikBag, isDraft)
-				);
+				const { type } = await dispatch(createOrEditViralThunk(viralData));
 
 				if (type === 'viralLibary/createOrEditViralThunk/fulfilled') {
 					handleClose();
 
-					if (isEdit && !(status === 'draft' && isDraft === false)) {
+					if (isEdit && !(status === 'draft' && values.save_draft === false)) {
 						dispatch(getAllViralsApi(queryParams));
 					} else if (isSearchParamsEmpty) {
 						dispatch(getAllViralsApi());
@@ -154,7 +151,7 @@ const ViralForm = ({
 			onSubmit={onSubmitHandler}
 		>
 			{({ setSubmitting, isSubmitting }) => (
-				<div>
+				<Form>
 					<ViralFormDrawer
 						open={open}
 						handleClose={handleClose}
@@ -173,7 +170,7 @@ const ViralForm = ({
 						wrapperRef={dialogWrapper}
 						isSubmitting={isSubmitting}
 					/>
-				</div>
+				</Form>
 			)}
 		</Formik>
 	);
