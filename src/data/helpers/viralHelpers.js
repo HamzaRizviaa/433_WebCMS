@@ -1,11 +1,11 @@
 import * as Yup from 'yup';
+import dayjs from 'dayjs';
 import { omit, isEmpty } from 'lodash';
 
 import { CalendarYellowIcon } from '../../assets/svg-icons';
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
-import { getDateTime, makeid } from '../utils';
+import { makeid } from '../utils';
 import { getRelativePath } from './commonHelpers';
-import dayjs from 'dayjs';
 
 export const viralTableColumns = [
 	{
@@ -51,7 +51,9 @@ export const viralTableColumns = [
 		text: 'LAST EDIT',
 		sort: true,
 		formatter: (content) =>
-			getFormatter('wrapper', { content: getDateTime(content) })
+			getFormatter('wrapper', {
+				content: dayjs(content).format('DD-MM-YYYY | HH:mm')
+			})
 	},
 	{
 		dataField: 'status',
