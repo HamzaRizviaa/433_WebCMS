@@ -1,3 +1,4 @@
+import React from 'react';
 import { StatusBadgeProps } from '../../StatusBadge';
 import { MediaPreviewerProps } from '../../../common/MediaPreviewer';
 
@@ -19,6 +20,11 @@ interface TextWithMultiIconProps {
 	showIcon: boolean;
 }
 
+interface TextWithIconProps {
+	content: string;
+	Icon: React.ReactNode;
+}
+
 interface Formatters {
 	status: StatusBadgeProps;
 	options: OptionsFormatterProps;
@@ -26,6 +32,7 @@ interface Formatters {
 	markup: TextMarkupProps;
 	wrapper: TextWrapperProps;
 	textWithIcon: TextWithMultiIconProps;
+	textAndIcon: TextWithIconProps;
 }
 
 export function getFormatter<T extends keyof Formatters>(
