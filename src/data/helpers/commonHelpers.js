@@ -39,3 +39,41 @@ export const reorder = (list, startIndex, endIndex) => {
 export const getRelativePath = (url = '') => {
 	return url.split('cloudfront.net/')[1] || url;
 };
+
+/**
+ *
+ * @param {string} startDateString - ISO string of start date
+ * @param {string} endDateString - ISO string of end date
+ * @returns {object} formatted start and end date object with, date, hour and min property
+ */
+export const formatScheduleDate = (startDateString, endDateString) => {
+	let startDate, startHour, startMin;
+	let endDate, endHour, endMin;
+
+	if (startDateString) {
+		startDate = new Date(startDateString);
+		startHour = startDate.getHours().toString().padStart(2, '0');
+		startMin = startDate.getMinutes().toString().padStart(2, '0');
+	}
+
+	if (endDateString) {
+		endDate = new Date(endDateString);
+		endHour = endDate.getHours().toString().padStart(2, '0');
+		endMin = endDate.getMinutes().toString().padStart(2, '0');
+	}
+
+	return {
+		startStamp: {
+			date: startDate,
+			hour: startHour,
+			min: startMin
+		},
+		...(!!endDate && {
+			endStamp: {
+				date: endDate,
+				hour: endHour,
+				min: endMin
+			}
+		})
+	};
+};

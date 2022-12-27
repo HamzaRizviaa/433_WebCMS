@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import dayjs from 'dayjs';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 export const getDateTime = (dateTime) => {
@@ -115,6 +116,28 @@ export const getLocalStorageDetails = () => {
 		: null;
 
 	return localStorageData;
+};
+
+// Check if given time is from past
+/**
+ *
+ * @param {Date} date
+ * @param {number} hours
+ * @param {number} mins
+ * @returns {boolean}
+ */
+export const isPastTime = (date, hours, mins) => {
+	const currentDate = new Date();
+
+	const selectedDate = dayjs(date).format('YYYY-MM-DD');
+	const selectedTime = `${hours}:${mins.length === 1 ? '0' : ''}${mins}`;
+	const selectedDateTimeString = `${selectedDate}T${selectedTime}`;
+	const selectedDateTime = new Date(selectedDateTimeString);
+
+	const timeDifference = selectedDateTime - currentDate;
+
+	if (timeDifference <= 900000) return true; // 900000 is in milliseconds which is equal to 15 minutes
+	return false;
 };
 
 export const getArticleDates = () => {

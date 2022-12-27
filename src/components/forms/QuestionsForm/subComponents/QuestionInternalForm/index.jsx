@@ -24,6 +24,9 @@ import {
 	areAllFieldsEmpty,
 	questionsFormInitialValues
 } from '../../../../../data/helpers';
+import SchedulerPopup from '../../../../common/SchedulerPopup';
+// import { Calendar } from '../../../../../assets/svg-icons';
+
 const headings = ['Poll', 'Quiz'];
 
 const QuestionInternalForm = ({
@@ -48,6 +51,11 @@ const QuestionInternalForm = ({
 	const [openPublishModal, setPublishModalState] = useState(false);
 	const [activeQuestionTitle, setActiveQuestionTitle] = useState('');
 
+	const [schedularModalState, setSchedulerModalState] = useState(false);
+
+	const closeSchedulerModal = () => setSchedulerModalState(false);
+	// const openSchedulerModal = () => setSchedulerModalState(true);
+	//
 	const {
 		dirty,
 		isValid,
@@ -131,6 +139,12 @@ const QuestionInternalForm = ({
 		setPublishModalState(false);
 	};
 
+	// Need to implement functionality
+	const handleScheduleConfirm = (values) => {
+		console.log(values);
+		closeSchedulerModal();
+	};
+
 	const isDraftDisabled = useMemo(() => {
 		const isAnyQuestionSlideEmpty = values.questions.some(
 			(item) =>
@@ -167,6 +181,12 @@ const QuestionInternalForm = ({
 
 	return (
 		<div>
+			<SchedulerPopup
+				open={schedularModalState}
+				onClose={closeSchedulerModal}
+				onConfirm={handleScheduleConfirm}
+				selectsRange
+			/>
 			<AccordianLayout title='General Information'>
 				<div>
 					<PublishAndStopModal
@@ -260,6 +280,13 @@ const QuestionInternalForm = ({
 					>
 						{isPublished ? 'SAVE CHANGES' : `ADD ${questionType}`}
 					</Button>
+					{/* <Button
+						disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
+						onClick={openSchedulerModal}
+						iconBtn
+					>
+						<Calendar />
+					</Button> */}
 				</div>
 			</div>
 		</div>
