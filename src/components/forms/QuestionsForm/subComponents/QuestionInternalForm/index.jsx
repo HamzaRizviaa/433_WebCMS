@@ -102,7 +102,7 @@ const QuestionInternalForm = ({
 			},
 			question_id: values.question_id
 		};
-		console.log(editFormInitValues, 'EEADAWD');
+
 		resetForm({ values: editFormInitValues });
 	};
 
