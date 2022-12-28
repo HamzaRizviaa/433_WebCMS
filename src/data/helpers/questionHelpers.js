@@ -7,6 +7,8 @@ import { getRelativePath } from './commonHelpers';
 import { advancedSettingsValidationSchemaQuestions } from './advancedSettingsHelpers';
 
 const { REACT_APP_MEDIA_ENDPOINT } = process.env;
+const defaultSummaryImage = `${REACT_APP_MEDIA_ENDPOINT}/media/photos/3a4ffcab-42a6-4926-9e12-10542a5c8f09.jpeg`;
+const defaultSummaryImageName = 'Background Default';
 
 export const questionTableColumns = [
 	{
@@ -127,9 +129,15 @@ export const questionsFormInitialValues = (allRules) => {
 		rules[rule._id] = false;
 	});
 	return {
-		resultsUploadedFiles: [],
-		positiveResultsUploadedFiles: [],
-		negativeResultsUploadedFiles: [],
+		resultsUploadedFiles: [
+			{ media_url: defaultSummaryImage, file_name: defaultSummaryImageName }
+		],
+		positiveResultsUploadedFiles: [
+			{ media_url: defaultSummaryImage, file_name: defaultSummaryImageName }
+		],
+		negativeResultsUploadedFiles: [
+			{ media_url: defaultSummaryImage, file_name: defaultSummaryImageName }
+		],
 		coverImageUploadedFiles: [],
 		general_info: {
 			save_draft: true,
