@@ -5,6 +5,8 @@ import { getDateTime } from '../utils';
 import uploadFilesToS3 from '../utils/uploadFilesToS3';
 import { getRelativePath } from './commonHelpers';
 import { advancedSettingsValidationSchemaQuestions } from './advancedSettingsHelpers';
+import { CalendarYellowIcon } from '../../assets/svg-icons';
+import dayjs from 'dayjs';
 
 const { REACT_APP_MEDIA_ENDPOINT } = process.env;
 const defaultSummaryImage = `${REACT_APP_MEDIA_ENDPOINT}/media/photos/3a4ffcab-42a6-4926-9e12-10542a5c8f09.jpeg`;
@@ -28,12 +30,22 @@ export const questionTableColumns = [
 		formatter: (content) =>
 			getFormatter('markup', { content: content?.toUpperCase() })
 	},
+	// {
+	// 	dataField: 'post_date',
+	// 	text: 'POST DATE | TIME',
+	// 	sort: true,
+	// 	formatter: (content) =>
+	// 		getFormatter('markup', { content: getDateTime(content) })
+	// },
 	{
 		dataField: 'post_date',
-		text: 'POST DATE | TIME',
+		text: 'POST, SCHEDULE DATE | TIME',
 		sort: true,
-		formatter: (content) =>
-			getFormatter('markup', { content: getDateTime(content) })
+		formatter: (content, row) =>
+			getFormatter('textAndIcon', {
+				content: dayjs(content).format('DD-MM-YYYY | HH:mm'),
+				Icon: row.is_scheduled ? CalendarYellowIcon : null
+			})
 	},
 	{
 		dataField: 'end_date',

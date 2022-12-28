@@ -11,6 +11,10 @@ import { useStyles } from './index.styles';
 import { formatScheduleDate } from '../../../data/helpers';
 import { isPastTime } from '../../../data/utils';
 
+const validationText = {
+	1: 'You can’t schedule in the past. Please select a time and date atleast 15 minutes from now.',
+	2: 'Selected End Date should be atleast 30 minutes ahead from the Start Date.'
+};
 const SchedulerPopup = ({
 	open,
 	onClose,
@@ -86,9 +90,15 @@ const SchedulerPopup = ({
 
 	const handleConfirm = () => {
 		const { date, hour, min } = values.startStamp;
-
-		if (isPastTime(date, hour, min)) {
-			setError(true);
+		const startStamp = { date, hours: hour, mins: min };
+		const endStamp = selectsRange && {
+			date: values?.endStamp?.date,
+			hours: values?.endStamp?.hour,
+			mins: values?.endStamp?.min
+		};
+		const isPastTimeError = isPastTime(startStamp, endStamp);
+		if (isPastTimeError) {
+			setError(validationText[isPastTimeError]);
 			return;
 		}
 
@@ -180,10 +190,7 @@ const SchedulerPopup = ({
 					<Collapse in={isError}>
 						<div className={classes.schedulerErrorContainer}>
 							<div className={classes.schedulerErrorTitle}>Whoops...</div>
-							<div className={classes.schedulerErrorText}>
-								You can’t schedule in the past. Please select a time and date
-								atleast 15 minutes from now.
-							</div>
+							<div className={classes.schedulerErrorText}>{isError}</div>
 						</div>
 					</Collapse>
 				</Grid>
