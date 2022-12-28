@@ -22,10 +22,10 @@ const checkFileSize = (file, library) => {
 	}
 	if (file.type === 'video/mp4') {
 		console.log('Found Video');
-		if (file.size > 10737418240) {
+		if (file.size > 5368709120) {
 			return {
 				code: 'size-too-large',
-				message: `The size of the file is too high`
+				message: `The size of the file is higher than 5 GB`
 			};
 		}
 	} else {
