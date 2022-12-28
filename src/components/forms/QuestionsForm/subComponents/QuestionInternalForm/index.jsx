@@ -93,15 +93,16 @@ const QuestionInternalForm = ({
 	};
 
 	const handleTabClick = (val) => {
+		const initialValues = questionsFormInitialValues(rules);
 		const editFormInitValues = {
-			...questionsFormInitialValues(rules),
+			...initialValues,
 			general_info: {
-				...questionsFormInitialValues.general_info,
+				...initialValues.general_info,
 				question_type: val.toLowerCase()
 			},
 			question_id: values.question_id
 		};
-
+		console.log(editFormInitValues, 'EEADAWD');
 		resetForm({ values: editFormInitValues });
 	};
 
