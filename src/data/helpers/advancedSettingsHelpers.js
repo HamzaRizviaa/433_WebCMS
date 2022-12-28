@@ -29,13 +29,17 @@ export const toolTipHandler = (val) => {
 };
 
 export const toolTipFormatter = (obj) => {
+	const countriesArray =
+		obj.countries?.length > 0 ? obj.countries.map((item) => item.name) : [];
+
 	const values = {
 		...obj,
 		countries:
 			obj.countries?.length > 0
-				? obj.countries.join(', ').replace(/, ([^,]*)$/, ' & $1')
+				? countriesArray.join(', ').replace(/, ([^,]*)$/, ' & $1')
 				: 'None'
 	};
+
 	return Object.entries(values).map(([key, value]) => (
 		<div key={key} style={{ textTransform: 'capitalize' }}>
 			{key} :{' '}

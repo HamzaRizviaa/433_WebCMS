@@ -7,6 +7,8 @@ import { getRelativePath } from './commonHelpers';
 import { advancedSettingsValidationSchemaQuestions } from './advancedSettingsHelpers';
 
 const { REACT_APP_MEDIA_ENDPOINT } = process.env;
+const defaultSummaryImage = `${REACT_APP_MEDIA_ENDPOINT}/media/photos/3a4ffcab-42a6-4926-9e12-10542a5c8f09.jpeg`;
+const defaultSummaryImageName = 'Background Default';
 
 export const questionTableColumns = [
 	{
@@ -127,22 +129,28 @@ export const questionsFormInitialValues = (allRules) => {
 		rules[rule._id] = false;
 	});
 	return {
-		resultsUploadedFiles: [],
-		positiveResultsUploadedFiles: [],
-		negativeResultsUploadedFiles: [],
+		resultsUploadedFiles: [
+			{ media_url: defaultSummaryImage, file_name: defaultSummaryImageName }
+		],
+		positiveResultsUploadedFiles: [
+			{ media_url: defaultSummaryImage, file_name: defaultSummaryImageName }
+		],
+		negativeResultsUploadedFiles: [
+			{ media_url: defaultSummaryImage, file_name: defaultSummaryImageName }
+		],
 		coverImageUploadedFiles: [],
 		general_info: {
 			save_draft: true,
 			question_type: 'poll',
-			results: '',
+			results: 'THANKS, SEE YOU NEXT TIME!',
 			results_image: '',
 			results_filename: '',
 			results_dropbox_url: '',
-			positive_results: '',
+			positive_results: 'GREAT JOB!',
 			positive_results_image: '',
 			positive_results_filename: '',
 			positive_results_dropbox_url: '',
-			negative_results: '',
+			negative_results: 'BETTER LUCK NEXT TIME!',
 			negative_results_image: '',
 			negative_results_filename: '',
 			negative_results_dropbox_url: '',
