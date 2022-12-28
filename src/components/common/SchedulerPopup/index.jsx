@@ -172,10 +172,6 @@ const SchedulerPopup = ({
 								/>
 							</Box>
 						)}
-						{/* Timezone Note Typo */}
-						<div className={classes.timezoneNote}>
-							All scheduling times are set to CET, +1
-						</div>
 					</div>
 				</Grid>
 
