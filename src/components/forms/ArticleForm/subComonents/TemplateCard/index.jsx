@@ -4,7 +4,7 @@ import { useStyles } from './index.style';
 import PropTypes from 'prop-types';
 import TemplateSVG from '../../../../../assets/TemplateAdd.svg';
 
-const TemplateCard = ({ newArticleClick }) => {
+const TemplateCard = ({ newArticleClick, handleTemplateClick }) => {
 	const dummyData = [
 		{
 			user: 'Alexander jordaan',
@@ -87,7 +87,11 @@ const TemplateCard = ({ newArticleClick }) => {
 
 			{dummyData.map((data, index) => {
 				return (
-					<div className={classes.card} key={index}>
+					<div
+						className={classes.card}
+						key={index}
+						onClick={() => handleTemplateClick()}
+					>
 						<div>
 							<div className={classes.author}>{data.user}</div>
 							<div className={classes.title}>{data.title}</div>
@@ -106,5 +110,6 @@ const TemplateCard = ({ newArticleClick }) => {
 export default TemplateCard;
 
 TemplateCard.propTypes = {
-	newArticleClick: PropTypes.bool.isRequired
+	newArticleClick: PropTypes.func.isRequired,
+	handleTemplateClick: PropTypes.func.isRequired
 };
