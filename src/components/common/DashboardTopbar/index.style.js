@@ -22,12 +22,7 @@ export const useTopbarStyles = makeStyles(() => ({
 		textTransform: 'uppercase'
 	},
 
-	buttonsSection: {
-		display: 'flex',
-		gap: 5
-	},
-
-	templateButton: {
-		width: '120px'
+	secondaryButtonBox: {
+		marginLeft: '12px'
 	}
 }));

@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import Table from '../../components/ui/Table';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 // import UploadOrEditArticle from '../../components/articles/uploadOrEditArticle';
-import ArticleForm from '../../components/forms/ArticleForm';
+import ArticleBuilderForm from '../../components/forms/ArticleForm/ArticleBuilderForm';
 import useGetAllArticlesQuery from '../../hooks/libraries/articles/useGetAllArticlesQuery';
 import { getSpecificArticle } from '../../data/features/articleLibrary/articleLibrarySlice';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
@@ -13,6 +13,7 @@ import { articleTableColumns } from '../../data/helpers/articleHelpers';
 import ArticleTemplateModal from '../../components/ui/ArticleTemplateModal';
 import { SettingsPowerRounded } from '@material-ui/icons';
 import TemplateCard from '../../components/forms/ArticleForm/subComonents/TemplateCard';
+import ArticleTemplateForm from '../../components/forms/ArticleForm/ArticleTemplateForm';
 
 const ArticleLibrary = () => {
 	const dispatch = useDispatch();
@@ -20,9 +21,13 @@ const ArticleLibrary = () => {
 
 	const { data, isLoading, totalRecords } = useGetAllArticlesQuery();
 
+	// ARTICLE BUILDER FORM STATES
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [rowStatus, setRowStatus] = useState('');
+
+	// ARTICLE TEMPLATE FORM STATES
+	const [showTemplateSlider, setShowTemplateSlider] = useState(false);
 
 	const handleRowClick = (_, row) => {
 		row.status === 'draft' && dispatch(getAllNewLabels());
@@ -37,13 +42,19 @@ const ArticleLibrary = () => {
 		setEdit(false);
 		setShowSlider(true);
 	};
-	const handleUploadArticleTemplateClick = () => {
-		setOpenModal(true);
-	};
+	// const handleUploadArticleTemplateClick = () => {
+	// 	setOpenModal(true);
+	// };
 
 	const handleNewArticleClick = () => {
 		setOpenModal(false);
 		setShowSlider(true);
+	};
+
+	const handleUploadTemplateClick = () => {
+		dispatch(getAllNewLabels());
+		setEdit(false);
+		setShowTemplateSlider(true);
 	};
 
 	return (
@@ -51,7 +62,9 @@ const ArticleLibrary = () => {
 			title='Article'
 			isLoading={isLoading}
 			onButtonClick={handleUploadArticleClick}
-			onTemplateButtonClick={handleUploadArticleTemplateClick}
+			// onTemplateButtonClick={handleUploadArticleTemplateClick}
+			secondaryButtonText={'Templates'}
+			secondaryButtonClick={handleUploadTemplateClick}
 		>
 			<Table
 				onRowClick={handleRowClick}
@@ -81,9 +94,15 @@ const ArticleLibrary = () => {
 			>
 				<TemplateCard newArticleClick={handleNewArticleClick} />
 			</ArticleTemplateModal>
-			<ArticleForm
+			<ArticleBuilderForm
 				open={showSlider}
 				handleClose={() => setShowSlider(false)}
+				isEdit={edit}
+				status={rowStatus}
+			/>
+			<ArticleTemplateForm
+				open={showTemplateSlider}
+				handleClose={() => setShowTemplateSlider(false)}
 				isEdit={edit}
 				status={rowStatus}
 			/>
