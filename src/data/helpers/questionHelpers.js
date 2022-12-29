@@ -53,7 +53,8 @@ export const questionTableColumns = [
 		sort: true,
 		formatter: (content) =>
 			getFormatter('markup', {
-				content: content === '-' ? '-' : getDateTime(content)
+				content:
+					content === '-' ? '-' : dayjs(content).format('DD-MM-YYYY | HH:mm')
 			})
 	},
 	{
@@ -318,7 +319,15 @@ const updatingQuestionsSlides = (questionsSlides = []) => {
 };
 
 export const questionDataFormatterForForm = (question, allRules) => {
-	const { id, summary, questions, ...rest } = question;
+	const {
+		id,
+		summary,
+		questions,
+		end_date,
+		start_date,
+		is_scheduled,
+		...rest
+	} = question;
 
 	const rules = {};
 
@@ -331,6 +340,7 @@ export const questionDataFormatterForForm = (question, allRules) => {
 	});
 
 	const formattedQuestion = {
+		is_scheduled,
 		rules: rules,
 		question_id: id,
 		coverImageUploadedFiles: rest.cover_image
@@ -380,6 +390,8 @@ export const questionDataFormatterForForm = (question, allRules) => {
 			question_type: rest.question_type,
 			question_title: rest.question_title,
 			cover_image_dropbox_url: rest.cover_image_dropbox_url,
+			end_date,
+			start_date,
 			...(question.question_type === 'poll'
 				? {
 						results: summary.results,

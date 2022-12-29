@@ -26,9 +26,8 @@ import {
 	questionsFormInitialValues
 } from '../../../../../data/helpers';
 import SchedulerPopup from '../../../../common/SchedulerPopup';
-import { Calendar } from '../../../../../assets/svg-icons';
+import { Calendar, Edit } from '../../../../../assets/svg-icons';
 import dayjs from 'dayjs';
-import { Edit } from '@material-ui/icons';
 import { IconButton } from '@material-ui/core';
 
 const headings = ['Poll', 'Quiz'];
@@ -144,6 +143,7 @@ const QuestionInternalForm = ({
 
 	const handleConfirm = (val) => {
 		setFieldValue('transition_to', val);
+		handlePublishClick();
 		submitForm();
 		setPublishModalState(false);
 	};
@@ -211,6 +211,7 @@ const QuestionInternalForm = ({
 	const handlePublishClick = () => {
 		setFieldValue('general_info.save_draft', false);
 		setFieldValue('general_info.start_date', null);
+		setFieldValue('general_info.end_date', null);
 	};
 
 	const handleSaveChangesClick = () => {
@@ -249,9 +250,8 @@ const QuestionInternalForm = ({
 				onClose={closeSchedulerModal}
 				onConfirm={handleScheduleConfirm}
 				onRemove={handleRemoveSchedule}
-				initialStartDate={
-					values.is_scheduled && specificQuestion?.general_info.start_date
-				}
+				initialStartDate={values.is_scheduled && specificQuestion?.start_date}
+				initialEndDate={values.is_scheduled && specificQuestion?.end_date}
 				isScheduled={values.is_scheduled}
 				isSubmitting={isSubmitting}
 			/>
@@ -262,7 +262,7 @@ const QuestionInternalForm = ({
 						{dayjs(values.general_info.start_date).format(
 							'DD-MM-YYYY, HH:mm'
 						)}{' '}
-						-{dayjs(values.general_info.end_date).format('DD-MM-YYYY, HH:mm')}
+						{/* -{dayjs(values.general_info.end_date).format('DD-MM-YYYY, HH:mm')} */}
 					</h2>
 					<IconButton onClick={openSchedulerModal} disabled={!isValid}>
 						<Edit
