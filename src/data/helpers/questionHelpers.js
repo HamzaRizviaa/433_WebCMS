@@ -183,7 +183,7 @@ export const questionsFormInitialValues = (allRules) => {
 
 export const questionDataFormatterForService = async (
 	values,
-	isDraft,
+	// isDraft,
 	status = 'draft',
 	allRules
 ) => {
@@ -236,7 +236,7 @@ export const questionDataFormatterForService = async (
 	const payload = {
 		general_info: {
 			...values.general_info,
-			save_draft: isDraft,
+			// save_draft: isDraft,
 			results_image: getRelativePath(resultsFile?.media_url),
 			results_filename: resultsFile?.file_name || '',
 			positive_results_image: getRelativePath(positiveResultsFile?.media_url),
@@ -246,7 +246,11 @@ export const questionDataFormatterForService = async (
 			cover_image: getRelativePath(coverImageFile?.media_url),
 			cover_image_file_name: coverImageFile?.file_name || '',
 			cover_image_width: coverImageFile?.width || 0,
-			cover_image_height: coverImageFile?.height || 0
+			cover_image_height: coverImageFile?.height || 0,
+			// Spreading the question schedule flag for edit state
+			...(values?.general_info?.start_date
+				? { schedule_flag_enabled: true }
+				: {})
 		},
 		questions: values.questions.map((item, index) => ({
 			...omit(item, ['uploadedFiles', 'answers']),
