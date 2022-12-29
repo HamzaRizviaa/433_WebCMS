@@ -20,5 +20,9 @@ export const useTopbarStyles = makeStyles(() => ({
 	title: {
 		marginRight: '2rem',
 		textTransform: 'uppercase'
+	},
+
+	secondaryButtonBox: {
+		marginLeft: '12px'
 	}
 }));

@@ -15,6 +15,8 @@ import { useLayoutStyles } from './index.style';
 const DashboardLayout = ({
 	title,
 	onButtonClick,
+	secondaryButtonText,
+	secondaryButtonClick,
 	hideLibraryText = false,
 	hideBtn = false,
 	hideSearchFilter = false,
@@ -61,6 +63,8 @@ const DashboardLayout = ({
 						<Topbar
 							title={title}
 							onButtonClick={onButtonClick}
+							secondaryButtonText={secondaryButtonText}
+							secondaryButtonClick={secondaryButtonClick}
 							hideBtn={hideBtn}
 							hideSearchFilter={hideSearchFilter}
 							hideDateFilter={hideDateFilter}
@@ -77,6 +81,8 @@ const DashboardLayout = ({
 DashboardLayout.propTypes = {
 	title: PropTypes.string.isRequired,
 	onButtonClick: PropTypes.func,
+	secondaryButtonText: PropTypes.string,
+	secondaryButtonClick: PropTypes.func,
 	hideBtn: PropTypes.bool,
 	hideSearchFilter: PropTypes.bool,
 	hideDateFilter: PropTypes.bool,

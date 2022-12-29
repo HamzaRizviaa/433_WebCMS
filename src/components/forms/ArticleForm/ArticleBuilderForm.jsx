@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useRef, useState, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
@@ -32,7 +31,7 @@ import {
 	deleteReadMoreApi
 } from '../../../data/services/readMoreArticleService';
 
-const ArticleForm = ({ open, handleClose, isEdit, status }) => {
+const ArticleBuilderForm = ({ open, handleClose, isEdit, status }) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const readMoreFeatureFlag = useSelector(selectReadMoreArticlesFeatureFlag);
@@ -182,11 +181,11 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 	);
 };
 
-ArticleForm.propTypes = {
+ArticleBuilderForm.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired
 };
 
-export default ArticleForm;
+export default ArticleBuilderForm;
