@@ -137,12 +137,12 @@ export const viralDataFormatterForService = (viral, file, allRules) => {
 					width: uploadedFiles[0].width || 0
 			  }
 			: {
-					media_url: getRelativePath(uploadedFiles[0].media_url) || '',
-					file_name: uploadedFiles[0].file_name || '',
+					media_url: getRelativePath(uploadedFiles[0]?.media_url) || '',
+					file_name: uploadedFiles[0]?.file_name || '',
 					thumbnail_url:
-						getRelativePath(uploadedFiles[0].thumbnail_url) || null,
-					height: uploadedFiles[0].height || 0,
-					width: uploadedFiles[0].width || 0
+						getRelativePath(uploadedFiles[0]?.thumbnail_url) || null,
+					height: uploadedFiles[0]?.height || 0,
+					width: uploadedFiles[0]?.width || 0
 			  }),
 		rules: filteredRules,
 
