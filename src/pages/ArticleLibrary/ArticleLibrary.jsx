@@ -32,12 +32,16 @@ const ArticleLibrary = () => {
 		setEdit(false);
 		setShowSlider(true);
 	};
+	const handleUploadArticleTemplateClick = () => {
+		setShowSlider(true);
+	};
 
 	return (
 		<DashboardLayout
 			title='Article'
 			isLoading={isLoading}
 			onButtonClick={handleUploadArticleClick}
+			onTemplateButtonClick={handleUploadArticleTemplateClick}
 		>
 			<Table
 				onRowClick={handleRowClick}

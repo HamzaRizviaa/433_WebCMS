@@ -20,5 +20,14 @@ export const useTopbarStyles = makeStyles(() => ({
 	title: {
 		marginRight: '2rem',
 		textTransform: 'uppercase'
+	},
+
+	buttonsSection: {
+		display: 'flex',
+		gap: 5
+	},
+
+	templateButton: {
+		width: '120px'
 	}
 }));

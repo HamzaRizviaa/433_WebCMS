@@ -12,7 +12,9 @@ const DashboardTopbar = ({
 	hideLibraryText = false,
 	hideBtn = false,
 	hideSearchFilter = false,
-	hideDateFilter = false
+	hideDateFilter = false,
+	onTemplateButtonClick,
+	hideTemplateBtn = false
 }) => {
 	const classes = useTopbarStyles();
 
@@ -23,12 +25,22 @@ const DashboardTopbar = ({
 					{title}
 					{!hideLibraryText && ' Library'}
 				</h1>
-				{!hideBtn && (
-					<Button
-						onClick={onButtonClick}
-						text={`UPLOAD ${title?.toUpperCase()}`}
-					/>
-				)}
+				<div className={classes.buttonsSection}>
+					{!hideBtn && (
+						<Button
+							onClick={onButtonClick}
+							text={`UPLOAD ${title?.toUpperCase()}`}
+						/>
+					)}
+					{title === 'Article' && !hideTemplateBtn && (
+						<Button
+							button2
+							className={classes.templateButton}
+							onClick={onTemplateButtonClick}
+							text={'TEMPLATES'}
+						/>
+					)}
+				</div>
 			</div>
 			<div className={classes.rightSection}>
 				{!hideSearchFilter && (
@@ -45,6 +57,8 @@ const DashboardTopbar = ({
 DashboardTopbar.propTypes = {
 	title: PropTypes.string.isRequired,
 	onButtonClick: PropTypes.func,
+	onTemplateButtonClick: PropTypes.func,
+	hideTemplateBtn: PropTypes.func,
 	hideBtn: PropTypes.bool,
 	hideSearchFilter: PropTypes.bool,
 	hideDateFilter: PropTypes.bool,
