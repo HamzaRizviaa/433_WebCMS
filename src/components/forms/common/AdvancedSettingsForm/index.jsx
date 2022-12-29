@@ -5,14 +5,17 @@ import { getRules } from '../../../../data/selectors';
 import AccordianLayout from '../../../layouts/AccordianLayout';
 import SubCardLayout from '../../../layouts/SubCardLayout';
 import FormikCheckbox from '../../../ui/inputs/formik/FormikCheckbox';
-import PrimaryLoader from '../../../ui/loaders/PrimaryLoader';
 import { useAdvancedSettingsFormStyles } from './index.style';
 import { toolTipHandler, toolTipFormatter } from '../../../../data/helpers';
+import FeatureWrapper from '../../../FeatureWrapper';
 
-const AdvancedSettingsForm = ({ isQuestions = false }) => {
+const AdvancedSettingsForm = ({
+	isQuestions = false,
+	questionsClosed = false
+}) => {
 	const classes = useAdvancedSettingsFormStyles();
 
-	const { rules, loading } = useSelector(getRules);
+	const { rules } = useSelector(getRules);
 
 	return (
 		<div className={classes.advancedSettingRoot}>
@@ -25,12 +28,12 @@ const AdvancedSettingsForm = ({ isQuestions = false }) => {
 				) : (
 					<></>
 				)}
-
-				<SubCardLayout title={'Restrictions'}>
-					<PrimaryLoader loading={loading}>
+				<FeatureWrapper name='geoblockingRestrictions'>
+					<SubCardLayout title={'Restrictions'}>
 						{rules.map((val, index) => {
 							return (
 								<FormikCheckbox
+									disabled={questionsClosed}
 									name={`rules.${val._id}`}
 									label={val.title}
 									tooltip={toolTipFormatter(toolTipHandler(val))}
@@ -38,15 +41,16 @@ const AdvancedSettingsForm = ({ isQuestions = false }) => {
 								/>
 							);
 						})}
-					</PrimaryLoader>
-				</SubCardLayout>
+					</SubCardLayout>
+				</FeatureWrapper>
 			</AccordianLayout>
 		</div>
 	);
 };
 
 AdvancedSettingsForm.propTypes = {
-	isQuestions: PropTypes.bool.isRequired
+	isQuestions: PropTypes.bool,
+	questionsClosed: PropTypes.bool
 };
 
 export default AdvancedSettingsForm;

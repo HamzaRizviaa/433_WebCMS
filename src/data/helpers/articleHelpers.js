@@ -234,6 +234,7 @@ export const uploadArticleFiles = async (article) => {
 				};
 			}
 		} else if (item.element_type === ARTICLE_ELEMENTS_TYPES.QUESTION) {
+			console.log({ item });
 			elements[index].question_data.answers = item.question_data.answers.map(
 				(answerItem, answerIndex) => ({
 					...answerItem,
@@ -261,9 +262,10 @@ export const uploadArticleFiles = async (article) => {
 				);
 				const questionData = {
 					...omit(item.question_data, ['uploadedFiles']),
-					...pick(item.question_data.uploadedFiles[0], ['width', 'height']),
 					image: uploadedFile.media_url,
-					file_name: uploadedFile.file_name
+					file_name: uploadedFile.file_name,
+					width: item.question_data.uploadedFiles[0].width || 0,
+					height: item.question_data.uploadedFiles[0].height || 0
 				};
 				elements[index].question_data = questionData;
 				elements[index].sort_order = index + 1;
@@ -271,7 +273,6 @@ export const uploadArticleFiles = async (article) => {
 			} else {
 				const questionData = {
 					...omit(item.question_data, ['uploadedFiles']),
-					...pick(item.question_data.uploadedFiles[0], ['width', 'height']),
 					image: item.question_data.uploadedFiles[0].media_url.includes(
 						'cloudfront.net/'
 					)
@@ -279,7 +280,9 @@ export const uploadArticleFiles = async (article) => {
 								'cloudfront.net/'
 						  )[1]
 						: item.question_data.uploadedFiles[0].media_url,
-					file_name: item.question_data.uploadedFiles[0].file_name
+					file_name: item.question_data.uploadedFiles[0].file_name,
+					width: item.question_data.uploadedFiles[0].width || 0,
+					height: item.question_data.uploadedFiles[0].height || 0
 				};
 				elements[index].question_data = questionData;
 				elements[index].sort_order = index + 1;
@@ -365,7 +368,9 @@ const articleElementsFormatterForForm = (elements) => {
 									media_url:
 										`${process.env.REACT_APP_MEDIA_ENDPOINT}/${elem.question_data.image}` ||
 										undefined,
-									file_name: elem.question_data.file_name
+									file_name: elem.question_data.file_name,
+									width: elem.question_data.width,
+									height: elem.question_data.height
 								}
 						  ]
 						: []
@@ -378,7 +383,17 @@ const articleElementsFormatterForForm = (elements) => {
 	});
 };
 
-export const articleDataFormatterForForm = (article) => {
+export const articleDataFormatterForForm = (article, allRules) => {
+	const rules = {};
+
+	allRules.forEach((rule) => {
+		rules[rule._id] = false;
+	});
+	//This loop should always run after the first one.
+	article.rules.forEach((rule) => {
+		rules[rule._id] = true;
+	});
+
 	const portraitFileKeys = ['file_name', 'image', 'height', 'width'];
 	const landscapeFileKeys = [
 		'landscape_image',
@@ -449,19 +464,20 @@ export const articleDataFormatterForForm = (article) => {
 
 	const elements = articleElementsFormatterForForm(article.elements);
 	formattedArticle.elements = elements;
-
+	formattedArticle.rules = rules;
 	return formattedArticle;
 };
 
 export const articleDataFormatterForService = (
 	article,
 	files,
-	isDraft = false
+	isDraft = false,
+	allRules
 ) => {
 	const { uploadedFiles, uploadedLandscapeCoverImage } = article;
 	const [authorImgFile, portraitImgFile, landscapeImgFile] = files;
 	const { media_url: authorMediaUrl } = authorImgFile;
-
+	const filteredRules = allRules.filter((rule) => article.rules[rule._id]);
 	const articleData = {
 		save_draft: isDraft,
 		translations: undefined,
@@ -521,7 +537,8 @@ export const articleDataFormatterForService = (
 					landscape_image: '',
 					landscape_height: 0,
 					landscape_width: 0
-			  })
+			  }),
+		rules: filteredRules
 	};
 
 	return articleData;
@@ -538,23 +555,31 @@ export const articleFormStatusInitialValues = {
 	dirty: false
 };
 
-export const articleFormInitialValues = {
-	mainCategoryId: '',
-	subCategoryId: '',
-	mainCategoryName: '',
-	subCategoryName: '',
-	title: '',
-	sub_text: '',
-	dropbox_url: '',
-	landscape_dropbox_url: '',
-	uploadedFiles: [],
-	uploadedLandscapeCoverImage: [],
-	author_text: '433 Team',
-	author_image: [{ media_url: Profile433 }],
-	labels: [],
-	show_likes: true,
-	show_comments: true,
-	elements: []
+export const articleFormInitialValues = (allRules) => {
+	const rules = {};
+
+	allRules.forEach((rule) => {
+		rules[rule._id] = false;
+	});
+	return {
+		mainCategoryId: '',
+		subCategoryId: '',
+		mainCategoryName: '',
+		subCategoryName: '',
+		title: '',
+		sub_text: '',
+		dropbox_url: '',
+		landscape_dropbox_url: '',
+		uploadedFiles: [],
+		uploadedLandscapeCoverImage: [],
+		author_text: '433 Team',
+		author_image: [{ media_url: Profile433 }],
+		labels: [],
+		show_likes: true,
+		show_comments: true,
+		elements: [],
+		rules
+	};
 };
 
 //

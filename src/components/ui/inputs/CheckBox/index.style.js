@@ -6,20 +6,22 @@ export const useCheckBoxStyles = makeStyles((theme) => ({
 		alignItems: 'center',
 		justifyContent: 'space-between'
 	},
-	root: {
-		'& .MuiSvgIcon-root': {
-			// height: '16px',
-			// width: '16px'
-			// fontSize: '16px'
-		}
-	},
 	checked: {
 		color: `${theme.palette.neonYellow} !important`
+	},
+	icon: {
+		'input:disabled ~ &': {
+			opacity: '0.5'
+		}
 	},
 	label: {
 		fontSize: '12px !important',
 		fontWeight: '400 !important',
-		lineHeight: '16px !important'
+		lineHeight: '16px !important',
+
+		'&.Mui-disabled': {
+			color: `${theme.palette.disabled}`
+		}
 	},
 	infoIcon: { cursor: 'pointer', height: '16px', width: '16px' }
 }));

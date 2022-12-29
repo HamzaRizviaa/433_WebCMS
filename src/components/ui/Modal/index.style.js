@@ -1,5 +1,11 @@
 import { makeStyles } from '@material-ui/core';
 
+const sizeMapper = {
+	small: 500,
+	medium: 742,
+	large: 990
+};
+
 export const useModalStyles = makeStyles((theme) => ({
 	root: {
 		padding: '18px 24px !important'
@@ -10,9 +16,12 @@ export const useModalStyles = makeStyles((theme) => ({
 	},
 
 	dialogBox: {
-		backgroundColor: `${theme.palette.normalGrey} !important`,
+		backgroundColor: ({ color }) =>
+			color === 'primary'
+				? `${theme.palette.normalGrey} !important`
+				: `${theme.palette.darkGrey} !important`,
 		borderRadius: '8px !important',
-		maxWidth: 500,
+		maxWidth: ({ size }) => sizeMapper[size],
 		boxShadow: '0px 16px 40px rgba(255, 255, 0, 0.17) !important'
 	},
 

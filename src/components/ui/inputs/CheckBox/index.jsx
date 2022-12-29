@@ -44,9 +44,11 @@ const CheckBox = ({
 							disabled={disabled}
 							onChange={handleInputChange}
 							onBlur={onBlur}
-							classes={{ root: classes.root, checked: classes.checked }}
-							icon={<CheckBoxIcon />}
-							checkedIcon={<CheckBoxCheckedIcon />}
+							classes={{
+								checked: classes.checked
+							}}
+							icon={<CheckBoxIcon className={classes.icon} />}
+							checkedIcon={<CheckBoxCheckedIcon className={classes.icon} />}
 						/>
 					}
 				/>

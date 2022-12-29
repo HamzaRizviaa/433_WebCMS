@@ -29,13 +29,25 @@ export const toolTipHandler = (val) => {
 };
 
 export const toolTipFormatter = (obj) => {
+	const countriesArray =
+		obj.countries?.length > 0 ? obj.countries.map((item) => item.name) : [];
+
 	const values = {
 		...obj,
-		countries: obj.countries?.length > 0 ? obj.countries.join(', ') : ' None'
+		countries:
+			obj.countries?.length > 0
+				? countriesArray.join(', ').replace(/, ([^,]*)$/, ' & $1')
+				: 'None'
 	};
+
 	return Object.entries(values).map(([key, value]) => (
 		<div key={key} style={{ textTransform: 'capitalize' }}>
-			{key} : {value}
+			{key} :{' '}
+			{key === 'duration'
+				? value + ' hours'
+				: key === 'min' || key === 'max'
+				? value + ' years'
+				: value}
 		</div>
 	));
 };

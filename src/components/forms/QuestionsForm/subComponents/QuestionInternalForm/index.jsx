@@ -15,7 +15,9 @@ import PublishAndStopModal from '../PublishAndStopModal';
 import { QuestionsLibraryService } from '../../../../../data/services';
 import { useFormStyles } from '../../../forms.style';
 import {
+	getGeoblockingFeatureFlag,
 	getRules,
+	selectSpecificQuestion,
 	selectTriviaFeatureFlag
 } from '../../../../../data/selectors';
 import AdvancedSettingsForm from '../../../common/AdvancedSettingsForm';
@@ -23,6 +25,11 @@ import {
 	areAllFieldsEmpty,
 	questionsFormInitialValues
 } from '../../../../../data/helpers';
+import SchedulerPopup from '../../../../common/SchedulerPopup';
+import { Calendar, Edit } from '../../../../../assets/svg-icons';
+import dayjs from 'dayjs';
+import { IconButton } from '@material-ui/core';
+
 const headings = ['Poll', 'Quiz'];
 
 const QuestionInternalForm = ({
@@ -38,12 +45,20 @@ const QuestionInternalForm = ({
 	const triviaOnQuestions = useSelector(selectTriviaFeatureFlag);
 	const isTriviaEnabled = triviaOnQuestions?._value === 'true';
 
+	const geoblockingRestrictions = useSelector(getGeoblockingFeatureFlag);
+	const isGeoblockingEnabled = geoblockingRestrictions?._value === 'true';
+
 	const { rules } = useSelector(getRules);
 
 	// States
 	const [openPublishModal, setPublishModalState] = useState(false);
 	const [activeQuestionTitle, setActiveQuestionTitle] = useState('');
 
+	const [schedularModalState, setSchedulerModalState] = useState(false);
+
+	const closeSchedulerModal = () => setSchedulerModalState(false);
+	const openSchedulerModal = () => setSchedulerModalState(true);
+	//
 	const {
 		dirty,
 		isValid,
@@ -61,11 +76,14 @@ const QuestionInternalForm = ({
 	const questionType = values.general_info.question_type;
 	const defaultSelectedTab = defaultQuestionType === 'quiz' ? 1 : 0;
 
+	const specificQuestion = useSelector(selectSpecificQuestion);
+
 	useEffect(() => {
 		validateForm();
-		return () => {
-			resetForm({ values: questionsFormInitialValues(rules) });
-		};
+		// return () => {
+		// 	resetForm({ values: questionsFormInitialValues(rules) });
+		// 	// dispatch(resetQues());
+		// };
 	}, []);
 
 	useEffect(() => {
@@ -81,10 +99,11 @@ const QuestionInternalForm = ({
 	};
 
 	const handleTabClick = (val) => {
+		const initialValues = questionsFormInitialValues(rules);
 		const editFormInitValues = {
-			...questionsFormInitialValues(rules),
+			...initialValues,
 			general_info: {
-				...questionsFormInitialValues.general_info,
+				...initialValues.general_info,
 				question_type: val.toLowerCase()
 			},
 			question_id: values.question_id
@@ -93,9 +112,9 @@ const QuestionInternalForm = ({
 		resetForm({ values: editFormInitValues });
 	};
 
-	const handleSaveDraft = () => {
-		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
-	};
+	// const handleSaveDraft = () => {
+	// 	onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
+	// };
 
 	const handlePublishBtnClick = async () => {
 		if (!isPublished) {
@@ -106,6 +125,7 @@ const QuestionInternalForm = ({
 				);
 
 				if (res?.data?.can_upload) {
+					handlePublishClick();
 					submitForm();
 				} else {
 					setSubmitting(false);
@@ -123,6 +143,7 @@ const QuestionInternalForm = ({
 
 	const handleConfirm = (val) => {
 		setFieldValue('transition_to', val);
+		handlePublishClick();
 		submitForm();
 		setPublishModalState(false);
 	};
@@ -142,6 +163,63 @@ const QuestionInternalForm = ({
 		return !dirty || isAnyQuestionSlideEmpty || isEqualToDefaultValues;
 	}, [values, dirty]);
 
+	/**
+	 * Methods for scheduling Questions
+	 */
+	const handleScheduleConfirm = (values) => {
+		closeSchedulerModal();
+
+		const { date, hour, min } = values.startStamp;
+
+		const selectedDate = dayjs(date).format('YYYY-MM-DD');
+		const selectedTime = `${hour}:${min.length === 1 ? '0' : ''}${min}`;
+		const selectedDateTime = `${selectedDate}T${selectedTime}`;
+
+		setFieldValue(
+			'general_info.start_date',
+			new Date(selectedDateTime).toISOString()
+		);
+		// end stamp
+		const { date: endDate, hour: endHour, min: endMin } = values.endStamp;
+
+		const endSelectedDate = dayjs(endDate).format('YYYY-MM-DD');
+		const endSelectedTime = `${endHour}:${
+			endMin.length === 1 ? '0' : ''
+		}${endMin}`;
+		const endSelectedDateTime = `${endSelectedDate}T${endSelectedTime}`;
+
+		setFieldValue(
+			'general_info.end_date',
+			new Date(endSelectedDateTime).toISOString()
+		);
+
+		setFieldValue('general_info.save_draft', true);
+		submitForm();
+	};
+
+	const handleRemoveSchedule = () => {
+		setFieldValue('general_info.start_date', null);
+		setFieldValue('general_info.save_draft', true);
+		submitForm();
+	};
+
+	const handleDraftClick = () => {
+		setFieldValue('general_info.save_draft', true);
+		onSubmitHandler(values, { setSubmitting, isSubmitting });
+	};
+
+	const handlePublishClick = () => {
+		setFieldValue('general_info.save_draft', false);
+		setFieldValue('general_info.start_date', null);
+		setFieldValue('general_info.end_date', null);
+	};
+
+	const handleSaveChangesClick = () => {
+		setFieldValue('general_info.save_draft', true);
+	};
+	/**
+	 * **********************************
+	 */
 	const classes = useFormStyles();
 
 	const actionInfo = (
@@ -163,6 +241,38 @@ const QuestionInternalForm = ({
 
 	return (
 		<div>
+			<SchedulerPopup
+				// open={schedularModalState}
+				// onClose={closeSchedulerModal}
+				// onConfirm={handleScheduleConfirm}
+				selectsRange
+				open={schedularModalState}
+				onClose={closeSchedulerModal}
+				onConfirm={handleScheduleConfirm}
+				onRemove={handleRemoveSchedule}
+				initialStartDate={values.is_scheduled && specificQuestion?.start_date}
+				initialEndDate={values.is_scheduled && specificQuestion?.end_date}
+				isScheduled={values.is_scheduled}
+				isSubmitting={isSubmitting}
+			/>
+			{values.is_scheduled && (
+				<div className={classes.scheduledTime}>
+					<h2>
+						<span className={classes.scheduleTimeLabel}>Scheduled Time:</span>
+						{dayjs(values.general_info.start_date).format(
+							'DD-MM-YYYY, HH:mm'
+						)}{' '}
+						{/* -{dayjs(values.general_info.end_date).format('DD-MM-YYYY, HH:mm')} */}
+					</h2>
+					<IconButton onClick={openSchedulerModal} disabled={!isValid}>
+						<Edit
+							className={`${classes.editScheduleIcon} ${
+								!isValid ? classes.disabledIcon : ''
+							}`}
+						/>
+					</IconButton>
+				</div>
+			)}
 			<AccordianLayout title='General Information'>
 				<div>
 					<PublishAndStopModal
@@ -198,7 +308,13 @@ const QuestionInternalForm = ({
 					</TabPanes>
 				</div>
 			</AccordianLayout>
-			<AdvancedSettingsForm isQuestions={true} />
+
+			{isGeoblockingEnabled ? (
+				<AdvancedSettingsForm isQuestions={true} questionsClosed={isClosed} />
+			) : (
+				<></>
+			)}
+
 			<FieldArray
 				name='questions'
 				render={(props) => (
@@ -234,14 +350,30 @@ const QuestionInternalForm = ({
 				</div>
 				<div className={classes.publishDraftDiv}>
 					{(!isEdit || status === 'draft') && (
-						<Button
-							size='small'
-							variant='outlined'
-							disabled={isDraftDisabled}
-							onClick={handleSaveDraft}
-						>
-							{status === 'draft' && isEdit ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
-						</Button>
+						<>
+							{values.is_scheduled ? (
+								<Button
+									size='small'
+									variant='outlined'
+									type='submit'
+									disabled={isValid ? !dirty : !isValid}
+									onClick={handleSaveChangesClick}
+								>
+									SAVE CHANGES
+								</Button>
+							) : (
+								<Button
+									size='small'
+									variant='outlined'
+									disabled={isDraftDisabled}
+									onClick={handleDraftClick}
+								>
+									{status === 'draft' && isEdit
+										? 'SAVE DRAFT'
+										: 'SAVE AS DRAFT'}
+								</Button>
+							)}
+						</>
 					)}
 					<Button
 						onClick={handlePublishBtnClick}
@@ -250,6 +382,15 @@ const QuestionInternalForm = ({
 					>
 						{isPublished ? 'SAVE CHANGES' : `ADD ${questionType}`}
 					</Button>
+					{!isPublished && !values.is_scheduled && (
+						<Button
+							disabled={values.is_scheduled || isPublished ? true : !isValid}
+							onClick={openSchedulerModal}
+							iconBtn
+						>
+							<Calendar />
+						</Button>
+					)}
 				</div>
 			</div>
 		</div>
