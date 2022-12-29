@@ -15,6 +15,8 @@ const DashboardTopbar = ({
 	hideBtn = false,
 	hideSearchFilter = false,
 	hideDateFilter = false
+	// onTemplateButtonClick
+	// hideTemplateBtn = false
 }) => {
 	const classes = useTopbarStyles();
 
@@ -53,6 +55,8 @@ const DashboardTopbar = ({
 DashboardTopbar.propTypes = {
 	title: PropTypes.string.isRequired,
 	onButtonClick: PropTypes.func,
+	onTemplateButtonClick: PropTypes.func,
+	// hideTemplateBtn: PropTypes.func,
 	secondaryButtonText: PropTypes.string,
 	secondaryButtonClick: PropTypes.func,
 	hideBtn: PropTypes.bool,

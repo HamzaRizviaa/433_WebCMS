@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -9,10 +10,14 @@ import useGetAllArticlesQuery from '../../hooks/libraries/articles/useGetAllArti
 import { getSpecificArticle } from '../../data/features/articleLibrary/articleLibrarySlice';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 import { articleTableColumns } from '../../data/helpers/articleHelpers';
+import ArticleTemplateModal from '../../components/ui/ArticleTemplateModal';
+import { SettingsPowerRounded } from '@material-ui/icons';
+import TemplateCard from '../../components/forms/ArticleForm/subComonents/TemplateCard';
 import ArticleTemplateForm from '../../components/forms/ArticleForm/ArticleTemplateForm';
 
 const ArticleLibrary = () => {
 	const dispatch = useDispatch();
+	const [openModal, setOpenModal] = useState(false);
 
 	const { data, isLoading, totalRecords } = useGetAllArticlesQuery();
 
@@ -37,6 +42,14 @@ const ArticleLibrary = () => {
 		setEdit(false);
 		setShowSlider(true);
 	};
+	// const handleUploadArticleTemplateClick = () => {
+	// 	setOpenModal(true);
+	// };
+
+	const handleNewArticleClick = () => {
+		setOpenModal(false);
+		setShowSlider(true);
+	};
 
 	const handleUploadTemplateClick = () => {
 		dispatch(getAllNewLabels());
@@ -49,6 +62,7 @@ const ArticleLibrary = () => {
 			title='Article'
 			isLoading={isLoading}
 			onButtonClick={handleUploadArticleClick}
+			// onTemplateButtonClick={handleUploadArticleTemplateClick}
 			secondaryButtonText={'Templates'}
 			secondaryButtonClick={handleUploadTemplateClick}
 		>
@@ -71,6 +85,15 @@ const ArticleLibrary = () => {
 				}
 				status={rowStatus}
 			/> */}
+			<ArticleTemplateModal
+				title={'UPLOAD ARTICLE'}
+				open={openModal}
+				onClose={() => setOpenModal(false)}
+				// onConfirm={handleConfirm}
+				// isSubmitting={isSubmitting}
+			>
+				<TemplateCard newArticleClick={handleNewArticleClick} />
+			</ArticleTemplateModal>
 			<ArticleBuilderForm
 				open={showSlider}
 				handleClose={() => setShowSlider(false)}
