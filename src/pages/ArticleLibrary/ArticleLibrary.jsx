@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -9,9 +10,12 @@ import useGetAllArticlesQuery from '../../hooks/libraries/articles/useGetAllArti
 import { getSpecificArticle } from '../../data/features/articleLibrary/articleLibrarySlice';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 import { articleTableColumns } from '../../data/helpers/articleHelpers';
+import ArticleTemplateModal from '../../components/ui/ArticleTemplateModal';
+import { SettingsPowerRounded } from '@material-ui/icons';
 
 const ArticleLibrary = () => {
 	const dispatch = useDispatch();
+	const [openModal, setOpenModal] = useState(false);
 
 	const { data, isLoading, totalRecords } = useGetAllArticlesQuery();
 
@@ -33,7 +37,7 @@ const ArticleLibrary = () => {
 		setShowSlider(true);
 	};
 	const handleUploadArticleTemplateClick = () => {
-		setShowSlider(true);
+		setOpenModal(true);
 	};
 
 	return (
@@ -62,6 +66,15 @@ const ArticleLibrary = () => {
 				}
 				status={rowStatus}
 			/> */}
+			<ArticleTemplateModal
+				title={'UPLOAD ARTICLE'}
+				open={openModal}
+				onClose={() => setOpenModal(false)}
+				// onConfirm={handleConfirm}
+				// isSubmitting={isSubmitting}
+			>
+				<div>Content Class</div>
+			</ArticleTemplateModal>
 			<ArticleForm
 				open={showSlider}
 				handleClose={() => setShowSlider(false)}
