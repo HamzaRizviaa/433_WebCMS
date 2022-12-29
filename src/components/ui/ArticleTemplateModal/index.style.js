@@ -1,18 +1,13 @@
 import { makeStyles } from '@material-ui/core';
 
-const sizeMapper = {
-	small: 500,
-	medium: 742,
-	large: 990
-};
-
 export const useModalStyles = makeStyles((theme) => ({
 	root: {
 		padding: '0px !important'
 	},
 
 	dialogContentRoot: {
-		padding: '4px 24px !important'
+		padding: '4px 0 !important',
+		'&::-webkit-scrollbar': { display: 'none' }
 	},
 
 	dialogBox: {
@@ -21,9 +16,12 @@ export const useModalStyles = makeStyles((theme) => ({
 				? `${theme.palette.normalGrey} !important`
 				: `${theme.palette.darkGrey} !important`,
 		borderRadius: '10px !important',
-		maxWidth: ({ size }) => sizeMapper[size],
+		maxWidth: '929px',
 		boxShadow: '0px 16px 40px rgba(255, 255, 0, 0.17) !important',
-		padding: '24px !important'
+		padding: '24px !important',
+		maxHeight: '648px',
+		boxSizing: 'border-box',
+		scrollbarWidth: 'none'
 	},
 
 	dialogTitle: {
@@ -34,7 +32,8 @@ export const useModalStyles = makeStyles((theme) => ({
 		lineHeight: '36px !important',
 		color: theme.palette.white,
 		display: 'flex !important',
-		justifyContent: 'space-between !important'
+		justifyContent: 'flex-start !important',
+		marginBottom: '32px'
 	},
 
 	dialogContentText: {

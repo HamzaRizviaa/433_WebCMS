@@ -12,6 +12,7 @@ import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySl
 import { articleTableColumns } from '../../data/helpers/articleHelpers';
 import ArticleTemplateModal from '../../components/ui/ArticleTemplateModal';
 import { SettingsPowerRounded } from '@material-ui/icons';
+import TemplateCard from '../../components/forms/ArticleForm/subComonents/TemplateCard';
 
 const ArticleLibrary = () => {
 	const dispatch = useDispatch();
@@ -73,7 +74,7 @@ const ArticleLibrary = () => {
 				// onConfirm={handleConfirm}
 				// isSubmitting={isSubmitting}
 			>
-				<div>Content Class</div>
+				<TemplateCard />
 			</ArticleTemplateModal>
 			<ArticleForm
 				open={showSlider}
