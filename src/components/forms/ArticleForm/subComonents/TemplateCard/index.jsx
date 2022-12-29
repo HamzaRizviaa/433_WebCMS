@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { useStyles } from './index.style';
+import PropTypes from 'prop-types';
 import TemplateSVG from '../../../../../assets/TemplateAdd.svg';
 
-const TemplateCard = () => {
+const TemplateCard = ({ newArticleClick }) => {
 	const dummyData = [
 		{
 			user: 'Alexander jordaan',
@@ -79,7 +80,7 @@ const TemplateCard = () => {
 	const classes = useStyles();
 	return (
 		<div className={classes.cardModal}>
-			<div className={classes.newCard}>
+			<div className={classes.newCard} onClick={() => newArticleClick()}>
 				<img src={TemplateSVG} className={classes.templateSVG} />
 				Empty Article
 			</div>
@@ -103,3 +104,7 @@ const TemplateCard = () => {
 };
 
 export default TemplateCard;
+
+TemplateCard.propTypes = {
+	newArticleClick: PropTypes.bool.isRequired
+};

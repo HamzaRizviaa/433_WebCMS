@@ -19,7 +19,8 @@ export const useStyles = makeStyles(() => ({
 		flexDirection: 'column',
 		justifyContent: 'space-between',
 		flexBasis: '283px',
-		boxSizing: 'border-box'
+		boxSizing: 'border-box',
+		cursor: 'pointer'
 	},
 	newCard: {
 		boxSizing: 'border-box',
@@ -36,7 +37,8 @@ export const useStyles = makeStyles(() => ({
 		lineHeight: '24px',
 		letterSpacing: '0.03em',
 		textTransform: 'capitalize',
-		flexBasis: '283px'
+		flexBasis: '283px',
+		cursor: 'pointer'
 	},
 	templateSVG: {
 		width: '40px',

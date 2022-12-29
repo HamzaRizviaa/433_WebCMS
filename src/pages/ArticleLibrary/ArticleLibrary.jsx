@@ -41,6 +41,11 @@ const ArticleLibrary = () => {
 		setOpenModal(true);
 	};
 
+	const handleNewArticleClick = () => {
+		setOpenModal(false);
+		setShowSlider(true);
+	};
+
 	return (
 		<DashboardLayout
 			title='Article'
@@ -74,7 +79,7 @@ const ArticleLibrary = () => {
 				// onConfirm={handleConfirm}
 				// isSubmitting={isSubmitting}
 			>
-				<TemplateCard />
+				<TemplateCard newArticleClick={handleNewArticleClick} />
 			</ArticleTemplateModal>
 			<ArticleForm
 				open={showSlider}
