@@ -51,10 +51,18 @@ const ArticleLibrary = () => {
 		setShowSlider(true);
 	};
 
-	const handleUploadTemplateClick = () => {
+	const handleTemplateClick = () => {
+		setOpenModal(false);
 		dispatch(getAllNewLabels());
 		setEdit(false);
 		setShowTemplateSlider(true);
+	};
+
+	const handleUploadTemplateClick = () => {
+		setOpenModal(true);
+		// dispatch(getAllNewLabels());
+		// setEdit(false);
+		// setShowTemplateSlider(true);
 	};
 
 	return (
@@ -92,7 +100,10 @@ const ArticleLibrary = () => {
 				// onConfirm={handleConfirm}
 				// isSubmitting={isSubmitting}
 			>
-				<TemplateCard newArticleClick={handleNewArticleClick} />
+				<TemplateCard
+					newArticleClick={handleNewArticleClick}
+					handleTemplateClick={handleTemplateClick}
+				/>
 			</ArticleTemplateModal>
 			<ArticleBuilderForm
 				open={showSlider}
