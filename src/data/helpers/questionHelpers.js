@@ -282,7 +282,8 @@ export const questionDataFormatterForService = async (
 			position: index + 1
 		})),
 		...(values.question_id ? { question_id: values.question_id } : {}),
-		rules: filteredRules
+		rules: filteredRules,
+		is_scheduled: values.is_scheduled
 	};
 
 	if (values.active_question_id) {

@@ -96,7 +96,9 @@ const SchedulerPopup = ({
 			hours: values?.endStamp?.hour,
 			mins: values?.endStamp?.min
 		};
+
 		const isPastTimeError = isPastTime(startStamp, endStamp);
+
 		if (isPastTimeError) {
 			setError(validationText[isPastTimeError]);
 			return;

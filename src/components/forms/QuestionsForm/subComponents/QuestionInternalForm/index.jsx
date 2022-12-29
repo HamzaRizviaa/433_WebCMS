@@ -4,6 +4,8 @@ import { isEqual, pick, omit } from 'lodash';
 import { FieldArray, useFormikContext } from 'formik';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import dayjs from 'dayjs';
+import { IconButton } from '@material-ui/core';
 
 import AccordianLayout from '../../../../layouts/AccordianLayout';
 import TabPanes from '../../../../ui/TabPanes';
@@ -27,8 +29,6 @@ import {
 } from '../../../../../data/helpers';
 import SchedulerPopup from '../../../../common/SchedulerPopup';
 import { Calendar, Edit } from '../../../../../assets/svg-icons';
-import dayjs from 'dayjs';
-import { IconButton } from '@material-ui/core';
 
 const headings = ['Poll', 'Quiz'];
 
@@ -77,14 +77,6 @@ const QuestionInternalForm = ({
 	const defaultSelectedTab = defaultQuestionType === 'quiz' ? 1 : 0;
 
 	const specificQuestion = useSelector(selectSpecificQuestion);
-
-	useEffect(() => {
-		validateForm();
-		// return () => {
-		// 	resetForm({ values: questionsFormInitialValues(rules) });
-		// 	// dispatch(resetQues());
-		// };
-	}, []);
 
 	useEffect(() => {
 		validateForm();
@@ -199,6 +191,7 @@ const QuestionInternalForm = ({
 
 	const handleRemoveSchedule = () => {
 		setFieldValue('general_info.start_date', null);
+		setFieldValue('general_info.end_date', null);
 		setFieldValue('general_info.save_draft', true);
 		submitForm();
 	};
