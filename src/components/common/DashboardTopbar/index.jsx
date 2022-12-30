@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { capitalize } from 'lodash';
-import Button from '../../button';
+import Button from '../../ui/Button';
 import DateRangeFilter from '../../ui/inputs/DateRangeFilter';
 import SearchFilter from '../../ui/inputs/SearchFilter';
 import { useTopbarStyles } from './index.style';
@@ -24,10 +24,9 @@ const DashboardTopbar = ({
 					{!hideLibraryText && ' Library'}
 				</h1>
 				{!hideBtn && (
-					<Button
-						onClick={onButtonClick}
-						text={`UPLOAD ${title?.toUpperCase()}`}
-					/>
+					<Button onClick={onButtonClick}>
+						{`UPLOAD ${title?.toUpperCase()}`}
+					</Button>
 				)}
 			</div>
 			<div className={classes.rightSection}>
