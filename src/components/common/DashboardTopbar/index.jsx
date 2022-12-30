@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { capitalize } from 'lodash';
-import Button from '../../button';
+import Button from '../../ui/Button';
 import DateRangeFilter from '../../ui/inputs/DateRangeFilter';
 import SearchFilter from '../../ui/inputs/SearchFilter';
 import { useTopbarStyles } from './index.style';
@@ -9,12 +9,14 @@ import { useTopbarStyles } from './index.style';
 const DashboardTopbar = ({
 	title,
 	onButtonClick,
+	secondaryButtonText,
+	secondaryButtonClick,
 	hideLibraryText = false,
 	hideBtn = false,
 	hideSearchFilter = false,
-	hideDateFilter = false,
-	onTemplateButtonClick,
-	hideTemplateBtn = false
+	hideDateFilter = false
+	// onTemplateButtonClick
+	// hideTemplateBtn = false
 }) => {
 	const classes = useTopbarStyles();
 
@@ -25,22 +27,18 @@ const DashboardTopbar = ({
 					{title}
 					{!hideLibraryText && ' Library'}
 				</h1>
-				<div className={classes.buttonsSection}>
-					{!hideBtn && (
-						<Button
-							onClick={onButtonClick}
-							text={`UPLOAD ${title?.toUpperCase()}`}
-						/>
-					)}
-					{title === 'Article' && !hideTemplateBtn && (
-						<Button
-							button2
-							className={classes.templateButton}
-							onClick={onTemplateButtonClick}
-							text={'TEMPLATES'}
-						/>
-					)}
-				</div>
+				{!hideBtn && (
+					<Button
+						onClick={onButtonClick}
+					>{`UPLOAD ${title?.toUpperCase()}`}</Button>
+				)}
+				{secondaryButtonText && (
+					<div className={classes.secondaryButtonBox}>
+						<Button variant={'outlined'} onClick={secondaryButtonClick}>
+							{secondaryButtonText.toUpperCase()}
+						</Button>
+					</div>
+				)}
 			</div>
 			<div className={classes.rightSection}>
 				{!hideSearchFilter && (
@@ -58,7 +56,9 @@ DashboardTopbar.propTypes = {
 	title: PropTypes.string.isRequired,
 	onButtonClick: PropTypes.func,
 	onTemplateButtonClick: PropTypes.func,
-	hideTemplateBtn: PropTypes.func,
+	// hideTemplateBtn: PropTypes.func,
+	secondaryButtonText: PropTypes.string,
+	secondaryButtonClick: PropTypes.func,
 	hideBtn: PropTypes.bool,
 	hideSearchFilter: PropTypes.bool,
 	hideDateFilter: PropTypes.bool,
