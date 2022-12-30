@@ -391,8 +391,7 @@ export const questionDataFormatterForForm = (question, allRules) => {
 			question_type: rest.question_type,
 			question_title: rest.question_title,
 			cover_image_dropbox_url: rest.cover_image_dropbox_url,
-			end_date,
-			start_date,
+			...(is_scheduled && { end_date, start_date }),
 			...(question.question_type === 'poll'
 				? {
 						results: summary.results,
