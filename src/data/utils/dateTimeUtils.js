@@ -119,7 +119,7 @@ export const getLocalStorageDetails = () => {
 };
 
 export const generateTimeStamp = (date, hours, mins) => {
-	const selectedDate = dayjs(date).format('YYYY-MM-DD');
+	const selectedDate = dayjs(date || new Date()).format('YYYY-MM-DD');
 	const selectedTime = `${hours}:${mins.length === 1 ? '0' : ''}${mins}`;
 	const selectedDateTimeString = `${selectedDate}T${selectedTime}`;
 	const selectedDateTime = new Date(selectedDateTimeString);
