@@ -16,11 +16,21 @@ const DashboardTopbar = ({
 }) => {
 	const classes = useTopbarStyles();
 
+	const titleArray = title.split('');
+
+	const handleHeadingTitle = () => {
+		return titleArray.map((item) => (
+			<span key={item} className={classes.titleName}>
+				{item}
+			</span>
+		));
+	};
+
 	return (
 		<div className={classes.header}>
 			<div className={classes.leftSection}>
 				<h1 className={classes.title}>
-					{title}
+					{handleHeadingTitle()}
 					{!hideLibraryText && ' Library'}
 				</h1>
 				{!hideBtn && (

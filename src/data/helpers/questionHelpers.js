@@ -5,6 +5,8 @@ import { getDateTime } from '../utils';
 import uploadFilesToS3 from '../utils/uploadFilesToS3';
 import { getRelativePath } from './commonHelpers';
 import { advancedSettingsValidationSchemaQuestions } from './advancedSettingsHelpers';
+import { CalendarYellowIcon } from '../../assets/svg-icons';
+import dayjs from 'dayjs';
 
 const { REACT_APP_MEDIA_ENDPOINT } = process.env;
 const defaultSummaryImage = `${REACT_APP_MEDIA_ENDPOINT}/media/photos/3a4ffcab-42a6-4926-9e12-10542a5c8f09.jpeg`;
@@ -30,10 +32,13 @@ export const questionTableColumns = [
 	},
 	{
 		dataField: 'post_date',
-		text: 'POST DATE | TIME',
+		text: 'POST, SCHEDULE DATE | TIME',
 		sort: true,
-		formatter: (content) =>
-			getFormatter('markup', { content: getDateTime(content) })
+		formatter: (content, row) =>
+			getFormatter('textAndIcon', {
+				content: dayjs(content).format('DD-MM-YYYY | HH:mm'),
+				Icon: row.is_scheduled ? CalendarYellowIcon : null
+			})
 	},
 	{
 		dataField: 'end_date',
@@ -41,7 +46,8 @@ export const questionTableColumns = [
 		sort: true,
 		formatter: (content) =>
 			getFormatter('markup', {
-				content: content === '-' ? '-' : getDateTime(content)
+				content:
+					content === '-' ? '-' : dayjs(content).format('DD-MM-YYYY | HH:mm')
 			})
 	},
 	{
@@ -171,7 +177,7 @@ export const questionsFormInitialValues = (allRules) => {
 
 export const questionDataFormatterForService = async (
 	values,
-	isDraft,
+	// isDraft,
 	status = 'draft',
 	allRules
 ) => {
@@ -224,7 +230,7 @@ export const questionDataFormatterForService = async (
 	const payload = {
 		general_info: {
 			...values.general_info,
-			save_draft: isDraft,
+			// save_draft: isDraft,
 			results_image: getRelativePath(resultsFile?.media_url),
 			results_filename: resultsFile?.file_name || '',
 			positive_results_image: getRelativePath(positiveResultsFile?.media_url),
@@ -234,7 +240,11 @@ export const questionDataFormatterForService = async (
 			cover_image: getRelativePath(coverImageFile?.media_url),
 			cover_image_file_name: coverImageFile?.file_name || '',
 			cover_image_width: coverImageFile?.width || 0,
-			cover_image_height: coverImageFile?.height || 0
+			cover_image_height: coverImageFile?.height || 0,
+			// Spreading the question schedule flag for edit state
+			...(values?.general_info?.start_date
+				? { schedule_flag_enabled: true }
+				: {})
 		},
 		questions: values.questions.map((item, index) => ({
 			...omit(item, ['uploadedFiles', 'answers']),
@@ -265,7 +275,8 @@ export const questionDataFormatterForService = async (
 			position: index + 1
 		})),
 		...(values.question_id ? { question_id: values.question_id } : {}),
-		rules: filteredRules
+		rules: filteredRules,
+		is_scheduled: values.is_scheduled
 	};
 
 	if (values.active_question_id) {
@@ -302,7 +313,15 @@ const updatingQuestionsSlides = (questionsSlides = []) => {
 };
 
 export const questionDataFormatterForForm = (question, allRules) => {
-	const { id, summary, questions, ...rest } = question;
+	const {
+		id,
+		summary,
+		questions,
+		end_date,
+		start_date,
+		is_scheduled,
+		...rest
+	} = question;
 
 	const rules = {};
 
@@ -315,6 +334,7 @@ export const questionDataFormatterForForm = (question, allRules) => {
 	});
 
 	const formattedQuestion = {
+		is_scheduled,
 		rules: rules,
 		question_id: id,
 		coverImageUploadedFiles: rest.cover_image
@@ -364,6 +384,7 @@ export const questionDataFormatterForForm = (question, allRules) => {
 			question_type: rest.question_type,
 			question_title: rest.question_title,
 			cover_image_dropbox_url: rest.cover_image_dropbox_url,
+			...(is_scheduled && { end_date, start_date }),
 			...(question.question_type === 'poll'
 				? {
 						results: summary.results,
