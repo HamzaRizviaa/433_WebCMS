@@ -11,10 +11,13 @@ import { useStyles } from './index.styles';
 import { formatScheduleDate } from '../../../data/helpers';
 import { isPastTime } from '../../../data/utils';
 
-const validationText = {
-	1: 'You can’t schedule in the past. Please select a time and date atleast 15 minutes from now.',
+const validationText = (selectsRange) => ({
+	1: `You can’t schedule in the past. Please select a${
+		selectsRange ? ' start' : ''
+	} time and date atleast 15 minutes from now.`,
 	2: 'Selected End Date should be atleast 30 minutes ahead from the Start Date.'
-};
+});
+
 const SchedulerPopup = ({
 	open,
 	onClose,
@@ -100,7 +103,7 @@ const SchedulerPopup = ({
 		const isPastTimeError = isPastTime(startStamp, endStamp);
 
 		if (isPastTimeError) {
-			setError(validationText[isPastTimeError]);
+			setError(validationText(selectsRange)[isPastTimeError]);
 			return;
 		}
 

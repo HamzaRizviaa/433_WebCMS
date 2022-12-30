@@ -7,7 +7,7 @@ export const useStyles = makeStyles((theme) => ({
 	},
 
 	tableContainer: {
-		margin: ' 1rem 0rem',
+		margin: '1rem 0rem',
 		'& .table': {
 			width: '100%',
 			borderCollapse: 'separate',
@@ -27,9 +27,9 @@ export const useStyles = makeStyles((theme) => ({
 				opacity: ({ isLoading }) => (isLoading ? 0.5 : 1),
 				display: 'block',
 				maxHeight: ({ formTable }) =>
-					formTable ? 'auto' : 'calc(100vh - 200px)',
+					formTable ? 'auto' : 'calc(100vh - 215px)',
 				minHeight: ({ formTable }) =>
-					formTable ? 'auto' : 'calc(100vh - 200px)',
+					formTable ? 'auto' : 'calc(100vh - 215px)',
 				overflowY: 'auto',
 				overflowX: 'hidden',
 				'& tr': {
