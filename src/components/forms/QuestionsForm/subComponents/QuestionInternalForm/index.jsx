@@ -104,10 +104,6 @@ const QuestionInternalForm = ({
 		resetForm({ values: editFormInitValues });
 	};
 
-	// const handleSaveDraft = () => {
-	// 	onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
-	// };
-
 	const handlePublishBtnClick = async () => {
 		if (!isPublished) {
 			try {
@@ -235,9 +231,6 @@ const QuestionInternalForm = ({
 	return (
 		<div>
 			<SchedulerPopup
-				// open={schedularModalState}
-				// onClose={closeSchedulerModal}
-				// onConfirm={handleScheduleConfirm}
 				selectsRange
 				open={schedularModalState}
 				onClose={closeSchedulerModal}
@@ -252,10 +245,7 @@ const QuestionInternalForm = ({
 				<div className={classes.scheduledTime}>
 					<h2>
 						<span className={classes.scheduleTimeLabel}>Scheduled Time:</span>
-						{dayjs(values.general_info.start_date).format(
-							'DD-MM-YYYY, HH:mm'
-						)}{' '}
-						{/* -{dayjs(values.general_info.end_date).format('DD-MM-YYYY, HH:mm')} */}
+						{dayjs(values.general_info.start_date).format('DD-MM-YYYY, HH:mm')}
 					</h2>
 					<IconButton onClick={openSchedulerModal} disabled={!isValid}>
 						<Edit
@@ -399,4 +389,5 @@ QuestionInternalForm.propTypes = {
 	toggleStopModal: PropTypes.func.isRequired,
 	defaultQuestionType: PropTypes.string.isRequired
 };
+
 export default QuestionInternalForm;

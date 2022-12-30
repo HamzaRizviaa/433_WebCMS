@@ -30,13 +30,6 @@ export const questionTableColumns = [
 		formatter: (content) =>
 			getFormatter('markup', { content: content?.toUpperCase() })
 	},
-	// {
-	// 	dataField: 'post_date',
-	// 	text: 'POST DATE | TIME',
-	// 	sort: true,
-	// 	formatter: (content) =>
-	// 		getFormatter('markup', { content: getDateTime(content) })
-	// },
 	{
 		dataField: 'post_date',
 		text: 'POST, SCHEDULE DATE | TIME',
