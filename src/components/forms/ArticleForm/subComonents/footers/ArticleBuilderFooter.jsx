@@ -12,7 +12,7 @@ import {
 import { useSelector } from 'react-redux';
 import { getRules } from '../../../../../data/selectors';
 
-const ArticleFormFooter = ({
+const ArticleBuilderFooter = ({
 	isEdit,
 	isDraft,
 	loading,
@@ -84,7 +84,7 @@ const ArticleFormFooter = ({
 	);
 };
 
-ArticleFormFooter.propTypes = {
+ArticleBuilderFooter.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	isDraft: PropTypes.bool.isRequired,
 	loading: PropTypes.bool,
@@ -92,4 +92,4 @@ ArticleFormFooter.propTypes = {
 	onSubmitHandler: PropTypes.func.isRequired
 };
 
-export default ArticleFormFooter;
+export default ArticleBuilderFooter;

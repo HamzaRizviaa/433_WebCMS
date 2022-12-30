@@ -1,5 +1,13 @@
 import moment from 'moment';
 
+export const getArticleBuilderDrawerTitle = (isEdit) => {
+	return isEdit ? 'Edit Article' : 'Article Builder';
+};
+
+export const getArticleTemplateDrawerTitle = (isEdit) => {
+	return isEdit ? 'Edit Template' : 'Create Template';
+};
+
 export const getFileExtension = (type) => {
 	if (type) {
 		let _type = type.split('/');

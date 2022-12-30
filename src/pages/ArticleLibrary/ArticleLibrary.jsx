@@ -1,23 +1,19 @@
-/* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import Table from '../../components/ui/Table';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
-// import UploadOrEditArticle from '../../components/articles/uploadOrEditArticle';
 import ArticleBuilderForm from '../../components/forms/ArticleForm/ArticleBuilderForm';
 import useGetAllArticlesQuery from '../../hooks/libraries/articles/useGetAllArticlesQuery';
 import { getSpecificArticle } from '../../data/features/articleLibrary/articleLibrarySlice';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 import { articleTableColumns } from '../../data/helpers/articleHelpers';
 import ArticleTemplateModal from '../../components/ui/ArticleTemplateModal';
-import { SettingsPowerRounded } from '@material-ui/icons';
 import TemplateCard from '../../components/forms/ArticleForm/subComonents/TemplateCard';
 import ArticleTemplateForm from '../../components/forms/ArticleForm/ArticleTemplateForm';
 
 const ArticleLibrary = () => {
 	const dispatch = useDispatch();
-	const [openModal, setOpenModal] = useState(false);
 
 	const { data, isLoading, totalRecords } = useGetAllArticlesQuery();
 
@@ -26,8 +22,17 @@ const ArticleLibrary = () => {
 	const [edit, setEdit] = useState(false);
 	const [rowStatus, setRowStatus] = useState('');
 
-	// ARTICLE TEMPLATE FORM STATES
+	// ARTICLE TEMPLATE STATES
+	const [showTemplateModal, setShowTemplateModal] = useState(false);
 	const [showTemplateSlider, setShowTemplateSlider] = useState(false);
+
+	/**
+	 * @type {string}
+	 * @description The selectedOption state will contain either one of the three values,
+	 * which are "", "article", and "template". If it is any empty string then it identifes
+	 * that neither one of the option is selected.
+	 */
+	const [selectedOption, setSelectedOption] = useState('');
 
 	const handleRowClick = (_, row) => {
 		row.status === 'draft' && dispatch(getAllNewLabels());
@@ -35,42 +40,38 @@ const ArticleLibrary = () => {
 		setEdit(true);
 		setShowSlider(true);
 		setRowStatus(row?.status);
+		setSelectedOption('article');
 	};
 
-	const handleUploadArticleClick = () => {
+	const handleUploadArticleClick = useCallback(() => {
+		setSelectedOption('article');
+		setShowTemplateModal(true);
+	}, []);
+
+	const handleUploadTemplateClick = useCallback(() => {
+		setSelectedOption('template');
+		setShowTemplateModal(true);
+	}, []);
+
+	const handleNewArticleClick = useCallback(() => {
 		dispatch(getAllNewLabels());
 		setEdit(false);
+		setShowTemplateModal(false);
 		setShowSlider(true);
-	};
-	// const handleUploadArticleTemplateClick = () => {
-	// 	setOpenModal(true);
-	// };
+	}, []);
 
-	const handleNewArticleClick = () => {
-		setOpenModal(false);
-		setShowSlider(true);
-	};
-
-	const handleTemplateClick = () => {
-		setOpenModal(false);
+	const handleTemplateClick = useCallback(() => {
 		dispatch(getAllNewLabels());
 		setEdit(false);
+		setShowTemplateModal(false);
 		setShowTemplateSlider(true);
-	};
-
-	const handleUploadTemplateClick = () => {
-		setOpenModal(true);
-		// dispatch(getAllNewLabels());
-		// setEdit(false);
-		// setShowTemplateSlider(true);
-	};
+	}, []);
 
 	return (
 		<DashboardLayout
 			title='Article'
 			isLoading={isLoading}
 			onButtonClick={handleUploadArticleClick}
-			// onTemplateButtonClick={handleUploadArticleTemplateClick}
 			secondaryButtonText={'Templates'}
 			secondaryButtonClick={handleUploadTemplateClick}
 		>
@@ -82,23 +83,12 @@ const ArticleLibrary = () => {
 				isLoading={isLoading}
 				noDataText='No Articles Found'
 			/>
-			{/* <UploadOrEditArticle
-				open={showSlider}
-				isEdit={edit}
-				handleClose={() => setShowSlider(false)}
-				title={edit ? 'Edit Article' : 'Article Builder'}
-				heading1={edit ? 'Media File' : 'Add Media File'}
-				buttonText={
-					edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
-				}
-				status={rowStatus}
-			/> */}
 			<ArticleTemplateModal
-				title={'UPLOAD ARTICLE'}
-				open={openModal}
-				onClose={() => setOpenModal(false)}
-				// onConfirm={handleConfirm}
-				// isSubmitting={isSubmitting}
+				title={
+					selectedOption === 'article' ? 'UPLOAD ARTICLE' : 'TEMPLATE MANAGER'
+				}
+				open={showTemplateModal}
+				onClose={() => setShowTemplateModal(false)}
 			>
 				<TemplateCard
 					newArticleClick={handleNewArticleClick}
@@ -110,12 +100,14 @@ const ArticleLibrary = () => {
 				handleClose={() => setShowSlider(false)}
 				isEdit={edit}
 				status={rowStatus}
+				selectedOption={selectedOption}
 			/>
 			<ArticleTemplateForm
 				open={showTemplateSlider}
 				handleClose={() => setShowTemplateSlider(false)}
 				isEdit={edit}
 				status={rowStatus}
+				selectedOption={selectedOption}
 			/>
 		</DashboardLayout>
 	);
