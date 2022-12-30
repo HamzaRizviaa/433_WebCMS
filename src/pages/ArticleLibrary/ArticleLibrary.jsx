@@ -10,16 +10,88 @@ import useGetAllArticlesQuery from '../../hooks/libraries/articles/useGetAllArti
 import { getSpecificArticle } from '../../data/features/articleLibrary/articleLibrarySlice';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 import { articleTableColumns } from '../../data/helpers/articleHelpers';
-import ArticleTemplateModal from '../../components/ui/ArticleTemplateModal';
-import { SettingsPowerRounded } from '@material-ui/icons';
-import TemplateCard from '../../components/forms/ArticleForm/subComonents/TemplateCard';
+import CardListing from '../../components/ui/Card/CardListing';
+import TemplateModal from '../../components/ui/TemplateModal';
+
+const dummyData = [
+	{
+		username: 'Alexander jordaan',
+		title: 'Matches of the week',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Template 2 but with longer name',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Matches of the week',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Template 2 but with longer name',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Matches of the week',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Template 2 but with longer name',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Matches of the week',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Template 2 but with longer name',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Matches of the week',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Template 2 but with longer name',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Matches of the week',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Template 2 but with longer name',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Matches of the week',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Template 2 but with longer name',
+		last_edited: '21-12-2022, 12:05'
+	}
+];
 
 const ArticleLibrary = () => {
 	const dispatch = useDispatch();
-	const [openModal, setOpenModal] = useState(false);
 
 	const { data, isLoading, totalRecords } = useGetAllArticlesQuery();
 
+	const [openModal, setOpenModal] = useState(false);
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [rowStatus, setRowStatus] = useState('');
@@ -61,26 +133,19 @@ const ArticleLibrary = () => {
 				isLoading={isLoading}
 				noDataText='No Articles Found'
 			/>
-			{/* <UploadOrEditArticle
-				open={showSlider}
-				isEdit={edit}
-				handleClose={() => setShowSlider(false)}
-				title={edit ? 'Edit Article' : 'Article Builder'}
-				heading1={edit ? 'Media File' : 'Add Media File'}
-				buttonText={
-					edit && rowStatus === 'published' ? 'SAVE CHANGES' : 'PUBLISH'
-				}
-				status={rowStatus}
-			/> */}
-			<ArticleTemplateModal
+
+			<TemplateModal
 				title={'UPLOAD ARTICLE'}
 				open={openModal}
 				onClose={() => setOpenModal(false)}
-				// onConfirm={handleConfirm}
-				// isSubmitting={isSubmitting}
 			>
-				<TemplateCard newArticleClick={handleNewArticleClick} />
-			</ArticleTemplateModal>
+				<CardListing
+					emptyCardText={'Empty Article'}
+					data={dummyData}
+					emptyCardClick={handleNewArticleClick}
+				/>
+			</TemplateModal>
+
 			<ArticleForm
 				open={showSlider}
 				handleClose={() => setShowSlider(false)}
