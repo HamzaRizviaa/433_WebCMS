@@ -105,7 +105,7 @@ export const deleteArticleThunk = createAsyncThunk(
 );
 
 //
-// Article Template Actions
+// Article Template Actions getAllArticleTemplates
 //
 export const getAllArticleTemplatesThunk = createAsyncThunk(
 	'articleLibary/getAllArticleTemplatesThunk',

@@ -1,89 +1,93 @@
-import React, { useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Table from '../../components/ui/Table';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import ArticleBuilderForm from '../../components/forms/ArticleForm/ArticleBuilderForm';
 import useGetAllArticlesQuery from '../../hooks/libraries/articles/useGetAllArticlesQuery';
-import { getSpecificArticle } from '../../data/features/articleLibrary/articleLibrarySlice';
+import {
+	getSpecificArticle,
+	getAllArticleTemplatesThunk
+} from '../../data/features/articleLibrary/articleLibrarySlice';
+import { selectAllArticleTemplate } from '../../data/selectors';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 import { articleTableColumns } from '../../data/helpers/articleHelpers';
 import ArticleTemplateModal from '../../components/ui/TemplateModal';
 import ArticleTemplateForm from '../../components/forms/ArticleForm/ArticleTemplateForm';
 import CardListing from '../../components/ui/card/TemplateCard/TemplateCardListing';
 
-const dummyData = [
-	{
-		username: 'Alexander jordaan',
-		title: 'Matches of the week',
-		last_edited: '21-12-2022, 12:05'
-	},
-	{
-		username: 'Alexander jordaan',
-		title: 'Template 2 but with longer name',
-		last_edited: '21-12-2022, 12:05'
-	},
-	{
-		username: 'Alexander jordaan',
-		title: 'Matches of the week',
-		last_edited: '21-12-2022, 12:05'
-	},
-	{
-		username: 'Alexander jordaan',
-		title: 'Template 2 but with longer name',
-		last_edited: '21-12-2022, 12:05'
-	},
-	{
-		username: 'Alexander jordaan',
-		title: 'Matches of the week',
-		last_edited: '21-12-2022, 12:05'
-	},
-	{
-		username: 'Alexander jordaan',
-		title: 'Template 2 but with longer name',
-		last_edited: '21-12-2022, 12:05'
-	},
-	{
-		username: 'Alexander jordaan',
-		title: 'Matches of the week',
-		last_edited: '21-12-2022, 12:05'
-	},
-	{
-		username: 'Alexander jordaan',
-		title: 'Template 2 but with longer name',
-		last_edited: '21-12-2022, 12:05'
-	},
-	{
-		username: 'Alexander jordaan',
-		title: 'Matches of the week',
-		last_edited: '21-12-2022, 12:05'
-	},
-	{
-		username: 'Alexander jordaan',
-		title: 'Template 2 but with longer name',
-		last_edited: '21-12-2022, 12:05'
-	},
-	{
-		username: 'Alexander jordaan',
-		title: 'Matches of the week',
-		last_edited: '21-12-2022, 12:05'
-	},
-	{
-		username: 'Alexander jordaan',
-		title: 'Template 2 but with longer name',
-		last_edited: '21-12-2022, 12:05'
-	},
-	{
-		username: 'Alexander jordaan',
-		title: 'Matches of the week',
-		last_edited: '21-12-2022, 12:05'
-	},
-	{
-		username: 'Alexander jordaan',
-		title: 'Template 2 but with longer name',
-		last_edited: '21-12-2022, 12:05'
-	}
-];
+// const dummyData = [
+// 	{
+// 		username: 'Alexander jordaan',
+// 		title: 'Matches of the week',
+// 		last_edited: '21-12-2022, 12:05'
+// 	},
+// 	{
+// 		username: 'Alexander jordaan',
+// 		title: 'Template 2 but with longer name',
+// 		last_edited: '21-12-2022, 12:05'
+// 	},
+// 	{
+// 		username: 'Alexander jordaan',
+// 		title: 'Matches of the week',
+// 		last_edited: '21-12-2022, 12:05'
+// 	},
+// 	{
+// 		username: 'Alexander jordaan',
+// 		title: 'Template 2 but with longer name',
+// 		last_edited: '21-12-2022, 12:05'
+// 	},
+// 	{
+// 		username: 'Alexander jordaan',
+// 		title: 'Matches of the week',
+// 		last_edited: '21-12-2022, 12:05'
+// 	},
+// 	{
+// 		username: 'Alexander jordaan',
+// 		title: 'Template 2 but with longer name',
+// 		last_edited: '21-12-2022, 12:05'
+// 	},
+// 	{
+// 		username: 'Alexander jordaan',
+// 		title: 'Matches of the week',
+// 		last_edited: '21-12-2022, 12:05'
+// 	},
+// 	{
+// 		username: 'Alexander jordaan',
+// 		title: 'Template 2 but with longer name',
+// 		last_edited: '21-12-2022, 12:05'
+// 	},
+// 	{
+// 		username: 'Alexander jordaan',
+// 		title: 'Matches of the week',
+// 		last_edited: '21-12-2022, 12:05'
+// 	},
+// 	{
+// 		username: 'Alexander jordaan',
+// 		title: 'Template 2 but with longer name',
+// 		last_edited: '21-12-2022, 12:05'
+// 	},
+// 	{
+// 		username: 'Alexander jordaan',
+// 		title: 'Matches of the week',
+// 		last_edited: '21-12-2022, 12:05'
+// 	},
+// 	{
+// 		username: 'Alexander jordaan',
+// 		title: 'Template 2 but with longer name',
+// 		last_edited: '21-12-2022, 12:05'
+// 	},
+// 	{
+// 		username: 'Alexander jordaan',
+// 		title: 'Matches of the week',
+// 		last_edited: '21-12-2022, 12:05'
+// 	},
+// 	{
+// 		username: 'Alexander jordaan',
+// 		title: 'Template 2 but with longer name',
+// 		last_edited: '21-12-2022, 12:05'
+// 	}
+// ];
 
 const ArticleLibrary = () => {
 	const dispatch = useDispatch();
@@ -106,6 +110,13 @@ const ArticleLibrary = () => {
 	 * that neither one of the option is selected.
 	 */
 	const [selectedOption, setSelectedOption] = useState('');
+
+	useEffect(() => {
+		dispatch(getAllArticleTemplatesThunk());
+	}, []);
+
+	const templateListingData = useSelector(selectAllArticleTemplate);
+	console.log(templateListingData, 'templateListingData');
 
 	const handleRowClick = (_, row) => {
 		//console.log(row.status)
@@ -166,7 +177,7 @@ const ArticleLibrary = () => {
 			>
 				<CardListing
 					emptyCardText={'Empty Article'}
-					data={dummyData}
+					data={templateListingData}
 					emptyCardClick={handleNewArticleClick}
 				/>
 			</ArticleTemplateModal>
