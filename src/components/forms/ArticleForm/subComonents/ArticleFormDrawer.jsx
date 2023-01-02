@@ -82,6 +82,7 @@ const ArticleFormDrawer = ({
 					<ArticleInternalForm
 						isEdit={isEdit}
 						status={status}
+						selectedOption={selectedOption}
 						topElementRef={topElementRef}
 						elementsWrapperRef={elementsWrapperRef}
 					/>
