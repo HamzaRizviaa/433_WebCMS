@@ -8,9 +8,82 @@ import useGetAllArticlesQuery from '../../hooks/libraries/articles/useGetAllArti
 import { getSpecificArticle } from '../../data/features/articleLibrary/articleLibrarySlice';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 import { articleTableColumns } from '../../data/helpers/articleHelpers';
-import ArticleTemplateModal from '../../components/ui/ArticleTemplateModal';
-import TemplateCard from '../../components/forms/ArticleForm/subComonents/TemplateCard';
+import ArticleTemplateModal from '../../components/ui/TemplateModal';
 import ArticleTemplateForm from '../../components/forms/ArticleForm/ArticleTemplateForm';
+import CardListing from '../../components/ui/Card/CardListing';
+
+const dummyData = [
+	{
+		username: 'Alexander jordaan',
+		title: 'Matches of the week',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Template 2 but with longer name',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Matches of the week',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Template 2 but with longer name',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Matches of the week',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Template 2 but with longer name',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Matches of the week',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Template 2 but with longer name',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Matches of the week',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Template 2 but with longer name',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Matches of the week',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Template 2 but with longer name',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Matches of the week',
+		last_edited: '21-12-2022, 12:05'
+	},
+	{
+		username: 'Alexander jordaan',
+		title: 'Template 2 but with longer name',
+		last_edited: '21-12-2022, 12:05'
+	}
+];
 
 const ArticleLibrary = () => {
 	const dispatch = useDispatch();
@@ -61,12 +134,12 @@ const ArticleLibrary = () => {
 		setShowSlider(true);
 	}, []);
 
-	const handleTemplateClick = useCallback(() => {
-		dispatch(getAllNewLabels());
-		setEdit(false);
-		setShowTemplateModal(false);
-		setShowTemplateSlider(true);
-	}, []);
+	// const handleTemplateClick = useCallback(() => {
+	// 	dispatch(getAllNewLabels());
+	// 	setEdit(false);
+	// 	setShowTemplateModal(false);
+	// 	setShowTemplateSlider(true);
+	// }, []);
 
 	return (
 		<DashboardLayout
@@ -91,12 +164,12 @@ const ArticleLibrary = () => {
 				open={showTemplateModal}
 				onClose={() => setShowTemplateModal(false)}
 			>
-				<TemplateCard
-					newArticleClick={handleNewArticleClick}
-					handleTemplateClick={handleTemplateClick}
+				<CardListing
+					emptyCardText={'Empty Article'}
+					data={dummyData}
+					emptyCardClick={handleNewArticleClick}
 				/>
 			</ArticleTemplateModal>
-
 			<ArticleBuilderForm
 				open={showSlider}
 				handleClose={() => setShowSlider(false)}
