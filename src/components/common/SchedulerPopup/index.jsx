@@ -13,7 +13,7 @@ import { isPastTime } from '../../../data/utils';
 
 const validationText = (selectsRange) => ({
 	1: `You can’t schedule in the past. Please select a${
-		selectsRange ? ' start' : ''
+		selectsRange ? ' Start' : ''
 	} Date and Time atleast 15 minutes from now.`,
 	2: 'Selected End Date and Time should be atleast 30 minutes ahead from the Start Date.'
 });
