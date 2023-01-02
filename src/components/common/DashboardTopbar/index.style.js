@@ -24,7 +24,7 @@ export const useTopbarStyles = makeStyles((theme) => ({
 
 	titleName: {
 		'&:hover': {
-			color: theme.palette.darkOrange
+			color: theme.palette.neonYellow
 		}
 	}
 }));
