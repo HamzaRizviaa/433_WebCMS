@@ -35,7 +35,7 @@ const articlesLibrarySlice = createSlice({
 			state.noResultStatus = false;
 		},
 		resetSpecificArticle: (state) => {
-			state.specificArticle = false;
+			state.specificArticle = null;
 		}
 	},
 	extraReducers: (builder) => {
