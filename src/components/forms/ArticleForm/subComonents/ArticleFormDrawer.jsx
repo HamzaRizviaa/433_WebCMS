@@ -9,7 +9,8 @@ import DrawerLayout from '../../../layouts/DrawerLayout';
 import ArticleElementsSidebar from './elements/ArticleElementsSidebar';
 import ArticleInternalForm from './ArticleInternalForm/index';
 import ArticlePreviewSidebar from './ArticlePreviewSidebar';
-import ArticleFormFooter from './ArticleFormFooter/index';
+import ArticleBuilderFooter from './footers/ArticleBuilderFooter';
+import ArticleTemplateFooter from './footers/ArticleTemplateFooter';
 import {
 	getRules,
 	selectSpecificArticleStatus
@@ -19,12 +20,17 @@ import {
 	articleFormStatusInitialValues,
 	articleUnwantedKeysForDeepEqual
 } from '../../../../data/helpers';
+import {
+	getArticleBuilderDrawerTitle,
+	getArticleTemplateDrawerTitle
+} from '../../../../data/utils/articleUtils';
 
 const ArticleFormDrawer = ({
 	open,
 	handleClose,
 	isEdit,
 	status,
+	selectedOption,
 	onSubmitHandler,
 	toggleDeleteModal
 }) => {
@@ -56,7 +62,11 @@ const ArticleFormDrawer = ({
 		<DrawerLayout
 			open={open}
 			handleClose={handleClose}
-			title={isEdit ? 'Edit Article' : 'Article Builder'}
+			title={
+				selectedOption === 'article'
+					? getArticleBuilderDrawerTitle(isEdit)
+					: getArticleTemplateDrawerTitle(isEdit)
+			}
 			notifID={isEdit ? values.id : ''}
 			isLoading={isLoading}
 			fromArticle
@@ -72,6 +82,7 @@ const ArticleFormDrawer = ({
 					<ArticleInternalForm
 						isEdit={isEdit}
 						status={status}
+						selectedOption={selectedOption}
 						topElementRef={topElementRef}
 						elementsWrapperRef={elementsWrapperRef}
 					/>
@@ -84,13 +95,23 @@ const ArticleFormDrawer = ({
 					/>
 				</Grid>
 			</Grid>
-			<ArticleFormFooter
-				isEdit={isEdit}
-				isDraft={status !== 'published'}
-				loading={isLoading}
-				openDeleteModal={toggleDeleteModal}
-				onSubmitHandler={onSubmitHandler}
-			/>
+			{selectedOption === 'article' && (
+				<ArticleBuilderFooter
+					isEdit={isEdit}
+					isDraft={status !== 'published'}
+					loading={isLoading}
+					openDeleteModal={toggleDeleteModal}
+					onSubmitHandler={onSubmitHandler}
+				/>
+			)}
+			{selectedOption === 'template' && (
+				<ArticleTemplateFooter
+					isEdit={isEdit}
+					isDraft={status !== 'published'}
+					loading={isLoading}
+					openDeleteModal={toggleDeleteModal}
+				/>
+			)}
 		</DrawerLayout>
 	);
 };
@@ -100,6 +121,7 @@ ArticleFormDrawer.propTypes = {
 	handleClose: PropTypes.func.isRequired,
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
+	selectedOption: PropTypes.oneOf(['', 'article', 'template']).isRequired,
 	onSubmitHandler: PropTypes.func.isRequired,
 	toggleDeleteModal: PropTypes.func.isRequired
 };

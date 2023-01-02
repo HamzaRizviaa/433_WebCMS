@@ -561,6 +561,7 @@ export const articleFormInitialValues = (allRules) => {
 	allRules.forEach((rule) => {
 		rules[rule._id] = false;
 	});
+
 	return {
 		mainCategoryId: '',
 		subCategoryId: '',
@@ -579,6 +580,15 @@ export const articleFormInitialValues = (allRules) => {
 		show_comments: true,
 		elements: [],
 		rules
+	};
+};
+
+export const articleTemplateFormInitialValues = (allRules) => {
+	const initialValues = articleFormInitialValues(allRules);
+
+	return {
+		...initialValues,
+		template_name: ''
 	};
 };
 
@@ -732,3 +742,8 @@ export const articleFormValidationSchema = Yup.object().shape({
 		)
 		.min(1)
 });
+
+export const articleTemplateFormValidationSchema =
+	articleFormValidationSchema.shape({
+		template_name: Yup.string().label('Template Name').required()
+	});

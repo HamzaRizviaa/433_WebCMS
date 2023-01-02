@@ -25,7 +25,13 @@ import {
 import { getRules } from '../../../data/selectors';
 import { deleteReadMoreApi } from '../../../data/services/readMoreArticleService';
 
-const ArticleTemplateForm = ({ open, handleClose, isEdit, status }) => {
+const ArticleTemplateForm = ({
+	open,
+	handleClose,
+	isEdit,
+	status,
+	selectedOption
+}) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
@@ -147,6 +153,7 @@ const ArticleTemplateForm = ({ open, handleClose, isEdit, status }) => {
 						handleClose={handleClose}
 						isEdit={isEdit}
 						status={status}
+						selectedOption={selectedOption}
 						onSubmitHandler={onSubmitHandler}
 						toggleDeleteModal={toggleDeleteModal}
 					/>
@@ -170,7 +177,8 @@ ArticleTemplateForm.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	isEdit: PropTypes.bool.isRequired,
-	status: PropTypes.string.isRequired
+	status: PropTypes.string.isRequired,
+	selectedOption: PropTypes.oneOf(['', 'article', 'template']).isRequired
 };
 
 export default ArticleTemplateForm;

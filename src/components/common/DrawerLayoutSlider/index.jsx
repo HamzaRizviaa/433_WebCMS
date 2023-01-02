@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { DrawerLayoutStyles } from './index.style';
 import Close from '@material-ui/icons/Close';
 import { Backdrop, Box, Paper, Slide } from '@material-ui/core';
-import CopyToClipboard from '../../CopyToClipboard';
+import CopyToClipboard from '../CopyToClipboard';
 import { ReactComponent as CopyIcon } from '../../../assets/Copy.svg';
 
 const DrawerLayoutSlider = ({

@@ -31,7 +31,13 @@ import {
 	deleteReadMoreApi
 } from '../../../data/services/readMoreArticleService';
 
-const ArticleBuilderForm = ({ open, handleClose, isEdit, status }) => {
+const ArticleBuilderForm = ({
+	open,
+	handleClose,
+	isEdit,
+	status,
+	selectedOption
+}) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const readMoreFeatureFlag = useSelector(selectReadMoreArticlesFeatureFlag);
@@ -162,6 +168,7 @@ const ArticleBuilderForm = ({ open, handleClose, isEdit, status }) => {
 						handleClose={handleClose}
 						isEdit={isEdit}
 						status={status}
+						selectedOption={selectedOption}
 						onSubmitHandler={onSubmitHandler}
 						toggleDeleteModal={toggleDeleteModal}
 					/>
@@ -185,7 +192,8 @@ ArticleBuilderForm.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	isEdit: PropTypes.bool.isRequired,
-	status: PropTypes.string.isRequired
+	status: PropTypes.string.isRequired,
+	selectedOption: PropTypes.oneOf(['', 'article', 'template']).isRequired
 };
 
 export default ArticleBuilderForm;
