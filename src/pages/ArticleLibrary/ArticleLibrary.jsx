@@ -10,8 +10,7 @@ import useGetAllArticlesQuery from '../../hooks/libraries/articles/useGetAllArti
 import { getSpecificArticle } from '../../data/features/articleLibrary/articleLibrarySlice';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 import { articleTableColumns } from '../../data/helpers/articleHelpers';
-<<<<<<< HEAD
-import CardListing from '../../components/ui/Card/CardListing';
+import CardListing from '../../components/ui/card/CardListing';
 import TemplateModal from '../../components/ui/TemplateModal';
 
 const dummyData = [
@@ -86,23 +85,14 @@ const dummyData = [
 		last_edited: '21-12-2022, 12:05'
 	}
 ];
-=======
-import ArticleTemplateModal from '../../components/ui/ArticleTemplateModal';
-import { SettingsPowerRounded } from '@material-ui/icons';
-import TemplateCard from '../../components/forms/ArticleForm/subComonents/TemplateCard';
-import ArticleTemplateForm from '../../components/forms/ArticleForm/ArticleTemplateForm';
->>>>>>> 19f055ee877a446b0e8426f53a6317438ea23824
 
 const ArticleLibrary = () => {
 	const dispatch = useDispatch();
 
 	const { data, isLoading, totalRecords } = useGetAllArticlesQuery();
 
-<<<<<<< HEAD
 	const [openModal, setOpenModal] = useState(false);
-=======
 	// ARTICLE BUILDER FORM STATES
->>>>>>> 19f055ee877a446b0e8426f53a6317438ea23824
 	const [showSlider, setShowSlider] = useState(false);
 	const [edit, setEdit] = useState(false);
 	const [rowStatus, setRowStatus] = useState('');
@@ -169,7 +159,6 @@ const ArticleLibrary = () => {
 				open={openModal}
 				onClose={() => setOpenModal(false)}
 			>
-<<<<<<< HEAD
 				<CardListing
 					emptyCardText={'Empty Article'}
 					data={dummyData}
@@ -177,15 +166,7 @@ const ArticleLibrary = () => {
 				/>
 			</TemplateModal>
 
-			<ArticleForm
-=======
-				<TemplateCard
-					newArticleClick={handleNewArticleClick}
-					handleTemplateClick={handleTemplateClick}
-				/>
-			</ArticleTemplateModal>
 			<ArticleBuilderForm
->>>>>>> 19f055ee877a446b0e8426f53a6317438ea23824
 				open={showSlider}
 				handleClose={() => setShowSlider(false)}
 				isEdit={edit}
