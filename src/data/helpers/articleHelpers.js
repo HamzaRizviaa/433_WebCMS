@@ -742,3 +742,8 @@ export const articleFormValidationSchema = Yup.object().shape({
 		)
 		.min(1)
 });
+
+export const articleTemplateFormValidationSchema =
+	articleFormValidationSchema.shape({
+		template_name: Yup.string().label('Template Name').required()
+	});
