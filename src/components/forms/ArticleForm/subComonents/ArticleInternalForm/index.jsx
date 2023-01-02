@@ -2,14 +2,16 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { FieldArray, useFormikContext } from 'formik';
 import { Box } from '@mui/material';
-import { useStyles } from '../subComponents.styles';
+
 import ArticleGeneralInfoForm from './ArticleGeneralInfoForm';
 import ArticleElementsFieldArray from '../elements/ArticleElementsFieldArray';
-import { useLazyGetMatchesTreeQuery } from '../../../../../data/features/articleLibrary/articleLibrary.query';
-import { articleFormInitialValues } from '../../../../../data/helpers';
 import AdvancedSettingsForm from '../../../common/AdvancedSettingsForm';
-import { useSelector } from 'react-redux';
+import { articleFormInitialValues } from '../../../../../data/helpers';
+import { useLazyGetMatchesTreeQuery } from '../../../../../data/features/articleLibrary/articleLibrary.query';
+import { useSelector, useDispatch } from 'react-redux';
 import { getRules } from '../../../../../data/selectors';
+import { resetSpecificArticle } from '../../../../../data/features/articleLibrary/articleLibrarySlice';
+import { useStyles } from '../subComponents.styles';
 
 const ArticleInternalForm = ({
 	isEdit,
@@ -18,6 +20,7 @@ const ArticleInternalForm = ({
 	elementsWrapperRef
 }) => {
 	const classes = useStyles();
+	const dispatch = useDispatch();
 	const { rules } = useSelector(getRules);
 	const { values, validateForm, resetForm } = useFormikContext();
 	const [getMatchesTree, { data: matchesData }] = useLazyGetMatchesTreeQuery();
@@ -28,6 +31,7 @@ const ArticleInternalForm = ({
 
 		return () => {
 			resetForm(articleFormInitialValues(rules));
+			dispatch(resetSpecificArticle());
 		};
 	}, []);
 
