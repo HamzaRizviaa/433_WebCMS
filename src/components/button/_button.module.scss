@@ -20,6 +20,8 @@
 
 .button:hover {
 	box-shadow: 0 5px 25px rgba(216, 204, 127, 0.73);
+}
+.button:active {
 	transform: scale(0.93);
 }
 
