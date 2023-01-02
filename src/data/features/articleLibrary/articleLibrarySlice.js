@@ -11,7 +11,7 @@ export * from './articleLibraryActions';
 const initialState = {
 	labels: [],
 	articles: [],
-	specificArticle: [],
+	specificArticle: null,
 	mainCategories: [],
 	subCategories: [],
 	totalRecords: 0,
@@ -33,6 +33,9 @@ const articlesLibrarySlice = createSlice({
 		},
 		resetNoResultStatus: (state) => {
 			state.noResultStatus = false;
+		},
+		resetSpecificArticle: (state) => {
+			state.specificArticle = false;
 		}
 	},
 	extraReducers: (builder) => {
@@ -103,7 +106,7 @@ const articlesLibrarySlice = createSlice({
 	}
 });
 
-export const { resetCalendarError, resetNoResultStatus } =
+export const { resetCalendarError, resetNoResultStatus, resetSpecificArticle } =
 	articlesLibrarySlice.actions;
 
 export default articlesLibrarySlice.reducer;
