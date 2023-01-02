@@ -10,7 +10,7 @@ import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySl
 import { articleTableColumns } from '../../data/helpers/articleHelpers';
 import ArticleTemplateModal from '../../components/ui/TemplateModal';
 import ArticleTemplateForm from '../../components/forms/ArticleForm/ArticleTemplateForm';
-import CardListing from '../../components/ui/Card/CardListing';
+import CardListing from '../../components/ui/card/TemplateCard/TemplateCardListing';
 
 const dummyData = [
 	{

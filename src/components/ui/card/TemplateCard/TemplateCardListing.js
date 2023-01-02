@@ -1,10 +1,10 @@
 import React from 'react';
 import { useStyles } from './index.style';
 import PropTypes from 'prop-types';
-import TemplateSVG from '../../../assets/TemplateAdd.svg';
+import TemplateSVG from '../../../../assets/TemplateAdd.svg';
 import Card from './index';
 
-const CardListing = ({ data, emptyCardClick, emptyCardText }) => {
+const TemplateCardListing = ({ data, emptyCardClick, emptyCardText }) => {
 	const classes = useStyles();
 
 	return (
@@ -21,9 +21,9 @@ const CardListing = ({ data, emptyCardClick, emptyCardText }) => {
 	);
 };
 
-export default CardListing;
+export default TemplateCardListing;
 
-CardListing.propTypes = {
+TemplateCardListing.propTypes = {
 	emptyCardClick: PropTypes.func.isRequired,
 	emptyCardText: PropTypes.string.isRequired,
 	data: PropTypes.array.isRequired
