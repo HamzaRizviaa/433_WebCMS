@@ -35,6 +35,7 @@ const ArticleLibrary = () => {
 	const [selectedOption, setSelectedOption] = useState('');
 
 	const handleRowClick = (_, row) => {
+		//console.log(row.status)
 		row.status === 'draft' && dispatch(getAllNewLabels());
 		dispatch(getSpecificArticle(row.id));
 		setEdit(true);
@@ -95,6 +96,7 @@ const ArticleLibrary = () => {
 					handleTemplateClick={handleTemplateClick}
 				/>
 			</ArticleTemplateModal>
+
 			<ArticleBuilderForm
 				open={showSlider}
 				handleClose={() => setShowSlider(false)}
