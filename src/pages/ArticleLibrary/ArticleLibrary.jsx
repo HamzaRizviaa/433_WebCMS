@@ -4,12 +4,12 @@ import { useDispatch } from 'react-redux';
 
 import Table from '../../components/ui/Table';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
-// import UploadOrEditArticle from '../../components/articles/uploadOrEditArticle';
 import ArticleBuilderForm from '../../components/forms/ArticleForm/ArticleBuilderForm';
 import useGetAllArticlesQuery from '../../hooks/libraries/articles/useGetAllArticlesQuery';
 import { getSpecificArticle } from '../../data/features/articleLibrary/articleLibrarySlice';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 import { articleTableColumns } from '../../data/helpers/articleHelpers';
+import ArticleTemplateForm from '../../components/forms/ArticleForm/ArticleTemplateForm';
 import CardListing from '../../components/ui/card/CardListing';
 import TemplateModal from '../../components/ui/TemplateModal';
 
