@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
 	getLabels,
-	getAllArticlesApi,
 	getSpecificArticle,
 	getArticleMainCategories,
-	getArticleSubCategories
+	getArticleSubCategories,
+	getAllArticlesApi,
+	getAllArticleTemplatesThunk
 } from './articleLibraryActions';
 export * from './articleLibraryActions';
 
@@ -21,7 +22,9 @@ const initialState = {
 	noResultStatus: false,
 	noResultStatusCalendar: false,
 	mainCategoriesStatus: false,
-	subCategoriesStatus: false
+	subCategoriesStatus: false,
+	articleTemplateListing: [],
+	templateListingStatus: false
 };
 
 const articlesLibrarySlice = createSlice({
@@ -99,6 +102,23 @@ const articlesLibrarySlice = createSlice({
 
 		builder.addCase(getArticleSubCategories.rejected, (state) => {
 			state.subCategoriesStatus = false;
+		});
+
+		// Article Templating Listing Actions
+		builder.addCase(getAllArticleTemplatesThunk.pending, (state) => {
+			state.status = 'loading';
+			state.templateListingStatus = 'loading';
+		});
+
+		builder.addCase(getAllArticleTemplatesThunk.fulfilled, (state, action) => {
+			state.articleTemplateListing = action.payload?.data;
+			state.status = 'success';
+			state.templateListingStatus = 'success';
+		});
+
+		builder.addCase(getAllArticleTemplatesThunk.rejected, (state) => {
+			state.status = 'failed';
+			state.templateListingStatus = 'failed';
 		});
 	}
 });
