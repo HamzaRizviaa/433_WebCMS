@@ -12,7 +12,7 @@ import WiFi from '../../../../assets/Wifi.svg';
 import Battery from '../../../../assets/Rectangle.svg';
 import Signals from '../../../../assets/MobileSignal.svg';
 import Avatar from '@mui/material/Avatar';
-import { default433Profile } from '../../../../data/helpers/articleHelpers';
+import { default433Profile } from '../../../../data/helpers/articleHelpers/index';
 
 const ArticlePreviewWrapper = ({ children, form }) => {
 	// Get Cover Url From data
