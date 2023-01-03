@@ -39,7 +39,9 @@ const ArticleInternalForm = ({
 				<h2>Builder</h2>
 				<p>Edit, reorder elements here and build your article</p>
 			</Box>
-			{selectedOption === 'template' && <ArticleTemplateInfoForm />}
+			<Box mb={2}>
+				{selectedOption === 'template' && <ArticleTemplateInfoForm />}
+			</Box>
 			<ArticleGeneralInfoForm isEdit={isEdit} status={status} />
 			{values.subCategoryId && <AdvancedSettingsForm />}
 			<Box

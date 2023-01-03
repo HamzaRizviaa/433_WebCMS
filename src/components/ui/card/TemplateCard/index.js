@@ -1,6 +1,7 @@
 import React from 'react';
 import { useStyles } from './index.style';
 import PropTypes from 'prop-types';
+import { getDateTime } from '../../../../data/utils';
 
 const Card = ({ data, index }) => {
 	const classes = useStyles();
@@ -13,7 +14,7 @@ const Card = ({ data, index }) => {
 			</div>
 			<div className={classes.dateBlock}>
 				Last edited
-				<div className={classes.date}>{data.last_edited}</div>
+				<div className={classes.date}>{getDateTime(data.last_edited)}</div>
 			</div>
 		</div>
 	);

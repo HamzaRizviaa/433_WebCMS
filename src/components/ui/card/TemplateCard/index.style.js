@@ -3,13 +3,14 @@ import { makeStyles } from '@material-ui/core';
 export const useStyles = makeStyles(() => ({
 	cardModal: {
 		display: 'flex',
-		gap: '16px',
-		flexWrap: 'wrap'
+		gap: '16px'
+		// /	flexWrap: 'wrap'
 	},
 	cardList: {
 		display: 'flex',
 		flexDirection: 'row'
 	},
+	// gridContainer: { gap: '10px' },
 	card: {
 		height: '180px',
 		backgroundColor: '#191919',
@@ -20,9 +21,11 @@ export const useStyles = makeStyles(() => ({
 		justifyContent: 'space-between',
 		flexBasis: '283px',
 		boxSizing: 'border-box',
-		cursor: 'pointer'
+		cursor: 'pointer',
+		margin: '0px 10px'
 	},
 	newCard: {
+		margin: '0px 10px',
 		boxSizing: 'border-box',
 		height: '180px',
 		backgroundColor: '#191919',
