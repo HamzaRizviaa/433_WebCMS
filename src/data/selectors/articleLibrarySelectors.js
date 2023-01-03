@@ -23,3 +23,6 @@ export const selectArticleMainCategories = (state) =>
 
 export const selectArticleSubCategories = (state) =>
 	state.rootReducer.articleLibrary.subCategories;
+
+export const selectAllArticleTemplate = (state) =>
+	state.rootReducer.articleLibrary.articleTemplateListing;

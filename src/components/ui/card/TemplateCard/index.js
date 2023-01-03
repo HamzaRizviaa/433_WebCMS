@@ -8,8 +8,8 @@ const Card = ({ data, index }) => {
 	return (
 		<div className={classes.card} key={index}>
 			<div>
-				<div className={classes.author}>{data.username}</div>
-				<div className={classes.title}>{data.title}</div>
+				<div className={classes.author}>{data.user}</div>
+				<div className={classes.title}>{data.template_name}</div>
 			</div>
 			<div className={classes.dateBlock}>
 				Last edited
