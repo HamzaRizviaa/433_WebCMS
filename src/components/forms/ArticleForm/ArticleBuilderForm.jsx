@@ -15,7 +15,7 @@ import {
 	articleDataFormatterForForm,
 	articleDataFormatterForService,
 	uploadArticleFiles
-} from '../../../data/helpers/articleHelpers';
+} from '../../../data/helpers/articleHelpers/index';
 import {
 	getAllArticlesApi,
 	createOrEditArticleThunk,

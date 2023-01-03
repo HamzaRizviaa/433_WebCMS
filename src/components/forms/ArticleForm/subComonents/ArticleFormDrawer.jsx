@@ -16,9 +16,11 @@ import {
 	selectSpecificArticleStatus
 } from '../../../../data/selectors';
 import {
-	articleFormInitialValues,
 	articleFormStatusInitialValues,
-	articleUnwantedKeysForDeepEqual
+	articleFormInitialValues,
+	articleTemplateFormInitialValues,
+	articleUnwantedKeysForDeepEqual,
+	articleTemplateUnwantedKeysForDeepEqual
 } from '../../../../data/helpers';
 import {
 	getArticleBuilderDrawerTitle,
@@ -50,13 +52,23 @@ const ArticleFormDrawer = ({
 	}, []);
 
 	useEffect(() => {
+		const unwantedKeysForDE =
+			selectedOption === 'article'
+				? articleUnwantedKeysForDeepEqual
+				: articleTemplateUnwantedKeysForDeepEqual;
+
+		const initialValues =
+			selectedOption === 'article'
+				? articleFormInitialValues(rules)
+				: articleTemplateFormInitialValues(rules);
+
 		setStatus({
 			dirty: !isEqual(
-				omit(values, articleUnwantedKeysForDeepEqual),
-				omit(articleFormInitialValues(rules), articleUnwantedKeysForDeepEqual)
+				omit(values, unwantedKeysForDE),
+				omit(initialValues, unwantedKeysForDE)
 			)
 		});
-	}, [values]);
+	}, [values, selectedOption]);
 
 	return (
 		<DrawerLayout
@@ -107,9 +119,9 @@ const ArticleFormDrawer = ({
 			{selectedOption === 'template' && (
 				<ArticleTemplateFooter
 					isEdit={isEdit}
-					isDraft={status !== 'published'}
 					loading={isLoading}
 					openDeleteModal={toggleDeleteModal}
+					onSubmitHandler={onSubmitHandler}
 				/>
 			)}
 		</DrawerLayout>

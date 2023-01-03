@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import { isEqual, pick, omit } from 'lodash';
 import { useFormikContext } from 'formik';
 import { useArticleFooterStyles } from './index.style';
@@ -9,7 +10,6 @@ import {
 	articleUnwantedKeysForDeepEqual,
 	checkIfAnyArticleElementIsEmpty
 } from '../../../../../data/helpers';
-import { useSelector } from 'react-redux';
 import { getRules } from '../../../../../data/selectors';
 
 const ArticleBuilderFooter = ({

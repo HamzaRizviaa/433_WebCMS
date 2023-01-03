@@ -5,7 +5,8 @@ import {
 	getArticleMainCategories,
 	getArticleSubCategories,
 	getAllArticlesApi,
-	getAllArticleTemplatesThunk
+	getAllArticleTemplatesThunk,
+	getSpecificArticleTemplateThunk
 } from './articleLibraryActions';
 export * from './articleLibraryActions';
 
@@ -23,8 +24,11 @@ const initialState = {
 	noResultStatusCalendar: false,
 	mainCategoriesStatus: false,
 	subCategoriesStatus: false,
+
+	// Article Template States
 	articleTemplateListing: [],
-	templateListingStatus: false
+	templateListingStatus: false,
+	specificArticleTemplate: null
 };
 
 const articlesLibrarySlice = createSlice({
@@ -119,6 +123,23 @@ const articlesLibrarySlice = createSlice({
 		builder.addCase(getAllArticleTemplatesThunk.rejected, (state) => {
 			state.status = 'failed';
 			state.templateListingStatus = 'failed';
+		});
+
+		// Specific Article Template Actions
+		builder.addCase(getSpecificArticleTemplateThunk.pending, (state) => {
+			state.specificArticleStatus = 'loading';
+		});
+
+		builder.addCase(
+			getSpecificArticleTemplateThunk.fulfilled,
+			(state, action) => {
+				state.specificArticleTemplate = action.payload;
+				state.specificArticleStatus = 'success';
+			}
+		);
+
+		builder.addCase(getSpecificArticleTemplateThunk.rejected, (state) => {
+			state.specificArticleStatus = 'failed';
 		});
 	}
 });

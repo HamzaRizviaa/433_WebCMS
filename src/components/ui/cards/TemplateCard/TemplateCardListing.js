@@ -1,18 +1,18 @@
 import React from 'react';
-import { useStyles } from './index.style';
 import PropTypes from 'prop-types';
+import { useStyles } from './index.style';
 import TemplateSVG from '../../../../assets/TemplateAdd.svg';
 import { Grid } from '@material-ui/core';
-import Card from './index';
+import TemplateCard from './index';
 
-const TemplateCardListing = ({ data, emptyCardClick, emptyCardText }) => {
+const TemplateCardListing = ({ data, emptyCardText, onCardClick }) => {
 	const classes = useStyles();
 
 	return (
 		<div className={classes.cardModal}>
 			<Grid container>
 				<Grid item md={4}>
-					<div className={classes.newCard} onClick={() => emptyCardClick()}>
+					<div className={classes.newCard} onClick={() => onCardClick()}>
 						<img src={TemplateSVG} className={classes.templateSVG} />
 						{emptyCardText}
 					</div>
@@ -21,7 +21,7 @@ const TemplateCardListing = ({ data, emptyCardClick, emptyCardText }) => {
 				{data.map((item, index) => {
 					return (
 						<Grid item md={4} key={index}>
-							<Card data={item} key={index} />
+							<TemplateCard data={item} key={index} onCardClick={onCardClick} />
 						</Grid>
 					);
 				})}
@@ -33,7 +33,7 @@ const TemplateCardListing = ({ data, emptyCardClick, emptyCardText }) => {
 export default TemplateCardListing;
 
 TemplateCardListing.propTypes = {
-	emptyCardClick: PropTypes.func.isRequired,
+	data: PropTypes.array.isRequired,
 	emptyCardText: PropTypes.string.isRequired,
-	data: PropTypes.array.isRequired
+	onCardClick: PropTypes.func.isRequired
 };

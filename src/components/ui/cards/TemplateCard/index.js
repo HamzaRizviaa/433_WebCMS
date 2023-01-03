@@ -1,13 +1,16 @@
 import React from 'react';
+import { isEmpty } from 'lodash';
 import { useStyles } from './index.style';
 import PropTypes from 'prop-types';
 import { getDateTime } from '../../../../data/utils';
 
-const Card = ({ data, index }) => {
+const TemplateCard = ({ data, onCardClick, index }) => {
 	const classes = useStyles();
 
+	if (isEmpty(data)) return null;
+
 	return (
-		<div className={classes.card} key={index}>
+		<div className={classes.card} key={index} onClick={() => onCardClick(data)}>
 			<div>
 				<div className={classes.author}>{data.user}</div>
 				<div className={classes.title}>{data.template_name}</div>
@@ -20,9 +23,10 @@ const Card = ({ data, index }) => {
 	);
 };
 
-export default Card;
+export default TemplateCard;
 
-Card.propTypes = {
-	data: PropTypes.obj,
+TemplateCard.propTypes = {
+	data: PropTypes.object.isRequired,
+	onCardClick: PropTypes.func,
 	index: PropTypes.any
 };

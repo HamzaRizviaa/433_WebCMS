@@ -1,96 +1,25 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { isEmpty } from 'lodash';
 import Table from '../../components/ui/Table';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import ArticleBuilderForm from '../../components/forms/ArticleForm/ArticleBuilderForm';
 import useGetAllArticlesQuery from '../../hooks/libraries/articles/useGetAllArticlesQuery';
 import {
 	getSpecificArticle,
+	getSpecificArticleTemplateThunk,
 	getAllArticleTemplatesThunk
 } from '../../data/features/articleLibrary/articleLibrarySlice';
 import { selectAllArticleTemplate } from '../../data/selectors';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
-import { articleTableColumns } from '../../data/helpers/articleHelpers';
+import { articleTableColumns } from '../../data/helpers/articleHelpers/index';
 import ArticleTemplateModal from '../../components/ui/TemplateModal';
 import ArticleTemplateForm from '../../components/forms/ArticleForm/ArticleTemplateForm';
-import CardListing from '../../components/ui/card/TemplateCard/TemplateCardListing';
-
-// const dummyData = [
-// 	{
-// 		username: 'Alexander jordaan',
-// 		title: 'Matches of the week',
-// 		last_edited: '21-12-2022, 12:05'
-// 	},
-// 	{
-// 		username: 'Alexander jordaan',
-// 		title: 'Template 2 but with longer name',
-// 		last_edited: '21-12-2022, 12:05'
-// 	},
-// 	{
-// 		username: 'Alexander jordaan',
-// 		title: 'Matches of the week',
-// 		last_edited: '21-12-2022, 12:05'
-// 	},
-// 	{
-// 		username: 'Alexander jordaan',
-// 		title: 'Template 2 but with longer name',
-// 		last_edited: '21-12-2022, 12:05'
-// 	},
-// 	{
-// 		username: 'Alexander jordaan',
-// 		title: 'Matches of the week',
-// 		last_edited: '21-12-2022, 12:05'
-// 	},
-// 	{
-// 		username: 'Alexander jordaan',
-// 		title: 'Template 2 but with longer name',
-// 		last_edited: '21-12-2022, 12:05'
-// 	},
-// 	{
-// 		username: 'Alexander jordaan',
-// 		title: 'Matches of the week',
-// 		last_edited: '21-12-2022, 12:05'
-// 	},
-// 	{
-// 		username: 'Alexander jordaan',
-// 		title: 'Template 2 but with longer name',
-// 		last_edited: '21-12-2022, 12:05'
-// 	},
-// 	{
-// 		username: 'Alexander jordaan',
-// 		title: 'Matches of the week',
-// 		last_edited: '21-12-2022, 12:05'
-// 	},
-// 	{
-// 		username: 'Alexander jordaan',
-// 		title: 'Template 2 but with longer name',
-// 		last_edited: '21-12-2022, 12:05'
-// 	},
-// 	{
-// 		username: 'Alexander jordaan',
-// 		title: 'Matches of the week',
-// 		last_edited: '21-12-2022, 12:05'
-// 	},
-// 	{
-// 		username: 'Alexander jordaan',
-// 		title: 'Template 2 but with longer name',
-// 		last_edited: '21-12-2022, 12:05'
-// 	},
-// 	{
-// 		username: 'Alexander jordaan',
-// 		title: 'Matches of the week',
-// 		last_edited: '21-12-2022, 12:05'
-// 	},
-// 	{
-// 		username: 'Alexander jordaan',
-// 		title: 'Template 2 but with longer name',
-// 		last_edited: '21-12-2022, 12:05'
-// 	}
-// ];
+import TemplateCardListing from '../../components/ui/cards/TemplateCard/TemplateCardListing';
 
 const ArticleLibrary = () => {
 	const dispatch = useDispatch();
+	const templateListingData = useSelector(selectAllArticleTemplate);
 
 	const { data, isLoading, totalRecords } = useGetAllArticlesQuery();
 
@@ -115,11 +44,7 @@ const ArticleLibrary = () => {
 		dispatch(getAllArticleTemplatesThunk());
 	}, []);
 
-	const templateListingData = useSelector(selectAllArticleTemplate);
-	console.log(templateListingData, 'templateListingData');
-
 	const handleRowClick = (_, row) => {
-		//console.log(row.status)
 		row.status === 'draft' && dispatch(getAllNewLabels());
 		dispatch(getSpecificArticle(row.id));
 		setEdit(true);
@@ -138,19 +63,22 @@ const ArticleLibrary = () => {
 		setShowTemplateModal(true);
 	}, []);
 
-	const handleNewArticleClick = useCallback(() => {
-		dispatch(getAllNewLabels());
-		setEdit(false);
-		setShowTemplateModal(false);
-		setShowSlider(true);
-	}, []);
+	const handleTemplateCardClick = useCallback(
+		(data) => {
+			if (!isEmpty(data)) {
+				dispatch(getSpecificArticleTemplateThunk(data.id));
+			}
 
-	// const handleTemplateClick = useCallback(() => {
-	// 	dispatch(getAllNewLabels());
-	// 	setEdit(false);
-	// 	setShowTemplateModal(false);
-	// 	setShowTemplateSlider(true);
-	// }, []);
+			dispatch(getAllNewLabels());
+			setShowTemplateModal(false);
+			setEdit(selectedOption === 'template' && !isEmpty(data) ? true : false);
+
+			selectedOption === 'article'
+				? setShowSlider(true)
+				: setShowTemplateSlider(true);
+		},
+		[selectedOption]
+	);
 
 	return (
 		<DashboardLayout
@@ -175,10 +103,12 @@ const ArticleLibrary = () => {
 				open={showTemplateModal}
 				onClose={() => setShowTemplateModal(false)}
 			>
-				<CardListing
-					emptyCardText={'Empty Article'}
+				<TemplateCardListing
+					emptyCardText={
+						selectedOption === 'article' ? 'Empty Article' : 'Empty Template'
+					}
 					data={templateListingData}
-					emptyCardClick={handleNewArticleClick}
+					onCardClick={handleTemplateCardClick}
 				/>
 			</ArticleTemplateModal>
 			<ArticleBuilderForm
