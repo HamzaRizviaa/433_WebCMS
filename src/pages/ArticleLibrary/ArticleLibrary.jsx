@@ -7,7 +7,7 @@ import ArticleBuilderForm from '../../components/forms/ArticleForm/ArticleBuilde
 import useGetAllArticlesQuery from '../../hooks/libraries/articles/useGetAllArticlesQuery';
 import { getSpecificArticle } from '../../data/features/articleLibrary/articleLibrarySlice';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
-import { articleTableColumns } from '../../data/helpers/articleHelpers';
+import { articleTableColumns } from '../../data/helpers/articleHelpers/index';
 import ArticleTemplateModal from '../../components/ui/TemplateModal';
 import ArticleTemplateForm from '../../components/forms/ArticleForm/ArticleTemplateForm';
 import CardListing from '../../components/ui/Card/CardListing';

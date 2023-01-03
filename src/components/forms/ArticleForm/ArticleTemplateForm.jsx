@@ -10,16 +10,16 @@ import { useCommonParams } from '../../../hooks';
 import { ArticleLibraryService } from '../../../data/services';
 import { selectSpecificArticle } from '../../../data/selectors/articleLibrarySelectors';
 import {
-	articleFormInitialValues,
-	articleFormValidationSchema,
+	articleTemplateFormInitialValues,
+	articleTemplateFormValidationSchema,
 	articleDataFormatterForForm,
 	articleDataFormatterForService,
 	uploadArticleFiles
-} from '../../../data/helpers/articleHelpers';
+} from '../../../data/helpers/articleHelpers/index';
 import {
-	getAllArticlesApi,
-	createOrEditArticleThunk,
-	deleteArticleThunk,
+	getAllArticleTemplatesThunk,
+	createOrEditArticleTemplateThunk,
+	deleteArticleTemplateThunk,
 	getArticleSubCategories
 } from '../../../data/features/articleLibrary/articleLibrarySlice';
 import { getRules } from '../../../data/selectors';
@@ -55,29 +55,29 @@ const ArticleTemplateForm = ({
 		() =>
 			isEdit && !isEmpty(specificArticle)
 				? articleDataFormatterForForm(specificArticle, rules)
-				: articleFormInitialValues(rules),
+				: articleTemplateFormInitialValues(rules),
 		[isEdit, specificArticle, rules]
 	);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
-	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
+	const onSubmitHandler = async (values, formikBag) => {
 		formikBag.setSubmitting(true);
 
 		try {
 			if (
-				(!isDraft && specificArticle?.title !== values.title) ||
-				(!isDraft && status === 'draft')
+				specificArticle?.template_name !== values.template_name ||
+				status === 'draft'
 			) {
-				const { data } = await ArticleLibraryService.getArticleCheckTitle(
-					values.title
+				const { data } = await ArticleLibraryService.articleTemplateCheckName(
+					values.template_name
 				);
 
 				if (data.response) {
 					formikBag.setSubmitting(false);
 					formikBag.setFieldError(
-						'title',
-						'An article item with this Title has already been published. Please amend the Title.'
+						'template_name',
+						'An article template item with this Name has already been created. Please amend the Template Name.'
 					);
 					return;
 				}
@@ -88,21 +88,21 @@ const ArticleTemplateForm = ({
 			const articleData = articleDataFormatterForService(
 				{ ...values, elements },
 				uploadedFilesRes,
-				isDraft,
+				false,
 				rules
 			);
 
 			const { type } = await dispatch(
-				createOrEditArticleThunk(articleData, formikBag, isDraft)
+				createOrEditArticleTemplateThunk(articleData, formikBag, false)
 			);
 
-			if (type === 'articleLibary/createOrEditArticleThunk/fulfilled') {
+			if (type === 'articleLibary/createOrEditArticleTemplateThunk/fulfilled') {
 				handleClose();
 
-				if (isEdit && !(status === 'draft' && isDraft === false)) {
-					dispatch(getAllArticlesApi(queryParams));
+				if (isEdit && !(status === 'draft')) {
+					dispatch(getAllArticleTemplatesThunk(queryParams));
 				} else if (isSearchParamsEmpty) {
-					dispatch(getAllArticlesApi());
+					dispatch(getAllArticleTemplatesThunk());
 				} else {
 					navigate('/article-library');
 				}
@@ -114,23 +114,18 @@ const ArticleTemplateForm = ({
 		}
 	};
 
-	const onDeleteHandler = async (id, isDraft, setSubmitting) => {
+	const onDeleteHandler = async (id, setSubmitting) => {
 		setSubmitting(true);
 		setOpenDeleteModal(false);
 		try {
-			const { payload } = await dispatch(
-				deleteArticleThunk({
-					article_id: id,
-					is_draft: isDraft
-				})
-			);
+			const { payload } = await dispatch(deleteArticleTemplateThunk(id));
 
 			if (payload.status === 200) {
 				deleteReadMoreApi(id);
 			}
 
 			handleClose();
-			dispatch(getAllArticlesApi(queryParams));
+			dispatch(getAllArticleTemplatesThunk(queryParams));
 		} catch (e) {
 			console.error(e);
 		} finally {
@@ -141,7 +136,7 @@ const ArticleTemplateForm = ({
 	return (
 		<Formik
 			initialValues={initialValues}
-			validationSchema={articleFormValidationSchema}
+			validationSchema={articleTemplateFormValidationSchema}
 			onSubmit={onSubmitHandler}
 			enableReinitialize
 			validateOnMount
@@ -161,7 +156,7 @@ const ArticleTemplateForm = ({
 						open={openDeleteModal}
 						toggle={toggleDeleteModal}
 						deleteBtn={() => {
-							onDeleteHandler(specificArticle?.id, status, setSubmitting);
+							onDeleteHandler(specificArticle?.id, setSubmitting);
 						}}
 						text={'Article'}
 						wrapperRef={dialogWrapper}

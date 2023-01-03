@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Box, Divider } from '@material-ui/core';
 import Button from '../../../../ui/Button';
 import { useStyles } from './elementPreviewers.styles';
-import { matchElementDataFormatter } from '../../../../../data/helpers/articleHelpers';
+import { matchElementDataFormatter } from '../../../../../data/helpers/articleHelpers/index';
 
 const MatchElementPreviewer = ({ item }) => {
 	// formatted data for match element

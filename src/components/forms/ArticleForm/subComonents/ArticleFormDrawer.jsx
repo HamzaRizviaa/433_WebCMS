@@ -16,8 +16,8 @@ import {
 	selectSpecificArticleStatus
 } from '../../../../data/selectors';
 import {
-	articleFormInitialValues,
 	articleFormStatusInitialValues,
+	articleFormInitialValues,
 	articleUnwantedKeysForDeepEqual
 } from '../../../../data/helpers';
 import {
@@ -110,6 +110,7 @@ const ArticleFormDrawer = ({
 					isDraft={status !== 'published'}
 					loading={isLoading}
 					openDeleteModal={toggleDeleteModal}
+					onSubmitHandler={onSubmitHandler}
 				/>
 			)}
 		</DrawerLayout>
