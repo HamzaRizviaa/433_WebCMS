@@ -23,6 +23,8 @@ const initialState = {
 	noResultStatusCalendar: false,
 	mainCategoriesStatus: false,
 	subCategoriesStatus: false,
+
+	// Article Template States
 	articleTemplateListing: [],
 	templateListingStatus: false
 };

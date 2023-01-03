@@ -2,7 +2,7 @@ import React from 'react';
 import { useStyles } from './index.style';
 import PropTypes from 'prop-types';
 import TemplateSVG from '../../../../assets/TemplateAdd.svg';
-import Card from './index';
+import TemplateCard from './index';
 
 const TemplateCardListing = ({ data, emptyCardClick, emptyCardText }) => {
 	const classes = useStyles();
@@ -15,7 +15,7 @@ const TemplateCardListing = ({ data, emptyCardClick, emptyCardText }) => {
 			</div>
 
 			{data.map((item, index) => {
-				return <Card data={item} key={index} />;
+				return <TemplateCard data={item} key={index} />;
 			})}
 		</div>
 	);

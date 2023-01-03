@@ -2,7 +2,7 @@ import React from 'react';
 import { useStyles } from './index.style';
 import PropTypes from 'prop-types';
 
-const Card = ({ data, index }) => {
+const TemplateCard = ({ data, index }) => {
 	const classes = useStyles();
 
 	return (
@@ -19,9 +19,9 @@ const Card = ({ data, index }) => {
 	);
 };
 
-export default Card;
+export default TemplateCard;
 
-Card.propTypes = {
+TemplateCard.propTypes = {
 	data: PropTypes.obj,
 	index: PropTypes.any
 };
