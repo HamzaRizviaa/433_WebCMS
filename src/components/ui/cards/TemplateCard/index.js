@@ -1,12 +1,15 @@
 import React from 'react';
+import { isEmpty } from 'lodash';
 import { useStyles } from './index.style';
 import PropTypes from 'prop-types';
 
-const TemplateCard = ({ data, index }) => {
+const TemplateCard = ({ data, onCardClick, index }) => {
 	const classes = useStyles();
 
+	if (isEmpty(data)) return null;
+
 	return (
-		<div className={classes.card} key={index}>
+		<div className={classes.card} key={index} onClick={() => onCardClick(data)}>
 			<div>
 				<div className={classes.author}>{data.user}</div>
 				<div className={classes.title}>{data.template_name}</div>
@@ -22,6 +25,7 @@ const TemplateCard = ({ data, index }) => {
 export default TemplateCard;
 
 TemplateCard.propTypes = {
-	data: PropTypes.obj,
+	data: PropTypes.object.isRequired,
+	onCardClick: PropTypes.func,
 	index: PropTypes.any
 };

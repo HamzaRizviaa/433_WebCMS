@@ -1,12 +1,13 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { isEmpty } from 'lodash';
 import Table from '../../components/ui/Table';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import ArticleBuilderForm from '../../components/forms/ArticleForm/ArticleBuilderForm';
 import useGetAllArticlesQuery from '../../hooks/libraries/articles/useGetAllArticlesQuery';
 import {
 	getSpecificArticle,
+	getSpecificArticleTemplateThunk,
 	getAllArticleTemplatesThunk
 } from '../../data/features/articleLibrary/articleLibrarySlice';
 import { selectAllArticleTemplate } from '../../data/selectors';
@@ -62,19 +63,22 @@ const ArticleLibrary = () => {
 		setShowTemplateModal(true);
 	}, []);
 
-	const handleNewArticleClick = useCallback(() => {
-		dispatch(getAllNewLabels());
-		setEdit(false);
-		setShowTemplateModal(false);
-		setShowSlider(true);
-	}, []);
+	const handleTemplateCardClick = useCallback(
+		(data) => {
+			if (!isEmpty(data)) {
+				dispatch(getSpecificArticleTemplateThunk(data.id));
+			}
 
-	// const handleTemplateClick = useCallback(() => {
-	// 	dispatch(getAllNewLabels());
-	// 	setEdit(false);
-	// 	setShowTemplateModal(false);
-	// 	setShowTemplateSlider(true);
-	// }, []);
+			dispatch(getAllNewLabels());
+			setShowTemplateModal(false);
+			setEdit(selectedOption === 'template' && !isEmpty(data) ? true : false);
+
+			selectedOption === 'article'
+				? setShowSlider(true)
+				: setShowTemplateSlider(true);
+		},
+		[selectedOption]
+	);
 
 	return (
 		<DashboardLayout
@@ -104,7 +108,7 @@ const ArticleLibrary = () => {
 						selectedOption === 'article' ? 'Empty Article' : 'Empty Template'
 					}
 					data={templateListingData}
-					emptyCardClick={handleNewArticleClick}
+					onCardClick={handleTemplateCardClick}
 				/>
 			</ArticleTemplateModal>
 			<ArticleBuilderForm

@@ -117,8 +117,8 @@ export const getAllArticleTemplatesThunk = createAsyncThunk(
 	}
 );
 
-export const getSpecificArticleThunk = createAsyncThunk(
-	'articleLibary/getSpecificArticleThunk',
+export const getSpecificArticleTemplateThunk = createAsyncThunk(
+	'articleLibary/getSpecificArticleTemplateThunk',
 	async (templateId) => {
 		const response = await ArticleLibraryService.getSpecificArticleTemplate(
 			templateId
