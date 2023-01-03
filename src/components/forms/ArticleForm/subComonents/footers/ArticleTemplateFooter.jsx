@@ -7,18 +7,17 @@ import { useArticleFooterStyles } from './index.style';
 import Button from '../../../../ui/Button';
 import {
 	articleTemplateFormInitialValues,
-	articleUnwantedKeysForDeepEqual
+	articleTemplateUnwantedKeysForDeepEqual
 } from '../../../../../data/helpers';
 import { getRules } from '../../../../../data/selectors';
 
 const ArticleBuilderFooter = ({
 	isEdit,
-	isDraft,
 	loading,
 	openDeleteModal,
 	onSubmitHandler
 }) => {
-	const classes = useArticleFooterStyles({ loading, isEdit, isDraft });
+	const classes = useArticleFooterStyles({ loading, isEdit });
 	const { rules } = useSelector(getRules);
 
 	const {
@@ -32,15 +31,17 @@ const ArticleBuilderFooter = ({
 		const isEqualToDefaultValues = isEqual(
 			omit(
 				pick(values, Object.keys(articleTemplateFormInitialValues(rules))),
-				articleUnwantedKeysForDeepEqual
+				articleTemplateUnwantedKeysForDeepEqual
 			),
 			omit(
 				articleTemplateFormInitialValues(rules),
-				articleUnwantedKeysForDeepEqual
+				articleTemplateUnwantedKeysForDeepEqual
 			)
 		);
 
 		const isDirty = isEdit ? dirty : formikStatus?.dirty;
+
+		console.log({ isDirty, isEqualToDefaultValues });
 
 		return !isDirty || isEqualToDefaultValues;
 	}, [isEdit, values, dirty, formikStatus]);
@@ -65,7 +66,7 @@ const ArticleBuilderFooter = ({
 					disabled={isTemplateButtonDisabled}
 					onClick={() => onSubmitHandler(values, { setSubmitting })}
 				>
-					{isEdit && !isDraft ? 'SAVE TEMPLATE' : 'CREATE TEMPLATE'}
+					{isEdit ? 'SAVE TEMPLATE' : 'CREATE TEMPLATE'}
 				</Button>
 			</div>
 		</div>
@@ -74,7 +75,6 @@ const ArticleBuilderFooter = ({
 
 ArticleBuilderFooter.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
-	isDraft: PropTypes.bool.isRequired,
 	loading: PropTypes.bool,
 	openDeleteModal: PropTypes.func,
 	onSubmitHandler: PropTypes.func.isRequired

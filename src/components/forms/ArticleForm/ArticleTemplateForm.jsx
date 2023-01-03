@@ -8,7 +8,7 @@ import DeleteModal from '../../DeleteModal';
 import ArticleFormDrawer from './subComonents/ArticleFormDrawer';
 import { useCommonParams } from '../../../hooks';
 import { ArticleLibraryService } from '../../../data/services';
-import { selectSpecificArticle } from '../../../data/selectors/articleLibrarySelectors';
+import { selectSpecificArticleTemplate } from '../../../data/selectors/articleLibrarySelectors';
 import {
 	articleTemplateFormInitialValues,
 	articleTemplateFormValidationSchema,
@@ -37,7 +37,7 @@ const ArticleTemplateForm = ({
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 
 	// Selectors
-	const specificArticle = useSelector(selectSpecificArticle);
+	const specificArticleTemplate = useSelector(selectSpecificArticleTemplate);
 	const { rules } = useSelector(getRules);
 
 	// Refs
@@ -47,16 +47,16 @@ const ArticleTemplateForm = ({
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
 	useEffect(() => {
-		if (specificArticle?.main_category_id)
-			dispatch(getArticleSubCategories(specificArticle.main_category_id));
-	}, [specificArticle]);
+		if (specificArticleTemplate?.main_category_id)
+			dispatch(getArticleSubCategories(specificArticleTemplate.main_category_id));
+	}, [specificArticleTemplate]);
 
 	const initialValues = useMemo(
 		() =>
-			isEdit && !isEmpty(specificArticle)
-				? articleDataFormatterForForm(specificArticle, rules)
+			isEdit && !isEmpty(specificArticleTemplate)
+				? articleDataFormatterForForm(specificArticleTemplate, rules)
 				: articleTemplateFormInitialValues(rules),
-		[isEdit, specificArticle, rules]
+		[isEdit, specificArticleTemplate, rules]
 	);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
@@ -66,7 +66,7 @@ const ArticleTemplateForm = ({
 
 		try {
 			if (
-				specificArticle?.template_name !== values.template_name ||
+				specificArticleTemplate?.template_name !== values.template_name ||
 				status === 'draft'
 			) {
 				const { data } = await ArticleLibraryService.articleTemplateCheckName(
@@ -156,7 +156,7 @@ const ArticleTemplateForm = ({
 						open={openDeleteModal}
 						toggle={toggleDeleteModal}
 						deleteBtn={() => {
-							onDeleteHandler(specificArticle?.id, setSubmitting);
+							onDeleteHandler(specificArticleTemplate?.id, setSubmitting);
 						}}
 						text={'Article'}
 						wrapperRef={dialogWrapper}
