@@ -16,6 +16,11 @@ export const useStyles = makeStyles((theme) => {
 			backgroundColor: theme.palette.black,
 			color: theme.palette.white,
 			aciveIconColor: theme.palette.neonYellow
+		},
+		qa: {
+			backgroundColor: '#1C315E',
+			color: theme.palette.white,
+			aciveIconColor: '#5DADE2'
 		}
 	};
 

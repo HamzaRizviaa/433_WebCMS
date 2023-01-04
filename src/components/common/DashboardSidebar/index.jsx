@@ -22,6 +22,8 @@ const checkDomain = (href) => {
 		return 'dev';
 	} else if (href.includes('staging')) {
 		return 'staging';
+	} else if (href.includes('qa')) {
+		return 'qa';
 	} else {
 		return 'prod';
 	}
@@ -35,10 +37,10 @@ const Sidebar = () => {
 
 	const [env, setEnv] = useState('prod');
 
-	const onLogoutSuccess = async(res) => {
+	const onLogoutSuccess = async (res) => {
 		console.log('Logged out Success', res);
-		const response = await UserService.logout()
-		if(response?.data.status_code == 200){
+		const response = await UserService.logout();
+		if (response?.data.status_code == 200) {
 			localStorage.removeItem('user_data');
 			navigate('/sign-in');
 		}
