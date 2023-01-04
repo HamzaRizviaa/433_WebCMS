@@ -73,7 +73,7 @@ export const useStyles = makeStyles(() => ({
 	 */
 	textDraggableData: {
 		fontWeight: 400,
-		fontSize: '16px',
+		fontSize: '14px',
 		lineHeight: 1.2,
 		color: 'white',
 		overflowWrap: 'anywhere'
