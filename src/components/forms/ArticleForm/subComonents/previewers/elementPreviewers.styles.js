@@ -115,7 +115,7 @@ export const useStyles = makeStyles(() => ({
 	},
 	questionDraggable: {
 		height: '380px',
-		borderRadius: '8px',
+		borderRadius: '16px',
 		marginTop: '16px',
 		marginBottom: '16px',
 		backgroundRepeat: 'no-repeat',
@@ -137,15 +137,18 @@ export const useStyles = makeStyles(() => ({
 		color: '#FFFFFF'
 	},
 	answer: {
-		height: '37px',
+		height: '40px',
 		fontStyle: 'normal',
-		fontWeight: 800,
-		fontSize: '12px',
+		fontWeight: 700,
+		fontSize: '14px',
 		lineHeight: '30px',
+		textTransform: 'uppercase',
 		color: '#FFFFFF',
-		borderRadius: '40px',
-		padding: '6px 16px 0px 16px',
-		backgroundColor: 'rgba(255, 255, 255, 0.25)',
-		marginTop: '8px'
+		borderRadius: '8px',
+		padding: '8px 16px 0px 16px',
+		backgroundColor: 'rgba(229, 229, 229, 0.5)',
+		marginTop: '8px',
+		boxShadow:
+			'inset 0px 2px 3px rgba(229, 229, 229, 0.3), inset 0px -1px 0px rgba(0, 0, 0, 0.13)'
 	}
 }));
