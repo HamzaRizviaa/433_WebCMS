@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ARTICLE_ELEMENTS_TYPES } from '../../../../../data/helpers/articleHelpers';
+import { ARTICLE_ELEMENTS_TYPES } from '../../../../../data/helpers/articleHelpers/index';
 
 // Elements
 import TextElement from './TextElement';

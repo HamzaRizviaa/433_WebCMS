@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useRef, useState, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +15,7 @@ import {
 	articleDataFormatterForForm,
 	articleDataFormatterForService,
 	uploadArticleFiles
-} from '../../../data/helpers/articleHelpers';
+} from '../../../data/helpers/articleHelpers/index';
 import {
 	getAllArticlesApi,
 	createOrEditArticleThunk,
@@ -32,7 +31,13 @@ import {
 	deleteReadMoreApi
 } from '../../../data/services/readMoreArticleService';
 
-const ArticleForm = ({ open, handleClose, isEdit, status }) => {
+const ArticleBuilderForm = ({
+	open,
+	handleClose,
+	isEdit,
+	status,
+	selectedOption
+}) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const readMoreFeatureFlag = useSelector(selectReadMoreArticlesFeatureFlag);
@@ -96,7 +101,7 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 			);
 
 			const { type, payload } = await dispatch(
-				createOrEditArticleThunk(articleData, formikBag, isDraft)
+				createOrEditArticleThunk(articleData)
 			);
 
 			if (type === 'articleLibary/createOrEditArticleThunk/fulfilled') {
@@ -104,7 +109,6 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 
 				if (isReadMoreAPIEnabled && !isDraft) {
 					if (!isEdit || status !== 'published') {
-						console.log('inside publish');
 						publishReadMoreApi(payload?.data?.data?.id);
 					}
 				}
@@ -163,6 +167,7 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 						handleClose={handleClose}
 						isEdit={isEdit}
 						status={status}
+						selectedOption={selectedOption}
 						onSubmitHandler={onSubmitHandler}
 						toggleDeleteModal={toggleDeleteModal}
 					/>
@@ -182,11 +187,12 @@ const ArticleForm = ({ open, handleClose, isEdit, status }) => {
 	);
 };
 
-ArticleForm.propTypes = {
+ArticleBuilderForm.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	isEdit: PropTypes.bool.isRequired,
-	status: PropTypes.string.isRequired
+	status: PropTypes.string.isRequired,
+	selectedOption: PropTypes.oneOf(['', 'article', 'template']).isRequired
 };
 
-export default ArticleForm;
+export default ArticleBuilderForm;

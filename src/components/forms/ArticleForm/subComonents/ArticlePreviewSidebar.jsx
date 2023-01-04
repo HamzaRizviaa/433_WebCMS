@@ -11,7 +11,7 @@ import {
 	TwitterElementPreviewer
 } from './previewers';
 import ArticlePreviewWrapper from './ArticlePreviewWrapper';
-import { ARTICLE_ELEMENTS_TYPES } from '../../../../data/helpers/articleHelpers';
+import { ARTICLE_ELEMENTS_TYPES } from '../../../../data/helpers/articleHelpers/index';
 
 const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 	const classes = useStyles();

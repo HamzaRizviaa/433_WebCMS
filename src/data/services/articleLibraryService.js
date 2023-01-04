@@ -51,6 +51,41 @@ class ArticleLibraryService {
 	static getArticleCheckTitle = (title) => {
 		return axiosInstance.get(`/article/check/${title}`);
 	};
+
+	//
+	// Article Template APIs
+	//
+	static getAllArticleTemplates = (queryParams) => {
+		const params = {
+			...queryParams,
+			limit: 8
+		};
+
+		return axiosInstance.get('/article-template', { params });
+	};
+
+	static getSpecificArticleTemplate = (templateId) => {
+		return axiosInstance.get(`/article-template/get-template/${templateId}`);
+	};
+
+	static postArticleTemplate = (data) => {
+		return axiosInstance.post(
+			`/article-template/create-article-template`,
+			data
+		);
+	};
+
+	static articleTemplateCheckName = (templateName) => {
+		return axiosInstance.get(
+			`/article-template/check-template-name/${templateName}`
+		);
+	};
+
+	static deleteArticleTemplate = (templateId) => {
+		return axiosInstance.delete(
+			`/article-template/delete-template/${templateId}`
+		);
+	};
 }
 
 export default ArticleLibraryService;

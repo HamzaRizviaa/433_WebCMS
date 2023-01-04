@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import { isEqual, pick, omit } from 'lodash';
 import { useFormikContext } from 'formik';
 import { useArticleFooterStyles } from './index.style';
@@ -9,10 +10,9 @@ import {
 	articleUnwantedKeysForDeepEqual,
 	checkIfAnyArticleElementIsEmpty
 } from '../../../../../data/helpers';
-import { useSelector } from 'react-redux';
 import { getRules } from '../../../../../data/selectors';
 
-const ArticleFormFooter = ({
+const ArticleBuilderFooter = ({
 	isEdit,
 	isDraft,
 	loading,
@@ -84,7 +84,7 @@ const ArticleFormFooter = ({
 	);
 };
 
-ArticleFormFooter.propTypes = {
+ArticleBuilderFooter.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	isDraft: PropTypes.bool.isRequired,
 	loading: PropTypes.bool,
@@ -92,4 +92,4 @@ ArticleFormFooter.propTypes = {
 	onSubmitHandler: PropTypes.func.isRequired
 };
 
-export default ArticleFormFooter;
+export default ArticleBuilderFooter;
