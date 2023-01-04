@@ -22,10 +22,10 @@ export const useStyles = makeStyles(() => ({
 		flexBasis: '283px',
 		boxSizing: 'border-box',
 		cursor: 'pointer',
-		margin: '0px 10px'
+		margin: '10px 10px'
 	},
 	newCard: {
-		margin: '0px 10px',
+		margin: '10px 10px',
 		boxSizing: 'border-box',
 		height: '180px',
 		backgroundColor: '#191919',
