@@ -18,9 +18,9 @@ export const useStyles = makeStyles((theme) => {
 			aciveIconColor: theme.palette.neonYellow
 		},
 		qa: {
-			backgroundColor: '#1C315E',
+			backgroundColor: '#122E1E',
 			color: theme.palette.white,
-			aciveIconColor: '#5DADE2'
+			aciveIconColor: '#2fcd97'
 		}
 	};
 

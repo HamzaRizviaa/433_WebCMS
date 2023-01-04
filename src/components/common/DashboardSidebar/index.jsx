@@ -17,7 +17,7 @@ import { UserService } from '../../../data/services';
 
 const checkDomain = (href) => {
 	if (href.includes('localhost')) {
-		return 'dev';
+		return 'qa';
 	} else if (href.includes('dev')) {
 		return 'dev';
 	} else if (href.includes('staging')) {
