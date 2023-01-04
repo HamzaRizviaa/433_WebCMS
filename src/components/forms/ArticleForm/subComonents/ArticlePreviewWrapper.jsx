@@ -49,24 +49,47 @@ const ArticlePreviewWrapper = ({ children, form }) => {
 						<div className={classes.navIcons}>
 							<img src={goBack} className={classes.goBackIcon} />
 						</div>
-						<div className={classes.navIcons}>
-							<img src={Share} className={classes.shareIcon} />
-						</div>
 					</div>
 
 					{/*  Title & Content Container */}
-					<Box mt={'600px'}>
-						{form?.subCategoryName ? (
-							<StatusBadge status={form?.subCategoryName} />
-						) : (
-							<></>
-						)}
+					<Box mt={'600px'} className={classes.mainContent}>
+						<Box>
+							{form?.subCategoryName ? (
+								<StatusBadge status={form?.subCategoryName} />
+							) : (
+								<></>
+							)}
+							<div className={classes.mainTitle}>
+								<Markup content={form.title} />
+							</div>
 
-						<div className={classes.mainTitle}>
-							<Markup content={form.title} />
-						</div>
+							{/* Author Container */}
+							<div className={classes.authordetails}>
+								<div>
+									<Avatar
+										src={
+											form?.author_image[0]
+												? form.author_image[0].media_url
+												: default433Profile
+										}
+									/>
+								</div>
+								<div className={classes.authorSection}>
+									<div className={classes.authorname}>
+										{form?.author_text || '-'}
+									</div>
+									{/* 433 Content Team */}
+									<div className={classes.postDateDetails}>
+										{date} - 10 min read
+									</div>
+								</div>
+							</div>
+						</Box>
 
-						<div className={classes.bottomIcons}>
+						<Box className={classes.rightContent}>
+							<div className={classes.icons}>
+								<img src={Share} className={classes.shareIcon} />
+							</div>
 							{form.show_likes && (
 								<div className={classes.icons}>
 									<img src={Heart} className={classes.footballIcon} />
@@ -77,29 +100,7 @@ const ArticlePreviewWrapper = ({ children, form }) => {
 									<img src={Comments} className={classes.commentIcon} />
 								</div>
 							)}
-						</div>
-
-						{/* Author Container */}
-						<div className={classes.authordetails}>
-							<div>
-								<Avatar
-									src={
-										form?.author_image[0]
-											? form.author_image[0].media_url
-											: default433Profile
-									}
-								/>
-							</div>
-							<div className={classes.authorSection}>
-								<div className={classes.authorname}>
-									{form?.author_text || '-'}
-								</div>
-								{/* 433 Content Team */}
-								<div className={classes.postDateDetails}>
-									{date} - 10 min read
-								</div>
-							</div>
-						</div>
+						</Box>
 					</Box>
 				</Box>
 

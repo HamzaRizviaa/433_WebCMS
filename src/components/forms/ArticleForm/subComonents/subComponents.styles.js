@@ -199,8 +199,8 @@ export const useStyles = makeStyles(() => ({
 	mobileIcons: { marginLeft: '3px', height: '10px' },
 	timeCon: { color: 'white' },
 	icons: {
-		width: '40px',
-		height: '40px',
+		width: '50px',
+		height: '50px',
 		background: 'rgba(64, 64, 64, 0.4)',
 		borderRadius: '40px',
 		display: 'flex',
@@ -219,20 +219,16 @@ export const useStyles = makeStyles(() => ({
 		marginLeft: '-6px',
 		paddingTop: '10px'
 	},
-	shareIcon: { height: '32px', paddingTop: '7px' },
+	shareIcon: { height: '30px', paddingTop: '7px' },
 
-	bottomIcons: {
-		display: 'flex',
-		padding: '2px'
-	},
 	footballIcon: {
-		width: '20px',
-		height: '20px',
+		width: '23px',
+		height: '27px',
 		padding: '11px 0px'
 	},
 	commentIcon: {
-		width: '24px',
-		height: '24px',
+		width: '26px',
+		height: '28px',
 		padding: '8px 0px 10px 0px'
 	},
 	commentbox: {
@@ -278,5 +274,19 @@ export const useStyles = makeStyles(() => ({
 		fontWeight: 400,
 		fontSize: '12px',
 		lineHeight: '16px'
+	},
+
+	mainContent: {
+		display: 'flex',
+		justifyContent: 'space-between',
+		alignItems: 'center'
+	},
+
+	rightContent: {
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'flex-end',
+		padding: '4px',
+		gap: '8px'
 	}
 }));
