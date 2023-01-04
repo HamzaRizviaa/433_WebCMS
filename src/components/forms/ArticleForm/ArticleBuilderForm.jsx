@@ -101,7 +101,7 @@ const ArticleBuilderForm = ({
 			);
 
 			const { type, payload } = await dispatch(
-				createOrEditArticleThunk(articleData, formikBag, isDraft)
+				createOrEditArticleThunk(articleData)
 			);
 
 			if (type === 'articleLibary/createOrEditArticleThunk/fulfilled') {
@@ -109,7 +109,6 @@ const ArticleBuilderForm = ({
 
 				if (isReadMoreAPIEnabled && !isDraft) {
 					if (!isEdit || status !== 'published') {
-						console.log('inside publish');
 						publishReadMoreApi(payload?.data?.data?.id);
 					}
 				}

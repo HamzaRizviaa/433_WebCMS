@@ -13,7 +13,7 @@ import {
 	articleTemplateFormInitialValues,
 	articleTemplateFormValidationSchema,
 	articleDataFormatterForForm,
-	articleDataFormatterForService,
+	articleTemplateDataFormatterForService,
 	uploadArticleFiles
 } from '../../../data/helpers/articleHelpers/index';
 import {
@@ -23,7 +23,6 @@ import {
 	getArticleSubCategories
 } from '../../../data/features/articleLibrary/articleLibrarySlice';
 import { getRules } from '../../../data/selectors';
-import { deleteReadMoreApi } from '../../../data/services/readMoreArticleService';
 
 const ArticleTemplateForm = ({
 	open,
@@ -48,7 +47,9 @@ const ArticleTemplateForm = ({
 
 	useEffect(() => {
 		if (specificArticleTemplate?.main_category_id)
-			dispatch(getArticleSubCategories(specificArticleTemplate.main_category_id));
+			dispatch(
+				getArticleSubCategories(specificArticleTemplate.main_category_id)
+			);
 	}, [specificArticleTemplate]);
 
 	const initialValues = useMemo(
@@ -66,14 +67,14 @@ const ArticleTemplateForm = ({
 
 		try {
 			if (
-				specificArticleTemplate?.template_name !== values.template_name ||
-				status === 'draft'
+				isEmpty(values.id) ||
+				specificArticleTemplate?.template_name !== values.template_name
 			) {
 				const { data } = await ArticleLibraryService.articleTemplateCheckName(
 					values.template_name
 				);
 
-				if (data.response) {
+				if (data.status_code === 200) {
 					formikBag.setSubmitting(false);
 					formikBag.setFieldError(
 						'template_name',
@@ -85,21 +86,20 @@ const ArticleTemplateForm = ({
 
 			const { uploadedFilesRes, elements } = await uploadArticleFiles(values);
 
-			const articleData = articleDataFormatterForService(
+			const articleData = articleTemplateDataFormatterForService(
 				{ ...values, elements },
 				uploadedFilesRes,
-				false,
 				rules
 			);
 
 			const { type } = await dispatch(
-				createOrEditArticleTemplateThunk(articleData, formikBag, false)
+				createOrEditArticleTemplateThunk(articleData)
 			);
 
 			if (type === 'articleLibary/createOrEditArticleTemplateThunk/fulfilled') {
 				handleClose();
 
-				if (isEdit && !(status === 'draft')) {
+				if (isEdit) {
 					dispatch(getAllArticleTemplatesThunk(queryParams));
 				} else if (isSearchParamsEmpty) {
 					dispatch(getAllArticleTemplatesThunk());
@@ -118,12 +118,7 @@ const ArticleTemplateForm = ({
 		setSubmitting(true);
 		setOpenDeleteModal(false);
 		try {
-			const { payload } = await dispatch(deleteArticleTemplateThunk(id));
-
-			if (payload.status === 200) {
-				deleteReadMoreApi(id);
-			}
-
+			await dispatch(deleteArticleTemplateThunk(id));
 			handleClose();
 			dispatch(getAllArticleTemplatesThunk(queryParams));
 		} catch (e) {

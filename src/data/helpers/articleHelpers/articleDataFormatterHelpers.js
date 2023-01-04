@@ -71,7 +71,6 @@ export const uploadArticleFiles = async (article) => {
 				};
 			}
 		} else if (item.element_type === ARTICLE_ELEMENTS_TYPES.QUESTION) {
-			console.log({ item });
 			elements[index].question_data.answers = item.question_data.answers.map(
 				(answerItem, answerIndex) => ({
 					...answerItem,
@@ -256,8 +255,8 @@ export const articleDataFormatterForForm = (article, allRules) => {
 				media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${article?.author_image}`
 			}
 		],
-		mainCategoryId: article.main_category_id,
-		subCategoryId: article.sub_category_id,
+		mainCategoryId: article.main_category_id || '',
+		subCategoryId: article.sub_category_id || '',
 		mainCategoryName: article.media_type,
 		subCategoryName: article.sub_category
 	};
@@ -315,6 +314,7 @@ export const articleDataFormatterForService = (
 	const [authorImgFile, portraitImgFile, landscapeImgFile] = files;
 	const { media_url: authorMediaUrl } = authorImgFile;
 	const filteredRules = allRules.filter((rule) => article.rules[rule._id]);
+
 	const articleData = {
 		save_draft: isDraft,
 		translations: undefined,
@@ -375,8 +375,36 @@ export const articleDataFormatterForService = (
 					landscape_height: 0,
 					landscape_width: 0
 			  }),
+
 		rules: filteredRules
 	};
 
 	return articleData;
+};
+
+export const articleTemplateDataFormatterForService = (
+	article,
+	files,
+	allRules
+) => {
+	const articleData = articleDataFormatterForService(
+		article,
+		files,
+		false,
+		allRules
+	);
+
+	return {
+		...omit(articleData, [
+			'save_draft',
+			'article_id',
+			isEmpty(articleData.main_category_id) ? 'main_category_id' : '',
+			isEmpty(articleData.sub_category_id) ? 'sub_category_id' : ''
+		]),
+
+		// Destructing the article template data
+
+		...(article.id ? { article_template_id: article.id } : {}),
+		template_name: article.template_name
+	};
 };

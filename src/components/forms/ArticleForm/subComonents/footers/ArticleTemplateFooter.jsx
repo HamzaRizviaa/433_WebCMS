@@ -2,13 +2,10 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useFormikContext } from 'formik';
-import { isEqual, pick, omit } from 'lodash';
+import { isEqual, pick, isEmpty } from 'lodash';
 import { useArticleFooterStyles } from './index.style';
 import Button from '../../../../ui/Button';
-import {
-	articleTemplateFormInitialValues,
-	articleTemplateUnwantedKeysForDeepEqual
-} from '../../../../../data/helpers';
+import { articleTemplateFormInitialValues } from '../../../../../data/helpers';
 import { getRules } from '../../../../../data/selectors';
 
 const ArticleBuilderFooter = ({
@@ -20,31 +17,18 @@ const ArticleBuilderFooter = ({
 	const classes = useArticleFooterStyles({ loading, isEdit });
 	const { rules } = useSelector(getRules);
 
-	const {
-		values,
-		dirty,
-		status: formikStatus,
-		setSubmitting
-	} = useFormikContext();
+	const { values, dirty, setSubmitting, setFieldError } = useFormikContext();
 
 	const isTemplateButtonDisabled = useMemo(() => {
 		const isEqualToDefaultValues = isEqual(
-			omit(
-				pick(values, Object.keys(articleTemplateFormInitialValues(rules))),
-				articleTemplateUnwantedKeysForDeepEqual
-			),
-			omit(
-				articleTemplateFormInitialValues(rules),
-				articleTemplateUnwantedKeysForDeepEqual
-			)
+			pick(values, Object.keys(articleTemplateFormInitialValues(rules))),
+			articleTemplateFormInitialValues(rules)
 		);
 
-		const isDirty = isEdit ? dirty : formikStatus?.dirty;
-
-		console.log({ isDirty, isEqualToDefaultValues });
-
-		return !isDirty || isEqualToDefaultValues;
-	}, [isEdit, values, dirty, formikStatus]);
+		return isEmpty(values.template_name)
+			? true
+			: !dirty || isEqualToDefaultValues || values.elements.length === 0;
+	}, [isEdit, values, dirty, rules]);
 
 	return (
 		<div className={classes.footer}>
@@ -64,7 +48,9 @@ const ArticleBuilderFooter = ({
 					size='small'
 					className={classes.btn}
 					disabled={isTemplateButtonDisabled}
-					onClick={() => onSubmitHandler(values, { setSubmitting })}
+					onClick={() =>
+						onSubmitHandler(values, { setSubmitting, setFieldError })
+					}
 				>
 					{isEdit ? 'SAVE TEMPLATE' : 'CREATE TEMPLATE'}
 				</Button>

@@ -47,6 +47,12 @@ const ArticleFormDrawer = ({
 
 	const isLoading = isSubmitting || specificArticleStatus === 'loading';
 
+	console.log({
+		isLoading,
+		isSubmitting,
+		specificArticleStatus
+	});
+
 	useEffect(() => {
 		setStatus({ ...articleFormStatusInitialValues });
 	}, []);

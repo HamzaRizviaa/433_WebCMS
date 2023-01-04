@@ -76,7 +76,7 @@ class ArticleLibraryService {
 	};
 
 	static articleTemplateCheckName = (templateName) => {
-		return axiosInstance.post(
+		return axiosInstance.get(
 			`/article-template/check-template-name/${templateName}`
 		);
 	};
