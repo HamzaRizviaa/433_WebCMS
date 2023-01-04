@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 
-export const useTopbarStyles = makeStyles(() => ({
+export const useTopbarStyles = makeStyles((theme) => ({
 	header: {
 		display: 'flex',
 		justifyContent: 'space-between'
@@ -20,5 +20,11 @@ export const useTopbarStyles = makeStyles(() => ({
 	title: {
 		marginRight: '2rem',
 		textTransform: 'uppercase'
+	},
+
+	titleName: {
+		'&:hover': {
+			color: theme.palette.neonYellow
+		}
 	}
 }));

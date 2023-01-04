@@ -34,7 +34,7 @@ const PollSummary = ({ openPreviewer, isClosed }) => {
 						name='general_info.results'
 						label='RESULTS'
 						placeholder='Please write your result here'
-						maxLength={24}
+						maxLength={26}
 						required
 						multiline
 						maxRows={2}
