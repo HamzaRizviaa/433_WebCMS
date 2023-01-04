@@ -13,6 +13,7 @@ import Battery from '../../../../assets/Rectangle.svg';
 import Signals from '../../../../assets/MobileSignal.svg';
 import Avatar from '@mui/material/Avatar';
 import { default433Profile } from '../../../../data/helpers/articleHelpers';
+import StatusBadge from '../../../ui/StatusBadge';
 
 const ArticlePreviewWrapper = ({ children, form }) => {
 	// Get Cover Url From data
@@ -54,10 +55,13 @@ const ArticlePreviewWrapper = ({ children, form }) => {
 					</div>
 
 					{/*  Title & Content Container */}
-					<Box mt={'300px'}>
-						<div className={classes.subCatText}>
-							{form?.subCategory?.name || ''}
-						</div>
+					<Box mt={'600px'}>
+						{form?.subCategoryName ? (
+							<StatusBadge status={form?.subCategoryName} />
+						) : (
+							<></>
+						)}
+
 						<div className={classes.mainTitle}>
 							<Markup content={form.title} />
 						</div>
