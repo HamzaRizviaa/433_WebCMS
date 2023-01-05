@@ -1,11 +1,6 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-/* eslint-disable react/display-name */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import SignIn from '../pages/SignIn/SignIn';
-import RequireAuth from './RequireAuth.js';
-// import Test from '../Test.jsx';
+import { useDispatch } from 'react-redux';
 
 // Libraries
 import MediaLibrary from '../pages/MediaLibrary/MediaLibrary';
@@ -14,8 +9,11 @@ import TopBanner from '../pages/TopBanner/TopBanner.jsx';
 import ViralLibrary from '../pages/ViralLibrary/ViralLibrary';
 import ArticleLibrary from '../pages/ArticleLibrary/ArticleLibrary';
 import NewsLibrary from '../pages/NewsLibrary/NewsLibrary';
+
+import SignIn from '../pages/SignIn/SignIn';
+import RequireAuth from './RequireAuth.js';
 import { fetchRules } from '../data/features/rulesConfig';
-import { useDispatch } from 'react-redux';
+import { getLocalStorageDetails } from '../data/utils';
 
 // import GamesLibrary from '../pages/GamesLibrary/GamesLibrary';
 // import PostLibrary from '../pages/PostLibrary/PostLibrary';
@@ -25,24 +23,18 @@ import { useDispatch } from 'react-redux';
  * @component
  */
 const AppRoutes = () => {
-	const [loginData, setLoginData] = useState(
-		localStorage.getItem('user_data')
-			? JSON.parse(localStorage.getItem('user_data'))
-			: null
-	);
 	const dispatch = useDispatch();
+	const localStorageData = getLocalStorageDetails();
+
 	useEffect(() => {
-		if (localStorage.getItem('user_data')) {
+		if (localStorageData) {
 			dispatch(fetchRules());
 		}
-	}, [localStorage.getItem('user_data')]);
+	}, [localStorageData]);
+
 	return (
 		<Routes>
-			<Route
-				exact
-				path='/sign-in'
-				element={<SignIn setLoginData={setLoginData} />}
-			/>
+			<Route exact path='/sign-in' element={<SignIn />} />
 			<Route
 				exact
 				path='/news-library'
