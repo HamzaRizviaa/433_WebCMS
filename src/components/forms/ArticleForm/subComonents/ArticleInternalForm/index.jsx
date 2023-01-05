@@ -12,6 +12,7 @@ import { useLazyGetMatchesTreeQuery } from '../../../../../data/features/article
 import { resetSpecificArticleTemplate } from '../../../../../data/features/articleLibrary/articleLibrarySlice';
 import { articleFormInitialValues } from '../../../../../data/helpers';
 import { getRules } from '../../../../../data/selectors';
+import { resetSpecificArticle } from '../../../../../data/features/articleLibrary/articleLibrarySlice';
 
 const ArticleInternalForm = ({
 	isEdit,
@@ -33,6 +34,7 @@ const ArticleInternalForm = ({
 		return () => {
 			resetForm(articleFormInitialValues(rules));
 			dispatch(resetSpecificArticleTemplate());
+			dispatch(resetSpecificArticle());
 		};
 	}, []);
 
