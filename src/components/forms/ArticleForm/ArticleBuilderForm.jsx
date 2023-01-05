@@ -8,7 +8,10 @@ import DeleteModal from '../../DeleteModal';
 import ArticleFormDrawer from './subComonents/ArticleFormDrawer';
 import { useCommonParams } from '../../../hooks';
 import { ArticleLibraryService } from '../../../data/services';
-import { selectSpecificArticle } from '../../../data/selectors/articleLibrarySelectors';
+import {
+	selectSpecificArticle,
+	selectSpecificArticleTemplate
+} from '../../../data/selectors/articleLibrarySelectors';
 import {
 	articleFormInitialValues,
 	articleFormValidationSchema,
@@ -46,6 +49,7 @@ const ArticleBuilderForm = ({
 
 	// Selectors
 	const specificArticle = useSelector(selectSpecificArticle);
+	const specificArticleTemplate = useSelector(selectSpecificArticleTemplate);
 	const { rules } = useSelector(getRules);
 
 	// Refs
@@ -57,15 +61,18 @@ const ArticleBuilderForm = ({
 	useEffect(() => {
 		if (specificArticle?.main_category_id)
 			dispatch(getArticleSubCategories(specificArticle.main_category_id));
-	}, [specificArticle]);
+	}, [specificArticle, specificArticleTemplate]);
 
-	const initialValues = useMemo(
-		() =>
-			isEdit && !isEmpty(specificArticle)
-				? articleDataFormatterForForm(specificArticle, rules)
-				: articleFormInitialValues(rules),
-		[isEdit, specificArticle, rules]
-	);
+	const initialValues = useMemo(() => {
+		if (!isEmpty(specificArticleTemplate) && !isEdit)
+			return articleDataFormatterForForm(specificArticleTemplate, rules);
+
+		if (isEdit || !isEmpty(specificArticle)) {
+			return articleDataFormatterForForm(specificArticle, rules);
+		} else {
+			articleFormInitialValues(rules);
+		}
+	}, [isEdit, specificArticle, rules, specificArticleTemplate]);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
