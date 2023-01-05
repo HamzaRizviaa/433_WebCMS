@@ -11,7 +11,8 @@ import FeatureWrapper from '../../../FeatureWrapper';
 
 const AdvancedSettingsForm = ({
 	isQuestions = false,
-	questionsClosed = false
+	questionsClosed = false,
+	hideRules = false
 }) => {
 	const classes = useAdvancedSettingsFormStyles();
 
@@ -20,18 +21,16 @@ const AdvancedSettingsForm = ({
 	return (
 		<div className={classes.advancedSettingRoot}>
 			<AccordianLayout title='Advanced Settings'>
-				{!isQuestions ? (
+				{!isQuestions && (
 					<SubCardLayout title={'Comments & Likes'}>
 						<FormikCheckbox name='show_comments' label='Show Comments' />
 						<FormikCheckbox name='show_likes' label='Show Likes' />
 					</SubCardLayout>
-				) : (
-					<></>
 				)}
-				<FeatureWrapper name='geoblockingRestrictions'>
-					<SubCardLayout title={'Restrictions'}>
-						{rules.map((val, index) => {
-							return (
+				{!hideRules && (
+					<FeatureWrapper name='geoblockingRestrictions'>
+						<SubCardLayout title={'Restrictions'}>
+							{rules.map((val, index) => (
 								<FormikCheckbox
 									disabled={questionsClosed}
 									name={`rules.${val._id}`}
@@ -39,10 +38,10 @@ const AdvancedSettingsForm = ({
 									tooltip={toolTipFormatter(toolTipHandler(val))}
 									key={index}
 								/>
-							);
-						})}
-					</SubCardLayout>
-				</FeatureWrapper>
+							))}
+						</SubCardLayout>
+					</FeatureWrapper>
+				)}
 			</AccordianLayout>
 		</div>
 	);
@@ -50,7 +49,8 @@ const AdvancedSettingsForm = ({
 
 AdvancedSettingsForm.propTypes = {
 	isQuestions: PropTypes.bool,
-	questionsClosed: PropTypes.bool
+	questionsClosed: PropTypes.bool,
+	hideRules: PropTypes.bool
 };
 
 export default AdvancedSettingsForm;
