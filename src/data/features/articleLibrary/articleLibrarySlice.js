@@ -116,7 +116,7 @@ const articlesLibrarySlice = createSlice({
 
 		// Article Templating Listing Actions
 		builder.addCase(getAllArticleTemplatesThunk.pending, (state) => {
-			state.status = 'loading';
+			state.status = 'pending';
 			state.templateListingStatus = 'loading';
 		});
 
