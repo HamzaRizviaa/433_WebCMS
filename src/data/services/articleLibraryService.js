@@ -58,7 +58,7 @@ class ArticleLibraryService {
 	static getAllArticleTemplates = (queryParams) => {
 		const params = {
 			...queryParams,
-			limit: 8
+			limit: 50
 		};
 
 		return axiosInstance.get('/article-template', { params });

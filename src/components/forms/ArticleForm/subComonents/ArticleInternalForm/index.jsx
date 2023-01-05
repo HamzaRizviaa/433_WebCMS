@@ -46,7 +46,9 @@ const ArticleInternalForm = ({
 				{selectedOption === 'template' && <ArticleTemplateInfoForm />}
 			</Box>
 			<ArticleGeneralInfoForm isEdit={isEdit} status={status} />
-			{values?.subCategoryId && <AdvancedSettingsForm />}
+			{values?.subCategoryId && (
+				<AdvancedSettingsForm hideRules={selectedOption === 'template'} />
+			)}
 			<Box
 				ref={topElementRef}
 				sx={{

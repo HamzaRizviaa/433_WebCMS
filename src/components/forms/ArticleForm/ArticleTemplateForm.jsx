@@ -20,7 +20,8 @@ import {
 	getAllArticleTemplatesThunk,
 	createOrEditArticleTemplateThunk,
 	deleteArticleTemplateThunk,
-	getArticleSubCategories
+	getArticleSubCategories,
+	setSpecificArticleStatus
 } from '../../../data/features/articleLibrary/articleLibrarySlice';
 import { getRules } from '../../../data/selectors';
 
@@ -63,6 +64,7 @@ const ArticleTemplateForm = ({
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
 	const onSubmitHandler = async (values, formikBag) => {
+		dispatch(setSpecificArticleStatus('loading'));
 		formikBag.setSubmitting(true);
 
 		try {
@@ -75,6 +77,7 @@ const ArticleTemplateForm = ({
 				);
 
 				if (data.status_code === 200) {
+					dispatch(setSpecificArticleStatus('success'));
 					formikBag.setSubmitting(false);
 					formikBag.setFieldError(
 						'template_name',
@@ -110,6 +113,7 @@ const ArticleTemplateForm = ({
 		} catch (e) {
 			console.error(e);
 		} finally {
+			dispatch(setSpecificArticleStatus('success'));
 			formikBag.setSubmitting(false);
 		}
 	};
@@ -153,7 +157,7 @@ const ArticleTemplateForm = ({
 						deleteBtn={() => {
 							onDeleteHandler(specificArticleTemplate?.id, setSubmitting);
 						}}
-						text={'Article'}
+						text={'Template'}
 						wrapperRef={dialogWrapper}
 						isSubmitting={isSubmitting}
 					/>
