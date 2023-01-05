@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form } from 'formik';
-import { isEmpty } from 'lodash';
+import { isEmpty, omit } from 'lodash';
 import DeleteModal from '../../DeleteModal';
 import ArticleFormDrawer from './subComonents/ArticleFormDrawer';
 import { useCommonParams } from '../../../hooks';
@@ -65,12 +65,15 @@ const ArticleBuilderForm = ({
 
 	const initialValues = useMemo(() => {
 		if (!isEmpty(specificArticleTemplate) && !isEdit)
-			return articleDataFormatterForForm(specificArticleTemplate, rules);
+			return articleDataFormatterForForm(
+				omit(specificArticleTemplate, ['id']),
+				rules
+			);
 
-		if (isEdit || !isEmpty(specificArticle)) {
+		if (isEdit && !isEmpty(specificArticle)) {
 			return articleDataFormatterForForm(specificArticle, rules);
 		} else {
-			articleFormInitialValues(rules);
+			return articleFormInitialValues(rules);
 		}
 	}, [isEdit, specificArticle, rules, specificArticleTemplate]);
 
