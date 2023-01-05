@@ -14,6 +14,7 @@ import { reorder } from '../../../../../data/helpers';
 const ArticleElementsFieldArray = ({
 	isEdit,
 	status,
+	selectedOption,
 	elementsWrapperRef,
 	matchesData,
 	form,
@@ -67,6 +68,7 @@ const ArticleElementsFieldArray = ({
 						index={index}
 						item={item}
 						name={`elements.${index}.twitter_post_url`}
+						required={selectedOption === 'article'}
 						handleRemoveElement={handleRemoveElement}
 					/>
 				);
@@ -76,17 +78,19 @@ const ArticleElementsFieldArray = ({
 						index={index}
 						item={item}
 						name={`elements.${index}.ig_post_url`}
+						required={selectedOption === 'article'}
 						handleRemoveElement={handleRemoveElement}
 					/>
 				);
 			case ARTICLE_ELEMENTS_TYPES.QUESTION:
 				return (
 					<QuestionElement
-						index={index}
-						item={item}
-						handleRemoveElement={handleRemoveElement}
 						isEdit={isEdit}
 						status={status}
+						index={index}
+						item={item}
+						required={selectedOption === 'article'}
+						handleRemoveElement={handleRemoveElement}
 					/>
 				);
 			case ARTICLE_ELEMENTS_TYPES.MATCH:
@@ -98,6 +102,7 @@ const ArticleElementsFieldArray = ({
 						index={index}
 						item={item}
 						data={matchesData}
+						required={selectedOption === 'article'}
 						handleRemoveElement={handleRemoveElement}
 					/>
 				);
@@ -120,6 +125,7 @@ const ArticleElementsFieldArray = ({
 ArticleElementsFieldArray.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
+	selectedOption: PropTypes.oneOf(['', 'article', 'template']).isRequired,
 	elementsWrapperRef: PropTypes.any,
 	matchesData: PropTypes.array,
 	form: PropTypes.object.isRequired,

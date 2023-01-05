@@ -40,12 +40,16 @@ const ArticleInternalForm = ({
 		<Box>
 			<Box mb={3.5} className={classes.mainTitleDescription}>
 				<h2>Builder</h2>
-				<p>Edit, reorder elements here and build your article</p>
+				<p>Edit, reorder elements here and build your {selectedOption}</p>
 			</Box>
 			<Box mb={2}>
 				{selectedOption === 'template' && <ArticleTemplateInfoForm />}
 			</Box>
-			<ArticleGeneralInfoForm isEdit={isEdit} status={status} />
+			<ArticleGeneralInfoForm
+				isEdit={isEdit}
+				status={status}
+				selectedOption={selectedOption}
+			/>
 			{values?.subCategoryId && (
 				<AdvancedSettingsForm hideRules={selectedOption === 'template'} />
 			)}
@@ -62,6 +66,7 @@ const ArticleInternalForm = ({
 						<ArticleElementsFieldArray
 							isEdit={isEdit}
 							status={status}
+							selectedOption={selectedOption}
 							elementsWrapperRef={elementsWrapperRef}
 							matchesData={matchesData}
 							{...props}

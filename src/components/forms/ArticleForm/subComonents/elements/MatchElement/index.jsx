@@ -14,6 +14,7 @@ const MatchElement = ({
 	item,
 	data,
 	isPublished,
+	required = false,
 	handleRemoveElement
 }) => {
 	const classes = useElementsStyles();
@@ -122,7 +123,7 @@ const MatchElement = ({
 					mapOptions={{ labelKey: 'name', valueKey: 'name' }}
 					disabled={isPublished && isItemCreated}
 					onChange={handleLeagueChange}
-					required
+					required={required}
 				/>
 			</div>
 			<div className={classes.matchFieldContainer}>
@@ -134,7 +135,7 @@ const MatchElement = ({
 					mapOptions={{ labelKey: 'name', valueKey: 'name' }}
 					disabled={(isPublished && isItemCreated) || isEmpty(item.league_name)}
 					onChange={handleTeamChange}
-					required
+					required={required}
 				/>
 			</div>
 			<div className={classes.matchFieldContainer}>
@@ -146,7 +147,7 @@ const MatchElement = ({
 					mapOptions={{ labelKey: 'name', valueKey: 'name' }}
 					disabled={(isPublished && isItemCreated) || isEmpty(item.team_name)}
 					onChange={handleMatchChange}
-					required
+					required={required}
 				/>
 			</div>
 		</DraggableCardLayout>
@@ -160,6 +161,7 @@ MatchElement.propTypes = {
 	index: PropTypes.number.isRequired,
 	item: PropTypes.object,
 	data: PropTypes.array,
+	required: PropTypes.bool,
 	handleRemoveElement: PropTypes.func
 };
 
