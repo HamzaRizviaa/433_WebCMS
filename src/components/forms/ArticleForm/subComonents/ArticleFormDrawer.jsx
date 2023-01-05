@@ -86,6 +86,7 @@ const ArticleFormDrawer = ({
 			<Grid container className={classes.articlesGridBox}>
 				<Grid className={classes.firstGridItem} item pr={1} md={3}>
 					<ArticleElementsSidebar
+						selectedOption={selectedOption}
 						topElementRef={topElementRef}
 						elementsWrapperRef={elementsWrapperRef}
 					/>

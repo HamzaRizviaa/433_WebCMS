@@ -6,7 +6,11 @@ import { useElementsStyles } from './elements.styles';
 import ToggleSwitchField from '../../../../ui/inputs/ToggleSwitchField';
 import { articleSidebarElements } from '../../../../../data/helpers/articleHelpers/index';
 
-const ArticleElementsSidebar = ({ topElementRef, elementsWrapperRef }) => {
+const ArticleElementsSidebar = ({
+	selectedOption,
+	topElementRef,
+	elementsWrapperRef
+}) => {
 	const classes = useElementsStyles();
 	const { values, setFieldValue } = useFormikContext();
 	const [itemsOnTop, setItemsOnTop] = useState(false);
@@ -46,7 +50,7 @@ const ArticleElementsSidebar = ({ topElementRef, elementsWrapperRef }) => {
 			<Box mb={2.5}>
 				<Typography className={classes.titleHeading}>Elements</Typography>
 				<Typography className={classes.titleText}>
-					Add elements to build your article
+					Add elements to build your {selectedOption}
 				</Typography>
 			</Box>
 			<Box className={classes.elementsDesc}>
@@ -77,6 +81,7 @@ const ArticleElementsSidebar = ({ topElementRef, elementsWrapperRef }) => {
 };
 
 ArticleElementsSidebar.propTypes = {
+	selectedOption: PropTypes.oneOf(['', 'article', 'template']).isRequired,
 	topElementRef: PropTypes.any,
 	elementsWrapperRef: PropTypes.any
 };
