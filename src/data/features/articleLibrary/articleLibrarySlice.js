@@ -40,6 +40,9 @@ const articlesLibrarySlice = createSlice({
 		},
 		resetNoResultStatus: (state) => {
 			state.noResultStatus = false;
+		},
+		resetSpecificArticleTemplate: (state) => {
+			state.specificArticleTemplate = null;
 		}
 	},
 	extraReducers: (builder) => {
@@ -144,7 +147,10 @@ const articlesLibrarySlice = createSlice({
 	}
 });
 
-export const { resetCalendarError, resetNoResultStatus } =
-	articlesLibrarySlice.actions;
+export const {
+	resetCalendarError,
+	resetNoResultStatus,
+	resetSpecificArticleTemplate
+} = articlesLibrarySlice.actions;
 
 export default articlesLibrarySlice.reducer;

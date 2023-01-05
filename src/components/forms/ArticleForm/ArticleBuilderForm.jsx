@@ -3,12 +3,15 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form } from 'formik';
-import { isEmpty } from 'lodash';
+import { isEmpty, omit } from 'lodash';
 import DeleteModal from '../../DeleteModal';
 import ArticleFormDrawer from './subComonents/ArticleFormDrawer';
 import { useCommonParams } from '../../../hooks';
 import { ArticleLibraryService } from '../../../data/services';
-import { selectSpecificArticle } from '../../../data/selectors/articleLibrarySelectors';
+import {
+	selectSpecificArticle,
+	selectSpecificArticleTemplate
+} from '../../../data/selectors/articleLibrarySelectors';
 import {
 	articleFormInitialValues,
 	articleFormValidationSchema,
@@ -46,6 +49,7 @@ const ArticleBuilderForm = ({
 
 	// Selectors
 	const specificArticle = useSelector(selectSpecificArticle);
+	const specificArticleTemplate = useSelector(selectSpecificArticleTemplate);
 	const { rules } = useSelector(getRules);
 
 	// Refs
@@ -57,15 +61,21 @@ const ArticleBuilderForm = ({
 	useEffect(() => {
 		if (specificArticle?.main_category_id)
 			dispatch(getArticleSubCategories(specificArticle.main_category_id));
-	}, [specificArticle]);
+	}, [specificArticle, specificArticleTemplate]);
 
-	const initialValues = useMemo(
-		() =>
-			isEdit && !isEmpty(specificArticle)
-				? articleDataFormatterForForm(specificArticle, rules)
-				: articleFormInitialValues(rules),
-		[isEdit, specificArticle, rules]
-	);
+	const initialValues = useMemo(() => {
+		if (!isEmpty(specificArticleTemplate) && !isEdit)
+			return articleDataFormatterForForm(
+				omit(specificArticleTemplate, ['id']),
+				rules
+			);
+
+		if (isEdit && !isEmpty(specificArticle)) {
+			return articleDataFormatterForForm(specificArticle, rules);
+		} else {
+			return articleFormInitialValues(rules);
+		}
+	}, [isEdit, specificArticle, rules, specificArticleTemplate]);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
