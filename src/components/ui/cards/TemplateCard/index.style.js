@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 
-export const useStyles = makeStyles(() => ({
+export const useStyles = makeStyles((theme) => ({
 	cardModal: {
 		display: 'flex',
 		gap: '16px'
@@ -22,10 +22,10 @@ export const useStyles = makeStyles(() => ({
 		flexBasis: '283px',
 		boxSizing: 'border-box',
 		cursor: 'pointer',
-		margin: '10px 10px'
+		margin: '10px'
 	},
 	newCard: {
-		margin: '10px 10px',
+		margin: '10px',
 		boxSizing: 'border-box',
 		height: '180px',
 		backgroundColor: '#191919',
@@ -63,8 +63,13 @@ export const useStyles = makeStyles(() => ({
 		fontSize: '18px',
 		lineHeight: '24px',
 		letterSpacing: '0.03em',
-		textTransform: 'capitalize',
-		marginBottom: '24px'
+		marginBottom: '24px',
+		// textOverflow: 'ellipsis',
+		// whiteSpace: 'nowrap !important',
+		overflow: 'hidden',
+		lineClamp: 2,
+		boxOrient: 'vertical',
+		display: '-webkit-box'
 	},
 	dateBlock: {
 		fontWeight: 400,
@@ -76,5 +81,13 @@ export const useStyles = makeStyles(() => ({
 		color: '#CCCCCC',
 		fontSize: '14px',
 		lineHeight: '24px'
+	},
+	skeletonCards: {
+		backgroundColor: theme.palette.normalGrey,
+		boxSizing: 'border-box',
+		margin: '10px',
+		borderRadius: 16,
+		overflow: 'hidden'
+		//'& Skeleton': { borderRadius: '16px !important' }
 	}
 }));

@@ -17,7 +17,7 @@ const TemplateCard = ({ data, onCardClick, index }) => {
 			</div>
 			<div className={classes.dateBlock}>
 				Last edited
-				<div className={classes.date}>{getDateTime(data.last_edited)}</div>
+				<div className={classes.date}>{getDateTime(data.last_edited, ',')}</div>
 			</div>
 		</div>
 	);

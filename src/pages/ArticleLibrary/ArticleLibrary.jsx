@@ -10,17 +10,21 @@ import {
 	getSpecificArticleTemplateThunk,
 	getAllArticleTemplatesThunk
 } from '../../data/features/articleLibrary/articleLibrarySlice';
-import { selectAllArticleTemplate } from '../../data/selectors';
+import {
+	selectAllArticleTemplate,
+	selectAllArticleTemplateStatus
+} from '../../data/selectors';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 import { articleTableColumns } from '../../data/helpers/articleHelpers/index';
 import ArticleTemplateModal from '../../components/ui/TemplateModal';
 import ArticleTemplateForm from '../../components/forms/ArticleForm/ArticleTemplateForm';
 import TemplateCardListing from '../../components/ui/cards/TemplateCard/TemplateCardListing';
+import TemplatingCardsSkeleton from '../../components/ui/cards/TemplateCard/TemplatingCardsSkeleton';
 
 const ArticleLibrary = () => {
 	const dispatch = useDispatch();
 	const templateListingData = useSelector(selectAllArticleTemplate);
-
+	const templateListingDataStatus = useSelector(selectAllArticleTemplateStatus);
 	const { data, isLoading, totalRecords } = useGetAllArticlesQuery();
 
 	// ARTICLE BUILDER FORM STATES
@@ -103,13 +107,17 @@ const ArticleLibrary = () => {
 				open={showTemplateModal}
 				onClose={() => setShowTemplateModal(false)}
 			>
-				<TemplateCardListing
-					emptyCardText={
-						selectedOption === 'article' ? 'Empty Article' : 'Empty Template'
-					}
-					data={templateListingData}
-					onCardClick={handleTemplateCardClick}
-				/>
+				{templateListingDataStatus === 'loading' ? (
+					<TemplatingCardsSkeleton />
+				) : (
+					<TemplateCardListing
+						emptyCardText={
+							selectedOption === 'article' ? 'Empty Article' : 'Empty Template'
+						}
+						data={templateListingData}
+						onCardClick={handleTemplateCardClick}
+					/>
+				)}
 			</ArticleTemplateModal>
 			<ArticleBuilderForm
 				open={showSlider}
