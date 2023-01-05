@@ -3,11 +3,11 @@ import moment from 'moment';
 import dayjs from 'dayjs';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-export const getDateTime = (dateTime) => {
+export const getDateTime = (dateTime, dateTimeSeperator = '|') => {
 	let formatted = new Date(dateTime);
 	return `${moment(formatted).format(
 		'DD-MM-YYYY'
-	)} | ${formatted.toLocaleTimeString('en-US', {
+	)} ${dateTimeSeperator} ${formatted.toLocaleTimeString('en-US', {
 		hour12: false,
 		hour: '2-digit',
 		minute: '2-digit'

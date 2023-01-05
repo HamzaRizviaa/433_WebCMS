@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Divider } from '@material-ui/core';
-import Button from '../../../../button';
+import Button from '../../../../ui/Button';
 import { useStyles } from './elementPreviewers.styles';
-import { matchElementDataFormatter } from '../../../../../data/helpers/articleHelpers';
+import { matchElementDataFormatter } from '../../../../../data/helpers/articleHelpers/index';
 
 const MatchElementPreviewer = ({ item }) => {
 	// formatted data for match element
@@ -14,6 +14,7 @@ const MatchElementPreviewer = ({ item }) => {
 		team1Color: data?.Team_1?.Team_Color, //|| 'white',
 		team2Color: data?.Team_2?.Team_Color //|| 'white'
 	});
+
 	return (
 		<Box className={classes.MatchContainer}>
 			<Box py={3} px={2} className={classes.matchDiv}>
@@ -32,7 +33,7 @@ const MatchElementPreviewer = ({ item }) => {
 						<div>{data?.Team_2?.Name}</div>
 					</Box>
 				</Box>
-				<Button text='FOLLOW MATCH' onClick={() => {}} />
+				<Button onClick={() => {}}>FOLLOW MATCH</Button>
 			</Box>
 		</Box>
 	);

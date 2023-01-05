@@ -4,7 +4,7 @@ import { Box } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { useStyles } from './elementPreviewers.styles';
 import { useLazyGetPostQuery } from '../../../../../data/features/articleLibrary/articleLibrary.query';
-import { ARTICLE_ELEMENTS_TYPES } from '../../../../../data/helpers/articleHelpers';
+import { ARTICLE_ELEMENTS_TYPES } from '../../../../../data/helpers/articleHelpers/index';
 
 const SocialPostElementPreviewer = ({ data }) => {
 	// extracted urls

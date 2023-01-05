@@ -1,26 +1,28 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
 import { FieldArray, useFormikContext } from 'formik';
 import { Box } from '@mui/material';
-
+import { useStyles } from '../subComponents.styles';
+import ArticleTemplateInfoForm from './ArticleTemplateInfoForm';
 import ArticleGeneralInfoForm from './ArticleGeneralInfoForm';
 import ArticleElementsFieldArray from '../elements/ArticleElementsFieldArray';
 import AdvancedSettingsForm from '../../../common/AdvancedSettingsForm';
-import { articleFormInitialValues } from '../../../../../data/helpers';
 import { useLazyGetMatchesTreeQuery } from '../../../../../data/features/articleLibrary/articleLibrary.query';
-import { useSelector, useDispatch } from 'react-redux';
+import { resetSpecificArticleTemplate } from '../../../../../data/features/articleLibrary/articleLibrarySlice';
+import { articleFormInitialValues } from '../../../../../data/helpers';
 import { getRules } from '../../../../../data/selectors';
 import { resetSpecificArticle } from '../../../../../data/features/articleLibrary/articleLibrarySlice';
-import { useStyles } from '../subComponents.styles';
 
 const ArticleInternalForm = ({
 	isEdit,
 	status,
+	selectedOption,
 	topElementRef,
 	elementsWrapperRef
 }) => {
-	const classes = useStyles();
 	const dispatch = useDispatch();
+	const classes = useStyles();
 	const { rules } = useSelector(getRules);
 	const { values, validateForm, resetForm } = useFormikContext();
 	const [getMatchesTree, { data: matchesData }] = useLazyGetMatchesTreeQuery();
@@ -31,6 +33,7 @@ const ArticleInternalForm = ({
 
 		return () => {
 			resetForm(articleFormInitialValues(rules));
+			dispatch(resetSpecificArticleTemplate());
 			dispatch(resetSpecificArticle());
 		};
 	}, []);
@@ -39,11 +42,19 @@ const ArticleInternalForm = ({
 		<Box>
 			<Box mb={3.5} className={classes.mainTitleDescription}>
 				<h2>Builder</h2>
-				<p>Edit, reorder elements here and build your article</p>
+				<p>Edit, reorder elements here and build your {selectedOption}</p>
 			</Box>
-			<ArticleGeneralInfoForm isEdit={isEdit} status={status} />
-			{values.subCategoryId ? <AdvancedSettingsForm /> : <></>}
-
+			<Box mb={2}>
+				{selectedOption === 'template' && <ArticleTemplateInfoForm />}
+			</Box>
+			<ArticleGeneralInfoForm
+				isEdit={isEdit}
+				status={status}
+				selectedOption={selectedOption}
+			/>
+			{values?.subCategoryId && (
+				<AdvancedSettingsForm hideRules={selectedOption === 'template'} />
+			)}
 			<Box
 				ref={topElementRef}
 				sx={{
@@ -57,6 +68,7 @@ const ArticleInternalForm = ({
 						<ArticleElementsFieldArray
 							isEdit={isEdit}
 							status={status}
+							selectedOption={selectedOption}
 							elementsWrapperRef={elementsWrapperRef}
 							matchesData={matchesData}
 							{...props}
@@ -71,6 +83,7 @@ const ArticleInternalForm = ({
 ArticleInternalForm.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
+	selectedOption: PropTypes.oneOf(['', 'article', 'template']).isRequired,
 	topElementRef: PropTypes.element,
 	elementsWrapperRef: PropTypes.any
 };

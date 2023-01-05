@@ -7,7 +7,13 @@ import FormikDropzone from '../../../../../ui/inputs/formik/FormikDropzone';
 import FormikField from '../../../../../ui/inputs/formik/FormikField';
 import FormikLabelsSelect from '../../../../../ui/inputs/formik/FormikLabelsSelect';
 
-const ArticleQuestionForm = ({ type, index, item, isPublished }) => {
+const ArticleQuestionForm = ({
+	type,
+	index,
+	item,
+	isPublished,
+	required = false
+}) => {
 	const classes = useElementsStyles();
 	const { setFieldValue } = useFormikContext();
 	const isItemCreated = !isEmpty(item.id);
@@ -33,7 +39,7 @@ const ArticleQuestionForm = ({ type, index, item, isPublished }) => {
 				{displayDropzoneTitle && (
 					<span className={classes.slideImageLabel}>
 						Add Background Image
-						<span className={classes.requiredImage}>{'*'}</span>
+						{required && <span className={classes.requiredImage}>{'*'}</span>}
 					</span>
 				)}
 				<div className={classes.dropzoneWrapper}>
@@ -66,7 +72,7 @@ const ArticleQuestionForm = ({ type, index, item, isPublished }) => {
 					maxRows={2}
 					maxLength={55}
 					disabled={isPublished && isItemCreated}
-					required
+					required={required}
 				/>
 			</div>
 			<div className={classes.fieldContainer}>
@@ -78,7 +84,7 @@ const ArticleQuestionForm = ({ type, index, item, isPublished }) => {
 					maxRows={2}
 					maxLength={29}
 					disabled={isPublished && isItemCreated}
-					required
+					required={required}
 				/>
 			</div>
 			<div className={classes.fieldContainer}>
@@ -90,7 +96,7 @@ const ArticleQuestionForm = ({ type, index, item, isPublished }) => {
 					maxRows={2}
 					maxLength={29}
 					disabled={isPublished && isItemCreated}
-					required
+					required={required}
 				/>
 			</div>
 			<div className={classes.fieldContainer}>
@@ -99,7 +105,7 @@ const ArticleQuestionForm = ({ type, index, item, isPublished }) => {
 					label='LABELS'
 					placeholder='Select a minimum of 1 labels'
 					disabled={isPublished && isItemCreated}
-					required
+					required={required}
 					library='Articles'
 				/>
 			</div>
@@ -111,7 +117,8 @@ ArticleQuestionForm.propTypes = {
 	type: PropTypes.string.isRequired,
 	index: PropTypes.number.isRequired,
 	item: PropTypes.object.isRequired,
-	isPublished: PropTypes.bool.isRequired
+	isPublished: PropTypes.bool.isRequired,
+	required: PropTypes.bool
 };
 
 export default ArticleQuestionForm;
