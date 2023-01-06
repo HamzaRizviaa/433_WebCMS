@@ -68,6 +68,11 @@ export const useStyles = makeStyles(() => ({
 		}
 	},
 
+	followMatchBtnWrapper: {
+		display: 'flex',
+		justifyContent: 'center'
+	},
+
 	/**
 	 * OTHER ELEMENTS STYLINGS
 	 */
