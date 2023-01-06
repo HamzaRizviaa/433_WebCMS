@@ -122,7 +122,7 @@ const articlesLibrarySlice = createSlice({
 
 		builder.addCase(getAllArticleTemplatesThunk.fulfilled, (state, action) => {
 			state.articleTemplateListing = action.payload?.data;
-			// state.status = 'success';
+			state.status = 'success';
 			state.templateListingStatus = 'success';
 		});
 
