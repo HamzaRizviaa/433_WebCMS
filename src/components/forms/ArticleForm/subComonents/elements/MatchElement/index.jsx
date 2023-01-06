@@ -55,7 +55,7 @@ const MatchElement = ({
 	useEffect(() => {
 		data && setLeagues(data);
 
-		if (isEdit && data) {
+		if ((isEdit && data) || (values.template_name && data)) {
 			const teams = data.find(
 				(value) => value.name === item.league_name
 			)?.teams;
