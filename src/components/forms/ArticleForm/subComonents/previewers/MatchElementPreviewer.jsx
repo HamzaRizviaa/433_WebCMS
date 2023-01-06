@@ -33,7 +33,9 @@ const MatchElementPreviewer = ({ item }) => {
 						<div>{data?.Team_2?.Name}</div>
 					</Box>
 				</Box>
-				<Button onClick={() => {}}>FOLLOW MATCH</Button>
+				<div className={classes.followMatchBtnWrapper}>
+					<Button onClick={() => {}}>FOLLOW MATCH</Button>
+				</div>
 			</Box>
 		</Box>
 	);
