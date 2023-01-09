@@ -304,19 +304,14 @@ export const articleDataFormatterForForm = (article, allRules) => {
 	return formattedArticle;
 };
 
-export const articleDataFormatterForService = (
-	article,
-	files,
-	isDraft = false,
-	allRules
-) => {
+export const articleDataFormatterForService = (article, files, allRules) => {
 	const { uploadedFiles, uploadedLandscapeCoverImage } = article;
 	const [authorImgFile, portraitImgFile, landscapeImgFile] = files;
 	const { media_url: authorMediaUrl } = authorImgFile;
 	const filteredRules = allRules.filter((rule) => article.rules[rule._id]);
 
 	const articleData = {
-		save_draft: isDraft,
+		save_draft: article.save_draft,
 		translations: undefined,
 		user_data: getUserDataObject(),
 		main_category_id: article.mainCategoryId,

@@ -79,7 +79,9 @@ const ArticleBuilderForm = ({
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
-	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
+	const onSubmitHandler = async (values, formikBag) => {
+		const isDraft = values.save_draft;
+
 		formikBag.setSubmitting(true);
 
 		try {
@@ -106,7 +108,6 @@ const ArticleBuilderForm = ({
 			const articleData = articleDataFormatterForService(
 				{ ...values, elements },
 				uploadedFilesRes,
-				isDraft,
 				rules
 			);
 
