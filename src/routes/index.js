@@ -14,6 +14,7 @@ import TopBanner from '../pages/TopBanner/TopBanner.jsx';
 import ViralLibrary from '../pages/ViralLibrary/ViralLibrary';
 import ArticleLibrary from '../pages/ArticleLibrary/ArticleLibrary';
 import NewsLibrary from '../pages/NewsLibrary/NewsLibrary';
+import RuleLibrary from '../pages/RuleLibrary/RuleLibrary';
 import { fetchRules } from '../data/features/rulesConfig';
 import { useDispatch } from 'react-redux';
 
@@ -73,6 +74,11 @@ const AppRoutes = () => {
 				exact
 				path='/viral-library'
 				element={<RequireAuth component={<ViralLibrary />} />}
+			/>
+			<Route
+				exact
+				path='/rule-library'
+				element={<RequireAuth component={<RuleLibrary />} />}
 			/>
 			{/* <Route
 				exact

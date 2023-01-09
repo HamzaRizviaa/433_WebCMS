@@ -27,3 +27,4 @@ export { ReactComponent as RadioBtnCheckedIcon } from './radio-btn-checked.svg';
 export { ReactComponent as CheckBoxCheckedIcon } from './Checkbox2.svg';
 export { ReactComponent as CheckBoxIcon } from './Checkbox.svg';
 export { ReactComponent as ArrowDown } from './Down.svg';
+export { ReactComponent as RuleLibrary } from './RuleLibrary.svg';
