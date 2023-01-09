@@ -44,7 +44,6 @@ const ArticleBuilderFooter = ({
 			)}
 			<div className={classes.container}>
 				<Button
-					type='submit'
 					size='small'
 					className={classes.btn}
 					disabled={isTemplateButtonDisabled}
