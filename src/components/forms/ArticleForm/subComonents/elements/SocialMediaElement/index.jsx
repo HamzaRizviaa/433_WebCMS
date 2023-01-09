@@ -4,7 +4,13 @@ import { useFormStyles } from '../../../../forms.style';
 import FormikField from '../../../../../ui/inputs/formik/FormikField';
 import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 
-const SocialMediaElement = ({ index, item, name, handleRemoveElement }) => {
+const SocialMediaElement = ({
+	index,
+	item,
+	name,
+	required = false,
+	handleRemoveElement
+}) => {
 	const classes = useFormStyles();
 
 	return (
@@ -22,7 +28,7 @@ const SocialMediaElement = ({ index, item, name, handleRemoveElement }) => {
 					placeholder='Please drop the URL here'
 					multiline
 					maxRows={2}
-					required
+					required={required}
 				/>
 			</div>
 		</DraggableCardLayout>
@@ -33,6 +39,7 @@ SocialMediaElement.propTypes = {
 	index: PropTypes.number.isRequired,
 	item: PropTypes.object,
 	name: PropTypes.string,
+	required: PropTypes.bool,
 	handleRemoveElement: PropTypes.func
 };
 

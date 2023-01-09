@@ -16,11 +16,15 @@ import { AuthService } from '../../../data/services';
 const DashboardLayout = ({
 	title,
 	onButtonClick,
+	secondaryButtonText,
+	secondaryButtonClick,
 	hideLibraryText = false,
 	hideBtn = false,
 	hideSearchFilter = false,
 	hideDateFilter = false,
 	isLoading = false,
+	onTemplateButtonClick = false,
+	hideTemplateBtn = false,
 	children
 }) => {
 	const dispatch = useDispatch();
@@ -61,7 +65,11 @@ const DashboardLayout = ({
 						<Topbar
 							title={title}
 							onButtonClick={onButtonClick}
+							secondaryButtonText={secondaryButtonText}
+							secondaryButtonClick={secondaryButtonClick}
 							hideBtn={hideBtn}
+							onTemplateButtonClick={onTemplateButtonClick}
+							hideTemplateBtn={hideTemplateBtn}
 							hideSearchFilter={hideSearchFilter}
 							hideDateFilter={hideDateFilter}
 							hideLibraryText={hideLibraryText}
@@ -77,7 +85,11 @@ const DashboardLayout = ({
 DashboardLayout.propTypes = {
 	title: PropTypes.string.isRequired,
 	onButtonClick: PropTypes.func,
+	secondaryButtonText: PropTypes.string,
+	secondaryButtonClick: PropTypes.func,
 	hideBtn: PropTypes.bool,
+	onTemplateButtonClick: PropTypes.func,
+	hideTemplateBtn: PropTypes.bool,
 	hideSearchFilter: PropTypes.bool,
 	hideDateFilter: PropTypes.bool,
 	hideLibraryText: PropTypes.bool,

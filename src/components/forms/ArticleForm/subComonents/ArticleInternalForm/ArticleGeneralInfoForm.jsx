@@ -19,7 +19,7 @@ import {
 	selectArticleSubCategories
 } from '../../../../../data/selectors';
 
-const ArticleGeneralInfoForm = ({ isEdit, status }) => {
+const ArticleGeneralInfoForm = ({ isEdit, status, selectedOption }) => {
 	const classes = useStyles();
 	const formClasses = useFormStyles();
 	const dispatch = useDispatch();
@@ -57,7 +57,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 							mapOptions={{ labelKey: 'name', valueKey: 'id' }}
 							onChange={handleMainCategoryChange}
 							disabled={isPublished}
-							required
+							required={selectedOption === 'article'}
 						/>
 					</div>
 				</div>
@@ -72,7 +72,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 							options={subCategories}
 							mapOptions={{ labelKey: 'name', valueKey: 'id' }}
 							onChange={handleSubCategoryChange}
-							required
+							required={selectedOption === 'article'}
 						/>
 					</div>
 				</div>
@@ -97,7 +97,9 @@ const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 					<h5>Add Media File</h5>
 					<h6 className={formClasses.fieldContainer}>
 						PORTRAIT IMAGE
-						<span style={{ color: '#ff355a', fontSize: '16px' }}>{'*'}</span>
+						{selectedOption === 'article' && (
+							<span style={{ color: '#ff355a', fontSize: '16px' }}>{'*'}</span>
+						)}
 					</h6>
 					<div className={formClasses.dropzoneWrapper}>
 						<FormikDropzone
@@ -114,7 +116,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 							fileSizeMessage='Image file size should not exceed 1MB.'
 							maxFiles={3}
 							showPreview
-							required
+							required={selectedOption === 'article'}
 							onDelete={() => setFieldValue('uploadedFiles', [])}
 						/>
 					</div>
@@ -129,7 +131,9 @@ const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 					</div>
 					<h6 className={classes.imageText}>
 						LANDSCAPE IMAGE
-						<span style={{ color: '#ff355a', fontSize: '16px' }}>{'*'}</span>
+						{selectedOption === 'article' && (
+							<span style={{ color: '#ff355a', fontSize: '16px' }}>{'*'}</span>
+						)}
 					</h6>
 					<div className={formClasses.dropzoneWrapper}>
 						<FormikDropzone
@@ -146,7 +150,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 							fileSizeMessage='Image file size should not exceed 1MB.'
 							maxFiles={1}
 							showPreview
-							required
+							required={selectedOption === 'article'}
 							onDelete={() => setFieldValue('uploadedLandscapeCoverImage', [])}
 						/>
 					</div>
@@ -165,7 +169,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 							name='title'
 							placeholder='Please write your title here'
 							multiline
-							required
+							required={selectedOption === 'article'}
 							maxLength={43}
 							maxRows={2}
 						/>
@@ -176,7 +180,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 							name='sub_text'
 							placeholder='Please write your sub title here'
 							multiline
-							required
+							required={selectedOption === 'article'}
 							maxRows={2}
 							maxLength={84}
 						/>
@@ -186,7 +190,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 							name='labels'
 							label='LABELS'
 							placeholder='Select a minimum of 4 labels'
-							required
+							required={selectedOption === 'article'}
 							library='Articles'
 							disabled={isPublished}
 						/>
@@ -199,7 +203,8 @@ const ArticleGeneralInfoForm = ({ isEdit, status }) => {
 
 ArticleGeneralInfoForm.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
-	status: PropTypes.string.isRequired
+	status: PropTypes.string.isRequired,
+	selectedOption: PropTypes.oneOf(['', 'article', 'template']).isRequired
 };
 
 export default ArticleGeneralInfoForm;
