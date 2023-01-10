@@ -180,7 +180,7 @@ export const useStyles = makeStyles(() => ({
 		height: '650px',
 		backgroundImage: ({
 			url
-		}) => `linear-gradient(180deg, rgba(0, 0, 0, 0) -12.5%, rgba(0, 0, 0, 0) 19.68%, rgba(0, 0, 0, 0) 60.4%, #000000 100%),
+		}) => `linear-gradient(180deg, rgba(0, 0, 0, 0) -12.5%, rgba(0, 0, 0, 0) 19.68%, rgba(0, 0, 0, 0) 50.4%, #000000 100%),
 					url(${url})`
 	},
 	topIcons: {
@@ -243,7 +243,7 @@ export const useStyles = makeStyles(() => ({
 	},
 	mainTitle: {
 		fontWeight: 800,
-		fontSize: '24px',
+		fontSize: '21px',
 		lineHeight: '40px',
 		color: 'white',
 		overflowWrap: 'anywhere'
@@ -251,7 +251,7 @@ export const useStyles = makeStyles(() => ({
 	authordetails: {
 		display: 'flex',
 		padding: '2px',
-		marginTop: '20px'
+		marginTop: '10px'
 	},
 	authorname: {
 		fontWeight: 700,

@@ -105,7 +105,7 @@ const ArticlePreviewWrapper = ({ children, form }) => {
 				</Box>
 
 				{/* Elements Container */}
-				<Box py={'40px'} px={'10px'}>
+				<Box py={'22px'} px={'10px'}>
 					{children}
 				</Box>
 			</div>

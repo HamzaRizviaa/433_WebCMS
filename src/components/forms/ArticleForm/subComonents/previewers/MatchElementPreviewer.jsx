@@ -16,7 +16,7 @@ const MatchElementPreviewer = ({ item }) => {
 	});
 	return (
 		<Box className={classes.MatchContainer}>
-			<Box py={2} px={2} mb={2} className={classes.matchDiv}>
+			<Box py={2} mb={2} className={classes.matchDiv}>
 				<Box className={classes.matchBox}>
 					<Box className={classes.teamBox}>
 						<img src={data.Team_1.Logo} className={classes.teamLogo} />

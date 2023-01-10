@@ -5,8 +5,8 @@ export const useStyles = makeStyles((theme) => ({
 	 * MATCH ELEMENT STYLINGS
 	 */
 	MatchContainer: {
-		background: ({ team1Color, team2Color }) =>
-			`linear-gradient(to right, ${team1Color} 0%, #000 50%, ${team2Color} 100%)`,
+		// background: ({ team1Color, team2Color }) =>
+		// 	`linear-gradient(to right, ${team1Color} 0%, #000 50%, ${team2Color} 100%)`,
 		padding: 0,
 		borderRadius: 16
 	},
@@ -140,16 +140,17 @@ export const useStyles = makeStyles((theme) => ({
 		textAlign: 'center'
 	},
 	question: {
-		paddingTop: '200px',
+		paddingTop: '250px',
 		fontStyle: 'normal',
 		fontWeight: 800,
 		fontSize: '24px',
 		lineHeight: '30px',
 		color: '#FFFFFF',
-		textShadow: '0px 1px 1px rgba(0, 0, 0, 0.3)'
+		textShadow: '0px 1px 1px rgba(0, 0, 0, 0.3)',
+		marginBottom: '16px'
 	},
 	answer: {
-		height: '40px',
+		height: '35px',
 		fontStyle: 'normal',
 		fontWeight: 700,
 		fontSize: '14px',
@@ -157,10 +158,11 @@ export const useStyles = makeStyles((theme) => ({
 		textTransform: 'uppercase',
 		color: '#FFFFFF',
 		borderRadius: '8px',
-		padding: '8px 16px 0px 16px',
+		padding: '4px 16px 0px 16px',
 		backgroundColor: 'rgba(229, 229, 229, 0.5)',
 		marginTop: '8px',
 		boxShadow:
-			'inset 0px 2px 3px rgba(229, 229, 229, 0.3), inset 0px -1px 0px rgba(0, 0, 0, 0.13)'
+			'inset 0px 2px 3px rgba(229, 229, 229, 0.3), inset 0px -1px 0px rgba(0, 0, 0, 0.13)',
+		textAlign: 'center'
 	}
 }));
