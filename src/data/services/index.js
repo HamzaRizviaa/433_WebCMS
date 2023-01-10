@@ -1,3 +1,4 @@
+export { default as AuthService } from './authService';
 export { default as TopBannerService } from './topBannerService';
 export { default as ArticleLibraryService } from './articleLibraryService';
 export { default as MediaLibraryService } from './mediaLibraryService';

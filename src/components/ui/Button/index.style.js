@@ -47,7 +47,8 @@ export const useButtonStyles = makeStyles((theme) => {
 		btnSpan: {
 			width: '100%',
 			fontFamily: 'Poppins',
-			fontSize: ({ size }) => (size === 'xlarge' ? '1.4rem' : '1.2rem'),
+			fontSize: ({ size }) =>
+				size === 'xlarge' || size === 'large' ? '1.4rem' : '1.2rem',
 			fontWeight: 800,
 			letterSpacing: '0.03em',
 			display: 'flex',
