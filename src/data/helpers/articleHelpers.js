@@ -302,7 +302,7 @@ export const uploadArticleFiles = async (article) => {
 };
 
 export const matchElementDataFormatter = (item) => ({
-	Day: moment(item?.match?.startdate).format('ddd, DD MMM'),
+	Day: moment(item?.match?.startdate).format('MMMM D'),
 	Time: moment(item?.match?.startdate).format('HH:mm'),
 	Team_1: {
 		Name: item?.match?.participant_teams_data?.[0]?.name,

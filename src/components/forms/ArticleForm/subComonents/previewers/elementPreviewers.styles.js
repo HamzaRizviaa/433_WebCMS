@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 // import theme from '../assets/theme';
-export const useStyles = makeStyles(() => ({
+export const useStyles = makeStyles((theme) => ({
 	/**
 	 * MATCH ELEMENT STYLINGS
 	 */
@@ -21,8 +21,8 @@ export const useStyles = makeStyles(() => ({
 		borderRadius: '16px'
 	},
 	teamLogo: {
-		width: '61px',
-		marginBottom: '13px'
+		width: '48px',
+		marginBottom: '10px'
 	},
 	teamBox: {
 		display: 'flex',
@@ -41,21 +41,23 @@ export const useStyles = makeStyles(() => ({
 		alignItems: 'center',
 		padding: '8px',
 		gap: '4px',
-		width: '90px',
-		height: '85px',
-		background: 'rgba(255, 255, 255, 0.15)',
-		borderRadius: '16px',
-		fontSize: '12px',
+		fontSize: '14px',
 		color: '#FFFFFF',
-		fontWeight: 400
+		textTransform: 'uppercase',
+		fontWeight: 800
 	},
-	dateDivider: { background: '#999', width: '75%' },
+	time: {
+		fontSize: '12px',
+		color: theme.palette.neonYellow,
+		fontWeight: 700
+	},
 	matchDiv: {
-		border: '1px solid transparent',
-		position: 'relative',
-		background: 'linear-gradient(#2D2D2D, #000)',
-		borderRadius: 16,
-		backgroundClip: 'padding-box',
+		border: '1px solid #333333',
+		//position: 'relative',
+		background: '#191919',
+		boxShadow: '0px 1px 1px rgba(255, 255, 255, 0.3)',
+		borderRadius: '12px',
+		//backgroundClip: 'padding-box',
 		'&:after': {
 			position: 'absolute',
 			top: -4,
@@ -66,6 +68,12 @@ export const useStyles = makeStyles(() => ({
 			zIndex: -1,
 			borderRadius: 16
 		}
+	},
+	matchButton: {
+		boxShadow:
+			'0px 2px 10px rgba(0, 0, 0, 0.4), inset 0px 1px 0px rgba(255, 255, 255, 0.3), inset 0px -1px 1px rgba(0, 0, 0, 0.2)',
+		borderRadius: '8px',
+		fontSize: '14px'
 	},
 
 	/**
