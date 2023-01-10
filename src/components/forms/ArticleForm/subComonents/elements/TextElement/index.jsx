@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import FormikTextEditor from '../../../../../ui/inputs/formik/FormikRichTextEditor';
+import FormikRichTextEditor from '../../../../../ui/inputs/formik/FormikRichTextEditor';
 import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 
 const TextElement = ({ index, item, handleRemoveElement, ...restProps }) => (
@@ -11,7 +11,11 @@ const TextElement = ({ index, item, handleRemoveElement, ...restProps }) => (
 		item={item}
 		onDeleteIconClick={handleRemoveElement}
 	>
-		<FormikTextEditor name={`elements.${index}.description`} id={index} {...restProps} />
+		<FormikRichTextEditor
+			id={index}
+			name={`elements.${index}.description`}
+			{...restProps}
+		/>
 	</DraggableCardLayout>
 );
 
