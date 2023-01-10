@@ -83,7 +83,7 @@ export const useStyles = makeStyles((theme) => ({
 		fontWeight: 400,
 		fontSize: '14px',
 		lineHeight: 1.2,
-		color: 'white',
+		color: '#CCCCCC',
 		overflowWrap: 'anywhere'
 	},
 	imageDraggableData: {

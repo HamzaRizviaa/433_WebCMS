@@ -177,10 +177,10 @@ export const useStyles = makeStyles(() => ({
 		backgroundPosition: 'center',
 		width: '380px',
 		// height: `${height}px`, linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 100%);
-		height: '812px',
+		height: '650px',
 		backgroundImage: ({
 			url
-		}) => `linear-gradient(180deg, rgba(0, 0, 0, 0) -12.5%, rgba(0, 0, 0, 0) 19.68%, rgba(0, 0, 0, 0) 57.99%, #000000 100%),
+		}) => `linear-gradient(180deg, rgba(0, 0, 0, 0) -12.5%, rgba(0, 0, 0, 0) 19.68%, rgba(0, 0, 0, 0) 60.4%, #000000 100%),
 					url(${url})`
 	},
 	topIcons: {
@@ -201,7 +201,7 @@ export const useStyles = makeStyles(() => ({
 	icons: {
 		width: '40px',
 		height: '40px',
-		background: 'rgba(64, 64, 64, 0.4)',
+		background: 'rgba(204, 204, 204, 0.2)',
 		borderRadius: '40px',
 		display: 'flex',
 		justifyContent: 'center'
