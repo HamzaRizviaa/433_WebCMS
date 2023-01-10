@@ -12,6 +12,7 @@ import { setRemoteConfig } from '../../data/features/remoteConfigSlice';
 import { getLocalStorageDetails } from '../../data/utils';
 import { AuthService } from '../../data/services';
 import classes from './_signIn.module.scss';
+import { fetchRules } from '../../data/features/rulesConfig';
 
 const SignIn = () => {
 	const dispatch = useDispatch();
@@ -55,8 +56,9 @@ const SignIn = () => {
 
 			if (userData?.status_code === 200) {
 				AuthService.setUserDataInLocalStorage(userData?.data);
-
 				setAccessTokenInHeader(userData?.data.access_token);
+
+				dispatch(fetchRules());
 
 				setAccessExpire(true);
 				setIsLoadingSignin(false);
