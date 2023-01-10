@@ -207,17 +207,17 @@ export const useStyles = makeStyles(() => ({
 		justifyContent: 'center'
 	},
 	navIcons: {
-		width: '48px',
-		height: '48px',
-		background: 'rgba(64, 64, 64, 0.4)',
-		borderRadius: '48px',
+		width: '40px',
+		height: '40px',
+		background: '#333333',
+		borderRadius: '20px',
 		display: 'flex',
 		justifyContent: 'center'
 	},
 	goBackIcon: {
-		height: '24px',
-		marginLeft: '-6px',
-		paddingTop: '10px'
+		height: '11px',
+		marginLeft: '-4px',
+		paddingTop: '14px'
 	},
 	shareIcon: { height: '25px', paddingTop: '7px' },
 
