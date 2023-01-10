@@ -225,6 +225,7 @@ export const articleDataFormatterForForm = (article, allRules) => {
 	allRules.forEach((rule) => {
 		rules[rule._id] = false;
 	});
+
 	//This loop should always run after the first one.
 	article.rules.forEach((rule) => {
 		rules[rule._id] = true;

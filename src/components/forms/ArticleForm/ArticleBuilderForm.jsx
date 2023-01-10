@@ -25,14 +25,8 @@ import {
 	deleteArticleThunk,
 	getArticleSubCategories
 } from '../../../data/features/articleLibrary/articleLibrarySlice';
-import {
-	getRules,
-	selectReadMoreArticlesFeatureFlag
-} from '../../../data/selectors';
-import {
-	publishReadMoreApi,
-	deleteReadMoreApi
-} from '../../../data/services/readMoreArticleService';
+import { getRules } from '../../../data/selectors';
+import { deleteReadMoreApi } from '../../../data/services/readMoreArticleService';
 
 const ArticleBuilderForm = ({
 	open,
@@ -43,8 +37,6 @@ const ArticleBuilderForm = ({
 }) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const readMoreFeatureFlag = useSelector(selectReadMoreArticlesFeatureFlag);
-	const isReadMoreAPIEnabled = readMoreFeatureFlag?._value === 'true';
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 
 	// Selectors
@@ -111,18 +103,10 @@ const ArticleBuilderForm = ({
 				rules
 			);
 
-			const { type, payload } = await dispatch(
-				createOrEditArticleThunk(articleData)
-			);
+			const { type } = await dispatch(createOrEditArticleThunk(articleData));
 
 			if (type === 'articleLibary/createOrEditArticleThunk/fulfilled') {
 				handleClose();
-
-				if (isReadMoreAPIEnabled && !isDraft) {
-					if (!isEdit || status !== 'published') {
-						publishReadMoreApi(payload?.data?.data?.id);
-					}
-				}
 
 				if (isEdit && !(status === 'draft' && isDraft === false)) {
 					dispatch(getAllArticlesApi(queryParams));

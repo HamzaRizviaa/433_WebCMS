@@ -16,6 +16,7 @@ function useSchedulerHandlers({ onSubmitHandler, closeSchedulerModal }) {
 
 		setFieldValue('schedule_date', new Date(selectedDateTime).toISOString());
 		setFieldValue('save_draft', true);
+		setFieldValue('is_sceduled', true);
 		submitForm();
 	};
 
