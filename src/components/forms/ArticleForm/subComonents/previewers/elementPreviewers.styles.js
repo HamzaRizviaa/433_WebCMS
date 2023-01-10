@@ -122,14 +122,17 @@ export const useStyles = makeStyles((theme) => ({
 		}
 	},
 	questionDraggable: {
-		height: '380px',
+		height: '470px',
 		borderRadius: '16px',
 		marginTop: '16px',
 		marginBottom: '16px',
 		backgroundRepeat: 'no-repeat',
 		backgroundSize: 'cover',
 		backgroundPosition: 'center',
-		backgroundImage: ({ questionImgUrl }) => `url(${questionImgUrl})`
+		backgroundImage: ({ questionImgUrl }) => `url(${questionImgUrl})`,
+		border: '1px solid rgba(255, 255, 255, 0.1)',
+		boxShadow:
+			'0px 1px 0px rgba(255, 255, 255, 0.2), 0px 2px 10px rgba(0, 0, 0, 0.4)'
 	},
 	questionDiv: {
 		paddingLeft: '24px',
@@ -140,9 +143,10 @@ export const useStyles = makeStyles((theme) => ({
 		paddingTop: '200px',
 		fontStyle: 'normal',
 		fontWeight: 800,
-		fontSize: '20px',
+		fontSize: '24px',
 		lineHeight: '30px',
-		color: '#FFFFFF'
+		color: '#FFFFFF',
+		textShadow: '0px 1px 1px rgba(0, 0, 0, 0.3)'
 	},
 	answer: {
 		height: '40px',
