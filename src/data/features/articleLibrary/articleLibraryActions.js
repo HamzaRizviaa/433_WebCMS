@@ -103,3 +103,73 @@ export const deleteArticleThunk = createAsyncThunk(
 		}
 	}
 );
+
+//
+// Article Template Actions getAllArticleTemplates
+//
+export const getAllArticleTemplatesThunk = createAsyncThunk(
+	'articleLibary/getAllArticleTemplatesThunk',
+	async (params = {}) => {
+		const { data: articles } =
+			await ArticleLibraryService.getAllArticleTemplates(params);
+
+		return articles.data;
+	}
+);
+
+export const getSpecificArticleTemplateThunk = createAsyncThunk(
+	'articleLibary/getSpecificArticleTemplateThunk',
+	async (templateId) => {
+		const response = await ArticleLibraryService.getSpecificArticleTemplate(
+			templateId
+		);
+
+		return response.data.data ? response.data.data : null;
+	}
+);
+
+export const createOrEditArticleTemplateThunk = createAsyncThunk(
+	'articleLibary/createOrEditArticleTemplateThunk',
+	async (data) => {
+		try {
+			const response = await ArticleLibraryService.postArticleTemplate(data);
+
+			if (response.data.status_code === 200) {
+				toast.success(
+					data.article_template_id
+						? 'Article Template has been edited!'
+						: 'Article Template has been created!'
+				);
+			}
+
+			return response;
+		} catch (e) {
+			toast.error(
+				data.article_template_id
+					? 'Failed to edit Article Template!'
+					: 'Failed to create Article Template!'
+			);
+			console.error(e);
+			throw new Error(e);
+		}
+	}
+);
+
+export const deleteArticleTemplateThunk = createAsyncThunk(
+	'articleLibary/deleteArticleTemplateThunk',
+	async (templateId) => {
+		try {
+			const response = await ArticleLibraryService.deleteArticleTemplate(
+				templateId
+			);
+
+			if (response.data.status_code === 200) {
+				toast.success('Article Template has been deleted!');
+			}
+			return response;
+		} catch (e) {
+			toast.error('Failed to delete Article Template!');
+			console.error(e);
+		}
+	}
+);

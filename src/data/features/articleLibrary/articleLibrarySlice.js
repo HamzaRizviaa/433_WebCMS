@@ -1,10 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
 	getLabels,
-	getAllArticlesApi,
 	getSpecificArticle,
 	getArticleMainCategories,
-	getArticleSubCategories
+	getArticleSubCategories,
+	getAllArticlesApi,
+	getAllArticleTemplatesThunk,
+	getSpecificArticleTemplateThunk
 } from './articleLibraryActions';
 export * from './articleLibraryActions';
 
@@ -21,7 +23,12 @@ const initialState = {
 	noResultStatus: false,
 	noResultStatusCalendar: false,
 	mainCategoriesStatus: false,
-	subCategoriesStatus: false
+	subCategoriesStatus: false,
+
+	// Article Template States
+	articleTemplateListing: [],
+	templateListingStatus: false,
+	specificArticleTemplate: null
 };
 
 const articlesLibrarySlice = createSlice({
@@ -36,6 +43,12 @@ const articlesLibrarySlice = createSlice({
 		},
 		resetSpecificArticle: (state) => {
 			state.specificArticle = null;
+		},
+		resetSpecificArticleTemplate: (state) => {
+			state.specificArticleTemplate = null;
+		},
+		setSpecificArticleStatus: (state, action) => {
+			state.specificArticleStatus = action.payload;
 		}
 	},
 	extraReducers: (builder) => {
@@ -103,10 +116,49 @@ const articlesLibrarySlice = createSlice({
 		builder.addCase(getArticleSubCategories.rejected, (state) => {
 			state.subCategoriesStatus = false;
 		});
+
+		// Article Templating Listing Actions
+		builder.addCase(getAllArticleTemplatesThunk.pending, (state) => {
+			state.status = 'pending';
+			state.templateListingStatus = 'loading';
+		});
+
+		builder.addCase(getAllArticleTemplatesThunk.fulfilled, (state, action) => {
+			state.articleTemplateListing = action.payload?.data;
+			state.status = 'success';
+			state.templateListingStatus = 'success';
+		});
+
+		builder.addCase(getAllArticleTemplatesThunk.rejected, (state) => {
+			state.status = 'failed';
+			state.templateListingStatus = 'failed';
+		});
+
+		// Specific Article Template Actions
+		builder.addCase(getSpecificArticleTemplateThunk.pending, (state) => {
+			state.specificArticleStatus = 'loading';
+		});
+
+		builder.addCase(
+			getSpecificArticleTemplateThunk.fulfilled,
+			(state, action) => {
+				state.specificArticleTemplate = action.payload;
+				state.specificArticleStatus = 'success';
+			}
+		);
+
+		builder.addCase(getSpecificArticleTemplateThunk.rejected, (state) => {
+			state.specificArticleStatus = 'failed';
+		});
 	}
 });
 
-export const { resetCalendarError, resetNoResultStatus, resetSpecificArticle } =
-	articlesLibrarySlice.actions;
+export const {
+	resetCalendarError,
+	resetNoResultStatus,
+	resetSpecificArticle,
+	resetSpecificArticleTemplate,
+	setSpecificArticleStatus
+} = articlesLibrarySlice.actions;
 
 export default articlesLibrarySlice.reducer;

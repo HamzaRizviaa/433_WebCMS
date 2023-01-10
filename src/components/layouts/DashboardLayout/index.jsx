@@ -11,15 +11,20 @@ import PrimaryLoader from '../../ui/loaders/PrimaryLoader';
 import { remoteConfig } from '../../../data/integrations/firebase';
 import { setRemoteConfig } from '../../../data/features/remoteConfigSlice';
 import { useLayoutStyles } from './index.style';
+import { AuthService } from '../../../data/services';
 
 const DashboardLayout = ({
 	title,
 	onButtonClick,
+	secondaryButtonText,
+	secondaryButtonClick,
 	hideLibraryText = false,
 	hideBtn = false,
 	hideSearchFilter = false,
 	hideDateFilter = false,
 	isLoading = false,
+	onTemplateButtonClick = false,
+	hideTemplateBtn = false,
 	children
 }) => {
 	const dispatch = useDispatch();
@@ -33,8 +38,7 @@ const DashboardLayout = ({
 		// checking token expiry
 		if (timeDifferenceMinutes <= 1) {
 			alert('Your session has expired');
-			localStorage.removeItem('user_data');
-			localStorage.removeItem('token_expire_time');
+			AuthService.removeTokenFromLocalStorage();
 			navigate('/sign-in');
 		}
 
@@ -61,7 +65,11 @@ const DashboardLayout = ({
 						<Topbar
 							title={title}
 							onButtonClick={onButtonClick}
+							secondaryButtonText={secondaryButtonText}
+							secondaryButtonClick={secondaryButtonClick}
 							hideBtn={hideBtn}
+							onTemplateButtonClick={onTemplateButtonClick}
+							hideTemplateBtn={hideTemplateBtn}
 							hideSearchFilter={hideSearchFilter}
 							hideDateFilter={hideDateFilter}
 							hideLibraryText={hideLibraryText}
@@ -77,7 +85,11 @@ const DashboardLayout = ({
 DashboardLayout.propTypes = {
 	title: PropTypes.string.isRequired,
 	onButtonClick: PropTypes.func,
+	secondaryButtonText: PropTypes.string,
+	secondaryButtonClick: PropTypes.func,
 	hideBtn: PropTypes.bool,
+	onTemplateButtonClick: PropTypes.func,
+	hideTemplateBtn: PropTypes.bool,
 	hideSearchFilter: PropTypes.bool,
 	hideDateFilter: PropTypes.bool,
 	hideLibraryText: PropTypes.bool,

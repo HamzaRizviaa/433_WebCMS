@@ -13,11 +13,12 @@ import {
 const tabPanesHeadings = ['Add Poll', 'Add Quiz'];
 
 const QuestionElement = ({
+	isEdit,
+	status,
 	index,
 	item,
-	handleRemoveElement,
-	isEdit,
-	status
+	required = false,
+	handleRemoveElement
 }) => {
 	const { setFieldValue, setFieldTouched } = useFormikContext();
 
@@ -97,6 +98,7 @@ const QuestionElement = ({
 						index={index}
 						item={item}
 						isPublished={isPublished}
+						required={required}
 					/>
 				</TabPanes.TabPanel>
 				<TabPanes.TabPanel value={1}>
@@ -105,6 +107,7 @@ const QuestionElement = ({
 						index={index}
 						item={item}
 						isPublished={isPublished}
+						required={required}
 					/>
 				</TabPanes.TabPanel>
 			</TabPanes>
@@ -113,11 +116,12 @@ const QuestionElement = ({
 };
 
 QuestionElement.propTypes = {
+	isEdit: PropTypes.bool.isRequired,
+	status: PropTypes.string.isRequired,
 	index: PropTypes.number.isRequired,
 	item: PropTypes.object,
-	handleRemoveElement: PropTypes.func,
-	isEdit: PropTypes.bool.isRequired,
-	status: PropTypes.string.isRequired
+	required: PropTypes.bool,
+	handleRemoveElement: PropTypes.func
 };
 
 export default QuestionElement;

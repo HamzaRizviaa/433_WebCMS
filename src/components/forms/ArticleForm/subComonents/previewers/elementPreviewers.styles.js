@@ -76,6 +76,11 @@ export const useStyles = makeStyles((theme) => ({
 		fontSize: '14px'
 	},
 
+	followMatchBtnWrapper: {
+		display: 'flex',
+		justifyContent: 'center'
+	},
+
 	/**
 	 * OTHER ELEMENTS STYLINGS
 	 */

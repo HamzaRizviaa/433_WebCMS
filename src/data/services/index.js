@@ -1,6 +1,6 @@
+export { default as AuthService } from './authService';
 export { default as TopBannerService } from './topBannerService';
 export { default as ArticleLibraryService } from './articleLibraryService';
-export { default as GamesLibraryService } from './gamesLibraryService';
 export { default as MediaLibraryService } from './mediaLibraryService';
 export { default as NewsLibraryService } from './newsLibraryService';
 export { default as PostLibraryService } from './postLibraryService';
