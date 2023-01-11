@@ -212,7 +212,8 @@ export const useStyles = makeStyles(() => ({
 		background: '#333333',
 		borderRadius: '20px',
 		display: 'flex',
-		justifyContent: 'center'
+		justifyContent: 'center',
+		opacity: 0.5
 	},
 	goBackIcon: {
 		height: '11px',
