@@ -52,7 +52,7 @@ const ArticlePreviewWrapper = ({ children, form }) => {
 					</div>
 
 					{/*  Title & Content Container */}
-					<Box mt={'560px'} className={classes.mainContent}>
+					<Box mt={'440px'} className={classes.mainContent}>
 						<Box>
 							{form?.subCategoryName ? (
 								<StatusBadge status={form?.subCategoryName} />
