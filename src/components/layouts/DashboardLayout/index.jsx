@@ -14,6 +14,7 @@ import { useLayoutStyles } from './index.style';
 
 const DashboardLayout = ({
 	title,
+	customText,
 	onButtonClick,
 	secondaryButtonText,
 	secondaryButtonClick,
@@ -64,6 +65,7 @@ const DashboardLayout = ({
 					<div className={classes.contentWrapper}>
 						<Topbar
 							title={title}
+							customText={customText}
 							onButtonClick={onButtonClick}
 							secondaryButtonText={secondaryButtonText}
 							secondaryButtonClick={secondaryButtonClick}
@@ -84,6 +86,7 @@ const DashboardLayout = ({
 
 DashboardLayout.propTypes = {
 	title: PropTypes.string.isRequired,
+	customText: PropTypes.string,
 	onButtonClick: PropTypes.func,
 	secondaryButtonText: PropTypes.string,
 	secondaryButtonClick: PropTypes.func,
