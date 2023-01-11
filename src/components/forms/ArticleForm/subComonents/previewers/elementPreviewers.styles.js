@@ -13,7 +13,7 @@ export const useStyles = makeStyles((theme) => ({
 	matchBox: {
 		display: 'flex',
 		flexDirection: 'row',
-		fontSize: '12px',
+		fontSize: '10px',
 		color: '#FFFFFF',
 		textTransform: 'capitalize',
 		fontWeight: 700,
@@ -39,7 +39,7 @@ export const useStyles = makeStyles((theme) => ({
 		flexDirection: 'column',
 		justifyContent: 'center',
 		alignItems: 'center',
-		padding: '8px',
+		padding: '22px',
 		gap: '4px',
 		fontSize: '14px',
 		color: '#FFFFFF',
@@ -47,7 +47,7 @@ export const useStyles = makeStyles((theme) => ({
 		fontWeight: 800
 	},
 	time: {
-		fontSize: '12px',
+		fontSize: '10px',
 		color: theme.palette.neonYellow,
 		fontWeight: 700
 	},

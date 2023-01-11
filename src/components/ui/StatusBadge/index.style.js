@@ -13,7 +13,10 @@ export const useStatusBadgeStyles = makeStyles((theme) => {
 		badgeWrapper: {
 			display: 'flex',
 			alignItems: 'center',
-			marginBottom: '1.2rem'
+			marginBottom: (props) =>
+				!(props.status?.toLowerCase() in statusToColorMapper)
+					? '0.8rem'
+					: '1.2rem'
 		},
 
 		badge: {
