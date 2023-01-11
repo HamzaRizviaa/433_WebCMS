@@ -94,6 +94,7 @@ const NewsInternalForm = ({
 		return !dirty || isAnyNewsSlideEmpty || isEqualToDefaultValues;
 	}, [values, dirty]);
 
+
 	return (
 		<div>
 			<SchedulerPopup

@@ -16,6 +16,7 @@ function useSchedulerHandlers({ onSubmitHandler, closeSchedulerModal }) {
 
 		setFieldValue('schedule_date', new Date(selectedDateTime).toISOString());
 		setFieldValue('save_draft', true);
+		setFieldValue('is_scheduled', true);
 		submitForm();
 	};
 
@@ -27,7 +28,7 @@ function useSchedulerHandlers({ onSubmitHandler, closeSchedulerModal }) {
 
 	const handleDraftClick = () => {
 		setFieldValue('save_draft', true);
-		onSubmitHandler(values, { setSubmitting, isSubmitting });
+		onSubmitHandler(values, { setSubmitting, isSubmitting, setFieldValue });
 	};
 
 	const handlePublishClick = () => {

@@ -6,6 +6,7 @@ import { getDateTime, makeid } from '../utils';
 import { getUserDataObject } from './index';
 import * as Yup from 'yup';
 import { advancedSettingsValidationSchema } from './advancedSettingsHelpers';
+import { CalendarYellowIcon } from '../../assets/svg-icons';
 
 export const newsColumns = [
 	{
@@ -31,10 +32,13 @@ export const newsColumns = [
 	},
 	{
 		dataField: 'post_date',
-		text: 'POST DATE | TIME',
+		text: 'POST, SCHEDULE DATE | TIME',
 		sort: true,
-		formatter: (content) =>
-			getFormatter('wrapper', { content: getDateTime(content) })
+		formatter: (content, row) =>
+			getFormatter('textAndIcon', {
+				content: getDateTime(content),
+				Icon: row.is_scheduled ? CalendarYellowIcon : null
+			})
 	},
 	{
 		dataField: 'labels',
@@ -114,15 +118,18 @@ export const newsDataFormatterForForm = (news, allRules) => {
 
 	formattedNews.slides = slidesData;
 	formattedNews.rules = rules;
+	formattedNews.save_draft = formattedNews.is_draft;
+
 	return formattedNews;
 };
 
 export const newsDataFormatterForService = (
 	news,
 	mediaFiles,
-	isDraft = false,
+	// isDraft = false,
 	allRules
 ) => {
+	// console.log(isDraft)
 	const filteredRules = allRules.filter((rule) => news.rules[rule._id]);
 	let slides =
 		news.slides.length > 0
@@ -144,9 +151,10 @@ export const newsDataFormatterForService = (
 			: [];
 
 	const newsData = {
+		...news,
 		translations: undefined,
 		user_data: getUserDataObject(),
-		save_draft: isDraft,
+		// save_draft: isDraft,
 		banner_title: news.banner_title,
 		banner_description: news.banner_description,
 		show_likes: news.show_likes,
@@ -155,7 +163,9 @@ export const newsDataFormatterForService = (
 		slides: slides,
 		rules: filteredRules,
 		// Destructing the viral id for edit state
-		...(news.id ? { news_id: news.id } : {})
+		...(news.id ? { news_id: news.id } : {}),
+		// ...(news?.schedule_date ? { schedule_flag_enabled: true } : {})
+
 	};
 
 	return newsData;
@@ -178,7 +188,9 @@ export const newsFormInitialValues = (allRules) => {
 		show_likes: true,
 		show_comments: true,
 		slides: [],
-		rules
+		rules,
+		save_draft: true,
+		is_scheduled: false
 	};
 };
 
