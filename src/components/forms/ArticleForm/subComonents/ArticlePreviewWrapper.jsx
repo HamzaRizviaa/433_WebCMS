@@ -46,9 +46,8 @@ const ArticlePreviewWrapper = ({ children, form }) => {
 				<Box py={'5px'} px={'10px'}>
 					{/* Header bar icons */}
 					<div className={classes.topIcons}>
-						<div className={classes.navIcons}>
-							<img src={goBack} className={classes.goBackIcon} />
-						</div>
+						<div className={classes.navIcons}></div>
+						<img src={goBack} className={classes.goBackIcon} />
 					</div>
 
 					{/*  Title & Content Container */}
@@ -79,9 +78,7 @@ const ArticlePreviewWrapper = ({ children, form }) => {
 										{form?.author_text || '-'}
 									</div>
 									{/* 433 Content Team */}
-									<div className={classes.postDateDetails}>
-										{date} - 10 min read
-									</div>
+									<div className={classes.postDateDetails}>{date}</div>
 								</div>
 							</div>
 						</Box>

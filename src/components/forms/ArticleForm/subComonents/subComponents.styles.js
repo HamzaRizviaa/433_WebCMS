@@ -168,7 +168,7 @@ export const useStyles = makeStyles(() => ({
 		backgroundPosition: 'center',
 		overflowY: 'auto',
 		overflowX: 'hidden',
-		width: '380px'
+		width: '390px'
 		// padding: '5px 10px'
 	},
 	backgroundSet: {
@@ -218,7 +218,9 @@ export const useStyles = makeStyles(() => ({
 	goBackIcon: {
 		height: '11px',
 		marginLeft: '-4px',
-		paddingTop: '14px'
+		paddingTop: '14px',
+		position: 'absolute',
+		left: '48px'
 	},
 	shareIcon: { height: '25px', paddingTop: '7px' },
 
