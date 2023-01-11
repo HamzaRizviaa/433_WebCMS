@@ -267,7 +267,7 @@ export const useStyles = makeStyles(() => ({
 		lineHeight: '16px'
 	},
 	authorSection: {
-		marginLeft: '11px',
+		marginLeft: '13px',
 		color: 'white'
 	},
 	description: {
