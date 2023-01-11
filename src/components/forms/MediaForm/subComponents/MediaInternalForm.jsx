@@ -1,10 +1,13 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { isEqual, pick, omit } from 'lodash';
 import { useFormikContext } from 'formik';
+import dayjs from 'dayjs';
+import { IconButton } from '@material-ui/core';
 import { useStyles } from '../index.styles';
 import { useStyles as globalUseStyles } from '../../../../styles/global.style';
+import { useFormStyles } from '../../forms.style';
 import {
 	mediaFormInitialValues,
 	mediaUnwantedKeysForDeepEqual
@@ -17,7 +20,11 @@ import Button from '../../../ui/Button';
 import SelectField from '../../../ui/inputs/SelectField';
 import AdvancedSettingsForm from '../../common/AdvancedSettingsForm';
 import { useSelector } from 'react-redux';
-import { getRules } from '../../../../data/selectors';
+import { getRules, selectSpecificMedia } from '../../../../data/selectors';
+import { Calendar, Edit } from '../../../../assets/svg-icons';
+import SchedulerPopup from '../../../common/SchedulerPopup';
+import useSchedulerHandlers from '../../../../hooks/useSchedulerHandlers';
+
 // const isTrue = true;
 
 const MediaInternalForm = ({
@@ -36,6 +43,20 @@ const MediaInternalForm = ({
 	const lastMainCatRef = useRef(null);
 	const isPublished = isEdit && status === 'published';
 	const { rules } = useSelector(getRules);
+
+	const [schedularModalState, setSchedulerModalState] = useState(false);
+	const specificMedia = useSelector(selectSpecificMedia);
+	const classesSchedular = useFormStyles();
+	const closeSchedulerModal = () => setSchedulerModalState(false);
+	const openSchedulerModal = () => setSchedulerModalState(true);
+
+	const {
+		// handleDraftClick,
+		// handlePublishClick,
+		handleRemoveSchedule,
+		// handleSaveChangesClick,
+		handleScheduleConfirm
+	} = useSchedulerHandlers({ onSubmitHandler, closeSchedulerModal });
 
 	// get categories
 	const {
@@ -152,7 +173,33 @@ const MediaInternalForm = ({
 
 	return (
 		<div>
+			<SchedulerPopup
+				open={schedularModalState}
+				onClose={closeSchedulerModal}
+				onConfirm={handleScheduleConfirm}
+				onRemove={handleRemoveSchedule}
+				initialStartDate={values.is_scheduled && specificMedia?.schedule_date}
+				isScheduled={values.is_scheduled}
+				isSubmitting={isSubmitting}
+			/>
 			<div className={globalClasses.contentWrapperNoPreview}>
+				{values.is_scheduled && (
+					<div className={classesSchedular.scheduledTime}>
+						<h2>
+							<span className={classesSchedular.scheduleTimeLabel}>
+								Scheduled Time:
+							</span>
+							{dayjs(values.schedule_date).format('DD-MM-YYYY, HH:mm')}
+						</h2>
+						<IconButton onClick={openSchedulerModal} disabled={!isValid}>
+							<Edit
+								className={`${classesSchedular.editScheduleIcon} ${
+									!isValid ? classesSchedular.disabledIcon : ''
+								}`}
+							/>
+						</IconButton>
+					</div>
+				)}
 				<div>
 					<h5>Select Media Type</h5>
 					<div className={classes.categoryContainer}>
@@ -400,6 +447,17 @@ const MediaInternalForm = ({
 									>
 										{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
 									</Button>
+									{!isPublished && !values.is_scheduled && (
+										<Button
+											disabled={
+												values.is_scheduled || isPublished ? true : !isValid
+											}
+											onClick={openSchedulerModal}
+											iconBtn
+										>
+											<Calendar />
+										</Button>
+									)}
 								</div>
 							)}
 						</div>
