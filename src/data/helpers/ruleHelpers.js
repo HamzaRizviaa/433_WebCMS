@@ -41,14 +41,14 @@ export const ruleColumns = [
 		formatter: (content) => getFormatter('status', { status: content })
 	},
 	{
-		dataField: 'post_date',
+		dataField: 'created_at',
 		text: 'POST DATE | TIME',
 		sort: true,
 		formatter: (content) =>
 			getFormatter('wrapper', { content: getDateTime(content) })
 	},
 	{
-		dataField: 'last_edit',
+		dataField: 'updated_at',
 		text: 'LAST EDIT',
 		sort: true,
 		formatter: (content) =>
