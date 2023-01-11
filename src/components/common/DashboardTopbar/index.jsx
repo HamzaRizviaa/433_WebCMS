@@ -8,6 +8,7 @@ import { useTopbarStyles } from './index.style';
 
 const DashboardTopbar = ({
 	title,
+	customText,
 	onButtonClick,
 	secondaryButtonText,
 	secondaryButtonClick,
@@ -26,9 +27,11 @@ const DashboardTopbar = ({
 					{!hideLibraryText && ' Library'}
 				</h1>
 				{!hideBtn && (
-					<Button
-						onClick={onButtonClick}
-					>{`UPLOAD ${title?.toUpperCase()}`}</Button>
+					<Button onClick={onButtonClick}>
+						{customText
+							? `${customText?.toUpperCase()}`
+							: `UPLOAD ${title?.toUpperCase()}`}
+					</Button>
 				)}
 				{secondaryButtonText && (
 					<div className={classes.secondaryButtonBox}>
@@ -52,6 +55,7 @@ const DashboardTopbar = ({
 
 DashboardTopbar.propTypes = {
 	title: PropTypes.string.isRequired,
+	customText: PropTypes.string,
 	onButtonClick: PropTypes.func,
 	onTemplateButtonClick: PropTypes.func,
 	secondaryButtonText: PropTypes.string,
