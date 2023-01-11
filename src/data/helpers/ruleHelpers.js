@@ -118,6 +118,6 @@ export const ruleFormInitialValues = (allRules) => {
 	};
 };
 
-export const ruleFormValidationSchema = advancedSettingsValidationSchema.shape({
-	title: Yup.string().required('You need to enter a title')
-});
+// export const ruleFormValidationSchema = advancedSettingsValidationSchema.shape({
+// 	title: Yup.string().required('You need to enter a title')
+// });

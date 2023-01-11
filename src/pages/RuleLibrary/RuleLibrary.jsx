@@ -121,6 +121,31 @@ const RuleLibrary = () => {
 				],
 				duration: 72
 			}
+		},
+		{
+			_id: '63be68f3457805ecb66b590b',
+			title: 'Geoblock Isfhan',
+			rule_type: '-',
+			tier: '-',
+			created_at: '2023-01-11T07:44:51.229Z',
+			updated_at: '2023-01-11T07:44:51.229Z',
+			geoblocking: {
+				countries: [
+					{
+						name: 'Germany',
+						code: 'DE'
+					},
+					{
+						name: 'Austria',
+						code: 'AT'
+					},
+					{
+						name: 'Switzerland',
+						code: 'CH'
+					}
+				],
+				duration: 72
+			}
 		}
 	];
 
@@ -164,7 +189,7 @@ const RuleLibrary = () => {
 				data={data}
 				totalRecords={totalRecords}
 				isLoading={isLoading}
-				noDataText='No Virals Found'
+				noDataText='No Rules Found'
 			/>
 			{/* <ViralForm
 				open={showSlider}
