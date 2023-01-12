@@ -6,7 +6,7 @@ export const useScheduledInfoBoxStyles = makeStyles((theme) => ({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		color: theme.palette.white,
-		marginBottom: 10
+		marginBottom: 20
 	},
 
 	scheduleTimeLabel: {
