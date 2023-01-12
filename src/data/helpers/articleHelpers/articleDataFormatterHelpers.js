@@ -393,12 +393,7 @@ export const articleTemplateDataFormatterForService = (
 	files,
 	allRules
 ) => {
-	const articleData = articleDataFormatterForService(
-		article,
-		files,
-		false,
-		allRules
-	);
+	const articleData = articleDataFormatterForService(article, files, allRules);
 
 	return {
 		...omit(articleData, [
