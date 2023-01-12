@@ -54,7 +54,7 @@ const MediaInternalForm = ({
 		// handleDraftClick,
 		// handlePublishClick,
 		handleRemoveSchedule,
-		// handleSaveChangesClick,
+		handleSaveChangesClick,
 		handleScheduleConfirm
 	} = useSchedulerHandlers({ onSubmitHandler, closeSchedulerModal });
 
@@ -427,16 +427,30 @@ const MediaInternalForm = ({
 							{(isEdit ? values?.mainCategory && values.subCategory : true) && (
 								<div className={classes.publishDraftDiv}>
 									{(!isEdit || status === 'draft') && (
-										<Button
-											size='small'
-											variant={'outlined'}
-											disabled={isDraftDisabled}
-											onClick={saveDraftHandler}
-										>
-											{status === 'draft' && isEdit
-												? 'SAVE DRAFT'
-												: 'SAVE AS DRAFT'}
-										</Button>
+										<>
+											{values.is_scheduled ? (
+												<Button
+													size='small'
+													variant='outlined'
+													type='submit'
+													disabled={isValid ? !dirty : !isValid}
+													onClick={handleSaveChangesClick}
+												>
+													SAVE CHANGES
+												</Button>
+											) : (
+												<Button
+													size='small'
+													variant={'outlined'}
+													disabled={isDraftDisabled}
+													onClick={saveDraftHandler}
+												>
+													{status === 'draft' && isEdit
+														? 'SAVE DRAFT'
+														: 'SAVE AS DRAFT'}
+												</Button>
+											)}
+										</>
 									)}
 									<Button
 										type='submit'

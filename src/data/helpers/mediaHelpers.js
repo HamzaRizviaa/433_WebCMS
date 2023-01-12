@@ -2,8 +2,10 @@ import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime, getLocalStorageDetails, makeid } from '../utils';
 import { isEmpty } from 'lodash';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import * as Yup from 'yup';
 import { advancedSettingsValidationSchema } from './advancedSettingsHelpers';
+import { CalendarYellowIcon } from '../../assets/svg-icons';
 
 export const mediaColumns = [
 	{
@@ -27,10 +29,13 @@ export const mediaColumns = [
 	},
 	{
 		dataField: 'post_date',
-		text: 'POST DATE | TIME',
+		text: 'POST, SCHEDULE DATE | TIME',
 		sort: true,
-		formatter: (content) =>
-			getFormatter('wrapper', { content: getDateTime(content) })
+		formatter: (content, row) =>
+			getFormatter('textAndIcon', {
+				content: dayjs(content).format('DD-MM-YYYY | HH:mm'),
+				Icon: row.is_scheduled ? CalendarYellowIcon : null
+			})
 	},
 	{
 		dataField: 'labels',
@@ -141,6 +146,10 @@ export const mediaDataFormatterForForm = (media, allRules) => {
 	formattedMedia.landscape_image_dropbox_url =
 		media?.dropbox_url?.landscape_cover_image;
 	formattedMedia.rules = rules;
+	formattedMedia.is_scheduled = media.is_scheduled;
+
+	if (media.is_scheduled) formattedMedia.schedule_date = media.schedule_date;
+
 	return formattedMedia;
 };
 
