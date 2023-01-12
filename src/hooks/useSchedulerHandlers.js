@@ -2,8 +2,9 @@ import { useFormikContext } from 'formik';
 import dayjs from 'dayjs';
 
 function useSchedulerHandlers({ onSubmitHandler, closeSchedulerModal }) {
-	const { values, submitForm, setFieldValue, setSubmitting, isSubmitting } =
-		useFormikContext();
+	const formikContext = useFormikContext();
+
+	const { values, submitForm, setFieldValue } = formikContext;
 
 	const handleScheduleConfirm = (values) => {
 		closeSchedulerModal();
@@ -29,7 +30,7 @@ function useSchedulerHandlers({ onSubmitHandler, closeSchedulerModal }) {
 
 	const handleDraftClick = () => {
 		setFieldValue('save_draft', true);
-		onSubmitHandler(values, { setSubmitting, isSubmitting });
+		onSubmitHandler(values, formikContext);
 	};
 
 	const handlePublishClick = () => {
