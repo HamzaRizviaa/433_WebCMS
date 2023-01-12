@@ -96,7 +96,7 @@ export const ruleDataFormatterForService = (rule, allRules) => {
 		rules: filteredRules,
 
 		// Spreading the rule id for edit state
-		...(id ? { viral_id: id } : {}),
+		...(id ? { rule_id: id } : {}),
 
 		// Spreading the rule schedule flag for edit state
 		...(schedule_date ? { schedule_flag_enabled: true, schedule_date } : {})
