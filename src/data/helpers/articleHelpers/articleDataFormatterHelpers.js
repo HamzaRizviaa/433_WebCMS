@@ -225,6 +225,7 @@ export const articleDataFormatterForForm = (article, allRules) => {
 	allRules.forEach((rule) => {
 		rules[rule._id] = false;
 	});
+
 	//This loop should always run after the first one.
 	article.rules.forEach((rule) => {
 		rules[rule._id] = true;
@@ -258,7 +259,9 @@ export const articleDataFormatterForForm = (article, allRules) => {
 		mainCategoryId: article.main_category_id || '',
 		subCategoryId: article.sub_category_id || '',
 		mainCategoryName: article.media_type,
-		subCategoryName: article.sub_category
+		subCategoryName: article.sub_category,
+		is_scheduled: article.is_scheduled || false,
+		save_draft: article.is_draft || true
 	};
 
 	if (formattedArticle.labels) {
@@ -304,19 +307,14 @@ export const articleDataFormatterForForm = (article, allRules) => {
 	return formattedArticle;
 };
 
-export const articleDataFormatterForService = (
-	article,
-	files,
-	isDraft = false,
-	allRules
-) => {
+export const articleDataFormatterForService = (article, files, allRules) => {
 	const { uploadedFiles, uploadedLandscapeCoverImage } = article;
 	const [authorImgFile, portraitImgFile, landscapeImgFile] = files;
 	const { media_url: authorMediaUrl } = authorImgFile;
 	const filteredRules = allRules.filter((rule) => article.rules[rule._id]);
 
 	const articleData = {
-		save_draft: isDraft,
+		save_draft: article.save_draft,
 		translations: undefined,
 		user_data: getUserDataObject(),
 		main_category_id: article.mainCategoryId,
@@ -333,7 +331,8 @@ export const articleDataFormatterForService = (
 			'mainCategoryId',
 			'subCategoryId',
 			'mainCategoryName',
-			'subCategoryName'
+			'subCategoryName',
+			'schedule_date'
 		]),
 
 		author_image: authorMediaUrl.includes('cloudfront.net/')
@@ -378,6 +377,8 @@ export const articleDataFormatterForService = (
 
 		rules: filteredRules
 	};
+
+	if (article.schedule_date) articleData.schedule_date = article.schedule_date;
 
 	return articleData;
 };
