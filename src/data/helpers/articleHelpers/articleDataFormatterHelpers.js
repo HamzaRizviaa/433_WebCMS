@@ -249,7 +249,8 @@ export const articleDataFormatterForForm = (article, allRules) => {
 			'media_type',
 			'sub_category',
 			'is_draft',
-			'status'
+			'status',
+			'schedule_date'
 		]),
 		author_image: [
 			{
@@ -263,6 +264,10 @@ export const articleDataFormatterForForm = (article, allRules) => {
 		is_scheduled: article.is_scheduled || false,
 		save_draft: article.is_draft || true
 	};
+
+	if (article.is_scheduled) {
+		formattedArticle.schedule_date = article.schedule_date;
+	}
 
 	if (formattedArticle.labels) {
 		const updatedLabels = formattedArticle.labels.map((label) => ({
