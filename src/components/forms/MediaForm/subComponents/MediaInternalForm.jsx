@@ -51,8 +51,8 @@ const MediaInternalForm = ({
 	const openSchedulerModal = () => setSchedulerModalState(true);
 
 	const {
-		// handleDraftClick,
-		// handlePublishClick,
+		handleDraftClick,
+		handlePublishClick,
 		handleRemoveSchedule,
 		handleSaveChangesClick,
 		handleScheduleConfirm
@@ -79,10 +79,8 @@ const MediaInternalForm = ({
 		isValid,
 		isSubmitting,
 		status: formikStatus,
-		handleSubmit,
 		setFieldValue,
 		setValues,
-		setSubmitting,
 		validateForm,
 		resetForm
 	} = useFormikContext();
@@ -137,9 +135,6 @@ const MediaInternalForm = ({
 
 		return !isDirty || isEqualToDefaultValues;
 	}, [dirty, values, formikStatus, isEdit]);
-
-	const saveDraftHandler = () =>
-		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
 
 	const fetchSubCategories = (id) => {
 		getSubCategories(id);
@@ -443,7 +438,7 @@ const MediaInternalForm = ({
 													size='small'
 													variant={'outlined'}
 													disabled={isDraftDisabled}
-													onClick={saveDraftHandler}
+													onClick={handleDraftClick}
 												>
 													{status === 'draft' && isEdit
 														? 'SAVE DRAFT'
@@ -457,7 +452,7 @@ const MediaInternalForm = ({
 										disabled={
 											isPublished ? (!dirty ? isValid : !isValid) : !isValid
 										}
-										onClick={handleSubmit}
+										onClick={handlePublishClick}
 									>
 										{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
 									</Button>

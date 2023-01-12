@@ -147,6 +147,7 @@ export const mediaDataFormatterForForm = (media, allRules) => {
 		media?.dropbox_url?.landscape_cover_image;
 	formattedMedia.rules = rules;
 	formattedMedia.is_scheduled = media.is_scheduled;
+	formattedMedia.save_draft = media.status === 'draft';
 
 	if (media.is_scheduled) formattedMedia.schedule_date = media.schedule_date;
 
@@ -203,7 +204,6 @@ export const fileUploadsArray = (media) => {
 
 export const mediaDataFormatterForServer = (
 	media,
-	isDraft = false,
 	mediaFiles,
 	userData,
 	completedUploadFiles,
@@ -218,7 +218,7 @@ export const mediaDataFormatterForServer = (
 			? Math.ceil(media?.uploadedFiles[0]?.duration)
 			: 0,
 		type: 'medialibrary',
-		save_draft: isDraft,
+		save_draft: media.save_draft,
 		main_category_id: media.mainCategoryContent || media.main_category_id,
 		sub_category_id: media.subCategoryContent || media.sub_category_id,
 		show_likes: media.show_likes ? true : false,
@@ -291,7 +291,12 @@ export const mediaDataFormatterForServer = (
 		file_name: media?.uploadedFiles[0]?.file_name,
 		video_data: completedUploadFiles[0]?.data?.data?.video_data || null,
 		image_data: null,
-		audio_data: completedUploadFiles[0]?.data?.data?.audio_data || null
+		audio_data: completedUploadFiles[0]?.data?.data?.audio_data || null,
+
+		// Spreading the media schedule flag for edit state
+		...(media.schedule_date
+			? { is_scheduled: true, schedule_date: media.schedule_date }
+			: {})
 	};
 	return mediaData;
 };
@@ -382,6 +387,8 @@ export const mediaFormInitialValues = (allRules) => {
 	return {
 		mainCategory: '',
 		subCategory: '',
+		save_draft: true,
+		is_scheduled: false,
 		title: '',
 		media_dropbox_url: '', // uploaded file
 		image_dropbox_url: '', //portrait
