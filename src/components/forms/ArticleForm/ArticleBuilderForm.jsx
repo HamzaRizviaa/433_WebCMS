@@ -26,7 +26,6 @@ import {
 	getArticleSubCategories
 } from '../../../data/features/articleLibrary/articleLibrarySlice';
 import { getRules } from '../../../data/selectors';
-import { deleteReadMoreApi } from '../../../data/services/readMoreArticleService';
 
 const ArticleBuilderForm = ({
 	open,
@@ -141,16 +140,12 @@ const ArticleBuilderForm = ({
 		setSubmitting(true);
 		setOpenDeleteModal(false);
 		try {
-			const { payload } = await dispatch(
+			await dispatch(
 				deleteArticleThunk({
 					article_id: id,
 					is_draft: isDraft
 				})
 			);
-
-			if (payload.status === 200) {
-				deleteReadMoreApi(id);
-			}
 
 			handleClose();
 			dispatch(getAllArticlesApi(queryParams));
