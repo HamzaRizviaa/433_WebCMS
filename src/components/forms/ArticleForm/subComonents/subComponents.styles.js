@@ -219,8 +219,8 @@ export const useStyles = makeStyles(() => ({
 		height: '11px',
 		marginLeft: '-4px',
 		paddingTop: '14px',
-		position: 'absolute',
-		left: '48px'
+		position: 'relative',
+		right: '335px'
 	},
 	shareIcon: { height: '25px', paddingTop: '7px' },
 
@@ -267,7 +267,7 @@ export const useStyles = makeStyles(() => ({
 		lineHeight: '16px'
 	},
 	authorSection: {
-		marginLeft: '5px',
+		marginLeft: '13px',
 		color: 'white'
 	},
 	description: {

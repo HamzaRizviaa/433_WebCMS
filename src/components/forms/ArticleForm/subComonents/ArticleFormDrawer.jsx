@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useFormikContext } from 'formik';
@@ -13,6 +13,7 @@ import ArticleBuilderFooter from './footers/ArticleBuilderFooter';
 import ArticleTemplateFooter from './footers/ArticleTemplateFooter';
 import {
 	getRules,
+	selectSpecificArticle,
 	selectSpecificArticleStatus
 } from '../../../../data/selectors';
 import {
@@ -26,6 +27,8 @@ import {
 	getArticleBuilderDrawerTitle,
 	getArticleTemplateDrawerTitle
 } from '../../../../data/utils/articleUtils';
+import useSchedulerHandlers from '../../../../hooks/useSchedulerHandlers';
+import SchedulerPopup from '../../../common/SchedulerPopup';
 
 const ArticleFormDrawer = ({
 	open,
@@ -36,9 +39,15 @@ const ArticleFormDrawer = ({
 	onSubmitHandler,
 	toggleDeleteModal
 }) => {
+	const [schedularModalState, setSchedulerModalState] = useState(false);
 	const classes = useStyles();
 	const topElementRef = useRef(null);
 	const elementsWrapperRef = useRef(null);
+
+	const specificArticle = useSelector(selectSpecificArticle);
+
+	const closeSchedulerModal = () => setSchedulerModalState(false);
+	const openSchedulerModal = () => setSchedulerModalState(true);
 
 	const { values, isSubmitting, setStatus } = useFormikContext();
 
@@ -70,6 +79,11 @@ const ArticleFormDrawer = ({
 		});
 	}, [values, selectedOption]);
 
+	const { handleRemoveSchedule, handleScheduleConfirm } = useSchedulerHandlers({
+		onSubmitHandler,
+		closeSchedulerModal
+	});
+
 	return (
 		<DrawerLayout
 			open={open}
@@ -83,6 +97,15 @@ const ArticleFormDrawer = ({
 			isLoading={isLoading}
 			fromArticle
 		>
+			<SchedulerPopup
+				open={schedularModalState}
+				onClose={closeSchedulerModal}
+				onConfirm={handleScheduleConfirm}
+				onRemove={handleRemoveSchedule}
+				initialStartDate={values.is_scheduled && specificArticle?.schedule_date}
+				isScheduled={values.is_scheduled}
+				isSubmitting={isSubmitting}
+			/>
 			<Grid container className={classes.articlesGridBox}>
 				<Grid className={classes.firstGridItem} item pr={1} md={3}>
 					<ArticleElementsSidebar
@@ -98,6 +121,7 @@ const ArticleFormDrawer = ({
 						selectedOption={selectedOption}
 						topElementRef={topElementRef}
 						elementsWrapperRef={elementsWrapperRef}
+						openSchedulerModal={openSchedulerModal}
 					/>
 				</Grid>
 				<Grid className={classes.lastGridItem} item md={3}>
@@ -115,6 +139,7 @@ const ArticleFormDrawer = ({
 					loading={isLoading}
 					openDeleteModal={toggleDeleteModal}
 					onSubmitHandler={onSubmitHandler}
+					openSchedulerModal={openSchedulerModal}
 				/>
 			)}
 			{selectedOption === 'template' && (
