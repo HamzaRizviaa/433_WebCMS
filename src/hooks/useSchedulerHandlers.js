@@ -16,11 +16,12 @@ function useSchedulerHandlers({ onSubmitHandler, closeSchedulerModal }) {
 
 		setFieldValue('schedule_date', new Date(selectedDateTime).toISOString());
 		setFieldValue('save_draft', true);
-		setFieldValue('is_sceduled', true);
+		setFieldValue('is_scheduled', true);
 		submitForm();
 	};
 
 	const handleRemoveSchedule = () => {
+		setFieldValue('is_scheduled', false);
 		setFieldValue('schedule_date', null);
 		setFieldValue('save_draft', true);
 		submitForm();
@@ -33,6 +34,7 @@ function useSchedulerHandlers({ onSubmitHandler, closeSchedulerModal }) {
 
 	const handlePublishClick = () => {
 		setFieldValue('save_draft', false);
+		setFieldValue('is_scheduled', false);
 		setFieldValue('schedule_date', null);
 	};
 

@@ -259,7 +259,9 @@ export const articleDataFormatterForForm = (article, allRules) => {
 		mainCategoryId: article.main_category_id || '',
 		subCategoryId: article.sub_category_id || '',
 		mainCategoryName: article.media_type,
-		subCategoryName: article.sub_category
+		subCategoryName: article.sub_category,
+		is_scheduled: article.is_scheduled || false,
+		save_draft: article.is_draft || true
 	};
 
 	if (formattedArticle.labels) {
@@ -329,7 +331,8 @@ export const articleDataFormatterForService = (article, files, allRules) => {
 			'mainCategoryId',
 			'subCategoryId',
 			'mainCategoryName',
-			'subCategoryName'
+			'subCategoryName',
+			'schedule_date'
 		]),
 
 		author_image: authorMediaUrl.includes('cloudfront.net/')
@@ -374,6 +377,8 @@ export const articleDataFormatterForService = (article, files, allRules) => {
 
 		rules: filteredRules
 	};
+
+	if (article.schedule_date) articleData.schedule_date = article.schedule_date;
 
 	return articleData;
 };

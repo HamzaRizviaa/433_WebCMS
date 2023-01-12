@@ -78,6 +78,7 @@ const ArticleBuilderForm = ({
 
 		try {
 			if (
+				values.is_scheduled ||
 				(!isDraft && specificArticle?.title !== values.title) ||
 				(!isDraft && status === 'draft')
 			) {
@@ -87,10 +88,18 @@ const ArticleBuilderForm = ({
 
 				if (data.response) {
 					formikBag.setSubmitting(false);
+					formikBag.setFieldValue(
+						'is_scheduled',
+						specificArticle?.is_scheduled,
+						false
+					);
 					formikBag.setFieldError(
 						'title',
 						'An article item with this Title has already been published. Please amend the Title.'
 					);
+
+					const titleField = document.querySelector("[name='title']");
+					if (titleField) titleField.focus();
 					return;
 				}
 			}
@@ -120,6 +129,11 @@ const ArticleBuilderForm = ({
 			console.error(e);
 		} finally {
 			formikBag.setSubmitting(false);
+			formikBag.setFieldValue(
+				'is_scheduled',
+				specificArticle?.is_scheduled,
+				false
+			);
 		}
 	};
 
