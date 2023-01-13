@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core';
 import theme from '../../../../assets/theme';
 
 export const useStyles = makeStyles(() => ({
-	elementContainer: { padding: '5px' },
+	elementContainer: { padding: '0px 5px', marginBottom: '16px' },
 	gridDivSmall: {
 		position: 'sticky',
 		top: '100px',
@@ -246,7 +246,7 @@ export const useStyles = makeStyles(() => ({
 	},
 	mainTitle: {
 		fontWeight: 800,
-		fontSize: '23px',
+		fontSize: '24px',
 		lineHeight: '40px',
 		color: 'white',
 		overflowWrap: 'anywhere'
@@ -258,16 +258,17 @@ export const useStyles = makeStyles(() => ({
 	},
 	authorname: {
 		fontWeight: 700,
-		fontSize: '16px',
-		lineHeight: '24px'
+		fontSize: '14px',
+		lineHeight: '18px'
 	},
 	postDateDetails: {
 		fontWeight: 400,
-		fontSize: '12px',
-		lineHeight: '16px'
+		fontSize: '11px',
+		lineHeight: '16px',
+		color: '#CCCCCC'
 	},
 	authorSection: {
-		marginLeft: '13px',
+		marginLeft: '8px',
 		color: 'white'
 	},
 	description: {
@@ -291,5 +292,10 @@ export const useStyles = makeStyles(() => ({
 		alignItems: 'flex-end',
 		padding: '6px',
 		gap: '8px'
+	},
+
+	avatarRoot: {
+		width: '32px !important',
+		height: '32px !important'
 	}
 }));
