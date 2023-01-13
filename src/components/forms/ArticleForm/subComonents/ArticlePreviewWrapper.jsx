@@ -72,7 +72,6 @@ const ArticlePreviewWrapper = ({ children, form }) => {
 												: Profile433
 										}
 										classes={{ root: classes.avatarRoot }}
-										// className={classes.avatarRoot}
 									/>
 								</div>
 								<div className={classes.authorSection}>
@@ -104,7 +103,7 @@ const ArticlePreviewWrapper = ({ children, form }) => {
 				</Box>
 
 				{/* Elements Container */}
-				<Box py={'22px'} px={'10px'}>
+				<Box py={'40px'} px={'10px'}>
 					{children}
 				</Box>
 			</div>
