@@ -246,7 +246,7 @@ export const useStyles = makeStyles(() => ({
 	},
 	mainTitle: {
 		fontWeight: 800,
-		fontSize: '23px',
+		fontSize: '24px',
 		lineHeight: '40px',
 		color: 'white',
 		overflowWrap: 'anywhere'
@@ -258,13 +258,14 @@ export const useStyles = makeStyles(() => ({
 	},
 	authorname: {
 		fontWeight: 700,
-		fontSize: '16px',
+		fontSize: '14px',
 		lineHeight: '24px'
 	},
 	postDateDetails: {
 		fontWeight: 400,
-		fontSize: '12px',
-		lineHeight: '16px'
+		fontSize: '11px',
+		lineHeight: '16px',
+		color: '#CCCCCC'
 	},
 	authorSection: {
 		marginLeft: '13px',
@@ -291,5 +292,10 @@ export const useStyles = makeStyles(() => ({
 		alignItems: 'flex-end',
 		padding: '6px',
 		gap: '8px'
+	},
+
+	avatarRoot: {
+		width: '32px !important',
+		height: '32px !important'
 	}
 }));
