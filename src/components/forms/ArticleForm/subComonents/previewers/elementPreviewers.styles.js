@@ -86,11 +86,17 @@ export const useStyles = makeStyles((theme) => ({
 	 */
 	textDraggableData: {
 		fontWeight: 400,
-		fontFamily: 'Inter, sans-serif',
 		fontSize: '14px',
-		lineHeight: '16.8px',
-		color: '#CCCCCC',
-		overflowWrap: 'anywhere'
+		lineHeight: '1.2 !important',
+		overflowWrap: 'anywhere',
+		// color: 'white'
+		fontFamily: 'Inter, sans-serif',
+		color: '#CCCCCC'
+
+		// '& p': {
+		// 	fontFamily: 'Poppins',
+		// 	color: '#FFFFFF'
+		// }
 	},
 	imageDraggableData: {
 		maxWidth: '100%',

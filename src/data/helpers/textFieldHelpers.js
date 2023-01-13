@@ -6,7 +6,9 @@ export const formatAndStyle = {
 				fontWeight: '800',
 				fontSize: '64px',
 				letterSpacing: '-2%',
-				marginBottom: '3px'
+				marginBottom: '3px',
+				color: 'white',
+				fontFamily: 'Poppins'
 			}
 		},
 		h2: {
@@ -14,7 +16,10 @@ export const formatAndStyle = {
 			styles: {
 				fontWeight: '800',
 				fontSize: '40px',
-				letterSpacing: '-2%'
+				letterSpacing: '-2%',
+
+				color: 'white',
+				fontFamily: 'Poppins'
 			}
 		},
 		h3: {
@@ -22,7 +27,9 @@ export const formatAndStyle = {
 			styles: {
 				fontWeight: '800',
 				fontSize: '36px',
-				letterSpacing: '-2%'
+				letterSpacing: '-2%',
+				color: 'white',
+				fontFamily: 'Poppins'
 			}
 		},
 		h4: {
@@ -30,14 +37,18 @@ export const formatAndStyle = {
 			styles: {
 				fontWeight: '800',
 				fontSize: '24px',
-				letterSpacing: '-2%'
+				letterSpacing: '-2%',
+				color: 'white',
+				fontFamily: 'Poppins'
 			}
 		},
 		subtitle: {
 			inline: 'span',
 			styles: {
 				fontWeight: '600',
-				fontSize: '24px'
+				fontSize: '24px',
+				color: 'white',
+				fontFamily: 'Poppins'
 			}
 		},
 		body_regular: {
