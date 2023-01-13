@@ -296,7 +296,7 @@ export const mediaDataFormatterForServer = (
 		// Spreading the media schedule flag for edit state
 		...(media.schedule_date
 			? { is_scheduled: true, schedule_date: media.schedule_date }
-			: {})
+			: { is_scheduled: false })
 	};
 	return mediaData;
 };
