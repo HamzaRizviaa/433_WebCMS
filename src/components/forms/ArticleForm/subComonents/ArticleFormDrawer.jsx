@@ -84,6 +84,10 @@ const ArticleFormDrawer = ({
 		closeSchedulerModal
 	});
 
+	const initialScheduledDate = specificArticle?.is_scheduled
+		? specificArticle?.schedule_date
+		: '';
+
 	return (
 		<DrawerLayout
 			open={open}
@@ -102,7 +106,7 @@ const ArticleFormDrawer = ({
 				onClose={closeSchedulerModal}
 				onConfirm={handleScheduleConfirm}
 				onRemove={handleRemoveSchedule}
-				initialStartDate={values.is_scheduled && specificArticle?.schedule_date}
+				initialStartDate={initialScheduledDate}
 				isScheduled={values.is_scheduled}
 				isSubmitting={isSubmitting}
 			/>
