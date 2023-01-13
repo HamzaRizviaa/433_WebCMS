@@ -66,9 +66,10 @@ const MediaForm = ({
 
 	// const { data } = subCategoryStates;
 
-	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
+	const onSubmitHandler = async (values, formikBag) => {
 		formikBag.setSubmitting(true);
 		const clonedValues = { ...values };
+		const isDraft = values.save_draft;
 
 		// const mainCategoryId = (mainCategories || []).find(
 		// 	(u) => u.name === values.mainCategory
