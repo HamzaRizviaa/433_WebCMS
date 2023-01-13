@@ -1,49 +1,41 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useFormikContext } from 'formik';
-import { selectSpecificViralStatus } from '../../../../data/selectors';
-
+import { selectSpecificRuleStatus } from '../../../../data/selectors';
 import DrawerLayout from '../../../layouts/DrawerLayout';
 import RuleInternalForm from './RuleInternalForm';
 
+/**
+ * RuleFormDrawer Component is used as a child of the ViralForm and the link to that is given below.
+ * RuleFormDrawer serves the purpose of wrapping up the DrawerLayout and the ViralInternalForm.
+ * The drawer which basically opens up from the side side and the interal form inside that.
+ * @component
+ * @see {@link http://127.0.0.1:5500/docs/ViralForm.html|ViralForm}
+ */
 const RuleFormDrawer = ({
 	open,
 	handleClose,
 	isEdit,
-	status,
 	onSubmitHandler,
 	toggleDeleteModal
 }) => {
 	const { values, isSubmitting } = useFormikContext();
-
-	const specificViralStatus = useSelector(selectSpecificViralStatus);
-
-	const [previewFile, setPreviewFile] = useState(null);
-
-	const openPreviewer = (file) => {
-		setPreviewFile(file);
-	};
-
-	const closePreviewer = () => {
-		setPreviewFile(null);
-	};
+	const specificRuleStatus = useSelector(selectSpecificRuleStatus);
 
 	return (
 		<DrawerLayout
 			open={open}
 			handleClose={handleClose}
-			title={isEdit ? 'Edit Rule' : 'Create New Rule'}
+			title={isEdit ? 'Edit Rule' : 'Create new Rule'}
 			notifID={isEdit && values ? values.id : ''}
-			isLoading={isSubmitting || specificViralStatus === 'loading'}
-			handlePreviewClose={closePreviewer}
-			previewFile={previewFile}
+			isLoading={isSubmitting || specificRuleStatus === 'loading'}
 		>
 			<RuleInternalForm
 				isEdit={isEdit}
-				status={status}
-				previewFile={previewFile}
-				openPreviewer={openPreviewer}
 				onSubmitHandler={onSubmitHandler}
 				toggleDeleteModal={toggleDeleteModal}
 			/>
@@ -55,7 +47,6 @@ RuleFormDrawer.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	isEdit: PropTypes.bool.isRequired,
-	status: PropTypes.string.isRequired,
 	onSubmitHandler: PropTypes.func.isRequired,
 	toggleDeleteModal: PropTypes.func.isRequired
 };

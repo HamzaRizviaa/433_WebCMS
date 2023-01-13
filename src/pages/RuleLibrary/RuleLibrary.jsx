@@ -1,24 +1,21 @@
 /* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
 import React, { useState } from 'react';
-// import { useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Table from '../../components/ui/Table';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import { ruleColumns } from '../../data/helpers/ruleHelpers';
 import useGetAllRulesQuery from '../../hooks/libraries/rules/useGetAllRules';
 import RuleForm from '../../components/forms/RuleForm';
-// import ViralForm from '../../components/forms/ViralForm';
-// import useGetAllViralsQuery from '../../hooks/libraries/virals/useGetAllViralsQuery';
-// import { getSpecificViral } from '../../data/features/viralLibrary/viralLibrarySlice';
-// import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
-// import { viralTableColumns } from '../../data/helpers/viralHelpers';
 
 /**
- * ViralLibrary Component serves as the starting point for the complete flow of the virals library.
+ * RuleLibrary Component serves as the starting point for the complete flow of the virals library.
  * It uses the DashboardLayout, Table, and ViralForm components and manages states and behaviours for these components.
  * @component
  */
 const RuleLibrary = () => {
-	// const dispatch = useDispatch();
+	const dispatch = useDispatch();
 
 	const { isLoading, totalRecords } = useGetAllRulesQuery();
 	const data = [
@@ -76,10 +73,12 @@ const RuleLibrary = () => {
 
 	const [showSlider, setShowSlider] = useState(false);
 	const [isEdit, setEdit] = useState(false);
-	const [rowStatus, setRowStatus] = useState(''); //publish or draft
 
+	// /**
+	//  * onUploadRuleClick which is fired whenver the "Upload Viral" button is clicked.
+	//  * It's responsible for opening the form in creation mode.
+	//  */
 	const onUploadRuleClick = () => {
-		// dispatch(getAllNewLabels());
 		setEdit(false);
 		setShowSlider(true);
 	};
@@ -90,19 +89,17 @@ const RuleLibrary = () => {
 	//  * @param {*} _
 	//  * @param {*} row
 	//  */
-	// const onRowClick = (_, row) => {
-	// 	row.status === 'draft' && dispatch(getAllNewLabels());
-	// 	dispatch(getSpecificViral(row.id));
-	// 	setEdit(true);
-	// 	setRowStatus(row.status); // pass in slider
-	// 	setShowSlider(true);
-	// };
+	const onRowClick = (_, row) => {
+		//dispatch(getSpecificRule(row.id));
+		setEdit(true);
+		setShowSlider(true);
+	};
 
 	return (
 		<DashboardLayout
 			title='Rule'
 			customText='Create New Rule'
-			isLoading={isLoading}
+			//isLoading={isLoading}
 			onButtonClick={onUploadRuleClick}
 		>
 			<Table
@@ -110,6 +107,7 @@ const RuleLibrary = () => {
 				data={data}
 				totalRecords={totalRecords}
 				isLoading={isLoading}
+				onRowClick={onRowClick}
 				noDataText='No Rules Found'
 			/>
 			<RuleForm
@@ -118,7 +116,6 @@ const RuleLibrary = () => {
 				handleClose={() => {
 					setShowSlider(false);
 				}}
-				status={rowStatus}
 			/>
 		</DashboardLayout>
 	);

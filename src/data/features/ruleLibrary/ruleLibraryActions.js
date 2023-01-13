@@ -87,8 +87,8 @@ export const createOrEditRuleThunk = createAsyncThunk(
  * @type {Function}
  * @param {Object} data - The data field contains the rule_id and is_draft properties
  */
-export const deleteViralThunk = createAsyncThunk(
-	'ruleLibrary/deleteViralThunk',
+export const deleteRuleThunk = createAsyncThunk(
+	'ruleLibrary/deleteRuleThunk',
 	async (data) => {
 		try {
 			const response = await RuleService.deleteViral(data);

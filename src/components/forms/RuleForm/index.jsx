@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
 import React, { useState, useRef, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
@@ -5,40 +8,29 @@ import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { Formik, Form } from 'formik';
 import { useCommonParams } from '../../../hooks';
-import { getRules, selectSpecificViral } from '../../../data/selectors';
+import { getRules, selectSpecificRule } from '../../../data/selectors';
 import {
-	viralDataFormatterForForm,
-	viralDataFormatterForService,
-	viralFormInitialValues,
-	viralFormValidationSchema
+	ruleDataFormatterForForm,
+	ruleDataFormatterForService,
+	ruleFormInitialValues
+	//ruleFormValidationSchema
 } from '../../../data/helpers';
 import {
-	createOrEditViralThunk,
-	deleteViralThunk,
-	getAllViralsApi
-} from '../../../data/features/viralLibrary/viralLibrarySlice';
-import { uploadFileToServer } from '../../../data/utils';
+	createOrEditRuleThunk,
+	deleteRuleThunk,
+	getAllRulesApi
+} from '../../../data/features/ruleLibrary/ruleLibrarySlice';
+// import { uploadFileToServer } from '../../../data/utils';
 
-import DeleteModal from '../../DeleteModal';
 import RuleFormDrawer from './subComponents/RuleFormDrawer';
+import DeleteModal from '../../DeleteModal';
 
-const RuleForm = ({
-	open,
-	handleClose,
-	isEdit,
-	status // draft or publish
-}) => {
+const RuleForm = ({ open, handleClose, isEdit }) => {
 	const navigate = useNavigate();
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 	const dispatch = useDispatch();
-	const specificViral = useSelector(selectSpecificViral);
+	const specificRule = useSelector(selectSpecificRule);
 	const { rules } = useSelector(getRules);
-
-	const {
-		features: { hlsVideoFormatOnVirals }
-	} = useSelector((state) => state.rootReducer.remoteConfig);
-
-	const isHlsFormatEnabled = hlsVideoFormatOnVirals?._value === 'true';
 
 	// States
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -48,10 +40,10 @@ const RuleForm = ({
 
 	const initialValues = useMemo(
 		() =>
-			isEdit && !isEmpty(specificViral)
-				? viralDataFormatterForForm(specificViral, rules)
-				: viralFormInitialValues(rules),
-		[isEdit, specificViral, rules]
+			isEdit && !isEmpty(specificRule)
+				? ruleDataFormatterForForm(specificRule, rules)
+				: ruleFormInitialValues(rules),
+		[isEdit, specificRule, rules]
 	);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
@@ -68,33 +60,19 @@ const RuleForm = ({
 			formikBag.setSubmitting(true);
 
 			try {
-				let uploadFileRes;
+				const ruleData = ruleDataFormatterForService(values, rules);
 
-				if (values.uploadedFiles[0]?.file) {
-					uploadFileRes = await uploadFileToServer(
-						values.uploadedFiles[0],
-						'virallibrary',
-						isHlsFormatEnabled
-					);
-				}
+				const { type } = await dispatch(createOrEditRuleThunk(ruleData));
 
-				const viralData = viralDataFormatterForService(
-					values,
-					uploadFileRes,
-					rules
-				);
-
-				const { type } = await dispatch(createOrEditViralThunk(viralData));
-
-				if (type === 'viralLibary/createOrEditViralThunk/fulfilled') {
+				if (type === 'ruleLibrary/createOrEditRuleThunk/fulfilled') {
 					handleClose();
 
-					if (isEdit && !(status === 'draft' && values.save_draft === false)) {
-						dispatch(getAllViralsApi(queryParams));
+					if (isEdit) {
+						dispatch(getAllRulesApi(queryParams));
 					} else if (isSearchParamsEmpty) {
-						dispatch(getAllViralsApi());
+						dispatch(getAllRulesApi());
 					} else {
-						navigate('/viral-library');
+						navigate('/rule-library');
 					}
 				}
 			} catch (e) {
@@ -103,30 +81,28 @@ const RuleForm = ({
 				formikBag.setSubmitting(false);
 			}
 		},
-		[queryParams, isSearchParamsEmpty, isHlsFormatEnabled]
+		[queryParams, isSearchParamsEmpty]
 	);
 
 	/**
 	 * onDeleteHandler is fired whenever a user wants to delete a viral.
 	 * It's responsible for calling the backend for deletion of viral and updating the UI accordingly.
 	 * @param {string} id - Id of the viral which is to be deleted
-	 * @param {boolean} isDraft - isDraft status of a viral
 	 * @param {Function} setSubmitting - Function which receives a boolean value as a param and changes the state of form if it is submitting or not
 	 */
 	const onDeleteHandler = useCallback(
-		async (id, isDraft, setSubmitting) => {
+		async (id, setSubmitting) => {
 			setSubmitting(true);
 			setOpenDeleteModal(false);
 			try {
 				await dispatch(
-					deleteViralThunk({
-						viral_id: id,
-						is_draft: isDraft
+					deleteRuleThunk({
+						rule_id: id
 					})
 				);
 
 				handleClose();
-				dispatch(getAllViralsApi(queryParams));
+				dispatch(getAllRulesApi(queryParams));
 			} catch (e) {
 				console.error(e);
 			} finally {
@@ -140,7 +116,7 @@ const RuleForm = ({
 		<Formik
 			enableReinitialize
 			initialValues={initialValues}
-			validationSchema={viralFormValidationSchema}
+			//validationSchema={ruleFormValidationSchema}
 			validateOnMount
 			onSubmit={onSubmitHandler}
 		>
@@ -150,15 +126,15 @@ const RuleForm = ({
 						open={open}
 						handleClose={handleClose}
 						isEdit={isEdit}
-						status={status}
-						onSubmitHandler={onSubmitHandler}
-						toggleDeleteModal={toggleDeleteModal}
+						//status={status}
+						//onSubmitHandler={onSubmitHandler}
+						//toggleDeleteModal={toggleDeleteModal}
 					/>
 					<DeleteModal
 						open={openDeleteModal}
 						toggle={closeDeleteModal}
 						deleteBtn={() => {
-							onDeleteHandler(specificViral?.id, status, setSubmitting);
+							onDeleteHandler(specificRule?.id, setSubmitting);
 						}}
 						text={'Rule'}
 						wrapperRef={dialogWrapper}
@@ -173,8 +149,7 @@ const RuleForm = ({
 RuleForm.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
-	isEdit: PropTypes.bool.isRequired,
-	status: PropTypes.string.isRequired
+	isEdit: PropTypes.bool.isRequired
 };
 
 export default RuleForm;
