@@ -35,7 +35,8 @@ const RichTextEditor = ({
 	value: externalValue,
 	onBlur,
 	onChange,
-	error
+	error,
+	disabled
 }) => {
 	const classes = useTextEditorStyles();
 	const inputClasses = useInputsStyles();
@@ -91,6 +92,7 @@ const RichTextEditor = ({
 				id={`text-${id}`}
 				name={name}
 				value={value}
+				disabled={disabled}
 			/>
 			<span className={inputClasses.errorText}>{error}</span>
 		</div>
@@ -103,7 +105,8 @@ RichTextEditor.propTypes = {
 	value: PropTypes.string,
 	onBlur: PropTypes.func,
 	onChange: PropTypes.func,
-	error: PropTypes.string
+	error: PropTypes.string,
+	disabled: PropTypes.bool
 };
 
 export default RichTextEditor;

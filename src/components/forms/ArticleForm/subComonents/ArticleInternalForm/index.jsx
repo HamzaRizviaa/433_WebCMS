@@ -18,7 +18,8 @@ const ArticleInternalForm = ({
 	status,
 	selectedOption,
 	topElementRef,
-	elementsWrapperRef
+	elementsWrapperRef,
+	readOnly = false
 }) => {
 	const dispatch = useDispatch();
 	const classes = useStyles();
@@ -43,15 +44,21 @@ const ArticleInternalForm = ({
 				<p>Edit, reorder elements here and build your {selectedOption}</p>
 			</Box>
 			<Box mb={2}>
-				{selectedOption === 'template' && <ArticleTemplateInfoForm />}
+				{selectedOption === 'template' && (
+					<ArticleTemplateInfoForm readOnly={readOnly} />
+				)}
 			</Box>
 			<ArticleGeneralInfoForm
 				isEdit={isEdit}
 				status={status}
 				selectedOption={selectedOption}
+				readOnly={readOnly}
 			/>
 			{values?.subCategoryId && (
-				<AdvancedSettingsForm hideRules={selectedOption === 'template'} />
+				<AdvancedSettingsForm
+					hideRules={selectedOption === 'template'}
+					readOnly={readOnly}
+				/>
 			)}
 			<Box
 				ref={topElementRef}
@@ -69,6 +76,7 @@ const ArticleInternalForm = ({
 							selectedOption={selectedOption}
 							elementsWrapperRef={elementsWrapperRef}
 							matchesData={matchesData}
+							readOnly={readOnly}
 							{...props}
 						/>
 					)}
@@ -83,7 +91,8 @@ ArticleInternalForm.propTypes = {
 	status: PropTypes.string.isRequired,
 	selectedOption: PropTypes.oneOf(['', 'article', 'template']).isRequired,
 	topElementRef: PropTypes.element,
-	elementsWrapperRef: PropTypes.any
+	elementsWrapperRef: PropTypes.any,
+	readOnly: PropTypes.bool
 };
 
 export default ArticleInternalForm;

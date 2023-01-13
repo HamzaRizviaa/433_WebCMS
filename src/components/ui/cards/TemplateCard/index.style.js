@@ -4,13 +4,11 @@ export const useStyles = makeStyles((theme) => ({
 	cardModal: {
 		display: 'flex',
 		gap: '16px'
-		// /	flexWrap: 'wrap'
 	},
 	cardList: {
 		display: 'flex',
 		flexDirection: 'row'
 	},
-	// gridContainer: { gap: '10px' },
 	card: {
 		height: '180px',
 		backgroundColor: '#191919',
@@ -48,7 +46,6 @@ export const useStyles = makeStyles((theme) => ({
 		height: '40px',
 		marginBottom: '16px'
 	},
-
 	author: {
 		fontWeight: 400,
 		fontSize: '12px',
@@ -64,8 +61,6 @@ export const useStyles = makeStyles((theme) => ({
 		lineHeight: '24px',
 		letterSpacing: '0.03em',
 		marginBottom: '24px',
-		// textOverflow: 'ellipsis',
-		// whiteSpace: 'nowrap !important',
 		overflow: 'hidden',
 		lineClamp: 2,
 		boxOrient: 'vertical',
@@ -88,6 +83,12 @@ export const useStyles = makeStyles((theme) => ({
 		margin: '10px',
 		borderRadius: 16,
 		overflow: 'hidden'
-		//'& Skeleton': { borderRadius: '16px !important' }
+	},
+	bottomBox: {
+		display: 'flex',
+		justifyContent: 'space-between'
+	},
+	iconBtn: {
+		marginTop: '-6px'
 	}
 }));

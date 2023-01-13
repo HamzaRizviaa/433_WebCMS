@@ -48,6 +48,7 @@ const DropzoneField = ({
 	maxFiles = 1,
 	hidePreviewIcon = false,
 	hideDeleteIcon = false,
+	readOnly = false,
 	...rest
 }) => {
 	const handleDrop = (files) => {
@@ -98,6 +99,7 @@ const DropzoneField = ({
 					showPreview={showPreview}
 					hidePreviewIcon={hidePreviewIcon}
 					hideDeleteIcon={hideDeleteIcon}
+					readOnly={readOnly}
 				/>
 			) : (
 				<section
@@ -106,7 +108,7 @@ const DropzoneField = ({
 					onBlur={onBlur}
 				>
 					<div {...getRootProps({ className: classes.dropzone })}>
-						<input {...getInputProps({ name, onBlur })} />
+						<input {...getInputProps({ name, onBlur })} disabled={readOnly} />
 						<AddCircleOutlineIcon className={classes.addFilesIcon} />
 						<p className={classes.dragMsg}>
 							Click or drag files to this area to upload

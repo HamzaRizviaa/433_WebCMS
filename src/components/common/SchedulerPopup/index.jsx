@@ -109,6 +109,7 @@ const SchedulerPopup = ({
 		: !values.startStamp.min;
 
 	const classes = useStyles();
+	
 	return (
 		<Modal
 			title='Pick a date & time'

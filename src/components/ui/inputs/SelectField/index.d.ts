@@ -27,6 +27,7 @@ export type SelectFieldCustomProps<T> = {
 	onSearchTextChange?: (value: string) => void;
 	onClearText?: () => void;
 	searchBarProps?: TextFieldProps;
+	readOnly?: boolean;
 };
 
 type ModifiedSelectProps = Omit<

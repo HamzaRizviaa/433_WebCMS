@@ -11,6 +11,7 @@ export type InputFieldProps = Omit<TextFieldProps, 'variant'> & {
 	endIcon?: JSX.Element;
 	maxLength?: number;
 	height?: 'small' | 'medium' | 'large';
+	readOnly?: boolean;
 };
 
 /**

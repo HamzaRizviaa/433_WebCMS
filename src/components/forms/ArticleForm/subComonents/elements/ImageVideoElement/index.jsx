@@ -6,7 +6,7 @@ import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
 import FormikDropzone from '../../../../../ui/inputs/formik/FormikDropzone';
 import FormikField from '../../../../../ui/inputs/formik/FormikField';
 
-const ImageVideoElement = ({ index, item, handleRemoveElement }) => {
+const ImageVideoElement = ({ index, item, handleRemoveElement, readOnly }) => {
 	const classes = useFormStyles();
 
 	const { setFieldValue } = useFormikContext();
@@ -22,6 +22,7 @@ const ImageVideoElement = ({ index, item, handleRemoveElement }) => {
 			index={index}
 			item={item}
 			onDeleteIconClick={handleRemoveElement}
+			disableActions={readOnly}
 		>
 			<div className={classes.dropzoneWrapper}>
 				<FormikDropzone
@@ -32,6 +33,7 @@ const ImageVideoElement = ({ index, item, handleRemoveElement }) => {
 					onDelete={() => handleDeleteFile()}
 					showPreview
 					hidePreviewIcon
+					readOnly={readOnly}
 				/>
 			</div>
 			<div className={classes.fieldContainer}>
@@ -41,6 +43,7 @@ const ImageVideoElement = ({ index, item, handleRemoveElement }) => {
 					placeholder='Please drop the dropbox URL here'
 					multiline
 					maxRows={2}
+					readOnly={readOnly}
 				/>
 			</div>
 		</DraggableCardLayout>
@@ -50,7 +53,8 @@ const ImageVideoElement = ({ index, item, handleRemoveElement }) => {
 ImageVideoElement.propTypes = {
 	index: PropTypes.number.isRequired,
 	item: PropTypes.object,
-	handleRemoveElement: PropTypes.func
+	handleRemoveElement: PropTypes.func,
+	readOnly: PropTypes.bool
 };
 
 export default ImageVideoElement;

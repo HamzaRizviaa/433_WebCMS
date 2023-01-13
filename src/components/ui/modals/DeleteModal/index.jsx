@@ -15,7 +15,7 @@ import useSound from 'use-sound';
 import { useStyles } from './deleteModal.style';
 import soundOpen from '../../assets/openSound.mp3';
 import soundClose from '../../assets/closeSound.mp3';
-import Button from '../ui/Button';
+import Button from '../../Button';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Grow in={true} ref={ref} {...props} />;
