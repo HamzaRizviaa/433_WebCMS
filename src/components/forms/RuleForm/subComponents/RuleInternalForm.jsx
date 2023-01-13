@@ -5,14 +5,14 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useFormikContext } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
-import { Grid } from '@material-ui/core';
+import { Grid, InputAdornment } from '@material-ui/core';
 import FormikField from '../../../ui/inputs/formik/FormikField';
-import Tooltip from '../../../Tooltip';
+import TextTooltip from '../../../ui/TextTooltip';
 import { QuestionMarkInfoIcon } from '../../../../assets/svg-icons';
 import Button from '../../../ui/Button';
 import CardLayoutWithToggleBtn from '../../../layouts/CardLayoutWithToggleBtn';
 import { selectSpecificRule } from '../../../../data/selectors';
-
+import FormikSelect from '../../../ui/inputs/formik/FormikSelect';
 //styles
 import { useFormStyles } from '../../forms.style';
 import { useStyles } from '../index.style';
@@ -50,12 +50,15 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 	const geoBlockBtnHandler = (value) => {
 		console.log('AAA');
 		setGeoBlockToggle(value);
+		//setFIeld
 	};
 
 	const ageRestrictionBtnHandler = (value) => {
 		console.log('BBB');
 		setAgeRestrictionToggle(value);
 	};
+
+	const data = ['Germany', 'Austraia'];
 
 	return (
 		<div>
@@ -70,9 +73,9 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							maxRows={4}
 							required
 							rightLabel={
-								<Tooltip title='Title is a required field' placement='top'>
+								<TextTooltip title='Title is a required field' placement='top'>
 									<QuestionMarkInfoIcon className={classes.infoIcon} />
-								</Tooltip>
+								</TextTooltip>
 							}
 						/>
 					</div>
@@ -86,14 +89,23 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 					name={'geoblock'}
 				>
 					<div className={classes.fieldContainer}>
-						<FormikField
+						<FormikSelect
+							label='LOCATION'
+							placeholder={'Please select countries'}
+							name={'locations'}
+							disabled={!geoBlockToggle}
+							options={data}
+							searchable
+							multiple
+						/>
+						{/* <FormikField
 							label='LOCATION'
 							name='location'
 							placeholder='Please select countries'
 							multiline
 							maxRows={4}
 							disabled={!geoBlockToggle}
-						/>
+						/> */}
 					</div>
 					<div className={classes.fieldContainer}>
 						<FormikField
@@ -101,7 +113,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							name='duration'
 							placeholder='Set a time duration of the geoblock in hours'
 							disabled={!geoBlockToggle}
-							// endAdornment='HOURS'
+							endIcon={<p>Hours</p>}
 						/>
 					</div>
 				</CardLayoutWithToggleBtn>
@@ -122,12 +134,12 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 									placeholder='Select a minimum age'
 									disabled={!ageRestrictionToggle}
 									rightLabel={
-										<Tooltip
+										<TextTooltip
 											title='Content item will not be visible to users below this age'
 											placement='top'
 										>
 											<QuestionMarkInfoIcon className={classes.infoIcon} />
-										</Tooltip>
+										</TextTooltip>
 									}
 								/>
 							</div>
@@ -140,12 +152,12 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 									placeholder='Select a maximum age'
 									disabled={!ageRestrictionToggle}
 									rightLabel={
-										<Tooltip
+										<TextTooltip
 											title='Content item will not be visible to users above this age'
 											placement='top'
 										>
 											<QuestionMarkInfoIcon className={classes.infoIcon} />
-										</Tooltip>
+										</TextTooltip>
 									}
 								/>
 							</div>
