@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Box, Grid, Collapse } from '@material-ui/core';
 import dayjs from 'dayjs';
 
-import Modal from '../../ui/Modal';
+import Modal from '../../ui/modals/Modal';
 import InlineDatePicker from '../../ui/inputs/InlineDatePicker';
 import TimePickerField from '../../ui/inputs/TimePickerField';
 import SchedulerDateField from '../../ui/inputs/SchedulerDateField';
