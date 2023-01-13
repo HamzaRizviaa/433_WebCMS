@@ -12,7 +12,7 @@ import WiFi from '../../../../assets/Wifi.svg';
 import Battery from '../../../../assets/Rectangle.svg';
 import Signals from '../../../../assets/MobileSignal.svg';
 import Avatar from '@mui/material/Avatar';
-import { default433Profile } from '../../../../data/helpers/articleHelpers';
+import { Profile433 } from '../../../../data/helpers/articleHelpers';
 import StatusBadge from '../../../ui/StatusBadge';
 
 const ArticlePreviewWrapper = ({ children, form }) => {
@@ -69,8 +69,9 @@ const ArticlePreviewWrapper = ({ children, form }) => {
 										src={
 											form?.author_image[0]
 												? form.author_image[0].media_url
-												: default433Profile
+												: Profile433
 										}
+										classes={{ root: classes.avatarRoot }}
 									/>
 								</div>
 								<div className={classes.authorSection}>
@@ -102,7 +103,7 @@ const ArticlePreviewWrapper = ({ children, form }) => {
 				</Box>
 
 				{/* Elements Container */}
-				<Box py={'22px'} px={'10px'}>
+				<Box py={'40px'} px={'10px'}>
 					{children}
 				</Box>
 			</div>
