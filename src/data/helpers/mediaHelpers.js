@@ -147,7 +147,7 @@ export const mediaDataFormatterForForm = (media, allRules) => {
 		media?.dropbox_url?.landscape_cover_image;
 	formattedMedia.rules = rules;
 	formattedMedia.is_scheduled = media.is_scheduled;
-	formattedMedia.save_draft = media.status === 'draft';
+	formattedMedia.save_draft = media.is_draft;
 
 	if (media.is_scheduled) formattedMedia.schedule_date = media.schedule_date;
 
@@ -212,6 +212,7 @@ export const mediaDataFormatterForServer = (
 	const filteredRules = allRules.filter((rule) => media.rules[rule._id]);
 	const mediaData = {
 		title: media.title,
+		is_scheduled: media.is_scheduled,
 		translations: undefined,
 		description: media.description,
 		duration: media?.uploadedFiles[0]?.duration
@@ -294,9 +295,7 @@ export const mediaDataFormatterForServer = (
 		audio_data: completedUploadFiles[0]?.data?.data?.audio_data || null,
 
 		// Spreading the media schedule flag for edit state
-		...(media.schedule_date
-			? { is_scheduled: true, schedule_date: media.schedule_date }
-			: { is_scheduled: false })
+		...(media.is_scheduled ? { schedule_date: media.schedule_date } : {})
 	};
 	return mediaData;
 };

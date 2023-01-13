@@ -118,9 +118,7 @@ const MediaForm = ({
 				rules
 			);
 
-			const { type } = await dispatch(
-				createOrEditMediaThunk(mediaData, formikBag, isDraft)
-			);
+			const { type } = await dispatch(createOrEditMediaThunk(mediaData));
 
 			if (type === 'mediaLibrary/createOrEditMediaThunk/fulfilled') {
 				handleClose();
