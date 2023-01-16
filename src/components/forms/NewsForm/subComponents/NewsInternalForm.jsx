@@ -32,7 +32,7 @@ const NewsInternalForm = ({
 	openPreviewer
 }) => {
 	const classes = useFormStyles();
-	const dispatch = useDispatch()
+	const dispatch = useDispatch();
 	const isPublished = isEdit && status === 'published';
 	const { rules } = useSelector(getRules);
 
@@ -70,7 +70,7 @@ const NewsInternalForm = ({
 		return () => {
 			resetForm(newsFormInitialValues(rules));
 			// reset specific news dispatch
-			dispatch(resetSpecificNews())
+			dispatch(resetSpecificNews());
 		};
 	}, []);
 
@@ -94,6 +94,9 @@ const NewsInternalForm = ({
 		return !dirty || isAnyNewsSlideEmpty || isEqualToDefaultValues;
 	}, [values, dirty]);
 
+	const initialScheduleDate = specificNews?.is_scheduled
+		? specificNews?.schedule_date
+		: '';
 
 	return (
 		<div>
@@ -102,7 +105,7 @@ const NewsInternalForm = ({
 				onClose={closeSchedulerModal}
 				onConfirm={handleScheduleConfirm}
 				onRemove={handleRemoveSchedule}
-				initialStartDate={values.is_scheduled && specificNews?.schedule_date}
+				initialStartDate={initialScheduleDate}
 				isScheduled={values.is_scheduled}
 				isSubmitting={isSubmitting}
 			/>

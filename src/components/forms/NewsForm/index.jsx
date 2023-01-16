@@ -65,15 +65,16 @@ const NewsForm = ({
 				);
 
 				if (data.response) {
-					formikBag.setFieldValue('is_scheduled', false);
 					formikBag.setSubmitting(false);
-					setTimeout(() => {
-						formikBag.setFieldError(
-							'banner_title',
-							'A News item with this Banner Title has already been published. Please amend the Banner Title.'
-						);
-					});
-
+					formikBag.setFieldValue(
+						'is_scheduled',
+						specificNews?.is_scheduled,
+						false
+					);
+					formikBag.setFieldError(
+						'banner_title',
+						'A News item with this Banner Title has already been published. Please amend the Banner Title.'
+					);
 					return;
 				}
 			}
@@ -114,6 +115,11 @@ const NewsForm = ({
 			console.error(e);
 		} finally {
 			formikBag.setSubmitting(false);
+			formikBag.setFieldValue(
+				'is_scheduled',
+				specificNews?.is_scheduled,
+				false
+			);
 		}
 	};
 

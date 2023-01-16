@@ -1,10 +1,9 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
-import { isEmpty } from 'lodash';
-import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
-import { getDateTime, makeid } from '../utils';
-import { getUserDataObject } from './index';
+import dayjs from 'dayjs';
 import * as Yup from 'yup';
+
+import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
+import { getDateTime } from '../utils';
+import { getUserDataObject } from './index';
 import { advancedSettingsValidationSchema } from './advancedSettingsHelpers';
 import { CalendarYellowIcon } from '../../assets/svg-icons';
 
@@ -36,7 +35,7 @@ export const newsColumns = [
 		sort: true,
 		formatter: (content, row) =>
 			getFormatter('textAndIcon', {
-				content: getDateTime(content),
+				content: dayjs(content).format('DD-MM-YYYY | HH:mm'),
 				Icon: row.is_scheduled ? CalendarYellowIcon : null
 			})
 	},
@@ -129,7 +128,7 @@ export const newsDataFormatterForService = (
 	// isDraft = false,
 	allRules
 ) => {
-	// console.log(isDraft)
+	const { schedule_date, ...rest } = news;
 	const filteredRules = allRules.filter((rule) => news.rules[rule._id]);
 	let slides =
 		news.slides.length > 0
@@ -151,22 +150,20 @@ export const newsDataFormatterForService = (
 			: [];
 
 	const newsData = {
-		...news,
+		...rest,
 		translations: undefined,
 		user_data: getUserDataObject(),
-		// save_draft: isDraft,
 		banner_title: news.banner_title,
 		banner_description: news.banner_description,
 		show_likes: news.show_likes,
 		show_comments: news.show_comments,
 		labels: news.labels,
 		slides: slides,
-		rules: filteredRules,
-		// Destructing the viral id for edit state
-		...(news.id ? { news_id: news.id } : {}),
-		// ...(news?.schedule_date ? { schedule_flag_enabled: true } : {})
-
+		rules: filteredRules
 	};
+
+	if (news.id) newsData.news_id = news.id;
+	if (news.is_scheduled) newsData.schedule_date = schedule_date;
 
 	return newsData;
 };
