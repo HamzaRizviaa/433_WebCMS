@@ -31,7 +31,6 @@ export const ruleColumns = [
 	{
 		dataField: 'age.min',
 		text: 'AGE RESTRICTION',
-		sort: true,
 		formatter: (content) =>
 			getFormatter('wrapper', { content: content ? '< ' + content : '-' })
 	},
