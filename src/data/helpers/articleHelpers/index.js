@@ -1,4 +1,6 @@
 import React from 'react';
+import dayjs from 'dayjs';
+
 import { getFormatter } from '../../../components/ui/Table/ColumnFormatters';
 import { getDateTime } from '../../utils';
 import {
@@ -7,10 +9,11 @@ import {
 	ImageVideo,
 	TwitterLine,
 	BallIcon,
-	Question
+	Question,
+	CalendarYellowIcon
 } from '../../../assets/svg-icons';
 
-export const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
+export const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/12659953-0423-4bdc-9512-69e52ff929f8.png`;
 export const default433Profile = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/Profile433.svg`;
 
 export const articleTableColumns = [
@@ -28,10 +31,13 @@ export const articleTableColumns = [
 	},
 	{
 		dataField: 'post_date',
-		text: 'POST DATE | TIME',
+		text: 'POST, SCHEDULE DATE | TIME',
 		sort: true,
-		formatter: (content) =>
-			getFormatter('wrapper', { content: getDateTime(content) })
+		formatter: (content, row) =>
+			getFormatter('textAndIcon', {
+				content: dayjs(content).format('DD-MM-YYYY | HH:mm'),
+				Icon: row.is_scheduled ? CalendarYellowIcon : null
+			})
 	},
 	{
 		dataField: 'labels',

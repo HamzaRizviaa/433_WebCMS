@@ -11,25 +11,20 @@ import {
 	checkIfAnyArticleElementIsEmpty
 } from '../../../../../data/helpers';
 import { getRules } from '../../../../../data/selectors';
+import { Calendar } from '../../../../../assets/svg-icons';
+import useSchedulerHandlers from '../../../../../hooks/useSchedulerHandlers';
 
 const ArticleBuilderFooter = ({
 	isEdit,
 	isDraft,
 	loading,
 	openDeleteModal,
-	onSubmitHandler
+	onSubmitHandler,
+	openSchedulerModal
 }) => {
-	const classes = useArticleFooterStyles({ loading, isEdit, isDraft });
 	const { rules } = useSelector(getRules);
 
-	const {
-		values,
-		dirty,
-		isValid,
-		status: formikStatus,
-		setSubmitting,
-		handleSubmit
-	} = useFormikContext();
+	const { values, dirty, isValid, status: formikStatus } = useFormikContext();
 
 	const isDraftButtonDisabled = useMemo(() => {
 		const isAnyElementEmpty = checkIfAnyArticleElementIsEmpty(values.elements);
@@ -46,6 +41,11 @@ const ArticleBuilderFooter = ({
 		return !isDirty || isAnyElementEmpty || isEqualToDefaultValues;
 	}, [isEdit, values, dirty, formikStatus]);
 
+	const { handleDraftClick, handlePublishClick, handleSaveChangesClick } =
+		useSchedulerHandlers({ onSubmitHandler });
+
+	const classes = useArticleFooterStyles({ loading, isEdit, isDraft });
+
 	return (
 		<div className={classes.footer}>
 			{isEdit && (
@@ -60,25 +60,47 @@ const ArticleBuilderFooter = ({
 			)}
 			<div className={classes.container}>
 				{(isDraft || !isEdit) && (
-					<Button
-						size='small'
-						variant='outlined'
-						className={classes.draftButton}
-						disabled={isDraftButtonDisabled}
-						onClick={() => onSubmitHandler(values, { setSubmitting }, true)}
-					>
-						{isEdit && isDraft ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
-					</Button>
+					<>
+						{values.is_scheduled ? (
+							<Button
+								size='small'
+								variant='outlined'
+								type='submit'
+								disabled={isValid ? !dirty : !isValid}
+								onClick={handleSaveChangesClick}
+							>
+								SAVE CHANGES
+							</Button>
+						) : (
+							<Button
+								size='small'
+								variant='outlined'
+								disabled={isDraftButtonDisabled}
+								onClick={handleDraftClick}
+							>
+								{isDraft && isEdit ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
+							</Button>
+						)}
+					</>
 				)}
 				<Button
 					type='submit'
 					size='small'
 					className={classes.btn}
 					disabled={!isDraft ? (!dirty ? isValid : !isValid) : !isValid}
-					onClick={handleSubmit}
+					onClick={handlePublishClick}
 				>
 					{isEdit && !isDraft ? 'SAVE CHANGES' : 'PUBLISH'}
 				</Button>
+				{isDraft && !values.is_scheduled && (
+					<Button
+						disabled={values.is_scheduled || !isDraft ? true : !isValid}
+						onClick={openSchedulerModal}
+						iconBtn
+					>
+						<Calendar />
+					</Button>
+				)}
 			</div>
 		</div>
 	);
@@ -89,7 +111,8 @@ ArticleBuilderFooter.propTypes = {
 	isDraft: PropTypes.bool.isRequired,
 	loading: PropTypes.bool,
 	openDeleteModal: PropTypes.func,
-	onSubmitHandler: PropTypes.func.isRequired
+	onSubmitHandler: PropTypes.func.isRequired,
+	openSchedulerModal: PropTypes.func.isRequired
 };
 
 export default ArticleBuilderFooter;

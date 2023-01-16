@@ -16,7 +16,11 @@ export const useArticleFooterStyles = makeStyles((theme) => ({
 	},
 	container: {
 		display: 'flex',
-		marginRight: '20px'
+		marginRight: '20px',
+
+		'& button': {
+			marginRight: 10
+		}
 	},
 	draftButton: {
 		margin: '0 1rem 0 0',

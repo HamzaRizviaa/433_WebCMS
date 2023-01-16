@@ -87,9 +87,21 @@ export const useStyles = makeStyles((theme) => ({
 	textDraggableData: {
 		fontWeight: 400,
 		fontSize: '14px',
-		lineHeight: 1.2,
+		lineHeight: '1.2 !important',
+		overflowWrap: 'anywhere',
+		// color: 'white'
+		fontFamily: 'Inter, sans-serif',
 		color: '#CCCCCC',
-		overflowWrap: 'anywhere'
+
+		'& .previewerHeadings': {
+			color: 'white !important',
+			fontFamily: 'Poppins !important'
+		},
+
+		'& .previewBodyTexts': {
+			fontFamily: 'Inter, sans-serif !important',
+			color: '#CCCCCC !important'
+		}
 	},
 	imageDraggableData: {
 		maxWidth: '100%',
@@ -129,8 +141,6 @@ export const useStyles = makeStyles((theme) => ({
 	questionDraggable: {
 		height: '470px',
 		borderRadius: '16px',
-		marginTop: '16px',
-		marginBottom: '16px',
 		backgroundRepeat: 'no-repeat',
 		backgroundSize: 'cover',
 		backgroundPosition: 'center',
@@ -169,5 +179,14 @@ export const useStyles = makeStyles((theme) => ({
 		boxShadow:
 			'inset 0px 2px 3px rgba(229, 229, 229, 0.3), inset 0px -1px 0px rgba(0, 0, 0, 0.13)',
 		textAlign: 'center'
+	},
+
+	twitterBox: {
+		'& > span > div': {
+			margin: '0px !important'
+		},
+		'& > span > iframe': {
+			margin: '0px !important'
+		}
 	}
 }));

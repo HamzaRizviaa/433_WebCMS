@@ -31,7 +31,7 @@ export const useStatusBadgeStyles = makeStyles((theme) => {
 				statusToColorMapper[props.status?.toLowerCase()] ||
 				theme.palette.neonYellow,
 			fontSize: (props) =>
-				props.status?.toLowerCase() in statusToColorMapper ? '1.2rem' : '1rem',
+				props.status?.toLowerCase() in statusToColorMapper ? '1.2rem' : '8px',
 			fontWeight: 800,
 			letterSpacing: '0.03rem',
 			height: 'fit-content',
