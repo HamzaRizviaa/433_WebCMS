@@ -1,5 +1,7 @@
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime } from '../utils';
+import { advancedSettingsValidationSchema } from './advancedSettingsHelpers';
+import * as Yup from 'yup';
 
 const ageFormatter = (content) => {
 	if (content.min !== undefined && content.max !== undefined) {
@@ -14,6 +16,7 @@ const ageFormatter = (content) => {
 
 	return '-';
 };
+
 export const ruleColumns = [
 	{
 		dataField: 'title',
@@ -74,24 +77,21 @@ export const ruleColumns = [
 	}
 ];
 
-export const ruleDataFormatterForForm = (rule, allRules) => {
+export const ruleDataFormatterForForm = (rule) => {
+	console.log(rule, 'rule on helpers');
 	//rule - rule library
-	//rules - geo blockiing rules
-
-	const rules = {};
-
-	allRules.forEach((rule) => {
-		rules[rule._id] = false;
-	});
-	//This loop should always run after the first one.
-	rule.rules.forEach((rule) => {
-		rules[rule._id] = true;
-	});
 
 	const payload = {
 		id: rule.id,
 		title: rule.title,
-		rules
+		age: {
+			min: rule.min,
+			max: rule.max
+		},
+		geoblocking: {
+			countries: rule.countries,
+			duration: rule.duration
+		}
 	};
 
 	// if (viral.is_scheduled) payload.schedule_date = viral.schedule_date;
@@ -99,38 +99,42 @@ export const ruleDataFormatterForForm = (rule, allRules) => {
 	return payload;
 };
 
-export const ruleDataFormatterForService = (rule, allRules) => {
-	const { id, schedule_date, ...rest } = rule;
-	const filteredRules = allRules.filter((rule) => rule.rules[rule._id]);
+export const ruleDataFormatterForService = (rule) => {
+	const { id } = rule;
 
-	const ruleData = {
-		// Spreading the properties of rule
-		...rest,
-		rules: filteredRules,
-
-		// Spreading the rule id for edit state
-		...(id ? { rule_id: id } : {}),
-
-		// Spreading the rule schedule flag for edit state
-		...(schedule_date ? { schedule_flag_enabled: true, schedule_date } : {})
+	const payload = {
+		id: rule.id,
+		title: rule.title,
+		age: {
+			min: rule.min,
+			max: rule.max
+		},
+		geoblocking: {
+			countries: rule.countries,
+			duration: rule.duration
+		},
+		...(id ? { rule_id: id } : {})
 	};
 
-	return ruleData;
+	// const ruleData = {
+	// 	// Spreading the properties of rule
+	// 	...rest,
+
+	// 	// Spreading the rule id for edit state
+	// 	...(id ? { rule_id: id } : {})
+	// };
+
+	return payload;
 };
 
-export const ruleFormInitialValues = (allRules) => {
-	const rules = {};
-
-	allRules.forEach((rule) => {
-		rules[rule._id] = false;
-	});
-
-	return {
-		title: '',
-		rules
-	};
+export const ruleFormInitialValues = {
+	title: '',
+	min: '',
+	max: '',
+	countries: [],
+	duration: ''
 };
 
-// export const ruleFormValidationSchema = advancedSettingsValidationSchema.shape({
-// 	title: Yup.string().required('You need to enter a title')
-// });
+export const ruleFormValidationSchema = advancedSettingsValidationSchema.shape({
+	title: Yup.string().required('You need to enter a title')
+});

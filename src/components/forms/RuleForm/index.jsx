@@ -8,12 +8,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { Formik, Form } from 'formik';
 import { useCommonParams } from '../../../hooks';
-import { getRules, selectSpecificRule } from '../../../data/selectors';
+import {
+	getCountries,
+	getRules,
+	selectSpecificRule
+} from '../../../data/selectors';
 import {
 	ruleDataFormatterForForm,
 	ruleDataFormatterForService,
-	ruleFormInitialValues
-	//ruleFormValidationSchema
+	ruleFormInitialValues,
+	ruleFormValidationSchema
 } from '../../../data/helpers';
 import {
 	createOrEditRuleThunk,
@@ -31,6 +35,7 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 	const dispatch = useDispatch();
 	const specificRule = useSelector(selectSpecificRule);
 	const { rules } = useSelector(getRules);
+	const { countries } = useSelector(getCountries);
 
 	// States
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -41,9 +46,9 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 	const initialValues = useMemo(
 		() =>
 			isEdit && !isEmpty(specificRule)
-				? ruleDataFormatterForForm(specificRule, rules)
-				: ruleFormInitialValues(rules),
-		[isEdit, specificRule, rules]
+				? ruleDataFormatterForForm(specificRule)
+				: ruleFormInitialValues,
+		[isEdit, specificRule]
 	);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
@@ -57,10 +62,12 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 	 */
 	const onSubmitHandler = useCallback(
 		async (values, formikBag) => {
+			console.log(values, 'values in formik');
 			formikBag.setSubmitting(true);
 
 			try {
-				const ruleData = ruleDataFormatterForService(values, rules);
+				const ruleData = ruleDataFormatterForService(values);
+				console.log(ruleData, 'ruleData');
 
 				const { type } = await dispatch(createOrEditRuleThunk(ruleData));
 
@@ -127,7 +134,7 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 						handleClose={handleClose}
 						isEdit={isEdit}
 						//status={status}
-						//onSubmitHandler={onSubmitHandler}
+						onSubmitHandler={onSubmitHandler}
 						//toggleDeleteModal={toggleDeleteModal}
 					/>
 					<DeleteModal

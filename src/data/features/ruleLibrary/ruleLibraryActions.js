@@ -11,6 +11,19 @@ export const fetchRules = createAsyncThunk('rule/fetchRules', async () => {
 	}
 });
 
+export const getCountries = createAsyncThunk(
+	'ruleLibrary/getCountries',
+	async () => {
+		const result = await RuleLibraryService.getCountries();
+		console.log(result, 'result');
+		if (result) {
+			return result.data.data;
+		} else {
+			return [];
+		}
+	}
+);
+
 export const getAllRulesApi = createAsyncThunk(
 	'ruleLibrary/getAllRulesApi',
 	async (params = {}) => {
@@ -58,13 +71,13 @@ export const deleteRuleThunk = createAsyncThunk(
 	'ruleLibrary/deleteRuleThunk',
 	async (data) => {
 		try {
-			const response = await RuleLibraryService.deleteViral(data);
+			const response = await RuleLibraryService.deleteRule(data);
 
 			if (response.data.status_code === 200) {
-				toast.success('Viral has been deleted!');
+				toast.success('Rule has been deleted!');
 			}
 		} catch (e) {
-			toast.error('Failed to delete Viral!');
+			toast.error('Failed to delete Rule!');
 			console.error(e);
 		}
 	}

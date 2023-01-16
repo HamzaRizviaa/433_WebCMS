@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useFormikContext } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,10 +16,13 @@ import FormikSelect from '../../../ui/inputs/formik/FormikSelect';
 //styles
 import { useFormStyles } from '../../forms.style';
 import { useStyles } from '../index.style';
+import { rulesFormInitialValues } from '../../../../data/helpers';
 
 const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 	const dispatch = useDispatch();
-
+	const isPublished = isEdit;
+	const classes = useFormStyles();
+	const internalFormClasses = useStyles();
 	const {
 		values,
 		dirty,
@@ -30,8 +33,6 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 		resetForm
 	} = useFormikContext();
 
-	const specificRule = useSelector(selectSpecificRule);
-
 	// useEffect(() => {
 	// 	validateForm();
 	// 	return () => {
@@ -39,26 +40,26 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 	// 		dispatch(resetSpecificViral());
 	// 	};
 	// }, []);
+	// useEffect(() => {
+	// 	dispatch(getCountries());
+	// }, []);
 
-	const isPublished = isEdit;
-	const classes = useFormStyles();
-	const internalFormClasses = useStyles();
+	const specificRule = useSelector(selectSpecificRule);
+	//const countries = useSelector(getCountries);
+	//console.log(countries, 'c o u n t r i e s ');
 
 	const [geoBlockToggle, setGeoBlockToggle] = useState(false);
 	const [ageRestrictionToggle, setAgeRestrictionToggle] = useState(false);
 
 	const geoBlockBtnHandler = (value) => {
-		console.log('AAA');
 		setGeoBlockToggle(value);
-		//setFIeld
 	};
 
 	const ageRestrictionBtnHandler = (value) => {
-		console.log('BBB');
 		setAgeRestrictionToggle(value);
 	};
 
-	const data = ['Germany', 'Austraia'];
+	const data = ['Germany', 'Austria'];
 
 	return (
 		<div>
@@ -92,20 +93,12 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 						<FormikSelect
 							label='LOCATION'
 							placeholder={'Please select countries'}
-							name={'locations'}
+							name={'countries'}
 							disabled={!geoBlockToggle}
 							options={data}
 							searchable
 							multiple
 						/>
-						{/* <FormikField
-							label='LOCATION'
-							name='location'
-							placeholder='Please select countries'
-							multiline
-							maxRows={4}
-							disabled={!geoBlockToggle}
-						/> */}
 					</div>
 					<div className={classes.fieldContainer}>
 						<FormikField
@@ -130,7 +123,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							<div className={internalFormClasses.fieldContainer}>
 								<FormikField
 									label='MINIMUM AGE'
-									name='minAge'
+									name='min'
 									placeholder='Select a minimum age'
 									disabled={!ageRestrictionToggle}
 									rightLabel={
@@ -148,7 +141,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							<div className={internalFormClasses.fieldContainer}>
 								<FormikField
 									label='MAXIMUM AGE'
-									name='maxAge'
+									name='max'
 									placeholder='Select a maximum age'
 									disabled={!ageRestrictionToggle}
 									rightLabel={
