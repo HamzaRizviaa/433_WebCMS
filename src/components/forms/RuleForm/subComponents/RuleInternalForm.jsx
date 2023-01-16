@@ -16,7 +16,8 @@ import FormikSelect from '../../../ui/inputs/formik/FormikSelect';
 //styles
 import { useFormStyles } from '../../forms.style';
 import { useStyles } from '../index.style';
-import { rulesFormInitialValues } from '../../../../data/helpers';
+import { ruleFormInitialValues } from '../../../../data/helpers';
+import { resetSpecificRule } from '../../../../data/features/ruleLibrary/ruleLibrarySlice';
 
 const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 	const dispatch = useDispatch();
@@ -33,16 +34,13 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 		resetForm
 	} = useFormikContext();
 
-	// useEffect(() => {
-	// 	validateForm();
-	// 	return () => {
-	// 		resetForm(viralFormInitialValues);
-	// 		dispatch(resetSpecificViral());
-	// 	};
-	// }, []);
-	// useEffect(() => {
-	// 	dispatch(getCountries());
-	// }, []);
+	useEffect(() => {
+		validateForm();
+		return () => {
+			resetForm(ruleFormInitialValues);
+			dispatch(resetSpecificRule());
+		};
+	}, []);
 
 	const specificRule = useSelector(selectSpecificRule);
 	//const countries = useSelector(getCountries);

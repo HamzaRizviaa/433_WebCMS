@@ -19,6 +19,11 @@ const initialState = {
 const rulesSlice = createSlice({
 	name: 'rule',
 	initialState,
+	reducers: {
+		resetSpecificRule: (state) => {
+			state.specificRule = null;
+		}
+	},
 	extraReducers: (builder) => {
 		builder.addCase(fetchRules.pending, (state) => {
 			state.loading = true;
@@ -51,18 +56,18 @@ const rulesSlice = createSlice({
 		// getSpecificRule Action Cases
 		builder.addCase(getSpecificRule.pending, (state) => {
 			state.loading = true;
-			state.status = 'pending';
+			state.specificRuleStatus = 'pending';
 		});
 
 		builder.addCase(getSpecificRule.fulfilled, (state, action) => {
 			state.loading = false;
 			state.specificRule = action.payload;
-			state.status = 'success';
+			state.specificRuleStatus = 'success';
 		});
 
 		builder.addCase(getSpecificRule.rejected, (state) => {
 			state.loading = false;
-			state.status = 'failed';
+			state.specificRuleStatus = 'failed';
 		});
 
 		// getAllRulesApi Action Cases
@@ -81,5 +86,7 @@ const rulesSlice = createSlice({
 		});
 	}
 });
+
+export const { resetSpecificRule } = rulesSlice.actions;
 
 export default rulesSlice.reducer;
