@@ -1,6 +1,19 @@
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime } from '../utils';
 
+const ageFormatter = (content) => {
+	if (content.min !== undefined && content.max !== undefined) {
+		return `> ${content.min} & < ${content.max}`;
+	}
+	if (content.min && content.max === undefined) {
+		return `> ${content.min}`;
+	}
+	if (content.max && content.min === undefined) {
+		return `< ${content.max}`;
+	}
+
+	return '-';
+};
 export const ruleColumns = [
 	{
 		dataField: 'title',
@@ -29,10 +42,10 @@ export const ruleColumns = [
 			getFormatter('wrapper', { content: content ? content + ' hours' : '-' })
 	},
 	{
-		dataField: 'age.min',
+		dataField: 'age',
 		text: 'AGE RESTRICTION',
 		formatter: (content) =>
-			getFormatter('wrapper', { content: content ? '< ' + content : '-' })
+			getFormatter('wrapper', { content: ageFormatter(content) })
 	},
 	{
 		dataField: 'tier',
