@@ -15,6 +15,9 @@ class RuleLibraryService {
 	static getRules() {
 		return axiosInstance.get('/rules');
 	}
+	static getCountries() {
+		return axiosInstance.get('/rules/countries');
+	}
 
 	/**
 	 * This function is responsible for the creation of a single rule
@@ -27,6 +30,24 @@ class RuleLibraryService {
 				api_version: 2
 			}
 		});
+	}
+
+	/**
+	 * This function is responsible for the fetching of a single rule
+	 * @param {string} id - The id of a rule
+	 * @returns Promise of the AxiosResponse Object
+	 */
+	static getSpecificRuleApi(id) {
+		return axiosInstance.get(`/rules/get-specific-rule/${id}`);
+	}
+
+	/**
+	 * This function is responsible for the deletion of a single rule
+	 * @param {Object} data - The data field contains the rule_id and is_draft properties
+	 * @returns Promise of the AxiosResponse Object
+	 */
+	static deleteRule(data) {
+		return axiosInstance.post('/rules/delete-rule', data);
 	}
 	static getAllRulesServiceCall(queryParams) {
 		const params = {

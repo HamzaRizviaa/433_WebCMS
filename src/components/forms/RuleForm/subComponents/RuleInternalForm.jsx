@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useFormikContext } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,7 +20,9 @@ import { rulesFormInitialValues } from '../../../../data/helpers';
 
 const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 	const dispatch = useDispatch();
-
+	const isPublished = isEdit;
+	const classes = useFormStyles();
+	const internalFormClasses = useStyles();
 	const {
 		values,
 		dirty,
@@ -31,9 +33,6 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 		resetForm
 	} = useFormikContext();
 
-	const specificRule = useSelector(selectSpecificRule);
-	console.log(values, 'value in innternal form');
-
 	// useEffect(() => {
 	// 	validateForm();
 	// 	return () => {
@@ -41,10 +40,13 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 	// 		dispatch(resetSpecificViral());
 	// 	};
 	// }, []);
+	// useEffect(() => {
+	// 	dispatch(getCountries());
+	// }, []);
 
-	const isPublished = isEdit;
-	const classes = useFormStyles();
-	const internalFormClasses = useStyles();
+	const specificRule = useSelector(selectSpecificRule);
+	//const countries = useSelector(getCountries);
+	//console.log(countries, 'c o u n t r i e s ');
 
 	const [geoBlockToggle, setGeoBlockToggle] = useState(false);
 	const [ageRestrictionToggle, setAgeRestrictionToggle] = useState(false);

@@ -3,3 +3,5 @@ export const selectSpecificRule = (state) =>
 
 export const selectSpecificRuleStatus = (state) =>
 	state.rootReducer.rulesSlice.specificRuleStatus;
+
+export const getCountries = (state) => state.rootReducer.rulesSlice.countries;

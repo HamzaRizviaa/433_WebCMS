@@ -8,7 +8,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { Formik, Form } from 'formik';
 import { useCommonParams } from '../../../hooks';
-import { getRules, selectSpecificRule } from '../../../data/selectors';
+import {
+	getCountries,
+	getRules,
+	selectSpecificRule
+} from '../../../data/selectors';
 import {
 	ruleDataFormatterForForm,
 	ruleDataFormatterForService,
@@ -31,6 +35,7 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 	const dispatch = useDispatch();
 	const specificRule = useSelector(selectSpecificRule);
 	const { rules } = useSelector(getRules);
+	const { countries } = useSelector(getCountries);
 
 	// States
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);

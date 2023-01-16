@@ -1,11 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchRules, getAllRulesApi } from './ruleLibraryActions';
+import { fetchRules, getAllRulesApi, getCountries } from './ruleLibraryActions';
 export * from './ruleLibraryActions';
 
 const initialState = {
 	loading: false,
 	rules: [],
 	rulesList: [],
+	countries: [],
 	error: ''
 };
 
@@ -26,6 +27,21 @@ const rulesSlice = createSlice({
 			state.rules = [];
 			state.error = action.error.message;
 		});
+		//countries
+		builder.addCase(getCountries.pending, (state) => {
+			state.loading = true;
+		});
+		builder.addCase(getCountries.fulfilled, (state, action) => {
+			state.loading = false;
+			state.countries = action.payload;
+			state.error = '';
+		});
+		builder.addCase(getCountries.rejected, (state, action) => {
+			state.loading = false;
+			state.countries = [];
+			state.error = action.error.message;
+		});
+
 		// getAllRulesApi Action Cases
 		builder.addCase(getAllRulesApi.pending, (state) => {
 			state.status = 'pending';
