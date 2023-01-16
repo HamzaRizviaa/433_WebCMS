@@ -53,10 +53,12 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 
 	const geoBlockBtnHandler = (value) => {
 		setGeoBlockToggle(value);
+		setFieldValue('geoblockToggle', value);
 	};
 
 	const ageRestrictionBtnHandler = (value) => {
 		setAgeRestrictionToggle(value);
+		setFieldValue('ageToggle', value);
 	};
 
 	const data = ['Germany', 'Austria'];
@@ -85,7 +87,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 				<CardLayoutWithToggleBtn
 					title={'GeoBlock'}
 					onChange={geoBlockBtnHandler}
-					checked={geoBlockToggle}
+					checked={values.geoblockToggle}
 					toggleBtn={true}
 					name={'geoblock'}
 				>
@@ -94,7 +96,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							label='LOCATION'
 							placeholder={'Please select countries'}
 							name={'geoblocking.countries'}
-							disabled={!geoBlockToggle}
+							disabled={!values.geoblockToggle}
 							options={data}
 							searchable
 							multiple
@@ -105,7 +107,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							label='GEOBLOCK DURATION'
 							name='geoblocking.duration'
 							placeholder='Set a time duration of the geoblock in hours'
-							disabled={!geoBlockToggle}
+							disabled={!values.geoblockToggle}
 							endIcon={<p>Hours</p>}
 						/>
 					</div>
@@ -114,7 +116,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 				<CardLayoutWithToggleBtn
 					title={'Age Restrictions'}
 					onChange={ageRestrictionBtnHandler}
-					checked={ageRestrictionToggle}
+					checked={values.ageToggle}
 					toggleBtn={true}
 					name={'agerestrictions'}
 				>
@@ -125,7 +127,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 									label='MINIMUM AGE'
 									name='age.min'
 									placeholder='Select a minimum age'
-									disabled={!ageRestrictionToggle}
+									disabled={!values.ageToggle}
 									rightLabel={
 										<TextTooltip
 											title='Content item will not be visible to users below this age'
@@ -143,7 +145,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 									label='MAXIMUM AGE'
 									name='age.max'
 									placeholder='Select a maximum age'
-									disabled={!ageRestrictionToggle}
+									disabled={!values.ageToggle}
 									rightLabel={
 										<TextTooltip
 											title='Content item will not be visible to users above this age'

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime } from '../utils';
 import { advancedSettingsValidationSchema } from './advancedSettingsHelpers';
@@ -92,6 +93,8 @@ export const ruleDataFormatterForForm = (rule) => {
 			countries: rule.geoblocking.countries,
 			duration: rule.geoblocking.duration
 		},
+		geoblockToggle: rule.geoblocking.countries.length > 0 || false,
+		ageToggle: !!rule.age.min || !!rule.age.max,
 		...(_id ? { _id } : {})
 	};
 
@@ -136,9 +139,33 @@ export const ruleFormInitialValues = {
 	geoblocking: {
 		countries: [],
 		duration: ''
-	}
+	},
+	ageToggle: false,
+	geoblockToggle: false
 };
 
-export const ruleFormValidationSchema = advancedSettingsValidationSchema.shape({
-	title: Yup.string().required('You need to enter a title')
+export const ruleFormValidationSchema = Yup.object().shape({
+	title: Yup.string().required('You need to enter a title'),
+	age: Yup.object().shape(
+		{
+			min: Yup.string().when('max', {
+				is: (max) => !max,
+				// !max || max.length === 0,
+				then: Yup.string().required('At least one of the Fields is required'),
+				otherwise: Yup.string().notRequired()
+			}),
+			max: Yup.string().when('min', {
+				is: (min) => !min,
+				then: Yup.string().required('At least one of the Fields is requiredd'),
+				otherwise: Yup.string().notRequired()
+			})
+		},
+		['max', 'min']
+	),
+	geoblocking: Yup.object().shape({
+		countries: Yup.array()
+			.min(1, "You can't leave this blank.")
+			.required("You can't leave this blank."),
+		duration: Yup.string()
+	})
 });
