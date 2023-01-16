@@ -6,8 +6,8 @@ import useCommonParams from '../../useCommonParams';
 export default function useGetAllRulesQuery() {
 	const dispatch = useDispatch();
 
-	const { rules, totalRecords, status } = useSelector(
-		(state) => state.rootReducer.ruleLibrary
+	const { rulesList, totalRecords, status } = useSelector(
+		(state) => state.rootReducer.rulesSlice
 	);
 
 	const { queryParams } = useCommonParams();
@@ -17,7 +17,7 @@ export default function useGetAllRulesQuery() {
 	}, [queryParams]);
 
 	return {
-		data: rules,
+		data: rulesList,
 		totalRecords,
 		isLoading: status === 'pending'
 	};

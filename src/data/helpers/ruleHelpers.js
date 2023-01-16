@@ -7,49 +7,49 @@ export const ruleColumns = [
 		dataField: 'title',
 		text: 'TITLE',
 		sort: true,
-		formatter: (content) => getFormatter('markup', { content })
+		formatter: (content) => getFormatter('markup', { content: content || '-' })
 	},
 
 	{
 		dataField: 'rule_type',
 		text: 'RULE TYPE',
 		sort: true,
-		formatter: (content) => getFormatter('markup', { content })
+		formatter: (content) => getFormatter('markup', { content: content || '-' })
 	},
 	{
-		dataField: 'geo_block',
+		dataField: 'geoblocking.countries',
 		text: 'GEO-BLOCK',
 		sort: true,
-		formatter: (content) => getFormatter('markup', { content })
+		formatter: (content) => getFormatter('markup', { content: content || '-' })
 	},
 	{
-		dataField: 'geo_block_time',
+		dataField: 'geoblocking.duration',
 		text: 'GEO-BLOCK TIME',
 		sort: true,
 		formatter: (content) =>
-			getFormatter('wrapper', { content: getDateTime(content) })
+			getFormatter('wrapper', { content: content ? content + ' hours' : '-' })
 	},
 	{
-		dataField: 'age_restriction',
+		dataField: 'age.min',
 		text: 'AGE RESTRICTION',
-		sort: true,
-		formatter: (content) => getFormatter('markup', { content })
+		formatter: (content) =>
+			getFormatter('wrapper', { content: content ? '< ' + content : '-' })
 	},
 	{
 		dataField: 'tier',
 		text: 'TIER',
 		sort: true,
-		formatter: (content) => getFormatter('status', { status: content })
+		formatter: (content) => getFormatter('markup', { content: content || '-' })
 	},
 	{
-		dataField: 'created_at',
+		dataField: 'post_date',
 		text: 'POST DATE | TIME',
 		sort: true,
 		formatter: (content) =>
 			getFormatter('wrapper', { content: getDateTime(content) })
 	},
 	{
-		dataField: 'updated_at',
+		dataField: 'last_edit',
 		text: 'LAST EDIT',
 		sort: true,
 		formatter: (content) =>

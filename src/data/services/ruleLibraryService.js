@@ -1,15 +1,15 @@
 import axiosInstance from '../axiosInstance';
 
-// const sortKeysMapping = {
-// 	rule: 'rule',
-// 	rule_type: 'ruletype',
-// 	geo_block: 'geoblock',
-// 	geo_block_time: 'geoblocktime',
-// 	age_restriction: 'agerestriction',
-// 	tier: 'tier',
-// 	post_date: 'postdate',
-// 	last_edit: 'lastedit'
-// };
+const sortKeysMapping = {
+	rule: 'rule',
+	rule_type: 'ruletype',
+	geo_block: 'geoblock',
+	geo_block_time: 'geoblocktime',
+	age_restriction: 'agerestriction',
+	tier: 'tier',
+	post_date: 'postdate',
+	last_edit: 'lastedit'
+};
 
 class RuleLibraryService {
 	static getRules() {
@@ -22,12 +22,20 @@ class RuleLibraryService {
 	 * @returns Promise of the AxiosResponse Object
 	 */
 	static postRule(data) {
-		console.log(data, 'dataaaaaa');
 		return axiosInstance.post('/rules/create-rule', data, {
 			params: {
 				api_version: 2
 			}
 		});
+	}
+	static getAllRulesServiceCall(queryParams) {
+		const params = {
+			...queryParams,
+			limit: 20,
+			sort_by: sortKeysMapping[queryParams.sort_by] || null
+		};
+
+		return axiosInstance.get('/rules/all-rules', { params });
 	}
 }
 

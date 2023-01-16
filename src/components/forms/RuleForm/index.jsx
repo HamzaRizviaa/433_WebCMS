@@ -55,7 +55,6 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 	 * @param {Object} values - Formik form values.
 	 * @param {Object} formikBag - Formik bag object which has all the utilities provided by formik.
 	 */
-
 	const onSubmitHandler = useCallback(
 		async (values, formikBag) => {
 			console.log(values, 'values in formik');

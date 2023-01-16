@@ -1,14 +1,9 @@
-/**
- * @module features/ruleLibraryActions
- * @description The ruleLibraryActions module contains all the asynchronous action handlers related to rules slice
- */
-
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
-import { RuleService, RuleLibraryService } from '../../services';
+import RuleLibraryService from '../../services/ruleLibraryService';
 
 export const fetchRules = createAsyncThunk('rule/fetchRules', async () => {
-	const result = await RuleService.getRules();
+	const result = await RuleLibraryService.getRules();
 	if (result) {
 		return result.data.data;
 	} else {
@@ -16,14 +11,6 @@ export const fetchRules = createAsyncThunk('rule/fetchRules', async () => {
 	}
 });
 
-/**
- * This action handler is responsible for the fetching of all rules.
- * See {@link RuleService} if you are interested in the getAllRulesssServiceCall function
- * which is used inside this action handler.
- * @type {Function}
- * @param {*} params - Query params on which the records should be filtered out
- * @returns The data object from the API response
- */
 export const getAllRulesApi = createAsyncThunk(
 	'ruleLibrary/getAllRulesApi',
 	async (params = {}) => {
@@ -34,14 +21,6 @@ export const getAllRulesApi = createAsyncThunk(
 	}
 );
 
-/**
- * This action handler is responsible for the fetching of a single rule by id.
- * See {@link RuleService} if you are interested in the getSpecificRule function
- * which is used inside this action handler.
- * @type {Function}
- * @param {string} id - The id of the rule
- * @returns The data object from the API response
- */
 export const getSpecificRule = createAsyncThunk(
 	'editButton/getSpecificRule', // not url , url is in services
 	async (id) => {
@@ -54,13 +33,6 @@ export const getSpecificRule = createAsyncThunk(
 	}
 );
 
-/**
- * This action handler is responsible for the creation and updation of a rule.
- * See {@link RuleService} if you are interested in the createOrEditRuleThunk function
- * which is used inside this action handler.
- * @type {Function}
- * @param {Object} data - The data field contains the properties of a rule
- */
 export const createOrEditRuleThunk = createAsyncThunk(
 	'ruleLibrary/createOrEditRuleThunk',
 	async (data) => {
@@ -83,13 +55,6 @@ export const createOrEditRuleThunk = createAsyncThunk(
 	}
 );
 
-/**
- * This action handler is responsible for the deletion of a rule.
- * See {@link RuleService} if you are interested in the deleteViral function
- * which is used inside this action handler.
- * @type {Function}
- * @param {Object} data - The data field contains the rule_id and is_draft properties
- */
 export const deleteRuleThunk = createAsyncThunk(
 	'ruleLibrary/deleteRuleThunk',
 	async (data) => {

@@ -6,7 +6,6 @@ import newsLibrary from './newsLibrary/newsLibrarySlice';
 import postsLibrary from './postsLibrary/postsLibrarySlice';
 import questionsLibrary from './questionsLibrary/questionsLibrarySlice';
 import viralLibrary from './viralLibrary/viralLibrarySlice';
-import ruleLibrary from './ruleLibrary/ruleLibrarySlice';
 import remoteConfig from './remoteConfigSlice';
 import rulesSlice from './ruleLibrary/ruleLibrarySlice';
 
@@ -18,7 +17,6 @@ const rootReducer = combineReducers({
 	postsLibrary,
 	questionsLibrary,
 	viralLibrary,
-	ruleLibrary,
 	remoteConfig,
 	rulesSlice
 });
