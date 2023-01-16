@@ -8,6 +8,7 @@ import DashboardLayout from '../../components/layouts/DashboardLayout';
 import { ruleColumns } from '../../data/helpers/ruleHelpers';
 import RuleForm from '../../components/forms/RuleForm';
 import useGetAllRulesQuery from '../../hooks/libraries/rules/useGetAllRulesQuery';
+import { getSpecificRule } from '../../data/features/ruleLibrary/ruleLibraryActions';
 
 /**
  * RuleLibrary Component serves as the starting point for the complete flow of the virals library.
@@ -40,7 +41,8 @@ const RuleLibrary = () => {
 	//  * @param {*} row
 	//  */
 	const onRowClick = (_, row) => {
-		//dispatch(getSpecificRule(row.id));
+		console.log('row', row);
+		dispatch(getSpecificRule(row._id));
 		setEdit(true);
 		setShowSlider(true);
 	};

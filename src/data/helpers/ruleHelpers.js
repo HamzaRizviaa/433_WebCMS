@@ -79,19 +79,20 @@ export const ruleColumns = [
 
 export const ruleDataFormatterForForm = (rule) => {
 	console.log(rule, 'rule on helpers');
+	const { _id } = rule;
 	//rule - rule library
 
 	const payload = {
-		id: rule.id,
 		title: rule.title,
 		age: {
-			min: rule.min,
-			max: rule.max
+			min: rule.age.min,
+			max: rule.age.max
 		},
 		geoblocking: {
-			countries: rule.countries,
-			duration: rule.duration
-		}
+			countries: rule.geoblocking.countries,
+			duration: rule.geoblocking.duration
+		},
+		...(_id ? { _id } : {})
 	};
 
 	// if (viral.is_scheduled) payload.schedule_date = viral.schedule_date;
@@ -100,20 +101,19 @@ export const ruleDataFormatterForForm = (rule) => {
 };
 
 export const ruleDataFormatterForService = (rule) => {
-	const { id } = rule;
+	const { _id } = rule;
 
 	const payload = {
-		id: rule.id,
 		title: rule.title,
 		age: {
-			min: rule.min,
-			max: rule.max
+			min: rule.age.min,
+			max: rule.age.max
 		},
 		geoblocking: {
-			countries: rule.countries,
-			duration: rule.duration
+			countries: rule.geoblocking.countries,
+			duration: rule.geoblocking.duration
 		},
-		...(id ? { rule_id: id } : {})
+		...(_id ? { _id } : {})
 	};
 
 	// const ruleData = {
@@ -129,10 +129,14 @@ export const ruleDataFormatterForService = (rule) => {
 
 export const ruleFormInitialValues = {
 	title: '',
-	min: '',
-	max: '',
-	countries: [],
-	duration: ''
+	age: {
+		min: '',
+		max: ''
+	},
+	geoblocking: {
+		countries: [],
+		duration: ''
+	}
 };
 
 export const ruleFormValidationSchema = advancedSettingsValidationSchema.shape({

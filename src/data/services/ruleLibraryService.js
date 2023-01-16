@@ -25,7 +25,7 @@ class RuleLibraryService {
 	 * @returns Promise of the AxiosResponse Object
 	 */
 	static postRule(data) {
-		return axiosInstance.post('/rules/create-rule', data, {
+		return axiosInstance.post('/rules', data, {
 			params: {
 				api_version: 2
 			}

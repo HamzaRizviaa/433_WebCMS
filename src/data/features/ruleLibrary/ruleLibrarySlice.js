@@ -1,5 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchRules, getAllRulesApi, getCountries } from './ruleLibraryActions';
+import {
+	fetchRules,
+	getAllRulesApi,
+	getSpecificRule,
+	getCountries
+} from './ruleLibraryActions';
 export * from './ruleLibraryActions';
 
 const initialState = {
@@ -7,6 +12,7 @@ const initialState = {
 	rules: [],
 	rulesList: [],
 	countries: [],
+	specificRule: null,
 	error: ''
 };
 
@@ -40,6 +46,23 @@ const rulesSlice = createSlice({
 			state.loading = false;
 			state.countries = [];
 			state.error = action.error.message;
+		});
+
+		// getSpecificRule Action Cases
+		builder.addCase(getSpecificRule.pending, (state) => {
+			state.loading = true;
+			state.status = 'pending';
+		});
+
+		builder.addCase(getSpecificRule.fulfilled, (state, action) => {
+			state.loading = false;
+			state.specificRule = action.payload;
+			state.status = 'success';
+		});
+
+		builder.addCase(getSpecificRule.rejected, (state) => {
+			state.loading = false;
+			state.status = 'failed';
 		});
 
 		// getAllRulesApi Action Cases

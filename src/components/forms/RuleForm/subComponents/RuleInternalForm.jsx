@@ -93,7 +93,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 						<FormikSelect
 							label='LOCATION'
 							placeholder={'Please select countries'}
-							name={'countries'}
+							name={'geoblocking.countries'}
 							disabled={!geoBlockToggle}
 							options={data}
 							searchable
@@ -103,7 +103,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 					<div className={classes.fieldContainer}>
 						<FormikField
 							label='GEOBLOCK DURATION'
-							name='duration'
+							name='geoblocking.duration'
 							placeholder='Set a time duration of the geoblock in hours'
 							disabled={!geoBlockToggle}
 							endIcon={<p>Hours</p>}
@@ -123,7 +123,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							<div className={internalFormClasses.fieldContainer}>
 								<FormikField
 									label='MINIMUM AGE'
-									name='min'
+									name='age.min'
 									placeholder='Select a minimum age'
 									disabled={!ageRestrictionToggle}
 									rightLabel={
@@ -141,7 +141,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							<div className={internalFormClasses.fieldContainer}>
 								<FormikField
 									label='MAXIMUM AGE'
-									name='max'
+									name='age.max'
 									placeholder='Select a maximum age'
 									disabled={!ageRestrictionToggle}
 									rightLabel={
