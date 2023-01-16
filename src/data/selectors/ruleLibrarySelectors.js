@@ -1,5 +1,5 @@
 export const selectSpecificRule = (state) =>
-	state.rootReducer.ruleLibrary.specificRule;
+	state.rootReducer.rulesSlice.specificRule;
 
 export const selectSpecificRuleStatus = (state) =>
-	state.rootReducer.ruleLibrary.specificRuleStatus;
+	state.rootReducer.rulesSlice.specificRuleStatus;

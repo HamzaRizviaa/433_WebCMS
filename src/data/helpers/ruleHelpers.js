@@ -6,20 +6,20 @@ export const ruleColumns = [
 		dataField: 'title',
 		text: 'TITLE',
 		sort: true,
-		formatter: (content) => getFormatter('markup', { content })
+		formatter: (content) => getFormatter('markup', { content: content || '-' })
 	},
 
 	{
 		dataField: 'rule_type',
 		text: 'RULE TYPE',
 		sort: true,
-		formatter: (content) => getFormatter('markup', { content })
+		formatter: (content) => getFormatter('markup', { content: content || '-' })
 	},
 	{
 		dataField: 'geoblocking.countries',
 		text: 'GEO-BLOCK',
 		sort: true,
-		formatter: (content) => getFormatter('markup', { content })
+		formatter: (content) => getFormatter('markup', { content: content || '-' })
 	},
 	{
 		dataField: 'geoblocking.duration',
@@ -39,7 +39,7 @@ export const ruleColumns = [
 		dataField: 'tier',
 		text: 'TIER',
 		sort: true,
-		formatter: (content) => getFormatter('markup', { content })
+		formatter: (content) => getFormatter('markup', { content: content || '-' })
 	},
 	{
 		dataField: 'post_date',
