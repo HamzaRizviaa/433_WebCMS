@@ -16,6 +16,7 @@ import FormikSelect from '../../../ui/inputs/formik/FormikSelect';
 //styles
 import { useFormStyles } from '../../forms.style';
 import { useStyles } from '../index.style';
+import { rulesFormInitialValues } from '../../../../data/helpers';
 
 const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 	const dispatch = useDispatch();
@@ -31,6 +32,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 	} = useFormikContext();
 
 	const specificRule = useSelector(selectSpecificRule);
+	console.log(values, 'value in innternal form');
 
 	// useEffect(() => {
 	// 	validateForm();
@@ -48,17 +50,14 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 	const [ageRestrictionToggle, setAgeRestrictionToggle] = useState(false);
 
 	const geoBlockBtnHandler = (value) => {
-		console.log('AAA');
 		setGeoBlockToggle(value);
-		//setFIeld
 	};
 
 	const ageRestrictionBtnHandler = (value) => {
-		console.log('BBB');
 		setAgeRestrictionToggle(value);
 	};
 
-	const data = ['Germany', 'Austraia'];
+	const data = ['Germany', 'Austria'];
 
 	return (
 		<div>
@@ -92,20 +91,12 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 						<FormikSelect
 							label='LOCATION'
 							placeholder={'Please select countries'}
-							name={'locations'}
+							name={'countries'}
 							disabled={!geoBlockToggle}
 							options={data}
 							searchable
 							multiple
 						/>
-						{/* <FormikField
-							label='LOCATION'
-							name='location'
-							placeholder='Please select countries'
-							multiline
-							maxRows={4}
-							disabled={!geoBlockToggle}
-						/> */}
 					</div>
 					<div className={classes.fieldContainer}>
 						<FormikField
@@ -130,7 +121,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							<div className={internalFormClasses.fieldContainer}>
 								<FormikField
 									label='MINIMUM AGE'
-									name='minAge'
+									name='min'
 									placeholder='Select a minimum age'
 									disabled={!ageRestrictionToggle}
 									rightLabel={
@@ -148,7 +139,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							<div className={internalFormClasses.fieldContainer}>
 								<FormikField
 									label='MAXIMUM AGE'
-									name='maxAge'
+									name='max'
 									placeholder='Select a maximum age'
 									disabled={!ageRestrictionToggle}
 									rightLabel={

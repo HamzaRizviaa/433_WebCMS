@@ -5,7 +5,7 @@
 
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
-import { RuleService } from '../../services';
+import { RuleService, RuleLibraryService } from '../../services';
 
 export const fetchRules = createAsyncThunk('rule/fetchRules', async () => {
 	const result = await RuleService.getRules();
@@ -27,7 +27,9 @@ export const fetchRules = createAsyncThunk('rule/fetchRules', async () => {
 export const getAllRulesApi = createAsyncThunk(
 	'ruleLibrary/getAllRulesApi',
 	async (params = {}) => {
-		const { data: rules } = await RuleService.getAllRulesServiceCall(params);
+		const { data: rules } = await RuleLibraryService.getAllRulesServiceCall(
+			params
+		);
 		return rules.data;
 	}
 );
@@ -43,7 +45,7 @@ export const getAllRulesApi = createAsyncThunk(
 export const getSpecificRule = createAsyncThunk(
 	'editButton/getSpecificRule', // not url , url is in services
 	async (id) => {
-		const response = await RuleService.getSpecificRuleApi(id);
+		const response = await RuleLibraryService.getSpecificRuleApi(id);
 		if (response?.data?.data) {
 			return response.data.data;
 		} else {
@@ -62,8 +64,9 @@ export const getSpecificRule = createAsyncThunk(
 export const createOrEditRuleThunk = createAsyncThunk(
 	'ruleLibrary/createOrEditRuleThunk',
 	async (data) => {
+		console.log(data, 'data rule post');
 		try {
-			const response = await RuleService.postRule(data);
+			const response = await RuleLibraryService.postRule(data);
 
 			if (response.data.status_code === 200) {
 				toast.success(
@@ -91,7 +94,7 @@ export const deleteRuleThunk = createAsyncThunk(
 	'ruleLibrary/deleteRuleThunk',
 	async (data) => {
 		try {
-			const response = await RuleService.deleteViral(data);
+			const response = await RuleLibraryService.deleteViral(data);
 
 			if (response.data.status_code === 200) {
 				toast.success('Viral has been deleted!');

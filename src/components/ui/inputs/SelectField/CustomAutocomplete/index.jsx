@@ -38,7 +38,6 @@ const CustomAutocomplete = ({
 	const [innerValue, setInnerValue] = useState('');
 
 	const handleChange = (_, selected, reason) => {
-		console.log(selected);
 		if (selected && onChange) {
 			onChange(selected);
 		}

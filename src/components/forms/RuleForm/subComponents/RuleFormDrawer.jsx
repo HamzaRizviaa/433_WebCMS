@@ -26,6 +26,8 @@ const RuleFormDrawer = ({
 	const { values, isSubmitting } = useFormikContext();
 	const specificRuleStatus = useSelector(selectSpecificRuleStatus);
 
+	console.log(values, 'values in drawer form');
+
 	return (
 		<DrawerLayout
 			open={open}
