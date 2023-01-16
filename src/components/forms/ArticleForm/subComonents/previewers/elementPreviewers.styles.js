@@ -91,12 +91,17 @@ export const useStyles = makeStyles((theme) => ({
 		overflowWrap: 'anywhere',
 		// color: 'white'
 		fontFamily: 'Inter, sans-serif',
-		color: '#CCCCCC'
+		color: '#CCCCCC',
 
-		// '& p': {
-		// 	fontFamily: 'Poppins',
-		// 	color: '#FFFFFF'
-		// }
+		'& .previewerHeadings': {
+			color: 'white !important',
+			fontFamily: 'Poppins !important'
+		},
+
+		'& .previewBodyTexts': {
+			fontFamily: 'Inter, sans-serif !important',
+			color: '#CCCCCC !important'
+		}
 	},
 	imageDraggableData: {
 		maxWidth: '100%',

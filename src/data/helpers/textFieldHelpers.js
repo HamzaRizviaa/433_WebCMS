@@ -2,6 +2,7 @@ export const formatAndStyle = {
 	formats: {
 		h1: {
 			inline: 'span',
+			classes: 'previewerHeadings',
 			styles: {
 				fontWeight: '800',
 				fontSize: '64px',
@@ -13,6 +14,8 @@ export const formatAndStyle = {
 		},
 		h2: {
 			inline: 'span',
+
+			classes: 'previewerHeadings',
 			styles: {
 				fontWeight: '800',
 				fontSize: '40px',
@@ -24,6 +27,8 @@ export const formatAndStyle = {
 		},
 		h3: {
 			inline: 'span',
+
+			classes: 'previewerHeadings',
 			styles: {
 				fontWeight: '800',
 				fontSize: '36px',
@@ -34,6 +39,8 @@ export const formatAndStyle = {
 		},
 		h4: {
 			inline: 'span',
+
+			classes: 'previewerHeadings',
 			styles: {
 				fontWeight: '800',
 				fontSize: '24px',
@@ -44,6 +51,8 @@ export const formatAndStyle = {
 		},
 		subtitle: {
 			inline: 'span',
+
+			classes: 'previewerHeadings',
 			styles: {
 				fontWeight: '600',
 				fontSize: '24px',
@@ -53,6 +62,7 @@ export const formatAndStyle = {
 		},
 		body_regular: {
 			inline: 'span',
+			classes: 'previewBodyTexts',
 			styles: {
 				fontWeight: '400',
 				fontSize: '16px',
@@ -61,6 +71,7 @@ export const formatAndStyle = {
 		},
 		body_bold: {
 			inline: 'span',
+			classes: 'previewBodyTexts',
 			styles: {
 				fontWeight: '700',
 				fontSize: '16px',
@@ -69,6 +80,7 @@ export const formatAndStyle = {
 		},
 		body_small: {
 			inline: 'span',
+			classes: 'previewBodyTexts',
 			styles: {
 				fontWeight: '400',
 				fontSize: '14px',
@@ -77,6 +89,7 @@ export const formatAndStyle = {
 		},
 		body_tiny: {
 			inline: 'span',
+			classes: 'previewBodyTexts',
 			styles: {
 				fontWeight: '500',
 				fontSize: '12px',
@@ -86,6 +99,7 @@ export const formatAndStyle = {
 		},
 		body_boldAndTiny: {
 			inline: 'span',
+			classes: 'previewBodyTexts',
 			styles: {
 				fontWeight: '700',
 				fontSize: '12px',
