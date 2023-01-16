@@ -2,7 +2,7 @@ export const formatAndStyle = {
 	formats: {
 		h1: {
 			inline: 'span',
-			classes: 'previewerHeadings',
+
 			styles: {
 				fontWeight: '800',
 				fontSize: '64px',
@@ -15,7 +15,6 @@ export const formatAndStyle = {
 		h2: {
 			inline: 'span',
 
-			classes: 'previewerHeadings',
 			styles: {
 				fontWeight: '800',
 				fontSize: '40px',
@@ -28,7 +27,6 @@ export const formatAndStyle = {
 		h3: {
 			inline: 'span',
 
-			classes: 'previewerHeadings',
 			styles: {
 				fontWeight: '800',
 				fontSize: '36px',
@@ -40,7 +38,6 @@ export const formatAndStyle = {
 		h4: {
 			inline: 'span',
 
-			classes: 'previewerHeadings',
 			styles: {
 				fontWeight: '800',
 				fontSize: '24px',
@@ -52,7 +49,6 @@ export const formatAndStyle = {
 		subtitle: {
 			inline: 'span',
 
-			classes: 'previewerHeadings',
 			styles: {
 				fontWeight: '600',
 				fontSize: '24px',
