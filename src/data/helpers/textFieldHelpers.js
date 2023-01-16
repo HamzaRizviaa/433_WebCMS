@@ -2,46 +2,67 @@ export const formatAndStyle = {
 	formats: {
 		h1: {
 			inline: 'span',
+			classes: 'previewerHeadings',
 			styles: {
 				fontWeight: '800',
 				fontSize: '64px',
 				letterSpacing: '-2%',
-				marginBottom: '3px'
+				marginBottom: '3px',
+				color: 'white',
+				fontFamily: 'Poppins'
 			}
 		},
 		h2: {
 			inline: 'span',
+
+			classes: 'previewerHeadings',
 			styles: {
 				fontWeight: '800',
 				fontSize: '40px',
-				letterSpacing: '-2%'
+				letterSpacing: '-2%',
+
+				color: 'white',
+				fontFamily: 'Poppins'
 			}
 		},
 		h3: {
 			inline: 'span',
+
+			classes: 'previewerHeadings',
 			styles: {
 				fontWeight: '800',
 				fontSize: '36px',
-				letterSpacing: '-2%'
+				letterSpacing: '-2%',
+				color: 'white',
+				fontFamily: 'Poppins'
 			}
 		},
 		h4: {
 			inline: 'span',
+
+			classes: 'previewerHeadings',
 			styles: {
 				fontWeight: '800',
 				fontSize: '24px',
-				letterSpacing: '-2%'
+				letterSpacing: '-2%',
+				color: 'white',
+				fontFamily: 'Poppins'
 			}
 		},
 		subtitle: {
 			inline: 'span',
+
+			classes: 'previewerHeadings',
 			styles: {
 				fontWeight: '600',
-				fontSize: '24px'
+				fontSize: '24px',
+				color: 'white',
+				fontFamily: 'Poppins'
 			}
 		},
 		body_regular: {
 			inline: 'span',
+			classes: 'previewBodyTexts',
 			styles: {
 				fontWeight: '400',
 				fontSize: '16px',
@@ -50,6 +71,7 @@ export const formatAndStyle = {
 		},
 		body_bold: {
 			inline: 'span',
+			classes: 'previewBodyTexts',
 			styles: {
 				fontWeight: '700',
 				fontSize: '16px',
@@ -58,6 +80,7 @@ export const formatAndStyle = {
 		},
 		body_small: {
 			inline: 'span',
+			classes: 'previewBodyTexts',
 			styles: {
 				fontWeight: '400',
 				fontSize: '14px',
@@ -66,6 +89,7 @@ export const formatAndStyle = {
 		},
 		body_tiny: {
 			inline: 'span',
+			classes: 'previewBodyTexts',
 			styles: {
 				fontWeight: '500',
 				fontSize: '12px',
@@ -75,6 +99,7 @@ export const formatAndStyle = {
 		},
 		body_boldAndTiny: {
 			inline: 'span',
+			classes: 'previewBodyTexts',
 			styles: {
 				fontWeight: '700',
 				fontSize: '12px',
