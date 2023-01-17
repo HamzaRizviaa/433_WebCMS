@@ -72,19 +72,29 @@ const ArticleBuilderForm = ({
 
 	const onSubmitHandler = async (values, formikBag) => {
 		const isDraft = values.save_draft;
+		const isScheduled = values.is_scheduled;
 
 		const { setSubmitting, setFieldValue, setFieldError } = formikBag;
 
 		setSubmitting(true);
 
+		// Title duplicate check cases
+		const isScheduleEnabledAndChanged =
+			isScheduled && specificArticle?.is_scheduled !== isScheduled;
+
+		const isPublishedOrScheduledAndTitleModified =
+			(!isDraft || isScheduled) && specificArticle?.title !== values.title;
+
+		const isDraftChangingToPublishAndScheduleDisable =
+			!isDraft && status === 'draft' && !specificArticle?.is_scheduled;
+
+		const shouldCheckTitleDuplication =
+			isScheduleEnabledAndChanged ||
+			isPublishedOrScheduledAndTitleModified ||
+			isDraftChangingToPublishAndScheduleDisable;
+
 		try {
-			if (
-				(values.is_scheduled &&
-					specificArticle?.is_scheduled !== values.is_scheduled) ||
-				((!isDraft || values.is_scheduled) &&
-					specificArticle?.title !== values.title) ||
-				(!isDraft && status === 'draft' && !specificArticle?.is_scheduled)
-			) {
+			if (shouldCheckTitleDuplication) {
 				const { data } = await ArticleLibraryService.getArticleCheckTitle(
 					values.title
 				);
@@ -127,12 +137,12 @@ const ArticleBuilderForm = ({
 			console.error(e);
 		} finally {
 			setSubmitting(false);
+			setFieldValue('save_draft', true, false);
 			setFieldValue(
 				'is_scheduled',
 				specificArticle?.is_scheduled || false,
 				false
 			);
-			setFieldValue('save_draft', true, false);
 		}
 	};
 
