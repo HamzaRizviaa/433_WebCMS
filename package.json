@@ -50,7 +50,7 @@
 		"yup": "^0.32.11"
 	},
 	"scripts": {
-		"start": "react-scripts start",
+		"start": "react-scripts start --openssl-legacy-provider",
 		"lint": "eslint ./src --ext .jsx,.js --fix",
 		"build": "react-scripts build",
 		"test": "react-scripts test",

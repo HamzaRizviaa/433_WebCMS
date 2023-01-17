@@ -1,11 +1,10 @@
 import axiosInstance from '../axiosInstance';
 
 const sortKeysMapping = {
-	rule: 'rule',
-	rule_type: 'ruletype',
-	geo_block: 'geoblock',
-	geo_block_time: 'geoblocktime',
-	age_restriction: 'agerestriction',
+	title: 'title',
+	rule_type: 'rule_type',
+	'geoblocking.countries': 'countries',
+	'geoblocking.duration': 'duration',
 	tier: 'tier',
 	post_date: 'postdate',
 	last_edit: 'lastedit'
