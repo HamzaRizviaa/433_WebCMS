@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
-import { Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import { useCommonParams } from '../../../hooks';
 import { selectSpecificMedia, getRules } from '../../../data/selectors';
 import {
@@ -66,9 +66,10 @@ const MediaForm = ({
 
 	// const { data } = subCategoryStates;
 
-	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
+	const onSubmitHandler = async (values, formikBag) => {
 		formikBag.setSubmitting(true);
 		const clonedValues = { ...values };
+		const isDraft = values.save_draft;
 
 		// const mainCategoryId = (mainCategories || []).find(
 		// 	(u) => u.name === values.mainCategory
@@ -83,6 +84,7 @@ const MediaForm = ({
 
 		try {
 			if (
+				values.is_scheduled ||
 				(!isDraft && specificMedia?.title !== values.title) ||
 				(!isDraft && status === 'draft')
 			) {
@@ -92,6 +94,11 @@ const MediaForm = ({
 
 				if (data.response) {
 					formikBag.setSubmitting(false);
+					formikBag.setFieldValue(
+						'is_scheduled',
+						specificMedia?.is_scheduled,
+						false
+					);
 					formikBag.setFieldError(
 						'title',
 						'A Media item with this Title has already been published. Please amend the Title.'
@@ -105,16 +112,13 @@ const MediaForm = ({
 			const getUser = getUserDataObject();
 			const mediaData = mediaDataFormatterForServer(
 				clonedValues,
-				isDraft,
 				uploadedImgs,
 				getUser,
 				completedUploadFiles,
 				rules
 			);
 
-			const { type } = await dispatch(
-				createOrEditMediaThunk(mediaData, formikBag, isDraft)
-			);
+			const { type } = await dispatch(createOrEditMediaThunk(mediaData));
 
 			if (type === 'mediaLibrary/createOrEditMediaThunk/fulfilled') {
 				handleClose();
@@ -132,6 +136,11 @@ const MediaForm = ({
 			toast.error(e.message || 'something comes up');
 		} finally {
 			formikBag.setSubmitting(false);
+			formikBag.setFieldValue(
+				'is_scheduled',
+				specificMedia?.is_scheduled,
+				false
+			);
 		}
 	};
 
@@ -163,7 +172,7 @@ const MediaForm = ({
 			onSubmit={onSubmitHandler}
 		>
 			{({ setSubmitting, isSubmitting }) => (
-				<div>
+				<Form>
 					<MediaFormDrawer
 						getSubCategories={getSubCategories}
 						subCategoryStates={subCategoryStates}
@@ -184,7 +193,7 @@ const MediaForm = ({
 						wrapperRef={dialogWrapper}
 						isSubmitting={isSubmitting}
 					/>
-				</div>
+				</Form>
 			)}
 		</Formik>
 	);
