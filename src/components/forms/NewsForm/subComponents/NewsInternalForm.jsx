@@ -1,28 +1,27 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { FieldArray, useFormikContext } from 'formik';
+import { useDispatch, useSelector } from 'react-redux';
 import { isEqual, pick } from 'lodash';
+import dayjs from 'dayjs';
+import { IconButton } from '@material-ui/core';
 
 import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
 import Button from '../../../ui/Button';
 import NewsSlideForm from './NewsSlideForm';
 import AccordianLayout from '../../../layouts/AccordianLayout';
-import { useFormStyles } from '../../forms.style';
+import AdvancedSettingsForm from '../../common/AdvancedSettingsForm';
+import SchedulerPopup from '../../../common/SchedulerPopup';
+import { Calendar, Edit } from '../../../../assets/svg-icons';
+import useSchedulerHandlers from '../../../../hooks/useSchedulerHandlers';
+import { getRules, selectSpecificNews } from '../../../../data/selectors';
+import { resetSpecificNews } from '../../../../data/features/newsLibrary/newsLibrarySlice';
 import {
 	areAllFieldsEmpty,
 	newsFormInitialValues
 } from '../../../../data/helpers';
-import AdvancedSettingsForm from '../../common/AdvancedSettingsForm';
-import { useSelector } from 'react-redux';
-import { getRules, selectSpecificNews } from '../../../../data/selectors';
-import SchedulerPopup from '../../../common/SchedulerPopup';
-import useSchedulerHandlers from '../../../../hooks/useSchedulerHandlers';
-import dayjs from 'dayjs';
-import { IconButton } from '@mui/material';
-import { Calendar, Edit } from '../../../../assets/svg-icons';
-import { useDispatch } from 'react-redux';
-import { resetSpecificNews } from '../../../../data/features/newsLibrary/newsLibrarySlice';
+import { useFormStyles } from '../../forms.style';
 
 const NewsInternalForm = ({
 	isEdit,
@@ -54,16 +53,8 @@ const NewsInternalForm = ({
 	} = useSchedulerHandlers({ onSubmitHandler, closeSchedulerModal });
 
 	// formik hook
-	const {
-		values,
-		dirty,
-		isValid,
-		isSubmitting,
-		// setSubmitting,
-		// setFieldError,
-		resetForm,
-		validateForm
-	} = useFormikContext();
+	const { values, dirty, isValid, isSubmitting, resetForm, validateForm } =
+		useFormikContext();
 
 	useEffect(() => {
 		validateForm();
@@ -73,14 +64,6 @@ const NewsInternalForm = ({
 			dispatch(resetSpecificNews());
 		};
 	}, []);
-
-	// const saveDraftHandler = () => {
-	// 	onSubmitHandler(
-	// 		values,
-	// 		{ setSubmitting, isSubmitting, setFieldError },
-	// 		true
-	// 	);
-	// };
 
 	const isDraftDisabled = useMemo(() => {
 		const isAnyNewsSlideEmpty = values.slides.some((item) =>
