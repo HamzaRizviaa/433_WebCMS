@@ -73,26 +73,25 @@ const ArticleBuilderForm = ({
 	const onSubmitHandler = async (values, formikBag) => {
 		const isDraft = values.save_draft;
 
-		formikBag.setSubmitting(true);
+		const { setSubmitting, setFieldValue, setFieldError } = formikBag;
+
+		setSubmitting(true);
 
 		try {
 			if (
-				values.is_scheduled ||
-				(!isDraft && specificArticle?.title !== values.title) ||
-				(!isDraft && status === 'draft')
+				(values.is_scheduled &&
+					specificArticle?.is_scheduled !== values.is_scheduled) ||
+				((!isDraft || values.is_scheduled) &&
+					specificArticle?.title !== values.title) ||
+				(!isDraft && status === 'draft' && !specificArticle?.is_scheduled)
 			) {
 				const { data } = await ArticleLibraryService.getArticleCheckTitle(
 					values.title
 				);
 
 				if (data.response) {
-					formikBag.setSubmitting(false);
-					formikBag.setFieldValue(
-						'is_scheduled',
-						specificArticle?.is_scheduled,
-						false
-					);
-					formikBag.setFieldError(
+					setSubmitting(false);
+					setFieldError(
 						'title',
 						'An article item with this Title has already been published. Please amend the Title.'
 					);
@@ -127,12 +126,13 @@ const ArticleBuilderForm = ({
 		} catch (e) {
 			console.error(e);
 		} finally {
-			formikBag.setSubmitting(false);
-			formikBag.setFieldValue(
+			setSubmitting(false);
+			setFieldValue(
 				'is_scheduled',
-				specificArticle?.is_scheduled,
+				specificArticle?.is_scheduled || false,
 				false
 			);
+			setFieldValue('save_draft', true, false);
 		}
 	};
 
