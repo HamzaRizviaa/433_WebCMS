@@ -86,7 +86,7 @@ const ArticleTemplatesModal = ({
 					<ArticlePreviewerForm
 						isEdit={isEdit}
 						status={status}
-						selectedOption={selectedOption}
+						selectedOption={'template'}
 						data={specificArticleTemplate}
 					/>
 				)}
