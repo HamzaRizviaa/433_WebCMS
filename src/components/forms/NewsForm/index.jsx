@@ -50,13 +50,15 @@ const NewsForm = ({
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 	const closeDeleteModal = () => setOpenDeleteModal(false);
 
-	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
+	const onSubmitHandler = async (values, formikBag) => {
 		formikBag.setSubmitting(true);
 
 		try {
 			if (
-				(!isDraft && specificNews?.banner_title !== values.banner_title) ||
-				(!isDraft && status === 'draft')
+				values?.is_scheduled ||
+				(!values.save_draft &&
+					specificNews?.banner_title !== values.banner_title) ||
+				(!values.save_draft && status === 'draft')
 			) {
 				const { data } = await NewsLibraryService.duplicateTitleCheck(
 					values.banner_title
@@ -64,6 +66,11 @@ const NewsForm = ({
 
 				if (data.response) {
 					formikBag.setSubmitting(false);
+					formikBag.setFieldValue(
+						'is_scheduled',
+						specificNews?.is_scheduled,
+						false
+					);
 					formikBag.setFieldError(
 						'banner_title',
 						'A News item with this Banner Title has already been published. Please amend the Banner Title.'
@@ -87,21 +94,16 @@ const NewsForm = ({
 
 			const mediaFiles = await Promise.all([...newsImages]);
 
-			const newsData = newsDataFormatterForService(
-				values,
-				mediaFiles,
-				isDraft,
-				rules
-			);
+			const newsData = newsDataFormatterForService(values, mediaFiles, rules);
 
 			const { type } = await dispatch(
-				createOrEditNewsThunk(newsData, formikBag, isDraft)
+				createOrEditNewsThunk(newsData, formikBag, values.save_draft)
 			);
 
 			if (type === 'newsLibrary/createOrEditNewsThunk/fulfilled') {
 				handleClose();
 
-				if (isEdit && !(status === 'draft' && isDraft === false)) {
+				if (isEdit && !(status === 'draft' && values.save_draft === false)) {
 					dispatch(getAllNewsApi(queryParams));
 				} else if (isSearchParamsEmpty) {
 					dispatch(getAllNewsApi());
@@ -113,6 +115,11 @@ const NewsForm = ({
 			console.error(e);
 		} finally {
 			formikBag.setSubmitting(false);
+			formikBag.setFieldValue(
+				'is_scheduled',
+				specificNews?.is_scheduled,
+				false
+			);
 		}
 	};
 
