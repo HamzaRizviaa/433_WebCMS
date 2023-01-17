@@ -29,6 +29,9 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 		dirty,
 		isValid,
 		setFieldValue,
+		resetField,
+		setFieldError,
+		setFieldTouched,
 		validateForm,
 		isSubmitting,
 		resetForm
@@ -51,12 +54,22 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 
 	const geoBlockBtnHandler = (value) => {
 		setGeoBlockToggle(value);
-		setFieldValue('geoblockToggle', value);
+		setFieldValue('toggleObject.geoblockToggle', value);
+		if (value === false) {
+			setFieldValue('geoblocking.countries', []);
+			setFieldValue('geoblocking.duration', '');
+			// setFieldError('geoblocking.countries', '');
+			setFieldTouched('geoblocking.countries', false);
+		}
 	};
 
 	const ageRestrictionBtnHandler = (value) => {
 		setAgeRestrictionToggle(value);
-		setFieldValue('ageToggle', value);
+		setFieldValue('toggleObject.ageToggle', value);
+		if (value === false) {
+			setFieldValue('age.min', '');
+			setFieldValue('age.max', '');
+		}
 	};
 
 	const data = ['Germany', 'Austria'];
@@ -85,7 +98,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 				<CardLayoutWithToggleBtn
 					title={'GeoBlock'}
 					onChange={geoBlockBtnHandler}
-					checked={values.geoblockToggle}
+					checked={values.toggleObject.geoblockToggle}
 					toggleBtn={true}
 					name={'geoblock'}
 				>
@@ -94,7 +107,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							label='LOCATION'
 							placeholder={'Please select countries'}
 							name={'geoblocking.countries'}
-							disabled={!values.geoblockToggle}
+							disabled={!values.toggleObject.geoblockToggle}
 							options={data}
 							searchable
 							multiple
@@ -105,7 +118,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							label='GEOBLOCK DURATION'
 							name='geoblocking.duration'
 							placeholder='Set a time duration of the geoblock in hours'
-							disabled={!values.geoblockToggle}
+							disabled={!values.toggleObject.geoblockToggle}
 							endIcon={<p>Hours</p>}
 						/>
 					</div>
@@ -114,7 +127,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 				<CardLayoutWithToggleBtn
 					title={'Age Restrictions'}
 					onChange={ageRestrictionBtnHandler}
-					checked={values.ageToggle}
+					checked={values.toggleObject.ageToggle}
 					toggleBtn={true}
 					name={'agerestrictions'}
 				>
@@ -125,7 +138,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 									label='MINIMUM AGE'
 									name='age.min'
 									placeholder='Select a minimum age'
-									disabled={!values.ageToggle}
+									disabled={!values.toggleObject.ageToggle}
 									rightLabel={
 										<TextTooltip
 											title='Content item will not be visible to users below this age'
@@ -143,7 +156,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 									label='MAXIMUM AGE'
 									name='age.max'
 									placeholder='Select a maximum age'
-									disabled={!values.ageToggle}
+									disabled={!values.toggleObject.ageToggle}
 									rightLabel={
 										<TextTooltip
 											title='Content item will not be visible to users above this age'

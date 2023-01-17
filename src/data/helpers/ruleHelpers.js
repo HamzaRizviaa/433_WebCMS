@@ -140,32 +140,86 @@ export const ruleFormInitialValues = {
 		countries: [],
 		duration: ''
 	},
-	ageToggle: false,
-	geoblockToggle: false
+	toggleObject: {
+		ageToggle: false,
+		geoblockToggle: false
+	}
 };
 
 export const ruleFormValidationSchema = Yup.object().shape({
 	title: Yup.string().required('You need to enter a title'),
-	age: Yup.object().shape(
-		{
-			min: Yup.string().when('max', {
-				is: (max) => !max,
-				// !max || max.length === 0,
-				then: Yup.string().required('At least one of the Fields is required'),
-				otherwise: Yup.string().notRequired()
+	// age: Yup.object().shape(
+	// 	{
+	// 		min: Yup.string().when('max', {
+	// 			is: (max) => !max,
+	// 			// !max || max.length === 0,
+	// 			then: Yup.string().required('At least one of the Fields is required'),
+	// 			otherwise: Yup.string().notRequired()
+	// 		}),
+	// 		max: Yup.string().when('min', {
+	// 			is: (min) => !min,
+	// 			then: Yup.string().required('At least one of the Fields is requiredd'),
+	// 			otherwise: Yup.string().notRequired()
+	// 		})
+	// 	},
+	// 	['max', 'min']
+	// ),
+	age: Yup.object()
+		.when('toggleObject.ageToggle', {
+			is: true,
+			then: Yup.object().shape(
+				{
+					min: Yup.string().when('max', {
+						is: (max) => !max,
+						// !max || max.length === 0,
+						then: Yup.string().required(
+							'At least one of the Fields is required'
+						),
+						otherwise: Yup.string().notRequired()
+					}),
+					max: Yup.string().when('min', {
+						is: (min) => !min,
+						then: Yup.string().required(
+							'At least one of the Fields is requiredd'
+						),
+						otherwise: Yup.string().notRequired()
+					})
+				},
+				['max', 'min']
+			),
+			otherwise: Yup.object().notRequired()
+		})
+		.default(undefined),
+	toggleObject: Yup.object()
+		.shape({
+			ageToggle: Yup.boolean(),
+			geoblockToggle: Yup.boolean()
+		})
+		.required('At least one toggle is required')
+		.default(undefined)
+		.test(
+			'atleast-one-toggle',
+			'At least one toggle is required',
+			function (value) {
+				return value.ageToggle || value.geoblockToggle;
+			}
+		),
+	geoblocking: Yup.object()
+		.when('toggleObject.geoblockToggle', {
+			is: true,
+			then: Yup.object().shape({
+				countries: Yup.array()
+					.min(1, "You can't leave this blank.")
+					.required("You can't leave this blank."),
+				duration: Yup.string()
 			}),
-			max: Yup.string().when('min', {
-				is: (min) => !min,
-				then: Yup.string().required('At least one of the Fields is requiredd'),
-				otherwise: Yup.string().notRequired()
-			})
-		},
-		['max', 'min']
-	),
-	geoblocking: Yup.object().shape({
-		countries: Yup.array()
-			.min(1, "You can't leave this blank.")
-			.required("You can't leave this blank."),
-		duration: Yup.string()
-	})
+			otherwise: Yup.object().notRequired()
+		})
+		.default(undefined)
+	// geoblocking: Yup.object().shape({
+	// 	countries: Yup.array()
+	// 		.min(1, "You can't leave this blank.")
+	// 		.required("You can't leave this blank."),
+	// 	duration: Yup.string()
+	// })
 });
