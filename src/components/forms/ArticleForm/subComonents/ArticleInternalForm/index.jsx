@@ -39,10 +39,12 @@ const ArticleInternalForm = ({
 
 	return (
 		<Box>
-			<Box mb={3.5} className={classes.mainTitleDescription}>
-				<h2>Builder</h2>
-				<p>Edit, reorder elements here and build your {selectedOption}</p>
-			</Box>
+			{!readOnly && (
+				<Box mb={3.5} className={classes.mainTitleDescription}>
+					<h2>Builder</h2>
+					<p>Edit, reorder elements here and build your {selectedOption}</p>
+				</Box>
+			)}
 			<Box mb={2}>
 				{selectedOption === 'template' && (
 					<ArticleTemplateInfoForm readOnly={readOnly} />

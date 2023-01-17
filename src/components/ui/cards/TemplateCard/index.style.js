@@ -13,14 +13,14 @@ export const useStyles = makeStyles((theme) => ({
 		height: '180px',
 		backgroundColor: '#191919',
 		borderRadius: '16px',
-		padding: '24px',
+		padding: '16px',
 		display: 'flex',
 		flexDirection: 'column',
 		justifyContent: 'space-between',
 		flexBasis: '283px',
 		boxSizing: 'border-box',
-		cursor: 'pointer',
-		margin: '10px'
+		margin: '10px',
+		border: ({ isSelected }) => (isSelected ? '1px solid #FFFF00' : 'none')
 	},
 	newCard: {
 		margin: '10px',
@@ -41,6 +41,9 @@ export const useStyles = makeStyles((theme) => ({
 		flexBasis: '283px',
 		cursor: 'pointer'
 	},
+	topBox: {
+		padding: '8px 8px 0px 8px'
+	},
 	templateSVG: {
 		width: '40px',
 		height: '40px',
@@ -56,6 +59,7 @@ export const useStyles = makeStyles((theme) => ({
 		marginBottom: '8px'
 	},
 	title: {
+		cursor: 'pointer',
 		fontWeight: 800,
 		fontSize: '18px',
 		lineHeight: '24px',
@@ -70,7 +74,8 @@ export const useStyles = makeStyles((theme) => ({
 		fontWeight: 400,
 		fontSize: '12px',
 		lineHeight: '16px',
-		color: '#808080'
+		color: '#808080',
+		padding: '0px 0px 8px 8px'
 	},
 	date: {
 		color: '#CCCCCC',
@@ -89,6 +94,7 @@ export const useStyles = makeStyles((theme) => ({
 		justifyContent: 'space-between'
 	},
 	iconBtn: {
-		marginTop: '-6px'
+		padding: 0,
+		margin: 0
 	}
 }));

@@ -32,6 +32,7 @@ const PreviewerModal = ({
 			transitionDuration={{ enter: 600, exit: 400 }}
 			aria-describedby='alert-dialog-slide-description'
 			classes={{ paper: classes.dialogBox, root: classes.root }}
+			hideBackdrop
 		>
 			<DialogTitle className={classes.dialogTitleWrapper}>
 				<div className={classes.dialogTitle}>

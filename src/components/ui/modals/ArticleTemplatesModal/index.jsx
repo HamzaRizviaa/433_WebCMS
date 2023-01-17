@@ -34,6 +34,7 @@ const ArticleTemplatesModal = ({
 	const specificArticleStatus = useSelector(selectSpecificArticleStatus);
 
 	// STATES
+	const [selectedTemplateId, setSelectedTemplateId] = useState('');
 	const [showPreviewrModal, setShowPreviewrModal] = useState(false);
 
 	useEffect(() => {
@@ -41,8 +42,14 @@ const ArticleTemplatesModal = ({
 	}, []);
 
 	const handleTemplatePreviewClick = useCallback((template) => {
+		setSelectedTemplateId(template.id);
 		setShowPreviewrModal(true);
 		dispatch(getSpecificArticleTemplateThunk(template.id));
+	}, []);
+
+	const onPreviewerCloseHandler = useCallback(() => {
+		setSelectedTemplateId('');
+		setShowPreviewrModal(false);
 	}, []);
 
 	return (
@@ -60,13 +67,14 @@ const ArticleTemplatesModal = ({
 						selectedOption === 'article' ? 'Empty Article' : 'Empty Template'
 					}
 					data={templateListingData}
+					selectedTemplateId={selectedTemplateId}
 					onCardClick={onTemplateCardClick}
 					onPreviewClick={handleTemplatePreviewClick}
 				/>
 			</TemplateModal>
 			<PreviewerModal
 				open={showPreviewrModal}
-				onClose={() => setShowPreviewrModal(false)}
+				onClose={onPreviewerCloseHandler}
 				title={
 					!isEmpty(specificArticleTemplate)
 						? truncate(specificArticleTemplate.template_name, { length: 30 })
