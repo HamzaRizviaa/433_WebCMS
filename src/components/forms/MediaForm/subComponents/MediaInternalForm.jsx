@@ -3,11 +3,10 @@ import React, { useEffect, useState, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { isEqual, pick, omit } from 'lodash';
 import { useFormikContext } from 'formik';
-import dayjs from 'dayjs';
-import { IconButton } from '@material-ui/core';
+import { useSelector } from 'react-redux';
+
 import { useStyles } from '../index.styles';
 import { useStyles as globalUseStyles } from '../../../../styles/global.style';
-import { useFormStyles } from '../../forms.style';
 import {
 	mediaFormInitialValues,
 	mediaUnwantedKeysForDeepEqual
@@ -19,13 +18,11 @@ import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
 import Button from '../../../ui/Button';
 import SelectField from '../../../ui/inputs/SelectField';
 import AdvancedSettingsForm from '../../common/AdvancedSettingsForm';
-import { useSelector } from 'react-redux';
 import { getRules, selectSpecificMedia } from '../../../../data/selectors';
-import { Calendar, Edit } from '../../../../assets/svg-icons';
+import { Calendar } from '../../../../assets/svg-icons';
 import SchedulerPopup from '../../../common/SchedulerPopup';
 import useSchedulerHandlers from '../../../../hooks/useSchedulerHandlers';
-
-// const isTrue = true;
+import ScheduledInfoBox from '../../common/ScheduledInfoBox';
 
 const MediaInternalForm = ({
 	getSubCategories,
@@ -44,9 +41,10 @@ const MediaInternalForm = ({
 	const isPublished = isEdit && status === 'published';
 	const { rules } = useSelector(getRules);
 
-	const [schedularModalState, setSchedulerModalState] = useState(false);
 	const specificMedia = useSelector(selectSpecificMedia);
-	const classesSchedular = useFormStyles();
+
+	const [schedularModalState, setSchedulerModalState] = useState(false);
+
 	const closeSchedulerModal = () => setSchedulerModalState(false);
 	const openSchedulerModal = () => setSchedulerModalState(true);
 
@@ -84,6 +82,7 @@ const MediaInternalForm = ({
 		validateForm,
 		resetForm
 	} = useFormikContext();
+
 	useEffect(() => {
 		validateForm();
 		return () => {
@@ -101,7 +100,6 @@ const MediaInternalForm = ({
 
 	useEffect(() => {
 		if (
-			// !isLoading &&
 			Array.isArray(mainCategories) &&
 			lastMainCatRef.current !== values.mainCategory &&
 			values?.mainCategory
@@ -153,7 +151,6 @@ const MediaInternalForm = ({
 			uploadedFiles: [],
 			mainCategoryName: data.name,
 			subCategoryName: ''
-			// setFieldValue('uploadedFiles', [])
 		});
 	};
 
@@ -179,21 +176,11 @@ const MediaInternalForm = ({
 			/>
 			<div className={globalClasses.contentWrapperNoPreview}>
 				{values.is_scheduled && (
-					<div className={classesSchedular.scheduledTime}>
-						<h2>
-							<span className={classesSchedular.scheduleTimeLabel}>
-								Scheduled Time:
-							</span>
-							{dayjs(values.schedule_date).format('DD-MM-YYYY, HH:mm')}
-						</h2>
-						<IconButton onClick={openSchedulerModal} disabled={!isValid}>
-							<Edit
-								className={`${classesSchedular.editScheduleIcon} ${
-									!isValid ? classesSchedular.disabledIcon : ''
-								}`}
-							/>
-						</IconButton>
-					</div>
+					<ScheduledInfoBox
+						scheduleDate={values.schedule_date}
+						openSchedulerModal={openSchedulerModal}
+						isValid={isValid}
+					/>
 				)}
 				<div>
 					<h5>Select Media Type</h5>

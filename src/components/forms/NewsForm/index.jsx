@@ -51,30 +51,43 @@ const NewsForm = ({
 	const closeDeleteModal = () => setOpenDeleteModal(false);
 
 	const onSubmitHandler = async (values, formikBag) => {
-		formikBag.setSubmitting(true);
+		const isDraft = values.save_draft;
+		const isScheduled = values.is_scheduled;
+
+		const { setSubmitting, setFieldValue, setFieldError } = formikBag;
+		setSubmitting(true);
+
+		// Title duplicate check cases
+		const isScheduleEnabledAndChanged =
+			isScheduled && specificNews?.is_scheduled !== isScheduled;
+
+		const isPublishedOrScheduledAndTitleModified =
+			(!isDraft || isScheduled) &&
+			specificNews?.banner_title !== values.banner_title;
+
+		const isDraftChangingToPublishAndScheduleDisable =
+			!isDraft && status === 'draft' && !specificNews?.is_scheduled;
+
+		const shouldCheckTitleDuplication =
+			isScheduleEnabledAndChanged ||
+			isPublishedOrScheduledAndTitleModified ||
+			isDraftChangingToPublishAndScheduleDisable;
 
 		try {
-			if (
-				values?.is_scheduled ||
-				(!values.save_draft &&
-					specificNews?.banner_title !== values.banner_title) ||
-				(!values.save_draft && status === 'draft')
-			) {
+			if (shouldCheckTitleDuplication) {
 				const { data } = await NewsLibraryService.duplicateTitleCheck(
 					values.banner_title
 				);
 
 				if (data.response) {
-					formikBag.setSubmitting(false);
-					formikBag.setFieldValue(
-						'is_scheduled',
-						specificNews?.is_scheduled,
-						false
-					);
-					formikBag.setFieldError(
+					setSubmitting(false);
+					setFieldError(
 						'banner_title',
 						'A News item with this Banner Title has already been published. Please amend the Banner Title.'
 					);
+
+					const titleField = document.querySelector("[name='banner_title']");
+					if (titleField) titleField.focus();
 					return;
 				}
 			}
@@ -96,14 +109,12 @@ const NewsForm = ({
 
 			const newsData = newsDataFormatterForService(values, mediaFiles, rules);
 
-			const { type } = await dispatch(
-				createOrEditNewsThunk(newsData, formikBag, values.save_draft)
-			);
+			const { type } = await dispatch(createOrEditNewsThunk(newsData));
 
 			if (type === 'newsLibrary/createOrEditNewsThunk/fulfilled') {
 				handleClose();
 
-				if (isEdit && !(status === 'draft' && values.save_draft === false)) {
+				if (isEdit && !(status === 'draft' && isDraft === false)) {
 					dispatch(getAllNewsApi(queryParams));
 				} else if (isSearchParamsEmpty) {
 					dispatch(getAllNewsApi());
@@ -114,12 +125,9 @@ const NewsForm = ({
 		} catch (e) {
 			console.error(e);
 		} finally {
-			formikBag.setSubmitting(false);
-			formikBag.setFieldValue(
-				'is_scheduled',
-				specificNews?.is_scheduled,
-				false
-			);
+			setSubmitting(false);
+			setFieldValue('save_draft', true, false);
+			setFieldValue('is_scheduled', specificNews?.is_scheduled || false, false);
 		}
 	};
 

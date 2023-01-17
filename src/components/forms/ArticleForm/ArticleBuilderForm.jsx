@@ -72,27 +72,36 @@ const ArticleBuilderForm = ({
 
 	const onSubmitHandler = async (values, formikBag) => {
 		const isDraft = values.save_draft;
+		const isScheduled = values.is_scheduled;
 
-		formikBag.setSubmitting(true);
+		const { setSubmitting, setFieldValue, setFieldError } = formikBag;
+
+		setSubmitting(true);
+
+		// Title duplicate check cases
+		const isScheduleEnabledAndChanged =
+			isScheduled && specificArticle?.is_scheduled !== isScheduled;
+
+		const isPublishedOrScheduledAndTitleModified =
+			(!isDraft || isScheduled) && specificArticle?.title !== values.title;
+
+		const isDraftChangingToPublishAndScheduleDisable =
+			!isDraft && status === 'draft' && !specificArticle?.is_scheduled;
+
+		const shouldCheckTitleDuplication =
+			isScheduleEnabledAndChanged ||
+			isPublishedOrScheduledAndTitleModified ||
+			isDraftChangingToPublishAndScheduleDisable;
 
 		try {
-			if (
-				values.is_scheduled ||
-				(!isDraft && specificArticle?.title !== values.title) ||
-				(!isDraft && status === 'draft')
-			) {
+			if (shouldCheckTitleDuplication) {
 				const { data } = await ArticleLibraryService.getArticleCheckTitle(
 					values.title
 				);
 
 				if (data.response) {
-					formikBag.setSubmitting(false);
-					formikBag.setFieldValue(
-						'is_scheduled',
-						specificArticle?.is_scheduled,
-						false
-					);
-					formikBag.setFieldError(
+					setSubmitting(false);
+					setFieldError(
 						'title',
 						'An article item with this Title has already been published. Please amend the Title.'
 					);
@@ -127,10 +136,11 @@ const ArticleBuilderForm = ({
 		} catch (e) {
 			console.error(e);
 		} finally {
-			formikBag.setSubmitting(false);
-			formikBag.setFieldValue(
+			setSubmitting(false);
+			setFieldValue('save_draft', true, false);
+			setFieldValue(
 				'is_scheduled',
-				specificArticle?.is_scheduled,
+				specificArticle?.is_scheduled || false,
 				false
 			);
 		}

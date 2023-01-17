@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { FieldArray, useFormikContext } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEqual, pick } from 'lodash';
-import dayjs from 'dayjs';
-import { IconButton } from '@material-ui/core';
 
 import FormikField from '../../../ui/inputs/formik/FormikField';
 import FormikLabelsSelect from '../../../ui/inputs/formik/FormikLabelsSelect';
@@ -13,7 +11,7 @@ import NewsSlideForm from './NewsSlideForm';
 import AccordianLayout from '../../../layouts/AccordianLayout';
 import AdvancedSettingsForm from '../../common/AdvancedSettingsForm';
 import SchedulerPopup from '../../../common/SchedulerPopup';
-import { Calendar, Edit } from '../../../../assets/svg-icons';
+import { Calendar } from '../../../../assets/svg-icons';
 import useSchedulerHandlers from '../../../../hooks/useSchedulerHandlers';
 import { getRules, selectSpecificNews } from '../../../../data/selectors';
 import { resetSpecificNews } from '../../../../data/features/newsLibrary/newsLibrarySlice';
@@ -22,6 +20,7 @@ import {
 	newsFormInitialValues
 } from '../../../../data/helpers';
 import { useFormStyles } from '../../forms.style';
+import ScheduledInfoBox from '../../common/ScheduledInfoBox';
 
 const NewsInternalForm = ({
 	isEdit,
@@ -93,19 +92,11 @@ const NewsInternalForm = ({
 				isSubmitting={isSubmitting}
 			/>
 			{values.is_scheduled && (
-				<div className={classes.scheduledTime}>
-					<h2>
-						<span className={classes.scheduleTimeLabel}>Scheduled Time:</span>
-						{dayjs(values.schedule_date).format('DD-MM-YYYY, HH:mm')}
-					</h2>
-					<IconButton onClick={openSchedulerModal} disabled={!isValid}>
-						<Edit
-							className={`${classes.editScheduleIcon} ${
-								!isValid ? classes.disabledIcon : ''
-							}`}
-						/>
-					</IconButton>
-				</div>
+				<ScheduledInfoBox
+					scheduleDate={values.schedule_date}
+					openSchedulerModal={openSchedulerModal}
+					isValid={isValid}
+				/>
 			)}
 			<AccordianLayout title='General Information'>
 				<div>
