@@ -8,7 +8,7 @@ import DashboardLayout from '../../components/layouts/DashboardLayout';
 import { ruleColumns } from '../../data/helpers/ruleHelpers';
 import RuleForm from '../../components/forms/RuleForm';
 import useGetAllRulesQuery from '../../hooks/libraries/rules/useGetAllRulesQuery';
-
+import { getSpecificRule } from '../../data/features/ruleLibrary/ruleLibrarySlice';
 /**
  * RuleLibrary Component serves as the starting point for the complete flow of the virals library.
  * It uses the DashboardLayout, Table, and ViralForm components and manages states and behaviours for these components.
@@ -92,7 +92,7 @@ const RuleLibrary = () => {
 	//  * @param {*} row
 	//  */
 	const onRowClick = (_, row) => {
-		//dispatch(getSpecificRule(row.id));
+		dispatch(getSpecificRule(row.id));
 		setEdit(true);
 		setShowSlider(true);
 	};
