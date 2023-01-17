@@ -6,14 +6,20 @@ import { useStyles } from './index.style';
 import { getDateTime } from '../../../../data/utils';
 import { PreviewIcon } from '../../../../assets/svg-icons';
 
-const TemplateCard = ({ index, data, onCardClick, onPreviewClick }) => {
-	const classes = useStyles();
+const TemplateCard = ({
+	index,
+	data,
+	isSelected,
+	onCardClick,
+	onPreviewClick
+}) => {
+	const classes = useStyles({ isSelected });
 
 	if (isEmpty(data)) return null;
 
 	return (
 		<div className={classes.card} key={index}>
-			<div>
+			<div className={classes.topBox}>
 				<div className={classes.author}>{data.user}</div>
 				<div className={classes.title} onClick={() => onCardClick(data)}>
 					{data.template_name}
@@ -44,6 +50,7 @@ export default TemplateCard;
 TemplateCard.propTypes = {
 	index: PropTypes.any,
 	data: PropTypes.object.isRequired,
+	isSelected: PropTypes.bool,
 	onCardClick: PropTypes.func,
 	onPreviewClick: PropTypes.func
 };

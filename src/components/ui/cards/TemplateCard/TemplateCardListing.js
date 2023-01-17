@@ -8,6 +8,7 @@ import TemplatingCardsSkeleton from './TemplatingCardsSkeleton';
 
 const TemplateCardListing = ({
 	data,
+	selectedTemplateId,
 	emptyCardText,
 	onCardClick,
 	onPreviewClick,
@@ -27,18 +28,17 @@ const TemplateCardListing = ({
 					</div>
 				</Grid>
 
-				{data.map((item, index) => {
-					return (
-						<Grid item md={4} key={index}>
-							<TemplateCard
-								data={item}
-								key={index}
-								onCardClick={onCardClick}
-								onPreviewClick={onPreviewClick}
-							/>
-						</Grid>
-					);
-				})}
+				{data.map((item, index) => (
+					<Grid item md={4} key={index}>
+						<TemplateCard
+							data={item}
+							key={index}
+							isSelected={selectedTemplateId === item.id}
+							onCardClick={onCardClick}
+							onPreviewClick={onPreviewClick}
+						/>
+					</Grid>
+				))}
 			</Grid>
 		</div>
 	);
@@ -46,6 +46,7 @@ const TemplateCardListing = ({
 
 TemplateCardListing.propTypes = {
 	data: PropTypes.array.isRequired,
+	selectedTemplateId: PropTypes.string,
 	emptyCardText: PropTypes.string.isRequired,
 	onCardClick: PropTypes.func.isRequired,
 	onPreviewClick: PropTypes.func,

@@ -10,7 +10,7 @@ const ArticleTemplateInfoForm = ({ readOnly }) => (
 			name='template_name'
 			placeholder='Please write your template name here'
 			multiline
-			required
+			required={readOnly ? false : true}
 			maxRows={2}
 			readOnly={readOnly}
 		/>
