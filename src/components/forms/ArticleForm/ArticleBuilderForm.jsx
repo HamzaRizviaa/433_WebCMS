@@ -83,7 +83,7 @@ const ArticleBuilderForm = ({
 					specificArticle?.is_scheduled !== values.is_scheduled) ||
 				((!isDraft || values.is_scheduled) &&
 					specificArticle?.title !== values.title) ||
-				(!isDraft && status === 'draft')
+				(!isDraft && status === 'draft' && !specificArticle?.is_scheduled)
 			) {
 				const { data } = await ArticleLibraryService.getArticleCheckTitle(
 					values.title
