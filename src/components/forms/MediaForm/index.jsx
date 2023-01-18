@@ -6,7 +6,6 @@ import { isEmpty } from 'lodash';
 import { Form, Formik } from 'formik';
 
 import MediaFormDrawer from './subComponents/MediaFormDrawer';
-import DeleteModal from '../../DeleteModal';
 import { selectSpecificMedia, getRules } from '../../../data/selectors';
 import {
 	completeUpload,
@@ -23,10 +22,7 @@ import {
 	getMedia
 } from '../../../data/features/mediaLibrary/mediaLibrarySlice';
 import { MediaLibraryService } from '../../../data/services';
-import {
-	useLazyGetSubCategoriesQuery
-} from '../../../data/features/mediaLibrary/media.query';
-import MediaFormDrawer from './subComponents/MediaFormDrawer';
+import { useLazyGetSubCategoriesQuery } from '../../../data/features/mediaLibrary/media.query';
 import DeleteModal from '../../ui/modals/DeleteModal';
 import { useCommonParams } from '../../../hooks';
 
