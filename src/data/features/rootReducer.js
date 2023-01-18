@@ -7,7 +7,7 @@ import postsLibrary from './postsLibrary/postsLibrarySlice';
 import questionsLibrary from './questionsLibrary/questionsLibrarySlice';
 import viralLibrary from './viralLibrary/viralLibrarySlice';
 import remoteConfig from './remoteConfigSlice';
-import rulesSlice from './rulesConfig';
+import rulesSlice from './ruleLibrary/ruleLibrarySlice';
 
 const rootReducer = combineReducers({
 	topBanner,
