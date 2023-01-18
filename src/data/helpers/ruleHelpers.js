@@ -93,8 +93,10 @@ export const ruleDataFormatterForForm = (rule) => {
 			countries: rule?.geoblocking?.countries,
 			duration: rule?.geoblocking?.duration
 		},
-		geoblockToggle: rule?.geoblocking?.countries?.length > 0 || false,
-		ageToggle: !!rule.age.min || !!rule.age.max,
+		toggleObject: {
+			geoblockToggle: rule?.geoblocking?.countries?.length > 0 || false,
+			ageToggle: !!rule.age.min || !!rule.age.max
+		},
 		...(_id ? { _id } : {})
 	};
 
@@ -109,12 +111,16 @@ export const ruleDataFormatterForService = (rule) => {
 	const payload = {
 		title: rule?.title,
 		age: {
-			min: rule?.age?.min,
-			max: rule?.age?.max
+			...(rule?.age?.min ? { min: rule?.age?.min } : {}),
+			...(rule?.age?.max ? { max: rule?.age?.max } : {})
 		},
 		geoblocking: {
-			countries: rule?.geoblocking?.countries,
-			duration: rule?.geoblocking?.duration
+			...(rule?.geoblocking?.countries?.length
+				? { countries: rule?.geoblocking?.countries }
+				: {}),
+			...(rule?.geoblocking?.duration
+				? { duration: rule?.geoblocking?.duration }
+				: {})
 		},
 		...(_id ? { _id } : {})
 	};
