@@ -17,11 +17,13 @@ import { AuthService } from '../../../data/services';
 
 const checkDomain = (href) => {
 	if (href.includes('localhost')) {
-		return 'dev';
+		return 'qa';
 	} else if (href.includes('dev')) {
 		return 'dev';
 	} else if (href.includes('staging')) {
 		return 'staging';
+	} else if (href.includes('qa')) {
+		return 'qa';
 	} else {
 		return 'prod';
 	}
@@ -35,10 +37,12 @@ const Sidebar = () => {
 
 	const [env, setEnv] = useState('prod');
 
+
 	const onLogoutSuccess = async () => {
 		const response = await AuthService.logout();
 		if (response?.status_code == 200) {
 			AuthService.removeTokenFromLocalStorage();
+
 			navigate('/sign-in');
 		}
 	};
