@@ -108,7 +108,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							placeholder='Set a time duration of the geoblock in hours'
 							disabled={!values.geoblockToggle}
 							endIcon={<p>Hours</p>}
-							allowOnlyNumbers={true}
+							allowOnlyNumbers
 						/>
 					</div>
 				</CardLayoutWithToggleBtn>
@@ -128,7 +128,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 									name='age.min'
 									placeholder='Select a minimum age'
 									disabled={!values.ageToggle}
-									allowOnlyNumbers={true}
+									allowOnlyNumbers
 									rightLabel={
 										<TextTooltip
 											title='Content item will not be visible to users below this age'
@@ -147,7 +147,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 									name='age.max'
 									placeholder='Select a maximum age'
 									disabled={!values.ageToggle}
-									allowOnlyNumbers={true}
+									allowOnlyNumbers
 									rightLabel={
 										<TextTooltip
 											title='Content item will not be visible to users above this age'

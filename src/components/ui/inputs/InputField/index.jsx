@@ -48,7 +48,8 @@ const InputField = ({
 
 	const handleChange = useCallback(
 		(event) => {
-			if (allowOnlyNumbers && !isNumber(event.target.value)) return;
+			const inputValue = event.target.value;
+			if (allowOnlyNumbers && inputValue && !isNumber(inputValue)) return;
 			setInnerValue(event.target.value);
 			debouncedHandleOnChange(event);
 		},
