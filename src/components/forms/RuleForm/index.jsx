@@ -12,8 +12,8 @@ import { getRules, selectSpecificRule } from '../../../data/selectors';
 import {
 	ruleDataFormatterForForm,
 	ruleDataFormatterForService,
-	ruleFormInitialValues
-	//ruleFormValidationSchema
+	ruleFormInitialValues,
+	ruleFormValidationSchema
 } from '../../../data/helpers';
 import {
 	createOrEditRuleThunk,
@@ -41,9 +41,9 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 	const initialValues = useMemo(
 		() =>
 			isEdit && !isEmpty(specificRule)
-				? ruleDataFormatterForForm(specificRule, rules)
-				: ruleFormInitialValues(rules),
-		[isEdit, specificRule, rules]
+				? ruleDataFormatterForForm(specificRule)
+				: ruleFormInitialValues,
+		[isEdit, specificRule]
 	);
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
@@ -57,10 +57,12 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 	 */
 	const onSubmitHandler = useCallback(
 		async (values, formikBag) => {
+			console.log(values, 'values in formik');
 			formikBag.setSubmitting(true);
 
 			try {
-				const ruleData = ruleDataFormatterForService(values, rules);
+				const ruleData = ruleDataFormatterForService(values);
+				console.log(ruleData, 'ruleData');
 
 				const { type } = await dispatch(createOrEditRuleThunk(ruleData));
 
@@ -116,7 +118,7 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 		<Formik
 			enableReinitialize
 			initialValues={initialValues}
-			//validationSchema={ruleFormValidationSchema}
+			validationSchema={ruleFormValidationSchema}
 			validateOnMount
 			onSubmit={onSubmitHandler}
 		>
@@ -127,7 +129,7 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 						handleClose={handleClose}
 						isEdit={isEdit}
 						//status={status}
-						//onSubmitHandler={onSubmitHandler}
+						onSubmitHandler={onSubmitHandler}
 						//toggleDeleteModal={toggleDeleteModal}
 					/>
 					<DeleteModal

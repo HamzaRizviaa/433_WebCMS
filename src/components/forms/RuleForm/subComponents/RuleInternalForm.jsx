@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useFormikContext } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,54 +11,67 @@ import TextTooltip from '../../../ui/TextTooltip';
 import { QuestionMarkInfoIcon } from '../../../../assets/svg-icons';
 import Button from '../../../ui/Button';
 import CardLayoutWithToggleBtn from '../../../layouts/CardLayoutWithToggleBtn';
-import { selectSpecificRule } from '../../../../data/selectors';
+import { selectSpecificRule, getCountries } from '../../../../data/selectors';
 import FormikSelect from '../../../ui/inputs/formik/FormikSelect';
+import { getCountriesApi } from '../../../../data/features/ruleLibrary/ruleLibrarySlice';
 //styles
 import { useFormStyles } from '../../forms.style';
 import { useStyles } from '../index.style';
+import { ruleFormInitialValues } from '../../../../data/helpers';
+import { resetSpecificRule } from '../../../../data/features/ruleLibrary/ruleLibrarySlice';
 
 const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 	const dispatch = useDispatch();
-
+	const isPublished = isEdit;
+	const classes = useFormStyles();
+	const internalFormClasses = useStyles();
 	const {
 		values,
 		dirty,
 		isValid,
 		setFieldValue,
+		errors,
+		resetField,
+		setErrors,
+		setFieldError,
+		setFieldTouched,
 		validateForm,
 		isSubmitting,
 		resetForm
 	} = useFormikContext();
 
+	useEffect(() => {
+		dispatch(getCountriesApi());
+		validateForm();
+		return () => {
+			resetForm(ruleFormInitialValues);
+			dispatch(resetSpecificRule());
+		};
+	}, []);
+
 	const specificRule = useSelector(selectSpecificRule);
-
-	// useEffect(() => {
-	// 	validateForm();
-	// 	return () => {
-	// 		resetForm(viralFormInitialValues);
-	// 		dispatch(resetSpecificViral());
-	// 	};
-	// }, []);
-
-	const isPublished = isEdit;
-	const classes = useFormStyles();
-	const internalFormClasses = useStyles();
+	const countries = useSelector(getCountries);
 
 	const [geoBlockToggle, setGeoBlockToggle] = useState(false);
 	const [ageRestrictionToggle, setAgeRestrictionToggle] = useState(false);
 
 	const geoBlockBtnHandler = (value) => {
-		console.log('AAA');
 		setGeoBlockToggle(value);
-		//setFIeld
+		setFieldValue('toggleObject.geoblockToggle', value);
+		if (value === false) {
+			setFieldValue('geoblocking.countries', [], false);
+			setFieldValue('geoblocking.duration', '', false);
+		}
 	};
 
 	const ageRestrictionBtnHandler = (value) => {
-		console.log('BBB');
 		setAgeRestrictionToggle(value);
+		setFieldValue('toggleObject.ageToggle', value);
+		if (value === false) {
+			setFieldValue('age.min', '', false);
+			setFieldValue('age.max', '', false);
+		}
 	};
-
-	const data = ['Germany', 'Austraia'];
 
 	return (
 		<div>
@@ -84,7 +97,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 				<CardLayoutWithToggleBtn
 					title={'GeoBlock'}
 					onChange={geoBlockBtnHandler}
-					checked={geoBlockToggle}
+					checked={values.toggleObject.geoblockToggle}
 					toggleBtn={true}
 					name={'geoblock'}
 				>
@@ -92,28 +105,22 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 						<FormikSelect
 							label='LOCATION'
 							placeholder={'Please select countries'}
-							name={'locations'}
-							disabled={!geoBlockToggle}
-							options={data}
+							name={'geoblocking.countries'}
+							filterSelectedOptions
+							disabled={!values.toggleObject.geoblockToggle}
+							options={countries}
 							searchable
 							multiple
 						/>
-						{/* <FormikField
-							label='LOCATION'
-							name='location'
-							placeholder='Please select countries'
-							multiline
-							maxRows={4}
-							disabled={!geoBlockToggle}
-						/> */}
 					</div>
 					<div className={classes.fieldContainer}>
 						<FormikField
 							label='GEOBLOCK DURATION'
-							name='duration'
+							name='geoblocking.duration'
 							placeholder='Set a time duration of the geoblock in hours'
-							disabled={!geoBlockToggle}
+							disabled={!values.toggleObject.geoblockToggle}
 							endIcon={<p>Hours</p>}
+							allowOnlyNumbers
 						/>
 					</div>
 				</CardLayoutWithToggleBtn>
@@ -121,7 +128,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 				<CardLayoutWithToggleBtn
 					title={'Age Restrictions'}
 					onChange={ageRestrictionBtnHandler}
-					checked={ageRestrictionToggle}
+					checked={values.toggleObject.ageToggle}
 					toggleBtn={true}
 					name={'agerestrictions'}
 				>
@@ -130,9 +137,10 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							<div className={internalFormClasses.fieldContainer}>
 								<FormikField
 									label='MINIMUM AGE'
-									name='minAge'
+									name='age.min'
 									placeholder='Select a minimum age'
-									disabled={!ageRestrictionToggle}
+									allowOnlyNumbers
+									disabled={!values.toggleObject.ageToggle}
 									rightLabel={
 										<TextTooltip
 											title='Content item will not be visible to users below this age'
@@ -148,9 +156,10 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							<div className={internalFormClasses.fieldContainer}>
 								<FormikField
 									label='MAXIMUM AGE'
-									name='maxAge'
+									name='age.max'
 									placeholder='Select a maximum age'
-									disabled={!ageRestrictionToggle}
+									allowOnlyNumbers
+									disabled={!values.toggleObject.ageToggle}
 									rightLabel={
 										<TextTooltip
 											title='Content item will not be visible to users above this age'
