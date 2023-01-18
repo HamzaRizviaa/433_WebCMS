@@ -11,8 +11,9 @@ import TextTooltip from '../../../ui/TextTooltip';
 import { QuestionMarkInfoIcon } from '../../../../assets/svg-icons';
 import Button from '../../../ui/Button';
 import CardLayoutWithToggleBtn from '../../../layouts/CardLayoutWithToggleBtn';
-import { selectSpecificRule } from '../../../../data/selectors';
+import { selectSpecificRule, getCountries } from '../../../../data/selectors';
 import FormikSelect from '../../../ui/inputs/formik/FormikSelect';
+import { getCountriesApi } from '../../../../data/features/ruleLibrary/ruleLibrarySlice';
 //styles
 import { useFormStyles } from '../../forms.style';
 import { useStyles } from '../index.style';
@@ -40,6 +41,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 	} = useFormikContext();
 
 	useEffect(() => {
+		dispatch(getCountriesApi());
 		validateForm();
 		return () => {
 			resetForm(ruleFormInitialValues);
@@ -48,8 +50,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 	}, []);
 
 	const specificRule = useSelector(selectSpecificRule);
-	//const countries = useSelector(getCountries);
-	//console.log(countries, 'c o u n t r i e s ');
+	const countries = useSelector(getCountries);
 
 	const [geoBlockToggle, setGeoBlockToggle] = useState(false);
 	const [ageRestrictionToggle, setAgeRestrictionToggle] = useState(false);
@@ -71,8 +72,6 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 			setFieldValue('age.max', '', false);
 		}
 	};
-
-	const data = ['Germany', 'Austria'];
 
 	return (
 		<div>
@@ -107,8 +106,9 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							label='LOCATION'
 							placeholder={'Please select countries'}
 							name={'geoblocking.countries'}
+							filterSelectedOptions
 							disabled={!values.toggleObject.geoblockToggle}
-							options={data}
+							options={countries}
 							searchable
 							multiple
 						/>
@@ -120,6 +120,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							placeholder='Set a time duration of the geoblock in hours'
 							disabled={!values.toggleObject.geoblockToggle}
 							endIcon={<p>Hours</p>}
+							allowOnlyNumbers
 						/>
 					</div>
 				</CardLayoutWithToggleBtn>
@@ -138,6 +139,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 									label='MINIMUM AGE'
 									name='age.min'
 									placeholder='Select a minimum age'
+									allowOnlyNumbers
 									disabled={!values.toggleObject.ageToggle}
 									rightLabel={
 										<TextTooltip
@@ -156,6 +158,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 									label='MAXIMUM AGE'
 									name='age.max'
 									placeholder='Select a maximum age'
+									allowOnlyNumbers
 									disabled={!values.toggleObject.ageToggle}
 									rightLabel={
 										<TextTooltip

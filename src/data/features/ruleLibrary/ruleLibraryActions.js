@@ -11,11 +11,10 @@ export const fetchRules = createAsyncThunk('rule/fetchRules', async () => {
 	}
 });
 
-export const getCountries = createAsyncThunk(
+export const getCountriesApi = createAsyncThunk(
 	'ruleLibrary/getCountries',
 	async () => {
 		const result = await RuleLibraryService.getCountries();
-		console.log(result, 'result');
 		if (result) {
 			return result.data.data;
 		} else {

@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-/* eslint-disable react/display-name */
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Table from '../../components/ui/Table';
@@ -19,8 +16,6 @@ const RuleLibrary = () => {
 	const dispatch = useDispatch();
 
 	const { data, isLoading, totalRecords } = useGetAllRulesQuery();
-	// console.log('DATA', data);
-	// console.log('TOTAL REC', totalRecords);
 
 	const [showSlider, setShowSlider] = useState(false);
 	const [isEdit, setEdit] = useState(false);
@@ -51,7 +46,8 @@ const RuleLibrary = () => {
 		<DashboardLayout
 			title='Rule'
 			customText='Create New Rule'
-			//isLoading={isLoading}
+			customSearchText='Search for Title, Country'
+			isLoading={isLoading}
 			onButtonClick={onUploadRuleClick}
 		>
 			<Table

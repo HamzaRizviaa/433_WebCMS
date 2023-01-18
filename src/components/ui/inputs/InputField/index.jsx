@@ -6,6 +6,7 @@ import { InputAdornment, IconButton, TextField } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useStyles } from './index.styled';
 import { useInputsStyles } from '../inputs.style';
+import { isNumber } from '../../../../data/helpers';
 
 const INPUT_DELAY = 200; // Miliseconds
 
@@ -24,6 +25,7 @@ const InputField = ({
 	required = false,
 	minRows = 1,
 	size = 'medium',
+	allowOnlyNumbers = false,
 	...restProps
 }) => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -46,6 +48,8 @@ const InputField = ({
 
 	const handleChange = useCallback(
 		(event) => {
+			const inputValue = event.target.value;
+			if (allowOnlyNumbers && inputValue && !isNumber(inputValue)) return;
 			setInnerValue(event.target.value);
 			debouncedHandleOnChange(event);
 		},
