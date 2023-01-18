@@ -11,6 +11,7 @@ import PrimaryLoader from '../../ui/loaders/PrimaryLoader';
 import { remoteConfig } from '../../../data/integrations/firebase';
 import { setRemoteConfig } from '../../../data/features/remoteConfigSlice';
 import { useLayoutStyles } from './index.style';
+import { AuthService } from '../../../data/services';
 
 const DashboardLayout = ({
 	title,
@@ -37,8 +38,7 @@ const DashboardLayout = ({
 		// checking token expiry
 		if (timeDifferenceMinutes <= 1) {
 			alert('Your session has expired');
-			localStorage.removeItem('user_data');
-			localStorage.removeItem('token_expire_time');
+			AuthService.removeTokenFromLocalStorage();
 			navigate('/sign-in');
 		}
 

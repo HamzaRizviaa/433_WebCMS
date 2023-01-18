@@ -18,12 +18,14 @@ import {
 	selectArticleMainCategories,
 	selectArticleSubCategories
 } from '../../../../../data/selectors';
+import ScheduledInfoBox from '../../../common/ScheduledInfoBox';
 
 const ArticleGeneralInfoForm = ({
 	isEdit,
 	status,
 	selectedOption,
-	readOnly
+	readOnly,
+	openSchedulerModal
 }) => {
 	const classes = useStyles();
 	const formClasses = useFormStyles();
@@ -37,7 +39,7 @@ const ArticleGeneralInfoForm = ({
 	const mainCategories = useSelector(selectArticleMainCategories);
 	const subCategories = useSelector(selectArticleSubCategories);
 
-	const { values, setFieldValue, errors } = useFormikContext();
+	const { values, setFieldValue, errors, isValid } = useFormikContext();
 
 	const handleMainCategoryChange = (val, metaData) => {
 		if (val) dispatch(getArticleSubCategories(val));
@@ -50,6 +52,13 @@ const ArticleGeneralInfoForm = ({
 
 	return (
 		<AccordianLayout title='General Information'>
+			{values.is_scheduled && (
+				<ScheduledInfoBox
+					scheduleDate={values.schedule_date}
+					openSchedulerModal={openSchedulerModal}
+					isValid={isValid}
+				/>
+			)}
 			<div className={classes.categoryContainer}>
 				<div className={classes.mainCategory}>
 					<div className={classes.fieldWrapper}>
@@ -219,7 +228,8 @@ ArticleGeneralInfoForm.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
 	selectedOption: PropTypes.oneOf(['', 'article', 'template']).isRequired,
-	readOnly: PropTypes.bool
+	readOnly: PropTypes.bool,
+	openSchedulerModal: PropTypes.func.isRequired
 };
 
 export default ArticleGeneralInfoForm;

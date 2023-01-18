@@ -37,7 +37,7 @@ class QuestionsLibraryService {
 		return axiosInstance.get('/question/get-question-edit', { params });
 	}
 
-	static postQuestion(data, apiVersion = 2, shouldTransition = false) {
+	static postQuestion(data, apiVersion = 2, shouldTransition) {
 		const params = {
 			api_version: apiVersion,
 			should_transition: shouldTransition

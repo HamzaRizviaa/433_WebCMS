@@ -1,19 +1,19 @@
 import { makeStyles } from '@material-ui/core';
 // import theme from '../assets/theme';
-export const useStyles = makeStyles(() => ({
+export const useStyles = makeStyles((theme) => ({
 	/**
 	 * MATCH ELEMENT STYLINGS
 	 */
 	MatchContainer: {
-		background: ({ team1Color, team2Color }) =>
-			`linear-gradient(to right, ${team1Color} 0%, #000 50%, ${team2Color} 100%)`,
+		// background: ({ team1Color, team2Color }) =>
+		// 	`linear-gradient(to right, ${team1Color} 0%, #000 50%, ${team2Color} 100%)`,
 		padding: 0,
 		borderRadius: 16
 	},
 	matchBox: {
 		display: 'flex',
 		flexDirection: 'row',
-		fontSize: '12px',
+		fontSize: '10px',
 		color: '#FFFFFF',
 		textTransform: 'capitalize',
 		fontWeight: 700,
@@ -21,8 +21,8 @@ export const useStyles = makeStyles(() => ({
 		borderRadius: '16px'
 	},
 	teamLogo: {
-		width: '61px',
-		marginBottom: '13px'
+		width: '48px',
+		marginBottom: '10px'
 	},
 	teamBox: {
 		display: 'flex',
@@ -39,23 +39,25 @@ export const useStyles = makeStyles(() => ({
 		flexDirection: 'column',
 		justifyContent: 'center',
 		alignItems: 'center',
-		padding: '8px',
+		padding: '22px',
 		gap: '4px',
-		width: '90px',
-		height: '85px',
-		background: 'rgba(255, 255, 255, 0.15)',
-		borderRadius: '16px',
-		fontSize: '12px',
+		fontSize: '14px',
 		color: '#FFFFFF',
-		fontWeight: 400
+		textTransform: 'uppercase',
+		fontWeight: 800
 	},
-	dateDivider: { background: '#999', width: '75%' },
+	time: {
+		fontSize: '10px',
+		color: theme.palette.neonYellow,
+		fontWeight: 700
+	},
 	matchDiv: {
-		border: '1px solid transparent',
-		position: 'relative',
-		background: 'linear-gradient(#2D2D2D, #000)',
-		borderRadius: 16,
-		backgroundClip: 'padding-box',
+		border: '1px solid #333333',
+		//position: 'relative',
+		background: '#191919',
+		boxShadow: '0px 1px 1px rgba(255, 255, 255, 0.3)',
+		borderRadius: '12px',
+		//backgroundClip: 'padding-box',
 		'&:after': {
 			position: 'absolute',
 			top: -4,
@@ -66,6 +68,12 @@ export const useStyles = makeStyles(() => ({
 			zIndex: -1,
 			borderRadius: 16
 		}
+	},
+	matchButton: {
+		boxShadow:
+			'0px 2px 10px rgba(0, 0, 0, 0.4), inset 0px 1px 0px rgba(255, 255, 255, 0.3), inset 0px -1px 1px rgba(0, 0, 0, 0.2)',
+		borderRadius: '8px',
+		fontSize: '14px'
 	},
 
 	followMatchBtnWrapper: {
@@ -78,10 +86,22 @@ export const useStyles = makeStyles(() => ({
 	 */
 	textDraggableData: {
 		fontWeight: 400,
-		fontSize: '16px',
-		lineHeight: 1.2,
-		color: 'white',
-		overflowWrap: 'anywhere'
+		fontSize: '14px',
+		lineHeight: '1.2 !important',
+		overflowWrap: 'anywhere',
+		// color: 'white'
+		fontFamily: 'Inter, sans-serif',
+		color: '#CCCCCC',
+
+		'& .previewerHeadings': {
+			color: 'white !important',
+			fontFamily: 'Poppins !important'
+		},
+
+		'& .previewBodyTexts': {
+			fontFamily: 'Inter, sans-serif !important',
+			color: '#CCCCCC !important'
+		}
 	},
 	imageDraggableData: {
 		maxWidth: '100%',
@@ -119,14 +139,15 @@ export const useStyles = makeStyles(() => ({
 		}
 	},
 	questionDraggable: {
-		height: '380px',
-		borderRadius: '8px',
-		marginTop: '16px',
-		marginBottom: '16px',
+		height: '470px',
+		borderRadius: '16px',
 		backgroundRepeat: 'no-repeat',
 		backgroundSize: 'cover',
 		backgroundPosition: 'center',
-		backgroundImage: ({ questionImgUrl }) => `url(${questionImgUrl})`
+		backgroundImage: ({ questionImgUrl }) => `url(${questionImgUrl})`,
+		border: '1px solid rgba(255, 255, 255, 0.1)',
+		boxShadow:
+			'0px 1px 0px rgba(255, 255, 255, 0.2), 0px 2px 10px rgba(0, 0, 0, 0.4)'
 	},
 	questionDiv: {
 		paddingLeft: '24px',
@@ -134,23 +155,38 @@ export const useStyles = makeStyles(() => ({
 		textAlign: 'center'
 	},
 	question: {
-		paddingTop: '200px',
+		paddingTop: '250px',
 		fontStyle: 'normal',
 		fontWeight: 800,
-		fontSize: '20px',
-		lineHeight: '30px',
-		color: '#FFFFFF'
-	},
-	answer: {
-		height: '37px',
-		fontStyle: 'normal',
-		fontWeight: 800,
-		fontSize: '12px',
+		fontSize: '24px',
 		lineHeight: '30px',
 		color: '#FFFFFF',
-		borderRadius: '40px',
-		padding: '6px 16px 0px 16px',
-		backgroundColor: 'rgba(255, 255, 255, 0.25)',
-		marginTop: '8px'
+		textShadow: '0px 1px 1px rgba(0, 0, 0, 0.3)',
+		marginBottom: '16px'
+	},
+	answer: {
+		height: '35px',
+		fontStyle: 'normal',
+		fontWeight: 700,
+		fontSize: '14px',
+		lineHeight: '30px',
+		textTransform: 'uppercase',
+		color: '#FFFFFF',
+		borderRadius: '8px',
+		padding: '4px 16px 0px 16px',
+		backgroundColor: 'rgba(229, 229, 229, 0.5)',
+		marginTop: '8px',
+		boxShadow:
+			'inset 0px 2px 3px rgba(229, 229, 229, 0.3), inset 0px -1px 0px rgba(0, 0, 0, 0.13)',
+		textAlign: 'center'
+	},
+
+	twitterBox: {
+		'& > span > div': {
+			margin: '0px !important'
+		},
+		'& > span > iframe': {
+			margin: '0px !important'
+		}
 	}
 }));

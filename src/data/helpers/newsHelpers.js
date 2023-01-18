@@ -1,11 +1,11 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
-import { isEmpty } from 'lodash';
-import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
-import { getDateTime, makeid } from '../utils';
-import { getUserDataObject } from './index';
+import dayjs from 'dayjs';
 import * as Yup from 'yup';
+
+import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
+import { getDateTime } from '../utils';
+import { getUserDataObject } from './index';
 import { advancedSettingsValidationSchema } from './advancedSettingsHelpers';
+import { CalendarYellowIcon } from '../../assets/svg-icons';
 
 export const newsColumns = [
 	{
@@ -31,10 +31,13 @@ export const newsColumns = [
 	},
 	{
 		dataField: 'post_date',
-		text: 'POST DATE | TIME',
+		text: 'POST, SCHEDULE DATE | TIME',
 		sort: true,
-		formatter: (content) =>
-			getFormatter('wrapper', { content: getDateTime(content) })
+		formatter: (content, row) =>
+			getFormatter('textAndIcon', {
+				content: dayjs(content).format('DD-MM-YYYY | HH:mm'),
+				Icon: row.is_scheduled ? CalendarYellowIcon : null
+			})
 	},
 	{
 		dataField: 'labels',
@@ -78,6 +81,7 @@ export const newsDataFormatterForForm = (news, allRules) => {
 	allRules.forEach((rule) => {
 		rules[rule._id] = false;
 	});
+
 	//This loop should always run after the first one.
 	news.rules.forEach((rule) => {
 		rules[rule._id] = true;
@@ -114,15 +118,13 @@ export const newsDataFormatterForForm = (news, allRules) => {
 
 	formattedNews.slides = slidesData;
 	formattedNews.rules = rules;
+	formattedNews.save_draft = formattedNews.is_draft;
+
 	return formattedNews;
 };
 
-export const newsDataFormatterForService = (
-	news,
-	mediaFiles,
-	isDraft = false,
-	allRules
-) => {
+export const newsDataFormatterForService = (news, mediaFiles, allRules) => {
+	const { schedule_date, ...rest } = news;
 	const filteredRules = allRules.filter((rule) => news.rules[rule._id]);
 	let slides =
 		news.slides.length > 0
@@ -144,26 +146,24 @@ export const newsDataFormatterForService = (
 			: [];
 
 	const newsData = {
+		...rest,
 		translations: undefined,
 		user_data: getUserDataObject(),
-		save_draft: isDraft,
 		banner_title: news.banner_title,
 		banner_description: news.banner_description,
 		show_likes: news.show_likes,
 		show_comments: news.show_comments,
 		labels: news.labels,
 		slides: slides,
-		rules: filteredRules,
-		// Destructing the viral id for edit state
-		...(news.id ? { news_id: news.id } : {})
+		rules: filteredRules
 	};
+
+	if (news.id) newsData.news_id = news.id;
+	if (news.is_scheduled) newsData.schedule_date = schedule_date;
 
 	return newsData;
 };
 
-//
-// News Form Helpers
-//
 export const newsFormInitialValues = (allRules) => {
 	const rules = {};
 
@@ -178,7 +178,9 @@ export const newsFormInitialValues = (allRules) => {
 		show_likes: true,
 		show_comments: true,
 		slides: [],
-		rules
+		rules,
+		save_draft: true,
+		is_scheduled: false
 	};
 };
 

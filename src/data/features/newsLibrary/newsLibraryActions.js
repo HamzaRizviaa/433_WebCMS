@@ -35,12 +35,12 @@ export const createOrEditNewsThunk = createAsyncThunk(
 
 			if (response.data.status_code === 200) {
 				toast.success(
-					data.viral_id ? 'News has been edited!' : 'News has been created!'
+					data.news_id ? 'News has been edited!' : 'News has been created!'
 				);
 			}
 		} catch (e) {
 			toast.error(
-				data.viral_id ? 'Failed to edit news!' : 'Failed to create news!'
+				data.news_id ? 'Failed to edit news!' : 'Failed to create news!'
 			);
 			console.error(e);
 			throw new Error(e);
