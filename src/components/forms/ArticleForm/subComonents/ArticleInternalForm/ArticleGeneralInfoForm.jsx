@@ -19,7 +19,12 @@ import {
 	selectArticleSubCategories
 } from '../../../../../data/selectors';
 
-const ArticleGeneralInfoForm = ({ isEdit, status, selectedOption }) => {
+const ArticleGeneralInfoForm = ({
+	isEdit,
+	status,
+	selectedOption,
+	readOnly
+}) => {
 	const classes = useStyles();
 	const formClasses = useFormStyles();
 	const dispatch = useDispatch();
@@ -58,6 +63,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status, selectedOption }) => {
 							onChange={handleMainCategoryChange}
 							disabled={isPublished}
 							required={selectedOption === 'article'}
+							readOnly={readOnly}
 						/>
 					</div>
 				</div>
@@ -73,6 +79,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status, selectedOption }) => {
 							mapOptions={{ labelKey: 'name', valueKey: 'id' }}
 							onChange={handleSubCategoryChange}
 							required={selectedOption === 'article'}
+							readOnly={readOnly}
 						/>
 					</div>
 				</div>
@@ -81,13 +88,14 @@ const ArticleGeneralInfoForm = ({ isEdit, status, selectedOption }) => {
 				<Fragment>
 					<h6 style={{ marginTop: '10px' }}>Author</h6>
 					<div className={classes.authorContainer}>
-						<ArticleAvatarField name={'author_image'} />
+						<ArticleAvatarField name={'author_image'} disabled={readOnly} />
 						<div className={classes.authorName}>
 							<FormikField
 								name='author_text'
 								value={'433 Team'}
 								multiline
 								maxRows={2}
+								readOnly={readOnly}
 							/>
 						</div>
 					</div>
@@ -118,6 +126,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status, selectedOption }) => {
 							showPreview
 							required={selectedOption === 'article'}
 							onDelete={() => setFieldValue('uploadedFiles', [])}
+							readOnly={readOnly}
 						/>
 					</div>
 					<div className={classes.dropBoxUrlContainer}>
@@ -127,6 +136,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status, selectedOption }) => {
 							placeholder='Please drop the dropbox URL here'
 							multiline
 							maxRows={2}
+							readOnly={readOnly}
 						/>
 					</div>
 					<h6 className={classes.imageText}>
@@ -152,6 +162,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status, selectedOption }) => {
 							showPreview
 							required={selectedOption === 'article'}
 							onDelete={() => setFieldValue('uploadedLandscapeCoverImage', [])}
+							readOnly={readOnly}
 						/>
 					</div>
 					<div className={classes.dropBoxUrlContainer}>
@@ -161,6 +172,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status, selectedOption }) => {
 							placeholder='Please drop the dropbox URL here'
 							multiline
 							maxRows={2}
+							readOnly={readOnly}
 						/>
 					</div>
 					<div className={formClasses.fieldContainer}>
@@ -172,6 +184,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status, selectedOption }) => {
 							required={selectedOption === 'article'}
 							maxLength={43}
 							maxRows={2}
+							readOnly={readOnly}
 						/>
 					</div>
 					<div className={formClasses.fieldContainer}>
@@ -183,6 +196,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status, selectedOption }) => {
 							required={selectedOption === 'article'}
 							maxRows={2}
 							maxLength={84}
+							readOnly={readOnly}
 						/>
 					</div>
 					<div className={formClasses.fieldContainer}>
@@ -192,7 +206,7 @@ const ArticleGeneralInfoForm = ({ isEdit, status, selectedOption }) => {
 							placeholder='Select a minimum of 4 labels'
 							required={selectedOption === 'article'}
 							library='Articles'
-							disabled={isPublished}
+							disabled={isPublished || readOnly}
 						/>
 					</div>
 				</Fragment>
@@ -204,7 +218,8 @@ const ArticleGeneralInfoForm = ({ isEdit, status, selectedOption }) => {
 ArticleGeneralInfoForm.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
-	selectedOption: PropTypes.oneOf(['', 'article', 'template']).isRequired
+	selectedOption: PropTypes.oneOf(['', 'article', 'template']).isRequired,
+	readOnly: PropTypes.bool
 };
 
 export default ArticleGeneralInfoForm;

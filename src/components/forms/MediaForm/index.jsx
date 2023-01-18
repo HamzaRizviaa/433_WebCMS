@@ -22,12 +22,10 @@ import {
 } from '../../../data/features/mediaLibrary/mediaLibrarySlice';
 import { MediaLibraryService } from '../../../data/services';
 import {
-	// useGetMainCategoriesQuery,
 	useLazyGetSubCategoriesQuery
 } from '../../../data/features/mediaLibrary/media.query';
-
 import MediaFormDrawer from './subComponents/MediaFormDrawer';
-import DeleteModal from '../../DeleteModal';
+import DeleteModal from '../../ui/modals/DeleteModal';
 import { toast } from 'react-toastify';
 
 const MediaForm = ({

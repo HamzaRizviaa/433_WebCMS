@@ -12,7 +12,8 @@ const ArticleQuestionForm = ({
 	index,
 	item,
 	isPublished,
-	required = false
+	required = false,
+	readOnly = false
 }) => {
 	const classes = useElementsStyles();
 	const { setFieldValue } = useFormikContext();
@@ -51,6 +52,7 @@ const ArticleQuestionForm = ({
 						onDelete={() => handleDeleteFile()}
 						showPreview
 						hidePreviewIcon
+						readOnly={readOnly}
 					/>
 				</div>
 			</div>
@@ -61,6 +63,7 @@ const ArticleQuestionForm = ({
 					placeholder='Please drop the dropbox URL here'
 					multiline
 					maxRows={2}
+					readOnly={readOnly}
 				/>
 			</div>
 			<div className={classes.fieldContainer}>
@@ -73,6 +76,7 @@ const ArticleQuestionForm = ({
 					maxLength={55}
 					disabled={isPublished && isItemCreated}
 					required={required}
+					readOnly={readOnly}
 				/>
 			</div>
 			<div className={classes.fieldContainer}>
@@ -85,6 +89,7 @@ const ArticleQuestionForm = ({
 					maxLength={29}
 					disabled={isPublished && isItemCreated}
 					required={required}
+					readOnly={readOnly}
 				/>
 			</div>
 			<div className={classes.fieldContainer}>
@@ -97,6 +102,7 @@ const ArticleQuestionForm = ({
 					maxLength={29}
 					disabled={isPublished && isItemCreated}
 					required={required}
+					readOnly={readOnly}
 				/>
 			</div>
 			<div className={classes.fieldContainer}>
@@ -104,7 +110,7 @@ const ArticleQuestionForm = ({
 					name={`elements.${index}.question_data.labels`}
 					label='LABELS'
 					placeholder='Select a minimum of 1 labels'
-					disabled={isPublished && isItemCreated}
+					disabled={(isPublished && isItemCreated) || readOnly}
 					required={required}
 					library='Articles'
 				/>
@@ -118,7 +124,8 @@ ArticleQuestionForm.propTypes = {
 	index: PropTypes.number.isRequired,
 	item: PropTypes.object.isRequired,
 	isPublished: PropTypes.bool.isRequired,
-	required: PropTypes.bool
+	required: PropTypes.bool,
+	readOnly: PropTypes.bool
 };
 
 export default ArticleQuestionForm;

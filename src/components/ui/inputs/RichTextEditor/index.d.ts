@@ -1,10 +1,11 @@
 export interface RichTextEditorProps {
-    name: string,
-	id: number,
-	initialData: string,
-    onBlur: () => void,
-    onChange: () => void,
-    error: string
+	name: string;
+	id: number;
+	initialData: string;
+	onBlur: () => void;
+	onChange: () => void;
+	error: string;
+	disabled?: boolean;
 }
 
 /** The Rich Text Editor is a component to be used for text editing.
@@ -12,4 +13,4 @@ export interface RichTextEditorProps {
  * It contains menu with options of edit, copy, cut, paste, and insert.
  */
 
-export default function RichTextEditor(props: RichTextEditorProps): JSX.Element
+export default function RichTextEditor(props: RichTextEditorProps): JSX.Element;

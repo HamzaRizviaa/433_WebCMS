@@ -9,7 +9,8 @@ const SocialMediaElement = ({
 	item,
 	name,
 	required = false,
-	handleRemoveElement
+	handleRemoveElement,
+	readOnly
 }) => {
 	const classes = useFormStyles();
 
@@ -20,6 +21,7 @@ const SocialMediaElement = ({
 			index={index}
 			item={item}
 			onDeleteIconClick={handleRemoveElement}
+			disableActions={readOnly}
 		>
 			<div className={classes.fieldContainer}>
 				<FormikField
@@ -29,6 +31,7 @@ const SocialMediaElement = ({
 					multiline
 					maxRows={2}
 					required={required}
+					readOnly={readOnly}
 				/>
 			</div>
 		</DraggableCardLayout>
@@ -40,7 +43,8 @@ SocialMediaElement.propTypes = {
 	item: PropTypes.object,
 	name: PropTypes.string,
 	required: PropTypes.bool,
-	handleRemoveElement: PropTypes.func
+	handleRemoveElement: PropTypes.func,
+	readOnly: PropTypes.bool
 };
 
 export default SocialMediaElement;

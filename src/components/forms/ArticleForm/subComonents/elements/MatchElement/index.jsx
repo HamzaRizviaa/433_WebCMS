@@ -15,7 +15,8 @@ const MatchElement = ({
 	data,
 	isPublished,
 	required = false,
-	handleRemoveElement
+	handleRemoveElement,
+	readOnly
 }) => {
 	const classes = useElementsStyles();
 	const [leagues, setLeagues] = useState([]);
@@ -55,7 +56,7 @@ const MatchElement = ({
 	useEffect(() => {
 		data && setLeagues(data);
 
-		if (isEdit && data) {
+		if ((isEdit && data) || (values.template_name && data)) {
 			const teams = data.find(
 				(value) => value.name === item.league_name
 			)?.teams;
@@ -113,6 +114,7 @@ const MatchElement = ({
 			index={index}
 			item={item}
 			onDeleteIconClick={handleRemoveElement}
+			disableActions={readOnly}
 		>
 			<div className={classes.matchFieldContainer}>
 				<FormikSelect
@@ -124,6 +126,7 @@ const MatchElement = ({
 					disabled={isPublished && isItemCreated}
 					onChange={handleLeagueChange}
 					required={required}
+					readOnly={readOnly}
 				/>
 			</div>
 			<div className={classes.matchFieldContainer}>
@@ -136,6 +139,7 @@ const MatchElement = ({
 					disabled={(isPublished && isItemCreated) || isEmpty(item.league_name)}
 					onChange={handleTeamChange}
 					required={required}
+					readOnly={readOnly}
 				/>
 			</div>
 			<div className={classes.matchFieldContainer}>
@@ -148,6 +152,7 @@ const MatchElement = ({
 					disabled={(isPublished && isItemCreated) || isEmpty(item.team_name)}
 					onChange={handleMatchChange}
 					required={required}
+					readOnly={readOnly}
 				/>
 			</div>
 		</DraggableCardLayout>
@@ -162,7 +167,8 @@ MatchElement.propTypes = {
 	item: PropTypes.object,
 	data: PropTypes.array,
 	required: PropTypes.bool,
-	handleRemoveElement: PropTypes.func
+	handleRemoveElement: PropTypes.func,
+	readOnly: PropTypes.bool
 };
 
 export default MatchElement;
