@@ -4,6 +4,7 @@ export interface PrimaryLoaderProps {
 	mainPage?: boolean;
 	secondary?: boolean;
 	opaqueBackground?: boolean;
+	fullHeight?: boolean;
 }
 
 /** The "PrimaryLoader" component is a wrapper that is used to show the loading.

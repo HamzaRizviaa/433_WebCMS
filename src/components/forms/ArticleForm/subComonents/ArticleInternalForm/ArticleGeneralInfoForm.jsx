@@ -24,6 +24,7 @@ const ArticleGeneralInfoForm = ({
 	isEdit,
 	status,
 	selectedOption,
+	readOnly,
 	openSchedulerModal
 }) => {
 	const classes = useStyles();
@@ -71,6 +72,7 @@ const ArticleGeneralInfoForm = ({
 							onChange={handleMainCategoryChange}
 							disabled={isPublished}
 							required={selectedOption === 'article'}
+							readOnly={readOnly}
 						/>
 					</div>
 				</div>
@@ -86,6 +88,7 @@ const ArticleGeneralInfoForm = ({
 							mapOptions={{ labelKey: 'name', valueKey: 'id' }}
 							onChange={handleSubCategoryChange}
 							required={selectedOption === 'article'}
+							readOnly={readOnly}
 						/>
 					</div>
 				</div>
@@ -94,13 +97,14 @@ const ArticleGeneralInfoForm = ({
 				<Fragment>
 					<h6 style={{ marginTop: '10px' }}>Author</h6>
 					<div className={classes.authorContainer}>
-						<ArticleAvatarField name={'author_image'} />
+						<ArticleAvatarField name={'author_image'} disabled={readOnly} />
 						<div className={classes.authorName}>
 							<FormikField
 								name='author_text'
 								value={'433 Team'}
 								multiline
 								maxRows={2}
+								readOnly={readOnly}
 							/>
 						</div>
 					</div>
@@ -131,6 +135,7 @@ const ArticleGeneralInfoForm = ({
 							showPreview
 							required={selectedOption === 'article'}
 							onDelete={() => setFieldValue('uploadedFiles', [])}
+							readOnly={readOnly}
 						/>
 					</div>
 					<div className={classes.dropBoxUrlContainer}>
@@ -140,6 +145,7 @@ const ArticleGeneralInfoForm = ({
 							placeholder='Please drop the dropbox URL here'
 							multiline
 							maxRows={2}
+							readOnly={readOnly}
 						/>
 					</div>
 					<h6 className={classes.imageText}>
@@ -165,6 +171,7 @@ const ArticleGeneralInfoForm = ({
 							showPreview
 							required={selectedOption === 'article'}
 							onDelete={() => setFieldValue('uploadedLandscapeCoverImage', [])}
+							readOnly={readOnly}
 						/>
 					</div>
 					<div className={classes.dropBoxUrlContainer}>
@@ -174,6 +181,7 @@ const ArticleGeneralInfoForm = ({
 							placeholder='Please drop the dropbox URL here'
 							multiline
 							maxRows={2}
+							readOnly={readOnly}
 						/>
 					</div>
 					<div className={formClasses.fieldContainer}>
@@ -185,6 +193,7 @@ const ArticleGeneralInfoForm = ({
 							required={selectedOption === 'article'}
 							maxLength={43}
 							maxRows={2}
+							readOnly={readOnly}
 						/>
 					</div>
 					<div className={formClasses.fieldContainer}>
@@ -196,6 +205,7 @@ const ArticleGeneralInfoForm = ({
 							required={selectedOption === 'article'}
 							maxRows={2}
 							maxLength={84}
+							readOnly={readOnly}
 						/>
 					</div>
 					<div className={formClasses.fieldContainer}>
@@ -205,7 +215,7 @@ const ArticleGeneralInfoForm = ({
 							placeholder='Select a minimum of 4 labels'
 							required={selectedOption === 'article'}
 							library='Articles'
-							disabled={isPublished}
+							disabled={isPublished || readOnly}
 						/>
 					</div>
 				</Fragment>
@@ -218,6 +228,7 @@ ArticleGeneralInfoForm.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
 	selectedOption: PropTypes.oneOf(['', 'article', 'template']).isRequired,
+	readOnly: PropTypes.bool,
 	openSchedulerModal: PropTypes.func.isRequired
 };
 
