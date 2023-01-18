@@ -4,7 +4,7 @@ export * from './newsLibraryActions';
 
 const initialState = {
 	news: [],
-	specificNews: [],
+	specificNews: null,
 	totalRecords: 0,
 	status: '',
 	specificNewsStatus: '',
@@ -22,6 +22,9 @@ const newsLibrarySlice = createSlice({
 		},
 		resetNoResultStatus: (state) => {
 			state.noResultStatus = false;
+		},
+		resetSpecificNews: (state) => {
+			state.specificNews = null;
 		}
 	},
 	extraReducers: (builder) => {
@@ -55,7 +58,7 @@ const newsLibrarySlice = createSlice({
 	}
 });
 
-export const { resetCalendarError, resetNoResultStatus } =
+export const { resetCalendarError, resetNoResultStatus, resetSpecificNews } =
 	newsLibrarySlice.actions;
 
 export default newsLibrarySlice.reducer;

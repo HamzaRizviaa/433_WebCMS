@@ -2,8 +2,10 @@ import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime, getLocalStorageDetails, makeid } from '../utils';
 import { isEmpty } from 'lodash';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import * as Yup from 'yup';
 import { advancedSettingsValidationSchema } from './advancedSettingsHelpers';
+import { CalendarYellowIcon } from '../../assets/svg-icons';
 
 export const mediaColumns = [
 	{
@@ -27,10 +29,13 @@ export const mediaColumns = [
 	},
 	{
 		dataField: 'post_date',
-		text: 'POST DATE | TIME',
+		text: 'POST, SCHEDULE DATE | TIME',
 		sort: true,
-		formatter: (content) =>
-			getFormatter('wrapper', { content: getDateTime(content) })
+		formatter: (content, row) =>
+			getFormatter('textAndIcon', {
+				content: dayjs(content).format('DD-MM-YYYY | HH:mm'),
+				Icon: row.is_scheduled ? CalendarYellowIcon : null
+			})
 	},
 	{
 		dataField: 'labels',
@@ -141,6 +146,11 @@ export const mediaDataFormatterForForm = (media, allRules) => {
 	formattedMedia.landscape_image_dropbox_url =
 		media?.dropbox_url?.landscape_cover_image;
 	formattedMedia.rules = rules;
+	formattedMedia.is_scheduled = media.is_scheduled;
+	formattedMedia.save_draft = media.is_draft;
+
+	if (media.is_scheduled) formattedMedia.schedule_date = media.schedule_date;
+
 	return formattedMedia;
 };
 
@@ -194,7 +204,6 @@ export const fileUploadsArray = (media) => {
 
 export const mediaDataFormatterForServer = (
 	media,
-	isDraft = false,
 	mediaFiles,
 	userData,
 	completedUploadFiles,
@@ -203,13 +212,14 @@ export const mediaDataFormatterForServer = (
 	const filteredRules = allRules.filter((rule) => media.rules[rule._id]);
 	const mediaData = {
 		title: media.title,
+		is_scheduled: media.is_scheduled,
 		translations: undefined,
 		description: media.description,
 		duration: media?.uploadedFiles[0]?.duration
 			? Math.ceil(media?.uploadedFiles[0]?.duration)
 			: 0,
 		type: 'medialibrary',
-		save_draft: isDraft,
+		save_draft: media.save_draft,
 		main_category_id: media.mainCategoryContent || media.main_category_id,
 		sub_category_id: media.subCategoryContent || media.sub_category_id,
 		show_likes: media.show_likes ? true : false,
@@ -282,7 +292,10 @@ export const mediaDataFormatterForServer = (
 		file_name: media?.uploadedFiles[0]?.file_name,
 		video_data: completedUploadFiles[0]?.data?.data?.video_data || null,
 		image_data: null,
-		audio_data: completedUploadFiles[0]?.data?.data?.audio_data || null
+		audio_data: completedUploadFiles[0]?.data?.data?.audio_data || null,
+
+		// Spreading the media schedule flag for edit state
+		...(media.is_scheduled ? { schedule_date: media.schedule_date } : {})
 	};
 	return mediaData;
 };
@@ -373,6 +386,8 @@ export const mediaFormInitialValues = (allRules) => {
 	return {
 		mainCategory: '',
 		subCategory: '',
+		save_draft: true,
+		is_scheduled: false,
 		title: '',
 		media_dropbox_url: '', // uploaded file
 		image_dropbox_url: '', //portrait
