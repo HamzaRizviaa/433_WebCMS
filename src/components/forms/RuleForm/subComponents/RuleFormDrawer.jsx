@@ -31,7 +31,7 @@ const RuleFormDrawer = ({
 			open={open}
 			handleClose={handleClose}
 			title={isEdit ? 'Edit Rule' : 'Create new Rule'}
-			notifID={isEdit && values ? values.id : ''}
+			notifID={isEdit && values ? values._id : ''}
 			isLoading={isSubmitting || specificRuleStatus === 'pending'}
 		>
 			<RuleInternalForm
