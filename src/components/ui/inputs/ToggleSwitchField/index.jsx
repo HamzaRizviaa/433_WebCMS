@@ -41,7 +41,7 @@ const ToggleSwitchField = ({
 				<div className={classes.toggleSwitch}>
 					<input
 						type='checkbox'
-						name={name} //mandatory field
+						name={name}
 						onBlur={onBlur}
 						className={classes.toggleSwitchCheckbox}
 						id={name}

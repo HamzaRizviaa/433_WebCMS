@@ -29,12 +29,6 @@ export const removeDuplicateLabel = (labels) => {
 	return labels;
 };
 
-export const isNumber = (value) => {
-	const numberRegex = /^[0-9]+$/;
-
-	return !!value && numberRegex.test(value);
-};
-
 export const reorder = (list, startIndex, endIndex) => {
 	const result = Array.from(list);
 	const [removed] = result.splice(startIndex, 1);

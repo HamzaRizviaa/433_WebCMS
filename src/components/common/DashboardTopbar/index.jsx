@@ -8,8 +8,6 @@ import { useTopbarStyles } from './index.style';
 
 const DashboardTopbar = ({
 	title,
-	customText,
-	customSearchText,
 	onButtonClick,
 	secondaryButtonText,
 	secondaryButtonClick,
@@ -28,11 +26,9 @@ const DashboardTopbar = ({
 					{!hideLibraryText && ' Library'}
 				</h1>
 				{!hideBtn && (
-					<Button onClick={onButtonClick}>
-						{customText
-							? `${customText?.toUpperCase()}`
-							: `UPLOAD ${title?.toUpperCase()}`}
-					</Button>
+					<Button
+						onClick={onButtonClick}
+					>{`UPLOAD ${title?.toUpperCase()}`}</Button>
 				)}
 				{secondaryButtonText && (
 					<div className={classes.secondaryButtonBox}>
@@ -45,11 +41,7 @@ const DashboardTopbar = ({
 			<div className={classes.rightSection}>
 				{!hideSearchFilter && (
 					<SearchFilter
-						placeholder={
-							customSearchText
-								? `${customSearchText}`
-								: `Search for ${capitalize(title)}, User, Label, ID`
-						}
+						placeholder={`Search for ${capitalize(title)}, User, Label, ID`}
 					/>
 				)}
 				{!hideDateFilter && <DateRangeFilter />}
@@ -60,8 +52,6 @@ const DashboardTopbar = ({
 
 DashboardTopbar.propTypes = {
 	title: PropTypes.string.isRequired,
-	customText: PropTypes.string,
-	customSearchText: PropTypes.string,
 	onButtonClick: PropTypes.func,
 	onTemplateButtonClick: PropTypes.func,
 	secondaryButtonText: PropTypes.string,
