@@ -118,7 +118,7 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 		<Formik
 			enableReinitialize
 			initialValues={initialValues}
-			//validationSchema={ruleFormValidationSchema}
+			validationSchema={ruleFormValidationSchema}
 			validateOnMount
 			onSubmit={onSubmitHandler}
 		>

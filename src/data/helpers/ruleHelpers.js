@@ -1,7 +1,23 @@
+/* eslint-disable no-unused-vars */
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime } from '../utils';
 import { advancedSettingsValidationSchema } from './advancedSettingsHelpers';
 import * as Yup from 'yup';
+
+const ageFormatter = (content) => {
+	if (content.min !== undefined && content.max !== undefined) {
+		return `> ${content.min} & < ${content.max}`;
+	}
+	if (content.min && content.max === undefined) {
+		return `> ${content.min}`;
+	}
+	if (content.max && content.min === undefined) {
+		return `< ${content.max}`;
+	}
+
+	return '-';
+};
+
 export const ruleColumns = [
 	{
 		dataField: 'title',
@@ -30,10 +46,10 @@ export const ruleColumns = [
 			getFormatter('wrapper', { content: content ? content + ' hours' : '-' })
 	},
 	{
-		dataField: 'age.min',
+		dataField: 'age',
 		text: 'AGE RESTRICTION',
 		formatter: (content) =>
-			getFormatter('wrapper', { content: content ? '< ' + content : '-' })
+			getFormatter('wrapper', { content: ageFormatter(content) })
 	},
 	{
 		dataField: 'tier',
@@ -64,19 +80,22 @@ export const ruleColumns = [
 
 export const ruleDataFormatterForForm = (rule) => {
 	console.log(rule, 'rule on helpers');
+	const { _id } = rule;
 	//rule - rule library
 
 	const payload = {
-		id: rule.id,
 		title: rule.title,
 		age: {
-			min: rule.min,
-			max: rule.max
+			min: rule?.age?.min,
+			max: rule?.age?.max
 		},
 		geoblocking: {
-			countries: rule.countries,
-			duration: rule.duration
-		}
+			countries: rule?.geoblocking?.countries,
+			duration: rule?.geoblocking?.duration
+		},
+		geoblockToggle: rule?.geoblocking?.countries?.length > 0 || false,
+		ageToggle: !!rule.age.min || !!rule.age.max,
+		...(_id ? { _id } : {})
 	};
 
 	// if (viral.is_scheduled) payload.schedule_date = viral.schedule_date;
@@ -85,20 +104,19 @@ export const ruleDataFormatterForForm = (rule) => {
 };
 
 export const ruleDataFormatterForService = (rule) => {
-	const { id } = rule;
+	const { _id } = rule;
 
 	const payload = {
-		id: rule.id,
-		title: rule.title,
+		title: rule?.title,
 		age: {
-			min: rule.min,
-			max: rule.max
+			min: rule?.age?.min,
+			max: rule?.age?.max
 		},
 		geoblocking: {
-			countries: rule.countries,
-			duration: rule.duration
+			countries: rule?.geoblocking?.countries,
+			duration: rule?.geoblocking?.duration
 		},
-		...(id ? { rule_id: id } : {})
+		...(_id ? { _id } : {})
 	};
 
 	// const ruleData = {
@@ -114,12 +132,94 @@ export const ruleDataFormatterForService = (rule) => {
 
 export const ruleFormInitialValues = {
 	title: '',
-	min: '',
-	max: '',
-	countries: [],
-	duration: ''
+	age: {
+		min: '',
+		max: ''
+	},
+	geoblocking: {
+		countries: [],
+		duration: ''
+	},
+	toggleObject: {
+		ageToggle: false,
+		geoblockToggle: false
+	}
 };
 
-export const ruleFormValidationSchema = advancedSettingsValidationSchema.shape({
-	title: Yup.string().required('You need to enter a title')
+export const ruleFormValidationSchema = Yup.object().shape({
+	title: Yup.string().required('You need to enter a title'),
+	// age: Yup.object().shape(
+	// 	{
+	// 		min: Yup.string().when('max', {
+	// 			is: (max) => !max,
+	// 			// !max || max.length === 0,
+	// 			then: Yup.string().required('At least one of the Fields is required'),
+	// 			otherwise: Yup.string().notRequired()
+	// 		}),
+	// 		max: Yup.string().when('min', {
+	// 			is: (min) => !min,
+	// 			then: Yup.string().required('At least one of the Fields is requiredd'),
+	// 			otherwise: Yup.string().notRequired()
+	// 		})
+	// 	},
+	// 	['max', 'min']
+	// ),
+	age: Yup.object()
+		.when('toggleObject.ageToggle', {
+			is: true,
+			then: Yup.object().shape(
+				{
+					min: Yup.string().when('max', {
+						is: (max) => !max,
+						// !max || max.length === 0,
+						then: Yup.string().required(
+							'At least one of the Fields is required'
+						),
+						otherwise: Yup.string().notRequired()
+					}),
+					max: Yup.string().when('min', {
+						is: (min) => !min,
+						then: Yup.string().required(
+							'At least one of the Fields is requiredd'
+						),
+						otherwise: Yup.string().notRequired()
+					})
+				},
+				['max', 'min']
+			),
+			otherwise: Yup.object().notRequired()
+		})
+		.default(undefined),
+	toggleObject: Yup.object()
+		.shape({
+			ageToggle: Yup.boolean(),
+			geoblockToggle: Yup.boolean()
+		})
+		.required('At least one toggle is required')
+		.default(undefined)
+		.test(
+			'atleast-one-toggle',
+			'At least one toggle is required',
+			function (value) {
+				return value.ageToggle || value.geoblockToggle;
+			}
+		),
+	geoblocking: Yup.object()
+		.when('toggleObject.geoblockToggle', {
+			is: true,
+			then: Yup.object().shape({
+				countries: Yup.array()
+					.min(1, "You can't leave this blank.")
+					.required("You can't leave this blank."),
+				duration: Yup.string()
+			}),
+			otherwise: Yup.object().notRequired()
+		})
+		.default(undefined)
+	// geoblocking: Yup.object().shape({
+	// 	countries: Yup.array()
+	// 		.min(1, "You can't leave this blank.")
+	// 		.required("You can't leave this blank."),
+	// 	duration: Yup.string()
+	// })
 });

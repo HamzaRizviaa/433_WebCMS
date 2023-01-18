@@ -17,6 +17,8 @@ import { getCountriesApi } from '../../../../data/features/ruleLibrary/ruleLibra
 //styles
 import { useFormStyles } from '../../forms.style';
 import { useStyles } from '../index.style';
+import { ruleFormInitialValues } from '../../../../data/helpers';
+import { resetSpecificRule } from '../../../../data/features/ruleLibrary/ruleLibrarySlice';
 
 const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 	const dispatch = useDispatch();
@@ -28,20 +30,21 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 		dirty,
 		isValid,
 		setFieldValue,
+		resetField,
+		setFieldError,
+		setFieldTouched,
 		validateForm,
 		isSubmitting,
 		resetForm
 	} = useFormikContext();
 
-	// useEffect(() => {
-	// 	validateForm();
-	// 	return () => {
-	// 		resetForm(viralFormInitialValues);
-	// 		dispatch(resetSpecificViral());
-	// 	};
-	// }, []);
 	useEffect(() => {
 		dispatch(getCountriesApi());
+		validateForm();
+		return () => {
+			resetForm(ruleFormInitialValues);
+			dispatch(resetSpecificRule());
+		};
 	}, []);
 
 	const specificRule = useSelector(selectSpecificRule);
@@ -52,10 +55,22 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 
 	const geoBlockBtnHandler = (value) => {
 		setGeoBlockToggle(value);
+		setFieldValue('toggleObject.geoblockToggle', value);
+		if (value === false) {
+			setFieldValue('geoblocking.countries', []);
+			setFieldValue('geoblocking.duration', '');
+			// setFieldError('geoblocking.countries', '');
+			setFieldTouched('geoblocking.countries', false);
+		}
 	};
 
 	const ageRestrictionBtnHandler = (value) => {
 		setAgeRestrictionToggle(value);
+		setFieldValue('toggleObject.ageToggle', value);
+		if (value === false) {
+			setFieldValue('age.min', '');
+			setFieldValue('age.max', '');
+		}
 	};
 
 	return (
@@ -82,7 +97,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 				<CardLayoutWithToggleBtn
 					title={'GeoBlock'}
 					onChange={geoBlockBtnHandler}
-					checked={geoBlockToggle}
+					checked={values.toggleObject.geoblockToggle}
 					toggleBtn={true}
 					name={'geoblock'}
 				>
@@ -90,9 +105,9 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 						<FormikSelect
 							label='LOCATION'
 							placeholder={'Please select countries'}
-							name={'countries'}
-							disabled={!geoBlockToggle}
-							options={countries}
+							name={'geoblocking.countries'}
+							disabled={!values.toggleObject.geoblockToggle}
+							options={data}
 							searchable
 							multiple
 						/>
@@ -100,9 +115,9 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 					<div className={classes.fieldContainer}>
 						<FormikField
 							label='GEOBLOCK DURATION'
-							name='duration'
+							name='geoblocking.duration'
 							placeholder='Set a time duration of the geoblock in hours'
-							disabled={!geoBlockToggle}
+							disabled={!values.toggleObject.geoblockToggle}
 							endIcon={<p>Hours</p>}
 						/>
 					</div>
@@ -111,7 +126,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 				<CardLayoutWithToggleBtn
 					title={'Age Restrictions'}
 					onChange={ageRestrictionBtnHandler}
-					checked={ageRestrictionToggle}
+					checked={values.toggleObject.ageToggle}
 					toggleBtn={true}
 					name={'agerestrictions'}
 				>
@@ -120,9 +135,9 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							<div className={internalFormClasses.fieldContainer}>
 								<FormikField
 									label='MINIMUM AGE'
-									name='min'
+									name='age.min'
 									placeholder='Select a minimum age'
-									disabled={!ageRestrictionToggle}
+									disabled={!values.toggleObject.ageToggle}
 									rightLabel={
 										<TextTooltip
 											title='Content item will not be visible to users below this age'
@@ -138,9 +153,9 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							<div className={internalFormClasses.fieldContainer}>
 								<FormikField
 									label='MAXIMUM AGE'
-									name='max'
+									name='age.max'
 									placeholder='Select a maximum age'
-									disabled={!ageRestrictionToggle}
+									disabled={!values.toggleObject.ageToggle}
 									rightLabel={
 										<TextTooltip
 											title='Content item will not be visible to users above this age'
