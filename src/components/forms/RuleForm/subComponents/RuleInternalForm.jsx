@@ -61,12 +61,6 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 			setFieldValue('geoblocking.countries', [], false);
 			setFieldValue('geoblocking.duration', '', false);
 		}
-		if (!values.toggleObject.ageToggle && !value) {
-			console.log('At least one toggle is required');
-			// setFieldError('toggleObject', 'Toggle required');
-			// console.log('isValidValuesinsside', errors);
-			// setFieldTouched('geoblocking.countries', false);
-		}
 	};
 
 	const ageRestrictionBtnHandler = (value) => {
@@ -77,7 +71,6 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 			setFieldValue('age.max', '', false);
 		}
 	};
-	console.log('errors', errors);
 
 	const data = ['Germany', 'Austria'];
 
