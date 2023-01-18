@@ -14,6 +14,11 @@ class RuleLibraryService {
 	static getRules() {
 		return axiosInstance.get('/rules');
 	}
+
+	/**
+	 * This function is responsible for the fetching all countries for rule library
+	 * @returns Promise of the AxiosResponse Object
+	 */
 	static getCountries() {
 		return axiosInstance.get('/rules/countries');
 	}

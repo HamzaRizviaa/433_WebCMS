@@ -3,7 +3,7 @@ import {
 	fetchRules,
 	getAllRulesApi,
 	getSpecificRule,
-	getCountries
+	getCountriesApi
 } from './ruleLibraryActions';
 export * from './ruleLibraryActions';
 
@@ -38,16 +38,16 @@ const rulesSlice = createSlice({
 			state.rules = [];
 			state.error = action.error.message;
 		});
-		//countries
-		builder.addCase(getCountries.pending, (state) => {
+		//get all countries ActionCases
+		builder.addCase(getCountriesApi.pending, (state) => {
 			state.loading = true;
 		});
-		builder.addCase(getCountries.fulfilled, (state, action) => {
+		builder.addCase(getCountriesApi.fulfilled, (state, action) => {
 			state.loading = false;
 			state.countries = action.payload;
 			state.error = '';
 		});
-		builder.addCase(getCountries.rejected, (state, action) => {
+		builder.addCase(getCountriesApi.rejected, (state, action) => {
 			state.loading = false;
 			state.countries = [];
 			state.error = action.error.message;
