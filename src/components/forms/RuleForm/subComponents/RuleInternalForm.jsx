@@ -29,7 +29,9 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 		dirty,
 		isValid,
 		setFieldValue,
+		errors,
 		resetField,
+		setErrors,
 		setFieldError,
 		setFieldTouched,
 		validateForm,
@@ -56,10 +58,14 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 		setGeoBlockToggle(value);
 		setFieldValue('toggleObject.geoblockToggle', value);
 		if (value === false) {
-			setFieldValue('geoblocking.countries', []);
-			setFieldValue('geoblocking.duration', '');
-			// setFieldError('geoblocking.countries', '');
-			setFieldTouched('geoblocking.countries', false);
+			setFieldValue('geoblocking.countries', [], false);
+			setFieldValue('geoblocking.duration', '', false);
+		}
+		if (!values.toggleObject.ageToggle && !value) {
+			console.log('At least one toggle is required');
+			// setFieldError('toggleObject', 'Toggle required');
+			// console.log('isValidValuesinsside', errors);
+			// setFieldTouched('geoblocking.countries', false);
 		}
 	};
 
@@ -67,10 +73,11 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 		setAgeRestrictionToggle(value);
 		setFieldValue('toggleObject.ageToggle', value);
 		if (value === false) {
-			setFieldValue('age.min', '');
-			setFieldValue('age.max', '');
+			setFieldValue('age.min', '', false);
+			setFieldValue('age.max', '', false);
 		}
 	};
+	console.log('errors', errors);
 
 	const data = ['Germany', 'Austria'];
 

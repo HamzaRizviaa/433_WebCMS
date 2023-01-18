@@ -169,20 +169,23 @@ export const ruleFormValidationSchema = Yup.object().shape({
 			is: true,
 			then: Yup.object().shape(
 				{
-					min: Yup.string().when('max', {
+					min: Yup.number().when('max', {
 						is: (max) => !max,
-						// !max || max.length === 0,
-						then: Yup.string().required(
+						then: Yup.number().required(
 							'At least one of the Fields is required'
 						),
-						otherwise: Yup.string().notRequired()
+						otherwise: Yup.number()
+							.notRequired()
+							.lessThan(Yup.ref('max'), 'Must be less than max age')
 					}),
-					max: Yup.string().when('min', {
+					max: Yup.number().when('min', {
 						is: (min) => !min,
-						then: Yup.string().required(
+						then: Yup.number().required(
 							'At least one of the Fields is requiredd'
 						),
-						otherwise: Yup.string().notRequired()
+						otherwise: Yup.number()
+							.notRequired()
+							.moreThan(Yup.ref('min'), 'Must be greater than min age')
 					})
 				},
 				['max', 'min']
