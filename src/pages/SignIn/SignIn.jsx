@@ -12,7 +12,7 @@ import { setRemoteConfig } from '../../data/features/remoteConfigSlice';
 import { getLocalStorageDetails } from '../../data/utils';
 import { AuthService } from '../../data/services';
 import classes from './_signIn.module.scss';
-import { fetchRules } from '../../data/features/rulesConfig';
+import { fetchRules } from '../../data/features/ruleLibrary/ruleLibraryActions';
 
 const SignIn = () => {
 	const dispatch = useDispatch();
