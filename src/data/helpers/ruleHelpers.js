@@ -106,22 +106,32 @@ export const ruleDataFormatterForForm = (rule) => {
 };
 
 export const ruleDataFormatterForService = (rule) => {
-	const { _id } = rule;
+	const { _id, toggleObject } = rule;
+
+	console.log('ruleService', rule);
 
 	const payload = {
 		title: rule?.title,
-		age: {
-			...(rule?.age?.min ? { min: rule?.age?.min } : {}),
-			...(rule?.age?.max ? { max: rule?.age?.max } : {})
-		},
-		geoblocking: {
-			...(rule?.geoblocking?.countries?.length
-				? { countries: rule?.geoblocking?.countries }
-				: {}),
-			...(rule?.geoblocking?.duration
-				? { duration: rule?.geoblocking?.duration }
-				: {})
-		},
+		...(toggleObject?.ageToggle
+			? {
+					age: {
+						...(rule?.age?.min ? { min: rule?.age?.min } : {}),
+						...(rule?.age?.max ? { max: rule?.age?.max } : {})
+					}
+			  }
+			: {}),
+		...(toggleObject?.geoblockToggle
+			? {
+					geoblocking: {
+						...(rule?.geoblocking?.countries?.length
+							? { countries: rule?.geoblocking?.countries }
+							: {}),
+						...(rule?.geoblocking?.duration
+							? { duration: rule?.geoblocking?.duration }
+							: {})
+					}
+			  }
+			: {}),
 		...(_id ? { _id } : {})
 	};
 
