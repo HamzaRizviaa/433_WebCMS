@@ -185,24 +185,36 @@ export const ruleFormValidationSchema = Yup.object().shape({
 			is: true,
 			then: Yup.object().shape(
 				{
-					min: Yup.number().when('max', {
-						is: (max) => !max,
-						then: Yup.number().required(
-							'At least one of the Fields is required'
+					min: Yup.number()
+						.when('max', {
+							is: (max) => !max,
+							then: Yup.number().required(
+								'At least one of the Fields is required'
+							),
+							otherwise: Yup.number()
+								.notRequired()
+								.lessThan(Yup.ref('max'), 'Must be less than max age')
+						})
+						.test(
+							'Is-positive?',
+							'The number must be greater than 0!',
+							(value) => (!value ? true : value > 0)
 						),
-						otherwise: Yup.number()
-							.notRequired()
-							.lessThan(Yup.ref('max'), 'Must be less than max age')
-					}),
-					max: Yup.number().when('min', {
-						is: (min) => !min,
-						then: Yup.number().required(
-							'At least one of the Fields is requiredd'
-						),
-						otherwise: Yup.number()
-							.notRequired()
-							.moreThan(Yup.ref('min'), 'Must be greater than min age')
-					})
+					max: Yup.number()
+						.when('min', {
+							is: (min) => !min,
+							then: Yup.number().required(
+								'At least one of the Fields is requiredd'
+							),
+							otherwise: Yup.number()
+								.notRequired()
+								.moreThan(Yup.ref('min'), 'Must be greater than min age')
+						})
+						.test(
+							'Is-positive?',
+							'The number must be greater than 0!',
+							(value) => (!value ? true : value > 0)
+						)
 				},
 				['max', 'min']
 			),
