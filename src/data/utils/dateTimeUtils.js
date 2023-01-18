@@ -118,6 +118,13 @@ export const getLocalStorageDetails = () => {
 	return localStorageData;
 };
 
+export const generateTimeStamp = (date, hours, mins) => {
+	const selectedDate = dayjs(date || new Date()).format('YYYY-MM-DD');
+	const selectedTime = `${hours}:${mins.length === 1 ? '0' : ''}${mins}`;
+	const selectedDateTimeString = `${selectedDate}T${selectedTime}`;
+	const selectedDateTime = new Date(selectedDateTimeString);
+	return selectedDateTime;
+};
 // Check if given time is from past
 /**
  *
@@ -126,17 +133,24 @@ export const getLocalStorageDetails = () => {
  * @param {number} mins
  * @returns {boolean}
  */
-export const isPastTime = (date, hours, mins) => {
-	const currentDate = new Date();
+export const isPastTime = (startStamp, endStamp) => {
+	const { date, hours, mins } = startStamp;
+	const selectedDateTime = generateTimeStamp(date, hours, mins);
 
-	const selectedDate = dayjs(date).format('YYYY-MM-DD');
-	const selectedTime = `${hours}:${mins.length === 1 ? '0' : ''}${mins}`;
-	const selectedDateTimeString = `${selectedDate}T${selectedTime}`;
-	const selectedDateTime = new Date(selectedDateTimeString);
+	const currentDate = new Date();
 
 	const timeDifference = selectedDateTime - currentDate;
 
-	if (timeDifference <= 900000) return true; // 900000 is in milliseconds which is equal to 15 minutes
+	if (timeDifference <= 900000) return 1; // 900000 is in milliseconds which is equal to 15 minutes
+
+	// if select ranges & endStamp available
+	if (endStamp) {
+		const { date, hours, mins } = endStamp;
+		const selectedEndDateTime = generateTimeStamp(date, hours, mins);
+		const difference = selectedEndDateTime - selectedDateTime;
+		// start and end date time difference should be more than 30 minutes
+		if (difference <= 900000 * 2) return 2;
+	}
 	return false;
 };
 

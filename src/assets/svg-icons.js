@@ -1,4 +1,5 @@
 export { ReactComponent as Logo } from './logo.svg';
+export { ReactComponent as Logo2 } from './Logo2.svg';
 export { ReactComponent as Media } from './media.svg';
 export { ReactComponent as Quiz } from './Quiz.svg';
 export { ReactComponent as Banner } from './Star.svg';
@@ -29,3 +30,4 @@ export { ReactComponent as CheckBoxIcon } from './Checkbox.svg';
 export { ReactComponent as ArrowDown } from './Down.svg';
 export { ReactComponent as RuleLibrary } from './RuleLibrary.svg';
 export { ReactComponent as QuestionMarkInfoIcon } from './QuestionMarkInfoIcon.svg';
+export { ReactComponent as DeniedError } from './AccesDenied.svg';

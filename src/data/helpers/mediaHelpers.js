@@ -408,7 +408,9 @@ export const mediaFormValidationSchema = advancedSettingsValidationSchema.shape(
 			})
 			.required('You need to enter atleast 4 labels')
 			.label('Labels'),
-		uploadedFiles: Yup.array().min(1).required(),
+		uploadedFiles: Yup.array()
+			.min(1, 'You need to upload a file to post media')
+			.required(),
 		uploadedCoverImage: Yup.array().min(1).required(),
 		uploadedLandscapeCoverImage: Yup.array().min(1).required()
 	}

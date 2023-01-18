@@ -37,7 +37,7 @@ const QuizSummary = ({ openPreviewer, isClosed }) => {
 						name='general_info.positive_results'
 						label='POSITIVE RESULTS'
 						placeholder='Please write your positive results message here'
-						maxLength={24}
+						maxLength={26}
 						required
 						multiline
 						maxRows={2}
@@ -70,7 +70,7 @@ const QuizSummary = ({ openPreviewer, isClosed }) => {
 						name='general_info.negative_results'
 						label='NEGATIVE RESULTS'
 						placeholder='Please write your negative results message here'
-						maxLength={24}
+						maxLength={26}
 						required
 						multiline
 						maxRows={2}

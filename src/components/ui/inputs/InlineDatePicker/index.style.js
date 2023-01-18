@@ -97,7 +97,7 @@ export const useInlineDatePickerStyles = makeStyles((theme) => ({
 				},
 
 				'& .react-datepicker__day--in-range': {
-					background: '#ffff003d',
+					background: '#ffff003d !important',
 					color: 'rgb(255, 255, 0, 0.7) !important',
 					borderRadius: '0px',
 					marginLeft: '0px',
@@ -143,15 +143,28 @@ export const useInlineDatePickerStyles = makeStyles((theme) => ({
 						}
 					},
 
-				'& .react-datepicker__day--range-start, & .react-datepicker__day--range-end':
-					{
-						backgroundColor: '#ffff00 !important',
-						color: '#000000 !important',
-						borderRadius: '6px',
+				'& .react-datepicker__day--range-start': {
+					backgroundColor: '#ffff00 !important',
+					color: '#000000 !important',
+					borderRadius: '6px',
+					padding: '6.5px 4px',
+					marginLeft: '16px',
+					marginRight: '16px'
+				},
+
+				'& .react-datepicker__day--range-end': {
+					backgroundColor: '#ffff00 !important',
+					color: '#000000 !important',
+					borderRadius: '6px',
+					padding: '6.5px 4px',
+					marginLeft: '14px',
+					marginRight: '14px',
+
+					'&:not(.react-datepicker__day--range-start)': {
 						marginLeft: '16px',
-						marginRight: '16px',
-						padding: '6.5px 4px'
+						marginRight: '16px'
 					}
+				}
 			}
 		},
 
