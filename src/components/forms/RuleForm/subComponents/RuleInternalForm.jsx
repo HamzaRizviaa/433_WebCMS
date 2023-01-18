@@ -104,6 +104,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 					<div className={classes.fieldContainer}>
 						<FormikSelect
 							label='LOCATION'
+							required
 							placeholder={'Please select countries'}
 							name={'geoblocking.countries'}
 							filterSelectedOptions

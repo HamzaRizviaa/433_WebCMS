@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useState } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { useGoogleLogout } from 'react-google-login';
 import TextTooltip from '../../ui/TextTooltip';
+import { useSelector } from 'react-redux';
 import { useStyles } from './index.styles';
 import {
 	Logo,
@@ -15,6 +16,7 @@ import {
 	RuleLibrary
 } from '../../../assets/svg-icons';
 import { UserService } from '../../../data/services';
+import { rulesLibraryFeatureFlag } from '../../../data/selectors';
 
 const checkDomain = (href) => {
 	if (href.includes('localhost')) {
@@ -62,6 +64,8 @@ const Sidebar = () => {
 	}, []);
 
 	const classes = useStyles({ env });
+	const rulesLibraryFeature = useSelector(rulesLibraryFeatureFlag);
+	const isRulesLibraryEnabled = rulesLibraryFeature?._value === 'true';
 
 	return (
 		<span className={classes.sidebarWrapper}>
@@ -138,19 +142,20 @@ const Sidebar = () => {
 						<Viral className={classes.icon} />
 					</TextTooltip>
 				</NavLink>
-
-				<NavLink
-					to='/rule-library'
-					className={({ isActive }) =>
-						isActive ? classes.activeRoute : classes.iconWrapper
-					}
-				>
-					<TextTooltip title='Rule' placement='right'>
-						<span className={classes.newsIcon}>
-							<RuleLibrary className={classes.icon} />
-						</span>
-					</TextTooltip>
-				</NavLink>
+				{isRulesLibraryEnabled && (
+					<NavLink
+						to='/rule-library'
+						className={({ isActive }) =>
+							isActive ? classes.activeRoute : classes.iconWrapper
+						}
+					>
+						<TextTooltip title='Rule' placement='right'>
+							<span className={classes.newsIcon}>
+								<RuleLibrary className={classes.icon} />
+							</span>
+						</TextTooltip>
+					</NavLink>
+				)}
 			</div>
 
 			<div onClick={signOut} className={classes.logoutContainer}>

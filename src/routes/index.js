@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // Libraries
 import MediaLibrary from '../pages/MediaLibrary/MediaLibrary';
@@ -14,6 +14,7 @@ import { fetchRules } from '../data/features/ruleLibrary/ruleLibraryActions';
 import SignIn from '../pages/SignIn/SignIn';
 import RequireAuth from './RequireAuth.js';
 import { getLocalStorageDetails } from '../data/utils';
+import { rulesLibraryFeatureFlag } from '../data/selectors';
 
 // import GamesLibrary from '../pages/GamesLibrary/GamesLibrary';
 // import PostLibrary from '../pages/PostLibrary/PostLibrary';
@@ -25,6 +26,8 @@ import { getLocalStorageDetails } from '../data/utils';
 const AppRoutes = () => {
 	const dispatch = useDispatch();
 	const localStorageData = getLocalStorageDetails();
+	const rulesLibraryFeature = useSelector(rulesLibraryFeatureFlag);
+	const isRulesLibraryEnabled = rulesLibraryFeature?._value === 'true';
 
 	useEffect(() => {
 		if (localStorageData) {
@@ -66,11 +69,14 @@ const AppRoutes = () => {
 				path='/viral-library'
 				element={<RequireAuth component={<ViralLibrary />} />}
 			/>
-			<Route
-				exact
-				path='/rule-library'
-				element={<RequireAuth component={<RuleLibrary />} />}
-			/>
+			{isRulesLibraryEnabled && (
+				<Route
+					exact
+					path='/rule-library'
+					element={<RequireAuth component={<RuleLibrary />} />}
+				/>
+			)}
+
 			{/* <Route
 				exact
 				path='/games-library'
