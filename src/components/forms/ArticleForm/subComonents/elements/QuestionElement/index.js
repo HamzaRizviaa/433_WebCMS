@@ -18,7 +18,8 @@ const QuestionElement = ({
 	index,
 	item,
 	required = false,
-	handleRemoveElement
+	handleRemoveElement,
+	readOnly
 }) => {
 	const { setFieldValue, setFieldTouched } = useFormikContext();
 
@@ -84,13 +85,14 @@ const QuestionElement = ({
 			index={index}
 			item={item}
 			onDeleteIconClick={handleRemoveElement}
+			disableActions={readOnly}
 		>
 			<TabPanes
 				type='questions'
 				headings={tabPanesHeadings}
 				defaultValue={item.question_data.question_type === 'poll' ? 0 : 1}
 				onClick={tabPanesOnClickHanlder}
-				hideTabsHead={isPublished && isItemCreated}
+				hideTabsHead={(isPublished && isItemCreated) || readOnly}
 			>
 				<TabPanes.TabPanel value={0}>
 					<ArticleQuestionForm
@@ -99,6 +101,7 @@ const QuestionElement = ({
 						item={item}
 						isPublished={isPublished}
 						required={required}
+						readOnly={readOnly}
 					/>
 				</TabPanes.TabPanel>
 				<TabPanes.TabPanel value={1}>
@@ -108,6 +111,7 @@ const QuestionElement = ({
 						item={item}
 						isPublished={isPublished}
 						required={required}
+						readOnly={readOnly}
 					/>
 				</TabPanes.TabPanel>
 			</TabPanes>
@@ -121,7 +125,8 @@ QuestionElement.propTypes = {
 	index: PropTypes.number.isRequired,
 	item: PropTypes.object,
 	required: PropTypes.bool,
-	handleRemoveElement: PropTypes.func
+	handleRemoveElement: PropTypes.func,
+	readOnly: PropTypes.bool
 };
 
 export default QuestionElement;

@@ -26,6 +26,7 @@ const InputField = ({
 	minRows = 1,
 	size = 'medium',
 	allowOnlyNumbers = false,
+	readOnly,
 	...restProps
 }) => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -95,6 +96,7 @@ const InputField = ({
 				fullWidth
 				inputProps={{ maxLength, ...inputProps }}
 				InputProps={{
+					readOnly,
 					disableUnderline: true,
 					className: inputsClasses.textFieldInput,
 					startAdornment: !!startIcon && (

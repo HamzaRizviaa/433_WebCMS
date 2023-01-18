@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { RadioGroup } from '@material-ui/core';
 
-import Modal from '../../../ui/Modal';
+import Modal from '../../../ui/modals/Modal';
 import RadioButton from '../../../ui/inputs/RadioButton';
 import { useQuestionsStyles } from '../index.style';
 

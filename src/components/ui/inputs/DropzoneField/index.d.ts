@@ -28,6 +28,7 @@ export type DropzoneFieldProps = DropzoneOptions & {
 	showPreview?: boolean;
 	hidePreviewIcon?: boolean;
 	hideDeleteIcon?: boolean;
+	readOnly?: boolean;
 };
 
 /**

@@ -29,3 +29,4 @@ export { ReactComponent as CheckBoxIcon } from './Checkbox.svg';
 export { ReactComponent as ArrowDown } from './Down.svg';
 export { ReactComponent as RuleLibrary } from './RuleLibrary.svg';
 export { ReactComponent as QuestionMarkInfoIcon } from './QuestionMarkInfoIcon.svg';
+export { ReactComponent as PreviewIcon } from './Preview.svg';
