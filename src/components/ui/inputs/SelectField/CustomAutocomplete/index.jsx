@@ -96,7 +96,8 @@ const CustomAutocomplete = ({
 
 	const inputsClasses = useInputsStyles({
 		isError: !!error,
-		isRequired: required
+		isRequired: required,
+		size
 	});
 
 	return (
@@ -137,6 +138,7 @@ const CustomAutocomplete = ({
 						disabled={disabled}
 						placeholder={hasValue ? '' : placeholder}
 						InputProps={{
+							className: inputsClasses.textFieldInput,
 							disableUnderline: true,
 							...params.InputProps,
 							classes: {
