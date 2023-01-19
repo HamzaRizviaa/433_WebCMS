@@ -13,7 +13,7 @@ const initialState = {
 	media: [],
 	allMedia: [],
 	mainCategories: [],
-	specificMedia: [],
+	specificMedia: null,
 	totalRecords: 0,
 	status: '',
 	specificMediaStatus: '',
@@ -31,6 +31,9 @@ const mediaLibrarySlice = createSlice({
 		},
 		resetNoResultStatus: (state) => {
 			state.noResultStatus = false;
+		},
+		resetSpecificMedia: (state) => {
+			state.specificMedia = null;
 		}
 	},
 	extraReducers: (builder) => {
@@ -81,7 +84,7 @@ const mediaLibrarySlice = createSlice({
 	}
 });
 
-export const { resetCalendarError, resetNoResultStatus } =
+export const { resetCalendarError, resetNoResultStatus, resetSpecificMedia } =
 	mediaLibrarySlice.actions;
 
 export default mediaLibrarySlice.reducer;
