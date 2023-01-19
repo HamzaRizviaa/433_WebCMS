@@ -12,6 +12,7 @@ export type InputFieldProps = Omit<TextFieldProps, 'variant'> & {
 	maxLength?: number;
 	allowOnlyNumbers?: boolean;
 	height?: 'small' | 'medium' | 'large';
+	readOnly?: boolean;
 };
 
 /**

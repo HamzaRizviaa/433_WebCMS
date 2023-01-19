@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { isEmpty } from 'lodash';
 import Table from '../../components/ui/Table';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
@@ -7,24 +7,16 @@ import ArticleBuilderForm from '../../components/forms/ArticleForm/ArticleBuilde
 import useGetAllArticlesQuery from '../../hooks/libraries/articles/useGetAllArticlesQuery';
 import {
 	getSpecificArticle,
-	getSpecificArticleTemplateThunk,
-	getAllArticleTemplatesThunk
+	getSpecificArticleTemplateThunk
 } from '../../data/features/articleLibrary/articleLibrarySlice';
-import {
-	selectAllArticleTemplate,
-	selectAllArticleTemplateStatus
-} from '../../data/selectors';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
 import { articleTableColumns } from '../../data/helpers/articleHelpers/index';
-import ArticleTemplateModal from '../../components/ui/TemplateModal';
 import ArticleTemplateForm from '../../components/forms/ArticleForm/ArticleTemplateForm';
-import TemplateCardListing from '../../components/ui/cards/TemplateCard/TemplateCardListing';
-import TemplatingCardsSkeleton from '../../components/ui/cards/TemplateCard/TemplatingCardsSkeleton';
+import ArticleTemplatesModal from '../../components/ui/modals/ArticleTemplatesModal';
 
 const ArticleLibrary = () => {
 	const dispatch = useDispatch();
-	const templateListingData = useSelector(selectAllArticleTemplate);
-	const templateListingDataStatus = useSelector(selectAllArticleTemplateStatus);
+
 	const { data, isLoading, totalRecords } = useGetAllArticlesQuery();
 
 	// ARTICLE BUILDER FORM STATES
@@ -43,10 +35,6 @@ const ArticleLibrary = () => {
 	 * that neither one of the option is selected.
 	 */
 	const [selectedOption, setSelectedOption] = useState('');
-
-	useEffect(() => {
-		dispatch(getAllArticleTemplatesThunk());
-	}, []);
 
 	const handleRowClick = (_, row) => {
 		row.status === 'draft' && dispatch(getAllNewLabels());
@@ -104,25 +92,14 @@ const ArticleLibrary = () => {
 				isLoading={isLoading}
 				noDataText='No Articles Found'
 			/>
-			<ArticleTemplateModal
-				title={
-					selectedOption === 'article' ? 'UPLOAD ARTICLE' : 'TEMPLATE MANAGER'
-				}
-				open={showTemplateModal}
-				onClose={() => setShowTemplateModal(false)}
-			>
-				{templateListingDataStatus === 'loading' ? (
-					<TemplatingCardsSkeleton />
-				) : (
-					<TemplateCardListing
-						emptyCardText={
-							selectedOption === 'article' ? 'Empty Article' : 'Empty Template'
-						}
-						data={templateListingData}
-						onCardClick={handleTemplateCardClick}
-					/>
-				)}
-			</ArticleTemplateModal>
+			<ArticleTemplatesModal
+				isEdit={edit}
+				status={rowStatus}
+				selectedOption={selectedOption}
+				showTemplateModal={showTemplateModal}
+				setShowTemplateModal={setShowTemplateModal}
+				onTemplateCardClick={handleTemplateCardClick}
+			/>
 			<ArticleBuilderForm
 				open={showSlider}
 				handleClose={() => setShowSlider(false)}
