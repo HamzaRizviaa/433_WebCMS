@@ -95,7 +95,7 @@ export const ruleDataFormatterForForm = (rule) => {
 		},
 		toggleObject: {
 			geoblockToggle: rule?.geoblocking?.countries?.length > 0 || false,
-			ageToggle: !!rule.age.min || !!rule.age.max
+			ageToggle: !!rule?.age?.min || !!rule?.age?.max || false
 		},
 		...(_id ? { _id } : {})
 	};
