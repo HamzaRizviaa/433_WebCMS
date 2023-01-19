@@ -20,6 +20,8 @@ const sizeMapper = {
 
 export const useSelectStyles = makeStyles((theme) => ({
 	select: ({ isError, isDisabled, size }) => ({
+		cursor: ({ readOnly }) =>
+			readOnly ? 'default !important' : 'pointer !important',
 		display: 'flex',
 		alignItems: 'center',
 		color: 'white !important',
@@ -82,13 +84,14 @@ export const useSelectStyles = makeStyles((theme) => ({
 
 			'&:hover': {
 				color: `${theme.palette.neonYellow} !important`,
-				// backgroundColor: `${theme.palette.normalGrey} !important`,
 				cursor: 'pointer'
 			}
 		}
 	},
 
 	input: {
+		cursor: ({ readOnly }) =>
+			readOnly ? 'default !important' : 'pointer !important',
 		display: 'flex',
 		alignItems: 'center',
 		height: ({ size }) => sizeMapper[size]?.height || 'auto',
