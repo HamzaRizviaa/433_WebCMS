@@ -23,7 +23,7 @@ import {
 // import { uploadFileToServer } from '../../../data/utils';
 
 import RuleFormDrawer from './subComponents/RuleFormDrawer';
-import DeleteModal from '../../DeleteModal';
+import DeleteModal from '../../ui/modals/DeleteModal';
 
 const RuleForm = ({ open, handleClose, isEdit }) => {
 	const navigate = useNavigate();
