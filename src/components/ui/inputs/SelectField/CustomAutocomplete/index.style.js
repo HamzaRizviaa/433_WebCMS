@@ -66,7 +66,8 @@ export const useAutocompleteStyles = makeStyles((theme) => ({
 		},
 
 		'& > input::placeholder': {
-			color: ({ isDisabled }) => (isDisabled ? theme.palette.disabled : 'unset')
+			color: ({ isDisabled }) =>
+				isDisabled ? theme.palette.lightGrey : 'unset'
 		},
 
 		'&:hover': {
