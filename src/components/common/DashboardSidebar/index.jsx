@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useState } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { useGoogleLogout } from 'react-google-login';
 import TextTooltip from '../../ui/TextTooltip';
+import { useSelector } from 'react-redux';
 import { useStyles } from './index.styles';
 import {
 	Logo,
@@ -11,9 +12,11 @@ import {
 	News,
 	Viral,
 	Logout,
-	Article
+	Article,
+	RuleLibrary
 } from '../../../assets/svg-icons';
-import { AuthService } from '../../../data/services';
+import { UserService } from '../../../data/services';
+import { rulesLibraryFeatureFlag } from '../../../data/selectors';
 
 const checkDomain = (href) => {
 	if (href.includes('localhost')) {
@@ -35,10 +38,11 @@ const Sidebar = () => {
 
 	const [env, setEnv] = useState('prod');
 
-	const onLogoutSuccess = async () => {
-		const response = await AuthService.logout();
-		if (response?.status_code == 200) {
-			AuthService.removeTokenFromLocalStorage();
+	const onLogoutSuccess = async (res) => {
+		console.log('Logged out Success', res);
+		const response = await UserService.logout();
+		if (response?.data.status_code == 200) {
+			localStorage.removeItem('user_data');
 			navigate('/sign-in');
 		}
 	};
@@ -60,6 +64,8 @@ const Sidebar = () => {
 	}, []);
 
 	const classes = useStyles({ env });
+	const rulesLibraryFeature = useSelector(rulesLibraryFeatureFlag);
+	const isRulesLibraryEnabled = rulesLibraryFeature?._value === 'true';
 
 	return (
 		<span className={classes.sidebarWrapper}>
@@ -136,6 +142,20 @@ const Sidebar = () => {
 						<Viral className={classes.icon} />
 					</TextTooltip>
 				</NavLink>
+				{isRulesLibraryEnabled && (
+					<NavLink
+						to='/rule-library'
+						className={({ isActive }) =>
+							isActive ? classes.activeRoute : classes.iconWrapper
+						}
+					>
+						<TextTooltip title='Rule' placement='right'>
+							<span className={classes.newsIcon}>
+								<RuleLibrary className={classes.icon} />
+							</span>
+						</TextTooltip>
+					</NavLink>
+				)}
 			</div>
 
 			<div onClick={signOut} className={classes.logoutContainer}>

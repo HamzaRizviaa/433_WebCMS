@@ -10,6 +10,7 @@ export type InputFieldProps = Omit<TextFieldProps, 'variant'> & {
 	startIcon?: JSX.Element;
 	endIcon?: JSX.Element;
 	maxLength?: number;
+	allowOnlyNumbers?: boolean;
 	height?: 'small' | 'medium' | 'large';
 	readOnly?: boolean;
 };
