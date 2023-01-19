@@ -56,7 +56,7 @@ const InputField = ({
 	const inputLength = innerValue.length;
 	const inputLengthPercent = maxLength ? (inputLength / maxLength) * 100 : null;
 
-	const classes = useStyles({ isError: !!error, inputLengthPercent });
+	const classes = useStyles({ isError: !!error, inputLengthPercent, readOnly });
 
 	const inputsClasses = useInputsStyles({
 		isRequired: required,
@@ -89,7 +89,7 @@ const InputField = ({
 				size='small'
 				minRows={minRows}
 				fullWidth
-				inputProps={{ maxLength, ...inputProps }}
+				inputProps={{ maxLength, ...inputProps, className: classes.inputField }}
 				InputProps={{
 					readOnly,
 					disableUnderline: true,
