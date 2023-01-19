@@ -48,7 +48,8 @@ const CustomSelect = ({
 		hasValue: !!value,
 		isError: !!error,
 		isDisabled: disabled,
-		size
+		size,
+		readOnly
 	});
 
 	const inputsClasses = useInputsStyles({
