@@ -3,7 +3,7 @@ import React, { useEffect, useState, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { isEqual, pick, omit } from 'lodash';
 import { useFormikContext } from 'formik';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { useStyles } from '../index.styles';
 import { useStyles as globalUseStyles } from '../../../../styles/global.style';
@@ -23,6 +23,7 @@ import { Calendar } from '../../../../assets/svg-icons';
 import SchedulerPopup from '../../../common/SchedulerPopup';
 import useSchedulerHandlers from '../../../../hooks/useSchedulerHandlers';
 import ScheduledInfoBox from '../../common/ScheduledInfoBox';
+import { resetSpecificMedia } from '../../../../data/features/mediaLibrary/mediaLibrarySlice';
 
 const MediaInternalForm = ({
 	getSubCategories,
@@ -36,6 +37,7 @@ const MediaInternalForm = ({
 	loadingStatus
 }) => {
 	const classes = useStyles();
+	const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
 	const lastMainCatRef = useRef(null);
 	const isPublished = isEdit && status === 'published';
@@ -87,6 +89,7 @@ const MediaInternalForm = ({
 		validateForm();
 		return () => {
 			resetForm(mediaFormInitialValues(rules));
+			dispatch(resetSpecificMedia());
 		};
 	}, []);
 
@@ -163,6 +166,10 @@ const MediaInternalForm = ({
 		});
 	};
 
+	const initialScheduleDate = specificMedia?.is_scheduled
+		? specificMedia?.schedule_date
+		: '';
+
 	return (
 		<div>
 			<SchedulerPopup
@@ -170,7 +177,7 @@ const MediaInternalForm = ({
 				onClose={closeSchedulerModal}
 				onConfirm={handleScheduleConfirm}
 				onRemove={handleRemoveSchedule}
-				initialStartDate={values.is_scheduled && specificMedia?.schedule_date}
+				initialStartDate={initialScheduleDate}
 				isScheduled={values.is_scheduled}
 				isSubmitting={isSubmitting}
 			/>
