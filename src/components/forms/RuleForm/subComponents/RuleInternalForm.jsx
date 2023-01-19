@@ -95,7 +95,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 				</CardLayoutWithToggleBtn>
 
 				<CardLayoutWithToggleBtn
-					title={'GeoBlock'}
+					title={'Geoblock'}
 					onChange={geoBlockBtnHandler}
 					checked={values.toggleObject.geoblockToggle}
 					toggleBtn={true}
@@ -109,7 +109,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							name={'geoblocking.countries'}
 							filterSelectedOptions
 							disabled={!values.toggleObject.geoblockToggle}
-							options={countries}
+							options={countries.length ? countries : []}
 							searchable
 							multiple
 						/>
@@ -127,7 +127,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 				</CardLayoutWithToggleBtn>
 
 				<CardLayoutWithToggleBtn
-					title={'Age Restrictions'}
+					title={'Age restrictions'}
 					onChange={ageRestrictionBtnHandler}
 					checked={values.toggleObject.ageToggle}
 					toggleBtn={true}
@@ -181,7 +181,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 						<Button
 							size='small'
 							variant={'outlined'}
-							//onClick={toggleDeleteModal}
+							onClick={toggleDeleteModal}
 						>
 							DELETE RULE
 						</Button>

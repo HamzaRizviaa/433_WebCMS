@@ -23,7 +23,7 @@ import {
 // import { uploadFileToServer } from '../../../data/utils';
 
 import RuleFormDrawer from './subComponents/RuleFormDrawer';
-import DeleteModal from '../../DeleteModal';
+import DeleteModal from '../../ui/modals/DeleteModal';
 
 const RuleForm = ({ open, handleClose, isEdit }) => {
 	const navigate = useNavigate();
@@ -57,12 +57,10 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 	 */
 	const onSubmitHandler = useCallback(
 		async (values, formikBag) => {
-			console.log(values, 'values in formik');
 			formikBag.setSubmitting(true);
 
 			try {
 				const ruleData = ruleDataFormatterForService(values);
-				console.log(ruleData, 'ruleData');
 
 				const { type } = await dispatch(createOrEditRuleThunk(ruleData));
 
@@ -92,17 +90,13 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 	 * @param {string} id - Id of the viral which is to be deleted
 	 * @param {Function} setSubmitting - Function which receives a boolean value as a param and changes the state of form if it is submitting or not
 	 */
+
 	const onDeleteHandler = useCallback(
-		async (id, setSubmitting) => {
+		async (id, isDraft = false, setSubmitting) => {
 			setSubmitting(true);
 			setOpenDeleteModal(false);
 			try {
-				await dispatch(
-					deleteRuleThunk({
-						rule_id: id
-					})
-				);
-
+				await dispatch(deleteRuleThunk({ id: id }));
 				handleClose();
 				dispatch(getAllRulesApi(queryParams));
 			} catch (e) {
@@ -130,13 +124,13 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 						isEdit={isEdit}
 						//status={status}
 						onSubmitHandler={onSubmitHandler}
-						//toggleDeleteModal={toggleDeleteModal}
+						toggleDeleteModal={toggleDeleteModal}
 					/>
 					<DeleteModal
 						open={openDeleteModal}
 						toggle={closeDeleteModal}
 						deleteBtn={() => {
-							onDeleteHandler(specificRule?.id, setSubmitting);
+							onDeleteHandler(specificRule?._id, false, setSubmitting);
 						}}
 						text={'Rule'}
 						wrapperRef={dialogWrapper}

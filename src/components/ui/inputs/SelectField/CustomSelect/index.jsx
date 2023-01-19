@@ -20,6 +20,7 @@ const CustomSelect = ({
 	required = false,
 	disabled = false,
 	size = 'medium',
+	readOnly,
 	...rest
 }) => {
 	const labelKey = mapOptions?.labelKey || 'label';
@@ -47,7 +48,8 @@ const CustomSelect = ({
 		hasValue: !!value,
 		isError: !!error,
 		isDisabled: disabled,
-		size
+		size,
+		readOnly
 	});
 
 	const inputsClasses = useInputsStyles({
@@ -87,6 +89,7 @@ const CustomSelect = ({
 				inputProps={{ classes: { root: classes.input } }}
 				renderValue={handleRenderValue}
 				disabled={disabled}
+				readOnly={readOnly}
 				disableUnderline
 				fullWidth
 				displayEmpty

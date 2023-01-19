@@ -7,6 +7,7 @@ const SelectField = ({
 	onSearchTextChange,
 	onClearText,
 	searchable = false,
+	readOnly,
 	...rest
 }) => {
 	return searchable ? (
@@ -16,7 +17,7 @@ const SelectField = ({
 			{...rest}
 		/>
 	) : (
-		<CustomSelect {...rest} />
+		<CustomSelect readOnly={readOnly} {...rest} />
 	);
 };
 

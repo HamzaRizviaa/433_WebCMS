@@ -79,26 +79,28 @@ export const ruleColumns = [
 ];
 
 export const ruleDataFormatterForForm = (rule) => {
-	console.log(rule, 'rule on helpers');
 	const { _id } = rule;
 	//rule - rule library
 
 	const payload = {
-		title: rule.title,
-		age: {
-			min: rule?.age?.min,
-			max: rule?.age?.max
-		},
+		title: rule?.title,
+		...(rule?.age?.min || rule?.age?.max
+			? {
+					age: { ...rule?.age }
+			  }
+			: {}),
 		geoblocking: {
-			countries: rule?.geoblocking?.countries,
-			duration: rule?.geoblocking?.duration
+			countries: rule?.geoblocking?.countries || [],
+			duration: rule?.geoblocking?.duration || ''
 		},
 		toggleObject: {
 			geoblockToggle: rule?.geoblocking?.countries?.length > 0 || false,
-			ageToggle: !!rule.age.min || !!rule.age.max
+			ageToggle: !!rule?.age?.min || !!rule?.age?.max || false
 		},
 		...(_id ? { _id } : {})
 	};
+
+	console.log('Rulepayload', payload);
 
 	// if (viral.is_scheduled) payload.schedule_date = viral.schedule_date;
 
@@ -107,8 +109,6 @@ export const ruleDataFormatterForForm = (rule) => {
 
 export const ruleDataFormatterForService = (rule) => {
 	const { _id, toggleObject } = rule;
-
-	console.log('ruleService', rule);
 
 	const payload = {
 		title: rule?.title,

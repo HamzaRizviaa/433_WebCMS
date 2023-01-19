@@ -11,9 +11,9 @@ import {
 import CloseIcon from '@material-ui/icons/Close';
 import useSound from 'use-sound';
 
-import Button from '../Button';
-import soundOpen from '../../../assets/openSound.mp3';
-import soundClose from '../../../assets/closeSound.mp3';
+import Button from '../../Button';
+import soundOpen from '../../../../assets/openSound.mp3';
+import soundClose from '../../../../assets/closeSound.mp3';
 import { useModalStyles } from './index.style';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
