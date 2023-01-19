@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import * as Yup from 'yup';
 import { advancedSettingsValidationSchema } from './advancedSettingsHelpers';
 import { CalendarYellowIcon } from '../../assets/svg-icons';
+import { toast } from 'react-toastify';
 
 export const mediaColumns = [
 	{
@@ -183,6 +184,7 @@ const uploadFileToServer = async (file, type) => {
 		}
 	} catch (error) {
 		console.error(error);
+		toast.error('Failed to upload files. Please try again');
 		throw Error(error.message || 'something went wrong');
 	}
 };
@@ -303,61 +305,68 @@ export const mediaDataFormatterForServer = (
 export const completeUpload = async (data, media) => {
 	// let mediaArray = [];
 	const mediaFiles = await Promise.all([...data]);
-	const mediaArray = mediaFiles.map((file, index) => {
+	const mediaArray = mediaFiles.map(async (file, index) => {
 		if (file?.signed_response) {
-			const newFileUpload = axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-				{
-					file_name:
-						index === 1
-							? media.uploadedCoverImage[0].file_name
-							: index === 2
-							? media.uploadedLandscapeCoverImage[0]?.file_name
-							: media.uploadedFiles[0].file_name,
-					type: 'medialibrary',
-					data: {
-						bucket: 'media',
-						multipart_upload:
-							media.uploadedFiles[0]?.mime_type == 'video/mp4'
-								? [
-										{
-											e_tag: file?.signed_response?.headers?.etag.replace(
-												/['"]+/g,
-												''
-											),
-											part_number: 1
-										}
-								  ]
-								: ['image'],
-						keys: {
-							image_key: file?.keys?.image_key,
-							...(media.mainCategoryName === 'Watch' ||
-							media?.mainCategoryName === 'Watch'
-								? {
-										video_key: file?.keys?.video_key,
-										audio_key: ''
-								  }
-								: {
-										audio_key: file?.keys?.audio_key,
-										video_key: ''
-								  })
-						},
-						upload_id:
-							media.mainCategoryName === 'Watch' ||
-							media?.mainCategoryName === 'Watch'
-								? file.upload_id || 'image'
-								: file.fileType === 'image'
-								? 'image'
-								: 'audio'
+			try {
+				const newFileUpload = await axios.post(
+					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+					{
+						file_name:
+							index === 1
+								? media.uploadedCoverImage[0].file_name
+								: index === 2
+								? media.uploadedLandscapeCoverImage[0]?.file_name
+								: media.uploadedFiles[0].file_name,
+						type: 'medialibrary',
+						data: {
+							bucket: 'media',
+							multipart_upload:
+								media.uploadedFiles[0]?.mime_type == 'video/mp4'
+									? [
+											{
+												e_tag: file?.signed_response?.headers?.etag.replace(
+													/['"]+/g,
+													''
+												),
+												part_number: 1
+											}
+									  ]
+									: ['image'],
+							keys: {
+								image_key: file?.keys?.image_key,
+								...(media.mainCategoryName === 'Watch' ||
+								media?.mainCategoryName === 'Watch'
+									? {
+											video_key: file?.keys?.video_key,
+											audio_key: ''
+									  }
+									: {
+											audio_key: file?.keys?.audio_key,
+											video_key: ''
+									  })
+							},
+							upload_id:
+								media.mainCategoryName === 'Watch' ||
+								media?.mainCategoryName === 'Watch'
+									? file.upload_id || 'image'
+									: file.fileType === 'image'
+									? 'image'
+									: 'audio'
+						}
+					},
+					{
+						headers: {
+							Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+						}
 					}
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
-				}
-			);
-			return newFileUpload;
+				);
+
+				return newFileUpload;
+			} catch (error) {
+				console.error(error);
+				toast.error('Failed to upload files. Please try again');
+				throw Error(error.message || 'something went wrong');
+			}
 		}
 	});
 
