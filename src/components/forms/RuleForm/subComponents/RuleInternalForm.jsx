@@ -109,7 +109,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 							name={'geoblocking.countries'}
 							filterSelectedOptions
 							disabled={!values.toggleObject.geoblockToggle}
-							options={countries}
+							options={countries.length ? countries : []}
 							searchable
 							multiple
 						/>
