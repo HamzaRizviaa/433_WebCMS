@@ -33,7 +33,7 @@ export const useStyles = makeStyles((theme) => ({
 
 	inputField: {
 		cursor: ({ readOnly }) =>
-			readOnly ? 'default !important' : 'pointer !important'
+			readOnly ? 'default !important' : 'text !important'
 	}
 }));
 
