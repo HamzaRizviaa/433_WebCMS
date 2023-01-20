@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 export const getArticleBuilderDrawerTitle = (isEdit) => {
 	return isEdit ? 'Edit Article' : 'Article Builder';
@@ -347,7 +347,7 @@ export const getTeamOptions = (data, val) => {
 };
 
 export const getMatchName = (date, name) => {
-	return `${moment(date).format('DD-MM-YYYY')} - ${name
+	return `${dayjs(date).format('DD-MM-YYYY')} - ${name
 		.split('-')
 		.join(' VS ')}`;
 };
