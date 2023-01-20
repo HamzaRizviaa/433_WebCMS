@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import Tooltip from '../../Tooltip';
-import { useState } from 'react';
+import TextTooltip from '../../ui/TextTooltip';
 
-const CopyToClipboard = ({ children, tooltipProps }) => {
+const CopyToClipboard = ({ children }) => {
 	const [showTooltip, setShowTooltip] = useState(false);
 
 	const onCopy = (content) => {
@@ -17,23 +16,22 @@ const CopyToClipboard = ({ children, tooltipProps }) => {
 
 	return (
 		<div style={{ cursor: 'pointer' }}>
-			<Tooltip
+			<TextTooltip
 				open={showTooltip}
 				placement='top'
-				title={'Copied!'}
-				leaveDelay={500}
+				title='Copied!'
+				leaveDelay={1000}
 				onClose={handleClose}
-				{...(tooltipProps || {})}
+				PopperProps={{ style: { marginTop: -10 } }}
 			>
 				{children({ copy: onCopy })}
-			</Tooltip>
+			</TextTooltip>
 		</div>
 	);
 };
 
 CopyToClipboard.propTypes = {
-	children: PropTypes.element.isRequired,
-	tooltipProps: PropTypes.object
+	children: PropTypes.element.isRequired
 };
 
 export default CopyToClipboard;

@@ -5,7 +5,7 @@ import { useTextTooltipStyles } from './index.style';
 
 const TextTooltip = ({
 	title = '',
-	placement = 'bottom-start',
+	placement = 'top',
 	children,
 	secondary,
 	classes,

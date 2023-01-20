@@ -1,14 +1,27 @@
 import React from 'react';
-import TabPanelUnstyled from '@mui/base/TabPanelUnstyled';
 import PropTypes from 'prop-types';
+import Box from '@material-ui/core/Box';
 
-const TabPanel = ({ children, value }) => {
-	return <TabPanelUnstyled value={value}>{children}</TabPanelUnstyled>;
-};
+function TabPanel(props) {
+	const { children, value, selectedValue, ...other } = props;
+
+	return (
+		<div
+			role='tabpanel'
+			hidden={value !== selectedValue}
+			id={`full-width-tabpanel-${value}`}
+			aria-labelledby={`full-width-tab-${value}`}
+			{...other}
+		>
+			{value === selectedValue && <Box>{children}</Box>}
+		</div>
+	);
+}
 
 TabPanel.propTypes = {
-	children: PropTypes.element.isRequired,
-	value: PropTypes.integer
+	value: PropTypes.string,
+	selectedValue: PropTypes.number,
+	children: PropTypes.element
 };
 
 export default TabPanel;

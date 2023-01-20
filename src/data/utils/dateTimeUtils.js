@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import dayjs from 'dayjs';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
 export const getDateTime = (dateTime, dateTimeSeperator = '|') => {
 	let formatted = new Date(dateTime);
