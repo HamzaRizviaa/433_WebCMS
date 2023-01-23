@@ -36,6 +36,7 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 		setFieldError,
 		setFieldTouched,
 		validateForm,
+		validateField,
 		isSubmitting,
 		resetForm
 	} = useFormikContext();
@@ -61,6 +62,8 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 		if (value === false) {
 			setFieldValue('geoblocking.countries', [], false);
 			setFieldValue('geoblocking.duration', '', false);
+		} else {
+			setFieldTouched('geoblocking.countries', false);
 		}
 	};
 
