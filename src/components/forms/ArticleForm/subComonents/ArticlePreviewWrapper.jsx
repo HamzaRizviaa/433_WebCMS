@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { getArticleDates } from '../../../../data/utils';
 import { Markup } from 'interweave';
-import { Box } from '@material-ui/core';
+import { Box, Avatar } from '@material-ui/core';
 import { useStyles } from './subComponents.styles';
 import Heart from '../../../../assets/Heart.svg';
 import Share from '../../../../assets/shareArticle.svg';
@@ -11,7 +11,6 @@ import Comments from '../../../../assets/Comment.svg';
 import WiFi from '../../../../assets/Wifi.svg';
 import Battery from '../../../../assets/Rectangle.svg';
 import Signals from '../../../../assets/MobileSignal.svg';
-import Avatar from '@mui/material/Avatar';
 import { Profile433 } from '../../../../data/helpers/articleHelpers';
 import StatusBadge from '../../../ui/StatusBadge';
 

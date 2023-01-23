@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { pick, omit, isEmpty, cloneDeep } from 'lodash';
 import { getUserDataObject } from '../commonHelpers';
 import { makeid, uploadFileToServer } from '../../utils';
@@ -138,8 +138,8 @@ export const uploadArticleFiles = async (article) => {
 };
 
 export const matchElementDataFormatter = (item) => ({
-	Day: moment(item?.match?.startdate).format('MMMM D'),
-	Time: moment(item?.match?.startdate).format('HH:mm'),
+	Day: dayjs(item?.match?.startdate).format('MMMM D'),
+	Time: dayjs(item?.match?.startdate).format('HH:mm'),
 	Team_1: {
 		Name: item?.match?.participant_teams_data?.[0]?.name,
 		Logo: item?.match?.participant_teams_data?.[0]?.team_logo,

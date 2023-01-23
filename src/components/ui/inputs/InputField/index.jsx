@@ -3,10 +3,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { InputAdornment, IconButton, TextField } from '@material-ui/core';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import { isNumber } from '../../../../data/helpers';
+
 import { useStyles } from './index.styled';
 import { useInputsStyles } from '../inputs.style';
-import { isNumber } from '../../../../data/helpers';
 
 const INPUT_DELAY = 200; // Miliseconds
 
@@ -111,7 +113,7 @@ const InputField = ({
 									aria-label='toggle password visibility'
 									onClick={() => setShowPassword(!showPassword)}
 								>
-									{showPassword ? <VisibilityOff /> : <Visibility />}
+									{showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
 								</IconButton>
 							) : (
 								endIcon
