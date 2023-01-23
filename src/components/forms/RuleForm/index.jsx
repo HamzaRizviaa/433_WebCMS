@@ -18,7 +18,8 @@ import {
 import {
 	createOrEditRuleThunk,
 	deleteRuleThunk,
-	getAllRulesApi
+	getAllRulesApi,
+	fetchRules
 } from '../../../data/features/ruleLibrary/ruleLibrarySlice';
 // import { uploadFileToServer } from '../../../data/utils';
 
@@ -69,8 +70,10 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 
 					if (isEdit) {
 						dispatch(getAllRulesApi(queryParams));
+						dispatch(fetchRules());
 					} else if (isSearchParamsEmpty) {
 						dispatch(getAllRulesApi());
+						dispatch(fetchRules());
 					} else {
 						navigate('/rule-library');
 					}
