@@ -90,7 +90,7 @@ const InputField = ({
 				{...restProps}
 				className={className}
 				type={isPasswordField ? (showPassword ? 'text' : 'password') : type}
-				autoComplete='nope'
+				autoComplete='off'
 				onChange={handleChange}
 				value={innerValue}
 				size='small'
