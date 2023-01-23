@@ -36,6 +36,8 @@ export const articleFormInitialValues = (allRules) => {
 		labels: [],
 		show_likes: true,
 		show_comments: true,
+		is_scheduled: false,
+		save_draft: true,
 		elements: [],
 		rules
 	};

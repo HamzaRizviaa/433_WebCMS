@@ -32,6 +32,7 @@ const CustomAutocomplete = ({
 	...rest
 }) => {
 	const labelKey = mapOptions?.labelKey || 'label';
+	// eslint-disable-next-line no-unused-vars
 	const valueKey = mapOptions?.valueKey || 'value';
 
 	const [innerValue, setInnerValue] = useState('');
@@ -58,9 +59,33 @@ const CustomAutocomplete = ({
 		[debouncedHandleOnChange]
 	);
 
+	const handleKeyPress = (e) => {
+		const newValue = e.key;
+
+		if (newValue === 'Enter') {
+			e.preventDefault();
+			e.stopPropagation();
+		}
+	};
+
 	const customRenderOption = renderOption
 		? renderOption
-		: (props) => <span>{props[labelKey]}</span>;
+		: (option) => (
+				<span>{typeof option === 'string' ? option : option[labelKey]}</span>
+		  );
+
+	const getOptionSelected = (option, selectedValue) => {
+		if (typeof selectedValue === 'object') {
+			if (!selectedValue[valueKey]) return true;
+			else return selectedValue && option[valueKey] === selectedValue[valueKey];
+		} else if (typeof selectedValue === 'string') {
+			if (!selectedValue) return true;
+			else return selectedValue && option === selectedValue;
+		}
+		return false;
+	};
+
+	const hasValue = value?.length > 0;
 
 	const classes = useAutocompleteStyles({
 		hasValue: !!value,
@@ -71,7 +96,8 @@ const CustomAutocomplete = ({
 
 	const inputsClasses = useInputsStyles({
 		isError: !!error,
-		isRequired: required
+		isRequired: required,
+		size
 	});
 
 	return (
@@ -104,19 +130,15 @@ const CustomAutocomplete = ({
 				getOptionLabel={(option) => {
 					return typeof option === 'string' ? option : option[labelKey];
 				}}
-				getOptionSelected={(option, selectedValue) =>
-					!(typeof selectedValue === 'object' && selectedValue[valueKey])
-						? true
-						: selectedValue && option[valueKey] === selectedValue[valueKey]
-				}
+				getOptionSelected={getOptionSelected}
 				renderOption={customRenderOption}
 				renderInput={(params) => (
 					<TextField
 						{...params}
-						{...searchBarProps}
 						disabled={disabled}
-						placeholder={placeholder}
+						placeholder={hasValue ? '' : placeholder}
 						InputProps={{
+							className: inputsClasses.textFieldInput,
 							disableUnderline: true,
 							...params.InputProps,
 							classes: {
@@ -125,6 +147,8 @@ const CustomAutocomplete = ({
 						}}
 						value={innerValue}
 						onChange={handleSearchTextChange}
+						onKeyPress={handleKeyPress}
+						{...searchBarProps}
 					/>
 				)}
 				closeIcon={<ClearIcon />}

@@ -69,7 +69,7 @@ const MatchElement = ({
 			}));
 
 			setTeams(teams || []);
-			setMatches(removeAddedMatches(mappedMatches) || []);
+			setMatches(removeAddedMatches(mappedMatches || []));
 		}
 	}, [data]);
 

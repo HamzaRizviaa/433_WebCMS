@@ -47,11 +47,15 @@ const ArticleLibrary = () => {
 
 	const handleUploadArticleClick = useCallback(() => {
 		setSelectedOption('article');
+		setEdit(false);
+		setRowStatus('');
 		setShowTemplateModal(true);
 	}, []);
 
 	const handleUploadTemplateClick = useCallback(() => {
 		setSelectedOption('template');
+		setEdit(false);
+		setRowStatus('');
 		setShowTemplateModal(true);
 	}, []);
 

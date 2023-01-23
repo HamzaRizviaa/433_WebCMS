@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core';
 import theme from '../../../../assets/theme';
 
 export const useStyles = makeStyles(() => ({
-	elementContainer: { padding: '5px' },
+	elementContainer: { padding: '0px 5px', marginBottom: '16px' },
 	gridDivSmall: {
 		position: 'sticky',
 		top: '100px',
@@ -168,7 +168,7 @@ export const useStyles = makeStyles(() => ({
 		backgroundPosition: 'center',
 		overflowY: 'auto',
 		overflowX: 'hidden',
-		width: '380px'
+		width: '390px'
 		// padding: '5px 10px'
 	},
 	backgroundSet: {
@@ -177,10 +177,10 @@ export const useStyles = makeStyles(() => ({
 		backgroundPosition: 'center',
 		width: '380px',
 		// height: `${height}px`, linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, rgba(0,0,0,1) 100%);
-		height: '812px',
+		height: '650px',
 		backgroundImage: ({
 			url
-		}) => `linear-gradient(180deg, rgba(0, 0, 0, 0) -12.5%, rgba(0, 0, 0, 0) 19.68%, rgba(0, 0, 0, 0) 57.99%, #000000 100%),
+		}) => `linear-gradient(to bottom, transparent 60%, black 89%),
 					url(${url})`
 	},
 	topIcons: {
@@ -201,38 +201,37 @@ export const useStyles = makeStyles(() => ({
 	icons: {
 		width: '40px',
 		height: '40px',
-		background: 'rgba(64, 64, 64, 0.4)',
+		background: 'rgba(204, 204, 204, 0.2)',
 		borderRadius: '40px',
 		display: 'flex',
 		justifyContent: 'center'
 	},
 	navIcons: {
-		width: '48px',
-		height: '48px',
-		background: 'rgba(64, 64, 64, 0.4)',
-		borderRadius: '48px',
+		width: '40px',
+		height: '40px',
+		background: '#333333',
+		borderRadius: '20px',
 		display: 'flex',
-		justifyContent: 'center'
+		justifyContent: 'center',
+		opacity: 0.5
 	},
 	goBackIcon: {
-		height: '24px',
-		marginLeft: '-6px',
-		paddingTop: '10px'
+		height: '11px',
+		marginLeft: '-4px',
+		paddingTop: '14px',
+		position: 'relative',
+		right: '335px'
 	},
-	shareIcon: { height: '32px', paddingTop: '7px' },
+	shareIcon: { height: '25px', paddingTop: '7px' },
 
-	bottomIcons: {
-		display: 'flex',
-		padding: '2px'
-	},
 	footballIcon: {
 		width: '20px',
 		height: '20px',
 		padding: '11px 0px'
 	},
 	commentIcon: {
-		width: '24px',
-		height: '24px',
+		width: '23px',
+		height: '25px',
 		padding: '8px 0px 10px 0px'
 	},
 	commentbox: {
@@ -255,20 +254,21 @@ export const useStyles = makeStyles(() => ({
 	authordetails: {
 		display: 'flex',
 		padding: '2px',
-		marginTop: '20px'
+		marginTop: '5px'
 	},
 	authorname: {
 		fontWeight: 700,
-		fontSize: '16px',
-		lineHeight: '24px'
+		fontSize: '14px',
+		lineHeight: '18px'
 	},
 	postDateDetails: {
 		fontWeight: 400,
-		fontSize: '12px',
-		lineHeight: '16px'
+		fontSize: '11px',
+		lineHeight: '16px',
+		color: '#CCCCCC'
 	},
 	authorSection: {
-		marginLeft: '5px',
+		marginLeft: '8px',
 		color: 'white'
 	},
 	description: {
@@ -278,5 +278,24 @@ export const useStyles = makeStyles(() => ({
 		fontWeight: 400,
 		fontSize: '12px',
 		lineHeight: '16px'
+	},
+
+	mainContent: {
+		display: 'flex',
+		justifyContent: 'space-between',
+		alignItems: 'center'
+	},
+
+	rightContent: {
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'flex-end',
+		padding: '6px',
+		gap: '8px'
+	},
+
+	avatarRoot: {
+		width: '32px !important',
+		height: '32px !important'
 	}
 }));

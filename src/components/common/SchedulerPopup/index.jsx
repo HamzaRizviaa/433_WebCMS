@@ -8,7 +8,10 @@ import InlineDatePicker from '../../ui/inputs/InlineDatePicker';
 import TimePickerField from '../../ui/inputs/TimePickerField';
 import SchedulerDateField from '../../ui/inputs/SchedulerDateField';
 import { useStyles } from './index.styles';
-import { formatScheduleDate } from '../../../data/helpers';
+import {
+	formatScheduleDate,
+	schedulerValidationText
+} from '../../../data/helpers';
 import { isPastTime } from '../../../data/utils';
 
 const SchedulerPopup = ({
@@ -86,9 +89,17 @@ const SchedulerPopup = ({
 
 	const handleConfirm = () => {
 		const { date, hour, min } = values.startStamp;
+		const startStamp = { date, hours: hour, mins: min };
+		const endStamp = selectsRange && {
+			date: values?.endStamp?.date,
+			hours: values?.endStamp?.hour,
+			mins: values?.endStamp?.min
+		};
 
-		if (isPastTime(date, hour, min)) {
-			setError(true);
+		const isPastTimeError = isPastTime(startStamp, endStamp);
+
+		if (isPastTimeError) {
+			setError(schedulerValidationText(selectsRange)[isPastTimeError]);
 			return;
 		}
 
@@ -181,10 +192,7 @@ const SchedulerPopup = ({
 					<Collapse in={isError}>
 						<div className={classes.schedulerErrorContainer}>
 							<div className={classes.schedulerErrorTitle}>Whoops...</div>
-							<div className={classes.schedulerErrorText}>
-								You can’t schedule in the past. Please select a time and date
-								atleast 15 minutes from now.
-							</div>
+							<div className={classes.schedulerErrorText}>{isError}</div>
 						</div>
 					</Collapse>
 				</Grid>

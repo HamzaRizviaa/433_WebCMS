@@ -56,5 +56,12 @@ export const useStyles = makeStyles(() => ({
 		border: '1px solid yellow !important',
 		color: 'white !important',
 		boxShadow: '0 1px 10px rgba(216, 204, 127, 1)'
-	}
+	},
+	langChip: ({ isEnglish }) => ({
+		border: isEnglish
+			? '1px solid yellow !important'
+			: '1px solid grey !important',
+		color: isEnglish ? 'white !important' : 'grey !important'
+	}),
+	divider: { marginLeft: '8px', marginRight: '6px' }
 }));

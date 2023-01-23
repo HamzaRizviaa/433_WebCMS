@@ -1,8 +1,10 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { isEqual, pick, omit } from 'lodash';
 import { useFormikContext } from 'formik';
+import { useSelector, useDispatch } from 'react-redux';
+
 import { useStyles } from '../index.styles';
 import { useStyles as globalUseStyles } from '../../../../styles/global.style';
 import {
@@ -16,9 +18,12 @@ import FormikDropzone from '../../../ui/inputs/formik/FormikDropzone';
 import Button from '../../../ui/Button';
 import SelectField from '../../../ui/inputs/SelectField';
 import AdvancedSettingsForm from '../../common/AdvancedSettingsForm';
-import { useSelector } from 'react-redux';
-import { getRules } from '../../../../data/selectors';
-// const isTrue = true;
+import { getRules, selectSpecificMedia } from '../../../../data/selectors';
+import { Calendar } from '../../../../assets/svg-icons';
+import SchedulerPopup from '../../../common/SchedulerPopup';
+import useSchedulerHandlers from '../../../../hooks/useSchedulerHandlers';
+import ScheduledInfoBox from '../../common/ScheduledInfoBox';
+import { resetSpecificMedia } from '../../../../data/features/mediaLibrary/mediaLibrarySlice';
 
 const MediaInternalForm = ({
 	getSubCategories,
@@ -32,10 +37,26 @@ const MediaInternalForm = ({
 	loadingStatus
 }) => {
 	const classes = useStyles();
+	const dispatch = useDispatch();
 	const globalClasses = globalUseStyles();
 	const lastMainCatRef = useRef(null);
 	const isPublished = isEdit && status === 'published';
 	const { rules } = useSelector(getRules);
+
+	const specificMedia = useSelector(selectSpecificMedia);
+
+	const [schedularModalState, setSchedulerModalState] = useState(false);
+
+	const closeSchedulerModal = () => setSchedulerModalState(false);
+	const openSchedulerModal = () => setSchedulerModalState(true);
+
+	const {
+		handleDraftClick,
+		handlePublishClick,
+		handleRemoveSchedule,
+		handleSaveChangesClick,
+		handleScheduleConfirm
+	} = useSchedulerHandlers({ onSubmitHandler, closeSchedulerModal });
 
 	// get categories
 	const {
@@ -58,17 +79,17 @@ const MediaInternalForm = ({
 		isValid,
 		isSubmitting,
 		status: formikStatus,
-		handleSubmit,
 		setFieldValue,
 		setValues,
-		setSubmitting,
 		validateForm,
 		resetForm
 	} = useFormikContext();
+
 	useEffect(() => {
 		validateForm();
 		return () => {
 			resetForm(mediaFormInitialValues(rules));
+			dispatch(resetSpecificMedia());
 		};
 	}, []);
 
@@ -82,7 +103,6 @@ const MediaInternalForm = ({
 
 	useEffect(() => {
 		if (
-			// !isLoading &&
 			Array.isArray(mainCategories) &&
 			lastMainCatRef.current !== values.mainCategory &&
 			values?.mainCategory
@@ -117,9 +137,6 @@ const MediaInternalForm = ({
 		return !isDirty || isEqualToDefaultValues;
 	}, [dirty, values, formikStatus, isEdit]);
 
-	const saveDraftHandler = () =>
-		onSubmitHandler(values, { setSubmitting, isSubmitting }, true);
-
 	const fetchSubCategories = (id) => {
 		getSubCategories(id);
 	};
@@ -137,7 +154,6 @@ const MediaInternalForm = ({
 			uploadedFiles: [],
 			mainCategoryName: data.name,
 			subCategoryName: ''
-			// setFieldValue('uploadedFiles', [])
 		});
 	};
 
@@ -150,9 +166,29 @@ const MediaInternalForm = ({
 		});
 	};
 
+	const initialScheduleDate = specificMedia?.is_scheduled
+		? specificMedia?.schedule_date
+		: '';
+
 	return (
 		<div>
+			<SchedulerPopup
+				open={schedularModalState}
+				onClose={closeSchedulerModal}
+				onConfirm={handleScheduleConfirm}
+				onRemove={handleRemoveSchedule}
+				initialStartDate={initialScheduleDate}
+				isScheduled={values.is_scheduled}
+				isSubmitting={isSubmitting}
+			/>
 			<div className={globalClasses.contentWrapperNoPreview}>
+				{values.is_scheduled && (
+					<ScheduledInfoBox
+						scheduleDate={values.schedule_date}
+						openSchedulerModal={openSchedulerModal}
+						isValid={isValid}
+					/>
+				)}
 				<div>
 					<h5>Select Media Type</h5>
 					<div className={classes.categoryContainer}>
@@ -380,26 +416,51 @@ const MediaInternalForm = ({
 							{(isEdit ? values?.mainCategory && values.subCategory : true) && (
 								<div className={classes.publishDraftDiv}>
 									{(!isEdit || status === 'draft') && (
-										<Button
-											size='small'
-											variant={'outlined'}
-											disabled={isDraftDisabled}
-											onClick={saveDraftHandler}
-										>
-											{status === 'draft' && isEdit
-												? 'SAVE DRAFT'
-												: 'SAVE AS DRAFT'}
-										</Button>
+										<>
+											{values.is_scheduled ? (
+												<Button
+													size='small'
+													variant='outlined'
+													type='submit'
+													disabled={isValid ? !dirty : !isValid}
+													onClick={handleSaveChangesClick}
+												>
+													SAVE CHANGES
+												</Button>
+											) : (
+												<Button
+													size='small'
+													variant={'outlined'}
+													disabled={isDraftDisabled}
+													onClick={handleDraftClick}
+												>
+													{status === 'draft' && isEdit
+														? 'SAVE DRAFT'
+														: 'SAVE AS DRAFT'}
+												</Button>
+											)}
+										</>
 									)}
 									<Button
 										type='submit'
 										disabled={
 											isPublished ? (!dirty ? isValid : !isValid) : !isValid
 										}
-										onClick={handleSubmit}
+										onClick={handlePublishClick}
 									>
 										{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
 									</Button>
+									{!isPublished && !values.is_scheduled && (
+										<Button
+											disabled={
+												values.is_scheduled || isPublished ? true : !isValid
+											}
+											onClick={openSchedulerModal}
+											iconBtn
+										>
+											<Calendar />
+										</Button>
+									)}
 								</div>
 							)}
 						</div>

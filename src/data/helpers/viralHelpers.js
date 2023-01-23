@@ -183,7 +183,9 @@ export const viralFormValidationSchema = advancedSettingsValidationSchema.shape(
 	{
 		caption: Yup.string().required('You need to enter a caption'),
 		dropbox_url: Yup.string(),
-		uploadedFiles: Yup.array().min(1).required(),
+		uploadedFiles: Yup.array()
+			.min(1, 'You need to upload a file to post viral')
+			.required(),
 		labels: Yup.array()
 			.min(4, (obj) => {
 				const labelsCount = obj.value?.length;

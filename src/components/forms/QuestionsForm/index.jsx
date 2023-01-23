@@ -61,13 +61,13 @@ const QuestionsForm = ({
 	const toggleStopModal = () => setOpenStopModal(!openStopModal);
 	const closeStopModal = () => setOpenStopModal(false);
 
-	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
+	const onSubmitHandler = async (values, formikBag) => {
 		formikBag.setSubmitting(true);
 
 		try {
 			const payload = await questionDataFormatterForService(
 				values,
-				isDraft,
+
 				status,
 				rules
 			);
@@ -84,7 +84,7 @@ const QuestionsForm = ({
 			};
 
 			if (values.active_question_id) modifiedPayload.shouldTransition = true;
-			if (status === 'CLOSED') delete modifiedPayload.general_info.end_date;
+			// if (status === 'CLOSED') delete modifiedPayload.general_info.end_date;
 
 			const { type } = await dispatch(
 				createOrEditQuestionThunk(modifiedPayload)
@@ -93,7 +93,10 @@ const QuestionsForm = ({
 			if (type === 'questionLibrary/createOrEditQuestionThunk/fulfilled') {
 				handleClose();
 
-				if (isEdit && !(status === 'draft' && isDraft === false)) {
+				if (
+					isEdit &&
+					!(status === 'draft' && values?.general_info?.save_draft === false)
+				) {
 					dispatch(getQuestions(queryParams));
 				} else if (isSearchParamsEmpty) {
 					dispatch(getQuestions());

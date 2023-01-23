@@ -1,7 +1,7 @@
 import React from 'react';
 import DrawerLayoutSlider from '../../common/DrawerLayoutSlider';
 import PrimaryLoader from '../../ui/loaders/PrimaryLoader';
-import Slide from '@mui/material/Slide';
+import Slide from '@material-ui/core/Slide';
 import PropTypes from 'prop-types';
 import { useDrawerLayoutStyles } from './index.style';
 import DropzoneFilePreviewer from '../../common/DropzoneFilePreviewer';

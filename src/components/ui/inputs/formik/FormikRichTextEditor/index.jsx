@@ -1,28 +1,25 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useField } from 'formik';
 import RichTextEditor from '../../RichTextEditor';
 
-const FormikTextEditor = ({ name, id, onChange, onBlur, disabled }) => {
+const FormikRichTextEditor = ({ name, id, onChange, onBlur, disabled }) => {
 	const [field, meta, helpers] = useField(name);
 	const { value } = field;
 	const { touched, error } = meta;
 	const { setValue, setTouched } = helpers;
 
-	const handleChange = useCallback(
-		(text) => {
-			setValue(text);
-			if (onChange) {
-				onChange(name, text);
-			}
-		},
-		[onChange]
-	);
+	const handleChange = (text) => {
+		setValue(text);
+		if (onChange) {
+			onChange(name, text);
+		}
+	};
 
-	const handleBlur = useCallback(() => {
+	const handleBlur = () => {
 		setTouched(true);
 		if (onBlur) onBlur(name, value);
-	}, [value, onBlur]);
+	};
 
 	return (
 		<RichTextEditor
@@ -37,7 +34,7 @@ const FormikTextEditor = ({ name, id, onChange, onBlur, disabled }) => {
 	);
 };
 
-FormikTextEditor.propTypes = {
+FormikRichTextEditor.propTypes = {
 	name: PropTypes.string,
 	id: PropTypes.number,
 	onChange: PropTypes.func,
@@ -45,4 +42,4 @@ FormikTextEditor.propTypes = {
 	disabled: PropTypes.bool
 };
 
-export default FormikTextEditor;
+export default FormikRichTextEditor;

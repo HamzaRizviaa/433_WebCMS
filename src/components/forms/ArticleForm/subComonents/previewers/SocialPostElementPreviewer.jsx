@@ -81,7 +81,7 @@ const SocialPostElementPreviewer = ({ data }) => {
 	};
 
 	return (
-		<Box pr={3} className={classes.twitterBox}>
+		<Box className={classes.twitterBox}>
 			{markup && <Markup content={markup} />}
 		</Box>
 	);

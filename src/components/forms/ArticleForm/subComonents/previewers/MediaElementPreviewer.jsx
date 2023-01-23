@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useStyles } from './elementPreviewers.styles';
+import ReactPlayer from 'react-player';
 
 const MediaElementPreviewer = ({ data, isEdit }) => {
 	//type of element
@@ -27,14 +28,27 @@ const MediaElementPreviewer = ({ data, isEdit }) => {
 
 				{/* Video Element */}
 				{type === 'video' && (
-					<video
-						id={'my-video'}
-						poster={isEdit ? data?.uploadedFiles[0]?.thumbnail_url : null}
-						className={classes.videoElement}
-						controls={true}
-					>
-						<source src={data?.uploadedFiles[0]?.media_url} />
-					</video>
+					// <video
+					// 	id={'my-video'}
+					// 	poster={isEdit ? data?.uploadedFiles[0]?.thumbnail_url : null}
+					// 	className={classes.videoElement}
+					// 	controls={true}
+					// >
+					// 	<source src={data?.uploadedFiles[0]?.media_url} />
+					// </video>
+					<ReactPlayer
+						width={'100%'}
+						height={'32rem'}
+						config={{
+							file: {
+								attributes: {
+									poster: isEdit ? data?.uploadedFiles[0]?.thumbnail_url : null
+								}
+							}
+						}}
+						controls
+						url={data?.uploadedFiles[0]?.media_url}
+					/>
 				)}
 			</div>
 		</div>

@@ -25,14 +25,7 @@ import {
 	deleteArticleThunk,
 	getArticleSubCategories
 } from '../../../data/features/articleLibrary/articleLibrarySlice';
-import {
-	getRules,
-	selectReadMoreArticlesFeatureFlag
-} from '../../../data/selectors';
-import {
-	publishReadMoreApi,
-	deleteReadMoreApi
-} from '../../../data/services/readMoreArticleService';
+import { getRules } from '../../../data/selectors';
 
 const ArticleBuilderForm = ({
 	open,
@@ -43,8 +36,6 @@ const ArticleBuilderForm = ({
 }) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const readMoreFeatureFlag = useSelector(selectReadMoreArticlesFeatureFlag);
-	const isReadMoreAPIEnabled = readMoreFeatureFlag?._value === 'true';
 	const { queryParams, isSearchParamsEmpty } = useCommonParams();
 
 	// Selectors
@@ -79,24 +70,44 @@ const ArticleBuilderForm = ({
 
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 
-	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
-		formikBag.setSubmitting(true);
+	const onSubmitHandler = async (values, formikBag) => {
+		const isDraft = values.save_draft;
+		const isScheduled = values.is_scheduled;
+
+		const { setSubmitting, setFieldValue, setFieldError } = formikBag;
+
+		setSubmitting(true);
+
+		// Title duplicate check cases
+		const isScheduleEnabledAndChanged =
+			isScheduled && specificArticle?.is_scheduled !== isScheduled;
+
+		const isPublishedOrScheduledAndTitleModified =
+			(!isDraft || isScheduled) && specificArticle?.title !== values.title;
+
+		const isDraftChangingToPublishAndScheduleDisable =
+			!isDraft && status === 'draft' && !specificArticle?.is_scheduled;
+
+		const shouldCheckTitleDuplication =
+			isScheduleEnabledAndChanged ||
+			isPublishedOrScheduledAndTitleModified ||
+			isDraftChangingToPublishAndScheduleDisable;
 
 		try {
-			if (
-				(!isDraft && specificArticle?.title !== values.title) ||
-				(!isDraft && status === 'draft')
-			) {
+			if (shouldCheckTitleDuplication) {
 				const { data } = await ArticleLibraryService.getArticleCheckTitle(
 					values.title
 				);
 
 				if (data.response) {
-					formikBag.setSubmitting(false);
-					formikBag.setFieldError(
+					setSubmitting(false);
+					setFieldError(
 						'title',
 						'An article item with this Title has already been published. Please amend the Title.'
 					);
+
+					const titleField = document.querySelector("[name='title']");
+					if (titleField) titleField.focus();
 					return;
 				}
 			}
@@ -106,22 +117,13 @@ const ArticleBuilderForm = ({
 			const articleData = articleDataFormatterForService(
 				{ ...values, elements },
 				uploadedFilesRes,
-				isDraft,
 				rules
 			);
 
-			const { type, payload } = await dispatch(
-				createOrEditArticleThunk(articleData)
-			);
+			const { type } = await dispatch(createOrEditArticleThunk(articleData));
 
 			if (type === 'articleLibary/createOrEditArticleThunk/fulfilled') {
 				handleClose();
-
-				if (isReadMoreAPIEnabled && !isDraft) {
-					if (!isEdit || status !== 'published') {
-						publishReadMoreApi(payload?.data?.data?.id);
-					}
-				}
 
 				if (isEdit && !(status === 'draft' && isDraft === false)) {
 					dispatch(getAllArticlesApi(queryParams));
@@ -134,7 +136,13 @@ const ArticleBuilderForm = ({
 		} catch (e) {
 			console.error(e);
 		} finally {
-			formikBag.setSubmitting(false);
+			setSubmitting(false);
+			setFieldValue('save_draft', true, false);
+			setFieldValue(
+				'is_scheduled',
+				specificArticle?.is_scheduled || false,
+				false
+			);
 		}
 	};
 
@@ -142,16 +150,12 @@ const ArticleBuilderForm = ({
 		setSubmitting(true);
 		setOpenDeleteModal(false);
 		try {
-			const { payload } = await dispatch(
+			await dispatch(
 				deleteArticleThunk({
 					article_id: id,
 					is_draft: isDraft
 				})
 			);
-
-			if (payload.status === 200) {
-				deleteReadMoreApi(id);
-			}
 
 			handleClose();
 			dispatch(getAllArticlesApi(queryParams));

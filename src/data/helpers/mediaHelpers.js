@@ -2,8 +2,11 @@ import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 import { getDateTime, getLocalStorageDetails, makeid } from '../utils';
 import { isEmpty } from 'lodash';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import * as Yup from 'yup';
 import { advancedSettingsValidationSchema } from './advancedSettingsHelpers';
+import { CalendarYellowIcon } from '../../assets/svg-icons';
+import { toast } from 'react-toastify';
 
 export const mediaColumns = [
 	{
@@ -27,10 +30,13 @@ export const mediaColumns = [
 	},
 	{
 		dataField: 'post_date',
-		text: 'POST DATE | TIME',
+		text: 'POST, SCHEDULE DATE | TIME',
 		sort: true,
-		formatter: (content) =>
-			getFormatter('wrapper', { content: getDateTime(content) })
+		formatter: (content, row) =>
+			getFormatter('textAndIcon', {
+				content: dayjs(content).format('DD-MM-YYYY | HH:mm'),
+				Icon: row.is_scheduled ? CalendarYellowIcon : null
+			})
 	},
 	{
 		dataField: 'labels',
@@ -141,6 +147,11 @@ export const mediaDataFormatterForForm = (media, allRules) => {
 	formattedMedia.landscape_image_dropbox_url =
 		media?.dropbox_url?.landscape_cover_image;
 	formattedMedia.rules = rules;
+	formattedMedia.is_scheduled = media.is_scheduled;
+	formattedMedia.save_draft = media.is_draft;
+
+	if (media.is_scheduled) formattedMedia.schedule_date = media.schedule_date;
+
 	return formattedMedia;
 };
 
@@ -173,6 +184,7 @@ const uploadFileToServer = async (file, type) => {
 		}
 	} catch (error) {
 		console.error(error);
+		toast.error('Failed to upload files. Please try again');
 		throw Error(error.message || 'something went wrong');
 	}
 };
@@ -194,7 +206,6 @@ export const fileUploadsArray = (media) => {
 
 export const mediaDataFormatterForServer = (
 	media,
-	isDraft = false,
 	mediaFiles,
 	userData,
 	completedUploadFiles,
@@ -203,13 +214,14 @@ export const mediaDataFormatterForServer = (
 	const filteredRules = allRules.filter((rule) => media.rules[rule._id]);
 	const mediaData = {
 		title: media.title,
+		is_scheduled: media.is_scheduled,
 		translations: undefined,
 		description: media.description,
 		duration: media?.uploadedFiles[0]?.duration
 			? Math.ceil(media?.uploadedFiles[0]?.duration)
 			: 0,
 		type: 'medialibrary',
-		save_draft: isDraft,
+		save_draft: media.save_draft,
 		main_category_id: media.mainCategoryContent || media.main_category_id,
 		sub_category_id: media.subCategoryContent || media.sub_category_id,
 		show_likes: media.show_likes ? true : false,
@@ -282,7 +294,10 @@ export const mediaDataFormatterForServer = (
 		file_name: media?.uploadedFiles[0]?.file_name,
 		video_data: completedUploadFiles[0]?.data?.data?.video_data || null,
 		image_data: null,
-		audio_data: completedUploadFiles[0]?.data?.data?.audio_data || null
+		audio_data: completedUploadFiles[0]?.data?.data?.audio_data || null,
+
+		// Spreading the media schedule flag for edit state
+		...(media.is_scheduled ? { schedule_date: media.schedule_date } : {})
 	};
 	return mediaData;
 };
@@ -290,61 +305,68 @@ export const mediaDataFormatterForServer = (
 export const completeUpload = async (data, media) => {
 	// let mediaArray = [];
 	const mediaFiles = await Promise.all([...data]);
-	const mediaArray = mediaFiles.map((file, index) => {
+	const mediaArray = mediaFiles.map(async (file, index) => {
 		if (file?.signed_response) {
-			const newFileUpload = axios.post(
-				`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
-				{
-					file_name:
-						index === 1
-							? media.uploadedCoverImage[0].file_name
-							: index === 2
-							? media.uploadedLandscapeCoverImage[0]?.file_name
-							: media.uploadedFiles[0].file_name,
-					type: 'medialibrary',
-					data: {
-						bucket: 'media',
-						multipart_upload:
-							media.uploadedFiles[0]?.mime_type == 'video/mp4'
-								? [
-										{
-											e_tag: file?.signed_response?.headers?.etag.replace(
-												/['"]+/g,
-												''
-											),
-											part_number: 1
-										}
-								  ]
-								: ['image'],
-						keys: {
-							image_key: file?.keys?.image_key,
-							...(media.mainCategoryName === 'Watch' ||
-							media?.mainCategoryName === 'Watch'
-								? {
-										video_key: file?.keys?.video_key,
-										audio_key: ''
-								  }
-								: {
-										audio_key: file?.keys?.audio_key,
-										video_key: ''
-								  })
-						},
-						upload_id:
-							media.mainCategoryName === 'Watch' ||
-							media?.mainCategoryName === 'Watch'
-								? file.upload_id || 'image'
-								: file.fileType === 'image'
-								? 'image'
-								: 'audio'
+			try {
+				const newFileUpload = await axios.post(
+					`${process.env.REACT_APP_API_ENDPOINT}/media-upload/complete-upload`,
+					{
+						file_name:
+							index === 1
+								? media.uploadedCoverImage[0].file_name
+								: index === 2
+								? media.uploadedLandscapeCoverImage[0]?.file_name
+								: media.uploadedFiles[0].file_name,
+						type: 'medialibrary',
+						data: {
+							bucket: 'media',
+							multipart_upload:
+								media.uploadedFiles[0]?.mime_type == 'video/mp4'
+									? [
+											{
+												e_tag: file?.signed_response?.headers?.etag.replace(
+													/['"]+/g,
+													''
+												),
+												part_number: 1
+											}
+									  ]
+									: ['image'],
+							keys: {
+								image_key: file?.keys?.image_key,
+								...(media.mainCategoryName === 'Watch' ||
+								media?.mainCategoryName === 'Watch'
+									? {
+											video_key: file?.keys?.video_key,
+											audio_key: ''
+									  }
+									: {
+											audio_key: file?.keys?.audio_key,
+											video_key: ''
+									  })
+							},
+							upload_id:
+								media.mainCategoryName === 'Watch' ||
+								media?.mainCategoryName === 'Watch'
+									? file.upload_id || 'image'
+									: file.fileType === 'image'
+									? 'image'
+									: 'audio'
+						}
+					},
+					{
+						headers: {
+							Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
+						}
 					}
-				},
-				{
-					headers: {
-						Authorization: `Bearer ${getLocalStorageDetails()?.access_token}`
-					}
-				}
-			);
-			return newFileUpload;
+				);
+
+				return newFileUpload;
+			} catch (error) {
+				console.error(error);
+				toast.error('Failed to upload files. Please try again');
+				throw Error(error.message || 'something went wrong');
+			}
 		}
 	});
 
@@ -373,6 +395,8 @@ export const mediaFormInitialValues = (allRules) => {
 	return {
 		mainCategory: '',
 		subCategory: '',
+		save_draft: true,
+		is_scheduled: false,
 		title: '',
 		media_dropbox_url: '', // uploaded file
 		image_dropbox_url: '', //portrait
@@ -408,7 +432,9 @@ export const mediaFormValidationSchema = advancedSettingsValidationSchema.shape(
 			})
 			.required('You need to enter atleast 4 labels')
 			.label('Labels'),
-		uploadedFiles: Yup.array().min(1).required(),
+		uploadedFiles: Yup.array()
+			.min(1, 'You need to upload a file to post media')
+			.required(),
 		uploadedCoverImage: Yup.array().min(1).required(),
 		uploadedLandscapeCoverImage: Yup.array().min(1).required()
 	}

@@ -1,0 +1,135 @@
+@import '../../styles/_variables.scss';
+@import '../../styles/_mixins.scss';
+
+.button {
+	display: block;
+	color: $black-color;
+	text-align: center;
+	background-color: $neon-yellow;
+	font-size: 1.2rem;
+	font-weight: 800;
+	letter-spacing: 0.03em;
+	height: fit-content;
+	border-radius: 65px;
+	padding: 1rem 6rem;
+	cursor: pointer;
+	white-space: nowrap;
+
+	// @include preventSelect;
+}
+
+.button:hover {
+	box-shadow: 0 5px 25px rgba(216, 204, 127, 0.73);
+}
+.button:active {
+	transform: scale(0.93);
+}
+
+.disabled {
+	background-color: $disabled;
+	cursor: default;
+}
+
+.disabledDraft {
+	border: 1px solid $disabled !important;
+	color: $disabled !important;
+	cursor: default;
+}
+
+.button2 {
+	background-color: $black-color;
+	border: 1px solid $neon-yellow;
+	color: $white-color;
+	margin: 0rem 1rem 0rem 0rem;
+	padding: 1rem 1rem;
+}
+
+.button2AddSave {
+	color: $black-color;
+	margin: 0rem 0rem 0rem 0rem;
+	padding: 1rem 2rem;
+}
+
+.button3 {
+	background-color: transparent;
+	border: 1px solid $neon-yellow;
+	color: $white-color;
+	margin: 0rem 1rem 0rem 0rem;
+	padding: 1rem 2rem;
+	font-family: Poppins;
+}
+
+.buttonStop {
+	background-color: transparent;
+	border: 1px solid #ff355a;
+	color: $white-color;
+	margin: 0rem 1rem 0rem 0rem;
+	padding: 1rem 1rem;
+}
+
+.activebtn {
+	background-color: $light-green;
+	color: $white-color;
+	padding: 0.5rem 1rem;
+	border-radius: 24px;
+	font-size: 12px;
+	line-height: 24px;
+	font-style: normal;
+	font-weight: bold;
+}
+.closedbtn {
+	background-color: $red;
+	color: $white-color;
+	padding: 0.5rem 1rem;
+	border-radius: 24px;
+	font-size: 12px;
+	line-height: 24px;
+	font-style: normal;
+	font-weight: bold;
+}
+.draftdbtn {
+	background-color: $neon-yellow;
+	color: $black-color;
+	padding: 0.5rem 1rem;
+	border-radius: 24px;
+	font-size: 12px;
+	line-height: 24px;
+	font-style: normal;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+.publishedBtn {
+	background-color: $light-green;
+	color: $white-color;
+	padding: 0.2rem 1rem;
+	border-radius: 24px;
+	font-size: 12px;
+	line-height: 24px;
+	font-style: normal;
+	font-weight: bold;
+	width: 97px;
+}
+.draftBtn {
+	background-color: #ffff00;
+	color: $black-color;
+	width: 72px;
+	padding: 0.2rem 1rem;
+	border-radius: 24px;
+	font-size: 12px;
+	line-height: 24px;
+	font-style: normal;
+	font-weight: bold;
+}
+
+.buttonNews {
+	background-color: transparent;
+	border: 1px solid $neon-yellow;
+	color: $white-color;
+	// margin: 0rem 1rem 0rem 0rem;
+	padding: 2% 6% 2% 38%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 1.4rem;
+}

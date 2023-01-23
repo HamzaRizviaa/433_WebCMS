@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { FieldArray, useFormikContext } from 'formik';
-import { Box } from '@mui/material';
-import { useStyles } from '../subComponents.styles';
+import { Box } from '@material-ui/core';
+
 import ArticleTemplateInfoForm from './ArticleTemplateInfoForm';
 import ArticleGeneralInfoForm from './ArticleGeneralInfoForm';
 import ArticleElementsFieldArray from '../elements/ArticleElementsFieldArray';
@@ -12,6 +12,8 @@ import { useLazyGetMatchesTreeQuery } from '../../../../../data/features/article
 import { resetSpecificArticleTemplate } from '../../../../../data/features/articleLibrary/articleLibrarySlice';
 import { articleFormInitialValues } from '../../../../../data/helpers';
 import { getRules } from '../../../../../data/selectors';
+import { resetSpecificArticle } from '../../../../../data/features/articleLibrary/articleLibrarySlice';
+import { useStyles } from '../subComponents.styles';
 
 const ArticleInternalForm = ({
 	isEdit,
@@ -19,7 +21,8 @@ const ArticleInternalForm = ({
 	selectedOption,
 	topElementRef,
 	elementsWrapperRef,
-	readOnly = false
+	readOnly = false,
+	openSchedulerModal
 }) => {
 	const dispatch = useDispatch();
 	const classes = useStyles();
@@ -34,6 +37,7 @@ const ArticleInternalForm = ({
 		return () => {
 			resetForm(articleFormInitialValues(rules));
 			dispatch(resetSpecificArticleTemplate());
+			dispatch(resetSpecificArticle());
 		};
 	}, []);
 
@@ -55,6 +59,7 @@ const ArticleInternalForm = ({
 				status={status}
 				selectedOption={selectedOption}
 				readOnly={readOnly}
+				openSchedulerModal={openSchedulerModal}
 			/>
 			{values?.subCategoryId && (
 				<AdvancedSettingsForm
@@ -94,7 +99,8 @@ ArticleInternalForm.propTypes = {
 	selectedOption: PropTypes.oneOf(['', 'article', 'template']).isRequired,
 	topElementRef: PropTypes.element,
 	elementsWrapperRef: PropTypes.any,
-	readOnly: PropTypes.bool
+	readOnly: PropTypes.bool,
+	openSchedulerModal: PropTypes.func.isRequired
 };
 
 export default ArticleInternalForm;

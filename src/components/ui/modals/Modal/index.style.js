@@ -1,9 +1,11 @@
 import { makeStyles } from '@material-ui/core';
 
 const sizeMapper = {
+	xsmall: 420,
 	small: 500,
 	medium: 742,
-	large: 990
+	large: 990,
+	xlarge: 1200
 };
 
 export const useModalStyles = makeStyles((theme) => ({
@@ -29,8 +31,9 @@ export const useModalStyles = makeStyles((theme) => ({
 		fontFamily: `${theme.typography.fontFamily} !important`,
 		fontStyle: 'normal !important',
 		fontWeight: '700 !important',
-		fontSize: '24px !important',
-		lineHeight: '36px !important',
+		fontSize: ({ size }) =>
+			size === 'xsmall' ? '16px !important' : '24px !important',
+		lineHeight: ({ size }) => (size === 'xsmall' ? 'unset' : '36px !important'),
 		color: theme.palette.white,
 		display: 'flex !important',
 		justifyContent: 'space-between !important'
@@ -52,7 +55,8 @@ export const useModalStyles = makeStyles((theme) => ({
 	},
 
 	closeIcon: {
-		fontSize: '30px !important',
+		fontSize: ({ size }) =>
+			size === 'xsmall' ? '24px !important' : '30px !important',
 		color: theme.palette.white,
 		marginRight: -6
 	},

@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
-import { Formik } from 'formik';
-import { useCommonParams } from '../../../hooks';
+import { Form, Formik } from 'formik';
+
+import MediaFormDrawer from './subComponents/MediaFormDrawer';
 import { selectSpecificMedia, getRules } from '../../../data/selectors';
 import {
 	completeUpload,
@@ -21,12 +22,9 @@ import {
 	getMedia
 } from '../../../data/features/mediaLibrary/mediaLibrarySlice';
 import { MediaLibraryService } from '../../../data/services';
-import {
-	useLazyGetSubCategoriesQuery
-} from '../../../data/features/mediaLibrary/media.query';
-import MediaFormDrawer from './subComponents/MediaFormDrawer';
+import { useLazyGetSubCategoriesQuery } from '../../../data/features/mediaLibrary/media.query';
 import DeleteModal from '../../ui/modals/DeleteModal';
-import { toast } from 'react-toastify';
+import { useCommonParams } from '../../../hooks';
 
 const MediaForm = ({
 	open,
@@ -57,43 +55,52 @@ const MediaForm = ({
 	const toggleDeleteModal = () => setOpenDeleteModal(!openDeleteModal);
 	const closeDeleteModal = () => setOpenDeleteModal(false);
 
-	// get categories
-	// const { data: mainCategories } = useGetMainCategoriesQuery();
 	//get sub categories
 	const [getSubCategories, subCategoryStates] = useLazyGetSubCategoriesQuery();
 
-	// const { data } = subCategoryStates;
-
-	const onSubmitHandler = async (values, formikBag, isDraft = false) => {
-		formikBag.setSubmitting(true);
+	// Submit Handler
+	const onSubmitHandler = async (values, formikBag) => {
 		const clonedValues = { ...values };
-
-		// const mainCategoryId = (mainCategories || []).find(
-		// 	(u) => u.name === values.mainCategory
-		// )?.id;
-
-		// const subCategoryId = (data || []).find(
-		// 	(u) => u.name === values.subCategory
-		// )?.id;
 
 		clonedValues.main_category_id = values?.mainCategory;
 		clonedValues.sub_category_id = values?.subCategory;
 
+		const isDraft = values.save_draft;
+		const isScheduled = values.is_scheduled;
+
+		const { setSubmitting, setFieldValue, setFieldError } = formikBag;
+		setSubmitting(true);
+
+		// Title duplicate check cases
+		const isScheduleEnabledAndChanged =
+			isScheduled && specificMedia?.is_scheduled !== isScheduled;
+
+		const isPublishedOrScheduledAndTitleModified =
+			(!isDraft || isScheduled) && specificMedia?.title !== values.title;
+
+		const isDraftChangingToPublishAndScheduleDisable =
+			!isDraft && status === 'draft' && !specificMedia?.is_scheduled;
+
+		const shouldCheckTitleDuplication =
+			isScheduleEnabledAndChanged ||
+			isPublishedOrScheduledAndTitleModified ||
+			isDraftChangingToPublishAndScheduleDisable;
+
 		try {
-			if (
-				(!isDraft && specificMedia?.title !== values.title) ||
-				(!isDraft && status === 'draft')
-			) {
+			if (shouldCheckTitleDuplication) {
 				const { data } = await MediaLibraryService.checkTitleDuplication(
 					values.title
 				);
 
 				if (data.response) {
-					formikBag.setSubmitting(false);
-					formikBag.setFieldError(
+					setSubmitting(false);
+					setFieldError(
 						'title',
 						'A Media item with this Title has already been published. Please amend the Title.'
 					);
+
+					const titleField = document.querySelector("[name='title']");
+					if (titleField) titleField.focus();
 					return;
 				}
 			}
@@ -103,16 +110,13 @@ const MediaForm = ({
 			const getUser = getUserDataObject();
 			const mediaData = mediaDataFormatterForServer(
 				clonedValues,
-				isDraft,
 				uploadedImgs,
 				getUser,
 				completedUploadFiles,
 				rules
 			);
 
-			const { type } = await dispatch(
-				createOrEditMediaThunk(mediaData, formikBag, isDraft)
-			);
+			const { type } = await dispatch(createOrEditMediaThunk(mediaData));
 
 			if (type === 'mediaLibrary/createOrEditMediaThunk/fulfilled') {
 				handleClose();
@@ -127,9 +131,14 @@ const MediaForm = ({
 			}
 		} catch (e) {
 			console.error(e);
-			toast.error(e.message || 'something comes up');
 		} finally {
-			formikBag.setSubmitting(false);
+			setSubmitting(false);
+			setFieldValue('save_draft', true, false);
+			setFieldValue(
+				'is_scheduled',
+				specificMedia?.is_scheduled || false,
+				false
+			);
 		}
 	};
 
@@ -161,7 +170,7 @@ const MediaForm = ({
 			onSubmit={onSubmitHandler}
 		>
 			{({ setSubmitting, isSubmitting }) => (
-				<div>
+				<Form>
 					<MediaFormDrawer
 						getSubCategories={getSubCategories}
 						subCategoryStates={subCategoryStates}
@@ -182,7 +191,7 @@ const MediaForm = ({
 						wrapperRef={dialogWrapper}
 						isSubmitting={isSubmitting}
 					/>
-				</div>
+				</Form>
 			)}
 		</Formik>
 	);
