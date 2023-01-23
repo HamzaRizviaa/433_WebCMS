@@ -197,7 +197,7 @@ export const ruleFormValidationSchema = Yup.object().shape({
 						})
 						.test(
 							'Is-positive?',
-							'The number must be greater than 0!',
+							'The number must be greater than 0',
 							(value) => (value === undefined ? true : value > 0)
 						),
 					max: Yup.number()
@@ -212,7 +212,7 @@ export const ruleFormValidationSchema = Yup.object().shape({
 						})
 						.test(
 							'Is-positive?',
-							'The number must be greater than 0!',
+							'The number must be greater than 0',
 
 							(value) => (value === undefined ? true : value > 0)
 						)
@@ -245,7 +245,7 @@ export const ruleFormValidationSchema = Yup.object().shape({
 					.required("You can't leave this blank."),
 				duration: Yup.number().test(
 					'Is-positive?',
-					'The number must be greater than 0!',
+					'The number must be greater than 0',
 					(value) => (value === undefined ? true : value > 0)
 				)
 			}),
