@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { FieldArray, useFormikContext } from 'formik';
-import { Box } from '@mui/material';
+import { Box } from '@material-ui/core';
 
 import ArticleTemplateInfoForm from './ArticleTemplateInfoForm';
 import ArticleGeneralInfoForm from './ArticleGeneralInfoForm';

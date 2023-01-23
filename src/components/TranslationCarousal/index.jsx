@@ -1,13 +1,11 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-/* eslint-disable react/display-name */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import Chip from '@material-ui/core/Chip';
+import Divider from '@material-ui/core/Divider';
+import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
+
 import { useStyles } from './index.style';
-import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 const TranslationCarousal = ({ lang, setLang }) => {
 	const [slide, setSlide] = useState(0);
@@ -74,7 +72,8 @@ const TranslationCarousal = ({ lang, setLang }) => {
 			shortName: 'tr'
 		}
 	];
-	const classes = useStyles({ slide });
+
+	const classes = useStyles({ slide, isEnglish: lang?.shortName === 'en' });
 
 	const handleClick = (data) => {
 		setLang({
@@ -90,14 +89,7 @@ const TranslationCarousal = ({ lang, setLang }) => {
 				<Chip
 					label='ENG'
 					variant='outlined'
-					sx={{
-						border:
-							lang?.shortName === 'en'
-								? '1px solid yellow !important'
-								: '1px solid grey !important',
-						color:
-							lang?.shortName === 'en' ? 'white !important' : 'grey !important'
-					}}
+					className={classes.langChip}
 					onClick={() =>
 						handleClick({
 							name: 'English',
@@ -110,7 +102,7 @@ const TranslationCarousal = ({ lang, setLang }) => {
 					orientation='vertical'
 					flexItem
 					color={'grey'}
-					sx={{ ml: '8px', mr: '6px' }}
+					className={classes.divider}
 				/>
 				<div className={classes.allChips}>
 					<NavigateBeforeIcon
