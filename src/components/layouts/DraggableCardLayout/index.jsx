@@ -8,8 +8,8 @@ import {
 	AccordionDetails,
 	Typography
 } from '@material-ui/core';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import { DragIcon, DeleteIcon } from '../../../assets/svg-icons';
 import { useDraggableCardLayoutStyles } from './index.style';
 

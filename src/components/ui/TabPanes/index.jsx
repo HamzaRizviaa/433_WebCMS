@@ -1,9 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import TabsUnstyled from '@mui/base/TabsUnstyled';
-import TabsListUnstyled from '@mui/base/TabsListUnstyled';
-import TabUnstyled from '@mui/base/TabUnstyled';
 
 import TabPanel from './TabPanel';
 import { useStyles } from './index.styles';
@@ -31,25 +28,31 @@ const TabPanes = ({
 
 	return (
 		<div className={muiClasses.root}>
-			<TabsUnstyled
-				className={muiClasses.tabRoot}
-				defaultValue={defaultValue}
-				value={value}
-			>
-				<TabsListUnstyled className={muiClasses.tabMainDiv}>
+			<div className='tabs-root'>
+				<div role='tablist' className='tabs-list' value={value}>
 					{headings.map((text, index) => (
-						<TabUnstyled
+						<div
+							role='tab'
 							disabled={disabled}
 							key={index}
 							onClick={() => handleClick(text, index)}
 							type='button'
+							className={`tab-btn${index === value ? ' tab-btn-selected' : ''}`}
 						>
 							{text}
-						</TabUnstyled>
+						</div>
 					))}
-				</TabsListUnstyled>
-				{children}
-			</TabsUnstyled>
+				</div>
+			</div>
+			<div>
+				{React.Children.map(children, (child) => {
+					if (!React.isValidElement(child)) {
+						throw new Error('TabPanes children must be vaild react element');
+					}
+
+					return React.cloneElement(child, { selectedValue: value });
+				})}
+			</div>
 		</div>
 	);
 };
