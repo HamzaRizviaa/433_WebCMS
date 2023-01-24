@@ -53,13 +53,11 @@ export const createOrEditRuleThunk = createAsyncThunk(
 
 			if (response.data.status_code === 200) {
 				toast.success(
-					data.rule_id ? 'Rule has been edited!' : 'Rule has been created!'
+					data._id ? 'Rule has been edited!' : 'Rule has been created!'
 				);
 			}
 		} catch (e) {
-			toast.error(
-				data.rule_id ? 'Failed to edit rule!' : 'Failed to create rule!'
-			);
+			toast.error(data._id ? 'Failed to edit rule!' : 'Failed to create rule!');
 			console.error(e);
 			throw new Error(e);
 		}
