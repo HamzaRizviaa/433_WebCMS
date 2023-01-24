@@ -20,7 +20,7 @@ import { rulesLibraryFeatureFlag } from '../../../data/selectors';
 
 const checkDomain = (href) => {
 	if (href.includes('localhost')) {
-		return 'qa';
+		return 'dev';
 	} else if (href.includes('dev')) {
 		return 'dev';
 	} else if (href.includes('staging')) {
