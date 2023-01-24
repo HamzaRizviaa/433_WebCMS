@@ -41,5 +41,13 @@ export const useStyles = makeStyles(() => ({
 		paddingRight: 18
 	},
 
-	iconWrapper: { marginRight: '10px', minWidth: '20px' }
+	iconWrapper: { marginRight: '10px', minWidth: '20px' },
+
+	optionsWrapper: {
+		display: 'flex'
+	},
+
+	notificationIcon: {
+		marginBottom: 10
+	}
 }));

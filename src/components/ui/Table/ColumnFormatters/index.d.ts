@@ -4,7 +4,10 @@ import { MediaPreviewerProps } from '../../../common/MediaPreviewer';
 
 interface OptionsFormatterProps {
 	title: string;
-	styledClass?: string;
+	notificationTitle?: string;
+	contentType?: string;
+	contentId?: string;
+	isNotificationEnabled?: boolean;
 }
 
 interface TextMarkupProps {

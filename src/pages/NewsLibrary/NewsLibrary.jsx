@@ -7,6 +7,7 @@ import useGetAllNews from '../../hooks/libraries/news/useGetAllNews';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import { getSpecificNews } from '../../data/features/newsLibrary/newsLibrarySlice';
 import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySlice';
+import NotificationForm from '../../components/forms/NotificationForm';
 
 /**
  * News Library Component
@@ -65,6 +66,7 @@ const NewsLibrary = () => {
 				}}
 				status={rowStatus}
 			/>
+			<NotificationForm />
 		</DashboardLayout>
 	);
 };

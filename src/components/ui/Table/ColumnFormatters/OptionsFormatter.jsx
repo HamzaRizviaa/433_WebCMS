@@ -1,24 +1,59 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import TextTooltip from '../../TextTooltip';
-import { Edit } from '../../../../assets/svg-icons';
+import { BellFilled, BellOutlined, Edit } from '../../../../assets/svg-icons';
 import { useStyles } from './index.style';
+import { IconButton } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
+import {
+	openNotificationSlider,
+	setLibraryData
+} from '../../../../data/features/notification/notificationSlice';
 
-const OptionsFormatter = ({ title, styledClass }) => {
+const OptionsFormatter = ({
+	title,
+	notificationTitle,
+	contentType = '',
+	contentId = '',
+	isNotificationEnabled = false
+}) => {
+	const dispatch = useDispatch();
+
+	const handleClick = (event) => {
+		event.stopPropagation();
+
+		dispatch(openNotificationSlider());
+		dispatch(setLibraryData({ payload: { contentType, contentId } }));
+	};
+
 	const classes = useStyles();
 
 	return (
-		<div className={styledClass}>
+		<div className={classes.optionsWrapper}>
 			<TextTooltip title={title} placement='bottom'>
 				<Edit className={classes.editIcon} />
 			</TextTooltip>
+			{!!notificationTitle && (
+				<IconButton onClick={handleClick}>
+					<TextTooltip title={notificationTitle} placement='bottom'>
+						{isNotificationEnabled ? (
+							<BellFilled className={classes.notificationIcon} />
+						) : (
+							<BellOutlined className={classes.notificationIcon} />
+						)}
+					</TextTooltip>
+				</IconButton>
+			)}
 		</div>
 	);
 };
 
 OptionsFormatter.propTypes = {
 	title: PropTypes.string.isRequired,
-	styledClass: PropTypes.string
+	notificationTitle: PropTypes.string,
+	contentType: PropTypes.string,
+	contentId: PropTypes.string,
+	isNotificationEnabled: PropTypes.bool
 };
 
 export default OptionsFormatter;

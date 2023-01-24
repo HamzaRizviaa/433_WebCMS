@@ -70,7 +70,13 @@ export const newsColumns = [
 	{
 		dataField: 'options',
 		text: 'OPTIONS',
-		formatter: () => getFormatter('options', { title: 'EDIT NEWS' })
+		formatter: (_, row) =>
+			getFormatter('options', {
+				title: 'EDIT NEWS',
+				notificationTitle: 'NOTIFICATION',
+				contentType: 'news',
+				contentId: row.id
+			})
 	}
 ];
 
