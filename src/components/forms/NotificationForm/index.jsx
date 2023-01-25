@@ -7,6 +7,7 @@ import DrawerLayout from '../../layouts/DrawerLayout';
 import NotificationInternalForm from './subComponents/NotificationInternalForm';
 import { selectNotificationSliderState } from '../../../data/selectors/notificationSelectors';
 import { closeNotificationSlider } from '../../../data/features/notification/notificationSlice';
+import { notificationInitialValues } from '../../../data/helpers';
 
 const NotificationForm = ({
 	isEdit
@@ -28,7 +29,7 @@ const NotificationForm = ({
 			isLoading={false}
 			customWidth={850}
 		>
-			<Formik>
+			<Formik initialValues={notificationInitialValues}>
 				<Form>
 					<NotificationInternalForm />
 				</Form>
