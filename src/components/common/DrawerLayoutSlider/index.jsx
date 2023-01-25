@@ -14,9 +14,10 @@ const DrawerLayoutSlider = ({
 	handlePreview,
 	preview,
 	fromArticle = false,
+	customWidth,
 	notifID
 }) => {
-	const classes = DrawerLayoutStyles({ fromArticle });
+	const classes = DrawerLayoutStyles({ fromArticle, customWidth });
 	const wrapperRef = useRef(null);
 
 	useEffect(() => {
@@ -100,7 +101,8 @@ DrawerLayoutSlider.propTypes = {
 		PropTypes.shape({ current: PropTypes.elementType })
 	]).isRequired,
 	isEdit: PropTypes.bool.isRequired,
-	notifID: PropTypes.string
+	notifID: PropTypes.string,
+	customWidth: PropTypes.number
 };
 
 export default DrawerLayoutSlider;

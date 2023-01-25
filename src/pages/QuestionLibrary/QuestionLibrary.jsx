@@ -7,18 +7,22 @@ import { getAllNewLabels } from '../../data/features/postsLibrary/postsLibrarySl
 import useGetAllQuestionsQuery from '../../hooks/libraries/questions/useGetAllQuestionsQuery';
 import { questionTableColumns } from '../../data/helpers/questionHelpers';
 import QuestionsForm from '../../components/forms/QuestionsForm';
+import QuestionGeneratorForm from '../../components/forms/QuestionsForm/QuestionGeneratorForm';
+import QuestionModal from '../../components/ui/modals/QuestionModal';
 
 const QuestionLibrary = () => {
 	const dispatch = useDispatch();
 
 	const { data, isLoading, totalRecords } = useGetAllQuestionsQuery();
 
-	const [showSlider, setShowSlider] = useState(false);
 	const [rowStatus, setRowStatus] = useState('draft');
 	const [rowLocation, setRowLocation] = useState('');
 	const [rowType, setRowType] = useState('');
 	const [edit, setEdit] = useState(false);
 	const [questionId, setQuestionId] = useState('');
+	const [showSlider, setShowSlider] = useState(false);
+	const [showQuestionModal, setShowQuestionModal] = useState(false);
+	const [questionGeneratorSlider, setQuestionGeneratorSlider] = useState(false);
 
 	const handleRowClick = (_, row) => {
 		const questionTypeText = row.question_type?.replaceAll(/<[^>]*>/gi, '');
@@ -38,11 +42,22 @@ const QuestionLibrary = () => {
 	const handleUploadQuestionClick = () => {
 		dispatch(getAllNewLabels());
 		setEdit(false);
-		setShowSlider(true);
+		setShowQuestionModal(true);
+	};
+
+	const handleEmptyQuestionClick = () => {
+		setShowSlider(true); //open form drawer
+		setShowQuestionModal(false); //closes the question modal
+	};
+
+	const handleSmartQuizClick = () => {
+		setQuestionGeneratorSlider(true);
+		setShowQuestionModal(false);
 	};
 
 	const handleClose = () => {
 		setShowSlider(false);
+		setQuestionGeneratorSlider(false);
 		setEdit(false);
 		setRowType('');
 		setRowStatus('draft');
@@ -63,6 +78,7 @@ const QuestionLibrary = () => {
 				isLoading={isLoading}
 				noDataText='No Questions Found'
 			/>
+
 			<QuestionsForm
 				open={showSlider}
 				isEdit={edit}
@@ -71,6 +87,18 @@ const QuestionLibrary = () => {
 				questionId={questionId}
 				handleClose={handleClose}
 				status={rowStatus}
+			/>
+
+			<QuestionGeneratorForm
+				open={questionGeneratorSlider}
+				handleClose={handleClose}
+			/>
+
+			<QuestionModal
+				showQuestionModal={showQuestionModal}
+				setShowQuestionModal={setShowQuestionModal}
+				questionForm={handleEmptyQuestionClick}
+				questionGeneratorForm={handleSmartQuizClick}
 			/>
 		</DashboardLayout>
 	);
