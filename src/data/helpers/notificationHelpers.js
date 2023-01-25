@@ -19,14 +19,8 @@ export const notificationInitialValues = {
 				{ appId: '' },
 				{
 					target_type: '',
-					target_version_operator: '',
-					target_versions: '',
-					target_language_operator: '',
-					target_languages: '',
-					target_region_operator: '',
-					target_regions: '',
-					target_audience_operator: '',
-					target_audiences: ''
+					target_operator: '',
+					target_data: []
 				}
 			]
 		}
