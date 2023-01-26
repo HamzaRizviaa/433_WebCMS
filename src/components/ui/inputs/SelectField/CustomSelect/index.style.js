@@ -34,7 +34,7 @@ export const useSelectStyles = makeStyles((theme) => ({
 		backgroundColor: isDisabled ? theme.palette.normalGrey : 'transparent',
 		borderColor: isError ? theme.palette.red : theme.palette.normalGrey,
 
-		'& svg': {
+		'& .MuiSvgIcon-root': {
 			display: 'block',
 			color: `${
 				isDisabled ? theme.palette.disabled : theme.palette.neonYellow
@@ -109,7 +109,7 @@ export const useSelectStyles = makeStyles((theme) => ({
 			borderRadius: 10
 		},
 
-		'& svg': {
+		'& .MuiSvgIcon-root': {
 			position: 'absolute',
 			color: `${theme.palette.neonYellow} !important`,
 			right: '12px !important',
