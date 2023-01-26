@@ -173,5 +173,9 @@ export const useQuestionsStyles = makeStyles((theme) => ({
 		borderRadius: 8,
 		margin: [[20, 0]],
 		padding: 16
+	},
+
+	lastGridItem: {
+		borderLeft: `1px solid ${theme.palette.darkGrey}`
 	}
 }));
