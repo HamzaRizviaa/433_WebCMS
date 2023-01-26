@@ -1,9 +1,9 @@
 import { useFormikContext } from 'formik';
 import React from 'react';
-import FormikDropzone from '../../../../ui/inputs/formik/FormikDropzone';
-import FormikField from '../../../../ui/inputs/formik/FormikField';
-import { useFormStyles } from '../../../forms.style';
-import { useNotificationStyles } from '../../index.style';
+import FormikDropzone from '../../../../../ui/inputs/formik/FormikDropzone';
+import FormikField from '../../../../../ui/inputs/formik/FormikField';
+import { useFormStyles } from '../../../../forms.style';
+import { useNotificationStyles } from '../../../index.style';
 import NotificationPreview from './NotificationPreview';
 
 const NotificationStepForm = () => {
