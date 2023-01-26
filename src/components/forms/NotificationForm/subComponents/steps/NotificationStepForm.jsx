@@ -1,3 +1,4 @@
+import { useFormikContext } from 'formik';
 import React from 'react';
 import FormikDropzone from '../../../../ui/inputs/formik/FormikDropzone';
 import FormikField from '../../../../ui/inputs/formik/FormikField';
@@ -8,13 +9,17 @@ import NotificationPreview from './NotificationPreview';
 const NotificationStepForm = () => {
 	const classes = useFormStyles();
 	const notifClasses = useNotificationStyles();
+
+	// formik hook
+	const { setFieldValue } = useFormikContext();
+
 	return (
 		<div className={notifClasses.notifDisplay}>
 			<div className={notifClasses.notifiContainer}>
 				<div className={classes.fieldContainer}>
 					<FormikField
 						label='NOTIFICATION TITLE'
-						name='notification_title'
+						name='notification.notification_title'
 						placeholder='Please write your notification title here'
 						required
 					/>
@@ -22,7 +27,7 @@ const NotificationStepForm = () => {
 				<div className={classes.fieldContainer}>
 					<FormikField
 						label='NOTIFICATION TEXT'
-						name='notification_text'
+						name='notification.notification_text'
 						placeholder='Please write your notification text here'
 						minRows={2}
 						multiline
@@ -31,22 +36,20 @@ const NotificationStepForm = () => {
 				</div>
 				<div className={classes.fieldWrapper}>
 					<FormikDropzone
-						name='notification_image'
+						label='NOTIFICATION IMAGE'
+						name='notification.uploadedFiles'
 						accept='image/jpeg, image/png, video/mp4'
 						formatMessage='Supported formats are jpeg, png and mp4'
 						maxFiles={1}
-						showPreview
 						required
-						// onPreview={openPreviewer}
-						// onDelete={() => setFieldValue('uploadedFiles', [])}
+						onDelete={() => setFieldValue('notification.uploadedFiles', [])}
 					/>
 				</div>
 				<div className={classes.fieldContainer}>
 					<FormikField
 						label='NOTIFICATION NAME'
-						name='notification_name'
+						name='notification.notification_name'
 						placeholder='Please write your notification name here'
-						required
 					/>
 				</div>
 			</div>
