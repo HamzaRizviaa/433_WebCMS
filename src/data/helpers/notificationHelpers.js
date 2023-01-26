@@ -7,26 +7,21 @@ export const stepsData = [
 ];
 
 export const notificationInitialValues = {
+	save_draft: true,
 	notification: {
+		uploadedFiles: [],
 		notification_title: '',
 		notification_text: '',
-		notification_image: [],
-		notification_name: ''
+		notification_name: '',
+		notification_image: '',
+		notification_image_filename: '',
+		notification_image_width: '',
+		notification_image_height: '',
+		notification_image_dropbox_url: ''
 	},
-	target: [
-		{
-			target_users: [
-				{ appId: '' },
-				{
-					target_type: '',
-					target_operator: '',
-					target_data: []
-				}
-			]
-		}
-	],
+	target: [{ topic_name: '' }],
 	scheduling: {
-		send_to_eligible_user: '',
+		is_scheduled: false,
 		date: '',
 		time: '',
 		schedule_date: null
@@ -37,6 +32,11 @@ export const notificationInitialValues = {
 	},
 	additional_options: {
 		android_notification_channel: '',
+		custom_data: [
+			{ key: 'module_type', value: '' },
+			{ key: 'post_id', value: '' },
+			{ key: 'notification_type', value: 'comment' }
+		],
 		sound: '',
 		apple_badge: '',
 		expires_in: 0,
