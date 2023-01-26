@@ -62,12 +62,14 @@ const TargetApp = ({ form, push, remove }) => {
 							</Grid>
 						</Grid>
 						<div>
-							<IconButton
-								className={classes.iconBtn}
-								onClick={handleRemove(index)}
-							>
-								<TrashIcon />
-							</IconButton>
+							{target.length > 1 && (
+								<IconButton
+									className={classes.iconBtn}
+									onClick={handleRemove(index)}
+								>
+									<TrashIcon />
+								</IconButton>
+							)}
 						</div>
 					</div>
 					{index > 0 && (
