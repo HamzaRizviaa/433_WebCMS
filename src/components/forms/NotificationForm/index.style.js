@@ -109,3 +109,17 @@ export const useNotificationStyles = makeStyles((theme) => ({
 		'& img': { width: '28px' }
 	}
 }));
+
+export const useSchedulingStyles = makeStyles((theme) => ({
+	scheduleRootBox: {
+		border: `1px solid ${theme.palette.darkGrey}`,
+		padding: theme.spacing(2, 2),
+		margin: theme.spacing(2, 0),
+		borderRadius: '8px'
+	},
+	scheduleGridMain: {
+		display: 'grid',
+		gridTemplateColumns: '40% 1fr',
+		gap: '20px'
+	}
+}));
