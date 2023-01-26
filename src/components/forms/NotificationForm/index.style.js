@@ -27,7 +27,7 @@ export const useNotificationStyles = makeStyles((theme) => ({
 	notifiContainer: {
 		flexBasis: '60%'
 	},
-	accordionRoot: {
+	notificationRoot: {
 		backgroundColor: theme.palette.black,
 		color: theme.palette.white,
 		border: `1px solid ${theme.palette.normalGrey}`,
@@ -68,7 +68,8 @@ export const useNotificationStyles = makeStyles((theme) => ({
 		bottom: '43px',
 		right: '27px',
 		'& img': {
-			width: '38px'
+			width: '38px',
+			height: '38px'
 		}
 	},
 	notifTitleIphone12: {
@@ -86,7 +87,8 @@ export const useNotificationStyles = makeStyles((theme) => ({
 		bottom: '43px',
 		right: '27px',
 		'& img': {
-			width: '38px'
+			width: '38px',
+			height: '38px'
 		}
 	},
 	notifTitleIphone14: {
@@ -106,6 +108,28 @@ export const useNotificationStyles = makeStyles((theme) => ({
 	notifImgIphone14: {
 		bottom: '50px',
 		right: '29px',
-		'& img': { width: '28px' }
+		'& img': { width: '28px', height: '28px' }
+	},
+	conversionRoot: {
+		backgroundColor: theme.palette.black,
+		color: theme.palette.white,
+		border: `1px solid ${theme.palette.normalGrey}`,
+		borderRadius: '6px !important',
+		padding: 20,
+		margin: '20px 10px'
+	},
+	conversionChevronContainer: {
+		display: 'flex',
+		'& img': {
+			margin: '0 12px'
+		}
+	},
+	conversionContainer: {
+		display: 'flex',
+		width: '100%',
+		alignItems: 'baseline'
+	},
+	metricContainer: {
+		width: '100%'
 	}
 }));

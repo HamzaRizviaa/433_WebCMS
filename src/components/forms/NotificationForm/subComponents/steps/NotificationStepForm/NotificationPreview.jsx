@@ -30,7 +30,7 @@ const NotificationPreview = () => {
 	};
 
 	return (
-		<Box className={classes.accordionRoot}>
+		<Box className={classes.notificationRoot}>
 			<h3>Preview</h3>
 			<Box mb={2} className={classes.notifTitleContainer}>
 				<img src={Android} />
