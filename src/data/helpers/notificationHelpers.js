@@ -10,7 +10,7 @@ export const notificationInitialValues = {
 	notification: {
 		notification_title: '',
 		notification_text: '',
-		notification_image: '',
+		notification_image: [],
 		notification_name: ''
 	},
 	target: [

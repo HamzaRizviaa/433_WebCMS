@@ -19,5 +19,21 @@ export const useNotificationStyles = makeStyles((theme) => ({
 
 	stepLabel: {
 		cursor: 'pointer'
+	},
+	notifDisplay: {
+		display: 'flex',
+		flexDirection: 'row'
+	},
+	notifiContainer: {
+		flexBasis: '60%'
+	},
+	accordionRoot: {
+		backgroundColor: theme.palette.black,
+		color: theme.palette.white,
+		border: `1px solid ${theme.palette.normalGrey}`,
+		borderRadius: '6px !important',
+		flexBasis: '40%',
+		padding: 20,
+		margin: '20px 0 20px 20px'
 	}
 }));
