@@ -13,7 +13,7 @@ const QuestionGeneratorForm = ({ open, handleClose }) => {
 			handleClose={handleClose}
 			title={'Automatic Generation'}
 			//	isLoading={isLoading}
-			customWidth={957}
+			customWidth={850}
 		>
 			<Grid container className={classes.articlesGridBox}>
 				<Grid className={classes.firstGridItem} item pr={1} md={6}>
