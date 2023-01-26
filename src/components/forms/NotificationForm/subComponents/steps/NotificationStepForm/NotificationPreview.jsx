@@ -1,10 +1,10 @@
 import { Box } from '@material-ui/core';
 import React from 'react';
-import { useNotificationStyles } from '../../index.style';
-import Android from '../../../../../assets/Android.svg';
-import Iphone12 from '../../../../../assets/Iphone-12.svg';
-import Iphone14Pro from '../../../../../assets/Iphone-14-PRO.svg';
-import ImagePlaceholder from '../../../../../assets/Notification_Placeholder.png';
+import { useNotificationStyles } from '../../../index.style';
+import Android from '../../../../../../assets/Android.svg';
+import Iphone12 from '../../../../../../assets/Iphone-12.svg';
+import Iphone14Pro from '../../../../../../assets/Iphone-14-PRO.svg';
+import ImagePlaceholder from '../../../../../../assets/Notification_Placeholder.png';
 import { useFormikContext } from 'formik';
 
 const NotificationPreview = () => {
