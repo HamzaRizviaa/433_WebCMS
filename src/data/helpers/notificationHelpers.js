@@ -1,3 +1,5 @@
+import * as yup from 'yup';
+
 export const stepsData = [
 	{ key: 'notification', label: 'Notification' },
 	{ key: 'target', label: 'Target' },
@@ -30,6 +32,7 @@ export const expirationUnitRange = {
 	minutes: 61
 };
 
+// INITIAL VALUES
 export const notificationInitialValues = {
 	save_draft: true,
 	notification: {
@@ -69,3 +72,19 @@ export const notificationInitialValues = {
 		expiration_unit: 'weeks'
 	}
 };
+
+// VALIDATION SCHEMAS
+
+const step1ValidationSchema = yup.object({});
+const step2ValidationSchema = yup.array().of(yup.object({}));
+const step3ValidationSchema = yup.object({});
+const step4ValidationSchema = yup.object({});
+const step5ValidationSchema = yup.object({});
+
+export const notificationValidationSchema = yup.object({
+	notification: step1ValidationSchema,
+	target: step2ValidationSchema,
+	scheduling: step3ValidationSchema,
+	conversion_events: step4ValidationSchema,
+	additional_options: step5ValidationSchema
+});
