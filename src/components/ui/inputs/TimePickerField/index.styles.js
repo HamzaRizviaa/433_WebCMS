@@ -132,7 +132,7 @@ export const useStyles = makeStyles((theme) => ({
 			fontFamily: 'Poppins',
 			fontSize: '14px',
 			fontWeight: '400',
-			lineHeight: '24px',
+			lineHeight: '21px',
 			letterSpacing: '0em',
 			// textAlign: 'center',
 			color: '#fff',
