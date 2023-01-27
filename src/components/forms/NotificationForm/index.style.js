@@ -20,6 +20,22 @@ export const useNotificationStyles = makeStyles((theme) => ({
 	stepLabel: {
 		cursor: 'pointer'
 	},
+
+	stepContainer: {
+		border: `1px solid ${theme.palette.darkGrey}`,
+		borderRadius: 8,
+		padding: 24,
+		paddingBottom: 10,
+		margin: [[20, 0]]
+	},
+
+	expireField: {
+		paddingRight: 5
+	},
+
+	expirationUnitField: {
+		paddingLeft: 5
+  },
 	notifDisplay: {
 		display: 'flex',
 		flexDirection: 'row'
@@ -205,5 +221,19 @@ export const useNotificationStyles = makeStyles((theme) => ({
 		height: 8,
 		width: 1,
 		backgroundColor: theme.palette.darkGrey
+	}
+}));
+
+export const useSchedulingStyles = makeStyles((theme) => ({
+	scheduleRootBox: {
+		border: `1px solid ${theme.palette.darkGrey}`,
+		padding: theme.spacing(2, 2),
+		margin: theme.spacing(2, 0),
+		borderRadius: '8px'
+	},
+	scheduleGridMain: {
+		display: 'grid',
+		gridTemplateColumns: '40% 1fr',
+		gap: '20px'
 	}
 }));

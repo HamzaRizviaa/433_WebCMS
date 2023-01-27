@@ -15,6 +15,8 @@ export const useStyles = makeStyles((theme) => ({
 	timeFieldContainer: {
 		// width: '100%',
 		display: 'flex',
+		border: '1px solid #333333',
+		borderRadius: '40px',
 
 		justifyContent: 'space-between',
 		'& .subField': {
