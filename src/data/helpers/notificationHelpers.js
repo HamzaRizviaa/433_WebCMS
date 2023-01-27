@@ -22,14 +22,14 @@ export const expirationUnitOptions = [
 	{ value: 'weeks', label: 'Weeks' },
 	{ value: 'days', label: 'Days' },
 	{ value: 'hours', label: 'Hours' },
-	{ value: 'minutes', label: 'Minutes' }
+	{ value: 'keyutes', label: 'Minutes' }
 ];
 
 export const expirationUnitRange = {
 	weeks: 5,
 	days: 8,
 	hours: 25,
-	minutes: 61
+	keyutes: 61
 };
 
 // INITIAL VALUES
@@ -50,7 +50,7 @@ export const notificationInitialValues = {
 	scheduling: {
 		is_scheduled: false,
 		date: new Date(),
-		time: { hour: '00', min: '00' },
+		time: { hour: '00', key: '00' },
 		schedule_date: null,
 		schedule_notification: 'now'
 	},
@@ -79,7 +79,43 @@ const step1ValidationSchema = yup.object({});
 const step2ValidationSchema = yup.array().of(yup.object({}));
 const step3ValidationSchema = yup.object({});
 const step4ValidationSchema = yup.object({});
-const step5ValidationSchema = yup.object({});
+const step5ValidationSchema = yup.object({
+	android_notification_channel: yup.string(),
+	sound: yup.string().required('Required!'),
+	apple_badge: yup.string().required('Required!'),
+	expires_in: yup.string().required('Required!'),
+	expiration_unit: yup.string().required('Required!'),
+	custom_data: yup.array().of(
+		yup.object().shape(
+			{
+				key: yup
+					.string()
+					.when('value', {
+						is: (value) => !!value,
+						then: yup.string().required('Key is required if value is present.'),
+						otherwise: (schema) => schema
+					})
+					.test(
+						'Is-duplicated?',
+						'This key is already declared',
+						function (value, ctx) {
+							const customDataArray = ctx?.from[1]?.value?.custom_data || [];
+							const filteredData = customDataArray.filter(
+								(item) => item.key === value
+							);
+							return filteredData.length <= 1;
+						}
+					),
+				value: yup.string().when('key', {
+					is: (key) => !!key,
+					then: yup.string().required('Value is required if key is present.'),
+					otherwise: (schema) => schema
+				})
+			},
+			['value', 'key']
+		)
+	)
+});
 
 export const notificationValidationSchema = yup.object({
 	notification: step1ValidationSchema,
