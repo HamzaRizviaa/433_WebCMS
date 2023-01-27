@@ -11,9 +11,9 @@ const ConversionEventStepForm = () => {
 			<Box className={classes.conversionContainer}>
 				<div className={classes.conversionChevronContainer}>
 					<div>Sent</div>
-					<RightChevron className={classes.rightIcon} />
+					<RightChevron />
 					<div>Opened</div>
-					<RightChevron className={classes.rightIcon} />
+					<RightChevron />
 				</div>
 
 				<div className={classes.metricContainer}>
