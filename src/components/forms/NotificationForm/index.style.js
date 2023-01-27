@@ -27,7 +27,7 @@ export const useNotificationStyles = makeStyles((theme) => ({
 	notifiContainer: {
 		flexBasis: '60%'
 	},
-	accordionRoot: {
+	notificationRoot: {
 		backgroundColor: theme.palette.black,
 		color: theme.palette.white,
 		border: `1px solid ${theme.palette.normalGrey}`,
@@ -68,7 +68,8 @@ export const useNotificationStyles = makeStyles((theme) => ({
 		bottom: '43px',
 		right: '27px',
 		'& img': {
-			width: '38px'
+			width: '38px',
+			height: '38px'
 		}
 	},
 	notifTitleIphone12: {
@@ -86,7 +87,8 @@ export const useNotificationStyles = makeStyles((theme) => ({
 		bottom: '43px',
 		right: '27px',
 		'& img': {
-			width: '38px'
+			width: '38px',
+			height: '38px'
 		}
 	},
 	notifTitleIphone14: {
@@ -106,7 +108,103 @@ export const useNotificationStyles = makeStyles((theme) => ({
 	notifImgIphone14: {
 		bottom: '50px',
 		right: '29px',
-		'& img': { width: '28px' }
+		'& img': { width: '28px', height: '28px' }
+	},
+	conversionRoot: {
+		backgroundColor: theme.palette.black,
+		color: theme.palette.white,
+		border: `1px solid ${theme.palette.normalGrey}`,
+		borderRadius: '6px !important',
+		padding: 20,
+		margin: '20px 10px'
+	},
+	conversionChevronContainer: {
+		display: 'flex',
+		'& img': {
+			margin: '0 12px'
+		}
+	},
+	conversionContainer: {
+		display: 'flex',
+		width: '100%',
+		alignItems: 'baseline'
+	},
+	metricContainer: {
+		width: '100%'
+	},
+	targetWrapper: {
+		position: 'relative',
+		paddingTop: 10
+	},
+
+	targetContainer: {
+		position: 'relative',
+		border: `1px solid ${theme.palette.darkGrey}`,
+		borderRadius: 8,
+		padding: 16,
+		marginBottom: 32
+	},
+
+	appIdContainer: {
+		display: 'flex'
+	},
+
+	fieldsRowContainer: {
+		border: `1px solid ${theme.palette.darkGrey}`,
+		borderRadius: 40,
+		height: 44,
+		width: '100%',
+
+		'& .MuiGrid-item': {
+			height: 'inherit'
+		}
+	},
+
+	gridItem: {
+		borderRight: `1px solid ${theme.palette.darkGrey}`,
+		borderTop: '10px solid transparent',
+		borderBottom: '10px solid transparent',
+		borderRadius: 10,
+		paddingLeft: 15
+	},
+
+	noBorderAndShadow: {
+		'& .MuiInput-root': {
+			border: 'none'
+		},
+
+		'& .MuiInput-input:hover': {
+			boxShadow: 'none'
+		}
+	},
+
+	targetAnotherAppBtn: {
+		position: 'absolute',
+		bottom: -75
+	},
+
+	iconBtn: {
+		paddingRight: 0
+	},
+
+	targetItemSeparator: {
+		position: 'absolute',
+		bottom: '100%',
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		color: theme.palette.black60
+	},
+
+	separatorText: {
+		fontSize: 12,
+		fontWeight: 700
+	},
+
+	separatorLine: {
+		height: 8,
+		width: 1,
+		backgroundColor: theme.palette.darkGrey
 	}
 }));
 
