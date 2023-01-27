@@ -131,7 +131,7 @@ export const useNotificationStyles = makeStyles((theme) => ({
 	},
 	metricContainer: {
 		width: '100%'
-,
+	},
 	targetWrapper: {
 		position: 'relative',
 		paddingTop: 10
