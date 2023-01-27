@@ -10,24 +10,23 @@ import InlineDatePicker from '../../../../ui/inputs/InlineDatePicker';
 import TimePickerField from '../../../../ui/inputs/TimePickerField';
 import dayjs from 'dayjs';
 
-const SchedulingStepForm = ({ options, selectsRange = false }) => {
+const SchedulingStepForm = ({ selectsRange = false }) => {
+	const [scheduleFields, setScheduleFields] = useState(false);
 	const [values, setValues] = useState({
-		startStamp: {
+		time: {
 			date: new Date(),
 			hour: '00',
 			min: '00'
 		},
-		...(selectsRange && {
-			endStamp: {
-				date: new Date(),
-				hour: '00',
-				min: '00'
-			}
-		})
+		startStamp: {
+			date: new Date(),
+			hour: '00',
+			min: '00'
+		}
 	});
 	const optionsText = [
-		{ value: 1, label: 'Now' },
-		{ value: 2, label: 'Schedule' }
+		{ value: 'now', label: 'Now' },
+		{ value: 'schedule', label: 'Schedule' }
 	];
 	const classes = useSchedulingStyles();
 
@@ -47,22 +46,32 @@ const SchedulingStepForm = ({ options, selectsRange = false }) => {
 			const [selectedStartDate, selectedEndDate] = selectedDate;
 
 			setValues((prevState) => ({
+				time: {
+					...prevState.time
+				},
 				startStamp: {
 					...prevState.startStamp,
 					date: selectedStartDate
-				},
-				endStamp: {
-					...prevState.endStamp,
-					date: selectedEndDate
 				}
 			}));
 		} else {
 			setValues((prevState) => ({
+				time: {
+					...prevState.time
+				},
 				startStamp: {
 					...prevState.startStamp,
 					date: selectedDate
 				}
 			}));
+		}
+	};
+
+	const handleScheduleChange = (value) => {
+		if (value === 'schedule') {
+			setScheduleFields(true);
+		} else {
+			setScheduleFields(false);
 		}
 	};
 
@@ -76,32 +85,39 @@ const SchedulingStepForm = ({ options, selectsRange = false }) => {
 					<div>
 						<FormikSelect
 							label='Send to eligible user'
-							name={`ScheduleNotifications`}
+							name={`scheduling.schedule_notification`}
+							placeholder='Please select'
 							options={optionsText}
+							onChange={handleScheduleChange}
 						/>
-						<div>
-							<SchedulerDateField value={formateDate(values.startStamp.date)} />
-							<TimePickerField
-								name='time'
-								label={selectsRange ? 'START TIME' : 'TIME'}
-								value={values.startStamp}
-								onChange={handleTimeChange}
-							/>
-						</div>
+						{scheduleFields && (
+							<div>
+								<SchedulerDateField
+									value={formateDate(values.startStamp.date)}
+								/>
+								<TimePickerField
+									name='time'
+									label={selectsRange ? 'START TIME' : 'TIME'}
+									value={values.time}
+									onChange={handleTimeChange}
+								/>
+							</div>
+						)}
 					</div>
 					<div>
-						<InlineDatePicker
-							name='schedule_date'
-							startDate={values.startStamp.date}
-							endDate={values.endStamp?.date || null}
-							value={values.startStamp.date}
-							onChange={handleDateChange}
-							formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 3)}
-							calendarStartDay={1}
-							selectsRange={selectsRange}
-							// past dates disabled
-							minDate={new Date()}
-						/>
+						{scheduleFields && (
+							<InlineDatePicker
+								name='schedule_date'
+								startDate={values.startStamp.date}
+								value={values.startStamp.date}
+								onChange={handleDateChange}
+								formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 3)}
+								calendarStartDay={1}
+								// selectsRange={selectsRange}
+								// past dates disabled
+								minDate={new Date()}
+							/>
+						)}
 					</div>
 				</div>
 			</div>

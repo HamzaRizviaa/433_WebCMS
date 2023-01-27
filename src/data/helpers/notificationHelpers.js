@@ -24,7 +24,8 @@ export const notificationInitialValues = {
 		is_scheduled: false,
 		date: '',
 		time: '',
-		schedule_date: null
+		schedule_date: null,
+		schedule_notification: 'now'
 	},
 	conversion_events: {
 		goal_metrics: '',
