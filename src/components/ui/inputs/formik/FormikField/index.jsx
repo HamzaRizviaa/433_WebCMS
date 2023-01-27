@@ -19,7 +19,7 @@ const FormikField = ({ name, onChange, onBlur, ...restProps }) => {
 	const handleChange = useCallback(
 		(event) => {
 			onValueChange(event);
-			if (onChange) onChange(name, event.target.value);
+			if (onChange) onChange(event.target.value);
 		},
 		[onValueChange, onChange]
 	);
@@ -27,7 +27,7 @@ const FormikField = ({ name, onChange, onBlur, ...restProps }) => {
 	const handleBlur = useCallback(
 		(event) => {
 			onFieldBlur(event);
-			if (onBlur) onBlur(name, event.target.value);
+			if (onBlur) onBlur(event);
 		},
 		[onFieldBlur, onBlur]
 	);

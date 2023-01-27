@@ -3,8 +3,27 @@ export const stepsData = [
 	{ key: 'target', label: 'Target' },
 	{ key: 'scheduling', label: 'Scheduling' },
 	{ key: 'conversionEvents', label: 'Conversion Events' },
-	{ key: 'additionalOption', label: 'Additional Options (optional)' }
+	{ key: 'additionalOptions', label: 'Additional Options (optional)' }
 ];
+
+export const booleanOptions = [
+	{ value: 'enabled', label: 'Enabled' },
+	{ value: 'disabled', label: 'Disabled' }
+];
+
+export const expirationUnitOptions = [
+	{ value: 'weeks', label: 'Weeks' },
+	{ value: 'days', label: 'Days' },
+	{ value: 'hours', label: 'Hours' },
+	{ value: 'minutes', label: 'Minutes' }
+];
+
+export const expirationUnitRange = {
+	weeks: 5,
+	days: 8,
+	hours: 25,
+	minutes: 61
+};
 
 export const notificationInitialValues = {
 	save_draft: true,
@@ -35,11 +54,12 @@ export const notificationInitialValues = {
 		custom_data: [
 			{ key: 'module_type', value: '' },
 			{ key: 'post_id', value: '' },
-			{ key: 'notification_type', value: 'comment' }
+			{ key: 'notification_type', value: 'comment' },
+			{ key: '', value: '' }
 		],
-		sound: '',
-		apple_badge: '',
-		expires_in: 0,
-		expiration_unit: ''
+		sound: 'enabled',
+		apple_badge: 'disabled',
+		expires_in: 4,
+		expiration_unit: 'weeks'
 	}
 };

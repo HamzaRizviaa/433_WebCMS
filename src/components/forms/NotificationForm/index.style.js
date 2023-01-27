@@ -19,5 +19,21 @@ export const useNotificationStyles = makeStyles((theme) => ({
 
 	stepLabel: {
 		cursor: 'pointer'
+	},
+
+	stepContainer: {
+		border: `1px solid ${theme.palette.darkGrey}`,
+		borderRadius: 8,
+		padding: 24,
+		paddingBottom: 10,
+		margin: [[20, 0]]
+	},
+
+	expireField: {
+		paddingRight: 5
+	},
+
+	expirationUnitField: {
+		paddingLeft: 5
 	}
 }));
