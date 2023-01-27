@@ -22,14 +22,14 @@ export const expirationUnitOptions = [
 	{ value: 'weeks', label: 'Weeks' },
 	{ value: 'days', label: 'Days' },
 	{ value: 'hours', label: 'Hours' },
-	{ value: 'keyutes', label: 'Minutes' }
+	{ value: 'minutes', label: 'Minutes' }
 ];
 
 export const expirationUnitRange = {
 	weeks: 5,
 	days: 8,
 	hours: 25,
-	keyutes: 61
+	minutes: 61
 };
 
 // INITIAL VALUES
@@ -50,7 +50,7 @@ export const notificationInitialValues = {
 	scheduling: {
 		is_scheduled: false,
 		date: new Date(),
-		time: { hour: '00', key: '00' },
+		time: { hour: '00', min: '00' },
 		schedule_date: null,
 		schedule_notification: 'now'
 	},
