@@ -38,3 +38,6 @@ export { ReactComponent as TrashIcon } from './Trash.svg';
 export { ReactComponent as CloseIcon } from './Close.svg';
 export { ReactComponent as AppleIcon } from './apple.svg';
 export { ReactComponent as AndroidIcon } from './android.svg';
+export { ReactComponent as AndroidCutout } from './Android-Screen.svg';
+export { ReactComponent as Iphone12Cutout } from './Iphone-12.svg';
+export { ReactComponent as Iphone14ProCutout } from './Iphone-14-PRO.svg';
