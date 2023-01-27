@@ -11,6 +11,11 @@ export const booleanOptions = [
 	{ value: 'disabled', label: 'Disabled' }
 ];
 
+export const scheduleOptions = [
+	{ value: 'now', label: 'Now' },
+	{ value: 'schedule', label: 'Schedule' }
+];
+
 export const expirationUnitOptions = [
 	{ value: 'weeks', label: 'Weeks' },
 	{ value: 'days', label: 'Days' },
@@ -41,8 +46,8 @@ export const notificationInitialValues = {
 	target: [{ topic_name: '' }],
 	scheduling: {
 		is_scheduled: false,
-		date: '',
-		time: '',
+		date: new Date(),
+		time: { hour: '00', min: '00' },
 		schedule_date: null,
 		schedule_notification: 'now'
 	},

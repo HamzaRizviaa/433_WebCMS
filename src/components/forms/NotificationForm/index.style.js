@@ -4,15 +4,13 @@ export const useNotificationStyles = makeStyles((theme) => ({
 	root: {
 		width: '100%'
 	},
-	button: {
-		marginTop: theme.spacing(1),
-		marginRight: theme.spacing(1)
-	},
+
 	actionsContainer: {
 		marginBottom: theme.spacing(2),
 		display: 'flex',
 		justifyContent: 'flex-end'
 	},
+
 	resetContainer: {
 		padding: theme.spacing(3)
 	},
@@ -35,7 +33,7 @@ export const useNotificationStyles = makeStyles((theme) => ({
 
 	expirationUnitField: {
 		paddingLeft: 5
-  },
+	},
 	notifDisplay: {
 		display: 'flex',
 		flexDirection: 'row'
@@ -126,14 +124,6 @@ export const useNotificationStyles = makeStyles((theme) => ({
 		right: '29px',
 		'& img': { width: '28px', height: '28px' }
 	},
-	conversionRoot: {
-		backgroundColor: theme.palette.black,
-		color: theme.palette.white,
-		border: `1px solid ${theme.palette.normalGrey}`,
-		borderRadius: '6px !important',
-		padding: 20,
-		margin: '20px 10px'
-	},
 	conversionChevronContainer: {
 		display: 'flex',
 		'& img': {
@@ -196,7 +186,7 @@ export const useNotificationStyles = makeStyles((theme) => ({
 
 	targetAnotherAppBtn: {
 		position: 'absolute',
-		bottom: -75
+		bottom: -70
 	},
 
 	iconBtn: {
@@ -221,19 +211,19 @@ export const useNotificationStyles = makeStyles((theme) => ({
 		height: 8,
 		width: 1,
 		backgroundColor: theme.palette.darkGrey
-	}
-}));
-
-export const useSchedulingStyles = makeStyles((theme) => ({
-	scheduleRootBox: {
-		border: `1px solid ${theme.palette.darkGrey}`,
-		padding: theme.spacing(2, 2),
-		margin: theme.spacing(2, 0),
-		borderRadius: '8px'
 	},
+
 	scheduleGridMain: {
 		display: 'grid',
 		gridTemplateColumns: '40% 1fr',
 		gap: '20px'
+	},
+
+	scheduleFieldsContainer: {
+		paddingRight: 20
+	},
+
+	dateField: {
+		border: `1px solid ${theme.palette.normalGrey}`
 	}
 }));

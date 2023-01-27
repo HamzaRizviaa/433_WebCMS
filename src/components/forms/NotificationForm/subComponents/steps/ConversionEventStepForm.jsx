@@ -7,7 +7,7 @@ import RightChevron from '../../../../../assets/Right.svg';
 const ConversionEventStepForm = () => {
 	const classes = useNotificationStyles();
 	return (
-		<Box className={classes.conversionRoot}>
+		<Box className={classes.stepContainer}>
 			<Box className={classes.conversionContainer}>
 				<div className={classes.conversionChevronContainer}>
 					<div>Sent</div>
@@ -21,7 +21,7 @@ const ConversionEventStepForm = () => {
 						name='goal_metrics'
 						placeholder='Select goal metric'
 						size='large'
-						// options={mainCategories}
+						options={[]}
 						mapOptions={{ labelKey: 'name', valueKey: 'id' }}
 						// onChange={handleMainCategoryChange}
 						// disabled={isPublished}
@@ -36,7 +36,7 @@ const ConversionEventStepForm = () => {
 					name='analytics_label'
 					placeholder='Add an analytics label'
 					size='large'
-					// options={mainCategories}
+					options={[]}
 					mapOptions={{ labelKey: 'name', valueKey: 'id' }}
 					// onChange={handleMainCategoryChange}
 					// disabled={isPublished}

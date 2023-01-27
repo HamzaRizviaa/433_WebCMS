@@ -1,120 +1,68 @@
-/* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import dayjs from 'dayjs';
 import { useFormikContext } from 'formik';
-import { useSchedulingStyles } from '../../index.style';
+
 import FormikSelect from '../../../../ui/inputs/formik/FormikSelect';
-import FormikDatePicker from '../../../../ui/inputs/formik/FormikDatePicker';
 import SchedulerDateField from '../../../../ui/inputs/SchedulerDateField';
 import InlineDatePicker from '../../../../ui/inputs/InlineDatePicker';
 import TimePickerField from '../../../../ui/inputs/TimePickerField';
-import dayjs from 'dayjs';
+import { scheduleOptions } from '../../../../../data/helpers';
+import { useNotificationStyles } from '../../index.style';
 
-const SchedulingStepForm = ({ selectsRange = false }) => {
-	const [scheduleFields, setScheduleFields] = useState(false);
-	const [values, setValues] = useState({
-		time: {
-			date: new Date(),
-			hour: '00',
-			min: '00'
-		},
-		startStamp: {
-			date: new Date(),
-			hour: '00',
-			min: '00'
-		}
-	});
-	const optionsText = [
-		{ value: 'now', label: 'Now' },
-		{ value: 'schedule', label: 'Schedule' }
-	];
-	const classes = useSchedulingStyles();
+const SchedulingStepForm = () => {
+	const { values, setFieldValue } = useFormikContext();
 
 	const handleTimeChange = (name, value) => {
-		setValues((prevState) => ({
-			...prevState,
-			[name]: {
-				date: prevState[name].date,
-				hour: value.hour,
-				min: value.min
-			}
-		}));
+		setFieldValue(name, value);
 	};
 
 	const handleDateChange = (selectedDate) => {
-		if (selectsRange) {
-			const [selectedStartDate, selectedEndDate] = selectedDate;
-
-			setValues((prevState) => ({
-				time: {
-					...prevState.time
-				},
-				startStamp: {
-					...prevState.startStamp,
-					date: selectedStartDate
-				}
-			}));
-		} else {
-			setValues((prevState) => ({
-				time: {
-					...prevState.time
-				},
-				startStamp: {
-					...prevState.startStamp,
-					date: selectedDate
-				}
-			}));
-		}
+		setFieldValue('scheduling.date', selectedDate);
 	};
 
-	const handleScheduleChange = (value) => {
-		if (value === 'schedule') {
-			setScheduleFields(true);
-		} else {
-			setScheduleFields(false);
-		}
-	};
+	const formatDate = (date) => dayjs(date || new Date()).format('MMM DD, YYYY');
 
-	const formateDate = (date) =>
-		dayjs(date || new Date()).format('MMM DD, YYYY');
+	const showDateAndTime =
+		values.scheduling.schedule_notification === 'schedule';
+
+	const classes = useNotificationStyles();
 
 	return (
 		<div>
-			<div className={classes.scheduleRootBox}>
+			<div className={classes.stepContainer}>
 				<div className={classes.scheduleGridMain}>
-					<div>
+					<div className={classes.scheduleFieldsContainer}>
 						<FormikSelect
-							label='Send to eligible user'
-							name={`scheduling.schedule_notification`}
+							label='SEND TO ELIGIBLE USER'
+							name='scheduling.schedule_notification'
 							placeholder='Please select'
-							options={optionsText}
-							onChange={handleScheduleChange}
+							options={scheduleOptions}
 						/>
-						{scheduleFields && (
+						{showDateAndTime && (
 							<div>
 								<SchedulerDateField
-									value={formateDate(values.startStamp.date)}
+									className={classes.dateField}
+									value={formatDate(values.scheduling.date)}
 								/>
 								<TimePickerField
-									name='time'
-									label={selectsRange ? 'START TIME' : 'TIME'}
-									value={values.time}
+									name='scheduling.time'
+									label='TIME'
+									value={values.scheduling.time}
 									onChange={handleTimeChange}
+									showSeparator
 								/>
 							</div>
 						)}
 					</div>
 					<div>
-						{scheduleFields && (
+						{showDateAndTime && (
 							<InlineDatePicker
-								name='schedule_date'
-								startDate={values.startStamp.date}
-								value={values.startStamp.date}
+								name='scheduling.date'
+								value={values.scheduling.date}
 								onChange={handleDateChange}
 								formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 3)}
 								calendarStartDay={1}
-								// selectsRange={selectsRange}
-								// past dates disabled
 								minDate={new Date()}
 							/>
 						)}
