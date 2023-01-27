@@ -23,7 +23,7 @@ const OptionsFormatter = ({
 		event.stopPropagation();
 
 		dispatch(openNotificationSlider());
-		dispatch(setLibraryData({ payload: { contentType, contentId } }));
+		dispatch(setLibraryData({ contentType, contentId }));
 	};
 
 	const classes = useStyles();

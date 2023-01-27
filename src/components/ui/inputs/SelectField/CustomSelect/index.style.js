@@ -19,9 +19,8 @@ const sizeMapper = {
 };
 
 export const useSelectStyles = makeStyles((theme) => ({
-	select: ({ isError, isDisabled, size }) => ({
-		cursor: ({ readOnly }) =>
-			readOnly ? 'default !important' : 'pointer !important',
+	select: ({ isError, isDisabled, size, readOnly }) => ({
+		cursor: readOnly ? 'default !important' : 'pointer !important',
 		display: 'flex',
 		alignItems: 'center',
 		color: 'white !important',
