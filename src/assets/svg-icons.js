@@ -38,3 +38,4 @@ export { ReactComponent as TrashIcon } from './Trash.svg';
 export { ReactComponent as CloseIcon } from './Close.svg';
 export { ReactComponent as AppleIcon } from './apple.svg';
 export { ReactComponent as AndroidIcon } from './android.svg';
+export { ReactComponent as RightChevron } from './Right.svg';

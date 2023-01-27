@@ -13,7 +13,6 @@ import Battery from '../../../../assets/Rectangle.svg';
 import Signals from '../../../../assets/MobileSignal.svg';
 import { Profile433 } from '../../../../data/helpers/articleHelpers';
 import StatusBadge from '../../../ui/StatusBadge';
-import { useFormikContext } from 'formik';
 
 const ArticlePreviewWrapper = ({ children, form }) => {
 	// Get Cover Url From data
@@ -22,8 +21,7 @@ const ArticlePreviewWrapper = ({ children, form }) => {
 
 	// Stylings
 	const classes = useStyles({ url: getUrl() });
-	const { values } = useFormikContext();
-	console.log('Article Vals', values);
+
 	/**
 	 * Date & Est time
 	 */

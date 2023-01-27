@@ -2,7 +2,7 @@ import { Box } from '@material-ui/core';
 import React from 'react';
 import FormikSelect from '../../../../ui/inputs/formik/FormikSelect';
 import { useNotificationStyles } from '../../index.style';
-import RightChevron from '../../../../../assets/Right.svg';
+import { RightChevron } from '../../../../../assets/svg-icons';
 
 const ConversionEventStepForm = () => {
 	const classes = useNotificationStyles();
@@ -11,9 +11,9 @@ const ConversionEventStepForm = () => {
 			<Box className={classes.conversionContainer}>
 				<div className={classes.conversionChevronContainer}>
 					<div>Sent</div>
-					<img src={RightChevron} />
+					<RightChevron />
 					<div>Opened</div>
-					<img src={RightChevron} />
+					<RightChevron />
 				</div>
 
 				<div className={classes.metricContainer}>

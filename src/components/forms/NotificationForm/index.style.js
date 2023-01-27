@@ -126,7 +126,7 @@ export const useNotificationStyles = makeStyles((theme) => ({
 	},
 	conversionChevronContainer: {
 		display: 'flex',
-		'& img': {
+		'& svg': {
 			margin: '0 12px'
 		}
 	},
