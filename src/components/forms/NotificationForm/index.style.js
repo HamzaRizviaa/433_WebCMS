@@ -35,7 +35,7 @@ export const useNotificationStyles = makeStyles((theme) => ({
 
 	expirationUnitField: {
 		paddingLeft: 5
-  },
+	},
 	notifDisplay: {
 		display: 'flex',
 		flexDirection: 'row'
@@ -136,7 +136,7 @@ export const useNotificationStyles = makeStyles((theme) => ({
 	},
 	conversionChevronContainer: {
 		display: 'flex',
-		'& img': {
+		'& svg': {
 			margin: '0 12px'
 		}
 	},

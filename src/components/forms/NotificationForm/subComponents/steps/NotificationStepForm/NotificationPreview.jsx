@@ -1,11 +1,9 @@
 import { Box } from '@material-ui/core';
 import React from 'react';
 import { useNotificationStyles } from '../../../index.style';
-import {
-	AndroidCutout,
-	Iphone12Cutout,
-	Iphone14ProCutout
-} from '../../../../../../assets/svg-icons';
+import Android from '../../../../../../assets/Android-Screen.svg';
+import Iphone12 from '../../../../../../assets/Iphone-12.svg';
+import Iphone14Pro from '../../../../../../assets/Iphone-14-PRO.svg';
 import ImagePlaceholder from '../../../../../../assets/Notification_Placeholder.png';
 import { useFormikContext } from 'formik';
 
@@ -33,7 +31,7 @@ const NotificationPreview = () => {
 		<Box className={classes.notificationRoot}>
 			<h3>Preview</h3>
 			<Box mb={2} className={classes.notifTitleContainer}>
-				<AndroidCutout />
+				<img src={Android} />
 				<div className={classes.notifTitleAndroid}>{notificationTitle}</div>
 				<div className={classes.notifTextAndroid}>{notificationText}</div>
 				<div className={classes.notifImgAndroid}>
@@ -42,7 +40,7 @@ const NotificationPreview = () => {
 				<h6>ANDROID</h6>
 			</Box>
 			<Box mb={2} className={classes.notifTitleContainer}>
-				<Iphone12Cutout />
+				<img src={Iphone12} />
 				<div className={classes.notifTitleIphone12}>{notificationTitle}</div>
 				<div className={classes.notifTextIphone12}>{notificationText}</div>
 				<div className={classes.notifImgIphone12}>
@@ -51,7 +49,7 @@ const NotificationPreview = () => {
 				<h6>IPHONE 12</h6>
 			</Box>
 			<Box className={classes.notifTitleContainer}>
-				<Iphone14ProCutout />
+				<img src={Iphone14Pro} />
 				<div className={classes.notifTitleIphone14}>{notificationTitle}</div>
 				<div className={classes.notifTextIphone14}>{notificationText}</div>
 				<div className={classes.notifImgIphone14}>
