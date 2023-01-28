@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Grid } from '@material-ui/core';
 import { useQuestionsStyles } from './index.style';
 import DrawerLayout from '../../layouts/DrawerLayout';
+import QuizQuestions from './subComponents/QuestionGeneratorInternalForm/QuizQuestions';
 
 const QuestionGeneratorForm = ({ open, handleClose }) => {
 	const classes = useQuestionsStyles();
@@ -21,7 +22,7 @@ const QuestionGeneratorForm = ({ open, handleClose }) => {
 				</Grid>
 
 				<Grid className={classes.lastGridItem} item md={6}>
-					Post Generated Questions
+					<QuizQuestions />
 				</Grid>
 			</Grid>
 		</DrawerLayout>

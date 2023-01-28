@@ -34,3 +34,4 @@ export { ReactComponent as PreviewIcon } from './Preview.svg';
 export { ReactComponent as DeniedError } from './AccesDenied.svg';
 export { ReactComponent as TemplateSVG } from './TemplateAdd.svg';
 export { ReactComponent as SmartQuiz } from './SmartQuiz.svg';
+export { ReactComponent as EmptyQuizQuestions } from './emptyQuizQuestions.svg';

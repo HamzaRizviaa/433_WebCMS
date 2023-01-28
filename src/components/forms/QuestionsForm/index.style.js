@@ -176,6 +176,27 @@ export const useQuestionsStyles = makeStyles((theme) => ({
 	},
 
 	lastGridItem: {
-		borderLeft: `1px solid ${theme.palette.darkGrey}`
+		borderLeft: `1px solid ${theme.palette.darkGrey}`,
+		paddingLeft: '20px'
+	},
+
+	quizTitle: {
+		fontWeight: '800',
+		fontSize: '20px'
+	},
+
+	emptyQuizInfoPage: {
+		height: '428px',
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+
+	emptyQuizInfoText: {
+		fontWeight: '400',
+		fontSize: '14px',
+		lineHeight: '24px',
+		textAlign: 'center'
 	}
 }));
