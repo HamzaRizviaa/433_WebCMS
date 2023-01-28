@@ -35,3 +35,4 @@ export { ReactComponent as DeniedError } from './AccesDenied.svg';
 export { ReactComponent as TemplateSVG } from './TemplateAdd.svg';
 export { ReactComponent as SmartQuiz } from './SmartQuiz.svg';
 export { ReactComponent as EmptyQuizQuestions } from './emptyQuizQuestions.svg';
+export { ReactComponent as Unlocked } from './Unlocked.svg';

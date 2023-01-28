@@ -31,5 +31,22 @@ export const useAccordionLayoutStyles = makeStyles((theme) => ({
 
 	accordianDetail: {
 		width: '100%'
+	},
+
+	rightSide: {
+		marginLeft: '170px',
+		marginTop: '3px',
+		height: '25px',
+		width: '25px',
+		background: ' #404040',
+		borderRadius: '40px',
+		textAlign: 'center',
+		cursor: 'pointer'
+	},
+
+	secondIcon: {
+		padding: '5px 0px',
+		width: '15px',
+		height: '15px'
 	}
 }));
