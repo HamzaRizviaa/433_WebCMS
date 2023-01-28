@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useQuestionsStyles } from '../../index.style';
 import { EmptyQuizQuestions, Unlocked } from '../../../../../assets/svg-icons';
 import AccordianLayout from '../../../../layouts/AccordianLayout';
+import QuizQuestionsForm from './QuizQuestionsForm';
 
 const QuizQuestions = ({ data = true }) => {
 	const classes = useQuestionsStyles();
@@ -27,7 +28,9 @@ const QuizQuestions = ({ data = true }) => {
 						title='Question 1'
 						SecondIcon={Unlocked}
 						onSecondIconClick={handleLockQuestion}
-					></AccordianLayout>
+					>
+						<QuizQuestionsForm />
+					</AccordianLayout>
 				</div>
 			)}
 		</div>
