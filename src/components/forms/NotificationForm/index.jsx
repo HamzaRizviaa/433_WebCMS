@@ -50,6 +50,7 @@ const NotificationForm = ({
 				initialValues={initialValues}
 				validationSchema={notificationValidationSchema}
 				enableReinitialize
+				validateOnMount
 			>
 				<Form>
 					<NotificationInternalForm />

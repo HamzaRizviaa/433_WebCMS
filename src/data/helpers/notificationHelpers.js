@@ -4,7 +4,7 @@ export const stepsData = [
 	{ key: 'notification', label: 'Notification' },
 	{ key: 'target', label: 'Target' },
 	{ key: 'scheduling', label: 'Scheduling' },
-	{ key: 'conversion_events', label: 'Conversion Events' },
+	// { key: 'conversion_events', label: 'Conversion Events' },
 	{ key: 'additional_options', label: 'Additional Options (optional)' }
 ];
 
@@ -54,10 +54,10 @@ export const notificationInitialValues = {
 		schedule_date: null,
 		schedule_notification: 'now'
 	},
-	conversion_events: {
-		goal_metrics: '',
-		analytics_label: ''
-	},
+	// conversion_events: {
+	// 	goal_metrics: '',
+	// 	analytics_label: ''
+	// },
 	additional_options: {
 		android_notification_channel: '',
 		custom_data: [
@@ -94,7 +94,7 @@ const step3ValidationSchema = yup.object({
 	})
 });
 
-const step4ValidationSchema = yup.object({});
+// const step4ValidationSchema = yup.object({});
 const step5ValidationSchema = yup.object({
 	android_notification_channel: yup.string(),
 	sound: yup.string().required('Required!'),
@@ -138,7 +138,7 @@ export const notificationStepsValidationSchemas = {
 	notification: step1ValidationSchema,
 	target: step2ValidationSchema,
 	scheduling: step3ValidationSchema,
-	conversion_events: step4ValidationSchema,
+	// conversion_events: step4ValidationSchema,
 	additional_options: step5ValidationSchema
 };
 
