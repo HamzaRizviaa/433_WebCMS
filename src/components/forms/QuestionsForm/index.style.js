@@ -198,5 +198,46 @@ export const useQuestionsStyles = makeStyles((theme) => ({
 		fontSize: '14px',
 		lineHeight: '24px',
 		textAlign: 'center'
+	},
+	// Generate Auto Question Stylings
+	filterContainer: {
+		padding: '30px',
+		paddingLeft: '0px'
+	},
+	filterField: {
+		margin: '5px 0px'
+	},
+	labelsContainer: {
+		display: 'flex',
+		justifyContent: 'space-between',
+		margin: '0 1rem'	
+	},
+
+	inputLabel: {
+		position: 'relative',
+		display: 'inline-block',
+		fontSize: '1.4rem',
+		fontWeight: 'bold',
+		marginBottom: '0.5rem',
+		color: (props) => (props.isError ? theme.palette.red : theme.palette.white),
+
+		'&::before': {
+			content: '"*"',
+			position: 'absolute',
+			right: -9,
+			top: -2,
+			fontSize: '1.5rem',
+			fontWeight: 'bold',
+			color: theme.palette.red,
+			display: (props) => (props.isRequired ? 'inline-block' : 'none')
+		}
+	},
+	radioContainer:{
+		margin: '0 1rem',
+		display:"flex",
+		justifyContent:"space-between",
+		width:"70%",
+		padding:"1.2rem 0"
+		
 	}
 }));
