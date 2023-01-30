@@ -210,7 +210,7 @@ export const useQuestionsStyles = makeStyles((theme) => ({
 	labelsContainer: {
 		display: 'flex',
 		justifyContent: 'space-between',
-		margin: '0 1rem'	
+		margin: '0 1rem'
 	},
 
 	inputLabel: {
@@ -232,12 +232,15 @@ export const useQuestionsStyles = makeStyles((theme) => ({
 			display: (props) => (props.isRequired ? 'inline-block' : 'none')
 		}
 	},
-	radioContainer:{
+	radioContainer: {
 		margin: '0 1rem',
-		display:"flex",
-		justifyContent:"space-between",
-		width:"70%",
-		padding:"1.2rem 0"
-		
+		display: 'flex',
+		justifyContent: 'space-between',
+		width: '70%',
+		padding: '1.2rem 0'
+	},
+
+	quizQuestionsDraftButtonWrapper: {
+		marginTop: '20px'
 	}
 }));

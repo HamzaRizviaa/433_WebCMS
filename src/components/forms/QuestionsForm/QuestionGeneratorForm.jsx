@@ -9,12 +9,14 @@ import { Formik, Form } from 'formik';
 import QuestionGeneratorInternalForm from './subComponents/QuestionGeneratorInternalForm';
 
 const QuestionsForm = ({ open, handleClose }) => {
+	const onSubmitHandler = async () => {};
+
 	return (
 		<Formik
 			enableReinitialize
 			initialValues={questionsFormInitialValues([])}
 			validationSchema={questionQuizGeneratorFormValidationSchema}
-			// onSubmit={onSubmitHandler}
+			onSubmit={onSubmitHandler}
 			validateOnMount
 		>
 			{
@@ -23,6 +25,7 @@ const QuestionsForm = ({ open, handleClose }) => {
 						<QuestionGeneratorInternalForm
 							open={open}
 							handleClose={handleClose}
+							onSubmitHandler={onSubmitHandler}
 						/>
 					</Form>
 				)

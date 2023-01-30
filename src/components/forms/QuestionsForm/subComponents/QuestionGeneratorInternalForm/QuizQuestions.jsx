@@ -4,8 +4,9 @@ import { FieldArray } from 'formik';
 import { useQuestionsStyles } from '../../index.style';
 import { EmptyQuizQuestions } from '../../../../../assets/svg-icons';
 import QuizQuestionsForm from './QuizQuestionsForm';
+import Button from '../../../../ui/Button';
 
-const QuizQuestions = ({ data = true }) => {
+const QuizQuestions = ({ data = true, onDraftClick }) => {
 	const classes = useQuestionsStyles();
 
 	return (
@@ -21,22 +22,32 @@ const QuizQuestions = ({ data = true }) => {
 					</p>
 				</div>
 			) : (
-				new Array(3)
-					.fill(0)
-					.map((item, index) => (
+				<>
+					{new Array(3).fill(0).map((item, index) => (
 						<FieldArray
 							key={item}
 							name='questions'
 							render={(props) => <QuizQuestionsForm {...props} index={index} />}
 						/>
-					))
+					))}
+					<Button
+						fullWidth
+						size='large'
+						variant='outlined'
+						onClick={onDraftClick}
+						className={classes.quizQuestionsDraftButtonWrapper}
+					>
+						SAVE AS A DRAFT
+					</Button>
+				</>
 			)}
 		</div>
 	);
 };
 
 QuizQuestions.propTypes = {
-	data: PropTypes.object.isRequired
+	data: PropTypes.object.isRequired,
+	onDraftClick: PropTypes.func.isRequired
 };
 
 export default QuizQuestions;
