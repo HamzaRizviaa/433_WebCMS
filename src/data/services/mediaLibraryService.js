@@ -40,7 +40,7 @@ class MediaLibraryService {
 	static postMedia = (data) => {
 		return axiosInstance.post('/media/create-media', data, {
 			params: {
-				api_version: 2
+				api_version: 3
 			}
 		});
 	};
