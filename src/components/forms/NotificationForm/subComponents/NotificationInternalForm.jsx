@@ -1,7 +1,7 @@
 import React from 'react';
 import { Stepper, Step, StepButton, StepContent } from '@material-ui/core';
 
-import Button from '../../../ui/Button';
+import NextStepButton from './NextStepButton';
 import { stepsComponents } from './steps';
 import { stepsData } from '../../../../data/helpers';
 import { useNotificationStyles } from '../index.style';
@@ -45,13 +45,10 @@ const NotificationInternalForm = () => {
 						<StepContent>
 							{stepsComponents[step.key]}
 							<div className={classes.actionsContainer}>
-								<Button
-									className={classes.button}
-									color='primary'
+								<NextStepButton
+									currentStep={step.key}
 									onClick={handleNext(index)}
-								>
-									NEXT STEP
-								</Button>
+								/>
 							</div>
 						</StepContent>
 					</Step>

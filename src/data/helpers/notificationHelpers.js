@@ -4,8 +4,8 @@ export const stepsData = [
 	{ key: 'notification', label: 'Notification' },
 	{ key: 'target', label: 'Target' },
 	{ key: 'scheduling', label: 'Scheduling' },
-	{ key: 'conversionEvents', label: 'Conversion Events' },
-	{ key: 'additionalOptions', label: 'Additional Options (optional)' }
+	{ key: 'conversion_events', label: 'Conversion Events' },
+	{ key: 'additional_options', label: 'Additional Options (optional)' }
 ];
 
 export const booleanOptions = [
@@ -100,6 +100,7 @@ const step5ValidationSchema = yup.object({
 						'This key is already declared',
 						function (value, ctx) {
 							const customDataArray = ctx?.from[1]?.value?.custom_data || [];
+
 							const filteredData = customDataArray.filter(
 								(item) => item.key === value
 							);
@@ -117,10 +118,14 @@ const step5ValidationSchema = yup.object({
 	)
 });
 
-export const notificationValidationSchema = yup.object({
+export const notificationStepsValidationSchemas = {
 	notification: step1ValidationSchema,
 	target: step2ValidationSchema,
 	scheduling: step3ValidationSchema,
 	conversion_events: step4ValidationSchema,
 	additional_options: step5ValidationSchema
-});
+};
+
+export const notificationValidationSchema = yup.object(
+	notificationStepsValidationSchemas
+);

@@ -10,6 +10,6 @@ export const stepsComponents = {
 	notification: <NotificationStepForm />,
 	target: <TargetStepForm />,
 	scheduling: <SchedulingStepForm />,
-	conversionEvents: <ConversionEventStepForm />,
-	additionalOptions: <AdditionalOptionStepForm />
+	conversion_events: <ConversionEventStepForm />,
+	additional_options: <AdditionalOptionStepForm />
 };
