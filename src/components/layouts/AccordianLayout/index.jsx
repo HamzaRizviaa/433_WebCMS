@@ -13,7 +13,9 @@ const AccordianLayout = ({
 	title,
 	largeIconsAndLabel,
 	children,
+	isSecondIconClicked = false,
 	SecondIcon,
+	SecondIconOnClick,
 	onSecondIconClick
 }) => {
 	const classes = useAccordionLayoutStyles({ largeIconsAndLabel });
@@ -25,10 +27,17 @@ const AccordianLayout = ({
 					<Typography>{title}</Typography>
 					{!!SecondIcon && (
 						<div className={classes.rightSide}>
-							<SecondIcon
-								className={classes.secondIcon}
-								onClick={onSecondIconClick}
-							/>
+							{isSecondIconClicked ? (
+								<SecondIconOnClick
+									className={classes.secondIcon}
+									onClick={onSecondIconClick}
+								/>
+							) : (
+								<SecondIcon
+									className={classes.secondIcon}
+									onClick={onSecondIconClick}
+								/>
+							)}
 						</div>
 					)}
 				</AccordionSummary>
@@ -45,7 +54,9 @@ AccordianLayout.propTypes = {
 	largeIconsAndLabel: PropTypes.bool,
 	children: PropTypes.element.isRequired,
 	SecondIcon: PropTypes.element.isRequired,
-	onSecondIconClick: PropTypes.func.isRequired
+	isSecondIconClicked: PropTypes.bool,
+	onSecondIconClick: PropTypes.func.isRequired,
+	SecondIconOnClick: PropTypes.func.isRequired
 };
 
 export default AccordianLayout;

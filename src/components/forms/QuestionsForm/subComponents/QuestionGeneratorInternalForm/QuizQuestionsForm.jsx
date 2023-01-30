@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import FormikField from '../../../../ui/inputs/formik/FormikField';
 import { useFormStyles } from '../../../forms.style';
 import AccordianLayout from '../../../../layouts/AccordianLayout';
-import { Unlocked } from '../../../../../assets/svg-icons';
+import { Unlocked, Locked } from '../../../../../assets/svg-icons';
 
 const QuizQuestionsForm = ({ index }) => {
 	const classes = useFormStyles();
@@ -18,6 +18,7 @@ const QuizQuestionsForm = ({ index }) => {
 			<AccordianLayout
 				title={`Question ${index + 1}`}
 				SecondIcon={Unlocked}
+				SecondIconOnClick={Locked}
 				onSecondIconClick={handleLockQuestion}
 			>
 				<div className={classes.fieldContainer}>
