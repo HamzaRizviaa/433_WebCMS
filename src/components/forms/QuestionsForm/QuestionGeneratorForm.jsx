@@ -1,37 +1,43 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Grid } from '@material-ui/core';
-import { useQuestionsStyles } from './index.style';
-import DrawerLayout from '../../layouts/DrawerLayout';
-import QuizQuestions from './subComponents/QuestionGeneratorInternalForm/QuizQuestions';
 
-const QuestionGeneratorForm = ({ open, handleClose }) => {
-	const classes = useQuestionsStyles();
+import { Formik, Form } from 'formik';
 
+import QuestionGeneratorInternalForm from './subComponents/QuestionGeneratorInternalForm';
+
+const QuestionsForm = ({ open, handleClose }) => {
 	return (
-		<DrawerLayout
-			open={open}
-			handleClose={handleClose}
-			title={'Automatic Generation'}
-			//	isLoading={isLoading}
-			customWidth={850}
+		<Formik
+			enableReinitialize
+			// initialValues={initialValues}
+			// validationSchema={getQuestionsValidationSchema(
+			// 	isSummaryEnabled,
+			// 	isTriviaEnabled
+			// )}
+			// onSubmit={onSubmitHandler}
+			validateOnMount
 		>
-			<Grid container className={classes.articlesGridBox}>
-				<Grid className={classes.firstGridItem} item pr={1} md={6}>
-					Quiz Questions
-				</Grid>
-
-				<Grid className={classes.lastGridItem} item md={6}>
-					<QuizQuestions />
-				</Grid>
-			</Grid>
-		</DrawerLayout>
+			{
+				(/*{ setSubmitting, isSubmitting }*/) => (
+					<Form>
+						<QuestionGeneratorInternalForm
+							open={open}
+							handleClose={handleClose}
+						/>
+					</Form>
+				)
+			}
+		</Formik>
 	);
 };
 
-QuestionGeneratorForm.propTypes = {
+QuestionsForm.propTypes = {
 	open: PropTypes.bool.isRequired,
-	handleClose: PropTypes.func.isRequired
+	handleClose: PropTypes.func.isRequired,
+	isEdit: PropTypes.bool.isRequired,
+	status: PropTypes.string.isRequired,
+	questionType: PropTypes.string.isRequired,
+	location: PropTypes.string.isRequired
 };
 
-export default QuestionGeneratorForm;
+export default QuestionsForm;
