@@ -117,5 +117,15 @@ export const useFormStyles = makeStyles((theme) => ({
 		'& path': {
 			fill: theme.palette.disabled
 		}
+	},
+
+	formButtons: {
+		display: 'flex',
+		justifyContent: 'flex-end',
+		alignItems: 'center',
+
+		'& button + button': {
+			marginLeft: 10
+		}
 	}
 }));

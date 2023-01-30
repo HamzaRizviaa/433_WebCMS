@@ -23,6 +23,8 @@ const NextStepButton = ({ currentStep, onClick }) => {
 
 	const classes = useNotificationStyles();
 
+	if (currentStep === 'additional_options') return null;
+
 	return (
 		<Button
 			className={classes.button}
@@ -30,7 +32,7 @@ const NextStepButton = ({ currentStep, onClick }) => {
 			onClick={onClick}
 			disabled={isStepInvalid}
 		>
-			{currentStep === 'additional_options' ? 'FINISH' : 'NEXT STEP'}
+			NEXT STEP
 		</Button>
 	);
 };
