@@ -75,9 +75,25 @@ export const notificationInitialValues = {
 
 // VALIDATION SCHEMAS
 
-const step1ValidationSchema = yup.object({});
-const step2ValidationSchema = yup.array().of(yup.object({}));
-const step3ValidationSchema = yup.object({});
+const step1ValidationSchema = yup.object({
+	notification_title: yup.string().required('Required!'),
+	notification_text: yup.string().required('Required!'),
+	uploadedFiles: yup.array().max(1),
+	notification_name: yup.string()
+});
+const step2ValidationSchema = yup.array().of(
+	yup.object({
+		topic_name: yup.string().required('Required!')
+	})
+);
+const step3ValidationSchema = yup.object({
+	time: yup.object().when('schedule_notification', {
+		is: (val) => val === 'schedule',
+		then: yup.object({ min: yup.string().required() }),
+		otherwise: yup.object().notRequired()
+	})
+});
+
 const step4ValidationSchema = yup.object({});
 const step5ValidationSchema = yup.object({
 	android_notification_channel: yup.string(),
