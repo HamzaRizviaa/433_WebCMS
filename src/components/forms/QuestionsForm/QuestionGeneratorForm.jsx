@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import {
+	questionQuizGeneratorFormValidationSchema,
+	questionsFormInitialValues
+} from '../../../data/helpers';
 import { Formik, Form } from 'formik';
 
 import QuestionGeneratorInternalForm from './subComponents/QuestionGeneratorInternalForm';
@@ -9,11 +12,8 @@ const QuestionsForm = ({ open, handleClose }) => {
 	return (
 		<Formik
 			enableReinitialize
-			// initialValues={initialValues}
-			// validationSchema={getQuestionsValidationSchema(
-			// 	isSummaryEnabled,
-			// 	isTriviaEnabled
-			// )}
+			initialValues={questionsFormInitialValues([])}
+			validationSchema={questionQuizGeneratorFormValidationSchema}
 			// onSubmit={onSubmitHandler}
 			validateOnMount
 		>

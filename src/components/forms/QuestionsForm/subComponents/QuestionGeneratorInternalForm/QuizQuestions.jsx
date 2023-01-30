@@ -1,14 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FieldArray } from 'formik';
 import { useQuestionsStyles } from '../../index.style';
-import { EmptyQuizQuestions, Unlocked } from '../../../../../assets/svg-icons';
-import AccordianLayout from '../../../../layouts/AccordianLayout';
+import { EmptyQuizQuestions } from '../../../../../assets/svg-icons';
 import QuizQuestionsForm from './QuizQuestionsForm';
 
 const QuizQuestions = ({ data = true }) => {
 	const classes = useQuestionsStyles();
-
-	const handleLockQuestion = () => {};
 
 	return (
 		<div>
@@ -23,15 +21,10 @@ const QuizQuestions = ({ data = true }) => {
 					</p>
 				</div>
 			) : (
-				<div>
-					<AccordianLayout
-						title='Question 1'
-						SecondIcon={Unlocked}
-						onSecondIconClick={handleLockQuestion}
-					>
-						<QuizQuestionsForm />
-					</AccordianLayout>
-				</div>
+				<FieldArray
+					name='questions'
+					render={(props) => <QuizQuestionsForm {...props} />}
+				/>
 			)}
 		</div>
 	);

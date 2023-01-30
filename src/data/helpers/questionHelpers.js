@@ -406,6 +406,20 @@ export const questionDataFormatterForForm = (question, allRules) => {
 	return formattedQuestion;
 };
 
+const questionQuizGeneratorSchema = yup
+	.array()
+	.of(
+		yup.object({
+			question: yup.string().trim().required('You need to enter a question'),
+			answers: yup.array().of(
+				yup.object().shape({
+					answer: yup.string().trim()
+				})
+			)
+		})
+	)
+	.min(10, 'Atleast 10 questions are required');
+
 const questionsSlideSchema = yup
 	.array()
 	.of(
@@ -429,6 +443,10 @@ const questionsSlideSchema = yup
 		})
 	)
 	.min(1, 'Atleast 1 question is required');
+
+export const questionQuizGeneratorFormValidationSchema = yup.object().shape({
+	questions: questionQuizGeneratorSchema
+});
 
 // V1 is with summary component and no trivia component
 export const questionsFormValidationSchemaV1 =

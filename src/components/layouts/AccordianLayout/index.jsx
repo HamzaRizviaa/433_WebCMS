@@ -23,7 +23,7 @@ const AccordianLayout = ({
 			<Accordion defaultExpanded>
 				<AccordionSummary expandIcon={<ExpandMoreIcon />}>
 					<Typography>{title}</Typography>
-					{SecondIcon && (
+					{!!SecondIcon && (
 						<div className={classes.rightSide}>
 							<SecondIcon
 								className={classes.secondIcon}
