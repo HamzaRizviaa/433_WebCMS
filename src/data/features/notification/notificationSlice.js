@@ -5,7 +5,8 @@ const initialState = {
 	libraryData: {
 		contentType: '',
 		contentId: ''
-	}
+	},
+	schedulerError: null
 };
 
 const notificationSlice = createSlice({
@@ -32,6 +33,15 @@ const notificationSlice = createSlice({
 				contentType: '',
 				contentId: ''
 			};
+		},
+
+		// Scheduler Error
+		setSchedulerError: (state) => {
+			state.schedulerError =
+				'You can’t schedule in the past. Please select a Date and Time atleast 15 minutes from now.';
+		},
+		resetSchedulerError: (state) => {
+			state.schedulerError = null;
 		}
 	}
 });
@@ -41,7 +51,9 @@ export const {
 	closeNotificationSlider,
 	toggleNotificationSlider,
 	setLibraryData,
-	resetLibraryData
+	resetLibraryData,
+	setSchedulerError,
+	resetSchedulerError
 } = notificationSlice.actions;
 
 export default notificationSlice.reducer;

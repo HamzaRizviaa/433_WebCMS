@@ -127,5 +127,31 @@ export const useFormStyles = makeStyles((theme) => ({
 		'& button + button': {
 			marginLeft: 10
 		}
+	},
+
+	schedulerErrorContainer: {
+		border: '1px solid red',
+		height: '50px',
+		borderRadius: '8px',
+		background: '#FF355A',
+		margin: '5px 0 10px 0',
+		padding: '16px',
+		display: 'flex',
+		alignItems: 'center',
+		flexWrap: 'wrap',
+		fontFamily: 'Poppins',
+		fontSize: '12px',
+		lineHeight: '16px',
+		letterSpacing: '0.03em',
+		color: '#fff'
+	},
+
+	schedulerErrorTitle: {
+		flexBasis: '100%',
+		fontWeight: 700
+	},
+
+	schedulerErrorText: {
+		fontWeight: 400
 	}
 }));

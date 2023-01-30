@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useFormikContext } from 'formik';
+import { useDispatch } from 'react-redux';
 
 import Button from '../../../ui/Button';
 import { notificationStepsValidationSchemas } from '../../../../data/helpers';
+import { isPastTime } from '../../../../data/utils';
 import { useNotificationStyles } from '../index.style';
+import {
+	resetSchedulerError,
+	setSchedulerError
+} from '../../../../data/features/notification/notificationSlice';
 
 const NextStepButton = ({ currentStep, onClick }) => {
+	const dispatch = useDispatch();
 	const [isStepInvalid, setStepInvalidState] = useState(false);
 
 	const { values } = useFormikContext();
@@ -21,6 +28,25 @@ const NextStepButton = ({ currentStep, onClick }) => {
 			.catch(() => setStepInvalidState(true));
 	}, [values]);
 
+	const handleClick = () => {
+		const { scheduling } = values;
+		const dateAndTime = {
+			date: scheduling.date,
+			hours: scheduling.time.hour,
+			mins: scheduling.time.min
+		};
+		if (currentStep === 'scheduling') {
+			const isPastTimeError = isPastTime(dateAndTime);
+			if (isPastTimeError) {
+				dispatch(setSchedulerError());
+				return;
+			} else {
+				dispatch(resetSchedulerError());
+			}
+		}
+		onClick();
+	};
+
 	const classes = useNotificationStyles();
 
 	if (currentStep === 'additional_options') return null;
@@ -29,7 +55,7 @@ const NextStepButton = ({ currentStep, onClick }) => {
 		<Button
 			className={classes.button}
 			color='primary'
-			onClick={onClick}
+			onClick={handleClick}
 			disabled={isStepInvalid}
 		>
 			NEXT STEP
