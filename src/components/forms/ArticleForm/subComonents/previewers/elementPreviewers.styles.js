@@ -198,13 +198,16 @@ export const useStyles = makeStyles((theme) => ({
 		lineHeight: '16px',
 		color: '#4D4D4D',
 		textAlign: 'center',
-		marginTop: '10px'
+		marginTop: '4px'
 	},
 	adDraggableData: {
 		textAlign: 'center',
+		borderRadius: '0px',
+
 		maxWidth: '100%',
 		'& >img': {
 			// maxWidth: '100%'
+			borderRadius: '0px',
 			height: '250px',
 			width: '300px'
 		}
