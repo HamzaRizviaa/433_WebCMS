@@ -37,3 +37,5 @@ export { ReactComponent as SmartQuiz } from './SmartQuiz.svg';
 export { ReactComponent as EmptyQuizQuestions } from './emptyQuizQuestions.svg';
 export { ReactComponent as Unlocked } from './Unlocked.svg';
 export { ReactComponent as Locked } from './Locked.svg';
+export { ReactComponent as Checkmark } from './Checkmark.svg';
+export { ReactComponent as Negative } from './Negative.svg';

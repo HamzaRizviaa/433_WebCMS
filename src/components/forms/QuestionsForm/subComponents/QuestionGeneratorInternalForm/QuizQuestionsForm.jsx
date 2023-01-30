@@ -3,7 +3,12 @@ import PropTypes from 'prop-types';
 import FormikField from '../../../../ui/inputs/formik/FormikField';
 import { useFormStyles } from '../../../forms.style';
 import AccordianLayout from '../../../../layouts/AccordianLayout';
-import { Unlocked, Locked } from '../../../../../assets/svg-icons';
+import {
+	Unlocked,
+	Locked,
+	Checkmark,
+	Negative
+} from '../../../../../assets/svg-icons';
 
 const QuizQuestionsForm = ({ index }) => {
 	const classes = useFormStyles();
@@ -28,6 +33,7 @@ const QuizQuestionsForm = ({ index }) => {
 						placeholder='Please add the question here'
 						multiline
 						maxRows={2}
+						removeMaxLengthLabel
 						maxLength={55}
 					/>
 				</div>
@@ -38,6 +44,8 @@ const QuizQuestionsForm = ({ index }) => {
 						placeholder='Please write your answer'
 						multiline
 						maxRows={2}
+						rightLabel={<Checkmark />}
+						removeMaxLengthLabel
 						maxLength={29}
 					/>
 				</div>
@@ -48,6 +56,8 @@ const QuizQuestionsForm = ({ index }) => {
 						placeholder='Please write your answer'
 						multiline
 						maxRows={2}
+						rightLabel={<Negative />}
+						removeMaxLengthLabel
 						maxLength={29}
 					/>
 				</div>
@@ -58,6 +68,8 @@ const QuizQuestionsForm = ({ index }) => {
 						placeholder='Please write your answer'
 						multiline
 						maxRows={2}
+						rightLabel={<Negative />}
+						removeMaxLengthLabel
 						maxLength={29}
 					/>
 				</div>
@@ -68,6 +80,8 @@ const QuizQuestionsForm = ({ index }) => {
 						placeholder='Please write your answer'
 						multiline
 						maxRows={2}
+						rightLabel={<Negative />}
+						removeMaxLengthLabel
 						maxLength={29}
 					/>
 				</div>
