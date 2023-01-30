@@ -8,13 +8,54 @@ import {
 	MediaElementPreviewer,
 	QuestionPoolPreviewer,
 	TextElementPreviewer,
-	TwitterElementPreviewer
+	TwitterElementPreviewer,
+	AdPreviewer
 } from './previewers';
 import ArticlePreviewWrapper from './ArticlePreviewWrapper';
 import { ARTICLE_ELEMENTS_TYPES } from '../../../../data/helpers/articleHelpers/index';
+import Sponsored from '../../../../assets/Micro.png';
 
 const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 	const classes = useStyles();
+
+	let previewData = [...data];
+
+	let adBox = {
+		element_type: 'AD',
+		image: Sponsored,
+		text: 'Sponsored'
+	};
+
+	const insertAd = (data) => {
+		if (
+			data.some((e) => {
+				e.element_type === 'AD';
+			})
+		) {
+			return data;
+		} else if (data.length > 0) {
+			if (data.length === 1) {
+				replaceData(previewData);
+			} else {
+				addDataAfterSecondIndex(previewData);
+			}
+		}
+	};
+
+	const replaceData = (data) => {
+		let newData;
+		newData = data.splice(1, 0, adBox);
+		return newData;
+	};
+
+	const addDataAfterSecondIndex = (data) => {
+		let newData;
+		newData = data.splice(2, 0, adBox);
+		return newData;
+	};
+
+	//inserting ads
+	insertAd(previewData);
 
 	const renderElements = (item, index, isEdit) => {
 		// element type
@@ -22,6 +63,8 @@ const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 
 		// conditional rendering
 		switch (type) {
+			case ARTICLE_ELEMENTS_TYPES.AD:
+				return <AdPreviewer data={item} />;
 			case ARTICLE_ELEMENTS_TYPES.MEDIA:
 				return <MediaElementPreviewer data={item} isEdit={isEdit} />;
 			case ARTICLE_ELEMENTS_TYPES.TEXT:
@@ -48,7 +91,7 @@ const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 			</Box>
 
 			<ArticlePreviewWrapper form={form}>
-				{data.map((item, index) => (
+				{previewData.map((item, index) => (
 					<div key={index} className={classes.elementContainer}>
 						{renderElements(item, index, isEdit)}
 					</div>

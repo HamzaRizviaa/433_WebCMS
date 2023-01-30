@@ -80,7 +80,8 @@ export const ARTICLE_ELEMENTS_TYPES = {
 	TWITTER: 'TWITTER',
 	IG: 'IG',
 	QUESTION: 'QUESTION',
-	MATCH: 'MATCH'
+	MATCH: 'MATCH',
+	AD: 'AD'
 };
 
 export const articleSidebarElements = [
