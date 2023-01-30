@@ -21,10 +21,15 @@ const QuizQuestions = ({ data = true }) => {
 					</p>
 				</div>
 			) : (
-				<FieldArray
-					name='questions'
-					render={(props) => <QuizQuestionsForm {...props} />}
-				/>
+				new Array(3)
+					.fill(0)
+					.map((item, index) => (
+						<FieldArray
+							key={item}
+							name='questions'
+							render={(props) => <QuizQuestionsForm {...props} index={index} />}
+						/>
+					))
 			)}
 		</div>
 	);

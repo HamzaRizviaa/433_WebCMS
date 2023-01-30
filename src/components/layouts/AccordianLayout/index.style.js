@@ -2,6 +2,8 @@ import { makeStyles } from '@material-ui/core';
 
 export const useAccordionLayoutStyles = makeStyles((theme) => ({
 	accordionRoot: {
+		marginTop: 20,
+
 		'& .MuiAccordion-root': {
 			backgroundColor: theme.palette.black,
 			color: theme.palette.white,
@@ -34,7 +36,7 @@ export const useAccordionLayoutStyles = makeStyles((theme) => ({
 	},
 
 	rightSide: {
-		marginLeft: '170px',
+		marginLeft: '165px',
 		marginTop: '3px',
 		height: '25px',
 		width: '25px',

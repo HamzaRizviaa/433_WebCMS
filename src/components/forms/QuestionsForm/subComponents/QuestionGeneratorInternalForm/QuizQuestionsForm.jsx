@@ -8,12 +8,15 @@ import { Unlocked } from '../../../../../assets/svg-icons';
 const QuizQuestionsForm = ({ index }) => {
 	const classes = useFormStyles();
 
-	const handleLockQuestion = () => {};
+	const handleLockQuestion = (e) => {
+		e.preventDefault();
+		e.stopPropagation();
+	};
 
 	return (
 		<div>
 			<AccordianLayout
-				title='Question 1'
+				title={`Question ${index + 1}`}
 				SecondIcon={Unlocked}
 				onSecondIconClick={handleLockQuestion}
 			>
