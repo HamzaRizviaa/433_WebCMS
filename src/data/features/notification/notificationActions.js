@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import NotificationsService from '../../services/notificationsService';
 
 export const getSpecificNotification = createAsyncThunk(
-	'notifications/getSpecificRule', // not url , url is in services
+	'notifications/getSpecificNotification', // not url , url is in services
 	async (id) => {
 		const response = await NotificationsService.getSpecificNotification(id);
 		if (response?.data?.data) {
@@ -14,22 +14,22 @@ export const getSpecificNotification = createAsyncThunk(
 	}
 );
 
-export const createOrEditRuleThunk = createAsyncThunk(
-	'notifications/createOrEditRuleThunk',
+export const createOrEditNotificationThunk = createAsyncThunk(
+	'notifications/createOrEditNotificationThunk',
 	async (data) => {
 		try {
 			const response = await NotificationsService.postNotification(data);
 
 			if (response.data.status_code === 200) {
 				toast.success(
-					data.rule_id
+					data.notification_id
 						? 'Notification has been edited!'
 						: 'Notification has been created!'
 				);
 			}
 		} catch (e) {
 			toast.error(
-				data.rule_id
+				data.notification_id
 					? 'Failed to edit Notification!'
 					: 'Failed to create Notification!'
 			);
@@ -39,8 +39,8 @@ export const createOrEditRuleThunk = createAsyncThunk(
 	}
 );
 
-export const deleteRuleThunk = createAsyncThunk(
-	'notifications/deleteRuleThunk',
+export const deleteNotificationThunk = createAsyncThunk(
+	'notifications/deleteNotificationThunk',
 	async (data) => {
 		try {
 			const response = await NotificationsService.deleteNotification(data);
