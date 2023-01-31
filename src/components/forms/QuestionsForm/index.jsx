@@ -73,7 +73,7 @@ const QuestionsForm = ({
 			);
 
 			const getApiVersion = (isSummaryEnabled, isTriviaEnabled) => {
-				if (isSummaryEnabled && isTriviaEnabled) return 3;
+				if (isSummaryEnabled && isTriviaEnabled) return 5;
 				if (isSummaryEnabled && !isTriviaEnabled) return 1;
 				if (!isSummaryEnabled && !isTriviaEnabled) return 2;
 			};

@@ -197,8 +197,8 @@ export const ruleFormValidationSchema = Yup.object().shape({
 						})
 						.test(
 							'Is-positive?',
-							'The number must be greater than 0!',
-							(value) => (!value ? true : value > 0)
+							'The number must be greater than 0',
+							(value) => (value === undefined ? true : value > 0)
 						),
 					max: Yup.number()
 						.when('min', {
@@ -212,8 +212,9 @@ export const ruleFormValidationSchema = Yup.object().shape({
 						})
 						.test(
 							'Is-positive?',
-							'The number must be greater than 0!',
-							(value) => (!value ? true : value > 0)
+							'The number must be greater than 0',
+
+							(value) => (value === undefined ? true : value > 0)
 						)
 				},
 				['max', 'min']
@@ -242,7 +243,11 @@ export const ruleFormValidationSchema = Yup.object().shape({
 				countries: Yup.array()
 					.min(1, "You can't leave this blank.")
 					.required("You can't leave this blank."),
-				duration: Yup.string()
+				duration: Yup.number().test(
+					'Is-positive?',
+					'The number must be greater than 0',
+					(value) => (value === undefined ? true : value > 0)
+				)
 			}),
 			otherwise: Yup.object().notRequired()
 		})

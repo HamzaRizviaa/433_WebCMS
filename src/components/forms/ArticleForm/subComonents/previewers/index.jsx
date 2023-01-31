@@ -4,3 +4,4 @@ export { default as MediaElementPreviewer } from './MediaElementPreviewer';
 export { default as TextElementPreviewer } from './TextElementPreviewer';
 export { default as IgElementPreviewer } from './IgElementPreviewer';
 export { default as TwitterElementPreviewer } from './TwitterElementPreviewer';
+export { default as AdPreviewer } from './AdPreviewer';
