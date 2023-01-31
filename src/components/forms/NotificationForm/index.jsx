@@ -37,6 +37,10 @@ const NotificationForm = ({
 		dispatch(closeNotificationSlider());
 	};
 
+	const onSubmitHandler = (values) => {
+		console.log('libraryData', libraryData, values);
+	};
+
 	return (
 		<DrawerLayout
 			open={isSliderOpen}
@@ -51,6 +55,7 @@ const NotificationForm = ({
 				validationSchema={notificationValidationSchema}
 				enableReinitialize
 				validateOnMount
+				onSubmitHandler={onSubmitHandler}
 			>
 				<Form>
 					<NotificationInternalForm />
