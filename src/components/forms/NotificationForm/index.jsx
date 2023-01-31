@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Formik, Form } from 'formik';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,7 +9,10 @@ import {
 	selectLibraryData,
 	selectNotificationSliderState
 } from '../../../data/selectors/notificationSelectors';
-import { closeNotificationSlider } from '../../../data/features/notification/notificationSlice';
+import {
+	closeNotificationSlider,
+	createOrEditNotificationThunk
+} from '../../../data/features/notification/notificationSlice';
 import {
 	notificationInitialValues,
 	notificationValidationSchema
@@ -37,9 +40,29 @@ const NotificationForm = ({
 		dispatch(closeNotificationSlider());
 	};
 
-	const onSubmitHandler = (values) => {
-		console.log('libraryData', libraryData, values);
-	};
+	const onSubmitHandler = useCallback(async (values, formikBag) => {
+		formikBag.setSubmitting(true);
+
+		try {
+			// const notificationData = notificationDataFormatterForService(values);
+
+			const { type } = await dispatch(createOrEditNotificationThunk(values));
+
+			if (type === 'notifications/createOrEditNotificationThunk/fulfilled') {
+				handleClose();
+
+				if (isEdit) {
+					// edit thunk
+				} else {
+					// navigate back to library
+				}
+			}
+		} catch (e) {
+			console.error(e);
+		} finally {
+			formikBag.setSubmitting(false);
+		}
+	}, []);
 
 	return (
 		<DrawerLayout
@@ -55,7 +78,7 @@ const NotificationForm = ({
 				validationSchema={notificationValidationSchema}
 				enableReinitialize
 				validateOnMount
-				onSubmitHandler={onSubmitHandler}
+				onSubmit={onSubmitHandler}
 			>
 				<Form>
 					<NotificationInternalForm />
