@@ -35,7 +35,10 @@ const NextStepButton = ({ currentStep, onClick }) => {
 			hours: scheduling.time.hour,
 			mins: scheduling.time.min
 		};
-		if (currentStep === 'scheduling') {
+		if (
+			currentStep === 'scheduling' &&
+			values.scheduling.schedule_notification === 'schedule'
+		) {
 			const isPastTimeError = isPastTime(dateAndTime);
 			if (isPastTimeError) {
 				dispatch(setSchedulerError());
