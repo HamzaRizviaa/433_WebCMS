@@ -7,7 +7,7 @@ import Button from '../../../ui/Button';
 import { notificationInitialValues } from '../../../../data/helpers';
 import { useFormStyles } from '../../forms.style';
 
-const NotificationFormButtons = ({ isEdit, status }) => {
+const NotificationFormButtons = ({ isEdit, status, openDeleteModal }) => {
 	const isPublished = status === 'published';
 
 	const { dirty, isValid, values } = useFormikContext();
@@ -24,31 +24,41 @@ const NotificationFormButtons = ({ isEdit, status }) => {
 	const classes = useFormStyles();
 
 	return (
-		<div className={classes.formButtons}>
-			{(!isEdit || status === 'draft') && (
+		<div className={classes.buttonDiv}>
+			<div>
+				{isEdit && (
+					<Button size='small' variant='outlined' onClick={openDeleteModal}>
+						DELETE NOTIFICATION
+					</Button>
+				)}
+			</div>
+			<div className={classes.formButtons}>
+				{(!isEdit || status === 'draft') && (
+					<Button
+						size='small'
+						variant='outlined'
+						disabled={isDraftDisabled}
+						onClick={() => {}}
+					>
+						{status === 'draft' && isEdit ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
+					</Button>
+				)}
 				<Button
 					size='small'
-					variant='outlined'
-					disabled={isDraftDisabled}
-					onClick={() => {}}
+					type='submit'
+					disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
 				>
-					{status === 'draft' && isEdit ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
+					{isPublished ? 'SAVE CHANGES' : 'SET NOTIFICATION'}
 				</Button>
-			)}
-			<Button
-				size='small'
-				type='submit'
-				disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
-			>
-				{isPublished ? 'SAVE CHANGES' : 'SET NOTIFICATION'}
-			</Button>
+			</div>
 		</div>
 	);
 };
 
 NotificationFormButtons.propTypes = {
 	isEdit: PropTypes.bool,
-	status: PropTypes.string
+	status: PropTypes.string,
+	openDeleteModal: PropTypes.func
 };
 
 export default NotificationFormButtons;

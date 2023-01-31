@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Formik, Form } from 'formik';
 import { useSelector, useDispatch } from 'react-redux';
@@ -11,17 +11,20 @@ import {
 } from '../../../data/selectors/notificationSelectors';
 import {
 	closeNotificationSlider,
-	createOrEditNotificationThunk
+	createOrEditNotificationThunk,
+	deleteNotificationThunk
 } from '../../../data/features/notification/notificationSlice';
 import {
 	notificationInitialValues,
 	notificationValidationSchema
 } from '../../../data/helpers';
+import DeleteModal from '../../ui/modals/DeleteModal';
 
 const NotificationForm = ({
 	isEdit
 	// status // draft or publish
 }) => {
+	const [isDeleteModalOpen, setDeleteModalState] = useState(false);
 	const dispatch = useDispatch();
 	const isSliderOpen = useSelector(selectNotificationSliderState);
 	const libraryData = useSelector(selectLibraryData);
@@ -35,6 +38,9 @@ const NotificationForm = ({
 
 		return initialValuesClone;
 	}, [libraryData]);
+
+	const openDeleteModal = () => setDeleteModalState(true);
+	const closeDeleteModal = () => setDeleteModalState(false);
 
 	const handleClose = () => {
 		dispatch(closeNotificationSlider());
@@ -64,6 +70,26 @@ const NotificationForm = ({
 		}
 	}, []);
 
+	const onDeleteHandler = async (id, setSubmitting) => {
+		setSubmitting(true);
+		setDeleteModalState(false);
+		try {
+			await dispatch(
+				deleteNotificationThunk({
+					id,
+					moduleType: libraryData.contentType
+				})
+			);
+
+			handleClose();
+			// dispatch(getAllNewsApi(queryParams));
+		} catch (e) {
+			console.error(e);
+		} finally {
+			setSubmitting(false);
+		}
+	};
+
 	return (
 		<DrawerLayout
 			open={isSliderOpen}
@@ -80,9 +106,20 @@ const NotificationForm = ({
 				validateOnMount
 				onSubmit={onSubmitHandler}
 			>
-				<Form>
-					<NotificationInternalForm />
-				</Form>
+				{({ isSubmitting, setSubmitting }) => (
+					<Form>
+						<NotificationInternalForm openDeleteModal={openDeleteModal} />
+						<DeleteModal
+							open={isDeleteModalOpen}
+							toggle={closeDeleteModal}
+							deleteBtn={() => {
+								onDeleteHandler('', setSubmitting);
+							}}
+							text='Notification'
+							isSubmitting={isSubmitting}
+						/>
+					</Form>
+				)}
 			</Formik>
 		</DrawerLayout>
 	);
