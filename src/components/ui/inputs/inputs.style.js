@@ -78,6 +78,7 @@ export const useInputsStyles = makeStyles((theme) => ({
 		fontWeight: 'bold',
 		marginTop: '0.2rem',
 		marginLeft: '1rem',
-		height: '1rem'
+		height: '1rem',
+		fontSize: 10
 	}
 }));

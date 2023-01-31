@@ -10,7 +10,10 @@ import {
 	selectNotificationSliderState
 } from '../../../data/selectors/notificationSelectors';
 import { closeNotificationSlider } from '../../../data/features/notification/notificationSlice';
-import { notificationInitialValues } from '../../../data/helpers';
+import {
+	notificationInitialValues,
+	notificationValidationSchema
+} from '../../../data/helpers';
 
 const NotificationForm = ({
 	isEdit
@@ -43,7 +46,12 @@ const NotificationForm = ({
 			isLoading={false}
 			customWidth={850}
 		>
-			<Formik initialValues={initialValues} enableReinitialize>
+			<Formik
+				initialValues={initialValues}
+				validationSchema={notificationValidationSchema}
+				enableReinitialize
+				validateOnMount
+			>
 				<Form>
 					<NotificationInternalForm />
 				</Form>

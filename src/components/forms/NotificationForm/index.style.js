@@ -148,11 +148,16 @@ export const useNotificationStyles = makeStyles((theme) => ({
 		border: `1px solid ${theme.palette.darkGrey}`,
 		borderRadius: 8,
 		padding: 16,
+		paddingBottom: 2,
 		marginBottom: 32
 	},
 
 	appIdContainer: {
 		display: 'flex'
+	},
+
+	selectField: {
+		width: '100%'
 	},
 
 	fieldsRowContainer: {

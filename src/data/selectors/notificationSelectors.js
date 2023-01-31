@@ -3,3 +3,6 @@ export const selectNotificationSliderState = (state) =>
 
 export const selectLibraryData = (state) =>
 	state.rootReducer.notification.libraryData;
+
+export const selectSchedulerError = (state) =>
+	state.rootReducer.notification.schedulerError;

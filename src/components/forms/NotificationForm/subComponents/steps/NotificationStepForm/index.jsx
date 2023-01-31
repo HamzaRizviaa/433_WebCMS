@@ -41,7 +41,6 @@ const NotificationStepForm = () => {
 						accept='image/jpeg, image/png, video/mp4'
 						formatMessage='Supported formats are jpeg, png and mp4'
 						maxFiles={1}
-						required
 						onDelete={() => setFieldValue('notification.uploadedFiles', [])}
 					/>
 				</div>
