@@ -1,4 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { getSpecificNotification } from './notificationActions';
+export * from './notificationActions';
 
 const initialState = {
 	isSliderOpen: false,
@@ -6,7 +8,8 @@ const initialState = {
 		contentType: '',
 		contentId: ''
 	},
-	schedulerError: null
+	schedulerError: null,
+	specificNotification: null
 };
 
 const notificationSlice = createSlice({
@@ -43,6 +46,24 @@ const notificationSlice = createSlice({
 		resetSchedulerError: (state) => {
 			state.schedulerError = null;
 		}
+	},
+	extraReducers: (builder) => {
+		// getSpecificRule Action Cases
+		builder.addCase(getSpecificNotification.pending, (state) => {
+			state.loading = true;
+			state.specificNotificationStatus = 'pending';
+		});
+
+		builder.addCase(getSpecificNotification.fulfilled, (state, action) => {
+			state.loading = false;
+			state.specificNotification = action.payload;
+			state.specificNotificationStatus = 'success';
+		});
+
+		builder.addCase(getSpecificNotification.rejected, (state) => {
+			state.loading = false;
+			state.specificNotificationStatus = 'failed';
+		});
 	}
 });
 
