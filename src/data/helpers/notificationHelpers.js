@@ -1,6 +1,10 @@
 import * as yup from 'yup';
 import uploadFilesToS3 from '../utils/uploadFilesToS3';
-import { generateISODateTimeStamp, getRelativePath } from './commonHelpers';
+import {
+	formatScheduleDate,
+	generateISODateTimeStamp,
+	getRelativePath
+} from './commonHelpers';
 import { getAllNewsApi } from '../features/newsLibrary/newsLibraryActions';
 import { getAllArticlesApi } from '../features/articleLibrary/articleLibraryActions';
 import { getAllMedia } from '../features/mediaLibrary/mediaLibraryActions';
@@ -45,7 +49,57 @@ export const libraryTypeToActionMapper = {
 	viral: getAllViralsApi
 };
 
-export const notificationDataFormatterForForm = {};
+export const notificationDataFormatterForForm = (notif) => {
+	console.log('NOTIFICATION DATA', notif);
+
+	const { startStamp } = formatScheduleDate(notif.schedule_date);
+
+	const emptyObj = { key: '', value: '' };
+
+	const payload = {
+		save_draft: notif.notification_status === 'draft',
+		notification_id: notif.id,
+		notification_status: notif.notification_status,
+		conversion_events: {
+			goal_metrics: notif.conversion_events.goal_metrics,
+			analytics_label: notif.conversion_events.analytics_label
+		},
+		notification: {
+			notification_title: notif.notification_title,
+			notification_text: notif.notification_text,
+			uploadedFiles: notif.notification_image
+				? [
+						{
+							media_url: `${process.env.REACT_APP_MEDIA_ENDPOINT}/${notif.notification_image}`,
+							file_name: notif.notification_image_filename,
+							width: notif.notification_image_width,
+							height: notif.notification_image_height
+						}
+				  ]
+				: [],
+			notification_image_dropbox_url: notif.notification_image_dropbox_url,
+			notification_name: notif.notification_name
+		},
+		target: notif.target,
+		scheduling: {
+			date: startStamp.date || new Date(),
+			time: { hour: startStamp.hour || '00', min: startStamp.min || '00' },
+			schedule_notification: notif.is_scheduled ? 'schedule' : 'now'
+		},
+		additional_options: {
+			android_notification_channel:
+				notif.additional_options.android_notification_channel,
+			custom_data: [...notif.additional_options.custom_data, emptyObj],
+			sound: notif.additional_options.sound ? 'enabled' : 'disabled',
+			apple_badge: notif.additional_options.apple_badge
+				? 'enabled'
+				: 'disabled',
+			expiration_unit: notif.additional_options.expiration_unit,
+			expires_in: notif.additional_options.expires_in
+		}
+	};
+	return payload;
+};
 
 export const notificationDataFormatterForService = async (values) => {
 	console.log('HELPERS VALUES', values);
@@ -60,7 +114,7 @@ export const notificationDataFormatterForService = async (values) => {
 	const { scheduling } = values;
 
 	const notificationData = {
-		save_draft: true,
+		save_draft: values.save_draft,
 		is_scheduled: scheduling.schedule_notification === 'schedule',
 		notification: {
 			notification_title: values?.notification?.notification_title || '',

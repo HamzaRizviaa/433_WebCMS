@@ -7,7 +7,12 @@ import NotificationStepper from './NotificationStepper';
 import { resetSpecificNotification } from '../../../../data/features/notification/notificationSlice';
 import { useNotificationStyles } from '../index.style';
 
-const NotificationInternalForm = ({ isEdit, status, openDeleteModal }) => {
+const NotificationInternalForm = ({
+	isEdit,
+	status,
+	openDeleteModal,
+	onSubmitHandler
+}) => {
 	const dispatch = useDispatch();
 	const classes = useNotificationStyles();
 
@@ -24,6 +29,7 @@ const NotificationInternalForm = ({ isEdit, status, openDeleteModal }) => {
 				isEdit={isEdit}
 				status={status}
 				openDeleteModal={openDeleteModal}
+				onSubmitHandler={onSubmitHandler}
 			/>
 		</div>
 	);
@@ -32,7 +38,8 @@ const NotificationInternalForm = ({ isEdit, status, openDeleteModal }) => {
 NotificationInternalForm.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string,
-	openDeleteModal: PropTypes.func.isRequired
+	openDeleteModal: PropTypes.func.isRequired,
+	onSubmitHandler: PropTypes.func.isRequired
 };
 
 export default NotificationInternalForm;
