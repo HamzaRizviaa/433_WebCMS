@@ -75,7 +75,9 @@ export const newsColumns = [
 				title: 'EDIT NEWS',
 				notificationTitle: 'NOTIFICATION',
 				contentType: 'news',
-				contentId: row.id
+				contentId: row.id,
+				notificationId: row.notification_id,
+				notificationStatus: row.notification_status
 			})
 	}
 ];

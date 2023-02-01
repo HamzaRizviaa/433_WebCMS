@@ -7,7 +7,8 @@ interface OptionsFormatterProps {
 	notificationTitle?: string;
 	contentType?: string;
 	contentId?: string;
-	isNotificationEnabled?: boolean;
+	notificationId?: string;
+	notificationStatus?: string;
 }
 
 interface TextMarkupProps {
