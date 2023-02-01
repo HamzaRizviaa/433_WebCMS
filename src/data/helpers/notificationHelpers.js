@@ -1,6 +1,10 @@
 import * as yup from 'yup';
 import uploadFilesToS3 from '../utils/uploadFilesToS3';
 import { generateISODateTimeStamp, getRelativePath } from './commonHelpers';
+import { getAllNewsApi } from '../features/newsLibrary/newsLibraryActions';
+import { getAllArticlesApi } from '../features/articleLibrary/articleLibraryActions';
+import { getAllMedia } from '../features/mediaLibrary/mediaLibraryActions';
+import { getAllViralsApi } from '../features/viralLibrary/viralLibraryActions';
 
 export const stepsData = [
 	{ key: 'notification', label: 'Notification' },
@@ -32,6 +36,13 @@ export const expirationUnitRange = {
 	days: 8,
 	hours: 25,
 	minutes: 61
+};
+
+export const libraryTypeToActionMapper = {
+	news: getAllNewsApi,
+	media: getAllMedia,
+	article: getAllArticlesApi,
+	viral: getAllViralsApi
 };
 
 export const notificationDataFormatterForForm = {};
@@ -84,6 +95,9 @@ export const notificationDataFormatterForService = async (values) => {
 			scheduling.time.min
 		);
 	}
+
+	if (values.notification_id)
+		notificationData.notification_id = values.notification_id;
 
 	return notificationData;
 };

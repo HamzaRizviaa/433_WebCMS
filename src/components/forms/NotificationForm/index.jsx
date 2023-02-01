@@ -4,10 +4,14 @@ import { Formik, Form } from 'formik';
 import { useSelector, useDispatch } from 'react-redux';
 
 import DrawerLayout from '../../layouts/DrawerLayout';
+import DeleteModal from '../../ui/modals/DeleteModal';
 import NotificationInternalForm from './subComponents/NotificationInternalForm';
+import useCommonParams from '../../../hooks/useCommonParams';
 import {
 	selectLibraryData,
-	selectNotificationSliderState
+	selectNotificationSliderState,
+	selectSpecificNotification,
+	selectSpecificNotificationStatus
 } from '../../../data/selectors/notificationSelectors';
 import {
 	closeNotificationSlider,
@@ -15,22 +19,32 @@ import {
 	deleteNotificationThunk
 } from '../../../data/features/notification/notificationSlice';
 import {
+	libraryTypeToActionMapper,
 	notificationDataFormatterForService,
 	notificationInitialValues,
 	notificationValidationSchema
 } from '../../../data/helpers';
-import DeleteModal from '../../ui/modals/DeleteModal';
 
-const NotificationForm = ({
-	isEdit
-	// status // draft or publish
-}) => {
-	const [isDeleteModalOpen, setDeleteModalState] = useState(false);
+const NotificationForm = () => {
 	const dispatch = useDispatch();
+
+	// Query params
+	const { queryParams } = useCommonParams();
+
+	// Local States
+	const [isLoading, setIsLoading] = useState(false);
+	const [isDeleteModalOpen, setDeleteModalState] = useState(false);
+
+	// Redux States
 	const isSliderOpen = useSelector(selectNotificationSliderState);
 	const libraryData = useSelector(selectLibraryData);
+	const specificNotification = useSelector(selectSpecificNotification);
+	const notificationLoadingStatus = useSelector(
+		selectSpecificNotificationStatus
+	);
 
-	console.log('STATUS', status);
+	const isEdit = !!specificNotification?.id;
+	const status = specificNotification?.notification_status;
 
 	const initialValues = useMemo(() => {
 		const initialValuesClone = { ...notificationInitialValues };
@@ -49,51 +63,50 @@ const NotificationForm = ({
 		dispatch(closeNotificationSlider());
 	};
 
-	const onSubmitHandler = useCallback(async (values, formikBag) => {
-		formikBag.setSubmitting(true);
+	const onSubmitHandler = useCallback(async (values) => {
+		setIsLoading(true);
+
+		const getTableData = libraryTypeToActionMapper[libraryData.contentType];
 
 		try {
 			const notificationData = await notificationDataFormatterForService(
 				values
 			);
-			console.log('Service DATA', notificationData);
 			const { type } = await dispatch(
 				createOrEditNotificationThunk(notificationData)
 			);
 
 			if (type === 'notifications/createOrEditNotificationThunk/fulfilled') {
+				dispatch(getTableData(queryParams));
 				handleClose();
-
-				if (isEdit) {
-					// edit thunk
-				} else {
-					// navigate back to library
-				}
 			}
 		} catch (e) {
 			console.error(e);
 		} finally {
-			formikBag.setSubmitting(false);
+			setIsLoading(false);
 		}
 	}, []);
 
-	const onDeleteHandler = async (id, setSubmitting) => {
-		setSubmitting(true);
+	const onDeleteHandler = async () => {
+		setIsLoading(true);
 		setDeleteModalState(false);
+
+		const getTableData = libraryTypeToActionMapper[libraryData.contentType];
+
 		try {
 			await dispatch(
 				deleteNotificationThunk({
-					id,
+					id: specificNotification?.id,
 					moduleType: libraryData.contentType
 				})
 			);
 
 			handleClose();
-			// dispatch(getAllNewsApi(queryParams));
+			dispatch(getTableData(queryParams));
 		} catch (e) {
 			console.error(e);
 		} finally {
-			setSubmitting(false);
+			setIsLoading(false);
 		}
 	};
 
@@ -102,32 +115,32 @@ const NotificationForm = ({
 			open={isSliderOpen}
 			handleClose={handleClose}
 			title={isEdit ? 'Edit Notification' : 'Compose Notification'}
-			notifID={''}
-			isLoading={false}
+			notifID={specificNotification?.id}
+			isLoading={isLoading || notificationLoadingStatus === 'pending'}
 			customWidth={850}
 		>
 			<Formik
 				initialValues={initialValues}
 				validationSchema={notificationValidationSchema}
+				onSubmit={onSubmitHandler}
 				enableReinitialize
 				validateOnMount
-				onSubmit={onSubmitHandler}
 			>
-				{({ isSubmitting, setSubmitting }) => (
-					<Form>
-						<NotificationInternalForm openDeleteModal={openDeleteModal} />
-						<DeleteModal
-							open={isDeleteModalOpen}
-							toggle={closeDeleteModal}
-							deleteBtn={() => {
-								onDeleteHandler('', setSubmitting);
-							}}
-							text='Notification'
-							isSubmitting={isSubmitting}
-						/>
-					</Form>
-				)}
+				<Form>
+					<NotificationInternalForm
+						openDeleteModal={openDeleteModal}
+						isEdit={isEdit}
+						status={status}
+					/>
+				</Form>
 			</Formik>
+			<DeleteModal
+				open={isDeleteModalOpen}
+				toggle={closeDeleteModal}
+				deleteBtn={onDeleteHandler}
+				text='Notification'
+				isSubmitting={isLoading}
+			/>
 		</DrawerLayout>
 	);
 };

@@ -9,7 +9,8 @@ const initialState = {
 		contentId: ''
 	},
 	schedulerError: null,
-	specificNotification: null
+	specificNotification: null,
+	specificNotificationStatus: ''
 };
 
 const notificationSlice = createSlice({
@@ -45,23 +46,23 @@ const notificationSlice = createSlice({
 		},
 		resetSchedulerError: (state) => {
 			state.schedulerError = null;
+		},
+		resetSpecificNotification: (state) => {
+			state.specificNotification = null;
 		}
 	},
 	extraReducers: (builder) => {
-		// getSpecificRule Action Cases
+		// Get Specific Notification Action Cases
 		builder.addCase(getSpecificNotification.pending, (state) => {
-			state.loading = true;
 			state.specificNotificationStatus = 'pending';
 		});
 
 		builder.addCase(getSpecificNotification.fulfilled, (state, action) => {
-			state.loading = false;
 			state.specificNotification = action.payload;
 			state.specificNotificationStatus = 'success';
 		});
 
 		builder.addCase(getSpecificNotification.rejected, (state) => {
-			state.loading = false;
 			state.specificNotificationStatus = 'failed';
 		});
 	}
@@ -74,7 +75,8 @@ export const {
 	setLibraryData,
 	resetLibraryData,
 	setSchedulerError,
-	resetSchedulerError
+	resetSchedulerError,
+	resetSpecificNotification
 } = notificationSlice.actions;
 
 export default notificationSlice.reducer;

@@ -6,3 +6,9 @@ export const selectLibraryData = (state) =>
 
 export const selectSchedulerError = (state) =>
 	state.rootReducer.notification.schedulerError;
+
+export const selectSpecificNotification = (state) =>
+	state.rootReducer.notification.specificNotification;
+
+export const selectSpecificNotificationStatus = (state) =>
+	state.rootReducer.notification.specificNotificationStatus;
