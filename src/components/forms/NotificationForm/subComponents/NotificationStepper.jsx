@@ -36,7 +36,11 @@ const NotificationStepper = () => {
 						id={index}
 						onClick={handleStep}
 						completed={isStepCompleted(index)}
-						disabled={!isStepCompleted(index)}
+						disabled={
+							index === 3
+								? !isStepCompleted(index - 1)
+								: !isStepCompleted(index)
+						}
 						className={classes.stepLabel}
 					>
 						{step.label}
