@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import uploadFilesToS3 from '../utils/uploadFilesToS3';
-import { getRelativePath } from './commonHelpers';
+import { generateISODateTimeStamp, getRelativePath } from './commonHelpers';
 
 export const stepsData = [
 	{ key: 'notification', label: 'Notification' },
@@ -39,30 +39,29 @@ export const notificationDataFormatterForForm = {};
 export const notificationDataFormatterForService = async (values) => {
 	console.log('HELPERS VALUES', values);
 
-	let uploadedFiles = [null, null];
+	let uploadedFiles = [null];
 
 	uploadedFiles = await uploadFilesToS3(
 		values.notification.uploadedFiles,
 		'newslibrary'
 	);
 
+	const { scheduling } = values;
+
 	const notificationData = {
 		save_draft: true,
-		is_scheduled: values?.scheduling.is_scheduled,
-		schedule_date: values?.scheduling.schedule_date,
+		is_scheduled: scheduling.schedule_notification === 'schedule',
 		notification: {
 			notification_title: values?.notification?.notification_title || '',
 			notification_text: values?.notification?.notification_text || '',
 			notification_name: values?.notification?.notification_name || '',
-			notification_image: getRelativePath(uploadedFiles[0]?.media_url) || '',
+			notification_image:
+				getRelativePath(uploadedFiles[0]?.media_url) || undefined,
 			notification_image_filename:
-				values?.notification?.uploadedFiles[0]?.file_name || '',
-			notification_image_width:
-				values?.notification?.uploadedFiles[0]?.width || 0,
-			notification_image_height:
-				values?.notification?.uploadedFiles[0]?.height || 0,
-			notification_image_dropbox_url:
-				values?.notification_image_dropbox_url || undefined
+				values?.notification?.uploadedFiles[0]?.file_name,
+			notification_image_width: values?.notification?.uploadedFiles[0]?.width,
+			notification_image_height: values?.notification?.uploadedFiles[0]?.height,
+			notification_image_dropbox_url: values?.notification_image_dropbox_url
 		},
 		target: values.target,
 		additional_options: {
@@ -77,6 +76,15 @@ export const notificationDataFormatterForService = async (values) => {
 			)
 		}
 	};
+
+	if (notificationData.is_scheduled) {
+		notificationData.schedule_date = generateISODateTimeStamp(
+			scheduling.date,
+			scheduling.time.hour,
+			scheduling.time.min
+		);
+	}
+
 	return notificationData;
 };
 
@@ -87,19 +95,13 @@ export const notificationInitialValues = {
 		uploadedFiles: [],
 		notification_title: '',
 		notification_text: '',
-		notification_name: '',
-		notification_image: '',
-		notification_image_filename: '',
-		notification_image_width: '',
-		notification_image_height: '',
-		notification_image_dropbox_url: ''
+		notification_name: ''
 	},
 	target: [{ topic_name: '' }],
 	scheduling: {
 		is_scheduled: false,
 		date: new Date(),
 		time: { hour: '00', min: '00' },
-		schedule_date: undefined,
 		schedule_notification: 'now'
 	},
 	// conversion_events: {
