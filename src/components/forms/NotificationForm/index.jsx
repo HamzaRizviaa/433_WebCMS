@@ -1,7 +1,8 @@
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Formik, Form } from 'formik';
 import { useSelector, useDispatch } from 'react-redux';
+import { isEmpty } from 'lodash';
 
 import DrawerLayout from '../../layouts/DrawerLayout';
 import DeleteModal from '../../ui/modals/DeleteModal';
@@ -25,7 +26,6 @@ import {
 	notificationInitialValues,
 	notificationValidationSchema
 } from '../../../data/helpers';
-import { isEmpty } from 'lodash';
 
 const NotificationForm = () => {
 	const dispatch = useDispatch();
@@ -47,7 +47,7 @@ const NotificationForm = () => {
 
 	const isEdit = !!specificNotification?.id;
 	const status = specificNotification?.notification_status;
-	console.log('SPECICF', specificNotification);
+
 	const initialValues = useMemo(() => {
 		const initialValuesClone = { ...notificationInitialValues };
 
@@ -67,7 +67,7 @@ const NotificationForm = () => {
 		dispatch(closeNotificationSlider());
 	};
 
-	const onSubmitHandler = useCallback(async (values) => {
+	const onSubmitHandler = async (values) => {
 		setIsLoading(true);
 
 		const getTableData = libraryTypeToActionMapper[libraryData.contentType];
@@ -89,7 +89,7 @@ const NotificationForm = () => {
 		} finally {
 			setIsLoading(false);
 		}
-	}, []);
+	};
 
 	const onDeleteHandler = async () => {
 		setIsLoading(true);

@@ -18,8 +18,6 @@ const NextStepButton = ({ currentStep, onClick }) => {
 
 	const { values } = useFormikContext();
 
-	console.log('VALSSS', values);
-
 	const currentStepValues = values[currentStep];
 	const currentStepSchema = notificationStepsValidationSchemas[currentStep];
 

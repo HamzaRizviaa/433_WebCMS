@@ -50,8 +50,6 @@ export const libraryTypeToActionMapper = {
 };
 
 export const notificationDataFormatterForForm = (notif) => {
-	console.log('NOTIFICATION DATA', notif);
-
 	const { startStamp } = formatScheduleDate(notif.schedule_date);
 
 	const emptyObj = { key: '', value: '' };
@@ -60,10 +58,6 @@ export const notificationDataFormatterForForm = (notif) => {
 		save_draft: notif.notification_status === 'draft',
 		notification_id: notif.id,
 		notification_status: notif.notification_status,
-		conversion_events: {
-			goal_metrics: notif.conversion_events.goal_metrics,
-			analytics_label: notif.conversion_events.analytics_label
-		},
 		notification: {
 			notification_title: notif.notification_title,
 			notification_text: notif.notification_text,
@@ -84,7 +78,7 @@ export const notificationDataFormatterForForm = (notif) => {
 		scheduling: {
 			date: startStamp.date || new Date(),
 			time: { hour: startStamp.hour || '00', min: startStamp.min || '00' },
-			schedule_notification: notif.is_scheduled ? 'schedule' : 'now'
+			schedule_notification: notif.schedule_date ? 'schedule' : 'now'
 		},
 		additional_options: {
 			android_notification_channel:
@@ -102,11 +96,7 @@ export const notificationDataFormatterForForm = (notif) => {
 };
 
 export const notificationDataFormatterForService = async (values) => {
-	console.log('HELPERS VALUES', values);
-
-	let uploadedFiles = [null];
-
-	uploadedFiles = await uploadFilesToS3(
+	const uploadedFiles = await uploadFilesToS3(
 		values.notification.uploadedFiles,
 		'newslibrary'
 	);
@@ -115,7 +105,8 @@ export const notificationDataFormatterForService = async (values) => {
 
 	const notificationData = {
 		save_draft: values.save_draft,
-		is_scheduled: scheduling.schedule_notification === 'schedule',
+		is_scheduled:
+			!values.save_draft && scheduling.schedule_notification === 'schedule',
 		notification: {
 			notification_title: values?.notification?.notification_title || '',
 			notification_text: values?.notification?.notification_text || '',
@@ -142,7 +133,7 @@ export const notificationDataFormatterForService = async (values) => {
 		}
 	};
 
-	if (notificationData.is_scheduled) {
+	if (scheduling.schedule_notification === 'schedule') {
 		notificationData.schedule_date = generateISODateTimeStamp(
 			scheduling.date,
 			scheduling.time.hour,
@@ -194,20 +185,22 @@ export const notificationInitialValues = {
 // VALIDATION SCHEMAS
 
 const step1ValidationSchema = yup.object({
-	notification_title: yup.string().required('Required!'),
-	notification_text: yup.string().required('Required!'),
+	notification_title: yup.string(),
+	notification_text: yup
+		.string()
+		.required('You need to enter notification text'),
 	uploadedFiles: yup.array().max(1),
 	notification_name: yup.string()
 });
 const step2ValidationSchema = yup.array().of(
 	yup.object({
-		topic_name: yup.string().required('Required!')
+		topic_name: yup.string().required('You need to enter topic name')
 	})
 );
 const step3ValidationSchema = yup.object({
 	time: yup.object().when('schedule_notification', {
 		is: (val) => val === 'schedule',
-		then: yup.object({ min: yup.string().required() }),
+		then: yup.object({ min: yup.string().required('Required!') }),
 		otherwise: yup.object().notRequired()
 	})
 });
@@ -231,7 +224,7 @@ const step5ValidationSchema = yup.object({
 					})
 					.test(
 						'Is-duplicated?',
-						'This key is already declared',
+						'This key is duplicated',
 						function (value, ctx) {
 							const customDataArray = ctx?.from[1]?.value?.custom_data || [];
 
