@@ -12,19 +12,19 @@ const NotificationPreview = () => {
 	const { values } = useFormikContext();
 
 	const notificationTitle =
-		values.notification.notification_title ||
-		values.notification.notification_text
-			? values.notification.notification_title
+		values?.notification?.notification_title ||
+		values?.notification?.notification_text
+			? values?.notification?.notification_title
 			: 'Notification Title';
 
 	const notificationText =
-		values.notification.notification_title ||
-		values.notification.notification_text
-			? values.notification.notification_text
+		values?.notification?.notification_title ||
+		values?.notification?.notification_text
+			? values?.notification?.notification_text
 			: 'Notification Text';
 
-	const notificationImage = values.notification.uploadedFiles[0]
-		? values.notification.uploadedFiles[0].media_url
+	const notificationImage = values?.notification?.uploadedFiles[0]
+		? values?.notification?.uploadedFiles[0]?.media_url
 		: ImagePlaceholder;
 
 	return (

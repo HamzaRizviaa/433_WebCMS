@@ -20,10 +20,12 @@ import {
 } from '../../../data/features/notification/notificationSlice';
 import {
 	libraryTypeToActionMapper,
+	notificationDataFormatterForForm,
 	notificationDataFormatterForService,
 	notificationInitialValues,
 	notificationValidationSchema
 } from '../../../data/helpers';
+import { isEmpty } from 'lodash';
 
 const NotificationForm = () => {
 	const dispatch = useDispatch();
@@ -45,7 +47,7 @@ const NotificationForm = () => {
 
 	const isEdit = !!specificNotification?.id;
 	const status = specificNotification?.notification_status;
-
+	console.log('SPECICF', specificNotification);
 	const initialValues = useMemo(() => {
 		const initialValuesClone = { ...notificationInitialValues };
 
@@ -53,8 +55,10 @@ const NotificationForm = () => {
 		customData[0].value = libraryData.contentType;
 		customData[1].value = libraryData.contentId;
 
-		return initialValuesClone;
-	}, [libraryData]);
+		return isEdit && !isEmpty(specificNotification)
+			? notificationDataFormatterForForm(specificNotification)
+			: initialValuesClone;
+	}, [libraryData, isEdit, specificNotification]);
 
 	const openDeleteModal = () => setDeleteModalState(true);
 	const closeDeleteModal = () => setDeleteModalState(false);
@@ -131,6 +135,7 @@ const NotificationForm = () => {
 						openDeleteModal={openDeleteModal}
 						isEdit={isEdit}
 						status={status}
+						onSubmitHandler={onSubmitHandler}
 					/>
 				</Form>
 			</Formik>
