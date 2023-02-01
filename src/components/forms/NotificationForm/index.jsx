@@ -15,6 +15,7 @@ import {
 	deleteNotificationThunk
 } from '../../../data/features/notification/notificationSlice';
 import {
+	notificationDataFormatterForService,
 	notificationInitialValues,
 	notificationValidationSchema
 } from '../../../data/helpers';
@@ -28,6 +29,8 @@ const NotificationForm = ({
 	const dispatch = useDispatch();
 	const isSliderOpen = useSelector(selectNotificationSliderState);
 	const libraryData = useSelector(selectLibraryData);
+
+	console.log('STATUS', status);
 
 	const initialValues = useMemo(() => {
 		const initialValuesClone = { ...notificationInitialValues };
@@ -50,9 +53,13 @@ const NotificationForm = ({
 		formikBag.setSubmitting(true);
 
 		try {
-			// const notificationData = notificationDataFormatterForService(values);
-
-			const { type } = await dispatch(createOrEditNotificationThunk(values));
+			const notificationData = await notificationDataFormatterForService(
+				values
+			);
+			console.log('Service DATA', notificationData);
+			const { type } = await dispatch(
+				createOrEditNotificationThunk(notificationData)
+			);
 
 			if (type === 'notifications/createOrEditNotificationThunk/fulfilled') {
 				handleClose();
@@ -127,7 +134,6 @@ const NotificationForm = ({
 
 NotificationForm.propTypes = {
 	isEdit: PropTypes.bool.isRequired
-	// status: PropTypes.string.isRequired
 };
 
 export default NotificationForm;

@@ -1,4 +1,6 @@
 import * as yup from 'yup';
+import uploadFilesToS3 from '../utils/uploadFilesToS3';
+import { getRelativePath } from './commonHelpers';
 
 export const stepsData = [
 	{ key: 'notification', label: 'Notification' },
@@ -32,6 +34,52 @@ export const expirationUnitRange = {
 	minutes: 61
 };
 
+export const notificationDataFormatterForForm = {};
+
+export const notificationDataFormatterForService = async (values) => {
+	console.log('HELPERS VALUES', values);
+
+	let uploadedFiles = [null, null];
+
+	uploadedFiles = await uploadFilesToS3(
+		values.notification.uploadedFiles,
+		'newslibrary'
+	);
+
+	const notificationData = {
+		save_draft: true,
+		is_scheduled: values?.scheduling.is_scheduled,
+		schedule_date: values?.scheduling.schedule_date,
+		notification: {
+			notification_title: values?.notification?.notification_title || '',
+			notification_text: values?.notification?.notification_text || '',
+			notification_name: values?.notification?.notification_name || '',
+			notification_image: getRelativePath(uploadedFiles[0]?.media_url) || '',
+			notification_image_filename:
+				values?.notification?.uploadedFiles[0]?.file_name || '',
+			notification_image_width:
+				values?.notification?.uploadedFiles[0]?.width || 0,
+			notification_image_height:
+				values?.notification?.uploadedFiles[0]?.height || 0,
+			notification_image_dropbox_url:
+				values?.notification_image_dropbox_url || undefined
+		},
+		target: values.target,
+		additional_options: {
+			android_notification_channel:
+				values?.additional_options.android_notification_channel,
+			sound: values?.additional_options.sound === 'enabled',
+			apple_badge: values?.additional_options.apple_badge === 'enabled',
+			expires_in: values?.additional_options.expires_in,
+			expiration_unit: values?.additional_options.expiration_unit,
+			custom_data: values?.additional_options.custom_data.filter(
+				(data) => data.key
+			)
+		}
+	};
+	return notificationData;
+};
+
 // INITIAL VALUES
 export const notificationInitialValues = {
 	save_draft: true,
@@ -51,7 +99,7 @@ export const notificationInitialValues = {
 		is_scheduled: false,
 		date: new Date(),
 		time: { hour: '00', min: '00' },
-		schedule_date: null,
+		schedule_date: undefined,
 		schedule_notification: 'now'
 	},
 	// conversion_events: {
