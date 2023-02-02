@@ -11,8 +11,6 @@ const NotificationStepForm = ({ status }) => {
 	const classes = useFormStyles();
 	const notifClasses = useNotificationStyles();
 
-	console.log('status', status);
-
 	const isPublished = status === 'published';
 
 	// formik hook
@@ -50,6 +48,7 @@ const NotificationStepForm = ({ status }) => {
 						formatMessage='Supported formats are jpeg and png'
 						maxFiles={1}
 						onDelete={() => setFieldValue('notification.uploadedFiles', [])}
+						disabled={isPublished}
 					/>
 				</div>
 				<div className={classes.fieldContainer}>
@@ -57,6 +56,7 @@ const NotificationStepForm = ({ status }) => {
 						label='NOTIFICATION NAME'
 						name='notification.notification_name'
 						placeholder='Please write notification name here'
+						disabled={isPublished}
 					/>
 				</div>
 			</div>

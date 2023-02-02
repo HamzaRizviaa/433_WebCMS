@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Grid } from '@material-ui/core';
 import { FieldArray, useFormikContext } from 'formik';
-
+import PropTypes from 'prop-types';
 import FormikField from '../../../../../ui/inputs/formik/FormikField';
 import FormikSelect from '../../../../../ui/inputs/formik/FormikSelect';
 import CustomData from './CustomData';
@@ -12,10 +12,12 @@ import {
 } from '../../../../../../data/helpers/notificationHelpers';
 import { useNotificationStyles } from '../../../index.style';
 
-const AdditionalOptionStepForm = () => {
+const AdditionalOptionStepForm = ({ status }) => {
 	const classes = useNotificationStyles();
 
 	const { values } = useFormikContext();
+
+	const isPublished = status === 'published';
 
 	const expireRangeOptions = useMemo(() => {
 		return [
@@ -31,6 +33,7 @@ const AdditionalOptionStepForm = () => {
 				<FormikField
 					name='additional_options.android_notification_channel'
 					label='ANDROID NOTIFICATION CHANNEL'
+					disabled={isPublished}
 				/>
 			</div>
 			<FieldArray
@@ -43,6 +46,7 @@ const AdditionalOptionStepForm = () => {
 					label='SOUND'
 					placeholder='Please Select'
 					options={booleanOptions}
+					disabled={isPublished}
 				/>
 			</div>
 			<div>
@@ -51,6 +55,7 @@ const AdditionalOptionStepForm = () => {
 					label='APPLE BADGE'
 					placeholder='Please Select'
 					options={booleanOptions}
+					disabled={isPublished}
 				/>
 			</div>
 			<div>
@@ -61,6 +66,7 @@ const AdditionalOptionStepForm = () => {
 							label='EXPIRES'
 							placeholder='Please Select'
 							options={expireRangeOptions}
+							disabled={isPublished}
 						/>
 					</Grid>
 					<Grid className={classes.expirationUnitField} md={6} item>
@@ -69,6 +75,7 @@ const AdditionalOptionStepForm = () => {
 							placeholder='Please Select'
 							label='&nbsp;'
 							options={expirationUnitOptions}
+							disabled={isPublished}
 						/>
 					</Grid>
 				</Grid>
@@ -78,3 +85,7 @@ const AdditionalOptionStepForm = () => {
 };
 
 export default AdditionalOptionStepForm;
+
+AdditionalOptionStepForm.propTypes = {
+	status: PropTypes.string
+};
