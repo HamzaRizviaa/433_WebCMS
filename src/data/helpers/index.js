@@ -7,3 +7,4 @@ export * from './viralHelpers';
 export * from './topBannerHelpers';
 export * from './ruleHelpers';
 export * from './advancedSettingsHelpers';
+export * from './notificationHelpers';

@@ -15,7 +15,8 @@ const DrawerLayout = ({
 	notifID,
 	isLoading,
 	children,
-	fromArticle = false
+	fromArticle = false,
+	customWidth
 }) => {
 	const classes = useDrawerLayoutStyles({ showPreview: !!previewFile });
 
@@ -28,6 +29,7 @@ const DrawerLayout = ({
 			preview={!!previewFile}
 			fromArticle={fromArticle}
 			notifID={notifID}
+			customWidth={customWidth}
 		>
 			<PrimaryLoader loading={isLoading} mainPage={fromArticle}>
 				<Slide in={true} direction='up' timeout={400}>
@@ -53,7 +55,8 @@ DrawerLayout.propTypes = {
 	previewFile: PropTypes.bool.isRequired,
 	notifID: PropTypes.string.isRequired,
 	isLoading: PropTypes.bool.isRequired,
-	children: PropTypes.element.isRequired
+	children: PropTypes.element.isRequired,
+	customWidth: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
 export default DrawerLayout;

@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { isEmpty } from 'lodash';
 import { getLocalStorageDetails } from '../utils';
 
@@ -90,3 +91,19 @@ export const schedulerValidationText = (selectsRange) => ({
 	} Date and Time atleast 15 minutes from now.`,
 	2: 'Selected End Date and Time should be atleast 30 minutes ahead from the Start Date and Time.'
 });
+
+/**
+ * Generate Date Time stamp in ISO format from date, hours and minutes.
+ *
+ * @param {Date | string} date - Date object or valid date string
+ * @param {string} hour - Hours in 24H format
+ * @param {string} min - minutes string
+ * @returns {string} Date Time stamp in ISO string
+ */
+export const generateISODateTimeStamp = (date, hour, min) => {
+	const selectedDate = dayjs(date).format('YYYY-MM-DD');
+	const selectedTime = `${hour}:${min.padStart(2, '0')}`;
+	const selectedDateTime = `${selectedDate}T${selectedTime}`;
+
+	return new Date(selectedDateTime).toISOString();
+};
