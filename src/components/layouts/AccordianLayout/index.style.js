@@ -36,7 +36,7 @@ export const useAccordionLayoutStyles = makeStyles((theme) => ({
 	},
 
 	rightSide: {
-		marginLeft: '165px',
+		marginLeft: '155px',
 		marginTop: '3px',
 		height: '25px',
 		width: '25px',

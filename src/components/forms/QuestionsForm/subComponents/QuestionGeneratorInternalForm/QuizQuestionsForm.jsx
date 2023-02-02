@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useFormikContext } from 'formik';
 import FormikField from '../../../../ui/inputs/formik/FormikField';
 import { useFormStyles } from '../../../forms.style';
 import AccordianLayout from '../../../../layouts/AccordianLayout';
@@ -12,6 +13,7 @@ import {
 
 const QuizQuestionsForm = ({ index }) => {
 	const classes = useFormStyles();
+	const { values } = useFormikContext();
 
 	const handleLockQuestion = (e) => {
 		e.preventDefault();
@@ -37,54 +39,20 @@ const QuizQuestionsForm = ({ index }) => {
 						maxLength={55}
 					/>
 				</div>
-				<div className={classes.fieldContainer}>
-					<FormikField
-						name={`questions.${index}.answers.right_answer`}
-						label='RIGHT ANSWER'
-						placeholder='Please write your answer'
-						multiline
-						maxRows={2}
-						rightLabel={<Checkmark />}
-						removeMaxLengthLabel
-						maxLength={29}
-					/>
-				</div>
-				<div className={classes.fieldContainer}>
-					<FormikField
-						name={`question1`}
-						label='WRONG ANSWER'
-						placeholder='Please write your answer'
-						multiline
-						maxRows={2}
-						rightLabel={<Negative />}
-						removeMaxLengthLabel
-						maxLength={29}
-					/>
-				</div>
-				<div className={classes.fieldContainer}>
-					<FormikField
-						name={`question1`}
-						label='WRONG ANSWER'
-						placeholder='Please write your answer'
-						multiline
-						maxRows={2}
-						rightLabel={<Negative />}
-						removeMaxLengthLabel
-						maxLength={29}
-					/>
-				</div>
-				<div className={classes.fieldContainer}>
-					<FormikField
-						name={`question1`}
-						label='WRONG ANSWER'
-						placeholder='Please write your answer'
-						multiline
-						maxRows={2}
-						rightLabel={<Negative />}
-						removeMaxLengthLabel
-						maxLength={29}
-					/>
-				</div>
+				{values.questions[index].answers.map((_, idx) => (
+					<div className={classes.fieldContainer} key={idx}>
+						<FormikField
+							name={`questions.${index}.answers.${idx}.answer`}
+							label={idx === 0 ? 'RIGHT ANSWER' : 'WRONG ANSWER'}
+							placeholder='Please write your answer'
+							multiline
+							maxRows={2}
+							rightLabel={idx === 0 ? <Checkmark /> : <Negative />}
+							removeMaxLengthLabel
+							maxLength={29}
+						/>
+					</div>
+				))}
 			</AccordianLayout>
 		</div>
 	);

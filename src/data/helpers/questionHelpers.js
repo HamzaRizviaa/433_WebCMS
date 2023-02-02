@@ -128,7 +128,10 @@ export const questionSlideInitialValues = {
 	]
 };
 
-export const questionsFormInitialValues = (allRules) => {
+export const questionsFormInitialValues = (
+	allRules,
+	isQuizGenerator = false
+) => {
 	const rules = {};
 
 	allRules.forEach((rule) => {
@@ -147,7 +150,7 @@ export const questionsFormInitialValues = (allRules) => {
 		coverImageUploadedFiles: [],
 		general_info: {
 			save_draft: true,
-			question_type: 'poll',
+			question_type: isQuizGenerator ? 'quiz' : 'poll',
 			results: 'THANKS, SEE YOU NEXT TIME!',
 			results_image: '',
 			results_filename: '',
@@ -179,7 +182,8 @@ export const questionDataFormatterForService = async (
 	values,
 	// isDraft,
 	status = 'draft',
-	allRules
+	allRules = [],
+	isQuestionGenerator = false
 ) => {
 	const filteredRules = allRules.filter((rule) => values.rules[rule._id]);
 	const pollFilesToUpload = [
@@ -193,13 +197,14 @@ export const questionDataFormatterForService = async (
 		values.negativeResultsUploadedFiles[0] || null
 	];
 
-	values.questions.forEach((item) => {
-		if (values.general_info.question_type === 'poll') {
-			pollFilesToUpload.push(item.uploadedFiles[0] || null);
-		} else {
-			quizFilesToUpload.push(item.uploadedFiles[0] || null);
-		}
-	});
+	!isQuestionGenerator &&
+		values.questions.forEach((item) => {
+			if (values.general_info.question_type === 'poll') {
+				pollFilesToUpload.push(item.uploadedFiles[0] || null);
+			} else {
+				quizFilesToUpload.push(item.uploadedFiles[0] || null);
+			}
+		});
 
 	let pollUploadedFiles = [null, null];
 	let quizUploadedFiles = [null, null, null];
@@ -406,6 +411,27 @@ export const questionDataFormatterForForm = (question, allRules) => {
 	return formattedQuestion;
 };
 
+export const quizGeneratorFormatter = (data) => {
+	return data.map((item) => ({
+		question: item.question.slice(0, 55),
+		answers: [
+			{
+				answer: item.correct_answer.slice(0, 29)
+			},
+			{
+				answer: item.wrong_answer_1.slice(0, 29)
+			},
+			{
+				answer: item.wrong_answer_2.slice(0, 29)
+			},
+			{
+				answer: item.wrong_answer_3.slice(0, 29)
+			}
+		],
+		dropbox_url: '',
+		labels: []
+	}));
+};
 const questionQuizGeneratorSchema = yup
 	.array()
 	.of(
