@@ -59,7 +59,9 @@ export const useStyles = makeStyles((theme) => {
 
 			'& path': {
 				fill: ({ notificationStatus }) =>
-					notificationStatusToColorMapper[notificationStatus]
+					notificationStatus === ''
+						? 'gray'
+						: notificationStatusToColorMapper[notificationStatus]
 			}
 		}
 	};

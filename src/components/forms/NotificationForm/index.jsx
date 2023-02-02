@@ -16,7 +16,8 @@ import {
 import {
 	closeNotificationSlider,
 	createOrEditNotificationThunk,
-	deleteNotificationThunk
+	deleteNotificationThunk,
+	resetSchedulerError
 } from '../../../data/features/notification/notificationSlice';
 import {
 	libraryTypeToActionMapper,
@@ -64,6 +65,7 @@ const NotificationForm = () => {
 
 	const handleClose = () => {
 		dispatch(closeNotificationSlider());
+		dispatch(resetSchedulerError());
 	};
 
 	const onSubmitHandler = async (values) => {

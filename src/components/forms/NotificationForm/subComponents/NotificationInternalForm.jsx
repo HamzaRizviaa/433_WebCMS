@@ -24,7 +24,7 @@ const NotificationInternalForm = ({
 
 	return (
 		<div className={classes.root}>
-			<NotificationStepper />
+			<NotificationStepper status={status} />
 			<NotificationFormButtons
 				isEdit={isEdit}
 				status={status}
