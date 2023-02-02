@@ -37,7 +37,7 @@ const NextStepButton = ({ currentStep, onClick }) => {
 		};
 		if (
 			currentStep === 'scheduling' &&
-			values.scheduling.schedule_notification === 'schedule'
+			scheduling.schedule_notification === 'schedule'
 		) {
 			const isPastTimeError = isPastTime(dateAndTime);
 			if (isPastTimeError) {

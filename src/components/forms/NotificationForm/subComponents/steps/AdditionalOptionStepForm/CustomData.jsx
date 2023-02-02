@@ -27,18 +27,27 @@ const CustomData = ({ form, push, remove }) => {
 		if (!customData[index].key && !value) remove(index);
 	};
 
+	const shouldDisable = (index) => {
+		return (
+			customData[index].key === 'module_type' ||
+			customData[index].key === 'post_id' ||
+			customData[index].key === 'notification_type'
+		);
+	};
+
 	return (
 		<div>
 			<div className={inputsClasses.labelsContainer}>
 				<span className={inputsClasses.inputLabel}>CUSTOM DATA</span>
 			</div>
-			{form.values.additional_options.custom_data.map((_, index) => (
+			{customData.map((_, index) => (
 				<Grid key={index} container>
 					<Grid className={classes.expireField} md={6} item>
 						<FormikField
 							name={`additional_options.custom_data.${index}.key`}
 							placeholder='Key'
 							onChange={handleKeyChange(index)}
+							disabled={shouldDisable(index)}
 						/>
 					</Grid>
 					<Grid className={classes.expirationUnitField} md={6} item>
@@ -46,6 +55,7 @@ const CustomData = ({ form, push, remove }) => {
 							name={`additional_options.custom_data.${index}.value`}
 							placeholder='Value'
 							onChange={handleValueChange(index)}
+							disabled={shouldDisable(index)}
 						/>
 					</Grid>
 				</Grid>

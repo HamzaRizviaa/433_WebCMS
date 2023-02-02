@@ -6,6 +6,7 @@ import { isEqual, pick } from 'lodash';
 import Button from '../../../ui/Button';
 import { notificationInitialValues } from '../../../../data/helpers';
 import { useFormStyles } from '../../forms.style';
+import { isPastTime } from '../../../../data/utils';
 
 const NotificationFormButtons = ({
 	isEdit,
@@ -16,6 +17,24 @@ const NotificationFormButtons = ({
 	const isPublished = status === 'published';
 
 	const { dirty, isValid, values, setFieldValue } = useFormikContext();
+	const { scheduling } = values;
+
+	const isSchedulerError = useMemo(() => {
+		const dateAndTime = {
+			date: scheduling.date,
+			hours: scheduling.time.hour,
+			mins: scheduling.time.min
+		};
+
+		if (
+			scheduling.schedule_notification === 'schedule' &&
+			isPastTime(dateAndTime)
+		) {
+			return true;
+		}
+
+		return false;
+	}, [scheduling]);
 
 	const isDraftDisabled = useMemo(() => {
 		const isEqualToDefaultValues = isEqual(
@@ -50,7 +69,7 @@ const NotificationFormButtons = ({
 					<Button
 						size='small'
 						variant='outlined'
-						disabled={isDraftDisabled}
+						disabled={isDraftDisabled || isSchedulerError}
 						onClick={handleDraft}
 					>
 						{status === 'draft' && isEdit ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
@@ -59,7 +78,10 @@ const NotificationFormButtons = ({
 				<Button
 					size='small'
 					type='submit'
-					disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
+					disabled={
+						(isPublished ? (!dirty ? isValid : !isValid) : !isValid) ||
+						isSchedulerError
+					}
 					onClick={handlePublish}
 				>
 					{isPublished ? 'SAVE CHANGES' : 'SET NOTIFICATION'}
