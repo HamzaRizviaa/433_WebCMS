@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FieldArray } from 'formik';
+import { useFormikContext } from 'formik';
 import { useQuestionsStyles } from '../../index.style';
 import { EmptyQuizQuestions } from '../../../../../assets/svg-icons';
 import QuizQuestionsForm from './QuizQuestionsForm';
@@ -8,6 +8,7 @@ import Button from '../../../../ui/Button';
 
 const QuizQuestions = ({ data = true, onDraftClick }) => {
 	const classes = useQuestionsStyles();
+	const { values } = useFormikContext();
 
 	return (
 		<div>
@@ -23,12 +24,8 @@ const QuizQuestions = ({ data = true, onDraftClick }) => {
 				</div>
 			) : (
 				<>
-					{new Array(3).fill(0).map((item, index) => (
-						<FieldArray
-							key={item}
-							name='questions'
-							render={(props) => <QuizQuestionsForm {...props} index={index} />}
-						/>
+					{values.questions.map((_, index) => (
+						<QuizQuestionsForm key={index} index={index} />
 					))}
 					<Button
 						fullWidth

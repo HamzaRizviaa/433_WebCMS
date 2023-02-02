@@ -1,20 +1,58 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
+import { Formik, Form } from 'formik';
 import {
+	questionDataFormatterForService,
 	questionQuizGeneratorFormValidationSchema,
 	questionsFormInitialValues
 } from '../../../data/helpers';
-import { Formik, Form } from 'formik';
 
 import QuestionGeneratorInternalForm from './subComponents/QuestionGeneratorInternalForm';
+import {
+	createOrEditQuestionThunk,
+	getQuestions
+} from '../../../data/features/questionsLibrary/questionsLibraryActions';
 
 const QuestionsForm = ({ open, handleClose }) => {
-	const onSubmitHandler = async () => {};
+	const dispatch = useDispatch();
+
+	const onSubmitHandler = async (values, formikBag) => {
+		formikBag.setSubmitting(true);
+
+		try {
+			const payload = await questionDataFormatterForService(
+				values,
+				'draft',
+				[],
+				true
+			);
+
+			const modifiedPayload = {
+				apiVersion: 3,
+				...payload
+			};
+
+			const { type } = await dispatch(
+				createOrEditQuestionThunk(modifiedPayload)
+			);
+
+			if (type === 'questionLibrary/createOrEditQuestionThunk/fulfilled') {
+				handleClose();
+
+				dispatch(getQuestions());
+			}
+		} catch (e) {
+			console.error(e);
+		} finally {
+			formikBag.setSubmitting(false);
+		}
+	};
 
 	return (
 		<Formik
 			enableReinitialize
-			initialValues={questionsFormInitialValues([])}
+			initialValues={questionsFormInitialValues([], true)}
 			validationSchema={questionQuizGeneratorFormValidationSchema}
 			onSubmit={onSubmitHandler}
 			validateOnMount
