@@ -34,13 +34,16 @@ export const useNotificationStyles = makeStyles((theme) => ({
 	expirationUnitField: {
 		paddingLeft: 5
 	},
+
 	notifDisplay: {
 		display: 'flex',
 		flexDirection: 'row'
 	},
+
 	notifiContainer: {
 		flexBasis: '60%'
 	},
+
 	notificationRoot: {
 		backgroundColor: theme.palette.black,
 		color: theme.palette.white,
@@ -53,6 +56,7 @@ export const useNotificationStyles = makeStyles((theme) => ({
 			marginBottom: '16px'
 		}
 	},
+
 	notifTitleContainer: {
 		position: 'relative',
 		'& h6': {
@@ -67,11 +71,13 @@ export const useNotificationStyles = makeStyles((theme) => ({
 			fontFamily: 'Inter, sans-serif'
 		}
 	},
+
 	notifTitleAndroid: {
 		fontWeight: '700',
 		bottom: '72px',
 		left: '25px'
 	},
+
 	notifTextAndroid: {
 		top: '62px',
 		left: '25px',
@@ -86,17 +92,20 @@ export const useNotificationStyles = makeStyles((theme) => ({
 			height: '38px'
 		}
 	},
+
 	notifTitleIphone12: {
 		fontWeight: '700',
 		bottom: '72px',
 		left: '25px'
 	},
+
 	notifTextIphone12: {
 		top: '66px',
 		left: '25px',
 		lineHeight: '12.1px',
 		width: '68%'
 	},
+
 	notifImgIphone12: {
 		bottom: '43px',
 		right: '27px',
@@ -110,6 +119,7 @@ export const useNotificationStyles = makeStyles((theme) => ({
 		bottom: '69px',
 		left: '27px'
 	},
+
 	notifTextIphone14: {
 		top: '69px',
 		left: '27px',
@@ -119,22 +129,26 @@ export const useNotificationStyles = makeStyles((theme) => ({
 		whiteSpace: 'nowrap',
 		overflow: 'hidden'
 	},
+
 	notifImgIphone14: {
 		bottom: '50px',
 		right: '29px',
 		'& img': { width: '28px', height: '28px' }
 	},
+
 	conversionChevronContainer: {
 		display: 'flex',
 		'& svg': {
 			margin: '0 12px'
 		}
 	},
+
 	conversionContainer: {
 		display: 'flex',
 		width: '100%',
 		alignItems: 'baseline'
 	},
+
 	metricContainer: {
 		width: '100%'
 	},

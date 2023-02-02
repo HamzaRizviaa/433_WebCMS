@@ -1,11 +1,13 @@
-import { Box } from '@material-ui/core';
 import React from 'react';
+import { Box } from '@material-ui/core';
+
 import FormikSelect from '../../../../ui/inputs/formik/FormikSelect';
-import { useNotificationStyles } from '../../index.style';
 import { RightChevron } from '../../../../../assets/svg-icons';
+import { useNotificationStyles } from '../../index.style';
 
 const ConversionEventStepForm = () => {
 	const classes = useNotificationStyles();
+
 	return (
 		<Box className={classes.stepContainer}>
 			<Box className={classes.conversionContainer}>
@@ -15,18 +17,12 @@ const ConversionEventStepForm = () => {
 					<div>Opened</div>
 					<RightChevron />
 				</div>
-
 				<div className={classes.metricContainer}>
 					<FormikSelect
 						name='goal_metrics'
 						placeholder='Select goal metric'
-						size='large'
 						options={[]}
 						mapOptions={{ labelKey: 'name', valueKey: 'id' }}
-						// onChange={handleMainCategoryChange}
-						// disabled={isPublished}
-						// required={selectedOption === 'article'}
-						// readOnly={readOnly}
 					/>
 				</div>
 			</Box>
@@ -38,10 +34,6 @@ const ConversionEventStepForm = () => {
 					size='large'
 					options={[]}
 					mapOptions={{ labelKey: 'name', valueKey: 'id' }}
-					// onChange={handleMainCategoryChange}
-					// disabled={isPublished}
-					// required={selectedOption === 'article'}
-					// readOnly={readOnly}
 				/>
 			</Box>
 		</Box>

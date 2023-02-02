@@ -1,17 +1,16 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Grid } from '@material-ui/core';
 import { FieldArray, useFormikContext } from 'formik';
 
 import FormikField from '../../../../../ui/inputs/formik/FormikField';
 import FormikSelect from '../../../../../ui/inputs/formik/FormikSelect';
+import CustomData from './CustomData';
 import {
 	booleanOptions,
 	expirationUnitOptions,
 	expirationUnitRange
 } from '../../../../../../data/helpers/notificationHelpers';
 import { useNotificationStyles } from '../../../index.style';
-import { useMemo } from 'react';
-import CustomData from './CustomData';
 
 const AdditionalOptionStepForm = () => {
 	const classes = useNotificationStyles();

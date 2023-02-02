@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { IconButton } from '@material-ui/core';
 
 import FormikSelect from '../../../../../ui/inputs/formik/FormikSelect';
@@ -92,6 +92,12 @@ const TargetApp = ({ form, push, remove }) => {
 			)}
 		</div>
 	);
+};
+
+TargetApp.propTypes = {
+	form: PropTypes.object.isRequired,
+	push: PropTypes.func.isRequired,
+	remove: PropTypes.func.isRequired
 };
 
 export default TargetApp;

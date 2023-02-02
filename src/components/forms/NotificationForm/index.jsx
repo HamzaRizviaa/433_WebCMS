@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Formik, Form } from 'formik';
 import { useSelector, useDispatch } from 'react-redux';
 import { isEmpty } from 'lodash';
@@ -148,10 +147,6 @@ const NotificationForm = () => {
 			/>
 		</DrawerLayout>
 	);
-};
-
-NotificationForm.propTypes = {
-	isEdit: PropTypes.bool.isRequired
 };
 
 export default NotificationForm;
