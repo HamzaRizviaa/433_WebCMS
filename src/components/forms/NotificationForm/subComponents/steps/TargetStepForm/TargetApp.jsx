@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { IconButton } from '@material-ui/core';
@@ -31,9 +32,11 @@ const appIdOptions = [
 	}
 ];
 
-const TargetApp = ({ form, push, remove }) => {
+const TargetApp = ({ form, push, remove, status }) => {
 	const classes = useNotificationStyles();
 	const inputsClasses = useInputsStyles({ isRequired: true });
+
+	const isPublished = status === 'published';
 
 	const handlePush = () => {
 		push({ topic_name: '' });
@@ -59,6 +62,7 @@ const TargetApp = ({ form, push, remove }) => {
 								options={appIdOptions}
 								placeholder='Select Topic'
 								className={classes.selectField}
+								disabled={isPublished}
 							/>
 							<div>
 								{target.length > 1 && (

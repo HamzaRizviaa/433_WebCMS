@@ -36,10 +36,11 @@ const AdditionalOptionStepForm = ({ status }) => {
 					disabled={isPublished}
 				/>
 			</div>
-			<FieldArray
-				name='additional_options.custom_data'
-				component={CustomData}
-			/>
+			<FieldArray name='additional_options.custom_data'>
+				{(props) => {
+					return <CustomData status={status} {...props} />;
+				}}
+			</FieldArray>
 			<div>
 				<FormikSelect
 					name='additional_options.sound'
