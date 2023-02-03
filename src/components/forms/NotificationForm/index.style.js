@@ -75,14 +75,24 @@ export const useNotificationStyles = makeStyles((theme) => ({
 	notifTitleAndroid: {
 		fontWeight: '700',
 		bottom: '72px',
-		left: '25px'
+		left: '25px',
+		width: '70%',
+		textOverflow: 'ellipsis',
+		whiteSpace: 'nowrap',
+		overflow: 'hidden'
 	},
 
 	notifTextAndroid: {
 		top: '62px',
 		left: '25px',
 		lineHeight: '12.1px',
-		width: '68%'
+		width: '68%',
+
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
+		display: '-webkit-box',
+		'-webkit-line-clamp': 2,
+		'-webkit-box-orient': 'vertical'
 	},
 	notifImgAndroid: {
 		bottom: '43px',
@@ -96,14 +106,23 @@ export const useNotificationStyles = makeStyles((theme) => ({
 	notifTitleIphone12: {
 		fontWeight: '700',
 		bottom: '72px',
-		left: '25px'
+		left: '25px',
+		width: '70%',
+		textOverflow: 'ellipsis',
+		whiteSpace: 'nowrap',
+		overflow: 'hidden'
 	},
 
 	notifTextIphone12: {
 		top: '66px',
 		left: '25px',
 		lineHeight: '12.1px',
-		width: '68%'
+		width: '68%',
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
+		display: '-webkit-box',
+		'-webkit-line-clamp': 2,
+		'-webkit-box-orient': 'vertical'
 	},
 
 	notifImgIphone12: {
@@ -117,7 +136,11 @@ export const useNotificationStyles = makeStyles((theme) => ({
 	notifTitleIphone14: {
 		fontWeight: '700',
 		bottom: '69px',
-		left: '27px'
+		left: '27px',
+		width: '72%',
+		textOverflow: 'ellipsis',
+		whiteSpace: 'nowrap',
+		overflow: 'hidden'
 	},
 
 	notifTextIphone14: {
