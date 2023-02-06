@@ -2,34 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { IconButton } from '@material-ui/core';
 
-import FormikSelect from '../../../../../ui/inputs/formik/FormikSelect';
 import Button from '../../../../../ui/Button';
-import {
-	AndroidIcon,
-	AppleIcon,
-	TrashIcon
-} from '../../../../../../assets/svg-icons';
+import { TrashIcon } from '../../../../../../assets/svg-icons';
 import { useNotificationStyles } from '../../../index.style';
 import { useInputsStyles } from '../../../../../ui/inputs/inputs.style';
-
-const appIdOptions = [
-	{
-		value: 'ios',
-		label: (
-			<div className='select-label-with-icon'>
-				<AppleIcon /> <span>IOS</span>
-			</div>
-		)
-	},
-	{
-		value: 'android',
-		label: (
-			<div className='select-label-with-icon'>
-				<AndroidIcon /> <span>Android</span>
-			</div>
-		)
-	}
-];
+import SelectTopicNameField from './SelectTopicNameField';
 
 const TargetApp = ({ form, push, remove }) => {
 	const classes = useNotificationStyles();
@@ -54,12 +31,7 @@ const TargetApp = ({ form, push, remove }) => {
 				{target.map((_, index) => (
 					<div key={index}>
 						<div className={classes.appIdContainer}>
-							<FormikSelect
-								name={`target.${index}.topic_name`}
-								options={appIdOptions}
-								placeholder='Select Topic'
-								className={classes.selectField}
-							/>
+							<SelectTopicNameField target={target} index={index} />
 							<div>
 								{target.length > 1 && (
 									<IconButton

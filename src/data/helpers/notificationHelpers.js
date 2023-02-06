@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 import * as yup from 'yup';
 import uploadFilesToS3 from '../utils/uploadFilesToS3';
 import {
@@ -9,6 +10,26 @@ import { getAllNewsApi } from '../features/newsLibrary/newsLibraryActions';
 import { getAllArticlesApi } from '../features/articleLibrary/articleLibraryActions';
 import { getAllMedia } from '../features/mediaLibrary/mediaLibraryActions';
 import { getAllViralsApi } from '../features/viralLibrary/viralLibraryActions';
+import { AndroidIcon, AppleIcon } from '../../assets/svg-icons';
+
+export const topicNameOptions = [
+	{
+		value: 'ios',
+		label: (
+			<div className='select-label-with-icon'>
+				<AppleIcon /> <span>IOS</span>
+			</div>
+		)
+	},
+	{
+		value: 'android',
+		label: (
+			<div className='select-label-with-icon'>
+				<AndroidIcon /> <span>Android</span>
+			</div>
+		)
+	}
+];
 
 export const stepsData = [
 	{ key: 'notification', label: 'Notification' },
@@ -47,6 +68,22 @@ export const libraryTypeToActionMapper = {
 	media: getAllMedia,
 	article: getAllArticlesApi,
 	viral: getAllViralsApi
+};
+
+export const filterSelectedTopics = (
+	selectedTopics,
+	allTopics,
+	currentIndex
+) => {
+	const topicNames = selectedTopics
+		.filter((_, idx) => idx !== currentIndex)
+		.map((item) => item.topic_name);
+
+	const filteredTopicNameOptions = allTopics.filter(
+		(item) => !topicNames.includes(item.value)
+	);
+
+	return filteredTopicNameOptions;
 };
 
 export const notificationDataFormatterForForm = (notif) => {
