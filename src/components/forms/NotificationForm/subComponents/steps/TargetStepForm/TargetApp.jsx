@@ -44,6 +44,7 @@ const TargetApp = ({ form, push, remove, status }) => {
 									<IconButton
 										className={classes.iconBtn}
 										onClick={handleRemove(index)}
+										disabled={isPublished}
 									>
 										<TrashIcon />
 									</IconButton>
@@ -65,6 +66,7 @@ const TargetApp = ({ form, push, remove, status }) => {
 					size='small'
 					onClick={handlePush}
 					className={classes.targetAnotherAppBtn}
+					disabled={isPublished}
 				>
 					TARGET ANOTHER TOPIC
 				</Button>
