@@ -14,8 +14,10 @@ import { selectSchedulerError } from '../../../../../data/selectors/notification
 import { useNotificationStyles } from '../../index.style';
 import { useFormStyles } from '../../../forms.style';
 
-const SchedulingStepForm = () => {
+const SchedulingStepForm = ({ status }) => {
 	const { values, setFieldValue } = useFormikContext();
+
+	const isPublished = status === 'published';
 
 	const schedulerError = useSelector(selectSchedulerError);
 
@@ -45,6 +47,7 @@ const SchedulingStepForm = () => {
 							name='scheduling.schedule_notification'
 							placeholder='Please select'
 							options={scheduleOptions}
+							disabled={isPublished}
 						/>
 						{showDateAndTime && (
 							<div>
@@ -92,5 +95,6 @@ export default SchedulingStepForm;
 
 SchedulingStepForm.propTypes = {
 	options: PropTypes.array,
-	selectsRange: PropTypes.bool
+	selectsRange: PropTypes.bool,
+	status: PropTypes.string
 };

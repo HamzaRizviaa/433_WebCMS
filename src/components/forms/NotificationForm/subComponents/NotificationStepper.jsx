@@ -1,12 +1,12 @@
 import React from 'react';
 import { Stepper, Step, StepButton, StepContent } from '@material-ui/core';
-
+import PropTypes from 'prop-types';
 import NextStepButton from './NextStepButton';
 import { stepsComponents } from './steps';
 import { stepsData } from '../../../../data/helpers';
 import { useNotificationStyles } from '../index.style';
 
-const NotificationStepper = () => {
+const NotificationStepper = ({ status }) => {
 	const [activeStep, setActiveStep] = React.useState(0);
 	const [completed, setCompleted] = React.useState(new Set());
 
@@ -46,7 +46,7 @@ const NotificationStepper = () => {
 						{step.label}
 					</StepButton>
 					<StepContent>
-						{stepsComponents[step.key]}
+						{React.createElement(stepsComponents[step.key], { status })}
 						<div className={classes.actionsContainer}>
 							<NextStepButton
 								currentStep={step.key}
@@ -61,3 +61,7 @@ const NotificationStepper = () => {
 };
 
 export default NotificationStepper;
+
+NotificationStepper.propTypes = {
+	status: PropTypes.string
+};

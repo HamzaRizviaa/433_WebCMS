@@ -6,11 +6,17 @@ import FormikField from '../../../../../ui/inputs/formik/FormikField';
 import { useNotificationStyles } from '../../../index.style';
 import { useInputsStyles } from '../../../../../ui/inputs/inputs.style';
 
-const CustomData = ({ form, push, remove }) => {
+const CustomData = ({ form, push, remove, status }) => {
 	const classes = useNotificationStyles();
 	const inputsClasses = useInputsStyles();
 
-	const customData = form.values.additional_options.custom_data;
+	const isPublished = status === 'published';
+
+	const customDataArray = form.values.additional_options.custom_data;
+
+	const customData = !isPublished
+		? customDataArray
+		: customDataArray.slice(0, customDataArray.length - 1);
 
 	const addItem = (index) => {
 		const lastItemIndex = customData.length - 1;
@@ -67,7 +73,8 @@ const CustomData = ({ form, push, remove }) => {
 CustomData.propTypes = {
 	form: PropTypes.object.isRequired,
 	push: PropTypes.func.isRequired,
-	remove: PropTypes.func.isRequired
+	remove: PropTypes.func.isRequired,
+	status: PropTypes.string
 };
 
 export default CustomData;

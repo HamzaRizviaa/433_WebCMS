@@ -1,16 +1,19 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { IconButton } from '@material-ui/core';
 
 import Button from '../../../../../ui/Button';
+import SelectTopicNameField from './SelectTopicNameField';
 import { TrashIcon } from '../../../../../../assets/svg-icons';
 import { useNotificationStyles } from '../../../index.style';
 import { useInputsStyles } from '../../../../../ui/inputs/inputs.style';
-import SelectTopicNameField from './SelectTopicNameField';
 
-const TargetApp = ({ form, push, remove }) => {
+const TargetApp = ({ form, push, remove, status }) => {
 	const classes = useNotificationStyles();
 	const inputsClasses = useInputsStyles({ isRequired: true });
+
+	const isPublished = status === 'published';
 
 	const handlePush = () => {
 		push({ topic_name: '' });

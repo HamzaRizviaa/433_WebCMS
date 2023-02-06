@@ -1,5 +1,3 @@
-import React from 'react';
-
 import NotificationStepForm from './NotificationStepForm';
 import TargetStepForm from './TargetStepForm';
 import SchedulingStepForm from './SchedulingStepForm';
@@ -7,9 +5,9 @@ import SchedulingStepForm from './SchedulingStepForm';
 import AdditionalOptionStepForm from './AdditionalOptionStepForm';
 
 export const stepsComponents = {
-	notification: <NotificationStepForm />,
-	target: <TargetStepForm />,
-	scheduling: <SchedulingStepForm />,
+	notification: NotificationStepForm,
+	target: TargetStepForm,
+	scheduling: SchedulingStepForm,
 	// conversion_events: <ConversionEventStepForm />,
-	additional_options: <AdditionalOptionStepForm />
+	additional_options: AdditionalOptionStepForm
 };

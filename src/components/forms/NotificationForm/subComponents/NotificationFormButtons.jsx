@@ -75,17 +75,21 @@ const NotificationFormButtons = ({
 						{status === 'draft' && isEdit ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
 					</Button>
 				)}
-				<Button
-					size='small'
-					type='submit'
-					disabled={
-						(isPublished ? (!dirty ? isValid : !isValid) : !isValid) ||
-						isSchedulerError
-					}
-					onClick={handlePublish}
-				>
-					{isPublished ? 'SAVE CHANGES' : 'SET NOTIFICATION'}
-				</Button>
+				{!isPublished ? (
+					<Button
+						size='small'
+						type='submit'
+						disabled={
+							(isPublished ? (!dirty ? isValid : !isValid) : !isValid) ||
+							isSchedulerError
+						}
+						onClick={handlePublish}
+					>
+						{isPublished ? 'SAVE CHANGES' : 'SET NOTIFICATION'}
+					</Button>
+				) : (
+					''
+				)}
 			</div>
 		</div>
 	);
