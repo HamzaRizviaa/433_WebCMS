@@ -34,7 +34,11 @@ const TargetApp = ({ form, push, remove, status }) => {
 				{target.map((_, index) => (
 					<div key={index}>
 						<div className={classes.appIdContainer}>
-							<SelectTopicNameField target={target} index={index} />
+							<SelectTopicNameField
+								target={target}
+								index={index}
+								isPublished={isPublished}
+							/>
 							<div>
 								{target.length > 1 && (
 									<IconButton
