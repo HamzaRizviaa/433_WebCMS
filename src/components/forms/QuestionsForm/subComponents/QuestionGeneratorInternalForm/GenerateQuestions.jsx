@@ -1,43 +1,79 @@
+import { RadioGroup } from '@material-ui/core';
 import React from 'react';
-import { useEffect } from 'react';
 import { useState } from 'react';
+import { useGetFilterOptionsQuery } from '../../../../../data/features/questionsLibrary/questionLibrary.query';
 import Button from '../../../../ui/Button';
 // import FormikSelect from '../../../../ui/inputs/formik/FormikSelect';
 import RadioButton from '../../../../ui/inputs/RadioButton';
 import SelectField from '../../../../ui/inputs/SelectField';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { useQuestionsStyles } from '../../index.style';
+import {
+	addDefaultOption,
+	defaultOption,
+	defaultState,
+	formatOptions
+} from '../../../../../data/helpers';
 
-const staticOptions = [
-	{ name: 'random', key: 1 },
-	{ name: 'ronaldo', key: 2 }
-];
-
-const GenerateQuestions = () => {
+const GenerateQuestions = ({ onGenerate }) => {
 	// controlled fields state
-	const [values, setValues] = useState({
-		league: 'random',
-		team: 'random',
-		year: 'random',
-		stat: 'random'
-	});
+	const [values, setValues] = useState(defaultState);
 
-	const { league, team, year, stat } = values;
+	const { mode } = values;
 
+	const [selectedRow, setSelectedRow] = useState([defaultOption]);
 	/**
 	 * Hooks
 	 */
 
-	useEffect(() => {
-		console.log('value changed', values);
-	}, [league, team, year, stat]);
+	// query hook => To feth all the available options for quiz generator
+	const { data } = useGetFilterOptionsQuery();
 
 	/**
 	 * Methods
 	 */
 
-	const handleValueChange = (value, name) => {
+	// Set Field Values to state
+	const handleValueChange = (value, name, row) => {
+		console.log(row);
+		if (name === 'league') {
+			if (mode === 'teams') {
+				setValues({ ...values, [name]: value, team: 'Random', player: null });
+				setSelectedRow(formatOptions(row?.teams) || []);
+
+				return;
+			}
+			if (mode === 'players') {
+				setValues({ ...values, [name]: value, player: 'Random', team: null });
+				setSelectedRow(formatOptions(row?.players) || []);
+				return;
+			}
+		}
 		setValues({ ...values, [name]: value });
+	};
+
+	// Change Mode e.g: Team || Player
+	const handleChangeMode = (e, value) => {
+		setValues({
+			...defaultState,
+			mode: value
+		});
+		setSelectedRow([defaultOption]);
+	};
+
+	const getStats = () => {
+		if (values.mode === 'players') {
+			return formatOptions(data?.['stats-player']);
+		}
+		if (values.mode === 'teams') {
+			return formatOptions(data?.['stats-team']);
+		}
+		return [defaultOption];
+	};
+
+	const handleGenerate = () => {
+		console.log(values);
+		onGenerate(values);
 	};
 
 	// stylings
@@ -53,10 +89,18 @@ const GenerateQuestions = () => {
 						<span className={classes.inputLabel}>Select Mode</span>
 					</div>
 
-					<div className={classes.radioContainer}>
-						<RadioButton label={'Teams'} />
-						<RadioButton label={'Players'} />
-					</div>
+					<RadioGroup
+						aria-label='status'
+						name='status'
+						value={mode}
+						onChange={handleChangeMode}
+						className=''
+					>
+						<div className={classes.radioContainer}>
+							<RadioButton label={'Teams'} value='teams' />
+							<RadioButton label={'Players'} value='players' />
+						</div>
+					</RadioGroup>
 				</div>
 
 				{/* Filter Dropdown Fields */}
@@ -65,29 +109,46 @@ const GenerateQuestions = () => {
 						<SelectField
 							name='league'
 							label='SELECT LEAGUE'
-							options={staticOptions}
+							options={addDefaultOption(data?.leagues) || [defaultOption]}
 							mapOptions={{ valueKey: 'name', labelKey: 'name' }}
 							placeholder='Please Select'
 							value={values.league}
-							onChange={(value) => handleValueChange(value, 'league')}
+							onChange={(value, _, row) =>
+								handleValueChange(value, 'league', row)
+							}
 						/>
 					</div>
-					<div className={classes.filterField}>
-						<SelectField
-							name='team'
-							label='SELECT TEAM'
-							options={staticOptions}
-							mapOptions={{ valueKey: 'name', labelKey: 'name' }}
-							placeholder='Please Select'
-							value={values.team}
-							onChange={(value) => handleValueChange(value, 'team')}
-						/>{' '}
-					</div>
+					{mode === 'teams' && (
+						<div className={classes.filterField}>
+							<SelectField
+								name='team'
+								label='SELECT TEAM'
+								options={selectedRow || []}
+								mapOptions={{ valueKey: 'name', labelKey: 'name' }}
+								placeholder='Please Select'
+								value={values.team}
+								onChange={(value) => handleValueChange(value, 'team')}
+							/>{' '}
+						</div>
+					)}
+					{mode === 'players' && (
+						<div className={classes.filterField}>
+							<SelectField
+								name='player'
+								label='SELECT PLAYER'
+								options={selectedRow || []}
+								mapOptions={{ valueKey: 'name', labelKey: 'name' }}
+								placeholder='Please Select'
+								value={values.player}
+								onChange={(value) => handleValueChange(value, 'player')}
+							/>{' '}
+						</div>
+					)}
 					<div className={classes.filterField}>
 						<SelectField
 							name='year'
 							label='SELECT YEAR'
-							options={staticOptions}
+							options={formatOptions(data?.years)}
 							mapOptions={{ valueKey: 'name', labelKey: 'name' }}
 							placeholder='Please Select'
 							value={values.year}
@@ -98,7 +159,7 @@ const GenerateQuestions = () => {
 						<SelectField
 							name='stat'
 							label='SELECT STAT'
-							options={staticOptions}
+							options={getStats()}
 							mapOptions={{ valueKey: 'name', labelKey: 'name' }}
 							placeholder='Please Select'
 							value={values.stat}
@@ -108,7 +169,12 @@ const GenerateQuestions = () => {
 				</div>
 
 				{/* Button */}
-				<Button fullWidth size='large' className={classes.filterField}>
+				<Button
+					fullWidth
+					size='large'
+					className={classes.filterField}
+					onClick={handleGenerate}
+				>
 					GENERATE QUESTION
 				</Button>
 			</div>
@@ -117,7 +183,7 @@ const GenerateQuestions = () => {
 };
 
 GenerateQuestions.propTypes = {
-	// data: PropTypes.object.isRequired
+	onGenerate: PropTypes.func.isRequired
 };
 
 export default GenerateQuestions;

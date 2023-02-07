@@ -6,7 +6,7 @@ import { EmptyQuizQuestions } from '../../../../../assets/svg-icons';
 import QuizQuestionsForm from './QuizQuestionsForm';
 import Button from '../../../../ui/Button';
 
-const QuizQuestions = ({ data = true, onDraftClick }) => {
+const QuizQuestions = ({ onDraftClick }) => {
 	const classes = useQuestionsStyles();
 	const { values } = useFormikContext();
 
@@ -14,7 +14,7 @@ const QuizQuestions = ({ data = true, onDraftClick }) => {
 		<div>
 			<h2 className={classes.quizTitle}>Quiz</h2>
 
-			{!data ? (
+			{!values.questions.length  ? (
 				<div className={classes.emptyQuizInfoPage}>
 					<EmptyQuizQuestions />
 					<p className={classes.emptyQuizInfoText}>

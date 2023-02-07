@@ -437,6 +437,7 @@ const questionQuizGeneratorSchema = yup
 	.of(
 		yup.object({
 			question: yup.string().trim().required('You need to enter a question'),
+			isLocked: yup.boolean(),
 			answers: yup.array().of(
 				yup.object().shape({
 					answer: yup.string().trim()
@@ -629,4 +630,36 @@ export const calculateAnswerPercentage = (totalParticipants, usersCount) => {
 	return totalParticipants !== 0
 		? Math.round(usersCount / totalParticipants) * 100
 		: 0;
+};
+
+/**
+ * QUESTION GENERATOR HELPER METHODS
+ */
+
+// default quiz generator option
+export const defaultOption = { name: 'Random' };
+
+// default quiz generator stae
+export const defaultState = {
+	league: 'Random',
+	team: 'Random',
+	player: 'Random',
+	year: 'Random',
+	stat: 'Random',
+	mode: 'teams'
+};
+
+// format options for dropdowns
+export const formatOptions = (options) => {
+	if (!Array.isArray(options)) return [defaultOption];
+	let results = options?.map((item) => {
+		return { name: item };
+	});
+	return addDefaultOption(results);
+};
+
+// add default options to dropdown filter
+export const addDefaultOption = (list) => {
+	if (!Array.isArray(list)) return;
+	return [defaultOption, ...list];
 };
