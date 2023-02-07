@@ -11,6 +11,8 @@ import { useFormStyles } from '../../forms.style';
 const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 	const classes = useFormStyles();
 
+	console.log(form, 'form in news', form.values.slides?.length);
+
 	const handleDeleteFile = (index) => {
 		form.setFieldValue(`slides.${index}.uploadedFiles`, []);
 	};
@@ -99,15 +101,17 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 				))}
 			</DraggableLayoutWrapper>
 			<div className={classes.addNewsBtnWrapper}>
-				<Button
-					variant='outlined'
-					size='xlarge'
-					icon={<AddIcon />}
-					onClick={handleAddNewsSlide}
-					fullWidth
-				>
-					ADD NEWS SLIDE
-				</Button>
+				{form.values.slides?.length < 10 && (
+					<Button
+						variant='outlined'
+						size='xlarge'
+						icon={<AddIcon />}
+						onClick={handleAddNewsSlide}
+						fullWidth
+					>
+						ADD NEWS SLIDE
+					</Button>
+				)}
 			</div>
 		</div>
 	);
