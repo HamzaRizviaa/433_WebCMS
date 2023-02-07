@@ -56,6 +56,8 @@ export const useStyles = makeStyles((theme) => {
 
 		notificationIcon: {
 			marginBottom: 10,
+			marginLeft: ({ notificationStatus }) =>
+				notificationStatus === '' ? '2px' : '0px',
 
 			'& path': {
 				fill: ({ notificationStatus }) =>
