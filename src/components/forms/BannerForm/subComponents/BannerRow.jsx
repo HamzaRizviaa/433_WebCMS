@@ -69,7 +69,7 @@ const BannerRow = ({ item, index, errorMsg, tabValue }) => {
 		}
 	};
 
-	const handleChange = (_, value) => {
+	const handleChange = (value) => {
 		const filteredIds = filterSelectedContentIds(values.bannerData);
 
 		dispatch(
