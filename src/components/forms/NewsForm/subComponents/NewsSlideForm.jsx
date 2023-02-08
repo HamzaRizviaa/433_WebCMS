@@ -11,8 +11,6 @@ import { useFormStyles } from '../../forms.style';
 const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 	const classes = useFormStyles();
 
-	console.log(form, 'form in news', form.values.slides?.length);
-
 	const handleDeleteFile = (index) => {
 		form.setFieldValue(`slides.${index}.uploadedFiles`, []);
 	};
