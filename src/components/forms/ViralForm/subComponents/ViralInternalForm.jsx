@@ -160,7 +160,7 @@ const ViralInternalForm = ({
 						required
 					/>
 				</div>
-				<AdvancedSettingsForm />
+				<AdvancedSettingsForm featureFlagLibrary='geoblockingRestrictionsVirals' />
 			</div>
 			<div className={classes.buttonDiv}>
 				<div>

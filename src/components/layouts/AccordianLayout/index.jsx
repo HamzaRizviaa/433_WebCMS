@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { PropTypes } from 'prop-types';
 import {
 	Accordion,
@@ -14,13 +14,24 @@ const AccordianLayout = ({
 	largeIconsAndLabel,
 	children,
 	SecondIcon,
-	onSecondIconClick
+	onSecondIconClick,
+	defaultExpanded = true
 }) => {
 	const classes = useAccordionLayoutStyles({ largeIconsAndLabel });
 
+	const [expanded, setExpanded] = useState(true);
+
+	useEffect(() => {
+		setExpanded(defaultExpanded);
+	}, [defaultExpanded]);
+
+	const handleChange = (e, newExpanded) => {
+		setExpanded(newExpanded);
+	};
+
 	return (
 		<div className={classes.accordionRoot}>
-			<Accordion defaultExpanded>
+			<Accordion expanded={expanded} onChange={handleChange}>
 				<AccordionSummary expandIcon={<ExpandMoreIcon />}>
 					<Typography>{title}</Typography>
 					{!!SecondIcon && (
@@ -45,7 +56,8 @@ AccordianLayout.propTypes = {
 	largeIconsAndLabel: PropTypes.bool,
 	children: PropTypes.element.isRequired,
 	SecondIcon: PropTypes.element.isRequired,
-	onSecondIconClick: PropTypes.func.isRequired
+	onSecondIconClick: PropTypes.func.isRequired,
+	defaultExpanded: PropTypes.bool
 };
 
 export default AccordianLayout;
