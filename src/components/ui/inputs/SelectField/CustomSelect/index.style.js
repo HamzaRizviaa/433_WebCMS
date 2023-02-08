@@ -50,7 +50,8 @@ export const useSelectStyles = makeStyles((theme) => ({
 		fontSize: '14px',
 
 		'&:hover': {
-			color: theme.palette.neonYellow
+			color: theme.palette.neonYellow,
+			backgroundColor: `${theme.palette.normalGrey} !important`
 		}
 	},
 
@@ -73,6 +74,11 @@ export const useSelectStyles = makeStyles((theme) => ({
 
 			'& .Mui-selected': {
 				color: theme.palette.neonYellow
+			},
+
+			'& .Mui-focusVisible': {
+				color: theme.palette.neonYellow,
+				backgroundColor: theme.palette.normalGrey
 			}
 		},
 
