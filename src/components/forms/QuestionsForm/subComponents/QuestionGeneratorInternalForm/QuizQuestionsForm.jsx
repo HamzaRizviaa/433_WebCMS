@@ -31,6 +31,7 @@ const QuizQuestionsForm = ({ index }) => {
 				title={`Question ${index + 1}`}
 				SecondIcon={values.questions[index].isLocked ? Locked : Unlocked}
 				onSecondIconClick={handleLockQuestion}
+				defaultExpanded={!values.questions[index].isLocked}
 			>
 				<div className={classes.fieldContainer}>
 					<FormikField
