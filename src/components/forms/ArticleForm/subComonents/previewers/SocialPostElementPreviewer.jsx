@@ -10,6 +10,8 @@ const SocialPostElementPreviewer = ({ data }) => {
 	// extracted urls
 	const extractedTwitterUrl = data && data.twitter_post_url;
 	const extractedIgUrl = data && data.ig_post_url;
+	const extractedYoutubeUrl = data && data.youtube_post_url;
+	const extractedTiktokUrl = data && data.tiktok_post_url;
 
 	// states
 	const [markup, setMarkup] = useState('');
@@ -64,6 +66,10 @@ const SocialPostElementPreviewer = ({ data }) => {
 				return `${process.env.REACT_APP_API_ENDPOINT}/social-media/get-embed-data?url=${extractedTwitterUrl}&type=twitter`;
 			case ARTICLE_ELEMENTS_TYPES.IG:
 				return `${process.env.REACT_APP_API_ENDPOINT}/social-media/get-embed-data?url=${extractedIgUrl}&type=instagram`;
+			case ARTICLE_ELEMENTS_TYPES.YOUTUBE:
+				return `${process.env.REACT_APP_API_ENDPOINT}/social-media/get-embed-data?url=${extractedYoutubeUrl}&type=youtube`;
+			case ARTICLE_ELEMENTS_TYPES.TIKTOK:
+				return `${process.env.REACT_APP_API_ENDPOINT}/social-media/get-embed-data?url=${extractedTiktokUrl}&type=tiktok`;
 			default:
 				return null;
 		}

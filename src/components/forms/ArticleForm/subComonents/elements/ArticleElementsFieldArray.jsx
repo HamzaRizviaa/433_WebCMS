@@ -87,6 +87,28 @@ const ArticleElementsFieldArray = ({
 						readOnly={readOnly}
 					/>
 				);
+			case ARTICLE_ELEMENTS_TYPES.YOUTUBE:
+				return (
+					<SocialMediaElement
+						index={index}
+						item={item}
+						name={`elements.${index}.youtube_post_url`}
+						required={selectedOption === 'article'}
+						handleRemoveElement={handleRemoveElement}
+						readOnly={readOnly}
+					/>
+				);
+			case ARTICLE_ELEMENTS_TYPES.TIKTOK:
+				return (
+					<SocialMediaElement
+						index={index}
+						item={item}
+						name={`elements.${index}.tiktok_post_url`}
+						required={selectedOption === 'article'}
+						handleRemoveElement={handleRemoveElement}
+						readOnly={readOnly}
+					/>
+				);
 			case ARTICLE_ELEMENTS_TYPES.QUESTION:
 				return (
 					<QuestionElement

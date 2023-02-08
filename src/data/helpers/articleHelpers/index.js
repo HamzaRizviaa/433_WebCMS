@@ -10,7 +10,9 @@ import {
 	TwitterLine,
 	BallIcon,
 	Question,
-	CalendarYellowIcon
+	CalendarYellowIcon,
+	Youtube,
+	Tiktok
 } from '../../../assets/svg-icons';
 
 export const Profile433 = `${process.env.REACT_APP_MEDIA_ENDPOINT}/media/photos/6c69e8b4-12ad-4f51-adb5-88def57d73c7.png`;
@@ -79,6 +81,8 @@ export const ARTICLE_ELEMENTS_TYPES = {
 	TEXT: 'TEXT',
 	TWITTER: 'TWITTER',
 	IG: 'IG',
+	YOUTUBE: 'YOUTUBE',
+	TIKTOK: 'TIKTOK',
 	QUESTION: 'QUESTION',
 	MATCH: 'MATCH'
 };
@@ -117,6 +121,24 @@ export const articleSidebarElements = [
 		data: {
 			element_type: ARTICLE_ELEMENTS_TYPES.IG,
 			ig_post_url: '',
+			dropbox_url: ''
+		}
+	},
+	{
+		image: <Youtube />,
+		text: 'Add Youtube video',
+		data: {
+			element_type: ARTICLE_ELEMENTS_TYPES.YOUTUBE,
+			youtube_post_url: '',
+			dropbox_url: ''
+		}
+	},
+	{
+		image: <Tiktok />,
+		text: 'Add Tiktok post',
+		data: {
+			element_type: ARTICLE_ELEMENTS_TYPES.TIKTOK,
+			tiktok_post_url: '',
 			dropbox_url: ''
 		}
 	},

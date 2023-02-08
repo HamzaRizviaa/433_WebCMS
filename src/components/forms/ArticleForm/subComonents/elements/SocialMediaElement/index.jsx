@@ -14,9 +14,18 @@ const SocialMediaElement = ({
 }) => {
 	const classes = useFormStyles();
 
+	const elementTitle =
+		item.element_type === 'IG'
+			? 'Add IG post'
+			: item.element_type === 'YOUTUBE'
+			? 'Add Youtube video'
+			: item.element_type === 'TIKTOK'
+			? 'Add Tiktok post'
+			: 'Add Tweet';
+
 	return (
 		<DraggableCardLayout
-			title={item.element_type === 'IG' ? 'Add IG post' : 'Add Tweet'}
+			title={elementTitle}
 			key={index}
 			index={index}
 			item={item}

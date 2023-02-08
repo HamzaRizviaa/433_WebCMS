@@ -115,6 +115,26 @@ export const articleFormValidationSchema = Yup.object().shape({
 						otherwise: (schema) => schema
 					}),
 
+				// Youtube element validations
+				youtube_post_url: Yup.string()
+					.trim()
+					.label('Youtube Post URL')
+					.when('element_type', {
+						is: (val) => val === ARTICLE_ELEMENTS_TYPES.YOUTUBE,
+						then: (schema) => schema.required(),
+						otherwise: (schema) => schema
+					}),
+
+				// Tiktok element validations
+				tiktok_post_url: Yup.string()
+					.trim()
+					.label('Tiktok Post URL')
+					.when('element_type', {
+						is: (val) => val === ARTICLE_ELEMENTS_TYPES.TIKTOK,
+						then: (schema) => schema.required(),
+						otherwise: (schema) => schema
+					}),
+
 				// Question element validations
 				question_data: Yup.object().when('element_type', {
 					is: (val) => val === ARTICLE_ELEMENTS_TYPES.QUESTION,
