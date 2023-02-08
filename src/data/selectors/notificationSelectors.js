@@ -12,3 +12,6 @@ export const selectSpecificNotification = (state) =>
 
 export const selectSpecificNotificationStatus = (state) =>
 	state.rootReducer.notification.specificNotificationStatus;
+
+export const selectNotificationFeatureFlag = (state) =>
+	state.rootReducer.remoteConfig.features.contentPushNotifications;
