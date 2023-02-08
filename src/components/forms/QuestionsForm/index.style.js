@@ -177,7 +177,21 @@ export const useQuestionsStyles = makeStyles((theme) => ({
 
 	lastGridItem: {
 		borderLeft: `1px solid ${theme.palette.darkGrey}`,
-		paddingLeft: '20px'
+		paddingLeft: '20px',
+		overflowY: 'auto',
+		height: 'calc(100vh - 150px)',
+		msOverflowStyle: 'none' /* Internet Explorer 10+ */,
+		scrollbarWidth: 'none' /* Firefox */,
+
+		'&::-webkit-scrollbar': {
+			width: '0em' /* Safari and Chrome */
+		}
+
+		// '&:hover': {
+		// 	'&::-webkit-scrollbar': {
+		// 		width: '0.2em' /* Safari and Chrome */
+		// 	}
+		// }
 	},
 
 	quizTitle: {
