@@ -66,7 +66,7 @@ const QuestionGeneratorInternalForm = ({
 			open={open}
 			handleClose={closeDrawer}
 			title={'Automatic Generation'}
-			isLoading={response.isLoading || response.isFetching}
+			isLoading={response.isLoading || response.isFetching || isSubmitting}
 			customWidth={850}
 		>
 			<Grid container className={classes.articlesGridBox}>
