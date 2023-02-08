@@ -29,10 +29,8 @@ const QuizQuestionsForm = ({ index }) => {
 		<div>
 			<AccordianLayout
 				title={`Question ${index + 1}`}
-				SecondIcon={Unlocked}
-				SecondIconOnClick={Locked}
+				SecondIcon={values.questions[index].isLocked ? Locked : Unlocked}
 				onSecondIconClick={handleLockQuestion}
-				isSecondIconClicked={values.questions[index].isLocked}
 			>
 				<div className={classes.fieldContainer}>
 					<FormikField
