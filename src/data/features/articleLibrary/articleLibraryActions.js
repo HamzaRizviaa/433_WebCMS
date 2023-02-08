@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
+import { ToastErrorNotifications } from '../../constants';
 import { ArticleLibraryService } from '../../services';
 
 export const getAllArticlesApi = createAsyncThunk(
@@ -94,7 +95,9 @@ export const deleteArticleThunk = createAsyncThunk(
 			const response = await ArticleLibraryService.deleteArticle(data);
 
 			if (response.data.status_code === 200) {
-				toast.success('Article has been deleted!');
+				response.data?.data?.is_deleted
+					? toast.success('Article has been deleted!')
+					: toast.error(ToastErrorNotifications.deleteBannerItemText);
 			}
 			return response;
 		} catch (e) {
