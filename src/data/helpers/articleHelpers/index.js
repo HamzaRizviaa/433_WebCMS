@@ -76,6 +76,13 @@ export const articleTableColumns = [
 	}
 ];
 
+export const socialMediaTitles = [
+	{ key: 'IG', label: 'Add IG post' },
+	{ key: 'TWITTER', label: 'Add Tweet' },
+	{ key: 'YOUTUBE', label: 'Add Youtube video' },
+	{ key: 'TIKTOK', label: 'Add Tiktok post' }
+];
+
 export const ARTICLE_ELEMENTS_TYPES = {
 	MEDIA: 'MEDIA',
 	TEXT: 'TEXT',
