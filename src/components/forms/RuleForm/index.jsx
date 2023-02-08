@@ -102,6 +102,7 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 				await dispatch(deleteRuleThunk({ id: id }));
 				handleClose();
 				dispatch(getAllRulesApi(queryParams));
+				dispatch(fetchRules());
 			} catch (e) {
 				console.error(e);
 			} finally {
