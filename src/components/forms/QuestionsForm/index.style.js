@@ -200,7 +200,7 @@ export const useQuestionsStyles = makeStyles((theme) => ({
 	},
 
 	emptyQuizInfoPage: {
-		height: '428px',
+		height: '555px',
 		display: 'flex',
 		flexDirection: 'column',
 		justifyContent: 'center',
