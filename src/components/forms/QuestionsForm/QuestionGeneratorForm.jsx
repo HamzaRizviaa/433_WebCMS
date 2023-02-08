@@ -39,6 +39,8 @@ const QuestionsForm = ({ open, handleClose }) => {
 
 			if (type === 'questionLibrary/createOrEditQuestionThunk/fulfilled') {
 				handleClose();
+				// reset form
+				formikBag.setFieldValue('questions', []);
 
 				dispatch(getQuestions());
 			}

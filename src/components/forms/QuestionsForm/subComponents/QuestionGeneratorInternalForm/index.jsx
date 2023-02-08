@@ -6,7 +6,10 @@ import { useQuestionsStyles } from '../../index.style';
 import DrawerLayout from '../../../../layouts/DrawerLayout';
 import GenerateQuestions from './GenerateQuestions';
 import QuizQuestions from './QuizQuestions';
-import { quizGeneratorFormatter } from '../../../../../data/helpers';
+import {
+	quizGeneratorFormatter,
+	replaceLockedQuestion
+} from '../../../../../data/helpers';
 import { useLazyGenerateQuestionsQuery } from '../../../../../data/features/questionsLibrary/questionLibrary.query';
 
 const QuestionGeneratorInternalForm = ({
@@ -27,7 +30,11 @@ const QuestionGeneratorInternalForm = ({
 	useEffect(() => {
 		if (response.isLoading || response.isFetching || response.isError) return;
 		response.data || [];
-		setFieldValue('questions', quizGeneratorFormatter(response.data || []));
+		let replacedQuestions = replaceLockedQuestion(
+			values.questions,
+			quizGeneratorFormatter(response.data || [])
+		);
+		setFieldValue('questions', replacedQuestions || []);
 	}, [response?.data]);
 
 	/**
@@ -37,15 +44,21 @@ const QuestionGeneratorInternalForm = ({
 	// Export and save draft questions
 	const handleDraftClick = () => {
 		setFieldValue('general_info.save_draft', true);
-		onSubmitHandler(values, { setSubmitting, isSubmitting });
+		onSubmitHandler(values, { setSubmitting, isSubmitting, setFieldValue });
 	};
 
 	// Close Drawer and reset state
 	const closeDrawer = () => {
 		handleClose();
+		// reset form values
 		setFieldValue('questions', []);
 	};
 
+	// Generate Questions
+
+	const handleGenerateQuestions = (filterData) => {
+		generateQuestion({ body: filterData, currentQuestions: values.questions });
+	};
 	return (
 		<DrawerLayout
 			open={open}
@@ -56,7 +69,9 @@ const QuestionGeneratorInternalForm = ({
 		>
 			<Grid container className={classes.articlesGridBox}>
 				<Grid className={classes.firstGridItem} item pr={1} md={6}>
-					<GenerateQuestions onGenerate={generateQuestion} />
+					<GenerateQuestions
+						onGenerate={(filterData) => handleGenerateQuestions(filterData)}
+					/>
 				</Grid>
 
 				<Grid className={classes.lastGridItem} item md={6}>
