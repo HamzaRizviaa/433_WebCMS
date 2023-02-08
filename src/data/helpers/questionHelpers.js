@@ -663,3 +663,30 @@ export const addDefaultOption = (list) => {
 	if (!Array.isArray(list)) return;
 	return [defaultOption, ...list];
 };
+
+// Replaced Locked Questions
+
+export const replaceLockedQuestion = (
+	currentQuestions = [],
+	newQuestions = []
+) => {
+	currentQuestions = Array.isArray(currentQuestions) ? currentQuestions : [];
+	newQuestions = Array.isArray(newQuestions) ? newQuestions : [];
+	let newArray = newQuestions.slice();
+	for (let i = 0; i < currentQuestions.length; i++) {
+		if (
+			Object.prototype.hasOwnProperty.call(currentQuestions[i], 'isLocked') &&
+			currentQuestions[i].isLocked
+		) {
+			if (i < newArray.length) {
+				newArray[i] = currentQuestions[i];
+				if (newArray.length < 10) {
+					newArray.push(newQuestions[i]);
+				}
+			} else {
+				newArray.push(currentQuestions[i]);
+			}
+		}
+	}
+	return newArray;
+};

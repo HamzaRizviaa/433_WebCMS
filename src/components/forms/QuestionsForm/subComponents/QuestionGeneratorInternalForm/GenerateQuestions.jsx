@@ -72,7 +72,6 @@ const GenerateQuestions = ({ onGenerate }) => {
 	};
 
 	const handleGenerate = () => {
-		console.log(values);
 		onGenerate(values);
 	};
 

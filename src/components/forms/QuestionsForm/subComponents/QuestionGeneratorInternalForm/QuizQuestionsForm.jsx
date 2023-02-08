@@ -13,11 +13,16 @@ import {
 
 const QuizQuestionsForm = ({ index }) => {
 	const classes = useFormStyles();
-	const { values } = useFormikContext();
+	const { values, setFieldValue } = useFormikContext();
 
 	const handleLockQuestion = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
+
+		setFieldValue(
+			`questions[${index}].isLocked`,
+			!values.questions[index].isLocked
+		);
 	};
 
 	return (
@@ -27,6 +32,7 @@ const QuizQuestionsForm = ({ index }) => {
 				SecondIcon={Unlocked}
 				SecondIconOnClick={Locked}
 				onSecondIconClick={handleLockQuestion}
+				isSecondIconClicked={values.questions[index].isLocked}
 			>
 				<div className={classes.fieldContainer}>
 					<FormikField

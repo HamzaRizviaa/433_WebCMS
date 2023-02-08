@@ -6,7 +6,10 @@ import { useQuestionsStyles } from '../../index.style';
 import DrawerLayout from '../../../../layouts/DrawerLayout';
 import GenerateQuestions from './GenerateQuestions';
 import QuizQuestions from './QuizQuestions';
-import { quizGeneratorFormatter } from '../../../../../data/helpers';
+import {
+	quizGeneratorFormatter,
+	replaceLockedQuestion
+} from '../../../../../data/helpers';
 import { useLazyGenerateQuestionsQuery } from '../../../../../data/features/questionsLibrary/questionLibrary.query';
 
 const QuestionGeneratorInternalForm = ({
@@ -24,10 +27,16 @@ const QuestionGeneratorInternalForm = ({
 	const [generateQuestion, response] = useLazyGenerateQuestionsQuery();
 
 	// Effect hooko to set Field Values
+	console.log('dslkfjld;fjsd', response);
 	useEffect(() => {
 		if (response.isLoading || response.isFetching || response.isError) return;
 		response.data || [];
-		setFieldValue('questions', quizGeneratorFormatter(response.data || []));
+		let replacedQuestions = replaceLockedQuestion(
+			values.questions,
+			quizGeneratorFormatter(response.data || [])
+		);
+		console.log('===>', replacedQuestions);
+		setFieldValue('questions', replacedQuestions || []);
 	}, [response?.data]);
 
 	/**
@@ -46,6 +55,12 @@ const QuestionGeneratorInternalForm = ({
 		setFieldValue('questions', []);
 	};
 
+	// Generate Questions
+
+	const handleGenerateQuestions = (filterData) => {
+		console.log(values.questions);
+		generateQuestion({ body: filterData, currentQuestions: values.questions });
+	};
 	return (
 		<DrawerLayout
 			open={open}
@@ -56,7 +71,9 @@ const QuestionGeneratorInternalForm = ({
 		>
 			<Grid container className={classes.articlesGridBox}>
 				<Grid className={classes.firstGridItem} item pr={1} md={6}>
-					<GenerateQuestions onGenerate={generateQuestion} />
+					<GenerateQuestions
+						onGenerate={(filterData) => handleGenerateQuestions(filterData)}
+					/>
 				</Grid>
 
 				<Grid className={classes.lastGridItem} item md={6}>

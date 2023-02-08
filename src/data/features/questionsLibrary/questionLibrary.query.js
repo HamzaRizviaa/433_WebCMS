@@ -1,3 +1,4 @@
+// import { replaceLockedQuestion } from '../../helpers';
 import rootRtkQuery from '../rootRTKQuery';
 
 const questionsQuery = rootRtkQuery.injectEndpoints({
@@ -7,10 +8,13 @@ const questionsQuery = rootRtkQuery.injectEndpoints({
 				'https://obceavskna.execute-api.eu-west-2.amazonaws.com/dev/quiz-builder/options'
 		}),
 		generateQuestions: build.query({
-			query: (body) => ({
+			query: ({ body }) => ({
 				url: `https://obceavskna.execute-api.eu-west-2.amazonaws.com/dev/quiz-builder/${
 					body?.mode === 'players' ? 'players' : 'teams'
 				}`,
+				headers: {
+					'No-Auth': 'true'
+				},
 				method: 'post',
 				body: {
 					year: body.year,
