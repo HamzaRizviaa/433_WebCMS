@@ -21,9 +21,10 @@ export default function TemplateModal({
 	onClose,
 	size = 'small',
 	color = 'primary',
+	customWidth,
 	children
 }) {
-	const classes = useModalStyles({ size, color });
+	const classes = useModalStyles({ size, color, customWidth });
 
 	return (
 		<div>
@@ -60,6 +61,7 @@ TemplateModal.propTypes = {
 	onClose: PropTypes.func.isRequired,
 	size: PropTypes.string,
 	color: PropTypes.string,
+	customWidth: PropTypes.any,
 	children: PropTypes.oneOfType([
 		PropTypes.element,
 		PropTypes.arrayOf(PropTypes.element)
