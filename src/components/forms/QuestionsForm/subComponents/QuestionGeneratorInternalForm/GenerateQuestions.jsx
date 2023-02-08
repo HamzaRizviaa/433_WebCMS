@@ -35,7 +35,6 @@ const GenerateQuestions = ({ onGenerate }) => {
 
 	// Set Field Values to state
 	const handleValueChange = (value, name, row) => {
-		console.log(row);
 		if (name === 'league') {
 			if (mode === 'teams') {
 				setValues({ ...values, [name]: value, team: 'Random', player: null });

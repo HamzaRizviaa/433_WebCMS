@@ -27,7 +27,6 @@ const QuestionGeneratorInternalForm = ({
 	const [generateQuestion, response] = useLazyGenerateQuestionsQuery();
 
 	// Effect hooko to set Field Values
-	console.log('dslkfjld;fjsd', response);
 	useEffect(() => {
 		if (response.isLoading || response.isFetching || response.isError) return;
 		response.data || [];
@@ -35,7 +34,6 @@ const QuestionGeneratorInternalForm = ({
 			values.questions,
 			quizGeneratorFormatter(response.data || [])
 		);
-		console.log('===>', replacedQuestions);
 		setFieldValue('questions', replacedQuestions || []);
 	}, [response?.data]);
 
@@ -46,19 +44,19 @@ const QuestionGeneratorInternalForm = ({
 	// Export and save draft questions
 	const handleDraftClick = () => {
 		setFieldValue('general_info.save_draft', true);
-		onSubmitHandler(values, { setSubmitting, isSubmitting });
+		onSubmitHandler(values, { setSubmitting, isSubmitting, setFieldValue });
 	};
 
 	// Close Drawer and reset state
 	const closeDrawer = () => {
 		handleClose();
+		// reset form values
 		setFieldValue('questions', []);
 	};
 
 	// Generate Questions
 
 	const handleGenerateQuestions = (filterData) => {
-		console.log(values.questions);
 		generateQuestion({ body: filterData, currentQuestions: values.questions });
 	};
 	return (
