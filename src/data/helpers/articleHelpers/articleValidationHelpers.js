@@ -105,7 +105,7 @@ export const articleFormValidationSchema = Yup.object().shape({
 							schema
 								.matches(
 									/https:\/\/(www\.)?twitter\.com\/[A-Za-z0-9_.+-@]+\/status\/[0-9]+$|^$/,
-									"The URL doesn't seems to be of Twitter's post. Please recheck the URL."
+									"The URL doesn't seem to be of a tweet. Please enter correct URL."
 								)
 								.required(),
 						otherwise: (schema) => schema
@@ -121,7 +121,7 @@ export const articleFormValidationSchema = Yup.object().shape({
 							schema
 								.matches(
 									/https:\/\/(www\.)?instagram\.com\/p\/[A-Za-z0-9_.+-@]+$|^$/,
-									"The URL doesn't seems to be of Instagram's post. Please recheck the URL."
+									"The URL doesn't seem to be of an Instagram post. Please enter correct URL."
 								)
 								.required(),
 						otherwise: (schema) => schema
