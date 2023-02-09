@@ -124,5 +124,14 @@ export const useSelectStyles = makeStyles((theme) => ({
 		pointerEvents: 'none',
 		cursor: 'default',
 		padding: '14px'
+	},
+
+	loaderWrapper: {
+		textAlign: 'center',
+		padding: '20px',
+		'& > img': {
+			height: '50px',
+			width: '50px'
+		}
 	}
 }));
