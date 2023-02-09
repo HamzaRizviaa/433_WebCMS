@@ -1,15 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { IconButton } from '@material-ui/core';
+
 import TextTooltip from '../../TextTooltip';
 import { BellFilled, BellOutlined, Edit } from '../../../../assets/svg-icons';
-import { useStyles } from './index.style';
-import { IconButton } from '@material-ui/core';
-import { useDispatch } from 'react-redux';
 import {
 	getSpecificNotification,
 	openNotificationSlider,
 	setLibraryData
 } from '../../../../data/features/notification/notificationSlice';
+import { selectNotificationFeatureFlag } from '../../../../data/selectors/notificationSelectors';
+import { useStyles } from './index.style';
 
 const OptionsFormatter = ({
 	title,
@@ -20,6 +22,9 @@ const OptionsFormatter = ({
 	notificationStatus = ''
 }) => {
 	const dispatch = useDispatch();
+
+	const notificationFlag = useSelector(selectNotificationFeatureFlag);
+	const isNotificationEnabled = notificationFlag?._value === 'true';
 
 	const handleClick = (event) => {
 		event.stopPropagation();
@@ -37,7 +42,7 @@ const OptionsFormatter = ({
 			<TextTooltip title={title} placement='bottom'>
 				<Edit className={classes.editIcon} />
 			</TextTooltip>
-			{!!notificationTitle && (
+			{isNotificationEnabled && !!notificationTitle && (
 				<IconButton onClick={handleClick}>
 					<TextTooltip
 						title={`${notificationStatus} ${notificationTitle}`}
