@@ -30,6 +30,7 @@ const DrawerLayout = ({
 			fromArticle={fromArticle}
 			customWidth={customWidth}
 			notifID={notifID}
+			customWidth={customWidth}
 		>
 			<PrimaryLoader loading={isLoading} mainPage={fromArticle}>
 				<Slide in={true} direction='up' timeout={400}>
@@ -56,7 +57,7 @@ DrawerLayout.propTypes = {
 	notifID: PropTypes.string.isRequired,
 	isLoading: PropTypes.bool.isRequired,
 	children: PropTypes.element.isRequired,
-	customWidth: PropTypes.number
+	customWidth: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
 export default DrawerLayout;

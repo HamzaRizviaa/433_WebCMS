@@ -1,18 +1,67 @@
 import { createTheme } from '@material-ui/core/styles';
 
 const theme = createTheme({
-	components: {
-		MuiCssBaseline: {
-			styleOverrides: {
-				body: {
-					backgroundColor: '#000000',
-					// color: '#ffffff',
-					margin: '1rem',
-					lineHeight: 1.4
-					// fontFamily: `['Poppins', 'sans-serif'].join(',') !important`
-				}
+	overrides: {
+		MuiStepper: {
+			root: {
+				fontFamily: '"Poppins", sans-serif',
+				fontSize: 14,
+				padding: 10,
+				backgroundColor: '#000000'
 			}
 		},
+		MuiStepConnector: {
+			line: {
+				borderColor: '#4d4d4d'
+			}
+		},
+		MuiStepIcon: {
+			root: {
+				color: '#4d4d4d'
+			},
+			active: {
+				color: '#ffff00 !important',
+
+				'& > text': {
+					fill: '#000 !important'
+				}
+			},
+			completed: {
+				color: '#ffff00 !important',
+
+				'& > text': {
+					fill: '#000 !important'
+				}
+			},
+			text: {
+				fontSize: 14,
+				fontWeight: 700,
+				paddingTop: 10,
+				fill: '#b3b3b3'
+			}
+		},
+		MuiStepLabel: {
+			root: {
+				'& .MuiSvgIcon-root': {
+					fontSize: '2.5rem'
+				}
+			},
+			label: {
+				fontSize: 16,
+				fontWeight: '700 !important',
+				color: '#ffffff !important'
+			}
+		},
+		MuiStepContent: {
+			root: {
+				fontSize: 14,
+				color: '#ffffff',
+				borderLeft: '1px solid #4d4d4d'
+			}
+		}
+	},
+
+	components: {
 		textFieldInput: {
 			color: '#ffffff',
 			border: ' 0.01px solid #404040',
@@ -62,6 +111,7 @@ const theme = createTheme({
 		orange: '#f68216',
 		green: '#00D87D',
 		pink: '#ffc0cb',
+		black60: '#666666',
 		black90: '#1A1A1A',
 		black80: '#333333',
 		purple: '#9581FF',
@@ -72,8 +122,7 @@ const theme = createTheme({
 		h1: {
 			fontSize: 48
 		}
-	},
-	overrides: {}
+	}
 });
 
 export default theme;

@@ -12,9 +12,19 @@ export const useStyles = makeStyles((theme) => ({
 		lineHeight: '16px',
 		margin: '1.5rem 1rem 0.5rem 1rem'
 	},
+	separator: {
+		display: 'block',
+		height: 24,
+		width: 1,
+		marginTop: 7,
+
+		backgroundColor: theme.palette.normalGrey
+	},
 	timeFieldContainer: {
 		// width: '100%',
 		display: 'flex',
+		border: '1px solid #333333',
+		borderRadius: '40px',
 
 		justifyContent: 'space-between',
 		'& .subField': {
@@ -37,7 +47,6 @@ export const useStyles = makeStyles((theme) => ({
 			borderTopRightRadius: '0px',
 			borderBottomRightRadius: '0px',
 
-			// position:"relative",
 			'& .greydText': {
 				fontSize: '14px',
 				fontWeight: 400,
@@ -61,7 +70,7 @@ export const useStyles = makeStyles((theme) => ({
 		'& .minsField': {
 			borderTopLeftRadius: '0px',
 			borderBottomLeftRadius: '0px',
-			// position:"relative",
+
 			'& .greydText': {
 				fontSize: '14px',
 				fontWeight: 400,
@@ -123,7 +132,7 @@ export const useStyles = makeStyles((theme) => ({
 			fontFamily: 'Poppins',
 			fontSize: '14px',
 			fontWeight: '400',
-			lineHeight: '24px',
+			lineHeight: '21px',
 			letterSpacing: '0em',
 			// textAlign: 'center',
 			color: '#fff',
