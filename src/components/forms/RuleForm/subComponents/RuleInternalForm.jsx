@@ -73,6 +73,9 @@ const RuleInternalForm = ({ isEdit, toggleDeleteModal }) => {
 		if (value === false) {
 			setFieldValue('age.min', '', false);
 			setFieldValue('age.max', '', false);
+		} else {
+			setFieldTouched('age.min', false);
+			setFieldTouched('age.max', false);
 		}
 	};
 

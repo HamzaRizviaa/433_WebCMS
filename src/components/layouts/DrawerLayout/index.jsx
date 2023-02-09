@@ -28,6 +28,7 @@ const DrawerLayout = ({
 			handlePreview={handlePreviewClose}
 			preview={!!previewFile}
 			fromArticle={fromArticle}
+			customWidth={customWidth}
 			notifID={notifID}
 			customWidth={customWidth}
 		>

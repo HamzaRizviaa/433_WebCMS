@@ -63,6 +63,7 @@ const ArticleInternalForm = ({
 			/>
 			{values?.subCategoryId && (
 				<AdvancedSettingsForm
+					featureFlagLibrary='geoblockingRestrictionsArticles'
 					hideRules={selectedOption === 'template'}
 					readOnly={readOnly}
 				/>
