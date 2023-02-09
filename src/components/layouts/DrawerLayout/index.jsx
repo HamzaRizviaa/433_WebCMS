@@ -30,7 +30,6 @@ const DrawerLayout = ({
 			fromArticle={fromArticle}
 			customWidth={customWidth}
 			notifID={notifID}
-			customWidth={customWidth}
 		>
 			<PrimaryLoader loading={isLoading} mainPage={fromArticle}>
 				<Slide in={true} direction='up' timeout={400}>
