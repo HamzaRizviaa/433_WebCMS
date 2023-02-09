@@ -105,18 +105,16 @@ const CustomSelect = ({
 						{noOptionsText}
 					</MenuItem>
 				) : (
-					<>
-						{options?.map((item) => (
-							<MenuItem
-								key={item[valueKey]}
-								value={item[valueKey]}
-								className={classes.selectOption}
-								metaData={item}
-							>
-								{item[labelKey]}
-							</MenuItem>
-						))}
-					</>
+					options?.map((item) => (
+						<MenuItem
+							key={item[valueKey]}
+							value={item[valueKey]}
+							className={classes.selectOption}
+							metaData={item}
+						>
+							{item[labelKey]}
+						</MenuItem>
+					))
 				)}
 			</Select>
 			<span className={inputsClasses.errorText}>{error}</span>

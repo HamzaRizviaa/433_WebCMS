@@ -16,7 +16,9 @@ import {
 } from '../../../../../data/features/articleLibrary/articleLibraryActions';
 import {
 	selectArticleMainCategories,
-	selectArticleSubCategories
+	selectArticleMainCategoriesStatus,
+	selectArticleSubCategories,
+	selectArticleSubCategoriesStatus
 } from '../../../../../data/selectors';
 import ScheduledInfoBox from '../../../common/ScheduledInfoBox';
 
@@ -38,6 +40,8 @@ const ArticleGeneralInfoForm = ({
 
 	const mainCategories = useSelector(selectArticleMainCategories);
 	const subCategories = useSelector(selectArticleSubCategories);
+	const mainCategoriesStatus = useSelector(selectArticleMainCategoriesStatus);
+	const subCategoriesStatus = useSelector(selectArticleSubCategoriesStatus);
 
 	const { values, setFieldValue, errors, isValid } = useFormikContext();
 
@@ -73,6 +77,7 @@ const ArticleGeneralInfoForm = ({
 							disabled={isPublished}
 							required={selectedOption === 'article'}
 							readOnly={readOnly}
+							isLoading={mainCategoriesStatus}
 						/>
 					</div>
 				</div>
@@ -89,6 +94,7 @@ const ArticleGeneralInfoForm = ({
 							onChange={handleSubCategoryChange}
 							required={selectedOption === 'article'}
 							readOnly={readOnly}
+							isLoading={subCategoriesStatus}
 						/>
 					</div>
 				</div>
