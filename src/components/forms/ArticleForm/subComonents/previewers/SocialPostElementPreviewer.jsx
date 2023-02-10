@@ -39,6 +39,7 @@ const SocialPostElementPreviewer = ({ data }) => {
 	/// set markup to load post
 	useEffect(() => {
 		if (postData && isSuccess) {
+			console.log('POST DATA', postData);
 			setMarkup(postData?.html);
 		}
 	}, [postData, isSuccess]);
@@ -83,6 +84,9 @@ const SocialPostElementPreviewer = ({ data }) => {
 		}
 		if (type === ARTICLE_ELEMENTS_TYPES.IG) {
 			window.instgrm.Embeds.process();
+		}
+		if (type === ARTICLE_ELEMENTS_TYPES.YOUTUBE) {
+			// onYouTubeIframeAPIReady();
 		}
 	};
 
