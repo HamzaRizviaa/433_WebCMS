@@ -27,6 +27,8 @@ const ArticleBuilderFooter = ({
 	const { values, dirty, isValid, status: formikStatus } = useFormikContext();
 
 	const isDraftButtonDisabled = useMemo(() => {
+		const isCategorySelected =
+			!!values.mainCategoryId && !!values.subCategoryId;
 		const isAnyElementEmpty = checkIfAnyArticleElementIsEmpty(values.elements);
 		const isEqualToDefaultValues = isEqual(
 			omit(
@@ -38,7 +40,9 @@ const ArticleBuilderFooter = ({
 
 		const isDirty = isEdit ? dirty : formikStatus?.dirty;
 
-		return !isDirty || isAnyElementEmpty || isEqualToDefaultValues;
+		return isCategorySelected
+			? !isDirty || isAnyElementEmpty || isEqualToDefaultValues
+			: !isCategorySelected;
 	}, [isEdit, values, dirty, formikStatus]);
 
 	const { handleDraftClick, handlePublishClick, handleSaveChangesClick } =
