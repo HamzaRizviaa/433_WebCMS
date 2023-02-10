@@ -409,3 +409,11 @@ export const articleTemplateDataFormatterForService = (
 		template_name: article.template_name
 	};
 };
+
+export const getYoutubeVideoEmbedId = (videoUrl = '') => {
+	if (videoUrl.includes('youtube.com'))
+		return videoUrl.split('watch?v=')[1] || '';
+	else if (videoUrl.includes('youtu.be'))
+		return videoUrl.split('youtu.be/')[1] || '';
+	else return '';
+};
