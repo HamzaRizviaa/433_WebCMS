@@ -16,8 +16,8 @@ export const DrawerLayoutStyles = makeStyles((theme) => ({
 		height: '100vh !important',
 		zIndex: '5 !important',
 		position: 'fixed !important',
-		minWidth: ({ fromArticle }) =>
-			fromArticle ? 'calc(100% - 82px)' : '40% !important',
+		minWidth: ({ fromArticle, customWidth }) =>
+			fromArticle ? 'calc(100% - 82px)' : customWidth || '40% !important',
 		transform: 'none !important',
 		overflowY: 'auto !important',
 		overflowX: 'hidden',

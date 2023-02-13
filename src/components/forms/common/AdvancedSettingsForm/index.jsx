@@ -11,6 +11,7 @@ import { toolTipHandler, toolTipFormatter } from '../../../../data/helpers';
 import FeatureWrapper from '../../../FeatureWrapper';
 
 const AdvancedSettingsForm = ({
+	featureFlagLibrary,
 	isQuestions = false,
 	questionsClosed = false,
 	hideRules = false,
@@ -38,7 +39,7 @@ const AdvancedSettingsForm = ({
 					</SubCardLayout>
 				)}
 				{!hideRules && (
-					<FeatureWrapper name='geoblockingRestrictions'>
+					<FeatureWrapper name={featureFlagLibrary}>
 						<SubCardLayout title={'Restrictions'}>
 							{rules.map((val, index) => (
 								<FormikCheckbox
@@ -58,6 +59,7 @@ const AdvancedSettingsForm = ({
 };
 
 AdvancedSettingsForm.propTypes = {
+	featureFlagLibrary: PropTypes.string.isRequired,
 	isQuestions: PropTypes.bool,
 	questionsClosed: PropTypes.bool,
 	hideRules: PropTypes.bool,

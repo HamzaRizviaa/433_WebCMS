@@ -99,15 +99,17 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 				))}
 			</DraggableLayoutWrapper>
 			<div className={classes.addNewsBtnWrapper}>
-				<Button
-					variant='outlined'
-					size='xlarge'
-					icon={<AddIcon />}
-					onClick={handleAddNewsSlide}
-					fullWidth
-				>
-					ADD NEWS SLIDE
-				</Button>
+				{form.values.slides?.length < 10 && (
+					<Button
+						variant='outlined'
+						size='xlarge'
+						icon={<AddIcon />}
+						onClick={handleAddNewsSlide}
+						fullWidth
+					>
+						ADD NEWS SLIDE
+					</Button>
+				)}
 			</div>
 		</div>
 	);

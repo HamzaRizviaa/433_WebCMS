@@ -397,7 +397,7 @@ const MediaInternalForm = ({
 							/>
 						</div>
 
-						<AdvancedSettingsForm />
+						<AdvancedSettingsForm featureFlagLibrary='geoblockingRestrictionsMedia' />
 
 						{/* buttons */}
 						<div className={classes.buttonDiv}>
