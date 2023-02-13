@@ -409,3 +409,17 @@ export const articleTemplateDataFormatterForService = (
 		template_name: article.template_name
 	};
 };
+
+export const getYoutubeVideoEmbedId = (videoUrl = '') => {
+	if (videoUrl.includes('youtube.com'))
+		return videoUrl.split('watch?v=')[1] || '';
+	else if (videoUrl.includes('youtu.be'))
+		return videoUrl.split('youtu.be/')[1] || '';
+	else return '';
+};
+
+export const getTiktokEmbedId = (tiktokUrl = '') => {
+	if (tiktokUrl.includes('tiktok.com'))
+		return tiktokUrl.split('/video/')[1] || '';
+	return '';
+};

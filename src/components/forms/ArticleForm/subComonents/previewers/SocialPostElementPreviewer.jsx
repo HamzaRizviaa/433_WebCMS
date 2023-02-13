@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Markup } from 'interweave';
 import { Box } from '@material-ui/core';
-import PropTypes from 'prop-types';
-import { useStyles } from './elementPreviewers.styles';
+
 import { useLazyGetPostQuery } from '../../../../../data/features/articleLibrary/articleLibrary.query';
 import { ARTICLE_ELEMENTS_TYPES } from '../../../../../data/helpers/articleHelpers/index';
+import { useStyles } from './elementPreviewers.styles';
 
 const SocialPostElementPreviewer = ({ data }) => {
 	// extracted urls
 	const extractedTwitterUrl = data && data.twitter_post_url;
 	const extractedIgUrl = data && data.ig_post_url;
+	const extractedYoutubeUrl = data && data.youtube_video_url;
+	const extractedTiktokUrl = data && data.tiktok_video_url;
 
 	// states
 	const [markup, setMarkup] = useState('');
@@ -64,6 +67,10 @@ const SocialPostElementPreviewer = ({ data }) => {
 				return `${process.env.REACT_APP_API_ENDPOINT}/social-media/get-embed-data?url=${extractedTwitterUrl}&type=twitter`;
 			case ARTICLE_ELEMENTS_TYPES.IG:
 				return `${process.env.REACT_APP_API_ENDPOINT}/social-media/get-embed-data?url=${extractedIgUrl}&type=instagram`;
+			case ARTICLE_ELEMENTS_TYPES.YOUTUBE:
+				return `${process.env.REACT_APP_API_ENDPOINT}/social-media/get-embed-data?url=${extractedYoutubeUrl}&type=youtube`;
+			case ARTICLE_ELEMENTS_TYPES.TIKTOK:
+				return `${process.env.REACT_APP_API_ENDPOINT}/social-media/get-embed-data?url=${extractedTiktokUrl}&type=tiktok`;
 			default:
 				return null;
 		}
@@ -77,12 +84,13 @@ const SocialPostElementPreviewer = ({ data }) => {
 		}
 		if (type === ARTICLE_ELEMENTS_TYPES.IG) {
 			window.instgrm.Embeds.process();
+			return;
 		}
 	};
 
 	return (
 		<Box className={classes.twitterBox}>
-			{markup && <Markup content={markup} />}
+			{!!markup && <Markup content={markup} />}
 		</Box>
 	);
 };

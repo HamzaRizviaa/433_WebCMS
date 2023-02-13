@@ -32,6 +32,8 @@ export { ReactComponent as RuleLibrary } from './RuleLibrary.svg';
 export { ReactComponent as QuestionMarkInfoIcon } from './QuestionMarkInfoIcon.svg';
 export { ReactComponent as PreviewIcon } from './Preview.svg';
 export { ReactComponent as DeniedError } from './AccesDenied.svg';
+export { ReactComponent as Tiktok } from './TikTok.svg';
+export { ReactComponent as Youtube } from './Youtube.svg';
 export { ReactComponent as TemplateSVG } from './TemplateAdd.svg';
 export { ReactComponent as SmartQuiz } from './SmartQuiz.svg';
 export { ReactComponent as EmptyQuizQuestions } from './emptyQuizQuestions.svg';
