@@ -29,6 +29,7 @@ const InputField = ({
 	size = 'medium',
 	allowOnlyNumbers = false,
 	readOnly,
+	removeMaxLengthLabel = false,
 	...restProps
 }) => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -80,7 +81,9 @@ const InputField = ({
 					{(!!rightLabel || !!maxLength) && (
 						<span className={classes.rightLabel}>
 							{rightLabel}
-							{maxLength ? ` ${inputLength}/${maxLength}` : ''}
+							{maxLength && !removeMaxLengthLabel
+								? ` ${inputLength}/${maxLength}`
+								: ''}
 						</span>
 					)}
 				</div>

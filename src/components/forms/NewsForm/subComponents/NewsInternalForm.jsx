@@ -134,7 +134,7 @@ const NewsInternalForm = ({
 				</div>
 			</AccordianLayout>
 
-			<AdvancedSettingsForm />
+			<AdvancedSettingsForm featureFlagLibrary='geoblockingRestrictionsNews' />
 
 			<FieldArray
 				name='slides'

@@ -4,6 +4,7 @@ import { MenuItem, Select } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { useSelectStyles } from './index.style';
 import { useInputsStyles } from '../../inputs.style';
+import Four33Loader from '../../../../../assets/Loader_Yellow.gif';
 
 const CustomSelect = ({
 	name,
@@ -21,6 +22,7 @@ const CustomSelect = ({
 	disabled = false,
 	size = 'medium',
 	readOnly,
+	isLoading = false,
 	...rest
 }) => {
 	const labelKey = mapOptions?.labelKey || 'label';
@@ -94,21 +96,26 @@ const CustomSelect = ({
 				fullWidth
 				displayEmpty
 			>
-				{options?.length === 0 && (
+				{isLoading ? (
+					<div className={classes.loaderWrapper}>
+						<img src={Four33Loader} />
+					</div>
+				) : options?.length === 0 && !isLoading ? (
 					<MenuItem value='' className={classes.noOptionsText}>
 						{noOptionsText}
 					</MenuItem>
+				) : (
+					options?.map((item) => (
+						<MenuItem
+							key={item[valueKey]}
+							value={item[valueKey]}
+							className={classes.selectOption}
+							metaData={item}
+						>
+							{item[labelKey]}
+						</MenuItem>
+					))
 				)}
-				{options?.map((item) => (
-					<MenuItem
-						key={item[valueKey]}
-						value={item[valueKey]}
-						className={classes.selectOption}
-						metaData={item}
-					>
-						{item[labelKey]}
-					</MenuItem>
-				))}
 			</Select>
 			<span className={inputsClasses.errorText}>{error}</span>
 		</div>

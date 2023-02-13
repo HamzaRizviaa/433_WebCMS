@@ -128,7 +128,10 @@ export const questionSlideInitialValues = {
 	]
 };
 
-export const questionsFormInitialValues = (allRules) => {
+export const questionsFormInitialValues = (
+	allRules,
+	isQuizGenerator = false
+) => {
 	const rules = {};
 
 	allRules.forEach((rule) => {
@@ -147,7 +150,7 @@ export const questionsFormInitialValues = (allRules) => {
 		coverImageUploadedFiles: [],
 		general_info: {
 			save_draft: true,
-			question_type: 'poll',
+			question_type: isQuizGenerator ? 'quiz' : 'poll',
 			results: 'THANKS, SEE YOU NEXT TIME!',
 			results_image: '',
 			results_filename: '',
@@ -179,7 +182,8 @@ export const questionDataFormatterForService = async (
 	values,
 	// isDraft,
 	status = 'draft',
-	allRules
+	allRules = [],
+	isQuestionGenerator = false
 ) => {
 	const filteredRules = allRules.filter((rule) => values.rules[rule._id]);
 	const pollFilesToUpload = [
@@ -193,13 +197,14 @@ export const questionDataFormatterForService = async (
 		values.negativeResultsUploadedFiles[0] || null
 	];
 
-	values.questions.forEach((item) => {
-		if (values.general_info.question_type === 'poll') {
-			pollFilesToUpload.push(item.uploadedFiles[0] || null);
-		} else {
-			quizFilesToUpload.push(item.uploadedFiles[0] || null);
-		}
-	});
+	!isQuestionGenerator &&
+		values.questions.forEach((item) => {
+			if (values.general_info.question_type === 'poll') {
+				pollFilesToUpload.push(item.uploadedFiles[0] || null);
+			} else {
+				quizFilesToUpload.push(item.uploadedFiles[0] || null);
+			}
+		});
 
 	let pollUploadedFiles = [null, null];
 	let quizUploadedFiles = [null, null, null];
@@ -406,6 +411,42 @@ export const questionDataFormatterForForm = (question, allRules) => {
 	return formattedQuestion;
 };
 
+export const quizGeneratorFormatter = (data) => {
+	return data.map((item) => ({
+		question: item.question.slice(0, 55),
+		answers: [
+			{
+				answer: item.correct_answer.slice(0, 29)
+			},
+			{
+				answer: item.wrong_answer_1.slice(0, 29)
+			},
+			{
+				answer: item.wrong_answer_2.slice(0, 29)
+			},
+			{
+				answer: item.wrong_answer_3.slice(0, 29)
+			}
+		],
+		dropbox_url: '',
+		labels: []
+	}));
+};
+const questionQuizGeneratorSchema = yup
+	.array()
+	.of(
+		yup.object({
+			question: yup.string().trim().required('You need to enter a question'),
+			isLocked: yup.boolean(),
+			answers: yup.array().of(
+				yup.object().shape({
+					answer: yup.string().trim()
+				})
+			)
+		})
+	)
+	.min(10, 'Atleast 10 questions are required');
+
 const questionsSlideSchema = yup
 	.array()
 	.of(
@@ -429,6 +470,10 @@ const questionsSlideSchema = yup
 		})
 	)
 	.min(1, 'Atleast 1 question is required');
+
+export const questionQuizGeneratorFormValidationSchema = yup.object().shape({
+	questions: questionQuizGeneratorSchema
+});
 
 // V1 is with summary component and no trivia component
 export const questionsFormValidationSchemaV1 =
@@ -585,4 +630,63 @@ export const calculateAnswerPercentage = (totalParticipants, usersCount) => {
 	return totalParticipants !== 0
 		? Math.round(usersCount / totalParticipants) * 100
 		: 0;
+};
+
+/**
+ * QUESTION GENERATOR HELPER METHODS
+ */
+
+// default quiz generator option
+export const defaultOption = { name: 'Random' };
+
+// default quiz generator stae
+export const defaultState = {
+	league: 'Random',
+	team: 'Random',
+	player: 'Random',
+	year: 'Random',
+	stat: 'Random',
+	mode: 'teams'
+};
+
+// format options for dropdowns
+export const formatOptions = (options) => {
+	if (!Array.isArray(options)) return [defaultOption];
+	let results = options?.map((item) => {
+		return { name: item };
+	});
+	return addDefaultOption(results);
+};
+
+// add default options to dropdown filter
+export const addDefaultOption = (list) => {
+	if (!Array.isArray(list)) return;
+	return [defaultOption, ...list];
+};
+
+// Replaced Locked Questions
+
+export const replaceLockedQuestion = (
+	currentQuestions = [],
+	newQuestions = []
+) => {
+	currentQuestions = Array.isArray(currentQuestions) ? currentQuestions : [];
+	newQuestions = Array.isArray(newQuestions) ? newQuestions : [];
+	let newArray = newQuestions.slice();
+	for (let i = 0; i < currentQuestions.length; i++) {
+		if (
+			Object.prototype.hasOwnProperty.call(currentQuestions[i], 'isLocked') &&
+			currentQuestions[i].isLocked
+		) {
+			if (i < newArray.length) {
+				newArray[i] = currentQuestions[i];
+				if (newArray.length < 10) {
+					newArray.push(newQuestions[i]);
+				}
+			} else {
+				newArray.push(currentQuestions[i]);
+			}
+		}
+	}
+	return newArray;
 };
