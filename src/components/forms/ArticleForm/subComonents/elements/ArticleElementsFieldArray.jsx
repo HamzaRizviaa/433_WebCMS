@@ -92,7 +92,7 @@ const ArticleElementsFieldArray = ({
 					<SocialMediaElement
 						index={index}
 						item={item}
-						name={`elements.${index}.youtube_post_url`}
+						name={`elements.${index}.youtube_video_url`}
 						required={selectedOption === 'article'}
 						handleRemoveElement={handleRemoveElement}
 						readOnly={readOnly}
@@ -103,7 +103,7 @@ const ArticleElementsFieldArray = ({
 					<SocialMediaElement
 						index={index}
 						item={item}
-						name={`elements.${index}.tiktok_post_url`}
+						name={`elements.${index}.tiktok_video_url`}
 						required={selectedOption === 'article'}
 						handleRemoveElement={handleRemoveElement}
 						readOnly={readOnly}

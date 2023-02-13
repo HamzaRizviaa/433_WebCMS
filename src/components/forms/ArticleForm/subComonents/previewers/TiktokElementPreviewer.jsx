@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { getTiktokEmbedId } from '../../../../../data/helpers/articleHelpers';
 
 const TiktokElementPreviewer = ({ data }) => {
-	const embedId = getTiktokEmbedId(data.tiktok_post_url);
+	const embedId = getTiktokEmbedId(data.tiktok_video_url);
 
 	return (
 		<div>

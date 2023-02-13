@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { getYoutubeVideoEmbedId } from '../../../../../data/helpers/articleHelpers';
 
 const YoutubeElementPreviewer = ({ data }) => {
-	const embedId = getYoutubeVideoEmbedId(data.youtube_post_url);
+	const embedId = getYoutubeVideoEmbedId(data.youtube_video_url);
 
 	return (
 		<div>

@@ -136,7 +136,7 @@ export const articleSidebarElements = [
 		text: 'Add Youtube video',
 		data: {
 			element_type: ARTICLE_ELEMENTS_TYPES.YOUTUBE,
-			youtube_post_url: '',
+			youtube_video_url: '',
 			dropbox_url: ''
 		}
 	},
@@ -145,7 +145,7 @@ export const articleSidebarElements = [
 		text: 'Add Tiktok post',
 		data: {
 			element_type: ARTICLE_ELEMENTS_TYPES.TIKTOK,
-			tiktok_post_url: '',
+			tiktok_video_url: '',
 			dropbox_url: ''
 		}
 	},

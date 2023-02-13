@@ -116,7 +116,7 @@ export const articleFormValidationSchema = Yup.object().shape({
 					}),
 
 				// Youtube element validations
-				youtube_post_url: Yup.string()
+				youtube_video_url: Yup.string()
 					.trim()
 					.label('Youtube Post URL')
 					.when('element_type', {
@@ -126,7 +126,7 @@ export const articleFormValidationSchema = Yup.object().shape({
 					}),
 
 				// Tiktok element validations
-				tiktok_post_url: Yup.string()
+				tiktok_video_url: Yup.string()
 					.trim()
 					.label('Tiktok Post URL')
 					.when('element_type', {

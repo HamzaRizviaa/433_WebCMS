@@ -11,8 +11,8 @@ const SocialPostElementPreviewer = ({ data }) => {
 	// extracted urls
 	const extractedTwitterUrl = data && data.twitter_post_url;
 	const extractedIgUrl = data && data.ig_post_url;
-	const extractedYoutubeUrl = data && data.youtube_post_url;
-	const extractedTiktokUrl = data && data.tiktok_post_url;
+	const extractedYoutubeUrl = data && data.youtube_video_url;
+	const extractedTiktokUrl = data && data.tiktok_video_url;
 
 	// states
 	const [markup, setMarkup] = useState('');
