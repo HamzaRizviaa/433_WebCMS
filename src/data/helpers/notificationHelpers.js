@@ -57,10 +57,10 @@ export const expirationUnitOptions = [
 ];
 
 export const expirationUnitRange = {
-	weeks: 5,
-	days: 8,
-	hours: 25,
-	minutes: 61
+	weeks: 4,
+	days: 7,
+	hours: 24,
+	minutes: 60
 };
 
 export const libraryTypeToActionMapper = {

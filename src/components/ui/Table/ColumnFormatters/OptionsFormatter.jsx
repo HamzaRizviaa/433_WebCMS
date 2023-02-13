@@ -49,9 +49,7 @@ const OptionsFormatter = ({
 						placement='bottom'
 					>
 						{notificationId ? (
-							<>
-								<BellFilled className={classes.notificationIcon} />
-							</>
+							<BellFilled className={classes.notificationIcon} />
 						) : (
 							<BellOutlined className={classes.notificationIcon} />
 						)}

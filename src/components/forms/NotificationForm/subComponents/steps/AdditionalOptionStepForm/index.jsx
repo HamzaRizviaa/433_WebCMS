@@ -24,7 +24,7 @@ const AdditionalOptionStepForm = ({ status }) => {
 			...Array(
 				expirationUnitRange[values.additional_options.expiration_unit]
 			).keys()
-		].map((item) => ({ value: item, label: item }));
+		].map((item) => ({ value: item + 1, label: item + 1 }));
 	}, [values.additional_options.expiration_unit]);
 
 	return (
