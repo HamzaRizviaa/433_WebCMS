@@ -7,12 +7,10 @@ import { useLazyGetPostQuery } from '../../../../../data/features/articleLibrary
 import { ARTICLE_ELEMENTS_TYPES } from '../../../../../data/helpers/articleHelpers/index';
 import { useStyles } from './elementPreviewers.styles';
 
-const SocialPostElementPreviewer = ({ data }) => {
+const SocialPostElementPreviewer = ({ data, error }) => {
 	// extracted urls
 	const extractedTwitterUrl = data && data.twitter_post_url;
 	const extractedIgUrl = data && data.ig_post_url;
-	const extractedYoutubeUrl = data && data.youtube_video_url;
-	const extractedTiktokUrl = data && data.tiktok_video_url;
 
 	// states
 	const [markup, setMarkup] = useState('');
@@ -23,21 +21,15 @@ const SocialPostElementPreviewer = ({ data }) => {
 	const [getPost, { isError, data: postData, isSuccess }] =
 		useLazyGetPostQuery();
 
-	// /styles
+	// styles
 	const classes = useStyles({ thumbnailHeight, thumbnailWidth });
 
 	// debounce api calls
 	useEffect(() => {
-		const timeout = setTimeout(() => {
-			if (data) getPost(generatePostEndPoint());
-		}, 500);
+		if (data && !error) getPost(generatePostEndPoint());
+	}, [data, error]);
 
-		return () => {
-			clearTimeout(timeout);
-		};
-	}, [data]);
-
-	/// set markup to load post
+	// set markup to load post
 	useEffect(() => {
 		if (postData && isSuccess) {
 			setMarkup(postData?.html);
@@ -67,10 +59,6 @@ const SocialPostElementPreviewer = ({ data }) => {
 				return `${process.env.REACT_APP_API_ENDPOINT}/social-media/get-embed-data?url=${extractedTwitterUrl}&type=twitter`;
 			case ARTICLE_ELEMENTS_TYPES.IG:
 				return `${process.env.REACT_APP_API_ENDPOINT}/social-media/get-embed-data?url=${extractedIgUrl}&type=instagram`;
-			case ARTICLE_ELEMENTS_TYPES.YOUTUBE:
-				return `${process.env.REACT_APP_API_ENDPOINT}/social-media/get-embed-data?url=${extractedYoutubeUrl}&type=youtube`;
-			case ARTICLE_ELEMENTS_TYPES.TIKTOK:
-				return `${process.env.REACT_APP_API_ENDPOINT}/social-media/get-embed-data?url=${extractedTiktokUrl}&type=tiktok`;
 			default:
 				return null;
 		}
@@ -94,9 +82,11 @@ const SocialPostElementPreviewer = ({ data }) => {
 		</Box>
 	);
 };
+
 export default SocialPostElementPreviewer;
 
 SocialPostElementPreviewer.propTypes = {
 	data: PropTypes.object.isRequired,
-	itemIndex: PropTypes.number
+	itemIndex: PropTypes.number,
+	error: PropTypes.object
 };

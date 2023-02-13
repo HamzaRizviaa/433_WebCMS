@@ -4,6 +4,13 @@ import { getUserDataObject } from '../commonHelpers';
 import { makeid, uploadFileToServer } from '../../utils';
 import { ARTICLE_ELEMENTS_TYPES } from './index';
 
+export const elementTypeToTitleMapper = {
+	IG: 'Add IG post',
+	TWITTER: 'Add Tweet',
+	YOUTUBE: 'Add Youtube video',
+	TIKTOK: 'Add Tiktok post'
+};
+
 export const uploadArticleFiles = async (article) => {
 	const { author_image, uploadedFiles, uploadedLandscapeCoverImage } = article;
 	const elements = cloneDeep(article.elements);

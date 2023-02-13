@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { getTiktokEmbedId } from '../../../../../data/helpers/articleHelpers';
 
-const TiktokElementPreviewer = ({ data }) => {
+const TiktokElementPreviewer = ({ data, error }) => {
 	const embedId = getTiktokEmbedId(data.tiktok_video_url);
 
 	return (
 		<div>
-			{!!embedId && (
+			{!error && !!embedId && (
 				<embed
 					width='100%'
 					height='745'
@@ -23,5 +23,6 @@ const TiktokElementPreviewer = ({ data }) => {
 export default TiktokElementPreviewer;
 
 TiktokElementPreviewer.propTypes = {
-	data: PropTypes.object.isRequired
+	data: PropTypes.object.isRequired,
+	error: PropTypes.object
 };
