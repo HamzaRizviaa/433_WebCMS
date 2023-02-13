@@ -417,3 +417,9 @@ export const getYoutubeVideoEmbedId = (videoUrl = '') => {
 		return videoUrl.split('youtu.be/')[1] || '';
 	else return '';
 };
+
+export const getTiktokEmbedId = (tiktokUrl = '') => {
+	if (tiktokUrl.includes('tiktok.com'))
+		return tiktokUrl.split('/video/')[1] || '';
+	return '';
+};

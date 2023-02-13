@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Markup } from 'interweave';
 import { Box } from '@material-ui/core';
-import PropTypes from 'prop-types';
-import { useStyles } from './elementPreviewers.styles';
+
 import { useLazyGetPostQuery } from '../../../../../data/features/articleLibrary/articleLibrary.query';
 import { ARTICLE_ELEMENTS_TYPES } from '../../../../../data/helpers/articleHelpers/index';
+import { useStyles } from './elementPreviewers.styles';
 
 const SocialPostElementPreviewer = ({ data }) => {
 	// extracted urls
@@ -39,7 +40,6 @@ const SocialPostElementPreviewer = ({ data }) => {
 	/// set markup to load post
 	useEffect(() => {
 		if (postData && isSuccess) {
-			console.log('POST DATA', postData);
 			setMarkup(postData?.html);
 		}
 	}, [postData, isSuccess]);
@@ -84,15 +84,13 @@ const SocialPostElementPreviewer = ({ data }) => {
 		}
 		if (type === ARTICLE_ELEMENTS_TYPES.IG) {
 			window.instgrm.Embeds.process();
-		}
-		if (type === ARTICLE_ELEMENTS_TYPES.YOUTUBE) {
-			// onYouTubeIframeAPIReady();
+			return;
 		}
 	};
 
 	return (
 		<Box className={classes.twitterBox}>
-			{markup && <Markup content={markup} />}
+			{!!markup && <Markup content={markup} />}
 		</Box>
 	);
 };
