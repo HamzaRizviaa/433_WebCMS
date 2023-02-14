@@ -99,6 +99,7 @@ export const useSelectStyles = makeStyles((theme) => ({
 		cursor: ({ readOnly }) =>
 			readOnly ? 'default !important' : 'pointer !important',
 		display: 'flex',
+		width: 'calc(100% - 60px) !important',
 		alignItems: 'center',
 		height: ({ size }) => sizeMapper[size]?.height || 'auto',
 		color: ({ hasValue }) =>
