@@ -55,7 +55,7 @@ class ViralLibraryService {
 	static postViral(data) {
 		return axiosInstance.post('/viral/add-viral', data, {
 			params: {
-				api_version: 2
+				api_version: 3
 			}
 		});
 	}

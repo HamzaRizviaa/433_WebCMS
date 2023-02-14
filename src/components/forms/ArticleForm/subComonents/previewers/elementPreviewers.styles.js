@@ -188,5 +188,28 @@ export const useStyles = makeStyles((theme) => ({
 		'& > span > iframe': {
 			margin: '0px !important'
 		}
+	},
+	//ad dessign
+	adText: {
+		fontFamily: 'Poppins',
+		fontStyle: 'normal',
+		fontWeight: 400,
+		fontSize: '12px',
+		lineHeight: '16px',
+		color: '#4D4D4D',
+		textAlign: 'center',
+		marginTop: '4px'
+	},
+	adDraggableData: {
+		textAlign: 'center',
+		borderRadius: '0px',
+
+		maxWidth: '100%',
+		'& >img': {
+			// maxWidth: '100%'
+			borderRadius: '0px',
+			height: '250px',
+			width: '300px'
+		}
 	}
 }));

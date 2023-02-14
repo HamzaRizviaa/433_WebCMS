@@ -189,8 +189,8 @@ const QuestionInternalForm = ({
 	};
 
 	const handleRemoveSchedule = () => {
-		setFieldValue('general_info.start_date', null);
-		setFieldValue('general_info.end_date', null);
+		setFieldValue('general_info.start_date', undefined);
+		setFieldValue('general_info.end_date', undefined);
 		setFieldValue('general_info.save_draft', true);
 		submitForm();
 	};
@@ -202,8 +202,8 @@ const QuestionInternalForm = ({
 
 	const handlePublishClick = () => {
 		setFieldValue('general_info.save_draft', false);
-		setFieldValue('general_info.start_date', null);
-		setFieldValue('general_info.end_date', null);
+		setFieldValue('general_info.start_date', undefined);
+		setFieldValue('general_info.end_date', undefined);
 	};
 
 	const handleSaveChangesClick = () => {

@@ -56,7 +56,7 @@ DrawerLayout.propTypes = {
 	notifID: PropTypes.string.isRequired,
 	isLoading: PropTypes.bool.isRequired,
 	children: PropTypes.element.isRequired,
-	customWidth: PropTypes.number
+	customWidth: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
 export default DrawerLayout;
