@@ -49,7 +49,7 @@ const ArticleFormDrawer = ({
 	const closeSchedulerModal = () => setSchedulerModalState(false);
 	const openSchedulerModal = () => setSchedulerModalState(true);
 
-	const { values, isSubmitting, setStatus } = useFormikContext();
+	const { values, errors, isSubmitting, setStatus } = useFormikContext();
 
 	const specificArticleStatus = useSelector(selectSpecificArticleStatus);
 	const { rules } = useSelector(getRules);
@@ -133,6 +133,7 @@ const ArticleFormDrawer = ({
 						isEdit={isEdit}
 						form={values}
 						data={values.elements}
+						errors={errors?.elements}
 					/>
 				</Grid>
 			</Grid>

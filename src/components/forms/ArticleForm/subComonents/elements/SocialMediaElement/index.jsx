@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useFormStyles } from '../../../../forms.style';
 import FormikField from '../../../../../ui/inputs/formik/FormikField';
 import DraggableCardLayout from '../../../../../layouts/DraggableCardLayout';
+import { elementTypeToTitleMapper } from '../../../../../../data/helpers/articleHelpers';
 
 const SocialMediaElement = ({
 	index,
@@ -14,14 +15,7 @@ const SocialMediaElement = ({
 }) => {
 	const classes = useFormStyles();
 
-	const elementTitle =
-		item.element_type === 'IG'
-			? 'Add IG post'
-			: item.element_type === 'YOUTUBE'
-			? 'Add Youtube video'
-			: item.element_type === 'TIKTOK'
-			? 'Add Tiktok post'
-			: 'Add Tweet';
+	const elementTitle = elementTypeToTitleMapper[item.element_type];
 
 	return (
 		<DraggableCardLayout
