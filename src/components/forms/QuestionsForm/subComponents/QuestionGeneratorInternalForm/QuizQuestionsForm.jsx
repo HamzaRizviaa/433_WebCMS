@@ -21,7 +21,7 @@ const QuizQuestionsForm = ({ index }) => {
 
 		setFieldValue(
 			`questions[${index}].isLocked`,
-			!values.questions[index].isLocked
+			!values?.questions[index]?.isLocked
 		);
 	};
 
@@ -29,9 +29,9 @@ const QuizQuestionsForm = ({ index }) => {
 		<div>
 			<AccordianLayout
 				title={`Question ${index + 1}`}
-				SecondIcon={values.questions[index].isLocked ? Locked : Unlocked}
+				SecondIcon={values?.questions[index]?.isLocked ? Locked : Unlocked}
 				onSecondIconClick={handleLockQuestion}
-				defaultExpanded={!values.questions[index].isLocked}
+				defaultExpanded={!values?.questions[index]?.isLocked}
 			>
 				<div className={classes.fieldContainer}>
 					<FormikField
@@ -44,7 +44,7 @@ const QuizQuestionsForm = ({ index }) => {
 						maxLength={55}
 					/>
 				</div>
-				{values.questions[index].answers.map((_, idx) => (
+				{values?.questions[index]?.answers.map((_, idx) => (
 					<div className={classes.fieldContainer} key={idx}>
 						<FormikField
 							name={`questions.${index}.answers.${idx}.answer`}

@@ -11,6 +11,7 @@ import {
 	replaceLockedQuestion
 } from '../../../../../data/helpers';
 import { useLazyGenerateQuestionsQuery } from '../../../../../data/features/questionsLibrary/questionLibrary.query';
+import { toast } from 'react-toastify';
 
 const QuestionGeneratorInternalForm = ({
 	open,
@@ -36,6 +37,15 @@ const QuestionGeneratorInternalForm = ({
 		);
 		setFieldValue('questions', replacedQuestions || []);
 	}, [response?.data]);
+
+	// Through error if quiz not generated
+	useEffect(() => {
+		if (response.isError) {
+			toast.error(
+				'Failed to generate questions. Please try again with different options.'
+			);
+		}
+	}, [response.isError]);
 
 	/**
 	 * Methods

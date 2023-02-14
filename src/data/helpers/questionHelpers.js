@@ -681,7 +681,7 @@ export const replaceLockedQuestion = (
 			if (i < newArray.length) {
 				newArray[i] = currentQuestions[i];
 				if (newArray.length < 10) {
-					newArray.push(newQuestions[i]);
+					newQuestions[i] && newArray.push(newQuestions[i]);
 				}
 			} else {
 				newArray.push(currentQuestions[i]);
