@@ -49,7 +49,8 @@ export const useSelectStyles = makeStyles((theme) => ({
 		fontSize: '14px',
 
 		'&:hover': {
-			color: theme.palette.neonYellow
+			color: theme.palette.neonYellow,
+			backgroundColor: `${theme.palette.normalGrey} !important`
 		}
 	},
 
@@ -72,6 +73,11 @@ export const useSelectStyles = makeStyles((theme) => ({
 
 			'& .Mui-selected': {
 				color: theme.palette.neonYellow
+			},
+
+			'& .Mui-focusVisible': {
+				color: theme.palette.neonYellow,
+				backgroundColor: theme.palette.normalGrey
 			}
 		},
 
@@ -92,6 +98,7 @@ export const useSelectStyles = makeStyles((theme) => ({
 		cursor: ({ readOnly }) =>
 			readOnly ? 'default !important' : 'pointer !important',
 		display: 'flex',
+		width: 'calc(100% - 60px) !important',
 		alignItems: 'center',
 		height: ({ size }) => sizeMapper[size]?.height || 'auto',
 		color: ({ hasValue }) =>
@@ -123,5 +130,14 @@ export const useSelectStyles = makeStyles((theme) => ({
 		pointerEvents: 'none',
 		cursor: 'default',
 		padding: '14px'
+	},
+
+	loaderWrapper: {
+		textAlign: 'center',
+		padding: '20px',
+		'& > img': {
+			height: '50px',
+			width: '50px'
+		}
 	}
 }));

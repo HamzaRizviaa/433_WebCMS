@@ -32,6 +32,8 @@ export { ReactComponent as RuleLibrary } from './RuleLibrary.svg';
 export { ReactComponent as QuestionMarkInfoIcon } from './QuestionMarkInfoIcon.svg';
 export { ReactComponent as PreviewIcon } from './Preview.svg';
 export { ReactComponent as DeniedError } from './AccesDenied.svg';
+export { ReactComponent as Tiktok } from './TikTok.svg';
+export { ReactComponent as Youtube } from './Youtube.svg';
 export { ReactComponent as BellOutlined } from './BellOutlined.svg';
 export { ReactComponent as BellFilled } from './BellFilled.svg';
 export { ReactComponent as TrashIcon } from './Trash.svg';
