@@ -81,6 +81,7 @@ const QuestionGeneratorInternalForm = ({
 				<Grid className={classes.firstGridItem} item pr={1} md={6}>
 					<GenerateQuestions
 						onGenerate={(filterData) => handleGenerateQuestions(filterData)}
+						formValues={values?.questions}
 					/>
 				</Grid>
 

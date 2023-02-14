@@ -690,3 +690,19 @@ export const replaceLockedQuestion = (
 	}
 	return newArray;
 };
+
+export const disableGenerateQuestions = (values) => {
+	let count = 0;
+	for (let i = 0; i < values.length; i++) {
+		if (
+			(Object.prototype.hasOwnProperty.call(values[i], 'isLocked') &&
+				!values[i].isLocked) ||
+			!Object.prototype.hasOwnProperty.call(values[i], 'isLocked')
+		) {
+			return false;
+		}
+		count += 1;
+	}
+
+	return count === 10 ? true : false;
+};

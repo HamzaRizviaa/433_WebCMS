@@ -20,6 +20,9 @@ export const useAccordionLayoutStyles = makeStyles((theme) => ({
 			backgroundColor: theme.palette.normalGrey,
 			borderRadius: '40px'
 		},
+		'& .MuiAccordionSummary-content': {
+			justifyContent: 'space-between'
+		},
 		'& .MuiTypography-root': {
 			fontFamily: 'Poppins',
 			fontWeight: '800',
@@ -36,7 +39,6 @@ export const useAccordionLayoutStyles = makeStyles((theme) => ({
 	},
 
 	rightSide: {
-		marginLeft: '155px',
 		marginTop: '3px',
 		height: '25px',
 		width: '25px',
