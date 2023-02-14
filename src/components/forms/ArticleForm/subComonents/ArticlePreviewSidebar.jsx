@@ -15,7 +15,6 @@ import {
 } from './previewers';
 import ArticlePreviewWrapper from './ArticlePreviewWrapper';
 import { ARTICLE_ELEMENTS_TYPES } from '../../../../data/helpers/articleHelpers/index';
-import Sponsored from '../../../../assets/Micro.png';
 
 const renderElements = (item, index, isEdit, errors) => {
 	// element type
@@ -25,8 +24,6 @@ const renderElements = (item, index, isEdit, errors) => {
 
 	// conditional rendering
 	switch (type) {
-  	case ARTICLE_ELEMENTS_TYPES.AD:
-			return <AdPreviewer data={item} />;
 		case ARTICLE_ELEMENTS_TYPES.MEDIA:
 			return (
 				<MediaElementPreviewer data={item} error={error} isEdit={isEdit} />
@@ -63,45 +60,6 @@ const renderElements = (item, index, isEdit, errors) => {
 
 const ArticlePreviewSidebar = ({ data, errors, form, isEdit }) => {
 	const classes = useStyles();
-  
-	let previewData = [...data];
-
-	let adBox = {
-		element_type: 'AD',
-		image: Sponsored,
-		text: 'Sponsored'
-	};
-
-	const insertAd = (data) => {
-		if (
-			data.some((e) => {
-				e.element_type === 'AD';
-			})
-		) {
-			return data;
-		} else if (data.length > 0) {
-			if (data.length === 1) {
-				replaceData(previewData);
-			} else {
-				addDataAfterSecondIndex(previewData);
-			}
-		}
-	};
-
-	const replaceData = (data) => {
-		let newData;
-		newData = data.splice(1, 0, adBox);
-		return newData;
-	};
-
-	const addDataAfterSecondIndex = (data) => {
-		let newData;
-		newData = data.splice(2, 0, adBox);
-		return newData;
-	};
-
-	//inserting ads
-	insertAd(previewData);
 
 	return (
 		<Box px={2} className={classes.gridDivSmall}>
@@ -111,9 +69,10 @@ const ArticlePreviewSidebar = ({ data, errors, form, isEdit }) => {
 			</Box>
 
 			<ArticlePreviewWrapper form={form}>
-				{previewData.map((item, index) => (
+				{data.map((item, index) => (
 					<div key={index} className={classes.elementContainer}>
 						{renderElements(item, index, isEdit, errors)}
+						{(data.length === 1 || index === 1) && <AdPreviewer />}
 					</div>
 				))}
 			</ArticlePreviewWrapper>

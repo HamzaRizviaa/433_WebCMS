@@ -91,8 +91,7 @@ export const ARTICLE_ELEMENTS_TYPES = {
 	YOUTUBE: 'YOUTUBE',
 	TIKTOK: 'TIKTOK',
 	QUESTION: 'QUESTION',
-	MATCH: 'MATCH',
-	AD: 'AD'
+	MATCH: 'MATCH'
 };
 
 export const articleSidebarElements = [

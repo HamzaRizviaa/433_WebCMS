@@ -203,6 +203,7 @@ export const useStyles = makeStyles((theme) => ({
 	adDraggableData: {
 		textAlign: 'center',
 		borderRadius: '0px',
+		marginTop: 20,
 
 		maxWidth: '100%',
 		'& >img': {
