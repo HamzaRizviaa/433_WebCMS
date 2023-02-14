@@ -1,5 +1,5 @@
 import React from 'react';
-import { ButtonProps } from '../Button';
+import { ButtonProps } from '../../Button';
 
 export interface ModalProps {
 	title: string;
@@ -17,7 +17,7 @@ export interface ModalProps {
 	hideLeftButton?: boolean;
 	isConfirmButtonDisabled?: boolean;
 	children: React.ReactElement;
-	size?: 'small' | 'medium' | 'large';
+	size?: 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge';
 	color?: 'primary' | 'secondary';
 }
 

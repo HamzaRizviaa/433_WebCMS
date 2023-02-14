@@ -29,6 +29,11 @@ export const useStyles = makeStyles((theme) => ({
 
 	endIcon: {
 		marginRight: 8
+	},
+
+	inputField: {
+		cursor: ({ readOnly }) =>
+			readOnly ? 'default !important' : 'text !important'
 	}
 }));
 

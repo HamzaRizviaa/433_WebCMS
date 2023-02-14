@@ -17,7 +17,7 @@ import PublishAndStopModal from '../PublishAndStopModal';
 import { QuestionsLibraryService } from '../../../../../data/services';
 import { useFormStyles } from '../../../forms.style';
 import {
-	getGeoblockingFeatureFlag,
+	getGeoblockingQuestionsFeatureFlag,
 	getRules,
 	selectSpecificQuestion,
 	selectTriviaFeatureFlag
@@ -45,8 +45,11 @@ const QuestionInternalForm = ({
 	const triviaOnQuestions = useSelector(selectTriviaFeatureFlag);
 	const isTriviaEnabled = triviaOnQuestions?._value === 'true';
 
-	const geoblockingRestrictions = useSelector(getGeoblockingFeatureFlag);
-	const isGeoblockingEnabled = geoblockingRestrictions?._value === 'true';
+	const geoblockingRestrictionsQuestions = useSelector(
+		getGeoblockingQuestionsFeatureFlag
+	);
+	const isGeoblockingEnabled =
+		geoblockingRestrictionsQuestions?._value === 'true';
 
 	const { rules } = useSelector(getRules);
 
@@ -293,7 +296,11 @@ const QuestionInternalForm = ({
 			</AccordianLayout>
 
 			{isGeoblockingEnabled ? (
-				<AdvancedSettingsForm isQuestions={true} questionsClosed={isClosed} />
+				<AdvancedSettingsForm
+					featureFlagLibrary='geoblockingRestrictionsQuestions'
+					isQuestions={true}
+					questionsClosed={isClosed}
+				/>
 			) : (
 				<></>
 			)}

@@ -173,5 +173,88 @@ export const useQuestionsStyles = makeStyles((theme) => ({
 		borderRadius: 8,
 		margin: [[20, 0]],
 		padding: 16
+	},
+
+	lastGridItem: {
+		borderLeft: `1px solid ${theme.palette.darkGrey}`,
+		paddingLeft: '20px',
+		overflowY: 'auto',
+		height: 'calc(100vh - 150px)',
+		msOverflowStyle: 'none' /* Internet Explorer 10+ */,
+		scrollbarWidth: 'none' /* Firefox */,
+
+		'&::-webkit-scrollbar': {
+			width: '0em' /* Safari and Chrome */
+		}
+
+		// '&:hover': {
+		// 	'&::-webkit-scrollbar': {
+		// 		width: '0.2em' /* Safari and Chrome */
+		// 	}
+		// }
+	},
+
+	quizTitle: {
+		fontWeight: '800',
+		fontSize: '20px'
+	},
+
+	emptyQuizInfoPage: {
+		height: '555px',
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+
+	emptyQuizInfoText: {
+		fontWeight: '400',
+		fontSize: '14px',
+		lineHeight: '24px',
+		textAlign: 'center'
+	},
+	// Generate Auto Question Stylings
+	filterContainer: {
+		padding: '30px',
+		paddingLeft: '0px'
+	},
+	filterField: {
+		margin: '5px 0px'
+	},
+	labelsContainer: {
+		display: 'flex',
+		justifyContent: 'space-between',
+		margin: '0 1rem'
+	},
+
+	inputLabel: {
+		position: 'relative',
+		display: 'inline-block',
+		fontSize: '1.4rem',
+		fontWeight: 'bold',
+		marginBottom: '0.5rem',
+		color: (props) => (props.isError ? theme.palette.red : theme.palette.white),
+
+		'&::before': {
+			content: '"*"',
+			position: 'absolute',
+			right: -9,
+			top: -2,
+			fontSize: '1.5rem',
+			fontWeight: 'bold',
+			color: theme.palette.red,
+			display: (props) => (props.isRequired ? 'inline-block' : 'none')
+		}
+	},
+	radioContainer: {
+		margin: '0 1rem',
+		display: 'flex',
+		justifyContent: 'space-between',
+		width: '70%',
+		padding: '1.2rem 0'
+	},
+
+	quizQuestionsDraftButtonWrapper: {
+		marginTop: '20px'
 	}
 }));

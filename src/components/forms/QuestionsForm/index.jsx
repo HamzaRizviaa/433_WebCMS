@@ -25,7 +25,7 @@ import {
 	getQuestions
 } from '../../../data/features/questionsLibrary/questionsLibraryActions';
 
-import DeleteModal from '../../DeleteModal';
+import DeleteModal from '../../ui/modals/DeleteModal';
 import QuestionsFormDrawer from './subComponents/QuestionsFormDrawer';
 import PublishAndStopModal from './subComponents/PublishAndStopModal';
 

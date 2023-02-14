@@ -1,11 +1,10 @@
 import React from 'react';
-import moment from 'moment';
 import dayjs from 'dayjs';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
 export const getDateTime = (dateTime, dateTimeSeperator = '|') => {
 	let formatted = new Date(dateTime);
-	return `${moment(formatted).format(
+	return `${dayjs(formatted).format(
 		'DD-MM-YYYY'
 	)} ${dateTimeSeperator} ${formatted.toLocaleTimeString('en-US', {
 		hour12: false,
@@ -16,7 +15,7 @@ export const getDateTime = (dateTime, dateTimeSeperator = '|') => {
 
 export const getDateConstantTime = (dateTime) => {
 	let formatted = new Date(dateTime);
-	return `${moment(formatted).format('DD-MM-YYYY')} | 23:59 (UTC +0)`;
+	return `${dayjs(formatted).format('DD-MM-YYYY')} | 23:59 (UTC +0)`;
 };
 
 //16-06-2022
@@ -41,7 +40,7 @@ export const formatDate2 = (date) => {
 	if (date === null) return null;
 
 	let formatted = new Date(date);
-	return `${moment(formatted).format('DD MMMM YYYY')}`;
+	return `${dayjs(formatted).format('DD MMMM YYYY')}`;
 };
 
 export const getCalendarText = (startDate, endDate) => {

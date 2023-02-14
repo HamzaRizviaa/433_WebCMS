@@ -101,7 +101,13 @@ export const articleFormValidationSchema = Yup.object().shape({
 					.label('Twitter Post URL')
 					.when('element_type', {
 						is: (val) => val === ARTICLE_ELEMENTS_TYPES.TWITTER,
-						then: (schema) => schema.required(),
+						then: (schema) =>
+							schema
+								.matches(
+									/https:\/\/(www\.)?twitter\.com\/[A-Za-z0-9_.+-@]+\/status\/[0-9]+$|^$/,
+									"The URL doesn't seem to be of a tweet. Please enter correct URL."
+								)
+								.required(),
 						otherwise: (schema) => schema
 					}),
 
@@ -111,6 +117,32 @@ export const articleFormValidationSchema = Yup.object().shape({
 					.label('Instagram Post URL')
 					.when('element_type', {
 						is: (val) => val === ARTICLE_ELEMENTS_TYPES.IG,
+						then: (schema) =>
+							schema
+								.matches(
+									/https:\/\/(www\.)?instagram\.com\/p\/[A-Za-z0-9_.+-@]+$|^$/,
+									"The URL doesn't seem to be of an Instagram post. Please enter correct URL."
+								)
+								.required(),
+						otherwise: (schema) => schema
+					}),
+
+				// Youtube element validations
+				youtube_video_url: Yup.string()
+					.trim()
+					.label('Youtube Post URL')
+					.when('element_type', {
+						is: (val) => val === ARTICLE_ELEMENTS_TYPES.YOUTUBE,
+						then: (schema) => schema.required(),
+						otherwise: (schema) => schema
+					}),
+
+				// Tiktok element validations
+				tiktok_video_url: Yup.string()
+					.trim()
+					.label('Tiktok Post URL')
+					.when('element_type', {
+						is: (val) => val === ARTICLE_ELEMENTS_TYPES.TIKTOK,
 						then: (schema) => schema.required(),
 						otherwise: (schema) => schema
 					}),

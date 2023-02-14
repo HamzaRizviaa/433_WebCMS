@@ -21,7 +21,7 @@ import {
 import { uploadFileToServer } from '../../../data/utils';
 
 import NewsFormDrawer from './subComponents/NewsFormDrawer';
-import DeleteModal from '../../DeleteModal';
+import DeleteModal from '../../ui/modals/DeleteModal';
 import { NewsLibraryService } from '../../../data/services';
 
 const NewsForm = ({

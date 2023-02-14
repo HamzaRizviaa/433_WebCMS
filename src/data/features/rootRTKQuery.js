@@ -12,6 +12,11 @@ const rootRtkQuery = createApi({
 				'Authorization',
 				`Bearer ${getLocalStorageDetails()?.access_token}`
 			);
+			// if no auth needed remove the token
+			if (headers.has('No-Auth')) {
+				headers.delete('Authorization');
+				headers.delete('No-Auth');
+			}
 			return headers;
 		}
 	}),

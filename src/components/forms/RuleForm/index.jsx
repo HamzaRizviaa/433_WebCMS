@@ -18,12 +18,13 @@ import {
 import {
 	createOrEditRuleThunk,
 	deleteRuleThunk,
-	getAllRulesApi
+	getAllRulesApi,
+	fetchRules
 } from '../../../data/features/ruleLibrary/ruleLibrarySlice';
 // import { uploadFileToServer } from '../../../data/utils';
 
 import RuleFormDrawer from './subComponents/RuleFormDrawer';
-import DeleteModal from '../../DeleteModal';
+import DeleteModal from '../../ui/modals/DeleteModal';
 
 const RuleForm = ({ open, handleClose, isEdit }) => {
 	const navigate = useNavigate();
@@ -69,8 +70,10 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 
 					if (isEdit) {
 						dispatch(getAllRulesApi(queryParams));
+						dispatch(fetchRules());
 					} else if (isSearchParamsEmpty) {
 						dispatch(getAllRulesApi());
+						dispatch(fetchRules());
 					} else {
 						navigate('/rule-library');
 					}
@@ -99,6 +102,7 @@ const RuleForm = ({ open, handleClose, isEdit }) => {
 				await dispatch(deleteRuleThunk({ id: id }));
 				handleClose();
 				dispatch(getAllRulesApi(queryParams));
+				dispatch(fetchRules());
 			} catch (e) {
 				console.error(e);
 			} finally {

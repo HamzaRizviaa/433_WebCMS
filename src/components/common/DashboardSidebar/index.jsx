@@ -25,6 +25,8 @@ const checkDomain = (href) => {
 		return 'dev';
 	} else if (href.includes('staging')) {
 		return 'staging';
+	} else if (href.includes('qa')) {
+		return 'qa';
 	} else {
 		return 'prod';
 	}

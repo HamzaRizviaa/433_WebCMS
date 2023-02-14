@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { CalendarYellowIcon } from '../../../../assets/svg-icons';
 import { useDatePickerStyles } from './index.styled';
 
@@ -30,7 +30,7 @@ const CustomDateInput = forwardRef((props, ref) => {
 			tabIndex={-1}
 		>
 			<span className={classes.dateInputText}>
-				{inputValue ? moment(inputValue).format('DD-MM-YYYY') : placeHolder}
+				{inputValue ? dayjs(inputValue).format('DD-MM-YYYY') : placeHolder}
 			</span>
 			<span className={classes.datePickerIcon}>
 				<CalendarYellowIcon onClick={onIconClick} />

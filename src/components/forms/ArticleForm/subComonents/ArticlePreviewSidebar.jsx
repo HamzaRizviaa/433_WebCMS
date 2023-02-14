@@ -8,7 +8,9 @@ import {
 	MediaElementPreviewer,
 	QuestionPoolPreviewer,
 	TextElementPreviewer,
-	TwitterElementPreviewer
+	TwitterElementPreviewer,
+	YoutubeElementPreviewer,
+	TiktokElementPreviewer
 } from './previewers';
 import ArticlePreviewWrapper from './ArticlePreviewWrapper';
 import { ARTICLE_ELEMENTS_TYPES } from '../../../../data/helpers/articleHelpers/index';
@@ -35,6 +37,10 @@ const ArticlePreviewSidebar = ({ data, form, isEdit }) => {
 				return <QuestionPoolPreviewer data={item} itemIndex={index} />;
 			case ARTICLE_ELEMENTS_TYPES.MATCH:
 				return <MatchElementPreviewer item={item} itemIndex={index} />;
+			case ARTICLE_ELEMENTS_TYPES.YOUTUBE:
+				return <YoutubeElementPreviewer data={item} itemIndex={index} />;
+			case ARTICLE_ELEMENTS_TYPES.TIKTOK:
+				return <TiktokElementPreviewer data={item} itemIndex={index} />;
 			default:
 				return null;
 		}

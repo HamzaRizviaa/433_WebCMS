@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { FieldArray, useFormikContext } from 'formik';
-import { Box } from '@mui/material';
+import { Box } from '@material-ui/core';
 
 import ArticleTemplateInfoForm from './ArticleTemplateInfoForm';
 import ArticleGeneralInfoForm from './ArticleGeneralInfoForm';
@@ -21,6 +21,7 @@ const ArticleInternalForm = ({
 	selectedOption,
 	topElementRef,
 	elementsWrapperRef,
+	readOnly = false,
 	openSchedulerModal
 }) => {
 	const dispatch = useDispatch();
@@ -42,21 +43,30 @@ const ArticleInternalForm = ({
 
 	return (
 		<Box>
-			<Box mb={3.5} className={classes.mainTitleDescription}>
-				<h2>Builder</h2>
-				<p>Edit, reorder elements here and build your {selectedOption}</p>
-			</Box>
+			{!readOnly && (
+				<Box mb={3.5} className={classes.mainTitleDescription}>
+					<h2>Builder</h2>
+					<p>Edit, reorder elements here and build your {selectedOption}</p>
+				</Box>
+			)}
 			<Box mb={2}>
-				{selectedOption === 'template' && <ArticleTemplateInfoForm />}
+				{selectedOption === 'template' && (
+					<ArticleTemplateInfoForm readOnly={readOnly} />
+				)}
 			</Box>
 			<ArticleGeneralInfoForm
 				isEdit={isEdit}
 				status={status}
 				selectedOption={selectedOption}
+				readOnly={readOnly}
 				openSchedulerModal={openSchedulerModal}
 			/>
 			{values?.subCategoryId && (
-				<AdvancedSettingsForm hideRules={selectedOption === 'template'} />
+				<AdvancedSettingsForm
+					featureFlagLibrary='geoblockingRestrictionsArticles'
+					hideRules={selectedOption === 'template'}
+					readOnly={readOnly}
+				/>
 			)}
 			<Box
 				ref={topElementRef}
@@ -74,6 +84,7 @@ const ArticleInternalForm = ({
 							selectedOption={selectedOption}
 							elementsWrapperRef={elementsWrapperRef}
 							matchesData={matchesData}
+							readOnly={readOnly}
 							{...props}
 						/>
 					)}
@@ -89,6 +100,7 @@ ArticleInternalForm.propTypes = {
 	selectedOption: PropTypes.oneOf(['', 'article', 'template']).isRequired,
 	topElementRef: PropTypes.element,
 	elementsWrapperRef: PropTypes.any,
+	readOnly: PropTypes.bool,
 	openSchedulerModal: PropTypes.func.isRequired
 };
 

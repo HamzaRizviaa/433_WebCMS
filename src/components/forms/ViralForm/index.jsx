@@ -20,7 +20,7 @@ import {
 import { uploadFileToServer } from '../../../data/utils';
 
 import ViralFormDrawer from './subComponents/ViralFormDrawer';
-import DeleteModal from '../../DeleteModal';
+import DeleteModal from '../../ui/modals/DeleteModal';
 
 /**
  * ViralForm Component is used as a child of the ViralLibrary and the link to that is given below.

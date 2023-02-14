@@ -34,6 +34,10 @@ export const useAutocompleteStyles = makeStyles((theme) => ({
 
 			'& .Mui-selected': {
 				color: theme.palette.neonYellow
+			},
+			'& [data-focus="true"]': {
+				color: `${theme.palette.neonYellow} !important`,
+				backgroundColor: `${theme.palette.normalGrey} !important`
 			}
 		},
 		'& li': {
@@ -42,7 +46,7 @@ export const useAutocompleteStyles = makeStyles((theme) => ({
 			fontSize: 14,
 			'&:hover': {
 				color: `${theme.palette.neonYellow} !important`,
-				// backgroundColor: `${theme.palette.normalGrey} !important`,
+				backgroundColor: `${theme.palette.normalGrey} !important`,
 				cursor: 'pointer'
 			}
 		}

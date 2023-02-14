@@ -17,6 +17,7 @@ const ArticleElementsFieldArray = ({
 	selectedOption,
 	elementsWrapperRef,
 	matchesData,
+	readOnly,
 	form,
 	remove
 }) => {
@@ -52,6 +53,7 @@ const ArticleElementsFieldArray = ({
 						index={index}
 						item={item}
 						handleRemoveElement={handleRemoveElement}
+						readOnly={readOnly}
 					/>
 				);
 			case ARTICLE_ELEMENTS_TYPES.MEDIA:
@@ -60,6 +62,7 @@ const ArticleElementsFieldArray = ({
 						index={index}
 						item={item}
 						handleRemoveElement={handleRemoveElement}
+						readOnly={readOnly}
 					/>
 				);
 			case ARTICLE_ELEMENTS_TYPES.TWITTER:
@@ -70,6 +73,7 @@ const ArticleElementsFieldArray = ({
 						name={`elements.${index}.twitter_post_url`}
 						required={selectedOption === 'article'}
 						handleRemoveElement={handleRemoveElement}
+						readOnly={readOnly}
 					/>
 				);
 			case ARTICLE_ELEMENTS_TYPES.IG:
@@ -80,6 +84,29 @@ const ArticleElementsFieldArray = ({
 						name={`elements.${index}.ig_post_url`}
 						required={selectedOption === 'article'}
 						handleRemoveElement={handleRemoveElement}
+						readOnly={readOnly}
+					/>
+				);
+			case ARTICLE_ELEMENTS_TYPES.YOUTUBE:
+				return (
+					<SocialMediaElement
+						index={index}
+						item={item}
+						name={`elements.${index}.youtube_video_url`}
+						required={selectedOption === 'article'}
+						handleRemoveElement={handleRemoveElement}
+						readOnly={readOnly}
+					/>
+				);
+			case ARTICLE_ELEMENTS_TYPES.TIKTOK:
+				return (
+					<SocialMediaElement
+						index={index}
+						item={item}
+						name={`elements.${index}.tiktok_video_url`}
+						required={selectedOption === 'article'}
+						handleRemoveElement={handleRemoveElement}
+						readOnly={readOnly}
 					/>
 				);
 			case ARTICLE_ELEMENTS_TYPES.QUESTION:
@@ -91,6 +118,7 @@ const ArticleElementsFieldArray = ({
 						item={item}
 						required={selectedOption === 'article'}
 						handleRemoveElement={handleRemoveElement}
+						readOnly={readOnly}
 					/>
 				);
 			case ARTICLE_ELEMENTS_TYPES.MATCH:
@@ -104,6 +132,7 @@ const ArticleElementsFieldArray = ({
 						data={matchesData}
 						required={selectedOption === 'article'}
 						handleRemoveElement={handleRemoveElement}
+						readOnly={readOnly}
 					/>
 				);
 			default:
@@ -128,6 +157,7 @@ ArticleElementsFieldArray.propTypes = {
 	selectedOption: PropTypes.oneOf(['', 'article', 'template']).isRequired,
 	elementsWrapperRef: PropTypes.any,
 	matchesData: PropTypes.array,
+	readOnly: PropTypes.bool,
 	form: PropTypes.object.isRequired,
 	remove: PropTypes.func.isRequired
 };

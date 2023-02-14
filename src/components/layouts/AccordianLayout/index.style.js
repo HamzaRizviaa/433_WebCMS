@@ -2,6 +2,8 @@ import { makeStyles } from '@material-ui/core';
 
 export const useAccordionLayoutStyles = makeStyles((theme) => ({
 	accordionRoot: {
+		marginTop: 20,
+
 		'& .MuiAccordion-root': {
 			backgroundColor: theme.palette.black,
 			color: theme.palette.white,
@@ -18,6 +20,9 @@ export const useAccordionLayoutStyles = makeStyles((theme) => ({
 			backgroundColor: theme.palette.normalGrey,
 			borderRadius: '40px'
 		},
+		'& .MuiAccordionSummary-content': {
+			justifyContent: 'space-between'
+		},
 		'& .MuiTypography-root': {
 			fontFamily: 'Poppins',
 			fontWeight: '800',
@@ -31,5 +36,21 @@ export const useAccordionLayoutStyles = makeStyles((theme) => ({
 
 	accordianDetail: {
 		width: '100%'
+	},
+
+	rightSide: {
+		marginTop: '3px',
+		height: '25px',
+		width: '25px',
+		background: ' #404040',
+		borderRadius: '40px',
+		textAlign: 'center',
+		cursor: 'pointer'
+	},
+
+	secondIcon: {
+		padding: '5px 0px',
+		width: '15px',
+		height: '15px'
 	}
 }));
