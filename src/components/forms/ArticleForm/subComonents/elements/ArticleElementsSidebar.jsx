@@ -58,25 +58,18 @@ const ArticleElementsSidebar = ({
 	};
 
 	useEffect(() => {
-		if (!isYoutubeEnabled && !isTiktokEnabled) {
-			const youtubeArr = articleSidebarElements.filter(
+		let copyArray = articleSidebarElements;
+		if (!isYoutubeEnabled) {
+			copyArray = copyArray.filter(
 				(value) => value.data.element_type !== 'YOUTUBE'
 			);
-			const tiktokArr = youtubeArr.filter(
-				(value) => value.data.element_type !== 'TIKTOK'
-			);
-			setMapValues(tiktokArr);
-		} else if (isYoutubeEnabled) {
-			const customArr = articleSidebarElements.filter(
-				(value) => value.data.element_type !== 'YOUTUBE'
-			);
-			setMapValues(customArr);
-		} else if (isTiktokEnabled) {
-			const customArr = articleSidebarElements.filter(
-				(value) => value.data.element_type !== 'TIKTOK'
-			);
-			setMapValues(customArr);
 		}
+		if (!isTiktokEnabled) {
+			copyArray = copyArray.filter(
+				(value) => value.data.element_type !== 'TIKTOK'
+			);
+		}
+		setMapValues(copyArray);
 	}, []);
 
 	return (
