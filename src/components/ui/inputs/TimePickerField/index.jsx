@@ -6,7 +6,13 @@ import clsx from 'clsx';
 import { ArrowDown } from '../../../../assets/svg-icons';
 import { useStyles } from './index.styles';
 
-const TimePickerField = ({ name, value, onChange, label = 'TIME' }) => {
+const TimePickerField = ({
+	name,
+	value,
+	onChange,
+	label = 'TIME',
+	showSeparator = false
+}) => {
 	// open or close hours dropdown.
 	const [open, setOpen] = useState(false);
 
@@ -85,6 +91,8 @@ const TimePickerField = ({ name, value, onChange, label = 'TIME' }) => {
 					</div>
 				</div>
 
+				{showSeparator && <span className={classes.separator} />}
+
 				{/* Mins Selector */}
 				<div className={clsx('minsField', 'subField')} onClick={focusMinField}>
 					{/* Mins text :Input field since it's editable */}
@@ -129,5 +137,6 @@ TimePickerField.propTypes = {
 	name: PropTypes.string.isRequired,
 	value: PropTypes.string,
 	onChange: PropTypes.func,
-	label: PropTypes.string
+	label: PropTypes.string,
+	showSeparator: PropTypes.bool
 };

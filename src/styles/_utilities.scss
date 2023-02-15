@@ -21,3 +21,13 @@
 .my-4 {
 	@extend .mt-4, .mb-4;
 }
+
+.select-label-with-icon {
+	display: flex;
+	align-items: center;
+
+	& svg {
+		margin-right: 10px;
+		margin-bottom: 3px;
+	}
+}

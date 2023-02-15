@@ -19,9 +19,8 @@ const sizeMapper = {
 };
 
 export const useSelectStyles = makeStyles((theme) => ({
-	select: ({ isError, isDisabled, size }) => ({
-		cursor: ({ readOnly }) =>
-			readOnly ? 'default !important' : 'pointer !important',
+	select: ({ isError, isDisabled, size, readOnly }) => ({
+		cursor: readOnly ? 'default !important' : 'pointer !important',
 		display: 'flex',
 		alignItems: 'center',
 		color: 'white !important',
@@ -34,7 +33,7 @@ export const useSelectStyles = makeStyles((theme) => ({
 		backgroundColor: isDisabled ? theme.palette.normalGrey : 'transparent',
 		borderColor: isError ? theme.palette.red : theme.palette.normalGrey,
 
-		'& svg': {
+		'& .MuiSvgIcon-root': {
 			display: 'block',
 			color: `${
 				isDisabled ? theme.palette.disabled : theme.palette.neonYellow
@@ -116,7 +115,7 @@ export const useSelectStyles = makeStyles((theme) => ({
 			borderRadius: 10
 		},
 
-		'& svg': {
+		'& .MuiSvgIcon-root': {
 			position: 'absolute',
 			color: `${theme.palette.neonYellow} !important`,
 			right: '12px !important',

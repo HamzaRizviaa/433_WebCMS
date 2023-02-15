@@ -6,3 +6,4 @@ export { default as IgElementPreviewer } from './IgElementPreviewer';
 export { default as TwitterElementPreviewer } from './TwitterElementPreviewer';
 export { default as YoutubeElementPreviewer } from './YoutubeElementPreviewer';
 export { default as TiktokElementPreviewer } from './TiktokElementPreviewer';
+export { default as AdPreviewer } from './AdPreviewer';
