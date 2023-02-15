@@ -78,9 +78,9 @@ export const deleteQuestionThunk = createAsyncThunk(
 			const response = await QuestionsLibraryService.deleteQuestion(data);
 
 			if (response.data.status_code === 200) {
-				response.data?.data?.is_deleted
-					? toast.success('Question has been deleted!')
-					: toast.error(ToastErrorNotifications.deleteBannerItemText);
+				response.data?.data?.is_deleted === false
+					? toast.error(ToastErrorNotifications.deleteBannerItemText)
+					: toast.success('Question has been deleted!');
 			}
 		} catch (e) {
 			toast.error('Failed to delete Question!');
@@ -96,9 +96,9 @@ export const stopQuestionThunk = createAsyncThunk(
 			const response = await QuestionsLibraryService.stopQuestion(data);
 
 			if (response?.data.status_code === 200) {
-				response.data?.data?.is_deleted
-					? toast.success('Question has been Stopped!')
-					: toast.error(ToastErrorNotifications.stopQuestionBannerItemText);
+				response.data?.data?.is_deleted === false
+					? toast.error(ToastErrorNotifications.stopQuestionBannerItemText)
+					: toast.success('Question has been Stopped!');
 			}
 		} catch (e) {
 			toast.error('Failed to stop Question!');

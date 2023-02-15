@@ -25,7 +25,7 @@ const BannerRow = ({ item, index, errorMsg, tabValue }) => {
 	const bannerContent = useSelector(selectBannerContent);
 	const bannerContentState = useSelector(selectBannerContentStatus);
 
-	// if flag enabled , select content dropdown will not have data from question library
+	// if flag enabled , select content dropdown will have data from question library
 	const selectBannerContentWithoutQuestions = useSelector(
 		selectBannerContentFeatureFlag
 	);
