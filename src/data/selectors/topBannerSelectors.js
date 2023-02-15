@@ -9,3 +9,6 @@ export const selectBannerContent = (state) =>
 
 export const selectAllBanners = (state) =>
 	state.rootReducer.topBanner.allBanners;
+
+export const selectBannerContentFeatureFlag = (state) =>
+	state.rootReducer.remoteConfig.features.bannerContentQuestions;
