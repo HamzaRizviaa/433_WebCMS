@@ -7,7 +7,8 @@ import FormikSelect from '../../../ui/inputs/formik/FormikSelect';
 import { useBannerFormStyles } from '../index.style';
 import {
 	selectBannerContent,
-	selectBannerContentStatus
+	selectBannerContentStatus,
+	selectBannerContentFeatureFlag
 } from '../../../../data/selectors';
 import { getBannerContent } from '../../../../data/features/topBanner/topBannerActions';
 import {
@@ -17,13 +18,24 @@ import {
 
 const BannerRow = ({ item, index, errorMsg, tabValue }) => {
 	const classes = useBannerFormStyles();
-
 	const dispatch = useDispatch();
 
 	const { setFieldValue, values } = useFormikContext();
 
 	const bannerContent = useSelector(selectBannerContent);
 	const bannerContentState = useSelector(selectBannerContentStatus);
+
+	// if flag enabled , select content dropdown will have data from question library
+	const selectBannerContentWithoutQuestions = useSelector(
+		selectBannerContentFeatureFlag
+	);
+
+	const isBannerContentEnabled =
+		selectBannerContentWithoutQuestions?._value === 'true';
+
+	const bannerWithoutQuestion = bannerContent.filter(
+		(e) => e.type !== 'QuestionMeta'
+	);
 
 	const handleDelete = () => {
 		setFieldValue(`bannerData.${index}.banner_type`, '');
@@ -113,7 +125,9 @@ const BannerRow = ({ item, index, errorMsg, tabValue }) => {
 							onSearchTextChange={handleSearchText}
 							onChange={handleChange}
 							name={`bannerData.${index}.content`}
-							options={bannerContent}
+							options={
+								isBannerContentEnabled ? bannerContent : bannerWithoutQuestion
+							}
 							mapOptions={{ valueKey: 'id', labelKey: 'title' }}
 						/>
 					</div>
