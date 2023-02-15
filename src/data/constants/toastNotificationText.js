@@ -20,5 +20,7 @@
 
 export const ToastErrorNotifications = {
 	deleteBannerItemText:
-		'This item cannot be deleted because it is inside the top banners.'
+		'This item cannot be deleted because it is inside the top banners.',
+	stopQuestionBannerItemText:
+		'This question cannot be stopped because it is inside the top banners.'
 };

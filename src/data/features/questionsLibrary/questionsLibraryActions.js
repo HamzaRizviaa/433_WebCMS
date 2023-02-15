@@ -96,7 +96,9 @@ export const stopQuestionThunk = createAsyncThunk(
 			const response = await QuestionsLibraryService.stopQuestion(data);
 
 			if (response?.data.status_code === 200) {
-				//toast.success('Question has been Stopped!');
+				response.data?.data?.is_deleted
+					? toast.success('Question has been Stopped!')
+					: toast.error(ToastErrorNotifications.stopQuestionBannerItemText);
 			}
 		} catch (e) {
 			toast.error('Failed to stop Question!');
