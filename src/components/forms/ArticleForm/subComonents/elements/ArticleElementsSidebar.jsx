@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useFormikContext } from 'formik';
 import { Box, Typography } from '@material-ui/core';
 import { useElementsStyles } from './elements.styles';
 import ToggleSwitchField from '../../../../ui/inputs/ToggleSwitchField';
 import { articleSidebarElements } from '../../../../../data/helpers/articleHelpers/index';
+import { useSelector } from 'react-redux';
+import {
+	selectTiktokFlag,
+	selectYoutubeFlag
+} from '../../../../../data/selectors';
 
 const ArticleElementsSidebar = ({
 	selectedOption,
@@ -14,6 +19,13 @@ const ArticleElementsSidebar = ({
 	const classes = useElementsStyles();
 	const { values, setFieldValue } = useFormikContext();
 	const [itemsOnTop, setItemsOnTop] = useState(false);
+	const [mapValues, setMapValues] = useState(articleSidebarElements);
+
+	const youtubeSelector = useSelector(selectYoutubeFlag);
+	const isYoutubeEnabled = youtubeSelector?._value === 'true';
+	const tiktokSelector = useSelector(selectTiktokFlag);
+	const isTiktokEnabled = tiktokSelector?._value === 'true';
+	console.log(isYoutubeEnabled, isTiktokEnabled);
 
 	const handleClick = (dataItem) => {
 		const cloneElements = [...values.elements];
@@ -45,6 +57,28 @@ const ArticleElementsSidebar = ({
 		setItemsOnTop(value);
 	};
 
+	useEffect(() => {
+		if (!isYoutubeEnabled && !isTiktokEnabled) {
+			const youtubeArr = articleSidebarElements.filter(
+				(value) => value.data.element_type !== 'YOUTUBE'
+			);
+			const tiktokArr = youtubeArr.filter(
+				(value) => value.data.element_type !== 'TIKTOK'
+			);
+			setMapValues(tiktokArr);
+		} else if (isYoutubeEnabled) {
+			const customArr = articleSidebarElements.filter(
+				(value) => value.data.element_type !== 'YOUTUBE'
+			);
+			setMapValues(customArr);
+		} else if (isTiktokEnabled) {
+			const customArr = articleSidebarElements.filter(
+				(value) => value.data.element_type !== 'TIKTOK'
+			);
+			setMapValues(customArr);
+		}
+	}, []);
+
 	return (
 		<Box className={classes.ArticleElementsSidebar}>
 			<Box mb={2.5}>
@@ -65,7 +99,7 @@ const ArticleElementsSidebar = ({
 					/>
 				</Box>
 			</Box>
-			{articleSidebarElements.map((dataItem, index) => (
+			{mapValues.map((dataItem, index) => (
 				<button
 					type={'button'}
 					onClick={() => handleClick(dataItem)}
