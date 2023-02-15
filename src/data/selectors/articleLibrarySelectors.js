@@ -30,6 +30,12 @@ export const selectArticleSubCategories = (state) =>
 export const selectArticleSubCategoriesStatus = (state) =>
 	state.rootReducer.articleLibrary.subCategoriesStatus;
 
+export const selectYoutubeFlag = (state) =>
+	state.rootReducer.remoteConfig.features.articleYoutubeElement;
+
+export const selectTiktokFlag = (state) =>
+	state.rootReducer.remoteConfig.features.articleTiktokElement;
+
 //
 // ARTICLE TEMPLATE SELECTORS
 //
