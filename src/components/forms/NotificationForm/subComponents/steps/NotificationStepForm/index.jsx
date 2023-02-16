@@ -49,6 +49,7 @@ const NotificationStepForm = ({ status }) => {
 						maxFiles={1}
 						onDelete={() => setFieldValue('notification.uploadedFiles', [])}
 						disabled={isPublished}
+						hideDeleteIcon={isPublished}
 					/>
 				</div>
 				<div className={classes.fieldContainer}>
