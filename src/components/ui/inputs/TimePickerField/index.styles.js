@@ -1,9 +1,10 @@
 import { makeStyles } from '@material-ui/core';
+
 const fieldHeight = '24px';
+
 export const useStyles = makeStyles((theme) => ({
 	continer: {
 		padding: '1rem 0'
-		// position: 'relative'
 	},
 	label: {
 		color: '#fff',
@@ -18,34 +19,39 @@ export const useStyles = makeStyles((theme) => ({
 		width: 1,
 		marginTop: 7,
 
-		backgroundColor: theme.palette.normalGrey
+		backgroundColor: ({ disabled }) =>
+			disabled ? theme.palette.black60 : theme.palette.normalGrey
 	},
 	timeFieldContainer: {
 		// width: '100%',
 		display: 'flex',
 		border: '1px solid #333333',
 		borderRadius: '40px',
+		backgroundColor: ({ disabled }) =>
+			disabled ? theme.palette.normalGrey : 'transparent',
 
 		justifyContent: 'space-between',
 		'& .subField': {
 			height: fieldHeight, // '40px',
-			left: '0px',
 			width: 'calc(50% - 33px)',
-			top: '20px',
 			borderRadius: '40px',
 			padding: '8px 16px 8px 16px',
-			background: 'black',
+			background: 'none',
 			// common
-			cursor: 'pointer',
 			display: 'flex',
 			justifyContent: 'space-between',
 			alignItems: 'center',
 			fontSize: '14px',
-			lineHeight: '24px'
+			lineHeight: '24px',
+			color: ({ disabled }) =>
+				disabled ? theme.palette.lightGrey : theme.palette.white,
+			backgroundColor: ({ disabled }) =>
+				disabled ? theme.palette.normalGrey : theme.palette.black
 		},
 		'& .hoursField': {
 			borderTopRightRadius: '0px',
 			borderBottomRightRadius: '0px',
+			cursor: ({ disabled }) => (disabled ? 'auto' : 'pointer'),
 
 			'& .greydText': {
 				fontSize: '14px',
@@ -57,7 +63,12 @@ export const useStyles = makeStyles((theme) => ({
 			'& .arrowCon': {
 				position: 'relative',
 				'& .arrow': {
-					marginTop: '8px'
+					marginTop: '8px',
+
+					'& path': {
+						fill: ({ disabled }) =>
+							disabled ? theme.palette.disabled : theme.palette.neonYellow
+					}
 				},
 				'& .anchorEle': {
 					position: 'absolute',
@@ -84,9 +95,8 @@ export const useStyles = makeStyles((theme) => ({
 				outline: 'none',
 				background: 'transparent',
 				fontFamily: 'Poppins',
-				cursor: 'pointer',
 
-				color: '#fff',
+				color: 'inherit',
 				'&:focus': {
 					border: 'none',
 					outline: 'none'
