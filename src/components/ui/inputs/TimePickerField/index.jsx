@@ -11,7 +11,8 @@ const TimePickerField = ({
 	value,
 	onChange,
 	label = 'TIME',
-	showSeparator = false
+	showSeparator = false,
+	disabled = false
 }) => {
 	// open or close hours dropdown.
 	const [open, setOpen] = useState(false);
@@ -24,7 +25,7 @@ const TimePickerField = ({
 
 	// toggle open
 	const toggleOpen = () => {
-		setOpen(!open);
+		if (!disabled) setOpen(!open);
 	};
 
 	// select hour
@@ -67,7 +68,7 @@ const TimePickerField = ({
 		});
 
 	// styles
-	const classes = useStyles();
+	const classes = useStyles({ disabled });
 
 	return (
 		<div className={classes.container}>
@@ -77,7 +78,12 @@ const TimePickerField = ({
 			{/* Hours & Mins Container  */}
 			<div className={classes.timeFieldContainer}>
 				{/* Hours Selector */}
-				<div className={clsx('hoursField', 'subField')} onClick={toggleOpen}>
+				<div
+					className={clsx('hoursField', 'subField')}
+					tabIndex='-1'
+					role='button'
+					onClick={toggleOpen}
+				>
 					{/* hours display  */}
 					<div>
 						{selectedHour || '00'} <span className='greydText'>Hrs</span>
@@ -103,6 +109,7 @@ const TimePickerField = ({
 							type='text'
 							value={value.min}
 							onChange={setMins}
+							disabled={disabled}
 						/>
 						<span className='greydText'>Mins</span>
 					</div>
@@ -138,5 +145,6 @@ TimePickerField.propTypes = {
 	value: PropTypes.string,
 	onChange: PropTypes.func,
 	label: PropTypes.string,
-	showSeparator: PropTypes.bool
+	showSeparator: PropTypes.bool,
+	disabled: PropTypes.bool
 };
