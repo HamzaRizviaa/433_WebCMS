@@ -10,6 +10,8 @@ const NotificationStepper = ({ status }) => {
 	const [activeStep, setActiveStep] = React.useState(0);
 	const [completed, setCompleted] = React.useState(new Set());
 
+	const isPublished = status === 'published';
+
 	const handleNext = (index) => () => {
 		const newCompleted = new Set(completed);
 		newCompleted.add(index);
@@ -23,7 +25,7 @@ const NotificationStepper = ({ status }) => {
 	};
 
 	const isStepCompleted = (step) => {
-		return completed.has(step);
+		return isPublished || completed.has(step);
 	};
 
 	const classes = useNotificationStyles();
@@ -46,11 +48,12 @@ const NotificationStepper = ({ status }) => {
 						{step.label}
 					</StepButton>
 					<StepContent>
-						{React.createElement(stepsComponents[step.key], { status })}
+						{React.cloneElement(stepsComponents[step.key], { status })}
 						<div className={classes.actionsContainer}>
 							<NextStepButton
 								currentStep={step.key}
 								onClick={handleNext(index)}
+								isPublished={isPublished}
 							/>
 						</div>
 					</StepContent>

@@ -4,15 +4,15 @@ import { useFormikContext } from 'formik';
 import { useDispatch } from 'react-redux';
 
 import Button from '../../../ui/Button';
-import { notificationStepsValidationSchemas } from '../../../../data/helpers';
 import { isPastTime } from '../../../../data/utils';
-import { useNotificationStyles } from '../index.style';
+import { notificationStepsValidationSchemas } from '../../../../data/helpers';
 import {
 	resetSchedulerError,
 	setSchedulerError
 } from '../../../../data/features/notification/notificationSlice';
+import { useNotificationStyles } from '../index.style';
 
-const NextStepButton = ({ currentStep, onClick }) => {
+const NextStepButton = ({ currentStep, onClick, isPublished }) => {
 	const dispatch = useDispatch();
 	const [isStepInvalid, setStepInvalidState] = useState(false);
 
@@ -36,6 +36,7 @@ const NextStepButton = ({ currentStep, onClick }) => {
 			mins: scheduling.time.min
 		};
 		if (
+			!isPublished &&
 			currentStep === 'scheduling' &&
 			scheduling.schedule_notification === 'schedule'
 		) {
@@ -68,7 +69,8 @@ const NextStepButton = ({ currentStep, onClick }) => {
 
 NextStepButton.propTypes = {
 	currentStep: PropTypes.string.isRequired,
-	onClick: PropTypes.func.isRequired
+	onClick: PropTypes.func.isRequired,
+	isPublished: PropTypes.bool
 };
 
 export default NextStepButton;
