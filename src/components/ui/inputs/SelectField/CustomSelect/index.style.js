@@ -40,7 +40,10 @@ export const useSelectStyles = makeStyles((theme) => ({
 			} !important`,
 			right: '1rem !important',
 			top: sizeMapper[size]?.top || '5px !important',
-			fontSize: '3.5rem !important'
+			fontSize: '3.5rem !important',
+			backgroundColor: isDisabled
+				? theme.palette.normalGrey
+				: theme.palette.black
 		}
 	}),
 
@@ -98,7 +101,7 @@ export const useSelectStyles = makeStyles((theme) => ({
 		cursor: ({ readOnly }) =>
 			readOnly ? 'default !important' : 'pointer !important',
 		display: 'flex',
-		width: 'calc(100% - 60px) !important',
+		width: '100% !important',
 		alignItems: 'center',
 		height: ({ size }) => sizeMapper[size]?.height || 'auto',
 		color: ({ hasValue }) =>
