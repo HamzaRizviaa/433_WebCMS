@@ -1,6 +1,4 @@
-import React from 'react';
 import dayjs from 'dayjs';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
 export const getDateTime = (dateTime, dateTimeSeperator = '|') => {
 	let formatted = new Date(dateTime);
@@ -11,11 +9,6 @@ export const getDateTime = (dateTime, dateTimeSeperator = '|') => {
 		hour: '2-digit',
 		minute: '2-digit'
 	})}`;
-};
-
-export const getDateConstantTime = (dateTime) => {
-	let formatted = new Date(dateTime);
-	return `${dayjs(formatted).format('DD-MM-YYYY')} | 23:59 (UTC +0)`;
 };
 
 //16-06-2022
@@ -41,72 +34,6 @@ export const formatDate2 = (date) => {
 
 	let formatted = new Date(date);
 	return `${dayjs(formatted).format('DD MMMM YYYY')}`;
-};
-
-export const getCalendarText = (startDate, endDate) => {
-	if (startDate && endDate) {
-		return (
-			<span
-				style={{
-					whiteSpace: 'pre-wrap',
-					display: 'flex',
-					alignItems: 'center'
-				}}
-			>
-				{startDate} <ArrowForwardIosIcon /> {endDate}
-			</span>
-		);
-	} else {
-		if (startDate && endDate === null) {
-			return (
-				<span
-					style={{
-						whiteSpace: 'pre-wrap',
-						display: 'flex',
-						alignItems: 'center'
-					}}
-				>
-					{startDate} <ArrowForwardIosIcon /> End date
-				</span>
-			);
-		} else if (startDate === null && endDate) {
-			return (
-				<span
-					style={{
-						color: '#808080',
-						whiteSpace: 'pre-wrap',
-						display: 'flex',
-						alignItems: 'center'
-					}}
-				>
-					Start Date <ArrowForwardIosIcon /> {endDate}
-				</span>
-			);
-		} else {
-			return (
-				<span
-					style={{
-						color: '#808080',
-						whiteSpace: 'pre-wrap',
-						display: 'flex',
-						alignItems: 'center'
-					}}
-				>
-					Start Date <ArrowForwardIosIcon /> End date
-				</span>
-			);
-		}
-	}
-};
-
-export const getCalendarText2 = (startDate) => {
-	if (startDate) {
-		return <span>{`${startDate}`}</span>;
-	} else {
-		return (
-			<span style={{ color: '#808080' }}>{`Please select an end date`}</span>
-		);
-	}
 };
 
 export const getLocalStorageDetails = () => {

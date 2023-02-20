@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -10,7 +10,9 @@ import AppRoutes from './routes';
 import './styles/index.scss';
 import 'react-toastify/dist/ReactToastify.css';
 
-ReactDOM.render(
+const root = createRoot(document.getElementById('root'));
+
+root.render(
 	<GoogleOAuthProvider clientId='761006834675-0717aiakfe9at8d7jahf10hdgevu7acg.apps.googleusercontent.com'>
 		<Provider store={store}>
 			<Router>
@@ -18,6 +20,9 @@ ReactDOM.render(
 				<ToastContainer />
 			</Router>
 		</Provider>
-	</GoogleOAuthProvider>,
-	document.getElementById('root')
+	</GoogleOAuthProvider>
 );
+
+if (module.hot) {
+	module.hot.accept();
+}

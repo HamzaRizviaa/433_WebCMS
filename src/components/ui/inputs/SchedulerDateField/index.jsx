@@ -2,11 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useStyles } from './index.styles';
 
-const SchedulerDateField = ({ value, label = 'DATE', className = '' }) => {
+const SchedulerDateField = ({
+	value,
+	label = 'DATE',
+	className = '',
+	disabled = false
+}) => {
 	//label checking
 	label = label || 'DATE';
 
-	const classes = useStyles();
+	const classes = useStyles({ disabled });
 
 	return (
 		<div className={classes.container}>
@@ -25,5 +30,6 @@ export default SchedulerDateField;
 SchedulerDateField.propTypes = {
 	value: PropTypes.string,
 	label: PropTypes.string,
-	className: PropTypes.string
+	className: PropTypes.string,
+	disabled: PropTypes.bool
 };

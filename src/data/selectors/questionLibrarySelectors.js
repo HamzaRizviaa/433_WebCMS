@@ -1,4 +1,4 @@
-export const selectAllNews = (state) =>
+export const selectAllQuestions = (state) =>
 	state.rootReducer.questionsLibrary.questions;
 
 export const selectSpecificQuestion = (state) =>

@@ -9,9 +9,9 @@ const InlineDatePicker = ({
 	value,
 	label,
 	error,
-	disabled,
-	required,
 	onBlur,
+	disabled = false,
+	required = false,
 	...rest
 }) => {
 	const classes = useInlineDatePickerStyles();
@@ -33,8 +33,8 @@ const InlineDatePicker = ({
 					{...rest}
 					name={name}
 					selected={value}
-					disabled={disabled}
 					onBlur={onBlur}
+					maxDate={disabled ? new Date('1970-01-01') : undefined}
 					inline
 				/>
 				{!!error && <span className={inputsClasses.errorText}>{error}</span>}
