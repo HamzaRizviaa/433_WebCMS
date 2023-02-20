@@ -12,6 +12,7 @@ import { remoteConfig } from '../../../data/integrations/firebase';
 import { setRemoteConfig } from '../../../data/features/remoteConfigSlice';
 import { useLayoutStyles } from './index.style';
 import { AuthService } from '../../../data/services';
+import { toast } from 'react-toastify';
 
 const DashboardLayout = ({
 	title,
@@ -39,9 +40,9 @@ const DashboardLayout = ({
 
 		// checking token expiry
 		if (timeDifferenceMinutes <= 1) {
-			alert('Your session has expired');
+			toast.error('Your session has expired', { position: 'top-center' });
 			AuthService.removeTokenFromLocalStorage();
-			navigate('/sign-in');
+			navigate('/sign-in?session=expired');
 		}
 
 		// Setting firebase config
@@ -89,7 +90,7 @@ const DashboardLayout = ({
 DashboardLayout.propTypes = {
 	title: PropTypes.string.isRequired,
 	customText: PropTypes.string,
-	customSearchText:PropTypes.string,
+	customSearchText: PropTypes.string,
 	onButtonClick: PropTypes.func,
 	secondaryButtonText: PropTypes.string,
 	secondaryButtonClick: PropTypes.func,
