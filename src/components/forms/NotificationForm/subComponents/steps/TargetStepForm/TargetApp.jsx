@@ -7,6 +7,7 @@ import Button from '../../../../../ui/Button';
 import SelectTopicNameField from './SelectTopicNameField';
 import { TrashIcon } from '../../../../../../assets/svg-icons';
 import { useNotificationStyles } from '../../../index.style';
+import { topicNameOptions } from '../../../../../../data/helpers';
 import { useInputsStyles } from '../../../../../ui/inputs/inputs.style';
 
 const TargetApp = ({ form, push, remove, status }) => {
@@ -60,7 +61,7 @@ const TargetApp = ({ form, push, remove, status }) => {
 					</div>
 				))}
 			</div>
-			{target.length < 5 && (
+			{target.length < 5 && topicNameOptions.length > target.length && (
 				<Button
 					variant='outlined'
 					size='small'

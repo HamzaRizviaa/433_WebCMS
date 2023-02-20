@@ -54,6 +54,7 @@ const SchedulingStepForm = ({ status }) => {
 								<SchedulerDateField
 									className={classes.dateField}
 									value={formatDate(values.scheduling.date)}
+									disabled={isPublished}
 								/>
 								<TimePickerField
 									name='scheduling.time'
@@ -61,6 +62,7 @@ const SchedulingStepForm = ({ status }) => {
 									value={values.scheduling.time}
 									onChange={handleTimeChange}
 									showSeparator
+									disabled={isPublished}
 								/>
 							</div>
 						)}
@@ -74,6 +76,7 @@ const SchedulingStepForm = ({ status }) => {
 								formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 3)}
 								calendarStartDay={1}
 								minDate={new Date()}
+								disabled={isPublished}
 							/>
 						)}
 					</div>

@@ -666,27 +666,76 @@ export const addDefaultOption = (list) => {
 
 // Replaced Locked Questions
 
-export const replaceLockedQuestion = (
-	currentQuestions = [],
-	newQuestions = []
-) => {
-	currentQuestions = Array.isArray(currentQuestions) ? currentQuestions : [];
-	newQuestions = Array.isArray(newQuestions) ? newQuestions : [];
-	let newArray = newQuestions.slice();
+export const replaceLockedQuestion = (currentQuestions, newQuestions) => {
+	const result = [];
+
+	// Make deep copies of the input arrays
+	currentQuestions = JSON.parse(JSON.stringify(currentQuestions));
+	newQuestions = JSON.parse(JSON.stringify(newQuestions));
+
 	for (let i = 0; i < currentQuestions.length; i++) {
-		if (
-			Object.prototype.hasOwnProperty.call(currentQuestions[i], 'isLocked') &&
-			currentQuestions[i].isLocked
-		) {
-			if (i < newArray.length) {
-				newArray[i] = currentQuestions[i];
-				if (newArray.length < 10) {
-					newArray.push(newQuestions[i]);
-				}
+		const currentQuestion = currentQuestions[i];
+
+		if (currentQuestion?.isLocked) {
+			result.push(currentQuestion);
+		} else {
+			const newQuestion = newQuestions.pop();
+
+			if (newQuestion) {
+				result.push(newQuestion);
 			} else {
-				newArray.push(currentQuestions[i]);
+				// If no new question is found, delete the current question
+				currentQuestions.splice(i, 1);
+				i--;
 			}
 		}
 	}
-	return newArray;
+
+	// If the result array has fewer than 10 items, add remaining questions from newQuestions
+	while (newQuestions.length > 0 && result.length < 10) {
+		result.push(newQuestions.pop());
+	}
+
+	return result;
+};
+
+// export const replaceLockedQuestion = (
+// 	currentQuestions = [],
+// 	newQuestions = []
+// ) => {
+// 	currentQuestions = Array.isArray(currentQuestions) ? currentQuestions : [];
+// 	newQuestions = Array.isArray(newQuestions) ? newQuestions : [];
+// 	let newArray = newQuestions.slice();
+// 	for (let i = 0; i < currentQuestions.length; i++) {
+// 		if (
+// 			Object.prototype.hasOwnProperty.call(currentQuestions[i], 'isLocked') &&
+// 			currentQuestions[i].isLocked
+// 		) {
+// 			if (i < newArray.length) {
+// 				newArray[i] = currentQuestions[i];
+// 				if (newArray.length < 10) {
+// 					newQuestions[i] && newArray.push(newQuestions[i]);
+// 				}
+// 			} else {
+// 				newArray.push(currentQuestions[i]);
+// 			}
+// 		}
+// 	}
+// 	return newArray;
+// };
+
+export const disableGenerateQuestions = (values) => {
+	let count = 0;
+	for (let i = 0; i < values.length; i++) {
+		if (
+			(Object.prototype.hasOwnProperty.call(values[i], 'isLocked') &&
+				!values[i].isLocked) ||
+			!Object.prototype.hasOwnProperty.call(values[i], 'isLocked')
+		) {
+			return false;
+		}
+		count += 1;
+	}
+
+	return count === 10 ? true : false;
 };

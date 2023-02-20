@@ -4,7 +4,6 @@ const fieldHeight = '24px';
 export const useStyles = makeStyles((theme) => ({
 	continer: {
 		padding: '1rem 0'
-		// position: 'relative'
 	},
 	label: {
 		color: '#fff',
@@ -22,7 +21,11 @@ export const useStyles = makeStyles((theme) => ({
 		background: 'black',
 		// common
 		fontSize: '14px',
-		lineHeight: '24px'
+		lineHeight: '24px',
+		color: ({ disabled }) =>
+			disabled ? theme.palette.lightGrey : theme.palette.white,
+		backgroundColor: ({ disabled }) =>
+			disabled ? theme.palette.normalGrey : theme.palette.black
 	},
 	arrowIcon: {
 		height: '20px',

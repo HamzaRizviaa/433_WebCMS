@@ -1,6 +1,7 @@
 import { toast } from 'react-toastify';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { NewsLibraryService } from '../../services';
+import { ToastErrorNotifications } from '../../constants';
 
 export const getAllNewsApi = createAsyncThunk(
 	'newsLibary/getAllNews',
@@ -53,12 +54,15 @@ export const deleteNewsThunk = createAsyncThunk(
 	async (data) => {
 		try {
 			const response = await NewsLibraryService.deleteNews(data);
-
 			if (response.data.status_code === 200) {
 				toast.success('News has been deleted!');
 			}
 		} catch (e) {
-			toast.error('Failed to delete News!');
+			if (e.response.status === 409) {
+				toast.error(ToastErrorNotifications.deleteBannerItemText);
+			} else {
+				toast.error('Failed to delete News!');
+			}
 			console.error(e);
 		}
 	}

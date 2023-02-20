@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Markup } from 'interweave';
 import { Box } from '@material-ui/core';
-import PropTypes from 'prop-types';
-import { useStyles } from './elementPreviewers.styles';
+
 import { useLazyGetPostQuery } from '../../../../../data/features/articleLibrary/articleLibrary.query';
 import { ARTICLE_ELEMENTS_TYPES } from '../../../../../data/helpers/articleHelpers/index';
+import { useStyles } from './elementPreviewers.styles';
 
-const SocialPostElementPreviewer = ({ data }) => {
+const SocialPostElementPreviewer = ({ data, error }) => {
 	// extracted urls
 	const extractedTwitterUrl = data && data.twitter_post_url;
 	const extractedIgUrl = data && data.ig_post_url;
@@ -20,21 +21,15 @@ const SocialPostElementPreviewer = ({ data }) => {
 	const [getPost, { isError, data: postData, isSuccess }] =
 		useLazyGetPostQuery();
 
-	// /styles
+	// styles
 	const classes = useStyles({ thumbnailHeight, thumbnailWidth });
 
 	// debounce api calls
 	useEffect(() => {
-		const timeout = setTimeout(() => {
-			if (data) getPost(generatePostEndPoint());
-		}, 500);
+		if (data && !error) getPost(generatePostEndPoint());
+	}, [data, error]);
 
-		return () => {
-			clearTimeout(timeout);
-		};
-	}, [data]);
-
-	/// set markup to load post
+	// set markup to load post
 	useEffect(() => {
 		if (postData && isSuccess) {
 			setMarkup(postData?.html);
@@ -77,18 +72,21 @@ const SocialPostElementPreviewer = ({ data }) => {
 		}
 		if (type === ARTICLE_ELEMENTS_TYPES.IG) {
 			window.instgrm.Embeds.process();
+			return;
 		}
 	};
 
 	return (
 		<Box className={classes.twitterBox}>
-			{markup && <Markup content={markup} />}
+			{!!markup && <Markup content={markup} />}
 		</Box>
 	);
 };
+
 export default SocialPostElementPreviewer;
 
 SocialPostElementPreviewer.propTypes = {
 	data: PropTypes.object.isRequired,
-	itemIndex: PropTypes.number
+	itemIndex: PropTypes.number,
+	error: PropTypes.object
 };

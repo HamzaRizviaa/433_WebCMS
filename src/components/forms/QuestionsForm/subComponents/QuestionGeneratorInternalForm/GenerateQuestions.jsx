@@ -12,10 +12,11 @@ import {
 	addDefaultOption,
 	defaultOption,
 	defaultState,
+	disableGenerateQuestions,
 	formatOptions
 } from '../../../../../data/helpers';
 
-const GenerateQuestions = ({ onGenerate }) => {
+const GenerateQuestions = ({ onGenerate, formValues }) => {
 	// controlled fields state
 	const [values, setValues] = useState(defaultState);
 
@@ -172,6 +173,7 @@ const GenerateQuestions = ({ onGenerate }) => {
 					size='large'
 					className={classes.filterField}
 					onClick={handleGenerate}
+					disabled={disableGenerateQuestions(formValues)}
 				>
 					GENERATE QUESTION
 				</Button>
@@ -181,7 +183,8 @@ const GenerateQuestions = ({ onGenerate }) => {
 };
 
 GenerateQuestions.propTypes = {
-	onGenerate: PropTypes.func.isRequired
+	onGenerate: PropTypes.func.isRequired,
+	formValues: PropTypes.array
 };
 
 export default GenerateQuestions;

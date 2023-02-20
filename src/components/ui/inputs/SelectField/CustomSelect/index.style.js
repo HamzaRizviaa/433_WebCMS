@@ -40,7 +40,10 @@ export const useSelectStyles = makeStyles((theme) => ({
 			} !important`,
 			right: '1rem !important',
 			top: sizeMapper[size]?.top || '5px !important',
-			fontSize: '3.5rem !important'
+			fontSize: '3.5rem !important',
+			backgroundColor: isDisabled
+				? theme.palette.normalGrey
+				: theme.palette.black
 		}
 	}),
 
@@ -49,7 +52,8 @@ export const useSelectStyles = makeStyles((theme) => ({
 		fontSize: '14px',
 
 		'&:hover': {
-			color: theme.palette.neonYellow
+			color: theme.palette.neonYellow,
+			backgroundColor: `${theme.palette.normalGrey} !important`
 		}
 	},
 
@@ -72,6 +76,11 @@ export const useSelectStyles = makeStyles((theme) => ({
 
 			'& .Mui-selected': {
 				color: theme.palette.neonYellow
+			},
+
+			'& .Mui-focusVisible': {
+				color: theme.palette.neonYellow,
+				backgroundColor: theme.palette.normalGrey
 			}
 		},
 
@@ -92,6 +101,7 @@ export const useSelectStyles = makeStyles((theme) => ({
 		cursor: ({ readOnly }) =>
 			readOnly ? 'default !important' : 'pointer !important',
 		display: 'flex',
+		width: '100% !important',
 		alignItems: 'center',
 		height: ({ size }) => sizeMapper[size]?.height || 'auto',
 		color: ({ hasValue }) =>
@@ -123,5 +133,14 @@ export const useSelectStyles = makeStyles((theme) => ({
 		pointerEvents: 'none',
 		cursor: 'default',
 		padding: '14px'
+	},
+
+	loaderWrapper: {
+		textAlign: 'center',
+		padding: '20px',
+		'& > img': {
+			height: '50px',
+			width: '50px'
+		}
 	}
 }));

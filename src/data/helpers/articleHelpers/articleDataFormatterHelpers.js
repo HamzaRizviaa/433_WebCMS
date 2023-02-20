@@ -4,6 +4,13 @@ import { getUserDataObject } from '../commonHelpers';
 import { makeid, uploadFileToServer } from '../../utils';
 import { ARTICLE_ELEMENTS_TYPES } from './index';
 
+export const elementTypeToTitleMapper = {
+	IG: 'Add IG post',
+	TWITTER: 'Add Tweet',
+	YOUTUBE: 'Add Youtube video',
+	TIKTOK: 'Add Tiktok post'
+};
+
 export const uploadArticleFiles = async (article) => {
 	const { author_image, uploadedFiles, uploadedLandscapeCoverImage } = article;
 	const elements = cloneDeep(article.elements);
@@ -408,4 +415,18 @@ export const articleTemplateDataFormatterForService = (
 		...(article.id ? { article_template_id: article.id } : {}),
 		template_name: article.template_name
 	};
+};
+
+export const getYoutubeVideoEmbedId = (videoUrl = '') => {
+	if (videoUrl.includes('youtube.com'))
+		return videoUrl.split('watch?v=')[1] || '';
+	else if (videoUrl.includes('youtu.be'))
+		return videoUrl.split('youtu.be/')[1] || '';
+	else return '';
+};
+
+export const getTiktokEmbedId = (tiktokUrl = '') => {
+	if (tiktokUrl.includes('tiktok.com'))
+		return tiktokUrl.split('/video/')[1] || '';
+	return '';
 };

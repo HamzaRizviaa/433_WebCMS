@@ -21,8 +21,20 @@ export const selectSpecificArticleStatus = (state) =>
 export const selectArticleMainCategories = (state) =>
 	state.rootReducer.articleLibrary.mainCategories;
 
+export const selectArticleMainCategoriesStatus = (state) =>
+	state.rootReducer.articleLibrary.mainCategoriesStatus;
+
 export const selectArticleSubCategories = (state) =>
 	state.rootReducer.articleLibrary.subCategories;
+
+export const selectArticleSubCategoriesStatus = (state) =>
+	state.rootReducer.articleLibrary.subCategoriesStatus;
+
+export const selectYoutubeFlag = (state) =>
+	state.rootReducer.remoteConfig.features.articleYoutubeElement;
+
+export const selectTiktokFlag = (state) =>
+	state.rootReducer.remoteConfig.features.articleTiktokElement;
 
 //
 // ARTICLE TEMPLATE SELECTORS
