@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useState } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
-import { useGoogleLogout } from 'react-google-login';
+import { googleLogout } from '@react-oauth/google';
 import TextTooltip from '../../ui/TextTooltip';
 import { useSelector } from 'react-redux';
 import { useStyles } from './index.styles';
@@ -15,7 +15,7 @@ import {
 	Article,
 	RuleLibrary
 } from '../../../assets/svg-icons';
-import { UserService } from '../../../data/services';
+import { AuthService, UserService } from '../../../data/services';
 import { rulesLibraryFeatureFlag } from '../../../data/selectors';
 
 const checkDomain = (href) => {
@@ -32,32 +32,19 @@ const checkDomain = (href) => {
 	}
 };
 
-const clientId =
-	'761006834675-0717aiakfe9at8d7jahf10hdgevu7acg.apps.googleusercontent.com';
-
 const Sidebar = () => {
 	const navigate = useNavigate();
 
 	const [env, setEnv] = useState('prod');
 
-	const onLogoutSuccess = async (res) => {
-		console.log('Logged out Success', res);
+	const handleLogout = async () => {
+		googleLogout();
 		const response = await UserService.logout();
 		if (response?.data.status_code == 200) {
-			localStorage.removeItem('user_data');
+			AuthService.removeTokenFromLocalStorage();
 			navigate('/sign-in');
 		}
 	};
-
-	const onFailure = () => {
-		console.log('Handle failure cases');
-	};
-
-	const { signOut } = useGoogleLogout({
-		clientId,
-		onLogoutSuccess,
-		onFailure
-	});
 
 	useLayoutEffect(() => {
 		if (window && window.location) {
@@ -160,7 +147,7 @@ const Sidebar = () => {
 				)}
 			</div>
 
-			<div onClick={signOut} className={classes.logoutContainer}>
+			<div onClick={handleLogout} className={classes.logoutContainer}>
 				<Logout className={classes.icon} />
 			</div>
 		</span>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import GoogleLogin from 'react-google-login';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
 import PrimaryLoader from '../../components/ui/loaders/PrimaryLoader';
@@ -11,8 +11,8 @@ import { getAll, fetchAndActivate } from 'firebase/remote-config';
 import { setRemoteConfig } from '../../data/features/remoteConfigSlice';
 import { getLocalStorageDetails } from '../../data/utils';
 import { AuthService } from '../../data/services';
-import classes from './_signIn.module.scss';
 import { fetchRules } from '../../data/features/ruleLibrary/ruleLibraryActions';
+import classes from './_signIn.module.scss';
 
 const SignIn = () => {
 	const dispatch = useDispatch();
@@ -22,25 +22,14 @@ const SignIn = () => {
 
 	const [signInError, setSignInError] = useState(false);
 	const [isLoadingSignIn, setIsLoadingSignin] = useState(false);
-	const [accessExpire, setAccessExpire] = useState(false);
 
-	useEffect(() => {
-		if (accessExpire) {
-			let expiryDate = new Date(
-				new Date().setHours(new Date().getHours() + 10)
-			);
-			AuthService.setTokenExpiryDateInLocalStorage(expiryDate);
-		}
-
-		return () => {
-			setAccessExpire(false);
-		};
-	}, [accessExpire]);
+	const [searchParams] = useSearchParams();
+	const session = searchParams.get('session');
 
 	useEffect(() => {
 		fetchAndActivate(remoteConfig)
 			.then(() => {
-				let configs = getAll(remoteConfig);
+				const configs = getAll(remoteConfig);
 				dispatch(setRemoteConfig(configs));
 			})
 			.catch((err) => {
@@ -52,15 +41,20 @@ const SignIn = () => {
 	const handleLogin = async (googleData) => {
 		setIsLoadingSignin(true);
 		try {
-			const userData = await AuthService.verifyGoogleUser(googleData.tokenId);
+			const userData = await AuthService.verifyGoogleUser(
+				googleData.credential
+			);
 
 			if (userData?.status_code === 200) {
 				AuthService.setUserDataInLocalStorage(userData?.data);
 				setAccessTokenInHeader(userData?.data.access_token);
+				const expiryDate = new Date(
+					new Date().setHours(new Date().getHours() + 10)
+				);
+				AuthService.setTokenExpiryDateInLocalStorage(expiryDate);
 
 				dispatch(fetchRules());
 
-				setAccessExpire(true);
 				setIsLoadingSignin(false);
 				setSignInError(false);
 				navigate('/news-library');
@@ -101,12 +95,14 @@ const SignIn = () => {
 									)}
 									<div className={classes.googleButtonWrapper}>
 										<GoogleLogin
-											className={classes.googleButton}
-											clientId='761006834675-0717aiakfe9at8d7jahf10hdgevu7acg.apps.googleusercontent.com'
-											buttonText='Sign In with Google'
 											onSuccess={handleLogin}
-											prompt={'consent'}
-											cookiePolicy={'single_host_origin'}
+											onError={() => {
+												console.error('Login Failed');
+											}}
+											useOneTap={session === 'expired'}
+											shape='circle'
+											auto_select
+											width='300'
 										/>
 									</div>
 									<div className={classes.helpText}>
@@ -114,9 +110,7 @@ const SignIn = () => {
 											Need help signing in? Please write an email to
 											<br />
 											<a
-												href={'https://www.433football.com/'}
-												target='_blank'
-												rel='noopener noreferrer'
+												href='mailto:cms@by433.com'
 												style={{ color: '#ffff00' }}
 											>
 												cms@by433.com
