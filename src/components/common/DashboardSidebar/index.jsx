@@ -15,7 +15,7 @@ import {
 	Article,
 	RuleLibrary
 } from '../../../assets/svg-icons';
-import { UserService } from '../../../data/services';
+import { AuthService, UserService } from '../../../data/services';
 import { rulesLibraryFeatureFlag } from '../../../data/selectors';
 
 const checkDomain = (href) => {
@@ -41,7 +41,7 @@ const Sidebar = () => {
 		googleLogout();
 		const response = await UserService.logout();
 		if (response?.data.status_code == 200) {
-			localStorage.removeItem('user_data');
+			AuthService.removeTokenFromLocalStorage();
 			navigate('/sign-in');
 		}
 	};

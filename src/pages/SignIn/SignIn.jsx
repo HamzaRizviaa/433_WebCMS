@@ -22,23 +22,9 @@ const SignIn = () => {
 
 	const [signInError, setSignInError] = useState(false);
 	const [isLoadingSignIn, setIsLoadingSignin] = useState(false);
-	const [accessExpire, setAccessExpire] = useState(false);
 
 	const [searchParams] = useSearchParams();
 	const session = searchParams.get('session');
-
-	useEffect(() => {
-		if (accessExpire) {
-			const expiryDate = new Date(
-				new Date().setHours(new Date().getHours() + 10)
-			);
-			AuthService.setTokenExpiryDateInLocalStorage(expiryDate);
-		}
-
-		return () => {
-			setAccessExpire(false);
-		};
-	}, [accessExpire]);
 
 	useEffect(() => {
 		fetchAndActivate(remoteConfig)
@@ -62,10 +48,13 @@ const SignIn = () => {
 			if (userData?.status_code === 200) {
 				AuthService.setUserDataInLocalStorage(userData?.data);
 				setAccessTokenInHeader(userData?.data.access_token);
+				const expiryDate = new Date(
+					new Date().setHours(new Date().getHours() + 10)
+				);
+				AuthService.setTokenExpiryDateInLocalStorage(expiryDate);
 
 				dispatch(fetchRules());
 
-				setAccessExpire(true);
 				setIsLoadingSignin(false);
 				setSignInError(false);
 				navigate('/news-library');
