@@ -12,7 +12,7 @@ import NewsLibrary from '../pages/NewsLibrary/NewsLibrary';
 import RuleLibrary from '../pages/RuleLibrary/RuleLibrary';
 import { fetchRules } from '../data/features/ruleLibrary/ruleLibraryActions';
 import SignIn from '../pages/SignIn/SignIn';
-import RequireAuth from './RequireAuth.js';
+import RequireAuth from './RequireAuth';
 import { getLocalStorageDetails } from '../data/utils';
 
 /**

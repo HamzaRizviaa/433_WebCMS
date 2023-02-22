@@ -55,7 +55,7 @@ const SignIn = () => {
 				AuthService.setUserDataInLocalStorage(userData?.data);
 				setAccessTokenInHeader(userData?.data.access_token);
 				const expiryDate = new Date(
-					new Date().setMinutes(new Date().getMinutes() + 2)
+					new Date().setHours(new Date().getHours() + 10)
 				);
 				AuthService.setTokenExpiryDateInLocalStorage(expiryDate);
 
