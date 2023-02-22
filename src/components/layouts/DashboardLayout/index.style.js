@@ -7,7 +7,7 @@ export const useLayoutStyles = makeStyles({
 
 	contentWrapper: {
 		padding: '2.5rem 2rem 0rem 2rem',
-		width: '100%'
+		width: 'calc(100% - 5rem)'
 	},
 
 	libraryLoader: {

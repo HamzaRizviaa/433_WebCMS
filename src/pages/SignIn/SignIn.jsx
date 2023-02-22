@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
-import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import {
+	Navigate,
+	useLocation,
+	useNavigate,
+	useSearchParams
+} from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
 import PrimaryLoader from '../../components/ui/loaders/PrimaryLoader';
@@ -17,6 +22,7 @@ import classes from './_signIn.module.scss';
 const SignIn = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const { state } = useLocation();
 
 	const localStorageData = getLocalStorageDetails();
 
@@ -49,7 +55,7 @@ const SignIn = () => {
 				AuthService.setUserDataInLocalStorage(userData?.data);
 				setAccessTokenInHeader(userData?.data.access_token);
 				const expiryDate = new Date(
-					new Date().setHours(new Date().getHours() + 10)
+					new Date().setMinutes(new Date().getMinutes() + 2)
 				);
 				AuthService.setTokenExpiryDateInLocalStorage(expiryDate);
 
@@ -57,7 +63,7 @@ const SignIn = () => {
 
 				setIsLoadingSignin(false);
 				setSignInError(false);
-				navigate('/news-library');
+				navigate(state?.from);
 			}
 		} catch (e) {
 			setSignInError(true);

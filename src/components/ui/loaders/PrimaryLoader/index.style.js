@@ -36,6 +36,7 @@ export const useStyles = makeStyles((theme) => ({
 					? '100%'
 					: 'calc(100vh - 150px)'
 				: 'auto',
-		overflow: ({ loading }) => (loading ? 'hidden' : 'unset')
+		overflow: ({ loading }) => (loading ? 'hidden' : 'unset'),
+		width: '100%'
 	}
 }));

@@ -1,18 +1,17 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { ThemeProvider } from '@material-ui/core/styles';
-import { useNavigate } from 'react-router-dom';
-import { getAll, fetchAndActivate } from 'firebase/remote-config';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
-import theme from '../../../assets/theme';
-import Sidebar from '../../common/DashboardSidebar';
+import { getAll, fetchAndActivate } from 'firebase/remote-config';
+
 import Topbar from '../../common/DashboardTopbar';
 import PrimaryLoader from '../../ui/loaders/PrimaryLoader';
 import { remoteConfig } from '../../../data/integrations/firebase';
 import { setRemoteConfig } from '../../../data/features/remoteConfigSlice';
 import { useLayoutStyles } from './index.style';
 import { AuthService } from '../../../data/services';
-import { toast } from 'react-toastify';
+import { checkIfTokenExpired } from '../../../data/helpers/commonHelpers';
 
 const DashboardLayout = ({
 	title,
@@ -32,17 +31,16 @@ const DashboardLayout = ({
 }) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const { pathname } = useLocation();
 
 	useEffect(() => {
-		const expiryDate = Date.parse(localStorage.getItem('token_expire_time'));
-		const currentDate = new Date();
-		const timeDifferenceMinutes = (expiryDate - currentDate) / 1000 / 60; //in minutes
-
 		// checking token expiry
-		if (timeDifferenceMinutes <= 1) {
+		const isTokenExpired = checkIfTokenExpired();
+
+		if (isTokenExpired) {
 			toast.error('Your session has expired', { position: 'top-center' });
 			AuthService.removeTokenFromLocalStorage();
-			navigate('/sign-in?session=expired');
+			navigate('/sign-in?session=expired', { state: { from: pathname } });
 		}
 
 		// Setting firebase config
@@ -52,7 +50,7 @@ const DashboardLayout = ({
 				dispatch(setRemoteConfig(configs));
 			})
 			.catch((err) => {
-				console.log('err fetch and activate', err);
+				console.error('err fetch and activate', err);
 				dispatch(setRemoteConfig({}));
 			});
 	}, []);
@@ -61,28 +59,23 @@ const DashboardLayout = ({
 
 	return (
 		<PrimaryLoader loading={isLoading} mainPage>
-			<ThemeProvider theme={theme}>
-				<div className={classes.root}>
-					<Sidebar />
-					<div className={classes.contentWrapper}>
-						<Topbar
-							title={title}
-							customText={customText}
-							customSearchText={customSearchText}
-							onButtonClick={onButtonClick}
-							secondaryButtonText={secondaryButtonText}
-							secondaryButtonClick={secondaryButtonClick}
-							hideBtn={hideBtn}
-							onTemplateButtonClick={onTemplateButtonClick}
-							hideTemplateBtn={hideTemplateBtn}
-							hideSearchFilter={hideSearchFilter}
-							hideDateFilter={hideDateFilter}
-							hideLibraryText={hideLibraryText}
-						/>
-						{children}
-					</div>
-				</div>
-			</ThemeProvider>
+			<div className={classes.contentWrapper}>
+				<Topbar
+					title={title}
+					customText={customText}
+					customSearchText={customSearchText}
+					onButtonClick={onButtonClick}
+					secondaryButtonText={secondaryButtonText}
+					secondaryButtonClick={secondaryButtonClick}
+					hideBtn={hideBtn}
+					onTemplateButtonClick={onTemplateButtonClick}
+					hideTemplateBtn={hideTemplateBtn}
+					hideSearchFilter={hideSearchFilter}
+					hideDateFilter={hideDateFilter}
+					hideLibraryText={hideLibraryText}
+				/>
+				{children}
+			</div>
 		</PrimaryLoader>
 	);
 };

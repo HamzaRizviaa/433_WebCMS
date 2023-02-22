@@ -107,3 +107,15 @@ export const generateISODateTimeStamp = (date, hour, min) => {
 
 	return new Date(selectedDateTime).toISOString();
 };
+
+/**
+ * Check if auth token is exired or not.
+ * @returns {boolean}
+ */
+export const checkIfTokenExpired = () => {
+	const expiryDate = Date.parse(localStorage.getItem('token_expire_time'));
+	const currentDate = new Date();
+	const timeDifferenceMinutes = (expiryDate - currentDate) / 1000 / 60; //in minutes
+
+	return timeDifferenceMinutes <= 1;
+};
