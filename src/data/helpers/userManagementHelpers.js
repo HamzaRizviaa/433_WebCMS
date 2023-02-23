@@ -1,6 +1,6 @@
 import { getFormatter } from '../../components/ui/Table/ColumnFormatters';
 
-export const rbacColumns = [
+export const userManagementColumns = [
 	{
 		dataField: 'title',
 		text: 'NAME',

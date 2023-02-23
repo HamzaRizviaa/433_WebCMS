@@ -14,7 +14,7 @@ import {
 	Logout,
 	Article,
 	RuleLibrary,
-	Rbac
+	UserManagement
 } from '../../../assets/svg-icons';
 import { AuthService, UserService } from '../../../data/services';
 import { rulesLibraryFeatureFlag } from '../../../data/selectors';
@@ -149,13 +149,13 @@ const Sidebar = () => {
 			</div>
 			<div>
 				<NavLink
-					to='/rbac-library'
+					to='/user-management-library'
 					className={({ isActive }) =>
 						isActive ? classes.rbacRoute : classes.iconWrapper
 					}
 				>
 					<TextTooltip title='RBAC' placement='right'>
-						<Rbac className={classes.icon} />
+						<UserManagement className={classes.icon} />
 					</TextTooltip>
 				</NavLink>
 				<div onClick={handleLogout} className={classes.logoutContainer}>

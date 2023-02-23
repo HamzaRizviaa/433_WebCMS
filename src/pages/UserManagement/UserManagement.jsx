@@ -6,7 +6,7 @@ import DashboardLayout from '../../components/layouts/DashboardLayout';
 import RuleForm from '../../components/forms/RuleForm';
 import useGetAllRulesQuery from '../../hooks/libraries/rules/useGetAllRulesQuery';
 import { getSpecificRule } from '../../data/features/ruleLibrary/ruleLibraryActions';
-import { rbacColumns } from '../../data/helpers/rbacHelpers';
+import { userManagementColumns } from '../../data/helpers/userManagementHelpers';
 
 /**
  * RuleLibrary Component serves as the starting point for the complete flow of the virals library.
@@ -53,7 +53,7 @@ const RBACLibrary = () => {
 			hideDateFilter
 		>
 			<Table
-				columns={rbacColumns}
+				columns={userManagementColumns}
 				data={data}
 				totalRecords={totalRecords}
 				isLoading={isLoading}

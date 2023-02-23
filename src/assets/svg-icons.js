@@ -48,4 +48,4 @@ export { ReactComponent as Unlocked } from './Unlocked.svg';
 export { ReactComponent as Locked } from './Locked.svg';
 export { ReactComponent as Checkmark } from './Checkmark.svg';
 export { ReactComponent as Negative } from './Negative.svg';
-export { ReactComponent as Rbac } from './Rbac.svg';
+export { ReactComponent as UserManagement } from './Rbac.svg';

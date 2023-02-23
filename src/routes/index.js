@@ -10,7 +10,7 @@ import ViralLibrary from '../pages/ViralLibrary/ViralLibrary';
 import ArticleLibrary from '../pages/ArticleLibrary/ArticleLibrary';
 import NewsLibrary from '../pages/NewsLibrary/NewsLibrary';
 import RuleLibrary from '../pages/RuleLibrary/RuleLibrary';
-import RBACLibrary from '../pages/RBACLibrary/RBACLibrary';
+import RBACLibrary from '../pages/UserManagement/UserManagement';
 import { fetchRules } from '../data/features/ruleLibrary/ruleLibraryActions';
 import SignIn from '../pages/SignIn/SignIn';
 import RequireAuth from './RequireAuth.js';
@@ -77,7 +77,7 @@ const AppRoutes = () => {
 			/>
 			<Route
 				exact
-				path='/rbac-library'
+				path='/user-management-library'
 				element={<RequireAuth component={<RBACLibrary />} />}
 			/>
 			{/* <Route
