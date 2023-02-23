@@ -1,10 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Navigate, useLocation } from 'react-router-dom';
 import { getLocalStorageDetails } from '../data/utils';
 import MainLayout from '../components/layouts/MainLayout';
 
-const RequireAuth = () => {
+const AuthenticatedRoutes = () => {
 	const { pathname } = useLocation();
 	const localStorageData = getLocalStorageDetails();
 
@@ -15,8 +14,4 @@ const RequireAuth = () => {
 	return <MainLayout />;
 };
 
-RequireAuth.propTypes = {
-	component: PropTypes.any
-};
-
-export default RequireAuth;
+export default AuthenticatedRoutes;

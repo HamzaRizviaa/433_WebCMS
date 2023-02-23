@@ -12,8 +12,9 @@ import NewsLibrary from '../pages/NewsLibrary/NewsLibrary';
 import RuleLibrary from '../pages/RuleLibrary/RuleLibrary';
 import { fetchRules } from '../data/features/ruleLibrary/ruleLibraryActions';
 import SignIn from '../pages/SignIn/SignIn';
-import RequireAuth from './RequireAuth';
+import AuthenticatedRoutes from './AuthenticatedRoutes';
 import { getLocalStorageDetails } from '../data/utils';
+import AuthorizedRoutes from './AuthorizedRoutes';
 
 /**
  * AppRoutes component where all the routing for the project is setup.
@@ -32,16 +33,19 @@ const AppRoutes = () => {
 	return (
 		<Routes>
 			<Route path='/sign-in' element={<SignIn />} />
-			<Route path='/' element={<RequireAuth />}>
-				<Route index element={<Navigate to='news-library' />} />
-				<Route path='news-library' element={<NewsLibrary />} />
-				<Route path='media-library' element={<MediaLibrary />} />
-				<Route path='question-library' element={<QuestionLibrary />} />
-				<Route path='top-banner' element={<TopBanner />} />
-				<Route path='article-library' element={<ArticleLibrary />} />
-				<Route path='viral-library' element={<ViralLibrary />} />
-				<Route path='rule-library' element={<RuleLibrary />} />
+			<Route path='/' element={<AuthenticatedRoutes />}>
+				<Route element={<AuthorizedRoutes />}>
+					<Route index element={<Navigate to='news-library' />} />
+					<Route path='news-library' element={<NewsLibrary />} />
+					<Route path='media-library' element={<MediaLibrary />} />
+					<Route path='question-library' element={<QuestionLibrary />} />
+					<Route path='top-banner' element={<TopBanner />} />
+					<Route path='article-library' element={<ArticleLibrary />} />
+					<Route path='viral-library' element={<ViralLibrary />} />
+					<Route path='rule-library' element={<RuleLibrary />} />
+				</Route>
 			</Route>
+
 			<Route path='*' element={<Navigate to='/sign-in' />} />
 		</Routes>
 	);
