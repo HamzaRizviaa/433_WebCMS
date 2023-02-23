@@ -11,10 +11,11 @@ import { isPastTime } from '../../../../data/utils';
 const NotificationFormButtons = ({
 	isEdit,
 	status,
+	isFieldInteractionAllowed,
+	canUserDelete,
 	openDeleteModal,
 	onSubmitHandler,
-	isFieldInteractionAllowed,
-	canUserDelete
+	handleClose
 }) => {
 	const isPublished = status === 'published';
 
@@ -94,7 +95,7 @@ const NotificationFormButtons = ({
 				</div>
 			) : (
 				<div className={classes.formButtons}>
-					<Button size='small' onClick={() => {}}>
+					<Button size='small' onClick={handleClose}>
 						Close
 					</Button>
 				</div>
@@ -109,7 +110,8 @@ NotificationFormButtons.propTypes = {
 	openDeleteModal: PropTypes.func,
 	onSubmitHandler: PropTypes.func,
 	isFieldInteractionAllowed: PropTypes.bool,
-	canUserDelete: PropTypes.bool
+	canUserDelete: PropTypes.bool,
+	handleClose: PropTypes.func
 };
 
 export default NotificationFormButtons;

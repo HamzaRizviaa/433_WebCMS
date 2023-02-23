@@ -69,10 +69,10 @@ const NewsLibrary = () => {
 			/>
 			<NewsForm
 				open={showSlider}
-				isEdit={edit}
 				handleClose={() => {
 					setShowSlider(false);
 				}}
+				isEdit={edit}
 				status={rowStatus}
 			/>
 			<NotificationForm />

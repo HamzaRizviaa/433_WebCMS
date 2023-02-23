@@ -50,6 +50,7 @@ const NewsSlideForm = ({
 						index={index}
 						item={item}
 						onDeleteIconClick={handleDeleteSlide}
+						disableActions={!isFieldInteractionAllowed}
 					>
 						<div>
 							<FormikDropzone

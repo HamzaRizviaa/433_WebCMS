@@ -11,7 +11,8 @@ const NotificationInternalForm = ({
 	isEdit,
 	status,
 	openDeleteModal,
-	onSubmitHandler
+	onSubmitHandler,
+	handleClose
 }) => {
 	const dispatch = useDispatch();
 	const classes = useNotificationStyles();
@@ -31,14 +32,18 @@ const NotificationInternalForm = ({
 
 	return (
 		<div className={classes.root}>
-			<NotificationStepper status={status} isFieldInteractionAllowed={isFieldInteractionAllowed} />
+			<NotificationStepper
+				status={status}
+				isFieldInteractionAllowed={isFieldInteractionAllowed}
+			/>
 			<NotificationFormButtons
 				isEdit={isEdit}
 				status={status}
-				openDeleteModal={openDeleteModal}
-				onSubmitHandler={onSubmitHandler}
 				isFieldInteractionAllowed={isFieldInteractionAllowed}
 				canUserDelete={permissions && permissions.Notifications.delete}
+				openDeleteModal={openDeleteModal}
+				onSubmitHandler={onSubmitHandler}
+				handleClose={handleClose}
 			/>
 		</div>
 	);
@@ -48,7 +53,8 @@ NotificationInternalForm.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string,
 	openDeleteModal: PropTypes.func.isRequired,
-	onSubmitHandler: PropTypes.func.isRequired
+	onSubmitHandler: PropTypes.func.isRequired,
+	handleClose: PropTypes.func.isRequired
 };
 
 export default NotificationInternalForm;

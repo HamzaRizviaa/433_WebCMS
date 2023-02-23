@@ -26,9 +26,10 @@ import ScheduledInfoBox from '../../common/ScheduledInfoBox';
 const NewsInternalForm = ({
 	isEdit,
 	status,
+	handleClose,
+	openPreviewer,
 	onSubmitHandler,
-	toggleDeleteModal,
-	openPreviewer
+	toggleDeleteModal
 }) => {
 	const classes = useFormStyles();
 	const dispatch = useDispatch();
@@ -45,7 +46,12 @@ const NewsInternalForm = ({
 
 	const { permissions, getIsFieldInteractionAllowed } =
 		usePermissionsAccessControl();
-	const isFieldInteractionAllowed = getIsFieldInteractionAllowed('News', isEdit);
+	const isFieldInteractionAllowed = getIsFieldInteractionAllowed(
+		'News',
+		isEdit
+	);
+
+	console.log({ isFieldInteractionAllowed });
 
 	/// Scheduler hook
 	const {
@@ -101,6 +107,7 @@ const NewsInternalForm = ({
 					scheduleDate={values.schedule_date}
 					openSchedulerModal={openSchedulerModal}
 					isValid={isValid}
+					hideEditIcon={!isFieldInteractionAllowed}
 				/>
 			)}
 			<AccordianLayout title='General Information'>
@@ -109,7 +116,11 @@ const NewsInternalForm = ({
 						name='labels'
 						label='LABELS'
 						placeholder='Select a minimum of 4 labels'
-						disabled={isFieldInteractionAllowed ? isPublished : !isFieldInteractionAllowed}
+						disabled={
+							isFieldInteractionAllowed
+								? isPublished
+								: !isFieldInteractionAllowed
+						}
 						required
 						library='News'
 					/>
@@ -211,7 +222,7 @@ const NewsInternalForm = ({
 					</div>
 				) : (
 					<div className={classes.publishDraftDiv}>
-						<Button size='small' onClick={() => {}}>
+						<Button size='small' onClick={handleClose}>
 							Close
 						</Button>
 					</div>
@@ -224,7 +235,7 @@ const NewsInternalForm = ({
 NewsInternalForm.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
-	previewFile: PropTypes.any,
+	handleClose: PropTypes.func.isRequired,
 	openPreviewer: PropTypes.func.isRequired,
 	onSubmitHandler: PropTypes.func.isRequired,
 	toggleDeleteModal: PropTypes.func.isRequired

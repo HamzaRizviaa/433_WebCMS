@@ -9,7 +9,7 @@ const permissionListing = [
 			create: true,
 			edit: false,
 			delete: false,
-			read: false
+			read: true
 		}
 	},
 	{
