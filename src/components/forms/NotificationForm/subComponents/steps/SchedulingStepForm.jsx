@@ -14,7 +14,7 @@ import { selectSchedulerError } from '../../../../../data/selectors/notification
 import { useNotificationStyles } from '../../index.style';
 import { useFormStyles } from '../../../forms.style';
 
-const SchedulingStepForm = ({ status }) => {
+const SchedulingStepForm = ({ status, isFieldInteractionAllowed }) => {
 	const { values, setFieldValue } = useFormikContext();
 
 	const isPublished = status === 'published';
@@ -47,14 +47,14 @@ const SchedulingStepForm = ({ status }) => {
 							name='scheduling.schedule_notification'
 							placeholder='Please select'
 							options={scheduleOptions}
-							disabled={isPublished}
+							disabled={isFieldInteractionAllowed ? isPublished : !isFieldInteractionAllowed}
 						/>
 						{showDateAndTime && (
 							<div>
 								<SchedulerDateField
 									className={classes.dateField}
 									value={formatDate(values.scheduling.date)}
-									disabled={isPublished}
+									disabled={isFieldInteractionAllowed ? isPublished : !isFieldInteractionAllowed}
 								/>
 								<TimePickerField
 									name='scheduling.time'
@@ -62,7 +62,7 @@ const SchedulingStepForm = ({ status }) => {
 									value={values.scheduling.time}
 									onChange={handleTimeChange}
 									showSeparator
-									disabled={isPublished}
+									disabled={isFieldInteractionAllowed ? isPublished : !isFieldInteractionAllowed}
 								/>
 							</div>
 						)}
@@ -76,7 +76,7 @@ const SchedulingStepForm = ({ status }) => {
 								formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 3)}
 								calendarStartDay={1}
 								minDate={new Date()}
-								disabled={isPublished}
+								disabled={isFieldInteractionAllowed ? isPublished : !isFieldInteractionAllowed}
 							/>
 						)}
 					</div>
@@ -94,10 +94,11 @@ const SchedulingStepForm = ({ status }) => {
 	);
 };
 
-export default SchedulingStepForm;
-
 SchedulingStepForm.propTypes = {
 	options: PropTypes.array,
 	selectsRange: PropTypes.bool,
-	status: PropTypes.string
+	status: PropTypes.string,
+	isFieldInteractionAllowed: PropTypes.bool
 };
+
+export default SchedulingStepForm;

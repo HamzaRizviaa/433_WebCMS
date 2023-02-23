@@ -10,7 +10,7 @@ import { useNotificationStyles } from '../../../index.style';
 import { topicNameOptions } from '../../../../../../data/helpers';
 import { useInputsStyles } from '../../../../../ui/inputs/inputs.style';
 
-const TargetApp = ({ form, push, remove, status }) => {
+const TargetApp = ({ form, push, remove, status, isFieldInteractionAllowed }) => {
 	const classes = useNotificationStyles();
 	const inputsClasses = useInputsStyles({ isRequired: true });
 
@@ -39,13 +39,14 @@ const TargetApp = ({ form, push, remove, status }) => {
 								target={target}
 								index={index}
 								isPublished={isPublished}
+								isFieldInteractionAllowed={isFieldInteractionAllowed}
 							/>
 							<div>
 								{target.length > 1 && (
 									<IconButton
 										className={classes.iconBtn}
 										onClick={handleRemove(index)}
-										disabled={isPublished}
+										disabled={isFieldInteractionAllowed ? isPublished : !isFieldInteractionAllowed}
 									>
 										<TrashIcon />
 									</IconButton>
@@ -61,17 +62,19 @@ const TargetApp = ({ form, push, remove, status }) => {
 					</div>
 				))}
 			</div>
-			{target.length < 5 && topicNameOptions.length > target.length && (
-				<Button
-					variant='outlined'
-					size='small'
-					onClick={handlePush}
-					className={classes.targetAnotherAppBtn}
-					disabled={isPublished}
-				>
-					TARGET ANOTHER TOPIC
-				</Button>
-			)}
+			{target.length < 5 &&
+				topicNameOptions.length > target.length &&
+				isFieldInteractionAllowed && (
+					<Button
+						variant='outlined'
+						size='small'
+						onClick={handlePush}
+						className={classes.targetAnotherAppBtn}
+						disabled={isPublished}
+					>
+						TARGET ANOTHER TOPIC
+					</Button>
+				)}
 		</div>
 	);
 };
@@ -79,7 +82,8 @@ const TargetApp = ({ form, push, remove, status }) => {
 TargetApp.propTypes = {
 	form: PropTypes.object.isRequired,
 	push: PropTypes.func.isRequired,
-	remove: PropTypes.func.isRequired
+	remove: PropTypes.func.isRequired,
+	isFieldInteractionAllowed: PropTypes.bool.isRequired
 };
 
 export default TargetApp;

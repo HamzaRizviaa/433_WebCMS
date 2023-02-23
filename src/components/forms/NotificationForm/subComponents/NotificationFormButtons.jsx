@@ -12,7 +12,9 @@ const NotificationFormButtons = ({
 	isEdit,
 	status,
 	openDeleteModal,
-	onSubmitHandler
+	onSubmitHandler,
+	isFieldInteractionAllowed,
+	canUserDelete
 }) => {
 	const isPublished = status === 'published';
 
@@ -58,39 +60,45 @@ const NotificationFormButtons = ({
 	return (
 		<div className={classes.buttonDiv}>
 			<div>
-				{isEdit && (
+				{isEdit && canUserDelete && (
 					<Button size='small' variant='outlined' onClick={openDeleteModal}>
 						DELETE NOTIFICATION
 					</Button>
 				)}
 			</div>
-			<div className={classes.formButtons}>
-				{(!isEdit || status === 'draft') && (
-					<Button
-						size='small'
-						variant='outlined'
-						disabled={isDraftDisabled || isSchedulerError}
-						onClick={handleDraft}
-					>
-						{status === 'draft' && isEdit ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
+			{isFieldInteractionAllowed ? (
+				<div className={classes.formButtons}>
+					{(!isEdit || status === 'draft') && (
+						<Button
+							size='small'
+							variant='outlined'
+							disabled={isDraftDisabled || isSchedulerError}
+							onClick={handleDraft}
+						>
+							{status === 'draft' && isEdit ? 'SAVE DRAFT' : 'SAVE AS DRAFT'}
+						</Button>
+					)}
+					{!isPublished && (
+						<Button
+							size='small'
+							type='submit'
+							disabled={
+								(isPublished ? (!dirty ? isValid : !isValid) : !isValid) ||
+								isSchedulerError
+							}
+							onClick={handlePublish}
+						>
+							{isPublished ? 'SAVE CHANGES' : 'SET NOTIFICATION'}
+						</Button>
+					)}
+				</div>
+			) : (
+				<div className={classes.formButtons}>
+					<Button size='small' onClick={() => {}}>
+						Close
 					</Button>
-				)}
-				{!isPublished ? (
-					<Button
-						size='small'
-						type='submit'
-						disabled={
-							(isPublished ? (!dirty ? isValid : !isValid) : !isValid) ||
-							isSchedulerError
-						}
-						onClick={handlePublish}
-					>
-						{isPublished ? 'SAVE CHANGES' : 'SET NOTIFICATION'}
-					</Button>
-				) : (
-					''
-				)}
-			</div>
+				</div>
+			)}
 		</div>
 	);
 };
@@ -99,7 +107,9 @@ NotificationFormButtons.propTypes = {
 	isEdit: PropTypes.bool,
 	status: PropTypes.string,
 	openDeleteModal: PropTypes.func,
-	onSubmitHandler: PropTypes.func
+	onSubmitHandler: PropTypes.func,
+	isFieldInteractionAllowed: PropTypes.bool,
+	canUserDelete: PropTypes.bool
 };
 
 export default NotificationFormButtons;
