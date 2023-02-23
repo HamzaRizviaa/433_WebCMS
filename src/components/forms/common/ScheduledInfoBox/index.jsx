@@ -6,7 +6,12 @@ import { IconButton } from '@material-ui/core';
 import { Edit } from '../../../../assets/svg-icons';
 import { useScheduledInfoBoxStyles } from './index.style';
 
-const ScheduledInfoBox = ({ openSchedulerModal, isValid, scheduleDate }) => {
+const ScheduledInfoBox = ({
+	openSchedulerModal,
+	isValid,
+	scheduleDate,
+	hideEditIcon = false
+}) => {
 	const classes = useScheduledInfoBoxStyles();
 
 	const formattedDate = dayjs(scheduleDate).format('DD-MM-YYYY, HH:mm');
@@ -17,17 +22,19 @@ const ScheduledInfoBox = ({ openSchedulerModal, isValid, scheduleDate }) => {
 				<span className={classes.scheduleTimeLabel}>Scheduled Time:</span>
 				{formattedDate}
 			</h2>
-			<IconButton
-				className={classes.editIconBtn}
-				onClick={openSchedulerModal}
-				disabled={!isValid}
-			>
-				<Edit
-					className={`${classes.editScheduleIcon} ${
-						!isValid ? classes.disabledIcon : ''
-					}`}
-				/>
-			</IconButton>
+			{!hideEditIcon && (
+				<IconButton
+					className={classes.editIconBtn}
+					onClick={openSchedulerModal}
+					disabled={!isValid}
+				>
+					<Edit
+						className={`${classes.editScheduleIcon} ${
+							!isValid ? classes.disabledIcon : ''
+						}`}
+					/>
+				</IconButton>
+			)}
 		</div>
 	);
 };
@@ -35,7 +42,8 @@ const ScheduledInfoBox = ({ openSchedulerModal, isValid, scheduleDate }) => {
 ScheduledInfoBox.propTypes = {
 	openSchedulerModal: PropTypes.func.isRequired,
 	isValid: PropTypes.bool,
-	scheduleDate: PropTypes.string
+	scheduleDate: PropTypes.string,
+	hideEditIcon: PropTypes.bool
 };
 
 export default ScheduledInfoBox;

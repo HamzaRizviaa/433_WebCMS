@@ -3,13 +3,13 @@ import { FieldArray } from 'formik';
 import PropTypes from 'prop-types';
 import TargetApp from './TargetApp';
 
-const TargetStepForm = ({ status }) => {
+const TargetStepForm = ({ status, isFieldInteractionAllowed }) => {
 	return (
 		<div>
 			<FieldArray name='target'>
-				{(props) => {
-					return <TargetApp status={status} {...props} />;
-				}}
+				{(props) => (
+					<TargetApp status={status} isFieldInteractionAllowed={isFieldInteractionAllowed} {...props} />
+				)}
 			</FieldArray>
 		</div>
 	);
@@ -18,5 +18,6 @@ const TargetStepForm = ({ status }) => {
 export default TargetStepForm;
 
 TargetStepForm.propTypes = {
-	status: PropTypes.string
+	status: PropTypes.string,
+	isFieldInteractionAllowed: PropTypes.bool
 };

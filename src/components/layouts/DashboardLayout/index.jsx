@@ -23,11 +23,10 @@ const DashboardLayout = ({
 	secondaryButtonClick,
 	hideLibraryText = false,
 	hideBtn = false,
+	hideSecondaryBtn,
 	hideSearchFilter = false,
 	hideDateFilter = false,
 	isLoading = false,
-	onTemplateButtonClick = false,
-	hideTemplateBtn = false,
 	children
 }) => {
 	const dispatch = useDispatch();
@@ -73,8 +72,7 @@ const DashboardLayout = ({
 							secondaryButtonText={secondaryButtonText}
 							secondaryButtonClick={secondaryButtonClick}
 							hideBtn={hideBtn}
-							onTemplateButtonClick={onTemplateButtonClick}
-							hideTemplateBtn={hideTemplateBtn}
+							hideSecondaryBtn={hideSecondaryBtn}
 							hideSearchFilter={hideSearchFilter}
 							hideDateFilter={hideDateFilter}
 							hideLibraryText={hideLibraryText}
@@ -95,8 +93,7 @@ DashboardLayout.propTypes = {
 	secondaryButtonText: PropTypes.string,
 	secondaryButtonClick: PropTypes.func,
 	hideBtn: PropTypes.bool,
-	onTemplateButtonClick: PropTypes.func,
-	hideTemplateBtn: PropTypes.bool,
+	hideSecondaryBtn: PropTypes.bool,
 	hideSearchFilter: PropTypes.bool,
 	hideDateFilter: PropTypes.bool,
 	hideLibraryText: PropTypes.bool,

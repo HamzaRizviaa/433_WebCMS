@@ -7,7 +7,7 @@ import NotificationPreview from './NotificationPreview';
 import { useFormStyles } from '../../../../forms.style';
 import { useNotificationStyles } from '../../../index.style';
 
-const NotificationStepForm = ({ status }) => {
+const NotificationStepForm = ({ status, isFieldInteractionAllowed }) => {
 	const classes = useFormStyles();
 	const notifClasses = useNotificationStyles();
 
@@ -26,7 +26,7 @@ const NotificationStepForm = ({ status }) => {
 						placeholder='Please write notification title here'
 						maxRows={2}
 						multiline
-						disabled={isPublished}
+						disabled={isFieldInteractionAllowed ? isPublished : !isFieldInteractionAllowed}
 					/>
 				</div>
 				<div className={classes.fieldContainer}>
@@ -37,7 +37,7 @@ const NotificationStepForm = ({ status }) => {
 						minRows={2}
 						multiline
 						required
-						disabled={isPublished}
+						disabled={isFieldInteractionAllowed ? isPublished : !isFieldInteractionAllowed}
 					/>
 				</div>
 				<div className={classes.fieldWrapper}>
@@ -48,8 +48,8 @@ const NotificationStepForm = ({ status }) => {
 						formatMessage='Supported formats are jpeg and png'
 						maxFiles={1}
 						onDelete={() => setFieldValue('notification.uploadedFiles', [])}
-						disabled={isPublished}
-						hideDeleteIcon={isPublished}
+						disabled={isFieldInteractionAllowed ? isPublished : !isFieldInteractionAllowed}
+						hideDeleteIcon={isFieldInteractionAllowed ? isPublished : !isFieldInteractionAllowed}
 					/>
 				</div>
 				<div className={classes.fieldContainer}>
@@ -57,7 +57,7 @@ const NotificationStepForm = ({ status }) => {
 						label='NOTIFICATION NAME'
 						name='notification.notification_name'
 						placeholder='Please write notification name here'
-						disabled={isPublished}
+						disabled={isFieldInteractionAllowed ? isPublished : !isFieldInteractionAllowed}
 					/>
 				</div>
 			</div>
@@ -66,8 +66,9 @@ const NotificationStepForm = ({ status }) => {
 	);
 };
 
-export default NotificationStepForm;
-
 NotificationStepForm.propTypes = {
-	status: PropTypes.string
+	status: PropTypes.string,
+	isFieldInteractionAllowed: PropTypes.bool
 };
+
+export default NotificationStepForm;
