@@ -6,7 +6,7 @@ import FormikField from '../../../../../ui/inputs/formik/FormikField';
 import { useNotificationStyles } from '../../../index.style';
 import { useInputsStyles } from '../../../../../ui/inputs/inputs.style';
 
-const CustomData = ({ form, push, remove, status }) => {
+const CustomData = ({ form, push, remove, status, isFieldInteractionAllowed = false }) => {
 	const classes = useNotificationStyles();
 	const inputsClasses = useInputsStyles();
 
@@ -53,7 +53,7 @@ const CustomData = ({ form, push, remove, status }) => {
 							name={`additional_options.custom_data.${index}.key`}
 							placeholder='Key'
 							onChange={handleKeyChange(index)}
-							disabled={shouldDisable(index)}
+							disabled={isFieldInteractionAllowed ? shouldDisable(index) : !isFieldInteractionAllowed}
 						/>
 					</Grid>
 					<Grid className={classes.expirationUnitField} md={6} item>
@@ -61,7 +61,7 @@ const CustomData = ({ form, push, remove, status }) => {
 							name={`additional_options.custom_data.${index}.value`}
 							placeholder='Value'
 							onChange={handleValueChange(index)}
-							disabled={shouldDisable(index)}
+							disabled={isFieldInteractionAllowed ? shouldDisable(index) : !isFieldInteractionAllowed}
 						/>
 					</Grid>
 				</Grid>
@@ -74,7 +74,8 @@ CustomData.propTypes = {
 	form: PropTypes.object.isRequired,
 	push: PropTypes.func.isRequired,
 	remove: PropTypes.func.isRequired,
-	status: PropTypes.string
+	status: PropTypes.string,
+	isFieldInteractionAllowed: PropTypes.bool.isRequired
 };
 
 export default CustomData;

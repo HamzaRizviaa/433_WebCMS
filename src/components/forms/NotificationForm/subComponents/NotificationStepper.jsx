@@ -6,7 +6,7 @@ import { stepsComponents } from './steps';
 import { stepsData } from '../../../../data/helpers';
 import { useNotificationStyles } from '../index.style';
 
-const NotificationStepper = ({ status }) => {
+const NotificationStepper = ({ status, isFieldInteractionAllowed }) => {
 	const [activeStep, setActiveStep] = React.useState(0);
 	const [completed, setCompleted] = React.useState(new Set());
 
@@ -48,7 +48,10 @@ const NotificationStepper = ({ status }) => {
 						{step.label}
 					</StepButton>
 					<StepContent>
-						{React.cloneElement(stepsComponents[step.key], { status })}
+						{React.cloneElement(stepsComponents[step.key], {
+							status,
+							isFieldInteractionAllowed
+						})}
 						<div className={classes.actionsContainer}>
 							<NextStepButton
 								currentStep={step.key}
@@ -66,5 +69,6 @@ const NotificationStepper = ({ status }) => {
 export default NotificationStepper;
 
 NotificationStepper.propTypes = {
-	status: PropTypes.string
+	status: PropTypes.string,
+	isFieldInteractionAllowed: PropTypes.bool
 };

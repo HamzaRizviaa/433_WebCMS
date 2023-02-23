@@ -7,7 +7,7 @@ import {
 import FormikSelect from '../../../../../ui/inputs/formik/FormikSelect';
 import { useNotificationStyles } from '../../../index.style';
 
-const SelectTopicNameField = ({ target, index, isPublished }) => {
+const SelectTopicNameField = ({ target, index, isPublished, isFieldInteractionAllowed }) => {
 	const classes = useNotificationStyles();
 
 	const filteredTopicNameOptions = filterSelectedTopics(
@@ -22,7 +22,7 @@ const SelectTopicNameField = ({ target, index, isPublished }) => {
 			options={filteredTopicNameOptions}
 			placeholder='Select Topic'
 			className={classes.selectField}
-			disabled={isPublished}
+			disabled={isFieldInteractionAllowed ? isPublished : !isFieldInteractionAllowed}
 		/>
 	);
 };
@@ -30,7 +30,8 @@ const SelectTopicNameField = ({ target, index, isPublished }) => {
 SelectTopicNameField.propTypes = {
 	target: PropTypes.arrayOf(PropTypes.object),
 	index: PropTypes.number,
-	isPublished: PropTypes.bool
+	isPublished: PropTypes.bool,
+	isFieldInteractionAllowed: PropTypes.bool
 };
 
 export default SelectTopicNameField;

@@ -133,10 +133,11 @@ const NotificationForm = () => {
 			>
 				<Form>
 					<NotificationInternalForm
-						openDeleteModal={openDeleteModal}
 						isEdit={isEdit}
 						status={status}
 						onSubmitHandler={onSubmitHandler}
+						openDeleteModal={openDeleteModal}
+						handleClose={handleClose}
 					/>
 				</Form>
 			</Formik>

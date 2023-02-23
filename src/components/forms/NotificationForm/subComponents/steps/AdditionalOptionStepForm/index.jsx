@@ -12,7 +12,7 @@ import {
 } from '../../../../../../data/helpers/notificationHelpers';
 import { useNotificationStyles } from '../../../index.style';
 
-const AdditionalOptionStepForm = ({ status }) => {
+const AdditionalOptionStepForm = ({ status, isFieldInteractionAllowed }) => {
 	const classes = useNotificationStyles();
 
 	const { values } = useFormikContext();
@@ -33,12 +33,14 @@ const AdditionalOptionStepForm = ({ status }) => {
 				<FormikField
 					name='additional_options.android_notification_channel'
 					label='ANDROID NOTIFICATION CHANNEL'
-					disabled={isPublished}
+					disabled={isFieldInteractionAllowed ? isPublished : !isFieldInteractionAllowed}
 				/>
 			</div>
 			<FieldArray name='additional_options.custom_data'>
 				{(props) => {
-					return <CustomData status={status} {...props} />;
+					return (
+						<CustomData status={status} isFieldInteractionAllowed={isFieldInteractionAllowed} {...props} />
+					);
 				}}
 			</FieldArray>
 			<div>
@@ -47,7 +49,7 @@ const AdditionalOptionStepForm = ({ status }) => {
 					label='SOUND'
 					placeholder='Please Select'
 					options={booleanOptions}
-					disabled={isPublished}
+					disabled={isFieldInteractionAllowed ? isPublished : !isFieldInteractionAllowed}
 				/>
 			</div>
 			<div>
@@ -56,7 +58,7 @@ const AdditionalOptionStepForm = ({ status }) => {
 					label='APPLE BADGE'
 					placeholder='Please Select'
 					options={booleanOptions}
-					disabled={isPublished}
+					disabled={isFieldInteractionAllowed ? isPublished : !isFieldInteractionAllowed}
 				/>
 			</div>
 			<div>
@@ -67,7 +69,7 @@ const AdditionalOptionStepForm = ({ status }) => {
 							label='EXPIRES'
 							placeholder='Please Select'
 							options={expireRangeOptions}
-							disabled={isPublished}
+							disabled={isFieldInteractionAllowed ? isPublished : !isFieldInteractionAllowed}
 						/>
 					</Grid>
 					<Grid className={classes.expirationUnitField} md={6} item>
@@ -76,7 +78,7 @@ const AdditionalOptionStepForm = ({ status }) => {
 							placeholder='Please Select'
 							label='&nbsp;'
 							options={expirationUnitOptions}
-							disabled={isPublished}
+							disabled={isFieldInteractionAllowed ? isPublished : !isFieldInteractionAllowed}
 						/>
 					</Grid>
 				</Grid>
@@ -88,5 +90,6 @@ const AdditionalOptionStepForm = ({ status }) => {
 export default AdditionalOptionStepForm;
 
 AdditionalOptionStepForm.propTypes = {
-	status: PropTypes.string
+	status: PropTypes.string,
+	isFieldInteractionAllowed: PropTypes.bool
 };

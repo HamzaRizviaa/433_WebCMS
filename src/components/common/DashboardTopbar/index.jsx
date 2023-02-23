@@ -15,6 +15,7 @@ const DashboardTopbar = ({
 	secondaryButtonClick,
 	hideLibraryText = false,
 	hideBtn = false,
+	hideSecondaryBtn = false,
 	hideSearchFilter = false,
 	hideDateFilter = false
 }) => {
@@ -44,7 +45,7 @@ const DashboardTopbar = ({
 							: `UPLOAD ${title?.toUpperCase()}`}
 					</Button>
 				)}
-				{secondaryButtonText && (
+				{secondaryButtonText && !hideSecondaryBtn && (
 					<div className={classes.secondaryButtonBox}>
 						<Button variant={'outlined'} onClick={secondaryButtonClick}>
 							{secondaryButtonText.toUpperCase()}
@@ -73,10 +74,10 @@ DashboardTopbar.propTypes = {
 	customText: PropTypes.string,
 	customSearchText: PropTypes.string,
 	onButtonClick: PropTypes.func,
-	onTemplateButtonClick: PropTypes.func,
 	secondaryButtonText: PropTypes.string,
 	secondaryButtonClick: PropTypes.func,
 	hideBtn: PropTypes.bool,
+	hideSecondaryBtn: PropTypes.bool,
 	hideSearchFilter: PropTypes.bool,
 	hideDateFilter: PropTypes.bool,
 	hideLibraryText: PropTypes.bool

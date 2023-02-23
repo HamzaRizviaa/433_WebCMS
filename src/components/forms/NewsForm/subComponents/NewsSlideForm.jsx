@@ -8,7 +8,14 @@ import DraggableLayoutWrapper from '../../../layouts/DraggableLayoutWrapper';
 import { AddIcon } from '../../../../assets/svg-icons';
 import { useFormStyles } from '../../forms.style';
 
-const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
+const NewsSlideForm = ({
+	form,
+	push,
+	remove,
+	swap,
+	openPreviewer,
+	isFieldInteractionAllowed
+}) => {
 	const classes = useFormStyles();
 
 	const handleDeleteFile = (index) => {
@@ -43,6 +50,7 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 						index={index}
 						item={item}
 						onDeleteIconClick={handleDeleteSlide}
+						disableActions={!isFieldInteractionAllowed}
 					>
 						<div>
 							<FormikDropzone
@@ -53,6 +61,8 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 								showPreview
 								onPreview={openPreviewer}
 								onDelete={() => handleDeleteFile(index)}
+								disabled={!isFieldInteractionAllowed}
+								hideDeleteIcon={!isFieldInteractionAllowed}
 							/>
 						</div>
 						<div className={classes.fieldContainer}>
@@ -62,6 +72,7 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 								placeholder='Please drop the URL here'
 								multiline
 								maxRows={2}
+								disabled={!isFieldInteractionAllowed}
 							/>
 						</div>
 						<div className={classes.fieldContainer}>
@@ -72,6 +83,7 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 								multiline
 								maxRows={2}
 								maxLength={43}
+								disabled={!isFieldInteractionAllowed}
 							/>
 						</div>
 						<div className={classes.fieldContainer}>
@@ -83,6 +95,7 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 								minRows={3}
 								maxRows={4}
 								maxLength={250}
+								disabled={!isFieldInteractionAllowed}
 							/>
 						</div>
 						<div className={classes.fieldContainer}>
@@ -93,6 +106,7 @@ const NewsSlideForm = ({ form, push, remove, swap, openPreviewer }) => {
 								multiline
 								maxRows={2}
 								maxLength={50}
+								disabled={!isFieldInteractionAllowed}
 							/>
 						</div>
 					</DraggableCardLayout>
@@ -120,7 +134,8 @@ NewsSlideForm.propTypes = {
 	push: PropTypes.func.isRequired,
 	remove: PropTypes.func.isRequired,
 	swap: PropTypes.func.isRequired,
-	openPreviewer: PropTypes.func.isRequired
+	openPreviewer: PropTypes.func.isRequired,
+	isFieldInteractionAllowed: PropTypes.bool.isRequired
 };
 
 export default NewsSlideForm;

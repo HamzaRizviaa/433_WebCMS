@@ -81,7 +81,8 @@ export const useStyles = makeStyles((theme) => {
 
 		logoutContainer: {
 			textAlign: 'center',
-			cursor: 'pointer'
+			cursor: 'pointer',
+			marginTop: '2.5rem'
 		},
 
 		navText: ({ env }) => ({
@@ -99,6 +100,36 @@ export const useStyles = makeStyles((theme) => {
 		activeRoute: ({ env }) => ({
 			marginTop: '2.5rem',
 			padding: '1rem 1.2rem 0.8rem 1.2rem',
+			borderRadius: '8px',
+			backgroundColor:
+				env === 'prod' ? theme.palette.normalGrey : 'transparent',
+			border:
+				env === 'prod'
+					? `2px solid ${theme.palette.normalGrey}`
+					: `2px solid ${envToColorMapper[env].color}`,
+
+			'& svg ': {
+				'& path': {
+					fill: envToColorMapper[env].aciveIconColor
+				},
+				'& circle': {
+					stroke: envToColorMapper[env].aciveIconColor
+				}
+			},
+
+			'& > span > svg': {
+				'& path': {
+					fill: 'none',
+					stroke: envToColorMapper[env].aciveIconColor
+				},
+				'& circle': {
+					stroke: envToColorMapper[env].aciveIconColor
+				}
+			}
+		}),
+		rbacRoute: ({ env }) => ({
+			marginTop: '2.5rem',
+			padding: '2rem 1.2rem 0.8rem 1.2rem',
 			borderRadius: '8px',
 			backgroundColor:
 				env === 'prod' ? theme.palette.normalGrey : 'transparent',

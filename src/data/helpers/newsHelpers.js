@@ -7,7 +7,7 @@ import { getUserDataObject } from './index';
 import { advancedSettingsValidationSchema } from './advancedSettingsHelpers';
 import { CalendarYellowIcon } from '../../assets/svg-icons';
 
-export const newsColumns = [
+export const getNewsColumns = (hasNotificationsAccess) => [
 	{
 		dataField: 'media',
 		text: 'MEDIA',
@@ -73,11 +73,15 @@ export const newsColumns = [
 		formatter: (_, row) =>
 			getFormatter('options', {
 				title: 'EDIT NEWS',
-				notificationTitle: 'NOTIFICATION',
 				contentType: 'news',
 				contentId: row.id,
-				notificationId: row.notification_id,
-				notificationStatus: row.notification_status
+				...(hasNotificationsAccess
+					? {
+							notificationTitle: 'NOTIFICATION',
+							notificationId: row.notification_id,
+							notificationStatus: row.notification_status
+					  }
+					: null)
 			})
 	}
 ];

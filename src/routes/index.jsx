@@ -10,6 +10,7 @@ import ViralLibrary from '../pages/ViralLibrary/ViralLibrary';
 import ArticleLibrary from '../pages/ArticleLibrary/ArticleLibrary';
 import NewsLibrary from '../pages/NewsLibrary/NewsLibrary';
 import RuleLibrary from '../pages/RuleLibrary/RuleLibrary';
+import RBACLibrary from '../pages/UserManagement/UserManagement';
 import { fetchRules } from '../data/features/ruleLibrary/ruleLibraryActions';
 import SignIn from '../pages/SignIn/SignIn';
 import AuthenticatedRoutes from './AuthenticatedRoutes';
@@ -43,6 +44,7 @@ const AppRoutes = () => {
 					<Route path='article-library' element={<ArticleLibrary />} />
 					<Route path='viral-library' element={<ViralLibrary />} />
 					<Route path='rule-library' element={<RuleLibrary />} />
+					<Route path='/user-management-library' element={<RBACLibrary />} />
 				</Route>
 			</Route>
 

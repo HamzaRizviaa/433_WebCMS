@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { Fragment, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 
+import { usePermissionsAccessControl } from '../../../../hooks';
 import TextTooltip from '../../TextTooltip';
 import { BellFilled, BellOutlined, Edit } from '../../../../assets/svg-icons';
 import {
@@ -25,6 +26,17 @@ const OptionsFormatter = ({
 
 	const notificationFlag = useSelector(selectNotificationFeatureFlag);
 	const isNotificationEnabled = notificationFlag?._value === 'true';
+
+	const { permissions } = usePermissionsAccessControl();
+
+	const canUserSeeEditedNotifications = useMemo(
+		() =>
+			permissions &&
+			(permissions.Notifications.edit ||
+				permissions.Notifications.read ||
+				permissions.Notifications.delete),
+		[permissions]
+	);
 
 	const handleClick = (event) => {
 		event.stopPropagation();
@@ -49,9 +61,17 @@ const OptionsFormatter = ({
 						placement='bottom'
 					>
 						{notificationId ? (
-							<BellFilled className={classes.notificationIcon} />
+							<Fragment>
+								{canUserSeeEditedNotifications && (
+									<BellFilled className={classes.notificationIcon} />
+								)}
+							</Fragment>
 						) : (
-							<BellOutlined className={classes.notificationIcon} />
+							<Fragment>
+								{permissions && permissions.Notifications.create && (
+									<BellOutlined className={classes.notificationIcon} />
+								)}
+							</Fragment>
 						)}
 					</TextTooltip>
 				</IconButton>

@@ -42,7 +42,7 @@ const NewsFormDrawer = ({
 			<NewsInternalForm
 				isEdit={isEdit}
 				status={status}
-				previewFile={previewFile}
+				handleClose={handleClose}
 				openPreviewer={openPreviewer}
 				onSubmitHandler={onSubmitHandler}
 				toggleDeleteModal={toggleDeleteModal}

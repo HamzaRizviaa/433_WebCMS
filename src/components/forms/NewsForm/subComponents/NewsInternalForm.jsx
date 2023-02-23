@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { FieldArray, useFormikContext } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,6 +13,7 @@ import AdvancedSettingsForm from '../../common/AdvancedSettingsForm';
 import SchedulerPopup from '../../../common/SchedulerPopup';
 import { Calendar } from '../../../../assets/svg-icons';
 import useSchedulerHandlers from '../../../../hooks/useSchedulerHandlers';
+import { usePermissionsAccessControl } from '../../../../hooks';
 import { getRules, selectSpecificNews } from '../../../../data/selectors';
 import { resetSpecificNews } from '../../../../data/features/newsLibrary/newsLibrarySlice';
 import {
@@ -25,9 +26,10 @@ import ScheduledInfoBox from '../../common/ScheduledInfoBox';
 const NewsInternalForm = ({
 	isEdit,
 	status,
+	handleClose,
+	openPreviewer,
 	onSubmitHandler,
-	toggleDeleteModal,
-	openPreviewer
+	toggleDeleteModal
 }) => {
 	const classes = useFormStyles();
 	const dispatch = useDispatch();
@@ -41,6 +43,15 @@ const NewsInternalForm = ({
 	// scheduler methods
 	const closeSchedulerModal = () => setSchedulerModalState(false);
 	const openSchedulerModal = () => setSchedulerModalState(true);
+
+	const { permissions, getIsFieldInteractionAllowed } =
+		usePermissionsAccessControl();
+	const isFieldInteractionAllowed = getIsFieldInteractionAllowed(
+		'News',
+		isEdit
+	);
+
+	console.log({ isFieldInteractionAllowed });
 
 	/// Scheduler hook
 	const {
@@ -96,6 +107,7 @@ const NewsInternalForm = ({
 					scheduleDate={values.schedule_date}
 					openSchedulerModal={openSchedulerModal}
 					isValid={isValid}
+					hideEditIcon={!isFieldInteractionAllowed}
 				/>
 			)}
 			<AccordianLayout title='General Information'>
@@ -104,7 +116,11 @@ const NewsInternalForm = ({
 						name='labels'
 						label='LABELS'
 						placeholder='Select a minimum of 4 labels'
-						disabled={isPublished}
+						disabled={
+							isFieldInteractionAllowed
+								? isPublished
+								: !isFieldInteractionAllowed
+						}
 						required
 						library='News'
 					/>
@@ -118,6 +134,7 @@ const NewsInternalForm = ({
 						maxLength={43}
 						maxRows={2}
 						required
+						disabled={!isFieldInteractionAllowed}
 					/>
 				</div>
 				<div className={classes.fieldContainer}>
@@ -130,70 +147,86 @@ const NewsInternalForm = ({
 						minRows={3}
 						maxRows={4}
 						required
+						disabled={!isFieldInteractionAllowed}
 					/>
 				</div>
 			</AccordianLayout>
 
-			<AdvancedSettingsForm featureFlagLibrary='geoblockingRestrictionsNews' />
+			<AdvancedSettingsForm
+				featureFlagLibrary='geoblockingRestrictionsNews'
+				readOnly={!isFieldInteractionAllowed}
+			/>
 
 			<FieldArray
 				name='slides'
 				render={(props) => (
-					<NewsSlideForm {...props} openPreviewer={openPreviewer} />
+					<NewsSlideForm
+						{...props}
+						openPreviewer={openPreviewer}
+						isFieldInteractionAllowed={isFieldInteractionAllowed}
+					/>
 				)}
 			/>
 			<div className={classes.buttonDiv}>
 				<div>
-					{isEdit && (
+					{isEdit && permissions && permissions.News.delete && (
 						<Button size='small' variant='outlined' onClick={toggleDeleteModal}>
 							DELETE NEWS
 						</Button>
 					)}
 				</div>
-				<div className={classes.publishDraftDiv}>
-					{(!isEdit || status === 'draft') && (
-						<>
-							{values.is_scheduled ? (
-								<Button
-									size='small'
-									variant='outlined'
-									type='submit'
-									disabled={isValid ? !dirty : !isValid}
-									onClick={handleSaveChangesClick}
-								>
-									SAVE CHANGES
-								</Button>
-							) : (
-								<Button
-									size='small'
-									variant='outlined'
-									disabled={isDraftDisabled}
-									onClick={handleDraftClick}
-								>
-									{status === 'draft' && isEdit
-										? 'SAVE DRAFT'
-										: 'SAVE AS DRAFT'}
-								</Button>
-							)}
-						</>
-					)}
-					<Button
-						onClick={handlePublishClick}
-						type='submit'
-						disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
-					>
-						{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
-					</Button>
-					{!isPublished && !values.is_scheduled && (
+				{isFieldInteractionAllowed ? (
+					<div className={classes.publishDraftDiv}>
+						{(!isEdit || status === 'draft') && (
+							<Fragment>
+								{values.is_scheduled ? (
+									<Button
+										size='small'
+										variant='outlined'
+										type='submit'
+										disabled={isValid ? !dirty : !isValid}
+										onClick={handleSaveChangesClick}
+									>
+										SAVE CHANGES
+									</Button>
+								) : (
+									<Button
+										size='small'
+										variant='outlined'
+										disabled={isDraftDisabled}
+										onClick={handleDraftClick}
+									>
+										{status === 'draft' && isEdit
+											? 'SAVE DRAFT'
+											: 'SAVE AS DRAFT'}
+									</Button>
+								)}
+							</Fragment>
+						)}
 						<Button
-							disabled={values.is_scheduled || isPublished ? true : !isValid}
-							onClick={openSchedulerModal}
-							iconBtn
+							onClick={handlePublishClick}
+							type='submit'
+							disabled={isPublished ? (!dirty ? isValid : !isValid) : !isValid}
 						>
-							<Calendar />
+							{isPublished ? 'SAVE CHANGES' : 'PUBLISH'}
 						</Button>
-					)}
-				</div>
+						{!isPublished && !values.is_scheduled && (
+							<Button
+								disabled={values.is_scheduled || isPublished ? true : !isValid}
+								onClick={openSchedulerModal}
+								iconBtn
+							>
+								<Calendar />
+							</Button>
+						)}
+					</div>
+				) : (
+					<div className={classes.publishDraftDiv}>
+						<Button size='small' onClick={handleClose}>
+							Close
+						</Button>
+					</div>
+				)}
 			</div>
 		</div>
 	);
@@ -202,7 +235,7 @@ const NewsInternalForm = ({
 NewsInternalForm.propTypes = {
 	isEdit: PropTypes.bool.isRequired,
 	status: PropTypes.string.isRequired,
-	previewFile: PropTypes.any,
+	handleClose: PropTypes.func.isRequired,
 	openPreviewer: PropTypes.func.isRequired,
 	onSubmitHandler: PropTypes.func.isRequired,
 	toggleDeleteModal: PropTypes.func.isRequired
