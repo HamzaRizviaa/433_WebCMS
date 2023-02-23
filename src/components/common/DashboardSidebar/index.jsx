@@ -13,7 +13,8 @@ import {
 	Viral,
 	Logout,
 	Article,
-	RuleLibrary
+	RuleLibrary,
+	Rbac
 } from '../../../assets/svg-icons';
 import { AuthService, UserService } from '../../../data/services';
 import { rulesLibraryFeatureFlag } from '../../../data/selectors';
@@ -146,9 +147,20 @@ const Sidebar = () => {
 					</NavLink>
 				)}
 			</div>
-
-			<div onClick={handleLogout} className={classes.logoutContainer}>
-				<Logout className={classes.icon} />
+			<div>
+				<NavLink
+					to='/rbac-library'
+					className={({ isActive }) =>
+						isActive ? classes.rbacRoute : classes.iconWrapper
+					}
+				>
+					<TextTooltip title='RBAC' placement='right'>
+						<Rbac className={classes.icon} />
+					</TextTooltip>
+				</NavLink>
+				<div onClick={handleLogout} className={classes.logoutContainer}>
+					<Logout className={classes.icon} />
+				</div>
 			</div>
 		</span>
 	);

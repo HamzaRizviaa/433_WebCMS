@@ -10,6 +10,7 @@ import ViralLibrary from '../pages/ViralLibrary/ViralLibrary';
 import ArticleLibrary from '../pages/ArticleLibrary/ArticleLibrary';
 import NewsLibrary from '../pages/NewsLibrary/NewsLibrary';
 import RuleLibrary from '../pages/RuleLibrary/RuleLibrary';
+import RBACLibrary from '../pages/RBACLibrary/RBACLibrary';
 import { fetchRules } from '../data/features/ruleLibrary/ruleLibraryActions';
 import SignIn from '../pages/SignIn/SignIn';
 import RequireAuth from './RequireAuth.js';
@@ -74,7 +75,11 @@ const AppRoutes = () => {
 				path='/rule-library'
 				element={<RequireAuth component={<RuleLibrary />} />}
 			/>
-
+			<Route
+				exact
+				path='/rbac-library'
+				element={<RequireAuth component={<RBACLibrary />} />}
+			/>
 			{/* <Route
 				exact
 				path='/games-library'
@@ -84,7 +89,6 @@ const AppRoutes = () => {
 				path='/post-library'
 				element={<RequireAuth component={<PostLibrary />} />}
 			/> */}
-			{/* <Route path='/testing' element={<Test />} /> */}
 			<Route path='*' element={<Navigate to='/sign-in' />} />
 		</Routes>
 	);
