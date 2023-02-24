@@ -5,6 +5,7 @@ import Unauthorized from '../pages/Unauthorized';
 import { usePermissionsAccessControl } from '../hooks';
 
 const pathnameToLibraryNameMapper = {
+	'/': 'News',
 	'/news-library': 'News',
 	'/media-library': 'Media',
 	'/question-library': 'Questions',

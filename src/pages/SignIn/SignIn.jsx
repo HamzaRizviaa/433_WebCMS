@@ -63,7 +63,7 @@ const SignIn = () => {
 
 				setIsLoadingSignin(false);
 				setSignInError(false);
-				navigate(state?.from);
+				navigate(state?.from || '/news-library');
 			}
 		} catch (e) {
 			setSignInError(true);
