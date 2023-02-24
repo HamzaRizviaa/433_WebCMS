@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
 
 const permissionListing = [
@@ -19,7 +19,7 @@ const permissionListing = [
 			create: false,
 			edit: false,
 			delete: false,
-			read: false
+			read: true
 		}
 	},
 	{
@@ -29,7 +29,7 @@ const permissionListing = [
 			create: false,
 			edit: false,
 			delete: false,
-			read: false
+			read: true
 		}
 	},
 	{
@@ -94,10 +94,10 @@ const permissionListing = [
 	}
 ];
 
-const usePermissionsAccessControl = () => {
+const usePermissionsAccessControl = (libraryName) => {
 	const [permissions, setPermissions] = useState(undefined);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		const updatedPermissions = {};
 
 		permissionListing.forEach((item) => {
@@ -124,7 +124,10 @@ const usePermissionsAccessControl = () => {
 		return isEdit ? permissions[typeOf].edit : permissions[typeOf].create;
 	};
 
-	return { permissions, getIsFieldInteractionAllowed };
+	return {
+		permissions: (permissions && permissions[libraryName]) || permissions,
+		getIsFieldInteractionAllowed
+	};
 };
 
 export default usePermissionsAccessControl;

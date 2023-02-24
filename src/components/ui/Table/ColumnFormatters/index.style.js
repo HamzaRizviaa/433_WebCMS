@@ -23,9 +23,8 @@ export const useStyles = makeStyles((theme) => {
 
 		editIcon: {
 			width: '2.5rem',
-			height: 'auto',
 			cursor: 'pointer',
-			marginBottom: '1rem'
+			marginTop: '-1.2rem'
 		},
 
 		tableCell: {
@@ -51,15 +50,17 @@ export const useStyles = makeStyles((theme) => {
 		iconWrapper: { marginRight: '10px', minWidth: '20px' },
 
 		optionsWrapper: {
-			display: 'flex'
+			display: 'flex',
+			alignItems: 'center'
 		},
 
 		notificationIcon: {
-			marginBottom: 10,
+			display: 'inline-block',
+			marginTop: '-0.8rem',
 			marginLeft: ({ notificationStatus }) =>
 				notificationStatus === '' ? '2px' : '0px',
 
-			'& path': {
+			'& svg > path': {
 				fill: ({ notificationStatus }) =>
 					notificationStatus === ''
 						? 'gray'

@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { IconButton } from '@material-ui/core';
@@ -61,17 +61,15 @@ const OptionsFormatter = ({
 						placement='bottom'
 					>
 						{notificationId ? (
-							<Fragment>
-								{canUserSeeEditedNotifications && (
-									<BellFilled className={classes.notificationIcon} />
-								)}
-							</Fragment>
+							<span className={classes.notificationIcon}>
+								{canUserSeeEditedNotifications && <BellFilled />}
+							</span>
 						) : (
-							<Fragment>
+							<span className={classes.notificationIcon}>
 								{permissions && permissions.Notifications.create && (
-									<BellOutlined className={classes.notificationIcon} />
+									<BellOutlined />
 								)}
-							</Fragment>
+							</span>
 						)}
 					</TextTooltip>
 				</IconButton>

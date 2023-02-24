@@ -69,8 +69,6 @@ const Table = ({
 		<NoDataIndicator noDataText={noDataText} formTable={formTable} />
 	);
 
-	console.log('News Table', noDataIndication);
-
 	return (
 		<div className={classes.tableWrapper}>
 			<div className={classes.tableContainer}>

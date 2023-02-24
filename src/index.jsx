@@ -1,5 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+// import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -21,6 +22,7 @@ root.render(
 			</Router>
 		</Provider>
 	</GoogleOAuthProvider>
+	// document.getElementById('root')
 );
 
 if (module.hot) {
